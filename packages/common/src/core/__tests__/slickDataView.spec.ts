@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { Aggregators } from '../../aggregators/index.js';
 import { SortDirectionNumber } from '../../enums/sortDirectionNumber.enum.js';
 import { SlickHybridSelectionModel } from '../../extensions/slickHybridSelectionModel.js';
@@ -12,6 +12,8 @@ class FakeAggregator {
   init() {}
   storeResult() {}
 }
+
+vi.useFakeTimers();
 
 describe('SlickDatView core file', () => {
   let container: HTMLElement;
@@ -2263,6 +2265,763 @@ describe('SlickDatView core file', () => {
 
       expect(unsubscribeCellCssStyleSpy).toHaveBeenCalled();
       expect(unsubscribeRowOrCountSpy).toHaveBeenCalledWith(expect.any(Function));
+    });
+  });
+
+  // ──────────────────────────────────────────────────────────────────────────────
+  // Formatted Data Cache
+  // ──────────────────────────────────────────────────────────────────────────────
+  describe('Formatted Data Cache', () => {
+    // populateFormattedDataCacheAsync uses MessageChannel (a real macrotask) which is
+    // not controlled by vi.useFakeTimers(). Switch to real timers for this describe block.
+    beforeAll(() => vi.useRealTimers());
+    afterAll(() => vi.useFakeTimers());
+
+    // Wait for the cache population to finish (event-based, works with any scheduler).
+    const waitForCache = (target?: SlickDataView): Promise<void> =>
+      new Promise<void>((resolve) => {
+        const dataView = target ?? dv;
+        if (!dataView.getCacheStatus().isPopulating) {
+          resolve();
+          return;
+        }
+        const handler = () => {
+          dataView.onFormattedDataCacheCompleted.unsubscribe(handler);
+          resolve();
+        };
+        dataView.onFormattedDataCacheCompleted.subscribe(handler);
+      });
+
+    const columns = [
+      { id: 'name', field: 'name', name: 'Name', formatter: (_r: number, _c: number, val: any) => `<b>${val}</b>` },
+      { id: 'age', field: 'age', name: 'Age' },
+    ] as any[];
+    const cacheGridOptions = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 }, enableFormattedDataCache: true } as any;
+    const baseCacheItems = [
+      { id: 1, name: 'Alice', age: 30 },
+      { id: 2, name: 'Bob', age: 25 },
+    ];
+    let cacheItems: Array<{ id: number; name: string; age: number }>;
+
+    let grid: SlickGrid;
+
+    beforeEach(() => {
+      cacheItems = baseCacheItems.map((item) => ({ ...item }));
+      dv = new SlickDataView({});
+      grid = new SlickGrid('#myGrid', dv, columns, cacheGridOptions);
+      dv.setGrid(grid);
+      dv.setItems(cacheItems);
+    });
+
+    afterEach(() => {
+      grid.destroy();
+    });
+
+    describe('getCacheStatus()', () => {
+      it('should return initial metadata state before population', () => {
+        const status = dv.getCacheStatus();
+        expect(status).toMatchObject({ isPopulating: expect.any(Boolean), lastProcessedRow: expect.any(Number), totalFormattedCells: expect.any(Number) });
+      });
+
+      it('should return a snapshot (not a live reference)', () => {
+        const status1 = dv.getCacheStatus();
+        const status2 = dv.getCacheStatus();
+        expect(status1).not.toBe(status2);
+      });
+    });
+
+    describe('clearFormattedDataCache()', () => {
+      it('should reset both caches and metadata', async () => {
+        await waitForCache();
+        dv.clearFormattedDataCache();
+        const status = dv.getCacheStatus();
+        expect(status.isPopulating).toBe(false);
+        expect(status.lastProcessedRow).toBe(-1);
+        expect(status.totalFormattedCells).toBe(0);
+      });
+
+      it('should clear export cache so getFormattedCellValue returns fallback', async () => {
+        await waitForCache();
+        dv.clearFormattedDataCache();
+        expect(dv.getFormattedCellValue(0, 'name', 'fallback')).toBe('fallback');
+      });
+
+      it('should clear cell display cache so getCellDisplayValue returns undefined', async () => {
+        await waitForCache();
+        dv.clearFormattedDataCache();
+        expect(dv.getCellDisplayValue(0, 'name')).toBeUndefined();
+      });
+
+      it('should cancel pending RAF when clearing cache', () => {
+        const cancelRafSpy = vi.spyOn(globalThis, 'cancelAnimationFrame').mockImplementation(() => undefined as any);
+        (dv as any)._populateCacheRafId = 777;
+
+        try {
+          dv.clearFormattedDataCache();
+          expect(cancelRafSpy).toHaveBeenCalledWith(777);
+          expect((dv as any)._populateCacheRafId).toBeUndefined();
+        } finally {
+          cancelRafSpy.mockRestore();
+        }
+      });
+    });
+
+    describe('getFormattedCellValue()', () => {
+      it('should return fallback when cache is disabled', () => {
+        const dvNoCache = new SlickDataView({});
+        const gridNoCache = new SlickGrid('#myGrid', dvNoCache, columns, { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as any);
+        dvNoCache.setItems(cacheItems);
+        expect(dvNoCache.getFormattedCellValue(0, 'name', 'FALLBACK')).toBe('FALLBACK');
+        gridNoCache.destroy();
+        dvNoCache.destroy();
+      });
+
+      it('should return fallback when cache is enabled but not yet populated', () => {
+        // Cache is still being populated asynchronously — synchronous call gets fallback
+        dv.clearFormattedDataCache();
+        expect(dv.getFormattedCellValue(0, 'name', 'MISS')).toBe('MISS');
+      });
+
+      it('should return cached value after population completes', async () => {
+        // The name column has a formatter but no exportWithFormatter, so it lands in cellOnlyColumns
+        // (export cache only populated for columns with exportWithFormatter or exportCustomFormatter)
+        await waitForCache();
+        // Fallback for export cache (name is cellOnly)
+        expect(dv.getFormattedCellValue(0, 'name', 'MISS')).toBe('MISS');
+      });
+    });
+
+    describe('getCellDisplayValue()', () => {
+      it('should return undefined for an uncached cell (no item arg)', () => {
+        dv.clearFormattedDataCache();
+        expect(dv.getCellDisplayValue(0, 'name')).toBeUndefined();
+      });
+
+      it('should return undefined for an uncached cell (with item arg, skips getItem)', () => {
+        dv.clearFormattedDataCache();
+        expect(dv.getCellDisplayValue(0, 'name', cacheItems[0])).toBeUndefined();
+      });
+
+      it('should return undefined when item id cannot be resolved', () => {
+        expect(dv.getCellDisplayValue(999, 'name')).toBeUndefined();
+      });
+
+      it('should return cached display value when cache entry exists', () => {
+        (dv as any).formattedCellCache[1] = { name: '<b>Alice</b>' };
+        const cached = dv.getCellDisplayValue(0, 'name', cacheItems[0]);
+        expect(cached).toBeDefined();
+        expect(cached).toBe('<b>Alice</b>');
+      });
+    });
+
+    describe('populateFormattedDataCacheAsync()', () => {
+      it('should do nothing when enableFormattedDataCache is false', async () => {
+        const dvOff = new SlickDataView({});
+        const gridOff = new SlickGrid('#myGrid', dvOff, columns, { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as any);
+        dvOff.setItems(cacheItems);
+        dvOff.populateFormattedDataCacheAsync(); // no-op: grid has no enableFormattedDataCache
+        // Give a tick to confirm nothing populates
+        await new Promise((r) => setTimeout(r, 20));
+        expect(dvOff.getCellDisplayValue(0, 'name')).toBeUndefined();
+        gridOff.destroy();
+        dvOff.destroy();
+      });
+
+      it('should fire onFormattedDataCacheProgress and onFormattedDataCacheCompleted events', async () => {
+        const progressSpy = vi.fn();
+        const completedSpy = vi.fn();
+
+        // Wait for the beforeEach-triggered run to finish, then start fresh
+        await waitForCache();
+        // Ensure the option is enabled in the DataView instance used by this test
+        (dv as any)._gridOptions = { ...(dv as any)._gridOptions, enableFormattedDataCache: true };
+
+        dv.onFormattedDataCacheProgress.subscribe(progressSpy);
+        dv.onFormattedDataCacheCompleted.subscribe(completedSpy);
+
+        // setItems() is the canonical flow that clears + repopulates cache when enabled
+        dv.setItems([...cacheItems]);
+        await waitForCache();
+
+        expect(progressSpy).toHaveBeenCalled();
+        expect(completedSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ totalRows: 2 }));
+
+        dv.onFormattedDataCacheProgress.unsubscribe(progressSpy);
+        dv.onFormattedDataCacheCompleted.unsubscribe(completedSpy);
+      });
+
+      it('should cancel an in-progress run when called again', async () => {
+        await waitForCache();
+        dv.clearFormattedDataCache();
+        const completedSpy = vi.fn();
+        dv.onFormattedDataCacheCompleted.subscribe(completedSpy);
+
+        dv.populateFormattedDataCacheAsync();
+        dv.populateFormattedDataCacheAsync(); // cancels the first; generation counter increments
+        await waitForCache();
+
+        // Only one completed event fires (for the second run)
+        expect(completedSpy).toHaveBeenCalledTimes(1);
+        dv.onFormattedDataCacheCompleted.unsubscribe(completedSpy);
+      });
+
+      it('should populate cell cache for columns with a formatter', async () => {
+        await waitForCache();
+        // name column has a formatter → stored in formattedCellCache
+        const cached = dv.getCellDisplayValue(0, 'name', cacheItems[0]);
+        expect(cached).toBeDefined();
+        expect(cached).toBe('<b>Alice</b>');
+      });
+
+      it('should skip group and groupTotals rows', async () => {
+        const groupItem = { __group: true, id: 99, name: 'group' };
+        const totalsItem = { __groupTotals: true, id: 98, name: 'totals' };
+        const mixedItems = [...cacheItems, groupItem, totalsItem] as any[];
+        dv.setItems(mixedItems);
+        await waitForCache();
+
+        // Groups/totals rows should not produce a cache entry
+        expect(dv.getCellDisplayValue(2, 'name', groupItem as any)).toBeUndefined();
+        expect(dv.getCellDisplayValue(3, 'name', totalsItem as any)).toBeUndefined();
+      });
+
+      it('should respect formattedDataCacheBatchSize option', async () => {
+        const manyItems = Array.from({ length: 50 }, (_, i) => ({ id: i, name: `User${i}`, age: i }));
+        const dvBatch = new SlickDataView({});
+        const gridBatch = new SlickGrid('#myGrid', dvBatch, columns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+          formattedDataCacheBatchSize: 10,
+        } as any);
+        dvBatch.setItems(manyItems);
+        await waitForCache(dvBatch);
+        expect(dvBatch.getCacheStatus().isPopulating).toBe(false);
+        gridBatch.destroy();
+        dvBatch.destroy();
+      });
+
+      it('should fallback to requestAnimationFrame and cancel a pending RAF when re-triggered', () => {
+        const rafSpy = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(() => 123 as any);
+        const cancelRafSpy = vi.spyOn(globalThis, 'cancelAnimationFrame').mockImplementation(() => undefined as any);
+        vi.stubGlobal('MessageChannel', undefined as any);
+
+        try {
+          dv.populateFormattedDataCacheAsync();
+          expect(rafSpy).toHaveBeenCalled();
+
+          dv.populateFormattedDataCacheAsync();
+          expect(cancelRafSpy).toHaveBeenCalledWith(123);
+        } finally {
+          vi.unstubAllGlobals();
+          rafSpy.mockRestore();
+          cancelRafSpy.mockRestore();
+        }
+      });
+
+      it('should schedule the next batch when population is not done in the current frame', () => {
+        const queuedRafCallbacks: Array<FrameRequestCallback> = [];
+        const rafSpy = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+          queuedRafCallbacks.push(cb);
+          return queuedRafCallbacks.length as any;
+        });
+        vi.stubGlobal('MessageChannel', undefined as any);
+
+        const dvFrame = new SlickDataView({});
+        const gridFrame = new SlickGrid('#myGrid', dvFrame, columns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+          formattedDataCacheBatchSize: 1,
+        } as any);
+        dvFrame.setGrid(gridFrame);
+        dvFrame.setItems([
+          { id: 1, name: 'A', age: 1 },
+          { id: 2, name: 'B', age: 2 },
+          { id: 3, name: 'C', age: 3 },
+        ]);
+
+        try {
+          dvFrame.clearFormattedDataCache();
+          queuedRafCallbacks.length = 0;
+          rafSpy.mockClear();
+          dvFrame.populateFormattedDataCacheAsync();
+          expect(rafSpy).toHaveBeenCalledTimes(1);
+
+          // Run only the first scheduled frame: with batchSize=1 and 3 rows total,
+          // processBatch is not done and must schedule another batch.
+          queuedRafCallbacks[0](performance.now());
+          expect(rafSpy).toHaveBeenCalledTimes(2);
+        } finally {
+          vi.unstubAllGlobals();
+          rafSpy.mockRestore();
+          gridFrame.destroy();
+          dvFrame.destroy();
+        }
+      });
+
+      it('should stop current batch when frame deadline is exceeded and schedule another frame', () => {
+        const queuedRafCallbacks: Array<FrameRequestCallback> = [];
+        const rafSpy = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+          queuedRafCallbacks.push(cb);
+          return queuedRafCallbacks.length as any;
+        });
+        const perfSpy = vi.spyOn(performance, 'now').mockReturnValue(100);
+        vi.stubGlobal('MessageChannel', undefined as any);
+
+        const dvFrame = new SlickDataView({});
+        const gridFrame = new SlickGrid('#myGrid', dvFrame, columns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+          formattedDataCacheBatchSize: 300,
+          formattedDataCacheFrameBudgetMs: -1,
+        } as any);
+        dvFrame.setGrid(gridFrame);
+        dvFrame.setItems(Array.from({ length: 40 }, (_, i) => ({ id: i + 1, name: `User${i + 1}`, age: i + 1 })));
+
+        try {
+          dvFrame.clearFormattedDataCache();
+          queuedRafCallbacks.length = 0;
+          rafSpy.mockClear();
+          dvFrame.populateFormattedDataCacheAsync();
+          expect(rafSpy).toHaveBeenCalledTimes(1);
+
+          queuedRafCallbacks[0](performance.now());
+
+          expect((dvFrame as any).formattedCacheMetadata.lastProcessedRow).toBeLessThan(39);
+          expect(rafSpy).toHaveBeenCalledTimes(2);
+        } finally {
+          vi.unstubAllGlobals();
+          perfSpy.mockRestore();
+          rafSpy.mockRestore();
+          gridFrame.destroy();
+          dvFrame.destroy();
+        }
+      });
+
+      it('should reset the deadline-check counter and continue processing when within frame budget', () => {
+        const queuedRafCallbacks: Array<FrameRequestCallback> = [];
+        const rafSpy = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+          queuedRafCallbacks.push(cb);
+          return queuedRafCallbacks.length as any;
+        });
+        const perfSpy = vi.spyOn(performance, 'now').mockReturnValue(100);
+        vi.stubGlobal('MessageChannel', undefined as any);
+
+        const dvFrame = new SlickDataView({});
+        const gridFrame = new SlickGrid('#myGrid', dvFrame, columns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+          formattedDataCacheBatchSize: 20,
+          formattedDataCacheFrameBudgetMs: 1000,
+        } as any);
+        dvFrame.setGrid(gridFrame);
+        dvFrame.setItems(Array.from({ length: 20 }, (_, i) => ({ id: i + 1, name: `User${i + 1}`, age: i + 1 })));
+
+        try {
+          dvFrame.clearFormattedDataCache();
+          queuedRafCallbacks.length = 0;
+          rafSpy.mockClear();
+          dvFrame.populateFormattedDataCacheAsync();
+          expect(rafSpy).toHaveBeenCalledTimes(1);
+
+          queuedRafCallbacks[0](performance.now());
+
+          // Finished in one frame (counter reached 0 at least once and got reset internally)
+          expect((dvFrame as any).formattedCacheMetadata.lastProcessedRow).toBe(19);
+          expect(rafSpy).toHaveBeenCalledTimes(1);
+        } finally {
+          vi.unstubAllGlobals();
+          perfSpy.mockRestore();
+          rafSpy.mockRestore();
+          gridFrame.destroy();
+          dvFrame.destroy();
+        }
+      });
+    });
+
+    describe('invalidateFormattedDataCacheForRow()', () => {
+      it('should do nothing when cache is disabled', () => {
+        const dvOff = new SlickDataView({});
+        const gridOff = new SlickGrid('#myGrid', dvOff, columns, { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as any);
+        dvOff.setItems(cacheItems);
+        expect(() => dvOff.invalidateFormattedDataCacheForRow(0)).not.toThrow();
+        gridOff.destroy();
+        dvOff.destroy();
+      });
+
+      it('should do nothing for an out-of-bounds row', () => {
+        expect(() => dv.invalidateFormattedDataCacheForRow(999)).not.toThrow();
+      });
+
+      it('should re-cache a single row after invalidation', async () => {
+        await waitForCache();
+        const cachedBefore = dv.getCellDisplayValue(0, 'name', cacheItems[0]);
+        expect(cachedBefore).toBe('<b>Alice</b>');
+
+        // Manually delete the cache entry to simulate stale data, then invalidate
+        dv.invalidateFormattedDataCacheForRow(0);
+        const cachedAfter = dv.getCellDisplayValue(0, 'name', cacheItems[0]);
+        expect(cachedAfter).toBeDefined();
+      });
+    });
+
+    describe('setItems() with cache enabled', () => {
+      it('should clear and restart cache population when setItems is called', async () => {
+        await waitForCache();
+        const completedSpy = vi.fn();
+        dv.onFormattedDataCacheCompleted.subscribe(completedSpy);
+
+        const newItems = [{ id: 10, name: 'Carol', age: 22 }];
+        dv.setItems(newItems);
+        await waitForCache();
+
+        expect(completedSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ totalRows: 1 }));
+        dv.onFormattedDataCacheCompleted.unsubscribe(completedSpy);
+      });
+    });
+
+    describe('deleteItem() / deleteItems() with cache', () => {
+      it('should remove the deleted item entry from both caches after deleteItem()', async () => {
+        await waitForCache();
+        const deletedItem = { ...cacheItems[0] };
+        // id=1 (Alice) is in the cell cache
+        expect(dv.getCellDisplayValue(0, 'name', deletedItem)).toBeDefined();
+
+        dv.deleteItem(1);
+        // formattedCellCache for id=1 should now be gone
+        expect(dv.getCellDisplayValue(0, 'name', deletedItem)).toBeUndefined();
+      });
+
+      it('should remove all deleted item entries from both caches after deleteItems()', async () => {
+        await waitForCache();
+        dv.deleteItems([1, 2]);
+        expect(dv.getItemCount()).toBe(0);
+        // Both cache entries should be gone
+        expect(dv.getCellDisplayValue(0, 'name', cacheItems[0])).toBeUndefined();
+        expect(dv.getCellDisplayValue(0, 'name', cacheItems[1])).toBeUndefined();
+      });
+    });
+
+    describe('updateItem() / updateItems() with cache', () => {
+      it('should re-cache the row after updateItem()', async () => {
+        await waitForCache();
+        const updatedItem = { id: 1, name: 'Alice Updated', age: 31 };
+        dv.updateItem(1, updatedItem);
+        // invalidateFormattedDataCacheForRow re-caches synchronously
+        const cached = dv.getCellDisplayValue(0, 'name', updatedItem);
+        expect(cached).toBeDefined();
+        expect(cached).toBe('<b>Alice Updated</b>');
+      });
+
+      it('should handle id change during updateItem() — remove old cache entry', async () => {
+        await waitForCache();
+        const oldItem = { ...cacheItems[0] };
+        const updatedItem = { id: 99, name: 'Alice Renamed', age: 31 };
+        dv.updateItem(1, updatedItem);
+        // Old id=1 entry must be gone; new id=99 must be re-cached
+        expect(dv.getCellDisplayValue(0, 'name', oldItem)).toBeUndefined();
+        const newCached = dv.getCellDisplayValue(0, 'name', updatedItem);
+        expect(newCached).toBe('<b>Alice Renamed</b>');
+      });
+
+      it('should re-cache all rows after updateItems()', async () => {
+        await waitForCache();
+        const updated = [
+          { id: 1, name: 'Alice v2', age: 31 },
+          { id: 2, name: 'Bob v2', age: 26 },
+        ];
+        dv.updateItems([1, 2], updated);
+        expect(dv.getCellDisplayValue(0, 'name', updated[0])).toBe('<b>Alice v2</b>');
+        expect(dv.getCellDisplayValue(1, 'name', updated[1])).toBe('<b>Bob v2</b>');
+      });
+
+      it('should remove old cache entry and re-cache when updateItems changes an item id', async () => {
+        await waitForCache();
+        const oldItem = { ...cacheItems[0] };
+        const updated = [{ id: 99, name: 'Alice v99', age: 31 }];
+
+        dv.updateItems([1], updated as any);
+
+        expect(dv.getCellDisplayValue(0, 'name', oldItem as any)).toBeUndefined();
+        expect(dv.getCellDisplayValue(0, 'name', updated[0] as any)).toBe('<b>Alice v99</b>');
+      });
+
+      it('should skip row invalidation when updated item is filtered out (rowIdx unresolved)', async () => {
+        await waitForCache();
+        dv.setFilter((item: any) => item.age >= 30);
+        dv.refresh();
+
+        const invalidateSpy = vi.spyOn(dv as any, 'invalidateFormattedDataCacheForRow');
+        const updated = [{ id: 1, name: 'Alice hidden', age: 10 }];
+        expect(() => dv.updateItems([1], updated)).not.toThrow();
+
+        expect(invalidateSpy).not.toHaveBeenCalled();
+        invalidateSpy.mockRestore();
+      });
+    });
+
+    describe('column classification in buildCacheContext()', () => {
+      it('should classify columns with exportWithFormatter+formatter as dualCacheColumns (both caches populated)', async () => {
+        const exportColumns = [
+          { id: 'title', field: 'title', name: 'Title', formatter: (_r: any, _c: any, val: any) => `<b>${val}</b>`, exportWithFormatter: true },
+          { id: 'code', field: 'code', name: 'Code' },
+        ] as any[];
+        const dvExport = new SlickDataView({});
+        const gridExport = new SlickGrid('#myGrid', dvExport, exportColumns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+        } as any);
+        dvExport.setGrid(gridExport);
+        dvExport.setItems([{ id: 1, title: 'Hello', code: 'A1' }]);
+        await waitForCache(dvExport);
+
+        // Dual-use column: formatter result stored in both export cache and cell cache
+        expect(dvExport.getFormattedCellValue(0, 'title', 'MISS')).not.toBe('MISS');
+        expect(dvExport.getCellDisplayValue(0, 'title', { id: 1, title: 'Hello', code: 'A1' })).toBeDefined();
+        gridExport.destroy();
+        dvExport.destroy();
+      });
+
+      it('should classify columns with exportCustomFormatter as exportOnlyCacheColumns', async () => {
+        const exportCustomColumns = [
+          {
+            id: 'title',
+            field: 'title',
+            name: 'Title',
+            formatter: (_r: any, _c: any, val: any) => `<b>${val}</b>`,
+            exportCustomFormatter: (_r: any, _c: any, val: any) => `EXPORT:${val}`,
+          },
+        ] as any[];
+        const dvCustom = new SlickDataView({});
+        const gridCustom = new SlickGrid('#myGrid', dvCustom, exportCustomColumns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+        } as any);
+        dvCustom.setGrid(gridCustom);
+        dvCustom.setItems([{ id: 1, title: 'Hello' }]);
+        await waitForCache(dvCustom);
+
+        // exportCustomFormatter → exportOnlyCacheColumns → export cache populated with custom formatter result
+        expect(dvCustom.getFormattedCellValue(0, 'title', 'MISS')).not.toBe('MISS');
+        gridCustom.destroy();
+        dvCustom.destroy();
+      });
+
+      it('should classify columns with only a formatter as cellOnlyColumns', async () => {
+        const cellOnlyColumns = [{ id: 'title', field: 'title', name: 'Title', formatter: (_r: any, _c: any, val: any) => `<b>${val}</b>` }] as any[];
+        const dvCell = new SlickDataView({});
+        const gridCell = new SlickGrid('#myGrid', dvCell, cellOnlyColumns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+        } as any);
+        dvCell.setGrid(gridCell);
+        dvCell.setItems([{ id: 1, title: 'Hello' }]);
+        await waitForCache(dvCell);
+
+        // cellOnly column: cell cache populated, export cache has no entry
+        expect(dvCell.getCellDisplayValue(0, 'title', { id: 1, title: 'Hello' })).toBeDefined();
+        expect(dvCell.getFormattedCellValue(0, 'title', 'MISS')).toBe('MISS');
+        gridCell.destroy();
+        dvCell.destroy();
+      });
+
+      it('should sanitizeDataExport output for dualCacheColumns when option is set', async () => {
+        const htmlColumns = [
+          {
+            id: 'title',
+            field: 'title',
+            name: 'Title',
+            formatter: (_r: any, _c: any, val: any) => `<b>${val}</b>`,
+            exportWithFormatter: true,
+          },
+        ] as any[];
+        const dvSanitize = new SlickDataView({});
+        const gridSanitize = new SlickGrid('#myGrid', dvSanitize, htmlColumns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+          excelExportOptions: { sanitizeDataExport: true },
+        } as any);
+        dvSanitize.setGrid(gridSanitize);
+        dvSanitize.setItems([{ id: 1, title: 'Hello' }]);
+        await waitForCache(dvSanitize);
+
+        // With sanitizeDataExport, HTML tags should be stripped from the export string
+        const exportVal = dvSanitize.getFormattedCellValue(0, 'title', 'MISS');
+        expect(exportVal).not.toContain('<b>');
+        expect(exportVal).toBe('Hello');
+        gridSanitize.destroy();
+        dvSanitize.destroy();
+      });
+
+      it('should handle a formatter that throws without crashing the whole population', async () => {
+        const throwingColumns = [
+          {
+            id: 'title',
+            field: 'title',
+            name: 'Title',
+            formatter: () => {
+              throw new Error('formatter error');
+            },
+            exportWithFormatter: true,
+          },
+        ] as any[];
+        const dvThrow = new SlickDataView({});
+        const gridThrow = new SlickGrid('#myGrid', dvThrow, throwingColumns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+        } as any);
+        dvThrow.setGrid(gridThrow);
+        dvThrow.setItems([{ id: 1, title: 'Hello' }]);
+        // Population should complete despite the formatter throwing
+        await expect(waitForCache(dvThrow)).resolves.toBeUndefined();
+        expect(dvThrow.getCacheStatus().isPopulating).toBe(false);
+        expect(dvThrow.getFormattedCellValue(0, 'title', 'MISS')).toBe('MISS');
+        gridThrow.destroy();
+        dvThrow.destroy();
+      });
+
+      it('should catch exportCustomFormatter errors and leave export cache value undefined', async () => {
+        const exportOnlyThrowColumns = [
+          {
+            id: 'title',
+            field: 'title',
+            name: 'Title',
+            exportCustomFormatter: () => {
+              throw new Error('export formatter error');
+            },
+          },
+        ] as any[];
+        const dvExportThrow = new SlickDataView({});
+        const gridExportThrow = new SlickGrid('#myGrid', dvExportThrow, exportOnlyThrowColumns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+        } as any);
+        dvExportThrow.setGrid(gridExportThrow);
+        dvExportThrow.setItems([{ id: 1, title: 'Hello' }]);
+
+        await expect(waitForCache(dvExportThrow)).resolves.toBeUndefined();
+        expect(dvExportThrow.getFormattedCellValue(0, 'title', 'MISS')).toBe('MISS');
+        gridExportThrow.destroy();
+        dvExportThrow.destroy();
+      });
+
+      it('should skip cell cache storage for live DOM formatter results (direct and wrapped)', async () => {
+        const domColumns = [
+          {
+            id: 'directElement',
+            field: 'directElement',
+            name: 'Direct Element',
+            formatter: () => {
+              const span = document.createElement('span');
+              span.textContent = 'direct-element';
+              return span;
+            },
+          },
+          {
+            id: 'directFragment',
+            field: 'directFragment',
+            name: 'Direct Fragment',
+            formatter: () => {
+              const fragment = document.createDocumentFragment();
+              const span = document.createElement('span');
+              span.textContent = 'direct-fragment';
+              fragment.appendChild(span);
+              return fragment;
+            },
+          },
+          {
+            id: 'wrappedElement',
+            field: 'wrappedElement',
+            name: 'Wrapped Element',
+            formatter: () => {
+              const span = document.createElement('span');
+              span.textContent = 'wrapped-element';
+              return { html: span };
+            },
+            exportWithFormatter: true,
+          },
+          {
+            id: 'wrappedFragment',
+            field: 'wrappedFragment',
+            name: 'Wrapped Fragment',
+            formatter: () => {
+              const fragment = document.createDocumentFragment();
+              const span = document.createElement('span');
+              span.textContent = 'wrapped-fragment';
+              fragment.appendChild(span);
+              return { html: fragment };
+            },
+            exportWithFormatter: true,
+          },
+          {
+            id: 'nullCell',
+            field: 'nullCell',
+            name: 'Null Cell',
+            formatter: () => null,
+          },
+        ] as any[];
+        const dvDom = new SlickDataView({});
+        const gridDom = new SlickGrid('#myGrid', dvDom, domColumns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+        } as any);
+        dvDom.setGrid(gridDom);
+        dvDom.setItems([
+          {
+            id: 1,
+            directElement: 'a',
+            directFragment: 'b',
+            wrappedElement: 'c',
+            wrappedFragment: 'd',
+            nullCell: 'e',
+          },
+        ]);
+
+        await waitForCache(dvDom);
+        expect(dvDom.getCellDisplayValue(0, 'directElement', { id: 1 } as any)).toBeUndefined();
+        expect(dvDom.getCellDisplayValue(0, 'directFragment', { id: 1 } as any)).toBeUndefined();
+        expect(dvDom.getCellDisplayValue(0, 'wrappedElement', { id: 1 } as any)).toBeUndefined();
+        expect(dvDom.getCellDisplayValue(0, 'wrappedFragment', { id: 1 } as any)).toBeUndefined();
+        expect(dvDom.getCellDisplayValue(0, 'nullCell', { id: 1 } as any)).toBeDefined();
+        gridDom.destroy();
+        dvDom.destroy();
+      });
+
+      it('should detect metadata formatter and skip row-level cell cache population', async () => {
+        const metadataColumns = [{ id: 'title', field: 'title', name: 'Title', formatter: (_r: any, _c: any, val: any) => `<b>${val}</b>` }] as any[];
+        const metadataProvider = {
+          getRowMetadata: () => ({
+            formatter: () => 'meta-formatter',
+          }),
+        };
+        const dvMetadata = new SlickDataView({ globalItemMetadataProvider: metadataProvider as any });
+        const gridMetadata = new SlickGrid('#myGrid', dvMetadata, metadataColumns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+        } as any);
+        dvMetadata.setGrid(gridMetadata);
+
+        const itemMetadataSpy = vi.spyOn(dvMetadata, 'getItemMetadata');
+        dvMetadata.setItems([{ id: 1, title: 'Hello' }]);
+        await waitForCache(dvMetadata);
+
+        expect(itemMetadataSpy).toHaveBeenCalled();
+        expect(dvMetadata.getCellDisplayValue(0, 'title', { id: 1, title: 'Hello' } as any)).toBeUndefined();
+        itemMetadataSpy.mockRestore();
+        gridMetadata.destroy();
+        dvMetadata.destroy();
+      });
     });
   });
 });

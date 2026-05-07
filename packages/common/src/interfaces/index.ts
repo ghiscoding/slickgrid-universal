@@ -67,6 +67,7 @@ export type * from './filterCallback.interface.js';
 export type * from './filterChangedArgs.interface.js';
 export type * from './filterCondition.interface.js';
 export type * from './filterConditionOption.interface.js';
+export type * from './formattedDataCache.interface.js';
 export type * from './formatter.interface.js';
 export type * from './formatterOption.interface.js';
 export type * from './formatterResultObject.interface.js';

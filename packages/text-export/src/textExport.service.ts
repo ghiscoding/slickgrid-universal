@@ -14,8 +14,8 @@ import type {
   TextExportOption,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, exportWithFormatterWhenDefined, getTranslationPrefix, htmlDecode } from '@slickgrid-universal/common';
-import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
+import { Constants, exportWithFormatterWhenDefined, getTranslationPrefix } from '@slickgrid-universal/common';
+import { addWhiteSpaces, extend, getHtmlStringOutput, htmlDecode, stripTags, titleCase } from '@slickgrid-universal/utils';
 
 const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
   delimiter: ',',
@@ -31,6 +31,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   protected _fileFormat: FileType | 'csv' | 'txt' = 'csv';
   protected _lineCarriageReturn = '\n';
   protected _grid!: SlickGrid;
+  protected _dataView!: SlickDataView;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
   protected _columnHeaders: Array<KeyTitlePair> = [];
   protected _hasGroupedItems = false;
@@ -46,11 +47,6 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     return (this._gridOptions && this._gridOptions.datasetIdPropertyName) || 'id';
   }
 
-  /** Getter of SlickGrid DataView object */
-  get _dataView(): SlickDataView {
-    return this._grid?.getData<SlickDataView>();
-  }
-
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
     return this._grid?.getOptions() ?? ({} as GridOption);
@@ -59,6 +55,12 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   dispose(): void {
     clearTimeout(this._timer);
     this._pubSubService?.unsubscribeAll();
+
+    // Clear critical memory leak references
+    this._grid = null as any;
+    this._dataView = null as any;
+    this._pubSubService = null;
+    this._translaterService = undefined;
   }
 
   /**
@@ -68,6 +70,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    */
   init(grid: SlickGrid, containerService: ContainerService): void {
     this._grid = grid;
+    this._dataView = grid?.getData<SlickDataView>() || {};
     this._pubSubService = containerService.get<PubSubService>('PubSubService');
 
     // get locales provided by user in main file or else use default English locales via the Constants
@@ -403,11 +406,20 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
           (prevColspan as number)--;
         }
       } else {
-        // get the output by analyzing if we'll pull the value from the cell or from a formatter
-        let itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._exportOptions);
+        const columnId = String(columnDef.id);
+
+        // Try cache first when enabled, otherwise keep the existing formatter path.
+        let itemData =
+          this._gridOptions.enableFormattedDataCache && columnDef.id != null
+            ? this._dataView.getFormattedCellValue(row, columnId, undefined)
+            : undefined;
+
+        if (itemData === undefined) {
+          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._exportOptions, true);
+        }
 
         // does the user want to sanitize the output data (remove HTML tags)?
-        if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {
+        if ((columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) && typeof itemData === 'string') {
           itemData = stripTags(itemData);
         }
 
@@ -469,10 +481,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
       }
 
-      // does the user want to sanitize the output data (remove HTML tags)?
-      if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {
-        itemData = stripTags(itemData);
-      }
+      // sanitization is already handled by formatter utility
 
       if (format === 'csv') {
         // when CSV we also need to escape double quotes twice, so a double quote " becomes 2x double quotes ""

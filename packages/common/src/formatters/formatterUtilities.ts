@@ -246,6 +246,7 @@ export function getBaseDateFormatter(): Formatter {
  * @param {Object} columnDef - column definition
  * @param {Object} grid - Slick Grid object
  * @param {Object} exportOptions - Excel or Text Export Options
+ * @param {boolean} [skipSanitization=false] - Skip sanitization (useful when export service will handle it)
  * @returns formatted string output or empty string
  */
 export function exportWithFormatterWhenDefined<T = any>(
@@ -254,7 +255,8 @@ export function exportWithFormatterWhenDefined<T = any>(
   columnDef: Column<T>,
   dataContext: T,
   grid: SlickGrid,
-  exportOptions?: TextExportOption | ExcelExportOption
+  exportOptions?: TextExportOption | ExcelExportOption,
+  skipSanitization = false
 ): string {
   let isEvaluatingFormatter = false;
 
@@ -276,6 +278,9 @@ export function exportWithFormatterWhenDefined<T = any>(
   }
 
   const output = parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
+  if (skipSanitization) {
+    return output;
+  }
   return exportOptions?.sanitizeDataExport && typeof output === 'string' ? stripTags(output) : output;
 }
 
@@ -297,17 +302,17 @@ export function parseFormatterWhenExist<T = any>(
   dataContext: T,
   grid: SlickGrid
 ): string {
-  let output = '';
-
-  // does the field have the dot (.) notation and is a complex object? if so pull the first property name
+  // Resolve the top-level property name for dot-notation fields (e.g. "address.city" → "address").
+  // Only call split() when a dot is actually present — avoids an array allocation per call in the common case.
   const fieldId = columnDef.field || columnDef.id || '';
-  let fieldProperty = fieldId;
-  if (typeof columnDef.field === 'string' && columnDef.field.indexOf('.') > 0) {
-    const props = columnDef.field.split('.');
-    fieldProperty = props.length > 0 ? props[0] : columnDef.field;
-  }
+  const fieldProperty = typeof fieldId === 'string' && fieldId.indexOf('.') > 0 ? fieldId.split('.')[0] : fieldId;
 
-  const cellValue = dataContext?.hasOwnProperty(fieldProperty as keyof T) ? dataContext[fieldProperty as keyof T] : null;
+  // Read the cell value once — reused for both the formatter call and the no-formatter fallback,
+  // avoiding the second hasOwnProperty lookup that the original performed in the else branch.
+  const hasOwnProp = !!dataContext && Object.prototype.hasOwnProperty.call(dataContext, fieldProperty as PropertyKey);
+  const cellValue = hasOwnProp ? (dataContext as any)[fieldProperty] : null;
+
+  let output: any;
 
   if (typeof formatter === 'function') {
     const formattedData = formatter(row, col, cellValue, columnDef, dataContext, grid);
@@ -316,19 +321,22 @@ export function parseFormatterWhenExist<T = any>(
       : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text;
     output = getHtmlStringOutput(cellResult as string | HTMLElement | DocumentFragment);
   } else {
-    output = (!dataContext?.hasOwnProperty(fieldProperty as keyof T) ? '' : cellValue) as string;
+    // No formatter: return the raw field value (null/undefined normalised below)
+    output = cellValue;
   }
 
-  if (output === null || output === undefined) {
-    output = '';
+  // Normalise null/undefined to empty string (loose equality catches both)
+  if (output == null) {
+    return '';
   }
 
-  // if at the end we have an empty object, then replace it with an empty string
-  if (typeof output === 'object' && !((output as any) instanceof Date) && Object.entries(output).length === 0) {
-    output = '';
+  // Replace Object.entries(output).length === 0 (allocates a [key,value][] array) with
+  // Object.keys which allocates only strings, and short-circuits on the first key found.
+  if (typeof output === 'object' && !(output instanceof Date) && Object.keys(output).length === 0) {
+    return '';
   }
 
-  return output;
+  return output as string;
 }
 
 // --

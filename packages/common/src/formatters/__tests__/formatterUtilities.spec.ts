@@ -152,8 +152,8 @@ describe('formatterUtilities', () => {
   });
 
   describe('copyCellToClipboard', () => {
-    let clipboardWriteMock;
-    let gridMock;
+    let clipboardWriteMock: any;
+    let gridMock: any;
 
     beforeEach(() => {
       clipboardWriteMock = vi.fn();
@@ -170,8 +170,8 @@ describe('formatterUtilities', () => {
       global.navigator = {
         clipboard: {
           writeText: clipboardWriteMock,
-        },
-      };
+        } as any,
+      } as any;
 
       // Clear all mocks before each test
       vi.clearAllMocks();
@@ -184,7 +184,7 @@ describe('formatterUtilities', () => {
       const columnDef = {
         exportWithFormatter: true,
         formatter: () => textToCopy,
-      };
+      } as unknown as Column;
 
       // Ensure the original function is functional
       const result = await copyCellToClipboard({
@@ -206,7 +206,7 @@ describe('formatterUtilities', () => {
       const columnDef = {
         exportWithFormatter: true,
         formatter: () => formattedText, // A mock function simulating formatter
-      };
+      } as unknown as Column;
 
       const result = await copyCellToClipboard({
         grid: gridMock,
@@ -226,7 +226,7 @@ describe('formatterUtilities', () => {
       const columnDef = {
         exportWithFormatter: true,
         formatter: () => textWithSymbols, // A mock function simulating formatter
-      };
+      } as unknown as Column;
 
       const result = await copyCellToClipboard({
         grid: gridMock,
@@ -246,7 +246,7 @@ describe('formatterUtilities', () => {
       const columnDef = {
         exportWithFormatter: true,
         formatter: () => textWithSymbols, // A mock function simulating formatter
-      };
+      } as unknown as Column;
 
       const result = await copyCellToClipboard({
         grid: gridMock,
@@ -266,7 +266,7 @@ describe('formatterUtilities', () => {
       const columnDef = {
         exportWithFormatter: true,
         formatter: () => textWithSymbols, // A mock function simulating formatter
-      };
+      } as unknown as Column;
 
       const result = await copyCellToClipboard({
         grid: gridMock,
@@ -289,7 +289,7 @@ describe('formatterUtilities', () => {
         grid: gridMock,
         cell: 0,
         row: 0,
-        column: {},
+        column: {} as unknown as Column,
         dataContext: {},
       });
 
@@ -496,6 +496,104 @@ describe('formatterUtilities', () => {
       it('should expect empty string when associated item property is undefined and has no formatter defined', () => {
         const output = exportWithFormatterWhenDefined(1, 1, mockColumn, { ...mockItem, firstName: undefined }, gridStub as SlickGrid, {});
         expect(output).toBe('');
+      });
+
+      describe('sanitization behavior', () => {
+        const htmlContent = '<b>Bold Text</b> & <script>alert("xss")</script>';
+        const htmlStrippedContent = 'Bold Text & alert("xss")'; // stripTags removes tags but leaves content (not fully sanitized)
+        const htmlFormatter: Formatter = (_row, _cell, value) => `<b>${value}</b>`;
+
+        it('should NOT sanitize when sanitizeDataExport is false and skipSanitization is false (default)', () => {
+          const output = exportWithFormatterWhenDefined(
+            1,
+            1,
+            { ...mockColumn, formatter: htmlFormatter },
+            { ...mockItem, firstName: 'Bold Text' },
+            gridStub as SlickGrid,
+            { exportWithFormatter: true, sanitizeDataExport: false }
+          );
+          expect(output).toBe('<b>Bold Text</b>');
+        });
+
+        it('should sanitize when sanitizeDataExport is true and skipSanitization is false (default)', () => {
+          const output = exportWithFormatterWhenDefined(
+            1,
+            1,
+            { ...mockColumn, formatter: htmlFormatter },
+            { ...mockItem, firstName: 'Bold Text' },
+            gridStub as SlickGrid,
+            { exportWithFormatter: true, sanitizeDataExport: true }
+          );
+          expect(output).toBe('Bold Text');
+        });
+
+        it('should NOT sanitize when skipSanitization is true, even if sanitizeDataExport is true', () => {
+          const htmlFormatterWithScript: Formatter = () => htmlContent;
+          const output = exportWithFormatterWhenDefined(
+            1,
+            1,
+            { ...mockColumn, formatter: htmlFormatterWithScript },
+            mockItem,
+            gridStub as SlickGrid,
+            { exportWithFormatter: true, sanitizeDataExport: true },
+            true // skipSanitization = true
+          );
+          // Should return raw HTML without stripping tags when skipSanitization is true
+          expect(output).toBe(htmlContent);
+        });
+
+        it('should sanitize HTML tags when sanitizeDataExport is enabled with skipSanitization false', () => {
+          const output = exportWithFormatterWhenDefined(
+            1,
+            1,
+            { ...mockColumn, formatter: () => htmlContent },
+            mockItem,
+            gridStub as SlickGrid,
+            { exportWithFormatter: true, sanitizeDataExport: true },
+            false // skipSanitization = false (explicit)
+          );
+          expect(output).toBe(htmlStrippedContent);
+        });
+
+        it('should handle complex HTML with multiple tags when sanitizing', () => {
+          const complexHtml = '<div><span>Test</span> & <br><img src="x" onerror="alert(1)"/></div>';
+          const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, formatter: () => complexHtml }, mockItem, gridStub as SlickGrid, {
+            exportWithFormatter: true,
+            sanitizeDataExport: true,
+          });
+          // stripTags removes all HTML tags but leaves the text content
+          expect(output).toBe('Test & ');
+        });
+
+        it('should return plain text unchanged when sanitizeDataExport is enabled but content has no HTML', () => {
+          const plainText = 'Just plain text';
+          const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, formatter: () => plainText }, mockItem, gridStub as SlickGrid, {
+            exportWithFormatter: true,
+            sanitizeDataExport: true,
+          });
+          expect(output).toBe(plainText);
+        });
+
+        it('should not apply sanitization when no exportWithFormatter is enabled', () => {
+          const output = exportWithFormatterWhenDefined(1, 1, mockColumn, { ...mockItem, firstName: 'John' }, gridStub as SlickGrid, {
+            sanitizeDataExport: true,
+          });
+          // No formatter is applied so raw value is returned
+          expect(output).toBe('John');
+        });
+
+        it('should prioritize column-level exportWithFormatter over grid option', () => {
+          const output = exportWithFormatterWhenDefined(
+            1,
+            1,
+            { ...mockColumn, exportWithFormatter: true, formatter: htmlFormatter },
+            { ...mockItem, firstName: 'Bold Text' },
+            gridStub as SlickGrid,
+            { exportWithFormatter: false, sanitizeDataExport: true } // grid option says false
+          );
+          // Column definition should take precedence
+          expect(output).toBe('Bold Text');
+        });
       });
     });
   });

@@ -175,7 +175,7 @@ describe('PdfExportService', () => {
       await service.exportToPdf(mockExportPdfOptions);
 
       expect(pubSubSpy).toHaveBeenCalledWith('onBeforeExportToPdf', true);
-      expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+      expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
     });
 
     describe('exportToPdf method', () => {
@@ -235,7 +235,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should call jsPDF with default page size A4 portrait', async () => {
@@ -245,7 +245,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should call jsPDF save() with the correct filename (non-IE)', async () => {
@@ -306,7 +306,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should have the LastName in uppercase when exportCustomFormatter is defined', async () => {
@@ -318,7 +318,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should have the LastName as empty string when item LastName is NULL', async () => {
@@ -330,7 +330,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should have the UserId as empty string even when UserId property is not found in the item object', async () => {
@@ -342,7 +342,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should sanitize data when sanitizeDataExport is enabled in grid options', async () => {
@@ -355,7 +355,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should export with landscape orientation when specified', async () => {
@@ -367,7 +367,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf({ ...mockExportPdfOptions, pageOrientation: 'landscape' });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
     });
 
@@ -394,7 +394,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf({ ...mockExportPdfOptions, includeHidden: true });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
     });
 
@@ -447,7 +447,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
     });
 
@@ -536,7 +536,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should prepend + to collapsed group title and - to expanded group title by default', () => {
@@ -1560,7 +1560,7 @@ describe('PdfExportService', () => {
 
     it('should cover link.click and link appendChild in downloadPdf', () => {
       service = new PdfExportService();
-      service.init({ getOptions: () => ({}) } as any, container);
+      service.init({ getOptions: () => ({}), getData: () => ({}) } as any, container);
       (navigator as any).msSaveOrOpenBlob = undefined;
       const appendSpy = vi.spyOn(document.body, 'appendChild');
       const clickSpy = vi.fn();
@@ -1596,7 +1596,10 @@ describe('PdfExportService', () => {
       });
       const result = await service.exportToPdf();
       expect(result).toBe(false);
-      expect(pubSubService.publish).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ error: expect.any(Error) }));
+      expect(pubSubService.publish).toHaveBeenCalledWith(
+        'onAfterExportToPdf',
+        expect.objectContaining({ error: expect.any(Error), durationMs: expect.any(Number) })
+      );
     });
 
     it('should handle downloadPdf with invalid link removal', () => {
@@ -1608,7 +1611,7 @@ describe('PdfExportService', () => {
         throw new Error('remove error');
       });
       service = new PdfExportService();
-      service.init({ getOptions: () => ({}) } as any, container);
+      service.init({ getOptions: () => ({}), getData: () => ({}) } as any, container);
       expect(() => service['downloadPdf'](new Uint8Array([1, 2, 3]), 'test.pdf')).toThrow('remove error');
       removeSpy.mockRestore();
     });
@@ -1650,7 +1653,7 @@ describe('PdfExportService', () => {
     });
 
     it('should throw error if enableTranslate is true but translaterService is missing', () => {
-      const gridStub = { getOptions: () => ({ enableTranslate: true, translater: undefined }) };
+      const gridStub = { getOptions: () => ({ enableTranslate: true, translater: undefined }), getData: () => ({}) };
       service = new PdfExportService();
       expect(() => service.init(gridStub as any, container)).toThrow('requires a Translate Service');
     });
@@ -1658,7 +1661,7 @@ describe('PdfExportService', () => {
     it('should use msSaveOrOpenBlob for IE/Edge', () => {
       (navigator as any).msSaveOrOpenBlob = vi.fn();
       service = new PdfExportService();
-      service.init({ getOptions: () => ({}) } as any, container);
+      service.init({ getOptions: () => ({}), getData: () => ({}) } as any, container);
       service['downloadPdf'](new Uint8Array([1, 2, 3]), 'test.pdf');
       expect((navigator as any).msSaveOrOpenBlob).toHaveBeenCalled();
     });
@@ -1672,7 +1675,7 @@ describe('PdfExportService', () => {
       const removeSpy = vi.spyOn(document.body, 'removeChild');
       const revokeSpy = vi.spyOn(URL, 'revokeObjectURL');
       service = new PdfExportService();
-      service.init({ getOptions: () => ({}) } as any, container);
+      service.init({ getOptions: () => ({}), getData: () => ({}) } as any, container);
       service['downloadPdf'](new Uint8Array([1, 2, 3]), 'test.pdf');
       expect(appendSpy).toHaveBeenCalled();
       expect(removeSpy).toHaveBeenCalled();
@@ -1699,6 +1702,79 @@ describe('PdfExportService', () => {
       Object.defineProperty(service, '_exportOptions', { value: { htmlDecode: true, sanitizeDataExport: true } });
       const result = service['readRegularRowData'](columns as any, 0, itemObj);
       expect(result.length).toBeGreaterThan(0);
+    });
+
+    it('should keep PDF row output parity for cache-off, cache-miss, and cache-hit', () => {
+      const columns: Column[] = [{ id: 'col1', field: 'col1', formatter: (_r, _c, v) => `<b>${v}</b>`, exportWithFormatter: true }];
+      const itemObj = { id: 1, col1: 'Z' };
+
+      const createService = (enableFormattedDataCache: boolean, cachedValue: string | undefined) => {
+        const pdfService = new PdfExportService();
+        const localContainer = new ContainerServiceStub();
+        const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+        localContainer.registerInstance('PubSubService', fakePubSub);
+        const localDataView: any = {
+          getGrouping: vi.fn().mockReturnValue([]),
+          getLength: vi.fn().mockReturnValue(1),
+          getItem: vi.fn().mockReturnValue(itemObj),
+          getItemMetadata: vi.fn().mockReturnValue({}),
+          getFormattedCellValue: vi.fn().mockReturnValue(cachedValue),
+        };
+        const localGrid: any = {
+          getData: vi.fn().mockReturnValue(localDataView),
+          getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache }),
+          getColumns: vi.fn().mockReturnValue(columns),
+          getParentRowSpanByCell: vi.fn().mockReturnValue(null),
+        };
+        pdfService.init(localGrid, localContainer);
+        (pdfService as any)._exportOptions = { htmlDecode: false, sanitizeDataExport: false };
+        return { pdfService, localDataView };
+      };
+
+      const { pdfService: noCacheService } = createService(false, undefined);
+      const noCacheOutput = noCacheService['readRegularRowData'](columns as any, 0, itemObj);
+
+      const { pdfService: cacheMissService, localDataView: missDataView } = createService(true, undefined);
+      const cacheMissOutput = cacheMissService['readRegularRowData'](columns as any, 0, itemObj);
+
+      const { pdfService: cacheHitService, localDataView: hitDataView } = createService(true, '<b>Z</b>');
+      const cacheHitOutput = cacheHitService['readRegularRowData'](columns as any, 0, itemObj);
+
+      expect(noCacheOutput).toEqual(['<b>Z</b>']);
+      expect(cacheMissOutput).toEqual(noCacheOutput);
+      expect(cacheHitOutput).toEqual(noCacheOutput);
+      expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined);
+      expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined);
+    });
+
+    it('should sanitize cache-hit values in readRegularRowData', () => {
+      const columns: Column[] = [{ id: 'col1', field: 'col1', sanitizeDataExport: true }];
+      const itemObj = { id: 1, col1: 'ignored-on-cache-hit' };
+
+      const pdfService = new PdfExportService();
+      const localContainer = new ContainerServiceStub();
+      const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+      localContainer.registerInstance('PubSubService', fakePubSub);
+      const localDataView: any = {
+        getGrouping: vi.fn().mockReturnValue([]),
+        getLength: vi.fn().mockReturnValue(1),
+        getItem: vi.fn().mockReturnValue(itemObj),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+        getFormattedCellValue: vi.fn().mockReturnValue('<b>&amp;Z</b>'),
+      };
+      const localGrid: any = {
+        getData: vi.fn().mockReturnValue(localDataView),
+        getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache: true }),
+        getColumns: vi.fn().mockReturnValue(columns),
+        getParentRowSpanByCell: vi.fn().mockReturnValue(null),
+      };
+
+      pdfService.init(localGrid, localContainer);
+      (pdfService as any)._exportOptions = { htmlDecode: false, sanitizeDataExport: true };
+
+      const output = pdfService['readRegularRowData'](columns as any, 0, itemObj);
+      expect(output).toEqual(['&amp;Z']);
+      expect(localDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined);
     });
   });
 
@@ -1759,7 +1835,7 @@ describe('PdfExportService', () => {
 
     it('should handle error in downloadPdf appendChild', () => {
       service = new PdfExportService();
-      service.init({ getOptions: () => ({}) } as any, container);
+      service.init({ getOptions: () => ({}), getData: () => ({}) } as any, container);
       const appendSpy = vi.spyOn(document.body, 'appendChild').mockImplementation(() => {
         throw new Error('append error');
       });
@@ -1883,7 +1959,7 @@ describe('PdfExportService', () => {
     Object.defineProperty(service, '_exportOptions', { value: { htmlDecode: true, sanitizeDataExport: true } });
     (service as any)._hasGroupedItems = false;
     const result = service['readRegularRowData'](columns as any, 0, itemObj);
-    expect(result).toEqual([undefined, '', '', '']); // Only first cell, rest skipped by colspan logic
+    expect(result).toEqual([undefined, '', '', '']); // col1: 'A', col2: '' (colspan=2 skipped), col3 & col4: '' (colspan='*' spans rest)
   });
 
   it('should cover drawHeaders with grouped pre-header, grouped column, and no group title', async () => {
@@ -2114,13 +2190,10 @@ describe('PdfExportService', () => {
   it('should cover rowspan skip logic (rowspan child cell)', async () => {
     class TestPdfExportService extends PdfExportService {
       setMockDataView(mock: any) {
-        (this as any).__dataView = mock;
+        (this as any)._dataView = mock;
       }
       setMockGrid(mock: any) {
         (this as any)._grid = mock;
-      }
-      get _dataView() {
-        return (this as any).__dataView;
       }
       // Always return the persistent gridOptions object
       get _gridOptions() {
@@ -2453,13 +2526,10 @@ describe('PdfExportService', () => {
   it('should cover rowspan logic for both skip and non-skip paths', async () => {
     class TestPdfExportService extends PdfExportService {
       setMockDataView(mock: any) {
-        (this as any).__dataView = mock;
+        (this as any)._dataView = mock;
       }
       setMockGrid(mock: any) {
         (this as any)._grid = mock;
-      }
-      get _dataView() {
-        return (this as any).__dataView;
       }
       get _gridOptions() {
         return gridOptions;

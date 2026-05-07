@@ -13,6 +13,7 @@ import {
   type GridOption,
   type Grouping,
   type GroupingGetterFunction,
+  type OnFormattedDataCacheCompletedEventArgs,
   type SlickDraggableGrouping,
   type VanillaCalendarOption,
 } from '@slickgrid-universal/common';
@@ -65,6 +66,11 @@ export default class Example03 {
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onitemsdeleted', this.handleItemsDeleted.bind(this));
+    this._bindingEventService.bind(
+      gridContainerElm,
+      'onformatteddatacachecompleted',
+      this.handleFormattedDataCacheCompleted.bind(this) as EventListener
+    );
     this._bindingEventService.bind(
       gridContainerElm,
       ['onbeforeexporttoexcel', 'onbeforeexporttopdf'],
@@ -342,6 +348,7 @@ export default class Example03 {
       dataView: {
         useCSPSafeFilter: true,
       },
+      enableFormattedDataCache: false, // enable it when you have a large dataset (e.g. we'll enable it when loading over 10K)
       headerMenu: {
         hideFreezeColumnsCommand: false,
       },
@@ -430,12 +437,12 @@ export default class Example03 {
     };
   }
 
-  loadData(count: number) {
+  loadData(rowCount: number) {
     // mock data
     const tmpArray: any[] = [];
     const currentYear = new Date().getFullYear();
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < rowCount; i++) {
       const randomFinishYear = new Date().getFullYear() - 3 + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
       const randomMonth = Math.floor(Math.random() * 10);
       const randomDay = Math.floor(Math.random() * 29);
@@ -458,6 +465,7 @@ export default class Example03 {
       // }
     }
     if (this.sgb) {
+      this.sgb.slickGrid?.setOptions({ enableFormattedDataCache: rowCount > 10000 });
       this.sgb.dataset = tmpArray;
     }
     // const item = this.sgb.dataView?.getItemById<ReportItem & { myAction: string; }>(0);
@@ -588,6 +596,16 @@ export default class Example03 {
   handleItemsDeleted(event) {
     const itemId = event?.detail;
     console.log('item deleted with id:', itemId);
+  }
+
+  handleFormattedDataCacheCompleted(e: CustomEvent<{ args: OnFormattedDataCacheCompletedEventArgs }>) {
+    const args = e.detail.args;
+    showToast(
+      `Formatted Data Cache completed: ${args.totalRows} rows, ${args.totalFormattedCells} cells in ${args.durationMs} ms`,
+      'info',
+      5000
+    );
+    console.log('onFormattedDataCacheCompleted', e, args);
   }
 
   executeCommand(_e, args) {

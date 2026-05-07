@@ -62,6 +62,7 @@ const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
 export class ExcelExportService implements ExternalResource, BaseExcelExportService {
   protected _fileFormat: Extract<FileType, 'xls' | 'xlsx'> = 'xlsx';
   protected _grid!: SlickGrid;
+  protected _dataView!: SlickDataView;
   protected _locales!: Locale;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
   protected _columnHeaders: Array<KeyTitlePair> = [];
@@ -92,11 +93,6 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     return this._gridOptions?.datasetIdPropertyName ?? 'id';
   }
 
-  /** Getter of SlickGrid DataView object */
-  get _dataView(): SlickDataView {
-    return this._grid?.getData<SlickDataView>();
-  }
-
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
     return this._grid?.getOptions() || ({} as GridOption);
@@ -122,6 +118,14 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     clearTimeout(this._timer1);
     clearTimeout(this._timer2);
     this._pubSubService?.unsubscribeAll();
+
+    // Clear critical memory leak references
+    this._grid = null as any;
+    this._dataView = null as any;
+    this._pubSubService = null;
+    this._translaterService = undefined;
+    this._regularCellExcelFormats = {};
+    this._groupTotalExcelFormats = {};
   }
 
   /**
@@ -131,6 +135,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    */
   init(grid: SlickGrid, containerService: ContainerService): void {
     this._grid = grid;
+    this._dataView = grid?.getData<SlickDataView>() || {};
     this._pubSubService = containerService.get<PubSubService>('PubSubService');
 
     // get locales provided by user in main file or else use default English locales via the Constants
@@ -163,6 +168,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     }
 
     this._pubSubService?.publish('onBeforeExportToExcel', true);
+    const exportStartTime = Date.now();
     this._excelExportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
     this._fileFormat = this._excelExportOptions.format || 'xlsx';
     const useStreamingExport = !!this._excelExportOptions.useStreamingExport;
@@ -232,19 +238,19 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
-          this._pubSubService?.publish('onAfterExportToExcel', { filename, mimeType });
+          this._pubSubService?.publish('onAfterExportToExcel', { filename, mimeType, durationMs: Date.now() - exportStartTime });
           return true;
         } catch (err) {
           // fallback to legacy export if streaming is not supported
-          return await this.legacyExcelExportAsync(filename, mimeType);
+          return await this.legacyExcelExportAsync(filename, mimeType, exportStartTime);
         }
       } else {
         // fallback to legacy export for non-xlsx or if useStreamingExport is false
-        return await this.legacyExcelExportAsync(filename, mimeType);
+        return await this.legacyExcelExportAsync(filename, mimeType, exportStartTime);
       }
     } /** v8 ignore next */ catch (error) {
       console.error('Excel export failed:', error);
-      this._pubSubService?.publish('onAfterExportToExcel', { error });
+      this._pubSubService?.publish('onAfterExportToExcel', { error, durationMs: Date.now() - exportStartTime });
       return false;
     }
   }
@@ -748,20 +754,33 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           colspan = prevColspan--;
         }
       } else {
-        let itemData: Date | number | string = '';
+        let itemData: Date | number | string | undefined;
         const columnId = String(columnDef.id);
         const columnCachedData = cachedColumnMetadata.get(columnId);
 
         // -- Read Data & Push to Data Array
         // user might want to export with Formatter, and/or auto-detect Excel format, and/or export as regular cell data
 
-        // for column that are Date type, we'll always export with their associated Date Formatters unless `exportWithFormatter` is specifically set to false
-        const exportOptions = columnCachedData?.exportOptions ?? this._excelExportOptions;
-        if (columnCachedData?.requiresFormatter) {
-          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, exportOptions);
-        } else {
-          const fieldProperty = columnCachedData?.fieldProperty ?? String(columnDef.field || columnDef.id);
-          itemData = this.getRawCellValue(itemObj, fieldProperty);
+        // Try cache first if enabled; on miss (or when cache is disabled), use the existing formatter/raw path.
+        if (this._gridOptions.enableFormattedDataCache) {
+          itemData = this._dataView.getFormattedCellValue(dataRowIdx, columnId, undefined);
+        }
+
+        if (itemData === undefined) {
+          if (columnCachedData?.requiresFormatter) {
+            itemData = exportWithFormatterWhenDefined(
+              row,
+              col,
+              columnDef,
+              itemObj,
+              this._grid,
+              columnCachedData.exportOptions ?? columnDef.excelExportOptions ?? this._excelExportOptions,
+              true
+            );
+          } else {
+            const fieldProperty = columnCachedData?.fieldProperty ?? String(columnDef.field || columnDef.id);
+            itemData = this.getRawCellValue(itemObj, fieldProperty);
+          }
         }
 
         // auto-detect best possible Excel format, unless the user provide his own formatting,
@@ -901,14 +920,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   /** Async version of legacy Excel export fallback method */
-  protected async legacyExcelExportAsync(filename: string, mimeType: string): Promise<boolean> {
+  protected async legacyExcelExportAsync(filename: string, mimeType: string, exportStartTime?: number): Promise<boolean> {
+    const startTime = exportStartTime ?? Date.now();
     try {
       await downloadExcelFile(this._workbook, filename, { mimeType });
-      this._pubSubService?.publish(`onAfterExportToExcel`, { filename, mimeType });
+      this._pubSubService?.publish(`onAfterExportToExcel`, { filename, mimeType, durationMs: Date.now() - startTime });
       return true;
     } catch (error) {
       console.error('Legacy Excel export failed:', error);
-      this._pubSubService?.publish('onAfterExportToExcel', { error });
+      this._pubSubService?.publish('onAfterExportToExcel', { error, durationMs: Date.now() - startTime });
       return false;
     }
   }

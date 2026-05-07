@@ -37,6 +37,7 @@ import type {
   EditorArguments,
   EditorConstructor,
   ElementPosition,
+  FormattedDataCachePlanner,
   Formatter,
   FormatterResultObject,
   FormatterResultWithHtml,
@@ -623,6 +624,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onDragReplaceCells = new SlickEvent<OnDragReplaceCellsEventArgs>('onDragReplaceCells', externalPubSub);
 
     this.initialize(options);
+    this.syncDataViewFormattedCachePlanner();
   }
 
   // Initialization
@@ -3657,6 +3659,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const originalOptions = extend(true, {}, this._options);
     this._options = extend(true, this._options, newOptions);
     this.triggerEvent(this.onSetOptions, { optionsBefore: originalOptions, optionsAfter: this._options });
+    if (this.shouldRefreshFormattedCachePlanner(newOptions)) {
+      this.syncDataViewFormattedCachePlanner(true);
+    }
 
     this.internal_setOptions(suppressRender, suppressColumnSet, suppressSetOverflow);
   }
@@ -3673,6 +3678,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.prepareForOptionsChange();
     this.invalidateRow(this.getDataLength());
     this.triggerEvent(this.onActivateChangedOptions, { options: this._options });
+    this.syncDataViewFormattedCachePlanner(true);
     this.internal_setOptions(suppressRender, suppressColumnSet, suppressSetOverflow);
   }
 
@@ -3746,6 +3752,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   setData(newData: CustomDataView<TData> | TData[], scrollToTop?: boolean): void {
     this.data = newData;
+    this.syncDataViewFormattedCachePlanner();
     this.invalidateAllRows();
     this.updateRowCount();
     if (scrollToTop) {
@@ -3803,6 +3810,69 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Are we using a DataView? */
   hasDataView(): boolean {
     return !Array.isArray(this.data);
+  }
+
+  protected readonly formattedDataCachePlanner: FormattedDataCachePlanner = (column, gridOptions) => {
+    const optionCandidates = [gridOptions.excelExportOptions, gridOptions.textExportOptions, gridOptions.pdfExportOptions];
+    const hasExportCustomFormatter = typeof column.exportCustomFormatter === 'function';
+    const hasColumnExportWithFormatter = !!column.exportWithFormatter;
+
+    // Column-level flags should work even when no global export options object is provided.
+    let shouldCacheExport = hasColumnExportWithFormatter || hasExportCustomFormatter;
+    let useCellFormatterForExport = hasColumnExportWithFormatter;
+    let sanitizeDataExport = !!column.sanitizeDataExport;
+
+    for (let i = 0; i < optionCandidates.length; i++) {
+      const exportOptions = optionCandidates[i];
+      if (!exportOptions) {
+        continue;
+      }
+
+      const hasExportWithFormatter =
+        column.exportWithFormatter !== undefined ? !!column.exportWithFormatter : !!exportOptions.exportWithFormatter;
+
+      if (!hasExportWithFormatter && !hasExportCustomFormatter) {
+        continue;
+      }
+
+      shouldCacheExport = true;
+      useCellFormatterForExport = useCellFormatterForExport || hasExportWithFormatter;
+      sanitizeDataExport = sanitizeDataExport || !!column.sanitizeDataExport || !!exportOptions.sanitizeDataExport;
+    }
+
+    if (!shouldCacheExport) {
+      return undefined;
+    }
+
+    return {
+      shouldCacheExport,
+      useCellFormatterForExport,
+      sanitizeDataExport,
+      exportOptions: {
+        exportWithFormatter: useCellFormatterForExport,
+        sanitizeDataExport,
+      },
+    };
+  };
+
+  protected shouldRefreshFormattedCachePlanner(newOptions: Partial<O>): boolean {
+    return (
+      'enableFormattedDataCache' in newOptions ||
+      'excelExportOptions' in newOptions ||
+      'textExportOptions' in newOptions ||
+      'pdfExportOptions' in newOptions
+    );
+  }
+
+  protected syncDataViewFormattedCachePlanner(forceRefresh = false): void {
+    if (!this.hasDataView() || !this._options.enableFormattedDataCache) {
+      return;
+    }
+
+    const dataView = this.getData<SlickDataView<TData>>();
+    if (typeof dataView.setFormattedDataCachePlanner === 'function') {
+      dataView.setFormattedDataCachePlanner(this.formattedDataCachePlanner, forceRefresh);
+    }
   }
 
   protected togglePanelVisibility(
@@ -3984,11 +4054,27 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // look up by id, then index
     const columnOverrides = rowMetadata?.columns && (rowMetadata.columns[column.id] || rowMetadata.columns[this.getColumnIndex(column.id)]);
 
-    return (columnOverrides?.formatter ||
+    const formatter = (columnOverrides?.formatter ||
       rowMetadata?.formatter ||
       column.formatter ||
       this._options.formatterFactory?.getFormatter(column) ||
       this._options.defaultFormatter) as Formatter;
+
+    // Metadata formatters are row-specific and are not cached, so they must bypass the cache wrapper.
+    const canUseDisplayCache =
+      this._options.enableFormattedDataCache && !rowMetadata?.formatter && !columnOverrides?.formatter && this.hasDataView();
+    const dataView = canUseDisplayCache ? this.getData<SlickDataView>() : undefined;
+
+    let resolvedFormatter = formatter;
+    if (typeof dataView?.getCellDisplayValue === 'function') {
+      resolvedFormatter = (rowIdx, cell, value, columnDef, dataContext, grid) => {
+        const cached = dataView.getCellDisplayValue(rowIdx, String(columnDef.id), dataContext as any);
+        const resolvedValue = cached !== undefined ? (cached as any) : formatter(rowIdx, cell, value, columnDef, dataContext, grid);
+        return resolvedValue;
+      };
+    }
+
+    return resolvedFormatter;
   }
 
   protected getEditor(row: number, cell: number): Editor | EditorConstructor | null | undefined {

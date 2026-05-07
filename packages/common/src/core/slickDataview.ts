@@ -1,14 +1,32 @@
-import { extend, getFunctionDetails, isDefined, type AnyFunction } from '@slickgrid-universal/utils';
+import {
+  extend,
+  getFunctionDetails,
+  getHtmlStringOutput,
+  isDefined,
+  isHtml,
+  isPrimitiveOrHTML,
+  stripTags,
+  type AnyFunction,
+} from '@slickgrid-universal/utils';
 import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider.js';
+import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities.js';
 import type { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface.js';
 import type {
   Aggregator,
   Column,
+  ColumnCacheEntry,
   DataViewHints,
+  FormattedDataCacheMetadata,
+  FormattedDataCachePlanner,
+  Formatter,
+  FormatterResultWithHtml,
+  FormatterResultWithText,
   Grouping,
   GroupingFormatterItem,
   ItemMetadata,
   ItemMetadataProvider,
+  OnFormattedDataCacheCompletedEventArgs,
+  OnFormattedDataCacheProgressEventArgs,
   OnGroupCollapsedEventArgs,
   OnGroupExpandedEventArgs,
   OnRowCountChangedEventArgs,
@@ -17,9 +35,28 @@ import type {
   OnSelectedRowIdsChangedEventArgs,
   OnSetItemsCalledEventArgs,
   PagingInfo,
+  RowCacheContext,
 } from '../interfaces/index.js';
 import { SlickEvent, SlickEventData, SlickGroup, SlickGroupTotals, type BasePubSub, type SlickNonDataItem } from './slickCore.js';
 import type { SlickGrid } from './slickGrid.js';
+
+function isLiveDomFormatterResult(
+  result: FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string | null | undefined
+): boolean {
+  if (result) {
+    if (isHtml(result)) {
+      return true;
+    }
+
+    if (typeof result === 'object') {
+      const htmlResult = (result as FormatterResultWithHtml).html;
+      if (isHtml(htmlResult)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 export interface DataViewOption {
   /**
@@ -87,7 +124,24 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected compiledFilterWithCaching?: FilterFn<TData> | null;
   protected compiledFilterWithCachingCSPSafe?: FilterWithCspCachingFn<TData> | null;
   protected filterCache: any[] = [];
-  protected _grid?: SlickGrid; // grid object will be defined only after using "syncGridSelection()" method"
+  protected _grid?: SlickGrid; // grid object will be defined after using "syncGridSelection()" or "setGrid()" method
+  protected _gridOptions?: ReturnType<SlickGrid['getOptions']>; // cached grid options, refreshed via onSetOptions subscription
+
+  // formatted data cache (export) — keyed by item id
+  protected formattedDataCache: Record<DataIdType, Partial<Record<string, string | number>>> = {};
+  // formatted cell cache (UI display) — keyed by item id
+  protected formattedCellCache: Record<
+    DataIdType,
+    Record<string, FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string>
+  > = {};
+  protected formattedDataCachePlanner?: FormattedDataCachePlanner;
+  protected formattedCacheMetadata: FormattedDataCacheMetadata = {
+    isPopulating: false,
+    lastProcessedRow: -1,
+    totalFormattedCells: 0,
+  };
+  protected _populateCacheRafId: number | undefined = undefined;
+  protected _cachePopulationGeneration = 0; // incremented on each new population run; stale closures bail out early
 
   // grouping
   protected groupingInfoDefaults: Grouping = {
@@ -127,6 +181,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   onRowsOrCountChanged: SlickEvent<OnRowsOrCountChangedEventArgs>;
   onSelectedRowIdsChanged: SlickEvent<OnSelectedRowIdsChangedEventArgs>;
   onSetItemsCalled: SlickEvent<OnSetItemsCalledEventArgs>;
+  onFormattedDataCacheProgress: SlickEvent<OnFormattedDataCacheProgressEventArgs>;
+  onFormattedDataCacheCompleted: SlickEvent<OnFormattedDataCacheCompletedEventArgs>;
 
   constructor(
     options?: Partial<DataViewOption> | undefined,
@@ -141,6 +197,14 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.onRowsOrCountChanged = new SlickEvent<OnRowsOrCountChangedEventArgs>('onRowsOrCountChanged', externalPubSub);
     this.onSelectedRowIdsChanged = new SlickEvent<OnSelectedRowIdsChangedEventArgs>('onSelectedRowIdsChanged', externalPubSub);
     this.onSetItemsCalled = new SlickEvent<OnSetItemsCalledEventArgs>('onSetItemsCalled', externalPubSub);
+    this.onFormattedDataCacheProgress = new SlickEvent<OnFormattedDataCacheProgressEventArgs>(
+      'onFormattedDataCacheProgress',
+      externalPubSub
+    );
+    this.onFormattedDataCacheCompleted = new SlickEvent<OnFormattedDataCacheCompletedEventArgs>(
+      'onFormattedDataCacheCompleted',
+      externalPubSub
+    );
 
     this._options = extend(true, {}, this.defaults, options);
   }
@@ -183,6 +247,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.compiledFilterCSPSafe = null;
     this.compiledFilterWithCaching = null;
     this.compiledFilterWithCachingCSPSafe = null;
+    this.clearFormattedDataCache();
     if (this._grid) {
       this._grid.onSelectedRowsChanged?.unsubscribe();
       this._grid.onCellCssStylesChanged?.unsubscribe();
@@ -306,6 +371,12 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.updateIdxById();
     this.ensureIdUniqueness();
     this.refresh();
+
+    // Clear and repopulate the formatted data cache whenever data is replaced
+    if (this._gridOptions?.enableFormattedDataCache) {
+      this.clearFormattedDataCache();
+      this.populateFormattedDataCacheAsync();
+    }
   }
 
   /** Set Paging Options */
@@ -554,6 +625,9 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   updateItem<T extends TData>(id: DataIdType, item: T): void {
     this.updateSingleItem(id, item);
     this.refresh();
+
+    // Invalidate the formatted cache for the updated item
+    this.invalidateFormattedCacheForUpdatedItem(id, item);
   }
 
   /**
@@ -569,6 +643,11 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       this.updateSingleItem(ids[i], newItems[i]);
     }
     this.refresh();
+
+    // Invalidate the formatted cache for every updated item
+    for (let i = 0, l = newItems.length; i < l; i++) {
+      this.invalidateFormattedCacheForUpdatedItem(ids[i], newItems[i]);
+    }
   }
 
   /**
@@ -633,6 +712,10 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       this.items.splice(idx, 1);
       this.updateIdxById(idx);
       this.refresh();
+
+      // Clean up cache entries for the deleted item
+      delete this.formattedDataCache[id];
+      delete this.formattedCellCache[id];
     }
   }
 
@@ -676,6 +759,12 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       // update lookup from front to back
       this.updateIdxById(indexesToDelete[0]);
       this.refresh();
+
+      // Clean up cache entries for all deleted items
+      for (let i = 0, l = ids.length; i < l; i++) {
+        delete this.formattedDataCache[ids[i]];
+        delete this.formattedCellCache[ids[i]];
+      }
     }
   }
 
@@ -1698,5 +1787,421 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     });
 
     this.onRowsOrCountChanged.subscribe(update.bind(this));
+  }
+
+  // --------------------------
+  // Formatted Data Cache
+  // --------------------------
+
+  /**
+   * Sets the grid reference so the DataView can access columns and options for the formatted data cache.
+   * This is called by SlickGrid when it binds a DataView as its data source.
+   * @param {SlickGrid} grid - The SlickGrid instance
+   */
+  setGrid(grid: SlickGrid): void {
+    this._grid = grid;
+    this._gridOptions = grid.getOptions();
+  }
+
+  /** Set the planner callback used to decide formatted-cache behavior for each column. */
+  setFormattedDataCachePlanner(planner?: FormattedDataCachePlanner, forceRefresh = false): void {
+    if (!forceRefresh && this.formattedDataCachePlanner === planner) {
+      return;
+    }
+
+    this.formattedDataCachePlanner = planner;
+
+    if (this._gridOptions?.enableFormattedDataCache) {
+      this.clearFormattedDataCache();
+      this.populateFormattedDataCacheAsync();
+    }
+  }
+
+  /**
+   * Returns the cached formatted cell value if available, otherwise returns the fallback value.
+   * Used by export services (e.g. ExcelExportService) to avoid re-executing expensive formatters.
+   * @param {number} rowIdx - The row index in the current view
+   * @param {string} columnId - The column ID
+   * @param {any} fallbackValue - Value to return when the cache has no entry for this cell
+   * @returns {any} The cached formatted value or the fallback value
+   */
+  getFormattedCellValue(rowIdx: number, columnId: string, fallbackValue: any): any {
+    if (!this._gridOptions?.enableFormattedDataCache) {
+      return fallbackValue;
+    }
+
+    const item = this.getItem(rowIdx);
+    const itemId = item?.[this.idProperty as keyof TData] as DataIdType | undefined;
+    if (itemId !== undefined) {
+      const rowCache = this.formattedDataCache[itemId];
+      if (rowCache?.[columnId] !== undefined) {
+        return rowCache[columnId];
+      }
+    }
+
+    return fallbackValue;
+  }
+
+  /**
+   * Returns the cached UI display formatter result for a cell, or `undefined` when not cached.
+   * Used by SlickGrid's `getFormatter` to skip re-executing the formatter during rendering.
+   * @param {number} rowIdx - The row index in the current view
+   * @param {string} columnId - The column ID
+   * @returns {FormatterResult | undefined} The raw cached formatter result, or `undefined` on a cache miss
+   */
+  getCellDisplayValue(
+    rowIdx: number,
+    columnId: string,
+    item?: TData
+  ): FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string | undefined {
+    const resolvedItem = item ?? this.getItem(rowIdx);
+    const itemId = resolvedItem?.[this.idProperty as keyof TData] as DataIdType | undefined;
+    if (itemId === undefined) {
+      return undefined;
+    }
+    return this.formattedCellCache[itemId]?.[columnId];
+  }
+
+  /**
+   * Returns a snapshot of the current formatted data cache metadata.
+   * @returns {FormattedDataCacheMetadata} The cache metadata
+   */
+  getCacheStatus(): FormattedDataCacheMetadata {
+    return { ...this.formattedCacheMetadata };
+  }
+
+  /**
+   * Clears the entire formatted data cache and resets the metadata.
+   * Called when columns change or when the dataset is completely replaced.
+   */
+  clearFormattedDataCache(): void {
+    // Cancel any in-progress background population before wiping the cache
+    if (this._populateCacheRafId !== undefined) {
+      cancelAnimationFrame(this._populateCacheRafId);
+      this._populateCacheRafId = undefined;
+    }
+    this.formattedDataCache = {};
+    this.formattedCellCache = {};
+    this.formattedCacheMetadata = {
+      isPopulating: false,
+      lastProcessedRow: -1,
+      totalFormattedCells: 0,
+    };
+  }
+
+  /**
+   * Invalidates the formatted data cache for a specific row and immediately re-caches it.
+   * Called when a cell value changes so that the cached formatter output stays up to date.
+   * @param {number} rowIdx - The row index (in the current view) to invalidate
+   */
+  invalidateFormattedDataCacheForRow(rowIdx: number): void {
+    if (!this._gridOptions?.enableFormattedDataCache) {
+      return;
+    }
+
+    const item = this.getItem(rowIdx);
+    const itemId = item?.[this.idProperty as keyof TData] as DataIdType | undefined;
+    if (itemId !== undefined) {
+      this.populateSingleRowCache(rowIdx, this.buildCacheContext());
+    }
+  }
+
+  /**
+   * Handles formatted cache cleanup and invalidation for an updated item.
+   * Removes stale cache entries if the item's id changed, and invalidates the row cache.
+   * @param oldId - The previous id of the item
+   * @param item - The updated item
+   */
+  protected invalidateFormattedCacheForUpdatedItem<T extends TData>(oldId: DataIdType, item: T): void {
+    const gridOptions = this._gridOptions;
+    if (!gridOptions?.enableFormattedDataCache) {
+      return;
+    }
+
+    const newId = item[this.idProperty as keyof T] as DataIdType;
+    // Remove the stale entry for the old id if it changed
+    if (oldId !== newId) {
+      delete this.formattedDataCache[oldId];
+      delete this.formattedCellCache[oldId];
+    }
+    const rowIdx = this.getRowById(newId ?? oldId);
+    if (rowIdx !== undefined) {
+      this.invalidateFormattedDataCacheForRow(rowIdx);
+    }
+  }
+
+  /**
+   * Starts populating the formatted data cache asynchronously in background batches using
+   * `requestAnimationFrame` so that the UI remains responsive during population.
+   * Does nothing when `enableFormattedDataCache` is not set in the grid options or when
+   * a population pass is already in progress.
+   * @param {number} [startRow=0] - Row index to start from (defaults to 0)
+   */
+  populateFormattedDataCacheAsync(startRow = 0): void {
+    const gridOptions = this._gridOptions;
+    if (!gridOptions?.enableFormattedDataCache) {
+      return;
+    }
+
+    // Cancel any still-running population before starting a new one.
+    // cancelAnimationFrame() stops the pending RAF (JS is single-threaded so a batch is never
+    // mid-execution here), while the generation counter acts as an explicit abort signal so that
+    // any closure that somehow fires after the reset detects it is stale and exits early.
+    if (this._populateCacheRafId !== undefined) {
+      cancelAnimationFrame(this._populateCacheRafId);
+      this._populateCacheRafId = undefined;
+    }
+    const generation = ++this._cachePopulationGeneration;
+
+    this.formattedCacheMetadata.isPopulating = true;
+    this.formattedCacheMetadata.lastProcessedRow = startRow - 1;
+    this.formattedCacheMetadata.totalFormattedCells = 0;
+    this.formattedCacheMetadata.cacheStartTime = Date.now();
+
+    // Compute columns/options once for the entire run (shared across all batches via closure)
+    const batchCtx = this.buildCacheContext();
+
+    // A single MessageChannel is created and reused for the entire population run.
+    // Re-posting to port2 each batch avoids the GC pressure of allocating a new channel
+    // per batch — with slow formatters this can be thousands of short-lived objects.
+    // `scheduleNextBatch` is assigned below after processBatch is defined.
+    let scheduleNextBatch!: () => void;
+    // Throttle progress notifications: firing every ~8ms batch overwhelms subscribers
+    // (e.g. a progress-bar update) and adds measurable overhead for slow formatters.
+    let lastProgressFireMs = 0;
+
+    const processBatch = () => {
+      // Bail out if a newer population has since been started
+      if (generation !== this._cachePopulationGeneration) {
+        return;
+      }
+      // Time-based batching: process rows until the per-frame budget is exhausted OR the row-count
+      // safety cap is reached — whichever comes first. This guarantees UI responsiveness regardless
+      // of how expensive individual formatters are (unlike a fixed row-count approach).
+      const frameBudgetMs = batchCtx.gridOptions.formattedDataCacheFrameBudgetMs ?? 8;
+      const maxRowsPerFrame = batchCtx.gridOptions.formattedDataCacheBatchSize ?? 300;
+      const frameDeadline = performance.now() + frameBudgetMs;
+      const totalRows = this.getLength();
+      const lastRowIndex = totalRows - 1;
+      let processedInBatch = 0;
+      let rowsUntilDeadlineCheck = 16;
+
+      while (processedInBatch < maxRowsPerFrame && this.formattedCacheMetadata.lastProcessedRow < lastRowIndex) {
+        if (--rowsUntilDeadlineCheck === 0) {
+          if (performance.now() >= frameDeadline) {
+            break;
+          }
+          rowsUntilDeadlineCheck = 16;
+        }
+
+        this.formattedCacheMetadata.lastProcessedRow++;
+        if (this.populateSingleRowCache(this.formattedCacheMetadata.lastProcessedRow, batchCtx)) {
+          processedInBatch++;
+        }
+      }
+
+      const isDone = this.formattedCacheMetadata.lastProcessedRow >= lastRowIndex;
+
+      // Fire progress event at most once every 250ms (not every 8ms batch)
+      const nowMs = Date.now();
+      if (isDone || nowMs - lastProgressFireMs >= 250) {
+        lastProgressFireMs = nowMs;
+        const elapsedMs = nowMs - (this.formattedCacheMetadata.cacheStartTime || 0);
+        const percentComplete = Math.round(((this.formattedCacheMetadata.lastProcessedRow + 1) / totalRows) * 100);
+        this.onFormattedDataCacheProgress.notify({
+          rowsProcessed: this.formattedCacheMetadata.lastProcessedRow + 1,
+          totalRows,
+          percentComplete,
+          elapsedMs,
+        });
+      }
+
+      if (!isDone) {
+        scheduleNextBatch();
+      } else {
+        this._populateCacheRafId = undefined;
+        this.formattedCacheMetadata.isPopulating = false;
+        const duration = Date.now() - (this.formattedCacheMetadata.cacheStartTime || 0);
+        this.onFormattedDataCacheCompleted.notify({
+          totalRows,
+          totalFormattedCells: this.formattedCacheMetadata.totalFormattedCells,
+          durationMs: duration,
+        });
+      }
+    };
+
+    // MessageChannel fires as a macro-task without waiting for vsync (unlike requestAnimationFrame).
+    // Reusing the same channel eliminates the ~16ms idle period between batches AND avoids
+    // allocating thousands of short-lived MessageChannel objects for slow-formatter scenarios.
+    if (typeof MessageChannel !== 'undefined') {
+      const { port1, port2 } = new MessageChannel();
+      port1.onmessage = processBatch;
+      scheduleNextBatch = () => port2.postMessage(null);
+    } else {
+      scheduleNextBatch = () => {
+        this._populateCacheRafId = requestAnimationFrame(processBatch);
+      };
+    }
+    scheduleNextBatch();
+  }
+
+  /** Builds a RowCacheContext from the current grid state. Called once per population run or per single-row invalidation. */
+  protected buildCacheContext(): RowCacheContext {
+    const grid = this._grid!;
+    const gridOptions = this._gridOptions ?? grid.getOptions();
+    const columns = grid.getColumns() ?? [];
+    const exportOnlyCacheColumns: ColumnCacheEntry[] = [];
+    const dualCacheColumns: ColumnCacheEntry[] = [];
+    const cellOnlyColumns: ColumnCacheEntry[] = [];
+
+    for (let ci = 0; ci < columns.length; ci++) {
+      const col = columns[ci];
+      const plannerConfig = this.formattedDataCachePlanner?.(col, gridOptions);
+      const needsExportCache = !!plannerConfig?.shouldCacheExport;
+      const canReuseCellFormatterForExport = !!plannerConfig?.useCellFormatterForExport;
+      const sanitizeDataExport = !!plannerConfig?.sanitizeDataExport;
+      const exportOptions = plannerConfig?.exportOptions;
+
+      const needsCellCache = !!col.formatter;
+      if (needsExportCache && needsCellCache && !col.exportCustomFormatter && canReuseCellFormatterForExport) {
+        // Both caches use the same underlying `formatter` — call it once per row and post-process
+        // the result for the export string (avoids the duplicate invocation that
+        // exportWithFormatterWhenDefined would cause for this common case).
+        dualCacheColumns.push({
+          column: col,
+          colIdx: ci,
+          columnId: String(col.id),
+          field: col.field,
+          formatter: col.formatter,
+          exportOptions,
+          sanitizeDataExport,
+        });
+      } else {
+        if (needsExportCache) {
+          // exportCustomFormatter (different from cell formatter) or exportWithFormatter without formatter
+          exportOnlyCacheColumns.push({ column: col, colIdx: ci, columnId: String(col.id), exportOptions, sanitizeDataExport: false });
+        }
+        if (needsCellCache) {
+          cellOnlyColumns.push({
+            column: col,
+            colIdx: ci,
+            columnId: String(col.id),
+            field: col.field,
+            formatter: col.formatter,
+            sanitizeDataExport: false,
+          });
+        }
+      }
+    }
+    const hasMetadataProviders = !!(this._options.globalItemMetadataProvider || this._options.groupItemMetadataProvider);
+    return {
+      grid,
+      gridOptions,
+      exportOnlyCacheColumns,
+      dualCacheColumns,
+      cellOnlyColumns,
+      rows: this.rows,
+      idProperty: this.idProperty as string,
+      hasMetadataProviders,
+    };
+  }
+
+  protected populateSingleRowCache(rowIdx: number, ctx: RowCacheContext): boolean {
+    // Access rows directly — bypasses getItem()'s group/totals lazy-calculation overhead
+    // (those rows are already skipped in the caller, so we never need that code path here).
+    const item = ctx.rows[rowIdx] as TData;
+    // Skip missing rows and non-data rows (group headers, group totals) — they have no stable item id
+    if (!item || (item as any).__group || (item as any).__groupTotals) {
+      return false;
+    }
+
+    const itemId = (item as any)[ctx.idProperty] as DataIdType;
+    if (!this.formattedDataCache[itemId]) {
+      this.formattedDataCache[itemId] = {};
+    }
+    if (!this.formattedCellCache[itemId]) {
+      this.formattedCellCache[itemId] = {};
+    }
+    const formattedDataRowCache = this.formattedDataCache[itemId];
+    const formattedCellRowCache = this.formattedCellCache[itemId];
+
+    const { grid, exportOnlyCacheColumns, dualCacheColumns, cellOnlyColumns, hasMetadataProviders } = ctx;
+    let totalFormattedCells = this.formattedCacheMetadata.totalFormattedCells;
+
+    // Only call getItemMetadata when a provider is configured; for plain data rows it always
+    // returns null, so skipping it avoids an extra method call per row in the common case.
+    const rowHasMetadataFormatter = hasMetadataProviders && !!(this.getItemMetadata(rowIdx) as any)?.formatter;
+
+    // 1. Export-only columns: exportCustomFormatter or exportWithFormatter without a cell formatter.
+    //    Uses exportWithFormatterWhenDefined since the export formatter differs from the cell formatter.
+    //    Passes skipSanitization=true so that sanitization is deferred to the export service which applies
+    //    it uniformly at the end of processing (avoiding redundant sanitization in the data flow).
+    for (let ci = 0; ci < exportOnlyCacheColumns.length; ci++) {
+      const entry = exportOnlyCacheColumns[ci];
+      try {
+        formattedDataRowCache[entry.columnId] = exportWithFormatterWhenDefined(
+          rowIdx,
+          entry.colIdx,
+          entry.column,
+          item,
+          grid,
+          entry.exportOptions,
+          true // skipSanitization=true: export service handles sanitization uniformly at the end
+        );
+        totalFormattedCells++;
+      } catch {
+        formattedDataRowCache[entry.columnId] = undefined;
+      }
+    }
+
+    // 2. Dual-cache columns: the same `formatter` powers both the export string and the cell display.
+    //    Call the formatter once and derive both cache entries from the single result — this halves
+    //    formatter invocations for the common case of exportWithFormatter + formatter on the same column.
+    for (let ci = 0; ci < dualCacheColumns.length; ci++) {
+      const entry = dualCacheColumns[ci];
+      try {
+        const cellValue = item[entry.field as keyof TData] ?? null;
+        const rawResult = (entry.formatter as Formatter)(rowIdx, entry.colIdx, cellValue, entry.column, item, grid);
+
+        // Post-process the raw formatter result into an export string — mirrors parseFormatterWhenExist
+        const cellResult = isPrimitiveOrHTML(rawResult)
+          ? rawResult
+          : (rawResult as FormatterResultWithHtml).html || (rawResult as FormatterResultWithText).text;
+        let exportStr = (getHtmlStringOutput(cellResult as string | HTMLElement | DocumentFragment) ?? '') as string;
+        if (entry.sanitizeDataExport && exportStr) {
+          exportStr = stripTags(exportStr);
+        }
+        formattedDataRowCache[entry.columnId] = exportStr;
+        totalFormattedCells++;
+
+        // Store the raw result for cell display (skipped when a metadata formatter overrides this row)
+        if (!rowHasMetadataFormatter && !isLiveDomFormatterResult(rawResult as any)) {
+          formattedCellRowCache[entry.columnId] = rawResult as any;
+        }
+      } catch {
+        formattedDataRowCache[entry.columnId] = undefined;
+      }
+    }
+
+    // 3. Cell-only columns: have a formatter but are not in the export cache.
+    //    Skipped entirely when a row-level metadata formatter overrides individual column formatters.
+    if (!rowHasMetadataFormatter) {
+      for (let ci = 0; ci < cellOnlyColumns.length; ci++) {
+        const entry = cellOnlyColumns[ci];
+        try {
+          const cellValue = item[entry.field as keyof TData] ?? null;
+          const rawResult = (entry.formatter as Formatter)(rowIdx, entry.colIdx, cellValue, entry.column, item, grid) as any;
+          if (!isLiveDomFormatterResult(rawResult)) {
+            formattedCellRowCache[entry.columnId] = rawResult;
+          }
+        } catch {
+          // Leave absent — cache miss falls through to the live formatter
+        }
+      }
+    }
+
+    this.formattedCacheMetadata.totalFormattedCells = totalFormattedCells;
+
+    return true;
   }
 }

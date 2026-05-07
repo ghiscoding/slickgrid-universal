@@ -18,6 +18,9 @@ class TestGrid extends SlickGrid<any, Column> {
   public callHandleGridKeyDown(e: any) {
     this.handleGridKeyDown(e);
   }
+  public callGetFormatter(row: number, column: Column) {
+    return this.getFormatter(row, column);
+  }
   public setCurrentEditorNull() {
     (this as any).currentEditor = null;
   }
@@ -2018,6 +2021,67 @@ describe('SlickGrid core file', () => {
       expect(firstRowElm?.classList.contains('text-bold')).toBeTruthy();
       expect(firstCellElm?.classList.contains('l0')).toBeTruthy();
       expect(firstCellElm?.classList.contains(`r${columns.length - 1}`)).toBeTruthy();
+    });
+  });
+
+  describe('getFormatter()', () => {
+    it('should return cached display value when formatted data cache is enabled', () => {
+      const formatterSpy = vi.fn().mockReturnValue('formatter-result');
+      const data = [{ id: 1, firstName: 'John' }];
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', formatter: formatterSpy }] as Column[];
+      const dv = new SlickDataView({});
+      const getCellDisplayValueSpy = vi.spyOn(dv, 'getCellDisplayValue').mockReturnValue('cached-value' as any);
+
+      grid = new TestGrid(container, dv, columns, { ...defaultOptions, enableFormattedDataCache: true });
+      dv.setItems(data);
+      grid.init();
+
+      const formatter = (grid as TestGrid).callGetFormatter(0, columns[0]);
+      const result = formatter(0, 0, data[0].firstName, columns[0], data[0], grid as any);
+
+      expect(result).toBe('cached-value');
+      expect(getCellDisplayValueSpy).toHaveBeenCalledWith(0, 'firstName', data[0]);
+      expect(formatterSpy).not.toHaveBeenCalled();
+    });
+
+    it('should fall back to the live formatter when formatted data cache misses', () => {
+      const formatterSpy = vi.fn().mockReturnValue('formatter-result');
+      const data = [{ id: 1, firstName: 'John' }];
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', formatter: formatterSpy }] as Column[];
+      const dv = new SlickDataView({});
+      const getCellDisplayValueSpy = vi.spyOn(dv, 'getCellDisplayValue').mockReturnValue(undefined);
+
+      grid = new TestGrid(container, dv, columns, { ...defaultOptions, enableFormattedDataCache: true });
+      dv.setItems(data);
+      grid.init();
+
+      const formatter = (grid as TestGrid).callGetFormatter(0, columns[0]);
+      const result = formatter(0, 0, data[0].firstName, columns[0], data[0], grid as any);
+
+      expect(result).toBe('formatter-result');
+      expect(getCellDisplayValueSpy).toHaveBeenCalledWith(0, 'firstName', data[0]);
+      expect(formatterSpy).toHaveBeenCalledWith(0, 0, data[0].firstName, columns[0], data[0], grid);
+    });
+
+    it('should fall back to the live formatter on cache miss and when row metadata defines a formatter', () => {
+      const formatterSpy = vi.fn().mockReturnValue('formatter-result');
+      const metadataFormatterSpy = vi.fn().mockReturnValue('metadata-result');
+      const data = [{ id: 1, firstName: 'John' }];
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', formatter: formatterSpy }] as Column[];
+      const dv = new SlickDataView({ globalItemMetadataProvider: { getRowMetadata: () => ({ formatter: metadataFormatterSpy }) } });
+      const getCellDisplayValueSpy = vi.spyOn(dv, 'getCellDisplayValue').mockReturnValue(undefined);
+
+      grid = new TestGrid(container, dv, columns, { ...defaultOptions, enableFormattedDataCache: true });
+      dv.setItems(data);
+      grid.init();
+
+      const formatter = (grid as TestGrid).callGetFormatter(0, columns[0]);
+      const result = formatter(0, 0, data[0].firstName, columns[0], data[0], grid as any);
+
+      expect(result).toBe('metadata-result');
+      expect(getCellDisplayValueSpy).not.toHaveBeenCalled();
+      expect(metadataFormatterSpy).toHaveBeenCalledWith(0, 0, data[0].firstName, columns[0], data[0], grid);
+      expect(formatterSpy).not.toHaveBeenCalled();
     });
   });
 

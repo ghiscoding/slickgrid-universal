@@ -12,8 +12,8 @@ import type {
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, exportWithFormatterWhenDefined, getTranslationPrefix, htmlDecode } from '@slickgrid-universal/common';
-import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
+import { Constants, exportWithFormatterWhenDefined, getTranslationPrefix } from '@slickgrid-universal/common';
+import { addWhiteSpaces, extend, getHtmlStringOutput, htmlDecode, stripTags, titleCase } from '@slickgrid-universal/utils';
 import jsPDF from 'jspdf';
 
 const DEFAULT_EXPORT_OPTIONS: PdfExportOption = {
@@ -62,6 +62,7 @@ function resolveColumnExportOptions(columnDef: Column, globalOptions: PdfExportO
 export class PdfExportService implements ExternalResource, BasePdfExportService {
   protected _exportOptions!: PdfExportOption;
   protected _grid!: SlickGrid;
+  protected _dataView!: SlickDataView;
   protected _groupedColumnHeaders?: Array<GroupedHeaderSpan>;
   protected _columnHeaders: Array<KeyTitlePair> = [];
   protected _hasGroupedItems = false;
@@ -77,11 +78,6 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
     return (this._gridOptions && this._gridOptions.datasetIdPropertyName) || 'id';
   }
 
-  /** Getter of SlickGrid DataView object */
-  get _dataView(): SlickDataView {
-    return this._grid?.getData<SlickDataView>();
-  }
-
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
     return this._grid?.getOptions() ?? ({} as GridOption);
@@ -90,6 +86,12 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   dispose(): void {
     clearTimeout(this._timer);
     this._pubSubService?.unsubscribeAll();
+
+    // Clear critical memory leak references
+    this._grid = null as any;
+    this._dataView = null as any;
+    this._pubSubService = null;
+    this._translaterService = undefined;
   }
 
   /**
@@ -99,6 +101,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
    */
   init(grid: SlickGrid, containerService: ContainerService): void {
     this._grid = grid;
+    this._dataView = grid?.getData<SlickDataView>() || {};
     this._pubSubService = containerService.get<PubSubService>('PubSubService');
 
     // get locales provided by user in main file or else use default English locales via the Constants
@@ -127,6 +130,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
     return new Promise((resolve) => {
       this._pubSubService?.publish(`onBeforeExportToPdf`, true);
+      const exportStartTime = Date.now();
       this._exportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.pdfExportOptions, ...options });
 
       // wrap it into a setTimeout so that the EventAggregator has enough time to start a pre-process like showing a spinner
@@ -437,11 +441,18 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
           // Save the PDF
           doc.save(`${this._exportOptions.filename}.pdf`);
 
-          this._pubSubService?.publish(`onAfterExportToPdf`, { filename: `${this._exportOptions.filename}.pdf` });
+          this._pubSubService?.publish(`onAfterExportToPdf`, {
+            filename: `${this._exportOptions.filename}.pdf`,
+            durationMs: Date.now() - exportStartTime,
+          });
           resolve(true);
         } catch (error) {
           console.error('Error exporting to PDF:', error);
-          this._pubSubService?.publish(`onAfterExportToPdf`, { filename: `${this._exportOptions.filename}.pdf`, error });
+          this._pubSubService?.publish(`onAfterExportToPdf`, {
+            filename: `${this._exportOptions.filename}.pdf`,
+            error,
+            durationMs: Date.now() - exportStartTime,
+          });
           resolve(false);
         }
       }, 0);
@@ -613,11 +624,20 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
           (prevColspan as number)--;
         }
       } else {
-        // get the output by analyzing if we'll pull the value from the cell or from a formatter
-        let itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, colOpt);
+        const columnId = String(columnDef.id);
+
+        // Try cache first when enabled, otherwise keep the existing formatter path.
+        let itemData =
+          this._gridOptions.enableFormattedDataCache && columnDef.id != null
+            ? this._dataView.getFormattedCellValue(row, columnId, undefined)
+            : undefined;
+
+        if (itemData === undefined) {
+          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, colOpt, true);
+        }
 
         // does the user want to sanitize the output data (remove HTML tags)?
-        if (columnDef.sanitizeDataExport || colOpt.sanitizeDataExport) {
+        if ((columnDef.sanitizeDataExport || colOpt.sanitizeDataExport) && typeof itemData === 'string') {
           itemData = stripTags(itemData);
         }
 
@@ -687,7 +707,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
       }
 
       // does the user want to sanitize the output data (remove HTML tags)?
-      if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {
+      if ((columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) && typeof itemData === 'string') {
         itemData = stripTags(itemData);
       }
 

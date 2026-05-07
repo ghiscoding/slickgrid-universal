@@ -141,9 +141,14 @@ describe('ExcelExportService', () => {
       const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
       expect(result).toBeTruthy();
-      expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
-      expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
-      expect(downloadExcelFile).toHaveBeenCalledWith(expect.objectContaining({ tables: [] }), 'export.xlsx', { mimeType: mimeTypeXLSX });
+      expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onBeforeExportToExcel', true);
+      expect(pubSubSpy).toHaveBeenCalledWith(
+        'onAfterExportToExcel',
+        expect.objectContaining({ filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) })
+      );
+      expect(downloadExcelFile).toHaveBeenCalledWith(expect.objectContaining({ tables: [] }), 'export.xlsx', {
+        mimeType: mimeTypeXLSX,
+      });
     });
 
     it('should not have any output since there are no column definitions provided', async () => {
@@ -153,9 +158,11 @@ describe('ExcelExportService', () => {
       const result = await service.exportToExcel({ ...mockExportExcelOptions, format: 'xls', useStreamingExport: false });
 
       expect(result).toBeTruthy();
-      expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
-      expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xls', mimeType: mimeTypeXLS });
-      expect(downloadExcelFile).toHaveBeenCalledWith(expect.objectContaining({ tables: [] }), 'export.xls', { mimeType: mimeTypeXLS });
+      expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onBeforeExportToExcel', true);
+      expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xls', mimeType: mimeTypeXLS, durationMs: expect.any(Number) });
+      expect(downloadExcelFile).toHaveBeenCalledWith(expect.objectContaining({ tables: [] }), 'export.xls', {
+        mimeType: mimeTypeXLS,
+      });
     });
 
     describe('exportToExcel method', () => {
@@ -198,7 +205,10 @@ describe('ExcelExportService', () => {
           const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: true });
           expect(result).toBeTruthy();
           expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onBeforeExportToExcel', true);
-          expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+          expect(pubSubSpy).toHaveBeenCalledWith(
+            'onAfterExportToExcel',
+            expect.objectContaining({ filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) })
+          );
 
           const streamArgs = (createExcelFileStream as any).mock.calls[0];
           const createObjArgs = (createObjectMock as any).mock.calls[0];
@@ -221,7 +231,10 @@ describe('ExcelExportService', () => {
           const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: true });
           expect(result).toBeTruthy();
           expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onBeforeExportToExcel', true);
-          expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+          expect(pubSubSpy).toHaveBeenCalledWith(
+            'onAfterExportToExcel',
+            expect.objectContaining({ filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) })
+          );
           expect(downloadExcelFile).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: mimeTypeXLSX });
           done();
         }));
@@ -244,7 +257,7 @@ describe('ExcelExportService', () => {
         const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(result).toBeTruthy();
-        expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
+        expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onBeforeExportToExcel', true);
       });
 
       it('should trigger an event after exporting the file', async () => {
@@ -264,7 +277,7 @@ describe('ExcelExportService', () => {
         const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(result).toBeTruthy();
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: mimeTypeXLSX });
       });
 
@@ -276,7 +289,7 @@ describe('ExcelExportService', () => {
         const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(result).toBeTruthy();
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: '' });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: '', durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: '' });
       });
 
@@ -288,7 +301,7 @@ describe('ExcelExportService', () => {
         const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(result).toBeTruthy();
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLS });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLS, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: mimeTypeXLS });
       });
     });
@@ -304,7 +317,7 @@ describe('ExcelExportService', () => {
         };
       });
 
-      it(`should have the Order exported correctly with multiple formatters which have 1 of them returning an object with a text property (instead of simple string)`, async () => {
+      it('should have the Order exported correctly with multiple formatters which have 1 of them returning an object with a text property (instead of simple string)', async () => {
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -313,7 +326,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -336,7 +349,7 @@ describe('ExcelExportService', () => {
         );
       });
 
-      it(`should have the LastName in uppercase when "formatter" is defined but also has "exportCustomFormatter" which will be used`, async () => {
+      it('should have the LastName in uppercase when "formatter" is defined but also has "exportCustomFormatter" which will be used', async () => {
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -345,7 +358,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -368,7 +381,7 @@ describe('ExcelExportService', () => {
         );
       });
 
-      it(`should have the LastName as empty string when item LastName is NULL and column definition "formatter" is defined but also has "exportCustomFormatter" which will be used`, async () => {
+      it('should have the LastName as empty string when item LastName is NULL and column definition "formatter" is defined but also has "exportCustomFormatter" which will be used', async () => {
         mockCollection = [{ id: 2, userId: '3C2', firstName: 'Ava Luna', lastName: null, position: 'HUMAN_RESOURCES', order: 3 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -377,7 +390,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -400,7 +413,7 @@ describe('ExcelExportService', () => {
         );
       });
 
-      it(`should have the UserId as empty string even when UserId property is not found in the item object`, async () => {
+      it('should have the UserId as empty string even when UserId property is not found in the item object', async () => {
         mockCollection = [{ id: 2, firstName: 'Ava', lastName: 'Luna', position: 'HUMAN_RESOURCES', order: 3 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -409,7 +422,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -432,7 +445,7 @@ describe('ExcelExportService', () => {
         );
       });
 
-      it(`should have the Order as empty string when using multiple formatters and last one result in a null output because its value is bigger than 10`, async () => {
+      it('should have the Order as empty string when using multiple formatters and last one result in a null output because its value is bigger than 10', async () => {
         mockCollection = [{ id: 2, userId: '3C2', firstName: 'Ava', lastName: 'Luna', position: 'HUMAN_RESOURCES', order: 13 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -441,7 +454,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -464,7 +477,7 @@ describe('ExcelExportService', () => {
         );
       });
 
-      it(`should have the UserId as empty string when its input value is null`, async () => {
+      it('should have the UserId as empty string when its input value is null', async () => {
         mockCollection = [{ id: 3, userId: undefined, firstName: '', lastName: 'Cash', position: 'SALES_REP', order: 3 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -473,7 +486,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -496,7 +509,7 @@ describe('ExcelExportService', () => {
         );
       });
 
-      it(`should have the Order without html tags when the grid option has has both "htmlDecode" and "sanitizeDataExport" is enabled`, async () => {
+      it('should have the Order without html tags when the grid option has has both "htmlDecode" and "sanitizeDataExport" is enabled', async () => {
         mockGridOptions.excelExportOptions = { htmlDecode: true, sanitizeDataExport: true };
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe &amp; McFly', position: 'FINANCE_MANAGER', order: 1 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
@@ -506,7 +519,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -529,7 +542,7 @@ describe('ExcelExportService', () => {
         );
       });
 
-      it(`should have different styling for header titles when the grid option has "columnHeaderStyle" provided with custom styles`, async () => {
+      it('should have different styling for header titles when the grid option has "columnHeaderStyle" provided with custom styles', async () => {
         mockGridOptions.excelExportOptions = { columnHeaderStyle: { font: { bold: true, italic: true } } };
         mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
@@ -539,7 +552,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -562,7 +575,7 @@ describe('ExcelExportService', () => {
         );
       });
 
-      it(`should have a custom Title when "customExcelHeader" is provided`, async () => {
+      it('should have a custom Title when "customExcelHeader" is provided', async () => {
         mockGridOptions.excelExportOptions = {
           sanitizeDataExport: true,
           customExcelHeader: (workbook, sheet) => {
@@ -592,7 +605,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -644,7 +657,7 @@ describe('ExcelExportService', () => {
         vi.clearAllMocks();
       });
 
-      it(`should expect Date to be formatted as ISO Date only "exportWithFormatter" is undefined or set to True but remains untouched when "exportWithFormatter" is explicitely set to False`, async () => {
+      it('should expect Date to be formatted as ISO Date only "exportWithFormatter" is undefined or set to True but remains untouched when "exportWithFormatter" is explicitely set to False', async () => {
         mockCollection = [
           { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', startDate: '2005-12-20T18:19:19.992Z', endDate: null },
           {
@@ -664,7 +677,7 @@ describe('ExcelExportService', () => {
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(service.stylesheet).toBeTruthy();
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -709,7 +722,7 @@ describe('ExcelExportService', () => {
 
       let mockCollection: any[];
 
-      it(`should export correctly with complex object formatters`, async () => {
+      it('should export correctly with complex object formatters', async () => {
         mockCollection = [{ id: 0, user: { firstName: 'John', lastName: 'X' }, position: 'SALES_REP', order: 10 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -718,7 +731,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false, includeHidden: true });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -739,7 +752,7 @@ describe('ExcelExportService', () => {
         );
       });
 
-      it(`should skip lines that have an empty Slick DataView structure like "getItem" that is null and is part of the item object`, async () => {
+      it('should skip lines that have an empty Slick DataView structure like "getItem" that is null and is part of the item object', async () => {
         mockCollection = [
           { id: 0, user: { firstName: 'John', lastName: 'X' }, position: 'SALES_REP', order: 10 },
           { id: 1, getItem: null, getItems: null, __parent: { id: 0, user: { firstName: 'John', lastName: 'X' }, position: 'SALES_REP', order: 10 } },
@@ -751,7 +764,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false, includeHidden: true });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -816,7 +829,7 @@ describe('ExcelExportService', () => {
         vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
-      it(`should have the LastName header title translated when defined as a "nameKey" and "translater" is set in grid option`, async () => {
+      it('should have the LastName header title translated when defined as a "nameKey" and "translater" is set in grid option', async () => {
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -825,7 +838,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -917,7 +930,7 @@ describe('ExcelExportService', () => {
           level: 0,
           selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span class="text-green">(2 items)</span>`,
+          title: 'Order: 20 <span class="text-green">(2 items)</span>',
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
@@ -933,13 +946,13 @@ describe('ExcelExportService', () => {
         vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
       });
 
-      it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
+      it('should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined', async () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -973,7 +986,7 @@ describe('ExcelExportService', () => {
           const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: true });
           expect(result).toBeTruthy();
           expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onBeforeExportToExcel', true);
-          expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+          expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
 
           const streamArgs = (createExcelFileStream as any).mock.calls[0];
           const createObjArgs = (createObjectMock as any).mock.calls[0];
@@ -1065,7 +1078,7 @@ describe('ExcelExportService', () => {
           level: 0,
           selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span class="text-green">(2 items)</span>`,
+          title: 'Order: 20 <span class="text-green">(2 items)</span>',
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
@@ -1081,14 +1094,14 @@ describe('ExcelExportService', () => {
         vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
       });
 
-      it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
+      it('should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined', async () => {
         parserCallbackSpy.mockReturnValue(8888);
         groupTotalParserCallbackSpy.mockReturnValueOnce(9999);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -1198,7 +1211,7 @@ describe('ExcelExportService', () => {
           level: 0,
           selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span class="text-green">(2 items)</span>`,
+          title: 'Order: 20 <span class="text-green">(2 items)</span>',
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
@@ -1214,13 +1227,13 @@ describe('ExcelExportService', () => {
         vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
       });
 
-      it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
+      it('should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined', async () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -1317,7 +1330,7 @@ describe('ExcelExportService', () => {
           level: 0,
           selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span class="text-green">(2 items)</span>`,
+          title: 'Order: 20 <span class="text-green">(2 items)</span>',
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
         mockGroup2 = {
@@ -1328,7 +1341,7 @@ describe('ExcelExportService', () => {
           level: 1,
           selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Last Name: X <span class="text-green">(1 items)</span>`,
+          title: 'Last Name: X <span class="text-green">(1 items)</span>',
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
         mockGroup3 = {
@@ -1339,7 +1352,7 @@ describe('ExcelExportService', () => {
           level: 1,
           selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Last Name: Doe <span class="text-green">(1 items)</span>`,
+          title: 'Last Name: Doe <span class="text-green">(1 items)</span>',
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
         mockGroup4 = {
@@ -1350,7 +1363,7 @@ describe('ExcelExportService', () => {
           level: 1,
           selectChecked: false,
           rows: [],
-          title: `Last Name: null <span class="text-green">(0 items)</span>`,
+          title: 'Last Name: null <span class="text-green">(0 items)</span>',
           totals: { value: '0', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
 
@@ -1380,14 +1393,14 @@ describe('ExcelExportService', () => {
         groupTotalParserCallbackSpy.mockReturnValue({ value: 9999, metadata: { style: 4 } });
       });
 
-      it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
+      it('should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined', async () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(groupTotalParserCallbackSpy).toHaveBeenCalled();
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -1418,7 +1431,7 @@ describe('ExcelExportService', () => {
         );
       });
 
-      it(`should not call group total value parser when column "exportAutoDetectCellFormat" is disabled`, async () => {
+      it('should not call group total value parser when column "exportAutoDetectCellFormat" is disabled', async () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         mockGridOptions.excelExportOptions!.autoDetectCellFormat = false;
 
@@ -1426,7 +1439,7 @@ describe('ExcelExportService', () => {
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(groupTotalParserCallbackSpy).not.toHaveBeenCalled();
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
       });
 
       it(`should have a xlsx export with grouping but without indentation when "addGroupIndentation" is set to False
@@ -1438,7 +1451,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -1548,7 +1561,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -1588,7 +1601,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -1668,7 +1681,7 @@ describe('ExcelExportService', () => {
           vi.clearAllMocks();
         });
 
-        it(`should have the LastName header title translated when defined as a "headerKey" and "translater" is set in grid option`, async () => {
+        it('should have the LastName header title translated when defined as a "headerKey" and "translater" is set in grid option', async () => {
           mockGridOptions.excelExportOptions!.sanitizeDataExport = false;
           mockTranslateCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
           vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockTranslateCollection.length);
@@ -1678,7 +1691,7 @@ describe('ExcelExportService', () => {
           service.init(gridStub, container);
           await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-          expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+          expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
           expect(downloadExcelFile).toHaveBeenCalledWith(
             expect.objectContaining({
               worksheets: [
@@ -1758,7 +1771,7 @@ describe('ExcelExportService', () => {
         expect(excelColumnCA).toBe('CA');
       });
 
-      it(`should export same colspan in the export excel as defined in the grid`, async () => {
+      it('should export same colspan in the export excel as defined in the grid', async () => {
         mockCollection = [
           { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 },
           { id: 1, userId: '1E09', firstName: 'Jane', lastName: 'Doe', position: 'DEVELOPER', order: 15 },
@@ -1780,7 +1793,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -1900,7 +1913,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX, durationMs: expect.any(Number) });
         expect(downloadExcelFile).toHaveBeenCalledWith(
           expect.objectContaining({
             worksheets: [
@@ -2028,7 +2041,7 @@ describe('ExcelExportService', () => {
         const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(result).toBe(false);
-        expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onAfterExportToExcel', { error: expect.any(Error) });
+        expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onAfterExportToExcel', { error: expect.any(Error), durationMs: expect.any(Number) });
       });
 
       it('should fallback to legacy export when streaming fails', async () => {
@@ -2272,6 +2285,152 @@ describe('ExcelExportService', () => {
       (svc as any)._excelExportOptions = { sanitizeDataExport: true, htmlDecode: true };
       const out = (svc as any).readRegularRowData(grid.getColumns(), 0, dv.getItem(0), 0);
       // decoded ampersand becomes '&'
+      expect(out[0]).toBe('&Z');
+    });
+
+    it('readRegularRowData should use DataView formatted cache when enabled and cache has value', () => {
+      const svc = new ExcelExportService();
+      const container = new ContainerServiceStub();
+      const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+      container.registerInstance('PubSubService', fakePubSub);
+      const formatterSpy = vi.fn().mockReturnValue('SHOULD_NOT_BE_USED');
+      const dv: any = {
+        getGrouping: vi.fn().mockReturnValue([]),
+        getLength: vi.fn().mockReturnValue(1),
+        getItem: vi.fn().mockReturnValue({ id: 1, name: 'raw-name' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+        getFormattedCellValue: vi.fn().mockReturnValue('cached-name'),
+      };
+      const grid: any = {
+        getData: vi.fn().mockReturnValue(dv),
+        getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache: true } as any),
+        getColumns: vi.fn().mockReturnValue([{ id: 'name', field: 'name', width: 50, formatter: formatterSpy, exportWithFormatter: true }]),
+      };
+      svc.init(grid, container);
+      const wb = new Workbook();
+      (svc as any)._workbook = wb;
+      (svc as any)._sheet = wb.createWorksheet({ name: 'Sheet1' });
+      (svc as any)._stylesheet = wb.getStyleSheet();
+      (svc as any)._stylesheetFormats = { boldFormat: (svc as any)._stylesheet.createFormat({ font: { bold: true } }) };
+      (svc as any)._excelExportOptions = {};
+
+      const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'raw-name' }, 0);
+
+      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
+      expect(out[0]).toBe('cached-name');
+      expect(formatterSpy).not.toHaveBeenCalled();
+    });
+
+    it('readRegularRowData should fallback to formatter and raw value on cache miss when cache is enabled', () => {
+      const svc = new ExcelExportService();
+      const container = new ContainerServiceStub();
+      const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+      container.registerInstance('PubSubService', fakePubSub);
+      const formatterSpy = vi.fn().mockReturnValue('formatted-name');
+      const dv: any = {
+        getGrouping: vi.fn().mockReturnValue([]),
+        getLength: vi.fn().mockReturnValue(1),
+        getItem: vi.fn().mockReturnValue({ id: 1, name: 'raw-name', code: 'A1' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+        getFormattedCellValue: vi.fn().mockReturnValue(undefined),
+      };
+      const grid: any = {
+        getData: vi.fn().mockReturnValue(dv),
+        getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache: true } as any),
+        getColumns: vi.fn().mockReturnValue([
+          { id: 'name', field: 'name', width: 50, formatter: formatterSpy, exportWithFormatter: true },
+          { id: 'code', field: 'code', width: 50 },
+        ]),
+      };
+      svc.init(grid, container);
+      const wb = new Workbook();
+      (svc as any)._workbook = wb;
+      (svc as any)._sheet = wb.createWorksheet({ name: 'Sheet1' });
+      (svc as any)._stylesheet = wb.getStyleSheet();
+      (svc as any)._stylesheetFormats = { boldFormat: (svc as any)._stylesheet.createFormat({ font: { bold: true } }) };
+      (svc as any)._excelExportOptions = {};
+
+      const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'raw-name', code: 'A1' }, 0);
+
+      expect(dv.getFormattedCellValue).toHaveBeenCalledTimes(2);
+      expect(formatterSpy).toHaveBeenCalled();
+      expect(out[0]).toBe('formatted-name');
+      expect(out[1]).toBe('A1');
+    });
+
+    it('readRegularRowData should produce identical output with cache disabled and cache-enabled cache miss', () => {
+      const columns = [
+        { id: 'name', field: 'name', width: 50, formatter: (_r: number, _c: number, val: any) => `<b>${val}</b>`, exportWithFormatter: true },
+        { id: 'code', field: 'code', width: 50 },
+      ];
+      const rowItem = { id: 1, name: 'Alpha', code: 'B2' };
+
+      const createService = (enableFormattedDataCache: boolean, cachedValue: string | undefined) => {
+        const svc = new ExcelExportService();
+        const container = new ContainerServiceStub();
+        const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+        container.registerInstance('PubSubService', fakePubSub);
+        const dv: any = {
+          getGrouping: vi.fn().mockReturnValue([]),
+          getLength: vi.fn().mockReturnValue(1),
+          getItem: vi.fn().mockReturnValue(rowItem),
+          getItemMetadata: vi.fn().mockReturnValue({}),
+          getFormattedCellValue: vi.fn().mockReturnValue(cachedValue),
+        };
+        const grid: any = {
+          getData: vi.fn().mockReturnValue(dv),
+          getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache } as any),
+          getColumns: vi.fn().mockReturnValue(columns),
+        };
+        svc.init(grid, container);
+        const wb = new Workbook();
+        (svc as any)._workbook = wb;
+        (svc as any)._sheet = wb.createWorksheet({ name: 'Sheet1' });
+        (svc as any)._stylesheet = wb.getStyleSheet();
+        (svc as any)._stylesheetFormats = { boldFormat: (svc as any)._stylesheet.createFormat({ font: { bold: true } }) };
+        (svc as any)._excelExportOptions = { sanitizeDataExport: true, htmlDecode: true };
+        return { svc, grid, dv };
+      };
+
+      const off = createService(false, undefined);
+      const onMiss = createService(true, undefined);
+
+      const outputNoCache = (off.svc as any).readRegularRowData(off.grid.getColumns(), 0, rowItem, 0);
+      const outputCacheMiss = (onMiss.svc as any).readRegularRowData(onMiss.grid.getColumns(), 0, rowItem, 0);
+
+      expect(outputCacheMiss).toEqual(outputNoCache);
+      expect(onMiss.dv.getFormattedCellValue).toHaveBeenCalledTimes(2);
+      expect(off.dv.getFormattedCellValue).not.toHaveBeenCalled();
+    });
+
+    it('readRegularRowData should sanitize and htmlDecode cache-hit values before parsing', () => {
+      const svc = new ExcelExportService();
+      const container = new ContainerServiceStub();
+      const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+      container.registerInstance('PubSubService', fakePubSub);
+      const dv: any = {
+        getGrouping: vi.fn().mockReturnValue([]),
+        getLength: vi.fn().mockReturnValue(1),
+        getItem: vi.fn().mockReturnValue({ id: 1, name: 'ignored' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+        getFormattedCellValue: vi.fn().mockReturnValue('<b>&amp;Z</b>'),
+      };
+      const grid: any = {
+        getData: vi.fn().mockReturnValue(dv),
+        getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache: true } as any),
+        getColumns: vi.fn().mockReturnValue([{ id: 'name', field: 'name', width: 50 }]),
+      };
+      svc.init(grid, container);
+      const wb = new Workbook();
+      (svc as any)._workbook = wb;
+      (svc as any)._sheet = wb.createWorksheet({ name: 'Sheet1' });
+      (svc as any)._stylesheet = wb.getStyleSheet();
+      (svc as any)._stylesheetFormats = { boldFormat: (svc as any)._stylesheet.createFormat({ font: { bold: true } }) };
+      (svc as any)._excelExportOptions = { sanitizeDataExport: true, htmlDecode: true };
+
+      const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'ignored' }, 0);
+
+      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
       expect(out[0]).toBe('&Z');
     });
 

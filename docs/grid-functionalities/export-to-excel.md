@@ -9,6 +9,7 @@
 - [Provide Custom Header Title](#provide-a-custom-header-title)
 - [Export from Button Click](#export-from-a-button-click-event)
 - [Show Loading Process Spinner](#show-loading-process-spinner)
+- [Large Dataset Performance](#large-dataset-performance)
 - [UI Sample](#ui-sample)
 
 ### Description
@@ -249,6 +250,35 @@ export class MyExample() {
 }
 ```
 
+### Large Dataset Performance
+For large datasets and formatter-heavy exports, you can improve responsiveness by enabling the DataView formatted cache.
+
+For a combined sorting + export strategy, see [Large Dataset Performance Guide](../developer-guides/large-dataset-performance.md).
+
+```ts
+gridOptions = {
+  enableFormattedDataCache: true,
+  // max rows processed per batch tick (defaults to 300)
+  formattedDataCacheBatchSize: 300,
+  // frame-time budget per batch in ms (defaults to 8)
+  formattedDataCacheFrameBudgetMs: 8,
+  excelExportOptions: {
+    exportWithFormatter: true,
+  },
+};
+```
+
+Notes:
+- Keep sanitization and html decoding in the export service pipeline.
+- Cache population can run in the background and does not block the UI.
+- onAfterExportToExcel now includes durationMs in the event payload, useful for telemetry/spinners.
+
+```ts
+gridContainerElm.addEventListener('onafterexporttoexcel', (e: CustomEvent<any>) => {
+  console.log('Export done in ms:', e.detail?.durationMs);
+});
+```
+
 ### UI Sample
 The Export to Excel handles all characters quite well, from Latin, to Unicode and even Unicorn emoji, it all works on all browsers (`Chrome`, `Firefox`, even `IE11`, I don't have access to older versions). Here's a demo
 
@@ -445,3 +475,5 @@ this.columns = [
 
 #### use Excel Formulas to calculate Totals by using other dataContext props
 ![image](https://github.com/ghiscoding/slickgrid-universal/assets/643976/871c2d84-33b2-41af-ac55-1f7eadb79cb8)
+
+
