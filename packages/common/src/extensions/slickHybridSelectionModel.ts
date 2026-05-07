@@ -468,14 +468,7 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
     } else {
       const activeRow = this._grid.getActiveCell();
       const isMultiSelect = this.gridOptions.multiSelect !== false;
-      if (
-        activeRow &&
-        e.shiftKey &&
-        !e.ctrlKey &&
-        !e.altKey &&
-        !e.metaKey &&
-        (e.key === 'ArrowUp' || e.key === 'ArrowDown')
-      ) {
+      if (activeRow && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
         let selectedRows = this.getSelectedRows();
         selectedRows.sort((x, y) => x - y);
 
