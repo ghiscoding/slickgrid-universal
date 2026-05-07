@@ -12,11 +12,8 @@ import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities
 import type { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface.js';
 import type {
   Aggregator,
-<<<<<<< feat/cache-formatted-data
-  ColumnCacheEntry,
-=======
   Column,
->>>>>>> master
+  ColumnCacheEntry,
   DataViewHints,
   FormattedDataCacheMetadata,
   FormattedDataCachePlanner,
