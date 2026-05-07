@@ -243,7 +243,14 @@ export function isPrimitiveValue(val: any): boolean {
 }
 
 export function isPrimitiveOrHTML(val: any): boolean {
-  return val instanceof HTMLElement || val instanceof DocumentFragment || isPrimitiveValue(val);
+  return isHtml(val) || isPrimitiveValue(val);
+}
+
+export function isHtml(val: any): boolean {
+  return (
+    (typeof HTMLElement !== 'undefined' && val instanceof HTMLElement) ||
+    (typeof DocumentFragment !== 'undefined' && val instanceof DocumentFragment)
+  );
 }
 
 /**

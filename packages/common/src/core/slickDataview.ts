@@ -3,6 +3,7 @@ import {
   getFunctionDetails,
   getHtmlStringOutput,
   isDefined,
+  isHtml,
   isPrimitiveOrHTML,
   stripTags,
   type AnyFunction,
@@ -42,27 +43,18 @@ import type { SlickGrid } from './slickGrid.js';
 function isLiveDomFormatterResult(
   result: FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string | null | undefined
 ): boolean {
-  if (!result) {
-    return false;
-  }
-
-  if (
-    (typeof HTMLElement !== 'undefined' && result instanceof HTMLElement) ||
-    (typeof DocumentFragment !== 'undefined' && result instanceof DocumentFragment)
-  ) {
-    return true;
-  }
-
-  if (typeof result === 'object') {
-    const htmlResult = (result as FormatterResultWithHtml).html;
-    if (
-      (typeof HTMLElement !== 'undefined' && htmlResult instanceof HTMLElement) ||
-      (typeof DocumentFragment !== 'undefined' && htmlResult instanceof DocumentFragment)
-    ) {
+  if (result) {
+    if (isHtml(result)) {
       return true;
     }
-  }
 
+    if (typeof result === 'object') {
+      const htmlResult = (result as FormatterResultWithHtml).html;
+      if (isHtml(htmlResult)) {
+        return true;
+      }
+    }
+  }
   return false;
 }
 
@@ -209,8 +201,10 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       'onFormattedDataCacheProgress',
       externalPubSub
     );
-    // prettier-ignore
-    this.onFormattedDataCacheCompleted = new SlickEvent<OnFormattedDataCacheCompletedEventArgs>('onFormattedDataCacheCompleted', externalPubSub);
+    this.onFormattedDataCacheCompleted = new SlickEvent<OnFormattedDataCacheCompletedEventArgs>(
+      'onFormattedDataCacheCompleted',
+      externalPubSub
+    );
 
     this._options = extend(true, {}, this.defaults, options);
   }

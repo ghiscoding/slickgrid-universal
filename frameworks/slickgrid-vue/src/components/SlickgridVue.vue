@@ -475,7 +475,9 @@ function initialization() {
     _gridOptions.value as GridOption,
     eventPubSubService
   );
-  (dataview as SlickDataView).setGrid(grid);
+  if (typeof (dataview as SlickDataView).setGrid === 'function') {
+    dataview.setGrid(grid);
+  }
   sharedService.dataView = dataview;
   sharedService.slickGrid = grid;
   sharedService.gridContainerElement = elm.value as HTMLDivElement;

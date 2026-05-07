@@ -1,4 +1,4 @@
-import { createDomElement, extend } from '@slickgrid-universal/utils';
+import { createDomElement, extend, isHtml } from '@slickgrid-universal/utils';
 import {
   applyHtmlToElement,
   SlickEventHandler,
@@ -156,9 +156,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     if (this._options?.toggleOnNodeTitle) {
       groupTitleElm.classList.add('pointer');
     }
-    item.title instanceof HTMLElement || item.title instanceof DocumentFragment
-      ? groupTitleElm.appendChild(item.title)
-      : applyHtmlToElement(groupTitleElm, item.title ?? '', this.gridOptions);
+    isHtml(item.title) ? groupTitleElm.appendChild(item.title) : applyHtmlToElement(groupTitleElm, item.title ?? '', this.gridOptions);
     containerElm.appendChild(groupTitleElm);
 
     return containerElm;

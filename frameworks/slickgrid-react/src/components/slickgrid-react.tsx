@@ -528,7 +528,9 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this._options,
       this._eventPubSubService
     );
-    (this.dataView as SlickDataView<TData>).setGrid(this.grid);
+    if (typeof (this.dataView as SlickDataView).setGrid === 'function') {
+      this.dataView.setGrid(this.grid);
+    }
     this.sharedService.dataView = this.dataView;
     this.sharedService.slickGrid = this.grid;
     this.sharedService.gridContainerElement = this._elm as HTMLDivElement;
