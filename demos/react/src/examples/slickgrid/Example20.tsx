@@ -11,6 +11,7 @@ import {
   type GridOption,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
+import { showToast } from './utilities.js';
 import './example20.scss'; // provide custom CSS/SASS styling
 
 const Example20: React.FC = () => {
@@ -321,7 +322,7 @@ const Example20: React.FC = () => {
   }
 
   function onCellValidationError(_e: Event, args: any) {
-    alert(args.validationResults.msg);
+    showToast(args.validationResults.msg, 'danger');
   }
 
   function setFrozenColumns(frozenCols: number) {

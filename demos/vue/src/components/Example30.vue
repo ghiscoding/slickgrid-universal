@@ -27,6 +27,7 @@ import {
 } from 'slickgrid-vue';
 import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 import COUNTRIES_COLLECTION from './data/countries.json';
+import { showToast } from './utilities.js';
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
@@ -556,7 +557,7 @@ function handleValidationError(e: Event, args: any) {
       console.log(errorMsg);
     }
   } else {
-    alert(args.validationResults.msg);
+    showToast(args.validationResults.msg, 'danger');
   }
   e.preventDefault(); // OR eventData.preventDefault();
   return false;

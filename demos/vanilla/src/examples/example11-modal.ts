@@ -2,6 +2,7 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import { Formatters, type Column, type DOMEvent, type Formatter, type GridOption } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
+import { showToast } from './utilities.js';
 import './example11-modal.scss';
 
 export default class Example11Modal {
@@ -72,7 +73,7 @@ export default class Example11Modal {
     console.log('handleValidationError', event.detail);
     const args = event.detail && event.detail.args;
     if (args.validationResults) {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
     }
     return false;
   }

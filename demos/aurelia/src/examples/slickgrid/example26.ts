@@ -19,6 +19,7 @@ import { CustomTitleFormatter } from './custom-title-formatter.js';
 import { EditorSelect } from './editor-select.js';
 import { FilterSelect } from './filter-select.js';
 import './example26.scss';
+import { showToast } from './utilities.js';
 
 const NB_ITEMS = 100;
 
@@ -312,7 +313,7 @@ export class Example26 {
   }
 
   onCellValidation(_e: Event, args: any) {
-    alert(args.validationResults.msg);
+    showToast(args.validationResults.msg, 'danger');
   }
 
   changeAutoCommit() {

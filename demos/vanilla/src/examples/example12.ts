@@ -24,6 +24,7 @@ import { Slicker, type VanillaForceGridBundle } from '@slickgrid-universal/vanil
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
 import countriesJson from './data/countries.json?raw';
 import { ExampleGridOptions } from './example-grid-options.js';
+import { showToast } from './utilities.js';
 import './example12.scss';
 
 // you can create custom validator to pass to an inline editor
@@ -658,7 +659,7 @@ export default class Example12 {
         console.log(errorMsg);
       }
     } else {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
     }
     return false;
   }

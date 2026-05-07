@@ -26,6 +26,7 @@ import {
   type VanillaCalendarOption,
 } from 'slickgrid-react';
 import COUNTRIES_COLLECTION from './data/countries.json';
+import { showToast } from './utilities.js';
 import './example30.scss'; // provide custom CSS/SASS styling
 
 const NB_ITEMS = 500;
@@ -604,7 +605,7 @@ const Example30: React.FC = () => {
         console.log(errorMsg);
       }
     } else {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
     }
     return false;
   }

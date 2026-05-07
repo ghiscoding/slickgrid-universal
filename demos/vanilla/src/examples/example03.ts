@@ -21,6 +21,7 @@ import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
+import { showToast } from './utilities.js';
 
 const NB_ITEMS = 10_000;
 
@@ -580,7 +581,7 @@ export default class Example03 {
     console.log('handleValidationError', event.detail);
     const args = event?.detail?.args;
     if (args.validationResults) {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
     }
   }
 
