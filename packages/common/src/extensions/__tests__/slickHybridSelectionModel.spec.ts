@@ -482,6 +482,23 @@ describe('Row Selection Model Plugin', () => {
     ]);
   });
 
+  it('should keep single row range on Shift+ArrowDown when multiSelect is false in row mode', () => {
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...mockGridOptions, multiSelect: false });
+    vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 1, row: 2 });
+    vi.spyOn(gridStub, 'getDataLength').mockReturnValue(6);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+
+    plugin.activeSelectionIsRow = true;
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([new SlickRange(2, 0, 2, 2)]);
+
+    const setSelectRangeSpy = vi.spyOn(plugin, 'setSelectedRanges');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), ['shiftKey'], 'ArrowDown');
+    gridStub.onKeyDown.notify({ cell: 1, row: 2, grid: gridStub }, keyDownEvent, gridStub);
+
+    expect(setSelectRangeSpy).toHaveBeenCalledWith([{ fromCell: 0, fromRow: 3, toCell: 2, toRow: 3 }]);
+  });
+
   it('should not call "setSelectedRanges" when triggered by "onClick" and "canCellBeActive" returns false', () => {
     vi.spyOn(gridStub, 'canCellBeActive').mockReturnValue(false);
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 3 });

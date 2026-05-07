@@ -467,8 +467,8 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
       }
     } else {
       const activeRow = this._grid.getActiveCell();
+      const isMultiSelect = this.gridOptions.multiSelect !== false;
       if (
-        this.gridOptions.multiSelect &&
         activeRow &&
         e.shiftKey &&
         !e.ctrlKey &&
@@ -495,6 +495,10 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
 
         if (active >= 0 && active < this._grid.getDataLength()) {
           this._grid.scrollRowIntoView(active);
+          if (!isMultiSelect) {
+            top = active;
+            bottom = active;
+          }
           const tempRanges = this.rowsToRanges(this.getRowsRange(top, bottom));
           this.setSelectedRanges(tempRanges);
         }

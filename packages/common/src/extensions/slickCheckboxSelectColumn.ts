@@ -326,9 +326,14 @@ export class SlickCheckboxSelectColumn<T = any> {
       this._addonOptions.onRowToggleStart(event, { row, previousSelectedRows });
     }
 
-    const newSelectedRows = this._selectedRowsLookup[row]
-      ? this._grid.getSelectedRows().filter((n) => n !== row)
-      : this._grid.getSelectedRows().concat(row);
+    const isMultiSelect = this._grid.getOptions().multiSelect !== false;
+    const newSelectedRows = isMultiSelect
+      ? this._selectedRowsLookup[row]
+        ? this._grid.getSelectedRows().filter((n) => n !== row)
+        : this._grid.getSelectedRows().concat(row)
+      : this._selectedRowsLookup[row]
+        ? []
+        : [row];
     this._grid.setSelectedRows(newSelectedRows, 'click.toggle');
     this._grid.setActiveCell(row, this.getCheckboxColumnCellIndex());
 
