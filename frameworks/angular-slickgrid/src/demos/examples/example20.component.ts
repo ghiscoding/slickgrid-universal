@@ -12,6 +12,7 @@ import {
   type ColumnEditorDualInput,
   type GridOption,
 } from '../../library';
+import { showToast } from './utilities';
 
 @Component({
   templateUrl: './example20.component.html',
@@ -324,7 +325,7 @@ export class Example20Component implements OnInit, OnDestroy {
   }
 
   onValidationError(e: Event, args: any) {
-    alert(args.validationResults.msg);
+    showToast(args.validationResults.msg, 'danger');
   }
 
   setFrozenColumns(frozenCols: number) {

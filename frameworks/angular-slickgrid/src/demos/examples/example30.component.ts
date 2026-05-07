@@ -26,6 +26,7 @@ import {
   type SliderOption,
   type VanillaCalendarOption,
 } from '../../library';
+import { showToast } from './utilities';
 
 const NB_ITEMS = 500;
 const URL_COUNTRIES_COLLECTION = 'assets/data/countries.json';
@@ -613,7 +614,7 @@ export class Example30Component implements OnDestroy, OnInit {
         console.log(errorMsg);
       }
     } else {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
     }
     return false;
   }

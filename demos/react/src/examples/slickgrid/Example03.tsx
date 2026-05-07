@@ -24,6 +24,7 @@ import SAMPLE_COLLECTION_DATA_URL from './data/collection_100_numbers.json?url';
 import COUNTRIES_COLLECTION from './data/countries.json';
 import COUNTRY_NAMES from './data/country_names.json';
 import fetchJsonp from './jsonp.js';
+import { showToast } from './utilities.js';
 
 const NB_ITEMS = 100;
 
@@ -562,7 +563,7 @@ const Example3: React.FC = () => {
 
   function onCellValidationError(_e: Event, args: any) {
     if (args.validationResults) {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
     }
   }
 

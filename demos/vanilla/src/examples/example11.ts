@@ -29,7 +29,7 @@ import countriesJson from './data/countries.json?raw';
 import { ExampleGridOptions } from './example-grid-options.js';
 import exampleModal from './example11-modal.html?raw';
 import Example11Modal from './example11-modal.js';
-import { loadComponent } from './utilities.js';
+import { loadComponent, showToast } from './utilities.js';
 import './example11.scss';
 
 const LOCAL_STORAGE_KEY = 'gridViewPreset';
@@ -519,7 +519,7 @@ export default class Example11 {
     console.log('handleValidationError', event.detail);
     const args = event?.detail?.args;
     if (args.validationResults) {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
     }
     return false;
   }
