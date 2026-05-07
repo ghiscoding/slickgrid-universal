@@ -27,6 +27,7 @@ import {
 import { CustomInputEditor } from './custom-inputEditor';
 import { CustomInputFilter } from './custom-inputFilter';
 import fetchJsonp from './jsonp';
+import { showToast } from './utilities';
 
 const NB_ITEMS = 100;
 const URL_SAMPLE_COLLECTION_DATA = 'assets/data/collection_100_numbers.json';
@@ -622,7 +623,7 @@ export class Example3Component implements OnInit {
 
   onValidationError(e: Event, args: any) {
     if (args.validationResults) {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
     }
   }
 

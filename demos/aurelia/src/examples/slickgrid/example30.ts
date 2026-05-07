@@ -27,6 +27,7 @@ import {
 } from 'aurelia-slickgrid';
 import './example30.scss'; // provide custom CSS/SASS styling
 import COUNTRIES_COLLECTION_URL from './data/countries.json?url';
+import { showToast } from './utilities.js';
 
 const NB_ITEMS = 500;
 
@@ -610,7 +611,7 @@ export class Example30 {
         console.log(errorMsg);
       }
     } else {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
     }
     e.preventDefault(); // OR eventData.preventDefault();
     return false;

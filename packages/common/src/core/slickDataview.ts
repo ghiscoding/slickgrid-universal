@@ -12,7 +12,11 @@ import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities
 import type { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface.js';
 import type {
   Aggregator,
+<<<<<<< feat/cache-formatted-data
   ColumnCacheEntry,
+=======
+  Column,
+>>>>>>> master
   DataViewHints,
   FormattedDataCacheMetadata,
   FormattedDataCachePlanner,
@@ -976,6 +980,32 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return this.groups;
   }
 
+  /**
+   * Get the grouping value for an item, respecting dataItemColumnValueExtractor if available.
+   * This allows grouping to work correctly with custom extractors for nested object properties.
+   */
+  protected getGroupingValue(item: TData, fieldName: string | number): any {
+    // Check if grid is available and has dataItemColumnValueExtractor
+    if (this._grid) {
+      const extractor = this._grid.getOptions?.().dataItemColumnValueExtractor;
+      if (extractor) {
+        const columns = this._grid.getColumns?.();
+        if (columns) {
+          // Find the column matching the grouping field
+          const column = columns.find((col: Column) => col.field === fieldName || col.id === fieldName);
+          if (column) {
+            const extractedValue = extractor(item, column);
+            if (extractedValue !== undefined && extractedValue !== null) {
+              return extractedValue;
+            }
+          }
+        }
+      }
+    }
+    // Fallback to direct field access
+    return item[fieldName as keyof TData];
+  }
+
   protected extractGroups(rows: any[], parentGroup?: SlickGroup): SlickGroup[] {
     let group: SlickGroup;
     let val: any;
@@ -1000,7 +1030,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
     for (let i = 0, l = rows.length; i < l; i++) {
       r = rows[i];
-      val = gi.getterIsAFn ? (gi.getter as GroupGetterFn)(r) : r[gi.getter as keyof TData];
+      val = gi.getterIsAFn ? (gi.getter as GroupGetterFn)(r) : this.getGroupingValue(r, gi.getter as string);
       group = groupsByVal[val];
       if (!group) {
         group = new SlickGroup();

@@ -589,7 +589,7 @@ export default class Example03 {
     console.log('handleValidationError', event.detail);
     const args = event?.detail?.args;
     if (args.validationResults) {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
     }
   }
 

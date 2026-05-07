@@ -12,6 +12,7 @@ import {
   type SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
+import { showToast } from './utilities.js';
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
@@ -304,7 +305,7 @@ function isNullUndefinedOrEmpty(data: any) {
 }
 
 function onCellValidationError(_e: Event, args: any) {
-  alert(args.validationResults.msg);
+  showToast(args.validationResults.msg, 'danger');
 }
 
 function setFrozenColumns(frozenCols: number) {

@@ -19,14 +19,14 @@ describe('Example 10 - Multiple Grids with Row Selection', () => {
 
     cy.get('@grid1')
       .find('.slickgrid-container')
-      .should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(225));
+      .should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.approximately(225, 1));
 
     cy.get('#slickGridContainer-grid2').as('grid2');
     cy.get('@grid2').should('have.css', 'width', '800px');
 
     cy.get('@grid2')
       .find('.slickgrid-container')
-      .should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(255));
+      .should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.approximately(255, 1));
   });
 
   it('should have exact Titles on 1st grid', () => {

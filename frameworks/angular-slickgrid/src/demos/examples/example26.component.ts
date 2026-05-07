@@ -22,6 +22,7 @@ import { CustomButtonFormatterComponent } from './custom-buttonFormatter.compone
 import { CustomTitleFormatterComponent } from './custom-titleFormatter.component';
 import { EditorNgSelectComponent } from './editor-ng-select.component';
 import { FilterNgSelectComponent } from './filter-ng-select.component';
+import { showToast } from './utilities';
 
 const NB_ITEMS = 100;
 
@@ -336,7 +337,7 @@ export class Example26Component implements OnInit {
   }
 
   onCellValidationError(e: Event, args: any) {
-    alert(args.validationResults.msg);
+    showToast(args.validationResults.msg, 'danger');
   }
 
   changeAutoCommit() {

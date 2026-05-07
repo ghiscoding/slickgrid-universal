@@ -16,6 +16,7 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import fetchJsonp from './jsonp.js';
+import { showToast } from './utilities.js';
 import './example04.scss';
 
 // you can create custom validator to pass to an inline editor
@@ -569,7 +570,7 @@ export default class Example04 {
     console.log('handleOnValidationError', event.detail);
     const args = event?.detail?.args;
     if (args.validationResults) {
-      alert(args.validationResults.msg);
+      showToast(args.validationResults.msg, 'danger');
       return false;
     }
   }

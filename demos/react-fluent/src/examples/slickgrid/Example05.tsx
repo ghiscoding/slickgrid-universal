@@ -15,6 +15,7 @@ import './example05.scss'; // provide custom CSS/SASS styling
 
 import { Button } from '@fluentui/react-components';
 import { baseFluentGridOption } from './base-fluent-grid-options.js';
+import { showToast } from './utilities.js';
 
 const Example05: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([]);
@@ -324,7 +325,7 @@ const Example05: React.FC = () => {
   }
 
   function onCellValidationError(_e: Event, args: any) {
-    alert(args.validationResults.msg);
+    showToast(args.validationResults.msg, 'danger');
   }
 
   function setFrozenColumns(frozenCols: number) {

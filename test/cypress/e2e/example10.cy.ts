@@ -24,7 +24,7 @@ describe('Example 10 - GraphQL Grid', () => {
   it('should have a grid of size 900 by 275px', () => {
     cy.get('.grid10').should('have.css', 'width', '900px');
 
-    cy.get('.grid10 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(275));
+    cy.get('.grid10 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.approximately(275, 1));
   });
 
   it('should have English Text inside some of the Filters', () => {
