@@ -87,7 +87,7 @@ gridObjChanged(grid) {
 ```
 
 ## Multiple Row Selections
-As for multiple row selections, you need to disable `enableCellNavigation` and enable `enableCheckboxSelector` and `enableSelection` (or `enableRowSelection` in <=9.x). Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
+As for multiple row selections, you need to enable `enableCheckboxSelector` and `enableSelection` (or `enableRowSelection` in <=9.x), keep `multiSelect` enabled (default is `true`), and typically use `selectionOptions.selectActiveRow: false` when you do not want active-row clicks to interfere with checkbox-based multi-selection. Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
 ### 1. with event (preferred way)
 You can also do it through an event since all SlickGrid events are exposed. For more info see [Docs - OnEvents - `3. event`](../events/grid-dataview-events.md)
@@ -113,6 +113,7 @@ const Example: React.FC = () => {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
+      // keep `multiSelect` enabled (default) for actual multiple row selection
     }
   }
 
@@ -151,6 +152,7 @@ const Example: React.FC = () => {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
+      // keep `multiSelect` enabled (default) for actual multiple row selection
     });
   }
 
@@ -419,6 +421,8 @@ All row selection methods respect the `multiSelect` option:
 2. **Keyboard Selection** (Shift+Arrow): Respects `multiSelect` setting
 3. **Programmatic Selection** (calling `setSelectedRows()`): Not restricted by `multiSelect` but subsequent UI interactions will respect it
 4. **Other Selection Handlers**: All adhere to the `multiSelect` constraint
+
+`selectionOptions.selectActiveRow` only controls whether activating a row also selects it; it does not override `multiSelect` and cannot enable multiple selection when `multiSelect: false`.
 
 ## Troubleshooting
 ### Adding a Column dynamically is removing the Row Selection column, why is that?

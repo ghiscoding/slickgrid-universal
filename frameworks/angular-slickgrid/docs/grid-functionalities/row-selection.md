@@ -55,7 +55,7 @@ onSelectedRowsChanged(e, args) {
 ```
 
 ## Multiple Row Selections
-As for multiple row selections, you need to provide an extra grid option of `rowSelectionOptions` which is an object and within it, you need to disable the `selectActiveRow` flag. The other configurations are the same as a Single Selection, which is to enable `enableCheckboxSelector` and `enableSelection` (or `enableRowSelection` in <=9.x). Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`).
+As for multiple row selections, you need to provide `selectionOptions.selectActiveRow: false` and keep `multiSelect` enabled (default is `true`). The other configurations are the same as a Single Selection, which is to enable `enableCheckboxSelector` and `enableSelection` (or `enableRowSelection` in <=9.x). Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`).
 
 #### View
 ```html
@@ -84,6 +84,7 @@ export class Example1 implements OnInit {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
+      // keep `multiSelect` enabled (default) for actual multiple row selection
     }
   }
 
