@@ -143,49 +143,6 @@ interface RowCaching {
 }
 
 export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O extends BaseGridOption<C> = BaseGridOption<C>> {
-  protected readonly formattedDataCachePlanner: FormattedDataCachePlanner = (column, gridOptions) => {
-    const optionCandidates = [gridOptions.excelExportOptions, gridOptions.textExportOptions, gridOptions.pdfExportOptions];
-    const hasExportCustomFormatter = typeof column.exportCustomFormatter === 'function';
-    const hasColumnExportWithFormatter = !!column.exportWithFormatter;
-
-    // Column-level flags should work even when no global export options object is provided.
-    let shouldCacheExport = hasColumnExportWithFormatter || hasExportCustomFormatter;
-    let useCellFormatterForExport = hasColumnExportWithFormatter;
-    let sanitizeDataExport = !!column.sanitizeDataExport;
-
-    for (let i = 0; i < optionCandidates.length; i++) {
-      const exportOptions = optionCandidates[i];
-      if (!exportOptions) {
-        continue;
-      }
-
-      const hasExportWithFormatter =
-        column.exportWithFormatter !== undefined ? !!column.exportWithFormatter : !!exportOptions.exportWithFormatter;
-
-      if (!hasExportWithFormatter && !hasExportCustomFormatter) {
-        continue;
-      }
-
-      shouldCacheExport = true;
-      useCellFormatterForExport = useCellFormatterForExport || hasExportWithFormatter;
-      sanitizeDataExport = sanitizeDataExport || !!column.sanitizeDataExport || !!exportOptions.sanitizeDataExport;
-    }
-
-    if (!shouldCacheExport) {
-      return undefined;
-    }
-
-    return {
-      shouldCacheExport,
-      useCellFormatterForExport,
-      sanitizeDataExport,
-      exportOptions: {
-        exportWithFormatter: useCellFormatterForExport,
-        sanitizeDataExport,
-      },
-    };
-  };
-
   // -- Public API
 
   // Events
@@ -3854,6 +3811,49 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   hasDataView(): boolean {
     return !Array.isArray(this.data);
   }
+
+  protected readonly formattedDataCachePlanner: FormattedDataCachePlanner = (column, gridOptions) => {
+    const optionCandidates = [gridOptions.excelExportOptions, gridOptions.textExportOptions, gridOptions.pdfExportOptions];
+    const hasExportCustomFormatter = typeof column.exportCustomFormatter === 'function';
+    const hasColumnExportWithFormatter = !!column.exportWithFormatter;
+
+    // Column-level flags should work even when no global export options object is provided.
+    let shouldCacheExport = hasColumnExportWithFormatter || hasExportCustomFormatter;
+    let useCellFormatterForExport = hasColumnExportWithFormatter;
+    let sanitizeDataExport = !!column.sanitizeDataExport;
+
+    for (let i = 0; i < optionCandidates.length; i++) {
+      const exportOptions = optionCandidates[i];
+      if (!exportOptions) {
+        continue;
+      }
+
+      const hasExportWithFormatter =
+        column.exportWithFormatter !== undefined ? !!column.exportWithFormatter : !!exportOptions.exportWithFormatter;
+
+      if (!hasExportWithFormatter && !hasExportCustomFormatter) {
+        continue;
+      }
+
+      shouldCacheExport = true;
+      useCellFormatterForExport = useCellFormatterForExport || hasExportWithFormatter;
+      sanitizeDataExport = sanitizeDataExport || !!column.sanitizeDataExport || !!exportOptions.sanitizeDataExport;
+    }
+
+    if (!shouldCacheExport) {
+      return undefined;
+    }
+
+    return {
+      shouldCacheExport,
+      useCellFormatterForExport,
+      sanitizeDataExport,
+      exportOptions: {
+        exportWithFormatter: useCellFormatterForExport,
+        sanitizeDataExport,
+      },
+    };
+  };
 
   protected shouldRefreshFormattedCachePlanner(newOptions: Partial<O>): boolean {
     return (
