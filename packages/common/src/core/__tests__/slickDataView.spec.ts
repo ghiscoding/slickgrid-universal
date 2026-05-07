@@ -216,6 +216,29 @@ describe('SlickDatView core file', () => {
         expect(dv.getItems()).toEqual([{ id: 0, name: 'John', age: 20 }]);
         expect(refreshSpy).toHaveBeenCalled();
       });
+
+      test('delete multiple items with multi-digit indices in correct numeric order', () => {
+        const refreshSpy = vi.spyOn(dv, 'refresh');
+        const items = [
+          { id: 0, name: 'Item0' },
+          { id: 1, name: 'Item1' },
+          { id: 2, name: 'Item2' },
+          { id: 3, name: 'Item3' },
+          { id: 10, name: 'Item10' },
+          { id: 20, name: 'Item20' },
+        ];
+
+        dv.setItems(items);
+        dv.deleteItems([20, 2, 10]); // Non-sequential, multi-digit indices
+
+        // Should delete items at indices 2, 10, 20 (Item2, Item10, Item20)
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'Item0' },
+          { id: 1, name: 'Item1' },
+          { id: 3, name: 'Item3' },
+        ]);
+        expect(refreshSpy).toHaveBeenCalled();
+      });
     });
 
     describe('deleteItems()', () => {
