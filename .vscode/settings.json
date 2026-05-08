@@ -2,7 +2,6 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "eslint.validate": ["javascript", "typescript"],
-  "js/ts.experimental.useTsgo": true,
   "js/ts.format.semicolons": "insert",
   "vitest.rootConfig": "./test/vitest.config.mts",
   "prettier.prettierPath": "node_modules/prettier/index.cjs",
