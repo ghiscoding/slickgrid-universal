@@ -449,6 +449,37 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(setActiveCellSpy).toHaveBeenCalledWith(2, 0);
   });
 
+  it('should call "toggleRowSelection" and keep only one selected row when grid multiSelect is false', () => {
+    vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', lastName: 'Doe', age: 30 });
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({ multiSelect: false });
+    vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([1, 2]);
+    const setActiveCellSpy = vi.spyOn(gridStub, 'setActiveCell');
+    const setSelectedRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
+
+    plugin.init(gridStub);
+    plugin.toggleRowSelection(2);
+
+    expect(setSelectedRowSpy).toHaveBeenCalledWith([2], 'click.toggle');
+    expect(setActiveCellSpy).toHaveBeenCalledWith(2, 0);
+  });
+
+  it('should call "toggleRowSelection" and unselect row when grid multiSelect is false and row is already selected', () => {
+    vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', lastName: 'Doe', age: 30 });
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({ multiSelect: false });
+    vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([2]);
+    const setActiveCellSpy = vi.spyOn(gridStub, 'setActiveCell');
+    const setSelectedRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
+
+    plugin.init(gridStub);
+    plugin.selectedRowsLookup = { 2: true };
+    plugin.toggleRowSelection(2);
+
+    expect(setSelectedRowSpy).toHaveBeenCalledWith([], 'click.toggle');
+    expect(setActiveCellSpy).toHaveBeenCalledWith(2, 0);
+  });
+
   it('should fill the "selectableOverride" and expect', () => {
     vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', lastName: 'Doe', age: 30 });
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);

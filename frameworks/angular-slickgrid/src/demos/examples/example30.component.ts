@@ -504,7 +504,6 @@ export class Example30Component implements OnDestroy, OnInit {
       preHeaderPanelHeight: 28,
       enableCheckboxSelector: true,
       enableSelection: true,
-      multiSelect: false,
       checkboxSelector: {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,

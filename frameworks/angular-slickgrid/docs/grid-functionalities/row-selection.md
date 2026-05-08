@@ -6,6 +6,7 @@
 - [Disable Custom Rows Selections via `selectableOverride`](#disable-custom-rows-selections-via-selectableoverride)
 - [Disable External Button when having Empty Selection](#disable-external-button-when-having-empty-selection)
 - [Change Row Selections](#change-row-selections)
+- [Understanding the multiSelect Option](#understanding-the-multiselect-option)
 - Troubleshooting
   - [Adding a Column dynamically is removing the Row Selection column, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-column-why-is-that)
 - [Hybrid Selection Model (cell+row selection)](#hybrid-selection-model-and-drag-fill)
@@ -54,7 +55,7 @@ onSelectedRowsChanged(e, args) {
 ```
 
 ## Multiple Row Selections
-As for multiple row selections, you need to provide an extra grid option of `rowSelectionOptions` which is an object and within it, you need to disable the `selectActiveRow` flag. The other configurations are the same as a Single Selection, which is to enable `enableCheckboxSelector` and `enableSelection` (or `enableRowSelection` in <=9.x). Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`).
+As for multiple row selections, you need to provide `selectionOptions.selectActiveRow: false` and keep `multiSelect` enabled (default is `true`). The other configurations are the same as a Single Selection, which is to enable `enableCheckboxSelector` and `enableSelection` (or `enableRowSelection` in <=9.x). Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`).
 
 #### View
 ```html
@@ -83,6 +84,7 @@ export class Example1 implements OnInit {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
+      // keep `multiSelect` enabled (default) for actual multiple row selection
     }
   }
 
@@ -294,6 +296,28 @@ copyDraggedCellRange(args: OnDragReplaceCellsEventArgs) {
   }
 }
 ```
+
+## Understanding the `multiSelect` Option
+The `multiSelect` grid option is a critical setting that controls how row selection works across all selection methods (checkboxes, keyboard navigation, and click handlers). Understanding this option is key to implementing the correct selection behavior for your use case.
+
+### `multiSelect: false` (Single Selection Mode)
+When `multiSelect: false`, the grid enforces **strict single selection**:
+- **Checkbox Selection**: Clicking a checkbox selects only that row. Clicking a checkbox that's already selected will **deselect** it (toggle behavior). Only one row can be selected at a time.
+- **Keyboard Selection**: Using Shift+Arrow keys to extend a range will select only the current row (range is clamped to a single row). Regular arrow navigation moves between rows but doesn't change selection.
+- **Overall Behavior**: At most one row is selected at any time. If you programmatically select a row while another is selected, only the new row remains selected.
+
+### `multiSelect: true` (Multiple Selection Mode)
+When `multiSelect: true`, the grid allows **multiple rows to be selected**:
+- **Checkbox Selection**: Clicking a checkbox adds or removes that row from the selection set. Multiple rows can be checked independently.
+- **Keyboard Selection**: Using Shift+Arrow keys extends the selection range to include multiple rows. Ctrl/Cmd+Click or Shift+Click can be used to build complex selections.
+- **Overall Behavior**: Multiple rows can be selected and retained in the selection set.
+
+### Selection Methods & `multiSelect`
+All row selection methods respect the `multiSelect` option:
+1. **Checkbox Selection** (when `enableCheckboxSelector: true`): Respects `multiSelect` setting
+2. **Keyboard Selection** (Shift+Arrow): Respects `multiSelect` setting
+3. **Programmatic Selection** (calling `setSelectedRows()`): Not restricted by `multiSelect` but subsequent UI interactions will respect it
+4. **Other Selection Handlers**: All adhere to the `multiSelect` constraint
 
 ## Troubleshooting
 ### Adding a Column dynamically is removing the Row Selection column, why is that?

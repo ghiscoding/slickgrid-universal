@@ -113,6 +113,8 @@ Mass Update allows you to apply changes (from the modal form) to the entire data
 
 Note however that there is a subtle difference compare to the Create Item action, you need to specifically tag which column will show up in the Mass Update and you need to do that by adding `massUpdate: true` flag inside the `editor` property of each column definition that you wish to be included in the form.
 
+Important: `selectionOptions.selectActiveRow: false` is commonly used for checkbox-based multi-row workflows, but you must also keep `multiSelect` enabled (default `true`), otherwise `mass-selection` and `auto-mass` will not work as expected because only one row can stay selected at a time.
+
 `auto-mass` option: If you decide to use Mass Update and Mass Selection and wish to only expose 1 button to do the action and let the system decide if it's doing a Mass Update or a Mass Selection change, you can use the modal type `auto-mass` (if it detect that some rows are selected it will use Mass Selection or else Mass Update). From our experience, user prefer to expose the 2 separate action buttons (less confusion), but this for you to decide, you have the option.
 
 ##### with TypeScript
@@ -176,6 +178,8 @@ const Example: React.FC = () => {
 
 ## Mass Selection
 Similar to the Mass Update but apply changes only on the selected rows. The setup is nearly identical to the Mass Update, just make sure to display appropriate modal title. Also note that you also need to add `massUpdate: true` flag inside the `editor` property of each column definition that you wish to be included in the Mass Selection changes form.
+
+**Important**: Mass Selection requires real multi-row selection, so even if you use `selectionOptions.selectActiveRow: false`, you must keep `multiSelect` enabled (default `true`); with `multiSelect: false`, only one row can remain selected and the modal will not behave as expected.
 
 Refer to the [Mass Update](#mass-update) section for code sample.
 

@@ -497,7 +497,6 @@ export class Example30 {
       preHeaderPanelHeight: 28,
       enableCheckboxSelector: true,
       enableSelection: true,
-      multiSelect: false,
       checkboxSelector: {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,

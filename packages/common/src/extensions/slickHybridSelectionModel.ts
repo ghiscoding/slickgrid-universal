@@ -467,15 +467,8 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
       }
     } else {
       const activeRow = this._grid.getActiveCell();
-      if (
-        this.gridOptions.multiSelect &&
-        activeRow &&
-        e.shiftKey &&
-        !e.ctrlKey &&
-        !e.altKey &&
-        !e.metaKey &&
-        (e.key === 'ArrowUp' || e.key === 'ArrowDown')
-      ) {
+      const isMultiSelect = this.gridOptions.multiSelect !== false;
+      if (activeRow && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
         let selectedRows = this.getSelectedRows();
         selectedRows.sort((x, y) => x - y);
 
@@ -495,6 +488,10 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
 
         if (active >= 0 && active < this._grid.getDataLength()) {
           this._grid.scrollRowIntoView(active);
+          if (!isMultiSelect) {
+            top = active;
+            bottom = active;
+          }
           const tempRanges = this.rowsToRanges(this.getRowsRange(top, bottom));
           this.setSelectedRanges(tempRanges);
         }
