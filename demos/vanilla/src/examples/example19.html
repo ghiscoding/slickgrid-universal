@@ -30,6 +30,18 @@
   </p>
 </h5>
 <h6 class="title is-6">
+  <button class="button is-small" onclick.trigger="undoLastEdit()" data-test="undo-last-edit-btn">
+    <span class="mdi mdi-undo"></span>
+    <span>Undo Last Edit</span>
+  </button>
+  <button class="button is-small" onclick.trigger="undoLastEdit(true)" data-test="undo-open-editor-btn">
+    <span class="mdi mdi-undo"></span>
+    <span>Undo Last Edit &amp; Open Editor</span>
+  </button>
+  <button class="button is-small" onclick.trigger="undoAllEdits()" data-test="undo-all-edits-btn">
+    <span class="mdi mdi-history"></span>
+    <span>Undo All Edits</span>
+  </button>
   <button class="button is-small is-primary" onclick.trigger="togglePagination()" data-text="toggle-pagination-btn">
     <span class="mdi mdi-swap-vertical"></span>
     <span>Toggle Pagination</span>

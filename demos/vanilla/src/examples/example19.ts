@@ -1,4 +1,12 @@
-import { Editors, Formatters, SlickEventHandler, type Column, type GridOption } from '@slickgrid-universal/common';
+import {
+  Editors,
+  Formatters,
+  SlickEventHandler,
+  SlickGlobalEditorLock,
+  type Column,
+  type EditCommand,
+  type GridOption,
+} from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example19.scss';
@@ -10,6 +18,9 @@ export default class Example19 {
 
   columns: Column[] = [];
   dataset: any[] = [];
+  editQueue: Array<{ item: any; column: Column; editCommand: EditCommand }> = [];
+  clipboardCommandStack: EditCommand[] = [];
+  editedItems = {};
   gridOptions!: GridOption;
   gridContainerElm: HTMLDivElement;
   isWithPagination = true;
@@ -145,9 +156,24 @@ export default class Example19 {
           // deny the whole first row and the cells C-E of the second row
           return !(args.row === 0 || (args.row === 1 && args.cell > 2 && args.cell < 6));
         },
+        clipboardCommandHandler: (clipboardCommand) => {
+          this.clipboardCommandStack.push(clipboardCommand);
+          clipboardCommand.execute();
+        },
         copyActiveEditorCell: true,
         removeDoubleQuotesOnPaste: true,
         replaceNewlinesWith: ' ',
+      },
+      editCommandHandler: (item, column, editCommand) => {
+        if (editCommand.prevSerializedValue !== editCommand.serializedValue) {
+          this.editQueue.push({ item, column, editCommand });
+          this.editedItems[editCommand.row] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
+          this.sgb.slickGrid?.invalidate();
+          editCommand.execute();
+
+          const hash = { [editCommand.row]: { [column.id]: 'unsaved-editable-field' } };
+          this.sgb.slickGrid?.setCellCssStyles(`unsaved_highlight_${[column.id]}${editCommand.row}`, hash);
+        }
       },
     };
   }
@@ -181,5 +207,58 @@ export default class Example19 {
     this.isGridEditable = !this.isGridEditable;
     this.sgb.gridOptions = { editable: this.isGridEditable };
     this.gridOptions = this.sgb.gridOptions;
+  }
+
+  undoLastEdit(showLastEditor = false) {
+    // First check if there's a clipboard command to undo
+    if (this.clipboardCommandStack.length > 0) {
+      const clipboardCommand = this.clipboardCommandStack.pop();
+      if (clipboardCommand) {
+        clipboardCommand.undo();
+        this.sgb.slickGrid?.invalidate();
+        return;
+      }
+    }
+    // Otherwise undo the last cell edit
+    const lastEdit = this.editQueue.pop();
+    const lastEditCommand = lastEdit?.editCommand;
+    if (lastEdit && lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
+      lastEditCommand.undo();
+
+      // remove unsaved css class from that cell
+      this.removeUnsavedStylingFromCell(lastEdit.item, lastEdit.column, lastEditCommand.row);
+      this.sgb.slickGrid?.invalidate();
+
+      // optionally open the last cell editor associated
+      if (showLastEditor) {
+        this.sgb?.slickGrid?.gotoCell(lastEditCommand.row, lastEditCommand.cell, false);
+      }
+    }
+  }
+
+  undoAllEdits() {
+    for (const lastEdit of this.editQueue) {
+      const lastEditCommand = lastEdit?.editCommand;
+      if (lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
+        lastEditCommand.undo();
+
+        // remove unsaved css class from that cell
+        this.removeUnsavedStylingFromCell(lastEdit.item, lastEdit.column, lastEditCommand.row);
+      }
+    }
+    // Undo clipboard commands in reverse order
+    while (this.clipboardCommandStack.length > 0) {
+      const clipboardCommand = this.clipboardCommandStack.pop();
+      if (clipboardCommand) {
+        clipboardCommand.undo();
+      }
+    }
+    this.sgb.slickGrid?.invalidate(); // re-render the grid only after every cells got rolled back
+    this.editQueue = [];
+  }
+
+  removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
+    // remove unsaved css class from that cell
+    this.sgb.slickGrid?.removeCellCssStyles(`unsaved_highlight_${[column.field]}${row}`);
   }
 }
