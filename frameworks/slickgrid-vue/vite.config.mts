@@ -9,7 +9,7 @@ export default defineConfig({
     vue(),
     dts({
       insertTypesEntry: true,
-      rollupTypes: process.env.NODE_ENV !== 'development',
+      bundleTypes: process.env.NODE_ENV !== 'development',
       tsconfigPath: './tsconfig.app.json',
     }),
   ],
