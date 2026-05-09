@@ -1,5 +1,5 @@
-import type { SlickDataView } from '../core/slickDataview';
-import type { SlickGrid } from '../core/slickGrid';
+import type { SlickDataView } from '../core/slickDataview.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 
 export function defaultOnBeforeMoveRows(
   e: MouseEvent | TouchEvent,
