@@ -26,15 +26,15 @@ catalog:
   '@types/sortablejs': ^1.15.9
   '@vitejs/plugin-react': ^6.0.1
   '@vitejs/plugin-vue': ^6.0.6
-  '@vitest/coverage-v8': ^5.0.0-beta.1
-  '@vitest/ui': ^5.0.0-beta.1
+  '@vitest/coverage-v8': ^5.0.0-beta.2
+  '@vitest/ui': ^5.0.0-beta.2
   bootstrap: ^5.3.8
   cross-env: ^10.1.0
   cypress: ^15.14.2
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
   dompurify: ^3.4.2
-  globals: ^17.5.0
+  globals: ^17.6.0
   i18next: ^25.10.10
   i18next-vue: ^5.4.0
   jsdom: ^29.1.1
@@ -44,18 +44,18 @@ catalog:
   native-copyfiles: ^2.0.1
   npm-run-all2: ^8.0.4
   oxlint: 1.43.0
-  react: ^19.2.5
-  react-dom: ^19.2.5
-  react-router: ^7.14.2
+  react: ^19.2.6
+  react-dom: ^19.2.6
+  react-router: ^7.15.0
   remove-glob: ^1.2.0
   rxjs: ^7.8.2
   sass: ^1.99.0
   sortablejs: ^1.15.7
   tslib: ^2.8.1
   typescript: ^6.0.3
-  vite: ^8.0.10
-  vitest: ^5.0.0-beta.1
-  vue: ^3.5.33
+  vite: ^8.0.11
+  vitest: ^5.0.0-beta.2
+  vue: ^3.5.34
 
 overrides:
   '@hono/node-server': ^1.19.14
