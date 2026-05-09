@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vue-row-detail-plugin",
-  "version": "10.6.0",
+  "version": "10.7.0",
   "description": "Vue Row Detail Plugin for SlickGrid-Vue",
   "type": "module",
   "main": "./dist/index.js",

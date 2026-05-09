@@ -1,6 +1,6 @@
 {
   "name": "slickgrid-vue",
-  "version": "10.6.0",
+  "version": "10.7.0",
   "description": "Slickgrid-Vue",
   "license": "MIT",
   "author": "Ghislain B.",
@@ -68,8 +68,8 @@
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.58.7",
-    "@vue/language-core": "^3.2.8",
     "@vitejs/plugin-vue": "catalog:",
+    "@vue/language-core": "^3.2.8",
     "cross-env": "catalog:",
     "i18next": "catalog:",
     "i18next-vue": "catalog:",

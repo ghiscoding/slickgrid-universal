@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/sql",
-  "version": "10.6.0",
+  "version": "10.7.0",
   "description": "SlickGrid Universal SQL Backend Service (implements BackendService for SQL)",
   "type": "module",
   "main": "./dist/index.js",

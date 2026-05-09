@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.6.0...v10.7.0) (2026-05-09)
+
+### Features
+
+* **core:** add optional formatted data cache for large dataset exports and rendering ([#2563](https://github.com/ghiscoding/slickgrid-universal/issues/2563)) ([15e3ca0](https://github.com/ghiscoding/slickgrid-universal/commit/15e3ca0bf782d2c37f7eb8e08af93722cffbd530)) - by @ghiscoding
+
 ## [10.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.2...v10.6.0) (2026-05-02)
 
 ### Features

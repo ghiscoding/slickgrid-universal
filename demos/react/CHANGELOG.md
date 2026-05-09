@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.6.0...v10.7.0) (2026-05-09)
+
+### Features
+
+* provide default callbacks for Row Move plugin when null ([#2577](https://github.com/ghiscoding/slickgrid-universal/issues/2577)) ([6e866a2](https://github.com/ghiscoding/slickgrid-universal/commit/6e866a263cf2db8d368b7c0ee9b59f23939393ed)) - by @ghiscoding
+
+### Bug Fixes
+
+* **regression:** Grid Presets should preserve column widths, fix [#2562](https://github.com/ghiscoding/slickgrid-universal/issues/2562) ([#2564](https://github.com/ghiscoding/slickgrid-universal/issues/2564)) ([90aab93](https://github.com/ghiscoding/slickgrid-universal/commit/90aab938af4cac4e54e2aa93844281a7aa4202ff)) - by @ghiscoding
+* respect `multiSelect` in checkbox and row keyboard selection ([#2573](https://github.com/ghiscoding/slickgrid-universal/issues/2573)) ([c684ea6](https://github.com/ghiscoding/slickgrid-universal/commit/c684ea6f59c2b1975057057338b92e09b0a76518)) - by @ghiscoding
+
 ## [10.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.2...v10.6.0) (2026-05-02)
 
 ### Features

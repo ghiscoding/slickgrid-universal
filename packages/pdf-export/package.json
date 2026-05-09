@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/pdf-export",
-  "version": "10.6.0",
+  "version": "10.7.0",
   "description": "PDF Export Service for SlickGrid Universal.",
   "type": "module",
   "main": "./dist/index.js",

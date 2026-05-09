@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.6.0...v10.7.0) (2026-05-09)
+
+### Features
+
+* provide default callbacks for Row Move plugin when null ([#2577](https://github.com/ghiscoding/slickgrid-universal/issues/2577)) ([6e866a2](https://github.com/ghiscoding/slickgrid-universal/commit/6e866a263cf2db8d368b7c0ee9b59f23939393ed)) - by @ghiscoding
+
 ## [10.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.2...v10.6.0) (2026-05-02)
 
 ### Bug Fixes

@@ -4,6 +4,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.6.0...v10.7.0) (2026-05-09)
+
+### Features
+
+* **core:** add optional formatted data cache for large dataset exports and rendering ([#2563](https://github.com/ghiscoding/slickgrid-universal/issues/2563)) ([15e3ca0](https://github.com/ghiscoding/slickgrid-universal/commit/15e3ca0bf782d2c37f7eb8e08af93722cffbd530)) - by @ghiscoding
+* provide default callbacks for Row Move plugin when null ([#2577](https://github.com/ghiscoding/slickgrid-universal/issues/2577)) ([6e866a2](https://github.com/ghiscoding/slickgrid-universal/commit/6e866a263cf2db8d368b7c0ee9b59f23939393ed)) - by @ghiscoding
+
+### Bug Fixes
+
+* enable momentum scrolling on iOS to prevent scroll interruption at horizontal boundaries ([#2566](https://github.com/ghiscoding/slickgrid-universal/issues/2566)) ([70fddd8](https://github.com/ghiscoding/slickgrid-universal/commit/70fddd8b5410a8db9679d84b2ec3993e969e06b4)) - by @ghiscoding
+* **regression:** Grid Presets should preserve column widths, fix [#2562](https://github.com/ghiscoding/slickgrid-universal/issues/2562) ([#2564](https://github.com/ghiscoding/slickgrid-universal/issues/2564)) ([90aab93](https://github.com/ghiscoding/slickgrid-universal/commit/90aab938af4cac4e54e2aa93844281a7aa4202ff)) - by @ghiscoding
+* respect `multiSelect` in checkbox and row keyboard selection ([#2573](https://github.com/ghiscoding/slickgrid-universal/issues/2573)) ([c684ea6](https://github.com/ghiscoding/slickgrid-universal/commit/c684ea6f59c2b1975057057338b92e09b0a76518)) - by @ghiscoding
+* restore individual cell values on undo for multi-cell paste ([#2570](https://github.com/ghiscoding/slickgrid-universal/issues/2570)) ([b3765cc](https://github.com/ghiscoding/slickgrid-universal/commit/b3765cc29fbc43a8b6f0f97363411447a86ed0c9)) - by @ghiscoding
+* **styling:** Fluent Theme had sort arrows inversed ([#2569](https://github.com/ghiscoding/slickgrid-universal/issues/2569)) ([1518e49](https://github.com/ghiscoding/slickgrid-universal/commit/1518e497b67efbbe53b42c126b19e3b3fe2f3154)) - by @ghiscoding
+* use dataItemColumnValueExtractor for grouping with nested objects ([#2571](https://github.com/ghiscoding/slickgrid-universal/issues/2571)) ([30774a1](https://github.com/ghiscoding/slickgrid-universal/commit/30774a12930f7c40da8ce345f73b119da84ca6f8)) - by @ghiscoding
+* use numeric sort in deleteItems to prevent data loss ([#2574](https://github.com/ghiscoding/slickgrid-universal/issues/2574)) ([f96f598](https://github.com/ghiscoding/slickgrid-universal/commit/f96f5984bd66b17af0249acb32f27e5519054989)) - by @ghiscoding
+
+### Reverts
+
+* Revert "chore(deps): update dependency vite-plugin-dts to v5 (#2567)" (#2568) ([cd71cd7](https://github.com/ghiscoding/slickgrid-universal/commit/cd71cd7bed57a19ee2b106b0c90bc58f450c8147)), closes [#2567](https://github.com/ghiscoding/slickgrid-universal/issues/2567) [#2568](https://github.com/ghiscoding/slickgrid-universal/issues/2568) - by @ghiscoding
+
 ## [10.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.2...v10.6.0) (2026-05-02)
 
 ### Features
