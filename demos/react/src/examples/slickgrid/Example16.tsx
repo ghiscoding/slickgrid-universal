@@ -97,9 +97,14 @@ const Example16: React.FC = () => {
         disableRowSelection: true,
         cancelEditOnDrag: true,
         width: 30,
-        onBeforeMoveRows,
-        onMoveRows,
-
+        // you can provide your own `onBeforeMoveRows` and/or `onMoveRows` implementation
+        // or use the default implementation, however the default won't work with Tree Data
+        // onBeforeMoveRows: () => {},
+        // onMoveRows: () => {},
+        onAfterMoveRows: (_e, args) => {
+          // update dataset for the ms-select list to be updated
+          setDataset(args.updatedItems);
+        },
         // you can change the move icon position of any extension (RowMove, RowDetail or RowSelector icon)
         // note that you might have to play with the position when using multiple extension
         // since it really depends on which extension get created first to know what their real position are
@@ -139,75 +144,6 @@ const Example16: React.FC = () => {
       };
     }
     return mockDataset;
-  }
-
-  function onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number }) {
-    for (const rowIdx of data.rows) {
-      // no point in moving before or after itself
-      if (
-        rowIdx === data.insertBefore ||
-        (rowIdx === data.insertBefore - 1 && data.insertBefore - 1 !== reactGridRef.current?.dataView.getItemCount())
-      ) {
-        e.stopPropagation();
-        return false;
-      }
-    }
-    return true;
-  }
-
-  function onMoveRows(_e: MouseEvent | TouchEvent, args: any) {
-    // rows and insertBefore references,
-    // note that these references are assuming that the dataset isn't filtered at all
-    // which is not always the case so we will recalcualte them and we won't use these reference afterward
-    const rows = args.rows as number[];
-    const insertBefore = args.insertBefore;
-    const extractedRows: number[] = [];
-
-    // when moving rows, we need to cancel any sorting that might happen
-    // we can do this by providing an undefined sort comparer
-    // which basically destroys the current sort comparer without resorting the dataset, it basically keeps the previous sorting
-    reactGridRef.current?.dataView.sort(undefined as any, true);
-
-    // the dataset might be filtered/sorted,
-    // so we need to get the same dataset as the one that the SlickGrid DataView uses
-    const tmpDataset = reactGridRef.current?.dataView.getItems() || [];
-    const filteredItems = reactGridRef.current?.dataView.getFilteredItems() || [];
-
-    const itemOnRight = reactGridRef.current?.dataView.getItem(insertBefore);
-    const insertBeforeFilteredIdx = itemOnRight
-      ? reactGridRef.current?.dataView.getIdxById(itemOnRight.id)
-      : reactGridRef.current?.dataView.getItemCount();
-
-    const filteredRowItems: any[] = [];
-    rows.forEach((row) => filteredRowItems.push(filteredItems[row]));
-    const filteredRows = filteredRowItems.map((item) => reactGridRef.current?.dataView.getIdxById(item.id));
-
-    const left = tmpDataset.slice(0, insertBeforeFilteredIdx);
-    const right = tmpDataset.slice(insertBeforeFilteredIdx, tmpDataset.length);
-
-    // convert into a final new dataset that has the new order
-    // we need to resort with
-    rows.sort((a: number, b: number) => a - b);
-    for (const filteredRow of filteredRows) {
-      if (filteredRow) {
-        extractedRows.push(tmpDataset[filteredRow]);
-      }
-    }
-    filteredRows.reverse();
-    for (const row of filteredRows) {
-      if (row !== undefined && insertBeforeFilteredIdx !== undefined) {
-        if (row < insertBeforeFilteredIdx) {
-          left.splice(row, 1);
-        } else {
-          right.splice(row - insertBeforeFilteredIdx, 1);
-        }
-      }
-    }
-
-    // final updated dataset, we need to overwrite the DataView dataset (and our local one) with this new dataset that has a new order
-    const finalDataset = left.concat(extractedRows.concat(right));
-
-    setDataset(finalDataset);
   }
 
   function hideDurationColumnDynamically() {

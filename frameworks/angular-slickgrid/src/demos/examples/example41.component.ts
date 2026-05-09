@@ -83,8 +83,14 @@ export class Example41Component implements OnInit {
         cancelEditOnDrag: true,
         disableRowSelection: true,
         hideRowMoveShadow: false,
-        onBeforeMoveRows: this.onBeforeMoveRows.bind(this),
-        onMoveRows: this.onMoveRows.bind(this),
+        // you can provide your own `onBeforeMoveRows` and/or `onMoveRows` implementation
+        // or use the default implementation, however the default won't work with Tree Data
+        // onBeforeMoveRows: () => {},
+        // onMoveRows: () => {},
+        onAfterMoveRows: (_e, args) => {
+          // update dataset for the ms-select list to be updated
+          this.dataset = args.updatedItems;
+        },
 
         // you can also override the usability of the rows, for example make every 2nd row the only moveable rows,
         // usabilityOverride: (row, dataContext, grid) => dataContext.id % 2 === 1
@@ -99,51 +105,6 @@ export class Example41Component implements OnInit {
       { id: 2, name: `Find out who's naughty`, complete: false },
       { id: 3, name: `Find out who's nice`, complete: false },
     ];
-  }
-
-  onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number }) {
-    for (const dataRow of data.rows) {
-      // no point in moving before or after itself
-      if (dataRow === data.insertBefore || dataRow === data.insertBefore - 1) {
-        e.stopPropagation();
-        return false;
-      }
-    }
-    return true;
-  }
-
-  onMoveRows(_e: MouseEvent | TouchEvent, args: { rows: number[]; insertBefore: number }) {
-    const extractedRows: any[] = [];
-    const rows = args.rows;
-    const insertBefore = args.insertBefore;
-    const left = this.dataset.slice(0, insertBefore);
-    const right = this.dataset.slice(insertBefore, this.dataset.length);
-
-    rows.sort((a, b) => a - b);
-
-    for (const row of rows) {
-      extractedRows.push(this.dataset[row]);
-    }
-
-    rows.reverse();
-
-    for (const row of rows) {
-      if (row < insertBefore) {
-        left.splice(row, 1);
-      } else {
-        right.splice(row - insertBefore, 1);
-      }
-    }
-
-    this.dataset = left.concat(extractedRows.concat(right));
-
-    const selectedRows: number[] = [];
-    for (let i = 0; i < rows.length; i++) {
-      selectedRows.push(left.length + i);
-    }
-
-    this.angularGrid.slickGrid?.resetActiveCell();
-    this.dataset = [...this.dataset];
   }
 
   handleOnDragInit(e: CustomEvent) {

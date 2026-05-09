@@ -57,8 +57,14 @@ function defineGrid() {
       cancelEditOnDrag: true,
       disableRowSelection: true,
       hideRowMoveShadow: false,
-      onBeforeMoveRows: onBeforeMoveRows,
-      onMoveRows: onMoveRows,
+      // you can provide your own `onBeforeMoveRows` and/or `onMoveRows` implementation
+      // or use the default implementation, however the default won't work with Tree Data
+      // onBeforeMoveRows: () => {},
+      // onMoveRows: () => {},
+      onAfterMoveRows: (_e, args) => {
+        // update dataset for the ms-select list to be updated
+        dataset.value = args.updatedItems;
+      },
 
       // you can also override the usability of the rows, for example make every 2nd row the only moveable rows,
       // usabilityOverride: (row, dataContext, grid) => dataContext.id % 2 === 1
@@ -73,51 +79,6 @@ function mockData() {
     { id: 2, name: `Find out who's naughty`, complete: false },
     { id: 3, name: `Find out who's nice`, complete: false },
   ];
-}
-
-function onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number }) {
-  for (const dataRow of data.rows) {
-    // no point in moving before or after itself
-    if (dataRow === data.insertBefore || dataRow === data.insertBefore - 1) {
-      e.stopPropagation();
-      return false;
-    }
-  }
-  return true;
-}
-
-function onMoveRows(_e: MouseEvent | TouchEvent, args: { rows: number[]; insertBefore: number }) {
-  const extractedRows: any[] = [];
-  const rows = args.rows;
-  const insertBefore = args.insertBefore;
-  const left = dataset.value.slice(0, insertBefore);
-  const right = dataset.value.slice(insertBefore, dataset.value.length);
-
-  rows.sort((a, b) => a - b);
-
-  for (const row of rows) {
-    extractedRows.push(dataset.value[row]);
-  }
-
-  rows.reverse();
-
-  for (const row of rows) {
-    if (row < insertBefore) {
-      left.splice(row, 1);
-    } else {
-      right.splice(row - insertBefore, 1);
-    }
-  }
-
-  dataset.value = left.concat(extractedRows.concat(right));
-
-  const selectedRows: number[] = [];
-  for (let i = 0; i < rows.length; i++) {
-    selectedRows.push(left.length + i);
-  }
-
-  vueGrid.slickGrid?.resetActiveCell();
-  vueGrid.slickGrid?.invalidate();
 }
 
 function handleOnDragInit(e: CustomEvent) {
