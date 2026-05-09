@@ -2,14 +2,15 @@ import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, findWidthOrDefault, getOffset, isDefined } from '@slickgrid-universal/utils';
 import { SlickEvent, SlickEventData, SlickEventHandler, Utils as SlickUtils, type SlickGrid } from '../core/index.js';
 import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type.js';
-import type {
-  Column,
-  DragRowMove,
-  FormatterResultWithHtml,
-  GridOption,
-  RowMoveManager,
-  RowMoveManagerOption,
+import {
+  type Column,
+  type DragRowMove,
+  type FormatterResultWithHtml,
+  type GridOption,
+  type RowMoveManager,
+  type RowMoveManagerOption,
 } from '../interfaces/index.js';
+import { defaultOnBeforeMoveRows, defaultOnMoveRows } from './rowMoveUtils.js';
 
 /**
  * Row Move Manager options:
@@ -196,11 +197,17 @@ export class SlickRowMoveManager {
         rows: dd.selectedRows,
         insertBefore: dd.insertBefore,
       };
-      // TODO:  this._grid.remapCellCssClasses ?
-      if (typeof this._addonOptions.onMoveRows === 'function') {
-        this._addonOptions.onMoveRows(e instanceof SlickEventData ? e.getNativeEvent() : e, eventData);
-      }
+
+      const evt: MouseEvent | TouchEvent = e instanceof SlickEventData ? e.getNativeEvent() : e;
+      typeof this._addonOptions.onMoveRows === 'function'
+        ? this._addonOptions.onMoveRows(evt, eventData)
+        : defaultOnMoveRows(evt, eventData);
       this.onMoveRows.notify(eventData);
+
+      if (typeof this._addonOptions.onAfterMoveRows === 'function') {
+        const updatedItems = (this._grid.hasDataView() ? this._grid.getData().getItems() : this._grid.getData()) as any[];
+        this._addonOptions.onAfterMoveRows(evt, { ...eventData, updatedItems });
+      }
     }
   }
 
@@ -228,10 +235,14 @@ export class SlickRowMoveManager {
           insertBefore,
         };
 
-        dd.canMove = !(
-          this._addonOptions?.onBeforeMoveRows?.(e, eventData) === false ||
-          this.onBeforeMoveRows.notify(eventData).getReturnValue() === false
-        );
+        const evt: MouseEvent | TouchEvent = e instanceof SlickEventData ? e.getNativeEvent() : e;
+        let beforeMoveRowResult =
+          typeof this._addonOptions.onBeforeMoveRows === 'function'
+            ? this._addonOptions.onBeforeMoveRows(evt, eventData)
+            : defaultOnBeforeMoveRows(evt, eventData);
+
+        // const beforeMoveRowResult = this._addonOptions?.onBeforeMoveRows?.(e, eventData) ?? defaultOnBeforeMoveRows(e, eventData);
+        dd.canMove = !(beforeMoveRowResult === false || this.onBeforeMoveRows.notify(eventData).getReturnValue() === false);
 
         // if there's a UsabilityOverride defined, we also need to verify that the condition is valid
         if (this._usabilityOverride && dd.canMove) {

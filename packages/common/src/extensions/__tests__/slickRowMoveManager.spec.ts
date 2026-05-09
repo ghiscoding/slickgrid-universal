@@ -27,6 +27,18 @@ const getEditorLockMock = {
   isActive: vi.fn(),
 };
 
+const dataViewStub = {
+  destroy: vi.fn(),
+  addItem: vi.fn(),
+  getItem: vi.fn(),
+  getItems: vi.fn(),
+  getIdxById: vi.fn(),
+  getFilteredItems: vi.fn(),
+  getItemCount: vi.fn(),
+  setItems: vi.fn(),
+  sort: vi.fn(),
+} as unknown as SlickDataView;
+
 const gridStub = {
   canCellBeActive: vi.fn(),
   getActiveCell: vi.fn(),
@@ -44,7 +56,9 @@ const gridStub = {
   getEditorLock: () => getEditorLockMock,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,
+  getData: () => dataViewStub,
   focus: vi.fn(),
+  hasDataView: () => true,
   registerPlugin: vi.fn(),
   setActiveCell: vi.fn(),
   setSelectedRows: vi.fn(),
@@ -340,6 +354,7 @@ describe('SlickRowMoveManager Plugin', () => {
 
   it('should create the plugin and trigger "dragStart" and "dragEnd" events, expect new row being moved when different and expect dragEnd to remove guide/proxy/shadow and finally onMoveRows to publish event and callback to be called', () => {
     const mockOnMoveRows = vi.fn();
+    const mockOnAfterMoveRows = vi.fn();
     const mockNewMovedRow = 0;
     const mockSlickRow = document.createElement('div');
     mockSlickRow.className = 'slick-row';
@@ -348,9 +363,10 @@ describe('SlickRowMoveManager Plugin', () => {
     vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[1]);
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockSlickRow);
     vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([2]);
+    vi.spyOn(dataViewStub, 'getItems').mockReturnValue([{ id: 1, first: 'John' }]);
     const setSelectRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
-    plugin.init(gridStub, { hideRowMoveShadow: false, onMoveRows: mockOnMoveRows });
+    plugin.init(gridStub, { hideRowMoveShadow: false, onMoveRows: mockOnMoveRows, onAfterMoveRows: mockOnAfterMoveRows });
     const onMoveRowNotifySpy = vi.spyOn(plugin.onMoveRows, 'notify');
 
     const divElm = document.createElement('div');
@@ -383,6 +399,12 @@ describe('SlickRowMoveManager Plugin', () => {
     gridStub.onDragEnd.notify(mockArgs, mouseEvent);
     expect(onMoveRowNotifySpy).toHaveBeenCalledWith({ insertBefore: -1, rows: [mockNewMovedRow], grid: gridStub });
     expect(mockOnMoveRows).toHaveBeenCalledWith(expect.anything(), { insertBefore: -1, rows: [mockNewMovedRow], grid: gridStub });
+    expect(mockOnAfterMoveRows).toHaveBeenCalledWith(expect.anything(), {
+      insertBefore: -1,
+      rows: [mockNewMovedRow],
+      updatedItems: [{ id: 1, first: 'John' }],
+      grid: gridStub,
+    });
     expect(stopImmediatePropagationSpy).toHaveBeenCalledTimes(2);
   });
 
@@ -554,5 +576,57 @@ describe('SlickRowMoveManager Plugin', () => {
     expect(mockArgs.clonedSlickRow.style.top).toBe('6px');
     expect(mockArgs.canMove).toBe(false);
     expect(mockArgs.guide.style.top).toBe('-1000px');
+  });
+
+  it('should create the plugin and trigger "dragStart" and "drag" events, expect new row being moved with default functions', () => {
+    const mockNewMovedRow = 0;
+    const mockSlickRow = document.createElement('div');
+    mockSlickRow.className = 'slick-row';
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[1]);
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockSlickRow);
+    vi.spyOn(gridStub, 'getDataLength').mockReturnValue(5);
+    vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([2]);
+    vi.spyOn(dataViewStub, 'getItemCount').mockReturnValue(4);
+    const setSelectRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
+
+    plugin.init(gridStub, { hideRowMoveShadow: false });
+    plugin.usabilityOverride(() => true);
+    vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
+
+    const divElm = document.createElement('div');
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
+    const stopImmediatePropagationSpy = vi.spyOn(mouseEvent, 'stopImmediatePropagation');
+    const mockArgs = {
+      deltaX: 0,
+      deltaY: 1,
+      offsetX: 2,
+      offsetY: 3,
+      row: 2,
+      rows: [2],
+      selectedRows: [2],
+      insertBefore: 4,
+      canMove: true,
+    } as any;
+    gridStub.onDragStart.notify(mockArgs, mouseEvent);
+
+    expect(stopImmediatePropagationSpy).toHaveBeenCalled();
+    expect(setSelectRowSpy).toHaveBeenCalledWith([mockNewMovedRow]);
+    expect(mockArgs.insertBefore).toBe(-1);
+    expect(mockArgs.selectedRows).toEqual([mockNewMovedRow]);
+    expect(mockArgs.clonedSlickRow).toBeTruthy();
+    expect(mockArgs.guide).toBeTruthy();
+    expect(mockArgs.selectionProxy).toBeTruthy();
+    expect(canvasTL.querySelector('.slick-reorder-guide')).toBeTruthy();
+    expect(canvasTL.querySelector('.slick-reorder-proxy')).toBeTruthy();
+    expect(canvasTL.querySelector('.slick-reorder-shadow-row')).toBeTruthy();
+
+    Object.defineProperty(mouseEvent, 'pageY', { writable: true, configurable: true, value: 12 });
+    gridStub.onDrag.notify(mockArgs, mouseEvent);
+    expect(mockArgs.selectionProxy.style.display).toBe('block');
+    expect(mockArgs.selectionProxy.style.top).toBe('7px');
+    expect(mockArgs.clonedSlickRow.style.display).toBe('block');
+    expect(mockArgs.clonedSlickRow.style.top).toBe('6px');
   });
 });
