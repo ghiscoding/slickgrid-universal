@@ -9,6 +9,8 @@ minimumReleaseAge: 2880 # 2 days in minutes
 minimumReleaseAgeExclude:
   # exclude packages that I personally maintain and are safe to use on the same day
   - '@lerna-lite/*'
+  # Renovate security update: hono@4.12.18
+  - hono@4.12.18
 
 catalog:
   '@4tw/cypress-drag-drop': ^2.3.1
@@ -58,7 +60,7 @@ catalog:
 overrides:
   '@hono/node-server': ^1.19.14
   '@isaacs/brace-expansion': ^5.0.1
-  hono: ^4.12.16
+  hono: ^4.12.18
   lodash: ^4.18.1
   minimatch: ^10.2.5
   picomatch: ^4.0.4
