@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { format as tempoFormat } from '@formkit/tempo';
 import { SqlService, type SqlResult, type SqlServiceApi } from '@slickgrid-universal/sql';
-import { Filters, Formatters, SlickgridVue, type Column, type GridOption } from 'slickgrid-vue';
+import { Filters, Formatters, SlickgridVue, type Column, type GridOption, type Metrics, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const defaultPageSize = 20;
@@ -9,17 +9,16 @@ const SQL_TABLE_NAME = 'users';
 const FAKE_SERVER_DELAY = 250;
 
 const gridOptions = ref<GridOption>();
-const columns: Ref<Column<ReportItem>[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const metrics = ref<Metrics>({} as Metrics);
 const showSubTitle = ref(true);
 const sqlQuery = ref('');
 const processing = ref(false);
-const status = ref('processing...');
-const statusClass = ref('is-warning');
+const status = ref({ text: 'processing...', class: '' });
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
-let vueGrid!: SlickgridVueInstance;
 const sqlService = ref(new SqlService());
+let vueGrid!: SlickgridVueInstance;
 
 onBeforeMount(() => {
   defineGrid();
@@ -157,7 +156,7 @@ function defineGrid() {
         metrics.value = result.metrics as Metrics;
         dataset.value = result.data;
         // update pagination totalItems to reflect backend total count
-        if (gridOptions.value.pagination) {
+        if (gridOptions.value?.pagination) {
           gridOptions.value.pagination.totalItems = result.metrics?.totalItemCount ?? 0;
         }
         if (vueGrid) {
@@ -166,7 +165,7 @@ function defineGrid() {
         displaySpinner(false);
         updateSqlQuery();
       },
-    } satisfies SqlServiceApi<{
+    } as SqlServiceApi<{
       id: number;
       name: string;
       gender: string;

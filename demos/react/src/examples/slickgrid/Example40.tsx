@@ -15,8 +15,8 @@ import {
   type OnRowCountChangedEventArgs,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import './example39.scss';
 import { randomNumber } from './utilities.js';
+import './example39.scss';
 
 const FETCH_SIZE = 50;
 

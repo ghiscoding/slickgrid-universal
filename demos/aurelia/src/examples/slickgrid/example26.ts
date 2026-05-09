@@ -18,8 +18,8 @@ import { CustomAureliaViewModelFilter } from './custom-aureliaViewModelFilter.js
 import { CustomTitleFormatter } from './custom-title-formatter.js';
 import { EditorSelect } from './editor-select.js';
 import { FilterSelect } from './filter-select.js';
-import './example26.scss';
 import { showToast } from './utilities.js';
+import './example26.scss';
 
 const NB_ITEMS = 100;
 

@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import {
   createDomElement,
-  Filters,
-  Formatters,
   getOffset,
   isDefined,
   SlickgridVue,
   type Column,
   type CurrentFilter,
   type GridOption,
-  type MultipleSelectOption,
   type OperatorType,
+  type SlickGrid,
   type SlickgridVueInstance,
-  type SliderRangeOption,
 } from 'slickgrid-vue';
-import { onBeforeMount, ref, type DefineComponent, type Ref } from 'vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 import './example53.scss';
 
 const NB_ITEMS = 2000;

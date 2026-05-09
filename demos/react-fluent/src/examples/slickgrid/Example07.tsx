@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { Button } from '@fluentui/react-components';
 import { sparkline } from '@fnando/sparkline';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -14,9 +15,8 @@ import {
   type GridOption,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import './example07.scss';
-import { Button } from '@fluentui/react-components';
 import { baseFluentGridOption } from './base-fluent-grid-options.js';
+import './example07.scss';
 
 const NB_ROWS = 200;
 

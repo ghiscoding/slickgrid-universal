@@ -15,8 +15,8 @@ import {
 import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
-import './example36.scss';
 import { showToast } from './utilities.js';
+import './example36.scss';
 
 const NB_ITEMS = 1200;
 

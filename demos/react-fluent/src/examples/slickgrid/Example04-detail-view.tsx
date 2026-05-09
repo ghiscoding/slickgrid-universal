@@ -1,8 +1,8 @@
+import { Button } from '@fluentui/react-components';
 import { format } from '@formkit/tempo';
 import React, { useState } from 'react';
 import type { RowDetailViewProps } from 'slickgrid-react';
 import './example04-detail-view.scss';
-import { Button } from '@fluentui/react-components';
 
 interface Item {
   assignee: string;

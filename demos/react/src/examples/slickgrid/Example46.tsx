@@ -1,4 +1,5 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { TextExportService } from '@slickgrid-universal/text-export';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Filters,
@@ -9,9 +10,8 @@ import {
   type GridOption,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import './example46.scss'; // provide custom CSS/SASS styling
-import { TextExportService } from '@slickgrid-universal/text-export';
 import { showToast } from './utilities.js';
+import './example46.scss'; // provide custom CSS/SASS styling
 
 interface Chapter {
   id: string;

@@ -18,9 +18,9 @@ import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
+import { showToast } from './utilities.js';
 import '../material-styles.scss';
 import './example02.scss';
-import { showToast } from './utilities.js';
 
 const NB_ITEMS = 5000;
 
@@ -402,7 +402,7 @@ export default class Example02 {
     this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
   }
 
-  groupByDurationOrderByCount(aggregateCollapsed) {
+  groupByDurationOrderByCount(aggregateCollapsed: boolean) {
     this.sgb?.slickGrid?.setSortColumns([]);
     this.sgb?.dataView?.setGrouping({
       getter: 'duration',

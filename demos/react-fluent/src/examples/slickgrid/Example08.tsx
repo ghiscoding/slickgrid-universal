@@ -1,3 +1,4 @@
+import { Button } from '@fluentui/react-components';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -17,9 +18,8 @@ import {
   type SlickgridReactInstance,
   type SlickGroupTotals,
 } from 'slickgrid-react';
-import './example08.scss';
-import { Button } from '@fluentui/react-components';
 import { baseFluentGridOption } from './base-fluent-grid-options.js';
+import './example08.scss';
 
 interface GroceryItem {
   id: number;

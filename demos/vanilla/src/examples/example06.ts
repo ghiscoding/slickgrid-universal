@@ -16,8 +16,8 @@ import {
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import './example06.scss';
 import { ExampleGridOptions } from './example-grid-options.js';
+import './example06.scss';
 
 export default class Example06 {
   columns: Column[];

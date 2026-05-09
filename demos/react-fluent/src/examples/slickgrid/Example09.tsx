@@ -1,4 +1,6 @@
+import { Button } from '@fluentui/react-components';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { TextExportService } from '@slickgrid-universal/text-export';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Filters,
@@ -9,12 +11,9 @@ import {
   type GridOption,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import './example09.scss'; // provide custom CSS/SASS styling
-
-import { Button } from '@fluentui/react-components';
-import { TextExportService } from '@slickgrid-universal/text-export';
 import { baseFluentGridOption } from './base-fluent-grid-options.js';
 import { showToast } from './utilities.js';
+import './example09.scss'; // provide custom CSS/SASS styling
 
 interface Chapter {
   id: string;

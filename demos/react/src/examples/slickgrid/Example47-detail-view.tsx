@@ -1,8 +1,8 @@
 import { format } from '@formkit/tempo';
 import React, { useState } from 'react';
 import type { RowDetailViewProps } from 'slickgrid-react';
-import './example47-detail-view.scss';
 import { showToast } from './utilities.js';
+import './example47-detail-view.scss';
 
 interface Item {
   id: number;

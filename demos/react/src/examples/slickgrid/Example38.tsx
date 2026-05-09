@@ -13,8 +13,8 @@ import {
   type OnRowCountChangedEventArgs,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import Data from './data/customers_100.json';
 import './example38.scss';
+import Data from './data/customers_100.json';
 
 const CARET_HTML_ESCAPED = '%5E';
 const PERCENT_HTML_ESCAPED = '%25';
