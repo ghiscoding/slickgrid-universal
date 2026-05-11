@@ -21,10 +21,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * use dataItemColumnValueExtractor for grouping with nested objects ([#2571](https://github.com/ghiscoding/slickgrid-universal/issues/2571)) ([30774a1](https://github.com/ghiscoding/slickgrid-universal/commit/30774a12930f7c40da8ce345f73b119da84ca6f8)) - by @ghiscoding
 * use numeric sort in deleteItems to prevent data loss ([#2574](https://github.com/ghiscoding/slickgrid-universal/issues/2574)) ([f96f598](https://github.com/ghiscoding/slickgrid-universal/commit/f96f5984bd66b17af0249acb32f27e5519054989)) - by @ghiscoding
 
-### Reverts
-
-* Revert "chore(deps): update dependency vite-plugin-dts to v5 (#2567)" (#2568) ([cd71cd7](https://github.com/ghiscoding/slickgrid-universal/commit/cd71cd7bed57a19ee2b106b0c90bc58f450c8147)), closes [#2567](https://github.com/ghiscoding/slickgrid-universal/issues/2567) [#2568](https://github.com/ghiscoding/slickgrid-universal/issues/2568) - by @ghiscoding
-
 ## [10.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.2...v10.6.0) (2026-05-02)
 
 ### Features
