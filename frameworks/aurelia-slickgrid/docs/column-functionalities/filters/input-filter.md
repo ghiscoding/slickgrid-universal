@@ -33,9 +33,9 @@ Example:
   - `!=John` => not equal to the text `John` (note that this is **not** equivalent to `<>`)
   - `John*` => starts with the sub-string `John`
   - `*Doe` => ends with the sub-string `Doe`
-  - `ab..ef` => anything included between "af" and "ef"
+  - `ab..ef` => anything included between `af` and `ef`
     - refer to the ASCII table for each character assigned index
-  - `!= ` => get defined only data and exclude any `undefined`, `null` or empty string `''`
+  - `!= ` => get defined only data and exclude any `undefined`, `null` or empty string `' '`
      - notice the empty string in the search value `' '`
 
 Note that you could do the same functionality with a Compound Filter.

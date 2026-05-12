@@ -84,3 +84,28 @@ function showFilterRow() {
   vueGrid.setHeaderRowVisibility(true);
 }
 ```
+
+### Default Filter Functionality
+
+The default filter is by default the `Filters.input` (when none is provided), is supporting the following operators: (`>`, `>=`, `<`, `<=`, `<>`, `!=`, `=`, `==`, `*`) that can be typed directly into the text filter, range filters can also have 1 of these options (`rangeInclusive` (default) or `rangeExclusive`). Also note that `<>` and `!=` are not aliased and have subtle differences. However the `=` and `==` are indeed aliases and equivalents.
+
+Examples:
+- Number type
+  - `>100` => bigger than 100
+  - `<>100` => anything with the exception of 100
+  - `15..44` => range between 15 and 44 (you can also provide option `rangeInclusive` (default) or `rangeExclusive`)
+- Date types
+  - `>=2001-01-01` => greater or equal than date `2001-01-01`
+  - `<02/28/17` => lower than date `02/28/17`
+  - `2001-01-01..2002-02-22` => range between `2001-01-01` and `2002-02-22`
+- String type
+  - `<>John` => not containing the sub-string `John`
+  - `!=John` => not equal to the text `John` (note that this is **not** equivalent to `<>`)
+  - `John*` => starts with the sub-string `John`
+  - `*Doe` => ends with the sub-string `Doe`
+  - `ab..ef` => anything included between `af` and `ef`
+    - refer to the ASCII table for each character assigned index
+  - `!= ` => get defined only data and exclude any `undefined`, `null` or empty string `' '`
+     - notice the empty string in the search value `' '`
+
+Note that you could also do the same kind of functionality by using the Compound Filter.

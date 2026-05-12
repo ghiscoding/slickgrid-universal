@@ -18,7 +18,7 @@ Input text filter is the default filter that will be used when the user ommits t
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example02.ts)
 
 ### UI Usage
-All column types support the following operators: (`>`, `>=`, `<`, `<=`, `<>`, `!=`, `=`, `==`, `*`) that can be typed directly into the text filter, range filters can also have 1 of these options (`rangeInclusive` (default) or `rangeExclusive`). Also note that `<>` and `!=` are aliases and are equivalent, the same applies to `=` and `==`.
+All column types support the following operators: (`>`, `>=`, `<`, `<=`, `<>`, `!=`, `=`, `==`, `*`) that can be typed directly into the text filter, range filters can also have 1 of these options (`rangeInclusive` (default) or `rangeExclusive`). Also note that `<>` and `!=` are not aliased and have subtle differences. However the `=` and `==` are indeed aliases and equivalents.
 
 Examples:
 - Number type
@@ -28,15 +28,15 @@ Examples:
 - Date types
   - `>=2001-01-01` => greater or equal than date `2001-01-01`
   - `<02/28/17` => lower than date `02/28/17`
-  - `2001-01-01..2002-02-22` => range between 2001-01-01 and 2002-02-22
+  - `2001-01-01..2002-02-22` => range between `2001-01-01` and `2002-02-22`
 - String type
   - `<>John` => not containing the sub-string `John`
   - `!=John` => not equal to the text `John` (note that this is **not** equivalent to `<>`)
   - `John*` => starts with the sub-string `John`
   - `*Doe` => ends with the sub-string `Doe`
-  - `ab..ef` => anything included between "af" and "ef"
+  - `ab..ef` => anything included between `af` and `ef`
     - refer to the ASCII table for each character assigned index
-  - `!= ` => get defined only data and exclude any `undefined`, `null` or empty string `''`
+  - `!= ` => get defined only data and exclude any `undefined`, `null` or empty string `' '`
      - notice the empty string in the search value `' '`
 
 Note that you could also do the same kind of functionality by using the Compound Filter.
