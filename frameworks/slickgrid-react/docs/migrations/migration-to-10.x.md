@@ -1,6 +1,6 @@
-## Simplification, Modernization and Accessibility⚡
+## Simplification, Modernization and Accessibility ⚡
 
-One of the biggest change of this release is to hide columns by using the `hidden` property (used by Column Picker, Grid Menu, etc...). Previously we were removing columns from the original columns array and then we were typically calling `setColumns()` to update the visible columns in the grid, but this meant that we had to keep references for all visible/non-visible columns. With this new release we now keep the full columns array at all time and simply change their visibility via the `hidden`  prop by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. Also, what I'm trying to emphasis is that you should avoid using `grid.setColumns()` in v10 and above but rather start toggling their `hidden` properties when you define them or dynamically change them in the future, see more details below...
+One of the biggest change of this release is to hide columns by using the `hidden` property (used by Column Picker, Grid Menu, etc...). Previously the usage was to remove columns from the original columns array and then typically call `setColumns()` to update the visible columns in the grid, but this meant that we had to keep references for all visible/non-visible columns. With this new release we now keep the full columns array at all time and simply change their visibility via the `hidden`  prop by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. Also, what I'm trying to emphasis is that you should avoid using `grid.setColumns()` in v10 and above but rather start toggling their `hidden` properties when you define them or dynamically change them in the future, see more details below...
 
 This new release also brings significant improvements to accessibility (a11y), making grids more usable for keyboard and screen reader users. For example, you can now use Tab/Shift+Tab to focus the Header Menu or Grid Menu, and then navigate menu commands with the arrow keys, making keyboard navigation much more intuitive and accessible.
 
@@ -21,7 +21,7 @@ This new release also brings significant improvements to accessibility (a11y), m
 
 _if you're not dynamically hiding columns and you're not using `colspan` or `rowspan` then you might not be impacted as much by this change._
 
-For years, I had to keep some references in a Shared Service as `shared.allColumns` and `shared.visibleColumns`, mostly for storing their position order and translating locales which are being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (up until now). However with v10, we simply toggle the `hidden` property on the column(s) to hide/show any of them, with this release we now keep the full columns reference at all time. We can translate them more easily while keeping their original position and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now just call `grid.getVisibleColumns()` which behind the scene is simply filtering `columns.filter(c => !c.hidden)`. This new approach does also come with new side effects for colspan/rowspan, because previously when we were hiding a column then the column to the right were previously taking over the spanning, but with the new approach, if we hide a column then its spanning will now disappear with the column (so I had to make code changes to handle that too)... If you want more details, you can see the full explanations of all the changes in [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
+For years the logical approach was to keep some references in a Shared Service as `shared.allColumns` and `shared.visibleColumns`, mostly for storing their position order and translating locales which are being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (up until now). However with v10, we simply toggle the `hidden` property on the column(s) to hide/show any of them, with this release we now keep the full columns reference at all time. We can translate them more easily while keeping their original position and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now just call `grid.getVisibleColumns()` which behind the scene is simply filtering `columns.filter(c => !c.hidden)`. This new approach does also come with new side effects for colspan/rowspan, because previously when we were hiding a column then the column to the right were previously taking over the spanning, but with the new approach, if we hide a column then its spanning will now disappear with the column (so I had to make code changes to handle that too)... If you want more details, you can see the full explanations of all the changes in [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
 
 **Summary Note** `grid.getColumns()` now includes hidden columns — code that assumed only visible columns will now need to filter with `!col.hidden` or simply switch to `grid.getVisibleColumns()` (see below).
 
@@ -75,7 +75,7 @@ _following changes should be transparent to most users_
 2. drop both `enableHybridSelection`/`enableRowSelection` and merge them into a new `enableSelection` grid option
 3. rename `rowSelectionOptions` grid option to `selectionOptions`
 
-`SlickHybridSelectionModel` was previously introduced in order to merge and allow using both Cell/Row Selections separately and/or in combo on the same grid. It was introduced in v9.x for initial testing and after using it for a few months, it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models and keep only the hybrid model (for smaller build & less code to maintain). Also, since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` since it now makes more sense with the hybrid approach and you will need to update your code when using Row Selection, see below:
+`SlickHybridSelectionModel` was previously introduced in order to allow using both Cell/Row Selections separately and/or in combo in the same grid. It was introduced in v9.x for initial testing and after using it for a few months, it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models and we'll keep only the hybrid model (for smaller build & less code to maintain). Also, since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` since it now makes more sense with the hybrid approach and so you will need to update your code when using Row Selection, see below:
 
 ```diff
 gridOptions = {
@@ -95,7 +95,7 @@ gridOptions = {
 
 #### Internal icons CSS class changes
 
-I found that some of the internal icons were wrongly using the `mdi-` prefix and that is wrong and causes problems when creating new Themes that don't use the MDI icons. This mean that the following CSS classes were renamed. If you are using any of them for E2E tests or for styling reasons, then make sure to update them.
+I recently found that some of the internal icons were wrongly using the `mdi-` prefix and was found to cause problems when creating new Themes that don't use these MDI icons. So in oder to fix this possibility, the following CSS classes were renamed. If you are using any of them for E2E tests or for styling reasons, then make sure to update them.
 
 | before | after | component |
 | ------ | ----- | --------- |
@@ -109,7 +109,7 @@ I found that some of the internal icons were wrongly using the `mdi-` prefix and
 
 ### Auto-Enabled External Resources
 
-This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this one, is that I often forget myself to enable the associated resource flags and typically if you want to load the resource then it's probably because you want to use it, hence auto-enabling the resource(s) makes sense. For example, if your register `ExcelExportService` then the library will now auto-enable the resources with their associated flags (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small and so it will auto-enable the following resources:
+This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this one, is that even myself I often forget to enable the associated resource flags and I would assume that if  you want to load the resource then it's probably because you want to use it, so... auto-enabling the resource(s) makes sense. For example, if your register `ExcelExportService` then the library will now auto-enable the resources with their associated flags (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small and so it will auto-enable the following resources:
 
 - ExcelExportService → `enableExcelExport: true`
 - PdfExportService → `enablePdfExport: true`
@@ -145,7 +145,7 @@ There's also a new Renderer similar to Slots but implemented with native code to
 
 #### Menu Options `optionItems` (deprecated)
 
-Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead (see [docs](../column-functionalities/cell-menu.md#default-usage) for both usages).
+Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and I don't think anyone ever used it, so let's remove it in v11 and just use `commandItems` instead (see [docs](../column-functionalities/cell-menu.md#default-usage) for both usages).
 
 ### Tooltips Outside the Grid (new feature)
 
@@ -264,7 +264,7 @@ columns = [{
 
 #### renaming all `text-color-xyz` to `color-xyz`
 
-I decided to remove all `text-color-...` and rename them all to `color-...` which is much shorter and easier to use.
+I decided to rename all `text-color-...` to `color-...` which is much shorter and easier to use.
 
 You can do a "Search and Replace" in VSCode via Regular Expressions to replace them all easily:
 
@@ -340,7 +340,7 @@ gridOptions = {
 
 #### Menu Options `optionItems` (deprecated)
 
-Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead (see [docs](../column-functionalities/cell-menu.md#default-usage) for both usages).
+Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and I don't think anyone ever used it, so let's remove it in v11 and just use `commandItems` instead (see [docs](../column-functionalities/cell-menu.md#default-usage) for both usages).
 
 ---
 
