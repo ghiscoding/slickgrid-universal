@@ -63,7 +63,6 @@
 * [Grid State & Presets](grid-functionalities/grid-state-preset.md)
 * [Grouping & Aggregators](grid-functionalities/grouping-aggregators.md)
 * [Header Menu & Header Buttons](grid-functionalities/header-menu-header-buttons.md)
-* [Header & Footer Slots](grid-functionalities/header-footer-slots.md)
 * [Custom Menu Slots](grid-functionalities/menu-slots.md)
 * [Pagination](grid-functionalities/pagination.md)
 * [Infinite Scroll](grid-functionalities/infinite-scroll.md)
