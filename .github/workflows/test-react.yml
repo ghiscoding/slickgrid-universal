@@ -82,6 +82,7 @@ jobs:
           Cypress_extended: true
 
       - uses: actions/upload-artifact@v7
+        if: always()
         with:
           name: cypress-screenshots
           path: demos/react/test/cypress/screenshots
