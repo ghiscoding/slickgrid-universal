@@ -1640,12 +1640,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   getHeaderColumn(columnIdOrIdx: number | string): HTMLDivElement {
     const idx = typeof columnIdOrIdx === 'number' ? columnIdOrIdx : this.getColumnIndex(columnIdOrIdx);
-    // prettier-ignore
-    const targetHeader = this.hasFrozenColumns() ? ((idx <= this._options.frozenColumn!) ? this._headerL : this._headerR) : this._headerL;
-    // prettier-ignore
-    const targetIndex = this.hasFrozenColumns() ? ((idx <= this._options.frozenColumn!) ? idx : idx - this._options.frozenColumn! - 1) : idx;
+    const targetHeader = this.hasFrozenColumns() ? (idx <= this._options.frozenColumn! ? this._headerL : this._headerR) : this._headerL;
+    const targetIndex = this.hasFrozenColumns() ? (idx <= this._options.frozenColumn! ? idx : idx - this._options.frozenColumn! - 1) : idx;
+    const directMatch = targetHeader.children[targetIndex] as HTMLDivElement | undefined;
+    const targetColumnId = String(this.columns[idx]?.id ?? columnIdOrIdx);
+    const directMatchColumn = Utils.storage.get(directMatch, 'column') as C | undefined;
+    if (directMatch && (directMatch.dataset?.id === targetColumnId || String(directMatchColumn?.id) === targetColumnId)) {
+      return directMatch;
+    }
 
-    return targetHeader.children[targetIndex] as HTMLDivElement;
+    return (
+      (Array.from(targetHeader.children).find((child) => (child as HTMLDivElement).dataset?.id === targetColumnId) as HTMLDivElement) ||
+      (undefined as any)
+    );
   }
 
   /** Get the Header Row DOM element */

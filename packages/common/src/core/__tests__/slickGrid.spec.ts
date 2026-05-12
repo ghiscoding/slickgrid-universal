@@ -2122,6 +2122,23 @@ describe('SlickGrid core file', () => {
       expect(slickRowElms[0].classList.contains('highlight-animate')).toBeFalsy();
       expect(slickRowElms[1].classList.contains('highlight-animate')).toBeFalsy();
     });
+
+    it('should return the correct header column by id when a hidden column precedes it', () => {
+      const columns = [
+        { id: 'a', field: 'a', name: 'A', hidden: true },
+        { id: 'b', field: 'b', name: 'B' },
+        { id: 'c', field: 'c', name: 'C' },
+      ] as Column[];
+      const rows = [{ id: 0, a: 'x', b: 'y', c: 'z' }];
+
+      grid = new SlickGrid<any, Column>(container, rows, columns, defaultOptions);
+      grid.init();
+
+      const headerElm = grid.getHeaderColumn('b');
+
+      expect(headerElm).toBeInstanceOf(HTMLDivElement);
+      expect(headerElm.dataset.id).toBe('b');
+    });
   });
 
   describe('flashCell() method', () => {
