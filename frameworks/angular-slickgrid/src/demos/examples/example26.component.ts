@@ -264,6 +264,7 @@ export class Example26Component implements OnInit {
       autoResize: {
         container: '#demo-container',
         rightPadding: 10,
+        bottomPadding: 20,
       },
       headerRowHeight: 45,
       rowHeight: 45, // increase row height so that the ng-select fits in the cell

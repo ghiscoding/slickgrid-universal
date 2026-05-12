@@ -16,6 +16,7 @@ describe('Example 26 - Use of Angular Components', () => {
   });
 
   it('should have exact column titles in grid', () => {
+    cy.get('[data-test=toggle-subtitle]').click();
     cy.get('#slickGridContainer-grid26')
       .find('.slick-header-columns')
       .children()
@@ -69,15 +70,10 @@ describe('Example 26 - Use of Angular Components', () => {
 
   it('should expect a Custom Angular ng-Select Dropdown Editor then select 1st option of 3 Assignee names', () => {
     cy.get('.slick-row:nth(0)').children('.slick-cell:nth(2)').click().click();
-
     cy.get('.ng-dropdown-panel-items .ng-option').should('have.length', 4);
-
     cy.get('.ng-dropdown-panel-items .ng-option:nth(1)').click();
-
     cy.get('.slick-row:nth(1)').children('.slick-cell:nth(2)').click().click();
-
     cy.get('.ng-dropdown-panel-items .ng-option:nth(2)').click();
-
     cy.get('[data-test=auto-commit]').click();
   });
 
