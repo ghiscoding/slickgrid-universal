@@ -67,8 +67,10 @@ function defineGrid() {
 
   gridOptions.value = {
     enableAutoResize: true,
+
+    // enabling both header buttons & menus could conflict unless you use `--slick-header-button-float: left`
     enableHeaderButton: true,
-    enableHeaderMenu: false,
+    enableHeaderMenu: true,
     autoCommitEdit: true,
     autoEdit: true,
     editable: true,

@@ -11,6 +11,7 @@
 
 * [Dark Mode](styling/dark-mode.md)
 * [Styling CSS/SASS/Themes](styling/styling.md)
+* [Multiple Column Header Rows](styling/multiple-column-header-rows.md)
 
 ## Column Functionalities
 

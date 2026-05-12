@@ -1,7 +1,27 @@
 /* 1st grid */
-#grid53 {
+#slickGridContainer-grid53 {
   --slick-header-button-float: left;
   --slick-header-button-margin: 0px 0 100px 8px;
+  --slick-header-menu-display: none;
+  --slick-header-row-count: 1;
+  --slick-icon-sort-position-right: auto;
+
+  .slickgrid-container .slick-header-columns {
+    .slick-header-column {
+      height: 25x;
+
+      .slick-sort-indicator,
+      .slick-sort-indicator-numbered {
+        top: 4px;
+      }
+      .slick-sort-indicator-numbered {
+        top: 10px;
+        margin-left: 18px;
+        left: auto;
+        right: auto;
+      }
+    }
+  }
 }
 
 .top-filters {
