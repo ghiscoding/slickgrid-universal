@@ -88,8 +88,10 @@ const Example53: React.FC = () => {
 
     const gridOptions: GridOption = {
       enableAutoResize: true,
+
+      // enabling both header buttons & menus could conflict unless you use `--slick-header-button-float: left`
       enableHeaderButton: true,
-      enableHeaderMenu: false,
+      enableHeaderMenu: true,
       autoCommitEdit: true,
       autoEdit: true,
       editable: true,
