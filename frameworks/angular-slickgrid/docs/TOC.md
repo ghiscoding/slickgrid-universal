@@ -35,6 +35,7 @@
   * [Single Search Filter](column-functionalities/filters/single-search-filter.md)
 * [Formatters](column-functionalities/formatters.md)
 * [Sorting](column-functionalities/sorting.md)
+* [Visibility](column-functionalities/visibility.md)
 
 ## Events
 

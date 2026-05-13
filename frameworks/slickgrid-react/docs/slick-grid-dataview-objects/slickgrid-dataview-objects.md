@@ -29,16 +29,16 @@ const Example: React.FC = () => {
   /** Change dynamically `autoEdit` grid options */
   function setAutoEdit(isAutoEdit) {
     setIsAutoEdit(isAutoEdit);
-    reactGridRef.current?.setOptions({ autoEdit: isAutoEdit }); // change the grid option dynamically
+    reactGridRef.current?.slickGrid.setOptions({ autoEdit: isAutoEdit }); // change the grid option dynamically
     return true;
   }
 
   function collapseAllGroups() {
-    reactGridRef.current?.collapseAllGroups();
+    reactGridRef.current?.slickGrid.collapseAllGroups();
   }
 
   function expandAllGroups() {
-    reactGridRef.current?.expandAllGroups();
+    reactGridRef.current?.slickGrid.expandAllGroups();
   }
 
   return !options ? '' : (
