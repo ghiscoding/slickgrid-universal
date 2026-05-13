@@ -4166,7 +4166,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     for (let i = 0, ii = columnCount; i < ii; i++) {
       isRenderCell = true;
       m = this.columns[i];
-      if (m && !m.hidden) {
+      if (m && (!m.hidden || metadata?.isGroup)) {
         colspan = 1;
         rowspan = 1;
         columnData = null;
@@ -5263,15 +5263,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // Render missing cells.
         cellsAdded = 0;
 
-        let metadata = this.getItemMetadaWhenExists(row);
-        metadata = metadata?.columns as ItemMetadata;
+        const metadata = this.getItemMetadaWhenExists(row);
+        const metadataCol = metadata?.columns;
 
         const d = this.getDataItem(row);
         let isFullColspan = false;
 
         // TODO: shorten this loop (index? heuristics? binary search?)
         for (let i = 0, ii = columnCount; i < ii; i++) {
-          if (this.columns[i] && !this.columns[i].hidden) {
+          if (this.columns[i] && (!this.columns[i].hidden || metadata?.isGroup)) {
             // Cells to the right are outside the range.
             if (this.columnPosLeft[i] > range.rightPx) {
               break;
@@ -5285,8 +5285,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
             colspan = 1;
             columnData = null;
-            if (metadata) {
-              columnData = metadata[this.columns[i].id as keyof ItemMetadata] || (metadata as any)[i];
+            if (metadataCol) {
+              columnData = metadataCol[this.columns[i].id as keyof ItemMetadata] || (metadataCol as any)[i];
               colspan = columnData?.colspan ?? 1;
               if (colspan === '*') {
                 colspan = ii - i;

@@ -94,7 +94,7 @@ export default class Example03 {
         name: 'Title',
         field: 'title',
         columnGroup: 'Common Factor',
-        hidden: true,
+        hidden: true, // column initially hidden
         sortable: true,
         editor: {
           model: Editors.longText,

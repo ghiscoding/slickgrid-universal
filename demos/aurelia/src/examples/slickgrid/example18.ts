@@ -64,6 +64,7 @@ export class Example18 {
         width: 70,
         minWidth: 50,
         cssClass: 'cell-title',
+        hidden: true, // column initially hidden
         filterable: true,
         sortable: true,
         grouping: {
