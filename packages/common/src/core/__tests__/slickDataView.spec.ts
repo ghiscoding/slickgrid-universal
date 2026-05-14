@@ -1114,6 +1114,7 @@ describe('SlickDatView core file', () => {
           },
         },
         cssClasses: 'slick-group slick-group-level-0',
+        isGroup: true,
         focusable: true,
         formatter: undefined,
         selectable: false,
@@ -1164,6 +1165,7 @@ describe('SlickDatView core file', () => {
         cssClasses: 'slick-group-totals slick-group-level-1',
         editorClass: null,
         focusable: false,
+        isGroup: true,
         formatter: expect.anything(),
         selectable: false,
       });
@@ -1260,6 +1262,7 @@ describe('SlickDatView core file', () => {
           },
         },
         cssClasses: 'slick-group slick-group-level-0',
+        isGroup: true,
         focusable: true,
         formatter: undefined,
         selectable: false,

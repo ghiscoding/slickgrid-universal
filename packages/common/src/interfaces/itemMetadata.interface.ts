@@ -1,4 +1,4 @@
-import type { Column, Formatter, GroupTotalsFormatter } from './index.js';
+import type { Column, Editor, EditorConstructor, Formatter, GroupTotalsFormatter } from './index.js';
 
 export type ColumnMetadata = Pick<
   Column,
@@ -32,4 +32,10 @@ export interface ItemMetadata {
     // properties describing metadata related to individual columns
     [colIdOrIdx in string | number]: ColumnMetadata;
   };
+
+  /** Any inline Editor class or Editor constructor, this is mostly used internally by SlickGrid */
+  editorClass?: Editor | EditorConstructor | null;
+
+  /** defined when the metadata is defined to be a group */
+  isGroup?: boolean;
 }

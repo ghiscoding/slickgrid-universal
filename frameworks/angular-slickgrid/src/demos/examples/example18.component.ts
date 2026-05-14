@@ -75,6 +75,7 @@ export class Example18Component implements OnInit, OnDestroy {
         name: 'Title',
         field: 'title',
         columnGroup: 'Common Factor',
+        hidden: true,
         width: 70,
         minWidth: 50,
         cssClass: 'cell-title',

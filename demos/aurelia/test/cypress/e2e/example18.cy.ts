@@ -1,6 +1,16 @@
 describe('Example 18 - Draggable Grouping & Aggregators', () => {
   const preHeaders = ['Common Factor', 'Period', 'Analysis', ''];
+  const originalTitles = ['Duration', 'Start', 'Finish', 'Cost', '% Complete', 'Effort-Driven'];
   const fullTitles = ['Title', 'Duration', 'Start', 'Finish', 'Cost', '% Complete', 'Effort-Driven'];
+  const gridMenuTitles = [
+    'Common Factor - Title',
+    'Common Factor - Duration',
+    'Period - Start',
+    'Period - Finish',
+    'Analysis - Cost',
+    'Analysis - % Complete',
+    'Analysis - Effort-Driven',
+  ];
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example18`);
@@ -18,10 +28,56 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
     cy.get('#grid18')
       .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
       .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .each(($child, index) => expect($child.text()).to.eq(originalTitles[index]));
   });
 
   it('should initially be grouped by "Duration" when loading the grid', () => {
+    cy.get('[data-row=0] > .cell-title .slick-group-title').contains(/Duration: [0-9]/);
+    cy.get('[data-row=1] > .slick-cell:nth(2)').should('contain', '0');
+  });
+
+  it('should open Grid Menu and be able to unhide "Title" column', () => {
+    cy.get('button.slick-grid-menu-button').click({ force: true });
+    cy.get('.slick-grid-menu:visible')
+      .find('.slick-column-picker-list')
+      .children('li:visible:nth(0)')
+      .children('label')
+      .should('contain', 'Common Factor - Title');
+    // .click({ force: true });
+
+    cy.get('.slick-column-picker-list input[data-columnid="title"]')
+      .parent('.icon-checkbox-container')
+      .find('.sgi')
+      .should('have.class', 'sgi-icon-picker-uncheck');
+
+    cy.get('.slick-column-picker-list li')
+      .children()
+
+      .each(($child, index) => {
+        if (index <= 5) {
+          expect($child.text()).to.eq(gridMenuTitles[index]);
+        }
+      });
+
+    cy.get('.slick-grid-menu:visible')
+      .find('.slick-column-picker-list')
+      .children('li:visible:nth(0)')
+      .children('label')
+      .should('contain', 'Common Factor - Title')
+      .click();
+
+    cy.get('.slick-column-picker-list input[data-columnid="title"]')
+      .parent('.icon-checkbox-container')
+      .find('.sgi')
+      .should('have.class', 'sgi-icon-picker-check');
+
+    cy.get('#grid18')
+      .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+  });
+
+  it('should still be grouped by "Duration"', () => {
     cy.get('[data-row=0] > .cell-title .slick-group-title').contains(/Duration: [0-9]/);
     cy.get('[data-row=1] > .slick-cell:nth(2)').should('contain', '0');
   });

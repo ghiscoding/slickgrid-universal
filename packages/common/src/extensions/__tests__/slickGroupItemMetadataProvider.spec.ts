@@ -235,6 +235,7 @@ describe('GroupItemMetadataProvider Service', () => {
       const output = service.getGroupRowMetadata({ count: 12, level: undefined as any, groupingKey: 'age', value: 33 }, 0);
       expect(output).toEqual({
         selectable: false,
+        isGroup: true,
         focusable: mockOptions.groupFocusable,
         cssClasses: `${mockOptions.groupCssClass} slick-group-level-0`,
         formatter: service.getOptions().totalsFormatter,
@@ -255,6 +256,7 @@ describe('GroupItemMetadataProvider Service', () => {
       const output = service.getGroupRowMetadata({ count: 12, level: 2, groupingKey: 'age', value: 33 }, 0);
       expect(output).toEqual({
         selectable: false,
+        isGroup: true,
         focusable: mockOptions.groupFocusable,
         cssClasses: `${mockOptions.groupCssClass} slick-group-level-2`,
         formatter: undefined,
@@ -277,6 +279,7 @@ describe('GroupItemMetadataProvider Service', () => {
       const output = service.getTotalsRowMetadata({ group: { count: 12, level: undefined as any, groupingKey: 'age', value: 33 } }, 0);
       expect(output).toEqual({
         editorClass: null,
+        isGroup: true,
         selectable: false,
         focusable: mockOptions.totalsFocusable,
         cssClasses: `groupy-totals slick-group-level-0`,
@@ -288,6 +291,7 @@ describe('GroupItemMetadataProvider Service', () => {
       const output = service.getTotalsRowMetadata({ group: { count: 12, level: 3, groupingKey: 'age', value: 33 } }, 0);
       expect(output).toEqual({
         editorClass: null,
+        isGroup: true,
         focusable: false,
         selectable: false,
         cssClasses: `slick-group-totals slick-group-level-3`,

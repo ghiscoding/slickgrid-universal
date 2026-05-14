@@ -9,7 +9,6 @@ import {
 } from '../core/index.js';
 import type {
   Column,
-  Formatter,
   GridOption,
   GroupingFormatterItem,
   GroupItemMetadataProviderOption,
@@ -97,6 +96,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
       focusable: this._options.groupFocusable,
       cssClasses: `${this._options.groupCssClass} slick-group-level-${item?.level || 0}`,
       formatter: (this._options.includeHeaderTotals && this._options.totalsFormatter) || undefined,
+      isGroup: true,
       columns: {
         0: {
           colspan: this._options.includeHeaderTotals ? '1' : '*',
@@ -108,19 +108,14 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
   }
 
   // prettier-ignore
-  getTotalsRowMetadata(item: { group: GroupingFormatterItem }, _row: number): {
-    selectable: boolean;
-    focusable: boolean | undefined;
-    cssClasses: string;
-    formatter: Formatter | undefined;
-    editorClass: null;
-  } {
+  getTotalsRowMetadata(item: { group: GroupingFormatterItem }, _row: number): ItemMetadata {
     return {
       selectable: false,
       focusable: this._options.totalsFocusable,
       cssClasses: `${this._options.totalsCssClass} slick-group-level-${item?.group?.level || 0}`,
       formatter: this._options.totalsFormatter,
       editorClass: null,
+      isGroup: true
     };
   }
 
