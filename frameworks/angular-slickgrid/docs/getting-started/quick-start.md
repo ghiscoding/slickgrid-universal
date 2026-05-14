@@ -49,8 +49,8 @@ Angular-Slickgrid default CSS compiled (if you use the plain Bootstrap Theme CSS
 ```json
 "styles": [
     "node_modules/bootstrap/dist/css/bootstrap.css",
-    "styles.css",
-    "node_modules/@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css"
+    "node_modules/@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css",
+    "styles.css"
 ]
 ```
 
@@ -110,7 +110,7 @@ bootstrapApplication(AppComponent, {
 Below are 2 different setups (with App Module (legacy) or Standalone) which in both cases require the `AngularSlickgridModule.forRoot()`, so make sure to include it.
 
 #### App Module (legacy)
-##### This only works with version 9.0 and below, any newer version (v10.0 and above) is now purely Standalone
+##### This only works with version 9.x and below, any newer version (v10.0 and above) is now purely Standalone
 Include `AngularSlickgridModule` in your App Module (`app.module.ts`)
 
 > **Note:** Make sure to add the `forRoot` since it will throw an error in the console when missing.
@@ -126,7 +126,7 @@ import { AngularSlickgridModule } from 'angular-slickgrid';
 export class AppModule { }
 ```
 
-#### Standalone (App Config)
+##### Standalone (App Config)
 > #### see this Stack Overflow [answer](https://stackoverflow.com/a/78527155/1212166) for more details and Stackblitz demo
 
 If your app is using standalone style, go to `app.config.ts`
@@ -206,6 +206,7 @@ export class GridBasicComponent {
 
   constructor() {
     this.prepareGrid();
+    this.getData();
   }
 
   prepareGrid() {
@@ -221,16 +222,15 @@ export class GridBasicComponent {
       enableAutoResize: true,
       enableSorting: true
     };
+  }
 
+  // fetch your data...
+  getData() {
     // fill the dataset with your data (or read it from the DB)
     this.dataset = [
       { id: 0, title: 'Task 1', duration: 45, percentComplete: 5, start: '2001-01-01', finish: '2001-01-31' },
       { id: 1, title: 'Task 2', duration: 33, percentComplete: 34, start: '2001-01-11', finish: '2001-02-04' },
     ];
-  }
-
-  getData() {
-    // fetch your data...
   }
 }
 ```
