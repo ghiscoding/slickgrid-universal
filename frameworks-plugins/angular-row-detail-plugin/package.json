@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/angular-row-detail-plugin",
-  "version": "10.7.0",
+  "version": "10.7.1",
   "description": "Angular Row Detail Plugin for Angular-SlickGrid",
   "type": "module",
   "main": "./dist/index.js",

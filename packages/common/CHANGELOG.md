@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.7.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.7.0...v10.7.1) (2026-05-16)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2580](https://github.com/ghiscoding/slickgrid-universal/issues/2580)) ([b4e6897](https://github.com/ghiscoding/slickgrid-universal/commit/b4e6897025ed6e24f9f8859385c6123632c40374)) - by @renovate-bot
+* **regression:** grouping with other hidden columns should still work ([#2585](https://github.com/ghiscoding/slickgrid-universal/issues/2585)) ([e69f68d](https://github.com/ghiscoding/slickgrid-universal/commit/e69f68ddc99234c3e6a1e11058583a34c4230ea9)) - by @ghiscoding
+
 ## [10.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.6.0...v10.7.0) (2026-05-09)
 
 ### Features
