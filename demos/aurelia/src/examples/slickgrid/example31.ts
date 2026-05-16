@@ -13,8 +13,8 @@ import {
   type Pagination,
 } from 'aurelia-slickgrid';
 import { Observable, of, type Subject } from 'rxjs';
-import './example31.scss'; // provide custom CSS/SASS styling
 import SAMPLE_DATA_URL from './data/customers_100.json?url';
+import './example31.scss'; // provide custom CSS/SASS styling
 
 const defaultPageSize = 20;
 

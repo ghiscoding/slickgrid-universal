@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Filters, SlickgridReact, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
-import './example22.scss';
 import CUSTOMERS_URL from './data/customers_100.json?url';
+import './example22.scss';
 
 const Example22: React.FC = () => {
   const [gridOptions1, setGridOptions1] = useState<GridOption | undefined>(undefined);

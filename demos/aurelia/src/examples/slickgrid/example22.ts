@@ -1,8 +1,8 @@
 import { IHttpClient } from '@aurelia/fetch-client';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
 import { Filters, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
-import './example22.scss';
 import CUSTOMERS_URL from './data/customers_100.json?url';
+import './example22.scss';
 
 export class Example22 {
   aureliaGrid2!: AureliaGridInstance;

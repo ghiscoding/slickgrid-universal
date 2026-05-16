@@ -13,8 +13,8 @@ import {
   type OnRowCountChangedEventArgs,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import './example39.scss';
 import SAMPLE_COLLECTION_DATA_URL from './data/customers_100.json?url';
+import './example39.scss';
 
 interface Status {
   text: string;

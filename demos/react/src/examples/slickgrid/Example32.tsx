@@ -18,8 +18,8 @@ import {
   type SlickgridReactInstance,
   type VanillaCalendarOption,
 } from 'slickgrid-react';
-import './example32.scss'; // provide custom CSS/SASS styling
 import COUNTRIES_COLLECTION_URL from './data/countries.json?url';
+import './example32.scss'; // provide custom CSS/SASS styling
 
 const NB_ITEMS = 400;
 

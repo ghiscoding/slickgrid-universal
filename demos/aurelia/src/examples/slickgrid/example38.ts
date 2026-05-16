@@ -12,8 +12,8 @@ import {
   type Metrics,
   type OnRowCountChangedEventArgs,
 } from 'aurelia-slickgrid';
-import './example38.scss';
 import SAMPLE_DATA_URL from './data/customers_100.json?url';
+import './example38.scss';
 
 const CARET_HTML_ESCAPED = '%5E';
 const PERCENT_HTML_ESCAPED = '%25';

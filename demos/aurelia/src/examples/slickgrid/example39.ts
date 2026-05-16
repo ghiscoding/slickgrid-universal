@@ -11,8 +11,8 @@ import {
   type MultipleSelectOption,
   type OnRowCountChangedEventArgs,
 } from 'aurelia-slickgrid';
-import './example39.scss';
 import SAMPLE_DATA_URL from './data/customers_100.json?url';
+import './example39.scss';
 
 const GRAPHQL_QUERY_DATASET_NAME = 'users';
 const FAKE_SERVER_DELAY = 250;
