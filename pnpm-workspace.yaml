@@ -14,13 +14,13 @@ minimumReleaseAgeExclude:
 
 catalog:
   '@4tw/cypress-drag-drop': ^2.3.1
-  '@angular-eslint/eslint-plugin': ^21.3.1
+  '@angular-eslint/eslint-plugin': ^21.4.0
   '@faker-js/faker': ^10.4.0
   '@fnando/sparkline': ^0.3.10
-  '@formkit/tempo': ^1.0.0
+  '@formkit/tempo': ^1.1.0
   '@popperjs/core': ^2.11.8
   '@types/fnando__sparkline': ^0.3.7
-  '@types/node': ^24.12.2
+  '@types/node': ^24.12.4
   '@types/react': ^19.2.14
   '@types/react-dom': ^19.2.3
   '@types/sortablejs': ^1.15.9
@@ -30,30 +30,30 @@ catalog:
   '@vitest/ui': ^5.0.0-beta.2
   bootstrap: ^5.3.8
   cross-env: ^10.1.0
-  cypress: ^15.14.2
+  cypress: ^15.15.0
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
-  dompurify: ^3.4.2
+  dompurify: ^3.4.3
   globals: ^17.6.0
   i18next: ^25.10.10
   i18next-vue: ^5.4.0
   jsdom: ^29.1.1
   jsdom-global: ^3.0.2
   jspdf: ^4.2.1
-  multiple-select-vanilla: ^5.1.0
+  multiple-select-vanilla: ^5.2.0
   native-copyfiles: ^2.0.1
   npm-run-all2: ^8.0.4
   oxlint: 1.43.0
   react: ^19.2.6
   react-dom: ^19.2.6
-  react-router: ^7.15.0
+  react-router: ^7.15.1
   remove-glob: ^1.2.0
   rxjs: ^7.8.2
   sass: ^1.99.0
   sortablejs: ^1.15.7
   tslib: ^2.8.1
   typescript: ^6.0.3
-  vite: ^8.0.11
+  vite: ^8.0.13
   vitest: ^5.0.0-beta.2
   vue: ^3.5.34
 
