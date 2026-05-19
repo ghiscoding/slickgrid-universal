@@ -38,13 +38,6 @@
       }
     ],
     "typescript/consistent-type-imports": "off",
-    "import/extensions": [
-      "off",
-      "ignorePackages",
-      {
-        "js": "never",
-        "ts": "never"
-      }
-    ]
+    "import/extensions": "off"
   }
 }
