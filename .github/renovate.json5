@@ -24,11 +24,16 @@
     // i18next major version - let's wait until our next major
     {
       packageNames: ['i18next'],
-      allowedVersions: '<26.0.0',
+      allowedVersions: '< 26.0.0',
     },
     {
       packageNames: ['react-i18next'],
-      allowedVersions: '<17.0.0',
+      allowedVersions: '< 17.0.0',
+    },
+    // postponed the following npm packages to next major, since they now require NodeJS: ^22.22.2 || ^24.15.0 || >=26.0.0
+    {
+      packageNames: [' npm-run-all2'],
+      allowedVersions: '< 10.0.0',
     },
     {
       matchManagers: ['github-actions'],
