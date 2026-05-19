@@ -1,15 +1,12 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["import", "oxc", "typescript"],
-
   "jsPlugins": ["eslint-plugin-cypress"],
-
   "env": {
     "es2025": true,
     "browser": true,
     "shared-node-browser": true
   },
-
   "ignorePatterns": [
     "**/*.{js,mjs,d.ts}",
     "**/dist/**",
