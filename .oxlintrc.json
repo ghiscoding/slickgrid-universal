@@ -25,9 +25,11 @@
       "plugins": ["vitest"],
       "rules": {
         "vitest/expect-expect": "error",
+        "vitest/no-conditional-expect": "off",
         "vitest/no-disabled-tests": "warn",
         "vitest/no-focused-tests": "error",
-        "vitest/require-mock-type-parameters": "off"
+        "vitest/require-mock-type-parameters": "off",
+        "vitest/valid-expect": "error"
       }
     },
     {

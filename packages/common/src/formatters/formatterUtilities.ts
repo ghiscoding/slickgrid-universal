@@ -66,6 +66,7 @@ export function getCopyCellValue(args: MenuCallbackArgs): string {
   if (typeof textToCopy === 'string') {
     textToCopy = textToCopy
       .replace(/^([·⮞⮟]\s*)|([·⮞⮟])\s*/gi, '')
+      /* oxlint-disable-next-line no-misleading-character-class */
       .replace(/[\u00b7\u034f]/gi, '') // remove unwanted Unicode characters (if entered directly)
       .trim();
   }
