@@ -33,7 +33,7 @@
     // postponed the following npm packages to next major, since they now require NodeJS: ^22.22.2 || ^24.15.0 || >=26.0.0
     {
       packageNames: [' npm-run-all2'],
-      allowedVersions: '< 10.0.0',
+      allowedVersions: '< 9.0.0',
     },
     {
       matchManagers: ['github-actions'],
