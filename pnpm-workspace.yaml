@@ -58,7 +58,7 @@ catalog:
   vue: ^3.5.34
 
 overrides:
-  '@hono/node-server': ^1.19.14
+  '@hono/node-server': ^2.0.2
   '@isaacs/brace-expansion': ^5.0.1
   hono: ^4.12.18
   ip-address: ^10.2.0
