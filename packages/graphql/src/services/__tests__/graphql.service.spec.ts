@@ -111,7 +111,7 @@ describe('GraphqlService', () => {
 
     it('should throw an error when no service options exists after service init', () => {
       service.init(undefined as any);
-      expect(() => service.buildQuery()).toThrow();
+      expect(() => service.buildQuery()).toThrow('');
     });
 
     it('should throw an error when no dataset is provided in the service options after service init', () => {
@@ -121,7 +121,7 @@ describe('GraphqlService', () => {
 
     it('should throw an error when no column definitions is provided in the service options after service init', () => {
       service.init({ datasetName: 'users' });
-      expect(() => service.buildQuery()).toThrow();
+      expect(() => service.buildQuery()).toThrow('');
     });
 
     it('should return a simple query with pagination set and nodes that includes "id" and the other 2 fields properties', () => {
@@ -618,7 +618,7 @@ describe('GraphqlService', () => {
   describe('processOnFilterChanged method', () => {
     it('should throw an error when backendService is undefined', () => {
       service.init(serviceOptions, paginationOptions, undefined);
-      expect(() => service.processOnFilterChanged(null as any, { grid: gridStub } as any)).toThrow();
+      expect(() => service.processOnFilterChanged(null as any, { grid: gridStub } as any)).toThrow('');
     });
 
     it('should throw an error when grid is undefined', () => {
@@ -1327,7 +1327,7 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
     });
 
-    it('should return a query with a CSV string when the filter operator is IN ', () => {
+    it('should return a query with a CSV string when the filter operator is IN', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"female,male"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {

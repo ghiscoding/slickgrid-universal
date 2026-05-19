@@ -372,8 +372,8 @@ describe('CellMenu Plugin', () => {
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
 
-        expect(cellMenuElm.classList.contains('dropdown'));
-        expect(cellMenuElm.classList.contains('dropright'));
+        expect(cellMenuElm.classList.contains('dropdown')).toBeTruthy();
+        expect(cellMenuElm.classList.contains('dropleft')).toBeTruthy();
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(
@@ -731,7 +731,7 @@ describe('CellMenu Plugin', () => {
         expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
-        expect(cellMenu1Elm.classList.contains('dropleft'));
+        expect(cellMenu1Elm.classList.contains('dropleft')).toBeTruthy();
 
         // return Cell Menu menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
         subCommands1Elm!.dispatchEvent(new Event('click'));
@@ -782,7 +782,7 @@ describe('CellMenu Plugin', () => {
         expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
-        expect(cellMenu1Elm.classList.contains('dropright'));
+        expect(cellMenu1Elm.classList.contains('dropright')).toBeTruthy();
 
         // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
         subCommands1Elm!.dispatchEvent(new Event('click'));

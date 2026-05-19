@@ -21,11 +21,6 @@
         enabled: false,
       },
     },
-    {
-      // blocked by oxlint issue: https://github.com/oxc-project/oxc/issues/19395 and https://github.com/oxc-project/oxc/issues/19431
-      packageNames: ['oxlint'],
-      allowedVersions: '1.43.0',
-    },
     // i18next major version - let's wait until our next major
     {
       packageNames: ['i18next'],

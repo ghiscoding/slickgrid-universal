@@ -176,7 +176,7 @@ describe('Grid Service', () => {
   });
 
   describe('getVisibleColumnDefinitions method', () => {
-    it('should call "visibleColumns" GETTER ', () => {
+    it('should call "visibleColumns" GETTER', () => {
       const mockColumns = [
         { id: 'field1', field: 'field1', width: 100 },
         { id: 'field2', field: 'field2', width: 100 },

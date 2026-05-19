@@ -1372,7 +1372,7 @@ describe('GridMenuControl', () => {
           expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
           expect(subCommand3Elm.textContent).toContain('Command 3');
           expect(subCommand5Elm.textContent).toContain('Command 5');
-          expect(gridMenu1Elm.classList.contains('dropleft'));
+          expect(gridMenu1Elm.classList.contains('dropleft')).toBeTruthy();
           expect(gridMenu2Elm.classList.contains('dropup')).toBeFalsy();
           expect(gridMenu2Elm.classList.contains('dropdown')).toBeTruthy();
 
@@ -1428,7 +1428,7 @@ describe('GridMenuControl', () => {
           expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
           expect(subCommand3Elm.textContent).toContain('Command 3');
           expect(subCommand5Elm.textContent).toContain('Command 5');
-          expect(gridMenu1Elm.classList.contains('dropright'));
+          expect(gridMenu1Elm.classList.contains('dropright')).toBeTruthy();
           expect(gridMenu2Elm.classList.contains('dropup')).toBeFalsy();
           expect(gridMenu2Elm.classList.contains('dropdown')).toBeTruthy();
 

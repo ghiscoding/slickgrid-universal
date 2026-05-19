@@ -807,7 +807,7 @@ describe('HeaderMenu Plugin', () => {
         expect(commandChevronElm.className).toBe('sub-item-chevron');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
-        expect(headerMenu1Elm.classList.contains('dropleft'));
+        expect(headerMenu1Elm.classList.contains('dropright')).toBeTruthy();
         expect(headerMenu2Elm.classList.contains('dropup')).toBeFalsy();
         expect(headerMenu2Elm.classList.contains('dropdown')).toBeTruthy();
 
@@ -872,7 +872,7 @@ describe('HeaderMenu Plugin', () => {
         expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
-        expect(headerMenu1Elm.classList.contains('dropright'));
+        expect(headerMenu1Elm.classList.contains('dropright')).toBeTruthy();
         expect(headerMenu2Elm.classList.contains('dropup')).toBeFalsy();
         expect(headerMenu2Elm.classList.contains('dropdown')).toBeTruthy();
 

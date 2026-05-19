@@ -1,4 +1,4 @@
-describe('Example 42 - Custom Filter Bar ', () => {
+describe('Example 42 - Custom Filter Bar', () => {
   const titles = ['Item', 'Cost', 'State Tax', 'County Tax', 'Federal Tax', 'Sub-Total', 'Total', 'Type'];
 
   it('should display Example title', () => {

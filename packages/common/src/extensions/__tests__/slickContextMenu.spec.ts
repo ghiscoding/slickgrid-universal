@@ -383,8 +383,8 @@ describe('ContextMenu Plugin', () => {
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
 
-        expect(contextMenuElm.classList.contains('dropdown'));
-        expect(contextMenuElm.classList.contains('dropright'));
+        expect(contextMenuElm.classList.contains('dropdown')).toBeTruthy();
+        expect(contextMenuElm.classList.contains('dropright')).toBeTruthy();
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(

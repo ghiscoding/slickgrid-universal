@@ -45,18 +45,6 @@
         "js": "never",
         "ts": "never"
       }
-    ],
-    "naming-convention": [
-      "error",
-      {
-        "selector": "directive",
-        "format": ["camelCase"],
-        "prefix": ["app"]
-      },
-      {
-        "selector": "component",
-        "format": ["kebab-case"]
-      }
     ]
   }
 }

@@ -193,7 +193,7 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
       });
     });
 
-    it('should filter the Files by the input search string and expect 4 rows and 1st column to have ', () => {
+    it('should filter the Files by the input search string and expect 4 rows and 1st column to have', () => {
       const filteredFiles = ['documents', 'pdf', 'map2.pdf', 'map.pdf'];
 
       cy.get('[data-test=search-string]').type('map');

@@ -1,13 +1,15 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["import", "oxc", "typescript", "vitest"],
+  "plugins": ["import", "oxc", "typescript"],
+
   "jsPlugins": ["eslint-plugin-cypress"],
-  "extends": ["recommended", "recommended-module"],
+
   "env": {
     "es2025": true,
     "browser": true,
     "shared-node-browser": true
   },
+
   "ignorePatterns": [
     "**/*.{js,mjs,d.ts}",
     "**/dist/**",
@@ -24,7 +26,8 @@
       "rules": {
         "vitest/expect-expect": "error",
         "vitest/no-disabled-tests": "warn",
-        "vitest/no-focused-tests": "error"
+        "vitest/no-focused-tests": "error",
+        "vitest/require-mock-type-parameters": "off"
       }
     },
     {
@@ -34,7 +37,10 @@
         "oxc/erasing-op": "off",
         "cypress/no-debug": "error",
         "import/extensions": "off",
-        "vitest/*": "off"
+        "vitest/expect-expect": "off",
+        "vitest/no-disabled-tests": "off",
+        "vitest/no-focused-tests": "off",
+        "vitest/valid-expect": "off"
       }
     },
     {
@@ -49,7 +55,6 @@
     "typescript/consistent-type-definitions": "error",
     "typescript/consistent-type-exports": "error",
     "typescript/consistent-type-imports": "error",
-    "typescript/member-ordering": "error",
     "typescript/no-empty-function": "off",
     "typescript/no-empty-object-type": ["error", { "allowInterfaces": "with-single-extends" }],
     "typescript/no-explicit-any": "off",
@@ -57,17 +62,8 @@
     "typescript/no-unsafe-function-type": "off",
     "typescript/no-non-null-assertion": "off",
     "typescript/no-unused-expressions": "off",
-    "typescript/no-unused-vars": [
-      "error",
-      {
-        "argsIgnorePattern": "^_",
-        "destructuredArrayIgnorePattern": "^_",
-        "caughtErrors": "none"
-      }
-    ],
-    "import/extensions": ["error", "always", { "ignorePackages": true }],
+    "typescript/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "destructuredArrayIgnorePattern": "^_", "caughtErrors": "none" }],
     "import/no-self-import": "error",
-    "import/no-useless-path-segments": ["error", { "noUselessIndex": true }],
     "no-async-promise-executor": "off",
     "oxc/erasing-op": "off",
     "object-shorthand": "error"

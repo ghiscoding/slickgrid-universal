@@ -255,7 +255,7 @@ describe('ExportService', () => {
       });
     });
 
-    describe('startDownloadFile call after all private methods ran ', () => {
+    describe('startDownloadFile call after all private methods ran', () => {
       let mockCollection: any[];
 
       beforeEach(() => {

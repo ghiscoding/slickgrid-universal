@@ -351,7 +351,7 @@ describe('HeaderButton Plugin', () => {
       );
     });
 
-    it('should trigger click and onCommand when pressing Enter key on a header button ', () => {
+    it('should trigger click and onCommand when pressing Enter key on a header button', () => {
       const headerDiv = document.createElement('div');
       headerDiv.className = 'slick-header-column';
 

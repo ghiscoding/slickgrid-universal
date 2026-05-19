@@ -361,7 +361,7 @@ describe('ExtensionService', () => {
           () => undefined as unknown as GridService
         );
 
-        expect(() => service.bindDifferentExtensions()).toThrow();
+        expect(() => service.bindDifferentExtensions()).toThrow('');
       });
 
       it('should register the ColumnPicker addon when "enableColumnPicker" is set in the grid options', () => {
