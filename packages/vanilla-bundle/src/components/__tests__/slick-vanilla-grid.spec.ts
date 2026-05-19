@@ -1519,7 +1519,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(backendExecuteSpy).toHaveBeenCalledWith(expect.any(Date), processResult, component.gridOptions.backendServiceApi as BackendServiceApi, 0);
       });
 
-      it('should throw an error when the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options', () => {
+      it('should throw an error when the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options', async () => {
         const mockError = { error: '404' };
         const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
         const promise = new Promise((_resolve, reject) => setTimeout(() => reject(mockError), 1));
@@ -1531,9 +1531,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(processSpy).toHaveBeenCalled();
 
-        promise.catch((e) => {
-          expect(e).toEqual(mockError);
-        });
+        vi.advanceTimersByTime(2);
+
+        await expect(promise).rejects.toEqual(mockError);
       });
 
       it('should throw an error when the process method on initialization when "executeProcessCommandOnInit" is set as a backend service options from an Observable', () => {

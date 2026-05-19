@@ -314,7 +314,7 @@ const vueComponentFormatter: Formatter = (_row: number, _cell: number, _val: any
 function setAutoEdit(autoEdit: boolean) {
   isAutoEdit.value = autoEdit;
   vueGrid.slickGrid.setOptions({
-    autoEdit: autoEdit,
+    autoEdit,
   });
   return true;
 }

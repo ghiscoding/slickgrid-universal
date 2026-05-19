@@ -518,7 +518,7 @@ describe('CheckboxEditor', () => {
         target: 'composite',
         compositeEditorOptions: editorArguments.compositeEditorOptions,
       });
-      expect(onCompositeEditorSpy).not.toHaveBeenCalled;
+      expect(onCompositeEditorSpy).not.toHaveBeenCalled();
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editor.editorDomElement.disabled).toEqual(true);
       expect(editor.editorDomElement.checked).toEqual(false);

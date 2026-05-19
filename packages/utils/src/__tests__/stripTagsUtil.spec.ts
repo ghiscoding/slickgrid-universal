@@ -106,7 +106,7 @@ describe('stripTags()', () => {
     });
   });
 
-  describe('with input types not evaluated ', () => {
+  describe('with input types not evaluated', () => {
     it('should return same number input but converted as string', () => {
       const input = 0;
       expect(stripTags(input)).toBe('0');

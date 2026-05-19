@@ -425,7 +425,7 @@ function initialization() {
       _gridOptions.value.groupItemMetadataOption as GroupItemMetadataProviderOption | undefined
     );
     sharedService.groupItemMetadataProvider = groupItemMetadataProvider;
-    dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: groupItemMetadataProvider };
+    dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider };
   }
   dataview = new SlickDataView<any>(dataViewOptions, eventPubSubService);
   eventPubSubService.publish('onDataviewCreated', dataview);
@@ -590,18 +590,18 @@ function initialization() {
 
     // return all available Services (non-singleton)
     backendService: backendService.value,
-    eventPubSubService: eventPubSubService,
-    filterService: filterService,
-    gridEventService: gridEventService,
-    gridStateService: gridStateService,
-    gridService: gridService,
-    headerGroupingService: headerGroupingService,
-    extensionService: extensionService,
+    eventPubSubService,
+    filterService,
+    gridEventService,
+    gridStateService,
+    gridService,
+    headerGroupingService,
+    extensionService,
     paginationComponent: slickPagination,
-    paginationService: paginationService,
-    resizerService: resizerService,
-    sortService: sortService,
-    treeDataService: treeDataService,
+    paginationService,
+    resizerService,
+    sortService,
+    treeDataService,
   };
 
   // addons (SlickGrid extra plugins/controls)

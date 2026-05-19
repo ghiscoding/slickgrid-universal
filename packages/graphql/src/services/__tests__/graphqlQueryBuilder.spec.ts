@@ -169,31 +169,31 @@ describe('GraphqlQueryBuilder', () => {
   });
 
   it('should throw Error if find input items have zero props', () => {
-    expect(() => new GraphqlQueryBuilder('x').find({})).toThrow();
+    expect(() => new GraphqlQueryBuilder('x').find({})).toThrow('');
   });
 
   it('should throw Error if find input items have multiple props', () => {
-    expect(() => new GraphqlQueryBuilder('x').find({ a: 'z', b: 'y' })).toThrow();
+    expect(() => new GraphqlQueryBuilder('x').find({ a: 'z', b: 'y' })).toThrow('');
   });
 
   it('should throw Error if find is undefined', () => {
-    expect(() => new GraphqlQueryBuilder('x').find()).toThrow();
+    expect(() => new GraphqlQueryBuilder('x').find()).toThrow('');
   });
 
   it('should throw Error if no find values have been set', () => {
-    expect(() => `${new GraphqlQueryBuilder('x')}`).toThrow();
+    expect(() => `${new GraphqlQueryBuilder('x')}`).toThrow('');
   });
 
   it('should throw Error if find is not valid', () => {
-    expect(() => new GraphqlQueryBuilder('x').find(123)).toThrow();
+    expect(() => new GraphqlQueryBuilder('x').find(123)).toThrow('');
   });
 
   it('should throw Error if you accidentally pass an undefined', () => {
-    expect(() => new GraphqlQueryBuilder('x', undefined)).toThrow();
+    expect(() => new GraphqlQueryBuilder('x', undefined)).toThrow('');
   });
 
   it('should throw Error it is not an input object for alias', () => {
     // @ts-ignore: 2345
-    expect(() => new GraphqlQueryBuilder('x', true)).toThrow();
+    expect(() => new GraphqlQueryBuilder('x', true)).toThrow('');
   });
 });

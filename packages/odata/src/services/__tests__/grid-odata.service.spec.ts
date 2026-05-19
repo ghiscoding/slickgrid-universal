@@ -295,7 +295,7 @@ describe('GridOdataService', () => {
   describe('processOnFilterChanged method', () => {
     it('should throw an error when backendService is undefined', () => {
       service.init(serviceOptions, paginationOptions, undefined);
-      expect(() => service.processOnFilterChanged(null as any, { grid: gridStub } as any)).toThrow();
+      expect(() => service.processOnFilterChanged(null as any, { grid: gridStub } as any)).toThrow('');
     });
 
     it('should throw an error when grid is undefined', () => {
@@ -877,7 +877,7 @@ describe('GridOdataService', () => {
       expect(query).toBe(expectation);
     });
 
-    it('should return a query with a CSV string when the filter operator is IN ', () => {
+    it('should return a query with a CSV string when the filter operator is IN', () => {
       const expectation = `$top=10&$filter=(Gender eq 'female' or Gender eq 'male')`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {

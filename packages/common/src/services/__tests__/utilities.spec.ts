@@ -421,13 +421,12 @@ describe('Service/Utilies', () => {
       expect(promise).toBe(castPromise);
     });
 
-    it('should be able to cast an Observable to a Promise', () => {
+    it('should be able to cast an Observable to a Promise', async () => {
       const inputArray = ['hello', 'world'];
       const observable = of(inputArray);
 
-      castObservableToPromise(rxjs, observable).then((outputArray) => {
-        expect(outputArray).toBe(inputArray);
-      });
+      const outputArray = await castObservableToPromise(rxjs, observable);
+      expect(outputArray).toBe(inputArray);
     });
   });
 

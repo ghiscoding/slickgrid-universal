@@ -33,7 +33,7 @@ describe('the Date ISO Formatter', () => {
     expect(result).toBe('2019-05-01');
   });
 
-  it('should return a formatted date value without time date provided has TZ but we specifically mention to parse as UTC ', () => {
+  it('should return a formatted date value without time date provided has TZ but we specifically mention to parse as UTC', () => {
     const value = new Date('2099-12-31T00:00:00.000Z');
 
     const result1 = Formatters.dateIso(0, 0, value, { params: { parseDateAsUtc: true } } as Column, {}, {} as any);
