@@ -331,18 +331,24 @@ export class Example27Component implements OnInit {
 
   /** Whenever a parent is being toggled, we'll keep a reference of all of these changes so that we can reapply them whenever we want */
   handleOnTreeItemToggled(treeToggleExecution: TreeToggleStateChange) {
-    this.hasNoExpandCollapseChanged = false;
-    this.treeToggleItems = treeToggleExecution.toggledItems as TreeToggledItem[];
+    // defer to microtask to avoid ExpressionChangedAfterItHasBeenCheckedError in Angular
+    queueMicrotask(() => {
+      this.hasNoExpandCollapseChanged = false;
+      this.treeToggleItems = treeToggleExecution.toggledItems as TreeToggledItem[];
+    });
     console.log('Tree Data changes', treeToggleExecution);
   }
 
   handleOnGridStateChanged(gridStateChange: GridStateChange) {
-    this.hasNoExpandCollapseChanged = false;
+    // defer state updates to microtask to avoid ExpressionChangedAfterItHasBeenCheckedError
+    queueMicrotask(() => {
+      this.hasNoExpandCollapseChanged = false;
 
-    if (gridStateChange?.change?.type === 'treeData') {
-      console.log('Tree Data gridStateChange', gridStateChange?.gridState?.treeData);
-      this.treeToggleItems = gridStateChange?.gridState?.treeData?.toggledItems as TreeToggledItem[];
-    }
+      if (gridStateChange?.change?.type === 'treeData') {
+        console.log('Tree Data gridStateChange', gridStateChange?.gridState?.treeData);
+        this.treeToggleItems = gridStateChange?.gridState?.treeData?.toggledItems as TreeToggledItem[];
+      }
+    });
   }
 
   logTreeDataToggledItems() {
