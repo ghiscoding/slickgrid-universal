@@ -292,6 +292,33 @@ export class TreeDataService {
     return this._currentToggledItems;
   }
 
+  /**
+   * Set or clear the runtime `maxVisibleDepth` for Tree Data and refresh the grid.
+   * Calling with `undefined` clears the value.
+   */
+  setMaxVisibleDepth(maxVisibleDepth?: number): void {
+    const gridOptions = this.sharedService.gridOptions ?? {};
+    const treeDataOptions = { ...(gridOptions.treeDataOptions || {}) } as any;
+
+    if (typeof maxVisibleDepth === 'number') {
+      treeDataOptions.maxVisibleDepth = maxVisibleDepth;
+    } else {
+      delete treeDataOptions.maxVisibleDepth;
+    }
+
+    gridOptions.treeDataOptions = treeDataOptions;
+    this.sharedService.gridOptions = gridOptions;
+    this._grid?.setOptions(gridOptions);
+
+    // refreshing the filters will trigger a grid refresh with new tree depth
+    this.filterService.refreshTreeDataFilters();
+  }
+
+  /** Clear the runtime `maxVisibleDepth` */
+  clearMaxVisibleDepth(): void {
+    this.setMaxVisibleDepth(undefined);
+  }
+
   /** Clear the sorting and set it back to initial sort */
   clearSorting(): void {
     const initialSort = this.getInitialSort(this.sharedService.columnDefinitions, this.sharedService.gridOptions);

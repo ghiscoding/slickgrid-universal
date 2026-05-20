@@ -78,6 +78,13 @@ export interface TreeDataOption extends TreeDataPropNames {
   /** Optional Title Formatter (allows you to format/style the title text differently) */
   titleFormatter?: Formatter;
 
+  /**
+   * Optional maximum visible tree depth. When provided, any tree node with a level
+   * greater than this number will be hidden from the grid display (but not removed
+   * from the dataset). Depths are zero-based (0 = root level).
+   */
+  maxVisibleDepth?: number;
+
   /** Defaults to False, should we toggle the tree node when clicking on the tree node title or toggle icon (tree node must have element with `.slick-tree-title` class name) */
   toggleOnNodeTitle?: boolean;
 
