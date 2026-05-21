@@ -133,7 +133,7 @@
     "jsdom-global": "catalog:",
     "npm-run-all2": "catalog:",
     "oxlint": "catalog:",
-    "eslint-plugin-import-ext": "workspace:*",
+    "eslint-plugin-local-import-ext": "0.1.1",
     "prettier": "^3.8.3",
     "remove-glob": "catalog:",
     "rxjs": "catalog:",

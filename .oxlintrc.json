@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["import", "oxc", "typescript"],
-  "jsPlugins": ["eslint-plugin-cypress", "eslint-plugin-import-ext"],
+  "jsPlugins": ["eslint-plugin-cypress", "eslint-plugin-local-import-ext"],
   "env": {
     "es2025": true,
     "browser": true,
@@ -65,7 +65,7 @@
     // "import/extensions" rule is blocked by https://github.com/oxc-project/oxc/issues/19431
     // use custom "eslint-plugin-import-ext" custom eslint plugin in the meantime to catch any missing local import file extensions
     "import/extensions": "off",
-    "import-ext/require-local-extension": [
+    "local-import-ext/require-local-extension": [
       "error",
       {
         "js": "always",

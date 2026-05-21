@@ -9,6 +9,7 @@ minimumReleaseAge: 2880 # 2 days in minutes
 minimumReleaseAgeExclude:
   # exclude packages that I personally maintain and are safe to use on the same day
   - '@lerna-lite/*'
+  - 'eslint-plugin-local-import-ext'
   # Renovate security update: hono@4.12.18
   - hono@4.12.18
 
