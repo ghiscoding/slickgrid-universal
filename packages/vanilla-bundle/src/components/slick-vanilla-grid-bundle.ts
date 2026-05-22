@@ -107,8 +107,6 @@ export class SlickVanillaGridBundle<TData = any> {
   extensionService!: ExtensionService;
   filterFactory!: FilterFactory;
   filterService!: FilterService;
-  gridClass!: string;
-  gridClassName!: string;
   gridEventService!: GridEventService;
   gridService!: GridService;
   gridStateService!: GridStateService;

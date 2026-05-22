@@ -5,12 +5,6 @@ packages:
   - packages/**
   - '!**/dist/**'
 
-minimumReleaseAge: 2880 # 2 days in minutes
-minimumReleaseAgeExclude:
-  # exclude packages that I personally maintain and are safe to use on the same day
-  - '@lerna-lite/*'
-  - 'eslint-plugin-local-import-ext'
-
 catalog:
   '@4tw/cypress-drag-drop': ^2.3.1
   '@angular-eslint/eslint-plugin': ^21.4.0
@@ -55,6 +49,13 @@ catalog:
   vite: ^8.0.13
   vitest: ^5.0.0-beta.2
   vue: ^3.5.34
+
+minimumReleaseAge: 2880 # 2 days in minutes
+
+minimumReleaseAgeExclude:
+  # exclude packages that I personally maintain and are safe to use on the same day
+  - '@lerna-lite/*'
+  - eslint-plugin-local-import-ext
 
 overrides:
   '@hono/node-server': ^2.0.2

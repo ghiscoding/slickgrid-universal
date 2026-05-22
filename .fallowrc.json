@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": ["src/index.ts", "src/main.ts"],
+  "ignorePatterns": ["**/package.json", "/__tests__/"],
+  "workspaces": {
+    "packages": ["frameworks/**", "frameworks-plugins/**", "packages/**", "!**/dist/**"]
+  },
+  "duplicates": {
+    "minOccurrences": 3
+  },
+  "rules": {
+    "unused-dependencies": "warn"
+  }
+}

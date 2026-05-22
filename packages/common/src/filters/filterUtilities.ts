@@ -96,7 +96,7 @@ export async function renderCollectionOptionsAsync(
 }
 
 /** Create or recreate an Observable Subject and reassign it to the "collectionAsync" object so user can call a "collectionAsync.next()" on it */
-export function createCollectionAsyncSubject(
+function createCollectionAsyncSubject(
   columnDef: Column,
   renderDomElementCallback: (collection: any) => void,
   rxjs?: RxJsFacade,
