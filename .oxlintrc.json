@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["import", "oxc", "typescript"],
-  "jsPlugins": ["eslint-plugin-cypress"],
+  "jsPlugins": ["eslint-plugin-cypress", "eslint-plugin-local-import-ext"],
   "env": {
     "es2025": true,
     "browser": true,
@@ -62,9 +62,17 @@
     "typescript/no-non-null-assertion": "off",
     "typescript/no-unused-expressions": "off",
     "typescript/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "destructuredArrayIgnorePattern": "^_", "caughtErrors": "none" }],
-    // blocked by https://github.com/oxc-project/oxc/issues/19431
-    // use "lint:local-js-imports" npm script in the meantime to catch any missing local JS imports
+    // "import/extensions" rule is blocked by https://github.com/oxc-project/oxc/issues/19431
+    // use custom "eslint-plugin-import-ext" custom eslint plugin in the meantime to catch any missing local import file extensions
     "import/extensions": "off",
+    "local-import-ext/require-local-extension": [
+      "error",
+      {
+        "js": "always",
+        "ts": "never",
+        "excludedFolders": ["demos/aurelia/test", "demos/react/test", "demos/vue/test", "frameworks/angular-slickgrid", "test"]
+      }
+    ],
     "import/no-self-import": "error",
     "no-async-promise-executor": "off",
     "oxc/erasing-op": "off",
