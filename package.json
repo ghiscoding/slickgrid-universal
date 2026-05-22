@@ -133,7 +133,7 @@
     "jsdom": "catalog:",
     "jsdom-global": "catalog:",
     "npm-run-all2": "catalog:",
-    "oxlint": "catalog:",    
+    "oxlint": "catalog:",
     "prettier": "^3.8.3",
     "remove-glob": "catalog:",
     "rxjs": "catalog:",
