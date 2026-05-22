@@ -22,6 +22,9 @@ on:
         description: 'Fixed Version'
         required: false
         type: string
+      skip_version_retry_publish:
+        type: boolean
+        description: 'Skip running `lerna version` and run publish-only retry (useful to retry failed publish)'
 
 permissions:
   contents: write # to be able to publish a GitHub release
@@ -74,6 +77,7 @@ jobs:
         run: pnpm build
 
       - name: Lerna Version (build query)
+        if: ${{ inputs.skip_version_retry_publish != true }}
         shell: bash
         run: |
           if [ "${{ inputs.dryrun }}" = "true" ] && [ "${{ inputs.graduate }}" = "true" ]; then
@@ -107,6 +111,7 @@ jobs:
         run: echo "${{ env.LERNA_VERSION_QUERY }}"
 
       - name: Lerna Version 🏷️
+        if: ${{ inputs.skip_version_retry_publish != true }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
@@ -114,6 +119,11 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           pnpm exec ${{ env.LERNA_VERSION_QUERY }}
+
+      - name: Skip Lerna Version Notice
+        if: ${{ inputs.skip_version_retry_publish == true }}
+        run: |
+          echo "skip_version_retry_publish=true — lerna version is skipped; proceeding to publish-only run."
 
       - name: Lerna Publish (build query)
         shell: bash
