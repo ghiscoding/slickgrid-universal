@@ -1,29 +1,15 @@
 import { isNumber } from '@slickgrid-universal/utils';
 import type { Aggregator } from './../interfaces/aggregator.interface.js';
 import type { GroupTotals } from './../interfaces/grouping.interface.js';
+import { BaseAggregator } from './baseAggregator.js';
 
-export class SumAggregator implements Aggregator {
-  private _isInitialized = false;
-  private _isTreeAggregator = false;
+export class SumAggregator extends BaseAggregator implements Aggregator {
   private _sum = 0;
   private _itemCount = 0;
-  private _field: number | string;
-  private _type = 'sum';
 
   constructor(field: number | string) {
-    this._field = field;
-  }
-
-  get field(): number | string {
-    return this._field;
-  }
-
-  get isInitialized(): boolean {
-    return this._isInitialized;
-  }
-
-  get type(): string {
-    return this._type;
+    super(field);
+    this._type = 'sum' as const;
   }
 
   init(item?: any, isTreeAggregator = false): void {
