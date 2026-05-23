@@ -1,6 +1,8 @@
+import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { Filters } from '../../filters/filters.index.js';
-import { renderDomElementFromCollectionAsync } from '../../filters/filterUtilities.js';
+import { renderCollectionOptionsAsync } from '../../filters/filterUtilities.js';
+import { Column } from '../../interfaces/column.interface.js';
 import { compareObjects, testFilterCondition } from '../filterUtilities.js';
 
 describe('filterUtilities', () => {
@@ -41,8 +43,8 @@ describe('filterUtilities', () => {
     });
   });
 
-  describe('renderDomElementFromCollectionAsync method', () => {
-    it('should get collection found in inner object property when "collectionInsideObjectProperty" is enabled and replace collection prop', () => {
+  describe('renderCollectionOptionsAsync method', () => {
+    it('should get collection found in inner object property when "collectionInsideObjectProperty" is enabled and replace collection prop', async () => {
       const collection = [
         { value: 'other', description: 'other' },
         { value: 'male', description: 'male' },
@@ -64,13 +66,42 @@ describe('filterUtilities', () => {
         },
       };
       const mockCallback = vi.fn();
-      renderDomElementFromCollectionAsync(mockColumn.filter.collection, mockColumn, mockCallback);
+      const collection$ = of(collection);
+      await renderCollectionOptionsAsync(
+        collection$,
+        mockColumn,
+        mockCallback,
+        {
+          isObservable: () => true,
+          firstValueFrom: () => Promise.resolve(collection),
+          createSubject: () => {
+            const subscribers: Array<(...args: any[]) => void> = [];
+            return {
+              subscribe: (cb: (...args: any[]) => void) => {
+                subscribers.push(cb);
+                return {
+                  unsubscribe: () => {
+                    const idx = subscribers.indexOf(cb);
+                    if (idx >= 0) subscribers.splice(idx, 1);
+                  },
+                };
+              },
+              next: (val: any) => subscribers.slice().forEach((cb) => cb(val)),
+            } as any;
+          },
+        } as any,
+        []
+      );
 
       expect(mockColumn.filter.collection).toEqual(collection);
       expect(mockCallback).toHaveBeenCalledWith(collection);
     });
 
-    it('should throw when collection is not a valid array', () => {
+    it('should throw when collection is not a valid array', async () => {
+      const initialCollection = [
+        { value: 'other', description: 'other' },
+        { value: 'male', description: 'male' },
+      ];
       const mockColumn = {
         id: 'gender',
         field: 'gender',
@@ -78,7 +109,7 @@ describe('filterUtilities', () => {
         filter: {
           collection: {
             deep: {
-              myCollection: null,
+              myCollection: initialCollection,
             },
           } as any,
           collectionOptions: { collectionInsideObjectProperty: 'deep.myCollection' },
@@ -87,7 +118,81 @@ describe('filterUtilities', () => {
         },
       };
 
-      expect(() => renderDomElementFromCollectionAsync(mockColumn.filter.collection, mockColumn, vi.fn())).toThrow(
+      const mockCallback = vi.fn();
+      const rxjsMock = {
+        isObservable: () => true,
+        firstValueFrom: () => Promise.resolve(initialCollection),
+        createSubject: () => {
+          const subscribers: Array<(...args: any[]) => void> = [];
+          return {
+            subscribe: (cb: (...args: any[]) => void) => {
+              subscribers.push(cb);
+              return {
+                unsubscribe: () => {
+                  const idx = subscribers.indexOf(cb);
+                  if (idx >= 0) subscribers.splice(idx, 1);
+                },
+              };
+            },
+            next: (val: any) => subscribers.slice().forEach((cb) => cb(val)),
+          } as any;
+        },
+      } as any;
+
+      // create subject by awaiting the initial collection
+      await renderCollectionOptionsAsync(of(initialCollection), mockColumn, mockCallback, rxjsMock, []);
+
+      // now simulate an async emission with an invalid collection inside the object property
+      const invalidPayload = { deep: { myCollection: null } };
+
+      expect(() => (mockColumn.filter as any).collectionAsync.next(invalidPayload)).toThrow(
+        'Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.'
+      );
+    });
+
+    it('should throw when collection is not a valid array and "collectionInsideObjectProperty" is not enabled', async () => {
+      const initialCollection = [
+        { value: 'one', description: 'one' },
+        { value: 'two', description: 'two' },
+      ];
+      const mockColumn: Column = {
+        id: 'gender',
+        field: 'gender',
+        filterable: true,
+        filter: {
+          collection: initialCollection,
+          collectionOptions: { collectionInsideObjectProperty: null as any },
+          customStructure: { value: 'value', label: 'description' },
+          model: Filters.multipleSelect,
+        },
+      };
+
+      const mockCallback = vi.fn();
+      const rxjsMock = {
+        isObservable: () => true,
+        firstValueFrom: () => Promise.resolve(initialCollection),
+        createSubject: () => {
+          const subscribers: Array<(...args: any[]) => void> = [];
+          return {
+            subscribe: (cb: (...args: any[]) => void) => {
+              subscribers.push(cb);
+              return {
+                unsubscribe: () => {
+                  const idx = subscribers.indexOf(cb);
+                  if (idx >= 0) subscribers.splice(idx, 1);
+                },
+              };
+            },
+            next: (val: any) => subscribers.slice().forEach((cb) => cb(val)),
+          } as any;
+        },
+      } as any;
+
+      // create subject by awaiting the initial collection
+      await renderCollectionOptionsAsync(of(initialCollection), mockColumn, mockCallback, rxjsMock, []);
+
+      // now simulate an async emission with an invalid collection (null)
+      expect(() => (mockColumn.filter as any).collectionAsync.next(null)).toThrow(
         'Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.'
       );
     });
