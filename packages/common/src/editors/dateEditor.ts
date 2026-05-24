@@ -2,7 +2,6 @@ import { parse } from '@formkit/tempo';
 import { createDomElement, emptyElement, extend, queueMicrotaskPolyfill, setDeepValue } from '@slickgrid-universal/utils';
 import { Calendar, type FormatDateString, type Options } from 'vanilla-calendar-pro';
 import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
-import { SlickEventData } from '../core/index.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import { Constants } from './../constants.js';
@@ -282,7 +281,7 @@ export class DateEditor extends BaseEditorClass implements Editor {
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions && triggerOnCompositeEditorChange) {
-        this.handleChangeOnCompositeEditor(compositeEditorOptions, 'system');
+        this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'system');
       }
     }
   }
@@ -371,7 +370,7 @@ export class DateEditor extends BaseEditorClass implements Editor {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions && triggerCompositeEventWhenExist) {
       const shouldDeleteFormValue = !clearByDisableCommand;
-      this.handleChangeOnCompositeEditor(compositeEditorOptions, 'user', shouldDeleteFormValue);
+      this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'user', shouldDeleteFormValue);
     }
   }
 
@@ -437,7 +436,7 @@ export class DateEditor extends BaseEditorClass implements Editor {
     if (this.args) {
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions) {
-        this.handleChangeOnCompositeEditor(compositeEditorOptions);
+        this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
       } else {
         this.save();
       }
@@ -447,15 +446,11 @@ export class DateEditor extends BaseEditorClass implements Editor {
   }
 
   protected handleChangeOnCompositeEditor(
+    event: Event | null,
     compositeEditorOptions: CompositeEditorOption,
     triggeredBy: 'user' | 'system' = 'user',
     isCalledByClearValue = false
   ): void {
-    const activeCell = this.grid.getActiveCell();
-    const column = this.args.column;
-    const columnId = this.columnDef?.id ?? '';
-    const item = this.dataContext;
-    const grid = this.grid;
     const newValue = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
@@ -464,24 +459,6 @@ export class DateEditor extends BaseEditorClass implements Editor {
     }
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
-    const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (
-      isCalledByClearValue ||
-      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
-    ) {
-      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
-    }
-    grid.onCompositeEditorChange.notify(
-      {
-        ...activeCell,
-        item,
-        grid,
-        column,
-        formValues: compositeEditorOptions.formValues,
-        editors: compositeEditorOptions.editors,
-        triggeredBy,
-      },
-      new SlickEventData()
-    );
+    super.handleChangeOnCompositeEditor(event, compositeEditorOptions, triggeredBy, isCalledByClearValue);
   }
 }

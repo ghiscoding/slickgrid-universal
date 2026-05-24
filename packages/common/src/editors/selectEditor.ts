@@ -8,7 +8,6 @@ import {
   sortCollectionWithOptions,
 } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { Constants } from '../constants.js';
-import { SlickEventData } from '../core/index.js';
 import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index.js';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import type {
@@ -135,7 +134,7 @@ export class SelectEditor extends BaseEditorClass implements Editor {
         }
 
         if (compositeEditorOptions) {
-          this.handleChangeOnCompositeEditor(compositeEditorOptions);
+          this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
         } else {
           this._isDisposingOrCallingSave = true;
           this.save(this.hasAutoCommitEdit);
@@ -337,7 +336,7 @@ export class SelectEditor extends BaseEditorClass implements Editor {
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions && triggerOnCompositeEditorChange) {
-        this.handleChangeOnCompositeEditor(compositeEditorOptions, 'system');
+        this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'system');
       }
     }
   }
@@ -454,7 +453,7 @@ export class SelectEditor extends BaseEditorClass implements Editor {
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions) {
-        this.handleChangeOnCompositeEditor(compositeEditorOptions);
+        this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
       }
     }
   }
@@ -543,7 +542,7 @@ export class SelectEditor extends BaseEditorClass implements Editor {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions && triggerCompositeEventWhenExist) {
       const shouldDeleteFormValue = !clearByDisableCommand;
-      this.handleChangeOnCompositeEditor(compositeEditorOptions, 'user', shouldDeleteFormValue);
+      this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'user', shouldDeleteFormValue);
     }
   }
 
@@ -731,40 +730,19 @@ export class SelectEditor extends BaseEditorClass implements Editor {
   }
 
   protected handleChangeOnCompositeEditor(
+    event: Event | null,
     compositeEditorOptions: CompositeEditorOption,
     triggeredBy: 'user' | 'system' = 'user',
     isCalledByClearValue = false
   ): void {
-    const activeCell = this.grid.getActiveCell();
-    const column = this.args.column;
-    const item = this.dataContext;
-    const grid = this.grid;
-    const newValues = this.serializeValue();
+    const newValue = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.dataContext, newValues);
+      this.applyValue(this.dataContext, newValue);
     }
-    this.applyValue(compositeEditorOptions.formValues, newValues);
+    this.applyValue(compositeEditorOptions.formValues, newValue);
 
-    const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (
-      isCalledByClearValue ||
-      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(this.columnId))
-    ) {
-      delete compositeEditorOptions.formValues[this.columnId]; // when the input is disabled we won't include it in the form result object
-    }
-    grid.onCompositeEditorChange.notify(
-      {
-        ...activeCell,
-        item,
-        grid,
-        column,
-        formValues: compositeEditorOptions.formValues,
-        editors: compositeEditorOptions.editors,
-        triggeredBy,
-      },
-      new SlickEventData()
-    );
+    super.handleChangeOnCompositeEditor(event, compositeEditorOptions, triggeredBy, isCalledByClearValue);
   }
 }

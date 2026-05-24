@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type SlickGrid } from '../core/index.js';
-import type { Column, ColumnEditor, EditorArguments, EditorValidator, GridOption } from './../interfaces/index.js';
+import { SlickEventData, type SlickGrid } from '../core/index.js';
+import type { Column, ColumnEditor, CompositeEditorOption, EditorArguments, EditorValidator, GridOption } from './../interfaces/index.js';
 
 /*
  * An example of a 'detached' editor.
@@ -65,5 +65,38 @@ export class BaseEditorClass {
       })
       .getReturnValue();
     return isCellEditable;
+  }
+
+  protected handleChangeOnCompositeEditor(
+    event: Event | null,
+    compositeEditorOptions: CompositeEditorOption,
+    triggeredBy: 'user' | 'system' = 'user',
+    isCalledByClearValue = false
+  ): void {
+    const activeCell = this.grid.getActiveCell();
+    const column = this.args.column;
+    const columnId = this.columnDef?.id ?? '';
+    const item = this.dataContext;
+    const grid = this.grid;
+
+    const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
+    if (
+      isCalledByClearValue ||
+      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
+    ) {
+      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+    }
+    grid.onCompositeEditorChange.notify(
+      {
+        ...activeCell,
+        item,
+        grid,
+        column,
+        formValues: compositeEditorOptions.formValues,
+        editors: compositeEditorOptions.editors,
+        triggeredBy,
+      },
+      new SlickEventData(event)
+    );
   }
 }

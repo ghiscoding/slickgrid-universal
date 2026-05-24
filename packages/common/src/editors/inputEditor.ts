@@ -1,5 +1,4 @@
 import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
-import { SlickEventData } from '../core/index.js';
 import { textValidator } from '../editorValidators/textValidator.js';
 import type { CompositeEditorOption, Editor, EditorArguments, EditorValidationResult, ValidateOption } from '../interfaces/index.js';
 import { getDescendantProperty } from '../services/utilities.js';
@@ -309,11 +308,6 @@ export class InputEditor extends BaseEditorClass implements Editor {
     triggeredBy: 'user' | 'system' = 'user',
     isCalledByClearValue = false
   ): void {
-    const activeCell = this.grid.getActiveCell();
-    const column = this.args.column;
-    const columnId = this.columnDef?.id ?? '';
-    const item = this.dataContext;
-    const grid = this.grid;
     const newValue = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
@@ -322,25 +316,7 @@ export class InputEditor extends BaseEditorClass implements Editor {
     }
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
-    const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (
-      isCalledByClearValue ||
-      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
-    ) {
-      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
-    }
-    grid.onCompositeEditorChange.notify(
-      {
-        ...activeCell,
-        item,
-        grid,
-        column,
-        formValues: compositeEditorOptions.formValues,
-        editors: compositeEditorOptions.editors,
-        triggeredBy,
-      },
-      new SlickEventData(event)
-    );
+    super.handleChangeOnCompositeEditor(event, compositeEditorOptions, triggeredBy, isCalledByClearValue);
   }
 
   protected handleOnInputChange(event: KeyboardEvent): void {

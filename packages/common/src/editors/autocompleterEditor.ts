@@ -1,29 +1,25 @@
-import { BindingEventService } from '@slickgrid-universal/binding';
 import { classNameToList, createDomElement, isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
 import autocompleter from 'autocompleter';
 import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter/commonEditorFilterUtils.js';
-import { applyHtmlToElement, SlickEventData, type SlickGrid } from '../core/index.js';
+import { applyHtmlToElement } from '../core/index.js';
 import { textValidator } from '../editorValidators/textValidator.js';
 import type {
   AutocompleterOption,
   AutocompleteSearchItem,
   CollectionCustomStructure,
   CollectionOverrideArgs,
-  Column,
-  ColumnEditor,
   CompositeEditorOption,
   Editor,
   EditorArguments,
   EditorValidationResult,
-  EditorValidator,
-  GridOption,
   Locale,
   ValidateOption,
 } from '../interfaces/index.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import { findOrDefault, getDescendantProperty } from '../services/utilities.js';
 import { Constants } from './../constants.js';
+import { BaseEditorClass } from './baseEditorClass.js';
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;
@@ -32,9 +28,8 @@ const MIN_LENGTH = 3;
  * An example of a 'detached' editor.
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
-export class AutocompleterEditor<T extends AutocompleteItem = any> implements Editor {
+export class AutocompleterEditor<T extends AutocompleteItem = any> extends BaseEditorClass implements Editor {
   protected _autocompleterOptions!: Partial<AutocompleterOption<T>>;
-  protected _bindEventService: BindingEventService;
   protected _currentValue: any;
   protected _defaultTextValue!: string;
   protected _originalValue: any;
@@ -56,12 +51,6 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   /** The translate library */
   protected _translater?: TranslaterService;
 
-  /** is the Editor disabled? */
-  disabled = false;
-
-  /** SlickGrid Grid object */
-  grid: SlickGrid;
-
   /** The property name for labels in the collection */
   labelName!: string;
 
@@ -80,15 +69,13 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   finalCollection: T[] = [];
 
   constructor(protected readonly args: EditorArguments) {
-    this.grid = args.grid;
-    this._bindEventService = new BindingEventService();
+    super(args);
     if (this.gridOptions?.translater) {
       this._translater = this.gridOptions.translater;
     }
 
     // get locales provided by user in forRoot or else use default English locales via the Constants
     this._locales = this.gridOptions?.locales || Constants.locales;
-
     this.init();
   }
 
@@ -110,16 +97,6 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   /** Getter for the Final Collection used in the AutoCompleted Source (this may vary from the "collection" especially when providing a customStructure) */
   get elementCollection(): Array<T | CollectionCustomStructure> | null {
     return this._elementCollection;
-  }
-
-  /** Get Column Definition object */
-  get columnDef(): Column {
-    return this.args.column;
-  }
-
-  /** Get Column Editor object */
-  get columnEditor(): ColumnEditor {
-    return this.columnDef?.editor || ({} as ColumnEditor);
   }
 
   /** Getter for the Custom Structure if exist */
@@ -144,23 +121,9 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     return { ...this.gridOptions.defaultEditorOptions?.autocompleter, ...this.columnEditor?.options };
   }
 
-  /** Getter for the Grid Options pulled through the Grid Object */
-  get gridOptions(): GridOption {
-    return this.grid?.getOptions() ?? {};
-  }
-
   /** Kraaden AutoComplete instance */
   get instance(): AutocompleteResult | undefined {
     return this._instance;
-  }
-
-  get hasAutoCommitEdit(): boolean {
-    return this.gridOptions.autoCommitEdit ?? false;
-  }
-
-  /** Get the Validator function, can be passed in Editor property or Column Definition */
-  get validator(): EditorValidator | undefined {
-    return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
   init(): void {
@@ -441,17 +404,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState(): void {
-    const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell
-      .notify({
-        ...activeCell,
-        item: this.dataContext,
-        column: this.args.column,
-        grid: this.grid,
-        target: 'composite',
-        compositeEditorOptions: this.args.compositeEditorOptions,
-      })
-      .getReturnValue();
+    const isCellEditable = super.checkInputUsabilityState();
     this.disable(isCellEditable === false);
   }
 
@@ -461,11 +414,6 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     triggeredBy: 'user' | 'system' = 'user',
     isCalledByClearValue = false
   ): void {
-    const activeCell = this.grid.getActiveCell();
-    const column = this.args.column;
-    const columnId = this.columnDef?.id ?? '';
-    const item = this.dataContext;
-    const grid = this.grid;
     const newValue = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
@@ -474,25 +422,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
-    const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (
-      isCalledByClearValue ||
-      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
-    ) {
-      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
-    }
-    grid.onCompositeEditorChange.notify(
-      {
-        ...activeCell,
-        item,
-        grid,
-        column,
-        formValues: compositeEditorOptions.formValues,
-        editors: compositeEditorOptions.editors,
-        triggeredBy,
-      },
-      new SlickEventData(event)
-    );
+    super.handleChangeOnCompositeEditor(event, compositeEditorOptions, triggeredBy, isCalledByClearValue);
   }
 
   // this function should be protected but for unit tests purposes we'll make it public until a better solution is found
