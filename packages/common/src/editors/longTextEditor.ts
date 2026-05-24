@@ -1,17 +1,13 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, getOffset, setDeepValue, toSentenceCase, type HtmlElementPosition } from '@slickgrid-universal/utils';
-import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
+import { SlickEventData, SlickEventHandler } from '../core/index.js';
 import { textValidator } from '../editorValidators/textValidator.js';
 import type {
-  Column,
-  ColumnEditor,
   CompositeEditorOption,
   Editor,
   EditorArguments,
   EditorValidationResult,
-  EditorValidator,
   ElementPosition,
-  GridOption,
   Locale,
   LongTextEditorOption,
   ValidateOption,
@@ -19,14 +15,14 @@ import type {
 import type { TranslaterService } from '../services/translater.service.js';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import { Constants } from './../constants.js';
+import { BaseEditorClass } from './baseEditorClass.js';
 
 /*
  * An example of a 'detached' editor.
  * The UI is added onto document BODY and .position(), .show() and .hide() are implemented.
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
-export class LongTextEditor implements Editor {
-  protected _bindEventService: BindingEventService;
+export class LongTextEditor extends BaseEditorClass implements Editor {
   protected _eventHandler: SlickEventHandler;
   protected _defaultTextValue: any;
   protected _isValueTouched = false;
@@ -36,21 +32,11 @@ export class LongTextEditor implements Editor {
   protected _textareaElm!: HTMLTextAreaElement;
   protected _wrapperElm!: HTMLDivElement;
 
-  /** is the Editor disabled? */
-  disabled = false;
-
-  /** SlickGrid Grid object */
-  grid: SlickGrid;
-
-  /** Grid options */
-  gridOptions: GridOption;
-
   /** The translate library */
   protected _translater?: TranslaterService;
 
   constructor(protected readonly args: EditorArguments) {
-    this.grid = args.grid;
-    this.gridOptions = args.grid?.getOptions() as GridOption;
+    super(args);
     const options = this.gridOptions || this.args.column.params || {};
     if (options?.translater) {
       this._translater = options.translater;
@@ -64,21 +50,6 @@ export class LongTextEditor implements Editor {
     this.init();
   }
 
-  /** Get Column Definition object */
-  get columnDef(): Column {
-    return this.args.column;
-  }
-
-  /** Get Column Editor object */
-  get columnEditor(): ColumnEditor {
-    return this.columnDef?.editor ?? ({} as ColumnEditor);
-  }
-
-  /** Getter for the item data context object */
-  get dataContext(): any {
-    return this.args.item;
-  }
-
   /** Getter for the Editor DOM Element */
   get editorDomElement(): HTMLTextAreaElement {
     return this._textareaElm;
@@ -86,15 +57,6 @@ export class LongTextEditor implements Editor {
 
   get editorOptions(): LongTextEditorOption {
     return { ...this.gridOptions.defaultEditorOptions?.longText, ...this.columnEditor?.options };
-  }
-
-  get hasAutoCommitEdit(): boolean {
-    return this.gridOptions?.autoCommitEdit ?? false;
-  }
-
-  /** Get the Validator function, can be passed in Editor property or Column Definition */
-  get validator(): EditorValidator | undefined {
-    return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
   init(): void {
@@ -418,17 +380,7 @@ export class LongTextEditor implements Editor {
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState(): void {
-    const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell
-      .notify({
-        ...activeCell,
-        item: this.dataContext,
-        column: this.args.column,
-        grid: this.grid,
-        target: 'composite',
-        compositeEditorOptions: this.args.compositeEditorOptions,
-      })
-      .getReturnValue();
+    const isCellEditable = super.checkInputUsabilityState();
     this.disable(isCellEditable === false);
   }
 

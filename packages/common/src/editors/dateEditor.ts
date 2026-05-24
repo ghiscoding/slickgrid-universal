@@ -1,31 +1,27 @@
 import { parse } from '@formkit/tempo';
-import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, queueMicrotaskPolyfill, setDeepValue } from '@slickgrid-universal/utils';
 import { Calendar, type FormatDateString, type Options } from 'vanilla-calendar-pro';
 import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
-import { SlickEventData, type SlickGrid } from '../core/index.js';
+import { SlickEventData } from '../core/index.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import { Constants } from './../constants.js';
 import type {
-  Column,
-  ColumnEditor,
   CompositeEditorOption,
   Editor,
   EditorArguments,
   EditorValidationResult,
-  EditorValidator,
   GridOption,
   ValidateOption,
   VanillaCalendarOption,
 } from './../interfaces/index.js';
 import { getDescendantProperty } from './../services/utilities.js';
+import { BaseEditorClass } from './baseEditorClass.js';
 
 /*
  * An example of a date picker editor using Vanilla-Calendar-Pro
  */
-export class DateEditor implements Editor {
-  protected _bindEventService: BindingEventService;
+export class DateEditor extends BaseEditorClass implements Editor {
   protected _clearButtonElm!: HTMLButtonElement;
   protected _editorInputGroupElm!: HTMLDivElement;
   protected _inputElm!: HTMLInputElement;
@@ -40,41 +36,15 @@ export class DateEditor implements Editor {
   defaultDate?: string;
   hasTimePicker = false;
 
-  /** is the Editor disabled? */
-  disabled = false;
-
-  /** SlickGrid Grid object */
-  grid: SlickGrid;
-
-  /** Grid options */
-  gridOptions: GridOption;
-
   /** The translate library */
   protected _translaterService: TranslaterService | undefined;
 
   constructor(protected readonly args: EditorArguments) {
-    this.grid = args.grid;
-    this.gridOptions = (this.grid.getOptions() || {}) as GridOption;
+    super(args);
     if (this.gridOptions?.translater) {
       this._translaterService = this.gridOptions.translater;
     }
-    this._bindEventService = new BindingEventService();
     this.init();
-  }
-
-  /** Get Column Definition object */
-  get columnDef(): Column {
-    return this.args.column;
-  }
-
-  /** Get Column Editor object */
-  get columnEditor(): ColumnEditor {
-    return this.columnDef?.editor || ({} as ColumnEditor);
-  }
-
-  /** Getter for the item data context object */
-  get dataContext(): any {
-    return this.args.item;
   }
 
   /** Getter for the Editor DOM Element */
@@ -87,17 +57,8 @@ export class DateEditor implements Editor {
     return { ...this.gridOptions.defaultEditorOptions?.date, ...this.columnEditor?.options };
   }
 
-  get hasAutoCommitEdit(): boolean {
-    return this.gridOptions.autoCommitEdit ?? false;
-  }
-
   get pickerOptions(): VanillaCalendarOption {
     return this._pickerMergedOptions;
-  }
-
-  /** Get the Validator function, can be passed in Editor property or Column Definition */
-  get validator(): EditorValidator | undefined {
-    return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
   async init(): Promise<void> {
@@ -466,17 +427,7 @@ export class DateEditor implements Editor {
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState(): void {
-    const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell
-      .notify({
-        ...activeCell,
-        item: this.dataContext,
-        column: this.args.column,
-        grid: this.grid,
-        target: 'composite',
-        compositeEditorOptions: this.args.compositeEditorOptions,
-      })
-      .getReturnValue();
+    const isCellEditable = super.checkInputUsabilityState();
     this.disable(isCellEditable === false);
   }
 
