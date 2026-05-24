@@ -1,28 +1,23 @@
-import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
-import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
+import { SlickEventData, SlickEventHandler } from '../core/index.js';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators/index.js';
 import type {
-  Column,
-  ColumnEditor,
   ColumnEditorDualInput,
   CompositeEditorOption,
   DOMEvent,
   Editor,
   EditorArguments,
   EditorValidationResult,
-  EditorValidator,
-  GridOption,
   ValidateOption,
 } from '../interfaces/index.js';
 import { getDescendantProperty } from '../services/utilities.js';
+import { BaseEditorClass } from './baseEditorClass.js';
 
 /*
  * An example of a 'detached' editor.
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
-export class DualInputEditor implements Editor {
-  protected _bindEventService: BindingEventService;
+export class DualInputEditor extends BaseEditorClass implements Editor {
   protected _eventHandler: SlickEventHandler;
   protected _isInternalFocusInProgress = false;
   protected _isValueSaveCalled = false;
@@ -38,38 +33,11 @@ export class DualInputEditor implements Editor {
   protected _originalRightValue!: string | number;
   protected _timer?: any;
 
-  /** is the Editor disabled? */
-  disabled = false;
-
-  /** SlickGrid Grid object */
-  grid: SlickGrid;
-
-  /** Grid options */
-  gridOptions: GridOption;
-
   constructor(protected readonly args: EditorArguments) {
-    this.grid = args.grid;
-    this.gridOptions = (this.grid.getOptions() || {}) as GridOption;
+    super(args);
     this._eventHandler = new SlickEventHandler();
-    this._bindEventService = new BindingEventService();
     this.init();
-
     this._eventHandler.subscribe(this.grid.onValidationError, () => (this._isValueSaveCalled = true));
-  }
-
-  /** Get Column Definition object */
-  get columnDef(): Column {
-    return this.args.column;
-  }
-
-  /** Get Column Editor object */
-  get columnEditor(): ColumnEditor {
-    return this.columnDef?.editor || ({} as ColumnEditor);
-  }
-
-  /** Getter for the item data context object */
-  get dataContext(): any {
-    return this.args.item;
   }
 
   /** Getter for the Editor DOM Element */
@@ -85,17 +53,8 @@ export class DualInputEditor implements Editor {
     return this._eventHandler;
   }
 
-  get hasAutoCommitEdit(): boolean {
-    return this.gridOptions.autoCommitEdit ?? false;
-  }
-
   get isValueSaveCalled(): boolean {
     return this._isValueSaveCalled;
-  }
-
-  /** Get the Shared Validator function, can be passed in Editor property or Column Definition */
-  get validator(): EditorValidator | undefined {
-    return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
   init(): void {
@@ -538,17 +497,7 @@ export class DualInputEditor implements Editor {
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState(): void {
-    const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell
-      .notify({
-        ...activeCell,
-        item: this.dataContext,
-        column: this.args.column,
-        grid: this.grid,
-        target: 'composite',
-        compositeEditorOptions: this.args.compositeEditorOptions,
-      })
-      .getReturnValue();
+    const isCellEditable = super.checkInputUsabilityState();
     this.disable(isCellEditable === false);
   }
 

@@ -1,74 +1,27 @@
-import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
-import { SlickEventData, type SlickGrid } from '../core/index.js';
 import { getDescendantProperty } from '../services/utilities.js';
 import { Constants } from './../constants.js';
-import type {
-  Column,
-  ColumnEditor,
-  CompositeEditorOption,
-  Editor,
-  EditorArguments,
-  EditorValidationResult,
-  EditorValidator,
-  GridOption,
-  ValidateOption,
-} from './../interfaces/index.js';
+import type { CompositeEditorOption, Editor, EditorArguments, EditorValidationResult, ValidateOption } from './../interfaces/index.js';
+import { BaseEditorClass } from './baseEditorClass.js';
 
 /*
  * An example of a 'detached' editor.
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
  */
-export class CheckboxEditor implements Editor {
-  protected _bindEventService: BindingEventService;
+export class CheckboxEditor extends BaseEditorClass implements Editor {
   protected _checkboxContainerElm!: HTMLDivElement;
   protected _input!: HTMLInputElement;
   protected _isValueTouched = false;
   protected _originalValue?: boolean | string;
 
-  /** is the Editor disabled? */
-  disabled = false;
-
-  /** SlickGrid Grid object */
-  grid: SlickGrid;
-
-  /** Grid options */
-  gridOptions: GridOption;
-
   constructor(protected readonly args: EditorArguments) {
-    this.grid = args.grid;
-    this.gridOptions = (this.grid.getOptions() || {}) as GridOption;
-    this._bindEventService = new BindingEventService();
+    super(args);
     this.init();
-  }
-
-  /** Get Column Definition object */
-  get columnDef(): Column {
-    return this.args.column;
-  }
-
-  /** Get Column Editor object */
-  get columnEditor(): ColumnEditor {
-    return this.columnDef?.editor || ({} as ColumnEditor);
-  }
-
-  /** Getter for the item data context object */
-  get dataContext(): any {
-    return this.args.item;
   }
 
   /** Getter for the Editor DOM Element */
   get editorDomElement(): any {
     return this._input;
-  }
-
-  get hasAutoCommitEdit(): boolean {
-    return this.gridOptions.autoCommitEdit ?? false;
-  }
-
-  /** Get the Validator function, can be passed in Editor property or Column Definition */
-  get validator(): EditorValidator | undefined {
-    return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
   init(): void {
@@ -297,17 +250,7 @@ export class CheckboxEditor implements Editor {
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState(): void {
-    const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell
-      .notify({
-        ...activeCell,
-        item: this.dataContext,
-        column: this.args.column,
-        grid: this.grid,
-        target: 'composite',
-        compositeEditorOptions: this.args.compositeEditorOptions,
-      })
-      .getReturnValue();
+    const isCellEditable = super.checkInputUsabilityState();
     this.disable(isCellEditable === false);
   }
 
@@ -317,11 +260,6 @@ export class CheckboxEditor implements Editor {
     triggeredBy: 'user' | 'system' = 'user',
     isCalledByClearValue = false
   ): void {
-    const activeCell = this.grid.getActiveCell();
-    const column = this.args.column;
-    const columnId = this.columnDef?.id ?? '';
-    const item = this.dataContext;
-    const grid = this.grid;
     const newValue = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
@@ -330,24 +268,6 @@ export class CheckboxEditor implements Editor {
     }
     this.applyValue(compositeEditorOptions.formValues, newValue);
 
-    const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (
-      isCalledByClearValue ||
-      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
-    ) {
-      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
-    }
-    grid.onCompositeEditorChange.notify(
-      {
-        ...activeCell,
-        item,
-        grid,
-        column,
-        formValues: compositeEditorOptions.formValues,
-        editors: compositeEditorOptions.editors,
-        triggeredBy,
-      },
-      new SlickEventData(event)
-    );
+    super.handleChangeOnCompositeEditor(event, compositeEditorOptions, triggeredBy, isCalledByClearValue);
   }
 }

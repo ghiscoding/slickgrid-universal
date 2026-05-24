@@ -8,30 +8,26 @@ import {
   sortCollectionWithOptions,
 } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { Constants } from '../constants.js';
-import { SlickEventData, type SlickGrid } from '../core/index.js';
 import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index.js';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import type {
   CollectionCustomStructure,
   CollectionOption,
   CollectionOverrideArgs,
-  Column,
-  ColumnEditor,
   CompositeEditorOption,
   Editor,
   EditorArguments,
   EditorValidationResult,
-  EditorValidator,
-  GridOption,
   Locale,
   SelectOption,
   ValidateOption,
 } from './../interfaces/index.js';
+import { BaseEditorClass } from './baseEditorClass.js';
 
 /**
  * Slickgrid editor class for multiple/single select lists
  */
-export class SelectEditor implements Editor {
+export class SelectEditor extends BaseEditorClass implements Editor {
   protected _isValueTouched = false;
 
   /** Locales */
@@ -51,9 +47,6 @@ export class SelectEditor implements Editor {
 
   /** Editor DOM element */
   editorElm?: HTMLElement;
-
-  /** is the Editor disabled? */
-  disabled = false;
 
   /** Editor Multiple-Select options */
   editorElmOptions!: Partial<MultipleSelectOption>;
@@ -82,14 +75,8 @@ export class SelectEditor implements Editor {
   /** The property name for values in the collection */
   valueName!: string;
 
-  /** Grid options */
-  gridOptions: GridOption;
-
   /** Do we translate the label? */
   enableTranslateLabel = false;
-
-  /** SlickGrid Grid object */
-  grid: SlickGrid;
 
   /** Final collection displayed in the UI, that is after processing filter/sort/override */
   finalCollection: any[] = [];
@@ -98,8 +85,7 @@ export class SelectEditor implements Editor {
     protected readonly args: EditorArguments,
     protected readonly isMultipleSelect: boolean
   ) {
-    this.grid = args.grid;
-    this.gridOptions = (this.grid.getOptions() || {}) as GridOption;
+    super(args);
     if (this.gridOptions?.translater) {
       this._translaterService = this.gridOptions.translater;
     }
@@ -148,7 +134,7 @@ export class SelectEditor implements Editor {
         }
 
         if (compositeEditorOptions) {
-          this.handleChangeOnCompositeEditor(compositeEditorOptions);
+          this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
         } else {
           this._isDisposingOrCallingSave = true;
           this.save(this.hasAutoCommitEdit);
@@ -185,23 +171,8 @@ export class SelectEditor implements Editor {
     return this.columnEditor?.collectionOptions;
   }
 
-  /** Get Column Definition object */
-  get columnDef(): Column {
-    return this.args.column;
-  }
-
   get columnId(): string | number {
     return this.columnDef?.id ?? '';
-  }
-
-  /** Get Column Editor object */
-  get columnEditor(): ColumnEditor {
-    return (this.columnDef?.editor ?? {}) as ColumnEditor;
-  }
-
-  /** Getter for item data context object */
-  get dataContext(): any {
-    return this.args.item;
   }
 
   get editorOptions(): MultipleSelectOption {
@@ -211,10 +182,6 @@ export class SelectEditor implements Editor {
   /** Getter for the Custom Structure if exist */
   protected get customStructure(): CollectionCustomStructure | undefined {
     return this.columnDef?.editor?.customStructure;
-  }
-
-  get hasAutoCommitEdit(): boolean {
-    return this.gridOptions.autoCommitEdit ?? false;
   }
 
   get msInstance(): MultipleSelectInstance | undefined {
@@ -320,11 +287,6 @@ export class SelectEditor implements Editor {
     return '';
   }
 
-  /** Get the Validator function, can be passed in Editor property or Column Definition */
-  get validator(): EditorValidator | undefined {
-    return this.columnEditor?.validator ?? this.columnDef?.validator;
-  }
-
   init(): void {
     if (!this.columnDef || !this.columnDef.editor || (!this.columnDef.editor.collection && !this.columnDef.editor.collectionAsync)) {
       throw new Error(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.
@@ -374,7 +336,7 @@ export class SelectEditor implements Editor {
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions && triggerOnCompositeEditorChange) {
-        this.handleChangeOnCompositeEditor(compositeEditorOptions, 'system');
+        this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'system');
       }
     }
   }
@@ -491,7 +453,7 @@ export class SelectEditor implements Editor {
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
       if (compositeEditorOptions) {
-        this.handleChangeOnCompositeEditor(compositeEditorOptions);
+        this.handleChangeOnCompositeEditor(null, compositeEditorOptions);
       }
     }
   }
@@ -580,7 +542,7 @@ export class SelectEditor implements Editor {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     if (compositeEditorOptions && triggerCompositeEventWhenExist) {
       const shouldDeleteFormValue = !clearByDisableCommand;
-      this.handleChangeOnCompositeEditor(compositeEditorOptions, 'user', shouldDeleteFormValue);
+      this.handleChangeOnCompositeEditor(null, compositeEditorOptions, 'user', shouldDeleteFormValue);
     }
   }
 
@@ -637,17 +599,7 @@ export class SelectEditor implements Editor {
 
   /** when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor */
   protected applyInputUsabilityState(): void {
-    const activeCell = this.grid.getActiveCell();
-    const isCellEditable = this.grid.onBeforeEditCell
-      .notify({
-        ...activeCell,
-        item: this.dataContext,
-        column: this.args.column,
-        grid: this.grid,
-        target: 'composite',
-        compositeEditorOptions: this.args.compositeEditorOptions,
-      })
-      .getReturnValue();
+    const isCellEditable = super.checkInputUsabilityState();
     this.disable(isCellEditable === false);
   }
 
@@ -778,40 +730,19 @@ export class SelectEditor implements Editor {
   }
 
   protected handleChangeOnCompositeEditor(
+    event: Event | null,
     compositeEditorOptions: CompositeEditorOption,
     triggeredBy: 'user' | 'system' = 'user',
     isCalledByClearValue = false
   ): void {
-    const activeCell = this.grid.getActiveCell();
-    const column = this.args.column;
-    const item = this.dataContext;
-    const grid = this.grid;
-    const newValues = this.serializeValue();
+    const newValue = this.serializeValue();
 
     // when valid, we'll also apply the new value to the dataContext item object
     if (this.validate().valid) {
-      this.applyValue(this.dataContext, newValues);
+      this.applyValue(this.dataContext, newValue);
     }
-    this.applyValue(compositeEditorOptions.formValues, newValues);
+    this.applyValue(compositeEditorOptions.formValues, newValue);
 
-    const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
-    if (
-      isCalledByClearValue ||
-      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(this.columnId))
-    ) {
-      delete compositeEditorOptions.formValues[this.columnId]; // when the input is disabled we won't include it in the form result object
-    }
-    grid.onCompositeEditorChange.notify(
-      {
-        ...activeCell,
-        item,
-        grid,
-        column,
-        formValues: compositeEditorOptions.formValues,
-        editors: compositeEditorOptions.editors,
-        triggeredBy,
-      },
-      new SlickEventData()
-    );
+    super.handleChangeOnCompositeEditor(event, compositeEditorOptions, triggeredBy, isCalledByClearValue);
   }
 }
