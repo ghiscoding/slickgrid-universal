@@ -22,7 +22,7 @@ export const getExcelNumberCallback: GetDataValueCallback = (data, { columnDef, 
 });
 
 /** Parse a number which the user might have provided formatter options (for example a user might have provided { decimalSeparator: ',', thousandSeparator: ' '}) */
-export function parseNumberWithFormatterOptions(value: any, column: Column, gridOptions: GridOption): any {
+function parseNumberWithFormatterOptions(value: any, column: Column, gridOptions: GridOption): any {
   let outValue = value;
   if (typeof value === 'string' && value) {
     const decimalSeparator = getValueFromParamsOrFormatterOptions(
@@ -126,7 +126,7 @@ export function getNumericFormatterOptions(
   return retrieveFormatterOptions(columnDef, grid, dataType!, formatterType);
 }
 
-export function getFormatterNumericDataType(formatter?: Formatter): 'currency' | 'decimal' | 'percent' {
+function getFormatterNumericDataType(formatter?: Formatter): 'currency' | 'decimal' | 'percent' {
   let dataType: 'currency' | 'decimal' | 'percent' | 'regular';
 
   switch (formatter) {

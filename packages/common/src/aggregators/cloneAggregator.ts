@@ -1,26 +1,13 @@
 import type { Aggregator } from './../interfaces/aggregator.interface.js';
 import type { GroupTotals } from './../interfaces/grouping.interface.js';
+import { BaseAggregatorClass } from './baseAggregatorClass.js';
 
-export class CloneAggregator implements Aggregator {
-  private _isInitialized = false;
-  private _field: number | string;
+export class CloneAggregator extends BaseAggregatorClass implements Aggregator {
   private _data = '';
-  private _type = 'clone' as const;
 
   constructor(field: number | string) {
-    this._field = field;
-  }
-
-  get field(): number | string {
-    return this._field;
-  }
-
-  get isInitialized(): boolean {
-    return this._isInitialized;
-  }
-
-  get type(): string {
-    return this._type;
+    super(field);
+    this._type = 'clone' as const;
   }
 
   init(_item?: any, isTreeAggregator = false): void {
