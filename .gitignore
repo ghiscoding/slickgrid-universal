@@ -43,3 +43,4 @@ test/cypress/screenshots/*.png
 
 # Environment variables
 .env
+.fallow/

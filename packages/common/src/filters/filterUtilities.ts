@@ -34,7 +34,7 @@ export function buildSelectOperator(optionValues: OperatorDetail[], grid: SlickG
  * When user use a CollectionAsync we will use the returned collection to render the filter DOM element
  * and reinitialize filter collection with this new collection
  */
-export function renderDomElementFromCollectionAsync(
+function renderDomElementFromCollectionAsync(
   collection: any[],
   columnDef: Column,
   renderDomElementCallback: (collection: any) => void
@@ -96,7 +96,7 @@ export async function renderCollectionOptionsAsync(
 }
 
 /** Create or recreate an Observable Subject and reassign it to the "collectionAsync" object so user can call a "collectionAsync.next()" on it */
-export function createCollectionAsyncSubject(
+function createCollectionAsyncSubject(
   columnDef: Column,
   renderDomElementCallback: (collection: any) => void,
   rxjs?: RxJsFacade,
