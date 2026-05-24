@@ -1,4 +1,4 @@
-export class BaseAggregator {
+export class BaseAggregatorClass {
   protected _isInitialized = false;
   protected _isTreeAggregator = false;
   protected _field: number | string;

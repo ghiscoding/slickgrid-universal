@@ -1,8 +1,8 @@
 import type { Aggregator } from './../interfaces/aggregator.interface.js';
 import type { GroupTotals } from './../interfaces/grouping.interface.js';
-import { BaseAggregator } from './baseAggregator.js';
+import { BaseAggregatorClass } from './baseAggregatorClass.js';
 
-export class CloneAggregator extends BaseAggregator implements Aggregator {
+export class CloneAggregator extends BaseAggregatorClass implements Aggregator {
   private _data = '';
 
   constructor(field: number | string) {

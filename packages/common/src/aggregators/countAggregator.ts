@@ -1,9 +1,9 @@
 import { isNumber } from '@slickgrid-universal/utils';
 import type { Aggregator } from './../interfaces/aggregator.interface.js';
 import type { GroupTotals } from './../interfaces/grouping.interface.js';
-import { BaseAggregator } from './baseAggregator.js';
+import { BaseAggregatorClass } from './baseAggregatorClass.js';
 
-export class CountAggregator extends BaseAggregator implements Aggregator {
+export class CountAggregator extends BaseAggregatorClass implements Aggregator {
   private _count = 0;
 
   constructor(field: number | string) {

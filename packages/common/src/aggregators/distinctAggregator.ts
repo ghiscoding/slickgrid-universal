@@ -1,8 +1,8 @@
 import type { Aggregator } from './../interfaces/aggregator.interface.js';
 import type { GroupTotals } from './../interfaces/grouping.interface.js';
-import { BaseAggregator } from './baseAggregator.js';
+import { BaseAggregatorClass } from './baseAggregatorClass.js';
 
-export class DistinctAggregator extends BaseAggregator implements Aggregator {
+export class DistinctAggregator extends BaseAggregatorClass implements Aggregator {
   private _distinctValues: any[] = [];
 
   constructor(field: number | string) {

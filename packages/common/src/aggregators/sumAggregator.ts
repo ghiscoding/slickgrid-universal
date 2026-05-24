@@ -1,9 +1,9 @@
 import { isNumber } from '@slickgrid-universal/utils';
 import type { Aggregator } from './../interfaces/aggregator.interface.js';
 import type { GroupTotals } from './../interfaces/grouping.interface.js';
-import { BaseAggregator } from './baseAggregator.js';
+import { BaseAggregatorClass } from './baseAggregatorClass.js';
 
-export class SumAggregator extends BaseAggregator implements Aggregator {
+export class SumAggregator extends BaseAggregatorClass implements Aggregator {
   private _sum = 0;
   private _itemCount = 0;
 
