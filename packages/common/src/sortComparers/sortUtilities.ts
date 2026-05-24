@@ -1,8 +1,11 @@
 import { type FieldType, type SortDirectionNumber } from '../enums/index.js';
 import type { Column, GridOption } from '../interfaces/index.js';
 import { isColumnDateType } from '../services/utilities.js';
+import { booleanSortComparer } from './booleanSortComparer.js';
 import { getAssociatedDateSortComparer } from './dateUtilities.js';
-import { SortComparers } from './index.js';
+import { numericSortComparer } from './numericSortComparer.js';
+import { objectStringSortComparer } from './objectStringSortComparer.js';
+import { stringSortComparer } from './stringSortComparer.js';
 
 export function sortByFieldType(
   fieldType: FieldType,
@@ -20,22 +23,22 @@ export function sortByFieldType(
   } else {
     switch (fieldType) {
       case 'boolean':
-        sortResult = SortComparers.boolean(value1, value2, sortDirection, sortColumn, gridOptions);
+        sortResult = booleanSortComparer(value1, value2, sortDirection, sortColumn, gridOptions);
         break;
       case 'float':
       case 'integer':
       case 'number':
-        sortResult = SortComparers.numeric(value1, value2, sortDirection, sortColumn, gridOptions);
+        sortResult = numericSortComparer(value1, value2, sortDirection, sortColumn, gridOptions);
         break;
       case 'object':
-        sortResult = SortComparers.objectString(value1, value2, sortDirection, sortColumn, gridOptions);
+        sortResult = objectStringSortComparer(value1, value2, sortDirection, sortColumn, gridOptions);
         break;
       case 'string':
       case 'text':
       case 'password':
       case 'readonly':
       default:
-        sortResult = SortComparers.string(value1, value2, sortDirection, sortColumn, gridOptions);
+        sortResult = stringSortComparer(value1, value2, sortDirection, sortColumn, gridOptions);
         break;
     }
   }

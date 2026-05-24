@@ -51,7 +51,7 @@
     "fallow": "fallow",
     "fallow:dead-code": "fallow dead-code --production",
     "fallow:dupes": "fallow dupes",
-    "fallow:health": "fallow health",
+    "fallow:health": "fallow health --coverage test/vitest-coverage",
     "fallow:fix:preview": "fallow fix --dry-run --production",
     "fallow:fix": "fallow fix --production",
     "lint": "oxlint .",
