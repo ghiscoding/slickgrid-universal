@@ -47,10 +47,6 @@ export class BaseEditorClass {
     return this.columnEditor?.validator ?? this.columnDef?.validator;
   }
 
-  disable(isDisabled = true): void {
-    this.disabled = isDisabled;
-  }
-
   // --
   // protected functions
   // ------------------
@@ -68,7 +64,6 @@ export class BaseEditorClass {
         compositeEditorOptions: this.args.compositeEditorOptions,
       })
       .getReturnValue();
-    this.disable(isCellEditable === false);
     return isCellEditable;
   }
 }
