@@ -1,6 +1,8 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
-import { SlickEventHandler, SlickGlobalEditorLock, type SlickDataView, type SlickGrid } from '../core/index.js';
+import { SlickEventHandler, SlickGlobalEditorLock } from '../core/slickCore.js';
+import type { SlickDataView } from '../core/slickDataview.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type {
   Column,
   EditCommand,
@@ -10,7 +12,8 @@ import type {
   FormatterResultWithText,
   GridOption,
 } from '../interfaces/index.js';
-import { SlickCellExternalCopyManager, SlickHybridSelectionModel } from './index.js';
+import { SlickCellExternalCopyManager } from './slickCellExternalCopyManager.js';
+import { SlickHybridSelectionModel } from './slickHybridSelectionModel.js';
 
 /*
   This manager enables users to copy/paste data from/to an external Spreadsheet application
