@@ -67,7 +67,7 @@ describe('Example 53 - Custom Filter Bar', () => {
   it('should clear "Total" filter from top header bar and then sort column descending and expect > 777', () => {
     cy.get('.top-dropped-filter[data-col-id="total"] .filter-remove').click();
     cy.get('.slick-topheader-panel .top-dropped-filter').should('have.length', 1);
-    cy.get('.slick-header-columns .slick-header-column:nth(6)').click().click();
+    cy.get('.slick-header-columns .slick-header-column:nth(6) .slick-column-name').click({}).click();
     cy.get('[data-row="0"] > .slick-cell:nth(6)').then(($cell) => expect(Number($cell.text())).to.be.gt(777));
     cy.get('[data-row="1"] > .slick-cell:nth(6)').then(($cell) => expect(Number($cell.text())).to.be.gt(777));
     cy.get('[data-row="2"] > .slick-cell:nth(6)').then(($cell) => expect(Number($cell.text())).to.be.gt(777));
@@ -81,7 +81,7 @@ describe('Example 53 - Custom Filter Bar', () => {
 
     cy.get('input.filter-modal-input').type('{backspace}3{enter}');
     cy.get('.top-dropped-filter[data-col-id="tax2"] .filter-value').should('contain', '>= 3');
-    cy.get('.slick-header-columns .slick-header-column:nth(3)').click();
+    cy.get('.slick-header-columns .slick-header-column:nth(3) .slick-column-name').click();
     cy.get('[data-row="0"] > .slick-cell:nth(3)').then(($cell) => expect(Number($cell.text())).to.be.gte(3));
     cy.get('[data-row="1"] > .slick-cell:nth(3)').then(($cell) => expect(Number($cell.text())).to.be.gte(3));
     cy.get('[data-row="2"] > .slick-cell:nth(3)').then(($cell) => expect(Number($cell.text())).to.be.gte(3));
