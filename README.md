@@ -36,6 +36,8 @@ Below is a list of reasons as to why this project was created and why it is buil
    - you can reuse the same grids and logic in many different frameworks, it's easily transportable
    - you can use it in plain JavaScript (ES6) or TypeScript, for example we use it ourselves as plain JS (ES6) in our Salesforce environment with LWC (Lightning Web Component)
 
+These were all the original reasons to create the library under a monorepo structure, but above all, it was mainly to avoid code duplication.
+
 ## Latest News & Releases
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all the latest News & Releases.
 
@@ -69,7 +71,7 @@ Multiple Themes are available:
 | <a href="https://lwc.dev/" rel="nofollow"><img alt="Salesforce (LWC)" src="https://login.salesforce.com/img/logo214.svg" width="52"></a> | [Slickgrid-Universal/vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle) | n/a | | [zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip) file | [docs](https://ghiscoding.gitbook.io/slickgrid-universal/getting-started/installation-salesforce) |
 | <a href="https://streamlit.io/" rel="nofollow"><img alt="Streamlit" src="https://docs.streamlit.io/logo.svg" width="45"></a> | [streamlit-slickgrid](https://github.com/streamlit/streamlit-slickgrid/) | [demo](https://slickgrid.streamlit.app/) | | | Community Python wrapper |
 
-The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) and is also being used to run all E2E tests with [Cypress](https://www.cypress.io/) for testing every UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package, is what we use in our SalesForce LWC (Lightning Web Component) implementation and this Zip file can also be used as a Standalone script (see [zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip) file). These were all the original reasons to create the library under a monorepo structure, but above all, it was mainly to avoid code duplication.
+The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) and is also being used to run all E2E tests with [Cypress](https://www.cypress.io/) for testing every UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package, is what we use in our SalesForce LWC (Lightning Web Component) implementation and this Zip file can also be used as a Standalone script (see [zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip) file).
 
 Dark Mode is also shown in some of the examples (not all), see [Dark Mode](https://ghiscoding.gitbook.io/slickgrid-universal/styling/dark-mode) documentation for more infos.
 
