@@ -55,7 +55,6 @@ minimumReleaseAge: 2880 # 2 days in minutes
 minimumReleaseAgeExclude:
   # exclude packages that I personally maintain and are safe to use on the same day
   - '@lerna-lite/*'
-  - eslint-plugin-local-import-ext
 
 overrides:
   '@hono/node-server': ^2.0.2
@@ -65,3 +64,4 @@ overrides:
   lodash: ^4.18.1
   minimatch: ^10.2.5
   picomatch: ^4.0.4
+  qs: ^6.15.2
