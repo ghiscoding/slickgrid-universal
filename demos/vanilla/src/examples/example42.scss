@@ -7,17 +7,15 @@
 
   .slickgrid-container .slick-header-columns {
     .slick-header-column {
-      height: 25x;
+      height: 25px;
 
-      .slick-sort-indicator,
-      .slick-sort-indicator-numbered {
-        top: 4px;
+      .slick-sort-indicator {
+        top: 8px;
+        right: 10px;
       }
       .slick-sort-indicator-numbered {
-        top: 10px;
-        margin-left: 18px;
-        left: auto;
-        right: auto;
+        top: 12px;
+        right: 4px;
       }
     }
   }
