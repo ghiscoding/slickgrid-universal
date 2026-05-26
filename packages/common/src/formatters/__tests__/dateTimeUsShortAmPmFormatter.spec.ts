@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Column } from '../../interfaces/index.js';
-import { Formatters } from '../index.js';
+import { Formatters } from '../formatters.index.js';
 
 describe('the DateTimeUsShortAmPm Formatter', () => {
   it('should return null when no value is provided', () => {

@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vite
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
-import { Formatters } from '../../formatters/index.js';
+import { Formatters } from '../../formatters/formatters.index.js';
 import type { Column, ContextMenu, ElementPosition, ExternalResource, Formatter, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index.js';
 import {
   BackendUtilityService,
