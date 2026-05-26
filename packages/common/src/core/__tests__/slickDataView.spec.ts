@@ -1,5 +1,5 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, test, vi } from 'vitest';
-import { Aggregators } from '../../aggregators/index.js';
+import { Aggregators } from '../../aggregators/aggregators.index.js';
 import { SortDirectionNumber } from '../../enums/sortDirectionNumber.enum.js';
 import { SlickHybridSelectionModel } from '../../extensions/slickHybridSelectionModel.js';
 import type { GridOption, Grouping } from '../../interfaces/index.js';
