@@ -101,6 +101,13 @@ $slick-dark-text-color: #d4d4d4;
   .slick-dropped-grouping-title {
     color: white;
   }
+  .slickgrid-container {
+    .slick-cell-checkboxsel {
+      .icon-checkbox-container.checked {
+        background-color: #62abf5;
+      }
+    }
+  }
 
   --slick-primary-color: #96c6fa;
   --slick-highlight-color: #62abf5;
@@ -130,10 +137,10 @@ $slick-dark-text-color: #d4d4d4;
   --slick-row-mouse-hover-color: #575757;
   --slick-cell-selected-color: #474a45;
   --slick-row-selected-color: #474a45;
-  --slick-checkbox-icon-color: #96c6fa;
+  --slick-checkbox-icon-color: #62abf5;
   --slick-checkbox-icon-height: 22px;
   --slick-checkbox-icon-bg-color: transparent;
-  --slick-checkbox-icon-border: none;
+  --slick-checkbox-icon-border: 1px solid #adadad;
   --slick-icon-sort-color: #96c6fa;
   --slick-multiselect-icon-radio-color: #96c6fa;
   --ms-checkbox-color: #96c6fa;
