@@ -21,6 +21,7 @@ const Example05: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(getData());
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
+  const [darkModeGrid, setDarkModeGrid] = useState(false);
   const [frozenColumnCount, setFrozenColumnCount] = useState(2);
   const [frozenRowCount, setFrozenRowCount] = useState(3);
   const [isFrozenBottom, setIsFrozenBottom] = useState(false);
@@ -246,6 +247,7 @@ const Example05: React.FC = () => {
         container: '#demo-container',
         rightPadding: 10,
       },
+      darkMode: false,
       gridWidth: 920,
       enableCellNavigation: true,
       editable: true,
@@ -334,6 +336,17 @@ const Example05: React.FC = () => {
     setGridOptions(updatedGridOptions);
   }
 
+  function toggleDarkModeGrid() {
+    const isDarkMode = !darkModeGrid;
+    setDarkModeGrid(isDarkMode);
+    if (isDarkMode) {
+      document.querySelector('.grid-container5')?.classList.add('dark-mode');
+    } else {
+      document.querySelector('.grid-container5')?.classList.remove('dark-mode');
+    }
+    reactGridRef.current?.slickGrid?.setOptions({ darkMode: isDarkMode });
+  }
+
   /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
   function toggleFrozenBottomRows() {
     reactGridRef.current?.slickGrid.setOptions({
@@ -381,6 +394,10 @@ const Example05: React.FC = () => {
 
       <div className="row my-1">
         <div className="col-sm-12">
+          <Button className="mx-1" onClick={() => toggleDarkModeGrid()} data-test="toggle-dark-mode">
+            <i className="fi fi-dark-theme"></i>
+            <span className="ms-1">Toggle Dark Mode</span>
+          </Button>
           <Button className="btn-icon mx-1" onClick={() => setFrozenColumns(-1)} data-test="remove-frozen-column-button">
             <i className="fi fi-dismiss"></i> Remove Frozen Columns
           </Button>
@@ -399,7 +416,7 @@ const Example05: React.FC = () => {
       <br />
 
       <SlickgridReact
-        gridId="grid20"
+        gridId="grid5"
         columns={columns}
         options={gridOptions}
         dataset={dataset}

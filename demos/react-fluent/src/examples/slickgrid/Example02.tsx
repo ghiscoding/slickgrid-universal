@@ -15,6 +15,7 @@ const Example02: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>(getData());
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
+  const [darkModeGrid, setDarkModeGrid] = useState(false);
 
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
 
@@ -73,6 +74,7 @@ const Example02: React.FC = () => {
         container: '#demo-container',
         rightPadding: 10,
       },
+      darkMode: false,
       enableFiltering: true,
       enableCheckboxSelector: true,
       checkboxSelector: {
@@ -215,6 +217,17 @@ const Example02: React.FC = () => {
     }
   }
 
+  function toggleDarkModeGrid() {
+    const isDarkMode = !darkModeGrid;
+    setDarkModeGrid(isDarkMode);
+    if (isDarkMode) {
+      document.querySelector('.grid-container2')?.classList.add('dark-mode');
+    } else {
+      document.querySelector('.grid-container2')?.classList.remove('dark-mode');
+    }
+    reactGridRef.current?.slickGrid?.setOptions({ darkMode: isDarkMode });
+  }
+
   // or Toggle Filtering/Sorting functionalities
   // ---------------------------------------------
 
@@ -234,6 +247,10 @@ const Example02: React.FC = () => {
 
       <div className="row">
         <div className="col-sm-12">
+          <Button className="mx-1" onClick={() => toggleDarkModeGrid()} data-test="toggle-dark-mode">
+            <i className="fi fi-dark-theme"></i>
+            <span className="ms-1">Toggle Dark Mode</span>
+          </Button>
           <Button className="mx-1" data-test="hide-duration-btn" onClick={() => hideDurationColumnDynamically()}>
             Dynamically Hide "Duration"
           </Button>
@@ -262,7 +279,7 @@ const Example02: React.FC = () => {
       <br />
 
       <SlickgridReact
-        gridId="grid16"
+        gridId="grid2"
         columns={columns}
         options={gridOptions!}
         dataset={dataset}
