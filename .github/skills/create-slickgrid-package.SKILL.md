@@ -1,12 +1,11 @@
 ## Create a new SlickGrid‑Universal package
 
-This skill documents the recommended steps and minimal references for adding a new package to the slickgrid‑universal monorepo. Use `SlickEmptyWarningComponent` (packages/empty-warning-component) as a simple reference implementation.
+New packages in the slickgrid‑universal monorepo are typically created when adding a new optional **External Resource** (i.e. a plugin or component that integrates with the grid but is not part of the core). This skill documents the recommended steps and minimal references for doing so. Use `SlickEmptyWarningComponent` ([packages/empty-warning-component](packages/empty-warning-component)) as a simple reference implementation.
 
 Key points
 - New packages that integrate with the grid should implement the `ExternalResource` interface from `@slickgrid-universal/common`.
 - Every package should provide an `init(grid: SlickGrid)` method. When you need services from `@slickgrid-universal/common`, use the second argument `init(grid: SlickGrid, containerService: ContainerService)` to obtain them.
 - Available Services (examples) are listed in the vanilla bundle; see [packages/vanilla-bundle/src/slick-vanilla-grid-bundle.ts](packages/vanilla-bundle/src/slick-vanilla-grid-bundle.ts#L399-L414).
-- To publish on npm with OIDC (initial publish), use `azu/setup-npm-trusted-publish` for trusted publishing.
 
 Quick checklist
 - Create package folder under `packages/your-package-name/`.
@@ -35,9 +34,7 @@ Minimal package structure
 Example: ExternalResource implementation (TypeScript)
 
 ```ts
-import type { SlickGrid } from '@slickgrid-universal/common';
-import type { ContainerService } from '@slickgrid-universal/common';
-import type { ExternalResource } from '@slickgrid-universal/common';
+import type { ContainerService, ExternalResource, SlickGrid } from '@slickgrid-universal/common';
 
 export class MyNewPackage implements ExternalResource {
   readonly pluginName = 'MyNewPackage';
@@ -71,5 +68,3 @@ References
 - Services list: [packages/vanilla-bundle/src/slick-vanilla-grid-bundle.ts](packages/vanilla-bundle/src/slick-vanilla-grid-bundle.ts#L399-L414).
 - TypeScript project references: [tsconfig.packages.json](tsconfig.packages.json).
 - OIDC publish action: https://github.com/azu/setup-npm-trusted-publish
-
-If you want, I can scaffold a minimal package skeleton (files + package.json + build/test scripts) for `packages/your-new-package` and a short example class modeled after `SlickEmptyWarningComponent`.
