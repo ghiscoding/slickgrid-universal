@@ -211,6 +211,20 @@ describe('SlickWebMcpService', () => {
 
       expect(result).toEqual({ data: [mockItems[0]], totalCount: mockItems.length });
     });
+
+    it('should handle dataView returned as a raw array', async () => {
+      const modelContext = makeModelContext();
+      Object.defineProperty(navigator, 'modelContext', { value: modelContext, writable: true, configurable: true });
+
+      // make grid.getData return a plain array instead of a DataView-like object
+      (gridStub.getData as any).mockReturnValueOnce(mockItems);
+
+      service.init(gridStub, container);
+      const tool = getTool(modelContext, 'read_slickgrid_data_');
+      const result: any = await tool.execute({ limit: 1 });
+
+      expect(result).toEqual({ data: [mockItems[0]], totalCount: mockItems.length });
+    });
   });
 
   // -------------------------------------------------------------------------
