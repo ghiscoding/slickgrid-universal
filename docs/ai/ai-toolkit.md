@@ -1,8 +1,24 @@
 # AI Toolkit (`@slickgrid-universal/web-mcp`)
 
-The AI Toolkit is an optional External Resource package that exposes SlickGrid data manipulation capabilities as [WebMCP](https://github.com/webmcp/webmcp) (Model Context Protocol) tools, allowing AI assistants running in the browser to read and manipulate a live grid via natural language.
+The AI Toolkit is an optional `ExternalResource` package that bridges SlickGrid with the browser's [Web Model Context Protocol (WebMCP)](https://github.com/webmcp/webmcp). When a user — or an automated agent — makes a natural-language request about the grid ("show me only High-priority tasks sorted by duration"), this package provides the standard MCP surface that lets an AI assistant discover what the grid looks like, read its current state, and push changes back to it — all without any custom glue code in your application.
 
 It is inspired by the [AG Grid AI Toolkit](https://www.ag-grid.com/angular-data-grid/ai-toolkit/) and follows the same general pattern: provide the LLM with a structured schema of the grid so it understands what it can act on, then let it produce a state object that is applied back to the grid.
+
+---
+
+## Why use this?
+
+Data grids are powerful but their filter and sort UIs can be intimidating for non-technical users and verbose to drive from automated agents. The AI Toolkit solves this by exposing a well-defined, LLM-friendly interface on top of SlickGrid's existing services.
+
+**Key use cases:**
+
+- **Natural-language grid queries** — let users type or speak queries like _"show me overdue tasks assigned to Alice, sorted by priority"_ and have an in-app assistant translate them directly into grid filters and sorts, no filter UI required.
+- **AI-powered dashboards** — embed a Copilot/GPT-style assistant sidebar in your application that can drive the grid on the user's behalf, reducing friction for complex multi-column filtering scenarios.
+- **Playwright / MCP browser automation** — Playwright's MCP-enabled browser mode can call `get_slickgrid_schema` and `apply_slickgrid_state` directly, making it trivial to write intent-based E2E tests: _"filter by status = Done, then assert row count"_ rather than hard-coding CSS selectors.
+- **Accessibility** — users who find filter forms difficult to use can interact with the grid through a text/voice interface backed by an LLM.
+- **Developer productivity** — during local development, ask an AI agent to pre-populate filters for a specific scenario without manually clicking through the UI every time.
+
+Because the package is purely opt-in and makes no changes to `@slickgrid-universal/common` or any framework wrapper, adding it carries zero cost for applications that do not use it.
 
 ---
 
@@ -117,6 +133,86 @@ async function onUserQuery(userQuery: string) {
 
 ---
 
+## Prompting
+
+The AI Toolkit does not include any prompting logic — the right prompt depends on your LLM and your data. A few practices that consistently improve results:
+
+- **Include the current grid state** so the LLM understands what is already applied.
+- **Include a few sample rows** (or the full dataset for small data) so the LLM understands the data format and domain values.
+- **Ask for an `explanation` string** alongside the state change — your UI can show users what changed.
+- **List the available features** (filtering, sorting, column visibility) so the LLM knows what it can and cannot do.
+- **Include domain context** inline, e.g. _"In this dataset, 'priority' values are 'Low', 'Medium' and 'High'"_.
+- **Ask for only the changed state**, not the full state, so that unchanged properties are not accidentally reset.
+
+### Starter system prompt
+
+```ts
+const systemPrompt = `
+You are an expert data analyst working with a data grid.
+Respond to user requests by returning a JSON object with the following shape:
+
+{
+  "newState": { /* partial grid state — only include what changed */ },
+  "propertiesToIgnore": [ /* list state keys you did NOT change */ ],
+  "explanation": "short human-readable description of changes"
+}
+
+Available state keys: "filters", "sorters", "visibleColumnIds".
+
+Current grid schema (columns and their capabilities):
+${JSON.stringify(schema, null, 2)}
+
+Current grid state:
+${JSON.stringify(currentState, null, 2)}
+`;
+```
+
+Using `propertiesToIgnore` is optional but recommended: pass it as a hint to `applyGridState` so that partial responses do not inadvertently clear state keys the LLM left out.
+
+---
+
+## Schema validation
+
+When using an LLM that does not support [Structured Outputs](https://platform.openai.com/docs/guides/structured-outputs), the response may not always conform to the expected shape. Validate it against a JSON schema before calling `applyGridState` to avoid runtime errors:
+
+```ts
+import Ajv from 'ajv';
+
+const ajv = new Ajv();
+const validate = ajv.compile({
+  type: 'object',
+  properties: {
+    filters: { type: 'array' },
+    sorters: { type: 'array' },
+    visibleColumnIds: { type: 'array', items: { type: 'string' } },
+  },
+  additionalProperties: false,
+});
+
+const parsed = JSON.parse(llmResponse);
+if (!validate(parsed.newState)) {
+  console.error('LLM returned invalid grid state', validate.errors);
+  return;
+}
+
+await mcpService.applyGridState(parsed.newState);
+```
+
+---
+
+## Handling schema size
+
+`getStructuredSchema()` returns metadata for every column. For grids with many columns this can inflate your prompt and exceed the LLM's context window. Practical mitigations:
+
+- **Filter the schema** before sending — strip columns that should not be AI-manipulable:
+  ```ts
+  const schema = mcpService.getStructuredSchema().filter(col => col.filterable || col.sortable);
+  ```
+- **Add column descriptions sparingly** — if you augment schema entries with free-text descriptions, keep them concise.
+- **Monitor total prompt size** — aim to leave at least 20–25 % of the context window for the model's response.
+
+---
+
 ## Extending
 
 Override `_registerDefaultTools()` to add custom tools or replace the built-in ones:
@@ -150,7 +246,8 @@ class MyMcpService extends SlickWebMcpService {
 ## Notes
 
 - `apply_slickgrid_state` delegates to `FilterService.updateFilters`, `SortService.updateSorting` and `GridService.showColumnByIds` under the hood — all the same rules that apply to those services apply here (e.g. `enableFiltering` must be `true` in your grid options to use filters).
-- The service has no knowledge of backend services — when using OData/GraphQL, ensure `triggerBackendQuery` behaviour is acceptable. You may want to call `filterService.updateFilters` directly with the third argument set to `false` and batch the backend query yourself.
+- **Backend services (OData / GraphQL):** the service has no knowledge of remote data services. When your grid is backed by OData or GraphQL, each call to `applyGridState` will trigger a backend query just as a manual filter would. If you need to batch several state changes and fire only one request, call `filterService.updateFilters(filters, true, false)` / `sortService.updateSorting(sorters, false)` directly (the third argument suppresses the automatic backend call) and then trigger the backend query yourself once all changes are applied.
+- **Multiple grids on the same page:** every tool name includes the grid's UID suffix, so two grids each with their own `SlickWebMcpService` register independent, non-conflicting tool sets.
 
 ---
 
