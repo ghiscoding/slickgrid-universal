@@ -19,6 +19,7 @@
     { "path": "./packages/text-export" },
     { "path": "./packages/utils" },
     { "path": "./packages/vanilla-bundle" },
-    { "path": "./packages/vanilla-force-bundle" }
+    { "path": "./packages/vanilla-force-bundle" },
+    { "path": "./packages/web-mcp" }
   ]
 }

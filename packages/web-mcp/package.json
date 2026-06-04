@@ -1,0 +1,42 @@
+{
+  "name": "@slickgrid-universal/web-mcp",
+  "version": "10.7.1",
+  "description": "Slick Web MCP Service - Vanilla Implementation exposing SlickGrid data and filtering as WebMCP (Model Context Protocol) tools",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "/dist",
+    "/src"
+  ],
+  "scripts": {
+    "build": "pnpm run clean && tsc",
+    "build:incremental": "tsc --incremental --declaration",
+    "clean": "remove dist tsconfig.tsbuildinfo",
+    "dev": "pnpm build:incremental"
+  },
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/web-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
+  "dependencies": {
+    "@slickgrid-universal/common": "workspace:*"
+  }
+}
