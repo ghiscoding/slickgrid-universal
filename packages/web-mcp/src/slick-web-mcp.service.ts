@@ -96,10 +96,6 @@ export class SlickWebMcpService implements ExternalResource {
     this._registerDefaultTools(navigator.modelContext);
   }
 
-  dispose(): void {
-    // modelContext does not currently expose a deregisterTool API
-  }
-
   // -----------------------------------------------------------------------
   // Public API (usable independently of WebMCP)
   // -----------------------------------------------------------------------
@@ -218,7 +214,38 @@ export class SlickWebMcpService implements ExternalResource {
                 searchTerms: { type: 'array', items: { type: 'string' } },
                 operator: {
                   type: 'string',
-                  enum: ['EQ', 'NE', 'GT', 'GE', 'LT', 'LE', 'CONTAINS', 'NOT_CONTAINS', 'IN', 'NIN'],
+                  // add all OperatorType values here to avoid forcing LLMs to guess the operator syntax
+                  enum: [
+                    '=',
+                    '!=',
+                    '<>',
+                    '>',
+                    '>=',
+                    '<',
+                    '<=',
+                    '*',
+                    'a*',
+                    '*z',
+                    'a*z',
+                    'EQ',
+                    'NE',
+                    'GT',
+                    'GE',
+                    'LT',
+                    'LE',
+                    'CONTAINS',
+                    'NOT_CONTAINS',
+                    'IN',
+                    'NIN',
+                    'IN_COLLECTION',
+                    'NOT_IN_COLLECTION',
+                    'Custom',
+                    'EndsWith',
+                    'StartsWith',
+                    'StartsWithEndsWith',
+                    'RangeInclusive',
+                    'RangeExclusive',
+                  ],
                 },
               },
               required: ['columnId', 'searchTerms'],

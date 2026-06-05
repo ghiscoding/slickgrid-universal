@@ -66,7 +66,6 @@ describe('SlickWebMcpService', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    service.dispose();
   });
 
   it('should have the correct pluginName', () => {
@@ -224,13 +223,6 @@ describe('SlickWebMcpService', () => {
       const result: any = await tool.execute({ limit: 1 });
 
       expect(result).toEqual({ data: [mockItems[0]], totalCount: mockItems.length });
-    });
-  });
-
-  // -------------------------------------------------------------------------
-  describe('dispose()', () => {
-    it('should be callable without errors', () => {
-      expect(() => service.dispose()).not.toThrow();
     });
   });
 });
