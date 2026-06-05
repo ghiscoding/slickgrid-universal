@@ -1,1 +1,1 @@
-export * from './slick-web-mcp.service.js';
+export * from './web-mcp.service.js';

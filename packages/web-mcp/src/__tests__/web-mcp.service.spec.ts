@@ -1,7 +1,7 @@
 import type { GridOption, SlickGrid } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContainerServiceStub } from '../../../../test/containerServiceStub.js';
-import { WebMcpService } from '../slick-web-mcp.service.js';
+import { WebMcpService } from '../web-mcp.service.js';
 
 const GRID_UID = 'slickgrid_123456';
 
