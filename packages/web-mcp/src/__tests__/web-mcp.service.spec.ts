@@ -179,6 +179,60 @@ describe('WebMcpService', () => {
       expect(sortServiceStub.updateSorting).toHaveBeenCalled();
       expect(gridServiceStub.showColumnByIds).toHaveBeenCalled();
     });
+
+    it('should throw on malformed filters', async () => {
+      // @ts-ignore intentionally malformed
+      await expect(service.applyGridState({ filters: 'not-an-array' })).rejects.toThrow(/filters must be an array/);
+    });
+
+    it('should throw on malformed sorters (bad direction)', async () => {
+      // @ts-ignore intentionally malformed
+      await expect(service.applyGridState({ sorters: [{ columnId: 'name', direction: 'UP' }] })).rejects.toThrow(
+        /sorters\[0\]\.direction must be 'ASC' or 'DESC'/
+      );
+    });
+
+    it('should throw on malformed visibleColumnIds element type', async () => {
+      // @ts-ignore intentionally malformed
+      await expect(service.applyGridState({ visibleColumnIds: [{ not: 'valid' }] })).rejects.toThrow(/visibleColumnIds\[0\] must be a string or number/);
+    });
+
+    it('should throw when visibleColumnIds is not an array', async () => {
+      // @ts-ignore intentionally malformed
+      await expect(service.applyGridState({ visibleColumnIds: 'not-an-array' })).rejects.toThrow(/visibleColumnIds must be an array/);
+    });
+
+    it('should throw when filters contains a non-object element', async () => {
+      // @ts-ignore intentionally malformed
+      await expect(service.applyGridState({ filters: [null] })).rejects.toThrow(/filters\[0\] must be an object/);
+    });
+
+    it('should throw when a filter is missing columnId', async () => {
+      // @ts-ignore intentionally malformed
+      await expect(service.applyGridState({ filters: [{ searchTerms: ['x'] }] })).rejects.toThrow(/filters\[0\]\.columnId is required/);
+    });
+
+    it('should throw when a filter has non-array searchTerms', async () => {
+      // @ts-ignore intentionally malformed
+      await expect(service.applyGridState({ filters: [{ columnId: 'name', searchTerms: 'x' }] })).rejects.toThrow(
+        /filters\[0\]\.searchTerms must be an array of strings/
+      );
+    });
+
+    it('should throw on non-array sorters', async () => {
+      // @ts-ignore intentionally malformed
+      await expect(service.applyGridState({ sorters: 'nope' })).rejects.toThrow(/sorters must be an array/);
+    });
+
+    it('should throw when sorter element is not an object', async () => {
+      // @ts-ignore intentionally malformed
+      await expect(service.applyGridState({ sorters: [null] })).rejects.toThrow(/sorters\[0\] must be an object/);
+    });
+
+    it('should throw when sorter is missing columnId', async () => {
+      // @ts-ignore intentionally malformed
+      await expect(service.applyGridState({ sorters: [{ direction: 'ASC' }] })).rejects.toThrow(/sorters\[0\]\.columnId is required/);
+    });
   });
 
   // -------------------------------------------------------------------------
@@ -195,6 +249,37 @@ describe('WebMcpService', () => {
 
       expect(filterServiceStub.updateFilters).toHaveBeenCalledWith(state.filters);
       expect(result).toEqual({ status: 'success', appliedState: state });
+    });
+
+    it('should return structured error when provided malformed state', async () => {
+      const modelContext = makeModelContext();
+      Object.defineProperty(navigator, 'modelContext', { value: modelContext, writable: true, configurable: true });
+
+      service.init(gridStub, container);
+      const tool = getTool(modelContext, 'apply_slickgrid_state_');
+
+      // send malformed filters
+      // @ts-ignore intentionally malformed
+      const result: any = await tool.execute({ filters: 'oops' });
+
+      expect(result).toHaveProperty('status', 'error');
+      expect(result).toHaveProperty('message');
+      expect(result.message).toMatch(/filters must be an array/);
+    });
+
+    it('should return structured error when visibleColumnIds is not an array', async () => {
+      const modelContext = makeModelContext();
+      Object.defineProperty(navigator, 'modelContext', { value: modelContext, writable: true, configurable: true });
+
+      service.init(gridStub, container);
+      const tool = getTool(modelContext, 'apply_slickgrid_state_');
+
+      // @ts-ignore intentionally malformed
+      const result: any = await tool.execute({ visibleColumnIds: 'oops' });
+
+      expect(result).toHaveProperty('status', 'error');
+      expect(result).toHaveProperty('message');
+      expect(result.message).toMatch(/visibleColumnIds must be an array/);
     });
   });
 

@@ -134,6 +134,11 @@ export class WebMcpService implements ExternalResource {
    * Each property is optional — omit any key to leave that aspect of the grid untouched.
    */
   async applyGridState(state: Partial<SlickGridState>): Promise<void> {
+    const validation = this._validateGridState(state);
+    if (!validation.valid) {
+      throw new Error(`Invalid grid state: ${validation.errors?.join('; ')}`);
+    }
+
     if (state.filters !== undefined && this._filterService) {
       await this._filterService.updateFilters(state.filters);
     }
@@ -143,6 +148,69 @@ export class WebMcpService implements ExternalResource {
     if (state.visibleColumnIds !== undefined && this._gridService) {
       this._gridService.showColumnByIds(state.visibleColumnIds);
     }
+  }
+
+  /**
+   * Basic validation for incoming grid state objects. Returns {valid, errors}.
+   * This is intentionally conservative — it only checks shapes and primitive types.
+   */
+  protected _validateGridState(state: Partial<SlickGridState>): { valid: boolean; errors?: string[] } {
+    const errors: string[] = [];
+
+    if (state.filters !== undefined) {
+      if (!Array.isArray(state.filters)) {
+        errors.push('filters must be an array');
+      } else {
+        state.filters.forEach((f, idx) => {
+          if (!f || (typeof f as unknown) !== 'object') {
+            errors.push(`filters[${idx}] must be an object`);
+            return;
+          }
+          // columnId and searchTerms are required per schema
+          if ((f as any).columnId === undefined) {
+            errors.push(`filters[${idx}].columnId is required`);
+          }
+          if (!Array.isArray((f as any).searchTerms)) {
+            errors.push(`filters[${idx}].searchTerms must be an array of strings`);
+          }
+        });
+      }
+    }
+
+    if (state.sorters !== undefined) {
+      if (!Array.isArray(state.sorters)) {
+        errors.push('sorters must be an array');
+      } else {
+        state.sorters.forEach((s, idx) => {
+          if (!s || (typeof s as unknown) !== 'object') {
+            errors.push(`sorters[${idx}] must be an object`);
+            return;
+          }
+          if ((s as any).columnId === undefined) {
+            errors.push(`sorters[${idx}].columnId is required`);
+          }
+          const dir = (s as any).direction;
+          if (dir !== 'ASC' && dir !== 'DESC') {
+            errors.push(`sorters[${idx}].direction must be 'ASC' or 'DESC'`);
+          }
+        });
+      }
+    }
+
+    if (state.visibleColumnIds !== undefined) {
+      if (!Array.isArray(state.visibleColumnIds)) {
+        errors.push('visibleColumnIds must be an array');
+      } else {
+        state.visibleColumnIds.forEach((id, idx) => {
+          const t = typeof id;
+          if (t !== 'string' && t !== 'number') {
+            errors.push(`visibleColumnIds[${idx}] must be a string or number`);
+          }
+        });
+      }
+    }
+
+    return { valid: errors.length === 0, errors: errors.length ? errors : undefined };
   }
 
   // -----------------------------------------------------------------------
@@ -266,8 +334,13 @@ export class WebMcpService implements ExternalResource {
         },
       },
       execute: async (state: Partial<SlickGridState>) => {
-        await this.applyGridState(state);
-        return { status: 'success', appliedState: state };
+        try {
+          await this.applyGridState(state);
+          return { status: 'success', appliedState: state };
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          return { status: 'error', message };
+        }
       },
     });
   }
