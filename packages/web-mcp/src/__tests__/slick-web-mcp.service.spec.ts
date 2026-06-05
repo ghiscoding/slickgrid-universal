@@ -1,7 +1,7 @@
 import type { GridOption, SlickGrid } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContainerServiceStub } from '../../../../test/containerServiceStub.js';
-import { SlickWebMcpService } from '../slick-web-mcp.service.js';
+import { WebMcpService } from '../slick-web-mcp.service.js';
 
 const GRID_UID = 'slickgrid_123456';
 
@@ -51,12 +51,12 @@ function getTool(modelContext: ReturnType<typeof makeModelContext>, prefix: stri
   return modelContext.registerTool.mock.calls.map((c: any) => c[0]).find((t: any) => t.name.startsWith(prefix));
 }
 
-describe('SlickWebMcpService', () => {
-  let service: SlickWebMcpService;
+describe('WebMcpService', () => {
+  let service: WebMcpService;
   let container: ContainerServiceStub;
 
   beforeEach(() => {
-    service = new SlickWebMcpService();
+    service = new WebMcpService();
     container = new ContainerServiceStub();
     container.registerInstance('FilterService', filterServiceStub);
     container.registerInstance('SortService', sortServiceStub);

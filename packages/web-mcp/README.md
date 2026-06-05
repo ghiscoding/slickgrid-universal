@@ -13,10 +13,10 @@ npm install @slickgrid-universal/web-mcp
 ## Basic Usage
 
 ```ts
-import { SlickWebMcpService } from '@slickgrid-universal/web-mcp';
+import { WebMcpService } from '@slickgrid-universal/web-mcp';
 
 const gridOptions = {
-  externalResources: [new SlickWebMcpService()],
+  externalResources: [new WebMcpService()],
   // ...
 };
 ```

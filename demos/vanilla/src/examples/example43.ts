@@ -1,6 +1,6 @@
 import type { Column, GridOption } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { SlickWebMcpService, type SlickGridState } from '@slickgrid-universal/web-mcp';
+import { WebMcpService, type SlickGridState } from '@slickgrid-universal/web-mcp';
 import { ExampleGridOptions } from './example-grid-options.js';
 import '../material-styles.scss';
 
@@ -12,7 +12,7 @@ export default class Example43 {
   gridOptions!: GridOption;
   dataset: any[] = [];
   sgb!: SlickVanillaGridBundle;
-  mcpService!: SlickWebMcpService;
+  mcpService!: WebMcpService;
   textResult = '';
 
   attached() {
@@ -20,7 +20,7 @@ export default class Example43 {
     this.dataset = this.loadData(200);
     const gridContainerElm = document.querySelector<HTMLDivElement>('.grid43')!;
 
-    this.mcpService = new SlickWebMcpService();
+    this.mcpService = new WebMcpService();
 
     this.sgb = new Slicker.GridBundle(
       gridContainerElm,

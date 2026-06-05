@@ -59,19 +59,19 @@ declare global {
 // -------------------------------------------------------------------------
 
 /**
- * SlickWebMcpService — an optional External Resource that exposes SlickGrid
+ * WebMcpService — an optional External Resource that exposes SlickGrid
  * data manipulation capabilities as WebMCP (Model Context Protocol) tools,
  * allowing AI assistants running in the browser to read and manipulate the
  * live grid via natural language.
  *
- * Add it to your grid via `externalResources: [new SlickWebMcpService()]`.
+ * Add it to your grid via `externalResources: [new WebMcpService()]`.
  *
  * The service silently no-ops when the browser does not expose
  * `navigator.modelContext`, so it is safe to include unconditionally.
  *
  * @see docs/ai/ai-toolkit.md for full documentation.
  */
-export class SlickWebMcpService implements ExternalResource {
+export class WebMcpService implements ExternalResource {
   readonly pluginName = 'WebMCPService';
 
   protected _grid!: SlickGrid;

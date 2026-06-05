@@ -47,10 +47,10 @@ npm install @slickgrid-universal/web-mcp
 ## Registration
 
 ```ts
-import { SlickWebMcpService } from '@slickgrid-universal/web-mcp';
+import { WebMcpService } from '@slickgrid-universal/web-mcp';
 
 const gridOptions = {
-  externalResources: [new SlickWebMcpService()],
+  externalResources: [new WebMcpService()],
   // ...
 };
 ```
@@ -112,9 +112,9 @@ await service.applyGridState(state: Partial<SlickGridState>): Promise<void>
 ### Example: custom LLM integration
 
 ```ts
-import { SlickWebMcpService } from '@slickgrid-universal/web-mcp';
+import { WebMcpService } from '@slickgrid-universal/web-mcp';
 
-const mcpService = new SlickWebMcpService();
+const mcpService = new WebMcpService();
 // mcpService is already init'd via externalResources
 
 async function onUserQuery(userQuery: string) {
@@ -218,9 +218,9 @@ await mcpService.applyGridState(parsed.newState);
 Override `_registerDefaultTools()` to add custom tools or replace the built-in ones:
 
 ```ts
-import { SlickWebMcpService, type WebMcpTool } from '@slickgrid-universal/web-mcp';
+import { WebMcpService, type WebMcpTool } from '@slickgrid-universal/web-mcp';
 
-class MyMcpService extends SlickWebMcpService {
+class MyMcpService extends WebMcpService {
   protected override _registerDefaultTools(modelContext: { registerTool: (t: WebMcpTool) => void }): void {
     super._registerDefaultTools(modelContext);
 
@@ -247,7 +247,7 @@ class MyMcpService extends SlickWebMcpService {
 
 - `apply_slickgrid_state` delegates to `FilterService.updateFilters`, `SortService.updateSorting` and `GridService.showColumnByIds` under the hood — all the same rules that apply to those services apply here (e.g. `enableFiltering` must be `true` in your grid options to use filters).
 - **Backend services (OData / GraphQL):** the service has no knowledge of remote data services. When your grid is backed by OData or GraphQL, each call to `applyGridState` will trigger a backend query just as a manual filter would. If you need to batch several state changes and fire only one request, call `filterService.updateFilters(filters, true, false)` / `sortService.updateSorting(sorters, false)` directly (the third argument suppresses the automatic backend call) and then trigger the backend query yourself once all changes are applied.
-- **Multiple grids on the same page:** every tool name includes the grid's UID suffix, so two grids each with their own `SlickWebMcpService` register independent, non-conflicting tool sets.
+- **Multiple grids on the same page:** every tool name includes the grid's UID suffix, so two grids each with their own `WebMcpService` register independent, non-conflicting tool sets.
 
 ---
 

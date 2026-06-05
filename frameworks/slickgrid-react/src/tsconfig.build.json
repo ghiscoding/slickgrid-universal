@@ -2,8 +2,8 @@
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "bundler",
-    "target": "es2018",
-    "lib": ["es2018", "dom"],
+    "target": "es2021",
+    "lib": ["es2021", "dom"],
     "typeRoots": ["../types", "../../node_modules/@types"],
     "outDir": "dist/amd",
     "noImplicitAny": true,
