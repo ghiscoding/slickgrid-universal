@@ -249,6 +249,10 @@ class MyMcpService extends WebMcpService {
 - **Backend services (OData / GraphQL):** the service has no knowledge of remote data services. When your grid is backed by OData or GraphQL, each call to `applyGridState` will trigger a backend query just as a manual filter would. If you need to batch several state changes and fire only one request, call `filterService.updateFilters(filters, true, false)` / `sortService.updateSorting(sorters, false)` directly (the third argument suppresses the automatic backend call) and then trigger the backend query yourself once all changes are applied.
 - **Multiple grids on the same page:** every tool name includes the grid's UID suffix, so two grids each with their own `WebMcpService` register independent, non-conflicting tool sets.
 
+### Try it locally
+
+For quick experimentation you can use the Model Context Tool Inspector project which connects to the browser's WebMCP surface and lets you invoke registered tools interactively: https://github.com/beaufortfrancois/model-context-tool-inspector. It also supports recent browser LLM integrations (for example Chrome's Gemini Nano) so you can run free, local prompt-driven calls against your running demo without wiring a full assistant UI.
+
 ---
 
 ## Playwright / MCP example
