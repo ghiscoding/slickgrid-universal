@@ -411,6 +411,9 @@ const Example27: React.FC = () => {
           <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-75k-rows-btn" onClick={() => setData(75000)}>
             75k rows
           </button>
+          <button className="btn btn-outline-secondary btn-xs btn-icon" data-test="add-250k-rows-btn" onClick={() => setData(250000)}>
+            250k rows
+          </button>
           <button
             onClick={() => dynamicallyChangeFilter()}
             className="btn btn-outline-secondary btn-xs btn-icon"
