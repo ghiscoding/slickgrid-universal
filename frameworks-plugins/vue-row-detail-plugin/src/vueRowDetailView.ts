@@ -20,6 +20,14 @@ const ROW_DETAIL_CONTAINER_PREFIX = 'container_';
 const PRELOAD_CONTAINER_PREFIX = 'container_loading';
 
 type AppData = Record<string, unknown>;
+
+export interface TeleportEntry {
+  id: string | number;
+  selector: string;
+  component: any;
+  data: ViewModelBindableInputData;
+}
+
 export interface CreatedView {
   id: string | number;
   dataContext: any;
@@ -38,6 +46,8 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   protected _userProcessFn?: (item: any) => Promise<any>;
   protected gridContainerElement!: HTMLElement;
   protected _timer?: any;
+  protected _teleportEntries: TeleportEntry[] = [];
+  protected _teleportHostSetter?: (entries: TeleportEntry[]) => void;
 
   constructor(private readonly eventPubSubService: EventPubSubService) {
     super(eventPubSubService);
@@ -67,8 +77,28 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     super.dispose();
   }
 
+  /**
+   * Register the RowDetailTeleportHost component's state setter.
+   * When provided, row details render via Vue Teleport (staying inside the app's Vue component tree for proper
+   * provide/inject, Pinia, and Vue Router access). When undefined the plugin falls back to the legacy isolated createApp approach.
+   * @internal — called by RowDetailTeleportHost, not intended for direct use.
+   */
+  registerTeleportHost(setter: ((entries: TeleportEntry[]) => void) | undefined): void {
+    this._teleportHostSetter = setter;
+    if (setter) {
+      setter([...this._teleportEntries]);
+    }
+  }
+
   /** Dispose of all the opened Row Detail Panels Components */
   disposeAllViewComponents() {
+    if (this._teleportHostSetter) {
+      // Teleport mode: batch-clear all entries in a single state update
+      this._teleportEntries = [];
+      this._teleportHostSetter([]);
+      this._views = [];
+      return;
+    }
     do {
       const view = this._views.pop();
       if (view) {
@@ -148,8 +178,12 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
           });
 
           this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
-            // unmount preload if exists
-            this._preloadApp?.unmount();
+            // unmount preload — either teleport entry or legacy app
+            if (this._teleportHostSetter) {
+              this._removeTeleportEntry('__preload__');
+            } else {
+              this._preloadApp?.unmount();
+            }
 
             // triggers after backend called "onAsyncResponse.notify()"
             // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
@@ -267,11 +301,10 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
-  /** Render (or re-render) the View Component (Row Detail) */
+  /** Render (or re-render) the preload View Component (Row Detail) */
   renderPreloadView(item: any) {
     const containerElement = this.gridContainerElement.querySelector(`.${PRELOAD_CONTAINER_PREFIX}`);
     if (this._preloadComponent && containerElement) {
-      const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
       const bindableData = {
         model: item,
         addon: this,
@@ -280,15 +313,26 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as AppData & ViewModelBindableInputData;
 
-      const tmpDiv = document.createElement('div');
-      this._preloadApp = createApp(this._preloadComponent, bindableData);
-      const instance = this._preloadApp.mount(tmpDiv) as ComponentPublicInstance;
-      bindableData.parentRef = instance;
-      containerElement.appendChild(instance.$el);
-
-      if (viewObj) {
-        viewObj.app = this._preloadApp;
-        viewObj.instance = instance;
+      if (this._teleportHostSetter) {
+        // Teleport mode: render preload via RowDetailTeleportHost (keeps Vue context/providers)
+        this._updateTeleportEntry({
+          id: '__preload__',
+          selector: `.${PRELOAD_CONTAINER_PREFIX}`,
+          component: this._preloadComponent,
+          data: bindableData as ViewModelBindableInputData,
+        });
+      } else {
+        // Legacy mode: isolated createApp per preload
+        const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
+        const tmpDiv = document.createElement('div');
+        this._preloadApp = createApp(this._preloadComponent, bindableData);
+        const instance = this._preloadApp.mount(tmpDiv) as ComponentPublicInstance;
+        bindableData.parentRef = instance;
+        containerElement.appendChild(instance.$el);
+        if (viewObj) {
+          viewObj.app = this._preloadApp;
+          viewObj.instance = instance;
+        }
       }
     }
   }
@@ -305,16 +349,28 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as AppData & ViewModelBindableInputData;
 
-      this.unmountViewWhenExists(item[this.datasetIdPropName]);
-
-      // empty container & load our Row Detail Vue Component dynamically
-      emptyElement(containerElement);
-      const tmpDiv = document.createElement('div');
-      const app = createApp(this._component, bindableData);
-      const instance = app.mount(tmpDiv) as ComponentPublicInstance;
-      bindableData.parentRef = app.component;
-      containerElement.appendChild(instance.$el);
-      this.upsertViewRefs(item, { app, instance, rendered: true });
+      if (this._teleportHostSetter) {
+        // Teleport mode: render via RowDetailTeleportHost so this panel stays inside the Vue component tree,
+        // giving it full access to provide/inject, Pinia, Vue Router, and other providers.
+        const selector = `.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`;
+        this._updateTeleportEntry({
+          id: item[this.datasetIdPropName],
+          selector,
+          component: this._component,
+          data: bindableData as ViewModelBindableInputData,
+        });
+        this.upsertViewRefs(item, { app: null, instance: null, rendered: true });
+      } else {
+        // Legacy mode: isolated createApp per row detail
+        this.unmountViewWhenExists(item[this.datasetIdPropName]);
+        emptyElement(containerElement);
+        const tmpDiv = document.createElement('div');
+        const app = createApp(this._component, bindableData);
+        const instance = app.mount(tmpDiv) as ComponentPublicInstance;
+        bindableData.parentRef = app.component;
+        containerElement.appendChild(instance.$el);
+        this.upsertViewRefs(item, { app, instance, rendered: true });
+      }
     }
   }
 
@@ -349,14 +405,41 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   }
 
   protected disposeViewComponent(expandedView: CreatedView): CreatedView | void {
+    expandedView.rendered = false;
+
+    if (this._teleportHostSetter) {
+      // Teleport mode: remove the teleport entry — RowDetailTeleportHost will unmount the component
+      this._removeTeleportEntry(expandedView.id);
+      return expandedView;
+    }
+
     if (expandedView?.instance) {
-      expandedView.rendered = false;
       const container = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
       if (container) {
         expandedView.app?.unmount();
         container.textContent = '';
         return expandedView;
       }
+    }
+  }
+
+  /** Add or update a teleport entry and notify the host setter */
+  protected _updateTeleportEntry(entry: TeleportEntry): void {
+    const idx = this._teleportEntries.findIndex((e) => e.id === entry.id);
+    if (idx >= 0) {
+      this._teleportEntries[idx] = entry;
+    } else {
+      this._teleportEntries.push(entry);
+    }
+    this._teleportHostSetter?.([...this._teleportEntries]);
+  }
+
+  /** Remove a teleport entry by id and notify the host setter */
+  protected _removeTeleportEntry(id: string | number): void {
+    const idx = this._teleportEntries.findIndex((e) => e.id === id);
+    if (idx >= 0) {
+      this._teleportEntries.splice(idx, 1);
+      this._teleportHostSetter?.([...this._teleportEntries]);
     }
   }
 
