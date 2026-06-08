@@ -1,5 +1,4 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
-import { flatten } from 'un-flatten-tree';
 import { Constants } from '../constants.js';
 import { type FieldType, type OperatorType } from '../enums/index.js';
 import type { Aggregator, CancellablePromiseWrapper, Column, GridOption, TreeDataPropNames } from '../interfaces/index.js';
@@ -79,19 +78,22 @@ export function addTreeLevelByMutation<T>(
   options: Required<Pick<TreeDataPropNames, 'childrenPropName' | 'levelPropName'>>,
   treeLevel = 0
 ): void {
-  const childrenPropName = getTreeDataOptionPropName(options, 'childrenPropName') as keyof T;
+  // options is Required<Pick<...>> so childrenPropName is always a defined string — no need for getTreeDataOptionPropName
+  const childrenPropName = options.childrenPropName as keyof T;
 
   if (Array.isArray(treeArray)) {
-    treeArray.forEach((item) => {
+    for (let i = 0; i < treeArray.length; i++) {
+      const item = treeArray[i];
       if (item) {
-        if (Array.isArray(item[childrenPropName]) && (item[childrenPropName] as Array<T>).length > 0) {
+        const children = item[childrenPropName] as T[] | undefined;
+        if (Array.isArray(children) && children.length > 0) {
           treeLevel++;
-          addTreeLevelByMutation(item[childrenPropName] as Array<T>, options, treeLevel);
+          addTreeLevelByMutation(children, options, treeLevel);
           treeLevel--;
         }
         (item as any)[options.levelPropName] = treeLevel;
       }
-    });
+    }
   }
 }
 
@@ -101,18 +103,21 @@ export function addTreeLevelAndAggregatorsByMutation<T = any>(
   treeLevel = 0,
   parent: T = null as any
 ): void {
-  const childrenPropName = getTreeDataOptionPropName(options, 'childrenPropName') as keyof T;
+  // options is Required<Pick<...>> so childrenPropName is always a defined string — no need for getTreeDataOptionPropName
+  const childrenPropName = options.childrenPropName as keyof T;
   const { aggregator } = options;
 
   if (Array.isArray(treeArray)) {
-    treeArray.forEach((item) => {
+    for (let i = 0; i < treeArray.length; i++) {
+      const item = treeArray[i];
       if (item) {
-        const isParent = Array.isArray(item[childrenPropName]);
+        const children = (item as any)[childrenPropName] as T[] | undefined;
+        const isParent = Array.isArray(children);
 
-        if (Array.isArray(item[childrenPropName]) && (item[childrenPropName] as Array<T>).length > 0) {
+        if (isParent && children!.length > 0) {
           aggregator.init(item, true);
           treeLevel++;
-          addTreeLevelAndAggregatorsByMutation(item[childrenPropName] as Array<T>, options, treeLevel, item);
+          addTreeLevelAndAggregatorsByMutation(children!, options, treeLevel, item);
           treeLevel--;
         }
 
@@ -122,12 +127,14 @@ export function addTreeLevelAndAggregatorsByMutation<T = any>(
         }
         (item as any)[options.levelPropName] = treeLevel;
       }
-    });
+    }
   }
 }
 
 /**
  * Convert a hierarchical (tree) array (with children) into a flat array structure array (where the children are pushed as next indexed item in the array)
+ * Uses an O(n) iterative DFS stack. Creates a shallow flat copy per node (excluding childrenPropName)
+ * so that the original hierarchical source nodes are never mutated.
  * Note: for perf reasons, it mutates the array by adding extra props like `treeLevel`
  * @param {Array<Object>} treeArray - input hierarchical (tree) array
  * @param {Object} options - you can provide "childrenPropName" and other options (defaults to "children")
@@ -142,7 +149,6 @@ export function flattenToParentChildArray<T>(
   const hasChildrenPropName = getTreeDataOptionPropName(options, 'hasChildrenPropName') as keyof T & string;
   const parentPropName = getTreeDataOptionPropName(options, 'parentPropName') as keyof T & string;
   const levelPropName = getTreeDataOptionPropName(options, 'levelPropName');
-  type FlatParentChildArray = Omit<T, keyof typeof childrenPropName>;
 
   if (options?.shouldAddTreeLevelNumber) {
     if (Array.isArray(options?.aggregators)) {
@@ -154,19 +160,38 @@ export function flattenToParentChildArray<T>(
     }
   }
 
-  const flat = flatten(
-    treeArray,
-    (node: any) => node[childrenPropName],
-    (node: T, parentNode?: T) => {
-      return {
-        [identifierPropName]: node[identifierPropName],
-        [parentPropName]: parentNode !== undefined ? parentNode![identifierPropName] : null,
-        [hasChildrenPropName]: !!node[childrenPropName],
-        ...objectWithoutKey(node, childrenPropName as keyof T), // reuse the entire object except the children array property
-      } as unknown as FlatParentChildArray;
-    }
-  );
+  // O(n) iterative DFS - two parallel stacks avoid tuple array allocations per node
+  const flat: T[] = [];
+  const nodeStack: T[] = [];
+  const parentStack: (T | undefined)[] = [];
 
+  for (let i = treeArray.length - 1; i >= 0; i--) {
+    nodeStack.push(treeArray[i]);
+    parentStack.push(undefined);
+  }
+
+  while (nodeStack.length > 0) {
+    const node = nodeStack.pop()!;
+    const parentNode = parentStack.pop();
+    const children = (node as any)[childrenPropName] as T[] | undefined;
+
+    // Create a shallow flat copy without childrenPropName. Flat and hierarchical items share the same
+    // object references, so in-place deletion on the original would corrupt the hierarchical dataset
+    // (breaking findItemInTreeStructure and direct tree mutations). Spread + delete on the copy keeps
+    // the hierarchical source intact and produces a clean flat item.
+    const flatNode: any = { ...(node as any) };
+    delete flatNode[childrenPropName];
+    flatNode[parentPropName] = parentNode != null ? parentNode[identifierPropName] : null;
+    flatNode[hasChildrenPropName] = Array.isArray(children);
+    flat.push(flatNode as T);
+
+    if (Array.isArray(children)) {
+      for (let i = children.length - 1; i >= 0; i--) {
+        nodeStack.push(children[i]);
+        parentStack.push(node);
+      }
+    }
+  }
   return flat;
 }
 
@@ -219,33 +244,39 @@ export function unflattenParentChildArrayToTree<P, T extends P & { [childrenProp
   const parentPropName = getTreeDataOptionPropName(options, 'parentPropName');
   const levelPropName = getTreeDataOptionPropName(options, 'levelPropName');
   const collapsedPropName = getTreeDataOptionPropName(options, 'collapsedPropName');
+  const initiallyCollapsed = options?.initiallyCollapsed ?? false;
   const inputArray: P[] = flatArray || [];
-  const roots: T[] = []; // items without parent which at the root
+  const roots: T[] = []; // items without parent which are at the root
 
-  // make them accessible by guid on this map
-  const all: any = {};
-
-  inputArray.forEach((item: any) => {
-    all[item[identifierPropName]] = item;
+  // build id→item index in a single pass, clearing any stale children
+  // Map is used instead of a plain object to avoid prototype chain overhead and Object.keys() allocation
+  const all = new Map<any, any>();
+  for (let i = 0; i < inputArray.length; i++) {
+    const item = inputArray[i] as any;
+    all.set(item[identifierPropName], item);
     delete item[childrenPropName];
-  });
+  }
 
-  // connect childrens to its parent, and split roots apart
-  Object.keys(all).forEach((id) => {
-    const item = all[id];
-    if (!(parentPropName in item) || item[parentPropName] === null || item[parentPropName] === undefined || item[parentPropName] === '') {
+  // connect children to their parent in a second pass over the original array
+  // (avoids Object.keys() which would allocate a separate string[] of all ids)
+  for (let i = 0; i < inputArray.length; i++) {
+    const item = inputArray[i] as any;
+    const parentId = item[parentPropName];
+    if (!(parentPropName in item) || parentId === null || parentId === undefined || parentId === '') {
       roots.push(item);
-    } else if (item[parentPropName] in all) {
-      const p = all[item[parentPropName]];
-      if (!(childrenPropName in p)) {
-        p[childrenPropName] = [];
-      }
-      p[childrenPropName].push(item);
-      if (p[collapsedPropName] === undefined) {
-        p[collapsedPropName] = options?.initiallyCollapsed ?? false;
+    } else {
+      const p = all.get(parentId);
+      if (p !== undefined) {
+        if (!(childrenPropName in p)) {
+          p[childrenPropName] = [];
+        }
+        p[childrenPropName].push(item);
+        if (p[collapsedPropName] === undefined) {
+          p[collapsedPropName] = initiallyCollapsed;
+        }
       }
     }
-  });
+  }
 
   // we need and want the Tree Level,
   // we can do that after the tree is created and mutate the array by adding a __treeLevel property on each item
@@ -257,7 +288,6 @@ export function unflattenParentChildArrayToTree<P, T extends P & { [childrenProp
   } else {
     addTreeLevelByMutation(roots, { childrenPropName, levelPropName }, 0);
   }
-
   return roots;
 }
 
@@ -275,18 +305,20 @@ export function findItemInTreeStructure<T extends object = any>(
   if (!childrenPropertyName) {
     throw new Error('findItemInTreeStructure requires parameter "childrenPropertyName"');
   }
-  const initialFind = treeArray.find(predicate);
-  const elementsWithChildren = treeArray.filter((x: T) => childrenPropertyName in x && x[childrenPropertyName as keyof T]);
-  if (initialFind) {
-    return initialFind;
-  } else if (elementsWithChildren.length) {
-    const childElements: T[] = [];
-    for (const item of elementsWithChildren) {
-      if (childrenPropertyName in item) {
-        (item as any)[childrenPropertyName].forEach((el: any) => childElements.push(el));
+  // O(n) iterative DFS — avoids recursion (no stack overflow risk) and eliminates
+  // the two-pass per level (find + filter) and intermediate childElements array of the recursive approach
+  const stack: T[] = treeArray.slice();
+  while (stack.length > 0) {
+    const item = stack.pop()!;
+    if (predicate(item)) {
+      return item;
+    }
+    const children = (item as any)[childrenPropertyName];
+    if (Array.isArray(children)) {
+      for (let i = children.length - 1; i >= 0; i--) {
+        stack.push(children[i]);
       }
     }
-    return findItemInTreeStructure<T>(childElements, predicate, childrenPropertyName);
   }
   return undefined;
 }
@@ -631,21 +663,6 @@ export function mapOperatorByFieldType(fieldType: FieldType): OperatorType {
   }
 
   return map;
-}
-
-/**
- * Takes an object and allow to provide a property key to omit from the original object
- * @param {Object} obj - input object
- * @param {String} omitKey - object property key to omit
- * @returns {String} original object without the property that user wants to omit
- */
-export function objectWithoutKey<T = any>(obj: T, omitKey: keyof T): T {
-  return Object.keys(obj as any).reduce((result, objKey) => {
-    if (objKey !== omitKey) {
-      (result as T)[objKey as keyof T] = obj[objKey as keyof T];
-    }
-    return result;
-  }, {}) as unknown as T;
 }
 
 /**

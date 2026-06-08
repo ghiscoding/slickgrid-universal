@@ -147,6 +147,7 @@ describe('Service/Utilies', () => {
       const output = unflattenParentChildArrayToTree(input, { parentPropName: 'parentId', childrenPropName: 'files' });
 
       expect(output).toEqual([
+        { id: 18, __treeLevel: 0, parentId: null, file: 'something.txt', dateModified: '2015-03-03', size: 90 },
         {
           id: 11,
           __treeLevel: 0,
@@ -162,14 +163,6 @@ describe('Service/Utilies', () => {
               file: 'mp3',
               files: [
                 {
-                  id: 14,
-                  __treeLevel: 2,
-                  __collapsed: false,
-                  parentId: 12,
-                  file: 'pop',
-                  files: [{ id: 15, __treeLevel: 3, parentId: 14, file: 'theme.mp3', dateModified: '2015-03-01', size: 85 }],
-                },
-                {
                   id: 16,
                   __treeLevel: 2,
                   __collapsed: false,
@@ -177,11 +170,18 @@ describe('Service/Utilies', () => {
                   file: 'rock',
                   files: [{ id: 17, __treeLevel: 3, parentId: 16, file: 'soft.mp3', dateModified: '2015-05-13', size: 98 }],
                 },
+                {
+                  id: 14,
+                  __treeLevel: 2,
+                  __collapsed: false,
+                  parentId: 12,
+                  file: 'pop',
+                  files: [{ id: 15, __treeLevel: 3, parentId: 14, file: 'theme.mp3', dateModified: '2015-03-01', size: 85 }],
+                },
               ],
             },
           ],
         },
-        { id: 18, __treeLevel: 0, parentId: null, file: 'something.txt', dateModified: '2015-03-03', size: 90 },
       ]);
     });
 
@@ -200,6 +200,7 @@ describe('Service/Utilies', () => {
       const output2 = unflattenParentChildArrayToTree(input, { parentPropName: 'parentId', childrenPropName: 'files' });
 
       expect(output1).toEqual([
+        { id: 18, __treeLevel: 0, parentId: null, file: 'something.txt', dateModified: '2015-03-03', size: 90 },
         {
           id: 11,
           __treeLevel: 0,
@@ -215,14 +216,6 @@ describe('Service/Utilies', () => {
               file: 'mp3',
               files: [
                 {
-                  id: 14,
-                  __treeLevel: 2,
-                  __collapsed: false,
-                  parentId: 12,
-                  file: 'pop',
-                  files: [{ id: 15, __treeLevel: 3, parentId: 14, file: 'theme.mp3', dateModified: '2015-03-01', size: 85 }],
-                },
-                {
                   id: 16,
                   __treeLevel: 2,
                   __collapsed: false,
@@ -230,11 +223,18 @@ describe('Service/Utilies', () => {
                   file: 'rock',
                   files: [{ id: 17, __treeLevel: 3, parentId: 16, file: 'soft.mp3', dateModified: '2015-05-13', size: 98 }],
                 },
+                {
+                  id: 14,
+                  __treeLevel: 2,
+                  __collapsed: false,
+                  parentId: 12,
+                  file: 'pop',
+                  files: [{ id: 15, __treeLevel: 3, parentId: 14, file: 'theme.mp3', dateModified: '2015-03-01', size: 85 }],
+                },
               ],
             },
           ],
         },
-        { id: 18, __treeLevel: 0, parentId: null, file: 'something.txt', dateModified: '2015-03-03', size: 90 },
       ]);
       expect(output1).toEqual(output2);
     });
@@ -257,6 +257,7 @@ describe('Service/Utilies', () => {
       });
 
       expect(output).toEqual([
+        { id: 18, __treeLevel: 0, parentId: null, file: 'something.txt', dateModified: '2015-03-03', size: 90 },
         {
           id: 11,
           __treeLevel: 0,
@@ -274,15 +275,6 @@ describe('Service/Utilies', () => {
               __treeTotals: { count: { size: 2 }, sum: { size: 98 + 85 } },
               files: [
                 {
-                  id: 14,
-                  __treeLevel: 2,
-                  __collapsed: false,
-                  parentId: 12,
-                  file: 'pop',
-                  __treeTotals: { count: { size: 1 }, sum: { size: 85 } },
-                  files: [{ id: 15, __treeLevel: 3, parentId: 14, file: 'theme.mp3', dateModified: '2015-03-01', size: 85 }],
-                },
-                {
                   id: 16,
                   __treeLevel: 2,
                   __collapsed: false,
@@ -291,11 +283,19 @@ describe('Service/Utilies', () => {
                   __treeTotals: { count: { size: 1 }, sum: { size: 98 } },
                   files: [{ id: 17, __treeLevel: 3, parentId: 16, file: 'soft.mp3', dateModified: '2015-05-13', size: 98 }],
                 },
+                {
+                  id: 14,
+                  __treeLevel: 2,
+                  __collapsed: false,
+                  parentId: 12,
+                  file: 'pop',
+                  __treeTotals: { count: { size: 1 }, sum: { size: 85 } },
+                  files: [{ id: 15, __treeLevel: 3, parentId: 14, file: 'theme.mp3', dateModified: '2015-03-01', size: 85 }],
+                },
               ],
             },
           ],
         },
-        { id: 18, __treeLevel: 0, parentId: null, file: 'something.txt', dateModified: '2015-03-03', size: 90 },
       ]);
     });
 
@@ -327,6 +327,7 @@ describe('Service/Utilies', () => {
       });
 
       expect(output1).toEqual([
+        { id: 18, __treeLevel: 0, parentId: null, file: 'something.txt', dateModified: '2015-03-03', size: 90 },
         {
           id: 11,
           __treeLevel: 0,
@@ -344,15 +345,6 @@ describe('Service/Utilies', () => {
               __treeTotals: { count: { size: 2 }, sum: { size: 98 + 85 } },
               files: [
                 {
-                  id: 14,
-                  __treeLevel: 2,
-                  __collapsed: false,
-                  parentId: 12,
-                  file: 'pop',
-                  __treeTotals: { count: { size: 1 }, sum: { size: 85 } },
-                  files: [{ id: 15, __treeLevel: 3, parentId: 14, file: 'theme.mp3', dateModified: '2015-03-01', size: 85 }],
-                },
-                {
                   id: 16,
                   __treeLevel: 2,
                   __collapsed: false,
@@ -361,11 +353,19 @@ describe('Service/Utilies', () => {
                   __treeTotals: { count: { size: 1 }, sum: { size: 98 } },
                   files: [{ id: 17, __treeLevel: 3, parentId: 16, file: 'soft.mp3', dateModified: '2015-05-13', size: 98 }],
                 },
+                {
+                  id: 14,
+                  __treeLevel: 2,
+                  __collapsed: false,
+                  parentId: 12,
+                  file: 'pop',
+                  __treeTotals: { count: { size: 1 }, sum: { size: 85 } },
+                  files: [{ id: 15, __treeLevel: 3, parentId: 14, file: 'theme.mp3', dateModified: '2015-03-01', size: 85 }],
+                },
               ],
             },
           ],
         },
-        { id: 18, __treeLevel: 0, parentId: null, file: 'something.txt', dateModified: '2015-03-03', size: 90 },
       ]);
       expect(output1).toEqual(output2);
       expect(output1).toEqual(output3);
@@ -498,6 +498,68 @@ describe('Service/Utilies', () => {
     });
   });
 
+  describe('addTreeLevelByMutation method', () => {
+    it('should mutate a hierarchical array by adding __treeLevel to each item', () => {
+      const treeArray = [
+        { id: 1, file: 'root.txt' },
+        {
+          id: 2,
+          file: 'Music',
+          files: [{ id: 3, file: 'mp3', files: [{ id: 4, file: 'song.mp3' }] }],
+        },
+      ];
+      addTreeLevelByMutation(treeArray, { childrenPropName: 'files', levelPropName: '__treeLevel' });
+
+      expect((treeArray[0] as any).__treeLevel).toBe(0);
+      expect((treeArray[1] as any).__treeLevel).toBe(0);
+      expect((treeArray[1] as any).files[0].__treeLevel).toBe(1);
+      expect((treeArray[1] as any).files[0].files[0].__treeLevel).toBe(2);
+    });
+
+    it('should use a custom levelPropName when provided', () => {
+      const treeArray = [{ id: 1, file: 'root.txt', items: [{ id: 2, file: 'child.txt' }] }];
+      addTreeLevelByMutation(treeArray, { childrenPropName: 'items', levelPropName: 'level' });
+
+      expect((treeArray[0] as any).level).toBe(0);
+      expect((treeArray[0] as any).items[0].level).toBe(1);
+    });
+
+    it('should not throw on an empty array', () => {
+      expect(() => addTreeLevelByMutation([], { childrenPropName: 'files', levelPropName: '__treeLevel' })).not.toThrow();
+    });
+  });
+
+  describe('addTreeLevelAndAggregatorsByMutation method', () => {
+    it('should mutate a hierarchical array by adding __treeLevel and accumulate aggregator totals', () => {
+      const treeArray = [
+        {
+          id: 1,
+          file: 'Music',
+          files: [
+            { id: 2, file: 'song.mp3', size: 50 },
+            { id: 3, file: 'other.mp3', size: 30 },
+          ],
+        },
+      ];
+      const aggregator = new SumAggregator('size');
+      addTreeLevelAndAggregatorsByMutation(treeArray, { aggregator, childrenPropName: 'files', levelPropName: '__treeLevel' });
+
+      expect((treeArray[0] as any).__treeLevel).toBe(0);
+      expect((treeArray[0] as any).__treeTotals).toEqual({ count: { size: 2 }, sum: { size: 80 } });
+      expect((treeArray[0] as any).files[0].__treeLevel).toBe(1);
+      expect((treeArray[0] as any).files[1].__treeLevel).toBe(1);
+    });
+
+    it('should not accumulate on leaf nodes without a parent', () => {
+      const treeArray = [{ id: 1, file: 'solo.mp3', size: 99 }];
+      const aggregator = new SumAggregator('size');
+      addTreeLevelAndAggregatorsByMutation(treeArray, { aggregator, childrenPropName: 'files', levelPropName: '__treeLevel' });
+
+      expect((treeArray[0] as any).__treeLevel).toBe(0);
+      expect((treeArray[0] as any).__treeTotals).toBeUndefined();
+    });
+  });
+
   describe('getTreeDataOptionPropName method', () => {
     let treeDataOptions: TreeDataPropNames;
     beforeEach(() => {
@@ -567,6 +629,16 @@ describe('Service/Utilies', () => {
       expect(() => findItemInTreeStructure(mockColumns, (x) => x.file === 'pop', '')).toThrow(
         'findItemInTreeStructure requires parameter "childrenPropertyName"'
       );
+    });
+
+    it('should find a root-level item', () => {
+      const item = findItemInTreeStructure(mockColumns, (x) => x.file === 'something.txt', 'files');
+      expect(item).toEqual({ id: 18, file: 'something.txt', dateModified: '2015-03-03', size: 90 });
+    });
+
+    it('should find a leaf node (item with no children)', () => {
+      const item = findItemInTreeStructure(mockColumns, (x) => x.file === 'soft.mp3', 'files');
+      expect(item).toEqual({ id: 17, file: 'soft.mp3', dateModified: '2015-05-13', size: 98 });
     });
 
     it('should find an item from a hierarchical array', () => {
