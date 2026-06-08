@@ -431,6 +431,36 @@ describe('TreeData Service', () => {
       expect(pubSubSpy).not.toHaveBeenCalledWith(`onTreeItemToggled`);
     });
 
+    it('should retry lazy loading when item already has a previous "load-fail" status', () => {
+      mockRowData.__collapsed = true;
+      mockRowData.__lazyLoading = 'load-fail'; // item previously failed, user retries by clicking again
+      vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+      const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
+      // only 1 "once" needed: findItemInTreeStructure consumes it; extra "once" values bleed into subsequent tests
+      vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValueOnce([mockRowData]);
+      const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
+      const spyInvalidate = vi.spyOn(gridStub, 'invalidate');
+
+      gridOptionsMock.treeDataOptions!.lazy = true;
+      gridOptionsMock.treeDataOptions!.onLazyLoad = (_node, _resolve, fail) => {
+        fail();
+      };
+
+      service.init(gridStub);
+      const eventData = new SlickEventData();
+      div.className = 'slick-group-toggle';
+      Object.defineProperty(eventData, 'target', { writable: true, value: div });
+      service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
+
+      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
+
+      expect(spyGetItem).toHaveBeenCalled();
+      expect(spyInvalidate).toHaveBeenCalled();
+      // should re-enter lazy load (set to "loading") then fail again (set to "load-fail")
+      expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: true, __lazyLoading: 'loading', __hasChildren: true });
+      expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: false, __lazyLoading: 'load-fail', __hasChildren: true });
+    });
+
     it('should toggle a collapsed item and execute lazy loading call and add children when resolving array with items', () => {
       const mockFlatDataset = [
         { id: 0, file: 'TXT', size: 5.8, __hasChildren: true, __treeLevel: 0 },
