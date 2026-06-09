@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
+import { RowDetailTeleportHost, VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
 import { Editors, Filters, Formatters, SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 import Example19Detail from './Example19Detail.vue';
 import ExampleDetailPreload from './ExampleDetailPreload.vue';
 
-const FAKE_SERVER_DELAY = 250;
+const FAKE_SERVER_DELAY = 40;
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
 const detailViewRowCount = ref(9);
@@ -16,9 +16,10 @@ const showSubTitle = ref(true);
 const flashAlertType = ref('alert-info');
 const message = ref('');
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
-let vueGrid!: SlickgridVueInstance;
+const vueGrid = ref<SlickgridVueInstance | undefined>(undefined);
 
-const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName('rowDetailView'));
+const rowDetailInstance = computed(() => vueGrid.value?.extensionService.getExtensionInstanceByName('rowDetailView'));
+const rowDetailPlugin = ref<any | undefined>(undefined);
 
 onBeforeMount(() => {
   defineGrid();
@@ -208,19 +209,24 @@ function getData(count: number) {
 }
 
 function changeDetailViewRowCount() {
-  const options = rowDetailInstance.value.getOptions();
+  const instance = rowDetailInstance.value;
+  if (!instance) return;
+  const options = instance.getOptions ? instance.getOptions() : undefined;
   if (options && options.panelRows) {
     options.panelRows = detailViewRowCount.value; // change number of rows dynamically
-    rowDetailInstance.value.setOptions(options);
+    instance.setOptions(options);
   }
 }
 
 function changeEditableGrid() {
-  // rowDetailInstance.value.setOptions({ useRowClick: false });
-  rowDetailInstance.value.collapseAll();
-  (rowDetailInstance.value as any).addonOptions.useRowClick = false;
+  const instance = rowDetailInstance.value;
+  if (instance) {
+    // rowDetailInstance.value.setOptions({ useRowClick: false });
+    instance.collapseAll();
+    (instance as any).addonOptions.useRowClick = false;
+  }
   gridOptions.value!.autoCommitEdit = !gridOptions.value!.autoCommitEdit;
-  vueGrid?.slickGrid.setOptions({
+  vueGrid.value?.slickGrid?.setOptions({
     editable: true,
     autoEdit: true,
     enableCellNavigation: true,
@@ -229,7 +235,7 @@ function changeEditableGrid() {
 }
 
 function closeAllRowDetail() {
-  rowDetailInstance.value.collapseAll();
+  rowDetailInstance.value?.collapseAll?.();
 }
 
 function showFlashMessage(msg: string, alertType = 'info') {
@@ -271,7 +277,7 @@ function simulateServerAsyncCall(item: any) {
 function toggleDarkMode() {
   isDarkMode.value = !isDarkMode.value;
   toggleBodyBackground();
-  vueGrid.slickGrid?.setOptions({ darkMode: isDarkMode.value });
+  vueGrid.value?.slickGrid?.setOptions({ darkMode: isDarkMode.value });
   closeAllRowDetail();
 }
 
@@ -293,11 +299,13 @@ function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
   const action = showSubTitle.value ? 'remove' : 'add';
   document.querySelector('.subtitle')?.classList[action]('hidden');
-  queueMicrotask(() => vueGrid.resizerService.resizeGrid());
+  queueMicrotask(() => vueGrid.value?.resizerService.resizeGrid());
 }
 
 function vueGridReady(grid: SlickgridVueInstance) {
-  vueGrid = grid;
+  vueGrid.value = grid;
+  rowDetailPlugin.value = grid?.extensionService.getExtensionInstanceByName('rowDetailView');
+  console.log('Row Detail Plugin instance on Grid Ready:', rowDetailPlugin.value);
 }
 
 defineExpose({
@@ -389,5 +397,6 @@ defineExpose({
       @onVueGridCreated="vueGridReady($event.detail)"
     >
     </slickgrid-vue>
+    <RowDetailTeleportHost :plugin="rowDetailPlugin" v-if="rowDetailPlugin" />
   </div>
 </template>

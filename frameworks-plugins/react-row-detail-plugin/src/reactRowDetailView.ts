@@ -25,6 +25,7 @@ export interface PortalEntry {
   container: Element;
   component: ComponentType<any>;
   data: ViewModelBindableInputData;
+  gen?: number;
 }
 
 export interface CreatedView {
@@ -47,6 +48,10 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   _root?: Root;
   protected _portalEntries: PortalEntry[] = [];
   protected _portalHostSetter?: (entries: PortalEntry[]) => void;
+  /** Monotonically-increasing generation counter per entry id — never resets on removal so React key always changes on re-add */
+  protected _portalGenMap: Map<string | number, number> = new Map();
+  /** Tracks the last container Element handed to React per entry id — survives removal so we can detect new DOM nodes (loadOnce restored HTML) vs same-DOM re-renders */
+  protected _portalContainerMap: Map<string | number, Element> = new Map();
 
   constructor(private readonly eventPubSubService: EventPubSubService) {
     super(eventPubSubService);
@@ -83,6 +88,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
       this._portalEntries = [];
       this._portalHostSetter([]);
       this._views = [];
+      this._portalContainerMap.clear();
       return;
     }
     do {
@@ -302,6 +308,12 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
 
       if (this._portalHostSetter) {
         // Portal mode: render preload via RowDetailPortalHost (keeps React context/providers)
+        // Clear stale HTML when the container is a new DOM node (e.g. loadOnce restored saved HTML via innerHTML).
+        // Do NOT clear if it's the same DOM node React is already managing — that causes removeChild errors.
+        const prevPreloadContainer = this._portalContainerMap.get('__preload__');
+        if (!prevPreloadContainer || containerElement !== prevPreloadContainer) {
+          containerElement.textContent = '';
+        }
         this._updatePortalEntry({ id: '__preload__', container: containerElement, component: this._preloadComponent, data: bindableData });
       } else {
         // Legacy mode: create isolated React root
@@ -331,6 +343,12 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
         // Portal mode: render via RowDetailPortalHost so this panel stays inside the app's React tree,
         // giving it full access to Context, Redux, Zustand, and other providers.
         const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
+        // Clear stale HTML when the container is a new DOM node (e.g. loadOnce restored saved HTML via innerHTML).
+        // Do NOT clear if it's the same DOM node React is already managing — that causes removeChild errors.
+        const prevContainer = this._portalContainerMap.get(item[this.datasetIdPropName]);
+        if (!prevContainer || containerElement !== prevContainer) {
+          containerElement.textContent = '';
+        }
         this._updatePortalEntry({
           id: item[this.datasetIdPropName],
           container: containerElement,
@@ -410,10 +428,22 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   protected _updatePortalEntry(entry: PortalEntry): void {
     const idx = this._portalEntries.findIndex((e) => e.id === entry.id);
     if (idx >= 0) {
+      // Entry already exists in the live list — preserve its generation so React keeps the same key
+      // and only patches props (no remount, no loss of inner component state like filter inputs).
+      entry.gen = this._portalEntries[idx].gen;
       this._portalEntries[idx] = entry;
     } else {
+      // Entry is new or was previously removed. Bump the per-id generation counter so the host
+      // key changes (e.g. "1-0" → "1-1"). This is critical for React 18 automatic batching:
+      // if remove + re-add happen in the same flush, the intermediate empty state is never
+      // committed; only a key change guarantees React unmounts the old and mounts a fresh component.
+      const newGen = (this._portalGenMap.get(entry.id) ?? -1) + 1;
+      this._portalGenMap.set(entry.id, newGen);
+      entry.gen = newGen;
       this._portalEntries.push(entry);
     }
+    // Always record the latest container so renderViewModel can distinguish new-DOM vs same-DOM on subsequent calls
+    this._portalContainerMap.set(entry.id, entry.container);
     this._portalHostSetter?.([...this._portalEntries]);
   }
 

@@ -48,7 +48,8 @@ export function RowDetailPortalHost({ plugin }: RowDetailPortalHostProps): React
     <>
       {entries.map((entry) => {
         const Component = entry.component;
-        return createPortal(<Component {...entry.data} />, entry.container, String(entry.id));
+        const key = `${String(entry.id)}-${entry.gen ?? 0}`;
+        return createPortal(<Component {...entry.data} key={key} />, entry.container, key);
       })}
     </>
   );

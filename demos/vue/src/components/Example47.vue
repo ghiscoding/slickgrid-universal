@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
+import { RowDetailTeleportHost, VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
 import {
   Aggregators,
   Editors,
@@ -38,9 +38,9 @@ const dataset = ref<Item[]>([]);
 const isDarkMode = ref(false);
 const showSubTitle = ref(true);
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
-let vueGrid!: SlickgridVueInstance;
-
-const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName('rowDetailView'));
+const vueGrid = ref<SlickgridVueInstance | undefined>(undefined);
+const rowDetailInstance = computed(() => vueGrid.value?.extensionService.getExtensionInstanceByName('rowDetailView'));
+const rowDetailPlugin = ref<any | undefined>(undefined);
 
 onBeforeMount(() => {
   defineGrid();
@@ -212,33 +212,35 @@ function getData(count: number) {
 }
 
 function changeDetailViewRowCount() {
-  const options = rowDetailInstance.value.getOptions();
+  const instance = rowDetailInstance.value;
+  if (!instance) return;
+  const options = instance.getOptions ? instance.getOptions() : undefined;
   if (options && options.panelRows) {
     options.panelRows = detailViewRowCount.value; // change number of rows dynamically
-    rowDetailInstance.value.setOptions(options);
+    instance.setOptions(options);
   }
 }
 
 function closeAllRowDetail() {
-  rowDetailInstance.value.collapseAll();
+  rowDetailInstance.value?.collapseAll?.();
 }
 
 function clearGrouping() {
-  vueGrid.dataView.setGrouping([]);
+  vueGrid.value?.dataView.setGrouping([]);
 }
 
 function collapseAllGroups() {
-  vueGrid.dataView.collapseAllGroups();
+  vueGrid.value?.dataView.collapseAllGroups();
 }
 
 function expandAllGroups() {
-  vueGrid.dataView.expandAllGroups();
+  vueGrid.value?.dataView.expandAllGroups();
 }
 
 function groupByDuration() {
   // you need to manually add the sort icon(s) in UI
-  vueGrid.filterService.setSortColumnIcons([{ columnId: 'duration', sortAsc: true }]);
-  vueGrid.dataView.setGrouping({
+  vueGrid.value?.filterService.setSortColumnIcons([{ columnId: 'duration', sortAsc: true }]);
+  vueGrid.value?.dataView.setGrouping({
     getter: 'duration',
     formatter: (g) => `Duration: ${g.value} <span class="text-primary">(${g.count} items)</span>`,
     comparer: (a, b) => {
@@ -248,7 +250,7 @@ function groupByDuration() {
     aggregateCollapsed: false,
     lazyTotalsCalculation: true,
   } as Grouping);
-  vueGrid.slickGrid.invalidate(); // invalidate all rows and re-render
+  vueGrid.value?.slickGrid.invalidate(); // invalidate all rows and re-render
 }
 
 function groupByDurationEffortDriven() {
@@ -257,8 +259,8 @@ function groupByDurationEffortDriven() {
     { columnId: 'duration', sortAsc: true },
     { columnId: 'effortDriven', sortAsc: true },
   ];
-  vueGrid.filterService.setSortColumnIcons(sortColumns);
-  vueGrid.dataView.setGrouping([
+  vueGrid.value?.filterService.setSortColumnIcons(sortColumns);
+  vueGrid.value?.dataView.setGrouping([
     {
       getter: 'duration',
       formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
@@ -274,7 +276,7 @@ function groupByDurationEffortDriven() {
       lazyTotalsCalculation: true,
     },
   ] as Grouping[]);
-  vueGrid.slickGrid.invalidate(); // invalidate all rows and re-render
+  vueGrid.value?.slickGrid.invalidate(); // invalidate all rows and re-render
 }
 
 /** Just for demo purposes, we will simulate an async server call and return more details on the selected row item */
@@ -311,7 +313,7 @@ function simulateServerAsyncCall(item: any) {
 function toggleDarkMode() {
   isDarkMode.value = !isDarkMode.value;
   toggleBodyBackground();
-  vueGrid.slickGrid?.setOptions({ darkMode: isDarkMode.value });
+  vueGrid.value?.slickGrid?.setOptions({ darkMode: isDarkMode.value });
   closeAllRowDetail();
 }
 
@@ -333,11 +335,12 @@ function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
   const action = showSubTitle.value ? 'remove' : 'add';
   document.querySelector('.subtitle')?.classList[action]('hidden');
-  queueMicrotask(() => vueGrid.resizerService.resizeGrid());
+  queueMicrotask(() => vueGrid.value?.resizerService.resizeGrid());
 }
 
 function vueGridReady(grid: SlickgridVueInstance) {
-  vueGrid = grid;
+  vueGrid.value = grid;
+  rowDetailPlugin.value = grid?.extensionService.getExtensionInstanceByName('rowDetailView');
   groupByDuration(); // group by duration on page load
 }
 </script>
@@ -435,5 +438,6 @@ function vueGridReady(grid: SlickgridVueInstance) {
       @onVueGridCreated="vueGridReady($event.detail)"
     >
     </slickgrid-vue>
+    <RowDetailTeleportHost :plugin="rowDetailPlugin" v-if="rowDetailPlugin" />
   </div>
 </template>

@@ -1,5 +1,5 @@
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
+import { ReactRowDetailView, RowDetailPortalHost } from '@slickgrid-universal/react-row-detail-plugin';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Aggregators,
@@ -44,6 +44,7 @@ const Example47: React.FC = () => {
 
   const serverWaitDelayRef = useRef(serverWaitDelay);
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
+  const [rowDetailPlugin, setRowDetailPlugin] = useState<ReactRowDetailView | null>(null);
 
   useEffect(() => {
     defineGrid();
@@ -201,6 +202,7 @@ const Example47: React.FC = () => {
       darkMode,
       preRegisterExternalExtensions: (pubSubService) => {
         const rowDetail = new ReactRowDetailView(pubSubService as EventPubSubService);
+        setRowDetailPlugin(rowDetail);
         return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
@@ -465,6 +467,7 @@ const Example47: React.FC = () => {
           dataset={dataset}
           onReactGridCreated={($event) => reactGridReady($event.detail)}
         />
+        {rowDetailPlugin ? <RowDetailPortalHost plugin={rowDetailPlugin} /> : null}
       </div>
     </div>
   );

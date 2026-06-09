@@ -103,6 +103,23 @@ function vueGridReady(vueGrid: SlickgridVueInstance) {
 </template>
 ```
 
+### Optional: Host component (Teleport)
+
+To keep Row Detail components inside your Vue app's component tree (so `provide`/`inject`, Pinia, router, and other context are preserved), mount the `RowDetailTeleportHost` once alongside your grid and pass the Row Detail plugin instance to it.
+
+```vue
+<script setup lang="ts">
+import { VueRowDetailView, RowDetailTeleportHost } from '@slickgrid-universal/vue-row-detail-plugin';
+// obtain the plugin instance via your grid instance: `const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName('rowDetailView'))`
+</script>
+
+<template>
+  <SlickgridVue ... />
+  <RowDetailTeleportHost :plugin="rowDetailInstance" />
+</template>
+```
+
+
 ### Changing Addon Options Dynamically
 Row Detail is an addon (commonly known as a plugin and are opt-in addon), because this is not built-in SlickGrid and instead are opt-in, we need to get the instance of that addon object. Once we have the instance, we can use `getOptions` and `setOptions` to get/set any of the addon options, adding `rowDetail` with intellisense should give you this info.
 

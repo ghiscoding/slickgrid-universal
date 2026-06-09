@@ -174,6 +174,34 @@ describe('SlickRowDetailView plugin', () => {
     expect(collapseAllSpy).toHaveBeenCalled();
   });
 
+  it('should call "collapseDetailView" and NOT collapse the row when "onBeforeRowDetailToggle" returns false', () => {
+    const itemMock = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: false, __sizePadding: 2, __height: 60 };
+    vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
+    const onBeforeSlickEventData = { getReturnValue: () => false } as unknown as SlickEventData;
+    const beforeToggleSpy = vi.spyOn(plugin.onBeforeRowDetailToggle, 'notify').mockReturnValue(onBeforeSlickEventData);
+    const updateItemSpy = vi.spyOn(dataviewStub, 'updateItem');
+
+    plugin.init(gridStub);
+    plugin.collapseDetailView(itemMock.id);
+
+    expect(beforeToggleSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock }, null, plugin);
+    // updateItem should NOT have been called because the toggle was cancelled
+    expect(updateItemSpy).not.toHaveBeenCalled();
+  });
+
+  it('should call "collapseDetailView" and collapse the row when "onBeforeRowDetailToggle" returns true', () => {
+    const itemMock = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: false, __sizePadding: 0, __height: 60 };
+    vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
+    const beforeToggleSpy = vi.spyOn(plugin.onBeforeRowDetailToggle, 'notify');
+    const updateItemSpy = vi.spyOn(dataviewStub, 'updateItem');
+
+    plugin.init(gridStub);
+    plugin.collapseDetailView(itemMock.id);
+
+    expect(beforeToggleSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock }, null, plugin);
+    expect(updateItemSpy).toHaveBeenCalledWith(itemMock.id, expect.objectContaining({ __collapsed: true }));
+  });
+
   it('should update grid row count and re-render grid when "onRowCountChanged" event is triggered', () => {
     const updateRowCountSpy = vi.spyOn(gridStub, 'updateRowCount');
     const renderSpy = vi.spyOn(gridStub, 'render');

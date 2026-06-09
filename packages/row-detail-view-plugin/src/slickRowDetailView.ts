@@ -287,6 +287,10 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   collapseDetailView(itemId: number | string, isMultipleCollapsing = false): void {
     const item = this.dataView.getItemById(itemId);
     if (item) {
+      // notify before toggling so extensions can prepare (and possibly cancel)
+      if (this.onBeforeRowDetailToggle.notify({ grid: this._grid, item }, null, this).getReturnValue() === false) {
+        return;
+      }
       if (!isMultipleCollapsing) {
         this.dataView.beginUpdate();
       }

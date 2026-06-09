@@ -26,6 +26,7 @@ export interface TeleportEntry {
   selector: string;
   component: any;
   data: ViewModelBindableInputData;
+  gen?: number;
 }
 
 export interface CreatedView {
@@ -48,6 +49,10 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   protected _timer?: any;
   protected _teleportEntries: TeleportEntry[] = [];
   protected _teleportHostSetter?: (entries: TeleportEntry[]) => void;
+  /** Monotonically-increasing generation counter per entry id — never resets on removal so key always changes on re-add */
+  protected _teleportGenMap: Map<string | number, number> = new Map();
+  /** Tracks the last container Element handed to Vue Teleport per entry id — survives removal so we can detect new DOM nodes vs same-DOM re-renders */
+  protected _teleportContainerMap: Map<string | number, Element> = new Map();
 
   constructor(private readonly eventPubSubService: EventPubSubService) {
     super(eventPubSubService);
@@ -97,6 +102,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
       this._teleportEntries = [];
       this._teleportHostSetter([]);
       this._views = [];
+      this._teleportContainerMap.clear();
       return;
     }
     do {
@@ -315,6 +321,13 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
 
       if (this._teleportHostSetter) {
         // Teleport mode: render preload via RowDetailTeleportHost (keeps Vue context/providers)
+        // Clear stale HTML when the container is a new DOM node (e.g. loadOnce restored saved HTML via innerHTML).
+        // Do NOT clear if it's the same DOM node Vue is already managing — that causes unmount errors.
+        const prevPreloadContainer = this._teleportContainerMap.get('__preload__');
+        if (!prevPreloadContainer || containerElement !== prevPreloadContainer) {
+          containerElement.textContent = '';
+        }
+        this._teleportContainerMap.set('__preload__', containerElement);
         this._updateTeleportEntry({
           id: '__preload__',
           selector: `.${PRELOAD_CONTAINER_PREFIX}`,
@@ -353,6 +366,11 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
         // Teleport mode: render via RowDetailTeleportHost so this panel stays inside the Vue component tree,
         // giving it full access to provide/inject, Pinia, Vue Router, and other providers.
         const selector = `.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`;
+        const prevContainer = this._teleportContainerMap.get(item[this.datasetIdPropName]);
+        if (!prevContainer || containerElement !== prevContainer) {
+          containerElement.textContent = '';
+        }
+        this._teleportContainerMap.set(item[this.datasetIdPropName], containerElement);
         this._updateTeleportEntry({
           id: item[this.datasetIdPropName],
           selector,
@@ -425,20 +443,38 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
 
   /** Add or update a teleport entry and notify the host setter */
   protected _updateTeleportEntry(entry: TeleportEntry): void {
+    console.log('vueRowDetailView._updateTeleportEntry called for id:', entry.id, 'selector:', entry.selector);
     const idx = this._teleportEntries.findIndex((e) => e.id === entry.id);
     if (idx >= 0) {
+      // Entry already exists in the live list — preserve its generation so Vue keeps the same key
+      // and only patches props (no remount, no loss of inner component state like filter inputs).
+      entry.gen = this._teleportEntries[idx].gen;
       this._teleportEntries[idx] = entry;
     } else {
+      // Entry is new or was previously removed. Bump the per-id generation counter so the host
+      // key changes (e.g. "1-0" → "1-1"), ensuring Vue unmounts the old and mounts a fresh component.
+      const newGen = (this._teleportGenMap.get(entry.id) ?? -1) + 1;
+      this._teleportGenMap.set(entry.id, newGen);
+      entry.gen = newGen;
       this._teleportEntries.push(entry);
     }
+    console.log(
+      'vueRowDetailView._teleportEntries now:',
+      this._teleportEntries.map((e) => ({ id: e.id, selector: e.selector, gen: e.gen }))
+    );
     this._teleportHostSetter?.([...this._teleportEntries]);
   }
 
   /** Remove a teleport entry by id and notify the host setter */
   protected _removeTeleportEntry(id: string | number): void {
+    console.log('vueRowDetailView._removeTeleportEntry called for id:', id);
     const idx = this._teleportEntries.findIndex((e) => e.id === id);
     if (idx >= 0) {
       this._teleportEntries.splice(idx, 1);
+      console.log(
+        'vueRowDetailView._teleportEntries after remove:',
+        this._teleportEntries.map((e) => ({ id: e.id, selector: e.selector, gen: e.gen }))
+      );
       this._teleportHostSetter?.([...this._teleportEntries]);
     }
   }

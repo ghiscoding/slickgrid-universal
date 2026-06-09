@@ -28,6 +28,23 @@ There is currently a known problem with Row Detail when loading the Row Detail C
 
 > You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.
 
+##### Portal Host (optional)
+To keep Row Detail components inside your React component tree (so `useContext`, Redux, Zustand, and other providers work), add the optional `RowDetailPortalHost` alongside your grid. When present the plugin renders Row Details via React portals; when absent the plugin falls back to the legacy per-row `createRoot()` behavior.
+
+Example (place next to your grid component):
+```tsx
+import { ReactRowDetailView, RowDetailPortalHost } from '@slickgrid-universal/react-row-detail-plugin';
+
+const rowDetailPlugin = new ReactRowDetailView(eventPubService);
+
+return (
+  <>
+    <SlickgridReact ... externalResources={[rowDetailPlugin]} />
+    <RowDetailPortalHost plugin={rowDetailPlugin} />
+  </>
+);
+```
+
 ## Usage
 
 > Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/react-row-detail-plugin`)
