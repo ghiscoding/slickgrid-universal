@@ -54,6 +54,7 @@
     "@slickgrid-universal/pagination-component": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
+    "@slickgrid-universal/web-mcp": "workspace:*",
     "dequal": "catalog:",
     "rxjs": "catalog:"
   },

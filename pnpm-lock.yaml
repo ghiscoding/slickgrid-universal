@@ -309,6 +309,9 @@ importers:
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
+      '@slickgrid-universal/web-mcp':
+        specifier: workspace:*
+        version: link:../../packages/web-mcp
       aurelia:
         specifier: ^2.0.0-rc.1
         version: 2.0.0-rc.1
@@ -421,6 +424,9 @@ importers:
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
+      '@slickgrid-universal/web-mcp':
+        specifier: workspace:*
+        version: link:../../packages/web-mcp
       bootstrap:
         specifier: 'catalog:'
         version: 5.3.8(@popperjs/core@2.11.8)
@@ -739,6 +745,9 @@ importers:
       '@slickgrid-universal/vue-row-detail-plugin':
         specifier: workspace:*
         version: link:../../frameworks-plugins/vue-row-detail-plugin
+      '@slickgrid-universal/web-mcp':
+        specifier: workspace:*
+        version: link:../../packages/web-mcp
       bootstrap:
         specifier: 'catalog:'
         version: 5.3.8(@popperjs/core@2.11.8)
@@ -931,6 +940,9 @@ importers:
       '@slickgrid-universal/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@slickgrid-universal/web-mcp':
+        specifier: workspace:*
+        version: link:../../packages/web-mcp
       dequal:
         specifier: 'catalog:'
         version: 2.0.3

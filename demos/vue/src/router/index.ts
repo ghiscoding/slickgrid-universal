@@ -61,6 +61,7 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example51', name: '51- Menus with Slots', component: () => import('../components/Example51.vue') },
   { path: '/example52', name: '52- SQL Backend Service', component: () => import('../components/Example52.vue') },
   { path: '/example53', name: '53- Custom Filter Bar', component: () => import('../components/Example53.vue') },
+  { path: '/example54', name: '54- AI / Web MCP Toolkit', component: () => import('../components/Example54.vue') },
 ];
 
 export const router = createRouter({

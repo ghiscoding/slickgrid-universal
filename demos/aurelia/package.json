@@ -43,6 +43,7 @@
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/sql": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
+    "@slickgrid-universal/web-mcp": "workspace:*",
     "aurelia": "^2.0.0-rc.1",
     "aurelia-slickgrid": "workspace:*",
     "bootstrap": "catalog:",
