@@ -309,6 +309,7 @@ export class TreeDataService {
     gridOptions.treeDataOptions = treeDataOptions;
     this.sharedService.gridOptions = gridOptions;
     this._grid?.setOptions(gridOptions);
+    this.pubSubService.publish('onTreeMaxVisibleDepthChanged', maxVisibleDepth);
 
     // refreshing the filters will trigger a grid refresh with new tree depth
     this.filterService.refreshTreeDataFilters();

@@ -216,21 +216,25 @@ describe('TreeData Service', () => {
   it('setMaxVisibleDepth should update sharedService.gridOptions.treeDataOptions and refresh filters', () => {
     // prepare shared options
     sharedService.gridOptions = { treeDataOptions: { columnId: 'file' } } as any;
+    const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
 
     service.setMaxVisibleDepth(2);
 
-    expect(sharedService.gridOptions.treeDataOptions.maxVisibleDepth).toBe(2);
+    expect(sharedService.gridOptions.treeDataOptions?.maxVisibleDepth).toBe(2);
     expect(filterServiceStub.refreshTreeDataFilters).toHaveBeenCalled();
+    expect(pubSubSpy).toHaveBeenCalledWith('onTreeMaxVisibleDepthChanged', 2);
   });
 
   it('clearMaxVisibleDepth should remove maxVisibleDepth and refresh filters', () => {
     // prepare shared options with existing maxVisibleDepth
     sharedService.gridOptions = { treeDataOptions: { columnId: 'file', maxVisibleDepth: 3 } } as any;
+    const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
 
     service.clearMaxVisibleDepth();
 
-    expect(sharedService.gridOptions.treeDataOptions.maxVisibleDepth).toBeUndefined();
+    expect(sharedService.gridOptions.treeDataOptions?.maxVisibleDepth).toBeUndefined();
     expect(filterServiceStub.refreshTreeDataFilters).toHaveBeenCalled();
+    expect(pubSubSpy).toHaveBeenCalledWith('onTreeMaxVisibleDepthChanged', undefined);
   });
 
   describe('handleOnCellClick method', () => {
