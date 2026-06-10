@@ -67,3 +67,4 @@ overrides:
   minimatch: ^10.2.5
   picomatch: ^4.0.4
   qs: ^6.15.2
+  tmp: ^0.2.7
