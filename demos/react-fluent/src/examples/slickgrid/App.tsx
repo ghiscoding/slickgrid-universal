@@ -37,6 +37,7 @@ const routes = [
   { path: 'example08', route: '/example08', element: lazy(() => import('./Example08.js')), title: '8- Excel Export Formulas' },
   { path: 'example09', route: '/example09', element: lazy(() => import('./Example09.js')), title: '9- Tree Data with Lazy Loading' },
   { path: 'example10', route: '/example10', element: lazy(() => import('./Example10.js')), title: '10- SQL Backend Service' },
+  { path: 'example11', route: '/example11', element: lazy(() => import('./Example11.js')), title: '11- Composite Editor Modal' },
   {
     path: 'fluent-icons',
     route: '/fluent-icons',
@@ -92,7 +93,7 @@ export default function Routes() {
           </NavDrawerBody>
         </NavDrawer>
 
-        <section className={styles.content}>
+        <section className={`${styles.content} panel-wm-content`}>
           <div id="demo-container">
             <Hamburger onClick={() => setIsOpen(!isOpen)} aria-expanded={isOpen} />
             <Suspense fallback={<div>Loading...</div>}>

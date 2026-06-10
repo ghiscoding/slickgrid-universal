@@ -513,6 +513,12 @@ importers:
       '@slickgrid-universal/common':
         specifier: workspace:*
         version: link:../../packages/common
+      '@slickgrid-universal/composite-editor-component':
+        specifier: workspace:*
+        version: link:../../packages/composite-editor-component
+      '@slickgrid-universal/custom-tooltip-plugin':
+        specifier: workspace:*
+        version: link:../../packages/custom-tooltip-plugin
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
         version: link:../../packages/event-pub-sub

@@ -83,8 +83,23 @@
 );
 
 @include svg.generateSvgClass(
+  'fi-checkbox-checked',
+  'M6 3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6ZM4 6c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6Zm9.85 1.85a.5.5 0 0 0-.7-.7L8.5 11.79l-1.65-1.64a.5.5 0 0 0-.7.7l2 2c.2.2.5.2.7 0l5-5Z'
+);
+
+@include svg.generateSvgClass(
+  'fi-checkbox-unchecked',
+  'M3 6a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Zm3-2a2 2 0 0 0-2 2v8c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6Z'
+);
+
+@include svg.generateSvgClass(
   'fi-checkmark',
   'M3.37 10.17a.5.5 0 0 0-.74.66l4 4.5c.19.22.52.23.72.02l10.5-10.5a.5.5 0 0 0-.7-.7L7.02 14.27l-3.65-4.1Z'
+);
+
+@include svg.generateSvgClass(
+  'fi-chevron-down',
+  'M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z'
 );
 
 @include svg.generateSvgClass(
@@ -162,6 +177,11 @@
 @include svg.generateSvgClass(
   'fi-filter-dismiss',
   'M12.5 15a.5.5 0 0 1 .09 1H7.5a.5.5 0 0 1-.09-1h5.09Zm2-4a.5.5 0 0 1 .09 1H5.5a.5.5 0 0 1-.09-1h9.09Zm0-10a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9ZM9.2 7c.1.35.24.68.4 1H3.5a.5.5 0 0 1-.09-1H9.2Zm7.15-3.35a.5.5 0 0 0-.7 0L14.5 4.79l-1.15-1.14a.5.5 0 1 0-.7.7l1.14 1.15-1.14 1.15a.5.5 0 1 0 .7.7l1.15-1.14 1.15 1.14a.5.5 0 1 0 .7-.7L15.21 5.5l1.14-1.15a.5.5 0 0 0 0-.7Z'
+);
+
+@include svg.generateSvgClass(
+  'fi-history',
+  'M10 4a6 6 0 1 1-5.98 5.54.5.5 0 1 0-1-.08A7 7 0 1 0 5 5.1V3.5a.5.5 0 0 0-1 0v3c0 .28.22.5.5.5h3a.5.5 0 0 0 0-1H5.53c1.1-1.23 2.7-2 4.47-2Zm0 2.5a.5.5 0 0 0-1 0v4c0 .28.22.5.5.5h3a.5.5 0 0 0 0-1H10V6.5Z'
 );
 
 @include svg.generateSvgClass(

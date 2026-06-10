@@ -256,25 +256,28 @@ section {
   }
 }
 
-.ms-1 {
-  margin-left: 0.25rem !important;
-}
-.me-1 {
-  margin-right: 0.25rem !important;
-}
-.mt-1 {
-  margin-top: 0.25rem !important;
-}
-.mb-1 {
-  margin-bottom: 0.25rem !important;
-}
-.mx-1 {
-  margin-left: 0.25rem !important;
-  margin-right: 0.25rem !important;
-}
-.my-1 {
-  margin-top: 0.25rem !important;
-  margin-bottom: 0.25rem !important;
+@for $i from 1 through 5 {
+  .ms-#{$i} {
+    margin-left: #{$i * 0.25}rem !important;
+  }
+  .me-#{$i} {
+    margin-right: #{$i * 0.25}rem !important;
+  }
+  .mt-#{$i} {
+    margin-top: #{$i * 0.25}rem !important;
+  }
+  .mb-#{$i} {
+    margin-bottom: #{$i * 0.25}rem !important;
+  }
+
+  .mx-#{$i} {
+    margin-left: #{$i * 0.25}rem !important;
+    margin-right: #{$i * 0.25}rem !important;
+  }
+  .my-#{$i} {
+    margin-top: #{$i * 0.25}rem !important;
+    margin-bottom: #{$i * 0.25}rem !important;
+  }
 }
 
 .fui-Button {
