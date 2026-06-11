@@ -63,7 +63,6 @@
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
     "@angular-eslint/eslint-plugin": "catalog:",
-    "@angular/animations": "^21.2.14",
     "@angular/build": "^21.2.12",
     "@angular/cli": "^21.2.12",
     "@angular/common": "^21.2.14",
