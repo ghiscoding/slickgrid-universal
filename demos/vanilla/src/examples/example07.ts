@@ -612,9 +612,6 @@ export default class Example07 {
     // you can dynamically add your column to your column definitions
     // and then use the spread operator [...cols] OR slice to force the framework to review the changes
     this.sgb.columnDefinitions.push(newCol);
-
-    // use slice spread operator [...cols] to trigger dirty checking
-    this.sgb.columnDefinitions = this.columns.slice();
   }
 
   dynamicallyRemoveLastColumn() {
