@@ -1011,7 +1011,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
    */
   updateColumnDefinitionsList(newColumns: Column[]) {
     // map the Editor model to editorClass and load editor collectionAsync
-    const updatedColumns = this.gridStateService.syncPluginColumns(newColumns, [...this.sharedService.allColumns, ...newColumns]);
+    const updatedColumns = this.gridStateService.syncPluginColumns(newColumns, [...(this.sharedService.allColumns || []), ...newColumns]);
 
     if (this.options.enableTranslate) {
       this.extensionService.translateColumnHeaders(undefined, updatedColumns);

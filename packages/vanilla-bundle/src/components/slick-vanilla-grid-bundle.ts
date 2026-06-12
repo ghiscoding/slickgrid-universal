@@ -1182,7 +1182,7 @@ export class SlickVanillaGridBundle<TData = any> {
   updateColumnDefinitionsList(newColumns: Column<TData>[]): void {
     if (this.slickGrid && this._gridOptions && Array.isArray(newColumns)) {
       // map the Editor model to editorClass and load editor collectionAsync
-      const updatedColumns = this.gridStateService.syncPluginColumns(newColumns, [...this.sharedService.allColumns, ...newColumns]);
+      const updatedColumns = this.gridStateService.syncPluginColumns(newColumns, [...(this.sharedService.allColumns || []), ...newColumns]);
 
       if (this._gridOptions.enableTranslate) {
         this.extensionService.translateColumnHeaders(undefined, updatedColumns, false);

@@ -592,7 +592,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const eventSpy = vi.spyOn(eventPubSubService, 'publish');
         const addPubSubSpy = vi.spyOn(component.translaterService as TranslaterService, 'addPubSubMessaging');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColDefs);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
 
         component.columnDefinitions = mockColDefs;
         component.gridOptions = { enableTranslate: true };
@@ -613,7 +613,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const eventSpy = vi.spyOn(eventPubSubService, 'publish');
         const addPubSubSpy = vi.spyOn(component.translaterService as TranslaterService, 'addPubSubMessaging');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColDefs);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
 
         component.gridOptions = { enableTranslate: false, autoAddCustomEditorFormatter: customEditableInputFormatter };
         component.columnDefinitions = mockColDefs;
@@ -693,7 +693,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           { firstName: 'Jane', lastName: 'Smith' },
         ];
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collection: ['male', 'female'] } }] as Column[];
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColDefs);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
         vi.spyOn(mockDataView, 'getLength').mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(mockData.length);
 
         component.columnDefinitions = mockColDefs;
@@ -1945,7 +1945,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockGridOptions = { enableTranslate: true, enableEmptyDataWarningMessage: true };
         vi.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
         vi.spyOn(mockGrid, 'getGridPosition').mockReturnValue({ top: 10, left: 20 } as any);
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColDefs);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
 
         component.gridOptions = mockGridOptions;
         component.initialization(divContainer, slickEventHandler);
@@ -2005,7 +2005,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
         const mockGridOptions = { enableTranslate: true, showCustomFooter: true, customFooterOptions: { hideRowSelectionCount: false } } as GridOption;
         vi.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColDefs);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
 
         translateService.use('fr');
         component.gridOptions = mockGridOptions;
@@ -2037,7 +2037,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should NOT have a Custom Footer when "showCustomFooter" is enabled WITH Pagination in use', () => {
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColDefs);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
 
         component.gridOptions.enablePagination = true;
         component.gridOptions.showCustomFooter = true;

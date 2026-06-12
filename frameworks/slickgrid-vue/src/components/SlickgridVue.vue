@@ -1155,7 +1155,7 @@ function setDarkMode(dark = false) {
  */
 function updateColumnsList(newColumns: Column<any>[]) {
   // map the Editor model to editorClass and load editor collectionAsync
-  const updatedColumns = gridStateService.syncPluginColumns(newColumns, [...sharedService.allColumns, ...newColumns]);
+  const updatedColumns = gridStateService.syncPluginColumns(newColumns, [...(sharedService.allColumns || []), ...newColumns]);
 
   if (_gridOptions.value.enableTranslate) {
     extensionService.translateColumnHeaders(undefined, updatedColumns);
