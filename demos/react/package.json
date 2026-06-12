@@ -36,6 +36,7 @@
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/sql": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
+    "@slickgrid-universal/web-mcp": "workspace:*",
     "bootstrap": "catalog:",
     "dompurify": "catalog:",
     "i18next": "catalog:",

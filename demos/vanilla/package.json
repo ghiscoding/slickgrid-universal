@@ -28,6 +28,7 @@
     "@slickgrid-universal/text-export": "workspace:*",
     "@slickgrid-universal/vanilla-bundle": "workspace:*",
     "@slickgrid-universal/vanilla-force-bundle": "workspace:*",
+    "@slickgrid-universal/web-mcp": "workspace:*",
     "alien-signals": "^3.2.1",
     "bulma": "^1.0.4",
     "dompurify": "catalog:",

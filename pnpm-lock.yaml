@@ -310,6 +310,9 @@ importers:
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
+      '@slickgrid-universal/web-mcp':
+        specifier: workspace:*
+        version: link:../../packages/web-mcp
       aurelia:
         specifier: ^2.0.0-rc.1
         version: 2.0.0-rc.1
@@ -422,6 +425,9 @@ importers:
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
+      '@slickgrid-universal/web-mcp':
+        specifier: workspace:*
+        version: link:../../packages/web-mcp
       bootstrap:
         specifier: 'catalog:'
         version: 5.3.8(@popperjs/core@2.11.8)
@@ -658,6 +664,9 @@ importers:
       '@slickgrid-universal/vanilla-force-bundle':
         specifier: workspace:*
         version: link:../../packages/vanilla-force-bundle
+      '@slickgrid-universal/web-mcp':
+        specifier: workspace:*
+        version: link:../../packages/web-mcp
       alien-signals:
         specifier: ^3.2.1
         version: 3.2.1
@@ -743,6 +752,9 @@ importers:
       '@slickgrid-universal/vue-row-detail-plugin':
         specifier: workspace:*
         version: link:../../frameworks-plugins/vue-row-detail-plugin
+      '@slickgrid-universal/web-mcp':
+        specifier: workspace:*
+        version: link:../../packages/web-mcp
       bootstrap:
         specifier: 'catalog:'
         version: 5.3.8(@popperjs/core@2.11.8)
@@ -935,6 +947,9 @@ importers:
       '@slickgrid-universal/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@slickgrid-universal/web-mcp':
+        specifier: workspace:*
+        version: link:../../packages/web-mcp
       dequal:
         specifier: 'catalog:'
         version: 2.0.3
@@ -1637,6 +1652,12 @@ importers:
       vite:
         specifier: 'catalog:'
         version: 8.0.13(@types/node@24.12.4)(esbuild@0.27.3)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.99.0)(terser@5.46.0)(yaml@2.9.0)
+
+  packages/web-mcp:
+    dependencies:
+      '@slickgrid-universal/common':
+        specifier: workspace:*
+        version: link:../common
 
 packages:
 

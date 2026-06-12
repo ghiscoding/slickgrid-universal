@@ -1,0 +1,56 @@
+<h3 class="title is-3">
+  Example 43 - AI / Web MCP Toolkit
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example43.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h5 class="mb-3 italic example-details">
+  Demonstrates the optional <code>@slickgrid-universal/web-mcp</code> package (<code>WebMcpService</code>), which exposes the grid as
+  <a href="https://modelcontextprotocol.io" target="_blank">Model Context Protocol (MCP)</a> tools so that AI assistants can read and
+  manipulate the grid via natural language. The buttons below simulate what an LLM would call — in a real WebMCP-capable browser the same
+  methods are called automatically by the AI assistant via <code>navigator.modelContext</code>. See
+  <a href="https://ghiscoding.gitbook.io/slickgrid-universal/ai/ai-toolkit" target="_blank">AI Toolkit docs</a> for full details.
+</h5>
+
+<div class="columns is-multiline mb-3">
+  <div class="column is-narrow">
+    <button class="button is-info is-small" onclick.trigger="showSchema()">
+      <!-- <span class="mdi mdi-code-json mr-1"></span> -->
+      &lt;/&gt; "getStructuredSchema()"
+    </button>
+  </div>
+  <div class="column is-narrow">
+    <button class="button is-info is-small" onclick.trigger="showState()">
+      <span class="mdi mdi-eye-outline mr-1"></span> "getGridState()"
+    </button>
+  </div>
+  <div class="column is-narrow">
+    <button class="button is-warning is-small" onclick.trigger="applyAiState()">🤖 "applyGridState()" — simulated LLM response</button>
+  </div>
+  <div class="column is-narrow">
+    <button class="button is-light is-small" onclick.trigger="resetGrid()"><span class="mdi mdi-refresh mr-1"></span> Reset</button>
+  </div>
+</div>
+
+<div class="columns">
+  <div class="column is-4">
+    <label class="label is-small">Output (what the LLM sees / sends)</label>
+    <pre
+      id="mcp-output"
+      textcontent.bind="textResult"
+      class="has-background-dark has-text-success p-3"
+      style="min-height: 260px; font-size: 0.75rem; overflow: auto; border-radius: 6px; white-space: pre-wrap"
+    ></pre>
+  </div>
+  <div class="column">
+    <div class="grid43"></div>
+  </div>
+</div>

@@ -1,0 +1,69 @@
+<div id="demo-container" class="container-fluid">
+  <h2>
+    Example 54: AI / Web MCP Toolkit
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example54.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" (click)="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </h2>
+
+  <div class="subtitle">
+    Demonstrates the optional <code>@slickgrid-universal/web-mcp</code> package (<code>WebMcpService</code>), which exposes the grid as
+    <a href="https://modelcontextprotocol.io" target="_blank">Model Context Protocol (MCP)</a> tools so that AI assistants can read and
+    manipulate the grid via natural language. The buttons below simulate what an LLM would call — in a real WebMCP-capable browser the same
+    methods are called automatically by the AI assistant via <code>navigator.modelContext</code>. See
+    <a href="https://ghiscoding.gitbook.io/slickgrid-universal/ai/ai-toolkit" target="_blank">AI Toolkit docs</a> for full details.
+  </div>
+
+  <div class="row" style="margin-bottom: 4px">
+    <div class="col-md-12">
+      <button class="btn btn-outline-secondary btn-xs btn-icon" (click)="showSchema()">
+        <!-- <span class="mdi mdi-code-json mr-1"></span> -->
+        &lt;/&gt; "getStructuredSchema()"
+      </button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon" (click)="showState()">
+        <span class="mdi mdi-eye-outline mr-1"></span> "getGridState()"
+      </button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon" (click)="applyAiState()">
+        🤖 "applyGridState()" — simulated LLM response
+      </button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon" (click)="resetGrid()">
+        <span class="mdi mdi-refresh mr-1"></span> Reset
+      </button>
+    </div>
+  </div>
+
+  <angular-slickgrid
+    gridId="grid54"
+    [columns]="columns"
+    [options]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+  >
+  </angular-slickgrid>
+
+  <div class="row mt-2">
+    <h6 class="label is-small">Output (what the LLM sees / sends)</h6>
+    <pre
+      id="mcp-output"
+      [textContent]="textResult"
+      style="
+        background-color: rgb(43, 43, 43);
+        color: rgb(0, 187, 0);
+        min-height: 260px;
+        font-size: 0.75rem;
+        overflow: auto;
+        border-radius: 6px;
+        white-space: pre-wrap;
+      "
+    ></pre>
+  </div>
+</div>
