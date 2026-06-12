@@ -592,7 +592,7 @@ const Example3: React.FC = () => {
     };
 
     // you can dynamically add your column to your column definitions
-    // and then use the spread operator [...cols] OR slice to force React to review the changes
+    // and then use the spread operator [...cols] OR slice to force dirty checking
     setColumns([...columns!, newCol]);
   }
 

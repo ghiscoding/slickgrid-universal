@@ -218,7 +218,7 @@ const Example12: React.FC = () => {
 
   function dynamicallyAddTitleHeader() {
     // you can dynamically add your column to your column definitions
-    // and then use the spread operator [...cols] OR slice to force React to review the changes
+    // and then use the spread operator [...cols] OR slice to force dirty checking
     const newCol = {
       id: `title${duplicateTitleHeaderCount++}`,
       field: 'id',
@@ -231,7 +231,8 @@ const Example12: React.FC = () => {
     };
     columns.push(newCol);
 
-    setColumns(columns.slice()); // or use spread operator [...cols]
+    // use slice spread operator [...cols] to trigger dirty checking
+    setColumns(columns.slice());
   }
 
   function exportToExcel() {

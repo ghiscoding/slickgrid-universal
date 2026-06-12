@@ -349,4 +349,4 @@ addNewColumn() {
 ```
 
 > **Note**
-> The code above is no lnger necessary with v10.8.0 and above.
+> The code above is no longer necessary with v10.8.0 and above, the lib will now take care of that for you.
