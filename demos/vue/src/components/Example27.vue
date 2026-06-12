@@ -123,6 +123,9 @@ function defineGrid() {
       indentMarginLeft: 15,
       initiallyCollapsed: true,
 
+      // when `maxVisibleDepth` is defined, any tree node with a level greater than this number will be hidden from the grid display (but not removed from the dataset)
+      // maxVisibleDepth: 2,
+
       // you can optionally sort by a different column and/or sort direction
       // this is the recommend approach, unless you are 100% that your original array is already sorted (in most cases it's not)
       // initialSort: {
@@ -373,6 +376,20 @@ function reapplyToggledItems() {
   vueGrid.treeDataService.applyToggledItemStateChanges(treeToggleItems.value);
 }
 
+function setMaxVisibleDepthFromInput() {
+  const input = document.querySelector('#maxVisibleDepthInput') as HTMLInputElement;
+  if (!input) return;
+  const value = parseInt(input.value, 10);
+  const maxVisibleDepth = Number.isFinite(value) ? value : undefined;
+  vueGrid.treeDataService.setMaxVisibleDepth(maxVisibleDepth as number | undefined);
+}
+
+function clearMaxVisibleDepth() {
+  const input = document.querySelector('#maxVisibleDepthInput') as HTMLInputElement;
+  if (input) input.value = '';
+  vueGrid.treeDataService.clearMaxVisibleDepth();
+}
+
 function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
   const action = showSubTitle.value ? 'remove' : 'add';
@@ -487,6 +504,35 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <span>Log Hierarchical Structure</span>
       </button>
     </div>
+    <div class="d-inline-block ms-2 mt-2">
+      <div class="input-group input-group-sm mb-0">
+        <input
+          id="maxVisibleDepthInput"
+          class="form-control"
+          type="number"
+          placeholder="Max Visible Depth (e.g. 1)"
+          aria-label="Max Visible Depth"
+        />
+        <button
+          class="btn btn-outline-secondary btn-xs btn-icon"
+          data-test="set-max-visible-depth-btn"
+          type="button"
+          @click="setMaxVisibleDepthFromInput()"
+        >
+          <span class="mdi mdi-check" aria-hidden="true"></span>
+          Set
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-xs btn-icon"
+          data-test="clear-max-visible-depth-btn"
+          type="button"
+          @click="clearMaxVisibleDepth()"
+        >
+          <span class="mdi mdi-close" aria-hidden="true"></span>
+          Clear
+        </button>
+      </div>
+    </div>
   </div>
 
   <br />
@@ -518,5 +564,12 @@ function vueGridReady(grid: SlickgridVueInstance) {
     align-items: center;
     gap: 4px;
   }
+}
+
+/* limit the demo maxVisibleDepth input size */
+#maxVisibleDepthInput {
+  height: 22px;
+  width: 100%;
+  max-width: 150px;
 }
 </style>

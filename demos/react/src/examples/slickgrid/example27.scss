@@ -1,9 +1,16 @@
 // @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.lite.scss';
 
 .icon {
-    align-items: center;
-    display: inline-flex;
-    justify-content: center;
-    height: 1.5rem;
-    width: 1.5rem;
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+/* limit the demo maxVisibleDepth input size */
+#maxVisibleDepthInput {
+  height: 22px;
+  width: 100%;
+  max-width: 150px;
 }

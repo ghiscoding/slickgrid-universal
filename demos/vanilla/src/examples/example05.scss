@@ -6,3 +6,9 @@
     column-gap: 4px;
   }
 }
+
+/* limit the demo maxVisibleDepth input size */
+#maxVisibleDepthInput {
+  width: 100%;
+  max-width: 150px;
+}

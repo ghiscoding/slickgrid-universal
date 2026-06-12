@@ -138,6 +138,9 @@ export class Example27Component implements OnInit {
         indentMarginLeft: 15,
         initiallyCollapsed: true,
 
+        // when `maxVisibleDepth` is defined, any tree node with a level greater than this number will be hidden from the grid display (but not removed from the dataset)
+        // maxVisibleDepth: 2,
+
         // you can optionally sort by a different column and/or sort direction
         // this is the recommend approach, unless you are 100% that your original array is already sorted (in most cases it's not)
         initialSort: {
@@ -328,18 +331,24 @@ export class Example27Component implements OnInit {
 
   /** Whenever a parent is being toggled, we'll keep a reference of all of these changes so that we can reapply them whenever we want */
   handleOnTreeItemToggled(treeToggleExecution: TreeToggleStateChange) {
-    this.hasNoExpandCollapseChanged = false;
-    this.treeToggleItems = treeToggleExecution.toggledItems as TreeToggledItem[];
+    // defer to microtask to avoid ExpressionChangedAfterItHasBeenCheckedError in Angular
+    queueMicrotask(() => {
+      this.hasNoExpandCollapseChanged = false;
+      this.treeToggleItems = treeToggleExecution.toggledItems as TreeToggledItem[];
+    });
     console.log('Tree Data changes', treeToggleExecution);
   }
 
   handleOnGridStateChanged(gridStateChange: GridStateChange) {
-    this.hasNoExpandCollapseChanged = false;
+    // defer state updates to microtask to avoid ExpressionChangedAfterItHasBeenCheckedError
+    queueMicrotask(() => {
+      this.hasNoExpandCollapseChanged = false;
 
-    if (gridStateChange?.change?.type === 'treeData') {
-      console.log('Tree Data gridStateChange', gridStateChange?.gridState?.treeData);
-      this.treeToggleItems = gridStateChange?.gridState?.treeData?.toggledItems as TreeToggledItem[];
-    }
+      if (gridStateChange?.change?.type === 'treeData') {
+        console.log('Tree Data gridStateChange', gridStateChange?.gridState?.treeData);
+        this.treeToggleItems = gridStateChange?.gridState?.treeData?.toggledItems as TreeToggledItem[];
+      }
+    });
   }
 
   logTreeDataToggledItems() {
@@ -371,5 +380,19 @@ export class Example27Component implements OnInit {
     const action = this.hideSubTitle ? 'add' : 'remove';
     document.querySelector('.subtitle')?.classList[action]('hidden');
     this.angularGrid.resizerService.resizeGrid(0);
+  }
+
+  setMaxVisibleDepthFromInput() {
+    const input = document.getElementById('maxVisibleDepthInput') as HTMLInputElement;
+    if (!input) return;
+    const value = parseInt(input.value, 10);
+    const maxVisibleDepth = Number.isFinite(value) ? value : undefined;
+    this.angularGrid.treeDataService.setMaxVisibleDepth(maxVisibleDepth as number | undefined);
+  }
+
+  clearMaxVisibleDepth() {
+    const input = document.getElementById('maxVisibleDepthInput') as HTMLInputElement;
+    if (input) input.value = '';
+    this.angularGrid.treeDataService.clearMaxVisibleDepth();
   }
 }

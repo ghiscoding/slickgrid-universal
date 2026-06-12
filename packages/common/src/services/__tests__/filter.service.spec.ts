@@ -139,6 +139,7 @@ describe('FilterService', () => {
     service = new FilterService(filterFactory, pubSubServiceStub, sharedService, backendUtilityService, rxjsResourceStub);
     slickgridEventHandler = service.eventHandler;
     vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(div);
+    vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionMock);
   });
 
   afterEach(() => {
@@ -1211,6 +1212,33 @@ describe('FilterService', () => {
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
+    });
+
+    it('should hide items deeper than treeDataOptions.maxVisibleDepth when tree data is enabled', () => {
+      // save previous values to avoid leaking state to other tests
+      const prevEnableTree = gridOptionMock.enableTreeData;
+      const prevTreeOptions = gridOptionMock.treeDataOptions;
+
+      try {
+        // enable tree data with maxVisibleDepth = 1
+        gridOptionMock.enableTreeData = true;
+        gridOptionMock.treeDataOptions = { columnId: 'file', levelPropName: '__treeLevel', maxVisibleDepth: 1 } as any;
+
+        const deepItem = { id: 10, __treeLevel: 2, __parentId: 1 } as any;
+        const shallowItem = { id: 11, __treeLevel: 1, __parentId: 1 } as any;
+
+        service.init(gridStub);
+
+        const deepOutput = service.customLocalFilter(deepItem, { dataView: dataViewStub, grid: gridStub, columnFilters: {} as any });
+        const shallowOutput = service.customLocalFilter(shallowItem, { dataView: dataViewStub, grid: gridStub, columnFilters: {} as any });
+
+        expect(deepOutput).toBe(false);
+        expect(shallowOutput).toBe(true);
+      } finally {
+        // restore previous state
+        gridOptionMock.enableTreeData = prevEnableTree;
+        gridOptionMock.treeDataOptions = prevTreeOptions;
+      }
     });
 
     it('should return True when using row detail and the item is found in its parent', () => {
