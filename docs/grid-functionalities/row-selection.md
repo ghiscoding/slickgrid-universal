@@ -380,3 +380,6 @@ this.columns = allColumns.slice(); // or use spread operator [...cols]
 // you could also use SlickGrid setColumns() method
 // this.sgb.slickGrid.setColumns(cols);
 ```
+
+> **Note**
+> The code above is no lnger necessary with v10.8.0 and above.

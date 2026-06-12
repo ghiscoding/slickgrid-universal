@@ -1,6 +1,8 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
 import { SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
+import type { AutocompleterEditor } from '../editors/autocompleterEditor.js';
+import type { SelectEditor } from '../editors/selectEditor.js';
 import { ExtensionName, type ExtensionNameTypeString } from '../enums/index.js';
 import type {
   Column,
@@ -15,10 +17,11 @@ import type {
 } from '../interfaces/index.js';
 import type { ExtensionService } from './extension.service.js';
 import type { FilterService } from './filter.service.js';
+import type { Observable, RxJsFacade } from './rxjsFacade.js';
 import type { SharedService } from './shared.service.js';
 import type { SortService } from './sort.service.js';
 import type { TreeDataService } from './treeData.service.js';
-import { sortPresetColumns } from './utilities.js';
+import { fetchAsPromise, sortPresetColumns } from './utilities.js';
 
 export class GridStateService {
   readonly pluginName = 'GridStateService';
@@ -36,7 +39,8 @@ export class GridStateService {
     protected readonly pubSubService: BasePubSubService,
     protected readonly sharedService: SharedService,
     protected readonly sortService: SortService,
-    protected readonly treeDataService: TreeDataService
+    protected readonly treeDataService: TreeDataService,
+    protected rxjs?: RxJsFacade | undefined
   ) {
     this._eventHandler = new SlickEventHandler();
   }
@@ -59,6 +63,10 @@ export class GridStateService {
   /** Setter of the selected data context object IDs */
   set selectedRowDataContextIds(dataContextIds: Array<number | string> | undefined) {
     this._selectedRowDataContextIds = dataContextIds;
+  }
+
+  addRxJsResource(rxjs: RxJsFacade): void {
+    this.rxjs = rxjs;
   }
 
   /**
@@ -99,57 +107,117 @@ export class GridStateService {
     if (Array.isArray(definedColumns) && definedColumns.length > 0) {
       const newArrangedColumns: Column[] = this.getAssociatedGridColumns(this._grid, definedColumns);
 
-      if (Array.isArray(newArrangedColumns) && newArrangedColumns.length > 0) {
-        // make sure that the checkbox selector is still visible in the list when it is enabled
-        if (Array.isArray(this.sharedService.allColumns)) {
-          const dynamicAddonColumnByIndexPositionList: { columnId: string; columnIndexPosition: number }[] = [];
+      this.updateColumnDefinitionsList(newArrangedColumns, triggerAutoSizeColumns, triggerColumnsFullResizeByContent);
+    }
+  }
 
-          // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
-          if (this._gridOptions.enableRowMoveManager) {
-            dynamicAddonColumnByIndexPositionList.push({
-              columnId: this._gridOptions?.rowMoveManager?.columnId ?? '_move',
-              columnIndexPosition: this._gridOptions?.rowMoveManager?.columnIndexPosition ?? 0,
-            });
-          }
-          if (this._gridOptions.enableCheckboxSelector) {
-            dynamicAddonColumnByIndexPositionList.push({
-              columnId: this._gridOptions?.checkboxSelector?.columnId ?? '_checkbox_selector',
-              columnIndexPosition: this._gridOptions?.checkboxSelector?.columnIndexPosition ?? 0,
-            });
-          }
-          if (this._gridOptions.enableRowDetailView) {
-            dynamicAddonColumnByIndexPositionList.push({
-              columnId: this._gridOptions?.rowDetailView?.columnId ?? '_detail_selector',
-              columnIndexPosition: this._gridOptions?.rowDetailView?.columnIndexPosition ?? 0,
-            });
-          }
+  /** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
+  loadSlickGridEditors(columns: Column[]): Column[] {
+    if (columns.some((col) => `${col.id}`.includes('.'))) {
+      console.warn(
+        '[Slickgrid-Universal] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
+      );
+    }
 
-          // since some features could have a `columnIndexPosition`, we need to make sure these indexes are respected in the column definitions
-          this.addColumnDynamicWhenFeatureEnabled(dynamicAddonColumnByIndexPositionList, this.sharedService.allColumns, newArrangedColumns);
-        }
-
-        // keep copy the original optional `width` properties optionally provided by the user.
-        // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
-        newArrangedColumns.forEach((col) => (col.originalWidth = col.width || col.originalWidth));
-
-        // finally sort and set the new presets columns (including checkbox selector if need be)
-        let allColumns = this._grid.getColumns();
-        if (!allColumns.length) {
-          allColumns = this._columns;
-        }
-        const orderedColumns = sortPresetColumns(allColumns, newArrangedColumns);
-        this._grid.setColumns(orderedColumns);
-
-        // resize the columns to fit the grid canvas
-        if (triggerAutoSizeColumns) {
-          this._grid.autosizeColumns();
-        } else if (
-          triggerColumnsFullResizeByContent ||
-          (this._gridOptions.enableAutoResizeColumnsByCellContent && !this._gridOptions.autosizeColumnsByCellContentOnFirstLoad)
-        ) {
-          this.pubSubService.publish('onFullResizeByContentRequested', { caller: 'GridStateService' });
-        }
+    return columns.map((column: Column | any) => {
+      // on every Editor that have a "collectionAsync", resolve the data and assign it to the "collection" property
+      if (column?.editor?.collectionAsync) {
+        this.loadEditorCollectionAsync(column);
       }
+      return { ...column, editorClass: column.editor?.model };
+    });
+  }
+
+  /**
+   * When the Editor(s) has a "editor.collection" property, we'll load the async collection.
+   * Since this is called after the async call resolves, the pointer will not be the same as the "column" argument passed.
+   */
+  updateEditorCollection<T = any>(column: Column<T>, newCollection: T[]): void {
+    if (this._grid && column.editor) {
+      column.editor.collection = newCollection;
+      column.editor.disabled = false;
+
+      // get current Editor, remove it from the DOM then re-enable it and re-render it with the new collection.
+      const currentEditor = this._grid.getCellEditor() as AutocompleterEditor | SelectEditor;
+      if (currentEditor?.disable && currentEditor?.renderDomElement) {
+        currentEditor.destroy();
+        currentEditor.disable(false);
+        currentEditor.renderDomElement(newCollection);
+      }
+    }
+  }
+
+  /**
+   *  Syncs plugin/extension columns (e.g., row move, checkbox selector, row detail)
+   *  into the provided columns array based on enabled grid options.
+   *  @param {Column[]} newColumns - Visible column definitions to update.
+   *  @param {Column[]} allColumns - Full column registry (may include plugin columns).
+   *  @returns {Column[]} Updated columns array with plugin columns ensured/positioned.
+   */
+  syncPluginColumns(newColumns: Column[], allColumns: Column[]): Column[] {
+    // map the Editor model to editorClass and load editor collectionAsync
+    newColumns = this.loadSlickGridEditors(newColumns);
+
+    if (Array.isArray(newColumns) && newColumns.length > 0) {
+      // make sure that the checkbox selector is still visible in the list when it is enabled
+      if (Array.isArray(allColumns)) {
+        const dynamicAddonColumnByIndexPositionList: { columnId: string; columnIndexPosition: number }[] = [];
+
+        // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
+        if (this._gridOptions.enableRowMoveManager) {
+          dynamicAddonColumnByIndexPositionList.push({
+            columnId: this._gridOptions?.rowMoveManager?.columnId ?? '_move',
+            columnIndexPosition: this._gridOptions?.rowMoveManager?.columnIndexPosition ?? 0,
+          });
+        }
+        if (this._gridOptions.enableCheckboxSelector) {
+          dynamicAddonColumnByIndexPositionList.push({
+            columnId: this._gridOptions?.checkboxSelector?.columnId ?? '_checkbox_selector',
+            columnIndexPosition: this._gridOptions?.checkboxSelector?.columnIndexPosition ?? 0,
+          });
+        }
+        if (this._gridOptions.enableRowDetailView) {
+          dynamicAddonColumnByIndexPositionList.push({
+            columnId: this._gridOptions?.rowDetailView?.columnId ?? '_detail_selector',
+            columnIndexPosition: this._gridOptions?.rowDetailView?.columnIndexPosition ?? 0,
+          });
+        }
+
+        // since some features could have a `columnIndexPosition`, we need to make sure these indexes are respected in the column definitions
+        this.addColumnDynamicWhenFeatureEnabled(dynamicAddonColumnByIndexPositionList, allColumns, newColumns);
+      }
+
+      // keep copy of the original optional `width` properties optionally provided by the user.
+      // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
+      newColumns.forEach((col) => (col.originalWidth = col.width || col.originalWidth));
+    }
+    return newColumns;
+  }
+
+  /**
+   * Dynamically change or update the column definitions list.
+   * We will re-render the grid so that the new header and data shows up correctly.
+   * If using i18n, we also need to trigger a re-translate of the column headers
+   */
+  updateColumnDefinitionsList(newColumns: Column[], triggerAutoSizeColumns = true, triggerColumnsFullResizeByContent = false): void {
+    // get all columns or use local copy if grid is not yet initialized,
+    let allColumns = this.sharedService.allColumns || this._grid.getColumns();
+
+    // then resync the dynamic columns (checkbox selector, row move, row detail) with the new columns list
+    const updatedColumns = this.syncPluginColumns(newColumns, allColumns);
+
+    // finally sort and set the new presets columns (including checkbox selector if need be)
+    const orderedColumns = sortPresetColumns(allColumns, updatedColumns);
+    this._grid.setColumns(orderedColumns);
+
+    // resize the columns to fit the grid canvas
+    if (triggerAutoSizeColumns) {
+      this._grid.autosizeColumns();
+    } else if (
+      triggerColumnsFullResizeByContent ||
+      (this._gridOptions.enableAutoResizeColumnsByCellContent && !this._gridOptions.autosizeColumnsByCellContentOnFirstLoad)
+    ) {
+      this.pubSubService.publish('onFullResizeByContentRequested', { caller: 'GridStateService' });
     }
   }
 
@@ -641,5 +709,26 @@ export class GridStateService {
     const selectionModel = this._grid.getSelectionModel();
     const isRowSelectionEnabled = !!(this._gridOptions.enableSelection || this._gridOptions.enableCheckboxSelector);
     return isRowSelectionEnabled && !!selectionModel;
+  }
+
+  /** Load the Editor Collection asynchronously and replace the "collection" property when Promise resolves */
+  protected loadEditorCollectionAsync(column: Column): void {
+    if (column?.editor) {
+      const collectionAsync = column.editor.collectionAsync;
+      column.editor.disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
+
+      if (collectionAsync instanceof Promise) {
+        fetchAsPromise(column.editor.collectionAsync, this.rxjs).then((resolvedCollection) => {
+          this.updateEditorCollection(column, resolvedCollection);
+        });
+      } else if (this.rxjs?.isObservable(collectionAsync)) {
+        // wrap this inside a microtask at the end of the task to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method after columns are available
+        queueMicrotask(() => {
+          this._subscriptions.push(
+            (collectionAsync as Observable<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
+          );
+        });
+      }
+    }
   }
 }

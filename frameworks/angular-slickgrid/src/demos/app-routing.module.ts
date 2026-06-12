@@ -55,6 +55,7 @@ export const routes: Routes = [
   { path: 'example51', loadComponent: () => import('./examples/example51.component').then((m) => m.Example51Component) },
   { path: 'example52', loadComponent: () => import('./examples/example52.component').then((m) => m.Example52Component) },
   { path: 'example53', loadComponent: () => import('./examples/example53.component').then((m) => m.Example53Component) },
+  { path: 'example', loadComponent: () => import('./examples/example.component').then((m) => m.TestGridPageComponent) },
   { path: '', redirectTo: '/example34', pathMatch: 'full' },
   { path: '**', redirectTo: '/example34', pathMatch: 'full' },
 ];

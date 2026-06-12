@@ -347,3 +347,6 @@ addNewColumn() {
   // this.angularGrid.slickGrid.setColumns(cols);
 }
 ```
+
+> **Note**
+> The code above is no lnger necessary with v10.8.0 and above.

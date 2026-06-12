@@ -599,14 +599,8 @@ export class Example03 {
     // and then use the spread operator [...cols] OR slice to force Aurelia to review the changes
     this.columns.push(newCol);
 
-    // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
-    // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
-    // for example if you use the Checkbox Selector (row selection), you MUST use the code below
-    /*
-    const allColumns = this.aureliaGrid.gridService.getAllColumnDefinitions();
-    allColumns.push(newCol);
-    this.columns = [...allColumns]; // (or use slice) reassign to column definitions for Aurelia to do dirty checking
-    */
+    // use slice spread operator [...cols] to trigger dirty checking
+    this.columns = this.columns.slice();
   }
 
   dynamicallyRemoveLastColumn() {

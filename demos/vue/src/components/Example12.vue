@@ -259,15 +259,6 @@ function dynamicallyAddTitleHeader() {
   };
   columns.value.push(newCol);
   columns.value = columns.value.slice(); // or use spread operator [...cols]
-
-  // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
-  // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
-  // for example if you use the Checkbox Selector (row selection), you MUST use the code below
-  /*
-    const allColumns = vueGrid.gridService.getAllColumnDefinitions();
-    allColumns.push(newCol);
-    columns.value = [...allColumns]; // (or use slice) reassign to column definitions for Vue to do dirty checking
-    */
 }
 
 function exportToExcel() {

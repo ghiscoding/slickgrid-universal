@@ -613,26 +613,12 @@ export default class Example07 {
     // and then use the spread operator [...cols] OR slice to force the framework to review the changes
     this.sgb.columnDefinitions.push(newCol);
 
-    // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
-    // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
-    // for example if you use the Checkbox Selector (row selection), you MUST use the code below
-    /*
-      const allOriginalColumns = this.sgb.gridService.getAllColumnDefinitions();
-      allOriginalColumns.push(newCol);
-      this.sgb.columnDefinitions = [...allOriginalColumns]; // (or use slice) reassign to column definitions for framework to do dirty checking
-    */
+    // use slice spread operator [...cols] to trigger dirty checking
+    this.sgb.columnDefinitions = this.columns.slice();
   }
 
   dynamicallyRemoveLastColumn() {
     this.sgb.columnDefinitions.pop();
-
-    /*
-    const allColumns = this.slickerGridInstance.gridService.getAllColumnDefinitions();
-    // remove your column from the full set of columns
-    // and use slice or spread [...] to trigger a dirty change
-    allOriginalColumns.pop();
-    this.sgb.columnDefinitions = allOriginalColumns.slice();
-    */
   }
 
   hideFinishColumnDynamically() {

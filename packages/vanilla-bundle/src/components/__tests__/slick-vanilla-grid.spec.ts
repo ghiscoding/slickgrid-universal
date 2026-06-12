@@ -14,7 +14,6 @@ import {
   type CurrentPagination,
   type CurrentPinning,
   type CurrentSorter,
-  type Editor,
   type ExtensionList,
   type ExtensionService,
   type ExtensionUtility,
@@ -44,7 +43,6 @@ import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import type { GraphqlPaginatedResult, GraphqlService, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { of, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
-import { basicFetchStub } from '../../../../../test/httpClientStub.js';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
@@ -158,6 +156,9 @@ const gridStateServiceStub = {
       mockGrid.setColumns(gridColumns);
     }
   }),
+  addRxJsResource: vi.fn(),
+  loadSlickGridEditors: vi.fn(),
+  syncPluginColumns: vi.fn(),
   getAssociatedGridColumns: vi.fn(),
   getCurrentGridState: vi.fn(),
   needToPreserveRowSelection: vi.fn(),
@@ -486,17 +487,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(component.columnDefinitions).toEqual(columnsMock);
   });
 
-  it('should update call updateColumnDefinitionsList() when pushing to the column definitions', () => {
-    const updateColumnsSpy = vi.spyOn(component, 'updateColumnDefinitionsList');
-    component.initialization(divContainer, slickEventHandler);
-
-    const newCol = { id: 'hobbies', name: 'Hobbies', field: 'hobbie' };
-    component.columnDefinitions.push(newCol);
-
-    expect(updateColumnsSpy).toHaveBeenCalled();
-    expect(component.columnDefinitions).toEqual(expect.arrayContaining([{ id: 'name', field: 'name' }, newCol]));
-  });
-
   describe('initialization method', () => {
     const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef) => {
       const isEditableItem = !!columnDef.editor;
@@ -590,10 +580,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { autoAddCustomEditorFormatter: customEditableInputFormatter };
         component.initialization(divContainer, slickEventHandler);
 
-        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith(
-          expect.arrayContaining([{ id: 'name', field: 'name' }]),
-          customEditableInputFormatter
-        );
+        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith(undefined, customEditableInputFormatter);
       });
     });
 
@@ -605,6 +592,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const eventSpy = vi.spyOn(eventPubSubService, 'publish');
         const addPubSubSpy = vi.spyOn(component.translaterService as TranslaterService, 'addPubSubMessaging');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColDefs);
 
         component.columnDefinitions = mockColDefs;
         component.gridOptions = { enableTranslate: true };
@@ -622,10 +610,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const translateSpy = vi.spyOn(extensionServiceStub, 'translateColumnHeaders');
         const autosizeSpy = vi.spyOn(mockGrid, 'autosizeColumns');
         const updateSpy = vi.spyOn(component, 'updateColumnDefinitionsList');
-        const renderSpy = vi.spyOn(extensionServiceStub, 'renderColumnHeaders');
         const eventSpy = vi.spyOn(eventPubSubService, 'publish');
         const addPubSubSpy = vi.spyOn(component.translaterService as TranslaterService, 'addPubSubMessaging');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColDefs);
 
         component.gridOptions = { enableTranslate: false, autoAddCustomEditorFormatter: customEditableInputFormatter };
         component.columnDefinitions = mockColDefs;
@@ -636,11 +624,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(addPubSubSpy).not.toHaveBeenCalled();
         expect(eventSpy).toHaveBeenCalledTimes(4);
         expect(updateSpy).toHaveBeenCalledWith(mockColDefs);
-        expect(renderSpy).toHaveBeenCalledWith(mockColDefs, true);
-        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith(
-          [{ id: 'name', field: 'name', editor: undefined }],
-          customEditableInputFormatter
-        );
+        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith(undefined, customEditableInputFormatter);
       });
     });
 
@@ -709,6 +693,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           { firstName: 'Jane', lastName: 'Smith' },
         ];
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collection: ['male', 'female'] } }] as Column[];
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColDefs);
         vi.spyOn(mockDataView, 'getLength').mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(mockData.length);
 
         component.columnDefinitions = mockColDefs;
@@ -841,120 +826,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(component.paginationOptions).toEqual(mockPagination);
         expect(paginationSrvSpy).toHaveBeenNthCalledWith(2, 1, true);
-      });
-    });
-
-    describe('with editors', () => {
-      it('should display a console warning when any of the column definition ids include a dot notation', () => {
-        const consoleSpy = vi.spyOn(console, 'warn').mockReturnValue();
-        const mockColDefs = [{ id: 'user.gender', field: 'user.gender', editor: { model: Editors.text, collection: ['male', 'female'] } }] as Column[];
-
-        component.columnDefinitions = mockColDefs;
-
-        expect(consoleSpy).toHaveBeenCalledWith(
-          '[Slickgrid-Universal] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
-        );
-      });
-
-      it('should be able to load async editors with a regular Promise', async () => {
-        const mockCollection = ['male', 'female'];
-        const promise = Promise.resolve(mockCollection);
-        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
-
-        component.columnDefinitions = mockColDefs;
-
-        vi.advanceTimersByTime(5);
-        await new Promise(process.nextTick);
-
-        expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
-        expect(component.columnDefinitions[0].editor!.model).toEqual(Editors.text);
-      });
-
-      it('should be able to load collectionAsync and expect Editor to be destroyed and re-render when receiving new collection from await', async () => {
-        const mockCollection = ['male', 'female'];
-        const promise = Promise.resolve(mockCollection);
-        const mockEditor = {
-          disable: vi.fn(),
-          destroy: vi.fn(),
-          renderDomElement: vi.fn(),
-        } as unknown as Editor;
-        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
-        vi.spyOn(mockGrid, 'getCellEditor').mockReturnValue(mockEditor);
-        const disableSpy = vi.spyOn(mockEditor, 'disable');
-        const destroySpy = vi.spyOn(mockEditor, 'destroy');
-        const renderSpy = vi.spyOn(mockEditor, 'renderDomElement');
-
-        component.columnDefinitions = mockColDefs;
-
-        vi.advanceTimersByTime(5);
-        await new Promise(process.nextTick);
-
-        expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
-        expect(component.columnDefinitions[0].editor!.model).toEqual(Editors.text);
-        expect(disableSpy).toHaveBeenCalledWith(false);
-        expect(destroySpy).toHaveBeenCalled();
-        expect(renderSpy).toHaveBeenCalledWith(mockCollection);
-      });
-
-      it('should be able to load async editors with as a Promise with content to simulate http-client', async () => {
-        const mockCollection = ['male', 'female'];
-        const promise = Promise.resolve({ content: mockCollection });
-        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
-
-        component.columnDefinitions = mockColDefs;
-
-        vi.advanceTimersByTime(5);
-        await new Promise(process.nextTick);
-
-        expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
-        expect(component.columnDefinitions[0].editor!.model).toEqual(Editors.text);
-      });
-
-      it('should be able to load async editors with a Fetch Promise', async () => {
-        const mockCollection = ['male', 'female'];
-        const collectionAsync = basicFetchStub('http://locahost/api', { method: 'GET' }, mockCollection);
-        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
-
-        component.columnDefinitions = mockColDefs;
-
-        vi.advanceTimersByTime(5);
-        await new Promise(process.nextTick);
-
-        expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
-        expect(component.columnDefinitions[0].editor!.model).toEqual(Editors.text);
-      });
-
-      it('should be able to load async editors with an Observable', async () => {
-        const mockCollection = ['male', 'female'];
-        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: of(mockCollection) } }] as Column[];
-
-        const rxjsMock = new RxJsResourceStub();
-        component.gridOptions = { externalResources: [rxjsMock] } as unknown as GridOption;
-        component.registerExternalResources([rxjsMock], true);
-        component.columnDefinitions = mockColDefs;
-        component.initialization(divContainer, slickEventHandler);
-
-        vi.advanceTimersByTime(5);
-        await new Promise(process.nextTick);
-
-        expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
-        expect(component.columnDefinitions[0].editor!.model).toEqual(Editors.text);
-        expect(component.columnDefinitions[0].editorClass).toEqual(Editors.text);
-      });
-
-      it('should throw an error when Fetch Promise response bodyUsed is true', async () => {
-        const consoleSpy = vi.spyOn(console, 'warn').mockReturnValue();
-        const mockCollection = ['male', 'female'];
-        const collectionAsync = basicFetchStub('http://invalid-url', { method: 'GET' }, mockCollection);
-        const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
-        component.columnDefinitions = mockColDefs;
-
-        component.initialization(divContainer, slickEventHandler);
-
-        vi.advanceTimersByTime(5);
-        await new Promise(process.nextTick);
-
-        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid-Universal] The response body passed to Fetch was already read.'));
       });
     });
 
@@ -1129,6 +1000,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const rxjsMock = new RxJsResourceStub();
         const backendUtilitySpy = vi.spyOn(backendUtilityServiceStub, 'addRxJsResource');
         const filterServiceSpy = vi.spyOn(filterServiceStub, 'addRxJsResource');
+        const stateServiceSpy = vi.spyOn(gridStateServiceStub, 'addRxJsResource');
         const sortServiceSpy = vi.spyOn(sortServiceStub, 'addRxJsResource');
         const paginationServiceSpy = vi.spyOn(paginationServiceStub, 'addRxJsResource');
 
@@ -1139,6 +1011,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(backendUtilitySpy).toHaveBeenCalled();
         expect(filterServiceSpy).toHaveBeenCalled();
+        expect(stateServiceSpy).toHaveBeenCalled();
         expect(sortServiceSpy).toHaveBeenCalled();
         expect(paginationServiceSpy).toHaveBeenCalled();
         expect(component.registeredResources.length).toBe(4); // RxJsResourceStub, GridService, GridStateService, SlickEmptyCompositeEditorComponent
@@ -2072,6 +1945,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockGridOptions = { enableTranslate: true, enableEmptyDataWarningMessage: true };
         vi.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
         vi.spyOn(mockGrid, 'getGridPosition').mockReturnValue({ top: 10, left: 20 } as any);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColDefs);
 
         component.gridOptions = mockGridOptions;
         component.initialization(divContainer, slickEventHandler);
@@ -2131,6 +2005,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
         const mockGridOptions = { enableTranslate: true, showCustomFooter: true, customFooterOptions: { hideRowSelectionCount: false } } as GridOption;
         vi.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColDefs);
 
         translateService.use('fr');
         component.gridOptions = mockGridOptions;
@@ -2162,6 +2037,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should NOT have a Custom Footer when "showCustomFooter" is enabled WITH Pagination in use', () => {
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColDefs);
 
         component.gridOptions.enablePagination = true;
         component.gridOptions.showCustomFooter = true;
