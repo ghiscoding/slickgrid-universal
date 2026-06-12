@@ -79,9 +79,13 @@ export class FilterService {
     return this._onSearchChange;
   }
 
-  /** Getter for the Grid Options pulled through the Grid Object */
+  /** Getter for the Grid Options pulled through the Grid Object.
+   * Prefer the SharedService gridOptions when available to allow runtime updates
+   * made to `sharedService.gridOptions` to be visible without relying on SlickGrid's
+   * internal deep-merged `getOptions()` value.
+   */
   protected get _gridOptions(): GridOption {
-    return this._grid?.getOptions() ?? {};
+    return this.sharedService?.gridOptions ?? this._grid?.getOptions() ?? {};
   }
 
   /** Getter for the Column Definitions pulled through the Grid Object */
@@ -326,8 +330,15 @@ export class FilterService {
       const collapsedPropName = treeDataOptions.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
       const parentPropName = treeDataOptions.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
       const childrenPropName = treeDataOptions?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
+      const levelPropName = treeDataOptions.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
+      const maxVisibleDepth = treeDataOptions.maxVisibleDepth;
       const primaryDataId = this._gridOptions.datasetIdPropertyName ?? 'id';
       const autoRecalcTotalsOnFilterChange = treeDataOptions.autoRecalcTotalsOnFilterChange ?? false;
+
+      // if a maxVisibleDepth is provided, hide any row deeper than that level
+      if (typeof maxVisibleDepth === 'number' && item[levelPropName] !== undefined && item[levelPropName] > maxVisibleDepth) {
+        return false;
+      }
 
       // typically when a parent is collapsed we can exit early (by returning false) but we can't do that when we use auto-recalc totals
       // if that happens, we need to keep a ref and recalculate total for all tree leafs then only after we can exit

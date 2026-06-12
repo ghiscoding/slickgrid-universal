@@ -229,6 +229,48 @@ describe('Example 27 - Tree Data (from a flat dataset with parentId references)'
     });
   });
 
+  it('deterministic: hide Task 1 children with maxVisibleDepth=1 and restore on clear', () => {
+    // Task 1 was just expanded by the previous test; now ensure children exist
+    cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-tree-title').should('contain', 'Task 1');
+
+    // ensure level-2 children exist; if not, expand Task 1 and re-check
+    cy.get('.slick-tree-title[level=2]')
+      .its('length')
+      .then((len) => {
+        if (len === 0) {
+          cy.get(
+            `.grid5 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`
+          ).click({ force: true });
+          cy.get('.grid5').find('.slick-tree-title[level=2]').its('length').should('be.greaterThan', 0);
+        } else {
+          expect(len).to.be.greaterThan(0);
+        }
+      });
+
+    // apply maxVisibleDepth=1
+    cy.get('#maxVisibleDepthInput').clear().type('1');
+    cy.get('[data-test=set-max-visible-depth-btn]').click();
+
+    // children (level=2) should be hidden
+    cy.get('.slick-tree-title[level=2]').should('have.length', 0);
+
+    // clear the maxVisibleDepth and expect children to reappear
+    cy.get('[data-test=clear-max-visible-depth-btn]').click();
+    cy.get('.slick-tree-title[level=2]').its('length').should('be.greaterThan', 0);
+  });
+
+  it('should set max visible depth via demo input and hide deeper nodes', () => {
+    // ensure there are level-2 items before applying maxVisibleDepth
+    cy.get('.slick-tree-title[level=2]').its('length').should('be.greaterThan', 0);
+
+    // set max visible depth to 1 and apply
+    cy.get('#maxVisibleDepthInput').clear().type('1');
+    cy.get('[data-test=set-max-visible-depth-btn]').click();
+
+    // after applying, level-2 items should be hidden
+    cy.get('.slick-tree-title[level=2]').should('have.length', 0);
+  });
+
   it('should be able to click on the "Collapse All (wihout event)" button', () => {
     cy.get('[data-test=collapse-all-noevent-btn]').contains('Collapse All (without triggering event)').click();
   });

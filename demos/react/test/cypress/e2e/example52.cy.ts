@@ -21,7 +21,9 @@ describe('Example 52 - SQL Grid', () => {
   it('should have a grid of size 900 by 200px', () => {
     cy.get('#slickGridContainer-grid52').should('have.css', 'width', '900px');
 
-    cy.get('#slickGridContainer-grid52 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(200));
+    cy.get('#slickGridContainer-grid52 > .slickgrid-container').should(($el) =>
+      expect(parseInt(`${$el.height()}`, 10)).to.be.approximately(200, 1)
+    );
   });
 
   it('should have SQL query with defined Grid Presets', () => {

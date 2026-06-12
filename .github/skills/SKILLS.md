@@ -1,5 +1,7 @@
 # Repository AI Skills
 
+- in all interactions and commit messages, be extremely concise and sacrifice grammar for the sake of concision.
+
 This folder contains repo-level AI skill files. Each skill is a `.SKILL.md` file describing how an AI assistant should behave or where to look for information.
 
 Available skills

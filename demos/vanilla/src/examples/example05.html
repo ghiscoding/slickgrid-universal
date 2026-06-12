@@ -74,6 +74,25 @@
         <span>Log Hierarchical Structure</span>
       </button>
     </div>
+    <div class="row mb-1">
+      <div class="field has-addons">
+        <p class="control">
+          <input id="maxVisibleDepthInput" class="input is-small" type="number" placeholder="Max Visible Depth (e.g. 1)" />
+        </p>
+        <p class="control">
+          <button onclick.trigger="setMaxVisibleDepthFromInput()" class="button is-small is-primary" data-test="set-max-visible-depth-btn">
+            <span class="mdi mdi-check" aria-hidden="true"></span>
+            <span style="margin-left: 6px">Set Depth</span>
+          </button>
+        </p>
+        <p class="control">
+          <button onclick.trigger="clearMaxVisibleDepth()" class="button is-small" data-test="clear-max-visible-depth-btn">
+            <span class="mdi mdi-close" aria-hidden="true"></span>
+            <span style="margin-left: 6px">Clear</span>
+          </button>
+        </p>
+      </div>
+    </div>
   </div>
 </div>
 

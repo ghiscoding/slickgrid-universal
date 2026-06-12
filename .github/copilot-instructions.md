@@ -1,5 +1,7 @@
 # GitHub Copilot Instructions for slickgrid-universal
 
+- in all interactions and commit messages, be extremely concise and sacrifice grammar for the sake of concision.
+
 ## Repository Overview
 This is a monorepo for SlickGrid Universal, which serves as a framework for grid functionality across multiple platforms. As a framework, stability and backward compatibility are critical:
 - Avoid breaking changes whenever possible. Instead, use deprecations and overloads to phase out old APIs or behaviors, only removing them after a full deprecation cycle.

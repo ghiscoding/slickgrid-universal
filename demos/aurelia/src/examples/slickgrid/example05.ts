@@ -425,13 +425,13 @@ export class Example05 {
   }
 
   // YOU CAN CHOOSE TO PREVENT EVENT FROM BUBBLING IN THE FOLLOWING 3x EVENTS
-  // note however that internally the cancelling the search is more of a rollback
   handleOnBeforeSort(/* e: Event */) {
     // e.preventDefault();
     // return false;
     return true;
   }
 
+  // note that internally the cancelling the search is more of a rollback
   handleOnBeforeSearchChange(/* e: Event */) {
     // e.preventDefault();
     // return false;

@@ -10,6 +10,7 @@
   - [`autoApproveParentItemWhenTreeColumnIsValid`](#autoapproveparentitemwhentreecolumnisvalid-boolean-option)
 - [Tree Data Service Methods](#tree-data-service-methods) - extra methods to work with Tree Data
   - `getItemCount(x)`, `getToggledItems()`, `getCurrentToggleState()`, `dynamicallyToggleItemState(x)`, `applyToggledItemStateChanges(x)`, ...
+- [Max Visible Depth](#max-visible-depth)
 - [Tree Totals with Aggregators](#tree-totals-with-aggregators)
 - [Tree Totals Formatter](#tree-totals-formatter)
 - [Lazy Loading Tree Data](#lazy-loading-tree-data)
@@ -267,6 +268,37 @@ export class Example1 {
   }
 }
 ```
+
+### Max Visible Depth
+
+You can limit how deep tree nodes are visible in the grid without removing them from the dataset by using the `treeDataOptions.maxVisibleDepth` option. When defined, any row whose tree level property is greater than the provided value will be hidden by the tree filter logic.
+
+Example grid option (static):
+```ts
+this.gridOptions = {
+  treeDataOptions: {
+    columnId: 'title',
+    levelPropName: 'treeLevel',
+    // when `maxVisibleDepth` is defined, any tree node with a level greater than this number will be hidden
+    // maxVisibleDepth: 2,
+  }
+};
+```
+
+Runtime API (preferred): use the `TreeDataService` convenience methods to set or clear the value at runtime. This avoids relying on nested `setOptions()` merges and ensures the change is applied consistently across the grid and demos.
+
+Example usage:
+```ts
+// set maximum visible tree depth to 1
+this.sgb.treeDataService.setMaxVisibleDepth(1);
+
+// clear the runtime limit (revert to unlimited depth)
+this.sgb.treeDataService.clearMaxVisibleDepth();
+```
+
+Notes:
+- The option only hides rows from the visual grid (filtering), it does not remove them from the underlying dataset.
+- When reading or updating runtime options in code, prefer the `TreeDataService` methods above rather than mutating nested option objects directly.
 
 ### Tree Totals with Aggregators
 ##### requires `v3.2.0` or higher

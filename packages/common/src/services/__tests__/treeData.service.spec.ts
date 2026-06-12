@@ -68,6 +68,7 @@ const gridStub = {
   onClick: new SlickEvent(),
   onKeyDown: new SlickEvent(),
   render: vi.fn(),
+  setOptions: vi.fn(),
   setSortColumns: vi.fn(),
 } as unknown as SlickGrid;
 
@@ -210,6 +211,30 @@ describe('TreeData Service', () => {
     const mockHierarchical = [{ file: 'documents', files: [{ file: 'vacation.txt' }] }];
     vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValueOnce(mockHierarchical);
     expect(service.datasetHierarchical).toEqual(mockHierarchical);
+  });
+
+  it('setMaxVisibleDepth should update sharedService.gridOptions.treeDataOptions and refresh filters', () => {
+    // prepare shared options
+    sharedService.gridOptions = { treeDataOptions: { columnId: 'file' } } as any;
+    const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
+
+    service.setMaxVisibleDepth(2);
+
+    expect(sharedService.gridOptions.treeDataOptions?.maxVisibleDepth).toBe(2);
+    expect(filterServiceStub.refreshTreeDataFilters).toHaveBeenCalled();
+    expect(pubSubSpy).toHaveBeenCalledWith('onTreeMaxVisibleDepthChanged', 2);
+  });
+
+  it('clearMaxVisibleDepth should remove maxVisibleDepth and refresh filters', () => {
+    // prepare shared options with existing maxVisibleDepth
+    sharedService.gridOptions = { treeDataOptions: { columnId: 'file', maxVisibleDepth: 3 } } as any;
+    const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
+
+    service.clearMaxVisibleDepth();
+
+    expect(sharedService.gridOptions.treeDataOptions?.maxVisibleDepth).toBeUndefined();
+    expect(filterServiceStub.refreshTreeDataFilters).toHaveBeenCalled();
+    expect(pubSubSpy).toHaveBeenCalledWith('onTreeMaxVisibleDepthChanged', undefined);
   });
 
   describe('handleOnCellClick method', () => {
@@ -574,6 +599,9 @@ describe('TreeData Service', () => {
         ]);
       };
 
+      // also set a maxVisibleDepth to ensure deeper nodes are hidden by filter logic
+      gridOptionsMock.treeDataOptions!.maxVisibleDepth = 1;
+
       service.init(gridStub);
       const eventData = new SlickEventData();
       div.className = 'slick-group-toggle';
@@ -595,6 +623,16 @@ describe('TreeData Service', () => {
       expect(service.getToggledItems()).toEqual([{ itemId: 123, isCollapsed: false }]);
       expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('myFile.txt');
       expect(pubSubSpy).not.toHaveBeenCalledWith(`onTreeItemToggled`);
+
+      // Verify maxVisibleDepth has an effect in integration: the mocked flat dataset contains a level 2 node,
+      // but when maxVisibleDepth is 1 those deeper nodes would be hidden by the filter logic.
+      const maxDepth = gridOptionsMock.treeDataOptions!.maxVisibleDepth as number;
+      // mockFlatDataset defined above in this test
+      const visibleFlat = mockFlatDataset.filter((d) => d.__treeLevel <= maxDepth);
+      const hiddenFlat = mockFlatDataset.filter((d) => d.__treeLevel > maxDepth);
+
+      expect(hiddenFlat.some((d) => d.__treeLevel === 2)).toBe(true);
+      expect(visibleFlat.length).toBeLessThan(mockFlatDataset.length);
     });
 
     describe('toggleOnNodeTitle option', () => {

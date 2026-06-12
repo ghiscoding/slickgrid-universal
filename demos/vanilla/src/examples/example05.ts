@@ -280,6 +280,9 @@ export default class Example05 {
         indentMarginLeft: 15,
         initiallyCollapsed: true,
 
+        // when `maxVisibleDepth` is defined, any tree node with a level greater than this number will be hidden from the grid display (but not removed from the dataset)
+        // maxVisibleDepth: 2,
+
         // you can optionally sort by a different column and/or sort direction
         // this is the recommend approach, unless you are 100% that your original array is already sorted (in most cases it's not)
         // initialSort: {
@@ -396,6 +399,20 @@ export default class Example05 {
 
   dynamicallyChangeFilter() {
     this.sgb.filterService.updateFilters([{ columnId: 'percentComplete', operator: '<', searchTerms: [40] }]);
+  }
+
+  setMaxVisibleDepthFromInput() {
+    const input = document.querySelector('#maxVisibleDepthInput') as HTMLInputElement;
+    if (!input) return;
+    const value = parseInt(input.value, 10);
+    const maxVisibleDepth = Number.isFinite(value) ? value : undefined;
+    this.sgb.treeDataService.setMaxVisibleDepth(maxVisibleDepth as number | undefined);
+  }
+
+  clearMaxVisibleDepth() {
+    const input = document.querySelector('#maxVisibleDepthInput') as HTMLInputElement;
+    if (input) input.value = '';
+    this.sgb.treeDataService.clearMaxVisibleDepth();
   }
 
   logHierarchicalStructure() {

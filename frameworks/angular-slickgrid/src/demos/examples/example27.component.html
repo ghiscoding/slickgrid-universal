@@ -116,6 +116,35 @@
         <span>Dynamically Change Filter (% complete &lt; 40)</span>
       </button>
     </div>
+    <div class="d-inline-block ms-2 mt-2">
+      <div class="input-group input-group-sm mb-0">
+        <input
+          id="maxVisibleDepthInput"
+          class="form-control"
+          type="number"
+          placeholder="Max Visible Depth (e.g. 1)"
+          aria-label="Max Visible Depth"
+        />
+        <button
+          class="btn btn-outline-secondary btn-xs btn-icon"
+          data-test="set-max-visible-depth-btn"
+          type="button"
+          (click)="setMaxVisibleDepthFromInput()"
+        >
+          <span class="mdi mdi-check" aria-hidden="true"></span>
+          Set
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-xs btn-icon"
+          data-test="clear-max-visible-depth-btn"
+          type="button"
+          (click)="clearMaxVisibleDepth()"
+        >
+          <span class="mdi mdi-close" aria-hidden="true"></span>
+          Clear
+        </button>
+      </div>
+    </div>
   </div>
 
   <br />
