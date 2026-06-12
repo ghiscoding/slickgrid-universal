@@ -1365,9 +1365,6 @@ importers:
       sortablejs:
         specifier: 'catalog:'
         version: 1.15.7
-      un-flatten-tree:
-        specifier: ^2.0.12
-        version: 2.0.12
       vanilla-calendar-pro:
         specifier: ^3.1.0
         version: 3.1.0
@@ -7786,9 +7783,6 @@ packages:
     resolution: {integrity: sha512-v3Xu+yuwBXisp6QYTcH4UbH+xYJXqnq2m/LtQVWKWzYc1iehYnLixoQDN9FH6/j9/oybfd6W9Ghwkl8+UMKTKQ==}
     engines: {node: '>=0.8.0'}
     hasBin: true
-
-  un-flatten-tree@2.0.12:
-    resolution: {integrity: sha512-E7v59ADEqVQs9gTZYxoe3uGs6Jj/a3gJ7lSJaTIBTc5w0+B3PJ/kVjs/Y/A26NBWEW8WAo556PpRatH4XHZR1w==}
 
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
@@ -15269,8 +15263,6 @@ snapshots:
 
   uglify-js@3.19.3:
     optional: true
-
-  un-flatten-tree@2.0.12: {}
 
   undici-types@7.16.0: {}
 
