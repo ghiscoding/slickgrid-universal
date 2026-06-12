@@ -61,7 +61,7 @@
     "baseline widely available"
   ],
   "dependencies": {
-    "@excel-builder-vanilla/types": "^5.0.0",
+    "@excel-builder-vanilla/types": "^5.1.0",
     "@formkit/tempo": "catalog:",
     "@slickgrid-universal/binding": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
