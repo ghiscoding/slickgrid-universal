@@ -2541,7 +2541,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           component.datasetHierarchical = mockHierarchical;
 
           expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
-          // expect(clearFilterSpy).toHaveBeenCalled();
           expect(processSpy).toHaveBeenCalled();
           expect(setItemsSpy).toHaveBeenCalledWith([], 'id');
           setTimeout(() => {

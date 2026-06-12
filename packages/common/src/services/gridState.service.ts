@@ -129,25 +129,6 @@ export class GridStateService {
   }
 
   /**
-   * When the Editor(s) has a "editor.collection" property, we'll load the async collection.
-   * Since this is called after the async call resolves, the pointer will not be the same as the "column" argument passed.
-   */
-  updateEditorCollection<T = any>(column: Column<T>, newCollection: T[]): void {
-    if (this._grid && column.editor) {
-      column.editor.collection = newCollection;
-      column.editor.disabled = false;
-
-      // get current Editor, remove it from the DOM then re-enable it and re-render it with the new collection.
-      const currentEditor = this._grid.getCellEditor() as AutocompleterEditor | SelectEditor;
-      if (currentEditor?.disable && currentEditor?.renderDomElement) {
-        currentEditor.destroy();
-        currentEditor.disable(false);
-        currentEditor.renderDomElement(newCollection);
-      }
-    }
-  }
-
-  /**
    *  Syncs plugin/extension columns (e.g., row move, checkbox selector, row detail)
    *  into the provided columns array based on enabled grid options.
    *  @param {Column[]} newColumns - Visible column definitions to update.
@@ -730,6 +711,25 @@ export class GridStateService {
             (collectionAsync as Observable<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
           );
         });
+      }
+    }
+  }
+
+  /**
+   * When the Editor(s) has a "editor.collection" property, we'll load the async collection.
+   * Since this is called after the async call resolves, the pointer will not be the same as the "column" argument passed.
+   */
+  protected updateEditorCollection<T = any>(column: Column<T>, newCollection: T[]): void {
+    if (this._grid && column.editor) {
+      column.editor.collection = newCollection;
+      column.editor.disabled = false;
+
+      // get current Editor, remove it from the DOM then re-enable it and re-render it with the new collection.
+      const currentEditor = this._grid.getCellEditor() as AutocompleterEditor | SelectEditor;
+      if (currentEditor?.disable && currentEditor?.renderDomElement) {
+        currentEditor.destroy();
+        currentEditor.disable(false);
+        currentEditor.renderDomElement(newCollection);
       }
     }
   }
