@@ -195,7 +195,7 @@ function addEditDeleteColumns() {
       },
     ];
 
-    // use slice or spread reassign to column definitions for Angular to do dirty checking
+    // use slice or spread reassign to column definitions to trigger dirty checking
     const allColumns = vueGrid.gridService.getAllColumnDefinitions();
     columns.value = [...newCols, ...allColumns];
   }

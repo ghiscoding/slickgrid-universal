@@ -204,7 +204,7 @@ export class Example16 {
         },
       ];
 
-      // use slice or spread reassign to column definitions for Angular to do dirty checking
+      // use slice or spread reassign to column definitions to trigger dirty checking
       const allColumns = this.aureliaGrid.gridService.getAllColumnDefinitions();
       this.columns = [...newCols, ...allColumns];
     }
