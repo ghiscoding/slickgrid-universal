@@ -1154,20 +1154,18 @@ function setDarkMode(dark = false) {
  * If using i18n, we also need to trigger a re-translate of the column headers
  */
 function updateColumnsList(newColumns: Column<any>[]) {
-  if (newColumns) {
-    // map the Editor model to editorClass and load editor collectionAsync
-    const updatedColumns = gridStateService.syncPluginColumns(newColumns, [...sharedService.allColumns, ...newColumns]);
+  // map the Editor model to editorClass and load editor collectionAsync
+  const updatedColumns = gridStateService.syncPluginColumns(newColumns, [...sharedService.allColumns, ...newColumns]);
 
-    if (_gridOptions.value.enableTranslate) {
-      extensionService.translateColumnHeaders(undefined, updatedColumns);
-    }
-    extensionService.renderColumnHeaders(updatedColumns, true);
+  if (_gridOptions.value.enableTranslate) {
+    extensionService.translateColumnHeaders(undefined, updatedColumns);
+  }
+  extensionService.renderColumnHeaders(updatedColumns, true);
 
-    if (_gridOptions.value?.enableAutoSizeColumns) {
-      grid?.autosizeColumns();
-    } else if (_gridOptions.value?.enableAutoResizeColumnsByCellContent && resizerService?.resizeColumnsByCellContent) {
-      resizerService.resizeColumnsByCellContent();
-    }
+  if (_gridOptions.value?.enableAutoSizeColumns) {
+    grid?.autosizeColumns();
+  } else if (_gridOptions.value?.enableAutoResizeColumnsByCellContent && resizerService?.resizeColumnsByCellContent) {
+    resizerService.resizeColumnsByCellContent();
   }
 }
 

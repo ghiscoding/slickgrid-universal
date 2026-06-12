@@ -1244,20 +1244,18 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
    * If using i18n, we also need to trigger a re-translate of the column headers
    */
   updateColumnsList(newColumns: Column<TData>[]) {
-    if (this.grid && this._options && Array.isArray(newColumns)) {
-      // map the Editor model to editorClass and load editor collectionAsync
-      const updatedColumns = this.gridStateService.syncPluginColumns(newColumns, [...this.sharedService.allColumns, ...newColumns]);
+    // map the Editor model to editorClass and load editor collectionAsync
+    const updatedColumns = this.gridStateService.syncPluginColumns(newColumns, [...this.sharedService.allColumns, ...newColumns]);
 
-      if (this._options.enableTranslate) {
-        this.extensionService.translateColumnHeaders(undefined, updatedColumns);
-      }
-      this.extensionService.renderColumnHeaders(updatedColumns, true);
+    if (this._options.enableTranslate) {
+      this.extensionService.translateColumnHeaders(undefined, updatedColumns);
+    }
+    this.extensionService.renderColumnHeaders(updatedColumns, true);
 
-      if (this._options?.enableAutoSizeColumns) {
-        this.grid.autosizeColumns();
-      } else if (this._options?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
-        this.resizerService.resizeColumnsByCellContent();
-      }
+    if (this._options?.enableAutoSizeColumns) {
+      this.grid.autosizeColumns();
+    } else if (this._options?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
+      this.resizerService.resizeColumnsByCellContent();
     }
   }
 

@@ -717,9 +717,11 @@ export class GridStateService {
       const collectionAsync = column.editor.collectionAsync;
       column.editor.disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
 
-      if (collectionAsync instanceof Promise) {
-        fetchAsPromise(column.editor.collectionAsync, this.rxjs).then((resolvedCollection) => {
-          this.updateEditorCollection(column, resolvedCollection);
+      if (collectionAsync instanceof Promise && collectionAsync) {
+        fetchAsPromise(collectionAsync).then((resolvedCollection) => {
+          if (resolvedCollection) {
+            this.updateEditorCollection(column, resolvedCollection);
+          }
         });
       } else if (this.rxjs?.isObservable(collectionAsync)) {
         // wrap this inside a microtask at the end of the task to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method after columns are available

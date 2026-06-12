@@ -1155,20 +1155,18 @@ export class AureliaSlickgridCustomElement {
    * If using i18n, we also need to trigger a re-translate of the column headers
    */
   updateColumnDefinitionsList(newColumns: Column[]) {
-    if (newColumns) {
-      // map the Editor model to editorClass and load editor collectionAsync
-      const updatedColumns = this.gridStateService.syncPluginColumns(newColumns, [...this.sharedService.allColumns, ...newColumns]);
+    // map the Editor model to editorClass and load editor collectionAsync
+    const updatedColumns = this.gridStateService.syncPluginColumns(newColumns, [...this.sharedService.allColumns, ...newColumns]);
 
-      if (this.options.enableTranslate) {
-        this.extensionService.translateColumnHeaders(undefined, updatedColumns);
-      }
-      this.extensionService.renderColumnHeaders(updatedColumns, true);
+    if (this.options.enableTranslate) {
+      this.extensionService.translateColumnHeaders(undefined, updatedColumns);
+    }
+    this.extensionService.renderColumnHeaders(updatedColumns, true);
 
-      if (this.options?.enableAutoSizeColumns) {
-        this.grid.autosizeColumns();
-      } else if (this.options?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
-        this.resizerService.resizeColumnsByCellContent();
-      }
+    if (this.options?.enableAutoSizeColumns) {
+      this.grid.autosizeColumns();
+    } else if (this.options?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
+      this.resizerService.resizeColumnsByCellContent();
     }
   }
 
