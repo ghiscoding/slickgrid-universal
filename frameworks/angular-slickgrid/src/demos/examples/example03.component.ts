@@ -653,6 +653,9 @@ export class Example3Component implements OnInit {
     // you can dynamically add your column to your column definitions
     // and then use the spread operator [...cols] OR slice to force Angular to review the changes
     this.columns.push(newCol);
+
+    // use slice spread operator [...cols] to trigger dirty checking
+    this.columns = this.columns.slice();
   }
 
   dynamicallyRemoveLastColumn() {
