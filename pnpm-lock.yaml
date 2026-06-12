@@ -1348,8 +1348,8 @@ importers:
   packages/common:
     dependencies:
       '@excel-builder-vanilla/types':
-        specifier: ^5.0.0
-        version: 5.0.0
+        specifier: ^5.1.0
+        version: 5.1.0
       '@formkit/tempo':
         specifier: 'catalog:'
         version: 1.1.0
@@ -1467,8 +1467,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       excel-builder-vanilla:
-        specifier: ^5.0.0
-        version: 5.0.0
+        specifier: ^5.1.0
+        version: 5.1.0
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
@@ -2400,8 +2400,8 @@ packages:
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@excel-builder-vanilla/types@5.0.0':
-    resolution: {integrity: sha512-k0qMo9+velvx2EJne0gwT1NacDRCIWdCHpwTu5hjuRKrr1BzKCiTqgBKUf9zL74HIU7dejoWl3wgguWrccTFXg==}
+  '@excel-builder-vanilla/types@5.1.0':
+    resolution: {integrity: sha512-R2FPgeuArFQaeGrqVTvXlRs6OsTrUGf7GtN4eQT4sf2AD9FhjzTYfkisVWzA3tvr5+snYmleQKBK3QixlgNrgQ==}
 
   '@exodus/bytes@1.15.0':
     resolution: {integrity: sha512-UY0nlA+feH81UGSHv92sLEPLCeZFjXOuHhrIo0HQydScuQc8s0A7kL/UdgwgDq8g8ilksmuoF35YVTNphV2aBQ==}
@@ -5549,8 +5549,8 @@ packages:
     resolution: {integrity: sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==}
     engines: {node: '>=18.0.0'}
 
-  excel-builder-vanilla@5.0.0:
-    resolution: {integrity: sha512-oLOWQ5/RTA2RMvO8PkXZc1sreOpjF7MGw4LNfJQdABPUYjwdY5qng/LVN1i9bVQ85jmZN3gD2NBu5VCChjnqrQ==}
+  excel-builder-vanilla@5.1.0:
+    resolution: {integrity: sha512-Dy8EBJGYcq0yGCof5vw+NyhFfgvJkRq0wVcStcpbH7aO3gSVwUX9Vt0d7DhBP3XxPhBy/GrJQ/ldRNRb3aL0jw==}
 
   execa@4.1.0:
     resolution: {integrity: sha512-j5W0//W7f8UxAn8hXVnwG8tLwdiUy4FJLcSupCg6maBYZDpyBvTApK7KyuI4bKj8KOh1r2YH+6ucuYtJv1bTZA==}
@@ -5636,6 +5636,9 @@ packages:
 
   fflate@0.8.2:
     resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
+
+  fflate@0.8.3:
+    resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
 
   file-entry-cache@8.0.0:
     resolution: {integrity: sha512-XXTUwCvisa5oacNGRP9SfNtYBNAMi+RPwBFmblZEF7N7swHYQS6/Zfk7SRwx4D5j3CH211YNRco1DEMNVfZCnQ==}
@@ -9124,9 +9127,7 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
-  '@excel-builder-vanilla/types@5.0.0':
-    dependencies:
-      fflate: 0.8.2
+  '@excel-builder-vanilla/types@5.1.0': {}
 
   '@exodus/bytes@1.15.0': {}
 
@@ -12894,9 +12895,9 @@ snapshots:
     dependencies:
       eventsource-parser: 3.0.6
 
-  excel-builder-vanilla@5.0.0:
+  excel-builder-vanilla@5.1.0:
     dependencies:
-      fflate: 0.8.2
+      fflate: 0.8.3
 
   execa@4.1.0:
     dependencies:
@@ -13011,6 +13012,8 @@ snapshots:
       picomatch: 4.0.4
 
   fflate@0.8.2: {}
+
+  fflate@0.8.3: {}
 
   file-entry-cache@8.0.0:
     dependencies:

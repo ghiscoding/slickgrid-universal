@@ -55,8 +55,8 @@ minimumReleaseAge: 2880 # 2 days in minutes
 minimumReleaseAgeExclude:
   # exclude packages that I personally maintain and are safe to use on the same day
   - '@lerna-lite/*'
-  # Renovate security update: hono@4.12.21
-  - hono@4.12.21
+  - 'excel-builder-vanilla'
+  - '@excel-builder-vanilla/types'
 
 overrides:
   '@hono/node-server': ^2.0.2
