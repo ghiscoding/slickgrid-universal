@@ -21,7 +21,7 @@
         enabled: false,
       },
     },
-    // i18next major version - let's wait until our next major
+    // postponed few packages to next major
     {
       packageNames: ['i18next'],
       allowedVersions: '< 26.0.0',
@@ -29,6 +29,10 @@
     {
       packageNames: ['react-i18next'],
       allowedVersions: '< 17.0.0',
+    },
+    {
+      packageNames: ['angular-eslint'],
+      allowedVersions: '< 22.0.0',
     },
     // postponed the following npm packages to next major, since they now require NodeJS: ^22.22.2 || ^24.15.0 || >=26.0.0
     {
