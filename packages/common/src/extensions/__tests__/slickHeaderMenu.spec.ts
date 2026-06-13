@@ -64,6 +64,7 @@ const gridStub = {
   updateColumns: vi.fn(),
   validateColumnFreezeWidth: vi.fn(),
   validateColumnFreeze: vi.fn(),
+  onBeforeSort: new SlickEvent(),
   onBeforeSetColumns: new SlickEvent(),
   onBeforeHeaderCellDestroy: new SlickEvent(),
   onClick: new SlickEvent(),
@@ -1231,7 +1232,7 @@ describe('HeaderMenu Plugin', () => {
 
         // Verify slotRenderer was called with the click event as the third argument
         expect(mockSlotRenderer).toHaveBeenCalledTimes(2); // once for render, once for click
-        const clickCallArgs = mockSlotRenderer.mock.calls[1]; // second call is from click
+        const clickCallArgs: any[] = mockSlotRenderer.mock.calls[1]; // second call is from click
         expect(clickCallArgs[2]).toBeDefined();
         expect(clickCallArgs[2]!.type).toBe('click');
       });
@@ -2104,6 +2105,42 @@ describe('HeaderMenu Plugin', () => {
         expect(sharedService.slickGrid.setSortColumns).toHaveBeenCalled();
       });
 
+      it('should NOT trigger the command "sort-desc" and expect Sort Service to call "onBackendSortChanged" being called without the sorted column', () => {
+        const mockSortedCols: ColumnSort[] = [
+          { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
+          { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } },
+        ];
+        const mockSortedOuput: ColumnSort[] = [
+          { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
+          { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } },
+        ];
+        const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
+        const backendSortSpy = vi.spyOn(sortServiceStub, 'onBackendSortChanged');
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
+          enableSorting: true,
+          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+        });
+
+        // cancel onBeforeSort event
+        const sed = new SlickEventData();
+        vi.spyOn(sed, 'getReturnValue').mockReturnValueOnce(false);
+        vi.spyOn(gridStub.onBeforeSort, 'notify').mockReturnValue(sed);
+
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="sort-desc"]') as HTMLDivElement;
+
+        const clickEvent = new Event('click');
+        commandDivElm.dispatchEvent(clickEvent);
+        expect(previousSortSpy).toHaveBeenCalled();
+        mockSortedOuput[1].sortCol = { ...columnsMock[1], ...mockSortedOuput[1].sortCol }; // merge with column header menu
+        expect(backendSortSpy).not.toHaveBeenCalledWith(expect.anything(), { multiColumnSort: true, sortCols: mockSortedOuput, grid: gridStub });
+        expect(sharedService.slickGrid.setSortColumns).not.toHaveBeenCalled();
+      });
+
       it('should trigger the command "sort-desc" and expect Sort Service to call "onLocalSortChanged" being called without the sorted column', () => {
         sharedService.dataView = dataViewStub;
         const mockSortedCols: ColumnSort[] = [
@@ -2164,6 +2201,42 @@ describe('HeaderMenu Plugin', () => {
         expect(previousSortSpy).toHaveBeenCalled();
         expect(gridSortSpy).toHaveBeenCalledWith(mockSortedOuput);
         expect(gridStub.setSortColumns).toHaveBeenCalled();
+      });
+
+      it('should NOT trigger the command "sort-desc" and expect "onSort" event triggered when no DataView is provided', () => {
+        sharedService.dataView = undefined as any;
+        const mockSortedCols: ColumnSort[] = [
+          { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
+          { columnId: 'field2', sortAsc: true, sortCol: { id: 'field2', field: 'field2' } },
+        ];
+        const mockSortedOuput: ColumnSort[] = [
+          { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
+          { columnId: 'field2', sortAsc: false, sortCol: { id: 'field2', field: 'field2' } },
+        ];
+        const previousSortSpy = vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValue([mockSortedCols[0]]);
+        const gridSortSpy = vi.spyOn(gridStub.onSort, 'notify');
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
+          enableSorting: true,
+          backendServiceApi: undefined,
+          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+        });
+
+        // cancel onBeforeSort event
+        const sed = new SlickEventData();
+        vi.spyOn(sed, 'getReturnValue').mockReturnValueOnce(false);
+        vi.spyOn(gridStub.onBeforeSort, 'notify').mockReturnValue(sed);
+
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        gridContainerDiv.querySelector('[data-command="sort-desc"]')!.dispatchEvent(new Event('click'));
+        expect(previousSortSpy).toHaveBeenCalled();
+        mockSortedOuput[1].sortCol = { ...columnsMock[1], ...mockSortedOuput[1].sortCol }; // merge with column header menu
+        expect(previousSortSpy).toHaveBeenCalled();
+        expect(gridSortSpy).not.toHaveBeenCalledWith(mockSortedOuput);
+        expect(gridStub.setSortColumns).not.toHaveBeenCalled();
       });
     });
   });

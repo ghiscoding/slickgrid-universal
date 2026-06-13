@@ -1,6 +1,5 @@
 import type {
   Column,
-  ColumnSort,
   CurrentFilter,
   CurrentSorter,
   DragRowMove,
@@ -50,6 +49,7 @@ import type {
   OnHeaderMouseEventArgs,
   OnHeaderRowCellRenderedEventArgs,
   OnKeyDownEventArgs,
+  OnLocalSortChangedArgs,
   OnRenderedEventArgs,
   OnRowCountChangedEventArgs,
   OnRowsChangedEventArgs,
@@ -190,7 +190,7 @@ export interface AngularSlickgridOutputs {
   onBeforeFilterChange: (e: CurrentFilter[]) => void;
   onBeforeFilterClear: (e: { columnId: string } | boolean) => void;
   onBeforeSearchChange: (e: OnSearchChangeEventArgs) => boolean | void;
-  onBeforeSortChange: (e: Array<ColumnSort & { clearSortTriggered?: boolean }>) => void;
+  onBeforeSortChange: (e: OnLocalSortChangedArgs) => void;
   onContextMenuClearGrouping: () => void;
   onContextMenuCollapseAllGroups: () => void;
   onContextMenuExpandAllGroups: () => void;

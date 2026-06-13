@@ -1,6 +1,5 @@
 import type {
   Column,
-  ColumnSort,
   CurrentFilter,
   CurrentSorter,
   DragRowMove,
@@ -51,6 +50,7 @@ import type {
   OnHeaderMouseEventArgs,
   OnHeaderRowCellRenderedEventArgs,
   OnKeyDownEventArgs,
+  OnLocalSortChangedArgs,
   OnRenderedEventArgs,
   OnRowCountChangedEventArgs,
   OnRowsChangedEventArgs,
@@ -176,7 +176,7 @@ export interface SlickgridVueProps {
   onOnBeforeFilterChange?: VueRegularEventHandler<CurrentFilter[]>;
   onOnBeforeFilterClear?: VueRegularEventHandler<{ columnId: string } | boolean>;
   onOnBeforeSearchChange?: VueRegularEventHandler<OnSearchChangeEventArgs, boolean | void>;
-  onOnBeforeSortChange?: VueRegularEventHandler<Array<ColumnSort & { clearSortTriggered?: boolean }>>;
+  onOnBeforeSortChange?: VueRegularEventHandler<OnLocalSortChangedArgs>;
   onOnContextMenuClearGrouping?: VueRegularEventHandler<void>;
   onOnContextMenuCollapseAllGroups?: VueRegularEventHandler<void>;
   onOnContextMenuExpandAllGroups?: VueRegularEventHandler<void>;

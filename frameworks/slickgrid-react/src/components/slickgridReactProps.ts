@@ -1,6 +1,5 @@
 import type {
   Column,
-  ColumnSort,
   ContainerService,
   CurrentFilter,
   CurrentSorter,
@@ -53,6 +52,7 @@ import type {
   OnHeaderMouseEventArgs,
   OnHeaderRowCellRenderedEventArgs,
   OnKeyDownEventArgs,
+  OnLocalSortChangedArgs,
   OnRenderedEventArgs,
   OnRowCountChangedEventArgs,
   OnRowsChangedEventArgs,
@@ -186,7 +186,7 @@ export interface SlickgridReactProps {
   onBeforeFilterChange?: ReactRegularEventHandler<CurrentFilter[]>;
   onBeforeFilterClear?: ReactRegularEventHandler<{ columnId: string } | boolean>;
   onBeforeSearchChange?: ReactRegularEventHandler<OnSearchChangeEventArgs, boolean | void>;
-  onBeforeSortChange?: ReactRegularEventHandler<Array<ColumnSort & { clearSortTriggered?: boolean }>>;
+  onBeforeSortChange?: ReactRegularEventHandler<OnLocalSortChangedArgs>;
   onContextMenuClearGrouping?: ReactRegularEventHandler<void>;
   onContextMenuCollapseAllGroups?: ReactRegularEventHandler<void>;
   onContextMenuExpandAllGroups?: ReactRegularEventHandler<void>;

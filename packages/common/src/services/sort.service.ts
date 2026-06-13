@@ -8,6 +8,8 @@ import type {
   DOMMouseOrTouchEvent,
   GridOption,
   MultiColumnSort,
+  OnBackendSortChangedArgs,
+  OnLocalSortChangedArgs,
   SingleColumnSort,
   TreeDataOption,
 } from '../interfaces/index.js';
@@ -398,10 +400,7 @@ export class SortService {
    * @param args - sort event arguments
    * @returns - False since we'll apply the sort icon(s) manually only after server responded
    */
-  onBackendSortChanged(
-    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData | undefined,
-    args: (SingleColumnSort | MultiColumnSort) & { clearSortTriggered?: boolean }
-  ): void {
+  onBackendSortChanged(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData | undefined, args: OnBackendSortChangedArgs): void {
     if (!args?.grid) {
       throw new Error(
         'Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function, it seems that "args" is not populated correctly'
@@ -442,7 +441,7 @@ export class SortService {
   /** When a Sort Changes on a Local grid (JSON dataset) */
   async onLocalSortChanged(
     grid: SlickGrid,
-    sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean }>,
+    sortColumns: OnLocalSortChangedArgs,
     forceReSort = false,
     emitSortChanged = false
   ): Promise<void> {
@@ -508,7 +507,7 @@ export class SortService {
    */
   sortHierarchicalDataset<T>(
     hierarchicalDataset: T[],
-    sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean }>,
+    sortColumns: OnLocalSortChangedArgs,
     emitSortChanged = false
   ): { hierarchical: T[]; flat: any[] } {
     this.sortTreeData(hierarchicalDataset, sortColumns);
