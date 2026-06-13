@@ -3,14 +3,14 @@
 New packages in the slickgrid‑universal monorepo are typically created when adding a new optional **External Resource** (i.e. a plugin or component that integrates with the grid but is not part of the core). This skill documents the recommended steps and minimal references for doing so. Use `SlickEmptyWarningComponent` ([packages/empty-warning-component](packages/empty-warning-component)) as a simple reference implementation.
 
 Key points
-- New packages that integrate with the grid should implement the `ExternalResource` interface from `@slickgrid-universal/common`.
+- New packages that integrate with the grid should implement the external resource (plugin) interface from `@slickgrid-universal/common`.
 - Every package should provide an `init(grid: SlickGrid)` method. When you need services from `@slickgrid-universal/common`, use the second argument `init(grid: SlickGrid, containerService: ContainerService)` to obtain them.
 - Available Services (examples) are listed in the vanilla bundle; see [packages/vanilla-bundle/src/slick-vanilla-grid-bundle.ts](packages/vanilla-bundle/src/slick-vanilla-grid-bundle.ts#L399-L414).
 
 Quick checklist
 - Create package folder under `packages/your-package-name/`.
 - Add `package.json`, `tsconfig.json`, `src/` with an exported entry (e.g. `src/index.ts`).
-- Implement an `ExternalResource` class (see example below).
+- Implement an external resource (plugin) class (see example below).
 - Add unit tests (Vitest) under `__tests__` or `src/__tests__`.
 - Add the package to `pnpm-workspace.yaml` (if needed) and ensure the root `pnpm build` covers it.
 - Any local dependency on another slickgrid-universal package must use `"workspace:*"` in `package.json` (e.g. `"@slickgrid-universal/common": "workspace:*"`).

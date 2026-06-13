@@ -11,7 +11,7 @@ Where to read (priority order)
 1. Concept & examples: `docs/ai/ai-toolkit.md`
 2. Package README: `packages/web-mcp/README.md`
 3. Implementation & types: `packages/web-mcp/src/web-mcp.service.ts`
-4. Core/common interfaces used: `packages/common` (search for `CurrentFilter`, `CurrentSorter`, `ExternalResource`, `FilterService`, `GridService`)
+4. Core/common interfaces used: `packages/common` (search for `CurrentFilter`, `CurrentSorter`, external resource (plugin), `FilterService`, `GridService`)
 5. Demo using WebMCP: `demos/vanilla/src/examples/example43.ts` and `demos/vanilla/src/examples/example43.html`
 6. Unit tests: `packages/web-mcp/src/__tests__/web-mcp.service.spec.ts`
 

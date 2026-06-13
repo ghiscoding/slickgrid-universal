@@ -67,7 +67,11 @@ export class Example15Component implements OnInit, OnDestroy {
   clearGridStateFromLocalStorage() {
     this.angularGrid.gridService.resetGrid(this.columns);
     this.angularGrid.paginationService!.changeItemPerPage(DEFAULT_PAGE_SIZE);
-    setTimeout(() => (localStorage[LOCAL_STORAGE_KEY] = null));
+    // this.angularGrid.resizerService.resizeColumnsByCellContent(true);
+
+    setTimeout(() => {
+      localStorage[LOCAL_STORAGE_KEY] = null;
+    });
   }
 
   /* Define grid Options and Columns */
@@ -216,6 +220,10 @@ export class Example15Component implements OnInit, OnDestroy {
         pageSizes: [5, 10, 15, 20, 25, 30, 40, 50, 75, 100],
         pageSize: DEFAULT_PAGE_SIZE,
       },
+      autoFitColumnsOnFirstLoad: false,
+      enableAutoSizeColumns: false,
+      autosizeColumnsByCellContentOnFirstLoad: true,
+      enableAutoResizeColumnsByCellContent: true,
     };
 
     // reload the Grid State with the grid options presets

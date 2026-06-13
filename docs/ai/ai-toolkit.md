@@ -1,6 +1,6 @@
 # AI Toolkit (`@slickgrid-universal/web-mcp`)
 
-The AI Toolkit is an optional `ExternalResource` package that bridges SlickGrid with the browser's [Web Model Context Protocol (WebMCP)](https://github.com/webmcp/webmcp). When a user — or an automated agent — makes a natural-language request about the grid ("show me only High-priority tasks sorted by duration"), this package provides the standard MCP surface that lets an AI assistant discover what the grid looks like, read its current state, and push changes back to it — all without any custom glue code in your application.
+The AI Toolkit is an optional external resource (plugin) package that bridges SlickGrid with the browser's [Web Model Context Protocol (WebMCP)](https://github.com/webmcp/webmcp). When a user — or an automated agent — makes a natural-language request about the grid ("show me only High-priority tasks sorted by duration"), this package provides the standard MCP surface that lets an AI assistant discover what the grid looks like, read its current state, and push changes back to it — all without any custom glue code in your application.
 
 It is inspired by the [AG Grid AI Toolkit](https://www.ag-grid.com/angular-data-grid/ai-toolkit/) and follows the same general pattern: provide the LLM with a structured schema of the grid so it understands what it can act on, then let it produce a state object that is applied back to the grid.
 
