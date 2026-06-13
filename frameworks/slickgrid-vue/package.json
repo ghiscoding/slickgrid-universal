@@ -67,17 +67,17 @@
     "vue": ">=3.5.0"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.58.7",
+    "@microsoft/api-extractor": "^7.58.8",
     "@vitejs/plugin-vue": "catalog:",
-    "@vue/language-core": "^3.2.9",
+    "@vue/language-core": "^3.3.4",
     "cross-env": "catalog:",
     "i18next": "catalog:",
     "i18next-vue": "catalog:",
     "sass": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-dts": "^5.0.0",
+    "vite-plugin-dts": "^5.0.2",
     "vue": "catalog:",
-    "vue-tsc": "^3.2.9"
+    "vue-tsc": "^3.3.4"
   }
 }

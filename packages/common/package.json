@@ -76,10 +76,10 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.5.0",
-    "cssnano": "^8.0.1",
+    "cssnano": "^8.0.2",
     "native-copyfiles": "catalog:",
     "npm-run-all2": "catalog:",
-    "postcss": "^8.5.14",
+    "postcss": "^8.5.15",
     "postcss-cli": "^11.0.1",
     "sass": "catalog:"
   },

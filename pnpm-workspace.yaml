@@ -13,20 +13,20 @@ catalog:
   '@formkit/tempo': ^1.1.0
   '@popperjs/core': ^2.11.8
   '@types/fnando__sparkline': ^0.3.7
-  '@types/node': ^24.12.4
-  '@types/react': ^19.2.14
+  '@types/node': ^24.13.2
+  '@types/react': ^19.2.17
   '@types/react-dom': ^19.2.3
   '@types/sortablejs': ^1.15.9
-  '@vitejs/plugin-react': ^6.0.1
-  '@vitejs/plugin-vue': ^6.0.6
-  '@vitest/coverage-v8': ^5.0.0-beta.2
-  '@vitest/ui': ^5.0.0-beta.2
+  '@vitejs/plugin-react': ^6.0.2
+  '@vitejs/plugin-vue': ^6.0.7
+  '@vitest/coverage-v8': ^5.0.0-beta.4
+  '@vitest/ui': ^5.0.0-beta.4
   bootstrap: ^5.3.8
   cross-env: ^10.1.0
-  cypress: ^15.15.0
+  cypress: ^15.17.0
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
-  dompurify: ^3.4.3
+  dompurify: ^3.4.9
   globals: ^17.6.0
   i18next: ^25.10.10
   i18next-vue: ^5.4.0
@@ -34,21 +34,21 @@ catalog:
   jsdom-global: ^3.0.2
   jspdf: ^4.2.1
   multiple-select-vanilla: ^5.2.0
-  native-copyfiles: ^2.0.1
+  native-copyfiles: ^2.0.3
   npm-run-all2: ^8.0.4
-  oxlint: ^1.65.0
-  react: ^19.2.6
-  react-dom: ^19.2.6
-  react-router: ^7.15.1
-  remove-glob: ^1.2.0
+  oxlint: ^1.69.0
+  react: ^19.2.7
+  react-dom: ^19.2.7
+  react-router: ^7.17.0
+  remove-glob: ^1.2.1
   rxjs: ^7.8.2
-  sass: ^1.99.0
+  sass: ^1.100.0
   sortablejs: ^1.15.7
   tslib: ^2.8.1
   typescript: ^6.0.3
-  vite: ^8.0.13
-  vitest: ^5.0.0-beta.2
-  vue: ^3.5.34
+  vite: ^8.0.16
+  vitest: ^5.0.0-beta.4
+  vue: ^3.5.38
 
 minimumReleaseAge: 2880 # 2 days in minutes
 
@@ -59,9 +59,9 @@ minimumReleaseAgeExclude:
   - '@excel-builder-vanilla/types'
 
 overrides:
-  '@hono/node-server': ^2.0.2
+  '@hono/node-server': ^2.0.4
   '@isaacs/brace-expansion': ^5.0.1
-  hono: ^4.12.21
+  hono: ^4.12.25
   ip-address: ^10.2.0
   lodash: ^4.18.1
   minimatch: ^10.2.5
