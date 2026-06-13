@@ -250,6 +250,7 @@ describe('GridStateService', () => {
             headerCssClass: 'blue',
             id: 'field2',
             hidden: false,
+            originalWidth: 150,
             width: 150,
           },
           {
@@ -257,6 +258,7 @@ describe('GridStateService', () => {
             field: 'field1',
             hidden: false,
             id: 'field1',
+            originalWidth: 100,
             width: 100,
           },
           {
@@ -266,8 +268,8 @@ describe('GridStateService', () => {
           },
         ] as Column[];
         presetColumnsMock = [
-          { columnId: 'field2', width: 150, headerCssClass: 'blue' },
-          { columnId: 'field1', width: 100, cssClass: 'red' },
+          { columnId: 'field2', originalWidth: 150, width: 150, headerCssClass: 'blue' },
+          { columnId: 'field1', originalWidth: 100, width: 100, cssClass: 'red' },
           { columnId: 'field3' },
         ] as CurrentColumn[];
       });
@@ -381,6 +383,7 @@ describe('GridStateService', () => {
             headerCssClass: 'blue',
             id: 'field2',
             hidden: false,
+            originalWidth: 150,
             width: 150,
           },
           {
@@ -389,6 +392,7 @@ describe('GridStateService', () => {
             hidden: false,
             headerCssClass: undefined,
             id: 'field1',
+            originalWidth: 100,
             width: 100,
           },
           {
@@ -397,6 +401,7 @@ describe('GridStateService', () => {
             hidden: false,
             headerCssClass: undefined,
             id: 'field3',
+            originalWidth: undefined,
             width: undefined,
           },
         ]);

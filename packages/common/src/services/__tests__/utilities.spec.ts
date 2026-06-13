@@ -1562,7 +1562,16 @@ describe('Service/Utilies', () => {
       ]);
 
       expect(results).toEqual([
-        { field: 'firstName', hidden: false, id: 'firstName', name: 'First Name', width: 250, cssClass: 'preset-class', headerCssClass: 'header-preset' },
+        {
+          field: 'firstName',
+          hidden: false,
+          id: 'firstName',
+          name: 'First Name',
+          originalWidth: 250,
+          width: 250,
+          cssClass: 'preset-class',
+          headerCssClass: 'header-preset',
+        },
         { field: 'lastName', hidden: false, id: 'lastName', name: 'Last Name', width: 620 },
         { field: 'age', hidden: true, id: 'age', name: 'age', width: 192 },
       ]);
