@@ -15,6 +15,7 @@ import type {
   MenuCommandItemCallbackArgs,
   MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
+  SingleColumnSort,
 } from '../interfaces/index.js';
 import type { FilterService } from '../services/filter.service.js';
 import { getTranslationPrefix } from '../services/index.js';
@@ -725,54 +726,63 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     if (args?.column) {
       // get previously sorted columns
       const columnDef = args.column;
+      const hasBackendServiceApi = !!this.sharedService.gridOptions.backendServiceApi;
+      const isMultiColumnSort = !!this.sharedService.gridOptions.multiColumnSort;
 
       // 1- get the sort columns without the current column, in the case of a single sort that would equal to an empty array
-      // prettier-ignore
-      const tmpSortedColumns = !this.sharedService.gridOptions.multiColumnSort ? [] : this.sortService.getCurrentColumnSorts(columnDef.id + '');
+      const tmpSortedColumns = !isMultiColumnSort ? [] : this.sortService.getCurrentColumnSorts(columnDef.id + '');
 
-      let emitterType: EmitterType = 'local';
+      const sortArgs = {
+        multiColumnSort: hasBackendServiceApi || isMultiColumnSort,
+        grid: this.grid,
+      } as SingleColumnSort | MultiColumnSort;
 
-      // 2- add to the column array, the new sorted column by the header menu
-      tmpSortedColumns.push({ columnId: columnDef.id, sortCol: columnDef, sortAsc: isSortingAsc });
-
-      if (this.sharedService.gridOptions.backendServiceApi) {
-        this.sortService.onBackendSortChanged(event, {
-          multiColumnSort: true,
-          sortCols: tmpSortedColumns,
-          grid: this.grid,
-        });
-        emitterType = 'remote';
+      if (hasBackendServiceApi) {
+        (sortArgs as MultiColumnSort).sortCols = tmpSortedColumns;
       } else if (this.sharedService.dataView) {
-        this.sortService.onLocalSortChanged(this.grid, tmpSortedColumns);
-        emitterType = 'local';
-      } else {
-        // when using customDataView, we will simply send it as a onSort event with notify
-        args.grid.onSort.notify(tmpSortedColumns as unknown as MultiColumnSort);
+        (sortArgs as SingleColumnSort).sortCol = columnDef;
       }
 
-      // update the sharedService.slickGrid sortColumns array which will at the same add the visual sort icon(s) on the UI
-      const newSortColumns = tmpSortedColumns.map((col) => {
-        return {
-          columnId: col?.sortCol?.id ?? '',
-          sortAsc: col?.sortAsc ?? true,
-        };
-      });
+      if (this.grid.onBeforeSort.notify(sortArgs).getReturnValue() !== false) {
+        let emitterType: EmitterType = 'local';
+        // 2- add to the column array, the new sorted column by the header menu
+        tmpSortedColumns.push({ columnId: columnDef.id, sortCol: columnDef, sortAsc: isSortingAsc });
 
-      // add sort icon in UI
-      this.grid.setSortColumns(newSortColumns);
+        if (hasBackendServiceApi) {
+          this.sortService.onBackendSortChanged(event, sortArgs);
+          emitterType = 'remote';
+        } else if (this.sharedService.dataView) {
+          this.sortService.onLocalSortChanged(this.grid, tmpSortedColumns);
+          emitterType = 'local';
+        } else {
+          // when using customDataView, we will simply send it as a onSort event with notify
+          args.grid.onSort.notify(tmpSortedColumns as unknown as MultiColumnSort);
+        }
 
-      // if we have an emitter type set, we will emit a sort changed
-      // for the Grid State Service to see the change.
-      // We also need to pass current sorters changed to the emitSortChanged method
-      if (emitterType) {
-        const currentLocalSorters: CurrentSorter[] = [];
-        newSortColumns.forEach((sortCol) => {
-          currentLocalSorters.push({
-            columnId: `${sortCol.columnId}`,
-            direction: sortCol.sortAsc ? 'ASC' : 'DESC',
-          });
+        // update the sharedService.slickGrid sortColumns array which will at the same add the visual sort icon(s) on the UI
+        const newSortColumns = tmpSortedColumns.map((col) => {
+          return {
+            columnId: col?.sortCol?.id ?? '',
+            sortAsc: col?.sortAsc ?? true,
+          };
         });
-        this.sortService.emitSortChanged(emitterType, currentLocalSorters);
+
+        // add sort icon in UI
+        this.grid.setSortColumns(newSortColumns);
+
+        // if we have an emitter type set, we will emit a sort changed
+        // for the Grid State Service to see the change.
+        // We also need to pass current sorters changed to the emitSortChanged method
+        if (emitterType) {
+          const currentLocalSorters: CurrentSorter[] = [];
+          newSortColumns.forEach((sortCol) => {
+            currentLocalSorters.push({
+              columnId: `${sortCol.columnId}`,
+              direction: sortCol.sortAsc ? 'ASC' : 'DESC',
+            });
+          });
+          this.sortService.emitSortChanged(emitterType, currentLocalSorters);
+        }
       }
     }
   }
