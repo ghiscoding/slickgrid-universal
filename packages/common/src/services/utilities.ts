@@ -764,6 +764,7 @@ export function sortPresetColumns<T = any>(allColumns: Column<T>[], presetColumn
           cssClass: presetColumn.cssClass ?? column.cssClass,
           headerCssClass: presetColumn.headerCssClass ?? column.headerCssClass,
           width: presetColumn.width ?? column.width,
+          originalWidth: presetColumn.width,
         }),
         hidden: !presetColumnMap.has(column.id) || (presetColumns.find((c) => c.id === column.id)?.hidden ?? false),
         _originalIndex: originalIndex,
