@@ -55,7 +55,7 @@
     "@slickgrid-universal/vanilla-bundle": "workspace:*"
   },
   "devDependencies": {
-    "fflate": "^0.8.2",
+    "fflate": "^0.8.3",
     "normalize-path": "^3.0.0",
     "vite": "catalog:"
   }
