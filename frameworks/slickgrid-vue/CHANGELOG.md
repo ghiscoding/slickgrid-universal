@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.7.1...v10.8.0) (2026-06-13)
+
+### Features
+
+* **TreeData:** add maxVisibleDepth option + runtime API ([#2591](https://github.com/ghiscoding/slickgrid-universal/issues/2591)) ([fa2f5ef](https://github.com/ghiscoding/slickgrid-universal/commit/fa2f5ef0f07cd4c7c2e25aaed8139baa5b23f2e4)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2592](https://github.com/ghiscoding/slickgrid-universal/issues/2592)) ([b81fe8b](https://github.com/ghiscoding/slickgrid-universal/commit/b81fe8b896e5d0dcbb20a1dab4afd9e423aa5691)) - by @renovate-bot
+* onBeforeSort should be cancellable from Header Menu ([#2610](https://github.com/ghiscoding/slickgrid-universal/issues/2610)) ([e524a14](https://github.com/ghiscoding/slickgrid-universal/commit/e524a1402c87e66092da7e426ab23626673968c2)) - by @ghiscoding
+* updating columns should include internal plugin columns ([#2607](https://github.com/ghiscoding/slickgrid-universal/issues/2607)) ([968e643](https://github.com/ghiscoding/slickgrid-universal/commit/968e643552d5792b3ad19bf7a4bfc0b6ecb1b0f6)) - by @ghiscoding
+
 ## [10.7.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.7.0...v10.7.1) (2026-05-16)
 
 ### Bug Fixes

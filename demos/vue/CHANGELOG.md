@@ -4,6 +4,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.7.1...v10.8.0) (2026-06-13)
+
+### Features
+
+* **TreeData:** add maxVisibleDepth option + runtime API ([#2591](https://github.com/ghiscoding/slickgrid-universal/issues/2591)) ([fa2f5ef](https://github.com/ghiscoding/slickgrid-universal/commit/fa2f5ef0f07cd4c7c2e25aaed8139baa5b23f2e4)) - by @ghiscoding
+* **web-mcp:** add optional WebMCP resource/plugin, demo & tests ([#2599](https://github.com/ghiscoding/slickgrid-universal/issues/2599)) ([94d7183](https://github.com/ghiscoding/slickgrid-universal/commit/94d7183891fe74d69e96c0750f39eeafc0355fdb)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2592](https://github.com/ghiscoding/slickgrid-universal/issues/2592)) ([b81fe8b](https://github.com/ghiscoding/slickgrid-universal/commit/b81fe8b896e5d0dcbb20a1dab4afd9e423aa5691)) - by @renovate-bot
+* updating columns should include internal plugin columns ([#2607](https://github.com/ghiscoding/slickgrid-universal/issues/2607)) ([968e643](https://github.com/ghiscoding/slickgrid-universal/commit/968e643552d5792b3ad19bf7a4bfc0b6ecb1b0f6)) - by @ghiscoding
+
+### Performance Improvements
+
+* drop `un-flatten-tree` dep & optimize Tree Data utils by ~3x perf ([#2601](https://github.com/ghiscoding/slickgrid-universal/issues/2601)) ([573c2c1](https://github.com/ghiscoding/slickgrid-universal/commit/573c2c12e203d0c504a83b4b6b5e7a6c51f46f52)) - by @ghiscoding
+
 ## [10.7.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.7.0...v10.7.1) (2026-05-16)
 
 ### Bug Fixes
