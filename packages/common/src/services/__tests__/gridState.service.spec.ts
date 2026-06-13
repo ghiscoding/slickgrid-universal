@@ -1,6 +1,10 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { of } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { basicFetchStub } from '../../../../../test/httpClientStub.js';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
+import { Editors } from '../../editors/index.js';
 import { ExtensionName } from '../../enums/index.js';
 import type { SlickColumnPicker } from '../../extensions/slickColumnPicker.js';
 import type { SlickHybridSelectionModel } from '../../extensions/slickHybridSelectionModel.js';
@@ -14,6 +18,7 @@ import type {
   CurrentPinning,
   CurrentRowSelection,
   CurrentSorter,
+  Editor,
   GridOption,
   GridState,
   GridStateChange,
@@ -81,6 +86,7 @@ const gridStub = {
   getSelectionModel: vi.fn(),
   getSelectedRows: vi.fn(),
   setColumns: vi.fn(),
+  getCellEditor: vi.fn(),
   getVisibleColumns: vi.fn(),
   setSelectedRows: vi.fn(),
   onColumnsReordered: new SlickEvent(),
@@ -281,7 +287,7 @@ describe('GridStateService', () => {
         gridOptionMock.rowMoveManager = { columnIndexPosition: 1 } as unknown as RowMoveManager;
         gridOptionMock.checkboxSelector = { columnIndexPosition: 2 } as unknown as CheckboxSelectorOption;
 
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
         const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
@@ -295,7 +301,7 @@ describe('GridStateService', () => {
 
       it('should call the method and expect slickgrid "setColumns" and a pubsub event "onFullResizeByContentRequested" to be called with newest columns when "triggerAutoSizeColumns" is false and "enableAutoResizeColumnsByCellContent" is true', () => {
         gridOptionMock.enableAutoResizeColumnsByCellContent = true;
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
         const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
@@ -310,7 +316,7 @@ describe('GridStateService', () => {
       it('should call the method and expect slickgrid "setColumns" but WITHOUT triggering pubsub event "onFullResizeByContentRequested" because it requires "enableAutoResizeColumnsByCellContent: true" AND "autosizeColumnsByCellContentOnFirstLoad: false" because this method is never called on first page load', () => {
         gridOptionMock.enableAutoResizeColumnsByCellContent = true;
         gridOptionMock.autosizeColumnsByCellContentOnFirstLoad = true;
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
         const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
@@ -323,7 +329,7 @@ describe('GridStateService', () => {
       });
 
       it('should call the method and expect slickgrid "setColumns" and a pubsub event "onFullResizeByContentRequested" to be called with newest columns when "triggerAutoSizeColumns" is false and 3rd is set to true', () => {
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
         const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
@@ -351,6 +357,7 @@ describe('GridStateService', () => {
       });
 
       it('should use columns already set in service when method is being called and grid.getColumns() returns an empty array', () => {
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(columnsWithoutCheckboxMock).mockReturnValueOnce(columnsWithoutCheckboxMock);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
         vi.spyOn(service, 'getColumns').mockReturnValueOnce([
           { id: 'field1', field: 'field1', width: 100, cssClass: 'red', hidden: true },
@@ -374,7 +381,6 @@ describe('GridStateService', () => {
             headerCssClass: 'blue',
             id: 'field2',
             hidden: false,
-            originalWidth: 150,
             width: 150,
           },
           {
@@ -383,7 +389,6 @@ describe('GridStateService', () => {
             hidden: false,
             headerCssClass: undefined,
             id: 'field1',
-            originalWidth: 100,
             width: 100,
           },
           {
@@ -392,7 +397,6 @@ describe('GridStateService', () => {
             hidden: false,
             headerCssClass: undefined,
             id: 'field3',
-            originalWidth: undefined,
             width: undefined,
           },
         ]);
@@ -403,7 +407,7 @@ describe('GridStateService', () => {
         gridOptionMock.enableCheckboxSelector = true;
         gridOptionMock.checkboxSelector = { columnIndexPosition: 0 } as unknown as CheckboxSelectorOption;
 
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(allColumnsMock);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
@@ -420,7 +424,7 @@ describe('GridStateService', () => {
         gridOptionMock.enableRowDetailView = true;
         gridOptionMock.rowDetailView = { columnIndexPosition: 0 } as unknown as RowDetailView;
 
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(allColumnsMock);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
@@ -437,7 +441,7 @@ describe('GridStateService', () => {
         gridOptionMock.enableRowMoveManager = true;
         gridOptionMock.rowMoveManager = { columnIndexPosition: 0 } as unknown as RowMoveManager;
 
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(allColumnsMock);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
@@ -456,7 +460,7 @@ describe('GridStateService', () => {
         gridOptionMock.checkboxSelector = { columnIndexPosition: 0 } as unknown as CheckboxSelectorOption;
         gridOptionMock.rowDetailView = { columnIndexPosition: 1 } as unknown as RowDetailView;
 
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(allColumnsMock);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
@@ -484,7 +488,7 @@ describe('GridStateService', () => {
         gridOptionMock.rowDetailView = { columnIndexPosition: 1 } as unknown as RowDetailView;
         gridOptionMock.rowMoveManager = { columnIndexPosition: 2 } as unknown as RowMoveManager;
 
-        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(allColumnsMock);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
@@ -1108,6 +1112,126 @@ describe('GridStateService', () => {
 
       expect(serviceSpy).toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onGridStateChanged`, stateChangeMock);
+    });
+  });
+
+  describe('with editors', () => {
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should display a console warning when any of the column definition ids include a dot notation', () => {
+      const consoleSpy = vi.spyOn(console, 'warn').mockReturnValue();
+      const mockColDefs = [{ id: 'user.gender', field: 'user.gender', editor: { model: Editors.text, collection: ['male', 'female'] } }] as Column[];
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
+
+      service.loadSlickGridEditors(mockColDefs);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[Slickgrid-Universal] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
+      );
+    });
+
+    it('should be able to load async editors with a regular Promise', async () => {
+      const mockCollection = ['male', 'female'];
+      const promise = Promise.resolve(mockCollection);
+      const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
+
+      const columns = service.loadSlickGridEditors(mockColDefs);
+
+      vi.advanceTimersByTime(5);
+      await new Promise(process.nextTick);
+
+      expect(columns[0].editor!.collection).toEqual(mockCollection);
+      expect(columns[0].editor!.model).toEqual(Editors.text);
+    });
+
+    it('should be able to load collectionAsync and expect Editor to be destroyed and re-render when receiving new collection from await', async () => {
+      const mockCollection = ['male', 'female'];
+      const promise = Promise.resolve(mockCollection);
+      const mockEditor = {
+        disable: vi.fn(),
+        destroy: vi.fn(),
+        renderDomElement: vi.fn(),
+      } as unknown as Editor;
+      const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
+      vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(mockEditor);
+      const disableSpy = vi.spyOn(mockEditor, 'disable');
+      const destroySpy = vi.spyOn(mockEditor, 'destroy');
+      const renderSpy = vi.spyOn(mockEditor, 'renderDomElement');
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
+
+      const columns = service.loadSlickGridEditors(mockColDefs);
+
+      vi.advanceTimersByTime(5);
+      await new Promise(process.nextTick);
+
+      expect(columns[0].editor!.collection).toEqual(mockCollection);
+      expect(columns[0].editor!.model).toEqual(Editors.text);
+      expect(disableSpy).toHaveBeenCalledWith(false);
+      expect(destroySpy).toHaveBeenCalled();
+      expect(renderSpy).toHaveBeenCalledWith(mockCollection);
+    });
+
+    it('should be able to load async editors with as a Promise with content to simulate http-client', async () => {
+      const mockCollection = ['male', 'female'];
+      const promise = Promise.resolve({ content: mockCollection });
+      const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
+
+      const columns = service.loadSlickGridEditors(mockColDefs);
+
+      vi.advanceTimersByTime(5);
+      await new Promise(process.nextTick);
+
+      expect(columns[0].editor!.collection).toEqual(mockCollection);
+      expect(columns[0].editor!.model).toEqual(Editors.text);
+    });
+
+    it('should be able to load async editors with a Fetch Promise', async () => {
+      const mockCollection = ['male', 'female'];
+      const collectionAsync = basicFetchStub('http://locahost/api', { method: 'GET' }, mockCollection);
+      const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
+
+      const columns = service.loadSlickGridEditors(mockColDefs);
+
+      vi.advanceTimersByTime(5);
+      await new Promise(process.nextTick);
+
+      expect(columns[0].editor!.collection).toEqual(mockCollection);
+      expect(columns[0].editor!.model).toEqual(Editors.text);
+    });
+
+    it('should be able to load async editors with an Observable', async () => {
+      const mockCollection = ['male', 'female'];
+      const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: of(mockCollection) } }] as Column[];
+
+      const rxjsMock = new RxJsResourceStub();
+      service.addRxJsResource(rxjsMock);
+      const columns = service.loadSlickGridEditors(mockColDefs);
+
+      vi.advanceTimersByTime(5);
+      await new Promise(process.nextTick);
+
+      expect(columns[0].editor!.collection).toEqual(mockCollection);
+      expect(columns[0].editor!.model).toEqual(Editors.text);
+      expect(columns[0].editorClass).toEqual(Editors.text);
+    });
+
+    it('should throw an error when Fetch Promise response bodyUsed is true', async () => {
+      const consoleSpy = vi.spyOn(console, 'warn').mockReturnValue();
+      const mockCollection = ['male', 'female'];
+      const collectionAsync = basicFetchStub('http://invalid-url', { method: 'GET' }, mockCollection);
+      const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
+
+      service.loadSlickGridEditors(mockColDefs);
+
+      vi.advanceTimersByTime(5);
+      await new Promise(process.nextTick);
+
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid-Universal] The response body passed to Fetch was already read.'));
     });
   });
 

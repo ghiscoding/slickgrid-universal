@@ -107,6 +107,9 @@ const gridServiceStub = {
 const gridStateServiceStub = {
   init: vi.fn(),
   dispose: vi.fn(),
+  addRxJsResource: vi.fn(),
+  loadSlickGridEditors: vi.fn(),
+  syncPluginColumns: vi.fn(),
   getAssociatedGridColumns: vi.fn(),
   getCurrentGridState: vi.fn(),
   needToPreserveRowSelection: vi.fn(),

@@ -727,7 +727,7 @@ export function fetchAsPromise<T = any>(input?: T[] | Promise<T> | Observable<T>
           } else if (response?.content) {
             resolve(response['content'] as T); // from http-client
           } else {
-            resolve(response); // anything we'll just return "as-is"
+            resolve(response); // anything else we'll just return "as-is"
           }
         })
         .catch((error) => reject(error));

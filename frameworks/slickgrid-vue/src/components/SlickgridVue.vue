@@ -25,7 +25,6 @@ import {
   SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
-  type AutocompleterEditor,
   type BackendServiceApi,
   type BackendServiceOption,
   type BasePaginationComponent,
@@ -42,7 +41,6 @@ import {
   type Pagination,
   type PaginationMetadata,
   type RxJsFacade,
-  type SelectEditor,
 } from '@slickgrid-universal/common';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
@@ -438,7 +436,7 @@ function initialization() {
   // Wrap each editor class in the Factory resolver so consumers of this library.
   // Vue will allow slickgrid to pass its arguments to the editors constructor last
   // when slickgrid creates the editor
-  _columns.value = loadSlickGridEditors(columnsModel.value || []);
+  _columns.value = gridStateService.loadSlickGridEditors(columnsModel.value || []);
 
   // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
   if (_gridOptions.value.autoAddCustomEditorFormatter) {
@@ -1156,25 +1154,18 @@ function setDarkMode(dark = false) {
  * If using i18n, we also need to trigger a re-translate of the column headers
  */
 function updateColumnsList(newColumns: Column<any>[]) {
-  if (newColumns) {
-    // map the Editor model to editorClass and load editor collectionAsync
-    newColumns = loadSlickGridEditors(newColumns);
+  // map the Editor model to editorClass and load editor collectionAsync
+  const updatedColumns = gridStateService.syncPluginColumns(newColumns, [...(sharedService.allColumns || []), ...newColumns]);
 
-    // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
-    if (_gridOptions.value.autoAddCustomEditorFormatter) {
-      autoAddEditorFormatterToColumnsWithEditor(newColumns, _gridOptions.value.autoAddCustomEditorFormatter);
-    }
+  if (_gridOptions.value.enableTranslate) {
+    extensionService.translateColumnHeaders(undefined, updatedColumns);
+  }
+  extensionService.renderColumnHeaders(updatedColumns, true);
 
-    if (_gridOptions.value.enableTranslate) {
-      extensionService.translateColumnHeaders(undefined, newColumns);
-    }
-    extensionService.renderColumnHeaders(newColumns, true);
-
-    if (_gridOptions.value?.enableAutoSizeColumns) {
-      grid?.autosizeColumns();
-    } else if (_gridOptions.value?.enableAutoResizeColumnsByCellContent && resizerService?.resizeColumnsByCellContent) {
-      resizerService.resizeColumnsByCellContent();
-    }
+  if (_gridOptions.value?.enableAutoSizeColumns) {
+    grid?.autosizeColumns();
+  } else if (_gridOptions.value?.enableAutoResizeColumnsByCellContent && resizerService?.resizeColumnsByCellContent) {
+    resizerService.resizeColumnsByCellContent();
   }
 }
 
@@ -1242,43 +1233,6 @@ function initializePaginationService(paginationOptions: Pagination) {
     // also initialize (render) the pagination component
     renderPagination();
     isPaginationInitialized = true;
-  }
-}
-
-/** Load the Editor Collection asynchronously and replace the "collection" property when Promise resolves */
-function loadEditorCollectionAsync(column: Column) {
-  if (column?.editor) {
-    const collectionAsync = column.editor.collectionAsync;
-    column.editor.disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
-
-    if (collectionAsync instanceof Promise) {
-      // wait for the "collectionAsync", once resolved we will save it into the "collection"
-      // the collectionAsync can be of 3 types HttpClient, HttpFetch or a Promise
-      collectionAsync.then((response: any | any[]) => {
-        if (Array.isArray(response)) {
-          updateEditorCollection(column, response); // from Promise
-        } else if (response instanceof Response && typeof response.json === 'function') {
-          if (response.bodyUsed) {
-            console.warn(
-              `[SlickGrid-Vue] The response body passed to collectionAsync was already read. ` +
-                `Either pass the dataset from the Response or clone the response first using response.clone()`
-            );
-          } else {
-            // from Fetch
-            (response as Response).json().then((data) => updateEditorCollection(column, data));
-          }
-        } else if (response?.content) {
-          updateEditorCollection(column, response.content); // from http-client
-        }
-      });
-    } else if (rxjs?.isObservable(collectionAsync)) {
-      // wrap this inside a microtask at the end of the task to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method after columns are available
-      queueMicrotask(() => {
-        subscriptions.push(
-          (collectionAsync as Observable<any>).subscribe((resolvedCollection) => updateEditorCollection(column, resolvedCollection))
-        );
-      });
-    }
   }
 }
 
@@ -1528,6 +1482,7 @@ function registerRxJsResource(resource: RxJsFacade) {
   backendUtilityService.addRxJsResource(rxjs);
   filterFactory.addRxJsResource(rxjs);
   filterService.addRxJsResource(rxjs);
+  gridStateService.addRxJsResource(rxjs);
   sortService.addRxJsResource(rxjs);
   paginationService.addRxJsResource(rxjs);
   containerService.registerInstance('RxJsResource', rxjs);
@@ -1601,24 +1556,6 @@ function sortTreeDataset<T>(flatDatasetInput: T[], forceGridRefresh = false): T[
   return flatDatasetOutput;
 }
 
-/** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
-function loadSlickGridEditors(columns: Column<any>[]): Column<any>[] {
-  if (columns.some((col) => `${col.id}`.includes('.'))) {
-    console.warn(
-      '[Slickgrid-Vue] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
-    );
-  }
-
-  return columns.map((column: Column | any) => {
-    // on every Editor which have a "collection" or a "collectionAsync"
-    if (column.editor?.collectionAsync) {
-      loadEditorCollectionAsync(column);
-    }
-
-    return { ...column, editorClass: column.editor?.model };
-  });
-}
-
 function suggestDateParsingWhenHelpful() {
   if (
     dataview!.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE &&
@@ -1630,25 +1567,6 @@ function suggestDateParsingWhenHelpful() {
       '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +
         'for more info visit => https://ghiscoding.gitbook.io/slickgrid-vue/column-functionalities/sorting#pre-parse-date-columns-for-better-perf'
     );
-  }
-}
-
-/**
- * When the Editor(s) has a "editor.collection" property, we'll load the async collection.
- * Since this is called after the async call resolves, the pointer will not be the same as the "column" argument passed.
- */
-function updateEditorCollection<T = any>(column: Column<T>, newCollection: T[]) {
-  if (grid && column.editor) {
-    column.editor.collection = newCollection;
-    column.editor.disabled = false;
-
-    // get current Editor, remove it from the DOM then re-enable it and re-render it with the new collection.
-    const currentEditor = grid.getCellEditor() as AutocompleterEditor | SelectEditor;
-    if (currentEditor?.disable && currentEditor?.renderDomElement) {
-      currentEditor.destroy();
-      currentEditor.disable(false);
-      currentEditor.renderDomElement(newCollection);
-    }
   }
 }
 </script>

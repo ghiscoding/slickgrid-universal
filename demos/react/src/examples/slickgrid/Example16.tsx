@@ -203,12 +203,9 @@ const Example16: React.FC = () => {
         },
       ];
 
-      // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
-      // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
-      // for example if you use the Checkbox Selector (row selection), you MUST use the code below
+      // use slice or spread reassign to column definitions to trigger dirty checking
       const allColumns = reactGridRef.current?.gridService.getAllColumnDefinitions() || [];
-      allColumns.unshift(newCols[0], newCols[1]);
-      setColumns([...allColumns]); // (or use slice) reassign to column definitions for React to do dirty checking
+      setColumns([...newCols, ...allColumns]);
     }
   }
 

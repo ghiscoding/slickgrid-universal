@@ -391,6 +391,9 @@ addNewColumn() {
 }
 ```
 
+> **Note**
+> The code above is no longer necessary with v10.8.0 and above, the lib will now take care of that for you.
+
 ## Row Detail with Inner Grid
 
 You can also add an inner grid inside a Row Detail, however there are a few things to know off and remember. Any time a Row Detail is falling outside the main grid viewport, it will be unmounted and until it comes back into the viewport which is then remounted. The process of unmounting and remounting means that Row Detail previous states aren't preserved, however you could use Grid State & Presets to overcome this problem.

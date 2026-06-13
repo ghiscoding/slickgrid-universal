@@ -24,7 +24,6 @@ import {
   SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
-  type AutocompleterEditor,
   type BackendService,
   type BackendServiceApi,
   type BackendServiceOption,
@@ -40,7 +39,6 @@ import {
   type Pagination,
   type PaginationMetadata,
   type RxJsFacade,
-  type SelectEditor,
 } from '@slickgrid-universal/common';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
@@ -501,7 +499,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     this.preRegisterResources();
 
     // prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it.
-    this._columns = this.loadSlickGridEditors(this.props.columns);
+    this._columns = this.gridStateService.loadSlickGridEditors(this.props.columns);
 
     // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
     if (this._options.autoAddCustomEditorFormatter) {
@@ -1246,25 +1244,18 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
    * If using i18n, we also need to trigger a re-translate of the column headers
    */
   updateColumnsList(newColumns: Column<TData>[]) {
-    if (this.grid && this._options && Array.isArray(newColumns)) {
-      // map the Editor model to editorClass and load editor collectionAsync
-      newColumns = this.loadSlickGridEditors(newColumns);
+    // map the Editor model to editorClass and load editor collectionAsync
+    const updatedColumns = this.gridStateService.syncPluginColumns(newColumns, [...(this.sharedService.allColumns || []), ...newColumns]);
 
-      // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
-      if (this._options.autoAddCustomEditorFormatter) {
-        autoAddEditorFormatterToColumnsWithEditor(newColumns, this._options.autoAddCustomEditorFormatter);
-      }
+    if (this._options.enableTranslate) {
+      this.extensionService.translateColumnHeaders(undefined, updatedColumns);
+    }
+    this.extensionService.renderColumnHeaders(updatedColumns, true);
 
-      if (this._options.enableTranslate) {
-        this.extensionService.translateColumnHeaders(undefined, newColumns);
-      }
-      this.extensionService.renderColumnHeaders(newColumns, true);
-
-      if (this._options?.enableAutoSizeColumns) {
-        this.grid.autosizeColumns();
-      } else if (this._options?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
-        this.resizerService.resizeColumnsByCellContent();
-      }
+    if (this._options?.enableAutoSizeColumns) {
+      this.grid.autosizeColumns();
+    } else if (this._options?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
+      this.resizerService.resizeColumnsByCellContent();
     }
   }
 
@@ -1372,43 +1363,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     } else if (!showPagination) {
       this.slickPagination?.dispose();
       this._isPaginationInitialized = false;
-    }
-  }
-
-  /** Load the Editor Collection asynchronously and replace the "collection" property when Promise resolves */
-  protected loadEditorCollectionAsync(column: Column) {
-    if (column?.editor) {
-      const collectionAsync = column.editor.collectionAsync;
-      column.editor.disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
-
-      if (collectionAsync instanceof Promise) {
-        // wait for the "collectionAsync", once resolved we will save it into the "collection"
-        // the collectionAsync can be of 3 types Fetch, Promise or RxJS when available
-        collectionAsync.then((response: any | any[]) => {
-          if (Array.isArray(response)) {
-            this.updateEditorCollection(column, response); // from Promise
-          } else if (response instanceof Response && typeof response.json === 'function') {
-            if (response.bodyUsed) {
-              console.warn(
-                `[SlickGrid-React] The response body passed to collectionAsync was already read.` +
-                  `Either pass the dataset from the Response or clone the response first using response.clone()`
-              );
-            } else {
-              // from Fetch
-              (response as Response).json().then((data) => this.updateEditorCollection(column, data));
-            }
-          } else if (response?.content) {
-            this.updateEditorCollection(column, response.content); // from http-client
-          }
-        });
-      } else if (this.rxjs?.isObservable(collectionAsync)) {
-        // wrap this inside a microtask at the end of the task to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method after columns are available
-        queueMicrotask(() => {
-          this.subscriptions.push(
-            (collectionAsync as Observable<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
-          );
-        });
-      }
     }
   }
 
@@ -1624,6 +1578,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     this.backendUtilityService.addRxJsResource(this.rxjs);
     this.filterFactory.addRxJsResource(this.rxjs);
     this.filterService.addRxJsResource(this.rxjs);
+    this.gridStateService.addRxJsResource(this.rxjs);
     this.sortService.addRxJsResource(this.rxjs);
     this.paginationService.addRxJsResource(this.rxjs);
     this.props.containerService.registerInstance('RxJsResource', this.rxjs);
@@ -1660,25 +1615,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     return flatDatasetOutput;
   }
 
-  /** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
-  protected loadSlickGridEditors(columns: Column<TData>[]): Column<TData>[] {
-    if (columns.some((col) => `${col?.id}`.includes('.'))) {
-      console.warn(
-        '[Slickgrid-React] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
-      );
-    }
-
-    return columns.map((column: Column | any) => {
-      if (column) {
-        // on every Editor which have a "collection" or a "collectionAsync"
-        if (column.editor?.collectionAsync) {
-          this.loadEditorCollectionAsync(column);
-        }
-        return { ...column, editorClass: column.editor?.model };
-      }
-    });
-  }
-
   protected suggestDateParsingWhenHelpful() {
     if (
       this.dataView?.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE &&
@@ -1690,25 +1626,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
         '[Slickgrid-React] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +
           'for more info visit => https://ghiscoding.gitbook.io/slickgrid-react/column-functionalities/sorting#pre-parse-date-columns-for-better-perf'
       );
-    }
-  }
-
-  /**
-   * When the Editor(s) has a "editor.collection" property, we'll load the async collection.
-   * Since this is called after the async call resolves, the pointer will not be the same as the "column" argument passed.
-   */
-  protected updateEditorCollection<U extends TData = any>(column: Column<U>, newCollection: U[]) {
-    if (this.grid && column.editor) {
-      column.editor.collection = newCollection;
-      column.editor.disabled = false;
-
-      // get current Editor, remove it from the DOM then re-enable it and re-render it with the new collection.
-      const currentEditor = this.grid.getCellEditor() as AutocompleterEditor | SelectEditor;
-      if (currentEditor?.disable && currentEditor?.renderDomElement) {
-        currentEditor.destroy();
-        currentEditor.disable(false);
-        currentEditor.renderDomElement(newCollection);
-      }
     }
   }
 

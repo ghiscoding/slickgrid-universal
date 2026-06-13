@@ -1,21 +1,3 @@
-import type {
-  BackendService,
-  BackendServiceApi,
-  BackendServiceOption,
-  BasePaginationComponent,
-  Column,
-  DataViewOption,
-  ExtensionList,
-  ExternalResource,
-  ExternalResourceConstructor,
-  GridOption,
-  Metrics,
-  Pagination,
-  PaginationMetadata,
-  RxJsFacade,
-  SelectEditor,
-  Subscription,
-} from '@slickgrid-universal/common';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
   BackendUtilityService,
@@ -24,7 +6,6 @@ import {
   emptyElement,
   ExtensionService,
   ExtensionUtility,
-  fetchAsPromise,
   FilterFactory,
   FilterService,
   GlobalGridOptions,
@@ -45,8 +26,22 @@ import {
   SortService,
   TreeDataService,
   unsubscribeAll,
-  type AutocompleterEditor,
+  type BackendService,
+  type BackendServiceApi,
+  type BackendServiceOption,
+  type BasePaginationComponent,
+  type Column,
+  type DataViewOption,
+  type ExtensionList,
+  type ExternalResource,
+  type ExternalResourceConstructor,
+  type GridOption,
+  type Metrics,
   type Observable,
+  type Pagination,
+  type PaginationMetadata,
+  type RxJsFacade,
+  type Subscription,
   type TranslaterService,
 } from '@slickgrid-universal/common';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
@@ -547,7 +542,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this.preRegisterResources();
 
     // prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it.
-    this._columns = this.loadSlickGridEditors(this._columns || []);
+    this._columns = this.gridStateService.loadSlickGridEditors(this._columns || []);
 
     // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
     if (this._gridOptions?.autoAddCustomEditorFormatter) {
@@ -1187,17 +1182,12 @@ export class SlickVanillaGridBundle<TData = any> {
   updateColumnDefinitionsList(newColumns: Column<TData>[]): void {
     if (this.slickGrid && this._gridOptions && Array.isArray(newColumns)) {
       // map the Editor model to editorClass and load editor collectionAsync
-      newColumns = this.loadSlickGridEditors(newColumns);
-
-      // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
-      if (this._gridOptions.autoAddCustomEditorFormatter) {
-        autoAddEditorFormatterToColumnsWithEditor(newColumns, this._gridOptions.autoAddCustomEditorFormatter);
-      }
+      const updatedColumns = this.gridStateService.syncPluginColumns(newColumns, [...(this.sharedService.allColumns || []), ...newColumns]);
 
       if (this._gridOptions.enableTranslate) {
-        this.extensionService.translateColumnHeaders(undefined, newColumns, false);
+        this.extensionService.translateColumnHeaders(undefined, updatedColumns, false);
       }
-      this.extensionService.renderColumnHeaders(newColumns, true);
+      this.extensionService.renderColumnHeaders(updatedColumns, true);
 
       if (this.slickGrid && this._gridOptions?.enableAutoSizeColumns) {
         this.slickGrid.autosizeColumns();
@@ -1355,17 +1345,6 @@ export class SlickVanillaGridBundle<TData = any> {
     } else if (!showPagination) {
       this.paginationComponent?.dispose();
       this._isPaginationInitialized = false;
-    }
-  }
-
-  /** Load the Editor Collection asynchronously and replace the "collection" property when Promise resolves */
-  protected loadEditorCollectionAsync(column: Column<TData>): void {
-    if (column?.editor) {
-      column.editor.disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
-
-      fetchAsPromise(column.editor.collectionAsync, this.rxjs).then((resolvedCollection) => {
-        this.updateEditorCollection(column, resolvedCollection);
-      });
     }
   }
 
@@ -1544,6 +1523,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this.backendUtilityService.addRxJsResource(this.rxjs);
     this.filterFactory.addRxJsResource(this.rxjs);
     this.filterService.addRxJsResource(this.rxjs);
+    this.gridStateService.addRxJsResource(this.rxjs);
     this.sortService.addRxJsResource(this.rxjs);
     this.paginationService.addRxJsResource(this.rxjs);
     this.universalContainerService.registerInstance('RxJsFacade', this.rxjs);
@@ -1583,25 +1563,6 @@ export class SlickVanillaGridBundle<TData = any> {
     return flatDatasetOutput;
   }
 
-  /** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
-  protected loadSlickGridEditors(columnDefinitions: Column<TData>[]): Column<TData>[] {
-    const columns = Array.isArray(columnDefinitions) ? columnDefinitions : [];
-
-    if (columns.some((col) => `${col.id}`.includes('.'))) {
-      console.warn(
-        '[Slickgrid-Universal] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
-      );
-    }
-
-    return columns.map((column) => {
-      // on every Editor that have a "collectionAsync", resolve the data and assign it to the "collection" property
-      if (column.editor?.collectionAsync) {
-        this.loadEditorCollectionAsync(column);
-      }
-      return { ...column, editorClass: column.editor?.model };
-    });
-  }
-
   protected suggestDateParsingWhenHelpful(): void {
     if (
       !this.gridOptions.silenceWarnings &&
@@ -1614,27 +1575,6 @@ export class SlickVanillaGridBundle<TData = any> {
         '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +
           'for more info visit => https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/sorting#pre-parse-date-columns-for-better-perf'
       );
-    }
-  }
-
-  /**
-   * When the Editor(s) has a "editor.collection" property, we'll load the async collection.
-   * Since this is called after the async call resolves, the pointer will not be the same as the "column" argument passed.
-   */
-  protected updateEditorCollection<U extends TData = any>(column: Column<U>, newCollection: U[]): void {
-    if (this.slickGrid && column.editor) {
-      column.editor.collection = newCollection;
-      column.editor.disabled = false;
-
-      // get current Editor, remove it from the DOm then re-enable it and re-render it with the new collection.
-      const currentEditor = this.slickGrid.getCellEditor() as AutocompleterEditor | SelectEditor;
-      if (currentEditor?.disable && currentEditor.renderDomElement) {
-        if (typeof currentEditor.destroy === 'function') {
-          currentEditor.destroy();
-        }
-        currentEditor.disable(false);
-        currentEditor.renderDomElement(newCollection);
-      }
     }
   }
 }

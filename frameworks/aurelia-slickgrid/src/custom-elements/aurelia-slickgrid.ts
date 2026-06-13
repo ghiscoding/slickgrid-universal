@@ -1,6 +1,5 @@
 import type { ICollectionObserver, ICollectionSubscriber } from '@aurelia/runtime';
 import type {
-  AutocompleterEditor,
   BackendService,
   BackendServiceApi,
   BackendServiceOption,
@@ -15,7 +14,6 @@ import type {
   Metrics,
   Pagination,
   PaginationMetadata,
-  SelectEditor,
 } from '@slickgrid-universal/common';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
@@ -360,7 +358,7 @@ export class AureliaSlickgridCustomElement {
     // and allow slickgrid to pass its arguments to the editors constructor last
     // when slickgrid creates the editor
     // https://github.com/aurelia/dependency-injection/blob/master/src/resolvers.js
-    this._columns = this.loadSlickGridEditors(this._columns);
+    this._columns = this.gridStateService.loadSlickGridEditors(this._columns);
 
     // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
     if (this.options.autoAddCustomEditorFormatter) {
@@ -1157,25 +1155,18 @@ export class AureliaSlickgridCustomElement {
    * If using i18n, we also need to trigger a re-translate of the column headers
    */
   updateColumnDefinitionsList(newColumns: Column[]) {
-    if (newColumns) {
-      // map the Editor model to editorClass and load editor collectionAsync
-      newColumns = this.loadSlickGridEditors(newColumns);
+    // map the Editor model to editorClass and load editor collectionAsync
+    const updatedColumns = this.gridStateService.syncPluginColumns(newColumns, [...(this.sharedService.allColumns || []), ...newColumns]);
 
-      // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
-      if (this.options.autoAddCustomEditorFormatter) {
-        autoAddEditorFormatterToColumnsWithEditor(newColumns, this.options.autoAddCustomEditorFormatter);
-      }
+    if (this.options.enableTranslate) {
+      this.extensionService.translateColumnHeaders(undefined, updatedColumns);
+    }
+    this.extensionService.renderColumnHeaders(updatedColumns, true);
 
-      if (this.options.enableTranslate) {
-        this.extensionService.translateColumnHeaders(undefined, newColumns);
-      }
-      this.extensionService.renderColumnHeaders(newColumns, true);
-
-      if (this.options?.enableAutoSizeColumns) {
-        this.grid.autosizeColumns();
-      } else if (this.options?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
-        this.resizerService.resizeColumnsByCellContent();
-      }
+    if (this.options?.enableAutoSizeColumns) {
+      this.grid.autosizeColumns();
+    } else if (this.options?.enableAutoResizeColumnsByCellContent && this.resizerService?.resizeColumnsByCellContent) {
+      this.resizerService.resizeColumnsByCellContent();
     }
   }
 
@@ -1267,43 +1258,6 @@ export class AureliaSlickgridCustomElement {
       // also initialize (render) the pagination component
       this.renderPagination();
       this._isPaginationInitialized = true;
-    }
-  }
-
-  /** Load the Editor Collection asynchronously and replace the "collection" property when Promise resolves */
-  protected loadEditorCollectionAsync(column: Column) {
-    if (column?.editor) {
-      const collectionAsync = column.editor.collectionAsync;
-      column.editor.disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
-
-      if (collectionAsync instanceof Promise) {
-        // wait for the "collectionAsync", once resolved we will save it into the "collection"
-        // the collectionAsync can be of 3 types HttpClient, HttpFetch or a Promise
-        collectionAsync.then((response: any | any[]) => {
-          if (Array.isArray(response)) {
-            this.updateEditorCollection(column, response); // from Promise
-          } else if (response instanceof Response && typeof response.json === 'function') {
-            if (response.bodyUsed) {
-              console.warn(
-                `[Aurelia-SlickGrid] The response body passed to collectionAsync was already read. ` +
-                  `Either pass the dataset from the Response or clone the response first using response.clone()`
-              );
-            } else {
-              // from Fetch
-              (response as Response).json().then((data) => this.updateEditorCollection(column, data));
-            }
-          } else if (response?.content) {
-            this.updateEditorCollection(column, response.content); // from http-client
-          }
-        });
-      } else if (this.rxjs?.isObservable(collectionAsync)) {
-        // wrap this inside a microtask at the end of the task to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method after columns are available
-        queueMicrotask(() => {
-          this.subscriptions.push(
-            (collectionAsync as Observable<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
-          );
-        });
-      }
     }
   }
 
@@ -1570,6 +1524,7 @@ export class AureliaSlickgridCustomElement {
     this.backendUtilityService.addRxJsResource(this.rxjs);
     this.filterFactory.addRxJsResource(this.rxjs);
     this.filterService.addRxJsResource(this.rxjs);
+    this.gridStateService.addRxJsResource(this.rxjs);
     this.sortService.addRxJsResource(this.rxjs);
     this.paginationService.addRxJsResource(this.rxjs);
     this.containerService.registerInstance('RxJsResource', this.rxjs);
@@ -1642,27 +1597,6 @@ export class AureliaSlickgridCustomElement {
     return flatDatasetOutput;
   }
 
-  /** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
-  protected loadSlickGridEditors(columns: Column[]): Column[] {
-    if (columns.some((col) => `${col.id}`.includes('.'))) {
-      console.warn(
-        '[Aurelia-Slickgrid] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
-      );
-    }
-
-    return columns.map((column: Column | any) => {
-      // on every Editor which have a "collection" or a "collectionAsync"
-      if (column.editor?.collectionAsync) {
-        this.loadEditorCollectionAsync(column);
-      }
-
-      return {
-        ...column,
-        editorClass: column.editor && this.container.getFactory(column.editor.model).Type,
-      };
-    });
-  }
-
   protected suggestDateParsingWhenHelpful() {
     if (
       this.dataview?.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE &&
@@ -1674,25 +1608,6 @@ export class AureliaSlickgridCustomElement {
         '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +
           'for more info visit => https://ghiscoding.gitbook.io/aurelia-slickgrid/column-functionalities/sorting#pre-parse-date-columns-for-better-perf'
       );
-    }
-  }
-
-  /**
-   * When the Editor(s) has a "editor.collection" property, we'll load the async collection.
-   * Since this is called after the async call resolves, the pointer will not be the same as the "column" argument passed.
-   */
-  protected updateEditorCollection<T = any>(column: Column<T>, newCollection: T[]) {
-    if (this.grid && column.editor) {
-      column.editor.collection = newCollection;
-      column.editor.disabled = false;
-
-      // get current Editor, remove it from the DOM then re-enable it and re-render it with the new collection.
-      const currentEditor = this.grid.getCellEditor() as AutocompleterEditor | SelectEditor;
-      if (currentEditor?.disable && currentEditor?.renderDomElement) {
-        currentEditor.destroy();
-        currentEditor.disable(false);
-        currentEditor.renderDomElement(newCollection);
-      }
     }
   }
 }

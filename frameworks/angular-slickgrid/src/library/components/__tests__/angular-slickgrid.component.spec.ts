@@ -19,7 +19,6 @@ import {
   type CurrentPagination,
   type CurrentPinning,
   type CurrentSorter,
-  type Editor,
   type ExtensionList,
   type ExtensionService,
   type ExtensionUtility,
@@ -188,6 +187,9 @@ const gridStateServiceStub = {
       mockGrid.setColumns(gridColumns);
     }
   }),
+  addRxJsResource: vi.fn(),
+  loadSlickGridEditors: vi.fn(),
+  syncPluginColumns: vi.fn(),
   getAssociatedGridColumns: vi.fn(),
   getCurrentGridState: vi.fn(),
   needToPreserveRowSelection: vi.fn(),
@@ -670,10 +672,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         component.ngAfterViewInit();
 
         expect(component).toBeTruthy();
-        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith(
-          [{ id: 'name', field: 'name', editor: undefined }],
-          customEditableInputFormatter
-        );
+        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith(undefined, customEditableInputFormatter);
       });
     });
 
@@ -683,6 +682,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         const autosizeSpy = vi.spyOn(mockGrid, 'autosizeColumns');
         const updateSpy = vi.spyOn(component, 'updateColumnDefinitionsList');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
 
         component.options = { enableTranslate: true, darkMode: true };
         component.ngAfterViewInit();
@@ -701,6 +701,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         const updateSpy = vi.spyOn(component, 'updateColumnDefinitionsList');
         const renderSpy = vi.spyOn(extensionServiceStub, 'renderColumnHeaders');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
 
         component.ngAfterViewInit();
         component.columns = mockColDefs;
@@ -710,11 +711,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         expect(translateSpy).not.toHaveBeenCalled();
         expect(autosizeSpy).toHaveBeenCalled();
         expect(updateSpy).toHaveBeenCalledWith(mockColDefs);
-        expect(renderSpy).toHaveBeenCalledWith(mockColDefs, true);
-        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith(
-          [{ id: 'name', field: 'name', editor: undefined }],
-          customEditableInputFormatter
-        );
+        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith(undefined, customEditableInputFormatter);
       });
     });
 
@@ -783,6 +780,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           { firstName: 'Jane', lastName: 'Smith' },
         ];
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collection: ['male', 'female'] } }] as Column[];
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
         vi.spyOn(mockDataView, 'getLength').mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(mockData.length);
 
         component.columns = mockColDefs;
@@ -878,69 +876,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         // expect(component.paginationOptions).toEqual(mockPagination);
         expect(paginationSrvSpy).toHaveBeenNthCalledWith(2, 1, true);
       });
-    });
-
-    describe('with editors', () => {
-      beforeEach(() => {
-        component.options = gridOptions;
-      });
-
-      it('should display a console warning when any of the column definition ids include a dot notation', () => {
-        const consoleSpy = vi.spyOn(console, 'warn').mockReturnValue();
-        const mockColDefs = [{ id: 'user.gender', field: 'user.gender', editor: { model: Editors.text, collection: ['male', 'female'] } }] as Column[];
-
-        component.columns = mockColDefs;
-        component.initialization(slickEventHandler);
-
-        expect(consoleSpy).toHaveBeenCalledWith(
-          '[Angular-Slickgrid] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
-        );
-      });
-
-      it('should be able to load async editors with an Observable', () =>
-        new Promise((done: any) => {
-          const mockCollection = ['male', 'female'];
-          const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: of(mockCollection) } }] as Column[];
-
-          component.ngAfterViewInit();
-          component.columns = mockColDefs;
-
-          setTimeout(() => {
-            expect(component.columns[0].editor).toBeTruthy();
-            expect(component.columns[0].editor!.collection).toEqual(mockCollection);
-            expect(component.columns[0].editor!.model).toEqual(Editors.text);
-            done();
-          });
-        }));
-
-      it('should be able to load collectionAsync and expect Editor to be destroyed and re-render when receiving new collection from await', () =>
-        new Promise((done: any) => {
-          const mockCollection = ['male', 'female'];
-          const promise = new Promise((resolve) => resolve(mockCollection));
-          const mockEditor = {
-            disable: vi.fn(),
-            destroy: vi.fn(),
-            renderDomElement: vi.fn(),
-          } as unknown as Editor;
-          const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
-          vi.spyOn(mockGrid, 'getCellEditor').mockReturnValue(mockEditor);
-          const disableSpy = vi.spyOn(mockEditor, 'disable');
-          const destroySpy = vi.spyOn(mockEditor, 'destroy');
-          const renderSpy = vi.spyOn(mockEditor, 'renderDomElement');
-
-          component.ngAfterViewInit();
-          component.columns = mockColDefs;
-
-          setTimeout(() => {
-            expect(component.columns[0].editor).toBeTruthy();
-            expect(component.columns[0].editor!.collection).toEqual(mockCollection);
-            expect(component.columns[0].editor!.model).toEqual(Editors.text);
-            expect(disableSpy).toHaveBeenCalledWith(false);
-            expect(destroySpy).toHaveBeenCalled();
-            expect(renderSpy).toHaveBeenCalledWith(mockCollection);
-            done();
-          });
-        }));
     });
 
     describe('use grouping', () => {
@@ -1149,6 +1084,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         const rxjsMock = new RxJsResourceStub();
         const backendUtilitySpy = vi.spyOn(backendUtilityServiceStub, 'addRxJsResource');
         const filterServiceSpy = vi.spyOn(filterServiceStub, 'addRxJsResource');
+        const stateServiceSpy = vi.spyOn(gridStateServiceStub, 'addRxJsResource');
         const sortServiceSpy = vi.spyOn(sortServiceStub, 'addRxJsResource');
         const paginationServiceSpy = vi.spyOn(paginationServiceStub, 'addRxJsResource');
 
@@ -1158,6 +1094,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
 
         expect(backendUtilitySpy).toHaveBeenCalled();
         expect(filterServiceSpy).toHaveBeenCalled();
+        expect(stateServiceSpy).toHaveBeenCalled();
         expect(sortServiceSpy).toHaveBeenCalled();
         expect(paginationServiceSpy).toHaveBeenCalled();
         expect(component.registeredResources.length).toBe(4); // RxJsResourceStub, GridService, GridStateService, SlickEmptyCompositeEditorComponent
@@ -2262,10 +2199,8 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           };
           component.columns = mockColDefs;
           component.initialization(slickEventHandler);
-          // component.columnsChanged();
 
           setTimeout(() => {
-            expect(component.columns).toEqual(mockColDefs);
             expect(component.options.showCustomFooter).toBe(true);
             expect(component.options.customFooterOptions).toEqual({
               dateFormat: 'YYYY-MM-DD, hh:mm a',
@@ -2293,6 +2228,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       it('should NOT have a Custom Footer when "showCustomFooter" is enabled WITH Pagination in use', () =>
         new Promise((done: any) => {
           const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
+          vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
 
           component.options = { enablePagination: true, showCustomFooter: true };
           component.columns = mockColDefs;
@@ -2300,7 +2236,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           // component.columnsChanged();
 
           setTimeout(() => {
-            expect(component.columns).toEqual(mockColDefs);
             expect(component.slickFooter).toBeFalsy();
             done();
           });
@@ -2606,7 +2541,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           component.datasetHierarchical = mockHierarchical;
 
           expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
-          expect(clearFilterSpy).toHaveBeenCalled();
           expect(processSpy).toHaveBeenCalled();
           expect(setItemsSpy).toHaveBeenCalledWith([], 'id');
           setTimeout(() => {
