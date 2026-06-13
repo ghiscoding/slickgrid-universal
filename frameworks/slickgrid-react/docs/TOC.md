@@ -44,6 +44,7 @@
 ## Features
 
 * [Accessibility (A11y)](features/accessibility.md)
+* [AI Toolkit](ai/ai-toolkit.md)
 
 ## Slick Grid/DataView Objects
 
