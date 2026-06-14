@@ -45,6 +45,7 @@
 ## Features
 
 * [Accessibility (A11y)](features/accessibility.md)
+* [AI Toolkit](ai/ai-toolkit.md)
 
 ## Grid Functionalities
 
