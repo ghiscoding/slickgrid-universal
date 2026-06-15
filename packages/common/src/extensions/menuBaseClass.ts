@@ -897,10 +897,10 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
         dropOffset = Number((addonOptions as CellMenu | ContextMenu)?.autoAdjustDropOffset || 0);
         sideOffset = Number((addonOptions as CellMenu | ContextMenu)?.autoAlignSideOffset || 0);
       } else {
-        menuOffsetLeft = isSubMenu ? parentOffset.left : (relativePos?.left ?? 0);
+        menuOffsetLeft = isSubMenu ? parentOffset.left : relativePos.left;
         menuOffsetTop = isSubMenu
           ? parentOffset.top
-          : (relativePos?.top ?? 0) + ((addonOptions as HeaderMenuOption)?.menuOffsetTop ?? 0) + targetElm.clientHeight;
+          : relativePos.top + ((addonOptions as HeaderMenuOption)?.menuOffsetTop ?? 0) + targetElm.clientHeight;
       }
 
       if ((this.pluginName === 'ContextMenu' || this.pluginName === 'GridMenu') && isSubMenu) {

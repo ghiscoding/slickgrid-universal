@@ -14,10 +14,10 @@ export type CSSStyleDeclarationWritable = Omit<CSSStyleDeclaration, CSSStyleDecl
 
 /** Calculate available space for each side of the DOM element */
 export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number } {
-  const vh = window.innerHeight || 0;
-  const vw = window.innerWidth || 0;
+  const vh = window.innerHeight;
+  const vw = window.innerWidth;
   const { top: pageScrollTop, left: pageScrollLeft } = windowScrollPosition();
-  const { top: elementOffsetTop = 0, left: elementOffsetLeft = 0 } = getOffset(element) || {};
+  const { top: elementOffsetTop = 0, left: elementOffsetLeft = 0 } = getOffset(element) ?? {};
 
   const top = elementOffsetTop - pageScrollTop;
   const left = elementOffsetLeft - pageScrollLeft;
@@ -131,27 +131,23 @@ export function getHtmlStringOutput(
 ): string {
   if (input instanceof DocumentFragment) {
     // a DocumentFragment doesn't have innerHTML/outerHTML, but we can loop through all children and concatenate them all to an HTML string
-    return [].map.call(input.childNodes, (x: HTMLElement) => x[type]).join('') || input.textContent || '';
+    return (
+      Array.from(input.childNodes)
+        .map((node: ChildNode) => (node as HTMLElement)[type])
+        .join('') ||
+      input.textContent ||
+      ''
+    );
   } else if (input instanceof HTMLElement) {
     return input[type];
   }
-  return String(input ?? ''); // reaching this line means it's already a string (or number) so just return it as string
+  return String(input ?? '');
 }
 
 /** Get offset of HTML element relative to a parent element */
-export function getOffsetRelativeToParent(
-  parentElm: HTMLElement | null,
-  childElm: HTMLElement | null
-):
-  | {
-      top: number;
-      right: number;
-      bottom: number;
-      left: number;
-    }
-  | undefined {
+export function getOffsetRelativeToParent(parentElm: HTMLElement | null, childElm: HTMLElement | null): HtmlElementPosition {
   if (!parentElm || !childElm) {
-    return undefined;
+    return { top: 0, bottom: 0, left: 0, right: 0 };
   }
   const parentPos = parentElm.getBoundingClientRect();
   const childPos = childElm.getBoundingClientRect();
@@ -165,7 +161,7 @@ export function getOffsetRelativeToParent(
 
 /** Get HTML element offset with pure JS */
 export function getOffset(elm?: HTMLElement | null): HtmlElementPosition {
-  if (!elm?.getBoundingClientRect) {
+  if (!elm) {
     return { top: 0, bottom: 0, left: 0, right: 0 };
   }
 
@@ -195,10 +191,10 @@ export function getInnerSize(elm: HTMLElement, type: 'height' | 'width'): number
 
 /** Get a DOM element style property value by calling getComputedStyle() on the element */
 export function getStyleProp(elm: HTMLElement, property: string): string | null {
-  if (elm) {
-    return getComputedStyle(elm).getPropertyValue(property);
+  if (!elm) {
+    return null;
   }
-  return null;
+  return getComputedStyle(elm).getPropertyValue(property);
 }
 
 export function findFirstAttribute(inputElm: Element | null | undefined, attributes: string[]): string | null {
@@ -221,24 +217,6 @@ export function findFirstAttribute(inputElm: Element | null | undefined, attribu
  */
 export function findWidthOrDefault(inputWidth?: number | string | null, defaultValue = 'auto'): string {
   return (/^[0-9]+$/i.test(`${inputWidth}`) ? `${+(inputWidth as number)}px` : (inputWidth as string)) || defaultValue;
-}
-
-/**
- * Simple function to encode the 5 most common HTML entities (`<`, `>`, `"`, `'`, `&`).
- * For example: "<div>Hello</div>" => "&lt;div&gt;Hello&lt;/div&gt;"
- * @param {String} inputValue - input value to be encoded
- * @return {String}
- */
-export function htmlEncode(inputValue: string): string {
-  const val = typeof inputValue === 'string' ? inputValue : String(inputValue);
-  const entityMap: { [char: string]: string } = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-  };
-  return (val || '').toString().replace(/[&<>"']/g, (s) => entityMap[s as keyof { [char: string]: string }]);
 }
 
 /**
@@ -281,6 +259,24 @@ export function htmlDecode(input?: string | boolean | number): string {
 }
 
 /**
+ * Simple function to encode the 5 most common HTML entities (`<`, `>`, `"`, `'`, `&`).
+ * For example: "<div>Hello</div>" => "&lt;div&gt;Hello&lt;/div&gt;"
+ * @param {String} inputValue - input value to be encoded
+ * @return {String}
+ */
+export function htmlEncode(inputValue: string): string {
+  const val = typeof inputValue === 'string' ? inputValue : String(inputValue);
+  const entityMap: { [char: string]: string } = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+  return (val || '').toString().replace(/[&<>"']/g, (s) => entityMap[s as keyof { [char: string]: string }]);
+}
+
+/**
  * Encode string to html special char and add html space padding defined
  * @param {string} inputStr - input string
  * @param {number} paddingLength - padding to add
@@ -308,7 +304,7 @@ export function insertAfterElement(referenceNode: HTMLElement, newNode: HTMLElem
  */
 export function windowScrollPosition(): { left: number; top: number } {
   return {
-    left: window.pageXOffset || document.documentElement.scrollLeft || 0,
-    top: window.pageYOffset || document.documentElement.scrollTop || 0,
+    left: window.pageXOffset,
+    top: window.pageYOffset,
   };
 }
