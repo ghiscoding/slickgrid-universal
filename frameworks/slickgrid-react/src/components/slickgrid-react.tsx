@@ -177,7 +177,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   };
 
   get dataset(): any[] {
-    return this.dataView?.getItems() || [];
+    return this.dataView?.getItems?.() || [];
   }
   set dataset(newDataset: any[]) {
     const prevDatasetLn = this._currentDatasetLength;
@@ -222,7 +222,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
 
     // when a hierarchical dataset is set afterward, we can reset the flat dataset and call a tree data sort that will overwrite the flat dataset
-    if (this.dataView && newHierarchicalDataset && this.grid && this.sortService?.processTreeDataInitialSort) {
+    if (this.dataView?.setItems && newHierarchicalDataset && this.grid && this.sortService?.processTreeDataInitialSort) {
       this.dataView.setItems([], this._options?.datasetIdPropertyName ?? 'id');
       this.sortService.processTreeDataInitialSort();
       this.treeDataService.initHierarchicalTree();
@@ -573,7 +573,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     if (!this.props.customDataView && this.dataView) {
       const initialDataset = this._options?.enableTreeData ? this.sortTreeDataset(this.props.dataset) : this.props.dataset;
-      if (Array.isArray(initialDataset)) {
+      if (Array.isArray(initialDataset) && this.dataView.setItems) {
         this.dataView.setItems(initialDataset, this._options.datasetIdPropertyName ?? 'id');
       }
 

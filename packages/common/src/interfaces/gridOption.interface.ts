@@ -64,8 +64,8 @@ export interface CustomDataView<T = any> {
   getLength(): number;
   getItemCount?: () => number;
   getFilteredItemCount?: () => number;
-  getItems: () => T[];
-  setItems: (data: T[]) => void;
+  getItems?: () => T[];
+  setItems?: (data: T[]) => void;
   setGrid?: (grid: SlickGrid) => void;
   refresh?: (...args: any[]) => void;
   destroy?: () => void;
