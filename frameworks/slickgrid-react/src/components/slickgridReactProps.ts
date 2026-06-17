@@ -3,6 +3,7 @@ import type {
   ContainerService,
   CurrentFilter,
   CurrentSorter,
+  CustomDataView,
   DragRowMove,
   ExportTextDownloadOption,
   ExtensionList,
@@ -71,7 +72,6 @@ import type {
   ReactSlickEventHandler,
   SingleColumnSort,
   SlickControlList,
-  SlickDataView,
   SlickGrid,
   SlickPluginList,
   SlickRange,
@@ -85,7 +85,7 @@ export interface SlickgridReactProps {
   footer?: React.ReactElement;
   containerService: ContainerService;
   translaterService?: TranslaterI18NextService;
-  customDataView?: SlickDataView;
+  customDataView?: CustomDataView;
   dataset: any[];
   datasetHierarchical?: any[] | null;
   extensions?: ExtensionList<SlickControlList | SlickPluginList>;

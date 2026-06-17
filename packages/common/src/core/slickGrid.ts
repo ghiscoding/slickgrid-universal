@@ -3801,7 +3801,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @returns {ItemMetadata | null}
    */
   getItemMetadaWhenExists(row: number): ItemMetadata | null {
-    return 'getItemMetadata' in this.data ? (this.data as CustomDataView<TData>).getItemMetadata(row) : null;
+    return 'getItemMetadata' in this.data ? (this.data as SlickDataView<TData>).getItemMetadata(row) : null;
   }
 
   /** Get Top Panel DOM element */
