@@ -5,6 +5,7 @@ import type {
   BackendServiceOption,
   BasePaginationComponent,
   Column,
+  CustomDataView,
   DataViewOption,
   EventSubscription,
   ExtensionList,
@@ -146,7 +147,7 @@ export class AureliaSlickgridCustomElement {
   @bindable({ mode: BindingMode.twoWay }) totalItems = 0;
   @bindable({ mode: BindingMode.fromView }) extensions!: ExtensionList<any>;
   @bindable({ mode: BindingMode.fromView }) instances: AureliaGridInstance | null = null;
-  @bindable() customDataView?: SlickDataView;
+  @bindable() customDataView?: CustomDataView;
   @bindable() dataset: any[] = [];
   @bindable() datasetHierarchical?: any[] | null;
   @bindable() gridId = '';
