@@ -283,7 +283,7 @@ describe('Example 5 - OData Grid', () => {
         .find('option')
         .last()
         .then((element) => {
-          cy.get('.search-filter.filter-name select').select(element.val());
+          cy.get('.search-filter.filter-name select').select(element.val() ?? '');
         });
 
       cy.get('.search-filter.filter-name').find('input').clear().type('Jo%yn%er');

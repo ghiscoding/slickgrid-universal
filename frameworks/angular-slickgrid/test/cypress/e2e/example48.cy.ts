@@ -1,8 +1,8 @@
 import { getScrollDistanceWhenDragOutsideGrid } from '../support/drag';
 
 function testScroll(fromClass: string, toClass: string, fromRow: number, fromCol: number) {
-  return getScrollDistanceWhenDragOutsideGrid(fromClass, 'topLeft', 'right', fromRow, fromCol, 165).then((cellScrollDistance) => {
-    return getScrollDistanceWhenDragOutsideGrid(toClass, 'topLeft', 'bottom', fromRow, fromCol, 165).then((rowScrollDistance) => {
+  return getScrollDistanceWhenDragOutsideGrid(fromClass, 'topLeft', 'right', fromRow, fromCol, 165).then((cellScrollDistance: any) => {
+    return getScrollDistanceWhenDragOutsideGrid(toClass, 'topLeft', 'bottom', fromRow, fromCol, 165).then((rowScrollDistance: any) => {
       return cy.wrap({
         cell: {
           scrollBefore: cellScrollDistance.scrollLeftBefore,
@@ -104,7 +104,7 @@ describe('Example 48 - Hybrid Selection Model', () => {
     it('should auto scroll take effect to display the selecting element when dragging', { scrollBehavior: false }, () => {
       cy.get('#grid48-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
 
-      testScroll('#grid48-1', '#grid48-1', 0, 1).then((scrollDistance) => {
+      testScroll('#grid48-1', '#grid48-1', 0, 1).then((scrollDistance: { cell: any; row: any }) => {
         expect(scrollDistance.cell.scrollBefore).to.be.lte(scrollDistance.cell.scrollAfter);
         expect(scrollDistance.row.scrollBefore).to.be.lte(scrollDistance.row.scrollAfter);
       });
@@ -136,7 +136,7 @@ describe('Example 48 - Hybrid Selection Model', () => {
 
       cy.get('#grid48-2 .slick-row[data-row="1"] .slick-cell.l3.r3').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-      testScroll('#grid48-2', '#grid48-2', 0, 1).then((scrollDistance) => {
+      testScroll('#grid48-2', '#grid48-2', 0, 1).then((scrollDistance: { cell: any; row: any }) => {
         expect(scrollDistance.cell.scrollBefore).to.be.lte(scrollDistance.cell.scrollAfter);
         expect(scrollDistance.row.scrollBefore).to.be.lte(scrollDistance.row.scrollAfter);
       });
