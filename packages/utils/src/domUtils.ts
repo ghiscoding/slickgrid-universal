@@ -264,7 +264,7 @@ export function htmlDecode(input?: string | boolean | number): string {
  * @param {String} inputValue - input value to be encoded
  * @return {String}
  */
-export function htmlEncode(inputValue: string): string {
+export function htmlEncode(inputValue: string | number): string {
   const val = typeof inputValue === 'string' ? inputValue : String(inputValue);
   const entityMap: { [char: string]: string } = {
     '&': '&amp;',
