@@ -17,7 +17,7 @@ export function calculateAvailableSpace(element: HTMLElement): { top: number; bo
   const vh = window.innerHeight;
   const vw = window.innerWidth;
   const { top: pageScrollTop, left: pageScrollLeft } = windowScrollPosition();
-  const { top: elementOffsetTop = 0, left: elementOffsetLeft = 0 } = getOffset(element) ?? {};
+  const { top: elementOffsetTop, left: elementOffsetLeft } = getOffset(element) ?? {};
 
   const top = elementOffsetTop - pageScrollTop;
   const left = elementOffsetLeft - pageScrollLeft;

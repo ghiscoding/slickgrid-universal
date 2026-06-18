@@ -29,6 +29,7 @@ import {
   type BackendServiceOption,
   type BasePaginationComponent,
   type Column,
+  type CustomDataView,
   type DataViewOption,
   type EventSubscription,
   type ExtensionList,
@@ -159,7 +160,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   sortService: SortService;
   treeDataService: TreeDataService;
 
-  dataView!: SlickDataView<TData>;
+  dataView!: SlickDataView<TData> | CustomDataView<TData>;
   grid!: SlickGrid;
   totalItems = 0;
 
@@ -176,7 +177,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   };
 
   get dataset(): any[] {
-    return this.dataView?.getItems() || [];
+    return this.dataView?.getItems?.() || [];
   }
   set dataset(newDataset: any[]) {
     const prevDatasetLn = this._currentDatasetLength;
@@ -221,19 +222,21 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
 
     // when a hierarchical dataset is set afterward, we can reset the flat dataset and call a tree data sort that will overwrite the flat dataset
-    if (this.dataView && newHierarchicalDataset && this.grid && this.sortService?.processTreeDataInitialSort) {
+    if (this.dataView?.setItems && newHierarchicalDataset && this.grid && this.sortService?.processTreeDataInitialSort) {
       this.dataView.setItems([], this._options?.datasetIdPropertyName ?? 'id');
       this.sortService.processTreeDataInitialSort();
       this.treeDataService.initHierarchicalTree();
 
       // we also need to reset/refresh the Tree Data filters because if we inserted new item(s) then it might not show up without doing this refresh
       // however we need to queue our process until the flat dataset is ready, so we can queue a microtask to execute the DataView refresh only after everything is ready
-      queueMicrotask(() => {
-        const flatDatasetLn = this.dataView?.getItemCount() ?? 0;
-        if (flatDatasetLn > 0 && (flatDatasetLn !== prevFlatDatasetLn || !isDatasetEqual)) {
-          this.filterService.refreshTreeDataFilters();
-        }
-      });
+      if ((this.dataView as SlickDataView)?.getItemCount) {
+        queueMicrotask(() => {
+          const flatDatasetLn = (this.dataView as SlickDataView).getItemCount();
+          if (flatDatasetLn > 0 && (flatDatasetLn !== prevFlatDatasetLn || !isDatasetEqual)) {
+            this.filterService.refreshTreeDataFilters();
+          }
+        });
+      }
     }
 
     this._isDatasetHierarchicalInitialized = true;
@@ -481,7 +484,9 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this.createBackendApiInternalPostProcessCallback(this._options);
     }
 
-    if (!this.props.customDataView) {
+    if (this.props.customDataView) {
+      this.dataView = this.props.customDataView;
+    } else {
       const dataviewInlineFilters = (this._options.dataView && this._options.dataView.inlineFilters) || false;
       let dataViewOptions: Partial<DataViewOption> = { ...this._options.dataView, inlineFilters: dataviewInlineFilters };
 
@@ -527,9 +532,9 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this._eventPubSubService
     );
     if (typeof (this.dataView as SlickDataView).setGrid === 'function') {
-      this.dataView.setGrid(this.grid);
+      (this.dataView as SlickDataView).setGrid(this.grid);
     }
-    this.sharedService.dataView = this.dataView;
+    this.sharedService.dataView = this.dataView as SlickDataView;
     this.sharedService.slickGrid = this.grid;
     this.sharedService.gridContainerElement = this._elm as HTMLDivElement;
     if (this.groupItemMetadataProvider) {
@@ -568,7 +573,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     if (!this.props.customDataView && this.dataView) {
       const initialDataset = this._options?.enableTreeData ? this.sortTreeDataset(this.props.dataset) : this.props.dataset;
-      if (Array.isArray(initialDataset)) {
+      if (Array.isArray(initialDataset) && this.dataView.setItems) {
         this.dataView.setItems(initialDataset, this._options.datasetIdPropertyName ?? 'id');
       }
 
@@ -589,9 +594,13 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
             // when using BackendServiceApi, we'll be using the "syncGridSelectionWithBackendService" flag BUT "syncGridSelection" must also be set to True
             preservedRowSelection = syncGridSelection && preservedRowSelectionWithBackend;
           }
-          this.dataView.syncGridSelection(this.grid, preservedRowSelection);
+          (this.dataView as SlickDataView).syncGridSelection?.(this.grid, preservedRowSelection);
         } else if (typeof syncGridSelection === 'object') {
-          this.dataView.syncGridSelection(this.grid, syncGridSelection.preserveHidden, syncGridSelection.preserveHiddenOnSelectionChange);
+          (this.dataView as SlickDataView).syncGridSelection?.(
+            this.grid,
+            syncGridSelection.preserveHidden,
+            syncGridSelection.preserveHiddenOnSelectionChange
+          );
         }
       }
 
@@ -633,7 +642,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       element: this._elm as HTMLDivElement,
 
       // Slick Grid & DataView objects
-      dataView: this.dataView,
+      dataView: this.dataView as SlickDataView,
       slickGrid: this.grid,
 
       // public methods
@@ -817,7 +826,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
   }
 
-  bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: SlickDataView) {
+  bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: CustomDataView) {
     // translate some of them on first load, then on each language change
     if (gridOptions.enableTranslate) {
       this.extensionService.translateAllExtensions();
@@ -896,29 +905,34 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
         this.loadFilterPresetsWhenDatasetInitialized();
 
         // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
-        this._eventHandler.subscribe(dataView.onRowCountChanged, (_e, args) => {
-          if (!gridOptions.enableRowDetailView || !Array.isArray(args.changedRows) || args.changedRows.length === args.itemCount) {
-            grid.invalidate();
-          } else {
-            grid.invalidateRows(args.changedRows);
-            grid.render();
-          }
-          this.handleOnItemCountChanged(dataView.getFilteredItemCount() || 0, dataView.getItemCount() || 0);
-        });
-        this._eventHandler.subscribe(dataView.onSetItemsCalled, (_e, args) => {
-          this.sharedService.isItemsDateParsed = false;
-          this.handleOnItemCountChanged(dataView.getFilteredItemCount() || 0, args.itemCount);
+        if (dataView.onRowCountChanged?.subscribe) {
+          this._eventHandler.subscribe(dataView.onRowCountChanged, (_e, args) => {
+            if (!gridOptions.enableRowDetailView || !Array.isArray(args.changedRows) || args.changedRows.length === args.itemCount) {
+              grid.invalidate();
+            } else {
+              grid.invalidateRows(args.changedRows);
+              grid.render();
+            }
+            this.handleOnItemCountChanged(dataView.getFilteredItemCount?.() || 0, dataView.getItemCount?.() || 0);
+          });
+        }
 
-          // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
-          if (
-            args.itemCount > 0 &&
-            (this.options.autosizeColumnsByCellContentOnFirstLoad || this.options.enableAutoResizeColumnsByCellContent)
-          ) {
-            this.resizerService.resizeColumnsByCellContent(!this._options?.resizeByContentOnlyOnFirstLoad);
-          }
-        });
+        if (dataView.onSetItemsCalled?.subscribe) {
+          this._eventHandler.subscribe(dataView.onSetItemsCalled, (_e, args) => {
+            this.sharedService.isItemsDateParsed = false;
+            this.handleOnItemCountChanged(dataView.getFilteredItemCount?.() || 0, args.itemCount);
 
-        if (gridOptions?.enableFiltering && !gridOptions.enableRowDetailView) {
+            // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
+            if (
+              args.itemCount > 0 &&
+              (this.options.autosizeColumnsByCellContentOnFirstLoad || this.options.enableAutoResizeColumnsByCellContent)
+            ) {
+              this.resizerService.resizeColumnsByCellContent(!this._options?.resizeByContentOnlyOnFirstLoad);
+            }
+          });
+        }
+
+        if (gridOptions?.enableFiltering && !gridOptions.enableRowDetailView && dataView.onRowsChanged?.subscribe) {
           this._eventHandler.subscribe(dataView.onRowsChanged, (_e, { calledOnRowCountChanged, rows }) => {
             // filtering data with local dataset will not always show correctly unless we call this updateRow/render
             // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
@@ -1160,7 +1174,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       if (Array.isArray(dataset) && this.grid && this.dataView?.setItems) {
         this.dataView.setItems(dataset, this._options.datasetIdPropertyName ?? 'id');
         if (!this._options.backendServiceApi && !this._options.enableTreeData) {
-          this.dataView.reSort();
+          (this.dataView as SlickDataView).reSort?.();
         }
 
         if (dataset.length > 0) {
@@ -1397,8 +1411,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   protected loadLocalGridPagination(dataset?: any[]) {
     if (this._options && this._paginationOptions) {
       this.totalItems = Array.isArray(dataset) ? dataset.length : 0;
-      if (this._paginationOptions && this.dataView?.getPagingInfo) {
-        const slickPagingInfo = this.dataView.getPagingInfo();
+      if (this._paginationOptions && (this.dataView as SlickDataView)?.getPagingInfo) {
+        const slickPagingInfo = (this.dataView as SlickDataView).getPagingInfo();
         if (slickPagingInfo?.hasOwnProperty('totalRows') && this._paginationOptions.totalItems !== slickPagingInfo.totalRows) {
           this.totalItems = slickPagingInfo.totalRows || 0;
         }
@@ -1425,15 +1439,15 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
       // maps the IDs to the Grid Rows and vice versa, the "dataContextIds" has precedence over the other
       if (Array.isArray(dataContextIds) && dataContextIds.length > 0) {
-        gridRowIndexes = this.dataView.mapIdsToRows(dataContextIds) || [];
+        gridRowIndexes = (this.dataView as SlickDataView).mapIdsToRows?.(dataContextIds) || [];
       } else if (Array.isArray(gridRowIndexes) && gridRowIndexes.length > 0) {
-        dataContextIds = this.dataView.mapRowsToIds(gridRowIndexes) || [];
+        dataContextIds = (this.dataView as SlickDataView).mapRowsToIds?.(gridRowIndexes) || [];
       }
 
       // apply row selection when defined as grid presets
       if (this.grid && Array.isArray(gridRowIndexes)) {
         this.grid.setSelectedRows(gridRowIndexes);
-        this.dataView!.setSelectedIds(dataContextIds || [], {
+        (this.dataView as SlickDataView).setSelectedIds?.(dataContextIds || [], {
           isRowBeingAdded: true,
           shouldTriggerEvent: false, // do not trigger when presetting the grid
           applyRowSelectionToGrid: true,
@@ -1617,7 +1631,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
   protected suggestDateParsingWhenHelpful() {
     if (
-      this.dataView?.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE &&
+      ((this.dataView as SlickDataView)?.getItemCount?.() ?? 0) > WARN_NO_PREPARSE_DATE_SIZE &&
       !this.options.silenceWarnings &&
       !this.options.preParseDateColumns &&
       this.grid.getColumns().some((c) => isColumnDateType(c.type))

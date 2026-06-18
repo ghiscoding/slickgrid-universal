@@ -1,7 +1,7 @@
 import type { BasePubSubService, EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
 import type { TrustedHTML } from 'trusted-types/lib';
-import type { DataViewOption, SlickEditorLock } from '../core/index.js';
+import type { DataViewOption, SlickEditorLock, SlickEvent, SlickGrid } from '../core/index.js';
 import type { ColumnReorderFunction, OperatorType } from '../enums/index.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type {
@@ -59,9 +59,22 @@ export interface CellViewportRange {
 }
 
 export interface CustomDataView<T = any> {
-  getItem: (index: number) => T;
-  getItemMetadata(row: number, cell?: boolean | number): ItemMetadata | null;
-  getLength: () => number;
+  getItem(index: number): T;
+  getItemMetadata?: (row: number, cell?: boolean | number) => ItemMetadata | null;
+  getLength(): number;
+  getItemCount?: () => number;
+  getFilteredItemCount?: () => number;
+  getItems?: () => T[];
+  setItems?: (data: T[]) => void;
+  setGrid?: (grid: SlickGrid) => void;
+  refresh?: (...args: any[]) => void;
+  destroy?: () => void;
+  dispose?: () => void;
+
+  onRowCountChanged?: SlickEvent;
+  onRowsChanged?: SlickEvent;
+  onSelectedRowIdsChanged?: SlickEvent;
+  onSetItemsCalled?: SlickEvent;
 }
 
 export interface CssStyleHash {
