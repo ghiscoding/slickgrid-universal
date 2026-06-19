@@ -1,0 +1,14 @@
+# vexp — internal files (auto-generated, not user-managed)
+# index.db is rebuilt from manifest.json on checkout
+index.db
+index.db-wal
+index.db-shm
+vexp.log
+daemon.log
+daemon.sock
+daemon.pid
+daemon.pipe
+mcp.port
+healthy
+parent_workspace.json
+token-savings-report.md

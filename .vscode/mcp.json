@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "vexp": {
+      "type": "stdio",
+      "command": "/home/ghislainb/.nvm/versions/node/v24.16.0/bin/node",
+      "args": [
+        "/home/ghislainb/.vscode-insiders/extensions/vexp.vexp-vscode-2.0.31-linux-x64/dist/mcp-server.cjs"
+      ],
+      "env": {
+        "VEXP_WORKSPACE": "/home/ghislainb/sourcecode/slickgrid-universal"
+      }
+    }
+  }
+}
