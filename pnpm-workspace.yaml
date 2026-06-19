@@ -8,7 +8,7 @@ packages:
 catalog:
   '@4tw/cypress-drag-drop': ^2.3.1
   '@angular-eslint/eslint-plugin': ^21.4.0
-  '@faker-js/faker': ^10.4.0
+  '@faker-js/faker': ^10.5.0
   '@fnando/sparkline': ^0.3.10
   '@formkit/tempo': ^1.1.0
   '@popperjs/core': ^2.11.8
@@ -26,7 +26,7 @@ catalog:
   cypress: ^15.17.0
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
-  dompurify: ^3.4.9
+  dompurify: ^3.4.11
   globals: ^17.6.0
   i18next: ^25.10.10
   i18next-vue: ^5.4.0
