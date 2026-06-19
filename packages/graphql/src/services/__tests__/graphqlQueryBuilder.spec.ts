@@ -169,31 +169,33 @@ describe('GraphqlQueryBuilder', () => {
   });
 
   it('should throw Error if find input items have zero props', () => {
-    expect(() => new GraphqlQueryBuilder('x').find({})).toThrow('');
+    expect(() => new GraphqlQueryBuilder('x').find({})).toThrow('Alias objects should only have one value. was passed: {}');
   });
 
   it('should throw Error if find input items have multiple props', () => {
-    expect(() => new GraphqlQueryBuilder('x').find({ a: 'z', b: 'y' })).toThrow('');
+    expect(() => new GraphqlQueryBuilder('x').find({ a: 'z', b: 'y' })).toThrow('Alias objects should only have one value. was passed: {"a":"z","b":"y"}');
   });
 
   it('should throw Error if find is undefined', () => {
-    expect(() => new GraphqlQueryBuilder('x').find()).toThrow('');
+    expect(() => new GraphqlQueryBuilder('x').find()).toThrow('find value can not be >>falsy<<');
   });
 
   it('should throw Error if no find values have been set', () => {
-    expect(() => `${new GraphqlQueryBuilder('x')}`).toThrow('');
+    expect(() => `${new GraphqlQueryBuilder('x')}`).toThrow(`return properties are not defined. use the 'find' function to defined them`);
   });
 
   it('should throw Error if find is not valid', () => {
-    expect(() => new GraphqlQueryBuilder('x').find(123)).toThrow('');
+    expect(() => new GraphqlQueryBuilder('x').find(123)).toThrow('cannot handle Find value of 123');
   });
 
   it('should throw Error if you accidentally pass an undefined', () => {
-    expect(() => new GraphqlQueryBuilder('x', undefined)).toThrow('');
+    expect(() => new GraphqlQueryBuilder('x', undefined)).toThrow('You have passed undefined as Second argument to "Query"');
   });
 
   it('should throw Error it is not an input object for alias', () => {
     // @ts-ignore: 2345
-    expect(() => new GraphqlQueryBuilder('x', true)).toThrow('');
+    expect(() => new GraphqlQueryBuilder('x', true)).toThrow(
+      'Second argument to "Query" should be an alias name(String) or filter arguments(Object). What was passed is: true'
+    );
   });
 });

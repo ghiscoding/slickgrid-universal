@@ -361,7 +361,9 @@ describe('ExtensionService', () => {
           () => undefined as unknown as GridService
         );
 
-        expect(() => service.bindDifferentExtensions()).toThrow('');
+        expect(() => service.bindDifferentExtensions()).toThrow(
+          '[Slickgrid-Universal] the RowBasedEdit Plugin requires a GridService to be configured and available'
+        );
       });
 
       it('should register the ColumnPicker addon when "enableColumnPicker" is set in the grid options', () => {

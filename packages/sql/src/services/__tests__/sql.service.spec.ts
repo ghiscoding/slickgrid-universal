@@ -111,7 +111,7 @@ describe('SqlService', () => {
 
     it('should throw an error when no service options exists after service init', () => {
       service.init(undefined as any);
-      expect(() => service.buildQuery()).toThrow('');
+      expect(() => service.buildQuery()).toThrow('SQL Service requires the "tableName" property and columns to properly build the SQL query');
     });
 
     it('should throw an error when no tableName is provided in the service options after service init', () => {
@@ -121,7 +121,7 @@ describe('SqlService', () => {
 
     it('should throw an error when no column definitions is provided in the service options after service init', () => {
       service.init({ tableName: 'users' });
-      expect(() => service.buildQuery()).toThrow('');
+      expect(() => service.buildQuery()).toThrow('SQL Service requires the "tableName" property and columns to properly build the SQL query');
     });
 
     it('should return a simple SQL query with pagination set and includes all fields', () => {
@@ -533,7 +533,7 @@ describe('SqlService', () => {
   describe('processOnFilterChanged method', () => {
     it('should throw an error when grid is undefined', () => {
       service.init(serviceOptions, paginationOptions, gridStub);
-      expect(() => service.processOnFilterChanged(null as any, { grid: undefined } as any)).toThrow('');
+      expect(() => service.processOnFilterChanged(null as any, { grid: undefined } as any)).toThrow('SQLService: "args" is not populated correctly');
     });
 
     it('should return a query with the new filter', () => {
@@ -1793,12 +1793,12 @@ describe('SqlService', () => {
     });
 
     it('should throw in _buildOrderByClause if options, tableName, or columns are missing', () => {
-      expect(() => service['buildOrderByClause']()).toThrow('');
+      expect(() => service['buildOrderByClause']()).toThrow('SQL Service requires the "tableName" property to properly build the SQL query');
       service.options = { tableName: 'users' };
-      expect(() => service['buildOrderByClause']()).toThrow('');
+      expect(() => service['buildOrderByClause']()).toThrow('SQL Service requires the "tableName" property to properly build the SQL query');
       service.options = undefined as any;
       service['_columns'] = [{ id: 'foo', field: 'foo' }];
-      expect(() => service['buildOrderByClause']()).toThrow('');
+      expect(() => service['buildOrderByClause']()).toThrow('SQL Service requires the "tableName" property to properly build the SQL query');
     });
 
     it('should return empty string from _buildOrderByClause if no valid sorters', () => {

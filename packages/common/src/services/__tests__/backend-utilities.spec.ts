@@ -113,7 +113,7 @@ describe('Backend Utility Service', () => {
 
     it('should throw back the error when callback was provided', () => {
       gridOptionMock.backendServiceApi!.onError = undefined;
-      expect(() => service.onBackendError('some error', gridOptionMock.backendServiceApi!)).toThrow('');
+      expect(() => service.onBackendError('some error', gridOptionMock.backendServiceApi!)).toThrow('some error');
     });
   });
 
