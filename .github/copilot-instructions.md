@@ -2,6 +2,12 @@
 
 - in all interactions and commit messages, be extremely concise and sacrifice grammar for the sake of concision.
 
+## Tools
+
+- Dependency graph/impact (JS/TS): use `madge` when available
+- Prefer non-SVG output for machine use when possible; use SVG only for visualization
+- Circular deps: `madge --circular`
+
 ## Repository Overview
 This is a monorepo for SlickGrid Universal, which serves as a framework for grid functionality across multiple platforms. As a framework, stability and backward compatibility are critical:
 - Avoid breaking changes whenever possible. Instead, use deprecations and overloads to phase out old APIs or behaviors, only removing them after a full deprecation cycle.

@@ -138,6 +138,7 @@
     "globals": "catalog:",
     "jsdom": "catalog:",
     "jsdom-global": "catalog:",
+    "madge": "^8.0.0",
     "npm-run-all2": "catalog:",
     "oxlint": "catalog:",
     "prettier": "^3.8.4",
