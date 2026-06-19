@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.8.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.0...v10.8.1) (2026-06-19)
+
+### Bug Fixes
+
+* **React:** assign CustomDataView to SharedService, fixes [#2614](https://github.com/ghiscoding/slickgrid-universal/issues/2614) ([#2617](https://github.com/ghiscoding/slickgrid-universal/issues/2617)) ([03637e4](https://github.com/ghiscoding/slickgrid-universal/commit/03637e4ac4240f1183c1a0c790c5d8397fd67349)) - by @ghiscoding
+
 ## [10.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.7.1...v10.8.0) (2026-06-13)
 
 **Note:** Version bump only for package @slickgrid-universal/utils
