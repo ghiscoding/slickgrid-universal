@@ -23,7 +23,7 @@
     },
     // Babel new major versions fail in Angular, let's ignore those
     {
-      packageNames: ['@babel/core', '@babel/plugin-proposal-decorators'],
+      packageNames: ['@babel/core', '@babel/plugin-proposal-decorators', 'undici'],
       allowedVersions: '< 8.0.0',
     },
     // postponed few packages to next major
