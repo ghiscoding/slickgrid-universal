@@ -295,7 +295,9 @@ describe('GridOdataService', () => {
   describe('processOnFilterChanged method', () => {
     it('should throw an error when backendService is undefined', () => {
       service.init(serviceOptions, paginationOptions, undefined);
-      expect(() => service.processOnFilterChanged(null as any, { grid: gridStub } as any)).toThrow('');
+      expect(() => service.processOnFilterChanged(null as any, { grid: gridStub } as any)).toThrow(
+        'Something went wrong in the GridOdataService, "backendServiceApi" is not initialized'
+      );
     });
 
     it('should throw an error when grid is undefined', () => {

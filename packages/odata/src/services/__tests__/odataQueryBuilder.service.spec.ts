@@ -23,7 +23,7 @@ describe('OdataService', () => {
 
     it('should throw an error when odata options are null', () => {
       service.options = undefined as any;
-      expect(() => service.buildQuery()).toThrow('');
+      expect(() => service.buildQuery()).toThrow('Odata Service requires certain options like "top" for it to work');
     });
 
     it('should return a query with $top pagination', () => {
