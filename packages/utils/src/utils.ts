@@ -1,5 +1,7 @@
 import type { AnyFunction } from './models/types.js';
 
+const unsafeMergeKeys = new Set(['__proto__', 'constructor', 'prototype']);
+
 /**
  * Add an item to an array only when the item does not exists, when the item is an object we will be using their "id" to compare
  * @param inputArray
@@ -107,8 +109,8 @@ export function deepMerge(target: any, ...sources: any[]): any {
 
   if (isObject(target) && isObject(source)) {
     Object.keys(source).forEach((prop) => {
-      if (source.hasOwnProperty(prop)) {
-        if (prop in target) {
+      if (Object.prototype.hasOwnProperty.call(source, prop) && !unsafeMergeKeys.has(prop)) {
+        if (Object.prototype.hasOwnProperty.call(target, prop)) {
           // handling merging of two properties with equal names
           if (typeof (target as any)[prop] !== 'object') {
             (target as any)[prop] = (source as any)[prop];

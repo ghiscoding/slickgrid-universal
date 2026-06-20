@@ -604,6 +604,31 @@ describe('Service/Utilies', () => {
         e: 2,
       });
     });
+
+    it('should ignore prototype pollution keys while merging objects', () => {
+      delete (Object.prototype as any).polluted;
+
+      const input1 = {};
+      const input2 = JSON.parse('{"__proto__":{"polluted":"yes"},"constructor":{"prototype":{"polluted":"yes"}},"prototype":{"polluted":"yes"}}');
+
+      const output = deepMerge(input1, input2);
+
+      expect(output).toEqual({});
+      expect((Object.prototype as any).polluted).toBeUndefined();
+      expect(({} as any).polluted).toBeUndefined();
+    });
+
+    it('should not recursively merge into inherited target properties', () => {
+      const inheritedOptions = { inherited: true };
+      const target = Object.create({ options: inheritedOptions });
+      const source = { options: { own: true } };
+
+      const output = deepMerge(target, source);
+
+      expect(output.options).toEqual({ own: true });
+      expect(Object.prototype.hasOwnProperty.call(output, 'options')).toBe(true);
+      expect(inheritedOptions).toEqual({ inherited: true });
+    });
   });
 
   describe('emptyObject() method', () => {
