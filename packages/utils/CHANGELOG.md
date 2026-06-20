@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.8.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.1...v10.8.2) (2026-06-20)
+
+### Bug Fixes
+
+* **utils:** prevent prototype pollution in deepMerge ([#2630](https://github.com/ghiscoding/slickgrid-universal/issues/2630)) ([62071e8](https://github.com/ghiscoding/slickgrid-universal/commit/62071e87567ad0aef779c8e27c7502f7b0b56a45)) - by @Dremig
+
 ## [10.8.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.0...v10.8.1) (2026-06-19)
 
 ### Bug Fixes
