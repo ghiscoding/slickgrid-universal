@@ -202,6 +202,21 @@ describe('Service/domUtilies', () => {
       expect(result).toBe('<div><span>some text</span></div>');
     });
 
+    it('should fall back to textContent when fragment children are not HTMLElements', () => {
+      const fragment = new DocumentFragment();
+      fragment.appendChild(document.createTextNode('some text'));
+
+      // Your fallback `|| input.textContent || ''` should kick in,
+      // because innerHTML/outerHTML on a Text node via (node as HTMLElement)[type] is undefined.
+      expect(getHtmlStringOutput(fragment, 'innerHTML')).toBe('some text');
+      expect(getHtmlStringOutput(fragment, 'outerHTML')).toBe('some text');
+    });
+
+    it('should return empty string when fragment has no children', () => {
+      const fragment = new DocumentFragment();
+      expect(getHtmlStringOutput(fragment)).toBe('');
+    });
+
     it('should return innerHTML of input div when input is a div and no argument type is provided, defaults to innerHTML', () => {
       const div = document.createElement('div');
       const span = document.createElement('span');
