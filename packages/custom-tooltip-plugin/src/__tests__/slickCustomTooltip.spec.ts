@@ -274,6 +274,81 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm.textContent).toBe('editing input tooltip text');
   });
 
+  it('should set tooltip accessibility attributes and associate the tooltip with the trigger element via aria-describedby', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.setAttribute('title', 'accessible tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
+    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.id).toBeTruthy();
+    expect(tooltipElm.getAttribute('role')).toBe('tooltip');
+    expect(tooltipElm.getAttribute('aria-live')).toBe('polite');
+    expect(tooltipElm.getAttribute('aria-atomic')).toBe('true');
+    expect(cellNode.getAttribute('aria-describedby')).toBe(tooltipElm.id);
+  });
+
+  it('should restore previous aria-describedby on the trigger when tooltip is hidden', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.setAttribute('title', 'accessible tooltip text');
+    cellNode.setAttribute('aria-describedby', 'previous-tooltip-id');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
+    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(cellNode.getAttribute('aria-describedby')).toBe(tooltipElm.id);
+
+    plugin.hideTooltip();
+
+    expect(cellNode.getAttribute('aria-describedby')).toBe('previous-tooltip-id');
+    expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
+  });
+
+  it('should remove aria-describedby from the trigger when tooltip is hidden and no previous value existed', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.setAttribute('title', 'accessible tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
+    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(cellNode.getAttribute('aria-describedby')).toBe(tooltipElm.id);
+
+    plugin.hideTooltip();
+
+    expect(cellNode.hasAttribute('aria-describedby')).toBe(false);
+    expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
+  });
+
   it('should create a tooltip from the editor [title] attribute and a formatter instead of the cell [title] when currently editing (editor lock) and a formatter is provided', () => {
     vi.spyOn(getEditorLockMock, 'isActive').mockReturnValue(true);
     const cellNode = document.createElement('div');
