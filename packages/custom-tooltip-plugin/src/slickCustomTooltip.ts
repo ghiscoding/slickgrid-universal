@@ -73,6 +73,9 @@ export class SlickCustomTooltip {
   protected _sharedService?: SharedService | null = null;
   protected _tooltipBodyElm?: HTMLDivElement;
   protected _tooltipElm?: HTMLDivElement;
+  protected _tooltipTriggerElm?: HTMLElement | null;
+  protected _tooltipId?: string;
+  protected _previousAriaDescribedBy?: string | null;
   protected _mouseTarget?: HTMLElement | null;
   protected _hasMultipleTooltips = false;
   protected _defaultOptions = {
@@ -253,6 +256,17 @@ export class SlickCustomTooltip {
   hideTooltip(): void {
     this._cancellablePromise?.cancel();
     this._observable$?.unsubscribe();
+
+    if (this._tooltipTriggerElm) {
+      if (this._previousAriaDescribedBy) {
+        this._tooltipTriggerElm.setAttribute('aria-describedby', this._previousAriaDescribedBy);
+      } else {
+        this._tooltipTriggerElm.removeAttribute('aria-describedby');
+      }
+      this._tooltipTriggerElm = null;
+      this._previousAriaDescribedBy = undefined;
+      this._tooltipId = undefined;
+    }
 
     if (this.addonOptions?.persistOnHover === false) {
       this.clearTimeouts();
@@ -594,10 +608,25 @@ export class SlickCustomTooltip {
     inputTitleElm?: Element | null
   ): void {
     // create the tooltip DOM element with the text returned by the Formatter
-    this._tooltipElm = createDomElement('div', { className: this.className });
+    const tooltipId = `${this.gridUid}-custom-tooltip-${cell.row}-${cell.cell}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    this._tooltipId = tooltipId;
+    this._tooltipElm = createDomElement('div', {
+      id: tooltipId,
+      className: this.className,
+      role: 'tooltip',
+      ariaLive: 'polite',
+      ariaAtomic: 'true',
+    });
     this._tooltipBodyElm = createDomElement('div', { className: this.bodyClassName });
     this._tooltipElm.classList.add(this.gridUid, `l${cell.cell}`, `r${cell.cell}`);
     this.tooltipElm?.appendChild(this._tooltipBodyElm);
+
+    const tooltipTriggerElm = (this._mouseTarget || this._cellNodeElm) as HTMLElement | null;
+    if (tooltipTriggerElm) {
+      this._tooltipTriggerElm = tooltipTriggerElm;
+      this._previousAriaDescribedBy = tooltipTriggerElm.getAttribute('aria-describedby');
+      tooltipTriggerElm.setAttribute('aria-describedby', tooltipId);
+    }
 
     // when cell is currently lock for editing, we'll force a tooltip title search
     // that can happen when user has a formatter but is currently editing and in that case we want the new value
