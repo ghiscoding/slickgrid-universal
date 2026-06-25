@@ -654,7 +654,7 @@ describe('AutocompleterFilter', () => {
   });
 
   describe('handleSelect method', () => {
-    it('should expect the "handleSelect" method to be called when the callback method is triggered when user provide his own filterOptions', () => {
+    it('should expect the "handleSelect" method to be called when the callback method is triggered when user provide his own filter options', () => {
       const spy = vi.spyOn(filter, 'handleSelect');
 
       mockColumn.filter.collection = [];

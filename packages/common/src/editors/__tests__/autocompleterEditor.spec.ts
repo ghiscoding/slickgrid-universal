@@ -689,7 +689,7 @@ describe('AutocompleterEditor', () => {
     });
 
     describe('renderItem callback method', () => {
-      it('should provide "renderItem" in the "editorOptions" and expect the autocomplete "render" to be overriden', () => {
+      it('should provide "renderItem" in the editor "options" and expect the autocomplete "render" to be overriden', () => {
         const mockTemplateString = `<div>Hello World</div>`;
         const mockTemplateCallback = () => mockTemplateString;
         mockColumn.editor = {
