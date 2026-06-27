@@ -20,6 +20,15 @@ const ROW_DETAIL_CONTAINER_PREFIX = 'container_';
 const PRELOAD_CONTAINER_PREFIX = 'container_loading';
 
 type AppData = Record<string, unknown>;
+
+export interface TeleportEntry {
+  id: string | number;
+  selector: string;
+  component: any;
+  data: ViewModelBindableInputData;
+  gen?: number;
+}
+
 export interface CreatedView {
   id: string | number;
   dataContext: any;
@@ -38,6 +47,12 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   protected _userProcessFn?: (item: any) => Promise<any>;
   protected gridContainerElement!: HTMLElement;
   protected _timer?: any;
+  protected _teleportEntries: TeleportEntry[] = [];
+  protected _teleportHostSetter?: (entries: TeleportEntry[]) => void;
+  /** Monotonically-increasing generation counter per entry id — never resets on removal so key always changes on re-add */
+  protected _teleportGenMap: Map<string | number, number> = new Map();
+  /** Tracks the last container Element handed to Vue Teleport per entry id — survives removal so we can detect new DOM nodes vs same-DOM re-renders */
+  protected _teleportContainerMap: Map<string | number, Element> = new Map();
 
   constructor(private readonly eventPubSubService: EventPubSubService) {
     super(eventPubSubService);
@@ -67,8 +82,29 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     super.dispose();
   }
 
+  /**
+   * Register the RowDetailTeleportHost component's state setter.
+   * When provided, row details render via Vue Teleport (staying inside the app's Vue component tree for proper
+   * provide/inject, Pinia, and Vue Router access). When undefined the plugin falls back to the legacy isolated createApp approach.
+   * @internal — called by RowDetailTeleportHost, not intended for direct use.
+   */
+  registerTeleportHost(setter: ((entries: TeleportEntry[]) => void) | undefined): void {
+    this._teleportHostSetter = setter;
+    if (setter) {
+      setter([...this._teleportEntries]);
+    }
+  }
+
   /** Dispose of all the opened Row Detail Panels Components */
   disposeAllViewComponents() {
+    if (this._teleportHostSetter) {
+      // Teleport mode: batch-clear all entries in a single state update
+      this._teleportEntries = [];
+      this._teleportHostSetter([]);
+      this._views = [];
+      this._teleportContainerMap.clear();
+      return;
+    }
     do {
       const view = this._views.pop();
       if (view) {
@@ -148,8 +184,12 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
           });
 
           this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
-            // unmount preload if exists
-            this._preloadApp?.unmount();
+            // unmount preload — either teleport entry or legacy app
+            if (this._teleportHostSetter) {
+              this._removeTeleportEntry('__preload__');
+            } else {
+              this._preloadApp?.unmount();
+            }
 
             // triggers after backend called "onAsyncResponse.notify()"
             // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
@@ -267,11 +307,10 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
-  /** Render (or re-render) the View Component (Row Detail) */
+  /** Render (or re-render) the preload View Component (Row Detail) */
   renderPreloadView(item: any) {
     const containerElement = this.gridContainerElement.querySelector(`.${PRELOAD_CONTAINER_PREFIX}`);
     if (this._preloadComponent && containerElement) {
-      const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
       const bindableData = {
         model: item,
         addon: this,
@@ -280,15 +319,33 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as AppData & ViewModelBindableInputData;
 
-      const tmpDiv = document.createElement('div');
-      this._preloadApp = createApp(this._preloadComponent, bindableData);
-      const instance = this._preloadApp.mount(tmpDiv) as ComponentPublicInstance;
-      bindableData.parentRef = instance;
-      containerElement.appendChild(instance.$el);
-
-      if (viewObj) {
-        viewObj.app = this._preloadApp;
-        viewObj.instance = instance;
+      if (this._teleportHostSetter) {
+        // Teleport mode: render preload via RowDetailTeleportHost (keeps Vue context/providers)
+        // Clear stale HTML when the container is a new DOM node (e.g. loadOnce restored saved HTML via innerHTML).
+        // Do NOT clear if it's the same DOM node Vue is already managing — that causes unmount errors.
+        const prevPreloadContainer = this._teleportContainerMap.get('__preload__');
+        if (!prevPreloadContainer || containerElement !== prevPreloadContainer) {
+          containerElement.textContent = '';
+        }
+        this._teleportContainerMap.set('__preload__', containerElement);
+        this._updateTeleportEntry({
+          id: '__preload__',
+          selector: `.${PRELOAD_CONTAINER_PREFIX}`,
+          component: this._preloadComponent,
+          data: bindableData as ViewModelBindableInputData,
+        });
+      } else {
+        // Legacy mode: isolated createApp per preload
+        const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
+        const tmpDiv = document.createElement('div');
+        this._preloadApp = createApp(this._preloadComponent, bindableData);
+        const instance = this._preloadApp.mount(tmpDiv) as ComponentPublicInstance;
+        bindableData.parentRef = instance;
+        containerElement.appendChild(instance.$el);
+        if (viewObj) {
+          viewObj.app = this._preloadApp;
+          viewObj.instance = instance;
+        }
       }
     }
   }
@@ -305,16 +362,33 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as AppData & ViewModelBindableInputData;
 
-      this.unmountViewWhenExists(item[this.datasetIdPropName]);
-
-      // empty container & load our Row Detail Vue Component dynamically
-      emptyElement(containerElement);
-      const tmpDiv = document.createElement('div');
-      const app = createApp(this._component, bindableData);
-      const instance = app.mount(tmpDiv) as ComponentPublicInstance;
-      bindableData.parentRef = app.component;
-      containerElement.appendChild(instance.$el);
-      this.upsertViewRefs(item, { app, instance, rendered: true });
+      if (this._teleportHostSetter) {
+        // Teleport mode: render via RowDetailTeleportHost so this panel stays inside the Vue component tree,
+        // giving it full access to provide/inject, Pinia, Vue Router, and other providers.
+        const selector = `.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`;
+        const prevContainer = this._teleportContainerMap.get(item[this.datasetIdPropName]);
+        if (!prevContainer || containerElement !== prevContainer) {
+          containerElement.textContent = '';
+        }
+        this._teleportContainerMap.set(item[this.datasetIdPropName], containerElement);
+        this._updateTeleportEntry({
+          id: item[this.datasetIdPropName],
+          selector,
+          component: this._component,
+          data: bindableData as ViewModelBindableInputData,
+        });
+        this.upsertViewRefs(item, { app: null, instance: null, rendered: true });
+      } else {
+        // Legacy mode: isolated createApp per row detail
+        this.unmountViewWhenExists(item[this.datasetIdPropName]);
+        emptyElement(containerElement);
+        const tmpDiv = document.createElement('div');
+        const app = createApp(this._component, bindableData);
+        const instance = app.mount(tmpDiv) as ComponentPublicInstance;
+        bindableData.parentRef = app.component;
+        containerElement.appendChild(instance.$el);
+        this.upsertViewRefs(item, { app, instance, rendered: true });
+      }
     }
   }
 
@@ -349,14 +423,59 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   }
 
   protected disposeViewComponent(expandedView: CreatedView): CreatedView | void {
+    expandedView.rendered = false;
+
+    if (this._teleportHostSetter) {
+      // Teleport mode: remove the teleport entry — RowDetailTeleportHost will unmount the component
+      this._removeTeleportEntry(expandedView.id);
+      return expandedView;
+    }
+
     if (expandedView?.instance) {
-      expandedView.rendered = false;
       const container = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
       if (container) {
         expandedView.app?.unmount();
         container.textContent = '';
         return expandedView;
       }
+    }
+  }
+
+  /** Add or update a teleport entry and notify the host setter */
+  protected _updateTeleportEntry(entry: TeleportEntry): void {
+    console.log('vueRowDetailView._updateTeleportEntry called for id:', entry.id, 'selector:', entry.selector);
+    const idx = this._teleportEntries.findIndex((e) => e.id === entry.id);
+    if (idx >= 0) {
+      // Entry already exists in the live list — preserve its generation so Vue keeps the same key
+      // and only patches props (no remount, no loss of inner component state like filter inputs).
+      entry.gen = this._teleportEntries[idx].gen;
+      this._teleportEntries[idx] = entry;
+    } else {
+      // Entry is new or was previously removed. Bump the per-id generation counter so the host
+      // key changes (e.g. "1-0" → "1-1"), ensuring Vue unmounts the old and mounts a fresh component.
+      const newGen = (this._teleportGenMap.get(entry.id) ?? -1) + 1;
+      this._teleportGenMap.set(entry.id, newGen);
+      entry.gen = newGen;
+      this._teleportEntries.push(entry);
+    }
+    console.log(
+      'vueRowDetailView._teleportEntries now:',
+      this._teleportEntries.map((e) => ({ id: e.id, selector: e.selector, gen: e.gen }))
+    );
+    this._teleportHostSetter?.([...this._teleportEntries]);
+  }
+
+  /** Remove a teleport entry by id and notify the host setter */
+  protected _removeTeleportEntry(id: string | number): void {
+    console.log('vueRowDetailView._removeTeleportEntry called for id:', id);
+    const idx = this._teleportEntries.findIndex((e) => e.id === id);
+    if (idx >= 0) {
+      this._teleportEntries.splice(idx, 1);
+      console.log(
+        'vueRowDetailView._teleportEntries after remove:',
+        this._teleportEntries.map((e) => ({ id: e.id, selector: e.selector, gen: e.gen }))
+      );
+      this._teleportHostSetter?.([...this._teleportEntries]);
     }
   }
 

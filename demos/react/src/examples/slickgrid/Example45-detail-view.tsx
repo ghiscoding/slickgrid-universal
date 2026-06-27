@@ -67,8 +67,12 @@ const Example45DetailView: React.FC<RowDetailViewProps<Distributor, typeof Examp
     let gridState: GridState | undefined;
     if (props.model.isUsingInnerGridStatePresets) {
       const gridStateStr = sessionStorage.getItem(`gridstate_${innerGridClass}`);
-      if (gridStateStr) {
-        gridState = JSON.parse(gridStateStr);
+      if (gridStateStr && gridStateStr !== 'undefined') {
+        try {
+          gridState = JSON.parse(gridStateStr);
+        } catch {
+          // ignore malformed JSON
+        }
       }
     }
 
@@ -91,7 +95,9 @@ const Example45DetailView: React.FC<RowDetailViewProps<Distributor, typeof Examp
   function handleBeforeGridDestroy() {
     if (props.model.isUsingInnerGridStatePresets) {
       const gridState = reactGridRef.current?.gridStateService.getCurrentGridState();
-      sessionStorage.setItem(`gridstate_${innerGridClass}`, JSON.stringify(gridState));
+      if (gridState) {
+        sessionStorage.setItem(`gridstate_${innerGridClass}`, JSON.stringify(gridState));
+      }
     }
   }
 

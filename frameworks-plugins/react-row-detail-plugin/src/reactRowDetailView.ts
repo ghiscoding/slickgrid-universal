@@ -12,12 +12,21 @@ import {
 } from '@slickgrid-universal/common';
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import type { ComponentType } from 'react';
 import type { Root } from 'react-dom/client';
 import { createReactComponentDynamically, type GridOption, type ViewModelBindableInputData } from 'slickgrid-react';
 import type { RowDetailView } from './interfaces.js';
 
 const ROW_DETAIL_CONTAINER_PREFIX = 'container_';
 const PRELOAD_CONTAINER_PREFIX = 'container_loading';
+
+export interface PortalEntry {
+  id: string | number;
+  container: Element;
+  component: ComponentType<any>;
+  data: ViewModelBindableInputData;
+  gen?: number;
+}
 
 export interface CreatedView {
   id: string | number;
@@ -37,6 +46,12 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   protected gridContainerElement!: HTMLElement;
   protected _timer?: any;
   _root?: Root;
+  protected _portalEntries: PortalEntry[] = [];
+  protected _portalHostSetter?: (entries: PortalEntry[]) => void;
+  /** Monotonically-increasing generation counter per entry id — never resets on removal so React key always changes on re-add */
+  protected _portalGenMap: Map<string | number, number> = new Map();
+  /** Tracks the last container Element handed to React per entry id — survives removal so we can detect new DOM nodes (loadOnce restored HTML) vs same-DOM re-renders */
+  protected _portalContainerMap: Map<string | number, Element> = new Map();
 
   constructor(private readonly eventPubSubService: EventPubSubService) {
     super(eventPubSubService);
@@ -68,12 +83,33 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
 
   /** Dispose of all the opened Row Detail Panels Components */
   disposeAllViewComponents() {
+    if (this._portalHostSetter) {
+      // Portal mode: batch-clear all entries in a single state update
+      this._portalEntries = [];
+      this._portalHostSetter([]);
+      this._views = [];
+      this._portalContainerMap.clear();
+      return;
+    }
     do {
       const view = this._views.pop();
       if (view) {
         this.disposeViewByItem(view);
       }
     } while (this._views.length > 0);
+  }
+
+  /**
+   * Register the RowDetailPortalHost component's state setter.
+   * When provided, row details render via React portals (staying inside the app's React tree for proper
+   * context propagation). When undefined the plugin falls back to the legacy isolated createRoot approach.
+   * @internal — called by RowDetailPortalHost, not intended for direct use.
+   */
+  registerPortalHost(setter: ((entries: PortalEntry[]) => void) | undefined): void {
+    this._portalHostSetter = setter;
+    if (setter) {
+      setter([...this._portalEntries]);
+    }
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
@@ -137,8 +173,12 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
           });
 
           this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
-            // dispose preload if exists
-            this._preloadRoot?.unmount();
+            // dispose preload — either portal entry or legacy root
+            if (this._portalHostSetter) {
+              this._removePortalEntry('__preload__');
+            } else {
+              this._preloadRoot?.unmount();
+            }
 
             // triggers after backend called "onAsyncResponse.notify()"
             // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
@@ -254,11 +294,10 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
-  /** Render (or re-render) the View Component (Row Detail) */
+  /** Render (or re-render) the preload View Component (Row Detail) */
   renderPreloadView(item: any) {
     const containerElement = this.gridContainerElement.querySelector(`.${PRELOAD_CONTAINER_PREFIX}`);
     if (this._preloadComponent && containerElement) {
-      // render row detail
       const bindableData = {
         model: item,
         addon: this,
@@ -266,11 +305,23 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
         dataView: this.dataView,
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
-      const detailContainer = document.createElement('section');
-      containerElement.appendChild(detailContainer);
 
-      const { root } = createReactComponentDynamically(this._preloadComponent, detailContainer, bindableData);
-      this._preloadRoot = root;
+      if (this._portalHostSetter) {
+        // Portal mode: render preload via RowDetailPortalHost (keeps React context/providers)
+        // Clear stale HTML when the container is a new DOM node (e.g. loadOnce restored saved HTML via innerHTML).
+        // Do NOT clear if it's the same DOM node React is already managing — that causes removeChild errors.
+        const prevPreloadContainer = this._portalContainerMap.get('__preload__');
+        if (!prevPreloadContainer || containerElement !== prevPreloadContainer) {
+          containerElement.textContent = '';
+        }
+        this._updatePortalEntry({ id: '__preload__', container: containerElement, component: this._preloadComponent, data: bindableData });
+      } else {
+        // Legacy mode: create isolated React root
+        const detailContainer = document.createElement('section');
+        containerElement.appendChild(detailContainer);
+        const { root } = createReactComponentDynamically(this._preloadComponent, detailContainer, bindableData);
+        this._preloadRoot = root;
+      }
     }
   }
 
@@ -288,16 +339,38 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
 
-      // load our Row Detail React Component dynamically, typically we would want to use `root.render()` after the preload component (last argument below)
-      // BUT the root render doesn't seem to work and shows a blank element, so we'll use `createRoot()` every time even though it shows a console log in Dev
-      // that is the only way I got it working so let's use it anyway and console warnings are removed in production anyway
-      const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
-      const { root } = createReactComponentDynamically(this._component, containerElement, bindableData);
-      if (viewObj) {
-        viewObj.root = root;
-        viewObj.rendered = true;
+      if (this._portalHostSetter) {
+        // Portal mode: render via RowDetailPortalHost so this panel stays inside the app's React tree,
+        // giving it full access to Context, Redux, Zustand, and other providers.
+        const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
+        // Clear stale HTML when the container is a new DOM node (e.g. loadOnce restored saved HTML via innerHTML).
+        // Do NOT clear if it's the same DOM node React is already managing — that causes removeChild errors.
+        const prevContainer = this._portalContainerMap.get(item[this.datasetIdPropName]);
+        if (!prevContainer || containerElement !== prevContainer) {
+          containerElement.textContent = '';
+        }
+        this._updatePortalEntry({
+          id: item[this.datasetIdPropName],
+          container: containerElement,
+          component: this._component,
+          data: bindableData,
+        });
+        if (viewObj) {
+          viewObj.rendered = true;
+        } else {
+          this.upsertViewRefs(item, null);
+        }
       } else {
-        this.upsertViewRefs(item, root);
+        // Legacy mode: each row detail gets its own isolated React root.
+        // Note: createRoot() is used every time since root.render() on a pre-existing root shows a blank element.
+        const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
+        const { root } = createReactComponentDynamically(this._component, containerElement, bindableData);
+        if (viewObj) {
+          viewObj.root = root;
+          viewObj.rendered = true;
+        } else {
+          this.upsertViewRefs(item, root);
+        }
       }
     }
   }
@@ -334,6 +407,13 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
 
   protected disposeViewComponent(expandedView: CreatedView): CreatedView | void {
     expandedView.rendered = false;
+
+    if (this._portalHostSetter) {
+      // Portal mode: remove the portal entry — RowDetailPortalHost will unmount the component
+      this._removePortalEntry(expandedView.id);
+      return expandedView;
+    }
+
     if (expandedView?.root) {
       const container = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
       if (container) {
@@ -341,6 +421,38 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
         container.textContent = '';
         return expandedView;
       }
+    }
+  }
+
+  /** Add or update a portal entry and notify the host setter */
+  protected _updatePortalEntry(entry: PortalEntry): void {
+    const idx = this._portalEntries.findIndex((e) => e.id === entry.id);
+    if (idx >= 0) {
+      // Entry already exists in the live list — preserve its generation so React keeps the same key
+      // and only patches props (no remount, no loss of inner component state like filter inputs).
+      entry.gen = this._portalEntries[idx].gen;
+      this._portalEntries[idx] = entry;
+    } else {
+      // Entry is new or was previously removed. Bump the per-id generation counter so the host
+      // key changes (e.g. "1-0" → "1-1"). This is critical for React 18 automatic batching:
+      // if remove + re-add happen in the same flush, the intermediate empty state is never
+      // committed; only a key change guarantees React unmounts the old and mounts a fresh component.
+      const newGen = (this._portalGenMap.get(entry.id) ?? -1) + 1;
+      this._portalGenMap.set(entry.id, newGen);
+      entry.gen = newGen;
+      this._portalEntries.push(entry);
+    }
+    // Always record the latest container so renderViewModel can distinguish new-DOM vs same-DOM on subsequent calls
+    this._portalContainerMap.set(entry.id, entry.container);
+    this._portalHostSetter?.([...this._portalEntries]);
+  }
+
+  /** Remove a portal entry by id and notify the host setter */
+  protected _removePortalEntry(id: string | number): void {
+    const idx = this._portalEntries.findIndex((e) => e.id === id);
+    if (idx >= 0) {
+      this._portalEntries.splice(idx, 1);
+      this._portalHostSetter?.([...this._portalEntries]);
     }
   }
 

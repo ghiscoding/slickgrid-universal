@@ -49,12 +49,20 @@ onBeforeUnmount(() => {
 onMounted(() => {
   innerDataset.value = [...props.model.orderData];
   showGrid.value = true;
+  console.log('Example45Detail mounted for id:', props.model.id);
+  // mark the container so tests can detect the detail has mounted
+  const container = document.querySelector(`.container_${props.model.id}`) as HTMLElement | null;
+  if (container) {
+    container.dataset.detailMounted = '1';
+  }
 });
 
 function handleBeforeGridDestroy() {
   if (props.model.isUsingInnerGridStatePresets) {
     const gridState = vueGrid.gridStateService.getCurrentGridState();
-    sessionStorage.setItem(`gridstate_${innerGridClass.value}`, JSON.stringify(gridState));
+    if (gridState) {
+      sessionStorage.setItem(`gridstate_${innerGridClass.value}`, JSON.stringify(gridState));
+    }
   }
 }
 
@@ -63,8 +71,12 @@ function defineGrid() {
   let gridState: GridState | undefined;
   if (props.model.isUsingInnerGridStatePresets) {
     const gridStateStr = sessionStorage.getItem(`gridstate_${innerGridClass.value}`);
-    if (gridStateStr) {
-      gridState = JSON.parse(gridStateStr);
+    if (gridStateStr && gridStateStr !== 'undefined') {
+      try {
+        gridState = JSON.parse(gridStateStr);
+      } catch {
+        // ignore malformed JSON
+      }
     }
   }
 

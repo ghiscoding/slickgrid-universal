@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { faker } from '@faker-js/faker';
-import { VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
+import { RowDetailTeleportHost, VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
 import { SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 import Example45Detail, { type Distributor, type OrderData } from './Example45Detail.vue';
@@ -17,9 +17,9 @@ const isUsingAutoHeight = ref(false);
 const isUsingInnerGridStatePresets = ref(false);
 const showSubTitle = ref(true);
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
-let vueGrid!: SlickgridVueInstance;
-
-const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName('rowDetailView') as VueRowDetailView);
+const vueGrid = ref<SlickgridVueInstance | undefined>(undefined);
+const rowDetailInstance = computed(() => vueGrid.value?.extensionService.getExtensionInstanceByName('rowDetailView') as VueRowDetailView);
+const rowDetailPlugin = ref<any | undefined>(undefined);
 
 onBeforeMount(() => {
   defineGrid();
@@ -133,17 +133,19 @@ function getData(count: number) {
 }
 
 function changeDetailViewRowCount() {
-  const options = rowDetailInstance.value.getOptions();
-  if (options?.panelRows) {
+  const instance = rowDetailInstance.value;
+  if (!instance) return;
+  const options = instance.getOptions ? instance.getOptions() : undefined;
+  if (options && options.panelRows) {
     options.panelRows = detailViewRowCount.value; // change number of rows dynamically
-    rowDetailInstance.value.setOptions(options);
+    instance.setOptions(options);
   }
 }
 
 function changeUsingResizerAutoHeight() {
   isUsingAutoHeight.value = !isUsingAutoHeight.value;
-  vueGrid.slickGrid?.setOptions({ autoResize: { ...gridOptions.value!.autoResize, autoHeight: isUsingAutoHeight.value } });
-  vueGrid.resizerService.resizeGrid();
+  vueGrid.value?.slickGrid?.setOptions({ autoResize: { ...gridOptions.value!.autoResize, autoHeight: isUsingAutoHeight.value } });
+  vueGrid.value?.resizerService.resizeGrid();
   return true;
 }
 
@@ -154,11 +156,11 @@ function changeUsingInnerGridStatePresets() {
 }
 
 function closeAllRowDetail() {
-  rowDetailInstance.value.collapseAll();
+  rowDetailInstance.value?.collapseAll?.();
 }
 
 function redrawAllRowDetail() {
-  rowDetailInstance.value.redrawAllViewComponents();
+  rowDetailInstance.value?.redrawAllViewComponents?.();
 }
 
 /** Just for demo purposes, we will simulate an async server call and return more details on the selected row item */
@@ -225,11 +227,12 @@ function toggleBodyBackground() {
 
 function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
-  queueMicrotask(() => vueGrid.resizerService.resizeGrid());
+  queueMicrotask(() => vueGrid.value?.resizerService.resizeGrid());
 }
 
 function vueGridReady(grid: SlickgridVueInstance) {
-  vueGrid = grid;
+  vueGrid.value = grid;
+  rowDetailPlugin.value = grid?.extensionService.getExtensionInstanceByName('rowDetailView');
 }
 </script>
 
@@ -341,5 +344,6 @@ function vueGridReady(grid: SlickgridVueInstance) {
       @onVueGridCreated="vueGridReady($event.detail)"
     >
     </slickgrid-vue>
+    <RowDetailTeleportHost :plugin="rowDetailPlugin" v-if="rowDetailPlugin" />
   </div>
 </template>

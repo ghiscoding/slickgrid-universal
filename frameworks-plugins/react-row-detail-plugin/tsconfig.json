@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "pretty": true,
+    "jsx": "react-jsx",
     "module": "esnext",
     "moduleResolution": "bundler",
     "target": "es2022",
