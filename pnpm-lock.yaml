@@ -36,9 +36,6 @@ catalogs:
     '@types/react-dom':
       specifier: ^19.2.3
       version: 19.2.3
-    '@types/sortablejs':
-      specifier: ^1.15.9
-      version: 1.15.9
     '@vitejs/plugin-react':
       specifier: ^6.0.2
       version: 6.0.2
@@ -117,9 +114,6 @@ catalogs:
     sass:
       specifier: ^1.101.0
       version: 1.101.0
-    sortablejs:
-      specifier: ^1.15.7
-      version: 1.15.7
     tslib:
       specifier: ^2.8.1
       version: 2.8.1
@@ -236,9 +230,6 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
-      sortablejs:
-        specifier: 'catalog:'
-        version: 1.15.7
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -1339,9 +1330,6 @@ importers:
       '@slickgrid-universal/utils':
         specifier: workspace:*
         version: link:../utils
-      '@types/sortablejs':
-        specifier: 'catalog:'
-        version: 1.15.9
       '@types/trusted-types':
         specifier: ^2.0.7
         version: 2.0.7
@@ -1354,9 +1342,6 @@ importers:
       multiple-select-vanilla:
         specifier: 'catalog:'
         version: 5.2.1
-      sortablejs:
-        specifier: 'catalog:'
-        version: 1.15.7
       vanilla-calendar-pro:
         specifier: ^3.1.0
         version: 3.1.0
@@ -4522,9 +4507,6 @@ packages:
 
   '@types/sizzle@2.3.10':
     resolution: {integrity: sha512-TC0dmN0K8YcWEAEfiPi5gJP14eJe30TTGjkvek3iM/1NdHHsdCA/Td6GvNndMOo/iSnIsZ4HuuhrYPDAmbxzww==}
-
-  '@types/sortablejs@1.15.9':
-    resolution: {integrity: sha512-7HP+rZGE2p886PKV9c9OJzLBI6BBJu1O7lJGYnPyG3fS4/duUCcngkNCjsLwIMV+WMqANe3tt4irrXHSIe68OQ==}
 
   '@types/tmp@0.2.6':
     resolution: {integrity: sha512-chhaNf2oKHlRkDGt+tiKE2Z5aJ6qalm7Z9rlLdBwmOiAAf09YQvvoLXjWK4HWPF1xU/fqvMgfNfpVoBscA/tKA==}
@@ -7715,9 +7697,6 @@ packages:
   sort-keys@6.0.0:
     resolution: {integrity: sha512-ueSlHJMwpIw42CJ4B11Uxzh/S0p0AlOyiNktlv2KOu5e1JpUE6DlC4AAUjXqesHdBRv/g0wC9Q4vwq0NP2pA9w==}
     engines: {node: '>=20'}
-
-  sortablejs@1.15.7:
-    resolution: {integrity: sha512-Kk8wLQPlS+yi1ZEf48a4+fzHa4yxjC30M/Sr2AnQu+f/MPwvvX9XjZ6OWejiz8crBsLwSq8GHqaxaET7u6ux0A==}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -11876,8 +11855,6 @@ snapshots:
 
   '@types/sizzle@2.3.10': {}
 
-  '@types/sortablejs@1.15.9': {}
-
   '@types/tmp@0.2.6': {}
 
   '@types/trusted-types@2.0.7': {}
@@ -15455,8 +15432,6 @@ snapshots:
   sort-keys@6.0.0:
     dependencies:
       is-plain-obj: 4.1.0
-
-  sortablejs@1.15.7: {}
 
   source-map-js@1.2.1: {}
 

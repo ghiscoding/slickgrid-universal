@@ -49,8 +49,6 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub.j
 import { UniversalContainerService } from '../../services/universalContainer.service.js';
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle.js';
 
-vi.mock('sortablejs');
-
 vi.useFakeTimers();
 
 const addVanillaEventPropagation = function (event: any) {
