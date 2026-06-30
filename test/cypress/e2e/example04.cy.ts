@@ -880,4 +880,75 @@ describe('Example 04 - Frozen Grid', () => {
       // Shift+Tab dosn't work in Cypress, so we can't go further with tests
     });
   });
+
+  describe('drag & drop column reordering with auto-scroll', () => {
+    it('should auto-scroll right viewport and reorder columns when "Start" is dragged well past the right edge (ending up after "Finish")', () => {
+      // Close the context menu opened by beforeEach
+      cy.get('body').type('{esc}');
+
+      // Control app timers to make drag auto-scroll deterministic in CI.
+      cy.clock();
+
+      // Normalize right viewport scroll so this test is isolated from previous test state.
+      cy.get('.slick-viewport-top.slick-viewport-right').then(($viewport) => {
+        $viewport[0].scrollLeft = 0;
+        $viewport[0].dispatchEvent(new Event('scroll', { bubbles: true }));
+      });
+      cy.get('.slick-viewport-top.slick-viewport-right').its('0.scrollLeft').should('equal', 0);
+
+      // Step 1: call SortableJS onStart for the "Start" column (1st right-section column).
+      // This sets canDragScroll=true (it's in _headerR) and binds the document 'drag' auto-scroll listener.
+      cy.get('.slick-header-columns-right').then(($rightHeader) => {
+        let sortInstance: any;
+        Object.keys($rightHeader[0]).forEach((prop) => {
+          if (prop.startsWith('Sortable')) sortInstance = ($rightHeader[0] as any)[prop];
+        });
+        expect(sortInstance).to.exist;
+        const startColumnEl = $rightHeader[0].querySelectorAll('.slick-header-column')[0] as HTMLElement;
+        sortInstance.options.onStart({ item: startColumnEl });
+      });
+
+      // Step 2: fire a document drag event well past the right edge (viewport-relative)
+      // to avoid CI flakiness caused by environment-dependent viewport widths.
+      cy.window().then((win) => {
+        const dragX = win.innerWidth + 1200;
+        cy.document().trigger('drag', { pageX: dragX, clientX: dragX, clientY: 50 });
+      });
+
+      // Step 3: advance mocked time so the 100ms scroll interval ticks several times.
+      cy.tick(350);
+
+      // Auto-scroll should have moved the right viewport to the right
+      cy.get('.slick-viewport-top.slick-viewport-right').its('0.scrollLeft').should('be.greaterThan', 0);
+
+      // Step 4: simulate the drag result — "Start" was moved to the right, past "Finish".
+      // SortableJS reads the DOM order via toArray() inside onEnd, so physically reorder the children first.
+      cy.get('.slick-header-columns-right').then(($rightHeader) => {
+        let sortInstance: any;
+        Object.keys($rightHeader[0]).forEach((prop) => {
+          if (prop.startsWith('Sortable')) sortInstance = ($rightHeader[0] as any)[prop];
+        });
+        expect(sortInstance).to.exist;
+        const cols = $rightHeader[0].querySelectorAll('.slick-header-column');
+        const startColumnEl = cols[0] as HTMLElement; // "Start"
+        const finishColumnEl = cols[1] as HTMLElement; // "Finish"
+
+        // Move "Finish" before "Start" → mirrors dragging Start past Finish
+        $rightHeader[0].insertBefore(finishColumnEl, startColumnEl);
+
+        // onEnd reads the new DOM order via toArray() and calls setColumns() if the order changed
+        sortInstance.options.onEnd({ item: startColumnEl, stopPropagation: () => {} });
+      });
+
+      // Right section should now be: Finish, Start, Completed, Cost | Duration, City of Origin, Action
+      cy.get('.slick-header-columns-right .slick-header-column:nth(0)').should('contain', 'Finish');
+      cy.get('.slick-header-columns-right .slick-header-column:nth(1)').should('contain', 'Start');
+      cy.get('.slick-header-columns-right .slick-header-column:nth(2)').should('contain', 'Completed');
+
+      // Left (frozen) section should remain unchanged: Sel, Title, % Complete
+      cy.get('.slick-header-columns-left .slick-header-column:nth(0)').should('contain', '');
+      cy.get('.slick-header-columns-left .slick-header-column:nth(1)').should('contain', 'Title');
+      cy.get('.slick-header-columns-left .slick-header-column:nth(2)').should('contain', '% Complete');
+    });
+  });
 });
