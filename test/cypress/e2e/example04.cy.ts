@@ -880,4 +880,88 @@ describe('Example 04 - Frozen Grid', () => {
       // Shift+Tab dosn't work in Cypress, so we can't go further with tests
     });
   });
+
+  describe('drag & drop column reordering with auto-scroll', () => {
+    it('should auto-scroll right viewport and reorder columns when "Start" is dragged well past the right edge (ending up after "Finish")', () => {
+      // Close the context menu opened by beforeEach
+      cy.get('body').type('{esc}');
+
+      // Control app timers to make drag auto-scroll deterministic in CI.
+      cy.clock();
+
+      // Normalize right viewport scroll so this test is isolated from previous test state.
+      cy.get('.slick-viewport-top.slick-viewport-right').then(($viewport) => {
+        $viewport[0].scrollLeft = 0;
+        $viewport[0].dispatchEvent(new Event('scroll', { bubbles: true }));
+      });
+      cy.get('.slick-viewport-top.slick-viewport-right').its('0.scrollLeft').should('equal', 0);
+
+      const dragDataTransfer = new DataTransfer();
+      const createDragLikeEvent = (eventName: string, x: number, y: number): Event => {
+        const evt = new Event(eventName, { bubbles: true, cancelable: true });
+        Object.defineProperty(evt, 'dataTransfer', { value: dragDataTransfer });
+        Object.defineProperty(evt, 'clientX', { value: x });
+        Object.defineProperty(evt, 'clientY', { value: y });
+        Object.defineProperty(evt, 'pageX', { value: x });
+        Object.defineProperty(evt, 'pageY', { value: y });
+        Object.defineProperty(evt, 'screenX', { value: x });
+        Object.defineProperty(evt, 'screenY', { value: y });
+        return evt;
+      };
+
+      // Step 1-2: use native drag events (FormKit branch) to start a drag on "Start",
+      // then move the pointer well past the right edge so document 'drag' starts auto-scroll.
+      cy.window().then((win) => {
+        const rightHeader = win.document.querySelector('.slick-header-columns-right') as HTMLElement;
+        const headerColumns = Array.from(rightHeader.querySelectorAll('.slick-header-column')) as HTMLElement[];
+        const startColumnEl = headerColumns.find((el) => (el.textContent ?? '').includes('Start')) as HTMLElement;
+
+        expect(startColumnEl).to.exist;
+
+        const startRect = startColumnEl.getBoundingClientRect();
+        const startX = startRect.left + startRect.width / 2;
+        const startY = startRect.top + startRect.height / 2;
+        const dragX = win.innerWidth + 1200;
+
+        startColumnEl.dispatchEvent(createDragLikeEvent('dragstart', startX, startY));
+        win.document.dispatchEvent(createDragLikeEvent('drag', dragX, startY));
+      });
+
+      // Step 3: advance mocked time so the 100ms scroll interval ticks several times.
+      cy.tick(350);
+
+      // Auto-scroll should have moved the right viewport to the right
+      cy.get('.slick-viewport-top.slick-viewport-right').its('0.scrollLeft').should('be.greaterThan', 0);
+
+      // Step 4: complete the native drag by dropping "Start" on/after "Finish" and ending drag.
+      cy.window().then((win) => {
+        const rightHeader = win.document.querySelector('.slick-header-columns-right') as HTMLElement;
+        const headerColumns = Array.from(rightHeader.querySelectorAll('.slick-header-column')) as HTMLElement[];
+        const startColumnEl = headerColumns.find((el) => (el.textContent ?? '').includes('Start')) as HTMLElement;
+        const finishColumnEl = headerColumns.find((el) => (el.textContent ?? '').includes('Finish')) as HTMLElement;
+
+        expect(startColumnEl).to.exist;
+        expect(finishColumnEl).to.exist;
+
+        const finishRect = finishColumnEl.getBoundingClientRect();
+        const finishX = finishRect.left + finishRect.width / 2;
+        const finishY = finishRect.top + finishRect.height / 2;
+
+        finishColumnEl.dispatchEvent(createDragLikeEvent('dragenter', finishX, finishY));
+        finishColumnEl.dispatchEvent(createDragLikeEvent('dragover', finishX, finishY));
+        finishColumnEl.dispatchEvent(createDragLikeEvent('drop', finishX, finishY));
+        startColumnEl.dispatchEvent(createDragLikeEvent('dragend', finishX, finishY));
+      });
+
+      // Right section should now be: Finish, Start, Completed, Cost | Duration, City of Origin, Action
+      cy.get('.slick-header-columns-right .slick-header-column:nth(0)').should('contain', 'Finish');
+      cy.get('.slick-header-columns-right .slick-header-column:nth(1)').should('contain', 'Start');
+      cy.get('.slick-header-columns-right .slick-header-column:nth(2)').should('contain', 'Completed');
+
+      // Left (frozen) section should remain unchanged: Sel, Title, % Complete
+      cy.get('.slick-header-columns-left .slick-header-column:nth(0)').should('contain', '');
+      cy.get('.slick-header-columns-left .slick-header-column:nth(1)').should('contain', 'Title');
+      cy.get('.slick-header-columns-left .slick-header-column:nth(2)').should('contain', '% Complete');
+    });
+  });
 });
