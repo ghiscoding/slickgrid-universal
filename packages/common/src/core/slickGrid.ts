@@ -2147,15 +2147,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // add/remove extra scroll padding for calculation
     const scrollColumnsRight = () => (this._viewportScrollContainerX.scrollLeft += 10);
     const scrollColumnsLeft = () => (this._viewportScrollContainerX.scrollLeft -= 10);
-    let prevColumnIds: Array<string | number> = [];
-    let columnMap: Map<string | number, { index: number; hidden: boolean; column: C }>;
-
-    let canDragScroll = false;
-
     const stopAutoScroll = () => {
       clearInterval(columnScrollTimer);
       columnScrollTimer = undefined;
     };
+    let prevColumnIds: Array<string | number> = [];
+    let columnMap: Map<string | number, { index: number; hidden: boolean; column: C }>;
+    let canDragScroll = false;
 
     // fires on document during native drag; also bind 'mousemove' for SortableJS forceFallback mode
     const autoScrollHandler = (e: DragEvent | MouseEvent) => {
@@ -2185,7 +2183,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // allow column to be resized even when they are not orderable
       preventOnFilter: false,
       revertClone: true,
-      scroll: false, // disable built-in scroll, we handle browser-edge auto-scroll ourselves
+      // use built-in SortableJS proximity scroll for non-frozen grids; frozen grids need custom scroll (wrong pane would be scrolled)
+      scroll: !this.hasFrozenColumns(),
       // lock unorderable columns by using a combo of filter + onMove
       filter: `.${this._options.unorderableColumnCssClass}`,
       onMove: (event) => {
@@ -2198,8 +2197,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         canDragScroll = !this.hasFrozenColumns() || this._headerR.contains(e.item);
 
         // bind 'drag' for native HTML5 drag and 'mousemove' for SortableJS forceFallback
-        this._bindingEventService.bind(document as any, 'drag', autoScrollHandler as EventListener, {}, 'colreorder');
-        this._bindingEventService.bind(document as any, 'mousemove', autoScrollHandler as EventListener, {}, 'colreorder');
+        this._bindingEventService.bind(document, 'drag', autoScrollHandler as EventListener, {}, 'colreorder');
+        this._bindingEventService.bind(document, 'mousemove', autoScrollHandler as EventListener, {}, 'colreorder');
 
         prevColumnIds = this.columns.map((c) => c.id);
 
