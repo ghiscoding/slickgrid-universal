@@ -1,8 +1,7 @@
+import { dragAndDrop, remapNodes, tearDown, type ParentConfig } from '@formkit/drag-and-drop';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { classNameToList, createDomElement, emptyElement, isEmptyObject } from '@slickgrid-universal/utils';
-import type { SortableEvent, Options as SortableOptions } from 'sortablejs';
-import Sortable from 'sortablejs/modular/sortable.core.esm.js';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
 import { SortDirectionNumber } from '../enums/index.js';
 import type {
@@ -47,7 +46,8 @@ export class SlickDraggableGrouping {
 
   protected _addonOptions!: DraggableGrouping;
   protected _bindingEventService: BindingEventService;
-  protected _droppableInstance?: Sortable;
+  protected _draggedColumnId: string | null = null;
+  protected _droppableParent?: HTMLElement;
   protected _dropzoneElm!: HTMLDivElement;
   protected _dropzonePlaceholderElm!: HTMLDivElement;
   protected _eventHandler!: SlickEventHandler;
@@ -57,8 +57,8 @@ export class SlickDraggableGrouping {
   protected _groupToggler?: HTMLDivElement;
   protected _isInitialized = false;
   protected _reorderedColumns: Column[] = [];
-  protected _sortableLeftInstance?: Sortable;
-  protected _sortableRightInstance?: Sortable;
+  protected _sortableLeftParent?: HTMLElement;
+  protected _sortableRightParent?: HTMLElement;
   protected _subscriptions: EventSubscription[] = [];
   protected _defaults = {
     dropPlaceHolderText: 'Drop a column header here to group by the column',
@@ -79,6 +79,16 @@ export class SlickDraggableGrouping {
     this._eventHandler = new SlickEventHandler();
   }
 
+  protected ensureWindowAbortSignal(parent: HTMLElement): void {
+    const win = parent.ownerDocument.defaultView;
+    if (win && globalThis.AbortController !== win.AbortController) {
+      globalThis.AbortController = win.AbortController;
+    }
+    if (win && globalThis.AbortSignal !== win.AbortSignal) {
+      globalThis.AbortSignal = win.AbortSignal;
+    }
+  }
+
   get addonOptions(): DraggableGroupingOption {
     return this._addonOptions;
   }
@@ -92,16 +102,16 @@ export class SlickDraggableGrouping {
     return this._dropzoneElm;
   }
 
-  get droppableInstance(): Sortable | undefined {
-    return this._droppableInstance;
+  get droppableParent(): HTMLElement | undefined {
+    return this._droppableParent;
   }
 
-  get sortableLeftInstance(): Sortable | undefined {
-    return this._sortableLeftInstance;
+  get sortableLeftParent(): HTMLElement | undefined {
+    return this._sortableLeftParent;
   }
 
-  get sortableRightInstance(): Sortable | undefined {
-    return this._sortableRightInstance;
+  get sortableRightParent(): HTMLElement | undefined {
+    return this._sortableRightParent;
   }
 
   get eventHandler(): SlickEventHandler {
@@ -124,7 +134,6 @@ export class SlickDraggableGrouping {
   get gridContainer(): HTMLElement {
     return this.grid.getContainerNode();
   }
-
   set isInitialized(state: boolean) {
     this._isInitialized = state;
   }
@@ -228,8 +237,9 @@ export class SlickDraggableGrouping {
   /** Dispose the plugin. */
   dispose(): void {
     this.destroySortableInstances();
-    if (this._droppableInstance?.el) {
-      this._droppableInstance?.destroy();
+    if (this._droppableParent) {
+      tearDown(this._droppableParent);
+      this._droppableParent = undefined;
     }
     this.onGroupChanged.unsubscribe();
     this._eventHandler.unsubscribeAll();
@@ -256,11 +266,14 @@ export class SlickDraggableGrouping {
   }
 
   destroySortableInstances(): void {
-    if (this._sortableLeftInstance?.el) {
-      this._sortableLeftInstance?.destroy();
+    this._bindingEventService.unbindAll('colreorder');
+    if (this._sortableLeftParent) {
+      tearDown(this._sortableLeftParent);
+      this._sortableLeftParent = undefined;
     }
-    if (this._sortableRightInstance?.el) {
-      this._sortableRightInstance?.destroy();
+    if (this._sortableRightParent) {
+      tearDown(this._sortableRightParent);
+      this._sortableRightParent = undefined;
     }
   }
 
@@ -305,34 +318,55 @@ export class SlickDraggableGrouping {
     _uid: string,
     trigger: (slickEvent: SlickEvent, data?: any) => void
   ): {
-    sortableLeftInstance: Sortable;
-    sortableRightInstance: Sortable;
+    sortableLeftParent: HTMLElement;
+    sortableRightParent: HTMLElement;
   } {
     this.destroySortableInstances();
     const dropzoneElm = grid.getTopHeaderPanel() || grid.getPreHeaderPanel();
     const draggablePlaceholderElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-draggable-dropzone-placeholder');
     const groupTogglerElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-group-toggle-all');
 
-    const sortableOptions = {
-      animation: 50,
-      ghostClass: 'slick-sortable-placeholder',
-      draggable: '.slick-header-column',
-      dataIdAttr: 'data-id',
-      group: {
-        name: 'shared',
-        pull: 'clone',
-        put: false,
-      },
-      // Fixes broken Firefox-Linux dragging
-      forceFallback: /firefox/i.test(navigator.userAgent) && /linux/i.test(navigator.userAgent),
-      revertClone: true,
-      // filter: function (_e, target) {
-      //   // block column from being able to be dragged if it's already a grouped column
-      //   // NOTE: need to disable for now since it also blocks the column reordering
-      //   return columnsGroupBy.some(c => c.id === target.getAttribute('data-id'));
-      // },
-      onStart: (e) => {
-        e.item.classList.add('slick-header-column-active');
+    const leftHeaderEl = this.gridContainer.querySelector(
+      `.${grid.getUID()} .slick-header-columns.slick-header-columns-left`
+    ) as HTMLDivElement;
+    const rightHeaderEl = this.gridContainer.querySelector(
+      `.${grid.getUID()} .slick-header-columns.slick-header-columns-right`
+    ) as HTMLDivElement;
+
+    const getColumnIds = (parent: HTMLElement): string[] =>
+      Array.from(parent.children)
+        .filter((el) => (el as HTMLElement).classList.contains('slick-header-column'))
+        .map((el) => (el as HTMLElement).dataset.id ?? '')
+        .filter(Boolean);
+
+    const reorderHeaderChildren = (parent: HTMLElement, values: string[]) => {
+      const allChildren = Array.from(parent.children) as HTMLElement[];
+      const draggableChildren = allChildren.filter((elm) => elm.classList.contains('slick-header-column'));
+      const draggableById = new Map(draggableChildren.map((elm) => [elm.dataset.id ?? '', elm]));
+
+      let dragIdx = 0;
+      const reorderedChildren = allChildren.map((elm) => {
+        if (!elm.classList.contains('slick-header-column')) {
+          return elm;
+        }
+        const nextId = values[dragIdx++];
+        return draggableById.get(nextId) ?? elm;
+      });
+
+      for (const child of reorderedChildren) {
+        parent.appendChild(child);
+      }
+    };
+
+    let reorderedIdsLeft: string[] = getColumnIds(leftHeaderEl);
+    let reorderedIdsRight: string[] = getColumnIds(rightHeaderEl);
+
+    const dndConfig: Partial<ParentConfig<string>> = {
+      group: `headers-${grid.getUID()}`,
+      draggingClass: 'slick-header-column-active',
+      dragPlaceholderClass: 'slick-sortable-placeholder',
+      draggable: (el) => el.classList.contains('slick-header-column'),
+      onDragstart: () => {
         if (draggablePlaceholderElm) {
           draggablePlaceholderElm.style.display = 'inline-block';
         }
@@ -342,8 +376,7 @@ export class SlickDraggableGrouping {
           groupTogglerElm.style.display = 'none';
         }
       },
-      onEnd: (e) => {
-        e.item.classList.remove('slick-header-column-active');
+      onDragend: () => {
         dropzoneElm?.classList.remove('slick-dropzone-hover');
         draggablePlaceholderElm?.parentElement?.classList.remove('slick-dropzone-placeholder-hover');
 
@@ -363,17 +396,12 @@ export class SlickDraggableGrouping {
           return;
         }
 
-        const reorderedIds = this.sortableLeftInstance?.toArray() ?? [];
+        // read final column order from reorderedIds (updated by setValues when formkit detects a sort/transfer)
+        const reorderedIds = reorderedIdsLeft;
 
         // when frozen columns are used, headers has more than one entry and we need the ids from all of them.
-        // though there is only really a left and right header, this will work even if that should change.
         if (headers.length > 1) {
-          const ids = this._sortableRightInstance?.toArray() ?? [];
-
-          // Note: the loop below could be simplified with:
-          // reorderedIds.push.apply(reorderedIds,ids);
-          // However, the loop is more in keeping with way-backward compatibility
-          for (const id of ids) {
+          for (const id of reorderedIdsRight) {
             reorderedIds.push(id);
           }
         }
@@ -385,19 +413,48 @@ export class SlickDraggableGrouping {
         }
         setColumns.call(grid, finalReorderedColumns);
         trigger.call(grid, grid.onColumnsReordered, { grid, impactedColumns: finalReorderedColumns });
-        e.stopPropagation();
         setupColumnResize.call(grid);
       },
-    } as SortableOptions;
+    };
 
-    this._sortableLeftInstance = Sortable.create(
-      this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-left`) as HTMLDivElement,
-      sortableOptions
-    );
-    this._sortableRightInstance = Sortable.create(
-      this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-right`) as HTMLDivElement,
-      sortableOptions
-    );
+    this.ensureWindowAbortSignal(leftHeaderEl);
+    dragAndDrop<string>({
+      parent: leftHeaderEl,
+      getValues: () => reorderedIdsLeft,
+      setValues: (values) => {
+        reorderedIdsLeft = values;
+        reorderHeaderChildren(leftHeaderEl, values);
+      },
+      config: dndConfig,
+    });
+    this.ensureWindowAbortSignal(rightHeaderEl);
+    dragAndDrop<string>({
+      parent: rightHeaderEl,
+      getValues: () => reorderedIdsRight,
+      setValues: (values) => {
+        reorderedIdsRight = values;
+        reorderHeaderChildren(rightHeaderEl, values);
+      },
+      config: dndConfig,
+    });
+    this._sortableLeftParent = leftHeaderEl;
+    this._sortableRightParent = rightHeaderEl;
+
+    // Track the dragged column ID via native drag events so the dropzone can handle the drop.
+    // @formkit/drag-and-drop doesn't support "clone on pull" cross-list behaviour, so the header →
+    // dropzone interaction is handled by native drag events wired in setupColumnDropbox().
+    // Use capture phase so we fire before formkit's node-level dragstart handler (which may stop propagation).
+    const trackDragStart = (e: DragEvent) => {
+      const target = (e.target as HTMLElement).closest('.slick-header-column') as HTMLElement | null;
+      this._draggedColumnId = target?.dataset.id ?? null;
+    };
+    const clearDraggedColumn = () => {
+      this._draggedColumnId = null;
+    };
+    this._bindingEventService.bind(leftHeaderEl, 'dragstart', trackDragStart as EventListener, { capture: true }, 'colreorder');
+    this._bindingEventService.bind(leftHeaderEl, 'dragend', clearDraggedColumn as EventListener, { capture: true }, 'colreorder');
+    this._bindingEventService.bind(rightHeaderEl, 'dragstart', trackDragStart as EventListener, { capture: true }, 'colreorder');
+    this._bindingEventService.bind(rightHeaderEl, 'dragend', clearDraggedColumn as EventListener, { capture: true }, 'colreorder');
 
     // user can optionally provide initial groupBy columns
     const initialGroupIds = this._addonOptions.initialGroupBy ?? this.gridOptions.presets?.grouping;
@@ -407,8 +464,8 @@ export class SlickDraggableGrouping {
     this._isInitialized = true;
 
     return {
-      sortableLeftInstance: this._sortableLeftInstance,
-      sortableRightInstance: this._sortableRightInstance,
+      sortableLeftParent: this._sortableLeftParent,
+      sortableRightParent: this._sortableRightParent,
     };
   }
 
@@ -582,6 +639,10 @@ export class SlickDraggableGrouping {
       }
     }
     this.updateGroupBy('remove-group');
+    // notify formkit that a chip was removed so its node tracking stays in sync
+    if (this._droppableParent) {
+      remapNodes(this._droppableParent);
+    }
   }
 
   protected addDragOverDropzoneListeners(): void {
@@ -599,39 +660,84 @@ export class SlickDraggableGrouping {
   protected setupColumnDropbox(): void {
     const dropzoneElm = this._dropzoneElm;
 
-    this._droppableInstance = Sortable.create(dropzoneElm, {
-      group: 'shared',
-      ghostClass: 'slick-droppable-sortitem-hover',
-      draggable: '.slick-dropped-grouping',
-      dragoverBubble: true,
-      onAdd: (evt: SortableEvent) => {
-        const el = evt.item as HTMLDivElement;
-        if (el.getAttribute('id')?.replace(this._gridUid, '')) {
-          // use Sortable's clone method to properly clone the element but add the missing clone() type definition (it's missing in `@types/sortablejs`)
-          const clonedElm = (Sortable.utils as Sortable.Utils & { clone<T extends HTMLElement>(el: T): T }).clone(
-            evt.item as HTMLDivElement
-          );
-          this.handleGroupByDrop(dropzoneElm, clonedElm);
-        }
-        el.parentNode?.removeChild(el);
-      },
-      onUpdate: () => {
-        const sortArray = this._droppableInstance?.toArray() ?? [];
-        const newGroupingOrder: Column[] = [];
-        for (const sortGroupId of sortArray) {
-          for (const groupByColumn of this.columnsGroupBy) {
-            if (groupByColumn.id === sortGroupId) {
-              newGroupingOrder.push(groupByColumn);
-              break;
-            }
+    // Use @formkit/drag-and-drop for within-dropzone sorting
+    const getDroppedGroupIds = (): string[] => this.columnsGroupBy.map((c) => String(c.id));
+
+    this.ensureWindowAbortSignal(dropzoneElm);
+
+    dragAndDrop<string>({
+      parent: dropzoneElm,
+      getValues: getDroppedGroupIds,
+      setValues: (values) => {
+        // Keep chip DOM order in sync with state order in vanilla DOM mode.
+        const droppedGroupElms = Array.from(dropzoneElm.querySelectorAll<HTMLDivElement>('.slick-dropped-grouping'));
+        for (const id of values) {
+          const targetElm = droppedGroupElms.find((elm) => elm.dataset.id === id);
+          if (targetElm) {
+            dropzoneElm.appendChild(targetElm);
           }
+        }
+
+        // reorder columnsGroupBy to match the new DOM order
+        const newGroupingOrder: Column[] = [];
+        for (const id of values) {
+          const col = this.columnsGroupBy.find((c) => String(c.id) === id);
+          if (col) newGroupingOrder.push(col);
         }
         this.columnsGroupBy = newGroupingOrder;
         this.updateGroupBy('sort-group');
       },
-    } as SortableOptions);
+      config: {
+        group: `dropzone-${this._gridUid}`,
+        draggable: (el) => el.classList.contains('slick-dropped-grouping'),
+        sortable: true,
+        dropZoneClass: 'slick-droppable-sortitem-hover',
+      },
+    });
+    this._droppableParent = dropzoneElm;
 
-    // Sortable doesn't have onOver, we need to implement it ourselves
+    // Handle header → dropzone drag via native drag events.
+    // We track the dragged column ID on native dragstart and handle the drop ourselves,
+    // since @formkit/drag-and-drop doesn't support "clone on pull" cross-list behaviour.
+    this._bindingEventService.bind(
+      dropzoneElm,
+      'dragover',
+      ((e: DragEvent) => {
+        if (this._draggedColumnId) {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzoneElm.classList.add('slick-dropzone-hover');
+        }
+      }) as EventListener,
+      { capture: true }
+    );
+
+    this._bindingEventService.bind(dropzoneElm, 'dragleave', (() => {
+      dropzoneElm.classList.remove('slick-dropzone-hover');
+    }) as EventListener);
+
+    this._bindingEventService.bind(
+      dropzoneElm,
+      'drop',
+      ((e: DragEvent) => {
+        if (this._draggedColumnId) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          dropzoneElm.classList.remove('slick-dropzone-hover');
+          const columnElm = this.grid.getHeaderColumn(this._draggedColumnId);
+          if (columnElm) {
+            this.handleGroupByDrop(dropzoneElm, columnElm);
+            // notify formkit that new chips were added so they become draggable for within-dropzone sorting
+            if (this._droppableParent) {
+              remapNodes(this._droppableParent);
+            }
+          }
+          this._draggedColumnId = null;
+        }
+      }) as EventListener,
+      { capture: true }
+    );
+
     this.addDragOverDropzoneListeners();
 
     if (this._groupToggler) {

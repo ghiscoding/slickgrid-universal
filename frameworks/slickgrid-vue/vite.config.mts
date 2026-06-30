@@ -25,6 +25,7 @@ export default defineConfig({
       // into your library
       external: [
         '@formkit/tempo',
+        '@formkit/drag-and-drop',
         '@slickgrid-universal/common',
         '@slickgrid-universal/custom-footer-component',
         '@slickgrid-universal/empty-warning-component',
@@ -35,7 +36,6 @@ export default defineConfig({
         'dequal',
         'i18next',
         'i18next-vue',
-        'sortablejs',
         'vue',
       ],
       output: {

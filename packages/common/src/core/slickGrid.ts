@@ -1,3 +1,4 @@
+import { dragAndDrop, tearDown, type ParentConfig } from '@formkit/drag-and-drop';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   classNameToList,
@@ -14,8 +15,6 @@ import {
   queueMicrotaskPolyfill,
   type CSSStyleDeclarationWritable,
 } from '@slickgrid-universal/utils';
-import type { SortableEvent, Options as SortableOptions } from 'sortablejs';
-import Sortable from 'sortablejs/modular/sortable.core.esm.js';
 import type { TrustedHTML } from 'trusted-types/lib';
 import type { SelectionModel } from '../enums/index.js';
 import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
@@ -530,8 +529,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected slickDraggableInstance: InteractionBase | null = null;
   protected slickMouseWheelInstances: Array<InteractionBase> = [];
   protected slickResizableInstances: Array<InteractionBase> = [];
-  protected sortableSideLeftInstance?: ReturnType<typeof Sortable.create>;
-  protected sortableSideRightInstance?: ReturnType<typeof Sortable.create>;
+  protected _sortableLeftParent?: HTMLElement;
+  protected _sortableRightParent?: HTMLElement;
   protected _pubSubService?: BasePubSub;
 
   /**
@@ -2139,76 +2138,138 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected setupColumnReorder(): void {
-    this.sortableSideLeftInstance?.destroy();
-    this.sortableSideRightInstance?.destroy();
+    this._bindingEventService.unbindAll('colreorder');
+    if (this._sortableLeftParent) {
+      tearDown(this._sortableLeftParent);
+      this._sortableLeftParent = undefined;
+    }
+    if (this._sortableRightParent) {
+      tearDown(this._sortableRightParent);
+      this._sortableRightParent = undefined;
+    }
 
-    let columnScrollTimer: any;
+    let columnScrollTimer: ReturnType<typeof setInterval> | undefined;
 
     // add/remove extra scroll padding for calculation
     const scrollColumnsRight = () => (this._viewportScrollContainerX.scrollLeft += 10);
     const scrollColumnsLeft = () => (this._viewportScrollContainerX.scrollLeft -= 10);
-    let prevColumnIds: Array<string | number> = [];
+    let prevDraggableColumnIds: string[] = [];
     let columnMap: Map<string | number, { index: number; hidden: boolean; column: C }>;
 
-    let canDragScroll = false;
-    const sortableOptions = {
-      animation: 50,
-      direction: 'horizontal',
-      ghostClass: 'slick-sortable-placeholder',
-      draggable: '.slick-header-column',
-      dragoverBubble: false,
-      // Fixes broken Firefox-Linux dragging
-      forceFallback: /firefox/i.test(navigator.userAgent) && /linux/i.test(navigator.userAgent),
-      // allow column to be resized even when they are not orderable
-      preventOnFilter: false,
-      revertClone: true,
-      scroll: !this.hasFrozenColumns(), // enable auto-scroll
-      // lock unorderable columns by using a combo of filter + onMove
-      filter: `.${this._options.unorderableColumnCssClass}`,
-      onMove: (event) => {
-        return !event.related.classList.contains(this._options.unorderableColumnCssClass as string);
-      },
-      onStart: (e) => {
-        e.item.classList.add('slick-header-column-active');
-        canDragScroll = !this.hasFrozenColumns() || getOffset(e.item).left > getOffset(this._viewportScrollContainerX).left;
+    const isDraggableHeaderElm = (elm: HTMLElement): boolean =>
+      elm.classList.contains('slick-header-column') && !elm.classList.contains(this._options.unorderableColumnCssClass!);
 
-        if (canDragScroll && (e as SortableEvent & { originalEvent: MouseEvent }).originalEvent.pageX > this._container.clientWidth) {
-          if (!columnScrollTimer) {
-            columnScrollTimer = setInterval(scrollColumnsRight, 100);
-          }
-        } else if (
-          canDragScroll &&
-          (e as SortableEvent & { originalEvent: MouseEvent }).originalEvent.pageX < getOffset(this._viewportScrollContainerX).left
-        ) {
-          if (!columnScrollTimer) {
-            columnScrollTimer = setInterval(scrollColumnsLeft, 100);
-          }
-        } else {
-          clearInterval(columnScrollTimer);
+    const getDraggableColumnIds = (parent: HTMLElement): string[] =>
+      Array.from(parent.children)
+        .filter((el) => isDraggableHeaderElm(el as HTMLElement))
+        .map((el) => (el as HTMLElement).dataset.id ?? '')
+        .filter(Boolean);
+
+    const reorderHeaderChildren = (parent: HTMLElement, values: string[]) => {
+      const allChildren = Array.from(parent.children) as HTMLElement[];
+      const draggableChildren = allChildren.filter((elm) => isDraggableHeaderElm(elm));
+      const draggableById = new Map(draggableChildren.map((elm) => [elm.dataset.id ?? '', elm]));
+
+      let dragIdx = 0;
+      const reorderedChildren = allChildren.map((elm) => {
+        if (!isDraggableHeaderElm(elm)) {
+          return elm;
         }
-        prevColumnIds = this.columns.map((c) => c.id);
+        const nextId = values[dragIdx++];
+        return draggableById.get(nextId) ?? elm;
+      });
 
-        // Create a map to track original column positions and hidden state
+      for (const child of reorderedChildren) {
+        parent.appendChild(child);
+      }
+    };
+
+    const ensureWindowAbortSignal = (parent: HTMLElement) => {
+      const win = parent.ownerDocument.defaultView;
+      if (win && globalThis.AbortController !== win.AbortController) {
+        globalThis.AbortController = win.AbortController;
+      }
+      if (win && globalThis.AbortSignal !== win.AbortSignal) {
+        globalThis.AbortSignal = win.AbortSignal;
+      }
+    };
+
+    let reorderedIdsLeft: string[] = getDraggableColumnIds(this._headerL);
+    let reorderedIdsRight: string[] = getDraggableColumnIds(this._headerR);
+
+    const config: Partial<ParentConfig<string>> = {
+      group: this.uid,
+      draggingClass: 'slick-header-column-active',
+      dragPlaceholderClass: 'slick-sortable-placeholder',
+      draggable: (el) => el.classList.contains('slick-header-column') && !el.classList.contains(this._options.unorderableColumnCssClass!),
+      accepts: (_targetParent, _initialParent, _currentParent, state) => {
+        const draggedEl = (state as any).draggedNodes?.[0]?.el as HTMLElement | undefined;
+        return !draggedEl?.classList.contains(this._options.unorderableColumnCssClass!);
+      },
+      onDragstart: (data) => {
+        const el = data.draggedNode.el as HTMLElement;
+        const stateWithCoords = data.state && 'coordinates' in data.state ? (data.state as { coordinates: { x: number } }) : undefined;
+        const startPageX =
+          typeof stateWithCoords?.coordinates.x === 'number'
+            ? stateWithCoords.coordinates.x + (globalThis?.scrollX ?? window.scrollX ?? 0)
+            : undefined;
+        const canDragScroll = !this.hasFrozenColumns() || this._headerR.contains(el);
+
+        reorderedIdsLeft = getDraggableColumnIds(this._headerL);
+        reorderedIdsRight = getDraggableColumnIds(this._headerR);
+        prevDraggableColumnIds = reorderedIdsLeft.concat(reorderedIdsRight);
         columnMap = new Map();
         this.columns.forEach((col, idx) => {
           columnMap.set(col.id, { index: idx, hidden: !!col.hidden, column: col });
         });
+
+        if (canDragScroll && typeof startPageX === 'number') {
+          const containerOffset = getOffset(this._container);
+          if (startPageX > containerOffset.left + this._container.clientWidth) {
+            columnScrollTimer = setInterval(scrollColumnsRight, 100);
+          } else if (startPageX < getOffset(this._viewportScrollContainerX).left) {
+            columnScrollTimer = setInterval(scrollColumnsLeft, 100);
+          }
+        }
+
+        this._bindingEventService.bind(
+          document,
+          'drag',
+          ((e: DragEvent) => {
+            if (e.clientX && e.clientY && canDragScroll) {
+              const containerOffset = getOffset(this._container);
+              const viewportLeft = getOffset(this._viewportScrollContainerX).left;
+              const containerRight = containerOffset.left + this._container.clientWidth;
+              if (!columnScrollTimer && e.pageX > containerRight) {
+                columnScrollTimer = setInterval(scrollColumnsRight, 100);
+              } else if (!columnScrollTimer && e.pageX < viewportLeft) {
+                columnScrollTimer = setInterval(scrollColumnsLeft, 100);
+              } else if (columnScrollTimer && e.pageX <= containerRight && e.pageX >= viewportLeft) {
+                clearInterval(columnScrollTimer);
+                columnScrollTimer = undefined;
+              }
+            }
+          }) as EventListener,
+          {},
+          'colreorder'
+        );
       },
-      onEnd: (e) => {
-        e.item.classList.remove('slick-header-column-active');
+      onDragend: () => {
+        this._bindingEventService.unbindAll('colreorder');
         clearInterval(columnScrollTimer);
+        columnScrollTimer = undefined;
         const prevScrollLeft = this.scrollLeft;
 
         if (!this.getEditorLock()?.commitCurrentEdit()) {
           return;
         }
 
-        let reorderedIds = this.sortableSideLeftInstance?.toArray() ?? [];
-        reorderedIds = reorderedIds.concat(this.sortableSideRightInstance?.toArray() ?? []);
+        // read final column order from reorderedIds (updated by setValues when formkit detects a sort/transfer)
+        const reorderedIds = reorderedIdsLeft.concat(reorderedIdsRight);
 
         const reorderedColumns: C[] = [];
-        for (let i = 0; i < reorderedIds.length; i++) {
-          reorderedColumns.push(this.columns[this.getColumnIndex(reorderedIds[i])]);
+        for (const id of reorderedIds) {
+          reorderedColumns.push(this.columns[this.getColumnIndex(id)]);
         }
 
         // Reconstruct final column array: insert hidden columns at their original indices
@@ -2216,31 +2277,49 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         let visibleIdx = 0;
         for (let i = 0; i < this.columns.length; i++) {
           const colInfo = columnMap.get(this.columns[i].id);
-          if (colInfo?.hidden) {
-            // Hidden column: insert at its original position
-            finalColumns.push(colInfo.column);
+          const isUnorderable = this.columns[i].reorderable === false;
+          if (colInfo?.hidden || isUnorderable) {
+            finalColumns.push(colInfo?.column ?? this.columns[i]);
           } else {
-            // Visible column: use reordered position
             finalColumns.push(reorderedColumns[visibleIdx++]);
           }
         }
 
-        e.stopPropagation();
-        if (!this.arrayEquals(prevColumnIds, reorderedIds)) {
+        if (!this.arrayEquals(prevDraggableColumnIds, reorderedIds)) {
           this.setColumns(finalColumns);
           // reapply previous scroll position since it might move back to x=0 after calling `setColumns()` (especially when `frozenColumn` is set)
           this.scrollToX(prevScrollLeft);
-          this.triggerEvent(this.onColumnsReordered, { impactedColumns: this.columns, previousColumnOrder: prevColumnIds });
+          this.triggerEvent(this.onColumnsReordered, { impactedColumns: this.columns, previousColumnOrder: prevDraggableColumnIds });
           this.setupColumnResize();
         }
         if (this.activeCellNode) {
           this.setFocus(); // refocus on active cell
         }
       },
-    } as SortableOptions;
+    };
 
-    this.sortableSideLeftInstance = Sortable.create(this._headerL, sortableOptions);
-    this.sortableSideRightInstance = Sortable.create(this._headerR, sortableOptions);
+    ensureWindowAbortSignal(this._headerL);
+    dragAndDrop<string>({
+      parent: this._headerL,
+      getValues: () => reorderedIdsLeft,
+      setValues: (values) => {
+        reorderedIdsLeft = values;
+        reorderHeaderChildren(this._headerL, values);
+      },
+      config,
+    });
+    ensureWindowAbortSignal(this._headerR);
+    dragAndDrop<string>({
+      parent: this._headerR,
+      getValues: () => reorderedIdsRight,
+      setValues: (values) => {
+        reorderedIdsRight = values;
+        reorderHeaderChildren(this._headerR, values);
+      },
+      config,
+    });
+    this._sortableLeftParent = this._headerL;
+    this._sortableRightParent = this._headerR;
   }
 
   protected getHeaderChildren(): HTMLElement[] {
@@ -2557,7 +2636,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
 
         this.updateCanvasWidth();
-        if (this._options.autoScrollOnColumnResize && !this._options.forceFitColumns) {
+        if (
+          this._options.autoScrollOnColumnResize &&
+          !this._options.forceFitColumns &&
+          !(this.hasFrozenColumns() && i <= this._options.frozenColumn!)
+        ) {
           const columnRight = this.columnPosRight[i];
           const scrollLeft = this._viewportScrollContainerX.scrollLeft;
           const viewportWidth = this._viewportScrollContainerX.clientWidth;
@@ -2644,12 +2727,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           onResize: (e, resizeElms) => {
             const targetEvent = (e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e;
             const targetPageX = (targetEvent as MouseEvent).pageX;
-            updateColumnResizeAutoScroll((targetEvent as MouseEvent).clientX, targetPageX, (resizePageX: number) => {
-              applyColumnResize(resizePageX, {
-                resizeableElement: resizeElms.resizeableElement,
-                resizeableHandleElement: resizeableHandle,
+            if (!(this.hasFrozenColumns() && i <= this._options.frozenColumn!)) {
+              updateColumnResizeAutoScroll((targetEvent as MouseEvent).clientX, targetPageX, (resizePageX: number) => {
+                applyColumnResize(resizePageX, {
+                  resizeableElement: resizeElms.resizeableElement,
+                  resizeableHandleElement: resizeableHandle,
+                });
               });
-            });
+            }
             applyColumnResize(targetPageX + resizeAutoScrollDeltaX, resizeElms);
           },
           onResizeEnd: (_e, resizeElms) => {
@@ -3052,11 +3137,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.unregisterPlugin(this.plugins[i]);
     }
 
-    if (this.sortableSideRightInstance?.el && typeof this.sortableSideRightInstance?.destroy === 'function') {
-      this.sortableSideRightInstance.destroy();
+    if (this._sortableRightParent) {
+      tearDown(this._sortableRightParent);
+      this._sortableRightParent = undefined;
     }
-    if (this.sortableSideLeftInstance?.el && typeof this.sortableSideLeftInstance?.destroy === 'function') {
-      this.sortableSideLeftInstance.destroy();
+    if (this._sortableLeftParent) {
+      tearDown(this._sortableLeftParent);
+      this._sortableLeftParent = undefined;
     }
 
     this._boundAncestors.length = 0; // reset array

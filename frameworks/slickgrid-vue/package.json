@@ -60,8 +60,7 @@
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/pagination-component": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "dequal": "catalog:",
-    "sortablejs": "catalog:"
+    "dequal": "catalog:"
   },
   "peerDependencies": {
     "vue": ">=3.5.0"

@@ -1,6 +1,6 @@
+import { remapNodes } from '@formkit/drag-and-drop';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, deepCopy } from '@slickgrid-universal/utils';
-import { type SortableOptions } from 'sortablejs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { Aggregators } from '../../aggregators/aggregators.index.js';
@@ -12,23 +12,14 @@ import { BackendUtilityService } from '../../services/backendUtility.service.js'
 import { SharedService } from '../../services/shared.service.js';
 import { SlickDraggableGrouping } from '../slickDraggableGrouping.js';
 
-vi.mock('sortablejs', () => ({
-  default: {
-    el: undefined,
-    options: {} as SortableOptions,
-    constructor: vi.fn(),
-    create: (el: HTMLElement, options: SortableOptions) => {
-      return {
-        el,
-        options,
-        destroy: vi.fn(),
-        toArray: vi.fn(),
-      };
-    },
-    utils: {
-      clone: (el: HTMLElement) => el.cloneNode(true),
-    },
-  },
+let mockDragAndDropCalls: Array<{ parent: HTMLElement; getValues: any; setValues: any; config: any }> = [];
+
+vi.mock('@formkit/drag-and-drop', () => ({
+  dragAndDrop: vi.fn((params: any) => {
+    mockDragAndDropCalls.push(params);
+  }),
+  remapNodes: vi.fn(),
+  tearDown: vi.fn(),
 }));
 
 const GRID_UID = 'slickgrid12345';
@@ -127,6 +118,7 @@ describe('Draggable Grouping Plugin', () => {
   let dropzoneElm: HTMLDivElement;
 
   beforeEach(() => {
+    mockDragAndDropCalls = [];
     gridContainerDiv = document.createElement('div');
     gridContainerDiv.className = `slickgrid-container ${GRID_UID}`;
     headerDiv = document.createElement('div');
@@ -296,19 +288,21 @@ describe('Draggable Grouping Plugin', () => {
         GRID_UID,
         triggerSpy
       );
-      vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.setValues(['age', 'medals']);
 
       const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-      fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
-      plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragstart?.({ draggedNode: { el: onStartItem } });
+      (plugin as any)._draggedColumnId = 'age';
+      vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(headerColumnDiv3);
+      dropzoneElm.dispatchEvent(new Event('drop'));
 
       let groupByRemoveElm = preHeaderDiv.querySelector('.slick-groupby-remove') as HTMLDivElement;
       const groupByRemoveImageElm = document.querySelector('.slick-groupby-remove-icon') as HTMLDivElement;
       let placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
 
-      expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
-      expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
-      expect(fn.sortableLeftInstance.destroy).toBeTruthy();
+      expect(fn.sortableLeftParent).toEqual(plugin.sortableLeftParent);
+      expect(fn.sortableRightParent).toEqual(plugin.sortableRightParent);
+      expect(plugin.sortableLeftParent).toBeTruthy();
       expect(groupByRemoveElm).toBeTruthy();
       expect(groupByRemoveImageElm).toBeTruthy();
 
@@ -337,14 +331,14 @@ describe('Draggable Grouping Plugin', () => {
         GRID_UID,
         triggerSpy
       );
-      vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue([]);
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.setValues([]);
 
       const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-      fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
-      plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
-      const endEvent = new CustomEvent('end');
-      Object.defineProperty(endEvent, 'item', { writable: true, configurable: true, value: headerColumnDiv3 });
-      fn.sortableLeftInstance.options.onEnd!(endEvent as any);
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragstart?.({ draggedNode: { el: onStartItem } });
+      (plugin as any)._draggedColumnId = 'age';
+      vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(headerColumnDiv3);
+      dropzoneElm.dispatchEvent(new Event('drop'));
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragend?.({});
 
       const placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
       const dropGroupingElm = preHeaderDiv.querySelector('.slick-dropped-grouping') as HTMLDivElement;
@@ -368,11 +362,11 @@ describe('Draggable Grouping Plugin', () => {
       );
 
       const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-      fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
-      plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
-      const endEvent = new CustomEvent('end');
-      Object.defineProperty(endEvent, 'item', { writable: true, configurable: true, value: headerColumnDiv3 });
-      fn.sortableLeftInstance.options.onEnd!(endEvent as any);
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragstart?.({ draggedNode: { el: onStartItem } });
+      (plugin as any)._draggedColumnId = 'age';
+      vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(headerColumnDiv3);
+      dropzoneElm.dispatchEvent(new Event('drop'));
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragend?.({});
 
       const groupByRemoveElm = document.querySelector('.slick-groupby-remove.mdi-close') as HTMLDivElement;
       expect(groupByRemoveElm).toBeTruthy();
@@ -382,7 +376,7 @@ describe('Draggable Grouping Plugin', () => {
       expect(triggerSpy).not.toHaveBeenCalled();
     });
 
-    it('should clear grouping and expect placeholder to be displayed when calling "onEnd" callback', () => {
+    it('should clear grouping and expect placeholder to be displayed when calling "onDragend" callback', () => {
       plugin.init(gridStub, { ...addonOptions });
       plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close color-danger' });
       const fn = plugin.setupColumnReorder(
@@ -398,18 +392,21 @@ describe('Draggable Grouping Plugin', () => {
       );
 
       const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-      fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
-      plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragstart?.({ draggedNode: { el: onStartItem } });
+      (plugin as any)._draggedColumnId = 'age';
+      vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(headerColumnDiv3);
+      const dragoverEvent = new Event('dragover', { bubbles: true, cancelable: true });
+      dropzoneElm.dispatchEvent(dragoverEvent);
+      expect(dragoverEvent.defaultPrevented).toBe(true);
+      dropzoneElm.dispatchEvent(new Event('drop'));
       plugin.clearDroppedGroups();
-      const endEvent = new CustomEvent('end');
-      Object.defineProperty(endEvent, 'item', { writable: true, configurable: true, value: headerColumnDiv3 });
-      fn.sortableLeftInstance.options.onEnd!(endEvent as any);
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragend?.({});
 
       const draggablePlaceholderElm = dropzoneElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
       expect(draggablePlaceholderElm.style.display).toEqual('inline-block');
     });
 
-    it('should execute the "onEnd" callback of Sortable and expect css classes to be updated', () => {
+    it('should execute the "onDragend" callback and expect css classes to be updated', () => {
       plugin.init(gridStub, { ...addonOptions });
       plugin.setColumns(mockColumns);
       plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close' });
@@ -426,22 +423,60 @@ describe('Draggable Grouping Plugin', () => {
         GRID_UID,
         triggerSpy
       );
-      vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.setValues(['age', 'medals']);
 
       const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-      fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
-      plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragstart?.({ draggedNode: { el: onStartItem } });
+      (plugin as any)._draggedColumnId = 'age';
+      vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(headerColumnDiv3);
+      dropzoneElm.dispatchEvent(new Event('drop'));
 
       const groupByRemoveElm = document.querySelector('.slick-groupby-remove.mdi-close');
       expect(groupByRemoveElm).toBeTruthy();
 
-      const endEvent = new CustomEvent('end');
-      Object.defineProperty(endEvent, 'item', { writable: true, configurable: true, value: headerColumnDiv3 });
-      fn.sortableLeftInstance.options.onEnd!(endEvent as any);
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragend?.({});
 
       expect(setColumnsSpy).toHaveBeenCalledWith([mockColumns[2], mockColumns[2]]);
       expect(setColumnResizeSpy).toHaveBeenCalled();
       expect(triggerSpy).toHaveBeenCalledWith(gridStub.onColumnsReordered, { grid: gridStub, impactedColumns: expect.arrayContaining([mockColumns[2]]) });
+    });
+
+    it('should exercise header getValues, draggable and native drag listeners', () => {
+      plugin.init(gridStub, { ...addonOptions });
+      const leftDraggableHeader = createDomElement('div', { className: 'slick-header-column', dataset: { id: 'firstName' } }, mockHeaderLeftDiv1);
+      createDomElement('div', { className: 'slick-header-spacer' }, mockHeaderLeftDiv1);
+      createDomElement('div', { className: 'slick-header-column', dataset: { id: 'lastName' } }, mockHeaderLeftDiv2);
+      const fn = plugin.setupColumnReorder(
+        gridStub,
+        mockHeaderLeftDiv1,
+        {},
+        setColumnsSpy,
+        setColumnResizeSpy,
+        mockColumns,
+        getColumnIndexSpy,
+        GRID_UID,
+        triggerSpy
+      );
+
+      const leftDndCall = mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent);
+      const rightDndCall = mockDragAndDropCalls.find((c) => c.parent === fn.sortableRightParent);
+
+      expect(leftDndCall?.getValues()).toEqual(['firstName']);
+      expect(rightDndCall?.getValues()).toEqual(['lastName']);
+      expect(leftDndCall?.config.draggable(leftDraggableHeader)).toBe(true);
+      expect(leftDndCall?.config.draggable(createDomElement('div'))).toBe(false);
+
+      leftDndCall?.setValues(['firstName']);
+      rightDndCall?.setValues(['lastName']);
+
+      leftDraggableHeader.dispatchEvent(new Event('dragstart', { bubbles: true }));
+      expect((plugin as any)._draggedColumnId).toBe('firstName');
+      leftDraggableHeader.dispatchEvent(new Event('dragend', { bubbles: true }));
+      expect((plugin as any)._draggedColumnId).toBeNull();
+
+      expect(mockHeaderLeftDiv1.querySelector('.slick-header-spacer')).toBeTruthy();
+      expect(mockHeaderLeftDiv1.querySelectorAll<HTMLDivElement>('.slick-header-column')[0].dataset.id).toBe('firstName');
+      expect(mockHeaderLeftDiv2.querySelectorAll<HTMLDivElement>('.slick-header-column')[0].dataset.id).toBe('lastName');
     });
 
     it('should drag over dropzone and expect hover css class be added and removed when dragging outside of dropzone', () => {
@@ -460,11 +495,11 @@ describe('Draggable Grouping Plugin', () => {
       );
 
       const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-      fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
-      plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
-      const endEvent = new CustomEvent('end');
-      Object.defineProperty(endEvent, 'item', { writable: true, configurable: true, value: headerColumnDiv3 });
-      fn.sortableLeftInstance.options.onEnd!(endEvent as any);
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragstart?.({ draggedNode: { el: onStartItem } });
+      (plugin as any)._draggedColumnId = 'age';
+      vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(headerColumnDiv3);
+      dropzoneElm.dispatchEvent(new Event('drop'));
+      mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragend?.({});
       const dropzonePlaceholderElm = dropzoneElm.querySelector('.slick-draggable-dropzone-placeholder');
 
       const dragoverEvent = new CustomEvent('dragover', { bubbles: true, detail: {} });
@@ -520,11 +555,13 @@ describe('Draggable Grouping Plugin', () => {
             GRID_UID,
             triggerSpy
           );
-          vi.spyOn(plugin.droppableInstance!, 'toArray').mockReturnValue(['age', 'medals']);
           const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-          fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
-          plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
-          plugin.droppableInstance?.options.onUpdate!({ item: mockDivPaneContainer1, clone: mockDivPaneContainer1.cloneNode(true) } as any);
+          mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragstart?.({ draggedNode: { el: onStartItem } });
+          (plugin as any)._draggedColumnId = 'age';
+          vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(headerColumnDiv3);
+          dropzoneElm.dispatchEvent(new Event('drop'));
+          // simulate within-dropzone reorder (replaces onUpdate callback)
+          mockDragAndDropCalls.find((c) => c.parent === plugin.droppableParent)?.setValues(['age', 'medals']);
         });
 
         afterEach(() => {
@@ -579,6 +616,13 @@ describe('Draggable Grouping Plugin', () => {
           plugin.setDroppedGroups('age');
         });
 
+        it('should return dropped group ids from dropzone getValues when at least one group is present', () => {
+          const dropzoneDndCall = mockDragAndDropCalls.find((c) => c.parent === plugin.droppableParent);
+
+          expect(plugin.columnsGroupBy.length).toBeGreaterThan(0);
+          expect(dropzoneDndCall?.getValues()).toEqual(['age']);
+        });
+
         it('should call "clearDroppedGroups" and expect the grouping to be cleared', () => {
           const preHeaderElm = document.querySelector('.slick-preheader-panel') as HTMLDivElement;
           let dropboxPlaceholderElm = preHeaderElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
@@ -588,6 +632,23 @@ describe('Draggable Grouping Plugin', () => {
           expect(dropboxPlaceholderElm.style.display).toBe('inline-block');
           expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'clear-all', groupColumns: [] });
           expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'clear-all', groupColumns: [] });
+        });
+
+        it('should exercise dropzone draggable config and remapNodes on drop', () => {
+          const droppableCall = mockDragAndDropCalls.find((c) => c.parent === plugin.droppableParent);
+          const droppedGroupingElm = createDomElement('div', { className: 'slick-dropped-grouping' }, dropzoneElm);
+
+          expect(droppableCall?.config.draggable(droppedGroupingElm)).toBe(true);
+          expect(droppableCall?.config.draggable(createDomElement('div'))).toBe(false);
+
+          const dropHeaderElm = createDomElement('div', { className: 'slick-header-column', dataset: { id: 'age' } }, preHeaderDiv);
+          vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(dropHeaderElm);
+          (plugin as any)._draggedColumnId = 'age';
+
+          dropzoneElm.dispatchEvent(new Event('drop'));
+
+          expect(remapNodes).toHaveBeenCalledWith(plugin.droppableParent);
+          expect((plugin as any)._draggedColumnId).toBeNull();
         });
 
         it('should use the Toggle All and expect classes to be toggled and DataView to call necessary method', () => {
@@ -684,19 +745,21 @@ describe('Draggable Grouping Plugin', () => {
             GRID_UID,
             triggerSpy
           );
-          vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+          mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.setValues(['age', 'medals']);
 
           const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-          fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
-          plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+          mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragstart?.({ draggedNode: { el: onStartItem } });
+          (plugin as any)._draggedColumnId = 'age';
+          vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(headerColumnDiv3);
+          dropzoneElm.dispatchEvent(new Event('drop'));
 
           expect(plugin.addonOptions.hideGroupSortIcons).toBe(true);
           const groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
           const groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
 
-          expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
-          expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
-          expect(fn.sortableLeftInstance.destroy).toBeTruthy();
+          expect(fn.sortableLeftParent).toEqual(plugin.sortableLeftParent);
+          expect(fn.sortableRightParent).toEqual(plugin.sortableRightParent);
+          expect(plugin.sortableLeftParent).toBeTruthy();
           expect(groupBySortElm).toBeFalsy();
           expect(groupBySortAscIconElm).toBeFalsy();
         });
@@ -717,11 +780,13 @@ describe('Draggable Grouping Plugin', () => {
             GRID_UID,
             triggerSpy
           );
-          vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age']);
+          mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.setValues(['age']);
 
           const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-          fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
-          plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+          mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragstart?.({ draggedNode: { el: onStartItem } });
+          (plugin as any)._draggedColumnId = 'age';
+          vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(headerColumnDiv3);
+          dropzoneElm.dispatchEvent(new Event('drop'));
 
           const groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
           const groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
@@ -746,18 +811,20 @@ describe('Draggable Grouping Plugin', () => {
             GRID_UID,
             triggerSpy
           );
-          vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+          mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.setValues(['age', 'medals']);
           const invalidateSpy = vi.spyOn(gridStub, 'invalidate');
 
           const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-          fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
-          plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+          mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragstart?.({ draggedNode: { el: onStartItem } });
+          (plugin as any)._draggedColumnId = 'age';
+          vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(headerColumnDiv3);
+          dropzoneElm.dispatchEvent(new Event('drop'));
 
           const groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
 
-          expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
-          expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
-          expect(fn.sortableLeftInstance.destroy).toBeTruthy();
+          expect(fn.sortableLeftParent).toEqual(plugin.sortableLeftParent);
+          expect(fn.sortableRightParent).toEqual(plugin.sortableRightParent);
+          expect(plugin.sortableLeftParent).toBeTruthy();
           expect(groupBySortElm).toBeTruthy();
           expect(groupBySortElm.classList.contains('slick-groupby-sort-asc-icon')).toBeTruthy();
 
@@ -800,18 +867,20 @@ describe('Draggable Grouping Plugin', () => {
             GRID_UID,
             triggerSpy
           );
-          vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+          mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.setValues(['age', 'medals']);
           const invalidateSpy = vi.spyOn(gridStub, 'invalidate');
 
           const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-          fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
-          plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+          mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragstart?.({ draggedNode: { el: onStartItem } });
+          (plugin as any)._draggedColumnId = 'age';
+          vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(headerColumnDiv3);
+          dropzoneElm.dispatchEvent(new Event('drop'));
 
           const groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
 
-          expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
-          expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
-          expect(fn.sortableLeftInstance.destroy).toBeTruthy();
+          expect(fn.sortableLeftParent).toEqual(plugin.sortableLeftParent);
+          expect(fn.sortableRightParent).toEqual(plugin.sortableRightParent);
+          expect(plugin.sortableLeftParent).toBeTruthy();
           expect(groupBySortElm).toBeTruthy();
           expect(groupBySortElm.classList.contains('mdi-arrow-up')).toBeTruthy();
 
@@ -861,20 +930,20 @@ describe('Draggable Grouping Plugin', () => {
           GRID_UID,
           triggerSpy
         );
-        vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['firstName', 'lastName', 'age']);
-        vi.spyOn(fn.sortableRightInstance, 'toArray').mockReturnValue(['gender']);
+        mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.setValues(['firstName', 'lastName', 'age']);
+        mockDragAndDropCalls.find((c) => c.parent === fn.sortableRightParent)?.setValues(['gender']);
 
         const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-        fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
-        plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
-        const endEvent = new CustomEvent('end');
-        Object.defineProperty(endEvent, 'item', { writable: true, configurable: true, value: headerColumnDiv3 });
-        fn.sortableLeftInstance.options.onEnd!(endEvent as any);
+        mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragstart?.({ draggedNode: { el: onStartItem } });
+        (plugin as any)._draggedColumnId = 'age';
+        vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(headerColumnDiv3);
+        dropzoneElm.dispatchEvent(new Event('drop'));
+        mockDragAndDropCalls.find((c) => c.parent === fn.sortableLeftParent)?.config.onDragend?.({});
 
         const groupByRemoveElm = document.querySelector('.slick-groupby-remove.mdi-close') as HTMLDivElement;
         expect(groupByRemoveElm).toBeTruthy();
 
-        mockColumns.pop(); // all original columns except last column which is what we returned on sortableRightInstance
+        mockColumns.pop(); // all original columns except last column which is what we returned on sortableRightParent
         expect(setColumnsSpy).toHaveBeenCalledWith(mockColumns);
       });
     });

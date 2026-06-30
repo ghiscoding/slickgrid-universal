@@ -45,12 +45,10 @@
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/pagination-component": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "dequal": "catalog:",
-    "sortablejs": "catalog:"
+    "dequal": "catalog:"
   },
   "devDependencies": {
-    "@slickgrid-universal/graphql": "workspace:*",
-    "@types/sortablejs": "catalog:"
+    "@slickgrid-universal/graphql": "workspace:*"
   },
   "funding": {
     "type": "ko_fi",

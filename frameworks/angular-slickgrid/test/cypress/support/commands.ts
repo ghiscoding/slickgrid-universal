@@ -24,6 +24,7 @@
 // -- This will overwrite an existing command --
 import '@4tw/cypress-drag-drop';
 import 'cypress-real-events';
+import './drag';
 import { convertPosition } from './common';
 
 declare global {
@@ -31,22 +32,12 @@ declare global {
   namespace Cypress {
     interface Chainable {
       // triggerHover: (elements: NodeListOf<HTMLElement>) => void;
-      convertPosition(viewport: string): Chainable<HTMLElement | JQuery<HTMLElement> | { x: string; y: string }>;
-      getCell(
-        row: number,
-        col: number,
-        viewport?: string,
-        options?: { parentSelector?: string; rowHeight?: number }
-      ): Chainable<HTMLElement | JQuery<HTMLElement>>;
-      getNthCell(
-        row: number,
-        nthCol: number,
-        viewport?: string,
-        options?: { parentSelector?: string; rowHeight?: number }
-      ): Chainable<HTMLElement | JQuery<HTMLElement>>;
+      convertPosition(viewport: string): Chainable<any>;
+      getCell(row: number, col: number, viewport?: string, options?: { parentSelector?: string; rowHeight?: number }): Chainable<any>;
+      getNthCell(row: number, nthCol: number, viewport?: string, options?: { parentSelector?: string; rowHeight?: number }): Chainable<any>;
+      getTransformValue(cssTransformMatrix: string, absoluteValue: boolean, transformType?: 'rotate' | 'scale'): Chainable<number>;
       saveLocalStorage: () => void;
       restoreLocalStorage: () => void;
-      getTransformValue(cssTransformMatrix: string, absoluteValue: boolean, transformType?: 'rotate' | 'scale'): Chainable<number>;
     }
   }
 }
