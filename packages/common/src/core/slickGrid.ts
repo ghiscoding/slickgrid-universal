@@ -2557,7 +2557,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
 
         this.updateCanvasWidth();
-        if (this._options.autoScrollOnColumnResize && !this._options.forceFitColumns) {
+        if (
+          this._options.autoScrollOnColumnResize &&
+          !this._options.forceFitColumns &&
+          !(this.hasFrozenColumns() && i <= this._options.frozenColumn!)
+        ) {
           const columnRight = this.columnPosRight[i];
           const scrollLeft = this._viewportScrollContainerX.scrollLeft;
           const viewportWidth = this._viewportScrollContainerX.clientWidth;
@@ -2644,12 +2648,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           onResize: (e, resizeElms) => {
             const targetEvent = (e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e;
             const targetPageX = (targetEvent as MouseEvent).pageX;
-            updateColumnResizeAutoScroll((targetEvent as MouseEvent).clientX, targetPageX, (resizePageX: number) => {
-              applyColumnResize(resizePageX, {
-                resizeableElement: resizeElms.resizeableElement,
-                resizeableHandleElement: resizeableHandle,
+            if (!(this.hasFrozenColumns() && i <= this._options.frozenColumn!)) {
+              updateColumnResizeAutoScroll((targetEvent as MouseEvent).clientX, targetPageX, (resizePageX: number) => {
+                applyColumnResize(resizePageX, {
+                  resizeableElement: resizeElms.resizeableElement,
+                  resizeableHandleElement: resizeableHandle,
+                });
               });
-            });
+            }
             applyColumnResize(targetPageX + resizeAutoScrollDeltaX, resizeElms);
           },
           onResizeEnd: (_e, resizeElms) => {
