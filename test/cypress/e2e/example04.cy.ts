@@ -884,6 +884,9 @@ describe('Example 04 - Frozen Grid', () => {
       // Close the context menu opened by beforeEach
       cy.get('body').type('{esc}');
 
+      // Control app timers to make drag auto-scroll deterministic in CI.
+      cy.clock();
+
       // Right viewport should start at scroll 0 (columns were made very wide in previous resize tests)
       cy.get('.slick-viewport-top.slick-viewport-right').its('0.scrollLeft').should('equal', 0);
 
@@ -894,6 +897,7 @@ describe('Example 04 - Frozen Grid', () => {
         Object.keys($rightHeader[0]).forEach((prop) => {
           if (prop.startsWith('Sortable')) sortInstance = ($rightHeader[0] as any)[prop];
         });
+        expect(sortInstance).to.exist;
         const startColumnEl = $rightHeader[0].querySelectorAll('.slick-header-column')[0] as HTMLElement;
         sortInstance.options.onStart({ item: startColumnEl });
       });
@@ -901,8 +905,8 @@ describe('Example 04 - Frozen Grid', () => {
       // Step 2: fire a document drag event far past the right edge — triggers the setInterval(scrollColumnsRight, 100) timer
       cy.document().trigger('drag', { pageX: 2000, clientX: 2000, clientY: 50 });
 
-      // Step 3: wait for the 100ms scroll interval to tick several times
-      cy.wait(300);
+      // Step 3: advance mocked time so the 100ms scroll interval ticks several times.
+      cy.tick(350);
 
       // Auto-scroll should have moved the right viewport to the right
       cy.get('.slick-viewport-top.slick-viewport-right').its('0.scrollLeft').should('be.greaterThan', 0);
@@ -914,6 +918,7 @@ describe('Example 04 - Frozen Grid', () => {
         Object.keys($rightHeader[0]).forEach((prop) => {
           if (prop.startsWith('Sortable')) sortInstance = ($rightHeader[0] as any)[prop];
         });
+        expect(sortInstance).to.exist;
         const cols = $rightHeader[0].querySelectorAll('.slick-header-column');
         const startColumnEl = cols[0] as HTMLElement; // "Start"
         const finishColumnEl = cols[1] as HTMLElement; // "Finish"
