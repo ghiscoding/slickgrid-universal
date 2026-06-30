@@ -14,7 +14,7 @@ import {
   queueMicrotaskPolyfill,
   type CSSStyleDeclarationWritable,
 } from '@slickgrid-universal/utils';
-import type { SortableEvent, Options as SortableOptions } from 'sortablejs';
+import type { Options as SortableOptions } from 'sortablejs';
 import Sortable from 'sortablejs/modular/sortable.core.esm.js';
 import type { TrustedHTML } from 'trusted-types/lib';
 import type { SelectionModel } from '../enums/index.js';
@@ -2151,6 +2151,29 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let columnMap: Map<string | number, { index: number; hidden: boolean; column: C }>;
 
     let canDragScroll = false;
+
+    const stopAutoScroll = () => {
+      clearInterval(columnScrollTimer);
+      columnScrollTimer = undefined;
+    };
+
+    // fires on document during native drag; also bind 'mousemove' for SortableJS forceFallback mode
+    const autoScrollHandler = (e: DragEvent | MouseEvent) => {
+      const { clientX, clientY, pageX } = e as MouseEvent;
+      if (clientX && clientY && canDragScroll) {
+        const containerOffset = getOffset(this._container);
+        const viewportLeft = getOffset(this._viewportScrollContainerX).left;
+        const containerRight = containerOffset.left + this._container.clientWidth;
+        if (!columnScrollTimer && pageX > containerRight) {
+          columnScrollTimer = setInterval(scrollColumnsRight, 100);
+        } else if (!columnScrollTimer && pageX < viewportLeft) {
+          columnScrollTimer = setInterval(scrollColumnsLeft, 100);
+        } else if (columnScrollTimer && pageX <= containerRight && pageX >= viewportLeft) {
+          stopAutoScroll();
+        }
+      }
+    };
+
     const sortableOptions = {
       animation: 50,
       direction: 'horizontal',
@@ -2162,7 +2185,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // allow column to be resized even when they are not orderable
       preventOnFilter: false,
       revertClone: true,
-      scroll: !this.hasFrozenColumns(), // enable auto-scroll
+      scroll: false, // disable built-in scroll, we handle browser-edge auto-scroll ourselves
       // lock unorderable columns by using a combo of filter + onMove
       filter: `.${this._options.unorderableColumnCssClass}`,
       onMove: (event) => {
@@ -2170,22 +2193,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       },
       onStart: (e) => {
         e.item.classList.add('slick-header-column-active');
-        canDragScroll = !this.hasFrozenColumns() || getOffset(e.item).left > getOffset(this._viewportScrollContainerX).left;
+        // only right-section columns (non-frozen) should auto-scroll; use contains() since
+        // _headerR has `left:-1000px` which breaks offset-based comparisons
+        canDragScroll = !this.hasFrozenColumns() || this._headerR.contains(e.item);
 
-        if (canDragScroll && (e as SortableEvent & { originalEvent: MouseEvent }).originalEvent.pageX > this._container.clientWidth) {
-          if (!columnScrollTimer) {
-            columnScrollTimer = setInterval(scrollColumnsRight, 100);
-          }
-        } else if (
-          canDragScroll &&
-          (e as SortableEvent & { originalEvent: MouseEvent }).originalEvent.pageX < getOffset(this._viewportScrollContainerX).left
-        ) {
-          if (!columnScrollTimer) {
-            columnScrollTimer = setInterval(scrollColumnsLeft, 100);
-          }
-        } else {
-          clearInterval(columnScrollTimer);
-        }
+        // bind 'drag' for native HTML5 drag and 'mousemove' for SortableJS forceFallback
+        this._bindingEventService.bind(document as any, 'drag', autoScrollHandler as EventListener, {}, 'colreorder');
+        this._bindingEventService.bind(document as any, 'mousemove', autoScrollHandler as EventListener, {}, 'colreorder');
+
         prevColumnIds = this.columns.map((c) => c.id);
 
         // Create a map to track original column positions and hidden state
@@ -2196,7 +2211,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       },
       onEnd: (e) => {
         e.item.classList.remove('slick-header-column-active');
-        clearInterval(columnScrollTimer);
+        stopAutoScroll();
+        this._bindingEventService.unbindAll('colreorder');
         const prevScrollLeft = this.scrollLeft;
 
         if (!this.getEditorLock()?.commitCurrentEdit()) {

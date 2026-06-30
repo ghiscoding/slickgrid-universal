@@ -3453,7 +3453,6 @@ describe('SlickGrid core file', () => {
 
       const dragEvent = new CustomEvent('DragEvent');
       vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
       Object.defineProperty(dragEvent, 'related', { writable: true, value: headerColumnElms[0] });
       Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
       Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
@@ -3463,6 +3462,12 @@ describe('SlickGrid core file', () => {
       expect(sortInstance).toBeTruthy();
       sortInstance.options.onStart(dragEvent);
       sortInstance.options.onMove(dragEvent);
+
+      const docDragEvt = new Event('drag') as DragEvent;
+      Object.defineProperty(docDragEvt, 'pageX', { writable: true, value: 20 }); // pageX < viewportLeft → scroll left
+      Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: 20 });
+      Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
+      document.dispatchEvent(docDragEvt);
       expect(viewportTopLeft.scrollLeft).toBe(0);
 
       vi.advanceTimersByTime(100);
@@ -3486,7 +3491,6 @@ describe('SlickGrid core file', () => {
 
       const dragEvent = new CustomEvent('DragEvent');
       vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: DEFAULT_GRID_WIDTH + 11 } });
       Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
       Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
       Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
@@ -3494,6 +3498,12 @@ describe('SlickGrid core file', () => {
 
       expect(sortInstance).toBeTruthy();
       sortInstance.options.onStart(dragEvent);
+
+      const docDragEvt = new Event('drag') as DragEvent;
+      Object.defineProperty(docDragEvt, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 }); // pageX > containerRight → scroll right
+      Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
+      Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
+      document.dispatchEvent(docDragEvt);
       expect(viewportTopLeft.scrollLeft).toBe(0);
 
       vi.advanceTimersByTime(100);
@@ -3517,7 +3527,6 @@ describe('SlickGrid core file', () => {
 
       const dragEvent = new CustomEvent('DragEvent');
       vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: DEFAULT_GRID_WIDTH + 11 } });
       Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
       Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
       Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
@@ -3525,6 +3534,12 @@ describe('SlickGrid core file', () => {
 
       expect(sortInstance).toBeTruthy();
       sortInstance.options.onStart(dragEvent);
+
+      const docDragEvt = new Event('drag') as DragEvent;
+      Object.defineProperty(docDragEvt, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
+      Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
+      Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
+      document.dispatchEvent(docDragEvt);
       expect(viewportTopLeft.scrollLeft).toBe(0);
 
       vi.advanceTimersByTime(100);
@@ -3532,6 +3547,45 @@ describe('SlickGrid core file', () => {
       expect(viewportTopLeft.scrollLeft).toBe(10);
       sortInstance.options.onEnd(dragEvent);
       expect(onColumnsReorderedSpy).not.toHaveBeenCalled(); // same order won't call event
+    });
+
+    it('should stop auto-scroll when cursor moves back into safe zone during drag', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
+      Object.keys(headerColumnsElm).forEach((prop) => {
+        if (prop.startsWith('Sortable')) {
+          sortInstance = headerColumnsElm[prop];
+        }
+      });
+      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
+      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const dragEvent = new CustomEvent('DragEvent');
+      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+
+      sortInstance.options.onStart(dragEvent);
+
+      // first drag beyond container right → starts scroll timer
+      const docDragEvt = new Event('drag') as DragEvent;
+      Object.defineProperty(docDragEvt, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
+      Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
+      Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
+      document.dispatchEvent(docDragEvt);
+      vi.advanceTimersByTime(100);
+      expect(viewportTopLeft.scrollLeft).toBe(10); // scrolled right
+
+      // now move cursor back into safe zone → timer should stop
+      const docDragSafe = new Event('drag') as DragEvent;
+      Object.defineProperty(docDragSafe, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH / 2 });
+      Object.defineProperty(docDragSafe, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH / 2 });
+      Object.defineProperty(docDragSafe, 'clientY', { writable: true, value: 10 });
+      document.dispatchEvent(docDragSafe);
+
+      viewportTopLeft.scrollLeft = 0; // reset to confirm timer is stopped
+      vi.advanceTimersByTime(100);
+      expect(viewportTopLeft.scrollLeft).toBe(0); // no more auto-scrolling
+
+      sortInstance.options.onEnd(dragEvent);
     });
 
     it('should try reordering column but stay at same scroll position when grid has frozen columns', () => {
@@ -3549,18 +3603,24 @@ describe('SlickGrid core file', () => {
 
       const dragEvent = new CustomEvent('DragEvent');
       vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
-      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] }); // frozen left column
       Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
       Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
 
       expect(sortInstance).toBeTruthy();
       sortInstance.options.onStart(dragEvent);
+
+      // even if drag event fires, canDragScroll=false for frozen left column → no scroll
+      const docDragEvt = new Event('drag') as DragEvent;
+      Object.defineProperty(docDragEvt, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
+      Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
+      Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
+      document.dispatchEvent(docDragEvt);
       expect(viewportTopLeft.scrollLeft).toBe(0);
 
       vi.advanceTimersByTime(100);
 
-      expect(viewportTopLeft.scrollLeft).toBe(0); // same position
+      expect(viewportTopLeft.scrollLeft).toBe(0); // same position, frozen column can't trigger scroll
       sortInstance.options.onEnd(dragEvent);
       expect(onColumnsReorderedSpy).not.toHaveBeenCalled();
     });
