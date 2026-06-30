@@ -880,7 +880,7 @@ describe('Example 04 - Frozen Grid', () => {
       // Shift+Tab dosn't work in Cypress, so we can't go further with tests
     });
 
-    it('should auto-scroll right viewport and reorder columns when "Start" is dragged ~550px past the right edge (ending up after "Finish")', () => {
+    it('should auto-scroll right viewport and reorder columns when "Start" is dragged well past the right edge (ending up after "Finish")', () => {
       // Close the context menu opened by beforeEach
       cy.get('body').type('{esc}');
 
@@ -902,8 +902,12 @@ describe('Example 04 - Frozen Grid', () => {
         sortInstance.options.onStart({ item: startColumnEl });
       });
 
-      // Step 2: fire a document drag event far past the right edge — triggers the setInterval(scrollColumnsRight, 100) timer
-      cy.document().trigger('drag', { pageX: 2000, clientX: 2000, clientY: 50 });
+      // Step 2: fire a document drag event well past the right edge (viewport-relative)
+      // to avoid CI flakiness caused by environment-dependent viewport widths.
+      cy.window().then((win) => {
+        const dragX = win.innerWidth + 1200;
+        cy.document().trigger('drag', { pageX: dragX, clientX: dragX, clientY: 50 });
+      });
 
       // Step 3: advance mocked time so the 100ms scroll interval ticks several times.
       cy.tick(350);
@@ -911,7 +915,7 @@ describe('Example 04 - Frozen Grid', () => {
       // Auto-scroll should have moved the right viewport to the right
       cy.get('.slick-viewport-top.slick-viewport-right').its('0.scrollLeft').should('be.greaterThan', 0);
 
-      // Step 4: simulate the drag result — "Start" was moved ~550px to the right, past "Finish".
+      // Step 4: simulate the drag result — "Start" was moved to the right, past "Finish".
       // SortableJS reads the DOM order via toArray() inside onEnd, so physically reorder the children first.
       cy.get('.slick-header-columns-right').then(($rightHeader) => {
         let sortInstance: any;
