@@ -354,9 +354,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.13.2
-      '@types/sortablejs':
-        specifier: 'catalog:'
-        version: 1.15.9
       aurelia-polyfills:
         specifier: ^1.3.4
         version: 1.3.4
@@ -487,9 +484,6 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.17)
-      '@types/sortablejs':
-        specifier: 'catalog:'
-        version: 1.15.9
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 6.0.2(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.2)(rolldown@1.0.3)(vite@8.0.16(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.101.0)(terser@5.46.0)(yaml@2.9.0)))(vite@8.0.16(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.101.0)(terser@5.46.0)(yaml@2.9.0))
@@ -596,9 +590,6 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.17)
-      '@types/sortablejs':
-        specifier: 'catalog:'
-        version: 1.15.9
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 6.0.2(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.2)(rolldown@1.0.3)(vite@8.0.16(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.101.0)(terser@5.46.0)(yaml@2.9.0)))(vite@8.0.16(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.101.0)(terser@5.46.0)(yaml@2.9.0))
@@ -1054,9 +1045,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.13.2
-      '@types/sortablejs':
-        specifier: 'catalog:'
-        version: 1.15.9
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.1.9(vitest@4.1.9)
@@ -1099,9 +1087,6 @@ importers:
       sass:
         specifier: 'catalog:'
         version: 1.101.0
-      sortablejs:
-        specifier: 'catalog:'
-        version: 1.15.7
       tslib:
         specifier: 'catalog:'
         version: 2.8.1
@@ -1157,9 +1142,6 @@ importers:
       dequal:
         specifier: 'catalog:'
         version: 2.0.3
-      sortablejs:
-        specifier: 'catalog:'
-        version: 1.15.7
     devDependencies:
       '@aurelia/kernel':
         specifier: ^2.0.0-rc.1
@@ -1203,9 +1185,6 @@ importers:
       dequal:
         specifier: 'catalog:'
         version: 2.0.3
-      sortablejs:
-        specifier: 'catalog:'
-        version: 1.15.7
     devDependencies:
       '@formkit/tempo':
         specifier: 'catalog:'
@@ -1240,9 +1219,6 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.17)
-      '@types/sortablejs':
-        specifier: 'catalog:'
-        version: 1.15.9
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 6.0.2(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.2)(rolldown@1.0.3)(vite@8.0.16(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.101.0)(terser@5.46.0)(yaml@2.9.0)))(vite@8.0.16(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.101.0)(terser@5.46.0)(yaml@2.9.0))
@@ -1306,9 +1282,6 @@ importers:
       dequal:
         specifier: 'catalog:'
         version: 2.0.3
-      sortablejs:
-        specifier: 'catalog:'
-        version: 1.15.7
     devDependencies:
       '@microsoft/api-extractor':
         specifier: ^7.58.9
@@ -1597,16 +1570,10 @@ importers:
       dequal:
         specifier: 'catalog:'
         version: 2.0.3
-      sortablejs:
-        specifier: 'catalog:'
-        version: 1.15.7
     devDependencies:
       '@slickgrid-universal/graphql':
         specifier: workspace:*
         version: link:../graphql
-      '@types/sortablejs':
-        specifier: 'catalog:'
-        version: 1.15.9
 
   packages/vanilla-force-bundle:
     dependencies:

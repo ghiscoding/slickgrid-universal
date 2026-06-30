@@ -58,8 +58,7 @@
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/pagination-component": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "dequal": "catalog:",
-    "sortablejs": "catalog:"
+    "dequal": "catalog:"
   },
   "devDependencies": {
     "@aurelia/kernel": "^2.0.0-rc.1",

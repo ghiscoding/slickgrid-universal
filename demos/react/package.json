@@ -59,7 +59,6 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/sortablejs": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",

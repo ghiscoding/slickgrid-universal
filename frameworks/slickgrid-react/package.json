@@ -65,8 +65,7 @@
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/pagination-component": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "dequal": "catalog:",
-    "sortablejs": "catalog:"
+    "dequal": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0"
@@ -83,7 +82,6 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/sortablejs": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "dompurify": "catalog:",
     "globals": "catalog:",
