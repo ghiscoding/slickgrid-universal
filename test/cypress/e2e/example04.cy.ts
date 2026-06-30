@@ -879,7 +879,9 @@ describe('Example 04 - Frozen Grid', () => {
 
       // Shift+Tab dosn't work in Cypress, so we can't go further with tests
     });
+  });
 
+  describe('drag & drop column reordering with auto-scroll', () => {
     it('should auto-scroll right viewport and reorder columns when "Start" is dragged well past the right edge (ending up after "Finish")', () => {
       // Close the context menu opened by beforeEach
       cy.get('body').type('{esc}');
@@ -887,7 +889,11 @@ describe('Example 04 - Frozen Grid', () => {
       // Control app timers to make drag auto-scroll deterministic in CI.
       cy.clock();
 
-      // Right viewport should start at scroll 0 (columns were made very wide in previous resize tests)
+      // Normalize right viewport scroll so this test is isolated from previous test state.
+      cy.get('.slick-viewport-top.slick-viewport-right').then(($viewport) => {
+        $viewport[0].scrollLeft = 0;
+        $viewport[0].dispatchEvent(new Event('scroll', { bubbles: true }));
+      });
       cy.get('.slick-viewport-top.slick-viewport-right').its('0.scrollLeft').should('equal', 0);
 
       // Step 1: call SortableJS onStart for the "Start" column (1st right-section column).
