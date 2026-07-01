@@ -592,6 +592,57 @@ describe('slickColumnReorderDrag', () => {
     expect(onDrop).not.toHaveBeenCalled();
   });
 
+  it('should keep dropzone active on mouseout when relatedTarget is null but pointer is still over dropzone', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    headerLeft.append(firstName);
+
+    const dropzone = document.createElement('div');
+    dropzone.className = 'slick-dropzone';
+    const dropzoneChild = document.createElement('div');
+    dropzone.append(dropzoneChild);
+    document.body.append(dropzone);
+
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: vi.fn(() => dropzoneChild as Element),
+    });
+
+    const onDrop = vi.fn();
+    const onDragEnd = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      onDragEnd,
+      onDrop,
+    });
+
+    firstName.dispatchEvent(
+      createDragEvent('dragstart', {
+        dataTransfer: { effectAllowed: '', setData: vi.fn(), setDragImage: vi.fn() },
+        clientX: 10,
+        clientY: 10,
+      })
+    );
+
+    // mark dropzone active first
+    document.dispatchEvent(createDragEvent('dragenter', { target: dropzone }));
+
+    const mouseOutEvt = createMouseEvent('mouseout', { target: dropzone, relatedTarget: null, clientX: 25, clientY: 25 });
+    document.dispatchEvent(mouseOutEvt);
+
+    firstName.dispatchEvent(createDragEvent('dragend', { clientX: 25, clientY: 25 }));
+
+    expect(onDrop).toHaveBeenCalledTimes(1);
+    expect(onDragEnd).not.toHaveBeenCalled();
+  });
+
   it('should return early on dragover when target parent is not a header container', () => {
     const headerLeft = document.createElement('div');
     const headerRight = document.createElement('div');

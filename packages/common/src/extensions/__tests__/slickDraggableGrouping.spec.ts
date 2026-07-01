@@ -689,6 +689,44 @@ describe('Draggable Grouping Plugin', () => {
           plugin.setDroppedGroups('age');
         });
 
+        it('should keep dropzone hover class on dragleave when relatedTarget is null but pointer is still over dropzone', () => {
+          const innerDropzoneChild = document.createElement('div');
+          dropzoneElm.appendChild(innerDropzoneChild);
+          dropzoneElm.classList.add('slick-dropzone-hover');
+
+          Object.defineProperty(document, 'elementFromPoint', {
+            configurable: true,
+            value: vi.fn(() => innerDropzoneChild as Element),
+          });
+
+          const dragLeaveEvt = new CustomEvent('dragleave', { bubbles: true, cancelable: true }) as unknown as DragEvent;
+          Object.defineProperty(dragLeaveEvt, 'relatedTarget', { configurable: true, value: null });
+          Object.defineProperty(dragLeaveEvt, 'clientX', { configurable: true, value: 25 });
+          Object.defineProperty(dragLeaveEvt, 'clientY', { configurable: true, value: 25 });
+          dropzoneElm.dispatchEvent(dragLeaveEvt);
+
+          expect(dropzoneElm.classList.contains('slick-dropzone-hover')).toBeTruthy();
+        });
+
+        it('should clear dropzone hover class on dragleave when relatedTarget is null and pointer is outside dropzone', () => {
+          const outsideElm = document.createElement('div');
+          document.body.appendChild(outsideElm);
+          dropzoneElm.classList.add('slick-dropzone-hover');
+
+          Object.defineProperty(document, 'elementFromPoint', {
+            configurable: true,
+            value: vi.fn(() => outsideElm as Element),
+          });
+
+          const dragLeaveEvt = new CustomEvent('dragleave', { bubbles: true, cancelable: true }) as unknown as DragEvent;
+          Object.defineProperty(dragLeaveEvt, 'relatedTarget', { configurable: true, value: null });
+          Object.defineProperty(dragLeaveEvt, 'clientX', { configurable: true, value: 300 });
+          Object.defineProperty(dragLeaveEvt, 'clientY', { configurable: true, value: 300 });
+          dropzoneElm.dispatchEvent(dragLeaveEvt);
+
+          expect(dropzoneElm.classList.contains('slick-dropzone-hover')).toBeFalsy();
+        });
+
         it('should call "clearDroppedGroups" and expect the grouping to be cleared', () => {
           const preHeaderElm = document.querySelector('.slick-preheader-panel') as HTMLDivElement;
           let dropboxPlaceholderElm = preHeaderElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;

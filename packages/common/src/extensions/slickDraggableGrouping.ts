@@ -569,7 +569,10 @@ export class SlickDraggableGrouping {
       },
       onColumnDragEnter: () => dropzoneElm.classList.add('slick-dropzone-hover'),
       onColumnDragLeave: (e) => {
-        if (!dropzoneElm.contains(e.relatedTarget as Node)) {
+        const nextTarget =
+          (e.relatedTarget as Node | null) ??
+          (e.clientX != null && e.clientY != null ? (document.elementFromPoint(e.clientX, e.clientY) as Node | null) : null);
+        if (!nextTarget || !dropzoneElm.contains(nextTarget)) {
           dropzoneElm.classList.remove('slick-dropzone-hover');
         }
       },

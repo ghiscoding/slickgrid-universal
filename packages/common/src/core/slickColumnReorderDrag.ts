@@ -35,6 +35,31 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     columnScrollTimer = undefined;
   };
 
+  const restoreDraggedToOriginalParent = () => {
+    if (originalParent && draggedEl && draggedEl.parentElement !== originalParent) {
+      originalParent.insertBefore(draggedEl, originalNextSibling as Node | null);
+    }
+  };
+
+  const isOverDropzone = (el: HTMLElement | null | undefined): boolean => !!el?.closest?.('.slick-dropzone');
+
+  const reorderDraggedAgainstTarget = (target: HTMLElement, clientX: number) => {
+    if (!draggedEl || target === draggedEl || !isDraggable(target)) {
+      return;
+    }
+
+    const targetParent = target.parentElement;
+    if (!targetParent || (!headerLeft.contains(targetParent) && !headerRight.contains(targetParent))) {
+      return;
+    }
+
+    const rect = target.getBoundingClientRect();
+    const movingRight = _lastClientX == null ? clientX >= rect.left + rect.width / 2 : clientX > _lastClientX;
+    _lastClientX = clientX;
+    const insertBefore = !movingRight;
+    targetParent.insertBefore(draggedEl, insertBefore ? target : target.nextSibling);
+  };
+
   const isDraggable = (el: HTMLElement): boolean =>
     el.matches(draggableSelector) && (!unorderableColumnCssClass || !el.classList.contains(unorderableColumnCssClass));
 
@@ -63,7 +88,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
   const autoScrollHandler = (e: DragEvent) => {
     const { clientX, clientY, pageX } = e;
-    if (clientX && clientY) {
+    if (clientX != null && clientY != null) {
       const containerOffset = getOffset(container);
       const viewportLeft = getOffset(viewportScrollContainerX).left;
       const containerRight = containerOffset.left + container.clientWidth;
@@ -106,13 +131,11 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
   const onDropzoneDragEnter = (e: Event) => {
     const target = e.target as HTMLElement | null;
-    if (draggedEl && target?.closest?.('.slick-dropzone')) {
+    if (draggedEl && isOverDropzone(target)) {
       dropzoneTargetActive = true;
       // Ensure the dragged header remains in the header DOM (non-destructive)
       try {
-        if (originalParent && draggedEl.parentElement !== originalParent) {
-          originalParent.insertBefore(draggedEl, originalNextSibling as Node | null);
-        }
+        restoreDraggedToOriginalParent();
       } catch (err) {
         // ignore
       }
@@ -121,19 +144,17 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
   const onDropzoneDragLeave = (e: Event) => {
     const target = e.target as HTMLElement | null;
-    if (target?.closest?.('.slick-dropzone')) {
+    if (isOverDropzone(target)) {
       dropzoneTargetActive = false;
     }
   };
 
   const onDropzoneMouseOver = (e: MouseEvent) => {
     const target = e.target as HTMLElement | null;
-    if (draggedEl && target?.closest?.('.slick-dropzone')) {
+    if (draggedEl && isOverDropzone(target)) {
       dropzoneTargetActive = true;
       try {
-        if (originalParent && draggedEl.parentElement !== originalParent) {
-          originalParent.insertBefore(draggedEl, originalNextSibling as Node | null);
-        }
+        restoreDraggedToOriginalParent();
       } catch (err) {
         // ignore
       }
@@ -142,8 +163,10 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
   const onDropzoneMouseOut = (e: MouseEvent) => {
     const target = e.target as HTMLElement | null;
-    const relatedTarget = e.relatedTarget as HTMLElement | null;
-    if (target?.closest?.('.slick-dropzone') && !relatedTarget?.closest?.('.slick-dropzone')) {
+    const relatedTarget =
+      (e.relatedTarget as HTMLElement | null) ??
+      (e.clientX != null && e.clientY != null ? (document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null) : null);
+    if (isOverDropzone(target) && !isOverDropzone(relatedTarget)) {
       dropzoneTargetActive = false;
     }
   };
@@ -196,14 +219,12 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
   const onDragOver = (e: DragEvent) => {
     e.preventDefault();
-    const overDropzone = (e.target as HTMLElement | null)?.closest?.('.slick-dropzone');
+    const overDropzone = isOverDropzone(e.target as HTMLElement | null);
     if (overDropzone) {
       dropzoneTargetActive = true;
       // Keep the dragged header visible in the original header DOM while over the dropzone
       try {
-        if (originalParent && draggedEl && draggedEl.parentElement !== originalParent) {
-          originalParent.insertBefore(draggedEl, originalNextSibling as Node | null);
-        }
+        restoreDraggedToOriginalParent();
       } catch (err) {
         // ignore
       }
@@ -211,21 +232,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     }
 
     const target = (e.target as HTMLElement).closest<HTMLElement>(draggableSelector);
-    if (!draggedEl || !target || target === draggedEl || !isDraggable(target)) {
-      return;
+    if (target) {
+      reorderDraggedAgainstTarget(target, e.clientX);
     }
-
-    // Only reorder against actual header containers, never against pre-header content.
-    const targetParent = target.parentElement;
-    if (!targetParent || (!headerLeft.contains(targetParent) && !headerRight.contains(targetParent))) {
-      return;
-    }
-
-    const rect = target.getBoundingClientRect();
-    const movingRight = _lastClientX == null ? e.clientX >= rect.left + rect.width / 2 : e.clientX > _lastClientX;
-    _lastClientX = e.clientX;
-    const insertBefore = !movingRight;
-    target.parentElement!.insertBefore(draggedEl, insertBefore ? target : target.nextSibling);
   };
 
   const onDragEnd = (e: DragEvent) => {
@@ -298,7 +307,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     if (fallbackActive && draggedEl) {
       updateFallbackGhost(e.clientX, e.clientY);
       const elUnder = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
-      const overDropzone = elUnder?.closest?.('.slick-dropzone');
+      const overDropzone = isOverDropzone(elUnder);
       if (overDropzone) {
         dropzoneTargetActive = true;
         return;
@@ -308,21 +317,12 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       // If we're over another header column, perform the same live DOM reordering
       // that the native dragover handler does so users get immediate visual feedback.
       const targetHeader = elUnder?.closest?.(draggableSelector) as HTMLElement | null;
-      if (!targetHeader || targetHeader === draggedEl || !isDraggable(targetHeader)) {
-        return;
-      }
-
-      const targetParent = targetHeader.parentElement;
-      if (!targetParent || (!headerLeft.contains(targetParent) && !headerRight.contains(targetParent))) {
+      if (!targetHeader) {
         return;
       }
 
       try {
-        const rect = targetHeader.getBoundingClientRect();
-        const movingRight = _lastClientX == null ? e.clientX >= rect.left + rect.width / 2 : e.clientX > _lastClientX;
-        _lastClientX = e.clientX;
-        const insertBefore = !movingRight;
-        targetHeader.parentElement!.insertBefore(draggedEl, insertBefore ? targetHeader : targetHeader.nextSibling);
+        reorderDraggedAgainstTarget(targetHeader, e.clientX);
       } catch (err) {
         // ignore DOM insertion errors
       }
