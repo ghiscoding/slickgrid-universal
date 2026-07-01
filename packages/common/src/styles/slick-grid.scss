@@ -144,10 +144,19 @@
     }
     &.odd {
       background-color: var(--slick-cell-odd-background-color, v.$slick-cell-odd-background-color);
+      // box-shadow: var(--slick-scrollbar-gutter-width, 0px) 0 0 0 var(--slick-cell-odd-background-color, v.$slick-cell-odd-background-color);
       &:hover {
         background-color: var(--slick-row-mouse-hover-color, v.$slick-row-mouse-hover-color);
+        // box-shadow: var(--slick-scrollbar-gutter-width, 0px) 0 0 0 var(--slick-row-mouse-hover-color, v.$slick-row-mouse-hover-color);
       }
     }
+    // &.even {
+    //   box-shadow: var(--slick-scrollbar-gutter-width, 0px) 0 0 0
+    //     var(--slick-cell-even-background-color, v.$slick-cell-even-background-color);
+    //   &:hover {
+    //     box-shadow: var(--slick-scrollbar-gutter-width, 0px) 0 0 0 var(--slick-row-mouse-hover-color, v.$slick-row-mouse-hover-color);
+    //   }
+    // }
     &.odd .slick-cell {
       background: inherit;
       &.copied {

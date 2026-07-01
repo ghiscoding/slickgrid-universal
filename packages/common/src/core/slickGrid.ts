@@ -2778,16 +2778,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       : this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
         ? 'hidden'
         : 'auto';
-    this._viewportTopL.style.overflowY =
-      !this.hasFrozenColumns() && this._options.alwaysShowVerticalScroll
-        ? 'scroll'
-        : this.hasFrozenColumns()
-          ? this.hasFrozenRows
-            ? 'hidden'
-            : 'hidden'
-          : this.hasFrozenRows
-            ? 'scroll'
-            : 'auto';
+    this._viewportTopL.style.overflowY = this.hasFrozenColumns() ? 'hidden' : this.hasFrozenRows ? 'scroll' : 'auto';
+    this._viewportTopL.style.scrollbarGutter = !this.hasFrozenColumns() && this._options.alwaysShowVerticalScroll ? 'stable' : '';
 
     this._viewportTopR.style.overflowX = this.hasFrozenColumns()
       ? this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
@@ -2796,15 +2788,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       : this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
         ? 'hidden'
         : 'auto';
-    this._viewportTopR.style.overflowY = this._options.alwaysShowVerticalScroll
-      ? 'scroll'
-      : this.hasFrozenColumns()
-        ? this.hasFrozenRows
-          ? 'scroll'
-          : 'auto'
-        : this.hasFrozenRows
-          ? 'scroll'
-          : 'auto';
+    this._viewportTopR.style.overflowY = this.hasFrozenColumns()
+      ? this.hasFrozenRows
+        ? 'scroll'
+        : 'auto'
+      : this.hasFrozenRows
+        ? 'scroll'
+        : 'auto';
+    this._viewportTopR.style.scrollbarGutter = this._options.alwaysShowVerticalScroll ? 'stable' : '';
 
     this._viewportBottomL.style.overflowX = this.hasFrozenColumns()
       ? this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
@@ -2813,16 +2804,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       : this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
         ? 'auto'
         : 'auto';
-    this._viewportBottomL.style.overflowY =
-      !this.hasFrozenColumns() && this._options.alwaysShowVerticalScroll
-        ? 'scroll'
-        : this.hasFrozenColumns()
-          ? this.hasFrozenRows
-            ? 'hidden'
-            : 'hidden'
-          : this.hasFrozenRows
-            ? 'scroll'
-            : 'auto';
+    this._viewportBottomL.style.overflowY = this.hasFrozenColumns() ? 'hidden' : this.hasFrozenRows ? 'scroll' : 'auto';
+    this._viewportBottomL.style.scrollbarGutter = !this.hasFrozenColumns() && this._options.alwaysShowVerticalScroll ? 'stable' : '';
 
     this._viewportBottomR.style.overflowX = this.hasFrozenColumns()
       ? this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
@@ -2831,15 +2814,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       : this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
         ? 'auto'
         : 'auto';
-    this._viewportBottomR.style.overflowY = this._options.alwaysShowVerticalScroll
-      ? 'scroll'
-      : this.hasFrozenColumns()
-        ? this.hasFrozenRows
-          ? 'auto'
-          : 'auto'
-        : this.hasFrozenRows
-          ? 'auto'
-          : 'auto';
+    this._viewportBottomR.style.overflowY = 'auto';
+    this._viewportBottomR.style.scrollbarGutter = this._options.alwaysShowVerticalScroll ? 'stable' : '';
 
     if (this._options.viewportClass) {
       const viewportClasses = classNameToList(this._options.viewportClass);
@@ -2848,6 +2824,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._viewportBottomL.classList.add(...viewportClasses);
       this._viewportBottomR.classList.add(...viewportClasses);
     }
+
+    const gutterWidth = this._options.alwaysShowVerticalScroll ? (this.scrollbarDimensions?.width ?? 0) : 0;
+    this._container.style.setProperty('--slick-scrollbar-gutter-width', `${gutterWidth}px`);
+    this._container.style.setProperty('--slick-row-height', `${this._options.rowHeight ?? 0}px`);
   }
 
   protected setScroller(): void {
@@ -4847,7 +4827,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** returns the available viewport inner width, that is the viewport width minus the scrollbar when shown */
   protected getViewportInnerWidth(): number {
-    return this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width || 0) : this.viewportW;
+    const hasReservedVerticalScrollbarSpace = this.viewportHasVScroll || this._options.alwaysShowVerticalScroll;
+    return hasReservedVerticalScrollbarSpace ? this.viewportW - (this.scrollbarDimensions?.width || 0) : this.viewportW;
   }
 
   getViewportWidth(): number {

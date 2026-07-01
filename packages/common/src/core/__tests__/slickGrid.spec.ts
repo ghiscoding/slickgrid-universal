@@ -1318,10 +1318,14 @@ describe('SlickGrid core file', () => {
       expect(grid).toBeTruthy();
       expect(topheaderElms).toBeTruthy();
       expect(topheaderElms[0].style.display).toBe('none');
-      expect(vpTopLeft.style.overflowY).toBe('scroll');
-      expect(vpTopRight.style.overflowY).toBe('scroll');
-      expect(vpBottomLeft.style.overflowY).toBe('scroll');
-      expect(vpBottomRight.style.overflowY).toBe('scroll');
+      expect(vpTopLeft.style.overflowY).toBe('auto');
+      expect(vpTopRight.style.overflowY).toBe('auto');
+      expect(vpBottomLeft.style.overflowY).toBe('auto');
+      expect(vpBottomRight.style.overflowY).toBe('auto');
+      expect(vpTopLeft.style.scrollbarGutter).toBe('stable');
+      expect(vpTopRight.style.scrollbarGutter).toBe('stable');
+      expect(vpBottomLeft.style.scrollbarGutter).toBe('stable');
+      expect(vpBottomRight.style.scrollbarGutter).toBe('stable');
     });
   });
 
