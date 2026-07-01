@@ -1,33 +1,5 @@
 import { getOffset } from '@slickgrid-universal/utils';
-
-export interface ColumnReorderDragOption {
-  /** Left header container (.slick-header-columns-left) */
-  headerLeft: HTMLElement;
-  /** Right header container (.slick-header-columns-right) */
-  headerRight: HTMLElement;
-  /** Grid container – used for the right-edge auto-scroll boundary */
-  container: HTMLElement;
-  /** Scrollable viewport – used for the left-edge boundary and actual scrolling */
-  viewportScrollContainerX: HTMLElement;
-  /** Returns true when the grid has frozen columns (determines which pane can auto-scroll) */
-  hasFrozenColumns: () => boolean;
-  /** CSS class that marks a column as non-reorderable */
-  unorderableColumnCssClass?: string;
-  /**
-   * Called right after dragstart, before any DOM changes.
-   * Use this to snapshot column state that your onDragEnd callback needs.
-   */
-  onDragStart?: (draggedEl: HTMLElement) => void;
-  /**
-   * Called when drag ends with the new visible-column ID order read from the DOM.
-   * Responsible for applying the reorder (setColumns, triggerEvent, etc.).
-   */
-  onDragEnd: (reorderedIds: string[]) => void;
-  /**
-   * Called when the drag is dropped onto an external dropzone such as draggable grouping.
-   */
-  onDrop?: (draggedEl: HTMLElement, event: DragEvent | MouseEvent, draggedColumnId?: string) => void;
-}
+import type { ColumnReorderDragOption, DropzonePillDragOption } from '../interfaces/slickColumnReorderDrag.interfaces.js';
 
 /**
  * Sets up native HTML5 drag-and-drop for column header reordering.
@@ -43,6 +15,8 @@ export interface ColumnReorderDragOption {
  */
 export function setupColumnReorderDrag(options: ColumnReorderDragOption): { destroy: () => void } {
   const { headerLeft, headerRight, container, viewportScrollContainerX, unorderableColumnCssClass } = options;
+  const dragActiveClass = options.dragActiveClass ?? 'slick-header-column-active';
+  const draggableSelector = options.draggableSelector ?? '.slick-header-column';
 
   let columnScrollTimer: ReturnType<typeof setInterval> | undefined;
   let draggedEl: HTMLElement | null = null;
@@ -62,7 +36,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   };
 
   const isDraggable = (el: HTMLElement): boolean =>
-    el.classList.contains('slick-header-column') && (!unorderableColumnCssClass || !el.classList.contains(unorderableColumnCssClass));
+    el.matches(draggableSelector) && (!unorderableColumnCssClass || !el.classList.contains(unorderableColumnCssClass));
 
   // Mirror SortableJS's Firefox/Linux fallback detection so the mouse-based path is used only for the broken browser combo.
   // Include Wayland because Firefox on Linux Wayland may omit the X11 token.
@@ -78,7 +52,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   // Set draggable attribute on all eligible header columns
   const refreshDraggable = (parent: HTMLElement) => {
     Array.from(parent.children as HTMLCollectionOf<HTMLElement>).forEach((el) => {
-      if (el.classList.contains('slick-header-column')) {
+      if (el.matches(draggableSelector)) {
         // Disable native HTML5 drag on Firefox/Linux and use mouse fallback
         el.draggable = isDraggable(el) && !isFfLinux;
       }
@@ -115,24 +89,18 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   };
 
   const updateFallbackGhost = (clientX: number, clientY: number) => {
-    if (!dragGhost) {
-      return;
+    if (dragGhost) {
+      dragGhost.style.left = `${clientX}px`;
+      dragGhost.style.top = `${clientY}px`;
     }
-    dragGhost.style.left = `${clientX}px`;
-    dragGhost.style.top = `${clientY}px`;
   };
 
   const createFallbackGhost = (source: HTMLElement, clientX: number, clientY: number) => {
     clearFallbackGhost();
     dragGhost = source.cloneNode(true) as HTMLElement;
     dragGhost.classList.add('slick-header-column-drag-ghost');
-    dragGhost.style.position = 'fixed';
     dragGhost.style.left = `${clientX}px`;
     dragGhost.style.top = `${clientY}px`;
-    dragGhost.style.margin = '0';
-    dragGhost.style.pointerEvents = 'none';
-    dragGhost.style.zIndex = '9999';
-    dragGhost.style.transform = 'translate(-8px, -8px)';
     document.body.appendChild(dragGhost);
   };
 
@@ -186,7 +154,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   document.addEventListener('mouseout', onDropzoneMouseOut as EventListener);
 
   const onDragStart = (e: DragEvent) => {
-    const target = (e.target as HTMLElement).closest<HTMLElement>('.slick-header-column');
+    const target = (e.target as HTMLElement).closest<HTMLElement>(draggableSelector);
     if (!target || !isDraggable(target)) {
       e.preventDefault();
       return;
@@ -197,7 +165,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     // remember original position so we can restore it if dropped outside headers (eg. dropzone)
     originalParent = target.parentElement;
     originalNextSibling = target.nextSibling;
-    target.classList.add('slick-header-column-active');
+    target.classList.add(dragActiveClass);
     if (e.dataTransfer) {
       e.dataTransfer.effectAllowed = 'move';
       // Store column id so the dropzone can identify which column was dragged
@@ -242,7 +210,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       return;
     }
 
-    const target = (e.target as HTMLElement).closest<HTMLElement>('.slick-header-column');
+    const target = (e.target as HTMLElement).closest<HTMLElement>(draggableSelector);
     if (!draggedEl || !target || target === draggedEl || !isDraggable(target)) {
       return;
     }
@@ -263,7 +231,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   const onDragEnd = (e: DragEvent) => {
     const draggedHeader = draggedEl;
     if (draggedHeader) {
-      draggedHeader.classList.remove('slick-header-column-active');
+      draggedHeader.classList.remove(dragActiveClass);
     }
     stopAutoScroll();
     document.removeEventListener('drag', autoScrollHandler as EventListener);
@@ -309,58 +277,62 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   // Firefox on Linux has broken/unstable native HTML5 drag behavior in many setups.
   // Provide a mouse-based fallback that mimics SortableJS's `forceFallback`.
   const onFallbackMouseDown = (e: MouseEvent) => {
-    const target = (e.target as HTMLElement).closest<HTMLElement>('.slick-header-column');
-    if (!target || !isDraggable(target)) return;
-    e.preventDefault();
-    draggedEl = target;
-    draggedColumnId = target.dataset.id ?? '';
-    originalParent = target.parentElement;
-    originalNextSibling = target.nextSibling;
-    draggedEl.classList.add('slick-header-column-active');
-    options.onDragStart?.(target);
-    createFallbackGhost(target, e.clientX, e.clientY);
-    fallbackActive = true;
-    _lastClientX = e.clientX;
-    document.addEventListener('mousemove', onFallbackMouseMove as EventListener);
-    document.addEventListener('mouseup', onFallbackMouseUp as EventListener);
+    const target = (e.target as HTMLElement).closest<HTMLElement>(draggableSelector);
+    if (target && isDraggable(target)) {
+      e.preventDefault();
+      draggedEl = target;
+      draggedColumnId = target.dataset.id ?? '';
+      originalParent = target.parentElement;
+      originalNextSibling = target.nextSibling;
+      draggedEl.classList.add(dragActiveClass);
+      options.onDragStart?.(target);
+      createFallbackGhost(target, e.clientX, e.clientY);
+      fallbackActive = true;
+      _lastClientX = e.clientX;
+      document.addEventListener('mousemove', onFallbackMouseMove as EventListener);
+      document.addEventListener('mouseup', onFallbackMouseUp as EventListener);
+    }
   };
 
   const onFallbackMouseMove = (e: MouseEvent) => {
-    if (!fallbackActive || !draggedEl) return;
-    updateFallbackGhost(e.clientX, e.clientY);
-    const elUnder = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
-    const overDropzone = elUnder?.closest?.('.slick-dropzone');
-    if (overDropzone) {
-      dropzoneTargetActive = true;
-      return;
-    }
-    dropzoneTargetActive = false;
+    if (fallbackActive && draggedEl) {
+      updateFallbackGhost(e.clientX, e.clientY);
+      const elUnder = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+      const overDropzone = elUnder?.closest?.('.slick-dropzone');
+      if (overDropzone) {
+        dropzoneTargetActive = true;
+        return;
+      }
+      dropzoneTargetActive = false;
 
-    // If we're over another header column, perform the same live DOM reordering
-    // that the native dragover handler does so users get immediate visual feedback.
-    const targetHeader = elUnder?.closest?.('.slick-header-column') as HTMLElement | null;
-    if (!targetHeader || targetHeader === draggedEl || !isDraggable(targetHeader)) return;
+      // If we're over another header column, perform the same live DOM reordering
+      // that the native dragover handler does so users get immediate visual feedback.
+      const targetHeader = elUnder?.closest?.(draggableSelector) as HTMLElement | null;
+      if (!targetHeader || targetHeader === draggedEl || !isDraggable(targetHeader)) {
+        return;
+      }
 
-    const targetParent = targetHeader.parentElement;
-    if (!targetParent || (!headerLeft.contains(targetParent) && !headerRight.contains(targetParent))) {
-      return;
-    }
+      const targetParent = targetHeader.parentElement;
+      if (!targetParent || (!headerLeft.contains(targetParent) && !headerRight.contains(targetParent))) {
+        return;
+      }
 
-    try {
-      const rect = targetHeader.getBoundingClientRect();
-      const movingRight = _lastClientX == null ? e.clientX >= rect.left + rect.width / 2 : e.clientX > _lastClientX;
-      _lastClientX = e.clientX;
-      const insertBefore = !movingRight;
-      targetHeader.parentElement!.insertBefore(draggedEl, insertBefore ? targetHeader : targetHeader.nextSibling);
-    } catch (err) {
-      // ignore DOM insertion errors
+      try {
+        const rect = targetHeader.getBoundingClientRect();
+        const movingRight = _lastClientX == null ? e.clientX >= rect.left + rect.width / 2 : e.clientX > _lastClientX;
+        _lastClientX = e.clientX;
+        const insertBefore = !movingRight;
+        targetHeader.parentElement!.insertBefore(draggedEl, insertBefore ? targetHeader : targetHeader.nextSibling);
+      } catch (err) {
+        // ignore DOM insertion errors
+      }
     }
   };
 
   const onFallbackMouseUp = (e: MouseEvent) => {
     const draggedHeader = draggedEl;
     if (draggedHeader) {
-      draggedHeader.classList.remove('slick-header-column-active');
+      draggedHeader.classList.remove(dragActiveClass);
     }
     fallbackActive = false;
     document.removeEventListener('mousemove', onFallbackMouseMove as EventListener);
@@ -370,7 +342,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     try {
       if (!droppedOnDropzone) {
         const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
-        if (el && el.closest && el.closest('.slick-dropzone')) {
+        if (el?.closest?.('.slick-dropzone')) {
           droppedOnDropzone = true;
         }
       }
@@ -440,11 +412,180 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       clearDropzoneTarget();
       clearFallbackGhost();
       [headerLeft, headerRight].forEach((parent) =>
-        Array.from(parent.querySelectorAll<HTMLElement>('.slick-header-column')).forEach((el) => {
+        Array.from(parent.querySelectorAll<HTMLElement>(draggableSelector)).forEach((el) => {
           el.draggable = false;
-          el.classList.remove('slick-header-column-active');
+          el.classList.remove(dragActiveClass);
         })
       );
+    },
+  };
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Dropzone pill drag (used by DraggableGrouping to reorder group pills)
+// ──────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Sets up drag-and-drop for reordering group pills inside a dropzone, plus
+ * accepting column-header drops that create new group pills.
+ *
+ * All Firefox+Linux detection and mouse-based fallback are handled internally;
+ * callers do not need to know about the browser quirk.
+ *
+ * @returns `{ destroy }` – call to remove all listeners.
+ */
+export function setupDropzonePillDrag(options: DropzonePillDragOption): { destroy: () => void } {
+  const { dropzoneElm } = options;
+  const itemSelector = options.itemSelector ?? '.slick-dropped-grouping';
+  const draggingCssClass = options.draggingCssClass ?? '';
+
+  const userAgent = (typeof window !== 'undefined' ? window.navigator : navigator)?.userAgent ?? '';
+  const isFfLinux = /firefox/i.test(userAgent) && /(?:linux|wayland)/i.test(userAgent);
+
+  let draggedPill: HTMLElement | null = null;
+  let fallbackActive = false;
+
+  // ── Native pill drag ──────────────────────────────────────────────────────
+
+  const onDragStart = (e: DragEvent) => {
+    const pill = (e.target as HTMLElement).closest<HTMLElement>(itemSelector);
+    if (pill) {
+      draggedPill = pill;
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+        if (typeof e.dataTransfer.setData === 'function') {
+          e.dataTransfer.setData('text/plain', pill.dataset.id ?? '');
+        }
+        // Explicit drag image avoids Firefox+Linux ghost rendering issues
+        if (typeof e.dataTransfer.setDragImage === 'function') {
+          const rect = pill.getBoundingClientRect();
+          e.dataTransfer.setDragImage(pill, e.clientX - rect.left, e.clientY - rect.top);
+        }
+      }
+    }
+  };
+
+  const onDragOver = (e: DragEvent) => {
+    e.preventDefault();
+    const target = (e.target as HTMLElement).closest<HTMLElement>(itemSelector);
+    if (draggedPill && target && target !== draggedPill) {
+      const rect = target.getBoundingClientRect();
+      dropzoneElm.insertBefore(draggedPill, e.clientX < rect.left + rect.width / 2 ? target : target.nextSibling);
+    }
+  };
+
+  const onDragEnd = () => {
+    if (draggedPill) {
+      const currentPill = draggedPill;
+      if (draggingCssClass) {
+        currentPill.classList.remove(draggingCssClass);
+      }
+      draggedPill = null;
+      fallbackActive = false;
+      options.onPillDragEnd?.(currentPill);
+    }
+  };
+
+  // ── Column-header drop visual feedback & acceptance ───────────────────────
+
+  const onDragEnter = (e: DragEvent) => {
+    if (!draggedPill) {
+      options.onColumnDragEnter?.(e);
+    }
+    e.preventDefault();
+  };
+
+  const onDragLeave = (e: DragEvent) => {
+    if (!draggedPill) {
+      options.onColumnDragLeave?.(e);
+    }
+  };
+
+  const onDrop = (e: DragEvent) => {
+    e.preventDefault();
+    if (!draggedPill) {
+      const columnDataId = e.dataTransfer?.getData('text/plain');
+      if (columnDataId) {
+        options.onColumnDrop?.(columnDataId, e);
+      }
+    }
+  };
+
+  // ── Firefox/Linux mouse-based fallback for pill reordering ────────────────
+
+  const onFallbackMouseDown = (e: MouseEvent) => {
+    const pill = (e.target as HTMLElement).closest<HTMLElement>(itemSelector);
+    if (pill) {
+      e.preventDefault();
+      draggedPill = pill;
+      fallbackActive = true;
+      if (draggingCssClass) {
+        pill.classList.add(draggingCssClass);
+      }
+    }
+  };
+
+  const onFallbackMouseMove = (e: MouseEvent) => {
+    if (fallbackActive && draggedPill) {
+      // e.target may be Document (not an Element) when dispatched on document, so guard with instanceof
+      const targetEl = e.target instanceof Element ? (e.target as HTMLElement) : null;
+      const target =
+        targetEl?.closest<HTMLElement>(itemSelector) ??
+        (document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null)?.closest<HTMLElement>(itemSelector);
+      if (!target || target === draggedPill || !dropzoneElm.contains(target)) {
+        return;
+      }
+      const rect = target.getBoundingClientRect();
+      const insertBefore = e.clientX < rect.left + rect.width / 2;
+      const insertTarget = insertBefore ? target : target.nextSibling;
+      if (draggedPill.parentElement === dropzoneElm && insertTarget !== draggedPill) {
+        dropzoneElm.insertBefore(draggedPill, insertTarget);
+      }
+    }
+  };
+
+  const onFallbackMouseUp = () => {
+    const currentPill = draggedPill;
+    if (currentPill && draggingCssClass) {
+      currentPill.classList.remove(draggingCssClass);
+    }
+    draggedPill = null;
+    fallbackActive = false;
+    if (currentPill) {
+      options.onPillDragEnd?.(currentPill);
+    }
+  };
+
+  // ── Register listeners ────────────────────────────────────────────────────
+
+  dropzoneElm.addEventListener('dragstart', onDragStart as EventListener);
+  dropzoneElm.addEventListener('dragover', onDragOver as EventListener);
+  dropzoneElm.addEventListener('dragend', onDragEnd);
+  dropzoneElm.addEventListener('dragenter', onDragEnter as EventListener);
+  dropzoneElm.addEventListener('dragleave', onDragLeave as EventListener);
+  dropzoneElm.addEventListener('drop', onDrop as EventListener);
+
+  if (isFfLinux) {
+    dropzoneElm.addEventListener('mousedown', onFallbackMouseDown as EventListener);
+    document.addEventListener('mousemove', onFallbackMouseMove as EventListener);
+    document.addEventListener('mouseup', onFallbackMouseUp);
+  }
+
+  return {
+    destroy() {
+      dropzoneElm.removeEventListener('dragstart', onDragStart as EventListener);
+      dropzoneElm.removeEventListener('dragover', onDragOver as EventListener);
+      dropzoneElm.removeEventListener('dragend', onDragEnd);
+      dropzoneElm.removeEventListener('dragenter', onDragEnter as EventListener);
+      dropzoneElm.removeEventListener('dragleave', onDragLeave as EventListener);
+      dropzoneElm.removeEventListener('drop', onDrop as EventListener);
+      if (isFfLinux) {
+        dropzoneElm.removeEventListener('mousedown', onFallbackMouseDown as EventListener);
+        document.removeEventListener('mousemove', onFallbackMouseMove as EventListener);
+        document.removeEventListener('mouseup', onFallbackMouseUp);
+      }
+      draggedPill = null;
+      fallbackActive = false;
     },
   };
 }

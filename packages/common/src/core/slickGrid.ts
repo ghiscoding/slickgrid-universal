@@ -2148,6 +2148,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       container: this._container,
       viewportScrollContainerX: this._viewportScrollContainerX,
       hasFrozenColumns: () => this.hasFrozenColumns(),
+      draggableSelector: '.slick-header-column',
+      dragActiveClass: 'slick-header-column-active',
       unorderableColumnCssClass: this._options.unorderableColumnCssClass,
       onDragStart: () => {
         prevColumnIds = this.columns.map((c) => c.id);

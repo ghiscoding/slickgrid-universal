@@ -383,6 +383,36 @@ describe('Draggable Grouping Plugin', () => {
       expect(triggerSpy).toHaveBeenCalledWith(gridStub.onColumnsReordered, { grid: gridStub, impactedColumns: expect.arrayContaining([mockColumns[2]]) });
     });
 
+    it('should execute setupColumnReorder onDrop callback when header drag ends over dropzone', () => {
+      plugin.init(gridStub, { ...addonOptions });
+      plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+
+      const headerCol = createDomElement('div', { className: 'slick-header-column', dataset: { id: 'age' } }, mockHeaderLeftDiv1);
+
+      // Create a dropped grouping and toggle all so onDrop callback executes its full UI branch (lines 311-326)
+      fireDropOnDropzone(dropzoneElm, 'age');
+
+      // Simulate drop over grouping dropzone at dragend so setupColumnReorderDrag calls onDrop callback.
+      Object.defineProperty(document, 'elementFromPoint', {
+        configurable: true,
+        value: vi.fn(() => dropzoneElm as Element),
+      });
+
+      fireDragStartOnHeader(headerCol);
+      const dragEndEvt = new Event('dragend', { bubbles: true, cancelable: true }) as DragEvent;
+      Object.defineProperty(dragEndEvt, 'clientX', { value: 25 });
+      Object.defineProperty(dragEndEvt, 'clientY', { value: 12 });
+      headerCol.dispatchEvent(dragEndEvt);
+
+      const draggablePlaceholderElm = dropzoneElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
+      const droppedGroupingElm = dropzoneElm.querySelector('.slick-dropped-grouping') as HTMLDivElement;
+      const toggleAllElm = dropzoneElm.querySelector('.slick-group-toggle-all') as HTMLDivElement;
+
+      expect(draggablePlaceholderElm.style.display).toBe('none');
+      expect(droppedGroupingElm.style.display).toBe('flex');
+      expect(toggleAllElm?.style.display).toBe('inline-flex');
+    });
+
     it('should drag over dropzone and expect hover css class be added and removed when dragging outside of dropzone', () => {
       plugin.init(gridStub, { ...addonOptions });
       plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close color-danger' });

@@ -100,6 +100,15 @@
     background-color: var(--slick-header-column-background-active, v.$slick-header-column-background-active) !important;
   }
 
+  // Firefox fallback when dragging a column header (since Firefox doesn't support the drag image)
+  .slick-header-column-drag-ghost {
+    position: fixed;
+    margin: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-8px, -8px);
+  }
+
   .slick-headerrow {
     background: var(--slick-grid-header-background, v.$slick-grid-header-background);
   }
