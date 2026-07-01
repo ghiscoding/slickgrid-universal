@@ -307,6 +307,25 @@ export class SlickDraggableGrouping {
           groupTogglerElm.style.display = 'none';
         }
       },
+      onDrop: (draggedEl, _event, draggedColumnId) => {
+        dropzoneElm?.classList.remove('slick-dropzone-hover');
+        draggablePlaceholderElm?.parentElement?.classList.remove('slick-dropzone-placeholder-hover');
+        const droppedGroupingElms = dropzoneElm.querySelectorAll<HTMLDivElement>('.slick-dropped-grouping');
+        droppedGroupingElms.forEach((el) => (el.style.display = 'flex'));
+        if (droppedGroupingElms.length) {
+          if (draggablePlaceholderElm) {
+            draggablePlaceholderElm.style.display = 'none';
+          }
+          if (groupTogglerElm) {
+            groupTogglerElm.style.display = 'inline-flex';
+          }
+        }
+        const headerColumnElm =
+          (draggedEl as HTMLDivElement | null) ?? this.gridContainer.querySelector<HTMLDivElement>(`[data-id="${draggedColumnId}"]`);
+        if (headerColumnElm) {
+          this.handleGroupByDrop(dropzoneElm, headerColumnElm);
+        }
+      },
       onDragEnd: (reorderedIds) => {
         dropzoneElm?.classList.remove('slick-dropzone-hover');
         draggablePlaceholderElm?.parentElement?.classList.remove('slick-dropzone-placeholder-hover');
@@ -533,7 +552,10 @@ export class SlickDraggableGrouping {
     const dropzoneElm = this._dropzoneElm;
     this._dropboxDrag?.destroy();
 
+    const isFfLinux =
+      typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent) && /(?:linux|wayland)/i.test(navigator.userAgent);
     let draggedPill: HTMLElement | null = null;
+    let fallbackActive = false;
 
     // --- Group pill reordering within the dropzone ---
     const onDragStart = (e: DragEvent) => {
@@ -564,10 +586,8 @@ export class SlickDraggableGrouping {
       }
     };
 
-    const onDragEnd = () => {
-      if (draggedPill) {
-        draggedPill = null;
-        // Read new pill order from DOM and update columnsGroupBy
+    const updatePillOrder = (currentPill: HTMLElement | null = draggedPill) => {
+      if (currentPill) {
         const newGroupingOrder: Column[] = [];
         dropzoneElm.querySelectorAll<HTMLElement>('.slick-dropped-grouping').forEach((pillElm) => {
           const id = pillElm.dataset.id;
@@ -577,6 +597,56 @@ export class SlickDraggableGrouping {
         this.columnsGroupBy = newGroupingOrder;
         this.updateGroupBy('sort-group');
       }
+    };
+
+    const onDragEnd = () => {
+      if (draggedPill) {
+        const currentPill = draggedPill;
+        currentPill.classList.remove('slick-dropped-grouping-dragging');
+        draggedPill = null;
+        fallbackActive = false;
+        updatePillOrder(currentPill);
+      }
+    };
+
+    const onFallbackMouseDown = (e: MouseEvent) => {
+      const pill = (e.target as HTMLElement).closest<HTMLElement>('.slick-dropped-grouping');
+      if (!pill) {
+        return;
+      }
+      e.preventDefault();
+      draggedPill = pill;
+      fallbackActive = true;
+      draggedPill.classList.add('slick-dropped-grouping-dragging');
+    };
+
+    const onFallbackMouseMove = (e: MouseEvent) => {
+      if (!fallbackActive || !draggedPill) {
+        return;
+      }
+      const target =
+        (e.target as HTMLElement | null)?.closest<HTMLElement>('.slick-dropped-grouping') ??
+        (document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null)?.closest<HTMLElement>('.slick-dropped-grouping');
+      if (!target || target === draggedPill || !dropzoneElm.contains(target)) {
+        return;
+      }
+
+      const rect = target.getBoundingClientRect();
+      const insertBefore = e.clientX < rect.left + rect.width / 2;
+      const insertTarget = insertBefore ? target : target.nextSibling;
+      if (draggedPill.parentElement === dropzoneElm && insertTarget !== draggedPill) {
+        dropzoneElm.insertBefore(draggedPill, insertTarget);
+      }
+    };
+
+    const onFallbackMouseUp = () => {
+      const currentPill = draggedPill;
+      if (currentPill) {
+        currentPill.classList.remove('slick-dropped-grouping-dragging');
+      }
+      draggedPill = null;
+      fallbackActive = false;
+      updatePillOrder(currentPill);
     };
 
     // --- Accept column header drops (creates a group pill) ---
@@ -613,6 +683,11 @@ export class SlickDraggableGrouping {
     dropzoneElm.addEventListener('dragenter', onDragEnter as EventListener);
     dropzoneElm.addEventListener('dragleave', onDragLeave as EventListener);
     dropzoneElm.addEventListener('drop', onDrop as EventListener);
+    if (isFfLinux) {
+      dropzoneElm.addEventListener('mousedown', onFallbackMouseDown as EventListener);
+      document.addEventListener('mousemove', onFallbackMouseMove as EventListener);
+      document.addEventListener('mouseup', onFallbackMouseUp as EventListener);
+    }
 
     this._dropboxDrag = {
       destroy: () => {
@@ -622,6 +697,11 @@ export class SlickDraggableGrouping {
         dropzoneElm.removeEventListener('dragenter', onDragEnter as EventListener);
         dropzoneElm.removeEventListener('dragleave', onDragLeave as EventListener);
         dropzoneElm.removeEventListener('drop', onDrop as EventListener);
+        if (isFfLinux) {
+          dropzoneElm.removeEventListener('mousedown', onFallbackMouseDown as EventListener);
+          document.removeEventListener('mousemove', onFallbackMouseMove as EventListener);
+          document.removeEventListener('mouseup', onFallbackMouseUp as EventListener);
+        }
       },
     };
 

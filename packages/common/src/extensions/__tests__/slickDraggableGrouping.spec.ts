@@ -469,6 +469,96 @@ describe('Draggable Grouping Plugin', () => {
       expect(Array.from(dropzoneElm.querySelectorAll('.slick-dropped-grouping')).map((el) => (el as HTMLElement).dataset.id)).toEqual(['medals', 'age']);
     });
 
+    it('should update grouped column order on Firefox fallback mouse up after swapping pills', () => {
+      Object.defineProperty(window.navigator, 'userAgent', {
+        configurable: true,
+        value: 'Mozilla/5.0 Firefox/128.0 Linux x86_64',
+      });
+
+      plugin.init(gridStub, { ...addonOptions });
+      plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+
+      const ageHeader = createDomElement('div', { className: 'slick-header-column', dataset: { id: 'age' } }, mockHeaderLeftDiv1);
+      const medalsHeader = createDomElement('div', { className: 'slick-header-column', dataset: { id: 'medals' } }, mockHeaderLeftDiv1);
+      (plugin as any).handleGroupByDrop(dropzoneElm, ageHeader);
+      (plugin as any).handleGroupByDrop(dropzoneElm, medalsHeader);
+
+      const firstPill = dropzoneElm.querySelector('.slick-dropped-grouping') as HTMLElement;
+      const secondPill = dropzoneElm.querySelectorAll('.slick-dropped-grouping')[1] as HTMLElement;
+      expect(plugin.columnsGroupBy.map((col) => col.id)).toEqual(['age', 'medals']);
+
+      vi.spyOn(secondPill, 'getBoundingClientRect').mockReturnValue({
+        left: 100,
+        width: 40,
+        right: 140,
+        top: 0,
+        bottom: 0,
+        x: 100,
+        y: 0,
+        height: 20,
+        toJSON: () => ({}),
+      } as DOMRect);
+      Object.defineProperty(document, 'elementFromPoint', {
+        configurable: true,
+        value: vi.fn(() => secondPill),
+      });
+
+      const mouseDown = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+      Object.defineProperty(mouseDown, 'target', { value: firstPill });
+      firstPill.dispatchEvent(mouseDown);
+
+      const mouseMove = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
+      Object.defineProperty(mouseMove, 'clientX', { value: 139 });
+      Object.defineProperty(mouseMove, 'clientY', { value: 10 });
+      document.dispatchEvent(mouseMove);
+
+      const mouseUp = new MouseEvent('mouseup', { bubbles: true, cancelable: true });
+      Object.defineProperty(mouseUp, 'clientX', { value: 139 });
+      Object.defineProperty(mouseUp, 'clientY', { value: 10 });
+      document.dispatchEvent(mouseUp);
+
+      expect(Array.from(dropzoneElm.querySelectorAll('.slick-dropped-grouping')).map((el) => (el as HTMLElement).dataset.id)).toEqual(['medals', 'age']);
+      expect(plugin.columnsGroupBy.map((col) => col.id)).toEqual(['medals', 'age']);
+    });
+
+    it('should reorder dropped grouping pills with a mouse fallback on Firefox/Linux', () => {
+      const originalUserAgent = navigator.userAgent;
+      Object.defineProperty(window.navigator, 'userAgent', {
+        configurable: true,
+        value: 'Mozilla/5.0 Firefox/128.0 Linux x86_64',
+      });
+
+      plugin.init(gridStub, { ...addonOptions });
+      plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+
+      const firstPill = createDomElement('div', { className: 'slick-dropped-grouping', dataset: { id: 'age' } }, dropzoneElm);
+      const secondPill = createDomElement('div', { className: 'slick-dropped-grouping', dataset: { id: 'medals' } }, dropzoneElm);
+
+      Object.defineProperty(document, 'elementFromPoint', {
+        configurable: true,
+        value: vi.fn(() => secondPill as Element),
+      });
+
+      const mouseDown = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+      Object.defineProperty(mouseDown, 'clientX', { value: 10 });
+      Object.defineProperty(mouseDown, 'clientY', { value: 10 });
+      firstPill.dispatchEvent(mouseDown);
+
+      const mouseMove = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
+      Object.defineProperty(mouseMove, 'clientX', { value: 120 });
+      Object.defineProperty(mouseMove, 'clientY', { value: 10 });
+      document.dispatchEvent(mouseMove);
+
+      const mouseUp = new MouseEvent('mouseup', { bubbles: true, cancelable: true });
+      Object.defineProperty(mouseUp, 'clientX', { value: 120 });
+      Object.defineProperty(mouseUp, 'clientY', { value: 10 });
+      document.dispatchEvent(mouseUp);
+
+      expect(Array.from(dropzoneElm.querySelectorAll('.slick-dropped-grouping')).map((el) => (el as HTMLElement).dataset.id)).toEqual(['medals', 'age']);
+
+      Object.defineProperty(window.navigator, 'userAgent', { configurable: true, value: originalUserAgent });
+    });
+
     describe('setupColumnDropbox method', () => {
       describe('setupColumnDropbox update & toggler click event', () => {
         let groupChangedSpy: any;

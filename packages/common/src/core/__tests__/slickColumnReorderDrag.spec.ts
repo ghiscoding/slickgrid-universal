@@ -224,6 +224,53 @@ describe('slickColumnReorderDrag', () => {
     expect(Array.from(headerLeft.children).map((el) => (el as HTMLElement).dataset.id)).toEqual(['lastName', 'firstName', 'age']);
   });
 
+  it('should not move dragged header into a preheader-style container', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    const lastName = createHeaderColumn('lastName');
+    const preHeaderGroup = createHeaderColumn('preHeaderGroup');
+    const preHeaderContainer = document.createElement('div');
+    preHeaderContainer.append(preHeaderGroup);
+    headerLeft.append(firstName, lastName);
+
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      onDragEnd: vi.fn(),
+    });
+
+    const dragStartEvt = createDragEvent('dragstart', {
+      dataTransfer: { effectAllowed: '', setData: vi.fn(), setDragImage: vi.fn() },
+      offsetX: 8,
+      offsetY: 4,
+    });
+    firstName.dispatchEvent(dragStartEvt);
+
+    vi.spyOn(preHeaderGroup, 'getBoundingClientRect').mockReturnValue({
+      left: 100,
+      width: 40,
+      right: 140,
+      top: 0,
+      bottom: 0,
+      x: 100,
+      y: 0,
+      height: 20,
+      toJSON: () => ({}),
+    } as DOMRect);
+
+    const dragOverEvt = createDragEvent('dragover', { clientX: 110 });
+    preHeaderGroup.dispatchEvent(dragOverEvt);
+
+    expect(Array.from(headerLeft.children).map((el) => (el as HTMLElement).dataset.id)).toEqual(['firstName', 'lastName']);
+    expect(preHeaderContainer.contains(firstName)).toBe(false);
+  });
+
   it('should call setDragImage with rect-relative coords (Firefox/Linux ghost fix) on dragstart', () => {
     const headerLeft = document.createElement('div');
     const headerRight = document.createElement('div');
@@ -265,5 +312,47 @@ describe('slickColumnReorderDrag', () => {
     // The ghost should be anchored at (clientX - rect.left, clientY - rect.top) = (10, 5)
     // NOT at e.offsetX / e.offsetY which would be relative to whichever child element was clicked
     expect(setDragImageSpy).toHaveBeenCalledWith(firstName, 10, 5);
+  });
+
+  it('should notify onDrop instead of onDragEnd when dropped onto a dropzone', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    const dropzone = document.createElement('div');
+    dropzone.className = 'slick-dropzone';
+    document.body.append(dropzone);
+    headerLeft.append(firstName);
+
+    const onDragEnd = vi.fn();
+    const onDrop = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      onDragEnd,
+      onDrop,
+    });
+
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: vi.fn(() => dropzone as Element),
+    });
+
+    const dragStartEvt = createDragEvent('dragstart', {
+      dataTransfer: { effectAllowed: '', setData: vi.fn(), setDragImage: vi.fn() },
+      clientX: 10,
+      clientY: 10,
+    });
+    firstName.dispatchEvent(dragStartEvt);
+
+    const dragEndEvt = createDragEvent('dragend', { clientX: 20, clientY: 20 });
+    firstName.dispatchEvent(dragEndEvt);
+
+    expect(onDrop).toHaveBeenCalledWith(firstName, dragEndEvt, 'firstName');
+    expect(onDragEnd).not.toHaveBeenCalled();
   });
 });
