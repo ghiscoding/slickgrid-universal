@@ -68,8 +68,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
   // Mirror SortableJS's Firefox/Linux fallback detection so the mouse-based path is used only for the broken browser combo.
   // Include Wayland because Firefox on Linux Wayland may omit the X11 token.
-  const isFfLinux =
-    typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent) && /(?:linux|wayland)/i.test(navigator.userAgent);
+  const isFfLinux = typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent) && /linux/i.test(navigator.userAgent);
 
   const getColumnIds = (parent: HTMLElement): string[] =>
     Array.from(parent.children)
@@ -508,7 +507,7 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
   const DRAG_THRESHOLD = 5; // pixels before we consider it a drag, not a click
 
   const userAgent = (typeof window !== 'undefined' ? window.navigator : navigator)?.userAgent ?? '';
-  const isFfLinux = /firefox/i.test(userAgent) && /(?:linux|wayland)/i.test(userAgent);
+  const isFfLinux = /firefox/i.test(userAgent) && /linux/i.test(userAgent);
 
   let draggedPill: HTMLElement | null = null;
   let fallbackActive = false;
