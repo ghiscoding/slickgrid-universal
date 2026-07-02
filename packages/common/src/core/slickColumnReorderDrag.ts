@@ -302,6 +302,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     } else {
       // Pointer fallback (mouse on FF/Linux, touch on all platforms)
       e.preventDefault();
+      e.stopPropagation();
       createFallbackGhost(target, clientX, clientY);
       fallbackActive = true;
       if ('touches' in e) {
@@ -553,6 +554,7 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
     const pill = (e.target as HTMLElement).closest<HTMLElement>(itemSelector);
     if (pill) {
       e.preventDefault();
+      e.stopPropagation();
       draggedPill = pill;
       fallbackActive = true;
       if (draggingCssClass) pill.classList.add(draggingCssClass);
