@@ -598,7 +598,7 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
   const onPointerMove = (e: MouseEvent | TouchEvent) => {
     if (draggedPill && dragStartX != null && dragStartY != null) {
       const { clientX, clientY } = getPointerPos(e);
-      
+
       // Check if we've exceeded the drag threshold
       if (!fallbackActive) {
         const deltaX = Math.abs(clientX - dragStartX);
