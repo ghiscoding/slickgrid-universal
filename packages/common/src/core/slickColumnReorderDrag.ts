@@ -326,6 +326,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     if (draggedEl && dragStartX != null && dragStartY != null) {
       const { clientX, clientY, pageX } = getPointerPos(e);
 
+      // Always update ghost position for visual feedback
+      updateFallbackGhost(clientX, clientY);
+
       // Check if we've exceeded the drag threshold
       if (!fallbackActive) {
         const deltaX = Math.abs(clientX - dragStartX);
@@ -343,7 +346,6 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       // Now handle the actual drag movement
       if (fallbackActive) {
         e.preventDefault();
-        updateFallbackGhost(clientX, clientY);
 
         // browser-edge auto-scroll
         const containerOffset = getOffset(container);
