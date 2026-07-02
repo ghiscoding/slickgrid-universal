@@ -125,8 +125,16 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
   const createFallbackGhost = (source: HTMLElement, clientX: number, clientY: number) => {
     clearFallbackGhost();
+    const rect = source.getBoundingClientRect();
     dragGhost = source.cloneNode(true) as HTMLElement;
     dragGhost.classList.add('slick-header-column-drag-ghost');
+    // Explicitly set dimensions and styles so the ghost renders correctly outside its original container
+    dragGhost.style.position = 'fixed';
+    dragGhost.style.pointerEvents = 'none';
+    dragGhost.style.zIndex = '9999';
+    dragGhost.style.width = `${rect.width}px`;
+    dragGhost.style.height = `${rect.height}px`;
+    dragGhost.style.opacity = '0.8';
     dragGhost.style.left = `${clientX}px`;
     dragGhost.style.top = `${clientY}px`;
     document.body.appendChild(dragGhost);
@@ -359,7 +367,13 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
           stopAutoScroll();
         }
 
-        const elUnder = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
+        const elUnder = (() => {
+          // Hide ghost temporarily so elementFromPoint doesn't hit it
+          if (dragGhost) dragGhost.style.display = 'none';
+          const el = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
+          if (dragGhost) dragGhost.style.display = '';
+          return el;
+        })();
         const overDropzone = isOverDropzone(elUnder);
         if (overDropzone) {
           dropzoneTargetActive = true;
