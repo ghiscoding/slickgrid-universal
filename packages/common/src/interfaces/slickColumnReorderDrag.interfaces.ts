@@ -28,7 +28,7 @@ export interface ColumnReorderDragOption {
   /**
    * Called when the drag is dropped onto an external dropzone such as draggable grouping.
    */
-  onDrop?: (draggedEl: HTMLElement, event: DragEvent | MouseEvent, draggedColumnId?: string) => void;
+  onDrop?: (draggedEl: HTMLElement, event: DragEvent | MouseEvent | TouchEvent, draggedColumnId?: string) => void;
 }
 
 /** Dropzone pill drag (used by DraggableGrouping to reorder group pills) */

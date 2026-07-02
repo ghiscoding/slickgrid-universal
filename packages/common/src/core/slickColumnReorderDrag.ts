@@ -176,47 +176,6 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   document.addEventListener('mouseover', onDropzoneMouseOver as EventListener);
   document.addEventListener('mouseout', onDropzoneMouseOut as EventListener);
 
-  const onDragStart = (e: DragEvent) => {
-    const target = (e.target as HTMLElement).closest<HTMLElement>(draggableSelector);
-    if (!target || !isDraggable(target)) {
-      e.preventDefault();
-      return;
-    }
-    draggedEl = target;
-    draggedColumnId = target.dataset.id ?? '';
-    clearDropzoneTarget();
-    // remember original position so we can restore it if dropped outside headers (eg. dropzone)
-    originalParent = target.parentElement;
-    originalNextSibling = target.nextSibling;
-    target.classList.add(dragActiveClass);
-    if (e.dataTransfer) {
-      e.dataTransfer.effectAllowed = 'move';
-      // Store column id so the dropzone can identify which column was dragged
-      if (typeof e.dataTransfer.setData === 'function') {
-        e.dataTransfer.setData('text/plain', target.dataset.id ?? '');
-      }
-      // Explicit drag image avoids Firefox+Linux ghost rendering issues.
-      // Use clientX/Y minus the target rect to get the offset relative to the
-      // actual column header element (e.offsetX/Y is relative to e.target which
-      // may be a child span, causing a wrong ghost position on Firefox/Linux).
-      if (typeof e.dataTransfer.setDragImage === 'function') {
-        const rect = target.getBoundingClientRect();
-        e.dataTransfer.setDragImage(target, e.clientX - rect.left, e.clientY - rect.top);
-      }
-    }
-
-    options.onDragStart?.(target);
-
-    // reset pointer tracking for this drag session
-    _lastClientX = e.clientX ?? null;
-
-    // Only non-frozen columns should trigger browser-edge auto-scroll
-    const canAutoScroll = !options.hasFrozenColumns() || headerRight.contains(target);
-    if (canAutoScroll) {
-      document.addEventListener('drag', autoScrollHandler as EventListener);
-    }
-  };
-
   const onDragOver = (e: DragEvent) => {
     e.preventDefault();
     const overDropzone = isOverDropzone(e.target as HTMLElement | null);
@@ -283,81 +242,141 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     _lastClientX = null;
   };
 
-  // Firefox on Linux has broken/unstable native HTML5 drag behavior in many setups.
-  // Provide a mouse-based fallback that mimics SortableJS's `forceFallback`.
-  const onFallbackMouseDown = (e: MouseEvent) => {
+  // Firefox/Linux native HTML5 drag is broken; touch screens never fire HTML5 drag events.
+  // All three start events (dragstart, mousedown, touchstart) share one handler.
+
+  /** Extract { clientX, clientY, pageX } from any pointer-like event.
+   * DragEvent inherits clientX/pageX from MouseEvent; TouchEvent uses touches[0] (or
+   * changedTouches[0] for touchend/touchcancel where touches is empty). */
+  const getPointerPos = (e: DragEvent | MouseEvent | TouchEvent) => {
+    if ('touches' in e) {
+      const t = e.touches[0] ?? e.changedTouches[0];
+      return { clientX: t?.clientX ?? 0, clientY: t?.clientY ?? 0, pageX: t?.pageX ?? 0 };
+    }
+    return { clientX: e.clientX, clientY: e.clientY, pageX: e.pageX };
+  };
+
+  const onStart = (e: DragEvent | MouseEvent | TouchEvent) => {
+    const { clientX, clientY } = getPointerPos(e);
     const target = (e.target as HTMLElement).closest<HTMLElement>(draggableSelector);
-    if (target && isDraggable(target)) {
+    if (!target || !isDraggable(target)) {
+      // Cancel a native drag that started on a non-orderable column
+      if (e.type === 'dragstart') {
+        e.preventDefault();
+      }
+      return;
+    }
+    // Common state setup
+    draggedEl = target;
+    draggedColumnId = target.dataset.id ?? '';
+    clearDropzoneTarget();
+    originalParent = target.parentElement;
+    originalNextSibling = target.nextSibling;
+    target.classList.add(dragActiveClass);
+    options.onDragStart?.(target);
+    _lastClientX = clientX;
+
+    if (e.type === 'dragstart') {
+      // Native HTML5 drag: configure dataTransfer and auto-scroll
+      const de = e as DragEvent;
+      if (de.dataTransfer) {
+        de.dataTransfer.effectAllowed = 'move';
+        // Store column id so the dropzone can identify which column was dragged
+        if (typeof de.dataTransfer.setData === 'function') {
+          de.dataTransfer.setData('text/plain', target.dataset.id ?? '');
+        }
+        // Explicit drag image avoids Firefox+Linux ghost rendering issues.
+        // Use clientX/Y minus the target rect to get the offset relative to the
+        // actual column header element (e.offsetX/Y is relative to e.target which
+        // may be a child span, causing a wrong ghost position on Firefox/Linux).
+        if (typeof de.dataTransfer.setDragImage === 'function') {
+          const rect = target.getBoundingClientRect();
+          de.dataTransfer.setDragImage(target, clientX - rect.left, clientY - rect.top);
+        }
+      }
+      // Only non-frozen columns should trigger browser-edge auto-scroll
+      const canAutoScroll = !options.hasFrozenColumns() || headerRight.contains(target);
+      if (canAutoScroll) {
+        document.addEventListener('drag', autoScrollHandler as EventListener);
+      }
+    } else {
+      // Pointer fallback (mouse on FF/Linux, touch on all platforms)
       e.preventDefault();
-      draggedEl = target;
-      draggedColumnId = target.dataset.id ?? '';
-      originalParent = target.parentElement;
-      originalNextSibling = target.nextSibling;
-      draggedEl.classList.add(dragActiveClass);
-      options.onDragStart?.(target);
-      createFallbackGhost(target, e.clientX, e.clientY);
+      createFallbackGhost(target, clientX, clientY);
       fallbackActive = true;
-      _lastClientX = e.clientX;
-      document.addEventListener('mousemove', onFallbackMouseMove as EventListener);
-      document.addEventListener('mouseup', onFallbackMouseUp as EventListener);
+      if ('touches' in e) {
+        document.addEventListener('touchmove', onPointerMove as EventListener, { passive: false });
+        document.addEventListener('touchend', onPointerUp as EventListener);
+        document.addEventListener('touchcancel', onPointerUp as EventListener);
+      } else {
+        document.addEventListener('mousemove', onPointerMove as EventListener);
+        document.addEventListener('mouseup', onPointerUp as EventListener);
+      }
     }
   };
 
-  const onFallbackMouseMove = (e: MouseEvent) => {
+  const onPointerMove = (e: MouseEvent | TouchEvent) => {
     if (fallbackActive && draggedEl) {
-      updateFallbackGhost(e.clientX, e.clientY);
-      const elUnder = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+      e.preventDefault();
+      const { clientX, clientY, pageX } = getPointerPos(e);
+      updateFallbackGhost(clientX, clientY);
+
+      // browser-edge auto-scroll
+      const containerOffset = getOffset(container);
+      const viewportLeft = getOffset(viewportScrollContainerX).left;
+      const containerRight = containerOffset.left + container.clientWidth;
+      if (!columnScrollTimer && pageX > containerRight) {
+        columnScrollTimer = setInterval(scrollColumnsRight, 100);
+      } else if (!columnScrollTimer && pageX < viewportLeft) {
+        columnScrollTimer = setInterval(scrollColumnsLeft, 100);
+      } else if (columnScrollTimer && pageX <= containerRight && pageX >= viewportLeft) {
+        stopAutoScroll();
+      }
+
+      const elUnder = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
       const overDropzone = isOverDropzone(elUnder);
       if (overDropzone) {
         dropzoneTargetActive = true;
-        return;
-      }
-      dropzoneTargetActive = false;
-
-      // If we're over another header column, perform the same live DOM reordering
-      // that the native dragover handler does so users get immediate visual feedback.
-      const targetHeader = elUnder?.closest?.(draggableSelector) as HTMLElement | null;
-      if (!targetHeader) {
-        return;
-      }
-
-      try {
-        reorderDraggedAgainstTarget(targetHeader, e.clientX);
-      } catch (err) {
-        // ignore DOM insertion errors
+      } else {
+        dropzoneTargetActive = false;
+        const targetHeader = elUnder?.closest?.(draggableSelector) as HTMLElement | null;
+        if (targetHeader) {
+          try {
+            reorderDraggedAgainstTarget(targetHeader, clientX);
+          } catch (err) {
+            // ignore DOM insertion errors
+          }
+        }
       }
     }
   };
 
-  const onFallbackMouseUp = (e: MouseEvent) => {
+  const onPointerUp = (e: MouseEvent | TouchEvent) => {
+    document.removeEventListener('mousemove', onPointerMove as EventListener);
+    document.removeEventListener('mouseup', onPointerUp as EventListener);
+    document.removeEventListener('touchmove', onPointerMove as EventListener);
+    document.removeEventListener('touchend', onPointerUp as EventListener);
+    document.removeEventListener('touchcancel', onPointerUp as EventListener);
     const draggedHeader = draggedEl;
-    if (draggedHeader) {
-      draggedHeader.classList.remove(dragActiveClass);
-    }
+    if (draggedHeader) draggedHeader.classList.remove(dragActiveClass);
+    stopAutoScroll();
     fallbackActive = false;
-    document.removeEventListener('mousemove', onFallbackMouseMove as EventListener);
-    document.removeEventListener('mouseup', onFallbackMouseUp as EventListener);
 
+    const { clientX, clientY } = getPointerPos(e);
     let droppedOnDropzone = dropzoneTargetActive;
     try {
       if (!droppedOnDropzone) {
-        const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
-        if (el?.closest?.('.slick-dropzone')) {
-          droppedOnDropzone = true;
-        }
+        const el = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
+        if (el?.closest?.('.slick-dropzone')) droppedOnDropzone = true;
       }
     } catch (err) {
       droppedOnDropzone = false;
     }
-    // If the fallback drop landed on an external dropzone, ensure the
-    // header DOM is restored to its original parent so the grid's column
-    // list remains intact. This prevents Firefox/Linux from permanently
-    // removing the header element when the dropzone interaction mutates the DOM.
     if (droppedOnDropzone && draggedHeader && originalParent) {
       try {
         originalParent.insertBefore(draggedHeader, originalNextSibling as Node | null);
       } catch (err) {
-        // ignore restore failures
+        // ignore
       }
     }
     const reorderedIds = getColumnIds(headerLeft).concat(getColumnIds(headerRight));
@@ -377,28 +396,34 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   };
 
   for (const parent of [headerLeft, headerRight]) {
-    parent.addEventListener('dragstart', onDragStart as EventListener);
+    parent.addEventListener('dragstart', onStart as EventListener);
     parent.addEventListener('dragover', onDragOver as EventListener);
     parent.addEventListener('dragend', onDragEnd as EventListener);
     if (isFfLinux) {
       // Mouse-based fallback for Firefox on Linux
-      parent.addEventListener('mousedown', onFallbackMouseDown as EventListener, true);
+      parent.addEventListener('mousedown', onStart as EventListener, true);
     }
+    // Touch fallback for all platforms (touch screens don't fire HTML5 drag events)
+    parent.addEventListener('touchstart', onStart as EventListener, { passive: false });
   }
 
   return {
     destroy() {
       for (const parent of [headerLeft, headerRight]) {
-        parent.removeEventListener('dragstart', onDragStart as EventListener);
+        parent.removeEventListener('dragstart', onStart as EventListener);
         parent.removeEventListener('dragover', onDragOver as EventListener);
         parent.removeEventListener('dragend', onDragEnd as EventListener);
         if (isFfLinux) {
-          parent.removeEventListener('mousedown', onFallbackMouseDown as EventListener, true);
+          parent.removeEventListener('mousedown', onStart as EventListener, true);
         }
+        parent.removeEventListener('touchstart', onStart as EventListener);
       }
       document.removeEventListener('drag', autoScrollHandler as EventListener);
-      document.removeEventListener('mousemove', onFallbackMouseMove as EventListener);
-      document.removeEventListener('mouseup', onFallbackMouseUp as EventListener);
+      document.removeEventListener('mousemove', onPointerMove as EventListener);
+      document.removeEventListener('mouseup', onPointerUp as EventListener);
+      document.removeEventListener('touchmove', onPointerMove as EventListener);
+      document.removeEventListener('touchend', onPointerUp as EventListener);
+      document.removeEventListener('touchcancel', onPointerUp as EventListener);
       document.removeEventListener('dragenter', onDropzoneDragEnter as EventListener);
       document.removeEventListener('dragleave', onDropzoneDragLeave as EventListener);
       document.removeEventListener('mouseover', onDropzoneMouseOver as EventListener);
@@ -511,49 +536,64 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
     }
   };
 
-  // ── Firefox/Linux mouse-based fallback for pill reordering ────────────────
+  // Firefox/Linux native drag is broken; touch screens never fire HTML5 drag events.
+  // Both cases share onPointerDown/Move/Up – coordinates come from a tiny helper.
 
-  const onFallbackMouseDown = (e: MouseEvent) => {
+  /** Extract { clientX, clientY } from a mouse or touch event.
+   * For touchend/touchcancel, e.touches is empty – falls back to changedTouches. */
+  const getPointerPos = (e: MouseEvent | TouchEvent) => {
+    if ('touches' in e) {
+      const t = e.touches[0] ?? e.changedTouches[0];
+      return { clientX: t?.clientX ?? 0, clientY: t?.clientY ?? 0 };
+    }
+    return { clientX: e.clientX, clientY: e.clientY };
+  };
+
+  const onPointerDown = (e: MouseEvent | TouchEvent) => {
     const pill = (e.target as HTMLElement).closest<HTMLElement>(itemSelector);
     if (pill) {
       e.preventDefault();
       draggedPill = pill;
       fallbackActive = true;
-      if (draggingCssClass) {
-        pill.classList.add(draggingCssClass);
+      if (draggingCssClass) pill.classList.add(draggingCssClass);
+      if ('touches' in e) {
+        document.addEventListener('touchmove', onPointerMove as EventListener, { passive: false });
+        document.addEventListener('touchend', onPointerUp as EventListener);
+        document.addEventListener('touchcancel', onPointerUp as EventListener);
+      } else {
+        document.addEventListener('mousemove', onPointerMove as EventListener);
+        document.addEventListener('mouseup', onPointerUp as EventListener);
       }
     }
   };
 
-  const onFallbackMouseMove = (e: MouseEvent) => {
+  const onPointerMove = (e: MouseEvent | TouchEvent) => {
     if (fallbackActive && draggedPill) {
-      // e.target may be Document (not an Element) when dispatched on document, so guard with instanceof
-      const targetEl = e.target instanceof Element ? (e.target as HTMLElement) : null;
-      const target =
-        targetEl?.closest<HTMLElement>(itemSelector) ??
-        (document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null)?.closest<HTMLElement>(itemSelector);
-      if (!target || target === draggedPill || !dropzoneElm.contains(target)) {
-        return;
-      }
-      const rect = target.getBoundingClientRect();
-      const insertBefore = e.clientX < rect.left + rect.width / 2;
-      const insertTarget = insertBefore ? target : target.nextSibling;
-      if (draggedPill.parentElement === dropzoneElm && insertTarget !== draggedPill) {
-        dropzoneElm.insertBefore(draggedPill, insertTarget);
+      e.preventDefault();
+      const { clientX, clientY } = getPointerPos(e);
+      const target = (document.elementFromPoint(clientX, clientY) as HTMLElement | null)?.closest<HTMLElement>(itemSelector);
+      if (target && target !== draggedPill && dropzoneElm.contains(target)) {
+        const rect = target.getBoundingClientRect();
+        const insertBefore = clientX < rect.left + rect.width / 2;
+        const insertTarget = insertBefore ? target : target.nextSibling;
+        if (draggedPill.parentElement === dropzoneElm && insertTarget !== draggedPill) {
+          dropzoneElm.insertBefore(draggedPill, insertTarget);
+        }
       }
     }
   };
 
-  const onFallbackMouseUp = () => {
+  const onPointerUp = () => {
+    document.removeEventListener('mousemove', onPointerMove as EventListener);
+    document.removeEventListener('mouseup', onPointerUp as EventListener);
+    document.removeEventListener('touchmove', onPointerMove as EventListener);
+    document.removeEventListener('touchend', onPointerUp as EventListener);
+    document.removeEventListener('touchcancel', onPointerUp as EventListener);
     const currentPill = draggedPill;
-    if (currentPill && draggingCssClass) {
-      currentPill.classList.remove(draggingCssClass);
-    }
+    if (currentPill && draggingCssClass) currentPill.classList.remove(draggingCssClass);
     draggedPill = null;
     fallbackActive = false;
-    if (currentPill) {
-      options.onPillDragEnd?.(currentPill);
-    }
+    if (currentPill) options.onPillDragEnd?.(currentPill);
   };
 
   // ── Register listeners ────────────────────────────────────────────────────
@@ -566,10 +606,10 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
   dropzoneElm.addEventListener('drop', onDrop as EventListener);
 
   if (isFfLinux) {
-    dropzoneElm.addEventListener('mousedown', onFallbackMouseDown as EventListener);
-    document.addEventListener('mousemove', onFallbackMouseMove as EventListener);
-    document.addEventListener('mouseup', onFallbackMouseUp);
+    dropzoneElm.addEventListener('mousedown', onPointerDown as EventListener);
   }
+  // Touch support for pill reordering (all platforms)
+  dropzoneElm.addEventListener('touchstart', onPointerDown as EventListener, { passive: false });
 
   return {
     destroy() {
@@ -579,11 +619,15 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
       dropzoneElm.removeEventListener('dragenter', onDragEnter as EventListener);
       dropzoneElm.removeEventListener('dragleave', onDragLeave as EventListener);
       dropzoneElm.removeEventListener('drop', onDrop as EventListener);
+      dropzoneElm.removeEventListener('touchstart', onPointerDown as EventListener);
       if (isFfLinux) {
-        dropzoneElm.removeEventListener('mousedown', onFallbackMouseDown as EventListener);
-        document.removeEventListener('mousemove', onFallbackMouseMove as EventListener);
-        document.removeEventListener('mouseup', onFallbackMouseUp);
+        dropzoneElm.removeEventListener('mousedown', onPointerDown as EventListener);
       }
+      document.removeEventListener('mousemove', onPointerMove as EventListener);
+      document.removeEventListener('mouseup', onPointerUp as EventListener);
+      document.removeEventListener('touchmove', onPointerMove as EventListener);
+      document.removeEventListener('touchend', onPointerUp as EventListener);
+      document.removeEventListener('touchcancel', onPointerUp as EventListener);
       draggedPill = null;
       fallbackActive = false;
     },
