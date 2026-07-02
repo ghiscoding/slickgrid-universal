@@ -275,12 +275,13 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     clearDropzoneTarget();
     originalParent = target.parentElement;
     originalNextSibling = target.nextSibling;
-    target.classList.add(dragActiveClass);
     options.onDragStart?.(target);
     _lastClientX = clientX;
 
     if (e.type === 'dragstart') {
       // Native HTML5 drag: configure dataTransfer and auto-scroll
+      // Add class immediately for native drag since it's committed
+      target.classList.add(dragActiveClass);
       const de = e as DragEvent;
       if (de.dataTransfer) {
         de.dataTransfer.effectAllowed = 'move';
@@ -332,6 +333,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
         }
         // Threshold exceeded - now commit to drag
         e.preventDefault();
+        draggedEl.classList.add(dragActiveClass);
         createFallbackGhost(draggedEl, clientX, clientY);
         fallbackActive = true;
       }
@@ -578,11 +580,11 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
   const onPointerDown = (e: MouseEvent | TouchEvent) => {
     const pill = (e.target as HTMLElement).closest<HTMLElement>(itemSelector);
     if (pill) {
-      // Track start position for drag threshold, but don't preventDefault yet
+      // Track start position for drag threshold
       dragStartX = getPointerPos(e).clientX;
       dragStartY = getPointerPos(e).clientY;
       draggedPill = pill;
-      // Add visual class immediately for UX feedback
+      // Add visual feedback immediately for pills (no menu conflict)
       if (draggingCssClass) pill.classList.add(draggingCssClass);
       if ('touches' in e) {
         document.addEventListener('touchmove', onPointerMove as EventListener, { passive: false });
