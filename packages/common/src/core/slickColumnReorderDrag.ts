@@ -305,9 +305,12 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       }
     } else {
       // Pointer fallback (mouse on FF/Linux, touch on all platforms)
-      // Don't preventDefault yet - wait for drag threshold before committing to drag
+      // Create ghost immediately for visual feedback, but don't add dragActiveClass yet
+      createFallbackGhost(target, clientX, clientY);
       dragStartX = clientX;
       dragStartY = clientY;
+      // Disable text selection during drag to prevent selection visual in Firefox/Linux
+      document.body.style.userSelect = 'none';
       if ('touches' in e) {
         document.addEventListener('touchmove', onPointerMove as EventListener, { passive: false });
         document.addEventListener('touchend', onPointerUp as EventListener);
@@ -334,7 +337,6 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
         // Threshold exceeded - now commit to drag
         e.preventDefault();
         draggedEl.classList.add(dragActiveClass);
-        createFallbackGhost(draggedEl, clientX, clientY);
         fallbackActive = true;
       }
 
@@ -418,6 +420,8 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     clearDropzoneTarget();
     fallbackActive = false;
     clearFallbackGhost();
+    // Re-enable text selection after drag completes
+    document.body.style.userSelect = '';
   };
 
   for (const parent of [headerLeft, headerRight]) {
@@ -586,6 +590,8 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
       draggedPill = pill;
       // Add visual feedback immediately for pills (no menu conflict)
       if (draggingCssClass) pill.classList.add(draggingCssClass);
+      // Disable text selection during drag
+      document.body.style.userSelect = 'none';
       if ('touches' in e) {
         document.addEventListener('touchmove', onPointerMove as EventListener, { passive: false });
         document.addEventListener('touchend', onPointerUp as EventListener);
@@ -642,6 +648,8 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
     dragStartX = null;
     dragStartY = null;
     fallbackActive = false;
+    // Re-enable text selection after drag completes
+    document.body.style.userSelect = '';
     if (currentPill) options.onPillDragEnd?.(currentPill);
   };
 
