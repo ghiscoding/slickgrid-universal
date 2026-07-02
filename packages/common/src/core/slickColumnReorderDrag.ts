@@ -129,9 +129,6 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     dragGhost = source.cloneNode(true) as HTMLElement;
     dragGhost.classList.add('slick-header-column-drag-ghost');
     // Explicitly set dimensions and styles so the ghost renders correctly outside its original container
-    dragGhost.style.position = 'fixed';
-    dragGhost.style.pointerEvents = 'none';
-    dragGhost.style.zIndex = '9999';
     dragGhost.style.width = `${rect.width}px`;
     dragGhost.style.height = `${rect.height}px`;
     dragGhost.style.opacity = '0.8';
