@@ -17,6 +17,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   const { headerLeft, headerRight, container, viewportScrollContainerX, unorderableColumnCssClass } = options;
   const dragActiveClass = options.dragActiveClass ?? 'slick-header-column-active';
   const draggableSelector = options.draggableSelector ?? '.slick-header-column';
+  const DRAG_THRESHOLD = 5; // pixels before we consider it a drag, not a click
 
   let columnScrollTimer: ReturnType<typeof setInterval> | undefined;
   let draggedEl: HTMLElement | null = null;
@@ -27,6 +28,8 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   let draggedColumnId = '';
   let _lastClientX: number | null = null;
   let dragGhost: HTMLElement | null = null;
+  let dragStartX: number | null = null;
+  let dragStartY: number | null = null;
 
   const scrollColumnsRight = () => (viewportScrollContainerX.scrollLeft += 10);
   const scrollColumnsLeft = () => (viewportScrollContainerX.scrollLeft -= 10);
@@ -301,10 +304,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       }
     } else {
       // Pointer fallback (mouse on FF/Linux, touch on all platforms)
-      e.preventDefault();
-      e.stopPropagation();
-      createFallbackGhost(target, clientX, clientY);
-      fallbackActive = true;
+      // Don't preventDefault yet - wait for drag threshold before committing to drag
+      dragStartX = clientX;
+      dragStartY = clientY;
       if ('touches' in e) {
         document.addEventListener('touchmove', onPointerMove as EventListener, { passive: false });
         document.addEventListener('touchend', onPointerUp as EventListener);
@@ -317,35 +319,53 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   };
 
   const onPointerMove = (e: MouseEvent | TouchEvent) => {
-    if (fallbackActive && draggedEl) {
-      e.preventDefault();
+    if (draggedEl && dragStartX != null && dragStartY != null) {
       const { clientX, clientY, pageX } = getPointerPos(e);
-      updateFallbackGhost(clientX, clientY);
 
-      // browser-edge auto-scroll
-      const containerOffset = getOffset(container);
-      const viewportLeft = getOffset(viewportScrollContainerX).left;
-      const containerRight = containerOffset.left + container.clientWidth;
-      if (!columnScrollTimer && pageX > containerRight) {
-        columnScrollTimer = setInterval(scrollColumnsRight, 100);
-      } else if (!columnScrollTimer && pageX < viewportLeft) {
-        columnScrollTimer = setInterval(scrollColumnsLeft, 100);
-      } else if (columnScrollTimer && pageX <= containerRight && pageX >= viewportLeft) {
-        stopAutoScroll();
+      // Check if we've exceeded the drag threshold
+      if (!fallbackActive) {
+        const deltaX = Math.abs(clientX - dragStartX);
+        const deltaY = Math.abs(clientY - dragStartY);
+        if (deltaX < DRAG_THRESHOLD && deltaY < DRAG_THRESHOLD) {
+          // Haven't moved far enough yet - don't commit to drag
+          return;
+        }
+        // Threshold exceeded - now commit to drag
+        e.preventDefault();
+        createFallbackGhost(draggedEl, clientX, clientY);
+        fallbackActive = true;
       }
 
-      const elUnder = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
-      const overDropzone = isOverDropzone(elUnder);
-      if (overDropzone) {
-        dropzoneTargetActive = true;
-      } else {
-        dropzoneTargetActive = false;
-        const targetHeader = elUnder?.closest?.(draggableSelector) as HTMLElement | null;
-        if (targetHeader) {
-          try {
-            reorderDraggedAgainstTarget(targetHeader, clientX);
-          } catch (err) {
-            // ignore DOM insertion errors
+      // Now handle the actual drag movement
+      if (fallbackActive) {
+        e.preventDefault();
+        updateFallbackGhost(clientX, clientY);
+
+        // browser-edge auto-scroll
+        const containerOffset = getOffset(container);
+        const viewportLeft = getOffset(viewportScrollContainerX).left;
+        const containerRight = containerOffset.left + container.clientWidth;
+        if (!columnScrollTimer && pageX > containerRight) {
+          columnScrollTimer = setInterval(scrollColumnsRight, 100);
+        } else if (!columnScrollTimer && pageX < viewportLeft) {
+          columnScrollTimer = setInterval(scrollColumnsLeft, 100);
+        } else if (columnScrollTimer && pageX <= containerRight && pageX >= viewportLeft) {
+          stopAutoScroll();
+        }
+
+        const elUnder = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
+        const overDropzone = isOverDropzone(elUnder);
+        if (overDropzone) {
+          dropzoneTargetActive = true;
+        } else {
+          dropzoneTargetActive = false;
+          const targetHeader = elUnder?.closest?.(draggableSelector) as HTMLElement | null;
+          if (targetHeader) {
+            try {
+              reorderDraggedAgainstTarget(targetHeader, clientX);
+            } catch (err) {
+              // ignore DOM insertion errors
+            }
           }
         }
       }
@@ -391,6 +411,8 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     originalNextSibling = null;
     draggedColumnId = '';
     _lastClientX = null;
+    dragStartX = null;
+    dragStartY = null;
     clearDropzoneTarget();
     fallbackActive = false;
     clearFallbackGhost();
@@ -464,12 +486,15 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
   const { dropzoneElm } = options;
   const itemSelector = options.itemSelector ?? '.slick-dropped-grouping';
   const draggingCssClass = options.draggingCssClass ?? '';
+  const DRAG_THRESHOLD = 5; // pixels before we consider it a drag, not a click
 
   const userAgent = (typeof window !== 'undefined' ? window.navigator : navigator)?.userAgent ?? '';
   const isFfLinux = /firefox/i.test(userAgent) && /(?:linux|wayland)/i.test(userAgent);
 
   let draggedPill: HTMLElement | null = null;
   let fallbackActive = false;
+  let dragStartX: number | null = null;
+  let dragStartY: number | null = null;
 
   // ── Native pill drag ──────────────────────────────────────────────────────
 
@@ -553,10 +578,11 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
   const onPointerDown = (e: MouseEvent | TouchEvent) => {
     const pill = (e.target as HTMLElement).closest<HTMLElement>(itemSelector);
     if (pill) {
-      e.preventDefault();
-      e.stopPropagation();
+      // Track start position for drag threshold, but don't preventDefault yet
+      dragStartX = getPointerPos(e).clientX;
+      dragStartY = getPointerPos(e).clientY;
       draggedPill = pill;
-      fallbackActive = true;
+      // Add visual class immediately for UX feedback
       if (draggingCssClass) pill.classList.add(draggingCssClass);
       if ('touches' in e) {
         document.addEventListener('touchmove', onPointerMove as EventListener, { passive: false });
@@ -570,16 +596,33 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
   };
 
   const onPointerMove = (e: MouseEvent | TouchEvent) => {
-    if (fallbackActive && draggedPill) {
-      e.preventDefault();
+    if (draggedPill && dragStartX != null && dragStartY != null) {
       const { clientX, clientY } = getPointerPos(e);
-      const target = (document.elementFromPoint(clientX, clientY) as HTMLElement | null)?.closest<HTMLElement>(itemSelector);
-      if (target && target !== draggedPill && dropzoneElm.contains(target)) {
-        const rect = target.getBoundingClientRect();
-        const insertBefore = clientX < rect.left + rect.width / 2;
-        const insertTarget = insertBefore ? target : target.nextSibling;
-        if (draggedPill.parentElement === dropzoneElm && insertTarget !== draggedPill) {
-          dropzoneElm.insertBefore(draggedPill, insertTarget);
+      
+      // Check if we've exceeded the drag threshold
+      if (!fallbackActive) {
+        const deltaX = Math.abs(clientX - dragStartX);
+        const deltaY = Math.abs(clientY - dragStartY);
+        if (deltaX < DRAG_THRESHOLD && deltaY < DRAG_THRESHOLD) {
+          // Haven't moved far enough yet - don't commit to drag
+          return;
+        }
+        // Threshold exceeded - now commit to drag by preventing default
+        e.preventDefault();
+        fallbackActive = true;
+      }
+
+      // Now handle the actual drag movement
+      if (fallbackActive) {
+        e.preventDefault();
+        const target = (document.elementFromPoint(clientX, clientY) as HTMLElement | null)?.closest<HTMLElement>(itemSelector);
+        if (target && target !== draggedPill && dropzoneElm.contains(target)) {
+          const rect = target.getBoundingClientRect();
+          const insertBefore = clientX < rect.left + rect.width / 2;
+          const insertTarget = insertBefore ? target : target.nextSibling;
+          if (draggedPill.parentElement === dropzoneElm && insertTarget !== draggedPill) {
+            dropzoneElm.insertBefore(draggedPill, insertTarget);
+          }
         }
       }
     }
@@ -594,6 +637,8 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
     const currentPill = draggedPill;
     if (currentPill && draggingCssClass) currentPill.classList.remove(draggingCssClass);
     draggedPill = null;
+    dragStartX = null;
+    dragStartY = null;
     fallbackActive = false;
     if (currentPill) options.onPillDragEnd?.(currentPill);
   };
@@ -631,6 +676,8 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
       document.removeEventListener('touchend', onPointerUp as EventListener);
       document.removeEventListener('touchcancel', onPointerUp as EventListener);
       draggedPill = null;
+      dragStartX = null;
+      dragStartY = null;
       fallbackActive = false;
     },
   };
