@@ -1539,8 +1539,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
 
     if (this.options.enableRowDetailView) {
       const RowDetailClass = this._registeredResources.find((res: any) => res.pluginName === 'AngularRowDetailView') as
-        | ExternalResourceConstructor
-        | undefined;
+        ExternalResourceConstructor | undefined;
       if (!RowDetailClass) {
         throw new Error(
           '[Angular-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AngularRowDetailView" class as an external resource.'
