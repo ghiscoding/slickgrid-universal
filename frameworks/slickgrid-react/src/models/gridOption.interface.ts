@@ -6,10 +6,7 @@ import type { RowDetailView } from './rowDetailView.interface.js';
 export interface GridOption extends UniversalGridOption {
   /** External Custom Pagination Component that can be provided by the user */
   customPaginationComponent?:
-    | typeof BasePaginationComponent
-    | (() => BasePaginationModel)
-    | ForwardRefExoticComponent<any & RefAttributes<any>>
-    | ComponentType<any>;
+    typeof BasePaginationComponent | (() => BasePaginationModel) | ForwardRefExoticComponent<any & RefAttributes<any>> | ComponentType<any>;
 
   /** I18N translation service instance */
   i18n?: I18Next;

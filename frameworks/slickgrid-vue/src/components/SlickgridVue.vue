@@ -206,7 +206,7 @@ const paginationModel = defineModel<Pagination>('pagination');
 watch(paginationModel, (newPaginationOptions) => paginationOptionsChanged(newPaginationOptions!));
 
 const _columns: Ref<Column[]> = ref([]);
-const columnsModel = defineModel<Column[]>('columns', { required: true, default: [] });
+const columnsModel = defineModel<Column[]>('columns', { required: true });
 watch(columnsModel, (columns) => columnsChanged(columns), { immediate: true });
 
 const dataModel = defineModel<any[]>('dataset', { required: false }); // technically true but user could use datasetHierarchical instead
