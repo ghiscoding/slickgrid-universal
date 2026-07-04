@@ -1406,8 +1406,7 @@ function preRegisterResources() {
 
   if (_gridOptions.value.enableRowDetailView) {
     const RowDetailClass = registeredResources.find((res: any) => res.pluginName === 'VueRowDetailView') as
-      | ExternalResourceConstructor
-      | undefined;
+      ExternalResourceConstructor | undefined;
     if (!RowDetailClass) {
       throw new Error(
         '[Slickgrid-Vue] You enabled the Row Detail View feature but you did not provide the "VueRowDetailView" class as an external resource.'
