@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.8.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.2...v10.8.3) (2026-07-04)
+
+### Bug Fixes
+
+* **a11y:** improve Tooltip plugin accessility ([#2631](https://github.com/ghiscoding/slickgrid-universal/issues/2631)) ([7224e98](https://github.com/ghiscoding/slickgrid-universal/commit/7224e9864026c9e1b78122d79db8822e55aeedfb)) - by @ghiscoding
+
 ## [10.8.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.1...v10.8.2) (2026-06-20)
 
 **Note:** Version bump only for package @slickgrid-universal/custom-tooltip-plugin

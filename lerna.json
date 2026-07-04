@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/lerna-lite/lerna-lite/main/packages/cli/schemas/lerna-schema.json",
-  "version": "10.8.2",
+  "version": "10.8.3",
   "npmClient": "pnpm",
   "loglevel": "info",
   "command": {
