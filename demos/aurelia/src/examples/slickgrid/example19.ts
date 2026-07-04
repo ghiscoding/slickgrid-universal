@@ -12,11 +12,11 @@ export class Example19 {
   @bindable detailViewRowCount = 9;
   @bindable serverWaitDelay = FAKE_SERVER_DELAY;
 
-  aureliaGrid!: AureliaGridInstance;
-  gridOptions!: GridOption;
+  aureliaGrid?: AureliaGridInstance;
+  gridOptions?: GridOption;
   columns: Column[] = [];
   dataset: any[] = [];
-  // extensions!: ExtensionList<any>;
+  // extensions?: ExtensionList<any>;
   flashAlertType = 'info';
   hideSubTitle = false;
   message = '';
@@ -213,14 +213,16 @@ export class Example19 {
 
   changeEditableGrid() {
     // this.rowDetailInstance.setOptions({ useRowClick: false });
-    this.rowDetailInstance.collapseAll();
-    (this.rowDetailInstance as any).addonOptions.useRowClick = false;
-    this.gridOptions.autoCommitEdit = !this.gridOptions.autoCommitEdit;
-    this.aureliaGrid?.slickGrid.setOptions({
-      editable: true,
-      autoEdit: true,
-      enableCellNavigation: true,
-    });
+    if (this.gridOptions) {
+      this.rowDetailInstance.collapseAll();
+      (this.rowDetailInstance as any).addonOptions.useRowClick = false;
+      this.gridOptions.autoCommitEdit = !this.gridOptions.autoCommitEdit;
+      this.aureliaGrid?.slickGrid.setOptions({
+        editable: true,
+        autoEdit: true,
+        enableCellNavigation: true,
+      });
+    }
     return true;
   }
 
@@ -267,7 +269,7 @@ export class Example19 {
   toggleDarkMode() {
     this._darkMode = !this._darkMode;
     this.toggleBodyBackground();
-    this.aureliaGrid.slickGrid?.setOptions({ darkMode: this._darkMode });
+    this.aureliaGrid?.slickGrid.setOptions({ darkMode: this._darkMode });
     this.closeAllRowDetail();
   }
 
@@ -285,7 +287,7 @@ export class Example19 {
     this.hideSubTitle = !this.hideSubTitle;
     const action = this.hideSubTitle ? 'add' : 'remove';
     document.querySelector('.subtitle')?.classList[action]('hidden');
-    this.aureliaGrid.resizerService.resizeGrid(0);
+    this.aureliaGrid?.resizerService.resizeGrid(0);
   }
 
   private randomNumber(min: number, max: number) {

@@ -17,12 +17,12 @@ interface Item {
 }
 
 export class Example47DetailView {
-  @bindable() model!: Item;
+  @bindable() model?: Item;
 
   // you also have access to the following objects (it must match the exact property names shown below)
-  @bindable() addon!: AureliaRowDetailView; // row detail addon instance
-  @bindable() grid!: SlickGrid;
-  @bindable() dataView!: SlickDataView;
+  @bindable() addon?: AureliaRowDetailView; // row detail addon instance
+  @bindable() grid?: SlickGrid;
+  @bindable() dataView?: SlickDataView;
 
   // you can also optionally use the Parent Component reference
   // NOTE that you MUST provide it through the "parentRef" property in your "rowDetail" grid options
@@ -39,10 +39,10 @@ export class Example47DetailView {
   deleteRow(model: any) {
     if (confirm(`Are you sure that you want to delete ${model.title}?`)) {
       // you first need to collapse all rows (via the 3rd party addon instance)
-      this.addon.collapseAll();
+      this.addon?.collapseAll();
 
       // then you can delete the item from the dataView
-      this.dataView.deleteItem(model.id);
+      this.dataView?.deleteItem(model.id);
 
       showToast(`Deleted row with ${model.title}`, 'danger');
     }
