@@ -75,11 +75,11 @@
     "vanilla-calendar-pro": "^3.1.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.5.0",
+    "autoprefixer": "^10.5.2",
     "cssnano": "^8.0.2",
     "native-copyfiles": "catalog:",
     "npm-run-all2": "catalog:",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.16",
     "postcss-cli": "^11.0.1",
     "sass": "catalog:"
   },
