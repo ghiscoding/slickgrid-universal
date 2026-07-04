@@ -16,10 +16,10 @@ const NB_ITEMS = 2000;
 
 export class Example53 {
   @bindable() pageSize = 50;
-  aureliaGrid!: AureliaGridInstance;
+  aureliaGrid?: AureliaGridInstance;
   columns: Column[] = [];
-  gridContainerElm!: HTMLDivElement;
-  gridOptions!: GridOption;
+  gridContainerElm?: HTMLDivElement;
+  gridOptions?: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
 
@@ -34,19 +34,19 @@ export class Example53 {
   aureliaGridReady(aureliaGrid: AureliaGridInstance) {
     this.aureliaGrid = aureliaGrid;
 
-    const topHeaderElm = this.aureliaGrid.slickGrid?.getTopHeaderPanel();
+    const topHeaderElm = this.aureliaGrid?.slickGrid?.getTopHeaderPanel();
     if (topHeaderElm) {
       topHeaderElm.className = 'top-filters';
       topHeaderElm.appendChild(createDomElement('span', { className: 'top-filters-title', textContent: 'Active Filters:' }));
     }
 
     // read column preset filters and render in the top header as Active Filters
-    for (const filter of this.gridOptions.presets?.filters || []) {
+    for (const filter of this.gridOptions?.presets?.filters || []) {
       this.createFilterBadge(
         { column: { id: filter.columnId, name: this.columns.find((col) => col.id === filter.columnId)?.name } },
         filter as CurrentFilter
       );
-      const columnEl = this.aureliaGrid.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${filter.columnId}"]`);
+      const columnEl = this.aureliaGrid?.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${filter.columnId}"]`);
       if (columnEl) {
         this.toggleFilterStyling(columnEl, filter.columnId, true);
       }
@@ -168,7 +168,7 @@ export class Example53 {
   /** create filter badges to show in the top header bar */
   createFilterBadge(args: any, currentFilter: CurrentFilter) {
     if (this.aureliaGrid) {
-      const topHeaderElm = this.aureliaGrid.slickGrid.getTopHeaderPanel();
+      const topHeaderElm = this.aureliaGrid?.slickGrid.getTopHeaderPanel();
       topHeaderElm.className = 'top-filters';
 
       // clear previous filter badge
@@ -194,8 +194,8 @@ export class Example53 {
       });
       close.addEventListener('click', (e) => {
         container.remove();
-        this.aureliaGrid.filterService.clearFilterByColumnId(e as any, args.column.id);
-        const columnEl = this.aureliaGrid.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${args.column.id}"]`);
+        this.aureliaGrid?.filterService.clearFilterByColumnId(e as any, args.column.id);
+        const columnEl = this.aureliaGrid?.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${args.column.id}"]`);
         if (columnEl) {
           this.toggleFilterStyling(columnEl, args.column.id, false);
         }
@@ -245,7 +245,7 @@ export class Example53 {
     modal.style.left = offset.left + 'px';
 
     // check if we already have a filter value, is so update the custom filter input with same value
-    const currentFilters = this.aureliaGrid.filterService.getColumnFilters();
+    const currentFilters = this.aureliaGrid?.filterService.getColumnFilters() || [];
     for (const filter of Object.values(currentFilters)) {
       if (filter.columnId === args.column.id) {
         const operator = filter.operator && filter.operator !== 'Contains' ? filter.operator + ' ' : '';
@@ -273,7 +273,7 @@ export class Example53 {
     });
 
     // you could use `drawFilterTemplate()` to render default column filters
-    // this.aureliaGrid.filterService.drawFilterTemplate(args.column, filterContainer);
+    // this.aureliaGrid?.filterService.drawFilterTemplate(args.column, filterContainer);
   }
 
   handleApplyFilter(columnEl: HTMLDivElement, value: string, args: any, modal: HTMLDivElement) {
@@ -286,7 +286,7 @@ export class Example53 {
         operator: op,
         searchTerms: [searchTerm],
       };
-      const allFilters = this.aureliaGrid.filterService.getColumnFilters();
+      const allFilters = this.aureliaGrid?.filterService.getColumnFilters() || [];
       const allCurrentFilters: CurrentFilter[] = [];
       for (const f of Object.values(allFilters)) {
         allCurrentFilters.push({
@@ -295,16 +295,16 @@ export class Example53 {
           searchTerms: f.searchTerms,
         });
       }
-      this.aureliaGrid.filterService.updateFilters([...allCurrentFilters.filter((f) => f.columnId !== args.column.id), cFilter]);
+      this.aureliaGrid?.filterService.updateFilters([...allCurrentFilters.filter((f) => f.columnId !== args.column.id), cFilter]);
       this.createFilterBadge(args, cFilter);
       this.toggleFilterStyling(columnEl, args.column.id, true);
     } else {
-      this.aureliaGrid.filterService.clearFilterByColumnId(null as any, args.column.id);
-      this.aureliaGrid.slickGrid?.getTopHeaderPanel()?.querySelector(`.top-dropped-filter[data-col-id="${args.column.id}"]`)?.remove();
+      this.aureliaGrid?.filterService.clearFilterByColumnId(null as any, args.column.id);
+      this.aureliaGrid?.slickGrid?.getTopHeaderPanel()?.querySelector(`.top-dropped-filter[data-col-id="${args.column.id}"]`)?.remove();
 
       this.toggleFilterStyling(columnEl, args.column.id, false);
     }
-    this.aureliaGrid.slickGrid?.invalidate();
+    this.aureliaGrid?.slickGrid?.invalidate();
     modal.remove();
   }
 
@@ -318,7 +318,7 @@ export class Example53 {
     } else {
       buttonEl.classList.remove('mdi-filter');
       buttonEl.classList.add('mdi-filter-outline');
-      this.aureliaGrid.slickGrid?.getTopHeaderPanel()?.querySelector(`.top-dropped-filter.col-${columndId}`)?.remove();
+      this.aureliaGrid?.slickGrid?.getTopHeaderPanel()?.querySelector(`.top-dropped-filter.col-${columndId}`)?.remove();
       columnEl.style.color = 'black';
     }
   }
@@ -327,6 +327,6 @@ export class Example53 {
     this.hideSubTitle = !this.hideSubTitle;
     const action = this.hideSubTitle ? 'add' : 'remove';
     document.querySelector('.subtitle')?.classList[action]('hidden');
-    this.aureliaGrid.resizerService.resizeGrid(0);
+    this.aureliaGrid?.resizerService.resizeGrid(0);
   }
 }

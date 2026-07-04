@@ -8,10 +8,10 @@ const STATUSES = ['Todo', 'In Progress', 'Done', 'Blocked'];
 
 export class Example54 {
   @bindable() textResult = '';
-  aureliaGrid!: AureliaGridInstance;
+  aureliaGrid?: AureliaGridInstance;
   columns: Column[] = [];
-  gridContainerElm!: HTMLDivElement;
-  gridOptions!: GridOption;
+  gridContainerElm?: HTMLDivElement;
+  gridOptions?: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
   mcpService = new WebMcpService();
@@ -83,7 +83,7 @@ export class Example54 {
     this.hideSubTitle = !this.hideSubTitle;
     const action = this.hideSubTitle ? 'add' : 'remove';
     document.querySelector('.subtitle')?.classList[action]('hidden');
-    this.aureliaGrid.resizerService.resizeGrid(0);
+    this.aureliaGrid?.resizerService.resizeGrid(0);
   }
 
   // ---------------------------------------------------------------------------

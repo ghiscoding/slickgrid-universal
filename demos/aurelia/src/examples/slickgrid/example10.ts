@@ -5,12 +5,12 @@ import './example10.scss'; // provide custom CSS/SASS styling
 export class Example10 {
   @bindable() isGrid2WithPagination = true;
 
-  aureliaGrid1!: AureliaGridInstance;
-  aureliaGrid2!: AureliaGridInstance;
+  aureliaGrid1?: AureliaGridInstance;
+  aureliaGrid2?: AureliaGridInstance;
   columns1: Column[] = [];
   columns2: Column[] = [];
-  gridOptions1!: GridOption;
-  gridOptions2!: GridOption;
+  gridOptions1?: GridOption;
+  gridOptions2?: GridOption;
   dataset1: any[] = [];
   dataset2: any[] = [];
   hideSubTitle = false;
@@ -249,19 +249,19 @@ export class Example10 {
   }
 
   goToGrid1FirstPage() {
-    this.aureliaGrid1.paginationService!.goToFirstPage();
+    this.aureliaGrid1?.paginationService!.goToFirstPage();
   }
 
   goToGrid1LastPage() {
-    this.aureliaGrid1.paginationService!.goToLastPage();
+    this.aureliaGrid1?.paginationService!.goToLastPage();
   }
 
   goToGrid2FirstPage() {
-    this.aureliaGrid2.paginationService!.goToFirstPage();
+    this.aureliaGrid2?.paginationService!.goToFirstPage();
   }
 
   goToGrid2LastPage() {
-    this.aureliaGrid2.paginationService!.goToLastPage();
+    this.aureliaGrid2?.paginationService!.goToLastPage();
   }
 
   /** Dispatched event of a Grid State Changed event */
@@ -289,7 +289,7 @@ export class Example10 {
   // IMPORTANT, the Pagination MUST BE CREATED on initial page load before you can start toggling it
   // Basically you cannot toggle a Pagination that doesn't exist (must created at the time as the grid)
   isGrid2WithPaginationChanged() {
-    this.aureliaGrid2.paginationService!.togglePaginationVisibility(this.isGrid2WithPagination);
+    this.aureliaGrid2?.paginationService!.togglePaginationVisibility(this.isGrid2WithPagination);
   }
 
   onGrid1SelectedRowsChanged(_e: Event, args: any) {
@@ -306,6 +306,6 @@ export class Example10 {
     this.hideSubTitle = !this.hideSubTitle;
     const action = this.hideSubTitle ? 'add' : 'remove';
     document.querySelector('.subtitle')?.classList[action]('hidden');
-    this.aureliaGrid2.resizerService.resizeGrid(0);
+    this.aureliaGrid2?.resizerService.resizeGrid(0);
   }
 }
