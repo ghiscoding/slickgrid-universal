@@ -22,7 +22,7 @@ export interface OrderData {
 }
 
 export class Example45DetailView {
-  @bindable() model!: Distributor;
+  @bindable() model?: Distributor;
   innerColDefs: Column[] = [];
   innerGridOptions!: GridOption;
   aureliaGrid!: AureliaGridInstance;
@@ -32,6 +32,8 @@ export class Example45DetailView {
   innerGridClass = '';
 
   attached() {
+    if (!this.model) return;
+
     this.gridId = `innergrid-${this.model.id}`;
     this.innerGridClass = `row-detail-${this.model.id}`;
     this.defineGrid();
@@ -51,7 +53,7 @@ export class Example45DetailView {
   defineGrid() {
     // when Grid State found in Session Storage, reapply inner Grid State then reapply it as preset
     let gridState: GridState | undefined;
-    if (this.model.isUsingInnerGridStatePresets) {
+    if (this.model?.isUsingInnerGridStatePresets) {
       const gridStateStr = sessionStorage.getItem(`gridstate_${this.innerGridClass}`);
       if (gridStateStr) {
         gridState = JSON.parse(gridStateStr);
@@ -83,7 +85,7 @@ export class Example45DetailView {
 
   handleBeforeGridDestroy() {
     console.log('handleBeforeGridDestroy', this.model);
-    if (this.model.isUsingInnerGridStatePresets) {
+    if (this.model?.isUsingInnerGridStatePresets) {
       const gridState = this.aureliaGrid.gridStateService.getCurrentGridState();
       sessionStorage.setItem(`gridstate_${this.innerGridClass}`, JSON.stringify(gridState));
     }

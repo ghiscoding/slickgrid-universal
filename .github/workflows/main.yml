@@ -25,6 +25,7 @@ jobs:
 
     name: '${{matrix.platform}} / Node ${{ matrix.node }}'
     runs-on: ${{matrix.platform}}
+    timeout-minutes: 30
     if: ${{ !startsWith(github.event.head_commit.message, 'docs:') }}
 
     steps:

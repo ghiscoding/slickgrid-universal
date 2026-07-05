@@ -206,7 +206,7 @@ const paginationModel = defineModel<Pagination>('pagination');
 watch(paginationModel, (newPaginationOptions) => paginationOptionsChanged(newPaginationOptions!));
 
 const _columns: Ref<Column[]> = ref([]);
-const columnsModel = defineModel<Column[]>('columns', { required: true, default: [] });
+const columnsModel = defineModel<Column[]>('columns', { required: true });
 watch(columnsModel, (columns) => columnsChanged(columns), { immediate: true });
 
 const dataModel = defineModel<any[]>('dataset', { required: false }); // technically true but user could use datasetHierarchical instead
@@ -1406,8 +1406,7 @@ function preRegisterResources() {
 
   if (_gridOptions.value.enableRowDetailView) {
     const RowDetailClass = registeredResources.find((res: any) => res.pluginName === 'VueRowDetailView') as
-      | ExternalResourceConstructor
-      | undefined;
+      ExternalResourceConstructor | undefined;
     if (!RowDetailClass) {
       throw new Error(
         '[Slickgrid-Vue] You enabled the Row Detail View feature but you did not provide the "VueRowDetailView" class as an external resource.'

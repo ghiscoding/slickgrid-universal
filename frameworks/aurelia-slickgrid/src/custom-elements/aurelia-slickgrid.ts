@@ -1445,8 +1445,7 @@ export class AureliaSlickgridCustomElement {
 
     if (this.options.enableRowDetailView) {
       const RowDetailClass = this._registeredResources.find((res: any) => res.pluginName === 'AureliaRowDetailView') as
-        | ExternalResourceConstructor
-        | undefined;
+        ExternalResourceConstructor | undefined;
       if (!RowDetailClass) {
         throw new Error(
           '[Aurelia-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AureliaRowDetailView" class as an external resource.'

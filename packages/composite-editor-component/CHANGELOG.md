@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.8.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.2...v10.8.3) (2026-07-04)
+
+**Note:** Version bump only for package @slickgrid-universal/composite-editor-component
+
 ## [10.8.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.1...v10.8.2) (2026-06-20)
 
 **Note:** Version bump only for package @slickgrid-universal/composite-editor-component

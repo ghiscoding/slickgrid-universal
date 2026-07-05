@@ -19,14 +19,14 @@ function randomBetween(min: number, max: number): number {
 
 export class Example42 {
   @bindable() pageSize = 50;
-  aureliaGrid!: AureliaGridInstance;
+  aureliaGrid?: AureliaGridInstance;
   columns: Column[] = [];
-  gridContainerElm!: HTMLDivElement;
-  gridOptions!: GridOption;
+  gridContainerElm?: HTMLDivElement;
+  gridOptions?: GridOption;
   dataset: any[] = [];
   paginationPosition: 'bottom' | 'top' = 'top';
   hideSubTitle = false;
-  paginationOptions!: Pagination;
+  paginationOptions?: Pagination;
 
   constructor() {
     this.defineGrid();
@@ -186,20 +186,20 @@ export class Example42 {
   }
 
   pageSizeChanged(pageSize: number) {
-    this.aureliaGrid.paginationService?.changeItemPerPage(pageSize);
+    this.aureliaGrid?.paginationService?.changeItemPerPage(pageSize);
   }
 
   togglePaginationPosition() {
-    const gridContainerElm = document.querySelector(`#${this.aureliaGrid.slickGrid.getOptions().gridContainerId || ''}`) as HTMLElement;
+    const gridContainerElm = document.querySelector(`#${this.aureliaGrid?.slickGrid.getOptions().gridContainerId || ''}`) as HTMLElement;
     this.paginationPosition = this.paginationPosition === 'top' ? 'bottom' : 'top';
-    (this.aureliaGrid.paginationComponent as CustomPagerComponent)?.disposeElement();
-    (this.aureliaGrid.paginationComponent as CustomPagerComponent)?.renderPagination(gridContainerElm, this.paginationPosition);
+    (this.aureliaGrid?.paginationComponent as CustomPagerComponent)?.disposeElement();
+    (this.aureliaGrid?.paginationComponent as CustomPagerComponent)?.renderPagination(gridContainerElm, this.paginationPosition);
   }
 
   toggleSubTitle() {
     this.hideSubTitle = !this.hideSubTitle;
     const action = this.hideSubTitle ? 'add' : 'remove';
     document.querySelector('.subtitle')?.classList[action]('hidden');
-    this.aureliaGrid.resizerService.resizeGrid(0);
+    this.aureliaGrid?.resizerService.resizeGrid(0);
   }
 }

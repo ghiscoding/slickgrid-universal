@@ -70,7 +70,7 @@
 * [Grid State & Presets](grid-functionalities/grid-state-preset.md)
 * [Grouping & Aggregators](grid-functionalities/grouping-aggregators.md)
 * [Header & Footer Slots](grid-functionalities/header-footer-slots.md)
-* [Custom Menu Slots](grid-functionalities/menu-slots.md)
+* [Custom Menu Slots](grid-functionalities/custom-menu-slots.md)
 * [Header Menu & Header Buttons](grid-functionalities/header-menu-header-buttons.md)
 * [Infinite Scroll](grid-functionalities/infinite-scroll.md)
 * [Pinning (frozen) of Columns/Rows](grid-functionalities/frozen-columns-rows.md)
@@ -116,4 +116,3 @@
 * [Migration Guide to 8.x (2024-05-10)](migrations/migration-to-8.x.md)
 * [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)
 * [Migration Guide to 10.x (2026-03-02)](migrations/migration-to-10.x.md)
-

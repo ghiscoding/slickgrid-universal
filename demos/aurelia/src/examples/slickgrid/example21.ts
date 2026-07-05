@@ -3,12 +3,12 @@ import { Formatters, type AureliaGridInstance, type Column, type GridOption, typ
 import './example21.scss';
 
 export class Example21 {
-  @bindable() selectedColumn!: Column;
-  @bindable() selectedOperator!: string;
+  @bindable() selectedColumn?: Column;
+  @bindable() selectedOperator?: string;
   @bindable() searchValue = '';
-  aureliaGrid!: AureliaGridInstance;
+  aureliaGrid?: AureliaGridInstance;
   columns: Column[] = [];
-  gridOptions!: GridOption;
+  gridOptions?: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
   operatorList: OperatorType[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
@@ -149,7 +149,7 @@ export class Example21 {
 
   updateFilter() {
     this.aureliaGrid?.filterService.updateSingleFilter({
-      columnId: `${this.selectedColumn.id || ''}`,
+      columnId: `${this.selectedColumn?.id || ''}`,
       operator: this.selectedOperator as OperatorType,
       searchTerms: [this.searchValue || ''],
     });
@@ -159,6 +159,6 @@ export class Example21 {
     this.hideSubTitle = !this.hideSubTitle;
     const action = this.hideSubTitle ? 'add' : 'remove';
     document.querySelector('.subtitle')?.classList[action]('hidden');
-    this.aureliaGrid.resizerService.resizeGrid(0);
+    this.aureliaGrid?.resizerService.resizeGrid(0);
   }
 }

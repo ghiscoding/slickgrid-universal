@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-react-fluent-demo",
   "private": true,
-  "version": "10.8.2",
+  "version": "10.8.3",
   "description": "Slickgrid-React demo",
   "keywords": [
     "react",
@@ -19,8 +19,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@fluentui/react-components": "^9.74.1",
-    "@fluentui/react-icons": "^2.0.330",
+    "@fluentui/react-components": "^9.74.3",
+    "@fluentui/react-icons": "^2.0.331",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/composite-editor-component": "workspace:*",
     "@slickgrid-universal/custom-tooltip-plugin": "workspace:*",

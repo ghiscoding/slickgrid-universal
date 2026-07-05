@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.8.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.2...v10.8.3) (2026-07-04)
+
+### Bug Fixes
+
+* **a11y:** improve Tooltip plugin accessility ([#2631](https://github.com/ghiscoding/slickgrid-universal/issues/2631)) ([7224e98](https://github.com/ghiscoding/slickgrid-universal/commit/7224e9864026c9e1b78122d79db8822e55aeedfb)) - by @ghiscoding
+* **core:** column should auto-scroll when dragging outside browser view ([#2633](https://github.com/ghiscoding/slickgrid-universal/issues/2633)) ([e45cca1](https://github.com/ghiscoding/slickgrid-universal/commit/e45cca1e79fa1d6d8915eaba925e5c54ddb600fd)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2638](https://github.com/ghiscoding/slickgrid-universal/issues/2638)) ([a0954eb](https://github.com/ghiscoding/slickgrid-universal/commit/a0954eb0c9004e43e85dfc8fdcee4aad1c05ed55)) - by @renovate-bot
+* left frozen columns & column resize interfere w/auto-scroll ([#2632](https://github.com/ghiscoding/slickgrid-universal/issues/2632)) ([6a020ef](https://github.com/ghiscoding/slickgrid-universal/commit/6a020ef491cb087db6ea61e07aba80071eaa4018)) - by @ghiscoding
+
 ## [10.8.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.1...v10.8.2) (2026-06-20)
 
 ### Bug Fixes

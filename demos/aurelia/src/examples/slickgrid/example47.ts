@@ -38,13 +38,13 @@ export class Example47 {
   @bindable detailViewRowCount = 9;
   @bindable serverWaitDelay = FAKE_SERVER_DELAY;
 
-  aureliaGrid!: AureliaGridInstance;
-  dataviewObj!: SlickDataView;
-  gridObj!: SlickGrid;
-  gridOptions!: GridOption;
+  aureliaGrid?: AureliaGridInstance;
+  dataviewObj?: SlickDataView;
+  gridObj?: SlickGrid;
+  gridOptions?: GridOption;
   columns: Column<Item>[] = [];
   dataset: Item[] = [];
-  // extensions!: ExtensionList<any>;
+  // extensions?: ExtensionList<any>;
   hideSubTitle = false;
   message = '';
 
@@ -245,33 +245,33 @@ export class Example47 {
   }
 
   changeDetailViewRowCount() {
-    const options = this.rowDetailInstance.getOptions();
+    const options = this.rowDetailInstance?.getOptions();
     if (options && options.panelRows) {
       options.panelRows = this.detailViewRowCount; // change number of rows dynamically
-      this.rowDetailInstance.setOptions(options);
+      this.rowDetailInstance?.setOptions(options);
     }
   }
 
   closeAllRowDetail() {
-    this.rowDetailInstance.collapseAll();
+    this.rowDetailInstance?.collapseAll();
   }
 
   clearGrouping() {
-    this.dataviewObj.setGrouping([]);
+    this.dataviewObj?.setGrouping([]);
   }
 
   collapseAllGroups() {
-    this.dataviewObj.collapseAllGroups();
+    this.dataviewObj?.collapseAllGroups();
   }
 
   expandAllGroups() {
-    this.dataviewObj.expandAllGroups();
+    this.dataviewObj?.expandAllGroups();
   }
 
   groupByDuration() {
     // you need to manually add the sort icon(s) in UI
-    this.aureliaGrid.filterService.setSortColumnIcons([{ columnId: 'duration', sortAsc: true }]);
-    this.dataviewObj.setGrouping({
+    this.aureliaGrid?.filterService.setSortColumnIcons([{ columnId: 'duration', sortAsc: true }]);
+    this.dataviewObj?.setGrouping({
       getter: 'duration',
       formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
       comparer: (a, b) => {
@@ -281,7 +281,7 @@ export class Example47 {
       aggregateCollapsed: false,
       lazyTotalsCalculation: true,
     } as Grouping);
-    this.gridObj.invalidate(); // invalidate all rows and re-render
+    this.gridObj?.invalidate(); // invalidate all rows and re-render
   }
 
   groupByDurationEffortDriven() {
@@ -290,8 +290,8 @@ export class Example47 {
       { columnId: 'duration', sortAsc: true },
       { columnId: 'effortDriven', sortAsc: true },
     ];
-    this.aureliaGrid.filterService.setSortColumnIcons(sortColumns);
-    this.dataviewObj.setGrouping([
+    this.aureliaGrid?.filterService.setSortColumnIcons(sortColumns);
+    this.dataviewObj?.setGrouping([
       {
         getter: 'duration',
         formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
@@ -307,7 +307,7 @@ export class Example47 {
         lazyTotalsCalculation: true,
       },
     ] as Grouping[]);
-    this.gridObj.invalidate(); // invalidate all rows and re-render
+    this.gridObj?.invalidate(); // invalidate all rows and re-render
   }
 
   /** Just for demo purposes, we will simulate an async server call and return more details on the selected row item */
@@ -344,7 +344,7 @@ export class Example47 {
   toggleDarkMode() {
     this._darkMode = !this._darkMode;
     this.toggleBodyBackground();
-    this.aureliaGrid.slickGrid?.setOptions({ darkMode: this._darkMode });
+    this.aureliaGrid?.slickGrid?.setOptions({ darkMode: this._darkMode });
     this.closeAllRowDetail();
   }
 
@@ -362,7 +362,7 @@ export class Example47 {
     this.hideSubTitle = !this.hideSubTitle;
     const action = this.hideSubTitle ? 'add' : 'remove';
     document.querySelector('.subtitle')?.classList[action]('hidden');
-    this.aureliaGrid.resizerService.resizeGrid(0);
+    this.aureliaGrid?.resizerService.resizeGrid(0);
   }
 
   private randomNumber(min: number, max: number) {
