@@ -410,7 +410,9 @@ export class Example18Component implements OnInit, OnDestroy {
     if (Array.isArray(groups) && groups.length > 0) {
       // assign a new array reference to trigger Angular change detection
       const newFields = groups.map((g) => g?.getter ?? '');
-      while (newFields.length < 3) newFields.push('');
+      while (newFields.length < 3) {
+        newFields.push('');
+      }
       this.selectedGroupingFields.set(newFields);
     } else if (groups.length === 0 && caller === 'remove-group') {
       this.clearGroupingSelects();

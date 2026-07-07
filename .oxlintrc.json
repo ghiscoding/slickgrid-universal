@@ -76,6 +76,7 @@
     "import/no-self-import": "error",
     "no-async-promise-executor": "off",
     "oxc/erasing-op": "off",
-    "object-shorthand": "error"
+    "object-shorthand": "error",
+    "curly": ["error", "all"]
   }
 }

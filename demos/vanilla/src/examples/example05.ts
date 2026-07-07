@@ -403,7 +403,9 @@ export default class Example05 {
 
   setMaxVisibleDepthFromInput() {
     const input = document.querySelector('#maxVisibleDepthInput') as HTMLInputElement;
-    if (!input) return;
+    if (!input) {
+      return;
+    }
     const value = parseInt(input.value, 10);
     const maxVisibleDepth = Number.isFinite(value) ? value : undefined;
     this.sgb.treeDataService.setMaxVisibleDepth(maxVisibleDepth as number | undefined);
@@ -411,7 +413,9 @@ export default class Example05 {
 
   clearMaxVisibleDepth() {
     const input = document.querySelector('#maxVisibleDepthInput') as HTMLInputElement;
-    if (input) input.value = '';
+    if (input) {
+      input.value = '';
+    }
     this.sgb.treeDataService.clearMaxVisibleDepth();
   }
 

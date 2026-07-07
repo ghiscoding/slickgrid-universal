@@ -294,11 +294,24 @@ export class SlickDraggableGrouping {
   ): void {
     this.destroyColumnReorderDrag();
     const dropzoneElm = grid.getTopHeaderPanel() || grid.getPreHeaderPanel();
-    const dropzoneSelector = `.${DROPZONE_CLASS}`;
-    const dropzoneHoverClass = DROPZONE_HOVER_CLASS;
     const draggablePlaceholderElm = dropzoneElm.querySelector<HTMLDivElement>(`.${DROPZONE_PLACEHOLDER_CLASS}`);
     const groupTogglerElm = dropzoneElm.querySelector<HTMLDivElement>(`.${GROUP_TOGGLE_ALL_CLASS}`);
     const uid = grid.getUID();
+
+    const restoreDropzoneState = () => {
+      dropzoneElm.classList.remove(DROPZONE_HOVER_CLASS);
+      draggablePlaceholderElm?.parentElement?.classList.remove('slick-dropzone-placeholder-hover');
+      const groupingElms = dropzoneElm.querySelectorAll<HTMLDivElement>('.slick-dropped-grouping');
+      groupingElms.forEach((el) => (el.style.display = 'flex'));
+      if (groupingElms.length) {
+        if (draggablePlaceholderElm) {
+          draggablePlaceholderElm.style.display = 'none';
+        }
+        if (groupTogglerElm) {
+          groupTogglerElm.style.display = 'inline-flex';
+        }
+      }
+    };
 
     this._columnReorderDrag = setupColumnReorderDrag({
       headerLeft: this.gridContainer.querySelector<HTMLDivElement>(`.${uid} .slick-header-columns.slick-header-columns-left`)!,
@@ -307,8 +320,8 @@ export class SlickDraggableGrouping {
       viewportScrollContainerX: (grid as any).getViewportNode?.() ?? this.gridContainer,
       hasFrozenColumns: () => ((grid.getOptions?.() as GridOption | undefined)?.frozenColumn ?? -1) >= 0,
       draggableSelector: '.slick-header-column',
-      dropzoneSelector,
-      dropzoneHoverClass,
+      dropzoneSelector: `.${DROPZONE_CLASS}`,
+      dropzoneHoverClass: DROPZONE_HOVER_CLASS,
       onDragStart: () => {
         if (draggablePlaceholderElm) {
           draggablePlaceholderElm.style.display = 'inline-block';
@@ -319,18 +332,7 @@ export class SlickDraggableGrouping {
         }
       },
       onDrop: (draggedEl, _event, draggedColumnId) => {
-        dropzoneElm?.classList.remove(dropzoneHoverClass);
-        draggablePlaceholderElm?.parentElement?.classList.remove('slick-dropzone-placeholder-hover');
-        const droppedGroupingElms = dropzoneElm.querySelectorAll<HTMLDivElement>('.slick-dropped-grouping');
-        droppedGroupingElms.forEach((el) => (el.style.display = 'flex'));
-        if (droppedGroupingElms.length) {
-          if (draggablePlaceholderElm) {
-            draggablePlaceholderElm.style.display = 'none';
-          }
-          if (groupTogglerElm) {
-            groupTogglerElm.style.display = 'inline-flex';
-          }
-        }
+        restoreDropzoneState();
         const headerColumnElm =
           (draggedEl as HTMLDivElement | null) ?? this.gridContainer.querySelector<HTMLDivElement>(`[data-id="${draggedColumnId}"]`);
         if (headerColumnElm) {
@@ -338,18 +340,7 @@ export class SlickDraggableGrouping {
         }
       },
       onDragEnd: (reorderedIds) => {
-        dropzoneElm?.classList.remove(dropzoneHoverClass);
-        draggablePlaceholderElm?.parentElement?.classList.remove('slick-dropzone-placeholder-hover');
-        const droppedGroupingElms = dropzoneElm.querySelectorAll<HTMLDivElement>('.slick-dropped-grouping');
-        droppedGroupingElms.forEach((el) => (el.style.display = 'flex'));
-        if (droppedGroupingElms.length) {
-          if (draggablePlaceholderElm) {
-            draggablePlaceholderElm.style.display = 'none';
-          }
-          if (groupTogglerElm) {
-            groupTogglerElm.style.display = 'inline-flex';
-          }
-        }
+        restoreDropzoneState();
 
         if (!grid.getEditorLock().commitCurrentEdit()) {
           return;
@@ -575,7 +566,9 @@ export class SlickDraggableGrouping {
         dropzoneElm.querySelectorAll<HTMLElement>('.slick-dropped-grouping').forEach((pillElm) => {
           const id = pillElm.dataset.id;
           const col = this.columnsGroupBy.find((c) => String(c.id) === id);
-          if (col) newGroupingOrder.push(col);
+          if (col) {
+            newGroupingOrder.push(col);
+          }
         });
         this.columnsGroupBy = newGroupingOrder;
         this.updateGroupBy('sort-group');

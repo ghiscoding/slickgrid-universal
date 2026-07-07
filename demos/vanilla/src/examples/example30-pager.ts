@@ -161,30 +161,34 @@ export class CustomPager implements BasePaginationComponent {
     const nextBtn = this._paginationElement.querySelector('li.page-item.seek-next') as HTMLLIElement;
 
     // VueJS-style class binding for buttons
-    if (firstBtn)
+    if (firstBtn) {
       bindClassList(firstBtn, () => ({
         'page-item': true,
         'seek-first': true,
         disabled: this.isLeftPaginationDisabled(),
       }));
-    if (prevBtn)
+    }
+    if (prevBtn) {
       bindClassList(prevBtn, () => ({
         'page-item': true,
         'seek-prev': true,
         disabled: this.isLeftPaginationDisabled(),
       }));
-    if (lastBtn)
+    }
+    if (lastBtn) {
       bindClassList(lastBtn, () => ({
         'page-item': true,
         'seek-end': true,
         disabled: this.isRightPaginationDisabled(),
       }));
-    if (nextBtn)
+    }
+    if (nextBtn) {
       bindClassList(nextBtn, () => ({
         'page-item': true,
         'seek-next': true,
         disabled: this.isRightPaginationDisabled(),
       }));
+    }
 
     // Text content for spans
     const itemFrom = this._paginationElement.querySelector('span.item-from');
@@ -194,19 +198,29 @@ export class CustomPager implements BasePaginationComponent {
     const pageNumber = this._paginationElement.querySelector('span.page-number');
 
     effect(() => {
-      if (itemFrom) itemFrom.textContent = String(this.dataFrom());
+      if (itemFrom) {
+        itemFrom.textContent = String(this.dataFrom());
+      }
     });
     effect(() => {
-      if (itemTo) itemTo.textContent = String(this.dataTo());
+      if (itemTo) {
+        itemTo.textContent = String(this.dataTo());
+      }
     });
     effect(() => {
-      if (totalItems) totalItems.textContent = String(this.totalItems());
+      if (totalItems) {
+        totalItems.textContent = String(this.totalItems());
+      }
     });
     effect(() => {
-      if (pageCount) pageCount.textContent = String(this.pageCount());
+      if (pageCount) {
+        pageCount.textContent = String(this.pageCount());
+      }
     });
     effect(() => {
-      if (pageNumber) pageNumber.textContent = String(this.pageNumber());
+      if (pageNumber) {
+        pageNumber.textContent = String(this.pageNumber());
+      }
     });
   }
 

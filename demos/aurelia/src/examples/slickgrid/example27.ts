@@ -385,7 +385,9 @@ export class Example27 {
 
   setMaxVisibleDepthFromInput() {
     const input = document.querySelector('#maxVisibleDepthInput') as HTMLInputElement;
-    if (!input) return;
+    if (!input) {
+      return;
+    }
     const value = parseInt(input.value, 10);
     const maxVisibleDepth = Number.isFinite(value) ? value : undefined;
     this.aureliaGrid.treeDataService.setMaxVisibleDepth(maxVisibleDepth as number | undefined);
@@ -393,7 +395,9 @@ export class Example27 {
 
   clearMaxVisibleDepth() {
     const input = document.querySelector('#maxVisibleDepthInput') as HTMLInputElement;
-    if (input) input.value = '';
+    if (input) {
+      input.value = '';
+    }
     this.aureliaGrid.treeDataService.clearMaxVisibleDepth();
   }
 }

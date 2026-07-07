@@ -32,7 +32,9 @@ export class Example45DetailView {
   innerGridClass = '';
 
   attached() {
-    if (!this.model) return;
+    if (!this.model) {
+      return;
+    }
 
     this.gridId = `innergrid-${this.model.id}`;
     this.innerGridClass = `row-detail-${this.model.id}`;

@@ -59,6 +59,14 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     document.querySelectorAll<HTMLElement>(dropzoneSelector).forEach((el) => el.classList.remove(dropzoneHoverClass));
   };
 
+  const safely = (operation: () => void, onError?: (error: unknown) => void) => {
+    try {
+      operation();
+    } catch (error) {
+      onError?.(error);
+    }
+  };
+
   const isDragStartIgnoredTarget = (el: HTMLElement | null, event: DragEvent | MouseEvent | TouchEvent): boolean => {
     const dragStartFilter = options.dragStartFilter;
     return typeof dragStartFilter === 'function'
@@ -164,11 +172,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       dropzoneTargetActive = true;
       toggleDropzoneHoverClass(target, true);
       // Ensure the dragged header remains in the header DOM (non-destructive)
-      try {
+      safely(() => {
         restoreDraggedToOriginalParent();
-      } catch (err) {
-        // ignore
-      }
+      });
     }
   };
 
@@ -193,11 +199,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       dropzoneTargetActive = true;
       toggleDropzoneHoverClass(e.target as HTMLElement | null, true);
       // Keep the dragged header visible in the original header DOM while over the dropzone
-      try {
+      safely(() => {
         restoreDraggedToOriginalParent();
-      } catch (err) {
-        // ignore
-      }
+      });
       return;
     }
 
@@ -222,16 +226,19 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     // restore the header to its original parent to avoid permanently removing the column
     // from the grid's column list when we read column order from the DOM.
     let droppedOnDropzone = dropzoneTargetActive;
-    try {
-      if (!droppedOnDropzone && e.clientX != null && e.clientY != null) {
-        const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
-        if (el && el.closest && el.closest(dropzoneSelector)) {
-          droppedOnDropzone = true;
+    safely(
+      () => {
+        if (!droppedOnDropzone && e.clientX != null && e.clientY != null) {
+          const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+          if (el && el.closest && el.closest(dropzoneSelector)) {
+            droppedOnDropzone = true;
+          }
         }
+      },
+      () => {
+        droppedOnDropzone = false;
       }
-    } catch (err) {
-      droppedOnDropzone = false;
-    }
+    );
 
     if (droppedOnDropzone && draggedHeader && originalParent) {
       // restore the header DOM to its original location
@@ -398,11 +405,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
         clearDropzoneHoverClasses();
         const targetHeader = elUnder?.closest?.(draggableSelector) as HTMLElement | null;
         if (targetHeader) {
-          try {
+          safely(() => {
             reorderDraggedAgainstTarget(targetHeader, clientX);
-          } catch (err) {
-            // ignore DOM insertion errors
-          }
+          });
         }
       }
     }
@@ -422,20 +427,25 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
     const { clientX, clientY } = getPointerPos(e);
     let droppedOnDropzone = dropzoneTargetActive;
-    try {
-      if (!droppedOnDropzone) {
-        const el = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
-        if (el?.closest?.(dropzoneSelector)) droppedOnDropzone = true;
+    safely(
+      () => {
+        if (!droppedOnDropzone) {
+          const el = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
+          if (el?.closest?.(dropzoneSelector)) {
+            droppedOnDropzone = true;
+          }
+        }
+      },
+      () => {
+        droppedOnDropzone = false;
       }
-    } catch (err) {
-      droppedOnDropzone = false;
-    }
-    if (droppedOnDropzone && draggedHeader && originalParent) {
-      try {
-        originalParent.insertBefore(draggedHeader, originalNextSibling as Node | null);
-      } catch (err) {
-        // ignore
-      }
+    );
+    const originalParentNode = originalParent;
+    const originalSiblingNode = originalNextSibling;
+    if (droppedOnDropzone && draggedHeader && originalParentNode) {
+      safely(() => {
+        originalParentNode.insertBefore(draggedHeader, originalSiblingNode as Node | null);
+      });
     }
     const reorderedIds = getColumnIds(headerLeft).concat(getColumnIds(headerRight));
     if (pointerDragCommitted && droppedOnDropzone && draggedHeader) {
@@ -622,7 +632,9 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
       dragStartY = getPointerPos(e).clientY;
       draggedPill = pill;
       // Add visual feedback immediately for pills (no menu conflict)
-      if (draggingCssClass) pill.classList.add(draggingCssClass);
+      if (draggingCssClass) {
+        pill.classList.add(draggingCssClass);
+      }
       // Disable text selection during drag
       document.body.style.userSelect = 'none';
       if ('touches' in e) {
@@ -676,14 +688,18 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
     document.removeEventListener('touchend', onPointerUp as EventListener);
     document.removeEventListener('touchcancel', onPointerUp as EventListener);
     const currentPill = draggedPill;
-    if (currentPill && draggingCssClass) currentPill.classList.remove(draggingCssClass);
+    if (currentPill && draggingCssClass) {
+      currentPill.classList.remove(draggingCssClass);
+    }
     draggedPill = null;
     dragStartX = null;
     dragStartY = null;
     fallbackActive = false;
     // Re-enable text selection after drag completes
     document.body.style.userSelect = '';
-    if (currentPill) options.onPillDragEnd?.(currentPill);
+    if (currentPill) {
+      options.onPillDragEnd?.(currentPill);
+    }
   };
 
   // ── Register listeners ────────────────────────────────────────────────────

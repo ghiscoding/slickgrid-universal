@@ -3,7 +3,13 @@ import type { InferDOMType } from './models/types.js';
 import { isDefined } from './utils.js';
 
 export type CSSStyleDeclarationReadonly =
-  'length' | 'parentRule' | 'getPropertyPriority' | 'getPropertyValue' | 'item' | 'removeProperty' | 'setProperty';
+  | 'length'
+  | 'parentRule'
+  | 'getPropertyPriority'
+  | 'getPropertyValue'
+  | 'item'
+  | 'removeProperty'
+  | 'setProperty';
 export type CSSStyleDeclarationWritable = Omit<CSSStyleDeclaration, CSSStyleDeclarationReadonly>;
 
 /** Calculate available space for each side of the DOM element */
@@ -87,7 +93,9 @@ export function classNameToList(className = ''): string[] {
  * @param obj - object containing 1 or more properties with DOM Elements
  */
 export function destroyAllElementProps(obj: Record<string, any> | null): void {
-  if (!obj || typeof obj !== 'object') return; // Guard clause for null/undefined
+  if (!obj || typeof obj !== 'object') {
+    return; // Guard clause for null/undefined
+  }
 
   Object.keys(obj).forEach((key) => {
     if (Array.isArray(obj[key])) {
