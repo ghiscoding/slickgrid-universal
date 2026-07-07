@@ -384,7 +384,9 @@ export class Example27Component implements OnInit {
 
   setMaxVisibleDepthFromInput() {
     const input = document.getElementById('maxVisibleDepthInput') as HTMLInputElement;
-    if (!input) return;
+    if (!input) {
+      return;
+    }
     const value = parseInt(input.value, 10);
     const maxVisibleDepth = Number.isFinite(value) ? value : undefined;
     this.angularGrid.treeDataService.setMaxVisibleDepth(maxVisibleDepth as number | undefined);
@@ -392,7 +394,9 @@ export class Example27Component implements OnInit {
 
   clearMaxVisibleDepth() {
     const input = document.getElementById('maxVisibleDepthInput') as HTMLInputElement;
-    if (input) input.value = '';
+    if (input) {
+      input.value = '';
+    }
     this.angularGrid.treeDataService.clearMaxVisibleDepth();
   }
 }

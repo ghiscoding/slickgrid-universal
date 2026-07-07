@@ -378,7 +378,9 @@ function reapplyToggledItems() {
 
 function setMaxVisibleDepthFromInput() {
   const input = document.querySelector('#maxVisibleDepthInput') as HTMLInputElement;
-  if (!input) return;
+  if (!input) {
+    return;
+  }
   const value = parseInt(input.value, 10);
   const maxVisibleDepth = Number.isFinite(value) ? value : undefined;
   vueGrid.treeDataService.setMaxVisibleDepth(maxVisibleDepth as number | undefined);
@@ -386,7 +388,9 @@ function setMaxVisibleDepthFromInput() {
 
 function clearMaxVisibleDepth() {
   const input = document.querySelector('#maxVisibleDepthInput') as HTMLInputElement;
-  if (input) input.value = '';
+  if (input) {
+    input.value = '';
+  }
   vueGrid.treeDataService.clearMaxVisibleDepth();
 }
 

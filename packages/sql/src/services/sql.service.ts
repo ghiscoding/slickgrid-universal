@@ -646,7 +646,9 @@ export class SqlService implements BackendService {
   /** Escapes SQL identifiers (table, column, etc.) based on the configured escape style. */
   protected escapeIdentifier(identifier?: string): string {
     const escapeStyle = this.options?.identifierEscapeStyle || 'doubleQuote';
-    if (!identifier) return '';
+    if (!identifier) {
+      return '';
+    }
     switch (escapeStyle) {
       case 'backtick':
         return `\`${String(identifier).replace(/`/g, '``')}\``;

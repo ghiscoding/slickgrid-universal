@@ -352,7 +352,9 @@ const Example27: React.FC = () => {
 
   function setMaxVisibleDepthFromInput() {
     const input = document.querySelector('#maxVisibleDepthInput') as HTMLInputElement;
-    if (!input) return;
+    if (!input) {
+      return;
+    }
     const value = parseInt(input.value, 10);
     const maxVisibleDepth = Number.isFinite(value) ? value : undefined;
     reactGridRef.current?.treeDataService.setMaxVisibleDepth(maxVisibleDepth as number | undefined);
@@ -360,7 +362,9 @@ const Example27: React.FC = () => {
 
   function clearMaxVisibleDepth() {
     const input = document.querySelector('#maxVisibleDepthInput') as HTMLInputElement;
-    if (input) input.value = '';
+    if (input) {
+      input.value = '';
+    }
     reactGridRef.current?.treeDataService.clearMaxVisibleDepth();
   }
 
