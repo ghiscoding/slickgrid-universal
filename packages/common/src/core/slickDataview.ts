@@ -1293,7 +1293,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected setFunctionName(fn: any, fnName: string): void {
     try {
       Object.defineProperty(fn, 'name', { writable: true, value: fnName });
-    } /* v8 ignore next */ catch (err) {
+    } /* v8 ignore next */ catch {
       fn.name = fnName;
     }
   }

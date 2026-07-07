@@ -240,7 +240,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           URL.revokeObjectURL(url);
           this._pubSubService?.publish('onAfterExportToExcel', { filename, mimeType, durationMs: Date.now() - exportStartTime });
           return true;
-        } catch (err) {
+        } catch {
           // fallback to legacy export if streaming is not supported
           return await this.legacyExcelExportAsync(filename, mimeType, exportStartTime);
         }

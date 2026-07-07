@@ -119,7 +119,7 @@ export class Logger {
     if (typeof message === 'object') {
       try {
         message = JSON.stringify(message, null, 2);
-      } catch (_e) {
+      } catch {
         additional = [message, ...additional];
         message = 'circular object in message. ';
       }

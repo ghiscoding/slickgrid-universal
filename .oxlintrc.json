@@ -50,18 +50,6 @@
     }
   ],
   "rules": {
-    "typescript/ban-ts-comment": "off",
-    "typescript/consistent-type-definitions": "error",
-    "typescript/consistent-type-exports": "error",
-    "typescript/consistent-type-imports": "error",
-    "typescript/no-empty-function": "off",
-    "typescript/no-empty-object-type": ["error", { "allowInterfaces": "with-single-extends" }],
-    "typescript/no-explicit-any": "off",
-    "typescript/no-inferrable-types": "error",
-    "typescript/no-unsafe-function-type": "off",
-    "typescript/no-non-null-assertion": "off",
-    "typescript/no-unused-expressions": "off",
-    "typescript/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "destructuredArrayIgnorePattern": "^_", "caughtErrors": "none" }],
     // "import/extensions" rule is blocked by https://github.com/oxc-project/oxc/issues/19431
     // use custom "eslint-plugin-import-ext" custom eslint plugin in the meantime to catch any missing local import file extensions
     "import/extensions": "off",
@@ -74,9 +62,29 @@
       }
     ],
     "import/no-self-import": "error",
+    "curly": ["error", "all"],
     "no-async-promise-executor": "off",
     "oxc/erasing-op": "off",
     "object-shorthand": "error",
-    "curly": ["error", "all"]
+    "typescript/ban-ts-comment": "off",
+    "typescript/consistent-type-definitions": "error",
+    "typescript/consistent-type-exports": "error",
+    "typescript/consistent-type-imports": "error",
+    "typescript/no-empty-function": "off",
+    "typescript/no-empty-object-type": ["error", { "allowInterfaces": "with-single-extends" }],
+    "typescript/no-explicit-any": "off",
+    "typescript/no-inferrable-types": "error",
+    "typescript/no-unsafe-function-type": "off",
+    "typescript/no-non-null-assertion": "off",
+    "typescript/no-unused-expressions": "off",
+    "typescript/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "caughtErrors": "all",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ]
   }
 }

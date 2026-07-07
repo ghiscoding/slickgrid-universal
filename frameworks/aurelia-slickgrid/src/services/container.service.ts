@@ -8,7 +8,7 @@ export class ContainerService implements UniversalContainerService {
   get<T = any>(key: string): T | null {
     try {
       return this.container.get(key) as T;
-    } catch (_) {
+    } catch {
       return null;
     }
   }
