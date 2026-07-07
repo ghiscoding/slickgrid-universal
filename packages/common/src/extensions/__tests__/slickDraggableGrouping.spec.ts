@@ -800,6 +800,21 @@ describe('Draggable Grouping Plugin', () => {
           expect(dvExpandSpy).toHaveBeenCalled();
         });
 
+        it('should use Toggle All icon fallback query when click target is not the icon', () => {
+          const dvCollapseSpy = vi.spyOn(dataViewStub, 'collapseAllGroups');
+          const toggleAllElm = document.querySelector('.slick-group-toggle-all') as HTMLDivElement;
+          const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon') as HTMLDivElement;
+          const clickEvent = new Event('click');
+          Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: toggleAllElm });
+
+          // click target is container, handler should fallback to currentTarget.querySelector('.slick-group-toggle-all-icon')
+          toggleAllElm.dispatchEvent(clickEvent);
+
+          expect(toggleAllIconElm.classList.contains('collapsed')).toBeTruthy();
+          expect(toggleAllIconElm.classList.contains('expanded')).toBeFalsy();
+          expect(dvCollapseSpy).toHaveBeenCalled();
+        });
+
         it('should clear all grouping when that action is called from Context Menu, it must be also cleared in the Draggable Grouping preheader', () => {
           const clearGroupSpy = vi.spyOn(plugin, 'clearDroppedGroups');
           eventPubSubService.publish('onContextMenuClearGrouping');
