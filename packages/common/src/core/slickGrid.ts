@@ -2308,7 +2308,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     };
 
     const scheduleColumnResizeAutoScroll = (resizeCallback: (targetPageX: number) => void) => {
-      if (this._columnResizeAutoScrollTimer || !autoScrollOffsetX) return;
+      if (this._columnResizeAutoScrollTimer || !autoScrollOffsetX) {
+        return;
+      }
       let elapsed = 0;
       this._columnResizeAutoScrollTimer = setInterval(() => {
         if (!autoScrollOffsetX) {
@@ -2322,7 +2324,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (!isBrowserEdge) {
           const delay = RESIZE_AUTOSCROLL_MAX_INTERVAL_MS - Math.abs(autoScrollOffsetX) * RESIZE_AUTOSCROLL_ACCELERATE_INTERVAL;
           elapsed += RESIZE_AUTOSCROLL_MIN_INTERVAL_MS;
-          if (elapsed < delay) return;
+          if (elapsed < delay) {
+            return;
+          }
           elapsed = 0;
         }
         /* v8 ignore next */

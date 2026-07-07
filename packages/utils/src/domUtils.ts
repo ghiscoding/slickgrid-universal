@@ -87,7 +87,9 @@ export function classNameToList(className = ''): string[] {
  * @param obj - object containing 1 or more properties with DOM Elements
  */
 export function destroyAllElementProps(obj: Record<string, any> | null): void {
-  if (!obj || typeof obj !== 'object') return; // Guard clause for null/undefined
+  if (!obj || typeof obj !== 'object') {
+    return; // Guard clause for null/undefined
+  }
 
   Object.keys(obj).forEach((key) => {
     if (Array.isArray(obj[key])) {

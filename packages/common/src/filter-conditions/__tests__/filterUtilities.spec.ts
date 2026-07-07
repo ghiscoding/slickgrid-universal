@@ -82,7 +82,9 @@ describe('filterUtilities', () => {
                 return {
                   unsubscribe: () => {
                     const idx = subscribers.indexOf(cb);
-                    if (idx >= 0) subscribers.splice(idx, 1);
+                    if (idx >= 0) {
+                      subscribers.splice(idx, 1);
+                    }
                   },
                 };
               },
@@ -130,7 +132,9 @@ describe('filterUtilities', () => {
               return {
                 unsubscribe: () => {
                   const idx = subscribers.indexOf(cb);
-                  if (idx >= 0) subscribers.splice(idx, 1);
+                  if (idx >= 0) {
+                    subscribers.splice(idx, 1);
+                  }
                 },
               };
             },
@@ -179,7 +183,9 @@ describe('filterUtilities', () => {
               return {
                 unsubscribe: () => {
                   const idx = subscribers.indexOf(cb);
-                  if (idx >= 0) subscribers.splice(idx, 1);
+                  if (idx >= 0) {
+                    subscribers.splice(idx, 1);
+                  }
                 },
               };
             },

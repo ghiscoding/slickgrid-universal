@@ -50,6 +50,22 @@
     }
   ],
   "rules": {
+    // "import/extensions" rule is blocked by https://github.com/oxc-project/oxc/issues/19431
+    // use custom "eslint-plugin-import-ext" custom eslint plugin in the meantime to catch any missing local import file extensions
+    "import/extensions": "off",
+    "local-import-ext/require-local-extension": [
+      "error",
+      {
+        "js": "always",
+        "ts": "never",
+        "excludedFolders": ["demos/aurelia/test", "demos/react/test", "demos/vue/test", "frameworks/angular-slickgrid", "test"]
+      }
+    ],
+    "import/no-self-import": "error",
+    "curly": ["error", "all"],
+    "no-async-promise-executor": "off",
+    "oxc/erasing-op": "off",
+    "object-shorthand": "error",
     "typescript/ban-ts-comment": "off",
     "typescript/consistent-type-definitions": "error",
     "typescript/consistent-type-exports": "error",
@@ -69,21 +85,6 @@
         "caughtErrors": "all",
         "caughtErrorsIgnorePattern": "^_"
       }
-    ],
-    // "import/extensions" rule is blocked by https://github.com/oxc-project/oxc/issues/19431
-    // use custom "eslint-plugin-import-ext" custom eslint plugin in the meantime to catch any missing local import file extensions
-    "import/extensions": "off",
-    "local-import-ext/require-local-extension": [
-      "error",
-      {
-        "js": "always",
-        "ts": "never",
-        "excludedFolders": ["demos/aurelia/test", "demos/react/test", "demos/vue/test", "frameworks/angular-slickgrid", "test"]
-      }
-    ],
-    "import/no-self-import": "error",
-    "no-async-promise-executor": "off",
-    "oxc/erasing-op": "off",
-    "object-shorthand": "error"
+    ]
   }
 }

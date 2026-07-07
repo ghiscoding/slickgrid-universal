@@ -6958,7 +6958,9 @@ describe('SlickGrid core file', () => {
       expect(onHeaderKeyDownSpy).toHaveBeenCalled();
       expect(onSortSpy).toHaveBeenCalled();
       // Restore original
-      if (origStorage) (globalThis as any).Utils.storage.get = origStorage;
+      if (origStorage) {
+        (globalThis as any).Utils.storage.get = origStorage;
+      }
     });
 
     it('should return cell CSS styles for a given key', () => {

@@ -373,7 +373,9 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                 // Use first column's dataRowBackgroundOffset for the row
                 // Always use the correct column for background offset (first visible data column)
                 let firstDataColIdx = 0;
-                if (this._hasGroupedItems) firstDataColIdx = 1;
+                if (this._hasGroupedItems) {
+                  firstDataColIdx = 1;
+                }
                 const firstColId = columns.filter((col: Column) => !col.excludeFromExport)[firstDataColIdx]?.id;
                 const colOpt = firstColId ? columnExportOptionsCache[firstColId] : this._exportOptions;
                 doc.rect(

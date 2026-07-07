@@ -901,7 +901,9 @@ describe('Example 04 - Frozen Grid', () => {
       cy.get('.slick-header-columns-right').then(($rightHeader) => {
         let sortInstance: any;
         Object.keys($rightHeader[0]).forEach((prop) => {
-          if (prop.startsWith('Sortable')) sortInstance = ($rightHeader[0] as any)[prop];
+          if (prop.startsWith('Sortable')) {
+            sortInstance = ($rightHeader[0] as any)[prop];
+          }
         });
         expect(sortInstance).to.exist;
         const startColumnEl = $rightHeader[0].querySelectorAll('.slick-header-column')[0] as HTMLElement;
@@ -926,7 +928,9 @@ describe('Example 04 - Frozen Grid', () => {
       cy.get('.slick-header-columns-right').then(($rightHeader) => {
         let sortInstance: any;
         Object.keys($rightHeader[0]).forEach((prop) => {
-          if (prop.startsWith('Sortable')) sortInstance = ($rightHeader[0] as any)[prop];
+          if (prop.startsWith('Sortable')) {
+            sortInstance = ($rightHeader[0] as any)[prop];
+          }
         });
         expect(sortInstance).to.exist;
         const cols = $rightHeader[0].querySelectorAll('.slick-header-column');
