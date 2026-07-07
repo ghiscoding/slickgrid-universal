@@ -7697,7 +7697,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
         }
         return null;
-      } /* v8 ignore next */ catch (_e: any) {
+      } /* v8 ignore next */ catch {
         return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
       }
     }
