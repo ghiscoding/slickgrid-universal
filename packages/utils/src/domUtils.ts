@@ -3,13 +3,7 @@ import type { InferDOMType } from './models/types.js';
 import { isDefined } from './utils.js';
 
 export type CSSStyleDeclarationReadonly =
-  | 'length'
-  | 'parentRule'
-  | 'getPropertyPriority'
-  | 'getPropertyValue'
-  | 'item'
-  | 'removeProperty'
-  | 'setProperty';
+  'length' | 'parentRule' | 'getPropertyPriority' | 'getPropertyValue' | 'item' | 'removeProperty' | 'setProperty';
 export type CSSStyleDeclarationWritable = Omit<CSSStyleDeclaration, CSSStyleDeclarationReadonly>;
 
 /** Calculate available space for each side of the DOM element */
