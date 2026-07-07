@@ -15,6 +15,16 @@ export interface ColumnReorderDragOption {
   hasFrozenColumns: () => boolean;
   /** CSS class that marks a column as non-reorderable */
   unorderableColumnCssClass?: string;
+  /** Dropzone selector used to detect external drop targets (default: `.slick-dropzone`) */
+  dropzoneSelector?: string;
+  /** CSS class toggled while hovering an external dropzone (default: `slick-dropzone-hover`) */
+  dropzoneHoverClass?: string;
+  /**
+   * Generic filter to ignore drag starts from interactive descendants.
+   * - `string`: CSS selector used with `closest()`
+   * - `function`: return `true` to cancel drag start for this target
+   */
+  dragStartFilter?: string | ((target: HTMLElement | null, event: DragEvent | MouseEvent | TouchEvent) => boolean);
   /**
    * Called right after dragstart, before any DOM changes.
    * Use this to snapshot column state that your onDragEnd callback needs.

@@ -91,6 +91,113 @@ describe('slickColumnReorderDrag', () => {
     expect(onDragEnd).not.toHaveBeenCalled();
   });
 
+  it('should prevent native dragstart from header menu button target', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    const headerMenuBtn = document.createElement('button');
+    headerMenuBtn.className = 'slick-header-menu-button';
+    firstName.append(headerMenuBtn);
+    headerLeft.append(firstName);
+
+    const onDragStart = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      dragStartFilter: '.slick-header-menu-button',
+      onDragStart,
+      onDragEnd: vi.fn(),
+    });
+
+    const dragStartEvt = createDragEvent('dragstart', {
+      target: headerMenuBtn,
+      dataTransfer: { effectAllowed: '', setData: vi.fn(), setDragImage: vi.fn() },
+      clientX: 10,
+      clientY: 10,
+    });
+    const preventDefaultSpy = vi.spyOn(dragStartEvt, 'preventDefault');
+    firstName.dispatchEvent(dragStartEvt);
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    expect(onDragStart).not.toHaveBeenCalled();
+  });
+
+  it('should prevent native dragstart when dragStartFilter selector matches target', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    const dragHandle = document.createElement('span');
+    dragHandle.className = 'no-reorder-handle';
+    firstName.append(dragHandle);
+    headerLeft.append(firstName);
+
+    const onDragStart = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      dragStartFilter: '.no-reorder-handle',
+      onDragStart,
+      onDragEnd: vi.fn(),
+    });
+
+    const dragStartEvt = createDragEvent('dragstart', {
+      target: dragHandle,
+      dataTransfer: { effectAllowed: '', setData: vi.fn(), setDragImage: vi.fn() },
+      clientX: 10,
+      clientY: 10,
+    });
+    const preventDefaultSpy = vi.spyOn(dragStartEvt, 'preventDefault');
+    firstName.dispatchEvent(dragStartEvt);
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    expect(onDragStart).not.toHaveBeenCalled();
+  });
+
+  it('should prevent native dragstart when dragStartFilter function returns true', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    headerLeft.append(firstName);
+
+    const onDragStart = vi.fn();
+    const dragStartFilter = vi.fn(() => true);
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      dragStartFilter,
+      onDragStart,
+      onDragEnd: vi.fn(),
+    });
+
+    const dragStartEvt = createDragEvent('dragstart', {
+      target: firstName,
+      dataTransfer: { effectAllowed: '', setData: vi.fn(), setDragImage: vi.fn() },
+      clientX: 10,
+      clientY: 10,
+    });
+    const preventDefaultSpy = vi.spyOn(dragStartEvt, 'preventDefault');
+    firstName.dispatchEvent(dragStartEvt);
+
+    expect(dragStartFilter).toHaveBeenCalledWith(firstName, dragStartEvt);
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    expect(onDragStart).not.toHaveBeenCalled();
+  });
+
   it('should prevent default on dragover and skip when drag was never started', () => {
     const headerLeft = document.createElement('div');
     const headerRight = document.createElement('div');
@@ -579,6 +686,96 @@ describe('slickColumnReorderDrag', () => {
     expect(onDragEnd).not.toHaveBeenCalled();
   });
 
+  it('should ignore Firefox/Linux mousedown drag start from header menu button', () => {
+    const originalNavigator = globalThis.navigator;
+    Object.defineProperty(globalThis, 'navigator', {
+      configurable: true,
+      value: { userAgent: 'Mozilla/5.0 Firefox/128.0 Linux x86_64' },
+    });
+
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    const headerMenuBtn = document.createElement('button');
+    headerMenuBtn.className = 'slick-header-menu-button';
+    firstName.append(headerMenuBtn);
+    headerLeft.append(firstName);
+
+    const onDragStart = vi.fn();
+    const onDragEnd = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      dragStartFilter: '.slick-header-menu-button',
+      onDragStart,
+      onDragEnd,
+    });
+
+    headerMenuBtn.dispatchEvent(createMouseEvent('mousedown', { clientX: 10, clientY: 10, target: headerMenuBtn }));
+    document.dispatchEvent(createMouseEvent('mousemove', { clientX: 140, clientY: 10, pageX: 140 }));
+    document.dispatchEvent(createMouseEvent('mouseup', { clientX: 140, clientY: 10 }));
+
+    expect(onDragStart).not.toHaveBeenCalled();
+    expect(onDragEnd).not.toHaveBeenCalled();
+    expect(firstName.classList.contains('slick-header-column-active')).toBe(false);
+
+    Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
+  });
+
+  it('should ignore touch drag start from header menu button', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    const headerMenuBtn = document.createElement('button');
+    headerMenuBtn.className = 'slick-header-menu-button';
+    firstName.append(headerMenuBtn);
+    headerLeft.append(firstName);
+
+    const onDragStart = vi.fn();
+    const onDragEnd = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      dragStartFilter: '.slick-header-menu-button',
+      onDragStart,
+      onDragEnd,
+    });
+
+    headerMenuBtn.dispatchEvent(
+      createTouchEvent('touchstart', {
+        touches: [{ clientX: 10, clientY: 10, pageX: 10 }],
+        changedTouches: [{ clientX: 10, clientY: 10, pageX: 10 }],
+        target: headerMenuBtn,
+      })
+    );
+    document.dispatchEvent(
+      createTouchEvent('touchmove', {
+        touches: [{ clientX: 140, clientY: 10, pageX: 140 }],
+        changedTouches: [{ clientX: 140, clientY: 10, pageX: 140 }],
+      })
+    );
+    document.dispatchEvent(
+      createTouchEvent('touchend', {
+        touches: [],
+        changedTouches: [{ clientX: 140, clientY: 10, pageX: 140 }],
+      })
+    );
+
+    expect(onDragStart).not.toHaveBeenCalled();
+    expect(onDragEnd).not.toHaveBeenCalled();
+    expect(firstName.classList.contains('slick-header-column-active')).toBe(false);
+  });
+
   it('should keep working when elementFromPoint throws in dragend and still call onDragEnd', () => {
     const headerLeft = document.createElement('div');
     const headerRight = document.createElement('div');
@@ -696,15 +893,7 @@ describe('slickColumnReorderDrag', () => {
     document.dispatchEvent(dragEnterEvt);
     expect(Array.from(headerLeft.children).map((el) => (el as HTMLElement).dataset.id)).toEqual(['firstName', 'lastName']);
 
-    // mouseover path should also restore parent if moved again
-    foreignParent.append(firstName);
-    const mouseOverEvt = createMouseEvent('mouseover', { target: dropzone });
-    document.dispatchEvent(mouseOverEvt);
-    expect(Array.from(headerLeft.children).map((el) => (el as HTMLElement).dataset.id)).toEqual(['firstName', 'lastName']);
-
-    // mouseout + dragleave should clear dropzone active state and avoid onDrop
-    const mouseOutEvt = createMouseEvent('mouseout', { target: dropzone, relatedTarget: document.body });
-    document.dispatchEvent(mouseOutEvt);
+    // dragleave should clear dropzone active state and avoid onDrop
     const dragLeaveEvt = createDragEvent('dragleave', { target: dropzone });
     document.dispatchEvent(dragLeaveEvt);
 
@@ -712,7 +901,7 @@ describe('slickColumnReorderDrag', () => {
     expect(onDrop).not.toHaveBeenCalled();
   });
 
-  it('should keep dropzone active on mouseout when relatedTarget is null but pointer is still over dropzone', () => {
+  it('should keep dropzone active on dragleave when relatedTarget is null but pointer is still over dropzone', () => {
     const headerLeft = document.createElement('div');
     const headerRight = document.createElement('div');
     const viewport = document.createElement('div');
@@ -754,8 +943,9 @@ describe('slickColumnReorderDrag', () => {
     // mark dropzone active first
     document.dispatchEvent(createDragEvent('dragenter', { target: dropzone }));
 
-    const mouseOutEvt = createMouseEvent('mouseout', { target: dropzone, relatedTarget: null, clientX: 25, clientY: 25 });
-    document.dispatchEvent(mouseOutEvt);
+    // dragleave with null relatedTarget but elementFromPoint inside dropzone should keep it active
+    const dragLeaveEvt = createDragEvent('dragleave', { target: dropzone, relatedTarget: null, clientX: 25, clientY: 25 });
+    document.dispatchEvent(dragLeaveEvt);
 
     firstName.dispatchEvent(createDragEvent('dragend', { clientX: 25, clientY: 25 }));
 
@@ -839,6 +1029,53 @@ describe('slickColumnReorderDrag', () => {
     Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
   });
 
+  it('should toggle dropzone hover class during Firefox/Linux fallback mousemove', () => {
+    const originalNavigator = globalThis.navigator;
+    Object.defineProperty(globalThis, 'navigator', {
+      configurable: true,
+      value: { userAgent: 'Mozilla/5.0 Firefox/128.0 Linux x86_64' },
+    });
+
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    headerLeft.append(firstName);
+
+    const nonDropzoneElm = document.createElement('div');
+    const dropzone = document.createElement('div');
+    dropzone.className = 'slick-dropzone';
+    const dropzoneChild = document.createElement('div');
+    dropzone.append(dropzoneChild);
+    document.body.append(nonDropzoneElm, dropzone);
+
+    const elementFromPointMock = vi.fn((x: number) => (x === 40 ? (dropzoneChild as Element) : (nonDropzoneElm as Element)));
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: elementFromPointMock,
+    });
+
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      onDragEnd: vi.fn(),
+    });
+
+    firstName.dispatchEvent(createMouseEvent('mousedown', { clientX: 10, clientY: 10, target: firstName }));
+    document.dispatchEvent(createMouseEvent('mousemove', { clientX: 40, clientY: 10 }));
+    expect(dropzone.classList.contains('slick-dropzone-hover')).toBe(true);
+
+    document.dispatchEvent(createMouseEvent('mousemove', { clientX: 80, clientY: 10 }));
+    expect(dropzone.classList.contains('slick-dropzone-hover')).toBe(false);
+
+    document.dispatchEvent(createMouseEvent('mouseup', { clientX: 80, clientY: 10 }));
+    Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
+  });
+
   it('should detect dropzone from elementFromPoint on fallback mouseup when dropzone was not previously active', () => {
     const originalNavigator = globalThis.navigator;
     Object.defineProperty(globalThis, 'navigator', {
@@ -858,10 +1095,7 @@ describe('slickColumnReorderDrag', () => {
     dropzone.className = 'slick-dropzone';
     document.body.append(nonDropzoneElm, dropzone);
 
-    const elementFromPointMock = vi
-      .fn()
-      .mockReturnValueOnce(nonDropzoneElm as Element) // mousemove -> not dropzone, keeps internal flag false
-      .mockReturnValueOnce(dropzone as Element); // mouseup -> should set droppedOnDropzone=true
+    const elementFromPointMock = vi.fn((x: number) => (x === 30 ? (dropzone as Element) : (nonDropzoneElm as Element)));
     Object.defineProperty(document, 'elementFromPoint', {
       configurable: true,
       value: elementFromPointMock,
@@ -881,9 +1115,55 @@ describe('slickColumnReorderDrag', () => {
 
     firstName.dispatchEvent(createMouseEvent('mousedown', { clientX: 10, clientY: 10, target: firstName }));
     document.dispatchEvent(createMouseEvent('mousemove', { clientX: 20, clientY: 20 }));
-    document.dispatchEvent(createMouseEvent('mouseup', { clientX: 20, clientY: 20 }));
+    document.dispatchEvent(createMouseEvent('mouseup', { clientX: 30, clientY: 20 }));
 
     expect(onDrop).toHaveBeenCalledTimes(1);
+    expect(onDragEnd).not.toHaveBeenCalled();
+
+    Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
+  });
+
+  it('should keep fallback column drag uncommitted when mousemove stays below threshold', () => {
+    const originalNavigator = globalThis.navigator;
+    Object.defineProperty(globalThis, 'navigator', {
+      configurable: true,
+      value: { userAgent: 'Mozilla/5.0 Firefox/128.0 Linux x86_64' },
+    });
+
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    headerLeft.append(firstName);
+
+    const elementFromPointMock = vi.fn(() => firstName);
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: elementFromPointMock,
+    });
+
+    const onDragStart = vi.fn();
+    const onDragEnd = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      onDragStart,
+      onDragEnd,
+    });
+
+    firstName.dispatchEvent(createMouseEvent('mousedown', { clientX: 10, clientY: 10, target: firstName }));
+    const moveEvt = createMouseEvent('mousemove', { clientX: 12, clientY: 12, pageX: 12 });
+    const preventDefaultSpy = vi.spyOn(moveEvt, 'preventDefault');
+    document.dispatchEvent(moveEvt);
+    document.dispatchEvent(createMouseEvent('mouseup', { clientX: 12, clientY: 12 }));
+
+    expect(preventDefaultSpy).not.toHaveBeenCalled();
+    expect(elementFromPointMock).toHaveBeenCalledTimes(1);
+    expect(onDragStart).not.toHaveBeenCalled();
     expect(onDragEnd).not.toHaveBeenCalled();
 
     Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
@@ -957,11 +1237,17 @@ describe('slickColumnReorderDrag', () => {
     const firstName = createHeaderColumn('firstName');
     headerLeft.append(firstName);
 
+    const elementFromPointMock = vi
+      .fn()
+      // fallback mousemove: return a non-dropzone element so drag can proceed
+      .mockImplementationOnce(() => firstName)
+      // fallback mouseup: throw and verify fallback path still calls onDragEnd
+      .mockImplementation(() => {
+        throw new Error('boom');
+      });
     Object.defineProperty(document, 'elementFromPoint', {
       configurable: true,
-      value: vi.fn(() => {
-        throw new Error('boom');
-      }),
+      value: elementFromPointMock,
     });
 
     const onDrop = vi.fn();
@@ -977,10 +1263,12 @@ describe('slickColumnReorderDrag', () => {
     });
 
     firstName.dispatchEvent(createMouseEvent('mousedown', { clientX: 10, clientY: 10, target: firstName }));
+    document.dispatchEvent(createMouseEvent('mousemove', { clientX: 20, clientY: 20 }));
     document.dispatchEvent(createMouseEvent('mouseup', { clientX: 20, clientY: 20 }));
 
     expect(onDrop).not.toHaveBeenCalled();
     expect(onDragEnd).toHaveBeenCalledWith(['firstName']);
+    expect(elementFromPointMock).toHaveBeenCalledTimes(2);
 
     Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
   });
@@ -1054,6 +1342,50 @@ describe('slickColumnReorderDrag', () => {
     expect(Array.from(dropzoneElm.children).map((el) => (el as HTMLElement).dataset.id)).toEqual(['age', 'medals']);
 
     document.dispatchEvent(createMouseEvent('mouseup', { clientX: 20, clientY: 20 }));
+    expect(onPillDragEnd).toHaveBeenCalledTimes(1);
+
+    instance.destroy();
+    Object.defineProperty(window.navigator, 'userAgent', { configurable: true, value: originalUserAgent });
+  });
+
+  it('should keep dropzone fallback drag uncommitted when mousemove stays below threshold', () => {
+    const originalUserAgent = window.navigator.userAgent;
+    Object.defineProperty(window.navigator, 'userAgent', {
+      configurable: true,
+      value: 'Mozilla/5.0 Firefox/128.0 Linux x86_64',
+    });
+
+    const dropzoneElm = document.createElement('div');
+    const firstPill = document.createElement('div');
+    const secondPill = document.createElement('div');
+    firstPill.className = 'slick-dropped-grouping';
+    secondPill.className = 'slick-dropped-grouping';
+    firstPill.dataset.id = 'age';
+    secondPill.dataset.id = 'medals';
+    dropzoneElm.append(firstPill, secondPill);
+    document.body.append(dropzoneElm);
+
+    const elementFromPointMock = vi.fn(() => secondPill as Element);
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: elementFromPointMock,
+    });
+
+    const onPillDragEnd = vi.fn();
+    const instance = setupDropzonePillDrag({
+      dropzoneElm,
+      onPillDragEnd,
+    });
+
+    firstPill.dispatchEvent(createMouseEvent('mousedown', { clientX: 10, clientY: 10, target: firstPill }));
+    const moveEvt = createMouseEvent('mousemove', { clientX: 12, clientY: 12 });
+    const preventDefaultSpy = vi.spyOn(moveEvt, 'preventDefault');
+    document.dispatchEvent(moveEvt);
+    document.dispatchEvent(createMouseEvent('mouseup', { clientX: 12, clientY: 12 }));
+
+    expect(preventDefaultSpy).not.toHaveBeenCalled();
+    expect(elementFromPointMock).not.toHaveBeenCalled();
+    expect(Array.from(dropzoneElm.children).map((el) => (el as HTMLElement).dataset.id)).toEqual(['age', 'medals']);
     expect(onPillDragEnd).toHaveBeenCalledTimes(1);
 
     instance.destroy();

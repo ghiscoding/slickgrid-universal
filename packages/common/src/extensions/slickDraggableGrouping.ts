@@ -17,6 +17,12 @@ import type { SharedService } from '../services/shared.service.js';
 import { sortByFieldType } from '../sortComparers/sortUtilities.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 
+const DROPZONE_CLASS = 'slick-dropzone';
+const DROPZONE_HOVER_CLASS = 'slick-dropzone-hover';
+const GROUP_TOGGLE_ALL_CLASS = 'slick-group-toggle-all';
+const GROUP_TOGGLE_ALL_ICON_CLASS = 'slick-group-toggle-all-icon';
+const DROPZONE_PLACEHOLDER_CLASS = 'slick-draggable-dropzone-placeholder';
+
 /**
  *
  * Draggable Grouping contributed by:  Muthukumar Selconstasu
@@ -128,7 +134,7 @@ export class SlickDraggableGrouping {
           '[Slickgrid-Universal] Draggable Grouping requires the pre-header to be created and shown for the plugin to work correctly (use `createPreHeaderPanel` and `showPreHeaderPanel`).'
         );
       }
-      this._dropzoneElm.classList.add('slick-dropzone');
+      this._dropzoneElm.classList.add(DROPZONE_CLASS);
 
       // add PubSub instance to all SlickEvent
       this.onGroupChanged.setPubSubService(this.pubSubService);
@@ -136,11 +142,11 @@ export class SlickDraggableGrouping {
       // add optional group "Toggle All" with its button & text when provided
       if (!this._addonOptions.hideToggleAllButton) {
         this._groupToggler = createDomElement('div', {
-          className: 'slick-group-toggle-all',
+          className: GROUP_TOGGLE_ALL_CLASS,
           title: this._addonOptions.toggleAllPlaceholderText ?? '',
           style: { display: 'none' },
         });
-        const groupTogglerIconElm = createDomElement('span', { className: 'sgi slick-group-toggle-all-icon' }, this._groupToggler);
+        const groupTogglerIconElm = createDomElement('span', { className: `sgi ${GROUP_TOGGLE_ALL_ICON_CLASS}` }, this._groupToggler);
 
         if (this.gridOptions.enableTranslate && this._addonOptions.toggleAllButtonTextKey) {
           this._addonOptions.toggleAllButtonText = this.extensionUtility.translateWhenEnabledAndServiceExist(
@@ -173,7 +179,7 @@ export class SlickDraggableGrouping {
         );
       }
 
-      this._dropzonePlaceholderElm = createDomElement('div', { className: 'slick-draggable-dropzone-placeholder' }, this._dropzoneElm);
+      this._dropzonePlaceholderElm = createDomElement('div', { className: DROPZONE_PLACEHOLDER_CLASS }, this._dropzoneElm);
       if (this.gridOptions.enableTranslate && this._addonOptions?.dropPlaceHolderTextKey) {
         this._addonOptions.dropPlaceHolderText = this.extensionUtility.translateWhenEnabledAndServiceExist(
           this._addonOptions.dropPlaceHolderTextKey,
@@ -288,8 +294,10 @@ export class SlickDraggableGrouping {
   ): void {
     this.destroyColumnReorderDrag();
     const dropzoneElm = grid.getTopHeaderPanel() || grid.getPreHeaderPanel();
-    const draggablePlaceholderElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-draggable-dropzone-placeholder');
-    const groupTogglerElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-group-toggle-all');
+    const dropzoneSelector = `.${DROPZONE_CLASS}`;
+    const dropzoneHoverClass = DROPZONE_HOVER_CLASS;
+    const draggablePlaceholderElm = dropzoneElm.querySelector<HTMLDivElement>(`.${DROPZONE_PLACEHOLDER_CLASS}`);
+    const groupTogglerElm = dropzoneElm.querySelector<HTMLDivElement>(`.${GROUP_TOGGLE_ALL_CLASS}`);
     const uid = grid.getUID();
 
     this._columnReorderDrag = setupColumnReorderDrag({
@@ -299,6 +307,8 @@ export class SlickDraggableGrouping {
       viewportScrollContainerX: (grid as any).getViewportNode?.() ?? this.gridContainer,
       hasFrozenColumns: () => ((grid.getOptions?.() as GridOption | undefined)?.frozenColumn ?? -1) >= 0,
       draggableSelector: '.slick-header-column',
+      dropzoneSelector,
+      dropzoneHoverClass,
       onDragStart: () => {
         if (draggablePlaceholderElm) {
           draggablePlaceholderElm.style.display = 'inline-block';
@@ -309,7 +319,7 @@ export class SlickDraggableGrouping {
         }
       },
       onDrop: (draggedEl, _event, draggedColumnId) => {
-        dropzoneElm?.classList.remove('slick-dropzone-hover');
+        dropzoneElm?.classList.remove(dropzoneHoverClass);
         draggablePlaceholderElm?.parentElement?.classList.remove('slick-dropzone-placeholder-hover');
         const droppedGroupingElms = dropzoneElm.querySelectorAll<HTMLDivElement>('.slick-dropped-grouping');
         droppedGroupingElms.forEach((el) => (el.style.display = 'flex'));
@@ -328,7 +338,7 @@ export class SlickDraggableGrouping {
         }
       },
       onDragEnd: (reorderedIds) => {
-        dropzoneElm?.classList.remove('slick-dropzone-hover');
+        dropzoneElm?.classList.remove(dropzoneHoverClass);
         draggablePlaceholderElm?.parentElement?.classList.remove('slick-dropzone-placeholder-hover');
         const droppedGroupingElms = dropzoneElm.querySelectorAll<HTMLDivElement>('.slick-dropped-grouping');
         droppedGroupingElms.forEach((el) => (el.style.display = 'flex'));
@@ -506,7 +516,7 @@ export class SlickDraggableGrouping {
   }
 
   protected toggleGroupAll({ grouping }: Column, collapsed?: boolean): void {
-    const togglerIcon = this._groupToggler?.querySelector<HTMLSpanElement>('.slick-group-toggle-all-icon');
+    const togglerIcon = this._groupToggler?.querySelector<HTMLSpanElement>(`.${GROUP_TOGGLE_ALL_ICON_CLASS}`);
     const isCollapsed = collapsed === true || grouping?.collapsed;
     togglerIcon?.classList.toggle('collapsed', isCollapsed);
     togglerIcon?.classList.toggle('expanded', !isCollapsed);
@@ -538,14 +548,17 @@ export class SlickDraggableGrouping {
   }
 
   protected addDragOverDropzoneListeners(): void {
-    const draggablePlaceholderElm = this._dropzoneElm.querySelector('.slick-draggable-dropzone-placeholder');
+    const draggablePlaceholderElm = this._dropzoneElm.querySelector(`.${DROPZONE_PLACEHOLDER_CLASS}`);
 
     if (draggablePlaceholderElm && this._dropzoneElm) {
       this._bindingEventService.bind(draggablePlaceholderElm, 'dragover', (e: Event) => e.preventDefault());
-      this._bindingEventService.bind(draggablePlaceholderElm, 'dragenter', () => this._dropzoneElm.classList.add('slick-dropzone-hover'));
-      this._bindingEventService.bind(draggablePlaceholderElm, 'dragleave', () =>
-        this._dropzoneElm.classList.remove('slick-dropzone-hover')
-      );
+      this._bindingEventService.bind(draggablePlaceholderElm, 'dragenter', (e: Event) => {
+        const dragEvent = e as DragEvent;
+        if (dragEvent.dataTransfer?.types?.length) {
+          this._dropzoneElm.classList.add(DROPZONE_HOVER_CLASS);
+        }
+      });
+      this._bindingEventService.bind(draggablePlaceholderElm, 'dragleave', () => this._dropzoneElm.classList.remove(DROPZONE_HOVER_CLASS));
     }
   }
 
@@ -567,17 +580,21 @@ export class SlickDraggableGrouping {
         this.columnsGroupBy = newGroupingOrder;
         this.updateGroupBy('sort-group');
       },
-      onColumnDragEnter: () => dropzoneElm.classList.add('slick-dropzone-hover'),
+      onColumnDragEnter: (e) => {
+        if (e.dataTransfer?.types?.length) {
+          dropzoneElm.classList.add(DROPZONE_HOVER_CLASS);
+        }
+      },
       onColumnDragLeave: (e) => {
         const nextTarget =
           (e.relatedTarget as Node | null) ??
           (e.clientX != null && e.clientY != null ? (document.elementFromPoint(e.clientX, e.clientY) as Node | null) : null);
         if (!nextTarget || !dropzoneElm.contains(nextTarget)) {
-          dropzoneElm.classList.remove('slick-dropzone-hover');
+          dropzoneElm.classList.remove(DROPZONE_HOVER_CLASS);
         }
       },
       onColumnDrop: (columnDataId) => {
-        dropzoneElm.classList.remove('slick-dropzone-hover');
+        dropzoneElm.classList.remove(DROPZONE_HOVER_CLASS);
         const headerColumnElm = this.gridContainer.querySelector<HTMLDivElement>(`[data-id="${columnDataId}"]`);
         if (headerColumnElm) {
           this.handleGroupByDrop(dropzoneElm, headerColumnElm);
@@ -591,7 +608,9 @@ export class SlickDraggableGrouping {
     if (this._groupToggler) {
       this._bindingEventService.bind(this._groupToggler, 'click', ((event: DOMMouseOrTouchEvent<HTMLDivElement>) => {
         // prettier-ignore
-        const target = event.target.classList.contains('slick-group-toggle-all-icon') ? event.target : event.currentTarget.querySelector('.slick-group-toggle-all-icon');
+        const target = event.target.classList.contains(GROUP_TOGGLE_ALL_ICON_CLASS)
+          ? event.target
+          : event.currentTarget.querySelector(`.${GROUP_TOGGLE_ALL_ICON_CLASS}`);
         this.toggleGroupToggler(target, target?.classList.contains('expanded'));
       }) as EventListener);
     }

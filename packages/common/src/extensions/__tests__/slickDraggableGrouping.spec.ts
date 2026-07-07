@@ -427,12 +427,47 @@ describe('Draggable Grouping Plugin', () => {
       const dragoverEvent = new CustomEvent('dragover', { bubbles: true, detail: {} });
       dropzonePlaceholderElm?.dispatchEvent(dragoverEvent);
 
-      const dragenterEvent = new CustomEvent('dragenter', { bubbles: true, detail: {} });
+      const dragenterEvent = new CustomEvent('dragenter', { bubbles: true, detail: {} }) as unknown as DragEvent;
+      Object.defineProperty(dragenterEvent, 'dataTransfer', {
+        configurable: true,
+        value: { types: ['text/plain'] },
+      });
       dropzonePlaceholderElm?.dispatchEvent(dragenterEvent);
       expect(dropzoneElm.classList.contains('slick-dropzone-hover')).toBeTruthy();
 
       const dragleaveEvent = new CustomEvent('dragleave', { bubbles: true, detail: {} });
       dropzonePlaceholderElm?.dispatchEvent(dragleaveEvent);
+      expect(dropzoneElm.classList.contains('slick-dropzone-hover')).toBeFalsy();
+    });
+
+    it('should ignore placeholder dragenter when drag payload has no types', () => {
+      plugin.init(gridStub, { ...addonOptions });
+      plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+
+      const dropzonePlaceholderElm = dropzoneElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
+      const dragenterEvent = new CustomEvent('dragenter', { bubbles: true, cancelable: true }) as unknown as DragEvent;
+      Object.defineProperty(dragenterEvent, 'dataTransfer', {
+        configurable: true,
+        value: { types: [] },
+      });
+
+      dropzonePlaceholderElm.dispatchEvent(dragenterEvent);
+
+      expect(dropzoneElm.classList.contains('slick-dropzone-hover')).toBeFalsy();
+    });
+
+    it('should ignore dropzone dragenter when drag payload has no types', () => {
+      plugin.init(gridStub, { ...addonOptions });
+      plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+
+      const dragenterEvent = new CustomEvent('dragenter', { bubbles: true, cancelable: true }) as unknown as DragEvent;
+      Object.defineProperty(dragenterEvent, 'dataTransfer', {
+        configurable: true,
+        value: { types: [] },
+      });
+
+      dropzoneElm.dispatchEvent(dragenterEvent);
+
       expect(dropzoneElm.classList.contains('slick-dropzone-hover')).toBeFalsy();
     });
 

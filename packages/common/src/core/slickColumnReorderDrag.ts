@@ -17,11 +17,12 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   const { headerLeft, headerRight, container, viewportScrollContainerX, unorderableColumnCssClass } = options;
   const dragActiveClass = options.dragActiveClass ?? 'slick-header-column-active';
   const draggableSelector = options.draggableSelector ?? '.slick-header-column';
+  const dropzoneSelector = options.dropzoneSelector ?? '.slick-dropzone';
+  const dropzoneHoverClass = options.dropzoneHoverClass ?? 'slick-dropzone-hover';
   const DRAG_THRESHOLD = 5; // pixels before we consider it a drag, not a click
 
   let columnScrollTimer: ReturnType<typeof setInterval> | undefined;
   let draggedEl: HTMLElement | null = null;
-  let fallbackActive = false;
   let originalParent: Node | null = null;
   let originalNextSibling: ChildNode | null = null;
   let dropzoneTargetActive = false;
@@ -30,6 +31,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   let dragGhost: HTMLElement | null = null;
   let dragStartX: number | null = null;
   let dragStartY: number | null = null;
+  let pointerDragCommitted = false;
 
   const scrollColumnsRight = () => (viewportScrollContainerX.scrollLeft += 10);
   const scrollColumnsLeft = () => (viewportScrollContainerX.scrollLeft -= 10);
@@ -44,7 +46,27 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     }
   };
 
-  const isOverDropzone = (el: HTMLElement | null | undefined): boolean => !!el?.closest?.('.slick-dropzone');
+  const isOverDropzone = (el: HTMLElement | null | undefined): boolean => !!el?.closest?.(dropzoneSelector);
+
+  const toggleDropzoneHoverClass = (el: HTMLElement | null | undefined, isActive: boolean) => {
+    const dropzone = el?.closest?.(dropzoneSelector) as HTMLElement | null;
+    if (dropzone) {
+      dropzone.classList.toggle(dropzoneHoverClass, isActive);
+    }
+  };
+
+  const clearDropzoneHoverClasses = () => {
+    document.querySelectorAll<HTMLElement>(dropzoneSelector).forEach((el) => el.classList.remove(dropzoneHoverClass));
+  };
+
+  const isDragStartIgnoredTarget = (el: HTMLElement | null, event: DragEvent | MouseEvent | TouchEvent): boolean => {
+    const dragStartFilter = options.dragStartFilter;
+    return typeof dragStartFilter === 'function'
+      ? !!dragStartFilter(el, event)
+      : typeof dragStartFilter === 'string' && dragStartFilter.trim()
+        ? !!el?.closest?.(dragStartFilter)
+        : false;
+  };
 
   const reorderDraggedAgainstTarget = (target: HTMLElement, clientX: number) => {
     if (!draggedEl || target === draggedEl || !isDraggable(target)) {
@@ -140,6 +162,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     const target = e.target as HTMLElement | null;
     if (draggedEl && isOverDropzone(target)) {
       dropzoneTargetActive = true;
+      toggleDropzoneHoverClass(target, true);
       // Ensure the dragged header remains in the header DOM (non-destructive)
       try {
         restoreDraggedToOriginalParent();
@@ -149,45 +172,26 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     }
   };
 
-  const onDropzoneDragLeave = (e: Event) => {
-    const target = e.target as HTMLElement | null;
-    if (isOverDropzone(target)) {
-      dropzoneTargetActive = false;
-    }
-  };
-
-  const onDropzoneMouseOver = (e: MouseEvent) => {
-    const target = e.target as HTMLElement | null;
-    if (draggedEl && isOverDropzone(target)) {
-      dropzoneTargetActive = true;
-      try {
-        restoreDraggedToOriginalParent();
-      } catch (err) {
-        // ignore
-      }
-    }
-  };
-
-  const onDropzoneMouseOut = (e: MouseEvent) => {
+  const onDropzoneDragLeave = (e: DragEvent) => {
     const target = e.target as HTMLElement | null;
     const relatedTarget =
       (e.relatedTarget as HTMLElement | null) ??
       (e.clientX != null && e.clientY != null ? (document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null) : null);
     if (isOverDropzone(target) && !isOverDropzone(relatedTarget)) {
       dropzoneTargetActive = false;
+      toggleDropzoneHoverClass(target, false);
     }
   };
 
   document.addEventListener('dragenter', onDropzoneDragEnter as EventListener);
   document.addEventListener('dragleave', onDropzoneDragLeave as EventListener);
-  document.addEventListener('mouseover', onDropzoneMouseOver as EventListener);
-  document.addEventListener('mouseout', onDropzoneMouseOut as EventListener);
 
   const onDragOver = (e: DragEvent) => {
     e.preventDefault();
     const overDropzone = isOverDropzone(e.target as HTMLElement | null);
     if (overDropzone) {
       dropzoneTargetActive = true;
+      toggleDropzoneHoverClass(e.target as HTMLElement | null, true);
       // Keep the dragged header visible in the original header DOM while over the dropzone
       try {
         restoreDraggedToOriginalParent();
@@ -196,6 +200,8 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       }
       return;
     }
+
+    clearDropzoneHoverClasses();
 
     const target = (e.target as HTMLElement).closest<HTMLElement>(draggableSelector);
     if (target) {
@@ -219,7 +225,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     try {
       if (!droppedOnDropzone && e.clientX != null && e.clientY != null) {
         const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
-        if (el && el.closest && el.closest('.slick-dropzone')) {
+        if (el && el.closest && el.closest(dropzoneSelector)) {
           droppedOnDropzone = true;
         }
       }
@@ -245,8 +251,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     originalNextSibling = null;
     draggedColumnId = '';
     clearDropzoneTarget();
-    fallbackActive = false;
+    clearDropzoneHoverClasses();
     _lastClientX = null;
+    pointerDragCommitted = false;
   };
 
   // Firefox/Linux native HTML5 drag is broken; touch screens never fire HTML5 drag events.
@@ -265,7 +272,14 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
   const onStart = (e: DragEvent | MouseEvent | TouchEvent) => {
     const { clientX, clientY } = getPointerPos(e);
-    const target = (e.target as HTMLElement).closest<HTMLElement>(draggableSelector);
+    const eventTarget = e.target as HTMLElement | null;
+    if (isDragStartIgnoredTarget(eventTarget, e)) {
+      if (e.type === 'dragstart') {
+        e.preventDefault();
+      }
+      return;
+    }
+    const target = eventTarget?.closest<HTMLElement>(draggableSelector);
     if (!target || !isDraggable(target)) {
       // Cancel a native drag that started on a non-orderable column
       if (e.type === 'dragstart') {
@@ -279,7 +293,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     clearDropzoneTarget();
     originalParent = target.parentElement;
     originalNextSibling = target.nextSibling;
-    options.onDragStart?.(target);
+    if (e.type === 'dragstart') {
+      options.onDragStart?.(target);
+    }
     _lastClientX = clientX;
 
     if (e.type === 'dragstart') {
@@ -309,12 +325,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       }
     } else {
       // Pointer fallback (mouse on FF/Linux, touch on all platforms)
-      // Create ghost immediately for visual feedback, but don't add dragActiveClass yet
-      createFallbackGhost(target, clientX, clientY);
       dragStartX = clientX;
       dragStartY = clientY;
-      // Disable text selection during drag to prevent selection visual in Firefox/Linux
-      document.body.style.userSelect = 'none';
+      pointerDragCommitted = false;
       if ('touches' in e) {
         document.addEventListener('touchmove', onPointerMove as EventListener, { passive: false });
         document.addEventListener('touchend', onPointerUp as EventListener);
@@ -330,11 +343,8 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     if (draggedEl && dragStartX != null && dragStartY != null) {
       const { clientX, clientY, pageX } = getPointerPos(e);
 
-      // Always update ghost position for visual feedback
-      updateFallbackGhost(clientX, clientY);
-
       // Check if we've exceeded the drag threshold
-      if (!fallbackActive) {
+      if (!pointerDragCommitted) {
         const deltaX = Math.abs(clientX - dragStartX);
         const deltaY = Math.abs(clientY - dragStartY);
         if (deltaX < DRAG_THRESHOLD && deltaY < DRAG_THRESHOLD) {
@@ -343,45 +353,55 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
         }
         // Threshold exceeded - now commit to drag
         e.preventDefault();
+        options.onDragStart?.(draggedEl);
+        createFallbackGhost(draggedEl, clientX, clientY);
         draggedEl.classList.add(dragActiveClass);
-        fallbackActive = true;
+        // Disable text selection only after drag intent is confirmed
+        document.body.style.userSelect = 'none';
+        pointerDragCommitted = true;
       }
 
-      // Now handle the actual drag movement
-      if (fallbackActive) {
-        e.preventDefault();
+      // Always update ghost position for visual feedback once drag is committed
+      updateFallbackGhost(clientX, clientY);
 
-        // browser-edge auto-scroll
-        const containerOffset = getOffset(container);
-        const viewportLeft = getOffset(viewportScrollContainerX).left;
-        const containerRight = containerOffset.left + container.clientWidth;
-        if (!columnScrollTimer && pageX > containerRight) {
-          columnScrollTimer = setInterval(scrollColumnsRight, 100);
-        } else if (!columnScrollTimer && pageX < viewportLeft) {
-          columnScrollTimer = setInterval(scrollColumnsLeft, 100);
-        } else if (columnScrollTimer && pageX <= containerRight && pageX >= viewportLeft) {
-          stopAutoScroll();
+      e.preventDefault();
+
+      // browser-edge auto-scroll
+      const containerOffset = getOffset(container);
+      const viewportLeft = getOffset(viewportScrollContainerX).left;
+      const containerRight = containerOffset.left + container.clientWidth;
+      if (!columnScrollTimer && pageX > containerRight) {
+        columnScrollTimer = setInterval(scrollColumnsRight, 100);
+      } else if (!columnScrollTimer && pageX < viewportLeft) {
+        columnScrollTimer = setInterval(scrollColumnsLeft, 100);
+      } else if (columnScrollTimer && pageX <= containerRight && pageX >= viewportLeft) {
+        stopAutoScroll();
+      }
+
+      const elUnder = (() => {
+        // Hide ghost temporarily so elementFromPoint doesn't hit it
+        if (dragGhost) {
+          dragGhost.style.display = 'none';
         }
-
-        const elUnder = (() => {
-          // Hide ghost temporarily so elementFromPoint doesn't hit it
-          if (dragGhost) dragGhost.style.display = 'none';
-          const el = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
-          if (dragGhost) dragGhost.style.display = '';
-          return el;
-        })();
-        const overDropzone = isOverDropzone(elUnder);
-        if (overDropzone) {
-          dropzoneTargetActive = true;
-        } else {
-          dropzoneTargetActive = false;
-          const targetHeader = elUnder?.closest?.(draggableSelector) as HTMLElement | null;
-          if (targetHeader) {
-            try {
-              reorderDraggedAgainstTarget(targetHeader, clientX);
-            } catch (err) {
-              // ignore DOM insertion errors
-            }
+        const el = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
+        if (dragGhost) {
+          dragGhost.style.display = '';
+        }
+        return el;
+      })();
+      const overDropzone = isOverDropzone(elUnder);
+      if (overDropzone) {
+        dropzoneTargetActive = true;
+        toggleDropzoneHoverClass(elUnder, true);
+      } else {
+        dropzoneTargetActive = false;
+        clearDropzoneHoverClasses();
+        const targetHeader = elUnder?.closest?.(draggableSelector) as HTMLElement | null;
+        if (targetHeader) {
+          try {
+            reorderDraggedAgainstTarget(targetHeader, clientX);
+          } catch (err) {
+            // ignore DOM insertion errors
           }
         }
       }
@@ -395,16 +415,17 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     document.removeEventListener('touchend', onPointerUp as EventListener);
     document.removeEventListener('touchcancel', onPointerUp as EventListener);
     const draggedHeader = draggedEl;
-    if (draggedHeader) draggedHeader.classList.remove(dragActiveClass);
+    if (draggedHeader) {
+      draggedHeader.classList.remove(dragActiveClass);
+    }
     stopAutoScroll();
-    fallbackActive = false;
 
     const { clientX, clientY } = getPointerPos(e);
     let droppedOnDropzone = dropzoneTargetActive;
     try {
       if (!droppedOnDropzone) {
         const el = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
-        if (el?.closest?.('.slick-dropzone')) droppedOnDropzone = true;
+        if (el?.closest?.(dropzoneSelector)) droppedOnDropzone = true;
       }
     } catch (err) {
       droppedOnDropzone = false;
@@ -417,9 +438,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       }
     }
     const reorderedIds = getColumnIds(headerLeft).concat(getColumnIds(headerRight));
-    if (droppedOnDropzone && draggedHeader) {
+    if (pointerDragCommitted && droppedOnDropzone && draggedHeader) {
       options.onDrop?.(draggedHeader, e, draggedColumnId);
-    } else {
+    } else if (pointerDragCommitted) {
       options.onDragEnd(reorderedIds);
     }
     draggedEl = null;
@@ -429,8 +450,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     _lastClientX = null;
     dragStartX = null;
     dragStartY = null;
+    pointerDragCommitted = false;
     clearDropzoneTarget();
-    fallbackActive = false;
+    clearDropzoneHoverClasses();
     clearFallbackGhost();
     // Re-enable text selection after drag completes
     document.body.style.userSelect = '';
@@ -467,15 +489,14 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       document.removeEventListener('touchcancel', onPointerUp as EventListener);
       document.removeEventListener('dragenter', onDropzoneDragEnter as EventListener);
       document.removeEventListener('dragleave', onDropzoneDragLeave as EventListener);
-      document.removeEventListener('mouseover', onDropzoneMouseOver as EventListener);
-      document.removeEventListener('mouseout', onDropzoneMouseOut as EventListener);
       stopAutoScroll();
       draggedEl = null;
       originalParent = null;
       originalNextSibling = null;
       draggedColumnId = '';
-      fallbackActive = false;
+      pointerDragCommitted = false;
       clearDropzoneTarget();
+      clearDropzoneHoverClasses();
       clearFallbackGhost();
       [headerLeft, headerRight].forEach((parent) =>
         Array.from(parent.querySelectorAll<HTMLElement>(draggableSelector)).forEach((el) => {
