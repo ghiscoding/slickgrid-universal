@@ -61,7 +61,15 @@
     "typescript/no-unsafe-function-type": "off",
     "typescript/no-non-null-assertion": "off",
     "typescript/no-unused-expressions": "off",
-    "typescript/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "destructuredArrayIgnorePattern": "^_", "caughtErrors": "none" }],
+    "typescript/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "caughtErrors": "all",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
     // "import/extensions" rule is blocked by https://github.com/oxc-project/oxc/issues/19431
     // use custom "eslint-plugin-import-ext" custom eslint plugin in the meantime to catch any missing local import file extensions
     "import/extensions": "off",

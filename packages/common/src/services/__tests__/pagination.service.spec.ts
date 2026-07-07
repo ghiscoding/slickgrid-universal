@@ -522,7 +522,7 @@ describe('PaginationService', () => {
       try {
         service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
         await service.processOnPageChanged(1);
-      } catch (e: any) {
+      } catch {
         expect(backendErrorSpy).toHaveBeenCalledWith(mockError, mockGridOption.backendServiceApi);
       }
     });
@@ -539,7 +539,7 @@ describe('PaginationService', () => {
       try {
         service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
         await service.processOnPageChanged(1);
-      } catch (e: any) {
+      } catch {
         expect(backendErrorSpy).toHaveBeenCalledWith(mockError, mockGridOption.backendServiceApi);
       }
     });
