@@ -45,6 +45,7 @@
   .slider-editor {
     height: 100%;
     .slider-editor-input {
+      margin: 0;
       height: var(--slick-slider-editor-height, v.$slick-slider-editor-height);
       &:focus {
         outline: 0;

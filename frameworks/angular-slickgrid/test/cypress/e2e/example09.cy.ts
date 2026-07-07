@@ -373,7 +373,7 @@ describe('Example 9 - Grid Menu', () => {
         .click();
 
       cy.get('.slick-submenu').should('have.length', 2);
-      cy.get('.slick-grid-menu.slick-menu-level-2.dropright') // right align
+      cy.get('.slick-grid-menu.slick-menu-level-2')
         .should('exist')
         .find('.slick-menu-item')
         .each(($command, index) => expect($command.text()).to.eq(subCommands2_1[index]));
