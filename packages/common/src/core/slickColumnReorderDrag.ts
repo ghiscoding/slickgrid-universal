@@ -1,6 +1,17 @@
 import { getOffset } from '@slickgrid-universal/utils';
 import type { ColumnReorderDragOption, DropzonePillDragOption } from '../interfaces/slickColumnReorderDrag.interfaces.js';
 
+/** Extract { clientX, clientY, pageX } from any pointer-like event.
+ * DragEvent inherits clientX/pageX from MouseEvent; TouchEvent uses touches[0] (or
+ * changedTouches[0] for touchend/touchcancel where touches is empty). */
+const getPointerPos = (e: DragEvent | MouseEvent | TouchEvent) => {
+  if ('touches' in e) {
+    const t = e.touches[0] ?? e.changedTouches[0];
+    return { clientX: t?.clientX ?? 0, clientY: t?.clientY ?? 0, pageX: t?.pageX ?? 0 };
+  }
+  return { clientX: e.clientX, clientY: e.clientY, pageX: e.pageX };
+};
+
 /**
  * Sets up native HTML5 drag-and-drop for column header reordering.
  *
@@ -20,6 +31,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   const dropzoneSelector = options.dropzoneSelector ?? '.slick-dropzone';
   const dropzoneHoverClass = options.dropzoneHoverClass ?? 'slick-dropzone-hover';
   const DRAG_THRESHOLD = 5; // pixels before we consider it a drag, not a click
+  const INTERVAL_TIME = 100; // ms for browser-edge auto-scroll
 
   let columnScrollTimer: ReturnType<typeof setInterval> | undefined;
   let draggedEl: HTMLElement | null = null;
@@ -33,6 +45,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   let dragStartY: number | null = null;
   let pointerDragCommitted = false;
 
+  const isOverDropzone = (el: HTMLElement | null | undefined): boolean => !!el?.closest?.(dropzoneSelector);
   const scrollColumnsRight = () => (viewportScrollContainerX.scrollLeft += 10);
   const scrollColumnsLeft = () => (viewportScrollContainerX.scrollLeft -= 10);
   const stopAutoScroll = () => {
@@ -46,13 +59,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     }
   };
 
-  const isOverDropzone = (el: HTMLElement | null | undefined): boolean => !!el?.closest?.(dropzoneSelector);
-
   const toggleDropzoneHoverClass = (el: HTMLElement | null | undefined, isActive: boolean) => {
     const dropzone = el?.closest?.(dropzoneSelector) as HTMLElement | null;
-    if (dropzone) {
-      dropzone.classList.toggle(dropzoneHoverClass, isActive);
-    }
+    dropzone?.classList.toggle(dropzoneHoverClass, isActive);
   };
 
   const clearDropzoneHoverClasses = () => {
@@ -97,7 +106,6 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     el.matches(draggableSelector) && (!unorderableColumnCssClass || !el.classList.contains(unorderableColumnCssClass));
 
   // Mirror SortableJS's Firefox/Linux fallback detection so the mouse-based path is used only for the broken browser combo.
-  // Include Wayland because Firefox on Linux Wayland may omit the X11 token.
   const isFfLinux = typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent) && /linux/i.test(navigator.userAgent);
 
   const getColumnIds = (parent: HTMLElement): string[] =>
@@ -125,31 +133,33 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       const viewportLeft = getOffset(viewportScrollContainerX).left;
       const containerRight = containerOffset.left + container.clientWidth;
       if (!columnScrollTimer && pageX > containerRight) {
-        columnScrollTimer = setInterval(scrollColumnsRight, 100);
+        columnScrollTimer = setInterval(scrollColumnsRight, INTERVAL_TIME);
       } else if (!columnScrollTimer && pageX < viewportLeft) {
-        columnScrollTimer = setInterval(scrollColumnsLeft, 100);
+        columnScrollTimer = setInterval(scrollColumnsLeft, INTERVAL_TIME);
       } else if (columnScrollTimer && pageX <= containerRight && pageX >= viewportLeft) {
         stopAutoScroll();
       }
     }
   };
 
-  const clearDropzoneTarget = () => {
-    dropzoneTargetActive = false;
-  };
-
+  const clearDropzoneTarget = () => (dropzoneTargetActive = false);
   const clearFallbackGhost = () => {
-    if (dragGhost?.parentElement) {
-      dragGhost.parentElement.removeChild(dragGhost);
-    }
+    dragGhost?.parentElement?.removeChild(dragGhost);
     dragGhost = null;
   };
 
-  const updateFallbackGhost = (clientX: number, clientY: number) => {
-    if (dragGhost) {
-      dragGhost.style.left = `${clientX}px`;
-      dragGhost.style.top = `${clientY}px`;
-    }
+  const resetDragState = () => {
+    draggedEl = null;
+    originalParent = null;
+    originalNextSibling = null;
+    draggedColumnId = '';
+    _lastClientX = null;
+    dragStartX = null;
+    dragStartY = null;
+    pointerDragCommitted = false;
+    clearDropzoneTarget();
+    clearDropzoneHoverClasses();
+    clearFallbackGhost();
   };
 
   const createFallbackGhost = (source: HTMLElement, clientX: number, clientY: number) => {
@@ -164,6 +174,13 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     dragGhost.style.left = `${clientX}px`;
     dragGhost.style.top = `${clientY}px`;
     document.body.appendChild(dragGhost);
+  };
+
+  const updateFallbackGhost = (clientX: number, clientY: number) => {
+    if (dragGhost) {
+      dragGhost.style.left = `${clientX}px`;
+      dragGhost.style.top = `${clientY}px`;
+    }
   };
 
   const onDropzoneDragEnter = (e: Event) => {
@@ -215,9 +232,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
   const onDragEnd = (e: DragEvent) => {
     const draggedHeader = draggedEl;
-    if (draggedHeader) {
-      draggedHeader.classList.remove(dragActiveClass);
-    }
+    draggedHeader?.classList.remove(dragActiveClass);
     stopAutoScroll();
     document.removeEventListener('drag', autoScrollHandler as EventListener);
 
@@ -253,45 +268,29 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       options.onDragEnd(reorderedIds);
     }
     // clear stored original position
-    draggedEl = null;
-    originalParent = null;
-    originalNextSibling = null;
-    draggedColumnId = '';
-    clearDropzoneTarget();
-    clearDropzoneHoverClasses();
-    _lastClientX = null;
-    pointerDragCommitted = false;
+    resetDragState();
   };
 
   // Firefox/Linux native HTML5 drag is broken; touch screens never fire HTML5 drag events.
   // All three start events (dragstart, mousedown, touchstart) share one handler.
 
-  /** Extract { clientX, clientY, pageX } from any pointer-like event.
-   * DragEvent inherits clientX/pageX from MouseEvent; TouchEvent uses touches[0] (or
-   * changedTouches[0] for touchend/touchcancel where touches is empty). */
-  const getPointerPos = (e: DragEvent | MouseEvent | TouchEvent) => {
-    if ('touches' in e) {
-      const t = e.touches[0] ?? e.changedTouches[0];
-      return { clientX: t?.clientX ?? 0, clientY: t?.clientY ?? 0, pageX: t?.pageX ?? 0 };
-    }
-    return { clientX: e.clientX, clientY: e.clientY, pageX: e.pageX };
-  };
-
   const onStart = (e: DragEvent | MouseEvent | TouchEvent) => {
     const { clientX, clientY } = getPointerPos(e);
     const eventTarget = e.target as HTMLElement | null;
-    if (isDragStartIgnoredTarget(eventTarget, e)) {
+    const cancelNativeDragIfNeeded = (e: DragEvent | MouseEvent | TouchEvent) => {
       if (e.type === 'dragstart') {
         e.preventDefault();
       }
+    };
+
+    if (isDragStartIgnoredTarget(eventTarget, e)) {
+      cancelNativeDragIfNeeded(e);
       return;
     }
     const target = eventTarget?.closest<HTMLElement>(draggableSelector);
     if (!target || !isDraggable(target)) {
       // Cancel a native drag that started on a non-orderable column
-      if (e.type === 'dragstart') {
-        e.preventDefault();
-      }
+      cancelNativeDragIfNeeded(e);
       return;
     }
     // Common state setup
@@ -378,9 +377,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       const viewportLeft = getOffset(viewportScrollContainerX).left;
       const containerRight = containerOffset.left + container.clientWidth;
       if (!columnScrollTimer && pageX > containerRight) {
-        columnScrollTimer = setInterval(scrollColumnsRight, 100);
+        columnScrollTimer = setInterval(scrollColumnsRight, INTERVAL_TIME);
       } else if (!columnScrollTimer && pageX < viewportLeft) {
-        columnScrollTimer = setInterval(scrollColumnsLeft, 100);
+        columnScrollTimer = setInterval(scrollColumnsLeft, INTERVAL_TIME);
       } else if (columnScrollTimer && pageX <= containerRight && pageX >= viewportLeft) {
         stopAutoScroll();
       }
@@ -413,16 +412,18 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     }
   };
 
-  const onPointerUp = (e: MouseEvent | TouchEvent) => {
+  const cleanupPointerListeners = () => {
     document.removeEventListener('mousemove', onPointerMove as EventListener);
     document.removeEventListener('mouseup', onPointerUp as EventListener);
     document.removeEventListener('touchmove', onPointerMove as EventListener);
     document.removeEventListener('touchend', onPointerUp as EventListener);
     document.removeEventListener('touchcancel', onPointerUp as EventListener);
+  };
+
+  const onPointerUp = (e: MouseEvent | TouchEvent) => {
+    cleanupPointerListeners();
     const draggedHeader = draggedEl;
-    if (draggedHeader) {
-      draggedHeader.classList.remove(dragActiveClass);
-    }
+    draggedHeader?.classList.remove(dragActiveClass);
     stopAutoScroll();
 
     const { clientX, clientY } = getPointerPos(e);
@@ -453,17 +454,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     } else if (pointerDragCommitted) {
       options.onDragEnd(reorderedIds);
     }
-    draggedEl = null;
-    originalParent = null;
-    originalNextSibling = null;
-    draggedColumnId = '';
-    _lastClientX = null;
-    dragStartX = null;
-    dragStartY = null;
-    pointerDragCommitted = false;
-    clearDropzoneTarget();
-    clearDropzoneHoverClasses();
-    clearFallbackGhost();
+    resetDragState();
     // Re-enable text selection after drag completes
     document.body.style.userSelect = '';
   };
@@ -492,22 +483,11 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
         parent.removeEventListener('touchstart', onStart as EventListener);
       }
       document.removeEventListener('drag', autoScrollHandler as EventListener);
-      document.removeEventListener('mousemove', onPointerMove as EventListener);
-      document.removeEventListener('mouseup', onPointerUp as EventListener);
-      document.removeEventListener('touchmove', onPointerMove as EventListener);
-      document.removeEventListener('touchend', onPointerUp as EventListener);
-      document.removeEventListener('touchcancel', onPointerUp as EventListener);
+      cleanupPointerListeners();
       document.removeEventListener('dragenter', onDropzoneDragEnter as EventListener);
       document.removeEventListener('dragleave', onDropzoneDragLeave as EventListener);
       stopAutoScroll();
-      draggedEl = null;
-      originalParent = null;
-      originalNextSibling = null;
-      draggedColumnId = '';
-      pointerDragCommitted = false;
-      clearDropzoneTarget();
-      clearDropzoneHoverClasses();
-      clearFallbackGhost();
+      resetDragState();
       [headerLeft, headerRight].forEach((parent) =>
         Array.from(parent.querySelectorAll<HTMLElement>(draggableSelector)).forEach((el) => {
           el.draggable = false;
@@ -614,16 +594,6 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
   // Firefox/Linux native drag is broken; touch screens never fire HTML5 drag events.
   // Both cases share onPointerDown/Move/Up – coordinates come from a tiny helper.
 
-  /** Extract { clientX, clientY } from a mouse or touch event.
-   * For touchend/touchcancel, e.touches is empty – falls back to changedTouches. */
-  const getPointerPos = (e: MouseEvent | TouchEvent) => {
-    if ('touches' in e) {
-      const t = e.touches[0] ?? e.changedTouches[0];
-      return { clientX: t?.clientX ?? 0, clientY: t?.clientY ?? 0 };
-    }
-    return { clientX: e.clientX, clientY: e.clientY };
-  };
-
   const onPointerDown = (e: MouseEvent | TouchEvent) => {
     const pill = (e.target as HTMLElement).closest<HTMLElement>(itemSelector);
     if (pill) {
@@ -681,12 +651,16 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
     }
   };
 
-  const onPointerUp = () => {
+  const cleanupPointerListeners = () => {
     document.removeEventListener('mousemove', onPointerMove as EventListener);
     document.removeEventListener('mouseup', onPointerUp as EventListener);
     document.removeEventListener('touchmove', onPointerMove as EventListener);
     document.removeEventListener('touchend', onPointerUp as EventListener);
     document.removeEventListener('touchcancel', onPointerUp as EventListener);
+  };
+
+  const onPointerUp = () => {
+    cleanupPointerListeners();
     const currentPill = draggedPill;
     if (currentPill && draggingCssClass) {
       currentPill.classList.remove(draggingCssClass);
@@ -729,11 +703,7 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
       if (isFfLinux) {
         dropzoneElm.removeEventListener('mousedown', onPointerDown as EventListener);
       }
-      document.removeEventListener('mousemove', onPointerMove as EventListener);
-      document.removeEventListener('mouseup', onPointerUp as EventListener);
-      document.removeEventListener('touchmove', onPointerMove as EventListener);
-      document.removeEventListener('touchend', onPointerUp as EventListener);
-      document.removeEventListener('touchcancel', onPointerUp as EventListener);
+      cleanupPointerListeners();
       draggedPill = null;
       dragStartX = null;
       dragStartY = null;
