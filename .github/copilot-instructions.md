@@ -101,18 +101,32 @@ When making changes to demos or documentation:
 
 ## Rule
 
-Always prefix shell commands with `rtk`:
+When `rtk` is available, prefer `rtk <command>` for terminal commands.
+
+Use this as a default-first policy for tests, lint/typecheck/build, git, and diagnostics commands.
+Apply the same pattern to analogous commands even if they are not explicitly listed below.
+
+Examples:
 
 ```bash
-# Instead of:              Use:
-git status                 rtk git status
-git log -10                rtk git log -10
-cargo test                 rtk cargo test
-docker ps                  rtk docker ps
-kubectl get pods           rtk kubectl pods
+vitest                     -> rtk vitest
+jest                       -> rtk jest
+git status                 -> rtk git status
+tsc                        -> rtk tsc
+ls                         -> rtk ls .
+```
+
+Git (explicit mappings):
+
+```bash
+git status                 -> rtk git status
+git log -n 10              -> rtk git log -n 10
+git diff                   -> rtk git diff
 ```
 
 If `rtk` is not available in the current environment, run the raw command without `rtk` instead of failing.
+
+For Vitest in this repo, default to `rtk vitest` unless full raw output is explicitly needed.
 
 ## Low-Token Availability Check
 
