@@ -112,6 +112,42 @@ docker ps                  rtk docker ps
 kubectl get pods           rtk kubectl pods
 ```
 
+If `rtk` is not available in the current environment, run the raw command without `rtk` instead of failing.
+
+## Low-Token Availability Check
+
+For PowerShell terminals, check once per terminal session and cache the result:
+
+```powershell
+if (-not $env:RTK_AVAILABLE) {
+	if (Get-Command rtk -ErrorAction SilentlyContinue) {
+		$env:RTK_AVAILABLE = '1'
+	}
+	else {
+		$env:RTK_AVAILABLE = '0'
+	}
+}
+```
+
+For bash/zsh terminals (Linux/macOS), use the equivalent one-time check:
+
+```bash
+if [ -z "${RTK_AVAILABLE+x}" ]; then
+  if command -v rtk >/dev/null 2>&1; then
+    export RTK_AVAILABLE=1
+  else
+    export RTK_AVAILABLE=0
+  fi
+fi
+```
+
+Use `rtk` only when `$env:RTK_AVAILABLE -eq '1'`; otherwise run the raw command.
+In bash/zsh, use `rtk` only when `$RTK_AVAILABLE = 1`; otherwise run the raw command.
+Do not re-run the availability check before every command.
+
+If a command fails because `rtk` is unexpectedly unavailable, set `$env:RTK_AVAILABLE = '0'` and retry once without `rtk`.
+In bash/zsh, set `RTK_AVAILABLE=0` and retry once without `rtk`.
+
 ## Meta commands (use directly)
 
 ```bash
