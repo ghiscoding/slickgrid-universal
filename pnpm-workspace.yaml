@@ -10,7 +10,6 @@ allowBuilds:
   core-js: false
   cypress: false
   esbuild: false
-  less: false
   lmdb: false
   msgpackr-extract: false
 
@@ -66,8 +65,6 @@ minimumReleaseAgeExclude:
   - '@lerna-lite/*'
   - 'excel-builder-vanilla'
   - '@excel-builder-vanilla/types'
-  # Renovate security update: dompurify@3.4.11
-  - dompurify@3.4.11
 
 overrides:
   '@babel/core': ^7.29.7
