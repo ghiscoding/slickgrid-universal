@@ -6,10 +6,10 @@ packages:
   - '!**/dist/**'
 
 allowBuilds:
-  '@parcel/watcher': false
+  '@parcel/watcher': true
   core-js: false
   cypress: false
-  esbuild: false
+  esbuild: true
   lmdb: false
   msgpackr-extract: false
 
