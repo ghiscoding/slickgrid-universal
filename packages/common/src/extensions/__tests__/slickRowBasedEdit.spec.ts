@@ -3,7 +3,15 @@ import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vite
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickGrid } from '../../core/index.js';
 import { Editors } from '../../editors/editors.index.js';
-import type { Column, EditCommand, GridOption, OnBeforeEditCellEventArgs, OnEventArgs, OnSetOptionsEventArgs, RowBasedEditOptions } from '../../interfaces/index.js';
+import type {
+  Column,
+  EditCommand,
+  GridOption,
+  OnBeforeEditCellEventArgs,
+  OnEventArgs,
+  OnSetOptionsEventArgs,
+  RowBasedEditOptions,
+} from '../../interfaces/index.js';
 import { GridService } from '../../services/grid.service.js';
 import type { ExtensionUtility } from '../extensionUtility.js';
 import {
@@ -152,9 +160,12 @@ describe('Row Based Edit Plugin', () => {
     const fakeItem = { id: 'test' };
 
     gridStub.getData.mockReturnValue({ getItem: () => fakeItem });
-    gridStub.getOptions.mockReturnValue({ ...optionsMock, });
+    gridStub.getOptions.mockReturnValue({ ...optionsMock });
     let userCanEdit = false;
-    plugin = new SlickRowBasedEdit(extensionUtilityStub, pubSubServiceStub, { ...addonOptions, onBeforeCellEdit: (_args: OnEventArgs) => (() => userCanEdit)() });
+    plugin = new SlickRowBasedEdit(extensionUtilityStub, pubSubServiceStub, {
+      ...addonOptions,
+      onBeforeCellEdit: (_args: OnEventArgs) => (() => userCanEdit)(),
+    });
     (plugin as any)._eventHandler = {
       subscribe: vi.fn(),
       unsubscribeAll: vi.fn(),
@@ -239,7 +250,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => { },
+          execute: () => {},
         } as EditCommand
       );
 
@@ -264,7 +275,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: [],
           serializedValue: ['bar'],
-          execute: () => { },
+          execute: () => {},
         } as EditCommand
       );
 
@@ -440,7 +451,7 @@ describe('Row Based Edit Plugin', () => {
       {
         prevSerializedValue: 'foo',
         serializedValue: 'bar',
-        execute: () => { },
+        execute: () => {},
       } as EditCommand
     );
 
@@ -736,7 +747,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => { },
+          execute: () => {},
         } as EditCommand
       );
       gridStub.invalidate.mockClear();
@@ -802,7 +813,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => { },
+          execute: () => {},
         } as EditCommand
       );
       gridStub.invalidate.mockClear();
@@ -830,7 +841,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => { },
+          execute: () => {},
           undo: undoSpy,
         } as unknown as EditCommand
       );
@@ -863,7 +874,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => { },
+          execute: () => {},
           undo: undoSpy,
         } as unknown as EditCommand
       );

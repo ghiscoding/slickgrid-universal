@@ -59,7 +59,7 @@ export class SlickRowBasedEdit {
 
   private _existingEditCommandHandler: ((item: any, column: Column<any>, command: EditCommand) => void) | undefined;
   protected _currentLang = 'en';
-  private _translations: { [locale: string]: ButtonTranslation; } = {};
+  private _translations: { [locale: string]: ButtonTranslation } = {};
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
@@ -498,7 +498,7 @@ export class SlickRowBasedEdit {
     this._grid.invalidate();
   }
 
-  protected updateItemMetadata(previousItemMetadata: any): (rowNumber: number) => { cssClasses: string; } {
+  protected updateItemMetadata(previousItemMetadata: any): (rowNumber: number) => { cssClasses: string } {
     return (rowNumber: number) => {
       const item = this._grid.getData().getItem(rowNumber);
       let meta = {
