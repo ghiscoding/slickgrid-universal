@@ -1517,15 +1517,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       ? this._options.ffMaxSupportedCssHeight
       : this._options.maxSupportedCssHeight;
     const div = createDomElement('div', { style: { display: 'hidden' } }, document.body);
+    const marker = createDomElement('div', { style: { position: 'absolute' } }, div);
 
     let condition = true;
     while (condition) {
       const test = supportedHeight * 2;
       Utils.height(div, test);
       const height = Utils.height(div);
+      marker.style.top = `${test - 1}px`;
+      const offsetTop = marker.offsetTop;
 
       /* v8 ignore else */
-      if (test > testUpTo! || height !== test) {
+      if (test > testUpTo! || height !== test || offsetTop !== test - 1) {
         condition = false;
         break;
       } else {
