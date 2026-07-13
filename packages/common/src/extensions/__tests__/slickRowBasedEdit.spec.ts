@@ -3,7 +3,15 @@ import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vite
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickGrid } from '../../core/index.js';
 import { Editors } from '../../editors/editors.index.js';
-import type { Column, EditCommand, GridOption, OnBeforeEditCellEventArgs, OnSetOptionsEventArgs, RowBasedEditOptions } from '../../interfaces/index.js';
+import type {
+  Column,
+  EditCommand,
+  GridOption,
+  OnBeforeEditCellEventArgs,
+  OnEventArgs,
+  OnSetOptionsEventArgs,
+  RowBasedEditOptions,
+} from '../../interfaces/index.js';
 import { GridService } from '../../services/grid.service.js';
 import type { ExtensionUtility } from '../extensionUtility.js';
 import {
@@ -145,6 +153,36 @@ describe('Row Based Edit Plugin', () => {
 
     plugin.rowBasedEditCommandHandler(fakeItem, {} as Column, {} as EditCommand);
 
+    expect(onBeforeEditCellHandler({} as Event, { item: fakeItem } as OnBeforeEditCellEventArgs)).toBe(true);
+  });
+
+  it('should respect user provided custom onBeforeCellEdit hooks', () => {
+    const fakeItem = { id: 'test' };
+
+    gridStub.getData.mockReturnValue({ getItem: () => fakeItem });
+    gridStub.getOptions.mockReturnValue({ ...optionsMock });
+    let userCanEdit = false;
+    plugin = new SlickRowBasedEdit(extensionUtilityStub, pubSubServiceStub, {
+      ...addonOptions,
+      onBeforeCellEdit: (_args: OnEventArgs) => (() => userCanEdit)(),
+    });
+    (plugin as any)._eventHandler = {
+      subscribe: vi.fn(),
+      unsubscribeAll: vi.fn(),
+    };
+    plugin.init(gridStub, gridService);
+
+    const onBeforeEditCellHandler = (plugin.eventHandler.subscribe as Mock<any>).mock.calls[0][1] as (e: Event, args: OnBeforeEditCellEventArgs) => boolean;
+    expect(onBeforeEditCellHandler({} as Event, { item: fakeItem } as OnBeforeEditCellEventArgs)).toBe(false);
+
+    // set row to edit mode
+    plugin.rowBasedEditCommandHandler(fakeItem, {} as Column, {} as EditCommand);
+
+    // should still fail
+    expect(onBeforeEditCellHandler({} as Event, { item: fakeItem } as OnBeforeEditCellEventArgs)).toBe(false);
+
+    // change to allow in userland
+    userCanEdit = true;
     expect(onBeforeEditCellHandler({} as Event, { item: fakeItem } as OnBeforeEditCellEventArgs)).toBe(true);
   });
 
