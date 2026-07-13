@@ -4008,8 +4008,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     );
 
     const oldOffset = this.offset;
+    // determine the page for the target position first, then derive the offset from that page
+    // (computing the offset from the previous page would lag one scroll event behind on jumps)
+    this.page = this.ph ? Math.min((this.n || 0) - 1, Math.floor(y / this.ph)) : 0;
     this.offset = Math.round(this.page * (this.cj || 0));
-    this.page = Math.min((this.n || 0) - 1, Math.floor(y / (this.ph || 0)));
     const newScrollTop = (y - this.offset) as number;
 
     if (this.offset !== oldOffset) {
