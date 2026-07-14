@@ -126,7 +126,10 @@ git diff                   -> rtk git diff
 
 If `rtk` is not available in the current environment, run the raw command without `rtk` instead of failing.
 
-For Vitest in this repo, default to `rtk vitest` unless full raw output is explicitly needed.
+For Vitest in this repo, default to `rtk vitest run` for test execution unless full raw output is explicitly needed.
+Use direct file filters when running a single spec, and point at the repo config in `test/vitest.config.mts`, for example `rtk vitest run --config test/vitest.config.mts packages/common/src/services/foo.spec.ts`.
+Spec paths can live anywhere in the monorepo, so use the repo-root path to the exact file being targeted.
+Prefer `vitest run` over `pnpm exec vitest` when the Vitest binary is available, since `run` is the actual test subcommand and supports the same single-file filters with less command overhead.
 
 ## Low-Token Availability Check
 
