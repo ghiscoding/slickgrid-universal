@@ -184,6 +184,17 @@ To run all unit tests (with Vitest), you can run one of the following commands (
 pnpm run test
 ```
 
+#### [Cypress](https://cypress.io/) E2E Tests
+To run all E2E tests (with Cypress), you can run one of the following commands (make sure that steps 1-2 were executed prior to running this command)
+
+```bash
+# will open the Cypress GUI
+pnpm run cypress
+
+# or run it in the shell (like a CI/CD would)
+pnpm run cypress:ci
+```
+
 ### [RTK](https://github.com/rtk-ai/rtk) Usage (Optional but Recommended)
 This repository's Copilot instructions prefer using [`rtk`](https://github.com/rtk-ai/rtk) (token-optimized CLI proxy) when running terminal commands.
 
@@ -195,17 +206,6 @@ Examples:
 rtk git status
 # fallback if rtk is unavailable
 git status
-```
-
-#### [Cypress](https://cypress.io/) E2E Tests
-To run all E2E tests (with Cypress), you can run one of the following commands (make sure that steps 1-2 were executed prior to running this command)
-
-```bash
-# will open the Cypress GUI
-pnpm run cypress
-
-# or run it in the shell (like a CI/CD would)
-pnpm run cypress:ci
 ```
 
 ## Sponsors
