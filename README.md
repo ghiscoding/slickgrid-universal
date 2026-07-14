@@ -128,19 +128,6 @@ corepack enable
 corepack prepare pnpm@latest --activate
 ```
 
-### RTK Usage (Optional but Recommended)
-This repository's Copilot instructions prefer using `rtk` (token-optimized CLI proxy) when running terminal commands.
-
-- If `rtk` is installed: prefer `rtk <command>`.
-- If `rtk` is not installed: run the raw command directly.
-
-Examples:
-```bash
-rtk git status
-# fallback if rtk is unavailable
-git status
-```
-
 #### Specific Framework install
 For a more targeted install, you could optionally install a specific framework (which avoids installing all frameworks).
 You should only do that if you're only interested in contributing something specific to a framework wrapper, see commands below:
@@ -195,6 +182,19 @@ To run all unit tests (with Vitest), you can run one of the following commands (
 
 ```bash
 pnpm run test
+```
+
+### [RTK](https://github.com/rtk-ai/rtk) Usage (Optional but Recommended)
+This repository's Copilot instructions prefer using [`rtk`](https://github.com/rtk-ai/rtk) (token-optimized CLI proxy) when running terminal commands.
+
+- If `rtk` is installed: prefer `rtk <command>`.
+- If `rtk` is not installed: run the raw command directly.
+
+Examples:
+```bash
+rtk git status
+# fallback if rtk is unavailable
+git status
 ```
 
 #### [Cypress](https://cypress.io/) E2E Tests
