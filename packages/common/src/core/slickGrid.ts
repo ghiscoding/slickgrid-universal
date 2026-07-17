@@ -4034,7 +4034,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this._metadataHasHeight === undefined) {
       this._metadataHasHeight = false;
       const dataView = this.data as CustomDataView<TData>;
-      const len = typeof dataView?.getLength === 'function' ? dataView.getLength() : (Array.isArray(this.data) ? this.data.length : 0);
+      const len = typeof dataView?.getLength === 'function' ? dataView.getLength() : Array.isArray(this.data) ? this.data.length : 0;
       for (let i = 0; i < Math.min(len, 20); i++) {
         const item = typeof dataView?.getItem === 'function' ? dataView.getItem(i) : (this.data as TData[])[i];
         if (item !== undefined && typeof getMetadata(item, i as any)?.height === 'number') {
