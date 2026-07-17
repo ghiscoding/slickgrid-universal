@@ -17,8 +17,11 @@ export class Example55 {
   dataset: StoryItem[] = [];
   gridOptions!: GridOption;
 
-  attached() {
+  constructor() {
     this.defineGrid();
+  }
+
+  attached() {
     this.dataset = this.getData(NB_ITEMS);
   }
 

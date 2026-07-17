@@ -17,8 +17,11 @@ export class Example56 {
   gridOptions!: GridOption;
   isCompact = false;
 
-  attached() {
+  constructor() {
     this.defineGrid();
+  }
+
+  attached() {
     this.dataset = this.getData(NB_ITEMS);
   }
 
