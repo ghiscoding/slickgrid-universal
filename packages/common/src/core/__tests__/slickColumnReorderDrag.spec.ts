@@ -686,6 +686,225 @@ describe('slickColumnReorderDrag', () => {
     expect(onDragEnd).not.toHaveBeenCalled();
   });
 
+  // ── Deviation 1: frozen boundary stays uncrossable ────────────────────────
+
+  it('should not allow dragging a column from headerLeft into headerRight (frozen boundary uncrossable)', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName'); // in left (frozen) pane
+    const start = createHeaderColumn('start'); // in right pane
+    headerLeft.append(firstName);
+    headerRight.append(start);
+
+    vi.spyOn(start, 'getBoundingClientRect').mockReturnValue({
+      left: 200,
+      width: 80,
+      right: 280,
+      top: 0,
+      bottom: 20,
+      x: 200,
+      y: 0,
+      height: 20,
+      toJSON: () => ({}),
+    } as DOMRect);
+    // elementFromPoint returns the right-pane column
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: vi.fn(() => start as Element),
+    });
+
+    const onDragEnd = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => true,
+      onDragEnd,
+    });
+
+    firstName.dispatchEvent(
+      createDragEvent('dragstart', {
+        dataTransfer: { effectAllowed: '', setData: vi.fn(), setDragImage: vi.fn() },
+        clientX: 10,
+        clientY: 10,
+      })
+    );
+    // dragover over the right-pane column — should NOT trigger a cross-boundary reorder
+    headerRight.dispatchEvent(createDragEvent('dragover', { clientX: 240, clientY: 10, target: start }));
+
+    // firstName must still be in headerLeft, start must still be in headerRight
+    expect(headerLeft.children[0]).toBe(firstName);
+    expect(headerRight.children[0]).toBe(start);
+
+    firstName.dispatchEvent(createDragEvent('dragend', { clientX: 240, clientY: 10 }));
+    // Same order (no cross-boundary reorder occurred) — onDragEnd receives all column IDs
+    // from both headers; setColumns is a no-op at the grid level (same order).
+    expect(onDragEnd).toHaveBeenCalledWith(['firstName', 'start']);
+  });
+
+  it('should not allow dragging a column from headerRight into headerLeft (frozen boundary uncrossable)', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName'); // in left (frozen) pane
+    const start = createHeaderColumn('start'); // in right pane
+    headerLeft.append(firstName);
+    headerRight.append(start);
+
+    vi.spyOn(firstName, 'getBoundingClientRect').mockReturnValue({
+      left: 0,
+      width: 100,
+      right: 100,
+      top: 0,
+      bottom: 20,
+      x: 0,
+      y: 0,
+      height: 20,
+      toJSON: () => ({}),
+    } as DOMRect);
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: vi.fn(() => firstName as Element),
+    });
+
+    const onDragEnd = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => true,
+      onDragEnd,
+    });
+
+    start.dispatchEvent(
+      createDragEvent('dragstart', {
+        dataTransfer: { effectAllowed: '', setData: vi.fn(), setDragImage: vi.fn() },
+        clientX: 240,
+        clientY: 10,
+      })
+    );
+    // dragover over the left-pane column — should NOT trigger a cross-boundary reorder
+    headerLeft.dispatchEvent(createDragEvent('dragover', { clientX: 50, clientY: 10, target: firstName }));
+
+    expect(headerLeft.children[0]).toBe(firstName);
+    expect(headerRight.children[0]).toBe(start);
+
+    start.dispatchEvent(createDragEvent('dragend', { clientX: 50, clientY: 10 }));
+    expect(onDragEnd).toHaveBeenCalledWith(['firstName', 'start']);
+  });
+
+  // ── Deviation 2: finalize on `drop` as well as `dragend` ─────────────────
+
+  it('should finalize the reorder on drop (no subsequent dragend) and call onDragEnd', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    const lastName = createHeaderColumn('lastName');
+    headerLeft.append(firstName, lastName);
+
+    vi.spyOn(lastName, 'getBoundingClientRect').mockReturnValue({
+      left: 100,
+      width: 40,
+      right: 140,
+      top: 0,
+      bottom: 20,
+      x: 100,
+      y: 0,
+      height: 20,
+      toJSON: () => ({}),
+    } as DOMRect);
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: vi.fn(() => lastName as Element),
+    });
+
+    const onDragEnd = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      onDragEnd,
+    });
+
+    firstName.dispatchEvent(
+      createDragEvent('dragstart', {
+        dataTransfer: { effectAllowed: '', setData: vi.fn(), setDragImage: vi.fn() },
+        clientX: 10,
+        clientY: 10,
+      })
+    );
+    // simulate live DOM reorder via dragover
+    headerLeft.dispatchEvent(createDragEvent('dragover', { clientX: 139, clientY: 10, target: lastName }));
+
+    // drop fires on the header (no dragend follows — e.g. @4tw/cypress-drag-drop behaviour)
+    const dropEvt = createDragEvent('drop', { clientX: 139, clientY: 10 });
+    headerLeft.dispatchEvent(dropEvt);
+
+    expect(onDragEnd).toHaveBeenCalledTimes(1);
+    expect(onDragEnd).toHaveBeenCalledWith(expect.arrayContaining(['lastName', 'firstName']));
+  });
+
+  it('should not double-finalize when both drop and dragend fire (real browser sequence)', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    const lastName = createHeaderColumn('lastName');
+    headerLeft.append(firstName, lastName);
+
+    vi.spyOn(lastName, 'getBoundingClientRect').mockReturnValue({
+      left: 100,
+      width: 40,
+      right: 140,
+      top: 0,
+      bottom: 20,
+      x: 100,
+      y: 0,
+      height: 20,
+      toJSON: () => ({}),
+    } as DOMRect);
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: vi.fn(() => lastName as Element),
+    });
+
+    const onDragEnd = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      onDragEnd,
+    });
+
+    firstName.dispatchEvent(
+      createDragEvent('dragstart', {
+        dataTransfer: { effectAllowed: '', setData: vi.fn(), setDragImage: vi.fn() },
+        clientX: 10,
+        clientY: 10,
+      })
+    );
+    headerLeft.dispatchEvent(createDragEvent('dragover', { clientX: 139, clientY: 10, target: lastName }));
+
+    // real browser fires drop then dragend
+    headerLeft.dispatchEvent(createDragEvent('drop', { clientX: 139, clientY: 10 }));
+    firstName.dispatchEvent(createDragEvent('dragend', { clientX: 139, clientY: 10 }));
+
+    // onDragEnd must be called exactly once despite both events firing
+    expect(onDragEnd).toHaveBeenCalledTimes(1);
+  });
+
   it('should ignore Firefox/Linux mousedown drag start from header menu button', () => {
     const originalNavigator = globalThis.navigator;
     Object.defineProperty(globalThis, 'navigator', {

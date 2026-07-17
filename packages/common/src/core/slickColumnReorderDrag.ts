@@ -90,8 +90,11 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       return;
     }
 
+    // Only allow reordering within the dragged column's own header container so columns
+    // can never cross the frozen-column boundary (same behavior as SortableJS's two
+    // unconnected lists).
     const targetParent = target.parentElement;
-    if (!targetParent || (!headerLeft.contains(targetParent) && !headerRight.contains(targetParent))) {
+    if (!targetParent || targetParent !== originalParent) {
       return;
     }
 
@@ -230,7 +233,8 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     }
   };
 
-  const onDragEnd = (e: DragEvent) => {
+  // Shared finalization logic for both `dragend` and `drop`-on-header paths.
+  const finalizeDrag = (e: DragEvent) => {
     const draggedHeader = draggedEl;
     draggedHeader?.classList.remove(dragActiveClass);
     stopAutoScroll();
@@ -267,8 +271,32 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     } else {
       options.onDragEnd(reorderedIds);
     }
-    // clear stored original position
+    // clear stored original position (sets draggedEl = null, making a subsequent
+    // dragend that follows a drop a harmless no-op via the !draggedEl guard below)
     resetDragState();
+  };
+
+  const onDragEnd = (e: DragEvent) => {
+    if (!draggedEl) {
+      // Drag already finalized by the `drop` handler, or dragend fired without a prior
+      // dragstart (e.g. a stale event). Just make sure cleanup is done and return.
+      stopAutoScroll();
+      document.removeEventListener('drag', autoScrollHandler as EventListener);
+      return;
+    }
+    finalizeDrag(e);
+  };
+
+  // Finalize on `drop` as well as `dragend` (like SortableJS did). Some drag sources
+  // dispatch `drop` without a following `dragend`; finalizing here ensures
+  // setColumns()/onColumnsReordered always run. When a real browser fires both events,
+  // the `dragend` handler above sees draggedEl === null (reset by finalizeDrag) and
+  // returns immediately, so there is no double-finalization.
+  const onHeaderDrop = (e: DragEvent) => {
+    e.preventDefault();
+    if (draggedEl) {
+      finalizeDrag(e);
+    }
   };
 
   // Firefox/Linux native HTML5 drag is broken; touch screens never fire HTML5 drag events.
@@ -463,6 +491,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     parent.addEventListener('dragstart', onStart as EventListener);
     parent.addEventListener('dragover', onDragOver as EventListener);
     parent.addEventListener('dragend', onDragEnd as EventListener);
+    parent.addEventListener('drop', onHeaderDrop as EventListener);
     if (isFfLinux) {
       // Mouse-based fallback for Firefox on Linux
       parent.addEventListener('mousedown', onStart as EventListener, true);
@@ -477,6 +506,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
         parent.removeEventListener('dragstart', onStart as EventListener);
         parent.removeEventListener('dragover', onDragOver as EventListener);
         parent.removeEventListener('dragend', onDragEnd as EventListener);
+        parent.removeEventListener('drop', onHeaderDrop as EventListener);
         if (isFfLinux) {
           parent.removeEventListener('mousedown', onStart as EventListener, true);
         }
