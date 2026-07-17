@@ -34,12 +34,18 @@ const gridOptions: GridOption = {
 
 ### Using Item Metadata Height Fallback
 Use metadata fallback when you already customize row metadata and prefer to keep row logic in metadata.
+Set `variableRowHeight: true` to activate variable height mode without a `rowHeightProvider`.
+
+> **Note:** `variableRowHeight: true` is only needed when using `ItemMetadata.height` **without** a `rowHeightProvider`.
+> When `rowHeightProvider` is defined, variable height mode is activated automatically.
+> Without this flag, `getRowMetadata` is still called for other purposes (e.g. colspan) and does **not** activate variable row height.
 
 ```ts
 import type { GridOption, ItemMetadata } from '@slickgrid-universal/common';
 
 const gridOptions: GridOption = {
   rowHeight: 40,
+  variableRowHeight: true, // required when using metadata height without a rowHeightProvider
   dataView: {
     globalItemMetadataProvider: {
       getRowMetadata: (item: { notes: string }): ItemMetadata => {

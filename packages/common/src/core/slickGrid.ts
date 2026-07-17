@@ -410,6 +410,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected rowPositionIndexer?: RowPositionIndexer; // row top positions (variable row height mode only)
   protected rowHeightsDirty = true; // set when row heights may have changed; the index is rebuilt on the next updateRowCount()
   protected frozenRowHeightsChanged = false; // set when an index rebuild changed the frozen rows height; consumed at the end of updateRowCount()
+  protected _metadataHasHeight?: boolean; // cached probe result: does getRowMetadata return a height property?
   protected _prevFrozenColumnIdx = -1;
   /** flag to indicate if invalid frozen alert has been shown already or not? This is to avoid showing it more than once */
   protected _invalidfrozenAlerted = false;
@@ -4021,10 +4022,28 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @returns {boolean} True when variable row height mode is enabled.
    */
   protected isVariableRowHeight(): boolean {
-    return (
-      typeof this._options.rowHeightProvider === 'function' ||
-      typeof this._options.dataView?.globalItemMetadataProvider?.getRowMetadata === 'function'
-    );
+    if (typeof this._options.rowHeightProvider === 'function') {
+      return true;
+    }
+    const getMetadata = this._options.dataView?.globalItemMetadataProvider?.getRowMetadata;
+    if (typeof getMetadata !== 'function') {
+      return false;
+    }
+    // Lazily probe whether getRowMetadata actually returns a height property.
+    // Cache the result so this stays O(1) after the first call.
+    if (this._metadataHasHeight === undefined) {
+      this._metadataHasHeight = false;
+      const dataView = this.data as CustomDataView<TData>;
+      const len = typeof dataView?.getLength === 'function' ? dataView.getLength() : (Array.isArray(this.data) ? this.data.length : 0);
+      for (let i = 0; i < Math.min(len, 20); i++) {
+        const item = typeof dataView?.getItem === 'function' ? dataView.getItem(i) : (this.data as TData[])[i];
+        if (item !== undefined && typeof getMetadata(item, i as any)?.height === 'number') {
+          this._metadataHasHeight = true;
+          break;
+        }
+      }
+    }
+    return this._metadataHasHeight;
   }
 
   /**
@@ -5132,6 +5151,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * count; the row position index is then rebuilt with the new heights.
    */
   invalidateRowHeights(): void {
+    this._metadataHasHeight = undefined; // reset probe cache so mode re-evaluates with current metadata
     if (this.isVariableRowHeight()) {
       this.rowHeightsDirty = true;
       this.invalidate();

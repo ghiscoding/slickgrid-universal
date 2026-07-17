@@ -31,9 +31,15 @@ gridOptions: GridOption = {
 ```
 
 ### Using Item Metadata Height Fallback
+Set `variableRowHeight: true` to activate variable height mode via metadata.
+
+> **Note:** Only needed when using `ItemMetadata.height` without a `rowHeightProvider`.
+> `rowHeightProvider` activates variable mode automatically.
+
 ```ts
 gridOptions: GridOption = {
   rowHeight: 40,
+  variableRowHeight: true, // required when using metadata height without a rowHeightProvider
   dataView: {
     globalItemMetadataProvider: {
       getRowMetadata: (item: { notes: string }) => {

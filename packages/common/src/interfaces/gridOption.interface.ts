@@ -835,8 +835,9 @@ export interface GridOption<C extends Column = Column> {
    * data item. Returns the height in pixels of that row, or `undefined` to fall back to
    * `ItemMetadata.height` (when the data provider supplies `getItemMetadata`) and finally to the
    * default `rowHeight`.
-   * Variable row height mode is enabled when either this callback is supplied, or when
-   * `dataView.globalItemMetadataProvider.getRowMetadata` is configured.
+   * Variable row height mode is auto-detected: it activates when this callback is supplied, or
+   * when `dataView.globalItemMetadataProvider.getRowMetadata` returns a `height` property for any
+   * row (probed lazily on first use). No explicit option is required.
    * Heights are cached in a prefix-sum index that is rebuilt whenever the row count changes, rows
    * are invalidated, or `grid.invalidateRowHeights()` is called; the callback is called once per
    * row per rebuild, so it must be fast (a simple lookup or calculation - no DOM access).
