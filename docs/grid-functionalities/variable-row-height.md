@@ -6,9 +6,7 @@
 - [Runtime Updates](#runtime-updates)
 
 ### Introduction
-By default, SlickGrid uses the grid option `rowHeight` for every row. This is still the baseline behavior.
-
-When variable row height is enabled, each row can resolve to a different height while preserving virtual scrolling and frozen panes.
+By default, SlickGrid uses the grid option `rowHeight` for every row. When variable row height is in play (via `rowHeightProvider` or `ItemMetadata.height` detection), each row can resolve to a different height while preserving virtual scrolling and frozen panes.
 
 ### Height Resolution Order
 For each row, height resolution follows this order:
@@ -33,19 +31,17 @@ const gridOptions: GridOption = {
 ```
 
 ### Using Item Metadata Height Fallback
-Use metadata fallback when you already customize row metadata and prefer to keep row logic in metadata.
-Set `variableRowHeight: true` to activate variable height mode without a `rowHeightProvider`.
+Use metadata fallback when you already customize row metadata and prefer to keep row height logic there.
+Variable height mode is activated automatically as soon as `getRowMetadata` returns an object with a numeric `height` property on any row.
 
-> **Note:** `variableRowHeight: true` is only needed when using `ItemMetadata.height` **without** a `rowHeightProvider`.
-> When `rowHeightProvider` is defined, variable height mode is activated automatically.
-> Without this flag, `getRowMetadata` is still called for other purposes (e.g. colspan) and does **not** activate variable row height.
+> **Note:** Simply having a `getRowMetadata` function (e.g. for colspan only) does **not** activate variable height mode.
+> The grid probes the first available data item and only enables variable height when a numeric `height` is found in the returned metadata.
 
 ```ts
 import type { GridOption, ItemMetadata } from '@slickgrid-universal/common';
 
 const gridOptions: GridOption = {
   rowHeight: 40,
-  variableRowHeight: true, // required when using metadata height without a rowHeightProvider
   dataView: {
     globalItemMetadataProvider: {
       getRowMetadata: (item: { notes: string }): ItemMetadata => {

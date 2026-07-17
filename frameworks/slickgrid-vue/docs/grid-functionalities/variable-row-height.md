@@ -6,9 +6,7 @@
 - [Runtime Updates](#runtime-updates)
 
 ### Introduction
-By default, SlickGrid uses the grid option `rowHeight` for every row.
-
-Use variable row height when rows need content-based heights while preserving virtual scrolling and frozen-pane behavior.
+By default, SlickGrid uses the grid option `rowHeight` for every row. When variable row height is in play (via `rowHeightProvider` or `ItemMetadata.height` detection), each row can resolve to a different height while preserving virtual scrolling and frozen panes.
 
 ### Height Resolution Order
 For each row, height resolution follows this order:
