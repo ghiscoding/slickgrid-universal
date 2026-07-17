@@ -570,8 +570,12 @@ export class SlickDraggableGrouping {
             newGroupingOrder.push(col);
           }
         });
-        this.columnsGroupBy = newGroupingOrder;
-        this.updateGroupBy('sort-group');
+        const isSameOrder =
+          newGroupingOrder.length === this.columnsGroupBy.length && newGroupingOrder.every((col, idx) => col === this.columnsGroupBy[idx]);
+        if (!isSameOrder) {
+          this.columnsGroupBy = newGroupingOrder;
+          this.updateGroupBy('sort-group');
+        }
       },
       onColumnDragEnter: (e) => {
         if (e.dataTransfer?.types?.length) {

@@ -724,6 +724,31 @@ describe('Draggable Grouping Plugin', () => {
           plugin.setDroppedGroups('age');
         });
 
+        it('should NOT call updateGroupBy("sort-group") when pill is dragged but order is unchanged (isSameOrder)', () => {
+          // Start fresh: clear all pills and columnsGroupBy so they're in sync
+          dropzoneElm.querySelectorAll('.slick-dropped-grouping').forEach((el) => el.remove());
+          const ageCol = plugin.columnsGroupBy.find((c) => String(c.id) === 'age');
+          plugin.columnsGroupBy = ageCol ? [ageCol] : [];
+
+          // Add exactly one pill that matches the single entry in columnsGroupBy
+          const syncedPill = document.createElement('div');
+          syncedPill.className = 'slick-dropped-grouping';
+          syncedPill.dataset.id = 'age';
+          dropzoneElm.appendChild(syncedPill);
+
+          // Clear spy history recorded during beforeEach setup
+          onGroupChangedCallbackSpy.mockClear();
+
+          // Fire pill dragstart+dragend without moving anything → isSameOrder should be true
+          const pillDragEvt = new Event('dragstart', { bubbles: true, cancelable: true }) as DragEvent;
+          Object.defineProperty(pillDragEvt, 'dataTransfer', { value: { effectAllowed: '', setData: vi.fn(), setDragImage: vi.fn() } });
+          syncedPill.dispatchEvent(pillDragEvt);
+          syncedPill.dispatchEvent(new Event('dragend', { bubbles: true }));
+
+          // updateGroupBy('sort-group') must NOT have been called because order did not change
+          expect(onGroupChangedCallbackSpy).not.toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ caller: 'sort-group' }));
+        });
+
         it('should keep dropzone hover class on dragleave when relatedTarget is null but pointer is still over dropzone', () => {
           const innerDropzoneChild = document.createElement('div');
           dropzoneElm.appendChild(innerDropzoneChild);
