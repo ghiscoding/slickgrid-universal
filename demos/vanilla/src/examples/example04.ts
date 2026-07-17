@@ -601,6 +601,7 @@ export default class Example04 {
   setFrozenColumns(frozenCols: number) {
     this.sgb?.slickGrid?.setOptions({ frozenColumn: frozenCols, alwaysShowVerticalScroll: false });
     this.gridOptions = this.sgb?.slickGrid?.getOptions() ?? {};
+    this.frozenColumnCount = frozenCols;
   }
 
   /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
@@ -648,5 +649,25 @@ export default class Example04 {
         alert('Command: ' + args.command);
         break;
     }
+  }
+
+  setLargeFreezedColumns() {
+    this.setFrozenColumns(2);
+    this.sgb.gridStateService.changeColumnsArrangement(
+      [
+        { columnId: '_checkbox_selector', cssClass: 'slick-cell-checkboxsel', headerCssClass: '', width: 40 },
+        { columnId: 'title', cssClass: '', headerCssClass: '', width: 240 },
+        { columnId: 'percentComplete', cssClass: '', headerCssClass: '', width: 384 },
+        { columnId: 'start', cssClass: '', headerCssClass: '', width: 104 },
+        { columnId: 'finish', cssClass: '', headerCssClass: '', width: 473 },
+        { columnId: 'completed', cssClass: '', headerCssClass: '', width: 372 },
+        { columnId: 'cost', cssClass: '', headerCssClass: '', width: 288 },
+        { columnId: 'cityOfOrigin', cssClass: '', headerCssClass: '', width: 204 },
+        { columnId: 'action', cssClass: '', headerCssClass: '', width: 64 },
+      ],
+      false,
+      false
+    );
+    // console.log('setLargeFreezedColumns', this.sgb.gridStateService.getCurrentColumns());
   }
 }

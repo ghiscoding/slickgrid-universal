@@ -485,7 +485,7 @@ export class Example33 {
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 100),
         description: i > 500 ? null : `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
-        percentComplete: Math.floor(Math.random() * (100 - 5 + 1) + 5),
+        percentComplete: Math.floor(Math.random() * (100 - 5 + 1) + 6), // between 6 and 100
         start: new Date(randomYear, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
         cost: i % 33 === 0 ? null : Math.round(Math.random() * 10000) / 100,
