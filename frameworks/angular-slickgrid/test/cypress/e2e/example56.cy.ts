@@ -27,8 +27,7 @@ describe('Example 56 - Variable Row Height (Dynamic)', { retries: 1 }, () => {
     return topOf(r, hOf) - frozenTopHeight(hOf);
   };
 
-  const canvasSelector = (r: number) =>
-    r < FROZEN_ROW_COUNT ? '#slickGridContainer-grid56 .grid-canvas-top' : '#slickGridContainer-grid56 .grid-canvas-bottom';
+  const canvasSelector = (r: number) => (r < FROZEN_ROW_COUNT ? '.grid-canvas-top' : '.grid-canvas-bottom');
 
   const assertRowStyle = (r: number, hOf: (row: number) => number) => {
     const expectedHeight = hOf(r);
@@ -47,7 +46,7 @@ describe('Example 56 - Variable Row Height (Dynamic)', { retries: 1 }, () => {
   };
 
   const ensureDefaultDensity = () => {
-    cy.get('#slickGridContainer-grid56 .grid-canvas-top .slick-row[data-row=1]')
+    cy.get('.grid-canvas-top .slick-row[data-row=1]')
       .invoke('attr', 'style')
       .then((style) => {
         if ((style ?? '').includes('height: 50px')) {
@@ -55,9 +54,7 @@ describe('Example 56 - Variable Row Height (Dynamic)', { retries: 1 }, () => {
         }
       });
 
-    cy.get('#slickGridContainer-grid56 .grid-canvas-top .slick-row[data-row=1]')
-      .should('have.attr', 'style')
-      .and('contain', 'height: 44px');
+    cy.get('.grid-canvas-top .slick-row[data-row=1]').should('have.attr', 'style').and('contain', 'height: 44px');
   };
 
   beforeEach(() => {
@@ -92,10 +89,10 @@ describe('Example 56 - Variable Row Height (Dynamic)', { retries: 1 }, () => {
 
     cy.get('[data-test="scroll-row-90-example56"]').click();
 
-    cy.get('#slickGridContainer-grid56 .slick-viewport-bottom.slick-viewport-left').should(($viewport) => {
+    cy.get('.slick-viewport-bottom.slick-viewport-left').should(($viewport) => {
       expect($viewport.scrollTop()).to.be.closeTo(expectedScrollTop, 2);
     });
 
-    cy.get('#slickGridContainer-grid56 .slick-row[data-row=90]').should('exist');
+    cy.get('.slick-row[data-row=90]').should('exist');
   });
 });

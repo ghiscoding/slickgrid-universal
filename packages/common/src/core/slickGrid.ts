@@ -4030,20 +4030,25 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return false;
     }
     // Lazily probe whether getRowMetadata actually returns a height property.
-    // Cache the result so this stays O(1) after the first call.
+    // Only cache `true` (confirmed variable-height) or `false` when we had real data to probe.
+    // When no data is available yet, leave `_metadataHasHeight` as undefined so we re-probe once data arrives.
     if (this._metadataHasHeight === undefined) {
-      this._metadataHasHeight = false;
       const dataView = this.data as CustomDataView<TData>;
       const len = typeof dataView?.getLength === 'function' ? dataView.getLength() : Array.isArray(this.data) ? this.data.length : 0;
-      for (let i = 0; i < Math.min(len, 20); i++) {
-        const item = typeof dataView?.getItem === 'function' ? dataView.getItem(i) : (this.data as TData[])[i];
-        if (item !== undefined && typeof getMetadata(item, i as any)?.height === 'number') {
-          this._metadataHasHeight = true;
-          break;
+      if (len > 0) {
+        // we have data — probe up to 20 rows and cache a definitive answer
+        this._metadataHasHeight = false;
+        for (let i = 0; i < Math.min(len, 20); i++) {
+          const item = typeof dataView?.getItem === 'function' ? dataView.getItem(i) : (this.data as TData[])[i];
+          if (item !== undefined && typeof getMetadata(item, i as any)?.height === 'number') {
+            this._metadataHasHeight = true;
+            break;
+          }
         }
       }
+      // else: no data yet — return false without caching so we re-probe on the next call
     }
-    return this._metadataHasHeight;
+    return this._metadataHasHeight ?? false;
   }
 
   /**
