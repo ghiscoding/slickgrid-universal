@@ -830,6 +830,21 @@ export interface GridOption<C extends Column = Column> {
   rowHeight?: number;
 
   /**
+   * Optional callback used in variable row height mode.
+   * Receives the grid instance (giving access to any grid state), the row index, and the row's
+   * data item. Returns the height in pixels of that row, or `undefined` to fall back to
+   * `ItemMetadata.height` (when the data provider supplies `getItemMetadata`) and finally to the
+   * default `rowHeight`.
+   * Variable row height mode is enabled when either this callback is supplied, or when
+   * `dataView.globalItemMetadataProvider.getRowMetadata` is configured.
+   * Heights are cached in a prefix-sum index that is rebuilt whenever the row count changes, rows
+   * are invalidated, or `grid.invalidateRowHeights()` is called; the callback is called once per
+   * row per rebuild, so it must be fast (a simple lookup or calculation - no DOM access).
+   * When heights change without a row count change, call `grid.invalidateRowHeights()`.
+   */
+  rowHeightProvider?: (grid: SlickGrid, row: number, item: any) => number | undefined;
+
+  /**
    * Defaults to "highlight-animate", a CSS class name used to simulate row highlight with an optional duration (e.g. after insert).
    * Note: make sure that the duration is always lower than the duration defined in the CSS/SASS variable `$slick-row-highlight-fade-animation`.
    * Also note that the highlight is temporary and will also disappear as soon as the user starts scrolling or a `render()` is being called

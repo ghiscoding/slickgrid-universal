@@ -93,6 +93,7 @@ import type {
 } from '../interfaces/index.js';
 import {
   preClickClassName,
+  RowPositionIndexer,
   SlickDragExtendHandle,
   SlickEvent,
   SlickEventData,
@@ -406,6 +407,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected hasFrozenRows = false;
   protected frozenRowsHeight = 0;
   protected actualFrozenRow = -1;
+  protected rowPositionIndexer?: RowPositionIndexer; // row top positions (variable row height mode only)
+  protected rowHeightsDirty = true; // set when row heights may have changed; the index is rebuilt on the next updateRowCount()
+  protected frozenRowHeightsChanged = false; // set when an index rebuild changed the frozen rows height; consumed at the end of updateRowCount()
   protected _prevFrozenColumnIdx = -1;
   /** flag to indicate if invalid frozen alert has been shown already or not? This is to avoid showing it more than once */
   protected _invalidfrozenAlerted = false;
@@ -2735,12 +2739,25 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (this._options.frozenRow! > -1) {
       this.hasFrozenRows = true;
-      this.frozenRowsHeight = this._options.frozenRow! * this._options.rowHeight!;
       const dataLength = this.getDataLength();
       this.actualFrozenRow = this._options.frozenBottom ? dataLength - this._options.frozenRow! : this._options.frozenRow!;
+      this.frozenRowsHeight = this.computeFrozenRowsHeight(dataLength);
     } else {
       this.hasFrozenRows = false;
     }
+  }
+
+  /**
+   * Computes the combined pixel height of the frozen rows: the first `frozenRow` rows, or the
+   * last `frozenRow` rows (i.e. from `actualFrozenRow` onward) when `frozenBottom` is enabled.
+   *
+   * @param {number} dataLength - The current dataset length.
+   * @returns {number} The combined frozen rows height in pixels.
+   */
+  protected computeFrozenRowsHeight(dataLength: number): number {
+    return this._options.frozenBottom
+      ? this.getRowPosition(dataLength) - this.getRowPosition(this.actualFrozenRow)
+      : this.getRowPosition(this._options.frozenRow!);
   }
 
   /** add/remove frozen class to left headers/footer when defined */
@@ -2939,9 +2956,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       `.${this.uid} .slick-topheader-panel { height: ${this._options.topHeaderPanelHeight}px; }`,
       `.${this.uid} .slick-headerrow-columns { height: ${this._options.headerRowHeight}px; }`,
       `.${this.uid} .slick-footerrow-columns { height: ${this._options.footerRowHeight}px; }`,
-      `.${this.uid} .slick-cell { height: ${rowHeight}px; }`,
-      `.${this.uid} .slick-row { height: ${this._options.rowHeight}px; }`,
     ];
+
+    if (this.isVariableRowHeight()) {
+      // in variable row height mode the cell height fills the row, and the row height is set
+      // per-row via inline style for rows that differ from the default; the stylesheet only
+      // provides the default row height so that unchanged rows don't need an inline style
+      rules.push(`.${this.uid} .slick-cell { height: calc(100% - ${this.cellHeightDiff}px); }`);
+      rules.push(`.${this.uid} .slick-row { height: ${this._options.rowHeight}px; }`);
+    } else {
+      rules.push(`.${this.uid} .slick-cell { height: ${rowHeight}px; }`);
+      rules.push(`.${this.uid} .slick-row { height: ${this._options.rowHeight}px; }`);
+    }
 
     const sheet = this._style.sheet;
 
@@ -3698,6 +3724,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.syncDataViewFormattedCachePlanner(true);
     }
 
+    // any option affecting row heights requires a rebuild of the row position index
+    if (newOptions.rowHeight !== undefined || newOptions.rowHeightProvider !== undefined) {
+      this.rowHeightsDirty = true;
+    }
+
     this.internal_setOptions(suppressRender, suppressColumnSet, suppressSetOverflow);
   }
 
@@ -3981,20 +4012,77 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   // Rendering / Scrolling
 
-  protected getRowHeight(): number {
+  /**
+   * Whether the grid is in variable row height mode.
+   * Enabled when a `rowHeightProvider` callback is supplied, or when the DataView has a
+   * `globalItemMetadataProvider.getRowMetadata` callback (allowing `ItemMetadata.height` fallback
+   * without defining a `rowHeightProvider`).
+   *
+   * @returns {boolean} True when variable row height mode is enabled.
+   */
+  protected isVariableRowHeight(): boolean {
+    return (
+      typeof this._options.rowHeightProvider === 'function' ||
+      typeof this._options.dataView?.globalItemMetadataProvider?.getRowMetadata === 'function'
+    );
+  }
+
+  /**
+   * Retrieves the height of a row.
+   * In variable row height mode (i.e. when a `rowHeightProvider` is configured) and with a row
+   * index provided, returns that row's individual height; otherwise returns the default row
+   * height defined in the grid options.
+   *
+   * @param {number} [row] - The row index. When omitted the default row height is returned.
+   * @returns {number} The row height in pixels.
+   */
+  getRowHeight(row?: number): number {
+    if (row !== undefined && this.isVariableRowHeight() && this.rowPositionIndexer) {
+      return this.rowPositionIndexer.height(row);
+    }
     return this._options.rowHeight!;
   }
 
+  /**
+   * Returns the virtual top pixel position of a row within the full grid content,
+   * i.e. without the virtual-scrolling page offset applied. Since a row's top position equals
+   * the combined height of all rows before it, this also serves as "the combined pixel height
+   * of the first N rows" when called with a row count.
+   *
+   * @param {number} row - The row index (or a row count when summing row heights).
+   * @returns {number} The virtual pixel position of the top of the row.
+   */
+  protected getRowPosition(row: number): number {
+    if (this.isVariableRowHeight() && this.rowPositionIndexer) {
+      return this.rowPositionIndexer.top(row);
+    }
+    return this._options.rowHeight! * row;
+  }
+
+  /**
+   * Computes the row index at a virtual vertical pixel position within the full grid content,
+   * i.e. without the virtual-scrolling page offset applied.
+   *
+   * @param {number} y - The virtual vertical position in pixels.
+   * @returns {number} The calculated row index.
+   */
+  protected getRowIndexFromPosition(y: number): number {
+    if (this.isVariableRowHeight() && this.rowPositionIndexer) {
+      return this.rowPositionIndexer.rowAt(y);
+    }
+    return Math.floor(y / this._options.rowHeight!);
+  }
+
   protected getRowTop(row: number): number {
-    return Math.round(this._options.rowHeight! * row - this.offset);
+    return Math.round(this.getRowPosition(row) - this.offset);
   }
 
   protected getRowBottom(row: number): number {
-    return this.getRowTop(row) + this._options.rowHeight!;
+    return this.getRowTop(row) + this.getRowHeight(row);
   }
 
   protected getRowFromPosition(y: number): number {
-    return Math.floor((y + this.offset) / this._options.rowHeight!);
+    return this.getRowIndexFromPosition(y + this.offset);
   }
 
   /**
@@ -4175,6 +4263,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       rowDiv.style.top = `${topOffset}px`; // default to `top: {offset}px`
     }
 
+    if (this.isVariableRowHeight()) {
+      // only rows with a non-default height get an inline height so that rows with
+      // the default height can be sized by the stylesheet rule
+      const rowHeight = this.getRowHeight(row);
+      if (rowHeight !== this._options.rowHeight) {
+        rowDiv.style.height = `${rowHeight}px`;
+      }
+    }
+
     let rowDivR: HTMLElement | undefined;
     divArrayL.push(rowDiv);
 
@@ -4321,7 +4418,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // update cell rowspan height when spanning more than 1 row
     const cellHeight = this.getCellHeight(row, rowspan);
-    if (rowspan > 1 && cellHeight !== this._options.rowHeight! - this.cellHeightDiff) {
+    if (rowspan > 1 && cellHeight !== this.getRowHeight(row) - this.cellHeightDiff) {
       cellDiv.style.height = `${cellHeight || 0}px`;
     }
 
@@ -4519,6 +4616,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Invalidate all grid rows */
   invalidateAllRows(): void {
+    // invalidated row content may resize the rows, so conservatively mark dirty for rebuild
+    this.rowHeightsDirty = true;
     if (this.currentEditor) {
       this.makeActiveCellNormal();
     }
@@ -4547,6 +4646,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     let row;
     this.vScrollDir = 0;
+    this.rowHeightsDirty = true;
     const rl = rows.length;
 
     // use Set to avoid duplicates
@@ -4780,19 +4880,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   getCellHeight(row: number, rowspan: number): number {
-    let cellHeight = this._options.rowHeight || 0;
     if (rowspan > 1) {
       const rowSpanBottomIdx = row + rowspan - 1;
-      cellHeight = this.getRowBottom(rowSpanBottomIdx) - this.getRowTop(row);
-    } else {
-      const rowHeight = this.getRowHeight();
-      /* v8 ignore if */
-      if (rowHeight !== cellHeight - this.cellHeightDiff) {
-        cellHeight = rowHeight;
-      }
+      return Math.ceil(this.getRowBottom(rowSpanBottomIdx) - this.getRowTop(row));
     }
-    cellHeight -= this.cellHeightDiff;
-    return Math.ceil(cellHeight);
+    return Math.ceil(this.getRowHeight(row) - this.cellHeightDiff);
   }
 
   /**
@@ -4823,8 +4915,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       fullHeight += this._options.showFooterRow ? this._options.footerRowHeight! + this.getVBoxDelta(this._footerRowScroller[0]) : 0;
       fullHeight += this.getCanvasWidth() > this.viewportW ? this.scrollbarDimensions?.height || 0 : 0;
 
-      this.viewportH =
-        this._options.rowHeight! * this.getDataLengthIncludingAddNew() + (this._options.frozenColumn === -1 ? fullHeight : 0);
+      this.viewportH = this.getRowPosition(this.getDataLengthIncludingAddNew()) + (this._options.frozenColumn === -1 ? fullHeight : 0);
     } else {
       const style = getComputedStyle(this._container);
       const containerBoxH = style.boxSizing !== 'content-box' ? this.getVBoxDelta(this._container) : 0;
@@ -5000,6 +5091,53 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.pagingIsLastPage = pagingInfo.pageNum === pagingInfo.totalPages - 1;
   }
 
+  /**
+   * (re)Builds the row position index used in variable row height mode when needed, i.e. when it is
+   * marked dirty (see invalidateRowHeights) or when the indexed row count no longer matches the
+   * dataset length. Since the frozen rows height depends on individual row heights, it is refreshed
+   * after every rebuild. Does nothing (and drops the index) when variable row height is disabled.
+   *
+   * @param {number} rowCount - The number of rows to index (including the Add-New row when enabled).
+   */
+  protected ensureRowPositionIndexer(rowCount: number): void {
+    if (!this.isVariableRowHeight()) {
+      this.rowPositionIndexer = undefined;
+      return;
+    }
+    if (!this.rowPositionIndexer) {
+      this.rowPositionIndexer = new RowPositionIndexer();
+      this.rowHeightsDirty = true;
+    }
+    if (this.rowHeightsDirty || this.rowPositionIndexer.count !== rowCount) {
+      const provider = this._options.rowHeightProvider;
+      // height resolution chain: provider -> ItemMetadata.height -> default rowHeight (in rebuild)
+      this.rowPositionIndexer.rebuild(
+        rowCount,
+        this._options.rowHeight!,
+        (row: number) => provider?.(this as unknown as SlickGrid, row, this.getDataItem(row)) ?? this.getItemMetadaWhenExists(row)?.height
+      );
+      this.rowHeightsDirty = false;
+      if (this.hasFrozenRows) {
+        const prevFrozenRowsHeight = this.frozenRowsHeight;
+        this.frozenRowsHeight = this.computeFrozenRowsHeight(this.getDataLength());
+        // pane splits and frozen canvas sizes derive from this value, so a change requires a canvas resize
+        this.frozenRowHeightsChanged = this.frozenRowsHeight !== prevFrozenRowsHeight;
+      }
+    }
+  }
+
+  /**
+   * Invalidate all row heights (variable row height mode) and fully re-render the grid.
+   * Call this after the values driving `rowHeightProvider` have changed without a change in row
+   * count; the row position index is then rebuilt with the new heights.
+   */
+  invalidateRowHeights(): void {
+    if (this.isVariableRowHeight()) {
+      this.rowHeightsDirty = true;
+      this.invalidate();
+    }
+  }
+
   /** Update the dataset row count */
   updateRowCount(): void {
     if (this.initialized) {
@@ -5028,11 +5166,23 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         numberOfRows = dataLengthIncludingAddNew + (this._options.leaveSpaceForNewRows ? this.numVisibleRows - 1 : 0);
       }
 
+      // (re)build the row position index (variable row height mode) before any height computations
+      this.ensureRowPositionIndexer(dataLengthIncludingAddNew);
+
+      // pixel height of the rows contained in the scrolling canvas; for frozen-top grids with variable
+      // row heights the scrolling rows are the ones after the frozen rows, so their combined height is
+      // the remainder after subtracting the frozen rows height (in fixed mode any `numberOfRows` rows
+      // have the same combined height, so the simple multiplication covers all layouts)
+      const scrollableRowsHeight =
+        this.isVariableRowHeight() && this.hasFrozenRows && !this._options.frozenBottom
+          ? this.getRowPosition(dataLength) - this.frozenRowsHeight
+          : this.getRowPosition(numberOfRows);
+
       const tempViewportH = Utils.height(this._viewportScrollContainerY) as number;
       const oldViewportHasVScroll = this.viewportHasVScroll;
       // with autoHeight, we do not need to accommodate the vertical scroll bar
       this.viewportHasVScroll =
-        this._options.alwaysShowVerticalScroll || (!this._options.autoHeight && numberOfRows * this._options.rowHeight! > tempViewportH);
+        this._options.alwaysShowVerticalScroll || (!this._options.autoHeight && scrollableRowsHeight > tempViewportH);
 
       this.makeActiveCellNormal();
 
@@ -5058,9 +5208,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       oldH = this.h;
       if (this._options.autoHeight) {
-        this.h = this._options.rowHeight! * numberOfRows;
+        this.h = scrollableRowsHeight;
       } else {
-        this.th = Math.max(this._options.rowHeight! * numberOfRows, tempViewportH - (this.scrollbarDimensions?.height || 0));
+        this.th = Math.max(scrollableRowsHeight, tempViewportH - (this.scrollbarDimensions?.height || 0));
         if (this.th < this.maxSupportedCssHeight) {
           // just one page
           this.h = this.ph = this.th;
@@ -5109,6 +5259,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this.resizeCanvas();
       }
 
+      if (this.frozenRowHeightsChanged) {
+        this.frozenRowHeightsChanged = false;
+        // re-apply the pane splits and frozen canvas sizes that were computed from the previous
+        // frozen rows height (same self-limiting recursion pattern as the autoHeight resize above:
+        // the nested updateRowCount recomputes an unchanged value, so it cannot re-trigger)
+        this.resizeCanvas();
+      }
+
       if (this._options.forceFitColumns && oldViewportHasVScroll !== this.viewportHasVScroll) {
         this.legacyAutosizeColumns();
       }
@@ -5154,7 +5312,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   getRenderedRange(viewportTop?: number, viewportLeft?: number): CellViewportRange {
     const range = this.getVisibleRange(viewportTop, viewportLeft);
-    const buffer = Math.round(this.viewportH / this._options.rowHeight!);
+    const buffer = Math.round(this.viewportH / this.getRowHeight());
     const minBuffer = this._options.minRowBuffer as number;
 
     if (this.vScrollDir === -1) {
@@ -6550,7 +6708,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (this._options.frozenBottom) {
         if (row >= this.actualFrozenRow) {
           if (this.h < this.viewportTopH) {
-            offset = this.actualFrozenRow * this._options.rowHeight!;
+            offset = this.getRowPosition(this.actualFrozenRow);
           } else {
             offset = this.h;
           }
@@ -6625,7 +6783,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const frozenRowOffset = this.getFrozenRowOffset(row);
 
     const y1 = this.getRowTop(row) - frozenRowOffset;
-    const y2 = y1 + this._options.rowHeight! - 1;
+    const y2 = y1 + this.getRowHeight(row) - 1;
     let x1 = 0;
     for (let i = 0; i < cell; i++) {
       if (this.columns[i] && !this.columns[i].hidden) {
@@ -7053,21 +7211,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       // if frozen row on top
       // subtract number of frozen row
-      const rowNumber = this.hasFrozenRows && !this._options.frozenBottom ? row - this._options.frozenRow! : row;
-
-      const rowAtTop = rowNumber * this._options.rowHeight!;
-      const rowAtBottom =
-        (rowNumber + 1) * this._options.rowHeight! -
-        viewportScrollH +
-        (this.viewportHasHScroll ? this.scrollbarDimensions?.height || 0 : 0);
+      const rowAtTop =
+        this.hasFrozenRows && !this._options.frozenBottom ? this.getRowPosition(row) - this.frozenRowsHeight : this.getRowPosition(row);
+      const rowBottomPosition = rowAtTop + this.getRowHeight(row);
+      const rowAtBottom = rowBottomPosition - viewportScrollH + (this.viewportHasHScroll ? this.scrollbarDimensions?.height || 0 : 0);
 
       // need to page down?
-      if ((rowNumber + 1) * this._options.rowHeight! > this.scrollTop + viewportScrollH + this.offset) {
+      if (rowBottomPosition > this.scrollTop + viewportScrollH + this.offset) {
         this.scrollTo(doPaging ? rowAtTop : rowAtBottom);
         this.render();
       }
       // or page up?
-      else if (rowNumber * this._options.rowHeight! < this.scrollTop + this.offset) {
+      else if (rowAtTop < this.scrollTop + this.offset) {
         this.scrollTo(doPaging ? rowAtBottom : rowAtTop);
         this.render();
       }
@@ -7079,7 +7234,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Number} row - grid row number
    */
   scrollRowToTop(row: number): void {
-    this.scrollTo(row * this._options.rowHeight!);
+    const rowAtTop =
+      this.hasFrozenRows && !this._options.frozenBottom ? this.getRowPosition(row) - this.frozenRowsHeight : this.getRowPosition(row);
+    this.scrollTo(rowAtTop);
     this.render();
   }
 
@@ -7087,8 +7244,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const deltaRows = dir * this.numVisibleRows;
     /// First fully visible row crosses the line with
     /// y === bottomOfTopmostFullyVisibleRow
-    const bottomOfTopmostFullyVisibleRow = this.scrollTop + this._options.rowHeight! - 1;
-    this.scrollTo((this.getRowFromPosition(bottomOfTopmostFullyVisibleRow) + deltaRows) * this._options.rowHeight!);
+    const bottomOfTopmostFullyVisibleRow = this.scrollTop + this.getRowHeight() - 1;
+    this.scrollTo(this.getRowPosition(this.getRowFromPosition(bottomOfTopmostFullyVisibleRow) + deltaRows));
     this.render();
 
     if (this._options.enableCellNavigation && isDefined(this.activeRow)) {

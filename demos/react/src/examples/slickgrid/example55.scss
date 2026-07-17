@@ -1,0 +1,12 @@
+#slickGridContainer-grid55 {
+  --slick-cell-border-left: 1px solid #dedede;
+}
+
+#slickGridContainer-grid55 .slickgrid-container .slick-cell.cell-wrap {
+  line-height: 1.25;
+  padding: 4px 6px;
+  white-space: normal;
+  text-overflow: clip;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}

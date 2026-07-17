@@ -62,6 +62,8 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example52', name: '52- SQL Backend Service', component: () => import('../components/Example52.vue') },
   { path: '/example53', name: '53- Custom Filter Bar', component: () => import('../components/Example53.vue') },
   { path: '/example54', name: '54- AI / Web MCP Toolkit', component: () => import('../components/Example54.vue') },
+  { path: '/example55', name: '55- Variable Row Height (Provider)', component: () => import('../components/Example55.vue') },
+  { path: '/example56', name: '56- Variable Row Height (Dynamic)', component: () => import('../components/Example56.vue') },
 ];
 
 export const router = createRouter({

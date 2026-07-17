@@ -1,0 +1,41 @@
+<div id="demo-container" class="container-fluid">
+  <h2>
+    Example 56: Variable Row Height (Dynamic)
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example56.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+
+  <div class="subtitle">
+    Variable row heights via <code>ItemMetadata.height</code> fallback, with compact mode rebuilding heights through
+    <code>invalidateRowHeights()</code>.
+  </div>
+
+  <div class="row" style="margin-bottom: 6px">
+    <div class="col-md-12">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="toggleDensity()" data-test="toggle-density">
+        <span class="mdi mdi-flip-vertical"></span>
+        <span> Toggle Compact Density</span>
+      </button>
+      <button class="btn btn-outline-secondary btn-sm ms-2 btn-icon" (click)="scrollToRow90()" data-test="scroll-row-90-example56">
+        <span class="mdi mdi-arrow-down"></span>
+        <span> Scroll To row 90</span>
+      </button>
+    </div>
+  </div>
+
+  <angular-slickgrid
+    gridId="grid56"
+    [columns]="columns"
+    [options]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+  >
+  </angular-slickgrid>
+</div>
