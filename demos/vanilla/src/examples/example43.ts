@@ -53,6 +53,9 @@ export default class Example43 {
     this.gridOptions = {
       enableFiltering: true,
       enableSorting: true,
+      autoResize: {
+        container: '.right-aside',
+      },
     };
   }
 
