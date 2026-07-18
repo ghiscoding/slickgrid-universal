@@ -2948,7 +2948,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
     (this._options.shadowRoot || document.head).appendChild(this._style);
 
-    const rowHeight = this._options.rowHeight! - this.cellHeightDiff;
     const rules = [
       `.${this.uid} .slick-group-header-column { left: 1000px; }`,
       `.${this.uid} .slick-header-column { left: 1000px; }`,
@@ -2959,16 +2958,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       `.${this.uid} .slick-footerrow-columns { height: ${this._options.footerRowHeight}px; }`,
     ];
 
-    if (this.isVariableRowHeight()) {
-      // in variable row height mode the cell height fills the row, and the row height is set
-      // per-row via inline style for rows that differ from the default; the stylesheet only
-      // provides the default row height so that unchanged rows don't need an inline style
-      rules.push(`.${this.uid} .slick-cell { height: calc(100% - ${this.cellHeightDiff}px); }`);
-      rules.push(`.${this.uid} .slick-row { height: ${this._options.rowHeight}px; }`);
-    } else {
-      rules.push(`.${this.uid} .slick-cell { height: ${rowHeight}px; }`);
-      rules.push(`.${this.uid} .slick-row { height: ${this._options.rowHeight}px; }`);
-    }
+    // Rows get a default height from CSS; in variable-height mode, individual rows override
+    // this via inline `style="height: Xpx"`. Cells use `height: 100%` (stylesheet) to fill their row.
+    rules.push(`.${this.uid} .slick-row { height: ${this._options.rowHeight}px; }`);
 
     const sheet = this._style.sheet;
 
@@ -4030,13 +4022,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return false;
     }
     // Lazily probe whether getRowMetadata actually returns a height property.
-    // Only cache `true` (confirmed variable-height) or `false` when we had real data to probe.
-    // When no data is available yet, leave `_metadataHasHeight` as undefined so we re-probe once data arrives.
+    // Only cache when we have real data to probe; when data isn't available yet return false
+    // (safe default) without caching, so the next call re-probes once data arrives.
     if (this._metadataHasHeight === undefined) {
       const dataView = this.data as CustomDataView<TData>;
       const len = typeof dataView?.getLength === 'function' ? dataView.getLength() : Array.isArray(this.data) ? this.data.length : 0;
       if (len > 0) {
-        // we have data — probe up to 20 rows and cache a definitive answer
+        // we have data — probe up to 20 rows and cache the definitive answer
         this._metadataHasHeight = false;
         for (let i = 0; i < Math.min(len, 20); i++) {
           const item = typeof dataView?.getItem === 'function' ? dataView.getItem(i) : (this.data as TData[])[i];
@@ -4048,7 +4040,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
       // else: no data yet — return false without caching so we re-probe on the next call
     }
-    return this._metadataHasHeight ?? false;
+    return this._metadataHasHeight === true;
   }
 
   /**

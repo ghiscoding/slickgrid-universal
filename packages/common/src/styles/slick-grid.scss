@@ -438,6 +438,7 @@
     box-sizing: border-box;
     border-style: var(--slick-grid-border-style, v.$slick-grid-border-style);
     display: var(--slick-cell-display, v.$slick-cell-display);
+    height: 100%;
     padding: 1px 2px;
     align-items: center;
   }
