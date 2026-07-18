@@ -117,8 +117,6 @@ function getData(itemCount: number): StoryItem[] {
 }
 
 #slickGridContainer-grid55 .slickgrid-container .slick-cell.cell-wrap {
-  line-height: 1.25;
-  padding: 4px 6px;
   white-space: normal;
   text-overflow: clip;
   overflow: hidden;

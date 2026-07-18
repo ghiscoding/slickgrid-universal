@@ -144,9 +144,6 @@ function getData(itemCount: number): TaskItem[] {
 }
 
 #slickGridContainer-grid56 .slickgrid-container .slick-cell.cell-wrap {
-  font-size: 14px;
-  line-height: 1.35;
-  padding: 4px 6px;
   white-space: normal;
   text-overflow: clip;
   overflow: hidden;
