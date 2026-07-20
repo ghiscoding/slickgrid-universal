@@ -457,22 +457,17 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
       grid: SlickGrid;
     }
   ) {
-    try {
-      const viewModel = this._views.find((x) => x.id === args.rowId);
-      if (viewModel && !viewModel.rendered) {
-        if (this.rowDetailViewOptions?.keepComponentAlive && viewModel.instance) {
-          // Try to reattach; if it fails, fall back to redraw
-          const reattachSuccess = this.reattachViewComponent(viewModel);
-          if (!reattachSuccess) {
-            this.redrawViewComponent(viewModel);
-          }
-        } else {
+    const viewModel = this._views.find((x) => x.id === args.rowId);
+    if (viewModel && !viewModel.rendered) {
+      if (this.rowDetailViewOptions?.keepComponentAlive && viewModel.instance) {
+        // Try to reattach; if it fails, fall back to redraw
+        const reattachSuccess = this.reattachViewComponent(viewModel);
+        if (!reattachSuccess) {
           this.redrawViewComponent(viewModel);
         }
+      } else {
+        this.redrawViewComponent(viewModel);
       }
-    } catch (error) {
-      // Handle any unexpected errors in viewport change handling
-      console.error('Error in handleOnRowBackToViewportRange:', error);
     }
   }
 

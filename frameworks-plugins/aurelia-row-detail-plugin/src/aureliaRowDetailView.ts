@@ -416,22 +416,17 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
       grid: SlickGrid;
     }
   ) {
-    try {
-      const slot = this._slots.find((x) => x.id === args.rowId);
-      if (slot) {
-        if (this.rowDetailViewOptions?.keepComponentAlive && this._keepAliveSlotIds.has(args.rowId)) {
-          // Try to reattach; if it fails, fall back to redraw
-          const reattachSuccess = this.reattachViewSlot(slot);
-          if (!reattachSuccess) {
-            await this.redrawViewSlot(slot);
-          }
-        } else {
+    const slot = this._slots.find((x) => x.id === args.rowId);
+    if (slot) {
+      if (this.rowDetailViewOptions?.keepComponentAlive && this._keepAliveSlotIds.has(args.rowId)) {
+        // Try to reattach; if it fails, fall back to redraw
+        const reattachSuccess = this.reattachViewSlot(slot);
+        if (!reattachSuccess) {
           await this.redrawViewSlot(slot);
         }
+      } else {
+        await this.redrawViewSlot(slot);
       }
-    } catch (error) {
-      // Handle any unexpected errors in viewport change handling
-      console.error('Error in handleOnRowBackToViewportRange:', error);
     }
   }
 
