@@ -117,7 +117,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
         this._component = this.gridOptions.rowDetailView.viewComponent;
         this.addonOptions.postTemplate = (itemDetail: any) => {
           const id = itemDetail[this.datasetIdPropName];
-          if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport) {
+          if (this.rowDetailViewOptions?.keepComponentAlive) {
             // reuse the same container element so React's root is never re-created
             if (!this._persistedContainers.has(id)) {
               this._persistedContainers.set(id, createDomElement('div', { className: `${ROW_DETAIL_CONTAINER_PREFIX}${id}` }));
@@ -197,7 +197,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
             if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
               this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
             }
-            if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport) {
+            if (this.rowDetailViewOptions?.keepComponentAlive) {
               // root lives on in the persisted container; just mark as not rendered
               const view = this._views.find((v) => v.id === args.item[this.datasetIdPropName]);
               if (view) {
@@ -397,7 +397,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   ) {
     const viewModel = this._views.find((x) => x.id === args.rowId);
     if (viewModel && !viewModel.rendered) {
-      if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport && viewModel.root) {
+      if (this.rowDetailViewOptions?.keepComponentAlive && viewModel.root) {
         // persisted container was re-inserted into DOM by postTemplate; root is still live
         viewModel.rendered = true;
       } else {

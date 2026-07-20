@@ -169,13 +169,13 @@ export class Example45Component implements OnDestroy, OnInit {
   changeKeepingComponentAlive() {
     this.isKeepingComponentAlive = !this.isKeepingComponentAlive;
     this.closeAllRowDetail();
-    // keepComponentAliveOnOutOfViewport is part of common RowDetailViewOption
+    // keepComponentAlive is part of common RowDetailViewOption
     if (this.gridOptions.rowDetailView) {
-      this.gridOptions.rowDetailView.keepComponentAliveOnOutOfViewport = this.isKeepingComponentAlive;
+      this.gridOptions.rowDetailView.keepComponentAlive = this.isKeepingComponentAlive;
     }
     // Update the plugin instance's internal _addonOptions
     const options = this.rowDetailInstance.getOptions();
-    this.rowDetailInstance.setOptions({ ...options, keepComponentAliveOnOutOfViewport: this.isKeepingComponentAlive });
+    this.rowDetailInstance.setOptions({ ...options, keepComponentAlive: this.isKeepingComponentAlive });
     return true;
   }
 

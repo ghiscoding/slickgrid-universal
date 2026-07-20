@@ -158,10 +158,10 @@ function changeKeepingComponentAlive() {
   isKeepingComponentAlive.value = !isKeepingComponentAlive.value;
   closeAllRowDetail();
   if (gridOptions.value?.rowDetailView) {
-    gridOptions.value.rowDetailView.keepComponentAliveOnOutOfViewport = isKeepingComponentAlive.value;
+    gridOptions.value.rowDetailView.keepComponentAlive = isKeepingComponentAlive.value;
   }
   const options = rowDetailInstance.value.getOptions();
-  rowDetailInstance.value.setOptions({ ...options, keepComponentAliveOnOutOfViewport: isKeepingComponentAlive.value });
+  rowDetailInstance.value.setOptions({ ...options, keepComponentAlive: isKeepingComponentAlive.value });
   return true;
 }
 

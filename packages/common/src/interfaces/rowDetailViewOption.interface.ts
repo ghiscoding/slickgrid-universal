@@ -28,7 +28,7 @@ export interface RowDetailViewOption {
    * Note: preserved components are not garbage-collected until the row is explicitly collapsed, so this uses more
    * memory when many rows are expanded simultaneously.
    */
-  keepComponentAliveOnOutOfViewport?: boolean;
+  keepComponentAlive?: boolean;
 
   /** Extra classes to be added to the collapse Toggle */
   collapsedClass?: string;

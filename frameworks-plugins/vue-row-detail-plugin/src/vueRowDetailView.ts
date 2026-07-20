@@ -204,7 +204,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
             if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
               this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
             }
-            if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport) {
+            if (this.rowDetailViewOptions?.keepComponentAlive) {
               this.detachViewFromDom(args.item);
             } else {
               this.disposeViewByItem(args.item);
@@ -315,7 +315,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
       const viewObj = this._views.find((obj) => obj.id === itemId);
 
       // If keep-component-alive is enabled and component already exists (but detached), reattach it instead of recreating
-      if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport && viewObj?.instance && !viewObj.rendered) {
+      if (this.rowDetailViewOptions?.keepComponentAlive && viewObj?.instance && !viewObj.rendered) {
         const reattachSuccess = this.reattachViewComponent(viewObj);
         if (reattachSuccess) {
           return;
@@ -350,7 +350,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
 
   /**
    * Detach a view component from the DOM without destroying it.
-   * Used when `keepComponentAliveOnOutOfViewport` is enabled so component state is preserved.
+   * Used when `keepComponentAlive` is enabled so component state is preserved.
    */
   protected detachViewFromDom(item: any): void {
     const foundView = this._views.find((view: CreatedView) => view.id === item[this.datasetIdPropName]);
@@ -363,7 +363,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
 
   /**
    * Reattach a preserved (detached) view component into the freshly rendered container element.
-   * Used when `keepComponentAliveOnOutOfViewport` is enabled and the row scrolls back into view.
+   * Used when `keepComponentAlive` is enabled and the row scrolls back into view.
    * Returns true if reattach succeeded, false if it failed (in which case re-rendering is needed).
    */
   protected reattachViewComponent(view: CreatedView): boolean {
@@ -460,7 +460,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     try {
       const viewModel = this._views.find((x) => x.id === args.rowId);
       if (viewModel && !viewModel.rendered) {
-        if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport && viewModel.instance) {
+        if (this.rowDetailViewOptions?.keepComponentAlive && viewModel.instance) {
           // Try to reattach; if it fails, fall back to redraw
           const reattachSuccess = this.reattachViewComponent(viewModel);
           if (!reattachSuccess) {

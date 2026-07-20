@@ -211,10 +211,10 @@ const Example45: React.FC = () => {
     const newIsKeepingComponentAlive = !isKeepingComponentAlive;
     closeAllRowDetail();
     if (gridOptions?.rowDetailView) {
-      gridOptions.rowDetailView.keepComponentAliveOnOutOfViewport = newIsKeepingComponentAlive;
+      gridOptions.rowDetailView.keepComponentAlive = newIsKeepingComponentAlive;
     }
     const options = rowDetailInstance().getOptions();
-    rowDetailInstance().setOptions({ ...options, keepComponentAliveOnOutOfViewport: newIsKeepingComponentAlive });
+    rowDetailInstance().setOptions({ ...options, keepComponentAlive: newIsKeepingComponentAlive });
     setIsKeepingComponentAlive(newIsKeepingComponentAlive);
     return true;
   }

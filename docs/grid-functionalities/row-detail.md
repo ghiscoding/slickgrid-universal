@@ -27,7 +27,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 By default, when a Row Detail is scrolled out of the viewport, the component is destroyed and recreated when scrolled back in. This means any state in the Row Detail component (including nested grid filters, sorts, or form inputs) is lost.
 
-To preserve Row Detail component state across viewport changes, you can enable the `keepComponentAliveOnOutOfViewport` option:
+To preserve Row Detail component state across viewport changes, you can enable the `keepComponentAlive` option:
 
 ```ts
 rowDetailView: {
@@ -35,7 +35,7 @@ rowDetailView: {
   
   // Keep Row Detail component alive when scrolled out of viewport (preserves state)
   // Default: false
-  keepComponentAliveOnOutOfViewport: true,
+  keepComponentAlive: true,
 }
 ```
 
@@ -54,7 +54,7 @@ You can dynamically change this option using `setOptions()`:
 changeKeepingComponentAlive() {
   const rowDetailInstance = this.extensionService.getExtensionInstanceByName('rowDetailView');
   const options = rowDetailInstance.getOptions();
-  options.keepComponentAliveOnOutOfViewport = !options.keepComponentAliveOnOutOfViewport;
+  options.keepComponentAlive = !options.keepComponentAlive;
   rowDetailInstance.setOptions(options);
 }
 ```

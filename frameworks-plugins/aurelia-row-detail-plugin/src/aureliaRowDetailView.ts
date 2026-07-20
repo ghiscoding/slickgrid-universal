@@ -183,7 +183,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
             if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
               this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
             }
-            if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport) {
+            if (this.rowDetailViewOptions?.keepComponentAlive) {
               this.detachViewFromDom(args.item);
             } else {
               this.disposeView(args.item);
@@ -277,7 +277,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
 
       // If keep-component-alive is enabled and component already exists (but detached), try to reattach it
       // If reattach fails, fall back to re-rendering fresh
-      if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport && slotObj?.controller && this._keepAliveSlotIds.has(slotObj.id)) {
+      if (this.rowDetailViewOptions?.keepComponentAlive && slotObj?.controller && this._keepAliveSlotIds.has(slotObj.id)) {
         const reattachSuccess = this.reattachViewSlot(slotObj);
         if (reattachSuccess) {
           return;
@@ -307,7 +307,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
 
   /**
    * Detach a view slot from the DOM without deactivating its controller.
-   * Used when `keepComponentAliveOnOutOfViewport` is enabled so component state is preserved.
+   * Used when `keepComponentAlive` is enabled so component state is preserved.
    */
   protected detachViewFromDom(item: any): void {
     const foundSlot = this._slots.find((slot: CreatedView) => slot.id === item[this.datasetIdPropName]);
@@ -321,7 +321,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
 
   /**
    * Reattach a preserved (detached) view slot into the freshly rendered container element.
-   * Used when `keepComponentAliveOnOutOfViewport` is enabled and the row scrolls back into view.
+   * Used when `keepComponentAlive` is enabled and the row scrolls back into view.
    * Returns true if reattach succeeded, false if it failed (in which case re-rendering is needed).
    */
   protected reattachViewSlot(slot: CreatedView): boolean {
@@ -419,7 +419,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
     try {
       const slot = this._slots.find((x) => x.id === args.rowId);
       if (slot) {
-        if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport && this._keepAliveSlotIds.has(args.rowId)) {
+        if (this.rowDetailViewOptions?.keepComponentAlive && this._keepAliveSlotIds.has(args.rowId)) {
           // Try to reattach; if it fails, fall back to redraw
           const reattachSuccess = this.reattachViewSlot(slot);
           if (!reattachSuccess) {

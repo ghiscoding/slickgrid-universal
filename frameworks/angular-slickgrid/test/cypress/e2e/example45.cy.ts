@@ -479,7 +479,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.wait(50);
         cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
 
-        // state should be PRESERVED because keepComponentAliveOnOutOfViewport is enabled
+        // state should be PRESERVED because keepComponentAlive is enabled
         cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
         cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
         cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');

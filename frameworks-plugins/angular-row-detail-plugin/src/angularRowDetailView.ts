@@ -202,7 +202,7 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
           if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
             this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
           }
-          if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport) {
+          if (this.rowDetailViewOptions?.keepComponentAlive) {
             this.detachViewFromDom(args.item);
           } else {
             this.disposeViewByItem(args.item);
@@ -285,7 +285,7 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
       const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
 
       // If keep-component-alive is enabled and component already exists (but detached), reattach it instead of creating new
-      if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport && viewObj?.componentRef && !viewObj.rendered) {
+      if (this.rowDetailViewOptions?.keepComponentAlive && viewObj?.componentRef && !viewObj.rendered) {
         this.reattachViewComponent(viewObj);
         return viewObj;
       }
@@ -324,7 +324,7 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
 
   /**
    * Detach a view component from the DOM and Angular's view tree without destroying it.
-   * Used when `keepComponentAliveOnOutOfViewport` is enabled so component state is preserved.
+   * Used when `keepComponentAlive` is enabled so component state is preserved.
    */
   protected detachViewFromDom(item: any): void {
     const foundView = this._views.find((view: CreatedView) => view.id === item[this.datasetIdPropName]);
@@ -339,7 +339,7 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
 
   /**
    * Reattach a preserved (detached) view component into the freshly rendered container element.
-   * Used when `keepComponentAliveOnOutOfViewport` is enabled and the row scrolls back into view.
+   * Used when `keepComponentAlive` is enabled and the row scrolls back into view.
    */
   protected reattachViewComponent(view: CreatedView): void {
     const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${ROW_DETAIL_CONTAINER_PREFIX}${view.id}`);
@@ -372,7 +372,7 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
     expandedView.rendered = false;
     const compRef = expandedView?.componentRef;
     if (compRef) {
-      // component may already be detached (keepComponentAliveOnOutOfViewport), so guard against double-detach
+      // component may already be detached (keepComponentAlive), so guard against double-detach
       tryCatch(() => this.appRef.detachView(compRef.hostView));
       if (typeof compRef?.destroy === 'function') {
         compRef.destroy();
@@ -449,7 +449,7 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
   ): void {
     const viewModel = this._views.find((x) => x.id === args.rowId);
     if (viewModel && !viewModel.rendered) {
-      if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport && viewModel.componentRef) {
+      if (this.rowDetailViewOptions?.keepComponentAlive && viewModel.componentRef) {
         this.reattachViewComponent(viewModel);
       } else {
         this.redrawViewComponent(viewModel);

@@ -161,10 +161,10 @@ export class Example45 {
     this.isKeepingComponentAlive = !this.isKeepingComponentAlive;
     this.closeAllRowDetail();
     if (this.gridOptions.rowDetailView) {
-      this.gridOptions.rowDetailView.keepComponentAliveOnOutOfViewport = this.isKeepingComponentAlive;
+      this.gridOptions.rowDetailView.keepComponentAlive = this.isKeepingComponentAlive;
     }
     const options = this.rowDetailInstance.getOptions();
-    this.rowDetailInstance.setOptions({ ...options, keepComponentAliveOnOutOfViewport: this.isKeepingComponentAlive });
+    this.rowDetailInstance.setOptions({ ...options, keepComponentAlive: this.isKeepingComponentAlive });
     return true;
   }
 
