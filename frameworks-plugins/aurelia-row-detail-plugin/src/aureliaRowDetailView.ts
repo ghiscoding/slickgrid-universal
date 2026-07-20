@@ -354,7 +354,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
         }
         this._keepAliveSlotIds.delete(slot.id);
         return true;
-      } catch (error) {
+      } catch {
         // If reattach fails (e.g., circular reference, DOM constraints), return false to trigger re-render
         return false;
       }
