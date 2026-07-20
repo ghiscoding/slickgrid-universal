@@ -853,9 +853,6 @@ importers:
       '@slickgrid-universal/row-detail-view-plugin':
         specifier: workspace:*
         version: link:../../packages/row-detail-view-plugin
-      '@slickgrid-universal/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
       aurelia-slickgrid:
         specifier: workspace:*
         version: link:../../frameworks/aurelia-slickgrid
@@ -877,9 +874,6 @@ importers:
       '@slickgrid-universal/row-detail-view-plugin':
         specifier: workspace:*
         version: link:../../packages/row-detail-view-plugin
-      '@slickgrid-universal/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
       react:
         specifier: 'catalog:'
         version: 19.2.7
