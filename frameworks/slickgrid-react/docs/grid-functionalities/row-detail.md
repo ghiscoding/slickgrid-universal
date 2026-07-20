@@ -23,6 +23,44 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 > For this reason, you should avoid using dynamic elements (i.e. form inputs) because whenever a re-render kicks in, it will reset and re-render these elements as if nothing happened.
 > So you should consider using Row Detail mainly for showing static data (hence where its name comes from "Row Detail" to show more detailed info) and even though it works with dynamic elements, you have to know its limitation.
 
+### Keeping Row Detail Components Alive During Scrolling
+
+By default, when a Row Detail is scrolled out of the viewport, the component is destroyed and recreated when scrolled back in. This means any state in the Row Detail component (including nested grid filters, sorts, or form inputs) is lost.
+
+To preserve Row Detail component state across viewport changes, you can enable the `keepComponentAliveOnOutOfViewport` option:
+
+```ts
+rowDetailView: {
+  // ... other options
+  
+  // Keep Row Detail component alive when scrolled out of viewport (preserves state)
+  // Default: false
+  keepComponentAliveOnOutOfViewport: true,
+}
+```
+
+When enabled:
+- Row Detail components are detached (not destroyed) when scrolled out of viewport
+- Components are reattached when scrolled back in
+- Component state is fully preserved (including nested grid state, filters, sorts, etc.)
+
+**Trade-offs:**
+- **Pros:** Component state is preserved, better UX for nested grids with dynamic state
+- **Cons:** Slightly higher memory usage since components stay in memory even when not visible
+
+You can dynamically change this option using `setOptions()`:
+
+```ts
+changeKeepingComponentAlive() {
+  const rowDetailInstance = reactGridRef.current?.extensionService.getExtensionInstanceByName('rowDetailView');
+  const options = rowDetailInstance?.getOptions();
+  if (options) {
+    options.keepComponentAliveOnOutOfViewport = !options.keepComponentAliveOnOutOfViewport;
+    rowDetailInstance?.setOptions(options);
+  }
+}
+```
+
 ##### NOTE
 There is currently a known problem with Row Detail when loading the Row Detail Components, it currently shows console warnings (see below), however these are just warnings and they don't show up in Production code. If anyone knows how to fix it please provide a Pull Request as a contribution (please note that the suggestion to use `root.render()` does NOT work as intended hence why we call `createRoot()` every time a row detail is rendered).
 

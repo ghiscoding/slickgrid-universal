@@ -446,6 +446,75 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
+      it('should disable inner Grid State/Presets and enable Keep Component Alive on Scroll', () => {
+        // disable inner grid state presets (auto-closes all rows)
+        cy.get('[data-test="use-inner-grid-state-presets"]').click();
+        // enable keep component alive (auto-closes all rows)
+        cy.get('[data-test="keep-component-alive"]').click();
+      });
+
+      it('should open 2nd row, sort inner grid "Freight" ascending and filter "Ship City" with "m" and expect 2 sorted rows', () => {
+        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 1}px;"] .slick-cell:nth(0)`)
+          .click()
+          .wait(40);
+
+        cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
+
+        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list')
+          .should('be.visible')
+          .children('.slick-menu-item:nth-of-type(3)')
+          .children('.slick-menu-content')
+          .should('contain', 'Sort Ascending')
+          .click();
+
+        cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
+
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+      });
+
+      it('should scroll far down (out of viewport) and back up and expect inner grid sort/filter state is PRESERVED (keepComponentAlive)', () => {
+        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 800);
+        cy.wait(50);
+        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
+
+        // state should be PRESERVED because keepComponentAliveOnOutOfViewport is enabled
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+      });
+
+      it('should scroll out of viewport a second time and back up and still expect inner grid sort/filter state is PRESERVED', () => {
+        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 800);
+        cy.wait(50);
+        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
+
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+      });
+
+      it('should collapse the 2nd row detail and re-open it and expect default (unfiltered) inner grid rows', () => {
+        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 1}px;"] .slick-cell:nth(0)`)
+          .click()
+          .wait(40);
+        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 1}px;"] .slick-cell:nth(0)`)
+          .click()
+          .wait(40);
+
+        // after collapse + reopen, component is recreated so filters/sort are reset — default order
+        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('not.contain', '10281');
+      });
+
+      it('should collapse all rows and disable Keep Component Alive on Scroll', () => {
+        cy.get('[data-test="collapse-all-btn"]').click();
+        cy.get('[data-test="keep-component-alive"]').click();
+      });
+
       it('should reload page on first describe run', () => {
         if (isUsingAutoHeight) {
           cy.reload();

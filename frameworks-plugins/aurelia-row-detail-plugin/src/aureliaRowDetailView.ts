@@ -30,6 +30,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
   protected _userProcessFn?: (item: any) => Promise<any>;
   protected _viewModel?: Constructable;
   protected _timer?: any;
+  protected _keepAliveSlotIds = new Set<string | number>();
 
   constructor(
     protected readonly aureliaUtilService: AureliaUtilService,
@@ -52,7 +53,9 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
   }
 
   get rowDetailViewOptions(): RowDetailView | undefined {
-    return this.gridOptions.rowDetailView;
+    // Read from getOptions() (which returns _addonOptions) instead of gridOptions.rowDetailView
+    // so that dynamic updates via setOptions() are reflected
+    return this.getOptions() as RowDetailView | undefined;
   }
 
   /** Dispose of the RowDetailView Extension */
@@ -180,7 +183,11 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
             if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
               this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
             }
-            this.disposeView(args.item);
+            if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport) {
+              this.detachViewFromDom(args.item);
+            } else {
+              this.disposeView(args.item);
+            }
           });
 
           this._eventHandler.subscribe(this.onRowOutOfViewportRange, (event, args) => {
@@ -266,6 +273,18 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
       `.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`
     );
     if (this._viewModel && containerElement) {
+      const slotObj = this._slots.find((obj) => obj.id === item[this.datasetIdPropName]);
+
+      // If keep-component-alive is enabled and component already exists (but detached), try to reattach it
+      // If reattach fails, fall back to re-rendering fresh
+      if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport && slotObj?.controller && this._keepAliveSlotIds.has(slotObj.id)) {
+        const reattachSuccess = this.reattachViewSlot(slotObj);
+        if (reattachSuccess) {
+          return;
+        }
+        // If reattach failed, fall through to re-render fresh below
+      }
+
       // render row detail
       const bindableData = {
         model: item,
@@ -275,7 +294,6 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
       const aureliaComp = await this.aureliaUtilService.createAureliaViewModelAddToSlot(this._viewModel, bindableData, containerElement);
-      const slotObj = this._slots.find((obj) => obj.id === item[this.datasetIdPropName]);
 
       if (slotObj && aureliaComp) {
         slotObj.controller = aureliaComp.controller;
@@ -287,9 +305,67 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
   // protected functions
   // ------------------
 
+  /**
+   * Detach a view slot from the DOM without deactivating its controller.
+   * Used when `keepComponentAliveOnOutOfViewport` is enabled so component state is preserved.
+   */
+  protected detachViewFromDom(item: any): void {
+    const foundSlot = this._slots.find((slot: CreatedView) => slot.id === item[this.datasetIdPropName]);
+    if (foundSlot?.controller) {
+      // physically remove the controller's host element from the visible DOM without calling deactivate()
+      const host = (foundSlot.controller as any).host as HTMLElement | undefined;
+      host?.remove();
+      this._keepAliveSlotIds.add(foundSlot.id);
+    }
+  }
+
+  /**
+   * Reattach a preserved (detached) view slot into the freshly rendered container element.
+   * Used when `keepComponentAliveOnOutOfViewport` is enabled and the row scrolls back into view.
+   * Returns true if reattach succeeded, false if it failed (in which case re-rendering is needed).
+   */
+  protected reattachViewSlot(slot: CreatedView): boolean {
+    const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${ROW_DETAIL_CONTAINER_PREFIX}${slot.id}`);
+    const host = (slot.controller as any)?.host as HTMLElement | undefined;
+    if (containerElement && host) {
+      try {
+        // If host and containerElement are the same, component is already in correct position
+        if (host === containerElement) {
+          this._keepAliveSlotIds.delete(slot.id);
+          return true;
+        }
+
+        // If containerElement is a descendant of host, there's a circular reference - can't reattach
+        if (host.contains(containerElement)) {
+          return false;
+        }
+
+        // Remove any old/stale container elements from within the host to prevent circular references
+        const oldContainers = host.querySelectorAll(`.${ROW_DETAIL_CONTAINER_PREFIX}${slot.id}`);
+        oldContainers.forEach((oldContainer) => {
+          if (oldContainer !== containerElement && oldContainer.parentElement === host) {
+            oldContainer.remove();
+          }
+        });
+
+        // Only append if not already in this container (prevents HierarchyRequestError)
+        if (host.parentElement !== containerElement) {
+          containerElement.appendChild(host);
+        }
+        this._keepAliveSlotIds.delete(slot.id);
+        return true;
+      } catch (error) {
+        // If reattach fails (e.g., circular reference, DOM constraints), return false to trigger re-render
+        return false;
+      }
+    }
+    return false;
+  }
+
   protected disposeView(item: any, removeFromArray = false): void {
     const foundSlotIndex = this._slots.findIndex((slot: CreatedView) => slot.id === item[this.datasetIdPropName]);
     if (foundSlotIndex >= 0 && this.disposeViewSlot(this._slots[foundSlotIndex])) {
+      this._keepAliveSlotIds.delete(this._slots[foundSlotIndex].id);
       if (removeFromArray) {
         this._slots.splice(foundSlotIndex, 1);
       }
@@ -340,9 +416,22 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
       grid: SlickGrid;
     }
   ) {
-    const slot = this._slots.find((x) => x.id === args.rowId);
-    if (slot) {
-      this.redrawViewSlot(slot);
+    try {
+      const slot = this._slots.find((x) => x.id === args.rowId);
+      if (slot) {
+        if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport && this._keepAliveSlotIds.has(args.rowId)) {
+          // Try to reattach; if it fails, fall back to redraw
+          const reattachSuccess = this.reattachViewSlot(slot);
+          if (!reattachSuccess) {
+            await this.redrawViewSlot(slot);
+          }
+        } else {
+          await this.redrawViewSlot(slot);
+        }
+      }
+    } catch (error) {
+      // Handle any unexpected errors in viewport change handling
+      console.error('Error in handleOnRowBackToViewportRange:', error);
     }
   }
 

@@ -25,6 +25,7 @@ export class Example45Component implements OnDestroy, OnInit {
   hideSubTitle = false;
   isUsingInnerGridStatePresets = false;
   isUsingAutoHeight = false;
+  isKeepingComponentAlive = false;
   serverWaitDelay = FAKE_SERVER_DELAY;
 
   get rowDetailInstance(): AngularRowDetailView {
@@ -162,6 +163,19 @@ export class Example45Component implements OnDestroy, OnInit {
   changeUsingInnerGridStatePresets() {
     this.isUsingInnerGridStatePresets = !this.isUsingInnerGridStatePresets;
     this.closeAllRowDetail();
+    return true;
+  }
+
+  changeKeepingComponentAlive() {
+    this.isKeepingComponentAlive = !this.isKeepingComponentAlive;
+    this.closeAllRowDetail();
+    // keepComponentAliveOnOutOfViewport is part of common RowDetailViewOption
+    if (this.gridOptions.rowDetailView) {
+      this.gridOptions.rowDetailView.keepComponentAliveOnOutOfViewport = this.isKeepingComponentAlive;
+    }
+    // Update the plugin instance's internal _addonOptions
+    const options = this.rowDetailInstance.getOptions();
+    this.rowDetailInstance.setOptions({ ...options, keepComponentAliveOnOutOfViewport: this.isKeepingComponentAlive });
     return true;
   }
 

@@ -16,6 +16,7 @@ import {
 } from '@slickgrid-universal/common';
 import type { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import { tryCatch } from '@slickgrid-universal/utils';
 import { type AngularUtilService, type GridOption } from 'angular-slickgrid';
 import { Observable, type Subject } from 'rxjs';
 import type { RowDetailView } from './interfaces.js';
@@ -65,7 +66,9 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
   }
 
   get rowDetailViewOptions(): RowDetailView | undefined {
-    return this.gridOptions.rowDetailView;
+    // Read from getOptions() (which returns _addonOptions) instead of gridOptions.rowDetailView
+    // so that dynamic updates via setOptions() are reflected
+    return this.getOptions() as RowDetailView | undefined;
   }
 
   addRxJsResource(rxjs: RxJsFacade): void {
@@ -199,7 +202,11 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
           if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
             this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
           }
-          this.disposeViewByItem(args.item);
+          if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport) {
+            this.detachViewFromDom(args.item);
+          } else {
+            this.disposeViewByItem(args.item);
+          }
         });
 
         this.eventHandler.subscribe(this.onRowOutOfViewportRange, (e, args) => {
@@ -275,6 +282,15 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
   renderViewModel(item: any): CreatedView | undefined {
     const containerElement = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`);
     if (this._viewComponent && containerElement) {
+      const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
+
+      // If keep-component-alive is enabled and component already exists (but detached), reattach it instead of creating new
+      if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport && viewObj?.componentRef && !viewObj.rendered) {
+        this.reattachViewComponent(viewObj);
+        return viewObj;
+      }
+
+      // Otherwise, create a new component
       // render row detail
       const componentOutput = this.angularUtilService.createAngularComponentAppendToDom(
         this._viewComponent,
@@ -292,7 +308,6 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
       );
 
       if (componentOutput?.componentRef) {
-        const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
         if (viewObj) {
           viewObj.componentRef = componentOutput.componentRef;
           viewObj.rendered = true;
@@ -306,6 +321,42 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
   // --
   // protected functions
   // ------------------
+
+  /**
+   * Detach a view component from the DOM and Angular's view tree without destroying it.
+   * Used when `keepComponentAliveOnOutOfViewport` is enabled so component state is preserved.
+   */
+  protected detachViewFromDom(item: any): void {
+    const foundView = this._views.find((view: CreatedView) => view.id === item[this.datasetIdPropName]);
+    if (foundView?.componentRef) {
+      foundView.rendered = false;
+      // detach from Angular's view tree to pause change detection (but keep the instance alive)
+      tryCatch(() => this.appRef.detachView(foundView.componentRef!.hostView));
+      // remove native element from DOM (the formatter will create a fresh container on re-render)
+      foundView.componentRef.location.nativeElement?.remove();
+    }
+  }
+
+  /**
+   * Reattach a preserved (detached) view component into the freshly rendered container element.
+   * Used when `keepComponentAliveOnOutOfViewport` is enabled and the row scrolls back into view.
+   */
+  protected reattachViewComponent(view: CreatedView): void {
+    const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${ROW_DETAIL_CONTAINER_PREFIX}${view.id}`);
+    if (containerElement && view.componentRef) {
+      const nativeElement = view.componentRef.location.nativeElement;
+
+      // Only append if not already in this container
+      if (nativeElement.parentElement !== containerElement) {
+        containerElement.appendChild(nativeElement);
+      }
+
+      // re-attach to Angular's view tree to resume change detection
+      // Use try-catch in case view is already attached
+      tryCatch(() => this.appRef.attachView(view.componentRef!.hostView));
+      view.rendered = true;
+    }
+  }
 
   protected disposeViewByItem(item: any, removeFromArray = false): void {
     const foundViewIndex = this._views.findIndex((view: CreatedView) => view.id === item[this.datasetIdPropName]);
@@ -321,7 +372,8 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
     expandedView.rendered = false;
     const compRef = expandedView?.componentRef;
     if (compRef) {
-      this.appRef.detachView(compRef.hostView);
+      // component may already be detached (keepComponentAliveOnOutOfViewport), so guard against double-detach
+      tryCatch(() => this.appRef.detachView(compRef.hostView));
       if (typeof compRef?.destroy === 'function') {
         compRef.destroy();
       }
@@ -397,7 +449,11 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
   ): void {
     const viewModel = this._views.find((x) => x.id === args.rowId);
     if (viewModel && !viewModel.rendered) {
-      this.redrawViewComponent(viewModel);
+      if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport && viewModel.componentRef) {
+        this.reattachViewComponent(viewModel);
+      } else {
+        this.redrawViewComponent(viewModel);
+      }
     }
   }
 }

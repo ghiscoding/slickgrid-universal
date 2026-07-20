@@ -19,6 +19,7 @@ export class Example45 {
   dataset: Distributor[] = [];
   isUsingAutoHeight = false;
   isUsingInnerGridStatePresets = false;
+  isKeepingComponentAlive = false;
   hideSubTitle = false;
 
   get rowDetailInstance() {
@@ -153,6 +154,17 @@ export class Example45 {
   changeUsingInnerGridStatePresets() {
     this.isUsingInnerGridStatePresets = !this.isUsingInnerGridStatePresets;
     this.closeAllRowDetail();
+    return true;
+  }
+
+  changeKeepingComponentAlive() {
+    this.isKeepingComponentAlive = !this.isKeepingComponentAlive;
+    this.closeAllRowDetail();
+    if (this.gridOptions.rowDetailView) {
+      this.gridOptions.rowDetailView.keepComponentAliveOnOutOfViewport = this.isKeepingComponentAlive;
+    }
+    const options = this.rowDetailInstance.getOptions();
+    this.rowDetailInstance.setOptions({ ...options, keepComponentAliveOnOutOfViewport: this.isKeepingComponentAlive });
     return true;
   }
 

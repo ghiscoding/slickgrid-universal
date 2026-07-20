@@ -36,6 +36,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   protected _userProcessFn?: (item: any) => Promise<any>;
   protected gridContainerElement!: HTMLElement;
   protected _timer?: any;
+  protected _persistedContainers = new Map<string | number, HTMLElement>();
   _root?: Root;
 
   constructor(private readonly eventPubSubService: EventPubSubService) {
@@ -55,7 +56,9 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   }
 
   get rowDetailViewOptions(): RowDetailView | undefined {
-    return this.gridOptions.rowDetailView;
+    // Read from getOptions() (which returns _addonOptions) instead of gridOptions.rowDetailView
+    // so that dynamic updates via setOptions() are reflected
+    return this.getOptions() as RowDetailView | undefined;
   }
 
   /** Dispose of the RowDetailView Extension */
@@ -74,6 +77,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
         this.disposeViewByItem(view);
       }
     } while (this._views.length > 0);
+    this._persistedContainers.clear();
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
@@ -111,8 +115,17 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
       }
       if (!this.gridOptions.rowDetailView.postTemplate) {
         this._component = this.gridOptions.rowDetailView.viewComponent;
-        this.addonOptions.postTemplate = (itemDetail: any) =>
-          createDomElement('div', { className: `${ROW_DETAIL_CONTAINER_PREFIX}${itemDetail[this.datasetIdPropName]}` });
+        this.addonOptions.postTemplate = (itemDetail: any) => {
+          const id = itemDetail[this.datasetIdPropName];
+          if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport) {
+            // reuse the same container element so React's root is never re-created
+            if (!this._persistedContainers.has(id)) {
+              this._persistedContainers.set(id, createDomElement('div', { className: `${ROW_DETAIL_CONTAINER_PREFIX}${id}` }));
+            }
+            return this._persistedContainers.get(id)!;
+          }
+          return createDomElement('div', { className: `${ROW_DETAIL_CONTAINER_PREFIX}${id}` });
+        };
       }
 
       if (this._grid && this.gridOptions) {
@@ -184,7 +197,15 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
             if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
               this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
             }
-            this.disposeViewByItem(args.item);
+            if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport) {
+              // root lives on in the persisted container; just mark as not rendered
+              const view = this._views.find((v) => v.id === args.item[this.datasetIdPropName]);
+              if (view) {
+                view.rendered = false;
+              }
+            } else {
+              this.disposeViewByItem(args.item);
+            }
           });
 
           this._eventHandler.subscribe(this.onRowOutOfViewportRange, (event, args) => {
@@ -328,6 +349,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
       this.disposeViewComponent(this._views[foundViewIdx]);
       if (removeFromArray) {
         this._views.splice(foundViewIdx, 1);
+        this._persistedContainers.delete(item[this.datasetIdPropName]);
       }
     }
   }
@@ -375,7 +397,12 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   ) {
     const viewModel = this._views.find((x) => x.id === args.rowId);
     if (viewModel && !viewModel.rendered) {
-      this.redrawViewComponent(viewModel);
+      if (this.rowDetailViewOptions?.keepComponentAliveOnOutOfViewport && viewModel.root) {
+        // persisted container was re-inserted into DOM by postTemplate; root is still live
+        viewModel.rendered = true;
+      } else {
+        this.redrawViewComponent(viewModel);
+      }
     }
   }
 
