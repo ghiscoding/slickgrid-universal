@@ -275,7 +275,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
-  /** Render (or re-render) the View Component (Row Detail) */
+  /** (re)Render the View Component (Row Detail) */
   renderPreloadView(item: any) {
     const containerElement = this.gridContainerElement.querySelector(`.${PRELOAD_CONTAINER_PREFIX}`);
     if (this._preloadComponent && containerElement) {
@@ -295,7 +295,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
-  /** Render (or re-render) the View Component (Row Detail) */
+  /** (re)Render the View Component (Row Detail) */
   renderViewModel(item: any) {
     const containerElement = this.gridContainerElement.querySelector<HTMLElement>(
       `.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`

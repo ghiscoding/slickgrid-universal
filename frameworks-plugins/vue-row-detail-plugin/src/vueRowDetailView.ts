@@ -280,7 +280,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
-  /** Render (or re-render) the Preload Component */
+  /** (re)Render the Preload Component */
   protected renderPreloadView(item: any): void {
     const containerElement = this.gridContainerElement.querySelector(`.${PRELOAD_CONTAINER_PREFIX}`);
 
@@ -306,7 +306,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
-  /** Render (or re-render) the View Component (Row Detail) */
+  /** (re)Render the View Component (Row Detail) */
   protected renderViewModel(item: any): void {
     const itemId = item[this.datasetIdPropName];
     const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${ROW_DETAIL_CONTAINER_PREFIX}${itemId}`);

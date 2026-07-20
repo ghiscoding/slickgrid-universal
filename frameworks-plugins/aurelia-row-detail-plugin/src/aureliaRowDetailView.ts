@@ -254,7 +254,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
-  /** Render (or re-render) the View Slot (Row Detail) */
+  /** (re)Render the View Slot (Row Detail) */
   async renderPreloadView() {
     const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${PRELOAD_CONTAINER_PREFIX}`);
     if (this._preloadViewModel && containerElement) {
@@ -267,7 +267,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
-  /** Render (or re-render) the View Slot (Row Detail) */
+  /** (re)Render the View Slot (Row Detail) */
   async renderViewModel(item: any) {
     const containerElement = this.gridContainerElement.querySelector<HTMLElement>(
       `.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`
