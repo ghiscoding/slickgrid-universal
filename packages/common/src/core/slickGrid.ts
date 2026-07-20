@@ -7959,7 +7959,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected rowsToRanges(rows: number[]): SlickRange[] {
     const ranges: SlickRange[] = [];
-    const lastCell = this.columns.length - 1;
+    const columns = this.getVisibleColumns();
+    const lastCell = this.getColumnIndex(columns[columns.length - 1].id);
     for (let i = 0; i < rows.length; i++) {
       ranges.push(new SlickRange(rows[i], 0, rows[i], lastCell));
     }
