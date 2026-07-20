@@ -7957,9 +7957,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return true;
   }
 
-  protected rowsToRanges(rows: number[], useVisibleColumnsOnly = false): SlickRange[] {
+  protected rowsToRanges(rows: number[]): SlickRange[] {
     const ranges: SlickRange[] = [];
-    const columns = useVisibleColumnsOnly ? this.getVisibleColumns() : this.columns;
+    const columns = this.getVisibleColumns();
     const lastCell = this.getColumnIndex(columns[columns.length - 1].id);
     for (let i = 0; i < rows.length; i++) {
       ranges.push(new SlickRange(rows[i], 0, rows[i], lastCell));
@@ -7980,14 +7980,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Array<number>} rowsArray - an array of row numbers.
    * @param {String} [caller] - an optional string to identify who called the method
    */
-  setSelectedRows(rows: number[], caller?: string, useVisibleColumnsOnly = false): void {
+  setSelectedRows(rows: number[], caller?: string): void {
     if (!this.selectionModel) {
       throw new Error('SlickGrid Selection model is not set');
     }
 
     const elock = this.getEditorLock();
     if (typeof elock?.isActive === 'function' && !elock.isActive()) {
-      this.selectionModel.setSelectedRanges(this.rowsToRanges(rows, useVisibleColumnsOnly), caller || 'SlickGrid.setSelectedRows');
+      this.selectionModel.setSelectedRanges(this.rowsToRanges(rows), caller || 'SlickGrid.setSelectedRows');
     }
   }
 
