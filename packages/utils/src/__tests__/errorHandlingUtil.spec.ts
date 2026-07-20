@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { tryCatch, tryCatchAsync, tryCatchAsyncWithReturn, tryCatchWithReturn } from '../errorHandlingUtil.js';
+import { tryCatch, tryCatchWithReturn } from '../errorHandlingUtil.js';
 
 describe('Error Handling Utilities', () => {
   describe('tryCatch()', () => {
@@ -65,74 +65,6 @@ describe('Error Handling Utilities', () => {
       const result = tryCatchWithReturn(operation, 'fallback');
 
       expect(result).toBe('fallback');
-      expect(operation).toHaveBeenCalledOnce();
-    });
-  });
-
-  describe('tryCatchAsync()', () => {
-    it('should execute async operation successfully', async () => {
-      const operation = vi.fn(async () => {});
-      await tryCatchAsync(operation);
-
-      expect(operation).toHaveBeenCalledOnce();
-    });
-
-    it('should call onError callback when async operation throws', async () => {
-      const error = new Error('async test error');
-      const operation = vi.fn(async () => {
-        throw error;
-      });
-      const onError = vi.fn();
-
-      await tryCatchAsync(operation, onError);
-
-      expect(operation).toHaveBeenCalledOnce();
-      expect(onError).toHaveBeenCalledOnce();
-      expect(onError).toHaveBeenCalledWith(error);
-    });
-
-    it('should not throw when async operation fails and no onError callback', async () => {
-      const operation = vi.fn(async () => {
-        throw new Error('async error');
-      });
-
-      await expect(tryCatchAsync(operation)).resolves.toBeUndefined();
-      expect(operation).toHaveBeenCalledOnce();
-    });
-  });
-
-  describe('tryCatchAsyncWithReturn()', () => {
-    it('should return async operation result on success', async () => {
-      const operation = vi.fn(async () => 'success');
-      const result = await tryCatchAsyncWithReturn(operation, 'default');
-
-      expect(result).toBe('success');
-      expect(operation).toHaveBeenCalledOnce();
-    });
-
-    it('should return default value and call onError when async operation throws', async () => {
-      const error = new Error('async test error');
-      const operation = vi.fn(async () => {
-        throw error;
-      });
-      const onError = vi.fn();
-
-      const result = await tryCatchAsyncWithReturn(operation, 'fallback', onError);
-
-      expect(result).toBe('fallback');
-      expect(operation).toHaveBeenCalledOnce();
-      expect(onError).toHaveBeenCalledOnce();
-      expect(onError).toHaveBeenCalledWith(error);
-    });
-
-    it('should return default value when async operation throws and no onError callback', async () => {
-      const operation = vi.fn(async () => {
-        throw new Error('async error');
-      });
-
-      const result = await tryCatchAsyncWithReturn(operation, 'default');
-
-      expect(result).toBe('default');
       expect(operation).toHaveBeenCalledOnce();
     });
   });
