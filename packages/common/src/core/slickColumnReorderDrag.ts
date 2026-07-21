@@ -1,4 +1,4 @@
-import { getOffset } from '@slickgrid-universal/utils';
+import { getOffset, tryCatch } from '@slickgrid-universal/utils';
 import type { ColumnReorderDragOption, DropzonePillDragOption } from '../interfaces/slickColumnReorderDrag.interfaces.js';
 
 /** Extract { clientX, clientY, pageX } from any pointer-like event.
@@ -66,14 +66,6 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
   const clearDropzoneHoverClasses = () => {
     document.querySelectorAll<HTMLElement>(dropzoneSelector).forEach((el) => el.classList.remove(dropzoneHoverClass));
-  };
-
-  const safely = (operation: () => void, onError?: (error: unknown) => void) => {
-    try {
-      operation();
-    } catch (error) {
-      onError?.(error);
-    }
   };
 
   const isDragStartIgnoredTarget = (el: HTMLElement | null, event: DragEvent | MouseEvent | TouchEvent): boolean => {
@@ -192,7 +184,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       dropzoneTargetActive = true;
       toggleDropzoneHoverClass(target, true);
       // Ensure the dragged header remains in the header DOM (non-destructive)
-      safely(() => {
+      tryCatch(() => {
         restoreDraggedToOriginalParent();
       });
     }
@@ -219,7 +211,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       dropzoneTargetActive = true;
       toggleDropzoneHoverClass(e.target as HTMLElement | null, true);
       // Keep the dragged header visible in the original header DOM while over the dropzone
-      safely(() => {
+      tryCatch(() => {
         restoreDraggedToOriginalParent();
       });
       return;
@@ -245,7 +237,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     // restore the header to its original parent to avoid permanently removing the column
     // from the grid's column list when we read column order from the DOM.
     let droppedOnDropzone = dropzoneTargetActive;
-    safely(
+    tryCatch(
       () => {
         if (!droppedOnDropzone && e.clientX != null && e.clientY != null) {
           const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
@@ -432,7 +424,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
         clearDropzoneHoverClasses();
         const targetHeader = elUnder?.closest?.(draggableSelector) as HTMLElement | null;
         if (targetHeader) {
-          safely(() => {
+          tryCatch(() => {
             reorderDraggedAgainstTarget(targetHeader, clientX);
           });
         }
@@ -456,7 +448,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
     const { clientX, clientY } = getPointerPos(e);
     let droppedOnDropzone = dropzoneTargetActive;
-    safely(
+    tryCatch(
       () => {
         if (!droppedOnDropzone) {
           const el = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
@@ -472,7 +464,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     const originalParentNode = originalParent;
     const originalSiblingNode = originalNextSibling;
     if (droppedOnDropzone && draggedHeader && originalParentNode) {
-      safely(() => {
+      tryCatch(() => {
         originalParentNode.insertBefore(draggedHeader, originalSiblingNode as Node | null);
       });
     }
