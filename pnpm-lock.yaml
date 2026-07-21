@@ -1342,8 +1342,8 @@ importers:
         specifier: ^2.0.7
         version: 2.0.7
       autocompleter:
-        specifier: ^9.3.2
-        version: 9.3.2
+        specifier: ^10.0.0
+        version: 10.0.0
       dequal:
         specifier: 'catalog:'
         version: 2.0.3
@@ -4871,8 +4871,8 @@ packages:
     resolution: {integrity: sha512-uljX+yBMAyHZwRgeSNxtzHVMoshGSUm83sCnRCbU2420KjTXm8l5shEBC8ZiPf2endha5ODLmIKIEFRXc/b82Q==}
     engines: {node: '>=20.16.0'}
 
-  autocompleter@9.3.2:
-    resolution: {integrity: sha512-rLbf2TLGOD7y+gOS36ksrZdIsvoHa2KXc2A7503w+NBRPrcF73zzFeYBxEcV/iMPjaBH3jFhNIYObZ7zt1fkCQ==}
+  autocompleter@10.0.0:
+    resolution: {integrity: sha512-ZKUvEIU8XpqqkMrZoy+QmAh7Ga8YE3qB8EFJzC05K69S8+dQ3xrN066vJImiIjkwYVG1Oc8eRP4YVDQOquUF9A==}
 
   autoprefixer@10.5.2:
     resolution: {integrity: sha512-rD5t5DwOjJdmSORcTq64j8MawTC+tbQ+HHqjR4NDumamy/ambn1UJrlKL+KdwujWxMkFjPM3pPHOEA9tl4767Q==}
@@ -12317,7 +12317,7 @@ snapshots:
       '@aurelia/runtime-html': 2.0.0-rc.1
       '@aurelia/template-compiler': 2.0.0-rc.1
 
-  autocompleter@9.3.2: {}
+  autocompleter@10.0.0: {}
 
   autoprefixer@10.5.2(postcss@8.5.16):
     dependencies:
