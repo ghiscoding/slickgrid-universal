@@ -810,6 +810,9 @@ importers:
       '@slickgrid-universal/row-detail-view-plugin':
         specifier: workspace:*
         version: link:../../packages/row-detail-view-plugin
+      '@slickgrid-universal/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       angular-slickgrid:
         specifier: workspace:*
         version: link:../../frameworks/angular-slickgrid/dist

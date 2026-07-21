@@ -1145,6 +1145,63 @@ describe('SlickRowDetailView plugin', () => {
       expect(onRowBackToViewportSpy).toHaveBeenCalled();
     });
 
+    it('should trigger "onRowBackToViewportRange" as soon as the last (bottom) row of the detail panel enters the viewport (row header is above viewport)', () => {
+      // regression test: previously required rdEndRow > visible.top + 1 (2+ rows visible),
+      // meaning the event fired 2-3 rows late when scrolling up toward a detail panel.
+      const mockProcess = vi.fn();
+      const itemMock = {
+        id: 123,
+        firstName: 'John',
+        lastName: 'Doe',
+        __collapsed: true,
+        __detailViewLoaded: true,
+        __sizePadding: 1,
+        __height: 150,
+        __detailContent: '<span>loading...</span>',
+      };
+      vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
+      const loadingTemplate = () => '<span>loading...</span>';
+      vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
+      // row header is at index 10 (above the viewport), detail spans rows 11-22 (panelRows=12)
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(10);
+      // row 10 is in cache (minRowBuffer keeps it there even when not directly visible)
+      vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
+        10: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        22: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        23: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      });
+      // visible.top=22 → last detail row (10+12=22) is exactly at the top of the viewport
+      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 22, bottom: 40, left: 0, right: 10 } as any);
+      divContainer.appendChild(cellDetailViewElm);
+      Object.defineProperty(detailViewContainerElm, 'scrollHeight', { writable: true, configurable: true, value: 4 });
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+        ...gridOptionsMock,
+        rowDetailView: {
+          process: mockProcess,
+          preTemplate: loadingTemplate,
+          panelRows: 12,
+          useRowClick: true,
+          saveDetailViewOnScroll: true,
+          singleRowExpand: false,
+          loadOnce: true,
+        } as any,
+      });
+      plugin.init(gridStub);
+      plugin.resizeDetailView(itemMock);
+      plugin.expandDetailView(itemMock.id);
+      plugin.rowIdsOutOfViewport = [123];
+
+      const onRowBackToViewportSpy = vi.spyOn(plugin.onRowBackToViewportRange, 'notify');
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
+
+      // trigger scroll — calculateFn runs after setTimeout(0)
+      gridStub.onScroll.notify({ scrollLeft: 0, scrollTop: 100, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
+      vi.advanceTimersByTime(1);
+
+      // the event should fire even when only the last row of the detail panel is at visible.top
+      expect(onRowBackToViewportSpy).toHaveBeenCalled();
+    });
+
     it('should call "resizeDetailView" and then calculate out of range detail views when calling on scroll and call "notifyOutOfViewport" when row is out of visibility', () => {
       const mockProcess = vi.fn();
       const itemMock = {

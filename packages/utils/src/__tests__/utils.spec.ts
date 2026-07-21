@@ -24,6 +24,7 @@ import {
   toKebabCase,
   toSentenceCase,
   toSnakeCase,
+  tryCatch,
   uniqueArray,
   uniqueObjectArray,
 } from '../utils.js';
@@ -995,6 +996,39 @@ describe('Service/Utilies', () => {
     it('should return a snake_case string when input is a sentence that may include numbers with only following char having the dash', () => {
       const output = toSnakeCase(sentence + ' 123 ' + ' apples');
       expect(output).toBe('the_quick_brown_fox123_apples');
+    });
+  });
+
+  describe('Error Handling Utilities', () => {
+    describe('tryCatch()', () => {
+      it('should execute operation successfully', () => {
+        const operation = vi.fn();
+        tryCatch(operation);
+        expect(operation).toHaveBeenCalledOnce();
+      });
+
+      it('should call onError callback when operation throws', () => {
+        const error = new Error('test error');
+        const operation = vi.fn(() => {
+          throw error;
+        });
+        const onError = vi.fn();
+
+        tryCatch(operation, onError);
+
+        expect(operation).toHaveBeenCalledOnce();
+        expect(onError).toHaveBeenCalledOnce();
+        expect(onError).toHaveBeenCalledWith(error);
+      });
+
+      it('should not call onError if no callback provided and operation throws', () => {
+        const operation = vi.fn(() => {
+          throw new Error('test error');
+        });
+
+        expect(() => tryCatch(operation)).not.toThrow();
+        expect(operation).toHaveBeenCalledOnce();
+      });
     });
   });
 

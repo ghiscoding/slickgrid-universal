@@ -33,6 +33,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   protected _component?: any;
   protected _preloadComponent?: any;
   protected _preloadApp?: App<Element>;
+  protected _preloadElement?: HTMLElement;
   protected _views: CreatedView[] = [];
   protected _subscriptions: EventSubscription[] = [];
   protected _userProcessFn?: (item: any) => Promise<any>;
@@ -56,7 +57,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   }
 
   get rowDetailViewOptions(): RowDetailView | undefined {
-    return this.gridOptions.rowDetailView;
+    return this.getOptions() as RowDetailView | undefined;
   }
 
   /** Dispose of the RowDetailView Extension */
@@ -148,8 +149,13 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
           });
 
           this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
-            // unmount preload if exists
-            this._preloadApp?.unmount();
+            // unmount preload if exists AND remove it from DOM
+            if (this._preloadApp) {
+              this._preloadApp.unmount();
+              this._preloadElement?.remove();
+              this._preloadApp = undefined;
+              this._preloadElement = undefined;
+            }
 
             // triggers after backend called "onAsyncResponse.notify()"
             // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
@@ -195,7 +201,11 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
             if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
               this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
             }
-            this.disposeViewByItem(args.item);
+            if (this.rowDetailViewOptions?.keepComponentAlive) {
+              this.detachViewFromDom(args.item);
+            } else {
+              this.disposeViewByItem(args.item);
+            }
           });
 
           this._eventHandler.subscribe(this.onRowOutOfViewportRange, (event, args) => {
@@ -267,11 +277,11 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
-  /** Render (or re-render) the View Component (Row Detail) */
-  renderPreloadView(item: any) {
+  /** (re)Render the Preload Component */
+  protected renderPreloadView(item: any): void {
     const containerElement = this.gridContainerElement.querySelector(`.${PRELOAD_CONTAINER_PREFIX}`);
+
     if (this._preloadComponent && containerElement) {
-      const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
       const bindableData = {
         model: item,
         addon: this,
@@ -284,19 +294,32 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
       this._preloadApp = createApp(this._preloadComponent, bindableData);
       const instance = this._preloadApp.mount(tmpDiv) as ComponentPublicInstance;
       bindableData.parentRef = instance;
-      containerElement.appendChild(instance.$el);
 
-      if (viewObj) {
-        viewObj.app = this._preloadApp;
-        viewObj.instance = instance;
+      // Store reference to preload element for later cleanup
+      this._preloadElement = instance.$el;
+      if (this._preloadElement) {
+        containerElement.appendChild(this._preloadElement);
       }
     }
   }
 
-  /** Render (or re-render) the View Component (Row Detail) */
-  renderViewModel(item: any) {
-    const containerElement = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`);
+  /** (re)Render the View Component (Row Detail) */
+  protected renderViewModel(item: any): void {
+    const itemId = item[this.datasetIdPropName];
+    const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${ROW_DETAIL_CONTAINER_PREFIX}${itemId}`);
+
     if (this._component && containerElement) {
+      const viewObj = this._views.find((obj) => obj.id === itemId);
+
+      // If keep-component-alive is enabled and component already exists (but detached), reattach it instead of recreating
+      if (this.rowDetailViewOptions?.keepComponentAlive && viewObj?.instance && !viewObj.rendered) {
+        const reattachSuccess = this.reattachViewComponent(viewObj);
+        if (reattachSuccess) {
+          return;
+        }
+        // If reattach failed, fall through to fresh re-render
+      }
+
       const bindableData = {
         model: item,
         addon: this,
@@ -321,6 +344,50 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   // --
   // protected functions
   // ------------------
+
+  /**
+   * Detach a view component from the DOM without destroying it.
+   * Used when `keepComponentAlive` is enabled so component state is preserved.
+   */
+  protected detachViewFromDom(item: any): void {
+    const foundView = this._views.find((view: CreatedView) => view.id === item[this.datasetIdPropName]);
+    if (foundView?.instance) {
+      foundView.rendered = false;
+      // physically remove the root element from DOM; the Vue app/instance stays alive
+      foundView.instance.$el?.remove();
+    }
+  }
+
+  /**
+   * Reattach a preserved (detached) view component into the freshly rendered container element.
+   * Used when `keepComponentAlive` is enabled and the row scrolls back into view.
+   * Returns true if reattach succeeded, false if it failed (in which case re-rendering is needed).
+   */
+  protected reattachViewComponent(view: CreatedView): boolean {
+    const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${ROW_DETAIL_CONTAINER_PREFIX}${view.id}`);
+    try {
+      if (!containerElement || !view.instance) {
+        return false;
+      }
+
+      // If element is already in correct container, just mark as rendered
+      if (view.instance.$el.parentElement === containerElement) {
+        view.rendered = true;
+        return true;
+      }
+
+      // If element contains the container (circular reference), can't reattach
+      if (view.instance.$el.contains(containerElement)) {
+        return false;
+      }
+
+      containerElement.appendChild(view.instance.$el);
+      view.rendered = true;
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
   /** remove any previous mounted views, if found then unmount them and delete them from our references array */
   protected unmountViewWhenExists(itemId: string | number) {
@@ -391,7 +458,15 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   ) {
     const viewModel = this._views.find((x) => x.id === args.rowId);
     if (viewModel && !viewModel.rendered) {
-      this.redrawViewComponent(viewModel);
+      if (this.rowDetailViewOptions?.keepComponentAlive && viewModel.instance) {
+        // Try to reattach; if it fails, fall back to redraw
+        const reattachSuccess = this.reattachViewComponent(viewModel);
+        if (!reattachSuccess) {
+          this.redrawViewComponent(viewModel);
+        }
+      } else {
+        this.redrawViewComponent(viewModel);
+      }
     }
   }
 
