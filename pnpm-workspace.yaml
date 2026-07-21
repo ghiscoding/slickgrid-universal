@@ -35,7 +35,7 @@ catalog:
   jspdf: ^4.2.1
   multiple-select-vanilla: ^5.2.1
   native-copyfiles: ^2.0.3
-  npm-run-all2: ^8.0.4
+  npm-run-all2: ^9.0.2
   oxlint: ^1.72.0
   react: ^19.2.7
   react-dom: ^19.2.7
