@@ -101,16 +101,69 @@ When making changes to demos or documentation:
 
 ## Rule
 
-Always prefix shell commands with `rtk`:
+When `rtk` is available, prefer `rtk <command>` for terminal commands.
+
+Use this as a default-first policy for tests, lint/typecheck/build, git, and diagnostics commands.
+Apply the same pattern to analogous commands even if they are not explicitly listed below.
+
+Examples:
 
 ```bash
-# Instead of:              Use:
-git status                 rtk git status
-git log -10                rtk git log -10
-cargo test                 rtk cargo test
-docker ps                  rtk docker ps
-kubectl get pods           rtk kubectl pods
+vitest                     -> rtk vitest
+jest                       -> rtk jest
+git status                 -> rtk git status
+tsc                        -> rtk tsc
+ls                         -> rtk ls .
 ```
+
+Git (explicit mappings):
+
+```bash
+git status                 -> rtk git status
+git log -n 10              -> rtk git log -n 10
+git diff                   -> rtk git diff
+```
+
+If `rtk` is not available in the current environment, run the raw command without `rtk` instead of failing.
+
+For Vitest in this repo, default to `rtk vitest run` for test execution unless full raw output is explicitly needed.
+Use direct file filters when running a single spec, and point at the repo config in `test/vitest.config.mts`, for example `rtk vitest run --config test/vitest.config.mts packages/common/src/services/foo.spec.ts`.
+Spec paths can live anywhere in the monorepo, so use the repo-root path to the exact file being targeted.
+Prefer `vitest run` over `pnpm exec vitest` when the Vitest binary is available, since `run` is the actual test subcommand and supports the same single-file filters with less command overhead.
+
+## Low-Token Availability Check
+
+For PowerShell terminals, check once per terminal session and cache the result:
+
+```powershell
+if (-not $env:RTK_AVAILABLE) {
+	if (Get-Command rtk -ErrorAction SilentlyContinue) {
+		$env:RTK_AVAILABLE = '1'
+	}
+	else {
+		$env:RTK_AVAILABLE = '0'
+	}
+}
+```
+
+For bash/zsh terminals (Linux/macOS), use the equivalent one-time check:
+
+```bash
+if [ -z "${RTK_AVAILABLE+x}" ]; then
+  if command -v rtk >/dev/null 2>&1; then
+    export RTK_AVAILABLE=1
+  else
+    export RTK_AVAILABLE=0
+  fi
+fi
+```
+
+Use `rtk` only when `$env:RTK_AVAILABLE -eq '1'`; otherwise run the raw command.
+In bash/zsh, use `rtk` only when `$RTK_AVAILABLE = 1`; otherwise run the raw command.
+Do not re-run the availability check before every command.
+
+If a command fails because `rtk` is unexpectedly unavailable, set `$env:RTK_AVAILABLE = '0'` and retry once without `rtk`.
+In bash/zsh, set `RTK_AVAILABLE=0` and retry once without `rtk`.
 
 ## Meta commands (use directly)
 

@@ -20,6 +20,16 @@ export interface RowDetailViewOption {
   /** Defaults to true, which will collapse all row detail views when user calls a sort. Unless user implements a sort to deal with padding */
   collapseAllOnSort?: boolean;
 
+  /**
+   * Defaults to false.
+   * When enabled, row detail components are preserved (not destroyed) when they scroll out of the viewport.
+   * Instead of being torn down, they are detached from the DOM (or removed in some frameworks) and reattached/re-added
+   * when the row scrolls back into view. This preserves the full component state, including nested grids.
+   * Note: preserved components are not garbage-collected until the row is explicitly collapsed, so this uses more
+   * memory when many rows are expanded simultaneously.
+   */
+  keepComponentAlive?: boolean;
+
   /** Extra classes to be added to the collapse Toggle */
   collapsedClass?: string;
 

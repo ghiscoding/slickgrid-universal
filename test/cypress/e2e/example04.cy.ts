@@ -895,6 +895,7 @@ describe('Example 04 - Frozen Grid', () => {
         $viewport[0].dispatchEvent(new Event('scroll', { bubbles: true }));
       });
       cy.get('.slick-viewport-top.slick-viewport-right').its('0.scrollLeft').should('equal', 0);
+      cy.get('[data-test="set-large-freezed-columns"]').click();
 
       const dataStore = new Map<string, string>();
       const dragDataTransfer = {

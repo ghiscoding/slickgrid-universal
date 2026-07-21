@@ -17,6 +17,7 @@ const Example45: React.FC = () => {
   const [hideSubTitle, setHideSubTitle] = useState(false);
   const [isUsingAutoHeight, setIsUsingAutoHeight] = useState<boolean>(false);
   const [isUsingInnerGridStatePresets, setIsUsingInnerGridStatePresets] = useState<boolean>(false);
+  const [isKeepingComponentAlive, setIsKeepingComponentAlive] = useState<boolean>(false);
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [serverWaitDelay, setServerWaitDelay] = useState<number>(FAKE_SERVER_DELAY);
 
@@ -206,6 +207,18 @@ const Example45: React.FC = () => {
     return true;
   }
 
+  function changeKeepingComponentAlive() {
+    const newIsKeepingComponentAlive = !isKeepingComponentAlive;
+    closeAllRowDetail();
+    if (gridOptions?.rowDetailView) {
+      gridOptions.rowDetailView.keepComponentAlive = newIsKeepingComponentAlive;
+    }
+    const options = rowDetailInstance().getOptions();
+    rowDetailInstance().setOptions({ ...options, keepComponentAlive: newIsKeepingComponentAlive });
+    setIsKeepingComponentAlive(newIsKeepingComponentAlive);
+    return true;
+  }
+
   function changeUsingResizerAutoHeight() {
     const newIsUsingAutoHeight = !isUsingAutoHeight;
     setIsUsingAutoHeight(newIsUsingAutoHeight);
@@ -348,6 +361,19 @@ const Example45: React.FC = () => {
                 />
                 <span title="should we use Grid State/Presets to keep the inner grid state whenever Row Details are out and back to viewport and re-rendered">
                   Use Inner Grid State/Presets
+                </span>
+              </label>
+              <label className="checkbox-inline control-label ms-2" htmlFor="keepComponentAlive">
+                <input
+                  type="checkbox"
+                  id="keepComponentAlive"
+                  data-test="keep-component-alive"
+                  className="me-1"
+                  checked={isKeepingComponentAlive}
+                  onChange={changeKeepingComponentAlive}
+                />
+                <span title="preserve component state (incl. nested grid sort/filters) when row scrolls out of viewport instead of destroying it">
+                  Keep Component Alive on Scroll
                 </span>
               </label>
               <label className="checkbox-inline control-label ms-2" htmlFor="useResizeAutoHeight">

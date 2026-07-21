@@ -44,7 +44,7 @@ catalog:
   sass: ^1.101.0
   tslib: ^2.8.1
   typescript: ^6.0.3
-  vite: ^8.1.3
+  vite: &viteVersion ^8.1.3
   vitest: ^4.1.9
   vue: ^3.5.39
 
@@ -61,17 +61,10 @@ minimumReleaseAgeExclude:
 overrides:
   '@babel/core': ^7.29.7
   '@hono/node-server': ^2.0.8
-  '@isaacs/brace-expansion': ^5.0.1
   esbuild: ^0.28.1
-  form-data: ^4.0.6
-  hono: ^4.12.27
   ip-address: ^10.2.0
-  lodash: ^4.18.1
   minimatch: ^10.2.5
   picomatch: ^4.0.5
-  piscina: ^5.2.0
   qs: ^6.15.3
-  tar: ^7.5.19
-  tmp: ^0.2.7
   undici: ^7.28.0
-  vite: ^8.1.3
+  vite: *viteVersion

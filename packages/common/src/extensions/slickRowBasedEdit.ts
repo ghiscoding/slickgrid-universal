@@ -472,8 +472,15 @@ export class SlickRowBasedEdit {
     return actionFragment;
   }
 
-  protected onBeforeEditCellHandler = (_e: SlickEventData, args: OnBeforeEditCellEventArgs) => {
-    return this._editedRows.has(args.item?.[this.gridOptions.datasetIdPropertyName ?? 'id']) as boolean;
+  protected onBeforeEditCellHandler = (_e: SlickEventData, args: OnBeforeEditCellEventArgs): boolean => {
+    const hasOnBeforeCellEditFn = typeof this._addonOptions?.onBeforeCellEdit === 'function';
+    const canEdit = this._editedRows.has(args.item?.[this.gridOptions.datasetIdPropertyName ?? 'id']) as boolean;
+    let userCanEdit = true;
+    if (hasOnBeforeCellEditFn) {
+      userCanEdit = this._addonOptions?.onBeforeCellEdit!(args as unknown as OnEventArgs) ?? true;
+    }
+
+    return canEdit && userCanEdit;
   };
 
   protected toggleEditmode(dataContext: any, editMode: boolean): void {

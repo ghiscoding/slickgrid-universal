@@ -546,7 +546,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           }
         }
         const rdEndRow = rowIdx + rowDetailCount;
-        if (startRow > rowIdx && rowIdx < rdEndRow && rdEndRow > this._visibleRenderedCell!.startRow + 1) {
+        // extend startRow to include row header when any part of the detail panel rows is visible
+        if (startRow > rowIdx && rdEndRow >= this._visibleRenderedCell!.startRow) {
           startRow = rowIdx;
         }
         this._visibleRenderedCell = { startRow, endRow };

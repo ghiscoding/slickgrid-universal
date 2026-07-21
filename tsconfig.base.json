@@ -10,6 +10,7 @@
     "importHelpers": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": true,
     "isolatedDeclarations": true,
     "isolatedModules": true,
     "noImplicitReturns": true,
@@ -21,6 +22,7 @@
     "noEmitOnError": true,
     "skipLibCheck": true,
     "preserveConstEnums": true,
+    "stableTypeOrdering": true,
     "stripInternal": true,
     "strict": true,
     "verbatimModuleSyntax": true

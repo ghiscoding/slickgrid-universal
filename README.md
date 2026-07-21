@@ -195,6 +195,19 @@ pnpm run cypress
 pnpm run cypress:ci
 ```
 
+### [RTK](https://github.com/rtk-ai/rtk) Usage (Optional but Recommended)
+This repository's Copilot instructions prefer using [`rtk`](https://github.com/rtk-ai/rtk) (token-optimized CLI proxy) when running terminal commands.
+
+- If `rtk` is installed: prefer `rtk <command>`.
+- If `rtk` is not installed: run the raw command directly.
+
+Examples:
+```bash
+rtk git status
+# fallback if rtk is unavailable
+git status
+```
+
 ## Sponsors
 
 Thanks to all my Sponsors

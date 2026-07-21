@@ -329,6 +329,7 @@ const Example20: React.FC = () => {
     reactGridRef.current?.slickGrid.setOptions({ frozenColumn: frozenCols });
     const updatedGridOptions = reactGridRef.current?.slickGrid.getOptions();
     setGridOptions(updatedGridOptions);
+    setFrozenColumnCount(frozenCols);
   }
 
   /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */

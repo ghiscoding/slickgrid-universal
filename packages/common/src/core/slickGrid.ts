@@ -1515,15 +1515,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       ? this._options.ffMaxSupportedCssHeight
       : this._options.maxSupportedCssHeight;
     const div = createDomElement('div', { style: { display: 'hidden' } }, document.body);
+    const marker = createDomElement('div', { style: { position: 'absolute' } }, div);
 
     let condition = true;
     while (condition) {
       const test = supportedHeight * 2;
       Utils.height(div, test);
       const height = Utils.height(div);
+      marker.style.top = `${test - 1}px`;
+      const offsetTop = marker.offsetTop;
 
       /* v8 ignore else */
-      if (test > testUpTo! || height !== test) {
+      if (test > testUpTo! || height !== test || offsetTop !== test - 1) {
         condition = false;
         break;
       } else {
@@ -3943,8 +3946,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     );
 
     const oldOffset = this.offset;
+    // determine the page for the target position first, then derive the offset from that page
+    // (computing the offset from the previous page would lag one scroll event behind on jumps)
+    this.page = this.ph ? Math.min((this.n || 0) - 1, Math.floor(y / this.ph)) : 0;
     this.offset = Math.round(this.page * (this.cj || 0));
-    this.page = Math.min((this.n || 0) - 1, Math.floor(y / (this.ph || 0)));
     const newScrollTop = (y - this.offset) as number;
 
     if (this.offset !== oldOffset) {
@@ -7889,7 +7894,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected rowsToRanges(rows: number[]): SlickRange[] {
     const ranges: SlickRange[] = [];
-    const lastCell = this.columns.length - 1;
+    const columns = this.getVisibleColumns();
+    const lastCell = this.getColumnIndex(columns[columns.length - 1].id);
     for (let i = 0; i < rows.length; i++) {
       ranges.push(new SlickRange(rows[i], 0, rows[i], lastCell));
     }
