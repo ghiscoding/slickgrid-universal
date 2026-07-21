@@ -228,15 +228,22 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
         this.eventHandler.subscribe(this._grid.onSort, this.disposeAllViewComponents.bind(this));
 
         // redraw all Views whenever certain events are triggered
+        // use a setTimeout to ensure the grid has finished re-rendering before we redraw
+        // (onBeforeRowOutOfViewportRange may set rendered=false during the render cycle)
         this._subscriptions.push(
           this.eventPubSubService?.subscribe(
-            ['onFilterChanged', 'onGridMenuColumnsChanged', 'onColumnPickerColumnsChanged'],
-            this.redrawAllViewComponents.bind(this, false)
-          ),
-          this.eventPubSubService?.subscribe(['onGridMenuClearAllFilters', 'onGridMenuClearAllSorting'], () => {
-            clearTimeout(this._timer);
-            this._timer = setTimeout(() => this.redrawAllViewComponents());
-          })
+            [
+              'onFilterChanged',
+              'onGridMenuColumnsChanged',
+              'onColumnPickerColumnsChanged',
+              'onGridMenuClearAllFilters',
+              'onGridMenuClearAllSorting',
+            ],
+            () => {
+              clearTimeout(this._timer);
+              this._timer = setTimeout(() => this.redrawAllViewComponents());
+            }
+          )
         );
       }
     }
@@ -282,8 +289,14 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
     if (this._viewComponent && containerElement) {
       const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
 
-      // If keep-component-alive is enabled and component already exists (but detached), reattach it instead of creating new
-      if (this.rowDetailViewOptions?.keepComponentAlive && viewObj?.componentRef && !viewObj.rendered) {
+      // If keep-component-alive is enabled and component already exists (but detached OR element disconnected from DOM),
+      // reattach it instead of creating new. The element can be disconnected when singleRowExpand triggers collapseAll()
+      // internally, which bypasses onBeforeRowDetailToggle and leaves rendered=true while removing the element from DOM.
+      if (
+        this.rowDetailViewOptions?.keepComponentAlive &&
+        viewObj?.componentRef &&
+        (!viewObj.rendered || !viewObj.componentRef.location.nativeElement?.isConnected)
+      ) {
         this.reattachViewComponent(viewObj);
         return viewObj;
       }

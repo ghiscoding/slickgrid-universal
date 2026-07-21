@@ -311,8 +311,10 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     if (this._component && containerElement) {
       const viewObj = this._views.find((obj) => obj.id === itemId);
 
-      // If keep-component-alive is enabled and component already exists (but detached), reattach it instead of recreating
-      if (this.rowDetailViewOptions?.keepComponentAlive && viewObj?.instance && !viewObj.rendered) {
+      // If keep-component-alive is enabled and component already exists (but detached OR element disconnected from DOM),
+      // reattach it instead of recreating. The element can be disconnected when singleRowExpand triggers collapseAll()
+      // internally, which bypasses onBeforeRowDetailToggle and leaves rendered=true while removing the element from DOM.
+      if (this.rowDetailViewOptions?.keepComponentAlive && viewObj?.instance && (!viewObj.rendered || !viewObj.instance.$el?.isConnected)) {
         const reattachSuccess = this.reattachViewComponent(viewObj);
         if (reattachSuccess) {
           return;

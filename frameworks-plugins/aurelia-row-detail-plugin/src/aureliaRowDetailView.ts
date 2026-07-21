@@ -209,15 +209,22 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
           this._eventHandler.subscribe(this._grid.onSort, this.disposeAllViewSlot.bind(this));
 
           // redraw all Views whenever certain events are triggered
+          // use a setTimeout to ensure the grid has finished re-rendering before we redraw
+          // (onBeforeRowOutOfViewportRange may set rendered=false during the render cycle)
           this._subscriptions.push(
             this.eventPubSubService?.subscribe(
-              ['onFilterChanged', 'onGridMenuColumnsChanged', 'onColumnPickerColumnsChanged'],
-              this.redrawAllViewSlots.bind(this, false)
-            ),
-            this.eventPubSubService?.subscribe(['onGridMenuClearAllFilters', 'onGridMenuClearAllSorting'], () => {
-              clearTimeout(this._timer);
-              this._timer = setTimeout(() => this.redrawAllViewSlots());
-            })
+              [
+                'onFilterChanged',
+                'onGridMenuColumnsChanged',
+                'onColumnPickerColumnsChanged',
+                'onGridMenuClearAllFilters',
+                'onGridMenuClearAllSorting',
+              ],
+              () => {
+                clearTimeout(this._timer);
+                this._timer = setTimeout(() => this.redrawAllViewSlots());
+              }
+            )
           );
         }
       }
@@ -273,9 +280,15 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
     if (this._viewModel && containerElement) {
       const slotObj = this._slots.find((obj) => obj.id === item[this.datasetIdPropName]);
 
-      // If keep-component-alive is enabled and component already exists (but detached), try to reattach it
+      // If keep-component-alive is enabled and component already exists (but detached OR host disconnected from DOM),
+      // try to reattach it. The host can be disconnected when singleRowExpand triggers collapseAll() internally,
+      // which bypasses onBeforeRowDetailToggle and leaves the controller alive while removing the host from DOM.
       // If reattach fails, fall back to re-rendering fresh
-      if (this.rowDetailViewOptions?.keepComponentAlive && slotObj?.controller && this._keepAliveSlotIds.has(slotObj.id)) {
+      if (
+        this.rowDetailViewOptions?.keepComponentAlive &&
+        slotObj?.controller &&
+        (this._keepAliveSlotIds.has(slotObj.id) || !slotObj.controller.host?.isConnected)
+      ) {
         const reattachSuccess = this.reattachViewSlot(slotObj);
         if (reattachSuccess) {
           return;
