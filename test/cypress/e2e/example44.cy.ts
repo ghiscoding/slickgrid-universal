@@ -21,17 +21,18 @@ describe('Example 44 - Variable Row Height (Provider)', { retries: 1 }, () => {
     const expectedHeights = [33, 40, 56, 72, 33, 40, 56, 72];
     const defaultRowHeight = 40;
 
-    for (const [r, expectedHeight] of expectedHeights.entries()) {
-      cy.get(`.grid44 .slick-row[data-row=${r}]`)
+    for (const [row, expectedHeight] of expectedHeights.entries()) {
+      cy.get(`.grid44 .slick-row[data-row=${row}]`)
         .invoke('attr', 'style')
         .then((style = '') => {
-          expect(style).to.contain(`transform: translateY(${topOf(r)}px)`);
+          expect(style).to.contain(`transform: translateY(${topOf(row)}px)`);
           if (expectedHeight === defaultRowHeight) {
             expect(style).not.to.contain('height:');
           } else {
             expect(style).to.contain(`height: ${expectedHeight}px`);
           }
         });
+      cy.get(`[data-row="${row}"] > .slick-cell:nth(3)`).should('contain', `${expectedHeight}px`);
     }
   });
 

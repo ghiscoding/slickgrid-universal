@@ -36,6 +36,7 @@ const Example55: React.FC = () => {
       { id: 'id', name: '#', field: 'id', minWidth: 60, maxWidth: 70 },
       { id: 'title', name: 'Story', field: 'title', minWidth: 180, width: 220 },
       { id: 'owner', name: 'Owner', field: 'owner', minWidth: 110, width: 130 },
+      { id: 'rowHeight', name: 'Height', field: 'rowHeight', formatter: (_row, _cell, value) => `${value}px`, minWidth: 90, width: 90 },
       { id: 'summary', name: 'Summary', field: 'summary', cssClass: 'cell-wrap', minWidth: 360, width: 500, maxWidth: 620 },
     ];
 

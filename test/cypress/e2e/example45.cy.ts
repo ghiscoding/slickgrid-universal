@@ -30,11 +30,11 @@ describe('Example 45 - Variable Row Height (Dynamic)', { retries: 1 }, () => {
 
   const canvasSelector = (r: number) => (r < FROZEN_ROW_COUNT ? '.grid45 .grid-canvas-top' : '.grid45 .grid-canvas-bottom');
 
-  const assertRowStyle = (r: number, hOf: (row: number) => number) => {
-    const expectedHeight = hOf(r);
-    const expectedTop = relativeTopInCanvas(r, hOf);
+  const assertRowStyle = (row: number, hOf: (row: number) => number) => {
+    const expectedHeight = hOf(row);
+    const expectedTop = relativeTopInCanvas(row, hOf);
 
-    cy.get(`${canvasSelector(r)} .slick-row[data-row=${r}]`)
+    cy.get(`${canvasSelector(row)} .slick-row[data-row=${row}]`)
       .should('have.attr', 'style')
       .and('contain', `transform: translateY(${expectedTop}px)`)
       .then((style) => {
@@ -44,6 +44,7 @@ describe('Example 45 - Variable Row Height (Dynamic)', { retries: 1 }, () => {
           expect(style).not.to.contain('height:');
         }
       });
+    cy.get(`[data-row="${row}"] > .slick-cell:nth(3)`).should('contain', `${expectedHeight}px`);
   };
 
   const ensureDefaultDensity = () => {

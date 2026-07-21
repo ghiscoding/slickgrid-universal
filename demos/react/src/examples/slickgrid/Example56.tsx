@@ -42,6 +42,16 @@ const Example56: React.FC = () => {
       { id: 'id', name: '#', field: 'id', minWidth: 60, maxWidth: 70 },
       { id: 'title', name: 'Task', field: 'title', minWidth: 180, width: 220 },
       { id: 'status', name: 'Status', field: 'status', minWidth: 120, width: 140 },
+      {
+        id: 'rowHeight',
+        name: 'Height',
+        field: 'rowHeight',
+        formatter: (row, _cell, _value, _coldef, _dataContext, grid) => {
+          return `${grid.getItemMetadaWhenExists(row)?.height ?? 0}px`;
+        },
+        minWidth: 90,
+        width: 90,
+      },
       { id: 'notes', name: 'Notes', field: 'notes', cssClass: 'cell-wrap', width: 420, maxWidth: 520 },
     ];
 
