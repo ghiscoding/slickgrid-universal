@@ -35,7 +35,6 @@ export default defineConfig({
         'dequal',
         'i18next',
         'i18next-vue',
-        'sortablejs',
         'vue',
       ],
       output: {
