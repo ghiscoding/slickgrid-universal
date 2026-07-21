@@ -12,7 +12,6 @@ import {
 } from '@slickgrid-universal/common';
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
-import { tryCatchWithReturn } from '@slickgrid-universal/utils';
 import type { GridOption, ViewModelBindableInputData } from 'slickgrid-vue';
 import { createApp, type App, type ComponentPublicInstance } from 'vue';
 import type { RowDetailView } from './interfaces.js';
@@ -58,8 +57,6 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   }
 
   get rowDetailViewOptions(): RowDetailView | undefined {
-    // Read from getOptions() (which returns _addonOptions) instead of gridOptions.rowDetailView
-    // so that dynamic updates via setOptions() are reflected
     return this.getOptions() as RowDetailView | undefined;
   }
 
@@ -368,7 +365,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
    */
   protected reattachViewComponent(view: CreatedView): boolean {
     const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${ROW_DETAIL_CONTAINER_PREFIX}${view.id}`);
-    return tryCatchWithReturn(() => {
+    try {
       if (!containerElement || !view.instance) {
         return false;
       }
@@ -387,7 +384,9 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
       containerElement.appendChild(view.instance.$el);
       view.rendered = true;
       return true;
-    }, false);
+    } catch {
+      return false;
+    }
   }
 
   /** remove any previous mounted views, if found then unmount them and delete them from our references array */

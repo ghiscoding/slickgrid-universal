@@ -56,8 +56,6 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   }
 
   get rowDetailViewOptions(): RowDetailView | undefined {
-    // Read from getOptions() (which returns _addonOptions) instead of gridOptions.rowDetailView
-    // so that dynamic updates via setOptions() are reflected
     return this.getOptions() as RowDetailView | undefined;
   }
 

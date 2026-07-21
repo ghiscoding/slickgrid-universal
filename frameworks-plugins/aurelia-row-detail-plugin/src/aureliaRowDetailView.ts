@@ -53,8 +53,6 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
   }
 
   get rowDetailViewOptions(): RowDetailView | undefined {
-    // Read from getOptions() (which returns _addonOptions) instead of gridOptions.rowDetailView
-    // so that dynamic updates via setOptions() are reflected
     return this.getOptions() as RowDetailView | undefined;
   }
 
@@ -313,7 +311,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
     const foundSlot = this._slots.find((slot: CreatedView) => slot.id === item[this.datasetIdPropName]);
     if (foundSlot?.controller) {
       // physically remove the controller's host element from the visible DOM without calling deactivate()
-      const host = (foundSlot.controller as any).host as HTMLElement | undefined;
+      const host: HTMLElement | undefined = foundSlot.controller.host;
       host?.remove();
       this._keepAliveSlotIds.add(foundSlot.id);
     }
@@ -326,7 +324,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
    */
   protected reattachViewSlot(slot: CreatedView): boolean {
     const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${ROW_DETAIL_CONTAINER_PREFIX}${slot.id}`);
-    const host = (slot.controller as any)?.host as HTMLElement | undefined;
+    const host: HTMLElement | undefined = slot.controller?.host;
     if (containerElement && host) {
       try {
         // If host and containerElement are the same, component is already in correct position

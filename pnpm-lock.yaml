@@ -905,9 +905,6 @@ importers:
       '@slickgrid-universal/row-detail-view-plugin':
         specifier: workspace:*
         version: link:../../packages/row-detail-view-plugin
-      '@slickgrid-universal/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
       slickgrid-vue:
         specifier: workspace:*
         version: link:../../frameworks/slickgrid-vue

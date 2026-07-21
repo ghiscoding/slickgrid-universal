@@ -42,7 +42,6 @@
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
-    "@slickgrid-universal/utils": "workspace:*",
     "slickgrid-vue": "workspace:*",
     "tslib": "catalog:",
     "vue": "catalog:"
