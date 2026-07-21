@@ -156,6 +156,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     this._eventHandler
       .subscribe(this._grid.onClick, this.handleClick.bind(this))
+      .subscribe(this._grid.onKeyDown, this.handleKeyDown.bind(this))
       .subscribe(this._grid.onBeforeEditCell, () => this.collapseAll())
       .subscribe(this._grid.onScroll, () => this.recalculateOutOfRangeViews(true, 0))
       .subscribe(this._grid.onBeforeRemoveCachedRow, (_e, args) => this.handleRemoveRow(args.row))
@@ -671,7 +672,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         if (this._addonOptions.collapsedClass) {
           collapsedClasses += this._addonOptions.collapsedClass;
         }
-        return createDomElement('div', { className: classNameToList(collapsedClasses).join(' ') });
+        return createDomElement('div', { className: classNameToList(collapsedClasses).join(' '), ariaExpanded: 'false' });
       } else {
         const rowHeight = this.gridOptions.rowHeight || 0;
         let outterHeight = (dataContext[`${this._keyPrefix}sizePadding`] || 0) * this.gridOptions.rowHeight!;
@@ -708,7 +709,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         cellDetailContainerElm.appendChild(innerContainerElm);
 
         const result: FormatterResultWithHtml = {
-          html: createDomElement('div', { className: classNameToList(expandedClasses).join(' ') }),
+          html: createDomElement('div', { className: classNameToList(expandedClasses).join(' '), ariaExpanded: 'true' }),
           insertElementAfterTarget: cellDetailContainerElm,
         };
 
@@ -726,6 +727,28 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         this.collapseDetailView(itemId);
       } else {
         this.expandDetailView(itemId);
+      }
+    }
+  }
+
+  /** Handle keyboard a11y for row detail toggle: Space, ArrowRight (expand), ArrowLeft (collapse). */
+  protected handleKeyDown(e: SlickEventData): void {
+    const key = e.key;
+    const activeCell = this._grid.getActiveCell();
+    const isSupportedKey = key === ' ' || key === 'ArrowRight' || key === 'ArrowLeft';
+    if (isSupportedKey && activeCell && !this._grid.getEditorLock()?.isActive()) {
+      const dataContext = this._grid.getDataItem(activeCell.row);
+      if (this.checkExpandableOverride(activeCell.row, dataContext, this._grid)) {
+        const column = this._grid.getColumnByIdx(activeCell.cell);
+        const isTogglerCell = this._addonOptions.useRowClick || column?.id === this._addonOptions.columnId;
+        const isCollapsed = !!dataContext[`${this._keyPrefix}collapsed`];
+        const isValidDirection = !(key === 'ArrowRight' && !isCollapsed) && !(key === 'ArrowLeft' && isCollapsed);
+
+        if (isTogglerCell && isValidDirection) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          this.toggleRowSelection(activeCell.row, dataContext);
+        }
       }
     }
   }

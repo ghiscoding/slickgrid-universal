@@ -45,6 +45,7 @@ const getEditorLockMock = {
 const gridStub = {
   getCellFromEvent: vi.fn(),
   getCellNode: vi.fn(),
+  getActiveCell: vi.fn(),
   getColumns: vi.fn(),
   getColumnByIdx: vi.fn(),
   getDataItem: vi.fn(),
@@ -62,6 +63,7 @@ const gridStub = {
   onBeforeEditCell: new SlickEvent(),
   onBeforeRemoveCachedRow: new SlickEvent(),
   onClick: new SlickEvent(),
+  onKeyDown: new SlickEvent(),
   onRendered: new SlickEvent(),
   onScroll: new SlickEvent(),
   onSort: new SlickEvent(),
@@ -1356,7 +1358,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.setOptions({ collapsedClass: 'some-collapsed' });
       plugin.expandableOverride(() => true);
       const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
-      expect((formattedVal as HTMLElement).outerHTML).toBe(`<div class="sgi detailView-toggle expand some-collapsed"></div>`);
+      expect((formattedVal as HTMLElement).outerHTML).toBe(`<div class="sgi detailView-toggle expand some-collapsed" aria-expanded="false"></div>`);
     });
 
     it('should execute formatter and expect it to return empty string and render nothing when isPadding is True', () => {
@@ -1383,7 +1385,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.expandableOverride(() => true);
       const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
       expect(((formattedVal as FormatterResultWithHtml).html as HTMLElement).outerHTML).toBe(
-        `<div class="sgi detailView-toggle collapse some-expanded"></div>`
+        `<div class="sgi detailView-toggle collapse some-expanded" aria-expanded="true"></div>`
       );
       expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(
         `<div class="dynamic-cell-detail cellDetailView_123" style="height: 50px; top: 25px;"><div class="detail-container detailViewContainer_123"><div class="innerDetailView_123"><div>Loading...</div></div></div></div>`
@@ -1405,11 +1407,166 @@ describe('SlickRowDetailView plugin', () => {
       plugin.expandableOverride(() => true);
       const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
       expect(((formattedVal as FormatterResultWithHtml).html as HTMLElement).outerHTML).toBe(
-        `<div class="sgi detailView-toggle collapse some-expanded"></div>`
+        `<div class="sgi detailView-toggle collapse some-expanded" aria-expanded="true"></div>`
       );
       expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(
         `<div class="dynamic-cell-detail cellDetailView_123" style="height: 50px; top: 25px;"><div class="detail-container detailViewContainer_123"><div class="innerDetailView_123"><div>Loading...</div></div></div></div>`
       );
+    });
+  });
+
+  describe('handleKeyDown - keyboard a11y handler', () => {
+    let preventDefaultSpy: ReturnType<typeof vi.spyOn>;
+    let stopPropagationSpy: ReturnType<typeof vi.spyOn>;
+    let toggleRowSelectionSpy: ReturnType<typeof vi.spyOn>;
+    let keyDownEvent: Event;
+    const detailColumn = { id: '_detail_selector', field: '_detail_selector' };
+    const mockActiveCell = { row: 0, cell: 0 };
+
+    beforeEach(() => {
+      vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(mockActiveCell);
+      vi.spyOn(gridStub, 'getEditorLock').mockReturnValue({ isActive: () => false } as any);
+      vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(detailColumn as any);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock); // reset to defaults (no useRowClick)
+
+      keyDownEvent = new Event('keydown');
+      Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: ' ' });
+      Object.defineProperty(keyDownEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+      Object.defineProperty(keyDownEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+      preventDefaultSpy = vi.spyOn(keyDownEvent, 'preventDefault');
+      stopPropagationSpy = vi.spyOn(keyDownEvent, 'stopImmediatePropagation');
+    });
+
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should toggle (expand) a collapsed row with Space key', () => {
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
+      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection').mockImplementation(vi.fn());
+      plugin.init(gridStub);
+
+      gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent);
+
+      expect(toggleRowSelectionSpy).toHaveBeenCalledWith(0, mockItem);
+      expect(preventDefaultSpy).toHaveBeenCalled();
+      expect(stopPropagationSpy).toHaveBeenCalled();
+    });
+
+    it('should expand a collapsed row with ArrowRight key', () => {
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
+      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection').mockImplementation(vi.fn());
+      Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowRight' });
+      plugin.init(gridStub);
+
+      gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent);
+
+      expect(toggleRowSelectionSpy).toHaveBeenCalledWith(0, mockItem);
+      expect(preventDefaultSpy).toHaveBeenCalled();
+      expect(stopPropagationSpy).toHaveBeenCalled();
+    });
+
+    it('should NOT expand an already expanded row with ArrowRight key', () => {
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: false };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
+      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection');
+      Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowRight' });
+      plugin.init(gridStub);
+
+      gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent);
+
+      expect(toggleRowSelectionSpy).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(stopPropagationSpy).not.toHaveBeenCalled();
+    });
+
+    it('should collapse an expanded row with ArrowLeft key', () => {
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: false };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
+      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection').mockImplementation(vi.fn());
+      Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowLeft' });
+      plugin.init(gridStub);
+
+      gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent);
+
+      expect(toggleRowSelectionSpy).toHaveBeenCalledWith(0, mockItem);
+      expect(preventDefaultSpy).toHaveBeenCalled();
+      expect(stopPropagationSpy).toHaveBeenCalled();
+    });
+
+    it('should NOT collapse an already collapsed row with ArrowLeft key', () => {
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
+      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection');
+      Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowLeft' });
+      plugin.init(gridStub);
+
+      gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent);
+
+      expect(toggleRowSelectionSpy).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(stopPropagationSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not toggle when inline editor is active', () => {
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
+      vi.spyOn(gridStub, 'getEditorLock').mockReturnValue({ isActive: () => true } as any);
+      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection');
+      plugin.init(gridStub);
+
+      gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent);
+
+      expect(toggleRowSelectionSpy).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(stopPropagationSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not toggle when focused on a non-toggle column (without useRowClick)', () => {
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
+      (gridStub.getColumnByIdx as ReturnType<typeof vi.fn>).mockReturnValue({ id: 'firstName' });
+      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection');
+      plugin.init(gridStub);
+
+      gridStub.onKeyDown.notify({ row: 0, cell: 1, grid: gridStub }, keyDownEvent);
+
+      expect(toggleRowSelectionSpy).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+    });
+
+    it('should toggle from any column when useRowClick is enabled', () => {
+      const mockProcess = vi.fn();
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
+      (gridStub.getColumnByIdx as ReturnType<typeof vi.fn>).mockReturnValue({ id: 'firstName' });
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+        ...gridOptionsMock,
+        rowDetailView: { process: mockProcess, columnIndexPosition: 0, useRowClick: true, panelRows: 2 } as any,
+      });
+      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection').mockImplementation(vi.fn());
+      plugin.init(gridStub);
+
+      gridStub.onKeyDown.notify({ row: 0, cell: 1, grid: gridStub }, keyDownEvent);
+
+      expect(toggleRowSelectionSpy).toHaveBeenCalledWith(0, mockItem);
+      expect(preventDefaultSpy).toHaveBeenCalled();
+      expect(stopPropagationSpy).toHaveBeenCalled();
+    });
+
+    it('should not toggle when checkExpandableOverride returns false', () => {
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
+      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection');
+      plugin.init(gridStub);
+      plugin.expandableOverride(() => false);
+
+      gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent);
+
+      expect(toggleRowSelectionSpy).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
     });
   });
 });
