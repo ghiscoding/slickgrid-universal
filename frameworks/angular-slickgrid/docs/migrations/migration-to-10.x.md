@@ -7,8 +7,7 @@ This new release also brings significant improvements to accessibility (a11y), m
 As a final touch, this release tries to align Angular-Slickgrid with more modern Angular patterns, including Angular 21 support, Standalone Components for simplified setup, and Zoneless change detection support which will allow you to drop the `zone.js` dependency for improved performance and smaller bundle size.
 
 #### Major Changes - Quick Summary
-- minimum requirements bump
-  - Angular v21+
+- Angular v21+ is now required
 - [`hidden` columns](#hidden-columns)
 - [Row Detail (now optional)](#row-detail-now-optional)
 - [ngx-translate@v17](#ngx-translate-v17x-is-now-required)
