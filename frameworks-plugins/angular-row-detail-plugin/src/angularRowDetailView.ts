@@ -282,8 +282,14 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
     if (this._viewComponent && containerElement) {
       const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
 
-      // If keep-component-alive is enabled and component already exists (but detached), reattach it instead of creating new
-      if (this.rowDetailViewOptions?.keepComponentAlive && viewObj?.componentRef && !viewObj.rendered) {
+      // If keep-component-alive is enabled and component already exists (but detached OR element disconnected from DOM),
+      // reattach it instead of creating new. The element can be disconnected when singleRowExpand triggers collapseAll()
+      // internally, which bypasses onBeforeRowDetailToggle and leaves rendered=true while removing the element from DOM.
+      if (
+        this.rowDetailViewOptions?.keepComponentAlive &&
+        viewObj?.componentRef &&
+        (!viewObj.rendered || !viewObj.componentRef.location.nativeElement?.isConnected)
+      ) {
         this.reattachViewComponent(viewObj);
         return viewObj;
       }
