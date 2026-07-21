@@ -67,7 +67,7 @@ export class Example55 {
       const lineCount = (i % 4) + 1;
       const summary = Array.from({ length: lineCount }, (_, idx) => `${fragments[(i + idx) % fragments.length]}`).join(' ');
       const wordCount = summary.trim().split(/\s+/).length;
-      const computedRowHeight = Math.max(40, 8 + lineCount * 16);
+      const computedRowHeight = Math.max(45, 8 + lineCount * 16);
       data.push({
         id: i,
         title: `Story ${i}`,

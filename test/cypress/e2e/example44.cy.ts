@@ -1,7 +1,7 @@
 describe('Example 44 - Variable Row Height (Provider)', { retries: 1 }, () => {
   // mirrors example44 provider output pattern
   const hOf = (r: number) => {
-    const cycle = [33, 40, 56, 72];
+    const cycle = [33, 45, 56, 72];
     return cycle[r % cycle.length];
   };
   const topOf = (r: number) => {
@@ -17,8 +17,8 @@ describe('Example 44 - Variable Row Height (Provider)', { retries: 1 }, () => {
     cy.get('h3').should('contain', 'Example 44 - Variable Row Height (Provider)');
   });
 
-  it('should render looping row heights (33, 40, 56, 72)', () => {
-    const expectedHeights = [33, 40, 56, 72, 33, 40, 56, 72];
+  it('should render looping row heights (33, 45, 56, 72)', () => {
+    const expectedHeights = [33, 45, 56, 72, 33, 45, 56, 72];
     const defaultRowHeight = 40;
 
     for (const [row, expectedHeight] of expectedHeights.entries()) {
