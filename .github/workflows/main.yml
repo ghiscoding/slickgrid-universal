@@ -56,7 +56,13 @@ jobs:
 
       - name: Run Vitest unit tests
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
-        run: pnpm test:coverage
+        run: pnpm test:coverage -- --reporter=junit --outputFile=test-report.junit.xml
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() && !contains(github.event.head_commit.message, 'chore(release)') }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload Vitest coverage to Codecov
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
