@@ -228,15 +228,22 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
         this.eventHandler.subscribe(this._grid.onSort, this.disposeAllViewComponents.bind(this));
 
         // redraw all Views whenever certain events are triggered
+        // use a setTimeout to ensure the grid has finished re-rendering before we redraw
+        // (onBeforeRowOutOfViewportRange may set rendered=false during the render cycle)
         this._subscriptions.push(
           this.eventPubSubService?.subscribe(
-            ['onFilterChanged', 'onGridMenuColumnsChanged', 'onColumnPickerColumnsChanged'],
-            this.redrawAllViewComponents.bind(this, false)
-          ),
-          this.eventPubSubService?.subscribe(['onGridMenuClearAllFilters', 'onGridMenuClearAllSorting'], () => {
-            clearTimeout(this._timer);
-            this._timer = setTimeout(() => this.redrawAllViewComponents());
-          })
+            [
+              'onFilterChanged',
+              'onGridMenuColumnsChanged',
+              'onColumnPickerColumnsChanged',
+              'onGridMenuClearAllFilters',
+              'onGridMenuClearAllSorting',
+            ],
+            () => {
+              clearTimeout(this._timer);
+              this._timer = setTimeout(() => this.redrawAllViewComponents());
+            }
+          )
         );
       }
     }

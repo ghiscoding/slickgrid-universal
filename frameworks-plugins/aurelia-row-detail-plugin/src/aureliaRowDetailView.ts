@@ -209,15 +209,22 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
           this._eventHandler.subscribe(this._grid.onSort, this.disposeAllViewSlot.bind(this));
 
           // redraw all Views whenever certain events are triggered
+          // use a setTimeout to ensure the grid has finished re-rendering before we redraw
+          // (onBeforeRowOutOfViewportRange may set rendered=false during the render cycle)
           this._subscriptions.push(
             this.eventPubSubService?.subscribe(
-              ['onFilterChanged', 'onGridMenuColumnsChanged', 'onColumnPickerColumnsChanged'],
-              this.redrawAllViewSlots.bind(this, false)
-            ),
-            this.eventPubSubService?.subscribe(['onGridMenuClearAllFilters', 'onGridMenuClearAllSorting'], () => {
-              clearTimeout(this._timer);
-              this._timer = setTimeout(() => this.redrawAllViewSlots());
-            })
+              [
+                'onFilterChanged',
+                'onGridMenuColumnsChanged',
+                'onColumnPickerColumnsChanged',
+                'onGridMenuClearAllFilters',
+                'onGridMenuClearAllSorting',
+              ],
+              () => {
+                clearTimeout(this._timer);
+                this._timer = setTimeout(() => this.redrawAllViewSlots());
+              }
+            )
           );
         }
       }
