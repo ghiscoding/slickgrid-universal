@@ -57,8 +57,8 @@ minimumReleaseAgeExclude:
   - '@lerna-lite/*'
   - 'excel-builder-vanilla'
   - '@excel-builder-vanilla/types'
-  # Renovate security update: dompurify@3.4.11
-  - dompurify@3.4.11
+  # Renovate security update: dompurify@3.4.11 || 3.4.12
+  - dompurify@3.4.11 || 3.4.12
 
 overrides:
   '@babel/core': ^7.29.7
