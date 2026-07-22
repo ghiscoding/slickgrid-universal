@@ -72,10 +72,11 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
+          files: ./test/vitest-coverage/clover.xml,./test/vitest-coverage/coverage-final.json
+          disable_search: true
+          fail_ci_if_error: true
           flags: universal
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: test/vitest-coverage
-          verbose: true
 
       - name: Retry Codecov upload when 1st try failed
         if: ${{ failure() && !contains(github.event.head_commit.message, 'chore(release)') }}
@@ -84,5 +85,8 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: test/vitest-coverage
+          files: ./test/vitest-coverage/clover.xml,./test/vitest-coverage/coverage-final.json
+          disable_search: true
+          fail_ci_if_error: true
+          flags: universal
           verbose: true
