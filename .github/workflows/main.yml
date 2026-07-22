@@ -72,8 +72,7 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
-          directory: test/vitest-coverage
-          files: ./clover.xml,./coverage-final.json
+          files: ./test/vitest-coverage/clover.xml,./test/vitest-coverage/coverage-final.json
           disable_search: true
           fail_ci_if_error: true
           flags: universal
@@ -86,5 +85,8 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: test/vitest-coverage
+          files: ./test/vitest-coverage/clover.xml,./test/vitest-coverage/coverage-final.json
+          disable_search: true
+          fail_ci_if_error: true
+          flags: universal
           verbose: true
