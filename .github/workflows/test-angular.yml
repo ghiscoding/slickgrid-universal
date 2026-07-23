@@ -83,7 +83,7 @@ jobs:
         run: pnpm angular:serve &
 
       - name: Run Cypress E2E tests
-        uses: cypress-io/github-action@fa4a118725a8f001170d49631ea89e5d66fee626 # v7
+        uses: cypress-io/github-action@fa4a118725a8f001170d49631ea89e5d66fee626 # v7.4.1
         with:
           install: false
           package-manager-cache: false
