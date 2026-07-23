@@ -58,10 +58,12 @@ minimumReleaseAgeExclude:
   - '@excel-builder-vanilla/types'
   - 'excel-builder-vanilla'
   - 'multiple-select-vanilla'
+  # Renovate security update: @hono/node-server@2.0.10
+  - "@hono/node-server@2.0.10"
 
 overrides:
   '@babel/core': ^7.29.7
-  '@hono/node-server': ^2.0.8
+  '@hono/node-server': ^2.0.10
   esbuild: ^0.28.1
   ip-address: ^10.2.0
   minimatch: ^10.2.5
