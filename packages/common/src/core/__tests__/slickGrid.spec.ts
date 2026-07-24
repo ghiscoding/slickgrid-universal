@@ -2576,6 +2576,22 @@ describe('SlickGrid core file', () => {
 
         expect(grid.getFrozenRowOffset(2)).toBe(DEFAULT_COLUMN_HEIGHT * 2);
       });
+
+      it('should return frozen-bottom offset based on computed row positions in variable row height mode', () => {
+        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+        const data = [{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }];
+        const rowHeights = [20, 35, 40, 45];
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          rowHeight: 20,
+          frozenBottom: true,
+          frozenRow: 2,
+          rowHeightProvider: (_grid, row) => rowHeights[row],
+        });
+
+        // actualFrozenRow is 2 (4 - 2), so the offset uses top position of row 2: 20 + 35 = 55
+        expect(grid.getFrozenRowOffset(2)).toBe(55);
+      });
     });
   });
 
@@ -5856,6 +5872,47 @@ describe('SlickGrid core file', () => {
       expect(renderSpy).toHaveBeenCalled();
     });
 
+    it('should scroll to computed row position when calling scrollRowToTop() in variable row height mode', () => {
+      const rowHeights = [25, 40, 30];
+      grid = new SlickGrid<any, Column>(container, data, columns, {
+        ...defaultOptions,
+        rowHeight: 25,
+        rowHeightProvider: (_grid, row) => rowHeights[row],
+      });
+      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+      const renderSpy = vi.spyOn(grid, 'render');
+
+      grid.scrollRowToTop(2);
+
+      // top of row 2 is 25 + 40
+      expect(scrollToSpy).toHaveBeenCalledWith(65);
+      expect(renderSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll to computed row position minus frozen top rows height in variable row height mode', () => {
+      const rowHeights = [20, 30, 40, 50];
+      const variableData = [
+        { id: 0, firstName: 'A', lastName: 'A', age: 1 },
+        { id: 1, firstName: 'B', lastName: 'B', age: 2 },
+        { id: 2, firstName: 'C', lastName: 'C', age: 3 },
+        { id: 3, firstName: 'D', lastName: 'D', age: 4 },
+      ];
+      grid = new SlickGrid<any, Column>(container, variableData, columns, {
+        ...defaultOptions,
+        frozenRow: 2,
+        rowHeight: 25,
+        rowHeightProvider: (_grid, row) => rowHeights[row],
+      });
+      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+      const renderSpy = vi.spyOn(grid, 'render');
+
+      grid.scrollRowToTop(3);
+
+      // top of row 3 is 20 + 30 + 40 = 90; frozen top rows height is 20 + 30 = 50; scroll target is 40
+      expect(scrollToSpy).toHaveBeenCalledWith(40);
+      expect(renderSpy).toHaveBeenCalled();
+    });
+
     it('should do page up when calling scrollRowIntoView() and we are further than row index that we want to scroll to', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenRow: 0 });
       const scrollToSpy = vi.spyOn(grid, 'scrollTo');
@@ -5867,6 +5924,99 @@ describe('SlickGrid core file', () => {
 
       expect(scrollToSpy).toHaveBeenCalledWith(2 * DEFAULT_COLUMN_HEIGHT); // default rowHeight: 25
       expect(renderSpy).toHaveBeenCalled();
+    });
+
+    it('should render inline row height and rebuild index when row heights are invalidated', () => {
+      const oneColumn = [{ id: 'firstName', field: 'firstName', name: 'First Name', sortable: true }] as Column[];
+      const providerHeights = [25, 40];
+      const rowHeightProvider = vi.fn((_grid: SlickGrid, row: number) => providerHeights[row]);
+      grid = new SlickGrid<any, Column>(
+        container,
+        [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ],
+        oneColumn,
+        {
+          ...defaultOptions,
+          rowHeight: 25,
+          rowHeightProvider,
+        }
+      );
+
+      expect(grid.getRowHeight(0)).toBe(25);
+      expect(grid.getRowHeight(1)).toBe(40);
+
+      const row0 = container.querySelector('.slick-row[data-row="0"]') as HTMLDivElement;
+      const row1 = container.querySelector('.slick-row[data-row="1"]') as HTMLDivElement;
+      expect(row0.style.height).toBe('');
+      expect(row1.style.height).toBe('40px');
+
+      rowHeightProvider.mockClear();
+      providerHeights[1] = 70;
+      const invalidateSpy = vi.spyOn(grid, 'invalidate');
+      grid.invalidateRowHeights();
+      grid.updateRowCount();
+
+      expect(invalidateSpy).toHaveBeenCalled();
+      expect(rowHeightProvider).toHaveBeenCalled();
+      expect(grid.getRowHeight(1)).toBe(70);
+    });
+
+    it('should rebuild row height index when rowHeightProvider is changed via setOptions()', () => {
+      const providerA = vi.fn((_grid: SlickGrid, row: number) => [25, 40][row]);
+      const providerB = vi.fn((_grid: SlickGrid, row: number) => [25, 80][row]);
+      grid = new SlickGrid<any, Column>(
+        container,
+        [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ],
+        [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[],
+        {
+          ...defaultOptions,
+          rowHeight: 25,
+          rowHeightProvider: providerA,
+        }
+      );
+
+      expect(grid.getRowHeight(1)).toBe(40);
+
+      providerB.mockClear();
+      grid.setOptions({ rowHeightProvider: providerB });
+      grid.updateRowCount();
+
+      expect(providerB).toHaveBeenCalled();
+      expect(grid.getRowHeight(1)).toBe(80);
+    });
+
+    it('should support metadata-only variable row height mode when rowHeightProvider is undefined', () => {
+      const dv = new SlickDataView({
+        globalItemMetadataProvider: {
+          getRowMetadata: (_item, row) => ({ height: [25, 65][row] }),
+        },
+      });
+      dv.setItems([
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ]);
+
+      grid = new SlickGrid<any, Column>(container, dv, [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[], {
+        ...defaultOptions,
+        rowHeight: 25,
+        dataView: {
+          globalItemMetadataProvider: {
+            getRowMetadata: (_item, row) => ({ height: [25, 65][row] }),
+          },
+        },
+      });
+
+      expect(grid.getRowHeight(0)).toBe(25);
+      expect(grid.getRowHeight(1)).toBe(65);
+
+      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+      grid.scrollRowToTop(1);
+      expect(scrollToSpy).toHaveBeenCalledWith(25);
     });
 
     it('should do nothing when trying to navigateTop when the dataset is empty', () => {
