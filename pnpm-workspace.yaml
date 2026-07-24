@@ -59,7 +59,7 @@ minimumReleaseAgeExclude:
   - 'excel-builder-vanilla'
   - 'multiple-select-vanilla'
   # Renovate security update: @hono/node-server@2.0.10
-  - "@hono/node-server@2.0.10"
+  - '@hono/node-server@2.0.10'
 
 overrides:
   '@babel/core': ^7.29.7
