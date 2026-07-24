@@ -89,7 +89,7 @@ const Example45DetailView: React.FC<RowDetailViewProps<Distributor, typeof Examp
   }
 
   function handleBeforeGridDestroy() {
-    if (props.model.isUsingInnerGridStatePresets) {
+    if (props.model.isUsingInnerGridStatePresets && reactGridRef.current?.gridStateService) {
       const gridState = reactGridRef.current?.gridStateService.getCurrentGridState();
       sessionStorage.setItem(`gridstate_${innerGridClass}`, JSON.stringify(gridState));
     }

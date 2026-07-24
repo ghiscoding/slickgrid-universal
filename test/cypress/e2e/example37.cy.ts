@@ -112,6 +112,14 @@ describe('Example 37 - Hybrid Selection Model', () => {
       cy.get('#selectionRange1').contains(/"fromRow":0,"fromCell":1,"toRow":1[45],"toCell":3/);
       cy.get('.grid37-1 .slick-viewport-top.slick-viewport-left').scrollTo(0, 13 * 35);
     });
+
+    it('should show "Command which should be shown" in context menu even when last column definition is hidden', () => {
+      cy.get('.grid37-1 .slick-row[data-row="14"] .slick-cell.l1.r1').as('task14');
+      cy.get('@task14').should('contain', 'Task 14');
+      cy.get('@task14').rightclick({ force: true });
+      cy.get('.slick-context-menu .slick-menu-item').should('contain', 'Command which should be shown');
+      cy.get('body').type('{esc}');
+    });
   });
 
   describe('Grid 2', () => {

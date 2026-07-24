@@ -19,14 +19,14 @@ catalog:
   '@types/sortablejs': ^1.15.9
   '@vitejs/plugin-react': ^6.0.3
   '@vitejs/plugin-vue': ^6.0.7
-  '@vitest/coverage-v8': ^4.1.9
-  '@vitest/ui': ^4.1.9
+  '@vitest/coverage-v8': ^4.1.10
+  '@vitest/ui': ^4.1.10
   bootstrap: ^5.3.8
   cross-env: ^10.1.0
   cypress: ^15.18.0
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
-  dompurify: ^3.4.11
+  dompurify: ^3.4.12
   globals: ^17.7.0
   i18next: ^25.10.10
   i18next-vue: ^5.4.0
@@ -35,7 +35,7 @@ catalog:
   jspdf: ^4.2.1
   multiple-select-vanilla: ^5.2.1
   native-copyfiles: ^2.0.3
-  npm-run-all2: ^8.0.4
+  npm-run-all2: ^9.0.2
   oxlint: ^1.72.0
   react: ^19.2.7
   react-dom: ^19.2.7
@@ -46,8 +46,8 @@ catalog:
   sortablejs: ^1.15.7
   tslib: ^2.8.1
   typescript: ^6.0.3
-  vite: &viteVersion ^8.1.3
-  vitest: ^4.1.9
+  vite: &viteVersion ^8.1.5
+  vitest: ^4.1.10
   vue: ^3.5.39
 
 minimumReleaseAge: 2880 # 2 days in minutes
@@ -55,14 +55,15 @@ minimumReleaseAge: 2880 # 2 days in minutes
 minimumReleaseAgeExclude:
   # exclude packages that I personally maintain and are safe to use on the same day
   - '@lerna-lite/*'
-  - 'excel-builder-vanilla'
   - '@excel-builder-vanilla/types'
-  # Renovate security update: dompurify@3.4.11
-  - dompurify@3.4.11
+  - 'excel-builder-vanilla'
+  - 'multiple-select-vanilla'
+  # Renovate security update: @hono/node-server@2.0.10
+  - "@hono/node-server@2.0.10"
 
 overrides:
   '@babel/core': ^7.29.7
-  '@hono/node-server': ^2.0.8
+  '@hono/node-server': ^2.0.10
   esbuild: ^0.28.1
   ip-address: ^10.2.0
   minimatch: ^10.2.5

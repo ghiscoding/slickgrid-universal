@@ -40,6 +40,7 @@ jest-coverage
 **/dist
 **/*.tgz
 test/cypress/screenshots/*.png
+test-report.junit.xml
 
 # Environment variables
 .env

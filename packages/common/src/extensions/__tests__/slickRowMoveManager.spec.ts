@@ -1,6 +1,6 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { SlickEvent, type SlickGrid } from '../../core/index.js';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import type { Column, DragRowMove, GridOption } from '../../interfaces/index.js';
 import { SlickRowMoveManager } from '../slickRowMoveManager.js';
 
@@ -60,6 +60,8 @@ const gridStub = {
   focus: vi.fn(),
   hasDataView: () => true,
   registerPlugin: vi.fn(),
+  resetActiveCell: vi.fn(),
+  invalidate: vi.fn(),
   setActiveCell: vi.fn(),
   setSelectedRows: vi.fn(),
   scrollCellIntoView: vi.fn(),
@@ -406,6 +408,50 @@ describe('SlickRowMoveManager Plugin', () => {
       grid: gridStub,
     });
     expect(stopImmediatePropagationSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should trigger "dragEnd" and call defaultOnMoveRows when no onMoveRows callback option is provided', () => {
+    const mockNewMovedRow = 0;
+    const mockSlickRow = document.createElement('div');
+    mockSlickRow.className = 'slick-row';
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[1]);
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockSlickRow);
+    const mockDataset = [
+      { id: 1, first: 'John' },
+      { id: 2, first: 'Jane' },
+    ];
+    vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([mockNewMovedRow]);
+    vi.spyOn(dataViewStub, 'getItems').mockReturnValue(mockDataset);
+    vi.spyOn(dataViewStub, 'getFilteredItems').mockReturnValue(mockDataset);
+    vi.spyOn(dataViewStub, 'getItemCount').mockReturnValue(mockDataset.length);
+    vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockDataset[1]);
+    vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(1);
+
+    // init WITHOUT providing onMoveRows callback so that defaultOnMoveRows is used
+    plugin.init(gridStub, { hideRowMoveShadow: false });
+    const onMoveRowNotifySpy = vi.spyOn(plugin.onMoveRows, 'notify');
+
+    const divElm = document.createElement('div');
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
+    const mockArgs = {
+      deltaX: 0,
+      deltaY: 1,
+      offsetX: 2,
+      offsetY: 3,
+      row: 2,
+      rows: [2],
+      selectedRows: [2],
+      insertBefore: 4,
+      canMove: true,
+    } as any;
+    gridStub.onDragStart.notify(mockArgs, mouseEvent);
+    gridStub.onDragEnd.notify(mockArgs, mouseEvent);
+
+    // verify defaultOnMoveRows was effectively called by checking its side effects (setItems was called)
+    expect(onMoveRowNotifySpy).toHaveBeenCalledWith({ insertBefore: -1, rows: [mockNewMovedRow], grid: gridStub });
+    expect(dataViewStub.setItems).toHaveBeenCalled();
   });
 
   it('should create the plugin and trigger "dragStart" and expect editor be cancelled when it is active editor', () => {

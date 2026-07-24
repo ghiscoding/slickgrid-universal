@@ -547,8 +547,8 @@ export class ExtensionService {
   }
 
   /**
-   * Render (or re-render) the column headers from column definitions.
-   * calling setColumns() will trigger a grid re-render
+   * (re)Render the column headers from column definitions.
+   * calling `setColumns()` will trigger a grid re-render
    */
   renderColumnHeaders(newColumns?: Column[], forceColumnDefinitionsOverwrite = false): void {
     let collection = newColumns;

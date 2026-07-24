@@ -43,6 +43,7 @@
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*",
     "angular-slickgrid": "workspace:*",
     "rxjs": "catalog:"
   },

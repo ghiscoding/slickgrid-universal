@@ -40,6 +40,10 @@ export default defineConfig({
       toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'queueMicrotask'],
     },
     globalSetup: './test/vitest-global-setup.ts',
+    reporters: ['default', 'junit'],
+    outputFile: {
+      junit: './test-report.junit.xml',
+    },
     setupFiles: ['./test/vitest-pretest.ts', './test/vitest-global-mocks.ts'],
     testTimeout: 60000,
     watch: false,
