@@ -150,7 +150,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   });
 
   /* this test is very flaky, let's skip it since it doesn't bring much value anyway */
-  it.skip('should MAX interval take effect when auto scroll: 600ms -> 200ms', { scrollBehavior: false }, () => {
+  it('should MAX interval take effect when auto scroll: 600ms -> 200ms', { scrollBehavior: false }, () => {
     // By default the MAX interval to show next cell is 600ms.
     testInterval(0, 9).then((defaultInterval) => {
       // Setting the interval to 200ms (1/3 of the default).
@@ -264,6 +264,8 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     cy.get('.grid17-1 .slick-viewport-bottom.slick-viewport-right').scrollTo(CELL_WIDTH * 3, CELL_HEIGHT * 3);
     cy.get('.grid17-2 .slick-viewport-bottom.slick-viewport-right').scrollTo(CELL_WIDTH * 3, CELL_HEIGHT * 3);
 
+    cy.get('[data-test="toggle-subtitle"]').click();
+
     // bottom right - to topLeft
     getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomRight', 'topLeft', 6, 4, 140).then((result: any) => {
       expect(result.scrollTopBefore).to.be.greaterThan(result.scrollTopAfter);
@@ -280,6 +282,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     'should have a frozen & grouping by Duration grid after click Set/Clear grouping by Duration button',
     { scrollBehavior: false },
     () => {
+      cy.get('[data-test="toggle-subtitle"]').click();
       cy.get('[data-test="set-clear-grouping-btn"]').trigger('click');
       cy.get(`.grid17-1 [style="transform: translateY(${CELL_HEIGHT * 0}px);"]`).should('have.length', 2 * 2);
       cy.get(`.grid17-2 [style="transform: translateY(${CELL_HEIGHT * 0}px);"]`).should('have.length', 2 * 2);
@@ -306,16 +309,14 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   }
 
   // skip flaky test for now
-  it.skip(
-    'should auto scroll to display the selecting element even unselectable cell exist in grouping grid',
-    { scrollBehavior: false },
-    () => {
-      testDragInGrouping('.grid17-1');
-      testDragInGrouping('.grid17-2');
-    }
-  );
+  it('should auto scroll to display the selecting element even unselectable cell exist in grouping grid', { scrollBehavior: false }, () => {
+    cy.get('[data-test="toggle-subtitle"]').click();
+    testDragInGrouping('.grid17-1');
+    testDragInGrouping('.grid17-2');
+  });
 
   it('should reset to default grid when click Set/Clear Frozen button and Set/Clear grouping button', () => {
+    cy.get('[data-test="toggle-subtitle"]').click();
     cy.get('[data-test="set-clear-frozen-btn"]').trigger('click');
     cy.get('[data-test="set-clear-grouping-btn"]').trigger('click');
     cy.get(`.grid17-1 [style="transform: translateY(${CELL_HEIGHT * 0}px);"]`).should('have.length', 1);

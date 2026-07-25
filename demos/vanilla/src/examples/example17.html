@@ -1,6 +1,9 @@
 <h3 class="title is-3">
   Example 17 - Auto-Scroll with Range Selector
   <span class="subtitle">(with Salesforce Theme)</span>
+  <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -12,9 +15,12 @@
     </a>
   </div>
 </h3>
-<h6 class="italic content example-details">Dragging from 2nd column to make a selection, and the viewport will auto scroll.</h6>
 
-<div>
+<h6 class="italic content example-details" style.bind="subTitleStyle">
+  Dragging from 2nd column to make a selection, and the viewport will auto scroll.
+</h6>
+
+<div style.bind="subTitleStyle">
   <span class="ml-1 mb-2">
     <label for="">Grid 1 - Pinned Columns: </label>
     <input
@@ -27,7 +33,7 @@
   </span>
 </div>
 <div>
-  <div class="row scroll-configs">
+  <div class="row scroll-configs" style.bind="subTitleStyle">
     <span>
       <label for="min-internal">MIN interval to show next cell (ms): </label>
       <input id="min-internal" class="is-narrow input is-small" type="number" data-test="min-interval-input" value.bind="minInterval" />
@@ -37,7 +43,7 @@
       <input id="delay-cursor" class="is-narrow input is-small" type="number" data-test="delay-cursor-input" value.bind="delayCursor" />
     </span>
   </div>
-  <div class="row my-3">
+  <div class="row my-3" style.bind="subTitleStyle">
     <label for="is-autoscroll">Auto Scroll: (need click Set Options): </label>
     <input id="is-autoscroll" type="checkbox" data-test="is-autoscroll-chk" checked.bind="isAutoScroll" />
 
