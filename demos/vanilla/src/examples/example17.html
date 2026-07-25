@@ -20,20 +20,8 @@
   Dragging from 2nd column to make a selection, and the viewport will auto scroll.
 </h6>
 
-<div style.bind="subTitleStyle">
-  <span class="ml-1 mb-2">
-    <label for="">Grid 1 - Pinned Columns: </label>
-    <input
-      type="number"
-      data-test="frozen-column-count"
-      class="frozen-column-count is-narrow input is-small"
-      value.bind="frozenColumnCount"
-    />
-    <button class="button is-small" data-test="set-frozen-columns-btn" onclick.trigger="changeFrozenColumnCount()">Set</button>
-  </span>
-</div>
 <div>
-  <div class="row scroll-configs" style.bind="subTitleStyle">
+  <div class="row scroll-configs">
     <span>
       <label for="min-internal">MIN interval to show next cell (ms): </label>
       <input id="min-internal" class="is-narrow input is-small" type="number" data-test="min-interval-input" value.bind="minInterval" />
@@ -43,8 +31,18 @@
       <input id="delay-cursor" class="is-narrow input is-small" type="number" data-test="delay-cursor-input" value.bind="delayCursor" />
     </span>
   </div>
-  <div class="row my-3" style.bind="subTitleStyle">
-    <label for="is-autoscroll">Auto Scroll: (need click Set Options): </label>
+  <div class="row my-3">
+    <span class="ml-1 mb-2">
+      <label for="">Grid 1 - Pinned Columns: </label>
+      <input
+        type="number"
+        data-test="frozen-column-count"
+        class="frozen-column-count is-narrow input is-small"
+        value.bind="frozenColumnCount"
+      />
+      <button class="button is-small" data-test="set-frozen-columns-btn" onclick.trigger="changeFrozenColumnCount()">Set</button>
+    </span>
+    <label for="is-autoscroll">Auto Scroll: </label>
     <input id="is-autoscroll" type="checkbox" data-test="is-autoscroll-chk" checked.bind="isAutoScroll" />
 
     <span class="ml-2">
