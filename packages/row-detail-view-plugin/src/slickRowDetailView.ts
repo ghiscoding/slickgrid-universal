@@ -327,8 +327,10 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       // we need to reevaluate & invalidate any row detail that are shown on top of the row that we're closing
       this.reevaluateRenderedRowIds(item);
 
+      // a new expanded row is considered both expanded & rendered
       item[`${this._keyPrefix}collapsed`] = false;
       this._expandedRowIds.add(itemId);
+      this._renderedViewportRowIds.add(itemId);
 
       // in the case something went wrong loading it the first time such a scroll of screen before loaded
       if (!item[`${this._keyPrefix}detailContent`]) {
