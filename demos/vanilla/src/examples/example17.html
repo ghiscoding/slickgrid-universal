@@ -1,6 +1,9 @@
 <h3 class="title is-3">
   Example 17 - Auto-Scroll with Range Selector
   <span class="subtitle">(with Salesforce Theme)</span>
+  <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -12,20 +15,11 @@
     </a>
   </div>
 </h3>
-<h6 class="italic content example-details">Dragging from 2nd column to make a selection, and the viewport will auto scroll.</h6>
 
-<div>
-  <span class="ml-1 mb-2">
-    <label for="">Grid 1 - Pinned Columns: </label>
-    <input
-      type="number"
-      data-test="frozen-column-count"
-      class="frozen-column-count is-narrow input is-small"
-      value.bind="frozenColumnCount"
-    />
-    <button class="button is-small" data-test="set-frozen-columns-btn" onclick.trigger="changeFrozenColumnCount()">Set</button>
-  </span>
-</div>
+<h6 class="italic content example-details" style.bind="subTitleStyle">
+  Dragging from 2nd column to make a selection, and the viewport will auto scroll.
+</h6>
+
 <div>
   <div class="row scroll-configs">
     <span>
@@ -38,7 +32,17 @@
     </span>
   </div>
   <div class="row my-3">
-    <label for="is-autoscroll">Auto Scroll: (need click Set Options): </label>
+    <span class="ml-1 mb-2">
+      <label for="">Grid 1 - Pinned Columns: </label>
+      <input
+        type="number"
+        data-test="frozen-column-count"
+        class="frozen-column-count is-narrow input is-small"
+        value.bind="frozenColumnCount"
+      />
+      <button class="button is-small" data-test="set-frozen-columns-btn" onclick.trigger="changeFrozenColumnCount()">Set</button>
+    </span>
+    <label for="is-autoscroll">Auto Scroll: </label>
     <input id="is-autoscroll" type="checkbox" data-test="is-autoscroll-chk" checked.bind="isAutoScroll" />
 
     <span class="ml-2">

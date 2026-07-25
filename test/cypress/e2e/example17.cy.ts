@@ -32,6 +32,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+    cy.get('[data-test="toggle-subtitle"]').click();
   });
 
   it(
@@ -150,7 +151,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   });
 
   /* this test is very flaky, let's skip it since it doesn't bring much value anyway */
-  it.skip('should MAX interval take effect when auto scroll: 600ms -> 200ms', { scrollBehavior: false }, () => {
+  it('should MAX interval take effect when auto scroll: 600ms -> 200ms', { scrollBehavior: false }, () => {
     // By default the MAX interval to show next cell is 600ms.
     testInterval(0, 9).then((defaultInterval) => {
       // Setting the interval to 200ms (1/3 of the default).
@@ -306,14 +307,10 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   }
 
   // skip flaky test for now
-  it.skip(
-    'should auto scroll to display the selecting element even unselectable cell exist in grouping grid',
-    { scrollBehavior: false },
-    () => {
-      testDragInGrouping('.grid17-1');
-      testDragInGrouping('.grid17-2');
-    }
-  );
+  it('should auto scroll to display the selecting element even unselectable cell exist in grouping grid', { scrollBehavior: false }, () => {
+    testDragInGrouping('.grid17-1');
+    testDragInGrouping('.grid17-2');
+  });
 
   it('should reset to default grid when click Set/Clear Frozen button and Set/Clear grouping button', () => {
     cy.get('[data-test="set-clear-frozen-btn"]').trigger('click');
