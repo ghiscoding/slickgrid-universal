@@ -60,6 +60,8 @@ const myRoutes: Routeable[] = [
   { path: 'example52', component: () => import('./examples/slickgrid/example52.js'), title: '52- SQL Backend Service' },
   { path: 'example53', component: () => import('./examples/slickgrid/example53.js'), title: '53- Custom Filter Bar' },
   { path: 'example54', component: () => import('./examples/slickgrid/example54.js'), title: '54- AI / Web MCP Toolkit' },
+  { path: 'example55', component: () => import('./examples/slickgrid/example55.js'), title: '55- Variable Row Height (Provider)' },
+  { path: 'example56', component: () => import('./examples/slickgrid/example56.js'), title: '56- Variable Row Height (Dynamic)' },
   { path: 'home', component: () => import('./home-page.js'), title: 'Home' },
 ];
 @route({

@@ -21,6 +21,14 @@ export interface ItemMetadata {
   /** Whether or not any cells in the row can be set as "active". */
   focusable?: boolean;
 
+  /**
+   * Row height in pixels, used by SlickGrid's default `rowHeightProvider` when
+   * `enableVariableRowHeight` is true.
+   * If a custom `rowHeightProvider` is supplied, that callback fully controls row heights and this
+   * property is ignored unless the callback reads it explicitly.
+   */
+  height?: number;
+
   /** A custom group formatter. */
   formatter?: GroupTotalsFormatter | Formatter;
 

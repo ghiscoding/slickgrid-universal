@@ -1,0 +1,31 @@
+<h3 class="title is-3">
+  Example 45 - Variable Row Height (Dynamic)
+  <span class="d-inline-flex">
+    <button class="button is-small" onclick.trigger="toggleDensity()" data-test="toggle-density">
+      <span class="mdi mdi-flip-vertical"></span>
+      <span> Toggle Compact Density</span>
+    </button>
+    <button class="button is-small ml-2" onclick.trigger="scrollToRow90()" data-test="scroll-row-90-example45">
+      <span class="mdi mdi-arrow-down"></span>
+      <span> Scroll To row 90</span>
+    </button>
+  </span>
+
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example45.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h6 class="title is-6 italic">
+  Variable row heights via <code>ItemMetadata.height</code> fallback, with compact mode rebuilding heights through
+  <code>invalidateRowHeights()</code>.
+</h6>
+
+<div class="grid45"></div>

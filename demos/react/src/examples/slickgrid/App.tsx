@@ -56,6 +56,8 @@ const routes = [
   { path: 'example52', route: '/example52', element: lazy(() => import('./Example52.js')), title: '52- SQL Backend Service' },
   { path: 'example53', route: '/example53', element: lazy(() => import('./Example53.js')), title: '53- Custom Filter Bar' },
   { path: 'example54', route: '/example54', element: lazy(() => import('./Example54.js')), title: '54- AI / Web MCP Toolkit' },
+  { path: 'example55', route: '/example55', element: lazy(() => import('./Example55.js')), title: '55- Variable Row Height (Provider)' },
+  { path: 'example56', route: '/example56', element: lazy(() => import('./Example56.js')), title: '56- Variable Row Height (Dynamic)' },
 ];
 
 export default function Routes() {
