@@ -19,6 +19,9 @@ The default `rowHeightProvider` reads `ItemMetadata.height` from `getRowMetadata
 ### Using rowHeightProvider
 Use `rowHeightProvider` when height is derived directly from row/item data.
 
+> **Important:** Defining a custom `rowHeightProvider` replaces SlickGrid's default provider.
+> The default provider reads `ItemMetadata.height`; once overridden, metadata height is no longer read unless your custom provider reads it explicitly.
+
 ```ts
 import type { Column, GridOption } from '@slickgrid-universal/common';
 

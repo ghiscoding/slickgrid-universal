@@ -17,6 +17,11 @@ When `enableVariableRowHeight: true`, each row height is resolved in this order:
 The default `rowHeightProvider` reads `ItemMetadata.height` from `getRowMetadata`, so metadata-only setups work without defining your own provider.
 
 ### Using rowHeightProvider
+Use `rowHeightProvider` when height is derived directly from row/item data.
+
+> **Important:** Defining a custom `rowHeightProvider` replaces SlickGrid's default provider.
+> The default provider reads `ItemMetadata.height`; once overridden, metadata height is no longer read unless your custom provider reads it explicitly.
+
 ```ts
 import { Column, GridOption } from 'angular-slickgrid';
 
@@ -31,6 +36,7 @@ gridOptions: GridOption = {
 ```
 
 ### Using Item Metadata Height Fallback
+Use metadata height when you already customize row metadata and prefer to keep row height logic there.
 Set `enableVariableRowHeight: true` and rely on the default `rowHeightProvider`.
 
 ```ts
