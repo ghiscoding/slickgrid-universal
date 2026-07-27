@@ -4863,11 +4863,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   getCellHeight(row: number, rowspan: number): number {
+    let cellHeight = this._options.rowHeight || 0;
     if (rowspan > 1) {
       const rowSpanBottomIdx = row + rowspan - 1;
-      return Math.ceil(this.getRowBottom(rowSpanBottomIdx) - this.getRowTop(row));
+      cellHeight = this.getRowBottom(rowSpanBottomIdx) - this.getRowTop(row);
+    } else {
+      const rowHeight = this.getRowHeight(row);
+      if (rowHeight !== cellHeight - this.cellHeightDiff) {
+        cellHeight = rowHeight;
+      }
     }
-    return Math.ceil(this.getRowHeight(row) - this.cellHeightDiff);
+
+    cellHeight -= this.cellHeightDiff;
+    return Math.ceil(cellHeight);
   }
 
   /**
