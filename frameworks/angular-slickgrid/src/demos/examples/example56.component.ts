@@ -62,6 +62,7 @@ export class Example56Component implements OnInit {
     this.gridOptions = {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
+      enableVariableRowHeight: true,
       rowHeight: 40,
       frozenRow: 2,
       gridHeight: 560,

@@ -6,14 +6,15 @@
 - [Runtime Updates](#runtime-updates)
 
 ### Introduction
-By default, SlickGrid uses the grid option `rowHeight` for every row. When variable row height is in play (via `rowHeightProvider` or `ItemMetadata.height` detection), each row can resolve to a different height while preserving virtual scrolling and frozen panes.
+By default, SlickGrid uses the grid option `rowHeight` for every row. Variable row height is opt-in and only active when `enableVariableRowHeight` is set to `true`.
 
 ### Height Resolution Order
-For each row, height resolution follows this order:
+When `enableVariableRowHeight: true`, each row height is resolved in this order:
 
 1. `rowHeightProvider(grid, row, item)` return value (when defined and when it returns a number)
-2. `ItemMetadata.height` from `dataView.globalItemMetadataProvider.getRowMetadata(item, row)`
-3. Grid option `rowHeight` (default fallback)
+2. Grid option `rowHeight` (default fallback)
+
+The default `rowHeightProvider` reads `ItemMetadata.height` from `getRowMetadata`, so metadata-only setups work without defining your own provider.
 
 ### Using rowHeightProvider
 Use `rowHeightProvider` when height is derived directly from row/item data.
@@ -22,6 +23,7 @@ Use `rowHeightProvider` when height is derived directly from row/item data.
 import type { Column, GridOption } from '@slickgrid-universal/common';
 
 const gridOptions: GridOption = {
+  enableVariableRowHeight: true,
   rowHeight: 40,
   rowHeightProvider: (_grid, _row, item: { summary: string }) => {
     const lineCount = Math.max(1, Math.ceil(item.summary.length / 55));
@@ -31,16 +33,14 @@ const gridOptions: GridOption = {
 ```
 
 ### Using Item Metadata Height Fallback
-Use metadata fallback when you already customize row metadata and prefer to keep row height logic there.
-Variable height mode is activated automatically as soon as `getRowMetadata` returns an object with a numeric `height` property on any row.
-
-> **Note:** Simply having a `getRowMetadata` function (e.g. for colspan only) does **not** activate variable height mode.
-> The grid probes the first available data item and only enables variable height when a numeric `height` is found in the returned metadata.
+Use metadata height when you already customize row metadata and prefer to keep row height logic there.
+Set `enableVariableRowHeight: true` and rely on the default `rowHeightProvider`.
 
 ```ts
 import type { GridOption, ItemMetadata } from '@slickgrid-universal/common';
 
 const gridOptions: GridOption = {
+  enableVariableRowHeight: true,
   rowHeight: 40,
   dataView: {
     globalItemMetadataProvider: {
@@ -57,7 +57,8 @@ const gridOptions: GridOption = {
 };
 ```
 
-If `rowHeightProvider` is omitted (or returns `undefined` for a row), `ItemMetadata.height` is used as fallback.
+If you supply a custom `rowHeightProvider`, it fully replaces the default provider behavior.
+When your custom provider returns `undefined`, the grid uses `rowHeight` for that row.
 
 ### Runtime Updates
 If row height inputs change at runtime (content, mode toggles, metadata rules), call `invalidateRowHeights()` to rebuild row positions and repaint.

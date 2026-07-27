@@ -58,6 +58,7 @@ const Example56: React.FC = () => {
     const options: GridOption = {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
+      enableVariableRowHeight: true,
       rowHeight: 40,
       frozenRow: 2,
       gridHeight: 560,

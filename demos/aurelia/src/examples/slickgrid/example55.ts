@@ -45,6 +45,7 @@ export class Example55 {
     this.gridOptions = {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
+      enableVariableRowHeight: true,
       rowHeight: 40,
       gridHeight: 560,
       gridWidth: 1080,

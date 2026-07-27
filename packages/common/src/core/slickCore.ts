@@ -976,7 +976,7 @@ export const preClickClassName = 'slick-edit-preclick';
 
 /**
  * RowPositionIndexer - a prefix-sum index of row top positions, used by SlickGrid when variable
- * row height mode is enabled (i.e. when a `rowHeightProvider` grid option is supplied).
+ * row height mode is enabled (i.e. when `enableVariableRowHeight` is true).
  *
  * `rowPos[i]` holds the virtual top pixel position of row `i` (i.e. the summed heights of all
  * preceding rows) and `rowPos[rowCount]` holds the total height of all indexed rows, which makes

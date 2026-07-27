@@ -65,6 +65,7 @@ export default class Example45 {
     const gridOptions: GridOption = {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
+      enableVariableRowHeight: true,
       rowHeight: 40,
       frozenRow: 2,
       gridHeight: 560,

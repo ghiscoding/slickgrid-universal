@@ -2583,6 +2583,7 @@ describe('SlickGrid core file', () => {
         const rowHeights = [20, 35, 40, 45];
         grid = new SlickGrid<any, Column>(container, data, columns, {
           ...defaultOptions,
+          enableVariableRowHeight: true,
           rowHeight: 20,
           frozenBottom: true,
           frozenRow: 2,
@@ -5876,6 +5877,7 @@ describe('SlickGrid core file', () => {
       const rowHeights = [25, 40, 30];
       grid = new SlickGrid<any, Column>(container, data, columns, {
         ...defaultOptions,
+        enableVariableRowHeight: true,
         rowHeight: 25,
         rowHeightProvider: (_grid, row) => rowHeights[row],
       });
@@ -5899,6 +5901,7 @@ describe('SlickGrid core file', () => {
       ];
       grid = new SlickGrid<any, Column>(container, variableData, columns, {
         ...defaultOptions,
+        enableVariableRowHeight: true,
         frozenRow: 2,
         rowHeight: 25,
         rowHeightProvider: (_grid, row) => rowHeights[row],
@@ -5939,6 +5942,7 @@ describe('SlickGrid core file', () => {
         oneColumn,
         {
           ...defaultOptions,
+          enableVariableRowHeight: true,
           rowHeight: 25,
           rowHeightProvider,
         }
@@ -5975,6 +5979,7 @@ describe('SlickGrid core file', () => {
         [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[],
         {
           ...defaultOptions,
+          enableVariableRowHeight: true,
           rowHeight: 25,
           rowHeightProvider: providerA,
         }
@@ -5990,7 +5995,7 @@ describe('SlickGrid core file', () => {
       expect(grid.getRowHeight(1)).toBe(80);
     });
 
-    it('should support metadata-only variable row height mode when rowHeightProvider is undefined', () => {
+    it('should support metadata-only variable row height mode via default rowHeightProvider', () => {
       const dv = new SlickDataView({
         globalItemMetadataProvider: {
           getRowMetadata: (_item, row) => ({ height: [25, 65][row] }),
@@ -6003,6 +6008,7 @@ describe('SlickGrid core file', () => {
 
       grid = new SlickGrid<any, Column>(container, dv, [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[], {
         ...defaultOptions,
+        enableVariableRowHeight: true,
         rowHeight: 25,
         dataView: {
           globalItemMetadataProvider: {
@@ -6017,6 +6023,29 @@ describe('SlickGrid core file', () => {
       const scrollToSpy = vi.spyOn(grid, 'scrollTo');
       grid.scrollRowToTop(1);
       expect(scrollToSpy).toHaveBeenCalledWith(25);
+    });
+
+    it('should use default rowHeight when custom rowHeightProvider returns undefined even if metadata defines height', () => {
+      const data = [
+        { id: 0, firstName: 'John' },
+        { id: 1, firstName: 'Jane' },
+      ];
+      const customProvider = vi.fn(() => undefined);
+
+      grid = new SlickGrid<any, Column>(container, data, [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[], {
+        ...defaultOptions,
+        enableVariableRowHeight: true,
+        rowHeight: 25,
+        rowHeightProvider: customProvider,
+        dataView: {
+          globalItemMetadataProvider: {
+            getRowMetadata: (_item, row) => ({ height: [25, 70][row] }),
+          },
+        },
+      });
+
+      expect(grid.getRowHeight(1)).toBe(25);
+      expect(customProvider).toHaveBeenCalled();
     });
 
     it('should do nothing when trying to navigateTop when the dataset is empty', () => {

@@ -22,9 +22,10 @@ export interface ItemMetadata {
   focusable?: boolean;
 
   /**
-   * Row height in pixels, only used in variable row height mode (i.e. when a `rowHeightProvider`
-   * grid option is configured). Applied when the provider returns `undefined` for the row; when
-   * this is also undefined the default `rowHeight` grid option is used.
+   * Row height in pixels, used by SlickGrid's default `rowHeightProvider` when
+   * `enableVariableRowHeight` is true.
+   * If a custom `rowHeightProvider` is supplied, that callback fully controls row heights and this
+   * property is ignored unless the callback reads it explicitly.
    */
   height?: number;
 

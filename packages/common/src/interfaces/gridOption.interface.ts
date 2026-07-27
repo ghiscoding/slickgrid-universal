@@ -830,14 +830,23 @@ export interface GridOption<C extends Column = Column> {
   rowHeight?: number;
 
   /**
+   * Defaults to false.
+   * Explicitly enable variable row height mode. When false, SlickGrid always uses fixed-height math
+   * and ignores per-row heights even if a `rowHeightProvider` is defined.
+   * This preserves the fixed-row-height fast path for grids that do not use variable row heights,
+   * avoiding per-row provider work on large datasets.
+   */
+  enableVariableRowHeight?: boolean;
+
+  /**
    * Optional callback used in variable row height mode.
    * Receives the grid instance (giving access to any grid state), the row index, and the row's
-   * data item. Returns the height in pixels of that row, or `undefined` to fall back to
-   * `ItemMetadata.height` (when the data provider supplies `getItemMetadata`) and finally to the
-   * default `rowHeight`.
-   * Variable row height mode is auto-detected: it activates when this callback is supplied, or
-   * when `dataView.globalItemMetadataProvider.getRowMetadata` returns a `height` property for any
-   * row (probed lazily on first use). No explicit option is required.
+   * data item. Returns the height in pixels of that row, or `undefined` to use the default
+   * `rowHeight`.
+   * Variable row height mode is active only when `enableVariableRowHeight` is true.
+   * By default, SlickGrid provides a metadata-backed provider (`ItemMetadata.height`), so
+   * metadata-only setups work by enabling the switch without defining this callback.
+   * Supplying a custom callback fully replaces the default provider behavior.
    * Heights are cached in a prefix-sum index that is rebuilt whenever the row count changes, rows
    * are invalidated, or `grid.invalidateRowHeights()` is called; the callback is called once per
    * row per rebuild, so it must be fast (a simple lookup or calculation - no DOM access).

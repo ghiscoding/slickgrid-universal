@@ -56,6 +56,7 @@ function defineGrid() {
   gridOptions.value = {
     enableCellNavigation: true,
     enableTextSelectionOnCells: true,
+    enableVariableRowHeight: true,
     rowHeight: 40,
     frozenRow: 2,
     gridHeight: 560,
