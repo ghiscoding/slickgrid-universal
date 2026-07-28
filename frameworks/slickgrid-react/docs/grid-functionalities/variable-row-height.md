@@ -6,7 +6,7 @@
 - [Runtime Updates](#runtime-updates)
 
 ### Introduction
-By default, SlickGrid uses the grid option `rowHeight` for every row. Variable row height is opt-in and only active when `enableVariableRowHeight` is set to `true`.
+By default, SlickGrid uses the grid option `rowHeight` for every row. Variable row height is opt-in and only active when `enableVariableRowHeight` grid option is set to `true`.
 
 ### Height Resolution Order
 When `enableVariableRowHeight: true`, each row height is resolved in this order:

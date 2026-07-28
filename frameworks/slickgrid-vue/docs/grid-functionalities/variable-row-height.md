@@ -6,7 +6,7 @@
 - [Runtime Updates](#runtime-updates)
 
 ### Introduction
-By default, SlickGrid uses the grid option `rowHeight` for every row. Variable row height is opt-in and only active when `enableVariableRowHeight` is set to `true`.
+By default, SlickGrid uses the grid option `rowHeight` for every row. Variable row height is opt-in and only active when `enableVariableRowHeight` grid option is set to `true`.
 
 ### Height Resolution Order
 When `enableVariableRowHeight: true`, each row height is resolved in this order:
@@ -28,6 +28,7 @@ import type { GridOption } from 'slickgrid-vue';
 const gridOptions: GridOption = {
   enableVariableRowHeight: true,
   rowHeight: 40,
+  // small demo to adjust row height by using summary length
   rowHeightProvider: (_grid, _row, item: { summary: string }) => {
     const lineCount = Math.max(1, Math.ceil(item.summary.length / 55));
     return Math.max(33, 8 + lineCount * 16);
@@ -45,6 +46,7 @@ const gridOptions: GridOption = {
   rowHeight: 40,
   dataView: {
     globalItemMetadataProvider: {
+      // quick demo to change row height by calculating notes length
       getRowMetadata: (item: { notes: string }) => {
         if (item.notes === 'Short note.') {
           return { height: 33 };
