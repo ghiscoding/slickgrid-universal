@@ -61,11 +61,12 @@ minimumReleaseAgeExclude:
 
 overrides:
   '@babel/core': ^7.29.7
-  '@hono/node-server': ^2.0.10
+  '@hono/node-server': ^2.0.12
   esbuild: ^0.28.1
-  ip-address: ^10.2.0
+  ip-address: ^10.3.1
   minimatch: ^10.2.5
   picomatch: ^4.0.5
+  postcss: ^8.5.23
   qs: ^6.15.3
   undici: ^7.28.0
   vite: *viteVersion
