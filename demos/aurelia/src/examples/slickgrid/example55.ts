@@ -1,3 +1,4 @@
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 import './example55.scss';
 
@@ -46,6 +47,7 @@ export class Example55 {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
       enableVariableRowHeight: true,
+      externalResources: [new ExcelExportService()],
       rowHeight: 40,
       gridHeight: 560,
       gridWidth: 1080,

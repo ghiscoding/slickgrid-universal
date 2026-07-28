@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
@@ -43,6 +44,7 @@ function defineGrid() {
     enableCellNavigation: true,
     enableTextSelectionOnCells: true,
     enableVariableRowHeight: true,
+    externalResources: [new ExcelExportService()],
     rowHeight: 40,
     gridHeight: 560,
     gridWidth: 1080,

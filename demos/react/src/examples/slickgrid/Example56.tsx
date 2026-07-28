@@ -1,3 +1,4 @@
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import React, { useEffect, useRef, useState } from 'react';
 import { SlickgridReact, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
 import './example56.scss';
@@ -59,6 +60,7 @@ const Example56: React.FC = () => {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
       enableVariableRowHeight: true,
+      externalResources: [new ExcelExportService()],
       rowHeight: 40,
       frozenRow: 2,
       gridHeight: 560,

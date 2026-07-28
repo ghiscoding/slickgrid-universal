@@ -1,4 +1,5 @@
 import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { AngularSlickgridComponent, type AngularGridInstance, type Column, type GridOption } from '../../library';
 
 const NB_ITEMS = 150;
@@ -63,6 +64,7 @@ export class Example56Component implements OnInit {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
       enableVariableRowHeight: true,
+      externalResources: [new ExcelExportService()],
       rowHeight: 40,
       frozenRow: 2,
       gridHeight: 560,
