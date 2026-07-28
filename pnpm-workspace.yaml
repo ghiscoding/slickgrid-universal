@@ -60,6 +60,8 @@ minimumReleaseAgeExclude:
   - 'multiple-select-vanilla'
   # Renovate security update: react-router@8.3.0
   - react-router@8.3.0
+  # Renovate security update: postcss@8.5.18
+  - postcss@8.5.18
 
 overrides:
   '@babel/core': ^7.29.7
