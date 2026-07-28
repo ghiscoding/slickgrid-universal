@@ -67,3 +67,5 @@ After any change that impacts row height, call:
 ```tsx
 reactGridRef.current?.slickGrid?.invalidateRowHeights?.();
 ```
+
+> Use `onReactGridCreated` event in your view template to get a reference to `reactGridRef.current?.slickGrid` (see [Grid and DataView events](../events/grid-dataview-events.md) for more info)

@@ -67,3 +67,5 @@ After any change that impacts row height, call:
 ```ts
 vueGrid.slickGrid?.invalidateRowHeights?.();
 ```
+
+> Use `@onVueGridCreated` event in your view template to get a reference to `vueGrid.slickGrid` (see [Grid and DataView events](../events/grid-dataview-events.md) for more info)

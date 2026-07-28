@@ -40,7 +40,7 @@
 ## Events
 
 * [Available events](events/available-events.md)
-* [On Events](events/grid-and-dataview-events.md)
+* [On Events](events/grid-dataview-events.md)
 
 ## Features
 

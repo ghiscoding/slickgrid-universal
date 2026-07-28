@@ -67,3 +67,5 @@ After any change that impacts row height, call:
 ```ts
 this.angularGrid?.slickGrid?.invalidateRowHeights?.();
 ```
+
+> Use `(onAngularGridCreated)` event in your view template to get a reference to `this.angularGrid?.slickGrid` (see [Grid and DataView events](../events/grid-dataview-events.md) for more info)

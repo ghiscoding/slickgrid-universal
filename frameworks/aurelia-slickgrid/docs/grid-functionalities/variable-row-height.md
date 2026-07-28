@@ -67,3 +67,5 @@ After any change that impacts row height, call:
 ```ts
 this.aureliaGrid?.slickGrid?.invalidateRowHeights?.();
 ```
+
+> Use `on-aurelia-grid-created.trigger` event in your view template to get a reference to `this.aureliaGrid?.slickGrid` (see [Grid and DataView events](../events/grid-dataview-events.md) for more info)
