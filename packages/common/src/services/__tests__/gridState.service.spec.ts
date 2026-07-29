@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { of } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';

@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 import { of, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
