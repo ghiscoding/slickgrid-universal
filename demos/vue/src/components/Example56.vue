@@ -60,6 +60,11 @@ function defineGrid() {
     enableVariableRowHeight: true,
     rowHeight: 40,
     externalResources: [new ExcelExportService()],
+    excelExportOptions: {
+      // export variable row height will also be reflected in the export
+      // but it can be disabled by setting `includeVariableRowHeight` to false
+      // includeVariableRowHeight: false, // export all rows at default height
+    },
     frozenRow: 2,
     gridHeight: 560,
     gridWidth: 1080,

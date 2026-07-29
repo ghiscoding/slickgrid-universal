@@ -968,6 +968,103 @@ describe('PdfExportService', () => {
     });
   });
 
+  describe('Variable Row Height', () => {
+    async function createVarHeightService(getRowHeightFn: (row: number) => number) {
+      vi.resetModules();
+      let capturedDidParseCell: ((data: any) => void) | undefined;
+      const autoTableSpy = vi.fn((opts: any) => {
+        capturedDidParseCell = opts.didParseCell;
+      });
+      function jsPDFMockVarHeight(this: any) {
+        this.save = vi.fn();
+        this.setFontSize = vi.fn();
+        this.getTextWidth = vi.fn((txt: string) => txt.length * 6);
+        this.internal = { pageSize: { getWidth: () => 595.28, getHeight: () => 841.89 } };
+        this.setFillColor = vi.fn();
+        this.setTextColor = vi.fn();
+        this.rect = vi.fn();
+        this.text = vi.fn();
+        this.addPage = vi.fn();
+        this.autoTable = autoTableSpy;
+      }
+      vi.doMock('jspdf', () => ({ __esModule: true, default: jsPDFMockVarHeight }));
+      const { PdfExportService: Svc } = await import('./pdfExport.service.js');
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 2,
+        getItem: (idx: number) => ({ id: idx, title: `Task ${idx}` }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const gridStub = {
+        getVisibleColumns: () => [{ id: 'title', field: 'title', name: 'Title', width: 100 }],
+        getOptions: () => ({ enableVariableRowHeight: true }),
+        getData: () => dataViewStub,
+        getRowHeight: getRowHeightFn,
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: () => pubSubService };
+      return { Svc, gridStub, container, autoTableSpy, getDidParseCell: () => capturedDidParseCell };
+    }
+
+    afterEach(() => {
+      vi.resetModules();
+    });
+
+    it('should set minCellHeight via didParseCell for body cells (px to pt: px * 0.75)', async () => {
+      const { Svc, gridStub, container, getDidParseCell } = await createVarHeightService(() => 50);
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      await service.exportToPdf({ filename: 'var-height' });
+
+      const didParseCell = getDidParseCell();
+      expect(didParseCell).toBeDefined();
+
+      const cell: any = { styles: {} };
+      didParseCell!({ section: 'body', row: { index: 0 }, column: { index: 0 }, cell });
+      // 50px * 0.75 = 37.5pt
+      expect(cell.styles.minCellHeight).toBe(37.5);
+    });
+
+    it('should NOT set minCellHeight for head cells', async () => {
+      const { Svc, gridStub, container, getDidParseCell } = await createVarHeightService(() => 50);
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      await service.exportToPdf({ filename: 'var-height-head' });
+
+      const cell: any = { styles: {} };
+      getDidParseCell()!({ section: 'head', row: { index: 0 }, column: { index: 0 }, cell });
+      expect(cell.styles.minCellHeight).toBeUndefined();
+    });
+
+    it('should NOT set minCellHeight when includeVariableRowHeight is false', async () => {
+      const { Svc, gridStub, container, getDidParseCell } = await createVarHeightService(() => 50);
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      await service.exportToPdf({ filename: 'var-height-disabled', includeVariableRowHeight: false });
+
+      const cell: any = { styles: {} };
+      getDidParseCell()!({ section: 'body', row: { index: 0 }, column: { index: 0 }, cell });
+      expect(cell.styles.minCellHeight).toBeUndefined();
+    });
+
+    it('should use per-row heights from getRowHeight', async () => {
+      const heights = [40, 60];
+      const { Svc, gridStub, container, getDidParseCell } = await createVarHeightService((row) => heights[row]);
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      await service.exportToPdf({ filename: 'var-height-per-row' });
+
+      const cell0: any = { styles: {} };
+      const cell1: any = { styles: {} };
+      const fn = getDidParseCell()!;
+      fn({ section: 'body', row: { index: 0 }, column: { index: 0 }, cell: cell0 });
+      fn({ section: 'body', row: { index: 1 }, column: { index: 0 }, cell: cell1 });
+      // 40px * 0.75 = 30pt, 60px * 0.75 = 45pt
+      expect(cell0.styles.minCellHeight).toBe(30);
+      expect(cell1.styles.minCellHeight).toBe(45);
+    });
+  });
+
   describe('without Translater Service', () => {
     beforeEach(() => {
       translateService = undefined as any;

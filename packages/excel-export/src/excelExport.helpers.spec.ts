@@ -41,7 +41,7 @@ describe('ExcelExportService Helpers', () => {
 
   it('efficientYield fallback uses setTimeout', async () => {
     (globalThis as any).scheduler = undefined;
-    const spy = vi.spyOn(global, 'setTimeout');
+    const spy = vi.spyOn(globalThis, 'setTimeout');
     await (service as any).efficientYield();
     expect(spy).toHaveBeenCalled();
   });

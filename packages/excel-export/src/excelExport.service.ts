@@ -210,6 +210,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       }
 
       this._sheet.setData(finalOutput);
+
+      // Apply variable row heights if enabled
+      if (this._gridOptions.enableVariableRowHeight && this._excelExportOptions.includeVariableRowHeight !== false) {
+        this.applyVariableRowHeights();
+      }
+
       this._workbook.addWorksheet(this._sheet);
 
       // MIME type could be undefined, if that's the case we'll detect the type by its file extension
@@ -648,6 +654,23 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       clearTimeout(this._timer2);
       this._timer2 = setTimeout(resolve, 0);
     });
+  }
+
+  /**
+   * Apply variable row heights from grid to Excel sheet when enableVariableRowHeight is enabled.
+   * Converts pixel heights to Excel points (72 DPI) using formula: pixels * (72/96) = pixels * 0.75
+   */
+  protected applyVariableRowHeights(): void {
+    const lineCount = this._dataView.getLength();
+    const headerRowOffset = this._hasColumnTitlePreHeader ? 3 : 2; // Offset for pre-header + header rows
+
+    for (let row = 0; row < lineCount; row++) {
+      const pixelHeight = this._grid.getRowHeight(row);
+      const excelRowNumber = row + headerRowOffset;
+      // Convert pixels to Excel points: 72 DPI / 96 DPI = 0.75
+      const excelHeight = Math.round(pixelHeight * 0.75 * 100) / 100; // Round to 2 decimal places
+      this._sheet.setRowInstructions(excelRowNumber, { height: excelHeight });
+    }
   }
 
   /**

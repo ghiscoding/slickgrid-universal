@@ -46,6 +46,11 @@ const Example55: React.FC = () => {
       enableTextSelectionOnCells: true,
       enableVariableRowHeight: true,
       externalResources: [new ExcelExportService()],
+      excelExportOptions: {
+        // export variable row height will also be reflected in the export
+        // but it can be disabled by setting `includeVariableRowHeight` to false
+        // includeVariableRowHeight: false, // export all rows at default height
+      },
       rowHeight: 40,
       gridHeight: 560,
       gridWidth: 1080,
