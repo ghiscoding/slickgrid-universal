@@ -26,6 +26,11 @@
       packageNames: ['@babel/core', '@babel/plugin-proposal-decorators', 'undici'],
       allowedVersions: '< 8.0.0',
     },
+    // jsdom v30 seems to cause test regressions in slickgrid.ts because of `getComputedStyle()` changes
+    {
+      packageNames: ['jsdom'],
+      allowedVersions: '< 30.0.0',
+    },
     // postponed few packages to next major
     {
       packageNames: ['i18next'],
