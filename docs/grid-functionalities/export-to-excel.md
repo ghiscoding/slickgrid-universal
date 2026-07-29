@@ -9,6 +9,7 @@
 - [Provide Custom Header Title](#provide-a-custom-header-title)
 - [Export from Button Click](#export-from-a-button-click-event)
 - [Show Loading Process Spinner](#show-loading-process-spinner)
+- [Variable Row Height](#variable-row-height)
 - [Large Dataset Performance](#large-dataset-performance)
 - [UI Sample](#ui-sample)
 
@@ -247,6 +248,17 @@ export class MyExample() {
     gridContainerElm.addEventListener('onbeforeexporttoexcel', () => processing = true);
     gridContainerElm.addEventListener('onafterexporttoexcel', () => processing = false);
   }
+}
+```
+
+### Variable Row Height
+When `enableVariableRowHeight: true` is set in your grid options, Excel export automatically reflects each row's individual pixel height, converted to Excel points (px × 0.75). This is enabled by default whenever variable row height is active.
+
+To opt out, set `includeVariableRowHeight: false` in your `excelExportOptions`:
+
+```ts
+excelExportOptions: {
+  includeVariableRowHeight: false, // export all rows at default height
 }
 ```
 

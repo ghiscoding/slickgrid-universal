@@ -4,6 +4,7 @@
 - [Using rowHeightProvider](#using-rowheightprovider)
 - [Using Item Metadata Height Fallback](#using-item-metadata-height-fallback)
 - [Runtime Updates](#runtime-updates)
+- [Export Integration](#export-integration)
 
 ### Introduction
 By default, SlickGrid uses the grid option `rowHeight` for every row. Variable row height is opt-in and only active when `enableVariableRowHeight` grid option is set to `true`.
@@ -71,3 +72,23 @@ vueGrid.slickGrid?.invalidateRowHeights?.();
 ```
 
 > Use `@onVueGridCreated` event in your view template to get a reference to `vueGrid.slickGrid` (see [Grid and DataView events](../events/grid-dataview-events.md) for more info)
+
+### Export Integration
+When `enableVariableRowHeight: true`, both Excel and PDF exports automatically reflect the per-row heights.
+
+- **Excel**: row heights are written via `setRowInstructions`, converting pixels to points (px × 0.75).
+- **PDF**: when using `jspdf-autotable`, `minCellHeight` is set per cell; the manual fallback uses the per-row height directly.
+
+Set `includeVariableRowHeight: false` in `excelExportOptions` or `pdfExportOptions` to skip row height export and use uniform row heights instead:
+
+```ts
+const gridOptions: GridOption = {
+  enableVariableRowHeight: true,
+  excelExportOptions: {
+    includeVariableRowHeight: false, // skip variable heights in Excel export
+  },
+  pdfExportOptions: {
+    includeVariableRowHeight: false, // skip variable heights in PDF export
+  },
+};
+```

@@ -8,6 +8,7 @@
 - [AutoTable Options Callback](#autotable-options-callback)
 - [Export from Button Click](#export-from-button-click)
 - [Show Loading Process Spinner](#show-loading-process-spinner)
+- [Variable Row Height](#variable-row-height)
 - [Large Dataset Performance](#large-dataset-performance)
 - [UI Sample](#ui-sample)
 
@@ -223,7 +224,19 @@ export class MyExample {
 }
 ```
 
+### Variable Row Height
+When `enableVariableRowHeight: true`, the PDF export automatically reflects per-row heights (px × 0.75 → pt). With `jspdf-autotable`, `minCellHeight` is set per row; the manual fallback uses the per-row height directly. Set `includeVariableRowHeight: false` in `pdfExportOptions` to skip this:
 
+```ts
+gridOptions = {
+  enableVariableRowHeight: true,
+  pdfExportOptions: {
+    includeVariableRowHeight: false, // export all rows at default height
+  },
+};
+```
+
+### Large Dataset Performance
 For a combined sorting + export strategy, see [Large Dataset Performance Guide](../developer-guides/large-dataset-performance.md).
 
 ```ts
