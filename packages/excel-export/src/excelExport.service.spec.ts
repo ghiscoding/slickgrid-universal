@@ -2646,6 +2646,42 @@ describe('ExcelExportService', () => {
     });
 
     describe('Variable Row Height', () => {
+      it('exportToExcel should call applyVariableRowHeights when variable row height is enabled', async () => {
+        const mockGridOptionWithVarHeight = { ...mockGridOptions, enableVariableRowHeight: true } as GridOption;
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptionWithVarHeight);
+        vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(40);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue([{ id: 'id', field: 'id', name: 'ID', width: 100 }] as Column[]);
+        vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(1);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValueOnce({ id: 1 });
+
+        const applyVariableRowHeightsSpy = vi.spyOn(service as any, 'applyVariableRowHeights');
+
+        service.init(gridStub, container);
+        const result = await service.exportToExcel({ filename: 'export', useStreamingExport: false, includeVariableRowHeight: true });
+
+        expect(result).toBe(true);
+        expect(applyVariableRowHeightsSpy).toHaveBeenCalledTimes(1);
+      });
+
+      it('exportToExcel should not call applyVariableRowHeights when includeVariableRowHeight is false', async () => {
+        const mockGridOptionWithVarHeight = { ...mockGridOptions, enableVariableRowHeight: true } as GridOption;
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptionWithVarHeight);
+        vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(40);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue([{ id: 'id', field: 'id', name: 'ID', width: 100 }] as Column[]);
+        vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(1);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValueOnce({ id: 1 });
+
+        const applyVariableRowHeightsSpy = vi.spyOn(service as any, 'applyVariableRowHeights');
+
+        service.init(gridStub, container);
+        const result = await service.exportToExcel({ filename: 'export', useStreamingExport: false, includeVariableRowHeight: false });
+
+        expect(result).toBe(true);
+        expect(applyVariableRowHeightsSpy).not.toHaveBeenCalled();
+      });
+
       it('applyVariableRowHeights should set row heights when enableVariableRowHeight is true', () => {
         const mockGridOptionWithVarHeight = { ...mockGridOptions, enableVariableRowHeight: true } as GridOption;
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptionWithVarHeight);
