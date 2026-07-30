@@ -698,6 +698,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._container
     );
 
+    // 0x0 helper div, programmatically focusable only (tabindex=-1). Exposing it to the a11y tree makes it
+    // an unallowed child of role="grid" (axe `aria-required-children`), so keep it out of the tree.
+    this._focusSink.setAttribute('aria-hidden', 'true');
+
     if (this._options.createTopHeaderPanel) {
       this._topHeaderPanelScroller = createDomElement(
         'div',
@@ -761,8 +765,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // Append the header scroller containers
     const headerContainerL = createDomElement('div', { className: 'slick-header-container' }, this._paneHeaderL);
     const headerContainerR = createDomElement('div', { className: 'slick-header-container' }, this._paneHeaderR);
-    this._headerScrollerL = createDomElement('div', { className: 'slick-header slick-state-default slick-header-left' }, headerContainerL);
-    this._headerScrollerR = createDomElement('div', { className: 'slick-header slick-state-default slick-header-right' }, headerContainerR);
+    // prettier-ignore
+    this._headerScrollerL = createDomElement('div', { className: 'slick-header slick-state-default slick-header-left', role: 'rowgroup' }, headerContainerL);
+    // prettier-ignore
+    this._headerScrollerR = createDomElement('div', { className: 'slick-header slick-state-default slick-header-right', role: 'rowgroup' }, headerContainerR);
 
     // header scroll position could change when using frozen grid and tabbing on next available header
     // so we need to make sure that all containers (header, headerrow, toppanel) are all in sync when that happens
@@ -777,20 +783,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // Append the columnn containers to the headers
     this._headerL = createDomElement(
       'div',
-      { className: 'slick-header-columns slick-header-columns-left', style: { left: '-1000px' } },
+      { className: 'slick-header-columns slick-header-columns-left', style: { left: '-1000px' }, role: 'row' },
       this._headerScrollerL
     );
     this._headerR = createDomElement(
       'div',
-      { className: 'slick-header-columns slick-header-columns-right', style: { left: '-1000px' } },
+      { className: 'slick-header-columns slick-header-columns-right', style: { left: '-1000px' }, role: 'row' },
       this._headerScrollerR
     );
 
     // Cache the header columns
     this._headers = [this._headerL, this._headerR];
 
-    this._headerRowScrollerL = createDomElement('div', { className: 'slick-headerrow slick-state-default' }, this._paneTopL);
-    this._headerRowScrollerR = createDomElement('div', { className: 'slick-headerrow slick-state-default' }, this._paneTopR);
+    // prettier-ignore
+    this._headerRowScrollerL = createDomElement('div', { className: 'slick-headerrow slick-state-default', role: 'rowgroup' }, this._paneTopL);
+    // prettier-ignore
+    this._headerRowScrollerR = createDomElement('div', { className: 'slick-headerrow slick-state-default', role: 'rowgroup' }, this._paneTopR);
 
     this._headerRowScroller = [this._headerRowScrollerL, this._headerRowScrollerR];
 
@@ -807,12 +815,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     this._headerRowL = createDomElement(
       'div',
-      { className: 'slick-headerrow-columns slick-headerrow-columns-left' },
+      { className: 'slick-headerrow-columns slick-headerrow-columns-left', role: 'row' },
       this._headerRowScrollerL
     );
     this._headerRowR = createDomElement(
       'div',
-      { className: 'slick-headerrow-columns slick-headerrow-columns-right' },
+      { className: 'slick-headerrow-columns slick-headerrow-columns-right', role: 'row' },
       this._headerRowScrollerR
     );
 
@@ -1957,7 +1965,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (this._options.showHeaderRow) {
         const headerRowCell = createDomElement(
           'div',
-          { className: `slick-state-default slick-headerrow-column l${i} r${i}` },
+          { className: `slick-state-default slick-headerrow-column l${i} r${i}`, role: 'gridcell' },
           headerRowTarget
         );
         const frozenClasses = this.hasFrozenColumns() && i <= this._options.frozenColumn! ? 'frozen' : null;

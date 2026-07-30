@@ -3101,6 +3101,33 @@ describe('SlickGrid core file', () => {
       expect(grid.getContainerNode().getAttribute('aria-rowcount')).toBe('11');
     });
 
+    it('should expect the header structure to have the ARIA roles required between grid and columnheader', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true });
+
+      const headerColumnElm = container.querySelector('[role="columnheader"]') as HTMLDivElement;
+      expect(headerColumnElm).toBeTruthy();
+      // a columnheader requires a "row" parent, and that row requires a "rowgroup" (or grid) parent,
+      // otherwise axe reports `aria-required-parent` + `aria-required-children` on every grid
+      expect(headerColumnElm.parentElement!.classList.contains('slick-header-columns')).toBe(true);
+      expect(headerColumnElm.parentElement!.getAttribute('role')).toBe('row');
+      expect(headerColumnElm.parentElement!.parentElement!.getAttribute('role')).toBe('rowgroup');
+
+      // same skeleton for the header row (filter row): rowgroup > row > gridcell
+      const headerRowCellElm = container.querySelector('.slick-headerrow-column') as HTMLDivElement;
+      expect(headerRowCellElm.getAttribute('role')).toBe('gridcell');
+      expect(headerRowCellElm.parentElement!.getAttribute('role')).toBe('row');
+      expect(headerRowCellElm.parentElement!.parentElement!.getAttribute('role')).toBe('rowgroup');
+    });
+
+    it('should expect the focus sinks to be hidden from the a11y tree', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+
+      // 0x0 helper divs with tabindex=-1 are otherwise computed as unallowed children of role="grid"
+      const sinks = container.querySelectorAll('div[tabindex="-1"]:not([class])');
+      expect(sinks.length).toBe(2);
+      sinks.forEach((sink) => expect(sink.getAttribute('aria-hidden')).toBe('true'));
+    });
+
     it('should return undefined editor when getDataItem() did not find any associated cell item', () => {
       const columns = [
         { id: 'name', field: 'name', name: 'Name' },
