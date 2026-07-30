@@ -97,11 +97,11 @@ gridOptions = {
 };
 ```
 
-## Angular Related
+## Angular Related Changes
 
 ### `ngx-translate` v17.x is now required
 
-Because of the Angular v21 upgrade, you will also need to upgrade [`ngx-translate`](https://ngx-translate.org/) to their version 17.x.
+Because of the Angular v21 upgrade, you will also need to upgrade [`ngx-translate`](https://ngx-translate.org/) to v17.
 
 > Side note, `ngx-translate` v18.0 was released not long after Angular 22 came out, however this will not be supported until next year with Angular-Slickgrid v11 (2027 Q1).
 
@@ -110,7 +110,7 @@ Because of the Angular v21 upgrade, you will also need to upgrade [`ngx-translat
 "dependencies": {
 -   "@ngx-translate/core": "^16.0.4",
 -   "@ngx-translate/http-loader": "^16.0.1",
-+   "@ngx-translate/core": "^17.0.0",
++   "@ngx-translate/core": "^17.0.0", // v18 isn't supported yet
 +   "@ngx-translate/http-loader": "^17.0.0",
 }
 ```
@@ -130,6 +130,7 @@ Angular-Slickgrid now works out-of-the-box in zoneless Angular apps, but still w
 - The library no longer calls `markForCheck()` or `detectChanges()` internally, so UI updates are handled automatically in both modes.
 - If you have custom code that relies on manual change detection, review and update it as needed.
 - For example, I had to switch to Signal to ensure UI changes were detected in the OData/GraphQL demos when using the `BackendServiceApi` with a `postProcess` callback and so you might need to do similar changes when using Pagination as well (in my demo I simply switched to Signals).
+- If you want the dataset to be reactive, you can use Signals as well, like so: `[dataset]="dataset()"`
 
 > **Tip:** In zoneless Angular, always use Signals for any state that requires updating the UI. For example, if you have a property like `selectedLanguage`, declare it as a Signal (`selectedLanguage = signal('en')`) and update it with `selectedLanguage.set('fr')`. Then in your template, use `selectedLanguage()` to display or bind the value. This ensures UI updates are rendered and you never need manual change detection.
 
