@@ -25,7 +25,7 @@ As a final touch, this release tries to align Angular-Slickgrid with more modern
 
 _if you're not dynamically hiding columns and you're not using `colspan` or `rowspan` then you might not be impacted as much by this change._
 
-For years the logical and legacy approach was to keep some references in a Shared Service as `shared.allColumns` and `shared.visibleColumns`, mostly for storing their position orders and translating locales which are being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (up until now). However with v10, we simply toggle the `hidden` property on the column(s) to hide/show any of them, and so with this release we now keep the full columns reference at all time. We can translate them more easily while keeping their original positions and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now just call `grid.getVisibleColumns()` which behind the scene is simply filtering `columns.filter(c => !c.hidden)`. This new approach does also come with new side effects for colspan/rowspan, because previously when we were hiding a column then the column to the right were previously taking over the spanning, but with the new approach, if we hide a column then its spanning will simply disappear with the column (so I had to make internal changes to handle that too)... If you want more details, you can see the full explanations of all the changes in [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
+For years the logical, and legacy approach, was to keep some references in a Shared Service as `shared.allColumns` and `shared.visibleColumns`, mostly for storing their position orders and translating locales which are being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (up until now that is). However with v10, we simply toggle the `hidden` property on the column(s) to hide/show any of them, and so with this release we now keep a reference to the full columns array at all time. We can translate them more easily while also keeping their original positions and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now just call `grid.getVisibleColumns()` which behind the scene is simply filtering `columns.filter(c => !c.hidden)`. This new approach does also come with new side effects for colspan/rowspan, because previously when we were hiding a column then the column to the right were previously taking over the spanning, but with the new approach, if we now hide a column that has spanning then it will now disappear with the column (so I had to make internal changes to handle that too)... If you want more details, you can see the full explanations of all the changes in [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
 
 **Summary Note** `grid.getColumns()` now includes hidden columns — code that assumed only visible columns will now need to filter with `!col.hidden` or simply switch to `grid.getVisibleColumns()` (see below).
 
@@ -46,7 +46,7 @@ _following changes should be transparent to most users, I'm just listing them in
 
 ### Row Detail (now optional)
 
-Since I don't think that Row Detail is being used by everyone, I decided to make it an optional plugin (package). This should help decrease build size quite a bit for users who don't use it at all. However, if you are one of them using it, then you will now have to register it as an external resource.
+Since I don't think that Row Detail was used by everyone, I decided to make it an optional plugin (package). This should help decrease build size quite a bit for users who don't use it at all. However, if you are one of them using it, then you will now have to register it as an external resource.
 
 ```diff
 + import { AngularRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
@@ -101,9 +101,9 @@ gridOptions = {
 
 ### `ngx-translate` v17.x is now required
 
-Because of the Angular v21 upgrade, you will also need to upgrade [`ngx-translate`](https://ngx-translate.org/) to their latest version 17.x.
+Because of the Angular v21 upgrade, you will also need to upgrade [`ngx-translate`](https://ngx-translate.org/) to their version 17.x.
 
-> Side note, `ngx-translate` v18.0 was later released not long after Angular 22 came out, however this will be supported just next year with Angular-Slickgrid v11 (2027 Q1).
+> Side note, `ngx-translate` v18.0 was released not long after Angular 22 came out, however this will not be supported until next year with Angular-Slickgrid v11 (2027 Q1).
 
 ```diff
 # package.json
@@ -129,7 +129,7 @@ Angular-Slickgrid now works out-of-the-box in zoneless Angular apps, but still w
 - If your app uses `zone.js`, you do not need to change anything, manual change detection (e.g., `markForCheck()`, `detectChanges()`) is still not required.
 - The library no longer calls `markForCheck()` or `detectChanges()` internally, so UI updates are handled automatically in both modes.
 - If you have custom code that relies on manual change detection, review and update it as needed.
-- For example, I had to switch to Signal to ensure UI changes were detected in the OData/GraphQL demos when using the `BackendServiceApi` with a `postProcess` callback and so you might need to do similar changes when using Pagination as well (in my case I switched to Signals).
+- For example, I had to switch to Signal to ensure UI changes were detected in the OData/GraphQL demos when using the `BackendServiceApi` with a `postProcess` callback and so you might need to do similar changes when using Pagination as well (in my demo I simply switched to Signals).
 
 > **Tip:** In zoneless Angular, always use Signals for any state that requires updating the UI. For example, if you have a property like `selectedLanguage`, declare it as a Signal (`selectedLanguage = signal('en')`) and update it with `selectedLanguage.set('fr')`. Then in your template, use `selectedLanguage()` to display or bind the value. This ensures UI updates are rendered and you never need manual change detection.
 
@@ -180,7 +180,7 @@ bootstrapApplication(AppComponent, {
 
 ### Internal icons CSS class changes
 
-I recently found that some of the internal icons were wrongly using the `mdi-` prefix and was found to cause problems when creating new Themes that don't use these MDI icons. So in oder to fix this possibility, the following CSS classes were renamed. If you are using any of them for E2E tests or for styling reasons, then make sure to update them.
+I recently found that some of the internal icons were wrongly using the Material `mdi-` prefix and was proved to cause problems when creating new Themes that don't use these Material design icons. So in oder to fix this issue, the following CSS classes were renamed. If you are using any of them for E2E tests or styling purposes, then make sure to update them.
 
 | before | after | component |
 | ------ | ----- | --------- |
@@ -194,7 +194,7 @@ I recently found that some of the internal icons were wrongly using the `mdi-` p
 
 ### Auto-Enabled External Resources
 
-This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this one, is I even myself often forget to enable the associated resource flags, but the thing is, if  you want to load the resource then it's probably because you want to use it, so... auto-enabling the resource(s) makes sense. For example, if your register `ExcelExportService` then the library will now auto-enable all loaded resources with their associated flags (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped. Also just to be clear, the list of auto-enabled external resources is rather small and so it will auto-enable the following resources:
+This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this one, is that I often forget even myself to enable the associated resource flags, and also if  you want to load the resource, then it's probably because you want to use it, so... auto-enabling the resource(s) makes sense. For example, if your register `ExcelExportService` then the library will now auto-enable all loaded resources with their associated flags (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped. Also just to be clear, the list of auto-enabled external resources is rather small and so it will auto-enable the following resources:
 
 - ExcelExportService → `enableExcelExport: true`
 - PdfExportService → `enablePdfExport: true`
