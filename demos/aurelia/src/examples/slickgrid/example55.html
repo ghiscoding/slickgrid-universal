@@ -1,0 +1,34 @@
+<div class="container-fluid">
+  <h2>
+    Example 55: Variable Row Height (Provider)
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example55.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+
+  <div class="subtitle">Variable row heights driven by <code>rowHeightProvider</code>.</div>
+
+  <div class="row" style="margin-bottom: 6px">
+    <div class="col-md-12">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="scrollToRow90()" data-test="scroll-row-90-example55">
+        <span class="mdi mdi-arrow-down"></span>
+        <span> Scroll To row 90</span>
+      </button>
+    </div>
+  </div>
+
+  <aurelia-slickgrid
+    grid-id="grid55"
+    columns.bind="columns"
+    options.bind="gridOptions"
+    dataset.bind="dataset"
+    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+  >
+  </aurelia-slickgrid>
+</div>

@@ -40,7 +40,7 @@
 ## Events
 
 * [Available events](events/available-events.md)
-* [On Events](events/grid-and-dataview-events.md)
+* [On Events](events/grid-dataview-events.md)
 
 ## Features
 
@@ -69,6 +69,7 @@
 * [Pagination](grid-functionalities/pagination.md)
 * [Infinite Scroll](grid-functionalities/infinite-scroll.md)
 * [Pinning (frozen) of Columns/Rows](grid-functionalities/frozen-columns-rows.md)
+* [Variable Row Height](grid-functionalities/variable-row-height.md)
 * [Row Detail](grid-functionalities/row-detail.md)
 * [Row Move (dragging)](grid-functionalities/row-move.md)
 * [Row Selection](grid-functionalities/row-selection.md)

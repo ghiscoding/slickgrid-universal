@@ -31,6 +31,7 @@ export default class Example17 {
   maxInterval = 600;
   delayCursor = 5;
   frozenColumnCount = -1;
+  subTitleStyle = 'display: block';
 
   attached() {
     this.defineGrids();
@@ -284,5 +285,9 @@ export default class Example17 {
     };
     this.sgb1.slickGrid?.setOptions(newOption);
     this.sgb2.slickGrid?.setOptions(newOption);
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
   }
 }

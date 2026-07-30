@@ -136,7 +136,7 @@ describe('HeaderGroupingService', () => {
       vi.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(mockPreHeaderPanelElm);
       vi.spyOn(gridStub, 'getPreHeaderPanelLeft').mockReturnValue(document.createElement('div'));
       vi.spyOn(gridStub, 'getPreHeaderPanelRight').mockReturnValue(document.createElement('div'));
-      setTimeoutSpy = vi.spyOn(global, 'setTimeout');
+      setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
     });
 
     afterEach(() => {

@@ -45,8 +45,8 @@ const pubSubServiceStub = {
 
 // URL object is not supported in JSDOM, we can simply mock it
 const createObjectMock = vi.fn();
-(global as any).URL.createObjectURL = createObjectMock;
-(global as any).URL.revokeObjectURL = vi.fn();
+(globalThis as any).URL.createObjectURL = createObjectMock;
+(globalThis as any).URL.revokeObjectURL = vi.fn();
 
 const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => (value !== null ? { text: `<b>${value}</b>` } : (null as any));
 const myUppercaseFormatter: Formatter = (_row, _cell, value) => (value ? { text: value.toUpperCase() } : (null as any));
@@ -91,6 +91,7 @@ const gridStub = {
   getVisibleColumns: vi.fn(),
   getGrouping: vi.fn(),
   getParentRowSpanByCell: vi.fn(),
+  getRowHeight: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('ExcelExportService', () => {
@@ -1984,7 +1985,7 @@ describe('ExcelExportService', () => {
         vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
 
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
-        const setTimeoutSpy = vi.spyOn(global, 'setTimeout');
+        const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
 
         service.init(gridStub, container);
 
@@ -1997,7 +1998,7 @@ describe('ExcelExportService', () => {
 
         // Should yield based on simplified frequency (500 for 2000 rows)
         // With 2000 rows and frequency of 500, we expect 4 yields: at 500, 1000, 1500, 2000
-        const yieldCalls = setTimeoutSpy.mock.calls.filter((call) => call[1] === 0);
+        const yieldCalls = setTimeoutSpy.mock.calls.filter((call: any[]) => call[1] === 0);
         expect(yieldCalls.length).toBeGreaterThanOrEqual(1); // Simplified yielding strategy
 
         expect(pubSubSpy).not.toHaveBeenCalledWith('onExcelExportProgress', expect.anything());
@@ -2104,7 +2105,7 @@ describe('ExcelExportService', () => {
         vi.spyOn(dataViewStub, 'getItem').mockImplementation((index) => mockData[index]);
         vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
 
-        const setTimeoutSpy = vi.spyOn(global, 'setTimeout');
+        const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
 
         service.init(gridStub, container);
 
@@ -2117,7 +2118,7 @@ describe('ExcelExportService', () => {
 
         // Should yield based on simplified frequency (1000 for 5000 rows)
         // With 5000 rows and frequency of 1000, we expect yields at 1000,2000,3000,4000
-        const yieldCalls = setTimeoutSpy.mock.calls.filter((call) => call[1] === 0);
+        const yieldCalls = setTimeoutSpy.mock.calls.filter((call: any[]) => call[1] === 0);
         expect(yieldCalls.length).toBeGreaterThanOrEqual(4);
       });
     });
@@ -2596,7 +2597,7 @@ describe('ExcelExportService', () => {
 
     it('efficientYield should fallback to setTimeout when scheduler is unavailable', async () => {
       (globalThis as any).scheduler = undefined;
-      const setTimeoutSpy = vi.spyOn(global, 'setTimeout');
+      const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
       service.init(gridStub, container);
       await (service as any).efficientYield();
       expect(setTimeoutSpy).toHaveBeenCalled();
@@ -2642,6 +2643,114 @@ describe('ExcelExportService', () => {
       } as any;
       const out = (service as any).readGroupedTotalRows([col], { groupTotals: { sum: 42 } }, 0);
       expect(out).toEqual(expect.arrayContaining(['', 'Total 42']));
+    });
+
+    describe('Variable Row Height', () => {
+      it('exportToExcel should call applyVariableRowHeight when variable row height is enabled', async () => {
+        const mockGridOptionWithVarHeight = { ...mockGridOptions, enableVariableRowHeight: true } as GridOption;
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptionWithVarHeight);
+        vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(40);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue([{ id: 'id', field: 'id', name: 'ID', width: 100 }] as Column[]);
+        vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(1);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValueOnce({ id: 1 });
+
+        const applyVariableRowHeightSpy = vi.spyOn(service as any, 'applyVariableRowHeight');
+
+        service.init(gridStub, container);
+        const result = await service.exportToExcel({ filename: 'export', useStreamingExport: false, includeVariableRowHeight: true });
+
+        expect(result).toBe(true);
+        expect(applyVariableRowHeightSpy).toHaveBeenCalledTimes(1);
+      });
+
+      it('exportToExcel should not call applyVariableRowHeight when includeVariableRowHeight is false', async () => {
+        const mockGridOptionWithVarHeight = { ...mockGridOptions, enableVariableRowHeight: true } as GridOption;
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptionWithVarHeight);
+        vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(40);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue([{ id: 'id', field: 'id', name: 'ID', width: 100 }] as Column[]);
+        vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(1);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValueOnce({ id: 1 });
+
+        const applyVariableRowHeightSpy = vi.spyOn(service as any, 'applyVariableRowHeight');
+
+        service.init(gridStub, container);
+        const result = await service.exportToExcel({ filename: 'export', useStreamingExport: false, includeVariableRowHeight: false });
+
+        expect(result).toBe(true);
+        expect(applyVariableRowHeightSpy).not.toHaveBeenCalled();
+      });
+
+      it('applyVariableRowHeight should set row heights when enableVariableRowHeight is true', () => {
+        const mockGridOptionWithVarHeight = { ...mockGridOptions, enableVariableRowHeight: true } as GridOption;
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptionWithVarHeight);
+        vi.spyOn(gridStub, 'getRowHeight').mockReturnValueOnce(40).mockReturnValueOnce(50).mockReturnValueOnce(60);
+
+        const setRowInstructionsSpy = vi.fn();
+        (service as any)._sheet = { setRowInstructions: setRowInstructionsSpy };
+        (service as any)._excelExportOptions = { includeVariableRowHeight: true };
+
+        service.init(gridStub, container);
+        (service as any).applyVariableRowHeight(0, 2);
+        (service as any).applyVariableRowHeight(1, 3);
+        (service as any).applyVariableRowHeight(2, 4);
+
+        // 40px * 0.75 = 30pt, 50px * 0.75 = 37.5pt, 60px * 0.75 = 45pt
+        expect(setRowInstructionsSpy).toHaveBeenCalledWith(2, { height: 30 });
+        expect(setRowInstructionsSpy).toHaveBeenCalledWith(3, { height: 37.5 });
+        expect(setRowInstructionsSpy).toHaveBeenCalledWith(4, { height: 45 });
+        expect(setRowInstructionsSpy).toHaveBeenCalledTimes(3);
+      });
+
+      it('applyVariableRowHeight should use the provided Excel row number', () => {
+        const mockGridOptionWithVarHeight = { ...mockGridOptions, enableVariableRowHeight: true } as GridOption;
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptionWithVarHeight);
+        vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(40);
+
+        const setRowInstructionsSpy = vi.fn();
+        (service as any)._sheet = { setRowInstructions: setRowInstructionsSpy };
+        (service as any)._excelExportOptions = { includeVariableRowHeight: true };
+
+        service.init(gridStub, container);
+        (service as any).applyVariableRowHeight(0, 3);
+
+        expect(setRowInstructionsSpy).toHaveBeenCalledWith(3, { height: 30 });
+      });
+
+      it('should convert pixel heights to Excel points correctly (72 DPI)', () => {
+        const mockGridOptionWithVarHeight = { ...mockGridOptions, enableVariableRowHeight: true } as GridOption;
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptionWithVarHeight);
+        vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(40);
+
+        const setRowInstructionsSpy = vi.fn();
+        (service as any)._sheet = { setRowInstructions: setRowInstructionsSpy };
+        (service as any)._excelExportOptions = { includeVariableRowHeight: true };
+
+        service.init(gridStub, container);
+        (service as any).applyVariableRowHeight(0, 2);
+
+        // 40px * 0.75 = 30pt
+        expect(setRowInstructionsSpy).toHaveBeenCalledWith(2, { height: 30 });
+      });
+
+      it('applyVariableRowHeight should skip rows that use the default grid row height', () => {
+        const mockGridOptionWithVarHeight = { ...mockGridOptions, enableVariableRowHeight: true, rowHeight: 25 } as GridOption;
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptionWithVarHeight);
+        vi.spyOn(gridStub, 'getRowHeight').mockReturnValueOnce(25).mockReturnValueOnce(40).mockReturnValueOnce(25);
+
+        const setRowInstructionsSpy = vi.fn();
+        (service as any)._sheet = { setRowInstructions: setRowInstructionsSpy };
+        (service as any)._excelExportOptions = { includeVariableRowHeight: true };
+
+        service.init(gridStub, container);
+        (service as any).applyVariableRowHeight(0, 2);
+        (service as any).applyVariableRowHeight(1, 3);
+        (service as any).applyVariableRowHeight(2, 4);
+
+        expect(setRowInstructionsSpy).toHaveBeenCalledTimes(1);
+        expect(setRowInstructionsSpy).toHaveBeenCalledWith(3, { height: 30 });
+      });
     });
   });
 

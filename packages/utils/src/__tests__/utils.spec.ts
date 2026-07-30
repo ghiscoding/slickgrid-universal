@@ -683,7 +683,7 @@ describe('Service/Utilies', () => {
     it('uses queueMicrotask() when available', () =>
       new Promise((done: any) => {
         const callback = vi.fn();
-        const queueMicrotaskSpy = vi.spyOn(global, 'queueMicrotask');
+        const queueMicrotaskSpy = vi.spyOn(globalThis, 'queueMicrotask');
         queueMicrotaskPolyfill(callback);
         setTimeout(() => {
           expect(queueMicrotaskSpy).toHaveBeenCalledWith(callback);
@@ -697,7 +697,7 @@ describe('Service/Utilies', () => {
       new Promise((done: any) => {
         const callback = vi.fn();
         // Remove queueMicrotask
-        const originalQueueMicrotask = global.queueMicrotask;
+        const originalQueueMicrotask = globalThis.queueMicrotask;
         // @ts-ignore
         delete global.queueMicrotask;
         // Spy on Promise.resolve().then
@@ -708,7 +708,7 @@ describe('Service/Utilies', () => {
           expect(callback).toHaveBeenCalledTimes(1);
           promiseThenSpy.mockRestore();
           // Restore queueMicrotask
-          global.queueMicrotask = originalQueueMicrotask;
+          globalThis.queueMicrotask = originalQueueMicrotask;
           done();
         }, 10);
       }));

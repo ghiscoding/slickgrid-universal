@@ -11,6 +11,7 @@ export default defineConfig({
   defaultCommandTimeout: 5000,
   pageLoadTimeout: 90000,
   numTestsKeptInMemory: 5,
+  scrollBehavior: 'nearest',
   retries: {
     experimentalStrategy: 'detect-flake-and-pass-on-threshold',
     experimentalOptions: {

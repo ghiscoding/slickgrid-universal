@@ -9,6 +9,7 @@
 - [Provide Custom Header Title](#provide-a-custom-header-title)
 - [Export from Button Click](#export-from-a-button-click-event)
 - [Show Loading Process Spinner](#show-loading-process-spinner)
+- [Variable Row Height](#variable-row-height)
 - [Large Dataset Performance](#large-dataset-performance)
 - [UI Sample](#ui-sample)
 
@@ -271,7 +272,19 @@ return !options ? null : (
 );
 ```
 
+### Variable Row Height
+When `enableVariableRowHeight: true`, the Excel export automatically reflects per-row heights, converting pixel heights to Excel points (px × 0.75). Set `includeVariableRowHeight: false` in `excelExportOptions` to skip this and use uniform row heights:
 
+```ts
+gridOptions = {
+  enableVariableRowHeight: true,
+  excelExportOptions: {
+    includeVariableRowHeight: false, // export all rows at default height
+  },
+};
+```
+
+### Large Dataset Performance
 For a combined sorting + export strategy, see [Large Dataset Performance Guide](../developer-guides/large-dataset-performance.md).
 
 ```ts
