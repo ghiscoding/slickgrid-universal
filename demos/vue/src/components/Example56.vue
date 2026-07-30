@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
@@ -59,11 +60,14 @@ function defineGrid() {
     enableTextSelectionOnCells: true,
     enableVariableRowHeight: true,
     rowHeight: 40,
-    externalResources: [new ExcelExportService()],
+    externalResources: [new ExcelExportService(), new PdfExportService()],
     excelExportOptions: {
       // export variable row height will also be reflected in the export
       // but it can be disabled by setting `includeVariableRowHeight` to false
       // includeVariableRowHeight: false, // export all rows at default height
+    },
+    pdfExportOptions: {
+      pageOrientation: 'landscape',
     },
     frozenRow: 2,
     gridHeight: 560,

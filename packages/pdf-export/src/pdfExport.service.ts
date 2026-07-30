@@ -205,6 +205,22 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
           // Prepare data
           const data = tableData;
+          const defaultRowHeight = 18;
+          const useVariableRowHeight = this._gridOptions.enableVariableRowHeight && this._exportOptions.includeVariableRowHeight !== false;
+          const rowHeightByRowIndex = new Map<number, number>();
+          const getPdfRowHeight = (rowIdx: number): number => {
+            if (!useVariableRowHeight) {
+              return defaultRowHeight;
+            }
+
+            let cachedRowHeight = rowHeightByRowIndex.get(rowIdx);
+            if (cachedRowHeight === undefined) {
+              cachedRowHeight = Math.round(this._grid.getRowHeight(rowIdx) * 0.75 * 100) / 100;
+              rowHeightByRowIndex.set(rowIdx, cachedRowHeight);
+            }
+
+            return cachedRowHeight;
+          };
 
           // Add table (using jsPDF-AutoTable if available, else fallback to manual)
           if ((doc as any).autoTable) {
@@ -260,12 +276,8 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                   data.cell.styles.halign = headerAlignMap[data.column.index];
                 }
                 // Apply variable row height as minCellHeight (px → pt: pixels * 0.75)
-                if (
-                  data.section === 'body' &&
-                  this._gridOptions.enableVariableRowHeight &&
-                  this._exportOptions.includeVariableRowHeight !== false
-                ) {
-                  data.cell.styles.minCellHeight = this._grid.getRowHeight(data.row.index) * 0.75;
+                if (data.section === 'body' && useVariableRowHeight) {
+                  data.cell.styles.minCellHeight = getPdfRowHeight(data.row.index);
                 }
               },
               alternateRowStyles: {
@@ -292,10 +304,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             const pageHeight = doc.internal.pageSize.getHeight();
             const pageWidth = doc.internal.pageSize.getWidth();
             const bottomMargin = 40;
-            const defaultRowHeight = 18;
             const margin = 40;
-            const useVariableRowHeight =
-              this._gridOptions.enableVariableRowHeight && this._exportOptions.includeVariableRowHeight !== false;
             // Dynamically calculate table width based on page width and margins
             const tableWidth = pageWidth - margin * 2;
             const colCount = headers.length;
@@ -361,8 +370,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             y = this._drawHeaderRow(doc, y, headers, colWidths, margin, headerTextOffset, headerBackgroundOffset, headerAligns);
             doc.setFontSize(this._exportOptions.fontSize || 10);
             data.forEach((row, rowIdx) => {
-              // px → pt: pixels * 0.75; fall back to default when not in variable-height mode
-              const rowHeight = useVariableRowHeight ? Math.round(this._grid.getRowHeight(rowIdx) * 0.75 * 100) / 100 : defaultRowHeight;
+              const rowHeight = getPdfRowHeight(rowIdx);
               // Check for page break before drawing row
               if (y + rowHeight + bottomMargin > pageHeight) {
                 doc.addPage();
