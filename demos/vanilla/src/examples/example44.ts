@@ -1,5 +1,6 @@
 import type { Column, GridOption } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example44.scss';
@@ -52,7 +53,7 @@ export default class Example44 {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
       enableVariableRowHeight: true,
-      externalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService(), new PdfExportService()],
       excelExportOptions: {
         // export variable row height will also be reflected in the export
         // but it can be disabled by setting `includeVariableRowHeight` to false

@@ -98,6 +98,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     return this._grid?.getOptions() || ({} as GridOption);
   }
 
+  protected get _shouldExportVariableRowHeights(): boolean {
+    return !!(this._gridOptions.enableVariableRowHeight && this._excelExportOptions.includeVariableRowHeight !== false);
+  }
+
   get stylesheet(): StyleSheet {
     return this._stylesheet;
   }
@@ -210,11 +214,6 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       }
 
       this._sheet.setData(finalOutput);
-
-      // Apply variable row heights if enabled
-      if (this._gridOptions.enableVariableRowHeight && this._excelExportOptions.includeVariableRowHeight !== false) {
-        this.applyVariableRowHeights();
-      }
 
       this._workbook.addWorksheet(this._sheet);
 
@@ -524,6 +523,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     // Read rows directly from DataView
     for (let rowNumber = 0; rowNumber < lineCount; rowNumber++) {
       const itemObj = dataView.getItem(rowNumber);
+      let rowWasExported = false;
 
       // make sure we have a filled object AND that the item doesn't include the "getItem" method
       // this happen could happen with an opened Row Detail as it seems to include an empty Slick DataView (we'll just skip those lines)
@@ -532,12 +532,19 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
           // Read a regular row
           originalDaraArray.push(this.readRegularRowData(columns, rowNumber, itemObj, rowNumber, cachedColumnMetadata));
+          rowWasExported = true;
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {
           // get the group row
           originalDaraArray.push([this.readGroupedRowTitle(itemObj)]);
+          rowWasExported = true;
         } else if (itemObj.__groupTotals) {
           // else if the row is a Group By and we have aggregators, then a property of '__groupTotals' would exist under that object
           originalDaraArray.push(this.readGroupedTotalRows(columns, itemObj, rowNumber));
+          rowWasExported = true;
+        }
+
+        if (rowWasExported && this._shouldExportVariableRowHeights) {
+          this.applyVariableRowHeight(rowNumber, originalDaraArray.length);
         }
       }
 
@@ -656,21 +663,18 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     });
   }
 
-  /**
-   * Apply variable row heights from grid to Excel sheet when enableVariableRowHeight is enabled.
-   * Converts pixel heights to Excel points (72 DPI) using formula: pixels * (72/96) = pixels * 0.75
-   */
-  protected applyVariableRowHeights(): void {
-    const lineCount = this._dataView.getLength();
-    const headerRowOffset = this._hasColumnTitlePreHeader ? 3 : 2; // Offset for pre-header + header rows
+  /** Apply one variable row height only when it differs from the grid default row height. */
+  protected applyVariableRowHeight(row: number, excelRowNumber: number): void {
+    const pixelHeight = this._grid.getRowHeight(row);
+    const defaultRowHeight = this._gridOptions.rowHeight;
 
-    for (let row = 0; row < lineCount; row++) {
-      const pixelHeight = this._grid.getRowHeight(row);
-      const excelRowNumber = row + headerRowOffset;
-      // Convert pixels to Excel points: 72 DPI / 96 DPI = 0.75
-      const excelHeight = Math.round(pixelHeight * 0.75 * 100) / 100; // Round to 2 decimal places
-      this._sheet.setRowInstructions(excelRowNumber, { height: excelHeight });
+    if (pixelHeight == null || pixelHeight <= 0 || pixelHeight === defaultRowHeight) {
+      return;
     }
+
+    // Convert pixels to Excel points: 72 DPI / 96 DPI = 0.75
+    const excelHeight = Math.round(pixelHeight * 0.75 * 100) / 100; // Round to 2 decimal places
+    this._sheet.setRowInstructions(excelRowNumber, { height: excelHeight });
   }
 
   /**
