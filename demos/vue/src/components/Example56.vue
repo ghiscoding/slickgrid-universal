@@ -120,7 +120,7 @@ function getData(itemCount: number): TaskItem[] {
 
 <template>
   <h2>
-    Example 56: Variable Row Height (Dynamic)
+    Example 56: Variable Row Height (item metadata)
     <span class="float-end">
       <a
         style="font-size: 18px"

@@ -128,7 +128,7 @@ const Example56: React.FC = () => {
     <div className="demo56">
       <div id="demo-container" className="container-fluid">
         <h2>
-          Example 56: Variable Row Height (Dynamic)
+          Example 56: Variable Row Height (item metadata)
           <span className="float-end font18">
             see&nbsp;
             <a

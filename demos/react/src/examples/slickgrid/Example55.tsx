@@ -98,7 +98,7 @@ const Example55: React.FC = () => {
     <div className="demo55">
       <div id="demo-container" className="container-fluid">
         <h2>
-          Example 55: Variable Row Height (Provider)
+          Example 55: Variable Row Height (provider)
           <span className="float-end font18">
             see&nbsp;
             <a

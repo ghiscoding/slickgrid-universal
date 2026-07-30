@@ -91,7 +91,7 @@ function getData(itemCount: number): StoryItem[] {
 
 <template>
   <h2>
-    Example 55: Variable Row Height (Provider)
+    Example 55: Variable Row Height (provider)
     <span class="float-end">
       <a
         style="font-size: 18px"

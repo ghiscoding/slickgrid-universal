@@ -1,4 +1,4 @@
-describe('Example 55 - Variable Row Height (Provider)', { retries: 1 }, () => {
+describe('Example 55 - Variable Row Height (provider)', { retries: 1 }, () => {
   const hOf = (r: number) => {
     const cycle = [33, 45, 56, 72];
     return cycle[r % cycle.length];
@@ -13,7 +13,7 @@ describe('Example 55 - Variable Row Height (Provider)', { retries: 1 }, () => {
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example55`);
-    cy.get('h2').should('contain', 'Example 55: Variable Row Height (Provider)');
+    cy.get('h2').should('contain', 'Example 55: Variable Row Height (provider)');
   });
 
   it('should render looping row heights (33, 45, 56, 72)', () => {
