@@ -59,6 +59,9 @@ export default class Example44 {
         // but it can be disabled by setting `includeVariableRowHeight` to false
         // includeVariableRowHeight: false, // export all rows at default height
       },
+      pdfExportOptions: {
+        pageOrientation: 'landscape',
+      },
       rowHeight: 40,
       gridHeight: 560,
       gridWidth: 1080,

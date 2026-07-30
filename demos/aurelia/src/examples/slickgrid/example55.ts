@@ -1,4 +1,5 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 import './example55.scss';
 
@@ -47,11 +48,14 @@ export class Example55 {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
       enableVariableRowHeight: true,
-      externalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService(), new PdfExportService()],
       excelExportOptions: {
         // export variable row height will also be reflected in the export
         // but it can be disabled by setting `includeVariableRowHeight` to false
         // includeVariableRowHeight: false, // export all rows at default height
+      },
+      pdfExportOptions: {
+        pageOrientation: 'landscape',
       },
       rowHeight: 40,
       gridHeight: 560,
