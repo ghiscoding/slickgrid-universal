@@ -42,6 +42,17 @@
     border-color: var(--slick-btn-default-border-hover-color, v.$slick-btn-default-border-hover-color);
   }
 }
+
+// slickgrid internal icons (used for grouping, tree data, pagination, etc..)
+.sgi {
+  display: inline-flex;
+  align-items: center;
+  background-color: currentColor;
+  font-size: var(--slick-icon-font-size, v.$slick-icon-font-size);
+  width: 1em;
+  height: 1em;
+}
+
 .slick-dark-mode {
   .btn-default {
     color: var(--slick-btn-default-text-color, v.$slick-btn-default-text-color);
@@ -52,14 +63,13 @@
   }
 }
 
-/* slickgrid internal icons (used for grouping, tree data, pagination, etc..) */
-.sgi {
-  display: inline-flex;
-  align-items: center;
-  background-color: currentColor;
-  font-size: var(--slick-icon-font-size, v.$slick-icon-font-size);
-  width: 1em;
-  height: 1em;
+// Firefox fallback when dragging a column header (since Firefox doesn't support the drag image)
+.slick-header-column-drag-ghost {
+  position: fixed;
+  margin: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-8px, -8px);
 }
 
 .slickgrid-container {

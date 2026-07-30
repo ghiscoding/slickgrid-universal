@@ -897,25 +897,43 @@ describe('Example 04 - Frozen Grid', () => {
       cy.get('.slick-viewport-top.slick-viewport-right').its('0.scrollLeft').should('equal', 0);
       cy.get('[data-test="set-large-freezed-columns"]').click();
 
-      // Step 1: call SortableJS onStart for the "Start" column (1st right-section column).
-      // This sets canDragScroll=true (it's in _headerR) and binds the document 'drag' auto-scroll listener.
-      cy.get('.slick-header-columns-right').then(($rightHeader) => {
-        let sortInstance: any;
-        Object.keys($rightHeader[0]).forEach((prop) => {
-          if (prop.startsWith('Sortable')) {
-            sortInstance = ($rightHeader[0] as any)[prop];
-          }
-        });
-        expect(sortInstance).to.exist;
-        const startColumnEl = $rightHeader[0].querySelectorAll('.slick-header-column')[0] as HTMLElement;
-        sortInstance.options.onStart({ item: startColumnEl });
-      });
+      const dataStore = new Map<string, string>();
+      const dragDataTransfer = {
+        dropEffect: 'move',
+        effectAllowed: 'all',
+        getData: (format: string) => dataStore.get(format) ?? '',
+        setData: (format: string, data: string) => {
+          dataStore.set(format, data);
+        },
+        setDragImage: () => {},
+      };
 
-      // Step 2: fire a document drag event well past the right edge (viewport-relative)
-      // to avoid CI flakiness caused by environment-dependent viewport widths.
+      const createDragLikeEvent = (eventName: string, x: number, y: number): Event => {
+        const evt = new Event(eventName, { bubbles: true, cancelable: true });
+        Object.defineProperty(evt, 'dataTransfer', { value: dragDataTransfer });
+        Object.defineProperty(evt, 'clientX', { value: x });
+        Object.defineProperty(evt, 'clientY', { value: y });
+        Object.defineProperty(evt, 'pageX', { value: x });
+        Object.defineProperty(evt, 'pageY', { value: y });
+        Object.defineProperty(evt, 'screenX', { value: x });
+        Object.defineProperty(evt, 'screenY', { value: y });
+        return evt;
+      };
+
+      // Step 1-2: start native drag on "Start" then fire document drag far-right to trigger auto-scroll.
       cy.window().then((win) => {
+        const rightHeader = win.document.querySelector('.slick-header-columns-right') as HTMLElement;
+        const cols = Array.from(rightHeader?.querySelectorAll('.slick-header-column') ?? []) as HTMLElement[];
+        const startColumnEl = cols.find((el) => (el.textContent ?? '').includes('Start')) as HTMLElement;
+        expect(startColumnEl).to.exist;
+
+        const startRect = startColumnEl.getBoundingClientRect();
+        const startX = startRect.left + startRect.width / 2;
+        const startY = startRect.top + startRect.height / 2;
+        startColumnEl.dispatchEvent(createDragLikeEvent('dragstart', startX, startY));
+
         const dragX = win.innerWidth + 1200;
-        cy.document().trigger('drag', { pageX: dragX, clientX: dragX, clientY: 50 });
+        win.document.dispatchEvent(createDragLikeEvent('drag', dragX, startY));
       });
 
       // Step 3: advance mocked time so the 100ms scroll interval ticks several times.
@@ -924,25 +942,24 @@ describe('Example 04 - Frozen Grid', () => {
       // Auto-scroll should have moved the right viewport to the right
       cy.get('.slick-viewport-top.slick-viewport-right').its('0.scrollLeft').should('be.greaterThan', 0);
 
-      // Step 4: simulate the drag result — "Start" was moved to the right, past "Finish".
-      // SortableJS reads the DOM order via toArray() inside onEnd, so physically reorder the children first.
-      cy.get('.slick-header-columns-right').then(($rightHeader) => {
-        let sortInstance: any;
-        Object.keys($rightHeader[0]).forEach((prop) => {
-          if (prop.startsWith('Sortable')) {
-            sortInstance = ($rightHeader[0] as any)[prop];
-          }
-        });
-        expect(sortInstance).to.exist;
-        const cols = $rightHeader[0].querySelectorAll('.slick-header-column');
-        const startColumnEl = cols[0] as HTMLElement; // "Start"
-        const finishColumnEl = cols[1] as HTMLElement; // "Finish"
+      // Step 4: drag over "Finish" on its right half then end drag to reorder as Finish -> Start.
+      cy.window().then((win) => {
+        const rightHeader = win.document.querySelector('.slick-header-columns-right') as HTMLElement;
+        const cols = Array.from(rightHeader?.querySelectorAll('.slick-header-column') ?? []) as HTMLElement[];
+        const startColumnEl = cols.find((el) => el.textContent?.includes('Start')) as HTMLElement;
+        const finishColumnEl = cols.find((el) => el.textContent?.includes('Finish')) as HTMLElement;
 
-        // Move "Finish" before "Start" → mirrors dragging Start past Finish
-        $rightHeader[0].insertBefore(finishColumnEl, startColumnEl);
+        expect(startColumnEl).to.exist;
+        expect(finishColumnEl).to.exist;
 
-        // onEnd reads the new DOM order via toArray() and calls setColumns() if the order changed
-        sortInstance.options.onEnd({ item: startColumnEl, stopPropagation: () => {} });
+        const finishRect = finishColumnEl.getBoundingClientRect();
+        const targetX = finishRect.left + finishRect.width / 2;
+        const targetY = finishRect.top + finishRect.height / 2;
+
+        finishColumnEl.dispatchEvent(createDragLikeEvent('dragenter', targetX, targetY));
+        finishColumnEl.dispatchEvent(createDragLikeEvent('dragover', targetX, targetY));
+        finishColumnEl.dispatchEvent(createDragLikeEvent('drop', targetX, targetY));
+        startColumnEl.dispatchEvent(createDragLikeEvent('dragend', targetX, targetY));
       });
 
       // Right section should now be: Finish, Start, Completed, Cost | Duration, City of Origin, Action
