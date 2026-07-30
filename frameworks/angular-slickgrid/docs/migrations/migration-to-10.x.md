@@ -10,7 +10,7 @@ As a final touch, this release tries to align Angular-Slickgrid with more modern
 - Angular v21+ is now required
 - [`hidden` columns](#hidden-columns)
 - [Row Detail (now optional)](#row-detail-now-optional)
-- [ngx-translate@v17](#ngx-translate-v17x-is-now-required)
+- [ngx-translate@v17](#ngx-translate-v17.x-is-now-required)
 - [Migrating to Standalone Component](#migrating-to-standalone-component)
 - huge improvements to accessibility (a11y, see above)
 - [What's next?](#whats-next-...version-11)
