@@ -1407,7 +1407,7 @@ describe('SlickGrid core file', () => {
       vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(-1);
       grid.updateRowCount();
 
-      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(4); // 2x left and 2x right, because we have 2x columns
+      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(2); // because we have 2x columns
       footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
       expect(footerElms[0].style.display).not.toBe('none');
       expect(footerElms[1].style.display).not.toBe('none');
@@ -1611,7 +1611,7 @@ describe('SlickGrid core file', () => {
 
       expect(grid.getRowCache()).toEqual({});
       expect(onBeforeRemoveCachedRowSpy).toHaveBeenCalledTimes(4);
-      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(4); // 2x left and 2x right, because we have 2x columns
+      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(2); // because we have 2x columns
       footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
       expect(footerElms[0].style.display).not.toBe('none');
       expect(footerElms[1].style.display).not.toBe('none');
@@ -1643,7 +1643,7 @@ describe('SlickGrid core file', () => {
       grid.setFooterRowVisibility(true);
       grid.updateColumns(); // this will trigger onBeforeFooterRowCellDestroySpy
 
-      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(4); // 2x left and 2x right, because we have 2x columns
+      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(2); // because we have 2x columns
       footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
       expect(footerElms[0].style.display).not.toBe('none');
       expect(footerElms[1].style.display).not.toBe('none');
