@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
+
+### Features
+
+* add `keepComponentAlive` to all 4 framework Row Detail plugins ([#2653](https://github.com/ghiscoding/slickgrid-universal/issues/2653)) ([37d3238](https://github.com/ghiscoding/slickgrid-universal/commit/37d323801007f2f7f7a3536c2526f1ae0470c5ec)) - by @ghiscoding
+
+### Bug Fixes
+
+* Row Detail `keepComponentAlive` duplicates and render race timing issue ([#2655](https://github.com/ghiscoding/slickgrid-universal/issues/2655)) ([4dff5d6](https://github.com/ghiscoding/slickgrid-universal/commit/4dff5d6935f86e0f5daef229344cdfd67c3532d6)) - by @ghiscoding
+
 ## [10.8.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.2...v10.8.3) (2026-07-04)
 
 **Note:** Version bump only for package @slickgrid-universal/angular-row-detail-plugin
