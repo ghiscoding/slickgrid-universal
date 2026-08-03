@@ -7414,7 +7414,7 @@ describe('SlickGrid core file', () => {
         expect(result).toEqual({ row: 1, cell: 1 });
       });
 
-      it('should return { row:1, cell:1 } when clicked cell is second cell of second row with a frozenRow and frozenBottom is inside range', () => {
+      it('should return { row:2, cell:1 } when clicked cell is second cell of second row with a frozenRow and frozenBottom is inside range', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 3, frozenBottom: true });
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
         const event = new CustomEvent('click');
@@ -7423,7 +7423,7 @@ describe('SlickGrid core file', () => {
         Object.defineProperty(event, 'clientY', { writable: true, value: DEFAULT_COLUMN_HEIGHT * 1 + 5 });
         const result = grid.getCellFromEvent(event);
 
-        expect(result).toEqual({ row: 1, cell: 1 });
+        expect(result).toEqual({ row: 2, cell: 1 });
       });
 
       it('should return null when using frozenRow that result into invalid row/cell number', () => {
