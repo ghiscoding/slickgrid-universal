@@ -1099,6 +1099,7 @@ importers:
       yaml:
         specifier: ^2.9.0
         version: 2.9.0
+    publishDirectory: dist
 
   frameworks/aurelia-slickgrid:
     dependencies:
