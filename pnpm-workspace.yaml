@@ -6,12 +6,12 @@ packages:
   - '!**/dist/**'
 
 allowBuilds:
-  '@parcel/watcher': true
-  core-js: true
-  cypress: true
-  esbuild: true
-  lmdb: true
-  msgpackr-extract: true
+  '@parcel/watcher': false
+  core-js: false
+  cypress: false
+  esbuild: false
+  lmdb: false
+  msgpackr-extract: false
 
 catalog:
   '@4tw/cypress-drag-drop': ^2.3.1
