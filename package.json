@@ -113,9 +113,9 @@
   },
   "engines": {
     "node": "^22.22.2 || >=24.15.0",
-    "pnpm": "10.x"
+    "pnpm": "11.x"
   },
-  "packageManager": "pnpm@10.34.5",
+  "packageManager": "pnpm@11.17.0",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
     "@formkit/tempo": "catalog:",

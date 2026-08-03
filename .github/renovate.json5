@@ -44,13 +44,6 @@
       packageNames: ['@angular-eslint/eslint-plugin'],
       allowedVersions: '< 22.0.0',
     },
-    // postponed the following npm packages to next major, since they now require NodeJS: ^22.22.2 || ^24.15.0 || >=26.0.0
-    {
-      matchManagers: ['github-actions'],
-      matchDepNames: ['pnpm/action-setup'],
-      allowedVersions: '< 6.0.0',
-      description: 'Keep pnpm action at v5 until we migrate to pnpm v11',
-    },
     {
       // Exclude @lerna-lite/* from minimumReleaseAge since I'm the maintainer of Lerna-Lite
       matchPackagePatterns: ['^@lerna-lite/'],
