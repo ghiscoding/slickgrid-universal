@@ -36,7 +36,7 @@ const innerGridOptions = ref<GridOption>();
 const innerColDefs: Ref<Column[]> = ref([]);
 const innerDataset = ref<any[]>([]);
 const innerGridClass = ref(`row-detail-${props.model.id}`);
-let vueGrid!: SlickgridVueInstance;
+let vueGrid: SlickgridVueInstance | undefined;
 
 onBeforeMount(() => {
   defineGrid();
@@ -52,7 +52,7 @@ onMounted(() => {
 });
 
 function handleBeforeGridDestroy() {
-  if (props.model.isUsingInnerGridStatePresets) {
+  if (props.model.isUsingInnerGridStatePresets && vueGrid?.gridStateService) {
     const gridState = vueGrid.gridStateService.getCurrentGridState();
     sessionStorage.setItem(`gridstate_${innerGridClass.value}`, JSON.stringify(gridState));
   }

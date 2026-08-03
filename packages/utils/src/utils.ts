@@ -403,6 +403,19 @@ export function toSnakeCase(inputStr: string): string {
 }
 
 /**
+ * Execute an operation with synchronous error handling.
+ * @param operation - function to execute
+ * @param onError - optional error callback
+ */
+export function tryCatch(operation: () => void, onError?: (error: unknown) => void): void {
+  try {
+    operation();
+  } catch (error) {
+    onError?.(error);
+  }
+}
+
+/**
  * Takes an input array and makes sure the array has unique values by removing duplicates
  * @param array input with possible duplicates
  * @return array output without duplicates

@@ -68,7 +68,7 @@
     "@slickgrid-universal/utils": "workspace:*",
     "@types/sortablejs": "catalog:",
     "@types/trusted-types": "^2.0.7",
-    "autocompleter": "^9.3.2",
+    "autocompleter": "^10.0.0",
     "dequal": "catalog:",
     "multiple-select-vanilla": "catalog:",
     "sortablejs": "catalog:",
@@ -79,7 +79,7 @@
     "cssnano": "^8.0.2",
     "native-copyfiles": "catalog:",
     "npm-run-all2": "catalog:",
-    "postcss": "^8.5.16",
+    "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",
     "sass": "catalog:"
   },

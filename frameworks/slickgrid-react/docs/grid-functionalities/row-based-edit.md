@@ -33,6 +33,8 @@ If the [Excel Copy Buffer Plugin](excel-copy-buffer.md) is configured, the Row b
 The idea of the plugin is to focus the users editing experience on specific individual rows and and save them individually. This is achieved by letting the user toggle one or more rows into edit mode.
 When a that happens a potentially registered `onBeforeEditMode` callback is executed to handle various preparation or cleanup tasks. Now changes can be made to those rows and will be highlighted and tracked. The user may cancel the edit mode at any time and revert all cells changes. If the save button is pressed on the other hand an `onBeforeRowUpdated` hook, which you define via plugin options, is called and expects a `Promise<boolean>`. In that method you'd typically write the changes to your backend and return either true or false based on the operations outcome. If a negative boolean is returned the edit mode is kept, otherwise the row applies the changes and toggles back into readonly mode. That means, no modifications can be done on the grid. Additionally, when a row is deleted via the delete button, an `onAfterDelete` callback is executed, which you can use to e.g. remove the row from your backend.
 
+Additionally, you can also register the optional `onBeforeCellEdit` hook which allows to control on a per cell level whether editing should be allowed or not, by returning a boolean.
+
 Here's the respective code shown in Example22:
 
 #### ViewModel

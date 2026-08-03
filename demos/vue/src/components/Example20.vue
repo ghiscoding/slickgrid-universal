@@ -311,6 +311,7 @@ function onCellValidationError(_e: Event, args: any) {
 function setFrozenColumns(frozenCols: number) {
   vueGrid.slickGrid.setOptions({ frozenColumn: frozenCols });
   gridOptions.value = vueGrid.slickGrid.getOptions();
+  frozenColumnCount.value = frozenCols;
 }
 
 /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */

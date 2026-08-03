@@ -98,6 +98,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     return this._grid?.getOptions() || ({} as GridOption);
   }
 
+  protected get _shouldExportVariableRowHeights(): boolean {
+    return !!(this._gridOptions.enableVariableRowHeight && this._excelExportOptions.includeVariableRowHeight !== false);
+  }
+
   get stylesheet(): StyleSheet {
     return this._stylesheet;
   }
@@ -210,6 +214,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       }
 
       this._sheet.setData(finalOutput);
+
       this._workbook.addWorksheet(this._sheet);
 
       // MIME type could be undefined, if that's the case we'll detect the type by its file extension
@@ -518,6 +523,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     // Read rows directly from DataView
     for (let rowNumber = 0; rowNumber < lineCount; rowNumber++) {
       const itemObj = dataView.getItem(rowNumber);
+      let rowWasExported = false;
 
       // make sure we have a filled object AND that the item doesn't include the "getItem" method
       // this happen could happen with an opened Row Detail as it seems to include an empty Slick DataView (we'll just skip those lines)
@@ -526,12 +532,19 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
           // Read a regular row
           originalDaraArray.push(this.readRegularRowData(columns, rowNumber, itemObj, rowNumber, cachedColumnMetadata));
+          rowWasExported = true;
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {
           // get the group row
           originalDaraArray.push([this.readGroupedRowTitle(itemObj)]);
+          rowWasExported = true;
         } else if (itemObj.__groupTotals) {
           // else if the row is a Group By and we have aggregators, then a property of '__groupTotals' would exist under that object
           originalDaraArray.push(this.readGroupedTotalRows(columns, itemObj, rowNumber));
+          rowWasExported = true;
+        }
+
+        if (rowWasExported && this._shouldExportVariableRowHeights) {
+          this.applyVariableRowHeight(rowNumber, originalDaraArray.length);
         }
       }
 
@@ -648,6 +661,20 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       clearTimeout(this._timer2);
       this._timer2 = setTimeout(resolve, 0);
     });
+  }
+
+  /** Apply one variable row height only when it differs from the grid default row height. */
+  protected applyVariableRowHeight(row: number, excelRowNumber: number): void {
+    const pixelHeight = this._grid.getRowHeight(row);
+    const defaultRowHeight = this._gridOptions.rowHeight;
+
+    if (pixelHeight == null || pixelHeight <= 0 || pixelHeight === defaultRowHeight) {
+      return;
+    }
+
+    // Convert pixels to Excel points: 72 DPI / 96 DPI = 0.75
+    const excelHeight = Math.round(pixelHeight * 0.75 * 100) / 100; // Round to 2 decimal places
+    this._sheet.setRowInstructions(excelRowNumber, { height: excelHeight });
   }
 
   /**

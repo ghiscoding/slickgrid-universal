@@ -15,6 +15,7 @@ const dataset = ref<Distributor[]>([]);
 const isDarkMode = ref(false);
 const isUsingAutoHeight = ref(false);
 const isUsingInnerGridStatePresets = ref(false);
+const isKeepingComponentAlive = ref(false);
 const showSubTitle = ref(true);
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
 let vueGrid!: SlickgridVueInstance;
@@ -150,6 +151,17 @@ function changeUsingResizerAutoHeight() {
 function changeUsingInnerGridStatePresets() {
   isUsingInnerGridStatePresets.value = !isUsingInnerGridStatePresets.value;
   closeAllRowDetail();
+  return true;
+}
+
+function changeKeepingComponentAlive() {
+  isKeepingComponentAlive.value = !isKeepingComponentAlive.value;
+  closeAllRowDetail();
+  if (gridOptions.value?.rowDetailView) {
+    gridOptions.value.rowDetailView.keepComponentAlive = isKeepingComponentAlive.value;
+  }
+  const options = rowDetailInstance.value.getOptions();
+  rowDetailInstance.value.setOptions({ ...options, keepComponentAlive: isKeepingComponentAlive.value });
   return true;
 }
 
@@ -314,6 +326,21 @@ function vueGridReady(grid: SlickgridVueInstance) {
               title="should we use Grid State/Presets to keep the inner grid state whenever Row Details are out and back to viewport and re-rendered"
             >
               Use Inner Grid State/Presets
+            </span>
+          </label>
+
+          <label class="checkbox-inline control-label ms-2" for="keepComponentAlive">
+            <input
+              type="checkbox"
+              id="keepComponentAlive"
+              data-test="keep-component-alive"
+              :checked="isKeepingComponentAlive"
+              @click="changeKeepingComponentAlive()"
+            />
+            <span
+              title="preserve component state (incl. nested grid sort/filters) when row scrolls out of viewport instead of destroying it"
+            >
+              Keep Component Alive on Scroll
             </span>
           </label>
 

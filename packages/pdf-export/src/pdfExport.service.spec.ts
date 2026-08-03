@@ -29,8 +29,8 @@ const pubSubServiceStub = {
 
 // URL object is not supported in JSDOM, we can simply mock it
 const createObjectMock = vi.fn();
-(global as any).URL.createObjectURL = createObjectMock;
-(global as any).URL.revokeObjectURL = vi.fn();
+(globalThis as any).URL.createObjectURL = createObjectMock;
+(globalThis as any).URL.revokeObjectURL = vi.fn();
 
 const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => (value !== null ? { text: `<b>${value}</b>` } : (null as any));
 const myUppercaseFormatter: Formatter = (_row, _cell, value) => (value ? { text: value.toUpperCase() } : (null as any));
@@ -161,7 +161,7 @@ describe('PdfExportService', () => {
       delete mockGridOptions.backendServiceApi;
       service?.dispose();
       vi.clearAllMocks();
-      delete (global as any).__pdfDocOverride;
+      delete (globalThis as any).__pdfDocOverride;
     });
 
     it('should create the service', () => {
@@ -724,13 +724,13 @@ describe('PdfExportService', () => {
       const container = { get: () => pubSubService };
       const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
       const doc = { page: vi.fn(), build: buildSpy };
-      (global as any).__pdfDocOverride = doc;
+      (globalThis as any).__pdfDocOverride = doc;
       const service = new PdfExportService();
       service.init(gridStub as any, container as any);
       let result;
       result = await service.exportToPdf({ filename: 'preheader-multipage', documentTitle: 'Test PDF' });
       expect(result).toBe(true);
-      delete (global as any).__pdfDocOverride;
+      delete (globalThis as any).__pdfDocOverride;
     });
 
     it('should call drawHeaders with grouped pre-header and without column headers', async () => {
@@ -748,7 +748,7 @@ describe('PdfExportService', () => {
       const container = { get: () => pubSubService };
       const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
       const doc = { page: vi.fn(), build: buildSpy };
-      (global as any).__pdfDocOverride = doc;
+      (globalThis as any).__pdfDocOverride = doc;
       const service = new PdfExportService();
       service.init(gridStub as any, container as any);
       const result = await service.exportToPdf({ filename: 'no-col-header', includeColumnHeaders: false });
@@ -759,7 +759,7 @@ describe('PdfExportService', () => {
       // Setup to hit both firstPageMaxRows and subsequentPageMaxRows logic
       const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
       const doc = { page: vi.fn(), build: buildSpy };
-      (global as any).__pdfDocOverride = doc;
+      (globalThis as any).__pdfDocOverride = doc;
       const rows = Array.from({ length: 60 }, (_, i) => ({ id: i, name: `Name${i}` }));
       dataViewStub.getLength.mockReturnValue(rows.length);
       dataViewStub.getItem.mockImplementation((i: number) => rows[i]);
@@ -795,7 +795,7 @@ describe('PdfExportService', () => {
       // Set global override for pdf doc
       const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3])); // Always succeed
       const doc = { page: vi.fn(), build: buildSpy };
-      (global as any).__pdfDocOverride = doc;
+      (globalThis as any).__pdfDocOverride = doc;
       const rows = Array.from({ length: 50 }, (_, i) => ({ id: i, name: `Name${i}` }));
       dataViewStub.getLength.mockReturnValue(rows.length);
       dataViewStub.getItem.mockImplementation((i: number) => rows[i]);
@@ -809,7 +809,7 @@ describe('PdfExportService', () => {
       }
       expect(result).toBe(true);
       // Clean up override
-      delete (global as any).__pdfDocOverride;
+      delete (globalThis as any).__pdfDocOverride;
     });
 
     it('should handle grouped header spanning (pre-header)', async () => {
@@ -868,7 +868,7 @@ describe('PdfExportService', () => {
       const container = { get: () => pubSubService };
       const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3])); // Always succeed
       const doc = { page: vi.fn(), build: buildSpy };
-      (global as any).__pdfDocOverride = doc;
+      (globalThis as any).__pdfDocOverride = doc;
       const service = new PdfExportService();
       service.init(gridStub as any, container as any);
       let result;
@@ -905,7 +905,7 @@ describe('PdfExportService', () => {
       const container = { get: () => pubSubService };
       const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
       const doc = { page: vi.fn(), build: buildSpy };
-      (global as any).__pdfDocOverride = doc;
+      (globalThis as any).__pdfDocOverride = doc;
       service.init(gridStub as any, container as any);
       const result = await service.exportToPdf({ filename: 'no-group-title' });
       expect(result).toBe(true);
@@ -925,7 +925,7 @@ describe('PdfExportService', () => {
       const container = { get: () => pubSubService };
       const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
       const doc = { page: vi.fn(), build: buildSpy };
-      (global as any).__pdfDocOverride = doc;
+      (globalThis as any).__pdfDocOverride = doc;
       service.init(gridStub as any, container as any);
       const result = await service.exportToPdf({ filename: 'long-titles' });
       expect(result).toBe(true);
@@ -934,7 +934,7 @@ describe('PdfExportService', () => {
     it('should split rows into multiple pages with documentTitle and verify first/subsequent page logic', async () => {
       const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
       const doc = { page: vi.fn(), build: buildSpy };
-      (global as any).__pdfDocOverride = doc;
+      (globalThis as any).__pdfDocOverride = doc;
       const rows = Array.from({ length: 70 }, (_, i) => ({ id: i, name: `Name${i}` }));
       dataViewStub.getLength.mockReturnValue(rows.length);
       dataViewStub.getItem.mockImplementation((i: number) => rows[i]);
@@ -965,6 +965,129 @@ describe('PdfExportService', () => {
       (service as any)._hasGroupedItems = false;
       const result = service['readRegularRowData'](columns as any, 0, itemObj);
       expect(result).toEqual(['B', 'C']); // col2 and col3 included
+    });
+  });
+
+  describe('Variable Row Height', () => {
+    async function createVarHeightService(getRowHeightFn: (row: number) => number, columnCount = 1) {
+      vi.resetModules();
+      let capturedDidParseCell: ((data: any) => void) | undefined;
+      const autoTableSpy = vi.fn((opts: any) => {
+        capturedDidParseCell = opts.didParseCell;
+      });
+      function jsPDFMockVarHeight(this: any) {
+        this.save = vi.fn();
+        this.setFontSize = vi.fn();
+        this.getTextWidth = vi.fn((txt: string) => txt.length * 6);
+        this.internal = { pageSize: { getWidth: () => 595.28, getHeight: () => 841.89 } };
+        this.setFillColor = vi.fn();
+        this.setTextColor = vi.fn();
+        this.rect = vi.fn();
+        this.text = vi.fn();
+        this.addPage = vi.fn();
+        this.autoTable = autoTableSpy;
+      }
+      vi.doMock('jspdf', () => ({ __esModule: true, default: jsPDFMockVarHeight }));
+      const { PdfExportService: Svc } = await import('./pdfExport.service.js');
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 2,
+        getItem: (idx: number) => ({ id: idx, title: `Task ${idx}` }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const visibleColumns = Array.from({ length: columnCount }, (_value, idx) => ({
+        id: `title${idx}`,
+        field: 'title',
+        name: `Title ${idx}`,
+        width: 100,
+      }));
+      const gridStub = {
+        getVisibleColumns: () => visibleColumns,
+        getOptions: () => ({ enableVariableRowHeight: true }),
+        getData: () => dataViewStub,
+        getRowHeight: getRowHeightFn,
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: () => pubSubService };
+      return { Svc, gridStub, container, autoTableSpy, getDidParseCell: () => capturedDidParseCell };
+    }
+
+    afterEach(() => {
+      vi.resetModules();
+    });
+
+    it('should set minCellHeight via didParseCell for body cells (px to pt: px * 0.75)', async () => {
+      const { Svc, gridStub, container, getDidParseCell } = await createVarHeightService(() => 50);
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      await service.exportToPdf({ filename: 'var-height' });
+
+      const didParseCell = getDidParseCell();
+      expect(didParseCell).toBeDefined();
+
+      const cell: any = { styles: {} };
+      didParseCell!({ section: 'body', row: { index: 0 }, column: { index: 0 }, cell });
+      // 50px * 0.75 = 37.5pt
+      expect(cell.styles.minCellHeight).toBe(37.5);
+    });
+
+    it('should NOT set minCellHeight for head cells', async () => {
+      const { Svc, gridStub, container, getDidParseCell } = await createVarHeightService(() => 50);
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      await service.exportToPdf({ filename: 'var-height-head' });
+
+      const cell: any = { styles: {} };
+      getDidParseCell()!({ section: 'head', row: { index: 0 }, column: { index: 0 }, cell });
+      expect(cell.styles.minCellHeight).toBeUndefined();
+    });
+
+    it('should NOT set minCellHeight when includeVariableRowHeight is false', async () => {
+      const { Svc, gridStub, container, getDidParseCell } = await createVarHeightService(() => 50);
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      await service.exportToPdf({ filename: 'var-height-disabled', includeVariableRowHeight: false });
+
+      const cell: any = { styles: {} };
+      getDidParseCell()!({ section: 'body', row: { index: 0 }, column: { index: 0 }, cell });
+      expect(cell.styles.minCellHeight).toBeUndefined();
+    });
+
+    it('should use per-row heights from getRowHeight', async () => {
+      const heights = [40, 60];
+      const { Svc, gridStub, container, getDidParseCell } = await createVarHeightService((row) => heights[row]);
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      await service.exportToPdf({ filename: 'var-height-per-row' });
+
+      const cell0: any = { styles: {} };
+      const cell1: any = { styles: {} };
+      const fn = getDidParseCell()!;
+      fn({ section: 'body', row: { index: 0 }, column: { index: 0 }, cell: cell0 });
+      fn({ section: 'body', row: { index: 1 }, column: { index: 0 }, cell: cell1 });
+      // 40px * 0.75 = 30pt, 60px * 0.75 = 45pt
+      expect(cell0.styles.minCellHeight).toBe(30);
+      expect(cell1.styles.minCellHeight).toBe(45);
+    });
+
+    it('should cache row heights in autoTable and not re-read the same row per cell', async () => {
+      const getRowHeightSpy = vi.fn((row: number) => (row === 0 ? 40 : 60));
+      const { Svc, gridStub, container, getDidParseCell } = await createVarHeightService(getRowHeightSpy, 2);
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      await service.exportToPdf({ filename: 'var-height-cached' });
+
+      const didParseCell = getDidParseCell()!;
+      const firstCell: any = { styles: {} };
+      const secondCell: any = { styles: {} };
+
+      didParseCell({ section: 'body', row: { index: 0 }, column: { index: 0 }, cell: firstCell });
+      didParseCell({ section: 'body', row: { index: 0 }, column: { index: 1 }, cell: secondCell });
+
+      expect(firstCell.styles.minCellHeight).toBe(30);
+      expect(secondCell.styles.minCellHeight).toBe(30);
+      expect(getRowHeightSpy).toHaveBeenCalledTimes(1);
+      expect(getRowHeightSpy).toHaveBeenCalledWith(0);
     });
   });
 
@@ -1806,7 +1929,7 @@ describe('PdfExportService', () => {
       const container = { get: () => pubSubService };
       const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
       const doc = { page: vi.fn(), build: buildSpy };
-      (global as any).__pdfDocOverride = doc;
+      (globalThis as any).__pdfDocOverride = doc;
       service.init(gridStub as any, container as any);
       const result = await service.exportToPdf({ filename: 'no-headers', includeColumnHeaders: false });
       expect(result).toBe(true);
@@ -1860,11 +1983,11 @@ describe('PdfExportService', () => {
       const container = { get: () => pubSubService };
       const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
       const doc = { page: vi.fn(), build: buildSpy };
-      (global as any).__pdfDocOverride = doc;
+      (globalThis as any).__pdfDocOverride = doc;
       service.init(gridStub as any, container as any);
       const result = await service.exportToPdf({ filename: 'normal-path' });
       expect(result).toBe(true);
-      delete (global as any).__pdfDocOverride;
+      delete (globalThis as any).__pdfDocOverride;
     });
 
     it('should resolve false in exportToPdf if error thrown in setTimeout', async () => {
@@ -1905,7 +2028,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     service.init(gridStub as any, container as any);
     const result = await service.exportToPdf({ filename: 'only-col-header', includeColumnHeaders: true });
     expect(result).toBe(true);
@@ -1931,7 +2054,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     service.init(gridStub as any, container as any);
     const result = await service.exportToPdf({ filename: 'repeat-headers', repeatHeadersOnEachPage: true });
     expect(result).toBe(true);
@@ -1976,7 +2099,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     service.init(gridStub as any, container as any);
     const result = await service.exportToPdf({ filename: 'drawHeaders-grouped-no-title', includeColumnHeaders: true });
     expect(result).toBe(true);
@@ -1996,7 +2119,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     const service = new PdfExportService();
     service.init(gridStub as any, container as any);
     (service as any)._groupedColumnHeaders = [];
@@ -2026,7 +2149,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     const service = new PdfExportService();
     service.init(gridStub as any, container as any);
     const result = await service.exportToPdf({ filename: 'multi-page-exact-one', fontSize: 10, headerFontSize: 11 });
@@ -2055,7 +2178,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     const service = new PdfExportService();
     service.init(gridStub as any, container as any);
     const result = await service.exportToPdf({ filename: 'multi-page-just-over', fontSize: 10, headerFontSize: 11 });
@@ -2076,7 +2199,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     const service = new PdfExportService();
     service.init(gridStub as any, container as any);
     const result = await service.exportToPdf({ filename: 'drawHeaders-none', includeColumnHeaders: false });
@@ -2104,7 +2227,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     const service = new PdfExportService();
     service.init(gridStub as any, container as any);
     const result = await service.exportToPdf({ filename: 'multi-page-no-title-no-repeat', repeatHeadersOnEachPage: false });
@@ -2129,7 +2252,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     const service = new PdfExportService();
     service.init(gridStub as any, container as any);
     (service as any)._groupedColumnHeaders = groupedHeaders;
@@ -2151,7 +2274,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     const service = new PdfExportService();
     service.init(gridStub as any, container as any);
     (service as any)._hasGroupedItems = true;
@@ -2180,7 +2303,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     const service = new PdfExportService();
     service.init(gridStub as any, container as any);
     const result = await service.exportToPdf({ filename: 'multi-page-repeat-title', repeatHeadersOnEachPage: true, documentTitle: 'Test Title' });
@@ -2228,7 +2351,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     const service = new TestPdfExportService();
     service.init(gridStub as any, container as any);
     service.setMockDataView(dataViewStub);
@@ -2236,7 +2359,7 @@ describe('PdfExportService', () => {
     (service as any)._exportOptions = { sanitizeDataExport: false };
     const result = (service as any).getAllGridRowData(columns);
     expect(result).toBeInstanceOf(Array);
-    delete (global as any).__pdfDocOverride;
+    delete (globalThis as any).__pdfDocOverride;
   });
 
   it('should cover drawHeaders with pre-header enabled, grouped headers present, and includeColumnHeaders false', async () => {
@@ -2566,7 +2689,7 @@ describe('PdfExportService', () => {
     const container = { get: () => pubSubService };
     const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
     const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
+    (globalThis as any).__pdfDocOverride = doc;
     const service = new TestPdfExportService();
     service.init(gridStub as any, container as any);
     (service as any)._exportOptions = { sanitizeDataExport: false };
@@ -2575,7 +2698,7 @@ describe('PdfExportService', () => {
     // Should hit both skip and non-skip paths
     const result = (service as any).getAllGridRowData(columns);
     expect(result).toBeInstanceOf(Array);
-    delete (global as any).__pdfDocOverride;
+    delete (globalThis as any).__pdfDocOverride;
   });
 
   it('should cover headerX += colWidth in drawHeaders (pre-header, grouped headers, grouping, groupByColumnHeader)', async () => {

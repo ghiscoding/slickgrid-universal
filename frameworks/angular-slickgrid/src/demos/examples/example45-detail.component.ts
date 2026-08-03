@@ -30,7 +30,7 @@ export class Example45DetailComponent implements OnDestroy, OnInit {
   model!: Distributor;
   innerColDefs: Column[] = [];
   innerGridOptions!: GridOption;
-  angularGrid!: AngularGridInstance;
+  angularGrid?: AngularGridInstance;
   innerDataset: any[] = [];
   innerGridId = '';
   innerGridClass = '';
@@ -89,7 +89,7 @@ export class Example45DetailComponent implements OnDestroy, OnInit {
   }
 
   handleBeforeGridDestroy() {
-    if (this.model.isUsingInnerGridStatePresets) {
+    if (this.model.isUsingInnerGridStatePresets && this.angularGrid?.gridStateService) {
       const gridState = this.angularGrid.gridStateService.getCurrentGridState();
       sessionStorage.setItem(`gridstate_${this.innerGridClass}`, JSON.stringify(gridState));
     }

@@ -5,13 +5,14 @@ export default defineConfig({
   video: false,
   projectId: 'p5zxx6',
   viewportWidth: 1200,
-  viewportHeight: 950,
+  viewportHeight: 1050,
   fixturesFolder: 'test/cypress/fixtures',
   screenshotsFolder: 'test/cypress/screenshots',
   videosFolder: 'test/cypress/videos',
   defaultCommandTimeout: 5000,
   pageLoadTimeout: 90000,
   numTestsKeptInMemory: 5,
+  scrollBehavior: 'nearest',
   retries: {
     experimentalStrategy: 'detect-flake-and-pass-on-threshold',
     experimentalOptions: {

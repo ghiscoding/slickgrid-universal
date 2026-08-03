@@ -79,6 +79,13 @@ export interface PdfExportOption {
   width?: number;
 
   /**
+   * When true (default), export row heights to PDF when enableVariableRowHeight is active.
+   * Set to false to ignore variable row heights and export all rows at default height.
+   * Heights are converted from pixels to PDF points (72 DPI): pixels * 0.75.
+   */
+  includeVariableRowHeight?: boolean;
+
+  /**
    * Optional callback to customize the jsPDF-AutoTable options before the table is rendered.
    * Receives the fully-built AutoTable options object and must return the (possibly mutated) options.
    * This is only called when jsPDF-AutoTable is available; the manual fallback path does not use it.

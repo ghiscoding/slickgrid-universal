@@ -895,6 +895,7 @@ describe('Example 04 - Frozen Grid', () => {
         $viewport[0].dispatchEvent(new Event('scroll', { bubbles: true }));
       });
       cy.get('.slick-viewport-top.slick-viewport-right').its('0.scrollLeft').should('equal', 0);
+      cy.get('[data-test="set-large-freezed-columns"]').click();
 
       // Step 1: call SortableJS onStart for the "Start" column (1st right-section column).
       // This sets canDragScroll=true (it's in _headerR) and binds the document 'drag' auto-scroll listener.

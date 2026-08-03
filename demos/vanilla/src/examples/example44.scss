@@ -1,0 +1,10 @@
+.grid44 {
+  --slick-cell-border-left: 1px solid #dedede;
+}
+
+.grid44 .slickgrid-container .slick-cell.cell-wrap {
+  white-space: normal;
+  text-overflow: clip;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}

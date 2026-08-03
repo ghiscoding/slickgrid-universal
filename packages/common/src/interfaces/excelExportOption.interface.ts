@@ -62,6 +62,13 @@ export interface ExcelExportOption {
    */
   useStreamingExport?: boolean;
 
+  /**
+   * When true (default), export row heights to Excel when enableVariableRowHeight is active.
+   * Set to false to ignore variable row heights and export all rows at default height.
+   * Heights are converted from pixels to Excel points (72 DPI) for proper rendering.
+   */
+  includeVariableRowHeight?: boolean;
+
   /** Add a Custom Excel Header on first row of the Excel Sheet */
   customExcelHeader?: (workbook: Workbook, sheet: Worksheet) => void;
 }

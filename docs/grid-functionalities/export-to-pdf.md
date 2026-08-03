@@ -8,6 +8,7 @@
 - [AutoTable Options Callback](#autotable-options-callback)
 - [Export from Button Click](#export-from-a-button-click-event)
 - [Show Loading Process Spinner](#show-loading-process-spinner)
+- [Variable Row Height](#variable-row-height)
 - [Large Dataset Performance](#large-dataset-performance)
 - [UI Sample](#ui-sample)
 
@@ -219,6 +220,17 @@ export class MyExample {
     gridContainerElm.addEventListener('onbeforeexporttopdf', () => this.processing = true);
     gridContainerElm.addEventListener('onafterexporttopdf', () => this.processing = false);
   }
+}
+```
+
+### Variable Row Height
+When `enableVariableRowHeight: true` is set in your grid options, PDF export automatically reflects each row's individual pixel height, converted to PDF points (px × 0.75). When using `jspdf-autotable`, `minCellHeight` is set per cell; the manual fallback uses the per-row height directly.
+
+To opt out, set `includeVariableRowHeight: false` in your `pdfExportOptions`:
+
+```ts
+pdfExportOptions: {
+  includeVariableRowHeight: false, // export all rows at default height
 }
 ```
 

@@ -2,6 +2,7 @@ import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { describe, expect, it, vi } from 'vitest';
 import type { EditController } from '../../interfaces/editController.interface.js';
 import {
+  RowPositionIndexer,
   SlickCopyRange,
   SlickEditorLock,
   SlickEvent,
@@ -394,6 +395,48 @@ describe('SlickCore file', () => {
 
       groupTotals.initialized = true;
       expect(groupTotals.initialized).toBeTruthy();
+    });
+  });
+
+  describe('RowPositionIndexer class', () => {
+    it('should build row top positions and row heights from callback values', () => {
+      const indexer = new RowPositionIndexer();
+      indexer.rebuild(3, 25, (row) => [25, 40, 30][row]);
+
+      expect(indexer.count).toBe(3);
+      expect(indexer.top(0)).toBe(0);
+      expect(indexer.top(1)).toBe(25);
+      expect(indexer.top(2)).toBe(65);
+      expect(indexer.height(0)).toBe(25);
+      expect(indexer.height(1)).toBe(40);
+      expect(indexer.height(2)).toBe(30);
+    });
+
+    it('should fallback to default row height for undefined callback values and for extrapolated rows', () => {
+      const indexer = new RowPositionIndexer();
+      indexer.rebuild(2, 20, (row) => (row === 0 ? 35 : undefined));
+
+      expect(indexer.height(0)).toBe(35);
+      expect(indexer.height(1)).toBe(20);
+      expect(indexer.top(2)).toBe(55);
+      expect(indexer.height(2)).toBe(20);
+      expect(indexer.top(3)).toBe(75);
+    });
+
+    it('should map vertical positions to row indexes for in-range and extrapolated positions', () => {
+      const indexer = new RowPositionIndexer();
+      indexer.rebuild(3, 25, (row) => [25, 40, 30][row]); // tops: 0, 25, 65, total: 95
+
+      expect(indexer.rowAt(-3)).toBe(0);
+      expect(indexer.rowAt(0)).toBe(0);
+      expect(indexer.rowAt(24)).toBe(0);
+      expect(indexer.rowAt(25)).toBe(1);
+      expect(indexer.rowAt(64)).toBe(1);
+      expect(indexer.rowAt(65)).toBe(2);
+      expect(indexer.rowAt(94)).toBe(2);
+      expect(indexer.rowAt(95)).toBe(3);
+      expect(indexer.rowAt(119)).toBe(3);
+      expect(indexer.rowAt(120)).toBe(4);
     });
   });
 

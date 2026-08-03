@@ -84,7 +84,7 @@ export default class Example37 {
 
   /* Define grid Options and Columns */
   defineGrids() {
-    this.columns1 = [
+    const baseColumns = [
       { id: 'id', name: '#', field: 'id', width: 32, maxWidth: 40, excludeFromHeaderMenu: true },
       { id: 'title', name: 'Title', field: 'title', width: 90, cssClass: 'cell-title' },
       { id: 'complete', name: '% Complete', field: 'percentComplete', sortable: true, width: 90 },
@@ -121,8 +121,18 @@ export default class Example37 {
         exportCustomFormatter: (_row, _cell, value) => (value ? 'Yes' : 'No'),
         formatter: Formatters.checkmarkMaterial,
       },
+    ] satisfies Column<any>[];
+
+    this.columns1 = [
+      ...baseColumns,
+      {
+        id: 'lastColumnHiddenColumn',
+        name: 'Last Column / Hidden Column',
+        field: 'lastColumnHiddenColumn',
+        hidden: true,
+      },
     ];
-    this.columns2 = [...this.columns1];
+    this.columns2 = [...baseColumns];
 
     this.gridOptions1 = {
       autoResize: {
@@ -154,6 +164,21 @@ export default class Example37 {
         copyActiveEditorCell: true,
         removeDoubleQuotesOnPaste: true,
         replaceNewlinesWith: ' ',
+      },
+
+      contextMenu: {
+        commandItems: [
+          {
+            command: 'commandWhichShouldBeShown',
+            title: 'Command which should be shown',
+            iconCssClass: 'mdi mdi-check',
+            itemVisibilityOverride: (item) => {
+              // before the fix: last column is hidden → range is silently dropped
+              this.sgb1.slickGrid?.setSelectedRows([item.row ?? 0]);
+              return this.sgb1.slickGrid?.getSelectedRows().includes(item.row ?? 0) ?? false; // always false ← bug
+            },
+          },
+        ],
       },
     };
 

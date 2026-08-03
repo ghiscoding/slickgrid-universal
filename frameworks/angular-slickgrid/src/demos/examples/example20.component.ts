@@ -331,6 +331,7 @@ export class Example20Component implements OnInit, OnDestroy {
   setFrozenColumns(frozenCols: number) {
     this.gridObj.setOptions({ frozenColumn: frozenCols });
     this.gridOptions = this.gridObj.getOptions();
+    this.frozenColumnCount = frozenCols;
   }
 
   /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */

@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 import {
   getOffset,
   SlickEvent,
@@ -788,7 +790,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('loading...');
 
-    await new Promise(process.nextTick);
+    await vi.runAllTimersAsync();
 
     tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm.textContent).toBe('async post text with ratio: 1.2');
@@ -820,7 +822,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('loading...');
 
-    await new Promise(process.nextTick);
+    await vi.runAllTimersAsync();
 
     tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm.textContent).toBe('tooltip title text with ratio: 1.2');
@@ -1246,7 +1248,7 @@ describe('SlickCustomTooltip plugin', () => {
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, persistOnHover: false });
 
-    const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
+    const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
 
     (plugin as any)._hideTooltipTimeout = 123 as any; // simulate existing timeout
     (plugin as any)._autoHideTimeout = 456 as any; // simulate existing timeout

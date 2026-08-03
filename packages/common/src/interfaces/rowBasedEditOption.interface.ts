@@ -76,6 +76,9 @@ export interface RowBasedEditOptions {
   /** method called before a row enters edit mode. */
   onBeforeEditMode?: (args: OnEventArgs) => void;
 
+  /** method deciding whether an individual cell can be toggled to edit mode */
+  onBeforeCellEdit?: (args: OnEventArgs) => boolean;
+
   /** method called after a row is deleted. */
   onAfterDelete?: (args: OnEventArgs) => void;
 }

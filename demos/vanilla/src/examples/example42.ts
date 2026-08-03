@@ -8,7 +8,6 @@ import {
   type Column,
   type GridOption,
 } from '@slickgrid-universal/common';
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import '../material-styles.scss';
@@ -20,10 +19,8 @@ export default class Example42 {
   gridOptions: GridOption;
   dataset: any[];
   sgb: SlickVanillaGridBundle;
-  excelExportService: ExcelExportService;
 
   constructor() {
-    this.excelExportService = new ExcelExportService();
     this._bindingEventService = new BindingEventService();
   }
 

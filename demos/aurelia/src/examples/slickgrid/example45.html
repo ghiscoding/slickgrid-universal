@@ -85,6 +85,19 @@
           </span>
         </label>
 
+        <label class="checkbox-inline control-label ms-2" for="keepComponentAlive">
+          <input
+            type="checkbox"
+            id="keepComponentAlive"
+            data-test="keep-component-alive"
+            checked.bind="isKeepingComponentAlive"
+            click.trigger="changeKeepingComponentAlive()"
+          />
+          <span title="preserve component state (incl. nested grid sort/filters) when row scrolls out of viewport instead of destroying it">
+            Keep Component Alive on Scroll
+          </span>
+        </label>
+
         <label class="checkbox-inline control-label ms-2" for="useResizeAutoHeight">
           <input
             type="checkbox"
