@@ -11,7 +11,7 @@ export default defineConfig({
   videosFolder: 'test/cypress/videos',
   defaultCommandTimeout: 5000,
   pageLoadTimeout: 90000,
-  numTestsKeptInMemory: 5,
+  numTestsKeptInMemory: 4,
   scrollBehavior: 'nearest',
   retries: {
     experimentalStrategy: 'detect-flake-and-pass-on-threshold',

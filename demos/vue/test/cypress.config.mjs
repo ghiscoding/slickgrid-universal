@@ -10,7 +10,7 @@ export default defineConfig({
   videosFolder: 'test/cypress/videos',
   defaultCommandTimeout: 5000,
   pageLoadTimeout: 90000,
-  numTestsKeptInMemory: 5,
+  numTestsKeptInMemory: 4,
   scrollBehavior: 'nearest',
   retries: {
     experimentalStrategy: 'detect-flake-and-pass-on-threshold',
@@ -29,7 +29,6 @@ export default defineConfig({
     experimentalRunAllSpecs: true,
     supportFile: 'test/cypress/support/index.ts',
     specPattern: 'test/cypress/e2e/**/*.cy.ts',
-    excludeSpecPattern: process.env.CI ? ['**/node_modules/**', '**/000-*.cy.ts'] : ['**/node_modules/**'],
     testIsolation: false,
     setupNodeEvents(on) {
       on('before:browser:launch', (browser, launchOptions) => {
