@@ -17,6 +17,7 @@
 /connect.lock
 /libpeerconnection.log
 .pnpm-debug.log
+.pnpm-store
 npm-debug.log
 pnpm-debug.log
 lerna-debug.log
