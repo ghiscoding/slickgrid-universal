@@ -3138,6 +3138,40 @@ describe('SlickGrid core file', () => {
       expect(document.activeElement).toBe(focusSink);
     });
 
+    it('should remove external focus sinks when grid is destroyed', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+
+      const focusSink = (grid as any)._focusSink as HTMLDivElement;
+      const focusSink2 = (grid as any)._focusSink2 as HTMLDivElement;
+
+      expect(document.body.contains(focusSink)).toBe(true);
+      expect(document.body.contains(focusSink2)).toBe(true);
+
+      grid.destroy(true);
+
+      expect(focusSink.isConnected).toBe(false);
+      expect(focusSink2.isConnected).toBe(false);
+    });
+
+    it('should keep ARIA header structure with frozen columns enabled', () => {
+      grid = new SlickGrid<any, Column>(container, items, [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ], {
+        ...defaultOptions,
+        showHeaderRow: true,
+        frozenColumn: 0,
+      });
+
+      const headerColumns = container.querySelectorAll('.slick-header-columns');
+      expect(headerColumns.length).toBe(2);
+      headerColumns.forEach((node) => expect(node.getAttribute('role')).toBe('row'));
+
+      const headerRowColumns = container.querySelectorAll('.slick-headerrow-columns');
+      expect(headerRowColumns.length).toBe(2);
+      headerRowColumns.forEach((node) => expect(node.getAttribute('role')).toBe('row'));
+    });
+
     it('should return undefined editor when getDataItem() did not find any associated cell item', () => {
       const columns = [
         { id: 'name', field: 'name', name: 'Name' },
