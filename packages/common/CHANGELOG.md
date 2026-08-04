@@ -4,6 +4,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
+
+### Features
+
+* add `keepComponentAlive` to all 4 framework Row Detail plugins ([#2653](https://github.com/ghiscoding/slickgrid-universal/issues/2653)) ([37d3238](https://github.com/ghiscoding/slickgrid-universal/commit/37d323801007f2f7f7a3536c2526f1ae0470c5ec)) - by @ghiscoding
+* **core:** add variable row height support ([#2650](https://github.com/ghiscoding/slickgrid-universal/issues/2650)) ([fd5d3e2](https://github.com/ghiscoding/slickgrid-universal/commit/fd5d3e262a04db3a16b3750f2da417e19dc633a9)) - by @ghiscoding
+* onBeforeCellEdit hook for RowBasedEditing plugin ([#2646](https://github.com/ghiscoding/slickgrid-universal/issues/2646)) ([a893dca](https://github.com/ghiscoding/slickgrid-universal/commit/a893dcaf6a8e024a21e235d6dbc8da27c5fa9a2b)) - by @zewa666
+
+### Bug Fixes
+
+* **core:** compute scrollTo page before deriving the paging offset ([#2644](https://github.com/ghiscoding/slickgrid-universal/issues/2644)) ([a944424](https://github.com/ghiscoding/slickgrid-universal/commit/a9444247d1e890f80625306f44937155c0ac3222)) - by @ghiscoding
+* **core:** probe positioned-child limit in getMaxSupportedCssHeight ([#2645](https://github.com/ghiscoding/slickgrid-universal/issues/2645)) ([c03bf1f](https://github.com/ghiscoding/slickgrid-universal/commit/c03bf1f430be6b90b743961a0a700d391dd1c966)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2692](https://github.com/ghiscoding/slickgrid-universal/issues/2692)) ([cab9a82](https://github.com/ghiscoding/slickgrid-universal/commit/cab9a82ccb3eccd888f90336af2e30a844cdc61e)) - by @ghiscoding
+* **deps:** update dependency autocompleter to v10 ([#2652](https://github.com/ghiscoding/slickgrid-universal/issues/2652)) ([b977768](https://github.com/ghiscoding/slickgrid-universal/commit/b977768660db23ce61f0cabebf8ce5fd0b016403)) - by @renovate-bot
+* **exports:** add new variable row height to Excel/PDF Export Services ([#2677](https://github.com/ghiscoding/slickgrid-universal/issues/2677)) ([66d8876](https://github.com/ghiscoding/slickgrid-universal/commit/66d88767e5bfe706de2e08de61362a61e0ad1257)) - by @ghiscoding
+* footer-row lifecycle - construction crash, inconsistent getFooterRow, double onFooterRowCellRendered ([#2672](https://github.com/ghiscoding/slickgrid-universal/issues/2672)) ([1dddad1](https://github.com/ghiscoding/slickgrid-universal/commit/1dddad1ab90944de7cdeb218e173ca9e20ecd86e)) - by @ghiscoding
+* frozen-bottom grids never clean up off-screen row cells ([#2668](https://github.com/ghiscoding/slickgrid-universal/issues/2668)) ([a5720a4](https://github.com/ghiscoding/slickgrid-universal/commit/a5720a4bfa9165131529e4b85154cd1f52fe833d)) - by @ghiscoding
+* frozen-bottom hit testing resolves the wrong row when data is shorter than the viewport ([#2673](https://github.com/ghiscoding/slickgrid-universal/issues/2673)) ([656fe48](https://github.com/ghiscoding/slickgrid-universal/commit/656fe4854634fe52319b06b608fe791bd45c24bb)) - by @ghiscoding
+* **regression:** prevent row selection from being dropped when last column is hidden ([#2648](https://github.com/ghiscoding/slickgrid-universal/issues/2648)) ([f90a1de](https://github.com/ghiscoding/slickgrid-universal/commit/f90a1dec1f3cc40a69cc37ea450467ac0aaecf30)) - by @Heimo001
+* **styling:** change default column resize handle width to 2px ([6d7e990](https://github.com/ghiscoding/slickgrid-universal/commit/6d7e99084e8d729bd54a3aa577c44048e7599ca4)) - by @ghiscoding
+* **styling:** Slider Editor must be aligned properly in Fluent Theme ([b018db8](https://github.com/ghiscoding/slickgrid-universal/commit/b018db854f3db40267dd1c8694efc400abccf72d)) - by @ghiscoding
+* **styling:** use "system-ui" as font-family for better OS native ([046a25b](https://github.com/ghiscoding/slickgrid-universal/commit/046a25b3449f8512f2c0983c0b42f8d8a70d5547)) - by @ghiscoding
+* updateRowPositions leaves right-pane row fragments at stale positions ([#2676](https://github.com/ghiscoding/slickgrid-universal/issues/2676)) ([bd98c6c](https://github.com/ghiscoding/slickgrid-universal/commit/bd98c6cad2c993146ec3ea5da98ddee1960d503e)) - by @ghiscoding
+
 ## [10.8.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.2...v10.8.3) (2026-07-04)
 
 ### Bug Fixes

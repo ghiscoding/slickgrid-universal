@@ -4,6 +4,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
+
+### Features
+
+* add `keepComponentAlive` to all 4 framework Row Detail plugins ([#2653](https://github.com/ghiscoding/slickgrid-universal/issues/2653)) ([37d3238](https://github.com/ghiscoding/slickgrid-universal/commit/37d323801007f2f7f7a3536c2526f1ae0470c5ec)) - by @ghiscoding
+* **core:** add variable row height support ([#2650](https://github.com/ghiscoding/slickgrid-universal/issues/2650)) ([fd5d3e2](https://github.com/ghiscoding/slickgrid-universal/commit/fd5d3e262a04db3a16b3750f2da417e19dc633a9)) - by @ghiscoding
+* onBeforeCellEdit hook for RowBasedEditing plugin ([#2646](https://github.com/ghiscoding/slickgrid-universal/issues/2646)) ([a893dca](https://github.com/ghiscoding/slickgrid-universal/commit/a893dcaf6a8e024a21e235d6dbc8da27c5fa9a2b)) - by @zewa666
+
+### Bug Fixes
+
+* **exports:** add new variable row height to Excel/PDF Export Services ([#2677](https://github.com/ghiscoding/slickgrid-universal/issues/2677)) ([66d8876](https://github.com/ghiscoding/slickgrid-universal/commit/66d88767e5bfe706de2e08de61362a61e0ad1257)) - by @ghiscoding
+* Row Detail `keepComponentAlive` duplicates and render race timing issue ([#2655](https://github.com/ghiscoding/slickgrid-universal/issues/2655)) ([4dff5d6](https://github.com/ghiscoding/slickgrid-universal/commit/4dff5d6935f86e0f5daef229344cdfd67c3532d6)) - by @ghiscoding
+
+### Performance Improvements
+
+* **export:** optimize Excel/PDF export variable row height handling ([#2681](https://github.com/ghiscoding/slickgrid-universal/issues/2681)) ([ebf49f2](https://github.com/ghiscoding/slickgrid-universal/commit/ebf49f2961632087bc480c27b9dc9344a8207a62)) - by @ghiscoding
+
 ## [10.8.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.2...v10.8.3) (2026-07-04)
 
 ### Bug Fixes

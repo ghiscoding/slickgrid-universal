@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
+
+### Features
+
+* add `keepComponentAlive` to all 4 framework Row Detail plugins ([#2653](https://github.com/ghiscoding/slickgrid-universal/issues/2653)) ([37d3238](https://github.com/ghiscoding/slickgrid-universal/commit/37d323801007f2f7f7a3536c2526f1ae0470c5ec)) - by @ghiscoding
+
 ## [10.8.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.2...v10.8.3) (2026-07-04)
 
 ### Bug Fixes

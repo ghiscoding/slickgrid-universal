@@ -21,6 +21,10 @@ describe('Example 3 - Grid with Editors', () => {
     cy.get('h2').should('contain', 'Example 3: Editors / Delete');
   });
 
+  it('should hide sub-title', () => {
+    cy.get('[data-test=toggle-subtitle]').click();
+  });
+
   it('should have exact Column Titles in the grid', () => {
     cy.get('#grid3')
       .find('.slick-header-columns')
@@ -280,15 +284,18 @@ describe('Example 3 - Grid with Editors', () => {
   });
 
   it('should delete the last item "Task 101" and expect it to be removed from the Filter', () => {
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('right').wait(50);
+
     cy.get('[data-test="delete-item-btn"]').click();
 
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0).wait(50);
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 100');
 
     cy.get('div.ms-filter.filter-prerequisites').trigger('click');
 
     cy.get('.ms-drop').find('span:nth(1)').contains('Task 100');
 
-    cy.get('div.ms-filter.filter-prerequisites').trigger('click');
+    cy.get('[data-name="filter-prerequisites"] .ms-ok-button').trigger('click');
   });
 
   it('should open the "Prerequisites" Filter then choose "Task 3", "Task 4" and "Task 8" from the list and expect to see 2 rows of data in the grid', () => {
