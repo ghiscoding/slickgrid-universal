@@ -29,9 +29,9 @@ export default defineConfig({
     baseUrl: 'http://localhost:8888/#',
     experimentalRunAllSpecs: true,
     supportFile: 'test/cypress/support/index.ts',
-    specPattern: 'test/cypress/e2e/**/*.cy.{js,ts}',
+    specPattern: 'test/cypress/e2e/**/*.cy.ts',
     testIsolation: false,
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on) {
       on('before:browser:launch', (browser, launchOptions) => {
         if (['chrome', 'edge'].includes(browser.name)) {
           if (browser.isHeadless) {
