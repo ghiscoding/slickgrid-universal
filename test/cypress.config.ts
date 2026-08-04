@@ -11,7 +11,10 @@ export default defineConfig({
   videosFolder: 'test/cypress/videos',
   defaultCommandTimeout: 5000,
   pageLoadTimeout: 90000,
-  numTestsKeptInMemory: 4,
+  // In headless/CI runs, keeping snapshots in memory can accumulate across many specs.
+  // Use 0 to keep memory usage lower and reduce flaky runner stalls.
+  numTestsKeptInMemory: 0,
+  experimentalMemoryManagement: true,
   scrollBehavior: 'nearest',
   retries: {
     experimentalStrategy: 'detect-flake-and-pass-on-threshold',
@@ -40,7 +43,6 @@ export default defineConfig({
             launchOptions.args.push('--disable-gpu');
             launchOptions.args.push('--disable-dev-shm-usage');
           }
-          launchOptions.args.push('--js-flags=--max-old-space-size=3500');
         }
         return launchOptions;
       });
