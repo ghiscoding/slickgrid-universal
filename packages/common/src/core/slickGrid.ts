@@ -692,10 +692,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._container.style.position = 'relative';
     }
 
+    const focusSinkParent = this._container.parentElement ?? this._container.ownerDocument?.body ?? this._container;
+
     this._focusSink = createDomElement(
       'div',
       { tabIndex: -1, style: { position: 'fixed', width: '0px', height: '0px', top: '0px', left: '0px', outline: '0px' } },
-      this._container
+      focusSinkParent
     );
 
     if (this._options.createTopHeaderPanel) {
@@ -761,8 +763,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // Append the header scroller containers
     const headerContainerL = createDomElement('div', { className: 'slick-header-container' }, this._paneHeaderL);
     const headerContainerR = createDomElement('div', { className: 'slick-header-container' }, this._paneHeaderR);
-    this._headerScrollerL = createDomElement('div', { className: 'slick-header slick-state-default slick-header-left' }, headerContainerL);
-    this._headerScrollerR = createDomElement('div', { className: 'slick-header slick-state-default slick-header-right' }, headerContainerR);
+    this._headerScrollerL = createDomElement('div', { className: 'slick-header slick-state-default slick-header-left', role: 'rowgroup' }, headerContainerL);
+    this._headerScrollerR = createDomElement('div', { className: 'slick-header slick-state-default slick-header-right', role: 'rowgroup' }, headerContainerR);
 
     // header scroll position could change when using frozen grid and tabbing on next available header
     // so we need to make sure that all containers (header, headerrow, toppanel) are all in sync when that happens
@@ -777,20 +779,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // Append the columnn containers to the headers
     this._headerL = createDomElement(
       'div',
-      { className: 'slick-header-columns slick-header-columns-left', style: { left: '-1000px' } },
+      { className: 'slick-header-columns slick-header-columns-left', style: { left: '-1000px' }, role: 'row' },
       this._headerScrollerL
     );
     this._headerR = createDomElement(
       'div',
-      { className: 'slick-header-columns slick-header-columns-right', style: { left: '-1000px' } },
+      { className: 'slick-header-columns slick-header-columns-right', style: { left: '-1000px' }, role: 'row' },
       this._headerScrollerR
     );
 
     // Cache the header columns
     this._headers = [this._headerL, this._headerR];
 
-    this._headerRowScrollerL = createDomElement('div', { className: 'slick-headerrow slick-state-default' }, this._paneTopL);
-    this._headerRowScrollerR = createDomElement('div', { className: 'slick-headerrow slick-state-default' }, this._paneTopR);
+    this._headerRowScrollerL = createDomElement('div', { className: 'slick-headerrow slick-state-default', role: 'rowgroup' }, this._paneTopL);
+    this._headerRowScrollerR = createDomElement('div', { className: 'slick-headerrow slick-state-default', role: 'rowgroup' }, this._paneTopR);
 
     this._headerRowScroller = [this._headerRowScrollerL, this._headerRowScrollerR];
 
@@ -807,12 +809,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     this._headerRowL = createDomElement(
       'div',
-      { className: 'slick-headerrow-columns slick-headerrow-columns-left' },
+      { className: 'slick-headerrow-columns slick-headerrow-columns-left', role: 'row' },
       this._headerRowScrollerL
     );
     this._headerRowR = createDomElement(
       'div',
-      { className: 'slick-headerrow-columns slick-headerrow-columns-right' },
+      { className: 'slick-headerrow-columns slick-headerrow-columns-right', role: 'row' },
       this._headerRowScrollerR
     );
 
@@ -946,7 +948,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     this._focusSink2 = this._focusSink.cloneNode(true) as HTMLDivElement;
-    this._container.appendChild(this._focusSink2);
+    focusSinkParent.appendChild(this._focusSink2);
 
     if (!this._options.explicitInitialization) {
       this.finishInitialization();
@@ -1933,7 +1935,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (this._options.showHeaderRow) {
         const headerRowCell = createDomElement(
           'div',
-          { className: `slick-state-default slick-headerrow-column l${i} r${i}` },
+          { className: `slick-state-default slick-headerrow-column l${i} r${i}`, role: 'gridcell' },
           headerRowTarget
         );
         const frozenClasses = this.hasFrozenColumns() && i <= this._options.frozenColumn! ? 'frozen' : null;
@@ -3067,6 +3069,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     this._boundAncestors.length = 0; // reset array
+
+    this._focusSink?.remove();
+    this._focusSink2?.remove();
 
     emptyElement(this._container);
     this.removeCssRules();

@@ -3101,6 +3101,43 @@ describe('SlickGrid core file', () => {
       expect(grid.getContainerNode().getAttribute('aria-rowcount')).toBe('11');
     });
 
+    it('should expect the header structure to have required ARIA rowgroup/row roles', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true });
+
+      const headerColumnElm = container.querySelector('[role="columnheader"]') as HTMLDivElement;
+      expect(headerColumnElm).toBeTruthy();
+      expect(headerColumnElm.parentElement!.classList.contains('slick-header-columns')).toBe(true);
+      expect(headerColumnElm.parentElement!.getAttribute('role')).toBe('row');
+      expect(headerColumnElm.parentElement!.parentElement!.getAttribute('role')).toBe('rowgroup');
+
+      const headerRowCellElm = container.querySelector('.slick-headerrow-column') as HTMLDivElement;
+      expect(headerRowCellElm).toBeTruthy();
+      expect(headerRowCellElm.getAttribute('role')).toBe('gridcell');
+      expect(headerRowCellElm.parentElement!.getAttribute('role')).toBe('row');
+      expect(headerRowCellElm.parentElement!.parentElement!.getAttribute('role')).toBe('rowgroup');
+    });
+
+    it('should place focus sinks outside the grid subtree and keep them focusable without aria-hidden', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+
+      const focusSink = (grid as any)._focusSink as HTMLDivElement;
+      const focusSink2 = (grid as any)._focusSink2 as HTMLDivElement;
+
+      expect(focusSink).toBeTruthy();
+      expect(focusSink2).toBeTruthy();
+      expect(container.contains(focusSink)).toBe(false);
+      expect(container.contains(focusSink2)).toBe(false);
+      expect(focusSink.parentElement).toBe(container.parentElement);
+      expect(focusSink2.parentElement).toBe(container.parentElement);
+      expect(focusSink.tabIndex).toBe(-1);
+      expect(focusSink2.tabIndex).toBe(-1);
+      expect(focusSink.getAttribute('aria-hidden')).toBeNull();
+      expect(focusSink2.getAttribute('aria-hidden')).toBeNull();
+
+      focusSink.focus();
+      expect(document.activeElement).toBe(focusSink);
+    });
+
     it('should return undefined editor when getDataItem() did not find any associated cell item', () => {
       const columns = [
         { id: 'name', field: 'name', name: 'Name' },
