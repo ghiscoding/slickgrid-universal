@@ -127,6 +127,7 @@ function getData(itemCount: number): StoryItem[] {
 <style lang="scss">
 #slickGridContainer-grid55 {
   --slick-cell-border-left: 1px solid #dedede;
+  --slick-font-size-base: 13px;
 }
 
 #slickGridContainer-grid55 .slickgrid-container .slick-cell.cell-wrap {

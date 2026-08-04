@@ -163,6 +163,7 @@ function getData(itemCount: number): TaskItem[] {
 <style lang="scss">
 #slickGridContainer-grid56 {
   --slick-cell-border-left: 1px solid #dedede;
+  --slick-font-size-base: 13px;
 }
 
 #slickGridContainer-grid56 .slickgrid-container .slick-cell.cell-wrap {
