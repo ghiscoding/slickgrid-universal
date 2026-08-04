@@ -3154,14 +3154,19 @@ describe('SlickGrid core file', () => {
     });
 
     it('should keep ARIA header structure with frozen columns enabled', () => {
-      grid = new SlickGrid<any, Column>(container, items, [
-        { id: 'name', field: 'name', name: 'Name' },
-        { id: 'age', field: 'age', name: 'Age' },
-      ], {
-        ...defaultOptions,
-        showHeaderRow: true,
-        frozenColumn: 0,
-      });
+      grid = new SlickGrid<any, Column>(
+        container,
+        items,
+        [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ],
+        {
+          ...defaultOptions,
+          showHeaderRow: true,
+          frozenColumn: 0,
+        }
+      );
 
       const headerColumns = container.querySelectorAll('.slick-header-columns');
       expect(headerColumns.length).toBe(2);
