@@ -763,8 +763,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // Append the header scroller containers
     const headerContainerL = createDomElement('div', { className: 'slick-header-container' }, this._paneHeaderL);
     const headerContainerR = createDomElement('div', { className: 'slick-header-container' }, this._paneHeaderR);
-    this._headerScrollerL = createDomElement('div', { className: 'slick-header slick-state-default slick-header-left', role: 'rowgroup' }, headerContainerL);
-    this._headerScrollerR = createDomElement('div', { className: 'slick-header slick-state-default slick-header-right', role: 'rowgroup' }, headerContainerR);
+    this._headerScrollerL = createDomElement(
+      'div',
+      { className: 'slick-header slick-state-default slick-header-left', role: 'rowgroup' },
+      headerContainerL
+    );
+    this._headerScrollerR = createDomElement(
+      'div',
+      { className: 'slick-header slick-state-default slick-header-right', role: 'rowgroup' },
+      headerContainerR
+    );
 
     // header scroll position could change when using frozen grid and tabbing on next available header
     // so we need to make sure that all containers (header, headerrow, toppanel) are all in sync when that happens
@@ -791,8 +799,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // Cache the header columns
     this._headers = [this._headerL, this._headerR];
 
-    this._headerRowScrollerL = createDomElement('div', { className: 'slick-headerrow slick-state-default', role: 'rowgroup' }, this._paneTopL);
-    this._headerRowScrollerR = createDomElement('div', { className: 'slick-headerrow slick-state-default', role: 'rowgroup' }, this._paneTopR);
+    this._headerRowScrollerL = createDomElement(
+      'div',
+      { className: 'slick-headerrow slick-state-default', role: 'rowgroup' },
+      this._paneTopL
+    );
+    this._headerRowScrollerR = createDomElement(
+      'div',
+      { className: 'slick-headerrow slick-state-default', role: 'rowgroup' },
+      this._paneTopR
+    );
 
     this._headerRowScroller = [this._headerRowScrollerL, this._headerRowScrollerR];
 
