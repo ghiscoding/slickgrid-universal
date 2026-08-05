@@ -841,8 +841,7 @@ export interface GridOption<C extends Column = Column> {
   /**
    * Optional callback used in variable row height mode.
    * Receives the grid instance (giving access to any grid state), the row index, and the row's
-   * data item. Returns the height in pixels of that row, or `undefined` to use the default
-   * `rowHeight`.
+   * data item. Returns the height (integer) in pixels of that row, or `undefined` to use the default `rowHeight`.
    * Variable row height mode is active only when `enableVariableRowHeight` is true.
    * By default, SlickGrid provides a metadata-backed provider (`ItemMetadata.height`), so
    * metadata-only setups work by enabling the switch without defining this callback.
