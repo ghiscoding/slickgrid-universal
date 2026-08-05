@@ -71,10 +71,11 @@ overrides:
   '@babel/core': ^7.29.7
   '@hono/node-server': ^2.0.12
   esbuild: ^0.28.1
+  hono: ^4.12.34
   ip-address: ^10.4.0
   minimatch: ^10.2.6
   picomatch: ^4.0.5
   postcss: ^8.5.25
   qs: ^6.15.3
-  undici: ^7.29.0
+  undici: '>=7.29.0'
   vite: *viteVersion
