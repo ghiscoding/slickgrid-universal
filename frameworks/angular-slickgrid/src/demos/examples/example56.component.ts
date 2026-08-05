@@ -24,6 +24,8 @@ export class Example56Component implements OnInit {
   dataset: TaskItem[] = [];
   gridOptions!: GridOption;
   isCompact = false;
+  excelExportService = new ExcelExportService();
+  pdfExportService = new PdfExportService();
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -52,6 +54,7 @@ export class Example56Component implements OnInit {
         id: 'rowHeight',
         name: 'Height',
         field: 'rowHeight',
+        exportWithFormatter: true,
         formatter: (row, _cell, _value, _coldef, _dataContext, grid) => {
           return `${grid.getItemMetadaWhenExists(row)?.height ?? 0}px`;
         },
@@ -65,7 +68,7 @@ export class Example56Component implements OnInit {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
       enableVariableRowHeight: true,
-      externalResources: [new ExcelExportService(), new PdfExportService()],
+      externalResources: [this.excelExportService, this.pdfExportService],
       excelExportOptions: {
         // export variable row height will also be reflected in the export
         // but it can be disabled by setting `includeVariableRowHeight` to false
@@ -126,5 +129,16 @@ export class Example56Component implements OnInit {
       });
     }
     return data;
+  }
+
+  exportToExcel() {
+    this.excelExportService.exportToExcel({
+      filename: 'export',
+      format: 'xlsx',
+    });
+  }
+
+  exportToPdf() {
+    this.pdfExportService.exportToPdf({ filename: 'export' });
   }
 }

@@ -18,6 +18,8 @@ const Example55: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<StoryItem[]>([]);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
+  const [excelExportService] = useState(new ExcelExportService());
+  const [pdfExportService] = useState(new PdfExportService());
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
 
   useEffect(() => {
@@ -38,7 +40,15 @@ const Example55: React.FC = () => {
       { id: 'id', name: '#', field: 'id', minWidth: 60, maxWidth: 70 },
       { id: 'title', name: 'Story', field: 'title', minWidth: 180, width: 220 },
       { id: 'owner', name: 'Owner', field: 'owner', minWidth: 110, width: 130 },
-      { id: 'rowHeight', name: 'Height', field: 'rowHeight', formatter: (_row, _cell, value) => `${value}px`, minWidth: 90, width: 90 },
+      {
+        id: 'rowHeight',
+        name: 'Height',
+        field: 'rowHeight',
+        exportWithFormatter: true,
+        formatter: (_row, _cell, value) => `${value}px`,
+        minWidth: 90,
+        width: 90,
+      },
       { id: 'summary', name: 'Summary', field: 'summary', cssClass: 'cell-wrap', minWidth: 360, width: 500, maxWidth: 620 },
     ];
 
@@ -46,7 +56,7 @@ const Example55: React.FC = () => {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
       enableVariableRowHeight: true,
-      externalResources: [new ExcelExportService(), new PdfExportService()],
+      externalResources: [excelExportService, pdfExportService],
       excelExportOptions: {
         // export variable row height will also be reflected in the export
         // but it can be disabled by setting `includeVariableRowHeight` to false
@@ -97,6 +107,17 @@ const Example55: React.FC = () => {
     return data;
   }
 
+  function exportToExcel() {
+    excelExportService.exportToExcel({
+      filename: 'Export',
+      format: 'xlsx',
+    });
+  }
+
+  function exportToPdf() {
+    pdfExportService.exportToPdf({ filename: 'Export' });
+  }
+
   return !gridOptions ? (
     ''
   ) : (
@@ -121,6 +142,12 @@ const Example55: React.FC = () => {
 
         <div className="row" style={{ marginBottom: '6px' }}>
           <div className="col-md-12">
+            <button className="btn btn-outline-secondary btn-sm btn-icon me-1" data-test="export-excel-btn" onClick={() => exportToExcel()}>
+              <i className="mdi mdi-file-excel-outline text-success"></i> Export to Excel
+            </button>
+            <button className="btn btn-outline-secondary btn-sm btn-icon" data-test="export-pdf-btn" onClick={() => exportToPdf()}>
+              <i className="mdi mdi-file-pdf-outline text-danger"></i> Export to PDF
+            </button>
             <button className="btn btn-outline-secondary btn-sm btn-icon" onClick={scrollToRow90} data-test="scroll-row-90-example55">
               <span className="mdi mdi-arrow-down"></span>
               <span> Scroll To row 90</span>
