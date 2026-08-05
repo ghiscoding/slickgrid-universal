@@ -336,12 +336,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /** Get each column style including a style for the width of each column */
   protected getColumnStyles(columns: Column[]): any[] {
+    const exportOptions = this._excelExportOptions ?? this._gridOptions?.excelExportOptions ?? {};
+    const defaultColumnWidth = exportOptions.customColumnWidth ?? 10;
+    const includeColumnWidth = exportOptions.includeColumnWidth === true;
     const grouping = this._dataView.getGrouping();
     const columnStyles = [];
     if (Array.isArray(grouping) && grouping.length > 0) {
       columnStyles.push({
         bestFit: true,
-        columnStyles: this._gridOptions?.excelExportOptions?.customColumnWidth ?? 10,
+        columnStyles: defaultColumnWidth,
       });
     }
 
@@ -349,9 +352,11 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       const skippedField = columnDef.excludeFromExport ?? false;
       // if column width is 0, then we consider that field as a hidden field and should not be part of the export
       if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
+        const width = columnDef.excelExportOptions?.width ?? (includeColumnWidth ? columnDef.width : undefined);
+
         columnStyles.push({
           bestFit: true,
-          width: columnDef.excelExportOptions?.width ?? this._gridOptions?.excelExportOptions?.customColumnWidth ?? 10,
+          width: width ?? defaultColumnWidth,
         });
       }
     });

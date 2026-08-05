@@ -66,6 +66,9 @@ initializeGrid() {
 - `sanitizeDataExport`: remove HTML/script from exported data
 - `pdfExportOptions`: per-column PDF export options (see interface for details)
   - `textAlign`: per-column horizontal text alignment (`'left'` \| `'center'` \| `'right'`), maps to AutoTable's `halign` style
+  - `width`: per-column width override in PDF points (`pt`)
+- `includeColumnWidth`: grid-level option (defaults to `false`) that uses each column `width` when `pdfExportOptions.width` is not defined on the column
+  - width precedence is: column `pdfExportOptions.width` > column `width` when `includeColumnWidth: true` > default PDF layout distribution
 
 Example — right-aligning a numeric column:
 ```ts

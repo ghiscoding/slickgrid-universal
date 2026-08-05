@@ -86,6 +86,7 @@ Inside the column definition there are couple of flags you can set in `excelExpo
 - `sheetName` allows you to change the Excel Sheet Name (defaults to "Sheet1")
 - `groupingColumnHeaderTitle` The column header title (at A0 in Excel) of the Group by. If nothing is provided it will use "Group By"
 - `groupingAggregatorRowText` The default text to display in 1st column of the File Export, which will identify that the current row is a Grouping Aggregator
+- `includeColumnWidth` defaults to `false`, when enabled it will use each column `width` in the Excel export when `excelExportOptions.width` is not defined on the column.
 - set `sanitizeDataExport` to remove any HTML/Script code from being export. For example if your value is `<span class="mdi mdi-check">True</span>` will export `True` without any HTML (data is sanitized).
    - this flag can be used in the Grid Options (all columns) or in a Column Definition (per column).
 - `customExcelHeader` is a callback method that can be used to provide a custom Header Title to your Excel File
@@ -142,6 +143,24 @@ What we can see from the example, is that it will use all Formatters (when exist
 ### Custom Column Width
 
 See [Custom Cell Styling](#custom-cell-styling) to define cell width.
+
+#### Width Precedence
+When exporting a column width, the library uses this order of precedence.
+
+1. Column `excelExportOptions.width`
+2. Column `width` when `includeColumnWidth: true`
+3. Grid `customColumnWidth`
+4. Internal fallback width (`10`)
+
+```ts
+const gridOptions = {
+  excelExportOptions: {
+    includeColumnWidth: true,
+    customColumnWidth: 15,
+  },
+  externalResources: [new ExcelExportService()],
+};
+```
 
 ### Styling the Header Titles
 By default the header titles (first row) will be styled as Bold text, however you can choose to style them differently with custom styles as shown below. To find out what styling you can use, you can take a look at Excel Builder-Vanilla [Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors) website. The code shown below is used in [Example 24](https://ghiscoding.github.io/slickgrid-react-demos/#/Example24) if you wish to see the result.

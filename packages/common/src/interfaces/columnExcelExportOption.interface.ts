@@ -14,7 +14,7 @@ export interface ColumnExcelExportOption {
    */
   style?: ExcelStyleInstruction;
 
-  /** Excel column width */
+  /** Excel column width (Excel width units, not pixels). */
   width?: number;
 
   /** Cell data value parser callback function */

@@ -223,15 +223,32 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
           };
 
           // Add table (using jsPDF-AutoTable if available, else fallback to manual)
+          const includeColumnWidth = this._exportOptions.includeColumnWidth === true;
+          const visibleColumns = columns.filter((col: Column) => !col.excludeFromExport && (col.width === undefined || col.width > 0));
           if ((doc as any).autoTable) {
             // Build per-column styles for AutoTable from each column's pdfExportOptions
-            const visibleColumns = columns.filter((col: Column) => !col.excludeFromExport && (col.width === undefined || col.width > 0));
-            const columnStyles: Record<number, { halign: string }> = {};
+            const columnStyles: Record<number, { halign?: string; cellWidth?: number }> = {};
             const groupOffset = this._hasGroupedItems ? 1 : 0;
             for (const [idx, col] of visibleColumns.entries()) {
               const colExportOpts = resolveColumnExportOptions(col, this._exportOptions);
-              if (colExportOpts.textAlign && colExportOpts.textAlign !== (this._exportOptions.textAlign || 'left')) {
-                columnStyles[idx + groupOffset] = { halign: colExportOpts.textAlign };
+              const alignOverride = colExportOpts.textAlign && colExportOpts.textAlign !== (this._exportOptions.textAlign || 'left');
+              const resolvedWidth =
+                typeof colExportOpts.width === 'number' && colExportOpts.width > 0
+                  ? colExportOpts.width
+                  : includeColumnWidth && typeof col.width === 'number' && col.width > 0
+                    ? col.width
+                    : undefined;
+
+              if (alignOverride || resolvedWidth !== undefined) {
+                const styleIdx = idx + groupOffset;
+                const styleDef = columnStyles[styleIdx] ?? {};
+                if (alignOverride) {
+                  styleDef.halign = colExportOpts.textAlign;
+                }
+                if (resolvedWidth !== undefined) {
+                  styleDef.cellWidth = resolvedWidth;
+                }
+                columnStyles[styleIdx] = styleDef;
               }
             }
 
@@ -334,10 +351,23 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             // Use custom width if provided, else equal width
             let colWidths = Array(colCount).fill(tableWidth / colCount);
             for (let i = 0; i < colCount; i++) {
-              const colId = columns[i]?.id;
+              if (this._hasGroupedItems && i === 0) {
+                continue;
+              }
+
+              const dataColIdx = this._hasGroupedItems ? i - 1 : i;
+              const colDef = visibleColumns[dataColIdx];
+              const colId = colDef?.id;
               const colOpt = colId ? columnExportOptionsCache[colId] : undefined;
-              if (colOpt && colOpt.width && typeof colOpt.width === 'number') {
-                colWidths[i] = colOpt.width;
+              const resolvedWidth =
+                typeof colOpt?.width === 'number' && colOpt.width > 0
+                  ? colOpt.width
+                  : includeColumnWidth && typeof colDef?.width === 'number' && colDef.width > 0
+                    ? colDef.width
+                    : undefined;
+
+              if (resolvedWidth !== undefined) {
+                colWidths[i] = resolvedWidth;
               }
             }
             // If any custom widths, adjust last column to fill remaining space so sum matches tableWidth

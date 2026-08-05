@@ -11,7 +11,7 @@ export interface ExcelExportOption {
   /** When defined, this will override header titles styling, when undefined the default will be a bold style */
   columnHeaderStyle?: ExcelStyleInstruction;
 
-  /** If set then this will be used as column width for all columns */
+  /** If set then this will be used as Excel column width for all columns (Excel width units, not pixels). */
   customColumnWidth?: number;
 
   /** Defaults to false, which leads to all Formatters of the grid being evaluated on export. You can also override a column by changing the propery on the column itself */
@@ -25,6 +25,19 @@ export interface ExcelExportOption {
 
   /** Defaults to false, should we also include hidden properties in the export? */
   includeHidden?: boolean;
+
+  /**
+   * When true, include each grid column width in the Excel export when no `excelExportOptions.width` is provided on the column.
+   * This is disabled by default to preserve backward compatibility with `customColumnWidth` exports.
+   */
+  includeColumnWidth?: boolean;
+
+  /**
+   * When true (default), export row heights to Excel when enableVariableRowHeight is active.
+   * Set to false to ignore variable row heights and export all rows at default height.
+   * Heights are converted from pixels to Excel points (72 DPI) for proper rendering.
+   */
+  includeVariableRowHeight?: boolean;
 
   /**
    * file MIME type could be provided by the user.
@@ -61,13 +74,6 @@ export interface ExcelExportOption {
    * Useful for debugging, compatibility, or environments where streaming is not desired or supported.
    */
   useStreamingExport?: boolean;
-
-  /**
-   * When true (default), export row heights to Excel when enableVariableRowHeight is active.
-   * Set to false to ignore variable row heights and export all rows at default height.
-   * Heights are converted from pixels to Excel points (72 DPI) for proper rendering.
-   */
-  includeVariableRowHeight?: boolean;
 
   /** Add a Custom Excel Header on first row of the Excel Sheet */
   customExcelHeader?: (workbook: Workbook, sheet: Worksheet) => void;

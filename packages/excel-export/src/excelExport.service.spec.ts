@@ -2611,6 +2611,41 @@ describe('ExcelExportService', () => {
       expect(styles.length).toBeGreaterThanOrEqual(mockColumns.length);
     });
 
+    it('getColumnStyles should keep using customColumnWidth by default even when grid columns have widths', () => {
+      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+      service.init(gridStub, container);
+      const styles = (service as any).getColumnStyles([{ id: 'title', field: 'title', width: 120 } as Column]);
+
+      expect(styles[0]).toEqual(expect.objectContaining({ width: 12 }));
+    });
+
+    it('getColumnStyles should use grid column width when includeColumnWidth is enabled', () => {
+      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+      mockGridOptions.excelExportOptions = { customColumnWidth: 12, includeColumnWidth: true } as any;
+      service.init(gridStub, container);
+      const styles = (service as any).getColumnStyles([{ id: 'title', field: 'title', width: 120 } as Column]);
+
+      expect(styles[0]).toEqual(expect.objectContaining({ width: 120 }));
+    });
+
+    it('getColumnStyles should prioritize excelExportOptions.width over includeColumnWidth and customColumnWidth', () => {
+      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+      mockGridOptions.excelExportOptions = { customColumnWidth: 12, includeColumnWidth: true } as any;
+      service.init(gridStub, container);
+      const styles = (service as any).getColumnStyles([{ id: 'title', field: 'title', width: 120, excelExportOptions: { width: 40 } } as Column]);
+
+      expect(styles[0]).toEqual(expect.objectContaining({ width: 40 }));
+    });
+
+    it('getColumnStyles should use raw columnDef.width when includeColumnWidth is enabled', () => {
+      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+      mockGridOptions.excelExportOptions = { customColumnWidth: 12, includeColumnWidth: true } as any;
+      service.init(gridStub, container);
+      const styles = (service as any).getColumnStyles([{ id: 'title', field: 'title', width: 120, minWidth: 130, maxWidth: 135 } as Column]);
+
+      expect(styles[0]).toEqual(expect.objectContaining({ width: 120 }));
+    });
+
     it('getColumnHeaderData should prepend Group By title when grouping exists', () => {
       vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([{ getter: 'id' }] as any);
       service.init(gridStub, container);

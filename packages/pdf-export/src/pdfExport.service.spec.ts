@@ -1232,6 +1232,53 @@ describe('PdfExportService', () => {
         expect(opts.columnStyles).toEqual({});
       });
 
+      it('should not include column width in autoTable by default', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'col1', field: 'col1', name: 'Col1', width: 120 },
+          { id: 'col2', field: 'col2', name: 'Col2', width: 180 },
+        ];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'no-width-by-default' });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(opts.columnStyles).toEqual({});
+      });
+
+      it('should include column width in autoTable when includeColumnWidth is enabled', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'col1', field: 'col1', name: 'Col1', width: 120 },
+          { id: 'col2', field: 'col2', name: 'Col2', width: 180 },
+        ];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'with-grid-width', includeColumnWidth: true });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(opts.columnStyles[0]).toEqual({ cellWidth: 120 });
+        expect(opts.columnStyles[1]).toEqual({ cellWidth: 180 });
+      });
+
+      it('should prioritize pdfExportOptions.width over includeColumnWidth in autoTable', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'col1', field: 'col1', name: 'Col1', width: 120, pdfExportOptions: { width: 80 } },
+          { id: 'col2', field: 'col2', name: 'Col2', width: 180 },
+        ];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'width-precedence', includeColumnWidth: true });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(opts.columnStyles[0]).toEqual({ cellWidth: 80 });
+        expect(opts.columnStyles[1]).toEqual({ cellWidth: 180 });
+      });
+
       it('should handle mixed column alignments correctly', async () => {
         const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
         const columns = [
