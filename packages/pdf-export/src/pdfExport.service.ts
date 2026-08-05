@@ -40,16 +40,14 @@ const DEFAULT_EXPORT_OPTIONS: PdfExportOption = {
   alternateRowColor: [245, 245, 245],
   cellPadding: 4,
 };
+const PX_TO_PT_CONVERSION_FACTOR = 0.75;
 
 export interface GroupedHeaderSpan {
   title: string;
   span: number;
 }
 
-const PX_TO_PT_CONVERSION_FACTOR = 0.75;
-
 // Utility to resolve and merge column/grid export options
-
 function resolveColumnExportOptions(columnDef: Column, globalOptions: PdfExportOption): PdfExportOption {
   const config = { ...globalOptions, ...(columnDef.pdfExportOptions || {}) };
 
