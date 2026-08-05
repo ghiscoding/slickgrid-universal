@@ -94,7 +94,7 @@ export class Example16Component implements OnInit {
         disableRowSelection: true,
         cancelEditOnDrag: true,
         hideRowMoveShadow: false,
-        width: 30,
+        width: 35,
         // you can provide your own `onBeforeMoveRows` and/or `onMoveRows` implementation
         // or use the default implementation, however the default won't work with Tree Data
         // onBeforeMoveRows: () => {},

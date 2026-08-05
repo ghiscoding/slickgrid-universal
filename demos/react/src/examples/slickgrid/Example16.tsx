@@ -96,7 +96,7 @@ const Example16: React.FC = () => {
         singleRowMove: true,
         disableRowSelection: true,
         cancelEditOnDrag: true,
-        width: 30,
+        width: 35,
         // you can provide your own `onBeforeMoveRows` and/or `onMoveRows` implementation
         // or use the default implementation, however the default won't work with Tree Data
         // onBeforeMoveRows: () => {},
