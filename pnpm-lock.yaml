@@ -243,26 +243,26 @@ importers:
   demos/aurelia:
     dependencies:
       '@aurelia/fetch-client':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       '@aurelia/i18n':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1(typescript@6.0.3)
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2(typescript@6.0.3)
       '@aurelia/kernel':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       '@aurelia/metadata':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       '@aurelia/router':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       '@aurelia/runtime':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       '@aurelia/runtime-html':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       '@faker-js/faker':
         specifier: 'catalog:'
         version: 10.5.0
@@ -315,8 +315,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/web-mcp
       aurelia:
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       aurelia-slickgrid:
         specifier: workspace:*
         version: link:../../frameworks/aurelia-slickgrid
@@ -334,14 +334,8 @@ importers:
         version: 7.8.2
     devDependencies:
       '@aurelia/vite-plugin':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1(@types/node@24.13.3)(esbuild@0.28.1)(less@4.8.1(supports-color@8.1.1))(sass@1.102.0)(yaml@2.9.0)
-      '@babel/plugin-proposal-decorators':
-        specifier: ^7.29.7
-        version: 7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
-      '@rolldown/plugin-babel':
-        specifier: ^0.2.3
-        version: 0.2.3(@babel/core@7.29.7(supports-color@8.1.1))(@babel/runtime@7.29.7)(rolldown@1.2.1)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(less@4.8.1(supports-color@8.1.1))(sass@1.102.0)(yaml@2.9.0))
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(less@4.8.1(supports-color@8.1.1))(sass@1.102.0)(yaml@2.9.0))
       '@types/fnando__sparkline':
         specifier: 'catalog:'
         version: 0.3.7
@@ -840,11 +834,11 @@ importers:
   frameworks-plugins/aurelia-row-detail-plugin:
     dependencies:
       '@aurelia/kernel':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       '@aurelia/runtime-html':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       '@slickgrid-universal/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -1104,14 +1098,14 @@ importers:
   frameworks/aurelia-slickgrid:
     dependencies:
       '@aurelia/i18n':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1(typescript@6.0.3)
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2(typescript@6.0.3)
       '@aurelia/runtime':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       '@aurelia/runtime-html':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       '@formkit/tempo':
         specifier: 'catalog:'
         version: 1.1.0
@@ -1134,15 +1128,15 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       aurelia:
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       dequal:
         specifier: 'catalog:'
         version: 2.0.3
     devDependencies:
       '@aurelia/kernel':
-        specifier: ^2.0.0-rc.1
-        version: 2.0.0-rc.1
+        specifier: ^2.0.0-rc.2
+        version: 2.0.0-rc.2
       dompurify:
         specifier: 'catalog:'
         version: 3.4.12
@@ -1863,61 +1857,63 @@ packages:
   '@asamuzakjp/nwsapi@2.3.9':
     resolution: {integrity: sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==}
 
-  '@aurelia/expression-parser@2.0.0-rc.1':
-    resolution: {integrity: sha512-Q3t9px0+e9foKN0XATSB70mCCNljPyhJ1B0n0yEeDIpq4o8WqmeTcneWr51pomsDeZJ8SqSjA4SCuAPc6AcblA==}
+  '@aurelia/expression-parser@2.0.0-rc.2':
+    resolution: {integrity: sha512-z3zKwDlnnkNwIcs4i/bRtfvnL2C6nlZBXf9Gt1JDDdeA+XYGXOC6b1+A7EzHM4GK54ZCiqwZMB9MYwnlLT0M9Q==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/fetch-client@2.0.0-rc.1':
-    resolution: {integrity: sha512-NrWo726OkaKzya661KyhA/1TjpTszfUI4UauCTDIIXYSgQK5U6YM55A9gnuj2Z1i/A4oWfg5XBmnpa5hBWlCvg==}
+  '@aurelia/fetch-client@2.0.0-rc.2':
+    resolution: {integrity: sha512-ieiqMs7xs24geXNzTkZRt2x/dsYJUxTihnY+RpiZAZbxQrkOVPKDWncj6+h67nT2RH3CgozZrKbaig3tJ/HAGw==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/i18n@2.0.0-rc.1':
-    resolution: {integrity: sha512-Fv3W8q3yh/7Yn29RHR2Jalt7jr8o+vKxr8bygbyUJiEqrHp+CKrq0PofvZ0feUBe7bvm93/SpjqO3OE1fC+hXg==}
+  '@aurelia/i18n@2.0.0-rc.2':
+    resolution: {integrity: sha512-a1Oq/CAcurvqsKLCCjeKLVlvEtxVfdAu7W7fJjN5e3BChEXKAFwdwHW7CX9iEYAjUAUAU1HSCTnGYz0xZkQCJQ==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/kernel@2.0.0-rc.1':
-    resolution: {integrity: sha512-cgrGCU8JO5Wh981EWqoVC2bt6n2Qk2j7NLuz+7BBG6H2hjJ4TJaaX2d1wtT53RD0IE1/VHnpAW5lrO67BoQFGA==}
+  '@aurelia/kernel@2.0.0-rc.2':
+    resolution: {integrity: sha512-2RHXI3RqjT4FBS+QdqqhOL4K1K9KiyBtpykKDJEPm2xjy54y8Ub93FK/RUHwWqZGHrH4yVS6dESlfhWKt3I5ow==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/metadata@2.0.0-rc.1':
-    resolution: {integrity: sha512-mxsBUayIhBmEmUAojNWNL6cfX3wh4HyHWZycR1huCsALgYZ8sXNUn6FjO/aeIEXFboUYuP7IyY55ZAvFzc5ZKw==}
+  '@aurelia/metadata@2.0.0-rc.2':
+    resolution: {integrity: sha512-GUyjpzEO8tJcPsmygjB2MvjBR4Wl9eO8spVOwypYIDUI1d3MCoBy48dv+sT+Te/WL29bJPaIRkGI8bnnKI36cg==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/platform-browser@2.0.0-rc.1':
-    resolution: {integrity: sha512-goE4nUi4pmaV3hVDN59IDaIfEBd6HhiIIKqLXJbcMRswoWZgsGWOq4dVpBSUwMjXOCJO8Rb5+k02UmUFFZEiRA==}
+  '@aurelia/platform-browser@2.0.0-rc.2':
+    resolution: {integrity: sha512-Bb1HFBc3wRqSxT7NkoHEii8vfDuX4uofRejawNKadQ5UT7NCNq7ffw9vOeAbnIwNjXtyfsEZH1ix9hMqMOfUPA==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/platform@2.0.0-rc.1':
-    resolution: {integrity: sha512-OOrgi4L/IvvrwKqPtyOzHPrJIinFQ/i8JFzpy9I9r67GTwbUT9KkizIQlyK7az1s70LUaYUF5S9xZHBdZLRNHg==}
+  '@aurelia/platform@2.0.0-rc.2':
+    resolution: {integrity: sha512-FzZ48bBlu5XVP3Q83fi39svbDeigPOIJAcvq6fw/ZvvbCV183R0cmupJj5Pl/9mgYnMEQjp+2mOyQOY/xMW7Kg==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/plugin-conventions@2.0.0-rc.1':
-    resolution: {integrity: sha512-PMz07vLDB8aWGGK51HjQHghKj2iGpMqBOZnEXkNuO17Q4QVWosBIP43+fWZIIqsIi+0Xp7O2rVNO6dNIlCjAkw==}
+  '@aurelia/plugin-conventions@2.0.0-rc.2':
+    resolution: {integrity: sha512-Pzc907LcRz52FTDCG12fdD/25K0i7RjPA+VxhOF331QWWME6afF59UMBqQknnOt3LmVw3OmoN3b0pv+SSOxPOw==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/route-recognizer@2.0.0-rc.1':
-    resolution: {integrity: sha512-xoAMxqWd8f8mawrKo1AxIDb9ljXKcd7GMfQhGfLvjgHOjlVMBSMAfFE0LxwEphFBbGTRfJJ2/U4feyESJkh2fg==}
+  '@aurelia/route-recognizer@2.0.0-rc.2':
+    resolution: {integrity: sha512-hr7gtR5D/sdNdDzIG0uGxSTitVIOIk/yASL4NN+q4aRz5OfDvalMJ1yRfL6i6N6w8afuxJ6FY/hznMLeuB9lCA==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/router@2.0.0-rc.1':
-    resolution: {integrity: sha512-UVunEslhos5NHGth0sZyD0eNe1rpeHmpj4NfaHv/tCBq0A8EqLgGOIqlwwj1aDm3c9nek/UXeozoM7jrRxZikQ==}
+  '@aurelia/router@2.0.0-rc.2':
+    resolution: {integrity: sha512-J8rv4rYWY94EDq2+qa9vWDdRm9/0b4QlsCyJenk65/SWPJzwuT0KPwm0AiMJIxXFjkwapyBLqEDub8TxOxmPkg==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/runtime-html@2.0.0-rc.1':
-    resolution: {integrity: sha512-9nYUcERtg2LKtdyvQsSRwBxr5p0tNMcLj8RYLjRm0HKOktLFu152dBRUDJpJYyKLAwKkLsWYLnng5EMKoZFa2w==}
+  '@aurelia/runtime-html@2.0.0-rc.2':
+    resolution: {integrity: sha512-bk/N9Eli5/MbKRL3RsqmiPFQCvkChMzITfXZD7AgVjjvMidZWEenLdIoU19sjBku7Yvbw953VAsLDCqtMFL7ZA==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/runtime@2.0.0-rc.1':
-    resolution: {integrity: sha512-KE2EfecnF9e0tLWGbk+hQK2e+gdTPj16o682G4Z4TFBaRjlq+3dsk+5WDBDLAiD5OQI5Mw00JklVBkAlYkxDnQ==}
+  '@aurelia/runtime@2.0.0-rc.2':
+    resolution: {integrity: sha512-StIZ8C1hNnV4WWQjm9rV4SgSwFb3A2J3PqCT1D/ksuDs9Hiy4BRicXy/E2yvfZXNtQR/miPiaPbC38VS8cStaA==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/template-compiler@2.0.0-rc.1':
-    resolution: {integrity: sha512-6jrb5+RPAJged+eIiDn/KFDjd6kiUUwSu9bQSXrMFJqi3PyhMRH+6AoL8fBGBUZ41CV3sK4D8u7dLhwpDe80gA==}
+  '@aurelia/template-compiler@2.0.0-rc.2':
+    resolution: {integrity: sha512-ukorCLxl/tm1f0i5atq32GHuqfr7zds4koyBucxw1thuq9GNjAJe4Qmq3GxM535h+FVsC3xD+DVfmOmgJ2eG0Q==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/vite-plugin@2.0.0-rc.1':
-    resolution: {integrity: sha512-SSeLtPyork4eKxrFc1j+GR30LVs0vejr9GbWr6hAT+ueELmObh7+Mdtv+BXIPlgxqZQcRT3NvSNuFAgBT8wx1g==}
+  '@aurelia/vite-plugin@2.0.0-rc.2':
+    resolution: {integrity: sha512-MCcqz5wwzEw0NSHw3U2UOUaqUEQXbmujgpunbPz+wlXuvfH+aLf4OLm9AOoo3kDTz0cdDlAgJJps468kVmZ/cQ==}
     engines: {node: '>=20.16.0'}
+    peerDependencies:
+      vite: ^8.2.0
 
   '@babel/code-frame@7.29.7':
     resolution: {integrity: sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==}
@@ -1943,26 +1939,12 @@ packages:
     resolution: {integrity: sha512-fXSwMQqitTGeHLBC08Eq5yXz2m37E4pJX1qAU1+2cNedz/ifv/bVXft90VeSav5nFO61EcNgwr0aJxbyPaWBPg==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/helper-annotate-as-pure@7.29.7':
-    resolution: {integrity: sha512-OoK6239jHPuSQOoS0kfTVKn0b/rVTk0seKq4Gd2UMLtmOVLjDC0ki3e+c90Trqv2gMfvJFqkiljrr568+qddiw==}
-    engines: {node: '>=6.9.0'}
-
   '@babel/helper-compilation-targets@7.29.7':
     resolution: {integrity: sha512-wem6WaBj4NaVYVdNhLPPVacES6ZJ+KBBfSkTMD3YZxbP3rm3Di85tJU5ljaUNhaOynt+Aj0xruhYuzQBt8n71g==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/helper-create-class-features-plugin@7.29.7':
-    resolution: {integrity: sha512-IY3ZD9Tmooqr3TUhc3DUWxiuo8xx1DWLhd5M7hQ+ZWJamqM2BbalrBJb2MisSLoYorOj75U03qULCxQTY9r3hg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.29.7
-
   '@babel/helper-globals@7.29.7':
     resolution: {integrity: sha512-3nQVUAtvkKH9zahfWgw96Jc/uFOmjACE1kQz82E2lqWmHBgjzbNlsC22nuQTfahmWeQtTq5nQ/4Nnd2A1wj4zA==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/helper-member-expression-to-functions@7.29.7':
-    resolution: {integrity: sha512-j+7JYmk1JYDtACIGj0QJqqWZjoUpMoEikQGADMaHgCMCSDqd2+P32rfcibUNrGOMWrlzK1WJBdxrB3JJQZwWtg==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-module-imports@7.29.7':
@@ -1974,24 +1956,6 @@ packages:
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.29.7
-
-  '@babel/helper-optimise-call-expression@7.29.7':
-    resolution: {integrity: sha512-+kmGVjcT9RGYzoDwdwEqEvGgKe3BYq+O1iGzjFubaNgZHwYHP6lsF2Yghf4kEuv9BV7tYDZ913aBW9am6YKong==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/helper-plugin-utils@7.29.7':
-    resolution: {integrity: sha512-G7sHYigPY17oO5SYWnfD/0MTBwVR781S/JI643e/JhUYgVgWE/61SoW3NH9KWUKyKq5LVh3npif99Wkt6j86Jw==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/helper-replace-supers@7.29.7':
-    resolution: {integrity: sha512-atfGXWSeCiF4DnKZIfmJfQRkSw9b9gNNXR1kqKjbhG4pGYCOnkp8OcTB8E3NXjBu8NpheSnOeNKz8KT7UNFTmQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.29.7
-
-  '@babel/helper-skip-transparent-expression-wrappers@7.29.7':
-    resolution: {integrity: sha512-brcMGQaVzIeUb+6/bs1Av0f8YuNNjKY2JyvfRCsFuFsdKccEQ5Ges2y74D74NZ1Rz8lKJ9ksJkfqwQFJ/iNEyQ==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/helper-split-export-declaration@7.24.7':
     resolution: {integrity: sha512-oy5V7pD+UvfkEATUKvIjvIAH/xCzfsFVw7ygW2SI6NClZzquT+mwdTfgfdbUiceh6iQO0CHtCPsyze/MZ2YbAA==}
@@ -2030,18 +1994,6 @@ packages:
     resolution: {integrity: sha512-srpptsAkEbbNIC/q8nT7o+m6CQe8CJUTV/t7MYc9NnWlgYVtHOb7JH6SorxMhN0kuRJjVqXbKClG6xSbPtzz+g==}
     engines: {node: ^22.18.0 || >=24.11.0}
     hasBin: true
-
-  '@babel/plugin-proposal-decorators@7.29.7':
-    resolution: {integrity: sha512-EtU0Hi3GvrTqD56xKmZvV/uCXK2ZbwVNPNLAquVItcAZpUhkXwWlo3Fmj0c2LxgSf2I8IDULeAepwNP1OefLXg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.29.7
-
-  '@babel/plugin-syntax-decorators@7.29.7':
-    resolution: {integrity: sha512-9MTTLbF39X6sqM92JPEsoI7++26hjZvzkxKZy64aMhWLH2mPkJ/Q3AV4QLmls3R14FpSpkOwQQfUh962JGQxxg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.29.7
 
   '@babel/runtime@7.29.7':
     resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
@@ -4394,6 +4346,9 @@ packages:
   '@swc/helpers@0.5.23':
     resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
 
+  '@swc/wasm@1.15.47':
+    resolution: {integrity: sha512-AdcxrBWz13mPnXxzxr5Lkxkgknwi0fAaArdehpYENB/iIds+WEWVcof3FJKfYAPP7TOeCsaSTKFTSsP3/YX7iw==}
+
   '@ts-graphviz/adapter@2.0.6':
     resolution: {integrity: sha512-kJ10lIMSWMJkLkkCG5gt927SnGZcBuG0s0HHswGzcHTgvtUe7yk5/3zTEr0bafzsodsOq5Gi6FhQeV775nC35Q==}
     engines: {node: '>=18'}
@@ -4517,6 +4472,10 @@ packages:
   '@typescript-eslint/visitor-keys@8.65.0':
     resolution: {integrity: sha512-8C71BQkGjiMmXtop7pHVJu1l2NNShFdkCyD6a2ezzs5vU/L3LRtb69EtcteFwz0mYMPzIgOw0n6OV4VBUWZd7A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript/typescript6@6.0.2':
+    resolution: {integrity: sha512-mbCddXd+jm7hfx7w2YU64/Av4/NqqeG3GoRZgxPcgoTxYjhrcfJRw9ULch71SS4G+Q3bOXFhRvPqjguN0Hyp5w==}
+    hasBin: true
 
   '@vitejs/plugin-basic-ssl@2.1.4':
     resolution: {integrity: sha512-HXciTXN/sDBYWgeAD4V4s0DN0g72x5mlxQhHxtYu3Tt8BLa6MzcJZUyDVFCdtjNs3bfENVHVzOsmooTVuNgAAw==}
@@ -4788,8 +4747,8 @@ packages:
   aurelia-polyfills@1.3.4:
     resolution: {integrity: sha512-NvOBYi4aWnxWCxfCfyW5DObggevOwfkC0riGMicgXNQg/ngpaQpFIXQgc4jMlI6jyE+/e38J36Hd9CeUcj04BA==}
 
-  aurelia@2.0.0-rc.1:
-    resolution: {integrity: sha512-uljX+yBMAyHZwRgeSNxtzHVMoshGSUm83sCnRCbU2420KjTXm8l5shEBC8ZiPf2endha5ODLmIKIEFRXc/b82Q==}
+  aurelia@2.0.0-rc.2:
+    resolution: {integrity: sha512-jz6nFiF3RD2RKXpwFnkkv/eWGy/BEtpANNN4YJ/Lxgzo7kLOWrQ3wt1AyrVyMhwq9966NcbqCwwOnY9LCLJJcg==}
     engines: {node: '>=20.16.0'}
 
   autocompleter@10.0.0:
@@ -5757,6 +5716,9 @@ packages:
   get-stream@5.2.0:
     resolution: {integrity: sha512-nBF+F1rAZVCu/p7rjzgA+Yb4lfYXrpl7a6VmJrU8wF9I1CKvP/QwPNZHnOlwbTkY6dvtFIzFMSyQXbLoTQPRpA==}
     engines: {node: '>=8'}
+
+  get-tsconfig@4.14.0:
+    resolution: {integrity: sha512-yTb+8DXzDREzgvYmh6s9vHsSVCHeC0G3PI5bEXNBHtmshPnO+S5O7qgLEOn0I5QvMy6kpZN8K1NKGyilLb93wA==}
 
   getpass@0.1.7:
     resolution: {integrity: sha512-0fzj9JxOLfJ+XGLhR8ze3unN0KZCgZwiSSDz168VERjK8Wl8kVSdcu2kspd4s4wtAa1y/qrVRiAA0WclVsu0ng==}
@@ -7259,6 +7221,9 @@ packages:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
     engines: {node: '>=8'}
 
+  resolve-pkg-maps@1.0.0:
+    resolution: {integrity: sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==}
+
   resolve@1.22.12:
     resolution: {integrity: sha512-TyeJ1zif53BPfHootBGwPRYT1RUt6oGWsaQr8UyZW/eAm9bKoijtvruSDEmZHm92CwS9nj7/fWttqPCgzep8CA==}
     engines: {node: '>= 0.4'}
@@ -8494,115 +8459,106 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@aurelia/expression-parser@2.0.0-rc.1':
+  '@aurelia/expression-parser@2.0.0-rc.2':
     dependencies:
-      '@aurelia/kernel': 2.0.0-rc.1
+      '@aurelia/kernel': 2.0.0-rc.2
 
-  '@aurelia/fetch-client@2.0.0-rc.1':
+  '@aurelia/fetch-client@2.0.0-rc.2':
     dependencies:
-      '@aurelia/kernel': 2.0.0-rc.1
-      '@aurelia/metadata': 2.0.0-rc.1
+      '@aurelia/kernel': 2.0.0-rc.2
+      '@aurelia/metadata': 2.0.0-rc.2
 
-  '@aurelia/i18n@2.0.0-rc.1(typescript@6.0.3)':
+  '@aurelia/i18n@2.0.0-rc.2(typescript@6.0.3)':
     dependencies:
-      '@aurelia/expression-parser': 2.0.0-rc.1
-      '@aurelia/kernel': 2.0.0-rc.1
-      '@aurelia/metadata': 2.0.0-rc.1
-      '@aurelia/platform': 2.0.0-rc.1
-      '@aurelia/runtime': 2.0.0-rc.1
-      '@aurelia/runtime-html': 2.0.0-rc.1
-      '@aurelia/template-compiler': 2.0.0-rc.1
+      '@aurelia/expression-parser': 2.0.0-rc.2
+      '@aurelia/kernel': 2.0.0-rc.2
+      '@aurelia/metadata': 2.0.0-rc.2
+      '@aurelia/platform': 2.0.0-rc.2
+      '@aurelia/runtime': 2.0.0-rc.2
+      '@aurelia/runtime-html': 2.0.0-rc.2
+      '@aurelia/template-compiler': 2.0.0-rc.2
       i18next: 25.10.10(typescript@6.0.3)
     transitivePeerDependencies:
       - typescript
 
-  '@aurelia/kernel@2.0.0-rc.1':
+  '@aurelia/kernel@2.0.0-rc.2':
     dependencies:
-      '@aurelia/metadata': 2.0.0-rc.1
-      '@aurelia/platform': 2.0.0-rc.1
+      '@aurelia/metadata': 2.0.0-rc.2
+      '@aurelia/platform': 2.0.0-rc.2
 
-  '@aurelia/metadata@2.0.0-rc.1': {}
+  '@aurelia/metadata@2.0.0-rc.2': {}
 
-  '@aurelia/platform-browser@2.0.0-rc.1':
+  '@aurelia/platform-browser@2.0.0-rc.2':
     dependencies:
-      '@aurelia/platform': 2.0.0-rc.1
+      '@aurelia/platform': 2.0.0-rc.2
 
-  '@aurelia/platform@2.0.0-rc.1': {}
+  '@aurelia/platform@2.0.0-rc.2': {}
 
-  '@aurelia/plugin-conventions@2.0.0-rc.1':
+  '@aurelia/plugin-conventions@2.0.0-rc.2':
     dependencies:
-      '@aurelia/expression-parser': 2.0.0-rc.1
-      '@aurelia/kernel': 2.0.0-rc.1
-      '@aurelia/metadata': 2.0.0-rc.1
-      '@aurelia/platform': 2.0.0-rc.1
-      '@aurelia/runtime': 2.0.0-rc.1
-      '@aurelia/runtime-html': 2.0.0-rc.1
-      '@aurelia/template-compiler': 2.0.0-rc.1
+      '@aurelia/expression-parser': 2.0.0-rc.2
+      '@aurelia/kernel': 2.0.0-rc.2
+      '@aurelia/metadata': 2.0.0-rc.2
+      '@aurelia/platform': 2.0.0-rc.2
+      '@aurelia/runtime': 2.0.0-rc.2
+      '@aurelia/runtime-html': 2.0.0-rc.2
+      '@aurelia/template-compiler': 2.0.0-rc.2
+      '@typescript/typescript6': 6.0.2
       modify-code: 2.1.4
       parse5: 7.3.0
-      typescript: 5.9.3
 
-  '@aurelia/route-recognizer@2.0.0-rc.1':
+  '@aurelia/route-recognizer@2.0.0-rc.2':
     dependencies:
-      '@aurelia/kernel': 2.0.0-rc.1
+      '@aurelia/kernel': 2.0.0-rc.2
 
-  '@aurelia/router@2.0.0-rc.1':
+  '@aurelia/router@2.0.0-rc.2':
     dependencies:
-      '@aurelia/kernel': 2.0.0-rc.1
-      '@aurelia/metadata': 2.0.0-rc.1
-      '@aurelia/platform': 2.0.0-rc.1
-      '@aurelia/platform-browser': 2.0.0-rc.1
-      '@aurelia/route-recognizer': 2.0.0-rc.1
-      '@aurelia/runtime': 2.0.0-rc.1
-      '@aurelia/runtime-html': 2.0.0-rc.1
+      '@aurelia/kernel': 2.0.0-rc.2
+      '@aurelia/metadata': 2.0.0-rc.2
+      '@aurelia/platform': 2.0.0-rc.2
+      '@aurelia/platform-browser': 2.0.0-rc.2
+      '@aurelia/route-recognizer': 2.0.0-rc.2
+      '@aurelia/runtime': 2.0.0-rc.2
+      '@aurelia/runtime-html': 2.0.0-rc.2
 
-  '@aurelia/runtime-html@2.0.0-rc.1':
+  '@aurelia/runtime-html@2.0.0-rc.2':
     dependencies:
-      '@aurelia/expression-parser': 2.0.0-rc.1
-      '@aurelia/kernel': 2.0.0-rc.1
-      '@aurelia/metadata': 2.0.0-rc.1
-      '@aurelia/platform': 2.0.0-rc.1
-      '@aurelia/platform-browser': 2.0.0-rc.1
-      '@aurelia/runtime': 2.0.0-rc.1
-      '@aurelia/template-compiler': 2.0.0-rc.1
+      '@aurelia/expression-parser': 2.0.0-rc.2
+      '@aurelia/kernel': 2.0.0-rc.2
+      '@aurelia/metadata': 2.0.0-rc.2
+      '@aurelia/platform': 2.0.0-rc.2
+      '@aurelia/platform-browser': 2.0.0-rc.2
+      '@aurelia/runtime': 2.0.0-rc.2
+      '@aurelia/template-compiler': 2.0.0-rc.2
 
-  '@aurelia/runtime@2.0.0-rc.1':
+  '@aurelia/runtime@2.0.0-rc.2':
     dependencies:
-      '@aurelia/expression-parser': 2.0.0-rc.1
-      '@aurelia/kernel': 2.0.0-rc.1
-      '@aurelia/metadata': 2.0.0-rc.1
-      '@aurelia/platform': 2.0.0-rc.1
+      '@aurelia/expression-parser': 2.0.0-rc.2
+      '@aurelia/kernel': 2.0.0-rc.2
+      '@aurelia/metadata': 2.0.0-rc.2
+      '@aurelia/platform': 2.0.0-rc.2
 
-  '@aurelia/template-compiler@2.0.0-rc.1':
+  '@aurelia/template-compiler@2.0.0-rc.2':
     dependencies:
-      '@aurelia/expression-parser': 2.0.0-rc.1
-      '@aurelia/kernel': 2.0.0-rc.1
-      '@aurelia/metadata': 2.0.0-rc.1
+      '@aurelia/expression-parser': 2.0.0-rc.2
+      '@aurelia/kernel': 2.0.0-rc.2
+      '@aurelia/metadata': 2.0.0-rc.2
 
-  '@aurelia/vite-plugin@2.0.0-rc.1(@types/node@24.13.3)(esbuild@0.28.1)(less@4.8.1(supports-color@8.1.1))(sass@1.102.0)(yaml@2.9.0)':
+  '@aurelia/vite-plugin@2.0.0-rc.2(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(less@4.8.1(supports-color@8.1.1))(sass@1.102.0)(yaml@2.9.0))':
     dependencies:
-      '@aurelia/kernel': 2.0.0-rc.1
-      '@aurelia/metadata': 2.0.0-rc.1
-      '@aurelia/platform': 2.0.0-rc.1
-      '@aurelia/plugin-conventions': 2.0.0-rc.1
-      '@aurelia/runtime': 2.0.0-rc.1
+      '@aurelia/kernel': 2.0.0-rc.2
+      '@aurelia/metadata': 2.0.0-rc.2
+      '@aurelia/platform': 2.0.0-rc.2
+      '@aurelia/plugin-conventions': 2.0.0-rc.2
+      '@aurelia/runtime': 2.0.0-rc.2
       '@rollup/pluginutils': 5.0.2
+      '@swc/helpers': 0.5.23
+      '@swc/wasm': 1.15.47
+      get-tsconfig: 4.14.0
       loader-utils: 2.0.4
       vite: 8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(less@4.8.1(supports-color@8.1.1))(sass@1.102.0)(yaml@2.9.0)
     transitivePeerDependencies:
-      - '@types/node'
-      - '@vitejs/devtools'
-      - esbuild
-      - jiti
-      - less
       - rollup
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - terser
-      - tsx
-      - yaml
 
   '@babel/code-frame@7.29.7':
     dependencies:
@@ -8653,10 +8609,6 @@ snapshots:
     dependencies:
       '@babel/types': 7.29.8
 
-  '@babel/helper-annotate-as-pure@7.29.7':
-    dependencies:
-      '@babel/types': 7.29.8
-
   '@babel/helper-compilation-targets@7.29.7':
     dependencies:
       '@babel/compat-data': 7.29.7
@@ -8665,27 +8617,7 @@ snapshots:
       lru-cache: 5.1.1
       semver: 6.3.1
 
-  '@babel/helper-create-class-features-plugin@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)':
-    dependencies:
-      '@babel/core': 7.29.7(supports-color@8.1.1)
-      '@babel/helper-annotate-as-pure': 7.29.7
-      '@babel/helper-member-expression-to-functions': 7.29.7(supports-color@8.1.1)
-      '@babel/helper-optimise-call-expression': 7.29.7
-      '@babel/helper-replace-supers': 7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
-      '@babel/helper-skip-transparent-expression-wrappers': 7.29.7(supports-color@8.1.1)
-      '@babel/traverse': 7.29.8(supports-color@8.1.1)
-      semver: 6.3.1
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/helper-globals@7.29.7': {}
-
-  '@babel/helper-member-expression-to-functions@7.29.7(supports-color@8.1.1)':
-    dependencies:
-      '@babel/traverse': 7.29.8(supports-color@8.1.1)
-      '@babel/types': 7.29.8
-    transitivePeerDependencies:
-      - supports-color
 
   '@babel/helper-module-imports@7.29.7(supports-color@8.1.1)':
     dependencies:
@@ -8700,28 +8632,6 @@ snapshots:
       '@babel/helper-module-imports': 7.29.7(supports-color@8.1.1)
       '@babel/helper-validator-identifier': 7.29.7
       '@babel/traverse': 7.29.8(supports-color@8.1.1)
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/helper-optimise-call-expression@7.29.7':
-    dependencies:
-      '@babel/types': 7.29.8
-
-  '@babel/helper-plugin-utils@7.29.7': {}
-
-  '@babel/helper-replace-supers@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)':
-    dependencies:
-      '@babel/core': 7.29.7(supports-color@8.1.1)
-      '@babel/helper-member-expression-to-functions': 7.29.7(supports-color@8.1.1)
-      '@babel/helper-optimise-call-expression': 7.29.7
-      '@babel/traverse': 7.29.8(supports-color@8.1.1)
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/helper-skip-transparent-expression-wrappers@7.29.7(supports-color@8.1.1)':
-    dependencies:
-      '@babel/traverse': 7.29.8(supports-color@8.1.1)
-      '@babel/types': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -8751,20 +8661,6 @@ snapshots:
   '@babel/parser@8.0.4':
     dependencies:
       '@babel/types': 8.0.4
-
-  '@babel/plugin-proposal-decorators@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)':
-    dependencies:
-      '@babel/core': 7.29.7(supports-color@8.1.1)
-      '@babel/helper-create-class-features-plugin': 7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
-      '@babel/helper-plugin-utils': 7.29.7
-      '@babel/plugin-syntax-decorators': 7.29.7(@babel/core@7.29.7(supports-color@8.1.1))
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/plugin-syntax-decorators@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))':
-    dependencies:
-      '@babel/core': 7.29.7(supports-color@8.1.1)
-      '@babel/helper-plugin-utils': 7.29.7
 
   '@babel/runtime@7.29.7': {}
 
@@ -11260,6 +11156,7 @@ snapshots:
     optionalDependencies:
       '@babel/runtime': 7.29.7
       vite: 8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(less@4.8.1(supports-color@8.1.1))(sass@1.102.0)(yaml@2.9.0)
+    optional: true
 
   '@rolldown/pluginutils@1.0.0-rc.4': {}
 
@@ -11465,6 +11362,8 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@swc/wasm@1.15.47': {}
+
   '@ts-graphviz/adapter@2.0.6':
     dependencies:
       '@ts-graphviz/common': 2.1.5
@@ -11631,6 +11530,10 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.65.0
       eslint-visitor-keys: 5.0.1
+
+  '@typescript/typescript6@6.0.2':
+    dependencies:
+      '@typescript/old': typescript@6.0.3
 
   '@vitejs/plugin-basic-ssl@2.1.4(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(less@4.8.1(supports-color@8.1.1))(sass@1.102.0)(yaml@2.9.0))':
     dependencies:
@@ -11955,17 +11858,17 @@ snapshots:
     dependencies:
       aurelia-pal: 1.8.2
 
-  aurelia@2.0.0-rc.1:
+  aurelia@2.0.0-rc.2:
     dependencies:
-      '@aurelia/expression-parser': 2.0.0-rc.1
-      '@aurelia/fetch-client': 2.0.0-rc.1
-      '@aurelia/kernel': 2.0.0-rc.1
-      '@aurelia/metadata': 2.0.0-rc.1
-      '@aurelia/platform': 2.0.0-rc.1
-      '@aurelia/platform-browser': 2.0.0-rc.1
-      '@aurelia/runtime': 2.0.0-rc.1
-      '@aurelia/runtime-html': 2.0.0-rc.1
-      '@aurelia/template-compiler': 2.0.0-rc.1
+      '@aurelia/expression-parser': 2.0.0-rc.2
+      '@aurelia/fetch-client': 2.0.0-rc.2
+      '@aurelia/kernel': 2.0.0-rc.2
+      '@aurelia/metadata': 2.0.0-rc.2
+      '@aurelia/platform': 2.0.0-rc.2
+      '@aurelia/platform-browser': 2.0.0-rc.2
+      '@aurelia/runtime': 2.0.0-rc.2
+      '@aurelia/runtime-html': 2.0.0-rc.2
+      '@aurelia/template-compiler': 2.0.0-rc.2
 
   autocompleter@10.0.0: {}
 
@@ -13062,6 +12965,10 @@ snapshots:
   get-stream@5.2.0:
     dependencies:
       pump: 3.0.4
+
+  get-tsconfig@4.14.0:
+    dependencies:
+      resolve-pkg-maps: 1.0.0
 
   getpass@0.1.7:
     dependencies:
@@ -14632,6 +14539,8 @@ snapshots:
   resolve-dependency-path@4.0.1: {}
 
   resolve-from@5.0.0: {}
+
+  resolve-pkg-maps@1.0.0: {}
 
   resolve@1.22.12:
     dependencies:
