@@ -336,9 +336,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /** Get each column style including a style for the width of each column */
   protected getColumnStyles(columns: Column[]): any[] {
-    const exportOptions = this._excelExportOptions ?? this._gridOptions?.excelExportOptions ?? {};
-    const defaultColumnWidth = exportOptions.customColumnWidth ?? 10;
-    const includeColumnWidth = exportOptions.includeColumnWidth === true;
+    const defaultColumnWidth = this._excelExportOptions.customColumnWidth ?? 10;
+    const includeColumnWidth = this._excelExportOptions.includeColumnWidth === true;
     const grouping = this._dataView.getGrouping();
     const columnStyles = [];
     if (Array.isArray(grouping) && grouping.length > 0) {
