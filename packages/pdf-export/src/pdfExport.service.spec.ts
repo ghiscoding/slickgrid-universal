@@ -1259,8 +1259,8 @@ describe('PdfExportService', () => {
         await service.exportToPdf({ filename: 'with-grid-width', includeColumnWidth: true });
 
         const opts = autoTableSpy.mock.calls[0][0];
-        expect(opts.columnStyles[0]).toEqual({ cellWidth: 120 });
-        expect(opts.columnStyles[1]).toEqual({ cellWidth: 180 });
+        expect(opts.columnStyles[0]).toEqual({ cellWidth: 90 });
+        expect(opts.columnStyles[1]).toEqual({ cellWidth: 135 });
       });
 
       it('should prioritize pdfExportOptions.width over includeColumnWidth in autoTable', async () => {
@@ -1276,7 +1276,7 @@ describe('PdfExportService', () => {
 
         const opts = autoTableSpy.mock.calls[0][0];
         expect(opts.columnStyles[0]).toEqual({ cellWidth: 80 });
-        expect(opts.columnStyles[1]).toEqual({ cellWidth: 180 });
+        expect(opts.columnStyles[1]).toEqual({ cellWidth: 135 });
       });
 
       it('should handle mixed column alignments correctly', async () => {
@@ -3025,6 +3025,61 @@ describe('PdfExportService', () => {
       // Percent header should be center-aligned
       const pctCall = headerCalls.find((c: any[]) => c[0] === 'Percent');
       expect(pctCall![3].align).toBe('center');
+    });
+
+    it('should use columnDef.width in manual fallback when includeColumnWidth is enabled', async () => {
+      vi.resetModules();
+      const textSpy = vi.fn();
+      function jsPDFMockManual(this: any) {
+        this.save = vi.fn();
+        this.setFontSize = vi.fn();
+        this.getTextWidth = vi.fn((txt: string) => txt.length * 6);
+        this.internal = {
+          pageSize: {
+            getWidth: () => 595.28,
+            getHeight: () => 841.89,
+          },
+        };
+        this.setFillColor = vi.fn();
+        this.setTextColor = vi.fn();
+        this.rect = vi.fn();
+        this.text = textSpy;
+        this.addPage = vi.fn();
+      }
+      vi.doMock('jspdf', () => ({ __esModule: true, default: jsPDFMockManual }));
+      const { PdfExportService: Svc } = await import('./pdfExport.service.js');
+
+      const columns = [
+        { id: 'first', field: 'first', name: 'FirstHdr', width: 200 },
+        { id: 'second', field: 'second', name: 'SecondHdr', width: 100 },
+      ];
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 1,
+        getItem: () => ({ id: 1, first: 'A', second: 'B' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const gridStub = {
+        getVisibleColumns: () => columns,
+        getOptions: () => ({}),
+        getData: () => dataViewStub,
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: () => pubSubService };
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+
+      await service.exportToPdf({ filename: 'manual-include-col-width', includeColumnWidth: true } as any);
+
+      const firstHeaderCall = textSpy.mock.calls.find((c: any[]) => c[0] === 'FirstHdr');
+      const secondHeaderCall = textSpy.mock.calls.find((c: any[]) => c[0] === 'SecondHdr');
+      expect(firstHeaderCall).toBeDefined();
+      expect(secondHeaderCall).toBeDefined();
+
+      // left alignment means header X equals current column start.
+      // with includeColumnWidth=true, first column width=200px converts to 150pt and second header starts at 40 + 150.
+      expect(firstHeaderCall![1]).toBe(40);
+      expect(secondHeaderCall![1]).toBe(190);
     });
 
     it('should call setDocumentProperties in manual fallback when documentProperties is provided', async () => {

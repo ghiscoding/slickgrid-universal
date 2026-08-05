@@ -46,6 +46,8 @@ export interface GroupedHeaderSpan {
   span: number;
 }
 
+const PX_TO_PT_CONVERSION_FACTOR = 0.75;
+
 // Utility to resolve and merge column/grid export options
 
 function resolveColumnExportOptions(columnDef: Column, globalOptions: PdfExportOption): PdfExportOption {
@@ -70,6 +72,10 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   protected _pubSubService!: PubSubService | null;
   protected _translaterService: TranslaterService | undefined;
   protected _timer?: any;
+
+  protected convertPixelToPdfPoint(pixelValue: number): number {
+    return Math.round(pixelValue * PX_TO_PT_CONVERSION_FACTOR * 100) / 100;
+  }
 
   /** PdfExportService class name which is use to find service instance in the external registered services */
   readonly pluginName = 'PdfExportService';
@@ -215,7 +221,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
             let cachedRowHeight = rowHeightByRowIndex.get(rowIdx);
             if (cachedRowHeight === undefined) {
-              cachedRowHeight = Math.round(this._grid.getRowHeight(rowIdx) * 0.75 * 100) / 100;
+              cachedRowHeight = this.convertPixelToPdfPoint(this._grid.getRowHeight(rowIdx));
               rowHeightByRowIndex.set(rowIdx, cachedRowHeight);
             }
 
@@ -236,7 +242,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                 typeof colExportOpts.width === 'number' && colExportOpts.width > 0
                   ? colExportOpts.width
                   : includeColumnWidth && typeof col.width === 'number' && col.width > 0
-                    ? col.width
+                    ? this.convertPixelToPdfPoint(col.width)
                     : undefined;
 
               if (alignOverride || resolvedWidth !== undefined) {
@@ -363,7 +369,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                 typeof colOpt?.width === 'number' && colOpt.width > 0
                   ? colOpt.width
                   : includeColumnWidth && typeof colDef?.width === 'number' && colDef.width > 0
-                    ? colDef.width
+                    ? this.convertPixelToPdfPoint(colDef.width)
                     : undefined;
 
               if (resolvedWidth !== undefined) {

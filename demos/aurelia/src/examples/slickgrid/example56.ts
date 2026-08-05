@@ -67,9 +67,14 @@ export class Example56 {
         // export variable row height will also be reflected in the export
         // but it can be disabled by setting `includeVariableRowHeight` to false
         // includeVariableRowHeight: false, // export all rows at default height
+
+        // we can opt-in to also use same column width grid vs Excel export (it's disabled by default)
+        includeColumnWidth: true,
       },
       pdfExportOptions: {
         pageOrientation: 'landscape',
+        // we can opt-in to also use same column width grid vs PDF export (it's disabled by default)
+        includeColumnWidth: true,
       },
       rowHeight: 40,
       frozenRow: 2,

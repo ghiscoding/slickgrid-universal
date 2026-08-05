@@ -352,7 +352,9 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       const skippedField = columnDef.excludeFromExport ?? false;
       // if column width is 0, then we consider that field as a hidden field and should not be part of the export
       if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
-        const width = columnDef.excelExportOptions?.width ?? (includeColumnWidth ? columnDef.width : undefined);
+        const width =
+          columnDef.excelExportOptions?.width ??
+          (includeColumnWidth && typeof columnDef.width === 'number' ? this.convertPixelToExcelWidth(columnDef.width) : undefined);
 
         columnStyles.push({
           bestFit: true,
@@ -361,6 +363,27 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       }
     });
     return columnStyles;
+  }
+
+  /** Convert grid column width in pixels to Excel column width units. */
+  protected convertPixelToExcelWidth(pixelWidth: number): number {
+    if (!Number.isFinite(pixelWidth) || pixelWidth <= 0) {
+      return 0;
+    }
+
+    // Excel width is not pixel-based. This approximation mirrors common Calibri 11 behavior.
+    const excelWidth = pixelWidth <= 12 ? pixelWidth / 12 : (pixelWidth - 5) / 7;
+    return this.roundTo2Decimals(excelWidth);
+  }
+
+  /** Convert pixels to Excel points (72 DPI / 96 DPI = 0.75). */
+  protected convertPixelToExcelPoint(pixelValue: number): number {
+    return this.roundTo2Decimals(pixelValue * 0.75);
+  }
+
+  /** Round numeric values to 2 decimal places for stable export output. */
+  protected roundTo2Decimals(value: number): number {
+    return Math.round(value * 100) / 100;
   }
 
   /**
@@ -677,8 +700,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       return;
     }
 
-    // Convert pixels to Excel points: 72 DPI / 96 DPI = 0.75
-    const excelHeight = Math.round(pixelHeight * 0.75 * 100) / 100; // Round to 2 decimal places
+    const excelHeight = this.convertPixelToExcelPoint(pixelHeight);
     this._sheet.setRowInstructions(excelRowNumber, { height: excelHeight });
   }
 
