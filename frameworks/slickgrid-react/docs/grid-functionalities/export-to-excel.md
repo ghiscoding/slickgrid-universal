@@ -147,10 +147,10 @@ See [Custom Cell Styling](#custom-cell-styling) to define cell width.
 #### Width Precedence
 When exporting a column width, the library uses this order of precedence.
 
-1. Column `excelExportOptions.width`
-2. Column `width` when `includeColumnWidth: true`
-3. Grid `customColumnWidth`
-4. Internal fallback width (`10`)
+1. Column `excelExportOptions.width` (when defined on the column)
+2. Column `width` when `includeColumnWidth` is enabled in `excelExportOptions`
+3. Grid `customColumnWidth` (when defined)
+4. Internal fallback width (`10` Excel width units, not pixels)
 
 ```ts
 const gridOptions = {
