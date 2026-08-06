@@ -66,9 +66,6 @@ minimumReleaseAgeExclude:
   - '@excel-builder-vanilla/types'
   - 'excel-builder-vanilla'
   - 'multiple-select-vanilla'
-  - '@aurelia'
-  - '@aurelia/*'
-  - aurelia@2.0.0-rc.2
 
 overrides:
   '@babel/core': ^7.29.7
