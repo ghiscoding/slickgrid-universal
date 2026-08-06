@@ -1689,8 +1689,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Get the Footer DOM element */
   getFooterRow(): HTMLDivElement | HTMLDivElement[] {
-    // return undefined consistently when there is no footer, instead of throwing on
-    // the non-frozen `_footerRow[0]` path while the frozen path returns undefined
     return this.hasFrozenColumns() ? this._footerRow : this._footerRow?.[0];
   }
 
@@ -1851,10 +1849,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     emptyElement(this._headerRowL);
     emptyElement(this._headerRowR);
 
-    // Footer cells are created and destroyed by createColumnFooter(), which runs
-    // immediately after createColumnHeaders(). Keep this block focused on header
-    // rendering so footer lifecycle stays single-owned and consistent.
-
     for (let i = 0, ln = this.columns.length; i < ln; i++) {
       const m: C = this.columns[i];
       if (!m || m.hidden) {
@@ -1981,8 +1975,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           grid: this,
         });
       }
-
-      // footer-row cells are created by createColumnFooter() (called right after), not here
     }
 
     this.setSortColumns(this.sortColumns);
@@ -5654,9 +5646,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         const rowNumber = row ? parseInt(row, 10) : 0;
         // same formula appendRowHtml uses to place rows initially
         const top = this.getRowTop(rowNumber) - this.getFrozenRowOffset(rowNumber);
-        // reposition EVERY fragment of the row: with frozen columns a row has one
-        // fragment per column pane, and repositioning only rowNode[0] left the
-        // right-pane fragment at its stale top after a paging-offset jump
         this.rowsCache[rowNumber].rowNode!.forEach((rowNode) => {
           if (this._options.rowTopOffsetRenderType === 'transform') {
             rowNode.style.transform = `translateY(${top}px)`;
@@ -6736,7 +6725,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const isBottom = Utils.parents(cellNode, '.grid-canvas-bottom').length;
 
       if (isBottom) {
-        // same render-path offset as above: getFrozenRowOffset, not a live top-canvas measurement
         rowOffset = this.getFrozenRowOffset(this.actualFrozenRow);
       }
 
@@ -6881,10 +6869,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const isBottom = Utils.parents(this.activeCellNode, '.grid-canvas-bottom').length;
 
       if (this.hasFrozenRows && isBottom) {
-        // use the same offset the render path uses to place bottom-canvas rows
-        // (getFrozenRowOffset), not a live measurement of the top canvas — the two
-        // diverge in frozenBottom mode (e.g. small datasets) and hit-testing then
-        // resolves the wrong row
         rowOffset -= this.getFrozenRowOffset(this.actualFrozenRow);
       }
 
