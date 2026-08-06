@@ -1,7 +1,7 @@
 {
-  "name": "@slickgrid-universal/excel-export",
+  "name": "@slickgrid-universal/formula-plugin",
   "version": "10.9.0",
-  "description": "Excel Export (xls/xlsx) Service.",
+  "description": "Optional Formula Service for Slickgrid-Universal.",
   "type": "module",
   "main": "./dist/index.js",
   "exports": {
@@ -31,21 +31,13 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
-    "directory": "packages/excel-export"
+    "directory": "packages/formula-plugin"
   },
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "dependencies": {
-    "@slickgrid-universal/common": "workspace:*",
-    "@slickgrid-universal/utils": "workspace:*",
-    "excel-builder-vanilla": "^5.2.0"
-  },
-  "devDependencies": {
-    "@slickgrid-universal/event-pub-sub": "workspace:*"
-  },
-  "funding": {
-    "type": "ko_fi",
-    "url": "https://ko-fi.com/ghiscoding"
+    "@slickgrid-universal/binding": "workspace:*",
+    "@slickgrid-universal/common": "workspace:*"
   }
 }

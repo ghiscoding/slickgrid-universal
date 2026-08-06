@@ -1296,3 +1296,106 @@ li.hidden {
   bottom: 0;
   right: 0;
 }
+
+// ----------------------------------------------
+// Formula UX Helpers
+// ----------------------------------------------
+
+.excel-col-prefix {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.2rem;
+  margin-right: 0.35rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--slick-excel-col-prefix-bg-color, #{v.$slick-excel-col-prefix-bg-color});
+  color: var(--slick-excel-col-prefix-color, #{v.$slick-excel-col-prefix-color});
+  border: 1px solid var(--slick-excel-col-prefix-border-color, #{v.$slick-excel-col-prefix-border-color});
+  vertical-align: middle;
+}
+
+.formula-editor-input {
+  width: 100%;
+  min-height: 26px;
+  padding: var(--slick-text-editor-padding, 2px 4px);
+  border: var(--slick-text-editor-border, 1px solid #9ca3af);
+  border-radius: var(--slick-text-editor-border-radius, 3px);
+  background: var(--slick-text-editor-background, #fff);
+  color: var(--slick-text-editor-color, inherit);
+  line-height: 1.3;
+  white-space: pre-wrap;
+  word-break: break-word;
+  outline: none;
+
+  &:focus {
+    border-color: var(--slick-form-control-focus-border-color, #2563eb);
+    box-shadow: var(--slick-form-control-focus-box-shadow, 0 0 0 1px #2563eb);
+  }
+}
+
+.formula-token {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+.formula-token-color-1,
+.formula-token-color-7 {
+  color: #{v.$slick-formula-token-1-color};
+}
+.formula-token-color-2,
+.formula-token-color-8 {
+  color: #{v.$slick-formula-token-2-color};
+}
+.formula-token-color-3,
+.formula-token-color-9 {
+  color: #{v.$slick-formula-token-3-color};
+}
+.formula-token-color-4,
+.formula-token-color-10 {
+  color: #{v.$slick-formula-token-4-color};
+}
+.formula-token-color-5 {
+  color: #{v.$slick-formula-token-5-color};
+}
+.formula-token-color-6 {
+  color: #{v.$slick-formula-token-6-color};
+}
+
+.formula-ref-cell-color-1,
+.formula-ref-cell-color-7 {
+  background: #{v.$slick-formula-ref-cell-1-background-color} !important;
+  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-1-color};
+}
+.formula-ref-cell-color-2,
+.formula-ref-cell-color-8 {
+  background: #{v.$slick-formula-ref-cell-2-background-color} !important;
+  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-2-color};
+}
+.formula-ref-cell-color-3,
+.formula-ref-cell-color-9 {
+  background: #{v.$slick-formula-ref-cell-3-background-color} !important;
+  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-3-color};
+}
+.formula-ref-cell-color-4,
+.formula-ref-cell-color-10 {
+  background: #{v.$slick-formula-ref-cell-4-background-color} !important;
+  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-4-color};
+}
+.formula-ref-cell-color-5 {
+  background: #{v.$slick-formula-ref-cell-5-background-color} !important;
+  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-5-color};
+}
+.formula-ref-cell-color-6 {
+  background: #{v.$slick-formula-ref-cell-6-background-color} !important;
+  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-6-color};
+}

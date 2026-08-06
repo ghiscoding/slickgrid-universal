@@ -487,6 +487,9 @@ export interface GridOption<C extends Column = Column> {
   /** Do we want to enable the Excel Export? (if Yes, it will show up in the Grid Menu) */
   enableExcelExport?: boolean;
 
+  /** Do we want to enable formulas handled by an optional external resource? */
+  enableFormulas?: boolean;
+
   /** Do we want to enable Filters? */
   enableFiltering?: boolean;
 

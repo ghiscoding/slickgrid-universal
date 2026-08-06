@@ -1,0 +1,41 @@
+.grid46 {
+  --example46-row-index-bg: #ececec;
+  --example46-row-index-color: inherit;
+  --example46-sub-total-color: rgb(33, 80, 115);
+  --example46-taxes-color: rgb(198, 89, 17);
+  --example46-total-color: rgb(0, 90, 158);
+  --slick-text-editor-background: #fff;
+
+  .slick-row:not(.slick-group) > .cell-unselectable {
+    background: var(--example46-row-index-bg) !important;
+    color: var(--example46-row-index-color);
+    font-weight: bold;
+  }
+
+  .text-sub-total {
+    font-style: italic;
+    color: var(--example46-sub-total-color);
+  }
+
+  .text-taxes {
+    font-style: italic;
+    color: var(--example46-taxes-color);
+  }
+
+  .text-total {
+    font-weight: bold;
+    color: var(--example46-total-color);
+  }
+}
+
+body[data-theme='dark'] .grid46,
+.dark-mode .grid46,
+.slick-dark-mode .grid46 {
+  --example46-row-index-bg: #334155;
+  --example46-row-index-color: #e2e8f0;
+  --example46-sub-total-color: #93c5fd;
+  --example46-taxes-color: #fdba74;
+  --example46-total-color: #60a5fa;
+  --slick-text-editor-background: #111827;
+  --slick-cell-selected-editable-color: #333333;
+}
