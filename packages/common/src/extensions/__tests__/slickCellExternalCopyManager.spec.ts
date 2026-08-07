@@ -624,6 +624,35 @@ describe('CellExternalCopyManager', () => {
           });
         }));
 
+      it('should paste CRLF clipboard rows without creating phantom blank rows', () =>
+        new Promise((done: any) => {
+          vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce(null as any);
+          vi.spyOn(gridStub, 'getDataLength').mockReturnValue(3);
+          vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 1, row: 0 });
+          vi.spyOn(gridStub, 'getDataItem')
+            .mockReturnValueOnce({ firstName: 'John', lastName: 'Doe' })
+            .mockReturnValueOnce({ firstName: 'Jane', lastName: 'Smith' });
+
+          plugin.init(gridStub, { clearCopySelectionDelay: 1 });
+
+          const updateCellSpy = vi.spyOn(gridStub, 'updateCell');
+          const keyDownCtrlPasteEvent = new Event('keydown');
+          Object.defineProperty(keyDownCtrlPasteEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'key', { writable: true, configurable: true, value: 'v' });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+
+          (navigator.clipboard.readText as Mock).mockResolvedValueOnce('Alpha\r\nBeta');
+          gridStub.onKeyDown.notify({ cell: 1, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
+
+          setTimeout(() => {
+            expect(updateCellSpy).toHaveBeenCalledTimes(2);
+            expect(updateCellSpy).toHaveBeenNthCalledWith(1, 0, 1);
+            expect(updateCellSpy).toHaveBeenNthCalledWith(2, 1, 1);
+            done();
+          });
+        }));
+
       it('should Copy, Paste but not execute run clipCommandHandler when defined', () =>
         new Promise((done: any) => {
           const mockClipboardCommandHandler = vi.fn();
