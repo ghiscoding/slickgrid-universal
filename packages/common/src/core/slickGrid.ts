@@ -1125,6 +1125,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return this._options.frozenColumn! > -1;
   }
 
+  /** Whether the row renders in the bottom canvas (rows >= actualFrozenRow). */
+  protected isBottomBandRow(row: number): boolean {
+    return this.hasFrozenRows && row >= this.actualFrozenRow;
+  }
+
+  /** Whether the row index belongs to the frozen (pinned) row band. */
+  protected isFrozenRowIdx(row: number): boolean {
+    return this.hasFrozenRows && (this._options.frozenBottom ? row >= this.actualFrozenRow : row < this.actualFrozenRow);
+  }
+
   /** Register an external Plugin */
   registerPlugin<T extends SlickPlugin>(plugin: T): void {
     this.plugins.unshift(plugin);
@@ -1244,7 +1254,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const idx = typeof columnIdOrIdx === 'number' ? columnIdOrIdx : this.getColumnIndex(columnIdOrIdx);
 
-    const isBottomSide = this.hasFrozenRows && rowIndex >= this.actualFrozenRow + (this._options.frozenBottom ? 0 : 1);
+    const isBottomSide = this.isBottomBandRow(rowIndex);
     const isRightSide = this.hasFrozenColumns() && idx > this._options.frozenColumn!;
 
     return targetContainers[(isBottomSide ? 2 : 0) + (isRightSide ? 1 : 0)];
@@ -4190,7 +4200,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const dataLoading = row < dataLength && !d;
     let rowCss =
       'slick-row' +
-      (this.hasFrozenRows && row <= this._options.frozenRow! ? ' frozen' : '') +
+      (this.isFrozenRowIdx(row) ? ' frozen' : '') +
       (dataLoading ? ' loading' : '') +
       (row === this.activeRow && this._options.showCellSelection ? ' active' : '') +
       (row % 2 === 1 ? ' odd' : ' even');
@@ -4429,11 +4439,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         let i = +rowId;
         let removeFrozenRow = true;
 
-        if (
-          this.hasFrozenRows &&
-          ((this._options.frozenBottom && (i as unknown as number) >= this.actualFrozenRow) || // Frozen bottom rows
-            (!this._options.frozenBottom && (i as unknown as number) <= this.actualFrozenRow)) // Frozen top rows
-        ) {
+        if (this.isFrozenRowIdx(i)) {
           removeFrozenRow = false;
         }
 
@@ -5331,14 +5337,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected cleanUpCells(range: CellViewportRange, row: number): void {
-    // Ignore frozen rows (mirror the guard used by cleanupRows: the top-band
-    // disjunct must be qualified with !frozenBottom, otherwise in frozenBottom
-    // mode the two disjuncts cover every row and NO row is ever cell-cleaned)
-    if (
-      this.hasFrozenRows &&
-      ((this._options.frozenBottom && row >= this.actualFrozenRow) || // Frozen bottom rows
-        (!this._options.frozenBottom && row <= this.actualFrozenRow)) // Frozen top rows
-    ) {
+    if (this.isFrozenRowIdx(row)) {
       return;
     }
 
@@ -5575,7 +5574,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       divArrayR.forEach((elm) => xRight.appendChild(elm as HTMLElement));
 
       for (let i = 0, ii = rows.length; i < ii; i++) {
-        if (this.hasFrozenRows && rows[i] >= this.actualFrozenRow) {
+        if (this.isBottomBandRow(rows[i])) {
           if (this.hasFrozenColumns()) {
             if (this.rowsCache?.hasOwnProperty(rows[i]) && x.firstChild && xRight.firstChild) {
               this.rowsCache[rows[i]].rowNode = [x.firstChild as HTMLElement, xRight.firstChild as HTMLElement];
@@ -7174,11 +7173,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Boolean} doPaging - scroll when pagination is enabled
    */
   scrollRowIntoView(row: number, doPaging?: boolean): void {
-    if (
-      !this.hasFrozenRows ||
-      (!this._options.frozenBottom && row > this.actualFrozenRow - 1) ||
-      (this._options.frozenBottom && row < this.actualFrozenRow - 1)
-    ) {
+    if (!this.isFrozenRowIdx(row)) {
       const viewportScrollH = Utils.height(this._viewportScrollContainerY) as number;
 
       // if frozen row on top
@@ -7806,10 +7801,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       const isAddNewRow = pos.row === this.getDataLength();
 
-      if (
-        (!this._options.frozenBottom && pos.row >= this.actualFrozenRow) ||
-        (this._options.frozenBottom && pos.row < this.actualFrozenRow)
-      ) {
+      if (!this.isFrozenRowIdx(pos.row)) {
         this.scrollCellIntoView(pos.row, pos.cell, !isAddNewRow && this._options.emulatePagingWhenScrolling);
       }
       this.setActiveCellInternal(this.getCellNode(pos.row, pos.cell));
