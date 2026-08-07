@@ -45,7 +45,7 @@
       allowedVersions: '< 22.0.0',
     },
     {
-      // Exclude @lerna-lite/* from minimumReleaseAge since I'm the maintainer of Lerna-Lite
+      // Exclude all the packages that I personally maintain from minimumReleaseAge
       matchPackagePatterns: ['^@lerna-lite/', '^@excel-builder-vanilla/types$', '^excel-builder-vanilla$', '^multiple-select-vanilla$'],
       minimumReleaseAge: '0',
     },
