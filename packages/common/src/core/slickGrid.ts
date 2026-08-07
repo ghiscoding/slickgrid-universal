@@ -925,42 +925,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // footer Row
     if (this._options.createFooterRow) {
-      this._footerRowScrollerR = createDomElement('div', { className: 'slick-footerrow slick-state-default' }, this._paneTopR);
-      this._footerRowScrollerL = createDomElement('div', { className: 'slick-footerrow slick-state-default' }, this._paneTopL);
-
-      this._footerRowScroller = [this._footerRowScrollerL, this._footerRowScrollerR];
-
-      this._footerRowSpacerL = createDomElement(
-        'div',
-        { style: { display: 'block', height: '1px', position: 'absolute', top: '0px', left: '0px' } },
-        this._footerRowScrollerL
-      );
-      Utils.width(this._footerRowSpacerL, canvasWithScrollbarWidth);
-      this._footerRowSpacerR = createDomElement(
-        'div',
-        { style: { display: 'block', height: '1px', position: 'absolute', top: '0px', left: '0px' } },
-        this._footerRowScrollerR
-      );
-      Utils.width(this._footerRowSpacerR, canvasWithScrollbarWidth);
-
-      this._footerRowL = createDomElement(
-        'div',
-        { className: 'slick-footerrow-columns slick-footerrow-columns-left' },
-        this._footerRowScrollerL
-      );
-      this._footerRowR = createDomElement(
-        'div',
-        { className: 'slick-footerrow-columns slick-footerrow-columns-right' },
-        this._footerRowScrollerR
-      );
-
-      this._footerRow = [this._footerRowL, this._footerRowR];
-
-      if (!this._options.showFooterRow) {
-        this._footerRowScroller.forEach((scroller) => {
-          Utils.hide(scroller);
-        });
-      }
+      this.materializeFooterRow();
     }
 
     this._focusSink2 = this._focusSink.cloneNode(true) as HTMLDivElement;
@@ -1797,6 +1762,56 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           grid: this,
         });
       }
+    }
+  }
+
+  /**
+   * Build footer row DOM lazily when footer row creation is enabled at runtime.
+   */
+  protected materializeFooterRow(): void {
+    const canvasWithScrollbarWidth = this.getCanvasWidth() + (this.scrollbarDimensions?.width || 0);
+
+    this._footerRowScrollerR = createDomElement('div', { className: 'slick-footerrow slick-state-default' }, this._paneTopR);
+    this._footerRowScrollerL = createDomElement('div', { className: 'slick-footerrow slick-state-default' }, this._paneTopL);
+    this._footerRowScroller = [this._footerRowScrollerL, this._footerRowScrollerR];
+
+    this._footerRowSpacerL = createDomElement(
+      'div',
+      { style: { display: 'block', height: '1px', position: 'absolute', top: '0px', left: '0px' } },
+      this._footerRowScrollerL
+    );
+    Utils.width(this._footerRowSpacerL, canvasWithScrollbarWidth);
+
+    this._footerRowSpacerR = createDomElement(
+      'div',
+      { style: { display: 'block', height: '1px', position: 'absolute', top: '0px', left: '0px' } },
+      this._footerRowScrollerR
+    );
+    Utils.width(this._footerRowSpacerR, canvasWithScrollbarWidth);
+
+    this._footerRowL = createDomElement(
+      'div',
+      { className: 'slick-footerrow-columns slick-footerrow-columns-left' },
+      this._footerRowScrollerL
+    );
+    this._footerRowR = createDomElement(
+      'div',
+      { className: 'slick-footerrow-columns slick-footerrow-columns-right' },
+      this._footerRowScrollerR
+    );
+    this._footerRow = [this._footerRowL, this._footerRowR];
+
+    if (!this._options.showFooterRow) {
+      this._footerRowScroller.forEach((scroller) => {
+        Utils.hide(scroller);
+      });
+    }
+
+    // Bind footer events only when footer row is created after init.
+    if (this.initialized) {
+      this._bindingEventService.bind(this._footerRow, 'contextmenu', this.handleFooterContextMenu.bind(this) as EventListener);
+      this._bindingEventService.bind(this._footerRow, 'click', this.handleFooterClick.bind(this) as EventListener);
+      this._bindingEventService.bind(this._footerRowScroller, 'scroll', this.handleFooterRowScroll.bind(this) as EventListener);
     }
   }
 
@@ -3731,6 +3746,21 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
     this.validateAndEnforceOptions();
     this.setFrozenOptions();
+
+    if (this._options.createFooterRow) {
+      if (!this._footerRow) {
+        this.materializeFooterRow();
+      }
+      if (this._options.showFooterRow) {
+        Utils.show(this._footerRowScroller);
+      } else {
+        Utils.hide(this._footerRowScroller);
+      }
+    } else if (this._footerRowScroller) {
+      this._footerRowScroller.forEach((scroller) => {
+        Utils.hide(scroller);
+      });
+    }
 
     // when user changed frozen row option, we need to force a recalculation of each viewport heights
     if (this._options.frozenBottom !== undefined) {
