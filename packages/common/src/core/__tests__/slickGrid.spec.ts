@@ -5581,6 +5581,28 @@ describe('SlickGrid core file', () => {
       expect(renderSpy).toHaveBeenCalledTimes(3);
     });
 
+    it('should route off-viewport alwaysRenderColumn cell to right canvas when frozen columns are enabled', () => {
+      const columnsWithAlwaysRender = [
+        { id: 'c0', field: 'c0', name: 'Col 0' },
+        { id: 'c1', field: 'c1', name: 'Col 1' },
+        { id: 'c2', field: 'c2', name: 'Col 2', alwaysRenderColumn: true },
+      ] as Column[];
+      const dataWithSingleRow = [{ id: 0, c0: '0', c1: '1', c2: '2' }];
+      grid = new SlickGrid<any, Column>(container, dataWithSingleRow, columnsWithAlwaysRender, { ...defaultOptions, frozenColumn: 0 });
+
+      vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 260, rightPx: 340, bottom: 20, top: 0 });
+      grid.render();
+
+      const alwaysRenderNode = grid.getCellNode(0, 2);
+      const alwaysRenderCanvas = alwaysRenderNode?.closest('.grid-canvas');
+      const frozenNode = grid.getCellNode(0, 0);
+      const frozenCanvas = frozenNode?.closest('.grid-canvas');
+
+      expect(alwaysRenderNode).toBeTruthy();
+      expect(alwaysRenderCanvas?.classList.contains('grid-canvas-right')).toBeTruthy();
+      expect(frozenCanvas?.classList.contains('grid-canvas-left')).toBeTruthy();
+    });
+
     it('should scroll when calling scrollCellIntoView() with row having colspan returned from DataView getItemMetadata()', () => {
       const columnsCopy = [...columns];
       columnsCopy[1].colspan = '*';
