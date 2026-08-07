@@ -322,6 +322,12 @@
     display: flex;
   }
 
+  [dir='rtl'] .slick-preheader-container,
+  [dir='rtl'] .slick-header-container,
+  [dir='rtl'] .slick-headerrow {
+    flex-direction: row-reverse;
+  }
+
   .slick-pane-top {
     box-sizing: border-box;
     border-top: var(--slick-pane-top-border-top, v.$slick-pane-top-border-top);
@@ -409,7 +415,7 @@
     border-left: 0px !important;
     border-top: 0px !important;
     border-bottom: 0px !important;
-    float: left;
+    // float: left;
   }
 
   .slick-header-column {

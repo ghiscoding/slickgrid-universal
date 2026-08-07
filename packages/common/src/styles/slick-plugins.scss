@@ -257,6 +257,11 @@ li.hidden {
   }
 }
 
+[dir='rtl'] .slick-grid-menu-button {
+  right: auto;
+  left: 0;
+}
+
 .slick-grid-menu-list {
   li {
     width: auto;
@@ -480,7 +485,7 @@ li.hidden {
    * This makes all "float:right" elements after it spill over to the next line
    * display way below the lower boundary of the column thus hiding them.
    */
-  float: left;
+  // float: left;
   margin-bottom: 100px;
 }
 

@@ -1,0 +1,8 @@
+.grid-rtl {
+  direction: rtl;
+  
+  .slick-resizable-handle {
+    right: auto !important;
+    left: 0 !important;
+  }
+}

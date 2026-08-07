@@ -1,0 +1,24 @@
+<h2>
+  Example 57: RTL (Right-to-Left) Support
+  <span class="float-end">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example57.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+</h2>
+
+<div class="subtitle">Basic grid with RTL (Right-to-Left) support enabled for RTL languages</div>
+
+<div class="grid-rtl" dir="rtl" style="width: 100%">
+  <aurelia-slickgrid
+    grid-id="grid57"
+    columns.bind="columns"
+    options.bind="gridOptions"
+    dataset.bind="dataset"
+    asg-on-aurelia-grid-created="aureliaGridReady($event.detail)"
+  ></aurelia-slickgrid>
+</div>
