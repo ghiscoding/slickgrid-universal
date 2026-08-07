@@ -1694,6 +1694,49 @@ describe('SlickGrid core file', () => {
       expect(grid.getFooterRowColumn('firstName')).toBeUndefined();
     });
 
+    it('should lazily create footer row when "createFooterRow" is enabled at runtime', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, {
+        ...defaultOptions,
+        createFooterRow: false,
+        showFooterRow: true,
+      });
+      grid.init();
+
+      const onFooterRowCellRenderedSpy = vi.spyOn(grid.onFooterRowCellRendered, 'notify');
+
+      expect(grid.getFooterRow()).toBeFalsy();
+      expect(container.querySelector('.slick-footerrow')).toBeFalsy();
+
+      expect(() => grid.setOptions({ createFooterRow: true, showFooterRow: true })).not.toThrow();
+
+      let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms).toBeTruthy();
+      expect(footerElms.length).toBe(2);
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+      expect(grid.getFooterRow()).toBeTruthy();
+      expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
+      expect(onFooterRowCellRenderedSpy).toHaveBeenCalledTimes(2);
+
+      grid.setFooterRowVisibility(false);
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setOptions({ createFooterRow: false });
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setOptions({ createFooterRow: true, showFooterRow: true });
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+    });
+
     it('should show footer when "showFooterRow" is enabled but not return any row when columns to the right are outside the range', () => {
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name' },
