@@ -66,9 +66,6 @@ catalogs:
     dequal:
       specifier: ^2.0.3
       version: 2.0.3
-    dompurify:
-      specifier: ^3.4.12
-      version: 3.4.12
     globals:
       specifier: ^17.8.0
       version: 17.8.0
@@ -354,7 +351,7 @@ importers:
         version: 1.15.0(cypress@15.19.0)
       dompurify:
         specifier: 'catalog:'
-        version: 3.4.12
+        version: 3.4.13
       sass:
         specifier: 'catalog:'
         version: 1.102.0
@@ -426,7 +423,7 @@ importers:
         version: 5.3.8(@popperjs/core@2.11.8)
       dompurify:
         specifier: 'catalog:'
-        version: 3.4.12
+        version: 3.4.13
       i18next:
         specifier: 'catalog:'
         version: 25.10.10(typescript@6.0.3)
@@ -541,7 +538,7 @@ importers:
         version: link:../../packages/text-export
       dompurify:
         specifier: 'catalog:'
-        version: 3.4.12
+        version: 3.4.13
       react:
         specifier: 'catalog:'
         version: 19.2.8
@@ -662,7 +659,7 @@ importers:
         version: 1.0.4
       dompurify:
         specifier: 'catalog:'
-        version: 3.4.12
+        version: 3.4.13
       multiple-select-vanilla:
         specifier: 'catalog:'
         version: 5.2.1
@@ -747,7 +744,7 @@ importers:
         version: 5.3.8(@popperjs/core@2.11.8)
       dompurify:
         specifier: 'catalog:'
-        version: 3.4.12
+        version: 3.4.13
       i18next:
         specifier: 'catalog:'
         version: 25.10.10(typescript@6.0.3)
@@ -1051,7 +1048,7 @@ importers:
         version: 1.15.0(cypress@15.19.0)
       dompurify:
         specifier: 'catalog:'
-        version: 3.4.12
+        version: 3.4.13
       globals:
         specifier: 'catalog:'
         version: 17.8.0
@@ -1140,7 +1137,7 @@ importers:
         version: 2.0.0-rc.2
       dompurify:
         specifier: 'catalog:'
-        version: 3.4.12
+        version: 3.4.13
       native-copyfiles:
         specifier: 'catalog:'
         version: 2.0.3
@@ -1216,7 +1213,7 @@ importers:
         version: 6.0.5(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.7(supports-color@8.1.1))(@babel/runtime@7.29.7)(rolldown@1.2.1)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(less@4.8.1(supports-color@8.1.1))(sass@1.102.0)(yaml@2.9.0)))(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(less@4.8.1(supports-color@8.1.1))(sass@1.102.0)(yaml@2.9.0))
       dompurify:
         specifier: 'catalog:'
-        version: 3.4.12
+        version: 3.4.13
       globals:
         specifier: 'catalog:'
         version: 17.8.0
@@ -5319,8 +5316,8 @@ packages:
     resolution: {integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==}
     engines: {node: '>= 4'}
 
-  dompurify@3.4.12:
-    resolution: {integrity: sha512-zQvGet8Z2sWbQhCmfFz/T5QWH2oBmjnqK3qvOjaqaNLrLEF912WamU+ohnTp0TCep/MFVHpdJuCZEdFOdTnEFg==}
+  dompurify@3.4.13:
+    resolution: {integrity: sha512-2vmYIoqjze2d+kakP8S/nS5shfsl587kzwEjcGlTdiksUVgFHnFCsLYDVj/JNqJVOQZGSYBTmuycv0PodwmnMQ==}
 
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
@@ -12504,7 +12501,7 @@ snapshots:
     dependencies:
       domelementtype: 2.3.0
 
-  dompurify@3.4.12:
+  dompurify@3.4.13:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -13343,7 +13340,7 @@ snapshots:
     optionalDependencies:
       canvg: 3.0.11
       core-js: 3.49.0
-      dompurify: 3.4.12
+      dompurify: 3.4.13
       html2canvas: 1.4.1
 
   jsprim@2.0.2:
