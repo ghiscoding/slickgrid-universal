@@ -2137,6 +2137,7 @@ describe('ExcelExportService', () => {
         getColumns: vi.fn().mockReturnValue([{ id: 'id', field: 'id', width: 80 }]),
       };
       svc.init(grid, container);
+      (svc as any)._excelExportOptions = { customColumnWidth: 10 };
       const styles = (svc as any).getColumnStyles(grid.getColumns());
       expect(styles[0]).toEqual(expect.objectContaining({ bestFit: true }));
     });
@@ -2606,9 +2607,72 @@ describe('ExcelExportService', () => {
     it('getColumnStyles should include grouping width style when grouping is present', () => {
       vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([{ getter: 'id' }] as any);
       service.init(gridStub, container);
+      (service as any)._excelExportOptions = { customColumnWidth: 10 };
       const styles = (service as any).getColumnStyles(mockColumns);
       expect(styles[0]).toEqual(expect.objectContaining({ bestFit: true }));
       expect(styles.length).toBeGreaterThanOrEqual(mockColumns.length);
+    });
+
+    it('getColumnStyles should keep using customColumnWidth by default even when grid columns have widths', () => {
+      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+      service.init(gridStub, container);
+      (service as any)._excelExportOptions = { customColumnWidth: 12 };
+      const styles = (service as any).getColumnStyles([{ id: 'title', field: 'title', width: 120 } as Column]);
+
+      expect(styles[0]).toEqual(expect.objectContaining({ width: 12 }));
+    });
+
+    it('getColumnStyles should use grid column width when includeColumnWidth is enabled', () => {
+      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+      service.init(gridStub, container);
+      (service as any)._excelExportOptions = { customColumnWidth: 12, includeColumnWidth: true };
+      const styles = (service as any).getColumnStyles([{ id: 'title', field: 'title', width: 120 } as Column]);
+
+      expect(styles[0]).toEqual(expect.objectContaining({ width: 16.43 }));
+    });
+
+    it('getColumnStyles should prioritize excelExportOptions.width over includeColumnWidth and customColumnWidth', () => {
+      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+      service.init(gridStub, container);
+      (service as any)._excelExportOptions = { customColumnWidth: 12, includeColumnWidth: true };
+      const styles = (service as any).getColumnStyles([{ id: 'title', field: 'title', width: 120, excelExportOptions: { width: 40 } } as Column]);
+
+      expect(styles[0]).toEqual(expect.objectContaining({ width: 40 }));
+    });
+
+    it('getColumnStyles should convert columnDef.width (px) to Excel width units when includeColumnWidth is enabled', () => {
+      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+      service.init(gridStub, container);
+      (service as any)._excelExportOptions = { customColumnWidth: 12, includeColumnWidth: true };
+      const styles = (service as any).getColumnStyles([{ id: 'title', field: 'title', width: 120, minWidth: 130, maxWidth: 135 } as Column]);
+
+      expect(styles[0]).toEqual(expect.objectContaining({ width: 16.43 }));
+    });
+
+    it('getColumnStyles should convert 70px to expected Excel width approximation', () => {
+      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+      service.init(gridStub, container);
+      (service as any)._excelExportOptions = { includeColumnWidth: true };
+      const styles = (service as any).getColumnStyles([{ id: 'title', field: 'title', width: 70 } as Column]);
+
+      expect(styles[0]).toEqual(expect.objectContaining({ width: 9.29 }));
+    });
+
+    it('getColumnStyles should return width 0 when includeColumnWidth is enabled and column width is Infinity', () => {
+      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+      service.init(gridStub, container);
+      (service as any)._excelExportOptions = { includeColumnWidth: true };
+      const styles = (service as any).getColumnStyles([{ id: 'title', field: 'title', width: Number.POSITIVE_INFINITY } as Column]);
+
+      expect(styles[0]).toEqual(expect.objectContaining({ width: 0 }));
+    });
+
+    it('convertPixelToExcelWidth should return 0 for non-finite and non-positive values', () => {
+      service.init(gridStub, container);
+
+      expect((service as any).convertPixelToExcelWidth(0)).toBe(0);
+      expect((service as any).convertPixelToExcelWidth(-10)).toBe(0);
+      expect((service as any).convertPixelToExcelWidth(Number.NaN)).toBe(0);
     });
 
     it('getColumnHeaderData should prepend Group By title when grouping exists', () => {

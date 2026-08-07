@@ -55,6 +55,12 @@ export interface PdfExportOption {
   cellPadding?: number;
   /** Defaults to false, should we also include hidden properties in the export? */
   includeHidden?: boolean;
+
+  /**
+   * When true, include each grid column `width` (pixels) in the PDF export when no `pdfExportOptions.width` is provided on the column.
+   * This is disabled by default to preserve backward compatibility with existing exports.
+   */
+  includeColumnWidth?: boolean;
   /**
    * Optional PDF document properties (metadata) set via `doc.setDocumentProperties()`.
    * These appear in the PDF viewer's "Document Properties" dialog.

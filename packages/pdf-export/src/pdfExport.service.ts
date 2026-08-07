@@ -40,6 +40,7 @@ const DEFAULT_EXPORT_OPTIONS: PdfExportOption = {
   alternateRowColor: [245, 245, 245],
   cellPadding: 4,
 };
+const PX_TO_PT_CONVERSION_FACTOR = 0.75;
 
 export interface GroupedHeaderSpan {
   title: string;
@@ -47,7 +48,6 @@ export interface GroupedHeaderSpan {
 }
 
 // Utility to resolve and merge column/grid export options
-
 function resolveColumnExportOptions(columnDef: Column, globalOptions: PdfExportOption): PdfExportOption {
   const config = { ...globalOptions, ...(columnDef.pdfExportOptions || {}) };
 
@@ -70,6 +70,10 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   protected _pubSubService!: PubSubService | null;
   protected _translaterService: TranslaterService | undefined;
   protected _timer?: any;
+
+  protected convertPixelToPdfPoint(pixelValue: number): number {
+    return Math.round(pixelValue * PX_TO_PT_CONVERSION_FACTOR * 100) / 100;
+  }
 
   /** PdfExportService class name which is use to find service instance in the external registered services */
   readonly pluginName = 'PdfExportService';
@@ -215,7 +219,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
             let cachedRowHeight = rowHeightByRowIndex.get(rowIdx);
             if (cachedRowHeight === undefined) {
-              cachedRowHeight = Math.round(this._grid.getRowHeight(rowIdx) * 0.75 * 100) / 100;
+              cachedRowHeight = this.convertPixelToPdfPoint(this._grid.getRowHeight(rowIdx));
               rowHeightByRowIndex.set(rowIdx, cachedRowHeight);
             }
 
@@ -223,15 +227,32 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
           };
 
           // Add table (using jsPDF-AutoTable if available, else fallback to manual)
+          const includeColumnWidth = this._exportOptions.includeColumnWidth === true;
+          const visibleColumns = columns.filter((col: Column) => !col.excludeFromExport && (col.width === undefined || col.width > 0));
           if ((doc as any).autoTable) {
             // Build per-column styles for AutoTable from each column's pdfExportOptions
-            const visibleColumns = columns.filter((col: Column) => !col.excludeFromExport && (col.width === undefined || col.width > 0));
-            const columnStyles: Record<number, { halign: string }> = {};
+            const columnStyles: Record<number, { halign?: string; cellWidth?: number }> = {};
             const groupOffset = this._hasGroupedItems ? 1 : 0;
             for (const [idx, col] of visibleColumns.entries()) {
               const colExportOpts = resolveColumnExportOptions(col, this._exportOptions);
-              if (colExportOpts.textAlign && colExportOpts.textAlign !== (this._exportOptions.textAlign || 'left')) {
-                columnStyles[idx + groupOffset] = { halign: colExportOpts.textAlign };
+              const alignOverride = colExportOpts.textAlign && colExportOpts.textAlign !== (this._exportOptions.textAlign || 'left');
+              const resolvedWidth =
+                typeof colExportOpts.width === 'number' && colExportOpts.width > 0
+                  ? colExportOpts.width
+                  : includeColumnWidth && typeof col.width === 'number' && col.width > 0
+                    ? this.convertPixelToPdfPoint(col.width)
+                    : undefined;
+
+              if (alignOverride || resolvedWidth !== undefined) {
+                const styleIdx = idx + groupOffset;
+                const styleDef = columnStyles[styleIdx] ?? {};
+                if (alignOverride) {
+                  styleDef.halign = colExportOpts.textAlign;
+                }
+                if (resolvedWidth !== undefined) {
+                  styleDef.cellWidth = resolvedWidth;
+                }
+                columnStyles[styleIdx] = styleDef;
               }
             }
 
@@ -334,10 +355,23 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             // Use custom width if provided, else equal width
             let colWidths = Array(colCount).fill(tableWidth / colCount);
             for (let i = 0; i < colCount; i++) {
-              const colId = columns[i]?.id;
+              if (this._hasGroupedItems && i === 0) {
+                continue;
+              }
+
+              const dataColIdx = this._hasGroupedItems ? i - 1 : i;
+              const colDef = visibleColumns[dataColIdx];
+              const colId = colDef?.id;
               const colOpt = colId ? columnExportOptionsCache[colId] : undefined;
-              if (colOpt && colOpt.width && typeof colOpt.width === 'number') {
-                colWidths[i] = colOpt.width;
+              const resolvedWidth =
+                typeof colOpt?.width === 'number' && colOpt.width > 0
+                  ? colOpt.width
+                  : includeColumnWidth && typeof colDef?.width === 'number' && colDef.width > 0
+                    ? this.convertPixelToPdfPoint(colDef.width)
+                    : undefined;
+
+              if (resolvedWidth !== undefined) {
+                colWidths[i] = resolvedWidth;
               }
             }
             // If any custom widths, adjust last column to fill remaining space so sum matches tableWidth

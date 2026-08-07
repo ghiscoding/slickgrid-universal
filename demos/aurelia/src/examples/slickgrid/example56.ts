@@ -18,6 +18,8 @@ export class Example56 {
   dataset: TaskItem[] = [];
   gridOptions!: GridOption;
   isCompact = false;
+  excelExportService = new ExcelExportService();
+  pdfExportService = new PdfExportService();
 
   constructor() {
     this.defineGrid();
@@ -49,6 +51,7 @@ export class Example56 {
         id: 'rowHeight',
         name: 'Height',
         field: 'rowHeight',
+        exportWithFormatter: true,
         formatter: (row, _cell, _value, _coldef, _dataContext, grid) => {
           return `${grid.getItemMetadaWhenExists(row)?.height ?? 0}px`;
         },
@@ -62,14 +65,19 @@ export class Example56 {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
       enableVariableRowHeight: true,
-      externalResources: [new ExcelExportService(), new PdfExportService()],
+      externalResources: [this.excelExportService, this.pdfExportService],
       excelExportOptions: {
         // export variable row height will also be reflected in the export
         // but it can be disabled by setting `includeVariableRowHeight` to false
         // includeVariableRowHeight: false, // export all rows at default height
+
+        // we can opt-in to also use same column width grid vs Excel export (it's disabled by default)
+        includeColumnWidth: true,
       },
       pdfExportOptions: {
         pageOrientation: 'landscape',
+        // we can opt-in to also use same column width grid vs PDF export (it's disabled by default)
+        includeColumnWidth: true,
       },
       rowHeight: 40,
       frozenRow: 2,
@@ -118,5 +126,16 @@ export class Example56 {
       });
     }
     return data;
+  }
+
+  exportToExcel() {
+    this.excelExportService.exportToExcel({
+      filename: 'export',
+      format: 'xlsx',
+    });
+  }
+
+  exportToPdf() {
+    this.pdfExportService.exportToPdf({ filename: 'export' });
   }
 }

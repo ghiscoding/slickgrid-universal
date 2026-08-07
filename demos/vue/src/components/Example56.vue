@@ -17,6 +17,8 @@ const gridOptions = ref<GridOption>();
 const columns: Ref<Column[]> = ref([]);
 const dataset = ref<TaskItem[]>([]);
 const isCompact = ref(false);
+const excelExportService = new ExcelExportService();
+const pdfExportService = new PdfExportService();
 let vueGrid!: SlickgridVueInstance;
 
 onBeforeMount(() => {
@@ -46,6 +48,7 @@ function defineGrid() {
       id: 'rowHeight',
       name: 'Height',
       field: 'rowHeight',
+      exportWithFormatter: true,
       formatter: (row, _cell, _value, _coldef, _dataContext, grid) => {
         return `${grid.getItemMetadaWhenExists(row)?.height ?? 0}px`;
       },
@@ -60,14 +63,19 @@ function defineGrid() {
     enableTextSelectionOnCells: true,
     enableVariableRowHeight: true,
     rowHeight: 40,
-    externalResources: [new ExcelExportService(), new PdfExportService()],
+    externalResources: [excelExportService, pdfExportService],
     excelExportOptions: {
       // export variable row height will also be reflected in the export
       // but it can be disabled by setting `includeVariableRowHeight` to false
       // includeVariableRowHeight: false, // export all rows at default height
+
+      // we can opt-in to also use same column width grid vs Excel export (it's disabled by default)
+      includeColumnWidth: true,
     },
     pdfExportOptions: {
       pageOrientation: 'landscape',
+      // we can opt-in to also use same column width grid vs PDF export (it's disabled by default)
+      includeColumnWidth: true,
     },
     frozenRow: 2,
     gridHeight: 560,
@@ -116,6 +124,17 @@ function getData(itemCount: number): TaskItem[] {
   }
   return data;
 }
+
+function exportToExcel() {
+  excelExportService.exportToExcel({
+    filename: 'Export',
+    format: 'xlsx',
+  });
+}
+
+function exportToPdf() {
+  pdfExportService.exportToPdf({ filename: 'Export' });
+}
 </script>
 
 <template>
@@ -139,6 +158,12 @@ function getData(itemCount: number): TaskItem[] {
 
   <div class="row" style="margin-bottom: 6px">
     <div class="col-md-12">
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="export-excel-btn" @click="exportToExcel()">
+        <i class="mdi mdi-file-excel-outline text-success"></i> Export to Excel
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="export-pdf-btn" @click="exportToPdf()">
+        <i class="mdi mdi-file-pdf-outline text-danger"></i> Export to PDF
+      </button>
       <button class="btn btn-outline-secondary btn-sm btn-icon" @click="toggleDensity()" data-test="toggle-density">
         <span class="mdi mdi-flip-vertical"></span>
         <span> Toggle Compact Density</span>
