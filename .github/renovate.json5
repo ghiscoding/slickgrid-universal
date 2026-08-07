@@ -23,7 +23,7 @@
     },
     // Babel new major versions fail in Angular, let's ignore those
     {
-      packageNames: ['@babel/core', '@babel/plugin-proposal-decorators', 'undici'],
+      packageNames: ['@babel/core', 'undici'],
       allowedVersions: '< 8.0.0',
     },
     // jsdom v30 seems to cause test regressions in slickgrid.ts because of `getComputedStyle()` changes
