@@ -1326,8 +1326,8 @@ importers:
   packages/common:
     dependencies:
       '@excel-builder-vanilla/types':
-        specifier: ^5.2.0
-        version: 5.2.0
+        specifier: ^5.2.1
+        version: 5.2.1
       '@formkit/tempo':
         specifier: 'catalog:'
         version: 1.1.0
@@ -1445,8 +1445,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       excel-builder-vanilla:
-        specifier: ^5.2.0
-        version: 5.2.0
+        specifier: ^5.2.2
+        version: 5.2.2
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
@@ -2368,8 +2368,8 @@ packages:
     resolution: {integrity: sha512-+CNAzxglkrpNf/kKywqQfk74QjtceuOE7Qm+AF8miRvPF/wmmK5+OJOgVh3AVTT3RP2mH3+FOaxlE5v72owk0A==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
-  '@excel-builder-vanilla/types@5.2.0':
-    resolution: {integrity: sha512-/gxZoYJN1f1Kom5zkcx4s7HklCeSK3v+W7XmW65OVIcK1J4sowu2NNjkTc/OgGWH/82y2p+TZTPMAFpJ3T/zCw==}
+  '@excel-builder-vanilla/types@5.2.1':
+    resolution: {integrity: sha512-JHwykCztVTsJiR0+o/5Du7cei4L8gvJIbR9DwdpWJDFttCGh8hCyfCHB6dEyJrN6LZQwZvcwhHEM8oJ+4PDtmQ==}
 
   '@exodus/bytes@1.15.1':
     resolution: {integrity: sha512-S6mL0yNB/Abt9Ei4tq8gDhcczc4S3+vQ4ra7vxnAf+YHC02srtqxKKZghx2Dq6p0e66THKwR6r8N6P95wEty7Q==}
@@ -5581,8 +5581,8 @@ packages:
     resolution: {integrity: sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==}
     engines: {node: '>=18.0.0'}
 
-  excel-builder-vanilla@5.2.0:
-    resolution: {integrity: sha512-kWvhUe4HdVmj7O6AYfjTURkNf/1ZGZsrgQ8ESCB3nzVE+BvpedZbJaLURbGUP2BBIaO+6N8lyMYoRhIHpavMew==}
+  excel-builder-vanilla@5.2.2:
+    resolution: {integrity: sha512-uDTc8MyINnc+IxMMPNg4xWAMqboFnckbnCvi/819VgwZzGh/ZqHzA5NHxxq80B8EAlJ7gAzeOa/gKB+MDfERJw==}
 
   execa@4.1.0:
     resolution: {integrity: sha512-j5W0//W7f8UxAn8hXVnwG8tLwdiUy4FJLcSupCg6maBYZDpyBvTApK7KyuI4bKj8KOh1r2YH+6ucuYtJv1bTZA==}
@@ -9032,7 +9032,7 @@ snapshots:
       '@eslint/core': 1.2.1
       levn: 0.4.1
 
-  '@excel-builder-vanilla/types@5.2.0': {}
+  '@excel-builder-vanilla/types@5.2.1': {}
 
   '@exodus/bytes@1.15.1': {}
 
@@ -12835,7 +12835,7 @@ snapshots:
     dependencies:
       eventsource-parser: 3.1.0
 
-  excel-builder-vanilla@5.2.0:
+  excel-builder-vanilla@5.2.2:
     dependencies:
       fflate: 0.8.3
 
