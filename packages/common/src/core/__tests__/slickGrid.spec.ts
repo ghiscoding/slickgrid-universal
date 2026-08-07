@@ -5603,6 +5603,95 @@ describe('SlickGrid core file', () => {
       expect(frozenCanvas?.classList.contains('grid-canvas-left')).toBeTruthy();
     });
 
+    it('should use bottom-right and top-right scroll containers when frozen columns with frozen-bottom rows are enabled', () => {
+      const dataWithThreeRows = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 2, firstName: 'Paul', lastName: 'Doe', age: 26 },
+      ];
+      grid = new SlickGrid<any, Column>(container, dataWithThreeRows, columns, {
+        ...defaultOptions,
+        frozenColumn: 0,
+        frozenRow: 1,
+        frozenBottom: true,
+      });
+
+      expect((grid as any)._viewportScrollContainerX).toBe((grid as any)._viewportBottomR);
+      expect((grid as any)._viewportScrollContainerY).toBe((grid as any)._viewportTopR);
+    });
+
+    it('should sync top-left viewport scrollLeft when scrolling X on a regular grid with frozen rows', () => {
+      const dataWithThreeRows = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 2, firstName: 'Paul', lastName: 'Doe', age: 26 },
+      ];
+      grid = new SlickGrid<any, Column>(container, dataWithThreeRows, columns, {
+        ...defaultOptions,
+        frozenRow: 1,
+      });
+
+      grid.scrollToX(42);
+
+      expect((grid as any)._viewportTopL.scrollLeft).toBe(42);
+      expect((grid as any)._headerRowScrollerL.scrollLeft).toBe(42);
+    });
+
+    it('should size bottom-right canvas when frozen-bottom rows and frozen columns are enabled', () => {
+      const dataWithThreeRows = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 2, firstName: 'Paul', lastName: 'Doe', age: 26 },
+      ];
+      grid = new SlickGrid<any, Column>(container, dataWithThreeRows, columns, {
+        ...defaultOptions,
+        frozenColumn: 0,
+        frozenRow: 1,
+        frozenBottom: true,
+      });
+
+      grid.resizeCanvas();
+
+      expect((grid as any)._canvasBottomR.style.height).toBe(`${(grid as any).frozenRowsHeight}px`);
+    });
+
+    it('should sync bottom-left vertical scroll on mousewheel when frozen columns with top-frozen rows are enabled', () => {
+      const dataWithThreeRows = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 2, firstName: 'Paul', lastName: 'Doe', age: 26 },
+      ];
+      grid = new SlickGrid<any, Column>(container, dataWithThreeRows, columns, {
+        ...defaultOptions,
+        frozenColumn: 0,
+        frozenRow: 1,
+        frozenBottom: false,
+      });
+
+      const viewportBottomR = (grid as any)._viewportBottomR as HTMLDivElement;
+      const viewportBottomL = (grid as any)._viewportBottomL as HTMLDivElement;
+      const viewportTopL = (grid as any)._viewportTopL as HTMLDivElement;
+      Object.defineProperty(viewportBottomR, 'scrollHeight', { writable: true, value: 600 });
+      Object.defineProperty(viewportBottomR, 'clientHeight', { writable: true, value: 100 });
+      Object.defineProperty(viewportBottomR, 'scrollWidth', { writable: true, value: 800 });
+      Object.defineProperty(viewportBottomR, 'clientWidth', { writable: true, value: 200 });
+      Object.defineProperty(viewportBottomR, 'scrollTop', { writable: true, value: 30 });
+      Object.defineProperty(viewportBottomR, 'scrollLeft', { writable: true, value: 0 });
+      Object.defineProperty(viewportBottomL, 'scrollTop', { writable: true, value: 0 });
+      Object.defineProperty(viewportTopL, 'scrollTop', { writable: true, value: 0 });
+
+      (grid as any).scrollTop = 30;
+      (grid as any).scrollLeft = 0;
+      (grid as any).prevScrollTop = 0;
+      (grid as any).prevScrollLeft = 0;
+      (grid as any).lastRenderedScrollTop = 0;
+      (grid as any).lastRenderedScrollLeft = 0;
+      (grid as any)._handleScroll('mousewheel');
+
+      expect((grid as any)._viewportBottomL.scrollTop).toBe(30);
+      expect((grid as any)._viewportTopL.scrollTop).toBe(0);
+    });
+
     it('should scroll when calling scrollCellIntoView() with row having colspan returned from DataView getItemMetadata()', () => {
       const columnsCopy = [...columns];
       columnsCopy[1].colspan = '*';
