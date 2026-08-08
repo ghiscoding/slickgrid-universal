@@ -41,7 +41,6 @@ li.hidden {
   }
 
   .close {
-    float: right;
     position: absolute;
     color: var(--slick-column-picker-close-btn-color, v.$slick-column-picker-close-btn-color);
     cursor: var(--slick-column-picker-close-btn-cursor, v.$slick-column-picker-close-btn-cursor);
@@ -54,7 +53,7 @@ li.hidden {
     font-size: var(--slick-column-picker-close-btn-font-size, v.$slick-column-picker-close-btn-font-size);
     background-color: var(--slick-column-picker-close-btn-bg-color, v.$slick-column-picker-close-btn-bg-color);
     border: var(--slick-column-picker-close-btn-border, v.$slick-column-picker-close-btn-border);
-    right: var(--slick-column-picker-close-btn-position-right, v.$slick-column-picker-close-btn-position-right);
+    inset-inline-end: var(--slick-column-picker-close-btn-position-right, v.$slick-column-picker-close-btn-position-right);
     top: var(--slick-column-picker-close-btn-position-top, v.$slick-column-picker-close-btn-position-top);
 
     &:hover {
@@ -132,6 +131,7 @@ li.hidden {
       height: 100%;
       width: 100%;
       margin-bottom: 0px;
+      gap: var(--slick-column-picker-label-gap, v.$slick-column-picker-label-gap);
     }
   }
 
@@ -198,7 +198,6 @@ li.hidden {
       display: inline-flex;
       align-items: center;
       flex-grow: 1;
-      padding-left: var(--slick-column-picker-label-text-padding-left, v.$slick-column-picker-label-text-padding-left);
     }
   }
 }
@@ -245,7 +244,7 @@ li.hidden {
   border: 0;
   cursor: pointer;
   position: absolute;
-  right: 0;
+  inset-inline-end: 0;
   z-index: 2;
   color: var(--slick-grid-menu-icon-btn-color, v.$slick-grid-menu-icon-btn-color);
   padding: var(--slick-grid-menu-button-padding, v.$slick-grid-menu-button-padding);
@@ -305,7 +304,6 @@ li.hidden {
 
     .close {
       cursor: pointer;
-      float: right;
       background-color: var(--slick-menu-close-btn-bg-color, v.$slick-menu-close-btn-bg-color);
       border: var(--slick-menu-close-btn-border, v.$slick-menu-close-btn-border);
       color: var(--slick-menu-close-btn-color, v.$slick-menu-close-btn-color);
@@ -335,6 +333,7 @@ li.hidden {
     display: flex;
     align-items: center;
     margin: 0;
+    gap: var(--slick-menu-item-gap, v.$slick-menu-item-gap);
     outline: none;
     border: var(--slick-menu-item-border, v.$slick-menu-item-border);
     border-radius: var(--slick-menu-item-border-radius, v.$slick-menu-item-border-radius);
@@ -379,7 +378,6 @@ li.hidden {
       background-repeat: no-repeat;
       display: inline-block;
       line-height: var(--slick-menu-icon-line-height, v.$slick-menu-icon-line-height);
-      margin-right: var(--slick-menu-icon-margin-right, v.$slick-menu-icon-margin-right);
       vertical-align: middle;
       min-width: var(--slick-menu-icon-min-width, v.$slick-menu-icon-min-width);
     }
@@ -483,6 +481,9 @@ li.hidden {
   float: left;
   margin-bottom: 100px;
 }
+[dir='rtl'] .slick-column-name {
+  float: right;
+}
 
 .slick-header-button {
   /**
@@ -529,7 +530,7 @@ li.hidden {
   // The next few items are already defined in the slick-headermenu file and it should stay that way, *unless* you also replace the button image included there.
   bottom: 0;
   top: 0;
-  right: var(--slick-header-menu-button-margin-right, v.$slick-header-menu-button-margin-right);
+  inset-inline-end: var(--slick-header-menu-button-margin-right, v.$slick-header-menu-button-margin-right);
   height: var(--slick-header-menu-button-icon-size, v.$slick-header-menu-button-icon-size);
   width: var(--slick-header-menu-button-icon-size, v.$slick-header-menu-button-icon-size);
 
@@ -584,8 +585,6 @@ li.hidden {
 .slick-column-name,
 .slick-headerrow-column.checkbox-header,
 .slick-cell-checkboxsel {
-  text-align: center;
-
   label {
     line-height: var(--slick-checkbox-icon-container-line-height, v.$slick-checkbox-icon-container-line-height);
   }
@@ -647,6 +646,8 @@ li.hidden {
   }
 }
 
+.slick-headerrow-column.checkbox-header,
+.slick-cell-checkboxsel,
 .slick-header-column.header-checkbox-selectall .slick-column-name {
   text-align: center;
   margin-right: 0;
@@ -961,7 +962,7 @@ li.hidden {
       padding: var(--slick-draggable-group-toggle-all-padding, v.$slick-draggable-group-toggle-all-padding);
       position: var(--draggable-group-toggle-all-position, v.$slick-draggable-group-toggle-all-position);
       top: var(--slick-draggable-group-toggle-all-top, v.$slick-draggable-group-toggle-all-top);
-      right: var(--slick-draggable-group-toggle-all-right, v.$slick-draggable-group-toggle-all-right);
+      inset-inline-end: var(--slick-draggable-group-toggle-all-right, v.$slick-draggable-group-toggle-all-right);
 
       .slick-group-toggle-all-icon {
         cursor: pointer;
@@ -1294,5 +1295,5 @@ li.hidden {
   background: var(--slick-drag-selection-handle-color, v.$slick-drag-selection-handle-color);
   position: absolute;
   bottom: 0;
-  right: 0;
+  inset-inline-end: 0;
 }
