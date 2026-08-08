@@ -425,10 +425,10 @@ describe('FormulaCellEditor', () => {
 
     expect(setCellCssStylesSpy).toHaveBeenCalledTimes(1);
     const cssHash = setCellCssStylesSpy.mock.calls[0][1] as Record<number, Record<string, string>>;
-    expect(cssHash[0].b).toBe('formula-ref-cell-color-1');
-    expect(cssHash[0].c).toBe('formula-ref-cell-color-1');
-    expect(cssHash[1].b).toBe('formula-ref-cell-color-1');
-    expect(cssHash[1].c).toBe('formula-ref-cell-color-1');
+    expect(cssHash[0].b).toBe('formula-cell-color-1');
+    expect(cssHash[0].c).toBe('formula-cell-color-1');
+    expect(cssHash[1].b).toBe('formula-cell-color-1');
+    expect(cssHash[1].c).toBe('formula-cell-color-1');
     expect(removeCellCssStylesSpy).not.toHaveBeenCalled();
 
     editor.destroy();

@@ -673,7 +673,7 @@ export class FormulaCellEditor implements Editor {
       for (let cell = minCell; cell <= maxCell; cell++) {
         const column = columns[cell];
         if (column?.id !== undefined && column?.id !== null) {
-          rowStyles[column.id] = 'formula-ref-cell-color-1';
+          rowStyles[column.id] = 'formula-cell-color-1';
         }
       }
       if (Object.keys(rowStyles).length > 0) {

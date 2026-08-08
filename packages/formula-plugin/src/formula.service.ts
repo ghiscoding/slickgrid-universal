@@ -222,7 +222,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const datasetLength = this.getDatasetLength();
 
     referenceGroups.forEach((refs, idx) => {
-      const cssColorClass = `formula-ref-cell-color-${(idx % FormulaService.FORMULA_TOKEN_COLOR_COUNT) + 1}`;
+      const cssColorClass = `formula-cell-color-${(idx % FormulaService.FORMULA_TOKEN_COLOR_COUNT) + 1}`;
       const styleKey = `formula-ref-highlight-${idx}`;
       const hash: Record<number, Record<string | number, string>> = {};
 

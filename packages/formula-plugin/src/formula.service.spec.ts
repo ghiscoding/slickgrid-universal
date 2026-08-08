@@ -364,9 +364,9 @@ describe('FormulaService', () => {
 
     expect(setCellCssStyles).toHaveBeenCalledTimes(1);
     const cssHash = setCellCssStyles.mock.calls[0][1] as Record<number, Record<string, string>>;
-    expect(cssHash[0].c).toBe('formula-ref-cell-color-1');
-    expect(cssHash[1].c).toBe('formula-ref-cell-color-1');
-    expect(cssHash[2].c).toBe('formula-ref-cell-color-1');
+    expect(cssHash[0].c).toBe('formula-cell-color-1');
+    expect(cssHash[1].c).toBe('formula-cell-color-1');
+    expect(cssHash[2].c).toBe('formula-cell-color-1');
   });
 
   it('should remap direct A1 references when hidden columns are excluded from export', () => {
