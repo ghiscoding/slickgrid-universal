@@ -1,17 +1,17 @@
-describe('Example 46 - Formula Service (MVP)', () => {
+describe('Example 47 - Formula Service (MVP)', () => {
   const GRID_ROW_HEIGHT = 38;
   const fullTitles = ['#', 'Name', 'Price', 'Quantity', 'Sub-Total', 'Taxable', 'Taxes', 'Total', 'Custom Sum'];
 
-  const rowSelector = (rowIdx: number) => `.grid46 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"]`;
+  const rowSelector = (rowIdx: number) => `.grid47 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"]`;
   const cell = (rowIdx: number, cellIdx: number) => `${rowSelector(rowIdx)} > .slick-cell:nth(${cellIdx})`;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/example46`);
-    cy.get('h3').should('contain', 'Example 46 - Formula Service (MVP)');
+    cy.visit(`${Cypress.config('baseUrl')}/example47`);
+    cy.get('h3').should('contain', 'Example 47 - Formula Service (MVP)');
   });
 
   it('should have exact column titles on grid', () => {
-    cy.get('.grid46')
+    cy.get('.grid47')
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
@@ -189,9 +189,9 @@ describe('Example 46 - Formula Service (MVP)', () => {
   it('should group by Taxable and allow returning back to ungrouped view', () => {
     cy.get('[data-test="group-by-btn"]').click();
 
-    cy.get('.grid46 .slick-group').should('have.length.at.least', 2);
-    cy.get('.grid46 .slick-group').first().should('contain', 'Taxable:');
-    cy.get('.grid46 .slick-group-totals').should('have.length.at.least', 1);
+    cy.get('.grid47 .slick-group').should('have.length.at.least', 2);
+    cy.get('.grid47 .slick-group').first().should('contain', 'Taxable:');
+    cy.get('.grid47 .slick-group-totals').should('have.length.at.least', 1);
 
     cy.get('[data-test="clear-grouping-btn"]').click();
 
