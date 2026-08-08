@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Column, GridOption } from '../../interfaces/index.js';
+import { SlickEventData } from '../slickCore.js';
 import { SlickGrid } from '../slickGrid.js';
 
 vi.useFakeTimers();
@@ -122,6 +123,67 @@ describe('SlickGrid RTL (Right-to-Left)', () => {
       const gridContainer = document.getElementById(gridId) as HTMLElement;
       grid = new SlickGrid<any, Column>(gridContainer, items, columns, { ...defaultOptions, rtl: true, enableFiltering: true });
       expect(grid.getOptions().rtl).toBe(true);
+    });
+  });
+
+  describe('Column Resizing', () => {
+    const columns = [
+      { id: 'id', field: 'id', name: 'Id', hidden: true },
+      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true, width: 77, previousWidth: 20, rerenderOnResize: true },
+      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true, minWidth: 35, maxWidth: 78 },
+      { id: 'age', field: 'age', name: 'Age', sortable: true, minWidth: 82, width: 86, maxWidth: 88 },
+      { id: 'gender', field: 'gender', name: 'Gender', sortable: true },
+    ] as Column[];
+    const data = [
+      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+    ];
+
+    it('should resize 2nd column that has a "width" defined using default sizing grid options', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false, rtl: true });
+      grid.init();
+
+      const sedOnBeforeResize = new SlickEventData();
+      sedOnBeforeResize.addReturnValue(true);
+      vi.spyOn(grid.onBeforeColumnsResize, 'notify').mockReturnValue(sedOnBeforeResize);
+      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+      // start resizing
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent);
+      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
+      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+      // header click won't get through
+      const onHeaderClickSpy = vi.spyOn(grid.onHeaderClick, 'notify');
+      container.querySelector('.slick-header')!.dispatchEvent(new CustomEvent('click'));
+      expect(onHeaderClickSpy).not.toHaveBeenCalled();
+
+      // end resizing
+      document.body.dispatchEvent(bodyMouseUpEvent);
+
+      vi.advanceTimersByTime(10);
+
+      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
+      expect(columns[0].width).toBe(80);
+      expect(columns[1].width).toBe(0);
+      expect(columns[2].width).toBe(65);
+      expect(columns[3].width).toBe(86);
+      expect(columns[4].width).toBe(80);
     });
   });
 });
