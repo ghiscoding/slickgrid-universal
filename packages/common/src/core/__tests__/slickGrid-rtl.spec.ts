@@ -36,6 +36,7 @@ describe('SlickGrid RTL (Right-to-Left)', () => {
       enableCellNavigation: true,
       columnResizingDelay: 1,
       scrollRenderThrottling: 1,
+      devMode: { ownerNodeIndex: 0 },
     };
     container = document.createElement('div');
     container.id = gridId;
@@ -43,6 +44,7 @@ describe('SlickGrid RTL (Right-to-Left)', () => {
     container.style.height = `${DEFAULT_GRID_HEIGHT}px`;
     container.style.width = `${DEFAULT_GRID_WIDTH}px`;
     document.body.appendChild(container);
+    Object.defineProperty(container, 'height', { writable: true, configurable: true, value: DEFAULT_GRID_HEIGHT });
     Object.defineProperty(container, 'clientHeight', { writable: true, configurable: true, value: DEFAULT_GRID_HEIGHT });
     Object.defineProperty(container, 'clientWidth', { writable: true, configurable: true, value: DEFAULT_GRID_WIDTH });
   });
