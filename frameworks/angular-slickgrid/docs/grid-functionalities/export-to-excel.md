@@ -87,6 +87,7 @@ Inside the column definition there are couple of flags you can set in `excelExpo
 - `sheetName` allows you to change the Excel Sheet Name (defaults to "Sheet1")
 - `groupingColumnHeaderTitle` The column header title (at A0 in Excel) of the Group by. If nothing is provided it will use "Group By"
 - `groupingAggregatorRowText` The default text to display in 1st column of the File Export, which will identify that the current row is a Grouping Aggregator
+- `includeColumnWidth` defaults to `false`, when enabled it will use each column `width` in the Excel export when `excelExportOptions.width` is not defined on the column.
 - set `sanitizeDataExport` to remove any HTML/Script code from being export. For example if your value is `<span class="mdi mdi-check">True</span>` will export `True` without any HTML (data is sanitized).
    - this flag can be used in the Grid Options (all columns) or in a Column Definition (per column).
 - `customExcelHeader` is a callback method that can be used to provide a custom Header Title to your Excel File
@@ -150,6 +151,24 @@ You could also set a custom width for the entire grid export via the `excelExpor
 this.gridOptions = {
   // set at the grid option level, meaning all column will evaluate the Formatter (when it has a Formatter defined)
   excelExportOptions: {
+    customColumnWidth: 15,
+  },
+  externalResources: [new ExcelExportService()],
+};
+```
+
+#### Width Precedence
+When exporting a column width, the library uses this order of precedence.
+
+1. Column `excelExportOptions.width` (when defined on the column)
+2. Column `width` when `includeColumnWidth` is enabled in `excelExportOptions`
+3. Grid `customColumnWidth` (when defined)
+4. Internal fallback width (`10` Excel width units, not pixels)
+
+```ts
+this.gridOptions = {
+  excelExportOptions: {
+    includeColumnWidth: true,
     customColumnWidth: 15,
   },
   externalResources: [new ExcelExportService()],

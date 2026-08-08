@@ -24,6 +24,8 @@ export class Example55Component implements OnInit {
   columns: Column[] = [];
   dataset: StoryItem[] = [];
   gridOptions!: GridOption;
+  excelExportService = new ExcelExportService();
+  pdfExportService = new PdfExportService();
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -43,7 +45,15 @@ export class Example55Component implements OnInit {
       { id: 'id', name: '#', field: 'id', minWidth: 60, maxWidth: 70 },
       { id: 'title', name: 'Story', field: 'title', minWidth: 180, width: 220 },
       { id: 'owner', name: 'Owner', field: 'owner', minWidth: 110, width: 130 },
-      { id: 'rowHeight', name: 'Height', field: 'rowHeight', formatter: (_row, _cell, value) => `${value}px`, minWidth: 90, width: 90 },
+      {
+        id: 'rowHeight',
+        name: 'Height',
+        field: 'rowHeight',
+        exportWithFormatter: true,
+        formatter: (_row, _cell, value) => `${value}px`,
+        minWidth: 90,
+        width: 90,
+      },
       { id: 'summary', name: 'Summary', field: 'summary', cssClass: 'cell-wrap', minWidth: 360, width: 500, maxWidth: 620 },
     ];
 
@@ -51,14 +61,19 @@ export class Example55Component implements OnInit {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
       enableVariableRowHeight: true,
-      externalResources: [new ExcelExportService(), new PdfExportService()],
+      externalResources: [this.excelExportService, this.pdfExportService],
       excelExportOptions: {
         // export variable row height will also be reflected in the export
         // but it can be disabled by setting `includeVariableRowHeight` to false
         // includeVariableRowHeight: false, // export all rows at default height
+
+        // we can opt-in to also use same column width grid vs Excel export (it's disabled by default)
+        includeColumnWidth: true,
       },
       pdfExportOptions: {
         pageOrientation: 'landscape',
+        // we can opt-in to also use same column width grid vs PDF export (it's disabled by default)
+        includeColumnWidth: true,
       },
       rowHeight: 40,
       gridHeight: 560,
@@ -92,5 +107,16 @@ export class Example55Component implements OnInit {
       });
     }
     return data;
+  }
+
+  exportToExcel() {
+    this.excelExportService.exportToExcel({
+      filename: 'export',
+      format: 'xlsx',
+    });
+  }
+
+  exportToPdf() {
+    this.pdfExportService.exportToPdf({ filename: 'export' });
   }
 }

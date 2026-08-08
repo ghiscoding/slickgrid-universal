@@ -17,6 +17,8 @@ const Example56: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<TaskItem[]>([]);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
+  const [excelExportService] = useState(new ExcelExportService());
+  const [pdfExportService] = useState(new PdfExportService());
 
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
   const compactRef = useRef(false);
@@ -48,6 +50,7 @@ const Example56: React.FC = () => {
         id: 'rowHeight',
         name: 'Height',
         field: 'rowHeight',
+        exportWithFormatter: true,
         formatter: (row, _cell, _value, _coldef, _dataContext, grid) => {
           return `${grid.getItemMetadaWhenExists(row)?.height ?? 0}px`;
         },
@@ -61,14 +64,19 @@ const Example56: React.FC = () => {
       enableCellNavigation: true,
       enableTextSelectionOnCells: true,
       enableVariableRowHeight: true,
-      externalResources: [new ExcelExportService(), new PdfExportService()],
+      externalResources: [excelExportService, pdfExportService],
       excelExportOptions: {
         // export variable row height will also be reflected in the export
         // but it can be disabled by setting `includeVariableRowHeight` to false
         // includeVariableRowHeight: false, // export all rows at default height
+
+        // we can opt-in to also use same column width grid vs Excel export (it's disabled by default)
+        includeColumnWidth: true,
       },
       pdfExportOptions: {
         pageOrientation: 'landscape',
+        // we can opt-in to also use same column width grid vs PDF export (it's disabled by default)
+        includeColumnWidth: true,
       },
       rowHeight: 40,
       frozenRow: 2,
@@ -122,6 +130,17 @@ const Example56: React.FC = () => {
     return data;
   }
 
+  function exportToExcel() {
+    excelExportService.exportToExcel({
+      filename: 'Export',
+      format: 'xlsx',
+    });
+  }
+
+  function exportToPdf() {
+    pdfExportService.exportToPdf({ filename: 'Export' });
+  }
+
   return !gridOptions ? (
     ''
   ) : (
@@ -147,6 +166,12 @@ const Example56: React.FC = () => {
 
         <div className="row" style={{ marginBottom: '6px' }}>
           <div className="col-md-12">
+            <button className="btn btn-outline-secondary btn-sm btn-icon me-1" data-test="export-excel-btn" onClick={() => exportToExcel()}>
+              <i className="mdi mdi-file-excel-outline text-success"></i> Export to Excel
+            </button>
+            <button className="btn btn-outline-secondary btn-sm btn-icon" data-test="export-pdf-btn" onClick={() => exportToPdf()}>
+              <i className="mdi mdi-file-pdf-outline text-danger"></i> Export to PDF
+            </button>
             <button className="btn btn-outline-secondary btn-sm btn-icon" onClick={toggleDensity} data-test="toggle-density">
               <span className="mdi mdi-flip-vertical"></span>
               <span> Toggle Compact Density</span>

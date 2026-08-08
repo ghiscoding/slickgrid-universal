@@ -23,7 +23,7 @@
     },
     // Babel new major versions fail in Angular, let's ignore those
     {
-      packageNames: ['@babel/core', '@babel/plugin-proposal-decorators', 'undici'],
+      packageNames: ['@babel/core', 'undici'],
       allowedVersions: '< 8.0.0',
     },
     // jsdom v30 seems to cause test regressions in slickgrid.ts because of `getComputedStyle()` changes
@@ -45,8 +45,8 @@
       allowedVersions: '< 22.0.0',
     },
     {
-      // Exclude @lerna-lite/* from minimumReleaseAge since I'm the maintainer of Lerna-Lite
-      matchPackagePatterns: ['^@lerna-lite/'],
+      // Exclude all the packages that I personally maintain from minimumReleaseAge
+      matchPackagePatterns: ['^@lerna-lite/', '^@excel-builder-vanilla/types$', '^excel-builder-vanilla$', '^multiple-select-vanilla$'],
       minimumReleaseAge: '0',
     },
   ],

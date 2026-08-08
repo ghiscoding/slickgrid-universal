@@ -19,6 +19,12 @@
 
   <div class="row" style="margin-bottom: 6px">
     <div class="col-md-12">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="export-excel-btn" (click)="exportToExcel()">
+        <i class="mdi mdi-file-excel-outline text-success"></i> Export to Excel
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="export-pdf-btn" (click)="exportToPdf()">
+        <i class="mdi mdi-file-pdf-outline text-danger"></i> Export to PDF
+      </button>
       <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="toggleDensity()" data-test="toggle-density">
         <span class="mdi mdi-flip-vertical"></span>
         <span> Toggle Compact Density</span>
