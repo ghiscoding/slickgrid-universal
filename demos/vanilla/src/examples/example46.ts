@@ -3,7 +3,7 @@ import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanil
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example46.scss';
 
-const NB_ITEMS = 10;
+const NB_ITEMS = 100;
 
 export default class Example46 {
   gridOptions!: GridOption;
@@ -21,33 +21,45 @@ export default class Example46 {
       { ...ExampleGridOptions, ...this.gridOptions },
       this.dataset
     );
+    document.querySelector('body')?.setAttribute('dir', 'rtl'); // ← Enable RTL mode
   }
 
   dispose() {
     this.sgb?.dispose();
+    document.querySelector('body')?.removeAttribute('dir'); // ← Disable RTL mode
   }
 
   defineGrid() {
     this.columns = [
-      { id: 'id', name: 'ID', field: 'id', sortable: true, minWidth: 60 },
-      { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
-      { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100, type: 'number' },
-      { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100, type: 'number' },
-      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso },
+      { id: 'id', name: 'ID', field: 'id', filterable: true, sortable: true, minWidth: 60 },
+      { id: 'title', name: 'Title', field: 'title', filterable: true, sortable: true, minWidth: 100 },
+      { id: 'duration', name: 'Duration (days)', field: 'duration', filterable: true, sortable: true, minWidth: 100, type: 'number' },
+      { id: '%', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true, minWidth: 100, type: 'number' },
+      {
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+      },
+      {
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+      },
       { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', minWidth: 80 },
     ];
 
     this.gridOptions = {
-      enableCellNavigation: true,
-      enableColumnReorder: true,
+      enableFiltering: true,
       gridHeight: 500,
       gridWidth: 900,
       rowHeight: 33,
       rtl: true, // ← Enable RTL mode
-      showColumnHeader: true,
-      showHeaderRow: true,
-      showFooterRow: false,
     };
   }
 

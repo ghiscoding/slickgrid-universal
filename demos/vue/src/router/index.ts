@@ -64,7 +64,7 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example54', name: '54- AI / Web MCP Toolkit', component: () => import('../components/Example54.vue') },
   { path: '/example55', name: '55- Variable Row Height (provider)', component: () => import('../components/Example55.vue') },
   { path: '/example56', name: '56- Variable Row Height (metadata)', component: () => import('../components/Example56.vue') },
-  { path: '/example57', name: '57- RTL (Right-to-Left) Support', component: () => import('../components/Example57.vue') },
+  { path: '/example57', name: '57- RTL (Right-to-Left)', component: () => import('../components/Example57.vue') },
 ];
 
 export const router = createRouter({

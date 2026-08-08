@@ -97,7 +97,7 @@ export class AppRouting {
       { route: 'example43', name: 'example43', view: './examples/example43.html', viewModel: Example43, title: 'Example43' },
       { route: 'example44', name: 'example44', view: './examples/example44.html', viewModel: Example44, title: 'Example44' },
       { route: 'example45', name: 'example45', view: './examples/example45.html', viewModel: Example45, title: 'Example45' },
-      { route: 'example46', name: 'example46', view: './examples/example46.html', viewModel: Example46, title: 'Example 46 - RTL Support' },
+      { route: 'example46', name: 'example46', view: './examples/example46.html', viewModel: Example46, title: 'Example46' },
       { route: '', redirect: 'example01' },
       { route: '**', redirect: 'example01' },
     ];

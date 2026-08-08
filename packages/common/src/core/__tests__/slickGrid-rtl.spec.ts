@@ -16,7 +16,7 @@ const template = `<div id="${containerId}" style="height: ${DEFAULT_GRID_HEIGHT}
     </div>
   </div>`;
 
-describe('SlickGrid RTL (Right-to-Left) Support', () => {
+describe('SlickGrid RTL (Right-to-Left)', () => {
   let container: HTMLElement;
   let grid: SlickGrid<any, Column>;
   const items = [

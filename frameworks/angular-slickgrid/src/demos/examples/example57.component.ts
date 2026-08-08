@@ -1,5 +1,5 @@
-import { Component, type OnInit } from '@angular/core';
-import { AngularSlickgridComponent, Formatters, type AngularGridInstance, type Column, type GridOption } from '../../library';
+import { Component, OnDestroy, type OnInit } from '@angular/core';
+import { AngularSlickgridComponent, Formatters, type Column, type GridOption } from '../../library';
 
 const NB_ITEMS = 100;
 
@@ -8,19 +8,20 @@ const NB_ITEMS = 100;
   styleUrls: ['./example57.component.scss'],
   imports: [AngularSlickgridComponent],
 })
-export class Example57Component implements OnInit {
-  angularGrid!: AngularGridInstance;
+export class Example57Component implements OnInit, OnDestroy {
   columns: Column[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
+  hideSubTitle = false;
 
   ngOnInit(): void {
     this.prepareGrid();
     this.dataset = this.mockData(NB_ITEMS);
+    document.querySelector('body')?.setAttribute('dir', 'rtl'); // ← Enable RTL mode
   }
 
-  angularGridReady(angularGrid: AngularGridInstance) {
-    this.angularGrid = angularGrid;
+  ngOnDestroy() {
+    document.querySelector('body')?.removeAttribute('dir'); // ← Disable RTL mode
   }
 
   prepareGrid() {
@@ -29,21 +30,31 @@ export class Example57Component implements OnInit {
       { id: 'title', name: 'Title', field: 'title', filterable: true, sortable: true, minWidth: 100 },
       { id: 'duration', name: 'Duration (days)', field: 'duration', filterable: true, sortable: true, minWidth: 100, type: 'number' },
       { id: '%', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true, minWidth: 100, type: 'number' },
-      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso },
+      {
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+      },
+      {
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+      },
       { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', minWidth: 80 },
     ];
 
     this.gridOptions = {
-      enableCellNavigation: true,
-      enableColumnReorder: true,
+      enableFiltering: true,
       gridHeight: 500,
       gridWidth: 700,
       rowHeight: 33,
       rtl: true, // ← Enable RTL mode
-      showColumnHeader: true,
-      showHeaderRow: true,
-      showFooterRow: false,
     };
   }
 
@@ -61,5 +72,11 @@ export class Example57Component implements OnInit {
       });
     }
     return data;
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
   }
 }

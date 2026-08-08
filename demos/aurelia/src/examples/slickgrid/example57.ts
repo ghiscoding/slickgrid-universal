@@ -1,4 +1,4 @@
-import { Formatters, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
+import { Formatters, type Column, type GridOption } from 'aurelia-slickgrid';
 
 const NB_ITEMS = 100;
 
@@ -13,6 +13,11 @@ export class Example57 {
 
   attached() {
     this.dataset = this.mockData(NB_ITEMS);
+    document.querySelector('body')?.setAttribute('dir', 'rtl'); // ← Enable RTL mode
+  }
+
+  detaching() {
+    document.querySelector('body')?.removeAttribute('dir'); // ← Disable RTL mode
   }
 
   defineGrid() {
@@ -21,22 +26,31 @@ export class Example57 {
       { id: 'title', name: 'Title', field: 'title', filterable: true, sortable: true, minWidth: 100 },
       { id: 'duration', name: 'Duration (days)', field: 'duration', filterable: true, sortable: true, minWidth: 100, type: 'number' },
       { id: '%', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true, minWidth: 100, type: 'number' },
-      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso },
+      {
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+      },
+      {
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+      },
       { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', minWidth: 80 },
     ];
 
     this.gridOptions = {
-      enableCellNavigation: true,
-      enableColumnReorder: true,
-      enableResizeByContent: true,
+      enableFiltering: true,
       gridHeight: 500,
       gridWidth: 700,
       rowHeight: 33,
       rtl: true, // ← Enable RTL mode
-      showColumnHeader: true,
-      showHeaderRow: true,
-      showFooterRow: false,
     };
   }
 

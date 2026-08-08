@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Formatters, SlickgridReact, type Column, type GridOption } from 'slickgrid-react';
-import './example57.scss';
 
 const NB_ITEMS = 100;
 
@@ -13,6 +12,11 @@ const Example57: React.FC = () => {
     defineGrid();
     const mockData = mockDataset();
     setDataset(mockData);
+    document.querySelector('body')?.setAttribute('dir', 'rtl'); // ← Enable RTL mode
+
+    return () => {
+      document.querySelector('body')?.removeAttribute('dir'); // ← Disable RTL mode
+    };
   }, []);
 
   const defineGrid = () => {
@@ -21,23 +25,32 @@ const Example57: React.FC = () => {
       { id: 'title', name: 'Title', field: 'title', filterable: true, sortable: true, minWidth: 100 },
       { id: 'duration', name: 'Duration (days)', field: 'duration', filterable: true, sortable: true, minWidth: 100, type: 'number' },
       { id: '%', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true, minWidth: 100, type: 'number' },
-      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso },
+      {
+        id: 'start',
+        name: 'Start',
+        field: 'start',
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+      },
+      {
+        id: 'finish',
+        name: 'Finish',
+        field: 'finish',
+        formatter: Formatters.dateIso,
+        exportWithFormatter: true,
+        filterable: true,
+      },
       { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', minWidth: 80 },
     ];
     setColumns(cols);
 
     const opts: GridOption = {
-      enableCellNavigation: true,
-      enableColumnReorder: true,
-      enableResizeByContent: true,
+      enableFiltering: true,
       gridHeight: 500,
       gridWidth: 700,
       rowHeight: 33,
       rtl: true, // ← Enable RTL mode
-      showColumnHeader: true,
-      showHeaderRow: true,
-      showFooterRow: false,
     };
     setGridOptions(opts);
   };
@@ -58,10 +71,10 @@ const Example57: React.FC = () => {
     return data;
   };
 
-  return (
+  return !gridOptions ? null : (
     <div id="demo-container" className="container-fluid">
       <h2>
-        Example 57: RTL (Right-to-Left) Support
+        Example 57: RTL (Right-to-Left)
         <span className="float-end font18">
           see&nbsp;
           <a
@@ -73,11 +86,9 @@ const Example57: React.FC = () => {
         </span>
       </h2>
 
-      <div className="subtitle">Basic grid with RTL (Right-to-Left) support enabled for RTL languages.</div>
+      <div className="subtitle">Basic grid with RTL (Right-to-Left) enabled for RTL languages.</div>
 
-      <div className="grid-rtl" dir="rtl" style={{ width: '100%' }}>
-        <SlickgridReact gridId="grid57" columns={columns} options={gridOptions} dataset={dataset} />
-      </div>
+      <SlickgridReact gridId="grid57" columns={columns} options={gridOptions} dataset={dataset} />
     </div>
   );
 };

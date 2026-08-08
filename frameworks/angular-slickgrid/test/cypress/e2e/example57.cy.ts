@@ -1,4 +1,4 @@
-describe('Example 57 - RTL (Right-to-Left) Support', () => {
+describe('Example 57 - RTL (Right-to-Left)', () => {
   const fullTitles = ['ID', 'Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 
   beforeEach(() => {
@@ -8,26 +8,26 @@ describe('Example 57 - RTL (Right-to-Left) Support', () => {
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example57`);
-    cy.get('h2').should('contain', 'Example 57: RTL (Right-to-Left) Support');
+    cy.get('h2').should('contain', 'Example 57: RTL (Right-to-Left)');
   });
 
   it('should have grid with RTL direction class', () => {
-    cy.get('.grid-rtl').should('exist').should('have.css', 'direction', 'rtl');
+    cy.get('#grid57').should('exist').should('have.css', 'direction', 'rtl');
   });
 
   it('should have exact column titles', () => {
-    cy.get('.grid-rtl')
+    cy.get('#grid57')
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
   it('should be able to resize a column', () => {
-    cy.get('.grid-rtl .slick-header-column:nth(1)').then(($header) => {
+    cy.get('#grid57 .slick-header-column:nth(1)').then(($header) => {
       const originalWidth = $header.width();
 
       // Find and drag the resize handle
-      cy.get('.grid-rtl .slick-header-column:nth(1) .slick-resizable-handle')
+      cy.get('#grid57 .slick-header-column:nth(1) .slick-resizable-handle')
         .should('exist')
         .trigger('mousedown', { which: 1 })
         .then(() => {
@@ -36,18 +36,18 @@ describe('Example 57 - RTL (Right-to-Left) Support', () => {
         });
 
       // Verify the column width changed
-      cy.get('.grid-rtl .slick-header-column:nth(1)').then(($resizedHeader) => {
+      cy.get('#grid57 .slick-header-column:nth(1)').then(($resizedHeader) => {
         expect($resizedHeader.width()).not.to.equal(originalWidth);
       });
     });
   });
 
   it('should display multiple rows of data', () => {
-    cy.get('.grid-rtl .slick-row').should('have.length.greaterThan', 10);
+    cy.get('#grid57 .slick-row').should('have.length.greaterThan', 10);
   });
 
   it('should have sorting enabled', () => {
-    cy.get('.grid-rtl')
+    cy.get('#grid57')
       .find('.slick-header-column')
       .first()
       .trigger('mouseover')
@@ -62,6 +62,6 @@ describe('Example 57 - RTL (Right-to-Left) Support', () => {
   });
 
   it('should work correctly with text column content', () => {
-    cy.get('.grid-rtl .slick-row:first-child .slick-cell:nth(1)').should('contain', 'Task');
+    cy.get('#grid57 .slick-row .slick-cell:nth(1)').should('contain', 'Task');
   });
 });

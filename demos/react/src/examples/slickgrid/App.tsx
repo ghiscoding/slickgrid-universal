@@ -58,7 +58,7 @@ const routes = [
   { path: 'example54', route: '/example54', element: lazy(() => import('./Example54.js')), title: '54- AI / Web MCP Toolkit' },
   { path: 'example55', route: '/example55', element: lazy(() => import('./Example55.js')), title: '55- Variable Row Height (provider)' },
   { path: 'example56', route: '/example56', element: lazy(() => import('./Example56.js')), title: '56- Variable Row Height (metadata)' },
-  { path: 'example57', route: '/example57', element: lazy(() => import('./Example57.js')), title: '57- RTL (Right-to-Left) Support' },
+  { path: 'example57', route: '/example57', element: lazy(() => import('./Example57.js')), title: '57- RTL (Right-to-Left)' },
 ];
 
 export default function Routes() {

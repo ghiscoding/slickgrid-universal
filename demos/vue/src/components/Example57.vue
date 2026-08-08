@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Formatters, SlickgridVue, type Column, type GridOption } from 'slickgrid-vue';
-import { onBeforeMount, ref, type Ref } from 'vue';
-import './example57.scss';
+import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 100;
 
@@ -12,6 +11,11 @@ const dataset: Ref<any[]> = ref([]);
 onBeforeMount(() => {
   defineGrid();
   dataset.value = mockData(NB_ITEMS);
+  document.querySelector('body')?.setAttribute('dir', 'rtl'); // ← Enable RTL mode
+});
+
+onUnmounted(() => {
+  document.querySelector('body')?.removeAttribute('dir'); // ← Disable RTL mode
 });
 
 function defineGrid() {
@@ -68,7 +72,7 @@ function mockData(count: number) {
 <template>
   <div id="demo-container" class="container-fluid">
     <h2>
-      Example 57: RTL (Right-to-Left) Support
+      Example 57: RTL (Right-to-Left)
       <span class="float-end">
         <a
           style="font-size: 18px"
@@ -79,7 +83,7 @@ function mockData(count: number) {
         </a>
       </span>
     </h2>
-    <div class="subtitle">Basic grid with RTL (Right-to-Left) support enabled for RTL languages</div>
+    <div class="subtitle">Basic grid with RTL (Right-to-Left) enabled for RTL languages</div>
 
     <div class="grid-rtl" dir="rtl" style="width: 100%">
       <slickgrid-vue grid-id="grid57" :columns="columns" :options="gridOptions" :dataset="dataset"></slickgrid-vue>
