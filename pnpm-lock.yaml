@@ -199,8 +199,8 @@ importers:
         specifier: 'catalog:'
         version: 1.15.0(cypress@15.20.0)
       eslint-plugin-cypress:
-        specifier: ^6.4.4
-        version: 6.4.4(eslint@10.8.0(supports-color@8.1.1))
+        specifier: ^7.0.0
+        version: 7.0.0(eslint@10.8.0(supports-color@8.1.1))
       eslint-plugin-local-import-ext:
         specifier: 0.2.0
         version: 0.2.0
@@ -5459,11 +5459,11 @@ packages:
     engines: {node: '>=6.0'}
     hasBin: true
 
-  eslint-plugin-cypress@6.4.4:
-    resolution: {integrity: sha512-ez6i14V0xYrq0DMKQmKPeWpi9XP8RI8GK6YT657yOnVlg72PUyR2psgVmC3jXjpTAXVdyB5VDoQPN/ytaw9+Pg==}
+  eslint-plugin-cypress@7.0.0:
+    resolution: {integrity: sha512-gpvL3S1w45c0DORI/P5v3k1UUW2NKje3JiFz+oTHGF6dZa6ZPBokItJS7jP0BXGPEgI3RpHyAMNMAJ9K5P0bow==}
     peerDependencies:
       '@typescript-eslint/parser': '>=8'
-      eslint: '>=9'
+      eslint: '>=10'
     peerDependenciesMeta:
       '@typescript-eslint/parser':
         optional: true
@@ -5763,10 +5763,6 @@ packages:
   global-dirs@3.0.1:
     resolution: {integrity: sha512-NBcGGFbBA9s1VzD41QXDG+3++t9Mn5t1FpLdhESY6oKY4gYTFpX4wO3sqGUa0Srjtbfj3szX0RnemmrVRUdULA==}
     engines: {node: '>=10'}
-
-  globals@17.8.0:
-    resolution: {integrity: sha512-Zz/LMDZScFmkakeL2cTHzf+PbWKdpU3uclqkZT7TjDG58j5WPt0PpA+n9uPI24fZtlw07q0OtEi84K+umsRzqQ==}
-    engines: {node: '>=18'}
 
   globals@17.9.0:
     resolution: {integrity: sha512-m/MvAW61QVU5VDNF1Vj8axt016h8w7L5TU1e9zlab7XIttAT2YAlCwl75K1fOqvMM9apmD7lbCIRhpfkhmxhCg==}
@@ -12682,10 +12678,10 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
-  eslint-plugin-cypress@6.4.4(eslint@10.8.0(supports-color@8.1.1)):
+  eslint-plugin-cypress@7.0.0(eslint@10.8.0(supports-color@8.1.1)):
     dependencies:
       eslint: 10.8.0(supports-color@8.1.1)
-      globals: 17.8.0
+      globals: 17.9.0
 
   eslint-plugin-local-import-ext@0.2.0: {}
 
@@ -13050,8 +13046,6 @@ snapshots:
   global-dirs@3.0.1:
     dependencies:
       ini: 2.0.0
-
-  globals@17.8.0: {}
 
   globals@17.9.0: {}
 
