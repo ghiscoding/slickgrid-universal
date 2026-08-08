@@ -88,7 +88,9 @@ const Example57: React.FC = () => {
 
       <div className="subtitle">Basic grid with RTL (Right-to-Left) enabled for RTL languages.</div>
 
-      <SlickgridReact gridId="grid57" columns={columns} options={gridOptions} dataset={dataset} />
+      <div dir="rtl">
+        <SlickgridReact gridId="grid57" columns={columns} options={gridOptions} dataset={dataset} />
+      </div>
     </div>
   );
 };

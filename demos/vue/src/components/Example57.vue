@@ -85,7 +85,7 @@ function mockData(count: number) {
     </h2>
     <div class="subtitle">Basic grid with RTL (Right-to-Left) enabled for RTL languages</div>
 
-    <div class="grid-rtl" dir="rtl" style="width: 100%">
+    <div dir="rtl">
       <slickgrid-vue grid-id="grid57" :columns="columns" :options="gridOptions" :dataset="dataset"></slickgrid-vue>
     </div>
   </div>
