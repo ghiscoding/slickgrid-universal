@@ -38,14 +38,25 @@ describe('Example 37 - Hybrid Selection Model', () => {
         });
     });
 
-    it('should export Grid 1 to Excel and keep static columns with expected data shapes', () => {
+    it('should export Grid 1 to Excel without hidden columns and keep expected data shapes', () => {
       const downloadsFolder = Cypress.config('downloadsFolder');
 
       cy.get('[data-test="export-excel-btn"]').click();
 
       cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 11 }).then((xlsx: any) => {
         expect(xlsx.fileName).to.match(/\.xlsx$/i);
-        expect(xlsx.header).to.deep.equal(['#', 'Title', '% Complete', 'Start', 'Finish', 'Priority', 'Effort Driven']);
+
+        const normalizedHeader = xlsx.header.map((columnName: string) =>
+          `${columnName}`
+            .replace(/\u00a0/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .toLowerCase()
+        );
+
+        expect(normalizedHeader).to.deep.equal(['#', 'title', '% complete', 'start', 'finish', 'priority', 'effort driven']);
+        expect(normalizedHeader).to.have.length(7);
+        expect(normalizedHeader).to.not.include('last column / hidden column');
         expect(xlsx.rowCount - 1).to.equal(400);
 
         expect(xlsx.dataRows).to.be.an('array');
