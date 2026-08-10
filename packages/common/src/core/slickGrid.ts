@@ -1766,7 +1766,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Build footer row DOM lazily when footer row creation is enabled at runtime.
+   * Builds the footer-row DOM (scrollers, spacers and footer-row containers) in both
+   * panes — the single construction path shared by init and by a runtime
+   * `setOptions({ createFooterRow: true })` enable. On an already-initialized grid it
+   * also binds the footer events (during init they are bound in `finishInitialization`).
+   * Runtime disable hides the footer rather than destroying it (symmetric with
+   * `showFooterRow`).
    */
   protected materializeFooterRow(): void {
     const canvasWithScrollbarWidth = this.getCanvasWidth() + (this.scrollbarDimensions?.width || 0);
@@ -3747,16 +3752,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.validateAndEnforceOptions();
     this.setFrozenOptions();
 
-    if (this._options.createFooterRow) {
-      if (!this._footerRow) {
-        this.materializeFooterRow();
-      }
-      if (this._options.showFooterRow) {
-        Utils.show(this._footerRowScroller);
-      } else {
-        Utils.hide(this._footerRowScroller);
-      }
-    } else if (this._footerRowScroller) {
+    if (this._options.createFooterRow && !this._footerRow) {
+      this.materializeFooterRow();
+    } else if (!this._options.createFooterRow && this._footerRow) {
       this._footerRowScroller.forEach((scroller) => {
         Utils.hide(scroller);
       });

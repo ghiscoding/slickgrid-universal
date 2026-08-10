@@ -1733,6 +1733,11 @@ describe('SlickGrid core file', () => {
 
       grid.setOptions({ createFooterRow: true, showFooterRow: true });
       footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setFooterRowVisibility(false);
+      grid.setFooterRowVisibility(true);
       expect(footerElms[0].style.display).not.toBe('none');
       expect(footerElms[1].style.display).not.toBe('none');
     });
