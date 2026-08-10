@@ -38,6 +38,7 @@ jest-coverage
 **/coverage
 **/vitest-coverage
 **/cypress-report
+**/cypress/downloads
 **/dist
 **/*.tgz
 test/cypress/screenshots/*.png
