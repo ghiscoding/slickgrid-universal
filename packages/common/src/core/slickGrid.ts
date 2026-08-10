@@ -319,6 +319,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     enableMouseWheelScrollHandler: true,
     doPaging: true,
     rowTopOffsetRenderType: 'top',
+    rtl: false,
     scrollRenderThrottling: 10,
     suppressCssChangesOnHiddenInit: false,
     ffMaxSupportedCssHeight: 6000000,
@@ -791,12 +792,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // Append the columnn containers to the headers
     this._headerL = createDomElement(
       'div',
-      { className: 'slick-header-columns slick-header-columns-left', style: { left: '-1000px' }, role: 'row' },
+      { className: 'slick-header-columns slick-header-columns-left', style: { [this.dirSide]: '-1000px' }, role: 'row' },
       this._headerScrollerL
     );
     this._headerR = createDomElement(
       'div',
-      { className: 'slick-header-columns slick-header-columns-right', style: { left: '-1000px' }, role: 'row' },
+      { className: 'slick-header-columns slick-header-columns-right', style: { [this.dirSide]: '-1000px' }, role: 'row' },
       this._headerScrollerR
     );
 
@@ -938,6 +939,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!this._options.explicitInitialization) {
       this.finishInitialization();
     }
+
+    this.applyRTL(this._options.rtl ?? false);
   }
 
   protected finishInitialization(): void {
@@ -2353,6 +2356,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       targetPageX: number,
       resizeCallback: (targetPageX: number) => void
     ) => {
+      // TODO: there is a known bug with auto-scroll in RTL,
+      // so disable it until someone can contribute a fix
+      if (this._options.rtl) {
+        stopColumnResizeAutoScroll();
+        return;
+      }
+
       autoScrollClientX = isDefinedNumber(clientX) ? clientX : autoScrollClientX;
       const viewportOffset = getOffset(this._viewportScrollContainerX);
       const left = viewportOffset.left;
@@ -2409,7 +2419,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       ) => {
         this.columnResizeDragging = true;
         let actualMinWidth;
-        const d = Math.min(maxPageX, Math.max(minPageX, targetPageX)) - pageX;
+        let d = Math.min(maxPageX, Math.max(minPageX, targetPageX)) - pageX;
+
+        if (this._options.rtl) {
+          d = -d;
+        }
+
         let x;
         let newCanvasWidthL = 0;
         // oxlint-disable-next-line no-unused-vars
@@ -2588,6 +2603,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this.updateCanvasWidth();
         if (
           this._options.autoScrollOnColumnResize &&
+          !this._options.rtl &&
           !this._options.forceFitColumns &&
           !(this.hasFrozenColumns() && i <= this._options.frozenColumn!)
         ) {
@@ -2668,8 +2684,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                 shrinkLeewayOnLeft += (c.previousWidth || 0) - Math.max(c.minWidth || 0, this.absoluteColumnMinWidth);
               }
             }
-            maxPageX = pageX + Math.min(shrinkLeewayOnRight ?? 100000, stretchLeewayOnLeft ?? 100000);
-            minPageX = pageX - Math.min(shrinkLeewayOnLeft ?? 100000, stretchLeewayOnRight ?? 100000);
+            if (this._options.rtl) {
+              maxPageX = pageX + Math.min(shrinkLeewayOnLeft ?? 100000, stretchLeewayOnRight ?? 100000);
+              minPageX = pageX - Math.min(shrinkLeewayOnRight ?? 100000, stretchLeewayOnLeft ?? 100000);
+            } else {
+              maxPageX = pageX + Math.min(shrinkLeewayOnRight ?? 100000, stretchLeewayOnLeft ?? 100000);
+              minPageX = pageX - Math.min(shrinkLeewayOnLeft ?? 100000, stretchLeewayOnRight ?? 100000);
+            }
             resizeAutoScrollDeltaX = 0;
             autoScrollClientX = isDefinedNumber((targetEvent as MouseEvent).clientX) ? (targetEvent as MouseEvent).clientX : undefined;
             stopColumnResizeAutoScroll();
@@ -2951,8 +2972,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     (this._options.shadowRoot || document.head).appendChild(this._style);
 
     const rules = [
-      `.${this.uid} .slick-group-header-column { left: 1000px; }`,
-      `.${this.uid} .slick-header-column { left: 1000px; }`,
+      `.${this.uid} .slick-group-header-column { ${this.dirSide}: 1000px; }`,
+      `.${this.uid} .slick-header-column { ${this.dirSide}: 1000px; }`,
       `.${this.uid} .slick-top-panel { height: ${this._options.topPanelHeight}px; }`,
       `.${this.uid} .slick-preheader-panel { height: ${this._options.preHeaderPanelHeight}px; }`,
       `.${this.uid} .slick-topheader-panel { height: ${this._options.topHeaderPanelHeight}px; }`,
@@ -3363,12 +3384,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         w = this.columns[i].hidden ? 0 : this.columns[i].width || 0;
 
         rule = this.getColumnCssRules(i);
-        if (rule.left) {
-          rule.left.style.left = `${x}px`;
-        }
-        if (rule.right) {
-          rule.right.style.right =
-            (this._options.frozenColumn !== -1 && i > this._options.frozenColumn! ? this.canvasWidthR : this.canvasWidthL) - x - w + 'px';
+        if (this._options.rtl) {
+          if (rule.left) {
+            rule.left.style.right = `${x}px`;
+          }
+          if (rule.right) {
+            rule.right.style.left =
+              (this._options.frozenColumn !== -1 && i > this._options.frozenColumn! ? this.canvasWidthR : this.canvasWidthL) - x - w + 'px';
+          }
+        } else {
+          if (rule.left) {
+            rule.left.style.left = `${x}px`;
+          }
+          if (rule.right) {
+            rule.right.style.right =
+              (this._options.frozenColumn !== -1 && i > this._options.frozenColumn! ? this.canvasWidthR : this.canvasWidthL) - x - w + 'px';
+          }
         }
 
         // If this column is frozen, reset the css left value since the
@@ -5295,11 +5326,21 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     viewportTop ??= this.scrollTop;
     viewportLeft ??= this.scrollLeft;
 
+    let leftPx = viewportLeft;
+    let rightPx = viewportLeft + this.viewportW;
+
+    if (this._options.rtl) {
+      // In RTL mode, scrollLeft is the offset from the right edge.
+      const maxScroll = this.canvasWidth - this.viewportW;
+      leftPx = maxScroll - viewportLeft - this.viewportW;
+      rightPx = maxScroll - viewportLeft;
+    }
+
     return {
       top: this.getRowFromPosition(viewportTop),
       bottom: this.getRowFromPosition(viewportTop + this.viewportH) + 1,
-      leftPx: viewportLeft,
-      rightPx: viewportLeft + this.viewportW,
+      leftPx,
+      rightPx,
     };
   }
 
@@ -5785,7 +5826,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected _handleScroll(eventType: 'mousewheel' | 'scroll' | 'system' = 'system'): boolean {
     let maxScrollDistanceY = this._viewportScrollContainerY.scrollHeight - this._viewportScrollContainerY.clientHeight;
-    let maxScrollDistanceX = this._viewportScrollContainerY.scrollWidth - this._viewportScrollContainerY.clientWidth;
+    let maxScrollDistanceX = this._viewportScrollContainerX.scrollWidth - this._viewportScrollContainerX.clientWidth;
 
     // Protect against erroneous clientHeight/Width greater than scrollHeight/Width.
     // Sometimes seen in Chrome.
@@ -8149,5 +8190,28 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   sanitizeHtmlString<T extends string | TrustedHTML>(dirtyHtml: unknown): T {
     return runOptionalHtmlSanitizer<T>(dirtyHtml, this._options?.sanitizer);
+  }
+
+  /**
+   * Returns the CSS property used to hide header columns off-screen by applying a large offset (e.g., `1000px`).
+   *
+   * In LTR mode (`rtl: false`), columns are positioned with a negative `left` value to hide them off-screen.
+   * In RTL mode (`rtl: true`), the same effect is achieved by using a positive `right` value, since the scroll direction is mirrored.
+   *
+   * @returns 'right' when RTL is enabled, otherwise 'left'
+   */
+  protected get dirSide(): string {
+    return this._options.rtl ? 'right' : 'left';
+  }
+
+  /** Applies/removes RTL state directly on the grid container. */
+  private applyRTL(enabled: boolean): void {
+    if (enabled) {
+      this._container.classList.add('slick-rtl');
+      this._container.setAttribute('dir', 'rtl');
+    } else {
+      this._container.classList.remove('slick-rtl');
+      this._container.removeAttribute('dir');
+    }
   }
 }

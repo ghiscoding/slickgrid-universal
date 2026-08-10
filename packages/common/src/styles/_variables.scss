@@ -359,7 +359,7 @@ $slick-column-picker-item-hover-border:                     1px solid #d5d5d5 !d
 $slick-column-picker-item-hover-color:                      #fafafa !default;
 $slick-column-picker-label-margin:                          4px !default;
 $slick-column-picker-label-font-weight:                     normal !default;
-$slick-column-picker-label-text-padding-left:               4px !default;
+$slick-column-picker-label-gap:                             4px !default;
 $slick-column-picker-link-background-color:                 #ffffff !default;
 $slick-column-picker-list-margin-bottom:                    8px !default;
 $slick-column-picker-opacity-hover:                         0.45 !default;
@@ -407,6 +407,7 @@ $slick-menu-item-border:                                    1px solid transparen
 $slick-menu-item-border-radius:                             0px !default;
 $slick-menu-item-disabled-color:                            silver !default;
 $slick-menu-item-font-size:                                 $slick-font-size-base !default;
+$slick-menu-item-gap:                                       4px !default;
 $slick-menu-item-height:                                    28px !default;
 $slick-menu-item-hover-border:                              1px solid #d5d5d5 !default;
 $slick-menu-item-hover-color:                               #fafafa !default;
@@ -416,7 +417,6 @@ $slick-menu-item-white-space:                               nowrap !default;
 $slick-menu-icon-font-size:                                 $slick-icon-font-size !default;
 $slick-menu-icon-line-height:                               calc(#{$slick-menu-icon-font-size} + 2px) !default;
 $slick-menu-item-width-when-button:                         calc(100% - #{$slick-menu-close-btn-width}) !default;
-$slick-menu-icon-margin-right:                              4px !default;
 $slick-menu-icon-min-width:                                 16px !default;
 $slick-menu-line-height:                                    24px !default;
 $slick-menu-min-width:                                      140px !default;

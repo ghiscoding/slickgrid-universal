@@ -149,6 +149,7 @@ describe('GridMenuControl', () => {
     enableAutoSizeColumns: true,
     enableGridMenu: true,
     enableTranslate: true,
+    rtl: false,
     backendServiceApi: {
       service: {
         buildQuery: vi.fn(),
@@ -2791,6 +2792,16 @@ describe('GridMenuControl', () => {
       ]);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
+    });
+
+    it('should open grid menu on the right when using RTL', () => {
+      gridOptionsMock.rtl = true;
+      control.init();
+      const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+      buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+      const gridMenuElm = document.querySelector('.slick-grid-menu') as HTMLDivElement;
+
+      expect(gridMenuElm.classList.contains('dropright')).toBe(true);
     });
   });
 });
