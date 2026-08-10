@@ -6,6 +6,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   const CELL_WIDTH = 80;
   const CELL_HEIGHT = 35;
   const SCROLLBAR_DIMENSION = 17;
+  const TIMING_JITTER_TOLERANCE_MS = 3;
   const fullTitles = ['#', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Cost', 'Effort Driven'];
   for (let i = 0; i < 30; i++) {
     fullTitles.push(`Mock${i}`);
@@ -129,6 +130,37 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     });
   }
 
+  function getMedian(values: number[]) {
+    const sorted = [...values].sort((a, b) => a - b);
+    return sorted[Math.floor(sorted.length / 2)];
+  }
+
+  function sampleIntervals(px: number, rowNumber: number | undefined, runs = 3) {
+    const cellSamples: number[] = [];
+    const rowSamples: number[] = [];
+
+    // Warm up first to reduce first-run variance on CI runners.
+    return testInterval(px, rowNumber).then(() => {
+      let chain: any = cy.wrap(null);
+
+      for (let i = 0; i < runs; i++) {
+        chain = chain.then(() =>
+          testInterval(px, rowNumber).then((sample) => {
+            cellSamples.push(sample.cell as number);
+            rowSamples.push(sample.row as number);
+          })
+        );
+      }
+
+      return chain.then(() =>
+        cy.wrap({
+          cellMedian: getMedian(cellSamples),
+          rowMedian: getMedian(rowSamples),
+        })
+      );
+    });
+  }
+
   it('should MIN interval take effect when auto scroll: 30ms -> 90ms', { scrollBehavior: false }, () => {
     // cy.get('[data-test="min-interval-input"]').type('{selectall}90'); // 30ms -> 90ms
     // By default the MIN interval to show next cell is 30ms.
@@ -153,17 +185,17 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   /* this test is very flaky, let's skip it since it doesn't bring much value anyway */
   it('should MAX interval take effect when auto scroll: 600ms -> 200ms', { scrollBehavior: false }, () => {
     // By default the MAX interval to show next cell is 600ms.
-    testInterval(0, 9).then((defaultInterval) => {
+    sampleIntervals(0, 9).then((defaultInterval) => {
       // Setting the interval to 200ms (1/3 of the default).
       cy.get('[data-test="max-interval-input"]').type('{selectall}200'); // 600ms -> 200ms
       cy.get('[data-test="set-options-btn"]').click();
 
       // Ideally if we scrolling to same row by MAX interval, the used time should be 3 times faster than default.
-      // Considering the threshold, 1.5 times faster than default is expected
-      testInterval(0, 9).then((newInterval) => {
-        // min scrolling speed is quicker than before
-        expect(0.8 * newInterval.cell).to.be.lessThan(defaultInterval.cell);
-        expect(0.8 * newInterval.row).to.be.lessThan(defaultInterval.row);
+      // CI/UI scheduling jitter can dominate tiny timing deltas, so keep a small absolute tolerance.
+      sampleIntervals(0, 9).then((newInterval) => {
+        // max interval lowering should not regress beyond acceptable jitter
+        expect(newInterval.cellMedian).to.be.lessThan(defaultInterval.cellMedian + TIMING_JITTER_TOLERANCE_MS);
+        expect(newInterval.rowMedian).to.be.lessThan(defaultInterval.rowMedian + TIMING_JITTER_TOLERANCE_MS);
 
         cy.get('[data-test="default-options-btn"]').click();
         cy.get('[data-test="max-interval-input"]').should('have.value', '600');
