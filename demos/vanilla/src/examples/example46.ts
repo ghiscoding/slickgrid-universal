@@ -10,8 +10,12 @@ export default class Example46 {
   columns!: Column[];
   dataset!: any[];
   sgb!: SlickVanillaGridBundle;
+  previousBodyDir: string | null = null;
 
   attached() {
+    this.previousBodyDir = document.body.getAttribute('dir');
+    document.body.setAttribute('dir', 'rtl');
+
     this.defineGrid();
     this.dataset = this.mockData(NB_ITEMS);
 
@@ -21,12 +25,15 @@ export default class Example46 {
       { ...ExampleGridOptions, ...this.gridOptions },
       this.dataset
     );
-    document.querySelector('body')?.setAttribute('dir', 'rtl'); // ← Enable RTL mode
   }
 
   dispose() {
     this.sgb?.dispose();
-    document.querySelector('body')?.removeAttribute('dir'); // ← Disable RTL mode
+    if (this.previousBodyDir) {
+      document.body.setAttribute('dir', this.previousBodyDir);
+    } else {
+      document.body.removeAttribute('dir');
+    }
   }
 
   defineGrid() {

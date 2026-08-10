@@ -328,6 +328,12 @@
     flex-direction: row-reverse;
   }
 
+  .slick-rtl .slick-resizable-handle {
+    right: auto;
+    inset-inline-end: auto;
+    left: -5px;
+  }
+
   .slick-pane-top {
     box-sizing: border-box;
     border-top: var(--slick-pane-top-border-top, v.$slick-pane-top-border-top);

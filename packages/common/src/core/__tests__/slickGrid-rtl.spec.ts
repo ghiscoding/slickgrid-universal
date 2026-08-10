@@ -67,6 +67,39 @@ describe('SlickGrid RTL (Right-to-Left)', () => {
       grid = new SlickGrid<any, Column>(gridContainer, items, columns, { ...defaultOptions, rtl: true });
       expect(grid.getOptions().rtl).toBe(true);
     });
+
+    it('should apply RTL class and dir attribute on grid container', () => {
+      const gridContainer = document.getElementById(gridId) as HTMLElement;
+      grid = new SlickGrid<any, Column>(gridContainer, items, columns, { ...defaultOptions, rtl: true });
+
+      expect(gridContainer.classList.contains('slick-rtl')).toBe(true);
+      expect(gridContainer.getAttribute('dir')).toBe('rtl');
+    });
+
+    it('should not apply RTL class or dir in LTR mode', () => {
+      const gridContainer = document.getElementById(gridId) as HTMLElement;
+      grid = new SlickGrid<any, Column>(gridContainer, items, columns, { ...defaultOptions, rtl: false });
+
+      expect(gridContainer.classList.contains('slick-rtl')).toBe(false);
+      expect(gridContainer.getAttribute('dir')).toBeNull();
+    });
+  });
+
+  describe('Visible Range in RTL', () => {
+    it('should calculate leftPx/rightPx with RTL negative scrollLeft convention', () => {
+      const gridContainer = document.getElementById(gridId) as HTMLElement;
+      grid = new SlickGrid<any, Column>(gridContainer, items, columns, { ...defaultOptions, rtl: true });
+
+      const anyGrid = grid as any;
+      anyGrid.canvasWidth = 2000;
+      anyGrid.viewportW = 800;
+
+      const range = grid.getVisibleRange(0, -200);
+
+      expect(range.leftPx).toBe(600);
+      expect(range.rightPx).toBe(1400);
+      expect(range.rightPx).toBeGreaterThan(range.leftPx);
+    });
   });
 
   describe('Column Resizing in RTL', () => {

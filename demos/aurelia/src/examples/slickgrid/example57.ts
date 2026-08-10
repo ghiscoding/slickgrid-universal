@@ -6,18 +6,24 @@ export class Example57 {
   gridOptions!: GridOption;
   columns: Column[] = [];
   dataset: any[] = [];
+  previousBodyDir: string | null = null;
 
   constructor() {
     this.defineGrid();
   }
 
   attached() {
+    this.previousBodyDir = document.body.getAttribute('dir');
+    document.body.setAttribute('dir', 'rtl');
     this.dataset = this.mockData(NB_ITEMS);
-    document.querySelector('body')?.setAttribute('dir', 'rtl'); // ← Enable RTL mode
   }
 
-  detaching() {
-    document.querySelector('body')?.removeAttribute('dir'); // ← Disable RTL mode
+  detached() {
+    if (this.previousBodyDir) {
+      document.body.setAttribute('dir', this.previousBodyDir);
+    } else {
+      document.body.removeAttribute('dir');
+    }
   }
 
   defineGrid() {

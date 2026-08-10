@@ -1,21 +1,30 @@
 <script setup lang="ts">
 import { Formatters, SlickgridVue, type Column, type GridOption } from 'slickgrid-vue';
-import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 100;
 
 const gridOptions = ref<GridOption>();
 const columns: Ref<Column[]> = ref([]);
 const dataset: Ref<any[]> = ref([]);
+let previousBodyDir: string | null = null;
 
 onBeforeMount(() => {
   defineGrid();
   dataset.value = mockData(NB_ITEMS);
-  document.querySelector('body')?.setAttribute('dir', 'rtl'); // ← Enable RTL mode
+});
+
+onMounted(() => {
+  previousBodyDir = document.body.getAttribute('dir');
+  document.body.setAttribute('dir', 'rtl');
 });
 
 onUnmounted(() => {
-  document.querySelector('body')?.removeAttribute('dir'); // ← Disable RTL mode
+  if (previousBodyDir) {
+    document.body.setAttribute('dir', previousBodyDir);
+  } else {
+    document.body.removeAttribute('dir');
+  }
 });
 
 function defineGrid() {

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, type OnInit } from '@angular/core';
+import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { AngularSlickgridComponent, Formatters, type Column, type GridOption } from '../../library';
 
 const NB_ITEMS = 100;
@@ -13,15 +13,22 @@ export class Example57Component implements OnInit, OnDestroy {
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
+  previousBodyDir: string | null = null;
 
   ngOnInit(): void {
+    this.previousBodyDir = document.body.getAttribute('dir');
+    document.body.setAttribute('dir', 'rtl');
+
     this.prepareGrid();
     this.dataset = this.mockData(NB_ITEMS);
-    document.querySelector('body')?.setAttribute('dir', 'rtl'); // ← Enable RTL mode
   }
 
-  ngOnDestroy() {
-    document.querySelector('body')?.removeAttribute('dir'); // ← Disable RTL mode
+  ngOnDestroy(): void {
+    if (this.previousBodyDir) {
+      document.body.setAttribute('dir', this.previousBodyDir);
+    } else {
+      document.body.removeAttribute('dir');
+    }
   }
 
   prepareGrid() {

@@ -970,6 +970,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!this._options.explicitInitialization) {
       this.finishInitialization();
     }
+
+    this.applyRTL(this._options.rtl ?? false);
   }
 
   protected finishInitialization(): void {
@@ -5280,11 +5282,21 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     viewportTop ??= this.scrollTop;
     viewportLeft ??= this.scrollLeft;
 
+    let leftPx = viewportLeft;
+    let rightPx = viewportLeft + this.viewportW;
+
+    if (this._options.rtl) {
+      // In RTL mode, scrollLeft is the offset from the right edge.
+      const maxScroll = this.canvasWidth - this.viewportW;
+      leftPx = maxScroll - viewportLeft - this.viewportW;
+      rightPx = maxScroll - viewportLeft;
+    }
+
     return {
       top: this.getRowFromPosition(viewportTop),
       bottom: this.getRowFromPosition(viewportTop + this.viewportH) + 1,
-      leftPx: viewportLeft,
-      rightPx: viewportLeft + this.viewportW,
+      leftPx,
+      rightPx,
     };
   }
 
@@ -8160,5 +8172,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   protected get dirSide(): string {
     return this._options.rtl ? 'right' : 'left';
+  }
+
+  /** Applies/removes RTL state directly on the grid container. */
+  private applyRTL(enabled: boolean): void {
+    if (enabled) {
+      this._container.classList.add('slick-rtl');
+      this._container.setAttribute('dir', 'rtl');
+    } else {
+      this._container.classList.remove('slick-rtl');
+      this._container.removeAttribute('dir');
+    }
   }
 }

@@ -9,13 +9,19 @@ const Example57: React.FC = () => {
   const [dataset, setDataset] = useState<any[]>([]);
 
   useEffect(() => {
+    const previousBodyDir = document.body.getAttribute('dir');
+    document.body.setAttribute('dir', 'rtl');
+
     defineGrid();
     const mockData = mockDataset();
     setDataset(mockData);
-    document.querySelector('body')?.setAttribute('dir', 'rtl'); // ← Enable RTL mode
 
     return () => {
-      document.querySelector('body')?.removeAttribute('dir'); // ← Disable RTL mode
+      if (previousBodyDir) {
+        document.body.setAttribute('dir', previousBodyDir);
+      } else {
+        document.body.removeAttribute('dir');
+      }
     };
   }, []);
 
