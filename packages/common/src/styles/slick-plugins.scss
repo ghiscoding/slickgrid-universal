@@ -481,8 +481,10 @@ li.hidden {
   float: left;
   margin-bottom: 100px;
 }
-[dir='rtl'] .slick-column-name {
-  float: right;
+.slick-column-name {
+  .slick-rtl & {
+    float: right;
+  }
 }
 
 .slick-header-button {

@@ -322,16 +322,18 @@
     display: flex;
   }
 
-  [dir='rtl'] .slick-preheader-container,
-  [dir='rtl'] .slick-header-container,
-  [dir='rtl'] .slick-headerrow {
-    flex-direction: row-reverse;
-  }
+  .slick-rtl {
+    .slick-preheader-container,
+    .slick-header-container,
+    .slick-headerrow {
+      flex-direction: row-reverse;
+    }
 
-  .slick-rtl .slick-resizable-handle {
-    right: auto;
-    inset-inline-end: auto;
-    left: -5px;
+    .slick-resizable-handle {
+      right: auto;
+      inset-inline-end: auto;
+      left: -5px;
+    }
   }
 
   .slick-pane-top {
@@ -422,6 +424,10 @@
     border-top: 0px !important;
     border-bottom: 0px !important;
     float: left;
+
+    .slick-rtl & {
+      float: right;
+    }
   }
 
   .slick-header-column {
@@ -498,10 +504,6 @@
     z-index: 999999;
     box-shadow: var(--slick-row-move-plugin-shadow-row-box-shadow, v.$slick-row-move-plugin-shadow-row-box-shadow);
   }
-}
-
-[dir='rtl'] .slick-header-column.slick-state-default {
-  float: right;
 }
 
 .scrollbar-fix {
