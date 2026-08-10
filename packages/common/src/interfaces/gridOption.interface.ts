@@ -866,6 +866,9 @@ export interface GridOption<C extends Column = Column> {
   /** Defaults to 400, duration to show the row highlight (e.g. after insert/edit/...) */
   rowHighlightDuration?: number;
 
+  /** Defaults to false, sets the grid direction to RTL (Right-to-Left) for proper rendering of RTL languages */
+  rtl?: boolean;
+
   /** Row Move Manager Plugin options & events */
   rowMoveManager?: RowMoveManager;
 

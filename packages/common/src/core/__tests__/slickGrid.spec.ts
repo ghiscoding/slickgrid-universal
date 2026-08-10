@@ -1694,6 +1694,54 @@ describe('SlickGrid core file', () => {
       expect(grid.getFooterRowColumn('firstName')).toBeUndefined();
     });
 
+    it('should lazily create footer row when "createFooterRow" is enabled at runtime', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, {
+        ...defaultOptions,
+        createFooterRow: false,
+        showFooterRow: true,
+      });
+      grid.init();
+
+      const onFooterRowCellRenderedSpy = vi.spyOn(grid.onFooterRowCellRendered, 'notify');
+
+      expect(grid.getFooterRow()).toBeFalsy();
+      expect(container.querySelector('.slick-footerrow')).toBeFalsy();
+
+      expect(() => grid.setOptions({ createFooterRow: true, showFooterRow: true })).not.toThrow();
+
+      let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms).toBeTruthy();
+      expect(footerElms.length).toBe(2);
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+      expect(grid.getFooterRow()).toBeTruthy();
+      expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
+      expect(onFooterRowCellRenderedSpy).toHaveBeenCalledTimes(2);
+
+      grid.setFooterRowVisibility(false);
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setOptions({ createFooterRow: false });
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setOptions({ createFooterRow: true, showFooterRow: true });
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setFooterRowVisibility(false);
+      grid.setFooterRowVisibility(true);
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+    });
+
     it('should show footer when "showFooterRow" is enabled but not return any row when columns to the right are outside the range', () => {
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name' },
@@ -2378,6 +2426,42 @@ describe('SlickGrid core file', () => {
         expect(result!.querySelector('.slick-cell')).toBeTruthy();
       });
 
+      it('should return bottom canvas node for the first scrollable row when top frozen rows are enabled', () => {
+        const localColumns = [
+          { id: 'id', field: 'id', name: 'Id' },
+          { id: 'firstName', field: 'firstName', name: 'First Name' },
+        ] as Column[];
+        const localData = Array.from({ length: 20 }, (_, i) => ({ id: i, firstName: `name-${i}` }));
+        const frozenRow = 3;
+
+        grid = new SlickGrid<any, Column>(container, localData, localColumns, { ...defaultOptions, frozenRow });
+
+        const apiCanvas = grid.getCanvasNode(0, frozenRow);
+        const domRow = container.querySelector(`.slick-row[data-row="${frozenRow}"]`) as HTMLElement;
+        const domCanvas = domRow?.closest('.grid-canvas') as HTMLElement;
+
+        expect(apiCanvas).toBeTruthy();
+        expect(domCanvas).toBeTruthy();
+        expect(apiCanvas).toEqual(domCanvas);
+        expect(apiCanvas.classList.contains('grid-canvas-bottom')).toBe(true);
+      });
+
+      it('should apply frozen css class only to pinned rows when frozenBottom is enabled', () => {
+        const localColumns = [
+          { id: 'id', field: 'id', name: 'Id' },
+          { id: 'firstName', field: 'firstName', name: 'First Name' },
+        ] as Column[];
+        const localData = Array.from({ length: 10 }, (_, i) => ({ id: i, firstName: `name-${i}` }));
+
+        grid = new SlickGrid<any, Column>(container, localData, localColumns, { ...defaultOptions, frozenRow: 3, frozenBottom: true });
+
+        const frozenRows = Array.from(container.querySelectorAll('.slick-row.frozen'))
+          .map((el) => Number((el as HTMLElement).dataset.row))
+          .sort((a, b) => a - b);
+
+        expect(frozenRows).toEqual([7, 8, 9]);
+      });
+
       it('should return undefined when calling the function when getViewports() is returning undefined', () => {
         grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
         vi.spyOn(grid, 'getViewports').mockReturnValueOnce(null as any);
@@ -2760,7 +2844,7 @@ describe('SlickGrid core file', () => {
       grid.init();
       const result = grid.getHeadersWidth();
 
-      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) + 1000 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80) + 1000 + 1000); // Left(1 col) + Right(1 col) => 800 + (1000 + 80) + 1000 + 1000
     });
 
     it('should return viewport element when calling the function when found in the grid container', () => {
@@ -2772,7 +2856,7 @@ describe('SlickGrid core file', () => {
       grid.init();
       const result = grid.getHeadersWidth();
 
-      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) * 2 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) + 1000 + 1000); // Both cols in left band => 800 + (1000 + 160) + 1000 + 1000
     });
 
     it('should remove Grid Menu width from the last header when scrollbar width is collapsed and columns are wider than canvas', () => {
@@ -6137,6 +6221,17 @@ describe('SlickGrid core file', () => {
 
       expect(scrollToSpy).toHaveBeenCalledWith(2 * DEFAULT_COLUMN_HEIGHT); // default rowHeight: 25
       expect(renderSpy).toHaveBeenCalled();
+    });
+
+    it('should allow scrolling to the last scrollable row when frozenBottom is enabled', () => {
+      const manyRows = Array.from({ length: 1000 }, (_, i) => ({ id: i, firstName: `name-${i}`, lastName: 'L', age: i }));
+      grid = new SlickGrid<any, Column>(container, manyRows, columns, { ...defaultOptions, frozenRow: 3, frozenBottom: true });
+      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+
+      grid.scrollRowIntoView(996);
+
+      expect(scrollToSpy).toHaveBeenCalled();
+      expect((scrollToSpy.mock.calls[0][0] as number) > 0).toBe(true);
     });
 
     it('should render inline row height and rebuild index when row heights are invalidated', () => {
