@@ -38,6 +38,31 @@ describe('Example 37 - Hybrid Selection Model', () => {
         });
     });
 
+    it('should export Grid 1 to Excel and keep static columns with expected data shapes', () => {
+      const downloadsFolder = Cypress.config('downloadsFolder');
+
+      cy.get('[data-test="export-excel-btn"]').click();
+
+      cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 11 }).then((xlsx: any) => {
+        expect(xlsx.fileName).to.match(/\.xlsx$/i);
+        expect(xlsx.header).to.deep.equal(['#', 'Title', '% Complete', 'Start', 'Finish', 'Priority', 'Effort Driven']);
+        expect(xlsx.rowCount - 1).to.equal(400);
+
+        expect(xlsx.dataRows).to.be.an('array');
+        expect(xlsx.dataRows.length).to.equal(11);
+
+        xlsx.dataRows.forEach((row: string[], index: number) => {
+          expect(row[0]).to.equal(`${index}`);
+          expect(row[1]).to.equal(`Task ${index}`);
+          expect(Number(row[2])).to.be.within(0, 99);
+          expect(row[3]).to.match(/^\d{2}\/\d{2}\/\d{4}$/);
+          expect(row[4]).to.match(/^\d{2}\/\d{2}\/\d{4}$/);
+          expect(row[5]).to.match(/^(Low|Medium|High)$/);
+          expect(row[6]).to.match(/^(Yes|No)$/);
+        });
+      });
+    });
+
     it('should click on Task 1 and be able to drag from bottom right corner to expand the cell selections to include 4 cells', () => {
       cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').as('task1');
       cy.get('@task1').should('contain', 'Task 1');

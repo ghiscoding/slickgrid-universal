@@ -860,6 +860,34 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('.slick-context-menu .slick-menu-command-list').should('not.exist');
     });
 
+    it('should export to Excel and contain expected worksheet content', () => {
+      const downloadsFolder = Cypress.config('downloadsFolder');
+
+      cy.get('.grid7').find('.slick-row .slick-cell:nth(2)').rightclick({ force: true });
+      cy.get('.slick-context-menu.dropright .slick-menu-command-list')
+        .find('.slick-menu-item:nth(1)')
+        .find('.slick-menu-content')
+        .contains('Export to Excel')
+        .click();
+
+      cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000 }).then((xlsx: any) => {
+        expect(xlsx.fileName).to.match(/\.xlsx$/i);
+        expect(xlsx.sheetName).to.be.a('string').and.not.be.empty;
+        expect(xlsx.rowCount).to.be.gte(3);
+
+        const normalizedHeaders = xlsx.header.map((header: string) => `${header}`.replace(/\s+/g, ' ').trim());
+        expect(normalizedHeaders).to.deep.equal(['Title', '% Complete', 'Duration', 'Completed', 'Start', 'Prerequisites', 'Title']);
+
+        expect(xlsx.firstDataRow[0]).to.equal('Task 4');
+        expect(Number(xlsx.firstDataRow[1])).to.be.a('number');
+        expect(xlsx.firstDataRow[2]).to.equal('0');
+        expect(`${xlsx.firstDataRow[3]}`.toUpperCase()).to.equal('FALSE');
+        expect(xlsx.firstDataRow[4]).to.equal('2009-01-01');
+        expect(xlsx.firstDataRow[5]).to.contain('Task 4');
+        expect(xlsx.firstDataRow[6]).to.equal('Task 4');
+      });
+    });
+
     it('should switch language', () => {
       cy.get('[data-test="language-button"]').click();
 

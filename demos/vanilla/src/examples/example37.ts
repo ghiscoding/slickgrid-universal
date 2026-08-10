@@ -4,7 +4,7 @@ import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanil
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example37.scss';
 
-const NB_ITEMS = 1000;
+const NB_ITEMS = 400;
 
 export default class Example37 {
   protected _eventHandler: SlickEventHandler;
@@ -17,6 +17,7 @@ export default class Example37 {
   dataset2!: any[];
   sgb1!: SlickVanillaGridBundle;
   sgb2!: SlickVanillaGridBundle;
+  excelExportService = new ExcelExportService();
 
   gridFocus() {
     this.sgb1.slickGrid?.focus();
@@ -149,7 +150,7 @@ export default class Example37 {
       excelExportOptions: {
         exportWithFormatter: true,
       },
-      externalResources: [new ExcelExportService()],
+      externalResources: [this.excelExportService],
 
       // enable new hybrid selection model (rows & cells)
       enableSelection: true,
@@ -222,5 +223,9 @@ export default class Example37 {
       };
     }
     return data;
+  }
+
+  exportGrid1ToExcel() {
+    this.excelExportService.exportToExcel({ filename: 'export', format: 'xlsx' });
   }
 }
