@@ -218,5 +218,38 @@ describe('SlickGrid RTL (Right-to-Left)', () => {
       expect(columns[3].width).toBe(86);
       expect(columns[4].width).toBe(80);
     });
+
+    it('should not schedule resize auto-scroll timer in RTL when dragging outside viewport', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, {
+        ...defaultOptions,
+        forceFitColumns: false,
+        rtl: true,
+        autoScrollOnColumnResize: true,
+      });
+      grid.init();
+
+      const setIntervalSpy = vi.spyOn(globalThis, 'setInterval');
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      // Simulate dragging outside the viewport edge.
+      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -200 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+      Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 0 });
+
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent);
+      vi.advanceTimersByTime(120);
+
+      expect(setIntervalSpy).not.toHaveBeenCalled();
+      expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
+      setIntervalSpy.mockRestore();
+    });
   });
 });

@@ -2324,6 +2324,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       targetPageX: number,
       resizeCallback: (targetPageX: number) => void
     ) => {
+      // TODO: there is a known bug with auto-scroll in RTL,
+      // so disable it until someone can contribute a fix
+      if (this._options.rtl) {
+        stopColumnResizeAutoScroll();
+        return;
+      }
+
       autoScrollClientX = isDefinedNumber(clientX) ? clientX : autoScrollClientX;
       const viewportOffset = getOffset(this._viewportScrollContainerX);
       const left = viewportOffset.left;
@@ -2564,6 +2571,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this.updateCanvasWidth();
         if (
           this._options.autoScrollOnColumnResize &&
+          !this._options.rtl &&
           !this._options.forceFitColumns &&
           !(this.hasFrozenColumns() && i <= this._options.frozenColumn!)
         ) {
@@ -5789,7 +5797,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected _handleScroll(eventType: 'mousewheel' | 'scroll' | 'system' = 'system'): boolean {
     let maxScrollDistanceY = this._viewportScrollContainerY.scrollHeight - this._viewportScrollContainerY.clientHeight;
-    let maxScrollDistanceX = this._viewportScrollContainerY.scrollWidth - this._viewportScrollContainerY.clientWidth;
+    let maxScrollDistanceX = this._viewportScrollContainerX.scrollWidth - this._viewportScrollContainerX.clientWidth;
 
     // Protect against erroneous clientHeight/Width greater than scrollHeight/Width.
     // Sometimes seen in Chrome.
