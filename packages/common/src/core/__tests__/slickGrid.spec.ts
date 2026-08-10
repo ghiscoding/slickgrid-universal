@@ -2426,6 +2426,42 @@ describe('SlickGrid core file', () => {
         expect(result!.querySelector('.slick-cell')).toBeTruthy();
       });
 
+      it('should return bottom canvas node for the first scrollable row when top frozen rows are enabled', () => {
+        const localColumns = [
+          { id: 'id', field: 'id', name: 'Id' },
+          { id: 'firstName', field: 'firstName', name: 'First Name' },
+        ] as Column[];
+        const localData = Array.from({ length: 20 }, (_, i) => ({ id: i, firstName: `name-${i}` }));
+        const frozenRow = 3;
+
+        grid = new SlickGrid<any, Column>(container, localData, localColumns, { ...defaultOptions, frozenRow });
+
+        const apiCanvas = grid.getCanvasNode(0, frozenRow);
+        const domRow = container.querySelector(`.slick-row[data-row="${frozenRow}"]`) as HTMLElement;
+        const domCanvas = domRow?.closest('.grid-canvas') as HTMLElement;
+
+        expect(apiCanvas).toBeTruthy();
+        expect(domCanvas).toBeTruthy();
+        expect(apiCanvas).toEqual(domCanvas);
+        expect(apiCanvas.classList.contains('grid-canvas-bottom')).toBe(true);
+      });
+
+      it('should apply frozen css class only to pinned rows when frozenBottom is enabled', () => {
+        const localColumns = [
+          { id: 'id', field: 'id', name: 'Id' },
+          { id: 'firstName', field: 'firstName', name: 'First Name' },
+        ] as Column[];
+        const localData = Array.from({ length: 10 }, (_, i) => ({ id: i, firstName: `name-${i}` }));
+
+        grid = new SlickGrid<any, Column>(container, localData, localColumns, { ...defaultOptions, frozenRow: 3, frozenBottom: true });
+
+        const frozenRows = Array.from(container.querySelectorAll('.slick-row.frozen'))
+          .map((el) => Number((el as HTMLElement).dataset.row))
+          .sort((a, b) => a - b);
+
+        expect(frozenRows).toEqual([7, 8, 9]);
+      });
+
       it('should return undefined when calling the function when getViewports() is returning undefined', () => {
         grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
         vi.spyOn(grid, 'getViewports').mockReturnValueOnce(null as any);
@@ -6185,6 +6221,17 @@ describe('SlickGrid core file', () => {
 
       expect(scrollToSpy).toHaveBeenCalledWith(2 * DEFAULT_COLUMN_HEIGHT); // default rowHeight: 25
       expect(renderSpy).toHaveBeenCalled();
+    });
+
+    it('should allow scrolling to the last scrollable row when frozenBottom is enabled', () => {
+      const manyRows = Array.from({ length: 1000 }, (_, i) => ({ id: i, firstName: `name-${i}`, lastName: 'L', age: i }));
+      grid = new SlickGrid<any, Column>(container, manyRows, columns, { ...defaultOptions, frozenRow: 3, frozenBottom: true });
+      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+
+      grid.scrollRowIntoView(996);
+
+      expect(scrollToSpy).toHaveBeenCalled();
+      expect((scrollToSpy.mock.calls[0][0] as number) > 0).toBe(true);
     });
 
     it('should render inline row height and rebuild index when row heights are invalidated', () => {

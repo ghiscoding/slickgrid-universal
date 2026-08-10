@@ -131,6 +131,9 @@ Use direct file filters when running a single spec, and point at the repo config
 Spec paths can live anywhere in the monorepo, so use the repo-root path to the exact file being targeted.
 Prefer `vitest run` over `pnpm exec vitest` when the Vitest binary is available, since `run` is the actual test subcommand and supports the same single-file filters with less command overhead.
 
+For Cypress from shell, default to `rtk cypress run --config-file test/cypress.config.ts --spec <spec-path>` when available.
+If Cypress is not on PATH ("Binary 'cypress' not found"), use `pnpm exec cypress run --config-file test/cypress.config.ts --spec <spec-path>`.
+
 ## Low-Token Availability Check
 
 For PowerShell terminals, check once per terminal session and cache the result:
