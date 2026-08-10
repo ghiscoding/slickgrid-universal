@@ -2844,7 +2844,7 @@ describe('SlickGrid core file', () => {
       grid.init();
       const result = grid.getHeadersWidth();
 
-      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) + 1000 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80) + 1000 + 1000); // Left(1 col) + Right(1 col) => 800 + (1000 + 80) + 1000 + 1000
     });
 
     it('should return viewport element when calling the function when found in the grid container', () => {
@@ -2856,7 +2856,7 @@ describe('SlickGrid core file', () => {
       grid.init();
       const result = grid.getHeadersWidth();
 
-      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) * 2 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) + 1000 + 1000); // Both cols in left band => 800 + (1000 + 160) + 1000 + 1000
     });
 
     it('should remove Grid Menu width from the last header when scrollbar width is collapsed and columns are wider than canvas', () => {
