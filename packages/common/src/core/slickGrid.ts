@@ -4112,6 +4112,51 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
+   * Map a virtual page index to its render offset in scroll-container space.
+   * First and last pages are pinned to container edges; interior pages are spread
+   * evenly between them to avoid browser edge clamping/jank near boundaries.
+   */
+  protected getPageOffset(page: number): number {
+    if (this.n <= 1 || page <= 0) {
+      return 0;
+    }
+
+    const lastOffset = Math.max(0, this.th - this.h);
+    if (page >= this.n - 1) {
+      return lastOffset;
+    }
+
+    // With no interior pages, keep legacy linear mapping.
+    if (this.n <= 3 || lastOffset <= 0) {
+      return Math.round(page * (this.cj || 0));
+    }
+
+    return Math.round(((page - 1) * lastOffset) / (this.n - 3));
+  }
+
+  /**
+   * Infer page index from large-scale scroll movement in container space.
+   * This mirrors page pinning logic used by getPageOffset().
+   */
+  protected getPageFromLargeScrollDelta(scrollTop: number): number {
+    if (this.n <= 1 || this.ph <= 0 || this.h <= this.viewportH || scrollTop < this.ph) {
+      return 0;
+    }
+
+    if (scrollTop >= this.h - this.ph) {
+      return this.n - 1;
+    }
+
+    // With no interior pages, keep legacy page selection behavior.
+    if (this.n <= 3 || this.h <= this.ph * 2) {
+      return Math.min(this.n - 1, Math.floor(scrollTop / this.ph));
+    }
+
+    const scaleFactor = (this.th - this.ph * 2) / (this.h - this.ph * 2);
+    return Math.min(this.n - 3, Math.floor(((scrollTop - this.ph) * scaleFactor) / this.ph)) + 1;
+  }
+
+  /**
    * Scroll to an Y coordinate position in the grid
    * @param {Number} y
    */
@@ -4128,7 +4173,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // determine the page for the target position first, then derive the offset from that page
     // (computing the offset from the previous page would lag one scroll event behind on jumps)
     this.page = this.ph ? Math.min((this.n || 0) - 1, Math.floor(y / this.ph)) : 0;
-    this.offset = Math.round(this.page * (this.cj || 0));
+    this.offset = this.getPageOffset(this.page);
     const newScrollTop = (y - this.offset) as number;
 
     if (this.offset !== oldOffset) {
@@ -5875,15 +5920,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (vScrollDist < this.viewportH) {
         this.scrollTo(this.scrollTop + this.offset);
       } else {
-        if (this.h === this.viewportH) {
-          this.page = 0;
-        } else {
-          this.page = Math.min(
-            this.n - 1,
-            Math.floor(this.scrollTop * ((this.th - this.viewportH) / (this.h - this.viewportH)) * (1 / this.ph))
-          );
-        }
-        this.offset = Math.round(this.page * this.cj);
+        this.page = this.getPageFromLargeScrollDelta(this.scrollTop);
+        this.offset = this.getPageOffset(this.page);
       }
     }
 
