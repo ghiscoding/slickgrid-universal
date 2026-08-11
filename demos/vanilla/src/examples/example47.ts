@@ -115,7 +115,6 @@ export default class Example47 {
   constructor() {
     this.excelExportService = new ExcelExportService();
     this.formulaService = new FormulaService({
-      editorParams: { debug: true },
       excelCustomFunctions: [{ name: 'CUSTOMSUM', args: ['values'], body: 'SUM(values)' }],
       customFunctions: {
         CUSTOMSUM: {
@@ -227,7 +226,7 @@ export default class Example47 {
         cssClass: 'text-sub-total',
         type: 'number',
         sortable: true,
-        width: 90,
+        width: 120,
         filterable: true,
         allowFormula: true,
         formatter: Formatters.dollar,
@@ -351,7 +350,7 @@ export default class Example47 {
       autoAddCustomEditorFormatter: customEditableInputFormatter,
       darkMode: this._darkMode,
       gridHeight: 470,
-      gridWidth: 830,
+      gridWidth: 1080,
       enableCellNavigation: true,
       autoEdit: true,
       autoCommitEdit: true,

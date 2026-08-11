@@ -109,6 +109,89 @@ describe('Example 47 - Formula Service (MVP)', () => {
     cy.get(cell(0, 4)).contains('$8.88');
   });
 
+  it('should keep multi-reference cell colors while typing formula text', () => {
+    cy.get(cell(0, 4)).click();
+    cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=C1*SUM(D1:D3)', { force: true });
+
+    // C1 should keep the first reference color.
+    cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-1');
+
+    // D1:D3 should keep the second reference color across the full range.
+    cy.get(cell(0, 3)).should('have.class', 'formula-cell-color-2');
+    cy.get(cell(1, 3)).should('have.class', 'formula-cell-color-2');
+    cy.get(cell(2, 3)).should('have.class', 'formula-cell-color-2');
+
+    // Cancel this transient edit to avoid affecting subsequent tests.
+    cy.get('.formula-editor-input').type('{esc}', { force: true });
+    cy.get(cell(0, 4)).contains('$8.88');
+  });
+
+  it('should keep formula-token colors aligned with matching grid cell colors', () => {
+    cy.get(cell(0, 4)).click();
+    cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=C1*SUM(D1:D3)', { force: true });
+
+    // Editor token colors.
+    cy.contains('.formula-editor-input .formula-token.formula-token-color-1', /^C1$/).should('exist');
+    cy.contains('.formula-editor-input .formula-token.formula-token-color-2', /^D1:D3$/).should('exist');
+
+    // Grid cell colors must match token palette assignment.
+    cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-1');
+    cy.get(cell(0, 3)).should('have.class', 'formula-cell-color-2');
+    cy.get(cell(1, 3)).should('have.class', 'formula-cell-color-2');
+    cy.get(cell(2, 3)).should('have.class', 'formula-cell-color-2');
+
+    cy.get('.formula-editor-input').type('{esc}', { force: true });
+    cy.get(cell(0, 4)).contains('$8.88');
+  });
+
+  it('should keep stable coloring when formula contains an incomplete range reference', () => {
+    cy.get(cell(0, 4)).click();
+    cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=C1*SUM(D1:D)', { force: true });
+
+    // Complete reference keeps color #1.
+    cy.contains('.formula-editor-input .formula-token.formula-token-color-1', /^C1$/).should('exist');
+    cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-1');
+
+    // Incomplete range keeps its own color #2 and should only color the valid start cell D1.
+    cy.contains('.formula-editor-input .formula-token.formula-token-color-2', /^D1:D$/).should('exist');
+    cy.get(cell(0, 3)).should('have.class', 'formula-cell-color-2');
+    cy.get(cell(1, 3)).should('not.have.class', 'formula-cell-color-2');
+    cy.get(cell(2, 3)).should('not.have.class', 'formula-cell-color-2');
+
+    cy.get('.formula-editor-input').type('{esc}', { force: true });
+    cy.get(cell(0, 4)).contains('$8.88');
+  });
+
+  it('should copy and cut plain text without nbsp/html artifacts from formula editor', () => {
+    cy.window().then((win) => {
+      const writeTextStub = cy.stub().resolves();
+      Object.defineProperty(win.navigator, 'clipboard', {
+        value: { writeText: writeTextStub },
+        configurable: true,
+      });
+      cy.wrap(writeTextStub).as('writeTextStub');
+    });
+
+    cy.get(cell(0, 4)).click();
+    cy.get('.formula-editor-input')
+      .should('be.visible')
+      .invoke('text', '=SUM(C1\u00a0+\u00a0D1)')
+      .trigger('keydown', { key: 'c', ctrlKey: true, bubbles: true, cancelable: true });
+
+    cy.get('@writeTextStub').should('have.been.calledWithExactly', '=SUM(C1 + D1)');
+
+    cy.get('.formula-editor-input').trigger('keydown', { key: 'x', ctrlKey: true, bubbles: true, cancelable: true });
+    cy.get('@writeTextStub').should('have.been.calledWithExactly', '=SUM(C1 + D1)');
+    cy.get('.formula-editor-input').invoke('text').should('eq', '');
+
+    // Exit transient edit and restore baseline formulas for later serial tests.
+    cy.get('.formula-editor-input').type('{esc}', { force: true });
+    cy.get('[data-test="reload-formulas-btn"]').click();
+    cy.get(cell(0, 4)).click();
+    cy.get('.formula-editor-input').should('be.visible').type('{enter}', { force: true });
+    cy.get(cell(0, 4)).contains('$8.88');
+  });
+
   it('should evaluate IF formula correctly for non-taxable and taxable rows', () => {
     // non-taxable row: IF condition should return 0 taxes
     cy.get(cell(0, 6)).click();

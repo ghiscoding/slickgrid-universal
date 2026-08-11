@@ -926,7 +926,7 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue(1, 'out', items[0].out, '')).toBe('[object Object]');
   });
 
-  it('should wrap onFormulaInputChange to refresh highlights and invoke user callback', () => {
+  it('should wrap onFormulaInputChange and invoke user callback without forcing highlight refresh', () => {
     const userCallback = vi.fn();
     const service = new FormulaService();
     const highlightSpy = vi.spyOn(service as any, 'renderFormulaReferenceHighlights');
@@ -947,7 +947,7 @@ describe('FormulaService', () => {
     const wrapped = columns[0].editor?.params?.onFormulaInputChange as ((formula: string) => void) | undefined;
     wrapped?.('=A1');
 
-    expect(highlightSpy).toHaveBeenCalledWith('=A1');
+    expect(highlightSpy).not.toHaveBeenCalled();
     expect(userCallback).toHaveBeenCalledWith('=A1');
   });
 });

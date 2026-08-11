@@ -6058,7 +6058,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           if (removedRowHash) {
             Object.keys(removedRowHash).forEach((columnId) => {
               if (!addedRowHash || removedRowHash![columnId] !== addedRowHash[columnId]) {
-                node = this.getCellNode(+row, this.getColumnIndex(columnId));
+                const colIdx = this.getColumnIndex(columnId);
+                node = this.getCellNode(+row, colIdx);
                 if (node) {
                   node.classList.remove(removedRowHash[columnId]);
                 }
@@ -6069,7 +6070,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           if (addedRowHash) {
             Object.keys(addedRowHash).forEach((columnId) => {
               if (!removedRowHash || removedRowHash[columnId] !== addedRowHash[columnId]) {
-                node = this.getCellNode(+row, this.getColumnIndex(columnId));
+                const colIdx = this.getColumnIndex(columnId);
+                node = this.getCellNode(+row, colIdx);
                 if (node) {
                   node.classList.add(addedRowHash[columnId]);
                 }

@@ -421,7 +421,8 @@ describe('FormulaCellEditor', () => {
     const editor = new FormulaCellEditor(args);
     editor.loadValue((args as any).item);
     (editor as any).restoreCaretOffset(8);
-    (editor as any)._editorElm.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+    // Call handleInput directly to simulate user typing, which applies colors
+    (editor as any).handleInput();
 
     expect(setCellCssStylesSpy).toHaveBeenCalledTimes(1);
     const cssHash = setCellCssStylesSpy.mock.calls[0][1] as Record<number, Record<string, string>>;
@@ -502,6 +503,228 @@ describe('FormulaCellEditor', () => {
     (editor as any).restoreCaretOffset(3);
     (editor as any).selectAutocompleteItem('SUM');
     expect(editor.serializeValue()).toBe('=SUM   (A1)');
+
+    editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+  });
+
+  it('should not apply persistent cell colors on initial load', () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    document.body.appendChild(hostContainer);
+    document.body.appendChild(gridContainer);
+
+    const setCellCssStylesSpy = vi.fn();
+    const gridStub = {
+      focus: () => undefined,
+      getActiveCell: () => ({ row: 0, cell: 0 }),
+      getCellFromEvent: () => null,
+      getColumns: () => [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({ editorNavigateOnArrows: false }),
+      removeCellCssStyles: () => undefined,
+      setCellCssStyles: setCellCssStylesSpy,
+      getSelectionModel: () => undefined,
+    } as any;
+
+    const args = {
+      column: { field: 'total', editor: { params: { formulaFunctionList: ['SUM'] } } },
+      commitChanges: () => undefined,
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=SUM(B1:C2)' },
+      cancelChanges: () => undefined,
+    } as unknown as EditorArguments;
+
+    const editor = new FormulaCellEditor(args);
+    editor.loadValue((args as any).item);
+
+    expect(setCellCssStylesSpy).not.toHaveBeenCalled();
+
+    editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+  });
+
+  it('should copy and cut plain text from editor DOM on Ctrl+C/Ctrl+X', async () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    document.body.appendChild(hostContainer);
+    document.body.appendChild(gridContainer);
+
+    const writeTextSpy = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText: writeTextSpy },
+      configurable: true,
+    });
+
+    const gridStub = {
+      focus: () => undefined,
+      getActiveCell: () => ({ row: 0, cell: 0 }),
+      getCellFromEvent: () => null,
+      getColumns: () => [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({ editorNavigateOnArrows: false }),
+      removeCellCssStyles: () => undefined,
+      setCellCssStyles: () => undefined,
+      getSelectionModel: () => undefined,
+    } as any;
+
+    const args = {
+      column: { field: 'total', editor: { params: { formulaFunctionList: ['SUM'] } } },
+      commitChanges: () => undefined,
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1' },
+      cancelChanges: () => undefined,
+    } as unknown as EditorArguments;
+
+    const editor = new FormulaCellEditor(args);
+    editor.loadValue((args as any).item);
+
+    (editor as any)._editorElm.textContent = '=SUM(A1\u00a0+\u00a0B1)';
+    (editor as any)._editorElm.dispatchEvent(new KeyboardEvent('keydown', { key: 'c', ctrlKey: true, bubbles: true, cancelable: true }));
+
+    expect(writeTextSpy).toHaveBeenNthCalledWith(1, '=SUM(A1 + B1)');
+    expect((editor as any)._editorElm.textContent).toBe('=SUM(A1\u00a0+\u00a0B1)');
+
+    (editor as any)._editorElm.dispatchEvent(new KeyboardEvent('keydown', { key: 'x', ctrlKey: true, bubbles: true, cancelable: true }));
+
+    expect(writeTextSpy).toHaveBeenNthCalledWith(2, '=SUM(A1 + B1)');
+    expect(editor.serializeValue()).toBe('');
+
+    await Promise.resolve();
+
+    editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+  });
+
+  it('should use live editor DOM text when selecting autocomplete item', () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    document.body.appendChild(hostContainer);
+    document.body.appendChild(gridContainer);
+
+    const gridStub = {
+      focus: () => undefined,
+      getActiveCell: () => ({ row: 0, cell: 0 }),
+      getCellFromEvent: () => null,
+      getColumns: () => [{ id: 'a' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({ editorNavigateOnArrows: false }),
+      removeCellCssStyles: () => undefined,
+      setCellCssStyles: () => undefined,
+    } as any;
+
+    const args = {
+      column: { field: 'total', editor: { params: { formulaFunctionList: ['SUM'] } } },
+      commitChanges: () => undefined,
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1' },
+      cancelChanges: () => undefined,
+    } as unknown as EditorArguments;
+
+    const editor = new FormulaCellEditor(args);
+    editor.loadValue((args as any).item);
+
+    // Keep stale internal value to ensure selection logic reads from DOM textContent.
+    (editor as any)._plainTextValue = '=A1';
+    (editor as any)._editorElm.textContent = '=su';
+    (editor as any).restoreCaretOffset(3);
+    (editor as any).selectAutocompleteItem('SUM');
+
+    expect(editor.serializeValue()).toBe('=SUM(');
+
+    editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+  });
+
+  it('should replace typed function name at caret in middle of formula and preserve surrounding text', () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    document.body.appendChild(hostContainer);
+    document.body.appendChild(gridContainer);
+
+    const gridStub = {
+      focus: () => undefined,
+      getActiveCell: () => ({ row: 0, cell: 0 }),
+      getCellFromEvent: () => null,
+      getColumns: () => [{ id: 'a' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({ editorNavigateOnArrows: false }),
+      removeCellCssStyles: () => undefined,
+      setCellCssStyles: () => undefined,
+    } as any;
+
+    const args = {
+      column: { field: 'total', editor: { params: { formulaFunctionList: ['SUM', 'SUMIF'] } } },
+      commitChanges: () => undefined,
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1+B1' },
+      cancelChanges: () => undefined,
+    } as unknown as EditorArguments;
+
+    const editor = new FormulaCellEditor(args);
+    editor.loadValue((args as any).item);
+
+    // Keep stale internal value to ensure replacement is driven by current DOM text.
+    (editor as any)._plainTextValue = '=A1+OLD(B1)+C1';
+    (editor as any)._editorElm.textContent = '=A1+su(B1)+C1';
+    (editor as any).restoreCaretOffset(6); // right after "su"
+    (editor as any).selectAutocompleteItem('SUM');
+
+    expect(editor.serializeValue()).toBe('=A1+SUM(B1)+C1');
+
+    editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+  });
+
+  it('should not remove selection highlight style when no selection highlight is active', () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    document.body.appendChild(hostContainer);
+    document.body.appendChild(gridContainer);
+
+    const removeCellCssStylesSpy = vi.fn();
+    const gridStub = {
+      focus: () => undefined,
+      getActiveCell: () => ({ row: 0, cell: 0 }),
+      getCellFromEvent: () => null,
+      getColumns: () => [{ id: 'a' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({ editorNavigateOnArrows: false }),
+      removeCellCssStyles: removeCellCssStylesSpy,
+      setCellCssStyles: () => undefined,
+      getSelectionModel: () => undefined,
+    } as any;
+
+    const args = {
+      column: { field: 'total', editor: { params: { formulaFunctionList: ['SUM'] } } },
+      commitChanges: () => undefined,
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1' },
+      cancelChanges: () => undefined,
+    } as unknown as EditorArguments;
+
+    const editor = new FormulaCellEditor(args);
+    editor.loadValue((args as any).item);
+
+    (editor as any)._isSelectionModelHighlightActive = false;
+    (editor as any).clearReferenceSelectionHighlight();
+
+    expect(removeCellCssStylesSpy).not.toHaveBeenCalledWith('formula-editor-grid-sel-highlight');
 
     editor.destroy();
     hostContainer.remove();

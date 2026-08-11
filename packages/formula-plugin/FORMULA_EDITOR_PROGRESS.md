@@ -1,6 +1,6 @@
 # Formula Editor Plugin Progress
 
-Last updated: 2026-08-06 (XSS fix in token rendering + removed Function() eval fallback + plugin API conventions + spec file corruption fix + grouping limitation note)
+Last updated: 2026-08-10 (formula-reference color sync fixes + incomplete-reference color stability + plain-text clipboard handling + unit/E2E regression coverage)
 Branch context: feat/cell-formula-plugin
 
 ## Maintenance Rule
@@ -89,10 +89,21 @@ formula.cellEditor.spec.ts covers:
 - Editor remains open and suppresses grid click after reference selection.
 - Caret-driven range highlight and drag-rewrite flow.
 - Endpoint drag expansion anchor behavior.
+- Fallback to cell-css highlighting when no selection model is available.
+- No persistent cell colors are applied on initial load.
+- Clipboard copy/cut uses plain text from editor DOM textContent (NBSP normalized).
+- Autocomplete insertion reads live editor DOM text instead of stale cached plain value.
+- Selection highlight style is removed only when it was actually active.
 
 formula.service.spec.ts covers:
 - Warning when formula columns exist but selection prerequisites are missing.
 - No warning when mixed selection is configured.
+
+test/cypress/e2e/example47.cy.ts covers:
+- Formula editor argument append-after-operator regression (`=SUM(C1*` then click cell => `=SUM(C1*D1`).
+- Multi-reference color persistence while typing (`=C1*SUM(D1:D3)`) with stable per-reference coloring.
+- Formula editor copy/cut plain-text clipboard behavior.
+- Incomplete reference color stability scenarios from formula-entry workflows.
 
 ## Latest Update: Security & Plugin Convention Review (2026-08-06)
 - **Fixed XSS**: `FormulaCellEditor.renderTokens()` built its highlighted markup as an HTML string (only cell-reference tokens were escaped) and assigned it via `innerHTML`. Any other raw formula text (typed or loaded from dataset values) was inserted unescaped, so formulas like `=A1&"<img src=x onerror=...>"` could execute arbitrary markup/script. Rewrote to build the token spans via DOM APIs (`createTextNode`/`createElement`+`textContent`) so no formula text is ever HTML-parsed. Removed the now-unused `escapeHtml()` helper.
@@ -132,6 +143,20 @@ These two expectations contradict each other for the same formula shape (only th
 - Plan: revisit in a dedicated pass with explicit handling/tests for column hide/show and column reorder scenarios.
 - Modified grid option to include: `{ enableColumnReorder: false, enableColumnPicker: false, enableGridMenu: false, enableHeaderMenu: false }` in example46
 
+## Latest Update: Formula Color Sync, Incomplete References, and Clipboard (2026-08-10)
+- Restored color-sync separation of concerns to prevent editor/grid mismatch regressions:
+	- persistent reference coloring is applied through `buildFormulaReferenceColorCache()` -> `applyFormulaReferenceCellColors()` on user input.
+	- `renderGridSelectionHighlight()` only manages selection-model highlight and no longer re-applies persistent colors.
+- Fixed a syntax regression in `FormulaCellEditor.clearReferenceSelectionHighlight()` (malformed brace block) that caused transform/parse failure.
+- Tightened highlight cleanup logic so selection highlight CSS key is removed only if highlight was previously active.
+- Confirmed incomplete references (for example `D1:D`) keep stable token color assignment and do not collapse other reference colors.
+- Added plain-text clipboard handling for Ctrl/Cmd+C and Ctrl/Cmd+X from editor DOM text content with NBSP normalization.
+
+Why this mattered:
+- Prevented "all references same color" and "colors disappear while typing" regressions.
+- Kept formula token colors and grid reference colors aligned for multi-reference formulas.
+- Ensured clipboard output from the formula editor is plain formula text without HTML/span artifacts.
+
 ## Known Constraints / Notes
 - Without a cell-capable selection model, range visuals fall back to CSS highlighting only.
 - TreeDataService-style hard throw was intentionally not used for formula selection prerequisites; behavior is warning-only to avoid breaking existing grids.
@@ -142,6 +167,7 @@ Run:
 - vitest run --config test/vitest.config.mts packages/formula-plugin/src/formula.cellEditor.spec.ts
 - vitest run --config test/vitest.config.mts packages/formula-plugin/src/formula.service.spec.ts
 - vitest run --config test/vitest.config.mts packages/excel-export/src/excelExport.service.spec.ts
+- cypress run --config-file test/cypress.config.ts --spec test/cypress/e2e/example47.cy.ts
 
 ## Suggested Next Items
 - Add optional strict mode in FormulaService to throw (instead of warn) when full selection prerequisites are required by product requirements.

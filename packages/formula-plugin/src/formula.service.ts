@@ -1381,7 +1381,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
       const userOnFormulaInputChange = mergedParams.onFormulaInputChange;
       mergedParams.onFormulaInputChange = (formula: string) => {
-        this.renderFormulaReferenceHighlights(formula);
         userOnFormulaInputChange?.(formula);
       };
 
