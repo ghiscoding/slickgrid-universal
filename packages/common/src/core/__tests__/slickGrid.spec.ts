@@ -132,7 +132,7 @@ describe('SlickGrid core file', () => {
     expect(grid.getPubSubService()).toEqual(pubSubServiceStub);
   });
 
-  it('should display a console warning when body zoom level is different than 100%', () => {
+  it('should not display a console warning when body zoom level is different than 100% in low-risk config', () => {
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
 
     document.body.style.zoom = '90%';
@@ -141,7 +141,19 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid] Zoom level other than 100% is not supported'));
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('[Slickgrid] Zoom level other than 100%'));
+  });
+
+  it('should display a console warning when body zoom level is different than 100% in high-risk config', () => {
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
+
+    document.body.style.zoom = '90%';
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...defaultOptions, enableVariableRowHeight: true }, pubSubServiceStub);
+    grid.init();
+
+    expect(grid).toBeTruthy();
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid] Zoom level other than 100% can cause subpar rendering'));
   });
 
   it('should not display a console warning when body zoom level is 100%', () => {
