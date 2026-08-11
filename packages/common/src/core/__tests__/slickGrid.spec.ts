@@ -182,9 +182,7 @@ describe('SlickGrid core file', () => {
     expect(styleElm?.getAttribute('nonce')).toBe('test-nonce');
   });
 
-  it('should display a console warning when Row Detail is enabled with `rowTopOffsetRenderType` is set to "transfrom"', () => {
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
-
+  it('should auto-fallback to top when Row Detail is enabled with `rowTopOffsetRenderType` set to "transform"', () => {
     document.body.style.zoom = '90%';
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     grid = new SlickGrid<any, Column>(
@@ -197,9 +195,7 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using either RowDetail and/or RowSpan')
-    );
+    expect(grid.getOptions().rowTopOffsetRenderType).toBe('top');
   });
 
   it('should display a console warning when RowSpan is enabled with `rowTopOffsetRenderType` is set to "transfrom"', () => {
@@ -218,7 +214,7 @@ describe('SlickGrid core file', () => {
 
     expect(grid).toBeTruthy();
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using either RowDetail and/or RowSpan')
+      expect.stringContaining('[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using RowSpan')
     );
   });
 
