@@ -642,10 +642,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Initializes the grid. */
   init(): void {
-    if (!this._options.silenceWarnings && document.body.style.zoom && document.body.style.zoom !== '100%') {
+    // prettier-ignore
+    const isZoomLevelUnsupported = (this._options.enableVariableRowHeight || this._options.enableCellRowSpan || this._options.enableRowDetailView || this._options.frozenRow! > 0);
+    if (!this._options.silenceWarnings && document.body.style.zoom && document.body.style.zoom !== '100%' && isZoomLevelUnsupported) {
       console.warn(
-        '[Slickgrid] Zoom level other than 100% is not supported by the library and will give subpar experience. ' +
-          'SlickGrid relies on the `rowHeight` grid option to do row positioning & calculation and when zoom is not 100% then calculation becomes all offset.'
+        '[Slickgrid] Zoom level other than 100% can cause subpar rendering in some configurations. ' +
+          'SlickGrid relies on row positioning calculations that can drift with browser zoom.'
       );
     }
     if (this._options.rowTopOffsetRenderType === 'transform' && this._options.enableCellRowSpan) {
