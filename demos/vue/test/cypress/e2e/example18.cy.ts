@@ -133,6 +133,21 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
       cy.get('.grouping-selects select:nth(2)').should('not.have.value');
     });
 
+    it('should update grid grouping when selecting Cost in the second Group by field dropdown', () => {
+      cy.get('.grouping-selects select:nth(1)').select('cost');
+
+      cy.get('.grouping-selects select:nth(0)').should('have.value', 'duration');
+      cy.get('.grouping-selects select:nth(1)').should('have.value', 'cost');
+      cy.get('.grouping-selects select:nth(2)').should('not.have.value');
+      cy.get('.slick-dropped-grouping:nth(0) div').contains('Duration');
+      cy.get('.slick-dropped-grouping:nth(1) div').contains('Cost');
+      cy.get(`[data-row=0].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration:');
+      cy.get(`[data-row=1].slick-group-level-1 .slick-group-title`).should('contain', 'Cost:');
+
+      cy.get('[data-test="clear-grouping-btn"]').click();
+      cy.get('[data-test="group-duration-sort-value-btn"]').click();
+    });
+
     it('should "Group by Duration then Effort-Driven" and expect 1st row to be expanded, 2nd row to be expanded and 3rd row to be a regular row', () => {
       cy.get('[data-test="group-duration-effort-btn"]').click();
 
