@@ -154,7 +154,7 @@ export default class Example19 {
         //   onCopyCancelled: (e, args: { ranges: SelectedRange[] }) => console.log('onCopyCancelled', args.ranges),
         onBeforePasteCell: (_e, args) => {
           // deny the whole first row and the cells C-E of the second row
-          return !(args.row === 0 || (args.row === 1 && args.cell > 2 && args.cell < 6));
+          return !(args.row === 0 || (args.row === 1 && args.cell > 3 && args.cell < 7));
         },
         clipboardCommandHandler: (clipboardCommand) => {
           this.clipboardCommandStack.push(clipboardCommand);
