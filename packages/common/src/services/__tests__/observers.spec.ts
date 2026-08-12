@@ -150,7 +150,10 @@ describe('Service/Observers', () => {
       collection.push(Math.random());
       collection.push(Math.random());
 
-      expect(collection.length).toBe(4);
+      // array mutations still work natively, only the callback is detached
+      expect(collection.length).toBe(6);
+      expect(callbackCount).toBe(2);
+      expect(collection.sort()).toBe(collection);
     });
 
     it('should return null when input is not an array type', () => {
