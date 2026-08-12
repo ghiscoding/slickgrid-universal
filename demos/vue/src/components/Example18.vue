@@ -346,13 +346,18 @@ function groupByDurationEffortDriven() {
   }
 }
 
-function groupByFieldName() {
+function groupByFieldName(event: Event, index: number) {
+  const selectedValue = (event.target as HTMLSelectElement).value;
+  const updatedGroupingFields = selectedGroupingFields.value.map((field, fieldIndex) =>
+    fieldIndex === index ? selectedValue : field
+  );
+  selectedGroupingFields.value = updatedGroupingFields;
   clearGrouping();
   if (draggableGroupingPlugin?.setDroppedGroups) {
     showPreHeader();
 
     // get the field names from Group By select(s) dropdown, but filter out any empty fields
-    const groupedFields = selectedGroupingFields.value.filter((g) => g !== '');
+    const groupedFields = updatedGroupingFields.filter((g) => g !== '');
     if (groupedFields.length === 0) {
       clearGrouping();
     } else {
@@ -536,7 +541,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
           <div class="row form-group">
             <label for="field1" class="col-sm-3 mb-2">Group by field(s)</label>
             <div v-for="(groupField, index) in selectedGroupingFields" :key="index" class="form-group col-md-3 grouping-selects">
-              <select class="form-select" :value="groupField" @change="groupByFieldName()">
+              <select class="form-select" :value="groupField" @change="groupByFieldName($event, index)">
                 <option :value="''">...</option>
                 <option v-for="(column, colIdx) in columns" :key="colIdx" :value="column.id">{{ column.name }}</option>
               </select>
