@@ -458,7 +458,7 @@ describe('Example 15 - OData Grid using RxJS', () => {
       cy.get('.slick-empty-data-warning').contains('No data to display.').should('not.be.visible');
 
       cy.window().then((win) => {
-        // expect(win.console.log).to.have.callCount(2);
+        expect(win.console.log).to.have.callCount(2);
         expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', {
           newValues: [
             {
@@ -470,7 +470,10 @@ describe('Example 15 - OData Grid using RxJS', () => {
           ],
           type: 'filter',
         });
-        // expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', { newValues: { pageNumber: 1, pageSize: 10 }, type: 'pagination' });
+        expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', {
+          newValues: { pageNumber: 1, pageSize: 10 },
+          type: 'pagination',
+        });
       });
     });
 

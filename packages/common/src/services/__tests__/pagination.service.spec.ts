@@ -761,6 +761,35 @@ describe('PaginationService', () => {
     });
   });
 
+  describe('duplicate "onPaginationChanged" publish within the same reset cycle', () => {
+    it('should NOT publish "onPaginationChanged" twice when "updateTotalItems" is called right after "resetPagination" with the same resulting pageNumber/pageSize', () => {
+      mockGridOption.backendServiceApi = null as any;
+      service.init(gridStub, mockGridOption.pagination as Pagination, null as any);
+      mockPubSub.publish.mockClear();
+
+      service.resetPagination(); // e.g. triggered by a Filter/Sort Cleared event, publishes onPaginationChanged (pageNumber:1)
+      service.updateTotalItems(999, true); // e.g. triggered afterward when the backend response resolves with a new totalItems, same cycle
+
+      const paginationChangedCalls = mockPubSub.publish.mock.calls.filter(([eventName]) => eventName === 'onPaginationChanged');
+      expect(paginationChangedCalls).toHaveLength(1);
+    });
+
+    it('should publish "onPaginationChanged" again on a brand new reset cycle even when ending on the same pageNumber/pageSize as before', () => {
+      mockGridOption.backendServiceApi = null as any;
+      service.init(gridStub, mockGridOption.pagination as Pagination, null as any);
+      mockPubSub.publish.mockClear();
+
+      service.resetPagination();
+      service.updateTotalItems(999, true);
+      mockPubSub.publish.mockClear();
+
+      service.resetPagination(); // a brand new/separate reset cycle (e.g. a different Filter change), still ends up on pageNumber:1
+
+      const paginationChangedCalls = mockPubSub.publish.mock.calls.filter(([eventName]) => eventName === 'onPaginationChanged');
+      expect(paginationChangedCalls).toHaveLength(1);
+    });
+  });
+
   describe('resetToPreviousPagination method', () => {
     it('should call "changeItemPerPage" when page size is different', () => {
       const changeItemSpy = vi.spyOn(service, 'changeItemPerPage');

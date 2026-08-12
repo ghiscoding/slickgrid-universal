@@ -32,6 +32,8 @@ export class PaginationService {
   protected _subscriptions: EventSubscription[] = [];
   protected _cursorPageInfo?: CursorPageInfo;
   protected _isCursorBased = false;
+  // last pageNumber/pageSize published via "onPaginationChanged", used to skip a later no-op re-publish
+  protected _lastPublishedPagination?: { pageNumber: number; pageSize: number };
 
   /** SlickGrid Grid object */
   grid!: SlickGrid;
@@ -341,6 +343,8 @@ export class PaginationService {
         if (isPageNumberReset) {
           this._pageNumber = 1;
           this.paginationOptions.pageNumber = 1;
+          // a reset always represents a distinct triggering action, forget the last published value
+          this._lastPublishedPagination = undefined;
         } else if (!this._initialized && pagination.pageNumber && pagination.pageNumber > 1) {
           this._pageNumber = pagination.pageNumber || 1;
         }
@@ -357,6 +361,11 @@ export class PaginationService {
         this._totalItems = pagination.totalItems;
       }
       this.recalculateFromToIndexes();
+
+      // keep showing page 1 during a reset even if totalItems is still a stale 0 (about to be updated shortly after)
+      if (isPageNumberReset && this._totalItems === 0) {
+        this._pageNumber = 1;
+      }
     }
     this._pageCount = Math.ceil(this._totalItems / this._itemsPerPage);
     this.sharedService.currentPagination = this.getCurrentPagination();
@@ -366,8 +375,17 @@ export class PaginationService {
     this.pubSubService.publish(`onPaginationRefreshed`, this.getFullPagination());
 
     // publish a pagination change only when flag requires it (triggered by page or pageSize change, dataset length change by a filter or others)
-    if (triggerChangedEvent && !dequal(previousPagination, this.getFullPagination())) {
-      this.pubSubService.publish(`onPaginationChanged`, this.getFullPagination());
+    if (triggerChangedEvent) {
+      const newFullPagination = this.getFullPagination();
+      const hasValueChanged = !dequal(previousPagination, newFullPagination);
+      // skip a duplicate pageNumber/pageSize publish (e.g. a totalItems-only refresh right after a reset)
+      const isDuplicateOfLastPublished =
+        this._lastPublishedPagination?.pageNumber === newFullPagination.pageNumber &&
+        this._lastPublishedPagination?.pageSize === newFullPagination.pageSize;
+      if ((isPageNumberReset || hasValueChanged) && !isDuplicateOfLastPublished) {
+        this._lastPublishedPagination = { pageNumber: newFullPagination.pageNumber ?? 1, pageSize: newFullPagination.pageSize ?? 0 };
+        this.pubSubService.publish(`onPaginationChanged`, newFullPagination);
+      }
     }
 
     // publish on the first pagination initialization (called by the "init()" method on first load)
