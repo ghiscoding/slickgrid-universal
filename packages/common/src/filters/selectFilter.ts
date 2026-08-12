@@ -241,9 +241,8 @@ export class SelectFilter implements Filter {
       this._msInstance.destroy();
     }
     this.filterElm?.remove();
-
-    // TODO: causing Example 7 E2E tests to fails, will revisit later
-    // this._collectionObservers.forEach(obs => obs?.disconnect());
+    this._collectionObservers.forEach((obs) => obs?.disconnect());
+    this._collectionObservers = [];
 
     // unsubscribe all the possible Observables if RxJS was used
     unsubscribeAll(this.subscriptions);

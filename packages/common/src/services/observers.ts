@@ -11,21 +11,19 @@ export function collectionObserver(
   if (Array.isArray(arr)) {
     // Add more methods here if you want to listen to them
     const mutationMethods = ['pop', 'push', 'reverse', 'shift', 'unshift', 'splice', 'sort'];
-    const originalActions: Array<{ method: string; action: () => void }> = [];
 
     mutationMethods.forEach((changeMethod: any) => {
       arr[changeMethod] = (...args: any[]) => {
         const res = Array.prototype[changeMethod].apply(arr, args); // call normal behaviour
-        originalActions.push({ method: changeMethod, action: res });
         callback.apply(arr, [arr, args]); // finally call the callback supplied
         return res;
       };
     });
 
-    // reapply original behaviors when disconnecting
+    // deleting the overrides restores the native Array.prototype behaviors
     const disconnect = () =>
       mutationMethods.forEach((changeMethod: any) => {
-        arr[changeMethod] = () => originalActions[changeMethod].action;
+        delete arr[changeMethod];
       });
 
     return { disconnect };
