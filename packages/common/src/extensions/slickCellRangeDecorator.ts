@@ -4,10 +4,8 @@ import type { CellRangeDecoratorOption } from '../interfaces/index.js';
 
 /**
  * Displays an overlay on top of a given cell range.
- * TODO:
- * Currently, it blocks mouse events to DOM nodes behind it.
- * Use FF and WebKit-specific "pointer-events" CSS style, or some kind of event forwarding.
- * Could also construct the borders separately using 4 individual DIVs.
+ * The overlay uses pointer-events: none so it does not block mouse events
+ * from reaching the grid cells beneath it.
  */
 export class SlickCellRangeDecorator {
   // --
@@ -22,10 +20,12 @@ export class SlickCellRangeDecorator {
     selectionCss: {
       border: '2px dashed red',
       zIndex: '9999',
+      pointerEvents: 'none',
     },
     copyToSelectionCss: {
       border: '2px dashed blue',
       zIndex: '9999',
+      pointerEvents: 'none',
     },
     offset: { top: 0, left: 0, height: 1, width: 1 },
   } as CellRangeDecoratorOption;
