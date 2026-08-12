@@ -104,6 +104,7 @@ let isGridInitialized = false;
 let isDatasetInitialized = false;
 let isDatasetHierarchicalInitialized = false;
 let isPaginationInitialized = false;
+let isPushingBackPluginColumns = false;
 let isLocalGrid = true;
 let metrics: Metrics | undefined;
 let registeredResources: Array<ExternalResource | ExternalResourceConstructor> = [];
@@ -356,9 +357,11 @@ function columnsChanged(columns?: Column[]) {
   if (columns) {
     _columns.value = columns;
   }
-  if (isGridInitialized) {
+  // the watcher flushes async, so this can land after the grid is initialized even though the pushback happened before it
+  if (isGridInitialized && !isPushingBackPluginColumns) {
     updateColumnsList(_columns.value);
   }
+  isPushingBackPluginColumns = false;
   if (_columns.value!.length > 0) {
     copyColumnWidthsReference(_columns.value);
   }
@@ -446,18 +449,19 @@ function initialization() {
   // save reference for all columns before they optionally become hidden/visible
   sharedService.allColumns = _columns.value as Column[];
 
-  // TODO: revisit later, this conflicts with Grid State (Example 15)
-  // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
-  // we'll subscribe to the event and push back the change to the user so they always use full column defs array including extra cols
-  // subscriptions.push(
-  //   _eventPubSubService.subscribe<{ columns: Column<any>[]; grid: SlickGrid }>('onPluginColumnsChanged', data => {
-  //     columns = data.columns;
-  //     columnsChanged();
-  //   })
-  // );
+  // certain extensions/plugins add extra columns not created by the user itself (RowMove, RowDetail, RowSelections),
+  // push them back through the `v-model:columns` binding so the user always sees the full column defs array.
+  // `_columns` already holds them, so the flag tells `columnsChanged()` to skip the grid re-render
+  // that would otherwise clash with Grid State & Presets
+  subscriptions.push(
+    eventPubSubService.subscribe<{ columns: Column[]; pluginName: string }>('onPluginColumnsChanged', (data) => {
+      isPushingBackPluginColumns = true;
+      columnsModel.value = data.columns;
+    })
+  );
 
-  // after subscribing to potential columns changed, we are ready to create these optional extensions
-  // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
+  // create optional extensions (RowMove, RowDetail, RowSelections), they splice their extra columns
+  // directly into the array below, so both `_columns` & `sharedService.allColumns` stay in sync
   extensionService.createExtensionsBeforeGridCreation(_columns.value as Column[], _gridOptions.value as GridOption);
 
   // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options

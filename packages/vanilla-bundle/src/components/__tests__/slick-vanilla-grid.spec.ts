@@ -472,23 +472,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(pubSubSpy).toHaveBeenNthCalledWith(5, 'onBeforeGridDestroy', expect.any(Object));
   });
 
-  // TODO: revisit later, this is conflicting with Grid State & Presets
-  // oxlint-disable-next-line no-disabled-tests
-  it.skip('should update column definitions when onPluginColumnsChanged event is triggered with updated columns', () => {
-    const columnsMock = [
-      { id: 'firstName', field: 'firstName', editor: undefined, editorClass: {} },
-      { id: 'lastName', field: 'lastName', editor: undefined, editorClass: {} },
-    ];
-    eventPubSubService.publish('onPluginColumnsChanged', {
-      columns: columnsMock,
-      pluginName: 'RowMoveManager',
-    });
-
-    component.initialization(divContainer, slickEventHandler);
-
-    expect(component.columnDefinitions).toEqual(columnsMock);
-  });
-
   describe('initialization method', () => {
     const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef) => {
       const isEditableItem = !!columnDef.editor;
