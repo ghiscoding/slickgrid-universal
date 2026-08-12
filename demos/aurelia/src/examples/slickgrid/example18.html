@@ -109,10 +109,22 @@
       <div class="form-row">
         <div class="row form-group">
           <label for="field1" class="col-sm-3 mb-2">Group by field(s)</label>
-          <div class="form-group col-md-3 grouping-selects" repeat.for="groupField of selectedGroupingFields">
-            <select class="form-select" change.trigger="groupByFieldName()" value.bind="groupField">
-              <option model.bind="''">...</option>
-              <option model.bind="column.id" repeat.for="column of columns">${column.name}</option>
+          <div class="form-group col-md-3 grouping-selects">
+            <select class="form-select" change.trigger="groupByFieldName($event, 0)" value.bind="selectedGroupingFields[0]">
+              <option value.bind="''">...</option>
+              <option value.bind="column.id" repeat.for="column of columns">${column.name}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3 grouping-selects">
+            <select class="form-select" change.trigger="groupByFieldName($event, 1)" value.bind="selectedGroupingFields[1]">
+              <option value.bind="''">...</option>
+              <option value.bind="column.id" repeat.for="column of columns">${column.name}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3 grouping-selects">
+            <select class="form-select" change.trigger="groupByFieldName($event, 2)" value.bind="selectedGroupingFields[2]">
+              <option value.bind="''">...</option>
+              <option value.bind="column.id" repeat.for="column of columns">${column.name}</option>
             </select>
           </div>
         </div>
