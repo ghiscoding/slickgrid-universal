@@ -62,6 +62,20 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     cy.get('[data-test="toggle-readonly-btn"]').click();
   });
 
+  it('should paste into editable cells while skipping blocked cells', () => {
+    const pasteText = '12:15\t12:16\t12:17\n13:15\t13:16\t13:17';
+
+    cy.window().then(async (win) => {
+      await win.navigator.clipboard.writeText(pasteText);
+    });
+
+    cy.getCell(1, 2, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).click().type('{ctrl}v');
+
+    cy.getCell(1, 2, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).should('contain.text', '12:15');
+    cy.getCell(1, 3, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).should('contain.text', '12:16');
+    cy.getCell(1, 4, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).should('have.text', '2:5');
+  });
+
   describe('with Pagination of size 20', () => {
     it('should click on cell B14 then Ctrl+Shift+End with selection B14-CV19', () => {
       cy.getCell(14, 3, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_B14').click();
