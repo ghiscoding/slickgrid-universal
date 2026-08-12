@@ -348,9 +348,7 @@ function groupByDurationEffortDriven() {
 
 function groupByFieldName(event: Event, index: number) {
   const selectedValue = (event.target as HTMLSelectElement).value;
-  const updatedGroupingFields = selectedGroupingFields.value.map((field, fieldIndex) =>
-    fieldIndex === index ? selectedValue : field
-  );
+  const updatedGroupingFields = selectedGroupingFields.value.map((field, fieldIndex) => (fieldIndex === index ? selectedValue : field));
   selectedGroupingFields.value = updatedGroupingFields;
   clearGrouping();
   if (draggableGroupingPlugin?.setDroppedGroups) {

@@ -359,9 +359,7 @@ export class Example18 {
 
   groupByFieldName(event: Event, index: number) {
     const selectedValue = (event.target as HTMLSelectElement).value;
-    const updatedGroupingFields = this.selectedGroupingFields.map((field, fieldIndex) =>
-      fieldIndex === index ? selectedValue : field
-    );
+    const updatedGroupingFields = this.selectedGroupingFields.map((field, fieldIndex) => (fieldIndex === index ? selectedValue : field));
     this.selectedGroupingFields = updatedGroupingFields;
     this._isUpdatingGroupingFromSelect = true;
     try {
