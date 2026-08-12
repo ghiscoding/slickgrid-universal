@@ -357,11 +357,18 @@ function columnsChanged(columns?: Column[]) {
   if (columns) {
     _columns.value = columns;
   }
-  // the watcher flushes async, so this can land after the grid is initialized even though the pushback happened before it
-  if (isGridInitialized && !isPushingBackPluginColumns) {
+
+  // this watcher flushes async, so the plugin columns pushback lands after the grid is initialized and its columns
+  // already have computed widths, re-running the below would clash with Grid State/Presets and would also stamp
+  // those computed widths as `originalWidth`, which the resize-by-content then treats as user-provided widths
+  if (isPushingBackPluginColumns) {
+    isPushingBackPluginColumns = false;
+    return;
+  }
+
+  if (isGridInitialized) {
     updateColumnsList(_columns.value);
   }
-  isPushingBackPluginColumns = false;
   if (_columns.value!.length > 0) {
     copyColumnWidthsReference(_columns.value);
   }
