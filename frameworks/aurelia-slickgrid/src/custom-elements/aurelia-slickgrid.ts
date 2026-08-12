@@ -369,18 +369,18 @@ export class AureliaSlickgridCustomElement {
     // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columns;
 
-    // TODO: revisit later, this conflicts with Grid State (Example 15)
-    // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
-    // we'll subscribe to the event and push back the change to the user so they always use full column defs array including extra cols
-    // this.subscriptions.push(
-    //   this._eventPubSubService.subscribe<{ columns: Column[]; grid: SlickGrid }>('onPluginColumnsChanged', data => {
-    //     this.columns = data.columns;
-    //     this.columnsChanged();
-    //   })
-    // );
+    // certain extensions/plugins add extra columns not created by the user itself (RowMove, RowDetail, RowSelections),
+    // push them back through the 2-way `columns` bindable so the user always sees the full column defs array.
+    // the assignment below re-enters `columnsChanged()`, which is safe only because the grid isn't initialized
+    // yet at this point and it therefore skips `updateColumnDefinitionsList()` (which would clash with Grid State & Presets)
+    this.subscriptions.push(
+      this._eventPubSubService.subscribe<{ columns: Column[]; pluginName: string }>('onPluginColumnsChanged', (data) => {
+        this.columns = data.columns;
+      })
+    );
 
-    // after subscribing to potential columns changed, we are ready to create these optional extensions
-    // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
+    // create optional extensions (RowMove, RowDetail, RowSelections), they splice their extra columns
+    // directly into the array below, so both `_columns` & `sharedService.allColumns` stay in sync
     this.extensionService.createExtensionsBeforeGridCreation(this._columns, this.options);
 
     // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options

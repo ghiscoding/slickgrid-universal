@@ -718,8 +718,10 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columns;
 
-    // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
-    // we'll subscribe to the event and push back the change to the user so they always use full column defs array including extra cols
+    // certain extensions/plugins add extra columns not created by the user itself (RowMove, RowDetail, RowSelections),
+    // we notify the user via the `columns` 2-way binding so they always get the full column defs array including extra cols.
+    // NOTE: assign the private field directly, going through the `columns` setter would re-run the column
+    // arrangement pipeline mid-init and conflict with Grid State & Presets.
     this.subscriptions.push(
       this._eventPubSubService.subscribe<{ columns: Column[]; grid: SlickGrid }>('onPluginColumnsChanged', (data) => {
         this._columns = data.columns;
@@ -727,8 +729,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       })
     );
 
-    // after subscribing to potential columns changed, we are ready to create these optional extensions
-    // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
+    // create optional extensions (RowMove, RowDetail, RowSelections), they splice their extra columns
+    // directly into the array below, which also triggers the `onPluginColumnsChanged` subscription above
     this.extensionService.createExtensionsBeforeGridCreation(this._columns, this.options);
 
     // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
