@@ -343,8 +343,6 @@ export class PaginationService {
         if (isPageNumberReset) {
           this._pageNumber = 1;
           this.paginationOptions.pageNumber = 1;
-          // a reset always represents a distinct triggering action, forget the last published value
-          this._lastPublishedPagination = undefined;
         } else if (!this._initialized && pagination.pageNumber && pagination.pageNumber > 1) {
           this._pageNumber = pagination.pageNumber || 1;
         }
@@ -382,7 +380,7 @@ export class PaginationService {
       const isDuplicateOfLastPublished =
         this._lastPublishedPagination?.pageNumber === newFullPagination.pageNumber &&
         this._lastPublishedPagination?.pageSize === newFullPagination.pageSize;
-      if ((isPageNumberReset || hasValueChanged) && !isDuplicateOfLastPublished) {
+      if (hasValueChanged && !isDuplicateOfLastPublished) {
         this._lastPublishedPagination = { pageNumber: newFullPagination.pageNumber ?? 1, pageSize: newFullPagination.pageSize ?? 0 };
         this.pubSubService.publish(`onPaginationChanged`, newFullPagination);
       }
