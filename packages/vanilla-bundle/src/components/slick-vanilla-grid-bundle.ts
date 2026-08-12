@@ -1152,7 +1152,7 @@ export class SlickVanillaGridBundle<TData = any> {
             this.initializePaginationService(paginationOptions);
           } else {
             // update the pagination service with the new total
-            this.paginationService.updateTotalItems(this.totalItems);
+            this.paginationService.updateTotalItems(this.totalItems, true);
           }
         }
 
