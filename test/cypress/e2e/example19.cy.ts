@@ -65,8 +65,8 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
   it('should paste into editable cells while skipping blocked cells', () => {
     const pasteText = '12:15\t12:16\t12:17\n13:15\t13:16\t13:17';
 
-    cy.window().then(async (win) => {
-      await win.navigator.clipboard.writeText(pasteText);
+    cy.window().then((win) => {
+      cy.stub(win.navigator.clipboard, 'readText').resolves(pasteText);
     });
 
     cy.getCell(1, 2, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).click().type('{ctrl}v');
