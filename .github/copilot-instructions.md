@@ -25,6 +25,10 @@ The monorepo contains:
 ### Testing
 - Use **Vitest** for unit tests (`.spec.ts` files)
 - Use **Cypress** for E2E tests (`.cy.ts` files in `test/cypress/e2e/`)
+  - Cypress runs with `testIsolation: false`, so all E2E tests are written serially: each test
+    inherits the grid/page state left by the previous one (no auto reset between tests).
+  - Write new tests to continue from the previous test state, don't assume a fresh page/selection,
+    and don't reorder/insert tests without checking the state they depend on.
 - Aim for 100% statement coverage on core functionality
 - Test files are usually in `__tests__/` subdirectory (or same folder if only 1-2 test files)
 - Unit tests exist in 2 implementations:
