@@ -1,8 +1,8 @@
 import { getScrollDistanceWhenDragOutsideGrid } from '../support/drag';
 
 function testScroll(fromClass: string, toClass: string, fromRow: number, fromCol: number) {
-  return getScrollDistanceWhenDragOutsideGrid(fromClass, 'topLeft', 'right', fromRow, fromCol, 165).then((cellScrollDistance) => {
-    return getScrollDistanceWhenDragOutsideGrid(toClass, 'topLeft', 'bottom', fromRow, fromCol, 165).then((rowScrollDistance) => {
+  return getScrollDistanceWhenDragOutsideGrid(fromClass, 'topLeft', 'right', fromRow, fromCol, 165).then((cellScrollDistance: any) => {
+    return getScrollDistanceWhenDragOutsideGrid(toClass, 'topLeft', 'bottom', fromRow, fromCol, 165).then((rowScrollDistance: any) => {
       return cy.wrap({
         cell: {
           scrollBefore: cellScrollDistance.scrollLeftBefore,
@@ -115,6 +115,42 @@ describe('Example 37 - Hybrid Selection Model', () => {
       cy.get('.grid37-1 .slick-cell.selected').should('have.length', 9);
     });
 
+    it('should be able to shrink the cell selections back to the top and to the left', () => {
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 9);
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l3.r3')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l3.r3')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 6);
+
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l3.r3')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l2.r2')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 4);
+    });
+
+    it('should expand the cell selections upward when dragging the handle above the selection top row', () => {
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 4);
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l2.r2')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-row[data-row="0"] .slick-cell.l2.r2')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 6);
+    });
+
     it('should click on 1st column and then row 2 and 3, then expect the full (single) row to be selected', () => {
       cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l0.r0').as('task1');
       cy.get('@task1').should('contain', '1');
@@ -140,7 +176,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
     it('should auto scroll take effect to display the selecting element when dragging', { scrollBehavior: false }, () => {
       cy.get('.grid37-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
 
-      testScroll('.grid37-1', '.grid37-1', 0, 1).then((scrollDistance) => {
+      testScroll('.grid37-1', '.grid37-1', 0, 1).then((scrollDistance: any) => {
         expect(scrollDistance.cell.scrollBefore).to.be.lte(scrollDistance.cell.scrollAfter);
         expect(scrollDistance.row.scrollBefore).to.be.lte(scrollDistance.row.scrollAfter);
       });
@@ -180,7 +216,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
 
       cy.get('.grid37-2 .slick-row[data-row="1"] .slick-cell.l3.r3').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-      testScroll('.grid37-2', '.grid37-2', 0, 1).then((scrollDistance) => {
+      testScroll('.grid37-2', '.grid37-2', 0, 1).then((scrollDistance: any) => {
         expect(scrollDistance.cell.scrollBefore).to.be.lte(scrollDistance.cell.scrollAfter);
         expect(scrollDistance.row.scrollBefore).to.be.lte(scrollDistance.row.scrollAfter);
       });
