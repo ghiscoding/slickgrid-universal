@@ -950,6 +950,14 @@ describe('SlickCore file', () => {
         expect(resultLeft.cell).toBe(normRange.end.cell);
       });
 
+      it('should anchor on the range start when target is inside the range so that it can shrink', () => {
+        const normRange = { start: { row: 3, cell: 3 }, end: { row: 5, cell: 5 } };
+
+        // dragging the handle back inside the range shrinks it (anchor stays on the range start)
+        const result = SlickSelectionUtils.normalRangeOppositeCellFromCopy(normRange as any, { row: 4, cell: 4 });
+        expect(result).toEqual({ row: 3, cell: 3 });
+      });
+
       it('should fallback to 0 when normalised range has undefined bounds', () => {
         const normRange = { start: {}, end: {} };
         const target = { row: 0, cell: 0 };

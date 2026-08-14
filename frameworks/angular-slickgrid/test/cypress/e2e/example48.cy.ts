@@ -79,6 +79,42 @@ describe('Example 48 - Hybrid Selection Model', () => {
       cy.get('#grid48-1 .slick-cell.selected').should('have.length', 9);
     });
 
+    it('should be able to shrink the cell selections back to the top and to the left', () => {
+      cy.get('#grid48-1 .slick-cell.selected').should('have.length', 9);
+      cy.get('#grid48-1 .slick-row[data-row="3"] .slick-cell.l3.r3')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+
+      cy.get('#grid48-1 .slick-row[data-row="2"] .slick-cell.l3.r3')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('#grid48-1 .slick-cell.selected').should('have.length', 6);
+
+      cy.get('#grid48-1 .slick-row[data-row="2"] .slick-cell.l3.r3')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+
+      cy.get('#grid48-1 .slick-row[data-row="2"] .slick-cell.l2.r2')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('#grid48-1 .slick-cell.selected').should('have.length', 4);
+    });
+
+    it('should expand the cell selections upward when dragging the handle above the selection top row', () => {
+      cy.get('#grid48-1 .slick-cell.selected').should('have.length', 4);
+      cy.get('#grid48-1 .slick-row[data-row="2"] .slick-cell.l2.r2')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+
+      cy.get('#grid48-1 .slick-row[data-row="0"] .slick-cell.l2.r2')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('#grid48-1 .slick-cell.selected').should('have.length', 6);
+    });
+
     it('should click on 1st column and then row 2 and 3, then expect the full (single) row to be selected', () => {
       cy.get('#grid48-1 .slick-row[data-row="1"] .slick-cell.l0.r0').as('task1');
       cy.get('@task1').should('contain', '1');

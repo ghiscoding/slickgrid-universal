@@ -373,7 +373,11 @@ export class SlickCellRangeSelector {
       selectionMode: this._selectionMode,
       allowAutoEdit: this._selectionMode === 'SEL' && r.isSingleCell(),
     });
-    this._previousSelectedRange = SlickSelectionUtils.normaliseDragRange(dd.range);
+    // keep the resulting range (not the raw drag range) so that a next drag-extend anchors on the real selection
+    this._previousSelectedRange = SlickSelectionUtils.normaliseDragRange({
+      start: { row: r.fromRow, cell: r.fromCell },
+      end: { row: r.toRow, cell: r.toCell },
+    });
   }
 
   protected handleDragInit(e: SlickEventData, dd: DragRowMove): void {
