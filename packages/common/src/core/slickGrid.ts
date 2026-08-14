@@ -642,15 +642,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Initializes the grid. */
   init(): void {
-    if (!this._options.silenceWarnings && document.body.style.zoom && document.body.style.zoom !== '100%') {
+    // prettier-ignore
+    const isZoomLevelUnsupported = (this._options.enableVariableRowHeight || this._options.enableCellRowSpan || this._options.enableRowDetailView || this._options.frozenRow! > 0);
+    if (!this._options.silenceWarnings && document.body.style.zoom && document.body.style.zoom !== '100%' && isZoomLevelUnsupported) {
       console.warn(
-        '[Slickgrid] Zoom level other than 100% is not supported by the library and will give subpar experience. ' +
-          'SlickGrid relies on the `rowHeight` grid option to do row positioning & calculation and when zoom is not 100% then calculation becomes all offset.'
+        '[Slickgrid] Zoom level other than 100% can cause subpar rendering in some configurations. ' +
+          'SlickGrid relies on row positioning calculations that can drift with browser zoom.'
       );
     }
-    if (this._options.rowTopOffsetRenderType === 'transform' && (this._options.enableCellRowSpan || this._options.enableRowDetailView)) {
+    if (this._options.rowTopOffsetRenderType === 'transform' && this._options.enableCellRowSpan) {
       console.warn(
-        '[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using either RowDetail and/or RowSpan since "transform" is known to have UI issues.'
+        '[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using RowSpan since "transform" is known to have UI issues.'
       );
     }
     this.finishInitialization();
@@ -3846,6 +3848,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this._options.autoHeight) {
       this._options.leaveSpaceForNewRows = false;
     }
+
+    // Row Detail relies on absolute top-based row positioning; force a safe fallback.
+    if (this._options.rowTopOffsetRenderType === 'transform' && this._options.enableRowDetailView) {
+      this._options.rowTopOffsetRenderType = 'top';
+    }
+
     // make sure the freeze is also valid without breaking the UI (e.g. we can't left freeze columns wider than visible left canvas width)
     if (!this.validateColumnFreezeWidth(this._options.frozenColumn)) {
       this._options.frozenColumn = this._prevFrozenColumnIdx < this._options.frozenColumn! ? this._prevFrozenColumnIdx : -1;

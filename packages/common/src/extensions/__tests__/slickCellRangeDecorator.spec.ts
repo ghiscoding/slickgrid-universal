@@ -26,10 +26,12 @@ describe('CellRangeDecorator Plugin', () => {
       selectionCss: {
         border: '2px dashed red',
         zIndex: '9999',
+        pointerEvents: 'none',
       },
       copyToSelectionCss: {
         border: '2px dashed blue',
         zIndex: '9999',
+        pointerEvents: 'none',
       },
       offset: { top: 0, left: 0, height: 1, width: 1 },
     });
@@ -58,6 +60,7 @@ describe('CellRangeDecorator Plugin', () => {
     expect(plugin.addonElement!.style.width).toEqual('');
     expect(plugin.addonElement?.style.border).toBe('2px dashed red');
     expect(plugin.addonElement?.style.zIndex).toBe('9999');
+    expect(plugin.addonElement?.style.pointerEvents).toBe('none');
   });
 
   it('should Show range when called and calculate new position when getCellNodeBox returns a cell position', () => {

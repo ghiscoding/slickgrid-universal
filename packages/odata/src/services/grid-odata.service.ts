@@ -604,31 +604,25 @@ export class GridOdataService implements BackendService {
       }
     } else if (sortColumns && !presetSorters) {
       // build the SortBy string, it could be multisort, example: customerNo asc, purchaserName desc
-      if (sortColumns?.length === 0) {
-        // TODO fix this line
-        // currentSorters = new Array(this.defaultOptions.orderBy); // when empty, use the default sort
-      } else {
-        if (sortColumns) {
-          for (const sortColumn of sortColumns) {
-            if (sortColumn.sortCol) {
-              let queryFieldName =
-                (sortColumn.sortCol.queryFieldSorter || sortColumn.sortCol.queryField || sortColumn.sortCol.field || '') + '';
-              if (this._odataService.options.caseType === 'pascalCase') {
-                queryFieldName = titleCase(queryFieldName);
-              }
+      // when sortColumns is empty, currentSorters stays empty (no default sorting applied)
+      for (const sortColumn of sortColumns) {
+        if (sortColumn.sortCol) {
+          let queryFieldName =
+            (sortColumn.sortCol.queryFieldSorter || sortColumn.sortCol.queryField || sortColumn.sortCol.field || '') + '';
+          if (this._odataService.options.caseType === 'pascalCase') {
+            queryFieldName = titleCase(queryFieldName);
+          }
 
-              currentSorters.push({
-                columnId: sortColumn.sortCol.id,
-                direction: sortColumn.sortAsc ? 'asc' : 'desc',
-              });
+          currentSorters.push({
+            columnId: sortColumn.sortCol.id,
+            direction: sortColumn.sortAsc ? 'asc' : 'desc',
+          });
 
-              if (queryFieldName !== '') {
-                odataSorters.push({
-                  field: queryFieldName,
-                  direction: sortColumn.sortAsc ? 'ASC' : 'DESC',
-                });
-              }
-            }
+          if (queryFieldName !== '') {
+            odataSorters.push({
+              field: queryFieldName,
+              direction: sortColumn.sortAsc ? 'ASC' : 'DESC',
+            });
           }
         }
       }

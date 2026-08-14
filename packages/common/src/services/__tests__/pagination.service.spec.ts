@@ -761,6 +761,20 @@ describe('PaginationService', () => {
     });
   });
 
+  describe('duplicate "onPaginationChanged" publish after a reset', () => {
+    it('should NOT publish "onPaginationChanged" twice when "updateTotalItems" is called right after "resetPagination" with the same resulting pageNumber/pageSize', () => {
+      mockGridOption.backendServiceApi = null as any;
+      service.init(gridStub, mockGridOption.pagination as Pagination, null as any);
+      mockPubSub.publish.mockClear();
+
+      service.resetPagination(); // e.g. triggered by a Filter/Sort Cleared event
+      service.updateTotalItems(999, true); // e.g. triggered afterward when the backend response resolves with a new totalItems
+
+      const paginationChangedCalls = mockPubSub.publish.mock.calls.filter(([eventName]) => eventName === 'onPaginationChanged');
+      expect(paginationChangedCalls).toHaveLength(1);
+    });
+  });
+
   describe('resetToPreviousPagination method', () => {
     it('should call "changeItemPerPage" when page size is different', () => {
       const changeItemSpy = vi.spyOn(service, 'changeItemPerPage');

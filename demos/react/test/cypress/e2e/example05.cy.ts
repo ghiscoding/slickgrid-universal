@@ -207,8 +207,7 @@ describe('Example 5 - OData Grid', () => {
       });
 
       cy.window().then((win) => {
-        // TODO look into, this should be called 2x times not 3x times
-        // expect(win.console.log).to.have.callCount(2);
+        expect(win.console.log).to.have.callCount(2);
         expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', { newValues: [], type: 'filter' });
         expect(win.console.log).to.be.calledWith('Client sample, Grid State changed:: ', {
           newValues: { pageNumber: 1, pageSize: 10 },

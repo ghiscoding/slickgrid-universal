@@ -37,7 +37,7 @@
     "react:watch": "pnpm -r --parallel run react:dev",
     "react-fluent:watch": "pnpm -r --parallel run react-fluent:dev",
     "vue:watch": "pnpm -r --parallel run vue:dev",
-    "universal:watch": "lerna watch --scope=\"@slickgrid-universal/*\" --ignore=\"@slickgrid-universal/vanilla-*\" --glob=\"src/**/*.{ts,scss}\" --ignored=\"**/*.spec.ts\" -- cross-env-shell 'pnpm run -r --filter $LERNA_PACKAGE_NAME dev'",
+    "universal:watch": "lerna watch --no-bail --scope=\"@slickgrid-universal/*\" --ignore=\"@slickgrid-universal/vanilla-*\" --glob=\"src/**/*.{ts,scss}\" --ignored=\"**/*.spec.ts\" -- cross-env-shell 'pnpm run -r --filter $LERNA_PACKAGE_NAME dev'",
     "vite:watch": "pnpm -r --parallel run vite:dev",
     "preview:publish": "lerna publish from-package --dry-run --yes",
     "preview:version": "lerna version --dry-run --yes",
