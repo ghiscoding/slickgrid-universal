@@ -140,8 +140,45 @@ describe('Example 47 - Formula Service (MVP)', () => {
     cy.get(cell(1, 3)).should('have.class', 'formula-cell-color-2');
     cy.get(cell(2, 3)).should('have.class', 'formula-cell-color-2');
 
+    // Commit and reopen: FormulaService pre-renders grid highlights during onBeforeEditCell,
+    // and its reference order must stay aligned with the editor token order.
+    cy.get('.formula-editor-input').type('{enter}', { force: true });
+    cy.get(cell(0, 4)).click();
+    cy.contains('.formula-editor-input .formula-token.formula-token-color-1', /^C1$/).should('exist');
+    cy.contains('.formula-editor-input .formula-token.formula-token-color-2', /^D1:D3$/).should('exist');
+    cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-1');
+    cy.get(cell(0, 3)).should('have.class', 'formula-cell-color-2');
+    cy.get(cell(1, 3)).should('have.class', 'formula-cell-color-2');
+    cy.get(cell(2, 3)).should('have.class', 'formula-cell-color-2');
+
     cy.get('.formula-editor-input').type('{esc}', { force: true });
-    cy.get(cell(0, 4)).contains('$8.88');
+    cy.get('[data-test="reload-formulas-btn"]').click();
+  });
+
+  it('should preserve reference colors when a range precedes a single-cell reference', () => {
+    cy.get(cell(0, 4)).click();
+    cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=SUM(D1:D3)*C1', { force: true });
+
+    // The shared cache must assign colors by textual order, regardless of reference shape.
+    cy.contains('.formula-editor-input .formula-token.formula-token-color-1', /^D1:D3$/).should('exist');
+    cy.contains('.formula-editor-input .formula-token.formula-token-color-2', /^C1$/).should('exist');
+    cy.get(cell(0, 3)).should('have.class', 'formula-cell-color-1');
+    cy.get(cell(1, 3)).should('have.class', 'formula-cell-color-1');
+    cy.get(cell(2, 3)).should('have.class', 'formula-cell-color-1');
+    cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-2');
+
+    // Commit and reopen so FormulaService.renderFormulaReferenceHighlights() is exercised.
+    cy.get('.formula-editor-input').type('{enter}', { force: true });
+    cy.get(cell(0, 4)).click();
+    cy.contains('.formula-editor-input .formula-token.formula-token-color-1', /^D1:D3$/).should('exist');
+    cy.contains('.formula-editor-input .formula-token.formula-token-color-2', /^C1$/).should('exist');
+    cy.get(cell(0, 3)).should('have.class', 'formula-cell-color-1');
+    cy.get(cell(1, 3)).should('have.class', 'formula-cell-color-1');
+    cy.get(cell(2, 3)).should('have.class', 'formula-cell-color-1');
+    cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-2');
+
+    cy.get('.formula-editor-input').type('{esc}', { force: true });
+    cy.get('[data-test="reload-formulas-btn"]').click();
   });
 
   it('should keep stable coloring when formula contains an incomplete range reference', () => {

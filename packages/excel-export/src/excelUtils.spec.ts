@@ -1,7 +1,14 @@
 import { Formatters, GroupTotalFormatters, type Column, type Formatter, type GridOption, type SlickGrid } from '@slickgrid-universal/common';
 import { type StyleSheet } from 'excel-builder-vanilla';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getExcelFormatFromGridFormatter, getExcelNumberCallback, getNumericFormatterOptions, useCellFormatByFieldType } from './excelUtils.js';
+import {
+  getExcelFormatFromGridFormatter,
+  getExcelNumberCallback,
+  getExcelSameInputDataCallback,
+  getGroupTotalValue,
+  getNumericFormatterOptions,
+  useCellFormatByFieldType,
+} from './excelUtils.js';
 
 const mockGridOptions = {
   enableExcelExport: true,
@@ -95,6 +102,24 @@ describe('excelUtils', () => {
         dataContext: {},
       });
       expect(output).toEqual({ metadata: { style: 3 }, value: 1244209.33 });
+    });
+
+    it('should return raw input when no Excel format is provided', () => {
+      expect(
+        getExcelSameInputDataCallback('raw value', {
+          columnDef: {} as Column,
+          excelFormatId: undefined,
+          gridOptions: mockGridOptions,
+          dataRowIdx: 0,
+          stylesheet: stylesheetStub,
+          dataContext: {},
+        })
+      ).toBe('raw value');
+    });
+
+    it('should return zero when group totals or fields are missing', () => {
+      expect(getGroupTotalValue(undefined, { columnDef: { field: 'amount' } as Column, groupType: 'sum' })).toBe(0);
+      expect(getGroupTotalValue({ sum: {} }, { columnDef: { field: 'amount' } as Column, groupType: 'sum' })).toBe(0);
     });
   });
 

@@ -1,43 +1,18 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { Editor, EditorArguments, EditorValidationResult, SelectionModel } from '@slickgrid-universal/common';
 import { createDomElement, SlickRange } from '@slickgrid-universal/common';
-
-const FORMULA_TOKEN_COLOR_COUNT = 10;
-
-interface FormulaReferenceColorInfo {
-  ref: string; // Excel reference like 'C1' or 'D1:D4'
-  colorIdx: number; // 0-9, used to compute color class
-  colorClass: string; // e.g. 'formula-cell-color-1'
-  cells: Array<{ row: number; cell: number }>; // All grid cells this reference covers
-}
+import {
+  createFormulaReferenceTokenRegex,
+  FormulaReferenceColorCache,
+  getExcelColumnNameByIndex,
+  normalizeFormulaReferenceToken,
+  parseExcelReferenceCell,
+} from './formula-reference.js';
 
 export interface FormulaEditorParams {
   debug?: boolean;
   formulaFunctionList?: string[];
   onFormulaInputChange?: (formula: string) => void;
-}
-
-function extractExcelReferencesFromFormula(formula: string): string[] {
-  const refs: string[] = [];
-  const seen = new Set<string>();
-  // Match: ranges (complete or incomplete like D1:D or D1:), or single cells
-  // The end cell in a range is completely optional, so D1: matches as a range with empty end
-  const regex = /\$?[A-Z]{1,3}\$?\d+\s*:\s*(?:\$?[A-Z]{1,3}\$?\d*)?|\$?[A-Z]{1,3}\$?\d+/g;
-  let match: RegExpExecArray | null;
-  const allMatches: string[] = [];
-  while ((match = regex.exec(formula)) !== null) {
-    const ref = normalizeFormulaReferenceToken(match[0]);
-    allMatches.push(ref);
-    if (!seen.has(ref)) {
-      seen.add(ref);
-      refs.push(ref);
-    }
-  }
-  return refs;
-}
-
-function normalizeFormulaReferenceToken(token: string): string {
-  return token.replace(/\$/g, '').replace(/\s+/g, '').toUpperCase();
 }
 
 export class FormulaCellEditor implements Editor {
@@ -64,15 +39,12 @@ export class FormulaCellEditor implements Editor {
   protected _tabNavigateTimer?: ReturnType<typeof setTimeout>;
   protected _isSyncingReferenceFromCaret = false;
   protected _isSelectionModelHighlightActive = false;
-  protected _cachedFormulaText = '';
   protected _plainTextValue = ''; // Keep plain text in sync with DOM for reliable copy/paste
-  protected _formulaRefColorCache: Map<string, FormulaReferenceColorInfo> = new Map(); // Single source of truth: ref -> {colorIdx, colorClass, cells}
-  protected _formulaColorChanged = false; // Flag to track when cache needs grid update
+  protected _formulaRefColorCache: FormulaReferenceColorCache = new FormulaReferenceColorCache();
   protected _hasAppliedColorsOnce = false; // Track if we've ever applied colors to avoid unnecessary removals
   protected _bindEventService: BindingEventService = new BindingEventService();
   protected _debug = false;
 
-  protected readonly _referenceTokenRegex: RegExp = /\$?[A-Z]{1,3}\$?\d+\s*:\s*(?:\$?[A-Z]{1,3}\$?\d*)?|\$?[A-Z]{1,3}\$?\d+/g;
   protected _initialLoadComplete = false; // Skip sync on first focusin during editor load
 
   constructor(protected readonly args: EditorArguments) {
@@ -517,7 +489,7 @@ export class FormulaCellEditor implements Editor {
   protected getReferenceTokenRangeAtCaretOrUndefined(): { start: number; end: number } | undefined {
     const text = this.getPlainTextValue();
     const caretOffset = this.getCaretOffset();
-    const regex = new RegExp(this._referenceTokenRegex.source, 'g');
+    const regex = createFormulaReferenceTokenRegex();
     let match: RegExpExecArray | null;
 
     while ((match = regex.exec(text)) !== null) {
@@ -579,34 +551,13 @@ export class FormulaCellEditor implements Editor {
       ? normalizedReferenceToken.split(':', 2)
       : [normalizedReferenceToken, normalizedReferenceToken];
 
-    const startCell = this.parseExcelReferenceCell(startToken);
-    const endCell = this.parseExcelReferenceCell(endToken);
+    const startCell = parseExcelReferenceCell(startToken);
+    const endCell = parseExcelReferenceCell(endToken);
     if (!startCell || !endCell) {
       return undefined;
     }
 
     return { startCell, endCell };
-  }
-
-  protected parseExcelReferenceCell(token: string): { row: number; cell: number } | undefined {
-    const match = token.match(/^([A-Z]{1,3})(\d+)$/);
-    if (!match) {
-      return undefined;
-    }
-
-    const columnName = match[1];
-    const rowIndex = Number.parseInt(match[2], 10) - 1;
-    if (!Number.isFinite(rowIndex) || rowIndex < 0) {
-      return undefined;
-    }
-
-    let columnIndex = 0;
-    for (let i = 0; i < columnName.length; i++) {
-      columnIndex = columnIndex * 26 + (columnName.charCodeAt(i) - 64);
-    }
-
-    const result = { row: rowIndex, cell: columnIndex - 1 };
-    return result;
   }
 
   protected replaceReferenceRangeFromGridSelection(startCell: { row: number; cell: number }, endCell: { row: number; cell: number }): void {
@@ -673,7 +624,7 @@ export class FormulaCellEditor implements Editor {
 
   protected getSingleReferenceTokenRangeOrUndefined(): { start: number; end: number } | undefined {
     const text = this.getPlainTextValue();
-    const regex = new RegExp(this._referenceTokenRegex.source, 'g');
+    const regex = createFormulaReferenceTokenRegex();
     const firstMatch = regex.exec(text);
     if (!firstMatch) {
       return undefined;
@@ -717,22 +668,9 @@ export class FormulaCellEditor implements Editor {
     const endRowIdx = Math.max(startCell.row, endCell.row);
 
     // getExcelColumnNameByIndex expects a 1-based column number, grid cell index is 0-based
-    const startRef = `${this.getExcelColumnNameByIndex(startColIdx + 1)}${startRowIdx + 1}`;
-    const endRef = `${this.getExcelColumnNameByIndex(endColIdx + 1)}${endRowIdx + 1}`;
+    const startRef = `${getExcelColumnNameByIndex(startColIdx + 1)}${startRowIdx + 1}`;
+    const endRef = `${getExcelColumnNameByIndex(endColIdx + 1)}${endRowIdx + 1}`;
     return startRef === endRef ? startRef : `${startRef}:${endRef}`;
-  }
-
-  protected getExcelColumnNameByIndex(columnIndex: number): string {
-    let dividend = columnIndex;
-    let columnName = '';
-
-    while (dividend > 0) {
-      const modulo = (dividend - 1) % 26;
-      columnName = String.fromCharCode(65 + modulo) + columnName;
-      dividend = Math.floor((dividend - modulo) / 26);
-    }
-
-    return columnName;
   }
 
   protected renderGridSelectionHighlight(startCell: { row: number; cell: number }, endCell: { row: number; cell: number }): void {
@@ -744,44 +682,19 @@ export class FormulaCellEditor implements Editor {
   }
 
   /**
-   * Single source of truth for formula → reference → color → cells mapping.
-   * Builds `_formulaRefColorCache` once per formula change.
+   * Refresh the shared formula → reference → color → cells cache.
    * Must be called before any rendering or grid cell coloring operations.
    */
   protected buildFormulaReferenceColorCache(): void {
     const raw = this.getPlainTextValue();
-    if (raw === this._cachedFormulaText && this._hasAppliedColorsOnce) {
+    if (!this._formulaRefColorCache.update(raw) && this._hasAppliedColorsOnce) {
       return; // Cache is up-to-date and colors already applied
     }
-    this._cachedFormulaText = raw;
-    this._formulaRefColorCache.clear();
-    this._formulaColorChanged = true; // Flag that colors need grid update
 
     // Clear old persistent colors only if we've previously applied colors
     if (this._hasAppliedColorsOnce) {
       this.args.grid.removeCellCssStyles?.(this._persistentFormulaColorStyleKey);
     }
-
-    if (raw.startsWith('=')) {
-      const refs = extractExcelReferencesFromFormula(raw);
-      refs.forEach((ref, idx) => {
-        const colorIdx = idx % FORMULA_TOKEN_COLOR_COUNT;
-        const colorClass = `formula-cell-color-${colorIdx + 1}`;
-        const cells = this.expandReferenceToGridCells(normalizeFormulaReferenceToken(ref));
-
-        // Add to cache regardless of cells (incomplete refs like "D1:D" still need editor coloring)
-        const info: FormulaReferenceColorInfo = {
-          ref,
-          colorIdx,
-          colorClass,
-          cells, // May be empty for incomplete refs
-        };
-        this._formulaRefColorCache.set(ref, info);
-      });
-    }
-
-    // Mark that colors changed so applyFormulaReferenceCellColors doesn't skip
-    this._formulaColorChanged = true;
 
     // Apply all reference colors to the grid (but skip on initial load to pass tests)
     if (this._isValueTouched) {
@@ -794,14 +707,19 @@ export class FormulaCellEditor implements Editor {
    * This paints the entire grid to show all formula references in their colors.
    */
   protected applyFormulaReferenceCellColors(): void {
-    if (!this._formulaColorChanged || this._formulaRefColorCache.size === 0) {
+    if (!this._formulaRefColorCache.isDirty) {
       return; // No colors to apply
+    }
+
+    if (this._formulaRefColorCache.size === 0) {
+      this._formulaRefColorCache.markClean();
+      return;
     }
 
     const hash: Record<number, Record<string | number, string>> = {};
 
     // Iterate through each cached reference and paint its cells
-    for (const [_ref, info] of this._formulaRefColorCache.entries()) {
+    for (const info of this._formulaRefColorCache.values()) {
       for (const cell of info.cells) {
         const { row } = cell;
         const cellIdx = cell.cell;
@@ -841,49 +759,7 @@ export class FormulaCellEditor implements Editor {
       }
     }
 
-    this._formulaColorChanged = false; // Reset flag after applying
-  }
-
-  /**
-   * Expand a reference string (e.g. "C1" or "D1:D4") into the grid cell coordinates it covers.
-   * For incomplete ranges like "D1:D", just returns the start cell since end is incomplete.
-   */
-  protected expandReferenceToGridCells(normalizedRef: string): Array<{ row: number; cell: number }> {
-    const cells: Array<{ row: number; cell: number }> = [];
-    const isRange = normalizedRef.includes(':');
-
-    if (!isRange) {
-      // Single cell like "C1"
-      const cell = this.parseExcelReferenceCell(normalizedRef);
-      if (cell) {
-        cells.push(cell);
-      }
-    } else {
-      // Range like "D1:D4" or incomplete like "D1:D"
-      const [startToken, endToken] = normalizedRef.split(':', 2);
-      const startCell = this.parseExcelReferenceCell(startToken);
-      const endCell = this.parseExcelReferenceCell(endToken || startToken);
-
-      if (startCell && endCell) {
-        // Both start and end are complete, expand the range
-        const minRow = Math.min(startCell.row, endCell.row);
-        const maxRow = Math.max(startCell.row, endCell.row);
-        const minCol = Math.min(startCell.cell, endCell.cell);
-        const maxCol = Math.max(startCell.cell, endCell.cell);
-
-        for (let r = minRow; r <= maxRow; r++) {
-          for (let c = minCol; c <= maxCol; c++) {
-            cells.push({ row: r, cell: c });
-          }
-        }
-      } else if (startCell) {
-        // Only start is complete (end is incomplete like "D1:D")
-        // Just highlight the start cell, don't try to infer the incomplete end
-        cells.push(startCell);
-      }
-    }
-
-    return cells;
+    this._formulaRefColorCache.markClean();
   }
 
   protected getColorForSelectedCells(startCell: { row: number; cell: number }, _endCell: { row: number; cell: number }): string {
@@ -893,7 +769,7 @@ export class FormulaCellEditor implements Editor {
     }
 
     // Find which formula reference contains the start cell
-    for (const [, info] of this._formulaRefColorCache.entries()) {
+    for (const info of this._formulaRefColorCache.values()) {
       for (const cell of info.cells) {
         if (cell.row === startCell.row && cell.cell === startCell.cell) {
           return info.colorClass;
@@ -1004,10 +880,10 @@ export class FormulaCellEditor implements Editor {
     }
 
     const caret = this.getCaretOffset();
-    // Read from the cache; callers are responsible for calling buildFormulaReferenceColorCache() first
+    // Read from the shared cache; callers are responsible for calling buildFormulaReferenceColorCache() first
     const refColorCache = this._formulaRefColorCache;
 
-    const referenceTokenRegex = new RegExp(this._referenceTokenRegex.source, 'g');
+    const referenceTokenRegex = createFormulaReferenceTokenRegex();
     // Build nodes via the DOM API (instead of innerHTML+string concat) so untrusted formula
     // text (e.g. `=A1&"<img src=x onerror=...>"`) can never be parsed as markup.
     const fragment = document.createDocumentFragment();
@@ -1020,18 +896,7 @@ export class FormulaCellEditor implements Editor {
       }
 
       const normalizedRef = normalizeFormulaReferenceToken(match[0]);
-      // Try exact match first, then look for ranges that start with this token
-      let colorIdx = refColorCache.get(normalizedRef)?.colorIdx ?? 0;
-      if (colorIdx === undefined) {
-        // Look for a range that starts with this token (e.g., D1 might match D1:D4)
-        for (const [, info] of refColorCache.entries()) {
-          if (info.ref.startsWith(normalizedRef + ':')) {
-            colorIdx = info.colorIdx;
-            break;
-          }
-        }
-      }
-      colorIdx = colorIdx ?? 0;
+      const colorIdx = refColorCache.get(normalizedRef)?.colorIdx ?? 0;
       const colorClass = `formula-token-color-${colorIdx + 1}`;
       const span = createDomElement('span', { className: `formula-token ${colorClass}` });
       span.textContent = match[0];

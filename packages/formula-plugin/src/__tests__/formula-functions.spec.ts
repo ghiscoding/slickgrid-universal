@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { FORMULA_ERROR } from './formula-errors.js';
-import { createFormulaFunctionRegistry } from './formula-functions.js';
+import { FORMULA_ERROR } from '../formula-errors.js';
+import { createFormulaFunctionRegistry } from '../formula-functions.js';
 
 describe('createFormulaFunctionRegistry', () => {
   it('should include core arithmetic/stat functions', () => {
@@ -9,9 +9,13 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('SUM')?.(1, 2, '3', true, null, undefined, '')).toBe(7);
     expect(registry.get('PRODUCT')?.(2, '3', true)).toBe(6);
     expect(registry.get('MIN')?.(6, '2', 8)).toBe(2);
+    expect(registry.get('MIN')?.()).toBe(0);
     expect(registry.get('MAX')?.(6, '2', 8)).toBe(8);
+    expect(registry.get('MAX')?.()).toBe(0);
     expect(registry.get('AVERAGE')?.(2, 4, '6')).toBe(4);
+    expect(registry.get('AVERAGE')?.()).toBe(0);
     expect(registry.get('MEDIAN')?.(10, 2, 6, 8)).toBe(7);
+    expect(registry.get('MEDIAN')?.(1, 2, 3)).toBe(2);
     expect(registry.get('MEDIAN')?.()).toBe(0);
     expect(registry.get('POWER')?.('2', 3)).toBe(8);
     expect(registry.get('SUM')?.({ foo: 1 } as any, 2)).toBe(2);
@@ -24,6 +28,8 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('SUMPRODUCT')?.([1, 2], [3, 4])).toBe(11);
     expect(registry.get('SUMPRODUCT')?.([2, 3, 4], [10, 20])).toBe(84);
     expect(registry.get('SUMPRODUCT')?.([], [])).toBe(0);
+    expect(registry.get('SUMPRODUCT')?.([1, undefined], [2, 3])).toBe(2);
+    expect(registry.get('SUMPRODUCT')?.([[1], []], [2, 3])).toBe(5);
     expect(registry.get('SUMPRODUCT')?.()).toBe(0);
   });
 
@@ -56,6 +62,14 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('COUNTIF')?.([1, 2, 3, 4], '<3')).toBe(2);
     expect(registry.get('COUNTIF')?.([1, 2, 3, 4], '>=3')).toBe(2);
     expect(registry.get('COUNTIF')?.(['a', 'b', 'a'], '<>a')).toBe(1);
+    expect(registry.get('COUNTIF')?.(['a', null], null)).toBe(1);
+  });
+
+  it('should normalize non-finite, boolean, numeric, and invalid numeric values', () => {
+    const registry = createFormulaFunctionRegistry(new Map());
+
+    expect(registry.get('SUM')?.(Infinity, true, false, ' 2 ', 'not numeric')).toBe(3);
+    expect(registry.get('SUM')?.([Number.NaN])).toBe(0);
   });
 
   it('should expose date/random/error helpers', () => {
@@ -98,18 +112,24 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('SUM')?.(9, 4)).toBe(5);
   });
 
-  it('should return false on unexpected criteria operator fallback', () => {
-    const registry = createFormulaFunctionRegistry(new Map());
-    const originalMatch = String.prototype.match;
-    const matchSpy = vi.spyOn(String.prototype as any, 'match').mockImplementation(function (this: string, _regex: RegExp) {
+ it('should return false on unexpected criteria operator fallback', () => {
+  const registry = createFormulaFunctionRegistry(new Map());
+  const originalMatch = String.prototype.match;
+
+  const matchSpy = vi
+    .spyOn(String.prototype as any, 'match')
+    .mockImplementation(function (this: string, ...args: any[]) {
+      const regex = args[0] as RegExp;
       if (this === '!2') {
         return ['!2', '!', '2'] as any;
       }
-      return originalMatch.call(this, _regex);
+
+      return originalMatch!.call(this, regex);
     });
 
-    expect(registry.get('COUNTIF')?.([1, 2, 3], '!2')).toBe(0);
+  expect(registry.get('COUNTIF')?.([1, 2, 3], '!2')).toBe(0);
 
-    matchSpy.mockRestore();
-  });
+  matchSpy.mockRestore();
+});
+
 });

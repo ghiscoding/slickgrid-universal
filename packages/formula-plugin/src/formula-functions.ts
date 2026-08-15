@@ -56,7 +56,8 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
         if (i >= arr.length) {
           continue;
         }
-        product *= arr[i] ?? 0;
+        // Values are normalized through toNumericFormulaValue() above, so each present entry is numeric.
+        product *= arr[i];
       }
       sum += product;
     }

@@ -1,6 +1,6 @@
 # Formula Editor Plugin Progress
 
-Last updated: 2026-08-10 (formula-reference color sync fixes + incomplete-reference color stability + plain-text clipboard handling + unit/E2E regression coverage)
+Last updated: 2026-08-15 (shared formula-reference parser + saved-formula reopen color-order fix + regression coverage)
 Branch context: feat/cell-formula-plugin
 
 ## Maintenance Rule
@@ -85,7 +85,7 @@ Why this mattered:
 - Kept only demo-specific visual overrides in example46 (for example row colors and local editor background/selected editable color vars).
 
 ## Tests Added/Updated
-formula.cellEditor.spec.ts covers:
+`src/__tests__/formula.cellEditor.spec.ts` covers:
 - Editor remains open and suppresses grid click after reference selection.
 - Caret-driven range highlight and drag-rewrite flow.
 - Endpoint drag expansion anchor behavior.
@@ -95,7 +95,7 @@ formula.cellEditor.spec.ts covers:
 - Autocomplete insertion reads live editor DOM text instead of stale cached plain value.
 - Selection highlight style is removed only when it was actually active.
 
-formula.service.spec.ts covers:
+`src/__tests__/formula.service.spec.ts` covers:
 - Warning when formula columns exist but selection prerequisites are missing.
 - No warning when mixed selection is configured.
 
@@ -157,6 +157,20 @@ Why this mattered:
 - Kept formula token colors and grid reference colors aligned for multi-reference formulas.
 - Ensured clipboard output from the formula editor is plain formula text without HTML/span artifacts.
 
+## Latest Update: Saved-Formula Reopen Color Order (2026-08-15)
+- Fixed inverted grid reference colors after committing and reopening a formula such as `=C1*SUM(D1:D3)`.
+- Root cause: `FormulaService.extractExcelReferenceGroups()` collected all ranges before single-cell references, while `FormulaCellEditor` assigned colors in textual order.
+- Added `formula-reference.ts` as the shared source for reference token matching, normalization, A1 column conversion, range expansion, deduplication, color assignment, and `FormulaReferenceColorCache` state management.
+- FormulaCellEditor and FormulaService now consume the same cache abstraction; their duplicate extraction, conversion, and reference-cache lifecycle implementations were removed. The editor retains only DOM/caret and grid-style application concerns.
+- Added shared utility and FormulaService unit regressions plus Cypress coverage that commits with Enter, reopens the editor, and verifies `C1` remains color 1 while `D1:D3` remains color 2.
+- Added the reverse-order Cypress regression (`=SUM(D1:D3)*C1`) to ensure color assignment follows formula text order in both directions.
+- Moved formula-plugin unit specs into `src/__tests__` and updated their relative imports.
+- Added direct unit coverage for the shared `FormulaReferenceColorCache`, malformed references, and shared A1 conversion/range expansion helpers.
+- Expanded formula-function, FormulaCellEditor, and FormulaService edge-case coverage for invalid values, color cleanup, caret guards, circular/missing references, and literal conversion.
+- Covered empty-stat-function and SUMPRODUCT normalization branches; removed an unreachable nullish fallback after numeric normalization.
+- Added direct editor helper coverage for invalid ranges, reference-token resolution, insertion decisions, anchor selection, and cache no-op handling.
+- Added FormulaService date arithmetic and reference/literal edge-case coverage.
+
 ## Known Constraints / Notes
 - Without a cell-capable selection model, range visuals fall back to CSS highlighting only.
 - TreeDataService-style hard throw was intentionally not used for formula selection prerequisites; behavior is warning-only to avoid breaking existing grids.
@@ -164,8 +178,9 @@ Why this mattered:
 
 ## Fast Verification
 Run:
-- vitest run --config test/vitest.config.mts packages/formula-plugin/src/formula.cellEditor.spec.ts
-- vitest run --config test/vitest.config.mts packages/formula-plugin/src/formula.service.spec.ts
+- vitest run --config test/vitest.config.mts packages/formula-plugin/src/__tests__/formula.cellEditor.spec.ts
+- vitest run --config test/vitest.config.mts packages/formula-plugin/src/__tests__/formula-reference.spec.ts
+- vitest run --config test/vitest.config.mts packages/formula-plugin/src/__tests__/formula.service.spec.ts
 - vitest run --config test/vitest.config.mts packages/excel-export/src/excelExport.service.spec.ts
 - cypress run --config-file test/cypress.config.ts --spec test/cypress/e2e/example47.cy.ts
 

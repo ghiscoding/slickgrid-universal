@@ -31,7 +31,7 @@ catalog:
   '@vitest/ui': ^4.1.10
   bootstrap: ^5.3.8
   cross-env: ^10.1.0
-  cypress: ^15.20.0
+  cypress: ^15.20.1
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
   dompurify: ^3.4.13
@@ -77,5 +77,5 @@ overrides:
   picomatch: ^4.0.5
   postcss: ^8.5.25
   qs: ^6.15.3
-  undici: '>=7.29.0'
+  undici: '^7.29.0'
   vite: *viteVersion

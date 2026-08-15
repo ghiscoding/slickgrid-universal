@@ -1,8 +1,8 @@
 import type { Column, FormulaExcelExportContext } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { FORMULA_ERROR } from './formula-errors.js';
-import { FormulaCellEditor } from './formula.cellEditor.js';
-import { FormulaService } from './formula.service.js';
+import { FORMULA_ERROR } from '../formula-errors.js';
+import { FormulaCellEditor } from '../formula.cellEditor.js';
+import { FormulaService } from '../formula.service.js';
 
 describe('FormulaService', () => {
   let warnSpy: ReturnType<typeof vi.spyOn>;
@@ -367,6 +367,54 @@ describe('FormulaService', () => {
     expect(cssHash[0].c).toBe('formula-cell-color-1');
     expect(cssHash[1].c).toBe('formula-cell-color-1');
     expect(cssHash[2].c).toBe('formula-cell-color-1');
+  });
+
+  it('should preserve formula reference order when assigning highlight colors', () => {
+    const setCellCssStyles = vi.fn();
+    const columns: Column[] = [
+      { id: 'a', field: 'a' },
+      { id: 'b', field: 'b' },
+      { id: 'c', field: 'c' },
+      { id: 'd', field: 'd' },
+    ];
+    const items = [{ id: 1 }, { id: 2 }, { id: 3 }];
+
+    const gridStub = {
+      getColumns: () => columns,
+      setColumns: (_newCols: Column[]) => undefined,
+      setCellCssStyles,
+      removeCellCssStyles: vi.fn(),
+      getData: () => ({
+        getItems: () => items,
+        getLength: () => items.length,
+      }),
+    } as any;
+
+    const service = new FormulaService();
+    service.init(gridStub);
+    service.renderFormulaReferenceHighlights('=C1*SUM(D1:D3)');
+
+    expect(setCellCssStyles).toHaveBeenCalledTimes(2);
+    expect(setCellCssStyles.mock.calls[0][0]).toBe('formula-ref-highlight-0');
+    expect(setCellCssStyles.mock.calls[0][1]).toEqual({ 0: { c: 'formula-cell-color-1' } });
+    expect(setCellCssStyles.mock.calls[1][0]).toBe('formula-ref-highlight-1');
+    expect(setCellCssStyles.mock.calls[1][1]).toEqual({
+      0: { d: 'formula-cell-color-2' },
+      1: { d: 'formula-cell-color-2' },
+      2: { d: 'formula-cell-color-2' },
+    });
+
+    // The same mapping must work when the range is the first reference in the formula.
+    setCellCssStyles.mockClear();
+    service.renderFormulaReferenceHighlights('=SUM(D1:D3)*C1');
+
+    expect(setCellCssStyles).toHaveBeenCalledTimes(2);
+    expect(setCellCssStyles.mock.calls[0][1]).toEqual({
+      0: { d: 'formula-cell-color-1' },
+      1: { d: 'formula-cell-color-1' },
+      2: { d: 'formula-cell-color-1' },
+    });
+    expect(setCellCssStyles.mock.calls[1][1]).toEqual({ 0: { c: 'formula-cell-color-2' } });
   });
 
   it('should remap direct A1 references when hidden columns are excluded from export', () => {
@@ -924,6 +972,44 @@ describe('FormulaService', () => {
     service.setFormula(1, 'out', '=A1');
 
     expect(service.getEvaluatedCellValue(1, 'out', items[0].out, '')).toBe('[object Object]');
+  });
+
+  it('should handle invalid references, circular references, missing cells, and literal conversion', () => {
+    const service = new FormulaService();
+    const items = [{ id: 1, value: '=A1' }];
+    const columns: Column[] = [{ id: 'value', field: 'value' }];
+    const gridStub = {
+      getColumns: () => columns,
+      getData: () => ({ getItems: () => items, getLength: () => items.length }),
+      getOptions: () => ({ datasetIdPropertyName: 'id' }),
+    } as any;
+    service.init(gridStub);
+
+    const context = { visited: new Set<string>(), memo: new Map<string, unknown>() };
+    expect((service as any).resolveExcelReferenceValue('?', 1, context)).toBe(FORMULA_ERROR.REF);
+    expect((service as any).resolveExcelReferenceValue('A', 0, context)).toBe(FORMULA_ERROR.REF);
+    expect((service as any).resolveExcelReferenceValue('B', 1, context)).toBe(FORMULA_ERROR.REF);
+    expect((service as any).resolveExcelReferenceValue('A', 2, context)).toBe(FORMULA_ERROR.REF);
+
+    context.visited.add('1::value');
+    expect((service as any).resolveExcelReferenceValue('A', 1, context)).toBe(FORMULA_ERROR.REF);
+    expect((service as any).getCellRawValue('missing', 'value')).toBeUndefined();
+    expect((service as any).getCellRawValue(1, 'missing')).toBeUndefined();
+
+    expect((service as any).toExpressionLiteral(null)).toBe('0');
+    expect((service as any).toExpressionLiteral(true)).toBe('true');
+    expect((service as any).toExpressionLiteral(false)).toBe('false');
+    expect((service as any).toExpressionLiteral(' 12.5 ')).toBe('12.5');
+    expect((service as any).toExpressionLiteral('hello')).toBe('"hello"');
+
+    const baseDate = new Date('2024-01-10T00:00:00.000Z');
+    expect((FormulaService as any).addFormulaValues(baseDate, 2)).toEqual(new Date('2024-01-12T00:00:00.000Z'));
+    expect((FormulaService as any).addFormulaValues(2, baseDate)).toEqual(new Date('2024-01-12T00:00:00.000Z'));
+    expect((FormulaService as any).addFormulaValues(2, 3)).toBe(5);
+    expect((FormulaService as any).subtractFormulaValues(baseDate, 2)).toEqual(new Date('2024-01-08T00:00:00.000Z'));
+    expect((FormulaService as any).subtractFormulaValues(baseDate, new Date('2024-01-08T00:00:00.000Z'))).toBe(2);
+    expect((FormulaService as any).subtractFormulaValues(5, 2)).toBe(3);
+    expect((FormulaService as any).addDays(baseDate, 1)).toEqual(new Date('2024-01-11T00:00:00.000Z'));
   });
 
   it('should wrap onFormulaInputChange and invoke user callback without forcing highlight refresh', () => {

@@ -14,6 +14,11 @@ import type {
 import { createDomElement, Formatters } from '@slickgrid-universal/common';
 import { FORMULA_ERROR, isFormulaErrorCode, type FormulaErrorCode } from './formula-errors.js';
 import { createFormulaFunctionRegistry, type FormulaCallback } from './formula-functions.js';
+import {
+  FormulaReferenceColorCache,
+  getExcelColumnIndexByName,
+  getExcelColumnNameByIndex,
+} from './formula-reference.js';
 import { FormulaCellEditor, type FormulaEditorParams } from './formula.cellEditor.js';
 
 export type { FormulaCallback } from './formula-functions.js';
@@ -62,12 +67,12 @@ interface FormulaEvaluationContext {
  */
 export class FormulaService implements ExternalResource, FormulaProvider {
   readonly pluginName = 'FormulaService';
-  protected static readonly FORMULA_TOKEN_COLOR_COUNT = 10;
 
   protected _grid!: SlickGrid;
   protected _dataView!: SlickDataView;
   protected _customFunctions: Map<string, FormulaCallback> = new Map<string, FormulaCallback>();
   protected _formulaStore: Map<string, string> = new Map<string, string>();
+  protected _formulaRefColorCache: FormulaReferenceColorCache = new FormulaReferenceColorCache();
   protected _originalColumnNamesById: Map<number | string, string | HTMLElement | DocumentFragment | undefined> = new Map();
   protected _formulaRefStyleKeys: string[] = [];
   protected _isExcelHeaderPrefixEnabled = false;
@@ -115,6 +120,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this.disableExcelHeaderPrefix();
     this.restoreAutoAssignedFormulaEditorColumns();
     this._formulaStore.clear();
+    this._formulaRefColorCache.clear();
     this.resetEvaluationMemo();
     this._customFunctions.clear();
     this._originalColumnNamesById.clear();
@@ -173,7 +179,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
       const originalName = this._originalColumnNamesById.get(column.id);
       const nameText = typeof originalName === 'string' ? originalName : String(column.id);
-      const excelLabel = this.getExcelColumnNameByIndex(index + 1);
+      const excelLabel = getExcelColumnNameByIndex(index + 1);
 
       return {
         ...column,
@@ -210,35 +216,31 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
 
     const normalizedFormula = formula.startsWith('=') ? formula.slice(1) : formula;
-    const referenceGroups = this.extractExcelReferenceGroups(
-      `=${this.replaceRefFunctionsWithA1Refs(
-        normalizedFormula,
-        ((this._grid?.getColumns?.() as Column[] | undefined) || []).map((col) => String(col.id)),
-        this.getDataItems().map((item) => String(item?.[this.getDatasetIdPropertyName()] ?? '')),
-        1
-      )}`
-    );
+    const normalizedFormulaWithRefs = `=${this.replaceRefFunctionsWithA1Refs(
+      normalizedFormula,
+      ((this._grid?.getColumns?.() as Column[] | undefined) || []).map((col) => String(col.id)),
+      this.getDataItems().map((item) => String(item?.[this.getDatasetIdPropertyName()] ?? '')),
+      1
+    )}`;
+    this._formulaRefColorCache.update(normalizedFormulaWithRefs);
     const columns = this._grid.getColumns() as Column[];
     const datasetLength = this.getDatasetLength();
 
-    referenceGroups.forEach((refs, idx) => {
-      const cssColorClass = `formula-cell-color-${(idx % FormulaService.FORMULA_TOKEN_COLOR_COUNT) + 1}`;
+    Array.from(this._formulaRefColorCache.values()).forEach((reference, idx) => {
       const styleKey = `formula-ref-highlight-${idx}`;
       const hash: Record<number, Record<string | number, string>> = {};
 
-      for (const ref of refs) {
-        const colIdx = this.getExcelColumnIndexByName(ref.col);
-        const rowIdx = ref.row - 1;
-        const column = columns[colIdx];
+      for (const cell of reference.cells) {
+        const column = columns[cell.cell];
 
-        if (!column || rowIdx < 0 || rowIdx >= datasetLength) {
+        if (!column || cell.row < 0 || cell.row >= datasetLength) {
           continue;
         }
 
-        if (!hash[rowIdx]) {
-          hash[rowIdx] = {};
+        if (!hash[cell.row]) {
+          hash[cell.row] = {};
         }
-        hash[rowIdx][column.id as number | string] = cssColorClass;
+        hash[cell.row][column.id as number | string] = reference.colorClass;
       }
 
       if (Object.keys(hash).length > 0) {
@@ -246,63 +248,14 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         this._formulaRefStyleKeys.push(styleKey);
       }
     });
+    this._formulaRefColorCache.markClean();
   }
 
   extractExcelReferences(formula: string): Array<{ col: string; row: number }> {
-    return this.extractExcelReferenceGroups(formula).flat();
-  }
-
-  protected extractExcelReferenceGroups(formula: string): Array<Array<{ col: string; row: number }>> {
-    const groups: Array<Array<{ col: string; row: number }>> = [];
-    const rangeRegex = /\$?([A-Z]{1,3})\$?(\d+)\s*:\s*\$?([A-Z]{1,3})\$?(\d+)/g;
-    let rangeMatch: RegExpExecArray | null;
-
-    while ((rangeMatch = rangeRegex.exec(formula)) !== null) {
-      const startColName = rangeMatch[1].toUpperCase();
-      const startRowNumber = Number(rangeMatch[2]);
-      const endColName = rangeMatch[3].toUpperCase();
-      const endRowNumber = Number(rangeMatch[4]);
-
-      const startColIdx = this.getExcelColumnIndexByName(startColName);
-      const endColIdx = this.getExcelColumnIndexByName(endColName);
-      if (startColIdx < 0 || endColIdx < 0 || Number.isNaN(startRowNumber) || Number.isNaN(endRowNumber)) {
-        continue;
-      }
-
-      const minColIdx = Math.min(startColIdx, endColIdx);
-      const maxColIdx = Math.max(startColIdx, endColIdx);
-      const minRowNumber = Math.max(1, Math.min(startRowNumber, endRowNumber));
-      const maxRowNumber = Math.max(startRowNumber, endRowNumber);
-      const groupRefs: Array<{ col: string; row: number }> = [];
-
-      for (let rowNumber = minRowNumber; rowNumber <= maxRowNumber; rowNumber++) {
-        for (let colIdx = minColIdx; colIdx <= maxColIdx; colIdx++) {
-          groupRefs.push({ col: this.getExcelColumnNameByIndex(colIdx + 1), row: rowNumber });
-        }
-      }
-
-      if (groupRefs.length > 0) {
-        groups.push(groupRefs);
-      }
-    }
-
-    const formulaWithoutRanges = formula.replace(rangeRegex, ' ');
-    const singleRefRegex = /\$?([A-Z]{1,3})\$?(\d+)/g;
-    const seenSingleRefs = new Set<string>();
-    let singleMatch: RegExpExecArray | null;
-
-    while ((singleMatch = singleRefRegex.exec(formulaWithoutRanges)) !== null) {
-      const col = singleMatch[1].toUpperCase();
-      const row = Number(singleMatch[2]);
-      const key = `${col}${row}`;
-      if (Number.isNaN(row) || seenSingleRefs.has(key)) {
-        continue;
-      }
-      seenSingleRefs.add(key);
-      groups.push([{ col, row }]);
-    }
-
-    return groups;
+    this._formulaRefColorCache.update(formula);
+    return Array.from(this._formulaRefColorCache.values()).flatMap((reference) =>
+      reference.cells.map((cell) => ({ col: getExcelColumnNameByIndex(cell.cell + 1), row: cell.row + 1 }))
+    );
   }
 
   clearFormulas(): void {
@@ -525,7 +478,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const hasLeadingDollar = columnRef.startsWith('$');
     const hasTrailingDollar = columnRef.endsWith('$');
     const rawColumnName = columnRef.replace(/\$/g, '').toUpperCase();
-    const sourceColumnIndex = this.getExcelColumnIndexByName(rawColumnName);
+    const sourceColumnIndex = getExcelColumnIndexByName(rawColumnName);
 
     if (sourceColumnIndex < 0) {
       return columnRef;
@@ -541,7 +494,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return columnRef;
     }
 
-    const targetColumnName = this.getExcelColumnNameByIndex(targetColumnIndex + 1);
+    const targetColumnName = getExcelColumnNameByIndex(targetColumnIndex + 1);
     return `${hasLeadingDollar ? '$' : ''}${targetColumnName}${hasTrailingDollar ? '$' : ''}`;
   }
 
@@ -568,27 +521,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected resetEvaluationMemo(): void {
     this._evaluationMemo.clear();
     this._isEvaluationMemoFlushScheduled = false;
-  }
-
-  protected getExcelColumnNameByIndex(columnIndex: number): string {
-    let dividend = columnIndex;
-    let columnName = '';
-
-    while (dividend > 0) {
-      const modulo = (dividend - 1) % 26;
-      columnName = String.fromCharCode(65 + modulo) + columnName;
-      dividend = Math.floor((dividend - modulo) / 26);
-    }
-
-    return columnName;
-  }
-
-  protected getExcelColumnIndexByName(colName: string): number {
-    let colIdx = 0;
-    for (let i = 0; i < colName.length; i++) {
-      colIdx = colIdx * 26 + (colName.charCodeAt(i) - 64);
-    }
-    return colIdx - 1;
   }
 
   protected getDatasetLength(): number {
@@ -1154,7 +1086,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           return '';
         }
 
-        const excelColName = this.getExcelColumnNameByIndex(columnIdx + 1);
+        const excelColName = getExcelColumnNameByIndex(columnIdx + 1);
         const excelRowNumber = rowIdx + excelRowOffset;
         return `${excelColName}${excelRowNumber}`;
       }
@@ -1169,7 +1101,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           return '';
         }
 
-        const excelColName = this.getExcelColumnNameByIndex(columnIdx + 1);
+        const excelColName = getExcelColumnNameByIndex(columnIdx + 1);
         const excelRowNumber = rowIdx + excelRowOffset - 1;
         return `${excelColName}${excelRowNumber}`;
       }
@@ -1213,8 +1145,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     endRowNumber: number,
     context: FormulaEvaluationContext
   ): unknown[] {
-    const startColIdx = this.getExcelColumnIndexByName(startColName.toUpperCase());
-    const endColIdx = this.getExcelColumnIndexByName(endColName.toUpperCase());
+    const startColIdx = getExcelColumnIndexByName(startColName.toUpperCase());
+    const endColIdx = getExcelColumnIndexByName(endColName.toUpperCase());
     if (startColIdx < 0 || endColIdx < 0) {
       return [];
     }
@@ -1227,7 +1159,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
     for (let rowNumber = minRowNumber; rowNumber <= maxRowNumber; rowNumber++) {
       for (let colIdx = minColIdx; colIdx <= maxColIdx; colIdx++) {
-        const colName = this.getExcelColumnNameByIndex(colIdx + 1);
+        const colName = getExcelColumnNameByIndex(colIdx + 1);
         rangeValues.push(this.resolveExcelReferenceValue(colName, rowNumber, context));
       }
     }
@@ -1268,7 +1200,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected resolveExcelReferenceValue(colName: string, rowNumber: number, context: FormulaEvaluationContext): unknown {
-    const colIdx = this.getExcelColumnIndexByName(colName.toUpperCase());
+    const colIdx = getExcelColumnIndexByName(colName.toUpperCase());
     if (colIdx < 0 || Number.isNaN(rowNumber) || rowNumber < 1) {
       return FORMULA_ERROR.REF;
     }

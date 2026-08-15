@@ -1,6 +1,6 @@
 import type { EditorArguments } from '@slickgrid-universal/common';
 import { describe, expect, it, vi } from 'vitest';
-import { FormulaCellEditor } from './formula.cellEditor.js';
+import { FormulaCellEditor } from '../formula.cellEditor.js';
 
 describe('FormulaCellEditor', () => {
   it('should keep editor open and suppress grid click after selecting a reference cell', () => {
@@ -725,6 +725,105 @@ describe('FormulaCellEditor', () => {
     (editor as any).clearReferenceSelectionHighlight();
 
     expect(removeCellCssStylesSpy).not.toHaveBeenCalledWith('formula-editor-grid-sel-highlight');
+
+    editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+  });
+
+  it('should cover persistent color cleanup, selection color fallback, and caret guards', () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    document.body.append(hostContainer, gridContainer);
+    const removeCellCssStylesSpy = vi.fn();
+    const setCellCssStylesSpy = vi.fn();
+    const gridStub = {
+      focus: () => undefined,
+      getActiveCell: () => ({ row: 0, cell: 0 }),
+      getCellFromEvent: () => null,
+      getColumns: () => [{ id: 'a' }, { id: 'b' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({ editorNavigateOnArrows: false }),
+      removeCellCssStyles: removeCellCssStylesSpy,
+      setCellCssStyles: setCellCssStylesSpy,
+      getSelectionModel: () => undefined,
+    } as any;
+    const args = {
+      column: { field: 'total', editor: { params: { formulaFunctionList: ['SUM'] } } },
+      commitChanges: () => undefined,
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1' },
+      cancelChanges: () => undefined,
+    } as unknown as EditorArguments;
+    const editor = new FormulaCellEditor(args);
+    editor.loadValue((args as any).item);
+
+    // Reapply colors after an existing cache so both cleanup paths are exercised.
+    (editor as any)._editorElm.textContent = '=B1';
+    (editor as any).handleInput();
+    (editor as any)._editorElm.textContent = '=1';
+    (editor as any).handleInput();
+    (editor as any)._editorElm.textContent = '=A1';
+    (editor as any).handleInput();
+
+    expect((editor as any).getColorForSelectedCells({ row: 0, cell: 0 }, { row: 0, cell: 0 })).toBe('formula-cell-color-1');
+    (editor as any)._editorElm.textContent = '=Z1';
+    (editor as any).handleInput();
+    (editor as any)._plainTextValue = '=A1';
+    expect((editor as any).getColorForSelectedCells({ row: 8, cell: 8 }, { row: 8, cell: 8 })).toBe('formula-cell-color-1');
+    (editor as any)._plainTextValue = 'plain text';
+    expect((editor as any).getColorForSelectedCells({ row: 8, cell: 8 }, { row: 8, cell: 8 })).toBe('formula-cell-color-1');
+
+    expect((editor as any).parseExcelReferenceCellRange('')).toBeUndefined();
+    expect((editor as any).parseExcelReferenceCellRange('A0')).toBeUndefined();
+    expect((editor as any).parseExcelReferenceCellRange('A1:B')).toBeUndefined();
+    (editor as any)._plainTextValue = '=A1';
+    (editor as any)._editorElm.textContent = '=A1';
+    (editor as any).restoreCaretOffset(3);
+    expect((editor as any).getReferenceTokenRangeAtCaret()).toEqual({ start: 1, end: 3 });
+    expect((editor as any).resolveReferenceEditRangeForGridSelection()).toEqual({ start: 1, end: 3 });
+    (editor as any)._referenceEditRange = { start: 0, end: 0 };
+    expect((editor as any).resolveReferenceEditRangeForGridSelection()).toEqual({ start: 1, end: 3 });
+    (editor as any)._plainTextValue = 'plain';
+    (editor as any)._editorElm.textContent = 'plain';
+    (editor as any).restoreCaretOffset(5);
+    expect((editor as any).shouldInsertReferenceAtCaret()).toBe(false);
+    expect((editor as any).getSingleReferenceTokenRangeOrUndefined()).toBeUndefined();
+    (editor as any)._plainTextValue = '=A1+B1';
+    (editor as any)._editorElm.textContent = '=A1+B1';
+    expect((editor as any).getSingleReferenceTokenRangeOrUndefined()).toBeUndefined();
+    (editor as any)._plainTextValue = '=A1';
+    (editor as any)._editorElm.textContent = '=A1';
+    (editor as any).restoreCaretOffset(1);
+    expect((editor as any).shouldInsertReferenceAtCaret()).toBe(true);
+    expect((editor as any).getSingleReferenceTokenRangeOrUndefined()).toEqual({ start: 1, end: 3 });
+    (editor as any)._plainTextValue = '=   ';
+    (editor as any)._editorElm.textContent = '=   ';
+    (editor as any).restoreCaretOffset(4);
+    expect((editor as any).shouldInsertReferenceAtCaret()).toBe(true);
+    expect((editor as any).resolveReferenceSelectionAnchorCell({ row: 0, cell: 0 }, { startCell: { row: 0, cell: 0 }, endCell: { row: 1, cell: 1 } })).toEqual({
+      row: 1,
+      cell: 1,
+    });
+    (editor as any)._formulaRefColorCache.markClean();
+    (editor as any).applyFormulaReferenceCellColors();
+
+    (editor as any)._isExitingEditor = true;
+    (editor as any).clearReferenceSelectionHighlight();
+    expect(removeCellCssStylesSpy).toHaveBeenCalledWith('formula-editor-grid-persistent-colors');
+
+    (editor as any)._isExitingEditor = false;
+    (editor as any).restoreCaretOffset(999);
+    (editor as any)._isDestroyed = true;
+    (editor as any).restoreCaretOffset(0);
+    (editor as any)._isDestroyed = false;
+    const selectionSpy = vi.spyOn(window, 'getSelection').mockReturnValue(null);
+    (editor as any).restoreCaretOffset(0);
+    selectionSpy.mockRestore();
+    (editor as any)._editorElm.textContent = 'plain text';
+    (editor as any).updateAutocomplete();
 
     editor.destroy();
     hostContainer.remove();
