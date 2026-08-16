@@ -2698,7 +2698,10 @@ describe('ExcelExportService', () => {
       const addCustomFunction = vi.fn();
       (service as any)._workbook = { addDefinedName, addCustomFunction };
       (service as any)._formulaProvider = {
-        getExcelDefinedNames: () => [{ name: '', refersTo: 'Sheet1!A1' }, { name: 'VALID', refersTo: 'Sheet1!A1' }],
+        getExcelDefinedNames: () => [
+          { name: '', refersTo: 'Sheet1!A1' },
+          { name: 'VALID', refersTo: 'Sheet1!A1' },
+        ],
         getExcelCustomFunctions: () => [
           { name: 'MISSING_BODY', args: ['values'], body: '' },
           { name: 'VALIDFN', args: ['values'], body: 'SUM(values)' },

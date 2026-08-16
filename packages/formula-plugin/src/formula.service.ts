@@ -14,11 +14,7 @@ import type {
 import { createDomElement, Formatters } from '@slickgrid-universal/common';
 import { FORMULA_ERROR, isFormulaErrorCode, type FormulaErrorCode } from './formula-errors.js';
 import { createFormulaFunctionRegistry, type FormulaCallback } from './formula-functions.js';
-import {
-  FormulaReferenceColorCache,
-  getExcelColumnIndexByName,
-  getExcelColumnNameByIndex,
-} from './formula-reference.js';
+import { FormulaReferenceColorCache, getExcelColumnIndexByName, getExcelColumnNameByIndex } from './formula-reference.js';
 import { FormulaCellEditor, type FormulaEditorParams } from './formula.cellEditor.js';
 
 export type { FormulaCallback } from './formula-functions.js';

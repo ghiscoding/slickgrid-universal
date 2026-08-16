@@ -108,9 +108,7 @@ export function parseExcelReferenceCell(token: string): FormulaGridCell | undefi
 
 export function expandFormulaReferenceToGridCells(reference: string): FormulaGridCell[] {
   const normalizedRef = normalizeFormulaReferenceToken(reference);
-  const [startToken, endToken] = normalizedRef.includes(':')
-    ? normalizedRef.split(':', 2)
-    : [normalizedRef, normalizedRef];
+  const [startToken, endToken] = normalizedRef.includes(':') ? normalizedRef.split(':', 2) : [normalizedRef, normalizedRef];
   const startCell = parseExcelReferenceCell(startToken);
   const endCell = parseExcelReferenceCell(endToken || startToken);
 

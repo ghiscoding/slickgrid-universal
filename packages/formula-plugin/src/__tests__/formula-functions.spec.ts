@@ -112,13 +112,11 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('SUM')?.(9, 4)).toBe(5);
   });
 
- it('should return false on unexpected criteria operator fallback', () => {
-  const registry = createFormulaFunctionRegistry(new Map());
-  const originalMatch = String.prototype.match;
+  it('should return false on unexpected criteria operator fallback', () => {
+    const registry = createFormulaFunctionRegistry(new Map());
+    const originalMatch = String.prototype.match;
 
-  const matchSpy = vi
-    .spyOn(String.prototype as any, 'match')
-    .mockImplementation(function (this: string, ...args: any[]) {
+    const matchSpy = vi.spyOn(String.prototype as any, 'match').mockImplementation(function (this: string, ...args: any[]) {
       const regex = args[0] as RegExp;
       if (this === '!2') {
         return ['!2', '!', '2'] as any;
@@ -127,9 +125,8 @@ describe('createFormulaFunctionRegistry', () => {
       return originalMatch!.call(this, regex);
     });
 
-  expect(registry.get('COUNTIF')?.([1, 2, 3], '!2')).toBe(0);
+    expect(registry.get('COUNTIF')?.([1, 2, 3], '!2')).toBe(0);
 
-  matchSpy.mockRestore();
-});
-
+    matchSpy.mockRestore();
+  });
 });
