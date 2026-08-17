@@ -6241,6 +6241,68 @@ describe('SlickGrid core file', () => {
       expect(renderSpy).toHaveBeenCalled();
     });
 
+    it('should keep page-boundary mapping stable with variable row height enabled', () => {
+      const manyRows = Array.from({ length: 700 }, (_, i) => ({ id: i, firstName: `name-${i}`, lastName: 'L', age: i }));
+      const variableRowHeightProvider = (_grid: SlickGrid, row: number) => 2200 + (row % 3) * 200;
+
+      grid = new SlickGrid<any, Column>(container, manyRows, columns, {
+        ...defaultOptions,
+        enableVariableRowHeight: true,
+        rowHeight: 2200,
+        rowHeightProvider: variableRowHeightProvider,
+      });
+
+      const testGrid = grid as any;
+      const lastPage = testGrid.n - 1;
+
+      expect(testGrid.n).toBeGreaterThan(3);
+      expect(testGrid.getPageOffset(0)).toBe(0);
+      expect(testGrid.getPageOffset(1)).toBe(0);
+      expect(testGrid.getPageOffset(lastPage)).toBe(Math.max(0, testGrid.th - testGrid.h));
+
+      expect(testGrid.getPageFromLargeScrollDelta(testGrid.ph - 1)).toBe(0);
+      expect(testGrid.getPageFromLargeScrollDelta(testGrid.h - testGrid.ph)).toBe(lastPage);
+
+      const row0Height = grid.getRowHeight(0);
+      const row1Height = grid.getRowHeight(1);
+      const row2Height = grid.getRowHeight(2);
+      expect(testGrid.getRowPosition(3)).toBe(row0Height + row1Height + row2Height);
+    });
+
+    it('should cover legacy and interior branch paths in virtual page mapping helpers', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, rowHeight: 25 });
+      const testGrid = grid as any;
+
+      // getPageOffset(): legacy mapping when page count is tiny (n <= 3)
+      testGrid.n = 3;
+      testGrid.th = 1000;
+      testGrid.h = 500;
+      testGrid.cj = 123;
+      expect(testGrid.getPageOffset(1)).toBe(123);
+
+      // getPageOffset(): legacy fallback when computed lastOffset is non-positive
+      testGrid.n = 5;
+      testGrid.th = 400;
+      testGrid.h = 500;
+      testGrid.cj = 47;
+      expect(testGrid.getPageOffset(1)).toBe(47);
+
+      // getPageFromLargeScrollDelta(): no-interior-pages legacy page selection path
+      testGrid.n = 3;
+      testGrid.ph = 100;
+      testGrid.h = 500;
+      testGrid.viewportH = 50;
+      expect(testGrid.getPageFromLargeScrollDelta(150)).toBe(1);
+
+      // getPageFromLargeScrollDelta(): interior-page scale-factor path
+      testGrid.n = 6;
+      testGrid.ph = 100;
+      testGrid.h = 500;
+      testGrid.th = 1200;
+      testGrid.viewportH = 50;
+      expect(testGrid.getPageFromLargeScrollDelta(250)).toBe(4);
+    });
+
     it('should do page up when calling scrollRowIntoView() and we are further than row index that we want to scroll to', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenRow: 0 });
       const scrollToSpy = vi.spyOn(grid, 'scrollTo');
