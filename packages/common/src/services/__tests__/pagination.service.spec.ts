@@ -716,6 +716,16 @@ describe('PaginationService', () => {
   });
 
   describe('resetPagination method', () => {
+    it('should keep page 1 when resetting before a zero-total backend response arrives', () => {
+      mockGridOption.pagination!.pageNumber = 2;
+      mockGridOption.pagination!.totalItems = 0;
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+
+      service.resetPagination(false);
+
+      expect(service.getCurrentPageNumber()).toBe(1);
+    });
+
     it('should call "refreshPagination" with 2 arguments True when calling the method', () => {
       const spy = vi.spyOn(service, 'refreshPagination');
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
