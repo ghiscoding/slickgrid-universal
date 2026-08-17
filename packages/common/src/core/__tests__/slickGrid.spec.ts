@@ -122,6 +122,29 @@ describe('SlickGrid core file', () => {
     expect(grid.getGridPosition()).toBeTruthy();
   });
 
+  it('should handle ancestor scrolling after the grid container is moved', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const oldScrollContainer = document.createElement('div');
+    const newScrollContainer = document.createElement('div');
+    document.body.append(oldScrollContainer, newScrollContainer);
+    oldScrollContainer.appendChild(container);
+
+    grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'Avery' }], columns, defaultOptions);
+    grid.init();
+    grid.setActiveCell(0, 0);
+    const positionChangedSpy = vi.spyOn(grid.onActiveCellPositionChanged, 'notify');
+
+    oldScrollContainer.dispatchEvent(new Event('scroll', { bubbles: false }));
+    expect(positionChangedSpy).toHaveBeenCalledTimes(1);
+
+    positionChangedSpy.mockClear();
+    newScrollContainer.appendChild(container);
+    oldScrollContainer.dispatchEvent(new Event('scroll', { bubbles: false }));
+    newScrollContainer.dispatchEvent(new Event('scroll', { bubbles: false }));
+
+    expect(positionChangedSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('should be able to instantiate SlickGrid with an external PubSub Service', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions, pubSubServiceStub);
@@ -7110,6 +7133,26 @@ describe('SlickGrid core file', () => {
       expect(firstItemAgeCell.classList.contains('highlight')).toBeFalsy();
       expect(secondItemAgeCell.textContent).toBe('20');
       expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
+    });
+
+    it('should merge keyed CSS style overlays before creating a cell', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+      grid.addCellCssStyles('primary', { 0: { age: 'primary-highlight' } });
+      grid.addCellCssStyles('secondary', { 0: { age: 'secondary-highlight' } });
+
+      const initialRow = document.createElement('div');
+      (grid as any).appendCellHtml(initialRow, 0, 1, 1, 1, null, items[0]);
+      expect(initialRow.firstElementChild?.classList.contains('primary-highlight')).toBe(true);
+      expect(initialRow.firstElementChild?.classList.contains('secondary-highlight')).toBe(true);
+
+      grid.setCellCssStyles('primary', { 0: { age: 'replacement-highlight' } });
+      grid.removeCellCssStyles('secondary');
+
+      const updatedRow = document.createElement('div');
+      (grid as any).appendCellHtml(updatedRow, 0, 1, 1, 1, null, items[0]);
+      expect(updatedRow.firstElementChild?.classList.contains('primary-highlight')).toBe(false);
+      expect(updatedRow.firstElementChild?.classList.contains('secondary-highlight')).toBe(false);
+      expect(updatedRow.firstElementChild?.classList.contains('replacement-highlight')).toBe(true);
     });
 
     it('should removeCellCssStyles of all matching keys by predicate', () => {
