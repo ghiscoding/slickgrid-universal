@@ -5482,6 +5482,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let colspan: number | string;
     let columnData: ColumnMetadata | null;
     const columnCount = this.columns.length;
+    const hasAlwaysRenderColumn = this.columns.some((column) => column?.alwaysRenderColumn);
+    let firstColumnIndex = 0;
+
+    // columnPosRight is monotonic only when there are no frozen columns, so use a lower-bound lookup
+    // to avoid scanning columns that are entirely left of the rendered range in the common case.
+    if (!this.hasFrozenColumns() && !hasAlwaysRenderColumn) {
+      firstColumnIndex = this.getFirstColumnIndexAtOrAfter(range.leftPx);
+    }
 
     for (let row = range.top as number, btm = range.bottom as number; row <= btm; row++) {
       cacheEntry = this.rowsCache[row];
@@ -5501,9 +5509,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
         const d = this.getDataItem(row);
         let isFullColspan = false;
+        const startColumnIndex = metadataCol || metadata?.isGroup ? 0 : firstColumnIndex;
 
-        // TODO: shorten this loop (index? heuristics? binary search?)
-        for (let i = 0, ii = columnCount; i < ii; i++) {
+        for (let i = startColumnIndex, ii = columnCount; i < ii; i++) {
           if (this.columns[i] && (!this.columns[i].hidden || metadata?.isGroup)) {
             // Cells to the right are outside the range.
             if (this.columnPosLeft[i] > range.rightPx) {
@@ -5577,6 +5585,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
       }
     }
+  }
+
+  protected getFirstColumnIndexAtOrAfter(leftPx: number): number {
+    let low = 0;
+    let high = this.columnPosRight.length;
+    while (low < high) {
+      const mid = low + Math.floor((high - low) / 2);
+      if (this.columnPosRight[mid] <= leftPx) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    return low;
   }
 
   protected createEmptyCachingRow(): RowCaching {
