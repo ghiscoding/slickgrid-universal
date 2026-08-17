@@ -128,7 +128,7 @@ initializeGrid() {
 
     treeDataOptions: {
       columnId: 'file',           // the column where you will have the Tree with collapse/expand icons
-      parentPropName: 'files',    // the parent/child key relation in your dataset
+      childrenPropName: 'files',  // the property holding child arrays in your hierarchical dataset
       levelPropName: 'treeLevel', // optionally, you can define the tree level property name, it nothing is provided it will use "__treeLevel"
 
       // you can optionally sort by a different column and/or sort direction
