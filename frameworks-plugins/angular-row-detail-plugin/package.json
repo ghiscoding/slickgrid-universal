@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@angular-eslint/eslint-plugin": "catalog:",
-    "@angular/core": "^21.2.19",
+    "@angular/core": "^21.2.20",
     "oxlint": "catalog:",
     "tslib": "catalog:",
     "vitest": "catalog:"
