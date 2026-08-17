@@ -5718,6 +5718,20 @@ describe('SlickGrid core file', () => {
       expect(frozenCanvas?.classList.contains('grid-canvas-left')).toBeTruthy();
     });
 
+    it('should find the first column intersecting the horizontal render range', () => {
+      const wideColumns = Array.from({ length: 100 }, (_, index) => ({
+        id: `column${index}`,
+        field: `column${index}`,
+        name: `Column ${index}`,
+        width: 80,
+      })) as Column[];
+      grid = new SlickGrid<any, Column>(container, [{}], wideColumns, defaultOptions);
+
+      expect((grid as any).getFirstColumnIndexAtOrAfter(0)).toBe(0);
+      expect((grid as any).getFirstColumnIndexAtOrAfter(800)).toBe(10);
+      expect((grid as any).getFirstColumnIndexAtOrAfter(8000)).toBe(100);
+    });
+
     it('should use bottom-right and top-right scroll containers when frozen columns with frozen-bottom rows are enabled', () => {
       const dataWithThreeRows = [
         { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
