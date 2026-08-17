@@ -12,6 +12,7 @@ export class EventPubSubService implements BasePubSubService {
   protected _elementSource: Element;
   protected _subscribedEvents: PubSubEvent[] = [];
   protected _timer?: any;
+  private _callbackMap = new Map<Function, Function>();
 
   eventNamingStyle: EventNamingStyle = 'camelCase';
 
@@ -40,6 +41,7 @@ export class EventPubSubService implements BasePubSubService {
     clearTimeout(this._timer);
     this.unsubscribeAll();
     this._subscribedEvents = [];
+    this._callbackMap.clear();
     this._elementSource?.remove();
     this._elementSource = null as any;
   }
@@ -85,8 +87,9 @@ export class EventPubSubService implements BasePubSubService {
       case 'camelCaseWithExtraOnPrefix':
         if (this.eventNamingStyle === 'camelCaseWithExtraOnPrefix') {
           outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, 'onOn')}`;
+        } else {
+          outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}${titleCase(outputEventName)}` : outputEventName;
         }
-        outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}${titleCase(outputEventName)}` : outputEventName;
         break;
       case 'kebabCase':
         outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}-${toKebabCase(outputEventName)}` : toKebabCase(outputEventName);
@@ -95,8 +98,9 @@ export class EventPubSubService implements BasePubSubService {
       case 'lowerCaseWithoutOnPrefix':
         if (this.eventNamingStyle === 'lowerCaseWithoutOnPrefix') {
           outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, '')}`;
+        } else {
+          outputEventName = `${eventNamePrefix}${outputEventName}`.toLowerCase();
         }
-        outputEventName = `${eventNamePrefix}${outputEventName}`.toLowerCase();
         break;
     }
     return outputEventName;
@@ -145,8 +149,13 @@ export class EventPubSubService implements BasePubSubService {
 
       // the event listener will return the data in the "event.detail", so we need to return its content to the final callback
       // basically we substitute the "data" with "event.detail" so that the user ends up with only the "data" result
-      this._elementSource.addEventListener(eventNameByConvention, (event: CustomEventInit<T>) => callback.call(null, event.detail as T));
-      this._subscribedEvents.push({ name: eventNameByConvention, listener: callback });
+      const wrappedListener = (event: CustomEventInit<T>) => callback.call(null, event.detail as T);
+
+      // store the mapping so unsubscribe can resolve the original callback to the wrapper
+      this._callbackMap.set(callback, wrappedListener);
+
+      this._elementSource.addEventListener(eventNameByConvention, wrappedListener);
+      this._subscribedEvents.push({ name: eventNameByConvention, listener: wrappedListener });
       subscriptions.push(() => this.unsubscribe(eventNameByConvention, callback as never));
     });
 
@@ -183,9 +192,15 @@ export class EventPubSubService implements BasePubSubService {
    */
   unsubscribe<T = any>(eventName: string, listener: (event: T | CustomEventInit<T>) => void, shouldRemoveFromEventList = true): void {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
-    this._elementSource.removeEventListener(eventNameByConvention, listener);
+
+    // resolve the actual DOM listener
+    // either it's the wrapper itself or we look it up via the map
+    const domListener = (this._callbackMap.get(listener) ?? listener) as EventListener;
+
+    this._elementSource.removeEventListener(eventNameByConvention, domListener);
     if (shouldRemoveFromEventList) {
-      this.removeSubscribedEventWhenFound(eventName, listener);
+      this.removeSubscribedEventWhenFound(eventNameByConvention, domListener as any);
+      this._callbackMap.delete(listener);
     }
   }
 
