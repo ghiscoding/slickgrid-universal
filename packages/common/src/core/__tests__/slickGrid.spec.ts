@@ -6116,6 +6116,7 @@ describe('SlickGrid core file', () => {
 
       const mouseEvent = new Event('mousewheel');
       const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
+      const nativeScrollPreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-right') as HTMLDivElement;
       Object.defineProperty(viewportBottomRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
@@ -6136,6 +6137,7 @@ describe('SlickGrid core file', () => {
       expect(viewportBottomRightElm.scrollTop).toBe(0);
       expect(onViewportChangedSpy).toHaveBeenCalled();
       expect(mousePreventSpy).toHaveBeenCalled();
+      expect(nativeScrollPreventSpy).toHaveBeenCalled();
     });
 
     it('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenColumn are enabled', () => {
