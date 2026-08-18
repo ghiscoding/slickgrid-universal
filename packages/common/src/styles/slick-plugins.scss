@@ -1257,7 +1257,8 @@ li.hidden {
 // Row Detail View Plugin
 // ---------------------------------------------------------
 
-.slick-row {
+.slick-row,
+.slick-row-detail-overlay {
   .detail-view-toggle {
     display: inline-block;
 
@@ -1278,17 +1279,17 @@ li.hidden {
       }
     }
   }
+}
 
-  .dynamic-cell-detail {
-    position: absolute;
-    width: 100%;
-    overflow: auto;
-    left: var(--slick-detail-view-container-left, v.$slick-detail-view-container-left);
-    border: var(--slick-detail-view-container-border, v.$slick-detail-view-container-border);
-    background-color: var(--slick-detail-view-container-bgcolor, v.$slick-detail-view-container-bgcolor);
-    padding: var(--slick-detail-view-container-padding, v.$slick-detail-view-container-padding);
-    z-index: var(--slick-detail-view-container-z-index, v.$slick-detail-view-container-z-index);
-  }
+.dynamic-cell-detail {
+  position: absolute;
+  width: 100%;
+  overflow: auto;
+  left: var(--slick-detail-view-container-left, v.$slick-detail-view-container-left);
+  border: var(--slick-detail-view-container-border, v.$slick-detail-view-container-border);
+  background-color: var(--slick-detail-view-container-bgcolor, v.$slick-detail-view-container-bgcolor);
+  padding: var(--slick-detail-view-container-padding, v.$slick-detail-view-container-padding);
+  z-index: var(--slick-detail-view-container-z-index, v.$slick-detail-view-container-z-index);
 }
 
 .slick-drag-replace-handle {

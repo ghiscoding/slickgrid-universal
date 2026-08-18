@@ -156,6 +156,8 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
               this._preloadApp = undefined;
               this._preloadElement = undefined;
             }
+            this.disposeViewByItem(args?.item);
+            this.refreshOverlayPanel(args?.item);
 
             // triggers after backend called "onAsyncResponse.notify()"
             // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
@@ -420,12 +422,12 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   protected disposeViewComponent(expandedView: CreatedView): CreatedView | void {
     if (expandedView?.instance) {
       expandedView.rendered = false;
+      expandedView.app?.unmount();
       const container = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
       if (container) {
-        expandedView.app?.unmount();
         container.textContent = '';
-        return expandedView;
       }
+      return expandedView;
     }
   }
 

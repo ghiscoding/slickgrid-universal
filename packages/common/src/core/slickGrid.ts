@@ -3136,6 +3136,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._focusSink?.remove();
     this._focusSink2?.remove();
 
+    // Mark the grid as inactive before its DOM references are cleared. Async data/sort
+    // callbacks can finish after destruction and must not attempt to update a null container.
+    this.initialized = false;
     emptyElement(this._container);
     this.removeCssRules();
 
@@ -3849,8 +3852,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._options.leaveSpaceForNewRows = false;
     }
 
-    // Row Detail relies on absolute top-based row positioning; force a safe fallback.
-    if (this._options.rowTopOffsetRenderType === 'transform' && this._options.enableRowDetailView) {
+    // @deprecated v11: remove this Row Detail fallback when inline rendering is removed.
+    // The legacy inline Row Detail renderer relies on absolute top-based row positioning;
+    // overlay rendering is compatible with transform-based row positioning.
+    if (
+      this._options.rowTopOffsetRenderType === 'transform' &&
+      this._options.enableRowDetailView &&
+      this._options.rowDetailView?.renderMode !== 'overlay'
+    ) {
       this._options.rowTopOffsetRenderType = 'top';
     }
 
@@ -4107,7 +4116,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return Math.floor(y / this._options.rowHeight!);
   }
 
-  protected getRowTop(row: number): number {
+  /** Get the rendered top offset of a row, including virtual-scroll page positioning. */
+  getRowTop(row: number): number {
     return Math.round(this.getRowPosition(row) - this.offset);
   }
 
@@ -4683,6 +4693,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Invalidate all grid rows and re-render the visible grid rows */
   invalidate(): void {
+    if (!this.initialized || !this._container) {
+      return;
+    }
     this.updateRowCount();
     this.invalidateAllRows();
     this.render();
@@ -5225,7 +5238,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Update the dataset row count */
   updateRowCount(): void {
-    if (this.initialized) {
+    if (this.initialized && this._container) {
       const dataLength = this.getDataLength();
       this._container.setAttribute('aria-rowcount', dataLength.toString());
 
