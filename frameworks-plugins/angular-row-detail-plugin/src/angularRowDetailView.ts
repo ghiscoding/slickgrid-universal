@@ -52,6 +52,10 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
     super(eventPubSubService);
   }
 
+  protected override shouldPreserveOverlay(): boolean {
+    return true;
+  }
+
   get addonOptions(): RowDetailViewOption {
     return this.getOptions();
   }
@@ -152,6 +156,8 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
         this.eventHandler.subscribe(this.onAsyncEndUpdate, (e, args) => {
           // destroy preload if exists
           this._preloadCompRef?.destroy();
+          this.disposeViewByItem(args?.item);
+          this.refreshOverlayPanel(args?.item);
 
           // triggers after backend called "onAsyncResponse.notify()"
           // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
@@ -388,6 +394,10 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
       if (typeof compRef?.destroy === 'function') {
         compRef.destroy();
       }
+      // A destroyed Angular component reference cannot be reused on the next
+      // async response. Clear it so the adapter creates a fresh detail view;
+      // detached keep-alive views are not routed through this method.
+      expandedView.componentRef = undefined;
       return expandedView;
     }
   }

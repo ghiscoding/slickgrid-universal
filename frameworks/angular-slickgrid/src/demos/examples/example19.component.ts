@@ -139,11 +139,12 @@ export class Example19Component implements OnDestroy, OnInit {
       },
       enableFiltering: true,
       enableRowDetailView: true,
-      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
+      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       darkMode: this._darkMode,
       datasetIdPropertyName: 'rowId', // optionally use a different "id"
       externalResources: [AngularRowDetailView],
       rowDetailView: {
+        renderMode: 'overlay',
         // optionally change the column index position of the icon (defaults to 0)
         // columnIndexPosition: 1,
 

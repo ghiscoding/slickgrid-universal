@@ -233,6 +233,25 @@ describe('SlickGrid core file', () => {
     expect(grid.getOptions().rowTopOffsetRenderType).toBe('top');
   });
 
+  it('should preserve transform row positioning when Row Detail uses the overlay render mode', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    grid = new SlickGrid<any, Column>(
+      '#myGrid',
+      [],
+      columns,
+      {
+        ...defaultOptions,
+        rowTopOffsetRenderType: 'transform',
+        enableRowDetailView: true,
+        rowDetailView: { renderMode: 'overlay' },
+      },
+      pubSubServiceStub
+    );
+    grid.init();
+
+    expect(grid.getOptions().rowTopOffsetRenderType).toBe('transform');
+  });
+
   it('should display a console warning when RowSpan is enabled with `rowTopOffsetRenderType` is set to "transfrom"', () => {
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
 
@@ -3266,6 +3285,16 @@ describe('SlickGrid core file', () => {
 
       expect(focusSink.isConnected).toBe(false);
       expect(focusSink2.isConnected).toBe(false);
+    });
+
+    it('should ignore invalidation after the grid has been destroyed', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+      grid.init();
+
+      grid.destroy(true);
+
+      expect(() => grid.invalidate()).not.toThrow();
+      expect(() => grid.updateRowCount()).not.toThrow();
     });
 
     it('should keep ARIA header structure with frozen columns enabled', () => {

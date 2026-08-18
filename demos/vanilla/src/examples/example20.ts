@@ -174,8 +174,9 @@ export default class Example20 {
         return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
       rowHeight: 33,
-      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
+      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       rowDetailView: {
+        renderMode: 'overlay',
         columnIndexPosition: 1,
         preTemplate: this.loadingTemplate.bind(this),
         postTemplate: this.loadView.bind(this),

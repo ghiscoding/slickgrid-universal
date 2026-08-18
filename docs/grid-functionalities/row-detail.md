@@ -1,5 +1,6 @@
 #### index
 - [Usage](#usage)
+- [Transform-compatible rendering](#transform-compatible-rendering)
 - [Changing Addon Options Dynamically](#changing-addon-options-dynamically)
 - [Calling Addon Methods Dynamically](#calling-addon-methods-dynamically)
 - [Row Detail - Preload Component - Loading Spinner](#row-detail---preload-component-loading-spinner)
@@ -22,6 +23,25 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 > **NOTE 2** Also please note that because SlickGrid is using its built-in Virtual Scroll feature by default (for perf reasons), this will call render and re-render multiple times and that happens whenever the Row Detail gets out of the grid viewport.
 > For this reason, you should avoid using dynamic elements (i.e. form inputs) because whenever a re-render kicks in, it will reset and re-render these elements as if nothing happened.
 > So you should consider using Row Detail mainly for showing static data (hence where its name comes from "Row Detail" to show more detailed info) and even though it works with dynamic elements, you have to know its limitation.
+
+### Transform-compatible rendering
+
+Row Detail panels use the `overlay` render mode in the examples. The panel is mounted in a sibling layer of the grid canvas instead of inside the transformed row, so it remains above neighbouring rows when `rowTopOffsetRenderType` is `transform`.
+
+```ts
+const gridOptions: GridOption = {
+  enableRowDetailView: true,
+  rowTopOffsetRenderType: 'transform',
+  rowDetailView: {
+    renderMode: 'overlay',
+    // ... other Row Detail options
+  }
+};
+```
+
+`renderMode: 'inline'` remains available temporarily for existing applications and is deprecated. It will be removed in the next major release. Overlay rendering preserves the existing Row Detail classes and framework component lifecycle, but custom CSS or tests that rely on `.slick-cell + .dynamic-cell-detail` should be changed to target `.dynamic-cell-detail` directly.
+
+**v11 transition:** `renderMode: 'overlay'` is the permanent rendering approach, but the option is currently a v10 opt-in. In v11, overlay rendering is planned to become the default and only Row Detail renderer, so `renderMode: 'overlay'` will no longer be necessary and the option may be removed. Keep the option while using v10 and remove it when upgrading to v11 if it is removed from the API.
 
 ### Keeping Row Detail Components Alive During Scrolling
 
@@ -107,6 +127,7 @@ export default class Example21 {
         return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
       rowDetailView: {
+        renderMode: 'overlay',
         // We can load the "process" asynchronously via Fetch, Promise, ...
         process: (item) => http.get(`api/item/${item.id}`),
 
@@ -273,6 +294,7 @@ export class Example {
         return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
+        renderMode: 'overlay',
         // We can load the "process" asynchronously via Fetch, Promise, ...
         process: (item) => http.get(`api/item/${item.id}`),
 
