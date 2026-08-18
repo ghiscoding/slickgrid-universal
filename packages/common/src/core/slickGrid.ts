@@ -6378,6 +6378,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const handled = this._handleScroll('mousewheel');
     if (handled) {
       e.stopPropagation();
+      // Frozen columns use a second viewport whose vertical position is mirrored
+      // from the scrolling pane. Letting the browser also process this wheel event
+      // advances the source pane a second time, briefly putting it ahead of the
+      // frozen viewport until its subsequent scroll event is handled.
+      if (this.hasFrozenColumns()) {
+        e.preventDefault();
+      }
     }
   }
 
