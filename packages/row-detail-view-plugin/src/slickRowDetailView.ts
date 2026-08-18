@@ -229,9 +229,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     });
 
     this._eventHandler.subscribe(this._grid.onRendered, () => this.isOverlayRenderMode && this.renderOverlayPanels());
-    if (this.isOverlayRenderMode) {
-      queueMicrotask(() => this.renderOverlayPanels());
-    }
   }
 
   /** Dispose of the Slick Row Detail View */
@@ -440,26 +437,18 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     // before notifying adapters so their mount target is connected to the DOM.
     this.isOverlayRenderMode && !shouldPreserveOverlay && this.renderOverlayPanels();
 
-    // trigger an event once the post template is finished loading
+    // DataView.updateItem synchronously triggers onRowsChanged, which renders the
+    // grid and its overlay panels before returning. Framework adapters can
+    // therefore mount their detail view immediately from this event.
     this._renderedIds.add(itemDetail[this.dataViewIdProperty]);
-    const notifyAsyncEndUpdate = () =>
-      this.onAsyncEndUpdate.notify(
-        {
-          grid: this._grid,
-          item: itemDetail,
-        },
-        e,
-        this
-      );
-
-    // Overlay panels are mounted from the grid's onRendered event. Defer framework
-    // callbacks by one microtask so custom adapters can safely find the post-template
-    // container before mounting nested components.
-    if (this.isOverlayRenderMode) {
-      queueMicrotask(notifyAsyncEndUpdate);
-    } else {
-      notifyAsyncEndUpdate();
-    }
+    this.onAsyncEndUpdate.notify(
+      {
+        grid: this._grid,
+        item: itemDetail,
+      },
+      e,
+      this
+    );
   }
 
   /**

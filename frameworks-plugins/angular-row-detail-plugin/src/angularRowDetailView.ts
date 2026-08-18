@@ -159,15 +159,11 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
           this.disposeViewByItem(args?.item);
           this.refreshOverlayPanel(args?.item);
 
-          // triggers after backend called "onAsyncResponse.notify()"
-          // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
-          queueMicrotask(() => {
-            this.renderViewModel(args?.item);
+          this.renderViewModel(args?.item);
 
-            if (this.rowDetailViewOptions && typeof this.rowDetailViewOptions.onAsyncEndUpdate === 'function') {
-              this.rowDetailViewOptions.onAsyncEndUpdate(e, args);
-            }
-          });
+          if (this.rowDetailViewOptions && typeof this.rowDetailViewOptions.onAsyncEndUpdate === 'function') {
+            this.rowDetailViewOptions.onAsyncEndUpdate(e, args);
+          }
         });
 
         this.eventHandler.subscribe(

@@ -458,7 +458,7 @@ describe('SlickRowDetailView plugin', () => {
     (plugin as any).renderOverlayPanels();
   });
 
-  it('should defer the async end update notification when overlay rendering is enabled', () => {
+  it('should synchronously notify the async end update after rendering the overlay', () => {
     const asyncEndUpdateSpy = vi.spyOn(plugin.onAsyncEndUpdate, 'notify');
     const itemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({
@@ -469,8 +469,6 @@ describe('SlickRowDetailView plugin', () => {
     plugin.init(gridStub);
     plugin.onAsyncResponse.notify({ item: itemMock }, new SlickEventData());
 
-    expect(asyncEndUpdateSpy).not.toHaveBeenCalled();
-    vi.runAllTimers();
     expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock }, expect.anything(), plugin);
   });
 

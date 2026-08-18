@@ -32,6 +32,7 @@
   "scripts": {
     "angular:dev": "ng serve --port 4300",
     "angular:cypress": "cypress open --config-file test/cypress.config.ts",
+    "angular:cypress:ci": "cypress run --config-file test/cypress.config.ts",
     "angular:preview": "vite preview --outDir=website --port=4300",
     "build": "pnpm packagr && pnpm run copy:i18n",
     "packagr": "ng-packagr -p ng-package.json -c tsconfig.json",

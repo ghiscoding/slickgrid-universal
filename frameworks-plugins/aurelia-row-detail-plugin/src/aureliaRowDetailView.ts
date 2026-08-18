@@ -143,15 +143,11 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
             this.disposeView(args?.item);
             this.refreshOverlayPanel(args?.item);
 
-            // triggers after backend called "onAsyncResponse.notify()"
-            // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
-            queueMicrotask(async () => {
-              await this.renderViewModel(args?.item);
+            await this.renderViewModel(args?.item);
 
-              if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
-                this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
-              }
-            });
+            if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
+              this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
+            }
           });
 
           this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {
@@ -206,13 +202,11 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
           // we need to redraw the open detail views if we change column position (column reorder)
           this._eventHandler.subscribe(this._grid.onColumnsReordered, this.redrawAllViewSlots.bind(this, false));
 
-          // Aurelia's view update can complete one render cycle after SlickGrid
-          // has rebuilt rows (notably with autoHeight). Re-evaluate the overlay
-          // viewport after that DOM pass so a detail that returned to view is
-          // given its back-to-viewport callback and its inner grid can mount.
+          // Re-evaluate the overlay viewport after SlickGrid has rebuilt its rows
+          // so a detail returning to view can mount its inner grid immediately.
           this._eventHandler.subscribe(this._grid.onRendered, () => {
             if (this.isOverlayRenderMode) {
-              queueMicrotask(() => this.recalculateOutOfRangeViews(true, 0));
+              this.recalculateOutOfRangeViews(true);
             }
           });
 
