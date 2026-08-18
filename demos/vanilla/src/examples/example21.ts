@@ -137,7 +137,7 @@ export default class Example21 {
         this.rowDetail = new SlickRowDetailView(pubSubService);
         return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
-      rowTopOffsetRenderType: 'transform',
+      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       rowHeight: 33,
       rowDetailView: {
         renderMode: 'overlay',

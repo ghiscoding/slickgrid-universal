@@ -130,7 +130,7 @@ export class Example19 {
       },
       enableFiltering: true,
       enableRowDetailView: true,
-      rowTopOffsetRenderType: 'transform',
+      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       darkMode: this._darkMode,
       datasetIdPropertyName: 'rowId', // optionally use a different "id"
       externalResources: [AureliaRowDetailView],

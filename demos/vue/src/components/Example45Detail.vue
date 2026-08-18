@@ -87,7 +87,7 @@ function defineGrid() {
     enableCellNavigation: true,
     datasetIdPropertyName: 'orderId',
     presets: gridState,
-    rowTopOffsetRenderType: 'transform',
+    // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
   };
 }
 

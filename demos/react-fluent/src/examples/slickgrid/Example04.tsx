@@ -161,7 +161,7 @@ const Example04: React.FC = () => {
       },
       enableFiltering: true,
       enableRowDetailView: true,
-      rowTopOffsetRenderType: 'transform',
+      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       darkMode,
       datasetIdPropertyName: 'rowId',
       preRegisterExternalExtensions: (pubSubService) => {

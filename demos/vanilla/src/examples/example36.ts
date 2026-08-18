@@ -196,7 +196,7 @@ export default class Example36 {
         return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
       rowHeight: 33,
-      rowTopOffsetRenderType: 'transform',
+      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       rowDetailView: {
         renderMode: 'overlay',
         columnIndexPosition: 1,
