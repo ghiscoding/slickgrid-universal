@@ -11,7 +11,8 @@
     "build": "pnpm type-check && vite build",
     "type-check": "tsc --noEmit",
     "vue:preview": "vite preview",
-    "vue:cypress": "cypress open --config-file test/cypress.config.mjs"
+    "vue:cypress": "cypress open --config-file test/cypress.config.mjs",
+    "vue:cypress:ci": "cypress run --config-file test/cypress.config.mjs"
   },
   "dependencies": {
     "@faker-js/faker": "catalog:",

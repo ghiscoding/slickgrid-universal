@@ -155,7 +155,7 @@ const Example45: React.FC = () => {
       },
       enableFiltering: true,
       enableRowDetailView: true,
-      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
+      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       rowHeight: 33,
       darkMode,
       preRegisterExternalExtensions: (pubSubService) => {
@@ -163,6 +163,7 @@ const Example45: React.FC = () => {
         return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
+        renderMode: 'overlay',
         process: (item) => simulateServerAsyncCall(item),
         loadOnce: false,
         useRowClick: false,

@@ -40,6 +40,10 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
     super(eventPubSubService);
   }
 
+  protected override shouldPreserveOverlay(): boolean {
+    return true;
+  }
+
   get addonOptions() {
     return this.getOptions();
   }
@@ -136,6 +140,8 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
           this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
             // dispose preload if exists
             this._preloadController?.dispose();
+            this.disposeView(args?.item);
+            this.refreshOverlayPanel(args?.item);
 
             // triggers after backend called "onAsyncResponse.notify()"
             // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
@@ -199,6 +205,16 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
 
           // we need to redraw the open detail views if we change column position (column reorder)
           this._eventHandler.subscribe(this._grid.onColumnsReordered, this.redrawAllViewSlots.bind(this, false));
+
+          // Aurelia's view update can complete one render cycle after SlickGrid
+          // has rebuilt rows (notably with autoHeight). Re-evaluate the overlay
+          // viewport after that DOM pass so a detail that returned to view is
+          // given its back-to-viewport callback and its inner grid can mount.
+          this._eventHandler.subscribe(this._grid.onRendered, () => {
+            if (this.isOverlayRenderMode) {
+              queueMicrotask(() => this.recalculateOutOfRangeViews(true, 0));
+            }
+          });
 
           // on row selection changed, we also need to redraw
           if (this.gridOptions.enableSelection || this.gridOptions.enableCheckboxSelector) {
@@ -323,6 +339,16 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
   protected detachViewFromDom(item: any): void {
     const foundSlot = this._slots.find((slot: CreatedView) => slot.id === item[this.datasetIdPropName]);
     if (foundSlot?.controller) {
+      // Overlay panels reuse the detailContent element when a panel is
+      // recreated after scrolling. The Aurelia controller host is that
+      // element's container, so removing it here would leave the recreated
+      // panel without a mount target. Removing the panel itself already
+      // detaches the active view while preserving its component state.
+      if (this.isOverlayRenderMode) {
+        this._keepAliveSlotIds.add(foundSlot.id);
+        return;
+      }
+
       // physically remove the controller's host element from the visible DOM without calling deactivate()
       const host: HTMLElement | undefined = foundSlot.controller.host;
       host?.remove();
@@ -386,11 +412,16 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
   protected disposeViewSlot(expandedView: CreatedView): CreatedView | void {
     if (expandedView?.controller) {
       const container = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
+      expandedView.controller.deactivate(expandedView.controller, null);
+      // A deactivated Aurelia controller cannot be reattached as a live view.
+      // Clear the reference so the next async response creates a fresh view;
+      // keepComponentAlive only detaches active controllers and leaves them
+      // available for reattachment through handleOnRowBackToViewportRange.
+      expandedView.controller = undefined;
       if (container) {
-        expandedView.controller.deactivate(expandedView.controller, null);
         container.textContent = '';
-        return expandedView;
       }
+      return expandedView;
     }
   }
 
@@ -429,8 +460,11 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
   ) {
     const slot = this._slots.find((x) => x.id === args.rowId);
     if (slot) {
-      if (this.rowDetailViewOptions?.keepComponentAlive && this._keepAliveSlotIds.has(args.rowId)) {
-        // Try to reattach; if it fails, fall back to redraw
+      if (this.rowDetailViewOptions?.keepComponentAlive && slot.controller) {
+        // Try to reattach any active controller. The overlay panel can be
+        // recreated by the grid without the detach callback being observed,
+        // so relying only on _keepAliveSlotIds can unnecessarily recreate the
+        // inner grid and lose its state.
         const reattachSuccess = this.reattachViewSlot(slot);
         if (!reattachSuccess) {
           await this.redrawViewSlot(slot);

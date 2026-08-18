@@ -875,7 +875,7 @@ export interface GridOption<C extends Column = Column> {
   /**
    * Defaults to "transform", what CSS style to we want to use to render each row top offset (choose between "top" and "transform").
    * For example, with a default `rowHeight: 22`, the 2nd row will have a `top` offset of 44px and by default have a CSS style of `transform: translateY(44px)`.
-   * NOTE: you should use "top" when using either Row Detail and/or RowSpan
+   * NOTE: use `top` with the legacy inline Row Detail renderer and/or RowSpan. Row Detail can use `rowDetailView.renderMode: 'overlay'` for transform compatibility.
    */
   rowTopOffsetRenderType?: 'top' | 'transform';
 

@@ -16,6 +16,7 @@
     "aurelia:dev": "vite",
     "aurelia:preview": "vite preview",
     "aurelia:cypress": "cypress open --config-file test/cypress.config.ts",
+    "aurelia:cypress:ci": "cypress run --config-file test/cypress.config.ts",
     "build": "pnpm type-check && vite build",
     "type-check": "tsc --noEmit"
   },

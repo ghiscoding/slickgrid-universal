@@ -35,7 +35,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       it('should open the Row Detail of the 2nd row and expect to find an inner grid with all inner column titles', () => {
         cy.get('.slick-cell.detail-view-toggle:nth(1)').click().wait(40);
 
-        cy.get('.slick-cell + .dynamic-cell-detail').find('h4').should('contain', '- Order Details (id: 1)');
+        cy.get('.dynamic-cell-detail').find('h4').should('contain', '- Order Details (id: 1)');
 
         cy.get('#innergrid-1')
           .find('.slick-header-columns')
@@ -55,34 +55,39 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should open 3rd row and still expect 2nd row to be sorted and filtered', () => {
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * (1 * (ROW_DETAIL_PANEL_COUNT + 1))}px;"] .slick-cell:nth(0)`)
+        cy.get(
+          `#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)[style*="translateY(${GRID_ROW_HEIGHT * (1 * (ROW_DETAIL_PANEL_COUNT + 1))}px)"] .slick-cell:nth(0)`
+        )
           .click()
           .wait(40);
 
-        cy.get('.slick-cell + .dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${2})`);
+        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${2})`);
 
         // 2nd row detail
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
 
         // 3rd row detail
         cy.get('#innergrid-2 .search-filter.filter-orderId').should('have.value', '');
         cy.get('#innergrid-2 .search-filter.filter-shipCity').should('have.value', '');
         cy.get('#innergrid-2 .slick-sort-indicator-asc').should('not.exist');
 
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10261');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Rio de Janeiro');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10261');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should(
+          'contain',
+          'Rio de Janeiro'
+        );
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should go at the bottom end of the grid, then back to top and expect all Row Details to be opened but reset to default', () => {
@@ -90,19 +95,25 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.get('#grid45').type('{ctrl}{home}', { release: false });
         cy.wait(50);
         // 2nd row detail
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10261');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Rio de Janeiro');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10261');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should(
+          'contain',
+          'Rio de Janeiro'
+        );
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
 
         // 3rd row detail
         cy.get('#innergrid-2 .search-filter.filter-orderId').should('have.value', '');
         cy.get('#innergrid-2 .search-filter.filter-shipCity').should('have.value', '');
         cy.get('#innergrid-2 .slick-sort-indicator-asc').should('not.exist');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10261');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Rio de Janeiro');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10261');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should(
+          'contain',
+          'Rio de Janeiro'
+        );
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should force redraw of all Row Details and expect same row details to be opened and opened', () => {
@@ -110,19 +121,25 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.wait(10);
 
         // 2nd row detail
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10261');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Rio de Janeiro');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10261');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should(
+          'contain',
+          'Rio de Janeiro'
+        );
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
 
         // 3rd row detail
         cy.get('#innergrid-2 .search-filter.filter-orderId').should('have.value', '');
         cy.get('#innergrid-2 .search-filter.filter-shipCity').should('have.value', '');
         cy.get('#innergrid-2 .slick-sort-indicator-asc').should('not.exist');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10261');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Rio de Janeiro');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10261');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should(
+          'contain',
+          'Rio de Janeiro'
+        );
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should close all rows', () => {
@@ -130,11 +147,13 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should open 2nd row and sort inner grid "Freight" column in ascending order and filter "Order ID" and "Ship City" with "m" and expect 2 sorted rows', () => {
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 1}px;"] .slick-cell:nth(0)`)
+        cy.get(
+          `#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] .slick-cell:nth(0)`
+        )
           .click()
           .wait(40);
 
-        cy.get('.slick-cell + .dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${1})`);
+        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${1})`);
 
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
@@ -148,14 +167,16 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.get('#innergrid-1 .search-filter.filter-orderId').clear().type('>102');
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should open 1st row and expect 2nd row no longer be sorted neither filtered because it has to re-rendered', () => {
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 0}px;"] .slick-cell:nth(0)`)
+        cy.get(
+          `#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] .slick-cell:nth(0)`
+        )
           .click()
           .wait(40);
 
@@ -163,10 +184,13 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.get('#innergrid-1 .slick-sort-indicator-asc').should('not.exist');
 
         // default rows
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10261');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Rio de Janeiro');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10261');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should(
+          'contain',
+          'Rio de Janeiro'
+        );
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should close all rows', () => {
@@ -174,11 +198,13 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should re-open 2nd row and sort inner grid "Freight" column in ascending order and filter "Ship City" with "m" and expect 2 sorted rows', () => {
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 1}px;"] .slick-cell:nth(0)`)
+        cy.get(
+          `#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] .slick-cell:nth(0)`
+        )
           .click()
           .wait(40);
 
-        cy.get('.slick-cell + .dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${1})`);
+        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${1})`);
 
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
@@ -191,10 +217,10 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should scroll down when the row detail is just barely visible and then scroll back up and still expect same filters/sorting', () => {
@@ -202,10 +228,10 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.wait(50);
         cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
 
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should scroll down by 2 pages down and then scroll back up and no longer the same filters/sorting', () => {
@@ -214,8 +240,14 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.wait(50);
         cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
 
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('not.contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('not.contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should(
+          'not.contain',
+          '10281'
+        );
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should(
+          'not.contain',
+          'Madrid'
+        );
       });
 
       it('should close all rows and enable inner Grid State/Presets', () => {
@@ -224,11 +256,13 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should open again 2nd row and sort inner grid "Freight" column in ascending order & filter "Ship City" with "m" and expect 2 sorted rows', () => {
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 1}px;"] .slick-cell:nth(0)`)
+        cy.get(
+          `#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] .slick-cell:nth(0)`
+        )
           .click()
           .wait(40);
 
-        cy.get('.slick-cell + .dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${1})`);
+        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${1})`);
 
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
@@ -241,18 +275,20 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should open again 3rd row and sort inner grid "Freight" column in ascending order & filter "Order ID" and "Ship City" with "m" and expect 2 sorted rows', () => {
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * (1 * (ROW_DETAIL_PANEL_COUNT + 1))}px;"] .slick-cell:nth(0)`)
+        cy.get(
+          `#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)[style*="translateY(${GRID_ROW_HEIGHT * (1 * (ROW_DETAIL_PANEL_COUNT + 1))}px)"] .slick-cell:nth(0)`
+        )
           .click()
           .wait(40);
 
-        cy.get('.slick-cell + .dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${2})`);
+        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${2})`);
 
         cy.get('#innergrid-2 .slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
@@ -267,22 +303,24 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.get('#innergrid-2 .search-filter.filter-shipCity').clear().type('m*');
 
         // 3rd row detail
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should close and reopen the 3rd row and expect same filtered and sorted rows', () => {
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * (1 * (ROW_DETAIL_PANEL_COUNT + 1))}px;"] .slick-cell:nth(0)`).as('3rdRow');
+        cy.get(
+          `#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)[style*="translateY(${GRID_ROW_HEIGHT * (1 * (ROW_DETAIL_PANEL_COUNT + 1))}px)"] .slick-cell:nth(0)`
+        ).as('3rdRow');
         cy.get('@3rdRow').click();
         cy.get('@3rdRow').click();
 
         // 3rd row detail
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should go to the bottom end of the grid and open row 987', () => {
@@ -300,16 +338,16 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.get('#grid45').type('{ctrl}{home}', { release: false });
 
         // 2nd row detail
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
 
         // 3rd row detail
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should go back to the bottom of the grid and still expect row detail 987 to be opened with same filter and no rows inside it', () => {
@@ -323,31 +361,35 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
       it('should go back to the top of the grid once more and close 3nd row and still expect same rows in both row details', () => {
         cy.get('#grid45').type('{ctrl}{home}', { release: false });
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * (1 * (ROW_DETAIL_PANEL_COUNT + 1))}px;"] .slick-cell:nth(0)`)
+        cy.get(
+          `#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)[style*="translateY(${GRID_ROW_HEIGHT * (1 * (ROW_DETAIL_PANEL_COUNT + 1))}px)"] .slick-cell:nth(0)`
+        )
           .click()
           .wait(40);
 
         // 2nd row detail
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
 
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * (1 * (ROW_DETAIL_PANEL_COUNT + 1))}px;"] .slick-cell:nth(0)`)
+        cy.get(
+          `#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)[style*="translateY(${GRID_ROW_HEIGHT * (1 * (ROW_DETAIL_PANEL_COUNT + 1))}px)"] .slick-cell:nth(0)`
+        )
           .click()
           .wait(40);
 
         // 2nd row detail
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
 
         // 3rd row detail
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should change Row Detail panel height to 15, open 2nd and 3rd then execute PageDown twice', () => {
@@ -361,19 +403,19 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.get('.slick-cell.detail-view-toggle:nth(1)').click().wait(40);
 
         // 2nd row detail
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
 
         // open 3rd row detail
-        cy.get(`.slick-row[data-row="14"] .slick-cell:nth(0)`).click().wait(40);
+        cy.get(`#grid45 .slick-row[data-row="14"] .slick-cell:nth(0)`).click().wait(40);
 
         // 3rd row detail
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
 
         cy.get('#grid45').type('{pageDown}{pageDown}', { release: false });
         cy.wait(50);
@@ -381,15 +423,15 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         // expect same grid details for both grids
         // 2nd row detail
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
         // 3rd row detail
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should change Row Detail panel height back to 8, open 2nd and 3rd and filter Company ID with "1..2" and expect only these 2 rows to be rendered in the grid', () => {
@@ -403,19 +445,19 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.get('.slick-cell.detail-view-toggle:nth(1)').click().wait(40);
 
         // 2nd row detail
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
 
         // open 3rd row detail
-        cy.get(`.slick-row[data-row="9"] .slick-cell:nth(0)`).click().wait(40);
+        cy.get(`#grid45 .slick-row[data-row="9"] .slick-cell:nth(0)`).click().wait(40);
 
         // 3rd row detail
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
 
         cy.get('.search-filter.filter-companyId').type('1..2');
         cy.get('#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)').should('have.length', ROW_DETAIL_PANEL_COUNT * 2);
@@ -434,16 +476,16 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         );
 
         // 2nd row detail
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
 
         // 3rd row detail
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-2 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should disable inner Grid State/Presets and enable Keep Component Alive on Scroll', () => {
@@ -454,7 +496,9 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should open 2nd row, sort inner grid "Freight" ascending and filter "Ship City" with "m" and expect 2 sorted rows', () => {
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 1}px;"] .slick-cell:nth(0)`)
+        cy.get(
+          `#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] .slick-cell:nth(0)`
+        )
           .click()
           .wait(40);
 
@@ -469,10 +513,10 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should scroll far down (out of viewport) and back up and expect inner grid sort/filter state is PRESERVED (keepComponentAlive)', () => {
@@ -481,10 +525,10 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
 
         // state should be PRESERVED because keepComponentAlive is enabled
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should scroll out of viewport a second time and back up and still expect inner grid sort/filter state is PRESERVED', () => {
@@ -492,22 +536,29 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         cy.wait(50);
         cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
 
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', '10281');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', '10267');
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'München');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(0)`).should('contain', '10267');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] > .slick-cell:nth(1)`).should('contain', 'München');
       });
 
       it('should collapse the 2nd row detail and re-open it and expect default (unfiltered) inner grid rows', () => {
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 1}px;"] .slick-cell:nth(0)`)
+        cy.get(
+          `#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] .slick-cell:nth(0)`
+        )
           .click()
           .wait(40);
-        cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 1}px;"] .slick-cell:nth(0)`)
+        cy.get(
+          `#grid45 .slick-row:not(#innergrid-1 .slick-row,#innergrid-2 .slick-row)[style*="translateY(${GRID_ROW_HEIGHT * 1}px)"] .slick-cell:nth(0)`
+        )
           .click()
           .wait(40);
 
         // after collapse + reopen, component is recreated so filters/sort are reset — default order
-        cy.get(`#innergrid-1 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('not.contain', '10281');
+        cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should(
+          'not.contain',
+          '10281'
+        );
       });
 
       it('should collapse all rows and disable Keep Component Alive on Scroll', () => {
