@@ -152,7 +152,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
             }
           });
 
-          this._eventHandler.subscribe(this.onAsyncEndUpdate, (event, args) => {
+          this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
             // dispose preload if exists
             this._preloadRoot?.unmount();
             this._preloadRoot = undefined;
@@ -162,11 +162,15 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
             this.disposeViewByItem(args?.item);
             this.refreshOverlayPanel(args?.item);
 
-            this.renderViewModel(args?.item);
+            // triggers after backend called "onAsyncResponse.notify()"
+            // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
+            queueMicrotask(() => {
+              this.renderViewModel(args?.item);
 
-            if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
-              this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
-            }
+              if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
+                this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
+              }
+            });
           });
 
           this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {
