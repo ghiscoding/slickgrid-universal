@@ -477,6 +477,7 @@ describe('SlickRowDetailView plugin', () => {
   it('should preserve the overlay for Aurelia view model adapters during async response', () => {
     const itemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
     const removeOverlayPanelSpy = vi.spyOn(plugin as any, 'removeOverlayPanel');
+    vi.spyOn(plugin as any, 'shouldPreserveOverlay').mockReturnValue(true);
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({
       ...gridOptionsMock,
       rowDetailView: {

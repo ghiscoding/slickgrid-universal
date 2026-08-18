@@ -1257,6 +1257,17 @@ li.hidden {
 // Row Detail View Plugin
 // ---------------------------------------------------------
 
+.slick-row-detail-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 10;
+}
+
 .slick-row,
 .slick-row-detail-overlay {
   .detail-view-toggle {

@@ -52,6 +52,10 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
     super(eventPubSubService);
   }
 
+  protected override shouldPreserveOverlay(): boolean {
+    return true;
+  }
+
   get addonOptions(): RowDetailViewOption {
     return this.getOptions();
   }

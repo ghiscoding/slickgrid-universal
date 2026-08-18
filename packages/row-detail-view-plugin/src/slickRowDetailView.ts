@@ -136,6 +136,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     return this._addonOptions?.renderMode === 'overlay';
   }
 
+  /** Framework adapters override this when they own the mounted overlay DOM. */
+  protected shouldPreserveOverlay(): boolean {
+    return false;
+  }
+
   set rowIdsOutOfViewport(rowIds: Array<string | number>) {
     this._rowIdsOutOfViewport = new Set(rowIds);
   }
@@ -421,24 +426,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     // get item detail argument
     const itemDetail = args.item;
-    // Framework adapters own a mounted preload root and must unmount it before the
-    // overlay panel is replaced. Vanilla templates can be replaced immediately.
-    const frameworkOptions = this._addonOptions as RowDetailView & {
-      viewComponent?: unknown;
-      preloadComponent?: unknown;
-      viewModel?: unknown;
-      preloadViewModel?: unknown;
-    };
-    // Framework adapters can provide either a component (React/Vue/Angular) or a
-    // view model (Aurelia). In both cases the adapter owns the mounted DOM and
-    // must refresh it after the async response, rather than having the base
-    // plugin remove the overlay before the adapter can mount its view.
-    const usesFrameworkView =
-      !!frameworkOptions?.viewComponent ||
-      !!frameworkOptions?.preloadComponent ||
-      !!frameworkOptions?.viewModel ||
-      !!frameworkOptions?.preloadViewModel;
-    if (!usesFrameworkView) {
+    const shouldPreserveOverlay = this.shouldPreserveOverlay();
+    if (!shouldPreserveOverlay) {
       this.removeOverlayPanel(itemDetail[this._dataViewIdProperty]);
     }
 
@@ -449,7 +438,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     // A framework adapter may mount its nested component from onAsyncEndUpdate before
     // the grid's onRendered event is emitted. Ensure the post-template overlay exists
     // before notifying adapters so their mount target is connected to the DOM.
-    this.isOverlayRenderMode && !usesFrameworkView && this.renderOverlayPanels();
+    this.isOverlayRenderMode && !shouldPreserveOverlay && this.renderOverlayPanels();
 
     // trigger an event once the post template is finished loading
     this._renderedIds.add(itemDetail[this.dataViewIdProperty]);
@@ -703,16 +692,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     let host = this._overlayHosts.get(canvas);
     if (!host) {
       host = createDomElement('div', { className: 'slick-row-detail-overlay' });
-      Object.assign(host.style, {
-        position: 'absolute',
-        top: '0px',
-        left: '0px',
-        width: '100%',
-        height: '0px',
-        overflow: 'visible',
-        pointerEvents: 'none',
-        zIndex: '10',
-      });
       canvas.appendChild(host);
       this._overlayHosts.set(canvas, host);
     }
@@ -752,13 +731,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     // itself can detach a React/Vue/Angular tree in the middle of its commit.
     const innerDetailView = panel.querySelector<HTMLElement>(`.innerDetailView_${itemId}`);
     if (innerDetailView) {
-      innerDetailView.replaceChildren();
-      const detailContent = item[`${this._keyPrefix}detailContent`];
-      if (detailContent instanceof HTMLElement) {
-        innerDetailView.appendChild(detailContent);
-      } else {
-        innerDetailView.innerHTML = this._grid.sanitizeHtmlString(detailContent);
-      }
+      this.renderDetailContent(innerDetailView, item);
     }
 
     const row = this.dataView.getRowById(itemId);
@@ -770,10 +743,25 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** Keep an existing overlay aligned after row heights or data-view positions change. */
   protected updateOverlayPanelPosition(panel: HTMLDivElement, item: any, row: number): void {
     const rowHeight = this.gridOptions.rowHeight || 0;
-    const top = this._grid.getRowTop(row) - this._grid.getFrozenRowOffset(row) + this._grid.getRowHeight(row);
+    const top = this.getDetailPanelTopOffset(row);
     const outterHeight = (item[`${this._keyPrefix}sizePadding`] || 0) * rowHeight;
     panel.style.top = `${top}px`;
     panel.style.height = `${outterHeight}px`;
+  }
+
+  /** Get the panel's offset immediately below its parent row. */
+  protected getDetailPanelTopOffset(row: number): number {
+    return this._grid.getRowTop(row) - this._grid.getFrozenRowOffset(row) + this._grid.getRowHeight(row);
+  }
+
+  /** Render or replace the detail content inside a panel container. */
+  protected renderDetailContent(container: HTMLElement, item: any): void {
+    const detailContent = item[`${this._keyPrefix}detailContent`];
+    if (detailContent instanceof HTMLElement) {
+      container.replaceChildren(detailContent);
+    } else {
+      container.innerHTML = this._grid.sanitizeHtmlString(detailContent);
+    }
   }
 
   /** Create the Row Detail panel DOM without deciding where it is mounted. */
@@ -791,9 +779,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       className: `dynamic-cell-detail cellDetailView_${dataContext[this._dataViewIdProperty]}`,
       style: {
         height: `${outterHeight}px`,
-        top: this.isOverlayRenderMode
-          ? `${this._grid.getRowTop(row) - this._grid.getFrozenRowOffset(row) + this._grid.getRowHeight(row)}px`
-          : `${rowHeight}px`,
+        top: this.isOverlayRenderMode ? `${this.getDetailPanelTopOffset(row)}px` : `${rowHeight}px`,
         pointerEvents: this.isOverlayRenderMode ? 'auto' : undefined,
       },
     });
@@ -803,11 +789,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     const innerDetailViewElm = createDomElement('div', {
       className: `innerDetailView_${dataContext[this._dataViewIdProperty]}`,
     });
-    if (dataContext[`${this._keyPrefix}detailContent`] instanceof HTMLElement) {
-      innerDetailViewElm.appendChild(dataContext[`${this._keyPrefix}detailContent`]);
-    } else {
-      innerDetailViewElm.innerHTML = this._grid.sanitizeHtmlString(dataContext[`${this._keyPrefix}detailContent`]);
-    }
+    this.renderDetailContent(innerDetailViewElm, dataContext);
 
     innerContainerElm.appendChild(innerDetailViewElm);
     cellDetailContainerElm.appendChild(innerContainerElm);

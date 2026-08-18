@@ -40,6 +40,10 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
     super(eventPubSubService);
   }
 
+  protected override shouldPreserveOverlay(): boolean {
+    return true;
+  }
+
   get addonOptions() {
     return this.getOptions();
   }
