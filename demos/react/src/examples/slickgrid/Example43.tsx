@@ -155,7 +155,7 @@ export default function Example43() {
     gridMenu: {
       hideColumnPickerSection: true,
     },
-    rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
+    rowTopOffsetRenderType: 'top', // intentional top-positioning coverage; rowspan also supports 'transform'
   };
 
   function exportToExcel() {
