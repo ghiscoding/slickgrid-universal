@@ -182,16 +182,26 @@ describe('EventPubSub Service', () => {
 
       service.eventNamingStyle = 'lowerCaseWithoutOnPrefix';
       const subscription = service.subscribeEvent('onDblClick', mockCallback);
-      divContainer.dispatchEvent(new CustomEvent('DblClick', { composed: true, detail: { name: 'John' } }));
+      divContainer.dispatchEvent(new CustomEvent('dblclick', { composed: true, detail: { name: 'John' } }));
 
       expect(getEventNameSpy).toHaveBeenCalledWith('onDblClick', '');
-      expect(service.subscribedEventNames).toEqual(['DblClick']);
+      expect(service.subscribedEventNames).toEqual(['dblclick']);
       expect(service.subscribedEvents.length).toBe(1);
-      expect(addEventSpy).toHaveBeenCalledWith('DblClick', expect.any(Function));
+      expect(addEventSpy).toHaveBeenCalledWith('dblclick', expect.any(Function));
       expect(mockCallback).toHaveBeenCalledTimes(1);
 
       subscription.unsubscribe();
       expect(service.subscribedEvents.length).toBe(0);
+    });
+
+    it('keeps lowerCaseWithoutOnPrefix event names lowercase', () => {
+      const callback = vi.fn();
+      service.eventNamingStyle = 'lowerCaseWithoutOnPrefix';
+      service.subscribeEvent('onDblClick', callback);
+
+      divContainer.dispatchEvent(new CustomEvent('dblclick'));
+
+      expect(callback).toHaveBeenCalledOnce();
     });
 
     it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called with kebabCase', () => {
@@ -348,6 +358,50 @@ describe('EventPubSub Service', () => {
       expect(removeEventSpy).toHaveBeenCalledWith('onClick', expect.any(Function));
       expect(removeEventSpy).toHaveBeenCalledWith('onDblClick', expect.any(Function));
       expect(unsubscribeSpy).toHaveBeenCalledTimes(2);
+      expect(service.subscribedEvents.length).toBe(0);
+    });
+
+    it('removes every event when a shared callback subscription is unsubscribed', () => {
+      const mockCallback = vi.fn();
+      const subscription = service.subscribe(['onClick', 'onDblClick'], mockCallback);
+
+      divContainer.dispatchEvent(new CustomEvent('onClick', { detail: { name: 'John' } }));
+      divContainer.dispatchEvent(new CustomEvent('onDblClick', { detail: { name: 'Jane' } }));
+      expect(mockCallback).toHaveBeenCalledTimes(2);
+
+      subscription.unsubscribe();
+
+      divContainer.dispatchEvent(new CustomEvent('onClick'));
+      divContainer.dispatchEvent(new CustomEvent('onDblClick'));
+      expect(mockCallback).toHaveBeenCalledTimes(2);
+      expect(service.subscribedEvents.length).toBe(0);
+    });
+
+    it('removes a subscribe callback with camelCaseWithExtraOnPrefix', () => {
+      const mockCallback = vi.fn();
+      service.eventNamingStyle = 'camelCaseWithExtraOnPrefix';
+      const subscription = service.subscribe('onDblClick', mockCallback);
+
+      subscription.unsubscribe();
+      divContainer.dispatchEvent(new CustomEvent('onOnDblClick'));
+
+      expect(mockCallback).toHaveBeenCalledTimes(0); // never fired before unsubscribe either
+    });
+
+    it('should correctly unsubscribe all listeners when same callback is used for multiple events (array subscribe)', () => {
+      const mockCallback = vi.fn();
+      service.subscribe(['onClick', 'onDblClick'], mockCallback);
+
+      divContainer.dispatchEvent(new CustomEvent('onClick', { detail: { name: 'John' } }));
+      divContainer.dispatchEvent(new CustomEvent('onDblClick', { detail: { name: 'Jane' } }));
+      expect(mockCallback).toHaveBeenCalledTimes(2);
+
+      service.unsubscribeAll();
+
+      // both DOM listeners must be truly removed
+      divContainer.dispatchEvent(new CustomEvent('onClick', { detail: { name: 'John' } }));
+      divContainer.dispatchEvent(new CustomEvent('onDblClick', { detail: { name: 'Jane' } }));
+      expect(mockCallback).toHaveBeenCalledTimes(2);
       expect(service.subscribedEvents.length).toBe(0);
     });
 

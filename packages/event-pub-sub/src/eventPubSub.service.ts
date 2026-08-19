@@ -12,7 +12,7 @@ export class EventPubSubService implements BasePubSubService {
   protected _elementSource: Element;
   protected _subscribedEvents: PubSubEvent[] = [];
   protected _timer?: any;
-  private _callbackMap = new Map<Function, Function>();
+  private _callbackMap = new Map<string, Map<Function, Function>>();
 
   eventNamingStyle: EventNamingStyle = 'camelCase';
 
@@ -41,7 +41,7 @@ export class EventPubSubService implements BasePubSubService {
     clearTimeout(this._timer);
     this.unsubscribeAll();
     this._subscribedEvents = [];
-    this._callbackMap.clear();
+    this._callbackMap.clear(); // clears all (eventName → callback → wrapper) mappings
     this._elementSource?.remove();
     this._elementSource = null as any;
   }
@@ -97,7 +97,7 @@ export class EventPubSubService implements BasePubSubService {
       case 'lowerCase':
       case 'lowerCaseWithoutOnPrefix':
         if (this.eventNamingStyle === 'lowerCaseWithoutOnPrefix') {
-          outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, '')}`;
+          outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, '')}`.toLowerCase();
         } else {
           outputEventName = `${eventNamePrefix}${outputEventName}`.toLowerCase();
         }
@@ -151,12 +151,16 @@ export class EventPubSubService implements BasePubSubService {
       // basically we substitute the "data" with "event.detail" so that the user ends up with only the "data" result
       const wrappedListener = (event: CustomEventInit<T>) => callback.call(null, event.detail as T);
 
-      // store the mapping so unsubscribe can resolve the original callback to the wrapper
-      this._callbackMap.set(callback, wrappedListener);
+      // store the mapping keyed by (eventName, callback) so the same callback can be used
+      // across multiple event names without entries overwriting each other
+      if (!this._callbackMap.has(eventNameByConvention)) {
+        this._callbackMap.set(eventNameByConvention, new Map());
+      }
+      this._callbackMap.get(eventNameByConvention)!.set(callback, wrappedListener);
 
       this._elementSource.addEventListener(eventNameByConvention, wrappedListener);
       this._subscribedEvents.push({ name: eventNameByConvention, listener: wrappedListener });
-      subscriptions.push(() => this.unsubscribe(eventNameByConvention, callback as never));
+      subscriptions.push(() => this.unsubscribe(eventNameByConvention, callback as never, true, true));
     });
 
     // return a subscription(s) that we can later unsubscribe
@@ -179,7 +183,7 @@ export class EventPubSubService implements BasePubSubService {
 
     // return a subscription that we can later unsubscribe
     return {
-      unsubscribe: () => this.unsubscribe(eventNameByConvention, listener as never),
+      unsubscribe: () => this.unsubscribe(eventNameByConvention, listener as never, true, true),
     };
   }
 
@@ -190,17 +194,25 @@ export class EventPubSubService implements BasePubSubService {
    * @param {Boolean} [shouldRemoveFromEventList] - should we also remove the event from the subscriptions array?
    * @return possibly a Subscription
    */
-  unsubscribe<T = any>(eventName: string, listener: (event: T | CustomEventInit<T>) => void, shouldRemoveFromEventList = true): void {
-    const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
+  unsubscribe<T = any>(
+    eventName: string,
+    listener: (event: T | CustomEventInit<T>) => void,
+    shouldRemoveFromEventList = true,
+    skipNamingConversion = false
+  ): void {
+    const eventNameByConvention = skipNamingConversion ? eventName : this.getEventNameByNamingConvention(eventName, '');
 
-    // resolve the actual DOM listener
-    // either it's the wrapper itself or we look it up via the map
-    const domListener = (this._callbackMap.get(listener) ?? listener) as EventListener;
+    // resolve the actual DOM listener via (eventName, callback) key
+    const eventMap = this._callbackMap.get(eventNameByConvention);
+    const domListener = (eventMap?.get(listener) ?? listener) as EventListener;
 
     this._elementSource.removeEventListener(eventNameByConvention, domListener);
     if (shouldRemoveFromEventList) {
       this.removeSubscribedEventWhenFound(eventNameByConvention, domListener as any);
-      this._callbackMap.delete(listener);
+      eventMap?.delete(listener);
+      if (eventMap?.size === 0) {
+        this._callbackMap.delete(eventNameByConvention);
+      }
     }
   }
 
@@ -219,7 +231,7 @@ export class EventPubSubService implements BasePubSubService {
     } else {
       let pubSubEvent = this._subscribedEvents.pop();
       while (pubSubEvent) {
-        this.unsubscribe(pubSubEvent.name, pubSubEvent.listener, false);
+        this.unsubscribe(pubSubEvent.name, pubSubEvent.listener, false, true);
         pubSubEvent = this._subscribedEvents.pop();
       }
     }
