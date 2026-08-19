@@ -169,7 +169,7 @@ export class Example43 {
       gridMenu: {
         hideColumnPickerSection: true,
       },
-      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
+      rowTopOffsetRenderType: 'top', // intentional top-positioning coverage; rowspan also supports 'transform'
     };
   }
 

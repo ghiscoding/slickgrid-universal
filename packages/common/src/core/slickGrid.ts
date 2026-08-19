@@ -650,11 +650,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           'SlickGrid relies on row positioning calculations that can drift with browser zoom.'
       );
     }
-    if (this._options.rowTopOffsetRenderType === 'transform' && this._options.enableCellRowSpan) {
-      console.warn(
-        '[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using RowSpan since "transform" is known to have UI issues.'
-      );
-    }
     this.finishInitialization();
   }
 
@@ -4344,14 +4339,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       role: 'row',
       dataset: { row: `${row}` },
     });
-    const frozenRowOffset = this.getFrozenRowOffset(row);
-    const topOffset = this.getRowTop(row) - frozenRowOffset;
-    if (this._options.rowTopOffsetRenderType === 'transform') {
-      rowDiv.style.transform = `translateY(${topOffset}px)`;
-    } else {
-      rowDiv.style.top = `${topOffset}px`; // default to `top: {offset}px`
-    }
-
     if (this._options.enableVariableRowHeight) {
       // only rows with a non-default height get an inline height so that rows with
       // the default height can be sized by the stylesheet rule
@@ -4437,6 +4424,26 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           i += ncolspan - 1;
         }
       }
+    }
+
+    this.applyRowTopOffset(rowDiv, row);
+    if (rowDivR) {
+      this.applyRowTopOffset(rowDivR, row);
+    }
+  }
+
+  /** Keep RowSpan host rows top-positioned so their cells escape transformed sibling stacking contexts. */
+  protected applyRowTopOffset(rowNode: HTMLElement, row: number): void {
+    const top = this.getRowTop(row) - this.getFrozenRowOffset(row);
+    const isTransform = this._options.rowTopOffsetRenderType === 'transform';
+    const hasRowSpan = this._options.enableCellRowSpan && !!rowNode.querySelector('.slick-cell.rowspan');
+    rowNode.classList.toggle('slick-rowspan', isTransform && hasRowSpan);
+    if (isTransform && !hasRowSpan) {
+      rowNode.style.top = '';
+      rowNode.style.transform = `translateY(${top}px)`;
+    } else {
+      rowNode.style.top = `${top}px`;
+      rowNode.style.transform = '';
     }
   }
 
@@ -5642,6 +5649,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           cacheEntry.cellNodesByColumnIdx![columnIdx] = node;
         }
       }
+      cacheEntry.rowNode?.forEach((rowNode) => this.applyRowTopOffset(rowNode, processedRow!));
     }
   }
 
@@ -5801,14 +5809,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.rowsCache && typeof this.rowsCache === 'object') {
       Object.keys(this.rowsCache).forEach((row) => {
         const rowNumber = row ? parseInt(row, 10) : 0;
-        // same formula appendRowHtml uses to place rows initially
-        const top = this.getRowTop(rowNumber) - this.getFrozenRowOffset(rowNumber);
         this.rowsCache[rowNumber].rowNode!.forEach((rowNode) => {
-          if (this._options.rowTopOffsetRenderType === 'transform') {
-            rowNode.style.transform = `translateY(${top}px)`;
-          } else {
-            rowNode.style.top = `${top}px`; // default to `top: {offset}px`
-          }
+          this.applyRowTopOffset(rowNode, rowNumber);
         });
       });
     }

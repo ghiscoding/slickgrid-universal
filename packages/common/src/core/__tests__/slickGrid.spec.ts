@@ -244,7 +244,7 @@ describe('SlickGrid core file', () => {
         rowTopOffsetRenderType: 'transform',
         enableRowDetailView: true,
         rowDetailView: { renderMode: 'overlay' },
-      },
+      } as GridOption,
       pubSubServiceStub
     );
     grid.init();
@@ -252,24 +252,39 @@ describe('SlickGrid core file', () => {
     expect(grid.getOptions().rowTopOffsetRenderType).toBe('transform');
   });
 
-  it('should display a console warning when RowSpan is enabled with `rowTopOffsetRenderType` is set to "transfrom"', () => {
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
-
-    document.body.style.zoom = '90%';
-    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+  it('should keep RowSpan host rows top-positioned while other rows use transforms', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
+      { id: 'lastName', field: 'lastName', name: 'Last Name' },
+    ] as Column[];
+    const data = [
+      { id: 0, firstName: 'Jane', lastName: 'Doe' },
+      { id: 1, firstName: 'John', lastName: 'Doe' },
+    ];
+    const dataView = new SlickDataView({
+      globalItemMetadataProvider: { getRowMetadata: (_item, row) => (row === 0 ? { columns: { 0: { rowspan: 2 } } } : undefined) },
+    });
+    dataView.setItems(data);
     grid = new SlickGrid<any, Column>(
       '#myGrid',
-      [],
+      dataView,
       columns,
       { ...defaultOptions, rowTopOffsetRenderType: 'transform', enableCellRowSpan: true },
       pubSubServiceStub
     );
     grid.init();
 
-    expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using RowSpan')
-    );
+    const spanRow = container.querySelector<HTMLElement>('.slick-row[data-row="0"]')!;
+    const regularRow = container.querySelector<HTMLElement>('.slick-row[data-row="1"]')!;
+    expect(grid.getOptions().rowTopOffsetRenderType).toBe('transform');
+    expect(spanRow.style.top).toBe('0px');
+    expect(spanRow.style.transform).toBe('');
+    expect(spanRow.classList).toContain('slick-rowspan');
+    expect(regularRow.style.top).toBe('');
+    expect(regularRow.style.transform).toBe(`translateY(${grid.getOptions().rowHeight}px)`);
+    const spanCell = spanRow.querySelector<HTMLElement>('.slick-cell.rowspan')!;
+    expect(spanCell).toBeTruthy();
+    expect(grid.getCellFromEvent({ target: spanCell } as unknown as Event)).toEqual({ row: 0, cell: 0 });
   });
 
   it('should be able to instantiate SlickGrid and get columns', () => {
