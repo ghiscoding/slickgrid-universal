@@ -128,7 +128,9 @@ describe('Example 20 - Row Detail View', () => {
 
     cy.get('.grid20').find('.dynamic-cell-detail .innerDetailView_1').as('detailContainer1');
     cy.get('@detailContainer1').find('h4').contains('Task 1');
-    cy.get('.grid20').find('.slick-row:nth(9) .slick-cell:nth(1)').click();
+    cy.get('.grid20')
+      .contains('.slick-row .slick-cell', /^Task 5$/)
+      .click();
     cy.get('.grid20').find('.dynamic-cell-detail .innerDetailView_5').as('detailContainer5');
     cy.get('@detailContainer5').find('h4').contains('Task 5');
 
@@ -252,10 +254,19 @@ describe('Example 20 - Row Detail View', () => {
   });
 
   it('should expect the Row Detail to be re-rendered after expanding/collapsing multiple times', () => {
-    cy.get('.grid20').find('.slick-row:nth(5) .slick-cell:nth(1)').as('toggle1');
-    cy.get('@toggle1').click();
-    cy.get('@toggle1').click();
-    cy.get('@toggle1').click();
+    const clickTask9Toggle = () =>
+      cy
+        .get('.grid20 .slick-row')
+        .filter(
+          (_index, row) =>
+            row.querySelector('.cell-title')?.textContent?.trim() === 'Task 9' && !!row.querySelector('.detail-view-toggle .sgi')
+        )
+        .find('.detail-view-toggle')
+        .click();
+
+    clickTask9Toggle();
+    clickTask9Toggle();
+    clickTask9Toggle();
 
     cy.get('.grid20').find('.dynamic-cell-detail .innerDetailView_9').as('detailContainer');
     cy.get('@detailContainer').find('h4').contains('Task 9');
