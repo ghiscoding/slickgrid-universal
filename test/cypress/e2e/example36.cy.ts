@@ -35,7 +35,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
   it('should open the 1st Row Detail of Duration(0) Group and expect to find some details', () => {
     cy.get('.slick-cell.l1.r1.detail-view-toggle:nth(0)').click().wait(40);
 
-    cy.get('.slick-cell + .dynamic-cell-detail')
+    cy.get('.dynamic-cell-detail')
       .find('h4')
       .contains(/Task [0-9]*/);
 
@@ -50,7 +50,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.get('[data-row="8"] > .slick-cell.l1').click();
     cy.get('[data-row="8"] > .slick-cell.l2').contains(/Task [0-9]*/);
 
-    cy.get('.slick-cell + .dynamic-cell-detail')
+    cy.get('.dynamic-cell-detail')
       .find('h4')
       .contains(/Task [0-9]*/);
 
@@ -111,7 +111,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.get('[data-row="0"] .slick-group-toggle.collapsed').click();
     cy.get('.slick-cell.l1.r1.detail-view-toggle:nth(0)').click().wait(40);
 
-    cy.get('.slick-cell + .dynamic-cell-detail')
+    cy.get('.dynamic-cell-detail')
       .find('h4')
       .contains(/Task [0-9]*/);
 
@@ -120,7 +120,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.get('.detail input').should('exist');
 
     cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
-    cy.get('.slick-cell + .dynamic-cell-detail').find('[data-test=delete-btn]').click();
+    cy.get('.dynamic-cell-detail').find('[data-test=delete-btn]').click();
     cy.get('.notification.is-danger').contains(/Deleted row with Task [0-9]*/);
     cy.get('.dynamic-cell-detail').should('have.length', 0);
   });
@@ -134,7 +134,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.get('[data-row="1"] > .slick-cell.l2').contains(/Task [0-9]*/);
     cy.get('[data-row="1"] > .slick-cell.l1').click().wait(40);
 
-    cy.get('.slick-cell + .dynamic-cell-detail')
+    cy.get('.dynamic-cell-detail')
       .find('h4')
       .contains(/Task [0-9]*/);
 
@@ -161,7 +161,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.wait(50);
     cy.get('.slick-group-toggle.collapsed').first().click();
 
-    cy.get('.slick-cell + .dynamic-cell-detail')
+    cy.get('.dynamic-cell-detail')
       .find('h4')
       .contains(/Task [0-9]*/);
 
@@ -188,7 +188,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.wait(50);
     cy.get('[data-test=expand-all-groups-btn]').click();
 
-    cy.get('.slick-cell + .dynamic-cell-detail')
+    cy.get('.dynamic-cell-detail')
       .find('h4')
       .contains(/Task [0-9]*/);
 

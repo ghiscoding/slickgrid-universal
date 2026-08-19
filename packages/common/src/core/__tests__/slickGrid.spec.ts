@@ -122,6 +122,29 @@ describe('SlickGrid core file', () => {
     expect(grid.getGridPosition()).toBeTruthy();
   });
 
+  it('should handle ancestor scrolling after the grid container is moved', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const oldScrollContainer = document.createElement('div');
+    const newScrollContainer = document.createElement('div');
+    document.body.append(oldScrollContainer, newScrollContainer);
+    oldScrollContainer.appendChild(container);
+
+    grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'Avery' }], columns, defaultOptions);
+    grid.init();
+    grid.setActiveCell(0, 0);
+    const positionChangedSpy = vi.spyOn(grid.onActiveCellPositionChanged, 'notify');
+
+    oldScrollContainer.dispatchEvent(new Event('scroll', { bubbles: false }));
+    expect(positionChangedSpy).toHaveBeenCalledTimes(1);
+
+    positionChangedSpy.mockClear();
+    newScrollContainer.appendChild(container);
+    oldScrollContainer.dispatchEvent(new Event('scroll', { bubbles: false }));
+    newScrollContainer.dispatchEvent(new Event('scroll', { bubbles: false }));
+
+    expect(positionChangedSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('should be able to instantiate SlickGrid with an external PubSub Service', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions, pubSubServiceStub);
@@ -210,24 +233,58 @@ describe('SlickGrid core file', () => {
     expect(grid.getOptions().rowTopOffsetRenderType).toBe('top');
   });
 
-  it('should display a console warning when RowSpan is enabled with `rowTopOffsetRenderType` is set to "transfrom"', () => {
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
-
-    document.body.style.zoom = '90%';
+  it('should preserve transform row positioning when Row Detail uses the overlay render mode', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     grid = new SlickGrid<any, Column>(
       '#myGrid',
       [],
+      columns,
+      {
+        ...defaultOptions,
+        rowTopOffsetRenderType: 'transform',
+        enableRowDetailView: true,
+        rowDetailView: { renderMode: 'overlay' },
+      } as GridOption,
+      pubSubServiceStub
+    );
+    grid.init();
+
+    expect(grid.getOptions().rowTopOffsetRenderType).toBe('transform');
+  });
+
+  it('should keep RowSpan host rows top-positioned while other rows use transforms', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
+      { id: 'lastName', field: 'lastName', name: 'Last Name' },
+    ] as Column[];
+    const data = [
+      { id: 0, firstName: 'Jane', lastName: 'Doe' },
+      { id: 1, firstName: 'John', lastName: 'Doe' },
+    ];
+    const dataView = new SlickDataView({
+      globalItemMetadataProvider: { getRowMetadata: (_item, row) => (row === 0 ? { columns: { 0: { rowspan: 2 } } } : undefined) },
+    });
+    dataView.setItems(data);
+    grid = new SlickGrid<any, Column>(
+      '#myGrid',
+      dataView,
       columns,
       { ...defaultOptions, rowTopOffsetRenderType: 'transform', enableCellRowSpan: true },
       pubSubServiceStub
     );
     grid.init();
 
-    expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using RowSpan')
-    );
+    const spanRow = container.querySelector<HTMLElement>('.slick-row[data-row="0"]')!;
+    const regularRow = container.querySelector<HTMLElement>('.slick-row[data-row="1"]')!;
+    expect(grid.getOptions().rowTopOffsetRenderType).toBe('transform');
+    expect(spanRow.style.top).toBe('0px');
+    expect(spanRow.style.transform).toBe('');
+    expect(spanRow.classList).toContain('slick-rowspan');
+    expect(regularRow.style.top).toBe('');
+    expect(regularRow.style.transform).toBe(`translateY(${grid.getOptions().rowHeight}px)`);
+    const spanCell = spanRow.querySelector<HTMLElement>('.slick-cell.rowspan')!;
+    expect(spanCell).toBeTruthy();
+    expect(grid.getCellFromEvent({ target: spanCell } as unknown as Event)).toEqual({ row: 0, cell: 0 });
   });
 
   it('should be able to instantiate SlickGrid and get columns', () => {
@@ -3245,6 +3302,16 @@ describe('SlickGrid core file', () => {
       expect(focusSink2.isConnected).toBe(false);
     });
 
+    it('should ignore invalidation after the grid has been destroyed', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+      grid.init();
+
+      grid.destroy(true);
+
+      expect(() => grid.invalidate()).not.toThrow();
+      expect(() => grid.updateRowCount()).not.toThrow();
+    });
+
     it('should keep ARIA header structure with frozen columns enabled', () => {
       grid = new SlickGrid<any, Column>(
         container,
@@ -5695,6 +5762,20 @@ describe('SlickGrid core file', () => {
       expect(frozenCanvas?.classList.contains('grid-canvas-left')).toBeTruthy();
     });
 
+    it('should find the first column intersecting the horizontal render range', () => {
+      const wideColumns = Array.from({ length: 100 }, (_, index) => ({
+        id: `column${index}`,
+        field: `column${index}`,
+        name: `Column ${index}`,
+        width: 80,
+      })) as Column[];
+      grid = new SlickGrid<any, Column>(container, [{}], wideColumns, defaultOptions);
+
+      expect((grid as any).getFirstColumnIndexAtOrAfter(0)).toBe(0);
+      expect((grid as any).getFirstColumnIndexAtOrAfter(800)).toBe(10);
+      expect((grid as any).getFirstColumnIndexAtOrAfter(8000)).toBe(100);
+    });
+
     it('should use bottom-right and top-right scroll containers when frozen columns with frozen-bottom rows are enabled', () => {
       const dataWithThreeRows = [
         { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
@@ -6093,6 +6174,7 @@ describe('SlickGrid core file', () => {
 
       const mouseEvent = new Event('mousewheel');
       const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
+      const nativeScrollPreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-right') as HTMLDivElement;
       Object.defineProperty(viewportBottomRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
@@ -6113,6 +6195,7 @@ describe('SlickGrid core file', () => {
       expect(viewportBottomRightElm.scrollTop).toBe(0);
       expect(onViewportChangedSpy).toHaveBeenCalled();
       expect(mousePreventSpy).toHaveBeenCalled();
+      expect(nativeScrollPreventSpy).toHaveBeenCalled();
     });
 
     it('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenColumn are enabled', () => {
@@ -6216,6 +6299,68 @@ describe('SlickGrid core file', () => {
       // top of row 3 is 20 + 30 + 40 = 90; frozen top rows height is 20 + 30 = 50; scroll target is 40
       expect(scrollToSpy).toHaveBeenCalledWith(40);
       expect(renderSpy).toHaveBeenCalled();
+    });
+
+    it('should keep page-boundary mapping stable with variable row height enabled', () => {
+      const manyRows = Array.from({ length: 700 }, (_, i) => ({ id: i, firstName: `name-${i}`, lastName: 'L', age: i }));
+      const variableRowHeightProvider = (_grid: SlickGrid, row: number) => 2200 + (row % 3) * 200;
+
+      grid = new SlickGrid<any, Column>(container, manyRows, columns, {
+        ...defaultOptions,
+        enableVariableRowHeight: true,
+        rowHeight: 2200,
+        rowHeightProvider: variableRowHeightProvider,
+      });
+
+      const testGrid = grid as any;
+      const lastPage = testGrid.n - 1;
+
+      expect(testGrid.n).toBeGreaterThan(3);
+      expect(testGrid.getPageOffset(0)).toBe(0);
+      expect(testGrid.getPageOffset(1)).toBe(0);
+      expect(testGrid.getPageOffset(lastPage)).toBe(Math.max(0, testGrid.th - testGrid.h));
+
+      expect(testGrid.getPageFromLargeScrollDelta(testGrid.ph - 1)).toBe(0);
+      expect(testGrid.getPageFromLargeScrollDelta(testGrid.h - testGrid.ph)).toBe(lastPage);
+
+      const row0Height = grid.getRowHeight(0);
+      const row1Height = grid.getRowHeight(1);
+      const row2Height = grid.getRowHeight(2);
+      expect(testGrid.getRowPosition(3)).toBe(row0Height + row1Height + row2Height);
+    });
+
+    it('should cover legacy and interior branch paths in virtual page mapping helpers', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, rowHeight: 25 });
+      const testGrid = grid as any;
+
+      // getPageOffset(): legacy mapping when page count is tiny (n <= 3)
+      testGrid.n = 3;
+      testGrid.th = 1000;
+      testGrid.h = 500;
+      testGrid.cj = 123;
+      expect(testGrid.getPageOffset(1)).toBe(123);
+
+      // getPageOffset(): legacy fallback when computed lastOffset is non-positive
+      testGrid.n = 5;
+      testGrid.th = 400;
+      testGrid.h = 500;
+      testGrid.cj = 47;
+      expect(testGrid.getPageOffset(1)).toBe(47);
+
+      // getPageFromLargeScrollDelta(): no-interior-pages legacy page selection path
+      testGrid.n = 3;
+      testGrid.ph = 100;
+      testGrid.h = 500;
+      testGrid.viewportH = 50;
+      expect(testGrid.getPageFromLargeScrollDelta(150)).toBe(1);
+
+      // getPageFromLargeScrollDelta(): interior-page scale-factor path
+      testGrid.n = 6;
+      testGrid.ph = 100;
+      testGrid.h = 500;
+      testGrid.th = 1200;
+      testGrid.viewportH = 50;
+      expect(testGrid.getPageFromLargeScrollDelta(250)).toBe(4);
     });
 
     it('should do page up when calling scrollRowIntoView() and we are further than row index that we want to scroll to', () => {
@@ -7110,6 +7255,26 @@ describe('SlickGrid core file', () => {
       expect(firstItemAgeCell.classList.contains('highlight')).toBeFalsy();
       expect(secondItemAgeCell.textContent).toBe('20');
       expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
+    });
+
+    it('should merge keyed CSS style overlays before creating a cell', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+      grid.addCellCssStyles('primary', { 0: { age: 'primary-highlight' } });
+      grid.addCellCssStyles('secondary', { 0: { age: 'secondary-highlight' } });
+
+      const initialRow = document.createElement('div');
+      (grid as any).appendCellHtml(initialRow, 0, 1, 1, 1, null, items[0]);
+      expect(initialRow.firstElementChild?.classList.contains('primary-highlight')).toBe(true);
+      expect(initialRow.firstElementChild?.classList.contains('secondary-highlight')).toBe(true);
+
+      grid.setCellCssStyles('primary', { 0: { age: 'replacement-highlight' } });
+      grid.removeCellCssStyles('secondary');
+
+      const updatedRow = document.createElement('div');
+      (grid as any).appendCellHtml(updatedRow, 0, 1, 1, 1, null, items[0]);
+      expect(updatedRow.firstElementChild?.classList.contains('primary-highlight')).toBe(false);
+      expect(updatedRow.firstElementChild?.classList.contains('secondary-highlight')).toBe(false);
+      expect(updatedRow.firstElementChild?.classList.contains('replacement-highlight')).toBe(true);
     });
 
     it('should removeCellCssStyles of all matching keys by predicate', () => {

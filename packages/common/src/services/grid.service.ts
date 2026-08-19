@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { arrayRemoveItemByIndex, isObjectEmpty } from '@slickgrid-universal/utils';
+import { arrayRemoveItemByIndex, isDefined, isObjectEmpty } from '@slickgrid-universal/utils';
 import type { SlickDataView, SlickGrid } from '../core/index.js';
 import { SlickHybridSelectionModel } from '../extensions/slickHybridSelectionModel.js';
 import type {
@@ -49,6 +49,7 @@ const ShowColumnOptionDefaults: ShowColumnOption = { autoResizeColumns: true, tr
 export class GridService {
   readonly pluginName = 'GridService';
   protected _grid!: SlickGrid;
+  protected _isBulkDeletingItems = false;
   protected _rowSelectionPlugin?: SlickHybridSelectionModel;
 
   constructor(
@@ -587,6 +588,10 @@ export class GridService {
     // end the bulk transaction since we're all done
     this._dataView.endUpdate();
 
+    if (this._gridOptions?.enableTreeData) {
+      this.invalidateHierarchicalDataset();
+    }
+
     // do we want to trigger an event after deleting the item
     if (options.triggerEvent) {
       this.pubSubService.publish<T[]>('onItemsDeleted', items);
@@ -621,6 +626,10 @@ export class GridService {
     // delete the item from the dataView
     this._dataView.deleteItem(itemId);
 
+    if (this._gridOptions?.enableTreeData && !this._isBulkDeletingItems) {
+      this.invalidateHierarchicalDataset();
+    }
+
     // do we want to trigger an event after deleting the item
     if (options.triggerEvent) {
       this.pubSubService.publish<Array<string | number>>('onItemsDeleted', [itemId]);
@@ -641,14 +650,20 @@ export class GridService {
       // begin bulk transaction
       this._dataView.beginUpdate(true);
 
+      this._isBulkDeletingItems = true;
       for (let i = 0; i < itemIds.length; i++) {
-        if (itemIds[i] !== null) {
+        if (isDefined(itemIds[i])) {
           this.deleteItemById(itemIds[i], { triggerEvent: false });
         }
       }
+      this._isBulkDeletingItems = false;
 
       // end the bulk transaction since we're all done
       this._dataView.endUpdate();
+
+      if (this._gridOptions?.enableTreeData) {
+        this.invalidateHierarchicalDataset();
+      }
 
       // do we want to trigger an event after deleting the item
       if (options.triggerEvent) {

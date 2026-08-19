@@ -16,6 +16,7 @@
     "react:dev": "vite",
     "react:preview": "vite preview",
     "react:cypress": "cypress open --config-file test/cypress.config.ts",
+    "react:cypress:ci": "cypress run --config-file test/cypress.config.ts",
     "build": "pnpm type-check && vite build",
     "type-check": "tsc --noEmit"
   },

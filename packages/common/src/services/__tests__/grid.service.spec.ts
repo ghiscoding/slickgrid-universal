@@ -1364,6 +1364,16 @@ describe('Grid Service', () => {
       expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsDeleted', [mockItem.id]);
     });
 
+    it('should invalidate the hierarchical dataset after deleting a Tree Data item', () => {
+      mockGridOptions.enableTreeData = true;
+      const invalidateSpy = vi.spyOn(service, 'invalidateHierarchicalDataset').mockImplementation(() => undefined);
+
+      service.deleteItemById(4);
+
+      expect(invalidateSpy).toHaveBeenCalledTimes(1);
+      delete mockGridOptions.enableTreeData;
+    });
+
     it('should remove any row selection when the grid option "enableCheckboxSelector" is enabled', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableCheckboxSelector: true } as GridOption);
       const mockItem = { id: 4, user: { firstName: 'John', lastName: 'Doe' } };
@@ -1402,6 +1412,17 @@ describe('Grid Service', () => {
       expect(deleteItemsSpy).toHaveBeenCalledTimes(1);
       expect(deleteItemsSpy).toHaveBeenCalledWith([0, 5]);
       expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsDeleted', mockItems);
+    });
+
+    it('should invalidate the hierarchical dataset once after deleting multiple Tree Data items', () => {
+      mockGridOptions.enableTreeData = true;
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      const invalidateSpy = vi.spyOn(service, 'invalidateHierarchicalDataset').mockImplementation(() => undefined);
+
+      service.deleteItems([{ id: 0 }, { id: 5 }]);
+
+      expect(invalidateSpy).toHaveBeenCalledTimes(1);
+      delete mockGridOptions.enableTreeData;
     });
 
     it('should expect the service to call the "deleteItem" when calling "deleteItems" with a single item which is not an array', () => {
@@ -1491,6 +1512,17 @@ describe('Grid Service', () => {
       expect(serviceDeleteSpy).toHaveBeenNthCalledWith(2, 5, { triggerEvent: false });
       expect(dataviewDeleteSpy).toHaveBeenCalledTimes(2);
       expect(pubSubSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should invalidate the hierarchical dataset once after deleting multiple Tree Data item IDs', () => {
+      mockGridOptions.enableTreeData = true;
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+      const invalidateSpy = vi.spyOn(service, 'invalidateHierarchicalDataset').mockImplementation(() => undefined);
+
+      service.deleteItemByIds([0, 5]);
+
+      expect(invalidateSpy).toHaveBeenCalledTimes(1);
+      delete mockGridOptions.enableTreeData;
     });
 
     it('should return an empty array when argument is not an array of IDs to delete', () => {

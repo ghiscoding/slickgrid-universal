@@ -154,7 +154,7 @@ function defineGrid() {
     enableFiltering: true,
     enableGrouping: true,
     enableRowDetailView: true,
-    rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
+    rowTopOffsetRenderType: 'top', // Intentional legacy Row Detail compatibility coverage; overlay mode supports "transform"
     darkMode: isDarkMode.value,
     externalResources: [VueRowDetailView],
     rowDetailView: {

@@ -161,7 +161,7 @@ const Example04: React.FC = () => {
       },
       enableFiltering: true,
       enableRowDetailView: true,
-      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
+      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       darkMode,
       datasetIdPropertyName: 'rowId',
       preRegisterExternalExtensions: (pubSubService) => {
@@ -169,6 +169,7 @@ const Example04: React.FC = () => {
         return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
+        renderMode: 'overlay',
         process: (item) => simulateServerAsyncCall(item),
         loadOnce: true,
         singleRowExpand: false,

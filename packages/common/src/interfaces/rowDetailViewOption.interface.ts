@@ -1,6 +1,15 @@
 import type { SlickDataView, SlickGrid, SlickRowDetailView, UsabilityOverrideFn } from '../index.js';
 import type { Observable, Subject } from '../services/rxjsFacade.js';
 
+/** Supported DOM render locations for a Row Detail panel. */
+export type RowDetailViewRenderMode = 'overlay' | RowDetailViewInlineRenderMode;
+
+/**
+ * @deprecated Inline Row Detail rendering is retained for backwards compatibility only and will be removed in the next major release.
+ * Use `renderMode: 'overlay'` instead.
+ */
+export type RowDetailViewInlineRenderMode = 'inline';
+
 export interface RowDetailViewProps<T = any, C = any> {
   model: T;
   addon: SlickRowDetailView;
@@ -57,6 +66,15 @@ export interface RowDetailViewOption {
 
   /** Defaults to null, do we want to defined a maximum number of rows to show. */
   maxRows?: number;
+
+  /**
+   * Where the Row Detail panel is rendered in the grid DOM.
+   * Overlay mode renders panels in a sibling layer of the grid canvas and is compatible with `rowTopOffsetRenderType: 'transform'`.
+   * Inline mode is retained for backwards compatibility and will be removed in the next major release.
+   * v11 plan: overlay rendering is intended to become the default and only renderer, so this transition option may be removed. Keep it while using v10 and remove it when upgrading to v11 if it is removed from the API.
+   * @default 'inline'
+   */
+  renderMode?: RowDetailViewRenderMode;
 
   /**
    * How many grid rows do we want to use for the detail panel view

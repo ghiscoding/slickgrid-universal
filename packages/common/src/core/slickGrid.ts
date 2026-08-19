@@ -392,7 +392,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected _viewport!: HTMLDivElement[];
   protected _canvas!: HTMLDivElement[];
   protected _style?: HTMLStyleElement;
-  protected _boundAncestors: HTMLElement[] = [];
   protected stylesheet?: { cssRules: Array<{ selectorText: string }>; rules: Array<{ selectorText: string }> } | null;
   protected columnCssRulesL?: Array<{ selectorText: string }>;
   protected columnCssRulesR?: Array<{ selectorText: string }>;
@@ -462,6 +461,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected plugins: SlickPlugin[] = [];
   protected cellCssClasses: CssStyleHash = {};
+  protected cellCssClassesByCell: CssStyleHash = {};
 
   protected columnsById: Record<string, number> = {};
   protected visibleColumnsById: Record<string, number> = {};
@@ -648,11 +648,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       console.warn(
         '[Slickgrid] Zoom level other than 100% can cause subpar rendering in some configurations. ' +
           'SlickGrid relies on row positioning calculations that can drift with browser zoom.'
-      );
-    }
-    if (this._options.rowTopOffsetRenderType === 'transform' && this._options.enableCellRowSpan) {
-      console.warn(
-        '[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using RowSpan since "transform" is known to have UI issues.'
       );
     }
     this.finishInitialization();
@@ -1574,16 +1569,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return this.absoluteColumnMinWidth;
   }
 
-  // TODO:  this is static. we need to handle page mutation.
   protected bindAncestorScrollEvents(): void {
-    let elem: HTMLElement | null = this.hasFrozenRows && !this._options.frozenBottom ? this._canvasBottomL : this._canvasTopL;
-    while ((elem = elem!.parentNode as HTMLElement) !== document.body && elem) {
-      // bind to scroll containers only
-      if (elem === this._viewportTopL || elem.scrollWidth !== elem.clientWidth || elem.scrollHeight !== elem.clientHeight) {
-        this._boundAncestors.push(elem);
-        this._bindingEventService.bind(elem, 'scroll', this.handleActiveCellPositionChange.bind(this));
-      }
-    }
+    this._bindingEventService.bind(
+      document,
+      'scroll',
+      (event) => {
+        const target = event.target;
+        if (this._viewport.includes(target as HTMLDivElement) || (target instanceof Node && target.contains(this._container))) {
+          this.handleActiveCellPositionChange();
+        }
+      },
+      true
+    );
   }
 
   /**
@@ -3131,11 +3128,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.sortableSideLeftInstance.destroy();
     }
 
-    this._boundAncestors.length = 0; // reset array
-
     this._focusSink?.remove();
     this._focusSink2?.remove();
 
+    // Mark the grid as inactive before its DOM references are cleared. Async data/sort
+    // callbacks can finish after destruction and must not attempt to update a null container.
+    this.initialized = false;
     emptyElement(this._container);
     this.removeCssRules();
 
@@ -3849,8 +3847,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._options.leaveSpaceForNewRows = false;
     }
 
-    // Row Detail relies on absolute top-based row positioning; force a safe fallback.
-    if (this._options.rowTopOffsetRenderType === 'transform' && this._options.enableRowDetailView) {
+    // @deprecated v11: remove this Row Detail fallback when inline rendering is removed.
+    // The legacy inline Row Detail renderer relies on absolute top-based row positioning;
+    // overlay rendering is compatible with transform-based row positioning.
+    if (
+      this._options.rowTopOffsetRenderType === 'transform' &&
+      this._options.enableRowDetailView &&
+      this._options.rowDetailView?.renderMode !== 'overlay'
+    ) {
       this._options.rowTopOffsetRenderType = 'top';
     }
 
@@ -4107,7 +4111,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return Math.floor(y / this._options.rowHeight!);
   }
 
-  protected getRowTop(row: number): number {
+  /** Get the rendered top offset of a row, including virtual-scroll page positioning. */
+  getRowTop(row: number): number {
     return Math.round(this.getRowPosition(row) - this.offset);
   }
 
@@ -4117,6 +4122,51 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected getRowFromPosition(y: number): number {
     return this.getRowIndexFromPosition(y + this.offset);
+  }
+
+  /**
+   * Map a virtual page index to its render offset in scroll-container space.
+   * First and last pages are pinned to container edges; interior pages are spread
+   * evenly between them to avoid browser edge clamping/jank near boundaries.
+   */
+  protected getPageOffset(page: number): number {
+    if (this.n <= 1 || page <= 0) {
+      return 0;
+    }
+
+    const lastOffset = Math.max(0, this.th - this.h);
+    if (page >= this.n - 1) {
+      return lastOffset;
+    }
+
+    // With no interior pages, keep legacy linear mapping.
+    if (this.n <= 3 || lastOffset <= 0) {
+      return Math.round(page * (this.cj || 0));
+    }
+
+    return Math.round(((page - 1) * lastOffset) / (this.n - 3));
+  }
+
+  /**
+   * Infer page index from large-scale scroll movement in container space.
+   * This mirrors page pinning logic used by getPageOffset().
+   */
+  protected getPageFromLargeScrollDelta(scrollTop: number): number {
+    if (this.n <= 1 || this.ph <= 0 || this.h <= this.viewportH || scrollTop < this.ph) {
+      return 0;
+    }
+
+    if (scrollTop >= this.h - this.ph) {
+      return this.n - 1;
+    }
+
+    // With no interior pages, keep legacy page selection behavior.
+    if (this.n <= 3 || this.h <= this.ph * 2) {
+      return Math.min(this.n - 1, Math.floor(scrollTop / this.ph));
+    }
+
+    const scaleFactor = (this.th - this.ph * 2) / (this.h - this.ph * 2);
+    return Math.min(this.n - 3, Math.floor(((scrollTop - this.ph) * scaleFactor) / this.ph)) + 1;
   }
 
   /**
@@ -4136,7 +4186,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // determine the page for the target position first, then derive the offset from that page
     // (computing the offset from the previous page would lag one scroll event behind on jumps)
     this.page = this.ph ? Math.min((this.n || 0) - 1, Math.floor(y / this.ph)) : 0;
-    this.offset = Math.round(this.page * (this.cj || 0));
+    this.offset = this.getPageOffset(this.page);
     const newScrollTop = (y - this.offset) as number;
 
     if (this.offset !== oldOffset) {
@@ -4289,14 +4339,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       role: 'row',
       dataset: { row: `${row}` },
     });
-    const frozenRowOffset = this.getFrozenRowOffset(row);
-    const topOffset = this.getRowTop(row) - frozenRowOffset;
-    if (this._options.rowTopOffsetRenderType === 'transform') {
-      rowDiv.style.transform = `translateY(${topOffset}px)`;
-    } else {
-      rowDiv.style.top = `${topOffset}px`; // default to `top: {offset}px`
-    }
-
     if (this._options.enableVariableRowHeight) {
       // only rows with a non-default height get an inline height so that rows with
       // the default height can be sized by the stylesheet rule
@@ -4383,6 +4425,26 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
       }
     }
+
+    this.applyRowTopOffset(rowDiv, row);
+    if (rowDivR) {
+      this.applyRowTopOffset(rowDivR, row);
+    }
+  }
+
+  /** Keep RowSpan host rows top-positioned so their cells escape transformed sibling stacking contexts. */
+  protected applyRowTopOffset(rowNode: HTMLElement, row: number): void {
+    const top = this.getRowTop(row) - this.getFrozenRowOffset(row);
+    const isTransform = this._options.rowTopOffsetRenderType === 'transform';
+    const hasRowSpan = this._options.enableCellRowSpan && !!rowNode.querySelector('.slick-cell.rowspan');
+    rowNode.classList.toggle('slick-rowspan', isTransform && hasRowSpan);
+    if (isTransform && !hasRowSpan) {
+      rowNode.style.top = '';
+      rowNode.style.transform = `translateY(${top}px)`;
+    } else {
+      rowNode.style.top = `${top}px`;
+      rowNode.style.transform = '';
+    }
   }
 
   protected appendCellHtml(
@@ -4414,12 +4476,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       cellCss += ' active';
     }
 
-    // TODO: merge them together in the setter
-    Object.keys(this.cellCssClasses).forEach((key) => {
-      if (this.cellCssClasses[key][row]?.[m.id]) {
-        cellCss += ` ${this.cellCssClasses[key][row][m.id]}`;
-      }
-    });
+    const cellCssClasses = this.cellCssClassesByCell[row]?.[m.id];
+    if (cellCssClasses) {
+      cellCss += ` ${cellCssClasses}`;
+    }
 
     let value: any = null;
     let formatterResult: FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string = '';
@@ -4640,6 +4700,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Invalidate all grid rows and re-render the visible grid rows */
   invalidate(): void {
+    if (!this.initialized || !this._container) {
+      return;
+    }
     this.updateRowCount();
     this.invalidateAllRows();
     this.render();
@@ -5182,7 +5245,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Update the dataset row count */
   updateRowCount(): void {
-    if (this.initialized) {
+    if (this.initialized && this._container) {
       const dataLength = this.getDataLength();
       this._container.setAttribute('aria-rowcount', dataLength.toString());
 
@@ -5484,6 +5547,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let colspan: number | string;
     let columnData: ColumnMetadata | null;
     const columnCount = this.columns.length;
+    const hasAlwaysRenderColumn = this.columns.some((column) => column?.alwaysRenderColumn);
+    let firstColumnIndex = 0;
+
+    // columnPosRight is monotonic only when there are no frozen columns, so use a lower-bound lookup
+    // to avoid scanning columns that are entirely left of the rendered range in the common case.
+    if (!this.hasFrozenColumns() && !hasAlwaysRenderColumn) {
+      firstColumnIndex = this.getFirstColumnIndexAtOrAfter(range.leftPx);
+    }
 
     for (let row = range.top as number, btm = range.bottom as number; row <= btm; row++) {
       cacheEntry = this.rowsCache[row];
@@ -5503,9 +5574,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
         const d = this.getDataItem(row);
         let isFullColspan = false;
+        const startColumnIndex = metadataCol || metadata?.isGroup ? 0 : firstColumnIndex;
 
-        // TODO: shorten this loop (index? heuristics? binary search?)
-        for (let i = 0, ii = columnCount; i < ii; i++) {
+        for (let i = startColumnIndex, ii = columnCount; i < ii; i++) {
           if (this.columns[i] && (!this.columns[i].hidden || metadata?.isGroup)) {
             // Cells to the right are outside the range.
             if (this.columnPosLeft[i] > range.rightPx) {
@@ -5578,7 +5649,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           cacheEntry.cellNodesByColumnIdx![columnIdx] = node;
         }
       }
+      cacheEntry.rowNode?.forEach((rowNode) => this.applyRowTopOffset(rowNode, processedRow!));
     }
+  }
+
+  protected getFirstColumnIndexAtOrAfter(leftPx: number): number {
+    let low = 0;
+    let high = this.columnPosRight.length;
+    while (low < high) {
+      const mid = low + Math.floor((high - low) / 2);
+      if (this.columnPosRight[mid] <= leftPx) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    return low;
   }
 
   protected createEmptyCachingRow(): RowCaching {
@@ -5723,14 +5809,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.rowsCache && typeof this.rowsCache === 'object') {
       Object.keys(this.rowsCache).forEach((row) => {
         const rowNumber = row ? parseInt(row, 10) : 0;
-        // same formula appendRowHtml uses to place rows initially
-        const top = this.getRowTop(rowNumber) - this.getFrozenRowOffset(rowNumber);
         this.rowsCache[rowNumber].rowNode!.forEach((rowNode) => {
-          if (this._options.rowTopOffsetRenderType === 'transform') {
-            rowNode.style.transform = `translateY(${top}px)`;
-          } else {
-            rowNode.style.top = `${top}px`; // default to `top: {offset}px`
-          }
+          this.applyRowTopOffset(rowNode, rowNumber);
         });
       });
     }
@@ -5883,15 +5963,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (vScrollDist < this.viewportH) {
         this.scrollTo(this.scrollTop + this.offset);
       } else {
-        if (this.h === this.viewportH) {
-          this.page = 0;
-        } else {
-          this.page = Math.min(
-            this.n - 1,
-            Math.floor(this.scrollTop * ((this.th - this.viewportH) / (this.h - this.viewportH)) * (1 / this.ph))
-          );
-        }
-        this.offset = Math.round(this.page * this.cj);
+        this.page = this.getPageFromLargeScrollDelta(this.scrollTop);
+        this.offset = this.getPageOffset(this.page);
       }
     }
 
@@ -6091,6 +6164,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
+  /** Merges the keyed CSS overlays once on update, rather than for every rendered cell. */
+  protected updateCellCssClassesByCell(): void {
+    this.cellCssClassesByCell = {};
+
+    Object.values(this.cellCssClasses).forEach((hash) => {
+      Object.entries(hash).forEach(([row, cellClasses]) => {
+        const mergedRowClasses = (this.cellCssClassesByCell[row] ??= {});
+        Object.entries(cellClasses).forEach(([columnId, cssClasses]) => {
+          if (cssClasses) {
+            mergedRowClasses[columnId] = mergedRowClasses[columnId] ? `${mergedRowClasses[columnId]} ${cssClasses}` : cssClasses;
+          }
+        });
+      });
+    });
+  }
+
   /**
    * Adds an "overlay" of CSS classes to cell DOM elements. SlickGrid can have many such overlays associated with different keys and they are frequently used by plugins. For example, SlickGrid uses this method internally to decorate selected cells with selectedCellCssClass (see options).
    * @param {String} key A unique key you can use in calls to setCellCssStyles and removeCellCssStyles. If a hash with that key has already been set, an exception will be thrown.
@@ -6107,6 +6196,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     this.cellCssClasses[key] = hash;
+    this.updateCellCssClassesByCell();
     this.updateCellCssStylesOnRenderedRows(hash, null);
     this.triggerEvent(this.onCellCssStylesChanged, { key, hash, grid: this });
   }
@@ -6119,6 +6209,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.cellCssClasses[key]) {
       this.updateCellCssStylesOnRenderedRows(null, this.cellCssClasses[key]);
       delete this.cellCssClasses[key];
+      this.updateCellCssClassesByCell();
       this.triggerEvent(this.onCellCssStylesChanged, { key, hash: null, grid: this });
     }
   }
@@ -6145,6 +6236,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   setCellCssStyles(key: string, hash: CssStyleHash): void {
     const prevHash = this.cellCssClasses[key];
     this.cellCssClasses[key] = hash;
+    this.updateCellCssClassesByCell();
     this.updateCellCssStylesOnRenderedRows(hash, prevHash);
     this.triggerEvent(this.onCellCssStylesChanged, { key, hash, grid: this });
   }
@@ -6303,6 +6395,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const handled = this._handleScroll('mousewheel');
     if (handled) {
       e.stopPropagation();
+      // Frozen columns use a second viewport whose vertical position is mirrored
+      // from the scrolling pane. Letting the browser also process this wheel event
+      // advances the source pane a second time, briefly putting it ahead of the
+      // frozen viewport until its subsequent scroll event is handled.
+      if (this.hasFrozenColumns()) {
+        e.preventDefault();
+      }
     }
   }
 

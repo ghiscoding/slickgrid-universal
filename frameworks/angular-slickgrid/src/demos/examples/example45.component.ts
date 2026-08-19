@@ -110,11 +110,12 @@ export class Example45Component implements OnDestroy, OnInit {
       autoHeight: false,
       enableFiltering: true,
       enableRowDetailView: true,
-      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
+      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       darkMode: this._darkMode,
       rowHeight: 33,
       externalResources: [AngularRowDetailView],
       rowDetailView: {
+        renderMode: 'overlay',
         process: (item: any) => this.simulateServerAsyncCall(item),
         loadOnce: false, // you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events
         useRowClick: false,
