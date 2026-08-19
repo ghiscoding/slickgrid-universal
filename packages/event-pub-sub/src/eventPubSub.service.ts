@@ -9,6 +9,12 @@ export interface PubSubEvent<T = any> {
   originalCallback?: (data: T) => void;
 }
 
+/**
+ * Simple publish/subscribe service using `CustomEvent`s on a single DOM element, such as the grid container.
+ *
+ * Framework adapters use different event naming conventions. `getEventNameByNamingConvention()`
+ * normalizes event names so Angular, Aurelia, React, Vue, and vanilla integrations can communicate consistently.
+ */
 export class EventPubSubService implements BasePubSubService {
   protected _elementSource: Element;
   protected _subscribedEvents: PubSubEvent[] = [];
