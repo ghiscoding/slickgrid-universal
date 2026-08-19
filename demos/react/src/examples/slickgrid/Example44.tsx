@@ -278,7 +278,7 @@ export default function Example44() {
     },
     enableExcelExport: true,
     externalResources: [new ExcelExportService()],
-    rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
+    rowTopOffsetRenderType: 'transform', // RowSpan host rows use hybrid top positioning
   };
 
   function clearScrollTo() {

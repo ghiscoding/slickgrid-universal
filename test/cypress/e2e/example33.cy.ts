@@ -39,7 +39,7 @@ describe('Example 33 - Column & Row Span', { retries: 0 }, () => {
   it('should drag Title column to swap with 2nd column "Revenue Growth" in the grid and expect rowspan to stay at same position with Task 0 to spread instead', () => {
     const expectedTitles = ['Revenue Growth', 'Title', 'Pricing Policy'];
 
-    cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l0.r0.rowspan`).should(($el) =>
+    cy.get(`[data-row=2] > .slick-cell.l0.r0.rowspan`).should(($el) =>
       expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
     );
 
@@ -51,11 +51,11 @@ describe('Example 33 - Column & Row Span', { retries: 0 }, () => {
     cy.get('.slick-header-column:nth(0)').contains('Revenue Growth');
     cy.get('.slick-header-column:nth(1)').contains('Title');
 
-    cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l1.r1`).should('contain', 'Task 0');
-    cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l1.r1`).should('not.exist');
-    cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell.l1.r1`).should('contain', 'Task 3');
+    cy.get(`[data-row=0] > .slick-cell.l1.r1`).should('contain', 'Task 0');
+    cy.get(`[data-row=2] > .slick-cell.l1.r1`).should('not.exist');
+    cy.get(`[data-row=3] > .slick-cell.l1.r1`).should('contain', 'Task 3');
 
-    cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l1.r1.rowspan`).should(($el) =>
+    cy.get(`[data-row=0] > .slick-cell.l1.r1.rowspan`).should(($el) =>
       expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
     );
 
@@ -69,7 +69,7 @@ describe('Example 33 - Column & Row Span', { retries: 0 }, () => {
   });
 
   it('should drag back Title column to reswap with 2nd column "Revenue Growth" in the grid and expect rowspan to stay at same position with Revenue Growth to now spread', () => {
-    cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l1.r1.rowspan`).should(($el) =>
+    cy.get(`[data-row=0] > .slick-cell.l1.r1.rowspan`).should(($el) =>
       expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
     );
     cy.get('.slick-header-columns')
@@ -80,10 +80,10 @@ describe('Example 33 - Column & Row Span', { retries: 0 }, () => {
     cy.get('.slick-header-column:nth(0)').contains('Title');
     cy.get('.slick-header-column:nth(1)').contains('Revenue Growth');
 
-    cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l0.r0`).should('contain', 'Task 0');
-    cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell.l0.r0`).should('contain', 'Task 1');
-    cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l0.r0`).should('contain', 'Task 2');
-    cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell.l0.r0`).should('not.exist');
+    cy.get(`[data-row=0] > .slick-cell.l0.r0`).should('contain', 'Task 0');
+    cy.get(`[data-row=1] > .slick-cell.l0.r0`).should('contain', 'Task 1');
+    cy.get(`[data-row=2] > .slick-cell.l0.r0`).should('contain', 'Task 2');
+    cy.get(`[data-row=3] > .slick-cell.l0.r0`).should('not.exist');
 
     const expectedTitles = ['Title', 'Revenue Growth', 'Pricing Policy'];
     cy.get('.slick-header-columns')
@@ -97,73 +97,65 @@ describe('Example 33 - Column & Row Span', { retries: 0 }, () => {
 
   describe('spanning', () => {
     it('should expect first row to be regular rows without any spanning', () => {
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l0.r0`).should('contain', 'Task 0');
+      cy.get(`[data-row=0] > .slick-cell.l0.r0`).should('contain', 'Task 0');
 
       for (let i = 2; i <= 6; i++) {
-        cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l${i}.r${i}`).should('exist');
+        cy.get(`[data-row=0] > .slick-cell.l${i}.r${i}`).should('exist');
       }
     });
 
     it('should expect 1st row, second cell to span (rowspan) across 3 rows', () => {
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell.l0.r0`).should('contain', 'Task 0');
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1).rowspan`).should(($el) => {
+      cy.get(`[data-row=0] > .slick-cell.l0.r0`).should('contain', 'Task 0');
+      cy.get(`[data-row=0] > .slick-cell.l1.r1.rowspan`).should(($el) => {
         expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3);
       });
 
       for (let i = 2; i <= 14; i++) {
-        cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(${i})`).contains(/\d+$/); // use regexp to make sure it's a number
+        cy.get(`[data-row=1] > .slick-cell:nth(${i})`).contains(/\d+$/); // use regexp to make sure it's a number
       }
     });
 
     it('should expect 3rd row first cell to span (rowspan) across 3 rows', () => {
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l0.r0.rowspan`).should('contain', 'Task 2');
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l0.r0.rowspan`).should(($el) =>
+      cy.get(`[data-row=2] > .slick-cell.l0.r0.rowspan`).should('contain', 'Task 2');
+      cy.get(`[data-row=2] > .slick-cell.l0.r0.rowspan`).should(($el) =>
         expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
       );
 
       for (let i = 2; i <= 5; i++) {
-        cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(${i})`).contains(/\d+$/);
+        cy.get(`[data-row=2] > .slick-cell:nth(${i})`).contains(/\d+$/);
       }
     });
 
     it('should expect 4th row to have 2 sections (blue, green) spanning across 3 rows (rowspan) and 2 columns (colspan)', () => {
       // blue rowspan section
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell.l1.r1.rowspan`).should(($el) =>
+      cy.get(`[data-row=3] > .slick-cell.l1.r1.rowspan`).should(($el) =>
         expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5)
       );
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell.l2.r2`)
-        .should('exist')
-        .contains(/\d+$/);
+      cy.get(`[data-row=3] > .slick-cell.l2.r2`).should('exist').contains(/\d+$/);
 
       // green colspan/rowspan section
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell.l3.r7`)
-        .should('exist')
-        .contains(/\d+$/);
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell.l8.r8`)
-        .should('exist')
-        .contains(/\d+$/);
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell.l9.r9`)
-        .should('exist')
-        .contains(/\d+$/);
+      cy.get(`[data-row=3] > .slick-cell.l3.r7`).should('exist').contains(/\d+$/);
+      cy.get(`[data-row=3] > .slick-cell.l8.r8`).should('exist').contains(/\d+$/);
+      cy.get(`[data-row=3] > .slick-cell.l9.r9`).should('exist').contains(/\d+$/);
     });
 
     it('should click on "Toggle blue cell colspan..." and expect colspan to widen from 1 column to 2 columns and from 5 rows to 3 rowspan', () => {
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell.l1.r1.rowspan`).should('exist');
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell.l1.r1.rowspan`).should(($el) =>
+      cy.get(`[data-row=3] > .slick-cell.l1.r1.rowspan`).should('exist');
+      cy.get(`[data-row=3] > .slick-cell.l1.r1.rowspan`).should(($el) =>
         expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5)
       );
 
       cy.get('[data-test="toggleSpans"]').click();
       cy.get('.slick-cell.l1.r1.rowspan').should('exist');
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell.l1.r2.rowspan`).should(($el) =>
+      cy.get(`[data-row=3] > .slick-cell.l1.r2.rowspan`).should(($el) =>
         expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
       );
     });
 
     it('should expect Task 8 on 2nd column to have rowspan spanning 80 cells', () => {
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 8}px;"] > .slick-cell.l0.r0`).should('contain', 'Task 8');
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 8}px;"] > .slick-cell:nth(1).rowspan`).contains(/\d+$/);
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 8}px;"] > .slick-cell:nth(1).rowspan`).should(($el) => {
+      cy.get(`[data-row=8] > .slick-cell.l0.r0`).should('contain', 'Task 8');
+      cy.get(`[data-row=8] > .slick-cell.l1.r1.rowspan`).contains(/\d+$/);
+      cy.get(`[data-row=8] > .slick-cell.l1.r1.rowspan`).should(($el) => {
         expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 80);
       });
     });
@@ -171,36 +163,36 @@ describe('Example 33 - Column & Row Span', { retries: 0 }, () => {
     it('should scroll to the right and still expect spans without any extra texts', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(400, 0).wait(10);
 
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).contains(/\d+$/);
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0).rowspan`).should('exist');
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1).rowspan`).should('exist');
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1).rowspan`).should(($el) =>
+      cy.get(`[data-row=3] > .slick-cell:nth(1)`).contains(/\d+$/);
+      cy.get(`[data-row=3] > .slick-cell.l1.r2.rowspan`).should('exist');
+      cy.get(`[data-row=3] > .slick-cell.l3.r7.rowspan`).should('exist');
+      cy.get(`[data-row=3] > .slick-cell.l3.r7.rowspan`).should(($el) =>
         expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
       );
 
       // next rows are regular cells
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell.l3.r3`).should('not.exist');
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell.l4.r4`).should('not.exist');
+      cy.get(`[data-row=4] > .slick-cell.l3.r3`).should('not.exist');
+      cy.get(`[data-row=4] > .slick-cell.l4.r4`).should('not.exist');
 
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell.l3.r3`).should('not.exist');
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell.l3.r3`).should('not.exist');
+      cy.get(`[data-row=5] > .slick-cell.l3.r3`).should('not.exist');
+      cy.get(`[data-row=5] > .slick-cell.l3.r3`).should('not.exist');
 
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 6}px;"] > .slick-cell.l4.r4`).should('exist');
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 6}px;"] > .slick-cell.l4.r4`).should('exist');
+      cy.get(`[data-row=6] > .slick-cell.l4.r4`).should('exist');
+      cy.get(`[data-row=6] > .slick-cell.l4.r4`).should('exist');
     });
 
     it('should scroll back to left and expect Task 8 to have 2 different spans (Revenue Grow: rowspan=80, Policy Index: rowspan=2000,colspan=2)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0).wait(10);
 
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 8}px;"] > .slick-cell.l0.r0`).should('contain', 'Task 8');
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 8}px;"] > .slick-cell:nth(1).rowspan`).should(($el) => {
+      cy.get(`[data-row=8] > .slick-cell.l0.r0`).should('contain', 'Task 8');
+      cy.get(`[data-row=8] > .slick-cell.l1.r1.rowspan`).should(($el) => {
         expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 80);
       });
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 8}px;"] > .slick-cell:nth(1)`).contains(/\d+$/);
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 8}px;"] > .slick-cell:nth(2)`).contains(/\d+$/);
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 8}px;"] > .slick-cell.l3.r4`).should('exist');
+      cy.get(`[data-row=8] > .slick-cell:nth(1)`).contains(/\d+$/);
+      cy.get(`[data-row=8] > .slick-cell:nth(2)`).contains(/\d+$/);
+      cy.get(`[data-row=8] > .slick-cell.l3.r4`).should('exist');
 
-      cy.get(`[style*="top: ${GRID_ROW_HEIGHT * 9}px;"] > .slick-cell.l0.r0`).should('contain', 'Task 9');
+      cy.get(`[data-row=9] > .slick-cell.l0.r0`).should('contain', 'Task 9');
     });
 
     it('should scroll to row 85 and still expect 3 spans in the screen, "Revenue Growth" and "Policy Index" spans', () => {
