@@ -77,5 +77,5 @@ overrides:
   picomatch: ^4.0.5
   postcss: ^8.5.26
   qs: ^6.15.3
-  undici: '>=7.29.0'
+  undici: ^7.29.0
   vite: 'catalog:'
