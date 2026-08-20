@@ -104,6 +104,7 @@ test/cypress/e2e/example47.cy.ts covers:
 - Multi-reference color persistence while typing (`=C1*SUM(D1:D3)`) with stable per-reference coloring.
 - Formula editor copy/cut plain-text clipboard behavior.
 - Incomplete reference color stability scenarios from formula-entry workflows.
+- Formula evaluation, custom functions, and baseline formula cell calculations.
 
 ## Latest Update: Security & Plugin Convention Review (2026-08-06)
 - **Fixed XSS**: `FormulaCellEditor.renderTokens()` built its highlighted markup as an HTML string (only cell-reference tokens were escaped) and assigned it via `innerHTML`. Any other raw formula text (typed or loaded from dataset values) was inserted unescaped, so formulas like `=A1&"<img src=x onerror=...>"` could execute arbitrary markup/script. Rewrote to build the token spans via DOM APIs (`createTextNode`/`createElement`+`textContent`) so no formula text is ever HTML-parsed. Removed the now-unused `escapeHtml()` helper.
@@ -145,6 +146,22 @@ These two expectations contradict each other for the same formula shape (only th
 - Exporting a formula that depends on a hidden source column requires `includeHidden: true` so the source exists in the workbook.
 - Added regressions for reorder/hide runtime behavior, reordered Excel export, and hidden-column-inclusive export.
 
+## PR #2716 Checklist Review (2026-08-20)
+Completed checklist items now include:
+- Cypress E2E coverage for formula editing, reference insertion, autocomplete, token/grid colors, clipboard behavior, and formula evaluation.
+- Stronger selected-reference styling through persistent reference colors plus SelectionModel range highlighting, with CSS fallback.
+- Stable column/row references for reorder and hide scenarios while keeping A1 syntax in the editor.
+- Excel export conversion from stable references back to native A1 formulas, including export row offsets and included hidden columns.
+- Shared reference/color parsing between FormulaCellEditor and FormulaService.
+
+Still open:
+- Full unit-test coverage; current patch coverage is below 100%.
+- Grouping and grouped formula export.
+- Grid State/Preset persistence for formula references.
+- Drag-fill replication, whole-column drag-handle expansion, and calculated-column support.
+- A higher-level formula drag-handle integration test.
+- Optional strict selection-prerequisite mode.
+
 ## Latest Update: Formula Color Sync, Incomplete References, and Clipboard (2026-08-10)
 - Restored color-sync separation of concerns to prevent editor/grid mismatch regressions:
 	- persistent reference coloring is applied through `buildFormulaReferenceColorCache()` -> `applyFormulaReferenceCellColors()` on user input.
@@ -172,6 +189,7 @@ Why this mattered:
 - Covered empty-stat-function and SUMPRODUCT normalization branches; removed an unreachable nullish fallback after numeric normalization.
 - Added direct editor helper coverage for invalid ranges, reference-token resolution, insertion decisions, anchor selection, and cache no-op handling.
 - Added FormulaService date arithmetic and reference/literal edge-case coverage.
+- Added stable-reference regressions covering A1-to-ID canonicalization, column reorder/hide evaluation, range endpoints, reordered Excel export, and hidden-column-inclusive export.
 
 ## Known Constraints / Notes
 - Without a cell-capable selection model, range visuals fall back to CSS highlighting only.
@@ -187,6 +205,6 @@ Run:
 - cypress run --config-file test/cypress.config.ts --spec test/cypress/e2e/example47.cy.ts
 
 ## Suggested Next Items
+- Improve patch coverage for the formula service and editor branches.
 - Add optional strict mode in FormulaService to throw (instead of warn) when full selection prerequisites are required by product requirements.
 - Validate behavior with drag handle interactions from SlickHybridSelectionModel in a higher-level integration test.
-- Add docs snippet in user-facing formula plugin docs showing required selection options for range UX.
