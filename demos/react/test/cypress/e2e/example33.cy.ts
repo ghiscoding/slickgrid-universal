@@ -82,32 +82,30 @@ describe('Example 33 - Regular & Custom Tooltips', () => {
 
     cy.get('@task6-cell').trigger('mouseleave').trigger('mouseout');
     cy.get('h2').trigger('mouseover');
-    cy.wait(10);
+    cy.get('.slick-custom-tooltip').should('not.exist');
   });
 
   it('should mouse over Task 6 cell on "Start" column and expect a delayed tooltip opening via async process', () => {
-    cy.get('.slick-custom-tooltip').should('not.exist');
     cy.get('[data-row="2"] > .slick-cell:nth(8)').as('start6-cell');
     cy.get('@start6-cell').contains(/\d{4}-\d{2}-\d{2}$/); // use regexp to make sure it's a number
     cy.get('@start6-cell').trigger('mouseover');
 
-    cy.wait(10);
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').contains('Custom Tooltip');
+    cy.get('.slick-custom-tooltip').should('be.visible').and('contain', 'Custom Tooltip').as('start-tooltip');
 
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(0)').contains('Id:');
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(1)').contains('6');
+    cy.get('@start-tooltip').find('.tooltip-2cols-row:nth(0)').find('div:nth(0)').contains('Id:');
+    cy.get('@start-tooltip').find('.tooltip-2cols-row:nth(0)').find('div:nth(1)').contains('6');
 
-    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(0)').contains('Title:');
-    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(1)').contains('Task 6');
+    cy.get('@start-tooltip').find('.tooltip-2cols-row:nth(1)').find('div:nth(0)').contains('Title:');
+    cy.get('@start-tooltip').find('.tooltip-2cols-row:nth(1)').find('div:nth(1)').contains('Task 6');
 
-    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(0)').contains('Effort Driven:');
-    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(1)').should('be.empty');
+    cy.get('@start-tooltip').find('.tooltip-2cols-row:nth(2)').find('div:nth(0)').contains('Effort Driven:');
+    cy.get('@start-tooltip').find('.tooltip-2cols-row:nth(2)').find('div:nth(1)').should('be.empty');
 
-    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(0)').contains('Completion:');
-    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(1)').find('.mdi-check-circle-outline').should('exist');
+    cy.get('@start-tooltip').find('.tooltip-2cols-row:nth(3)').find('div:nth(0)').contains('Completion:');
+    cy.get('@start-tooltip').find('.tooltip-2cols-row:nth(3)').find('div:nth(1)').find('.mdi-check-circle-outline').should('exist');
 
-    cy.get('@start6-cell').trigger('mouseout');
+    cy.get('@start6-cell').trigger('mouseleave').trigger('mouseout');
+    cy.get('.slick-custom-tooltip').should('not.exist');
   });
 
   it('should mouse over 6th row Description and expect full cell content to show in a tooltip because cell has ellipsis and is too long for the cell itself', () => {
@@ -160,20 +158,19 @@ describe('Example 33 - Regular & Custom Tooltips', () => {
     cy.get('@duration2-cell').contains(/\d+\sday[s]?$/);
     cy.get('@duration2-cell').trigger('mouseover');
 
-    cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').contains('Custom Tooltip');
+    cy.get('.slick-custom-tooltip').should('be.visible').and('contain', 'Custom Tooltip').as('duration-tooltip');
 
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(0)').contains('Id:');
-    cy.get('.tooltip-2cols-row:nth(0)').find('div:nth(1)').contains('6');
+    cy.get('@duration-tooltip').find('.tooltip-2cols-row:nth(0)').find('div:nth(0)').contains('Id:');
+    cy.get('@duration-tooltip').find('.tooltip-2cols-row:nth(0)').find('div:nth(1)').contains('6');
 
-    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(0)').contains('Title:');
-    cy.get('.tooltip-2cols-row:nth(1)').find('div:nth(1)').contains('Task 6');
+    cy.get('@duration-tooltip').find('.tooltip-2cols-row:nth(1)').find('div:nth(0)').contains('Title:');
+    cy.get('@duration-tooltip').find('.tooltip-2cols-row:nth(1)').find('div:nth(1)').contains('Task 6');
 
-    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(0)').contains('Effort Driven:');
-    cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(1)').should('be.empty');
+    cy.get('@duration-tooltip').find('.tooltip-2cols-row:nth(2)').find('div:nth(0)').contains('Effort Driven:');
+    cy.get('@duration-tooltip').find('.tooltip-2cols-row:nth(2)').find('div:nth(1)').should('be.empty');
 
-    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(0)').contains('Completion:');
-    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(1)').find('.mdi-check-circle-outline').should('exist');
+    cy.get('@duration-tooltip').find('.tooltip-2cols-row:nth(3)').find('div:nth(0)').contains('Completion:');
+    cy.get('@duration-tooltip').find('.tooltip-2cols-row:nth(3)').find('div:nth(1)').find('.mdi-check-circle-outline').should('exist');
 
     cy.get('@duration2-cell').trigger('mouseout');
   });
