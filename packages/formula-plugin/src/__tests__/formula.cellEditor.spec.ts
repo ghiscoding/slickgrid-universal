@@ -3,6 +3,59 @@ import { describe, expect, it, vi } from 'vitest';
 import { FormulaCellEditor } from '../formula.cellEditor.js';
 
 describe('FormulaCellEditor', () => {
+  it('should display stable references as A1 while serializing the stable form', () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    document.body.appendChild(hostContainer);
+    document.body.appendChild(gridContainer);
+
+    const item = { id: 'a_01', total: '=REF(COLUMN("price"),ROW("a_01"))*REF(COLUMN("quantity"),ROW("a_01"))' };
+    const committed = vi.fn();
+    const gridStub = {
+      focus: () => undefined,
+      getActiveCell: () => ({ row: 0, cell: 2 }),
+      getColumns: () => [{ id: 'price' }, { id: 'quantity' }, { id: 'total' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({ editorNavigateOnArrows: false }),
+      removeCellCssStyles: () => undefined,
+      setCellCssStyles: () => undefined,
+    } as any;
+
+    const args = {
+      column: {
+        field: 'total',
+        editor: {
+          params: {
+            toDisplayFormula: (formula: string) =>
+              formula.replace(/REF\(COLUMN\("price"\),ROW\("a_01"\)\)/g, 'A1').replace(/REF\(COLUMN\("quantity"\),ROW\("a_01"\)\)/g, 'B1'),
+            toStoredFormula: (formula: string) =>
+              formula.replace('A1', 'REF(COLUMN("price"),ROW("a_01"))').replace('B1', 'REF(COLUMN("quantity"),ROW("a_01"))'),
+            onFormulaCommit: committed,
+          },
+        },
+      },
+      commitChanges: () => undefined,
+      container: hostContainer,
+      grid: gridStub,
+      item,
+      cancelChanges: () => undefined,
+    } as unknown as EditorArguments;
+
+    const editor = new FormulaCellEditor(args);
+    editor.loadValue(item);
+
+    expect(editor.serializeValue()).toBe(item.total);
+    expect((editor as any)._editorElm.textContent).toBe('=A1*B1');
+
+    editor.applyValue(item, editor.serializeValue());
+    expect(committed).toHaveBeenCalledWith(item.total, item);
+
+    editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+  });
+
   it('should keep editor open and suppress grid click after selecting a reference cell', () => {
     const hostContainer = document.createElement('div');
     const gridContainer = document.createElement('div');

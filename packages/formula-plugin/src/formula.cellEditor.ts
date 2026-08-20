@@ -13,6 +13,12 @@ export interface FormulaEditorParams {
   debug?: boolean;
   formulaFunctionList?: string[];
   onFormulaInputChange?: (formula: string) => void;
+  /** Convert the persisted formula to the user-facing A1 form when the editor opens. */
+  toDisplayFormula?: (formula: string, item?: any) => string;
+  /** Convert the user-facing A1 form to the persisted formula form on commit. */
+  toStoredFormula?: (formula: string, item?: any) => string;
+  /** Notify the formula service after a formula has been committed. */
+  onFormulaCommit?: (formula: string, item?: any) => void;
 }
 
 export class FormulaCellEditor implements Editor {
@@ -104,7 +110,9 @@ export class FormulaCellEditor implements Editor {
   loadValue(item: any): void {
     const field = this.args.column.field as string;
     const value = item?.[field] ?? '';
-    this._originalValue = String(value);
+    const editorParams = this.args.column.editor?.params as FormulaEditorParams | undefined;
+    const displayValue = editorParams?.toDisplayFormula?.(String(value), item) ?? String(value);
+    this._originalValue = displayValue;
     this._plainTextValue = this._originalValue; // Keep in sync
     this._editorElm.textContent = this._originalValue;
 
@@ -116,12 +124,15 @@ export class FormulaCellEditor implements Editor {
   }
 
   serializeValue(): string {
-    return this.getPlainTextValue();
+    const editorParams = this.args.column.editor?.params as FormulaEditorParams | undefined;
+    return editorParams?.toStoredFormula?.(this.getPlainTextValue(), this.args.item) ?? this.getPlainTextValue();
   }
 
   applyValue(item: any, state: any): void {
     const field = this.args.column.field as string;
     item[field] = state;
+    const editorParams = this.args.column.editor?.params as FormulaEditorParams | undefined;
+    editorParams?.onFormulaCommit?.(String(state ?? ''), item);
   }
 
   isValueChanged(): boolean {

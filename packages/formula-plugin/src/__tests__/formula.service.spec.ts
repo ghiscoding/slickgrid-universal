@@ -251,6 +251,127 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue(1, 'totalRef', items[0].totalRef, 0)).toBe(40);
   });
 
+  it('should canonicalize editor A1 references and remain stable after column reorder or hide', () => {
+    const service = new FormulaService();
+    const columns: Column[] = [
+      { id: 'product', field: 'product' },
+      { id: 'price', field: 'price' },
+      { id: 'quantity', field: 'quantity' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const items = [{ id: 'a_01', product: 'Apples', price: 1.2, quantity: 5, total: '=B1*C1' }];
+    const gridStub = {
+      getColumns: () => columns,
+      setColumns: (newCols: Column[]) => columns.splice(0, columns.length, ...newCols),
+      getData: () => ({ getItems: () => items, getLength: () => items.length }),
+      getOptions: () => ({ datasetIdPropertyName: 'id' }),
+    } as any;
+
+    service.init(gridStub);
+    service.setFormula('a_01', 'total', '=B1*C1');
+
+    expect(service.getFormula('a_01', 'total')).toBe('=REF(COLUMN("price"),ROW("a_01"))*REF(COLUMN("quantity"),ROW("a_01"))');
+    expect(service.getEvaluatedCellValue('a_01', 'total', items[0].total, 0)).toBe(6);
+
+    columns.splice(0, columns.length, columns[2], columns[0], columns[3], columns[1]);
+    expect(service.getEvaluatedCellValue('a_01', 'total', items[0].total, 0)).toBe(6);
+
+    columns.find((column) => column.id === 'product')!.hidden = true;
+    expect(service.getEvaluatedCellValue('a_01', 'total', items[0].total, 0)).toBe(6);
+  });
+
+  it('should canonicalize and evaluate A1 ranges with stable endpoint references', () => {
+    const service = new FormulaService();
+    const columns: Column[] = [
+      { id: 'product', field: 'product' },
+      { id: 'price', field: 'price' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const items = [
+      { id: 'a_01', product: 'Apples', price: 1.2, total: '=SUM(B1:B3)' },
+      { id: 'o_02', product: 'Oranges', price: 0.8, total: 0 },
+      { id: 'b_03', product: 'Bananas', price: 1.6, total: 0 },
+    ];
+    const gridStub = {
+      getColumns: () => columns,
+      setColumns: (newCols: Column[]) => columns.splice(0, columns.length, ...newCols),
+      getData: () => ({ getItems: () => items, getLength: () => items.length }),
+      getOptions: () => ({ datasetIdPropertyName: 'id' }),
+    } as any;
+
+    service.init(gridStub);
+    service.setFormula('a_01', 'total', '=SUM(B1:B3)');
+
+    expect(service.getFormula('a_01', 'total')).toBe('=SUM(REF(COLUMN("price"),ROW("a_01")):REF(COLUMN("price"),ROW("b_03")))');
+    expect(service.getEvaluatedCellValue('a_01', 'total', items[0].total, 0)).toBeCloseTo(3.6, 10);
+  });
+
+  it('should export stable references as native Excel A1 formulas using the export order', () => {
+    const service = new FormulaService();
+    const columns: Column[] = [
+      { id: 'price', field: 'price' },
+      { id: 'quantity', field: 'quantity' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const items = [{ id: 'a_01', price: 1.2, quantity: 5, total: '=A1*B1' }];
+    const gridStub = {
+      getColumns: () => columns,
+      setColumns: (_newCols: Column[]) => undefined,
+      getData: () => ({ getItems: () => items, getLength: () => items.length }),
+      getOptions: () => ({ datasetIdPropertyName: 'id' }),
+    } as any;
+
+    service.init(gridStub);
+    service.setFormula('a_01', 'total', '=A1*B1');
+    columns.splice(0, columns.length, columns[1], columns[0], columns[2]);
+
+    const context: FormulaExcelExportContext = {
+      columnId: 'total',
+      columnIds: ['quantity', 'price', 'total'],
+      dataRowIdx: 0,
+      datasetIdPropertyName: 'id',
+      excelRowOffset: 2,
+      gridOptions: {},
+      rowId: 'a_01',
+      rowIds: ['a_01'],
+    };
+
+    expect(service.getExcelFormula(context)).toBe('B2*A2');
+  });
+
+  it('should export stable references to hidden columns when hidden columns are included', () => {
+    const service = new FormulaService();
+    const columns: Column[] = [
+      { id: 'product', field: 'product', hidden: true },
+      { id: 'price', field: 'price' },
+      { id: 'quantity', field: 'quantity' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const items = [{ id: 'a_01', product: 'Apples', price: 1.2, quantity: 5, total: '=B1*C1' }];
+    const gridStub = {
+      getColumns: () => columns,
+      setColumns: (_newCols: Column[]) => undefined,
+      getData: () => ({ getItems: () => items, getLength: () => items.length }),
+      getOptions: () => ({ datasetIdPropertyName: 'id' }),
+    } as any;
+
+    service.init(gridStub);
+    service.setFormula('a_01', 'total', '=B1*C1');
+
+    const context: FormulaExcelExportContext = {
+      columnId: 'total',
+      columnIds: ['product', 'price', 'quantity', 'total'],
+      dataRowIdx: 0,
+      datasetIdPropertyName: 'id',
+      excelRowOffset: 2,
+      gridOptions: {},
+      rowId: 'a_01',
+      rowIds: ['a_01'],
+    };
+
+    expect(service.getExcelFormula(context)).toBe('B2*C2');
+  });
+
   it('should shift direct A1 references by excelRowOffset during export', () => {
     const gridStub = {
       getData: vi.fn().mockReturnValue({}),

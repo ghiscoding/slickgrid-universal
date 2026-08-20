@@ -360,13 +360,6 @@ export default class Example47 {
         maxDecimal: 2,
         minDecimal: 2,
       },
-
-      // column reorder and visibility will probably fail, let's disable for now
-      enableColumnReorder: false,
-      enableColumnPicker: false,
-      enableGridMenu: false,
-      enableHeaderMenu: false,
-
       enableGrouping: true,
       enableFormulas: true,
       enableExcelExport: true,

@@ -92,6 +92,14 @@ Highlight behavior:
 - preferred: selection-model highlights through `setSelectedRanges(...)`
 - fallback: CSS highlights through `setCellCssStyles(...)`
 
+Formula reference storage:
+- the editor displays familiar Excel A1 references such as `C1` and `D1:D3`
+- committed formulas are stored with stable column and row identities, for example `REF(COLUMN("price"),ROW("a_01"))`
+- this keeps references aligned when columns are reordered or hidden and when rows are sorted
+- `ExcelExportService` converts the stable references back to native Excel A1 formulas using the exported column and row order
+
+When a formula references a hidden source column, export it with `includeHidden: true` so the referenced column exists in the workbook. If the source column is omitted from the export, Excel cannot evaluate a formula that points to it.
+
 ### Runtime API at a Glance
 Frequently used methods:
 - `setFormula(rowId, columnId, formula)`

@@ -1,6 +1,6 @@
 # Formula Editor Plugin Progress
 
-Last updated: 2026-08-15 (shared formula-reference parser + saved-formula reopen color-order fix + regression coverage)
+Last updated: 2026-08-20 (stable AG-style formula references with A1 editor display + Excel export coverage)
 Branch context: feat/cell-formula-plugin
 
 ## Maintenance Rule
@@ -59,8 +59,8 @@ Why this mattered:
 - excelCustomFunctions is required for workbook-level export so Excel can resolve names/functions and avoid #NAME? (on Excel versions supporting LAMBDA).
 
 ## Latest Update: Example 46 Dark Mode Editor Background (2026-08-06)
-- Fixed dark mode editor background mismatch in demo example46 by switching formula editor background to use --slick-text-editor-background.
-- Added local variable overrides in example46:
+- Fixed dark mode editor background mismatch in demo example47 by switching formula editor background to use --slick-text-editor-background.
+- Added local variable overrides in example47:
 	- light mode: --slick-text-editor-background: #fff
 	- dark mode: --slick-text-editor-background: #111827
 - Added dark-mode selected editable cell color override:
@@ -69,7 +69,7 @@ Why this mattered:
 
 ## Latest Update: Formula Token Styling (2026-08-06)
 - Updated formula token appearance to match Excel/AG Grid behavior: text color only.
-- Removed token chip styling (border/background) from shared plugin styles and example46 demo token overrides.
+- Removed token chip styling (border/background) from shared plugin styles and example47 demo token overrides.
 - This avoids visual conflict when selecting formula text (for example Ctrl+A in editor).
 
 ## Latest Update: Ctrl+A Event Scope (2026-08-06)
@@ -78,11 +78,11 @@ Why this mattered:
 - This prevents SlickGrid from receiving the event and selecting all grid cells while formula editor is focused.
 
 ## Latest Update: Formula Style Portability (2026-08-06)
-- Moved base formula editor styling from demo-level example46 stylesheet into shared plugin styles:
+- Moved base formula editor styling from demo-level example47 stylesheet into shared plugin styles:
 	- .formula-editor-input
 	- .formula-token
 - Added shared CSS variables for formula editor border/focus/text colors with dark-mode defaults.
-- Kept only demo-specific visual overrides in example46 (for example row colors and local editor background/selected editable color vars).
+- Kept only demo-specific visual overrides in example47 (for example row colors and local editor background/selected editable color vars).
 
 ## Tests Added/Updated
 `src/__tests__/formula.cellEditor.spec.ts` covers:
@@ -123,7 +123,7 @@ These two expectations contradict each other for the same formula shape (only th
 ## Latest Update: Grouping Limitation Note (2026-08-06)
 - Grouping + FormulaService is **not fully supported yet**.
 - Grouping/Grouping Formatter scenarios can still show incorrect or unstable formula behavior.
-- `example46` includes grouping, but known grouping-related bugs remain.
+- `example47` includes grouping, but known grouping-related bugs remain.
 - Concrete issue: when grouping inserts extra group rows (for example group headers/totals), formula references are not remapped to account for the inserted rows, so A1 references can point to the wrong cells (row offset drift).
 - Excel export for grouped formula scenarios is also not yet fully complete.
 - Plan: keep grouping support as a follow-up task and fix it in a dedicated pass later.
@@ -136,12 +136,14 @@ These two expectations contradict each other for the same formula shape (only th
 - Root cause was a single-reference fallback path that replaced the lone token even when caret context indicated a new argument expression.
 - Fix: when no token is active at caret and caret follows an argument operator/delimiter (`=`, `(`, `,`, `+`, `-`, `*`, `/`, `^`, `&`, `:`), editor now inserts at caret instead of replacing the existing reference token.
 
-## Latest Update: Column Reorder/Hide Offset Risk Note (2026-08-06)
-- Added a forward-looking risk note for formula stability with column visibility/order changes.
-- Most probable issue: if a column is hidden or moved (for example via Column Picker or Grid Menu), formulas that rely on A1-style column letters can become offset/misaligned from intended source columns.
-- Current status: not fully validated/fixed yet.
-- Plan: revisit in a dedicated pass with explicit handling/tests for column hide/show and column reorder scenarios.
-- Modified grid option to include: `{ enableColumnReorder: false, enableColumnPicker: false, enableGridMenu: false, enableHeaderMenu: false }` in example46
+## Latest Update: Stable Column/Row References (2026-08-20)
+- This risk is addressed for formulas committed through FormulaService.
+- The editor continues to display A1 references, while committed formulas use stable `REF(COLUMN("columnId"),ROW("rowId"))` references.
+- Runtime evaluation resolves stable references against the full logical column list, including hidden columns.
+- Excel export converts stable references to native A1 formulas using the exported column and row order.
+- Legacy A1 formulas are canonicalized when the service has the current grid column and row identities.
+- Exporting a formula that depends on a hidden source column requires `includeHidden: true` so the source exists in the workbook.
+- Added regressions for reorder/hide runtime behavior, reordered Excel export, and hidden-column-inclusive export.
 
 ## Latest Update: Formula Color Sync, Incomplete References, and Clipboard (2026-08-10)
 - Restored color-sync separation of concerns to prevent editor/grid mismatch regressions:
