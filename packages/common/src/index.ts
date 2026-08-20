@@ -1,4 +1,4 @@
-import * as Utils from '@slickgrid-universal/utils';
+import * as ExternalUtils from '@slickgrid-universal/utils';
 import * as BackendUtilities from './services/backendUtility.service.js';
 import * as Observers from './services/observers.js';
 import * as ServiceUtilities from './services/utilities.js';
@@ -43,8 +43,8 @@ const Utilities: any = {
   ...Observers,
   ...ServiceUtilities,
   ...SortUtilities,
-  ...Utils,
-  deepAssign: Utils.deepMerge,
+  ...ExternalUtils,
+  deepAssign: ExternalUtils.deepMerge,
 };
 export { Utilities };
 export { SlickgridConfig } from './slickgrid-config.js';

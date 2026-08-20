@@ -325,7 +325,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       it('should go to the bottom end of the grid and open row 987', () => {
         cy.get('#grid45').type('{ctrl}{end}', { release: false });
 
-        cy.get('.slick-row[data-row=1001] .detail-view-toggle').first().click();
+        cy.get('.slick-row[data-row=1001] .slick-cell.detail-view-toggle').click();
 
         cy.get('#innergrid-987 .search-filter.filter-orderId').as('orderIdSearch');
         cy.get('@orderIdSearch').clear();
