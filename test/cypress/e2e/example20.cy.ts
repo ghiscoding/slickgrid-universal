@@ -130,7 +130,10 @@ describe('Example 20 - Row Detail View', () => {
     cy.get('@detailContainer1').find('h4').contains('Task 1');
     cy.get('.grid20')
       .contains('.slick-row .slick-cell', /^Task 5$/)
-      .click();
+      .closest('.slick-row')
+      .find('.slick-cell.detail-view-toggle')
+      .click()
+      .wait(40);
     cy.get('.grid20').find('.dynamic-cell-detail .innerDetailView_5').as('detailContainer5');
     cy.get('@detailContainer5').find('h4').contains('Task 5');
 
@@ -261,7 +264,7 @@ describe('Example 20 - Row Detail View', () => {
           (_index, row) =>
             row.querySelector('.cell-title')?.textContent?.trim() === 'Task 9' && !!row.querySelector('.detail-view-toggle .sgi')
         )
-        .find('.detail-view-toggle')
+        .find('.slick-cell.detail-view-toggle')
         .click();
 
     clickTask9Toggle();
