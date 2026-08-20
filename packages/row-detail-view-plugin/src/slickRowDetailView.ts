@@ -70,6 +70,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected _renderedIds: Set<number | string> = new Set();
   protected _overlayHosts: Map<HTMLElement, HTMLDivElement> = new Map();
   protected _overlayPanels: Map<number | string, HTMLDivElement> = new Map();
+  protected _pendingAsyncEndUpdates: Map<number | string, { eventData: SlickEventData; item: any; isDataViewUpdated: boolean }> = new Map();
+  protected _isUpdatingAsyncResponse = false;
   protected _visibleRenderedCell?: { startRow: number; endRow: number };
   protected _backViewportTimer: any;
   protected _defaults = {
@@ -136,11 +138,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     return this._addonOptions?.renderMode === 'overlay';
   }
 
-  /** Framework adapters override this when they own the mounted overlay DOM. */
-  protected shouldPreserveOverlay(): boolean {
-    return false;
-  }
-
   set rowIdsOutOfViewport(rowIds: Array<string | number>) {
     this._rowIdsOutOfViewport = new Set(rowIds);
   }
@@ -192,6 +189,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     });
 
     this._eventHandler.subscribe(this.dataView.onRowsChanged, (_e, args) => {
+      // A suspended DataView only emits this event when endUpdate() releases its
+      // accumulated changes. Pending details are safe to finish on the grid render
+      // caused by this notification, not on an unrelated render in the meantime.
+      this._pendingAsyncEndUpdates.forEach((pendingUpdate) => (pendingUpdate.isDataViewUpdated = true));
+
       const cachedRows = Object.keys(this._grid.getRowCache()).map(Number);
       const toInvalidateRows: number[] = [];
       const intersectedRows = args.rows.filter((nb) => cachedRows.includes(nb));
@@ -228,10 +230,12 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this._dataViewIdProperty = this.dataView.getIdPropertyName() || 'id';
     });
 
-    this._eventHandler.subscribe(this._grid.onRendered, () => this.isOverlayRenderMode && this.renderOverlayPanels());
-    if (this.isOverlayRenderMode) {
-      queueMicrotask(() => this.renderOverlayPanels());
-    }
+    this._eventHandler.subscribe(this._grid.onRendered, () => {
+      this.isOverlayRenderMode && this.renderOverlayPanels();
+      if (!this._isUpdatingAsyncResponse) {
+        this.flushPendingAsyncEndUpdates();
+      }
+    });
   }
 
   /** Dispose of the Slick Row Detail View */
@@ -241,6 +245,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this._expandedRowIds.clear();
     this._rowIdsOutOfViewport.clear();
     this._renderedViewportRowIds.clear();
+    this._pendingAsyncEndUpdates.clear();
     clearTimeout(this._backViewportTimer);
   }
 
@@ -350,7 +355,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** Expand a row given the dataview item that is to be expanded */
   expandDetailView(itemId: number | string): void {
     const item = this.dataView.getItemById(itemId);
-    if (item) {
+    if (item && !item[`${this._keyPrefix}isPadding`]) {
       if (this._addonOptions?.singleRowExpand) {
         this.collapseAll();
       }
@@ -426,40 +431,27 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     // get item detail argument
     const itemDetail = args.item;
-    const shouldPreserveOverlay = this.shouldPreserveOverlay();
-    if (!shouldPreserveOverlay) {
-      this.removeOverlayPanel(itemDetail[this._dataViewIdProperty]);
-    }
+    const itemId = itemDetail[this._dataViewIdProperty];
+    this.beforeDetailViewRender(itemDetail);
 
     // if we just want to load in a view directly we can use detailView property to do so
     itemDetail[`${this._keyPrefix}detailContent`] = args.detailView ?? this._addonOptions?.postTemplate?.(itemDetail);
     itemDetail[`${this._keyPrefix}detailViewLoaded`] = true;
-    this.dataView.updateItem(itemDetail[this._dataViewIdProperty], itemDetail);
-    // A framework adapter may mount its nested component from onAsyncEndUpdate before
-    // the grid's onRendered event is emitted. Ensure the post-template overlay exists
-    // before notifying adapters so their mount target is connected to the DOM.
-    this.isOverlayRenderMode && !shouldPreserveOverlay && this.renderOverlayPanels();
-
-    // trigger an event once the post template is finished loading
-    this._renderedIds.add(itemDetail[this.dataViewIdProperty]);
-    const notifyAsyncEndUpdate = () =>
-      this.onAsyncEndUpdate.notify(
-        {
-          grid: this._grid,
-          item: itemDetail,
-        },
-        e,
-        this
-      );
-
-    // Overlay panels are mounted from the grid's onRendered event. Defer framework
-    // callbacks by one microtask so custom adapters can safely find the post-template
-    // container before mounting nested components.
-    if (this.isOverlayRenderMode) {
-      queueMicrotask(notifyAsyncEndUpdate);
-    } else {
-      notifyAsyncEndUpdate();
+    // DataView updates can be suspended by beginUpdate()/endUpdate(). Keep the response
+    // pending before updateItem() so onRowsChanged can identify when that update is
+    // released and the following grid render can safely mount the framework view.
+    this._pendingAsyncEndUpdates.set(itemId, {
+      eventData: e,
+      item: itemDetail,
+      isDataViewUpdated: false,
+    });
+    this._isUpdatingAsyncResponse = true;
+    try {
+      this.dataView.updateItem(itemDetail[this._dataViewIdProperty], itemDetail);
+    } finally {
+      this._isUpdatingAsyncResponse = false;
     }
+    this.flushPendingAsyncEndUpdates();
   }
 
   /**
@@ -642,6 +634,43 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   // protected functions
   // ------------------
 
+  /** Framework adapters can synchronously dispose their preload/current view before SlickGrid replaces its template. */
+  protected beforeDetailViewRender(_item: any): void {}
+
+  /** Framework adapters can mount their view after SlickGrid rendered. */
+  protected renderDetailView(_item: any): void | Promise<void> {}
+
+  /** Complete pending async responses only after SlickGrid has finished its actual render cycle. */
+  protected flushPendingAsyncEndUpdates(): void {
+    for (const [itemId, { eventData, item, isDataViewUpdated }] of this._pendingAsyncEndUpdates) {
+      if (!isDataViewUpdated) {
+        continue;
+      }
+      this._pendingAsyncEndUpdates.delete(itemId);
+      this._renderedIds.add(itemId);
+      if (this.isOverlayRenderMode) {
+        this.refreshOverlayPanel(item);
+      }
+
+      const renderResult = this.renderDetailView(item);
+      const notifyAsyncEndUpdate = () =>
+        this.onAsyncEndUpdate.notify(
+          {
+            grid: this._grid,
+            item,
+          },
+          eventData,
+          this
+        );
+
+      if (renderResult instanceof Promise) {
+        void renderResult.then(notifyAsyncEndUpdate);
+      } else {
+        notifyAsyncEndUpdate();
+      }
+    }
+  }
+
   /** Render all expanded panels in sibling overlay layers of their grid canvases. */
   protected renderOverlayPanels(): void {
     if (!this.isOverlayRenderMode || !this._grid) {
@@ -729,7 +758,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     // Keep the outer panel node stable while a framework adapter transitions from
     // its preload component to the real detail component. Replacing the panel
     // itself can detach a React/Vue/Angular tree in the middle of its commit.
-    const innerDetailView = panel.querySelector<HTMLElement>(`.innerDetailView_${itemId}`);
+    const innerDetailView = panel.getElementsByClassName(`innerDetailView_${itemId}`).item(0) as HTMLElement | null;
     if (innerDetailView) {
       this.renderDetailContent(innerDetailView, item);
     }
@@ -830,6 +859,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   protected checkExpandableOverride(row: number, dataContext: any, grid: SlickGrid): boolean {
+    if (dataContext?.[`${this._keyPrefix}isPadding`]) {
+      return false;
+    }
     if (typeof this._expandableOverride === 'function') {
       return this._expandableOverride(row, dataContext, grid);
     }
@@ -868,46 +900,43 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   ): FormatterResultWithHtml | HTMLElement | '' {
     if (!this.checkExpandableOverride(row, dataContext, grid)) {
       return '';
-    } else {
-      if (dataContext[`${this._keyPrefix}collapsed`] === undefined) {
-        dataContext[`${this._keyPrefix}collapsed`] = true;
-        dataContext[`${this._keyPrefix}sizePadding`] = 0; // the required number of pading rows
-        dataContext[`${this._keyPrefix}height`] = 0; // the actual height in pixels of the detail field
-        dataContext[`${this._keyPrefix}isPadding`] = false;
-        dataContext[`${this._keyPrefix}parent`] = undefined;
-        dataContext[`${this._keyPrefix}offset`] = 0;
+    }
+
+    if (dataContext[`${this._keyPrefix}collapsed`] === undefined) {
+      dataContext[`${this._keyPrefix}collapsed`] = true;
+      dataContext[`${this._keyPrefix}sizePadding`] = 0; // the required number of pading rows
+      dataContext[`${this._keyPrefix}height`] = 0; // the actual height in pixels of the detail field
+      dataContext[`${this._keyPrefix}isPadding`] = false;
+      dataContext[`${this._keyPrefix}parent`] = undefined;
+      dataContext[`${this._keyPrefix}offset`] = 0;
+    }
+
+    if (dataContext[`${this._keyPrefix}collapsed`]) {
+      let collapsedClasses = `sgi ${this._addonOptions.cssClass || ''} expand `;
+      if (this._addonOptions.collapsedClass) {
+        collapsedClasses += this._addonOptions.collapsedClass;
       }
+      return createDomElement('div', { className: classNameToList(collapsedClasses).join(' '), ariaExpanded: 'false' });
+    }
 
-      if (dataContext[`${this._keyPrefix}isPadding`]) {
-        // render nothing
-      } else if (dataContext[`${this._keyPrefix}collapsed`]) {
-        let collapsedClasses = `sgi ${this._addonOptions.cssClass || ''} expand `;
-        if (this._addonOptions.collapsedClass) {
-          collapsedClasses += this._addonOptions.collapsedClass;
-        }
-        return createDomElement('div', { className: classNameToList(collapsedClasses).join(' '), ariaExpanded: 'false' });
-      } else {
-        let expandedClasses = `sgi ${this._addonOptions.cssClass || ''} collapse `;
-        if (this._addonOptions.expandedClass) {
-          expandedClasses += this._addonOptions.expandedClass;
-        }
+    let expandedClasses = `sgi ${this._addonOptions.cssClass || ''} collapse `;
+    if (this._addonOptions.expandedClass) {
+      expandedClasses += this._addonOptions.expandedClass;
+    }
 
-        const result: FormatterResultWithHtml = {
-          html: createDomElement('div', { className: classNameToList(expandedClasses).join(' '), ariaExpanded: 'true' }),
-        };
+    const result: FormatterResultWithHtml = {
+      html: createDomElement('div', { className: classNameToList(expandedClasses).join(' '), ariaExpanded: 'true' }),
+    };
 
-        // @deprecated v11: always mount the detail panel in the overlay layer.
-        if (!this.isOverlayRenderMode) {
-          const detailPanel = this.createDetailViewElement(dataContext, row);
-          if (detailPanel) {
-            result.insertElementAfterTarget = detailPanel;
-          }
-        }
-
-        return result;
+    // @deprecated v11: always mount the detail panel in the overlay layer.
+    if (!this.isOverlayRenderMode) {
+      const detailPanel = this.createDetailViewElement(dataContext, row);
+      if (detailPanel) {
+        result.insertElementAfterTarget = detailPanel;
       }
     }
-    return '';
+
+    return result;
   }
 
   /** When row is getting toggled, we will handle the action of collapsing/expanding */
