@@ -40,8 +40,14 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
     super(eventPubSubService);
   }
 
-  protected override shouldPreserveOverlay(): boolean {
-    return true;
+  protected override beforeDetailViewRender(item: any): void {
+    this._preloadController?.dispose();
+    this._preloadController = undefined;
+    this.disposeView(item);
+  }
+
+  protected override renderDetailView(item: any): Promise<void> {
+    return this.renderViewModel(item);
   }
 
   get addonOptions() {
@@ -137,21 +143,10 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
             }
           });
 
-          this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
-            // dispose preload if exists
-            this._preloadController?.dispose();
-            this.disposeView(args?.item);
-            this.refreshOverlayPanel(args?.item);
-
-            // triggers after backend called "onAsyncResponse.notify()"
-            // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
-            queueMicrotask(async () => {
-              await this.renderViewModel(args?.item);
-
-              if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
-                this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
-              }
-            });
+          this._eventHandler.subscribe(this.onAsyncEndUpdate, (event, args) => {
+            if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
+              this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
+            }
           });
 
           this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {
@@ -206,13 +201,10 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
           // we need to redraw the open detail views if we change column position (column reorder)
           this._eventHandler.subscribe(this._grid.onColumnsReordered, this.redrawAllViewSlots.bind(this, false));
 
-          // Aurelia's view update can complete one render cycle after SlickGrid
-          // has rebuilt rows (notably with autoHeight). Re-evaluate the overlay
-          // viewport after that DOM pass so a detail that returned to view is
-          // given its back-to-viewport callback and its inner grid can mount.
+          // Re-evaluate the overlay after SlickGrid has rebuilt its rows.
           this._eventHandler.subscribe(this._grid.onRendered, () => {
             if (this.isOverlayRenderMode) {
-              queueMicrotask(() => this.recalculateOutOfRangeViews(true, 0));
+              this.recalculateOutOfRangeViews(true, 0);
             }
           });
 

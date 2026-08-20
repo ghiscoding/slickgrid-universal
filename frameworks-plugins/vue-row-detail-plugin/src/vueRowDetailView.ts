@@ -44,8 +44,18 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     super(eventPubSubService);
   }
 
-  protected override shouldPreserveOverlay(): boolean {
-    return true;
+  protected override beforeDetailViewRender(item: any): void {
+    if (this._preloadApp) {
+      this._preloadApp.unmount();
+      this._preloadElement?.remove();
+      this._preloadApp = undefined;
+      this._preloadElement = undefined;
+    }
+    this.disposeViewByItem(item);
+  }
+
+  protected override renderDetailView(item: any): void {
+    this.renderViewModel(item);
   }
 
   get addonOptions() {
@@ -152,26 +162,10 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
             }
           });
 
-          this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
-            // unmount preload if exists AND remove it from DOM
-            if (this._preloadApp) {
-              this._preloadApp.unmount();
-              this._preloadElement?.remove();
-              this._preloadApp = undefined;
-              this._preloadElement = undefined;
+          this._eventHandler.subscribe(this.onAsyncEndUpdate, (event, args) => {
+            if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
+              this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
             }
-            this.disposeViewByItem(args?.item);
-            this.refreshOverlayPanel(args?.item);
-
-            // triggers after backend called "onAsyncResponse.notify()"
-            // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
-            queueMicrotask(async () => {
-              await this.renderViewModel(args?.item);
-
-              if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
-                this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
-              }
-            });
           });
 
           this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {

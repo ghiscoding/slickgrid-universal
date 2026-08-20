@@ -44,8 +44,14 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
     super(eventPubSubService);
   }
 
-  protected override shouldPreserveOverlay(): boolean {
-    return true;
+  protected override beforeDetailViewRender(item: any): void {
+    this._preloadRoot?.unmount();
+    this._preloadRoot = undefined;
+    this.disposeViewByItem(item);
+  }
+
+  protected override renderDetailView(item: any): void {
+    this.renderViewModel(item);
   }
 
   get addonOptions() {
@@ -152,25 +158,10 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
             }
           });
 
-          this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
-            // dispose preload if exists
-            this._preloadRoot?.unmount();
-            this._preloadRoot = undefined;
-            // An async response can replace an already-rendered detail panel. Unmount the
-            // previous React tree before the overlay panel is recreated, otherwise the next
-            // render would call createRoot() on the same container twice.
-            this.disposeViewByItem(args?.item);
-            this.refreshOverlayPanel(args?.item);
-
-            // triggers after backend called "onAsyncResponse.notify()"
-            // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
-            queueMicrotask(() => {
-              this.renderViewModel(args?.item);
-
-              if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
-                this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
-              }
-            });
+          this._eventHandler.subscribe(this.onAsyncEndUpdate, (event, args) => {
+            if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
+              this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
+            }
           });
 
           this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {
