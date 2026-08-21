@@ -5,6 +5,7 @@
 - [Minimum Column Setup](#minimum-column-setup)
 - [Core Options](#core-options)
 - [Formula Editor and References](#formula-editor-and-references)
+- [Formula Drag-Fill](#formula-drag-fill)
 - [Runtime API at a Glance](#runtime-api-at-a-glance)
 - [Evaluation and Export Summary](#evaluation-and-export-summary)
 - [Troubleshooting](#troubleshooting)
@@ -99,6 +100,21 @@ Formula reference storage:
 - `ExcelExportService` converts the stable references back to native Excel A1 formulas using the exported column and row order
 
 When a formula references a hidden source column, export it with `includeHidden: true` so the referenced column exists in the workbook. If the source column is omitted from the export, Excel cannot evaluate a formula that points to it.
+
+### Formula Drag-Fill
+
+With cell-capable selection enabled, Formula Service handles the `.slick-drag-replace-handle` automatically for formula-enabled columns.
+
+- formulas shift relative A1 references while keeping absolute reference parts fixed
+- one static source value is copied
+- multiple numeric source values continue as a linear progression
+- string or mixed source values repeat in source order
+
+This matches the common defaults documented by [AG Grid's fill handle](https://www.ag-grid.com/javascript-data-grid/cell-selection-fill-handle/). Series inference is implemented inside the optional formula-plugin package, so grids that do not register Formula Service do not include this behavior.
+
+Use `autoEdit: false` when combining formula editing and drag-fill. A single click selects the formula cell and exposes the drag handle; double-click the cell when you want to open the formula editor.
+
+Modifier-key copy/increment toggles, custom fill callbacks, range-reduction clearing, and double-click fill are not currently implemented.
 
 ### Runtime API at a Glance
 Frequently used methods:

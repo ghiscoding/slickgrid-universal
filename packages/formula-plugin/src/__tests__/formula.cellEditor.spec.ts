@@ -649,6 +649,11 @@ describe('FormulaCellEditor', () => {
     expect(writeTextSpy).toHaveBeenNthCalledWith(2, '=SUM(A1 + B1)');
     expect(editor.serializeValue()).toBe('');
 
+    writeTextSpy.mockRejectedValueOnce(new Error('clipboard unavailable'));
+    (editor as any)._editorElm.dispatchEvent(new KeyboardEvent('keydown', { key: 'c', ctrlKey: true, bubbles: true, cancelable: true }));
+    writeTextSpy.mockRejectedValueOnce(new Error('clipboard unavailable'));
+    (editor as any)._editorElm.dispatchEvent(new KeyboardEvent('keydown', { key: 'x', ctrlKey: true, bubbles: true, cancelable: true }));
+
     await Promise.resolve();
 
     editor.destroy();
@@ -881,5 +886,253 @@ describe('FormulaCellEditor', () => {
     editor.destroy();
     hostContainer.remove();
     gridContainer.remove();
+  });
+
+  it('should cover paste, keyboard navigation, and editor lifecycle guards', () => {
+    vi.useFakeTimers();
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    document.body.append(hostContainer, gridContainer);
+    const focusSpy = vi.fn();
+    const commitCurrentEdit = vi.fn(() => true);
+    const navigateNext = vi.fn();
+    const navigatePrev = vi.fn();
+    const cancelChanges = vi.fn();
+    const gridStub = {
+      focus: focusSpy,
+      getActiveCell: () => ({ row: 0, cell: 0 }),
+      getCellFromEvent: () => null,
+      getColumns: () => [{ id: 'a' }, { id: 'b' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit }),
+      getOptions: () => ({ editorNavigateOnArrows: false }),
+      navigateNext,
+      navigatePrev,
+      removeCellCssStyles: vi.fn(),
+      setCellCssStyles: vi.fn(),
+    } as any;
+
+    const editor = new FormulaCellEditor({
+      column: { field: 'total', editor: { params: { formulaFunctionList: ['SUM'] } } },
+      commitChanges: vi.fn(),
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1' },
+      cancelChanges,
+    } as unknown as EditorArguments);
+    editor.loadValue({ total: '=A1' });
+
+    editor.focus();
+    expect(editor.validate()).toEqual({ valid: true, msg: '' });
+    expect(editor.isValueChanged()).toBe(false);
+
+    const execCommandSpy = vi.fn().mockReturnValue(true);
+    Object.defineProperty(document, 'execCommand', { configurable: true, value: execCommandSpy });
+    (editor as any).handlePaste({
+      preventDefault: vi.fn(),
+      clipboardData: { getData: () => '+B1' },
+    });
+    expect(execCommandSpy).toHaveBeenCalledWith('insertText', false, '+B1');
+
+    (editor as any)._editorElm.textContent = '=su';
+    (editor as any).restoreCaretOffset(3);
+    (editor as any).handleInput();
+    (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'ArrowUp', cancelable: true }));
+    (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'Escape', cancelable: true }));
+
+    (editor as any)._autocompleteItems = [];
+    (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'ArrowLeft', cancelable: true }));
+    (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'Enter', cancelable: true }));
+    expect(commitCurrentEdit).toHaveBeenCalledTimes(1);
+    editor.destroy();
+
+    const invalidRangeEditor = new FormulaCellEditor({
+      column: { field: 'total' },
+      commitChanges: vi.fn(),
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1:B' },
+      cancelChanges: vi.fn(),
+    } as unknown as EditorArguments);
+    invalidRangeEditor.loadValue({ total: '=A1:B' });
+    (invalidRangeEditor as any).restoreCaretOffset(5);
+    (invalidRangeEditor as any).handleInput();
+    (invalidRangeEditor as any)._referenceEditRange = undefined;
+    (invalidRangeEditor as any)._plainTextValue = '=1+A1';
+    (invalidRangeEditor as any)._editorElm.textContent = '=1+A1';
+    (invalidRangeEditor as any).restoreCaretOffset(2);
+    expect((invalidRangeEditor as any).resolveReferenceEditRangeForGridSelection()).toEqual({ start: 3, end: 5 });
+    invalidRangeEditor.destroy();
+
+    // A newly opened editor from Tab ignores the initial untouched Tab blur.
+    const tabEditor = new FormulaCellEditor({
+      event: new KeyboardEvent('keydown', { key: 'Tab' }),
+      column: { field: 'total' },
+      commitChanges: vi.fn(),
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1' },
+      cancelChanges: vi.fn(),
+    } as unknown as EditorArguments);
+    tabEditor.loadValue({ total: '=A1' });
+    (tabEditor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'Tab', cancelable: true }));
+    expect(navigateNext).not.toHaveBeenCalled();
+    tabEditor.destroy();
+
+    // A changed editor commits and navigates in both directions after the timer.
+    const navigateEditor = new FormulaCellEditor({
+      column: { field: 'total' },
+      commitChanges: vi.fn(),
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1' },
+      cancelChanges,
+    } as unknown as EditorArguments);
+    navigateEditor.loadValue({ total: '=A1' });
+    (navigateEditor as any)._isValueTouched = true;
+    (navigateEditor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, cancelable: true }));
+    vi.runAllTimers();
+    expect(navigatePrev).toHaveBeenCalled();
+    navigateEditor.destroy();
+
+    const escapeEditor = new FormulaCellEditor({
+      column: { field: 'total' },
+      commitChanges: vi.fn(),
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1' },
+      cancelChanges,
+    } as unknown as EditorArguments);
+    escapeEditor.loadValue({ total: '=A1' });
+    (escapeEditor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'Escape', cancelable: true }));
+    expect(cancelChanges).toHaveBeenCalled();
+    escapeEditor.destroy();
+
+    delete (document as any).execCommand;
+    hostContainer.remove();
+    gridContainer.remove();
+    vi.useRealTimers();
+  });
+
+  it('should cover focus, commit fallback, pointer guards, and reference-sync cleanup', () => {
+    vi.useFakeTimers();
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    const gridCell = document.createElement('div');
+    gridContainer.appendChild(gridCell);
+    document.body.append(hostContainer, gridContainer);
+    let commitResult = false;
+    let eventCell: { row: number; cell: number } | null = null;
+    const commitChanges = vi.fn();
+    const navigateNext = vi.fn();
+    const gridStub = {
+      focus: vi.fn(),
+      getActiveCell: () => ({ row: 0, cell: 0 }),
+      getCellFromEvent: () => eventCell,
+      getColumns: () => [{ id: 'a' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => commitResult }),
+      getOptions: () => ({ editorNavigateOnArrows: false }),
+      navigateNext,
+      navigatePrev: vi.fn(),
+      removeCellCssStyles: vi.fn(),
+      setCellCssStyles: vi.fn(),
+    } as any;
+    const editor = new FormulaCellEditor({
+      column: { field: 'total', editor: { params: { formulaFunctionList: ['SUM'] } } },
+      commitChanges,
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1' },
+      cancelChanges: vi.fn(),
+    } as unknown as EditorArguments);
+    editor.loadValue({ total: '=A1' });
+
+    (editor as any).handleFocusIn();
+    (editor as any)._initialLoadComplete = true;
+    (editor as any).handleFocusIn();
+    (editor as any).handleEditorKeyUp();
+    (editor as any).handleEditorMouseUp();
+    (editor as any).handleFocusOut(new FocusEvent('focusout', { relatedTarget: null }));
+    vi.runAllTimers();
+    (editor as any)._isExitingEditor = true;
+    (editor as any).handleFocusOut(new FocusEvent('focusout', { relatedTarget: null }));
+    (editor as any)._isExitingEditor = false;
+    (editor as any)._suppressInitialTabBlur = false;
+    (editor as any).ensureAutocompleteElement();
+    (editor as any).handleFocusOut(new FocusEvent('focusout', { relatedTarget: null }));
+    (editor as any)._suppressInitialTabBlur = true;
+    (editor as any)._isValueTouched = false;
+    (editor as any).handleFocusOut(new FocusEvent('focusout', { relatedTarget: null }));
+    (editor as any)._isDestroyed = true;
+    vi.runAllTimers();
+    (editor as any)._isDestroyed = false;
+
+    (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'Enter', cancelable: true }));
+    expect(commitChanges).toHaveBeenCalled();
+    (editor as any)._isExitingEditor = false;
+    (editor as any)._isValueTouched = true;
+    (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'Tab', cancelable: true }));
+    vi.runAllTimers();
+
+    commitResult = true;
+    (editor as any)._isExitingEditor = false;
+    (editor as any)._isValueTouched = true;
+    (editor as any).handleKeydown(new KeyboardEvent('keydown', { key: 'Tab', cancelable: true }));
+    vi.runAllTimers();
+    expect(navigateNext).toHaveBeenCalled();
+
+    (editor as any)._plainTextValue = 'plain';
+    (editor as any)._editorElm.textContent = 'plain';
+    (editor as any).syncReferenceSelectionFromCaret();
+    expect((editor as any).getReferenceTokenRangeAtCaret()).toEqual({ start: 0, end: 0 });
+
+    const gridTargetEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 });
+    Object.defineProperty(gridTargetEvent, 'target', { configurable: true, value: gridCell });
+    (editor as any)._isExitingEditor = false;
+    (editor as any)._plainTextValue = '=A1';
+    eventCell = { row: -1, cell: -1 };
+    (editor as any).handleWindowMouseDown(gridTargetEvent);
+    eventCell = null;
+    (editor as any)._plainTextValue = 'plain';
+    (editor as any).handleWindowMouseDown(gridTargetEvent);
+    (editor as any)._plainTextValue = '=A1';
+    (editor as any)._gridContainerElm = (editor as any)._editorElm;
+    const editorTarget = new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 });
+    Object.defineProperty(editorTarget, 'target', { configurable: true, value: (editor as any)._editorElm });
+    (editor as any).handleWindowMouseDown(editorTarget);
+    (editor as any)._gridContainerElm = gridContainer;
+    gridContainer.appendChild((editor as any)._autocompleteElm);
+    const autocompleteTarget = new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 });
+    Object.defineProperty(autocompleteTarget, 'target', { configurable: true, value: (editor as any)._autocompleteElm });
+    (editor as any).handleWindowMouseDown(autocompleteTarget);
+
+    const selectionSpy = vi.spyOn(window, 'getSelection').mockReturnValue(null);
+    (editor as any).setCursorAtEnd();
+    selectionSpy.mockRestore();
+
+    (editor as any)._editorElm.remove();
+    expect((editor as any).shouldCaptureGridReferenceSelection(gridTargetEvent)).toBe(false);
+
+    (editor as any)._plainTextValue = '=A1';
+    (editor as any)._editorElm.textContent = '=A1';
+    (editor as any).restoreCaretOffset(1);
+    const editorTargetEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 });
+    (editor as any).handleWindowMouseDown(editorTargetEvent);
+    (editor as any)._autocompleteElm = document.createElement('div');
+    (editor as any).handleWindowMouseDown(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
+
+    gridCell.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
+    (editor as any)._isDraggingGridRefSelection = true;
+    (editor as any)._referenceRangeAnchorCell = { row: 0, cell: 0 };
+    gridCell.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, cancelable: true, button: 0 }));
+    gridCell.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, button: 0 }));
+    vi.runAllTimers();
+
+    (editor as any).setCursorAtEnd();
+    editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+    vi.useRealTimers();
   });
 });

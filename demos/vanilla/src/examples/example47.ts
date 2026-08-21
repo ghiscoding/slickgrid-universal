@@ -352,7 +352,7 @@ export default class Example47 {
       gridHeight: 470,
       gridWidth: 1080,
       enableCellNavigation: true,
-      autoEdit: true,
+      autoEdit: false,
       autoCommitEdit: true,
       editable: true,
       rowHeight: 38,

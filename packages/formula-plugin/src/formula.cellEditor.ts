@@ -625,10 +625,6 @@ export class FormulaCellEditor implements Editor {
     }
 
     const textBeforeCaretTrimEnd = textBeforeCaret.replace(/\s+$/, '');
-    if (!textBeforeCaretTrimEnd.length) {
-      return false;
-    }
-
     const lastChar = textBeforeCaretTrimEnd[textBeforeCaretTrimEnd.length - 1];
     return /[=,(+\-*/^&:]/.test(lastChar);
   }

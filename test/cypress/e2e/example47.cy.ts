@@ -53,14 +53,14 @@ describe('Example 47 - Formula Service (MVP)', () => {
   });
 
   it('should edit a formula cell in Formula Editor and persist the updated formula result', () => {
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=C1*D1*2{enter}', { force: true });
 
     cy.get(cell(0, 4)).contains('$17.76');
     cy.get(cell(0, 7)).contains('$17.76');
 
     // Re-open editor and verify the entered formula text persisted in store.
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input')
       .should('be.visible')
       .invoke('text')
@@ -71,7 +71,7 @@ describe('Example 47 - Formula Service (MVP)', () => {
     // restore baseline formulas for subsequent test steps in this serial run
     cy.get('[data-test="reload-formulas-btn"]').click();
     // In this demo, reloaded formula text can require one editor commit to refresh displayed calculated value.
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').type('{enter}', { force: true });
     cy.get(cell(0, 4)).contains('$8.88');
     cy.get(cell(0, 7)).contains('$8.88');
@@ -79,7 +79,7 @@ describe('Example 47 - Formula Service (MVP)', () => {
 
   it('should keep first argument and append second reference after operator in function expression', () => {
     // Start formula entry from the Sub-Total formula cell.
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=s', { force: true });
 
     // Pick SUM from autocomplete.
@@ -104,13 +104,13 @@ describe('Example 47 - Formula Service (MVP)', () => {
 
     // Restore canonical formula text for subsequent serial test steps.
     cy.get('[data-test="reload-formulas-btn"]').click();
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').type('{enter}', { force: true });
     cy.get(cell(0, 4)).contains('$8.88');
   });
 
   it('should keep multi-reference cell colors while typing formula text', () => {
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=C1*SUM(D1:D3)', { force: true });
 
     // C1 should keep the first reference color.
@@ -127,7 +127,7 @@ describe('Example 47 - Formula Service (MVP)', () => {
   });
 
   it('should keep formula-token colors aligned with matching grid cell colors', () => {
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=C1*SUM(D1:D3)', { force: true });
 
     // Editor token colors.
@@ -143,7 +143,7 @@ describe('Example 47 - Formula Service (MVP)', () => {
     // Commit and reopen: FormulaService pre-renders grid highlights during onBeforeEditCell,
     // and its reference order must stay aligned with the editor token order.
     cy.get('.formula-editor-input').type('{enter}', { force: true });
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.contains('.formula-editor-input .formula-token.formula-token-color-1', /^C1$/).should('exist');
     cy.contains('.formula-editor-input .formula-token.formula-token-color-2', /^D1:D3$/).should('exist');
     cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-1');
@@ -156,7 +156,7 @@ describe('Example 47 - Formula Service (MVP)', () => {
   });
 
   it('should preserve reference colors when a range precedes a single-cell reference', () => {
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=SUM(D1:D3)*C1', { force: true });
 
     // The shared cache must assign colors by textual order, regardless of reference shape.
@@ -169,7 +169,7 @@ describe('Example 47 - Formula Service (MVP)', () => {
 
     // Commit and reopen so FormulaService.renderFormulaReferenceHighlights() is exercised.
     cy.get('.formula-editor-input').type('{enter}', { force: true });
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.contains('.formula-editor-input .formula-token.formula-token-color-1', /^D1:D3$/).should('exist');
     cy.contains('.formula-editor-input .formula-token.formula-token-color-2', /^C1$/).should('exist');
     cy.get(cell(0, 3)).should('have.class', 'formula-cell-color-1');
@@ -182,7 +182,7 @@ describe('Example 47 - Formula Service (MVP)', () => {
   });
 
   it('should keep stable coloring when formula contains an incomplete range reference', () => {
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=C1*SUM(D1:D)', { force: true });
 
     // Complete reference keeps color #1.
@@ -209,7 +209,7 @@ describe('Example 47 - Formula Service (MVP)', () => {
       cy.wrap(writeTextStub).as('writeTextStub');
     });
 
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input')
       .should('be.visible')
       .invoke('text', '=SUM(C1\u00a0+\u00a0D1)')
@@ -224,27 +224,27 @@ describe('Example 47 - Formula Service (MVP)', () => {
     // Exit transient edit and restore baseline formulas for later serial tests.
     cy.get('.formula-editor-input').type('{esc}', { force: true });
     cy.get('[data-test="reload-formulas-btn"]').click();
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').type('{enter}', { force: true });
     cy.get(cell(0, 4)).contains('$8.88');
   });
 
   it('should evaluate IF formula correctly for non-taxable and taxable rows', () => {
     // non-taxable row: IF condition should return 0 taxes
-    cy.get(cell(0, 6)).click();
+    cy.get(cell(0, 6)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=IF(F1=TRUE,E1*0.2,0){enter}', { force: true });
     cy.get(cell(0, 6)).contains('$0.00');
     cy.get(cell(0, 7)).contains('$8.88');
 
     // taxable row: IF condition should calculate taxes from sub-total
-    cy.get(cell(2, 6)).click();
+    cy.get(cell(2, 6)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=IF(F3=TRUE,E3*0.2,0){enter}', { force: true });
     cy.get(cell(2, 6)).contains('$1.82');
     cy.get(cell(2, 7)).contains('$10.92');
 
     // restore baseline formulas for subsequent serial tests
     cy.get('[data-test="reload-formulas-btn"]').click();
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').type('{enter}', { force: true });
     cy.get(cell(2, 6)).contains('$0.68');
     cy.get(cell(2, 7)).contains('$9.78');
@@ -252,7 +252,7 @@ describe('Example 47 - Formula Service (MVP)', () => {
 
   it('should support SUM and other built-in functions and keep custom function column editable', () => {
     // verify default custom function exists in editor text for row 1
-    cy.get(cell(0, 8)).click();
+    cy.get(cell(0, 8)).dblclick();
     cy.get('.formula-editor-input')
       .should('be.visible')
       .invoke('text')
@@ -264,18 +264,18 @@ describe('Example 47 - Formula Service (MVP)', () => {
     cy.get(cell(0, 8)).contains('$6.22');
 
     // PRODUCT on row 2
-    cy.get(cell(1, 8)).click();
+    cy.get(cell(1, 8)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=PRODUCT(C2,D2){enter}', { force: true });
     cy.get(cell(1, 8)).contains('$4.65');
 
     // MAX on row 3
-    cy.get(cell(2, 8)).click();
+    cy.get(cell(2, 8)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=MAX(C3,D3){enter}', { force: true });
     cy.get(cell(2, 8)).contains('$4.55');
 
     // restore baseline formulas for subsequent serial tests
     cy.get('[data-test="reload-formulas-btn"]').click();
-    cy.get(cell(0, 4)).click();
+    cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').type('{enter}', { force: true });
     cy.get(cell(0, 8)).contains('$6.22');
     cy.get(cell(1, 8)).contains('$4.55');
@@ -291,11 +291,11 @@ describe('Example 47 - Formula Service (MVP)', () => {
     cy.get(cell(2, 7)).contains('$9.67');
 
     // edit price + qty in row 3 and validate formula recalculation
-    cy.get(cell(2, 2)).click();
+    cy.get(cell(2, 2)).dblclick();
     cy.get(`${cell(2, 2)} input`)
       .clear()
       .type('4.23{enter}');
-    cy.get(cell(2, 3)).click();
+    cy.get(cell(2, 3)).dblclick();
     cy.get(`${cell(2, 3)} input`)
       .clear()
       .type('3{enter}');
@@ -317,5 +317,74 @@ describe('Example 47 - Formula Service (MVP)', () => {
 
     cy.get(cell(0, 1)).contains('Oranges');
     cy.get(cell(1, 1)).contains('Apples');
+  });
+
+  it('should infer a numeric series when drag-filling static values in a formula column', () => {
+    cy.reload();
+
+    // Replace the first two Sub-Total formulas with the numeric seed values 10 and 20.
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}10{enter}', { force: true });
+    cy.get(cell(1, 4)).dblclick();
+    cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}20{enter}', { force: true });
+
+    // Select the two seed cells with the cell-range selector, then drag the fill handle down through row 4.
+    cy.get(cell(0, 4)).click({ force: true });
+    cy.get(cell(0, 4)).trigger('mousedown', { which: 1, force: true });
+    cy.get(cell(1, 4)).trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
+    cy.get('.grid47 .slick-cell.selected').should('have.length', 2);
+    cy.get(cell(1, 4)).find('.slick-drag-replace-handle').trigger('mousedown', { which: 1, force: true });
+    cy.get(cell(3, 4)).trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+    cy.get(cell(2, 4)).should('contain', '$30.00');
+    cy.get(cell(3, 4)).should('contain', '$40.00');
+  });
+
+  it('should preserve formula results after column reorder and hiding a referenced source column', () => {
+    cy.reload();
+
+    const reorderedTitles = ['#', 'Name', 'Quantity', 'Sub-Total', 'Price', 'Taxable', 'Taxes', 'Total', 'Custom Sum'];
+    cy.get('.grid47 .slick-header-columns .slick-header-column:nth(2)')
+      .contains('Price')
+      .drag('.grid47 .slick-header-columns .slick-header-column:nth(4)');
+    cy.get('.grid47 .slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(reorderedTitles[index]));
+
+    // Price and Quantity moved, but the stable formula still calculates the same Sub-Total.
+    cy.get(cell(0, 2)).should('contain', '4');
+    cy.get(cell(0, 3)).should('contain', '$8.88');
+    cy.get(cell(0, 4)).should('contain', '$2.22');
+
+    // Hide Price through the column picker and verify formulas can still evaluate at runtime.
+    cy.get('.grid47 .slick-header-column').contains('Price').trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.slick-column-picker:visible input[data-columnid="price"]').parent('.icon-checkbox-container').click({ force: true });
+    cy.get('.slick-column-picker:visible .close').click({ force: true });
+
+    cy.get('.grid47 .slick-header-columns .slick-header-column').should('have.length', 8);
+    cy.get(cell(0, 3)).should('contain', '$8.88');
+    cy.get(cell(0, 6)).should('contain', '$8.88');
+  });
+
+  it('should export reordered formulas with the correct Excel row offset', () => {
+    cy.reload();
+    const downloadsFolder = Cypress.config('downloadsFolder');
+
+    cy.get('.grid47 .slick-header-columns .slick-header-column:nth(2)')
+      .contains('Price')
+      .drag('.grid47 .slick-header-columns .slick-header-column:nth(4)');
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.get('[data-test="export-excel-btn"]').click();
+
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 2 }).then((xlsx: any) => {
+      // formulaRows[0] is the header row; the custom title row plus the header place
+      // the first dataset row on Excel row 3, which is formulaRows[1].
+      // The # column is excluded from Excel, and Price is dropped after
+      // Sub-Total by the drag operation. The exported columns are Name (A),
+      // Quantity (B), Sub-Total (C), Price (D), Taxable (E), Taxes (F),
+      // Total (G), and Custom Sum (H).
+      expect(xlsx.formulaRows[1][2]).to.equal('D3*B3');
+      expect(xlsx.formulaRows[1][6]).to.equal('C3+F3');
+    });
   });
 });

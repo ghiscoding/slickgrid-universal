@@ -1,7 +1,9 @@
+import { Formatters, SlickEvent, SlickRange } from '@slickgrid-universal/common';
 import type { Column, FormulaExcelExportContext } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FORMULA_ERROR } from '../formula-errors.js';
 import { FormulaCellEditor } from '../formula.cellEditor.js';
+import { translateFormulaReferences } from '../formula.drag-fill.js';
 import { FormulaService } from '../formula.service.js';
 
 describe('FormulaService', () => {
@@ -13,6 +15,111 @@ describe('FormulaService', () => {
 
   afterEach(() => {
     warnSpy.mockRestore();
+  });
+
+  it('should expose and merge service options', () => {
+    const service = new FormulaService({ autoAssignEditor: false });
+
+    expect(service.getOptions()).toEqual({ autoAssignEditor: false });
+    service.setOptions({ enableExcelHeaderPrefix: false });
+
+    expect(service.getOptions()).toEqual({ autoAssignEditor: false, enableExcelHeaderPrefix: false });
+  });
+
+  it('should cover service lifecycle and conversion guard paths', () => {
+    const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
+    const items = [{ id: 'r1', value: '=A1' }];
+    const onDragReplaceCells = new SlickEvent();
+    const gridStub = {
+      onDragReplaceCells,
+      getColumns: () => columns,
+      setColumns: (nextColumns: Column[]) => columns.splice(0, columns.length, ...nextColumns),
+      getData: () => ({ getItems: () => items, getLength: () => items.length }),
+      getOptions: () => ({ datasetIdPropertyName: 'id', enableSelection: true, selectionOptions: { selectionType: 'mixed' } }),
+      setCellCssStyles: vi.fn(),
+      invalidate: vi.fn(),
+      render: vi.fn(),
+    } as any;
+    const service = new FormulaService();
+    service.init(gridStub);
+
+    service.clearFormulaReferenceHighlights();
+    service.renderFormulaReferenceHighlights();
+    service.renderFormulaReferenceHighlights('=Z1');
+    expect(service.extractExcelReferences('=A1')).toEqual([{ col: 'A', row: 1 }]);
+    service.clearFormulas();
+    expect(service.hasFormula('r1', 'value')).toBe(false);
+    service.setFormula('r1', 'value', '=A1');
+    expect(service.removeFormula('r1', 'value')).toBe(true);
+    expect(service.unregisterCustomFunction('missing')).toBe(false);
+    expect(service.getExcelFormula({ rowId: 'r1', columnId: 'value', columnIds: ['value'], rowIds: ['r1'], excelRowOffset: 1 } as any)).toBeUndefined();
+    expect(service.getExcelDefinedNames()).toEqual([]);
+    expect(service.getExcelCustomFunctions()).toEqual([]);
+    expect((service as any).shiftDirectExcelReferences('', [], [], 0)).toBe('');
+
+    (service as any)._dataView = { getItems: () => items };
+    expect((service as any).getDatasetLength()).toBe(1);
+    (service as any)._dataView = {};
+    expect((service as any).getDatasetLength()).toBe(0);
+
+    const fallbackService = new FormulaService();
+    expect(fallbackService.getEvaluatedCellValue('missing', 'value', 42)).toBe(42);
+    const noColumnsService = new FormulaService();
+    noColumnsService.init({ getColumns: () => [], getData: () => ({ getItems: () => [], getLength: () => 0 }), getOptions: () => ({}) } as any);
+    noColumnsService.syncFormulasFromDataset();
+
+    const missingIdService = new FormulaService();
+    missingIdService.init({
+      getColumns: () => [{ id: 'value', field: 'value', allowFormula: true }],
+      getData: () => ({ getItems: () => [{ value: '=A1' }], getLength: () => 1 }),
+      getOptions: () => ({}),
+    } as any);
+
+    const flagService = new FormulaService();
+    (flagService as any)._formulaReferenceAbsoluteFlagsByKey.set('r::value', [{ column: true, row: false }]);
+    expect((flagService as any).applyFormulaReferenceAbsoluteFlags('r::value', '=A1+B1')).toBe('=$A1+B1');
+    (flagService as any)._grid = { getColumns: () => [{ id: 'value', field: 'value' }], getOptions: () => ({}) };
+    (flagService as any)._dataView = { getItems: () => [{ id: 'r', value: '=A1' }] };
+    (flagService as any)._formulaStore.set('orphan::value', '=A1');
+    (flagService as any)._formulaCoordinatesByKey.set('r::value', { rowId: 'r', columnId: 'value' });
+    (flagService as any)._formulaStore.set('r::value', '=A1');
+    (flagService as any).canonicalizeStoredFormulas();
+    expect((flagService as any).getFormula('r', 'value')).toContain('REF(COLUMN("value")');
+
+    const pipelineService = new FormulaService();
+    const formulaFormatter = () => 'formula';
+    (formulaFormatter as any).__formulaEvalFormatter = true;
+    const multiple = (Formatters as any).multiple;
+    const withExisting = (pipelineService as any).withFormulaFormatterPipeline(
+      { params: { formatters: [formulaFormatter] }, formatter: multiple },
+      formulaFormatter
+    );
+    expect(withExisting.params.formatters).toEqual([formulaFormatter]);
+    const withMissingFormula = (pipelineService as any).withFormulaFormatterPipeline({ params: { formatters: [] }, formatter: multiple }, () => 'formula');
+    expect(withMissingFormula.params.formatters).toHaveLength(1);
+    const wrappedFormatter = () => 'base';
+    (wrappedFormatter as any).__formulaAutoEditableWrapped = true;
+    (wrappedFormatter as any).__formulaAutoEditableBaseFormatter = () => 'original';
+    expect((pipelineService as any).unwrapAutoEditableFormatter(wrappedFormatter)()).toBe('original');
+    expect((pipelineService as any).normalizeFormulaSyntax('')).toBe('');
+
+    expect((flagService as any).convertA1ReferencesToStableRefs('=A0:B1', ['value'], ['r'])).toBe('=A0:B1');
+    expect((flagService as any).convertA1ReferencesToStableRefs('=A1:B1', ['value'], ['r'])).toBe('=A1:B1');
+    expect((flagService as any).replaceRefFunctionsWithA1Refs('', ['value'], ['r'])).toBe('');
+    expect((flagService as any).replaceRefFunctionsWithA1Refs('=REF(COLUMN("value"),ROW("missing"))', ['value'], ['r'])).toBe('=');
+
+    (flagService as any)._dataView = { getItems: () => [{ id: 'r', value: '' }] };
+    flagService.setFormula('r', 'value', '=1');
+    vi.spyOn(flagService as any, 'evaluateFormulaExpression')
+      .mockReturnValueOnce(Number.POSITIVE_INFINITY)
+      .mockReturnValueOnce(Number.NaN);
+    expect(flagService.getEvaluatedCellValue('r', 'value', '=1', 0)).toBe(FORMULA_ERROR.DIV0);
+    flagService.registerCustomFunction('NAN', () => Number.NaN);
+    flagService.setFormula('r', 'value', '=2');
+    expect(flagService.getEvaluatedCellValue('r', 'value', '=2', 0)).toBe(FORMULA_ERROR.VALUE);
+    flagService.setFormula('r', 'value', '=Z1');
+    expect(flagService.getEvaluatedCellValue('r', 'value', '=Z1', 0)).toBe(FORMULA_ERROR.REF);
+    expect((flagService as any).evaluateExpressionWithParser('"x"^2', new Map())).toBe(FORMULA_ERROR.NUM);
   });
 
   it('should set/get/has formula by row and column ids', () => {
@@ -32,6 +139,76 @@ describe('FormulaService', () => {
 
     expect(service.hasFormula('id_1', 'total')).toBeFalsy();
     expect(service.getFormula('id_1', 'total')).toBeUndefined();
+  });
+
+  it('should translate relative and absolute A1 references for drag-fill without changing quoted literals', () => {
+    expect(translateFormulaReferences('=A1+$B1+C$1+$D$1+"A1"', 2, 1)).toBe('=B3+$B3+D$1+$D$1+"A1"');
+  });
+
+  it('should drag-fill a formula into target rows and keep the stored formula stable', () => {
+    const service = new FormulaService();
+    const columns: Column[] = [
+      { id: 'price', field: 'price' },
+      { id: 'quantity', field: 'quantity' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const items = [
+      { id: 'r1', price: 2, quantity: 3, total: '=A1*2' },
+      { id: 'r2', price: 4, quantity: 5, total: '' },
+      { id: 'r3', price: 6, quantity: 7, total: '' },
+    ];
+    const gridStub = {
+      getColumns: () => columns,
+      getVisibleColumns: () => columns,
+      setColumns: (newColumns: Column[]) => columns.splice(0, columns.length, ...newColumns),
+      getData: () => ({
+        getItems: () => items,
+        getLength: () => items.length,
+        updateItems: vi.fn(),
+      }),
+      getDataItem: (row: number) => items[row],
+      getOptions: () => ({ datasetIdPropertyName: 'id', enableFormulas: true }),
+    } as any;
+
+    service.init(gridStub);
+    (service as any).handleDragReplaceCells(
+      {},
+      {
+        prevSelectedRange: new SlickRange(0, 2),
+        selectedRange: new SlickRange(0, 2, 2, 2),
+        grid: gridStub,
+      }
+    );
+
+    expect(service.getFormula('r2', 'total')).toBe('=REF(COLUMN("price"),ROW("r2"))*2');
+    expect(service.getFormula('r3', 'total')).toBe('=REF(COLUMN("price"),ROW("r3"))*2');
+    expect(service.getEvaluatedCellValue('r2', 'total')).toBe(8);
+    expect(service.getEvaluatedCellValue('r3', 'total')).toBe(12);
+    expect(
+      service.getExcelFormula({
+        columnId: 'total',
+        columnIds: ['price', 'quantity', 'total'],
+        dataRowIdx: 1,
+        datasetIdPropertyName: 'id',
+        excelRowOffset: 1,
+        gridOptions: {},
+        rowId: 'r2',
+        rowIds: ['r1', 'r2', 'r3'],
+      })
+    ).toBe('A2*2');
+
+    service.setFormula('r1', 'total', '=$A$1+$B1');
+    (service as any).handleDragReplaceCells(
+      {},
+      {
+        prevSelectedRange: new SlickRange(0, 2),
+        selectedRange: new SlickRange(0, 2, 1, 2),
+        grid: gridStub,
+      }
+    );
+
+    expect((service as any).toDisplayFormulaForCell(service.getFormula('r2', 'total'), 'r2', 'total')).toBe('=$A$1+$B2');
+    expect(service.getEvaluatedCellValue('r2', 'total')).toBe(7);
   });
 
   it('should translate REF() formula syntax into Excel references', () => {
@@ -188,6 +365,36 @@ describe('FormulaService', () => {
     service.init(gridStub);
 
     expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('should add and remove Excel column prefixes idempotently', () => {
+    const columns: Column[] = [
+      { id: 'name', field: 'name', name: 'Name' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const setColumns = vi.fn((nextColumns: Column[]) => columns.splice(0, columns.length, ...nextColumns));
+    const service = new FormulaService();
+    const gridStub = {
+      getColumns: () => columns,
+      setColumns,
+      getData: () => ({ getItems: () => [], getLength: () => 0 }),
+      getOptions: () => ({ enableSelection: true, selectionOptions: { selectionType: 'mixed' } }),
+    } as any;
+
+    service.init(gridStub);
+    service.enableExcelHeaderPrefix();
+    expect(columns[0].name).toContain('A</span> Name');
+    expect(columns[1].name).toContain('B</span> total');
+
+    const callsAfterEnable = setColumns.mock.calls.length;
+    service.enableExcelHeaderPrefix();
+    expect(setColumns).toHaveBeenCalledTimes(callsAfterEnable);
+
+    service.disableExcelHeaderPrefix();
+    expect(columns[0].name).toBe('Name');
+    expect(columns[1].name).toContain('B</span> total');
+    service.disableExcelHeaderPrefix();
+    expect(setColumns).toHaveBeenCalledTimes(callsAfterEnable + 1);
   });
 
   it('should evaluate SUM() with A1 references', () => {
@@ -1111,6 +1318,7 @@ describe('FormulaService', () => {
     expect((service as any).resolveExcelReferenceValue('A', 0, context)).toBe(FORMULA_ERROR.REF);
     expect((service as any).resolveExcelReferenceValue('B', 1, context)).toBe(FORMULA_ERROR.REF);
     expect((service as any).resolveExcelReferenceValue('A', 2, context)).toBe(FORMULA_ERROR.REF);
+    expect((service as any).resolveExcelRangeValues('?', 1, 'A', 1, context)).toEqual([]);
 
     context.visited.add('1::value');
     expect((service as any).resolveExcelReferenceValue('A', 1, context)).toBe(FORMULA_ERROR.REF);
@@ -1122,6 +1330,9 @@ describe('FormulaService', () => {
     expect((service as any).toExpressionLiteral(false)).toBe('false');
     expect((service as any).toExpressionLiteral(' 12.5 ')).toBe('12.5');
     expect((service as any).toExpressionLiteral('hello')).toBe('"hello"');
+    expect((service as any).replaceRefFunctionsWithA1Refs('=REF(COLUMN("missing"),ROW(1))', ['value'], ['1'], 1)).toBe('=');
+    service.registerCustomFunction('INVALID', {} as any);
+    expect(service.getCustomFunction('INVALID')).toBeUndefined();
 
     const baseDate = new Date('2024-01-10T00:00:00.000Z');
     expect((FormulaService as any).addFormulaValues(baseDate, 2)).toEqual(new Date('2024-01-12T00:00:00.000Z'));
@@ -1131,6 +1342,75 @@ describe('FormulaService', () => {
     expect((FormulaService as any).subtractFormulaValues(baseDate, new Date('2024-01-08T00:00:00.000Z'))).toBe(2);
     expect((FormulaService as any).subtractFormulaValues(5, 2)).toBe(3);
     expect((FormulaService as any).addDays(baseDate, 1)).toEqual(new Date('2024-01-11T00:00:00.000Z'));
+  });
+
+  it('should cover the recursive-descent parser operators, literals, collections, and syntax errors', () => {
+    const service = new FormulaService();
+    const functions = new Map<string, (...args: unknown[]) => unknown>([['FN', (...args) => args.length]]);
+    const evaluate = (expression: string) => (service as any).evaluateExpressionWithParser(expression, functions);
+
+    expect(evaluate(' 1 + 2 ')).toBe(3);
+    expect(evaluate('"a\\"b"')).toBe('a"b');
+    expect(evaluate('1 == 1')).toBe(true);
+    expect(evaluate('1 != 2')).toBe(true);
+    expect(evaluate('1 < 2')).toBe(true);
+    expect(evaluate('2 > 1')).toBe(true);
+    expect(evaluate('1 <= 1')).toBe(true);
+    expect(evaluate('1 >= 1')).toBe(true);
+    expect(evaluate('"a" & "b"')).toBe('ab');
+    expect(evaluate('4 - 2')).toBe(2);
+    expect(evaluate('2 * 3')).toBe(6);
+    expect(evaluate('6 / 2')).toBe(3);
+    expect(evaluate('2 ^ 3')).toBe(8);
+    expect(evaluate('50%')).toBe(0.5);
+    expect(evaluate('+2')).toBe(2);
+    expect(evaluate('-2')).toBe(-2);
+    expect(evaluate('FN(1, 2)')).toBe(2);
+    expect(evaluate('TRUE')).toBe(true);
+    expect(evaluate('FALSE')).toBe(false);
+    expect(evaluate('NULL')).toBe(null);
+    expect(evaluate('(1)')).toBe(1);
+    expect(evaluate('[]')).toEqual([]);
+    expect(evaluate('[1, 2]')).toEqual([1, 2]);
+
+    expect(evaluate('1..2')).toBe(FORMULA_ERROR.NUM);
+    expect(evaluate('@')).toBe(FORMULA_ERROR.ERROR);
+    expect(evaluate('UNKNOWN')).toBe(FORMULA_ERROR.NAME);
+    expect(evaluate('UNKNOWN()')).toBe(FORMULA_ERROR.NAME);
+    expect(evaluate('FN(')).toBe(FORMULA_ERROR.ERROR);
+    expect(evaluate('(1')).toBe(FORMULA_ERROR.ERROR);
+    expect(evaluate('[1')).toBe(FORMULA_ERROR.ERROR);
+    expect(evaluate('1 2')).toBe(FORMULA_ERROR.ERROR);
+    expect(evaluate('1 / 0')).toBe(FORMULA_ERROR.DIV0);
+    expect(evaluate('1 + UNKNOWN')).toBe(FORMULA_ERROR.NAME);
+    expect(evaluate('1 + "x"')).toBe('1x');
+    expect(evaluate('1 * "x"')).toBe(FORMULA_ERROR.VALUE);
+    expect(evaluate('1 < UNKNOWN')).toBe(FORMULA_ERROR.NAME);
+    expect(evaluate('"a" & UNKNOWN')).toBe(FORMULA_ERROR.NAME);
+    expect(evaluate('1 - "x"')).toBe(FORMULA_ERROR.VALUE);
+    expect(evaluate('1 * UNKNOWN')).toBe(FORMULA_ERROR.NAME);
+    expect(evaluate('1 ^ UNKNOWN')).toBe(FORMULA_ERROR.NAME);
+    expect(evaluate('"x"%')).toBe(FORMULA_ERROR.VALUE);
+    expect(evaluate('+UNKNOWN')).toBe(FORMULA_ERROR.NAME);
+    expect(evaluate('-UNKNOWN')).toBe(FORMULA_ERROR.NAME);
+    expect(evaluate('(UNKNOWN)')).toBe(FORMULA_ERROR.NAME);
+    expect(evaluate('[UNKNOWN]')).toBe(FORMULA_ERROR.NAME);
+
+    const context = { visited: new Set<string>(), memo: new Map<string, unknown>() };
+    expect((service as any).evaluateFormulaExpression('', context)).toBe(FORMULA_ERROR.NULL);
+    expect((service as any).evaluateFormulaExpression('=1;2', context)).toBe(FORMULA_ERROR.ERROR);
+    expect((service as any).evaluateFormulaExpression('=FOO', context)).toBe(FORMULA_ERROR.NAME);
+    expect((service as any).evaluateFormulaExpression('=A1:B1', context)).toBe(FORMULA_ERROR.REF);
+
+    for (const error of [ReferenceError, TypeError, SyntaxError, Error]) {
+      const throwingService = new FormulaService({});
+      throwingService.registerCustomFunction('THROW', () => {
+        throw new error();
+      });
+      expect((throwingService as any).evaluateFormulaExpression('=THROW()', { visited: new Set(), memo: new Map() })).toBe(
+        error === ReferenceError ? FORMULA_ERROR.NAME : error === TypeError ? FORMULA_ERROR.VALUE : FORMULA_ERROR.ERROR
+      );
+    }
   });
 
   it('should wrap onFormulaInputChange and invoke user callback without forcing highlight refresh', () => {
@@ -1156,5 +1436,32 @@ describe('FormulaService', () => {
 
     expect(highlightSpy).not.toHaveBeenCalled();
     expect(userCallback).toHaveBeenCalledWith('=A1');
+  });
+
+  it('should wrap formula editor conversion and commit callbacks with and without row items', () => {
+    const columns: Column[] = [{ id: 'total', field: 'total', allowFormula: true }];
+    const items = [{ id: 'r1', total: '=A1' }];
+    const service = new FormulaService();
+    const gridStub = {
+      getColumns: () => columns,
+      setColumns: (newColumns: Column[]) => columns.splice(0, columns.length, ...newColumns),
+      getData: () => ({ getItems: () => items, getLength: () => items.length }),
+      getOptions: () => ({ editable: true, datasetIdPropertyName: 'id' }),
+      invalidate: vi.fn(),
+      render: vi.fn(),
+    } as any;
+
+    service.init(gridStub);
+    const params = columns[0].editor?.params as any;
+
+    expect(params.toDisplayFormula('=A1')).toBe('=A1');
+    expect(params.toDisplayFormula('=A1', { id: 'r1' })).toBe('=A1');
+    expect(params.toStoredFormula('=A1')).toContain('REF(COLUMN("total"),ROW("r1"))');
+    expect(params.toStoredFormula('=A1', { id: 'r1' })).toContain('REF(COLUMN("total"),ROW("r1"))');
+
+    params.onFormulaCommit('=A1');
+    expect(service.getFormula('r1', 'total')).toBe('=REF(COLUMN("total"),ROW("r1"))');
+    params.onFormulaCommit('=A1', { id: 'r1' });
+    expect(service.getFormula('r1', 'total')).toBe('=REF(COLUMN("total"),ROW("r1"))');
   });
 });

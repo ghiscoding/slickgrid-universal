@@ -8,10 +8,11 @@ import type {
   FormulaExcelDefinedNameExport,
   FormulaExcelExportContext,
   FormulaProvider,
+  OnDragReplaceCellsEventArgs,
   SlickDataView,
   SlickGrid,
 } from '@slickgrid-universal/common';
-import { createDomElement, Formatters } from '@slickgrid-universal/common';
+import { createDomElement, Formatters, SlickEventHandler } from '@slickgrid-universal/common';
 import { FORMULA_ERROR, isFormulaErrorCode, type FormulaErrorCode } from './formula-errors.js';
 import { createFormulaFunctionRegistry, type FormulaCallback } from './formula-functions.js';
 import {
@@ -21,6 +22,7 @@ import {
   parseExcelReferenceCell,
 } from './formula-reference.js';
 import { FormulaCellEditor, type FormulaEditorParams } from './formula.cellEditor.js';
+import { handleFormulaDragFill } from './formula.drag-fill.js';
 
 export type { FormulaCallback } from './formula-functions.js';
 
@@ -62,6 +64,11 @@ interface FormulaEvaluationContext {
   memo: Map<string, unknown>;
 }
 
+interface FormulaReferenceAbsoluteFlags {
+  column: boolean;
+  row: boolean;
+}
+
 /**
  * Optional formula service storing formulas by row/column and exposing export helpers.
  * This MVP focuses on formula storage and Excel conversion support.
@@ -74,6 +81,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected _customFunctions: Map<string, FormulaCallback> = new Map<string, FormulaCallback>();
   protected _formulaStore: Map<string, string> = new Map<string, string>();
   protected _formulaCoordinatesByKey: Map<string, { rowId: number | string; columnId: number | string }> = new Map();
+  protected _formulaReferenceAbsoluteFlagsByKey: Map<string, FormulaReferenceAbsoluteFlags[]> = new Map();
   protected _formulaRefColorCache: FormulaReferenceColorCache = new FormulaReferenceColorCache();
   protected _originalColumnNamesById: Map<number | string, string | HTMLElement | DocumentFragment | undefined> = new Map();
   protected _formulaRefStyleKeys: string[] = [];
@@ -83,6 +91,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected _originalColumnDefsById: Map<number | string, Pick<Column, 'formatter' | 'params' | 'editorClass' | 'editor'>> = new Map();
   protected _evaluationMemo: Map<string, unknown> = new Map<string, unknown>();
   protected _isEvaluationMemoFlushScheduled = false;
+  protected _eventHandler: SlickEventHandler = new SlickEventHandler();
 
   protected static readonly FORMULA_EVAL_FORMATTER_FLAG = '__formulaEvalFormatter';
 
@@ -105,6 +114,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return;
     }
 
+    if (this._grid.onDragReplaceCells) {
+      this._eventHandler.subscribe(this._grid.onDragReplaceCells, this.handleDragReplaceCells.bind(this));
+    }
+
     if (this._options.customFunctions) {
       this.registerCustomFunctions(this._options.customFunctions);
     }
@@ -119,11 +132,13 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   dispose(): void {
+    this._eventHandler.unsubscribeAll();
     this.clearFormulaReferenceHighlights();
     this.disableExcelHeaderPrefix();
     this.restoreAutoAssignedFormulaEditorColumns();
     this._formulaStore.clear();
     this._formulaCoordinatesByKey.clear();
+    this._formulaReferenceAbsoluteFlagsByKey.clear();
     this._formulaRefColorCache.clear();
     this.resetEvaluationMemo();
     this._customFunctions.clear();
@@ -266,6 +281,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   clearFormulas(): void {
     this._formulaStore.clear();
     this._formulaCoordinatesByKey.clear();
+    this._formulaReferenceAbsoluteFlagsByKey.clear();
     this.resetEvaluationMemo();
   }
 
@@ -396,13 +412,97 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     if (formula == null || formula === '') {
       this._formulaStore.delete(key);
       this._formulaCoordinatesByKey.delete(key);
+      this._formulaReferenceAbsoluteFlagsByKey.delete(key);
       this.resetEvaluationMemo();
       return;
     }
 
+    if (this.containsDirectExcelReference(formula)) {
+      this.captureFormulaReferenceAbsoluteFlags(key, formula);
+    }
     this._formulaCoordinatesByKey.set(key, { rowId, columnId });
     this._formulaStore.set(key, this.toStoredFormula(formula));
     this.resetEvaluationMemo();
+  }
+
+  /**
+   * Fill formulas through the same drag-handle event used by the spreadsheet examples.
+   * The source formula is converted to the editor's A1 form, shifted relative to the
+   * source cell, and then stored again in stable column/row-reference form.
+   */
+  protected handleDragReplaceCells(_event: unknown, args: OnDragReplaceCellsEventArgs): void {
+    handleFormulaDragFill(args, {
+      grid: this._grid,
+      dataView: this._dataView,
+      getDatasetIdPropertyName: this.getDatasetIdPropertyName.bind(this),
+      getFormula: this.getFormula.bind(this),
+      setFormula: this.setFormula.bind(this),
+      toStoredFormula: this.toStoredFormula.bind(this),
+      toDisplayFormulaForCell: this.toDisplayFormulaForCell.bind(this),
+    });
+  }
+
+  protected containsDirectExcelReference(formula: string): boolean {
+    const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_])/gi;
+    let found = false;
+    this.transformFormulaOutsideQuotedStrings(formula, (segment) => {
+      found ||= referenceRegex.test(segment);
+      referenceRegex.lastIndex = 0;
+      return segment;
+    });
+    return found;
+  }
+
+  protected captureFormulaReferenceAbsoluteFlags(key: string, formula: string): void {
+    const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_])/gi;
+    const flags: FormulaReferenceAbsoluteFlags[] = [];
+    this.transformFormulaOutsideQuotedStrings(formula, (segment) => {
+      segment.replace(referenceRegex, (reference) => {
+        reference.split(':').forEach((endpoint) => {
+          const match = endpoint.trim().match(/^(\$?)[A-Z]{1,3}(\$?)(\d+)$/i);
+          if (match) {
+            flags.push({ column: match[1] === '$', row: match[2] === '$' });
+          }
+        });
+        return reference;
+      });
+      return segment;
+    });
+    this._formulaReferenceAbsoluteFlagsByKey.set(key, flags);
+  }
+
+  protected toDisplayFormulaForCell(formula: string, rowId: number | string, columnId: number | string): string {
+    const displayFormula = this.toDisplayFormula(formula);
+    return this.applyFormulaReferenceAbsoluteFlags(this.buildStoreKey(rowId, columnId), displayFormula);
+  }
+
+  protected applyFormulaReferenceAbsoluteFlags(key: string, formula: string): string {
+    const flags = this._formulaReferenceAbsoluteFlagsByKey.get(key);
+    if (!flags?.length) {
+      return formula;
+    }
+
+    const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_])/gi;
+    let flagIndex = 0;
+    return this.transformFormulaOutsideQuotedStrings(formula, (segment) =>
+      segment.replace(referenceRegex, (reference) =>
+        reference
+          .split(':')
+          .map((endpoint) => {
+            const flag = flags[flagIndex++];
+            if (!flag) {
+              return endpoint;
+            }
+            const parsed = endpoint.trim().match(/^(\$?)([A-Z]{1,3})(\$?)(\d+)$/i);
+            /* v8 ignore if - the surrounding reference regex guarantees a valid endpoint */
+            if (!parsed) {
+              return endpoint;
+            }
+            return `${flag.column ? '$' : ''}${parsed[2].toUpperCase()}${flag.row ? '$' : ''}${parsed[4]}`;
+          })
+          .join(':')
+      )
+    );
   }
 
   /** Canonicalize formulas supplied before the grid was initialized. */
@@ -497,7 +597,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       context.excelRowOffset
     );
 
-    return this.normalizeFormulaSyntax(withNumericRowRefs);
+    return this.normalizeFormulaSyntax(
+      this.applyFormulaReferenceAbsoluteFlags(this.buildStoreKey(context.rowId, context.columnId), withNumericRowRefs)
+    );
   }
 
   /** Shift only direct A1 references left after stable references have been canonicalized. */
@@ -510,6 +612,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])/gi;
     const remapEndpoint = (token: string): string => {
       const parsed = parseExcelReferenceCell(token);
+      /* v8 ignore if - the A1 token regex guarantees that parsing succeeds */
       if (!parsed) {
         return token;
       }
@@ -1437,8 +1540,20 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       mergedParams.onFormulaInputChange = (formula: string) => {
         userOnFormulaInputChange?.(formula);
       };
-      mergedParams.toDisplayFormula = (formula: string) => this.toDisplayFormula(formula);
-      mergedParams.toStoredFormula = (formula: string) => this.toStoredFormula(formula);
+      mergedParams.toDisplayFormula = (formula: string, item?: any) => {
+        const rowId = item?.[this.getDatasetIdPropertyName()] as number | string | undefined;
+        return rowId === undefined || rowId === null
+          ? this.toDisplayFormula(formula)
+          : this.toDisplayFormulaForCell(formula, rowId, column.id);
+      };
+      mergedParams.toStoredFormula = (formula: string, item?: any) => {
+        const rowId = item?.[this.getDatasetIdPropertyName()] as number | string | undefined;
+        const storedFormula = this.toStoredFormula(formula);
+        if (rowId !== undefined && rowId !== null && this.containsDirectExcelReference(formula)) {
+          this.captureFormulaReferenceAbsoluteFlags(this.buildStoreKey(rowId, column.id), formula);
+        }
+        return storedFormula;
+      };
       mergedParams.onFormulaCommit = (formula: string, item?: any) => {
         const rowId = item?.[this.getDatasetIdPropertyName()] as number | string | undefined;
         if (rowId !== undefined && rowId !== null) {
