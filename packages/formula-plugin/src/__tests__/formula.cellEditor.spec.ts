@@ -371,6 +371,7 @@ describe('FormulaCellEditor', () => {
     const editor = new FormulaCellEditor(args);
     editor.loadValue((args as any).item);
     (editor as any).restoreCaretOffset(5);
+    (editor as any)._referenceEditRange = undefined;
 
     c1CellElm.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
     c1CellElm.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, button: 0 }));

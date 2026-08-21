@@ -422,6 +422,23 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(13);
   });
 
+  it('should prefer a changed live formula when the stored formula is not stable', () => {
+    const service = new FormulaService();
+    const columns: Column[] = [{ id: 'total', field: 'total', allowFormula: true }];
+    const items = [{ id: 1, total: '=1' }];
+    const gridStub = {
+      getColumns: () => columns,
+      setColumns: (_newCols: Column[]) => undefined,
+      getData: () => ({ getItems: () => items, getLength: () => items.length }),
+      getOptions: () => ({ datasetIdPropertyName: 'id' }),
+    } as any;
+
+    service.init(gridStub);
+    service.setFormula(1, 'total', '=1');
+
+    expect(service.getEvaluatedCellValue(1, 'total', '=2', 0)).toBe(2);
+  });
+
   it('should evaluate both direct A1 and REF(COLUMN(),ROW()) formula styles', () => {
     const service = new FormulaService();
     const columns: Column[] = [
@@ -1185,6 +1202,38 @@ describe('FormulaService', () => {
     expect(formatted).toBeInstanceOf(HTMLElement);
     expect(formatted.className).toContain('editing-field');
     expect(formatted.firstElementChild).toBe(baseElm);
+  });
+
+  it('should resolve formatter rows through DataView getItem or the item-array fallback', () => {
+    const columns: Column[] = [{ id: 'total', field: 'total', allowFormula: true }];
+    const items = [{ id: 1, total: '=SUM(1,2)' }];
+    const getItem = vi.fn((row: number) => items[row]);
+    const dataView = { getItems: () => items, getLength: () => items.length, getItem };
+    const gridStub = {
+      getColumns: () => columns,
+      setColumns: (_newCols: Column[]) => undefined,
+      getData: () => dataView,
+      getOptions: () => ({ datasetIdPropertyName: 'id' }),
+    } as any;
+    const service = new FormulaService();
+    service.init(gridStub);
+
+    const formatter = (service as any).buildFormulaValueFormatter(columns[0]);
+    expect(formatter(0, 0, items[0].total, columns[0])).toBe(3);
+    expect(getItem).toHaveBeenCalledWith(0);
+
+    const fallbackService = new FormulaService();
+    const fallbackDataView = { getItems: () => items, getLength: () => items.length };
+    const fallbackGridStub = {
+      getColumns: () => columns,
+      setColumns: (_newCols: Column[]) => undefined,
+      getData: () => fallbackDataView,
+      getOptions: () => ({ datasetIdPropertyName: 'id' }),
+    } as any;
+    fallbackService.init(fallbackGridStub);
+
+    const fallbackFormatter = (fallbackService as any).buildFormulaValueFormatter(columns[0]);
+    expect(fallbackFormatter(0, 0, items[0].total, columns[0])).toBe(3);
   });
 
   it('should reuse memoized value when evaluating same formula cell repeatedly in one tick', () => {

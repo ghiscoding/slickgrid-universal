@@ -205,6 +205,8 @@ Why this mattered:
 - Documented the interaction requirement for combined formula editing and drag-fill: with `autoEdit: false`, a single click selects the formula cell and double-click opens the editor without competing with the drag handle.
 - Added Example 47 Cypress coverage for numeric series inference, formula stability after column reorder/hide, and exported formula row offsets.
 - Expanded Vitest coverage for FormulaCellEditor keyboard, caret, focus, clipboard, and lifecycle paths; FormulaService parser, lifecycle, conversion, and export paths; and drag-fill edge cases.
+- Added FormulaService regressions for changed live-formula precedence and both FormulaValueFormatter row-resolution paths (`DataView.getItem()` and the item-array fallback).
+- The full unit suite passes with 218 files and 6,022 tests; Formula plugin coverage is 100% statements/functions/lines and 93.52% branches.
 
 ### Cypress Coverage Audit (2026-08-21)
 
@@ -219,6 +221,7 @@ The following implemented paths remain covered by unit tests but do not yet have
 - TreeDataService-style hard throw was intentionally not used for formula selection prerequisites; behavior is warning-only to avoid breaking existing grids.
 - Grouping and Grouping Formatter integration is currently a known limitation for FormulaService and grouped formula export.
 - Series inference currently covers AG Grid's common default path only; modifier-key toggles, custom fill callbacks, range-reduction clearing, and double-click fill remain follow-ups.
+- The FormulaService currently supports all function names and operators listed in the AG Grid Formula Reference, plus `SUMPRODUCT` and `NA`. Revisit for closer Excel/AG Grid semantic parity later, including wildcard criteria, type-coercion edge cases, and distinct `#CIRCREF!` / `#PARSE!` error codes (circular references currently return `#REF!`, and parser failures return `#ERROR!`).
 
 ## Fast Verification
 
@@ -229,7 +232,7 @@ Run:
 - vitest run --config test/vitest.config.mts packages/formula-plugin/src/__tests__/formula-reference.spec.ts
 - vitest run --config test/vitest.config.mts packages/formula-plugin/src/__tests__/formula.service.spec.ts
 - vitest run --config test/vitest.config.mts packages/excel-export/src/excelExport.service.spec.ts
-- pnpm test:coverage (218 files, 6,020 tests; Formula plugin: 100% statements/functions/lines, 92.98% branches)
+- pnpm test:coverage (218 files, 6,022 tests; Formula plugin: 100% statements/functions/lines, 93.52% branches)
 - cypress run --config-file test/cypress.config.ts --spec test/cypress/e2e/example47.cy.ts
 
 ## Suggested Next Items
