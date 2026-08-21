@@ -243,7 +243,7 @@ export function getExcelFormatFromGridFormatter(
 
   if (!excelFormat && (columnDef.formatter || columnDef.groupTotalsFormatter)) {
     format = createExcelFormatFromGridFormatter(columnDef, grid, formatterType, groupType);
-    if (!excelFormats.hasOwnProperty(format)) {
+    if (!Object.prototype.hasOwnProperty.call(excelFormats, format)) {
       excelFormats[format] = stylesheet.createFormat({ format }); // save new formatter with its format as a prop key
     }
     excelFormat = excelFormats[format] as ExcelFormatter;

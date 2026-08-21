@@ -345,6 +345,25 @@ describe('SlickGrid core file', () => {
     expect(updateColumnSpy).toHaveBeenCalled();
   });
 
+  it('should treat inherited property names as ordinary column IDs', () => {
+    const specialColumns = [
+      { id: '__proto__', field: 'proto', name: 'Proto' },
+      { id: 'constructor', field: 'ctor', name: 'Constructor' },
+      { id: 'toString', field: 'string', name: 'To String' },
+    ] as Column[];
+    grid = new SlickGrid<any, Column>('#myGrid', [], specialColumns, defaultOptions);
+    grid.init();
+
+    expect(grid.getColumnIndex('__proto__')).toBe(0);
+    expect(grid.getColumnIndex('constructor')).toBe(1);
+    expect(grid.getColumnIndex('toString')).toBe(2);
+    expect(grid.getColumnById('__proto__')).toBe(specialColumns[0]);
+    expect(grid.getColumnById('constructor')).toBe(specialColumns[1]);
+    expect(grid.getColumnById('toString')).toBe(specialColumns[2]);
+    expect(Object.getPrototypeOf((grid as any).columnsById)).toBeNull();
+    expect(Object.getPrototypeOf((grid as any).visibleColumnsById)).toBeNull();
+  });
+
   it('should call setColumns() and wait a cycle before updating the column headers', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class', headerCellAttrs: { 'some-attr': 3 } },

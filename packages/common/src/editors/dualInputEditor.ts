@@ -526,13 +526,17 @@ export class DualInputEditor extends BaseEditorClass implements Editor {
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
     if (
       isCalledByClearValue ||
-      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(leftInputId))
+      (this.disabled &&
+        isExcludeDisabledFieldFormValues &&
+        Object.prototype.hasOwnProperty.call(compositeEditorOptions.formValues, leftInputId))
     ) {
       delete compositeEditorOptions.formValues[leftInputId];
     }
     if (
       isCalledByClearValue ||
-      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(rightInputId))
+      (this.disabled &&
+        isExcludeDisabledFieldFormValues &&
+        Object.prototype.hasOwnProperty.call(compositeEditorOptions.formValues, rightInputId))
     ) {
       delete compositeEditorOptions.formValues[rightInputId];
     }

@@ -65,7 +65,7 @@ export function SlickCompositeEditor(
     position: null,
     destroy: null,
     formValues: {},
-    editors: {},
+    editors: Object.create(null),
   } as unknown as CompositeEditorOption;
   options = { ...defaultOptions, ...options };
   let _timer: any;

@@ -1436,8 +1436,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       excel-builder-vanilla:
-        specifier: ^5.2.3
-        version: 5.2.3
+        specifier: ^5.2.4
+        version: 5.2.4
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
@@ -5589,8 +5589,8 @@ packages:
     resolution: {integrity: sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==}
     engines: {node: '>=18.0.0'}
 
-  excel-builder-vanilla@5.2.3:
-    resolution: {integrity: sha512-bz40csisehNfD8l7Zntr8QWhRnvmwp/9Qc0kW98rJiRZwOhEwFmuVbLzzXnJ/i2UQD8UEiHH8YVWojmcFENshA==}
+  excel-builder-vanilla@5.2.4:
+    resolution: {integrity: sha512-+w45ExNv9wzPdwhqOW8ZafMH7n8qODtrLKoho3NUkSwUU5OByUEd3IleLLVmZFk/O6ZSjcLKIPDRc56Felmm0g==}
 
   execa@4.1.0:
     resolution: {integrity: sha512-j5W0//W7f8UxAn8hXVnwG8tLwdiUy4FJLcSupCg6maBYZDpyBvTApK7KyuI4bKj8KOh1r2YH+6ucuYtJv1bTZA==}
@@ -12887,7 +12887,7 @@ snapshots:
     dependencies:
       eventsource-parser: 3.1.0
 
-  excel-builder-vanilla@5.2.3:
+  excel-builder-vanilla@5.2.4:
     dependencies:
       fflate: 0.8.3
 

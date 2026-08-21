@@ -2548,6 +2548,35 @@ describe('ExcelExportService', () => {
       expect((service as any)._regularCellExcelFormats.id.getDataValueParser).toBe(existingParser);
     });
 
+    it('cacheRegularCellExcelFormats should treat inherited property names as ordinary column IDs', () => {
+      service.init(gridStub, container);
+      (service as any)._excelExportOptions = { autoDetectCellFormat: true };
+      (service as any)._workbook = new Workbook();
+      (service as any)._sheet = (service as any)._workbook.createWorksheet({ name: 'Sheet1' });
+      (service as any)._stylesheet = (service as any)._workbook.getStyleSheet();
+      const boldFmt = (service as any)._stylesheet.createFormat({ font: { bold: true } });
+      const strFmt = (service as any)._stylesheet.createFormat({ format: '@' });
+      const numFmt = (service as any)._stylesheet.createFormat({ format: '0' });
+      (service as any)._stylesheetFormats = Object.assign(Object.create(null), {
+        boldFormat: boldFmt,
+        stringFormat: strFmt,
+        numberFormat: numFmt,
+      });
+      const columns = [
+        { id: '__proto__', field: 'proto', width: 100 },
+        { id: 'constructor', field: 'ctor', width: 100 },
+        { id: 'toString', field: 'string', width: 100 },
+      ] as Column[];
+
+      const cache = (service as any).preCalculateColumnMetadata(columns);
+      (service as any).cacheRegularCellExcelFormats(columns, cache);
+
+      expect(Object.getPrototypeOf(service.regularCellExcelFormats)).toBeNull();
+      expect(Object.getOwnPropertyDescriptor(service.regularCellExcelFormats, '__proto__')?.value).toBeDefined();
+      expect(Object.getOwnPropertyDescriptor(service.regularCellExcelFormats, 'constructor')?.value).toBeDefined();
+      expect(Object.getOwnPropertyDescriptor(service.regularCellExcelFormats, 'toString')?.value).toBeDefined();
+    });
+
     it('getRawCellValue should return empty string for empty object values', () => {
       service.init(gridStub, container);
       const output = (service as any).getRawCellValue({ title: {} }, 'title');

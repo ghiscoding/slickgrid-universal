@@ -128,12 +128,12 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected _gridOptions?: ReturnType<SlickGrid['getOptions']>; // cached grid options, refreshed via onSetOptions subscription
 
   // formatted data cache (export) — keyed by item id
-  protected formattedDataCache: Record<DataIdType, Partial<Record<string, string | number>>> = {};
+  protected formattedDataCache: Record<DataIdType, Partial<Record<string, string | number>>> = Object.create(null);
   // formatted cell cache (UI display) — keyed by item id
   protected formattedCellCache: Record<
     DataIdType,
     Record<string, FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string>
-  > = {};
+  > = Object.create(null);
   protected formattedDataCachePlanner?: FormattedDataCachePlanner;
   protected formattedCacheMetadata: FormattedDataCacheMetadata = {
     isPopulating: false,
@@ -490,7 +490,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
         gi.compiledAccumulators[idx] = this.compileAccumulatorLoopCSPSafe(gi.aggregators[idx]);
       }
 
-      this.toggledGroupsByLevel[i] = {};
+      this.toggledGroupsByLevel[i] = Object.create(null);
     }
 
     this.refresh();
@@ -508,10 +508,11 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
   protected ensureRowsByIdCache(): void {
     if (!this.rowsById) {
-      this.rowsById = {};
+      const rowsById: { [id: DataIdType]: number } = Object.create(null);
       for (let i = 0, l = this.rows.length; i < l; i++) {
-        this.rowsById[this.rows[i][this.idProperty as keyof TData] as DataIdType] = i;
+        rowsById[this.rows[i][this.idProperty as keyof TData] as DataIdType] = i;
       }
+      this.rowsById = rowsById;
     }
   }
 
@@ -870,7 +871,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected expandCollapseAllGroups(level?: number, collapse?: boolean): void {
     if (!isDefined(level)) {
       for (let i = 0; i < this.groupingInfos.length; i++) {
-        this.toggledGroupsByLevel[i] = {};
+        this.toggledGroupsByLevel[i] = Object.create(null);
         this.groupingInfos[i].collapsed = collapse;
 
         if (collapse === true) {
@@ -880,7 +881,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
         }
       }
     } else {
-      this.toggledGroupsByLevel[level] = {};
+      this.toggledGroupsByLevel[level] = Object.create(null);
       this.groupingInfos[level].collapsed = collapse;
 
       if (collapse === true) {
@@ -1743,7 +1744,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     let inHandler: boolean;
 
     const storeCellCssStyles = (hash: CssStyleHash) => {
-      hashById = {};
+      hashById = Object.create(null);
       if (typeof hash === 'object') {
         Object.keys(hash).forEach((row) => {
           if (hash && this.rows[row as any]) {
@@ -1880,8 +1881,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       cancelAnimationFrame(this._populateCacheRafId);
       this._populateCacheRafId = undefined;
     }
-    this.formattedDataCache = {};
-    this.formattedCellCache = {};
+    this.formattedDataCache = Object.create(null);
+    this.formattedCellCache = Object.create(null);
     this.formattedCacheMetadata = {
       isPopulating: false,
       lastProcessedRow: -1,
@@ -2117,10 +2118,10 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
     const itemId = (item as any)[ctx.idProperty] as DataIdType;
     if (!this.formattedDataCache[itemId]) {
-      this.formattedDataCache[itemId] = {};
+      this.formattedDataCache[itemId] = Object.create(null);
     }
     if (!this.formattedCellCache[itemId]) {
-      this.formattedCellCache[itemId] = {};
+      this.formattedCellCache[itemId] = Object.create(null);
     }
     const formattedDataRowCache = this.formattedDataCache[itemId];
     const formattedCellRowCache = this.formattedCellCache[itemId];
