@@ -372,6 +372,7 @@ describe('FormulaCellEditor', () => {
     editor.loadValue((args as any).item);
     (editor as any).restoreCaretOffset(5);
     (editor as any)._referenceEditRange = undefined;
+    expect((editor as any).resolveReferenceEditRangeForGridSelection()).toEqual({ start: 5, end: 5 });
     vi.spyOn(editor as any, 'resolveReferenceEditRangeForGridSelection').mockReturnValue(undefined);
 
     c1CellElm.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
