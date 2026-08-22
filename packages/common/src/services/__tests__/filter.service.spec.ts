@@ -154,6 +154,13 @@ describe('FilterService', () => {
     expect(service).toBeTruthy();
   });
 
+  it('should expose column filters as a plain-object snapshot for compatibility', () => {
+    const columnFilters = service.getColumnFilters();
+
+    expect(typeof columnFilters.hasOwnProperty).toBe('function');
+    expect(columnFilters).toEqual({});
+  });
+
   it('should dispose of the event handler', () => {
     const spy = vi.spyOn(slickgridEventHandler, 'unsubscribeAll');
     service.dispose();

@@ -721,7 +721,9 @@ export class FilterService {
   }
 
   getColumnFilters(): ColumnFilters {
-    return this._columnFilters;
+    // Keep the internal dictionary prototype-free while preserving the historical
+    // plain-object shape for consumers of this public getter.
+    return { ...this._columnFilters };
   }
 
   getPreviousFilters(): CurrentFilter[] {
