@@ -42,7 +42,7 @@ export class FilterService {
   protected _isFilterFirstRender = true;
   protected _firstColumnIdRendered: string | number = '';
   protected _filtersMetadata: Array<Filter> = [];
-  protected _columnFilters: ColumnFilters = {};
+  protected _columnFilters: ColumnFilters = Object.create(null);
   protected _grid!: SlickGrid;
   protected _isTreePresetExecuted = false;
   protected _previousFilters: CurrentFilter[] = [];
@@ -600,7 +600,7 @@ export class FilterService {
     const isNotExcludingChildAndValidateOnlyTreeColumn =
       !excludeChildrenWhenFilteringTree && this._gridOptions.treeDataOptions?.autoApproveParentItemWhenTreeColumnIsValid === true;
 
-    const treeObj = {};
+    const treeObj = Object.create(null) as Record<string | number, any>;
     const filteredChildrenAndParents = new Set<number | string>(); // use Set instead of simple array to avoid duplicates
 
     // a Map of unique itemId/value pair where the value is a boolean which tells us if the parent matches the filter criteria or not
@@ -1032,7 +1032,7 @@ export class FilterService {
   async updateSingleFilter(filter: CurrentFilter, emitChangedEvent = true, triggerBackendQuery = true): Promise<boolean> {
     const columnDef = this._grid.getColumns().find((col) => col.id === filter.columnId);
     if (columnDef && filter.columnId) {
-      this._columnFilters = {};
+      this._columnFilters = Object.create(null);
       const emptySearchTermReturnAllValues = columnDef.filter?.emptySearchTermReturnAllValues ?? true;
 
       if (
@@ -1258,7 +1258,7 @@ export class FilterService {
       const eventKey = (event as KeyboardEvent)?.key;
       if (
         this._onSearchChange &&
-        (args.forceOnSearchChangeEvent || eventKey === 'Enter' || !dequal(oldColumnFilters, this._columnFilters))
+        (args.forceOnSearchChangeEvent || eventKey === 'Enter' || !dequal(oldColumnFilters, { ...this._columnFilters }))
       ) {
         const eventArgs = {
           clearFilterTriggered: args.clearFilterTriggered,

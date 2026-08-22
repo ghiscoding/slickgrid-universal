@@ -59,7 +59,7 @@ export class SlickRowBasedEdit {
 
   private _existingEditCommandHandler: ((item: any, column: Column<any>, command: EditCommand) => void) | undefined;
   protected _currentLang = 'en';
-  private _translations: { [locale: string]: ButtonTranslation } = {};
+  private _translations: { [locale: string]: ButtonTranslation } = Object.create(null);
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(

@@ -22,12 +22,12 @@ export class AvgAggregator extends BaseAggregatorClass implements Aggregator {
     this._isTreeAggregator = isTreeAggregator;
     if (isTreeAggregator) {
       if (!item.__treeTotals) {
-        item.__treeTotals = {};
+        item.__treeTotals = Object.create(null);
       }
       if (item.__treeTotals[this._type] === undefined) {
-        item.__treeTotals[this._type] = {};
-        item.__treeTotals.sum = {};
-        item.__treeTotals.count = {};
+        item.__treeTotals[this._type] = Object.create(null);
+        item.__treeTotals.sum = Object.create(null);
+        item.__treeTotals.count = Object.create(null);
       }
       item.__treeTotals[this._type][this._field] = 0;
       item.__treeTotals['count'][this._field] = 0;
@@ -48,7 +48,7 @@ export class AvgAggregator extends BaseAggregatorClass implements Aggregator {
     } else {
       if (isTreeParent) {
         if (!item.__treeTotals) {
-          item.__treeTotals = {};
+          item.__treeTotals = Object.create(null);
         }
         this.addGroupTotalPropertiesWhenNotExist(item.__treeTotals);
         this._sum = parseFloat(item.__treeTotals['sum'][this._field] ?? 0);
@@ -81,13 +81,13 @@ export class AvgAggregator extends BaseAggregatorClass implements Aggregator {
 
   protected addGroupTotalPropertiesWhenNotExist(groupTotals: any): void {
     if (groupTotals[this._type] === undefined) {
-      groupTotals[this._type] = {};
+      groupTotals[this._type] = Object.create(null);
     }
     if (this._isTreeAggregator && groupTotals['sum'] === undefined) {
-      groupTotals['sum'] = {};
+      groupTotals['sum'] = Object.create(null);
     }
     if (this._isTreeAggregator && groupTotals['count'] === undefined) {
-      groupTotals['count'] = {};
+      groupTotals['count'] = Object.create(null);
     }
   }
 }

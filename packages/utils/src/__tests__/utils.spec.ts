@@ -510,6 +510,16 @@ describe('Service/Utilies', () => {
       expect(arr2[0].address.zip).toBe(888888);
       expect(arr2[1].address.zip).toBe(999999);
     });
+
+    it('should not allow copied prototype keys to modify Object.prototype', () => {
+      delete (Object.prototype as any).polluted;
+      const input = JSON.parse('{"__proto__":{"polluted":"yes"}}');
+
+      const output = deepCopy(input);
+
+      expect(output.__proto__.polluted).toBe('yes');
+      expect((Object.prototype as any).polluted).toBeUndefined();
+    });
   });
 
   describe('deepMerge() method', () => {
@@ -853,6 +863,17 @@ describe('Service/Utilies', () => {
           ],
         },
       });
+    });
+
+    it('should not allow a __proto__ path to modify Object.prototype', () => {
+      delete (Object.prototype as any).polluted;
+      const output: any = {};
+
+      setDeepValue(output, '__proto__.polluted', 'yes');
+
+      expect(Object.prototype.hasOwnProperty.call(output, '__proto__')).toBe(true);
+      expect(output.__proto__.polluted).toBe('yes');
+      expect((Object.prototype as any).polluted).toBeUndefined();
     });
   });
 
