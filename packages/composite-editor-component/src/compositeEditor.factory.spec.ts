@@ -167,6 +167,25 @@ describe('Composite Editor Factory', () => {
     expect(document.activeElement).not.toBeUndefined();
   });
 
+  it('should keep composite form values prototype-free while preserving hasOwnProperty compatibility', () => {
+    const factoryWithInitialValues = new (SlickCompositeEditor as any)(columnsMock, containers, {
+      ...compositeOptions,
+      formValues: { existingField: 'initial value' },
+    });
+    const output = new factoryWithInitialValues(textEditorArgs);
+    const formValues = output.getEditors()[0].args.compositeEditorOptions?.formValues as Record<string, any>;
+
+    expect(Object.getPrototypeOf(formValues)).toBeNull();
+    expect(formValues.existingField).toBe('initial value');
+    expect(typeof formValues.hasOwnProperty).toBe('function');
+    expect(formValues.hasOwnProperty('missingField')).toBe(false);
+
+    formValues.__proto__ = { polluted: true };
+    expect(Object.getPrototypeOf(formValues)).toBeNull();
+    expect(Object.prototype.hasOwnProperty.call(formValues, '__proto__')).toBe(true);
+    expect(({} as any).polluted).toBeUndefined();
+  });
+
   it('should be able to call the cancelChanges & commitChanges function to test the noop function after initialization', () => {
     const output = new factory(textEditorArgs);
     const cancelOutput = output.getEditors()[0].args.cancelChanges();

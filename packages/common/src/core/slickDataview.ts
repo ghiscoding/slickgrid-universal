@@ -613,9 +613,9 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
     // Also update the rows? no need since the `refresh()`, further down, blows away the `rows[]` cache and recalculates it via `recalc()`!
     if (!this.updated) {
-      this.updated = {};
+      this.updated = Object.create(null);
     }
-    this.updated[id] = true;
+    this.updated![id] = true;
   }
 
   /**
@@ -1002,7 +1002,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     let group: SlickGroup;
     let val: any;
     const groups: SlickGroup[] = [];
-    const groupsByVal: any = {};
+    const groupsByVal: Record<string, SlickGroup> = Object.create(null);
     let r;
     const level = parentGroup ? parentGroup.level + 1 : 0;
     const gi = this.groupingInfos[level];

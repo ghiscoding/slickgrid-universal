@@ -224,6 +224,15 @@ describe('OdataService', () => {
         LastName: { search: ['Doe'], value: 'Doe' },
       });
     });
+
+    it('should safely store filter names that match Object prototype properties', () => {
+      service.saveColumnFilter('__proto__', 'John', ['John']);
+      service.saveColumnFilter('constructor', 'Doe', ['Doe']);
+
+      expect(service.columnFilters['__proto__']).toEqual({ search: ['John'], value: 'John' });
+      expect(service.columnFilters.constructor).toEqual({ search: ['Doe'], value: 'Doe' });
+      expect((Object.prototype as any).polluted).toBeUndefined();
+    });
   });
 
   describe('removeColumnFilter method', () => {

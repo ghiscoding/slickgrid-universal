@@ -19,10 +19,10 @@ export class MinAggregator extends BaseAggregatorClass implements Aggregator {
     this._isTreeAggregator = isTreeAggregator;
     if (isTreeAggregator) {
       if (!item.__treeTotals) {
-        item.__treeTotals = {};
+        item.__treeTotals = Object.create(null);
       }
       if (item.__treeTotals[this._type] === undefined) {
-        item.__treeTotals[this._type] = {};
+        item.__treeTotals[this._type] = Object.create(null);
       }
       item.__treeTotals[this._type][this._field] = null;
     }
@@ -38,7 +38,7 @@ export class MinAggregator extends BaseAggregatorClass implements Aggregator {
     } else {
       if (isTreeParent) {
         if (!item.__treeTotals) {
-          item.__treeTotals = {};
+          item.__treeTotals = Object.create(null);
         }
         this.addGroupTotalPropertiesWhenNotExist(item.__treeTotals);
         const parentMin =
@@ -68,7 +68,7 @@ export class MinAggregator extends BaseAggregatorClass implements Aggregator {
 
   protected addGroupTotalPropertiesWhenNotExist(groupTotals: any): void {
     if (groupTotals[this._type] === undefined) {
-      groupTotals[this._type] = {};
+      groupTotals[this._type] = Object.create(null);
     }
   }
 
