@@ -21,6 +21,26 @@ export interface CompositeEditor extends Editor {
 }
 
 /**
+ * Create a prototype-free dynamic map while retaining the historical
+ * `map.hasOwnProperty(key)` compatibility used by some composite-editor consumers.
+ */
+function createSafeDynamicMap<T extends Record<string, any>>(initialValues?: T): T {
+  const target = Object.create(null) as Record<string, any>;
+  Object.keys(initialValues ?? {}).forEach((key) => {
+    target[key] = initialValues![key];
+  });
+
+  return new Proxy(target, {
+    get(map, property, receiver) {
+      if (property === 'hasOwnProperty' && !Object.prototype.hasOwnProperty.call(map, property)) {
+        return Object.prototype.hasOwnProperty.bind(map);
+      }
+      return Reflect.get(map, property, receiver);
+    },
+  }) as T;
+}
+
+/**
  * A composite SlickGrid editor factory.
  * Generates an editor that is composed of multiple editors for given columns.
  * Individual editors are provided given containers instead of the original cell.
@@ -64,10 +84,11 @@ export function SlickCompositeEditor(
     hide: null,
     position: null,
     destroy: null,
-    formValues: {},
+    formValues: createSafeDynamicMap(),
     editors: Object.create(null),
   } as unknown as CompositeEditorOption;
   options = { ...defaultOptions, ...options };
+  options.formValues = createSafeDynamicMap(options.formValues);
   let _timer: any;
 
   /* no operation (empty) function */
@@ -110,7 +131,7 @@ export function SlickCompositeEditor(
             cancelChanges: noop,
             compositeEditorOptions: options,
             isCompositeEditor: true,
-            formValues: {},
+            formValues: createSafeDynamicMap(),
           } as CompositeEditorArguments);
           options.editors[column.id] = currentEditor; // add every Editor instance refs
           editors.push(currentEditor as Editor & { args: EditorArguments });

@@ -27,7 +27,7 @@ export class DistinctAggregator extends BaseAggregatorClass implements Aggregato
 
   storeResult(groupTotals: GroupTotals<any[]>): void {
     if (!groupTotals || groupTotals[this._type] === undefined) {
-      groupTotals[this._type] = {};
+      groupTotals[this._type] = Object.create(null);
     }
     groupTotals[this._type][this._field] = this._distinctValues;
   }

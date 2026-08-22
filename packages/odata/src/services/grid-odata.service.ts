@@ -316,7 +316,7 @@ export class GridOdataService implements BackendService {
 
     // loop through all columns to inspect filters
     for (const columnId in columnFilters) {
-      if (columnFilters.hasOwnProperty(columnId)) {
+      if (Object.prototype.hasOwnProperty.call(columnFilters, columnId)) {
         const columnFilter = (columnFilters as any)[columnId];
 
         // if user defined some "presets", then we need to find the filters from the column definitions instead

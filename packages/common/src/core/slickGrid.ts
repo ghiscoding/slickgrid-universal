@@ -460,8 +460,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected selectedRanges: SlickRange[] = [];
 
   protected plugins: SlickPlugin[] = [];
-  protected cellCssClasses: CssStyleHash = {};
-  protected cellCssClassesByCell: CssStyleHash = {};
+  protected cellCssClasses: CssStyleHash = Object.create(null);
+  protected cellCssClassesByCell: CssStyleHash = Object.create(null);
 
   protected columnsById: Record<string, number> = Object.create(null);
   protected visibleColumnsById: Record<string, number> = Object.create(null);
@@ -3536,13 +3536,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.selectionRightCell = -1;
     this.dragReplaceEl.removeEl();
     this.selectedRows = [];
-    const hash: CssStyleHash = {};
+    const hash: CssStyleHash = Object.create(null);
     for (let i = 0; i < ranges.length; i++) {
       for (let j = ranges[i].fromRow; j <= ranges[i].toRow; j++) {
         if (!hash[j]) {
           // prevent duplicates
           this.selectedRows.push(j);
-          hash[j] = {};
+          hash[j] = Object.create(null);
         }
         for (let k = ranges[i].fromCell; k <= ranges[i].toCell; k++) {
           if (this.canCellBeSelected(j, k)) {
@@ -6166,11 +6166,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Merges the keyed CSS overlays once on update, rather than for every rendered cell. */
   protected updateCellCssClassesByCell(): void {
-    this.cellCssClassesByCell = {};
+    this.cellCssClassesByCell = Object.create(null);
 
     Object.values(this.cellCssClasses).forEach((hash) => {
       Object.entries(hash).forEach(([row, cellClasses]) => {
-        const mergedRowClasses = (this.cellCssClassesByCell[row] ??= {});
+        const mergedRowClasses = (this.cellCssClassesByCell[row] ??= Object.create(null));
         Object.entries(cellClasses).forEach(([columnId, cssClasses]) => {
           if (cssClasses) {
             mergedRowClasses[columnId] = mergedRowClasses[columnId] ? `${mergedRowClasses[columnId]} ${cssClasses}` : cssClasses;

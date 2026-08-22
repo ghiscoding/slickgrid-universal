@@ -24,7 +24,7 @@ export class OdataQueryBuilderService {
       orderBy: '',
     };
     this._defaultSortBy = '';
-    this._columnFilters = {};
+    this._columnFilters = Object.create(null);
   }
 
   /*

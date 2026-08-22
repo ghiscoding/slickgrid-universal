@@ -60,6 +60,21 @@ describe('sumAggregator', () => {
       const total = 58 + 14 + 87;
       expect(groupTotals.sum[fieldName]).toBe(total);
     });
+
+    it('should safely store a field name that matches an Object prototype property', () => {
+      delete (Object.prototype as any).polluted;
+      const fieldName = '__proto__';
+      const groupTotals: GroupTotals = {};
+      const item = JSON.parse('{"__proto__":5}');
+      aggregator = new SumAggregator(fieldName);
+      aggregator.init();
+      aggregator.accumulate(item);
+      aggregator.storeResult(groupTotals);
+
+      expect(Object.prototype.hasOwnProperty.call(groupTotals.sum, fieldName)).toBe(true);
+      expect(groupTotals.sum[fieldName]).toBe(5);
+      expect((Object.prototype as any).polluted).toBeUndefined();
+    });
   });
 
   describe('Tree Aggregator', () => {

@@ -532,10 +532,10 @@ export class SlickCellExternalCopyManager {
     this.clearCopySelection();
 
     const columns = this._grid.getColumns();
-    const hash: CssStyleHash = {};
+    const hash: CssStyleHash = Object.create(null);
     for (const range of ranges) {
       for (let j = range.fromRow; j <= range.toRow; j++) {
-        hash[j] = {};
+        hash[j] = Object.create(null);
         for (let k = range.fromCell; k <= range.toCell && k < columns.length; k++) {
           hash[j][columns[k].id] = this._copiedCellStyle;
         }

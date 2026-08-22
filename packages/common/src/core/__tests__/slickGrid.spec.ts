@@ -7235,6 +7235,20 @@ describe('SlickGrid core file', () => {
       );
     });
 
+    it('should support CSS style keys that match Object prototype properties', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+      const hash = { 0: { age: 'highlight' } };
+
+      grid.addCellCssStyles('__proto__', hash);
+      grid.addCellCssStyles('constructor', hash);
+      grid.addCellCssStyles('toString', hash);
+
+      expect(grid.getCellCssStyles('__proto__')).toBe(hash);
+      expect(grid.getCellCssStyles('constructor')).toBe(hash);
+      expect(grid.getCellCssStyles('toString')).toBe(hash);
+      expect((Object.prototype as any).polluted).toBeUndefined();
+    });
+
     it('should exit early when trying to remove CSS Style key that does not exist in hash', () => {
       const hashCopy = { ...hash };
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
