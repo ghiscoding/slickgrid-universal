@@ -875,6 +875,17 @@ describe('Service/Utilies', () => {
       expect(output.__proto__.polluted).toBe('yes');
       expect((Object.prototype as any).polluted).toBeUndefined();
     });
+
+    it('should safely set a leaf __proto__ property without modifying Object.prototype', () => {
+      delete (Object.prototype as any).polluted;
+      const output: any = {};
+
+      setDeepValue(output, '__proto__', { polluted: 'yes' });
+
+      expect(Object.prototype.hasOwnProperty.call(output, '__proto__')).toBe(true);
+      expect(output.__proto__).toEqual({ polluted: 'yes' });
+      expect((Object.prototype as any).polluted).toBeUndefined();
+    });
   });
 
   describe('titleCase() method', () => {
