@@ -1,6 +1,6 @@
 import type { Column, OnDragReplaceCellsEventArgs, SlickDataView, SlickGrid, SlickRange } from '@slickgrid-universal/common';
 import { SlickSelectionUtils } from '@slickgrid-universal/common';
-import { getExcelColumnIndexByName, getExcelColumnNameByIndex } from './formula-reference.js';
+import { getExcelColumnIndexByName, getExcelColumnNameByIndex, setFormulaObjectProperty } from './formula-reference.js';
 
 /** Internal callbacks used by FormulaService to keep storage and display concerns in the service. */
 export interface FormulaDragFillContext {
@@ -90,7 +90,7 @@ export function handleFormulaDragFill(args: OnDragReplaceCellsEventArgs, context
             targetRow - sourceRow,
             targetColumnIndex - sourceColumnIndex
           );
-          targetItem[targetField] = context.toStoredFormula(translatedFormula);
+          setFormulaObjectProperty(targetItem, targetField, context.toStoredFormula(translatedFormula));
           context.setFormula(targetRowId, targetColumn.id, translatedFormula);
         } else {
           const { seriesIndex, sourceValues } = getSourceValueSeries(
@@ -102,7 +102,7 @@ export function handleFormulaDragFill(args: OnDragReplaceCellsEventArgs, context
             context.grid,
             valueSeriesCache
           );
-          targetItem[targetField] = getFillSeriesValue(sourceValues, seriesIndex);
+          setFormulaObjectProperty(targetItem, targetField, getFillSeriesValue(sourceValues, seriesIndex));
           context.setFormula(targetRowId, targetColumn.id, null);
         }
         updatedItems.set(String(targetRowId), { id: targetRowId, item: targetItem });

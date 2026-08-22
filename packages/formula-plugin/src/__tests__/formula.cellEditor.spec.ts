@@ -56,6 +56,32 @@ describe('FormulaCellEditor', () => {
     gridContainer.remove();
   });
 
+  it('should assign a __proto__ field as an own data property', () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    const gridStub = {
+      focus: () => undefined,
+      getActiveCell: () => ({ row: 0, cell: 0 }),
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({}),
+    } as any;
+    const item: Record<string, unknown> = { id: 'row-1' };
+    const editor = new FormulaCellEditor({
+      column: { field: '__proto__', editor: { params: {} } },
+      container: hostContainer,
+      grid: gridStub,
+      item,
+    } as any);
+
+    editor.applyValue(item, '=1');
+
+    expect(Object.prototype.hasOwnProperty.call(item, '__proto__')).toBe(true);
+    expect(item.__proto__).toBe('=1');
+    expect(Object.getPrototypeOf(item)).toBe(Object.prototype);
+    editor.destroy();
+  });
+
   it('should keep editor open and suppress grid click after selecting a reference cell', () => {
     const hostContainer = document.createElement('div');
     const gridContainer = document.createElement('div');

@@ -1,4 +1,6 @@
 export const FORMULA_TOKEN_COLOR_COUNT = 10;
+/** Maximum number of cells expanded for one formula reference range. */
+export const FORMULA_MAX_REFERENCE_CELLS = 100_000;
 
 export interface FormulaGridCell {
   row: number;
@@ -124,6 +126,11 @@ export function expandFormulaReferenceToGridCells(reference: string): FormulaGri
   const maxRow = Math.max(startCell.row, endCell.row);
   const minCell = Math.min(startCell.cell, endCell.cell);
   const maxCell = Math.max(startCell.cell, endCell.cell);
+  const rowCount = maxRow - minRow + 1;
+  const cellCount = maxCell - minCell + 1;
+  if (!Number.isSafeInteger(rowCount) || !Number.isSafeInteger(cellCount) || rowCount * cellCount > FORMULA_MAX_REFERENCE_CELLS) {
+    return [];
+  }
 
   for (let row = minRow; row <= maxRow; row++) {
     for (let cell = minCell; cell <= maxCell; cell++) {
@@ -157,4 +164,19 @@ export function buildFormulaReferenceColorInfos(formula: string): FormulaReferen
   }
 
   return references;
+}
+
+/** Assign a data-cell value without invoking the legacy Object.prototype.__proto__ setter. */
+export function setFormulaObjectProperty(target: Record<string, unknown>, propertyName: string, value: unknown): void {
+  if (propertyName === '__proto__') {
+    Object.defineProperty(target, propertyName, {
+      configurable: true,
+      enumerable: true,
+      value,
+      writable: true,
+    });
+    return;
+  }
+
+  target[propertyName] = value;
 }

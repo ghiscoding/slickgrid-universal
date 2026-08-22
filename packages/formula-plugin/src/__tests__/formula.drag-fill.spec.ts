@@ -14,6 +14,35 @@ describe('formula drag-fill', () => {
     expect(getFillSeriesValue([], 0)).toBeUndefined();
   });
 
+  it('should assign drag-filled values to a __proto__ field without changing the row prototype', () => {
+    const columns: Column[] = [{ id: '__proto__', field: '__proto__', allowFormula: true }];
+    const sourceValue = { copied: true };
+    const sourceItem: Record<string, unknown> = { id: 'r1' };
+    Object.defineProperty(sourceItem, '__proto__', { configurable: true, enumerable: true, value: sourceValue, writable: true });
+    const targetItem: Record<string, unknown> = { id: 'r2' };
+    const items = [sourceItem, targetItem];
+    const grid = {
+      getColumns: () => columns,
+      getVisibleColumns: () => columns,
+      getDataItem: (row: number) => items[row],
+      getOptions: () => ({}),
+    } as any;
+
+    handleFormulaDragFill({ grid, prevSelectedRange: new SlickRange(0, 0), selectedRange: new SlickRange(0, 0, 1, 0) } as any, {
+      grid,
+      dataView: { updateItems: vi.fn() } as any,
+      getDatasetIdPropertyName: () => 'id',
+      getFormula: () => undefined,
+      setFormula: vi.fn(),
+      toStoredFormula: (formula: string) => formula,
+      toDisplayFormulaForCell: (formula: string) => formula,
+    });
+
+    expect(Object.prototype.hasOwnProperty.call(targetItem, '__proto__')).toBe(true);
+    expect(targetItem.__proto__).toBe(sourceValue);
+    expect(Object.getPrototypeOf(targetItem)).toBe(Object.prototype);
+  });
+
   it('should infer a vertical numeric series only in formula-enabled columns', () => {
     const columns: Column[] = [
       { id: 'series', field: 'series', allowFormula: true },

@@ -54,6 +54,10 @@ describe('formula reference utilities', () => {
     expect(expandFormulaReferenceToGridCells('D1:')).toEqual([{ row: 0, cell: 3 }]);
   });
 
+  it('should refuse to expand an excessively large range', () => {
+    expect(expandFormulaReferenceToGridCells('A1:ZZZ1000000')).toEqual([]);
+  });
+
   it('should share formula-change and dirty-state handling through the color cache', () => {
     const cache = new FormulaReferenceColorCache();
 

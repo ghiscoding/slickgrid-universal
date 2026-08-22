@@ -7,6 +7,7 @@ import {
   getExcelColumnNameByIndex,
   normalizeFormulaReferenceToken,
   parseExcelReferenceCell,
+  setFormulaObjectProperty,
 } from './formula-reference.js';
 
 export interface FormulaEditorParams {
@@ -130,7 +131,7 @@ export class FormulaCellEditor implements Editor {
 
   applyValue(item: any, state: any): void {
     const field = this.args.column.field as string;
-    item[field] = state;
+    setFormulaObjectProperty(item, field, state);
     const editorParams = this.args.column.editor?.params as FormulaEditorParams | undefined;
     editorParams?.onFormulaCommit?.(String(state ?? ''), item);
   }
@@ -723,7 +724,7 @@ export class FormulaCellEditor implements Editor {
       return;
     }
 
-    const hash: Record<number, Record<string | number, string>> = {};
+    const hash: Record<number, Record<string | number, string>> = Object.create(null);
 
     // Iterate through each cached reference and paint its cells
     for (const info of this._formulaRefColorCache.values()) {
@@ -737,7 +738,7 @@ export class FormulaCellEditor implements Editor {
         const columnId = column?.id;
 
         if (columnId && !hash[row]) {
-          hash[row] = {};
+          hash[row] = Object.create(null);
         }
         if (columnId) {
           hash[row][columnId] = info.colorClass;

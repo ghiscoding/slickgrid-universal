@@ -16,6 +16,7 @@ import { createDomElement, Formatters, SlickEventHandler } from '@slickgrid-univ
 import { FORMULA_ERROR, isFormulaErrorCode, type FormulaErrorCode } from './formula-errors.js';
 import { createFormulaFunctionRegistry, type FormulaCallback } from './formula-functions.js';
 import {
+  FORMULA_MAX_REFERENCE_CELLS,
   FormulaReferenceColorCache,
   getExcelColumnIndexByName,
   getExcelColumnNameByIndex,
@@ -247,7 +248,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
     Array.from(this._formulaRefColorCache.values()).forEach((reference, idx) => {
       const styleKey = `formula-ref-highlight-${idx}`;
-      const hash: Record<number, Record<string | number, string>> = {};
+      const hash: Record<number, Record<string | number, string>> = Object.create(null);
 
       for (const cell of reference.cells) {
         const column = columns[cell.cell];
@@ -257,7 +258,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         }
 
         if (!hash[cell.row]) {
-          hash[cell.row] = {};
+          hash[cell.row] = Object.create(null);
         }
         hash[cell.row][column.id as number | string] = reference.colorClass;
       }
@@ -1380,6 +1381,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const maxColIdx = Math.max(startColIdx, endColIdx);
     const minRowNumber = Math.max(1, Math.min(startRowNumber, endRowNumber));
     const maxRowNumber = Math.max(startRowNumber, endRowNumber);
+    const rowCount = maxRowNumber - minRowNumber + 1;
+    const cellCount = maxColIdx - minColIdx + 1;
+    if (!Number.isSafeInteger(rowCount) || !Number.isSafeInteger(cellCount) || rowCount * cellCount > FORMULA_MAX_REFERENCE_CELLS) {
+      return [FORMULA_ERROR.REF];
+    }
     const rangeValues: unknown[] = [];
 
     for (let rowNumber = minRowNumber; rowNumber <= maxRowNumber; rowNumber++) {

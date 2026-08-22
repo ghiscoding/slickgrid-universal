@@ -217,6 +217,7 @@ The Example 47 Cypress suite is passing with the prescribed `pnpm cypress:ci --s
 The following implemented paths remain covered by unit tests but do not yet have direct Cypress coverage: caret-aware reference detection and range endpoint drag expansion, CSS fallback highlighting without a compatible selection model, prerequisite warning behavior, raw `REF(COLUMN(),ROW())` entry, hidden-column-inclusive Excel export, absolute/relative formula translation through the drag handle, workbook defined-name/custom-function assertions, and grouping-specific formula behavior.
 
 ## Known Constraints / Notes
+- Security audit follow-up: formula reference expansion is bounded, highlight dictionaries use null-prototype objects, and formula/drag-fill writes safely handle a `__proto__` field.
 - Without a cell-capable selection model, range visuals fall back to CSS highlighting only.
 - TreeDataService-style hard throw was intentionally not used for formula selection prerequisites; behavior is warning-only to avoid breaking existing grids.
 - Grouping and Grouping Formatter integration is currently a known limitation for FormulaService and grouped formula export.

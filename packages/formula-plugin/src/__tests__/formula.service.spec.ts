@@ -122,6 +122,24 @@ describe('FormulaService', () => {
     expect((flagService as any).evaluateExpressionWithParser('"x"^2', new Map())).toBe(FORMULA_ERROR.NUM);
   });
 
+  it('should keep special column IDs as own highlight hash keys', () => {
+    const columns: Column[] = [{ id: '__proto__', field: '__proto__', allowFormula: true }];
+    const setCellCssStyles = vi.fn();
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({
+      getColumns: () => columns,
+      getData: () => ({ getItems: () => [{ id: 'r1', value: 1 }], getLength: () => 1 }),
+      getOptions: () => ({ datasetIdPropertyName: 'id', enableFormulas: true }),
+      setCellCssStyles,
+    } as any);
+
+    service.renderFormulaReferenceHighlights('=A1');
+
+    const hash = setCellCssStyles.mock.calls[0]?.[1] as Record<number, Record<string, string>>;
+    expect(Object.prototype.hasOwnProperty.call(hash[0], '__proto__')).toBe(true);
+    expect(hash[0].__proto__).toBe('formula-cell-color-1');
+  });
+
   it('should set/get/has formula by row and column ids', () => {
     const service = new FormulaService();
 
@@ -1450,6 +1468,7 @@ describe('FormulaService', () => {
     expect((service as any).evaluateFormulaExpression('=1;2', context)).toBe(FORMULA_ERROR.ERROR);
     expect((service as any).evaluateFormulaExpression('=FOO', context)).toBe(FORMULA_ERROR.NAME);
     expect((service as any).evaluateFormulaExpression('=A1:B1', context)).toBe(FORMULA_ERROR.REF);
+    expect((service as any).evaluateFormulaExpression('=SUM(A1:ZZZ1000000)', context)).toBe(FORMULA_ERROR.REF);
 
     for (const error of [ReferenceError, TypeError, SyntaxError, Error]) {
       const throwingService = new FormulaService({});
