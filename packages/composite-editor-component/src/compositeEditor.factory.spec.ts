@@ -168,10 +168,15 @@ describe('Composite Editor Factory', () => {
   });
 
   it('should keep composite form values prototype-free while preserving hasOwnProperty compatibility', () => {
-    const output = new factory(textEditorArgs);
+    const factoryWithInitialValues = new (SlickCompositeEditor as any)(columnsMock, containers, {
+      ...compositeOptions,
+      formValues: { existingField: 'initial value' },
+    });
+    const output = new factoryWithInitialValues(textEditorArgs);
     const formValues = output.getEditors()[0].args.compositeEditorOptions?.formValues as Record<string, any>;
 
     expect(Object.getPrototypeOf(formValues)).toBeNull();
+    expect(formValues.existingField).toBe('initial value');
     expect(typeof formValues.hasOwnProperty).toBe('function');
     expect(formValues.hasOwnProperty('missingField')).toBe(false);
 
