@@ -463,8 +463,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected cellCssClasses: CssStyleHash = {};
   protected cellCssClassesByCell: CssStyleHash = {};
 
-  protected columnsById: Record<string, number> = {};
-  protected visibleColumnsById: Record<string, number> = {};
+  protected columnsById: Record<string, number> = Object.create(null);
+  protected visibleColumnsById: Record<string, number> = Object.create(null);
   protected sortColumns: ColumnSort[] = [];
   protected columnPosLeft: number[] = [];
   protected columnPosRight: number[] = [];
@@ -3619,8 +3619,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected updateColumnProps(): void {
-    this.columnsById = {};
-    this.visibleColumnsById = {};
+    this.columnsById = Object.create(null);
+    this.visibleColumnsById = Object.create(null);
 
     for (let i = 0; i < this.columns.length; i++) {
       let m: C = this.columns[i] || {};

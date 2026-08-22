@@ -2341,6 +2341,9 @@ describe('SlickDatView core file', () => {
 
     afterEach(() => {
       grid.destroy();
+      delete (Object.prototype as any).prototypePollutionAudit;
+      delete (Object as any).prototypePollutionAudit;
+      delete (Object.prototype.toString as any).prototypePollutionAudit;
     });
 
     describe('getCacheStatus()', () => {
@@ -2441,6 +2444,43 @@ describe('SlickDatView core file', () => {
     });
 
     describe('populateFormattedDataCacheAsync()', () => {
+      it('should cache special item IDs without modifying built-in objects', async () => {
+        const specialItems = [
+          { id: '__proto__', name: 'Proto' },
+          { id: 'constructor', name: 'Constructor' },
+          { id: 'toString', name: 'To String' },
+        ];
+        const specialColumns = [
+          {
+            id: 'prototypePollutionAudit',
+            field: 'name',
+            name: 'Name',
+            formatter: (_row: number, _cell: number, value: any) => `<b>${value}</b>`,
+          },
+        ] as any[];
+        const specialDataView = new SlickDataView({});
+        const specialGrid = new SlickGrid('#myGrid', specialDataView, specialColumns, cacheGridOptions);
+        specialDataView.setGrid(specialGrid);
+        specialDataView.setItems(specialItems);
+
+        try {
+          await waitForCache(specialDataView);
+
+          expect(specialDataView.getCellDisplayValue(0, 'prototypePollutionAudit', specialItems[0])).toBe('<b>Proto</b>');
+          expect(specialDataView.getCellDisplayValue(1, 'prototypePollutionAudit', specialItems[1])).toBe('<b>Constructor</b>');
+          expect(specialDataView.getCellDisplayValue(2, 'prototypePollutionAudit', specialItems[2])).toBe('<b>To String</b>');
+          expect(Object.prototype).not.toHaveProperty('prototypePollutionAudit');
+          expect(Object).not.toHaveProperty('prototypePollutionAudit');
+          expect(Object.prototype.toString).not.toHaveProperty('prototypePollutionAudit');
+          expect(Object.getPrototypeOf((specialDataView as any).formattedDataCache)).toBeNull();
+          expect(Object.getPrototypeOf((specialDataView as any).formattedCellCache)).toBeNull();
+          expect(Object.getPrototypeOf((specialDataView as any).formattedCellCache.__proto__)).toBeNull();
+        } finally {
+          specialGrid.destroy();
+          specialDataView.destroy();
+        }
+      });
+
       it('should do nothing when enableFormattedDataCache is false', async () => {
         const dvOff = new SlickDataView({});
         const gridOff = new SlickGrid('#myGrid', dvOff, columns, { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as any);
