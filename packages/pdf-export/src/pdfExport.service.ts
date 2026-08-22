@@ -171,7 +171,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
           this._columnHeaders = this.getColumnHeaders(columns) || [];
 
           // cache resolved export options for each column as a Record by column.id
-          const columnExportOptionsCache: Record<string, PdfExportOption> = {};
+          const columnExportOptionsCache: Record<string, PdfExportOption> = Object.create(null);
           columns.forEach((col: Column) => {
             if (col.id) {
               columnExportOptionsCache[col.id] = resolveColumnExportOptions(col, this._exportOptions);

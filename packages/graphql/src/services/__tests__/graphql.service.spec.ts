@@ -76,6 +76,9 @@ describe('GraphqlService', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    delete (Object.prototype as any).polluted;
+    delete (Object as any).polluted;
+    delete (Object.prototype.toString as any).polluted;
   });
 
   it('should create the service', () => {
@@ -527,6 +530,17 @@ describe('GraphqlService', () => {
       const query = service.buildFilterQuery(columns);
 
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+    });
+
+    it('should treat inherited property names as ordinary fields without polluting built-ins', () => {
+      const columns = ['__proto__.polluted', 'constructor.prototype.polluted', 'toString.polluted'];
+
+      const query = service.buildFilterQuery(columns);
+
+      expect(removeSpaces(query)).toBe('__proto__{polluted},constructor{prototype{polluted}},toString{polluted}');
+      expect(Object.prototype).not.toHaveProperty('polluted');
+      expect(Object).not.toHaveProperty('polluted');
+      expect(Object.prototype.toString).not.toHaveProperty('polluted');
     });
   });
 

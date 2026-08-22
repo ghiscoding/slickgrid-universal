@@ -82,7 +82,9 @@ export class BaseEditorClass {
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
     if (
       isCalledByClearValue ||
-      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
+      (this.disabled &&
+        isExcludeDisabledFieldFormValues &&
+        Object.prototype.hasOwnProperty.call(compositeEditorOptions.formValues, columnId))
     ) {
       delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
     }

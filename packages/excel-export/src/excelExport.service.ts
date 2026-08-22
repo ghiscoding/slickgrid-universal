@@ -93,10 +93,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   // references of each detected cell and/or group total formats
   protected _regularCellExcelFormats: {
     [fieldId: string]: { excelFormatId?: number; getDataValueParser: GetDataValueCallback };
-  } = {};
+  } = Object.create(null);
   protected _groupTotalExcelFormats: {
     [fieldId: string]: { groupType: string; excelFormat?: ExcelFormatter; getGroupTotalParser?: GetGroupTotalValueCallback };
-  } = {};
+  } = Object.create(null);
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   readonly pluginName = 'ExcelExportService';
@@ -144,8 +144,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._formulaProvider = undefined;
     this._formulaColumnIds = [];
     this._formulaRowIds = [];
-    this._regularCellExcelFormats = {};
-    this._groupTotalExcelFormats = {};
+    this._regularCellExcelFormats = Object.create(null);
+    this._groupTotalExcelFormats = Object.create(null);
   }
 
   /**
@@ -195,8 +195,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     const useStreamingExport = !!this._excelExportOptions.useStreamingExport;
 
     // reset references of detected Excel formats
-    this._regularCellExcelFormats = {};
-    this._groupTotalExcelFormats = {};
+    this._regularCellExcelFormats = Object.create(null);
+    this._groupTotalExcelFormats = Object.create(null);
 
     // prepare the Excel Workbook & Sheet
     const worksheetOptions = { name: this._excelExportOptions.sheetName || 'Sheet1' };
@@ -210,7 +210,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     const boldFormat = this._stylesheet.createFormat({ font: { bold: true } });
     const stringFormat = this._stylesheet.createFormat({ format: '@' });
     const numberFormat = this._stylesheet.createFormat({ format: '0' });
-    this._stylesheetFormats = { boldFormat, numberFormat, stringFormat };
+    this._stylesheetFormats = Object.assign(Object.create(null), { boldFormat, numberFormat, stringFormat });
     this._sheet.setColumnFormats([boldFormat]);
 
     try {

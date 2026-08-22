@@ -197,13 +197,13 @@ export class GraphqlService implements BackendService {
    * @param inputArray
    */
   buildFilterQuery(inputArray: string[]): string {
-    const set = (o: any = {}, a: any) => {
+    const set = (o: any, a: any) => {
       const k = a.shift();
-      o[k] = a.length ? set(o[k] ?? {}, a) : null;
+      o[k] = a.length ? set(o[k] ?? Object.create(null), a) : null;
       return o;
     };
 
-    const output = inputArray.reduce((o: any, a: string) => set(o, a.split('.')), {});
+    const output = inputArray.reduce((o: any, a: string) => set(o, a.split('.')), Object.create(null));
 
     return JSON.stringify(output)
       .replace(/"|:|null/g, '')
