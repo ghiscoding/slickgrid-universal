@@ -3,6 +3,59 @@ import { describe, expect, it, vi } from 'vitest';
 import { FormulaCellEditor } from '../formula.cellEditor.js';
 
 describe('FormulaCellEditor', () => {
+  it('should move Home and End across token spans', () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    document.body.appendChild(hostContainer);
+    document.body.appendChild(gridContainer);
+    const gridStub = {
+      focus: () => undefined,
+      getActiveCell: () => ({ row: 0, cell: 0 }),
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({ editorNavigateOnArrows: false }),
+    } as any;
+
+    const editor = new FormulaCellEditor({
+      column: { field: 'total' },
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=C1*SUM(D1:D5)+C2' },
+    } as any);
+    editor.loadValue({ total: '=C1*SUM(D1:D5)+C2' });
+
+    (editor as any).restoreCaretOffset(2);
+    const homeEvent = new KeyboardEvent('keydown', { key: 'Home', cancelable: true });
+    (editor as any).handleKeydown(homeEvent);
+    expect(homeEvent.defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe((editor as any)._editorElm);
+    expect((editor as any).getCaretOffset()).toBe(0);
+
+    const endEvent = new KeyboardEvent('keydown', { key: 'End', cancelable: true });
+    (editor as any).handleKeydown(endEvent);
+    expect(endEvent.defaultPrevented).toBe(true);
+    expect((editor as any).getCaretOffset()).toBe('=C1*SUM(D1:D5)+C2'.length);
+
+    (editor as any).moveCaretToOffset(0);
+    const rightEvent = new KeyboardEvent('keydown', { key: 'ArrowRight', ctrlKey: true, cancelable: true });
+    (editor as any).handleKeydown(rightEvent);
+    expect(rightEvent.defaultPrevented).toBe(true);
+    expect((editor as any).getCaretOffset()).toBe('=C1'.length);
+
+    const secondRightEvent = new KeyboardEvent('keydown', { key: 'ArrowRight', ctrlKey: true, cancelable: true });
+    (editor as any).handleKeydown(secondRightEvent);
+    expect((editor as any).getCaretOffset()).toBe('=C1*SUM(D1:D5'.length);
+
+    const leftEvent = new KeyboardEvent('keydown', { key: 'ArrowLeft', ctrlKey: true, cancelable: true });
+    (editor as any).handleKeydown(leftEvent);
+    expect(leftEvent.defaultPrevented).toBe(true);
+    expect((editor as any).getCaretOffset()).toBe('=C1*SUM('.length);
+
+    editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+  });
+
   it('should display stable references as A1 while serializing the stable form', () => {
     const hostContainer = document.createElement('div');
     const gridContainer = document.createElement('div');
@@ -206,7 +259,7 @@ describe('FormulaCellEditor', () => {
     (editor as any).restoreCaretOffset(7);
     (editor as any)._editorElm.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
 
-    const initialSelectionRange = selectionRangesCalls.at(-1)?.[0];
+    const initialSelectionRange = selectionRangesCalls[selectionRangesCalls.length - 1]?.[0];
     expect(initialSelectionRange).toMatchObject({ fromRow: 0, fromCell: 3, toRow: 1, toCell: 3 });
     expect(setCellCssStylesCalls).toHaveLength(0);
 
@@ -223,7 +276,7 @@ describe('FormulaCellEditor', () => {
     expect(mouseUpEvent.defaultPrevented).toBe(true);
     expect(editor.serializeValue()).toBe('=SUM(E1:E3)');
 
-    const updatedSelectionRange = selectionRangesCalls.at(-1)?.[0];
+    const updatedSelectionRange = selectionRangesCalls[selectionRangesCalls.length - 1]?.[0];
     expect(updatedSelectionRange).toMatchObject({ fromRow: 0, fromCell: 4, toRow: 2, toCell: 4 });
 
     editor.destroy();
@@ -295,7 +348,7 @@ describe('FormulaCellEditor', () => {
     expect(editor.serializeValue()).toBe('=SUM(D1:D6)');
     expect(editor.serializeValue().startsWith('=')).toBe(true);
 
-    const updatedSelectionRange = selectionRangesCalls.at(-1)?.[0];
+    const updatedSelectionRange = selectionRangesCalls[selectionRangesCalls.length - 1]?.[0];
     expect(updatedSelectionRange).toMatchObject({ fromRow: 0, fromCell: 3, toRow: 5, toCell: 3 });
 
     editor.destroy();

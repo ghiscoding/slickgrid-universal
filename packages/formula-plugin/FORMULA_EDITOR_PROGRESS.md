@@ -3,6 +3,18 @@
 Last updated: 2026-08-21 (formula drag-fill and complete unit-test coverage)
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Formula Editor Cell Sizing (2026-08-22)
+- Consolidated `.formula-editor-input` cell sizing and AG Grid-style single-line editor behavior into `slick-editors.scss` alongside the native text editors.
+- Set the contenteditable formula editor to `border-box` and removed its fixed minimum height so it stays within the cell like native text editors.
+- Vertically centered formula text and colored reference tokens within the cell editor.
+- Kept the formula editor as a direct contenteditable element with standard hidden-scrollbar behavior and no ellipsis, keeping formula tokens as direct editor children.
+- Centered the direct formula text and token items within the full-height contenteditable editor.
+- Simplified the formula editor overflow declaration to the two-value shorthand.
+- Handled HOME and END explicitly so caret movement crosses colored formula-token spans.
+- Made Ctrl/Cmd+Arrow navigation move across complete colored reference-token sections.
+- Kept token navigation compatible with ES2021 by avoiding `Array.prototype.at()`.
+- Centralized repeated keyboard event suppression in a small editor helper while preserving Ctrl/Cmd+A browser selection behavior.
+
 ## Maintenance Rule
 - On every formula-plugin related change, update this file in the same commit/PR.
 - Keep it short and factual: what changed, why, tests added/updated, and any new constraints.

@@ -1333,25 +1333,6 @@ li.hidden {
   vertical-align: middle;
 }
 
-.formula-editor-input {
-  width: 100%;
-  min-height: 26px;
-  padding: var(--slick-text-editor-padding, 2px 4px);
-  border: var(--slick-text-editor-border, 1px solid #9ca3af);
-  border-radius: var(--slick-text-editor-border-radius, 3px);
-  background: var(--slick-text-editor-background, #fff);
-  color: var(--slick-text-editor-color, inherit);
-  line-height: 1.3;
-  white-space: pre-wrap;
-  word-break: break-word;
-  outline: none;
-
-  &:focus {
-    border-color: var(--slick-form-control-focus-border-color, #2563eb);
-    box-shadow: var(--slick-form-control-focus-box-shadow, 0 0 0 1px #2563eb);
-  }
-}
-
 .formula-token {
   display: inline;
   margin: 0;

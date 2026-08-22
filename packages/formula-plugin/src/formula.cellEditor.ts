@@ -217,16 +217,13 @@ export class FormulaCellEditor implements Editor {
     // Keep Select-All scoped to the formula editor.
     // Let browser default behavior select editor content, but stop SlickGrid from handling Ctrl/Cmd+A.
     if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'a') {
-      event.stopPropagation();
-      event.stopImmediatePropagation();
+      this.stopKeyboardEvent(event, false);
       return;
     }
 
     // Handle copy/cut to ensure we copy plain text only, not HTML spans
     if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'c') {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
+      this.stopKeyboardEvent(event);
       const plainText = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
       navigator.clipboard.writeText(plainText).catch(() => {
         // Fallback for older browsers
@@ -235,9 +232,7 @@ export class FormulaCellEditor implements Editor {
     }
 
     if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'x') {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
+      this.stopKeyboardEvent(event);
       const plainText = (this._editorElm.textContent || '').replace(/\u00a0/g, ' ');
       navigator.clipboard.writeText(plainText).catch(() => {
         // Fallback for older browsers
@@ -254,18 +249,14 @@ export class FormulaCellEditor implements Editor {
 
     if (this._autocompleteItems.length > 0) {
       if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
+        this.stopKeyboardEvent(event);
         this._autocompleteSelectedIdx = (this._autocompleteSelectedIdx + 1) % this._autocompleteItems.length;
         this.renderAutocompleteItems();
         return;
       }
 
       if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
+        this.stopKeyboardEvent(event);
         this._autocompleteSelectedIdx =
           (this._autocompleteSelectedIdx - 1 + this._autocompleteItems.length) % this._autocompleteItems.length;
         this.renderAutocompleteItems();
@@ -273,9 +264,7 @@ export class FormulaCellEditor implements Editor {
       }
 
       if (event.key === 'Enter' || event.key === 'Tab') {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
+        this.stopKeyboardEvent(event);
         this.selectAutocompleteItem(this._autocompleteItems[this._autocompleteSelectedIdx]);
         return;
       }
@@ -286,17 +275,43 @@ export class FormulaCellEditor implements Editor {
     }
 
     if (
+      (event.ctrlKey || event.metaKey) &&
+      !event.altKey &&
+      !event.shiftKey &&
+      (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
+    ) {
+      const text = this.getPlainTextValue();
+      const tokenRanges = this.getFormulaReferenceTokenRanges(text);
+      if (tokenRanges.length > 0) {
+        this.stopKeyboardEvent(event);
+
+        const caretOffset = this.getCaretOffset();
+        const previousToken = tokenRanges.filter((range) => range.start < caretOffset).pop();
+        const targetOffset = event.key === 'ArrowRight'
+          ? tokenRanges.find((range) => range.end > caretOffset)?.end ?? text.length
+          : previousToken?.start ?? 0;
+
+        this.moveCaretToOffset(targetOffset);
+        return;
+      }
+    }
+
+    if (event.key === 'Home' || event.key === 'End') {
+      this.stopKeyboardEvent(event);
+      this.moveCaretToOffset(event.key === 'Home' ? 0 : this.getPlainTextValue().length);
+      return;
+    }
+
+    if (
       !this.args.grid.getOptions().editorNavigateOnArrows &&
-      (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Home' || event.key === 'End')
+      (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
     ) {
       event.stopImmediatePropagation();
       return;
     }
 
     if (event.key === 'Enter') {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
+      this.stopKeyboardEvent(event);
       this._isExitingEditor = true;
       this.clearReferenceSelectionHighlight();
       const didCommit = this.args.grid.getEditorLock?.()?.commitCurrentEdit?.();
@@ -307,9 +322,7 @@ export class FormulaCellEditor implements Editor {
       const grid = this.args.grid;
       const isShiftTab = event.shiftKey;
 
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
+      this.stopKeyboardEvent(event);
 
       if (this._isOpenedByTabKey && !this._isValueTouched) {
         this._isOpenedByTabKey = false;
@@ -343,6 +356,14 @@ export class FormulaCellEditor implements Editor {
       this.clearReferenceSelectionHighlight();
       this.args.cancelChanges();
     }
+  }
+
+  protected stopKeyboardEvent(event: KeyboardEvent, preventDefault = true): void {
+    if (preventDefault) {
+      event.preventDefault();
+    }
+    event.stopPropagation();
+    event.stopImmediatePropagation();
   }
 
   protected handleWindowMouseDown = (event: MouseEvent): void => {
@@ -843,6 +864,19 @@ export class FormulaCellEditor implements Editor {
     preRange.selectNodeContents(this._editorElm);
     preRange.setEnd(range.endContainer, range.endOffset);
     return preRange.toString().length;
+  }
+
+  protected moveCaretToOffset(offset: number): void {
+    this._editorElm.focus({ preventScroll: true });
+    this.restoreCaretOffset(offset);
+    this._editorElm.scrollLeft = offset === 0 ? 0 : this._editorElm.scrollWidth;
+  }
+
+  protected getFormulaReferenceTokenRanges(text: string): Array<{ start: number; end: number }> {
+    return Array.from(text.matchAll(createFormulaReferenceTokenRegex()), (match) => ({
+      start: match.index,
+      end: match.index + match[0].length,
+    }));
   }
 
   protected restoreCaretOffset(offset: number): void {
