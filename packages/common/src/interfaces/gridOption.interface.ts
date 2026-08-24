@@ -885,8 +885,12 @@ export interface GridOption<C extends Column = Column> {
    */
   sanitizer?: Sanitizer;
 
-  /** Defaults to 10(ms), render throttling when using virtual scroll on large dataset */
-  scrollRenderThrottling?: number;
+  /**
+   * Defaults to 10(ms), render throttling when using virtual scroll on large dataset.
+   * Use `0` to disable the throttling entirely, or `'raf'` to coalesce renders with `requestAnimationFrame`
+   * (at most 1 render per frame, aligned with the browser paint cycle).
+   */
+  scrollRenderThrottling?: number | 'raf';
 
   /** CSS class name used when cell is selected */
   selectedCellCssClass?: string;

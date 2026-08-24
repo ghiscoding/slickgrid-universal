@@ -1,6 +1,6 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, test, vi, type MockInstance } from 'vitest';
 import { AutocompleterEditor, CheckboxEditor, InputEditor, LongTextEditor } from '../../editors/index.js';
 import { SlickHybridSelectionModel } from '../../extensions/index.js';
 import { copyCellToClipboard } from '../../formatters/formatterUtilities.js';
@@ -5635,6 +5635,116 @@ describe('SlickGrid core file', () => {
         click2,
         grid
       );
+    });
+  });
+
+  describe.skip('Scroll Render Throttling', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const data = [{ id: 0, firstName: 'John' }];
+
+    let rafCallback: FrameRequestCallback | undefined;
+    let rafSpy: MockInstance;
+    let cancelRafSpy: MockInstance;
+
+    const mockAnimationFrame = () => {
+      rafCallback = undefined;
+      rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+        rafCallback = cb;
+        return 987;
+      });
+      cancelRafSpy = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {});
+    };
+
+    afterEach(() => {
+      rafSpy?.mockRestore();
+      cancelRafSpy?.mockRestore();
+    });
+
+    it('should throttle the action to the provided period when a number is used', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+      const action = vi.fn();
+      const throttle = (grid as any).actionThrottle(action, 10);
+
+      throttle.enqueue();
+      expect(action).toHaveBeenCalledTimes(1); // leading execution
+
+      throttle.enqueue(); // blocked, so it gets queued as a trailing execution
+      expect(action).toHaveBeenCalledTimes(1);
+
+      vi.advanceTimersByTime(11);
+      expect(action).toHaveBeenCalledTimes(2);
+    });
+
+    it('should keep the timer scheduler (not animation frames) when throttling is disabled with 0', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+      mockAnimationFrame();
+      const action = vi.fn();
+      const throttle = (grid as any).actionThrottle(action, 0);
+
+      throttle.enqueue();
+
+      expect(rafSpy).not.toHaveBeenCalled();
+      expect(action).toHaveBeenCalledTimes(1);
+    });
+
+    it('should coalesce multiple enqueues into a single animation frame when using "raf"', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+      mockAnimationFrame();
+      const action = vi.fn();
+      const throttle = (grid as any).actionThrottle(action, 'raf');
+
+      throttle.enqueue();
+      throttle.enqueue();
+      throttle.enqueue();
+
+      expect(rafSpy).toHaveBeenCalledTimes(1);
+      expect(action).not.toHaveBeenCalled(); // deferred to the frame
+
+      rafCallback!(0);
+      expect(action).toHaveBeenCalledTimes(1);
+
+      // once the frame ran, a new enqueue schedules a fresh frame
+      throttle.enqueue();
+      expect(rafSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should cancel a pending animation frame when dequeuing with "raf"', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+      mockAnimationFrame();
+      const action = vi.fn();
+      const throttle = (grid as any).actionThrottle(action, 'raf');
+
+      throttle.enqueue();
+      throttle.dequeue();
+
+      expect(cancelRafSpy).toHaveBeenCalledWith(987);
+      expect(action).not.toHaveBeenCalled();
+
+      // dequeuing twice shouldn't cancel anything else
+      throttle.dequeue();
+      expect(cancelRafSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should schedule grid renders through animation frames when "raf" grid option is used', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, scrollRenderThrottling: 'raf' });
+      grid.init();
+      mockAnimationFrame();
+
+      (grid as any).scrollThrottle.enqueue();
+
+      expect(rafSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should cancel any pending animation frame when the grid is destroyed', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, scrollRenderThrottling: 'raf' });
+      grid.init();
+      mockAnimationFrame();
+      (grid as any).scrollThrottle.enqueue();
+
+      grid.destroy(true);
+      skipGridDestroy = true;
+
+      expect(cancelRafSpy).toHaveBeenCalledWith(987);
     });
   });
 

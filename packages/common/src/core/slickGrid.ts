@@ -349,6 +349,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected _executionBlockTimer?: any;
   protected _flashCellTimer?: any;
   protected _highlightRowTimer?: any;
+  protected _rafRenderHandle?: number;
 
   // scroller
   protected th!: number; // virtual height
@@ -667,7 +668,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     } else {
       this._options = extend<O>(true, {}, this._defaults, options);
     }
-    this.scrollThrottle = this.actionThrottle(this.render.bind(this), this._options.scrollRenderThrottling as number);
+    this.scrollThrottle = this.actionThrottle(this.render.bind(this), this._options.scrollRenderThrottling!);
     this.maxSupportedCssHeight = this.maxSupportedCssHeight || this.getMaxSupportedCssHeight();
     this.validateAndEnforceOptions();
     this._columnDefaults.width = this._options.defaultColumnWidth;
@@ -3079,6 +3080,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Clear all highlight timers that might have been left opened */
   protected clearAllTimers(): void {
     this.clearAutoScrollTimer();
+    this.scrollThrottle?.dequeue(); // also cancels a pending animation frame when in rAF mode
     [
       this._columnResizeTimer,
       this._executionBlockTimer,
@@ -4244,8 +4246,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return (value + '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  protected getFormatter(row: number, column: C): Formatter {
-    const rowMetadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row);
+  /** @param {ItemMetadata|null} [rowMetadata] - pass the row metadata when already resolved to avoid a redundant lookup per cell, `undefined` means "resolve it here" */
+  protected getFormatter(row: number, column: C, rowMetadata?: ItemMetadata | null): Formatter {
+    if (rowMetadata === undefined) {
+      rowMetadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row);
+    }
 
     // look up by id, then index
     const columnOverrides = rowMetadata?.columns && (rowMetadata.columns[column.id] || rowMetadata.columns[this.getColumnIndex(column.id)]);
@@ -4408,11 +4413,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           // All columns to the right are outside the range, so no need to render them
           if (isRenderCell) {
             const targetedRowDiv = this.hasFrozenColumns() && i > this._options.frozenColumn! ? rowDivR! : rowDiv;
-            this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d);
+            this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d, metadata);
           }
         } else if (m.alwaysRenderColumn || (this.hasFrozenColumns() && i <= this._options.frozenColumn!)) {
           const targetedRowDiv = this.hasFrozenColumns() && i > this._options.frozenColumn! ? rowDivR! : rowDiv;
-          this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d);
+          this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d, metadata);
         }
 
         if (ncolspan > 1) {
@@ -4429,7 +4434,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     colspan: number,
     rowspan: number,
     columnMetadata: ColumnMetadata | null,
-    item: TData
+    item: TData,
+    rowMetadata?: ItemMetadata | null
   ): void {
     // divRow: the html element to append items too
     // row, cell: row and column index
@@ -4462,7 +4468,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let formatterResult: FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string = '';
     if (item) {
       value = this.getDataItemValueForColumn(item, m);
-      formatterResult = this.getFormatter(row, m)(row, cell, value, m, item, this as unknown as SlickGrid);
+      formatterResult = this.getFormatter(row, m, rowMetadata)(row, cell, value, m, item, this as unknown as SlickGrid);
       if (formatterResult === null || formatterResult === undefined) {
         formatterResult = '';
       }
@@ -5579,7 +5585,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
             if (this.columnPosRight[Math.min(ii - 1, i + ncolspan - 1)] > range.leftPx) {
               const rowspan = this.getRowspan(row, i);
-              this.appendCellHtml(divRow, row, i, ncolspan, rowspan, columnData, d);
+              this.appendCellHtml(divRow, row, i, ncolspan, rowspan, columnData, d, metadata);
               cellsAdded++;
             }
 
@@ -5982,11 +5988,41 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
+   * Coalesces the action into a single execution per animation frame, which keeps renders aligned with
+   * the browser paint cycle instead of competing with it on an arbitrary timer.
+   */
+  protected rafThrottle(action: () => void): { enqueue: () => void; dequeue: () => void } {
+    const dequeue = () => {
+      if (this._rafRenderHandle !== undefined) {
+        cancelAnimationFrame(this._rafRenderHandle);
+        this._rafRenderHandle = undefined;
+      }
+    };
+
+    const enqueue = () => {
+      if (this._rafRenderHandle === undefined) {
+        this._rafRenderHandle = requestAnimationFrame(() => {
+          this._rafRenderHandle = undefined;
+          action.call(this);
+        });
+      }
+    };
+
+    return { enqueue: enqueue.bind(this), dequeue: dequeue.bind(this) };
+  }
+
+  /**
    * limits the frequency at which the provided action is executed.
    * call enqueue to execute the action - it will execute either immediately or, if it was executed less than minPeriod_ms in the past, as soon as minPeriod_ms has expired.
    * call dequeue to cancel any pending action.
+   * Passing `'raf'` switches to a `requestAnimationFrame` scheduler instead of a time-based one.
    */
-  protected actionThrottle(action: () => void, minPeriod_ms: number): { enqueue: () => void; dequeue: () => void } {
+  protected actionThrottle(action: () => void, minPeriod_ms: number | 'raf'): { enqueue: () => void; dequeue: () => void } {
+    if (minPeriod_ms === 'raf' && typeof requestAnimationFrame === 'function') {
+      return this.rafThrottle(action);
+    }
+
+    const periodMs = typeof minPeriod_ms === 'number' ? minPeriod_ms : 0;
     let blocked = false;
     let queued = false;
 
@@ -6003,7 +6039,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const blockAndExecute = () => {
       blocked = true;
       clearTimeout(this._executionBlockTimer);
-      this._executionBlockTimer = setTimeout(unblock, minPeriod_ms);
+      this._executionBlockTimer = setTimeout(unblock, periodMs);
       action.call(this);
     };
 

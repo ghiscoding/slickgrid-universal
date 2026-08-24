@@ -346,6 +346,7 @@ export default class Example03 {
       autoResize: {
         container: '.demo-container',
       },
+      scrollRenderThrottling: 0,
       dataView: {
         useCSPSafeFilter: true,
       },
