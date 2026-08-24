@@ -274,12 +274,7 @@ export class FormulaCellEditor implements Editor {
       }
     }
 
-    if (
-      (event.ctrlKey || event.metaKey) &&
-      !event.altKey &&
-      !event.shiftKey &&
-      (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
-    ) {
+    if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
       const text = this.getPlainTextValue();
       const tokenRanges = this.getFormulaReferenceTokenRanges(text);
       if (tokenRanges.length > 0) {
@@ -287,9 +282,10 @@ export class FormulaCellEditor implements Editor {
 
         const caretOffset = this.getCaretOffset();
         const previousToken = tokenRanges.filter((range) => range.start < caretOffset).pop();
-        const targetOffset = event.key === 'ArrowRight'
-          ? tokenRanges.find((range) => range.end > caretOffset)?.end ?? text.length
-          : previousToken?.start ?? 0;
+        const targetOffset =
+          event.key === 'ArrowRight'
+            ? (tokenRanges.find((range) => range.end > caretOffset)?.end ?? text.length)
+            : (previousToken?.start ?? 0);
 
         this.moveCaretToOffset(targetOffset);
         return;
@@ -302,10 +298,7 @@ export class FormulaCellEditor implements Editor {
       return;
     }
 
-    if (
-      !this.args.grid.getOptions().editorNavigateOnArrows &&
-      (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
-    ) {
+    if (!this.args.grid.getOptions().editorNavigateOnArrows && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
       event.stopImmediatePropagation();
       return;
     }
