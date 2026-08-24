@@ -69,7 +69,7 @@ import type { SlickgridVueProps } from './slickgridVueProps.interface.js';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parsing isn't enabled
 
-export interface VueRowDetailView {
+interface VueRowDetailView {
   create(columns: Column[], gridOptions: GridOption): any;
   init(grid: SlickGrid, containerService?: ContainerService): void;
 }

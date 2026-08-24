@@ -11,7 +11,7 @@ import {
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import SlickgridVue from './components/SlickgridVue.vue';
-import type { GridOption, RowDetailView, SlickgridVueInstance, ViewModelBindableInputData } from './models/index.js';
+import type { GridOption, RowDetailView, SlickgridVueInstance, ViewModelBindableData, ViewModelBindableInputData } from './models/index.js';
 import type { SlickgridConfig } from './slickgrid-config.js';
 
 export * from '@slickgrid-universal/common';
@@ -36,5 +36,6 @@ export {
   type SlickgridVueInstance,
   SortComparers,
   Utilities,
+  type ViewModelBindableData,
   type ViewModelBindableInputData,
 };
