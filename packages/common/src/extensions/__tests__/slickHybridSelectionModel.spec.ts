@@ -165,10 +165,11 @@ describe('Row Selection Model Plugin', () => {
 
   it('should be able to change model options after init', () => {
     plugin.init(gridStub);
-    plugin.setOptions({ selectActiveRow: false, selectActiveCell: false });
+    plugin.setOptions({ selectActiveRow: false, selectActiveCell: false, enableMultiSelection: true });
 
     expect(plugin.getOptions().selectActiveRow).toBe(false);
     expect(plugin.getOptions().selectActiveCell).toBe(false);
+    expect(plugin.getOptions().enableMultiSelection).toBe(true);
   });
 
   it('should create the plugin and set selection type to "cell" and', () => {
@@ -679,6 +680,25 @@ describe('Row Selection Model Plugin', () => {
       );
     });
 
+    it('should add a row range when a modifier drag is appended to an existing multi-selection', () => {
+      plugin = new SlickHybridSelectionModel({ selectionType: 'row', enableMultiSelection: true, dragToSelect: true });
+      plugin.init(gridStub);
+      plugin.setSelectedRanges([new SlickRange(0, 0, 0, 2)]);
+
+      const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
+      const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
+      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: new SlickRange(2, 0, 2, 2), addToSelection: true } as any, scrollEvent, gridStub);
+
+      expect(setSelectedRangesSpy).toHaveBeenCalledWith(
+        [
+          { fromCell: 0, fromRow: 0, toCell: 2, toRow: 0 },
+          { fromCell: 0, fromRow: 2, toCell: 2, toRow: 2 },
+        ],
+        undefined,
+        undefined
+      );
+    });
+
     it('should be able to manually create Row Selection and then call "setSelectedRanges" when "onCellRangeSelected" event is triggered', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
       const setSelectedRangeSpy = vi.spyOn(plugin, 'setSelectedRanges');
@@ -941,6 +961,112 @@ describe('Cell Selection Model Plugin', () => {
 
     expect(setActiveCellSpy).toHaveBeenCalledWith(2, 1, false, false, true);
     expect(setSelectRangeSpy).toHaveBeenCalledWith([{ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 }], undefined, 'SEL');
+  });
+
+  it('should replace only the active cell range when selection mode is REP', () => {
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'));
+    plugin = new SlickHybridSelectionModel({ selectionType: 'cell' });
+    const canCellBeSelectedSpy = vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([new SlickRange(1, 1), new SlickRange(3, 3)]);
+
+    const setActiveCellSpy = vi.spyOn(gridStub, 'setActiveCell');
+    const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
+    plugin
+      .getCellRangeSelector()!
+      .onCellRangeSelected.notify({ range: new SlickRange(4, 4, 5, 5), allowAutoEdit: false, selectionMode: 'REP' }, mouseEvent, gridStub);
+
+    expect(setActiveCellSpy).toHaveBeenCalledWith(4, 4, false, false, true);
+    expect(setSelectedRangesSpy).toHaveBeenCalledWith([new SlickRange(1, 1), new SlickRange(4, 4, 5, 5)], undefined, 'REP');
+    canCellBeSelectedSpy.mockRestore();
+  });
+
+  it('should append a cell range when a modifier drag is used with multi-selection enabled', () => {
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'));
+    plugin = new SlickHybridSelectionModel({ selectionType: 'cell', enableMultiSelection: true });
+    const canCellBeSelectedSpy = vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([new SlickRange(1, 1)]);
+
+    const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
+    plugin
+      .getCellRangeSelector()!
+      .onCellRangeSelected.notify(
+        { range: new SlickRange(3, 3, 4, 4), allowAutoEdit: false, selectionMode: 'SEL', addToSelection: true },
+        mouseEvent,
+        gridStub
+      );
+
+    expect(setSelectedRangesSpy).toHaveBeenCalledWith([new SlickRange(1, 1), new SlickRange(3, 3, 4, 4)], undefined, 'SEL');
+    canCellBeSelectedSpy.mockRestore();
+  });
+
+  it('should add a non-contiguous cell range when Ctrl is clicked with multi-selection enabled', () => {
+    plugin = new SlickHybridSelectionModel({ selectionType: 'cell', enableMultiSelection: true });
+    const canCellBeSelectedSpy = vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const getCellFromEventSpy = vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 3 });
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([new SlickRange(1, 1)]);
+
+    const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
+    const clickEvent = addVanillaEventPropagation(new Event('click'), ['ctrlKey']);
+    gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, clickEvent, gridStub);
+
+    expect(setSelectedRangesSpy).toHaveBeenCalledWith([new SlickRange(1, 1), new SlickRange(3, 2)]);
+    canCellBeSelectedSpy.mockRestore();
+    getCellFromEventSpy.mockRestore();
+  });
+
+  it('should remove an exact cell range when Ctrl is clicked again with multi-selection enabled', () => {
+    plugin = new SlickHybridSelectionModel({ selectionType: 'cell', enableMultiSelection: true });
+    const canCellBeSelectedSpy = vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const getCellFromEventSpy = vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 3 });
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([new SlickRange(3, 2)]);
+
+    const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
+    const clickEvent = addVanillaEventPropagation(new Event('click'), ['ctrlKey']);
+    gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, clickEvent, gridStub);
+
+    expect(setSelectedRangesSpy).toHaveBeenCalledWith([]);
+    canCellBeSelectedSpy.mockRestore();
+    getCellFromEventSpy.mockRestore();
+  });
+
+  it('should ignore a Ctrl-click on a cell that cannot be selected', () => {
+    plugin = new SlickHybridSelectionModel({ selectionType: 'cell', enableMultiSelection: true });
+    const canCellBeSelectedSpy = vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(false);
+    const getCellFromEventSpy = vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 3 });
+    plugin.init(gridStub);
+
+    const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
+    const clickEvent = addVanillaEventPropagation(new Event('click'), ['ctrlKey']);
+    gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, clickEvent, gridStub);
+
+    expect(setSelectedRangesSpy).not.toHaveBeenCalled();
+    canCellBeSelectedSpy.mockRestore();
+    getCellFromEventSpy.mockRestore();
+  });
+
+  it('should remove a clicked cell from an existing range when Ctrl is clicked with multi-selection enabled', () => {
+    plugin = new SlickHybridSelectionModel({ selectionType: 'cell', enableMultiSelection: true });
+    const canCellBeSelectedSpy = vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const getCellFromEventSpy = vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 2 });
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([new SlickRange(1, 1, 3, 3)]);
+
+    const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
+    const clickEvent = addVanillaEventPropagation(new Event('click'), ['ctrlKey']);
+    gridStub.onClick.notify({ cell: 2, row: 2, grid: gridStub }, clickEvent, gridStub);
+
+    expect(setSelectedRangesSpy).toHaveBeenCalledWith([
+      new SlickRange(1, 1, 1, 3),
+      new SlickRange(3, 1, 3, 3),
+      new SlickRange(2, 1, 2, 1),
+      new SlickRange(2, 3, 2, 3),
+    ]);
+    canCellBeSelectedSpy.mockRestore();
+    getCellFromEventSpy.mockRestore();
   });
 
   it('should not call "setSelectedRanges" when "onCellRangeSelecting" is triggered', () => {

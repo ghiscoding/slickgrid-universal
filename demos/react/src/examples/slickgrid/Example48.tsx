@@ -22,6 +22,7 @@ const Example48: React.FC = () => {
   const [_reactGrid1, setReactGrid1] = useState<SlickgridReactInstance>();
   const [_reactGrid2, setReactGrid2] = useState<SlickgridReactInstance>();
   const [hideSubTitle, setHideSubTitle] = useState(false);
+  const [enableMultiSelection, setEnableMultiSelection] = useState(false);
 
   // mock some data (different in each dataset)
   const [dataset1] = useState<any[]>(mockData(NB_ITEMS));
@@ -95,6 +96,7 @@ const Example48: React.FC = () => {
       selectionOptions: {
         rowSelectColumnIds: ['id'],
         selectionType: 'mixed',
+        enableMultiSelection: false,
         // showDragHandle: 'hover', // can also be true (default) or false
       },
 
@@ -123,6 +125,7 @@ const Example48: React.FC = () => {
 
         // allow using the mouse drag selection to select multiple rows
         dragToSelect: true,
+        enableMultiSelection: false,
       },
     };
 
@@ -130,6 +133,29 @@ const Example48: React.FC = () => {
     setColumns2(columns2);
     setGridOptions1(gridOptions1);
     setGridOptions2(gridOptions2);
+  }
+
+  function toggleMultiSelection(event: React.ChangeEvent<HTMLInputElement>) {
+    const enabled = event.target.checked;
+    setEnableMultiSelection(enabled);
+
+    const selectionOptions1 = { ...gridOptions1?.selectionOptions, enableMultiSelection: enabled };
+    const selectionOptions2 = { ...gridOptions2?.selectionOptions, enableMultiSelection: enabled };
+    const updatedGridOptions1 = { ...gridOptions1, selectionOptions: selectionOptions1 } as GridOption;
+    const updatedGridOptions2 = { ...gridOptions2, selectionOptions: selectionOptions2 } as GridOption;
+    setGridOptions1(updatedGridOptions1);
+    setGridOptions2(updatedGridOptions2);
+
+    _reactGrid1?.slickGrid.setOptions({ selectionOptions: selectionOptions1 }, true);
+    _reactGrid2?.slickGrid.setOptions({ selectionOptions: selectionOptions2 }, true);
+    const selectionModel1 = _reactGrid1?.slickGrid.getSelectionModel();
+    const selectionModel2 = _reactGrid2?.slickGrid.getSelectionModel();
+    if (selectionModel1) {
+      selectionModel1.setOptions({ enableMultiSelection: enabled });
+    }
+    if (selectionModel2) {
+      selectionModel2.setOptions({ enableMultiSelection: enabled });
+    }
   }
 
   function mockData(itemCount: number) {
@@ -244,7 +270,10 @@ const Example48: React.FC = () => {
         />
       </div>
 
-      <hr />
+      <label className="checkbox-inline control-label mb-3">
+        <input type="checkbox" data-test="enable-multi-selection" checked={enableMultiSelection} onChange={toggleMultiSelection} /> Enable
+        multi-selection (Ctrl/Cmd-click or drag)
+      </label>
 
       <h3>
         Grid 2

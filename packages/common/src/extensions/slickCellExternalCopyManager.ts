@@ -459,46 +459,45 @@ export class SlickCellExternalCopyManager {
             }
 
             const columns = this._grid.getColumns();
+            const fromRow = Math.min(...ranges.map((range) => range.fromRow));
+            const fromCell = Math.min(...ranges.map((range) => range.fromCell));
+            const toRow = Math.max(...ranges.map((range) => range.toRow));
+            const toCell = Math.max(...ranges.map((range) => range.toCell));
             let clipText = '';
 
-            for (let rg = 0; rg < ranges.length; rg++) {
-              const range = ranges[rg];
-              const clipTextRows: string[] = [];
-              for (let i = range.fromRow; i < range.toRow + 1; i++) {
-                const clipTextCells: string[] = [];
-                const dt = this._dataWrapper.getDataItem(i);
-
-                if (clipTextRows.length === 0 && this._addonOptions.includeHeaderWhenCopying) {
-                  const clipTextHeaders: string[] = [];
-                  for (let j = range.fromCell; j < range.toCell + 1; j++) {
-                    if (columns[j]) {
-                      const colName: string =
-                        columns[j].name instanceof HTMLElement
-                          ? stripTags((columns[j].name as HTMLElement).innerHTML)
-                          : (columns[j].name as string);
-                      if (colName.length > 0 && !columns[j].hidden) {
-                        clipTextHeaders.push(this.getHeaderValueForColumn(columns[j]));
-                      }
-                    }
-                  }
-                  clipTextRows.push(clipTextHeaders.join('\t'));
-                }
-
-                for (let j = range.fromCell; j < range.toCell + 1; j++) {
-                  if (columns[j]) {
-                    const colName: string =
-                      columns[j].name instanceof HTMLElement
-                        ? stripTags((columns[j].name as HTMLElement).innerHTML)
-                        : (columns[j].name as string);
-                    if (colName.length > 0 && !columns[j].hidden) {
-                      clipTextCells.push(this.getDataItemValueForColumn(dt, columns[j], i, j, e));
-                    }
+            const clipTextRows: string[] = [];
+            if (this._addonOptions.includeHeaderWhenCopying) {
+              const clipTextHeaders: string[] = [];
+              for (let j = fromCell; j <= toCell; j++) {
+                const column = columns[j];
+                const isSelectedColumn = ranges.some((range) => j >= range.fromCell && j <= range.toCell);
+                if (column) {
+                  const colName: string = column.name instanceof HTMLElement ? stripTags(column.name.innerHTML) : (column.name as string);
+                  if (colName.length > 0 && !column.hidden) {
+                    clipTextHeaders.push(isSelectedColumn ? this.getHeaderValueForColumn(column) : '');
                   }
                 }
-                clipTextRows.push(clipTextCells.join('\t'));
               }
-              clipText += clipTextRows.join('\r\n') + '\r\n';
+              clipTextRows.push(clipTextHeaders.join('\t'));
             }
+
+            for (let i = fromRow; i <= toRow; i++) {
+              const clipTextCells: string[] = [];
+              const dt = this._dataWrapper.getDataItem(i);
+              for (let j = fromCell; j <= toCell; j++) {
+                const column = columns[j];
+                if (column) {
+                  const colName: string = column.name instanceof HTMLElement ? stripTags(column.name.innerHTML) : (column.name as string);
+                  if (colName.length > 0 && !column.hidden) {
+                    clipTextCells.push(
+                      ranges.some((range) => range.contains(i, j)) ? this.getDataItemValueForColumn(dt, column, i, j, e) : ''
+                    );
+                  }
+                }
+              }
+              clipTextRows.push(clipTextCells.join('\t'));
+            }
+            clipText += clipTextRows.join('\r\n') + '\r\n';
 
             // copy to clipboard using override or default browser Clipboard API
             const clipboardOverrideFn = this._grid.getOptions().clipboardWriteOverride;

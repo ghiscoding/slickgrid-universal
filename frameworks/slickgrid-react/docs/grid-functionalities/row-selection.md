@@ -323,14 +323,14 @@ export default Example;
 Starting with v9.10.0, you can now use the new Hybrid Selection Model, this new model will allow you to do Cell Selection & Row Selection in the same grid. This wasn't previously doable before that version because SlickGrid only ever allows 1 selection model to be loaded at once and so we had to load either `SlickCellSelectionModel` or `SlickRowSelectionModel` but never both of them at the same time. The new Hybrid Selection Model is merging both of these plugins in a single plugin allowing us to do both type of selections.
 
 > [!NOTE]
-> You can use `{ enableSelection: true, selectionOptions: { selectionType: 'mixed' }}` grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
+> You can use `{ enableSelection: true, selectionOptions: { selectionType: 'mixed' }}` (or `enableHybridSelection: true` in v9) grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
 
 For example, we could use the Excel Copy Buffer (Cell Selection) and use `rowSelectColumnIds` (Row Selection)
 
 ```tsx
 setGridOptions({
   // enable new hybrid selection model (rows & cells)
-  enableSelection: true,
+  enableSelection: true, // or enableHybridSelection: true in v9
   // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
   selectionOptions: {
     selectActiveRow: true,
@@ -360,6 +360,10 @@ selectionOptions: {
   // showDragHandle: false,    // disable the drag handle
 }
 ```
+
+For non-contiguous selection ranges, set `selectionOptions.enableMultiSelection: true`. Ctrl/Cmd-click toggles the clicked cell or row, and Ctrl/Cmd-drag adds another range. In row-selection mode, `multiSelect` continues to control whether multiple rows are allowed.
+
+When `enableExcelCopyBuffer` is enabled, copying multiple non-contiguous ranges preserves their relative row and column positions in a single rectangular clipboard block; unselected cells inside the bounding rectangle remain blank.
 
 #### Component
 ```tsx

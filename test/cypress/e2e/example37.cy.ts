@@ -192,6 +192,63 @@ describe('Example 37 - Hybrid Selection Model', () => {
       cy.get('.slick-context-menu .slick-menu-item').should('contain', 'Command which should be shown');
       cy.get('body').type('{esc}');
     });
+
+    it('should toggle multiple cell selection ranges with the checkbox', () => {
+      cy.get('.grid37-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('[data-test="enable-multi-selection"]').check();
+
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l2.r2')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l1.r1').click({ ctrlKey: true });
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l1.r1')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('.grid37-1 .slick-row[data-row="4"] .slick-cell.l1.r1')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 4);
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.selected').should('have.length', 0);
+      cy.get('#selectionRange1').contains(/"fromRow":1,"fromCell":1,"toRow":1,"toCell":2/);
+      cy.get('#selectionRange1').contains(/"fromRow":3,"fromCell":1,"toRow":4,"toCell":1/);
+      cy.get('#selectionRange1')
+        .invoke('text')
+        .then((text) => expect(text.match(/"fromRow"/g)).to.have.length(2));
+      cy.get('[data-test="enable-multi-selection"]').should('be.checked');
+    });
+    it('should preserve row and column offsets when copying multiple cell ranges', () => {
+      cy.get('.grid37-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('[data-test="enable-multi-selection"]').should('be.checked');
+      cy.window().then((win) => {
+        cy.stub(win.navigator.clipboard, 'writeText').as('clipboardWriteText');
+      });
+
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l1.r1')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l5.r5').click({ ctrlKey: true });
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l5.r5')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l5.r5')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('#selectionRange1').contains(/"fromRow":1,"fromCell":1,"toRow":3,"toCell":1/);
+      cy.get('#selectionRange1').contains(/"fromRow":2,"fromCell":5,"toRow":3,"toCell":5/);
+      cy.get('.grid37-1 .grid-canvas').first().trigger('keydown', { key: 'c', ctrlKey: true, bubbles: true, force: true });
+
+      cy.get('@clipboardWriteText').should('have.been.calledWith', 'Task 1\t\t\t\t\r\nTask 2\t\t\t\t2\r\nTask 3\t\t\t\t3\r\n');
+    });
   });
 
   describe('Grid 2', () => {
@@ -252,6 +309,25 @@ describe('Example 37 - Hybrid Selection Model', () => {
       cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
       cy.get('.grid37-2 .slick-row[data-row="5"] .slick-cell.l0.r0').should('have.class', 'selected');
       cy.get('.grid37-2 .slick-cell.selected').should('have.length', 8 * 2);
+    });
+
+    it('should toggle multiple row selection ranges with the checkbox', () => {
+      cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.grid37-2 .slick-row[data-row="4"] input[type=checkbox]').uncheck({ force: true });
+      cy.get('.grid37-2 .slick-row[data-row="5"] input[type=checkbox]').uncheck({ force: true });
+      cy.get('[data-test="enable-multi-selection"]').should('be.checked');
+
+      cy.get('.grid37-2 .slick-row[data-row="1"] input[type=checkbox]').check({ force: true });
+      cy.get('.grid37-2 .slick-row[data-row="2"] input[type=checkbox]').check({ force: true });
+      cy.get('.grid37-2 .slick-row[data-row="4"] .slick-cell.l1.r1').click({ ctrlKey: true });
+      cy.get('#selectionRange2')
+        .invoke('text')
+        .then((text) => expect(text.match(/"fromRow"/g)).to.have.length(3));
+      cy.get('.grid37-2 .slick-cell.selected').should('have.length', 8 * 3);
+      cy.get('.grid37-2 .slick-row[data-row="3"] .slick-cell.selected').should('have.length', 0);
+      cy.get('#selectionRange2').contains(/"fromRow":1,"fromCell":0,"toRow":1,"toCell":7/);
+      cy.get('#selectionRange2').contains(/"fromRow":2,"fromCell":0,"toRow":2,"toCell":7/);
+      cy.get('#selectionRange2').contains(/"fromRow":4,"fromCell":0,"toRow":4,"toCell":7/);
     });
   });
 });
