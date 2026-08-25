@@ -10,7 +10,7 @@
   - [Adding a Column dynamically is removing the Row Selection column, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-column-why-is-that)
 
 ### Description
-The Row based editing plugin makes it possible to keep the grid readonly except for rows which the user explicitely toggles into edit mode.
+The Row based editing plugin makes it possible to keep the grid readonly except for rows which the user explicitly toggles into edit mode.
 
 **Note:** This plugin enforces the use of the `autoEdit` option and will turn it on with a console warning if its not already.
 
@@ -18,7 +18,7 @@ The Row based editing plugin makes it possible to keep the grid readonly except 
 [Demo](https://ghiscoding.github.io/angular-slickgrid-demos/#/example35) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example35.component.ts)
 
 ## The action column
-A new column is rendered that shows an edit/delete button. If the user clicks on edit, a save and cancel button are shown instead and the row toggles into edit mode. By default as the last column but you can override it with the option `columnIndexPosition`. Additionally it's default column id can be overriden using the opiton `columnId`. Furthermore, you can also override the columns label via the `actionsColumnLabel` property.
+A new column is rendered that shows an edit/delete button. If the user clicks on edit, a save and cancel button are shown instead and the row toggles into edit mode. By default as the last column but you can override it with the option `columnIndexPosition`. Additionally it's default column id can be overridden using the opiton `columnId`. Furthermore, you can also override the columns label via the `actionsColumnLabel` property.
 
 ### Single or multiple editable rows
 By default you can only toggle a single row into edit mode. If you set the option `allowMultipleRows` to `true` on the other hand, you can toggle as many as you want.
