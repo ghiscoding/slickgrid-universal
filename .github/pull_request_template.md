@@ -23,12 +23,12 @@
 
 ## AI / LLM assistance
 
-- AI / LLM assistance used: 
-  - [ ] No 
+- AI / LLM assistance used:
+  - [ ] No
   - [ ] Yes
-- If yes:
-  - which tool/model:
-  - how was it used:
+- If **Yes**:
+  - **which tool/model**:
+  - **how was it used**:
 
 ## Checklist
 
