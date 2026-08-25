@@ -129,7 +129,7 @@ export class Example {
     this.sgb.paginationOptions!.totalItems = totalItemCount;
 
     // infinite scroll has an extra data property to determine if we hit an infinite scroll and there's still more data (in that case we need append data)
-    // or if we're on first data fetching (no scroll bottom ever occured yet)
+    // or if we're on first data fetching (no scroll bottom ever occurred yet)
     if (!data.infiniteScrollBottomHit) {
       // initial load not scroll hit yet, full dataset assignment
       this.sgb.slickGrid?.scrollTo(0); // scroll back to top to avoid unwanted onScrollEnd event triggering

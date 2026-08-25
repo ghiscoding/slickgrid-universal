@@ -79,7 +79,7 @@ this.gridOptions = {
 
 > **Note**  we use [Tempo](https://tempo.formkit.com/) to parse and format Dates to the chosen format via the `type` option when provided in your column definition.
 
-#### Dealing with different input/ouput dates (example: UTC)
+#### Dealing with different input/output dates (example: UTC)
 What if your date input (from your dataset) has a different output on the screen (UI)?
 In that case, you will most probably have a Formatter and type representing the input type, we also provided an `outputType` that can be used to deal with that use case.
 
