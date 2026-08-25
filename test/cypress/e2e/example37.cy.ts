@@ -218,8 +218,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
       cy.get('#selectionRange1')
         .invoke('text')
         .then((text) => expect(text.match(/"fromRow"/g)).to.have.length(2));
-
-      cy.get('[data-test="enable-multi-selection"]').uncheck();
+      cy.get('[data-test="enable-multi-selection"]').should('be.checked');
     });
   });
 
@@ -287,7 +286,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
       cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
       cy.get('.grid37-2 .slick-row[data-row="4"] input[type=checkbox]').uncheck({ force: true });
       cy.get('.grid37-2 .slick-row[data-row="5"] input[type=checkbox]').uncheck({ force: true });
-      cy.get('[data-test="enable-multi-selection"]').check();
+      cy.get('[data-test="enable-multi-selection"]').should('be.checked');
 
       cy.get('.grid37-2 .slick-row[data-row="1"] input[type=checkbox]').check({ force: true });
       cy.get('.grid37-2 .slick-row[data-row="2"] input[type=checkbox]').check({ force: true });
@@ -300,8 +299,6 @@ describe('Example 37 - Hybrid Selection Model', () => {
       cy.get('#selectionRange2').contains(/"fromRow":1,"fromCell":0,"toRow":1,"toCell":7/);
       cy.get('#selectionRange2').contains(/"fromRow":2,"fromCell":0,"toRow":2,"toCell":7/);
       cy.get('#selectionRange2').contains(/"fromRow":4,"fromCell":0,"toRow":4,"toCell":7/);
-
-      cy.get('[data-test="enable-multi-selection"]').uncheck();
     });
   });
 });
