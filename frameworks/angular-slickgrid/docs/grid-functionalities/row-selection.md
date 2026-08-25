@@ -258,6 +258,16 @@ this.gridOptions = {
 
 You can also `onDragReplaceCells` event to drag and fill cell values to the extended cell selection.
 
+The Excel-style selection drag handle is visible by default. You can control its visibility with `selectionOptions.showDragHandle`:
+
+```ts
+selectionOptions: {
+  showDragHandle: true,      // default; always visible
+  // showDragHandle: 'hover', // visible while hovering the selected cell
+  // showDragHandle: false,    // disable the drag handle
+}
+```
+
 ###### View
 
 ```html

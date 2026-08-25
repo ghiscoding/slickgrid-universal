@@ -157,6 +157,7 @@ export default class Example37 {
       selectionOptions: {
         rowSelectColumnIds: ['id'],
         selectionType: 'mixed',
+        // showDragHandle: 'hover', // can also be true (default) or false
       },
 
       // when using the ExcelCopyBuffer, you can see what the selection range is

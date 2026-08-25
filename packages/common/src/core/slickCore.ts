@@ -444,6 +444,7 @@ export class SlickCopyRange {
 export class SlickDragExtendHandle {
   id: string;
   cssClass = 'slick-drag-replace-handle';
+  hoverCssClass = 'slick-drag-replace-handle-hover';
 
   constructor(gridUid: string) {
     this.id = `${gridUid}_drag_replace_handle`;
@@ -453,10 +454,13 @@ export class SlickDragExtendHandle {
     document.getElementById(this.id)?.remove();
   }
 
-  createEl(activeCellNode: HTMLDivElement | null): void {
+  createEl(activeCellNode: HTMLDivElement | null, showDragHandle: boolean | 'hover' = true): void {
     if (activeCellNode) {
       const dragReplaceEl = document.createElement('div');
       dragReplaceEl.classList.add('slick-drag-replace-handle');
+      if (showDragHandle === 'hover') {
+        dragReplaceEl.classList.add(this.hoverCssClass);
+      }
       dragReplaceEl.id = this.id;
       activeCellNode.appendChild(dragReplaceEl);
     }

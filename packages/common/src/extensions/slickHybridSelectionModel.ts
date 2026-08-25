@@ -32,6 +32,7 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
     selectActiveCell: true,
     selectActiveRow: true,
     dragToSelect: false,
+    showDragHandle: true,
     autoScrollWhenDrag: true,
     handleRowMoveManagerColumn: true, // Row Selection on RowMoveManager column
     rowSelectColumnIds: [], // Row Selection on these columns
