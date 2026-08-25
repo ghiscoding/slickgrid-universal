@@ -1010,6 +1010,21 @@ describe('SlickGrid core file', () => {
         expect(onDragReplaceSpy).not.toHaveBeenCalled();
       });
 
+      it('should compare the final cell coordinate during a REP selection update', () => {
+        const cellSelectionModel = new SlickHybridSelectionModel({ selectionType: 'cell' });
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.setSelectionModel(cellSelectionModel);
+        const onDragReplaceSpy = vi.spyOn(grid.onDragReplaceCells, 'notify');
+        const handleSelectedRangesChanged = (grid as any).handleSelectedRangesChanged.bind(grid);
+        const previousRange = new SlickRange(0, 0, 1, 2);
+        const selectedRange = new SlickRange(0, 0, 1, 1);
+
+        handleSelectedRangesChanged(new SlickEventData(new CustomEvent('click')), [previousRange]);
+        handleSelectedRangesChanged(new SlickEventData(new CustomEvent('click', { detail: { selectionMode: 'REP' } })), [selectedRange]);
+
+        expect(onDragReplaceSpy).not.toHaveBeenCalled();
+      });
+
       it('should call onSelectedRowsChanged() with Hybrid Selection Mode and addDragHandle', () => {
         const rowSelectionModel = new SlickHybridSelectionModel();
         const setRangeSpy = vi.spyOn(rowSelectionModel, 'setSelectedRanges');
