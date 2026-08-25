@@ -858,6 +858,27 @@ describe('SlickGrid core file', () => {
       { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
     ];
 
+    describe('Cell selection drag handle', () => {
+      it.each([
+        { showDragHandle: undefined, expectedClass: false, expectedHandle: true, label: 'default' },
+        { showDragHandle: true, expectedClass: false, expectedHandle: true, label: 'true' },
+        { showDragHandle: 'hover' as const, expectedClass: true, expectedHandle: true, label: 'hover' },
+        { showDragHandle: false, expectedClass: false, expectedHandle: false, label: 'false' },
+      ])('should support the $label showDragHandle mode', ({ showDragHandle, expectedClass, expectedHandle }) => {
+        const selectionModel = new SlickHybridSelectionModel({ selectionType: 'cell' });
+        const selectionOptions = showDragHandle === undefined ? { selectionType: 'cell' as const } : { selectionType: 'cell' as const, showDragHandle };
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, showCellSelection: true, selectionOptions });
+        grid.setSelectionModel(selectionModel);
+        grid.render();
+
+        selectionModel.setSelectedRanges([new SlickRange(0, 0, 1, 0)]);
+
+        const dragHandle = container.querySelector('.slick-drag-replace-handle');
+        expect(!!dragHandle).toBe(expectedHandle);
+        expect(dragHandle ? dragHandle.classList.contains('slick-drag-replace-handle-hover') : false).toBe(expectedClass);
+      });
+    });
+
     describe('setSelectedRows() method', () => {
       it('should throw when calling setSelectedRows() without a selection model', () => {
         grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
