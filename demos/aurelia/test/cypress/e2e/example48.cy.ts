@@ -53,6 +53,21 @@ describe('Example 48 - Hybrid Selection Model', () => {
       cy.get('#grid48-1 .slick-cell.selected').should('have.length', 4);
     });
 
+    it('should preserve cell selection when dragging with the secondary mouse button', () => {
+      cy.get('#grid48-1 .slick-cell.selected').should('have.length', 4);
+
+      cy.get('#grid48-1 .slick-row[data-row="1"] .slick-cell.l1.r1').trigger('mousedown', {
+        button: 2,
+        which: 3,
+        force: true,
+      });
+      cy.get('#grid48-1 .slick-row[data-row="3"] .slick-cell.l3.r3')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { button: 2, which: 3, force: true });
+
+      cy.get('#grid48-1 .slick-cell.selected').should('have.length', 4);
+    });
+
     it('should be able to expand the cell selections further to the right', () => {
       cy.get('#grid48-1 .slick-cell.selected').should('have.length', 4);
       cy.get('#grid48-1 .slick-row[data-row="2"] .slick-cell.l2.r2')

@@ -941,6 +941,21 @@ describe('SlickGrid core file', () => {
         expect(secondRowItemCell.classList.contains('selected')).toBeTruthy();
       });
 
+      it('should select rows when the last column is hidden', () => {
+        const columnsWithHiddenLastColumn = [
+          { id: 'firstName', field: 'firstName', name: 'First Name' },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+        ] as Column[];
+        const rowSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row' });
+
+        grid = new SlickGrid<any, Column>(container, data, columnsWithHiddenLastColumn, defaultOptions);
+        grid.setSelectionModel(rowSelectionModel);
+        grid.setSelectedRows([1]);
+
+        expect(rowSelectionModel.getSelectedRanges()).toEqual([{ fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 }]);
+        expect(grid.getSelectedRows()).toEqual([1]);
+      });
+
       it('should call SlickHybridSelectionModel.onDragReplaceCells() when selection mode is REP and range is expanding', () => {
         const hybridSelectionModel = new SlickHybridSelectionModel();
         hybridSelectionModel.activeSelectionIsRow = true;
