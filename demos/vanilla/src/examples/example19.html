@@ -50,8 +50,19 @@
     <span class="mdi mdi-table-edit"></span>
     <span>Toggle Edit/Readonly Grid</span>
   </button>
-  <label class="ml-3">Range Selection</label>
-  <span id="selectionRange"></span>
+  <label class="checkbox-inline ml-3">
+    <input
+      type="checkbox"
+      data-test="enable-multi-selection"
+      checked.bind="enableMultiSelection"
+      onclick.trigger="toggleMultiSelection(event.target.checked)"
+    />
+    Enable multi-selection (Ctrl/Cmd-click or drag)
+  </label>
+  <div class="my-2">
+    <label class="ml-3">Range Selection</label>
+    <span id="selectionRange"></span>
+  </div>
 </h6>
 
 <div class="grid19"></div>

@@ -176,6 +176,35 @@ describe('Example 48 - Hybrid Selection Model', () => {
         .then((text) => expect(text.match(/"fromRow"/g)).to.have.length(2));
       cy.get('[data-test="enable-multi-selection"]').should('be.checked');
     });
+    it('should preserve row and column offsets when copying multiple cell ranges', () => {
+      cy.get('#grid48-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('[data-test="enable-multi-selection"]').should('be.checked');
+      cy.window().then((win) => {
+        cy.stub(win.navigator.clipboard, 'writeText').as('clipboardWriteText');
+      });
+
+      cy.get('#grid48-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
+      cy.get('#grid48-1 .slick-row[data-row="1"] .slick-cell.l1.r1')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('#grid48-1 .slick-row[data-row="3"] .slick-cell.l1.r1')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('#grid48-1 .slick-row[data-row="2"] .slick-cell.l5.r5').click({ ctrlKey: true });
+      cy.get('#grid48-1 .slick-row[data-row="2"] .slick-cell.l5.r5')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('#grid48-1 .slick-row[data-row="3"] .slick-cell.l5.r5')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('#selectionRange1').contains(/"fromRow":1,"fromCell":1,"toRow":3,"toCell":1/);
+      cy.get('#selectionRange1').contains(/"fromRow":2,"fromCell":5,"toRow":3,"toCell":5/);
+      cy.get('#grid48-1 .grid-canvas').first().trigger('keydown', { key: 'c', ctrlKey: true, bubbles: true, force: true });
+
+      cy.get('@clipboardWriteText').should('have.been.calledWith', 'Task 1\t\t\t\t\r\nTask 2\t\t\t\t2\r\nTask 3\t\t\t\t3\r\n');
+    });
   });
 
   describe('Grid 2', () => {

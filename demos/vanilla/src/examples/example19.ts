@@ -26,6 +26,7 @@ export default class Example19 {
   isWithPagination = true;
   sgb: SlickVanillaGridBundle;
   isGridEditable = true;
+  enableMultiSelection = false;
 
   attached() {
     this._eventHandler = new SlickEventHandler();
@@ -145,6 +146,9 @@ export default class Example19 {
       },
       headerRowHeight: 35,
       rowHeight: 30,
+      selectionOptions: {
+        enableMultiSelection: false,
+      },
 
       // when using the ExcelCopyBuffer, you can see what the selection range is
       enableExcelCopyBuffer: true,
@@ -200,6 +204,14 @@ export default class Example19 {
     this.isWithPagination = !this.isWithPagination;
     this.sgb.paginationService!.togglePaginationVisibility(this.isWithPagination);
     this.sgb.slickGrid!.setSelectedRows([]);
+  }
+
+  toggleMultiSelection(isChecked: boolean) {
+    this.enableMultiSelection = isChecked;
+    const selectionOptions = { ...this.gridOptions.selectionOptions, enableMultiSelection: isChecked };
+    this.gridOptions.selectionOptions = selectionOptions;
+    this.sgb.slickGrid?.setOptions({ selectionOptions }, true);
+    this.sgb.slickGrid?.getSelectionModel()?.setOptions({ enableMultiSelection: isChecked });
   }
 
   toggleGridEditReadonly() {

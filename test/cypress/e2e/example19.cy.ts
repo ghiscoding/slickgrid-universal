@@ -271,5 +271,36 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
 
       cy.get('#selectionRange').should('have.text', '{"fromRow":0,"fromCell":92,"toRow":15,"toCell":92}');
     });
+
+    it('should preserve row and column offsets when copying multiple cell ranges', () => {
+      cy.get('.slick-pagination .seek-first').click();
+      cy.get('.grid19 .slick-viewport-top.slick-viewport-left').scrollTo('topLeft');
+      cy.get('[data-test="enable-multi-selection"]').check();
+      cy.window().then((win) => {
+        cy.stub(win.navigator.clipboard, 'writeText').as('clipboardWriteText');
+      });
+
+      cy.get('.grid19 .slick-row[data-row="1"] .slick-cell.l2.r2').click();
+      cy.get('.grid19 .slick-row[data-row="1"] .slick-cell.l2.r2')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('.grid19 .slick-row[data-row="3"] .slick-cell.l2.r2')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('.grid19 .slick-row[data-row="2"] .slick-cell.l4.r4').click({ ctrlKey: true });
+      cy.get('.grid19 .slick-row[data-row="2"] .slick-cell.l4.r4')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('.grid19 .slick-row[data-row="3"] .slick-cell.l4.r4')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('#selectionRange').contains(/"fromRow":1,"fromCell":2,"toRow":3,"toCell":2/);
+      cy.get('#selectionRange').contains(/"fromRow":2,"fromCell":4,"toRow":3,"toCell":4/);
+      cy.get('.grid19 .grid-canvas').first().trigger('keydown', { key: 'c', ctrlKey: true, bubbles: true, force: true });
+
+      cy.get('@clipboardWriteText').should('have.been.calledWith', '12:15\t\t\r\n13:15\t\t13:17\r\n4:3\t\t4:5\r\n');
+    });
   });
 });
