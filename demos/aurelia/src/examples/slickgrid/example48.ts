@@ -14,6 +14,7 @@ export class Example48 {
   dataset1!: any[];
   dataset2!: any[];
   hideSubTitle = false;
+  enableMultiSelection = false;
 
   constructor() {
     this._eventHandler = new SlickEventHandler();
@@ -120,6 +121,7 @@ export class Example48 {
       selectionOptions: {
         rowSelectColumnIds: ['id'],
         selectionType: 'mixed',
+        enableMultiSelection: false,
         // showDragHandle: 'hover', // can also be true (default) or false
       },
 
@@ -146,8 +148,29 @@ export class Example48 {
 
         // allow using the mouse drag selection to select multiple rows
         dragToSelect: true,
+        enableMultiSelection: false,
       },
     };
+  }
+
+  toggleMultiSelection(event: Event) {
+    this.enableMultiSelection = (event.target as HTMLInputElement).checked;
+
+    const selectionOptions1 = { ...this.gridOptions1.selectionOptions, enableMultiSelection: this.enableMultiSelection };
+    const selectionOptions2 = { ...this.gridOptions2.selectionOptions, enableMultiSelection: this.enableMultiSelection };
+    this.gridOptions1.selectionOptions = selectionOptions1;
+    this.gridOptions2.selectionOptions = selectionOptions2;
+
+    this.aureliaGrid1?.slickGrid?.setOptions({ selectionOptions: selectionOptions1 }, true);
+    this.aureliaGrid2?.slickGrid?.setOptions({ selectionOptions: selectionOptions2 }, true);
+    const selectionModel1 = this.aureliaGrid1?.slickGrid?.getSelectionModel();
+    const selectionModel2 = this.aureliaGrid2?.slickGrid?.getSelectionModel();
+    if (selectionModel1) {
+      selectionModel1.setOptions({ enableMultiSelection: this.enableMultiSelection });
+    }
+    if (selectionModel2) {
+      selectionModel2.setOptions({ enableMultiSelection: this.enableMultiSelection });
+    }
   }
 
   mockData(itemCount: number) {

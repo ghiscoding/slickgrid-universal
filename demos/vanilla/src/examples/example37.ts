@@ -17,6 +17,7 @@ export default class Example37 {
   dataset2!: any[];
   sgb1!: SlickVanillaGridBundle;
   sgb2!: SlickVanillaGridBundle;
+  enableMultiSelection = false;
   excelExportService = new ExcelExportService();
 
   gridFocus() {
@@ -157,6 +158,7 @@ export default class Example37 {
       selectionOptions: {
         rowSelectColumnIds: ['id'],
         selectionType: 'mixed',
+        enableMultiSelection: false,
         // showDragHandle: 'hover', // can also be true (default) or false
       },
 
@@ -198,8 +200,31 @@ export default class Example37 {
 
         // allow using the mouse drag selection to select multiple rows
         dragToSelect: true,
+        enableMultiSelection: false,
       },
     };
+  }
+
+  toggleMultiSelection(isChecked: boolean) {
+    this.enableMultiSelection = isChecked;
+
+    const selectionOptions1 = { ...this.gridOptions1.selectionOptions, enableMultiSelection: this.enableMultiSelection };
+    const selectionOptions2 = { ...this.gridOptions2.selectionOptions, enableMultiSelection: this.enableMultiSelection };
+    this.gridOptions1.selectionOptions = selectionOptions1;
+    this.gridOptions2.selectionOptions = selectionOptions2;
+
+    if (this.sgb1.slickGrid && this.sgb2.slickGrid) {
+      this.sgb1.slickGrid.setOptions({ selectionOptions: selectionOptions1 }, true);
+      this.sgb2.slickGrid.setOptions({ selectionOptions: selectionOptions2 }, true);
+      const selectionModel1 = this.sgb1.slickGrid.getSelectionModel();
+      const selectionModel2 = this.sgb2.slickGrid.getSelectionModel();
+      if (selectionModel1) {
+        selectionModel1.setOptions({ enableMultiSelection: this.enableMultiSelection });
+      }
+      if (selectionModel2) {
+        selectionModel2.setOptions({ enableMultiSelection: this.enableMultiSelection });
+      }
+    }
   }
 
   // mock a dataset

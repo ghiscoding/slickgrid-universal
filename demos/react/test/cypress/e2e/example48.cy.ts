@@ -148,6 +148,35 @@ describe('Example 48 - Hybrid Selection Model', () => {
       cy.get('#selectionRange1').contains(/"fromRow":0,"fromCell":1,"toRow":1[45],"toCell":3/);
       cy.get('#grid48-1 .slick-viewport-top.slick-viewport-left').scrollTo(0, 13 * 35);
     });
+
+    it('should toggle multiple cell selection ranges with the checkbox', () => {
+      cy.get('#grid48-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('[data-test="enable-multi-selection"]').check();
+
+      cy.get('#grid48-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
+      cy.get('#grid48-1 .slick-row[data-row="1"] .slick-cell.l1.r1')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('#grid48-1 .slick-row[data-row="1"] .slick-cell.l2.r2')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+      cy.get('#grid48-1 .slick-row[data-row="3"] .slick-cell.l1.r1').click({ ctrlKey: true });
+      cy.get('#grid48-1 .slick-row[data-row="3"] .slick-cell.l1.r1')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('#grid48-1 .slick-row[data-row="4"] .slick-cell.l1.r1')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+      cy.get('#grid48-1 .slick-cell.selected').should('have.length', 4);
+      cy.get('#grid48-1 .slick-row[data-row="2"] .slick-cell.selected').should('have.length', 0);
+      cy.get('#selectionRange1').contains(/"fromRow":1,"fromCell":1,"toRow":1,"toCell":2/);
+      cy.get('#selectionRange1').contains(/"fromRow":3,"fromCell":1,"toRow":4,"toCell":1/);
+      cy.get('#selectionRange1')
+        .invoke('text')
+        .then((text) => expect(text.match(/"fromRow"/g)).to.have.length(2));
+
+      cy.get('[data-test="enable-multi-selection"]').uncheck();
+    });
   });
 
   describe('Grid 2', () => {
@@ -208,6 +237,27 @@ describe('Example 48 - Hybrid Selection Model', () => {
       cy.get('#grid48-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
       cy.get('#grid48-2 .slick-row[data-row="5"] .slick-cell.l0.r0').should('have.class', 'selected');
       cy.get('#grid48-2 .slick-cell.selected').should('have.length', 8 * 2);
+    });
+
+    it('should toggle multiple row selection ranges with the checkbox', () => {
+      cy.get('#grid48-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('#grid48-2 .slick-row[data-row="4"] input[type=checkbox]').uncheck({ force: true });
+      cy.get('#grid48-2 .slick-row[data-row="5"] input[type=checkbox]').uncheck({ force: true });
+      cy.get('[data-test="enable-multi-selection"]').check();
+
+      cy.get('#grid48-2 .slick-row[data-row="1"] input[type=checkbox]').check({ force: true });
+      cy.get('#grid48-2 .slick-row[data-row="2"] input[type=checkbox]').check({ force: true });
+      cy.get('#grid48-2 .slick-row[data-row="4"] .slick-cell.l1.r1').click({ ctrlKey: true });
+      cy.get('#selectionRange2')
+        .invoke('text')
+        .then((text) => expect(text.match(/"fromRow"/g)).to.have.length(3));
+      cy.get('#grid48-2 .slick-cell.selected').should('have.length', 8 * 3);
+      cy.get('#grid48-2 .slick-row[data-row="3"] .slick-cell.selected').should('have.length', 0);
+      cy.get('#selectionRange2').contains(/"fromRow":1,"fromCell":0,"toRow":1,"toCell":7/);
+      cy.get('#selectionRange2').contains(/"fromRow":2,"fromCell":0,"toRow":2,"toCell":7/);
+      cy.get('#selectionRange2').contains(/"fromRow":4,"fromCell":0,"toRow":4,"toCell":7/);
+
+      cy.get('[data-test="enable-multi-selection"]').uncheck();
     });
   });
 });

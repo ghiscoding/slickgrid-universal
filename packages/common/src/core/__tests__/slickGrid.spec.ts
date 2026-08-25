@@ -994,6 +994,22 @@ describe('SlickGrid core file', () => {
         expect(invalidateSpy).toHaveBeenCalled();
       });
 
+      it('should not trigger drag replace when more than one selected range changes', () => {
+        const cellSelectionModel = new SlickHybridSelectionModel({ selectionType: 'cell' });
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.setSelectionModel(cellSelectionModel);
+        const onDragReplaceSpy = vi.spyOn(grid.onDragReplaceCells, 'notify');
+        const handleSelectedRangesChanged = (grid as any).handleSelectedRangesChanged.bind(grid);
+
+        handleSelectedRangesChanged(new SlickEventData(new CustomEvent('click')), [new SlickRange(0, 0), new SlickRange(1, 0)]);
+        handleSelectedRangesChanged(new SlickEventData(new CustomEvent('click', { detail: { selectionMode: 'REP' } })), [
+          new SlickRange(0, 0, 1, 0),
+          new SlickRange(1, 0, 2, 0),
+        ]);
+
+        expect(onDragReplaceSpy).not.toHaveBeenCalled();
+      });
+
       it('should call onSelectedRowsChanged() with Hybrid Selection Mode and addDragHandle', () => {
         const rowSelectionModel = new SlickHybridSelectionModel();
         const setRangeSpy = vi.spyOn(rowSelectionModel, 'setSelectedRanges');
@@ -4142,6 +4158,19 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
 
       expect(onDragInitSpy).not.toHaveBeenCalled();
+    });
+
+    it('should allow modifier-key drags when enableMultiSelection is explicitly configured', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, {
+        ...defaultOptions,
+        selectionOptions: { enableMultiSelection: false },
+      });
+      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify');
+      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+      const cMouseDownEvent = new MouseEvent('mousedown', { bubbles: true, ctrlKey: true });
+      slickCellElm.dispatchEvent(cMouseDownEvent);
+
+      expect(onDragInitSpy).toHaveBeenCalled();
     });
 
     it('should not drag when event has cancelled bubbling (immediatePropagationStopped)', () => {

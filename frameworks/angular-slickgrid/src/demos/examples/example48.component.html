@@ -45,7 +45,10 @@
     </angular-slickgrid>
   </div>
 
-  <hr />
+  <label class="checkbox-inline control-label mb-3">
+    <input type="checkbox" data-test="enable-multi-selection" [checked]="enableMultiSelection" (change)="toggleMultiSelection($event)" />
+    Enable multi-selection (Ctrl/Cmd-click or drag)
+  </label>
 
   <h3>
     Grid 2

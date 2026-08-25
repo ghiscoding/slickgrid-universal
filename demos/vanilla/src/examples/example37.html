@@ -52,8 +52,16 @@
 </div>
 <div class="grid37-1"></div>
 
-<div class="column is-half">
-  <hr class="my-4" />
+<div class="column is-half my-3">
+  <label class="checkbox-inline control-label">
+    <input
+      type="checkbox"
+      data-test="enable-multi-selection"
+      checked.bind="enableMultiSelection"
+      onclick.trigger="toggleMultiSelection(event.target.checked)"
+    />
+    Enable multi-selection (Ctrl/Cmd-click or drag) on both grids
+  </label>
 </div>
 
 <div class="columns">

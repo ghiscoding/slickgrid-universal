@@ -361,6 +361,8 @@ selectionOptions: {
 }
 ```
 
+For non-contiguous selection ranges, set `selectionOptions.enableMultiSelection: true`. Ctrl/Cmd-click toggles the clicked cell or row, and Ctrl/Cmd-drag adds another range. In row-selection mode, `multiSelect` continues to control whether multiple rows are allowed.
+
 #### Component
 ```tsx
 const Example: React.FC = () => {

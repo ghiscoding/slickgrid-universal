@@ -1,6 +1,12 @@
+<!-- PR title should be using conventional commit with a length below 73 chars. See https://www.conventionalcommits.org/en/v1.0.0/ -->
+
 ## Summary
 
 <!-- Describe the purpose of this pull request and link any related issue. -->
+
+## Why
+
+<!-- Optional reasons explaining why you think this PR can be useful -->
 
 ## Changes
 
@@ -12,7 +18,7 @@
 
 ## Comments
 
-<!-- any other optional comments to add -->
+<!-- Any other optional comments to add -->
 
 ## AI/LLM assistance
 

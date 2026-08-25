@@ -20,11 +20,18 @@ import type {
 } from '../interfaces/index.js';
 import { SlickCellRangeDecorator } from './index.js';
 
+interface CellRangeSelectedEvent {
+  range: SlickRange;
+  selectionMode: string;
+  allowAutoEdit: boolean;
+  addToSelection?: boolean;
+}
+
 export class SlickCellRangeSelector {
   readonly pluginName = 'CellRangeSelector';
   onBeforeCellRangeSelected: SlickEvent<{ row: number; cell: number }>;
-  onCellRangeSelecting: SlickEvent<{ range: SlickRange; selectionMode: string; allowAutoEdit: boolean }>;
-  onCellRangeSelected: SlickEvent<{ range: SlickRange; selectionMode: string; allowAutoEdit: boolean }>;
+  onCellRangeSelecting: SlickEvent<CellRangeSelectedEvent>;
+  onCellRangeSelected: SlickEvent<CellRangeSelectedEvent>;
 
   protected _activeCanvas!: HTMLElement;
   protected _options!: CellRangeSelectorOption;
@@ -40,6 +47,7 @@ export class SlickCellRangeSelector {
   protected _dragReplaceHandleCell: { row: number; cell: number } | null = null;
   protected _selectionMode: CellSelectionMode = 'SEL';
   protected _dragReplaceHandleActive = false;
+  protected _addToSelection = false;
 
   // Frozen row & column variables
   protected _columnOffset = 0;
@@ -73,10 +81,8 @@ export class SlickCellRangeSelector {
 
   constructor(options?: Partial<CellRangeSelectorOption>) {
     this.onBeforeCellRangeSelected = new SlickEvent<{ row: number; cell: number }>('onBeforeCellRangeSelected');
-    this.onCellRangeSelecting = new SlickEvent<{ range: SlickRange; selectionMode: string; allowAutoEdit: boolean }>(
-      'onCellRangeSelecting'
-    );
-    this.onCellRangeSelected = new SlickEvent<{ range: SlickRange; selectionMode: string; allowAutoEdit: boolean }>('onCellRangeSelected');
+    this.onCellRangeSelecting = new SlickEvent<CellRangeSelectedEvent>('onCellRangeSelecting');
+    this.onCellRangeSelected = new SlickEvent<CellRangeSelectedEvent>('onCellRangeSelected');
     this._eventHandler = new SlickEventHandler();
     this._options = deepMerge(this._defaults, options);
   }
@@ -337,6 +343,7 @@ export class SlickCellRangeSelector {
           range,
           selectionMode: '',
           allowAutoEdit: false,
+          ...(this._addToSelection ? { addToSelection: true } : {}),
         });
       }
     }
@@ -372,7 +379,9 @@ export class SlickCellRangeSelector {
       range: r,
       selectionMode: this._selectionMode,
       allowAutoEdit: this._selectionMode === 'SEL' && r.isSingleCell(),
+      ...(this._addToSelection ? { addToSelection: true } : {}),
     });
+    this._addToSelection = false;
     // keep the resulting range (not the raw drag range) so that a next drag-extend anchors on the real selection
     this._previousSelectedRange = SlickSelectionUtils.normaliseDragRange({
       start: { row: r.fromRow, cell: r.fromCell },
@@ -411,6 +420,8 @@ export class SlickCellRangeSelector {
     }
 
     this._dragReplaceHandleActive = dd.matchClassTag === 'dragReplaceHandle';
+    this._addToSelection =
+      !this._dragReplaceHandleActive && this._gridOptions.selectionOptions?.enableMultiSelection === true && (!!e.ctrlKey || !!e.metaKey);
     if (this._dragReplaceHandleActive) {
       this._dragReplaceHandleCell = this._grid.getCellFromEvent(e);
     } else {
