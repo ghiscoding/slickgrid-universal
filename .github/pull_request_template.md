@@ -10,6 +10,10 @@
 
 <!-- List the tests, builds, lint, formatting, or other checks that were run. -->
 
+## Comments
+
+<!-- any other optional comments to add -->
+
 ## AI/LLM assistance
 
 - AI/LLM assistance used: [ ] No [ ] Yes
