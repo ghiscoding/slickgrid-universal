@@ -30,7 +30,7 @@ export interface KeyboardNavigationOptions {
  * Supports arrow key navigation, Enter/Space activation, and Escape to close
  * Can be used for menus, lists, pickers, or any focusable item collections
  */
-export function bindKeyboardNavigation(
+function bindKeyboardNavigation(
   containerElm: HTMLElement,
   bindEventService: BindingEventService,
   options: KeyboardNavigationOptions
@@ -173,16 +173,7 @@ export function bindKeyboardNavigation(
 export function wireMenuKeyboardNavigation(
   menuElm: HTMLElement,
   bindEventService: any,
-  options?: {
-    onActivate?: (focusedItem: HTMLElement) => void;
-    onEscape?: () => void;
-    onTab?: (evt: KeyboardEvent, focusedItem: HTMLElement) => void;
-    onOpenSubMenu?: (focusedItem: HTMLElement) => void;
-    onCloseSubMenu?: (focusedItem: HTMLElement) => void;
-    eventServiceKey?: string;
-    allItemsSelector?: string;
-    focusedItemSelector?: string;
-  }
+  options?: Partial<Omit<KeyboardNavigationOptions, 'filterFn'>>
 ): void {
   // Allow all menus, including GridMenu, to use keyboard navigation
   const defaultSelector =
