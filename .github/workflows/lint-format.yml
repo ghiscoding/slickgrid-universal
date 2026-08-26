@@ -58,3 +58,9 @@ jobs:
 
       - name: Prettier
         run: pnpm prettier:check
+
+      - name: Fallow dead-code checks
+        run: pnpm fallow:dead-code
+
+      - name: Fallow production auto-fix preview
+        run: pnpm fallow:fix:check
