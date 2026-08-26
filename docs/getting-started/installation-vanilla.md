@@ -70,7 +70,7 @@ export class GridBasicComponent {
 ```
 
 ### 3. CSS / SASS Styles
-Load your prefered theme, choose between Bootstrap (default), Material or Salesforce themes. You can also customize them to your taste (either by using SASS or CSS variables).
+Load your preferred theme, choose between Bootstrap (default), Material or Salesforce themes. You can also customize them to your taste (either by using SASS or CSS variables).
 
 #### CSS
 Default compiled `css`, you can load it through HTML or import it in your JS code depending on your project.

@@ -197,7 +197,7 @@ const Example47: React.FC = () => {
       enableFiltering: true,
       enableGrouping: true,
       enableRowDetailView: true,
-      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
+      rowTopOffsetRenderType: 'top', // Intentional legacy Row Detail compatibility coverage; overlay mode supports "transform"
       darkMode,
       preRegisterExternalExtensions: (pubSubService) => {
         const rowDetail = new ReactRowDetailView(pubSubService as EventPubSubService);

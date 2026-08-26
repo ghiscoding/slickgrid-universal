@@ -17,6 +17,8 @@ interface StoryItem {
 const gridOptions = ref<GridOption>();
 const columns: Ref<Column[]> = ref([]);
 const dataset = ref<StoryItem[]>([]);
+const excelExportService = new ExcelExportService();
+const pdfExportService = new PdfExportService();
 let vueGrid!: SlickgridVueInstance;
 
 onBeforeMount(() => {
@@ -37,7 +39,15 @@ function defineGrid() {
     { id: 'id', name: '#', field: 'id', minWidth: 60, maxWidth: 70 },
     { id: 'title', name: 'Story', field: 'title', minWidth: 180, width: 220 },
     { id: 'owner', name: 'Owner', field: 'owner', minWidth: 110, width: 130 },
-    { id: 'rowHeight', name: 'Height', field: 'rowHeight', formatter: (_row, _cell, value) => `${value}px`, minWidth: 90, width: 90 },
+    {
+      id: 'rowHeight',
+      name: 'Height',
+      field: 'rowHeight',
+      exportWithFormatter: true,
+      formatter: (_row, _cell, value) => `${value}px`,
+      minWidth: 90,
+      width: 90,
+    },
     { id: 'summary', name: 'Summary', field: 'summary', cssClass: 'cell-wrap', minWidth: 360, width: 500, maxWidth: 620 },
   ];
 
@@ -45,14 +55,19 @@ function defineGrid() {
     enableCellNavigation: true,
     enableTextSelectionOnCells: true,
     enableVariableRowHeight: true,
-    externalResources: [new ExcelExportService(), new PdfExportService()],
+    externalResources: [excelExportService, pdfExportService],
     excelExportOptions: {
       // export variable row height will also be reflected in the export
       // but it can be disabled by setting `includeVariableRowHeight` to false
       // includeVariableRowHeight: false, // export all rows at default height
+
+      // we can opt-in to also use same column width grid vs Excel export (it's disabled by default)
+      includeColumnWidth: true,
     },
     pdfExportOptions: {
       pageOrientation: 'landscape',
+      // we can opt-in to also use same column width grid vs PDF export (it's disabled by default)
+      includeColumnWidth: true,
     },
     rowHeight: 40,
     gridHeight: 560,
@@ -87,11 +102,22 @@ function getData(itemCount: number): StoryItem[] {
   }
   return data;
 }
+
+function exportToExcel() {
+  excelExportService.exportToExcel({
+    filename: 'Export',
+    format: 'xlsx',
+  });
+}
+
+function exportToPdf() {
+  pdfExportService.exportToPdf({ filename: 'Export' });
+}
 </script>
 
 <template>
   <h2>
-    Example 55: Variable Row Height (Provider)
+    Example 55: Variable Row Height (provider)
     <span class="float-end">
       <a
         style="font-size: 18px"
@@ -107,6 +133,12 @@ function getData(itemCount: number): StoryItem[] {
 
   <div class="row" style="margin-bottom: 6px">
     <div class="col-md-12">
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="export-excel-btn" @click="exportToExcel()">
+        <i class="mdi mdi-file-excel-outline text-success"></i> Export to Excel
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="export-pdf-btn" @click="exportToPdf()">
+        <i class="mdi mdi-file-pdf-outline text-danger"></i> Export to PDF
+      </button>
       <button class="btn btn-outline-secondary btn-sm btn-icon" @click="scrollToRow90()" data-test="scroll-row-90-example55">
         <span class="mdi mdi-arrow-down"></span>
         <span> Scroll To row 90</span>
@@ -127,6 +159,7 @@ function getData(itemCount: number): StoryItem[] {
 <style lang="scss">
 #slickGridContainer-grid55 {
   --slick-cell-border-left: 1px solid #dedede;
+  --slick-font-size-base: 13px;
 }
 
 #slickGridContainer-grid55 .slickgrid-container .slick-cell.cell-wrap {

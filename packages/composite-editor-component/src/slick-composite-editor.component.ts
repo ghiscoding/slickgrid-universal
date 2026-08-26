@@ -563,13 +563,13 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           this._options.onRendered(this._modalElm);
         }
 
-        this._editors = {};
+        this._editors = Object.create(null);
         this._editorContainers = modalColumns.map((col) => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid='${col.id}']`)) || [];
         this._compositeOptions = {
           destroy: this.disposeComponent.bind(this),
           modalType,
           validationMsgPrefix: '* ',
-          formValues: {},
+          formValues: Object.create(null),
           editors: this._editors,
         };
         const compositeEditor = new (SlickCompositeEditor as any)(

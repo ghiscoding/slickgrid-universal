@@ -122,6 +122,29 @@ describe('SlickGrid core file', () => {
     expect(grid.getGridPosition()).toBeTruthy();
   });
 
+  it('should handle ancestor scrolling after the grid container is moved', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const oldScrollContainer = document.createElement('div');
+    const newScrollContainer = document.createElement('div');
+    document.body.append(oldScrollContainer, newScrollContainer);
+    oldScrollContainer.appendChild(container);
+
+    grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'Avery' }], columns, defaultOptions);
+    grid.init();
+    grid.setActiveCell(0, 0);
+    const positionChangedSpy = vi.spyOn(grid.onActiveCellPositionChanged, 'notify');
+
+    oldScrollContainer.dispatchEvent(new Event('scroll', { bubbles: false }));
+    expect(positionChangedSpy).toHaveBeenCalledTimes(1);
+
+    positionChangedSpy.mockClear();
+    newScrollContainer.appendChild(container);
+    oldScrollContainer.dispatchEvent(new Event('scroll', { bubbles: false }));
+    newScrollContainer.dispatchEvent(new Event('scroll', { bubbles: false }));
+
+    expect(positionChangedSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('should be able to instantiate SlickGrid with an external PubSub Service', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions, pubSubServiceStub);
@@ -132,7 +155,7 @@ describe('SlickGrid core file', () => {
     expect(grid.getPubSubService()).toEqual(pubSubServiceStub);
   });
 
-  it('should display a console warning when body zoom level is different than 100%', () => {
+  it('should not display a console warning when body zoom level is different than 100% in low-risk config', () => {
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
 
     document.body.style.zoom = '90%';
@@ -141,7 +164,19 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid] Zoom level other than 100% is not supported'));
+    expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('[Slickgrid] Zoom level other than 100%'));
+  });
+
+  it('should display a console warning when body zoom level is different than 100% in high-risk config', () => {
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
+
+    document.body.style.zoom = '90%';
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...defaultOptions, enableVariableRowHeight: true }, pubSubServiceStub);
+    grid.init();
+
+    expect(grid).toBeTruthy();
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid] Zoom level other than 100% can cause subpar rendering'));
   });
 
   it('should not display a console warning when body zoom level is 100%', () => {
@@ -182,9 +217,7 @@ describe('SlickGrid core file', () => {
     expect(styleElm?.getAttribute('nonce')).toBe('test-nonce');
   });
 
-  it('should display a console warning when Row Detail is enabled with `rowTopOffsetRenderType` is set to "transfrom"', () => {
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
-
+  it('should auto-fallback to top when Row Detail is enabled with `rowTopOffsetRenderType` set to "transform"', () => {
     document.body.style.zoom = '90%';
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     grid = new SlickGrid<any, Column>(
@@ -197,29 +230,61 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using either RowDetail and/or RowSpan')
-    );
+    expect(grid.getOptions().rowTopOffsetRenderType).toBe('top');
   });
 
-  it('should display a console warning when RowSpan is enabled with `rowTopOffsetRenderType` is set to "transfrom"', () => {
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
-
-    document.body.style.zoom = '90%';
+  it('should preserve transform row positioning when Row Detail uses the overlay render mode', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     grid = new SlickGrid<any, Column>(
       '#myGrid',
       [],
+      columns,
+      {
+        ...defaultOptions,
+        rowTopOffsetRenderType: 'transform',
+        enableRowDetailView: true,
+        rowDetailView: { renderMode: 'overlay' },
+      } as GridOption,
+      pubSubServiceStub
+    );
+    grid.init();
+
+    expect(grid.getOptions().rowTopOffsetRenderType).toBe('transform');
+  });
+
+  it('should keep RowSpan host rows top-positioned while other rows use transforms', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
+      { id: 'lastName', field: 'lastName', name: 'Last Name' },
+    ] as Column[];
+    const data = [
+      { id: 0, firstName: 'Jane', lastName: 'Doe' },
+      { id: 1, firstName: 'John', lastName: 'Doe' },
+    ];
+    const dataView = new SlickDataView({
+      globalItemMetadataProvider: { getRowMetadata: (_item, row) => (row === 0 ? { columns: { 0: { rowspan: 2 } } } : undefined) },
+    });
+    dataView.setItems(data);
+    grid = new SlickGrid<any, Column>(
+      '#myGrid',
+      dataView,
       columns,
       { ...defaultOptions, rowTopOffsetRenderType: 'transform', enableCellRowSpan: true },
       pubSubServiceStub
     );
     grid.init();
 
-    expect(grid).toBeTruthy();
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using either RowDetail and/or RowSpan')
-    );
+    const spanRow = container.querySelector<HTMLElement>('.slick-row[data-row="0"]')!;
+    const regularRow = container.querySelector<HTMLElement>('.slick-row[data-row="1"]')!;
+    expect(grid.getOptions().rowTopOffsetRenderType).toBe('transform');
+    expect(spanRow.style.top).toBe('0px');
+    expect(spanRow.style.transform).toBe('');
+    expect(spanRow.classList).toContain('slick-rowspan');
+    expect(regularRow.style.top).toBe('');
+    expect(regularRow.style.transform).toBe(`translateY(${grid.getOptions().rowHeight}px)`);
+    const spanCell = spanRow.querySelector<HTMLElement>('.slick-cell.rowspan')!;
+    expect(spanCell).toBeTruthy();
+    expect(grid.getCellFromEvent({ target: spanCell } as unknown as Event)).toEqual({ row: 0, cell: 0 });
   });
 
   it('should be able to instantiate SlickGrid and get columns', () => {
@@ -278,6 +343,25 @@ describe('SlickGrid core file', () => {
 
     expect(grid.getColumnById('firstName')).toEqual({ ...columns[0], hidden: false, width: 333 });
     expect(updateColumnSpy).toHaveBeenCalled();
+  });
+
+  it('should treat inherited property names as ordinary column IDs', () => {
+    const specialColumns = [
+      { id: '__proto__', field: 'proto', name: 'Proto' },
+      { id: 'constructor', field: 'ctor', name: 'Constructor' },
+      { id: 'toString', field: 'string', name: 'To String' },
+    ] as Column[];
+    grid = new SlickGrid<any, Column>('#myGrid', [], specialColumns, defaultOptions);
+    grid.init();
+
+    expect(grid.getColumnIndex('__proto__')).toBe(0);
+    expect(grid.getColumnIndex('constructor')).toBe(1);
+    expect(grid.getColumnIndex('toString')).toBe(2);
+    expect(grid.getColumnById('__proto__')).toBe(specialColumns[0]);
+    expect(grid.getColumnById('constructor')).toBe(specialColumns[1]);
+    expect(grid.getColumnById('toString')).toBe(specialColumns[2]);
+    expect(Object.getPrototypeOf((grid as any).columnsById)).toBeNull();
+    expect(Object.getPrototypeOf((grid as any).visibleColumnsById)).toBeNull();
   });
 
   it('should call setColumns() and wait a cycle before updating the column headers', () => {
@@ -774,6 +858,27 @@ describe('SlickGrid core file', () => {
       { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
     ];
 
+    describe('Cell selection drag handle', () => {
+      it.each([
+        { showDragHandle: undefined, expectedClass: false, expectedHandle: true, label: 'default' },
+        { showDragHandle: true, expectedClass: false, expectedHandle: true, label: 'true' },
+        { showDragHandle: 'hover' as const, expectedClass: true, expectedHandle: true, label: 'hover' },
+        { showDragHandle: false, expectedClass: false, expectedHandle: false, label: 'false' },
+      ])('should support the $label showDragHandle mode', ({ showDragHandle, expectedClass, expectedHandle }) => {
+        const selectionModel = new SlickHybridSelectionModel({ selectionType: 'cell' });
+        const selectionOptions = showDragHandle === undefined ? { selectionType: 'cell' as const } : { selectionType: 'cell' as const, showDragHandle };
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, showCellSelection: true, selectionOptions });
+        grid.setSelectionModel(selectionModel);
+        grid.render();
+
+        selectionModel.setSelectedRanges([new SlickRange(0, 0, 1, 0)]);
+
+        const dragHandle = container.querySelector('.slick-drag-replace-handle');
+        expect(!!dragHandle).toBe(expectedHandle);
+        expect(dragHandle ? dragHandle.classList.contains('slick-drag-replace-handle-hover') : false).toBe(expectedClass);
+      });
+    });
+
     describe('setSelectedRows() method', () => {
       it('should throw when calling setSelectedRows() without a selection model', () => {
         grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
@@ -836,6 +941,21 @@ describe('SlickGrid core file', () => {
         expect(secondRowItemCell.classList.contains('selected')).toBeTruthy();
       });
 
+      it('should select rows when the last column is hidden', () => {
+        const columnsWithHiddenLastColumn = [
+          { id: 'firstName', field: 'firstName', name: 'First Name' },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+        ] as Column[];
+        const rowSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row' });
+
+        grid = new SlickGrid<any, Column>(container, data, columnsWithHiddenLastColumn, defaultOptions);
+        grid.setSelectionModel(rowSelectionModel);
+        grid.setSelectedRows([1]);
+
+        expect(rowSelectionModel.getSelectedRanges()).toEqual([{ fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 }]);
+        expect(grid.getSelectedRows()).toEqual([1]);
+      });
+
       it('should call SlickHybridSelectionModel.onDragReplaceCells() when selection mode is REP and range is expanding', () => {
         const hybridSelectionModel = new SlickHybridSelectionModel();
         hybridSelectionModel.activeSelectionIsRow = true;
@@ -887,6 +1007,37 @@ describe('SlickGrid core file', () => {
         rowSelectionModel.setSelectedRanges([slickRange], 'SlickHybridSelectionModel.setSelectedRanges', 'REP');
         expect(onDragReplaceSpy).toHaveBeenCalledWith({ grid, prevSelectedRange, selectedRange }, expect.anything(), grid);
         expect(invalidateSpy).toHaveBeenCalled();
+      });
+
+      it('should not trigger drag replace when more than one selected range changes', () => {
+        const cellSelectionModel = new SlickHybridSelectionModel({ selectionType: 'cell' });
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.setSelectionModel(cellSelectionModel);
+        const onDragReplaceSpy = vi.spyOn(grid.onDragReplaceCells, 'notify');
+        const handleSelectedRangesChanged = (grid as any).handleSelectedRangesChanged.bind(grid);
+
+        handleSelectedRangesChanged(new SlickEventData(new CustomEvent('click')), [new SlickRange(0, 0), new SlickRange(1, 0)]);
+        handleSelectedRangesChanged(new SlickEventData(new CustomEvent('click', { detail: { selectionMode: 'REP' } })), [
+          new SlickRange(0, 0, 1, 0),
+          new SlickRange(1, 0, 2, 0),
+        ]);
+
+        expect(onDragReplaceSpy).not.toHaveBeenCalled();
+      });
+
+      it('should compare the final cell coordinate during a REP selection update', () => {
+        const cellSelectionModel = new SlickHybridSelectionModel({ selectionType: 'cell' });
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.setSelectionModel(cellSelectionModel);
+        const onDragReplaceSpy = vi.spyOn(grid.onDragReplaceCells, 'notify');
+        const handleSelectedRangesChanged = (grid as any).handleSelectedRangesChanged.bind(grid);
+        const previousRange = new SlickRange(0, 0, 1, 2);
+        const selectedRange = new SlickRange(0, 0, 1, 1);
+
+        handleSelectedRangesChanged(new SlickEventData(new CustomEvent('click')), [previousRange]);
+        handleSelectedRangesChanged(new SlickEventData(new CustomEvent('click', { detail: { selectionMode: 'REP' } })), [selectedRange]);
+
+        expect(onDragReplaceSpy).not.toHaveBeenCalled();
       });
 
       it('should call onSelectedRowsChanged() with Hybrid Selection Mode and addDragHandle', () => {
@@ -1407,13 +1558,13 @@ describe('SlickGrid core file', () => {
       vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(-1);
       grid.updateRowCount();
 
-      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(4); // 2x left and 2x right, because we have 2x columns
+      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(2); // because we have 2x columns
       footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
       expect(footerElms[0].style.display).not.toBe('none');
       expect(footerElms[1].style.display).not.toBe('none');
       expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
-      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-left') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
-      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
+      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-left') as HTMLDivElement).style.display).toBe('none'); // frozenRow: 0 -> no freeze
+      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement).style.display).toBe('none'); // frozenRow: 0 -> no freeze
     });
 
     it('should define colspan and rowspan then expect to cleanup rendered cells when SlickDataView and cell metadata are defined', () => {
@@ -1611,13 +1762,13 @@ describe('SlickGrid core file', () => {
 
       expect(grid.getRowCache()).toEqual({});
       expect(onBeforeRemoveCachedRowSpy).toHaveBeenCalledTimes(4);
-      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(4); // 2x left and 2x right, because we have 2x columns
+      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(2); // because we have 2x columns
       footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
       expect(footerElms[0].style.display).not.toBe('none');
       expect(footerElms[1].style.display).not.toBe('none');
       expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
-      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-left') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
-      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
+      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-left') as HTMLDivElement).style.display).toBe('none'); // frozenRow: 0 -> no freeze
+      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement).style.display).toBe('none'); // frozenRow: 0 -> no freeze
     });
 
     it('should hide/show column headers div when "showFooterRow" is disabled (with frozenColumn/frozenRow/frozenBottom) and expect footer row column exists', () => {
@@ -1643,13 +1794,13 @@ describe('SlickGrid core file', () => {
       grid.setFooterRowVisibility(true);
       grid.updateColumns(); // this will trigger onBeforeFooterRowCellDestroySpy
 
-      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(4); // 2x left and 2x right, because we have 2x columns
+      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(2); // because we have 2x columns
       footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
       expect(footerElms[0].style.display).not.toBe('none');
       expect(footerElms[1].style.display).not.toBe('none');
       expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
-      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-left') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
-      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement).style.display).not.toBe('none'); // frozenRow: 0
+      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-left') as HTMLDivElement).style.display).toBe('none'); // frozenRow: 0 -> no freeze
+      expect((container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement).style.display).toBe('none'); // frozenRow: 0 -> no freeze
     });
 
     it('should hide column headers div when "showFooterRow" is disabled and expect undefined footer row column', () => {
@@ -1692,6 +1843,54 @@ describe('SlickGrid core file', () => {
       expect(grid.getFooterRow()).toBeFalsy();
       expect(footerElm).toBeFalsy();
       expect(grid.getFooterRowColumn('firstName')).toBeUndefined();
+    });
+
+    it('should lazily create footer row when "createFooterRow" is enabled at runtime', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, {
+        ...defaultOptions,
+        createFooterRow: false,
+        showFooterRow: true,
+      });
+      grid.init();
+
+      const onFooterRowCellRenderedSpy = vi.spyOn(grid.onFooterRowCellRendered, 'notify');
+
+      expect(grid.getFooterRow()).toBeFalsy();
+      expect(container.querySelector('.slick-footerrow')).toBeFalsy();
+
+      expect(() => grid.setOptions({ createFooterRow: true, showFooterRow: true })).not.toThrow();
+
+      let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms).toBeTruthy();
+      expect(footerElms.length).toBe(2);
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+      expect(grid.getFooterRow()).toBeTruthy();
+      expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
+      expect(onFooterRowCellRenderedSpy).toHaveBeenCalledTimes(2);
+
+      grid.setFooterRowVisibility(false);
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setOptions({ createFooterRow: false });
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setOptions({ createFooterRow: true, showFooterRow: true });
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setFooterRowVisibility(false);
+      grid.setFooterRowVisibility(true);
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
     });
 
     it('should show footer when "showFooterRow" is enabled but not return any row when columns to the right are outside the range', () => {
@@ -2378,6 +2577,42 @@ describe('SlickGrid core file', () => {
         expect(result!.querySelector('.slick-cell')).toBeTruthy();
       });
 
+      it('should return bottom canvas node for the first scrollable row when top frozen rows are enabled', () => {
+        const localColumns = [
+          { id: 'id', field: 'id', name: 'Id' },
+          { id: 'firstName', field: 'firstName', name: 'First Name' },
+        ] as Column[];
+        const localData = Array.from({ length: 20 }, (_, i) => ({ id: i, firstName: `name-${i}` }));
+        const frozenRow = 3;
+
+        grid = new SlickGrid<any, Column>(container, localData, localColumns, { ...defaultOptions, frozenRow });
+
+        const apiCanvas = grid.getCanvasNode(0, frozenRow);
+        const domRow = container.querySelector(`.slick-row[data-row="${frozenRow}"]`) as HTMLElement;
+        const domCanvas = domRow?.closest('.grid-canvas') as HTMLElement;
+
+        expect(apiCanvas).toBeTruthy();
+        expect(domCanvas).toBeTruthy();
+        expect(apiCanvas).toEqual(domCanvas);
+        expect(apiCanvas.classList.contains('grid-canvas-bottom')).toBe(true);
+      });
+
+      it('should apply frozen css class only to pinned rows when frozenBottom is enabled', () => {
+        const localColumns = [
+          { id: 'id', field: 'id', name: 'Id' },
+          { id: 'firstName', field: 'firstName', name: 'First Name' },
+        ] as Column[];
+        const localData = Array.from({ length: 10 }, (_, i) => ({ id: i, firstName: `name-${i}` }));
+
+        grid = new SlickGrid<any, Column>(container, localData, localColumns, { ...defaultOptions, frozenRow: 3, frozenBottom: true });
+
+        const frozenRows = Array.from(container.querySelectorAll('.slick-row.frozen'))
+          .map((el) => Number((el as HTMLElement).dataset.row))
+          .sort((a, b) => a - b);
+
+        expect(frozenRows).toEqual([7, 8, 9]);
+      });
+
       it('should return undefined when calling the function when getViewports() is returning undefined', () => {
         grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
         vi.spyOn(grid, 'getViewports').mockReturnValueOnce(null as any);
@@ -2760,7 +2995,7 @@ describe('SlickGrid core file', () => {
       grid.init();
       const result = grid.getHeadersWidth();
 
-      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) + 1000 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80) + 1000 + 1000); // Left(1 col) + Right(1 col) => 800 + (1000 + 80) + 1000 + 1000
     });
 
     it('should return viewport element when calling the function when found in the grid container', () => {
@@ -2772,7 +3007,7 @@ describe('SlickGrid core file', () => {
       grid.init();
       const result = grid.getHeadersWidth();
 
-      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) * 2 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) + 1000 + 1000); // Both cols in left band => 800 + (1000 + 160) + 1000 + 1000
     });
 
     it('should remove Grid Menu width from the last header when scrollbar width is collapsed and columns are wider than canvas', () => {
@@ -3099,6 +3334,92 @@ describe('SlickGrid core file', () => {
       expect(grid.getContainerNode().getAttribute('role')).toBe('grid');
       expect(grid.getContainerNode().getAttribute('aria-colcount')).toBe('1');
       expect(grid.getContainerNode().getAttribute('aria-rowcount')).toBe('11');
+    });
+
+    it('should expect the header structure to have required ARIA rowgroup/row roles', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true });
+
+      const headerColumnElm = container.querySelector('[role="columnheader"]') as HTMLDivElement;
+      expect(headerColumnElm).toBeTruthy();
+      expect(headerColumnElm.parentElement!.classList.contains('slick-header-columns')).toBe(true);
+      expect(headerColumnElm.parentElement!.getAttribute('role')).toBe('row');
+      expect(headerColumnElm.parentElement!.parentElement!.getAttribute('role')).toBe('rowgroup');
+
+      const headerRowCellElm = container.querySelector('.slick-headerrow-column') as HTMLDivElement;
+      expect(headerRowCellElm).toBeTruthy();
+      expect(headerRowCellElm.getAttribute('role')).toBe('gridcell');
+      expect(headerRowCellElm.parentElement!.getAttribute('role')).toBe('row');
+      expect(headerRowCellElm.parentElement!.parentElement!.getAttribute('role')).toBe('rowgroup');
+    });
+
+    it('should place focus sinks outside the grid subtree and keep them focusable without aria-hidden', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+
+      const focusSink = (grid as any)._focusSink as HTMLDivElement;
+      const focusSink2 = (grid as any)._focusSink2 as HTMLDivElement;
+
+      expect(focusSink).toBeTruthy();
+      expect(focusSink2).toBeTruthy();
+      expect(container.contains(focusSink)).toBe(false);
+      expect(container.contains(focusSink2)).toBe(false);
+      expect(focusSink.parentElement).toBe(container.parentElement);
+      expect(focusSink2.parentElement).toBe(container.parentElement);
+      expect(focusSink.tabIndex).toBe(-1);
+      expect(focusSink2.tabIndex).toBe(-1);
+      expect(focusSink.getAttribute('aria-hidden')).toBeNull();
+      expect(focusSink2.getAttribute('aria-hidden')).toBeNull();
+
+      focusSink.focus();
+      expect(document.activeElement).toBe(focusSink);
+    });
+
+    it('should remove external focus sinks when grid is destroyed', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+
+      const focusSink = (grid as any)._focusSink as HTMLDivElement;
+      const focusSink2 = (grid as any)._focusSink2 as HTMLDivElement;
+
+      expect(document.body.contains(focusSink)).toBe(true);
+      expect(document.body.contains(focusSink2)).toBe(true);
+
+      grid.destroy(true);
+
+      expect(focusSink.isConnected).toBe(false);
+      expect(focusSink2.isConnected).toBe(false);
+    });
+
+    it('should ignore invalidation after the grid has been destroyed', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+      grid.init();
+
+      grid.destroy(true);
+
+      expect(() => grid.invalidate()).not.toThrow();
+      expect(() => grid.updateRowCount()).not.toThrow();
+    });
+
+    it('should keep ARIA header structure with frozen columns enabled', () => {
+      grid = new SlickGrid<any, Column>(
+        container,
+        items,
+        [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ],
+        {
+          ...defaultOptions,
+          showHeaderRow: true,
+          frozenColumn: 0,
+        }
+      );
+
+      const headerColumns = container.querySelectorAll('.slick-header-columns');
+      expect(headerColumns.length).toBe(2);
+      headerColumns.forEach((node) => expect(node.getAttribute('role')).toBe('row'));
+
+      const headerRowColumns = container.querySelectorAll('.slick-headerrow-columns');
+      expect(headerRowColumns.length).toBe(2);
+      headerRowColumns.forEach((node) => expect(node.getAttribute('role')).toBe('row'));
     });
 
     it('should return undefined editor when getDataItem() did not find any associated cell item', () => {
@@ -3780,6 +4101,33 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
 
       expect(onDragInitSpy).not.toHaveBeenCalled();
+    });
+
+    it('should allow modifier-key drags when enableMultiSelection is explicitly configured', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, {
+        ...defaultOptions,
+        selectionOptions: { enableMultiSelection: false },
+      });
+      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify');
+      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+      const cMouseDownEvent = new MouseEvent('mousedown', { bubbles: true, ctrlKey: true });
+      slickCellElm.dispatchEvent(cMouseDownEvent);
+
+      expect(onDragInitSpy).toHaveBeenCalled();
+    });
+
+    it('should allow modifier-key drags when preventDragFromKeys is explicitly empty', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, {
+        ...defaultOptions,
+        preventDragFromKeys: [],
+      });
+      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify');
+      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+      const cMouseDownEvent = new MouseEvent('mousedown', { bubbles: true, ctrlKey: true });
+      slickCellElm.dispatchEvent(cMouseDownEvent);
+
+      expect(grid.getOptions().preventDragFromKeys).toEqual([]);
+      expect(onDragInitSpy).toHaveBeenCalled();
     });
 
     it('should not drag when event has cancelled bubbling (immediatePropagationStopped)', () => {
@@ -5418,6 +5766,131 @@ describe('SlickGrid core file', () => {
       expect(renderSpy).toHaveBeenCalledTimes(3);
     });
 
+    it('should route off-viewport alwaysRenderColumn cell to right canvas when frozen columns are enabled', () => {
+      const columnsWithAlwaysRender = [
+        { id: 'c0', field: 'c0', name: 'Col 0' },
+        { id: 'c1', field: 'c1', name: 'Col 1' },
+        { id: 'c2', field: 'c2', name: 'Col 2', alwaysRenderColumn: true },
+      ] as Column[];
+      const dataWithSingleRow = [{ id: 0, c0: '0', c1: '1', c2: '2' }];
+      grid = new SlickGrid<any, Column>(container, dataWithSingleRow, columnsWithAlwaysRender, { ...defaultOptions, frozenColumn: 0 });
+
+      vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 260, rightPx: 340, bottom: 20, top: 0 });
+      grid.render();
+
+      const alwaysRenderNode = grid.getCellNode(0, 2);
+      const alwaysRenderCanvas = alwaysRenderNode?.closest('.grid-canvas');
+      const frozenNode = grid.getCellNode(0, 0);
+      const frozenCanvas = frozenNode?.closest('.grid-canvas');
+
+      expect(alwaysRenderNode).toBeTruthy();
+      expect(alwaysRenderCanvas?.classList.contains('grid-canvas-right')).toBeTruthy();
+      expect(frozenCanvas?.classList.contains('grid-canvas-left')).toBeTruthy();
+    });
+
+    it('should find the first column intersecting the horizontal render range', () => {
+      const wideColumns = Array.from({ length: 100 }, (_, index) => ({
+        id: `column${index}`,
+        field: `column${index}`,
+        name: `Column ${index}`,
+        width: 80,
+      })) as Column[];
+      grid = new SlickGrid<any, Column>(container, [{}], wideColumns, defaultOptions);
+
+      expect((grid as any).getFirstColumnIndexAtOrAfter(0)).toBe(0);
+      expect((grid as any).getFirstColumnIndexAtOrAfter(800)).toBe(10);
+      expect((grid as any).getFirstColumnIndexAtOrAfter(8000)).toBe(100);
+    });
+
+    it('should use bottom-right and top-right scroll containers when frozen columns with frozen-bottom rows are enabled', () => {
+      const dataWithThreeRows = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 2, firstName: 'Paul', lastName: 'Doe', age: 26 },
+      ];
+      grid = new SlickGrid<any, Column>(container, dataWithThreeRows, columns, {
+        ...defaultOptions,
+        frozenColumn: 0,
+        frozenRow: 1,
+        frozenBottom: true,
+      });
+
+      expect((grid as any)._viewportScrollContainerX).toBe((grid as any)._viewportBottomR);
+      expect((grid as any)._viewportScrollContainerY).toBe((grid as any)._viewportTopR);
+    });
+
+    it('should sync top-left viewport scrollLeft when scrolling X on a regular grid with frozen rows', () => {
+      const dataWithThreeRows = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 2, firstName: 'Paul', lastName: 'Doe', age: 26 },
+      ];
+      grid = new SlickGrid<any, Column>(container, dataWithThreeRows, columns, {
+        ...defaultOptions,
+        frozenRow: 1,
+      });
+
+      grid.scrollToX(42);
+
+      expect((grid as any)._viewportTopL.scrollLeft).toBe(42);
+      expect((grid as any)._headerRowScrollerL.scrollLeft).toBe(42);
+    });
+
+    it('should size bottom-right canvas when frozen-bottom rows and frozen columns are enabled', () => {
+      const dataWithThreeRows = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 2, firstName: 'Paul', lastName: 'Doe', age: 26 },
+      ];
+      grid = new SlickGrid<any, Column>(container, dataWithThreeRows, columns, {
+        ...defaultOptions,
+        frozenColumn: 0,
+        frozenRow: 1,
+        frozenBottom: true,
+      });
+
+      grid.resizeCanvas();
+
+      expect((grid as any)._canvasBottomR.style.height).toBe(`${(grid as any).frozenRowsHeight}px`);
+    });
+
+    it('should sync bottom-left vertical scroll on mousewheel when frozen columns with top-frozen rows are enabled', () => {
+      const dataWithThreeRows = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 2, firstName: 'Paul', lastName: 'Doe', age: 26 },
+      ];
+      grid = new SlickGrid<any, Column>(container, dataWithThreeRows, columns, {
+        ...defaultOptions,
+        frozenColumn: 0,
+        frozenRow: 1,
+        frozenBottom: false,
+      });
+
+      const viewportBottomR = (grid as any)._viewportBottomR as HTMLDivElement;
+      const viewportBottomL = (grid as any)._viewportBottomL as HTMLDivElement;
+      const viewportTopL = (grid as any)._viewportTopL as HTMLDivElement;
+      Object.defineProperty(viewportBottomR, 'scrollHeight', { writable: true, value: 600 });
+      Object.defineProperty(viewportBottomR, 'clientHeight', { writable: true, value: 100 });
+      Object.defineProperty(viewportBottomR, 'scrollWidth', { writable: true, value: 800 });
+      Object.defineProperty(viewportBottomR, 'clientWidth', { writable: true, value: 200 });
+      Object.defineProperty(viewportBottomR, 'scrollTop', { writable: true, value: 30 });
+      Object.defineProperty(viewportBottomR, 'scrollLeft', { writable: true, value: 0 });
+      Object.defineProperty(viewportBottomL, 'scrollTop', { writable: true, value: 0 });
+      Object.defineProperty(viewportTopL, 'scrollTop', { writable: true, value: 0 });
+
+      (grid as any).scrollTop = 30;
+      (grid as any).scrollLeft = 0;
+      (grid as any).prevScrollTop = 0;
+      (grid as any).prevScrollLeft = 0;
+      (grid as any).lastRenderedScrollTop = 0;
+      (grid as any).lastRenderedScrollLeft = 0;
+      (grid as any)._handleScroll('mousewheel');
+
+      expect((grid as any)._viewportBottomL.scrollTop).toBe(30);
+      expect((grid as any)._viewportTopL.scrollTop).toBe(0);
+    });
+
     it('should scroll when calling scrollCellIntoView() with row having colspan returned from DataView getItemMetadata()', () => {
       const columnsCopy = [...columns];
       columnsCopy[1].colspan = '*';
@@ -5633,14 +6106,14 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
       viewportLeftElm.dispatchEvent(mouseEvent);
 
-      expect(viewportTopLeftElm.scrollLeft).toBe(88);
-      expect(preHeaderElm[0].scrollLeft).toBe(88);
-      expect(footerRowElm[0].scrollLeft).toBe(88);
+      expect(viewportTopLeftElm.scrollLeft).toBe(160);
+      expect(preHeaderElm[0].scrollLeft).toBe(0);
+      expect(footerRowElm[0].scrollLeft).toBe(0);
       expect(viewportLeftElm.scrollLeft).toBe(88);
-      expect(viewportLeftElm.scrollTop).toBe(25);
-      expect(viewportBottomRightElm.scrollTop).toBe(25);
-      expect(onViewportChangedSpy).toHaveBeenCalled();
-      expect(mousePreventSpy).toHaveBeenCalled();
+      expect(viewportLeftElm.scrollTop).toBe(0);
+      expect(viewportBottomRightElm.scrollTop).toBe(0);
+      expect(onViewportChangedSpy).not.toHaveBeenCalled();
+      expect(mousePreventSpy).not.toHaveBeenCalled();
 
       vi.advanceTimersByTime(1);
       viewportLeftElm.dispatchEvent(mouseEvent);
@@ -5679,14 +6152,37 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(viewportBottomLeftElm, 'scrollLeft', { writable: true, value: 88 });
       viewportBottomLeftElm.dispatchEvent(mouseEvent);
 
-      expect(viewportTopLeftElm.scrollLeft).toBe(88);
-      expect(preHeaderElm[0].scrollLeft).toBe(88);
-      expect(footerRowElm[0].scrollLeft).toBe(88);
+      expect(viewportTopLeftElm.scrollLeft).toBe(160);
+      expect(preHeaderElm[0].scrollLeft).toBe(0);
+      expect(footerRowElm[0].scrollLeft).toBe(0);
       expect(viewportBottomLeftElm.scrollLeft).toBe(88);
       expect(viewportBottomLeftElm.scrollTop).toBe(50);
       expect(viewportBottomLeftElm.scrollTop).toBe(50);
-      expect(onViewportChangedSpy).toHaveBeenCalled();
-      expect(mousePreventSpy).toHaveBeenCalled();
+      expect(onViewportChangedSpy).not.toHaveBeenCalled();
+      expect(mousePreventSpy).not.toHaveBeenCalled();
+    });
+
+    it('should treat frozenRow 0 as no freeze and render rows in top canvas only', () => {
+      const dv = new SlickDataView();
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, {
+        ...defaultOptions,
+        frozenRow: 0,
+        createFooterRow: true,
+        createPreHeaderPanel: true,
+      });
+
+      const topPaneLeft = container.querySelector('.slick-pane.slick-pane-top.slick-pane-left') as HTMLDivElement;
+      const bottomPaneLeft = container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-left') as HTMLDivElement;
+      const bottomPaneRight = container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement;
+      const topCanvasRows = container.querySelectorAll('.grid-canvas-top .slick-row');
+      const bottomCanvasRows = container.querySelectorAll('.grid-canvas-bottom .slick-row');
+
+      expect(topPaneLeft.style.display).not.toBe('none');
+      expect(bottomPaneLeft.style.display).toBe('none');
+      expect(bottomPaneRight.style.display).toBe('none');
+      expect(topCanvasRows.length).toBe(data.length);
+      expect(bottomCanvasRows.length).toBe(0);
     });
 
     it('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenColumn/frozenRow are enabled', () => {
@@ -5704,6 +6200,7 @@ describe('SlickGrid core file', () => {
 
       const mouseEvent = new Event('mousewheel');
       const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
+      const nativeScrollPreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-right') as HTMLDivElement;
       Object.defineProperty(viewportBottomRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
@@ -5724,6 +6221,7 @@ describe('SlickGrid core file', () => {
       expect(viewportBottomRightElm.scrollTop).toBe(0);
       expect(onViewportChangedSpy).toHaveBeenCalled();
       expect(mousePreventSpy).toHaveBeenCalled();
+      expect(nativeScrollPreventSpy).toHaveBeenCalled();
     });
 
     it('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenColumn are enabled', () => {
@@ -5754,13 +6252,13 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
       viewportLeftElm.dispatchEvent(mouseEvent);
 
-      expect(preHeaderElm[1].scrollLeft).toBe(0);
-      expect(footerRowElm[1].scrollLeft).toBe(0);
+      expect(preHeaderElm[1].scrollLeft).toBe(80);
+      expect(footerRowElm[1].scrollLeft).toBe(80);
       expect(viewportLeftElm.scrollLeft).toBe(88);
       expect(viewportLeftElm.scrollTop).toBe(25);
-      expect(viewportTopRightElm.scrollTop).toBe(0);
-      expect(onViewportChangedSpy).not.toHaveBeenCalled();
-      expect(mousePreventSpy).not.toHaveBeenCalled();
+      expect(viewportTopRightElm.scrollTop).toBe(25);
+      expect(onViewportChangedSpy).toHaveBeenCalled();
+      expect(mousePreventSpy).toHaveBeenCalled();
     });
   });
 
@@ -5829,6 +6327,68 @@ describe('SlickGrid core file', () => {
       expect(renderSpy).toHaveBeenCalled();
     });
 
+    it('should keep page-boundary mapping stable with variable row height enabled', () => {
+      const manyRows = Array.from({ length: 700 }, (_, i) => ({ id: i, firstName: `name-${i}`, lastName: 'L', age: i }));
+      const variableRowHeightProvider = (_grid: SlickGrid, row: number) => 2200 + (row % 3) * 200;
+
+      grid = new SlickGrid<any, Column>(container, manyRows, columns, {
+        ...defaultOptions,
+        enableVariableRowHeight: true,
+        rowHeight: 2200,
+        rowHeightProvider: variableRowHeightProvider,
+      });
+
+      const testGrid = grid as any;
+      const lastPage = testGrid.n - 1;
+
+      expect(testGrid.n).toBeGreaterThan(3);
+      expect(testGrid.getPageOffset(0)).toBe(0);
+      expect(testGrid.getPageOffset(1)).toBe(0);
+      expect(testGrid.getPageOffset(lastPage)).toBe(Math.max(0, testGrid.th - testGrid.h));
+
+      expect(testGrid.getPageFromLargeScrollDelta(testGrid.ph - 1)).toBe(0);
+      expect(testGrid.getPageFromLargeScrollDelta(testGrid.h - testGrid.ph)).toBe(lastPage);
+
+      const row0Height = grid.getRowHeight(0);
+      const row1Height = grid.getRowHeight(1);
+      const row2Height = grid.getRowHeight(2);
+      expect(testGrid.getRowPosition(3)).toBe(row0Height + row1Height + row2Height);
+    });
+
+    it('should cover legacy and interior branch paths in virtual page mapping helpers', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, rowHeight: 25 });
+      const testGrid = grid as any;
+
+      // getPageOffset(): legacy mapping when page count is tiny (n <= 3)
+      testGrid.n = 3;
+      testGrid.th = 1000;
+      testGrid.h = 500;
+      testGrid.cj = 123;
+      expect(testGrid.getPageOffset(1)).toBe(123);
+
+      // getPageOffset(): legacy fallback when computed lastOffset is non-positive
+      testGrid.n = 5;
+      testGrid.th = 400;
+      testGrid.h = 500;
+      testGrid.cj = 47;
+      expect(testGrid.getPageOffset(1)).toBe(47);
+
+      // getPageFromLargeScrollDelta(): no-interior-pages legacy page selection path
+      testGrid.n = 3;
+      testGrid.ph = 100;
+      testGrid.h = 500;
+      testGrid.viewportH = 50;
+      expect(testGrid.getPageFromLargeScrollDelta(150)).toBe(1);
+
+      // getPageFromLargeScrollDelta(): interior-page scale-factor path
+      testGrid.n = 6;
+      testGrid.ph = 100;
+      testGrid.h = 500;
+      testGrid.th = 1200;
+      testGrid.viewportH = 50;
+      expect(testGrid.getPageFromLargeScrollDelta(250)).toBe(4);
+    });
+
     it('should do page up when calling scrollRowIntoView() and we are further than row index that we want to scroll to', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenRow: 0 });
       const scrollToSpy = vi.spyOn(grid, 'scrollTo');
@@ -5840,6 +6400,17 @@ describe('SlickGrid core file', () => {
 
       expect(scrollToSpy).toHaveBeenCalledWith(2 * DEFAULT_COLUMN_HEIGHT); // default rowHeight: 25
       expect(renderSpy).toHaveBeenCalled();
+    });
+
+    it('should allow scrolling to the last scrollable row when frozenBottom is enabled', () => {
+      const manyRows = Array.from({ length: 1000 }, (_, i) => ({ id: i, firstName: `name-${i}`, lastName: 'L', age: i }));
+      grid = new SlickGrid<any, Column>(container, manyRows, columns, { ...defaultOptions, frozenRow: 3, frozenBottom: true });
+      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+
+      grid.scrollRowIntoView(996);
+
+      expect(scrollToSpy).toHaveBeenCalled();
+      expect((scrollToSpy.mock.calls[0][0] as number) > 0).toBe(true);
     });
 
     it('should render inline row height and rebuild index when row heights are invalidated', () => {
@@ -6671,6 +7242,20 @@ describe('SlickGrid core file', () => {
       );
     });
 
+    it('should support CSS style keys that match Object prototype properties', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+      const hash = { 0: { age: 'highlight' } };
+
+      grid.addCellCssStyles('__proto__', hash);
+      grid.addCellCssStyles('constructor', hash);
+      grid.addCellCssStyles('toString', hash);
+
+      expect(grid.getCellCssStyles('__proto__')).toBe(hash);
+      expect(grid.getCellCssStyles('constructor')).toBe(hash);
+      expect(grid.getCellCssStyles('toString')).toBe(hash);
+      expect((Object.prototype as any).polluted).toBeUndefined();
+    });
+
     it('should exit early when trying to remove CSS Style key that does not exist in hash', () => {
       const hashCopy = { ...hash };
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
@@ -6710,6 +7295,26 @@ describe('SlickGrid core file', () => {
       expect(firstItemAgeCell.classList.contains('highlight')).toBeFalsy();
       expect(secondItemAgeCell.textContent).toBe('20');
       expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
+    });
+
+    it('should merge keyed CSS style overlays before creating a cell', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+      grid.addCellCssStyles('primary', { 0: { age: 'primary-highlight' } });
+      grid.addCellCssStyles('secondary', { 0: { age: 'secondary-highlight' } });
+
+      const initialRow = document.createElement('div');
+      (grid as any).appendCellHtml(initialRow, 0, 1, 1, 1, null, items[0]);
+      expect(initialRow.firstElementChild?.classList.contains('primary-highlight')).toBe(true);
+      expect(initialRow.firstElementChild?.classList.contains('secondary-highlight')).toBe(true);
+
+      grid.setCellCssStyles('primary', { 0: { age: 'replacement-highlight' } });
+      grid.removeCellCssStyles('secondary');
+
+      const updatedRow = document.createElement('div');
+      (grid as any).appendCellHtml(updatedRow, 0, 1, 1, 1, null, items[0]);
+      expect(updatedRow.firstElementChild?.classList.contains('primary-highlight')).toBe(false);
+      expect(updatedRow.firstElementChild?.classList.contains('secondary-highlight')).toBe(false);
+      expect(updatedRow.firstElementChild?.classList.contains('replacement-highlight')).toBe(true);
     });
 
     it('should removeCellCssStyles of all matching keys by predicate', () => {
@@ -7327,7 +7932,7 @@ describe('SlickGrid core file', () => {
         expect(result).toEqual({ row: 1, cell: 1 });
       });
 
-      it('should return { row:1, cell:1 } when clicked cell is second cell of second row with a frozenRow and frozenBottom is inside range', () => {
+      it('should return { row:2, cell:1 } when clicked cell is second cell of second row with a frozenRow and frozenBottom is inside range', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 3, frozenBottom: true });
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
         const event = new CustomEvent('click');
@@ -7336,7 +7941,7 @@ describe('SlickGrid core file', () => {
         Object.defineProperty(event, 'clientY', { writable: true, value: DEFAULT_COLUMN_HEIGHT * 1 + 5 });
         const result = grid.getCellFromEvent(event);
 
-        expect(result).toEqual({ row: 1, cell: 1 });
+        expect(result).toEqual({ row: 2, cell: 1 });
       });
 
       it('should return null when using frozenRow that result into invalid row/cell number', () => {

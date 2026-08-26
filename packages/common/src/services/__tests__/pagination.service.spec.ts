@@ -716,6 +716,16 @@ describe('PaginationService', () => {
   });
 
   describe('resetPagination method', () => {
+    it('should keep page 1 when resetting before a zero-total backend response arrives', () => {
+      mockGridOption.pagination!.pageNumber = 2;
+      mockGridOption.pagination!.totalItems = 0;
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+
+      service.resetPagination(false);
+
+      expect(service.getCurrentPageNumber()).toBe(1);
+    });
+
     it('should call "refreshPagination" with 2 arguments True when calling the method', () => {
       const spy = vi.spyOn(service, 'refreshPagination');
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
@@ -758,6 +768,20 @@ describe('PaginationService', () => {
 
       expect(setPagingSpy).not.toHaveBeenCalled();
       expect(spy).toHaveBeenCalledWith(true, true);
+    });
+  });
+
+  describe('duplicate "onPaginationChanged" publish after a reset', () => {
+    it('should NOT publish "onPaginationChanged" twice when "updateTotalItems" is called right after "resetPagination" with the same resulting pageNumber/pageSize', () => {
+      mockGridOption.backendServiceApi = null as any;
+      service.init(gridStub, mockGridOption.pagination as Pagination, null as any);
+      mockPubSub.publish.mockClear();
+
+      service.resetPagination(); // e.g. triggered by a Filter/Sort Cleared event
+      service.updateTotalItems(999, true); // e.g. triggered afterward when the backend response resolves with a new totalItems
+
+      const paginationChangedCalls = mockPubSub.publish.mock.calls.filter(([eventName]) => eventName === 'onPaginationChanged');
+      expect(paginationChangedCalls).toHaveLength(1);
     });
   });
 

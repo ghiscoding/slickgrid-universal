@@ -31,6 +31,7 @@
       <code>rowSelectColumnIds: ['id']</code> as the columns that will trigger row selection.
     </li>
     <li>2. clicking on the any other columns will use <code>CellSelectionModel</code> by default</li>
+    <li>3. with cell selection, hold Shift and click another cell to select the rectangular range between the two cells</li>
   </ul>
 </h5>
 
@@ -44,12 +45,24 @@
       </span>
     </h5>
     <button class="button is-small mb-3" onclick.trigger="gridFocus()">Grid Focus</button>
+    <button class="button is-small" data-test="export-excel-btn" onclick.trigger="exportGrid1ToExcel()">
+      <span class="mdi mdi-file-excel-outline"></span>
+      <span>Export to Excel</span>
+    </button>
   </div>
 </div>
 <div class="grid37-1"></div>
 
-<div class="column is-half">
-  <hr class="my-4" />
+<div class="column is-half my-3">
+  <label class="checkbox-inline control-label">
+    <input
+      type="checkbox"
+      data-test="enable-multi-selection"
+      checked.bind="enableMultiSelection"
+      onclick.trigger="toggleMultiSelection(event.target.checked)"
+    />
+    Enable multi-selection (Ctrl/Cmd-click or drag) on both grids
+  </label>
 </div>
 
 <div class="columns">

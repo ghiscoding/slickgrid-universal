@@ -270,6 +270,16 @@
     }
   }
 
+  // Active-row padding changes the containing box and can clip the fixed-height RowSpan cell.
+  .slick-row.active.slick-rowspan {
+    padding: 0;
+  }
+
+  // Keep the complete RowSpan host row above selected/hovered transformed rows.
+  .slick-row.slick-rowspan {
+    z-index: var(--slick-rowspan-z-index, 10);
+  }
+
   .slick-group-header-columns {
     position: relative;
     white-space: nowrap;
@@ -330,6 +340,20 @@
   .slick-preheader-container,
   .slick-header-container {
     display: flex;
+  }
+
+  .slick-rtl {
+    .slick-preheader-container,
+    .slick-header-container,
+    .slick-headerrow {
+      flex-direction: row-reverse;
+    }
+
+    .slick-resizable-handle {
+      right: auto;
+      inset-inline-end: auto;
+      left: -5px;
+    }
   }
 
   .slick-pane-top {
@@ -420,6 +444,10 @@
     border-top: 0px !important;
     border-bottom: 0px !important;
     float: left;
+
+    .slick-rtl & {
+      float: right;
+    }
   }
 
   .slick-header-column {
@@ -620,7 +648,7 @@
         top: var(--slick-icon-tree-load-fail-sup-top, v.$slick-icon-tree-load-fail-sup-top);
         left: var(--slick-icon-tree-load-fail-sup-left, v.$slick-icon-tree-load-fail-sup-left);
         font-size: var(--slick-icon-tree-load-fail-sup-font-size, v.$slick-icon-tree-load-fail-sup-font-size);
-        right: var(--slick-icon-tree-load-fail-sup-right, v.$slick-icon-tree-load-fail-sup-right);
+        inset-inline-end: var(--slick-icon-tree-load-fail-sup-right, v.$slick-icon-tree-load-fail-sup-right);
         color: var(--slick-icon-tree-load-fail-sup-color, v.$slick-icon-tree-load-fail-sup-color);
         @include svg.generateSvgStyle('slick-icon-load-fail-sup-svg', v.$slick-icon-tree-load-fail-sup-svg-path);
       }
@@ -689,6 +717,7 @@
     }
   }
   .slick-header-columns {
+    display: flex;
     background: var(--slick-grid-header-background, v.$slick-grid-header-background);
     background-color: var(--slick-header-background-color, v.$slick-header-background-color);
 
@@ -760,7 +789,7 @@
         width: 1em;
         left: auto;
         font-size: var(--slick-icon-sort-font-size, v.$slick-icon-sort-font-size);
-        right: var(--slick-icon-sort-position-right, v.$slick-icon-sort-position-right);
+        inset-inline-end: var(--slick-icon-sort-position-right, v.$slick-icon-sort-position-right);
         top: var(--slick-icon-sort-position-top, v.$slick-icon-sort-position-top);
       }
       .slick-sort-indicator-numbered {
@@ -768,7 +797,7 @@
         font-size: var(--slick-sort-indicator-number-font-size, v.$slick-sort-indicator-number-font-size);
         width: var(--slick-sort-indicator-number-width, v.$slick-sort-indicator-number-width);
         left: var(--slick-sort-indicator-number-left, v.$slick-sort-indicator-number-left);
-        right: var(--slick-sort-indicator-number-right, v.$slick-sort-indicator-number-right);
+        inset-inline-end: var(--slick-sort-indicator-number-right, v.$slick-sort-indicator-number-right);
         top: var(--slick-sort-indicator-number-top, v.$slick-sort-indicator-number-top);
       }
 
@@ -799,7 +828,7 @@
         top: 0;
         height: 100%;
         width: 6px;
-        right: 0;
+        inset-inline-end: 0;
         z-index: 4;
 
         &:hover {
@@ -810,7 +839,7 @@
           border-top: var(--slick-header-resizable-hover-border-top, v.$slick-header-resizable-hover-border-top);
           border-radius: var(--slick-header-resizable-hover-border-radius, v.$slick-header-resizable-hover-border-radius);
           width: var(--slick-header-resizable-hover-width, v.$slick-header-resizable-hover-width);
-          right: var(--slick-header-resizable-hover-right, v.$slick-header-resizable-hover-right);
+          inset-inline-end: var(--slick-header-resizable-hover-right, v.$slick-header-resizable-hover-right);
           height: var(--slick-header-resizable-hover-height, v.$slick-header-resizable-hover-height);
           top: var(--slick-header-resizable-hover-top, v.$slick-header-resizable-hover-top);
           opacity: var(--slick-header-resizable-hover-opacity, v.$slick-header-resizable-hover-opacity);

@@ -17,6 +17,7 @@
 /connect.lock
 /libpeerconnection.log
 .pnpm-debug.log
+.pnpm-store
 npm-debug.log
 pnpm-debug.log
 lerna-debug.log
@@ -37,6 +38,7 @@ jest-coverage
 **/coverage
 **/vitest-coverage
 **/cypress-report
+**/cypress/downloads
 **/dist
 **/*.tgz
 test/cypress/screenshots/*.png

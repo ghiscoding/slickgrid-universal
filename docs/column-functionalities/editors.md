@@ -265,7 +265,7 @@ export interface EditorValidatorOutput {
 }
 ```
 
-So if we take all of these informations and we want to create our own Custom Editor to validate a Title field, we could create something like this:
+So if we take all of these information and we want to create our own Custom Editor to validate a Title field, we could create something like this:
 ```ts
 const myCustomTitleValidator: EditorValidator = (value: any, args: EditorArgs) => {
   // you can get the Editor Args which can be helpful, e.g. we can get the Translate Service from it

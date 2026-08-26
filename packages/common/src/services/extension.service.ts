@@ -34,8 +34,8 @@ import type { TranslaterService } from './translater.service.js';
 import type { TreeDataService } from './treeData.service.js';
 
 export class ExtensionService {
-  protected _extensionCreatedList: ExtensionList<any> = {} as ExtensionList<any>;
-  protected _extensionList: ExtensionList<any> = {} as ExtensionList<any>;
+  protected _extensionCreatedList: ExtensionList<any> = Object.create(null);
+  protected _extensionList: ExtensionList<any> = Object.create(null);
 
   protected _cellMenuPlugin?: SlickCellMenu;
   protected _cellExcelCopyManagerPlugin?: SlickCellExcelCopyManager;
@@ -78,7 +78,7 @@ export class ExtensionService {
 
       // dispose each extension
       extensionNames.forEach((extensionName) => {
-        if (this._extensionList.hasOwnProperty(extensionName)) {
+        if (Object.prototype.hasOwnProperty.call(this._extensionList, extensionName)) {
           const extension = this._extensionList[
             extensionName as keyof Record<ExtensionName | ExtensionNameTypeString, ExtensionModel<any>>
           ] as ExtensionModel<any>;
@@ -104,7 +104,7 @@ export class ExtensionService {
     this._rowMoveManagerPlugin = null as any;
     this._selectionModel = null as any;
     this._extensionCreatedList = null as any;
-    this._extensionList = {} as ExtensionList<any>;
+    this._extensionList = Object.create(null);
   }
 
   /**
@@ -136,7 +136,7 @@ export class ExtensionService {
   getCreatedExtensionByName<P extends SlickControlList | SlickPluginList = any>(
     name: ExtensionName | ExtensionNameTypeString
   ): ExtensionModel<P> | undefined {
-    if (this._extensionCreatedList?.hasOwnProperty(name)) {
+    if (Object.prototype.hasOwnProperty.call(this._extensionCreatedList, name)) {
       return this._extensionCreatedList[name];
     }
     return undefined;

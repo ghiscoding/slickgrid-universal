@@ -34,9 +34,9 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Install pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
+        uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2
         with:
-          run_install: false
+          install: false
 
       - name: Set NodeJS
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
@@ -62,7 +62,7 @@ jobs:
         run: pnpm vanilla:serve:demo &
 
       - name: Run Cypress E2E tests
-        uses: cypress-io/github-action@fa4a118725a8f001170d49631ea89e5d66fee626 # v7.4.1
+        uses: cypress-io/github-action@c32f12761482a282d24ca0fd7466d8ae86f54ba8 # v7.4.2
         with:
           install: false
           package-manager-cache: false

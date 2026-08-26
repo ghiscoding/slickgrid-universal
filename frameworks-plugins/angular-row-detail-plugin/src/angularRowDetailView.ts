@@ -52,6 +52,16 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
     super(eventPubSubService);
   }
 
+  protected override beforeDetailViewRender(item: any): void {
+    this._preloadCompRef?.destroy();
+    this._preloadCompRef = undefined;
+    this.disposeViewByItem(item);
+  }
+
+  protected override renderDetailView(item: any): void {
+    this.renderViewModel(item);
+  }
+
   get addonOptions(): RowDetailViewOption {
     return this.getOptions();
   }
@@ -150,18 +160,9 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
         });
 
         this.eventHandler.subscribe(this.onAsyncEndUpdate, (e, args) => {
-          // destroy preload if exists
-          this._preloadCompRef?.destroy();
-
-          // triggers after backend called "onAsyncResponse.notify()"
-          // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
-          queueMicrotask(() => {
-            this.renderViewModel(args?.item);
-
-            if (this.rowDetailViewOptions && typeof this.rowDetailViewOptions.onAsyncEndUpdate === 'function') {
-              this.rowDetailViewOptions.onAsyncEndUpdate(e, args);
-            }
-          });
+          if (this.rowDetailViewOptions && typeof this.rowDetailViewOptions.onAsyncEndUpdate === 'function') {
+            this.rowDetailViewOptions.onAsyncEndUpdate(e, args);
+          }
         });
 
         this.eventHandler.subscribe(
@@ -388,6 +389,10 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
       if (typeof compRef?.destroy === 'function') {
         compRef.destroy();
       }
+      // A destroyed Angular component reference cannot be reused on the next
+      // async response. Clear it so the adapter creates a fresh detail view;
+      // detached keep-alive views are not routed through this method.
+      expandedView.componentRef = undefined;
       return expandedView;
     }
   }

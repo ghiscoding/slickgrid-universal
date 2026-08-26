@@ -1,4 +1,4 @@
-describe('Example 45 - Variable Row Height (Dynamic)', { retries: 1 }, () => {
+describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () => {
   const BASE_ROW_HEIGHT = 40;
   const FROZEN_ROW_COUNT = 2;
 
@@ -65,7 +65,7 @@ describe('Example 45 - Variable Row Height (Dynamic)', { retries: 1 }, () => {
   });
 
   it('should display Example title', () => {
-    cy.get('h3').should('contain', 'Example 45 - Variable Row Height (Dynamic)');
+    cy.get('h3').should('contain', 'Example 45 - Variable Row Height (item metadata)');
   });
 
   it('should render frozen and scrollable rows with expected transform and row heights from metadata fallback', () => {

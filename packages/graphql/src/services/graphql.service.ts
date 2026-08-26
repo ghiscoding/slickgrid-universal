@@ -132,14 +132,14 @@ export class GraphqlService implements BackendService {
     }
 
     // add dataset filters, could be Pagination and SortingFilters and/or FieldFilters
-    let datasetFilters: GraphqlDatasetFilter = {};
+    let datasetFilters: GraphqlDatasetFilter = Object.create(null);
 
     // only add pagination if it's enabled in the grid options
     if (this._gridOptions.enablePagination !== false || this.options.infiniteScroll) {
-      datasetFilters = {};
+      datasetFilters = Object.create(null);
 
       if (this.options.useCursor && this.options.paginationOptions) {
-        datasetFilters = { ...this.options.paginationOptions };
+        datasetFilters = Object.assign(Object.create(null), this.options.paginationOptions);
       } else {
         const paginationOptions = this.options?.paginationOptions;
         datasetFilters.first =
@@ -197,13 +197,13 @@ export class GraphqlService implements BackendService {
    * @param inputArray
    */
   buildFilterQuery(inputArray: string[]): string {
-    const set = (o: any = {}, a: any) => {
+    const set = (o: any, a: any) => {
       const k = a.shift();
-      o[k] = a.length ? set(o[k] ?? {}, a) : null;
+      o[k] = a.length ? set(o[k] ?? Object.create(null), a) : null;
       return o;
     };
 
-    const output = inputArray.reduce((o: any, a: string) => set(o, a.split('.')), {});
+    const output = inputArray.reduce((o: any, a: string) => set(o, a.split('.')), Object.create(null));
 
     return JSON.stringify(output)
       .replace(/"|:|null/g, '')

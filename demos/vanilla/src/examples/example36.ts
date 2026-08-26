@@ -196,8 +196,9 @@ export default class Example36 {
         return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
       rowHeight: 33,
-      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
+      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       rowDetailView: {
+        renderMode: 'overlay',
         columnIndexPosition: 1,
         preTemplate: this.loadingTemplate.bind(this),
         postTemplate: this.loadView.bind(this),
@@ -414,20 +415,18 @@ export default class Example36 {
   addDeleteRowOnClickListener(itemId: string) {
     const deleteBtnElm = document.querySelector('#delete_row_' + itemId);
     if (deleteBtnElm) {
-      this._bindingEventService.bind(deleteBtnElm, 'click', this.handleDeleteRow.bind(this, itemId), undefined, `event-detail-${itemId}`);
+      const listenerGroup = `event-detail-delete-${itemId}`;
+      this._bindingEventService.unbindAll(listenerGroup);
+      this._bindingEventService.bind(deleteBtnElm, 'click', this.handleDeleteRow.bind(this, itemId), undefined, listenerGroup);
     }
   }
 
   addAssigneeOnClickListener(itemId: string) {
     const assigneeBtnElm = document.querySelector('#who-is-assignee_' + itemId);
     if (assigneeBtnElm) {
-      this._bindingEventService.bind(
-        assigneeBtnElm,
-        'click',
-        this.handleAssigneeClicked.bind(this, itemId),
-        undefined,
-        `event-detail-${itemId}`
-      );
+      const listenerGroup = `event-detail-assignee-${itemId}`;
+      this._bindingEventService.unbindAll(listenerGroup);
+      this._bindingEventService.bind(assigneeBtnElm, 'click', this.handleAssigneeClicked.bind(this, itemId), undefined, listenerGroup);
     }
   }
 
@@ -450,7 +449,7 @@ export default class Example36 {
   /** dispose/remove event listener when closing the row detail(s) to avoid event leaks */
   disposeRowDetailElementListeners(itemId: string) {
     // remove all button event listeners attached to a specific row event detail
-    this._bindingEventService.unbindAll(`event-detail-${itemId}`);
+    this._bindingEventService.unbindAll([`event-detail-delete-${itemId}`, `event-detail-assignee-${itemId}`]);
   }
 
   mockData(count: number) {

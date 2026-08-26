@@ -1,5 +1,6 @@
 import {
   createDomElement,
+  OnRowsChangedEventArgs,
   SlickEvent,
   SlickEventData,
   type Column,
@@ -48,6 +49,7 @@ const gridStub = {
   getActiveCell: vi.fn(),
   getColumns: vi.fn(),
   getColumnByIdx: vi.fn(),
+  getColumnIndex: vi.fn(),
   getDataItem: vi.fn(),
   getData: () => dataviewStub,
   getEditorLock: () => getEditorLockMock,
@@ -55,6 +57,10 @@ const gridStub = {
   getUID: () => GRID_UID,
   getRenderedRange: vi.fn(),
   getRowCache: vi.fn(),
+  getRowHeight: vi.fn(),
+  getRowTop: vi.fn(),
+  getFrozenRowOffset: vi.fn(),
+  getViewportNode: vi.fn(),
   invalidateRows: vi.fn(),
   registerPlugin: vi.fn(),
   render: vi.fn(),
@@ -88,6 +94,13 @@ describe('SlickRowDetailView plugin', () => {
     divContainer.className = `slickgrid-container ${GRID_UID}`;
     document.body.appendChild(divContainer);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.mocked(gridStub.getRowCache).mockReturnValue({});
+    vi.mocked(dataviewStub.updateItem).mockImplementation(() => {
+      if ((plugin as any)._pendingAsyncEndUpdates.size > 0) {
+        dataviewStub.onRowsChanged.notify({ rows: [0] } as OnRowsChangedEventArgs);
+        gridStub.onRendered.notify({ startRow: 0, endRow: 0, grid: gridStub });
+      }
+    });
   });
 
   afterEach(() => {
@@ -195,7 +208,7 @@ describe('SlickRowDetailView plugin', () => {
   it('should invalidate all rows and re-render grid when "onRowsChanged" event is triggered', () => {
     const mockItem = { id: 1, firstName: 'John', lastName: 'Doe' };
     const mockProcess = vi.fn();
-    vi.spyOn(gridStub, 'getRowCache').mockReturnValueOnce({
+    vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
       0: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
       1: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
       2: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
@@ -204,7 +217,7 @@ describe('SlickRowDetailView plugin', () => {
     const invalidateRowsSpy = vi.spyOn(gridStub, 'invalidateRows');
     const renderSpy = vi.spyOn(gridStub, 'render');
     vi.spyOn(dataviewStub, 'getItemById').mockReturnValueOnce(mockItem);
-    vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(1).mockReturnValueOnce(1);
+    vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(1);
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({
       ...gridOptionsMock,
       rowDetailView: { process: mockProcess, columnIndexPosition: 0, useRowClick: true, maxRows: 2, panelRows: 2 } as any,
@@ -221,6 +234,10 @@ describe('SlickRowDetailView plugin', () => {
     expect(plugin.eventHandler).toBeTruthy();
     expect(invalidateRowsSpy).toHaveBeenCalledWith([1]); // only row 1 should be invalidated
     expect(renderSpy).toHaveBeenCalled();
+
+    (plugin as any)._renderedIds.add(mockItem.id);
+    dataviewStub.onRowsChanged.notify({ rows: [1] } as OnRowsChangedEventArgs);
+    expect(invalidateRowsSpy).toHaveBeenLastCalledWith([]);
   });
 
   it('should trigger "onAsyncResponse" when calling "expandDetailView()" when template is already cached from loadOnce', () => {
@@ -350,6 +367,24 @@ describe('SlickRowDetailView plugin', () => {
     expect(output).toEqual(parentItemMock);
   });
 
+  it('should never expand a Row Detail padding item', () => {
+    const processMock = vi.fn();
+    const updateItemSpy = vi.spyOn(dataviewStub, 'updateItem');
+    const paddingItem = { id: '1.1', title: 'Task 1', __collapsed: true, __isPadding: true };
+    vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(paddingItem);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+      ...gridOptionsMock,
+      rowDetailView: { process: processMock, panelRows: 2, useRowClick: true } as any,
+    });
+
+    plugin.init(gridStub);
+    plugin.expandDetailView(paddingItem.id);
+
+    expect((plugin as any).checkExpandableOverride(1, paddingItem, gridStub)).toBe(false);
+    expect(updateItemSpy).not.toHaveBeenCalled();
+    expect(processMock).not.toHaveBeenCalled();
+  });
+
   it('should trigger "onAsyncResponse" but throw an error when there is no item provided', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockReturnValue();
     const updateItemSpy = vi.spyOn(dataviewStub, 'updateItem');
@@ -405,6 +440,135 @@ describe('SlickRowDetailView plugin', () => {
       gridStub
     );
     expect(invalidateSpy).toHaveBeenCalled();
+  });
+
+  it('should refresh framework overlay content without replacing the outer panel', () => {
+    const itemMock = { id: 123, __sizePadding: 2, __detailContent: '<span>Updated</span>' };
+    const viewport = document.createElement('div');
+    const canvas = document.createElement('div');
+    canvas.className = 'grid-canvas';
+    viewport.appendChild(canvas);
+    divContainer.appendChild(viewport);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+      ...gridOptionsMock,
+      rowDetailView: { renderMode: 'overlay', panelRows: 2, columnId: '_detail_selector' } as any,
+    });
+    vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
+    vi.spyOn(gridStub, 'getViewportNode').mockReturnValue(viewport);
+    vi.spyOn(gridStub, 'getRowTop').mockReturnValue(100);
+    vi.spyOn(gridStub, 'getFrozenRowOffset').mockReturnValue(0);
+    vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(25);
+    vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
+    vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+
+    plugin.init(gridStub);
+    (plugin as any).refreshOverlayPanel(null);
+    const gridRef = (plugin as any)._grid;
+    (plugin as any)._grid = undefined;
+    (plugin as any).renderOverlayPanels();
+    (plugin as any)._grid = gridRef;
+    (plugin as any)._expandedRowIds.add(itemMock.id);
+    (plugin as any)._renderedViewportRowIds.add(itemMock.id);
+    (plugin as any).renderOverlayPanels();
+    const panel = (plugin as any)._overlayPanels.get(itemMock.id) as HTMLElement;
+
+    (plugin as any).refreshOverlayPanel({ ...itemMock, __detailContent: createDomElement('span', { textContent: 'Element' }) });
+    expect(panel.querySelector('.innerDetailView_123')?.textContent).toBe('Element');
+    (plugin as any).refreshOverlayPanel({ ...itemMock, __detailContent: '<span>String</span>' });
+    expect(panel.querySelector('.innerDetailView_123')?.innerHTML).toBe('<span>String</span>');
+
+    panel.innerHTML = '<div></div>';
+    (plugin as any).refreshOverlayPanel({ ...itemMock, __detailContent: '<span>No inner</span>' });
+    vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(undefined);
+    (plugin as any).refreshOverlayPanel({ ...itemMock, __detailContent: '<span>No row</span>' });
+
+    (plugin as any)._overlayPanels.delete(itemMock.id);
+    (plugin as any).refreshOverlayPanel(itemMock);
+    vi.spyOn(gridStub, 'getViewportNode').mockReturnValue(document.createElement('div'));
+    (plugin as any).renderOverlayPanels();
+  });
+
+  it('should wait for the actual grid render before notifying the async end update', () => {
+    const asyncEndUpdateSpy = vi.spyOn(plugin.onAsyncEndUpdate, 'notify');
+    const itemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
+    vi.mocked(dataviewStub.updateItem).mockImplementation(() => undefined);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+      ...gridOptionsMock,
+      rowDetailView: { renderMode: 'overlay', postTemplate: () => '<span>Post</span>' } as any,
+    });
+
+    plugin.init(gridStub);
+    plugin.onAsyncResponse.notify({ item: itemMock }, new SlickEventData());
+
+    expect(asyncEndUpdateSpy).not.toHaveBeenCalled();
+    gridStub.onRendered.notify({ startRow: 0, endRow: 0, grid: gridStub });
+    expect(asyncEndUpdateSpy).not.toHaveBeenCalled();
+
+    dataviewStub.onRowsChanged.notify({ rows: [0] } as OnRowsChangedEventArgs);
+    gridStub.onRendered.notify({ startRow: 0, endRow: 0, grid: gridStub });
+    expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock }, expect.anything(), plugin);
+  });
+
+  it('should call framework lifecycle hooks around the grid render', () => {
+    const itemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
+    const beforeRenderSpy = vi.spyOn(plugin as any, 'beforeDetailViewRender');
+    const renderDetailViewSpy = vi.spyOn(plugin as any, 'renderDetailView');
+    vi.mocked(dataviewStub.updateItem).mockImplementation(() => undefined);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+      ...gridOptionsMock,
+      rowDetailView: { postTemplate: () => '<span>Post</span>' } as any,
+    });
+
+    plugin.init(gridStub);
+    plugin.onAsyncResponse.notify({ item: itemMock }, new SlickEventData());
+
+    expect(beforeRenderSpy).toHaveBeenCalledWith(itemMock);
+    expect(beforeRenderSpy.mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(dataviewStub.updateItem).mock.invocationCallOrder[0]);
+    expect(renderDetailViewSpy).not.toHaveBeenCalled();
+
+    dataviewStub.onRowsChanged.notify({ rows: [0] } as OnRowsChangedEventArgs);
+    gridStub.onRendered.notify({ startRow: 0, endRow: 0, grid: gridStub });
+
+    expect(renderDetailViewSpy).toHaveBeenCalledWith(itemMock);
+  });
+
+  it('should finish updateItem before calling the framework render hook when the grid renders synchronously', () => {
+    const itemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
+    const renderDetailViewSpy = vi.spyOn(plugin as any, 'renderDetailView');
+    let updateItemCompleted = false;
+    vi.mocked(dataviewStub.updateItem).mockImplementation(() => {
+      dataviewStub.onRowsChanged.notify({ rows: [0] } as OnRowsChangedEventArgs);
+      gridStub.onRendered.notify({ startRow: 0, endRow: 0, grid: gridStub });
+      expect(renderDetailViewSpy).not.toHaveBeenCalled();
+      updateItemCompleted = true;
+    });
+    renderDetailViewSpy.mockImplementation(() => expect(updateItemCompleted).toBe(true));
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+      ...gridOptionsMock,
+      rowDetailView: { postTemplate: () => '<span>Post</span>' } as any,
+    });
+
+    plugin.init(gridStub);
+    plugin.onAsyncResponse.notify({ item: itemMock }, new SlickEventData());
+
+    expect(renderDetailViewSpy).toHaveBeenCalledWith(itemMock);
+  });
+
+  it('should wait for an async framework render hook before notifying the async end update', async () => {
+    const itemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
+    const asyncEndUpdateSpy = vi.spyOn(plugin.onAsyncEndUpdate, 'notify');
+    vi.spyOn(plugin as any, 'renderDetailView').mockResolvedValue(undefined);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+      ...gridOptionsMock,
+      rowDetailView: { postTemplate: () => '<span>Post</span>' } as any,
+    });
+
+    plugin.init(gridStub);
+    plugin.onAsyncResponse.notify({ item: itemMock }, new SlickEventData());
+
+    expect(asyncEndUpdateSpy).not.toHaveBeenCalled();
+    await Promise.resolve();
+    expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock }, expect.anything(), plugin);
   });
 
   it('should trigger "onAsyncResponse" with Row Detail from post template with HTML Element when no detailView is provided and expect "updateItem" from DataView to be called with new template & data', () => {
@@ -1445,6 +1609,121 @@ describe('SlickRowDetailView plugin', () => {
         `<div class="dynamic-cell-detail cellDetailView_123" style="height: 50px; top: 25px;"><div class="detail-container detailViewContainer_123"><div class="innerDetailView_123"><div>Loading...</div></div></div></div>`
       );
     });
+
+    it('should render expanded Row Detail into a sibling overlay layer', () => {
+      const mockItem = {
+        id: 123,
+        firstName: 'John',
+        lastName: 'Doe',
+        __collapsed: false,
+        __isPadding: false,
+        __sizePadding: 2,
+        __detailContent: '<div>Loading...</div>',
+      };
+      const viewport = document.createElement('div');
+      const canvas = document.createElement('div');
+      canvas.className = 'grid-canvas';
+      viewport.appendChild(canvas);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+        ...gridOptionsMock,
+        rowDetailView: { renderMode: 'overlay', panelRows: 2, columnId: '_detail_selector' } as any,
+      });
+      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getViewportNode').mockReturnValue(viewport);
+      vi.spyOn(gridStub, 'getRowCache').mockReturnValue({ 0: { rowNode: [document.createElement('div')] } } as any);
+      vi.spyOn(gridStub, 'getRowTop').mockReturnValue(100);
+      vi.spyOn(gridStub, 'getFrozenRowOffset').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(25);
+      vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(mockItem);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+
+      plugin.init(gridStub);
+      (plugin as any)._expandedRowIds.add(mockItem.id);
+      (plugin as any)._renderedViewportRowIds.add(mockItem.id);
+      (plugin as any).renderOverlayPanels();
+
+      const panel = canvas.querySelector('.slick-row-detail-overlay .dynamic-cell-detail') as HTMLElement;
+      expect(panel).toBeTruthy();
+      expect(panel.parentElement?.parentElement).toBe(canvas);
+      expect(panel.style.top).toBe('125px');
+      expect(
+        (plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub) as FormatterResultWithHtml).insertElementAfterTarget
+      ).toBeUndefined();
+
+      // A redraw can reset viewport bookkeeping before framework adapters remount nested views.
+      (plugin as any).resetRenderedRows();
+      expect(canvas.querySelector('.slick-row-detail-overlay .dynamic-cell-detail')).toBeTruthy();
+
+      plugin.setOptions({ renderMode: 'inline' });
+      expect(canvas.querySelector('.slick-row-detail-overlay')).toBeNull();
+
+      const renderOverlaySpy = vi.spyOn(plugin as any, 'renderOverlayPanels');
+      plugin.setOptions({ renderMode: 'overlay' });
+      expect(renderOverlaySpy).toHaveBeenCalled();
+    });
+
+    it('should cover overlay panel viewport and reattachment branches', () => {
+      const mockItem = {
+        id: 123,
+        __collapsed: false,
+        __isPadding: false,
+        __sizePadding: 2,
+        __detailContent: '<div>Loading...</div>',
+      };
+      const viewport = document.createElement('div');
+      const canvas = document.createElement('div');
+      canvas.className = 'grid-canvas';
+      viewport.appendChild(canvas);
+      divContainer.appendChild(viewport);
+
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+        ...gridOptionsMock,
+        rowDetailView: { renderMode: 'overlay', panelRows: 2, columnId: '_detail_selector' } as any,
+      });
+      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getViewportNode').mockReturnValue(viewport);
+      vi.spyOn(gridStub, 'getRowTop').mockReturnValue(100);
+      vi.spyOn(gridStub, 'getFrozenRowOffset').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(25);
+      vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(mockItem);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+      const rowBackSpy = vi.spyOn(plugin.onRowBackToViewportRange, 'notify');
+
+      plugin.init(gridStub);
+      (plugin as any)._expandedRowIds.add(mockItem.id);
+      (plugin as any)._renderedViewportRowIds.add(mockItem.id);
+      (plugin as any)._rowIdsOutOfViewport.add(mockItem.id);
+      (plugin as any).renderOverlayPanels();
+      expect(rowBackSpy).toHaveBeenCalled();
+
+      // Reparent an existing panel when its canvas changes.
+      const panel = (plugin as any)._overlayPanels.get(mockItem.id) as HTMLElement;
+      panel.remove();
+      const secondCanvas = document.createElement('div');
+      secondCanvas.className = 'grid-canvas';
+      const secondViewport = document.createElement('div');
+      secondViewport.appendChild(secondCanvas);
+      vi.spyOn(gridStub, 'getViewportNode').mockReturnValue(secondViewport);
+      (plugin as any).renderOverlayPanels();
+      expect(panel.parentElement).toBe(secondCanvas.querySelector('.slick-row-detail-overlay'));
+
+      // Exercise the early-return paths for rows which are no longer rendered or available.
+      (plugin as any)._renderedViewportRowIds.clear();
+      (plugin as any).renderOverlayPanels();
+      (plugin as any)._renderedViewportRowIds.add(mockItem.id);
+      vi.spyOn(dataviewStub, 'getItemById').mockReturnValueOnce(undefined).mockReturnValueOnce(mockItem);
+      vi.spyOn(gridStub, 'getViewportNode').mockReturnValueOnce(secondViewport).mockReturnValueOnce(document.createElement('div'));
+      (plugin as any).renderOverlayPanels();
+      (plugin as any).renderOverlayPanels();
+    });
+
+    it('should return expanded item ids for a grouping key', () => {
+      const groupedItems = [{ id: 1 }, { id: '1.1', __isPadding: true }, { id: 2 }];
+      vi.spyOn(dataviewStub, 'getItemsByGroupingKey').mockReturnValue(groupedItems as any);
+      plugin.init(gridStub);
+
+      expect((plugin as any).getGroupItemIds('group-1')).toEqual([1, 2]);
+    });
   });
 
   describe('handleKeyDown - keyboard a11y handler', () => {
@@ -1476,7 +1755,7 @@ describe('SlickRowDetailView plugin', () => {
     it('should toggle (expand) a collapsed row with Space key', () => {
       const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
       vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
-      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection').mockImplementation(vi.fn());
+      toggleRowSelectionSpy = vi.spyOn(plugin as any, 'toggleRowSelection').mockImplementation(vi.fn());
       plugin.init(gridStub);
 
       gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent);
@@ -1489,7 +1768,7 @@ describe('SlickRowDetailView plugin', () => {
     it('should expand a collapsed row with ArrowRight key', () => {
       const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
       vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
-      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection').mockImplementation(vi.fn());
+      toggleRowSelectionSpy = vi.spyOn(plugin as any, 'toggleRowSelection').mockImplementation(vi.fn());
       Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowRight' });
       plugin.init(gridStub);
 
@@ -1503,7 +1782,7 @@ describe('SlickRowDetailView plugin', () => {
     it('should NOT expand an already expanded row with ArrowRight key', () => {
       const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: false };
       vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
-      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection');
+      toggleRowSelectionSpy = vi.spyOn(plugin as any, 'toggleRowSelection');
       Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowRight' });
       plugin.init(gridStub);
 
@@ -1517,7 +1796,7 @@ describe('SlickRowDetailView plugin', () => {
     it('should collapse an expanded row with ArrowLeft key', () => {
       const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: false };
       vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
-      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection').mockImplementation(vi.fn());
+      toggleRowSelectionSpy = vi.spyOn(plugin as any, 'toggleRowSelection').mockImplementation(vi.fn());
       Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowLeft' });
       plugin.init(gridStub);
 
@@ -1531,7 +1810,7 @@ describe('SlickRowDetailView plugin', () => {
     it('should NOT collapse an already collapsed row with ArrowLeft key', () => {
       const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
       vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
-      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection');
+      toggleRowSelectionSpy = vi.spyOn(plugin as any, 'toggleRowSelection');
       Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowLeft' });
       plugin.init(gridStub);
 
@@ -1546,7 +1825,7 @@ describe('SlickRowDetailView plugin', () => {
       const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
       vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
       vi.spyOn(gridStub, 'getEditorLock').mockReturnValue({ isActive: () => true } as any);
-      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection');
+      toggleRowSelectionSpy = vi.spyOn(plugin as any, 'toggleRowSelection');
       plugin.init(gridStub);
 
       gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent);
@@ -1560,7 +1839,7 @@ describe('SlickRowDetailView plugin', () => {
       const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
       vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
       (gridStub.getColumnByIdx as ReturnType<typeof vi.fn>).mockReturnValue({ id: 'firstName' });
-      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection');
+      toggleRowSelectionSpy = vi.spyOn(plugin as any, 'toggleRowSelection');
       plugin.init(gridStub);
 
       gridStub.onKeyDown.notify({ row: 0, cell: 1, grid: gridStub }, keyDownEvent);
@@ -1578,7 +1857,7 @@ describe('SlickRowDetailView plugin', () => {
         ...gridOptionsMock,
         rowDetailView: { process: mockProcess, columnIndexPosition: 0, useRowClick: true, panelRows: 2 } as any,
       });
-      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection').mockImplementation(vi.fn());
+      toggleRowSelectionSpy = vi.spyOn(plugin as any, 'toggleRowSelection').mockImplementation(vi.fn());
       plugin.init(gridStub);
 
       gridStub.onKeyDown.notify({ row: 0, cell: 1, grid: gridStub }, keyDownEvent);
@@ -1591,7 +1870,7 @@ describe('SlickRowDetailView plugin', () => {
     it('should not toggle when checkExpandableOverride returns false', () => {
       const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
       vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
-      toggleRowSelectionSpy = vi.spyOn(plugin, 'toggleRowSelection');
+      toggleRowSelectionSpy = vi.spyOn(plugin as any, 'toggleRowSelection');
       plugin.init(gridStub);
       plugin.expandableOverride(() => false);
 

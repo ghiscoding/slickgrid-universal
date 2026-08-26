@@ -27,7 +27,7 @@ export class CloneAggregator extends BaseAggregatorClass implements Aggregator {
 
   storeResult(groupTotals: GroupTotals): void {
     if (!groupTotals || groupTotals[this._type] === undefined) {
-      groupTotals[this._type] = {};
+      groupTotals[this._type] = Object.create(null);
     }
     groupTotals[this._type][this._field] = this._data;
   }

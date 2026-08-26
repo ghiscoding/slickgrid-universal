@@ -28,6 +28,7 @@
     outputs of the selected cells. This also applies if the cells editor is already open due to use of
     <code>copyActiveEditorCell</code>
   </p>
+  <p>Click a cell, then hold Shift and click another cell to select the rectangular range between them.</p>
 </h5>
 <h6 class="title is-6">
   <button class="button is-small" onclick.trigger="undoLastEdit()" data-test="undo-last-edit-btn">
@@ -50,8 +51,19 @@
     <span class="mdi mdi-table-edit"></span>
     <span>Toggle Edit/Readonly Grid</span>
   </button>
-  <label class="ml-3">Range Selection</label>
-  <span id="selectionRange"></span>
+  <label class="checkbox-inline ml-3">
+    <input
+      type="checkbox"
+      data-test="enable-multi-selection"
+      checked.bind="enableMultiSelection"
+      onclick.trigger="toggleMultiSelection(event.target.checked)"
+    />
+    Enable multi-selection (Ctrl/Cmd-click or drag)
+  </label>
+  <div class="my-2">
+    <label class="ml-3">Range Selection</label>
+    <span id="selectionRange"></span>
+  </div>
 </h6>
 
 <div class="grid19"></div>

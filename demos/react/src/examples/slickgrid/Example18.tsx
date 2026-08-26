@@ -299,32 +299,14 @@ const Example18: React.FC = () => {
   }
 
   function clearGroupingSelects() {
-    selectedGroupingFields.forEach((_g, i) => (selectedGroupingFields[i] = ''));
-    setSelectedGroupingFields(['', '', '']); // force dirty checking
-
-    // reset all select dropdown using JS
-    selectedGroupingFields.forEach((_val, index) => dynamicallyChangeSelectGroupByValue(index, ''));
+    setSelectedGroupingFields(['', '', '']);
   }
 
   function changeSelectedGroupByField(e: React.ChangeEvent<HTMLSelectElement>, index: number) {
     const val = (e.target as HTMLSelectElement).value;
-    updateSelectGroupFieldsArray(index, val, () => groupByFieldName());
-  }
-
-  /** Change the select dropdown group using pure JS */
-  function dynamicallyChangeSelectGroupByValue(selectGroupIndex = 0, val = '') {
-    const selectElm = document.querySelector<HTMLSelectElement>(`.select-group-${selectGroupIndex}`);
-    if (selectElm) {
-      selectElm.selectedIndex = Array.from(selectElm.options).findIndex((o) => o.value === val);
-      updateSelectGroupFieldsArray(selectGroupIndex, val);
-    }
-  }
-
-  /** update grouping field array React state */
-  function updateSelectGroupFieldsArray(index: number, val: string, _setStateCallback?: () => void) {
-    const tmpSelectedGroupingFields = selectedGroupingFields;
-    tmpSelectedGroupingFields[index] = val;
-    setSelectedGroupingFields([...tmpSelectedGroupingFields]); // force dirty checking
+    const updatedGroupingFields = selectedGroupingFields.map((field, fieldIndex) => (fieldIndex === index ? val : field));
+    setSelectedGroupingFields(updatedGroupingFields);
+    groupByFieldName(updatedGroupingFields);
   }
 
   function clearGrouping(invalidateRows = true) {
@@ -379,13 +361,13 @@ const Example18: React.FC = () => {
     }
   }
 
-  function groupByFieldName() {
+  function groupByFieldName(groupingFields = selectedGroupingFields) {
     clearGrouping();
     if (draggableGroupingPlugin?.setDroppedGroups) {
       showPreHeader();
 
       // get the field names from Group By select(s) dropdown, but filter out any empty fields
-      const groupedFields = selectedGroupingFields.filter((g) => g !== '');
+      const groupedFields = groupingFields.filter((g) => g !== '');
       if (groupedFields.length === 0) {
         clearGrouping();
       } else {
@@ -396,18 +378,12 @@ const Example18: React.FC = () => {
   }
 
   function onGroupChanged(change: { caller?: string; groupColumns: Grouping[] }) {
-    const caller = change?.caller ?? [];
+    const caller = change?.caller ?? '';
     const groups = change?.groupColumns ?? [];
-    const tmpSelectedGroupingFields = selectedGroupingFields;
 
-    if (Array.isArray(tmpSelectedGroupingFields) && Array.isArray(groups) && groups.length > 0) {
+    if (groups.length > 0) {
       // update all Group By select dropdown
-      tmpSelectedGroupingFields.forEach((_g, i) => (tmpSelectedGroupingFields[i] = (groups[i]?.getter ?? '') as string));
-      setSelectedGroupingFields([...tmpSelectedGroupingFields]);
-
-      // use JS to change select dropdown value
-      // TODO: this should be removed in the future and only use setState
-      tmpSelectedGroupingFields.forEach((val, index) => dynamicallyChangeSelectGroupByValue(index, val as string));
+      setSelectedGroupingFields((currentFields) => currentFields.map((_field, index) => (groups[index]?.getter ?? '') as string));
     } else if (groups.length === 0 && caller === 'remove-group') {
       clearGroupingSelects();
     }
@@ -609,9 +585,10 @@ const Example18: React.FC = () => {
                     <select
                       className={`form-select select-group-${index}`}
                       data-test="search-column-list"
+                      value={groupField}
                       onChange={($event) => changeSelectedGroupByField($event, index)}
                     >
-                      <option value="''">...</option>
+                      <option value="">...</option>
                       {columns.map((column) => (
                         <option value={column.id} key={column.id}>
                           {column.name as string}

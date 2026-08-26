@@ -81,10 +81,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   // references of each detected cell and/or group total formats
   protected _regularCellExcelFormats: {
     [fieldId: string]: { excelFormatId?: number; getDataValueParser: GetDataValueCallback };
-  } = {};
+  } = Object.create(null);
   protected _groupTotalExcelFormats: {
     [fieldId: string]: { groupType: string; excelFormat?: ExcelFormatter; getGroupTotalParser?: GetGroupTotalValueCallback };
-  } = {};
+  } = Object.create(null);
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   readonly pluginName = 'ExcelExportService';
@@ -128,8 +128,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._dataView = null as any;
     this._pubSubService = null;
     this._translaterService = undefined;
-    this._regularCellExcelFormats = {};
-    this._groupTotalExcelFormats = {};
+    this._regularCellExcelFormats = Object.create(null);
+    this._groupTotalExcelFormats = Object.create(null);
   }
 
   /**
@@ -178,8 +178,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     const useStreamingExport = !!this._excelExportOptions.useStreamingExport;
 
     // reset references of detected Excel formats
-    this._regularCellExcelFormats = {};
-    this._groupTotalExcelFormats = {};
+    this._regularCellExcelFormats = Object.create(null);
+    this._groupTotalExcelFormats = Object.create(null);
 
     // prepare the Excel Workbook & Sheet
     const worksheetOptions = { name: this._excelExportOptions.sheetName || 'Sheet1' };
@@ -193,7 +193,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     const boldFormat = this._stylesheet.createFormat({ font: { bold: true } });
     const stringFormat = this._stylesheet.createFormat({ format: '@' });
     const numberFormat = this._stylesheet.createFormat({ format: '0' });
-    this._stylesheetFormats = { boldFormat, numberFormat, stringFormat };
+    this._stylesheetFormats = Object.assign(Object.create(null), { boldFormat, numberFormat, stringFormat });
     this._sheet.setColumnFormats([boldFormat]);
 
     try {
@@ -336,12 +336,14 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /** Get each column style including a style for the width of each column */
   protected getColumnStyles(columns: Column[]): any[] {
+    const defaultColumnWidth = this._excelExportOptions.customColumnWidth ?? 10;
+    const includeColumnWidth = this._excelExportOptions.includeColumnWidth === true;
     const grouping = this._dataView.getGrouping();
     const columnStyles = [];
     if (Array.isArray(grouping) && grouping.length > 0) {
       columnStyles.push({
         bestFit: true,
-        columnStyles: this._gridOptions?.excelExportOptions?.customColumnWidth ?? 10,
+        columnStyles: defaultColumnWidth,
       });
     }
 
@@ -349,13 +351,38 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       const skippedField = columnDef.excludeFromExport ?? false;
       // if column width is 0, then we consider that field as a hidden field and should not be part of the export
       if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
+        const width =
+          columnDef.excelExportOptions?.width ??
+          (includeColumnWidth && typeof columnDef.width === 'number' ? this.convertPixelToExcelWidth(columnDef.width) : undefined);
+
         columnStyles.push({
           bestFit: true,
-          width: columnDef.excelExportOptions?.width ?? this._gridOptions?.excelExportOptions?.customColumnWidth ?? 10,
+          width: width ?? defaultColumnWidth,
         });
       }
     });
     return columnStyles;
+  }
+
+  /** Convert grid column width in pixels to Excel column width units. */
+  protected convertPixelToExcelWidth(pixelWidth: number): number {
+    if (!Number.isFinite(pixelWidth) || pixelWidth <= 0) {
+      return 0;
+    }
+
+    // Excel width is not pixel-based. This approximation mirrors common Calibri 11 behavior.
+    const excelWidth = pixelWidth <= 12 ? pixelWidth / 12 : (pixelWidth - 5) / 7;
+    return this.roundTo2Decimals(excelWidth);
+  }
+
+  /** Convert pixels to Excel points (72 DPI / 96 DPI = 0.75). */
+  protected convertPixelToExcelPoint(pixelValue: number): number {
+    return this.roundTo2Decimals(pixelValue * 0.75);
+  }
+
+  /** Round numeric values to 2 decimal places for stable export output. */
+  protected roundTo2Decimals(value: number): number {
+    return Math.round(value * 100) / 100;
   }
 
   /**
@@ -672,8 +699,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       return;
     }
 
-    // Convert pixels to Excel points: 72 DPI / 96 DPI = 0.75
-    const excelHeight = Math.round(pixelHeight * 0.75 * 100) / 100; // Round to 2 decimal places
+    const excelHeight = this.convertPixelToExcelPoint(pixelHeight);
     this._sheet.setRowInstructions(excelRowNumber, { height: excelHeight });
   }
 

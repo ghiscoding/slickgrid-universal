@@ -19,10 +19,10 @@ export class CountAggregator extends BaseAggregatorClass implements Aggregator {
     // when dealing with Tree Data structure, we also need to keep sum & itemCount refs
     if (isTreeAggregator) {
       if (!item.__treeTotals) {
-        item.__treeTotals = {};
+        item.__treeTotals = Object.create(null);
       }
       if (item.__treeTotals[this._type] === undefined) {
-        item.__treeTotals[this._type] = {};
+        item.__treeTotals[this._type] = Object.create(null);
       }
       item.__treeTotals[this._type][this._field] = 0;
     }
@@ -35,10 +35,10 @@ export class CountAggregator extends BaseAggregatorClass implements Aggregator {
     if (this._isTreeAggregator) {
       if (isTreeParent) {
         if (!item.__treeTotals) {
-          item.__treeTotals = {};
+          item.__treeTotals = Object.create(null);
         }
         if (item.__treeTotals[this._type] === undefined) {
-          item.__treeTotals[this._type] = {};
+          item.__treeTotals[this._type] = Object.create(null);
         }
         this._count = item.__treeTotals[this._type][this._field] ?? 0;
       } else if (isNumber(val)) {
@@ -49,7 +49,7 @@ export class CountAggregator extends BaseAggregatorClass implements Aggregator {
 
   storeResult(groupTotals: GroupTotals<number | number[]>): void {
     if (!groupTotals || groupTotals[this._type] === undefined) {
-      groupTotals[this._type] = {};
+      groupTotals[this._type] = Object.create(null);
     }
     let itemCount = this._count;
 

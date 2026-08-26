@@ -111,7 +111,8 @@ export function extend<T = any>(...args: any[]): T {
           if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
             if (copyIsArray) {
               copyIsArray = false;
-              clone = src && isArray(src) ? src : [];
+              // An explicitly provided empty array is an override, not an array to merge.
+              clone = src && isArray(src) && copy.length > 0 ? src : [];
             } else {
               clone = src && isPlainObject(src) ? src : {};
             }

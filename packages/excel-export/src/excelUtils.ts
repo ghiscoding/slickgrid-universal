@@ -13,10 +13,10 @@ import type { StyleSheet } from 'excel-builder-vanilla';
 export type ExcelFormatter = object & { id: number };
 
 // define all type of potential excel data function callbacks
-export const getExcelSameInputDataCallback: GetDataValueCallback = (data, { excelFormatId }) => {
+const getExcelSameInputDataCallback: GetDataValueCallback = (data, { excelFormatId }) => {
   return excelFormatId !== undefined ? { value: data, metadata: { style: excelFormatId } } : data;
 };
-export const getExcelNumberCallback: GetDataValueCallback = (data, { columnDef, excelFormatId, gridOptions }) => ({
+const getExcelNumberCallback: GetDataValueCallback = (data, { columnDef, excelFormatId, gridOptions }) => ({
   value: typeof data === 'string' && /\d/g.test(data) ? parseNumberWithFormatterOptions(data, columnDef, gridOptions) : data,
   metadata: { style: excelFormatId },
 });
@@ -65,7 +65,7 @@ export function getGroupTotalValue(totals: any, args: { columnDef: Column; group
 }
 
 /** Get numeric formatter options when defined or use default values (minDecimal, maxDecimal, thousandSeparator, decimalSeparator, wrapNegativeNumber) */
-export function getNumericFormatterOptions(
+function getNumericFormatterOptions(
   columnDef: Column,
   grid: SlickGrid,
   formatterType: FormatterType
@@ -110,18 +110,7 @@ export function getNumericFormatterOptions(
         break;
     }
   } else {
-    // when formatter is a Formatter.multiple, we need to loop through each of its formatter to find the best numeric data type
-    if (columnDef.formatter === Formatters.multiple && Array.isArray(columnDef.params?.formatters)) {
-      dataType = 'decimal';
-      for (const formatter of columnDef.params.formatters) {
-        dataType = getFormatterNumericDataType(formatter);
-        if (dataType !== 'decimal') {
-          break; // if we found something different than the default (decimal) then we can assume that we found our type so we can stop & return
-        }
-      }
-    } else {
-      dataType = getFormatterNumericDataType(columnDef.formatter);
-    }
+    dataType = getFormatterNumericDataType(columnDef.formatter);
   }
   return retrieveFormatterOptions(columnDef, grid, dataType!, formatterType);
 }
@@ -243,7 +232,7 @@ export function getExcelFormatFromGridFormatter(
 
   if (!excelFormat && (columnDef.formatter || columnDef.groupTotalsFormatter)) {
     format = createExcelFormatFromGridFormatter(columnDef, grid, formatterType, groupType);
-    if (!excelFormats.hasOwnProperty(format)) {
+    if (!Object.prototype.hasOwnProperty.call(excelFormats, format)) {
       excelFormats[format] = stylesheet.createFormat({ format }); // save new formatter with its format as a prop key
     }
     excelFormat = excelFormats[format] as ExcelFormatter;

@@ -84,7 +84,7 @@ const Example45DetailView: React.FC<RowDetailViewProps<Distributor, typeof Examp
       enableCellNavigation: true,
       datasetIdPropertyName: 'orderId',
       presets: gridState,
-      rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
+      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
     };
   }
 

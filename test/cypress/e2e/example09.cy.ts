@@ -289,7 +289,7 @@ describe('Example 09 - OData Grid', () => {
         .find('option')
         .last()
         .then((element) => {
-          cy.get('.search-filter.filter-name select').select(element.val());
+          cy.get('.search-filter.filter-name select').select(element.val() || '');
         });
 
       cy.get('.search-filter.filter-name').find('input').clear().type('Jo%yn%er');
@@ -522,7 +522,7 @@ describe('Example 09 - OData Grid', () => {
       cy.get('.slick-empty-data-warning').contains('No data to display.').should('not.be.visible');
 
       cy.window().then((win) => {
-        // expect(win.console.log).to.have.callCount(2);
+        expect(win.console.log).to.have.callCount(2);
         expect(win.console.log).to.be.calledWith('Grid State changed:: ', {
           newValues: [
             {
@@ -534,7 +534,10 @@ describe('Example 09 - OData Grid', () => {
           ],
           type: 'filter',
         });
-        // expect(win.console.log).to.be.calledWith('Grid State changed:: ', { newValues: { pageNumber: 1, pageSize: 10 }, type: 'pagination' });
+        expect(win.console.log).to.be.calledWith('Grid State changed:: ', {
+          newValues: { pageNumber: 1, pageSize: 10 },
+          type: 'pagination',
+        });
       });
     });
 

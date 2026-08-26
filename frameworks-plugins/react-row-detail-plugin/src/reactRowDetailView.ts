@@ -12,6 +12,7 @@ import {
 } from '@slickgrid-universal/common';
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import { flushSync } from 'react-dom';
 import type { Root } from 'react-dom/client';
 import { createReactComponentDynamically, type GridOption, type ViewModelBindableInputData } from 'slickgrid-react';
 import type { RowDetailView } from './interfaces.js';
@@ -41,6 +42,16 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
 
   constructor(private readonly eventPubSubService: EventPubSubService) {
     super(eventPubSubService);
+  }
+
+  protected override beforeDetailViewRender(item: any): void {
+    this._preloadRoot?.unmount();
+    this._preloadRoot = undefined;
+    this.disposeViewByItem(item);
+  }
+
+  protected override renderDetailView(item: any): void {
+    this.renderViewModel(item);
   }
 
   get addonOptions() {
@@ -147,19 +158,10 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
             }
           });
 
-          this._eventHandler.subscribe(this.onAsyncEndUpdate, async (event, args) => {
-            // dispose preload if exists
-            this._preloadRoot?.unmount();
-
-            // triggers after backend called "onAsyncResponse.notify()"
-            // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
-            queueMicrotask(() => {
-              this.renderViewModel(args?.item);
-
-              if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
-                this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
-              }
-            });
+          this._eventHandler.subscribe(this.onAsyncEndUpdate, (event, args) => {
+            if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
+              this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
+            }
           });
 
           this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {
@@ -307,11 +309,16 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
 
-      // load our Row Detail React Component dynamically, typically we would want to use `root.render()` after the preload component (last argument below)
-      // BUT the root render doesn't seem to work and shows a blank element, so we'll use `createRoot()` every time even though it shows a console log in Dev
-      // that is the only way I got it working so let's use it anyway and console warnings are removed in production anyway
       const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
-      const { root } = createReactComponentDynamically(this._component, containerElement, bindableData);
+      let root: Root | undefined;
+      // React 19 schedules root.render asynchronously. Flush this mount so a nested
+      // SlickgridReact can find its #innergrid-* container before its componentDidMount.
+      flushSync(() => {
+        root = createReactComponentDynamically(this._component, containerElement, bindableData).root;
+      });
+      if (!root) {
+        return;
+      }
       if (viewObj) {
         viewObj.root = root;
         viewObj.rendered = true;
@@ -356,11 +363,12 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
     expandedView.rendered = false;
     if (expandedView?.root) {
       const container = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
+      expandedView.root.unmount();
+      expandedView.root = null;
       if (container) {
-        expandedView.root.unmount();
         container.textContent = '';
-        return expandedView;
       }
+      return expandedView;
     }
   }
 

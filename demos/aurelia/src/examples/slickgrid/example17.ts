@@ -18,8 +18,8 @@ export class Example17 {
     this.aureliaGrid = aureliaGrid;
   }
 
-  destroyGrid() {
-    this.gridCreated = false;
+  toggleGrid() {
+    this.gridCreated = !this.gridCreated;
   }
 
   handleFileImport(event: any) {

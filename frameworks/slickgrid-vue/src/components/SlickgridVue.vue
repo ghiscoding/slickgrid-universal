@@ -55,6 +55,7 @@ import {
   nextTick,
   onBeforeUnmount,
   onMounted,
+  onUpdated,
   ref,
   useAttrs,
   watch,
@@ -69,10 +70,12 @@ import type { SlickgridVueProps } from './slickgridVueProps.interface.js';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parsing isn't enabled
 
-export interface VueRowDetailView {
+interface VueRowDetailView {
   create(columns: Column[], gridOptions: GridOption): any;
   init(grid: SlickGrid, containerService?: ContainerService): void;
 }
+
+type VueEventCallback = (event: CustomEvent<any>) => unknown;
 
 const attrs = useAttrs();
 
@@ -104,12 +107,14 @@ let isGridInitialized = false;
 let isDatasetInitialized = false;
 let isDatasetHierarchicalInitialized = false;
 let isPaginationInitialized = false;
+let isPushingBackPluginColumns = false;
 let isLocalGrid = true;
 let metrics: Metrics | undefined;
 let registeredResources: Array<ExternalResource | ExternalResourceConstructor> = [];
 let scrollEndCalled = false;
 let showPagination = false;
 let subscriptions: Array<EventSubscription> = [];
+const vueEventSubscriptions = new Map<string, EventSubscription>();
 
 // components / plugins
 let slickEmptyWarning: SlickEmptyWarningComponent | undefined;
@@ -283,6 +288,10 @@ onBeforeUnmount(() => {
   disposing();
 });
 
+onUpdated(() => {
+  synchronizeVueEventSubscriptions();
+});
+
 onMounted(() => {
   if (!columnsModel.value) {
     throw new Error(
@@ -292,25 +301,8 @@ onMounted(() => {
 
   if (elm.value && eventPubSubService instanceof EventPubSubService) {
     eventPubSubService.elementSource = elm.value;
-
-    // Vue doesn't play well with subscribing to native Custom Events & also the render is called after the constructor which brings a second problem
-    // to fix both issues, we need to do the following:
-    // 1. loop through all component props and subscribe to the ones that startsWith "on", we'll assume that it's the custom events
-    // 2. then call the assigned listener(s) when events are dispatched
-    for (const attr in { ...attrs, ...props }) {
-      if (attr.startsWith('onOn')) {
-        const eventCallback = attrs[attr as keyof SlickgridVueProps] || props[attr as keyof SlickgridVueProps];
-        if (typeof eventCallback === 'function') {
-          const singlePrefixEventName = attr.replace(/^onOn/, 'on');
-          subscriptions.push(
-            eventPubSubService.subscribe(singlePrefixEventName, (data: unknown) => {
-              const gridEventName = eventPubSubService.getEventNameByNamingConvention(singlePrefixEventName, '');
-              eventCallback.call(null, new CustomEvent(gridEventName, { detail: data }));
-            })
-          );
-        }
-      }
-    }
+    eventPubSubService.eventNamingStyle = _gridOptions.value.eventNamingStyle ?? 'camelCaseWithExtraOnPrefix';
+    synchronizeVueEventSubscriptions();
   }
 
   initialization();
@@ -356,6 +348,15 @@ function columnsChanged(columns?: Column[]) {
   if (columns) {
     _columns.value = columns;
   }
+
+  // this watcher flushes async, so the plugin columns pushback lands after the grid is initialized and its columns
+  // already have computed widths, re-running the below would clash with Grid State/Presets and would also stamp
+  // those computed widths as `originalWidth`, which the resize-by-content then treats as user-provided widths
+  if (isPushingBackPluginColumns) {
+    isPushingBackPluginColumns = false;
+    return;
+  }
+
   if (isGridInitialized) {
     updateColumnsList(_columns.value);
   }
@@ -446,18 +447,19 @@ function initialization() {
   // save reference for all columns before they optionally become hidden/visible
   sharedService.allColumns = _columns.value as Column[];
 
-  // TODO: revisit later, this conflicts with Grid State (Example 15)
-  // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
-  // we'll subscribe to the event and push back the change to the user so they always use full column defs array including extra cols
-  // subscriptions.push(
-  //   _eventPubSubService.subscribe<{ columns: Column<any>[]; grid: SlickGrid }>('onPluginColumnsChanged', data => {
-  //     columns = data.columns;
-  //     columnsChanged();
-  //   })
-  // );
+  // certain extensions/plugins add extra columns not created by the user itself (RowMove, RowDetail, RowSelections),
+  // push them back through the `v-model:columns` binding so the user always sees the full column defs array.
+  // `_columns` already holds them, so the flag tells `columnsChanged()` to skip the grid re-render
+  // that would otherwise clash with Grid State & Presets
+  subscriptions.push(
+    eventPubSubService.subscribe<{ columns: Column[]; pluginName: string }>('onPluginColumnsChanged', (data) => {
+      isPushingBackPluginColumns = true;
+      columnsModel.value = data.columns;
+    })
+  );
 
-  // after subscribing to potential columns changed, we are ready to create these optional extensions
-  // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
+  // create optional extensions (RowMove, RowDetail, RowSelections), they splice their extra columns
+  // directly into the array below, so both `_columns` & `sharedService.allColumns` stay in sync
   extensionService.createExtensionsBeforeGridCreation(_columns.value as Column[], _gridOptions.value as GridOption);
 
   // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
@@ -618,6 +620,7 @@ function disposing(shouldEmptyDomElementContainer = false) {
   }
 
   collectionObservers.forEach((obs) => obs?.disconnect());
+  disposeVueEventSubscriptions();
   eventPubSubService.unsubscribeAll();
 
   // dispose of all Services
@@ -660,17 +663,54 @@ function disposing(shouldEmptyDomElementContainer = false) {
     }
     backendServiceApi = undefined;
   }
-  for (const prop of Object.keys(columnsModel.value)) {
-    (columnsModel.value as any)[prop] = null;
-  }
   for (const prop of Object.keys(sharedService)) {
     (sharedService as any)[prop] = null;
   }
+  _columns.value = [];
 
   // we could optionally also empty the content of the grid container DOM element
   if (shouldEmptyDomElementContainer) {
     emptyGridContainerElm();
   }
+}
+
+/**
+ * Bridge function-valued `onOn*` props to the PubSub host element.
+ * Keep one stable subscription per event name and resolve the latest callback at dispatch time to avoid subscription churn on update.
+ */
+function synchronizeVueEventSubscriptions() {
+  const eventPropNames = new Set([...Object.keys(attrs), ...Object.keys(props), ...vueEventSubscriptions.keys()]);
+
+  eventPropNames.forEach((attrName) => {
+    if (!attrName.startsWith('onOn')) {
+      return;
+    }
+
+    const attr = attrName as keyof SlickgridVueProps;
+    const eventCallback = (attrs[attr] || props[attr]) as VueEventCallback | undefined;
+    const eventSubscription = vueEventSubscriptions.get(attrName);
+
+    if (typeof eventCallback === 'function' && !eventSubscription) {
+      const singlePrefixEventName = attrName.replace(/^onOn/, 'on');
+      vueEventSubscriptions.set(
+        attrName,
+        eventPubSubService.subscribeEvent(singlePrefixEventName, (event) => {
+          const currentCallback = (attrs[attr] || props[attr]) as VueEventCallback | undefined;
+          if (typeof currentCallback === 'function' && currentCallback.call(null, event) === false) {
+            event.preventDefault();
+          }
+        })
+      );
+    } else if (typeof eventCallback !== 'function' && eventSubscription) {
+      eventSubscription.unsubscribe?.();
+      vueEventSubscriptions.delete(attrName);
+    }
+  });
+}
+
+function disposeVueEventSubscriptions() {
+  vueEventSubscriptions.forEach((subscription) => subscription.unsubscribe?.());
+  vueEventSubscriptions.clear();
 }
 
 /** Do not rename to `dispose` as it's an Vue hook */

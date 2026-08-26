@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-react-demo",
   "private": true,
-  "version": "10.8.3",
+  "version": "10.9.0",
   "description": "Slickgrid-React demo",
   "keywords": [
     "react",
@@ -16,6 +16,7 @@
     "react:dev": "vite",
     "react:preview": "vite preview",
     "react:cypress": "cypress open --config-file test/cypress.config.ts",
+    "react:cypress:ci": "cypress run --config-file test/cypress.config.ts",
     "build": "pnpm type-check && vite build",
     "type-check": "tsc --noEmit"
   },

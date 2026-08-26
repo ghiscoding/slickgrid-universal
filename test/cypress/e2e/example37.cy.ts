@@ -1,8 +1,8 @@
 import { getScrollDistanceWhenDragOutsideGrid } from '../support/drag';
 
 function testScroll(fromClass: string, toClass: string, fromRow: number, fromCol: number) {
-  return getScrollDistanceWhenDragOutsideGrid(fromClass, 'topLeft', 'right', fromRow, fromCol, 165).then((cellScrollDistance) => {
-    return getScrollDistanceWhenDragOutsideGrid(toClass, 'topLeft', 'bottom', fromRow, fromCol, 165).then((rowScrollDistance) => {
+  return getScrollDistanceWhenDragOutsideGrid(fromClass, 'topLeft', 'right', fromRow, fromCol, 165).then((cellScrollDistance: any) => {
+    return getScrollDistanceWhenDragOutsideGrid(toClass, 'topLeft', 'bottom', fromRow, fromCol, 165).then((rowScrollDistance: any) => {
       return cy.wrap({
         cell: {
           scrollBefore: cellScrollDistance.scrollLeftBefore,
@@ -38,17 +38,68 @@ describe('Example 37 - Hybrid Selection Model', () => {
         });
     });
 
-    it('should click on Task 1 and be able to drag from bottom right corner to expand the cell selections to include 4 cells', () => {
+    it('should export Grid 1 to Excel without hidden columns and keep expected data shapes', () => {
+      const downloadsFolder = Cypress.config('downloadsFolder');
+
+      cy.get('[data-test="export-excel-btn"]').click();
+
+      cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 11 }).then((xlsx: any) => {
+        expect(xlsx.fileName).to.match(/\.xlsx$/i);
+
+        const normalizedHeader = xlsx.header.map((columnName: string) =>
+          `${columnName}`
+            .replace(/\u00a0/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .toLowerCase()
+        );
+
+        expect(normalizedHeader).to.deep.equal(['#', 'title', '% complete', 'start', 'finish', 'priority', 'effort driven']);
+        expect(normalizedHeader).to.have.length(7);
+        expect(normalizedHeader).to.not.include('last column / hidden column');
+        expect(xlsx.rowCount - 1).to.equal(400);
+
+        expect(xlsx.dataRows).to.be.an('array');
+        expect(xlsx.dataRows.length).to.equal(11);
+
+        xlsx.dataRows.forEach((row: string[], index: number) => {
+          expect(row[0]).to.equal(`${index}`);
+          expect(row[1]).to.equal(`Task ${index}`);
+          expect(Number(row[2])).to.be.within(0, 99);
+          expect(row[3]).to.match(/^\d{2}\/\d{2}\/\d{4}$/);
+          expect(row[4]).to.match(/^\d{2}\/\d{2}\/\d{4}$/);
+          expect(row[5]).to.match(/^(Low|Medium|High)$/);
+          expect(row[6]).to.match(/^(Yes|No)$/);
+        });
+      });
+    });
+
+    it('should allow Ctrl-drag from Task 1 to expand the cell selections to include 4 cells', () => {
       cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').as('task1');
       cy.get('@task1').should('contain', 'Task 1');
       cy.get('@task1').click().should('have.class', 'selected');
       cy.get('.grid37-1 .slick-cell.selected').should('have.length', 1);
 
-      cy.get('@task1').find('.slick-drag-replace-handle').trigger('mousedown', { which: 1, force: true });
+      cy.get('@task1').find('.slick-drag-replace-handle').trigger('mousedown', { which: 1, ctrlKey: true, force: true });
 
       cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l2.r2')
+        .trigger('mousemove', 'bottomRight', { ctrlKey: true, force: true })
+        .trigger('mouseup', 'bottomRight', { which: 1, ctrlKey: true, force: true });
+
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 4);
+    });
+
+    it('should preserve cell selection when dragging with the secondary mouse button', () => {
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 4);
+
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').trigger('mousedown', {
+        button: 2,
+        which: 3,
+        force: true,
+      });
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l3.r3')
         .trigger('mousemove', 'bottomRight')
-        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+        .trigger('mouseup', 'bottomRight', { button: 2, which: 3, force: true });
 
       cy.get('.grid37-1 .slick-cell.selected').should('have.length', 4);
     });
@@ -79,6 +130,42 @@ describe('Example 37 - Hybrid Selection Model', () => {
       cy.get('.grid37-1 .slick-cell.selected').should('have.length', 9);
     });
 
+    it('should be able to shrink the cell selections back to the top and to the left', () => {
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 9);
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l3.r3')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l3.r3')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 6);
+
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l3.r3')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l2.r2')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 4);
+    });
+
+    it('should expand the cell selections upward when dragging the handle above the selection top row', () => {
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 4);
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l2.r2')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-row[data-row="0"] .slick-cell.l2.r2')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 6);
+    });
+
     it('should click on 1st column and then row 2 and 3, then expect the full (single) row to be selected', () => {
       cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l0.r0').as('task1');
       cy.get('@task1').should('contain', '1');
@@ -104,7 +191,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
     it('should auto scroll take effect to display the selecting element when dragging', { scrollBehavior: false }, () => {
       cy.get('.grid37-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
 
-      testScroll('.grid37-1', '.grid37-1', 0, 1).then((scrollDistance) => {
+      testScroll('.grid37-1', '.grid37-1', 0, 1).then((scrollDistance: any) => {
         expect(scrollDistance.cell.scrollBefore).to.be.lte(scrollDistance.cell.scrollAfter);
         expect(scrollDistance.row.scrollBefore).to.be.lte(scrollDistance.row.scrollAfter);
       });
@@ -119,6 +206,92 @@ describe('Example 37 - Hybrid Selection Model', () => {
       cy.get('@task14').rightclick({ force: true });
       cy.get('.slick-context-menu .slick-menu-item').should('contain', 'Command which should be shown');
       cy.get('body').type('{esc}');
+    });
+
+    it('should toggle multiple cell selection ranges with the checkbox', () => {
+      cy.get('.grid37-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('[data-test="enable-multi-selection"]').check();
+
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l2.r2')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l1.r1').click({ ctrlKey: true });
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l1.r1')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('.grid37-1 .slick-row[data-row="4"] .slick-cell.l1.r1')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 4);
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.selected').should('have.length', 0);
+      cy.get('#selectionRange1').contains(/"fromRow":1,"fromCell":1,"toRow":1,"toCell":2/);
+      cy.get('#selectionRange1').contains(/"fromRow":3,"fromCell":1,"toRow":4,"toCell":1/);
+      cy.get('#selectionRange1')
+        .invoke('text')
+        .then((text) => expect(text.match(/"fromRow"/g)).to.have.length(2));
+      cy.get('[data-test="enable-multi-selection"]').should('be.checked');
+    });
+
+    it('should select a rectangular cell range when Shift-clicking another cell', () => {
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l3.r3').click({ shiftKey: true });
+
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 9);
+      cy.get('#selectionRange1').should('have.text', '{"fromRow":1,"fromCell":1,"toRow":3,"toCell":3}');
+    });
+
+    it('should preserve row and column offsets when copying multiple cell ranges', () => {
+      cy.get('.grid37-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('[data-test="enable-multi-selection"]').should('be.checked');
+      cy.window().then((win) => {
+        cy.stub(win.navigator.clipboard, 'writeText').as('clipboardWriteText');
+      });
+
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l1.r1')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l5.r5').click({ ctrlKey: true });
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l5.r5')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l5.r5')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('#selectionRange1').contains(/"fromRow":1,"fromCell":1,"toRow":3,"toCell":1/);
+      cy.get('#selectionRange1').contains(/"fromRow":2,"fromCell":5,"toRow":3,"toCell":5/);
+      cy.get('.grid37-1 .grid-canvas').first().trigger('keydown', { key: 'c', ctrlKey: true, bubbles: true, force: true });
+
+      cy.get('@clipboardWriteText').should('have.been.calledWith', 'Task 1\t\t\t\t\r\nTask 2\t\t\t\t2\r\nTask 3\t\t\t\t3\r\n');
+    });
+
+    it('should select the active cell when cell selection disables active-row selection', () => {
+      cy.window()
+        .its('main.app.viewModelObj', { timeout: 10000 })
+        .should((viewModelObj: Record<string, any>) => {
+          expect(
+            Object.values(viewModelObj).some((viewModel) => viewModel?.sgb1?.slickGrid),
+            'Grid 1 view model'
+          ).to.be.true;
+        })
+        .then((viewModelObj: Record<string, any>) => {
+          const viewModel = Object.values(viewModelObj).find((candidate) => candidate?.sgb1?.slickGrid);
+          const selectionModel = viewModel.sgb1.slickGrid.getSelectionModel();
+          selectionModel.setOptions({ selectActiveCell: true, selectActiveRow: false, selectionType: 'cell' });
+          selectionModel.setSelectedRanges([]);
+        });
+
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
+      cy.get('#selectionRange1').should('have.text', '{"fromRow":1,"fromCell":1,"toRow":1,"toCell":1}');
     });
   });
 
@@ -144,7 +317,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
 
       cy.get('.grid37-2 .slick-row[data-row="1"] .slick-cell.l3.r3').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-      testScroll('.grid37-2', '.grid37-2', 0, 1).then((scrollDistance) => {
+      testScroll('.grid37-2', '.grid37-2', 0, 1).then((scrollDistance: any) => {
         expect(scrollDistance.cell.scrollBefore).to.be.lte(scrollDistance.cell.scrollAfter);
         expect(scrollDistance.row.scrollBefore).to.be.lte(scrollDistance.row.scrollAfter);
       });
@@ -180,6 +353,25 @@ describe('Example 37 - Hybrid Selection Model', () => {
       cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
       cy.get('.grid37-2 .slick-row[data-row="5"] .slick-cell.l0.r0').should('have.class', 'selected');
       cy.get('.grid37-2 .slick-cell.selected').should('have.length', 8 * 2);
+    });
+
+    it('should toggle multiple row selection ranges with the checkbox', () => {
+      cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.grid37-2 .slick-row[data-row="4"] input[type=checkbox]').uncheck({ force: true });
+      cy.get('.grid37-2 .slick-row[data-row="5"] input[type=checkbox]').uncheck({ force: true });
+      cy.get('[data-test="enable-multi-selection"]').should('be.checked');
+
+      cy.get('.grid37-2 .slick-row[data-row="1"] input[type=checkbox]').check({ force: true });
+      cy.get('.grid37-2 .slick-row[data-row="2"] input[type=checkbox]').check({ force: true });
+      cy.get('.grid37-2 .slick-row[data-row="4"] .slick-cell.l1.r1').click({ ctrlKey: true });
+      cy.get('#selectionRange2')
+        .invoke('text')
+        .then((text) => expect(text.match(/"fromRow"/g)).to.have.length(3));
+      cy.get('.grid37-2 .slick-cell.selected').should('have.length', 8 * 3);
+      cy.get('.grid37-2 .slick-row[data-row="3"] .slick-cell.selected').should('have.length', 0);
+      cy.get('#selectionRange2').contains(/"fromRow":1,"fromCell":0,"toRow":1,"toCell":7/);
+      cy.get('#selectionRange2').contains(/"fromRow":2,"fromCell":0,"toRow":2,"toCell":7/);
+      cy.get('#selectionRange2').contains(/"fromRow":4,"fromCell":0,"toRow":4,"toCell":7/);
     });
   });
 });

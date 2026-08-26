@@ -45,7 +45,14 @@
         Use default CSV data
       </button>
       &nbsp;/
-      <button class="btn btn-outline-danger btn-sm ms-2" click.trigger="destroyGrid()">Destroy Grid</button>
+      <button
+        class="btn btn-outline-danger btn-sm ms-2"
+        data-test="toggle-grid-btn"
+        disabled.bind="columns.length === 0"
+        click.trigger="toggleGrid()"
+      >
+        ${gridCreated ? 'Destroy Grid' : 'Recreate Grid'}
+      </button>
     </div>
   </div>
 

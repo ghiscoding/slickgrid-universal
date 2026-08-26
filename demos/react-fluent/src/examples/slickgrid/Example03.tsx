@@ -400,18 +400,11 @@ const Example03: React.FC = () => {
   }
 
   function onGroupChanged(change: { caller?: string; groupColumns: Grouping[] }) {
-    const caller = change?.caller ?? [];
+    const caller = change?.caller ?? '';
     const groups = change?.groupColumns ?? [];
-    const tmpSelectedGroupingFields = selectedGroupingFields;
 
-    if (Array.isArray(tmpSelectedGroupingFields) && Array.isArray(groups) && groups.length > 0) {
-      // update all Group By select dropdown
-      tmpSelectedGroupingFields.forEach((_g, i) => (tmpSelectedGroupingFields[i] = (groups[i]?.getter ?? '') as string));
-      setSelectedGroupingFields([...tmpSelectedGroupingFields]);
-
-      // use JS to change select dropdown value
-      // TODO: this should be removed in the future and only use setState
-      tmpSelectedGroupingFields.forEach((val, index) => dynamicallyChangeSelectGroupByValue(index, val as string));
+    if (groups.length > 0) {
+      setSelectedGroupingFields((currentFields) => currentFields.map((_field, index) => (groups[index]?.getter ?? '') as string));
     } else if (groups.length === 0 && caller === 'remove-group') {
       clearGroupingSelects();
     }

@@ -136,7 +136,7 @@ export class Example {
     // once pagination totalItems is filled, we can update the dataset
 
     // infinite scroll has an extra data property to determine if we hit an infinite scroll and there's still more data (in that case we need append data)
-    // or if we're on first data fetching (no scroll bottom ever occured yet)
+    // or if we're on first data fetching (no scroll bottom ever occurred yet)
     if (!data.infiniteScrollBottomHit) {
       // initial load not scroll hit yet, full dataset assignment
       this.aureliaGrid.slickGrid?.scrollTo(0); // scroll back to top to avoid unwanted onScroll end triggered

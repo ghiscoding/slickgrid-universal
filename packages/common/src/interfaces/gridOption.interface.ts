@@ -841,8 +841,7 @@ export interface GridOption<C extends Column = Column> {
   /**
    * Optional callback used in variable row height mode.
    * Receives the grid instance (giving access to any grid state), the row index, and the row's
-   * data item. Returns the height in pixels of that row, or `undefined` to use the default
-   * `rowHeight`.
+   * data item. Returns the height (integer) in pixels of that row, or `undefined` to use the default `rowHeight`.
    * Variable row height mode is active only when `enableVariableRowHeight` is true.
    * By default, SlickGrid provides a metadata-backed provider (`ItemMetadata.height`), so
    * metadata-only setups work by enabling the switch without defining this callback.
@@ -864,6 +863,9 @@ export interface GridOption<C extends Column = Column> {
   /** Defaults to 400, duration to show the row highlight (e.g. after insert/edit/...) */
   rowHighlightDuration?: number;
 
+  /** Defaults to false, sets the grid direction to RTL (Right-to-Left) for proper rendering of RTL languages */
+  rtl?: boolean;
+
   /** Row Move Manager Plugin options & events */
   rowMoveManager?: RowMoveManager;
 
@@ -871,9 +873,12 @@ export interface GridOption<C extends Column = Column> {
   selectionOptions?: HybridSelectionModelOption;
 
   /**
+   * @deprecated Since 'transform' now works with everything (including Row Detali and RowSpan), the next major version (v11)
+   * will drop this option and only use 'transform' as the only rendering mode.
+   *
    * Defaults to "transform", what CSS style to we want to use to render each row top offset (choose between "top" and "transform").
    * For example, with a default `rowHeight: 22`, the 2nd row will have a `top` offset of 44px and by default have a CSS style of `transform: translateY(44px)`.
-   * NOTE: you should use "top" when using either Row Detail and/or RowSpan
+   * NOTE: use `top` with the legacy inline Row Detail renderer. Row Detail uses an overlay and RowSpan uses hybrid positioning for transform compatibility.
    */
   rowTopOffsetRenderType?: 'top' | 'transform';
 

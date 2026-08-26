@@ -4,7 +4,7 @@ import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanil
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example37.scss';
 
-const NB_ITEMS = 1000;
+const NB_ITEMS = 400;
 
 export default class Example37 {
   protected _eventHandler: SlickEventHandler;
@@ -17,6 +17,8 @@ export default class Example37 {
   dataset2!: any[];
   sgb1!: SlickVanillaGridBundle;
   sgb2!: SlickVanillaGridBundle;
+  enableMultiSelection = false;
+  excelExportService = new ExcelExportService();
 
   gridFocus() {
     this.sgb1.slickGrid?.focus();
@@ -141,6 +143,7 @@ export default class Example37 {
       gridHeight: 250,
       gridWidth: 800,
       enableCellNavigation: true,
+      preventDragFromKeys: [],
       autoEdit: true,
       editable: true,
       headerRowHeight: 35,
@@ -149,13 +152,15 @@ export default class Example37 {
       excelExportOptions: {
         exportWithFormatter: true,
       },
-      externalResources: [new ExcelExportService()],
+      externalResources: [this.excelExportService],
 
       // enable new hybrid selection model (rows & cells)
       enableSelection: true,
       selectionOptions: {
         rowSelectColumnIds: ['id'],
         selectionType: 'mixed',
+        enableMultiSelection: false,
+        // showDragHandle: 'hover', // can also be true (default) or false
       },
 
       // when using the ExcelCopyBuffer, you can see what the selection range is
@@ -196,8 +201,31 @@ export default class Example37 {
 
         // allow using the mouse drag selection to select multiple rows
         dragToSelect: true,
+        enableMultiSelection: false,
       },
     };
+  }
+
+  toggleMultiSelection(isChecked: boolean) {
+    this.enableMultiSelection = isChecked;
+
+    const selectionOptions1 = { ...this.gridOptions1.selectionOptions, enableMultiSelection: this.enableMultiSelection };
+    const selectionOptions2 = { ...this.gridOptions2.selectionOptions, enableMultiSelection: this.enableMultiSelection };
+    this.gridOptions1.selectionOptions = selectionOptions1;
+    this.gridOptions2.selectionOptions = selectionOptions2;
+
+    if (this.sgb1.slickGrid && this.sgb2.slickGrid) {
+      this.sgb1.slickGrid.setOptions({ selectionOptions: selectionOptions1 }, true);
+      this.sgb2.slickGrid.setOptions({ selectionOptions: selectionOptions2 }, true);
+      const selectionModel1 = this.sgb1.slickGrid.getSelectionModel();
+      const selectionModel2 = this.sgb2.slickGrid.getSelectionModel();
+      if (selectionModel1) {
+        selectionModel1.setOptions({ enableMultiSelection: this.enableMultiSelection });
+      }
+      if (selectionModel2) {
+        selectionModel2.setOptions({ enableMultiSelection: this.enableMultiSelection });
+      }
+    }
   }
 
   // mock a dataset
@@ -222,5 +250,9 @@ export default class Example37 {
       };
     }
     return data;
+  }
+
+  exportGrid1ToExcel() {
+    this.excelExportService.exportToExcel({ filename: 'export', format: 'xlsx' });
   }
 }

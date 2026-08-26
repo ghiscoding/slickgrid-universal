@@ -24,7 +24,7 @@ export class OdataQueryBuilderService {
       orderBy: '',
     };
     this._defaultSortBy = '';
-    this._columnFilters = {};
+    this._columnFilters = Object.create(null);
   }
 
   /*
@@ -178,7 +178,7 @@ export class OdataQueryBuilderService {
   // -------------------
 
   private buildSelectExpand(selectFields: string[]): { selectParts: string[]; expandParts: string[] } {
-    const navigations: { [navigation: string]: string[] } = {};
+    const navigations: { [navigation: string]: string[] } = Object.create(null);
     const selectItems = new Set<string>();
 
     for (const field of selectFields) {

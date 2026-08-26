@@ -63,7 +63,12 @@ export function deepCopy(objectOrArray: any | any[]): any | any[] {
     // Recursively copy it's value and add to the clone
     Object.keys(objectOrArray).forEach((key) => {
       if (Object.prototype.hasOwnProperty.call(objectOrArray, key)) {
-        (clone as any)[key] = deepCopy(objectOrArray[key]);
+        const value = deepCopy(objectOrArray[key]);
+        if (key === '__proto__') {
+          Object.defineProperty(clone, key, { configurable: true, enumerable: true, writable: true, value });
+        } else {
+          (clone as any)[key] = value;
+        }
       }
     });
     return clone;
@@ -144,7 +149,7 @@ export function deepMerge(target: any, ...sources: any[]): any {
 export function emptyObject(obj: any): any {
   if (isObject(obj)) {
     Object.keys(obj).forEach((key) => {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         delete obj[key];
       }
     });
@@ -307,17 +312,28 @@ export function setDeepValue<T = unknown>(obj: T, path: string | string[], value
   if (path.length > 1) {
     const e = path.shift() as keyof T;
     if (obj && e !== undefined) {
-      setDeepValue(
-        (obj[e] =
-          isDefined(obj[e]) && (Array.isArray(obj[e]) || Object.prototype.toString.call(obj[e]) === '[object Object]')
-            ? obj[e]
-            : ({} as any)),
-        path,
-        value
-      );
+      const key = String(e);
+      const hasOwnProperty = Object.prototype.hasOwnProperty.call(obj, e);
+      const currentValue = hasOwnProperty ? obj[e] : undefined;
+      const nextValue =
+        isDefined(currentValue) && (Array.isArray(currentValue) || Object.prototype.toString.call(currentValue) === '[object Object]')
+          ? currentValue
+          : ({} as any);
+
+      if (key === '__proto__') {
+        Object.defineProperty(obj, e, { configurable: true, enumerable: true, writable: true, value: nextValue });
+      } else {
+        obj[e] = nextValue;
+      }
+      setDeepValue(nextValue, path, value);
     }
   } else if (obj && path[0]) {
-    obj[path[0] as keyof T] = value;
+    const key = String(path[0]);
+    if (key === '__proto__') {
+      Object.defineProperty(obj, path[0] as keyof T, { configurable: true, enumerable: true, writable: true, value });
+    } else {
+      obj[path[0] as keyof T] = value;
+    }
   }
 }
 

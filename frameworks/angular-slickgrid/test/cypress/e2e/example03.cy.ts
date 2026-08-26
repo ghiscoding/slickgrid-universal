@@ -21,6 +21,10 @@ describe('Example 3 - Grid with Editors', () => {
     cy.get('h2').should('contain', 'Example 3: Editors / Delete');
   });
 
+  it('should hide sub-title', () => {
+    cy.get('[data-test=toggle-subtitle]').click();
+  });
+
   it('should have exact Column Titles in the grid', () => {
     cy.get('#grid3')
       .find('.slick-header-columns')
@@ -32,7 +36,7 @@ describe('Example 3 - Grid with Editors', () => {
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`)
       .should('contain', 'Task 1')
       .click();
-    cy.get('input[type=text].editor-text').type('Task 8888');
+    cy.get('input.editor-text').type('Task 8888');
 
     // mouse click on next cell on the right & expect a save
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(4)`).click();
@@ -42,7 +46,7 @@ describe('Example 3 - Grid with Editors', () => {
   it('should be able to undo the editor and expect it to be opened, then clicking on Escape should reveal the cell to have rolled back text of "Task 1"', () => {
     cy.get('[data-test="undo-btn"]').click();
 
-    cy.get('input[type=text].editor-text').should('exist').type('{esc}');
+    cy.get('input.editor-text').should('exist').type('{esc}');
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`).should('contain', 'Task 1');
   });
@@ -89,7 +93,7 @@ describe('Example 3 - Grid with Editors', () => {
     //   .type('Venice');
 
     // change Effort Driven
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(11)`).click();
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(11)`).click({ force: true });
     cy.get(
       `[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(11) > input.editor-checkbox.editor-effort-driven`
     ).check();
@@ -176,7 +180,6 @@ describe('Example 3 - Grid with Editors', () => {
       .blur();
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(10)`).click(); // the blur seems to not always work, so just click on another cell
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(11)`).find('.mdi-check.checkmark-icon');
-
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
   });
 
@@ -241,6 +244,58 @@ describe('Example 3 - Grid with Editors', () => {
     cy.get(
       `[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(11) > input.editor-checkbox.editor-effort-driven`
     ).uncheck();
+  });
+
+  it('should click Add Item button 2x times and expect "Task 100" and "Task 101" to be created', () => {
+    cy.get('[data-test="add-item-btn"]').click();
+    cy.wait(200);
+    cy.get('[data-test="add-item-btn"]').click();
+
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 101');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 100');
+
+    // cy.get('[data-test="toggle-filtering-btn"]').click(); // show it back
+  });
+
+  it('should open the "Prerequisites" Filter and expect to have Task 500 & 101 in the Filter', () => {
+    cy.get('div.ms-filter.filter-prerequisites').trigger('click');
+
+    cy.get('.ms-drop').find('span:nth(1)').contains('Task 101');
+
+    cy.get('.ms-drop').find('span:nth(2)').contains('Task 100');
+
+    cy.get('div.ms-filter.filter-prerequisites').trigger('click');
+  });
+
+  it('should open the "Prerequisites" Editor and expect to have Task 100 & 101 in the Editor', () => {
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(12)`)
+      .should('contain', '')
+      .click();
+
+    cy.get('.ms-drop').find('span:nth(1)').contains('Task 101');
+
+    cy.get('.ms-drop').find('span:nth(2)').contains('Task 100');
+
+    cy.get('[data-name=editor-prerequisites].ms-drop ul > li:nth(0)').click();
+
+    cy.get('.ms-ok-button').last().click({ force: true });
+
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(12)`).should('contain', 'Task 101');
+  });
+
+  it('should delete the last item "Task 101" and expect it to be removed from the Filter', () => {
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('right').wait(50);
+
+    cy.get('[data-test="delete-item-btn"]').click();
+
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0).wait(50);
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 100');
+
+    cy.get('div.ms-filter.filter-prerequisites').trigger('click');
+
+    cy.get('.ms-drop').find('span:nth(1)').contains('Task 100');
+
+    cy.get('[data-name="filter-prerequisites"] .ms-ok-button').trigger('click');
   });
 
   it('should open the "Prerequisites" Filter then choose "Task 3", "Task 4" and "Task 8" from the list and expect to see 2 rows of data in the grid', () => {

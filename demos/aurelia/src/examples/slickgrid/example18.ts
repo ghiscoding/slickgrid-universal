@@ -32,6 +32,7 @@ export class Example18 {
   hideSubTitle = false;
   processing = false;
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
+  private _isUpdatingGroupingFromSelect = false;
   excelExportService = new ExcelExportService();
   pdfExportService = new PdfExportService();
   textExportService = new TextExportService();
@@ -356,19 +357,27 @@ export class Example18 {
     }
   }
 
-  groupByFieldName() {
-    this.clearGrouping();
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
-      this.showPreHeader();
+  groupByFieldName(event: Event, index: number) {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    const updatedGroupingFields = this.selectedGroupingFields.map((field, fieldIndex) => (fieldIndex === index ? selectedValue : field));
+    this.selectedGroupingFields = updatedGroupingFields;
+    this._isUpdatingGroupingFromSelect = true;
+    try {
+      this.clearGrouping();
+      if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+        this.showPreHeader();
 
-      // get the field names from Group By select(s) dropdown, but filter out any empty fields
-      const groupedFields = this.selectedGroupingFields.filter((g) => g !== '');
-      if (groupedFields.length === 0) {
-        this.clearGrouping();
-      } else {
-        this.draggableGroupingPlugin.setDroppedGroups(groupedFields);
+        // get the field names from Group By select(s) dropdown, but filter out any empty fields
+        const groupedFields = updatedGroupingFields.filter((g) => g !== '');
+        if (groupedFields.length === 0) {
+          this.clearGrouping();
+        } else {
+          this.draggableGroupingPlugin.setDroppedGroups(groupedFields);
+        }
+        this.gridObj.invalidate(); // invalidate all rows and re-render
       }
-      this.gridObj.invalidate(); // invalidate all rows and re-render
+    } finally {
+      this._isUpdatingGroupingFromSelect = false;
     }
   }
 
@@ -376,10 +385,13 @@ export class Example18 {
     const caller = change?.caller ?? [];
     const groups = change?.groupColumns ?? [];
 
+    if (this._isUpdatingGroupingFromSelect) {
+      return;
+    }
+
     if (Array.isArray(this.selectedGroupingFields) && Array.isArray(groups) && groups.length > 0) {
       // update all Group By select dropdown
-      this.selectedGroupingFields.forEach((_g, i) => (this.selectedGroupingFields[i] = groups[i]?.getter ?? ''));
-      this.selectedGroupingFields = [...this.selectedGroupingFields]; // force dirty checking
+      this.selectedGroupingFields = [0, 1, 2].map((index) => groups[index]?.getter ?? '');
     } else if (groups.length === 0 && caller === 'remove-group') {
       this.clearGroupingSelects();
     }

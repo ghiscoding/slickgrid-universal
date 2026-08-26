@@ -146,6 +146,12 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     }
     this._userOriginalGridMenu = { ...this.sharedService.gridOptions.gridMenu };
     this._addonOptions = { ...this._defaults, ...this.getDefaultGridMenuOptions(), ...this.sharedService.gridOptions.gridMenu };
+
+    // adjust dropSide for RTL mode (menu should open to the right when button is on the left in RTL)
+    if (this.sharedService.gridOptions.rtl) {
+      this._addonOptions.dropSide = 'right';
+    }
+
     this.sharedService.gridOptions.gridMenu = this._addonOptions;
 
     // merge original user grid menu items with internal items

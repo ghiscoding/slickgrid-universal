@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-vue-demo",
   "private": true,
-  "version": "10.8.3",
+  "version": "10.9.0",
   "type": "module",
   "author": {
     "name": "Ghislain B."
@@ -11,7 +11,8 @@
     "build": "pnpm type-check && vite build",
     "type-check": "tsc --noEmit",
     "vue:preview": "vite preview",
-    "vue:cypress": "cypress open --config-file test/cypress.config.mjs"
+    "vue:cypress": "cypress open --config-file test/cypress.config.mjs",
+    "vue:cypress:ci": "cypress run --config-file test/cypress.config.mjs"
   },
   "dependencies": {
     "@faker-js/faker": "catalog:",
@@ -39,7 +40,7 @@
     "rxjs": "catalog:",
     "slickgrid-vue": "workspace:*",
     "vue": "catalog:",
-    "vue-router": "^5.1.0"
+    "vue-router": "^5.2.0"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",

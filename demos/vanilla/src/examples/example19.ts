@@ -26,6 +26,7 @@ export default class Example19 {
   isWithPagination = true;
   sgb: SlickVanillaGridBundle;
   isGridEditable = true;
+  enableMultiSelection = false;
 
   attached() {
     this._eventHandler = new SlickEventHandler();
@@ -145,6 +146,9 @@ export default class Example19 {
       },
       headerRowHeight: 35,
       rowHeight: 30,
+      selectionOptions: {
+        enableMultiSelection: false,
+      },
 
       // when using the ExcelCopyBuffer, you can see what the selection range is
       enableExcelCopyBuffer: true,
@@ -154,7 +158,7 @@ export default class Example19 {
         //   onCopyCancelled: (e, args: { ranges: SelectedRange[] }) => console.log('onCopyCancelled', args.ranges),
         onBeforePasteCell: (_e, args) => {
           // deny the whole first row and the cells C-E of the second row
-          return !(args.row === 0 || (args.row === 1 && args.cell > 2 && args.cell < 6));
+          return !(args.row === 0 || (args.row === 1 && args.cell > 3 && args.cell < 7));
         },
         clipboardCommandHandler: (clipboardCommand) => {
           this.clipboardCommandStack.push(clipboardCommand);
@@ -200,6 +204,14 @@ export default class Example19 {
     this.isWithPagination = !this.isWithPagination;
     this.sgb.paginationService!.togglePaginationVisibility(this.isWithPagination);
     this.sgb.slickGrid!.setSelectedRows([]);
+  }
+
+  toggleMultiSelection(isChecked: boolean) {
+    this.enableMultiSelection = isChecked;
+    const selectionOptions = { ...this.gridOptions.selectionOptions, enableMultiSelection: isChecked };
+    this.gridOptions.selectionOptions = selectionOptions;
+    this.sgb.slickGrid?.setOptions({ selectionOptions }, true);
+    this.sgb.slickGrid?.getSelectionModel()?.setOptions({ enableMultiSelection: isChecked });
   }
 
   toggleGridEditReadonly() {

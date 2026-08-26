@@ -70,13 +70,46 @@ describe('Draggable class', () => {
     dg.destroy();
   });
 
+  it('should ignore secondary-button mousedown events', () => {
+    const dragInitSpy = vi.fn();
+    const dragStartSpy = vi.fn();
+    const dragSpy = vi.fn();
+    const dragEndSpy = vi.fn();
+    containerElement.className = 'slick-cell';
+
+    dg = Draggable({
+      containerElement,
+      allowDragFrom: 'div.slick-cell',
+      onDrag: dragSpy,
+      onDragInit: dragInitSpy,
+      onDragStart: dragStartSpy,
+      onDragEnd: dragEndSpy,
+    });
+
+    const secondaryButtonEvent = new Event('mousedown');
+    Object.defineProperty(secondaryButtonEvent, 'button', { value: 2 });
+    containerElement.dispatchEvent(secondaryButtonEvent);
+
+    expect(dragInitSpy).not.toHaveBeenCalled();
+    expect(dragStartSpy).not.toHaveBeenCalled();
+    expect(dragSpy).not.toHaveBeenCalled();
+    expect(dragEndSpy).not.toHaveBeenCalled();
+  });
+
   it('should trigger mousedown and expect a dragInit and a dragStart and drag to all happen since it was triggered by an allowed element and we did move afterward', () => {
     const removeBodyListenerSpy = vi.spyOn(document.body, 'removeEventListener');
     const removeWindowListenerSpy = vi.spyOn(window, 'removeEventListener');
     const dragInitSpy = vi.fn();
     const dragSpy = vi.fn();
-    const dragStartSpy = vi.fn();
-    const dragEndSpy = vi.fn();
+    // the drag position object is mutated in place, so snapshot it at call time to assert X/Y pos
+    let dragInitPos: any;
+    let dragStartPos: any;
+    let dragPos: any;
+    let dragEndPos: any;
+    const dragStartSpy = vi.fn((_e, dd) => (dragStartPos = { ...dd }));
+    const dragEndSpy = vi.fn((_e, dd) => (dragEndPos = { ...dd }));
+    dragInitSpy.mockImplementation((_e, dd) => (dragInitPos = { ...dd }));
+    dragSpy.mockImplementation((_e, dd) => (dragPos = { ...dd }));
     containerElement.className = 'slick-cell';
 
     dg = Draggable({
@@ -104,7 +137,19 @@ describe('Draggable class', () => {
     window.dispatchEvent(muEvt);
 
     expect(dg).toBeTruthy();
-    expect(dragInitSpy).toHaveBeenCalledWith(mdEvt, {
+    expect(dragInitSpy).toHaveBeenCalledWith(mdEvt, expect.anything());
+    expect(dragInitPos).toEqual({
+      startX: 10,
+      startY: 10,
+      deltaX: 0,
+      deltaY: 0,
+      dragHandle: containerElement,
+      dragSource: containerElement,
+      matchClassTag: '.slick-cell',
+      target: containerElement,
+    });
+    expect(dragStartSpy).toHaveBeenCalledWith(mmEvt, expect.anything());
+    expect(dragStartPos).toEqual({
       startX: 10,
       startY: 10,
       deltaX: 2,
@@ -112,11 +157,10 @@ describe('Draggable class', () => {
       dragHandle: containerElement,
       dragSource: containerElement,
       matchClassTag: '.slick-cell',
-      target: window,
+      target: document.body,
     });
-    expect(dragStartSpy).toHaveBeenCalled(); // TODO: revisit calledWith X/Y pos, after migrating to TS class
-    expect(dragSpy).toHaveBeenCalled();
-    expect(dragEndSpy).toHaveBeenCalled();
+    expect(dragPos).toEqual(dragStartPos);
+    expect(dragEndPos).toEqual({ ...dragStartPos, target: window });
     expect(removeBodyListenerSpy).toHaveBeenCalledTimes(2 * 2); // 2x events
     expect(removeWindowListenerSpy).toHaveBeenCalledTimes(3 * 2); // 3x events
   });

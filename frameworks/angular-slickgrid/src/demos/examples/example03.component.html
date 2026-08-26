@@ -79,10 +79,15 @@
             Clear Filters
           </button>
           <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="angularGrid.sortService.clearSorting()">Clear Sorting</button>
-          <button class="btn btn-sm btn-outline-primary" (click)="addItem()" title="Clear Filters &amp; Sorting to see it better">
+          <button
+            class="btn btn-sm btn-outline-primary"
+            data-test="add-item-btn"
+            (click)="addItem()"
+            title="Clear Filters &amp; Sorting to see it better"
+          >
             Add item
           </button>
-          <button class="btn btn-sm btn-outline-danger" (click)="deleteItem()">Delete item</button>
+          <button class="btn btn-sm btn-outline-danger" data-test="delete-item-btn" (click)="deleteItem()">Delete item</button>
         </div>
       </div>
       <div class="row" style="margin-top: 5px">

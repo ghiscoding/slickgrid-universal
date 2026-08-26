@@ -72,8 +72,10 @@ const Example: React.FC = () => {
           },
         },
       },
-      rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
+      rowTopOffsetRenderType: 'transform', // default; RowSpan is supported with v10.10.x+
     });
   }
 }
 ```
+
+**v11 transition:** RowSpan uses hybrid positioning in v10.10.x+ so that `rowTopOffsetRenderType: 'transform'` works without requiring the legacy `top` workaround. In v11, transform-based row positioning is planned to be the only supported mode, so `rowTopOffsetRenderType: 'top'` will no longer be necessary and the `'top'` value may be removed from the API.

@@ -1,7 +1,7 @@
 {
   "name": "aurelia-slickgrid",
   "description": "Slickgrid components made available in Aurelia",
-  "version": "10.8.3",
+  "version": "10.9.0",
   "keywords": [
     "aurelia",
     "datagrid",
@@ -45,12 +45,12 @@
     "pack": "npm pack"
   },
   "peerDependencies": {
-    "aurelia": "^2.0.0-rc.1"
+    "aurelia": "^2.0.0-rc.2"
   },
   "dependencies": {
-    "@aurelia/i18n": "^2.0.0-rc.1",
-    "@aurelia/runtime": "^2.0.0-rc.1",
-    "@aurelia/runtime-html": "^2.0.0-rc.1",
+    "@aurelia/i18n": "^2.0.0-rc.2",
+    "@aurelia/runtime": "^2.0.0-rc.2",
+    "@aurelia/runtime-html": "^2.0.0-rc.2",
     "@formkit/tempo": "catalog:",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/custom-footer-component": "workspace:*",
@@ -61,7 +61,7 @@
     "dequal": "catalog:"
   },
   "devDependencies": {
-    "@aurelia/kernel": "^2.0.0-rc.1",
+    "@aurelia/kernel": "^2.0.0-rc.2",
     "dompurify": "catalog:",
     "native-copyfiles": "catalog:",
     "remove-glob": "catalog:",

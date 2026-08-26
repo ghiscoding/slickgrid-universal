@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
+
+### Features
+
+* add `keepComponentAlive` to all 4 framework Row Detail plugins ([#2653](https://github.com/ghiscoding/slickgrid-universal/issues/2653)) ([37d3238](https://github.com/ghiscoding/slickgrid-universal/commit/37d323801007f2f7f7a3536c2526f1ae0470c5ec)) - by @ghiscoding
+
+### Bug Fixes
+
+* **a11y:** add `aria-expanded` to Row Detail ([#2656](https://github.com/ghiscoding/slickgrid-universal/issues/2656)) ([2eb9242](https://github.com/ghiscoding/slickgrid-universal/commit/2eb92427c9b5ab783a02dec3385a64d6574490a4)) - by @ghiscoding
+* Row Detail newly expanded row shouldn't be re-rendered ([#2667](https://github.com/ghiscoding/slickgrid-universal/issues/2667)) ([daeaf31](https://github.com/ghiscoding/slickgrid-universal/commit/daeaf31f608fa247d523b6877a37c50345b62197)) - by @ghiscoding
+
 ## [10.8.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.2...v10.8.3) (2026-07-04)
 
 **Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin

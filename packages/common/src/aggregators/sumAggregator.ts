@@ -21,11 +21,11 @@ export class SumAggregator extends BaseAggregatorClass implements Aggregator {
     // when dealing with Tree Data structure, we also need to keep sum & itemCount refs
     if (isTreeAggregator) {
       if (!item.__treeTotals) {
-        item.__treeTotals = {};
+        item.__treeTotals = Object.create(null);
       }
       if (item.__treeTotals[this._type] === undefined) {
-        item.__treeTotals[this._type] = {};
-        item.__treeTotals.count = {};
+        item.__treeTotals[this._type] = Object.create(null);
+        item.__treeTotals.count = Object.create(null);
       }
       item.__treeTotals['count'][this._field] = 0;
       item.__treeTotals[this._type][this._field] = 0;
@@ -44,7 +44,7 @@ export class SumAggregator extends BaseAggregatorClass implements Aggregator {
     } else {
       if (isTreeParent) {
         if (!item.__treeTotals) {
-          item.__treeTotals = {};
+          item.__treeTotals = Object.create(null);
         }
         this.addGroupTotalPropertiesWhenNotExist(item.__treeTotals);
         this._sum = parseFloat(item.__treeTotals[this._type][this._field] ?? 0);
@@ -58,7 +58,7 @@ export class SumAggregator extends BaseAggregatorClass implements Aggregator {
 
   storeResult(groupTotals: GroupTotals): void {
     if (!groupTotals || groupTotals[this._type] === undefined) {
-      groupTotals[this._type] = {};
+      groupTotals[this._type] = Object.create(null);
     }
     this.addGroupTotalPropertiesWhenNotExist(groupTotals);
     let sum = this._sum;
@@ -75,10 +75,10 @@ export class SumAggregator extends BaseAggregatorClass implements Aggregator {
 
   protected addGroupTotalPropertiesWhenNotExist(groupTotals: any): void {
     if (groupTotals[this._type] === undefined) {
-      groupTotals[this._type] = {};
+      groupTotals[this._type] = Object.create(null);
     }
     if (this._isTreeAggregator && groupTotals['count'] === undefined) {
-      groupTotals['count'] = {};
+      groupTotals['count'] = Object.create(null);
     }
   }
 }

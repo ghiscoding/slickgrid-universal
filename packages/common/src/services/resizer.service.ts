@@ -442,7 +442,7 @@ export class ResizerService {
   resizeColumnsByCellContent(recalculateColumnsTotalWidth = false): void {
     const columns = this._grid.getColumns();
     const dataset = this.dataView.getItems() as any[];
-    const columnWidths: { [columnId in string | number]: number } = {};
+    const columnWidths: { [columnId in string | number]: number } = Object.create(null);
     let reRender = false;
     let readItemCount = 0;
     const viewportWidth = this._gridContainerElm?.offsetWidth ?? 0;
@@ -505,7 +505,7 @@ export class ResizerService {
     this._grid.updateColumns();
     this._hasResizedByContentAtLeastOnce = true;
 
-    const calculateColumnWidths: { [columnId in string | number]: number | undefined } = {};
+    const calculateColumnWidths: { [columnId in string | number]: number | undefined } = Object.create(null);
     for (const columnDef of columns) {
       calculateColumnWidths[columnDef.id] = columnDef.width;
     }
@@ -542,7 +542,7 @@ export class ResizerService {
 
     // Track the largest sanitized formatted text for each column
     let readItemCount = 0;
-    const maxSanitizedTextMap: { [columnId: string]: string } = {};
+    const maxSanitizedTextMap: { [columnId: string]: string } = Object.create(null);
     for (const [rowIdx, item] of dataset.entries()) {
       if (rowIdx > maxItemToInspect) {
         break;

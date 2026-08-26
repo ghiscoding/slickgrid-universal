@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
+
+### Features
+
+* **core:** add variable row height support ([#2650](https://github.com/ghiscoding/slickgrid-universal/issues/2650)) ([fd5d3e2](https://github.com/ghiscoding/slickgrid-universal/commit/fd5d3e262a04db3a16b3750f2da417e19dc633a9)) - by @ghiscoding
+
+### Bug Fixes
+
+* **exports:** add new variable row height to Excel/PDF Export Services ([#2677](https://github.com/ghiscoding/slickgrid-universal/issues/2677)) ([66d8876](https://github.com/ghiscoding/slickgrid-universal/commit/66d88767e5bfe706de2e08de61362a61e0ad1257)) - by @ghiscoding
+* **regression:** prevent row selection from being dropped when last column is hidden ([#2648](https://github.com/ghiscoding/slickgrid-universal/issues/2648)) ([f90a1de](https://github.com/ghiscoding/slickgrid-universal/commit/f90a1dec1f3cc40a69cc37ea450467ac0aaecf30)) - by @Heimo001
+
+### Performance Improvements
+
+* **export:** optimize Excel/PDF export variable row height handling ([#2681](https://github.com/ghiscoding/slickgrid-universal/issues/2681)) ([ebf49f2](https://github.com/ghiscoding/slickgrid-universal/commit/ebf49f2961632087bc480c27b9dc9344a8207a62)) - by @ghiscoding
+
 ## [10.8.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.2...v10.8.3) (2026-07-04)
 
 **Note:** Version bump only for package vanilla-demo

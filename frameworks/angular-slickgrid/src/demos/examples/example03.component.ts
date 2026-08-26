@@ -508,10 +508,10 @@ export class Example3Component implements OnInit {
     setTimeout(() => {
       const requisiteColumnDef = this.columns.find((column: Column) => column.id === 'prerequisites');
       if (requisiteColumnDef) {
-        const filterCollectionAsync = requisiteColumnDef.filter!.collectionAsync;
+        const filterCollection = requisiteColumnDef.filter!.collection;
         const editorCollection = requisiteColumnDef.editor!.collection;
 
-        if (Array.isArray(editorCollection)) {
+        if (Array.isArray(editorCollection) && Array.isArray(filterCollection)) {
           // add the new row to the grid
           this.angularGrid.gridService.addItem(newRows[0]);
 
@@ -519,15 +519,11 @@ export class Example3Component implements OnInit {
 
           // Push to the Editor "collection"
           editorCollection.push({ value: lastRowIndex, label: lastRowIndex, prefix: 'Task' });
+          filterCollection.push({ value: lastRowIndex, label: lastRowIndex, prefix: 'Task' });
 
           // or replace entire "collection"
           // durationColumnDef.editor.collection = [...collection, ...[{ value: lastRowIndex, label: lastRowIndex }]];
-
-          // for the Filter only, we have a trigger an RxJS/Subject change with the new collection
-          // we do this because Filter(s) are shown at all time, while on Editor it's unnecessary since they are only shown when opening them
-          if (filterCollectionAsync instanceof Subject) {
-            filterCollectionAsync.next(editorCollection);
-          }
+          // durationColumnDef.filter.collection = [...collection, ...[{ value: lastRowIndex, label: lastRowIndex }]];
         }
       }
     }, 250);

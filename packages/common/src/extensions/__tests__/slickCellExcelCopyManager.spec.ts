@@ -29,6 +29,7 @@ const mockCellExternalCopyManager = {
   constructor: vi.fn(),
   init: vi.fn(),
   dispose: vi.fn(),
+  copyToClipboard: vi.fn().mockResolvedValue(true),
   getHeaderValueForColumn: vi.fn(),
   getDataItemValueForColumn: vi.fn(),
   setDataItemValueForColumn: vi.fn(),
@@ -125,6 +126,13 @@ describe('CellExcelCopyManager', () => {
       expect(plugin.gridOptions).toEqual(gridOptionsMock);
       expect(setSelectionSpy).toHaveBeenCalledWith(mockCellSelectionModel);
       expect(cellExternalCopyInitSpy).toHaveBeenCalledWith(gridStub, expectedAddonOptions);
+    });
+
+    it('should expose the copy-to-clipboard command from the Excel copy manager', async () => {
+      plugin.init(gridStub);
+
+      await expect(plugin.copyToClipboard()).resolves.toBe(true);
+      expect(mockCellExternalCopyManager.copyToClipboard).toHaveBeenCalledTimes(1);
     });
 
     it('should call internal event handler subscribe and expect the "onCopyCells" option to be called when addon notify is called', () => {

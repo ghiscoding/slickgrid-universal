@@ -5,6 +5,7 @@ export type SelectionModel<T = any> = SlickPlugin & {
   refreshSelections: () => void;
   onSelectedRangesChanged: SlickEvent<SlickRange[]>;
   getOptions: () => T;
+  setOptions: (options: Partial<T>) => void;
   getSelectedRanges: () => SlickRange[];
   setSelectedRanges: (ranges: SlickRange[], caller?: string, selectionMode?: string) => void;
 };
