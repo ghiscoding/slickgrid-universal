@@ -19,6 +19,7 @@ import {
   autoAddEditorFormatterToColumnsWithEditor,
   BackendUtilityService,
   CollectionService,
+  Constants,
   emptyElement,
   ExtensionService,
   ExtensionUtility,
@@ -65,7 +66,6 @@ import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { Observable } from 'rxjs';
-import { Constants } from '../constants';
 import { GlobalGridOptions } from '../global-grid-options';
 import type { AngularGridInstance, ExternalTestingDependencies, GridOption } from '../models/index';
 import { AngularUtilService } from '../services/angularUtil.service';
