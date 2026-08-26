@@ -169,15 +169,15 @@ export class EventPubSubService implements BasePubSubService {
 
   /**
    * Subscribes to a message channel or message type.
-   * This is similar to the "subscribe" except that the callback receives an event typed as CustomEventInit and the data will be inside its "event.detail"
+   * This is similar to the "subscribe" except that the callback receives the original CustomEvent and the data will be inside its "event.detail"
    * @param {String} event - the event name/message
    * @param {Function} callback - The callback to be invoked when the specified message is published.
    * @return {Subscription} possibly a Subscription
    */
-  subscribeEvent<T = any>(eventName: string, listener: (event: CustomEventInit<T>) => void): Subscription {
+  subscribeEvent<T = any>(eventName: string, listener: (event: CustomEvent<T>) => void): Subscription {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
-    this._elementSource.addEventListener(eventNameByConvention, listener);
-    this._subscribedEvents.push({ name: eventNameByConvention, listener });
+    this._elementSource.addEventListener(eventNameByConvention, listener as EventListener);
+    this._subscribedEvents.push({ name: eventNameByConvention, listener: listener as PubSubEvent<T>['listener'] });
 
     // return a subscription that we can later unsubscribe
     return {
