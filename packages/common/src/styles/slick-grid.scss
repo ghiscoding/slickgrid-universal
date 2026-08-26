@@ -72,16 +72,6 @@
   transform: translate(-8px, -8px);
 }
 
-.slick-dark-mode {
-  .btn-default {
-    color: var(--slick-btn-default-text-color, v.$slick-btn-default-text-color);
-    border: var(--slick-btn-default-border, v.$slick-btn-default-border);
-    &:hover {
-      border-color: var(--slick-btn-default-border-hover-color, v.$slick-btn-default-border-hover-color);
-    }
-  }
-}
-
 .slickgrid-container {
   outline: 0;
   position: relative;
