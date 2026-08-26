@@ -55,6 +55,7 @@ import {
   nextTick,
   onBeforeUnmount,
   onMounted,
+  onUpdated,
   ref,
   useAttrs,
   watch,
@@ -73,6 +74,8 @@ interface VueRowDetailView {
   create(columns: Column[], gridOptions: GridOption): any;
   init(grid: SlickGrid, containerService?: ContainerService): void;
 }
+
+type VueEventCallback = (event: CustomEvent<any>) => unknown;
 
 const attrs = useAttrs();
 
@@ -111,6 +114,7 @@ let registeredResources: Array<ExternalResource | ExternalResourceConstructor> =
 let scrollEndCalled = false;
 let showPagination = false;
 let subscriptions: Array<EventSubscription> = [];
+const vueEventSubscriptions = new Map<string, EventSubscription>();
 
 // components / plugins
 let slickEmptyWarning: SlickEmptyWarningComponent | undefined;
@@ -284,6 +288,10 @@ onBeforeUnmount(() => {
   disposing();
 });
 
+onUpdated(() => {
+  synchronizeVueEventSubscriptions();
+});
+
 onMounted(() => {
   if (!columnsModel.value) {
     throw new Error(
@@ -293,25 +301,8 @@ onMounted(() => {
 
   if (elm.value && eventPubSubService instanceof EventPubSubService) {
     eventPubSubService.elementSource = elm.value;
-
-    // Vue doesn't play well with subscribing to native Custom Events & also the render is called after the constructor which brings a second problem
-    // to fix both issues, we need to do the following:
-    // 1. loop through all component props and subscribe to the ones that startsWith "on", we'll assume that it's the custom events
-    // 2. then call the assigned listener(s) when events are dispatched
-    for (const attr in { ...attrs, ...props }) {
-      if (attr.startsWith('onOn')) {
-        const eventCallback = attrs[attr as keyof SlickgridVueProps] || props[attr as keyof SlickgridVueProps];
-        if (typeof eventCallback === 'function') {
-          const singlePrefixEventName = attr.replace(/^onOn/, 'on');
-          subscriptions.push(
-            eventPubSubService.subscribe(singlePrefixEventName, (data: unknown) => {
-              const gridEventName = eventPubSubService.getEventNameByNamingConvention(singlePrefixEventName, '');
-              eventCallback.call(null, new CustomEvent(gridEventName, { detail: data }));
-            })
-          );
-        }
-      }
-    }
+    eventPubSubService.eventNamingStyle = _gridOptions.value.eventNamingStyle ?? 'camelCaseWithExtraOnPrefix';
+    synchronizeVueEventSubscriptions();
   }
 
   initialization();
@@ -629,6 +620,7 @@ function disposing(shouldEmptyDomElementContainer = false) {
   }
 
   collectionObservers.forEach((obs) => obs?.disconnect());
+  disposeVueEventSubscriptions();
   eventPubSubService.unsubscribeAll();
 
   // dispose of all Services
@@ -680,6 +672,45 @@ function disposing(shouldEmptyDomElementContainer = false) {
   if (shouldEmptyDomElementContainer) {
     emptyGridContainerElm();
   }
+}
+
+/**
+ * Bridge function-valued `onOn*` props to the PubSub host element.
+ * Keep one stable subscription per event name and resolve the latest callback at dispatch time to avoid subscription churn on update.
+ */
+function synchronizeVueEventSubscriptions() {
+  const eventPropNames = new Set([...Object.keys(attrs), ...Object.keys(props), ...vueEventSubscriptions.keys()]);
+
+  eventPropNames.forEach((attrName) => {
+    if (!attrName.startsWith('onOn')) {
+      return;
+    }
+
+    const attr = attrName as keyof SlickgridVueProps;
+    const eventCallback = (attrs[attr] || props[attr]) as VueEventCallback | undefined;
+    const eventSubscription = vueEventSubscriptions.get(attrName);
+
+    if (typeof eventCallback === 'function' && !eventSubscription) {
+      const singlePrefixEventName = attrName.replace(/^onOn/, 'on');
+      vueEventSubscriptions.set(
+        attrName,
+        eventPubSubService.subscribeEvent(singlePrefixEventName, (event) => {
+          const currentCallback = (attrs[attr] || props[attr]) as VueEventCallback | undefined;
+          if (typeof currentCallback === 'function' && currentCallback.call(null, event) === false) {
+            event.preventDefault();
+          }
+        })
+      );
+    } else if (typeof eventCallback !== 'function' && eventSubscription) {
+      eventSubscription.unsubscribe?.();
+      vueEventSubscriptions.delete(attrName);
+    }
+  });
+}
+
+function disposeVueEventSubscriptions() {
+  vueEventSubscriptions.forEach((subscription) => subscription.unsubscribe?.());
+  vueEventSubscriptions.clear();
 }
 
 /** Do not rename to `dispose` as it's an Vue hook */

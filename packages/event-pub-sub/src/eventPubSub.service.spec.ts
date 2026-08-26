@@ -156,6 +156,18 @@ describe('EventPubSub Service', () => {
       expect(service.subscribedEvents.length).toBe(0);
     });
 
+    it('should provide the original CustomEvent and preserve its cancellation', () => {
+      const callback = vi.fn((event: CustomEvent<{ name: string }>) => event.preventDefault());
+      const event = new CustomEvent('onClick', { cancelable: true, detail: { name: 'John' } });
+
+      service.subscribeEvent('onClick', callback);
+      const dispatchResult = divContainer.dispatchEvent(event);
+
+      expect(callback).toHaveBeenCalledWith(event);
+      expect(event.defaultPrevented).toBe(true);
+      expect(dispatchResult).toBe(false);
+    });
+
     it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called with lowerCase event name', () => {
       const addEventSpy = vi.spyOn(divContainer, 'addEventListener');
       const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
