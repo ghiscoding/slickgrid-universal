@@ -235,6 +235,15 @@ describe('Example 37 - Hybrid Selection Model', () => {
         .then((text) => expect(text.match(/"fromRow"/g)).to.have.length(2));
       cy.get('[data-test="enable-multi-selection"]').should('be.checked');
     });
+
+    it('should select a rectangular cell range when Shift-clicking another cell', () => {
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l3.r3').click({ shiftKey: true });
+
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 9);
+      cy.get('#selectionRange1').should('have.text', '{"fromRow":1,"fromCell":1,"toRow":3,"toCell":3}');
+    });
+
     it('should preserve row and column offsets when copying multiple cell ranges', () => {
       cy.get('.grid37-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
       cy.get('[data-test="enable-multi-selection"]').should('be.checked');
