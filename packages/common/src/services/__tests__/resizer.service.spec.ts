@@ -944,8 +944,10 @@ describe('Resizer Service', () => {
           }, 15);
         }));
 
-      it('should set "_cResizeCheckRequired" when grid is hidden from UI while auto-fix loop is running', () =>
-        new Promise((done: any) => {
+      it('should set "_cResizeCheckRequired" when grid is hidden from UI while auto-fix loop is running', async () => {
+        vi.useFakeTimers();
+
+        try {
           mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
           mockGridOptions.autoFixResizeTimeout = 3;
           service.intervalRetryDelay = 1;
@@ -953,12 +955,15 @@ describe('Resizer Service', () => {
           vi.spyOn(service as any, 'isGridVisibleInUI').mockReturnValue(false);
           service.init(gridStub, divContainer);
 
-          setTimeout(() => {
-            expect((service as any)._cResizeCheckRequired).toBe(true);
-            service.requestStopOfAutoFixResizeGrid(true);
-            done();
-          }, 5);
-        }));
+          await vi.advanceTimersByTimeAsync(service.intervalRetryDelay);
+
+          expect((service as any)._cResizeCheckRequired).toBe(true);
+        } finally {
+          service.requestStopOfAutoFixResizeGrid(true);
+          service.dispose();
+          vi.useRealTimers();
+        }
+      });
 
       it('should try to resize grid when its UI is deemed broken by the 2nd condition check of "getRenderedRange"', () =>
         new Promise((done: any) => {
