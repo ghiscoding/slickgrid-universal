@@ -272,6 +272,12 @@ With cell selection enabled, click an anchor cell and then Shift-click another c
 
 For non-contiguous selection ranges, set `selectionOptions.enableMultiSelection: true`. Ctrl/Cmd-click toggles the clicked cell or row, and Ctrl/Cmd-drag adds another range. In row-selection mode, `multiSelect` continues to control whether multiple rows are allowed.
 
+By default, the draggable interaction blocks Ctrl/Cmd drag gestures through `preventDragFromKeys: ['ctrlKey', 'metaKey']`. To allow modifier-key cell-range dragging independently of the selection model, explicitly clear the option:
+
+```ts
+preventDragFromKeys: [],
+```
+
 When `enableExcelCopyBuffer` is enabled, copying multiple non-contiguous ranges preserves their relative row and column positions in a single rectangular clipboard block; unselected cells inside the bounding rectangle remain blank.
 
 ###### View

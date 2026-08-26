@@ -81,6 +81,7 @@ const Example48: React.FC = () => {
       gridHeight: 250,
       gridWidth: 800,
       enableCellNavigation: true,
+      preventDragFromKeys: [],
       autoEdit: true,
       editable: true,
       headerRowHeight: 35,

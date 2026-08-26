@@ -4203,6 +4203,20 @@ describe('SlickGrid core file', () => {
       expect(onDragInitSpy).toHaveBeenCalled();
     });
 
+    it('should allow modifier-key drags when preventDragFromKeys is explicitly empty', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, {
+        ...defaultOptions,
+        preventDragFromKeys: [],
+      });
+      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify');
+      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+      const cMouseDownEvent = new MouseEvent('mousedown', { bubbles: true, ctrlKey: true });
+      slickCellElm.dispatchEvent(cMouseDownEvent);
+
+      expect(grid.getOptions().preventDragFromKeys).toEqual([]);
+      expect(onDragInitSpy).toHaveBeenCalled();
+    });
+
     it('should not drag when event has cancelled bubbling (immediatePropagationStopped)', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
 

@@ -114,6 +114,7 @@ export class Example48Component implements OnInit {
       gridHeight: 250,
       gridWidth: 800,
       enableCellNavigation: true,
+      preventDragFromKeys: [],
       autoEdit: true,
       editable: true,
       headerRowHeight: 35,
