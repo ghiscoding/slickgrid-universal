@@ -344,6 +344,19 @@ describe('CellExternalCopyManager', () => {
           });
         }));
 
+      it('should copy the current selection when copyToClipboard is called', async () => {
+        const writeTextSpy = vi.spyOn(navigator.clipboard, 'writeText');
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 0, 1, 1)]);
+        vi.spyOn(gridStub, 'getDataItem').mockImplementation((row) =>
+          row === 0 ? { firstName: 'John', lastName: 'Doe' } : { firstName: 'Jane', lastName: 'Doe' }
+        );
+        plugin.init(gridStub, { includeHeaderWhenCopying: true });
+
+        await expect(plugin.copyToClipboard()).resolves.toBe(true);
+
+        expect(writeTextSpy).toHaveBeenCalledWith('First Name\tLast Name\r\nserialized output\tDoe\r\nserialized output\tDoe\r\n');
+      });
+
       it('should preserve row and column offsets when copying multiple cell ranges', () =>
         new Promise((done: any) => {
           const writeTextSpy = vi.spyOn(navigator.clipboard, 'writeText');
