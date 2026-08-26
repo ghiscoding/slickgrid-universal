@@ -59,6 +59,10 @@ jobs:
       - name: Prettier
         run: pnpm prettier:check
 
+      # we need to build the entire project for Fallow to work properly
+      - name: Build Everything
+        run: pnpm build
+
       - name: Fallow dead-code checks
         run: pnpm fallow:dead-code
 
