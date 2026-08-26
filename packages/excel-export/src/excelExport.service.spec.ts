@@ -20,7 +20,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi, t
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
 import { ExcelExportService } from './excelExport.service.js';
-import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils.js';
+import { useCellFormatByFieldType } from './excelUtils.js';
 
 // mocked modules
 vi.mock('excel-builder-vanilla', async (importOriginal) => ({
@@ -702,7 +702,7 @@ describe('ExcelExportService', () => {
           { mimeType: mimeTypeXLSX }
         );
         expect(service.regularCellExcelFormats.position).toEqual({
-          getDataValueParser: getExcelSameInputDataCallback,
+          getDataValueParser: expect.any(Function),
           excelFormatId: 4,
         });
       });

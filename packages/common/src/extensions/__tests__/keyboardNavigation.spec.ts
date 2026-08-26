@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-// Wire up keyboard navigation (this will use the filterFn)
-import { bindKeyboardNavigation, wireMenuKeyboardNavigation } from '../keyboardNavigation.js';
+// Wire up keyboard navigation through its public entry point.
+import { wireMenuKeyboardNavigation } from '../keyboardNavigation.js';
 
-describe('bindKeyboardNavigation', () => {
+describe('keyboard navigation behavior', () => {
   let container: HTMLElement;
   let items: HTMLElement[];
 
@@ -32,13 +32,13 @@ describe('bindKeyboardNavigation', () => {
       bind: vi.fn(),
     };
 
-    bindKeyboardNavigation(container, fakeService as any, {
+    wireMenuKeyboardNavigation(container, fakeService as any, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
     });
 
     // Verify keydown handler is registered
-    expect(fakeService.bind).toHaveBeenCalledWith(container, 'keydown', expect.any(Function), undefined, 'keyboard-navigation');
+    expect(fakeService.bind).toHaveBeenCalledWith(container, 'keydown', expect.any(Function), undefined, 'menu-keyboard');
   });
 
   it('should bind mouseover handler for hover-to-focus', () => {
@@ -46,13 +46,13 @@ describe('bindKeyboardNavigation', () => {
       bind: vi.fn(),
     };
 
-    bindKeyboardNavigation(container, fakeService as any, {
+    wireMenuKeyboardNavigation(container, fakeService as any, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
     });
 
     // Verify mouseover handler is registered (new hover feature)
-    expect(fakeService.bind).toHaveBeenCalledWith(container, 'mouseover', expect.any(Function), undefined, 'keyboard-navigation');
+    expect(fakeService.bind).toHaveBeenCalledWith(container, 'mouseover', expect.any(Function), undefined, 'menu-keyboard');
   });
 
   it('should use custom eventServiceKey for both handlers', () => {
@@ -60,7 +60,7 @@ describe('bindKeyboardNavigation', () => {
       bind: vi.fn(),
     };
 
-    bindKeyboardNavigation(container, fakeService as any, {
+    wireMenuKeyboardNavigation(container, fakeService as any, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
       eventServiceKey: 'custom-nav',
@@ -74,29 +74,13 @@ describe('bindKeyboardNavigation', () => {
     expect(mouseoverCall?.[4]).toBe('custom-nav');
   });
 
-  it('should use custom filterFn when provided', () => {
-    const filterFn = vi.fn(() => true);
-    const fakeService = {
-      bind: vi.fn(),
-    };
-
-    bindKeyboardNavigation(container, fakeService as any, {
-      focusedItemSelector: '[role="menuitem"]:focus',
-      allItemsSelector: '[role="menuitem"]',
-      filterFn,
-    });
-
-    // Just verify binding happens with filter function
-    expect(fakeService.bind).toHaveBeenCalled();
-  });
-
   it('should move focus with ArrowDown and ArrowUp', () => {
     const service = {
       bind: (el: HTMLElement, event: string, handler: EventListener) => {
         el.addEventListener(event, handler);
       },
     };
-    bindKeyboardNavigation(container, service as any, {
+    wireMenuKeyboardNavigation(container, service as any, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
     });
@@ -132,7 +116,7 @@ describe('bindKeyboardNavigation', () => {
         el.addEventListener(event, handler);
       },
     };
-    bindKeyboardNavigation(container, service as any, {
+    wireMenuKeyboardNavigation(container, service as any, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
     });
@@ -154,7 +138,7 @@ describe('bindKeyboardNavigation', () => {
       },
     };
 
-    bindKeyboardNavigation(container, service as any, {
+    wireMenuKeyboardNavigation(container, service as any, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
       onActivate,
@@ -168,19 +152,15 @@ describe('bindKeyboardNavigation', () => {
     expect(onOpenSubMenu).not.toHaveBeenCalled();
   });
 
-  it('should apply filterFn when hovering over items', () => {
+  it('should not focus hidden items when hovering', () => {
     const menuItems = container.querySelectorAll('[role="menuitem"]');
-    const filterFn = (item: HTMLElement) => item !== menuItems[2];
 
     const bindService = {
       bind: vi.fn(),
     };
 
-    bindKeyboardNavigation(container, bindService as any, {
-      focusedItemSelector: '[role="menuitem"]:focus',
-      allItemsSelector: '[role="menuitem"]',
-      filterFn,
-    });
+    menuItems[2].classList.add('hidden');
+    wireMenuKeyboardNavigation(container, bindService as any);
 
     // Verify mouseover handler is bound
     const mouseoverCall = bindService.bind.mock.calls.find((call) => call[1] === 'mouseover');
@@ -212,7 +192,7 @@ describe('bindKeyboardNavigation', () => {
       bind: vi.fn(),
     };
 
-    bindKeyboardNavigation(container, bindService as any, {
+    wireMenuKeyboardNavigation(container, bindService as any, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
     });
@@ -238,7 +218,7 @@ describe('bindKeyboardNavigation', () => {
       bind: vi.fn(),
     };
 
-    bindKeyboardNavigation(container, bindService as any, {
+    wireMenuKeyboardNavigation(container, bindService as any, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
     });
@@ -267,7 +247,7 @@ describe('bindKeyboardNavigation', () => {
       bind: vi.fn(),
     };
 
-    bindKeyboardNavigation(container, bindService as any, {
+    wireMenuKeyboardNavigation(container, bindService as any, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
     });
@@ -317,14 +297,14 @@ describe('wireMenuKeyboardNavigation', () => {
     menu.remove();
   });
 
-  it('should call bindKeyboardNavigation with default selectors', () => {
+  it('should bind with default selectors', () => {
     const fakeService = {
       bind: vi.fn(),
     };
 
     wireMenuKeyboardNavigation(menu, fakeService);
 
-    // Verify bindKeyboardNavigation was called with proper handler binding
+    // Verify the expected handlers are bound
     expect(fakeService.bind).toHaveBeenCalledWith(menu, 'keydown', expect.any(Function), undefined, 'menu-keyboard');
     expect(fakeService.bind).toHaveBeenCalledWith(menu, 'mouseover', expect.any(Function), undefined, 'menu-keyboard');
   });
@@ -524,7 +504,7 @@ describe('Sub-menu keyboard navigation', () => {
     onOpenSubMenu = vi.fn();
     onCloseSubMenu = vi.fn();
 
-    bindKeyboardNavigation(container, bindService, {
+    wireMenuKeyboardNavigation(container, bindService, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
       onOpenSubMenu,
@@ -635,7 +615,7 @@ describe('Sub-menu keyboard navigation', () => {
     const localOnCloseSubMenu = vi.fn();
     const localOnEscape = vi.fn();
 
-    bindKeyboardNavigation(subMenu, bindService, {
+    wireMenuKeyboardNavigation(subMenu, bindService, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
       onCloseSubMenu: localOnCloseSubMenu,
@@ -661,7 +641,8 @@ describe('Sub-menu keyboard navigation', () => {
 
     document.body.appendChild(container);
 
-    bindKeyboardNavigation(container, bindService, {
+    delete container.dataset.keyboardNavBound;
+    wireMenuKeyboardNavigation(container, bindService, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
       onCloseSubMenu: localOnCloseSubMenu,
