@@ -1,5 +1,5 @@
 import { isNumber } from '@slickgrid-universal/utils';
-import { type SlickGrid } from '../core/index.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import { retrieveFormatterOptions } from '../formatters/formatterUtilities.js';
 import { decimalFormatted, thousandSeparatorFormatted } from '../services/utilities.js';
 import type { Column, GroupTotalsFormatter } from './../interfaces/index.js';

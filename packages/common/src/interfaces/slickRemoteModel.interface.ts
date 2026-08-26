@@ -1,4 +1,4 @@
-import type { SlickEvent } from '../core/index.js';
+import type { SlickEvent } from '../core/slickCore.js';
 import type { Column } from './column.interface.js';
 
 /**

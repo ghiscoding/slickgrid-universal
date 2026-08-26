@@ -1,4 +1,4 @@
-import type { SlickGrid } from '../core/index.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type { ContainerService } from '../services/index.js';
 import type { Column } from './column.interface.js';
 import type { GridOption } from './gridOption.interface.js';

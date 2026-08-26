@@ -1,7 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 import { SlickEventHandler, SlickGlobalEditorLock } from '../core/slickCore.js';
-import type { SlickDataView } from '../core/slickDataview.js';
+import type { SlickDataView } from '../core/slickDataView.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import type {
   Column,

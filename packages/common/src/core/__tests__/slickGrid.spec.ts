@@ -7,7 +7,7 @@ import { copyCellToClipboard } from '../../formatters/formatterUtilities.js';
 import { SelectionModel } from '../../index.js';
 import type { Column, CustomDataView, EditCommand, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces/index.js';
 import { SlickEvent, SlickEventData, SlickGlobalEditorLock, SlickRange } from '../slickCore.js';
-import { SlickDataView } from '../slickDataview.js';
+import { SlickDataView } from '../slickDataView.js';
 import { SlickGrid } from '../slickGrid.js';
 
 // Subclass for protected method coverage

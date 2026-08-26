@@ -1,4 +1,4 @@
-import type { SlickGrid } from '../core/index.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type { OperatorType, SearchTerm } from '../enums/index.js';
 import type { CollectionService, RxJsFacade, TranslaterService } from '../services/index.js';
 import type { Column, FilterArguments, FilterCallback } from './index.js';

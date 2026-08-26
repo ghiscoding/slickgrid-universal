@@ -1,4 +1,5 @@
-import type { SlickEvent, SlickGrid } from '../core/index.js';
+import type { SlickEvent } from '../core/slickCore.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type { Column } from '../interfaces/index.js';
 
 export type ColumnReorderFunction = (

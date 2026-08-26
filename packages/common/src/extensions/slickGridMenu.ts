@@ -1,6 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement, extend, findWidthOrDefault, getHtmlStringOutput } from '@slickgrid-universal/utils';
-import { SlickEvent, Utils as SlickUtils } from '../core/index.js';
+import { SlickEvent, Utils as SlickUtils } from '../core/slickCore.js';
 import type {
   Column,
   DOMEvent,
@@ -15,10 +15,11 @@ import type {
 } from '../interfaces/index.js';
 import type { ExcelExportService } from '../services/excelExport.service.js';
 import type { FilterService } from '../services/filter.service.js';
-import { getTranslationPrefix, type PdfExportService } from '../services/index.js';
+import type { PdfExportService } from '../services/pdfExport.service.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { SortService } from '../services/sort.service.js';
 import type { TextExportService } from '../services/textExport.service.js';
+import { getTranslationPrefix } from '../services/utilities.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
 

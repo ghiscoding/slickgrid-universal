@@ -1,7 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 import { Constants } from '../constants.js';
-import { SlickEventData } from '../core/index.js';
+import { SlickEventData } from '../core/slickCore.js';
 import { sliderValidator } from '../editorValidators/sliderValidator.js';
 import type {
   CompositeEditorOption,

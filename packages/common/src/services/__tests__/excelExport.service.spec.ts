@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { SlickGrid } from '../../core/index.js';
+import type { SlickGrid } from '../../core/slickGrid.js';
 import type { ContainerService } from '../container.service.js';
 import { ExcelExportService } from '../excelExport.service.js';
 

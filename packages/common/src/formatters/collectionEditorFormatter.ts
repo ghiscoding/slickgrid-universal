@@ -1,4 +1,4 @@
-import { findOrDefault } from '../services/index.js';
+import { findOrDefault } from '../services/utilities.js';
 import type { Formatter } from './../interfaces/index.js';
 import { arrayToCsvFormatter } from './arrayToCsvFormatter.js';
 

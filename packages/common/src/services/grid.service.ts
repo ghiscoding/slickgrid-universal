@@ -1,6 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { arrayRemoveItemByIndex, isDefined, isObjectEmpty } from '@slickgrid-universal/utils';
-import type { SlickDataView, SlickGrid } from '../core/index.js';
+import { type SlickDataView } from '../core/slickDataView.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import { SlickHybridSelectionModel } from '../extensions/slickHybridSelectionModel.js';
 import type {
   CellArgs,

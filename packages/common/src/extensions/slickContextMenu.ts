@@ -1,6 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { extend, isDefined } from '@slickgrid-universal/utils';
-import type { SlickEventData } from '../core/index.js';
+import type { SlickEventData } from '../core/slickCore.js';
 import { copyCellToClipboard, getCopyCellValue } from '../formatters/formatterUtilities.js';
 import type {
   Column,
@@ -12,9 +12,12 @@ import type {
   MenuOptionItem,
   OnContextMenuArgs,
 } from '../interfaces/index.js';
-import { getTranslationPrefix, type ExcelExportService, type PdfExportService, type TextExportService } from '../services/index.js';
+import type { ExcelExportService } from '../services/excelExport.service.js';
+import type { PdfExportService } from '../services/pdfExport.service.js';
 import type { SharedService } from '../services/shared.service.js';
+import type { TextExportService } from '../services/textExport.service.js';
 import type { TreeDataService } from '../services/treeData.service.js';
+import { getTranslationPrefix } from '../services/utilities.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
 

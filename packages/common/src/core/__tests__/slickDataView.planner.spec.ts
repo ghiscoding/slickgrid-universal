@@ -1,5 +1,5 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { SlickDataView } from '../slickDataview.js';
+import { SlickDataView } from '../slickDataView.js';
 import { SlickGrid } from '../slickGrid.js';
 
 vi.useFakeTimers();

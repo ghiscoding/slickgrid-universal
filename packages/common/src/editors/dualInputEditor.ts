@@ -1,6 +1,8 @@
 import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
-import { SlickEventData, SlickEventHandler } from '../core/index.js';
-import { floatValidator, integerValidator, textValidator } from '../editorValidators/index.js';
+import { SlickEventData, SlickEventHandler } from '../core/slickCore.js';
+import { floatValidator } from '../editorValidators/floatValidator.js';
+import { integerValidator } from '../editorValidators/integerValidator.js';
+import { textValidator } from '../editorValidators/textValidator.js';
 import type {
   ColumnEditorDualInput,
   CompositeEditorOption,
