@@ -276,10 +276,16 @@ describe('Example 37 - Hybrid Selection Model', () => {
 
     it('should select the active cell when cell selection disables active-row selection', () => {
       cy.window()
-        .its('Example37.sgb1.slickGrid', { timeout: 10000 })
-        .should('exist')
-        .then((slickGrid: any) => {
-          const selectionModel = slickGrid.getSelectionModel();
+        .its('main.app.viewModelObj', { timeout: 10000 })
+        .should((viewModelObj: Record<string, any>) => {
+          expect(
+            Object.values(viewModelObj).some((viewModel) => viewModel?.sgb1?.slickGrid),
+            'Grid 1 view model'
+          ).to.be.true;
+        })
+        .then((viewModelObj: Record<string, any>) => {
+          const viewModel = Object.values(viewModelObj).find((candidate) => candidate?.sgb1?.slickGrid);
+          const selectionModel = viewModel.sgb1.slickGrid.getSelectionModel();
           selectionModel.setOptions({ selectActiveCell: true, selectActiveRow: false, selectionType: 'cell' });
           selectionModel.setSelectedRanges([]);
         });
