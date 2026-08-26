@@ -275,11 +275,14 @@ describe('Example 37 - Hybrid Selection Model', () => {
     });
 
     it('should select the active cell when cell selection disables active-row selection', () => {
-      cy.window().then((win: any) => {
-        const selectionModel = win.Example37.sgb1.slickGrid.getSelectionModel();
-        selectionModel.setOptions({ selectActiveCell: true, selectActiveRow: false, selectionType: 'cell' });
-        selectionModel.setSelectedRanges([]);
-      });
+      cy.window()
+        .its('Example37.sgb1.slickGrid', { timeout: 10000 })
+        .should('exist')
+        .then((slickGrid: any) => {
+          const selectionModel = slickGrid.getSelectionModel();
+          selectionModel.setOptions({ selectActiveCell: true, selectActiveRow: false, selectionType: 'cell' });
+          selectionModel.setSelectedRanges([]);
+        });
 
       cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
       cy.get('#selectionRange1').should('have.text', '{"fromRow":1,"fromCell":1,"toRow":1,"toCell":1}');
