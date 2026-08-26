@@ -593,6 +593,14 @@ describe('extend()', () => {
     test('arrays are merged', () => expect(target).toEqual(expectedTarget));
   });
 
+  describe('deep clone; empty arrays override defaults', () => {
+    const defaults = { arr: [1, 2, 3] };
+    const override = { arr: [] };
+    const target = extend(true, defaults, override);
+
+    test('empty arrays replace the default array', () => expect(target).toEqual({ arr: [] }));
+  });
+
   describe('deep clone === false; objects merged normally', () => {
     const defaults = { a: 1 };
     const override = { a: 2 };

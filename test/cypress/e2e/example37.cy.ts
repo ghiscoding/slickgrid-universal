@@ -74,17 +74,17 @@ describe('Example 37 - Hybrid Selection Model', () => {
       });
     });
 
-    it('should click on Task 1 and be able to drag from bottom right corner to expand the cell selections to include 4 cells', () => {
+    it('should allow Ctrl-drag from Task 1 to expand the cell selections to include 4 cells', () => {
       cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').as('task1');
       cy.get('@task1').should('contain', 'Task 1');
       cy.get('@task1').click().should('have.class', 'selected');
       cy.get('.grid37-1 .slick-cell.selected').should('have.length', 1);
 
-      cy.get('@task1').find('.slick-drag-replace-handle').trigger('mousedown', { which: 1, force: true });
+      cy.get('@task1').find('.slick-drag-replace-handle').trigger('mousedown', { which: 1, ctrlKey: true, force: true });
 
       cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l2.r2')
-        .trigger('mousemove', 'bottomRight')
-        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+        .trigger('mousemove', 'bottomRight', { ctrlKey: true, force: true })
+        .trigger('mouseup', 'bottomRight', { which: 1, ctrlKey: true, force: true });
 
       cy.get('.grid37-1 .slick-cell.selected').should('have.length', 4);
     });
