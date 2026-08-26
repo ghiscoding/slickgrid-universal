@@ -77,6 +77,14 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
   });
 
   describe('with Pagination of size 20', () => {
+    it('should select a rectangular cell range when Shift-clicking another cell', () => {
+      cy.getCell(10, 4, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).click();
+      cy.getCell(12, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).click({ shiftKey: true });
+
+      cy.get('.grid19 .slick-cell.selected').should('have.length', 9);
+      cy.get('#selectionRange').should('have.text', '{"fromRow":10,"fromCell":4,"toRow":12,"toCell":6}');
+    });
+
     it('should click on cell B14 then Ctrl+Shift+End with selection B14-CV19', () => {
       cy.getCell(14, 3, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_B14').click();
 

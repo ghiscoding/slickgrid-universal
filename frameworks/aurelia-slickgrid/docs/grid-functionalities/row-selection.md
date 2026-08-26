@@ -280,6 +280,8 @@ selectionOptions: {
 }
 ```
 
+With cell selection enabled, click an anchor cell and then Shift-click another cell to select the rectangular range between them. In row-selection mode, Shift-click selects all rows between the anchor and clicked row.
+
 For non-contiguous selection ranges, set `selectionOptions.enableMultiSelection: true`. Ctrl/Cmd-click toggles the clicked cell or row, and Ctrl/Cmd-drag adds another range. In row-selection mode, `multiSelect` continues to control whether multiple rows are allowed.
 
 When `enableExcelCopyBuffer` is enabled, copying multiple non-contiguous ranges preserves their relative row and column positions in a single rectangular clipboard block; unselected cells inside the bounding rectangle remain blank.
