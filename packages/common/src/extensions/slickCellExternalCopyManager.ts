@@ -226,6 +226,70 @@ export class SlickCellExternalCopyManager {
     this._addonOptions.includeHeaderWhenCopying = includeHeaderWhenCopying;
   }
 
+  /** Copy the currently selected cell ranges to the clipboard. */
+  async copyToClipboard(e: SlickEventData = new SlickEventData()): Promise<boolean> {
+    if (typeof this._onCopyInit === 'function') {
+      this._onCopyInit.call(this);
+    }
+
+    const ranges = this._grid.getSelectionModel()?.getSelectedRanges() ?? [];
+    if (ranges.length === 0) {
+      return false;
+    }
+
+    this._copiedRanges = ranges;
+    this.markCopySelection(ranges);
+    this.onCopyCells.notify({ ranges });
+    if (typeof this._addonOptions.onCopyCells === 'function') {
+      this._addonOptions.onCopyCells(e, { ranges });
+    }
+
+    const columns = this._grid.getColumns();
+    const fromRow = Math.min(...ranges.map((range) => range.fromRow));
+    const fromCell = Math.min(...ranges.map((range) => range.fromCell));
+    const toRow = Math.max(...ranges.map((range) => range.toRow));
+    const toCell = Math.max(...ranges.map((range) => range.toCell));
+    const clipTextRows: string[] = [];
+
+    if (this._addonOptions.includeHeaderWhenCopying) {
+      const clipTextHeaders: string[] = [];
+      for (let j = fromCell; j <= toCell; j++) {
+        const column = columns[j];
+        const isSelectedColumn = ranges.some((range) => j >= range.fromCell && j <= range.toCell);
+        if (this.isColumnCopyable(column)) {
+          clipTextHeaders.push(isSelectedColumn ? this.getHeaderValueForColumn(column) : '');
+        }
+      }
+      clipTextRows.push(clipTextHeaders.join('\t'));
+    }
+
+    for (let i = fromRow; i <= toRow; i++) {
+      const clipTextCells: string[] = [];
+      const dt = this._dataWrapper.getDataItem(i);
+      for (let j = fromCell; j <= toCell; j++) {
+        const column = columns[j];
+        if (this.isColumnCopyable(column)) {
+          clipTextCells.push(ranges.some((range) => range.contains(i, j)) ? this.getDataItemValueForColumn(dt, column, i, j, e) : '');
+        }
+      }
+      clipTextRows.push(clipTextCells.join('\t'));
+    }
+
+    const clipText = clipTextRows.join('\r\n') + '\r\n';
+
+    // copy to clipboard using override or default browser Clipboard API
+    const clipboardOverrideFn = this._grid.getOptions().clipboardWriteOverride;
+    clipboardOverrideFn ? clipboardOverrideFn(clipText) : await navigator.clipboard.writeText(clipText);
+
+    if (typeof this._onCopySuccess === 'function') {
+      // If it's cell selection, use the toRow/fromRow fields
+      const rowCount = ranges.length === 1 ? ranges[0].toRow + 1 - ranges[0].fromRow : ranges.length;
+      this._onCopySuccess(rowCount);
+    }
+
+    return true;
+  }
+
   //
   // protected functions
   // ---------------------
@@ -430,7 +494,6 @@ export class SlickCellExternalCopyManager {
 
   protected async handleKeyDown(e: SlickEventData): Promise<boolean | void> {
     try {
-      let ranges: SlickRange[];
       if (!this._grid.getEditorLock().isActive() || this._grid.getOptions().autoEdit) {
         if (e.key === 'Escape') {
           if (this._copiedRanges) {
@@ -446,69 +509,7 @@ export class SlickCellExternalCopyManager {
 
         if ((e.key === 'c' || e.key === 'Insert') && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
           // CTRL+C or CTRL+INS
-          if (typeof this._onCopyInit === 'function') {
-            this._onCopyInit.call(this);
-          }
-          ranges = this._grid.getSelectionModel()?.getSelectedRanges() ?? [];
-          if (ranges.length !== 0) {
-            this._copiedRanges = ranges;
-            this.markCopySelection(ranges);
-            this.onCopyCells.notify({ ranges });
-            if (typeof this._addonOptions.onCopyCells === 'function') {
-              this._addonOptions.onCopyCells(e, { ranges });
-            }
-
-            const columns = this._grid.getColumns();
-            const fromRow = Math.min(...ranges.map((range) => range.fromRow));
-            const fromCell = Math.min(...ranges.map((range) => range.fromCell));
-            const toRow = Math.max(...ranges.map((range) => range.toRow));
-            const toCell = Math.max(...ranges.map((range) => range.toCell));
-            let clipText = '';
-
-            const clipTextRows: string[] = [];
-            if (this._addonOptions.includeHeaderWhenCopying) {
-              const clipTextHeaders: string[] = [];
-              for (let j = fromCell; j <= toCell; j++) {
-                const column = columns[j];
-                const isSelectedColumn = ranges.some((range) => j >= range.fromCell && j <= range.toCell);
-                if (column) {
-                  const colName: string = column.name instanceof HTMLElement ? stripTags(column.name.innerHTML) : (column.name as string);
-                  if (colName.length > 0 && !column.hidden) {
-                    clipTextHeaders.push(isSelectedColumn ? this.getHeaderValueForColumn(column) : '');
-                  }
-                }
-              }
-              clipTextRows.push(clipTextHeaders.join('\t'));
-            }
-
-            for (let i = fromRow; i <= toRow; i++) {
-              const clipTextCells: string[] = [];
-              const dt = this._dataWrapper.getDataItem(i);
-              for (let j = fromCell; j <= toCell; j++) {
-                const column = columns[j];
-                if (column) {
-                  const colName: string = column.name instanceof HTMLElement ? stripTags(column.name.innerHTML) : (column.name as string);
-                  if (colName.length > 0 && !column.hidden) {
-                    clipTextCells.push(
-                      ranges.some((range) => range.contains(i, j)) ? this.getDataItemValueForColumn(dt, column, i, j, e) : ''
-                    );
-                  }
-                }
-              }
-              clipTextRows.push(clipTextCells.join('\t'));
-            }
-            clipText += clipTextRows.join('\r\n') + '\r\n';
-
-            // copy to clipboard using override or default browser Clipboard API
-            const clipboardOverrideFn = this._grid.getOptions().clipboardWriteOverride;
-            clipboardOverrideFn ? clipboardOverrideFn(clipText) : await navigator.clipboard.writeText(clipText);
-
-            if (typeof this._onCopySuccess === 'function') {
-              // If it's cell selection, use the toRow/fromRow fields
-              const rowCount = ranges.length === 1 ? ranges[0].toRow + 1 - ranges[0].fromRow : ranges.length;
-              this._onCopySuccess(rowCount);
-            }
-
+          if (await this.copyToClipboard(e)) {
             return false;
           }
         }
@@ -546,5 +547,13 @@ export class SlickCellExternalCopyManager {
       () => this.clearCopySelection(),
       this.addonOptions?.clearCopySelectionDelay || CLEAR_COPY_SELECTION_DELAY
     );
+  }
+
+  protected isColumnCopyable(column?: Column): column is Column {
+    if (!column) {
+      return false;
+    }
+    const colName: string = column.name instanceof HTMLElement ? stripTags(column.name.innerHTML) : (column.name as string);
+    return colName.length > 0 && !column.hidden;
   }
 }

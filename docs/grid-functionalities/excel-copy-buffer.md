@@ -16,6 +16,23 @@ this.gridOptions = {
 };
 ```
 
+### Programmatic Copy
+
+The Excel copy buffer can also be triggered from a context-menu or toolbar command. Keep the registered plugin instance and call `copyToClipboard()` to use the same selection serialization as `Ctrl+C`:
+
+```typescript
+let excelCopyManager: SlickCellExcelCopyManager;
+
+this.gridOptions = {
+  enableExcelCopyBuffer: true,
+  excelCopyBufferOptions: {
+    onExtensionRegistered: (plugin) => (excelCopyManager = plugin),
+  },
+};
+
+await excelCopyManager.copyToClipboard();
+```
+
 ### Copy & Paste with Cell Formatter
 What if you have a date in UTC format in your dataset but your grid shows it as a Date ISO format? In that case, you are using a Formatter (e.g. `formatter: Formatters.dateIso`) and you wish to use that formatter. Good news, that is supported with and to make is simpler for the implementation, we will use a flag that already exist which is `exportWithFormatter` and is used by the `Export to File` service (for more info, read [Wiki - Export to File](export-to-text-file.md)
 
