@@ -570,6 +570,17 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     expect(pubSubSpy).toHaveBeenNthCalledWith(5, 'onBeforeGridDestroy', expect.any(Object));
   });
 
+  it('should preserve caller-owned columns when destroyed', () => {
+    component.ngAfterViewInit();
+    const suppliedColumns: Column[] = [{ id: 'firstName', field: 'firstName', name: 'First Name' }];
+    component.columns = suppliedColumns;
+
+    component.ngOnDestroy();
+
+    expect(suppliedColumns).toHaveLength(1);
+    expect(suppliedColumns[0]).toMatchObject({ id: 'firstName', field: 'firstName', name: 'First Name' });
+  });
+
   it('should update column definitions when onPluginColumnsChanged event is triggered with updated columns', () => {
     const colsChangeSpy = vi.spyOn(component.columnsChange, 'emit');
     const columnsMock = [

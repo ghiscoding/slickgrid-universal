@@ -671,12 +671,10 @@ function disposing(shouldEmptyDomElementContainer = false) {
     }
     backendServiceApi = undefined;
   }
-  for (const prop of Object.keys(columnsModel.value)) {
-    (columnsModel.value as any)[prop] = null;
-  }
   for (const prop of Object.keys(sharedService)) {
     (sharedService as any)[prop] = null;
   }
+  _columns.value = [];
 
   // we could optionally also empty the content of the grid container DOM element
   if (shouldEmptyDomElementContainer) {
