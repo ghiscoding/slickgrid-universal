@@ -11,8 +11,8 @@ const Example17: React.FC = () => {
   const [uploadFileRef, setUploadFileRef] = useState('');
   const [hideSubTitle, setHideSubTitle] = useState(false);
 
-  function destroyGrid() {
-    setGridCreated(false);
+  function toggleGrid() {
+    setGridCreated(!gridCreated);
   }
 
   function handleFileImport(event: any) {
@@ -149,8 +149,13 @@ const Example17: React.FC = () => {
             Use default CSV data
           </button>
           &nbsp;/
-          <button className="btn btn-outline-danger btn-sm ms-2" onClick={() => destroyGrid()}>
-            Destroy Grid
+          <button
+            className="btn btn-outline-danger btn-sm ms-2"
+            data-test="toggle-grid-btn"
+            disabled={columns.length === 0}
+            onClick={() => toggleGrid()}
+          >
+            {gridCreated ? 'Destroy Grid' : 'Recreate Grid'}
           </button>
         </div>
       </div>

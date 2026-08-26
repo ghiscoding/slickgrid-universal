@@ -380,6 +380,16 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(component.isGridInitialized).toBeTruthy();
   });
 
+  it('should preserve caller-owned column definitions when disposed', () => {
+    const suppliedColumns: Column[] = [{ id: 'firstName', field: 'firstName', name: 'First Name' }];
+    component.columnDefinitions = suppliedColumns;
+
+    component.dispose();
+
+    expect(suppliedColumns).toHaveLength(1);
+    expect(suppliedColumns[0]).toMatchObject({ id: 'firstName', field: 'firstName', name: 'First Name' });
+  });
+
   it('should provide the gridService lazily', () => {
     cellDiv = document.createElement('div');
     divContainer.innerHTML = template;

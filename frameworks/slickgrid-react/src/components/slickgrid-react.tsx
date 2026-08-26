@@ -725,9 +725,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       }
       this.backendServiceApi = undefined;
     }
-    for (const prop of Object.keys(this.props.columns)) {
-      (this.props.columns as any)[prop] = null;
-    }
     for (const prop of Object.keys(this.sharedService)) {
       (this.sharedService as any)[prop] = null;
     }
