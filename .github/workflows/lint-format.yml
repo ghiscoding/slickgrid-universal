@@ -59,6 +59,10 @@ jobs:
       - name: Prettier
         run: pnpm prettier:check
 
+      # we need to build at least the Slickgrid-Universal packages for Fallow to work properly
+      - name: Build Slickgrid-Universal packages
+        run: pnpm build:universal
+
       - name: Fallow dead-code checks
         run: pnpm fallow:dead-code
 
