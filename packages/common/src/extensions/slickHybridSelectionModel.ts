@@ -313,7 +313,7 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
     } else {
       if (this._options?.selectActiveCell && isRowDefined && isCellDefined) {
         // if any row selections are visible, leave them untouched unless `selectActiveCell` is enabled
-        if (this._options.selectActiveRow) {
+        if (this._options.selectionType === 'cell' || this._options.selectActiveRow) {
           this.setSelectedRanges([new SlickRange(args.row, args.cell)], undefined, '');
         }
       } else if (!this._options?.selectActiveCell || (!isRowDefined && !isCellDefined)) {

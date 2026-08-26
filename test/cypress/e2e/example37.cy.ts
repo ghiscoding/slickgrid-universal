@@ -273,6 +273,17 @@ describe('Example 37 - Hybrid Selection Model', () => {
 
       cy.get('@clipboardWriteText').should('have.been.calledWith', 'Task 1\t\t\t\t\r\nTask 2\t\t\t\t2\r\nTask 3\t\t\t\t3\r\n');
     });
+
+    it('should select the active cell when cell selection disables active-row selection', () => {
+      cy.window().then((win: any) => {
+        const selectionModel = win.Example37.sgb1.slickGrid.getSelectionModel();
+        selectionModel.setOptions({ selectActiveCell: true, selectActiveRow: false, selectionType: 'cell' });
+        selectionModel.setSelectedRanges([]);
+      });
+
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
+      cy.get('#selectionRange1').should('have.text', '{"fromRow":1,"fromCell":1,"toRow":1,"toCell":1}');
+    });
   });
 
   describe('Grid 2', () => {

@@ -392,6 +392,8 @@ function changeRowSelections() {
 
 Starting with v9.10.0, you can now use the new Hybrid Selection Model, this new model will allow you to do Cell Selection & Row Selection in the same grid. This wasn't previously doable before that version because SlickGrid only ever allows 1 selection model to be loaded at once and so we had to load either `SlickCellSelectionModel` or `SlickRowSelectionModel` but never both of them at the same time. The new Hybrid Selection Model is merging both of these plugins in a single plugin allowing us to do both type of selections.
 
+When `selectionType: 'cell'`, `selectActiveCell` controls whether the active cell becomes the selected range; `selectActiveRow` does not disable cell selection.
+
 > [!NOTE]
 > You can use `{ enableSelection: true, selectionOptions: { selectionType: 'mixed' }}` (or `enableHybridSelection: true` in v9) grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
 
