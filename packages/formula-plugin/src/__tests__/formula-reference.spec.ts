@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildFormulaReferenceColorInfos,
+  buildFormulaReferenceCssHash,
   expandFormulaReferenceToGridCells,
   FormulaReferenceColorCache,
   getExcelColumnIndexByName,
@@ -74,5 +75,18 @@ describe('formula reference utilities', () => {
     cache.clear();
     expect(cache.size).toBe(0);
     expect(cache.isDirty).toBe(false);
+  });
+
+  it('should build one CSS hash for more than ten colored references and accept numeric column IDs', () => {
+    const references = buildFormulaReferenceColorInfos('=A1+B1+C1+D1+E1+F1+G1+H1+I1+J1+K1');
+    const columns = Array.from({ length: 11 }, (_value, index) => ({ id: index }));
+    const hash = buildFormulaReferenceCssHash(references, columns, 1);
+
+    expect(Object.keys(hash)).toEqual(['0']);
+    expect(hash[0][0]).toBe('formula-cell-color-1');
+    expect(hash[0][9]).toBe('formula-cell-color-10');
+    expect(hash[0][10]).toBe('formula-cell-color-1');
+    expect(Object.keys(hash[0])).toHaveLength(11);
+    expect(buildFormulaReferenceCssHash(references, columns, 0)).toEqual({});
   });
 });

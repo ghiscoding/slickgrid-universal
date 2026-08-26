@@ -2,7 +2,9 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import type { Editor, EditorArguments, EditorValidationResult, SelectionModel } from '@slickgrid-universal/common';
 import { createDomElement, SlickRange } from '@slickgrid-universal/common';
 import {
+  buildFormulaReferenceCssHash,
   createFormulaReferenceTokenRegex,
+  FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY,
   FormulaReferenceColorCache,
   getExcelColumnNameByIndex,
   normalizeFormulaReferenceToken,
@@ -37,9 +39,7 @@ export class FormulaCellEditor implements Editor {
   protected _originalValue = '';
   protected _referenceEditRange?: { start: number; end: number };
   protected _referenceRangeAnchorCell?: { row: number; cell: number };
-  protected _persistentFormulaColorStyleKey = 'formula-editor-grid-persistent-colors';
-  protected _referenceSelectionStyleKey = 'formula-editor-grid-ref-selection';
-  protected _selectionHighlightStyleKey = 'formula-editor-grid-sel-highlight';
+  protected _selectionRangesBeforeFormulaHighlight?: SlickRange[];
   protected _suppressNextGridClick = false;
   protected _suppressGridClickResetTimer?: ReturnType<typeof setTimeout>;
   protected _suppressInitialTabBlur = false;
@@ -48,7 +48,6 @@ export class FormulaCellEditor implements Editor {
   protected _isSelectionModelHighlightActive = false;
   protected _plainTextValue = ''; // Keep plain text in sync with DOM for reliable copy/paste
   protected _formulaRefColorCache: FormulaReferenceColorCache = new FormulaReferenceColorCache();
-  protected _hasAppliedColorsOnce = false; // Track if we've ever applied colors to avoid unnecessary removals
   protected _bindEventService: BindingEventService = new BindingEventService();
   protected _debug = false;
 
@@ -97,6 +96,7 @@ export class FormulaCellEditor implements Editor {
     clearTimeout(this._tabNavigateTimer);
     this.hideAutocomplete();
     this.clearReferenceSelectionHighlight();
+    this.clearFormulaReferenceColors();
     this._bindEventService.unbindAll();
     this._autocompleteElm?.remove();
     this._editorElm?.remove();
@@ -708,20 +708,8 @@ export class FormulaCellEditor implements Editor {
    * Must be called before any rendering or grid cell coloring operations.
    */
   protected buildFormulaReferenceColorCache(): void {
-    const raw = this.getPlainTextValue();
-    if (!this._formulaRefColorCache.update(raw) && this._hasAppliedColorsOnce) {
-      return; // Cache is up-to-date and colors already applied
-    }
-
-    // Clear old persistent colors only if we've previously applied colors
-    if (this._hasAppliedColorsOnce) {
-      this.args.grid.removeCellCssStyles?.(this._persistentFormulaColorStyleKey);
-    }
-
-    // Apply all reference colors to the grid (but skip on initial load to pass tests)
-    if (this._isValueTouched) {
-      this.applyFormulaReferenceCellColors();
-    }
+    this._formulaRefColorCache.update(this.getPlainTextValue());
+    this.applyFormulaReferenceCellColors();
   }
 
   /**
@@ -733,93 +721,39 @@ export class FormulaCellEditor implements Editor {
       return; // No colors to apply
     }
 
-    if (this._formulaRefColorCache.size === 0) {
-      this._formulaRefColorCache.markClean();
-      return;
-    }
-
-    const hash: Record<number, Record<string | number, string>> = Object.create(null);
-
-    // Iterate through each cached reference and paint its cells
-    for (const info of this._formulaRefColorCache.values()) {
-      for (const cell of info.cells) {
-        const { row } = cell;
-        const cellIdx = cell.cell;
-
-        // Convert cell index to column ID for SlickGrid's setCellCssStyles API
-        const columns = this.args.grid.getColumns?.() || [];
-        const column = columns[cellIdx];
-        const columnId = column?.id;
-
-        if (columnId && !hash[row]) {
-          hash[row] = Object.create(null);
-        }
-        if (columnId) {
-          hash[row][columnId] = info.colorClass;
-        }
-      }
-    }
+    const hash = buildFormulaReferenceCssHash(this._formulaRefColorCache.values(), this.args.grid.getColumns?.() || []);
 
     if (Object.keys(hash).length > 0) {
-      // Clear old styles only if we've previously applied colors
-      if (this._hasAppliedColorsOnce) {
-        this.args.grid.removeCellCssStyles?.(this._persistentFormulaColorStyleKey);
-        // Also clear any old individual reference highlight keys
-        for (let i = 0; i < 10; i++) {
-          this.args.grid.removeCellCssStyles?.(`formula-ref-highlight-${i}`);
-        }
-      }
-      this.args.grid.setCellCssStyles?.(this._persistentFormulaColorStyleKey, hash as any);
-      this._hasAppliedColorsOnce = true; // Mark that we've applied colors
+      this.args.grid.setCellCssStyles?.(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY, hash as any);
     } else {
-      // Clear styles if no colors to apply (only if we've previously applied colors)
-      if (this._hasAppliedColorsOnce) {
-        this.args.grid.removeCellCssStyles?.(this._persistentFormulaColorStyleKey);
-        for (let i = 0; i < 10; i++) {
-          this.args.grid.removeCellCssStyles?.(`formula-ref-highlight-${i}`);
-        }
-      }
+      this.clearFormulaReferenceColors();
     }
 
     this._formulaRefColorCache.markClean();
   }
 
-  protected getColorForSelectedCells(startCell: { row: number; cell: number }, _endCell: { row: number; cell: number }): string {
-    const raw = this.getPlainTextValue();
-    if (!raw.startsWith('=')) {
-      return 'formula-cell-color-1';
-    }
-
-    // Find which formula reference contains the start cell
-    for (const info of this._formulaRefColorCache.values()) {
-      for (const cell of info.cells) {
-        if (cell.row === startCell.row && cell.cell === startCell.cell) {
-          return info.colorClass;
-        }
-      }
-    }
-
-    return 'formula-cell-color-1';
+  protected clearFormulaReferenceColors(): void {
+    this.args.grid.removeCellCssStyles?.(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY);
   }
 
   protected clearReferenceSelectionHighlight(): void {
     const selectionModel = this.getGridSelectionModel();
     const hadSelectionHighlight = this._isSelectionModelHighlightActive;
 
-    if (selectionModel && hadSelectionHighlight) {
-      selectionModel.setSelectedRanges([], 'FormulaCellEditor.clearReferenceSelectionHighlight', '');
+    if (hadSelectionHighlight) {
+      selectionModel?.setSelectedRanges(
+        this._selectionRangesBeforeFormulaHighlight ?? [],
+        'FormulaCellEditor.clearReferenceSelectionHighlight',
+        ''
+      );
       this._isSelectionModelHighlightActive = false;
     }
-
-    if (hadSelectionHighlight) {
-      // Only remove the selection highlight style if we previously applied it
-      this.args.grid.removeCellCssStyles?.(this._selectionHighlightStyleKey);
-    }
+    this._selectionRangesBeforeFormulaHighlight = undefined;
 
     // When exiting the editor, also clear persistent formula colors
     // Otherwise they linger after ENTER/Escape even though the editor is closed
     if (this._isExitingEditor) {
-      this.args.grid.removeCellCssStyles?.(this._persistentFormulaColorStyleKey);
+      this.clearFormulaReferenceColors();
     }
   }
 
@@ -827,6 +761,14 @@ export class FormulaCellEditor implements Editor {
     const selectionModel = this.getGridSelectionModel();
     if (!selectionModel) {
       return false;
+    }
+
+    if (!this._isSelectionModelHighlightActive) {
+      const selectedRanges =
+        typeof selectionModel.getSelectedRanges === 'function' ? selectionModel.getSelectedRanges() : ([] as SlickRange[]);
+      this._selectionRangesBeforeFormulaHighlight = selectedRanges.map(
+        (range) => new SlickRange(range.fromRow, range.fromCell, range.toRow, range.toCell)
+      );
     }
 
     selectionModel.setSelectedRanges(

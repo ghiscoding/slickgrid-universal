@@ -3,6 +3,13 @@
 Last updated: 2026-08-21 (formula drag-fill and complete unit-test coverage)
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Multi-Selection Preservation and Highlight Cleanup (2026-08-26)
+- FormulaCellEditor now snapshots existing cell/row selection ranges before applying its temporary active-reference range and restores them when the temporary highlight is cleared or the editor closes.
+- FormulaCellEditor and FormulaService now share one reference-to-cell CSS hash builder and one aggregate highlight overlay key; the editor owns open-time highlighting without a demo-level pre-render hook.
+- Removed obsolete editor highlight keys, the unused selection-color lookup, and numbered `formula-ref-highlight-*` cleanup.
+- Formula colors are now cleared on every editor destroy path, including non-keyboard teardown.
+- Added regressions for restoring multiple ranges, aggregating more than ten colored references, numeric column IDs, and non-keyboard cleanup.
+
 ## Latest Update: Formula Editor Cell Sizing (2026-08-22)
 - Consolidated `.formula-editor-input` cell sizing and AG Grid-style single-line editor behavior into `slick-editors.scss` alongside the native text editors.
 - Set the contenteditable formula editor to `border-box` and removed its fixed minimum height so it stays within the cell like native text editors.
@@ -102,7 +109,7 @@ Why this mattered:
 - Caret-driven range highlight and drag-rewrite flow.
 - Endpoint drag expansion anchor behavior.
 - Fallback to cell-css highlighting when no selection model is available.
-- No persistent cell colors are applied on initial load.
+- Initial editor load applies persistent reference colors through the shared aggregate overlay.
 - Clipboard copy/cut uses plain text from editor DOM textContent (NBSP normalized).
 - Autocomplete insertion reads live editor DOM text instead of stale cached plain value.
 - Selection highlight style is removed only when it was actually active.

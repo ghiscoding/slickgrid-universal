@@ -1,5 +1,6 @@
-import type { EditorArguments } from '@slickgrid-universal/common';
+import { SlickRange, type EditorArguments } from '@slickgrid-universal/common';
 import { describe, expect, it, vi } from 'vitest';
+import { FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY } from '../formula-reference.js';
 import { FormulaCellEditor } from '../formula.cellEditor.js';
 
 describe('FormulaCellEditor', () => {
@@ -261,7 +262,11 @@ describe('FormulaCellEditor', () => {
 
     const initialSelectionRange = selectionRangesCalls[selectionRangesCalls.length - 1]?.[0];
     expect(initialSelectionRange).toMatchObject({ fromRow: 0, fromCell: 3, toRow: 1, toCell: 3 });
-    expect(setCellCssStylesCalls).toHaveLength(0);
+    expect(setCellCssStylesCalls).toHaveLength(1);
+    expect(setCellCssStylesCalls[0]).toEqual({
+      0: { d: 'formula-cell-color-1' },
+      1: { d: 'formula-cell-color-1' },
+    });
 
     const mouseDownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 });
     startCellElm.dispatchEvent(mouseDownEvent);
@@ -278,6 +283,57 @@ describe('FormulaCellEditor', () => {
 
     const updatedSelectionRange = selectionRangesCalls[selectionRangesCalls.length - 1]?.[0];
     expect(updatedSelectionRange).toMatchObject({ fromRow: 0, fromCell: 4, toRow: 2, toCell: 4 });
+
+    editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+  });
+
+  it('should restore pre-existing multi-ranges after its temporary formula highlight', () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    document.body.append(hostContainer, gridContainer);
+    const originalRanges = [new SlickRange(1, 1), new SlickRange(3, 2, 4, 3)];
+    let selectedRanges = originalRanges;
+    const setSelectedRanges = vi.fn((ranges: SlickRange[]) => {
+      selectedRanges = ranges;
+    });
+    const selectionModelStub = {
+      getSelectedRanges: () => selectedRanges,
+      setSelectedRanges,
+    };
+    const gridStub = {
+      focus: () => undefined,
+      getCellFromEvent: () => null,
+      getColumns: () => [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({ editorNavigateOnArrows: false }),
+      getSelectionModel: () => selectionModelStub,
+      removeCellCssStyles: vi.fn(),
+      setCellCssStyles: vi.fn(),
+    } as any;
+    const editor = new FormulaCellEditor({
+      column: { field: 'total' },
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1+B1' },
+    } as any);
+    editor.loadValue({ total: '=A1+B1' });
+
+    (editor as any).renderSelectionModelHighlight({ row: 0, cell: 0 }, { row: 0, cell: 0 });
+    (editor as any).renderSelectionModelHighlight({ row: 0, cell: 1 }, { row: 2, cell: 1 });
+    expect(selectedRanges).toEqual([new SlickRange(0, 1, 2, 1)]);
+
+    (editor as any).clearReferenceSelectionHighlight();
+
+    expect(selectedRanges).toEqual(originalRanges);
+    expect(selectedRanges).not.toBe(originalRanges);
+    expect(setSelectedRanges).toHaveBeenLastCalledWith(
+      [new SlickRange(1, 1), new SlickRange(3, 2, 4, 3)],
+      'FormulaCellEditor.clearReferenceSelectionHighlight',
+      ''
+    );
 
     editor.destroy();
     hostContainer.remove();
@@ -644,7 +700,7 @@ describe('FormulaCellEditor', () => {
     gridContainer.remove();
   });
 
-  it('should not apply persistent cell colors on initial load', () => {
+  it('should apply persistent cell colors on initial load', () => {
     const hostContainer = document.createElement('div');
     const gridContainer = document.createElement('div');
     document.body.appendChild(hostContainer);
@@ -676,9 +732,48 @@ describe('FormulaCellEditor', () => {
     const editor = new FormulaCellEditor(args);
     editor.loadValue((args as any).item);
 
-    expect(setCellCssStylesSpy).not.toHaveBeenCalled();
+    expect(setCellCssStylesSpy).toHaveBeenCalledWith(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY, {
+      0: { b: 'formula-cell-color-1', c: 'formula-cell-color-1' },
+      1: { b: 'formula-cell-color-1', c: 'formula-cell-color-1' },
+    });
 
     editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+  });
+
+  it('should clear formula colors when destroyed without a keyboard exit', () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    document.body.append(hostContainer, gridContainer);
+    const removeCellCssStyles = vi.fn();
+    const setCellCssStyles = vi.fn();
+    const gridStub = {
+      focus: () => undefined,
+      getCellFromEvent: () => null,
+      getColumns: () => [{ id: 'a' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({ editorNavigateOnArrows: false }),
+      removeCellCssStyles,
+      setCellCssStyles,
+    } as any;
+    const editor = new FormulaCellEditor({
+      column: { field: 'total' },
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1' },
+    } as any);
+    editor.loadValue({ total: '=A1' });
+
+    (editor as any)._editorElm.textContent = '=A1+1';
+    (editor as any).handleInput();
+    expect(setCellCssStyles).toHaveBeenCalledWith(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY, { 0: { a: 'formula-cell-color-1' } });
+
+    editor.destroy();
+
+    expect((editor as any)._isExitingEditor).toBe(false);
+    expect(removeCellCssStyles).toHaveBeenCalledWith(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY);
     hostContainer.remove();
     gridContainer.remove();
   });
@@ -829,7 +924,7 @@ describe('FormulaCellEditor', () => {
     gridContainer.remove();
   });
 
-  it('should not remove selection highlight style when no selection highlight is active', () => {
+  it('should not mutate grid styles when no selection highlight is active', () => {
     const hostContainer = document.createElement('div');
     const gridContainer = document.createElement('div');
     document.body.appendChild(hostContainer);
@@ -864,14 +959,14 @@ describe('FormulaCellEditor', () => {
     (editor as any)._isSelectionModelHighlightActive = false;
     (editor as any).clearReferenceSelectionHighlight();
 
-    expect(removeCellCssStylesSpy).not.toHaveBeenCalledWith('formula-editor-grid-sel-highlight');
+    expect(removeCellCssStylesSpy).not.toHaveBeenCalled();
 
     editor.destroy();
     hostContainer.remove();
     gridContainer.remove();
   });
 
-  it('should cover persistent color cleanup, selection color fallback, and caret guards', () => {
+  it('should cover persistent color cleanup and caret guards', () => {
     const hostContainer = document.createElement('div');
     const gridContainer = document.createElement('div');
     document.body.append(hostContainer, gridContainer);
@@ -908,13 +1003,8 @@ describe('FormulaCellEditor', () => {
     (editor as any)._editorElm.textContent = '=A1';
     (editor as any).handleInput();
 
-    expect((editor as any).getColorForSelectedCells({ row: 0, cell: 0 }, { row: 0, cell: 0 })).toBe('formula-cell-color-1');
     (editor as any)._editorElm.textContent = '=Z1';
     (editor as any).handleInput();
-    (editor as any)._plainTextValue = '=A1';
-    expect((editor as any).getColorForSelectedCells({ row: 8, cell: 8 }, { row: 8, cell: 8 })).toBe('formula-cell-color-1');
-    (editor as any)._plainTextValue = 'plain text';
-    expect((editor as any).getColorForSelectedCells({ row: 8, cell: 8 }, { row: 8, cell: 8 })).toBe('formula-cell-color-1');
 
     expect((editor as any).parseExcelReferenceCellRange('')).toBeUndefined();
     expect((editor as any).parseExcelReferenceCellRange('A0')).toBeUndefined();
@@ -952,7 +1042,7 @@ describe('FormulaCellEditor', () => {
 
     (editor as any)._isExitingEditor = true;
     (editor as any).clearReferenceSelectionHighlight();
-    expect(removeCellCssStylesSpy).toHaveBeenCalledWith('formula-editor-grid-persistent-colors');
+    expect(removeCellCssStylesSpy).toHaveBeenCalledWith(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY);
 
     (editor as any)._isExitingEditor = false;
     (editor as any).restoreCaretOffset(999);

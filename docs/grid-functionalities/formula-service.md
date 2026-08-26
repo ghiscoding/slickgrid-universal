@@ -90,8 +90,9 @@ For full reference pick UX:
 - `selectionOptions.selectionType: 'mixed'` or `'cell'`
 
 Highlight behavior:
-- preferred: selection-model highlights through `setSelectedRanges(...)`
-- fallback: CSS highlights through `setCellCssStyles(...)`
+- the active reference under the caret uses the selection model through `setSelectedRanges(...)`
+- existing cell/row selection ranges are restored when the temporary active-reference highlight is cleared
+- all formula references use one CSS overlay through `setCellCssStyles(...)`, with a distinct color matching each formula token
 
 Formula reference storage:
 - the editor displays familiar Excel A1 references such as `C1` and `D1:D3`

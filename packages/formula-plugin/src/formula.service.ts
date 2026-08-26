@@ -16,7 +16,9 @@ import { createDomElement, Formatters, SlickEventHandler } from '@slickgrid-univ
 import { FORMULA_ERROR, isFormulaErrorCode, type FormulaErrorCode } from './formula-errors.js';
 import { createFormulaFunctionRegistry, type FormulaCallback } from './formula-functions.js';
 import {
+  buildFormulaReferenceCssHash,
   FORMULA_MAX_REFERENCE_CELLS,
+  FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY,
   FormulaReferenceColorCache,
   getExcelColumnIndexByName,
   getExcelColumnNameByIndex,
@@ -85,7 +87,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected _formulaReferenceAbsoluteFlagsByKey: Map<string, FormulaReferenceAbsoluteFlags[]> = new Map();
   protected _formulaRefColorCache: FormulaReferenceColorCache = new FormulaReferenceColorCache();
   protected _originalColumnNamesById: Map<number | string, string | HTMLElement | DocumentFragment | undefined> = new Map();
-  protected _formulaRefStyleKeys: string[] = [];
   protected _isExcelHeaderPrefixEnabled = false;
   protected _hasWarnedSelectionPrerequisite = false;
   protected _hasAutoAssignedFormulaEditor = false;
@@ -151,10 +152,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return;
     }
 
-    for (const styleKey of this._formulaRefStyleKeys) {
-      this._grid.removeCellCssStyles(styleKey);
-    }
-    this._formulaRefStyleKeys = [];
+    this._grid.removeCellCssStyles(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY);
   }
 
   protected validateSelectionModelPrerequisites(): void {
@@ -244,30 +242,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     )}`;
     this._formulaRefColorCache.update(normalizedFormulaWithRefs);
     const columns = this._grid.getColumns() as Column[];
-    const datasetLength = this.getDatasetLength();
+    const hash = buildFormulaReferenceCssHash(this._formulaRefColorCache.values(), columns, this.getDatasetLength());
 
-    Array.from(this._formulaRefColorCache.values()).forEach((reference, idx) => {
-      const styleKey = `formula-ref-highlight-${idx}`;
-      const hash: Record<number, Record<string | number, string>> = Object.create(null);
-
-      for (const cell of reference.cells) {
-        const column = columns[cell.cell];
-
-        if (!column || cell.row < 0 || cell.row >= datasetLength) {
-          continue;
-        }
-
-        if (!hash[cell.row]) {
-          hash[cell.row] = Object.create(null);
-        }
-        hash[cell.row][column.id as number | string] = reference.colorClass;
-      }
-
-      if (Object.keys(hash).length > 0) {
-        this._grid.setCellCssStyles(styleKey, hash as any);
-        this._formulaRefStyleKeys.push(styleKey);
-      }
-    });
+    if (Object.keys(hash).length > 0) {
+      this._grid.setCellCssStyles(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY, hash as any);
+    }
     this._formulaRefColorCache.markClean();
   }
 

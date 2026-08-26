@@ -140,7 +140,7 @@ describe('Example 47 - Formula Service (MVP)', () => {
     cy.get(cell(1, 3)).should('have.class', 'formula-cell-color-2');
     cy.get(cell(2, 3)).should('have.class', 'formula-cell-color-2');
 
-    // Commit and reopen: FormulaService pre-renders grid highlights during onBeforeEditCell,
+    // Commit and reopen: FormulaCellEditor rebuilds grid highlights from the saved formula,
     // and its reference order must stay aligned with the editor token order.
     cy.get('.formula-editor-input').type('{enter}', { force: true });
     cy.get(cell(0, 4)).dblclick();
@@ -167,7 +167,7 @@ describe('Example 47 - Formula Service (MVP)', () => {
     cy.get(cell(2, 3)).should('have.class', 'formula-cell-color-1');
     cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-2');
 
-    // Commit and reopen so FormulaService.renderFormulaReferenceHighlights() is exercised.
+    // Commit and reopen so FormulaCellEditor initial-load highlighting is exercised.
     cy.get('.formula-editor-input').type('{enter}', { force: true });
     cy.get(cell(0, 4)).dblclick();
     cy.contains('.formula-editor-input .formula-token.formula-token-color-1', /^D1:D3$/).should('exist');

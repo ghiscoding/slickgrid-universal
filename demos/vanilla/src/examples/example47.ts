@@ -430,13 +430,9 @@ export default class Example47 {
 
     const args = event?.detail?.args;
     const columnDef = args?.column as Column<GroceryItem> | undefined;
-    const item = args?.item as GroceryItem | undefined;
 
     if (columnDef?.allowFormula) {
       this.formulaService.enableExcelHeaderPrefix();
-      const value = item?.[String(columnDef.id) as keyof GroceryItem];
-      const formula = typeof value === 'string' ? value : this.formulaService.getFormula(item?.id as number, String(columnDef.id));
-      this.formulaService.renderFormulaReferenceHighlights(formula);
       this.lastFormulaEvent = `formula edit mode enabled (${String(columnDef.id)})`;
     } else {
       this.formulaService.clearFormulaReferenceHighlights();

@@ -1,6 +1,8 @@
 export const FORMULA_TOKEN_COLOR_COUNT = 10;
 /** Maximum number of cells expanded for one formula reference range. */
 export const FORMULA_MAX_REFERENCE_CELLS = 100_000;
+/** Shared grid CSS overlay key used while formula references are highlighted. */
+export const FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY = 'formula-reference-highlights';
 
 export interface FormulaGridCell {
   row: number;
@@ -13,6 +15,8 @@ export interface FormulaReferenceColorInfo {
   colorClass: string;
   cells: FormulaGridCell[];
 }
+
+export type FormulaReferenceCssHash = Record<number, Record<number | string, string>>;
 
 /** Shared reference/color state used by FormulaCellEditor and FormulaService. */
 export class FormulaReferenceColorCache {
@@ -164,6 +168,29 @@ export function buildFormulaReferenceColorInfos(formula: string): FormulaReferen
   }
 
   return references;
+}
+
+/** Convert colored formula references to the keyed cell-class hash expected by SlickGrid. */
+export function buildFormulaReferenceCssHash(
+  references: Iterable<FormulaReferenceColorInfo>,
+  columns: Array<{ id?: number | string }>,
+  rowCount?: number
+): FormulaReferenceCssHash {
+  const hash: FormulaReferenceCssHash = Object.create(null);
+
+  for (const reference of references) {
+    for (const cell of reference.cells) {
+      const columnId = columns[cell.cell]?.id;
+      if (columnId === undefined || columnId === null || cell.row < 0 || (rowCount !== undefined && cell.row >= rowCount)) {
+        continue;
+      }
+
+      const rowClasses = (hash[cell.row] ??= Object.create(null));
+      rowClasses[columnId] = reference.colorClass;
+    }
+  }
+
+  return hash;
 }
 
 /** Assign a data-cell value without invoking the legacy Object.prototype.__proto__ setter. */

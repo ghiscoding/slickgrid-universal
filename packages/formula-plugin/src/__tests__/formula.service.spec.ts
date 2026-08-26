@@ -2,6 +2,7 @@ import { Formatters, SlickEvent, SlickRange } from '@slickgrid-universal/common'
 import type { Column, FormulaExcelExportContext } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FORMULA_ERROR } from '../formula-errors.js';
+import { FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY } from '../formula-reference.js';
 import { FormulaCellEditor } from '../formula.cellEditor.js';
 import { translateFormulaReferences } from '../formula.drag-fill.js';
 import { FormulaService } from '../formula.service.js';
@@ -757,12 +758,10 @@ describe('FormulaService', () => {
     service.init(gridStub);
     service.renderFormulaReferenceHighlights('=C1*SUM(D1:D3)');
 
-    expect(setCellCssStyles).toHaveBeenCalledTimes(2);
-    expect(setCellCssStyles.mock.calls[0][0]).toBe('formula-ref-highlight-0');
-    expect(setCellCssStyles.mock.calls[0][1]).toEqual({ 0: { c: 'formula-cell-color-1' } });
-    expect(setCellCssStyles.mock.calls[1][0]).toBe('formula-ref-highlight-1');
-    expect(setCellCssStyles.mock.calls[1][1]).toEqual({
-      0: { d: 'formula-cell-color-2' },
+    expect(setCellCssStyles).toHaveBeenCalledTimes(1);
+    expect(setCellCssStyles.mock.calls[0][0]).toBe(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY);
+    expect(setCellCssStyles.mock.calls[0][1]).toEqual({
+      0: { c: 'formula-cell-color-1', d: 'formula-cell-color-2' },
       1: { d: 'formula-cell-color-2' },
       2: { d: 'formula-cell-color-2' },
     });
@@ -771,13 +770,41 @@ describe('FormulaService', () => {
     setCellCssStyles.mockClear();
     service.renderFormulaReferenceHighlights('=SUM(D1:D3)*C1');
 
-    expect(setCellCssStyles).toHaveBeenCalledTimes(2);
+    expect(setCellCssStyles).toHaveBeenCalledTimes(1);
     expect(setCellCssStyles.mock.calls[0][1]).toEqual({
-      0: { d: 'formula-cell-color-1' },
+      0: { c: 'formula-cell-color-2', d: 'formula-cell-color-1' },
       1: { d: 'formula-cell-color-1' },
       2: { d: 'formula-cell-color-1' },
     });
-    expect(setCellCssStyles.mock.calls[1][1]).toEqual({ 0: { c: 'formula-cell-color-2' } });
+  });
+
+  it('should use and clear one aggregate highlight key for more than ten references', () => {
+    const setCellCssStyles = vi.fn();
+    const removeCellCssStyles = vi.fn();
+    const columns = Array.from({ length: 11 }, (_value, index) => ({
+      id: String.fromCharCode(97 + index),
+      field: String.fromCharCode(97 + index),
+    })) as Column[];
+    const gridStub = {
+      getColumns: () => columns,
+      setColumns: (_newCols: Column[]) => undefined,
+      setCellCssStyles,
+      removeCellCssStyles,
+      getData: () => ({ getItems: () => [{ id: 1 }], getLength: () => 1 }),
+    } as any;
+    const service = new FormulaService();
+    service.init(gridStub);
+
+    service.renderFormulaReferenceHighlights('=A1+B1+C1+D1+E1+F1+G1+H1+I1+J1+K1');
+
+    expect(setCellCssStyles).toHaveBeenCalledTimes(1);
+    expect(setCellCssStyles.mock.calls[0][0]).toBe(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY);
+    expect(Object.keys(setCellCssStyles.mock.calls[0][1][0])).toHaveLength(11);
+
+    removeCellCssStyles.mockClear();
+    service.clearFormulaReferenceHighlights();
+    expect(removeCellCssStyles).toHaveBeenCalledOnce();
+    expect(removeCellCssStyles).toHaveBeenCalledWith(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY);
   });
 
   it('should remap direct A1 references when hidden columns are excluded from export', () => {
