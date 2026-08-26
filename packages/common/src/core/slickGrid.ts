@@ -104,7 +104,7 @@ import {
   type BasePubSub,
   type SlickEditorLock,
 } from './slickCore.js';
-import type { SlickDataView } from './slickDataview.js';
+import type { SlickDataView } from './slickDataView.js';
 import { Draggable, MouseWheel, Resizable } from './slickInteractions.js';
 import { applyHtmlToElement, runOptionalHtmlSanitizer } from './utils.js';
 

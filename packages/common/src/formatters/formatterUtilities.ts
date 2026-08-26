@@ -1,7 +1,7 @@
 import { format } from '@formkit/tempo';
 import { getHtmlStringOutput, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 import { Constants } from '../constants.js';
-import { type SlickGrid } from '../core/index.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import { type FieldType } from '../enums/field.type.js';
 import type {
   Column,

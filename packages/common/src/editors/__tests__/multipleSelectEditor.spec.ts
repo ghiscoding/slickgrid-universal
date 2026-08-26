@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-vanilla';
 import { type SlickGrid } from '../../core/index.js';
-import type { SlickDataView } from '../../core/slickDataview.js';
+import type { SlickDataView } from '../../core/slickDataView.js';
 import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
 import { Editors } from '../index.js';
 import { MultipleSelectEditor } from '../multipleSelectEditor.js';

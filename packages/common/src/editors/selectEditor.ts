@@ -8,8 +8,10 @@ import {
   sortCollectionWithOptions,
 } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { Constants } from '../constants.js';
-import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index.js';
-import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
+import { CollectionService } from '../services/collection.service.js';
+import { buildMsSelectCollectionList } from '../services/domUtilities.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import { findOrDefault, getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import type {
   CollectionCustomStructure,
   CollectionOption,

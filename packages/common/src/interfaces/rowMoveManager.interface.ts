@@ -1,4 +1,4 @@
-import type { SlickGrid } from '../core/index.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type { SlickRowMoveManager } from '../extensions/slickRowMoveManager.js';
 import type { RowMoveManagerOption } from './index.js';
 

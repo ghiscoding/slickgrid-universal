@@ -6,8 +6,8 @@ import {
   SlickSelectionUtils,
   Utils as SlickUtils,
   type SlickEventData,
-  type SlickGrid,
-} from '../core/index.js';
+} from '../core/slickCore.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import type {
   CellRangeSelectorOption,
   CellSelectionMode,
@@ -18,7 +18,7 @@ import type {
   MouseOffsetViewport,
   OnScrollEventArgs,
 } from '../interfaces/index.js';
-import { SlickCellRangeDecorator } from './index.js';
+import { SlickCellRangeDecorator } from './slickCellRangeDecorator.js';
 
 interface CellRangeSelectedEvent {
   range: SlickRange;

@@ -2,7 +2,7 @@ import { classNameToList, createDomElement, isObject, isPrimitiveValue, setDeepV
 import autocompleter from 'autocompleter';
 import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter/commonEditorFilterUtils.js';
-import { applyHtmlToElement } from '../core/index.js';
+import { applyHtmlToElement } from '../core/utils.js';
 import { textValidator } from '../editorValidators/textValidator.js';
 import type {
   AutocompleterOption,

@@ -1,9 +1,10 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, isDefined, toSentenceCase } from '@slickgrid-universal/utils';
-import { type SlickGrid } from '../core/index.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import { type OperatorType, type SearchTerm } from '../enums/index.js';
 import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
-import { mapOperatorToShorthandDesignation, type TranslaterService } from '../services/index.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import { mapOperatorToShorthandDesignation } from '../services/utilities.js';
 import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities.js';
 
 export class InputFilter implements Filter {

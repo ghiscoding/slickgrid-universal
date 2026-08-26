@@ -1,4 +1,5 @@
-import type { SlickEvent, SlickGrid } from '../core/index.js';
+import { SlickEvent } from '../core/slickCore.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import type { UsabilityOverrideFn } from '../enums/index.js';
 import type { ContainerService } from '../services/container.service.js';
 import type {

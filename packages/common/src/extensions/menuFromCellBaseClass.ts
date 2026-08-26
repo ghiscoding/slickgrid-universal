@@ -1,6 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, findWidthOrDefault, titleCase } from '@slickgrid-universal/utils';
-import type { SlickEventData, SlickGrid } from '../core/index.js';
+import type { SlickEventData } from '../core/slickCore.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type {
   CellMenu,
   Column,

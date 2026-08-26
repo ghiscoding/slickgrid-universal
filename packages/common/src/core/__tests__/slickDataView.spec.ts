@@ -5,7 +5,7 @@ import { SlickHybridSelectionModel } from '../../extensions/slickHybridSelection
 import type { GridOption, Grouping } from '../../interfaces/index.js';
 import { SortComparers } from '../../sortComparers/index.js';
 import { SlickEventData } from '../slickCore.js';
-import { SlickDataView } from '../slickDataview.js';
+import { SlickDataView } from '../slickDataView.js';
 import { SlickGrid } from '../slickGrid.js';
 
 class FakeAggregator {

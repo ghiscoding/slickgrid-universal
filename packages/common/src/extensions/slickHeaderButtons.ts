@@ -1,5 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { type SlickEventData, type SlickEventHandler, type SlickGrid } from '../core/index.js';
+import { type SlickEventData, type SlickEventHandler } from '../core/slickCore.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import type {
   Column,
   DOMEvent,

@@ -1,4 +1,4 @@
-import type { SlickGrid } from '../core/index.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type { SlickGridMenu } from '../extensions/slickGridMenu.js';
 import type { Column, GridMenuCommandItemCallbackArgs, GridMenuOption } from './index.js';
 

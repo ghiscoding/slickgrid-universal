@@ -1,5 +1,6 @@
 import { createDomElement, deepMerge, setStyles } from '@slickgrid-universal/utils';
-import type { SlickGrid, SlickRange } from '../core/index.js';
+import type { SlickRange } from '../core/slickCore.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type { CellRangeDecoratorOption } from '../interfaces/index.js';
 
 /**

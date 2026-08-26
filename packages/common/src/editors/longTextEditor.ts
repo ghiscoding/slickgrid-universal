@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, getOffset, setDeepValue, toSentenceCase, type HtmlElementPosition } from '@slickgrid-universal/utils';
-import { SlickEventHandler } from '../core/index.js';
+import { SlickEventHandler } from '../core/slickCore.js';
 import { textValidator } from '../editorValidators/textValidator.js';
 import type {
   CompositeEditorOption,

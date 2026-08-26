@@ -2,9 +2,12 @@ import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy, extend, queueMicrotaskPolyfill, stripTags } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { Constants } from '../constants.js';
-import { SlickEvent, SlickEventData, SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
+import { SlickEvent, SlickEventData, SlickEventHandler } from '../core/slickCore.js';
+import { type SlickDataView } from '../core/slickDataView.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import { type EmitterType, type OperatorType, type SearchTerm } from '../enums/index.js';
-import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index.js';
+import { getParsedSearchTermsByFieldType } from '../filter-conditions/filterConditionProcesses.js';
+import { FilterConditions } from '../filter-conditions/filterConditions.index.js';
 import { type FilterFactory } from './../filters/filterFactory.js';
 import type {
   Column,
