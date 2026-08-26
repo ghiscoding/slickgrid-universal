@@ -35,4 +35,3 @@
 - [ ] The changes are limited to only one scope (if not please explain why in the comments above).
 - [ ] Tests were added or updated where appropriate.
 - [ ] Documentation was updated where appropriate.
-- [ ] Ran a full project build (required when code logic changed)
