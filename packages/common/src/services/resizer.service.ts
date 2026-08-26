@@ -1,7 +1,9 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, getInnerSize, getOffset, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
-import { SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
+import { SlickEventHandler } from '../core/slickCore.js';
+import { type SlickDataView } from '../core/slickDataView.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities.js';
 import type { AutoResizeOption, Column, GridOption, GridSize, ResizeByContentOption } from '../interfaces/index.js';
 

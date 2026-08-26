@@ -1,6 +1,6 @@
 import { createDomElement, extend, isHtml } from '@slickgrid-universal/utils';
 import { SlickEventHandler, SlickGroup, type SlickEventData } from '../core/slickCore.js';
-import type { SlickDataView } from '../core/slickDataview.js';
+import type { SlickDataView } from '../core/slickDataView.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import { applyHtmlToElement } from '../core/utils.js';
 import type {

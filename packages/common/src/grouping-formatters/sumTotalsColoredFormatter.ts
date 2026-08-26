@@ -1,5 +1,5 @@
 import { createDomElement, isNumber } from '@slickgrid-universal/utils';
-import { type SlickGrid } from '../core/index.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import type { Column, GroupTotalsFormatter } from './../interfaces/index.js';
 import { sumTotalsFormatter } from './sumTotalsFormatter.js';
 

@@ -1,8 +1,9 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { classNameToList, createDomElement, emptyElement, isEmptyObject } from '@slickgrid-universal/utils';
-import { SlickEvent, SlickEventData, SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
-import { setupColumnReorderDrag, setupDropzonePillDrag } from '../core/slickColumnReorderDrag.js';
+import { SlickEvent, SlickEventData, SlickEventHandler } from '../core/slickCore.js';
+import { type SlickDataView } from '../core/slickDataView.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import { SortDirectionNumber } from '../enums/index.js';
 import type {
   Column,

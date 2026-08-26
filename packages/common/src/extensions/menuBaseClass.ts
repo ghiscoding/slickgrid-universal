@@ -10,7 +10,8 @@ import {
   isDefined,
   titleCase,
 } from '@slickgrid-universal/utils';
-import { SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index.js';
+import { SlickEventHandler, type SlickEventData } from '../core/slickCore.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import { applyHtmlToElement } from '../core/utils.js';
 import type {
   CellMenu,

@@ -1,6 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, findWidthOrDefault, getOffset, isDefined } from '@slickgrid-universal/utils';
-import { SlickEvent, SlickEventData, SlickEventHandler, Utils as SlickUtils, type SlickGrid } from '../core/index.js';
+import { SlickEvent, SlickEventData, SlickEventHandler, Utils as SlickUtils } from '../core/slickCore.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type.js';
 import {
   type Column,

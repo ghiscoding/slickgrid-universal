@@ -1,4 +1,4 @@
-import type { SlickGrid } from '../core/index.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type { Column } from './column.interface.js';
 
 export interface ColumnSort {

@@ -1,13 +1,7 @@
 import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
-import {
-  SlickEvent,
-  SlickEventData,
-  SlickEventHandler,
-  SlickRange,
-  Utils as SlickUtils,
-  type SlickDataView,
-  type SlickGrid,
-} from '../core/index.js';
+import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange, Utils as SlickUtils } from '../core/slickCore.js';
+import { type SlickDataView } from '../core/slickDataView.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import type {
   Column,
   CssStyleHash,

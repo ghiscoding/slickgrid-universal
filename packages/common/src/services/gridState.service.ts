@@ -1,6 +1,8 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
-import { SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
+import { SlickEventHandler } from '../core/slickCore.js';
+import { type SlickDataView } from '../core/slickDataView.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import type { AutocompleterEditor } from '../editors/autocompleterEditor.js';
 import type { SelectEditor } from '../editors/selectEditor.js';
 import { ExtensionName, type ExtensionNameTypeString } from '../enums/index.js';

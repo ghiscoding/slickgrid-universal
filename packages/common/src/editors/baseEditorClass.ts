@@ -1,5 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { SlickEventData, type SlickGrid } from '../core/index.js';
+import { SlickEventData } from '../core/slickCore.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import type { Column, ColumnEditor, CompositeEditorOption, EditorArguments, EditorValidator, GridOption } from './../interfaces/index.js';
 
 /*

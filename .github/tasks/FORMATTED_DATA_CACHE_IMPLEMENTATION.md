@@ -34,7 +34,7 @@ operations.
 
 | File | Role |
 |---|---|
-| `packages/common/src/core/slickDataview.ts` | All cache logic lives here |
+| `packages/common/src/core/slickDataView.ts` | All cache logic lives here |
 | `packages/common/src/core/slickGrid.ts` | Defines planner + syncs planner into DataView + `getFormatter()` cache wrapper |
 | `packages/excel-export/src/excelExport.service.ts` | Reads `formattedDataCache` via `getFormattedCellValue()` |
 | `packages/pdf-export/src/pdfExport.service.ts` | Reads `formattedDataCache` in regular-row export path before formatter fallback |

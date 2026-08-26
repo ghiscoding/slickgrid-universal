@@ -1,9 +1,9 @@
 import { isDefined } from '@slickgrid-universal/utils';
-import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/index.js';
-import type { SlickDataView } from '../core/slickDataview.js';
+import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/slickCore.js';
+import type { SlickDataView } from '../core/slickDataView.js';
 import type { SlickGrid } from '../core/slickGrid.js';
-import type { GridOption, HybridSelectionModelOption, SelectionModel } from '../index.js';
-import type { CustomDataView, OnActiveCellChangedEventArgs } from '../interfaces/index.js';
+import type { SelectionModel } from '../enums/selectionModel.type.js';
+import type { CustomDataView, GridOption, HybridSelectionModelOption, OnActiveCellChangedEventArgs } from '../interfaces/index.js';
 import { SlickCellRangeSelector } from './slickCellRangeSelector.js';
 
 export class SlickHybridSelectionModel implements SelectionModel<HybridSelectionModelOption> {

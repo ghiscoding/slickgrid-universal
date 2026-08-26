@@ -7,11 +7,13 @@ import {
   sortCollectionWithOptions,
 } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { Constants } from '../constants.js';
-import type { SlickGrid } from '../core/index.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import { type OperatorType, type SearchTerm } from '../enums/index.js';
 import type { CollectionService } from '../services/collection.service.js';
-import { buildMsSelectCollectionList, type RxJsFacade, type Subscription, type TranslaterService } from '../services/index.js';
+import { buildMsSelectCollectionList } from '../services/domUtilities.js';
 import { collectionObserver, propertyObserver } from '../services/observers.js';
+import type { RxJsFacade, Subscription } from '../services/rxjsFacade.js';
+import type { TranslaterService } from '../services/translater.service.js';
 import { fetchAsPromise, getTranslationPrefix, unsubscribeAll } from '../services/utilities.js';
 import type {
   CollectionCustomStructure,

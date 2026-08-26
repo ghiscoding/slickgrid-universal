@@ -18,9 +18,9 @@ import type {
   SingleColumnSort,
 } from '../interfaces/index.js';
 import type { FilterService } from '../services/filter.service.js';
-import { getTranslationPrefix } from '../services/index.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { SortService } from '../services/sort.service.js';
+import { getTranslationPrefix } from '../services/utilities.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
 

@@ -1,4 +1,5 @@
-import type { SlickDataView, SlickGrid } from '../core/index.js';
+import type { SlickDataView } from '../core/slickDataView.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider.js';
 import type { Column, CurrentPagination, ExternalResource, ExternalResourceConstructor, GridOption } from '../interfaces/index.js';
 

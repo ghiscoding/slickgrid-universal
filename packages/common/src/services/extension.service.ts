@@ -8,30 +8,28 @@ import {
   type SlickControlList,
   type SlickPluginList,
 } from '../enums/index.js';
-import {
-  SlickAutoTooltip,
-  SlickCellExcelCopyManager,
-  SlickCellMenu,
-  SlickCheckboxSelectColumn,
-  SlickColumnPicker,
-  SlickContextMenu,
-  SlickDraggableGrouping,
-  SlickGridMenu,
-  SlickHeaderButtons,
-  SlickHeaderMenu,
-  SlickHybridSelectionModel,
-  SlickRowBasedEdit,
-  SlickRowMoveManager,
-  type ExtensionUtility,
-  type SlickGroupItemMetadataProvider,
-} from '../extensions/index.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import { SlickAutoTooltip } from '../extensions/slickAutoTooltip.js';
+import { SlickCellExcelCopyManager } from '../extensions/slickCellExcelCopyManager.js';
+import { SlickCellMenu } from '../extensions/slickCellMenu.js';
+import { SlickCheckboxSelectColumn } from '../extensions/slickCheckboxSelectColumn.js';
+import { SlickColumnPicker } from '../extensions/slickColumnPicker.js';
+import { SlickContextMenu } from '../extensions/slickContextMenu.js';
+import { SlickDraggableGrouping } from '../extensions/slickDraggableGrouping.js';
+import { SlickGridMenu } from '../extensions/slickGridMenu.js';
+import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider.js';
+import { SlickHeaderButtons } from '../extensions/slickHeaderButtons.js';
+import { SlickHeaderMenu } from '../extensions/slickHeaderMenu.js';
+import { SlickHybridSelectionModel } from '../extensions/slickHybridSelectionModel.js';
+import { SlickRowBasedEdit } from '../extensions/slickRowBasedEdit.js';
+import { SlickRowMoveManager } from '../extensions/slickRowMoveManager.js';
 import type { Column, ExtensionModel, GridOption } from '../interfaces/index.js';
-import type { FilterService } from './filter.service.js';
-import type { GridService } from './grid.service.js';
-import type { SharedService } from './shared.service.js';
-import type { SortService } from './sort.service.js';
-import type { TranslaterService } from './translater.service.js';
-import type { TreeDataService } from './treeData.service.js';
+import { FilterService } from './filter.service.js';
+import { GridService } from './grid.service.js';
+import { SharedService } from './shared.service.js';
+import { SortService } from './sort.service.js';
+import { TranslaterService } from './translater.service.js';
+import { TreeDataService } from './treeData.service.js';
 
 export class ExtensionService {
   protected _extensionCreatedList: ExtensionList<any> = Object.create(null);
