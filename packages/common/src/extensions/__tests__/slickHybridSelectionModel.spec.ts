@@ -1130,7 +1130,12 @@ describe('Cell Selection Model Plugin', () => {
 
   it('should call "setSelectedRanges" with Slick Ranges when triggered by "onActiveCellChanged" and "selectActiveCell" is True', () => {
     vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValueOnce([]);
-    plugin = new SlickHybridSelectionModel({ selectActiveCell: true, cellRangeSelector: undefined as any });
+    plugin = new SlickHybridSelectionModel({
+      selectActiveCell: true,
+      selectActiveRow: false,
+      selectionType: 'cell',
+      cellRangeSelector: undefined as any,
+    });
     plugin.init(gridStub);
     const setSelectRangeSpy = vi.spyOn(plugin, 'setSelectedRanges');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'));

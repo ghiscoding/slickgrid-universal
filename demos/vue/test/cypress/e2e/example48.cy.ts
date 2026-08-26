@@ -229,6 +229,11 @@ describe('Example 48 - Hybrid Selection Model', () => {
 
       cy.get('@clipboardWriteText').should('have.been.calledWith', 'Task 1\t\t\t\t\r\nTask 2\t\t\t\t2\r\nTask 3\t\t\t\t3\r\n');
     });
+
+    it('should expose the active cell as the selected range', () => {
+      cy.get('#grid48-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
+      cy.get('#selectionRange1').should('have.text', '{"fromRow":1,"fromCell":1,"toRow":1,"toCell":1}');
+    });
   });
 
   describe('Grid 2', () => {
