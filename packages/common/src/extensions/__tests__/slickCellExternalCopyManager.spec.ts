@@ -357,6 +357,26 @@ describe('CellExternalCopyManager', () => {
         expect(writeTextSpy).toHaveBeenCalledWith('First Name\tLast Name\r\nserialized output\tDoe\r\nserialized output\tDoe\r\n');
       });
 
+      it('should not copy anything when there is no selected range', async () => {
+        const writeTextSpy = vi.spyOn(navigator.clipboard, 'writeText');
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValue([]);
+        plugin.init(gridStub);
+
+        await expect(plugin.copyToClipboard()).resolves.toBe(false);
+
+        expect(writeTextSpy).not.toHaveBeenCalled();
+      });
+
+      it('should skip a selected cell when its column is not available', async () => {
+        const writeTextSpy = vi.spyOn(navigator.clipboard, 'writeText');
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 3, 0, 3)]);
+        plugin.init(gridStub);
+
+        await expect(plugin.copyToClipboard()).resolves.toBe(true);
+
+        expect(writeTextSpy).toHaveBeenCalledWith('\r\n');
+      });
+
       it('should preserve row and column offsets when copying multiple cell ranges', () =>
         new Promise((done: any) => {
           const writeTextSpy = vi.spyOn(navigator.clipboard, 'writeText');
