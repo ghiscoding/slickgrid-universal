@@ -94,6 +94,11 @@ export function Draggable(options: DraggableOption): {
   }
 
   function userPressed(event: MouseEvent | TouchEvent | KeyboardEvent): void {
+    // Cell/row dragging is a primary-button action; let secondary clicks open context menus.
+    if (event.type === 'mousedown' && 'button' in event && (event as MouseEvent).button !== 0) {
+      return;
+    }
+
     element = event.target as HTMLElement;
     if (!preventDrag(event)) {
       const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;

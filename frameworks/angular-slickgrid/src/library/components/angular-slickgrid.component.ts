@@ -586,11 +586,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       }
       this.backendServiceApi = undefined;
     }
-    if (this.columns) {
-      for (const prop of Object.keys(this.columns)) {
-        (this.columns as any)[prop] = null;
-      }
-    }
     for (const prop of Object.keys(this.sharedService)) {
       (this.sharedService as any)[prop] = null;
     }

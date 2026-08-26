@@ -580,9 +580,6 @@ export class AureliaSlickgridCustomElement {
       }
       this.backendServiceApi = undefined;
     }
-    for (const prop of Object.keys(this.columns)) {
-      (this.columns as any)[prop] = null;
-    }
     for (const prop of Object.keys(this.sharedService)) {
       (this.sharedService as any)[prop] = null;
     }

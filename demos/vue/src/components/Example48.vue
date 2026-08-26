@@ -13,6 +13,9 @@ const columns2: Ref<Column[]> = ref([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
 const showSubTitle = ref(true);
+const enableMultiSelection = ref(false);
+const vueGrid1 = ref<SlickgridVueInstance>();
+const vueGrid2 = ref<SlickgridVueInstance>();
 
 onBeforeMount(() => {
   defineGrids();
@@ -22,6 +25,7 @@ onBeforeMount(() => {
 });
 
 function vueGrid1Ready(vueGrid: SlickgridVueInstance) {
+  vueGrid1.value = vueGrid;
   const cellSelectionModel1 = vueGrid.slickGrid!.getSelectionModel()!;
   _eventHandler.subscribe(cellSelectionModel1.onSelectedRangesChanged, (_e, args) => {
     const targetRange = document.querySelector('#selectionRange1') as HTMLSpanElement;
@@ -35,6 +39,7 @@ function vueGrid1Ready(vueGrid: SlickgridVueInstance) {
 }
 
 function vueGrid2Ready(vueGrid: SlickgridVueInstance) {
+  vueGrid2.value = vueGrid;
   const cellSelectionModel2 = vueGrid.slickGrid!.getSelectionModel()!;
   _eventHandler.subscribe(cellSelectionModel2.onSelectedRangesChanged, (_e, args) => {
     const targetRange = document.querySelector('#selectionRange2') as HTMLSpanElement;
@@ -99,6 +104,7 @@ function defineGrids() {
     gridHeight: 250,
     gridWidth: 800,
     enableCellNavigation: true,
+    preventDragFromKeys: [],
     autoEdit: true,
     editable: true,
     headerRowHeight: 35,
@@ -114,6 +120,8 @@ function defineGrids() {
     selectionOptions: {
       rowSelectColumnIds: ['id'],
       selectionType: 'mixed',
+      enableMultiSelection: false,
+      // showDragHandle: 'hover', // can also be true (default) or false
     },
 
     // when using the ExcelCopyBuffer, you can see what the selection range is
@@ -140,8 +148,30 @@ function defineGrids() {
 
       // allow using the mouse drag selection to select multiple rows
       dragToSelect: true,
+      enableMultiSelection: false,
     },
   };
+}
+
+function toggleMultiSelection(event: Event) {
+  const enabled = (event.target as HTMLInputElement).checked;
+  enableMultiSelection.value = enabled;
+
+  const selectionOptions1 = { ...gridOptions1.value?.selectionOptions, enableMultiSelection: enabled };
+  const selectionOptions2 = { ...gridOptions2.value?.selectionOptions, enableMultiSelection: enabled };
+  gridOptions1.value = { ...gridOptions1.value, selectionOptions: selectionOptions1 } as GridOption;
+  gridOptions2.value = { ...gridOptions2.value, selectionOptions: selectionOptions2 } as GridOption;
+
+  vueGrid1.value?.slickGrid?.setOptions({ selectionOptions: selectionOptions1 }, true);
+  vueGrid2.value?.slickGrid?.setOptions({ selectionOptions: selectionOptions2 }, true);
+  const selectionModel1 = vueGrid1.value?.slickGrid?.getSelectionModel();
+  const selectionModel2 = vueGrid2.value?.slickGrid?.getSelectionModel();
+  if (selectionModel1) {
+    selectionModel1.setOptions({ enableMultiSelection: enabled });
+  }
+  if (selectionModel2) {
+    selectionModel2.setOptions({ enableMultiSelection: enabled });
+  }
 }
 
 function mockData(itemCount: number) {
@@ -219,7 +249,10 @@ function toggleSubTitle() {
     </SlickgridVue>
   </div>
 
-  <hr />
+  <label class="checkbox-inline control-label mb-3">
+    <input type="checkbox" data-test="enable-multi-selection" :checked="enableMultiSelection" @change="toggleMultiSelection" />
+    Enable multi-selection (Ctrl/Cmd-click or drag)
+  </label>
 
   <h3>
     Grid 2

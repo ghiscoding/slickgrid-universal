@@ -70,6 +70,32 @@ describe('Draggable class', () => {
     dg.destroy();
   });
 
+  it('should ignore secondary-button mousedown events', () => {
+    const dragInitSpy = vi.fn();
+    const dragStartSpy = vi.fn();
+    const dragSpy = vi.fn();
+    const dragEndSpy = vi.fn();
+    containerElement.className = 'slick-cell';
+
+    dg = Draggable({
+      containerElement,
+      allowDragFrom: 'div.slick-cell',
+      onDrag: dragSpy,
+      onDragInit: dragInitSpy,
+      onDragStart: dragStartSpy,
+      onDragEnd: dragEndSpy,
+    });
+
+    const secondaryButtonEvent = new Event('mousedown');
+    Object.defineProperty(secondaryButtonEvent, 'button', { value: 2 });
+    containerElement.dispatchEvent(secondaryButtonEvent);
+
+    expect(dragInitSpy).not.toHaveBeenCalled();
+    expect(dragStartSpy).not.toHaveBeenCalled();
+    expect(dragSpy).not.toHaveBeenCalled();
+    expect(dragEndSpy).not.toHaveBeenCalled();
+  });
+
   it('should trigger mousedown and expect a dragInit and a dragStart and drag to all happen since it was triggered by an allowed element and we did move afterward', () => {
     const removeBodyListenerSpy = vi.spyOn(document.body, 'removeEventListener');
     const removeWindowListenerSpy = vi.spyOn(window, 'removeEventListener');

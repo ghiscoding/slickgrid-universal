@@ -344,6 +344,61 @@ describe('CellExternalCopyManager', () => {
           });
         }));
 
+      it('should copy the current selection when copyToClipboard is called', async () => {
+        const writeTextSpy = vi.spyOn(navigator.clipboard, 'writeText');
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 0, 1, 1)]);
+        vi.spyOn(gridStub, 'getDataItem').mockImplementation((row) =>
+          row === 0 ? { firstName: 'John', lastName: 'Doe' } : { firstName: 'Jane', lastName: 'Doe' }
+        );
+        plugin.init(gridStub, { includeHeaderWhenCopying: true });
+
+        await expect(plugin.copyToClipboard()).resolves.toBe(true);
+
+        expect(writeTextSpy).toHaveBeenCalledWith('First Name\tLast Name\r\nserialized output\tDoe\r\nserialized output\tDoe\r\n');
+      });
+
+      it('should not copy anything when there is no selected range', async () => {
+        const writeTextSpy = vi.spyOn(navigator.clipboard, 'writeText');
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValue([]);
+        plugin.init(gridStub);
+
+        await expect(plugin.copyToClipboard()).resolves.toBe(false);
+
+        expect(writeTextSpy).not.toHaveBeenCalled();
+      });
+
+      it('should skip a selected cell when its column is not available', async () => {
+        const writeTextSpy = vi.spyOn(navigator.clipboard, 'writeText');
+        vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 3, 0, 3)]);
+        plugin.init(gridStub);
+
+        await expect(plugin.copyToClipboard()).resolves.toBe(true);
+
+        expect(writeTextSpy).toHaveBeenCalledWith('\r\n');
+      });
+
+      it('should preserve row and column offsets when copying multiple cell ranges', () =>
+        new Promise((done: any) => {
+          const writeTextSpy = vi.spyOn(navigator.clipboard, 'writeText');
+          vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockHybridSelectionModel);
+          vi.spyOn(mockHybridSelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 0, 2, 0), new SlickRange(1, 2, 2, 2)]);
+          plugin.init(gridStub, {
+            dataItemColumnValueExtractor: (_item, _column, row, cell) => `${row}:${cell}`,
+          });
+
+          const keyDownCtrlCopyEvent = new Event('keydown');
+          Object.defineProperty(keyDownCtrlCopyEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
+          Object.defineProperty(keyDownCtrlCopyEvent, 'key', { writable: true, configurable: true, value: 'c' });
+          Object.defineProperty(keyDownCtrlCopyEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+          Object.defineProperty(keyDownCtrlCopyEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+          gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlCopyEvent, gridStub);
+
+          setTimeout(() => {
+            expect(writeTextSpy).toHaveBeenCalledWith('0:0\t\t\r\n1:0\t\t1:2\r\n2:0\t\t2:2\r\n');
+            done();
+          });
+        }));
+
       it('should Copy, Paste and run Execute clip command', () =>
         new Promise((done: any) => {
           let clipCommand: EditCommand;

@@ -60,6 +60,11 @@ export class SlickCellExcelCopyManager {
     return this._undoRedoBuffer;
   }
 
+  /** Copy the currently selected cell ranges to the clipboard. */
+  copyToClipboard(): Promise<boolean> {
+    return this._cellExternalCopyManagerPlugin.copyToClipboard();
+  }
+
   init(grid: SlickGrid, options?: ExcelCopyBufferOption): void {
     this._grid = grid;
     this.createUndoRedoBuffer();

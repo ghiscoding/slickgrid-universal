@@ -43,8 +43,8 @@ export class Example17Component {
     this.uploadFileRef = '';
   }
 
-  destroyGrid() {
-    this.gridCreated = false;
+  toggleGrid() {
+    this.gridCreated = !this.gridCreated;
   }
 
   dynamicallyCreateGrid(csvContent: string) {

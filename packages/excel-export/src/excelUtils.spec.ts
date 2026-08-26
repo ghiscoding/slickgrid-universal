@@ -1,14 +1,7 @@
 import { Formatters, GroupTotalFormatters, type Column, type Formatter, type GridOption, type SlickGrid } from '@slickgrid-universal/common';
 import { type StyleSheet } from 'excel-builder-vanilla';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  getExcelFormatFromGridFormatter,
-  getExcelNumberCallback,
-  getExcelSameInputDataCallback,
-  getGroupTotalValue,
-  getNumericFormatterOptions,
-  useCellFormatByFieldType,
-} from './excelUtils.js';
+import { getExcelFormatFromGridFormatter, getGroupTotalValue, useCellFormatByFieldType } from './excelUtils.js';
 
 const mockGridOptions = {
   enableExcelExport: true,
@@ -27,6 +20,19 @@ const stylesheetStub = {
   createFormat: vi.fn(),
 } as unknown as StyleSheet;
 
+function invokeExcelNumberParser(data: any, gridOptions = mockGridOptions) {
+  const columnDef = { type: 'number', formatter: Formatters.decimal } as Column;
+  const parser = useCellFormatByFieldType(stylesheetStub, {}, columnDef, gridStub).getDataValueParser;
+  return parser(data, {
+    columnDef,
+    excelFormatId: 3,
+    gridOptions,
+    dataRowIdx: 0,
+    stylesheet: stylesheetStub,
+    dataContext: {},
+  });
+}
+
 describe('excelUtils', () => {
   const mockedFormatId = 135;
   let createFormatSpy: any;
@@ -40,81 +46,58 @@ describe('excelUtils', () => {
     vi.clearAllMocks();
   });
 
-  describe('getExcelNumberCallback() method', () => {
-    it('should return same data when input not a number', () => {
-      const output = getExcelNumberCallback('something else', {
-        columnDef: {} as Column,
+  describe('getGroupTotalValue() method', () => {
+    it('should return the requested group total value', () => {
+      expect(getGroupTotalValue({ sum: { amount: 42 } }, { columnDef: { field: 'amount' } as Column, groupType: 'sum' })).toBe(42);
+    });
+
+    it('should return zero when the requested group total value is missing', () => {
+      expect(getGroupTotalValue({}, { columnDef: { field: 'amount' } as Column, groupType: 'sum' })).toBe(0);
+    });
+  });
+
+  describe('data value parsers', () => {
+    it('should preserve data for a non-number field', () => {
+      const columnDef = {} as Column;
+      const parser = useCellFormatByFieldType(stylesheetStub, {}, columnDef, gridStub, false).getDataValueParser;
+      const output = parser('text', {
+        columnDef,
         excelFormatId: 3,
         gridOptions: mockGridOptions,
         dataRowIdx: 0,
         stylesheet: stylesheetStub,
         dataContext: {},
       });
+
+      expect(output).toEqual({ metadata: { style: 3 }, value: 'text' });
+    });
+
+    it('should return same data when input not a number', () => {
+      const output = invokeExcelNumberParser('something else');
       expect(output).toEqual({ metadata: { style: 3 }, value: 'something else' });
     });
 
     it('should return same data when input value is already a number', () => {
-      const output = getExcelNumberCallback(9.33, {
-        columnDef: {} as Column,
-        excelFormatId: 3,
-        gridOptions: mockGridOptions,
-        dataRowIdx: 0,
-        stylesheet: stylesheetStub,
-        dataContext: {},
-      });
+      const output = invokeExcelNumberParser(9.33);
       expect(output).toEqual({ metadata: { style: 3 }, value: 9.33 });
     });
 
     it('should return parsed number when input value can be parsed to a number', () => {
-      const output = getExcelNumberCallback('$1,209.33', {
-        columnDef: {} as Column,
-        excelFormatId: 3,
-        gridOptions: mockGridOptions,
-        dataRowIdx: 0,
-        stylesheet: stylesheetStub,
-        dataContext: {},
-      });
+      const output = invokeExcelNumberParser('$1,209.33');
       expect(output).toEqual({ metadata: { style: 3 }, value: 1209.33 });
     });
 
     it('should return negative parsed number when input value can be parsed to a number', () => {
-      const output = getExcelNumberCallback('-$1,209.33', {
-        columnDef: {} as Column,
-        excelFormatId: 3,
-        gridOptions: mockGridOptions,
-        dataRowIdx: 0,
-        stylesheet: stylesheetStub,
-        dataContext: {},
-      });
+      const output = invokeExcelNumberParser('-$1,209.33');
       expect(output).toEqual({ metadata: { style: 3 }, value: -1209.33 });
     });
 
     it('should be able to provide a number with different decimal separator as formatter options and return parsed number when input value can be parsed to a number', () => {
-      const output = getExcelNumberCallback('1 244 209,33€', {
-        columnDef: {} as Column,
-        excelFormatId: 3,
-        gridOptions: {
-          ...mockGridOptions,
-          formatterOptions: { decimalSeparator: ',', thousandSeparator: ' ' },
-        },
-        dataRowIdx: 0,
-        stylesheet: stylesheetStub,
-        dataContext: {},
+      const output = invokeExcelNumberParser('1 244 209,33€', {
+        ...mockGridOptions,
+        formatterOptions: { decimalSeparator: ',', thousandSeparator: ' ' },
       });
       expect(output).toEqual({ metadata: { style: 3 }, value: 1244209.33 });
-    });
-
-    it('should return raw input when no Excel format is provided', () => {
-      expect(
-        getExcelSameInputDataCallback('raw value', {
-          columnDef: {} as Column,
-          excelFormatId: undefined,
-          gridOptions: mockGridOptions,
-          dataRowIdx: 0,
-          stylesheet: stylesheetStub,
-          dataContext: {},
-        })
-      ).toBe('raw value');
     });
 
     it('should return zero when group totals or fields are missing', () => {
@@ -181,453 +164,190 @@ describe('excelUtils', () => {
     });
   });
 
-  describe('getNumericFormatterOptions() method', () => {
-    describe('with GroupTotalFormatters', () => {
-      it('should get formatter options for GroupTotalFormatters.avgTotalsDollar', () => {
-        const column = {
+  describe('numeric formatter options through public format generation', () => {
+    const testCases: Array<[string, Column, 'cell' | 'group', string, string]> = [
+      [
+        'GroupTotalFormatters.avgTotalsDollar',
+        {
           type: 'number',
           formatter: Formatters.decimal,
           groupTotalsFormatter: GroupTotalFormatters.avgTotalsDollar,
           params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',', numberSuffix: ' USD' },
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'group');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 4,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: ',',
-          wrapNegativeNumber: true,
-        });
-      });
-
-      it('should get formatter options for GroupTotalFormatters.sumTotalsDollarColoredBold', () => {
-        const column = {
+        } as Column,
+        'group',
+        'avg',
+        '"$"#,##0.00##;("$"#,##0.00##)',
+      ],
+      [
+        'GroupTotalFormatters.sumTotalsDollarColoredBold',
+        {
           type: 'number',
           formatter: Formatters.decimal,
           groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarColoredBold,
           params: { thousandSeparator: ' ', decimalSeparator: ',', numberSuffix: ' USD' },
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'group');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: ',',
-          maxDecimal: 4,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: ' ',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for GroupTotalFormatters.sumTotalsDollarColored', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.decimal,
-          groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarColored,
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'group');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 4,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: '',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for GroupTotalFormatters.sumTotalsDollarBold', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.decimal,
-          groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'group');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 4,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: '',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for GroupTotalFormatters.sumTotalsDollar', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.decimal,
-          groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'group');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 4,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: '',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for GroupTotalFormatters.avgTotalsPercentage', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.decimal,
-          groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'group');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: undefined,
-          minDecimal: undefined,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: '',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for GroupTotalFormatters.avgTotals', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.decimal,
-          groupTotalsFormatter: GroupTotalFormatters.avgTotals,
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'group');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 2,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: '',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for GroupTotalFormatters.minTotals', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.decimal,
-          groupTotalsFormatter: GroupTotalFormatters.minTotals,
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'group');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 2,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: '',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for GroupTotalFormatters.maxTotals', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.decimal,
-          groupTotalsFormatter: GroupTotalFormatters.maxTotals,
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'group');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 2,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: '',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for GroupTotalFormatters.sumTotalsColored', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.decimal,
-          groupTotalsFormatter: GroupTotalFormatters.sumTotalsColored,
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'group');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 2,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: '',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for GroupTotalFormatters.sumTotals', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.decimal,
-          groupTotalsFormatter: GroupTotalFormatters.sumTotals,
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'group');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 2,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: '',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for GroupTotalFormatters.sumTotalsBold', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.decimal,
-          groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'group');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 2,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: '',
-          wrapNegativeNumber: false,
-        });
-      });
-    });
-
-    describe('with regular Formatters', () => {
-      it('should get formatter options for Formatters.dollarColoredBold', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.dollarColoredBold,
-          params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' },
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'cell');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 4,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: ',',
-          wrapNegativeNumber: true,
-        });
-      });
-
-      it('should get formatter options for Formatters.dollarColoredBold when using Formatters.multiple and 1 of its formatter is dollarColoredBold formatter', () => {
-        const column = {
+        } as Column,
+        'group',
+        'sum',
+        '"$"# ##0,00##;"-$"# ##0,00##',
+      ],
+      [
+        'GroupTotalFormatters.sumTotalsDollarColored',
+        { type: 'number', formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarColored } as Column,
+        'group',
+        'sum',
+        '"$"0.00##;"-$"0.00##',
+      ],
+      [
+        'GroupTotalFormatters.sumTotalsDollarBold',
+        { type: 'number', formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold } as Column,
+        'group',
+        'sum',
+        '"$"0.00##;"-$"0.00##',
+      ],
+      [
+        'GroupTotalFormatters.sumTotalsDollar',
+        { type: 'number', formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar } as Column,
+        'group',
+        'sum',
+        '"$"0.00##;"-$"0.00##',
+      ],
+      [
+        'GroupTotalFormatters.avgTotalsPercentage',
+        { type: 'number', formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage } as Column,
+        'group',
+        'avg',
+        '0"%";0"%"',
+      ],
+      [
+        'GroupTotalFormatters.avgTotals',
+        { type: 'number', formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.avgTotals } as Column,
+        'group',
+        'avg',
+        '0;"-"0',
+      ],
+      [
+        'GroupTotalFormatters.minTotals',
+        { type: 'number', formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.minTotals } as Column,
+        'group',
+        'min',
+        '0.00;"-"0.00',
+      ],
+      [
+        'GroupTotalFormatters.maxTotals',
+        { type: 'number', formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.maxTotals } as Column,
+        'group',
+        'max',
+        '0.00;"-"0.00',
+      ],
+      [
+        'GroupTotalFormatters.sumTotalsColored',
+        { type: 'number', formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsColored } as Column,
+        'group',
+        'sum',
+        '0.00;"-"0.00',
+      ],
+      [
+        'GroupTotalFormatters.sumTotals',
+        { type: 'number', formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotals } as Column,
+        'group',
+        'sum',
+        '0.00;"-"0.00',
+      ],
+      [
+        'GroupTotalFormatters.sumTotalsBold',
+        { type: 'number', formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold } as Column,
+        'group',
+        'sum',
+        '0.00;"-"0.00',
+      ],
+      [
+        'Formatters.dollarColoredBold',
+        { type: 'number', formatter: Formatters.dollarColoredBold, params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column,
+        'cell',
+        '',
+        '"$"#,##0.00##;("$"#,##0.00##)',
+      ],
+      [
+        'Formatters.multiple with dollarColoredBold',
+        {
           type: 'number',
           formatter: Formatters.multiple,
           params: { formatters: [Formatters.dollarColoredBold, myBoldFormatter], displayNegativeNumberWithParentheses: true, thousandSeparator: ',' },
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'cell');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 4,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: ',',
-          wrapNegativeNumber: true,
-        });
-      });
-
-      it('should get formatter options for Formatters.dollarColored', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.dollarColored,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'cell');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 4,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: ' ',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for Formatters.dollar', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.dollar,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'cell');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 4,
-          minDecimal: 2,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: ' ',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for Formatters.percent', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.percent,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'cell');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: undefined,
-          minDecimal: undefined,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: ' ',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for Formatters.percent when using Formatters.multiple and 1 of its formatter is percent formatter', () => {
-        const column = {
+        } as Column,
+        'cell',
+        '',
+        '"$"#,##0.00##;("$"#,##0.00##)',
+      ],
+      [
+        'Formatters.dollarColored',
+        { type: 'number', formatter: Formatters.dollarColored, params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' } } as Column,
+        'cell',
+        '',
+        '"$"# ##0.00##;"-$"# ##0.00##',
+      ],
+      [
+        'Formatters.dollar',
+        { type: 'number', formatter: Formatters.dollar, params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' } } as Column,
+        'cell',
+        '',
+        '"$"# ##0.00##;"-$"# ##0.00##',
+      ],
+      [
+        'Formatters.percent',
+        { type: 'number', formatter: Formatters.percent, params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' } } as Column,
+        'cell',
+        '',
+        '### 000"%";"-"### 000"%"',
+      ],
+      [
+        'Formatters.multiple with percent',
+        {
           type: 'number',
           formatter: Formatters.multiple,
           params: { formatters: [Formatters.percent, myBoldFormatter], displayNegativeNumberWithParentheses: true, thousandSeparator: ',' },
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'cell');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: undefined,
-          minDecimal: undefined,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: ',',
-          wrapNegativeNumber: true,
-        });
-      });
-
-      it('should get formatter options for Formatters.percentComplete', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.percentComplete,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'cell');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: undefined,
-          minDecimal: undefined,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: ' ',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for Formatters.percentSymbol', () => {
-        const column = {
-          type: 'number',
-          formatter: Formatters.percentSymbol,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' },
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'cell');
-
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: undefined,
-          minDecimal: undefined,
-          numberPrefix: '',
-          numberSuffix: '',
-          thousandSeparator: ' ',
-          wrapNegativeNumber: false,
-        });
-      });
-
-      it('should get formatter options for Formatters.decimal', () => {
-        const column = {
+        } as Column,
+        'cell',
+        '',
+        '###,000"%";(###,000"%")',
+      ],
+      [
+        'Formatters.percentComplete',
+        { type: 'number', formatter: Formatters.percentComplete, params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' } } as Column,
+        'cell',
+        '',
+        '000"%";"-"# ##0"%"',
+      ],
+      [
+        'Formatters.percentSymbol',
+        { type: 'number', formatter: Formatters.percentSymbol, params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' } } as Column,
+        'cell',
+        '',
+        '# ##0"%";"-"# ##0"%"',
+      ],
+      [
+        'Formatters.decimal',
+        {
           type: 'number',
           formatter: Formatters.decimal,
           params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ', numberPrefix: 'Dollar ', numberSuffix: ' USD' },
-        } as Column;
-        const output = getNumericFormatterOptions(column, gridStub, 'cell');
+        } as Column,
+        'cell',
+        '',
+        '"Dollar "# ##0.00" USD";"-Dollar "# ##0.00" USD"',
+      ],
+    ];
 
-        expect(output).toEqual({
-          currencyPrefix: '',
-          currencySuffix: '',
-          decimalSeparator: '.',
-          maxDecimal: 2,
-          minDecimal: 2,
-          numberPrefix: 'Dollar ',
-          numberSuffix: ' USD',
-          thousandSeparator: ' ',
-          wrapNegativeNumber: false,
-        });
+    for (const [label, column, formatterType, groupType, expectedFormat] of testCases) {
+      it(`should generate the expected format for ${label}`, () => {
+        if (formatterType === 'group') {
+          column.field = 'field';
+        }
+        const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, formatterType);
+
+        expect(output).toEqual({ groupType, excelFormat: { id: 135 } });
+        expect(createFormatSpy).toHaveBeenCalledWith({ format: expectedFormat });
       });
-    });
+    }
   });
 
   describe('getExcelFormatFromGridFormatter() method', () => {

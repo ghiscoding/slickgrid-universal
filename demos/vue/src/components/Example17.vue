@@ -11,8 +11,8 @@ const templateUrl = ref(new URL('./data/users.csv', import.meta.url).href);
 const uploadFileRef = ref('');
 const showSubTitle = ref(true);
 
-function disposeGrid() {
-  gridCreated.value = false;
+function toggleGrid() {
+  gridCreated.value = !gridCreated.value;
 }
 
 function handleFileImport(event: any) {
@@ -134,7 +134,9 @@ function toggleSubTitle() {
         Use default CSV data
       </button>
       &nbsp;/
-      <button class="btn btn-outline-danger btn-sm ms-2" @click="disposeGrid()">Destroy Grid</button>
+      <button class="btn btn-outline-danger btn-sm ms-2" data-test="toggle-grid-btn" :disabled="columns.length === 0" @click="toggleGrid()">
+        {{ gridCreated ? 'Destroy Grid' : 'Recreate Grid' }}
+      </button>
     </div>
   </div>
 

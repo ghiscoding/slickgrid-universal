@@ -27,6 +27,7 @@ export class Example48Component implements OnInit {
   dataset1!: any[];
   dataset2!: any[];
   hideSubTitle = false;
+  enableMultiSelection = false;
 
   ngOnInit(): void {
     this.defineGrids();
@@ -113,6 +114,7 @@ export class Example48Component implements OnInit {
       gridHeight: 250,
       gridWidth: 800,
       enableCellNavigation: true,
+      preventDragFromKeys: [],
       autoEdit: true,
       editable: true,
       headerRowHeight: 35,
@@ -128,6 +130,8 @@ export class Example48Component implements OnInit {
       selectionOptions: {
         rowSelectColumnIds: ['id'],
         selectionType: 'mixed',
+        enableMultiSelection: false,
+        // showDragHandle: 'hover', // can also be true (default) or false
       },
 
       // when using the ExcelCopyBuffer, you can see what the selection range is
@@ -152,8 +156,29 @@ export class Example48Component implements OnInit {
 
         // allow using the mouse drag selection to select multiple rows
         dragToSelect: true,
+        enableMultiSelection: false,
       },
     };
+  }
+
+  toggleMultiSelection(event: Event) {
+    this.enableMultiSelection = (event.target as HTMLInputElement).checked;
+
+    const selectionOptions1 = { ...this.gridOptions1.selectionOptions, enableMultiSelection: this.enableMultiSelection };
+    const selectionOptions2 = { ...this.gridOptions2.selectionOptions, enableMultiSelection: this.enableMultiSelection };
+    this.gridOptions1.selectionOptions = selectionOptions1;
+    this.gridOptions2.selectionOptions = selectionOptions2;
+
+    this.angularGrid1?.slickGrid?.setOptions({ selectionOptions: selectionOptions1 }, true);
+    this.angularGrid2?.slickGrid?.setOptions({ selectionOptions: selectionOptions2 }, true);
+    const selectionModel1 = this.angularGrid1?.slickGrid?.getSelectionModel();
+    const selectionModel2 = this.angularGrid2?.slickGrid?.getSelectionModel();
+    if (selectionModel1) {
+      selectionModel1.setOptions({ enableMultiSelection: this.enableMultiSelection });
+    }
+    if (selectionModel2) {
+      selectionModel2.setOptions({ enableMultiSelection: this.enableMultiSelection });
+    }
   }
 
   mockData(itemCount: number) {

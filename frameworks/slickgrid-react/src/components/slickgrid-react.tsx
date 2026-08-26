@@ -66,6 +66,8 @@ interface State {
   showPagination: boolean;
 }
 
+type ReactEventCallback = (event: CustomEvent<any>) => unknown;
+
 export class SlickgridReact<TData = any> extends React.Component<SlickgridReactProps, State> {
   // i18next has to be provided by the external user through our `I18nextProvider`
   static contextType = I18nextContext;
@@ -97,6 +99,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   protected _collectionObservers: Array<null | { disconnect: () => void }> = [];
   protected _eventHandler!: SlickEventHandler;
   protected _eventPubSubService!: EventPubSubService;
+  protected _reactEventSubscriptions = new Map<string, EventSubscription>();
   protected _hideHeaderRowAfterPageLoad = false;
   protected _i18next: I18Next | null = null;
   protected _isAutosizeColsCalled = false;
@@ -264,7 +267,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     // initialize and assign all Service Dependencies
     this._eventPubSubService = new EventPubSubService();
-    this._eventPubSubService.eventNamingStyle = 'camelCase';
+    this._eventPubSubService.eventNamingStyle = this._options.eventNamingStyle ?? 'camelCase';
 
     this.backendUtilityService = new BackendUtilityService();
     this.gridEventService = new GridEventService();
@@ -375,24 +378,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     this._mounted = true;
     if (this._elm && this._eventPubSubService instanceof EventPubSubService) {
       this._eventPubSubService.elementSource = this._elm;
-
-      // React doesn't play well with Custom Events & also the render is called after the constructor which brings a second problem
-      // to fix both issues, we need to do the following:
-      // loop through all component props and subscribe to the ones that startsWith "on", we'll assume that it's the custom events
-      // we'll then call the assigned listener(s) when events are dispatching
-      for (const prop in this.props) {
-        if (prop.startsWith('on')) {
-          const eventCallback: any = this.props[prop as keyof SlickgridReactProps];
-          if (typeof eventCallback === 'function') {
-            this.subscriptions.push(
-              this._eventPubSubService.subscribe(prop, (data: unknown) => {
-                const gridEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, '');
-                eventCallback.call(null, new CustomEvent(gridEventName, { detail: data }));
-              })
-            );
-          }
-        }
-      }
+      this.synchronizeReactEventSubscriptions();
     }
 
     // save resource refs to register before the grid options are merged and possibly deep copied
@@ -683,6 +669,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
 
     this._collectionObservers.forEach((obs) => obs?.disconnect());
+    this.disposeReactEventSubscriptions();
     this._eventPubSubService.unsubscribeAll();
 
     // dispose of all Services
@@ -725,9 +712,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       }
       this.backendServiceApi = undefined;
     }
-    for (const prop of Object.keys(this.props.columns)) {
-      (this.props.columns as any)[prop] = null;
-    }
     for (const prop of Object.keys(this.sharedService)) {
       (this.sharedService as any)[prop] = null;
     }
@@ -763,6 +747,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
 
   componentDidUpdate(prevProps: SlickgridReactProps) {
+    this.synchronizeReactEventSubscriptions();
+
     // get the grid options (order of precedence is Global Options first, then user option which could overwrite the Global options)
     if (this.props.options !== prevProps.options) {
       this._options = { ...GlobalGridOptions, ...this._options };
@@ -781,6 +767,44 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this.datasetHierarchical = this.props.datasetHierarchical;
     }
     this.suggestDateParsingWhenHelpful();
+  }
+
+  /**
+   * React only handles known DOM events on built-in elements, so bridge any function-valued `on*` props to the PubSub host element.
+   * Keep one stable subscription per event name and resolve the latest callback at dispatch time to avoid subscription churn on re-render.
+   */
+  protected synchronizeReactEventSubscriptions(): void {
+    const eventPropNames = new Set([...Object.keys(this.props), ...this._reactEventSubscriptions.keys()]);
+
+    eventPropNames.forEach((propName) => {
+      if (!propName.startsWith('on')) {
+        return;
+      }
+
+      const prop = propName as keyof SlickgridReactProps;
+      const eventCallback = this.props[prop] as ReactEventCallback | undefined;
+      const eventSubscription = this._reactEventSubscriptions.get(propName);
+
+      if (typeof eventCallback === 'function' && !eventSubscription) {
+        this._reactEventSubscriptions.set(
+          propName,
+          this._eventPubSubService.subscribeEvent(propName, (event) => {
+            const currentCallback = this.props[prop] as ReactEventCallback | undefined;
+            if (typeof currentCallback === 'function' && currentCallback.call(null, event) === false) {
+              event.preventDefault();
+            }
+          })
+        );
+      } else if (typeof eventCallback !== 'function' && eventSubscription) {
+        eventSubscription.unsubscribe?.();
+        this._reactEventSubscriptions.delete(propName);
+      }
+    });
+  }
+
+  protected disposeReactEventSubscriptions(): void {
+    this._reactEventSubscriptions.forEach((subscription) => subscription.unsubscribe?.());
+    this._reactEventSubscriptions.clear();
   }
 
   columnsChanged(columns?: Column[]) {

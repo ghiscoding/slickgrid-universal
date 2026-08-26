@@ -80,4 +80,16 @@ describe('Example 17 - Dynamically Create Grid from CSV / Excel import', () => {
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', '33');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).should('contain', 'Teacher');
   });
+
+  it('should preserve the supplied columns when destroying and recreating the grid', () => {
+    cy.get('[data-test="toggle-grid-btn"]').should('contain', 'Destroy Grid').click();
+    cy.get('#slickGridContainer-grid17').should('not.exist');
+
+    cy.get('[data-test="toggle-grid-btn"]').should('contain', 'Recreate Grid').click();
+    cy.get('#slickGridContainer-grid17')
+      .find('.slick-header-columns')
+      .children()
+      .should('have.length', defaultCsvTitles.length)
+      .each(($column, index) => expect($column.text()).to.eq(defaultCsvTitles[index]));
+  });
 });
