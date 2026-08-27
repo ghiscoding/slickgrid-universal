@@ -5110,6 +5110,7 @@ describe('SlickGrid core file', () => {
       resizeHandleElm.dispatchEvent(cMouseDownEvent);
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
+      expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
       document.body.dispatchEvent(bodyMouseUpEvent);
 
       expect(scrollToXSpy).not.toHaveBeenCalledWith(400);
@@ -5186,15 +5187,12 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
 
-      const dragCallCountAfterMove = onColumnsDragSpy.mock.calls.length;
-
-      // The minimal auto-scroll logic triggers the callback every 30ms (RESIZE_AUTOSCROLL_MIN_INTERVAL_MS),
-      // so after 90ms, we expect 4 calls (initial + 3 intervals)
+      // Resize and reorder auto-scroll share the same 30ms interval.
       vi.advanceTimersByTime(90);
       expect(onColumnsDragSpy.mock.calls.length).toBe(4);
 
       vi.advanceTimersByTime(40);
-      expect(onColumnsDragSpy.mock.calls.length).toBeGreaterThan(dragCallCountAfterMove);
+      expect(onColumnsDragSpy.mock.calls.length).toBe(5);
 
       document.body.dispatchEvent(bodyMouseUpEvent);
     });
@@ -5294,7 +5292,7 @@ describe('SlickGrid core file', () => {
       document.body.dispatchEvent(upEvt);
     });
 
-    it('should trigger accelerated auto-scroll when resizing column inside grid (non-browser-edge)', () => {
+    it('should clamp resizing to the viewport edge before auto-scroll continues at the shared rate', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, {
         ...defaultOptions,
         forceFitColumns: false,
@@ -5309,26 +5307,27 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
 
       const columnElms = container.querySelectorAll('.slick-header-column');
-      const lastColumnElm = columnElms[3];
-      const resizeHandleElm = lastColumnElm.querySelector('.slick-resizable-handle') as HTMLDivElement;
+      const resizeHandleElm = columnElms[0].querySelector('.slick-resizable-handle') as HTMLDivElement;
 
       const cMouseDownEvent = new CustomEvent('mousedown');
       const bodyMouseMoveEvent = new CustomEvent('mousemove');
       Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
       Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 80 });
       Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 140 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 1000 });
       Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-      // Simulate pointer inside grid, not at browser edge
       Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 400 });
 
       resizeHandleElm.dispatchEvent(cMouseDownEvent);
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
 
-      // Advance timers to trigger the accelerated auto-scroll branch
-      vi.advanceTimersByTime(200);
-      expect(onColumnsDragSpy).toHaveBeenCalled();
+      expect(columns[1].width).toBe(720);
+      expect(onColumnsDragSpy).toHaveBeenCalledTimes(1);
+
+      vi.advanceTimersByTime(30);
+      expect(columns[1].width).toBe(730);
+      expect(onColumnsDragSpy).toHaveBeenCalledTimes(2);
       document.body.dispatchEvent(new CustomEvent('mouseup'));
     });
 
