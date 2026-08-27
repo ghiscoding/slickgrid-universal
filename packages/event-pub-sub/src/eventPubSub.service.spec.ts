@@ -1,5 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 import { EventPubSubService } from './eventPubSub.service.js';
+import type { BasePubSubService } from './types/basePubSubService.interface.js';
 
 describe('EventPubSub Service', () => {
   let service: EventPubSubService;
@@ -166,6 +167,24 @@ describe('EventPubSub Service', () => {
       expect(callback).toHaveBeenCalledWith(event);
       expect(event.defaultPrevented).toBe(true);
       expect(dispatchResult).toBe(false);
+    });
+
+    it('should expose the original CustomEvent through the base service contract', () => {
+      const baseService: BasePubSubService = service;
+      const callback = vi.fn((event: CustomEvent<{ name: string }>) => {
+        expectTypeOf(event).toEqualTypeOf<CustomEvent<{ name: string }>>();
+        event.preventDefault();
+      });
+      const event = new CustomEvent('onClick', { cancelable: true, detail: { name: 'John' } });
+
+      baseService.subscribeEvent?.('onClick', callback);
+      const dispatchResult = divContainer.dispatchEvent(event);
+
+      expect(callback).toHaveBeenCalledWith(event);
+      expect(dispatchResult).toBe(false);
+
+      baseService.unsubscribe('onClick', callback);
+      expect(service.subscribedEvents.length).toBe(0);
     });
 
     it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called with lowerCase event name', () => {
