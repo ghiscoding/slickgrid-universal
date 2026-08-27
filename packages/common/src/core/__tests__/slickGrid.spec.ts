@@ -3777,14 +3777,25 @@ describe('SlickGrid core file', () => {
     ];
     let sortInstance: any;
 
+    const getSortableInstance = () => {
+      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
+      const sortableProp = Object.keys(headerColumnsElm).find((prop) => prop.startsWith('Sortable'))!;
+      return headerColumnsElm[sortableProp];
+    };
+
+    const dispatchDocumentDrag = (pageX: number, clientX = pageX, clientY = 10) => {
+      const event = new Event('drag');
+      Object.defineProperties(event, {
+        pageX: { value: pageX },
+        clientX: { value: clientX },
+        clientY: { value: clientY },
+      });
+      document.dispatchEvent(event);
+    };
+
     it('should reorder column to the left when current column pageX is lower than viewport left position', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-      Object.keys(headerColumnsElm).forEach((prop) => {
-        if (prop.startsWith('Sortable')) {
-          sortInstance = headerColumnsElm[prop];
-        }
-      });
+      sortInstance = getSortableInstance();
       const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
       const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
       const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as any;
@@ -3801,14 +3812,10 @@ describe('SlickGrid core file', () => {
       sortInstance.options.onStart(dragEvent);
       sortInstance.options.onMove(dragEvent);
 
-      const docDragEvt = new Event('drag') as DragEvent;
-      Object.defineProperty(docDragEvt, 'pageX', { writable: true, value: 20 }); // pageX < viewportLeft → scroll left
-      Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: 20 });
-      Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
-      document.dispatchEvent(docDragEvt);
+      dispatchDocumentDrag(20); // pageX < viewportLeft → scroll left
       expect(viewportTopLeft.scrollLeft).toBe(0);
 
-      vi.advanceTimersByTime(100);
+      vi.advanceTimersByTime(30);
 
       expect(viewportTopLeft.scrollLeft).toBe(-10);
       sortInstance.options.onEnd(dragEvent);
@@ -3817,12 +3824,7 @@ describe('SlickGrid core file', () => {
 
     it('should reorder column to the right when current column pageX is greater than container width', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-      Object.keys(headerColumnsElm).forEach((prop) => {
-        if (prop.startsWith('Sortable')) {
-          sortInstance = headerColumnsElm[prop];
-        }
-      });
+      sortInstance = getSortableInstance();
       const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
       const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
       const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
@@ -3837,14 +3839,10 @@ describe('SlickGrid core file', () => {
       expect(sortInstance).toBeTruthy();
       sortInstance.options.onStart(dragEvent);
 
-      const docDragEvt = new Event('drag') as DragEvent;
-      Object.defineProperty(docDragEvt, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 }); // pageX > containerRight → scroll right
-      Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
-      Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
-      document.dispatchEvent(docDragEvt);
+      dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11); // pageX > containerRight → scroll right
       expect(viewportTopLeft.scrollLeft).toBe(0);
 
-      vi.advanceTimersByTime(100);
+      vi.advanceTimersByTime(30);
 
       expect(viewportTopLeft.scrollLeft).toBe(10);
       sortInstance.options.onEnd(dragEvent);
@@ -3853,12 +3851,7 @@ describe('SlickGrid core file', () => {
 
     it('should not trigger "onColumnsReordered" neither reorder column when column order is the same', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-      Object.keys(headerColumnsElm).forEach((prop) => {
-        if (prop.startsWith('Sortable')) {
-          sortInstance = headerColumnsElm[prop];
-        }
-      });
+      sortInstance = getSortableInstance();
       const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
       const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
       const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
@@ -3873,14 +3866,10 @@ describe('SlickGrid core file', () => {
       expect(sortInstance).toBeTruthy();
       sortInstance.options.onStart(dragEvent);
 
-      const docDragEvt = new Event('drag') as DragEvent;
-      Object.defineProperty(docDragEvt, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
-      Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
-      Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
-      document.dispatchEvent(docDragEvt);
+      dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11);
       expect(viewportTopLeft.scrollLeft).toBe(0);
 
-      vi.advanceTimersByTime(100);
+      vi.advanceTimersByTime(30);
 
       expect(viewportTopLeft.scrollLeft).toBe(10);
       sortInstance.options.onEnd(dragEvent);
@@ -3889,12 +3878,7 @@ describe('SlickGrid core file', () => {
 
     it('should stop auto-scroll when cursor moves back into safe zone during drag', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-      Object.keys(headerColumnsElm).forEach((prop) => {
-        if (prop.startsWith('Sortable')) {
-          sortInstance = headerColumnsElm[prop];
-        }
-      });
+      sortInstance = getSortableInstance();
       const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
       const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
       const dragEvent = new CustomEvent('DragEvent');
@@ -3904,24 +3888,43 @@ describe('SlickGrid core file', () => {
       sortInstance.options.onStart(dragEvent);
 
       // first drag beyond container right → starts scroll timer
-      const docDragEvt = new Event('drag') as DragEvent;
-      Object.defineProperty(docDragEvt, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
-      Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
-      Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
-      document.dispatchEvent(docDragEvt);
-      vi.advanceTimersByTime(100);
+      dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11);
+      vi.advanceTimersByTime(30);
       expect(viewportTopLeft.scrollLeft).toBe(10); // scrolled right
 
       // now move cursor back into safe zone → timer should stop
-      const docDragSafe = new Event('drag') as DragEvent;
-      Object.defineProperty(docDragSafe, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH / 2 });
-      Object.defineProperty(docDragSafe, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH / 2 });
-      Object.defineProperty(docDragSafe, 'clientY', { writable: true, value: 10 });
-      document.dispatchEvent(docDragSafe);
+      dispatchDocumentDrag(DEFAULT_GRID_WIDTH / 2);
 
       viewportTopLeft.scrollLeft = 0; // reset to confirm timer is stopped
-      vi.advanceTimersByTime(100);
+      vi.advanceTimersByTime(30);
       expect(viewportTopLeft.scrollLeft).toBe(0); // no more auto-scrolling
+
+      sortInstance.options.onEnd(dragEvent);
+    });
+
+    it('should preserve and reverse auto-scroll direction as drag coordinates change', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+      sortInstance = getSortableInstance();
+      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
+      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const dragEvent = new CustomEvent('DragEvent');
+      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+
+      sortInstance.options.onStart(dragEvent);
+
+      dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11);
+      dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11); // same direction keeps the current timer
+      vi.advanceTimersByTime(30);
+      expect(viewportTopLeft.scrollLeft).toBe(10);
+
+      dispatchDocumentDrag(0, 0, 0); // native drag can lose coordinates outside the browser
+      vi.advanceTimersByTime(30);
+      expect(viewportTopLeft.scrollLeft).toBe(20);
+
+      dispatchDocumentDrag(10);
+      vi.advanceTimersByTime(30);
+      expect(viewportTopLeft.scrollLeft).toBe(10);
 
       sortInstance.options.onEnd(dragEvent);
     });
@@ -3929,12 +3932,7 @@ describe('SlickGrid core file', () => {
     it('should try reordering column but stay at same scroll position when grid has frozen columns', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 0 });
       grid.setActiveCell(0, 1);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-      Object.keys(headerColumnsElm).forEach((prop) => {
-        if (prop.startsWith('Sortable')) {
-          sortInstance = headerColumnsElm[prop];
-        }
-      });
+      sortInstance = getSortableInstance();
       const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
       const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
       const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
@@ -3948,12 +3946,8 @@ describe('SlickGrid core file', () => {
       expect(sortInstance).toBeTruthy();
       sortInstance.options.onStart(dragEvent);
 
-      // even if drag event fires, canDragScroll=false for frozen left column → no scroll
-      const docDragEvt = new Event('drag') as DragEvent;
-      Object.defineProperty(docDragEvt, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
-      Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
-      Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
-      document.dispatchEvent(docDragEvt);
+      // frozen left columns do not bind the custom auto-scroll listener
+      dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11);
       expect(viewportTopLeft.scrollLeft).toBe(0);
 
       vi.advanceTimersByTime(100);
@@ -5226,7 +5220,7 @@ describe('SlickGrid core file', () => {
       clearIntervalSpy.mockRestore();
     });
 
-    it('should keep resize auto-scroll timer idle when offset becomes zero and stop it when pointer returns inside viewport', () => {
+    it('should stop resize auto-scroll when its offset becomes zero or the pointer returns inside the viewport', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, {
         ...defaultOptions,
         forceFitColumns: false,
@@ -5258,6 +5252,12 @@ describe('SlickGrid core file', () => {
         value: (window.innerWidth || document.documentElement.clientWidth || 1024) - 1,
       });
 
+      const moveLeftEdgeEvt = new CustomEvent('mousemove');
+      Object.defineProperty(moveLeftEdgeEvt, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(moveLeftEdgeEvt, 'pageX', { writable: true, value: 140 });
+      Object.defineProperty(moveLeftEdgeEvt, 'pageY', { writable: true, value: 13 });
+      Object.defineProperty(moveLeftEdgeEvt, 'clientX', { writable: true, value: 1 });
+
       const moveZeroOffsetEvt = new CustomEvent('mousemove');
       Object.defineProperty(moveZeroOffsetEvt, 'target', { writable: true, value: resizeHandleElm });
       Object.defineProperty(moveZeroOffsetEvt, 'pageX', { writable: true, value: 0 });
@@ -5279,11 +5279,17 @@ describe('SlickGrid core file', () => {
 
       document.body.dispatchEvent(moveZeroOffsetEvt);
       const dragCountBeforeIdleTick = onColumnsDragSpy.mock.calls.length;
+      expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
       vi.advanceTimersByTime(30);
       expect(onColumnsDragSpy.mock.calls.length).toBe(dragCountBeforeIdleTick);
 
+      document.body.dispatchEvent(moveRightEdgeEvt);
+      expect((grid as any)._columnResizeAutoScrollTimer).toBeDefined();
       document.body.dispatchEvent(moveInsideEvt);
       expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
+
+      document.body.dispatchEvent(moveLeftEdgeEvt);
+      expect((grid as any)._columnResizeAutoScrollTimer).toBeDefined();
 
       document.body.dispatchEvent(upEvt);
     });

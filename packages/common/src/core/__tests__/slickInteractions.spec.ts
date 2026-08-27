@@ -540,4 +540,32 @@ describe('Resizable class', () => {
     expect(preventDefaultSpy).not.toHaveBeenCalled();
     expect(resizeSpy).toHaveBeenCalled();
   });
+
+  it('should handle mouse and touch resize with the appropriate default prevention', () => {
+    const resizeSpy = vi.fn();
+    const touch = { clientX: 10, clientY: 20 };
+    const touchEvent = (type: string, touches = [touch]) => Object.assign(new Event(type), { touches, changedTouches: [touch] });
+
+    rsz = Resizable({
+      resizeableElement: containerElement,
+      resizeableHandleElement: containerElement,
+      onResize: resizeSpy,
+    });
+
+    containerElement.dispatchEvent(touchEvent('touchstart'));
+    const touchMoveEvt = touchEvent('touchmove');
+    const preventDefaultSpy = vi.spyOn(touchMoveEvt, 'preventDefault');
+    document.body.dispatchEvent(touchMoveEvt);
+    document.body.dispatchEvent(touchEvent('touchend', []));
+
+    containerElement.dispatchEvent(new MouseEvent('mousedown'));
+    const mouseMoveEvt = new MouseEvent('mousemove');
+    const mousePreventDefaultSpy = vi.spyOn(mouseMoveEvt, 'preventDefault');
+    document.body.dispatchEvent(mouseMoveEvt);
+    document.body.dispatchEvent(new MouseEvent('mouseup'));
+
+    expect(preventDefaultSpy).not.toHaveBeenCalled();
+    expect(mousePreventDefaultSpy).toHaveBeenCalled();
+    expect(resizeSpy).toHaveBeenCalledWith(touch, expect.any(Object));
+  });
 });
