@@ -3,9 +3,11 @@ import { type BasePubSubService } from './types/basePubSubService.interface.js';
 import { type EventNamingStyle } from './types/eventNamingStyle.type.js';
 import { type EventSubscription, type Subscription } from './types/eventSubscription.interface.js';
 
+export type PubSubEventListener<T = any> = ((event: T | CustomEventInit<T>) => void) | ((event: CustomEvent<T>) => void);
+
 export interface PubSubEvent<T = any> {
   name: string;
-  listener: (event: T | CustomEventInit<T>) => void;
+  listener: PubSubEventListener<T>;
   originalCallback?: (data: T) => void;
 }
 
@@ -154,9 +156,9 @@ export class EventPubSubService implements BasePubSubService {
 
       // the event listener will return the data in the "event.detail", so we need to return its content to the final callback
       // basically we substitute the "data" with "event.detail" so that the user ends up with only the "data" result
-      const wrappedListener = (event: CustomEventInit<T>) => callback.call(null, event.detail as T);
+      const wrappedListener = (event: CustomEvent<T>) => callback.call(null, event.detail);
 
-      this._elementSource.addEventListener(eventNameByConvention, wrappedListener);
+      this._elementSource.addEventListener(eventNameByConvention, wrappedListener as EventListener);
       this._subscribedEvents.push({ name: eventNameByConvention, listener: wrappedListener, originalCallback: callback });
       subscriptions.push(() => this.unsubscribeResolved(eventNameByConvention, wrappedListener as EventListener));
     });
@@ -177,7 +179,7 @@ export class EventPubSubService implements BasePubSubService {
   subscribeEvent<T = any>(eventName: string, listener: (event: CustomEvent<T>) => void): Subscription {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
     this._elementSource.addEventListener(eventNameByConvention, listener as EventListener);
-    this._subscribedEvents.push({ name: eventNameByConvention, listener: listener as PubSubEvent<T>['listener'] });
+    this._subscribedEvents.push({ name: eventNameByConvention, listener });
 
     // return a subscription that we can later unsubscribe
     return {
@@ -192,7 +194,9 @@ export class EventPubSubService implements BasePubSubService {
    * @param {Boolean} [shouldRemoveFromEventList] - should we also remove the event from the subscriptions array?
    * @return possibly a Subscription
    */
-  unsubscribe<T = any>(eventName: string, listener: (event: T | CustomEventInit<T>) => void, shouldRemoveFromEventList = true): void {
+  unsubscribe<T = any>(eventName: string, listener: (event: CustomEvent<T>) => void, shouldRemoveFromEventList?: boolean): void;
+  unsubscribe<T = any>(eventName: string, listener: (event: T | CustomEventInit<T>) => void, shouldRemoveFromEventList?: boolean): void;
+  unsubscribe<T = any>(eventName: string, listener: PubSubEventListener<T>, shouldRemoveFromEventList = true): void {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
     const subscribedEvents = this._subscribedEvents.filter(
       (pubSubEvent) => pubSubEvent.name === eventNameByConvention && pubSubEvent.originalCallback === listener
@@ -232,7 +236,7 @@ export class EventPubSubService implements BasePubSubService {
   // protected functions
   // --------------------
 
-  protected removeSubscribedEventWhenFound<T>(eventName: string, listener: (event: T | CustomEventInit<T>) => void): void {
+  protected removeSubscribedEventWhenFound<T>(eventName: string, listener: PubSubEvent<T>['listener']): void {
     const eventIdx = this._subscribedEvents.findIndex((evt) => evt.name === eventName && evt.listener === listener);
     if (eventIdx >= 0) {
       this._subscribedEvents.splice(eventIdx, 1);
