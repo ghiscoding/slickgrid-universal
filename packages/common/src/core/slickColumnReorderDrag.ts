@@ -32,6 +32,8 @@ const getPointerPos = (e: DragEvent | MouseEvent | TouchEvent) => {
   return { clientX: e.clientX, clientY: e.clientY, pageX: e.pageX };
 };
 
+const isRtl = (el: HTMLElement): boolean => getComputedStyle(el).direction === 'rtl';
+
 /** Apply the reordered visible/movable IDs while keeping hidden and fixed columns at their original indices. */
 export function reconcileColumnOrder<T extends { id?: string | number; hidden?: boolean; reorderable?: boolean }>(
   columns: T[],
@@ -133,7 +135,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     const rect = target.getBoundingClientRect();
     const movingRight = _lastClientX == null ? clientX >= rect.left + rect.width / 2 : clientX > _lastClientX;
     _lastClientX = clientX;
-    const insertBefore = !movingRight;
+    const insertBefore = isRtl(targetParent) ? movingRight : !movingRight;
     targetParent.insertBefore(draggedEl, insertBefore ? target : target.nextSibling);
   };
 
@@ -615,7 +617,8 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
     const target = (e.target as HTMLElement).closest<HTMLElement>(itemSelector);
     if (draggedPill && target && target !== draggedPill) {
       const rect = target.getBoundingClientRect();
-      dropzoneElm.insertBefore(draggedPill, e.clientX < rect.left + rect.width / 2 ? target : target.nextSibling);
+      const insertBefore = isRtl(dropzoneElm) ? e.clientX > rect.left + rect.width / 2 : e.clientX < rect.left + rect.width / 2;
+      dropzoneElm.insertBefore(draggedPill, insertBefore ? target : target.nextSibling);
     }
   };
 
@@ -709,7 +712,7 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
         const target = (document.elementFromPoint(clientX, clientY) as HTMLElement | null)?.closest<HTMLElement>(itemSelector);
         if (target && target !== draggedPill && dropzoneElm.contains(target)) {
           const rect = target.getBoundingClientRect();
-          const insertBefore = clientX < rect.left + rect.width / 2;
+          const insertBefore = isRtl(dropzoneElm) ? clientX > rect.left + rect.width / 2 : clientX < rect.left + rect.width / 2;
           const insertTarget = insertBefore ? target : target.nextSibling;
           if (draggedPill.parentElement === dropzoneElm && insertTarget !== draggedPill) {
             dropzoneElm.insertBefore(draggedPill, insertTarget);
