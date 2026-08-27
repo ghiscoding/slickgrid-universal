@@ -23,18 +23,18 @@ catalog:
   '@types/fnando__sparkline': ^0.3.7
   '@types/node': ^24.13.3
   '@types/react': ^19.2.18
-  '@types/react-dom': ^19.2.4
+  '@types/react-dom': ^19.2.5
   '@types/sortablejs': ^1.15.9
-  '@vitejs/plugin-react': ^6.0.5
+  '@vitejs/plugin-react': ^6.1.0
   '@vitejs/plugin-vue': ^6.0.8
   '@vitest/coverage-v8': ^4.1.11
   '@vitest/ui': ^4.1.11
   bootstrap: ^5.3.8
   cross-env: ^10.1.0
-  cypress: ^15.21.0
+  cypress: ^15.21.1
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
-  dompurify: ^3.4.13
+  dompurify: ^3.4.14
   globals: ^17.11.0
   i18next: ^25.10.10
   i18next-vue: ^5.4.0
@@ -42,19 +42,19 @@ catalog:
   jsdom-global: ^3.0.2
   jspdf: ^4.2.1
   multiple-select-vanilla: ^5.2.2
-  native-copyfiles: ^2.0.3
+  native-copyfiles: ^2.0.4
   npm-run-all2: ^9.0.3
-  oxlint: ^1.79.0
+  oxlint: ^1.80.0
   react: ^19.2.8
   react-dom: ^19.2.8
   react-router: ^8.3.0
-  remove-glob: ^1.2.1
+  remove-glob: ^1.2.2
   rxjs: ^7.8.2
-  sass: ^1.102.0
+  sass: ^1.103.1
   sortablejs: ^1.15.7
   tslib: ^2.8.1
   typescript: ^6.0.3
-  vite: ^8.2.1
+  vite: ^8.2.2
   vitest: ^4.1.11
   vue: ^3.5.41
 
@@ -71,10 +71,10 @@ overrides:
   '@babel/core': ^7.29.7
   '@hono/node-server': ^2.1.1
   esbuild: ^0.28.2
-  hono: ^4.13.2
+  hono: ^4.13.4
   ip-address: ^10.5.0
   minimatch: ^10.2.6
-  picomatch: ^4.0.5
+  picomatch: ^4.0.7
   postcss: ^8.5.26
   qs: ^6.15.3
   undici: ^7.29.0
