@@ -63,6 +63,8 @@ export default class Example46 {
 
     this.gridOptions = {
       enableFiltering: true,
+      // Disabled in RTL because SortableJS lacks RTL support; patch SortableJS or use https://github.com/HamadHadi/Sortable-rtl to enable it.
+      enableColumnReorder: false,
       gridHeight: 500,
       gridWidth: 900,
       rowHeight: 33,
