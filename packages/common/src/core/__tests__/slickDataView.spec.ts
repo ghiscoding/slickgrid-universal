@@ -1734,7 +1734,7 @@ describe('SlickDatView core file', () => {
       expect(refreshSpy).toHaveBeenCalled();
     });
 
-    it('should be able to set a filter with CSP Safe approach and expect items to be filtered', () => {
+    it('should keep the deprecated CSP-safe option backward compatible', () => {
       const items = [
         { id: 1, name: 'Bob', age: 33 },
         { id: 4, name: 'John', age: 20 },
@@ -1753,6 +1753,52 @@ describe('SlickDatView core file', () => {
         { id: 4, name: 'John', age: 20 },
         { id: 3, name: 'Jane', age: 24 },
       ]);
+    });
+
+    it('should always use CSP-safe filtering when deprecated inline filter options are enabled', () => {
+      const minimumId = 2;
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
+      const filter = (item: any) => item.id >= minimumId;
+      const functionSpy = vi.spyOn(globalThis, 'Function');
+
+      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: false });
+      dv.setItems(items);
+      dv.setFilter(filter);
+
+      expect(functionSpy).not.toHaveBeenCalled();
+      expect(dv.getFilter()).toBe(filter);
+      expect(dv.getFilteredItems()).toEqual([
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ]);
+
+      functionSpy.mockRestore();
+    });
+
+    it('should cache successful filters when the filter is expanding', () => {
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+      ];
+      const filter = vi.fn((item: any) => item.id >= 2);
+
+      dv.setItems(items);
+      dv.setRefreshHints({ isFilterExpanding: true });
+      dv.setFilter(filter);
+
+      expect(filter).toHaveBeenCalledTimes(3);
+
+      dv.setRefreshHints({ isFilterExpanding: true });
+      dv.refresh();
+
+      expect(filter).toHaveBeenCalledTimes(4);
+      expect(filter).toHaveBeenLastCalledWith(items[0], undefined);
+      expect(dv.getFilteredItems()).toEqual([items[1], items[2]]);
     });
 
     it('should be able to set a filter and extra filter arguments and expect items to be filtered', () => {
@@ -1782,7 +1828,7 @@ describe('SlickDatView core file', () => {
       ]);
     });
 
-    it('should be able to set a filter as CSP Safe and extra filter arguments and expect items to be filtered', () => {
+    it('should keep deprecated inline and CSP-safe options backward compatible with filter arguments', () => {
       const searchString = 'Ob'; // we'll provide "searchString" as filter args
       const myFilter = (item: any, args: any) => item.name.toLowerCase().includes(args.searchString?.toLowerCase());
       const items = [

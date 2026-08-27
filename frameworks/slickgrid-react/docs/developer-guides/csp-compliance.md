@@ -14,8 +14,6 @@ const gridOptions = {
 
 > **Note** If you're wondering about the `ADD_ATTR: ['level']`, well the "level" is a custom attribute used by SlickGrid Grouping/Draggable Grouping to track the grouping level depth and it must be kept.
 
-> **Note** the DataView is not CSP safe by default, it is opt-in via the `useCSPSafeFilter` option.
-
 ```typescript
 import DOMPurify from 'dompurify';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -34,37 +32,7 @@ with this code in place, we can use the following CSP meta tag (which is what we
 ```
 
 #### DataView
-Since we use the DataView, you will also need to enable a new `useCSPSafeFilter` flag to be CSP safe as the name suggest. This option is opt-in because it has a slight performance impact when enabling this option (it shouldn't be noticeable unless you use a very large dataset).
-
-```typescript
-import DOMPurify from 'dompurify';
-import { GridOption } from 'slickgrid-react';
-
-const Example: React.FC = () => {
-  const [dataset, setDataset] = useState<any[]>([]);
-  const [columns, setColumns] = useState<Column[]>([]);
-  const [options, setOptions] = useState<GridOption | undefined>(undefined);
-  const reactGridRef = useRef<SlickgridReactInstance | null>(null);
-
-useEffect(() => defineGrid(), []);
-
-  function reactGridReady(reactGrid: SlickgridReactInstance) {
-    reactGridRef.current = reactGrid;
-  }
-
-  function defineGrid() {
-    // ...
-
-    setOptions({
-      // you could also optionally use the sanitizerOptions instead
-      // sanitizerOptions: { RETURN_TRUSTED_TYPE: true }
-      dataView: {
-        useCSPSafeFilter: true
-      },
-    });
-  }
-}
-```
+DataView filtering is CSP-safe by default and does not use runtime code generation. No DataView option is required. The deprecated `inlineFilters` and `useCSPSafeFilter` options remain accepted for backward compatibility but are ignored.
 
 ### Custom Formatter using native HTML
 We now also allow passing native HTML Element as a Custom Formatter instead of HTML string in order to avoid the use of `innerHTML` and stay CSP safe. We also have a new grid option named `enableHtmlRendering`, which is enabled by default and is allowing the use of `innerHTML` in the library (by Formatters and others), however when disabled it will totally restrict the use of `innerHTML` which will help to stay CSP safe.
