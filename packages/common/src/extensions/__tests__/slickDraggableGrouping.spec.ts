@@ -128,6 +128,9 @@ describe('Draggable Grouping Plugin', () => {
     vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getHeaderColumn').mockImplementation((columnId) =>
+      document.querySelector<HTMLDivElement>(`.slick-header-column[data-id="${columnId}"]`)!
+    );
     vi.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(dropzoneElm);
     plugin = new SlickDraggableGrouping(extensionUtility, eventPubSubService, sharedService);
   });
@@ -378,9 +381,44 @@ describe('Draggable Grouping Plugin', () => {
 
       fireDragEndOnHeader(ageHeaderCol);
 
-      expect(setColumnsSpy).toHaveBeenCalledWith([mockColumns[2], mockColumns[2]]);
+      expect(setColumnsSpy).toHaveBeenCalledWith(mockColumns);
       expect(setColumnResizeSpy).toHaveBeenCalled();
-      expect(triggerSpy).toHaveBeenCalledWith(gridStub.onColumnsReordered, { grid: gridStub, impactedColumns: expect.arrayContaining([mockColumns[2]]) });
+      expect(triggerSpy).toHaveBeenCalledWith(gridStub.onColumnsReordered, { grid: gridStub, impactedColumns: mockColumns });
+    });
+
+    it('should preserve hidden and non-reorderable columns when reordering with Draggable Grouping', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'lastName', field: 'lastName', reorderable: false },
+        { id: 'hidden', field: 'hidden', hidden: true },
+        { id: 'age', field: 'age' },
+      ] as Column[];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ unorderableColumnCssClass: 'unorderable' } as GridOption);
+      vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
+      plugin.init(gridStub, { ...addonOptions });
+
+      const firstName = createDomElement('div', { className: 'slick-header-column', dataset: { id: 'firstName' } }, mockHeaderLeftDiv1);
+      createDomElement('div', { className: 'slick-header-column unorderable', dataset: { id: 'lastName' } }, mockHeaderLeftDiv1);
+      const age = createDomElement('div', { className: 'slick-header-column', dataset: { id: 'age' } }, mockHeaderLeftDiv1);
+
+      const result = plugin.setupColumnReorder(
+        gridStub,
+        mockHeaderLeftDiv1,
+        {},
+        setColumnsSpy,
+        setColumnResizeSpy,
+        columns,
+        getColumnIndexSpy,
+        GRID_UID,
+        triggerSpy
+      );
+      fireDragStartOnHeader(firstName);
+      mockHeaderLeftDiv1.insertBefore(age, firstName);
+      fireDragEndOnHeader(firstName);
+
+      expect(result.columnReorderDragInstance).toBeTruthy();
+      expect(setColumnsSpy).toHaveBeenCalledWith([columns[3], columns[1], columns[2], columns[0]]);
     });
 
     it('should execute setupColumnReorder onDrop callback when header drag ends over dropzone', () => {
@@ -1052,7 +1090,6 @@ describe('Draggable Grouping Plugin', () => {
         const groupByRemoveElm = document.querySelector('.slick-groupby-remove.mdi-close') as HTMLDivElement;
         expect(groupByRemoveElm).toBeTruthy();
 
-        mockColumns.pop(); // remove gender (index 4); getColumnIndexSpy returns 0,1,2,3 for firstName,lastName,age,gender
         expect(setColumnsSpy).toHaveBeenCalledWith(mockColumns);
       });
     });

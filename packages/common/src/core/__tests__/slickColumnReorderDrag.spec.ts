@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { setupColumnReorderDrag, setupDropzonePillDrag } from '../slickColumnReorderDrag.js';
+import { reconcileColumnOrder, setupColumnReorderDrag, setupDropzonePillDrag } from '../slickColumnReorderDrag.js';
 
 describe('slickColumnReorderDrag', () => {
   const createHeaderColumn = (id: string, extraClass = '') => {
@@ -36,7 +36,20 @@ describe('slickColumnReorderDrag', () => {
 
   afterEach(() => {
     document.body.innerHTML = '';
+    document.body.style.userSelect = '';
     vi.restoreAllMocks();
+  });
+
+  it('should reconcile movable columns while preserving hidden and fixed positions', () => {
+    const columns = [{ id: 'first' }, { id: 'fixed', reorderable: false }, { id: 'hidden', hidden: true }, { id: 'last' }];
+
+    expect(reconcileColumnOrder(columns, ['last', 'first'])).toEqual([columns[3], columns[1], columns[2], columns[0]]);
+  });
+
+  it('should keep the original order when the reordered ID list is incomplete', () => {
+    const columns = [{ id: 'first' }, { id: 'last' }];
+
+    expect(reconcileColumnOrder(columns, ['last'])).toEqual(columns);
   });
 
   it('should initialize draggable headers and clear draggable flags on destroy', () => {
@@ -930,7 +943,6 @@ describe('slickColumnReorderDrag', () => {
       container,
       viewportScrollContainerX: viewport,
       hasFrozenColumns: () => false,
-      dragStartFilter: '.slick-header-menu-button',
       onDragStart,
       onDragEnd,
     });
@@ -965,7 +977,6 @@ describe('slickColumnReorderDrag', () => {
       container,
       viewportScrollContainerX: viewport,
       hasFrozenColumns: () => false,
-      dragStartFilter: '.slick-header-menu-button',
       onDragStart,
       onDragEnd,
     });
@@ -993,6 +1004,53 @@ describe('slickColumnReorderDrag', () => {
     expect(onDragStart).not.toHaveBeenCalled();
     expect(onDragEnd).not.toHaveBeenCalled();
     expect(firstName.classList.contains('slick-header-column-active')).toBe(false);
+  });
+
+  it('should ignore touch drag start from a column resize handle by default', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'slick-resizable-handle';
+    firstName.append(resizeHandle);
+    headerLeft.append(firstName);
+
+    const onDragStart = vi.fn();
+    const onDragEnd = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      onDragStart,
+      onDragEnd,
+    });
+
+    resizeHandle.dispatchEvent(
+      createTouchEvent('touchstart', {
+        touches: [{ clientX: 10, clientY: 10, pageX: 10 }],
+        changedTouches: [{ clientX: 10, clientY: 10, pageX: 10 }],
+        target: resizeHandle,
+      })
+    );
+    document.dispatchEvent(
+      createTouchEvent('touchmove', {
+        touches: [{ clientX: 140, clientY: 10, pageX: 140 }],
+        changedTouches: [{ clientX: 140, clientY: 10, pageX: 140 }],
+      })
+    );
+    document.dispatchEvent(
+      createTouchEvent('touchend', {
+        touches: [],
+        changedTouches: [{ clientX: 140, clientY: 10, pageX: 140 }],
+      })
+    );
+
+    expect(onDragStart).not.toHaveBeenCalled();
+    expect(onDragEnd).not.toHaveBeenCalled();
   });
 
   it('should keep working when elementFromPoint throws in dragend and still call onDragEnd', () => {
@@ -1118,6 +1176,55 @@ describe('slickColumnReorderDrag', () => {
 
     firstName.dispatchEvent(createDragEvent('dragend', { clientX: 20, clientY: 20 }));
     expect(onDrop).not.toHaveBeenCalled();
+  });
+
+  it('should ignore another grid dropzone when a specific dropzone element is provided', () => {
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    headerLeft.append(firstName);
+
+    const ownGrid = document.createElement('div');
+    ownGrid.className = 'grid-a';
+    const ownDropzone = document.createElement('div');
+    ownDropzone.className = 'slick-dropzone';
+    ownGrid.append(ownDropzone);
+    const otherDropzone = document.createElement('div');
+    otherDropzone.className = 'slick-dropzone';
+    document.body.append(ownGrid, otherDropzone);
+
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: vi.fn(() => otherDropzone as Element),
+    });
+
+    const onDrop = vi.fn();
+    const onDragEnd = vi.fn();
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      dropzoneSelector: '.grid-a .slick-dropzone',
+      onDrop,
+      onDragEnd,
+    });
+
+    firstName.dispatchEvent(
+      createDragEvent('dragstart', {
+        dataTransfer: { effectAllowed: '', setData: vi.fn(), setDragImage: vi.fn() },
+        clientX: 10,
+        clientY: 10,
+      })
+    );
+    document.dispatchEvent(createDragEvent('dragenter', { target: otherDropzone }));
+    firstName.dispatchEvent(createDragEvent('dragend', { clientX: 25, clientY: 25 }));
+
+    expect(onDrop).not.toHaveBeenCalled();
+    expect(onDragEnd).toHaveBeenCalledWith(['firstName']);
   });
 
   it('should keep dropzone active on dragleave when relatedTarget is null but pointer is still over dropzone', () => {
@@ -1526,6 +1633,98 @@ describe('slickColumnReorderDrag', () => {
     Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
   });
 
+  it('should restore the existing body user-select style when column drag is destroyed', () => {
+    const originalNavigator = globalThis.navigator;
+    Object.defineProperty(globalThis, 'navigator', {
+      configurable: true,
+      value: { userAgent: 'Mozilla/5.0 Firefox/128.0 Linux x86_64' },
+    });
+
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    headerLeft.append(firstName);
+    document.body.style.userSelect = 'text';
+    Object.defineProperty(document, 'elementFromPoint', { configurable: true, value: vi.fn(() => firstName) });
+
+    const instance = setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      onDragEnd: vi.fn(),
+    });
+
+    firstName.dispatchEvent(createMouseEvent('mousedown', { clientX: 10, clientY: 10, target: firstName }));
+    document.dispatchEvent(createMouseEvent('mousemove', { clientX: 20, clientY: 20, pageX: 20 }));
+    expect(document.body.style.userSelect).toBe('none');
+
+    instance.destroy();
+
+    expect(document.body.style.userSelect).toBe('text');
+    Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
+  });
+
+  it('should ignore non-primary mouse buttons in the Firefox/Linux fallback', () => {
+    const originalNavigator = globalThis.navigator;
+    Object.defineProperty(globalThis, 'navigator', {
+      configurable: true,
+      value: { userAgent: 'Mozilla/5.0 Firefox/128.0 Linux x86_64' },
+    });
+
+    const headerLeft = document.createElement('div');
+    const headerRight = document.createElement('div');
+    const viewport = document.createElement('div');
+    const container = document.createElement('div');
+    const firstName = createHeaderColumn('firstName');
+    headerLeft.append(firstName);
+    const onDragStart = vi.fn();
+    const onDragEnd = vi.fn();
+
+    setupColumnReorderDrag({
+      headerLeft,
+      headerRight,
+      container,
+      viewportScrollContainerX: viewport,
+      hasFrozenColumns: () => false,
+      onDragStart,
+      onDragEnd,
+    });
+
+    firstName.dispatchEvent(createMouseEvent('mousedown', { button: 2, clientX: 10, clientY: 10, target: firstName }));
+    document.dispatchEvent(createMouseEvent('mousemove', { clientX: 140, clientY: 10, pageX: 140 }));
+    document.dispatchEvent(createMouseEvent('mouseup', { clientX: 140, clientY: 10 }));
+
+    expect(onDragStart).not.toHaveBeenCalled();
+    expect(onDragEnd).not.toHaveBeenCalled();
+    Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
+  });
+
+  it('should ignore non-primary mouse buttons when dragging a pill in the Firefox/Linux fallback', () => {
+    const originalUserAgent = window.navigator.userAgent;
+    Object.defineProperty(window.navigator, 'userAgent', {
+      configurable: true,
+      value: 'Mozilla/5.0 Firefox/128.0 Linux x86_64',
+    });
+
+    const dropzoneElm = document.createElement('div');
+    const pill = document.createElement('div');
+    pill.className = 'slick-dropped-grouping';
+    dropzoneElm.append(pill);
+    const onPillDragEnd = vi.fn();
+    setupDropzonePillDrag({ dropzoneElm, onPillDragEnd });
+
+    pill.dispatchEvent(createMouseEvent('mousedown', { button: 2, target: pill }));
+    document.dispatchEvent(createMouseEvent('mousemove', { clientX: 20, clientY: 20 }));
+    document.dispatchEvent(createMouseEvent('mouseup', { clientX: 20, clientY: 20 }));
+
+    expect(onPillDragEnd).not.toHaveBeenCalled();
+    Object.defineProperty(window.navigator, 'userAgent', { configurable: true, value: originalUserAgent });
+  });
+
   it('should return early in dropzone fallback mousemove when target resolves to dragged pill', () => {
     const originalUserAgent = window.navigator.userAgent;
     Object.defineProperty(window.navigator, 'userAgent', {
@@ -1780,6 +1979,29 @@ describe('slickColumnReorderDrag', () => {
     expect(Array.from(dropzoneElm.children).map((el) => (el as HTMLElement).dataset.id)).toEqual(['medals', 'age']);
     expect(firstPill.classList.contains('dragging')).toBe(false);
     expect(onPillDragEnd).toHaveBeenCalledWith(firstPill);
+  });
+
+  it('should restore the existing body user-select style when pill drag is destroyed', () => {
+    const dropzoneElm = document.createElement('div');
+    const pill = document.createElement('div');
+    pill.className = 'slick-dropped-grouping';
+    dropzoneElm.append(pill);
+    document.body.append(dropzoneElm);
+    document.body.style.userSelect = 'text';
+
+    const instance = setupDropzonePillDrag({ dropzoneElm });
+    pill.dispatchEvent(
+      createTouchEvent('touchstart', {
+        touches: [{ clientX: 10, clientY: 10, pageX: 10 }],
+        changedTouches: [{ clientX: 10, clientY: 10, pageX: 10 }],
+        target: pill,
+      })
+    );
+    expect(document.body.style.userSelect).toBe('none');
+
+    instance.destroy();
+
+    expect(document.body.style.userSelect).toBe('text');
   });
 
   it('should start left auto-scroll when pointer moves past left viewport edge during fallback drag (line 331)', () => {

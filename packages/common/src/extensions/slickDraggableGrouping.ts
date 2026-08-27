@@ -1,7 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { classNameToList, createDomElement, emptyElement, isEmptyObject } from '@slickgrid-universal/utils';
-import { setupColumnReorderDrag, setupDropzonePillDrag } from '../core/slickColumnReorderDrag.js';
+import { reconcileColumnOrder, setupColumnReorderDrag, setupDropzonePillDrag } from '../core/slickColumnReorderDrag.js';
 import { SlickEvent, SlickEventData, SlickEventHandler } from '../core/slickCore.js';
 import { type SlickDataView } from '../core/slickDataView.js';
 import { type SlickGrid } from '../core/slickGrid.js';
@@ -290,15 +290,16 @@ export class SlickDraggableGrouping {
     setColumns: (columns: Column[]) => void,
     setupColumnResize: () => void,
     _columns: Column[],
-    getColumnIndex: (columnId: string) => number,
+    _getColumnIndex: (columnId: string) => number,
     _uid: string,
     trigger: (slickEvent: SlickEvent, data?: any) => void
-  ): void {
+  ): { columnReorderDragInstance: { destroy: () => void } } {
     this.destroyColumnReorderDrag();
     const dropzoneElm = grid.getTopHeaderPanel() || grid.getPreHeaderPanel();
     const draggablePlaceholderElm = dropzoneElm.querySelector<HTMLDivElement>(`.${DROPZONE_PLACEHOLDER_CLASS}`);
     const groupTogglerElm = dropzoneElm.querySelector<HTMLDivElement>(`.${GROUP_TOGGLE_ALL_CLASS}`);
     const uid = grid.getUID();
+    const gridOptions = grid.getOptions?.() as GridOption | undefined;
 
     const restoreDropzoneState = () => {
       dropzoneElm.classList.remove(DROPZONE_HOVER_CLASS);
@@ -320,9 +321,10 @@ export class SlickDraggableGrouping {
       headerRight: this.gridContainer.querySelector<HTMLDivElement>(`.${uid} .slick-header-columns.slick-header-columns-right`)!,
       container: this.gridContainer,
       viewportScrollContainerX: (grid as any).getViewportNode?.() ?? this.gridContainer,
-      hasFrozenColumns: () => ((grid.getOptions?.() as GridOption | undefined)?.frozenColumn ?? -1) >= 0,
+      hasFrozenColumns: () => (gridOptions?.frozenColumn ?? -1) >= 0,
       draggableSelector: '.slick-header-column',
-      dropzoneSelector: `.${DROPZONE_CLASS}`,
+      unorderableColumnCssClass: gridOptions?.unorderableColumnCssClass,
+      dropzoneSelector: `.${uid} .${DROPZONE_CLASS}`,
       dropzoneHoverClass: DROPZONE_HOVER_CLASS,
       onDragStart: () => {
         if (draggablePlaceholderElm) {
@@ -348,11 +350,7 @@ export class SlickDraggableGrouping {
           return;
         }
 
-        const finalReorderedColumns: Column[] = [];
-        const reorderedColumns = grid.getColumns();
-        for (const reorderedId of reorderedIds) {
-          finalReorderedColumns.push(reorderedColumns[getColumnIndex.call(grid, reorderedId)]);
-        }
+        const finalReorderedColumns = reconcileColumnOrder(grid.getColumns(), reorderedIds);
         setColumns.call(grid, finalReorderedColumns);
         trigger.call(grid, grid.onColumnsReordered, { grid, impactedColumns: finalReorderedColumns });
         setupColumnResize.call(grid);
@@ -365,6 +363,8 @@ export class SlickDraggableGrouping {
       this.setDroppedGroups(initialGroupIds);
     }
     this._isInitialized = true;
+
+    return { columnReorderDragInstance: this._columnReorderDrag };
   }
 
   //
@@ -540,21 +540,6 @@ export class SlickDraggableGrouping {
     this.updateGroupBy('remove-group');
   }
 
-  protected addDragOverDropzoneListeners(): void {
-    const draggablePlaceholderElm = this._dropzoneElm.querySelector(`.${DROPZONE_PLACEHOLDER_CLASS}`);
-
-    if (draggablePlaceholderElm && this._dropzoneElm) {
-      this._bindingEventService.bind(draggablePlaceholderElm, 'dragover', (e: Event) => e.preventDefault());
-      this._bindingEventService.bind(draggablePlaceholderElm, 'dragenter', (e: Event) => {
-        const dragEvent = e as DragEvent;
-        if (dragEvent.dataTransfer?.types?.length) {
-          this._dropzoneElm.classList.add(DROPZONE_HOVER_CLASS);
-        }
-      });
-      this._bindingEventService.bind(draggablePlaceholderElm, 'dragleave', () => this._dropzoneElm.classList.remove(DROPZONE_HOVER_CLASS));
-    }
-  }
-
   protected setupColumnDropbox(): void {
     const dropzoneElm = this._dropzoneElm;
     this._dropboxDrag?.destroy();
@@ -562,7 +547,7 @@ export class SlickDraggableGrouping {
     this._dropboxDrag = setupDropzonePillDrag({
       dropzoneElm,
       itemSelector: '.slick-dropped-grouping',
-      draggingCssClass: 'slick-dropped-grouping-dragging',
+      draggingCssClass: 'slick-droppable-sortitem-hover',
       onPillDragEnd: () => {
         const newGroupingOrder: Column[] = [];
         dropzoneElm.querySelectorAll<HTMLElement>('.slick-dropped-grouping').forEach((pillElm) => {
@@ -594,15 +579,12 @@ export class SlickDraggableGrouping {
       },
       onColumnDrop: (columnDataId) => {
         dropzoneElm.classList.remove(DROPZONE_HOVER_CLASS);
-        const headerColumnElm = this.gridContainer.querySelector<HTMLDivElement>(`[data-id="${columnDataId}"]`);
+        const headerColumnElm = this.grid.getHeaderColumn(columnDataId);
         if (headerColumnElm) {
           this.handleGroupByDrop(dropzoneElm, headerColumnElm);
         }
       },
     });
-
-    // Keep the placeholder-level hover listeners (for visual feedback when cursor enters the placeholder)
-    this.addDragOverDropzoneListeners();
 
     if (this._groupToggler) {
       this._bindingEventService.bind(this._groupToggler, 'click', ((event: DOMMouseOrTouchEvent<HTMLDivElement>) => {

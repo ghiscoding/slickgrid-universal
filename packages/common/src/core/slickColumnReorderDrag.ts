@@ -1,6 +1,26 @@
 import { getOffset, tryCatch } from '@slickgrid-universal/utils';
 import type { ColumnReorderDragOption, DropzonePillDragOption } from '../interfaces/slickColumnReorderDrag.interfaces.js';
 
+const DEFAULT_DRAG_START_FILTER =
+  '.slick-resizable-handle, .slick-header-button, .slick-header-menu-button, button, input, select, textarea, a, [contenteditable]:not([contenteditable="false"])';
+
+const bodyTextSelectionLocks = new WeakMap<HTMLElement, { count: number; previousUserSelect: string }>();
+
+const lockBodyTextSelection = (): (() => void) => {
+  const body = document.body;
+  const lock = bodyTextSelectionLocks.get(body) ?? { count: 0, previousUserSelect: body.style.userSelect };
+  bodyTextSelectionLocks.set(body, lock);
+  lock.count++;
+  body.style.userSelect = 'none';
+
+  return () => {
+    if (--lock.count === 0) {
+      body.style.userSelect = lock.previousUserSelect;
+      bodyTextSelectionLocks.delete(body);
+    }
+  };
+};
+
 /** Extract { clientX, clientY, pageX } from any pointer-like event.
  * DragEvent inherits clientX/pageX from MouseEvent; TouchEvent uses touches[0] (or
  * changedTouches[0] for touchend/touchcancel where touches is empty). */
@@ -11,6 +31,22 @@ const getPointerPos = (e: DragEvent | MouseEvent | TouchEvent) => {
   }
   return { clientX: e.clientX, clientY: e.clientY, pageX: e.pageX };
 };
+
+/** Apply the reordered visible/movable IDs while keeping hidden and fixed columns at their original indices. */
+export function reconcileColumnOrder<T extends { id?: string | number; hidden?: boolean; reorderable?: boolean }>(
+  columns: T[],
+  reorderedIds: string[]
+): T[] {
+  const movableColumns = columns.filter((column) => !column.hidden && column.reorderable !== false);
+  const columnMap = new Map(movableColumns.map((column) => [String(column.id), column]));
+  const reorderedColumns = reorderedIds.map((id) => columnMap.get(id)).filter((column): column is T => !!column);
+  if (reorderedColumns.length !== movableColumns.length || new Set(reorderedColumns).size !== movableColumns.length) {
+    return [...columns];
+  }
+
+  let index = 0;
+  return columns.map((column) => (column.hidden || column.reorderable === false ? column : reorderedColumns[index++]));
+}
 
 /**
  * Sets up native HTML5 drag-and-drop for column header reordering.
@@ -44,6 +80,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   let dragStartX: number | null = null;
   let dragStartY: number | null = null;
   let pointerDragCommitted = false;
+  let releaseBodyTextSelection: (() => void) | undefined;
 
   const isOverDropzone = (el: HTMLElement | null | undefined): boolean => !!el?.closest?.(dropzoneSelector);
   const scrollColumnsRight = () => (viewportScrollContainerX.scrollLeft += 10);
@@ -70,6 +107,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
   const isDragStartIgnoredTarget = (el: HTMLElement | null, event: DragEvent | MouseEvent | TouchEvent): boolean => {
     const dragStartFilter = options.dragStartFilter;
+    if (el?.closest?.(DEFAULT_DRAG_START_FILTER)) {
+      return true;
+    }
     return typeof dragStartFilter === 'function'
       ? !!dragStartFilter(el, event)
       : typeof dragStartFilter === 'string' && dragStartFilter.trim()
@@ -241,7 +281,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       () => {
         if (!droppedOnDropzone && e.clientX != null && e.clientY != null) {
           const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
-          if (el && el.closest && el.closest(dropzoneSelector)) {
+          if (isOverDropzone(el)) {
             droppedOnDropzone = true;
           }
         }
@@ -303,7 +343,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       }
     };
 
-    if (isDragStartIgnoredTarget(eventTarget, e)) {
+    if ((e.type === 'mousedown' && (e as MouseEvent).button !== 0) || isDragStartIgnoredTarget(eventTarget, e)) {
       cancelNativeDragIfNeeded(e);
       return;
     }
@@ -383,7 +423,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
         createFallbackGhost(draggedEl, clientX, clientY);
         draggedEl.classList.add(dragActiveClass);
         // Disable text selection only after drag intent is confirmed
-        document.body.style.userSelect = 'none';
+        releaseBodyTextSelection ??= lockBodyTextSelection();
         pointerDragCommitted = true;
       }
 
@@ -452,7 +492,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       () => {
         if (!droppedOnDropzone) {
           const el = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
-          if (el?.closest?.(dropzoneSelector)) {
+          if (isOverDropzone(el)) {
             droppedOnDropzone = true;
           }
         }
@@ -475,8 +515,8 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       options.onDragEnd(reorderedIds);
     }
     resetDragState();
-    // Re-enable text selection after drag completes
-    document.body.style.userSelect = '';
+    releaseBodyTextSelection?.();
+    releaseBodyTextSelection = undefined;
   };
 
   for (const parent of [headerLeft, headerRight]) {
@@ -510,6 +550,8 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       document.removeEventListener('dragleave', onDropzoneDragLeave as EventListener);
       stopAutoScroll();
       resetDragState();
+      releaseBodyTextSelection?.();
+      releaseBodyTextSelection = undefined;
       [headerLeft, headerRight].forEach((parent) =>
         Array.from(parent.querySelectorAll<HTMLElement>(draggableSelector)).forEach((el) => {
           el.draggable = false;
@@ -546,6 +588,7 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
   let fallbackActive = false;
   let dragStartX: number | null = null;
   let dragStartY: number | null = null;
+  let releaseBodyTextSelection: (() => void) | undefined;
 
   // ── Native pill drag ──────────────────────────────────────────────────────
 
@@ -617,6 +660,9 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
   // Both cases share onPointerDown/Move/Up – coordinates come from a tiny helper.
 
   const onPointerDown = (e: MouseEvent | TouchEvent) => {
+    if (e.type === 'mousedown' && (e as MouseEvent).button !== 0) {
+      return;
+    }
     const pill = (e.target as HTMLElement).closest<HTMLElement>(itemSelector);
     if (pill) {
       // Track start position for drag threshold
@@ -628,7 +674,7 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
         pill.classList.add(draggingCssClass);
       }
       // Disable text selection during drag
-      document.body.style.userSelect = 'none';
+      releaseBodyTextSelection ??= lockBodyTextSelection();
       if ('touches' in e) {
         document.addEventListener('touchmove', onPointerMove as EventListener, { passive: false });
         document.addEventListener('touchend', onPointerUp as EventListener);
@@ -691,8 +737,8 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
     dragStartX = null;
     dragStartY = null;
     fallbackActive = false;
-    // Re-enable text selection after drag completes
-    document.body.style.userSelect = '';
+    releaseBodyTextSelection?.();
+    releaseBodyTextSelection = undefined;
     if (currentPill) {
       options.onPillDragEnd?.(currentPill);
     }
@@ -730,6 +776,8 @@ export function setupDropzonePillDrag(options: DropzonePillDragOption): { destro
       dragStartX = null;
       dragStartY = null;
       fallbackActive = false;
+      releaseBodyTextSelection?.();
+      releaseBodyTextSelection = undefined;
     },
   };
 }

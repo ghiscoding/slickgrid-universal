@@ -89,7 +89,7 @@ import type {
   SingleColumnSort,
   SlickPlugin,
 } from '../interfaces/index.js';
-import { setupColumnReorderDrag } from './slickColumnReorderDrag.js';
+import { reconcileColumnOrder, setupColumnReorderDrag } from './slickColumnReorderDrag.js';
 import {
   preClickClassName,
   RowPositionIndexer,
@@ -2156,7 +2156,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._columnReorderDrag?.destroy();
 
     let prevColumnIds: Array<string | number> = [];
-    let columnMap: Map<string, { index: number; hidden: boolean; reorderable: boolean; column: C }> | undefined;
+    let columnsBeforeDrag: C[] | undefined;
 
     this._columnReorderDrag = setupColumnReorderDrag({
       headerLeft: this._headerL,
@@ -2169,35 +2169,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       unorderableColumnCssClass: this._options.unorderableColumnCssClass,
       onDragStart: () => {
         prevColumnIds = this.columns.map((c) => c.id);
-        const map = new Map<string, { index: number; hidden: boolean; reorderable: boolean; column: C }>();
-        this.columns.forEach((col, idx) =>
-          map.set(String(col.id), { index: idx, hidden: !!col.hidden, reorderable: col.reorderable !== false, column: col })
-        );
-        columnMap = map;
+        columnsBeforeDrag = [...this.columns];
       },
       onDragEnd: (reorderedIds) => {
         //  onDragStart never ran (drag started outside a column) or when editing a cell then cancel the reorder operation
-        if (!columnMap || !this.getEditorLock()?.commitCurrentEdit()) {
+        if (!columnsBeforeDrag || !this.getEditorLock()?.commitCurrentEdit()) {
           return;
         }
 
         const prevScrollLeft = this.scrollLeft;
-        const reorderedColumns: C[] = reorderedIds.map((id) => columnMap?.get(id)?.column).filter((column): column is C => !!column);
-        const reorderedIdSet = new Set(reorderedIds);
-
-        // Reconstruct final column array while preserving hidden/non-draggable columns at their original indices.
-        const finalColumns: C[] = [];
-        let visibleIdx = 0;
-        for (let i = 0; i < this.columns.length; i++) {
-          const colInfo = columnMap.get(String(this.columns[i].id));
-          if (colInfo?.hidden) {
-            finalColumns.push(colInfo.column);
-          } else if (colInfo?.reorderable && reorderedIdSet.has(String(this.columns[i].id))) {
-            finalColumns.push(reorderedColumns[visibleIdx++] ?? colInfo!.column);
-          } else {
-            finalColumns.push(colInfo!.column);
-          }
-        }
+        const finalColumns = reconcileColumnOrder(columnsBeforeDrag, reorderedIds);
 
         const finalColumnIds = finalColumns.map((col) => col.id);
         if (!this.arrayEquals(prevColumnIds, finalColumnIds)) {
