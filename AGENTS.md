@@ -22,6 +22,7 @@ Changes in `packages/` can affect every framework. Preserve backward compatibili
 - For plugin changes, preserve existing `init()`, `dispose()`, `getOptions()`, and `setOptions()` lifecycle methods where applicable. Use `BindingEventService` for DOM event binding and cleanup.
 - When changing shared behavior, check all four framework wrappers and relevant demos.
 - Never edit generated `dist/` output unless explicitly requested.
+- When drafting a pull request, follow `.github/pull_request_template.md`, including its conventional-commit title requirement and applicable sections and checklist items.
 
 ## Testing and quality
 
@@ -31,6 +32,7 @@ Changes in `packages/` can affect every framework. Preserve backward compatibili
 - Framework demos provide headless Cypress CI scripts. Start the matching demo server first (`pnpm angular:serve`, `pnpm aurelia:serve`, `pnpm react:serve`, or `pnpm vue:serve`).
 - Run the corresponding root CI command: `pnpm angular:cypress:ci`, `pnpm aurelia:cypress:ci`, `pnpm react:cypress:ci`, or `pnpm vue:cypress:ci` (for example, `pnpm aurelia:cypress:ci`). These commands use each framework's Cypress config and are preferred for validating framework-specific E2E suites.
 - Add or update tests for behavior changes, especially in core packages.
+- Maintain 100% statement, branch, function, and line coverage for changed production code. Scope coverage collection to the changed source files while including all tests needed to exercise them; passing tests alone is not sufficient.
 - Run the smallest relevant checks first, then broader checks when practical:
 
 ```text

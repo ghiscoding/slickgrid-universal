@@ -898,7 +898,7 @@ describe('Example 04 - Frozen Grid', () => {
       cy.get('[data-test="set-large-freezed-columns"]').click();
 
       // Step 1: call SortableJS onStart for the "Start" column (1st right-section column).
-      // This sets canDragScroll=true (it's in _headerR) and binds the document 'drag' auto-scroll listener.
+      // This binds the document 'drag' auto-scroll listener for the right pane.
       cy.get('.slick-header-columns-right').then(($rightHeader) => {
         let sortInstance: any;
         Object.keys($rightHeader[0]).forEach((prop) => {
@@ -918,7 +918,7 @@ describe('Example 04 - Frozen Grid', () => {
         cy.document().trigger('drag', { pageX: dragX, clientX: dragX, clientY: 50 });
       });
 
-      // Step 3: advance mocked time so the 100ms scroll interval ticks several times.
+      // Step 3: advance mocked time so the 30ms scroll interval ticks several times.
       cy.tick(350);
 
       // Auto-scroll should have moved the right viewport to the right
