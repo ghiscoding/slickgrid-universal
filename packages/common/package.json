@@ -72,11 +72,11 @@
     "dequal": "catalog:",
     "multiple-select-vanilla": "catalog:",
     "sortablejs": "catalog:",
-    "vanilla-calendar-pro": "^3.2.0"
+    "vanilla-calendar-pro": "^3.3.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.5.4",
-    "cssnano": "^8.0.5",
+    "cssnano": "^8.0.8",
     "native-copyfiles": "catalog:",
     "npm-run-all2": "catalog:",
     "postcss": "^8.5.26",
