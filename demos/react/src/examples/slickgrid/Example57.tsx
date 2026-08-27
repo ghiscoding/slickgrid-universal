@@ -53,6 +53,8 @@ const Example57: React.FC = () => {
 
     const opts: GridOption = {
       enableFiltering: true,
+      // Disabled in RTL because SortableJS lacks RTL support; patch SortableJS or use https://github.com/HamadHadi/Sortable-rtl to enable it.
+      enableColumnReorder: false,
       gridHeight: 500,
       gridWidth: 700,
       rowHeight: 33,
