@@ -1,6 +1,6 @@
 ## Simplification, Modernization and Accessibility ⚡
 
-One of the biggest change of this release is to hide columns by using a `hidden` column property (used by Column Picker, Grid Menu, etc...). Previously the behavior was to remove columns from the original columns array and then typically call `setColumns()` to update the visible columns in the grid, but this meant that we had to keep references for all visible/non-visible columns. With this new release we now keep the full columns array at all time and simply change their visibility via the `hidden` prop by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. Also, what I'm trying to emphasis is that you should avoid using `grid.setColumns()` in v10 and above, instead you should just toggle column `hidden` properties when defining them or when dynamically changing them after creation, see more details below...
+One of the biggest change of this release is to hide columns by using a `hidden` column property (used by Column Picker, Grid Menu, etc...). Previously the behavior was to remove columns from the original columns array and then typically call `setColumns()` to update the visible columns in the grid, but this meant that we had to keep references for all visible/non-visible columns. With this new release we now keep the full columns array at all time and simply change their visibility via the `hidden` prop by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. Also, what I'm trying to emphasis is that you should only use `grid.setColumns()` when changing the columns list in v10 and above, but for only hiding columns then you should simply use the column `hidden` toggle property when defining it or when dynamically changing any of them after creation, see more details below...
 
 This new release also brings significant improvements to accessibility (a11y), making grids more usable for keyboard and screen reader users. For example, you can now use Tab/Shift+Tab to focus the Header Menu or Grid Menu, and then navigate menu commands with the arrow keys, making keyboard navigation much more intuitive and accessible.
 
@@ -42,7 +42,7 @@ _following changes should be transparent to most users, I'm just listing them in
 
 ### Row Detail (now optional)
 
-Since I don't think that Row Detail was used by everyone, I decided to make it an optional plugin (package). This should help decrease build size quite a bit for users who don't use it at all. However, if you are one of them using it, then you will now have to register it as an external resource.
+Since I don't think Row Detail was being used by everyone, I decided to make it an optional plugin (package). This will help decrease build size quite a bit for users who don't need it. However, if you are one of them using it, then you will now have to import and register it as an external resource.
 
 ```diff
 + import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
