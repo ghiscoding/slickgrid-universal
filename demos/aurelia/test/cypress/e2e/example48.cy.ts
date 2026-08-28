@@ -337,9 +337,10 @@ describe('Example 48 - Hybrid Selection Model', () => {
       cy.get('#selectionRange2').should('have.text', firstRange);
 
       const secondRowCell = `${gridSelector} .slick-row[data-row="3"] .slick-cell.l1.r1`;
-      cy.get(secondRowCell).trigger('mousedown', { which: 1, ctrlKey: true, force: true });
-      cy.get(secondRowCell).trigger('mousemove', 30, 10, { ctrlKey: true, force: true });
-      cy.get(secondRowCell).trigger('mousemove', 30, 52, { ctrlKey: true, force: true });
+      cy.get(secondRowCell).as('secondRowCell');
+      cy.get('@secondRowCell').trigger('mousedown', { which: 1, ctrlKey: true, force: true });
+      cy.get('@secondRowCell').trigger('mousemove', 30, 10, { ctrlKey: true, force: true });
+      cy.get('@secondRowCell').trigger('mousemove', 30, 52, { ctrlKey: true, force: true });
 
       cy.get('#selectionRange2').should('have.text', combinedRanges);
       cy.get(`${gridSelector} .slick-cell.selected`).should('have.length', 8 * 4);
