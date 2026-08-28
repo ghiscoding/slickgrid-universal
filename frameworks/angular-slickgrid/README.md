@@ -12,8 +12,6 @@ Angular-SlickGrid is a custom component created specifically for [Angular](https
 ## Documentation
 📕 [Documentation](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start) website powered by GitBook for version 7+ (_or use the [Wikis](https://github.com/ghiscoding/Angular-Slickgrid/wiki) for older versions_).
 
-For common issues, see the [Troubleshooting Section](#troubleshooting-section) below
-
 ## Installation
 Available in Stackblitz (Codeflow) below, this can also be used to provide an issue repro.
 
@@ -84,15 +82,15 @@ Also note that all of these themes also have **Dark Theme** equivalent and even 
 `Angular-Slickgrid` works with all `Bootstrap` versions, you can see a demo of each one below. It also works well with any other frameworks like Material or Bulma and there are also couple of extra styling themes based on Material & Salesforce which are also available. You can also use different SVG icons, you may want to look at the [Docs - SVG Icons](https://ghiscoding.gitbook.io/angular-slickgrid/styling/svg-icons) for more info.
 
 [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos) includes the following:
-- [Bootstrap 5 demo](https://ghiscoding.github.io/angular-slickgrid-demos) / [examples repo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap5-demo-with-translate) - Code samples which uses `ngx-translate` to support multiple locales.
-- [Bootstrap 5 (single Locale)](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap5-demo-with-locales) / [examples repo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap5-demo-with-locales) - Code Sample with a single Locale (without `ngx-translate`)
+- [Bootstrap 5 demo (with ngx-translate)](https://ghiscoding.github.io/angular-slickgrid-demos) / [examples repo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/standalone-with-translate) - Code samples which uses `ngx-translate` to support multiple locales.
+- [Bootstrap 5 (single Locale)](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/standalone-single-locale) / [examples repo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/standalone-single-locale) - Code Sample with a single Locale (without `ngx-translate`)
 
 #### Working Demo
-For a complete set of working demos (40+ examples), we strongly suggest you clone [Angular-Slickgrid Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repository (instructions are provided inside it). The demo repo provides multiple examples and are updated on every new project release, so it is updated frequently and is also the GitHub live demo page for the [Bootstrap 5 demo](https://ghiscoding.github.io/angular-slickgrid-demos).
+For a complete set of working demos (~60 examples), we strongly suggest you clone [Angular-Slickgrid Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repository (instructions are provided inside). The demo repo provides multiple examples and are updated on every new project release, so it is updated frequently and is also linked to the GitHub [Live Demo](https://ghiscoding.github.io/angular-slickgrid-demos) page.
 
 ```sh
 git clone https://github.com/ghiscoding/angular-slickgrid-demos
-cd bootstrap5-demo-with-translate # or any of the other demos
+cd standalone-with-translate # or any of the other demos
 npm install
 npm start
 ```
@@ -121,11 +119,11 @@ Make sure to check out the [Releases](https://github.com/ghiscoding/slickgrid-un
 | 6.x               | 16+ | [Migration 6.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-6.x) | removal of jQuery (now uses browser native code),<br> requires Slickgrid-Universal [3.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v3.0.0) | 2023-07-01 |
 | 5.x               | 14+ | [Migration 5.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-5.x) | removal of jQueryUI, requires Slickgrid-Universal [2.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v2.0.0) | 2022-10-17 |
 
-### ngx-translate Compatibility
+### `ngx-translate` Compatibility
 
 Angular-Slickgrid uses [`ngx-translate`](https://github.com/ngx-translate/core) library to support Locales. See their version compatibility table shown below
 
-**NOTE** please note that even if `@ngx-translate` is in fact optional, it will be installed behind the scene nonetheless because of our use of `@Optional()` for DI (dependency injection). It's assumed to be removed by the tree shaking process after a production build.
+**NOTE** please note that even if `@ngx-translate` is declared as optional, it will nonetheless be installed behind the scene because of our use of `@Optional()` internally for DI (dependency injection) detection. It's assumed that ngx-translate will be removed by the tree shaking process when running a production build.
 
 | Angular Version | @ngx-translate/core |
 |-----------------|---------------------|
