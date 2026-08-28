@@ -3838,11 +3838,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // @deprecated v11: remove this Row Detail fallback when inline rendering is removed.
     // The legacy inline Row Detail renderer relies on absolute top-based row positioning;
-    // overlay rendering is compatible with transform-based row positioning.
+    // an omitted renderMode automatically uses overlay rendering with transform-based row positioning.
     if (
       this._options.rowTopOffsetRenderType === 'transform' &&
       this._options.enableRowDetailView &&
-      this._options.rowDetailView?.renderMode !== 'overlay'
+      this._options.rowDetailView?.renderMode === 'inline'
     ) {
       this._options.rowTopOffsetRenderType = 'top';
     }

@@ -25,22 +25,21 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ### Transform-compatible rendering
 
-Row Detail panels use the `overlay` render mode in the examples. The panel is mounted in a sibling layer of the grid canvas instead of inside the transformed row, so it remains above neighbouring rows when `rowTopOffsetRenderType` is `transform`.
+Row Detail automatically uses the `overlay` render mode when `rowTopOffsetRenderType` is `transform` (the default). The panel is mounted in a sibling layer of the grid canvas instead of inside the transformed row, so it remains above neighbouring rows. No additional Row Detail option is required.
 
 ```ts
 const gridOptions: GridOption = {
   enableRowDetailView: true,
   rowTopOffsetRenderType: 'transform',
   rowDetailView: {
-    renderMode: 'overlay',
     // ... other Row Detail options
   }
 };
 ```
 
-`renderMode: 'inline'` remains available temporarily for existing applications and is deprecated. It will be removed in the next major release. Overlay rendering preserves the existing Row Detail classes and framework component lifecycle, but custom CSS or tests that rely on `.slick-cell + .dynamic-cell-detail` should be changed to target `.dynamic-cell-detail` directly.
+`renderMode: 'inline'` remains available temporarily for existing applications and is deprecated. Explicitly selecting it makes SlickGrid use `rowTopOffsetRenderType: 'top'` for compatibility. Overlay rendering preserves the existing Row Detail classes and framework component lifecycle, but custom CSS or tests that rely on `.slick-cell + .dynamic-cell-detail` should be changed to target `.dynamic-cell-detail` directly.
 
-**v11 transition:** `renderMode: 'overlay'` is the permanent rendering approach, but the option is currently a v10 opt-in. In v11, overlay rendering is planned to become the default and only Row Detail renderer, so `renderMode: 'overlay'` will no longer be necessary and the option may be removed. Keep the option while using v10 and remove it when upgrading to v11 if it is removed from the API.
+**v11 transition:** Overlay rendering is the permanent rendering approach. In v11, it is planned to become the only Row Detail renderer, so `renderMode` may be removed from the API.
 
 ### Keeping Row Detail Components Alive During Scrolling
 
@@ -123,7 +122,6 @@ export class GridExample {
       },
       externalResources: [AureliaRowDetailView], // for v10 and above
       rowDetailView: {
-        renderMode: 'overlay',
         // We can load the "process" asynchronously in 3 different ways (aurelia-http-client, aurelia-fetch-client OR even Promise)
         process: (item) => this.http.get(`api/item/${item.id}`),
 

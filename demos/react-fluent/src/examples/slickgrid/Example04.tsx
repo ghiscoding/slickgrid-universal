@@ -169,7 +169,6 @@ const Example04: React.FC = () => {
         return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
-        renderMode: 'overlay',
         process: (item) => simulateServerAsyncCall(item),
         loadOnce: true,
         singleRowExpand: false,

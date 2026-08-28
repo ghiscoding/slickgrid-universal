@@ -68,11 +68,12 @@ export interface RowDetailViewOption {
   maxRows?: number;
 
   /**
-   * Where the Row Detail panel is rendered in the grid DOM.
+   * Temporary transition option for choosing where the Row Detail panel is rendered in the grid DOM.
    * Overlay mode renders panels in a sibling layer of the grid canvas and is compatible with `rowTopOffsetRenderType: 'transform'`.
+   * When omitted, overlay mode is automatically used with `rowTopOffsetRenderType: 'transform'`; otherwise inline mode is used.
    * Inline mode is retained for backwards compatibility and will be removed in the next major release.
-   * v11 plan: overlay rendering is intended to become the default and only renderer, so this transition option may be removed. Keep it while using v10 and remove it when upgrading to v11 if it is removed from the API.
-   * @default 'inline'
+   * Overlay rendering will become the default and only renderer in the next major release (v11), so this option may be removed. Keep it while using the current major and remove it when upgrading if it is removed from the API.
+   * @default 'overlay' with transform row positioning; otherwise 'inline'
    */
   renderMode?: RowDetailViewRenderMode;
 
