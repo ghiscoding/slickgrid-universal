@@ -14,14 +14,14 @@
 ### Description
 A Row Detail allows you to open a detail panel which can contain extra and/or more detailed information about a row. For example, we have a user list but we want to display detailed information about this user (his full address, account info, last purchasers, ...) but these are extra details that we don't want to display this in the user grid (for performance and real estate reasons)... so a Row Detail is perfect for that use case.
 
-> **NOTE** Please note that because of the complexity behind Row Detail, the following features might not mix well and possibly cause UI problems with Row Detail (use at your risk):
+> **NOTE 1** Please note that because of the complexity behind Row Detail, the following features might not play too well together and will possibly cause UI problems with Row Detail (use at your risk):
 > - Pagination
 > - Tree Data
 > - RowSpan
 
-> **NOTE 2** Also please note that because SlickGrid is using its built-in Virtual Scroll feature by default (for perf reasons), this will call render and re-render multiple times and that happens whenever the Row Detail gets out of the grid viewport.
-> For this reason, you should avoid using dynamic elements (i.e. form inputs) because whenever a re-render kicks in, it will reset and re-render these elements as if nothing happened.
-> So you should consider using Row Detail mainly for showing static data (hence where its name comes from "Row Detail" to show more detailed info) and even though it works with dynamic elements, you have to know its limitation.
+> **NOTE 2** Also please note that because SlickGrid is using its own built-in Virtual Scroll feature by default (for perf reasons), it render and re-render multiple times while scrolling, and whenever that happens whenever the Row Detail will reset its content because of the re-render.
+> So for that reason, you should avoid using dynamic elements (i.e. form inputs) because whenever a re-render kicks in, it will reset and re-render the Row Detail content as if nothing happened.
+> So you should consider using Row Detail mainly for showing static data (hence the name "Row Detail" to show more detailed info) and to be clear dynamic elements can be rendered but it's very usable if they get reset every time you scroll out of the viewport and so just remember this limitation.
 
 ### Transform-compatible rendering
 
