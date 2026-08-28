@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
+
+### Bug Fixes
+
+* **row-detail:** support transform rows with overlay rendering ([#2738](https://github.com/ghiscoding/slickgrid-universal/issues/2738)) ([acd2e33](https://github.com/ghiscoding/slickgrid-universal/commit/acd2e33b011d7591d3f5d549c7dce895bb23cd4a)) - by @ghiscoding
+* **row-detail:** synchronize framework rendering without microtasks ([#2740](https://github.com/ghiscoding/slickgrid-universal/issues/2740)) ([bb111ed](https://github.com/ghiscoding/slickgrid-universal/commit/bb111ed75f04cc7a44b4136f20bc7f94403d698a)) - by @ghiscoding
+* **security:** harden dynamic object maps against prototype pollution ([#2743](https://github.com/ghiscoding/slickgrid-universal/issues/2743)) ([5262f34](https://github.com/ghiscoding/slickgrid-universal/commit/5262f3433b00654e9ef29cfe1dc77b5345e9a43e)) - by @ghiscoding
+
 ## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
 
 ### Features

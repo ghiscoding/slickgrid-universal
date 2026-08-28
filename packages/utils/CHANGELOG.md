@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
+
+### Bug Fixes
+
+* **security:** harden dynamic object maps against prototype pollution ([#2743](https://github.com/ghiscoding/slickgrid-universal/issues/2743)) ([5262f34](https://github.com/ghiscoding/slickgrid-universal/commit/5262f3433b00654e9ef29cfe1dc77b5345e9a43e)) - by @ghiscoding
+* **utils:** allow empty arrays to override defaults ([#2758](https://github.com/ghiscoding/slickgrid-universal/issues/2758)) ([986464d](https://github.com/ghiscoding/slickgrid-universal/commit/986464dda1fd621967e84aa7b1083f09c5814077)) - by @ghiscoding
+
 ## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
 
 ### Features
