@@ -63,7 +63,8 @@ function defineGrid() {
         },
       },
     },
-    rowTopOffsetRenderType: 'transform', // default; RowSpan is supported with v10.10.x+
+    // (default) 'transform' is only supported with version >=10.10.0, otherwise you need to use 'top'
+      rowTopOffsetRenderType: 'transform', 
   };
 }
 </script>
