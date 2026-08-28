@@ -99,8 +99,9 @@ export interface GridState {
 }
 ```
 
-> [!NOTE]
-> You can get Grouping column Ids as Grid State but it is limited to Draggable Grouping **only** via Grid Presets and it will not work with regular Grouping.
+{% hint style="note" %}
+You can get Grouping column Ids as Grid State but it is limited to Draggable Grouping **only** via Grid Presets and it will not work with regular Grouping.
+{% endhint %}
 
 #### Example
 For example, we can set `presets` on a grid like so:
