@@ -1681,7 +1681,7 @@ describe('GridMenuControl', () => {
           // Verify slotRenderer was called with the click event as the third argument
           // GridMenu calls slotRenderer 3 times: init, openMenu, and click
           expect(mockSlotRenderer).toHaveBeenCalledTimes(3);
-          const clickCallArgs = mockSlotRenderer.mock.calls[2]; // third call is from click
+          const clickCallArgs: any[] = mockSlotRenderer.mock.calls[2]; // third call is from click
           expect(clickCallArgs[2]).toBeDefined();
           expect(clickCallArgs[2]!.type).toBe('click');
         });
@@ -2774,7 +2774,7 @@ describe('GridMenuControl', () => {
       const labelForcefitElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-forcefit]') as HTMLLabelElement;
       const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-syncresize]') as HTMLLabelElement;
 
-      expect(handlerSpy).toHaveBeenCalledTimes(4 * 2);
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
       // expect(commandTitleElm.textContent).toBe('Custom Command Title');
       expect(columnTitleElm.textContent).toBe('Custom Column Title');
       expect(labelForcefitElm.textContent).toBe('Custom Force Fit Title');

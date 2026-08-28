@@ -166,6 +166,7 @@ describe('GridStateService', () => {
 
     it('should have called the "subscribeToAllGridChanges" method while initializing with Hybrid Selection is enabled', () => {
       vi.spyOn(gridStub, 'getSelectionModel').mockReturnValueOnce(hybridSelectionModelStub);
+      vi.clearAllMocks();
       const gridStateSpy = vi.spyOn(service, 'subscribeToAllGridChanges');
       const pubSubSpy = vi.spyOn(mockPubSub, 'subscribe');
 
@@ -174,7 +175,7 @@ describe('GridStateService', () => {
       vi.spyOn(gridStub, 'getSelectionModel').mockReturnValueOnce(hybridSelectionModelStub);
 
       expect(gridStateSpy).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledTimes(21); // not 7 but 21 with hybrid selection, not sure why though
+      expect(pubSubSpy).toHaveBeenCalledTimes(7);
       // expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onFilterChanged`, () => { });
     });
 
