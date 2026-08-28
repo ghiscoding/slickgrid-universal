@@ -32,6 +32,7 @@
     "build:universal": "tsc --build ./tsconfig.packages.json && pnpm sass:bundle",
     "build:frameworks": "pnpm -r --stream --filter=\"./{demos,frameworks,frameworks-plugins}/**\" run build",
     "build:watch": "tsc --build ./tsconfig.packages.json --watch",
+    "bench:data-view": "vitest bench --config ./test/vitest.benchmark.config.mts --run ./test/benchmarks/slickDataView.bench.ts",
     "angular:watch": "pnpm -r --parallel run angular:dev",
     "aurelia:watch": "pnpm -r --parallel run aurelia:dev",
     "react:watch": "pnpm -r --parallel run react:dev",

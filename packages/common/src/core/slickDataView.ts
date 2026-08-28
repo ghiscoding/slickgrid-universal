@@ -1,13 +1,4 @@
-import {
-  extend,
-  getFunctionDetails,
-  getHtmlStringOutput,
-  isDefined,
-  isHtml,
-  isPrimitiveOrHTML,
-  stripTags,
-  type AnyFunction,
-} from '@slickgrid-universal/utils';
+import { extend, getHtmlStringOutput, isDefined, isHtml, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider.js';
 import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities.js';
 import type { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface.js';
@@ -60,8 +51,12 @@ function isLiveDomFormatterResult(
 
 export interface DataViewOption {
   /**
-   * Defaults to false, are we using inline filters?
-   * Note: please use with great care as this will break built-in filters
+   * @deprecated Filters are always CSP-safe and this option is now ignored.
+   * Next major cleanup:
+   * - Remove both `inlineFilters` and `useCSPSafeFilter` from `DataViewOption` and the default options.
+   * - Remove framework and vanilla-bundle code that forwards `inlineFilters`, along with its compatibility tests and documentation.
+   * - Remove the deprecated `FilterCspFn` and `FilterWithCspCachingFn` type aliases.
+   * - Consider renaming the protected `*CSPSafe` methods to neutral names and update their tests and benchmarks.
    */
   inlineFilters: boolean;
 
@@ -72,14 +67,16 @@ export interface DataViewOption {
   groupItemMetadataProvider: SlickGroupItemMetadataProvider | null;
 
   /**
-   * defaults to false, option to use CSP Safe approach,
-   * Note: it is an opt-in option because it is slightly slower (perf impact) when compared to the non-CSP safe approach.
+   * @deprecated Filters are always CSP-safe and this option is now ignored. Remove it in the next major together with
+   * `inlineFilters` by following that option's cleanup checklist.
    */
   useCSPSafeFilter: boolean;
 }
 
 export type FilterFn<T> = (item: T, args: any) => boolean;
+/** @deprecated Filtering is always CSP-safe. Remove this unused alias in the next major. */
 export type FilterCspFn<T> = (item: T[], args: any) => T[];
+/** @deprecated Filtering is always CSP-safe. Remove this unused alias in the next major. */
 export type FilterWithCspCachingFn<T> = (item: T[], args: any, filterCache: any[]) => T[];
 export type DataIdType = number | string;
 export type SlickDataItem = SlickNonDataItem | SlickGroup | SlickGroupTotals | any;
@@ -106,7 +103,6 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected idxById: Map<DataIdType, number> = new Map<DataIdType, number>(); // indexes by id
   protected rowsById: { [id: DataIdType]: number } | undefined = undefined; // rows by id; lazy-calculated
   protected filter: FilterFn<TData> | null = null; // filter function
-  protected filterCSPSafe: FilterFn<TData> | null = null; // filter function
   protected updated: { [id: DataIdType]: boolean } | null = null; // updated item ids
   protected suspend = false; // suspends the recalculation
   protected isBulkSuspend = false; // delays protectedious operations like the
@@ -119,10 +115,6 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected prevRefreshHints: DataViewHints = {};
   protected filterArgs: any;
   protected filteredItems: TData[] = [];
-  protected compiledFilter?: FilterFn<TData> | null;
-  protected compiledFilterCSPSafe?: FilterCspFn<TData> | null;
-  protected compiledFilterWithCaching?: FilterFn<TData> | null;
-  protected compiledFilterWithCachingCSPSafe?: FilterWithCspCachingFn<TData> | null;
   protected filterCache: any[] = [];
   protected _grid?: SlickGrid; // grid object will be defined after using "syncGridSelection()" or "setGrid()" method
   protected _gridOptions?: ReturnType<SlickGrid['getOptions']>; // cached grid options, refreshed via onSetOptions subscription
@@ -238,15 +230,10 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.idxById = null as any;
     this.rowsById = null as any;
     this.filter = null as any;
-    this.filterCSPSafe = null as any;
     this.updated = null as any;
     this.sortComparer = null as any;
     this.filterCache = [];
     this.filteredItems = [];
-    this.compiledFilter = null;
-    this.compiledFilterCSPSafe = null;
-    this.compiledFilterWithCaching = null;
-    this.compiledFilterWithCachingCSPSafe = null;
     this.clearFormattedDataCache();
     if (this._grid) {
       this._grid.onSelectedRowsChanged?.unsubscribe();
@@ -444,7 +431,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
   /** Get current Filter used by the DataView */
   getFilter(): FilterFn<TData> | null {
-    return this._options.useCSPSafeFilter ? this.filterCSPSafe : this.filter;
+    return this.filter;
   }
 
   /**
@@ -452,14 +439,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param {Function} fn - filter callback function
    */
   setFilter(filterFn: FilterFn<TData>): void {
-    this.filterCSPSafe = filterFn;
     this.filter = filterFn;
-    if (this._options.inlineFilters) {
-      this.compiledFilterCSPSafe = this.compileFilterCSPSafe;
-      this.compiledFilterWithCachingCSPSafe = this.compileFilterWithCachingCSPSafe;
-      this.compiledFilter = this.compileFilter(this._options.useCSPSafeFilter);
-      this.compiledFilterWithCaching = this.compileFilterWithCaching(this._options.useCSPSafeFilter);
-    }
     this.refresh();
   }
 
@@ -1149,14 +1129,12 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected compileAccumulatorLoopCSPSafe(aggregator: Aggregator): (items: any[]) => void {
     if (aggregator.accumulate) {
       return function (items: any[]) {
-        let result;
         if (Array.isArray(items)) {
           for (let i = 0; i < items.length; i++) {
             const item = items[i];
-            result = aggregator.accumulate!.call(aggregator, item);
+            aggregator.accumulate!(item);
           }
         }
-        return result;
       };
     } else {
       return function noAccumulator() {};
@@ -1165,110 +1143,25 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
   protected compileFilterCSPSafe(items: TData[], args: any): TData[] {
     /* v8 ignore if */
-    if (typeof this.filterCSPSafe !== 'function') {
+    if (typeof this.filter !== 'function') {
       return [];
     }
     const retval: TData[] = [];
     const il = items.length;
 
     for (let _i = 0; _i < il; _i++) {
-      if (this.filterCSPSafe(items[_i], args)) {
-        retval.push(items[_i]);
+      const item = items[_i];
+      if (this.filter(item, args)) {
+        retval.push(item);
       }
     }
 
     return retval;
-  }
-
-  protected compileFilter(stopRunningIfCSPSafeIsActive = false): FilterFn<TData> | null {
-    if (stopRunningIfCSPSafeIsActive) {
-      return null;
-    }
-    const filterInfo = getFunctionDetails(this.filter as FilterFn<TData>);
-
-    const filterPath1 = '{ continue _coreloop; }$1';
-    const filterPath2 = '{ _retval[_idx++] = $item$; continue _coreloop; }$1';
-    // make some allowances for minification - there's only so far we can go with RegEx
-    const filterBody = filterInfo.body
-      .replace(/return false\s*([;}]|\}|$)/gi, filterPath1)
-      .replace(/return!1([;}]|\}|$)/gi, filterPath1)
-      .replace(/return true\s*([;}]|\}|$)/gi, filterPath2)
-      .replace(/return!0([;}]|\}|$)/gi, filterPath2)
-      .replace(/return ([^;}]+?)\s*([;}]|$)/gi, '{ if ($1) { _retval[_idx++] = $item$; }; continue _coreloop; }$2');
-
-    // This preserves the function template code after JS compression,
-    // so that replace() commands still work as expected.
-    let tpl = [
-      // 'function(_items, _args) { ',
-      'var _retval = [], _idx = 0; ',
-      'var $item$, $args$ = _args; ',
-      '_coreloop: ',
-      'for (var _i = 0, _il = _items.length; _i < _il; _i++) { ',
-      '$item$ = _items[_i]; ',
-      '$filter$; ',
-      '} ',
-      'return _retval; ',
-      // '}'
-    ].join('');
-    tpl = tpl.replace(/\$filter\$/gi, filterBody);
-    tpl = tpl.replace(/\$item\$/gi, filterInfo.params[0]);
-    tpl = tpl.replace(/\$args\$/gi, filterInfo.params[1]);
-    const fn: any = new Function('_items,_args', tpl);
-    const fnName = 'compiledFilter';
-    fn.displayName = fnName;
-    fn.name = this.setFunctionName(fn, fnName);
-    return fn;
-  }
-
-  protected compileFilterWithCaching(stopRunningIfCSPSafeIsActive = false): FilterFn<TData> | null {
-    if (stopRunningIfCSPSafeIsActive) {
-      return null;
-    }
-
-    const filterInfo = getFunctionDetails(this.filter as FilterFn<TData>);
-
-    const filterPath1 = '{ continue _coreloop; }$1';
-    const filterPath2 = '{ _cache[_i] = true;_retval[_idx++] = $item$; continue _coreloop; }$1';
-    // make some allowances for minification - there's only so far we can go with RegEx
-    const filterBody = filterInfo.body
-      .replace(/return false\s*([;}]|\}|$)/gi, filterPath1)
-      .replace(/return!1([;}]|\}|$)/gi, filterPath1)
-      .replace(/return true\s*([;}]|\}|$)/gi, filterPath2)
-      .replace(/return!0([;}]|\}|$)/gi, filterPath2)
-      .replace(/return ([^;}]+?)\s*([;}]|$)/gi, '{ if ((_cache[_i] = $1)) { _retval[_idx++] = $item$; }; continue _coreloop; }$2');
-
-    // This preserves the function template code after JS compression,
-    // so that replace() commands still work as expected.
-    let tpl = [
-      // 'function(_items, _args, _cache) { ',
-      'var _retval = [], _idx = 0; ',
-      'var $item$, $args$ = _args; ',
-      '_coreloop: ',
-      'for (var _i = 0, _il = _items.length; _i < _il; _i++) { ',
-      '$item$ = _items[_i]; ',
-      'if (_cache[_i]) { ',
-      '_retval[_idx++] = $item$; ',
-      'continue _coreloop; ',
-      '} ',
-      '$filter$; ',
-      '} ',
-      'return _retval; ',
-      // '}'
-    ].join('');
-    tpl = tpl.replace(/\$filter\$/gi, filterBody);
-    tpl = tpl.replace(/\$item\$/gi, filterInfo.params[0]);
-    tpl = tpl.replace(/\$args\$/gi, filterInfo.params[1]);
-
-    const fn: any = new Function('_items,_args,_cache', tpl);
-    const fnName = 'compiledFilterWithCaching';
-    fn.displayName = fnName;
-    fn.name = this.setFunctionName(fn, fnName);
-    return fn;
   }
 
   protected compileFilterWithCachingCSPSafe(items: TData[], args: any, filterCache: any[]): TData[] {
     /* v8 ignore if */
-    if (typeof this.filterCSPSafe !== 'function') {
+    if (typeof this.filter !== 'function') {
       return [];
     }
 
@@ -1276,54 +1169,12 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     const il = items.length;
 
     for (let _i = 0; _i < il; _i++) {
-      if (filterCache[_i] || this.filterCSPSafe(items[_i], args)) {
-        retval.push(items[_i]);
-      }
-    }
-
-    return retval;
-  }
-
-  /**
-   * In ES5 we could set the function name on the fly but in ES6 this is forbidden and we need to set it through differently
-   * We can use Object.defineProperty and set it the property to writable, see MDN for reference
-   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
-   * @param {*} fn
-   * @param {string} fnName
-   */
-  protected setFunctionName(fn: any, fnName: string): void {
-    try {
-      Object.defineProperty(fn, 'name', { writable: true, value: fnName });
-    } /* v8 ignore next */ catch {
-      fn.name = fnName;
-    }
-  }
-
-  protected uncompiledFilter(items: TData[], args: any): any[] {
-    const retval: any[] = [];
-    let idx = 0;
-
-    for (let i = 0, ii = items.length; i < ii; i++) {
-      if (this.filter?.(items[i], args)) {
-        retval[idx++] = items[i];
-      }
-    }
-
-    return retval;
-  }
-
-  protected uncompiledFilterWithCaching(items: TData[], args: any, cache: any): any[] {
-    const retval: any[] = [];
-    let idx = 0;
-    let item: TData;
-
-    for (let i = 0, ii = items.length; i < ii; i++) {
-      item = items[i];
-      if (cache[i]) {
-        retval[idx++] = item;
-      } else if (this.filter?.(item, args)) {
-        retval[idx++] = item;
-        cache[i] = true;
+      const item = items[_i];
+      if (filterCache[_i]) {
+        retval.push(item);
+      } else if (this.filter(item, args)) {
+        filterCache[_i] = true;
+        retval.push(item);
       }
     }
 
@@ -1331,26 +1182,13 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   protected getFilteredAndPagedItems(items: TData[]): { totalRows: number; rows: TData[] } {
-    if (this._options.useCSPSafeFilter ? this.filterCSPSafe : this.filter) {
-      let batchFilter: AnyFunction;
-      let batchFilterWithCaching: AnyFunction;
-      if (this._options.useCSPSafeFilter) {
-        batchFilter = (this._options.inlineFilters ? this.compiledFilterCSPSafe : this.uncompiledFilter) as AnyFunction;
-        batchFilterWithCaching = (
-          this._options.inlineFilters ? this.compiledFilterWithCachingCSPSafe : this.uncompiledFilterWithCaching
-        ) as AnyFunction;
-      } else {
-        batchFilter = (this._options.inlineFilters ? this.compiledFilter : this.uncompiledFilter) as AnyFunction;
-        batchFilterWithCaching = (
-          this._options.inlineFilters ? this.compiledFilterWithCaching : this.uncompiledFilterWithCaching
-        ) as AnyFunction;
-      }
+    if (this.filter) {
       if (this.refreshHints.isFilterNarrowing) {
-        this.filteredItems = batchFilter.call(this, this.filteredItems, this.filterArgs);
+        this.filteredItems = this.compileFilterCSPSafe(this.filteredItems, this.filterArgs);
       } else if (this.refreshHints.isFilterExpanding) {
-        this.filteredItems = batchFilterWithCaching.call(this, items, this.filterArgs, this.filterCache);
+        this.filteredItems = this.compileFilterWithCachingCSPSafe(items, this.filterArgs, this.filterCache);
       } else if (!this.refreshHints.isFilterUnchanged) {
-        this.filteredItems = batchFilter.call(this, items, this.filterArgs);
+        this.filteredItems = this.compileFilterCSPSafe(items, this.filterArgs);
       }
     } else {
       // special case:  if not filtering and not paging, the resulting
