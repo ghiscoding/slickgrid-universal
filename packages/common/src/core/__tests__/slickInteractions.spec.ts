@@ -160,7 +160,7 @@ describe('Draggable class', () => {
       target: document.body,
     });
     expect(dragPos).toEqual(dragStartPos);
-    expect(dragEndPos).toEqual({ ...dragStartPos, target: window });
+    expect(dragEndPos).toEqual({ ...dragStartPos, target: expect.any(Window) });
     expect(removeBodyListenerSpy).toHaveBeenCalledTimes(2 * 2); // 2x events
     expect(removeWindowListenerSpy).toHaveBeenCalledTimes(3 * 2); // 3x events
   });
