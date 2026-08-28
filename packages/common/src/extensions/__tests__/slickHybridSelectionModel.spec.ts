@@ -222,15 +222,16 @@ describe('Row Selection Model Plugin', () => {
     });
   });
 
-  it('should expect that "setSelectedRows" is being triggered when "refreshSelections" is called with rowSelectColumnIds defined with column IDs', () => {
+  it('should preserve row ranges when "refreshSelections" is called with rowSelectColumnIds defined with column IDs', () => {
     vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValueOnce([{ id: 'firstName', field: 'firstName', name: 'First Name' }]);
     vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
 
     plugin = new SlickHybridSelectionModel({ rowSelectColumnIds: ['firstName'], selectActiveRow: false });
     plugin.init(gridStub);
 
-    vi.spyOn(plugin, 'getSelectedRows').mockReturnValue([0, 1]);
+    vi.spyOn(plugin, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 0, 1, 2)]);
     const setSelectedRowsSpy = vi.spyOn(plugin, 'setSelectedRows');
+    const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'));
     gridStub.onActiveCellChanged.notify({ cell: undefined as any, row: 3, grid: gridStub }, mouseEvent, gridStub);
     plugin.refreshSelections();
@@ -239,10 +240,11 @@ describe('Row Selection Model Plugin', () => {
     gridStub.onActiveCellChanged.notify({ cell: 0, row: 3, grid: gridStub }, mouseEvent, gridStub);
     plugin.refreshSelections();
 
-    expect(setSelectedRowsSpy).toHaveBeenCalledWith([0, 1]);
+    expect(setSelectedRowsSpy).not.toHaveBeenCalled();
+    expect(setSelectedRangesSpy).toHaveBeenCalledWith([expect.objectContaining({ fromCell: 0, fromRow: 0, toRow: 1 })], undefined, '');
   });
 
-  it('should expect that "setSelectedRows" is being triggered when "refreshSelections" is called with enableRowMoveManager enabled', () => {
+  it('should preserve row ranges when "refreshSelections" is called with enableRowMoveManager enabled', () => {
     vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValueOnce([]);
     vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
     mockGridOptions.enableRowMoveManager = true;
@@ -251,29 +253,29 @@ describe('Row Selection Model Plugin', () => {
     plugin = new SlickHybridSelectionModel({ selectActiveRow: false });
     plugin.init(gridStub);
 
-    vi.spyOn(plugin, 'getSelectedRows').mockReturnValue([0, 1]);
-    const setSelectedRowsSpy = vi.spyOn(plugin, 'setSelectedRows');
+    vi.spyOn(plugin, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 0, 1, 2)]);
+    const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'));
     gridStub.onActiveCellChanged.notify({ cell: 0, row: 3, grid: gridStub }, mouseEvent, gridStub);
     plugin.refreshSelections();
 
-    expect(setSelectedRowsSpy).toHaveBeenCalledWith([0, 1]);
+    expect(setSelectedRangesSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 1, 2)], undefined, '');
   });
 
-  it('should expect that "setSelectedRows" is being triggered when "refreshSelections" is called with rowSelectOverride returning true', () => {
+  it('should preserve row ranges when "refreshSelections" is called with rowSelectOverride returning true', () => {
     vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValueOnce([]);
     vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
 
     plugin = new SlickHybridSelectionModel({ rowSelectOverride: () => true, selectActiveRow: false });
     plugin.init(gridStub);
 
-    vi.spyOn(plugin, 'getSelectedRows').mockReturnValue([0, 1]);
-    const setSelectedRowsSpy = vi.spyOn(plugin, 'setSelectedRows');
+    vi.spyOn(plugin, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 0, 1, 2)]);
+    const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'));
     gridStub.onActiveCellChanged.notify({ cell: 0, row: 3, grid: gridStub }, mouseEvent, gridStub);
     plugin.refreshSelections();
 
-    expect(setSelectedRowsSpy).toHaveBeenCalledWith([0, 1]);
+    expect(setSelectedRangesSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 1, 2)], undefined, '');
   });
 
   it('should expect that "setSelectedRows" is being triggered when "refreshSelections" is called with selectionType set to "cell"', () => {
@@ -294,36 +296,36 @@ describe('Row Selection Model Plugin', () => {
     expect(setSelectedRangesSpy).toHaveBeenCalledWith([], undefined, '');
   });
 
-  it('should expect that "setSelectedRows" is being triggered when "refreshSelections" is called with selectionType set to "row"', () => {
+  it('should preserve row ranges when "refreshSelections" is called with selectionType set to "row"', () => {
     vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValueOnce([]);
     vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
 
     plugin = new SlickHybridSelectionModel({ selectionType: 'row', selectActiveRow: false });
     plugin.init(gridStub);
 
-    vi.spyOn(plugin, 'getSelectedRows').mockReturnValue([0, 1]);
-    const setSelectedRowsSpy = vi.spyOn(plugin, 'setSelectedRows');
+    vi.spyOn(plugin, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 0, 1, 2)]);
+    const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'));
     gridStub.onActiveCellChanged.notify({ cell: 0, row: 3, grid: gridStub }, mouseEvent, gridStub);
     plugin.refreshSelections();
 
-    expect(setSelectedRowsSpy).toHaveBeenCalledWith([0, 1]);
+    expect(setSelectedRangesSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 1, 2)], undefined, '');
   });
 
-  it('should expect that "setSelectedRows" is being triggered when "refreshSelections" is called with rowSelectOverride returning true', () => {
+  it('should preserve row ranges when "refreshSelections" is called with rowSelectOverride returning true', () => {
     vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValueOnce([]);
     vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
 
     plugin = new SlickHybridSelectionModel({ rowSelectOverride: () => true, selectActiveRow: false });
     plugin.init(gridStub);
 
-    vi.spyOn(plugin, 'getSelectedRows').mockReturnValue([0, 1]);
-    const setSelectedRowsSpy = vi.spyOn(plugin, 'setSelectedRows');
+    vi.spyOn(plugin, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 0, 1, 2)]);
+    const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'));
     gridStub.onActiveCellChanged.notify({ cell: 0, row: 3, grid: gridStub }, mouseEvent, gridStub);
     plugin.refreshSelections();
 
-    expect(setSelectedRowsSpy).toHaveBeenCalledWith([0, 1]);
+    expect(setSelectedRangesSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 1, 2)], undefined, '');
   });
 
   it('should not call "setSelectedRows" when cell/row are not defined', () => {
@@ -697,6 +699,33 @@ describe('Row Selection Model Plugin', () => {
         undefined,
         undefined
       );
+    });
+
+    it('should show the current row range during a modifier drag without accumulating intermediate ranges', () => {
+      plugin = new SlickHybridSelectionModel({ selectionType: 'row', enableMultiSelection: true, dragToSelect: true });
+      plugin.init(gridStub);
+      plugin.setSelectedRanges([new SlickRange(0, 0, 1, 2)]);
+
+      const setSelectedRangesSpy = vi.spyOn(plugin, 'setSelectedRanges');
+      const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
+      plugin.getCellRangeSelector()!.onCellRangeSelecting.notify({ range: new SlickRange(2, 0, 2, 2), addToSelection: true } as any, scrollEvent, gridStub);
+      expect(plugin.getSelectedRanges()).toEqual([new SlickRange(0, 0, 1, 2), new SlickRange(2, 0, 2, 2)]);
+
+      plugin.getCellRangeSelector()!.onCellRangeSelecting.notify({ range: new SlickRange(2, 0, 3, 2), addToSelection: true } as any, scrollEvent, gridStub);
+      expect(plugin.getSelectedRanges()).toEqual([new SlickRange(0, 0, 1, 2), new SlickRange(2, 0, 3, 2)]);
+
+      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: new SlickRange(2, 0, 3, 2), addToSelection: true } as any, scrollEvent, gridStub);
+
+      expect(setSelectedRangesSpy).toHaveBeenCalledTimes(3);
+      expect(setSelectedRangesSpy).toHaveBeenCalledWith(
+        [
+          { fromCell: 0, fromRow: 0, toCell: 2, toRow: 1 },
+          { fromCell: 0, fromRow: 2, toCell: 2, toRow: 3 },
+        ],
+        undefined,
+        undefined
+      );
+      expect(plugin.getSelectedRanges()).toEqual([new SlickRange(0, 0, 1, 2), new SlickRange(2, 0, 3, 2)]);
     });
 
     it('should be able to manually create Row Selection and then call "setSelectedRanges" when "onCellRangeSelected" event is triggered', () => {

@@ -314,5 +314,39 @@ describe('Example 48 - Hybrid Selection Model', () => {
       cy.get('#selectionRange2').contains(/"fromRow":2,"fromCell":0,"toRow":2,"toCell":7/);
       cy.get('#selectionRange2').contains(/"fromRow":4,"fromCell":0,"toRow":4,"toCell":7/);
     });
+
+    it('should preserve row ranges when enabling multi-selection and show the live modifier-drag preview', () => {
+      const gridSelector = '#grid48-2';
+      const firstRange = '{"fromRow":0,"fromCell":0,"toRow":1,"toCell":7}';
+      const secondRange = '{"fromRow":3,"fromCell":0,"toRow":4,"toCell":7}';
+      const combinedRanges = `${firstRange}${secondRange}`;
+
+      cy.get(`${gridSelector} .slick-viewport-top.slick-viewport-left`).scrollTo('top');
+      cy.get(`${gridSelector} .slick-row[data-row="1"] input[type=checkbox]`).uncheck({ force: true });
+      cy.get(`${gridSelector} .slick-row[data-row="2"] input[type=checkbox]`).uncheck({ force: true });
+      cy.get(`${gridSelector} .slick-row[data-row="4"] input[type=checkbox]`).uncheck({ force: true });
+      cy.get('[data-test="enable-multi-selection"]').uncheck();
+
+      const firstRowCell = `${gridSelector} .slick-row[data-row="0"] .slick-cell.l1.r1`;
+      cy.get(firstRowCell).dragStart();
+      cy.get(firstRowCell).dragCell(1, 0);
+      cy.dragEnd(gridSelector);
+      cy.get('#selectionRange2').should('have.text', firstRange);
+
+      cy.get('[data-test="enable-multi-selection"]').check();
+      cy.get('#selectionRange2').should('have.text', firstRange);
+
+      const secondRowCell = `${gridSelector} .slick-row[data-row="3"] .slick-cell.l1.r1`;
+      cy.get(secondRowCell).trigger('mousedown', { which: 1, ctrlKey: true, force: true });
+      cy.get(secondRowCell).trigger('mousemove', 30, 10, { ctrlKey: true, force: true });
+      cy.get(secondRowCell).trigger('mousemove', 30, 52, { ctrlKey: true, force: true });
+
+      cy.get('#selectionRange2').should('have.text', combinedRanges);
+      cy.get(`${gridSelector} .slick-cell.selected`).should('have.length', 8 * 4);
+      cy.get(`${gridSelector} .slick-row[data-row="2"] .slick-cell.selected`).should('have.length', 0);
+
+      cy.dragEnd(gridSelector);
+      cy.get('#selectionRange2').should('have.text', combinedRanges);
+    });
   });
 });
