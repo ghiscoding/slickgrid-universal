@@ -68,8 +68,9 @@ export class Grid43Component implements OnInit {
           },
         },
       },
-      // (default) 'transform' is only supported with version >=10.10.0, otherwise you need to use 'top'
-      rowTopOffsetRenderType: 'transform', 
+      // (default) 'transform' is only supported with version >=10.10.0
+      // otherwise you need to use rowTopOffsetRenderType: 'top'
+      rowTopOffsetRenderType: 'transform',
     };
   }
 }
