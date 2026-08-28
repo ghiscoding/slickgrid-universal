@@ -1,6 +1,6 @@
 ## Simplification, Modernization and Accessibility ⚡
 
-One of the biggest change of this release is to hide columns by using a `hidden` column property (used by Column Picker, Grid Menu, etc...). Previously the behavior was to remove columns from the original columns array and then typically call `setColumns()` to update the visible columns in the grid, but this meant that we had to keep references for all visible/non-visible columns. With this new release we now keep the full columns array at all time and simply change their visibility via the `hidden` prop by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. Also, what I'm trying to emphasis is that you should only use `grid.setColumns()` when changing the columns list in v10 and above, but for only hiding columns then you should simply use the column `hidden` toggle property when defining it or when dynamically changing any of them after creation, see more details below...
+One of the biggest change in this release is how to hide columns by using a `hidden` column property (used by Column Picker, Grid Menu, etc...). Previously the behavior was to remove columns from the original columns array and then typically call `setColumns()` to update the visible columns in the grid, but this meant that we had to keep references for all visible/non-visible columns. With this new release we now keep the full columns array at all time and simply change their visibility via the `hidden` prop by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. Also, what I'm trying to emphasis is that you should only use `grid.setColumns()` when changing the columns list in v10 and above, but when you want to hide column(s) then you should now use the column `hidden` property when defining it or to dynamically hide it after creation, see more details below...
 
 This new release also brings significant improvements to accessibility (a11y), making grids more usable for keyboard and screen reader users. For example, you can now use Tab/Shift+Tab to focus the Header Menu or Grid Menu, and then navigate menu commands with the arrow keys, making keyboard navigation much more intuitive and accessible.
 
@@ -11,7 +11,7 @@ This new release also brings significant improvements to accessibility (a11y), m
 - huge improvements to accessibility (a11y, see above)
 - [What's next?](#whats-next-...version-11)
 
-> **Note:** if you come from an earlier version, please make sure to follow each migrations in their respective order (review previous migration guides)
+> **Note:** if you come from an earlier version, please make sure to follow each migrations in their respective order by reviewing all previous migration guides
 
 > **Tip:** An [agent skill guide](migration-to-10.x.skill.yaml) is available to help structure your migration. This provides a quick reference of all major changes, Vue-specific patterns, code examples, and migration checklists.
 
@@ -100,7 +100,7 @@ gridOptions = {
 + selectionOptions: {
     selectActiveRow: false,
 
-    // optional type can be: ['cell','row','mixed'] defaults to 'mixed'
+    // optional type can be: ('cell','row','mixed') defaults to 'mixed'
 +   selectionType: 'mixed',
   }
 };
