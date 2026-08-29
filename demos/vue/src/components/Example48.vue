@@ -249,9 +249,9 @@ function toggleSubTitle() {
     </SlickgridVue>
   </div>
 
-  <label class="checkbox-inline control-label mb-3">
+  <label class="checkbox-inline control-label my-3">
     <input type="checkbox" data-test="enable-multi-selection" :checked="enableMultiSelection" @change="toggleMultiSelection" />
-    Enable multi-selection (Ctrl/Cmd-click or drag)
+    <b>Enable multi-selection</b> (Ctrl/Cmd-click or drag)
   </label>
 
   <h3>
