@@ -42,7 +42,7 @@ export class GridExample {
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, this.gridOptions, dataset);
   }
 
-  detached() {
+  dispose() {
     this.saveCurrentGridState()
   }
 
