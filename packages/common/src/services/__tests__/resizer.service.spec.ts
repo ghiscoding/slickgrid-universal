@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
@@ -678,6 +680,20 @@ describe('Resizer Service', () => {
 
         expect(reRenderSpy).toHaveBeenCalledWith(false);
         expect(mockColDefs[1].width).toBe(56); // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 55.28 ceil to => 56
+      });
+
+      it('should leave the column unchanged when the DataView has no accessible items', () => {
+        const reRenderSpy = vi.spyOn(gridStub, 'reRenderColumns');
+        const initialWidth = 120;
+        mockColDefs[1].width = initialWidth;
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue([]);
+
+        mockGridOptions.enableColumnResizeOnDoubleClick = true;
+        service.init(gridStub, divContainer);
+        gridStub.onColumnsResizeDblClick.notify({ triggeredByColumn: 'firstName', grid: gridStub });
+
+        expect(reRenderSpy).not.toHaveBeenCalled();
+        expect(mockColDefs[1].width).toBe(initialWidth);
       });
 
       it('should call handleSingleColumnResizeByContent when "onHeaderMenuColumnResizeByContent" gets triggered but expect a resized column width when left section width becomes greater than full viewport width', () => {
