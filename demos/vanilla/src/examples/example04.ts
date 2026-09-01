@@ -653,7 +653,7 @@ export default class Example04 {
 
   setLargeFreezedColumns() {
     this.setFrozenColumns(2);
-    this.sgb.gridStateService.changeColumnsArrangement(
+    this.sgb.gridStateService.applyColumnLayout(
       [
         { columnId: '_checkbox_selector', cssClass: 'slick-cell-checkboxsel', headerCssClass: '', width: 40 },
         { columnId: 'title', cssClass: '', headerCssClass: '', width: 240 },
