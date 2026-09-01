@@ -223,7 +223,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     if (this.sharedService?.gridOptions && this.slickGrid?.setOptions) {
       this.sharedService.gridOptions = mergedOptions;
-      this.slickGrid.setOptions(mergedOptions, false, true); // make sure to supressColumnCheck (3rd arg) to avoid problem with changeColumnsArrangement() and custom grid view
+      this.slickGrid.setOptions(mergedOptions, false, true); // make sure to suppress column checks (3rd arg) when applying a column layout and using a custom grid view
       this.slickGrid.reRenderColumns(true); // then call a re-render since we did supressColumnCheck on previous setOptions
     }
 
@@ -1347,7 +1347,7 @@ export class SlickVanillaGridBundle<TData = any> {
     ) {
       // delegate to GridStateService for centralized column arrangement logic
       // we pass `false` for triggerAutoSizeColumns to maintain original behavior on preset load
-      this.gridStateService.changeColumnsArrangement(this.gridOptions.presets.columns, false);
+      this.gridStateService.applyColumnLayout(this.gridOptions.presets.columns, false);
     }
   }
 
