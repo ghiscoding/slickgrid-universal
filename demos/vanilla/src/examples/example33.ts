@@ -92,10 +92,12 @@ export default class Example33 {
         id: 'revenueGrowth',
         name: 'Revenue Growth',
         field: 'revenueGrowth',
+        headerCssClass: 'auto-header-height-demo',
         exportCustomFormatter: rowCellValueExportFormatter,
         formatter: rowCellValueFormatter,
         type: 'number',
-        minWidth: 120,
+        minWidth: 65,
+        width: 65,
       },
       {
         id: 'pricingPolicy',
@@ -284,6 +286,7 @@ export default class Example33 {
 
     this.gridOptions = {
       enableCellNavigation: true,
+      autoHeaderHeight: true,
       enableColumnReorder: true,
       enableHeaderMenu: false,
       enableCellRowSpan: true,

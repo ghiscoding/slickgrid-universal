@@ -29,6 +29,7 @@ Changes in `packages/` can affect every framework. Preserve backward compatibili
 - Unit tests use Vitest with `test/vitest.config.mts`.
 - E2E tests use Cypress with `test/cypress.config.ts`.
 - Cypress tests use `testIsolation: false`; preserve their execution order and inherited state.
+- For the Vanilla demo suite, start the watch server with `pnpm serve:vite`, then run the root Cypress CI suite with `pnpm cypress:ci`. To run one spec while iterating, pass its path directly (for example, `pnpm cypress:ci --spec test/cypress/e2e/example33.cy.ts`).
 - Framework demos provide headless Cypress CI scripts. Start the matching demo server first (`pnpm angular:serve`, `pnpm aurelia:serve`, `pnpm react:serve`, or `pnpm vue:serve`).
 - Run the corresponding root CI command: `pnpm angular:cypress:ci`, `pnpm aurelia:cypress:ci`, `pnpm react:cypress:ci`, or `pnpm vue:cypress:ci` (for example, `pnpm aurelia:cypress:ci`). These commands use each framework's Cypress config and are preferred for validating framework-specific E2E suites.
 - Add or update tests for behavior changes, especially in core packages.

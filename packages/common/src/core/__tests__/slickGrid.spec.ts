@@ -12,6 +12,15 @@ import { SlickGrid } from '../slickGrid.js';
 
 // Subclass for protected method coverage
 class TestGrid extends SlickGrid<any, Column> {
+  public callRecalculateHeaderHeightWithoutLeftHeader() {
+    const headerScrollerL = this._headerScrollerL;
+    (this as any)._headerScrollerL = undefined;
+    this.recalculateHeaderHeight();
+    this._headerScrollerL = headerScrollerL;
+  }
+  public callRecalculateHeaderHeight() {
+    this.recalculateHeaderHeight();
+  }
   public callHandleContainerKeyDown(e: any) {
     this.handleContainerKeyDown(e);
   }
@@ -3293,6 +3302,84 @@ describe('SlickGrid core file', () => {
       expect(invalidateSpy).toHaveBeenCalled();
       expect(renderSpy).toHaveBeenCalled();
     });
+
+    it('should recalculate automatic header height after column widths are rerendered', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, autoHeaderHeight: true });
+      const recalculateSpy = vi.spyOn(grid as any, 'recalculateHeaderHeight');
+
+      grid.reRenderColumns();
+
+      expect(recalculateSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('automatic header height', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
+      { id: 'lastName', field: 'lastName', name: 'Last Name' },
+    ] as Column[];
+
+    it('should synchronize frozen header panes to the largest rendered height', () => {
+      grid = new TestGrid(container, [], columns, { ...defaultOptions, autoHeaderHeight: true, frozenColumn: 0 });
+      const [leftHeader, rightHeader] = container.querySelectorAll<HTMLDivElement>('.slick-header');
+      vi.spyOn(leftHeader, 'getBoundingClientRect').mockReturnValue({ height: 42 } as DOMRect);
+      vi.spyOn(rightHeader, 'getBoundingClientRect').mockReturnValue({ height: 58 } as DOMRect);
+      const resizeSpy = vi.spyOn(grid, 'resizeCanvas');
+
+      (grid as TestGrid).callRecalculateHeaderHeight();
+
+      [leftHeader, rightHeader].forEach((header) => {
+        expect(header.classList).toContain('slick-header-auto-height');
+        expect(header.style.getPropertyValue('--slick-auto-header-height')).toBe('58px');
+        expect(header.style.height).toBe('58px');
+      });
+      expect(resizeSpy).toHaveBeenCalledTimes(1);
+
+      (grid as TestGrid).callRecalculateHeaderHeight();
+      expect(resizeSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should ignore recalculation before the left header pane is created', () => {
+      grid = new TestGrid(container, [], columns, defaultOptions);
+
+      expect(() => (grid as TestGrid).callRecalculateHeaderHeightWithoutLeftHeader()).not.toThrow();
+    });
+
+    it('should remove automatic header-height styles when disabled with setOptions', () => {
+      grid = new TestGrid(container, [], columns, { ...defaultOptions, autoHeaderHeight: true, frozenColumn: 0 });
+      const headers = [...container.querySelectorAll<HTMLDivElement>('.slick-header')];
+      headers.forEach((header, index) => {
+        vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 42 + index } as DOMRect);
+      });
+
+      (grid as TestGrid).callRecalculateHeaderHeight();
+      grid.setOptions({ autoHeaderHeight: false });
+
+      headers.forEach((header) => {
+        expect(header.classList).not.toContain('slick-header-auto-height');
+        expect(header.style.getPropertyValue('--slick-auto-header-height')).toBe('');
+        expect(header.style.height).toBe('');
+      });
+    });
+
+    it('should recalculate automatic header height when enabled with setOptions', () => {
+      grid = new TestGrid(container, [], columns, { ...defaultOptions, autoHeaderHeight: false });
+      const recalculateSpy = vi.spyOn(grid as any, 'recalculateHeaderHeight');
+
+      grid.setOptions({ autoHeaderHeight: true });
+
+      expect(recalculateSpy).toHaveBeenCalled();
+      expect(container.querySelectorAll('.slick-header-auto-height')).toHaveLength(2);
+    });
+
+    it('should recalculate automatic header height after updating columns', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, autoHeaderHeight: true });
+      const recalculateSpy = vi.spyOn(grid as any, 'recalculateHeaderHeight');
+
+      grid.updateColumns();
+
+      expect(recalculateSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('Editors', () => {
@@ -4548,9 +4635,10 @@ describe('SlickGrid core file', () => {
     });
 
     it('should resize 2nd column that has a "width" defined using default sizing grid options', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, autoHeaderHeight: true, forceFitColumns: false });
       grid.init();
 
+      const recalculateSpy = vi.spyOn(grid as any, 'recalculateHeaderHeight');
       const sedOnBeforeResize = new SlickEventData();
       sedOnBeforeResize.addReturnValue(true);
       vi.spyOn(grid.onBeforeColumnsResize, 'notify').mockReturnValue(sedOnBeforeResize);
@@ -4586,6 +4674,7 @@ describe('SlickGrid core file', () => {
       vi.advanceTimersByTime(10);
 
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+      expect(recalculateSpy).toHaveBeenCalledTimes(1);
       expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(80);
       expect(columns[1].width).toBe(0);
