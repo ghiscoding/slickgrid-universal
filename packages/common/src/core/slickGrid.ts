@@ -260,6 +260,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     asyncEditorLoading: false,
     asyncEditorLoadDelay: 100,
     forceFitColumns: false,
+    autoHeaderHeight: false,
     autoScrollOnColumnResize: true,
     autoScrollResizeLeftDelay: RESIZE_AUTOSCROLL_BROWSER_EDGE_LEFT_DELAY_MS,
     autoScrollResizeRightDelay: RESIZE_AUTOSCROLL_BROWSER_EDGE_RIGHT_DELAY_MS,
@@ -977,6 +978,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.setupColumnSort();
       this.createCssRules();
       this.resizeCanvas();
+
+      if (this._options.autoHeaderHeight) {
+        this.recalculateHeaderHeight();
+      }
       this.bindAncestorScrollEvents();
 
       this._bindingEventService.bind(this._container, 'resize', this.resizeCanvas.bind(this));
@@ -2033,6 +2038,57 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this.setupColumnReorder();
       }
     }
+
+    this.handleAutoHeaderHeightChange();
+  }
+
+  /** Adds or removes the automatic header-height styles from both header panes. */
+  protected handleAutoHeaderHeightChange(): void {
+    const enabled = !!this._options.autoHeaderHeight;
+    const headers = [this._headerScrollerL, this._headerScrollerR].filter((header): header is HTMLDivElement => !!header);
+
+    headers.forEach((header) => header.classList.toggle('slick-header-auto-height', enabled));
+
+    if (!enabled) {
+      this.clearAutoHeaderHeightStyles(headers);
+    }
+  }
+
+  /** Measures natural header heights and applies the largest one to every header pane. */
+  protected recalculateHeaderHeight(): void {
+    if (!this._headerScrollerL) {
+      return;
+    }
+
+    const headers = [this._headerScrollerL, this._headerScrollerR].filter((header): header is HTMLDivElement => !!header);
+    const currentHeight = parseFloat(this._headerScrollerL.style.getPropertyValue('--slick-auto-header-height') || '0');
+
+    // Remove the previous calculated height before measuring the rendered header content.
+    this.clearAutoHeaderHeightStyles(headers);
+    const maxHeight = Math.max(...headers.map((header) => header.getBoundingClientRect().height));
+
+    if (maxHeight > 0) {
+      this.setAutoHeaderHeightStyles(maxHeight, headers);
+
+      // A viewport resize is only necessary when the calculated height actually changed.
+      if (Math.abs(maxHeight - currentHeight) > 0.5) {
+        this.resizeCanvas();
+      }
+    }
+  }
+
+  protected clearAutoHeaderHeightStyles(headers: HTMLDivElement[]): void {
+    headers.forEach((header) => {
+      header.style.removeProperty('--slick-auto-header-height');
+      header.style.height = '';
+    });
+  }
+
+  protected setAutoHeaderHeightStyles(height: number, headers: HTMLDivElement[]): void {
+    headers.forEach((header) => {
+      header.style.setProperty('--slick-auto-header-height', `${height}px`);
+      header.style.height = `${height}px`;
+    });
   }
 
   protected setupColumnSort(): void {
@@ -2693,7 +2749,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               }
             }
             this.updateCanvasWidth(true);
-            this.render();
+            if (this._options.autoHeaderHeight) {
+              this.recalculateHeaderHeight();
+            } else {
+              this.render();
+            }
             this.scrollToX(this._viewportScrollContainerX.scrollLeft);
             this.triggerEvent(this.onColumnsResized, { triggeredByColumn });
             clearTimeout(this._columnResizeTimer);
@@ -3239,6 +3299,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.applyColumnHeaderWidths();
     this.updateCanvasWidth(true);
 
+    if (this._options.autoHeaderHeight) {
+      this.recalculateHeaderHeight();
+    }
+
     this.triggerEvent(this.onAutosizeColumns, { columns: this.columns });
 
     if (reRender) {
@@ -3679,6 +3743,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.resizeCanvas();
       this.updateCanvasWidth();
       this.applyColumnWidths();
+      if (this._options.autoHeaderHeight) {
+        this.recalculateHeaderHeight();
+      }
       this.handleScroll();
       this.getSelectionModel()?.refreshSelections();
     }
@@ -3829,6 +3896,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     } else if (this._options.enableMouseWheelScrollHandler === false) {
       this.destroyAllInstances(this.slickMouseWheelInstances); // remove scroll handler when option is disable
     }
+
+    // Keep header classes and styles synchronized when column rebuilding is suppressed.
+    this.handleAutoHeaderHeightChange();
   }
 
   protected validateAndEnforceOptions(): void {

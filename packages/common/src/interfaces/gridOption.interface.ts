@@ -161,6 +161,12 @@ export interface GridOption<C extends Column = Column> {
   autoHeight?: boolean;
 
   /**
+   * Defaults to false. When enabled, measures rendered column headers and adjusts their shared height to fit multi-line text, HTML, or DOM content.
+   * Header heights are kept in sync when frozen columns are used and recalculated after column width changes.
+   */
+  autoHeaderHeight?: boolean;
+
+  /**
    * Defaults to 60, when "autoFixResizeWhenBrokenStyleDetected" is enabled then what will be the delay timeout before quitting?
    * Note that that the resize gets called every 200ms
    */
