@@ -662,6 +662,9 @@ export interface GridOption<C extends Column = Column> {
   /** Number of column index(es) to freeze (pin) in the grid */
   frozenColumn?: number;
 
+  /** Defaults to 0. Number of visible columns to freeze (pin) from the right edge of the grid. */
+  frozenRightColumn?: number;
+
   /** Number of row index(es) to freeze (pin) in the grid */
   frozenRow?: number;
 

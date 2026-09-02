@@ -92,6 +92,7 @@ export class GridService {
   clearPinning(resetColumns = true): void {
     this.sharedService.slickGrid.setOptions({
       frozenColumn: -1,
+      frozenRightColumn: 0,
       frozenRow: -1,
       frozenBottom: false,
       enableMouseWheelScrollHandler: false,

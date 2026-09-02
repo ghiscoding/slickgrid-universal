@@ -5,6 +5,9 @@ export interface CurrentPinning {
   /** Number of column index(es) to freeze (pin) in the grid */
   frozenColumn?: number;
 
+  /** Number of visible columns to freeze (pin) from the right edge of the grid */
+  frozenRightColumn?: number;
+
   /** Number of row index(es) to freeze (pin) in the grid */
   frozenRow?: number;
 }

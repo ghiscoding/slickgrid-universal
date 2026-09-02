@@ -214,12 +214,12 @@ export class GridStateService {
    */
   getCurrentGridState(includeHiddenColumns = false): GridState {
     const isIncludingHiddenProps = !!(includeHiddenColumns || this._gridOptions.gridStateIncludeHiddenProps);
-    const { frozenColumn, frozenRow, frozenBottom } = this.sharedService.gridOptions;
+    const { frozenColumn, frozenRightColumn, frozenRow, frozenBottom } = this.sharedService.gridOptions;
     const gridState: GridState = {
       columns: this.getCurrentColumns(isIncludingHiddenProps),
       filters: this.getCurrentFilters(),
       sorters: this.getCurrentSorters(),
-      pinning: { frozenColumn, frozenRow, frozenBottom },
+      pinning: { frozenColumn, frozenRightColumn, frozenRow, frozenBottom },
     };
 
     // optional Grouping
@@ -674,12 +674,11 @@ export class GridStateService {
   protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid): void {
     const onSetOptionsHandler = grid.onSetOptions;
     this._eventHandler.subscribe(onSetOptionsHandler, (_e, args) => {
-      const { frozenBottom: frozenBottomBefore, frozenColumn: frozenColumnBefore, frozenRow: frozenRowBefore } = args.optionsBefore;
-      const { frozenBottom: frozenBottomAfter, frozenColumn: frozenColumnAfter, frozenRow: frozenRowAfter } = args.optionsAfter;
-
-      if (frozenBottomBefore !== frozenBottomAfter || frozenColumnBefore !== frozenColumnAfter || frozenRowBefore !== frozenRowAfter) {
+      const pinningOptions = ['frozenBottom', 'frozenColumn', 'frozenRightColumn', 'frozenRow'] as const;
+      if (pinningOptions.some((option) => args.optionsBefore[option] !== args.optionsAfter[option])) {
         const isIncludingHiddenProps = !!this._gridOptions.gridStateIncludeHiddenProps;
-        const newValues = { frozenBottom: frozenBottomAfter, frozenColumn: frozenColumnAfter, frozenRow: frozenRowAfter };
+        const { frozenBottom, frozenColumn, frozenRightColumn, frozenRow } = args.optionsAfter;
+        const newValues = { frozenBottom, frozenColumn, frozenRightColumn, frozenRow };
         const currentGridState = this.getCurrentGridState(isIncludingHiddenProps);
         this.pubSubService.publish('onGridStateChanged', {
           change: { newValues, type: 'pinning' },

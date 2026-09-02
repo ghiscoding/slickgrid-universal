@@ -897,6 +897,11 @@
     border-right: var(--slick-frozen-border-right, v.$slick-frozen-border-right);
   }
 
+  .slick-pane-right-frozen {
+    z-index: 3;
+    border-left: var(--slick-frozen-border-right, v.$slick-frozen-border-right);
+  }
+
   .slick-pane-bottom {
     border-top: var(--slick-frozen-border-bottom, v.$slick-frozen-border-bottom);
   }

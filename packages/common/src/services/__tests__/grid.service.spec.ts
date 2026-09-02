@@ -1599,7 +1599,13 @@ describe('Grid Service', () => {
       service.clearPinning();
 
       expect(updateColumnSpy).toHaveBeenCalled();
-      expect(setOptionsSpy).toHaveBeenCalledWith({ frozenBottom: false, frozenColumn: -1, frozenRow: -1, enableMouseWheelScrollHandler: false });
+      expect(setOptionsSpy).toHaveBeenCalledWith({
+        frozenBottom: false,
+        frozenColumn: -1,
+        frozenRightColumn: 0,
+        frozenRow: -1,
+        enableMouseWheelScrollHandler: false,
+      });
     });
 
     it('should call "setPinning" which itself calls "clearPinning" when the pinning option input is an empty object', () => {

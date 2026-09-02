@@ -580,8 +580,8 @@ describe('GridStateService', () => {
 
     describe('bindSlickGridOnSetOptionsEventToGridStateChange tests', () => {
       it('should subscribe to some SlickGrid events and expect the event to be triggered when a notify is triggered after service was initialized', () => {
-        const mockGridOptionsBefore = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as GridOption;
-        const mockGridOptionsAfter = { frozenBottom: true, frozenColumn: 1, frozenRow: 1 } as GridOption;
+        const mockGridOptionsBefore = { frozenBottom: false, frozenColumn: -1, frozenRightColumn: 0, frozenRow: -1 } as GridOption;
+        const mockGridOptionsAfter = { frozenBottom: true, frozenColumn: 1, frozenRightColumn: 2, frozenRow: 1 } as GridOption;
         const gridStateMock = { pinning: mockGridOptionsBefore, columns: [], filters: [], sorters: [] } as GridState;
         const stateChangeMock = { change: { newValues: mockGridOptionsAfter, type: 'pinning' }, gridState: gridStateMock } as GridStateChange;
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');

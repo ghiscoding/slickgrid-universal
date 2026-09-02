@@ -19,6 +19,8 @@ import fetchJsonp from './jsonp.js';
 import { showToast } from './utilities.js';
 import './example04.scss';
 
+const ITEMS_COUNT = 500;
+
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value) => {
   if (value === null || value === undefined || !value.length) {
@@ -418,6 +420,7 @@ export default class Example04 {
       enableSelection: true,
       frozenColumn: this.frozenColumnCount,
       frozenRow: this.frozenRowCount,
+      frozenRightColumn: 2,
       // frozenBottom: true, // if you want to freeze the bottom instead of the top, you can enable this property
       editCommandHandler: (_item, _column, editCommand) => {
         this.commandQueue.push(editCommand);
@@ -531,7 +534,7 @@ export default class Example04 {
 
     // mock data
     this.dataset = [];
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < ITEMS_COUNT; i++) {
       this.dataset[i] = {
         id: i,
         title: 'Task ' + i,
