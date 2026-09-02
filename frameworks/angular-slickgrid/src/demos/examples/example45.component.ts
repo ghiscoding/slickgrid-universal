@@ -115,7 +115,6 @@ export class Example45Component implements OnDestroy, OnInit {
       rowHeight: 33,
       externalResources: [AngularRowDetailView],
       rowDetailView: {
-        renderMode: 'overlay',
         process: (item: any) => this.simulateServerAsyncCall(item),
         loadOnce: false, // you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events
         useRowClick: false,

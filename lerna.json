@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/lerna-lite/lerna-lite/main/packages/cli/schemas/lerna-schema.json",
-  "version": "10.9.0",
+  "version": "10.10.0",
   "npmClient": "pnpm",
   "loglevel": "info",
   "command": {
@@ -9,14 +9,17 @@
       "createRelease": "github",
       "changelogIncludeCommitsClientLogin": " - by @%l",
       "changelogHeaderMessage": "## All-in-One SlickGrid agnostic library, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀",
-      "commentIssues": "✅ This issue has been resolved in version %v 📦<br>🔗 The release notes are available at: [GitHub Release](%u) 🚀",
+      "commentIssues": "✅ This issue has been resolved and included in version %v 📦<br>🔗 The release notes are available at: [GitHub Release](%u) 🚀",
       "commentPullRequests": "🎉 This pull request is included in version %v 📦<br>🔗 The release notes are available at: [GitHub Release](%u) 🚀",
       "message": "chore(release): publish new version %s",
-      "releaseFooterMessage": "<br>🎉 Another Slickgrid-Universal release 🤖 Love the project? Give it a star ⭐"
+      "releaseFooterMessage": "<br>🎉 Another Slickgrid-Universal release 🤖 Love the project? Give us a star ⭐"
     },
     "publish": {
       "cleanupTempFiles": true,
-      "stripPackageKeys": ["devDependencies", "scripts"]
+      "stripPackageKeys": [
+        "devDependencies",
+        "scripts"
+      ]
     },
     "watch": {
       "noBail": true,
@@ -24,5 +27,10 @@
     }
   },
   "changelogPreset": "conventionalcommits",
-  "packages": ["demos/*", "frameworks/*", "frameworks-plugins/*", "packages/*"]
+  "packages": [
+    "demos/*",
+    "frameworks/*",
+    "frameworks-plugins/*",
+    "packages/*"
+  ]
 }

@@ -1,4 +1,5 @@
-import type { SlickEvent, SlickEventData, SlickGrid } from '../core/index.js';
+import { SlickEvent, SlickEventData } from '../core/slickCore.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import type { GridSize, ResizerOption } from './index.js';
 
 /**

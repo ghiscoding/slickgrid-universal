@@ -20,6 +20,7 @@ import {
   autoAddEditorFormatterToColumnsWithEditor,
   BackendUtilityService,
   CollectionService,
+  Constants,
   emptyElement,
   ExtensionService,
   ExtensionUtility,
@@ -51,7 +52,6 @@ import { SlickPaginationComponent } from '@slickgrid-universal/pagination-compon
 import { extend } from '@slickgrid-universal/utils';
 import { bindable, BindingMode, customElement, IContainer, IEventAggregator, IObserverLocator, resolve, type IDisposable } from 'aurelia';
 import { dequal } from 'dequal/lite';
-import { Constants } from '../constants.js';
 import { GlobalGridOptions } from '../global-grid-options.js';
 import type { AureliaGridInstance, GridOption } from '../models/index.js';
 import { AureliaUtilService, ContainerService, disposeAllSubscriptions, TranslaterService } from '../services/index.js';
@@ -1265,7 +1265,7 @@ export class AureliaSlickgridCustomElement {
     if (this.options.presets && Array.isArray(this.options.presets.columns) && this.options.presets.columns.length > 0) {
       // delegate to GridStateService for centralized column arrangement logic
       // we pass `false` for triggerAutoSizeColumns to maintain original behavior on preset load
-      this.gridStateService.changeColumnsArrangement(this.options.presets.columns, false);
+      this.gridStateService.applyColumnLayout(this.options.presets.columns, false);
     }
   }
 

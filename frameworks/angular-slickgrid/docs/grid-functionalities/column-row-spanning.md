@@ -1,11 +1,12 @@
 ### Description
 You can use Colspan and/or Rowspan by using the DataView Item Metadata Provider, however please note that row spanning is under a flag because of its small perf hit (`rowspan` requires an initial loop through of all row item metadata to map all row span).
 
-> [!NOTE]
-> Please note that `colspan` and `rowspan` have multiple constraints that you must be aware,
-> any side effects will **not** keep anything in sync since metadata are based on grid row index based...
-> for example: Filtering/Sorting/Paging/ColumnReorder/ColumnHidding
-> These side effect will require user's own logic to deal with such things!
+{% hint style="note" %}
+Please note that `colspan` and `rowspan` have multiple constraints that you must be aware,
+any side effects will **not** keep anything in sync since metadata are based on grid row index based...
+for example: Filtering/Sorting/Paging/ColumnReorder/ColumnHidding
+These side effect will require user's own logic to deal with such things!
+{% endhint %}
 
 ### Demo
 
@@ -67,7 +68,9 @@ export class Grid43Component implements OnInit {
           },
         },
       },
-      rowTopOffsetRenderType: 'transform', // default; RowSpan is supported with v10.10.x+
+      // (default) 'transform' is only supported with version >=10.10.0
+      // otherwise you need to use rowTopOffsetRenderType: 'top'
+      rowTopOffsetRenderType: 'transform',
     };
   }
 }

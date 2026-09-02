@@ -166,6 +166,7 @@ describe('GridStateService', () => {
 
     it('should have called the "subscribeToAllGridChanges" method while initializing with Hybrid Selection is enabled', () => {
       vi.spyOn(gridStub, 'getSelectionModel').mockReturnValueOnce(hybridSelectionModelStub);
+      vi.clearAllMocks();
       const gridStateSpy = vi.spyOn(service, 'subscribeToAllGridChanges');
       const pubSubSpy = vi.spyOn(mockPubSub, 'subscribe');
 
@@ -174,7 +175,7 @@ describe('GridStateService', () => {
       vi.spyOn(gridStub, 'getSelectionModel').mockReturnValueOnce(hybridSelectionModelStub);
 
       expect(gridStateSpy).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledTimes(21); // not 7 but 21 with hybrid selection, not sure why though
+      expect(pubSubSpy).toHaveBeenCalledTimes(7);
       // expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onFilterChanged`, () => { });
     });
 
@@ -229,7 +230,7 @@ describe('GridStateService', () => {
       });
     });
 
-    describe('changeColumnsArrangement method', () => {
+    describe('applyColumnLayout method', () => {
       const rowCheckboxColumnMock: Column = { id: '_checkbox_selector', field: '_checkbox_selector', minWidth: 50 };
       const rowDetailColumnMock: Column = { id: '_detail_selector', field: '_detail_selector', minWidth: 50 };
       const rowMoveColumnMock: Column = { id: '_move', field: '_move', minWidth: 50 };
@@ -296,11 +297,19 @@ describe('GridStateService', () => {
         const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
 
-        service.changeColumnsArrangement(presetColumnsMock);
+        service.applyColumnLayout(presetColumnsMock);
 
         expect(setColsSpy).toHaveBeenCalledWith([...columnsWithoutCheckboxMock]);
         expect(autoSizeSpy).toHaveBeenCalled();
         expect(pubSubSpy).not.toHaveBeenCalledWith('onFullResizeByContentRequested');
+      });
+
+      it('should delegate the deprecated "changeColumnsArrangement" method to "applyColumnLayout"', () => {
+        const applyColumnLayoutSpy = vi.spyOn(service, 'applyColumnLayout');
+
+        service.changeColumnsArrangement(presetColumnsMock, false, true);
+
+        expect(applyColumnLayoutSpy).toHaveBeenCalledWith(presetColumnsMock, false, true);
       });
 
       it('should call the method and expect slickgrid "setColumns" and a pubsub event "onFullResizeByContentRequested" to be called with newest columns when "triggerAutoSizeColumns" is false and "enableAutoResizeColumnsByCellContent" is true', () => {
@@ -310,7 +319,7 @@ describe('GridStateService', () => {
         const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
 
-        service.changeColumnsArrangement(presetColumnsMock, false);
+        service.applyColumnLayout(presetColumnsMock, false);
 
         expect(setColsSpy).toHaveBeenCalledWith(columnsWithoutCheckboxMock);
         expect(autoSizeSpy).not.toHaveBeenCalled();
@@ -325,7 +334,7 @@ describe('GridStateService', () => {
         const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
 
-        service.changeColumnsArrangement(presetColumnsMock, false);
+        service.applyColumnLayout(presetColumnsMock, false);
 
         expect(setColsSpy).toHaveBeenCalledWith(columnsWithoutCheckboxMock);
         expect(autoSizeSpy).not.toHaveBeenCalled();
@@ -338,7 +347,7 @@ describe('GridStateService', () => {
         const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
 
-        service.changeColumnsArrangement(presetColumnsMock, false, true);
+        service.applyColumnLayout(presetColumnsMock, false, true);
 
         expect(setColsSpy).toHaveBeenCalledWith(columnsWithoutCheckboxMock);
         expect(autoSizeSpy).not.toHaveBeenCalled();
@@ -354,7 +363,7 @@ describe('GridStateService', () => {
           { columnId: 'field3' },
         ] as CurrentColumn[];
 
-        service.changeColumnsArrangement(presetColumnsMock, false);
+        service.applyColumnLayout(presetColumnsMock, false);
 
         expect(setColsSpy).toHaveBeenCalledWith(columnsWithoutCheckboxMock);
         expect(autoSizeSpy).not.toHaveBeenCalled();
@@ -376,7 +385,7 @@ describe('GridStateService', () => {
           { columnId: 'field3' },
         ] as CurrentColumn[];
 
-        service.changeColumnsArrangement(presetColumnsMock, false);
+        service.applyColumnLayout(presetColumnsMock, false);
 
         expect(setColsSpy).toHaveBeenCalledWith([
           {
@@ -418,7 +427,7 @@ describe('GridStateService', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
-        service.changeColumnsArrangement(presetColumnsMock, false);
+        service.applyColumnLayout(presetColumnsMock, false);
 
         const setColumnsArg = setColsSpy.mock.calls[0][0];
         expect(setColumnsArg).toEqual(expect.arrayContaining([expect.objectContaining({ id: '_checkbox_selector', field: '_checkbox_selector' })]));
@@ -435,7 +444,7 @@ describe('GridStateService', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
-        service.changeColumnsArrangement(presetColumnsMock, false);
+        service.applyColumnLayout(presetColumnsMock, false);
 
         const setColumnsArg = setColsSpy.mock.calls[0][0];
         expect(setColumnsArg).toEqual(expect.arrayContaining([expect.objectContaining({ id: '_detail_selector', field: '_detail_selector' })]));
@@ -452,7 +461,7 @@ describe('GridStateService', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
-        service.changeColumnsArrangement(presetColumnsMock, false);
+        service.applyColumnLayout(presetColumnsMock, false);
 
         const setColumnsArg = setColsSpy.mock.calls[0][0];
         expect(setColumnsArg).toEqual(expect.arrayContaining([expect.objectContaining({ id: '_move', field: '_move' })]));
@@ -471,7 +480,7 @@ describe('GridStateService', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
-        service.changeColumnsArrangement(presetColumnsMock, false);
+        service.applyColumnLayout(presetColumnsMock, false);
 
         const setColumnsArg = setColsSpy.mock.calls[0][0];
         expect(setColumnsArg).toEqual(
@@ -499,7 +508,7 @@ describe('GridStateService', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
         const setColsSpy = vi.spyOn(gridStub, 'setColumns');
 
-        service.changeColumnsArrangement(presetColumnsMock, false);
+        service.applyColumnLayout(presetColumnsMock, false);
 
         const setColumnsArg = setColsSpy.mock.calls[0][0];
         expect(setColumnsArg).toEqual(

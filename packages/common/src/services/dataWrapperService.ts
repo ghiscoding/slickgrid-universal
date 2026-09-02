@@ -1,4 +1,5 @@
-import type { SlickDataView, SlickGrid } from '../core/index.js';
+import { type SlickDataView } from '../core/slickDataView.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 
 export class DataWrapperService {
   protected _dataView?: SlickDataView;

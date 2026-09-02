@@ -1,4 +1,7 @@
-import 'jsdom-global/register';
-
 // (global as any).Storage = window.localStorage;
-(global as any).navigator = { userAgent: 'node.js' };
+if (!globalThis.navigator) {
+  Object.defineProperty(globalThis, 'navigator', {
+    value: { userAgent: 'node.js' },
+    configurable: true,
+  });
+}

@@ -1,4 +1,4 @@
-import type { SlickGrid } from '../core/index.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type { SharedService } from '../services/shared.service.js';
 import type {
   BackendServiceOption,

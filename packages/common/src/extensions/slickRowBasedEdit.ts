@@ -1,6 +1,7 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
-import { SlickEventHandler, SlickGlobalEditorLock, type SlickEventData, type SlickGrid } from '../core/index.js';
+import { SlickEventHandler, SlickGlobalEditorLock, type SlickEventData } from '../core/slickCore.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import type {
   Column,
   EditCommand,

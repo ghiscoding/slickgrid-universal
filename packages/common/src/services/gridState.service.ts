@@ -1,6 +1,8 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
-import { SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
+import { SlickEventHandler } from '../core/slickCore.js';
+import { type SlickDataView } from '../core/slickDataView.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import type { AutocompleterEditor } from '../editors/autocompleterEditor.js';
 import type { SelectEditor } from '../editors/selectEditor.js';
 import { ExtensionName, type ExtensionNameTypeString } from '../enums/index.js';
@@ -90,8 +92,8 @@ export class GridStateService {
   }
 
   /**
-   * Dynamically change the arrangement/distribution of the columns Positions/Visibilities and optionally Widths.
-   * For a column to have its visibly as hidden, it has to be part of the original list but excluded from the list provided as argument to be considered a hidden field.
+   * Apply a column layout, including column order, visibility, and optionally widths.
+   * For a column to be hidden, it must be part of the original list but excluded from the list provided as argument.
    * If you are passing columns Width, then you probably don't want to trigger the autosizeColumns (2nd argument to False).
    * We could also resize the columns by their content but be aware that you can only trigger 1 type of resize at a time (either the 2nd argument or the 3rd last argument but not both at same time)
    * The resize by content could be called by the 3rd argument OR simply by enabling `enableAutoResizeColumnsByCellContent` but again this will only get executed when the 2nd argument is set to false.
@@ -99,16 +101,18 @@ export class GridStateService {
    * @param {Boolean} triggerAutoSizeColumns - True by default, do we also want to call the "autosizeColumns()" method to make the columns fit in the grid?
    * @param {Boolean} triggerColumnsFullResizeByContent - False by default, do we also want to call full columns resize by their content?
    */
-  changeColumnsArrangement(
-    definedColumns: CurrentColumn[],
-    triggerAutoSizeColumns = true,
-    triggerColumnsFullResizeByContent = false
-  ): void {
+  applyColumnLayout(definedColumns: CurrentColumn[], triggerAutoSizeColumns = true, triggerColumnsFullResizeByContent = false): void {
     if (Array.isArray(definedColumns) && definedColumns.length > 0) {
       const newArrangedColumns: Column[] = this.getAssociatedGridColumns(this._grid, definedColumns);
 
       this.updateColumnDefinitionsList(newArrangedColumns, triggerAutoSizeColumns, triggerColumnsFullResizeByContent);
     }
+  }
+
+  /** @deprecated @use `applyColumnLayout()` instead. This alias will be removed in v11. */
+  // prettier-ignore
+  changeColumnsArrangement(definedColumns: CurrentColumn[], triggerAutoSizeColumns = true, triggerColumnsFullResizeByContent = false): void {
+    this.applyColumnLayout(definedColumns, triggerAutoSizeColumns, triggerColumnsFullResizeByContent);
   }
 
   /** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
@@ -595,7 +599,7 @@ export class GridStateService {
    * Add certain column(s), when the feature is/are enabled, to an output column definitions array (by reference).
    * Basically some features (for example: Row Selection, Row Detail, Row Move) will be added as column(s) dynamically and internally by the lib,
    * we just ask the developer to enable the feature, via flags, and internally the lib will create the necessary column.
-   * So specifically for these column(s) and feature(s), we need to re-add them internally when the user calls the `changeColumnsArrangement()` method.
+   * So specifically for these column(s) and feature(s), we need to re-add them internally when the user calls the `applyColumnLayout()` method.
    * @param {Array<Object>} dynamicAddonColumnByIndexPositionList - array of plugin columnId and columnIndexPosition that will be re-added (if it wasn't already found in the output array) dynamically
    * @param {Array<Column>} fullColumns - full column definitions array that includes every columns (including Row Selection, Row Detail, Row Move when enabled)
    * @param {Array<Column>} newArrangedColumns - output array that will be use to show in the UI (it could have less columns than fullColumnDefinitions array since user might hide some columns)

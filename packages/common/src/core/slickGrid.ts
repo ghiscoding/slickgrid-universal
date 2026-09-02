@@ -104,7 +104,7 @@ import {
   type BasePubSub,
   type SlickEditorLock,
 } from './slickCore.js';
-import type { SlickDataView } from './slickDataview.js';
+import type { SlickDataView } from './slickDataView.js';
 import { Draggable, MouseWheel, Resizable } from './slickInteractions.js';
 import { applyHtmlToElement, runOptionalHtmlSanitizer } from './utils.js';
 
@@ -112,9 +112,8 @@ import { applyHtmlToElement, runOptionalHtmlSanitizer } from './utils.js';
 // body scroll range (header width is the header/body scroll-sync floor) and column
 // drag-reorder has room past the last column
 const HEADER_WIDTH_SLACK = 1000;
-const RESIZE_AUTOSCROLL_MIN_INTERVAL_MS = 30;
-const RESIZE_AUTOSCROLL_MAX_INTERVAL_MS = 600;
-const RESIZE_AUTOSCROLL_ACCELERATE_INTERVAL = 5;
+const COLUMN_AUTOSCROLL_DISTANCE_PX = 10;
+const COLUMN_AUTOSCROLL_INTERVAL_MS = 30;
 const RESIZE_AUTOSCROLL_BROWSER_EDGE_PX = 1;
 const RESIZE_AUTOSCROLL_BROWSER_EDGE_LEFT_DELAY_MS = 300;
 const RESIZE_AUTOSCROLL_BROWSER_EDGE_RIGHT_DELAY_MS = 1200;
@@ -224,7 +223,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected canvas: HTMLCanvasElement | null = null;
   protected canvas_context: CanvasRenderingContext2D | null = null;
   protected _isResizingColumn = false;
-  protected _columnResizeAutoScrollTimer?: any;
+  protected _columnResizeAutoScrollTimer?: ReturnType<typeof setInterval>;
   protected _lastColumnGridMenuCompensation = 2; // when Grid Menu is enabled, we need to compensate the last column width by 2px to give room for the column resize handle between the last column and the grid menu button
 
   // settings
@@ -261,6 +260,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     asyncEditorLoading: false,
     asyncEditorLoadDelay: 100,
     forceFitColumns: false,
+    autoHeaderHeight: false,
     autoScrollOnColumnResize: true,
     autoScrollResizeLeftDelay: RESIZE_AUTOSCROLL_BROWSER_EDGE_LEFT_DELAY_MS,
     autoScrollResizeRightDelay: RESIZE_AUTOSCROLL_BROWSER_EDGE_RIGHT_DELAY_MS,
@@ -978,6 +978,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.setupColumnSort();
       this.createCssRules();
       this.resizeCanvas();
+
+      if (this._options.autoHeaderHeight) {
+        this.recalculateHeaderHeight();
+      }
       this.bindAncestorScrollEvents();
 
       this._bindingEventService.bind(this._container, 'resize', this.resizeCanvas.bind(this));
@@ -2034,6 +2038,57 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this.setupColumnReorder();
       }
     }
+
+    this.handleAutoHeaderHeightChange();
+  }
+
+  /** Adds or removes the automatic header-height styles from both header panes. */
+  protected handleAutoHeaderHeightChange(): void {
+    const enabled = !!this._options.autoHeaderHeight;
+    const headers = [this._headerScrollerL, this._headerScrollerR].filter((header): header is HTMLDivElement => !!header);
+
+    headers.forEach((header) => header.classList.toggle('slick-header-auto-height', enabled));
+
+    if (!enabled) {
+      this.clearAutoHeaderHeightStyles(headers);
+    }
+  }
+
+  /** Measures natural header heights and applies the largest one to every header pane. */
+  protected recalculateHeaderHeight(): void {
+    if (!this._headerScrollerL) {
+      return;
+    }
+
+    const headers = [this._headerScrollerL, this._headerScrollerR].filter((header): header is HTMLDivElement => !!header);
+    const currentHeight = parseFloat(this._headerScrollerL.style.getPropertyValue('--slick-auto-header-height') || '0');
+
+    // Remove the previous calculated height before measuring the rendered header content.
+    this.clearAutoHeaderHeightStyles(headers);
+    const maxHeight = Math.max(...headers.map((header) => header.getBoundingClientRect().height));
+
+    if (maxHeight > 0) {
+      this.setAutoHeaderHeightStyles(maxHeight, headers);
+
+      // A viewport resize is only necessary when the calculated height actually changed.
+      if (Math.abs(maxHeight - currentHeight) > 0.5) {
+        this.resizeCanvas();
+      }
+    }
+  }
+
+  protected clearAutoHeaderHeightStyles(headers: HTMLDivElement[]): void {
+    headers.forEach((header) => {
+      header.style.removeProperty('--slick-auto-header-height');
+      header.style.height = '';
+    });
+  }
+
+  protected setAutoHeaderHeightStyles(height: number, headers: HTMLDivElement[]): void {
+    headers.forEach((header) => {
+      header.style.setProperty('--slick-auto-header-height', `${height}px`);
+      header.style.height = `${height}px`;
+    });
   }
 
   protected setupColumnSort(): void {
@@ -2158,32 +2213,33 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.sortableSideLeftInstance?.destroy();
     this.sortableSideRightInstance?.destroy();
 
-    let columnScrollTimer: any;
+    let columnScrollTimer: ReturnType<typeof setInterval> | undefined;
+    let columnScrollDirection = 0;
 
-    // add/remove extra scroll padding for calculation
-    const scrollColumnsRight = () => (this._viewportScrollContainerX.scrollLeft += 10);
-    const scrollColumnsLeft = () => (this._viewportScrollContainerX.scrollLeft -= 10);
     const stopAutoScroll = () => {
       clearInterval(columnScrollTimer);
       columnScrollTimer = undefined;
+      columnScrollDirection = 0;
     };
     let prevColumnIds: Array<string | number> = [];
-    let columnMap: Map<string | number, { index: number; hidden: boolean; column: C }>;
-    let canDragScroll = false;
+    let hiddenColumns: Map<string | number, C>;
 
     // fires on document during native drag; also bind 'mousemove' for SortableJS forceFallback mode
     const autoScrollHandler = (e: DragEvent | MouseEvent) => {
-      const { clientX, clientY, pageX } = e as MouseEvent;
-      if (clientX && clientY && canDragScroll) {
-        const containerOffset = getOffset(this._container);
+      const { clientX, clientY, pageX } = e;
+      if (clientX && clientY) {
         const viewportLeft = getOffset(this._viewportScrollContainerX).left;
-        const containerRight = containerOffset.left + this._container.clientWidth;
-        if (!columnScrollTimer && pageX > containerRight) {
-          columnScrollTimer = setInterval(scrollColumnsRight, 100);
-        } else if (!columnScrollTimer && pageX < viewportLeft) {
-          columnScrollTimer = setInterval(scrollColumnsLeft, 100);
-        } else if (columnScrollTimer && pageX <= containerRight && pageX >= viewportLeft) {
+        const containerRight = getOffset(this._container).left + this._container.clientWidth;
+        const direction = pageX > containerRight ? 1 : pageX < viewportLeft ? -1 : 0;
+        if (direction !== columnScrollDirection) {
           stopAutoScroll();
+          columnScrollDirection = direction;
+          if (direction) {
+            columnScrollTimer = setInterval(
+              () => (this._viewportScrollContainerX.scrollLeft += direction * COLUMN_AUTOSCROLL_DISTANCE_PX),
+              COLUMN_AUTOSCROLL_INTERVAL_MS
+            );
+          }
         }
       }
     };
@@ -2210,19 +2266,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         e.item.classList.add('slick-header-column-active');
         // only right-section columns (non-frozen) should auto-scroll; use contains() since
         // _headerR has `left:-1000px` which breaks offset-based comparisons
-        canDragScroll = !this.hasFrozenColumns() || this._headerR.contains(e.item);
-
-        // bind 'drag' for native HTML5 drag and 'mousemove' for SortableJS forceFallback
-        this._bindingEventService.bind(document, 'drag', autoScrollHandler as EventListener, {}, 'colreorder');
-        this._bindingEventService.bind(document, 'mousemove', autoScrollHandler as EventListener, {}, 'colreorder');
+        if (!this.hasFrozenColumns() || this._headerR.contains(e.item)) {
+          // bind 'drag' for native HTML5 drag and 'mousemove' for SortableJS forceFallback
+          this._bindingEventService.bind(document, 'drag', autoScrollHandler as EventListener, {}, 'colreorder');
+          this._bindingEventService.bind(document, 'mousemove', autoScrollHandler as EventListener, {}, 'colreorder');
+        }
 
         prevColumnIds = this.columns.map((c) => c.id);
-
-        // Create a map to track original column positions and hidden state
-        columnMap = new Map();
-        this.columns.forEach((col, idx) => {
-          columnMap.set(col.id, { index: idx, hidden: !!col.hidden, column: col });
-        });
+        hiddenColumns = new Map(this.columns.filter((column) => column.hidden).map((column) => [column.id, column]));
       },
       onEnd: (e) => {
         e.item.classList.remove('slick-header-column-active');
@@ -2234,27 +2285,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           return;
         }
 
-        let reorderedIds = this.sortableSideLeftInstance?.toArray() ?? [];
-        reorderedIds = reorderedIds.concat(this.sortableSideRightInstance?.toArray() ?? []);
-
-        const reorderedColumns: C[] = [];
-        for (let i = 0; i < reorderedIds.length; i++) {
-          reorderedColumns.push(this.columns[this.getColumnIndex(reorderedIds[i])]);
-        }
+        const reorderedIds = [...this.sortableSideLeftInstance!.toArray(), ...this.sortableSideRightInstance!.toArray()];
+        const reorderedColumns = reorderedIds.map((id) => this.columns[this.getColumnIndex(id)]);
 
         // Reconstruct final column array: insert hidden columns at their original indices
-        const finalColumns: C[] = [];
         let visibleIdx = 0;
-        for (let i = 0; i < this.columns.length; i++) {
-          const colInfo = columnMap.get(this.columns[i].id);
-          if (colInfo?.hidden) {
-            // Hidden column: insert at its original position
-            finalColumns.push(colInfo.column);
-          } else {
-            // Visible column: use reordered position
-            finalColumns.push(reorderedColumns[visibleIdx++]);
-          }
-        }
+        const finalColumns = this.columns.map((column) => hiddenColumns.get(column.id) ?? reorderedColumns[visibleIdx++]);
 
         e.stopPropagation();
         if (!this.arrayEquals(prevColumnIds, reorderedIds)) {
@@ -2292,7 +2328,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let lastResizable = -1;
     let frozenLeftColMaxWidth = 0;
     let resizeAutoScrollDeltaX = 0;
-    // Only these two are needed for auto-scroll state
     let autoScrollClientX: number | undefined;
     let autoScrollOffsetX = 0;
 
@@ -2324,72 +2359,57 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     };
 
     const scheduleColumnResizeAutoScroll = (resizeCallback: (targetPageX: number) => void) => {
-      if (this._columnResizeAutoScrollTimer || !autoScrollOffsetX) {
+      if (this._columnResizeAutoScrollTimer) {
         return;
       }
-      let elapsed = 0;
       this._columnResizeAutoScrollTimer = setInterval(() => {
-        if (!autoScrollOffsetX) {
-          elapsed = 0;
-          return;
-        }
-        const isBrowserEdge = Math.abs(autoScrollOffsetX) === 1;
         const viewportOffset = getOffset(this._viewportScrollContainerX);
-        const moveDistance = isBrowserEdge ? 4 * autoScrollOffsetX : (this.getAbsoluteColumnMinWidth() / 2) * Math.sign(autoScrollOffsetX);
-        /* v8 ignore next 5 */
-        if (!isBrowserEdge) {
-          const delay = RESIZE_AUTOSCROLL_MAX_INTERVAL_MS - Math.abs(autoScrollOffsetX) * RESIZE_AUTOSCROLL_ACCELERATE_INTERVAL;
-          elapsed += RESIZE_AUTOSCROLL_MIN_INTERVAL_MS;
-          if (elapsed < delay) {
-            return;
-          }
-          elapsed = 0;
-        }
         /* v8 ignore next */
         const targetPageX =
           autoScrollOffsetX > 0
-            ? viewportOffset.left + this._viewportScrollContainerX.clientWidth + moveDistance
-            : viewportOffset.left - moveDistance;
+            ? viewportOffset.left + this._viewportScrollContainerX.clientWidth + COLUMN_AUTOSCROLL_DISTANCE_PX
+            : viewportOffset.left - COLUMN_AUTOSCROLL_DISTANCE_PX;
         resizeCallback(targetPageX + resizeAutoScrollDeltaX);
-      }, RESIZE_AUTOSCROLL_MIN_INTERVAL_MS);
+      }, COLUMN_AUTOSCROLL_INTERVAL_MS);
     };
 
     const updateColumnResizeAutoScroll = (
       clientX: number | undefined,
       targetPageX: number,
       resizeCallback: (targetPageX: number) => void
-    ) => {
+    ): number => {
       // TODO: there is a known bug with auto-scroll in RTL,
       // so disable it until someone can contribute a fix
-      if (this._options.rtl) {
+      if (this._options.rtl || !this._options.autoScrollOnColumnResize) {
         stopColumnResizeAutoScroll();
-        return;
+        return targetPageX;
       }
 
       autoScrollClientX = isDefinedNumber(clientX) ? clientX : autoScrollClientX;
-      const viewportOffset = getOffset(this._viewportScrollContainerX);
-      const left = viewportOffset.left;
-      const right = left + this._viewportScrollContainerX.clientWidth;
+      const left = getOffset(this._viewportScrollContainerX).left;
+      const viewportWidth = this._viewportScrollContainerX.clientWidth;
+      const right = left + viewportWidth;
       const browserW = window.innerWidth || document.documentElement.clientWidth || 0;
       if (targetPageX <= left) {
         autoScrollOffsetX = targetPageX - left;
       } else if (targetPageX >= right) {
         autoScrollOffsetX = targetPageX - right;
       } else if (isDefinedNumber(autoScrollClientX) && browserW > 0) {
-        /* v8 ignore if */
-        if (autoScrollClientX <= RESIZE_AUTOSCROLL_BROWSER_EDGE_PX) {
-          autoScrollOffsetX = -1;
-        } else if (autoScrollClientX >= browserW - RESIZE_AUTOSCROLL_BROWSER_EDGE_PX) {
-          autoScrollOffsetX = 1;
-        } else {
-          stopColumnResizeAutoScroll();
-          return;
-        }
+        autoScrollOffsetX =
+          autoScrollClientX <= RESIZE_AUTOSCROLL_BROWSER_EDGE_PX
+            ? -1
+            : autoScrollClientX >= browserW - RESIZE_AUTOSCROLL_BROWSER_EDGE_PX
+              ? 1
+              : 0;
       } else {
-        stopColumnResizeAutoScroll();
-        return;
+        autoScrollOffsetX = 0;
       }
-      scheduleColumnResizeAutoScroll(resizeCallback);
+      if (autoScrollOffsetX) {
+        scheduleColumnResizeAutoScroll(resizeCallback);
+        return autoScrollOffsetX > 0 && viewportWidth ? Math.min(right, targetPageX) : targetPageX;
+      }
+      stopColumnResizeAutoScroll();
+      return targetPageX;
     };
 
     for (let i = 0; i < children.length; i++) {
@@ -2611,15 +2631,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           !(this.hasFrozenColumns() && i <= this._options.frozenColumn!)
         ) {
           const columnRight = this.columnPosRight[i];
-          const scrollLeft = this._viewportScrollContainerX.scrollLeft;
+          const previousScrollLeft = this._viewportScrollContainerX.scrollLeft;
           const viewportWidth = this._viewportScrollContainerX.clientWidth;
           const isLastVisibleColumn = i === vc.length - 1;
-          const previousScrollLeft = this._viewportScrollContainerX.scrollLeft;
           if (isLastVisibleColumn) {
             this._isResizingColumn = true;
             const maxScrollLeft = Math.max(0, this._viewportScrollContainerX.scrollWidth - this._viewportScrollContainerX.clientWidth);
             this.scrollToX(maxScrollLeft);
-          } else if (columnRight > scrollLeft + viewportWidth) {
+          } else if (columnRight > previousScrollLeft + viewportWidth) {
             this._isResizingColumn = true;
             this.scrollToX(columnRight - viewportWidth);
           }
@@ -2695,19 +2714,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               minPageX = pageX - Math.min(shrinkLeewayOnLeft ?? 100000, stretchLeewayOnRight ?? 100000);
             }
             resizeAutoScrollDeltaX = 0;
-            autoScrollClientX = isDefinedNumber((targetEvent as MouseEvent).clientX) ? (targetEvent as MouseEvent).clientX : undefined;
+            autoScrollClientX = (targetEvent as MouseEvent).clientX;
             stopColumnResizeAutoScroll();
           },
           onResize: (e, resizeElms) => {
             const targetEvent = (e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e;
-            const targetPageX = (targetEvent as MouseEvent).pageX;
+            let targetPageX = (targetEvent as MouseEvent).pageX;
             if (!(this.hasFrozenColumns() && i <= this._options.frozenColumn!)) {
-              updateColumnResizeAutoScroll((targetEvent as MouseEvent).clientX, targetPageX, (resizePageX: number) => {
-                applyColumnResize(resizePageX, {
-                  resizeableElement: resizeElms.resizeableElement,
-                  resizeableHandleElement: resizeableHandle,
-                });
-              });
+              targetPageX = updateColumnResizeAutoScroll((targetEvent as MouseEvent).clientX, targetPageX, (resizePageX) =>
+                applyColumnResize(resizePageX, resizeElms)
+              );
             }
             applyColumnResize(targetPageX + resizeAutoScrollDeltaX, resizeElms);
           },
@@ -2733,7 +2749,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               }
             }
             this.updateCanvasWidth(true);
-            this.render();
+            if (this._options.autoHeaderHeight) {
+              this.recalculateHeaderHeight();
+            } else {
+              this.render();
+            }
             this.scrollToX(this._viewportScrollContainerX.scrollLeft);
             this.triggerEvent(this.onColumnsResized, { triggeredByColumn });
             clearTimeout(this._columnResizeTimer);
@@ -3279,6 +3299,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.applyColumnHeaderWidths();
     this.updateCanvasWidth(true);
 
+    if (this._options.autoHeaderHeight) {
+      this.recalculateHeaderHeight();
+    }
+
     this.triggerEvent(this.onAutosizeColumns, { columns: this.columns });
 
     if (reRender) {
@@ -3719,6 +3743,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.resizeCanvas();
       this.updateCanvasWidth();
       this.applyColumnWidths();
+      if (this._options.autoHeaderHeight) {
+        this.recalculateHeaderHeight();
+      }
       this.handleScroll();
       this.getSelectionModel()?.refreshSelections();
     }
@@ -3869,6 +3896,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     } else if (this._options.enableMouseWheelScrollHandler === false) {
       this.destroyAllInstances(this.slickMouseWheelInstances); // remove scroll handler when option is disable
     }
+
+    // Keep header classes and styles synchronized when column rebuilding is suppressed.
+    this.handleAutoHeaderHeightChange();
   }
 
   protected validateAndEnforceOptions(): void {
@@ -3878,11 +3908,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // @deprecated v11: remove this Row Detail fallback when inline rendering is removed.
     // The legacy inline Row Detail renderer relies on absolute top-based row positioning;
-    // overlay rendering is compatible with transform-based row positioning.
+    // an omitted renderMode automatically uses overlay rendering with transform-based row positioning.
     if (
       this._options.rowTopOffsetRenderType === 'transform' &&
       this._options.enableRowDetailView &&
-      this._options.rowDetailView?.renderMode !== 'overlay'
+      this._options.rowDetailView?.renderMode === 'inline'
     ) {
       this._options.rowTopOffsetRenderType = 'top';
     }

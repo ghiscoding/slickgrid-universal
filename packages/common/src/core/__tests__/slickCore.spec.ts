@@ -206,21 +206,17 @@ describe('SlickCore file', () => {
 
     it('should be able to add a PubSub instance to the SlickEvent call notify() and expect PubSub .publish() to be called and the externalize event callback be called also', () => {
       const ed = new SlickEventData();
-      const pubSubCopy = { ...pubSubServiceStub };
+      const publishSpy = vi.fn();
+      const pubSubCopy = { ...pubSubServiceStub, publish: publishSpy };
       const onClick = new SlickEvent('onClick', pubSubCopy);
-      pubSubCopy.publish = (_evtName, _data, _delay, evtCallback) => {
+      publishSpy.mockImplementation((_evtName, _data, _delay, evtCallback) => {
         evtCallback!(new CustomEvent('click'));
-      };
+      });
 
       onClick.notify({ hello: 'world' }, ed);
 
       expect(ed.nativeEvent).toBeDefined();
-      expect(pubSubServiceStub.publish).toHaveBeenCalledWith(
-        'onClick',
-        { eventData: expect.any(Object), args: { hello: 'world' } },
-        undefined,
-        expect.any(Function)
-      );
+      expect(publishSpy).toHaveBeenCalledWith('onClick', { eventData: expect.any(Object), args: { hello: 'world' } }, undefined, expect.any(Function));
     });
   });
 

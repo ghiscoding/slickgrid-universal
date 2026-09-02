@@ -1662,6 +1662,43 @@ describe('SlickRowDetailView plugin', () => {
       expect(renderOverlaySpy).toHaveBeenCalled();
     });
 
+    it('should automatically use the overlay layer with transform row positioning', () => {
+      const mockItem = {
+        id: 123,
+        __collapsed: false,
+        __isPadding: false,
+        __sizePadding: 2,
+        __detailContent: '<div>Loading...</div>',
+      };
+      const viewport = document.createElement('div');
+      const canvas = document.createElement('div');
+      canvas.className = 'grid-canvas';
+      viewport.appendChild(canvas);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+        ...gridOptionsMock,
+        rowTopOffsetRenderType: 'transform',
+        rowDetailView: { panelRows: 2, columnId: '_detail_selector' } as any,
+      });
+      vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getViewportNode').mockReturnValue(viewport);
+      vi.spyOn(gridStub, 'getRowCache').mockReturnValue({ 0: { rowNode: [document.createElement('div')] } } as any);
+      vi.spyOn(gridStub, 'getRowTop').mockReturnValue(100);
+      vi.spyOn(gridStub, 'getFrozenRowOffset').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(25);
+      vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(mockItem);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
+
+      plugin.init(gridStub);
+      (plugin as any)._expandedRowIds.add(mockItem.id);
+      (plugin as any)._renderedViewportRowIds.add(mockItem.id);
+      (plugin as any).renderOverlayPanels();
+
+      expect(canvas.querySelector('.slick-row-detail-overlay .dynamic-cell-detail')).toBeTruthy();
+      expect(
+        (plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub) as FormatterResultWithHtml).insertElementAfterTarget
+      ).toBeUndefined();
+    });
+
     it('should cover overlay panel viewport and reattachment branches', () => {
       const mockItem = {
         id: 123,

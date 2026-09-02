@@ -130,7 +130,7 @@ export class GridEditorComponent {
     this.defineGrid();
   }
 
-  detached() {
+  dispose() {
     // don't forget to unsubscribe to the Slick Grid Events
     this.onCellChangeSubscriber.unsubscribe();
     this.onCellClickSubscriber.unsubscribe();

@@ -17,7 +17,7 @@ import {
   sortCollectionWithOptions,
 } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { Constants } from '../constants.js';
-import { type SlickGrid } from '../core/index.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import { applyHtmlToElement } from '../core/utils.js';
 import { type OperatorType, type SearchTerm } from '../enums/index.js';
 import type {

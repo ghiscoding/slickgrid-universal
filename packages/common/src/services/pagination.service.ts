@@ -1,7 +1,9 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { queueMicrotaskPolyfill } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
-import { SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
+import { SlickEventHandler } from '../core/slickCore.js';
+import { type SlickDataView } from '../core/slickDataView.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import type {
   BackendServiceApi,
   CurrentPagination,

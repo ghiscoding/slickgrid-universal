@@ -1,4 +1,4 @@
-import type { SlickGrid } from '../core/index.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type { Column, FormatterResultWithHtml, FormatterResultWithText } from './index.js';
 
 export declare type Formatter<T = any> = (

@@ -204,6 +204,7 @@ $slick-header-border-right:                                 0 none !default;
 $slick-header-border-bottom:                                0 none !default;
 $slick-header-border-left:                                  0 none !default;
 $slick-header-column-height:                                calc(17px * #{$slick-header-row-count}) !default;  // header is calculated by rows to show
+$slick-auto-header-height-extra:                            8px !default;
 $slick-header-column-background-active:                     color.adjust($slick-grid-header-background, $lightness: -5%) !default;
 $slick-header-column-background-hover:                      color.adjust($slick-grid-header-background, $lightness: -2%) !default;
 $slick-header-column-sortable-background-hover:             #e0e0e0 !default;

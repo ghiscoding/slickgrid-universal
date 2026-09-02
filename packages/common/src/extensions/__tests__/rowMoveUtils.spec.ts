@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { SlickEvent, type SlickGrid } from '../../core/index.js';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import { defaultOnBeforeMoveRows, defaultOnMoveRows } from '../rowMoveUtils.js';
+
+type DataViewStub = Omit<SlickDataView, 'getItemCount'> & {
+  getItemCount?: SlickDataView['getItemCount'];
+};
 
 const dataViewStub = {
   destroy: vi.fn(),
@@ -12,7 +16,7 @@ const dataViewStub = {
   getItemCount: vi.fn(),
   setItems: vi.fn(),
   sort: vi.fn(),
-} as unknown as SlickDataView;
+} as unknown as DataViewStub;
 
 const gridStub = {
   getCellNode: vi.fn(),
@@ -35,19 +39,19 @@ describe('rowMoveUtils', () => {
 
     it('should return false when trying to move at same position', () => {
       vi.spyOn(dataViewStub, 'getItemCount').mockReturnValue(4);
-      const output = defaultOnBeforeMoveRows(new CustomEvent('change'), { rows: [0, 1, 2, 3], insertBefore: 1, grid: gridStub });
+      const output = defaultOnBeforeMoveRows(new MouseEvent('change'), { rows: [0, 1, 2, 3], insertBefore: 1, grid: gridStub });
       expect(output).toEqual(false);
     });
 
     it('should return true when trying to move at available spot', () => {
       vi.spyOn(dataViewStub, 'getItemCount').mockReturnValue(500);
-      const output = defaultOnBeforeMoveRows(new CustomEvent('change'), { rows: [1], insertBefore: 3, grid: gridStub });
+      const output = defaultOnBeforeMoveRows(new MouseEvent('change'), { rows: [1], insertBefore: 3, grid: gridStub });
       expect(output).toEqual(true);
     });
 
     it('should return false when dataView.getItemCount() is undefined', () => {
       dataViewStub.getItemCount = undefined;
-      const output = defaultOnBeforeMoveRows(new CustomEvent('change'), { rows: [1], insertBefore: 3, grid: gridStub });
+      const output = defaultOnBeforeMoveRows(new MouseEvent('change'), { rows: [1], insertBefore: 3, grid: gridStub });
       expect(output).toEqual(false);
     });
   });
@@ -70,7 +74,7 @@ describe('rowMoveUtils', () => {
       vi.spyOn(dataViewStub, 'getItem').mockReturnValue(items[1]);
       vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0).mockReturnValueOnce(0).mockReturnValueOnce(1).mockReturnValueOnce(2).mockReturnValueOnce(3);
       vi.spyOn(dataViewStub, 'getItemCount').mockReturnValue(items.length);
-      defaultOnMoveRows(new CustomEvent('change'), { insertBefore: 2, rows: [0, 1, 2, 3], grid: gridStub });
+      defaultOnMoveRows(new MouseEvent('change'), { insertBefore: 2, rows: [0, 1, 2, 3], grid: gridStub });
 
       expect(setItemSpy).toHaveBeenCalledWith([
         { id: 1, firstName: 'Jane' },
@@ -94,21 +98,20 @@ describe('rowMoveUtils', () => {
       vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null);
       vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0).mockReturnValueOnce(0).mockReturnValueOnce(1).mockReturnValueOnce(2).mockReturnValueOnce(3);
       vi.spyOn(dataViewStub, 'getItemCount').mockReturnValue(items.length);
-      defaultOnMoveRows(new CustomEvent('change'), { insertBefore: 2, rows: [0, 1, 2, 3], grid: gridStub });
+      defaultOnMoveRows(new MouseEvent('change'), { insertBefore: 2, rows: [0, 1, 2, 3], grid: gridStub });
 
       expect(setItemSpy).toHaveBeenCalledWith([
+        { id: 0, firstName: 'John' },
         { id: 1, firstName: 'Jane' },
         { id: 2, firstName: 'Smith' },
         { id: 3, firstName: 'Bob' },
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
       ]);
     });
 
     it('should return false when dataView.getItemCount() is undefined', () => {
       const consoleErrorSpy = vi.spyOn(console, 'error').mockReturnValue();
       dataViewStub.getItemCount = undefined;
-      defaultOnMoveRows(new CustomEvent('change'), { rows: [1], insertBefore: 3, grid: gridStub });
+      defaultOnMoveRows(new MouseEvent('change'), { rows: [1], insertBefore: 3, grid: gridStub });
       expect(consoleErrorSpy).toHaveBeenCalledWith('Sorry `defaultOnMoveRows()` only works with SlickDataView');
     });
   });

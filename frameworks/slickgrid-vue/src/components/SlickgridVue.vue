@@ -1282,7 +1282,7 @@ function loadColumnPresetsWhenDatasetInitialized() {
   if (_gridOptions.value.presets && Array.isArray(_gridOptions.value.presets.columns) && _gridOptions.value.presets.columns.length > 0) {
     // delegate to GridStateService for centralized column arrangement logic
     // we pass `false` for triggerAutoSizeColumns to maintain original behavior on preset load
-    gridStateService.changeColumnsArrangement(_gridOptions.value.presets.columns, false);
+    gridStateService.applyColumnLayout(_gridOptions.value.presets.columns, false);
   }
 }
 

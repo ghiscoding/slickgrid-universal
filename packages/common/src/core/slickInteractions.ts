@@ -368,26 +368,22 @@ export function Resizable(options: ResizableOption): {
   }
 
   function resizingHandler(e: MouseEvent | TouchEvent): void {
-    if (e.preventDefault && e.type !== 'touchmove') {
+    if (e.type !== 'touchmove') {
       e.preventDefault();
     }
     const event = ((e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e) as MouseEvent | TouchEvent;
-    if (typeof onResize === 'function') {
-      onResize(event, { resizeableElement, resizeableHandleElement });
-    }
+    executeResizeCallbackWhenDefined(onResize, event);
   }
 
   function pointerResizingHandler(e: PointerEvent): void {
-    if (activePointerId !== undefined && e.pointerId !== activePointerId) {
+    if (e.pointerId !== activePointerId) {
       return;
     }
 
-    if (e.preventDefault && e.pointerType !== 'touch') {
+    if (e.pointerType !== 'touch') {
       e.preventDefault();
     }
-    if (typeof onResize === 'function') {
-      onResize(e, { resizeableElement, resizeableHandleElement });
-    }
+    executeResizeCallbackWhenDefined(onResize, e);
   }
 
   /** Remove all mouse/touch handlers */
@@ -401,7 +397,7 @@ export function Resizable(options: ResizableOption): {
   }
 
   function pointerResizeEndHandler(e: PointerEvent): void {
-    if (activePointerId !== undefined && e.pointerId !== activePointerId) {
+    if (e.pointerId !== activePointerId) {
       return;
     }
 

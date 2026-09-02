@@ -1,4 +1,4 @@
-import type { SlickGrid } from '../core/index.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import type { OperatorType, SearchTerm } from '../enums/index.js';
 import type { Column, FilterCallback } from './index.js';
 

@@ -1,5 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickEventHandler, type SlickDataView, type SlickEventData, type SlickGrid } from '../core/index.js';
+import { SlickEventData, SlickEventHandler } from '../core/slickCore.js';
+import { type SlickDataView } from '../core/slickDataView.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import { SortDirectionNumber, type EmitterType, type SortDirection } from '../enums/index.js';
 import type {
   Column,

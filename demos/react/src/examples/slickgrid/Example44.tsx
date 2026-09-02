@@ -73,10 +73,12 @@ export default function Example44() {
       id: 'revenueGrowth',
       name: 'Revenue Growth',
       field: 'revenueGrowth',
+      headerCssClass: 'auto-header-height-demo',
       exportCustomFormatter: rowCellValueExportFormatter,
       formatter: rowCellValueFormatter,
       type: 'number',
-      minWidth: 120,
+      minWidth: 65,
+      width: 65,
     },
     {
       id: 'pricingPolicy',
@@ -265,6 +267,7 @@ export default function Example44() {
 
   const gridOptions: GridOption = {
     enableCellNavigation: true,
+    autoHeaderHeight: true,
     enableColumnReorder: true,
     enableHeaderMenu: false,
     enableCellRowSpan: true,
@@ -411,6 +414,10 @@ export default function Example44() {
           (i.e. Filtering/Sorting/Paging/Column Reorder) will require you to implement proper logic to recalculate these indexes (it becomes
           your responsability). This demo does not show this because it is up to you to decide what to do when the span changes shape (i.e.
           you default to 3 rowspan but you filter a row in the middle, how do you want to proceed?).
+        </p>
+        <p className="italic example-details">
+          <code>autoHeaderHeight</code> is enabled: the narrow <i>Revenue Growth</i> column wraps its header and the grid measures the
+          required height.
         </p>
       </div>
 

@@ -53,7 +53,7 @@ You will have to update the lib path in your `angular.json`, simply update the p
 ],
 ```
 ##### Allowed CommonJS Dependencies (`angular.json`)
-You also need to modify the `allowedCommonJsDependencies` option include `assign-deep`, `jquery-ui` (and `stream` for WebPack 5) while `angular-slickgrid` itself can be removed, so your updated option should be (for a full sample, take a look at this [angular.json](https://github.com/ghiscoding/angular-slickgrid-demos/blob/master/bootstrap5-demo-with-translate/angular.json#L20) from 1 of the demo)
+You also need to modify the `allowedCommonJsDependencies` option include `assign-deep`, `jquery-ui` (and `stream` for WebPack 5) while `angular-slickgrid` itself can be removed, so your updated option should be (for a full sample, take a look at this [angular.json](https://github.com/ghiscoding/angular-slickgrid-demos/blob/master/standalone-with-translate/angular.json#L20) from 1 of the demo)
 ```diff
 "allowedCommonJsDependencies": [
 +  "assign-deep",
@@ -62,7 +62,7 @@ You also need to modify the `allowedCommonJsDependencies` option include `assign
 +  "stream"
 ]
 ```
-and you should also update/create the `ngcc.config.js` in the root of your project (or copy the code live [demo](https://github.com/ghiscoding/angular-slickgrid-demos/blob/master/bootstrap5-demo-with-translate/ngcc.config.js))
+and you should also update/create the `ngcc.config.js` in the root of your project (or copy the code live [demo](https://github.com/ghiscoding/angular-slickgrid-demos/blob/master/standalone-with-translate/ngcc.config.js))
 ```diff
 module.exports = {
   packages: {

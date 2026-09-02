@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
+
+### Features
+
+* **export:** add opt-in includeColumnWidth for Excel and PDF exports ([#2697](https://github.com/ghiscoding/slickgrid-universal/issues/2697)) ([9919580](https://github.com/ghiscoding/slickgrid-universal/commit/99195806bd970f016d418ba15be9c86e6e0c33cb)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update excel-builder-vanilla to ^5.2.3 ([#2713](https://github.com/ghiscoding/slickgrid-universal/issues/2713)) ([14b76ad](https://github.com/ghiscoding/slickgrid-universal/commit/14b76adfc3f7fc431267b35c10c634421f449c1b)) - by @renovate-bot
+* **security:** prevent prototype pollution in dynamic lookups ([#2742](https://github.com/ghiscoding/slickgrid-universal/issues/2742)) ([a7bb92c](https://github.com/ghiscoding/slickgrid-universal/commit/a7bb92cac206948b1b3405ae04a43dee61922e6c)) - by @ghiscoding
+
 ## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
 
 ### Bug Fixes

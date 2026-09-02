@@ -19,6 +19,7 @@ import {
   autoAddEditorFormatterToColumnsWithEditor,
   BackendUtilityService,
   CollectionService,
+  Constants,
   emptyElement,
   ExtensionService,
   ExtensionUtility,
@@ -65,7 +66,6 @@ import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { Observable } from 'rxjs';
-import { Constants } from '../constants';
 import { GlobalGridOptions } from '../global-grid-options';
 import type { AngularGridInstance, ExternalTestingDependencies, GridOption } from '../models/index';
 import { AngularUtilService } from '../services/angularUtil.service';
@@ -1393,7 +1393,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     if (Array.isArray(this.options.presets?.columns) && this.options.presets.columns.length > 0) {
       // delegate to GridStateService for centralized column arrangement logic
       // we pass `false` for triggerAutoSizeColumns to maintain original behavior on preset load
-      this.gridStateService.changeColumnsArrangement(this.options.presets.columns, false);
+      this.gridStateService.applyColumnLayout(this.options.presets.columns, false);
     }
   }
 

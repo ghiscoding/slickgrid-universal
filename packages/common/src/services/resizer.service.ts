@@ -1,7 +1,9 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, getInnerSize, getOffset, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
-import { SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
+import { SlickEventHandler } from '../core/slickCore.js';
+import { type SlickDataView } from '../core/slickDataView.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities.js';
 import type { AutoResizeOption, Column, GridOption, GridSize, ResizeByContentOption } from '../interfaces/index.js';
 
@@ -666,6 +668,15 @@ export class ResizerService {
   }
 
   protected handleSingleColumnResizeByContent(columnId: string): void {
+    // A custom DataView might not expose all rows through getItems() (for example, a windowed
+    // DataView can intentionally return an empty array). In that case we cannot calculate a
+    // content width, so leave the current column width unchanged and let the consumer provide
+    // its own resize handler if it can fetch the rows asynchronously.
+    const dataItems = this.dataView?.getItems?.();
+    if (!Array.isArray(dataItems) || dataItems.length === 0) {
+      return;
+    }
+
     const columns = this._grid.getColumns();
     const columnDefIdx = columns.findIndex((col) => col.id === columnId);
 

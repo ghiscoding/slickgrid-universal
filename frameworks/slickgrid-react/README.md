@@ -110,7 +110,7 @@ Also note that all of these themes also have **Dark Theme** equivalent and even 
 - [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-react-demos/) / [examples repo](https://github.com/ghiscoding/slickgrid-react-demos/tree/main/bootstrap5-i18n-demo)
 
 #### Working Demos
-For a complete set of working demos (40+ examples), we strongly suggest you to clone the [Slickgrid-React Demos](https://github.com/ghiscoding/slickgrid-react-demos) repository (instructions are provided inside it). The repo provides multiple examples and are updated every time a new release is out, so it is updated frequently and is used as the GitHub live demo page.
+For a complete set of working demos (~60 examples), we strongly suggest you to clone the [Slickgrid-React Demos](https://github.com/ghiscoding/slickgrid-react-demos) repository (instructions are provided inside). The repo provides multiple examples and are updated every time a new release is out, so it is updated frequently and is also linked to the GitHub [Live Demo](https://ghiscoding.github.io/slickgrid-react-demos) page.
 
 ## Latest News & Releases
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Releases.
