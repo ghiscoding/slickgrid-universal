@@ -226,7 +226,7 @@ describe('SlickGrid core file', () => {
     expect(styleElm?.getAttribute('nonce')).toBe('test-nonce');
   });
 
-  it('should auto-fallback to top when Row Detail is enabled with `rowTopOffsetRenderType` set to "transform"', () => {
+  it('should preserve transform row positioning when Row Detail uses the automatic overlay render mode', () => {
     document.body.style.zoom = '90%';
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     grid = new SlickGrid<any, Column>(
@@ -239,7 +239,7 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid).toBeTruthy();
-    expect(grid.getOptions().rowTopOffsetRenderType).toBe('top');
+    expect(grid.getOptions().rowTopOffsetRenderType).toBe('transform');
   });
 
   it('should preserve transform row positioning when Row Detail uses the overlay render mode', () => {
@@ -259,6 +259,25 @@ describe('SlickGrid core file', () => {
     grid.init();
 
     expect(grid.getOptions().rowTopOffsetRenderType).toBe('transform');
+  });
+
+  it('should auto-fallback to top when Row Detail explicitly uses the inline render mode', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    grid = new SlickGrid<any, Column>(
+      '#myGrid',
+      [],
+      columns,
+      {
+        ...defaultOptions,
+        rowTopOffsetRenderType: 'transform',
+        enableRowDetailView: true,
+        rowDetailView: { renderMode: 'inline' },
+      } as GridOption,
+      pubSubServiceStub
+    );
+    grid.init();
+
+    expect(grid.getOptions().rowTopOffsetRenderType).toBe('top');
   });
 
   it('should keep RowSpan host rows top-positioned while other rows use transforms', () => {

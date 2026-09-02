@@ -98,7 +98,6 @@ function defineGrid() {
     rowHeight: 33,
     externalResources: [VueRowDetailView],
     rowDetailView: {
-      renderMode: 'overlay',
       process: (item: any) => simulateServerAsyncCall(item),
       loadOnce: false, // you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events
       useRowClick: false,

@@ -48,7 +48,7 @@
     "fallow": "pnpx fallow",
     "fallow:dead-code": "pnpx fallow dead-code --production",
     "fallow:dupes": "pnpx fallow dupes",
-    "fallow:health": "pnpx fallow health --coverage test/vitest-coverage",
+    "fallow:health": "pnpx fallow health --coverage ./test/vitest-coverage/coverage-final.json",
     "fallow:fix:check": "pnpx fallow fix --dry-run --production",
     "fallow:fix": "pnpx fallow fix --production",
     "lint": "oxlint .",

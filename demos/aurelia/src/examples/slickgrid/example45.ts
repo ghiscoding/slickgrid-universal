@@ -105,7 +105,6 @@ export class Example45 {
       rowHeight: 33,
       externalResources: [AureliaRowDetailView],
       rowDetailView: {
-        renderMode: 'overlay',
         process: (item) => this.simulateServerAsyncCall(item),
         loadOnce: false, // you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events
         useRowClick: false,
