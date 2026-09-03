@@ -138,7 +138,6 @@ Date sorting should work out of the box as long as you provide the correct colum
 - `saveOutputType`: if you already have a `type` and an `outputType` but you wish to save your date (i.e. save to DB) in yet another format
 
 ### Pre-Parse Date Columns for better perf
-##### requires v5.8.0 and higher
 
 For a broader large dataset strategy that also covers export cache tuning, see [Large Dataset Performance Guide](../developer-guides/large-dataset-performance.md).
 
