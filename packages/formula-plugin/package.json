@@ -1,0 +1,43 @@
+{
+  "name": "@slickgrid-universal/formula-plugin",
+  "version": "10.9.0",
+  "description": "Optional Formula Service for Slickgrid-Universal.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "/dist",
+    "/src"
+  ],
+  "scripts": {
+    "build": "pnpm run clean && tsc",
+    "build:incremental": "tsc --incremental --declaration",
+    "clean": "remove dist tsconfig.tsbuildinfo",
+    "dev": "pnpm build:incremental"
+  },
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/formula-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
+  "dependencies": {
+    "@slickgrid-universal/binding": "workspace:*",
+    "@slickgrid-universal/common": "workspace:*"
+  }
+}
