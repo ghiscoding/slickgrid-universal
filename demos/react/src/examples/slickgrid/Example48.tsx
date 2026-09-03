@@ -271,9 +271,9 @@ const Example48: React.FC = () => {
         />
       </div>
 
-      <label className="checkbox-inline control-label mb-3">
-        <input type="checkbox" data-test="enable-multi-selection" checked={enableMultiSelection} onChange={toggleMultiSelection} /> Enable
-        multi-selection (Ctrl/Cmd-click or drag)
+      <label className="checkbox-inline control-label my-3">
+        <input type="checkbox" data-test="enable-multi-selection" checked={enableMultiSelection} onChange={toggleMultiSelection} />
+        <b className="ms-2">Enable multi-selection</b> (Ctrl/Cmd-click or drag)
       </label>
 
       <h3>

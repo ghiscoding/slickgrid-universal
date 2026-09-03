@@ -21,6 +21,7 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
   protected _dataView?: CustomDataView | SlickDataView;
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
+  protected _multiSelectionBaseRanges?: SlickRange[];
   protected _prevSelectedRow?: number;
   protected _prevKeyDown = '';
   protected _ranges: SlickRange[] = [];
@@ -267,7 +268,9 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
 
   refreshSelections(): void {
     if (this._activeSelectionIsRow) {
-      this.setSelectedRows(this.getSelectedRows());
+      const lastCell = this._grid.getColumns().length - 1;
+      const ranges = this.getSelectedRanges().map((range) => new SlickRange(range.fromRow, 0, range.toRow, lastCell));
+      this.setSelectedRanges(ranges, undefined, '');
     } else {
       this.setSelectedRanges(this.getSelectedRanges(), undefined, '');
     }
@@ -638,6 +641,7 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
   }
 
   protected handleBeforeCellRangeSelected(e: SlickEventData, cell: { row: number; cell: number }): boolean | void {
+    this._multiSelectionBaseRanges = undefined;
     if (this._activeSelectionIsRow) {
       let isRowMoveColumn = false;
       if (this.gridOptions.enableRowMoveManager) {
@@ -673,8 +677,19 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
         return false;
       }
       const selectedRange = new SlickRange(args.range.fromRow, 0, args.range.toRow, this._grid.getColumns().length - 1);
-      const ranges =
-        args.addToSelection && this._options.enableMultiSelection ? [...this.getSelectedRanges(), selectedRange] : [selectedRange];
+      const isMultiSelection = args.addToSelection && this._options.enableMultiSelection;
+      let currentRanges = this.getSelectedRanges();
+      if (isMultiSelection) {
+        // A modifier drag emits multiple intermediate selecting events. Keep
+        // the ranges that existed when the drag started and replace only the
+        // temporary preview range on each event.
+        this._multiSelectionBaseRanges ??= currentRanges.slice();
+        currentRanges = this._multiSelectionBaseRanges;
+      }
+      const ranges = isMultiSelection ? [...currentRanges, selectedRange] : [selectedRange];
+      if (args.caller === 'onCellRangeSelected') {
+        this._multiSelectionBaseRanges = undefined;
+      }
       this.setSelectedRanges(ranges, undefined, args.selectionMode);
     } else {
       if (args.caller === 'onCellRangeSelecting') {

@@ -30,6 +30,23 @@ describe('Example 44 - Column & Row Span', { retries: 0 }, () => {
     cy.get('h2').should('contain', 'Example 44: colspan/rowspan with large dataset');
   });
 
+  it('should calculate a height that fits the wrapped Revenue Growth header', () => {
+    cy.get('.slick-header-auto-height').should('have.length', 2);
+    cy.get('.slick-header-auto-height')
+      .first()
+      .should(($header) => {
+        expect(parseFloat($header.css('--slick-auto-header-height'))).to.be.greaterThan(0);
+      });
+    cy.get('.auto-header-height-demo').should(($header) => {
+      expect($header[0].scrollHeight).to.be.lte($header[0].clientHeight);
+      expect($header[0].clientHeight).to.be.lessThan(100);
+      const name = $header[0].querySelector<HTMLElement>('.slick-column-name');
+      expect(name).to.exist;
+      const lineHeight = parseFloat(getComputedStyle(name!).lineHeight) || 16;
+      expect(name!.scrollHeight).to.be.within(lineHeight * 1.5, lineHeight * 2.5);
+    });
+  });
+
   it('should have exact column titles', () => {
     cy.get('.slick-header-columns')
       .children()

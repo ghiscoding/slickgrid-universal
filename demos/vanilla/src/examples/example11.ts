@@ -826,13 +826,13 @@ export default class Example11 {
       const pinning = selectedView?.pinning ?? { frozenBottom: false, frozenColumn: -1, frozenRow: -1 };
       this.sgb.filterService.updateFilters(filters as CurrentFilter[]);
       this.sgb.sortService.updateSorting(sorters as CurrentSorter[]);
-      this.sgb.gridStateService.changeColumnsArrangement(columns);
+      this.sgb.gridStateService.applyColumnLayout(columns);
       this.sgb.gridService.setPinning(pinning); // make sure to set pinning last in case some columns were hidden which would offset the pinning
     } else {
       this.sgb.gridService.clearPinning();
       this.sgb.filterService.clearFilters();
       this.sgb.sortService.clearSorting();
-      this.sgb.gridStateService.changeColumnsArrangement(
+      this.sgb.gridStateService.applyColumnLayout(
         [...this.columns].map((col) => ({ columnId: `${col.id}` }))
         // OR the `hidden` props alternative
         // [...this.columns].map((col) => ({ columnId: `${col.id}`, hidden: false }))

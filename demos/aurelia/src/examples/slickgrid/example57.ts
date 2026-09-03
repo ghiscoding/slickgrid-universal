@@ -18,7 +18,7 @@ export class Example57 {
     this.dataset = this.mockData(NB_ITEMS);
   }
 
-  detached() {
+  dispose() {
     if (this.previousBodyDir) {
       document.body.setAttribute('dir', this.previousBodyDir);
     } else {

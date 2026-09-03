@@ -127,7 +127,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
     if (this.sharedService?.gridOptions && this.grid?.setOptions) {
       this.sharedService.gridOptions = mergedOptions;
-      this.grid.setOptions(mergedOptions, false, true); // make sure to supressColumnCheck (3rd arg) to avoid problem with changeColumnsArrangement() and custom grid view
+      this.grid.setOptions(mergedOptions, false, true); // make sure to suppress column checks (3rd arg) when applying a column layout and using a custom grid view
       this.grid.reRenderColumns(true); // then call a re-render since we did supressColumnCheck on previous setOptions
     }
     this._options = mergedOptions;
@@ -1410,7 +1410,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     if (this.grid && this.options.presets && Array.isArray(this.options.presets.columns) && this.options.presets.columns.length > 0) {
       // delegate to GridStateService for centralized column arrangement logic
       // we pass `false` for triggerAutoSizeColumns to maintain original behavior on preset load
-      this.gridStateService.changeColumnsArrangement(this.options.presets.columns, false);
+      this.gridStateService.applyColumnLayout(this.options.presets.columns, false);
     }
   }
 

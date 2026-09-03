@@ -50,7 +50,7 @@ export class GridExample {
     // populate the grid
   }
 
-  detached() {
+  dispose() {
     this.saveCurrentGridState()
   }
 

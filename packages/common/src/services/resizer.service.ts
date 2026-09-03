@@ -668,6 +668,15 @@ export class ResizerService {
   }
 
   protected handleSingleColumnResizeByContent(columnId: string): void {
+    // A custom DataView might not expose all rows through getItems() (for example, a windowed
+    // DataView can intentionally return an empty array). In that case we cannot calculate a
+    // content width, so leave the current column width unchanged and let the consumer provide
+    // its own resize handler if it can fetch the rows asynchronously.
+    const dataItems = this.dataView?.getItems?.();
+    if (!Array.isArray(dataItems) || dataItems.length === 0) {
+      return;
+    }
+
     const columns = this._grid.getColumns();
     const columnDefIdx = columns.findIndex((col) => col.id === columnId);
 
