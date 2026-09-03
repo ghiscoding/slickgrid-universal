@@ -170,7 +170,8 @@ function getSourceValueSeries(
 }
 
 /** AG Grid-style default: copy one value, continue numeric ranges, and repeat mixed ranges. */
-function getFillSeriesValue(sourceValues: unknown[], seriesIndex: number): unknown {
+// fallow-ignore-next-line unused-export
+export function getFillSeriesValue(sourceValues: unknown[], seriesIndex: number): unknown {
   if (sourceValues.length === 0) {
     return undefined;
   }
@@ -217,7 +218,8 @@ function getFormulaOrRawValue(
 }
 
 /** Shift relative A1 references while leaving quoted literals untouched. */
-function translateFormulaReferences(formula: string, rowDelta: number, columnDelta: number): string {
+// fallow-ignore-next-line unused-export
+export function translateFormulaReferences(formula: string, rowDelta: number, columnDelta: number): string {
   const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_])/gi;
   return transformFormulaOutsideQuotedStrings(formula, (segment) =>
     segment.replace(referenceRegex, (reference) =>

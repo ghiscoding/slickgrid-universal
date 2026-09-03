@@ -112,7 +112,8 @@ export function parseExcelReferenceCell(token: string): FormulaGridCell | undefi
   return { row, cell };
 }
 
-function expandFormulaReferenceToGridCells(reference: string): FormulaGridCell[] {
+// fallow-ignore-next-line unused-export
+export function expandFormulaReferenceToGridCells(reference: string): FormulaGridCell[] {
   const normalizedRef = normalizeFormulaReferenceToken(reference);
   const [startToken, endToken] = normalizedRef.includes(':') ? normalizedRef.split(':', 2) : [normalizedRef, normalizedRef];
   const startCell = parseExcelReferenceCell(startToken);
@@ -145,7 +146,8 @@ function expandFormulaReferenceToGridCells(reference: string): FormulaGridCell[]
 }
 
 /** Build the shared left-to-right reference/color mapping used by both the editor and service. */
-function buildFormulaReferenceColorInfos(formula: string): FormulaReferenceColorInfo[] {
+// fallow-ignore-next-line unused-export
+export function buildFormulaReferenceColorInfos(formula: string): FormulaReferenceColorInfo[] {
   const references: FormulaReferenceColorInfo[] = [];
   const seen = new Set<string>();
   const referenceRegex = createFormulaReferenceTokenRegex();
