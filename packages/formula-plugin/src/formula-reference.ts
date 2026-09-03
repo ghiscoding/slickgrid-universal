@@ -1,4 +1,4 @@
-export const FORMULA_TOKEN_COLOR_COUNT = 10;
+const FORMULA_TOKEN_COLOR_COUNT = 10;
 /** Maximum number of cells expanded for one formula reference range. */
 export const FORMULA_MAX_REFERENCE_CELLS = 100_000;
 /** Shared grid CSS overlay key used while formula references are highlighted. */
@@ -112,7 +112,7 @@ export function parseExcelReferenceCell(token: string): FormulaGridCell | undefi
   return { row, cell };
 }
 
-export function expandFormulaReferenceToGridCells(reference: string): FormulaGridCell[] {
+function expandFormulaReferenceToGridCells(reference: string): FormulaGridCell[] {
   const normalizedRef = normalizeFormulaReferenceToken(reference);
   const [startToken, endToken] = normalizedRef.includes(':') ? normalizedRef.split(':', 2) : [normalizedRef, normalizedRef];
   const startCell = parseExcelReferenceCell(startToken);
@@ -145,7 +145,7 @@ export function expandFormulaReferenceToGridCells(reference: string): FormulaGri
 }
 
 /** Build the shared left-to-right reference/color mapping used by both the editor and service. */
-export function buildFormulaReferenceColorInfos(formula: string): FormulaReferenceColorInfo[] {
+function buildFormulaReferenceColorInfos(formula: string): FormulaReferenceColorInfo[] {
   const references: FormulaReferenceColorInfo[] = [];
   const seen = new Set<string>();
   const referenceRegex = createFormulaReferenceTokenRegex();
