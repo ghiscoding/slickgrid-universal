@@ -25,18 +25,19 @@ export interface BasePubSubService {
 
   /**
    * Subscribes to a custom event message channel or message type.
-   * This is similar to the "subscribe" except that the callback receives an event typed as CustomEventInit and the data will be inside its "event.detail"
+   * This is similar to the "subscribe" except that the callback receives the original CustomEvent and the data will be inside its "event.detail"
    * @param event The event channel or event data type.
    * @param callback The callback to be invoked when the specified message is published.
    * @return possibly a Subscription
    */
-  subscribeEvent?<T = any>(_eventName: string | Function, _callback: (event: CustomEventInit<T>) => void): EventSubscription | any;
+  subscribeEvent?<T = any>(_eventName: string | Function, _callback: (event: CustomEvent<T>) => void): EventSubscription | any;
 
   /**
    * Unsubscribes a message name
    * @param event The event name
    * @return possibly a Subscription
    */
+  unsubscribe<T = any>(_eventName: string, _callback: (event: CustomEvent<T>) => void): void;
   unsubscribe(_eventName: string, _callback: (event: CustomEventInit) => void): void;
 
   /** Unsubscribes all subscriptions that currently exists */

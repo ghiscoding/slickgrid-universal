@@ -4,6 +4,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
+
+### Features
+
+* add configurable cell selection drag handle visibility ([#2747](https://github.com/ghiscoding/slickgrid-universal/issues/2747)) ([5e90446](https://github.com/ghiscoding/slickgrid-universal/commit/5e9044623515893dcec58bce81e251e3e30beffa)) - by @ghiscoding
+* add core RTL support for headers and column resizing ([#2714](https://github.com/ghiscoding/slickgrid-universal/issues/2714)) ([a4807b2](https://github.com/ghiscoding/slickgrid-universal/commit/a4807b212ae6c120d79d1683d1e4b2d699fcb362)) - by @ghiscoding
+* **export:** add opt-in includeColumnWidth for Excel and PDF exports ([#2697](https://github.com/ghiscoding/slickgrid-universal/issues/2697)) ([9919580](https://github.com/ghiscoding/slickgrid-universal/commit/99195806bd970f016d418ba15be9c86e6e0c33cb)) - by @ghiscoding
+* **selection:** add multi-range selection and drag handle options ([#2748](https://github.com/ghiscoding/slickgrid-universal/issues/2748)) ([88ffa93](https://github.com/ghiscoding/slickgrid-universal/commit/88ffa9332bd4b427f72c6e30d16e121c934ed9e9)), closes [#2752](https://github.com/ghiscoding/slickgrid-universal/issues/2752) - by @ghiscoding
+
+### Bug Fixes
+
+* allow grid events through range overlays and readonly paste ([#2723](https://github.com/ghiscoding/slickgrid-universal/issues/2723)) ([894533d](https://github.com/ghiscoding/slickgrid-universal/commit/894533df942cd9a302ff886d53caaa2d8ed61e31)) - by @ghiscoding
+* **common:** support Shift-click cell range selection ([#2757](https://github.com/ghiscoding/slickgrid-universal/issues/2757)) ([797ff45](https://github.com/ghiscoding/slickgrid-universal/commit/797ff454b597896a670b2f6d61b28c8a7ce35c6a)) - by @ghiscoding
+* **demos:** disable RTL column reordering with SortableJS ([#2769](https://github.com/ghiscoding/slickgrid-universal/issues/2769)) ([602c17c](https://github.com/ghiscoding/slickgrid-universal/commit/602c17cc2daecbec0d62491db24312dcd61c36e7)) - by @ghiscoding
+* **row-detail:** support transform rows with overlay rendering ([#2738](https://github.com/ghiscoding/slickgrid-universal/issues/2738)) ([acd2e33](https://github.com/ghiscoding/slickgrid-universal/commit/acd2e33b011d7591d3f5d549c7dce895bb23cd4a)) - by @ghiscoding
+* **rowspan:** support rowTopOffsetRenderType transform ([#2739](https://github.com/ghiscoding/slickgrid-universal/issues/2739)) ([12daf7f](https://github.com/ghiscoding/slickgrid-universal/commit/12daf7fa6a22fefe3d5bfb225c86fca8b35bcca2)) - by @ghiscoding
+* **utils:** allow empty arrays to override defaults ([#2758](https://github.com/ghiscoding/slickgrid-universal/issues/2758)) ([986464d](https://github.com/ghiscoding/slickgrid-universal/commit/986464dda1fd621967e84aa7b1083f09c5814077)) - by @ghiscoding
+
 ## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
 
 ### Features

@@ -144,7 +144,6 @@ export class Example19Component implements OnDestroy, OnInit {
       datasetIdPropertyName: 'rowId', // optionally use a different "id"
       externalResources: [AngularRowDetailView],
       rowDetailView: {
-        renderMode: 'overlay',
         // optionally change the column index position of the icon (defaults to 0)
         // columnIndexPosition: 1,
 

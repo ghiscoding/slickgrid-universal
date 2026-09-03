@@ -56,3 +56,15 @@ Also note that if you use a stylesheet attached to your component (or inline), y
   templateUrl: './demo.component.html'
 })
 ```
+
+### Automatic header height
+
+Set `autoHeaderHeight: true` to size column headers from their rendered content instead of using a fixed row count. This supports multi-line text, HTML, and DOM elements used as column names. The calculated height is shared by frozen header panes and is recalculated after column resizing or autosizing.
+
+```ts
+const gridOptions = {
+  autoHeaderHeight: true,
+};
+```
+
+The option is disabled by default. Use it with a theme stylesheet from Slickgrid-Universal; it provides the required header wrapping styles.

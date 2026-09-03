@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
+
+### Bug Fixes
+
+* **security:** harden dynamic object maps against prototype pollution ([#2743](https://github.com/ghiscoding/slickgrid-universal/issues/2743)) ([5262f34](https://github.com/ghiscoding/slickgrid-universal/commit/5262f3433b00654e9ef29cfe1dc77b5345e9a43e)) - by @ghiscoding
+* **security:** prevent prototype pollution in dynamic lookups ([#2742](https://github.com/ghiscoding/slickgrid-universal/issues/2742)) ([a7bb92c](https://github.com/ghiscoding/slickgrid-universal/commit/a7bb92cac206948b1b3405ae04a43dee61922e6c)) - by @ghiscoding
+
 ## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
 
 **Note:** Version bump only for package @slickgrid-universal/composite-editor-component

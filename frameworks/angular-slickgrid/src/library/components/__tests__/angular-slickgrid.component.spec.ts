@@ -181,7 +181,7 @@ const gridServiceStub = {
 const gridStateServiceStub = {
   init: vi.fn(),
   dispose: vi.fn(),
-  changeColumnsArrangement: vi.fn((columns) => {
+  applyColumnLayout: vi.fn((columns) => {
     const gridColumns = gridStateServiceStub.getAssociatedGridColumns(mockGrid, columns);
     if (gridColumns && Array.isArray(gridColumns)) {
       mockGrid.setColumns(gridColumns);
@@ -1723,12 +1723,12 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
 
       it('should reflect columns in the grid', () => {
         const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
-        const changeColsSpy = vi.spyOn(gridStateServiceStub, 'changeColumnsArrangement');
+        const applyColumnLayoutSpy = vi.spyOn(gridStateServiceStub, 'applyColumnLayout');
 
         component.options = { presets: { columns: mockColsPresets } } as unknown as GridOption;
         component.initialization(slickEventHandler);
 
-        expect(changeColsSpy).toHaveBeenCalledWith(mockColsPresets, false);
+        expect(applyColumnLayoutSpy).toHaveBeenCalledWith(mockColsPresets, false);
       });
 
       it('should reflect columns with an extra checkbox selection column in the grid when "enableCheckboxSelector" is set', () => {
@@ -1739,13 +1739,13 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           { ...mockCol, editorClass: undefined, hidden: false },
         ];
         vi.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
-        const changeColsSpy = vi.spyOn(gridStateServiceStub, 'changeColumnsArrangement');
+        const applyColumnLayoutSpy = vi.spyOn(gridStateServiceStub, 'applyColumnLayout');
 
         component.columns = mockCols;
         component.options = { ...gridOptions, enableCheckboxSelector: true, presets: { columns: mockColsPresets } } as unknown as GridOption;
         component.initialization(slickEventHandler);
 
-        expect(changeColsSpy).toHaveBeenCalledWith(mockColsPresets, false);
+        expect(applyColumnLayoutSpy).toHaveBeenCalledWith(mockColsPresets, false);
       });
 
       it('should reflect columns with an extra row detail column in the grid when "enableRowDetailView" is set', () => {
@@ -1756,7 +1756,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           { ...mockCol, editorClass: undefined, hidden: false },
         ];
         vi.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
-        const changeColsSpy = vi.spyOn(gridStateServiceStub, 'changeColumnsArrangement');
+        const applyColumnLayoutSpy = vi.spyOn(gridStateServiceStub, 'applyColumnLayout');
 
         component.columns = mockCols;
         component.options = {
@@ -1767,7 +1767,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         } as GridOption;
         component.initialization(slickEventHandler);
 
-        expect(changeColsSpy).toHaveBeenCalledWith(mockColsPresets, false);
+        expect(applyColumnLayoutSpy).toHaveBeenCalledWith(mockColsPresets, false);
       });
 
       it('should reflect columns with an extra row move column in the grid when "enableRowMoveManager" is set', () => {
@@ -1778,13 +1778,13 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           { ...mockCol, editorClass: undefined, hidden: false },
         ];
         vi.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
-        const changeColsSpy = vi.spyOn(gridStateServiceStub, 'changeColumnsArrangement');
+        const applyColumnLayoutSpy = vi.spyOn(gridStateServiceStub, 'applyColumnLayout');
 
         component.columns = mockCols;
         component.options = { ...gridOptions, enableRowMoveManager: true, presets: { columns: mockColsPresets } } as unknown as GridOption;
         component.initialization(slickEventHandler);
 
-        expect(changeColsSpy).toHaveBeenCalledWith(mockColsPresets, false);
+        expect(applyColumnLayoutSpy).toHaveBeenCalledWith(mockColsPresets, false);
       });
 
       it('should reflect 3 dynamic columns (1-RowMove, 2-RowSelection, 3-RowDetail) when all associated extension flags are enabled', () => {
@@ -1797,7 +1797,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           { ...mockCol, editorClass: undefined, hidden: false },
         ];
         vi.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
-        const changeColsSpy = vi.spyOn(gridStateServiceStub, 'changeColumnsArrangement');
+        const applyColumnLayoutSpy = vi.spyOn(gridStateServiceStub, 'applyColumnLayout');
 
         component.columns = mockCols;
         component.options = {
@@ -1810,7 +1810,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         } as unknown as GridOption;
         component.initialization(slickEventHandler);
 
-        expect(changeColsSpy).toHaveBeenCalledWith(mockColsPresets, false);
+        expect(applyColumnLayoutSpy).toHaveBeenCalledWith(mockColsPresets, false);
       });
 
       it('should execute backend service "init" method when set', () => {

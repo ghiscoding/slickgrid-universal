@@ -131,11 +131,14 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /**
-   * True when Row Detail panels should be rendered outside transformed row elements.
+   * True when Row Detail panels should be rendered in a sibling overlay layer.
    * @deprecated v11: remove this compatibility switch when overlay becomes the only renderer.
    */
   protected get isOverlayRenderMode(): boolean {
-    return this._addonOptions?.renderMode === 'overlay';
+    return (
+      this._addonOptions?.renderMode === 'overlay' ||
+      (this._addonOptions?.renderMode === undefined && this.gridOptions.rowTopOffsetRenderType === 'transform')
+    );
   }
 
   set rowIdsOutOfViewport(rowIds: Array<string | number>) {

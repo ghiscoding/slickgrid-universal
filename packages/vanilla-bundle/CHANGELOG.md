@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
+
+### Bug Fixes
+
+* **core:** sync plugin-added columns to Aurelia & Vue bindings ([#2725](https://github.com/ghiscoding/slickgrid-universal/issues/2725)) ([92cd645](https://github.com/ghiscoding/slickgrid-universal/commit/92cd6453d48848aff73fe2aacf5aa9c7087aa6ff)) - by @ghiscoding
+* **pagination:** dedupe duplicate onPaginationChanged within reset cycle ([c8a400f](https://github.com/ghiscoding/slickgrid-universal/commit/c8a400f4a5d4d92357661b9d06cac32eb668edbe)) - by @ghiscoding
+* preserve caller-owned columns when disposing grids ([#2761](https://github.com/ghiscoding/slickgrid-universal/issues/2761)) ([4432e21](https://github.com/ghiscoding/slickgrid-universal/commit/4432e219f7eb2f66e425f8cc58915011aad65ecf)) - by @ghiscoding
+
 ## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-bundle

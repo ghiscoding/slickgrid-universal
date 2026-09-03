@@ -167,11 +167,12 @@ describe('formatterUtilities', () => {
       };
 
       // Mock clipboard API
-      global.navigator = {
-        clipboard: {
+      Object.defineProperty(globalThis.navigator, 'clipboard', {
+        value: {
           writeText: clipboardWriteMock,
         } as any,
-      } as any;
+        configurable: true,
+      });
 
       // Clear all mocks before each test
       vi.clearAllMocks();

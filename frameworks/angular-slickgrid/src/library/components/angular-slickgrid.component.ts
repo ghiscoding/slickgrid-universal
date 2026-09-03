@@ -1393,7 +1393,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     if (Array.isArray(this.options.presets?.columns) && this.options.presets.columns.length > 0) {
       // delegate to GridStateService for centralized column arrangement logic
       // we pass `false` for triggerAutoSizeColumns to maintain original behavior on preset load
-      this.gridStateService.changeColumnsArrangement(this.options.presets.columns, false);
+      this.gridStateService.applyColumnLayout(this.options.presets.columns, false);
     }
   }
 

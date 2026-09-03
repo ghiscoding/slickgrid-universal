@@ -4,6 +4,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
+
+### Features
+
+* add configurable cell selection drag handle visibility ([#2747](https://github.com/ghiscoding/slickgrid-universal/issues/2747)) ([5e90446](https://github.com/ghiscoding/slickgrid-universal/commit/5e9044623515893dcec58bce81e251e3e30beffa)) - by @ghiscoding
+* add core RTL support for headers and column resizing ([#2714](https://github.com/ghiscoding/slickgrid-universal/issues/2714)) ([a4807b2](https://github.com/ghiscoding/slickgrid-universal/commit/a4807b212ae6c120d79d1683d1e4b2d699fcb362)) - by @ghiscoding
+* build the footer row lazily when createFooterRow is enabled at runtime ([#2707](https://github.com/ghiscoding/slickgrid-universal/issues/2707)) ([54eeab0](https://github.com/ghiscoding/slickgrid-universal/commit/54eeab039fbcca6fe3738a9a32e2ecbcab6e8da4)) - by @ghiscoding
+* **export:** add opt-in includeColumnWidth for Excel and PDF exports ([#2697](https://github.com/ghiscoding/slickgrid-universal/issues/2697)) ([9919580](https://github.com/ghiscoding/slickgrid-universal/commit/99195806bd970f016d418ba15be9c86e6e0c33cb)) - by @ghiscoding
+* **grid:** improve column reorder auto-scroll ([#2772](https://github.com/ghiscoding/slickgrid-universal/issues/2772)) ([ed4046b](https://github.com/ghiscoding/slickgrid-universal/commit/ed4046beaed16179848fd4c921396eea93dcff26)) - by @ghiscoding
+* **selection:** add multi-range selection and drag handle options ([#2748](https://github.com/ghiscoding/slickgrid-universal/issues/2748)) ([88ffa93](https://github.com/ghiscoding/slickgrid-universal/commit/88ffa9332bd4b427f72c6e30d16e121c934ed9e9)), closes [#2752](https://github.com/ghiscoding/slickgrid-universal/issues/2752) - by @ghiscoding
+
+### Bug Fixes
+
+* **a11y:** add missing ARIA row/rowgroup structure to grid headers ([#2694](https://github.com/ghiscoding/slickgrid-universal/issues/2694)) ([8df454e](https://github.com/ghiscoding/slickgrid-universal/commit/8df454edb50590474b42969de688208e48032ec2)) - by @ghiscoding
+* allow grid events through range overlays and readonly paste ([#2723](https://github.com/ghiscoding/slickgrid-universal/issues/2723)) ([894533d](https://github.com/ghiscoding/slickgrid-universal/commit/894533df942cd9a302ff886d53caaa2d8ed61e31)) - by @ghiscoding
+* canonicalize the frozen-row boundary across all comparison sites ([#2706](https://github.com/ghiscoding/slickgrid-universal/issues/2706)) ([694a7fe](https://github.com/ghiscoding/slickgrid-universal/commit/694a7fe64b072058fd36e5ceb4c67d87f6d93b5a)) - by @ghiscoding
+* **common:** expose programmatic Excel copy command ([#2760](https://github.com/ghiscoding/slickgrid-universal/issues/2760)) ([3ba474c](https://github.com/ghiscoding/slickgrid-universal/commit/3ba474c6aa334f36e3299e0bf1a5ae43ba650c61)) - by @ghiscoding
+* **common:** handle dynamic scroll ancestors and cell CSS overlays ([#2735](https://github.com/ghiscoding/slickgrid-universal/issues/2735)) ([c575e05](https://github.com/ghiscoding/slickgrid-universal/commit/c575e0555025254180bb8aaf78cd25a471be25b1)) - by @ghiscoding
+* **common:** ignore secondary-button cell range drags ([#2756](https://github.com/ghiscoding/slickgrid-universal/issues/2756)) ([612be0b](https://github.com/ghiscoding/slickgrid-universal/commit/612be0b1864d25d9303ba6d8a275f4e8ddfee6e6)) - by @ghiscoding
+* **common:** keep Tree Data synchronized after deletions ([#2733](https://github.com/ghiscoding/slickgrid-universal/issues/2733)) ([442af0e](https://github.com/ghiscoding/slickgrid-universal/commit/442af0ec2797f851c838c048c076947289654bdb)) - by @ghiscoding
+* **common:** support Shift-click cell range selection ([#2757](https://github.com/ghiscoding/slickgrid-universal/issues/2757)) ([797ff45](https://github.com/ghiscoding/slickgrid-universal/commit/797ff454b597896a670b2f6d61b28c8a7ce35c6a)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2731](https://github.com/ghiscoding/slickgrid-universal/issues/2731)) ([839eb01](https://github.com/ghiscoding/slickgrid-universal/commit/839eb011c855d2e871d489e140313e8e207051db)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2771](https://github.com/ghiscoding/slickgrid-universal/issues/2771)) ([aef1507](https://github.com/ghiscoding/slickgrid-universal/commit/aef15079213a77524fc3337d96e89b7b1fbb3c84)) - by @renovate-bot
+* **deps:** update excel-builder-vanilla to ^5.2.3 ([#2713](https://github.com/ghiscoding/slickgrid-universal/issues/2713)) ([14b76ad](https://github.com/ghiscoding/slickgrid-universal/commit/14b76adfc3f7fc431267b35c10c634421f449c1b)) - by @renovate-bot
+* **filters:** collection observer disconnect() broke array mutations ([#2726](https://github.com/ghiscoding/slickgrid-universal/issues/2726)) ([26379ce](https://github.com/ghiscoding/slickgrid-universal/commit/26379ceae303d916fc53a2ab243ff2a0009e624b)) - by @ghiscoding
+* fractional grid height leaves the bottom rows unrendered ([#2700](https://github.com/ghiscoding/slickgrid-universal/issues/2700)) ([36a03d9](https://github.com/ghiscoding/slickgrid-universal/commit/36a03d93f250f01d6e29764c9da8b99ccd4ee0b9)) - by @ghiscoding
+* **grid:** force top row offset for RowDetail in transform mode ([#2722](https://github.com/ghiscoding/slickgrid-universal/issues/2722)) ([9188ffc](https://github.com/ghiscoding/slickgrid-universal/commit/9188ffc6811e3d9b27e4ce365b3b278e89c8a544)) - by @ghiscoding
+* **grid:** prevent column resize auto-scroll jumps ([#2773](https://github.com/ghiscoding/slickgrid-universal/issues/2773)) ([976f39e](https://github.com/ghiscoding/slickgrid-universal/commit/976f39e6ac19f6b0d5ca7c9e96c9cd2ad2238549)) - by @ghiscoding
+* **pagination:** dedupe duplicate onPaginationChanged within reset cycle ([c8a400f](https://github.com/ghiscoding/slickgrid-universal/commit/c8a400f4a5d4d92357661b9d06cac32eb668edbe)) - by @ghiscoding
+* route off-viewport alwaysRenderColumn cells to their own column band ([#2704](https://github.com/ghiscoding/slickgrid-universal/issues/2704)) ([c933fe8](https://github.com/ghiscoding/slickgrid-universal/commit/c933fe875af2df41087ef5b5fa0078f0ccb2f9a7)) - by @ghiscoding
+* **row-detail:** support transform rows with overlay rendering ([#2738](https://github.com/ghiscoding/slickgrid-universal/issues/2738)) ([acd2e33](https://github.com/ghiscoding/slickgrid-universal/commit/acd2e33b011d7591d3f5d549c7dce895bb23cd4a)) - by @ghiscoding
+* **row-detail:** synchronize framework rendering without microtasks ([#2740](https://github.com/ghiscoding/slickgrid-universal/issues/2740)) ([bb111ed](https://github.com/ghiscoding/slickgrid-universal/commit/bb111ed75f04cc7a44b4136f20bc7f94403d698a)) - by @ghiscoding
+* **rowspan:** support rowTopOffsetRenderType transform ([#2739](https://github.com/ghiscoding/slickgrid-universal/issues/2739)) ([12daf7f](https://github.com/ghiscoding/slickgrid-universal/commit/12daf7fa6a22fefe3d5bfb225c86fca8b35bcca2)) - by @ghiscoding
+* **security:** harden dynamic object maps against prototype pollution ([#2743](https://github.com/ghiscoding/slickgrid-universal/issues/2743)) ([5262f34](https://github.com/ghiscoding/slickgrid-universal/commit/5262f3433b00654e9ef29cfe1dc77b5345e9a43e)) - by @ghiscoding
+* **security:** prevent prototype pollution in dynamic lookups ([#2742](https://github.com/ghiscoding/slickgrid-universal/issues/2742)) ([a7bb92c](https://github.com/ghiscoding/slickgrid-universal/commit/a7bb92cac206948b1b3405ae04a43dee61922e6c)) - by @ghiscoding
+* **selection:** allow drag handle to shrink cell selection ([#2729](https://github.com/ghiscoding/slickgrid-universal/issues/2729)) ([55d0d46](https://github.com/ghiscoding/slickgrid-universal/commit/55d0d46cf2e3f4bcd6999885898298773bfb7591)) - by @ghiscoding
+* **selection:** sync active cell with selected range ([#2759](https://github.com/ghiscoding/slickgrid-universal/issues/2759)) ([c042e85](https://github.com/ghiscoding/slickgrid-universal/commit/c042e85727266ec8da60485de70d0c3ff03aca32)) - by @ghiscoding
+* **slickgrid:** prevent native wheel drift with frozen columns ([#2737](https://github.com/ghiscoding/slickgrid-universal/issues/2737)) ([4c4c4e9](https://github.com/ghiscoding/slickgrid-universal/commit/4c4c4e9e53cef4b6749fbea238a709fcd0d36ec5)) - by @ghiscoding
+* treat frozenRow: 0 as no freeze (input clamp) ([#2702](https://github.com/ghiscoding/slickgrid-universal/issues/2702)) ([6787010](https://github.com/ghiscoding/slickgrid-universal/commit/6787010c21cd42c233f9aa142154765c21104572)) - by @ghiscoding
+* **utils:** allow empty arrays to override defaults ([#2758](https://github.com/ghiscoding/slickgrid-universal/issues/2758)) ([986464d](https://github.com/ghiscoding/slickgrid-universal/commit/986464dda1fd621967e84aa7b1083f09c5814077)) - by @ghiscoding
+
+### Performance Improvements
+
+* **common:** skip off-screen columns during cell rendering ([#2736](https://github.com/ghiscoding/slickgrid-universal/issues/2736)) ([d4cd5f7](https://github.com/ghiscoding/slickgrid-universal/commit/d4cd5f7c7305421fa134343d2f3185195105db39)) - by @ghiscoding
+* **slickgrid:** stabilize paged scrolling edges and clarify paging path ([#2721](https://github.com/ghiscoding/slickgrid-universal/issues/2721)) ([e509475](https://github.com/ghiscoding/slickgrid-universal/commit/e509475834eaf15f04833ea907935e6807ea5c50)) - by @ghiscoding
+
 ## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
 
 ### Features

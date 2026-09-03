@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
+
+### Bug Fixes
+
+* **event-pub-sub:** align CustomEvent public types ([#2770](https://github.com/ghiscoding/slickgrid-universal/issues/2770)) ([8f8ce81](https://github.com/ghiscoding/slickgrid-universal/commit/8f8ce81efbf6f99cca6499844bca6f795899cbe9)) - by @ghiscoding
+* **event-pub-sub:** fix listener leak, naming convention logic and subscribeEvent double-transformation ([#2734](https://github.com/ghiscoding/slickgrid-universal/issues/2734)) ([f5ef778](https://github.com/ghiscoding/slickgrid-universal/commit/f5ef77831ef6a1864a5a48411e2c5e2e72be6665)) - by @rlamtabbet
+* **events:** preserve CustomEvents in React and Vue wrappers ([#2762](https://github.com/ghiscoding/slickgrid-universal/issues/2762)) ([68cadaa](https://github.com/ghiscoding/slickgrid-universal/commit/68cadaa259822cc78cc54eb09ca3af4331ed9898)) - by @ghiscoding
+
 ## [10.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.3...v10.9.0) (2026-08-03)
 
 **Note:** Version bump only for package @slickgrid-universal/event-pub-sub

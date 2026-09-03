@@ -1,6 +1,6 @@
 {
   "name": "slickgrid-vue",
-  "version": "10.9.0",
+  "version": "10.10.0",
   "description": "Slickgrid-Vue",
   "license": "MIT",
   "author": "Ghislain B.",
@@ -66,9 +66,9 @@
     "vue": ">=3.5.0"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.58.12",
+    "@microsoft/api-extractor": "^7.59.0",
     "@vitejs/plugin-vue": "catalog:",
-    "@vue/language-core": "^3.3.10",
+    "@vue/language-core": "^3.3.11",
     "cross-env": "catalog:",
     "i18next": "catalog:",
     "i18next-vue": "catalog:",
@@ -77,6 +77,6 @@
     "vite": "catalog:",
     "vite-plugin-dts": "^5.0.3",
     "vue": "catalog:",
-    "vue-tsc": "^3.3.10"
+    "vue-tsc": "^3.3.11"
   }
 }

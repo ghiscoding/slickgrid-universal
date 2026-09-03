@@ -231,8 +231,9 @@ Starting with v9.10.0, you can now use the new Hybrid Selection Model, this new 
 
 When `selectionType: 'cell'`, `selectActiveCell` controls whether the active cell becomes the selected range; `selectActiveRow` does not disable cell selection.
 
-> [!NOTE]
-> You can use `{ enableSelection: true, selectionOptions: { selectionType: 'mixed' }}` (or `enableHybridSelection: true` in v9) grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
+{% hint style="note" %}
+You can use `{ enableSelection: true, selectionOptions: { selectionType: 'mixed' }}` (or `enableHybridSelection: true` in v9) grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
+{% endhint %}
 
 For example, we could use the Excel Copy Buffer (Cell Selection) and use `rowSelectColumnIds` (Row Selection)
 

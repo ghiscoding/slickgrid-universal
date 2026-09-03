@@ -936,7 +936,7 @@ describe('Example 04 - Frozen Grid', () => {
         win.document.dispatchEvent(createDragLikeEvent('drag', dragX, startY));
       });
 
-      // Step 3: advance mocked time so the 100ms scroll interval ticks several times.
+      // Step 3: advance mocked time so the 30ms scroll interval ticks several times.
       cy.tick(350);
 
       // Auto-scroll should have moved the right viewport to the right

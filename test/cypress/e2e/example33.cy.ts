@@ -30,10 +30,57 @@ describe('Example 33 - Column & Row Span', { retries: 0 }, () => {
     cy.get('h3').should('contain', 'Example 33 - colspan/rowspan with large dataset');
   });
 
+  it('should calculate a height that fits the wrapped Revenue Growth header', () => {
+    cy.get('.slick-header-auto-height').should('have.length', 2);
+    cy.get('.slick-header-auto-height')
+      .first()
+      .should(($header) => {
+        expect(parseFloat($header.css('--slick-auto-header-height'))).to.be.greaterThan(0);
+      });
+    cy.get('.auto-header-height-demo').should(($header) => {
+      expect($header[0].scrollHeight).to.be.lte($header[0].clientHeight);
+      expect($header[0].clientHeight).to.be.lessThan(100);
+      const name = $header[0].querySelector<HTMLElement>('.slick-column-name');
+      expect(name).to.exist;
+      const lineHeight = parseFloat(getComputedStyle(name!).lineHeight) || 16;
+      expect(name!.scrollHeight).to.be.within(lineHeight * 1.5, lineHeight * 2.5);
+    });
+  });
+
   it('should have exact column titles', () => {
     cy.get('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+  });
+
+  it('should auto-scroll horizontally when a column is dragged past the viewport', () => {
+    let sortInstance: any;
+    let draggedColumn: HTMLElement;
+
+    cy.clock();
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0).its('0.scrollLeft').should('equal', 0);
+
+    cy.get('.slick-header-columns-left').then(($header) => {
+      const sortableProperty = Object.keys($header[0]).find((property) => property.startsWith('Sortable'));
+      sortInstance = ($header[0] as any)[sortableProperty!];
+      draggedColumn = $header[0].querySelector('.slick-header-column') as HTMLElement;
+
+      expect(sortInstance).to.exist;
+      sortInstance.options.onStart({ item: draggedColumn });
+    });
+
+    cy.window().then((win) => {
+      const dragX = win.innerWidth + 1200;
+      cy.document().trigger('drag', { pageX: dragX, clientX: dragX, clientY: 50 });
+    });
+    cy.tick(300);
+
+    cy.get('.slick-viewport-top.slick-viewport-left').its('0.scrollLeft').should('be.greaterThan', 0);
+    cy.then(() => sortInstance.options.onEnd({ item: draggedColumn, stopPropagation: () => {} }));
+
+    cy.get('.slick-header-column:nth(0)').should('contain', 'Title');
+    cy.get('.slick-header-column:nth(1)').should('contain', 'Revenue Growth');
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0);
   });
 
   it('should drag Title column to swap with 2nd column "Revenue Growth" in the grid and expect rowspan to stay at same position with Task 0 to spread instead', () => {
