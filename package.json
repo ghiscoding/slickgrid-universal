@@ -141,7 +141,6 @@
     "prettier": "^3.9.6",
     "remove-glob": "catalog:",
     "rxjs": "catalog:",
-    "sortablejs": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

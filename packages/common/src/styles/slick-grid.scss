@@ -43,7 +43,7 @@
   }
 }
 
-/* slickgrid internal icons (used for grouping, tree data, pagination, etc..) */
+// slickgrid internal icons (used for grouping, tree data, pagination, etc..)
 .sgi {
   display: inline-flex;
   align-items: center;
@@ -61,6 +61,15 @@
       border-color: var(--slick-btn-default-border-hover-color, v.$slick-btn-default-border-hover-color);
     }
   }
+}
+
+// Firefox fallback when dragging a column header (since Firefox doesn't support the drag image)
+.slick-header-column-drag-ghost {
+  position: fixed;
+  margin: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-8px, -8px);
 }
 
 .slickgrid-container {

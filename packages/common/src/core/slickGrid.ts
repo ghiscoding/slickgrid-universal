@@ -14,8 +14,6 @@ import {
   queueMicrotaskPolyfill,
   type CSSStyleDeclarationWritable,
 } from '@slickgrid-universal/utils';
-import type { Options as SortableOptions } from 'sortablejs';
-import Sortable from 'sortablejs/modular/sortable.core.esm.js';
 import type { TrustedHTML } from 'trusted-types/lib';
 import type { SelectionModel } from '../enums/index.js';
 import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
@@ -91,6 +89,7 @@ import type {
   SingleColumnSort,
   SlickPlugin,
 } from '../interfaces/index.js';
+import { reconcileColumnOrder, setupColumnReorderDrag } from './slickColumnReorderDrag.js';
 import {
   preClickClassName,
   RowPositionIndexer,
@@ -541,8 +540,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected slickDraggableInstance: InteractionBase | null = null;
   protected slickMouseWheelInstances: Array<InteractionBase> = [];
   protected slickResizableInstances: Array<InteractionBase> = [];
-  protected sortableSideLeftInstance?: ReturnType<typeof Sortable.create>;
-  protected sortableSideRightInstance?: ReturnType<typeof Sortable.create>;
+  protected _columnReorderDrag?: { destroy: () => void };
   protected _pubSubService?: BasePubSub;
 
   /**
@@ -2210,90 +2208,35 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected setupColumnReorder(): void {
-    this.sortableSideLeftInstance?.destroy();
-    this.sortableSideRightInstance?.destroy();
+    this._columnReorderDrag?.destroy();
 
-    let columnScrollTimer: ReturnType<typeof setInterval> | undefined;
-    let columnScrollDirection = 0;
-
-    const stopAutoScroll = () => {
-      clearInterval(columnScrollTimer);
-      columnScrollTimer = undefined;
-      columnScrollDirection = 0;
-    };
     let prevColumnIds: Array<string | number> = [];
-    let hiddenColumns: Map<string | number, C>;
+    let columnsBeforeDrag: C[] | undefined;
 
-    // fires on document during native drag; also bind 'mousemove' for SortableJS forceFallback mode
-    const autoScrollHandler = (e: DragEvent | MouseEvent) => {
-      const { clientX, clientY, pageX } = e;
-      if (clientX && clientY) {
-        const viewportLeft = getOffset(this._viewportScrollContainerX).left;
-        const containerRight = getOffset(this._container).left + this._container.clientWidth;
-        const direction = pageX > containerRight ? 1 : pageX < viewportLeft ? -1 : 0;
-        if (direction !== columnScrollDirection) {
-          stopAutoScroll();
-          columnScrollDirection = direction;
-          if (direction) {
-            columnScrollTimer = setInterval(
-              () => (this._viewportScrollContainerX.scrollLeft += direction * COLUMN_AUTOSCROLL_DISTANCE_PX),
-              COLUMN_AUTOSCROLL_INTERVAL_MS
-            );
-          }
-        }
-      }
-    };
-
-    const sortableOptions = {
-      animation: 50,
-      direction: 'horizontal',
-      ghostClass: 'slick-sortable-placeholder',
-      draggable: '.slick-header-column',
-      dragoverBubble: false,
-      // Fixes broken Firefox-Linux dragging
-      forceFallback: /firefox/i.test(navigator.userAgent) && /linux/i.test(navigator.userAgent),
-      // allow column to be resized even when they are not orderable
-      preventOnFilter: false,
-      revertClone: true,
-      // use built-in SortableJS proximity scroll for non-frozen grids; frozen grids need custom scroll (wrong pane would be scrolled)
-      scroll: !this.hasFrozenColumns(),
-      // lock unorderable columns by using a combo of filter + onMove
-      filter: `.${this._options.unorderableColumnCssClass}`,
-      onMove: (event) => {
-        return !event.related.classList.contains(this._options.unorderableColumnCssClass as string);
-      },
-      onStart: (e) => {
-        e.item.classList.add('slick-header-column-active');
-        // only right-section columns (non-frozen) should auto-scroll; use contains() since
-        // _headerR has `left:-1000px` which breaks offset-based comparisons
-        if (!this.hasFrozenColumns() || this._headerR.contains(e.item)) {
-          // bind 'drag' for native HTML5 drag and 'mousemove' for SortableJS forceFallback
-          this._bindingEventService.bind(document, 'drag', autoScrollHandler as EventListener, {}, 'colreorder');
-          this._bindingEventService.bind(document, 'mousemove', autoScrollHandler as EventListener, {}, 'colreorder');
-        }
-
+    this._columnReorderDrag = setupColumnReorderDrag({
+      headerLeft: this._headerL,
+      headerRight: this._headerR,
+      container: this._container,
+      viewportScrollContainerX: this._viewportScrollContainerX,
+      hasFrozenColumns: () => this.hasFrozenColumns(),
+      draggableSelector: '.slick-header-column',
+      dragActiveClass: 'slick-header-column-active',
+      unorderableColumnCssClass: this._options.unorderableColumnCssClass,
+      onDragStart: () => {
         prevColumnIds = this.columns.map((c) => c.id);
-        hiddenColumns = new Map(this.columns.filter((column) => column.hidden).map((column) => [column.id, column]));
+        columnsBeforeDrag = [...this.columns];
       },
-      onEnd: (e) => {
-        e.item.classList.remove('slick-header-column-active');
-        stopAutoScroll();
-        this._bindingEventService.unbindAll('colreorder');
-        const prevScrollLeft = this.scrollLeft;
-
-        if (!this.getEditorLock()?.commitCurrentEdit()) {
+      onDragEnd: (reorderedIds) => {
+        //  onDragStart never ran (drag started outside a column) or when editing a cell then cancel the reorder operation
+        if (!columnsBeforeDrag || !this.getEditorLock()?.commitCurrentEdit()) {
           return;
         }
 
-        const reorderedIds = [...this.sortableSideLeftInstance!.toArray(), ...this.sortableSideRightInstance!.toArray()];
-        const reorderedColumns = reorderedIds.map((id) => this.columns[this.getColumnIndex(id)]);
+        const prevScrollLeft = this.scrollLeft;
+        const finalColumns = reconcileColumnOrder(columnsBeforeDrag, reorderedIds);
 
-        // Reconstruct final column array: insert hidden columns at their original indices
-        let visibleIdx = 0;
-        const finalColumns = this.columns.map((column) => hiddenColumns.get(column.id) ?? reorderedColumns[visibleIdx++]);
-
-        e.stopPropagation();
-        if (!this.arrayEquals(prevColumnIds, reorderedIds)) {
+        const finalColumnIds = finalColumns.map((col) => col.id);
+        if (!this.arrayEquals(prevColumnIds, finalColumnIds)) {
           this.setColumns(finalColumns);
           // reapply previous scroll position since it might move back to x=0 after calling `setColumns()` (especially when `frozenColumn` is set)
           this.scrollToX(prevScrollLeft);
@@ -2304,10 +2247,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           this.setFocus(); // refocus on active cell
         }
       },
-    } as SortableOptions;
-
-    this.sortableSideLeftInstance = Sortable.create(this._headerL, sortableOptions);
-    this.sortableSideRightInstance = Sortable.create(this._headerR, sortableOptions);
+    });
   }
 
   protected getHeaderChildren(): HTMLElement[] {
@@ -3145,12 +3085,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.unregisterPlugin(this.plugins[i]);
     }
 
-    if (this.sortableSideRightInstance?.el && typeof this.sortableSideRightInstance?.destroy === 'function') {
-      this.sortableSideRightInstance.destroy();
-    }
-    if (this.sortableSideLeftInstance?.el && typeof this.sortableSideLeftInstance?.destroy === 'function') {
-      this.sortableSideLeftInstance.destroy();
-    }
+    this._columnReorderDrag?.destroy();
 
     this._focusSink?.remove();
     this._focusSink2?.remove();
