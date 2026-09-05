@@ -185,7 +185,10 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     });
 
     it('should click on cell E46 then Shift+Ctrl+ArrowRight key with full row horizontal selection E46-CV46', () => {
-      cy.getCell(46, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E46').click();
+      cy.getCell(46, 92, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CL46');
+      cy.get('@cell_CL46').type('{home}');
+      cy.getCell(46, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E46');
+      cy.get('@cell_E46').click();
 
       cy.get('@cell_E46').type('{shift}{ctrl}{rightarrow}', { release: false });
 
@@ -193,7 +196,10 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     });
 
     it('should click on cell E46 then Shift+Ctrl+ArrowUp key with full column vertical top selection E0-E46', () => {
-      cy.getCell(46, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E46').click();
+      cy.getCell(46, 92, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CL46');
+      cy.get('@cell_CL46').type('{home}');
+      cy.getCell(46, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E46');
+      cy.get('@cell_E46').click();
 
       cy.get('@cell_E46').type('{shift}{ctrl}{uparrow}', { release: false });
 
@@ -282,7 +288,8 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
 
     it('should preserve row and column offsets when copying multiple cell ranges', () => {
       cy.get('.slick-pagination .seek-first').click();
-      cy.get('.grid19 .slick-viewport-top.slick-viewport-left').scrollTo('topLeft');
+      cy.getCell(2, 92, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CL2');
+      cy.get('@cell_CL2').type('{home}');
       cy.get('[data-test="enable-multi-selection"]').check();
       cy.window().then((win) => {
         cy.stub(win.navigator.clipboard, 'writeText').as('clipboardWriteText');
