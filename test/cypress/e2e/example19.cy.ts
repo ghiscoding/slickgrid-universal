@@ -185,7 +185,10 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     });
 
     it('should click on cell E46 then Shift+Ctrl+ArrowRight key with full row horizontal selection E46-CV46', () => {
-      cy.getCell(46, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E46').click();
+      cy.getCell(46, 92, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CL46');
+      cy.get('@cell_CL46').type('{home}');
+      cy.getCell(46, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E46');
+      cy.get('@cell_E46').click();
 
       cy.get('@cell_E46').type('{shift}{ctrl}{rightarrow}', { release: false });
 
@@ -193,7 +196,10 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
     });
 
     it('should click on cell E46 then Shift+Ctrl+ArrowUp key with full column vertical top selection E0-E46', () => {
-      cy.getCell(46, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E46').click();
+      cy.getCell(46, 92, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CL46');
+      cy.get('@cell_CL46').type('{home}');
+      cy.getCell(46, 6, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_E46');
+      cy.get('@cell_E46').click();
 
       cy.get('@cell_E46').type('{shift}{ctrl}{uparrow}', { release: false });
 
@@ -288,6 +294,8 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
         cy.stub(win.navigator.clipboard, 'writeText').as('clipboardWriteText');
       });
 
+      cy.getCell(2, 92, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CL2');
+      cy.get('@cell_CL2').type('{home}');
       cy.get('.grid19 .slick-row[data-row="1"] .slick-cell.l2.r2').click();
       cy.get('.grid19 .slick-row[data-row="1"] .slick-cell.l2.r2')
         .find('.slick-drag-replace-handle')
