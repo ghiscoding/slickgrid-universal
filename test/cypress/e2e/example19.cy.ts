@@ -288,14 +288,13 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
 
     it('should preserve row and column offsets when copying multiple cell ranges', () => {
       cy.get('.slick-pagination .seek-first').click();
-      cy.get('.grid19 .slick-viewport-top.slick-viewport-left').scrollTo('topLeft');
+      cy.getCell(2, 92, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CL2');
+      cy.get('@cell_CL2').type('{home}');
       cy.get('[data-test="enable-multi-selection"]').check();
       cy.window().then((win) => {
         cy.stub(win.navigator.clipboard, 'writeText').as('clipboardWriteText');
       });
 
-      cy.getCell(2, 92, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT }).as('cell_CL2');
-      cy.get('@cell_CL2').type('{home}');
       cy.get('.grid19 .slick-row[data-row="1"] .slick-cell.l2.r2').click();
       cy.get('.grid19 .slick-row[data-row="1"] .slick-cell.l2.r2')
         .find('.slick-drag-replace-handle')
