@@ -1253,80 +1253,6 @@ describe('SlickGrid core file', () => {
       expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'));
     });
 
-    it.skip('should show an alert when trying to call setColumn() with less than 1 column on the right section of the column freeze and when invalidColumnFreezePickerCallback is defined', () => {
-      const alertSpy = vi.spyOn(globalThis, 'alert').mockReturnValue();
-      const onAfterSetColumnsSpy = vi.spyOn(grid.onAfterSetColumns, 'notify');
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name' },
-        { id: 'lastName', field: 'lastName', name: 'Last Name' },
-        { id: 'age', field: 'age', name: 'Age' },
-      ] as Column[];
-      const gridOptions = {
-        ...defaultOptions,
-        enableColumnReorder: false,
-        enableCellNavigation: true,
-        preHeaderPanelHeight: 30,
-        showPreHeaderPanel: true,
-        createPreHeaderPanel: true,
-        frozenColumn: 1,
-        invalidColumnFreezePickerCallback: (error) => alert(error),
-      } as GridOption;
-      const data = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-      ];
-
-      skipGridDestroy = true;
-      grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
-
-      // only return middle column (meaning first/last are now hidden columns)
-      vi.spyOn(grid, 'getVisibleColumns').mockReturnValueOnce([columns[1]]);
-      grid.setColumns([columns[1]]);
-      expect(alertSpy).toHaveBeenCalledWith(
-        expect.stringContaining(
-          '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining.'
-        )
-      );
-      expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();
-    });
-
-    it.skip('should return false when calling validateColumnFreeze() when less than 1 column on the right section of the column freeze and when invalidColumnFreezePickerCallback is defined', () => {
-      const onAfterSetColumnsSpy = vi.spyOn(grid.onAfterSetColumns, 'notify');
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name' },
-        { id: 'lastName', field: 'lastName', name: 'Last Name' },
-        { id: 'age', field: 'age', name: 'Age' },
-      ] as Column[];
-      const gridOptions = {
-        ...defaultOptions,
-        enableColumnReorder: false,
-        enableCellNavigation: true,
-        preHeaderPanelHeight: 30,
-        showPreHeaderPanel: true,
-        createPreHeaderPanel: true,
-        frozenColumn: 1,
-      } as GridOption;
-      const data = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-      ];
-
-      skipGridDestroy = true;
-      grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
-
-      // only return middle column (meaning first/last are now hidden columns)
-      vi.spyOn(grid, 'getVisibleColumns').mockReturnValueOnce([columns[1]]);
-      grid.setColumns([columns[1]]);
-      const result = grid.validateColumnFreeze(columns[1].id, true);
-
-      expect(result).toBe(false);
-      expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();
-
-      vi.spyOn(grid, 'getVisibleColumns').mockReturnValueOnce([]);
-      const result2 = grid.validateColumnFreeze('firstName', true);
-      expect(result2).toBe(true); // match actual logic: empty means no restriction
-    });
-
     it('should return true when calling validateColumnFreeze() when frozenColumn is within and below visible column', () => {
       const onAfterSetColumnsSpy = vi.spyOn(grid.onAfterSetColumns, 'notify');
       const columns = [
@@ -1350,32 +1276,6 @@ describe('SlickGrid core file', () => {
       const result = grid.validateColumnFreeze(columns[1].id, true);
 
       expect(result).toBe(true);
-      expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();
-    });
-
-    it.skip('should return false when calling validateColumnFreeze() and trying to unfreeze only column available', () => {
-      const onAfterSetColumnsSpy = vi.spyOn(grid.onAfterSetColumns, 'notify');
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name' },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
-        { id: 'age', field: 'age', name: 'Age' },
-      ] as Column[];
-      const gridOptions = {
-        ...defaultOptions,
-        enableColumnReorder: false,
-        enableCellNavigation: true,
-        preHeaderPanelHeight: 30,
-        showPreHeaderPanel: true,
-        createPreHeaderPanel: true,
-        frozenColumn: 0,
-      } as GridOption;
-
-      grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
-
-      // only return middle column (meaning first/last are now hidden columns)
-      const result = grid.validateColumnFreeze(columns[0].id, true);
-
-      expect(result).toBe(false);
       expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();
     });
 
@@ -2561,72 +2461,12 @@ describe('SlickGrid core file', () => {
         expect(result).toEqual(container.querySelector('.slick-viewport'));
       });
 
-      it.skip('should return viewport element when calling the function when found in the grid container', () => {
-        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, frozenRow: 2, frozenBottom: true });
-        const result = grid.getViewportNode(22, 3);
-
-        expect(result).toBeTruthy();
-        expect(result!.className).toEqual('slick-viewport slick-viewport-bottom slick-viewport-left');
-        expect(result!.querySelector('div')!.className).toEqual('grid-canvas grid-canvas-bottom grid-canvas-left');
-        expect(result!.querySelector('.slick-row.frozen')).toBeTruthy();
-        expect(result!.querySelector('.slick-cell')).toBeTruthy();
-      });
-
-      it.skip('should return bottom canvas node for the first scrollable row when top frozen rows are enabled', () => {
-        const localColumns = [
-          { id: 'id', field: 'id', name: 'Id' },
-          { id: 'firstName', field: 'firstName', name: 'First Name' },
-        ] as Column[];
-        const localData = Array.from({ length: 20 }, (_, i) => ({ id: i, firstName: `name-${i}` }));
-        const frozenRow = 3;
-
-        grid = new SlickGrid<any, Column>(container, localData, localColumns, { ...defaultOptions, frozenRow });
-
-        const apiCanvas = grid.getCanvasNode(0, frozenRow);
-        const domRow = container.querySelector(`.slick-row[data-row="${frozenRow}"]`) as HTMLElement;
-        const domCanvas = domRow?.closest('.grid-canvas') as HTMLElement;
-
-        expect(apiCanvas).toBeTruthy();
-        expect(domCanvas).toBeTruthy();
-        expect(apiCanvas).toEqual(domCanvas);
-        expect(apiCanvas.classList.contains('grid-canvas-bottom')).toBe(true);
-      });
-
-      it.skip('should apply frozen css class only to pinned rows when frozenBottom is enabled', () => {
-        const localColumns = [
-          { id: 'id', field: 'id', name: 'Id' },
-          { id: 'firstName', field: 'firstName', name: 'First Name' },
-        ] as Column[];
-        const localData = Array.from({ length: 10 }, (_, i) => ({ id: i, firstName: `name-${i}` }));
-
-        grid = new SlickGrid<any, Column>(container, localData, localColumns, { ...defaultOptions, frozenRow: 3, frozenBottom: true });
-
-        const frozenRows = Array.from(container.querySelectorAll('.slick-row.frozen'))
-          .map((el) => Number((el as HTMLElement).dataset.row))
-          .sort((a, b) => a - b);
-
-        expect(frozenRows).toEqual([7, 8, 9]);
-      });
-
       it('should return undefined when calling the function when getViewports() is returning undefined', () => {
         grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
         vi.spyOn(grid, 'getViewports').mockReturnValueOnce(null as any);
         const result = grid.getViewportNode();
 
         expect(result).toBeFalsy();
-      });
-
-      it.skip('should return slick header left & right depending on frozenColumn index', () => {
-        const columns = [
-          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-          { id: 'lastName', field: 'lastName', name: 'Last Name' },
-          { id: 'age', field: 'age', name: 'age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, fullWidthRows: true, frozenColumn: 1 });
-
-        expect((grid.getHeader() as HTMLDivElement[])[0]).toBeInstanceOf(HTMLDivElement);
-        expect(((grid.getHeader() as HTMLDivElement[])[0] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-left');
-        expect(((grid.getHeader() as HTMLDivElement[])[1] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-right');
       });
     });
 
@@ -2701,26 +2541,6 @@ describe('SlickGrid core file', () => {
           right: expect.any(Number),
         });
       });
-
-      it.skip('should return cell node box dimension on Frozen grid for other cell but expect to start our left calculation minus left frozen row', () => {
-        const columns = [
-          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-          { id: 'lastName', field: 'lastName', name: 'Last Name' },
-          { id: 'age', field: 'age', name: 'age' },
-        ] as Column[];
-        const data = [
-          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-        ];
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 1 });
-
-        expect(grid.getCellNodeBox(1, 2)).toEqual({
-          left: 0, // 0 because previous cell is frozen
-          top: DEFAULT_COLUMN_HEIGHT, // default column height
-          bottom: expect.any(Number),
-          right: expect.any(Number),
-        });
-      });
     });
 
     describe('getFrozenRowOffset() function', () => {
@@ -2754,21 +2574,6 @@ describe('SlickGrid core file', () => {
         expect(grid.getFrozenRowOffset(2)).toBe(0);
       });
 
-      it.skip('should return offset of default column height when frozenRow is defined as 1', () => {
-        const columns = [
-          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-          { id: 'lastName', field: 'lastName', name: 'Last Name' },
-          { id: 'age', field: 'age', name: 'age' },
-        ] as Column[];
-        const data = [
-          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-        ];
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenRow: 1 });
-
-        expect(grid.getFrozenRowOffset(2)).toBe(DEFAULT_COLUMN_HEIGHT);
-      });
-
       it('should return offset of default column height when frozenBottom is enabled and frozenRow is defined as 2 but actual frozen row is calculated to 0 because of frozen bottom and data length of 2 (2-2=0)', () => {
         const columns = [
           { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
@@ -2782,46 +2587,6 @@ describe('SlickGrid core file', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenBottom: true, frozenRow: 2 }); // 2 - 2 = 0 as actual frozen row
 
         expect(grid.getFrozenRowOffset(2)).toBe(0);
-      });
-
-      it.skip('should return offset of default column height * 2 when frozenBottom is enabled and frozenRow is defined as 2 and column height is lower than viewport offset top', () => {
-        const columns = [
-          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-          { id: 'lastName', field: 'lastName', name: 'Last Name' },
-          { id: 'age', field: 'age', name: 'age' },
-        ] as Column[];
-        const data = [
-          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-          { id: 2, firstName: 'Bob', lastName: 'Smith', age: 48 },
-          { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37 },
-        ];
-        grid = new SlickGrid<any, Column>(container, data, columns, {
-          ...defaultOptions,
-          frozenBottom: true,
-          frozenRow: 2,
-          topPanelHeight: 540,
-          showTopPanel: true,
-        });
-
-        expect(grid.getFrozenRowOffset(2)).toBe(DEFAULT_COLUMN_HEIGHT * 2);
-      });
-
-      it.skip('should return frozen-bottom offset based on computed row positions in variable row height mode', () => {
-        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-        const data = [{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }];
-        const rowHeights = [20, 35, 40, 45];
-        grid = new SlickGrid<any, Column>(container, data, columns, {
-          ...defaultOptions,
-          enableVariableRowHeight: true,
-          rowHeight: 20,
-          frozenBottom: true,
-          frozenRow: 2,
-          rowHeightProvider: (_grid, row) => rowHeights[row],
-        });
-
-        // actualFrozenRow is 2 (4 - 2), so the offset uses top position of row 2: 20 + 35 = 55
-        expect(grid.getFrozenRowOffset(2)).toBe(55);
       });
     });
   });
@@ -2878,131 +2643,6 @@ describe('SlickGrid core file', () => {
       const result = grid.getCanvasWidth();
 
       expect(result).toBe(DEFAULT_GRID_WIDTH);
-    });
-
-    it.skip('should return left viewport width of 160px which is the default column width times 2', () => {
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-        { id: 'lastName', field: 'lastName', name: 'Last Name' },
-        { id: 'age', field: 'age', name: 'age' },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, frozenColumn: 1 });
-      const result = grid.getCanvasWidth();
-      grid.resizeCanvas();
-      grid.autosizeColumns();
-      grid.reRenderColumns();
-      grid.render();
-      grid.updateColumnHeader(1);
-
-      expect((grid.getHeader() as HTMLDivElement[])[0]).toBeInstanceOf(HTMLDivElement);
-      expect(grid.getHeader(columns[0])).toBeInstanceOf(HTMLDivElement);
-      expect(grid.getVisibleColumns().length).toBe(2);
-      expect(grid.getColumnIndex('lastName')).toBe(1);
-      expect(grid.getVisibleColumnIndex('lastName')).toBe(0);
-      expect(result).toBe(80 * 2);
-    });
-
-    it.skip('should return left viewport total column widths but also use shrink leeway since we are larger than canvas width', () => {
-      const columns: Column[] = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', minWidth: 110, width: 300, hidden: true },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 620 },
-        { id: 'age', field: 'age', name: 'age', width: 192, resizable: false },
-        { id: 'gender', field: 'gender', name: 'gender', width: 200 },
-        { id: 'active', field: 'active', name: 'active', width: 200, hidden: true },
-      ];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, frozenColumn: 1 });
-      const result = grid.getCanvasWidth();
-      grid.resizeCanvas();
-      grid.autosizeColumns();
-      grid.reRenderColumns();
-      grid.render();
-      grid.updateColumnHeader(1);
-
-      expect((grid.getHeader() as HTMLDivElement[])[0]).toBeInstanceOf(HTMLDivElement);
-      expect(grid.getHeader(columns[0])).toBeInstanceOf(HTMLDivElement);
-      expect(grid.getVisibleColumns().length).toBe(3);
-      expect(result).toBe(1012);
-      expect(columns[0].width).toBe(300);
-      expect(columns[1].width).toBeGreaterThanOrEqual(454);
-      expect(columns[1].width).toBeLessThanOrEqual(456);
-      expect(columns[2].width).toBe(192);
-      expect(columns[3].width).toBeGreaterThanOrEqual(152);
-      expect(columns[3].width).toBeLessThan(154);
-      expect(columns[4].width).toBe(200); // hidden
-    });
-
-    it.skip('should return visible columns', () => {
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-        { id: 'lastName', field: 'lastName', name: 'Last Name' },
-        { id: 'age', field: 'age', name: 'age' },
-        { id: 'gender', field: 'gender', name: 'gender' },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, frozenColumn: 0 });
-      const updateSpy = vi.spyOn(grid.onBeforeUpdateColumns, 'notify');
-      grid.updateColumns();
-      expect(grid.getVisibleColumns().length).toBe(3);
-
-      const newColumns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', hidden: false },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: false },
-        { id: 'age', field: 'age', name: 'age', hidden: true },
-        { id: 'gender', field: 'gender', name: 'gender', hidden: true },
-      ] as Column[];
-      grid.setColumns(newColumns);
-
-      expect(updateSpy).toHaveBeenCalled();
-      expect((grid.getHeader() as HTMLDivElement[])[0]).toBeInstanceOf(HTMLDivElement);
-      expect(grid.getVisibleColumns().length).toBe(2);
-    });
-
-    it.skip('should return full grid width when fullWidthRows is enabled even with frozenColumn defined', () => {
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-        { id: 'lastName', field: 'lastName', name: 'Last Name' },
-        { id: 'age', field: 'age', name: 'age' },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, fullWidthRows: true, frozenColumn: 1 });
-      const result = grid.getCanvasWidth();
-
-      expect(grid.getVisibleColumns().length).toBe(2);
-      expect(result).toBe(DEFAULT_GRID_WIDTH);
-      expect((grid.getHeader() as HTMLDivElement[])[0]).toBeInstanceOf(HTMLDivElement);
-      expect(((grid.getHeader() as HTMLDivElement[])[0] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-left');
-      expect(((grid.getHeader() as HTMLDivElement[])[1] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-right');
-    });
-
-    it.skip('should return viewport element when calling the function when found in the grid container', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
-      const result = grid.getHeadersWidth();
-
-      expect(result).toBe(2000 + DEFAULT_GRID_WIDTH); // (1000 * 1) + 1000 + gridWidth 800
-    });
-
-    it.skip('should return viewport element when calling the function when found in the grid container', () => {
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-        { id: 'lastName', field: 'lastName', name: 'Last Name' },
-        { id: 'age', field: 'age', name: 'age' },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, frozenColumn: 1 });
-      grid.init();
-      const result = grid.getHeadersWidth();
-
-      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80) + 1000 + 1000); // Left(1 col) + Right(1 col) => 800 + (1000 + 80) + 1000 + 1000
-    });
-
-    it.skip('should return viewport element when calling the function when found in the grid container', () => {
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name' },
-        { id: 'lastName', field: 'lastName', name: 'Last Name' },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, frozenColumn: 1 });
-      grid.init();
-      const result = grid.getHeadersWidth();
-
-      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) + 1000 + 1000); // Both cols in left band => 800 + (1000 + 160) + 1000 + 1000
     });
 
     it('should remove Grid Menu width from the last header when scrollbar width is collapsed and columns are wider than canvas', () => {
@@ -3152,20 +2792,6 @@ describe('SlickGrid core file', () => {
         expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
       });
 
-      it.skip('should return full viewport height by data size when "autoHeight" is enabled and has pre-header & frozenColumn', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, {
-          ...defaultOptions,
-          autoHeight: true,
-          frozenColumn: 1,
-          createPreHeaderPanel: true,
-          showPreHeaderPanel: true,
-          preHeaderPanelHeight: 44,
-        });
-        grid.init();
-
-        expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
-      });
-
       it('should return full viewport height by data size + headerRow & preHeader when they are enabled with "autoHeight"', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, {
           ...defaultOptions,
@@ -3305,26 +2931,6 @@ describe('SlickGrid core file', () => {
       { id: 'lastName', field: 'lastName', name: 'Last Name' },
     ] as Column[];
 
-    it.skip('should synchronize frozen header panes to the largest rendered height', () => {
-      grid = new TestGrid(container, [], columns, { ...defaultOptions, autoHeaderHeight: true, frozenColumn: 0 });
-      const [leftHeader, rightHeader] = container.querySelectorAll<HTMLDivElement>('.slick-header');
-      vi.spyOn(leftHeader, 'getBoundingClientRect').mockReturnValue({ height: 42 } as DOMRect);
-      vi.spyOn(rightHeader, 'getBoundingClientRect').mockReturnValue({ height: 58 } as DOMRect);
-      const resizeSpy = vi.spyOn(grid, 'resizeCanvas');
-
-      (grid as TestGrid).callRecalculateHeaderHeight();
-
-      [leftHeader, rightHeader].forEach((header) => {
-        expect(header.classList).toContain('slick-header-auto-height');
-        expect(header.style.getPropertyValue('--slick-auto-header-height')).toBe('58px');
-        expect(header.style.height).toBe('58px');
-      });
-      expect(resizeSpy).toHaveBeenCalledTimes(1);
-
-      (grid as TestGrid).callRecalculateHeaderHeight();
-      expect(resizeSpy).toHaveBeenCalledTimes(1);
-    });
-
     it('should ignore recalculation before the left header pane is created', () => {
       grid = new TestGrid(container, [], columns, defaultOptions);
 
@@ -3346,16 +2952,6 @@ describe('SlickGrid core file', () => {
         expect(header.style.getPropertyValue('--slick-auto-header-height')).toBe('');
         expect(header.style.height).toBe('');
       });
-    });
-
-    it.skip('should recalculate automatic header height when enabled with setOptions', () => {
-      grid = new TestGrid(container, [], columns, { ...defaultOptions, autoHeaderHeight: false });
-      const recalculateSpy = vi.spyOn(grid as any, 'recalculateHeaderHeight');
-
-      grid.setOptions({ autoHeaderHeight: true });
-
-      expect(recalculateSpy).toHaveBeenCalled();
-      expect(container.querySelectorAll('.slick-header-auto-height')).toHaveLength(2);
     });
 
     it('should recalculate automatic header height after updating columns', () => {
@@ -3469,30 +3065,6 @@ describe('SlickGrid core file', () => {
 
       expect(() => grid.invalidate()).not.toThrow();
       expect(() => grid.updateRowCount()).not.toThrow();
-    });
-
-    it.skip('should keep ARIA header structure with frozen columns enabled', () => {
-      grid = new SlickGrid<any, Column>(
-        container,
-        items,
-        [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ],
-        {
-          ...defaultOptions,
-          showHeaderRow: true,
-          frozenColumn: 0,
-        }
-      );
-
-      const headerColumns = container.querySelectorAll('.slick-header-columns');
-      expect(headerColumns.length).toBe(2);
-      headerColumns.forEach((node) => expect(node.getAttribute('role')).toBe('row'));
-
-      const headerRowColumns = container.querySelectorAll('.slick-headerrow-columns');
-      expect(headerRowColumns.length).toBe(2);
-      headerRowColumns.forEach((node) => expect(node.getAttribute('role')).toBe('row'));
     });
 
     it('should return undefined editor when getDataItem() did not find any associated cell item', () => {
@@ -3849,186 +3421,6 @@ describe('SlickGrid core file', () => {
       { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
     ];
     let sortInstance: any;
-
-    const getSortableInstance = () => {
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-      const sortableProp = Object.keys(headerColumnsElm).find((prop) => prop.startsWith('Sortable'))!;
-      return headerColumnsElm[sortableProp];
-    };
-
-    const dispatchDocumentDrag = (pageX: number, clientX = pageX, clientY = 10) => {
-      const event = new Event('drag');
-      Object.defineProperties(event, {
-        pageX: { value: pageX },
-        clientX: { value: clientX },
-        clientY: { value: clientY },
-      });
-      document.dispatchEvent(event);
-    };
-
-    it.skip('should reorder column to the left when current column pageX is lower than viewport left position', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      sortInstance = getSortableInstance();
-      const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
-      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as any;
-
-      const dragEvent = new CustomEvent('DragEvent');
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'related', { writable: true, value: headerColumnElms[0] });
-      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
-      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['firstName', 'age', 'lastName']); // simulate column order change
-
-      expect(sortInstance).toBeTruthy();
-      sortInstance.options.onStart(dragEvent);
-      sortInstance.options.onMove(dragEvent);
-
-      dispatchDocumentDrag(20); // pageX < viewportLeft → scroll left
-      expect(viewportTopLeft.scrollLeft).toBe(0);
-
-      vi.advanceTimersByTime(30);
-
-      expect(viewportTopLeft.scrollLeft).toBe(-10);
-      sortInstance.options.onEnd(dragEvent);
-      expect(onColumnsReorderedSpy).toHaveBeenCalled();
-    });
-
-    it.skip('should reorder column to the right when current column pageX is greater than container width', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      sortInstance = getSortableInstance();
-      const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
-      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-
-      const dragEvent = new CustomEvent('DragEvent');
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
-      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['firstName', 'age', 'lastName']); // simulate column order change
-
-      expect(sortInstance).toBeTruthy();
-      sortInstance.options.onStart(dragEvent);
-
-      dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11); // pageX > containerRight → scroll right
-      expect(viewportTopLeft.scrollLeft).toBe(0);
-
-      vi.advanceTimersByTime(30);
-
-      expect(viewportTopLeft.scrollLeft).toBe(10);
-      sortInstance.options.onEnd(dragEvent);
-      expect(onColumnsReorderedSpy).toHaveBeenCalled();
-    });
-
-    it.skip('should not trigger "onColumnsReordered" neither reorder column when column order is the same', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      sortInstance = getSortableInstance();
-      const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
-      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-
-      const dragEvent = new CustomEvent('DragEvent');
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
-      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['firstName', 'lastName', 'age']); // simulate same column order as before
-
-      expect(sortInstance).toBeTruthy();
-      sortInstance.options.onStart(dragEvent);
-
-      dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11);
-      expect(viewportTopLeft.scrollLeft).toBe(0);
-
-      vi.advanceTimersByTime(30);
-
-      expect(viewportTopLeft.scrollLeft).toBe(10);
-      sortInstance.options.onEnd(dragEvent);
-      expect(onColumnsReorderedSpy).not.toHaveBeenCalled(); // same order won't call event
-    });
-
-    it.skip('should stop auto-scroll when cursor moves back into safe zone during drag', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      sortInstance = getSortableInstance();
-      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      const dragEvent = new CustomEvent('DragEvent');
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-
-      sortInstance.options.onStart(dragEvent);
-
-      // first drag beyond container right → starts scroll timer
-      dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11);
-      vi.advanceTimersByTime(30);
-      expect(viewportTopLeft.scrollLeft).toBe(10); // scrolled right
-
-      // now move cursor back into safe zone → timer should stop
-      dispatchDocumentDrag(DEFAULT_GRID_WIDTH / 2);
-
-      viewportTopLeft.scrollLeft = 0; // reset to confirm timer is stopped
-      vi.advanceTimersByTime(30);
-      expect(viewportTopLeft.scrollLeft).toBe(0); // no more auto-scrolling
-
-      sortInstance.options.onEnd(dragEvent);
-    });
-
-    it.skip('should preserve and reverse auto-scroll direction as drag coordinates change', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      sortInstance = getSortableInstance();
-      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      const dragEvent = new CustomEvent('DragEvent');
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-
-      sortInstance.options.onStart(dragEvent);
-
-      dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11);
-      dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11); // same direction keeps the current timer
-      vi.advanceTimersByTime(30);
-      expect(viewportTopLeft.scrollLeft).toBe(10);
-
-      dispatchDocumentDrag(0, 0, 0); // native drag can lose coordinates outside the browser
-      vi.advanceTimersByTime(30);
-      expect(viewportTopLeft.scrollLeft).toBe(20);
-
-      dispatchDocumentDrag(10);
-      vi.advanceTimersByTime(30);
-      expect(viewportTopLeft.scrollLeft).toBe(10);
-
-      sortInstance.options.onEnd(dragEvent);
-    });
-
-    it.skip('should try reordering column but stay at same scroll position when grid has frozen columns', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 0 });
-      grid.setActiveCell(0, 1);
-      sortInstance = getSortableInstance();
-      const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
-      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-
-      const dragEvent = new CustomEvent('DragEvent');
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] }); // frozen left column
-      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
-      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-
-      expect(sortInstance).toBeTruthy();
-      sortInstance.options.onStart(dragEvent);
-
-      // frozen left columns do not bind the custom auto-scroll listener
-      dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11);
-      expect(viewportTopLeft.scrollLeft).toBe(0);
-
-      vi.advanceTimersByTime(100);
-
-      expect(viewportTopLeft.scrollLeft).toBe(0); // same position, frozen column can't trigger scroll
-      sortInstance.options.onEnd(dragEvent);
-      expect(onColumnsReorderedSpy).not.toHaveBeenCalled();
-    });
 
     it('should not allow column reordering when Editor Lock commitCurrentEdit() is failing', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 0 });
@@ -5917,14 +5309,6 @@ describe('SlickGrid core file', () => {
       { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
     ];
 
-    it.skip('should not scroll when calling scrollCellIntoView() with same position to frozen column', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 1 });
-      const renderSpy = vi.spyOn(grid, 'render');
-      grid.scrollCellIntoView(1, 1, true);
-
-      expect(renderSpy).toHaveBeenCalledTimes(1); // 1x by the grid initialization
-    });
-
     it('should scroll when calling scrollCellIntoView() with lower position than frozen column', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 0 });
       const renderSpy = vi.spyOn(grid, 'render');
@@ -5958,28 +5342,6 @@ describe('SlickGrid core file', () => {
       expect(horizontalScroller.scrollLeft).toBeGreaterThan(0);
     });
 
-    it.skip('should route off-viewport alwaysRenderColumn cell to right canvas when frozen columns are enabled', () => {
-      const columnsWithAlwaysRender = [
-        { id: 'c0', field: 'c0', name: 'Col 0' },
-        { id: 'c1', field: 'c1', name: 'Col 1' },
-        { id: 'c2', field: 'c2', name: 'Col 2', alwaysRenderColumn: true },
-      ] as Column[];
-      const dataWithSingleRow = [{ id: 0, c0: '0', c1: '1', c2: '2' }];
-      grid = new SlickGrid<any, Column>(container, dataWithSingleRow, columnsWithAlwaysRender, { ...defaultOptions, frozenColumn: 0 });
-
-      vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 260, rightPx: 340, bottom: 20, top: 0 });
-      grid.render();
-
-      const alwaysRenderNode = grid.getCellNode(0, 2);
-      const alwaysRenderCanvas = alwaysRenderNode?.closest('.grid-canvas');
-      const frozenNode = grid.getCellNode(0, 0);
-      const frozenCanvas = frozenNode?.closest('.grid-canvas');
-
-      expect(alwaysRenderNode).toBeTruthy();
-      expect(alwaysRenderCanvas?.classList.contains('grid-canvas-right')).toBeTruthy();
-      expect(frozenCanvas?.classList.contains('grid-canvas-left')).toBeTruthy();
-    });
-
     it('should find the first column intersecting the horizontal render range', () => {
       const wideColumns = Array.from({ length: 100 }, (_, index) => ({
         id: `column${index}`,
@@ -5992,95 +5354,6 @@ describe('SlickGrid core file', () => {
       expect((grid as any).getFirstColumnIndexAtOrAfter(0)).toBe(0);
       expect((grid as any).getFirstColumnIndexAtOrAfter(800)).toBe(10);
       expect((grid as any).getFirstColumnIndexAtOrAfter(8000)).toBe(100);
-    });
-
-    it.skip('should use bottom-right and top-right scroll containers when frozen columns with frozen-bottom rows are enabled', () => {
-      const dataWithThreeRows = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-        { id: 2, firstName: 'Paul', lastName: 'Doe', age: 26 },
-      ];
-      grid = new SlickGrid<any, Column>(container, dataWithThreeRows, columns, {
-        ...defaultOptions,
-        frozenColumn: 0,
-        frozenRow: 1,
-        frozenBottom: true,
-      });
-
-      expect((grid as any)._viewportScrollContainerX).toBe((grid as any)._viewportBottomR);
-      expect((grid as any)._viewportScrollContainerY).toBe((grid as any)._viewportTopR);
-    });
-
-    it.skip('should sync top-left viewport scrollLeft when scrolling X on a regular grid with frozen rows', () => {
-      const dataWithThreeRows = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-        { id: 2, firstName: 'Paul', lastName: 'Doe', age: 26 },
-      ];
-      grid = new SlickGrid<any, Column>(container, dataWithThreeRows, columns, {
-        ...defaultOptions,
-        frozenRow: 1,
-      });
-
-      grid.scrollToX(42);
-
-      expect((grid as any)._viewportTopL.scrollLeft).toBe(42);
-      expect((grid as any)._headerRowScrollerL.scrollLeft).toBe(42);
-    });
-
-    it.skip('should size bottom-right canvas when frozen-bottom rows and frozen columns are enabled', () => {
-      const dataWithThreeRows = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-        { id: 2, firstName: 'Paul', lastName: 'Doe', age: 26 },
-      ];
-      grid = new SlickGrid<any, Column>(container, dataWithThreeRows, columns, {
-        ...defaultOptions,
-        frozenColumn: 0,
-        frozenRow: 1,
-        frozenBottom: true,
-      });
-
-      grid.resizeCanvas();
-
-      expect((grid as any)._canvasBottomR.style.height).toBe(`${(grid as any).frozenRowsHeight}px`);
-    });
-
-    it.skip('should sync bottom-left vertical scroll on mousewheel when frozen columns with top-frozen rows are enabled', () => {
-      const dataWithThreeRows = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-        { id: 2, firstName: 'Paul', lastName: 'Doe', age: 26 },
-      ];
-      grid = new SlickGrid<any, Column>(container, dataWithThreeRows, columns, {
-        ...defaultOptions,
-        frozenColumn: 0,
-        frozenRow: 1,
-        frozenBottom: false,
-      });
-
-      const viewportBottomR = (grid as any)._viewportBottomR as HTMLDivElement;
-      const viewportBottomL = (grid as any)._viewportBottomL as HTMLDivElement;
-      const viewportTopL = (grid as any)._viewportTopL as HTMLDivElement;
-      Object.defineProperty(viewportBottomR, 'scrollHeight', { writable: true, value: 600 });
-      Object.defineProperty(viewportBottomR, 'clientHeight', { writable: true, value: 100 });
-      Object.defineProperty(viewportBottomR, 'scrollWidth', { writable: true, value: 800 });
-      Object.defineProperty(viewportBottomR, 'clientWidth', { writable: true, value: 200 });
-      Object.defineProperty(viewportBottomR, 'scrollTop', { writable: true, value: 30 });
-      Object.defineProperty(viewportBottomR, 'scrollLeft', { writable: true, value: 0 });
-      Object.defineProperty(viewportBottomL, 'scrollTop', { writable: true, value: 0 });
-      Object.defineProperty(viewportTopL, 'scrollTop', { writable: true, value: 0 });
-
-      (grid as any).scrollTop = 30;
-      (grid as any).scrollLeft = 0;
-      (grid as any).prevScrollTop = 0;
-      (grid as any).prevScrollLeft = 0;
-      (grid as any).lastRenderedScrollTop = 0;
-      (grid as any).lastRenderedScrollLeft = 0;
-      (grid as any)._handleScroll('mousewheel');
-
-      expect((grid as any)._viewportBottomL.scrollTop).toBe(30);
-      expect((grid as any)._viewportTopL.scrollTop).toBe(0);
     });
 
     it('should scroll when calling scrollCellIntoView() with row having colspan returned from DataView getItemMetadata()', () => {
@@ -6124,333 +5397,6 @@ describe('SlickGrid core file', () => {
 
       expect(renderSpy).toHaveBeenCalledTimes(1);
       expect(viewportElm.scrollLeft).toBe(0);
-    });
-
-    it.skip('should scroll all elements shown when triggered by mousewheel and topHeader is enabled', () => {
-      const dv = new SlickDataView();
-      dv.setItems(data);
-      grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions,
-        enableMouseWheelScrollHandler: true,
-        createTopHeaderPanel: true,
-      });
-      grid.setOptions({ enableMouseWheelScrollHandler: false });
-      grid.setOptions({ enableMouseWheelScrollHandler: true });
-      grid.scrollCellIntoView(1, 2, true);
-
-      const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
-      const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
-      const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      Object.defineProperty(viewportTopLeftElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
-      Object.defineProperty(viewportTopLeftElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
-      Object.defineProperty(viewportTopLeftElm, 'clientHeight', { writable: true, value: 125 });
-      Object.defineProperty(viewportTopLeftElm, 'clientWidth', { writable: true, value: 75 });
-
-      const viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      const topHeaderElm = container.querySelector('.slick-topheader-panel') as HTMLDivElement;
-      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
-      viewportLeftElm.dispatchEvent(mouseEvent);
-
-      expect(topHeaderElm.scrollLeft).toBe(88);
-      expect(viewportLeftElm.scrollLeft).toBe(88);
-      expect(viewportLeftElm.scrollTop).toBe(25);
-      expect(viewportTopLeftElm.scrollTop).toBe(25);
-      expect(onViewportChangedSpy).toHaveBeenCalled();
-      expect(mousePreventSpy).toHaveBeenCalled();
-    });
-
-    it.skip('should scroll all elements shown when triggered by mousewheel and preHeader/footer are enabled and without any Frozen rows/columns', () => {
-      const dv = new SlickDataView();
-      dv.setItems(data);
-      grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions,
-        enableMouseWheelScrollHandler: true,
-        createFooterRow: true,
-        createPreHeaderPanel: true,
-      });
-      grid.setOptions({ enableMouseWheelScrollHandler: false });
-      grid.setOptions({ enableMouseWheelScrollHandler: true });
-      grid.scrollCellIntoView(1, 2, true);
-
-      const mouseEvent = new Event('mousewheel');
-      Object.defineProperty(mouseEvent, 'shiftKey', { writable: true, value: true });
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
-      const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
-      const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      Object.defineProperty(viewportTopLeftElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
-      Object.defineProperty(viewportTopLeftElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
-      Object.defineProperty(viewportTopLeftElm, 'clientHeight', { writable: true, value: 125 });
-      Object.defineProperty(viewportTopLeftElm, 'clientWidth', { writable: true, value: 75 });
-
-      const viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      const footerRowElm = container.querySelectorAll('.slick-footerrow');
-      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
-      viewportLeftElm.dispatchEvent(mouseEvent);
-
-      expect(preHeaderElm[1].scrollLeft).toBe(0);
-      expect(footerRowElm[1].scrollLeft).toBe(0);
-      expect(viewportLeftElm.scrollLeft).toBe(88);
-      expect(viewportLeftElm.scrollTop).toBe(25);
-      expect(viewportTopLeftElm.scrollTop).toBe(25);
-      expect(onViewportChangedSpy).toHaveBeenCalled();
-      expect(mousePreventSpy).toHaveBeenCalled();
-    });
-
-    it.skip('should scroll all elements shown when triggered by mousewheel and preHeader/footer are enabled and without any Frozen rows/columns', () => {
-      const dv = new SlickDataView();
-      dv.setItems(data);
-      grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions,
-        enableMouseWheelScrollHandler: true,
-        createFooterRow: true,
-        createPreHeaderPanel: true,
-      });
-      grid.scrollCellIntoView(1, 2, true);
-
-      const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
-      const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
-      const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      Object.defineProperty(viewportTopLeftElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
-      Object.defineProperty(viewportTopLeftElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
-      Object.defineProperty(viewportTopLeftElm, 'clientHeight', { writable: true, value: 125 });
-      Object.defineProperty(viewportTopLeftElm, 'clientWidth', { writable: true, value: 75 });
-
-      const viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      const footerRowElm = container.querySelectorAll('.slick-footerrow');
-      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
-      viewportLeftElm.dispatchEvent(mouseEvent);
-
-      expect(preHeaderElm[1].scrollLeft).toBe(0);
-      expect(footerRowElm[1].scrollLeft).toBe(0);
-      expect(viewportLeftElm.scrollLeft).toBe(88);
-      expect(viewportLeftElm.scrollTop).toBe(25);
-      expect(viewportTopLeftElm.scrollTop).toBe(25);
-      expect(onViewportChangedSpy).toHaveBeenCalled();
-      expect(mousePreventSpy).toHaveBeenCalled();
-    });
-
-    it.skip('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenColumn are enabled', () => {
-      const dv = new SlickDataView();
-      dv.setItems(data);
-      grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions,
-        frozenColumn: 0,
-        enableMouseWheelScrollHandler: true,
-        createFooterRow: true,
-        createPreHeaderPanel: true,
-      });
-      grid.scrollCellIntoView(1, 2, true);
-
-      const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
-      const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
-      const viewportTopRightElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
-      Object.defineProperty(viewportTopRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
-      Object.defineProperty(viewportTopRightElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
-      Object.defineProperty(viewportTopRightElm, 'clientHeight', { writable: true, value: 125 });
-      Object.defineProperty(viewportTopRightElm, 'clientWidth', { writable: true, value: 75 });
-
-      const viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      const footerRowElm = container.querySelectorAll('.slick-footerrow');
-      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
-      viewportLeftElm.dispatchEvent(mouseEvent);
-
-      expect(preHeaderElm[1].scrollLeft).toBe(80);
-      expect(footerRowElm[1].scrollLeft).toBe(80);
-      expect(viewportLeftElm.scrollLeft).toBe(88);
-      expect(viewportLeftElm.scrollTop).toBe(25);
-      expect(viewportTopRightElm.scrollTop).toBe(25);
-      expect(onViewportChangedSpy).toHaveBeenCalled();
-      expect(mousePreventSpy).toHaveBeenCalled();
-    });
-
-    it.skip('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenRow are enabled', () => {
-      container.style.height = '25px';
-      const dv = new SlickDataView();
-      dv.setItems(data);
-      grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions,
-        frozenRow: 0,
-        enableMouseWheelScrollHandler: true,
-        createFooterRow: true,
-        createPreHeaderPanel: true,
-      });
-      grid.scrollCellIntoView(1, 2, true);
-
-      const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
-      const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
-      const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      const viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
-      Object.defineProperty(viewportBottomRightElm, 'scrollHeight', { writable: true, value: 25 });
-      Object.defineProperty(viewportBottomRightElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
-      Object.defineProperty(viewportBottomRightElm, 'clientHeight', { writable: true, value: 125 });
-      Object.defineProperty(viewportBottomRightElm, 'clientWidth', { writable: true, value: 75 });
-
-      const viewportLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
-      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      const footerRowElm = container.querySelectorAll('.slick-footerrow');
-      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
-      viewportLeftElm.dispatchEvent(mouseEvent);
-
-      expect(viewportTopLeftElm.scrollLeft).toBe(160);
-      expect(preHeaderElm[0].scrollLeft).toBe(0);
-      expect(footerRowElm[0].scrollLeft).toBe(0);
-      expect(viewportLeftElm.scrollLeft).toBe(88);
-      expect(viewportLeftElm.scrollTop).toBe(0);
-      expect(viewportBottomRightElm.scrollTop).toBe(0);
-      expect(onViewportChangedSpy).not.toHaveBeenCalled();
-      expect(mousePreventSpy).not.toHaveBeenCalled();
-
-      vi.advanceTimersByTime(1);
-      viewportLeftElm.dispatchEvent(mouseEvent);
-    });
-
-    it.skip('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenRow are enabled', () => {
-      container.style.height = '50px';
-      container.style.width = '88px';
-      const dv = new SlickDataView();
-      dv.setItems([data[0]]);
-      grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions,
-        frozenRow: 0,
-        enableMouseWheelScrollHandler: true,
-        createFooterRow: true,
-        createPreHeaderPanel: true,
-        rowHeight: 50,
-      });
-      let viewportBottomLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
-      Object.defineProperty(viewportBottomLeftElm, 'scrollTop', { writable: true, value: 50 });
-      grid.scrollCellIntoView(1, 2, true);
-
-      const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
-      const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
-      const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      viewportBottomLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
-      Object.defineProperty(viewportBottomLeftElm, 'scrollHeight', { writable: true, value: 50 });
-      Object.defineProperty(viewportBottomLeftElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
-      Object.defineProperty(viewportBottomLeftElm, 'clientHeight', { writable: true, value: 125 });
-      Object.defineProperty(viewportBottomLeftElm, 'clientWidth', { writable: true, value: 75 });
-
-      // let viewportLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
-      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      const footerRowElm = container.querySelectorAll('.slick-footerrow');
-      Object.defineProperty(viewportBottomLeftElm, 'scrollLeft', { writable: true, value: 88 });
-      viewportBottomLeftElm.dispatchEvent(mouseEvent);
-
-      expect(viewportTopLeftElm.scrollLeft).toBe(160);
-      expect(preHeaderElm[0].scrollLeft).toBe(0);
-      expect(footerRowElm[0].scrollLeft).toBe(0);
-      expect(viewportBottomLeftElm.scrollLeft).toBe(88);
-      expect(viewportBottomLeftElm.scrollTop).toBe(50);
-      expect(viewportBottomLeftElm.scrollTop).toBe(50);
-      expect(onViewportChangedSpy).not.toHaveBeenCalled();
-      expect(mousePreventSpy).not.toHaveBeenCalled();
-    });
-
-    it.skip('should treat frozenRow 0 as no freeze and render rows in top canvas only', () => {
-      const dv = new SlickDataView();
-      dv.setItems(data);
-      grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions,
-        frozenRow: 0,
-        createFooterRow: true,
-        createPreHeaderPanel: true,
-      });
-
-      const topPaneLeft = container.querySelector('.slick-pane.slick-pane-top.slick-pane-left') as HTMLDivElement;
-      const bottomPaneLeft = container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-left') as HTMLDivElement;
-      const bottomPaneRight = container.querySelector('.slick-pane.slick-pane-bottom.slick-pane-right') as HTMLDivElement;
-      const topCanvasRows = container.querySelectorAll('.grid-canvas-top .slick-row');
-      const bottomCanvasRows = container.querySelectorAll('.grid-canvas-bottom .slick-row');
-
-      expect(topPaneLeft.style.display).not.toBe('none');
-      expect(bottomPaneLeft.style.display).toBe('none');
-      expect(bottomPaneRight.style.display).toBe('none');
-      expect(topCanvasRows.length).toBe(data.length);
-      expect(bottomCanvasRows.length).toBe(0);
-    });
-
-    it.skip('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenColumn/frozenRow are enabled', () => {
-      const dv = new SlickDataView();
-      dv.setItems(data);
-      grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions,
-        frozenColumn: 0,
-        frozenRow: 1,
-        enableMouseWheelScrollHandler: true,
-        createFooterRow: true,
-        createPreHeaderPanel: true,
-      });
-      grid.scrollCellIntoView(1, 2, true);
-
-      const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
-      const nativeScrollPreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
-      const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
-      const viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-right') as HTMLDivElement;
-      Object.defineProperty(viewportBottomRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
-      Object.defineProperty(viewportBottomRightElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
-      Object.defineProperty(viewportBottomRightElm, 'clientHeight', { writable: true, value: 125 });
-      Object.defineProperty(viewportBottomRightElm, 'clientWidth', { writable: true, value: 75 });
-
-      const viewportLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
-      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      const footerRowElm = container.querySelectorAll('.slick-footerrow');
-      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
-      viewportLeftElm.dispatchEvent(mouseEvent);
-
-      expect(preHeaderElm[1].scrollLeft).toBe(80);
-      expect(footerRowElm[1].scrollLeft).toBe(80);
-      expect(viewportLeftElm.scrollLeft).toBe(88);
-      expect(viewportLeftElm.scrollTop).toBe(0);
-      expect(viewportBottomRightElm.scrollTop).toBe(0);
-      expect(onViewportChangedSpy).toHaveBeenCalled();
-      expect(mousePreventSpy).toHaveBeenCalled();
-      expect(nativeScrollPreventSpy).toHaveBeenCalled();
-    });
-
-    it.skip('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenColumn are enabled', () => {
-      const dv = new SlickDataView();
-      dv.setItems(data);
-      grid = new SlickGrid<any, Column>(container, dv, columns, {
-        ...defaultOptions,
-        frozenColumn: 0,
-        frozenRow: 0,
-        enableMouseWheelScrollHandler: true,
-        createFooterRow: true,
-        createPreHeaderPanel: true,
-      });
-      grid.scrollCellIntoView(1, 2, true);
-
-      const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
-      const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
-      const viewportTopRightElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
-      Object.defineProperty(viewportTopRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
-      Object.defineProperty(viewportTopRightElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
-      Object.defineProperty(viewportTopRightElm, 'clientHeight', { writable: true, value: 125 });
-      Object.defineProperty(viewportTopRightElm, 'clientWidth', { writable: true, value: 75 });
-
-      const viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      const preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
-      const footerRowElm = container.querySelectorAll('.slick-footerrow');
-      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
-      viewportLeftElm.dispatchEvent(mouseEvent);
-
-      expect(preHeaderElm[1].scrollLeft).toBe(80);
-      expect(footerRowElm[1].scrollLeft).toBe(80);
-      expect(viewportLeftElm.scrollLeft).toBe(88);
-      expect(viewportLeftElm.scrollTop).toBe(25);
-      expect(viewportTopRightElm.scrollTop).toBe(25);
-      expect(onViewportChangedSpy).toHaveBeenCalled();
-      expect(mousePreventSpy).toHaveBeenCalled();
     });
   });
 
@@ -6500,31 +5446,6 @@ describe('SlickGrid core file', () => {
 
       // top of row 2 is 25 + 40
       expect(scrollToSpy).toHaveBeenCalledWith(65);
-      expect(renderSpy).toHaveBeenCalled();
-    });
-
-    it.skip('should scroll to computed row position minus frozen top rows height in variable row height mode', () => {
-      const rowHeights = [20, 30, 40, 50];
-      const variableData = [
-        { id: 0, firstName: 'A', lastName: 'A', age: 1 },
-        { id: 1, firstName: 'B', lastName: 'B', age: 2 },
-        { id: 2, firstName: 'C', lastName: 'C', age: 3 },
-        { id: 3, firstName: 'D', lastName: 'D', age: 4 },
-      ];
-      grid = new SlickGrid<any, Column>(container, variableData, columns, {
-        ...defaultOptions,
-        enableVariableRowHeight: true,
-        frozenRow: 2,
-        rowHeight: 25,
-        rowHeightProvider: (_grid, row) => rowHeights[row],
-      });
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-      const renderSpy = vi.spyOn(grid, 'render');
-
-      grid.scrollRowToTop(3);
-
-      // top of row 3 is 20 + 30 + 40 = 90; frozen top rows height is 20 + 30 = 50; scroll target is 40
-      expect(scrollToSpy).toHaveBeenCalledWith(40);
       expect(renderSpy).toHaveBeenCalled();
     });
 
@@ -7154,44 +6075,6 @@ describe('SlickGrid core file', () => {
       expect(onActiveCellSpy).toHaveBeenCalled();
     });
 
-    it.skip('should scroll down and return true when calling navigateDown with valid navigation', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-        { id: 2, firstName: 'Bob' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
-      grid.setActiveCell(1, 1);
-      const result = grid.navigateDown();
-
-      expect(result).toBe(true);
-      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it.skip('should scroll down and return true when calling navigateDown with valid navigation', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-        { id: 2, firstName: 'Bob' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 2, frozenBottom: true });
-      vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(2, 1);
-      // @ts-ignore
-      vi.spyOn(grid, 'gotoLeft').mockReturnValueOnce({ cell: 0, posX: 0, row: 3 });
-      const result = grid.navigatePrev();
-
-      expect(result).toBeUndefined();
-      expect(scrollCellSpy).toHaveBeenCalledWith(2, 1, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
     it('should navigate to previous cell but return false when calling navigatePrev but cannot go further', () => {
       const data = [{ id: 0, firstName: 'John' }];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
@@ -7614,218 +6497,6 @@ describe('SlickGrid core file', () => {
       expect(focusGridMenuSpy).toHaveBeenCalled();
     });
 
-    it.skip('should focus on right pane first filter element when user typed Tab and frozenColumn is set to 0', () => {
-      // Use a real DOM structure to avoid infinite recursion
-      const testGridInstance = new TestGrid(container, items, columns, {
-        ...defaultOptions,
-        enableCellNavigation: true,
-        autoEditByKeypress: true,
-        frozenColumn: 0,
-      });
-      const headerRowLeftCols = createDomElement('div', { className: 'slick-headerrow-columns slick-headerrow-columns-left' });
-      const headerRowRightCols = createDomElement('div', { className: 'slick-headerrow-columns slick-headerrow-columns-right' });
-      const headerRowCol1 = createDomElement('div', { className: 'slick-headerrow-column' });
-      const headerRowCol2 = createDomElement('div', { className: 'slick-headerrow-column' });
-      const headerRowCol3 = createDomElement('div', { className: 'slick-headerrow-column' });
-      const headerRowCol4 = createDomElement('div', { className: 'slick-headerrow-column' });
-      const inputFilter1 = createDomElement('input', { className: 'slick-filter-input filter1', tabIndex: 0 });
-      const inputFilter2 = createDomElement('input', { className: 'slick-filter-input filter2', tabIndex: 0 });
-      const inputFilter3 = createDomElement('input', { className: 'slick-filter-input filter3', tabIndex: 0 });
-      const inputFilter4 = createDomElement('input', { className: 'slick-filter-input filter4', tabIndex: 0 });
-      const filter3Spy = vi.spyOn(inputFilter3, 'focus');
-      headerRowCol1.appendChild(inputFilter1);
-      headerRowCol2.appendChild(inputFilter2);
-      headerRowCol3.appendChild(inputFilter3);
-      headerRowCol4.appendChild(inputFilter4);
-      headerRowLeftCols.appendChild(headerRowCol1);
-      headerRowLeftCols.appendChild(headerRowCol2);
-      headerRowRightCols.appendChild(headerRowCol3);
-      headerRowRightCols.appendChild(headerRowCol4);
-      container.querySelector('.slick-pane-left')!.appendChild(headerRowLeftCols);
-      container.querySelector('.slick-pane-right')!.appendChild(headerRowRightCols);
-      Object.defineProperty(inputFilter1, 'offsetParent', { value: 5 });
-      Object.defineProperty(inputFilter2, 'offsetParent', { value: 5 });
-      Object.defineProperty(inputFilter3, 'offsetParent', { value: 5 });
-      Object.defineProperty(inputFilter4, 'offsetParent', { value: 5 });
-
-      const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: false }) as any;
-      Object.defineProperty(tabEvent, 'target', { value: inputFilter2 });
-      testGridInstance.callHandleContainerKeyDown(tabEvent);
-
-      const keyEvent = {
-        key: 'a',
-        ctrlKey: false,
-        originalEvent: {},
-        target: container.querySelector('.slick-cell.l1.r1'),
-        stopPropagation: vi.fn(),
-        preventDefault: vi.fn(),
-      } as any;
-      testGridInstance.setActiveCell(0, 1);
-      testGridInstance.callHandleGridKeyDown(keyEvent);
-      skipGridDestroy = true;
-
-      expect(filter3Spy).toHaveBeenCalled();
-    });
-
-    it.skip('should focus on right pane first filter element when user typed Shift+Tab and frozenColumn is set to 0', () => {
-      // Use a real DOM structure to avoid infinite recursion
-      const testGridInstance = new TestGrid(container, items, columns, {
-        ...defaultOptions,
-        enableCellNavigation: true,
-        autoEditByKeypress: true,
-        frozenColumn: 0,
-      });
-      const headerRowLeftCols = createDomElement('div', { className: 'slick-headerrow-columns slick-headerrow-columns-left' });
-      const headerRowRightCols = createDomElement('div', { className: 'slick-headerrow-columns slick-headerrow-columns-right' });
-      const headerRowCol1 = createDomElement('div', { className: 'slick-headerrow-column' });
-      const headerRowCol2 = createDomElement('div', { className: 'slick-headerrow-column' });
-      const headerRowCol3 = createDomElement('div', { className: 'slick-headerrow-column' });
-      const headerRowCol4 = createDomElement('div', { className: 'slick-headerrow-column' });
-      const inputFilter1 = createDomElement('input', { className: 'slick-filter-input filter1', tabIndex: 0 });
-      const inputFilter2 = createDomElement('input', { className: 'slick-filter-input filter2', tabIndex: 0 });
-      const inputFilter3 = createDomElement('input', { className: 'slick-filter-input filter3', tabIndex: 0 });
-      const inputFilter4 = createDomElement('input', { className: 'slick-filter-input filter4', tabIndex: 0 });
-      const filter2Spy = vi.spyOn(inputFilter2, 'focus');
-      headerRowCol1.appendChild(inputFilter1);
-      headerRowCol2.appendChild(inputFilter2);
-      headerRowCol3.appendChild(inputFilter3);
-      headerRowCol4.appendChild(inputFilter4);
-      headerRowLeftCols.appendChild(headerRowCol1);
-      headerRowLeftCols.appendChild(headerRowCol2);
-      headerRowRightCols.appendChild(headerRowCol3);
-      headerRowRightCols.appendChild(headerRowCol4);
-      container.querySelector('.slick-pane-left')!.appendChild(headerRowLeftCols);
-      container.querySelector('.slick-pane-right')!.appendChild(headerRowRightCols);
-      Object.defineProperty(inputFilter1, 'offsetParent', { value: 5 });
-      Object.defineProperty(inputFilter2, 'offsetParent', { value: 5 });
-      Object.defineProperty(inputFilter3, 'offsetParent', { value: 5 });
-      Object.defineProperty(inputFilter4, 'offsetParent', { value: 5 });
-
-      const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true }) as any;
-      Object.defineProperty(tabEvent, 'target', { value: inputFilter3 });
-      testGridInstance.callHandleContainerKeyDown(tabEvent);
-
-      const keyEvent = {
-        key: 'a',
-        ctrlKey: false,
-        originalEvent: {},
-        target: container.querySelector('.slick-cell.l1.r1'),
-        stopPropagation: vi.fn(),
-        preventDefault: vi.fn(),
-      } as any;
-      testGridInstance.setActiveCell(0, 1);
-      testGridInstance.callHandleGridKeyDown(keyEvent);
-      skipGridDestroy = true;
-
-      expect(filter2Spy).toHaveBeenCalled();
-    });
-
-    it.skip('should focus on right pane first column header element when user typed Tab and frozenColumn is set to 0', () => {
-      // Use a real DOM structure to avoid infinite recursion
-      const testGridInstance = new TestGrid(container, items, columns, {
-        ...defaultOptions,
-        enableCellNavigation: true,
-        autoEditByKeypress: true,
-        frozenColumn: 0,
-      });
-      const headerLeftCols = createDomElement('div', { className: 'slick-header-columns slick-header-columns-left' });
-      const headerRightCols = createDomElement('div', { className: 'slick-header-columns slick-header-columns-right' });
-      const headerCol1 = createDomElement('div', { className: 'slick-header-column', tabIndex: 0 });
-      const headerCol2 = createDomElement('div', { className: 'slick-header-column', tabIndex: 0 });
-      const headerCol3 = createDomElement('div', { className: 'slick-header-column', tabIndex: 0 });
-      const headerCol4 = createDomElement('div', { className: 'slick-header-column', tabIndex: 0 });
-      const spanTitle1 = createDomElement('span', { className: 'slick-column-name', textContent: 'Title 1' });
-      const spanTitle2 = createDomElement('span', { className: 'slick-column-name', textContent: 'Title 2' });
-      const spanTitle3 = createDomElement('span', { className: 'slick-column-name', textContent: 'Title 3' });
-      const spanTitle4 = createDomElement('span', { className: 'slick-column-name', textContent: 'Title 4' });
-      const title3Spy = vi.spyOn(headerCol3, 'focus');
-      headerCol1.appendChild(spanTitle1);
-      headerCol2.appendChild(spanTitle2);
-      headerCol3.appendChild(spanTitle3);
-      headerCol4.appendChild(spanTitle4);
-      headerLeftCols.appendChild(headerCol1);
-      headerLeftCols.appendChild(headerCol2);
-      headerRightCols.appendChild(headerCol3);
-      headerRightCols.appendChild(headerCol4);
-      container.querySelector('.slick-pane-left')!.appendChild(headerLeftCols);
-      container.querySelector('.slick-pane-right')!.appendChild(headerRightCols);
-      Object.defineProperty(headerCol1, 'offsetParent', { value: 5 });
-      Object.defineProperty(headerCol2, 'offsetParent', { value: 5 });
-      Object.defineProperty(headerCol3, 'offsetParent', { value: 5 });
-      Object.defineProperty(headerCol4, 'offsetParent', { value: 5 });
-
-      const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: false }) as any;
-      Object.defineProperty(tabEvent, 'target', { value: headerCol2 });
-      testGridInstance.callHandleContainerKeyDown(tabEvent);
-
-      const keyEvent = {
-        key: 'a',
-        ctrlKey: false,
-        originalEvent: {},
-        target: container.querySelector('.slick-cell.l1.r1'),
-        stopPropagation: vi.fn(),
-        preventDefault: vi.fn(),
-      } as any;
-      testGridInstance.setActiveCell(0, 1);
-      testGridInstance.callHandleGridKeyDown(keyEvent);
-      skipGridDestroy = true;
-
-      expect(title3Spy).toHaveBeenCalled();
-    });
-
-    it.skip('should focus on right pane first column header element when user typed Shift+Tab and frozenColumn is set to 0', () => {
-      // Use a real DOM structure to avoid infinite recursion
-      const testGridInstance = new TestGrid(container, items, columns, {
-        ...defaultOptions,
-        enableCellNavigation: true,
-        autoEditByKeypress: true,
-        frozenColumn: 0,
-      });
-      const headerLeftCols = createDomElement('div', { className: 'slick-header-columns slick-header-columns-left' });
-      const headerRightCols = createDomElement('div', { className: 'slick-header-columns slick-header-columns-right' });
-      const headerCol1 = createDomElement('div', { className: 'slick-header-column', tabIndex: 0 });
-      const headerCol2 = createDomElement('div', { className: 'slick-header-column', tabIndex: 0 });
-      const headerCol3 = createDomElement('div', { className: 'slick-header-column', tabIndex: 0 });
-      const headerCol4 = createDomElement('div', { className: 'slick-header-column', tabIndex: 0 });
-      const spanTitle1 = createDomElement('span', { className: 'slick-column-name', textContent: 'Title 1' });
-      const spanTitle2 = createDomElement('span', { className: 'slick-column-name', textContent: 'Title 2' });
-      const spanTitle3 = createDomElement('span', { className: 'slick-column-name', textContent: 'Title 3' });
-      const spanTitle4 = createDomElement('span', { className: 'slick-column-name', textContent: 'Title 4' });
-      const title2Spy = vi.spyOn(headerCol2, 'focus');
-      headerCol1.appendChild(spanTitle1);
-      headerCol2.appendChild(spanTitle2);
-      headerCol3.appendChild(spanTitle3);
-      headerCol4.appendChild(spanTitle4);
-      headerLeftCols.appendChild(headerCol1);
-      headerLeftCols.appendChild(headerCol2);
-      headerRightCols.appendChild(headerCol3);
-      headerRightCols.appendChild(headerCol4);
-      container.querySelector('.slick-pane-left')!.appendChild(headerLeftCols);
-      container.querySelector('.slick-pane-right')!.appendChild(headerRightCols);
-      Object.defineProperty(headerCol1, 'offsetParent', { value: 5 });
-      Object.defineProperty(headerCol2, 'offsetParent', { value: 5 });
-      Object.defineProperty(headerCol3, 'offsetParent', { value: 5 });
-      Object.defineProperty(headerCol4, 'offsetParent', { value: 5 });
-
-      const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true }) as any;
-      Object.defineProperty(tabEvent, 'target', { value: headerCol3 });
-      testGridInstance.callHandleContainerKeyDown(tabEvent);
-
-      const keyEvent = {
-        key: 'a',
-        ctrlKey: false,
-        originalEvent: {},
-        target: container.querySelector('.slick-cell.l1.r1'),
-        stopPropagation: vi.fn(),
-        preventDefault: vi.fn(),
-      } as any;
-      testGridInstance.setActiveCell(0, 1);
-      testGridInstance.callHandleGridKeyDown(keyEvent);
-      skipGridDestroy = true;
-
-      expect(title2Spy).toHaveBeenCalled();
-    });
-
     it('should trigger onHeaderKeyDown and sortCallback on Enter/Space', () => {
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
@@ -8132,29 +6803,6 @@ describe('SlickGrid core file', () => {
 
         expect(result).toEqual({ row: 1, cell: 1 });
       });
-
-      it.skip('should return { row:2, cell:1 } when clicked cell is second cell of second row with a frozenRow and frozenBottom is inside range', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 3, frozenBottom: true });
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        Object.defineProperty(event, 'clientX', { writable: true, value: DEFAULT_COLUMN_WIDTH * 2 + 5 });
-        Object.defineProperty(event, 'clientY', { writable: true, value: DEFAULT_COLUMN_HEIGHT * 1 + 5 });
-        const result = grid.getCellFromEvent(event);
-
-        expect(result).toEqual({ row: 2, cell: 1 });
-      });
-
-      it.skip('should return null when using frozenRow that result into invalid row/cell number', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 3, frozenBottom: true });
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-
-        const result = grid.getCellFromEvent(event); // not passing clientX/clientY will return NaN
-
-        expect(result).toBeNull();
-      });
     });
   });
 
@@ -8399,53 +7047,6 @@ describe('SlickGrid core file', () => {
 
         expect(getDataItemSpy).toHaveBeenCalledTimes(1);
         expect(secondItemAgeCell.innerHTML).toBe('<strong>25</strong>');
-      });
-
-      it.skip('should change an item value via asyncPostRenderer then call updateRow() and expect it to be updated in the UI with Formatter result', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          {
-            id: 'age',
-            field: 'age',
-            name: 'Age',
-            asyncPostRender: (node, row, data) => (node.textContent = data),
-            asyncPostRenderCleanup: (node) => (node.textContent = ''),
-          },
-        ] as Column[];
-        const gridOptions = {
-          ...defaultOptions,
-          rowHeight: 2222,
-          enableCellNavigation: true,
-          enableAsyncPostRender: true,
-          enableAsyncPostRenderCleanup: true,
-          asyncPostRenderDelay: 1,
-          asyncPostRenderCleanupDelay: 1,
-        };
-        grid = new SlickGrid<any, Column>(container, items, columns, gridOptions);
-        let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
-        expect(firstItemAgeCell.innerHTML).toBe('44');
-
-        const getDataItemSpy = vi.spyOn(grid, 'getDataItem');
-        grid.updateRow(0);
-        vi.advanceTimersByTime(1);
-
-        firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
-        expect(getDataItemSpy).toHaveBeenCalledTimes(2);
-        // expect(firstItemAgeCell.innerHTML).toBe('25');
-
-        grid.setActiveRow(0);
-        grid.gotoCell(10, 1);
-        expect(grid.getViewports()[0].scrollLeft).toBe(80);
-        grid.setOptions({ frozenColumn: 2 });
-        grid.render();
-        vi.advanceTimersByTime(2); // cleanup asyncPostRender
-
-        firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
-        expect(firstItemAgeCell.innerHTML).not.toBe('25');
-        expect(grid.getViewports()[0].scrollLeft).toBe(0); // scroll left is 0 because it was reset by setOptions to avoid UI issues
-
-        grid.scrollTo(8);
-        vi.advanceTimersByTime(1);
       });
 
       it('should change an item from an Editor then call updateRow() and expect it call the editor loadValue() method', () => {
@@ -9024,23 +7625,6 @@ describe('SlickGrid core file', () => {
         container.querySelector('.slick-header.slick-header-left')!.dispatchEvent(event);
 
         expect(onHeaderClickSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
-      });
-
-      it.skip('should call scrollToX() when header right is scrolled', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
-        const scrollToXSpy = vi.spyOn(grid, 'scrollToX');
-        const headerColumns = container.querySelectorAll('.slick-header-column');
-        const event = new CustomEvent('scroll');
-        Object.defineProperty(headerColumns[0], 'scrollLeft', { writable: true, value: 100 });
-        Object.defineProperty(event, 'target', { writable: true, value: headerColumns[0] });
-        container.querySelector('.slick-header.slick-header-right')!.dispatchEvent(event);
-
-        expect(scrollToXSpy).toHaveBeenCalledWith(100);
       });
     });
 
