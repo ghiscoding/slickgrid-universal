@@ -781,15 +781,15 @@ describe('Example 04 - Frozen Grid', () => {
       // vertical scroll to middle
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('0%', '40%', { duration: 1500 });
 
-      getCell(15, 3).should('contain', '2009-01-01');
-      getCell(15, 4).should('contain', '2009-05-05');
-      getCell(15, 7).contains(/[United State|Canada]*/);
-      getCell(15, 8).should('contain', 'Action');
+      getCell(200, 3).should('contain', '2009-01-01');
+      getCell(200, 4).should('contain', '2009-05-05');
+      getCell(200, 7).contains(/[United State|Canada]*/);
+      getCell(200, 8).should('contain', 'Action');
 
-      getCell(20, 3).should('contain', '2009-01-01');
-      getCell(20, 4).should('contain', '2009-05-05');
-      getCell(20, 7).contains(/[United State|Canada]*/);
-      getCell(20, 8).should('contain', 'Action');
+      getCell(205, 3).should('contain', '2009-01-01');
+      getCell(205, 4).should('contain', '2009-05-05');
+      getCell(205, 7).contains(/[United State|Canada]*/);
+      getCell(205, 8).should('contain', 'Action');
 
       // reset scroll
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0, { ensureScrollable: false });

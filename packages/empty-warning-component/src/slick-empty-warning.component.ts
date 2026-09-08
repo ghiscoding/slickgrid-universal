@@ -64,16 +64,14 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     const rightElementMarginLeft = mergedOptions.rightViewportMarginLeft ?? 0;
     const leftElementFrozenMarginLeft = mergedOptions.frozenLeftViewportMarginLeft ?? 0;
     const rightElementFrozenMarginLeft = mergedOptions.frozenRightViewportMarginLeft ?? 0;
-    const isFrozenGrid =
-      (this.gridOptions?.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0) ||
-      this.gridOptions?.pinning?.columns !== undefined;
+    const isPinnedGrid = this.gridOptions?.pinning?.columns !== undefined;
     const leftViewportMarginLeft = typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
     const rightViewportMarginLeft = typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
 
     // when dealing with a grid that has "autoHeight" option, we need to override 2 height that get miscalculated
     // that is because it is not aware that we are adding this slick empty element in this grid DOM
     if (this.gridOptions.autoHeight) {
-      const leftPaneElm = document.querySelector<HTMLDivElement>(`.${gridUid} .slick-pane.slick-pane-top.slick-pane-left`);
+      const leftPaneElm = document.querySelector<HTMLDivElement>(`.${gridUid} .slick-pane.slick-pane-top`);
       if (leftPaneElm && leftPaneElm.style && gridCanvasElm && gridCanvasElm.style) {
         const leftPaneHeight = parseInt(leftPaneElm.style.height, 10) || 0; // this field auto calc by row height
 
@@ -120,29 +118,29 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     if (this._warningLeftElement) {
       // display/hide right/left messages
       let leftDisplay = isShowing ? 'flex' : 'none';
-      if (isFrozenGrid && isShowing) {
+      if (isPinnedGrid && isShowing) {
         leftDisplay = mergedOptions.hideFrozenLeftWarning ? 'none' : 'flex';
       }
       this._warningLeftElement.style.display = leftDisplay;
 
-      // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
+      // use correct left margin (defaults to 40% on regular grid or 10px on pinned grid)
       const leftFrozenMarginLeft =
         typeof leftElementFrozenMarginLeft === 'string' ? leftElementFrozenMarginLeft : `${leftElementFrozenMarginLeft}px`;
-      this._warningLeftElement.style.marginLeft = isFrozenGrid ? leftFrozenMarginLeft : leftViewportMarginLeft;
+      this._warningLeftElement.style.marginLeft = isPinnedGrid ? leftFrozenMarginLeft : leftViewportMarginLeft;
     }
 
     if (this._warningRightElement) {
-      // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
+      // use correct left margin (defaults to 40% on regular grid or 10px on pinned grid)
       let rightDisplay = isShowing ? 'flex' : 'none';
-      if (isFrozenGrid && isShowing) {
+      if (isPinnedGrid && isShowing) {
         rightDisplay = mergedOptions.hideFrozenRightWarning ? 'none' : 'flex';
       }
       this._warningRightElement.style.display = rightDisplay;
 
-      // use correct left margin (defaults to 40% on regular grid or 10px on frozen grid)
+      // use correct left margin (defaults to 40% on regular grid or 10px on pinned grid)
       const rightFrozenMarginLeft =
         typeof rightElementFrozenMarginLeft === 'string' ? rightElementFrozenMarginLeft : `${rightElementFrozenMarginLeft}px`;
-      this._warningRightElement.style.marginLeft = isFrozenGrid ? rightFrozenMarginLeft : rightViewportMarginLeft;
+      this._warningRightElement.style.marginLeft = isPinnedGrid ? rightFrozenMarginLeft : rightViewportMarginLeft;
     }
 
     return isShowing;

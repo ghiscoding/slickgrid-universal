@@ -19,7 +19,7 @@ import fetchJsonp from './jsonp.js';
 import { showToast } from './utilities.js';
 import './example04.scss';
 
-const ITEMS_COUNT = 40;
+const ITEMS_COUNT = 500;
 
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value) => {

@@ -1,6 +1,6 @@
 describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
-  const scrollOwner = '.grid47 .slick-docking-horizontal-scroller';
-  const row = (index: number) => `.grid47 .slick-row[data-row="${index}"]`;
+  const scrollOwner = '.slick-docking-horizontal-scroller';
+  const row = (index: number) => `.slick-row[data-row="${index}"]`;
   const cell = (rowIndex: number, columnIndex: number) => `${row(rowIndex)} .slick-cell.l${columnIndex}.r${columnIndex}`;
 
   beforeEach(() => {
@@ -9,8 +9,8 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
 
   it('should display the financial report title and all report columns', () => {
     cy.get('h3').should('contain', 'Example 47 - Sticky Financial Report');
-    cy.get('.grid47 .slick-header-column').should('have.length', 18);
-    cy.get('.grid47 .slick-header-column').then(($headers) => {
+    cy.get('.slick-header-column').should('have.length', 18);
+    cy.get('.slick-header-column').then(($headers) => {
       const ids = [...$headers].map((header) => header.getAttribute('data-id'));
       expect(ids).to.have.members([
         'account',
@@ -36,9 +36,9 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
   });
 
   it('should render the configured sticky columns at the initial viewport', () => {
-    cy.get('.grid47 .slick-header-column[data-id="account"]').should('have.class', 'financial-account-header');
+    cy.get('.slick-header-column[data-id="account"]').should('have.class', 'financial-account-header');
     for (const columnId of ['q1', 'q2', 'q3', 'q4', 'ytd']) {
-      cy.get(`.grid47 .slick-header-column[data-id="${columnId}"]`).should('have.class', 'financial-sticky-candidate-header');
+      cy.get(`.slick-header-column[data-id="${columnId}"]`).should('have.class', 'financial-sticky-candidate-header');
     }
     cy.get(`${row(0)} .slick-cell.financial-sticky-candidate`).should('have.length.at.least', 5);
     cy.get(`${row(0)} .slick-cell.financial-account-column`).should('exist');
@@ -52,7 +52,7 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
       ['q4', 16],
       ['ytd', 17],
     ] as const) {
-      cy.get(`.grid47 .slick-header-column[data-id="${columnId}"]`).should('have.class', 'slick-column-sticky');
+      cy.get(`.slick-header-column[data-id="${columnId}"]`).should('have.class', 'slick-column-sticky');
       cy.get(cell(0, columnIndex)).should('have.class', 'slick-cell-sticky');
     }
   });
@@ -78,7 +78,7 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
       ['q4', 16],
       ['ytd', 17],
     ] as const) {
-      cy.get(`.grid47 .slick-header-column[data-id="${columnId}"]`).then(($header) => {
+      cy.get(`.slick-header-column[data-id="${columnId}"]`).then(($header) => {
         cy.get(cell(0, columnIndex)).then(($cell) => {
           const headerLeft = $header[0].getBoundingClientRect().left;
           const cellLeft = $cell[0].getBoundingClientRect().left;
@@ -92,7 +92,7 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
     // At the left edge, the trailing quarter columns are docked to the right.
     cy.get(scrollOwner).scrollTo(0, 0, { ensureScrollable: false });
     for (const columnId of ['q2', 'q3', 'q4', 'ytd']) {
-      cy.get(`.grid47 .slick-header-column[data-id="${columnId}"]`)
+      cy.get(`.slick-header-column[data-id="${columnId}"]`)
         .should('have.class', 'slick-column-sticky')
         .and('have.class', 'slick-column-pinned-right');
     }
@@ -101,12 +101,12 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
     // remain docked at the trailing edge.
     cy.get(scrollOwner).scrollTo('50%', 0);
     for (const columnId of ['account', 'q1']) {
-      cy.get(`.grid47 .slick-header-column[data-id="${columnId}"]`)
+      cy.get(`.slick-header-column[data-id="${columnId}"]`)
         .should('have.class', 'slick-column-sticky')
         .and('have.class', 'slick-column-pinned-left');
     }
     for (const columnId of ['q3', 'q4', 'ytd']) {
-      cy.get(`.grid47 .slick-header-column[data-id="${columnId}"]`)
+      cy.get(`.slick-header-column[data-id="${columnId}"]`)
         .should('have.class', 'slick-column-sticky')
         .and('have.class', 'slick-column-pinned-right');
     }
@@ -115,7 +115,7 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
     // on the left while the later periods occupy their natural positions.
     cy.get(scrollOwner).scrollTo('right');
     for (const columnId of ['account', 'q1', 'q2']) {
-      cy.get(`.grid47 .slick-header-column[data-id="${columnId}"]`)
+      cy.get(`.slick-header-column[data-id="${columnId}"]`)
         .should('have.class', 'slick-column-sticky')
         .and('have.class', 'slick-column-pinned-left');
     }
@@ -125,9 +125,7 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
     // At the initial position Q2 is docked at the trailing edge. ArrowRight
     // must reveal its natural position before making it active.
     cy.get(scrollOwner).scrollTo(0, 0, { ensureScrollable: false });
-    cy.get('.grid47 .slick-header-column[data-id="q2"]')
-      .should('have.class', 'slick-column-sticky')
-      .and('have.class', 'slick-column-pinned-right');
+    cy.get('.slick-header-column[data-id="q2"]').should('have.class', 'slick-column-sticky').and('have.class', 'slick-column-pinned-right');
     cy.get(cell(0, 7)).should('exist').click({ force: true });
     cy.get(scrollOwner)
       .invoke('prop', 'scrollLeft')
@@ -146,7 +144,7 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
 
   it('should keep sticky summary rows keyboard-addressable after scrolling to the report totals', () => {
     cy.get(scrollOwner).scrollTo('right');
-    cy.get('.grid47 .slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
     cy.get(`${row(20)} .slick-cell`).should('exist');
     cy.get(`${row(20)} .slick-cell.l0.r0`)
       .click()
@@ -155,7 +153,7 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
   });
 
   it('should dock all three summary rows to the bottom after they have been seen', () => {
-    const viewport = '.grid47 .slick-viewport-top.slick-viewport-left';
+    const viewport = '.slick-viewport-top.slick-viewport-left';
 
     // First reveal the summary rows so two-sided stickiness is eligible.
     cy.get(viewport).scrollTo('bottom');
@@ -172,8 +170,8 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
 
   it('should toggle the subtitle without destroying the sticky grid', () => {
     cy.get('[data-test="toggle-subtitle"]').click();
-    cy.get('.grid47 .slick-header-column[data-id="account"]').should('exist');
+    cy.get('.slick-header-column[data-id="account"]').should('exist');
     cy.get('[data-test="toggle-subtitle"]').click();
-    cy.get('.grid47 .slick-header-column[data-id="ytd"]').should('exist');
+    cy.get('.slick-header-column[data-id="ytd"]').should('exist');
   });
 });

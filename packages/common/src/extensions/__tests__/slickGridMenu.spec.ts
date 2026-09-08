@@ -382,7 +382,7 @@ describe('GridMenuControl', () => {
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
 
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
+        expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
 
@@ -390,26 +390,6 @@ describe('GridMenuControl', () => {
         gridStub.onClick.notify({ row: 1, cell: 2, grid: gridStub }, eventData as any, gridStub);
 
         expect(control.menuElement).toBeFalsy();
-      });
-
-      it('should expect the Grid Menu to change from the Left side container to the Right side when changing from a regular to a frozen grid via "setOptions"', () => {
-        const recreateSpy = vi.spyOn(control, 'recreateGridMenu');
-        sharedService.slickGrid = gridStub;
-
-        control.initEventHandlers();
-        gridStub.onSetOptions.notify(
-          { grid: gridStub, optionsBefore: { frozenColumn: -1 }, optionsAfter: { frozenColumn: 2 } },
-          new SlickEventData(),
-          gridStub
-        );
-        expect(recreateSpy).toHaveBeenCalledTimes(1);
-
-        gridStub.onSetOptions.notify(
-          { grid: gridStub, optionsBefore: { frozenColumn: 2 }, optionsAfter: { frozenColumn: -1 } },
-          new SlickEventData(),
-          gridStub
-        );
-        expect(recreateSpy).toHaveBeenCalledTimes(2);
       });
 
       it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called when defined', () => {
@@ -429,7 +409,7 @@ describe('GridMenuControl', () => {
         control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
         const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
 
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
+        expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(liElmList[2].textContent).toBe('Billing - Field 3');
@@ -452,7 +432,7 @@ describe('GridMenuControl', () => {
         control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
         const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
 
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
+        expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(liElmList[2].textContent).toBe('Field 3');
@@ -551,7 +531,7 @@ describe('GridMenuControl', () => {
         const inputForcefitElm = control.menuElement!.querySelector('#slickgrid_124343-gridmenu-colpicker-forcefit') as HTMLInputElement;
         const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-forcefit]') as HTMLLabelElement;
 
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
+        expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(inputForcefitElm.checked).toBeTruthy();
@@ -576,7 +556,7 @@ describe('GridMenuControl', () => {
         const inputSyncElm = control.menuElement!.querySelector('#slickgrid_124343-gridmenu-colpicker-syncresize') as HTMLInputElement;
         const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-syncresize]') as HTMLLabelElement;
 
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
+        expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(inputSyncElm.checked).toBeTruthy();
@@ -609,7 +589,7 @@ describe('GridMenuControl', () => {
           visibleColumns: columnsMock,
           grid: gridStub,
         };
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
+        expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(onColChangedMock).toHaveBeenCalledWith(expect.anything(), expectedCallbackArgs);
@@ -636,7 +616,7 @@ describe('GridMenuControl', () => {
         const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-forcefit]') as HTMLLabelElement;
         inputForcefitElm.dispatchEvent(new Event('click', { bubbles: true }));
 
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
+        expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(inputForcefitElm.checked).toBeTruthy();
         expect(inputForcefitElm.dataset.option).toBe('autoresize');
@@ -665,7 +645,7 @@ describe('GridMenuControl', () => {
         const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-syncresize]') as HTMLLabelElement;
         inputSyncElm.dispatchEvent(new Event('click', { bubbles: true }));
 
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
+        expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(inputSyncElm.checked).toBeTruthy();
         expect(inputSyncElm.dataset.option).toBe('syncresize');
@@ -2576,7 +2556,7 @@ describe('GridMenuControl', () => {
         gridStub.onColumnsReordered.notify({ impactedColumns: columnsUnorderedMock, previousColumnOrder: [], grid: gridStub }, eventData as any, gridStub);
         control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
 
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
+        expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(control.columns).toEqual(columnsMock);
@@ -2632,7 +2612,7 @@ describe('GridMenuControl', () => {
           }
         }
 
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
+        expect(handlerSpy).toHaveBeenCalledTimes(3);
 
         // Verify that columns are displayed in alphabetical order: Alpha Field, Beta Field, Zebra Field
         expect(columnLabels).toEqual(['Zebra Field', 'Beta Field']);
@@ -2682,7 +2662,7 @@ describe('GridMenuControl', () => {
           }
         }
 
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
+        expect(handlerSpy).toHaveBeenCalledTimes(3);
 
         // Verify that columns are displayed in alphabetical order: Alpha Field, Beta Field, Zebra Field
         expect(columnLabels).toEqual(sortedColumnsMock.map((c) => c.name));
@@ -2730,7 +2710,7 @@ describe('GridMenuControl', () => {
       const labelForcefitElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-forcefit]') as HTMLLabelElement;
       const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-syncresize]') as HTMLLabelElement;
 
-      expect(handlerSpy).toHaveBeenCalledTimes(4);
+      expect(handlerSpy).toHaveBeenCalledTimes(3);
       expect(labelForcefitElm.textContent).toBe('Ajustement forcé des colonnes');
       expect(labelSyncElm.textContent).toBe('Redimension synchrone');
       expect(utilitySpy).toHaveBeenCalled();
@@ -2779,7 +2759,7 @@ describe('GridMenuControl', () => {
       const labelForcefitElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-forcefit]') as HTMLLabelElement;
       const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-syncresize]') as HTMLLabelElement;
 
-      expect(handlerSpy).toHaveBeenCalledTimes(4);
+      expect(handlerSpy).toHaveBeenCalledTimes(3);
       // expect(commandTitleElm.textContent).toBe('Custom Command Title');
       expect(columnTitleElm.textContent).toBe('Custom Column Title');
       expect(labelForcefitElm.textContent).toBe('Custom Force Fit Title');

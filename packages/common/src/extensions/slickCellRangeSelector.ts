@@ -49,12 +49,6 @@ export class SlickCellRangeSelector {
   protected _dragReplaceHandleActive = false;
   protected _addToSelection = false;
 
-  // Frozen row & column variables
-  protected _columnOffset = 0;
-  protected _rowOffset = 0;
-  protected _isRightCanvas = false;
-  protected _isBottomCanvas = false;
-
   // autoScroll related variables
   protected _activeViewport!: HTMLElement;
   protected _autoScrollTimerId?: any;
@@ -147,8 +141,11 @@ export class SlickCellRangeSelector {
 
   getMouseOffsetViewport(e: MouseEvent | TouchEvent, dd: DragPosition): MouseOffsetViewport {
     const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
-    const viewportLeft = this._activeViewport.scrollLeft;
-    const viewportTop = this._activeViewport.scrollTop;
+    // The active body viewport does not own horizontal scrolling when column
+    // pinning is enabled. Use the grid's last scroll event so range selection
+    // compares cell positions with the shared docking scrollbar offset.
+    const viewportLeft = this._scrollLeft;
+    const viewportTop = this._scrollTop;
     const viewportRight = viewportLeft + this._viewportWidth;
     const viewportBottom = viewportTop + this._viewportHeight;
 
@@ -289,29 +286,11 @@ export class SlickCellRangeSelector {
   protected handleDragTo(e: { pageX: number; pageY: number }, dd: DragPosition): void {
     const targetEvent: MouseEvent | Touch = (e as unknown as TouchEvent)?.touches?.[0] ?? e;
     const end = this._grid.getCellFromPoint(
-      targetEvent.pageX - getOffset(this._activeCanvas).left + this._columnOffset,
-      targetEvent.pageY - getOffset(this._activeCanvas).top + this._rowOffset
+      targetEvent.pageX - getOffset(this._activeCanvas).left,
+      targetEvent.pageY - getOffset(this._activeCanvas).top
     );
 
     if (end !== undefined) {
-      // ... frozen column(s),
-      if (
-        this._gridOptions.frozenColumn! >= 0 &&
-        ((!this._isRightCanvas && end.cell > this._gridOptions.frozenColumn!) ||
-          (this._isRightCanvas && end.cell <= this._gridOptions.frozenColumn!))
-      ) {
-        return;
-      }
-
-      // ... or frozen row(s)
-      if (
-        this._gridOptions.frozenRow! >= 0 &&
-        ((!this._isBottomCanvas && end.row >= this._gridOptions.frozenRow!) ||
-          (this._isBottomCanvas && end.row < this._gridOptions.frozenRow!))
-      ) {
-        return;
-      }
-
       // scrolling the viewport to display the target `end` cell if it is not fully displayed
       if (this.addonOptions.autoScroll && this._draggingMouseOffset) {
         const endCellBox = this._grid.getCellNodeBox(end.row, end.cell);
@@ -324,7 +303,6 @@ export class SlickCellRangeSelector {
         }
       }
 
-      // ... or regular grid (without any frozen options)
       if (!this._grid.canCellBeSelected(end.row, end.cell)) {
         return;
       }
@@ -364,10 +342,7 @@ export class SlickCellRangeSelector {
     this.stopIntervalTimer();
     const targetEvent: MouseEvent | Touch = (e as unknown as TouchEvent)?.touches?.[0] ?? e;
     const canvasOffset = getOffset(this._activeCanvas);
-    const end = this._grid.getCellFromPoint(
-      targetEvent.pageX - (canvasOffset?.left ?? 0) + this._columnOffset,
-      targetEvent.pageY - (canvasOffset?.top ?? 0) + this._rowOffset
-    );
+    const end = this._grid.getCellFromPoint(targetEvent.pageX - (canvasOffset?.left ?? 0), targetEvent.pageY - (canvasOffset?.top ?? 0));
     const cornerCell =
       !this._dragReplaceHandleActive || !this._previousSelectedRange
         ? dd.range.start
@@ -403,21 +378,6 @@ export class SlickCellRangeSelector {
       x: this._grid.getAbsoluteColumnMinWidth() / 2,
       y: this._gridOptions.rowHeight! / 2,
     };
-
-    this._rowOffset = 0;
-    this._columnOffset = 0;
-    this._isBottomCanvas = this._activeCanvas.classList.contains('grid-canvas-bottom');
-
-    if (this._gridOptions.frozenRow! > -1 && this._isBottomCanvas) {
-      const canvasSelector = `${this.gridUidSelector} .grid-canvas-${this._gridOptions.frozenBottom ? 'bottom' : 'top'}`;
-      this._rowOffset = document.querySelector(canvasSelector)?.clientHeight ?? 0;
-    }
-
-    this._isRightCanvas = this._activeCanvas.classList.contains('grid-canvas-right');
-
-    if (this._gridOptions.frozenColumn! > -1 && this._isRightCanvas) {
-      this._columnOffset = document.querySelector(`${this.gridUidSelector} .grid-canvas-left`)?.clientWidth ?? 0;
-    }
 
     this._dragReplaceHandleActive = dd.matchClassTag === 'dragReplaceHandle';
     this._addToSelection =
@@ -461,15 +421,8 @@ export class SlickCellRangeSelector {
     this._grid.focus('internal');
 
     const canvasOffset = getOffset(this._canvas);
-    let startX = dd.startX - canvasOffset.left;
-    if (this._gridOptions.frozenColumn! >= 0 && this._isRightCanvas) {
-      startX += this._scrollLeft;
-    }
-
-    let startY = dd.startY - canvasOffset.top;
-    if (this._gridOptions.frozenRow! >= 0 && this._isBottomCanvas) {
-      startY += this._scrollTop;
-    }
+    const startX = dd.startX - canvasOffset.left;
+    const startY = dd.startY - canvasOffset.top;
 
     let start: { row: number | undefined; cell: number | undefined } | null;
     this._selectionMode = this._dragReplaceHandleActive ? 'REP' : 'SEL';

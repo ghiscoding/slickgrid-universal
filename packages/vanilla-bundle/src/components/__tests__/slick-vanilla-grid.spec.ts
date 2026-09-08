@@ -418,12 +418,12 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect((instance.extensionService as any).lazyGridService()).toBeDefined();
   });
 
-  it('should load enabled mousewheel scrolling when using a frozen grid', () => {
+  it('should not force mousewheel scrolling when using the single-viewport legacy frozen options', () => {
     component.gridOptions.enableMouseWheelScrollHandler = undefined;
     component.gridOptions.frozenRow = 3;
     component.initialization(divContainer, slickEventHandler);
 
-    expect(component.gridOptions.enableMouseWheelScrollHandler).toBe(true);
+    expect(component.gridOptions.enableMouseWheelScrollHandler).toBeUndefined();
   });
 
   it('should keep frozen column index reference (via frozenVisibleColumnId) when grid is a frozen grid', () => {

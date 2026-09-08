@@ -659,16 +659,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this._eventHandler = eventHandler;
     this._isAutosizeColsCalled = false;
 
-    // when detecting a frozen grid, we'll automatically enable the mousewheel scroll handler so that we can scroll from both left/right frozen containers
-    if (
-      this.options &&
-      ((this.options.frozenRow !== undefined && this.options.frozenRow >= 0) ||
-        (this.options.frozenColumn !== undefined && this.options.frozenColumn >= 0)) &&
-      this.options.enableMouseWheelScrollHandler === undefined
-    ) {
-      this.options.enableMouseWheelScrollHandler = true;
-    }
-
     this._eventPubSubService.eventNamingStyle = this.options?.eventNamingStyle ?? 'camelCase';
     this._eventPubSubService.publish('onBeforeGridCreate', true);
 

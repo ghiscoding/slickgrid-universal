@@ -54,10 +54,6 @@ const DEFAULT_OPTIONS: Required<DockingOption> = {
   stickyHysteresis: 2,
 };
 
-// Permanent pins and scroll-activated sticky items share this resolver. The
-// sticky feature is exercised by Vanilla Example 47's quarterly report.
-const STICKY_DOCKING_ENABLED = true;
-
 /**
  * Resolves permanent pinning and scroll-activated stickiness into the same three-band model.
  * It is deliberately DOM-free so the virtual renderer only has to react when band membership changes.
@@ -124,9 +120,6 @@ export class DockingController<C extends Column = Column> {
     // First record which candidates have actually been visible. A sticky item
     // must not materialize merely because the user jumped across it.
     center.forEach((entry) => {
-      if (!STICKY_DOCKING_ENABLED) {
-        return;
-      }
       const sticky = columns[entry.index].sticky;
       if (!sticky) {
         return;
@@ -294,9 +287,6 @@ export class DockingController<C extends Column = Column> {
 
     const visibleBottom = scrollTop + Math.max(0, viewportHeight - topHeight - bottomHeight);
     center.forEach((row) => {
-      if (!STICKY_DOCKING_ENABLED) {
-        return;
-      }
       const isStickyBoth = stickyBothIds.has(row.id) || stickyBothIds.has(row.index);
       const isStickyTop = isStickyBoth || stickyTopIds.has(row.id) || stickyTopIds.has(row.index);
       const isStickyBottom = isStickyBoth || stickyBottomIds.has(row.id) || stickyBottomIds.has(row.index);

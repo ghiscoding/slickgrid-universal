@@ -302,7 +302,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
         .contains(/(true|false)+$/);
 
       cy.get('.grid1')
-        .find('.slick-pane-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(3)')
+        .find('.slick-header-columns .slick-header-column[role="columnheader"]:nth(3)')
         .trigger('mouseover')
         .children('.slick-header-menu-button')
         .invoke('show')
@@ -360,7 +360,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
         .contains(/(true|false)+$/);
 
       cy.get('.grid1')
-        .find('.slick-pane-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(3)')
+        .find('.slick-header-columns .slick-header-column[role="columnheader"]:nth(3)')
         .trigger('mouseover')
         .children('.slick-header-menu-button')
         .invoke('show')

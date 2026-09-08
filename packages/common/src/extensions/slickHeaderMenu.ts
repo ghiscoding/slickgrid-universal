@@ -47,6 +47,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     buttonImage: null,
     minWidth: 100,
     hideColumnHideCommand: false,
+    // Single-column pinning is opt-in; preserve the legacy menu by default.
+    hidePinColumnCommand: true,
     hideSortCommands: false,
     title: '',
     subMenuOpenByEvent: 'mouseover',
@@ -363,7 +365,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
           // Single-column pinning. This is independent of the bulk index
           // command above and writes only the selected column definition.
-          if (headerMenuOptions && !headerMenuOptions.hidePinColumnCommand) {
+          if (headerMenuOptions && !this._addonOptions?.hidePinColumnCommand) {
             hasFrozenOrResizeCommand = true;
             const isPinned = columnDef.pinned === 'left' || columnDef.pinned === 'right';
             if (isPinned) {

@@ -233,39 +233,17 @@ describe('HeaderGroupingService', () => {
       expect(divHeaderColumns[0].outerHTML).toEqual(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns">All your colums div here</div>`);
     });
 
-    it('should render the pre-header twice (for both left & right viewports) row grouping title DOM element', () => {
-      const frozenColumns = 2;
-      gridOptionMock.frozenColumn = frozenColumns;
-      const headerGroupSpy = vi.spyOn(service, 'renderHeaderGroups');
-      const preHeaderLeftSpy = vi.spyOn(gridStub, 'getPreHeaderPanelLeft').mockReturnValue(document.createElement('div'));
-      const preHeaderRightSpy = vi.spyOn(gridStub, 'getPreHeaderPanelRight').mockReturnValue(document.createElement('div'));
-      const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
-
-      service.init(gridStub);
-      vi.runAllTimers(); // fast-forward timer
-
-      expect(preHeaderLeftSpy).toHaveBeenCalledTimes(1);
-      expect(preHeaderRightSpy).toHaveBeenCalledTimes(1);
-      expect(headerGroupSpy).toHaveBeenNthCalledWith(1, expect.anything(), 0, frozenColumns + 1);
-      expect(headerGroupSpy).toHaveBeenNthCalledWith(2, expect.anything(), frozenColumns + 1, mockColumns.length);
-      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
-      expect(divHeaderColumns.length).toBeGreaterThan(2);
-      expect(divHeaderColumns[0].outerHTML).toEqual(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns">All your colums div here</div>`);
-    });
-
-    it('should render the pre-header row grouping title after changing "frozenColumn" with grid "setOptions"', () => {
+    it('should keep rendering the pre-header row grouping title after grid options change', () => {
       const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
       service.init(gridStub);
-      gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: { frozenColumn: -1 }, optionsAfter: { frozenColumn: 1 } }, new SlickEventData(), gridStub);
+      gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: {}, optionsAfter: {} }, new SlickEventData(), gridStub);
       vi.runAllTimers(); // fast-forward timer
 
       expect(renderSpy).toHaveBeenCalledTimes(1);
-      expect(setTimeoutSpy).toHaveBeenCalledTimes(2);
-      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 0);
+      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
       expect(divHeaderColumns.length).toBeGreaterThan(2);
       expect(divHeaderColumns[0].outerHTML).toEqual(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns">All your colums div here</div>`);
     });

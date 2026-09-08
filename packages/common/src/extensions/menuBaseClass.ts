@@ -963,10 +963,12 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
         }
         const gridPos = this.grid.getGridPosition();
         const browserWidth = document.documentElement.clientWidth;
+        const requestedDropSide = (addonOptions as CellMenu | ContextMenu)?.dropSide;
         const dropSide = subMenuPosCalc >= gridPos.width || subMenuPosCalc >= browserWidth ? 'left' : 'right';
+        const effectiveDropSide = isSubMenu && requestedDropSide === 'right' ? 'right' : dropSide;
 
         let needHeaderMenuOffsetLeftRecalc = false;
-        if (dropSide === 'left' || (!isSubMenu && (addonOptions as CellMenu | ContextMenu)?.dropSide === 'left')) {
+        if (effectiveDropSide === 'left' || (!isSubMenu && requestedDropSide === 'left')) {
           menuElm.classList.remove('dropright');
           menuElm.classList.add('dropleft');
           if (this.pluginName === 'HeaderMenu') {
@@ -1001,6 +1003,25 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
             menuOffsetLeft =
               menuOffsetLeft + targetElm.clientWidth - menuElm.clientWidth + ((addonOptions as HeaderMenuOption)?.autoAlignOffset || 0);
           }
+        }
+      }
+
+      // Context menus are appended to document.body and therefore use document
+      // coordinates. A right-click on a cell that is outside the visible area
+      // (for example after widening columns) can otherwise place the menu far
+      // outside the grid. Keep the root context menu within the grid viewport.
+      if (this.pluginName === 'ContextMenu' && !isSubMenu) {
+        const containerRect = containerElm.getBoundingClientRect();
+        const pageOffsetX = window.pageXOffset || document.documentElement.scrollLeft || 0;
+        const pageOffsetY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        const gridLeft = containerRect.left + pageOffsetX;
+        const gridTop = containerRect.top + pageOffsetY;
+        const gridRight = containerRect.right + pageOffsetX;
+        const gridBottom = containerRect.bottom + pageOffsetY;
+
+        if (gridRight > gridLeft && gridBottom > gridTop && Number.isFinite(menuOffsetLeft) && Number.isFinite(menuOffsetTop)) {
+          menuOffsetLeft = Math.min(Math.max(menuOffsetLeft, gridLeft), Math.max(gridLeft, gridRight - menuWidth));
+          menuOffsetTop = Math.min(Math.max(menuOffsetTop, gridTop), Math.max(gridTop, gridBottom - menuHeight));
         }
       }
 

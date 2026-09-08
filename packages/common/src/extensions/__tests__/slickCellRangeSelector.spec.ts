@@ -123,6 +123,41 @@ describe('CellRangeSelector Plugin', () => {
     expect(plugin.getCellDecorator()).toBeTruthy();
   });
 
+  it('should expose the grid UID and selector after initialization', () => {
+    expect(plugin.gridUid).toBe('');
+    expect(plugin.gridUidSelector).toBe('');
+
+    plugin.init(gridStub);
+
+    expect(plugin.gridUid).toBe(GRID_UID);
+    expect(plugin.gridUidSelector).toBe(`.${GRID_UID}`);
+  });
+
+  it('should use the grid scroll event offset when calculating the active viewport bounds', () => {
+    const viewport = document.createElement('div');
+    Object.defineProperties(viewport, {
+      scrollLeft: { configurable: true, value: 0 },
+      scrollTop: { configurable: true, value: 0 },
+    });
+    vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue({ left: 20, top: 30, right: 120, bottom: 80 } as DOMRect);
+    (plugin as any)._activeViewport = viewport;
+    (plugin as any)._viewportWidth = 100;
+    (plugin as any)._viewportHeight = 50;
+    plugin.init(gridStub);
+
+    gridStub.onScroll.notify({ scrollHeight: 1000, scrollTop: 40, scrollLeft: 60, grid: gridStub }, addVanillaEventPropagation(new Event('scroll')), gridStub);
+
+    const result = plugin.getMouseOffsetViewport({ pageX: 70, pageY: 50 } as MouseEvent, {} as any);
+
+    expect(result.viewport).toEqual({
+      left: 60,
+      top: 40,
+      right: 160,
+      bottom: 90,
+      offset: { left: 20, top: 30, right: 120, bottom: 80 },
+    });
+  });
+
   it('should handle drag but return without executing anything when item cannot be dragged and cell cannot be selected', () => {
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
@@ -713,7 +748,7 @@ describe('CellRangeSelector Plugin', () => {
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
-    expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 14);
+    expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 4);
 
     vi.advanceTimersByTime(7);
     expect(onCellRangeSelectingSpy).not.toHaveBeenCalled();
@@ -776,7 +811,7 @@ describe('CellRangeSelector Plugin', () => {
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
-    expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 14);
+    expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 4);
 
     vi.advanceTimersByTime(7);
 
@@ -909,7 +944,7 @@ describe('CellRangeSelector Plugin', () => {
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
-    expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 14);
+    expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 4);
 
     vi.advanceTimersByTime(7);
 

@@ -20,7 +20,7 @@ vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
 
 const mockGridOptions = {
   enableTranslate: false,
-  frozenColumn: 0,
+  pinning: { columns: { left: 0 } },
 } as GridOption;
 
 const gridStub = {
@@ -142,8 +142,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.textContent).toBe('No data to display.');
     });
 
-    it('should expect the Slick-Empty-Warning to be created in both viewports when using Frozen Grid but NOT displayed on left when "hideFrozenLeftWarning" flag is enabled', () => {
-      mockGridOptions.frozenColumn = 2;
+    it('should expect the Slick-Empty-Warning to be created in both viewports when using pinned columns but NOT displayed on left when "hideFrozenLeftWarning" flag is enabled', () => {
+      mockGridOptions.pinning = { columns: { left: 2 } };
       (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenLeftWarning = true;
       (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenRightWarning = false;
       component = new SlickEmptyWarningComponent();
@@ -169,7 +169,7 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created and use different left margin when "leftViewportMarginLeft" is set', () => {
-      mockGridOptions.frozenColumn = -1;
+      mockGridOptions.pinning = undefined;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
@@ -194,7 +194,7 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created with proper height when defining a grid that has the "autoHeight" grid option', () => {
-      mockGridOptions.frozenColumn = -1;
+      mockGridOptions.pinning = undefined;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
@@ -224,7 +224,7 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created with calculated height including preHeader & filter headerRow when they are both defined in the grid options with "autoHeight" as well', () => {
-      mockGridOptions.frozenColumn = -1;
+      mockGridOptions.pinning = undefined;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
@@ -260,7 +260,7 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created when defining a grid that has the "autoHeight" grid option but hidden when calling it the show warning with True then False', () => {
-      mockGridOptions.frozenColumn = -1;
+      mockGridOptions.pinning = undefined;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
@@ -293,7 +293,7 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created and use different left margin when "rightViewportMarginLeft" is set', () => {
-      mockGridOptions.frozenColumn = -1;
+      mockGridOptions.pinning = undefined;
       (mockGridOptions.emptyDataWarning as EmptyWarning).rightViewportMarginLeft = '40%';
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
@@ -320,7 +320,7 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created in both viewports and use different left margin when "frozenLeftViewportMarginLeft" is set', () => {
-      mockGridOptions.frozenColumn = 2;
+      mockGridOptions.pinning = { columns: { left: 2 } };
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       (mockGridOptions.emptyDataWarning as EmptyWarning).frozenLeftViewportMarginLeft = '15px';
       component = new SlickEmptyWarningComponent();
@@ -346,7 +346,7 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created in both viewports and use different left margin when "frozenRightViewportMarginLeft" is set', () => {
-      mockGridOptions.frozenColumn = 2;
+      mockGridOptions.pinning = { columns: { left: 2 } };
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       (mockGridOptions.emptyDataWarning as EmptyWarning).frozenRightViewportMarginLeft = '22px';
       component = new SlickEmptyWarningComponent();
@@ -371,8 +371,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.textContent).toBe('No data to display.');
     });
 
-    it('should expect the Slick-Empty-Warning to be created in both viewports when using Frozen Grid but NOT displayed on right when "hideFrozenRightWarning" flag is enabled', () => {
-      mockGridOptions.frozenColumn = 2;
+    it('should expect the Slick-Empty-Warning to be created in both viewports when using pinned columns but NOT displayed on right when "hideFrozenRightWarning" flag is enabled', () => {
+      mockGridOptions.pinning = { columns: { left: 2 } };
       (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenLeftWarning = false;
       (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenRightWarning = true;
       component = new SlickEmptyWarningComponent();

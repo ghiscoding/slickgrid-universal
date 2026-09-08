@@ -120,18 +120,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
     // subscribe to the grid, when it's destroyed, we should also destroy the Grid Menu
     this._eventHandler.subscribe(this.grid.onBeforeDestroy, this.dispose.bind(this));
-
-    // when a grid optionally changes from a regular grid to a frozen grid, we need to destroy & recreate the grid menu
-    // we do this change because the Grid Menu is on the left container for a regular grid, it should however be displayed on the right container for a frozen grid
-    this._eventHandler.subscribe(this.grid.onSetOptions, (_e, args) => {
-      if (args && args.optionsBefore && args.optionsAfter) {
-        const switchedFromRegularToFrozen = args.optionsBefore.frozenColumn! >= 0 && args.optionsAfter.frozenColumn === -1;
-        const switchedFromFrozenToRegular = args.optionsBefore.frozenColumn === -1 && args.optionsAfter.frozenColumn! >= 0;
-        if (switchedFromRegularToFrozen || switchedFromFrozenToRegular) {
-          this.recreateGridMenu();
-        }
-      }
-    });
   }
 
   /** Initialize plugin. */
@@ -208,13 +196,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   createGridMenu(): void {
     const gridMenuWidth = (this._addonOptions?.menuWidth || this._defaults.menuWidth) as number;
     const gridContainer = this.grid.getContainerNode();
-    const headerSide = this.gridOptions.hasOwnProperty('frozenColumn') && this.gridOptions.frozenColumn! >= 0 ? 'right' : 'left';
-
     // find the header or pre-header element where to insert the grid menu button
     this._headerElm =
       this._addonOptions?.iconButtonContainer === 'preheader'
         ? gridContainer.querySelector<HTMLDivElement>('.slick-preheader-panel')
-        : gridContainer.querySelector<HTMLDivElement>(`.slick-header-${headerSide}`);
+        : gridContainer.querySelector<HTMLDivElement>('.slick-header-left');
 
     if (this._headerElm?.parentElement && this._addonOptions) {
       if (this._addonOptions.showButton ?? this._defaults.showButton) {

@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness POC — progress handoff
 
-Last updated: 2026-09-07 (safe LOC cleanup complete; legacy freeze removal explicitly scheduled immediately after the first PR)
+Last updated: 2026-09-08 (first legacy-freeze removal pass complete; follow-up audit still required)
 
 ## Goal
 
@@ -47,28 +47,25 @@ The header commands are now pinning-aware: bulk actions emit
 single-column actions emit `pin-column`/`unpin-column` and use `PIN_COLUMN`/
 `UNPIN_COLUMN` labels. None recreates the old two-pane freeze layout.
 
-The POC has now gone through visual hardening and selected Cypress migration. Unit tests,
-coverage, the full Cypress matrix, framework validation, and documentation remain follow-up
-work after the legacy freeze deletion pass.
+The POC has now gone through visual hardening, selected Cypress migration, and a first
+legacy-freeze removal pass. Unit tests, coverage, the full Cypress matrix, framework validation,
+and documentation are now follow-up work in progress. The legacy deletion is not considered
+complete yet; another audit pass is still required.
 
 ## Refactoring status and immediate follow-up
 
-The behavior-preserving cleanup pass is complete, but the refactoring is **not complete**.
-The current pass only deduplicated docking-overlay event binding, shared header/footer
-scroll forwarding, docking predicates, and repetitive comments. It intentionally did not
-remove the legacy frozen implementation because the first PR is being used as the POC
-checkpoint.
+The behavior-preserving cleanup pass and a first legacy-freeze deletion pass are complete, but
+the refactoring is **not complete**. The first deletion pass substantially reduced the old
+multi-pane branches in `SlickGrid` and related service, extension, and wrapper paths. A second
+audit is still required before this work can be treated as finished.
 
-The legacy freeze/pane removal is the **immediate next task after creating the first PR**;
-it must happen before adding more compatibility branches or treating the current code as
-the final architecture. The old frozen options, pane fields, synchronized-scroll branches,
-validation paths, state/menu plumbing, and frozen SCSS remain temporary and must be deleted
-in that follow-up breaking-change pass.
+Remaining references include legacy names and compatibility paths in shared state/services,
+empty-warning and resizer options, extension assumptions, tests, and framework integrations.
+Remove or deliberately rename those references while preserving the single-viewport invariants;
+do not add new compatibility branches.
 
-Current working-tree library delta relative to `HEAD` (packages, excluding tests/demos) is
-approximately `+2,886 / -387`, or **+2,499 net LOC**. This is a POC snapshot, not the
-expected post-cleanup size. Recalculate the production LOC immediately after the legacy
-deletion pass; do not use the earlier planning estimate as the final number.
+The previous working-tree LOC estimate is stale after the deletion pass. Recalculate production
+LOC after the follow-up audit rather than using the earlier planning estimate.
 
 ## Maintainability acceptance gate
 
@@ -99,7 +96,8 @@ The final implementation must satisfy all of the following:
 
 Do not revive a `ViewportMgr` merely to conceal the old multi-pane renderer. In this design,
 deleting the multi-pane renderer is simpler and better aligned with the major-version breaking
-change. This gate is a required review item before tests, documentation, or release work begin.
+change. This gate remains a required review item before final acceptance; focused tests and
+documentation work may continue while the follow-up deletion audit is underway.
 
 ## leftover TODOs identified by user
 - [x] Unified grid options support pinning (left, right, top, bottom)
@@ -123,6 +121,7 @@ change. This gate is a required review item before tests, documentation, or rele
 - a11y issues with sticky example when using arrows to navigate, it jumps from a center column to a sticky column, is that expected? I would think that it should rather move the scroll instead and show next data cell instead (that is what we were doing in the legacy freezing, also need to verify new pinning feature).
 - probably need more pinning Cypress test in vanilla example04.cy.ts to cover the new feature vs legacy frozen feature.
 - why is context menu opened outside of the grid viewport in vanilla example04.cy.ts? The context menu position is unexpected (seemed to be the tests in describe "accessibility sub-menus tests").
+- did we remove all frozen legacy stuff? We didn't, for example: change `frozenVisibleColumnId` according to new pinning naming
 - address comment brought up in SlickGrid for new pinning/sticky features:
   > I think the major version would indicate this well enough. yeah its a bit more than a break, its a feature deprecation sort of, but the replacement is subjectively better for me.
   > what the latest push in AI development made me think of though is that we might should start thinking about shipping curated skills along with the library. that would serve two purposes. first, LLMs would know better how to apply specific features from slickgrid on the consumer end. but secondly, the skills could also act as a verification of the docs and thus overall improve the development of new features as LLMs could check up on skills when touching existing features
@@ -612,7 +611,10 @@ requirements are the two largest sources of variance.
   remaining bottom-edge assertion that still needs follow-up; do not spend more
   migration time here until the other spec failures are triaged.
 
-1. **Legacy freeze code is inert, not fully deleted.** `setFrozenOptions()` forces `frozenColumn`/`frozenRow` to `-1` and `frozenBottom` to `false`. Many dead fields, branches, validation callbacks, services, grid-state shapes, styles, and public option types remain and must be removed after acceptance.
+1. **The first legacy deletion pass is not the final cleanup.** Remaining `frozen*` names,
+   compatibility branches, state/service fields, extension assumptions, tests, styles, and
+   public option remnants still need a deliberate second audit. `frozenVisibleColumnId` and
+   frozen-related empty-warning/resizer options are examples that still require review.
 2. **Old options intentionally no longer work.** `frozenColumn`, `frozenRow`, and `frozenBottom` are not valid ways to configure this POC. The existing `Freeze Columns` menu label remains for migration familiarity, but its implementation writes the canonical `pinning` option. `GridService.setPinning()` accepts the unified nested shape.
 3. **Visual/browser validation is incomplete.** Left/right pinning, bottom rows, sticky transitions, resize, reorder, RTL, variable row height, row/column spans, editors, selection, and all four framework wrappers need manual follow-up.
 4. **Colspans crossing docking bands are not defined.** A colspan beginning in one band and ending in another can produce incorrect geometry. The final design should reject, split, or explicitly define this case.
@@ -632,6 +634,12 @@ requirements are the two largest sources of variance.
 12. **Public controller surface is provisional.** `DockingController` is currently exported for the POC; it may be better kept internal in the final API.
 13. **No compatibility/migration layer is intended.** Any temporary legacy fields should be deleted, not deprecated, once this direction is approved.
 
+## Documentation scope
+
+The v11 migration guide is currently maintained for the vanilla/root documentation only:
+`docs/migrations/migration-to-11.x.md`. Framework-specific migration guides are intentionally
+deferred until the vanilla guide and API cleanup are settled; do not add framework v11 guides yet.
+
 ## Resume checklist
 
 1. Reload Vanilla Example 04 and confirm:
@@ -649,23 +657,24 @@ requirements are the two largest sources of variance.
    migration-friendly bulk command while the POC is being validated, and keep `Pin Column`/
    `Unpin Column` for the single-column action. Remove the legacy terminology during the final
    major-version API cleanup if the migration window no longer requires it.
-7. Immediately after the first PR is created, delete the old pane-freezing implementation rather than layering compatibility over it:
+7. Perform a second legacy-cleanup audit rather than layering compatibility over the first pass:
    - remove frozen options/defaults/validation/messages;
    - remove right/bottom pane fields and DOM construction entirely;
    - collapse canvas/viewport/header collections to single objects where practical;
    - remove old synchronized-scroll branches;
    - replace `CurrentPinning`, GridService, GridStateService, menus, and extensions with the new shapes;
    - remove obsolete frozen SCSS and framework assumptions.
-8. Recalculate production LOC after the deletion pass.
-9. Only then begin unit, coverage, Cypress, framework, documentation, and migration work.
+8. Recalculate production LOC after the follow-up audit.
+9. Keep unit, coverage, Cypress, framework, and documentation work aligned with the cleaned API;
+   do not declare the legacy removal complete until the audit and focused regressions pass.
 
 ## New-context handoff checklist
 
 - Treat this file and the current working tree as the source of truth; do not restart the POC
   from the old PR 1238 frozen-pane branch.
-- The safe cleanup pass is finished, but no claim has been made that the full refactor is done.
-  The first PR checkpoint may still contain temporary frozen code; delete it immediately after
-  that PR is created.
+- The safe cleanup pass and first legacy deletion pass are finished, but no claim has been made
+  that the full refactor is done. Continue with the follow-up audit before calling legacy removal
+  complete.
 - Before changing layout code, preserve the current invariants: one native horizontal scroll,
   one native vertical scroll, one rendered row with left/center/right regions, stable header /
   header-row / footer region wrappers, and one shared `DockingController`.

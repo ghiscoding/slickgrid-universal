@@ -1590,7 +1590,7 @@ describe('Grid Service', () => {
       { id: 'field2', field: 'field2', width: 75 },
     ];
 
-    it('should call "clearPinning" and expect SlickGrid "setOptions" and "setColumns" to be called with frozen options being reset', () => {
+    it('should call "clearPinning" and reset the unified pinning options', () => {
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       sharedService.slickGrid = gridStub;
@@ -1599,7 +1599,12 @@ describe('Grid Service', () => {
       service.clearPinning();
 
       expect(updateColumnSpy).toHaveBeenCalled();
-      expect(setOptionsSpy).toHaveBeenCalledWith({ frozenBottom: false, frozenColumn: -1, frozenRow: -1, enableMouseWheelScrollHandler: false });
+      expect(setOptionsSpy).toHaveBeenCalledWith({
+        pinning: {
+          columns: { left: [], right: [] },
+          rows: { top: [], bottom: [] },
+        },
+      });
     });
 
     it('should call "setPinning" which itself calls "clearPinning" when the pinning option input is an empty object', () => {
@@ -1622,8 +1627,8 @@ describe('Grid Service', () => {
       expect(clearPinningSpy).toHaveBeenCalled();
     });
 
-    it('should call "setPinning" and expect SlickGrid "setOptions" be called with new frozen options and "autosizeColumns" also be called', () => {
-      const mockPinning = { frozenBottom: true, frozenColumn: 1, frozenRow: 2 };
+    it('should call "setPinning" with unified pinning options and autosize columns', () => {
+      const mockPinning = { columns: { left: [1], right: [] }, rows: { top: [], bottom: [] } };
       sharedService.slickGrid = gridStub;
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
@@ -1632,12 +1637,12 @@ describe('Grid Service', () => {
 
       service.setPinning(mockPinning);
 
-      expect(setOptionsSpy).toHaveBeenCalledWith(mockPinning, false, true);
+      expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: mockPinning }, false, true);
       expect(autosizeColumnsSpy).toHaveBeenCalled();
     });
 
-    it('should call "setPinning" and expect SlickGrid "setOptions" be called with new frozen options and "autosizeColumns" not being called when passing False as 2nd argument', () => {
-      const mockPinning = { frozenBottom: true, frozenColumn: 1, frozenRow: 2 };
+    it('should call "setPinning" without autosizing when passing false as the 2nd argument', () => {
+      const mockPinning = { columns: { left: [1], right: [] }, rows: { top: [], bottom: [] } };
       sharedService.slickGrid = gridStub;
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
@@ -1646,7 +1651,7 @@ describe('Grid Service', () => {
 
       service.setPinning(mockPinning, false);
 
-      expect(setOptionsSpy).toHaveBeenCalledWith(mockPinning, false, true);
+      expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: mockPinning }, false, true);
       expect(autosizeColumnsSpy).not.toHaveBeenCalled();
     });
   });

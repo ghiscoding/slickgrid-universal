@@ -53,14 +53,7 @@ export class HeaderGroupingService {
           .subscribe(grid.onColumnsReordered, () => this.renderPreHeaderRowGroupingTitles())
           .subscribe(grid.onRendered, () => this.renderPreHeaderRowGroupingTitles())
           .subscribe(grid.onAutosizeColumns, () => this.renderPreHeaderRowGroupingTitles())
-          .subscribe(this._dataView.onRowCountChanged, () => this.delayRenderPreHeaderRowGroupingTitles(0))
-          .subscribe(grid.onSetOptions, (_e, args) => {
-            // and finally we need to re-create after user calls the Grid "setOptions" when changing from regular to frozen grid (and vice versa)
-            // when user changes frozen columns dynamically (e.g. from header menu), we need to re-render the pre-header of the grouping titles
-            if (args?.optionsBefore?.frozenColumn !== args?.optionsAfter?.frozenColumn) {
-              this.delayRenderPreHeaderRowGroupingTitles(0);
-            }
-          });
+          .subscribe(this._dataView.onRowCountChanged, () => this.delayRenderPreHeaderRowGroupingTitles(0));
 
         // also not sure why at this point, but it seems that I need to call the 1st create in a delayed execution
         // probably some kind of timing issues and delaying it until the grid is fully ready fixes this problem
@@ -85,18 +78,7 @@ export class HeaderGroupingService {
   renderPreHeaderRowGroupingTitles(): void {
     const colsCount = this._grid.getVisibleColumns().length;
 
-    if (this._gridOptions?.frozenColumn !== undefined && this._gridOptions.frozenColumn >= 0) {
-      const frozenCol = this._gridOptions.frozenColumn;
-
-      // Add column groups to left panel
-      this.renderHeaderGroups(this._grid.getPreHeaderPanelLeft(), 0, frozenCol + 1);
-
-      // Add column groups to right panel
-      this.renderHeaderGroups(this._grid.getPreHeaderPanelRight(), frozenCol + 1, colsCount);
-    } else {
-      // regular grid (not a frozen grid)
-      this.renderHeaderGroups(this._grid.getPreHeaderPanel(), 0, colsCount);
-    }
+    this.renderHeaderGroups(this._grid.getPreHeaderPanel(), 0, colsCount);
   }
 
   renderHeaderGroups(preHeaderPanel: HTMLElement, start: number, end: number): void {
@@ -112,8 +94,6 @@ export class HeaderGroupingService {
     let headerElm: HTMLDivElement | null = null;
     let lastColumnGroup = '';
     let widthTotal = 0;
-    const frozenHeaderWidthCalcDifferential = this._gridOptions?.frozenHeaderWidthCalcDifferential ?? 0;
-    const isFrozenGrid = this._gridOptions?.frozenColumn !== undefined && this._gridOptions.frozenColumn >= 0;
     const visibleColumns = this._grid.getVisibleColumns();
 
     for (let i = start; i < end; i++) {
@@ -122,12 +102,12 @@ export class HeaderGroupingService {
         if (lastColumnGroup === colDef.columnGroup && i > 0) {
           widthTotal += colDef.width || 0;
           if (headerElm?.style) {
-            headerElm.style.width = `${widthTotal - headerColumnWidthDiff - frozenHeaderWidthCalcDifferential}px`; // remove possible frozen border
+            headerElm.style.width = `${widthTotal - headerColumnWidthDiff}px`;
           }
         } else {
           widthTotal = colDef.width || 0;
           headerElm = createDomElement('div', {
-            className: `slick-state-default slick-header-column ${isFrozenGrid ? 'frozen' : ''}`,
+            className: 'slick-state-default slick-header-column',
             dataset: { group: colDef.columnGroup },
             style: { width: `${widthTotal - headerColumnWidthDiff}px` },
           });

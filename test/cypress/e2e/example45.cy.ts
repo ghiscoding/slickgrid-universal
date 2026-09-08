@@ -27,7 +27,7 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
     return topOf(r, hOf);
   };
 
-  const rowHostSelector = (r: number) => (r < FROZEN_ROW_COUNT ? '.grid45 .slick-docking-overlay' : '.grid45 .grid-canvas-top');
+  const rowHostSelector = (r: number) => (r < FROZEN_ROW_COUNT ? '.slick-docking-overlay' : '.grid-canvas-top');
 
   const assertRowStyle = (row: number, hOf: (row: number) => number) => {
     const expectedHeight = hOf(row);
@@ -53,7 +53,7 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
   };
 
   const ensureDefaultDensity = () => {
-    cy.get('.grid45 .slick-docking-overlay .slick-row[data-row=1]')
+    cy.get('.slick-docking-overlay .slick-row[data-row=1]')
       .invoke('attr', 'style')
       .then((style) => {
         if ((style ?? '').includes('height: 50px')) {
@@ -61,7 +61,7 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
         }
       });
 
-    cy.get('.grid45 .slick-docking-overlay .slick-row[data-row=1]').should('have.attr', 'style').and('contain', 'height: 44px');
+    cy.get('.slick-docking-overlay .slick-row[data-row=1]').should('have.attr', 'style').and('contain', 'height: 44px');
   };
 
   beforeEach(() => {
@@ -96,10 +96,10 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
 
     cy.get('[data-test="scroll-row-90-example45"]').click();
 
-    cy.get('.grid45 .slick-viewport-top.slick-viewport-left').should(($viewport) => {
+    cy.get('.slick-viewport-top.slick-viewport-left').should(($viewport) => {
       expect($viewport.scrollTop()).to.be.closeTo(expectedScrollTop, 2);
     });
 
-    cy.get('.grid45 .slick-row[data-row=90]').should('exist');
+    cy.get('.slick-row[data-row=90]').should('exist');
   });
 });

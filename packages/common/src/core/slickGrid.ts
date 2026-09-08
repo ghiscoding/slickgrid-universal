@@ -702,7 +702,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Initializes the grid. */
   init(): void {
     // prettier-ignore
-    const isZoomLevelUnsupported = (this._options.enableVariableRowHeight || this._options.enableCellRowSpan || this._options.enableRowDetailView || this._options.frozenRow! > 0);
+    const isZoomLevelUnsupported = this._options.enableVariableRowHeight || this._options.enableCellRowSpan || this._options.enableRowDetailView;
     if (!this._options.silenceWarnings && document.body.style.zoom && document.body.style.zoom !== '100%' && isZoomLevelUnsupported) {
       console.warn(
         '[Slickgrid] Zoom level other than 100% can cause subpar rendering in some configurations. ' +
@@ -781,13 +781,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
 
-    // Containers used for scrolling frozen columns and rows
-    this._paneHeaderL = createDomElement('div', { className: 'slick-pane slick-pane-header slick-pane-left' }, this._container);
-    this._paneHeaderR = createDomElement('div', { className: 'slick-pane slick-pane-header slick-pane-right' }, this._container);
-    this._paneTopL = createDomElement('div', { className: 'slick-pane slick-pane-top slick-pane-left' }, this._container);
-    this._paneTopR = createDomElement('div', { className: 'slick-pane slick-pane-top slick-pane-right' }, this._container);
-    this._paneBottomL = createDomElement('div', { className: 'slick-pane slick-pane-bottom slick-pane-left' }, this._container);
-    this._paneBottomR = createDomElement('div', { className: 'slick-pane slick-pane-bottom slick-pane-right' }, this._container);
+    // The grid uses one live header/body container. Legacy aliases are kept
+    // temporarily for internal call sites that are being migrated.
+    this._paneHeaderL = createDomElement('div', { className: 'slick-pane slick-pane-header' }, this._container);
+    this._paneHeaderR = this._paneHeaderL;
+    this._paneTopL = createDomElement('div', { className: 'slick-pane slick-pane-top' }, this._container);
+    this._paneTopR = this._paneTopL;
+    this._paneBottomL = this._paneTopL;
+    this._paneBottomR = this._paneTopL;
 
     if (this._options.createPreHeaderPanel) {
       const headerContainer = createDomElement('div', { className: 'slick-preheader-container' }, this._paneHeaderL);
@@ -804,47 +805,26 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this._preHeaderPanelScroller
       );
 
-      this._preHeaderPanelScrollerR = createDomElement(
-        'div',
-        { className: 'slick-preheader-panel slick-state-default', style: { overflow: 'hidden', position: 'relative' } },
-        this._paneHeaderR
-      );
-      this._preHeaderPanelR = createDomElement('div', null, this._preHeaderPanelScrollerR);
-      this._preHeaderPanelSpacerR = createDomElement(
-        'div',
-        { style: { display: 'block', height: '1px', position: 'absolute', top: '0px', left: '0px' } },
-        this._preHeaderPanelScrollerR
-      );
+      this._preHeaderPanelScrollerR = this._preHeaderPanelScroller;
+      this._preHeaderPanelR = this._preHeaderPanel;
+      this._preHeaderPanelSpacerR = this._preHeaderPanelSpacer;
 
       if (!this._options.showPreHeaderPanel) {
         Utils.hide(this._preHeaderPanelScroller);
-        Utils.hide(this._preHeaderPanelScrollerR);
       }
     }
 
     // Append the header scroller containers
     const headerContainerL = createDomElement('div', { className: 'slick-header-container' }, this._paneHeaderL);
-    const headerContainerR = createDomElement('div', { className: 'slick-header-container' }, this._paneHeaderR);
     this._headerScrollerL = createDomElement(
       'div',
       { className: 'slick-header slick-state-default slick-header-left', role: 'rowgroup' },
       headerContainerL
     );
-    this._headerScrollerR = createDomElement(
-      'div',
-      { className: 'slick-header slick-state-default slick-header-right', role: 'rowgroup' },
-      headerContainerR
-    );
-
-    // header scroll position could change when using frozen grid and tabbing on next available header
-    // so we need to make sure that all containers (header, headerrow, toppanel) are all in sync when that happens
-    this._bindingEventService.bind(this._headerScrollerR, 'scroll', (e) => {
-      this.scrollToX((e.target as HTMLElement).scrollLeft);
-    });
+    this._headerScrollerR = this._headerScrollerL;
 
     // Cache the header scroller containers
     this._headerScroller.push(this._headerScrollerL);
-    this._headerScroller.push(this._headerScrollerR);
 
     // Append the columnn containers to the headers
     this._headerL = createDomElement(
@@ -852,63 +832,47 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       { className: 'slick-header-columns slick-header-columns-left', role: 'row' },
       this._headerScrollerL
     );
-    this._headerR = createDomElement(
-      'div',
-      { className: 'slick-header-columns slick-header-columns-right', role: 'row' },
-      this._headerScrollerR
-    );
+    this._headerR = this._headerL;
 
     // Cache the header columns
-    this._headers = [this._headerL, this._headerR];
+    this._headers = [this._headerL];
 
     this._headerRowScrollerL = createDomElement(
       'div',
       { className: 'slick-headerrow slick-state-default', role: 'rowgroup' },
       this._paneTopL
     );
-    this._headerRowScrollerR = createDomElement(
-      'div',
-      { className: 'slick-headerrow slick-state-default', role: 'rowgroup' },
-      this._paneTopR
-    );
+    this._headerRowScrollerR = this._headerRowScrollerL;
 
-    this._headerRowScroller = [this._headerRowScrollerL, this._headerRowScrollerR];
+    this._headerRowScroller = [this._headerRowScrollerL];
 
     this._headerRowSpacerL = createDomElement(
       'div',
       { style: { display: 'block', height: '1px', position: 'absolute', top: '0px', left: '0px' } },
       this._headerRowScrollerL
     );
-    this._headerRowSpacerR = createDomElement(
-      'div',
-      { style: { display: 'block', height: '1px', position: 'absolute', top: '0px', left: '0px' } },
-      this._headerRowScrollerR
-    );
+    this._headerRowSpacerR = this._headerRowSpacerL;
 
     this._headerRowL = createDomElement(
       'div',
       { className: 'slick-headerrow-columns slick-headerrow-columns-left', role: 'row' },
       this._headerRowScrollerL
     );
-    this._headerRowR = createDomElement(
-      'div',
-      { className: 'slick-headerrow-columns slick-headerrow-columns-right', role: 'row' },
-      this._headerRowScrollerR
-    );
+    this._headerRowR = this._headerRowL;
 
-    this._headerRows = [this._headerRowL, this._headerRowR];
+    this._headerRows = [this._headerRowL];
 
     // Append the top panel scroller
     this._topPanelScrollerL = createDomElement('div', { className: 'slick-top-panel-scroller slick-state-default' }, this._paneTopL);
-    this._topPanelScrollerR = createDomElement('div', { className: 'slick-top-panel-scroller slick-state-default' }, this._paneTopR);
+    this._topPanelScrollerR = this._topPanelScrollerL;
 
-    this._topPanelScrollers = [this._topPanelScrollerL, this._topPanelScrollerR];
+    this._topPanelScrollers = [this._topPanelScrollerL];
 
     // Append the top panel
     this._topPanelL = createDomElement('div', { className: 'slick-top-panel', style: { width: '10000px' } }, this._topPanelScrollerL);
-    this._topPanelR = createDomElement('div', { className: 'slick-top-panel', style: { width: '10000px' } }, this._topPanelScrollerR);
+    this._topPanelR = this._topPanelL;
 
-    this._topPanels = [this._topPanelL, this._topPanelR];
+    this._topPanels = [this._topPanelL];
 
     if (!this._options.showColumnHeader) {
       this._headerScroller.forEach((el) => {
@@ -930,20 +894,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // Append the viewport containers
     this._viewportTopL = createDomElement('div', { className: 'slick-viewport slick-viewport-top slick-viewport-left' }, this._paneTopL);
-    this._viewportTopR = createDomElement('div', { className: 'slick-viewport slick-viewport-top slick-viewport-right' }, this._paneTopR);
-    this._viewportBottomL = createDomElement(
-      'div',
-      { className: 'slick-viewport slick-viewport-bottom slick-viewport-left' },
-      this._paneBottomL
-    );
-    this._viewportBottomR = createDomElement(
-      'div',
-      { className: 'slick-viewport slick-viewport-bottom slick-viewport-right' },
-      this._paneBottomR
-    );
+    this._viewportTopR = this._viewportTopL;
+    this._viewportBottomL = this._viewportTopL;
+    this._viewportBottomR = this._viewportTopL;
 
     // Cache the viewports
-    this._viewport = [this._viewportTopL, this._viewportTopR, this._viewportBottomL, this._viewportBottomR];
+    this._viewport = [this._viewportTopL];
     if (this._options.viewportClass) {
       this._viewport.forEach((view) => {
         view.classList.add(...classNameToList(this._options.viewportClass));
@@ -955,12 +911,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // Append the canvas containers
     this._canvasTopL = createDomElement('div', { className: 'grid-canvas grid-canvas-top grid-canvas-left' }, this._viewportTopL);
-    this._canvasTopR = createDomElement('div', { className: 'grid-canvas grid-canvas-top grid-canvas-right' }, this._viewportTopR);
-    this._canvasBottomL = createDomElement('div', { className: 'grid-canvas grid-canvas-bottom grid-canvas-left' }, this._viewportBottomL);
-    this._canvasBottomR = createDomElement('div', { className: 'grid-canvas grid-canvas-bottom grid-canvas-right' }, this._viewportBottomR);
+    this._canvasTopR = this._canvasTopL;
+    this._canvasBottomL = this._canvasTopL;
+    this._canvasBottomR = this._canvasTopL;
 
     // Cache the canvases
-    this._canvas = [this._canvasTopL, this._canvasTopR, this._canvasBottomL, this._canvasBottomR];
+    this._canvas = [this._canvasTopL];
 
     this.scrollbarDimensions = this.scrollbarDimensions || this.measureScrollbar();
     const canvasWithScrollbarWidth = this.getCanvasWidth() + this.scrollbarDimensions.width;
@@ -1028,8 +984,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       this.setFrozenOptions();
-      this.setPaneFrozenClasses();
-      this.setPaneVisibility();
       this.activateSingleViewportLayout();
       this.setScroller();
       this.setOverflow();
@@ -1069,12 +1023,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       this._bindingEventService.bind(this._headerScroller, 'contextmenu', this.handleHeaderContextMenu.bind(this) as EventListener);
       this._bindingEventService.bind(this._headerScroller, 'click', this.handleHeaderClick.bind(this) as EventListener);
-      this._bindingEventService.bind(this._headerRowScroller, 'scroll', this.handleHeaderRowScroll.bind(this) as EventListener);
+      this._bindingEventService.bind(this._headerRowScrollerL, 'scroll', this.handleHeaderRowScroll.bind(this) as EventListener);
 
       if (this._options.createFooterRow) {
         this._bindingEventService.bind(this._footerRow, 'contextmenu', this.handleFooterContextMenu.bind(this) as EventListener);
         this._bindingEventService.bind(this._footerRow, 'click', this.handleFooterClick.bind(this) as EventListener);
-        this._bindingEventService.bind(this._footerRowScroller, 'scroll', this.handleFooterRowScroll.bind(this) as EventListener);
+        this._bindingEventService.bind(this._footerRowScrollerL, 'scroll', this.handleFooterRowScroll.bind(this) as EventListener);
       }
 
       if (this._options.createTopHeaderPanel) {
@@ -1528,7 +1482,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.getHeadersWidth();
 
       Utils.width(this._headerL, this.getDockingChromeRootWidth());
-      Utils.width(this._headerR, this.headersWidthR);
+      if (this._headerR !== this._headerL) {
+        Utils.width(this._headerR, this.headersWidthR);
+      }
 
       if (this.hasFrozenColumns()) {
         Utils.width(this._canvasTopR, this.canvasWidthR);
@@ -1985,7 +1941,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this.resetDockingChromeRegionSet(this._footerRowL, 'slick-footerrow-columns', 'left');
         this.dockingFooterRowRegions = undefined;
       }
-      emptyElement(this._footerRowR);
+      if (this._footerRowR !== this._footerRowL) {
+        emptyElement(this._footerRowR);
+      }
 
       for (let i = 0; i < this.columns.length; i++) {
         const m = this.columns[i];
@@ -2031,8 +1989,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected materializeFooterRow(): void {
     const canvasWithScrollbarWidth = this.getCanvasWidth() + (this.scrollbarDimensions?.width || 0);
 
-    this._footerRowScrollerR = createDomElement('div', { className: 'slick-footerrow slick-state-default' }, this._paneTopR);
     this._footerRowScrollerL = createDomElement('div', { className: 'slick-footerrow slick-state-default' }, this._paneTopL);
+    this._footerRowScrollerR = this._footerRowScrollerL;
     this._footerRowScroller = [this._footerRowScrollerL];
 
     this._footerRowSpacerL = createDomElement(
@@ -2042,23 +2000,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     );
     Utils.width(this._footerRowSpacerL, canvasWithScrollbarWidth);
 
-    this._footerRowSpacerR = createDomElement(
-      'div',
-      { style: { display: 'block', height: '1px', position: 'absolute', top: '0px', left: '0px' } },
-      this._footerRowScrollerR
-    );
-    Utils.width(this._footerRowSpacerR, canvasWithScrollbarWidth);
+    this._footerRowSpacerR = this._footerRowSpacerL;
 
     this._footerRowL = createDomElement(
       'div',
       { className: 'slick-footerrow-columns slick-footerrow-columns-left' },
       this._footerRowScrollerL
     );
-    this._footerRowR = createDomElement(
-      'div',
-      { className: 'slick-footerrow-columns slick-footerrow-columns-right' },
-      this._footerRowScrollerR
-    );
+    this._footerRowR = this._footerRowL;
     this._footerRow = [this._footerRowL];
 
     if (this.hasConfiguredColumnDocking()) {
@@ -2112,12 +2061,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.dockingHeaderRegions = undefined;
       this.dockingHeaderRowRegions = undefined;
     }
-    emptyElement(this._headerR);
+    if (this._headerR !== this._headerL) {
+      emptyElement(this._headerR);
+    }
 
     this.getHeadersWidth();
 
     Utils.width(this._headerL, this.getDockingChromeRootWidth());
-    Utils.width(this._headerR, this.headersWidthR);
+    if (this._headerR !== this._headerL) {
+      Utils.width(this._headerR, this.headersWidthR);
+    }
 
     this._headerRows.forEach((row) => {
       const columnElements = row.querySelectorAll('.slick-headerrow-column');
@@ -2133,7 +2086,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       });
     });
 
-    emptyElement(this._headerRowR);
+    if (this._headerRowR !== this._headerRowL) {
+      emptyElement(this._headerRowR);
+    }
 
     for (let i = 0, ln = this.columns.length; i < ln; i++) {
       const m: C = this.columns[i];
@@ -2717,6 +2672,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // fires on document during native drag; also bind 'mousemove' for SortableJS forceFallback mode
     const autoScrollHandler = (e: DragEvent | MouseEvent) => {
+      if (!this.initialized || !this._viewportScrollContainerX) {
+        stopAutoScroll();
+        return;
+      }
       const { clientX, clientY, pageX } = e;
       if (clientX && clientY) {
         const viewportLeft = getOffset(this._viewportScrollContainerX).left;
@@ -2726,10 +2685,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           stopAutoScroll();
           columnScrollDirection = direction;
           if (direction) {
-            columnScrollTimer = setInterval(
-              () => (this._viewportScrollContainerX.scrollLeft += direction * COLUMN_AUTOSCROLL_DISTANCE_PX),
-              COLUMN_AUTOSCROLL_INTERVAL_MS
-            );
+            columnScrollTimer = setInterval(() => {
+              if (!this.initialized || !this._viewportScrollContainerX) {
+                stopAutoScroll();
+                return;
+              }
+              this._viewportScrollContainerX.scrollLeft += direction * COLUMN_AUTOSCROLL_DISTANCE_PX;
+            }, COLUMN_AUTOSCROLL_INTERVAL_MS);
           }
         }
       }
@@ -2808,7 +2770,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.sortableSideRightInstance = Sortable.create(this.getDockingChromeRegion('header', 'right'), sortableOptions);
     } else {
       this.sortableSideLeftInstance = Sortable.create(this._headerL, sortableOptions);
-      this.sortableSideRightInstance = this._headerR.isConnected ? Sortable.create(this._headerR, sortableOptions) : undefined;
+      this.sortableSideRightInstance =
+        this._headerR !== this._headerL && this._headerR.isConnected ? Sortable.create(this._headerR, sortableOptions) : undefined;
     }
   }
 
@@ -2869,6 +2832,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         return;
       }
       this._columnResizeAutoScrollTimer = setInterval(() => {
+        if (!this.initialized || !this._viewportScrollContainerX) {
+          stopColumnResizeAutoScroll();
+          return;
+        }
         const viewportOffset = getOffset(this._viewportScrollContainerX);
         /* v8 ignore next */
         const targetPageX =
@@ -2884,6 +2851,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       targetPageX: number,
       resizeCallback: (targetPageX: number) => void
     ): number => {
+      if (!this.initialized || !this._viewportScrollContainerX) {
+        stopColumnResizeAutoScroll();
+        return targetPageX;
+      }
       // TODO: there is a known bug with auto-scroll in RTL,
       // so disable it until someone can contribute a fix
       if (this._options.rtl || !this._options.autoScrollOnColumnResize) {
@@ -3296,11 +3267,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected activateSingleViewportLayout(): void {
-    this._paneHeaderR.remove();
-    this._paneTopR.remove();
-    this._paneBottomL.remove();
-    this._paneBottomR.remove();
-
     this._headerScroller = [this._headerScrollerL];
     this._headers = [this._headerL];
     this._headerRowScroller = [this._headerRowScrollerL];
@@ -3463,163 +3429,26 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       : this.getRowPosition(this._options.frozenRow!);
   }
 
-  /** add/remove frozen class to left headers/footer when defined */
-  protected setPaneFrozenClasses(): void {
-    const classAction = this.hasFrozenColumns() ? 'add' : 'remove';
-    for (const elm of [this._paneHeaderL, this._paneTopL, this._paneBottomL]) {
-      elm.classList[classAction]('frozen');
-    }
-  }
-
-  protected setPaneVisibility(): void {
-    if (this.hasFrozenColumns()) {
-      Utils.show(this._paneHeaderR);
-      Utils.show(this._paneTopR);
-
-      if (this.hasFrozenRows) {
-        Utils.show(this._paneBottomL);
-        Utils.show(this._paneBottomR);
-      } else {
-        Utils.hide(this._paneBottomR);
-        Utils.hide(this._paneBottomL);
-      }
-    } else {
-      Utils.hide(this._paneHeaderR);
-      Utils.hide(this._paneTopR);
-      Utils.hide(this._paneBottomR);
-
-      if (this.hasFrozenRows) {
-        Utils.show(this._paneBottomL);
-      } else {
-        Utils.hide(this._paneBottomR);
-        Utils.hide(this._paneBottomL);
-      }
-    }
-  }
-
   protected setOverflow(): void {
-    this._viewportTopL.style.overflowX = this.hasFrozenColumns()
-      ? this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
-        ? 'hidden'
-        : 'scroll'
-      : this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
-        ? 'hidden'
-        : 'auto';
-    this._viewportTopL.style.overflowY =
-      !this.hasFrozenColumns() && this._options.alwaysShowVerticalScroll
-        ? 'scroll'
-        : this.hasFrozenColumns()
-          ? this.hasFrozenRows
-            ? 'hidden'
-            : 'hidden'
-          : this.hasFrozenRows
-            ? 'scroll'
-            : 'auto';
-
-    this._viewportTopR.style.overflowX = this.hasFrozenColumns()
-      ? this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
-        ? 'hidden'
-        : 'scroll'
-      : this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
-        ? 'hidden'
-        : 'auto';
-    this._viewportTopR.style.overflowY = this._options.alwaysShowVerticalScroll
-      ? 'scroll'
-      : this.hasFrozenColumns()
-        ? this.hasFrozenRows
-          ? 'scroll'
-          : 'auto'
-        : this.hasFrozenRows
-          ? 'scroll'
-          : 'auto';
-
-    this._viewportBottomL.style.overflowX = this.hasFrozenColumns()
-      ? this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
-        ? 'scroll'
-        : 'auto'
-      : this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
-        ? 'auto'
-        : 'auto';
-    this._viewportBottomL.style.overflowY =
-      !this.hasFrozenColumns() && this._options.alwaysShowVerticalScroll
-        ? 'scroll'
-        : this.hasFrozenColumns()
-          ? this.hasFrozenRows
-            ? 'hidden'
-            : 'hidden'
-          : this.hasFrozenRows
-            ? 'scroll'
-            : 'auto';
-
-    this._viewportBottomR.style.overflowX = this.hasFrozenColumns()
-      ? this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
-        ? 'scroll'
-        : 'auto'
-      : this.hasFrozenRows && !this._options.alwaysAllowHorizontalScroll
-        ? 'auto'
-        : 'auto';
-    this._viewportBottomR.style.overflowY = this._options.alwaysShowVerticalScroll
-      ? 'scroll'
-      : this.hasFrozenColumns()
-        ? this.hasFrozenRows
-          ? 'auto'
-          : 'auto'
-        : this.hasFrozenRows
-          ? 'auto'
-          : 'auto';
-
-    if (this.hasDockingHorizontalScroller()) {
-      this._viewportTopL.style.overflowX = 'hidden';
-      this._dockingHorizontalScroller!.style.overflowX = 'auto';
-      this._dockingHorizontalScroller!.style.overflowY = 'hidden';
+    this._viewportTopL.style.overflowX = this.hasDockingHorizontalScroller() ? 'hidden' : 'auto';
+    this._viewportTopL.style.overflowY = this._options.autoHeight ? 'hidden' : this._options.alwaysShowVerticalScroll ? 'scroll' : 'auto';
+    if (this._dockingHorizontalScroller) {
+      this._dockingHorizontalScroller.style.overflowX = 'auto';
+      this._dockingHorizontalScroller.style.overflowY = 'hidden';
     }
 
     if (this._options.viewportClass) {
       const viewportClasses = classNameToList(this._options.viewportClass);
       this._viewportTopL.classList.add(...viewportClasses);
-      this._viewportTopR.classList.add(...viewportClasses);
-      this._viewportBottomL.classList.add(...viewportClasses);
-      this._viewportBottomR.classList.add(...viewportClasses);
     }
   }
 
   protected setScroller(): void {
-    if (this.hasFrozenColumns()) {
-      this._headerScrollContainer = this._headerScrollerR;
-      this._headerRowScrollContainer = this._headerRowScrollerR;
-      this._footerRowScrollContainer = this._footerRowScrollerR;
-
-      if (this.hasFrozenRows) {
-        if (this._options.frozenBottom) {
-          this._viewportScrollContainerX = this._viewportBottomR;
-          this._viewportScrollContainerY = this._viewportTopR;
-        } else {
-          this._viewportScrollContainerX = this._viewportScrollContainerY = this._viewportBottomR;
-        }
-      } else {
-        this._viewportScrollContainerX = this._viewportScrollContainerY = this._viewportTopR;
-      }
-    } else {
-      this._headerScrollContainer = this._headerScrollerL;
-      this._headerRowScrollContainer = this._headerRowScrollerL;
-      this._footerRowScrollContainer = this._footerRowScrollerL;
-
-      if (this.hasFrozenRows) {
-        if (this._options.frozenBottom) {
-          this._viewportScrollContainerX = this._viewportBottomL;
-          this._viewportScrollContainerY = this._viewportTopL;
-        } else {
-          this._viewportScrollContainerX = this._viewportScrollContainerY = this._viewportBottomL;
-        }
-      } else {
-        this._viewportScrollContainerX = this._viewportScrollContainerY = this._viewportTopL;
-      }
-    }
-
-    if (this.hasDockingHorizontalScroller()) {
-      this._viewportScrollContainerX = this._dockingHorizontalScroller!;
-      this._viewportScrollContainerY = this._viewportTopL;
-    }
+    this._headerScrollContainer = this._headerScrollerL;
+    this._headerRowScrollContainer = this._headerRowScrollerL;
+    this._footerRowScrollContainer = this._footerRowScrollerL;
+    this._viewportScrollContainerY = this._viewportTopL;
+    this._viewportScrollContainerX = this._dockingHorizontalScroller ?? this._viewportTopL;
   }
 
   protected measureCellPaddingAndBorder(): void {
@@ -4806,8 +4635,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.updateColumnCaches();
 
     if (this.initialized) {
-      this.setPaneFrozenClasses();
-      this.setPaneVisibility();
       this.setOverflow();
       this.invalidateAllRows();
       this.createColumnHeaders();
@@ -7345,20 +7172,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  protected handleHeaderRowScroll(): void {
-    this.handleElementScroll(this._headerRowScrollContainer);
+  protected handleHeaderRowScroll(e?: Event): void {
+    this.handleElementScroll((e?.currentTarget || e?.target || this._headerRowScrollContainer) as HTMLElement);
   }
 
-  protected handleFooterRowScroll(): void {
-    this.handleElementScroll(this._footerRowScrollContainer);
+  protected handleFooterRowScroll(e?: Event): void {
+    this.handleElementScroll((e?.currentTarget || e?.target || this._footerRowScrollContainer) as HTMLElement);
   }
 
-  protected handlePreHeaderPanelScroll(): void {
-    this.handleElementScroll(this._preHeaderPanelScroller);
+  protected handlePreHeaderPanelScroll(e?: Event): void {
+    this.handleElementScroll((e?.currentTarget || e?.target || this._preHeaderPanelScroller) as HTMLElement);
   }
 
-  protected handleTopHeaderPanelScroll(): void {
-    this.handleElementScroll(this._topHeaderPanelScroller);
+  protected handleTopHeaderPanelScroll(e?: Event): void {
+    this.handleElementScroll((e?.currentTarget || e?.target || this._topHeaderPanelScroller) as HTMLElement);
   }
 
   protected handleElementScroll(element: HTMLElement): void {
@@ -8471,7 +8298,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return parseInt(cls[0].substr(1, cls[0].length - 1), 10);
   }
 
-  protected getRowFromNode(rowNode: HTMLElement): number | null {
+  protected getRowFromNode(rowNode: HTMLElement | null | undefined): number | null {
+    if (!rowNode) {
+      return null;
+    }
     rowNode = (rowNode.closest('.slick-row') as HTMLElement) || rowNode;
     for (const row in this.rowsCache) {
       if (this.rowsCache) {
@@ -8528,7 +8358,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const targetEvent: any = (e as TouchEvent).touches ? (e as TouchEvent).touches[0] : e;
 
-    const cellNode = (e as Event & { target: HTMLElement }).target.closest('.slick-cell');
+    const cellNode = (e as Event & { target?: HTMLElement }).target?.closest('.slick-cell');
     if (!cellNode) {
       return null;
     }
@@ -8655,9 +8485,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected getNaturalColumnRange(firstCell: number, lastCell: number = firstCell): { left: number; right: number } {
     const first = this.dockingByColumn.get(firstCell);
     const last = this.dockingByColumn.get(lastCell);
+    // Docking offsets for center columns are relative to the center band,
+    // whereas internalScrollColumnIntoView() compares full-grid coordinates
+    // that include the permanent left-pinned band.
+    const leftBaseWidth = this.dockingLayout.leftBaseWidth;
     return {
-      left: first?.naturalOffset ?? this.columnPosLeft[firstCell] ?? 0,
-      right: last ? last.naturalOffset + last.width : (this.columnPosRight[lastCell] ?? 0),
+      left: leftBaseWidth + (first?.naturalOffset ?? this.columnPosLeft[firstCell] ?? 0),
+      right: leftBaseWidth + (last ? last.naturalOffset + last.width : (this.columnPosRight[lastCell] ?? 0)),
     };
   }
 
