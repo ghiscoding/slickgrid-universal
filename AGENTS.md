@@ -11,6 +11,7 @@ This is a pnpm monorepo for SlickGrid Universal:
 - `test/` contains shared test configuration and Cypress support.
 
 Changes in `packages/` can affect every framework. Preserve backward compatibility: prefer additive changes, overloads, and deprecations over breaking API changes.
+The framework has many options; ensure new options do not contradict or interfere with existing ones.
 
 ## Working rules
 
@@ -20,17 +21,24 @@ Changes in `packages/` can affect every framework. Preserve backward compatibili
 - Prefer non-SVG output for machine use; use SVG only for visualization.
 - Use strict TypeScript and preserve existing public API naming and behavior.
 - Prefer `interface` for object shapes when consistent with surrounding code.
+- Use `protected` for class methods that may be extended.
+- Follow existing naming conventions, such as `_privateField` and `publicMethod`.
 - Avoid circular dependencies. Use `madge --circular` when dependency impact needs verification.
 - For plugin changes, preserve existing `init()`, `dispose()`, `getOptions()`, and `setOptions()` lifecycle methods where applicable. Use `BindingEventService` for DOM event binding and cleanup.
+- Plugins extend SlickGrid and use `SlickEventHandler` where applicable. Support both grid options and column definition options.
 - When changing shared behavior, check all four framework wrappers and relevant demos.
 - Never edit generated `dist/` output unless explicitly requested.
 - When drafting a pull request, follow `.github/pull_request_template.md`, including its conventional-commit title requirement and applicable sections and checklist items.
+- Keep interactions and commit messages concise while preserving clarity.
 
 ## Testing and quality
 
 - Unit tests use Vitest with `test/vitest.config.mts`.
+- Vitest unit tests use `.spec.ts` files; Cypress E2E tests use `.cy.ts` files under `test/cypress/e2e/`.
 - E2E tests use Cypress with `test/cypress.config.ts`.
 - Cypress tests use `testIsolation: false`; preserve their execution order and inherited state.
+- Cypress tests are serial: new tests inherit the grid/page state left by previous tests, so do not assume a fresh page or selection and do not reorder tests without checking dependencies.
+- Tests commonly live in `__tests__/` subdirectories. Native/vanilla tests are under `packages/`; Angular-specific tests are under `frameworks/angular-slickgrid/`.
 - For the Vanilla demo suite, start the watch server with `pnpm serve:vite`, then run the root Cypress CI suite with `pnpm cypress:ci`. To run one spec while iterating, pass its path directly (for example, `pnpm cypress:ci --spec test/cypress/e2e/example33.cy.ts`).
 - Framework demos provide headless Cypress CI scripts. Start the matching demo server first (`pnpm angular:serve`, `pnpm aurelia:serve`, `pnpm react:serve`, or `pnpm vue:serve`).
 - Run the corresponding root CI command: `pnpm angular:cypress:ci`, `pnpm aurelia:cypress:ci`, `pnpm react:cypress:ci`, or `pnpm vue:cypress:ci` (for example, `pnpm aurelia:cypress:ci`). These commands use each framework's Cypress config and are preferred for validating framework-specific E2E suites.
@@ -46,7 +54,7 @@ pnpm build
 ```
 
 - Use `pnpm lint:fix` and `pnpm prettier:write` only when autofix or formatting changes are intended.
-- Check the applicable `.oxlintrc.json` when working in Angular or framework-plugin code.
+- Check the applicable `.oxlintrc.json` when working in Angular or framework-plugin code. The repository has three configurations: root `.oxlintrc.json`, `frameworks/angular-slickgrid/.oxlintrc.json`, and `frameworks-plugins/angular-row-detail-plugin/.oxlintrc.json`.
 
 <!-- rtk-instructions v2 -->
 # RTK - Token-Optimized CLI
@@ -155,11 +163,36 @@ When VEXP is available, use `run_pipeline` before built-in file search, grep, or
 
 `run_pipeline` can query all indexed repositories. Use `repos: ["alias"]` to scope it, and use `index_status` to see aliases. If VEXP is unavailable, use the normal repository tools.
 
+### Smart features
+
+VEXP can auto-detect intent, combine hybrid ranking, use session memory, and expand its context budget as needed.
+
 ## Documentation
 
-- Update `docs/` and applicable framework documentation when public behavior or APIs change.
-- Keep examples valid and consistent across Angular, React, Vue, and Aurelia.
-- Use repository-relative Markdown links for source references.
+ Update corresponding framework documentation under `frameworks/*/docs/` when applicable.
+ Include code examples that work across all supported frameworks.
+
+## Common commands
+
+- `pnpm build` builds all packages and frameworks; it is also the `Build Everything` task.
+- `pnpm lint` runs OXLint across the repository.
+- `pnpm lint:fix` applies available OXLint fixes.
+- `pnpm prettier:check` checks formatting; `pnpm prettier:write` formats files.
+- `pnpm test` runs Vitest; `pnpm test:coverage` runs Vitest with coverage.
+- `pnpm dev` starts the Vanilla demo; use `pnpm dev:angular`, `pnpm dev:react`, `pnpm dev:vue`, or `pnpm dev:aurelia` for framework demos.
+
+## Monorepo structure
+
+- Changes to `packages/` affect all framework wrappers.
+- Framework wrappers depend on core packages; prefer relative imports within packages.
+- Avoid circular dependencies.
+
+## Code review focus
+
+- Verify tests pass and coverage remains high.
+- Check impact across all four framework implementations.
+- Ensure new options do not contradict or overlap with existing ones.
+- Check that examples work in all framework demos.
 
 ## Completion checklist
 
