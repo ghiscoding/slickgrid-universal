@@ -6,7 +6,7 @@ import { SlickHybridSelectionModel } from '../../extensions/index.js';
 import { copyCellToClipboard } from '../../formatters/formatterUtilities.js';
 import { SelectionModel } from '../../index.js';
 import type { Column, CustomDataView, EditCommand, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces/index.js';
-import { SlickEvent, SlickEventData, SlickGlobalEditorLock, SlickRange } from '../slickCore.js';
+import { SlickEvent, SlickEventData, SlickGlobalEditorLock, SlickRange, Utils } from '../slickCore.js';
 import { SlickDataView } from '../slickDataView.js';
 import { SlickGrid } from '../slickGrid.js';
 
@@ -114,7 +114,6 @@ describe('SlickGrid core file', () => {
     expect(grid.getActiveCanvasNode()).toBeTruthy();
     expect(grid.getContainerNode()).toEqual(container);
     expect(grid.getGridPosition()).toBeTruthy();
-    expect(grid.getFrozenColumnId()).toBe(null);
   });
 
   it('should be able to instantiate SlickGrid without DataView and always show vertical scroll', () => {
@@ -1178,7 +1177,6 @@ describe('SlickGrid core file', () => {
         enableCellNavigation: true,
         preHeaderPanelHeight: 30,
         showPreHeaderPanel: true,
-        frozenColumn: 0,
         createPreHeaderPanel: true,
       } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
@@ -1194,89 +1192,6 @@ describe('SlickGrid core file', () => {
       expect(grid.getPreHeaderPanel()).toBeTruthy();
       expect(grid.getPreHeaderPanel()).toEqual(grid.getPreHeaderPanelLeft());
       expect(grid.getPreHeaderPanelRight()).toEqual(grid.getPreHeaderPanel());
-    });
-
-    it('should show an alert when frozen column is wider than actual grid width and invalidColumnFreezeWidthCallback is defined', () => {
-      const alertSpy = vi.spyOn(globalThis, 'alert').mockReturnValue();
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', minWidth: 40, maxWidth: 70 },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', minWidth: 40 },
-      ] as Column[];
-      const gridOptions = {
-        ...defaultOptions,
-        enableColumnReorder: false,
-        enableCellNavigation: true,
-        preHeaderPanelHeight: 30,
-        showPreHeaderPanel: true,
-        frozenColumn: 0,
-        createPreHeaderPanel: true,
-        // invalidColumnFreezeWidthCallback: (error) => alert(error),
-      } as GridOption;
-      const data = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-      ];
-      Object.defineProperty(container, 'clientWidth', { writable: true, value: 40 });
-      vi.spyOn(container, 'getBoundingClientRect').mockReturnValueOnce({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
-
-      skipGridDestroy = true;
-      grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
-      grid.validateColumnFreezeWidth(gridOptions.frozenColumn);
-      expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'));
-    });
-
-    it('should show an alert when trying to use setOptions with frozen column that is wider than actual grid width and invalidColumnFreezeWidthCallback is defined', () => {
-      const alertSpy = vi.spyOn(globalThis, 'alert').mockReturnValue();
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name' },
-        { id: 'lastName', field: 'lastName', name: 'Last Name' },
-      ] as Column[];
-      const gridOptions = {
-        ...defaultOptions,
-        enableColumnReorder: false,
-        enableCellNavigation: true,
-        preHeaderPanelHeight: 30,
-        showPreHeaderPanel: true,
-        createPreHeaderPanel: true,
-        invalidColumnFreezeWidthCallback: (error) => alert(error),
-      } as GridOption;
-      const data = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-      ];
-      Object.defineProperty(container, 'clientWidth', { writable: true, value: 40 });
-      vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
-
-      skipGridDestroy = true;
-      grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
-      grid.setOptions({ frozenColumn: 0 });
-      expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'));
-    });
-
-    it('should return true when calling validateColumnFreeze() when frozenColumn is within and below visible column', () => {
-      const onAfterSetColumnsSpy = vi.spyOn(grid.onAfterSetColumns, 'notify');
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name' },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
-        { id: 'age', field: 'age', name: 'Age' },
-      ] as Column[];
-      const gridOptions = {
-        ...defaultOptions,
-        enableColumnReorder: false,
-        enableCellNavigation: true,
-        preHeaderPanelHeight: 30,
-        showPreHeaderPanel: true,
-        createPreHeaderPanel: true,
-        frozenColumn: 0,
-      } as GridOption;
-
-      grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
-
-      // only return middle column (meaning first/last are now hidden columns)
-      const result = grid.validateColumnFreeze(columns[1].id, true);
-
-      expect(result).toBe(true);
-      expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();
     });
 
     it('should hide column headers div when "showPreHeaderPanel" is disabled', () => {
@@ -1316,7 +1231,6 @@ describe('SlickGrid core file', () => {
         enableCellNavigation: true,
         topHeaderPanelHeight,
         showTopHeaderPanel: true,
-        frozenColumn: 0,
         createTopHeaderPanel: true,
       } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
@@ -1340,7 +1254,6 @@ describe('SlickGrid core file', () => {
       const paneTopLeftElm = container.querySelector('.slick-pane-top') as HTMLDivElement;
 
       expect(paneTopLeftElm.style.top).toBe(`${paneHeight + topHeaderPanelHeight}px`);
-      expect(grid.getFrozenColumnId()).toBe(null);
     });
 
     it('should hide column headers div when "showTopHeaderPanel" is disabled', () => {
@@ -1446,16 +1359,21 @@ describe('SlickGrid core file', () => {
       expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
     });
 
-    it('should hide/show column headers div when "showFooterRow" is disabled (with frozenColumn/frozenRow) and expect footer row column exists', () => {
+    it('should hide/show column headers div when "showFooterRow" is disabled with pinning and expect footer row column exists', () => {
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name', colspan: 3 },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },
       ] as Column[];
-      const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, frozenColumn: 0, frozenRow: 0 } as GridOption;
       const data = [
         { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
       ];
+      const gridOptions = {
+        ...defaultOptions,
+        createFooterRow: true,
+        showFooterRow: false,
+        pinning: { columns: { left: 0 }, rows: { top: [0] } },
+      } as GridOption;
       grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
       grid.init();
       let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
@@ -1644,11 +1562,11 @@ describe('SlickGrid core file', () => {
         { id: 'firstName', field: 'firstName', name: 'First Name', colspan: 3 },
         { id: 'lastName', field: 'lastName', name: 'Last Name', colspan: 2 },
       ] as Column[];
-      const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, frozenColumn: 0, frozenRow: 0 } as GridOption;
       const data = [
         { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
       ];
+      const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false } as GridOption;
       grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
       grid.init();
       let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
@@ -1682,16 +1600,21 @@ describe('SlickGrid core file', () => {
       expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
     });
 
-    it('should hide/show column headers div when "showFooterRow" is disabled (with frozenColumn/frozenRow/frozenBottom) and expect footer row column exists', () => {
+    it('should hide/show column headers div when "showFooterRow" is disabled with bottom pinning and expect footer row column exists', () => {
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name' },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },
       ] as Column[];
-      const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, frozenColumn: 0, frozenRow: 0, frozenBottom: true } as GridOption;
       const data = [
         { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
       ];
+      const gridOptions = {
+        ...defaultOptions,
+        createFooterRow: true,
+        showFooterRow: false,
+        pinning: { columns: { left: 0 }, rows: { bottom: [1] } },
+      } as GridOption;
       grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
       grid.init();
       let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
@@ -1717,7 +1640,7 @@ describe('SlickGrid core file', () => {
         { id: 'firstName', field: 'firstName', name: 'First Name' },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },
       ] as Column[];
-      const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, frozenColumn: 1 } as GridOption;
+      const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, pinning: { columns: { left: 1 } } } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
       grid.init();
       let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
@@ -1731,7 +1654,7 @@ describe('SlickGrid core file', () => {
       footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
       expect(footerElms[0].style.display).not.toBe('none');
       expect(footerElms[0].style.display).not.toBe('none');
-      expect(grid.getFooterRowColumn(2)).toBeUndefined();
+      expect(grid.getFooterRowColumn(2)).toBeNull();
 
       grid.setFooterRowVisibility(false);
       footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
@@ -1744,7 +1667,7 @@ describe('SlickGrid core file', () => {
         { id: 'firstName', field: 'firstName', name: 'First Name' },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },
       ] as Column[];
-      const gridOptions = { ...defaultOptions, createFooterRow: false, showFooterRow: false, frozenColumn: 1 } as GridOption;
+      const gridOptions = { ...defaultOptions, createFooterRow: false, showFooterRow: false, pinning: { columns: { left: 1 } } } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
       grid.init();
       const footerElm = container.querySelector<HTMLDivElement>('.slick-footerrow');
@@ -1833,7 +1756,6 @@ describe('SlickGrid core file', () => {
         ...defaultOptions,
         createFooterRow: true,
         showFooterRow: true,
-        frozenColumn: 1,
       });
       vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 200, rightPx: 12, bottom: 230, top: 12 });
       grid.init();
@@ -1888,7 +1810,7 @@ describe('SlickGrid core file', () => {
         { id: 'firstName', field: 'firstName', name: 'First Name' },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },
       ] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showHeaderRow: true, frozenColumn: 0 });
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showHeaderRow: true, pinning: { columns: { left: 0 } } });
       grid.init();
       const headerElms = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
       const firstNameColHeader = grid.getHeaderRowColumn('firstName');
@@ -1906,12 +1828,30 @@ describe('SlickGrid core file', () => {
       expect(firstNameColHeader).toEqual(headerElms[0].querySelector('.slick-headerrow-column'));
     });
 
+    it('should notify before destroying existing header row cells when recreating headers', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      grid = new SlickGrid<any>(container, [], columns, { ...defaultOptions, showHeaderRow: true });
+      grid.init();
+
+      const headerRow = document.createElement('div');
+      const headerRowCell = document.createElement('div');
+      headerRowCell.className = 'slick-headerrow-column';
+      headerRow.appendChild(headerRowCell);
+      Utils.storage.put(headerRowCell, 'column', columns[0]);
+      (grid as any)._headerRows = [headerRow];
+      const destroySpy = vi.spyOn(grid.onBeforeHeaderRowCellDestroy, 'notify');
+
+      (grid as any).createColumnHeaders();
+
+      expect(destroySpy).toHaveBeenCalledWith({ node: grid, column: columns[0], grid }, expect.anything(), grid);
+    });
+
     it('should hide top panel div when "showHeaderRow" is disabled', () => {
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name' },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },
       ] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showHeaderRow: false, frozenColumn: 1 });
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showHeaderRow: false, pinning: { columns: { left: 1 } } });
       grid.init();
       let headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
 
@@ -1923,7 +1863,7 @@ describe('SlickGrid core file', () => {
       grid.setHeaderRowVisibility(true);
       headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
       expect(headerElm[0].style.display).not.toBe('none');
-      expect(grid.getHeaderRowColumn('firstName')).toBeUndefined();
+      expect(grid.getHeaderRowColumn('firstName')).toBeNull();
 
       grid.setHeaderRowVisibility(false);
       headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
@@ -1935,7 +1875,7 @@ describe('SlickGrid core file', () => {
         { id: 'firstName', field: 'firstName', name: 'First Name' },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },
       ] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showHeaderRow: false, frozenColumn: 1 });
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, showHeaderRow: false, pinning: { columns: { left: 1 } } });
       grid.init();
       let headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
 
@@ -1946,7 +1886,7 @@ describe('SlickGrid core file', () => {
       grid.setHeaderRowVisibility(true);
       headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
       expect(headerElm[0].style.display).not.toBe('none');
-      expect(grid.getHeaderRowColumn(2)).toBeUndefined();
+      expect(grid.getHeaderRowColumn(2)).toBeNull();
     });
   });
 
@@ -2543,4130 +2483,3991 @@ describe('SlickGrid core file', () => {
       });
     });
 
-    describe('getFrozenRowOffset() function', () => {
-      it('should return 0 offset when frozenRow is undefined', () => {
+    describe('Grid Dimensions', () => {
+      it('should get 2 rows of cell height when rowspan is set to 2 when calling getCellHeight()', () => {
         const columns = [
-          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-          { id: 'lastName', field: 'lastName', name: 'Last Name' },
-          { id: 'age', field: 'age', name: 'age' },
+          { id: 'firstName', field: 'firstName', name: 'First Name', alwaysRenderColumn: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
         ] as Column[];
-        const data = [
-          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-        ];
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 1 });
+        grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'John', lastName: 'Doe' }], columns, defaultOptions);
+        vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 200, rightPx: 12, bottom: 230, top: 12 });
+        const cellHeight = grid.getCellHeight(0, 2);
 
-        expect(grid.getFrozenRowOffset(1)).toBe(0);
+        expect(cellHeight).toBe(50);
       });
 
-      it('should return offset of 0 when frozenRow is defined as 0', () => {
+      it('should return default column width when column is not wider than grid and fullWidthRows is disabled with mixinDefaults is enabled', () => {
+        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, mixinDefaults: true });
+        grid.activateChangedOptions();
+        const result = grid.getCanvasWidth();
+
+        expect(result).toBe(80);
+        expect(grid.getAbsoluteColumnMinWidth()).toBe(0);
+        expect(grid.getHeaderColumnWidthDiff()).toBe(0);
+      });
+
+      it('should not call onBeforeCellEditorDestroy when mixinDefaults is enabled and commitCurrentEdit is returning false', () => {
+        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, editable: true, mixinDefaults: true });
+        const onBeforeCellEditorDestroySpy = vi.spyOn(grid.onBeforeCellEditorDestroy, 'notify');
+        vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+        grid.activateChangedOptions();
+        const result = grid.getCanvasWidth();
+
+        expect(result).toBe(80);
+        expect(grid.getAbsoluteColumnMinWidth()).toBe(0);
+        expect(grid.getHeaderColumnWidthDiff()).toBe(0);
+        expect(onBeforeCellEditorDestroySpy).not.toHaveBeenCalled();
+      });
+
+      it('should return default full grid width when column is not wider than grid but fullWidthRows is enabled', () => {
+        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, fullWidthRows: true });
+        const result = grid.getCanvasWidth();
+
+        expect(result).toBe(DEFAULT_GRID_WIDTH);
+      });
+
+      it('should return original grid width of 800px', () => {
+        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, fullWidthRows: true });
+        const result = grid.getCanvasWidth();
+
+        expect(result).toBe(DEFAULT_GRID_WIDTH);
+      });
+
+      it('should remove Grid Menu width from the last header when scrollbar width is collapsed and columns are wider than canvas', () => {
         const columns = [
-          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-          { id: 'lastName', field: 'lastName', name: 'Last Name' },
-          { id: 'age', field: 'age', name: 'age' },
+          { id: 'firstName', field: 'firstName', name: 'First Name', width: 800 },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', width: 800 },
         ] as Column[];
-        const data = [
-          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-        ];
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenRow: 0 });
-
-        expect(grid.getFrozenRowOffset(2)).toBe(0);
-      });
-
-      it('should return offset of default column height when frozenBottom is enabled and frozenRow is defined as 2 but actual frozen row is calculated to 0 because of frozen bottom and data length of 2 (2-2=0)', () => {
-        const columns = [
-          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-          { id: 'lastName', field: 'lastName', name: 'Last Name' },
-          { id: 'age', field: 'age', name: 'age' },
-        ] as Column[];
-        const data = [
-          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-        ];
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenBottom: true, frozenRow: 2 }); // 2 - 2 = 0 as actual frozen row
-
-        expect(grid.getFrozenRowOffset(2)).toBe(0);
-      });
-    });
-  });
-
-  describe('Grid Dimensions', () => {
-    it('should get 2 rows of cell height when rowspan is set to 2 when calling getCellHeight()', () => {
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', alwaysRenderColumn: true },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'John', lastName: 'Doe' }], columns, defaultOptions);
-      vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 200, rightPx: 12, bottom: 230, top: 12 });
-      const cellHeight = grid.getCellHeight(0, 2);
-
-      expect(cellHeight).toBe(50);
-    });
-
-    it('should return default column width when column is not wider than grid and fullWidthRows is disabled with mixinDefaults is enabled', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, mixinDefaults: true });
-      grid.activateChangedOptions();
-      const result = grid.getCanvasWidth();
-
-      expect(result).toBe(80);
-      expect(grid.getAbsoluteColumnMinWidth()).toBe(0);
-      expect(grid.getHeaderColumnWidthDiff()).toBe(0);
-    });
-
-    it('should not call onBeforeCellEditorDestroy when mixinDefaults is enabled and commitCurrentEdit is returning false', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, editable: true, mixinDefaults: true });
-      const onBeforeCellEditorDestroySpy = vi.spyOn(grid.onBeforeCellEditorDestroy, 'notify');
-      vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
-      grid.activateChangedOptions();
-      const result = grid.getCanvasWidth();
-
-      expect(result).toBe(80);
-      expect(grid.getAbsoluteColumnMinWidth()).toBe(0);
-      expect(grid.getHeaderColumnWidthDiff()).toBe(0);
-      expect(onBeforeCellEditorDestroySpy).not.toHaveBeenCalled();
-    });
-
-    it('should return default full grid width when column is not wider than grid but fullWidthRows is enabled', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, fullWidthRows: true });
-      const result = grid.getCanvasWidth();
-
-      expect(result).toBe(DEFAULT_GRID_WIDTH);
-    });
-
-    it('should return original grid width of 800px', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, fullWidthRows: true });
-      const result = grid.getCanvasWidth();
-
-      expect(result).toBe(DEFAULT_GRID_WIDTH);
-    });
-
-    it('should remove Grid Menu width from the last header when scrollbar width is collapsed and columns are wider than canvas', () => {
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', width: 800 },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 800 },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, {
-        ...defaultOptions,
-        enableGridMenu: true,
-        gridMenu: { menuWidth: 18 },
-      });
-      grid.init();
-
-      const headerElms = container.querySelectorAll<HTMLElement>('.slick-header-columns .slick-header-column');
-      const firstHeaderWidth = parseFloat(headerElms[0].style.width || '0');
-      const lastHeaderWidth = parseFloat(headerElms[1].style.width || '0');
-
-      expect(firstHeaderWidth).toBe(800);
-      expect(lastHeaderWidth).toBe(780);
-      expect(firstHeaderWidth - lastHeaderWidth).toBe(20);
-    });
-
-    it('should only remove last column compensation from header width when scrollbar width is visible', () => {
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', width: 80 },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 80 },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, {
-        ...defaultOptions,
-        enableGridMenu: true,
-        gridMenu: { menuWidth: 18 },
-      });
-      grid.init();
-
-      (grid as any).scrollbarDimensions = { width: 12, height: 12 };
-      (grid as any).createColumnHeaders();
-      (grid as any).applyColumnHeaderWidths();
-
-      const headerElms = container.querySelectorAll<HTMLElement>('.slick-header-columns .slick-header-column');
-      const firstHeaderWidth = parseFloat(headerElms[0].style.width || '0');
-      const lastHeaderWidth = parseFloat(headerElms[1].style.width || '0');
-
-      expect(firstHeaderWidth).toBe(80);
-      expect(lastHeaderWidth).toBe(80);
-      expect(firstHeaderWidth - lastHeaderWidth).toBe(0);
-    });
-
-    it('should use default Grid Menu width fallback when scrollbar width is collapsed and menu width is undefined and columns are wider than canvas', () => {
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', width: 800 },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 800 },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, {
-        ...defaultOptions,
-        enableGridMenu: true,
-        gridMenu: {},
-      });
-      grid.init();
-
-      (grid as any).scrollbarDimensions = { width: 0, height: 12 };
-      (grid as any).createColumnHeaders();
-      (grid as any).applyColumnHeaderWidths();
-
-      const headerElms = container.querySelectorAll<HTMLElement>('.slick-header-columns .slick-header-column');
-      const firstHeaderWidth = parseFloat(headerElms[0].style.width || '0');
-      const lastHeaderWidth = parseFloat(headerElms[1].style.width || '0');
-
-      expect(firstHeaderWidth).toBe(800);
-      expect(lastHeaderWidth).toBe(780);
-      expect(firstHeaderWidth - lastHeaderWidth).toBe(20);
-    });
-
-    it('should define rowspan and test mandatory rows are always rendered', () => {
-      const metadata: any = {
-        0: { columns: { 0: { colspan: 2, rowspan: 28 } } },
-      };
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', colspan: 2, rowspan: 2 },
-        { id: 'lastName', field: 'lastName', name: 'Last Name' },
-        { id: 'age', field: 'age', name: 'Age' },
-        { id: 'gender', field: 'gender', name: 'gender' },
-        { id: 'scholarity', field: 'scholarity', name: 'scholarity', colspan: '*' },
-        { id: 'bornCity', field: 'bornCity', name: 'bornCity' },
-      ] as Column[];
-      const gridOptions = { ...defaultOptions, enableCellRowSpan: true, createFooterRow: true, showFooterRow: false, minRowBuffer: 10 } as GridOption;
-      const data: any[] = [];
-      for (let i = 0; i < 1000; i++) {
-        data.push({ id: i, firstName: 'John', lastName: 'Doe', age: 30 });
-      }
-      const dv = new SlickDataView({ globalItemMetadataProvider: { getRowMetadata: (row) => metadata[row] } });
-      dv.setItems(data);
-      grid = new SlickGrid<any, Column>(container, dv, columns, gridOptions);
-      vi.spyOn(grid, 'getRowSpanIntersect') // add a rowspan mandatory row to always render
-        .mockReturnValue(2);
-      const getDataSpy = vi.spyOn(grid, 'getDataItem');
-
-      grid.init();
-      vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 200, rightPx: 12, bottom: 80, top: 42 });
-      vi.spyOn(dv, 'getItemMetadata').mockReturnValue({
-        cssClasses: 'text-bold',
-        focusable: true,
-        formatter: (_row: number, _col: number, val: any) => val,
-        columns: { 0: { colspan: '2:30' } },
-      });
-
-      grid.scrollCellIntoView(200, 0);
-      vi.spyOn(grid, 'getRowSpanIntersect').mockReturnValueOnce(1); // add a rowspan mandatory row to always render
-      vi.spyOn(grid, 'getRowSpanColumnIntersects').mockReturnValue([2, 3]);
-      vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(data.length + 1); // add 1 more to force a full rowspan cache remap
-      const remapRowspanSpy = vi.spyOn(grid, 'remapAllColumnsRowSpan');
-      grid.updateRowCount();
-
-      const slickCells = document.querySelectorAll<HTMLDivElement>('.slick-cell');
-      const slickCell0 = document.querySelector('.slick-cell.l0.r0') as HTMLDivElement;
-
-      expect(remapRowspanSpy).toHaveBeenCalled();
-      expect(slickCell0).toBeTruthy();
-      expect(slickCells.length).toBe(48);
-      expect(getDataSpy).toHaveBeenCalledTimes(32);
-    });
-
-    describe('getViewportHeight() method', () => {
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', alwaysRenderColumn: true },
-        { id: 'lastName', field: 'lastName', name: 'Last Name' },
-        { id: 'age', field: 'age', name: 'Age' },
-      ] as Column[];
-      const data = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-        { id: 2, firstName: 'Bob', lastName: 'Smith', age: 48 },
-        { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37 },
-      ];
-
-      it('should return full viewport height by data size when "autoHeight" is enabled', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, autoHeight: true });
-        grid.init();
-
-        expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
-      });
-
-      it('should return full viewport height by data size when "autoHeight" is enabled and has frozenColumn', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, autoHeight: true, frozenColumn: 1 });
-        grid.init();
-
-        expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
-      });
-
-      it('should return full viewport height by data size + headerRow & preHeader when they are enabled with "autoHeight"', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, {
+        grid = new SlickGrid<any, Column>(container, [], columns, {
           ...defaultOptions,
-          autoHeight: true,
-          forceFitColumns: true,
-          showHeaderRow: true,
-          headerRowHeight: 50,
-          createPreHeaderPanel: true,
-          showPreHeaderPanel: true,
-          preHeaderPanelHeight: 44,
+          enableGridMenu: true,
+          gridMenu: { menuWidth: 18 },
         });
         grid.init();
 
-        expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length + 50 + 44);
-        expect(grid.getCanvasWidth()).toBeGreaterThanOrEqual(799);
-        expect(grid.getCanvasWidth()).toBeLessThanOrEqual(801);
+        const headerElms = container.querySelectorAll<HTMLElement>('.slick-header-columns .slick-header-column');
+        const firstHeaderWidth = parseFloat(headerElms[0].style.width || '0');
+        const lastHeaderWidth = parseFloat(headerElms[1].style.width || '0');
+
+        expect(firstHeaderWidth).toBe(800);
+        expect(lastHeaderWidth).toBe(780);
+        expect(firstHeaderWidth - lastHeaderWidth).toBe(20);
       });
 
-      it('should return full viewport height by data size + headerRow & footerRow when they are enabled with "autoHeight"', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, {
+      it('should only remove last column compensation from header width when scrollbar width is visible', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', width: 80 },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', width: 80 },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, {
           ...defaultOptions,
-          autoHeight: true,
-          forceFitColumns: true,
-          headerRowHeight: 50,
-          showHeaderRow: true,
-          footerRowHeight: 40,
-          createFooterRow: true,
-          showFooterRow: true,
+          enableGridMenu: true,
+          gridMenu: { menuWidth: 18 },
         });
         grid.init();
 
-        expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length + 50 + 40);
-        expect(grid.getCanvasWidth()).toBeGreaterThanOrEqual(799);
-        expect(grid.getCanvasWidth()).toBeLessThanOrEqual(801);
+        (grid as any).scrollbarDimensions = { width: 12, height: 12 };
+        (grid as any).createColumnHeaders();
+        (grid as any).applyColumnHeaderWidths();
+
+        const headerElms = container.querySelectorAll<HTMLElement>('.slick-header-columns .slick-header-column');
+        const firstHeaderWidth = parseFloat(headerElms[0].style.width || '0');
+        const lastHeaderWidth = parseFloat(headerElms[1].style.width || '0');
+
+        expect(firstHeaderWidth).toBe(80);
+        expect(lastHeaderWidth).toBe(80);
+        expect(firstHeaderWidth - lastHeaderWidth).toBe(0);
       });
 
-      it('should return original grid height when calling method', () => {
+      it('should use default Grid Menu width fallback when scrollbar width is collapsed and menu width is undefined and columns are wider than canvas', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', width: 800 },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', width: 800 },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, {
+          ...defaultOptions,
+          enableGridMenu: true,
+          gridMenu: {},
+        });
+        grid.init();
+
+        (grid as any).scrollbarDimensions = { width: 0, height: 12 };
+        (grid as any).createColumnHeaders();
+        (grid as any).applyColumnHeaderWidths();
+
+        const headerElms = container.querySelectorAll<HTMLElement>('.slick-header-columns .slick-header-column');
+        const firstHeaderWidth = parseFloat(headerElms[0].style.width || '0');
+        const lastHeaderWidth = parseFloat(headerElms[1].style.width || '0');
+
+        expect(firstHeaderWidth).toBe(800);
+        expect(lastHeaderWidth).toBe(780);
+        expect(firstHeaderWidth - lastHeaderWidth).toBe(20);
+      });
+
+      it('should define rowspan and test mandatory rows are always rendered', () => {
+        const metadata: any = {
+          0: { columns: { 0: { colspan: 2, rowspan: 28 } } },
+        };
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', colspan: 2, rowspan: 2 },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+          { id: 'gender', field: 'gender', name: 'gender' },
+          { id: 'scholarity', field: 'scholarity', name: 'scholarity', colspan: '*' },
+          { id: 'bornCity', field: 'bornCity', name: 'bornCity' },
+        ] as Column[];
+        const gridOptions = { ...defaultOptions, enableCellRowSpan: true, createFooterRow: true, showFooterRow: false, minRowBuffer: 10 } as GridOption;
+        const data: any[] = [];
+        for (let i = 0; i < 1000; i++) {
+          data.push({ id: i, firstName: 'John', lastName: 'Doe', age: 30 });
+        }
+        const dv = new SlickDataView({ globalItemMetadataProvider: { getRowMetadata: (row) => metadata[row] } });
+        dv.setItems(data);
+        grid = new SlickGrid<any, Column>(container, dv, columns, gridOptions);
+        vi.spyOn(grid, 'getRowSpanIntersect') // add a rowspan mandatory row to always render
+          .mockReturnValue(2);
+        const getDataSpy = vi.spyOn(grid, 'getDataItem');
+
+        grid.init();
+        vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 200, rightPx: 12, bottom: 80, top: 42 });
+        vi.spyOn(dv, 'getItemMetadata').mockReturnValue({
+          cssClasses: 'text-bold',
+          focusable: true,
+          formatter: (_row: number, _col: number, val: any) => val,
+          columns: { 0: { colspan: '2:30' } },
+        });
+
+        grid.scrollCellIntoView(200, 0);
+        vi.spyOn(grid, 'getRowSpanIntersect').mockReturnValueOnce(1); // add a rowspan mandatory row to always render
+        vi.spyOn(grid, 'getRowSpanColumnIntersects').mockReturnValue([2, 3]);
+        vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(data.length + 1); // add 1 more to force a full rowspan cache remap
+        const remapRowspanSpy = vi.spyOn(grid, 'remapAllColumnsRowSpan');
+        grid.updateRowCount();
+
+        const slickCells = document.querySelectorAll<HTMLDivElement>('.slick-cell');
+        const slickCell0 = document.querySelector('.slick-cell.l0.r0') as HTMLDivElement;
+
+        expect(remapRowspanSpy).toHaveBeenCalled();
+        expect(slickCell0).toBeTruthy();
+        expect(slickCells.length).toBe(48);
+        expect(getDataSpy).toHaveBeenCalledTimes(32);
+      });
+
+      describe('getViewportHeight() method', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', alwaysRenderColumn: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
         const data = [
           { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
           { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
           { id: 2, firstName: 'Bob', lastName: 'Smith', age: 48 },
           { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37 },
         ];
-        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-        grid.init();
 
-        expect(grid.getViewportHeight()).toBe(DEFAULT_GRID_HEIGHT);
+        it('should return full viewport height by data size when "autoHeight" is enabled', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, autoHeight: true });
+          grid.init();
+
+          expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
+        });
+
+        it('should return full viewport height by data size when "autoHeight" is enabled and has column pinning', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, autoHeight: true, pinning: { columns: { left: 1 } } });
+          grid.init();
+
+          expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
+        });
+
+        it('should return full viewport height by data size + headerRow & preHeader when they are enabled with "autoHeight"', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, {
+            ...defaultOptions,
+            autoHeight: true,
+            forceFitColumns: true,
+            showHeaderRow: true,
+            headerRowHeight: 50,
+            createPreHeaderPanel: true,
+            showPreHeaderPanel: true,
+            preHeaderPanelHeight: 44,
+          });
+          grid.init();
+
+          expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length + 50 + 44);
+          expect(grid.getCanvasWidth()).toBeGreaterThanOrEqual(799);
+          expect(grid.getCanvasWidth()).toBeLessThanOrEqual(801);
+        });
+
+        it('should return full viewport height by data size + headerRow & footerRow when they are enabled with "autoHeight"', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, {
+            ...defaultOptions,
+            autoHeight: true,
+            forceFitColumns: true,
+            headerRowHeight: 50,
+            showHeaderRow: true,
+            footerRowHeight: 40,
+            createFooterRow: true,
+            showFooterRow: true,
+          });
+          grid.init();
+
+          expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length + 50 + 40);
+          expect(grid.getCanvasWidth()).toBeGreaterThanOrEqual(799);
+          expect(grid.getCanvasWidth()).toBeLessThanOrEqual(801);
+        });
+
+        it('should return original grid height when calling method', () => {
+          const data = [
+            { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+            { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+            { id: 2, firstName: 'Bob', lastName: 'Smith', age: 48 },
+            { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37 },
+          ];
+          grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+          grid.init();
+
+          expect(grid.getViewportHeight()).toBe(DEFAULT_GRID_HEIGHT);
+        });
+
+        it('should return original grid height minus headerRow & footerRow heights when calling method', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, {
+            ...defaultOptions,
+            headerRowHeight: 50,
+            showHeaderRow: true,
+            footerRowHeight: 40,
+            createFooterRow: true,
+            showFooterRow: true,
+          });
+          grid.init();
+
+          expect(grid.getViewportHeight()).toBe(DEFAULT_GRID_HEIGHT - 50 - 40);
+        });
+      });
+    });
+
+    describe('updateColumnHeader() method', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
+
+      it('should be able to change Header text content and title tooltip', () => {
+        grid = new SlickGrid<any, Column>(container, [], [...columns], defaultOptions);
+        const onBeforeHeaderSpy = vi.spyOn(grid.onBeforeHeaderCellDestroy, 'notify');
+        const onHeaderCellRenderSpy = vi.spyOn(grid.onHeaderCellRendered, 'notify');
+        let column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
+        expect(column2Elm[1].textContent).toBe('Last Name');
+
+        grid.updateColumnHeader('lastName', 'Middle Name', 'middle name tooltip');
+
+        column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
+        expect(column2Elm[1].textContent).toBe('Middle Name');
+        expect(column2Elm[1].title).toBe('middle name tooltip');
+        expect(onBeforeHeaderSpy).toHaveBeenCalled();
+        expect(onHeaderCellRenderSpy).toHaveBeenCalled();
       });
 
-      it('should return original grid height minus headerRow & footerRow heights when calling method', () => {
+      it('should not be able to change Header text content when enabling "explicitInitialization" and we called updateColumnHeader() and init() was not called', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, explicitInitialization: true });
+
+        grid.updateColumnHeader('lastName', 'Middle Name', 'middle name tooltip');
+
+        const column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
+        expect(column2Elm.length).toBe(0);
+      });
+
+      it('should not be able to change any Header text content when column provided is invalid', () => {
+        grid = new SlickGrid<any, Column>(container, [], [...columns], defaultOptions);
+        let column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
+        expect(column2Elm[1].textContent).toBe('Last Name');
+
+        grid.updateColumnHeader('unknown', 'Middle Name', 'middle name tooltip');
+
+        column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
+        expect(column2Elm[0].textContent).toBe('First Name');
+        expect(column2Elm[1].textContent).toBe('Last Name');
+      });
+    });
+
+    describe('reRenderColumns() method', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+
+      it('should force grid render when calling method with true argument provided', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
+        const invalidateSpy = vi.spyOn(grid, 'invalidateAllRows');
+        const renderSpy = vi.spyOn(grid, 'render');
+
+        grid.reRenderColumns(true);
+
+        expect(invalidateSpy).toHaveBeenCalled();
+        expect(renderSpy).toHaveBeenCalled();
+      });
+
+      it('should recalculate automatic header height after column widths are rerendered', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, autoHeaderHeight: true });
+        const recalculateSpy = vi.spyOn(grid as any, 'recalculateHeaderHeight');
+
+        grid.reRenderColumns();
+
+        expect(recalculateSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('automatic header height', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
+
+      it('should ignore recalculation before the left header pane is created', () => {
+        grid = new TestGrid(container, [], columns, defaultOptions);
+
+        expect(() => (grid as TestGrid).callRecalculateHeaderHeightWithoutLeftHeader()).not.toThrow();
+      });
+
+      it('should remove automatic header-height styles when disabled with setOptions', () => {
+        grid = new TestGrid(container, [], columns, { ...defaultOptions, autoHeaderHeight: true, pinning: { columns: { left: 0 } } });
+        const headers = [...container.querySelectorAll<HTMLDivElement>('.slick-header')];
+        headers.forEach((header, index) => {
+          vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 42 + index } as DOMRect);
+        });
+
+        (grid as TestGrid).callRecalculateHeaderHeight();
+        grid.setOptions({ autoHeaderHeight: false });
+
+        headers.forEach((header) => {
+          expect(header.classList).not.toContain('slick-header-auto-height');
+          expect(header.style.getPropertyValue('--slick-auto-header-height')).toBe('');
+          expect(header.style.height).toBe('');
+        });
+      });
+
+      it('should recalculate automatic header height after updating columns', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, autoHeaderHeight: true });
+        const recalculateSpy = vi.spyOn(grid as any, 'recalculateHeaderHeight');
+
+        grid.updateColumns();
+
+        expect(recalculateSpy).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('Editors', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editorClass: LongTextEditor }] as Column[];
+      let items: Array<{ id: number; name: string; age: number; active?: boolean }> = [];
+
+      beforeEach(() => {
+        items = [
+          { id: 0, name: 'Avery', age: 44 },
+          { id: 1, name: 'Bob', age: 20 },
+          { id: 2, name: 'Rachel', age: 46 },
+          { id: 3, name: 'Jane', age: 24 },
+          { id: 4, name: 'John', age: 20 },
+          { id: 5, name: 'Arnold', age: 50 },
+          { id: 6, name: 'Carole', age: 40 },
+          { id: 7, name: 'Jason', age: 48 },
+          { id: 8, name: 'Julie', age: 42 },
+          { id: 9, name: 'Aaron', age: 23 },
+          { id: 10, name: 'Ariane', age: 43 },
+        ];
+      });
+
+      afterEach(() => {
+        vi.clearAllMocks();
+      });
+
+      it('should expect editor when calling getEditController()', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+
+        const result = grid.getEditController();
+
+        expect(result).toBeTruthy();
+      });
+
+      it('should expect the grid container to have aria attributes set', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+
+        expect(grid).toBeTruthy();
+        expect(grid.getContainerNode().getAttribute('role')).toBe('grid');
+        expect(grid.getContainerNode().getAttribute('aria-colcount')).toBe('1');
+        expect(grid.getContainerNode().getAttribute('aria-rowcount')).toBe('11');
+      });
+
+      it('should expect the header structure to have required ARIA rowgroup/row roles', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true });
+
+        const headerColumnElm = container.querySelector('[role="columnheader"]') as HTMLDivElement;
+        expect(headerColumnElm).toBeTruthy();
+        expect(headerColumnElm.parentElement!.classList.contains('slick-header-columns')).toBe(true);
+        expect(headerColumnElm.parentElement!.getAttribute('role')).toBe('row');
+        expect(headerColumnElm.parentElement!.parentElement!.getAttribute('role')).toBe('rowgroup');
+
+        const headerRowCellElm = container.querySelector('.slick-headerrow-column') as HTMLDivElement;
+        expect(headerRowCellElm).toBeTruthy();
+        expect(headerRowCellElm.getAttribute('role')).toBe('gridcell');
+        expect(headerRowCellElm.parentElement!.getAttribute('role')).toBe('row');
+        expect(headerRowCellElm.parentElement!.parentElement!.getAttribute('role')).toBe('rowgroup');
+      });
+
+      it('should place focus sinks outside the grid subtree and keep them focusable without aria-hidden', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+
+        const focusSink = (grid as any)._focusSink as HTMLDivElement;
+        const focusSink2 = (grid as any)._focusSink2 as HTMLDivElement;
+
+        expect(focusSink).toBeTruthy();
+        expect(focusSink2).toBeTruthy();
+        expect(container.contains(focusSink)).toBe(false);
+        expect(container.contains(focusSink2)).toBe(false);
+        expect(focusSink.parentElement).toBe(container.parentElement);
+        expect(focusSink2.parentElement).toBe(container.parentElement);
+        expect(focusSink.tabIndex).toBe(-1);
+        expect(focusSink2.tabIndex).toBe(-1);
+        expect(focusSink.getAttribute('aria-hidden')).toBeNull();
+        expect(focusSink2.getAttribute('aria-hidden')).toBeNull();
+
+        focusSink.focus();
+        expect(document.activeElement).toBe(focusSink);
+      });
+
+      it('should remove external focus sinks when grid is destroyed', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+
+        const focusSink = (grid as any)._focusSink as HTMLDivElement;
+        const focusSink2 = (grid as any)._focusSink2 as HTMLDivElement;
+
+        expect(document.body.contains(focusSink)).toBe(true);
+        expect(document.body.contains(focusSink2)).toBe(true);
+
+        grid.destroy(true);
+
+        expect(focusSink.isConnected).toBe(false);
+        expect(focusSink2.isConnected).toBe(false);
+      });
+
+      it('should ignore invalidation after the grid has been destroyed', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+        grid.init();
+
+        grid.destroy(true);
+
+        expect(() => grid.invalidate()).not.toThrow();
+        expect(() => grid.updateRowCount()).not.toThrow();
+      });
+
+      it('should return undefined editor when getDataItem() did not find any associated cell item', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        vi.spyOn(grid, 'getDataItem').mockReturnValue(null);
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+
+        const result = grid.getCellEditor();
+
+        expect(result).toBeFalsy();
+      });
+
+      it('should return undefined editor when trying to add a new row item and "cannotTriggerInsert" is set', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', cannotTriggerInsert: true, editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, autoEditNewRow: false });
+        const onBeforeEditCellSpy = vi.spyOn(grid.onBeforeEditCell, 'notify');
+        grid.setActiveCell(0, 1);
+        vi.spyOn(grid, 'getDataLength').mockReturnValue(0); // trick grid to think it's a new item
+        grid.editActiveCell(InputEditor as any, true);
+
+        expect(onBeforeEditCellSpy).not.toHaveBeenCalled();
+      });
+
+      it('should return undefined editor when onBeforeEditCell returns false', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', cannotTriggerInsert: true, editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, autoEditNewRow: false });
+        const sed = new SlickEventData();
+        vi.spyOn(sed, 'getReturnValue').mockReturnValue(false);
+        vi.spyOn(grid.onBeforeEditCell, 'notify').mockReturnValue(sed);
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        const result = grid.getCellEditor();
+
+        expect(result).toBeFalsy();
+      });
+
+      it('should do nothing when trying to commit unchanged Age field Editor', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        const editor = grid.getCellEditor();
+        const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
+        vi.spyOn(editor!, 'isValueChanged').mockReturnValue(false); // unchanged value
+
+        const result = grid.getEditController()?.commitCurrentEdit();
+
+        expect(editor).toBeTruthy();
+        expect(onCellChangeSpy).not.toHaveBeenCalled();
+        expect(result).toBeTruthy();
+      });
+
+      it('should commit Name field Editor via an Editor defined as ItemMetadata by column id & asyncEditorLoading enabled and expect it to call execute() command and triggering onCellChange() notify', () => {
+        Object.defineProperty(document, 'selection', { writable: true, value: { empty: () => {} } });
+        const newValue = 33;
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name', colspan: '*' },
+          { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+        ] as Column[];
+        const dv = new SlickDataView();
+        dv.setItems(items);
+        grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, asyncEditorLoading: true });
+        vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { age: { colspan: '*', editorClass: InputEditor } } } as any);
+        grid.setActiveCell(0, 1);
+
+        vi.advanceTimersByTime(2);
+        const activeCellNode = container.querySelector('.slick-cell.editable.l1.r1');
+        grid.editActiveCell(InputEditor as any, true);
+
+        const editor = grid.getCellEditor();
+        const updateRowSpy = vi.spyOn(grid, 'updateRow');
+        const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
+        vi.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
+        expect(activeCellNode).toBeTruthy();
+
+        const result = grid.getEditController()?.commitCurrentEdit();
+
+        expect(editor).toBeTruthy();
+        expect(updateRowSpy).toHaveBeenCalledWith(0);
+        expect(onCellChangeSpy).toHaveBeenCalledWith(
+          expect.objectContaining({ command: 'execute', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: newValue }, column: columns[1] }),
+          expect.anything(),
+          grid
+        );
+        expect(grid.getEditController()).toBeTruthy();
+        expect(result).toBeTruthy();
+      });
+
+      it('should commit Name field Editor via an Editor defined as ItemMetadata by column id & asyncEditorLoading enabled and expect it to call execute() command and triggering onCellChange() notify', () => {
+        (navigator as any).__defineGetter__('userAgent', () => 'Firefox');
+        const newValue = 33;
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', type: 'number', colspan: '2', editorClass: InputEditor },
+        ] as Column[];
+        const dv = new SlickDataView();
+        dv.setItems(items);
+        grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, asyncEditorLoading: true });
+        vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { 1: { editorClass: InputEditor } } as any });
+        grid.setActiveCell(0, 1);
+
+        vi.advanceTimersByTime(2);
+        const activeCellNode = container.querySelector('.slick-cell.editable.l1.r1');
+        grid.editActiveCell(InputEditor as any, true);
+
+        const editor = grid.getCellEditor();
+        const updateRowSpy = vi.spyOn(grid, 'updateRow');
+        const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
+        vi.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
+        expect(activeCellNode).toBeTruthy();
+
+        const result = grid.getEditController()?.commitCurrentEdit();
+
+        expect(editor).toBeTruthy();
+        expect(updateRowSpy).toHaveBeenCalledWith(0);
+        expect(onCellChangeSpy).toHaveBeenCalledWith(
+          expect.objectContaining({ command: 'execute', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: newValue }, column: columns[1] }),
+          expect.anything(),
+          grid
+        );
+        expect(grid.getEditController()).toBeTruthy();
+        expect(result).toBeTruthy();
+      });
+
+      it('should commit Age field Editor by calling execute() command and triggering onCellChange() notify', () => {
+        const newValue = 33;
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: LongTextEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onPositionSpy = vi.spyOn(grid.onActiveCellPositionChanged, 'notify');
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(LongTextEditor as any, true);
+        const editor = grid.getCellEditor();
+        const updateRowSpy = vi.spyOn(grid, 'updateRow');
+        const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
+        vi.spyOn(editor!, 'serializeValue').mockReturnValue(newValue);
+
+        const result = grid.getEditController()?.commitCurrentEdit();
+
+        expect(onPositionSpy).toHaveBeenCalled();
+        expect(editor).toBeTruthy();
+        expect(updateRowSpy).toHaveBeenCalledWith(0);
+        expect(onCellChangeSpy).toHaveBeenCalledWith(
+          expect.objectContaining({ command: 'execute', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: newValue }, column: columns[1] }),
+          expect.anything(),
+          grid
+        );
+        expect(grid.getEditController()).toBeTruthy();
+        expect(result).toBeTruthy();
+
+        // test hide editor when editor is already opened but we start scrolling
+        vi.spyOn(grid, 'getActiveCellPosition').mockReturnValue({ visible: false } as any);
+        const canvasBottom = container.querySelector('.slick-viewport-left');
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(LongTextEditor as any, true);
+        const hideEditorSpy = vi.spyOn(grid.getCellEditor()!, 'hide');
+        canvasBottom?.dispatchEvent(new Event('scroll'));
+        expect(hideEditorSpy).toHaveBeenCalled();
+      });
+
+      it('should commit Active field Editor by calling execute() command with preClick and triggering onCellChange() notify', () => {
+        const newValue = false;
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: CheckboxEditor },
+          { id: 'active', field: 'active', name: 'Active', type: 'boolean' },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1, true);
+        const editor = grid.getCellEditor();
+        const updateRowSpy = vi.spyOn(grid, 'updateRow');
+        const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
+        const preClickSpy = vi.spyOn(CheckboxEditor.prototype, 'preClick');
+        vi.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
+        grid.editActiveCell(CheckboxEditor as any, true);
+
+        const result = grid.getEditController()?.commitCurrentEdit();
+
+        expect(preClickSpy).toHaveBeenCalled();
+        expect(editor).toBeTruthy();
+        expect(updateRowSpy).toHaveBeenCalledWith(0);
+        expect(onCellChangeSpy).toHaveBeenCalledWith(expect.objectContaining({ command: 'execute', row: 0, cell: 1 }), expect.anything(), grid);
+        expect(grid.getEditController()).toBeTruthy();
+        expect(result).toBeTruthy();
+      });
+
+      it('should commit & rollback Age field Editor by calling execute() & undo() commands from a custom EditCommandHandler and triggering onCellChange() notify', () => {
+        const newValue = 33;
+        const editQueue: Array<{ item: any; column: Column; editCommand: EditCommand }> = [];
+        const undoLastEdit = () => {
+          const lastEditCommand = editQueue.pop()?.editCommand;
+          if (lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
+            lastEditCommand.undo();
+            grid.invalidate();
+          }
+        };
+        const editCommandHandler = (item: any, column: Column, editCommand: EditCommand) => {
+          if (editCommand.prevSerializedValue !== editCommand.serializedValue) {
+            editQueue.push({ item, column, editCommand });
+            grid.invalidate();
+            editCommand.execute();
+          }
+        };
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+        ] as Column[];
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, editCommandHandler });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        const editor = grid.getCellEditor();
+        const updateRowSpy = vi.spyOn(grid, 'updateRow');
+        const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
+        vi.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
+
+        const result = grid.getEditController()?.commitCurrentEdit();
+
+        expect(editor).toBeTruthy();
+        expect(updateRowSpy).toHaveBeenCalledWith(0);
+        expect(onCellChangeSpy).toHaveBeenCalledWith(
+          expect.objectContaining({ command: 'execute', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: newValue }, column: columns[1] }),
+          expect.anything(),
+          grid
+        );
+        expect(grid.getEditController()).toBeTruthy();
+        expect(result).toBeTruthy();
+
+        undoLastEdit();
+
+        expect(onCellChangeSpy).toHaveBeenCalledWith(
+          expect.objectContaining({ command: 'undo', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: '44' }, column: columns[1] }),
+          expect.anything(),
+          grid
+        );
+      });
+
+      it('should commit Age field Editor by applying new values and triggering onAddNewRow() notify', () => {
+        const newValue = 77;
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, enableAddRow: true, editable: true });
+
+        grid.setActiveCell(1, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        const editor = grid.getCellEditor();
+        vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(0); // trick grid to think it's a new item
+        const onAddNewRowSpy = vi.spyOn(grid.onAddNewRow, 'notify');
+        vi.spyOn(editor!, 'serializeValue').mockReturnValue(newValue);
+
+        const result = grid.getEditController()?.commitCurrentEdit();
+
+        expect(editor).toBeTruthy();
+        expect(onAddNewRowSpy).toHaveBeenCalledWith(expect.objectContaining({ item: { age: newValue }, column: columns[1] }), expect.anything(), grid);
+        expect(grid.getEditController()).toBeTruthy();
+        expect(result).toBeTruthy();
+      });
+
+      it('should commit Age field Editor by applying new values and triggering onAddNewRow() notify with autoHeight enabled and expect different viewport height', () => {
+        const newValue = 77;
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, {
+          ...defaultOptions,
+          autoHeight: true,
+          enableCellNavigation: true,
+          enableAddRow: true,
+          editable: true,
+        });
+        const prevHeight = grid.getViewportHeight();
+        grid.onAddNewRow.subscribe((e, args) => {
+          grid.setData([...(grid.getData() as any[]), args.item]);
+        });
+
+        grid.setActiveCell(1, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        const editor = grid.getCellEditor();
+        vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(0); // trick grid to think it's a new item
+        const onAddNewRowSpy = vi.spyOn(grid.onAddNewRow, 'notify');
+        vi.spyOn(editor!, 'serializeValue').mockReturnValue(newValue);
+
+        const result = grid.getEditController()?.commitCurrentEdit();
+        const newHeight = grid.getViewportHeight();
+
+        expect(editor).toBeTruthy();
+        expect(onAddNewRowSpy).toHaveBeenCalledWith(expect.objectContaining({ item: { age: newValue }, column: columns[1] }), expect.anything(), grid);
+        expect(grid.getEditController()).toBeTruthy();
+        expect(result).toBeTruthy();
+        expect(prevHeight).not.toEqual(newHeight);
+      });
+
+      it('should not commit Age field Editor returns invalid result, expect triggering onValidationError() notify', () => {
+        const invalidResult = { valid: false, msg: 'invalid value' };
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        const editor = grid.getCellEditor();
+        const onValidationErrorSpy = vi.spyOn(grid.onValidationError, 'notify');
+        vi.spyOn(editor!, 'validate').mockReturnValue(invalidResult);
+        const activeCellNode = container.querySelector('.slick-cell.editable.l1.r1');
+
+        const result = grid.getEditController()?.commitCurrentEdit();
+
+        expect(editor).toBeTruthy();
+        expect(onValidationErrorSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            editor,
+            cellNode: activeCellNode,
+            validationResults: invalidResult,
+            row: 0,
+            cell: 1,
+            column: columns[1],
+          }),
+          expect.anything(),
+          grid
+        );
+        expect(grid.getEditController()).toBeTruthy();
+        expect(result).toBeFalsy();
+      });
+    });
+
+    describe('Column Reorder', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+        { id: 'age', field: 'age', name: 'Age', sortable: true },
+      ] as Column[];
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+      let sortInstance: any;
+
+      it('should not allow column reordering when Editor Lock commitCurrentEdit() is failing', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, pinning: { columns: { left: 0 } } });
+        grid.init();
+        vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+        const headerColumnsElm: any = document.querySelector('.slick-header-columns.slick-header-columns-left');
+        Object.keys(headerColumnsElm).forEach((prop) => {
+          if (prop.startsWith('Sortable')) {
+            sortInstance = headerColumnsElm[prop];
+          }
+        });
+        const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
+        const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
+        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+
+        const dragEvent = new CustomEvent('DragEvent');
+        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+        Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
+        Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+        Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
+
+        expect(sortInstance).toBeTruthy();
+        sortInstance.options.onStart(dragEvent);
+        expect(viewportTopLeft.scrollLeft).toBe(0);
+
+        vi.advanceTimersByTime(100);
+
+        expect(viewportTopLeft.scrollLeft).toBe(0);
+        sortInstance.options.onEnd(dragEvent);
+        expect(onColumnsReorderedSpy).not.toHaveBeenCalled();
+      });
+
+      it('should preserve hidden columns at their original indices when reordering visible columns', () => {
+        const columnsWithHidden = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+          { id: 'middleName', field: 'middleName', name: 'Middle Name', sortable: true, hidden: true },
+          { id: 'age', field: 'age', name: 'Age', sortable: true },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, data, columnsWithHidden, defaultOptions);
+        const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
+        Object.keys(headerColumnsElm).forEach((prop) => {
+          if (prop.startsWith('Sortable')) {
+            sortInstance = headerColumnsElm[prop];
+          }
+        });
+        const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
+        const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
+        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+
+        const dragEvent = new CustomEvent('DragEvent');
+        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+        Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
+        Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+        Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
+        Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
+        // SortableJS only returns visible columns (firstName, lastName, age)
+        // Simulate moving lastName before firstName: ['lastName', 'firstName', 'age']
+        vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['lastName', 'firstName', 'age']);
+
+        sortInstance.options.onStart(dragEvent);
+        sortInstance.options.onEnd(dragEvent);
+
+        const finalColumns = grid.getColumns();
+        // Expected order: lastName, firstName, middleName (hidden stays at index 2), age
+        expect(grid.getColumnByIdx(0)!.id).toBe('lastName');
+        expect(finalColumns[0].id).toBe('lastName');
+        expect(finalColumns[1].id).toBe('firstName');
+        expect(finalColumns[2].id).toBe('middleName'); // hidden column stays at original position
+        expect(finalColumns[2].hidden).toBe(true);
+        expect(finalColumns[3].id).toBe('age');
+        expect(onColumnsReorderedSpy).toHaveBeenCalled();
+      });
+
+      it('should preserve multiple hidden columns at their original indices when reordering', () => {
+        const columnsWithMultipleHidden = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+          { id: 'middleName', field: 'middleName', name: 'Middle Name', sortable: true, hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+          { id: 'suffix', field: 'suffix', name: 'Suffix', sortable: true, hidden: true },
+          { id: 'age', field: 'age', name: 'Age', sortable: true },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, data, columnsWithMultipleHidden, defaultOptions);
+        const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
+        Object.keys(headerColumnsElm).forEach((prop) => {
+          if (prop.startsWith('Sortable')) {
+            sortInstance = headerColumnsElm[prop];
+          }
+        });
+        const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
+        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+
+        const dragEvent = new CustomEvent('DragEvent');
+        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+        Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
+        Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+        Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
+        Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
+        // Simulate reordering visible columns: ['age', 'firstName', 'lastName']
+        vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['age', 'firstName', 'lastName']);
+
+        sortInstance.options.onStart(dragEvent);
+        sortInstance.options.onEnd(dragEvent);
+
+        const finalColumns = grid.getColumns();
+        // Expected: age, middleName(hidden at idx 1), firstName, suffix(hidden at idx 3), lastName
+        expect(finalColumns[0].id).toBe('age');
+        expect(finalColumns[1].id).toBe('middleName');
+        expect(finalColumns[1].hidden).toBe(true);
+        expect(finalColumns[2].id).toBe('firstName');
+        expect(finalColumns[3].id).toBe('suffix');
+        expect(finalColumns[3].hidden).toBe(true);
+        expect(finalColumns[4].id).toBe('lastName');
+      });
+
+      it('should handle reordering when hidden column is at the beginning', () => {
+        const columnsWithHiddenFirst = [
+          { id: 'id', field: 'id', name: 'ID', sortable: true, hidden: true },
+          { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+          { id: 'age', field: 'age', name: 'Age', sortable: true },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, data, columnsWithHiddenFirst, defaultOptions);
+        const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
+        Object.keys(headerColumnsElm).forEach((prop) => {
+          if (prop.startsWith('Sortable')) {
+            sortInstance = headerColumnsElm[prop];
+          }
+        });
+        const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
+        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+
+        const dragEvent = new CustomEvent('DragEvent');
+        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+        Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
+        Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+        Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
+        Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
+        // Reorder visible columns: ['lastName', 'age', 'firstName']
+        vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['lastName', 'age', 'firstName']);
+
+        sortInstance.options.onStart(dragEvent);
+        sortInstance.options.onEnd(dragEvent);
+
+        const finalColumns = grid.getColumns();
+        // Expected: id(hidden at idx 0), lastName, age, firstName
+        expect(finalColumns[0].id).toBe('id');
+        expect(finalColumns[0].hidden).toBe(true);
+        expect(finalColumns[1].id).toBe('lastName');
+        expect(finalColumns[2].id).toBe('age');
+        expect(finalColumns[3].id).toBe('firstName');
+      });
+
+      it('should handle reordering when hidden column is at the end', () => {
+        const columnsWithHiddenLast = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+          { id: 'age', field: 'age', name: 'Age', sortable: true },
+          { id: 'metadata', field: 'metadata', name: 'Metadata', sortable: true, hidden: true },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, data, columnsWithHiddenLast, defaultOptions);
+        const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
+        Object.keys(headerColumnsElm).forEach((prop) => {
+          if (prop.startsWith('Sortable')) {
+            sortInstance = headerColumnsElm[prop];
+          }
+        });
+        const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
+        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+
+        const dragEvent = new CustomEvent('DragEvent');
+        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+        Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
+        Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+        Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
+        Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
+        // Reorder visible columns: ['age', 'firstName', 'lastName']
+        vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['age', 'firstName', 'lastName']);
+
+        sortInstance.options.onStart(dragEvent);
+        sortInstance.options.onEnd(dragEvent);
+
+        const finalColumns = grid.getColumns();
+        // Expected: age, firstName, lastName, metadata(hidden at idx 3)
+        expect(finalColumns[0].id).toBe('age');
+        expect(finalColumns[1].id).toBe('firstName');
+        expect(finalColumns[2].id).toBe('lastName');
+        expect(finalColumns[3].id).toBe('metadata');
+        expect(finalColumns[3].hidden).toBe(true);
+      });
+    });
+
+    describe('Drag & Drop (Draggable)', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+        {
+          id: 'lastName',
+          field: 'lastName',
+          name: 'Last Name',
+          sortable: true,
+          asyncPostRender: (node) => (node.textContent = String(Math.random())),
+          asyncPostRenderCleanup: (node) => (node.textContent = ''),
+        },
+        { id: 'age', field: 'age', name: 'Age', sortable: true },
+      ] as Column[];
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+      for (let i = 0; i < 500; i++) {
+        data[i] = {
+          id: i,
+          firstName: i % 2 ? 'John' : 'Jane',
+          lastName: 'Doe',
+          age: Math.random(),
+        };
+      }
+
+      it('should not drag when cell is not in found in the grid', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify');
+        const slickCellElm = createDomElement('div', { className: 'slick-cell l0' });
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+        container.dispatchEvent(cMouseDownEvent);
+
+        expect(onDragInitSpy).not.toHaveBeenCalled();
+      });
+
+      it('should allow modifier-key drags when enableMultiSelection is explicitly configured', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, {
           ...defaultOptions,
-          headerRowHeight: 50,
-          showHeaderRow: true,
-          footerRowHeight: 40,
-          createFooterRow: true,
-          showFooterRow: true,
+          selectionOptions: { enableMultiSelection: false },
+        });
+        const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify');
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        const cMouseDownEvent = new MouseEvent('mousedown', { bubbles: true, ctrlKey: true });
+        slickCellElm.dispatchEvent(cMouseDownEvent);
+
+        expect(onDragInitSpy).toHaveBeenCalled();
+      });
+
+      it('should allow modifier-key drags when preventDragFromKeys is explicitly empty', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          preventDragFromKeys: [],
+        });
+        const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify');
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        const cMouseDownEvent = new MouseEvent('mousedown', { bubbles: true, ctrlKey: true });
+        slickCellElm.dispatchEvent(cMouseDownEvent);
+
+        expect(grid.getOptions().preventDragFromKeys).toEqual([]);
+        expect(onDragInitSpy).toHaveBeenCalled();
+      });
+
+      it('should not drag when event has cancelled bubbling (immediatePropagationStopped)', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const sedMouseDown = new SlickEventData();
+        sedMouseDown.addReturnValue(false);
+        sedMouseDown.stopImmediatePropagation();
+        const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedMouseDown);
+        const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify');
+        const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
+        const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        slickCellElm.classList.add('dnd', 'cell-reorder');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        bodyMouseMoveEvent.stopImmediatePropagation(); // simulate bubbling stop from dragInit
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: slickCellElm });
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        window.dispatchEvent(bodyMouseUpEvent);
+
+        expect(onDragInitSpy).toHaveBeenCalled();
+        expect(onDragStartSpy).not.toHaveBeenCalled();
+        expect(onDragSpy).not.toHaveBeenCalled();
+        expect(onDragEndSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not execute any events after onDragInit when it returns false', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify');
+        const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify');
+        const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
+        const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        slickCellElm.classList.add('dnd', 'cell-reorder');
+
+        const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+        Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: slickCellElm });
+
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent1);
+        window.dispatchEvent(bodyMouseUpEvent);
+
+        expect(onDragInitSpy).toHaveBeenCalled();
+        expect(onDragStartSpy).not.toHaveBeenCalled();
+        expect(onDragSpy).not.toHaveBeenCalled();
+        expect(onDragEndSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not execute onDragStart or any other events when onDragStart event has cancelled bubbling (immediatePropagationStopped)', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const sedDragInit = new SlickEventData();
+        const sedDragStart = new SlickEventData();
+        sedDragInit.addReturnValue(true);
+        sedDragStart.addReturnValue(false);
+        sedDragInit.stopImmediatePropagation();
+        sedDragStart.stopImmediatePropagation();
+        const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
+        const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify').mockReturnValue(sedDragStart);
+        const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
+        const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        slickCellElm.classList.add('dnd', 'cell-reorder');
+
+        const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+        Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: slickCellElm });
+
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent1);
+        window.dispatchEvent(bodyMouseUpEvent);
+
+        expect(onDragInitSpy).toHaveBeenCalled();
+        expect(onDragStartSpy).toHaveBeenCalled();
+        expect(onDragSpy).toHaveBeenCalled();
+        expect(onDragEndSpy).toHaveBeenCalled();
+      });
+
+      it('should not execute onDragStart when cell has an Editor but commitCurrentEdit() returns false', () => {
+        columns[1].editorClass = InputEditor;
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, editable: true });
+        vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const sedDragInit = new SlickEventData();
+        const sedDragStart = new SlickEventData();
+        sedDragInit.addReturnValue(true);
+        sedDragStart.addReturnValue(false);
+        sedDragInit.stopImmediatePropagation();
+        sedDragStart.stopImmediatePropagation();
+        const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
+        const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
+        const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        slickCellElm.classList.add('dnd', 'cell-reorder');
+
+        const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+        Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: slickCellElm });
+
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        container.dispatchEvent(cMouseDownEvent);
+
+        document.body.dispatchEvent(bodyMouseMoveEvent1);
+        window.dispatchEvent(bodyMouseUpEvent);
+
+        expect(onDragInitSpy).toHaveBeenCalled();
+        expect(onDragSpy).toHaveBeenCalled();
+        expect(onDragEndSpy).toHaveBeenCalled();
+      });
+
+      it('should drag from a cell and execute all onDrag events when a slick-cell is dragged and its event is stopped', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+
+        const sedDragInit = new SlickEventData();
+        sedDragInit.addReturnValue(true);
+        sedDragInit.stopImmediatePropagation();
+        const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
+        const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify');
+        const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
+        const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        slickCellElm.classList.add('dnd', 'cell-reorder');
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: slickCellElm });
+        Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 20 });
+        Object.defineProperty(bodyMouseMoveEvent, 'clientY', { writable: true, value: 18 });
+
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        window.dispatchEvent(bodyMouseUpEvent);
+
+        expect(onDragInitSpy).toHaveBeenCalled();
+        expect(onDragStartSpy).toHaveBeenCalled();
+        expect(onDragSpy).toHaveBeenCalled();
+        expect(onDragEndSpy).toHaveBeenCalled();
+      });
+
+      it('should drag from a cell and execute all onDrag events then cleanup async renderer when a slick-cell is dragged and its event is stopped', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          rowHeight: 2200,
+          enableAsyncPostRender: true,
+          enableAsyncPostRenderCleanup: true,
+        });
+        const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
+        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, height: 223 } as DOMRect);
+        Object.defineProperty(viewportTopLeft, 'scrollTop', { writable: true, value: 3000 });
+        Object.defineProperty(viewportTopLeft, 'scrollLeft', { writable: true, value: 88 });
+        Object.defineProperty(viewportTopLeft, 'scrollHeight', { writable: true, value: 440 });
+        Object.defineProperty(viewportTopLeft, 'scrollWidth', { writable: true, value: 459 });
+        Object.defineProperty(viewportTopLeft, 'clientHeight', { writable: true, value: 223 });
+        Object.defineProperty(viewportTopLeft, 'clientWidth', { writable: true, value: 128 });
+
+        const sedDragInit = new SlickEventData();
+        sedDragInit.addReturnValue(true);
+        sedDragInit.stopImmediatePropagation();
+        const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
+        const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify');
+        const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
+        const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        slickCellElm.classList.add('dnd', 'cell-reorder');
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: slickCellElm });
+        Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 20 });
+        Object.defineProperty(bodyMouseMoveEvent, 'clientY', { writable: true, value: 18 });
+
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        window.dispatchEvent(bodyMouseUpEvent);
+        expect(onDragInitSpy).toHaveBeenCalled();
+        expect(onDragStartSpy).toHaveBeenCalled();
+        expect(onDragSpy).toHaveBeenCalled();
+        expect(onDragEndSpy).toHaveBeenCalled();
+
+        grid.scrollRowIntoView(30);
+        expect((document.querySelector('.slick-row.odd') as HTMLDivElement).style.top).toMatch(/^[0-9]*px$/gi);
+        grid.setActiveRow(30);
+        grid.scrollTo(33);
+        vi.advanceTimersByTime(10);
+
+        vi.spyOn(grid, 'getCellNode').mockReturnValueOnce(document.createElement('div'));
+        grid.updateCell(30, 1);
+        grid.invalidateRows([31]);
+        grid.scrollTo(2);
+        vi.advanceTimersByTime(12);
+
+        expect(onViewportChangedSpy).toHaveBeenCalled();
+      });
+
+      it('should "rowTopOffsetRenderType" use grid option and scrollTo row and expect transform of translateY to be changed', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          rowHeight: 2200,
+          enableAsyncPostRender: true,
+          enableAsyncPostRenderCleanup: true,
+          rowTopOffsetRenderType: 'transform',
+        });
+        const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
+        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, height: 223 } as DOMRect);
+        Object.defineProperty(viewportTopLeft, 'scrollTop', { writable: true, value: 3000 });
+        Object.defineProperty(viewportTopLeft, 'scrollLeft', { writable: true, value: 88 });
+        Object.defineProperty(viewportTopLeft, 'scrollHeight', { writable: true, value: 440 });
+        Object.defineProperty(viewportTopLeft, 'scrollWidth', { writable: true, value: 459 });
+        Object.defineProperty(viewportTopLeft, 'clientHeight', { writable: true, value: 223 });
+        Object.defineProperty(viewportTopLeft, 'clientWidth', { writable: true, value: 128 });
+
+        const sedDragInit = new SlickEventData();
+        sedDragInit.addReturnValue(true);
+        sedDragInit.stopImmediatePropagation();
+        const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
+        const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify');
+        const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
+        const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        slickCellElm.classList.add('dnd', 'cell-reorder');
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: slickCellElm });
+        Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 20 });
+        Object.defineProperty(bodyMouseMoveEvent, 'clientY', { writable: true, value: 18 });
+
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        window.dispatchEvent(bodyMouseUpEvent);
+        expect(onDragInitSpy).toHaveBeenCalled();
+        expect(onDragStartSpy).toHaveBeenCalled();
+        expect(onDragSpy).toHaveBeenCalled();
+        expect(onDragEndSpy).toHaveBeenCalled();
+
+        grid.scrollRowIntoView(30);
+        expect((document.querySelector('.slick-row.odd') as HTMLDivElement).style.transform).toMatch(/^translateY\([0-9]*px\)$/gi);
+        grid.setActiveRow(30);
+        grid.scrollTo(33);
+        vi.advanceTimersByTime(10);
+
+        grid.updateCell(0, 1);
+        grid.invalidateRows([31]);
+        grid.scrollTo(2);
+        vi.advanceTimersByTime(12);
+
+        expect(onViewportChangedSpy).toHaveBeenCalled();
+      });
+
+      it('should drag from a cell and execute all onDrag events except onDragStart when mousemove event target is not a slick-cell', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+
+        const sedDragInit = new SlickEventData();
+        sedDragInit.addReturnValue(true);
+        sedDragInit.stopImmediatePropagation();
+        const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
+        const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify');
+        const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
+        const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        slickCellElm.classList.add('dnd', 'cell-reorder');
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+        // Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: null });
+        Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 20 });
+        Object.defineProperty(bodyMouseMoveEvent, 'clientY', { writable: true, value: 18 });
+
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        window.dispatchEvent(bodyMouseUpEvent);
+
+        expect(onDragInitSpy).toHaveBeenCalled();
+        expect(onDragStartSpy).not.toHaveBeenCalled();
+        expect(onDragSpy).toHaveBeenCalled();
+        expect(onDragEndSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('Column Resizing', () => {
+      const columns = [
+        { id: 'id', field: 'id', name: 'Id', hidden: true },
+        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true, width: 77, previousWidth: 20, rerenderOnResize: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true, minWidth: 35, maxWidth: 78 },
+        { id: 'age', field: 'age', name: 'Age', sortable: true, minWidth: 82, width: 86, maxWidth: 88 },
+        { id: 'gender', field: 'gender', name: 'Gender', sortable: true },
+      ] as Column[];
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+
+      it('should resize should not go through when column has an editor', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
+        // grid.init();
+
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+        vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        // document.body.dispatchEvent(bodyMouseMoveEvent);
+        expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+      });
+
+      it('should resize 2nd column that has a "width" defined using default sizing grid options', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, autoHeaderHeight: true, forceFitColumns: false });
+        grid.init();
+
+        const recalculateSpy = vi.spyOn(grid as any, 'recalculateHeaderHeight');
+        const sedOnBeforeResize = new SlickEventData();
+        sedOnBeforeResize.addReturnValue(true);
+        vi.spyOn(grid.onBeforeColumnsResize, 'notify').mockReturnValue(sedOnBeforeResize);
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
+        expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+        // header click won't get through
+        const onHeaderClickSpy = vi.spyOn(grid.onHeaderClick, 'notify');
+        container.querySelector('.slick-header')!.dispatchEvent(new CustomEvent('click'));
+        expect(onHeaderClickSpy).not.toHaveBeenCalled();
+
+        // end resizing
+        document.body.dispatchEvent(bodyMouseUpEvent);
+
+        vi.advanceTimersByTime(10);
+
+        expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+        expect(recalculateSpy).toHaveBeenCalledTimes(1);
+        expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
+        expect(columns[0].width).toBe(80);
+        expect(columns[1].width).toBe(0);
+        expect(columns[2].width).toBe(65);
+        expect(columns[3].width).toBe(86);
+        expect(columns[4].width).toBe(80);
+      });
+
+      it('should resize 3rd column that has a "minWidth" defined using default sizing grid options', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false, syncColumnCellResize: true });
+        grid.init();
+
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
+        expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+        // end resizing
+        document.body.dispatchEvent(bodyMouseUpEvent);
+
+        vi.advanceTimersByTime(10);
+
+        expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
+        expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
+        expect(columns[0].width).toBe(80);
+        expect(columns[1].width).toBe(0);
+        expect(columns[2].width).toBe(59);
+        expect(columns[3].width).toBe(88);
+        expect(columns[4].width).toBe(80);
+      });
+
+      it('should resize 3rd column that has a "minWidth" defined using default sizing grid options with a frozen column', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          forceFitColumns: false,
+          pinning: { columns: { left: 0 } },
+          syncColumnCellResize: true,
         });
         grid.init();
 
-        expect(grid.getViewportHeight()).toBe(DEFAULT_GRID_HEIGHT - 50 - 40);
-      });
-    });
-  });
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+        const invalidateRowSpy = vi.spyOn(grid, 'invalidateAllRows');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
 
-  describe('updateColumnHeader() method', () => {
-    const columns = [
-      { id: 'firstName', field: 'firstName', name: 'First Name' },
-      { id: 'lastName', field: 'lastName', name: 'Last Name' },
-    ] as Column[];
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(columnElms[0], 'offsetWidth', { writable: true, value: 40 });
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
 
-    it('should be able to change Header text content and title tooltip', () => {
-      grid = new SlickGrid<any, Column>(container, [], [...columns], defaultOptions);
-      const onBeforeHeaderSpy = vi.spyOn(grid.onBeforeHeaderCellDestroy, 'notify');
-      const onHeaderCellRenderSpy = vi.spyOn(grid.onHeaderCellRendered, 'notify');
-      let column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
-      expect(column2Elm[1].textContent).toBe('Last Name');
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
+        expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
 
-      grid.updateColumnHeader('lastName', 'Middle Name', 'middle name tooltip');
+        // end resizing
+        Object.defineProperty(columnElms[0], 'offsetWidth', { writable: true, value: 38 });
+        document.body.dispatchEvent(bodyMouseUpEvent);
 
-      column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
-      expect(column2Elm[1].textContent).toBe('Middle Name');
-      expect(column2Elm[1].title).toBe('middle name tooltip');
-      expect(onBeforeHeaderSpy).toHaveBeenCalled();
-      expect(onHeaderCellRenderSpy).toHaveBeenCalled();
-    });
+        vi.advanceTimersByTime(10);
 
-    it('should not be able to change Header text content when enabling "explicitInitialization" and we called updateColumnHeader() and init() was not called', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, explicitInitialization: true });
-
-      grid.updateColumnHeader('lastName', 'Middle Name', 'middle name tooltip');
-
-      const column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
-      expect(column2Elm.length).toBe(0);
-    });
-
-    it('should not be able to change any Header text content when column provided is invalid', () => {
-      grid = new SlickGrid<any, Column>(container, [], [...columns], defaultOptions);
-      let column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
-      expect(column2Elm[1].textContent).toBe('Last Name');
-
-      grid.updateColumnHeader('unknown', 'Middle Name', 'middle name tooltip');
-
-      column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
-      expect(column2Elm[0].textContent).toBe('First Name');
-      expect(column2Elm[1].textContent).toBe('Last Name');
-    });
-  });
-
-  describe('reRenderColumns() method', () => {
-    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-
-    it('should force grid render when calling method with true argument provided', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
-      const invalidateSpy = vi.spyOn(grid, 'invalidateAllRows');
-      const renderSpy = vi.spyOn(grid, 'render');
-
-      grid.reRenderColumns(true);
-
-      expect(invalidateSpy).toHaveBeenCalled();
-      expect(renderSpy).toHaveBeenCalled();
-    });
-
-    it('should recalculate automatic header height after column widths are rerendered', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, autoHeaderHeight: true });
-      const recalculateSpy = vi.spyOn(grid as any, 'recalculateHeaderHeight');
-
-      grid.reRenderColumns();
-
-      expect(recalculateSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('automatic header height', () => {
-    const columns = [
-      { id: 'firstName', field: 'firstName', name: 'First Name' },
-      { id: 'lastName', field: 'lastName', name: 'Last Name' },
-    ] as Column[];
-
-    it('should ignore recalculation before the left header pane is created', () => {
-      grid = new TestGrid(container, [], columns, defaultOptions);
-
-      expect(() => (grid as TestGrid).callRecalculateHeaderHeightWithoutLeftHeader()).not.toThrow();
-    });
-
-    it('should remove automatic header-height styles when disabled with setOptions', () => {
-      grid = new TestGrid(container, [], columns, { ...defaultOptions, autoHeaderHeight: true, frozenColumn: 0 });
-      const headers = [...container.querySelectorAll<HTMLDivElement>('.slick-header')];
-      headers.forEach((header, index) => {
-        vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 42 + index } as DOMRect);
+        expect(invalidateRowSpy).toHaveBeenCalled();
+        expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
+        expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
+        expect(columns[0].width).toBe(80);
+        expect(columns[1].width).toBe(40); // go over freezing column limit, assign offsetWidth found from column element
+        expect(columns[2].width).toBe(59 - 40);
+        expect(columns[3].width).toBe(88);
+        expect(columns[4].width).toBe(80);
       });
 
-      (grid as TestGrid).callRecalculateHeaderHeight();
-      grid.setOptions({ autoHeaderHeight: false });
+      it('should resize 3rd column that has a "minWidth" with a frozen column that is greater than available columns', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          forceFitColumns: false,
+          pinning: { columns: { left: 0, right: 5 } },
+          syncColumnCellResize: true,
+        });
+        grid.init();
 
-      headers.forEach((header) => {
-        expect(header.classList).not.toContain('slick-header-auto-height');
-        expect(header.style.getPropertyValue('--slick-auto-header-height')).toBe('');
-        expect(header.style.height).toBe('');
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
+        expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+        // end resizing
+        document.body.dispatchEvent(bodyMouseUpEvent);
+
+        vi.advanceTimersByTime(10);
+
+        expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
+        expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
+        expect(columns[0].width).toBe(80);
+        expect(columns[1].width).toBe(0);
+        expect(columns[2].width).toBe(59);
+        expect(columns[3].width).toBe(88);
+        expect(columns[4].width).toBe(80);
+      });
+
+      it('should resize 2nd column with forceFitColumns option enabled', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
+        grid.init();
+        grid.autosizeColumns();
+
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
+        const bodyMouseMoveEvent2 = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+        Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+        Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent1, 'pageX', { writable: true, value: 78 });
+        Object.defineProperty(bodyMouseMoveEvent2, 'pageX', { writable: true, value: 79 });
+        Object.defineProperty(bodyMouseMoveEvent1, 'pageY', { writable: true, value: 13 });
+
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent1);
+        Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 75 });
+        document.body.dispatchEvent(bodyMouseMoveEvent2);
+        expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
+        expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+        // end resizing
+        document.body.dispatchEvent(bodyMouseUpEvent);
+        expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+        expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
+        expect(columns[0].width).toBe(80);
+        expect(columns[1].width).toBe(0);
+        expect(columns[2].width).toBe(74);
+        expect(columns[3].width).toBe(133);
+        expect(columns[4].width).toBe(198);
+      });
+
+      it('should resize 2nd column with forceFitColumns and column pinning enabled', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true, pinning: { columns: { left: 1 } } });
+        grid.init();
+        grid.autosizeColumns();
+
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
+        const bodyMouseMoveEvent2 = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+        Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+        Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 70 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent1, 'pageX', { writable: true, value: 78 });
+        Object.defineProperty(bodyMouseMoveEvent2, 'pageX', { writable: true, value: 72 });
+        Object.defineProperty(bodyMouseMoveEvent1, 'pageY', { writable: true, value: 13 });
+
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent1);
+        Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 75 });
+        document.body.dispatchEvent(bodyMouseMoveEvent2);
+        expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
+        expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+        // end resizing
+        document.body.dispatchEvent(bodyMouseUpEvent);
+        expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+        expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
+        expect(columns[0].width).toBe(80);
+        expect(columns[1].width).toBe(0);
+        expect(columns[2].width).toBe(76);
+        expect(columns[3].width).toBe(131);
+        expect(columns[4].width).toBe(198);
+      });
+
+      it('should resize 2nd column without forceFitColumns option', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
+        grid.init();
+        grid.autosizeColumns();
+
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
+        const bodyMouseMoveEvent2 = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+        Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+        Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent1, 'pageX', { writable: true, value: 78 });
+        Object.defineProperty(bodyMouseMoveEvent2, 'pageX', { writable: true, value: 79 });
+        Object.defineProperty(bodyMouseMoveEvent1, 'pageY', { writable: true, value: 13 });
+
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent1);
+        Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 75 });
+        document.body.dispatchEvent(bodyMouseMoveEvent2);
+        expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
+        expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+        // end resizing
+        document.body.dispatchEvent(bodyMouseUpEvent);
+        expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+        expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
+        expect(columns[0].width).toBe(80);
+        expect(columns[1].width).toBe(0);
+        expect(columns[2].width).toBe(74);
+        expect(columns[3].width).toBe(88);
+        expect(columns[4].width).toBeGreaterThanOrEqual(550);
+        expect(columns[4].width).toBeLessThanOrEqual(552);
+      });
+
+      it('should resize 2nd column with forceFitColumns option enabled', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
+        grid.init();
+        grid.autosizeColumns();
+
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+        Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+        Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
+        expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+        // end resizing
+        document.body.dispatchEvent(bodyMouseUpEvent);
+        expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+        expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
+        expect(columns[0].width).toBe(80);
+        expect(columns[1].width).toBe(0);
+        expect(columns[2].width).toBe(73);
+        expect(columns[3].width).toBe(88);
+        expect(columns[4].width).toBe(244);
+      });
+
+      it('should resize 3rd column with forceFitColumns option enabled', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
+        grid.init();
+        grid.autosizeColumns();
+
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+        Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+        Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
+        expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+        // end resizing
+        document.body.dispatchEvent(bodyMouseUpEvent);
+        expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
+        expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
+        expect(columns[0].width).toBe(80);
+        expect(columns[1].width).toBe(0);
+        expect(columns[2].width).toBe(74);
+        expect(columns[3].width).toBe(132);
+        expect(columns[4].width).toBe(199);
+      });
+
+      it('should resize 3rd column with forceFitColumns option enabled with a frozen column', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true, pinning: { columns: { left: 0 } } });
+        grid.init();
+        grid.autosizeColumns();
+
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+        Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+        Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
+        expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+        // end resizing
+        document.body.dispatchEvent(bodyMouseUpEvent);
+        expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
+        expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
+        expect(columns[0].width).toBe(80);
+        expect(columns[1].width).toBe(0);
+        expect(columns[2].width).toBe(74);
+        expect(columns[3].width).toBe(132);
+        expect(columns[4].width).toBe(199);
+      });
+
+      it('should resize 3rd column without forceFitColumns option but with a frozen column', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false, pinning: { columns: { left: 0 } } });
+        grid.init();
+        grid.autosizeColumns();
+
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+        Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+        Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
+        expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+        // end resizing
+        document.body.dispatchEvent(bodyMouseUpEvent);
+        expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
+        expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
+        expect(columns[0].width).toBe(80);
+        expect(columns[1].width).toBe(0);
+        expect(columns[2].width).toBe(74);
+        expect(columns[3].width).toBe(132);
+        expect(columns[4].width).toBeGreaterThanOrEqual(550);
+      });
+
+      it('should resize 4th column with forceFitColumns option enabled and a column with maxWidth and a frozen column', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true, pinning: { columns: { left: 0 } } });
+        grid.init();
+        grid.autosizeColumns();
+
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const column3 = columnElms[3 - 1]; // -1 because hidden column is removed from DOM
+        const resizeHandleElm = column3.querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+        Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+        Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+        // start resizing
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        expect(column3.classList.contains('slick-header-column-active')).toBeTruthy();
+        expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: column3, resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
+
+        // end resizing
+        document.body.dispatchEvent(bodyMouseUpEvent);
+        expect(column3.classList.contains('slick-header-column-active')).toBeFalsy();
+        expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[3].id, grid }, expect.anything(), grid);
+        expect(columns[0].width).toBe(80);
+        expect(columns[1].width).toBe(0);
+        expect(columns[2].width).toBe(74);
+        expect(columns[3].width).toBe(132);
+        expect(columns[4].width).toBe(199);
+      });
+
+      it('should auto-scroll while resizing the last visible column when option is enabled', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
+        grid.init();
+
+        const scrollToXSpy = vi.spyOn(grid, 'scrollToX');
+        const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
+        Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
+        Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
+        Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
+
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const lastColumnElm = columnElms[3];
+        const resizeHandleElm = lastColumnElm.querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 80 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 140 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        document.body.dispatchEvent(bodyMouseUpEvent);
+
+        expect(scrollToXSpy).toHaveBeenCalledWith(400);
+      });
+
+      it('should not auto-scroll while resizing the last visible column when option is disabled', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          forceFitColumns: false,
+          autoScrollOnColumnResize: false,
+        });
+        grid.init();
+
+        const scrollToXSpy = vi.spyOn(grid, 'scrollToX');
+        const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
+        Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
+        Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
+        Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
+
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const lastColumnElm = columnElms[3];
+        const resizeHandleElm = lastColumnElm.querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 80 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 140 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
+        document.body.dispatchEvent(bodyMouseUpEvent);
+
+        expect(scrollToXSpy).not.toHaveBeenCalledWith(400);
+      });
+
+      it('should auto-scroll while resizing the last visible column when column pinning is enabled', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          forceFitColumns: false,
+        });
+        grid.init();
+
+        const scrollToXSpy = vi.spyOn(grid, 'scrollToX');
+        const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
+        Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
+        Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
+        Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
+
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const lastColumnElm = columnElms[3];
+        const resizeHandleElm = lastColumnElm.querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 80 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 140 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+        document.body.dispatchEvent(bodyMouseUpEvent);
+
+        expect(scrollToXSpy).toHaveBeenCalledWith(400);
+      });
+
+      it('should use autoScrollResizeRightDelay when resize continues from browser right edge', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          forceFitColumns: false,
+          autoScrollResizeRightDelay: 120,
+        });
+        grid.init();
+
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
+        Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
+        Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
+        Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
+
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const lastColumnElm = columnElms[3];
+        const resizeHandleElm = lastColumnElm.querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        const bodyMouseUpEvent = new CustomEvent('mouseup');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 80 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(cMouseDownEvent, 'clientX', { writable: true, value: 120 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 140 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+        Object.defineProperty(bodyMouseMoveEvent, 'clientX', {
+          writable: true,
+          value: (window.innerWidth || document.documentElement.clientWidth || 1024) - 1,
+        });
+
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+
+        // Resize and reorder auto-scroll share the same 30ms interval.
+        vi.advanceTimersByTime(90);
+        expect(onColumnsDragSpy.mock.calls.length).toBe(4);
+
+        vi.advanceTimersByTime(40);
+        expect(onColumnsDragSpy.mock.calls.length).toBe(5);
+
+        document.body.dispatchEvent(bodyMouseUpEvent);
+      });
+
+      it('should clear any existing resize auto-scroll timer when setting up column resize and when clearing all timers', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
+        grid.init();
+
+        const clearIntervalSpy = vi.spyOn(globalThis, 'clearInterval');
+        const timerId = setInterval(() => {}, 1000);
+        (grid as any)._columnResizeAutoScrollTimer = timerId;
+
+        (grid as any).setupColumnResize();
+        expect(clearIntervalSpy).toHaveBeenCalledWith(timerId);
+        expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
+
+        const timerId2 = setInterval(() => {}, 1000);
+        (grid as any)._columnResizeAutoScrollTimer = timerId2;
+        (grid as any).clearAllTimers();
+        expect(clearIntervalSpy).toHaveBeenCalledWith(timerId2);
+        expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
+
+        clearIntervalSpy.mockRestore();
+      });
+
+      it('should stop resize auto-scroll when its offset becomes zero or the pointer returns inside the viewport', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          forceFitColumns: false,
+          autoScrollResizeRightDelay: 60,
+        });
+        grid.init();
+
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
+        Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
+        Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
+        Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
+
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const lastColumnElm = columnElms[3];
+        const resizeHandleElm = lastColumnElm.querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const downEvt = new CustomEvent('mousedown');
+        Object.defineProperty(downEvt, 'pageX', { writable: true, value: 80 });
+        Object.defineProperty(downEvt, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(downEvt, 'clientX', { writable: true, value: 100 });
+
+        const moveRightEdgeEvt = new CustomEvent('mousemove');
+        Object.defineProperty(moveRightEdgeEvt, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(moveRightEdgeEvt, 'pageX', { writable: true, value: 140 });
+        Object.defineProperty(moveRightEdgeEvt, 'pageY', { writable: true, value: 13 });
+        Object.defineProperty(moveRightEdgeEvt, 'clientX', {
+          writable: true,
+          value: (window.innerWidth || document.documentElement.clientWidth || 1024) - 1,
+        });
+
+        const moveLeftEdgeEvt = new CustomEvent('mousemove');
+        Object.defineProperty(moveLeftEdgeEvt, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(moveLeftEdgeEvt, 'pageX', { writable: true, value: 140 });
+        Object.defineProperty(moveLeftEdgeEvt, 'pageY', { writable: true, value: 13 });
+        Object.defineProperty(moveLeftEdgeEvt, 'clientX', { writable: true, value: 1 });
+
+        const moveZeroOffsetEvt = new CustomEvent('mousemove');
+        Object.defineProperty(moveZeroOffsetEvt, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(moveZeroOffsetEvt, 'pageX', { writable: true, value: 0 });
+        Object.defineProperty(moveZeroOffsetEvt, 'pageY', { writable: true, value: 13 });
+        Object.defineProperty(moveZeroOffsetEvt, 'clientX', { writable: true, value: 200 });
+
+        const moveInsideEvt = new CustomEvent('mousemove');
+        Object.defineProperty(moveInsideEvt, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(moveInsideEvt, 'pageX', { writable: true, value: 140 });
+        Object.defineProperty(moveInsideEvt, 'pageY', { writable: true, value: 13 });
+        Object.defineProperty(moveInsideEvt, 'clientX', { writable: true, value: 200 });
+
+        const upEvt = new CustomEvent('mouseup');
+
+        resizeHandleElm.dispatchEvent(downEvt);
+        container.dispatchEvent(downEvt);
+        document.body.dispatchEvent(moveRightEdgeEvt);
+        expect((grid as any)._columnResizeAutoScrollTimer).toBeDefined();
+
+        document.body.dispatchEvent(moveZeroOffsetEvt);
+        const dragCountBeforeIdleTick = onColumnsDragSpy.mock.calls.length;
+        expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
+        vi.advanceTimersByTime(30);
+        expect(onColumnsDragSpy.mock.calls.length).toBe(dragCountBeforeIdleTick);
+
+        document.body.dispatchEvent(moveRightEdgeEvt);
+        expect((grid as any)._columnResizeAutoScrollTimer).toBeDefined();
+        document.body.dispatchEvent(moveInsideEvt);
+        expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
+
+        document.body.dispatchEvent(moveLeftEdgeEvt);
+        expect((grid as any)._columnResizeAutoScrollTimer).toBeDefined();
+
+        document.body.dispatchEvent(upEvt);
+      });
+
+      it('should clamp resizing to the viewport edge before auto-scroll continues at the shared rate', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          forceFitColumns: false,
+          autoScrollOnColumnResize: true,
+        });
+        grid.init();
+
+        const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+        const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
+        Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
+        Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
+        Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
+
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[0].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const cMouseDownEvent = new CustomEvent('mousedown');
+        const bodyMouseMoveEvent = new CustomEvent('mousemove');
+        Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+        Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 80 });
+        Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 1000 });
+        Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+        Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 400 });
+
+        resizeHandleElm.dispatchEvent(cMouseDownEvent);
+        container.dispatchEvent(cMouseDownEvent);
+        document.body.dispatchEvent(bodyMouseMoveEvent);
+
+        expect(columns[1].width).toBe(720);
+        expect(onColumnsDragSpy).toHaveBeenCalledTimes(1);
+
+        vi.advanceTimersByTime(30);
+        expect(columns[1].width).toBe(730);
+        expect(onColumnsDragSpy).toHaveBeenCalledTimes(2);
+        document.body.dispatchEvent(new CustomEvent('mouseup'));
+      });
+
+      it('should trigger onViewportChanged and return true when resizing last column and only horizontal scroll occurs', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
+        grid.init();
+
+        // Simulate state for the branch: _isResizingColumn && hScrollDist && !vScrollDist
+        (grid as any)._isResizingColumn = true;
+        (grid as any).lastRenderedScrollLeft = 0;
+        (grid as any).lastRenderedScrollTop = 0;
+        (grid as any).prevScrollTop = 0;
+        (grid as any).scrollTop = 0;
+
+        // Ensure scroll bounds allow scrollLeft = 100
+        (grid as any).canvasWidth = 200;
+        if (!(grid as any)._viewportScrollContainerX) {
+          (grid as any)._viewportScrollContainerX = document.createElement('div');
+        }
+        const viewportX = (grid as any)._viewportScrollContainerX;
+        Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 200 });
+        Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 50 });
+        Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
+
+        // Set prevScrollLeft and scrollLeft right before dispatching scroll event
+        (grid as any).prevScrollLeft = 0;
+        viewportX.scrollLeft = 100;
+        (grid as any).scrollLeft = 100;
+
+        // Stub scrollToX to avoid side effects
+        vi.spyOn(grid as any, 'scrollToX').mockImplementation(() => {});
+
+        const onViewportChangedSpy = vi.spyOn(grid, 'triggerEvent');
+
+        // Dispatch a real scroll event on the viewport element
+        const scrollEvent = new Event('scroll');
+        viewportX.dispatchEvent(scrollEvent);
+        // Call handleScroll to simulate the grid's scroll handler
+        (grid as any).handleScroll(scrollEvent);
+
+        // Should update lastRenderedScrollLeft, trigger onViewportChanged
+        expect((grid as any).lastRenderedScrollLeft).toBe(100);
+        expect(onViewportChangedSpy).toHaveBeenCalledWith(grid.onViewportChanged, expect.anything());
+      });
+
+      it('should expect the last column to never be resizable', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
+        grid.init();
+
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const column4 = columnElms[4 - 1]; // -1 because hidden column is removed from DOM
+        const resizeHandleElm = column4.querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        expect(resizeHandleElm).toBeNull();
       });
     });
 
-    it('should recalculate automatic header height after updating columns', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, autoHeaderHeight: true });
-      const recalculateSpy = vi.spyOn(grid as any, 'recalculateHeaderHeight');
+    describe('Sorting', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+        { id: 'age', field: 'age', name: 'Age', sortable: true },
+      ] as Column[];
 
-      grid.updateColumns();
+      it('should find a single sort icons to sorted column when calling setSortColumn() with a single column to sort ascending', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
+        grid.setSortColumn('firstName', true);
 
-      expect(recalculateSpy).toHaveBeenCalledTimes(1);
+        const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+        const sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+        const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+
+        expect(sortIndicators.length).toBe(columns.length);
+        expect(sortAscIndicators.length).toBe(1);
+        expect(sortDescIndicators.length).toBe(0);
+        expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: true }]);
+      });
+
+      it('should not trigger onBeforeSort when clicking on column resize handle', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
+        grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
+        const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
+
+        const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+        const sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+        const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+        const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+        const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+        expect(sortIndicators.length).toBe(columns.length);
+        expect(sortAscIndicators.length).toBe(0);
+        expect(sortDescIndicators.length).toBe(1);
+        expect(sortedColElms.length).toBe(0);
+        expect(sortNumberedIndicators.length).toBe(0);
+        expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }]);
+
+        const firstColHeaderElm = container.querySelector('.slick-header-columns');
+        const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]') as HTMLDivElement;
+        const firstResizeHandleElm = firstNameHeaderColumnElm.querySelector('.slick-resizable-handle');
+        const click = new CustomEvent('click');
+        Object.defineProperty(click, 'target', { writable: true, value: firstResizeHandleElm });
+        firstColHeaderElm?.dispatchEvent(click);
+
+        expect(onBeforeSortSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not trigger onBeforeSort when clicking on slick-header-columns div', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
+        const headerColumns = container.querySelectorAll<HTMLDivElement>('.slick-header-columns');
+        headerColumns?.forEach((elm) => {
+          elm.querySelector('.slick-header-column')?.classList.add('slick-header-column-sorted');
+        });
+        grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
+        const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
+
+        const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+        const sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+        const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+        const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+        const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+        expect(sortIndicators.length).toBe(columns.length);
+        expect(sortAscIndicators.length).toBe(0);
+        expect(sortDescIndicators.length).toBe(1);
+        expect(sortedColElms.length).toBe(0);
+        expect(sortNumberedIndicators.length).toBe(0);
+        expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }]);
+
+        const firstColHeaderElm = container.querySelector('.slick-header-columns');
+        const click = new CustomEvent('click');
+        firstColHeaderElm?.dispatchEvent(click);
+
+        expect(onBeforeSortSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not trigger onBeforeSort when an open editor commit fails', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
+        grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
+        const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
+        vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+
+        const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+        const sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+        const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+        const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+        const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+        expect(sortIndicators.length).toBe(columns.length);
+        expect(sortAscIndicators.length).toBe(0);
+        expect(sortDescIndicators.length).toBe(1);
+        expect(sortedColElms.length).toBe(0);
+        expect(sortNumberedIndicators.length).toBe(0);
+        expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }]);
+
+        const firstColHeaderElm = container.querySelector('.slick-header-columns');
+        const click2 = new CustomEvent('click');
+        const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+        Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
+        firstColHeaderElm?.dispatchEvent(click2);
+
+        expect(onBeforeSortSpy).not.toHaveBeenCalled();
+      });
+
+      it('should find a single sorted icons when calling setSortColumn() with a single col being sorted when multiSort is disabled', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
+        grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
+        const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
+
+        const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+        let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+        const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+        const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+        const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+        expect(sortIndicators.length).toBe(columns.length);
+        expect(sortAscIndicators.length).toBe(0);
+        expect(sortDescIndicators.length).toBe(1);
+        expect(sortedColElms.length).toBe(0);
+        expect(sortNumberedIndicators.length).toBe(0);
+        expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }]);
+
+        const firstColHeaderElm = container.querySelector('.slick-header-columns');
+        const click = new CustomEvent('click');
+        firstColHeaderElm?.dispatchEvent(click);
+
+        sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+        expect(sortAscIndicators.length).toBe(0); // same because closest .slick-header-column not found
+
+        const click2 = new CustomEvent('click');
+        const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+        Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
+        firstColHeaderElm?.dispatchEvent(click2);
+
+        // clicking on firstName with legacy behavior
+        expect(onBeforeSortSpy).toHaveBeenCalledTimes(1);
+        expect(onBeforeSortSpy).toHaveBeenCalledWith(
+          {
+            grid,
+            multiColumnSort: false,
+            sortAsc: true,
+            columnId: 'firstName',
+            previousSortColumns: [{ columnId: 'firstName', sortAsc: true }],
+            sortCol: columns[0],
+          },
+          click2,
+          grid
+        );
+      });
+
+      it('should find multiple sorted icons when calling setSortColumn() with 2 columns being sorted when multiSort is enabled', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: true, numberedMultiColumnSort: true });
+        grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
+        const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
+
+        const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+        let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+        const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+        const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+        const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+        expect(sortIndicators.length).toBe(columns.length);
+        expect(sortAscIndicators.length).toBe(1);
+        expect(sortDescIndicators.length).toBe(1);
+        expect(sortedColElms.length).toBe(0);
+        expect(sortNumberedIndicators[0]?.classList.contains('slick-sort-indicator-desc')).toBeTruthy();
+        expect(sortNumberedIndicators[0]?.textContent).toBe('1');
+        expect(sortNumberedIndicators[1]?.classList.contains('slick-sort-indicator-asc')).toBeTruthy();
+        expect(sortNumberedIndicators[1]?.textContent).toBe('2');
+        expect(grid.getSortColumns()).toEqual([
+          { columnId: 'firstName', sortAsc: false },
+          { columnId: 'lastName', sortAsc: true },
+        ]);
+
+        const firstColHeaderElm = container.querySelector('.slick-header-columns');
+        const click = new CustomEvent('click');
+        firstColHeaderElm?.dispatchEvent(click);
+
+        sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+        expect(sortAscIndicators.length).toBe(1); // same because closest .slick-header-column not found
+
+        const click2 = new CustomEvent('click');
+        const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+        Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
+        firstColHeaderElm?.dispatchEvent(click2);
+
+        // clicking on firstName with legacy behavior
+        expect(onBeforeSortSpy).toHaveBeenCalledWith(
+          {
+            grid,
+            multiColumnSort: true,
+            previousSortColumns: [
+              { columnId: 'firstName', sortAsc: true },
+              { columnId: 'lastName', sortAsc: true },
+            ],
+            sortCols: [{ columnId: 'firstName', sortAsc: true, sortCol: columns[0] }],
+          },
+          click2,
+          grid
+        );
+      });
+
+      it('should find multiple sorted icons numbered icons when calling setSortColumn() with 2 columns being sorted when multiSort and tristateMultiColumnSort are enabled', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, {
+          ...defaultOptions,
+          multiColumnSort: true,
+          numberedMultiColumnSort: true,
+          tristateMultiColumnSort: true,
+        });
+        grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
+        const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
+
+        let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+        const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+        const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+        const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+        const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+        expect(sortIndicators.length).toBe(columns.length);
+        expect(sortAscIndicators.length).toBe(1);
+        expect(sortDescIndicators.length).toBe(1);
+        expect(sortedColElms.length).toBe(0);
+        expect(sortNumberedIndicators[0]?.classList.contains('slick-sort-indicator-desc')).toBeTruthy();
+        expect(sortNumberedIndicators[0]?.textContent).toBe('1');
+        expect(sortNumberedIndicators[1]?.classList.contains('slick-sort-indicator-asc')).toBeTruthy();
+        expect(sortNumberedIndicators[1]?.textContent).toBe('2');
+        expect(grid.getSortColumns()).toEqual([
+          { columnId: 'firstName', sortAsc: false },
+          { columnId: 'lastName', sortAsc: true },
+        ]);
+
+        const firstColHeaderElm = container.querySelector('.slick-header-columns');
+        const click = new CustomEvent('click');
+        firstColHeaderElm?.dispatchEvent(click);
+
+        sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+        expect(sortAscIndicators.length).toBe(1); // same because closest .slick-header-column not found
+
+        const click2 = new CustomEvent('click');
+        const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+        Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
+        firstColHeaderElm?.dispatchEvent(click2);
+
+        // only left with lastName since firstName is now sorted ascending because of tristate
+        expect(onBeforeSortSpy).toHaveBeenCalledWith(
+          {
+            grid,
+            multiColumnSort: true,
+            previousSortColumns: [
+              { columnId: 'firstName', sortAsc: true },
+              { columnId: 'lastName', sortAsc: true },
+            ],
+            sortCols: [{ columnId: 'lastName', sortAsc: true, sortCol: columns[1] }],
+          },
+          click2,
+          grid
+        );
+      });
+
+      it('should find multiple sorted icons with separate numbered icons when calling setSortColumn() with 2 columns being sorted when multiSort, tristateMultiColumnSort and sortColNumberInSeparateSpan are enabled', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, {
+          ...defaultOptions,
+          multiColumnSort: true,
+          numberedMultiColumnSort: true,
+          tristateMultiColumnSort: true,
+          sortColNumberInSeparateSpan: true,
+        });
+        grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
+        const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
+
+        let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+        const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+        const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+        const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+        const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+        expect(sortIndicators.length).toBe(columns.length);
+        expect(sortAscIndicators.length).toBe(1);
+        expect(sortDescIndicators.length).toBe(1);
+        expect(sortedColElms.length).toBe(0);
+        expect(sortIndicators[0]?.classList.contains('slick-sort-indicator-desc')).toBeTruthy();
+        expect(sortNumberedIndicators[0]?.textContent).toBe('1');
+        expect(sortIndicators[1]?.classList.contains('slick-sort-indicator-asc')).toBeTruthy();
+        expect(sortNumberedIndicators[1]?.textContent).toBe('2');
+        expect(grid.getSortColumns()).toEqual([
+          { columnId: 'firstName', sortAsc: false },
+          { columnId: 'lastName', sortAsc: true },
+        ]);
+
+        const firstColHeaderElm = container.querySelector('.slick-header-columns');
+        const click = new CustomEvent('click');
+        firstColHeaderElm?.dispatchEvent(click);
+
+        sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+        expect(sortAscIndicators.length).toBe(1); // same because closest .slick-header-column not found
+
+        const click2 = new CustomEvent('click');
+        const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+        Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
+        firstColHeaderElm?.dispatchEvent(click2);
+
+        // only left with lastName since firstName is now sorted ascending because of tristate
+        expect(onBeforeSortSpy).toHaveBeenCalledWith(
+          {
+            grid,
+            multiColumnSort: true,
+            previousSortColumns: [
+              { columnId: 'firstName', sortAsc: true },
+              { columnId: 'lastName', sortAsc: true },
+            ],
+            sortCols: [{ columnId: 'lastName', sortAsc: true, sortCol: columns[1] }],
+          },
+          click2,
+          grid
+        );
+      });
+
+      it('should remove current sort when the sorting is triggered and tristateMultiColumnSort is enabled but multiColumnSort is disabled', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, {
+          ...defaultOptions,
+          multiColumnSort: false,
+          numberedMultiColumnSort: true,
+          tristateMultiColumnSort: true,
+        });
+        grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
+        const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
+
+        const firstColHeaderElm = container.querySelector('.slick-header-columns');
+        const colClick = new CustomEvent('click');
+        const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+        Object.defineProperty(colClick, 'target', { writable: true, value: firstNameHeaderColumnElm });
+        firstColHeaderElm?.dispatchEvent(colClick);
+
+        // only left with lastName since firstName is now sorted ascending because of tristate
+        expect(onBeforeSortSpy).toHaveBeenCalledWith(
+          {
+            grid,
+            multiColumnSort: false,
+            previousSortColumns: [
+              { columnId: 'firstName', sortAsc: true },
+              { columnId: 'lastName', sortAsc: true },
+            ],
+            columnId: null,
+            sortAsc: true,
+            sortCol: null,
+          },
+          colClick,
+          grid
+        );
+      });
+
+      it('should sort by firstName when no previous sort exist and we triggered with tristateMultiColumnSort enabled but multiColumnSort is disabled', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, {
+          ...defaultOptions,
+          multiColumnSort: false,
+          numberedMultiColumnSort: true,
+          tristateMultiColumnSort: true,
+        });
+        grid.setSortColumns([]);
+        const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
+
+        const firstColHeaderElm = container.querySelector('.slick-header-columns');
+        const click = new CustomEvent('click');
+        firstColHeaderElm?.dispatchEvent(click);
+
+        const colClick = new CustomEvent('click');
+        const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+        Object.defineProperty(colClick, 'target', { writable: true, value: firstNameHeaderColumnElm });
+        firstColHeaderElm?.dispatchEvent(colClick);
+
+        expect(onBeforeSortSpy).toHaveBeenCalledWith(
+          {
+            grid,
+            multiColumnSort: false,
+            previousSortColumns: [],
+            columnId: 'firstName',
+            sortAsc: true,
+            sortCol: columns[0],
+          },
+          colClick,
+          grid
+        );
+      });
+
+      it('should sort by firstName when no previous sort exist and we triggered with tristateMultiColumnSort & multiColumnSort both disabled', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, {
+          ...defaultOptions,
+          multiColumnSort: false,
+          numberedMultiColumnSort: true,
+          tristateMultiColumnSort: false,
+        });
+        grid.setSortColumns([]);
+        const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
+
+        const firstColHeaderElm = container.querySelector('.slick-header-columns');
+        const click = new CustomEvent('click');
+        firstColHeaderElm?.dispatchEvent(click);
+
+        const colClick = new CustomEvent('click');
+        const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+        Object.defineProperty(colClick, 'target', { writable: true, value: firstNameHeaderColumnElm });
+        firstColHeaderElm?.dispatchEvent(colClick);
+
+        expect(onBeforeSortSpy).toHaveBeenCalledWith(
+          {
+            grid,
+            multiColumnSort: false,
+            previousSortColumns: [],
+            columnId: 'firstName',
+            sortAsc: true,
+            sortCol: columns[0],
+          },
+          colClick,
+          grid
+        );
+      });
+
+      it('should remove all sorting when multiSort is enabled and we clicked column with a metaKey (Ctrl/Win)', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: true });
+        grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
+        const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
+        const firstColHeaderElm = container.querySelector('.slick-header-columns');
+
+        const click2 = new CustomEvent('click');
+        Object.defineProperty(click2, 'metaKey', { writable: true, value: true });
+        const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+        Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
+        firstColHeaderElm?.dispatchEvent(click2);
+
+        // clicking on firstName with legacy behavior
+        expect(onBeforeSortSpy).toHaveBeenCalledTimes(1);
+        expect(onBeforeSortSpy).toHaveBeenCalledWith(
+          {
+            grid,
+            multiColumnSort: true,
+            previousSortColumns: [{ columnId: 'firstName', sortAsc: true }],
+            sortCols: [],
+          },
+          click2,
+          grid
+        );
+      });
     });
-  });
 
-  describe('Editors', () => {
-    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editorClass: LongTextEditor }] as Column[];
-    let items: Array<{ id: number; name: string; age: number; active?: boolean }> = [];
-
-    beforeEach(() => {
-      items = [
-        { id: 0, name: 'Avery', age: 44 },
-        { id: 1, name: 'Bob', age: 20 },
-        { id: 2, name: 'Rachel', age: 46 },
-        { id: 3, name: 'Jane', age: 24 },
-        { id: 4, name: 'John', age: 20 },
-        { id: 5, name: 'Arnold', age: 50 },
-        { id: 6, name: 'Carole', age: 40 },
-        { id: 7, name: 'Jason', age: 48 },
-        { id: 8, name: 'Julie', age: 42 },
-        { id: 9, name: 'Aaron', age: 23 },
-        { id: 10, name: 'Ariane', age: 43 },
+    describe('Scrolling', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+        { id: 'age', field: 'age', name: 'Age', sortable: true },
+      ] as Column[];
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
       ];
-    });
 
-    afterEach(() => {
-      vi.clearAllMocks();
-    });
+      it('should scroll when calling scrollCellIntoView() with lower position than frozen column', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, pinning: { columns: { left: 0 } } });
+        grid.init();
+        const renderSpy = vi.spyOn(grid, 'render');
+        grid.scrollCellIntoView(1, 1, true);
 
-    it('should expect editor when calling getEditController()', () => {
-      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
-
-      const result = grid.getEditController();
-
-      expect(result).toBeTruthy();
-    });
-
-    it('should expect the grid container to have aria attributes set', () => {
-      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
-
-      expect(grid).toBeTruthy();
-      expect(grid.getContainerNode().getAttribute('role')).toBe('grid');
-      expect(grid.getContainerNode().getAttribute('aria-colcount')).toBe('1');
-      expect(grid.getContainerNode().getAttribute('aria-rowcount')).toBe('11');
-    });
-
-    it('should expect the header structure to have required ARIA rowgroup/row roles', () => {
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true });
-
-      const headerColumnElm = container.querySelector('[role="columnheader"]') as HTMLDivElement;
-      expect(headerColumnElm).toBeTruthy();
-      expect(headerColumnElm.parentElement!.classList.contains('slick-header-columns')).toBe(true);
-      expect(headerColumnElm.parentElement!.getAttribute('role')).toBe('row');
-      expect(headerColumnElm.parentElement!.parentElement!.getAttribute('role')).toBe('rowgroup');
-
-      const headerRowCellElm = container.querySelector('.slick-headerrow-column') as HTMLDivElement;
-      expect(headerRowCellElm).toBeTruthy();
-      expect(headerRowCellElm.getAttribute('role')).toBe('gridcell');
-      expect(headerRowCellElm.parentElement!.getAttribute('role')).toBe('row');
-      expect(headerRowCellElm.parentElement!.parentElement!.getAttribute('role')).toBe('rowgroup');
-    });
-
-    it('should place focus sinks outside the grid subtree and keep them focusable without aria-hidden', () => {
-      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
-
-      const focusSink = (grid as any)._focusSink as HTMLDivElement;
-      const focusSink2 = (grid as any)._focusSink2 as HTMLDivElement;
-
-      expect(focusSink).toBeTruthy();
-      expect(focusSink2).toBeTruthy();
-      expect(container.contains(focusSink)).toBe(false);
-      expect(container.contains(focusSink2)).toBe(false);
-      expect(focusSink.parentElement).toBe(container.parentElement);
-      expect(focusSink2.parentElement).toBe(container.parentElement);
-      expect(focusSink.tabIndex).toBe(-1);
-      expect(focusSink2.tabIndex).toBe(-1);
-      expect(focusSink.getAttribute('aria-hidden')).toBeNull();
-      expect(focusSink2.getAttribute('aria-hidden')).toBeNull();
-
-      focusSink.focus();
-      expect(document.activeElement).toBe(focusSink);
-    });
-
-    it('should remove external focus sinks when grid is destroyed', () => {
-      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
-
-      const focusSink = (grid as any)._focusSink as HTMLDivElement;
-      const focusSink2 = (grid as any)._focusSink2 as HTMLDivElement;
-
-      expect(document.body.contains(focusSink)).toBe(true);
-      expect(document.body.contains(focusSink2)).toBe(true);
-
-      grid.destroy(true);
-
-      expect(focusSink.isConnected).toBe(false);
-      expect(focusSink2.isConnected).toBe(false);
-    });
-
-    it('should ignore invalidation after the grid has been destroyed', () => {
-      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
-      grid.init();
-
-      grid.destroy(true);
-
-      expect(() => grid.invalidate()).not.toThrow();
-      expect(() => grid.updateRowCount()).not.toThrow();
-    });
-
-    it('should return undefined editor when getDataItem() did not find any associated cell item', () => {
-      const columns = [
-        { id: 'name', field: 'name', name: 'Name' },
-        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-      vi.spyOn(grid, 'getDataItem').mockReturnValue(null);
-      grid.setActiveCell(0, 1);
-      grid.editActiveCell(InputEditor as any, true);
-
-      const result = grid.getCellEditor();
-
-      expect(result).toBeFalsy();
-    });
-
-    it('should return undefined editor when trying to add a new row item and "cannotTriggerInsert" is set', () => {
-      const columns = [
-        { id: 'name', field: 'name', name: 'Name' },
-        { id: 'age', field: 'age', name: 'Age', cannotTriggerInsert: true, editorClass: InputEditor },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, autoEditNewRow: false });
-      const onBeforeEditCellSpy = vi.spyOn(grid.onBeforeEditCell, 'notify');
-      grid.setActiveCell(0, 1);
-      vi.spyOn(grid, 'getDataLength').mockReturnValue(0); // trick grid to think it's a new item
-      grid.editActiveCell(InputEditor as any, true);
-
-      expect(onBeforeEditCellSpy).not.toHaveBeenCalled();
-    });
-
-    it('should return undefined editor when onBeforeEditCell returns false', () => {
-      const columns = [
-        { id: 'name', field: 'name', name: 'Name' },
-        { id: 'age', field: 'age', name: 'Age', cannotTriggerInsert: true, editorClass: InputEditor },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, autoEditNewRow: false });
-      const sed = new SlickEventData();
-      vi.spyOn(sed, 'getReturnValue').mockReturnValue(false);
-      vi.spyOn(grid.onBeforeEditCell, 'notify').mockReturnValue(sed);
-      grid.setActiveCell(0, 1);
-      grid.editActiveCell(InputEditor as any, true);
-      const result = grid.getCellEditor();
-
-      expect(result).toBeFalsy();
-    });
-
-    it('should do nothing when trying to commit unchanged Age field Editor', () => {
-      const columns = [
-        { id: 'name', field: 'name', name: 'Name' },
-        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-      grid.setActiveCell(0, 1);
-      grid.editActiveCell(InputEditor as any, true);
-      const editor = grid.getCellEditor();
-      const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
-      vi.spyOn(editor!, 'isValueChanged').mockReturnValue(false); // unchanged value
-
-      const result = grid.getEditController()?.commitCurrentEdit();
-
-      expect(editor).toBeTruthy();
-      expect(onCellChangeSpy).not.toHaveBeenCalled();
-      expect(result).toBeTruthy();
-    });
-
-    it('should commit Name field Editor via an Editor defined as ItemMetadata by column id & asyncEditorLoading enabled and expect it to call execute() command and triggering onCellChange() notify', () => {
-      Object.defineProperty(document, 'selection', { writable: true, value: { empty: () => {} } });
-      const newValue = 33;
-      const columns = [
-        { id: 'name', field: 'name', name: 'Name', colspan: '*' },
-        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
-      ] as Column[];
-      const dv = new SlickDataView();
-      dv.setItems(items);
-      grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, asyncEditorLoading: true });
-      vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { age: { colspan: '*', editorClass: InputEditor } } } as any);
-      grid.setActiveCell(0, 1);
-
-      vi.advanceTimersByTime(2);
-      const activeCellNode = container.querySelector('.slick-cell.editable.l1.r1');
-      grid.editActiveCell(InputEditor as any, true);
-
-      const editor = grid.getCellEditor();
-      const updateRowSpy = vi.spyOn(grid, 'updateRow');
-      const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
-      vi.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
-      expect(activeCellNode).toBeTruthy();
-
-      const result = grid.getEditController()?.commitCurrentEdit();
-
-      expect(editor).toBeTruthy();
-      expect(updateRowSpy).toHaveBeenCalledWith(0);
-      expect(onCellChangeSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ command: 'execute', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: newValue }, column: columns[1] }),
-        expect.anything(),
-        grid
-      );
-      expect(grid.getEditController()).toBeTruthy();
-      expect(result).toBeTruthy();
-    });
-
-    it('should commit Name field Editor via an Editor defined as ItemMetadata by column id & asyncEditorLoading enabled and expect it to call execute() command and triggering onCellChange() notify', () => {
-      (navigator as any).__defineGetter__('userAgent', () => 'Firefox');
-      const newValue = 33;
-      const columns = [
-        { id: 'name', field: 'name', name: 'Name' },
-        { id: 'age', field: 'age', name: 'Age', type: 'number', colspan: '2', editorClass: InputEditor },
-      ] as Column[];
-      const dv = new SlickDataView();
-      dv.setItems(items);
-      grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, asyncEditorLoading: true });
-      vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { 1: { editorClass: InputEditor } } as any });
-      grid.setActiveCell(0, 1);
-
-      vi.advanceTimersByTime(2);
-      const activeCellNode = container.querySelector('.slick-cell.editable.l1.r1');
-      grid.editActiveCell(InputEditor as any, true);
-
-      const editor = grid.getCellEditor();
-      const updateRowSpy = vi.spyOn(grid, 'updateRow');
-      const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
-      vi.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
-      expect(activeCellNode).toBeTruthy();
-
-      const result = grid.getEditController()?.commitCurrentEdit();
-
-      expect(editor).toBeTruthy();
-      expect(updateRowSpy).toHaveBeenCalledWith(0);
-      expect(onCellChangeSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ command: 'execute', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: newValue }, column: columns[1] }),
-        expect.anything(),
-        grid
-      );
-      expect(grid.getEditController()).toBeTruthy();
-      expect(result).toBeTruthy();
-    });
-
-    it('should commit Age field Editor by calling execute() command and triggering onCellChange() notify', () => {
-      const newValue = 33;
-      const columns = [
-        { id: 'name', field: 'name', name: 'Name' },
-        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: LongTextEditor },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-      const onPositionSpy = vi.spyOn(grid.onActiveCellPositionChanged, 'notify');
-      grid.setActiveCell(0, 1);
-      grid.editActiveCell(LongTextEditor as any, true);
-      const editor = grid.getCellEditor();
-      const updateRowSpy = vi.spyOn(grid, 'updateRow');
-      const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
-      vi.spyOn(editor!, 'serializeValue').mockReturnValue(newValue);
-
-      const result = grid.getEditController()?.commitCurrentEdit();
-
-      expect(onPositionSpy).toHaveBeenCalled();
-      expect(editor).toBeTruthy();
-      expect(updateRowSpy).toHaveBeenCalledWith(0);
-      expect(onCellChangeSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ command: 'execute', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: newValue }, column: columns[1] }),
-        expect.anything(),
-        grid
-      );
-      expect(grid.getEditController()).toBeTruthy();
-      expect(result).toBeTruthy();
-
-      // test hide editor when editor is already opened but we start scrolling
-      vi.spyOn(grid, 'getActiveCellPosition').mockReturnValue({ visible: false } as any);
-      const canvasBottom = container.querySelector('.slick-viewport-left');
-      grid.setActiveCell(0, 1);
-      grid.editActiveCell(LongTextEditor as any, true);
-      const hideEditorSpy = vi.spyOn(grid.getCellEditor()!, 'hide');
-      canvasBottom?.dispatchEvent(new Event('scroll'));
-      expect(hideEditorSpy).toHaveBeenCalled();
-    });
-
-    it('should commit Active field Editor by calling execute() command with preClick and triggering onCellChange() notify', () => {
-      const newValue = false;
-      const columns = [
-        { id: 'name', field: 'name', name: 'Name' },
-        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: CheckboxEditor },
-        { id: 'active', field: 'active', name: 'Active', type: 'boolean' },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-      grid.setActiveCell(0, 1, true);
-      const editor = grid.getCellEditor();
-      const updateRowSpy = vi.spyOn(grid, 'updateRow');
-      const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
-      const preClickSpy = vi.spyOn(CheckboxEditor.prototype, 'preClick');
-      vi.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
-      grid.editActiveCell(CheckboxEditor as any, true);
-
-      const result = grid.getEditController()?.commitCurrentEdit();
-
-      expect(preClickSpy).toHaveBeenCalled();
-      expect(editor).toBeTruthy();
-      expect(updateRowSpy).toHaveBeenCalledWith(0);
-      expect(onCellChangeSpy).toHaveBeenCalledWith(expect.objectContaining({ command: 'execute', row: 0, cell: 1 }), expect.anything(), grid);
-      expect(grid.getEditController()).toBeTruthy();
-      expect(result).toBeTruthy();
-    });
-
-    it('should commit & rollback Age field Editor by calling execute() & undo() commands from a custom EditCommandHandler and triggering onCellChange() notify', () => {
-      const newValue = 33;
-      const editQueue: Array<{ item: any; column: Column; editCommand: EditCommand }> = [];
-      const undoLastEdit = () => {
-        const lastEditCommand = editQueue.pop()?.editCommand;
-        if (lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
-          lastEditCommand.undo();
-          grid.invalidate();
-        }
-      };
-      const editCommandHandler = (item: any, column: Column, editCommand: EditCommand) => {
-        if (editCommand.prevSerializedValue !== editCommand.serializedValue) {
-          editQueue.push({ item, column, editCommand });
-          grid.invalidate();
-          editCommand.execute();
-        }
-      };
-      const columns = [
-        { id: 'name', field: 'name', name: 'Name' },
-        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
-      ] as Column[];
-
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, editCommandHandler });
-      grid.setActiveCell(0, 1);
-      grid.editActiveCell(InputEditor as any, true);
-      const editor = grid.getCellEditor();
-      const updateRowSpy = vi.spyOn(grid, 'updateRow');
-      const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
-      vi.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
-
-      const result = grid.getEditController()?.commitCurrentEdit();
-
-      expect(editor).toBeTruthy();
-      expect(updateRowSpy).toHaveBeenCalledWith(0);
-      expect(onCellChangeSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ command: 'execute', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: newValue }, column: columns[1] }),
-        expect.anything(),
-        grid
-      );
-      expect(grid.getEditController()).toBeTruthy();
-      expect(result).toBeTruthy();
-
-      undoLastEdit();
-
-      expect(onCellChangeSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ command: 'undo', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: '44' }, column: columns[1] }),
-        expect.anything(),
-        grid
-      );
-    });
-
-    it('should commit Age field Editor by applying new values and triggering onAddNewRow() notify', () => {
-      const newValue = 77;
-      const columns = [
-        { id: 'name', field: 'name', name: 'Name' },
-        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, enableAddRow: true, editable: true });
-
-      grid.setActiveCell(1, 1);
-      grid.editActiveCell(InputEditor as any, true);
-      const editor = grid.getCellEditor();
-      vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(0); // trick grid to think it's a new item
-      const onAddNewRowSpy = vi.spyOn(grid.onAddNewRow, 'notify');
-      vi.spyOn(editor!, 'serializeValue').mockReturnValue(newValue);
-
-      const result = grid.getEditController()?.commitCurrentEdit();
-
-      expect(editor).toBeTruthy();
-      expect(onAddNewRowSpy).toHaveBeenCalledWith(expect.objectContaining({ item: { age: newValue }, column: columns[1] }), expect.anything(), grid);
-      expect(grid.getEditController()).toBeTruthy();
-      expect(result).toBeTruthy();
-    });
-
-    it('should commit Age field Editor by applying new values and triggering onAddNewRow() notify with autoHeight enabled and expect different viewport height', () => {
-      const newValue = 77;
-      const columns = [
-        { id: 'name', field: 'name', name: 'Name' },
-        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, items, columns, {
-        ...defaultOptions,
-        autoHeight: true,
-        enableCellNavigation: true,
-        enableAddRow: true,
-        editable: true,
-      });
-      const prevHeight = grid.getViewportHeight();
-      grid.onAddNewRow.subscribe((e, args) => {
-        grid.setData([...(grid.getData() as any[]), args.item]);
+        expect(renderSpy).toHaveBeenCalledTimes(3);
       });
 
-      grid.setActiveCell(1, 1);
-      grid.editActiveCell(InputEditor as any, true);
-      const editor = grid.getCellEditor();
-      vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(0); // trick grid to think it's a new item
-      const onAddNewRowSpy = vi.spyOn(grid.onAddNewRow, 'notify');
-      vi.spyOn(editor!, 'serializeValue').mockReturnValue(newValue);
+      it('should scroll a center column that is obscured by left pinning', () => {
+        const pinnedColumns = Array.from({ length: 5 }, (_value, index) => ({
+          id: `column${index}`,
+          field: `column${index}`,
+          name: `Column ${index}`,
+          width: 80,
+        })) as Column[];
+        const pinnedData = [{ id: 0, column0: '0', column1: '1', column2: '2', column3: '3', column4: '4' }];
+        grid = new SlickGrid<any, Column>(container, pinnedData, pinnedColumns, {
+          ...defaultOptions,
+          pinning: { columns: { left: 0, right: [] } },
+        });
 
-      const result = grid.getEditController()?.commitCurrentEdit();
-      const newHeight = grid.getViewportHeight();
+        const horizontalScroller = container.querySelector('.slick-docking-horizontal-scroller') as HTMLDivElement;
+        Object.defineProperties(horizontalScroller, {
+          clientWidth: { configurable: true, value: 300 },
+          scrollWidth: { configurable: true, value: 400 },
+        });
+        vi.spyOn(horizontalScroller, 'getBoundingClientRect').mockReturnValue({ width: 300 } as DOMRect);
 
-      expect(editor).toBeTruthy();
-      expect(onAddNewRowSpy).toHaveBeenCalledWith(expect.objectContaining({ item: { age: newValue }, column: columns[1] }), expect.anything(), grid);
-      expect(grid.getEditController()).toBeTruthy();
-      expect(result).toBeTruthy();
-      expect(prevHeight).not.toEqual(newHeight);
+        grid.scrollCellIntoView(0, 3);
+
+        expect(horizontalScroller.scrollLeft).toBeGreaterThan(0);
+      });
+
+      it('should find the first column intersecting the horizontal render range', () => {
+        const wideColumns = Array.from({ length: 100 }, (_, index) => ({
+          id: `column${index}`,
+          field: `column${index}`,
+          name: `Column ${index}`,
+          width: 80,
+        })) as Column[];
+        grid = new SlickGrid<any, Column>(container, [{}], wideColumns, defaultOptions);
+
+        expect((grid as any).getFirstColumnIndexAtOrAfter(0)).toBe(0);
+        expect((grid as any).getFirstColumnIndexAtOrAfter(800)).toBe(10);
+        expect((grid as any).getFirstColumnIndexAtOrAfter(8000)).toBe(100);
+      });
+
+      it('should scroll when calling scrollCellIntoView() with row having colspan returned from DataView getItemMetadata()', () => {
+        const columnsCopy = [...columns];
+        columnsCopy[1].colspan = '*';
+        columnsCopy[2].colspan = '1';
+        const dv = new SlickDataView();
+        dv.setItems(data);
+        grid = new SlickGrid<any, Column>(container, dv, columns, {
+          ...defaultOptions,
+          pinning: { columns: { left: 0 } },
+          enableMouseWheelScrollHandler: true,
+        });
+        vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { lastName: { colspan: '*' } } } as any);
+        const renderSpy = vi.spyOn(grid, 'render');
+        grid.scrollCellIntoView(1, 1, true);
+        grid.scrollCellIntoView(1, 2, true);
+
+        expect(renderSpy).toHaveBeenCalledTimes(6);
+      });
+
+      it('should call scrollColumnIntoView() and expect left scroll to become 80 which is default column width', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, pinning: { columns: { left: 0 } } });
+        let viewportElm = container.querySelector('.slick-docking-horizontal-scroller') as HTMLDivElement;
+        Object.defineProperty(viewportElm, 'scrollLeft', { writable: true, value: 20 });
+        Object.defineProperty(viewportElm, 'scrollWidth', { writable: true, value: 10 });
+        viewportElm.dispatchEvent(new CustomEvent('scroll'));
+        const renderSpy = vi.spyOn(grid, 'render');
+        grid.scrollColumnIntoView(2);
+        viewportElm = container.querySelector('.slick-docking-horizontal-scroller') as HTMLDivElement;
+
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect(viewportElm.scrollLeft).toBe(10);
+      });
+
+      it('should call scrollColumnIntoView() and expect left scroll to be lower than scrollLeft and become 0', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, pinning: { columns: { left: 0 } } });
+        let viewportElm = container.querySelector('.slick-docking-horizontal-scroller') as HTMLDivElement;
+        Object.defineProperty(viewportElm, 'scrollLeft', { writable: true, value: 10 });
+        Object.defineProperty(viewportElm, 'scrollWidth', { writable: true, value: 20 });
+        viewportElm.dispatchEvent(new CustomEvent('scroll'));
+        const renderSpy = vi.spyOn(grid, 'render');
+        grid.scrollColumnIntoView(1);
+        viewportElm = container.querySelector('.slick-docking-horizontal-scroller') as HTMLDivElement;
+
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+        expect(viewportElm.scrollLeft).toBe(0);
+      });
     });
 
-    it('should not commit Age field Editor returns invalid result, expect triggering onValidationError() notify', () => {
-      const invalidResult = { valid: false, msg: 'invalid value' };
+    describe('Navigation', () => {
       const columns = [
-        { id: 'name', field: 'name', name: 'Name' },
-        { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-      grid.setActiveCell(0, 1);
-      grid.editActiveCell(InputEditor as any, true);
-      const editor = grid.getCellEditor();
-      const onValidationErrorSpy = vi.spyOn(grid.onValidationError, 'notify');
-      vi.spyOn(editor!, 'validate').mockReturnValue(invalidResult);
-      const activeCellNode = container.querySelector('.slick-cell.editable.l1.r1');
-
-      const result = grid.getEditController()?.commitCurrentEdit();
-
-      expect(editor).toBeTruthy();
-      expect(onValidationErrorSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          editor,
-          cellNode: activeCellNode,
-          validationResults: invalidResult,
-          row: 0,
-          cell: 1,
-          column: columns[1],
-        }),
-        expect.anything(),
-        grid
-      );
-      expect(grid.getEditController()).toBeTruthy();
-      expect(result).toBeFalsy();
-    });
-  });
-
-  describe('Column Reorder', () => {
-    const columns = [
-      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
-      { id: 'age', field: 'age', name: 'Age', sortable: true },
-    ] as Column[];
-    const data = [
-      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-    ];
-    let sortInstance: any;
-
-    it('should not allow column reordering when Editor Lock commitCurrentEdit() is failing', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 0 });
-      vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
-      const headerColumnsElm: any = document.querySelector('.slick-header-columns.slick-header-columns-left');
-      Object.keys(headerColumnsElm).forEach((prop) => {
-        if (prop.startsWith('Sortable')) {
-          sortInstance = headerColumnsElm[prop];
-        }
-      });
-      const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
-      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-
-      const dragEvent = new CustomEvent('DragEvent');
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
-      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-
-      expect(sortInstance).toBeTruthy();
-      sortInstance.options.onStart(dragEvent);
-      expect(viewportTopLeft.scrollLeft).toBe(0);
-
-      vi.advanceTimersByTime(100);
-
-      expect(viewportTopLeft.scrollLeft).toBe(0);
-      sortInstance.options.onEnd(dragEvent);
-      expect(onColumnsReorderedSpy).not.toHaveBeenCalled();
-    });
-
-    it('should preserve hidden columns at their original indices when reordering visible columns', () => {
-      const columnsWithHidden = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
-        { id: 'middleName', field: 'middleName', name: 'Middle Name', sortable: true, hidden: true },
-        { id: 'age', field: 'age', name: 'Age', sortable: true },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, data, columnsWithHidden, defaultOptions);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-      Object.keys(headerColumnsElm).forEach((prop) => {
-        if (prop.startsWith('Sortable')) {
-          sortInstance = headerColumnsElm[prop];
-        }
-      });
-      const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
-      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-
-      const dragEvent = new CustomEvent('DragEvent');
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
-      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
-      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-      // SortableJS only returns visible columns (firstName, lastName, age)
-      // Simulate moving lastName before firstName: ['lastName', 'firstName', 'age']
-      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['lastName', 'firstName', 'age']);
-
-      sortInstance.options.onStart(dragEvent);
-      sortInstance.options.onEnd(dragEvent);
-
-      const finalColumns = grid.getColumns();
-      // Expected order: lastName, firstName, middleName (hidden stays at index 2), age
-      expect(grid.getColumnByIdx(0)!.id).toBe('lastName');
-      expect(finalColumns[0].id).toBe('lastName');
-      expect(finalColumns[1].id).toBe('firstName');
-      expect(finalColumns[2].id).toBe('middleName'); // hidden column stays at original position
-      expect(finalColumns[2].hidden).toBe(true);
-      expect(finalColumns[3].id).toBe('age');
-      expect(onColumnsReorderedSpy).toHaveBeenCalled();
-    });
-
-    it('should preserve multiple hidden columns at their original indices when reordering', () => {
-      const columnsWithMultipleHidden = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-        { id: 'middleName', field: 'middleName', name: 'Middle Name', sortable: true, hidden: true },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
-        { id: 'suffix', field: 'suffix', name: 'Suffix', sortable: true, hidden: true },
-        { id: 'age', field: 'age', name: 'Age', sortable: true },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, data, columnsWithMultipleHidden, defaultOptions);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-      Object.keys(headerColumnsElm).forEach((prop) => {
-        if (prop.startsWith('Sortable')) {
-          sortInstance = headerColumnsElm[prop];
-        }
-      });
-      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-
-      const dragEvent = new CustomEvent('DragEvent');
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
-      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
-      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-      // Simulate reordering visible columns: ['age', 'firstName', 'lastName']
-      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['age', 'firstName', 'lastName']);
-
-      sortInstance.options.onStart(dragEvent);
-      sortInstance.options.onEnd(dragEvent);
-
-      const finalColumns = grid.getColumns();
-      // Expected: age, middleName(hidden at idx 1), firstName, suffix(hidden at idx 3), lastName
-      expect(finalColumns[0].id).toBe('age');
-      expect(finalColumns[1].id).toBe('middleName');
-      expect(finalColumns[1].hidden).toBe(true);
-      expect(finalColumns[2].id).toBe('firstName');
-      expect(finalColumns[3].id).toBe('suffix');
-      expect(finalColumns[3].hidden).toBe(true);
-      expect(finalColumns[4].id).toBe('lastName');
-    });
-
-    it('should handle reordering when hidden column is at the beginning', () => {
-      const columnsWithHiddenFirst = [
-        { id: 'id', field: 'id', name: 'ID', sortable: true, hidden: true },
         { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
         { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
         { id: 'age', field: 'age', name: 'Age', sortable: true },
       ] as Column[];
-      grid = new SlickGrid<any, Column>(container, data, columnsWithHiddenFirst, defaultOptions);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-      Object.keys(headerColumnsElm).forEach((prop) => {
-        if (prop.startsWith('Sortable')) {
-          sortInstance = headerColumnsElm[prop];
-        }
-      });
-      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-
-      const dragEvent = new CustomEvent('DragEvent');
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
-      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
-      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-      // Reorder visible columns: ['lastName', 'age', 'firstName']
-      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['lastName', 'age', 'firstName']);
-
-      sortInstance.options.onStart(dragEvent);
-      sortInstance.options.onEnd(dragEvent);
-
-      const finalColumns = grid.getColumns();
-      // Expected: id(hidden at idx 0), lastName, age, firstName
-      expect(finalColumns[0].id).toBe('id');
-      expect(finalColumns[0].hidden).toBe(true);
-      expect(finalColumns[1].id).toBe('lastName');
-      expect(finalColumns[2].id).toBe('age');
-      expect(finalColumns[3].id).toBe('firstName');
-    });
-
-    it('should handle reordering when hidden column is at the end', () => {
-      const columnsWithHiddenLast = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
-        { id: 'age', field: 'age', name: 'Age', sortable: true },
-        { id: 'metadata', field: 'metadata', name: 'Metadata', sortable: true, hidden: true },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, data, columnsWithHiddenLast, defaultOptions);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-      Object.keys(headerColumnsElm).forEach((prop) => {
-        if (prop.startsWith('Sortable')) {
-          sortInstance = headerColumnsElm[prop];
-        }
-      });
-      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-
-      const dragEvent = new CustomEvent('DragEvent');
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
-      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
-      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-      // Reorder visible columns: ['age', 'firstName', 'lastName']
-      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['age', 'firstName', 'lastName']);
-
-      sortInstance.options.onStart(dragEvent);
-      sortInstance.options.onEnd(dragEvent);
-
-      const finalColumns = grid.getColumns();
-      // Expected: age, firstName, lastName, metadata(hidden at idx 3)
-      expect(finalColumns[0].id).toBe('age');
-      expect(finalColumns[1].id).toBe('firstName');
-      expect(finalColumns[2].id).toBe('lastName');
-      expect(finalColumns[3].id).toBe('metadata');
-      expect(finalColumns[3].hidden).toBe(true);
-    });
-  });
-
-  describe('Drag & Drop (Draggable)', () => {
-    const columns = [
-      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-      {
-        id: 'lastName',
-        field: 'lastName',
-        name: 'Last Name',
-        sortable: true,
-        asyncPostRender: (node) => (node.textContent = String(Math.random())),
-        asyncPostRenderCleanup: (node) => (node.textContent = ''),
-      },
-      { id: 'age', field: 'age', name: 'Age', sortable: true },
-    ] as Column[];
-    const data = [
-      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-    ];
-    for (let i = 0; i < 500; i++) {
-      data[i] = {
-        id: i,
-        firstName: i % 2 ? 'John' : 'Jane',
-        lastName: 'Doe',
-        age: Math.random(),
-      };
-    }
-
-    it('should not drag when cell is not in found in the grid', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify');
-      const slickCellElm = createDomElement('div', { className: 'slick-cell l0' });
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
-      container.dispatchEvent(cMouseDownEvent);
-
-      expect(onDragInitSpy).not.toHaveBeenCalled();
-    });
-
-    it('should allow modifier-key drags when enableMultiSelection is explicitly configured', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, {
-        ...defaultOptions,
-        selectionOptions: { enableMultiSelection: false },
-      });
-      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify');
-      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-      const cMouseDownEvent = new MouseEvent('mousedown', { bubbles: true, ctrlKey: true });
-      slickCellElm.dispatchEvent(cMouseDownEvent);
-
-      expect(onDragInitSpy).toHaveBeenCalled();
-    });
-
-    it('should allow modifier-key drags when preventDragFromKeys is explicitly empty', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, {
-        ...defaultOptions,
-        preventDragFromKeys: [],
-      });
-      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify');
-      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-      const cMouseDownEvent = new MouseEvent('mousedown', { bubbles: true, ctrlKey: true });
-      slickCellElm.dispatchEvent(cMouseDownEvent);
-
-      expect(grid.getOptions().preventDragFromKeys).toEqual([]);
-      expect(onDragInitSpy).toHaveBeenCalled();
-    });
-
-    it('should not drag when event has cancelled bubbling (immediatePropagationStopped)', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const sedMouseDown = new SlickEventData();
-      sedMouseDown.addReturnValue(false);
-      sedMouseDown.stopImmediatePropagation();
-      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedMouseDown);
-      const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify');
-      const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
-      const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
-      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-      slickCellElm.classList.add('dnd', 'cell-reorder');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      bodyMouseMoveEvent.stopImmediatePropagation(); // simulate bubbling stop from dragInit
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: slickCellElm });
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      window.dispatchEvent(bodyMouseUpEvent);
-
-      expect(onDragInitSpy).toHaveBeenCalled();
-      expect(onDragStartSpy).not.toHaveBeenCalled();
-      expect(onDragSpy).not.toHaveBeenCalled();
-      expect(onDragEndSpy).not.toHaveBeenCalled();
-    });
-
-    it('should not execute any events after onDragInit when it returns false', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify');
-      const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify');
-      const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
-      const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
-      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-      slickCellElm.classList.add('dnd', 'cell-reorder');
-
-      const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
-      Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: slickCellElm });
-
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent1);
-      window.dispatchEvent(bodyMouseUpEvent);
-
-      expect(onDragInitSpy).toHaveBeenCalled();
-      expect(onDragStartSpy).not.toHaveBeenCalled();
-      expect(onDragSpy).not.toHaveBeenCalled();
-      expect(onDragEndSpy).not.toHaveBeenCalled();
-    });
-
-    it('should not execute onDragStart or any other events when onDragStart event has cancelled bubbling (immediatePropagationStopped)', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const sedDragInit = new SlickEventData();
-      const sedDragStart = new SlickEventData();
-      sedDragInit.addReturnValue(true);
-      sedDragStart.addReturnValue(false);
-      sedDragInit.stopImmediatePropagation();
-      sedDragStart.stopImmediatePropagation();
-      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
-      const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify').mockReturnValue(sedDragStart);
-      const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
-      const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
-      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-      slickCellElm.classList.add('dnd', 'cell-reorder');
-
-      const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
-      Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: slickCellElm });
-
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent1);
-      window.dispatchEvent(bodyMouseUpEvent);
-
-      expect(onDragInitSpy).toHaveBeenCalled();
-      expect(onDragStartSpy).toHaveBeenCalled();
-      expect(onDragSpy).toHaveBeenCalled();
-      expect(onDragEndSpy).toHaveBeenCalled();
-    });
-
-    it('should not execute onDragStart when cell has an Editor but commitCurrentEdit() returns false', () => {
-      columns[1].editorClass = InputEditor;
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, editable: true });
-      vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const sedDragInit = new SlickEventData();
-      const sedDragStart = new SlickEventData();
-      sedDragInit.addReturnValue(true);
-      sedDragStart.addReturnValue(false);
-      sedDragInit.stopImmediatePropagation();
-      sedDragStart.stopImmediatePropagation();
-      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
-      const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
-      const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
-      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-      slickCellElm.classList.add('dnd', 'cell-reorder');
-
-      const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
-      Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: slickCellElm });
-
-      grid.setActiveCell(0, 1);
-      grid.editActiveCell(InputEditor as any, true);
-      container.dispatchEvent(cMouseDownEvent);
-
-      document.body.dispatchEvent(bodyMouseMoveEvent1);
-      window.dispatchEvent(bodyMouseUpEvent);
-
-      expect(onDragInitSpy).toHaveBeenCalled();
-      expect(onDragSpy).toHaveBeenCalled();
-      expect(onDragEndSpy).toHaveBeenCalled();
-    });
-
-    it('should drag from a cell and execute all onDrag events when a slick-cell is dragged and its event is stopped', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-
-      const sedDragInit = new SlickEventData();
-      sedDragInit.addReturnValue(true);
-      sedDragInit.stopImmediatePropagation();
-      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
-      const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify');
-      const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
-      const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
-      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-      slickCellElm.classList.add('dnd', 'cell-reorder');
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: slickCellElm });
-      Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 20 });
-      Object.defineProperty(bodyMouseMoveEvent, 'clientY', { writable: true, value: 18 });
-
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      window.dispatchEvent(bodyMouseUpEvent);
-
-      expect(onDragInitSpy).toHaveBeenCalled();
-      expect(onDragStartSpy).toHaveBeenCalled();
-      expect(onDragSpy).toHaveBeenCalled();
-      expect(onDragEndSpy).toHaveBeenCalled();
-    });
-
-    it('should drag from a cell and execute all onDrag events then cleanup async renderer when a slick-cell is dragged and its event is stopped', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, {
-        ...defaultOptions,
-        rowHeight: 2200,
-        enableAsyncPostRender: true,
-        enableAsyncPostRenderCleanup: true,
-      });
-      const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, height: 223 } as DOMRect);
-      Object.defineProperty(viewportTopLeft, 'scrollTop', { writable: true, value: 3000 });
-      Object.defineProperty(viewportTopLeft, 'scrollLeft', { writable: true, value: 88 });
-      Object.defineProperty(viewportTopLeft, 'scrollHeight', { writable: true, value: 440 });
-      Object.defineProperty(viewportTopLeft, 'scrollWidth', { writable: true, value: 459 });
-      Object.defineProperty(viewportTopLeft, 'clientHeight', { writable: true, value: 223 });
-      Object.defineProperty(viewportTopLeft, 'clientWidth', { writable: true, value: 128 });
-
-      const sedDragInit = new SlickEventData();
-      sedDragInit.addReturnValue(true);
-      sedDragInit.stopImmediatePropagation();
-      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
-      const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify');
-      const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
-      const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
-      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-      slickCellElm.classList.add('dnd', 'cell-reorder');
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: slickCellElm });
-      Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 20 });
-      Object.defineProperty(bodyMouseMoveEvent, 'clientY', { writable: true, value: 18 });
-
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      window.dispatchEvent(bodyMouseUpEvent);
-      expect(onDragInitSpy).toHaveBeenCalled();
-      expect(onDragStartSpy).toHaveBeenCalled();
-      expect(onDragSpy).toHaveBeenCalled();
-      expect(onDragEndSpy).toHaveBeenCalled();
-
-      grid.scrollRowIntoView(30);
-      expect((document.querySelector('.slick-row.odd') as HTMLDivElement).style.top).toMatch(/^[0-9]*px$/gi);
-      grid.setActiveRow(30);
-      grid.scrollTo(33);
-      vi.advanceTimersByTime(10);
-
-      vi.spyOn(grid, 'getCellNode').mockReturnValueOnce(document.createElement('div'));
-      grid.updateCell(30, 1);
-      grid.invalidateRows([31]);
-      grid.scrollTo(2);
-      vi.advanceTimersByTime(12);
-
-      expect(onViewportChangedSpy).toHaveBeenCalled();
-    });
-
-    it('should "rowTopOffsetRenderType" use grid option and scrollTo row and expect transform of translateY to be changed', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, {
-        ...defaultOptions,
-        rowHeight: 2200,
-        enableAsyncPostRender: true,
-        enableAsyncPostRenderCleanup: true,
-        rowTopOffsetRenderType: 'transform',
-      });
-      const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
-      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, height: 223 } as DOMRect);
-      Object.defineProperty(viewportTopLeft, 'scrollTop', { writable: true, value: 3000 });
-      Object.defineProperty(viewportTopLeft, 'scrollLeft', { writable: true, value: 88 });
-      Object.defineProperty(viewportTopLeft, 'scrollHeight', { writable: true, value: 440 });
-      Object.defineProperty(viewportTopLeft, 'scrollWidth', { writable: true, value: 459 });
-      Object.defineProperty(viewportTopLeft, 'clientHeight', { writable: true, value: 223 });
-      Object.defineProperty(viewportTopLeft, 'clientWidth', { writable: true, value: 128 });
-
-      const sedDragInit = new SlickEventData();
-      sedDragInit.addReturnValue(true);
-      sedDragInit.stopImmediatePropagation();
-      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
-      const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify');
-      const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
-      const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
-      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-      slickCellElm.classList.add('dnd', 'cell-reorder');
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: slickCellElm });
-      Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 20 });
-      Object.defineProperty(bodyMouseMoveEvent, 'clientY', { writable: true, value: 18 });
-
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      window.dispatchEvent(bodyMouseUpEvent);
-      expect(onDragInitSpy).toHaveBeenCalled();
-      expect(onDragStartSpy).toHaveBeenCalled();
-      expect(onDragSpy).toHaveBeenCalled();
-      expect(onDragEndSpy).toHaveBeenCalled();
-
-      grid.scrollRowIntoView(30);
-      expect((document.querySelector('.slick-row.odd') as HTMLDivElement).style.transform).toMatch(/^translateY\([0-9]*px\)$/gi);
-      grid.setActiveRow(30);
-      grid.scrollTo(33);
-      vi.advanceTimersByTime(10);
-
-      grid.updateCell(0, 1);
-      grid.invalidateRows([31]);
-      grid.scrollTo(2);
-      vi.advanceTimersByTime(12);
-
-      expect(onViewportChangedSpy).toHaveBeenCalled();
-    });
-
-    it('should drag from a cell and execute all onDrag events except onDragStart when mousemove event target is not a slick-cell', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-
-      const sedDragInit = new SlickEventData();
-      sedDragInit.addReturnValue(true);
-      sedDragInit.stopImmediatePropagation();
-      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
-      const onDragStartSpy = vi.spyOn(grid.onDragStart, 'notify');
-      const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
-      const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
-      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-      slickCellElm.classList.add('dnd', 'cell-reorder');
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
-      // Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: null });
-      Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 20 });
-      Object.defineProperty(bodyMouseMoveEvent, 'clientY', { writable: true, value: 18 });
-
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      window.dispatchEvent(bodyMouseUpEvent);
-
-      expect(onDragInitSpy).toHaveBeenCalled();
-      expect(onDragStartSpy).not.toHaveBeenCalled();
-      expect(onDragSpy).toHaveBeenCalled();
-      expect(onDragEndSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('Column Resizing', () => {
-    const columns = [
-      { id: 'id', field: 'id', name: 'Id', hidden: true },
-      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true, width: 77, previousWidth: 20, rerenderOnResize: true },
-      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true, minWidth: 35, maxWidth: 78 },
-      { id: 'age', field: 'age', name: 'Age', sortable: true, minWidth: 82, width: 86, maxWidth: 88 },
-      { id: 'gender', field: 'gender', name: 'Gender', sortable: true },
-    ] as Column[];
-    const data = [
-      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-    ];
-
-    it('should resize should not go through when column has an editor', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
-      // grid.init();
-
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
-      vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      // document.body.dispatchEvent(bodyMouseMoveEvent);
-      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
-    });
-
-    it('should resize 2nd column that has a "width" defined using default sizing grid options', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, autoHeaderHeight: true, forceFitColumns: false });
-      grid.init();
-
-      const recalculateSpy = vi.spyOn(grid as any, 'recalculateHeaderHeight');
-      const sedOnBeforeResize = new SlickEventData();
-      sedOnBeforeResize.addReturnValue(true);
-      vi.spyOn(grid.onBeforeColumnsResize, 'notify').mockReturnValue(sedOnBeforeResize);
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
-
-      // header click won't get through
-      const onHeaderClickSpy = vi.spyOn(grid.onHeaderClick, 'notify');
-      container.querySelector('.slick-header')!.dispatchEvent(new CustomEvent('click'));
-      expect(onHeaderClickSpy).not.toHaveBeenCalled();
-
-      // end resizing
-      document.body.dispatchEvent(bodyMouseUpEvent);
-
-      vi.advanceTimersByTime(10);
-
-      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(recalculateSpy).toHaveBeenCalledTimes(1);
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(65);
-      expect(columns[3].width).toBe(86);
-      expect(columns[4].width).toBe(80);
-    });
-
-    it('should resize 3rd column that has a "minWidth" defined using default sizing grid options', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false, syncColumnCellResize: true });
-      grid.init();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
-
-      // end resizing
-      document.body.dispatchEvent(bodyMouseUpEvent);
-
-      vi.advanceTimersByTime(10);
-
-      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(59);
-      expect(columns[3].width).toBe(88);
-      expect(columns[4].width).toBe(80);
-    });
-
-    it('should resize 3rd column that has a "minWidth" defined using default sizing grid options with a frozen column', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false, frozenColumn: 0, syncColumnCellResize: true });
-      grid.init();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
-      const invalidateRowSpy = vi.spyOn(grid, 'invalidateAllRows');
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(columnElms[0], 'offsetWidth', { writable: true, value: 40 });
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
-
-      // end resizing
-      Object.defineProperty(columnElms[0], 'offsetWidth', { writable: true, value: 38 });
-      document.body.dispatchEvent(bodyMouseUpEvent);
-
-      vi.advanceTimersByTime(10);
-
-      expect(invalidateRowSpy).toHaveBeenCalled();
-      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(40); // go over freezing column limit, assign offsetWidth found from column element
-      expect(columns[2].width).toBe(59 - 40);
-      expect(columns[3].width).toBe(88);
-      expect(columns[4].width).toBe(80);
-    });
-
-    it('should resize 3rd column that has a "minWidth" with a frozen column that is greater than available columns', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false, frozenColumn: 5, syncColumnCellResize: true });
-      grid.init();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
-
-      // end resizing
-      document.body.dispatchEvent(bodyMouseUpEvent);
-
-      vi.advanceTimersByTime(10);
-
-      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(59);
-      expect(columns[3].width).toBe(88);
-      expect(columns[4].width).toBe(80);
-    });
-
-    it('should resize 2nd column with forceFitColumns option enabled', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
-      grid.init();
-      grid.autosizeColumns();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
-      const bodyMouseMoveEvent2 = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
-      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
-      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent1, 'pageX', { writable: true, value: 78 });
-      Object.defineProperty(bodyMouseMoveEvent2, 'pageX', { writable: true, value: 79 });
-      Object.defineProperty(bodyMouseMoveEvent1, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent1);
-      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 75 });
-      document.body.dispatchEvent(bodyMouseMoveEvent2);
-      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
-
-      // end resizing
-      document.body.dispatchEvent(bodyMouseUpEvent);
-      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(74);
-      expect(columns[3].width).toBe(133);
-      expect(columns[4].width).toBe(198);
-    });
-
-    it('should resize 2nd column with forceFitColumns and frozenColumn options enabled', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true, frozenColumn: 1 });
-      grid.init();
-      grid.autosizeColumns();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
-      const bodyMouseMoveEvent2 = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
-      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
-      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 70 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent1, 'pageX', { writable: true, value: 78 });
-      Object.defineProperty(bodyMouseMoveEvent2, 'pageX', { writable: true, value: 72 });
-      Object.defineProperty(bodyMouseMoveEvent1, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent1);
-      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 75 });
-      document.body.dispatchEvent(bodyMouseMoveEvent2);
-      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
-
-      // end resizing
-      document.body.dispatchEvent(bodyMouseUpEvent);
-      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(76);
-      expect(columns[3].width).toBe(131);
-      expect(columns[4].width).toBe(198);
-    });
-
-    it('should resize 2nd column without forceFitColumns option', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
-      grid.init();
-      grid.autosizeColumns();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
-      const bodyMouseMoveEvent2 = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
-      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
-      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent1, 'pageX', { writable: true, value: 78 });
-      Object.defineProperty(bodyMouseMoveEvent2, 'pageX', { writable: true, value: 79 });
-      Object.defineProperty(bodyMouseMoveEvent1, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent1);
-      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 75 });
-      document.body.dispatchEvent(bodyMouseMoveEvent2);
-      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
-
-      // end resizing
-      document.body.dispatchEvent(bodyMouseUpEvent);
-      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(74);
-      expect(columns[3].width).toBe(88);
-      expect(columns[4].width).toBeGreaterThanOrEqual(550);
-      expect(columns[4].width).toBeLessThanOrEqual(552);
-    });
-
-    it('should resize 2nd column with forceFitColumns option enabled', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
-      grid.init();
-      grid.autosizeColumns();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
-      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
-      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
-
-      // end resizing
-      document.body.dispatchEvent(bodyMouseUpEvent);
-      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(73);
-      expect(columns[3].width).toBe(88);
-      expect(columns[4].width).toBe(244);
-    });
-
-    it('should resize 3rd column with forceFitColumns option enabled', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
-      grid.init();
-      grid.autosizeColumns();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
-      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
-      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
-
-      // end resizing
-      document.body.dispatchEvent(bodyMouseUpEvent);
-      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(74);
-      expect(columns[3].width).toBe(132);
-      expect(columns[4].width).toBe(199);
-    });
-
-    it('should resize 3rd column with forceFitColumns option enabled with a frozen column', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true, frozenColumn: 0 });
-      grid.init();
-      grid.autosizeColumns();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
-      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
-      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
-
-      // end resizing
-      document.body.dispatchEvent(bodyMouseUpEvent);
-      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(74);
-      expect(columns[3].width).toBe(132);
-      expect(columns[4].width).toBe(199);
-    });
-
-    it('should resize 3rd column without forceFitColumns option but with a frozen column', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false, frozenColumn: 0 });
-      grid.init();
-      grid.autosizeColumns();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
-      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
-      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
-
-      // end resizing
-      document.body.dispatchEvent(bodyMouseUpEvent);
-      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(74);
-      expect(columns[3].width).toBe(132);
-      expect(columns[4].width).toBeGreaterThanOrEqual(550);
-    });
-
-    it('should resize 4th column with forceFitColumns option enabled and a column with maxWidth and a frozen column', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true, frozenColumn: 0 });
-      grid.init();
-      grid.autosizeColumns();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const onColumnsResizedSpy = vi.spyOn(grid.onColumnsResized, 'notify');
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const column3 = columnElms[3 - 1]; // -1 because hidden column is removed from DOM
-      const resizeHandleElm = column3.querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
-      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
-      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      // start resizing
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      expect(column3.classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(onColumnsDragSpy).toHaveBeenCalledWith({ triggeredByColumn: column3, resizeHandle: resizeHandleElm, grid }, expect.anything(), grid);
-
-      // end resizing
-      document.body.dispatchEvent(bodyMouseUpEvent);
-      expect(column3.classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[3].id, grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(74);
-      expect(columns[3].width).toBe(132);
-      expect(columns[4].width).toBe(199);
-    });
-
-    it('should auto-scroll while resizing the last visible column when option is enabled', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
-      grid.init();
-
-      const scrollToXSpy = vi.spyOn(grid, 'scrollToX');
-      const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
-      Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
-      Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
-      Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
-
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const lastColumnElm = columnElms[3];
-      const resizeHandleElm = lastColumnElm.querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 80 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 140 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      document.body.dispatchEvent(bodyMouseUpEvent);
-
-      expect(scrollToXSpy).toHaveBeenCalledWith(400);
-    });
-
-    it('should not auto-scroll while resizing the last visible column when option is disabled', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, {
-        ...defaultOptions,
-        forceFitColumns: false,
-        autoScrollOnColumnResize: false,
-      });
-      grid.init();
-
-      const scrollToXSpy = vi.spyOn(grid, 'scrollToX');
-      const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
-      Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
-      Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
-      Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
-
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const lastColumnElm = columnElms[3];
-      const resizeHandleElm = lastColumnElm.querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 80 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 140 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
-      document.body.dispatchEvent(bodyMouseUpEvent);
-
-      expect(scrollToXSpy).not.toHaveBeenCalledWith(400);
-    });
-
-    it('should auto-scroll while resizing the last visible column when frozenColumn is enabled', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, {
-        ...defaultOptions,
-        forceFitColumns: false,
-        frozenColumn: 0,
-      });
-      grid.init();
-
-      const scrollToXSpy = vi.spyOn(grid, 'scrollToX');
-      const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
-      Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
-      Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
-      Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
-
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const lastColumnElm = columnElms[3];
-      const resizeHandleElm = lastColumnElm.querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 80 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 140 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-      document.body.dispatchEvent(bodyMouseUpEvent);
-
-      expect(scrollToXSpy).toHaveBeenCalledWith(400);
-    });
-
-    it('should use autoScrollResizeRightDelay when resize continues from browser right edge', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, {
-        ...defaultOptions,
-        forceFitColumns: false,
-        autoScrollResizeRightDelay: 120,
-      });
-      grid.init();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
-      Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
-      Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
-      Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
-
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const lastColumnElm = columnElms[3];
-      const resizeHandleElm = lastColumnElm.querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      const bodyMouseUpEvent = new CustomEvent('mouseup');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 80 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(cMouseDownEvent, 'clientX', { writable: true, value: 120 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 140 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-      Object.defineProperty(bodyMouseMoveEvent, 'clientX', {
-        writable: true,
-        value: (window.innerWidth || document.documentElement.clientWidth || 1024) - 1,
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+
+      it('should scroll to defined row position when calling scrollRowToTop()', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.init();
+        const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+        const renderSpy = vi.spyOn(grid, 'render');
+
+        grid.scrollRowToTop(2);
+
+        expect(scrollToSpy).toHaveBeenCalledWith(2 * DEFAULT_COLUMN_HEIGHT); // default rowHeight: 25
+        expect(renderSpy).toHaveBeenCalled();
       });
 
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-
-      // Resize and reorder auto-scroll share the same 30ms interval.
-      vi.advanceTimersByTime(90);
-      expect(onColumnsDragSpy.mock.calls.length).toBe(4);
-
-      vi.advanceTimersByTime(40);
-      expect(onColumnsDragSpy.mock.calls.length).toBe(5);
-
-      document.body.dispatchEvent(bodyMouseUpEvent);
-    });
-
-    it('should clear any existing resize auto-scroll timer when setting up column resize and when clearing all timers', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
-      grid.init();
-
-      const clearIntervalSpy = vi.spyOn(globalThis, 'clearInterval');
-      const timerId = setInterval(() => {}, 1000);
-      (grid as any)._columnResizeAutoScrollTimer = timerId;
-
-      (grid as any).setupColumnResize();
-      expect(clearIntervalSpy).toHaveBeenCalledWith(timerId);
-      expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
-
-      const timerId2 = setInterval(() => {}, 1000);
-      (grid as any)._columnResizeAutoScrollTimer = timerId2;
-      (grid as any).clearAllTimers();
-      expect(clearIntervalSpy).toHaveBeenCalledWith(timerId2);
-      expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
-
-      clearIntervalSpy.mockRestore();
-    });
-
-    it('should stop resize auto-scroll when its offset becomes zero or the pointer returns inside the viewport', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, {
-        ...defaultOptions,
-        forceFitColumns: false,
-        autoScrollResizeRightDelay: 60,
-      });
-      grid.init();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
-      Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
-      Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
-      Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
-
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const lastColumnElm = columnElms[3];
-      const resizeHandleElm = lastColumnElm.querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const downEvt = new CustomEvent('mousedown');
-      Object.defineProperty(downEvt, 'pageX', { writable: true, value: 80 });
-      Object.defineProperty(downEvt, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(downEvt, 'clientX', { writable: true, value: 100 });
-
-      const moveRightEdgeEvt = new CustomEvent('mousemove');
-      Object.defineProperty(moveRightEdgeEvt, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(moveRightEdgeEvt, 'pageX', { writable: true, value: 140 });
-      Object.defineProperty(moveRightEdgeEvt, 'pageY', { writable: true, value: 13 });
-      Object.defineProperty(moveRightEdgeEvt, 'clientX', {
-        writable: true,
-        value: (window.innerWidth || document.documentElement.clientWidth || 1024) - 1,
-      });
-
-      const moveLeftEdgeEvt = new CustomEvent('mousemove');
-      Object.defineProperty(moveLeftEdgeEvt, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(moveLeftEdgeEvt, 'pageX', { writable: true, value: 140 });
-      Object.defineProperty(moveLeftEdgeEvt, 'pageY', { writable: true, value: 13 });
-      Object.defineProperty(moveLeftEdgeEvt, 'clientX', { writable: true, value: 1 });
-
-      const moveZeroOffsetEvt = new CustomEvent('mousemove');
-      Object.defineProperty(moveZeroOffsetEvt, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(moveZeroOffsetEvt, 'pageX', { writable: true, value: 0 });
-      Object.defineProperty(moveZeroOffsetEvt, 'pageY', { writable: true, value: 13 });
-      Object.defineProperty(moveZeroOffsetEvt, 'clientX', { writable: true, value: 200 });
-
-      const moveInsideEvt = new CustomEvent('mousemove');
-      Object.defineProperty(moveInsideEvt, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(moveInsideEvt, 'pageX', { writable: true, value: 140 });
-      Object.defineProperty(moveInsideEvt, 'pageY', { writable: true, value: 13 });
-      Object.defineProperty(moveInsideEvt, 'clientX', { writable: true, value: 200 });
-
-      const upEvt = new CustomEvent('mouseup');
-
-      resizeHandleElm.dispatchEvent(downEvt);
-      container.dispatchEvent(downEvt);
-      document.body.dispatchEvent(moveRightEdgeEvt);
-      expect((grid as any)._columnResizeAutoScrollTimer).toBeDefined();
-
-      document.body.dispatchEvent(moveZeroOffsetEvt);
-      const dragCountBeforeIdleTick = onColumnsDragSpy.mock.calls.length;
-      expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
-      vi.advanceTimersByTime(30);
-      expect(onColumnsDragSpy.mock.calls.length).toBe(dragCountBeforeIdleTick);
-
-      document.body.dispatchEvent(moveRightEdgeEvt);
-      expect((grid as any)._columnResizeAutoScrollTimer).toBeDefined();
-      document.body.dispatchEvent(moveInsideEvt);
-      expect((grid as any)._columnResizeAutoScrollTimer).toBeUndefined();
-
-      document.body.dispatchEvent(moveLeftEdgeEvt);
-      expect((grid as any)._columnResizeAutoScrollTimer).toBeDefined();
-
-      document.body.dispatchEvent(upEvt);
-    });
-
-    it('should clamp resizing to the viewport edge before auto-scroll continues at the shared rate', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, {
-        ...defaultOptions,
-        forceFitColumns: false,
-        autoScrollOnColumnResize: true,
-      });
-      grid.init();
-
-      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
-      const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
-      Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
-      Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
-      Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
-
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[0].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      const cMouseDownEvent = new CustomEvent('mousedown');
-      const bodyMouseMoveEvent = new CustomEvent('mousemove');
-      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
-      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 80 });
-      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 1000 });
-      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
-      Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 400 });
-
-      resizeHandleElm.dispatchEvent(cMouseDownEvent);
-      container.dispatchEvent(cMouseDownEvent);
-      document.body.dispatchEvent(bodyMouseMoveEvent);
-
-      expect(columns[1].width).toBe(720);
-      expect(onColumnsDragSpy).toHaveBeenCalledTimes(1);
-
-      vi.advanceTimersByTime(30);
-      expect(columns[1].width).toBe(730);
-      expect(onColumnsDragSpy).toHaveBeenCalledTimes(2);
-      document.body.dispatchEvent(new CustomEvent('mouseup'));
-    });
-
-    it('should trigger onViewportChanged and return true when resizing last column and only horizontal scroll occurs', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
-      grid.init();
-
-      // Simulate state for the branch: _isResizingColumn && hScrollDist && !vScrollDist
-      (grid as any)._isResizingColumn = true;
-      (grid as any).lastRenderedScrollLeft = 0;
-      (grid as any).lastRenderedScrollTop = 0;
-      (grid as any).prevScrollTop = 0;
-      (grid as any).scrollTop = 0;
-
-      // Ensure scroll bounds allow scrollLeft = 100
-      (grid as any).canvasWidth = 200;
-      if (!(grid as any)._viewportScrollContainerX) {
-        (grid as any)._viewportScrollContainerX = document.createElement('div');
-      }
-      const viewportX = (grid as any)._viewportScrollContainerX;
-      Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 200 });
-      Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 50 });
-      Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
-
-      // Set prevScrollLeft and scrollLeft right before dispatching scroll event
-      (grid as any).prevScrollLeft = 0;
-      viewportX.scrollLeft = 100;
-      (grid as any).scrollLeft = 100;
-
-      // Stub scrollToX to avoid side effects
-      vi.spyOn(grid as any, 'scrollToX').mockImplementation(() => {});
-
-      const onViewportChangedSpy = vi.spyOn(grid, 'triggerEvent');
-
-      // Dispatch a real scroll event on the viewport element
-      const scrollEvent = new Event('scroll');
-      viewportX.dispatchEvent(scrollEvent);
-      // Call handleScroll to simulate the grid's scroll handler
-      (grid as any).handleScroll(scrollEvent);
-
-      // Should update lastRenderedScrollLeft, trigger onViewportChanged
-      expect((grid as any).lastRenderedScrollLeft).toBe(100);
-      expect(onViewportChangedSpy).toHaveBeenCalledWith(grid.onViewportChanged, expect.anything());
-    });
-
-    it('should expect the last column to never be resizable', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
-      grid.init();
-
-      const columnElms = container.querySelectorAll('.slick-header-column');
-      const column4 = columnElms[4 - 1]; // -1 because hidden column is removed from DOM
-      const resizeHandleElm = column4.querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-      expect(resizeHandleElm).toBeNull();
-    });
-  });
-
-  describe('Sorting', () => {
-    const columns = [
-      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
-      { id: 'age', field: 'age', name: 'Age', sortable: true },
-    ] as Column[];
-
-    it('should find a single sort icons to sorted column when calling setSortColumn() with a single column to sort ascending', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
-      grid.setSortColumn('firstName', true);
-
-      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
-      const sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
-      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
-
-      expect(sortIndicators.length).toBe(columns.length);
-      expect(sortAscIndicators.length).toBe(1);
-      expect(sortDescIndicators.length).toBe(0);
-      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: true }]);
-    });
-
-    it('should not trigger onBeforeSort when clicking on column resize handle', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
-      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
-      const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
-
-      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
-      const sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
-      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
-      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
-      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
-
-      expect(sortIndicators.length).toBe(columns.length);
-      expect(sortAscIndicators.length).toBe(0);
-      expect(sortDescIndicators.length).toBe(1);
-      expect(sortedColElms.length).toBe(0);
-      expect(sortNumberedIndicators.length).toBe(0);
-      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }]);
-
-      const firstColHeaderElm = container.querySelector('.slick-header-columns');
-      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]') as HTMLDivElement;
-      const firstResizeHandleElm = firstNameHeaderColumnElm.querySelector('.slick-resizable-handle');
-      const click = new CustomEvent('click');
-      Object.defineProperty(click, 'target', { writable: true, value: firstResizeHandleElm });
-      firstColHeaderElm?.dispatchEvent(click);
-
-      expect(onBeforeSortSpy).not.toHaveBeenCalled();
-    });
-
-    it('should not trigger onBeforeSort when clicking on slick-header-columns div', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
-      const headerColumns = container.querySelectorAll<HTMLDivElement>('.slick-header-columns');
-      headerColumns?.forEach((elm) => {
-        elm.querySelector('.slick-header-column')?.classList.add('slick-header-column-sorted');
-      });
-      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
-      const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
-
-      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
-      const sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
-      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
-      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
-      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
-
-      expect(sortIndicators.length).toBe(columns.length);
-      expect(sortAscIndicators.length).toBe(0);
-      expect(sortDescIndicators.length).toBe(1);
-      expect(sortedColElms.length).toBe(0);
-      expect(sortNumberedIndicators.length).toBe(0);
-      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }]);
-
-      const firstColHeaderElm = container.querySelector('.slick-header-columns');
-      const click = new CustomEvent('click');
-      firstColHeaderElm?.dispatchEvent(click);
-
-      expect(onBeforeSortSpy).not.toHaveBeenCalled();
-    });
-
-    it('should not trigger onBeforeSort when an open editor commit fails', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
-      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
-      const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
-      vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
-
-      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
-      const sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
-      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
-      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
-      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
-
-      expect(sortIndicators.length).toBe(columns.length);
-      expect(sortAscIndicators.length).toBe(0);
-      expect(sortDescIndicators.length).toBe(1);
-      expect(sortedColElms.length).toBe(0);
-      expect(sortNumberedIndicators.length).toBe(0);
-      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }]);
-
-      const firstColHeaderElm = container.querySelector('.slick-header-columns');
-      const click2 = new CustomEvent('click');
-      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
-      Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
-      firstColHeaderElm?.dispatchEvent(click2);
-
-      expect(onBeforeSortSpy).not.toHaveBeenCalled();
-    });
-
-    it('should find a single sorted icons when calling setSortColumn() with a single col being sorted when multiSort is disabled', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
-      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
-      const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
-
-      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
-      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
-      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
-      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
-      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
-
-      expect(sortIndicators.length).toBe(columns.length);
-      expect(sortAscIndicators.length).toBe(0);
-      expect(sortDescIndicators.length).toBe(1);
-      expect(sortedColElms.length).toBe(0);
-      expect(sortNumberedIndicators.length).toBe(0);
-      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }]);
-
-      const firstColHeaderElm = container.querySelector('.slick-header-columns');
-      const click = new CustomEvent('click');
-      firstColHeaderElm?.dispatchEvent(click);
-
-      sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
-      expect(sortAscIndicators.length).toBe(0); // same because closest .slick-header-column not found
-
-      const click2 = new CustomEvent('click');
-      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
-      Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
-      firstColHeaderElm?.dispatchEvent(click2);
-
-      // clicking on firstName with legacy behavior
-      expect(onBeforeSortSpy).toHaveBeenCalledTimes(1);
-      expect(onBeforeSortSpy).toHaveBeenCalledWith(
-        {
-          grid,
-          multiColumnSort: false,
-          sortAsc: true,
-          columnId: 'firstName',
-          previousSortColumns: [{ columnId: 'firstName', sortAsc: true }],
-          sortCol: columns[0],
-        },
-        click2,
-        grid
-      );
-    });
-
-    it('should find multiple sorted icons when calling setSortColumn() with 2 columns being sorted when multiSort is enabled', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: true, numberedMultiColumnSort: true });
-      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
-      const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
-
-      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
-      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
-      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
-      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
-      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
-
-      expect(sortIndicators.length).toBe(columns.length);
-      expect(sortAscIndicators.length).toBe(1);
-      expect(sortDescIndicators.length).toBe(1);
-      expect(sortedColElms.length).toBe(0);
-      expect(sortNumberedIndicators[0]?.classList.contains('slick-sort-indicator-desc')).toBeTruthy();
-      expect(sortNumberedIndicators[0]?.textContent).toBe('1');
-      expect(sortNumberedIndicators[1]?.classList.contains('slick-sort-indicator-asc')).toBeTruthy();
-      expect(sortNumberedIndicators[1]?.textContent).toBe('2');
-      expect(grid.getSortColumns()).toEqual([
-        { columnId: 'firstName', sortAsc: false },
-        { columnId: 'lastName', sortAsc: true },
-      ]);
-
-      const firstColHeaderElm = container.querySelector('.slick-header-columns');
-      const click = new CustomEvent('click');
-      firstColHeaderElm?.dispatchEvent(click);
-
-      sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
-      expect(sortAscIndicators.length).toBe(1); // same because closest .slick-header-column not found
-
-      const click2 = new CustomEvent('click');
-      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
-      Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
-      firstColHeaderElm?.dispatchEvent(click2);
-
-      // clicking on firstName with legacy behavior
-      expect(onBeforeSortSpy).toHaveBeenCalledWith(
-        {
-          grid,
-          multiColumnSort: true,
-          previousSortColumns: [
-            { columnId: 'firstName', sortAsc: true },
-            { columnId: 'lastName', sortAsc: true },
-          ],
-          sortCols: [{ columnId: 'firstName', sortAsc: true, sortCol: columns[0] }],
-        },
-        click2,
-        grid
-      );
-    });
-
-    it('should find multiple sorted icons numbered icons when calling setSortColumn() with 2 columns being sorted when multiSort and tristateMultiColumnSort are enabled', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, {
-        ...defaultOptions,
-        multiColumnSort: true,
-        numberedMultiColumnSort: true,
-        tristateMultiColumnSort: true,
-      });
-      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
-      const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
-
-      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
-      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
-      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
-      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
-      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
-
-      expect(sortIndicators.length).toBe(columns.length);
-      expect(sortAscIndicators.length).toBe(1);
-      expect(sortDescIndicators.length).toBe(1);
-      expect(sortedColElms.length).toBe(0);
-      expect(sortNumberedIndicators[0]?.classList.contains('slick-sort-indicator-desc')).toBeTruthy();
-      expect(sortNumberedIndicators[0]?.textContent).toBe('1');
-      expect(sortNumberedIndicators[1]?.classList.contains('slick-sort-indicator-asc')).toBeTruthy();
-      expect(sortNumberedIndicators[1]?.textContent).toBe('2');
-      expect(grid.getSortColumns()).toEqual([
-        { columnId: 'firstName', sortAsc: false },
-        { columnId: 'lastName', sortAsc: true },
-      ]);
-
-      const firstColHeaderElm = container.querySelector('.slick-header-columns');
-      const click = new CustomEvent('click');
-      firstColHeaderElm?.dispatchEvent(click);
-
-      sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
-      expect(sortAscIndicators.length).toBe(1); // same because closest .slick-header-column not found
-
-      const click2 = new CustomEvent('click');
-      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
-      Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
-      firstColHeaderElm?.dispatchEvent(click2);
-
-      // only left with lastName since firstName is now sorted ascending because of tristate
-      expect(onBeforeSortSpy).toHaveBeenCalledWith(
-        {
-          grid,
-          multiColumnSort: true,
-          previousSortColumns: [
-            { columnId: 'firstName', sortAsc: true },
-            { columnId: 'lastName', sortAsc: true },
-          ],
-          sortCols: [{ columnId: 'lastName', sortAsc: true, sortCol: columns[1] }],
-        },
-        click2,
-        grid
-      );
-    });
-
-    it('should find multiple sorted icons with separate numbered icons when calling setSortColumn() with 2 columns being sorted when multiSort, tristateMultiColumnSort and sortColNumberInSeparateSpan are enabled', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, {
-        ...defaultOptions,
-        multiColumnSort: true,
-        numberedMultiColumnSort: true,
-        tristateMultiColumnSort: true,
-        sortColNumberInSeparateSpan: true,
-      });
-      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
-      const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
-
-      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
-      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
-      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
-      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
-      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
-
-      expect(sortIndicators.length).toBe(columns.length);
-      expect(sortAscIndicators.length).toBe(1);
-      expect(sortDescIndicators.length).toBe(1);
-      expect(sortedColElms.length).toBe(0);
-      expect(sortIndicators[0]?.classList.contains('slick-sort-indicator-desc')).toBeTruthy();
-      expect(sortNumberedIndicators[0]?.textContent).toBe('1');
-      expect(sortIndicators[1]?.classList.contains('slick-sort-indicator-asc')).toBeTruthy();
-      expect(sortNumberedIndicators[1]?.textContent).toBe('2');
-      expect(grid.getSortColumns()).toEqual([
-        { columnId: 'firstName', sortAsc: false },
-        { columnId: 'lastName', sortAsc: true },
-      ]);
-
-      const firstColHeaderElm = container.querySelector('.slick-header-columns');
-      const click = new CustomEvent('click');
-      firstColHeaderElm?.dispatchEvent(click);
-
-      sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
-      expect(sortAscIndicators.length).toBe(1); // same because closest .slick-header-column not found
-
-      const click2 = new CustomEvent('click');
-      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
-      Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
-      firstColHeaderElm?.dispatchEvent(click2);
-
-      // only left with lastName since firstName is now sorted ascending because of tristate
-      expect(onBeforeSortSpy).toHaveBeenCalledWith(
-        {
-          grid,
-          multiColumnSort: true,
-          previousSortColumns: [
-            { columnId: 'firstName', sortAsc: true },
-            { columnId: 'lastName', sortAsc: true },
-          ],
-          sortCols: [{ columnId: 'lastName', sortAsc: true, sortCol: columns[1] }],
-        },
-        click2,
-        grid
-      );
-    });
-
-    it('should remove current sort when the sorting is triggered and tristateMultiColumnSort is enabled but multiColumnSort is disabled', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, {
-        ...defaultOptions,
-        multiColumnSort: false,
-        numberedMultiColumnSort: true,
-        tristateMultiColumnSort: true,
-      });
-      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
-      const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
-
-      const firstColHeaderElm = container.querySelector('.slick-header-columns');
-      const colClick = new CustomEvent('click');
-      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
-      Object.defineProperty(colClick, 'target', { writable: true, value: firstNameHeaderColumnElm });
-      firstColHeaderElm?.dispatchEvent(colClick);
-
-      // only left with lastName since firstName is now sorted ascending because of tristate
-      expect(onBeforeSortSpy).toHaveBeenCalledWith(
-        {
-          grid,
-          multiColumnSort: false,
-          previousSortColumns: [
-            { columnId: 'firstName', sortAsc: true },
-            { columnId: 'lastName', sortAsc: true },
-          ],
-          columnId: null,
-          sortAsc: true,
-          sortCol: null,
-        },
-        colClick,
-        grid
-      );
-    });
-
-    it('should sort by firstName when no previous sort exist and we triggered with tristateMultiColumnSort enabled but multiColumnSort is disabled', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, {
-        ...defaultOptions,
-        multiColumnSort: false,
-        numberedMultiColumnSort: true,
-        tristateMultiColumnSort: true,
-      });
-      grid.setSortColumns([]);
-      const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
-
-      const firstColHeaderElm = container.querySelector('.slick-header-columns');
-      const click = new CustomEvent('click');
-      firstColHeaderElm?.dispatchEvent(click);
-
-      const colClick = new CustomEvent('click');
-      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
-      Object.defineProperty(colClick, 'target', { writable: true, value: firstNameHeaderColumnElm });
-      firstColHeaderElm?.dispatchEvent(colClick);
-
-      expect(onBeforeSortSpy).toHaveBeenCalledWith(
-        {
-          grid,
-          multiColumnSort: false,
-          previousSortColumns: [],
-          columnId: 'firstName',
-          sortAsc: true,
-          sortCol: columns[0],
-        },
-        colClick,
-        grid
-      );
-    });
-
-    it('should sort by firstName when no previous sort exist and we triggered with tristateMultiColumnSort & multiColumnSort both disabled', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, {
-        ...defaultOptions,
-        multiColumnSort: false,
-        numberedMultiColumnSort: true,
-        tristateMultiColumnSort: false,
-      });
-      grid.setSortColumns([]);
-      const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
-
-      const firstColHeaderElm = container.querySelector('.slick-header-columns');
-      const click = new CustomEvent('click');
-      firstColHeaderElm?.dispatchEvent(click);
-
-      const colClick = new CustomEvent('click');
-      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
-      Object.defineProperty(colClick, 'target', { writable: true, value: firstNameHeaderColumnElm });
-      firstColHeaderElm?.dispatchEvent(colClick);
-
-      expect(onBeforeSortSpy).toHaveBeenCalledWith(
-        {
-          grid,
-          multiColumnSort: false,
-          previousSortColumns: [],
-          columnId: 'firstName',
-          sortAsc: true,
-          sortCol: columns[0],
-        },
-        colClick,
-        grid
-      );
-    });
-
-    it('should remove all sorting when multiSort is enabled and we clicked column with a metaKey (Ctrl/Win)', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: true });
-      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
-      const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
-      const firstColHeaderElm = container.querySelector('.slick-header-columns');
-
-      const click2 = new CustomEvent('click');
-      Object.defineProperty(click2, 'metaKey', { writable: true, value: true });
-      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
-      Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
-      firstColHeaderElm?.dispatchEvent(click2);
-
-      // clicking on firstName with legacy behavior
-      expect(onBeforeSortSpy).toHaveBeenCalledTimes(1);
-      expect(onBeforeSortSpy).toHaveBeenCalledWith(
-        {
-          grid,
-          multiColumnSort: true,
-          previousSortColumns: [{ columnId: 'firstName', sortAsc: true }],
-          sortCols: [],
-        },
-        click2,
-        grid
-      );
-    });
-  });
-
-  describe('Scrolling', () => {
-    const columns = [
-      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
-      { id: 'age', field: 'age', name: 'Age', sortable: true },
-    ] as Column[];
-    const data = [
-      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-    ];
-
-    it('should scroll when calling scrollCellIntoView() with lower position than frozen column', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 0 });
-      const renderSpy = vi.spyOn(grid, 'render');
-      grid.scrollCellIntoView(1, 1, true);
-
-      expect(renderSpy).toHaveBeenCalledTimes(3);
-    });
-
-    it('should scroll a center column that is obscured by left pinning', () => {
-      const pinnedColumns = Array.from({ length: 5 }, (_value, index) => ({
-        id: `column${index}`,
-        field: `column${index}`,
-        name: `Column ${index}`,
-        width: 80,
-      })) as Column[];
-      const pinnedData = [{ id: 0, column0: '0', column1: '1', column2: '2', column3: '3', column4: '4' }];
-      grid = new SlickGrid<any, Column>(container, pinnedData, pinnedColumns, {
-        ...defaultOptions,
-        pinning: { columns: { left: 0, right: [] } },
-      });
-
-      const horizontalScroller = container.querySelector('.slick-docking-horizontal-scroller') as HTMLDivElement;
-      Object.defineProperties(horizontalScroller, {
-        clientWidth: { configurable: true, value: 300 },
-        scrollWidth: { configurable: true, value: 400 },
-      });
-      vi.spyOn(horizontalScroller, 'getBoundingClientRect').mockReturnValue({ width: 300 } as DOMRect);
-
-      grid.scrollCellIntoView(0, 3);
-
-      expect(horizontalScroller.scrollLeft).toBeGreaterThan(0);
-    });
-
-    it('should find the first column intersecting the horizontal render range', () => {
-      const wideColumns = Array.from({ length: 100 }, (_, index) => ({
-        id: `column${index}`,
-        field: `column${index}`,
-        name: `Column ${index}`,
-        width: 80,
-      })) as Column[];
-      grid = new SlickGrid<any, Column>(container, [{}], wideColumns, defaultOptions);
-
-      expect((grid as any).getFirstColumnIndexAtOrAfter(0)).toBe(0);
-      expect((grid as any).getFirstColumnIndexAtOrAfter(800)).toBe(10);
-      expect((grid as any).getFirstColumnIndexAtOrAfter(8000)).toBe(100);
-    });
-
-    it('should scroll when calling scrollCellIntoView() with row having colspan returned from DataView getItemMetadata()', () => {
-      const columnsCopy = [...columns];
-      columnsCopy[1].colspan = '*';
-      columnsCopy[2].colspan = '1';
-      const dv = new SlickDataView();
-      dv.setItems(data);
-      grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, frozenColumn: 0, enableMouseWheelScrollHandler: true });
-      vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { lastName: { colspan: '*' } } } as any);
-      const renderSpy = vi.spyOn(grid, 'render');
-      grid.scrollCellIntoView(1, 1, true);
-      grid.scrollCellIntoView(1, 2, true);
-
-      expect(renderSpy).toHaveBeenCalledTimes(6);
-    });
-
-    it('should call scrollColumnIntoView() and expect left scroll to become 80 which is default column width', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, pinning: { columns: { left: 0 } } });
-      let viewportElm = container.querySelector('.slick-docking-horizontal-scroller') as HTMLDivElement;
-      Object.defineProperty(viewportElm, 'scrollLeft', { writable: true, value: 20 });
-      Object.defineProperty(viewportElm, 'scrollWidth', { writable: true, value: 10 });
-      viewportElm.dispatchEvent(new CustomEvent('scroll'));
-      const renderSpy = vi.spyOn(grid, 'render');
-      grid.scrollColumnIntoView(2);
-      viewportElm = container.querySelector('.slick-docking-horizontal-scroller') as HTMLDivElement;
-
-      expect(renderSpy).toHaveBeenCalledTimes(1);
-      expect(viewportElm.scrollLeft).toBe(10);
-    });
-
-    it('should call scrollColumnIntoView() and expect left scroll to be lower than scrollLeft and become 0', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, pinning: { columns: { left: 0 } } });
-      let viewportElm = container.querySelector('.slick-docking-horizontal-scroller') as HTMLDivElement;
-      Object.defineProperty(viewportElm, 'scrollLeft', { writable: true, value: 10 });
-      Object.defineProperty(viewportElm, 'scrollWidth', { writable: true, value: 20 });
-      viewportElm.dispatchEvent(new CustomEvent('scroll'));
-      const renderSpy = vi.spyOn(grid, 'render');
-      grid.scrollColumnIntoView(1);
-      viewportElm = container.querySelector('.slick-docking-horizontal-scroller') as HTMLDivElement;
-
-      expect(renderSpy).toHaveBeenCalledTimes(1);
-      expect(viewportElm.scrollLeft).toBe(0);
-    });
-  });
-
-  describe('Navigation', () => {
-    const columns = [
-      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
-      { id: 'age', field: 'age', name: 'Age', sortable: true },
-    ] as Column[];
-    const data = [
-      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-    ];
-
-    it('should stop navigation before the add-new row when the frozen bottom boundary is active', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenRow: 1, frozenBottom: true });
-      (grid as any).hasFrozenRows = true;
-      (grid as any)._options.frozenBottom = true;
-      const result = (grid as any).navigateToPos({ row: data.length, cell: 0, posX: 0, posY: data.length });
-
-      expect(result).toBeUndefined();
-    });
-
-    it('should scroll to defined row position when calling scrollRowToTop()', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenRow: 0 });
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-      const renderSpy = vi.spyOn(grid, 'render');
-
-      grid.scrollRowToTop(2);
-
-      expect(scrollToSpy).toHaveBeenCalledWith(2 * DEFAULT_COLUMN_HEIGHT); // default rowHeight: 25
-      expect(renderSpy).toHaveBeenCalled();
-    });
-
-    it('should scroll to computed row position when calling scrollRowToTop() in variable row height mode', () => {
-      const rowHeights = [25, 40, 30];
-      grid = new SlickGrid<any, Column>(container, data, columns, {
-        ...defaultOptions,
-        enableVariableRowHeight: true,
-        rowHeight: 25,
-        rowHeightProvider: (_grid, row) => rowHeights[row],
-      });
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-      const renderSpy = vi.spyOn(grid, 'render');
-
-      grid.scrollRowToTop(2);
-
-      // top of row 2 is 25 + 40
-      expect(scrollToSpy).toHaveBeenCalledWith(65);
-      expect(renderSpy).toHaveBeenCalled();
-    });
-
-    it('should keep page-boundary mapping stable with variable row height enabled', () => {
-      const manyRows = Array.from({ length: 700 }, (_, i) => ({ id: i, firstName: `name-${i}`, lastName: 'L', age: i }));
-      const variableRowHeightProvider = (_grid: SlickGrid, row: number) => 2200 + (row % 3) * 200;
-
-      grid = new SlickGrid<any, Column>(container, manyRows, columns, {
-        ...defaultOptions,
-        enableVariableRowHeight: true,
-        rowHeight: 2200,
-        rowHeightProvider: variableRowHeightProvider,
-      });
-
-      const testGrid = grid as any;
-      const lastPage = testGrid.n - 1;
-
-      expect(testGrid.n).toBeGreaterThan(3);
-      expect(testGrid.getPageOffset(0)).toBe(0);
-      expect(testGrid.getPageOffset(1)).toBe(0);
-      expect(testGrid.getPageOffset(lastPage)).toBe(Math.max(0, testGrid.th - testGrid.h));
-
-      expect(testGrid.getPageFromLargeScrollDelta(testGrid.ph - 1)).toBe(0);
-      expect(testGrid.getPageFromLargeScrollDelta(testGrid.h - testGrid.ph)).toBe(lastPage);
-
-      const row0Height = grid.getRowHeight(0);
-      const row1Height = grid.getRowHeight(1);
-      const row2Height = grid.getRowHeight(2);
-      expect(testGrid.getRowPosition(3)).toBe(row0Height + row1Height + row2Height);
-    });
-
-    it('should cover legacy and interior branch paths in virtual page mapping helpers', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, rowHeight: 25 });
-      const testGrid = grid as any;
-
-      // getPageOffset(): legacy mapping when page count is tiny (n <= 3)
-      testGrid.n = 3;
-      testGrid.th = 1000;
-      testGrid.h = 500;
-      testGrid.cj = 123;
-      expect(testGrid.getPageOffset(1)).toBe(123);
-
-      // getPageOffset(): legacy fallback when computed lastOffset is non-positive
-      testGrid.n = 5;
-      testGrid.th = 400;
-      testGrid.h = 500;
-      testGrid.cj = 47;
-      expect(testGrid.getPageOffset(1)).toBe(47);
-
-      // getPageFromLargeScrollDelta(): no-interior-pages legacy page selection path
-      testGrid.n = 3;
-      testGrid.ph = 100;
-      testGrid.h = 500;
-      testGrid.viewportH = 50;
-      expect(testGrid.getPageFromLargeScrollDelta(150)).toBe(1);
-
-      // getPageFromLargeScrollDelta(): interior-page scale-factor path
-      testGrid.n = 6;
-      testGrid.ph = 100;
-      testGrid.h = 500;
-      testGrid.th = 1200;
-      testGrid.viewportH = 50;
-      expect(testGrid.getPageFromLargeScrollDelta(250)).toBe(4);
-    });
-
-    it('should do page up when calling scrollRowIntoView() and we are further than row index that we want to scroll to', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenRow: 0 });
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-      const renderSpy = vi.spyOn(grid, 'render');
-
-      grid.scrollRowToTop(2);
-      grid.updatePagingStatusFromView({ pageNum: 0, pageSize: 10, totalPages: 2 });
-      grid.scrollRowIntoView(1, true);
-
-      expect(scrollToSpy).toHaveBeenCalledWith(2 * DEFAULT_COLUMN_HEIGHT); // default rowHeight: 25
-      expect(renderSpy).toHaveBeenCalled();
-    });
-
-    it('should allow scrolling to the last scrollable row when frozenBottom is enabled', () => {
-      const manyRows = Array.from({ length: 1000 }, (_, i) => ({ id: i, firstName: `name-${i}`, lastName: 'L', age: i }));
-      grid = new SlickGrid<any, Column>(container, manyRows, columns, { ...defaultOptions, frozenRow: 3, frozenBottom: true });
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-
-      grid.scrollRowIntoView(996);
-
-      expect(scrollToSpy).toHaveBeenCalled();
-      expect((scrollToSpy.mock.calls[0][0] as number) > 0).toBe(true);
-    });
-
-    it('should render inline row height and rebuild index when row heights are invalidated', () => {
-      const oneColumn = [{ id: 'firstName', field: 'firstName', name: 'First Name', sortable: true }] as Column[];
-      const providerHeights = [25, 40];
-      const rowHeightProvider = vi.fn((_grid: SlickGrid, row: number) => providerHeights[row]);
-      grid = new SlickGrid<any, Column>(
-        container,
-        [
-          { id: 0, firstName: 'John' },
-          { id: 1, firstName: 'Jane' },
-        ],
-        oneColumn,
-        {
+      it('should scroll to computed row position when calling scrollRowToTop() in variable row height mode', () => {
+        const rowHeights = [25, 40, 30];
+        grid = new SlickGrid<any, Column>(container, data, columns, {
           ...defaultOptions,
           enableVariableRowHeight: true,
           rowHeight: 25,
-          rowHeightProvider,
-        }
-      );
+          rowHeightProvider: (_grid, row) => rowHeights[row],
+        });
+        const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+        const renderSpy = vi.spyOn(grid, 'render');
 
-      expect(grid.getRowHeight(0)).toBe(25);
-      expect(grid.getRowHeight(1)).toBe(40);
+        grid.scrollRowToTop(2);
 
-      const row0 = container.querySelector('.slick-row[data-row="0"]') as HTMLDivElement;
-      const row1 = container.querySelector('.slick-row[data-row="1"]') as HTMLDivElement;
-      expect(row0.style.height).toBe('');
-      expect(row1.style.height).toBe('40px');
+        // top of row 2 is 25 + 40
+        expect(scrollToSpy).toHaveBeenCalledWith(65);
+        expect(renderSpy).toHaveBeenCalled();
+      });
 
-      rowHeightProvider.mockClear();
-      providerHeights[1] = 70;
-      const invalidateSpy = vi.spyOn(grid, 'invalidate');
-      grid.invalidateRowHeights();
-      grid.updateRowCount();
+      it('should keep page-boundary mapping stable with variable row height enabled', () => {
+        const manyRows = Array.from({ length: 700 }, (_, i) => ({ id: i, firstName: `name-${i}`, lastName: 'L', age: i }));
+        const variableRowHeightProvider = (_grid: SlickGrid, row: number) => 2200 + (row % 3) * 200;
 
-      expect(invalidateSpy).toHaveBeenCalled();
-      expect(rowHeightProvider).toHaveBeenCalled();
-      expect(grid.getRowHeight(1)).toBe(70);
-    });
-
-    it('should rebuild row height index when rowHeightProvider is changed via setOptions()', () => {
-      const providerA = vi.fn((_grid: SlickGrid, row: number) => [25, 40][row]);
-      const providerB = vi.fn((_grid: SlickGrid, row: number) => [25, 80][row]);
-      grid = new SlickGrid<any, Column>(
-        container,
-        [
-          { id: 0, firstName: 'John' },
-          { id: 1, firstName: 'Jane' },
-        ],
-        [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[],
-        {
+        grid = new SlickGrid<any, Column>(container, manyRows, columns, {
           ...defaultOptions,
           enableVariableRowHeight: true,
-          rowHeight: 25,
-          rowHeightProvider: providerA,
-        }
-      );
+          rowHeight: 2200,
+          rowHeightProvider: variableRowHeightProvider,
+        });
 
-      expect(grid.getRowHeight(1)).toBe(40);
+        const testGrid = grid as any;
+        const lastPage = testGrid.n - 1;
 
-      providerB.mockClear();
-      grid.setOptions({ rowHeightProvider: providerB });
-      grid.updateRowCount();
+        expect(testGrid.n).toBeGreaterThan(3);
+        expect(testGrid.getPageOffset(0)).toBe(0);
+        expect(testGrid.getPageOffset(1)).toBe(0);
+        expect(testGrid.getPageOffset(lastPage)).toBe(Math.max(0, testGrid.th - testGrid.h));
 
-      expect(providerB).toHaveBeenCalled();
-      expect(grid.getRowHeight(1)).toBe(80);
-    });
+        expect(testGrid.getPageFromLargeScrollDelta(testGrid.ph - 1)).toBe(0);
+        expect(testGrid.getPageFromLargeScrollDelta(testGrid.h - testGrid.ph)).toBe(lastPage);
 
-    it('should support metadata-only variable row height mode via default rowHeightProvider', () => {
-      const dv = new SlickDataView({
-        globalItemMetadataProvider: {
-          getRowMetadata: (_item, row) => ({ height: [25, 65][row] }),
-        },
+        const row0Height = grid.getRowHeight(0);
+        const row1Height = grid.getRowHeight(1);
+        const row2Height = grid.getRowHeight(2);
+        expect(testGrid.getRowPosition(3)).toBe(row0Height + row1Height + row2Height);
       });
-      dv.setItems([
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ]);
 
-      grid = new SlickGrid<any, Column>(container, dv, [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[], {
-        ...defaultOptions,
-        enableVariableRowHeight: true,
-        rowHeight: 25,
-        dataView: {
+      it('should cover legacy and interior branch paths in virtual page mapping helpers', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, rowHeight: 25 });
+        const testGrid = grid as any;
+
+        // getPageOffset(): legacy mapping when page count is tiny (n <= 3)
+        testGrid.n = 3;
+        testGrid.th = 1000;
+        testGrid.h = 500;
+        testGrid.cj = 123;
+        expect(testGrid.getPageOffset(1)).toBe(123);
+
+        // getPageOffset(): legacy fallback when computed lastOffset is non-positive
+        testGrid.n = 5;
+        testGrid.th = 400;
+        testGrid.h = 500;
+        testGrid.cj = 47;
+        expect(testGrid.getPageOffset(1)).toBe(47);
+
+        // getPageFromLargeScrollDelta(): no-interior-pages legacy page selection path
+        testGrid.n = 3;
+        testGrid.ph = 100;
+        testGrid.h = 500;
+        testGrid.viewportH = 50;
+        expect(testGrid.getPageFromLargeScrollDelta(150)).toBe(1);
+
+        // getPageFromLargeScrollDelta(): interior-page scale-factor path
+        testGrid.n = 6;
+        testGrid.ph = 100;
+        testGrid.h = 500;
+        testGrid.th = 1200;
+        testGrid.viewportH = 50;
+        expect(testGrid.getPageFromLargeScrollDelta(250)).toBe(4);
+      });
+
+      it('should do page up when calling scrollRowIntoView() and we are further than row index that we want to scroll to', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.init();
+        const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+        const renderSpy = vi.spyOn(grid, 'render');
+
+        grid.scrollRowToTop(2);
+        grid.updatePagingStatusFromView({ pageNum: 0, pageSize: 10, totalPages: 2 });
+        grid.scrollRowIntoView(1, true);
+
+        expect(scrollToSpy).toHaveBeenCalledWith(2 * DEFAULT_COLUMN_HEIGHT); // default rowHeight: 25
+        expect(renderSpy).toHaveBeenCalled();
+      });
+
+      it('should allow scrolling to the last scrollable row when bottom pinning is enabled', () => {
+        const manyRows = Array.from({ length: 1000 }, (_, i) => ({ id: i, firstName: `name-${i}`, lastName: 'L', age: i }));
+        grid = new SlickGrid<any, Column>(container, manyRows, columns, { ...defaultOptions, pinning: { rows: { top: [0, 1, 2], bottom: [997, 998, 999] } } });
+        grid.init();
+        const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+
+        grid.scrollRowIntoView(996);
+
+        expect(scrollToSpy).toHaveBeenCalled();
+        expect((scrollToSpy.mock.calls[0][0] as number) > 0).toBe(true);
+      });
+
+      it('should render inline row height and rebuild index when row heights are invalidated', () => {
+        const oneColumn = [{ id: 'firstName', field: 'firstName', name: 'First Name', sortable: true }] as Column[];
+        const providerHeights = [25, 40];
+        const rowHeightProvider = vi.fn((_grid: SlickGrid, row: number) => providerHeights[row]);
+        grid = new SlickGrid<any, Column>(
+          container,
+          [
+            { id: 0, firstName: 'John' },
+            { id: 1, firstName: 'Jane' },
+          ],
+          oneColumn,
+          {
+            ...defaultOptions,
+            enableVariableRowHeight: true,
+            rowHeight: 25,
+            rowHeightProvider,
+          }
+        );
+
+        expect(grid.getRowHeight(0)).toBe(25);
+        expect(grid.getRowHeight(1)).toBe(40);
+
+        const row0 = container.querySelector('.slick-row[data-row="0"]') as HTMLDivElement;
+        const row1 = container.querySelector('.slick-row[data-row="1"]') as HTMLDivElement;
+        expect(row0.style.height).toBe('');
+        expect(row1.style.height).toBe('40px');
+
+        rowHeightProvider.mockClear();
+        providerHeights[1] = 70;
+        const invalidateSpy = vi.spyOn(grid, 'invalidate');
+        grid.invalidateRowHeights();
+        grid.updateRowCount();
+
+        expect(invalidateSpy).toHaveBeenCalled();
+        expect(rowHeightProvider).toHaveBeenCalled();
+        expect(grid.getRowHeight(1)).toBe(70);
+      });
+
+      it('should rebuild row height index when rowHeightProvider is changed via setOptions()', () => {
+        const providerA = vi.fn((_grid: SlickGrid, row: number) => [25, 40][row]);
+        const providerB = vi.fn((_grid: SlickGrid, row: number) => [25, 80][row]);
+        grid = new SlickGrid<any, Column>(
+          container,
+          [
+            { id: 0, firstName: 'John' },
+            { id: 1, firstName: 'Jane' },
+          ],
+          [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[],
+          {
+            ...defaultOptions,
+            enableVariableRowHeight: true,
+            rowHeight: 25,
+            rowHeightProvider: providerA,
+          }
+        );
+
+        expect(grid.getRowHeight(1)).toBe(40);
+
+        providerB.mockClear();
+        grid.setOptions({ rowHeightProvider: providerB });
+        grid.updateRowCount();
+
+        expect(providerB).toHaveBeenCalled();
+        expect(grid.getRowHeight(1)).toBe(80);
+      });
+
+      it('should support metadata-only variable row height mode via default rowHeightProvider', () => {
+        const dv = new SlickDataView({
           globalItemMetadataProvider: {
             getRowMetadata: (_item, row) => ({ height: [25, 65][row] }),
           },
-        },
-      });
+        });
+        dv.setItems([
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ]);
 
-      expect(grid.getRowHeight(0)).toBe(25);
-      expect(grid.getRowHeight(1)).toBe(65);
-
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-      grid.scrollRowToTop(1);
-      expect(scrollToSpy).toHaveBeenCalledWith(25);
-    });
-
-    it('should use default rowHeight when custom rowHeightProvider returns undefined even if metadata defines height', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      const customProvider = vi.fn(() => undefined);
-
-      grid = new SlickGrid<any, Column>(container, data, [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[], {
-        ...defaultOptions,
-        enableVariableRowHeight: true,
-        rowHeight: 25,
-        rowHeightProvider: customProvider,
-        dataView: {
-          globalItemMetadataProvider: {
-            getRowMetadata: (_item, row) => ({ height: [25, 70][row] }),
+        grid = new SlickGrid<any, Column>(container, dv, [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[], {
+          ...defaultOptions,
+          enableVariableRowHeight: true,
+          rowHeight: 25,
+          dataView: {
+            globalItemMetadataProvider: {
+              getRowMetadata: (_item, row) => ({ height: [25, 65][row] }),
+            },
           },
-        },
+        });
+
+        expect(grid.getRowHeight(0)).toBe(25);
+        expect(grid.getRowHeight(1)).toBe(65);
+
+        const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+        grid.scrollRowToTop(1);
+        expect(scrollToSpy).toHaveBeenCalledWith(25);
       });
 
-      expect(grid.getRowHeight(1)).toBe(25);
-      expect(customProvider).toHaveBeenCalled();
+      it('should use default rowHeight when custom rowHeightProvider returns undefined even if metadata defines height', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        const customProvider = vi.fn(() => undefined);
+
+        grid = new SlickGrid<any, Column>(container, data, [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[], {
+          ...defaultOptions,
+          enableVariableRowHeight: true,
+          rowHeight: 25,
+          rowHeightProvider: customProvider,
+          dataView: {
+            globalItemMetadataProvider: {
+              getRowMetadata: (_item, row) => ({ height: [25, 70][row] }),
+            },
+          },
+        });
+
+        expect(grid.getRowHeight(1)).toBe(25);
+        expect(customProvider).toHaveBeenCalled();
+      });
+
+      it('should do nothing when trying to navigateTop when the dataset is empty', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        grid.navigateTop();
+
+        expect(scrollCellSpy).not.toHaveBeenCalled();
+      });
+
+      it('should scroll when calling to navigateTop with dataset', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveRow(0, 0);
+        grid.navigateTop();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
+        expect(resetCellSpy).toHaveBeenCalled();
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should scroll when calling to navigateBottom with dataset', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+        grid.setActiveRow(0, 0);
+        grid.navigateBottom();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
+        expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
+        expect(resetCellSpy).toHaveBeenCalled();
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should scroll when calling to navigateBottom with dataset and rowspan', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, enableCellRowSpan: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+        const setActiveRowSpy = vi.spyOn(grid, 'setActiveRow');
+        grid.setActiveRow(0, 0);
+        grid.navigateBottom();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
+        expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
+        expect(resetCellSpy).toHaveBeenCalled();
+        expect(onActiveCellSpy).toHaveBeenCalled();
+        expect(setActiveRowSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to left then bottom and expect active cell to change with previous cell position that was activated by the left navigation', () => {
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
+        const canCellActiveSpy = vi.spyOn(grid, 'canCellBeActive');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+        grid.setActiveCell(0, 1);
+        grid.navigateLeft();
+        grid.navigateBottom();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
+        expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
+        expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
+        expect(resetCellSpy).not.toHaveBeenCalled();
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to the right but jump over hidden column, from active cell 0 to 2', () => {
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+          { id: 2, firstName: 'Bob', lastName: 'Smith', age: 22 },
+          { id: 3, firstName: 'David', lastName: 'Smith', age: 24 },
+        ];
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true, hidden: true },
+          { id: 'age', field: 'age', name: 'Age', sortable: true },
+          { id: 'gender', field: 'gender', name: 'Aender', sortable: true },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
+        const canCellActiveSpy = vi.spyOn(grid, 'canCellBeActive');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+        grid.setActiveCell(0, 0);
+        grid.navigateRight();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, true);
+        expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
+        expect(canCellActiveSpy).toHaveBeenCalled();
+        expect(resetCellSpy).not.toHaveBeenCalled();
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should add rowspan, then navigate to all possible sides', () => {
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        ];
+        const metadata: any = {
+          0: { columns: { 0: { colspan: 2, rowspan: 2 } } },
+          3: { columns: { 1: { colspan: 2, rowspan: 3 } } },
+        };
+        const customDV = { getItemMetadata: (row) => metadata[row], getLength: () => 2, getItem: (i) => data[i], getItems: () => data } as CustomDataView;
+        grid = new SlickGrid<any, Column>('#myGrid', customDV, columns, { ...defaultOptions, editable: true, enableCellRowSpan: true });
+        grid.setActiveCell(0, 1);
+        grid.navigateBottomEnd();
+        grid.navigatePrev();
+
+        grid.setActiveCell(0, 3);
+        grid.navigateUp();
+        grid.navigateBottomEnd();
+        expect(grid.navigateNext()).toBe(true);
+        expect(grid.navigatePrev()).toBe(true);
+        expect(grid.navigatePrev()).toBe(true);
+        expect(grid.navigateRowStart()).toBe(true);
+        expect(grid.navigateRowEnd()).toBe(true);
+        expect(grid.navigateNext()).toBe(true);
+        expect(grid.navigateNext()).toBe(true);
+        expect(grid.navigateDown()).toBe(true);
+      });
+
+      it('should navigate to left then page down and expect active cell to change with previous cell position that was activated by the left navigation', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
+        const canCellActiveSpy = vi.spyOn(grid, 'canCellBeActive');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+        grid.setActiveCell(0, 1);
+        grid.navigateLeft();
+        grid.navigatePageDown();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
+        expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
+        expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
+        expect(resetCellSpy).not.toHaveBeenCalled();
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should scroll when calling to navigatePageDown with dataset', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+        const renderSpy = vi.spyOn(grid, 'render');
+        grid.setActiveRow(0, 0);
+        grid.navigatePageDown();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+        expect(scrollToSpy).toHaveBeenCalledWith(600);
+        expect(renderSpy).toHaveBeenCalled();
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should scroll when calling to navigatePageUp with dataset', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+        const renderSpy = vi.spyOn(grid, 'render');
+        grid.setActiveRow(0, 0);
+        grid.navigatePageUp();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+        expect(scrollToSpy).toHaveBeenCalledWith(-600);
+        expect(renderSpy).toHaveBeenCalled();
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should return false when trying to scroll to left but enableCellNavigation is disabled', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: false });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(0, 0);
+        const result = grid.navigateLeft();
+
+        expect(result).toBe(false);
+        expect(grid.getActiveCellNode()).toBeFalsy();
+        expect(scrollCellSpy).not.toHaveBeenCalled();
+        expect(onActiveCellSpy).not.toHaveBeenCalled();
+      });
+
+      it('should try to scroll to left but return false cell is already at column index 0 and cannot go further', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(0, 0);
+        const result = grid.navigateLeft();
+
+        expect(result).toBe(false);
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should scroll to left but return false when calling navigateLeft but cannot find first focusable cell', () => {
+        const data = [{ id: 0, firstName: 'John' }];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
+        grid.setActiveCell(0, 2);
+        grid.navigateLeft();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should scroll to left and return true when calling navigateLeft with valid navigation', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(0, 1);
+        const result = grid.navigateLeft();
+
+        expect(result).toBe(true);
+        expect(grid.getGridPosition()).toMatchObject({ left: 0 });
+        expect(grid.getActiveCellPosition()).toMatchObject({ left: 0 });
+        expect(grid.getActiveCellNode()).toBeTruthy();
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should scroll to left and return true but stay at same cell column when calling navigateLeft with an active editor', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+        grid.setActiveCell(0, 1);
+        const result = grid.navigateLeft();
+
+        expect(result).toBe(true);
+      });
+
+      it('should scroll to right but return false when calling navigateRight but cannot go further', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(0, 2);
+        const result = grid.navigateRight();
+
+        expect(result).toBe(false);
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should scroll to right and return true when calling navigateRight with valid navigation', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(0, 1);
+        grid.navigateRight();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, true);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate left but return false when calling navigateLeft and nothing is available on the left & right with bottom row pinning', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+          { id: 2, firstName: 'Bob' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          enableCellNavigation: true,
+          pinning: { rows: { top: [0, 1], bottom: [2] } },
+        });
+        grid.init();
+        vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(2, 1);
+        // @ts-ignore
+        vi.spyOn(grid, 'gotoRight').mockReturnValueOnce(null);
+        const result = grid.navigateLeft();
+
+        expect(result).toBe(false);
+        expect(scrollCellSpy).toHaveBeenCalledWith(2, 1, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate left but return false when calling navigateLeft and nothing is available on the left & right with row pinning', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+          { id: 2, firstName: 'Bob' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, pinning: { rows: { top: [0, 1] } } });
+        grid.init();
+        vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(2, 1);
+        // @ts-ignore
+        vi.spyOn(grid, 'gotoRight').mockReturnValueOnce(null);
+        const result = grid.navigateLeft();
+
+        expect(result).toBe(false);
+        expect(scrollCellSpy).toHaveBeenCalledWith(2, 1, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate left and return true when calling navigateLeft and only right is available', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+          { id: 2, firstName: 'Bob' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          enableCellNavigation: true,
+          pinning: { rows: { top: [0, 1], bottom: [2] } },
+        });
+        grid.init();
+        vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(2, 1);
+        // @ts-ignore
+        vi.spyOn(grid, 'gotoRight').mockReturnValueOnce({ cell: 0, posX: 0, row: 1 });
+        const result = grid.navigateLeft();
+
+        expect(result).toBe(true);
+        expect(scrollCellSpy).toHaveBeenCalledWith(2, 1, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should scroll up but return false when calling navigateUp but cannot go further', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(0, 0);
+        const result = grid.navigateUp();
+        grid.focus();
+
+        expect(result).toBe(false);
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should scroll to right and return true when calling navigateUp with valid navigation', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+          { id: 2, firstName: 'Bob' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+        grid.setActiveCell(1, 1);
+        const result = grid.navigateUp();
+
+        expect(result).toBe(true);
+        expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should scroll down but return false when calling navigateDown but cannot go further', () => {
+        const data = [{ id: 0, firstName: 'John' }];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(0, 0);
+        const result = grid.navigateDown();
+
+        expect(result).toBe(false);
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to previous cell but return false when calling navigatePrev but cannot go further', () => {
+        const data = [{ id: 0, firstName: 'John' }];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(0, 0);
+        const result = grid.navigatePrev();
+
+        expect(result).toBe(false);
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to previous cell and return true when calling navigatePrev but scroll to 0,0 when providing out of bound cell', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(0, -1);
+        const result = grid.navigatePrev();
+
+        expect(result).toBe(true);
+        expect(scrollCellSpy).toHaveBeenCalledWith(1, 2, true);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to previous cell and return true when calling navigatePrev with valid navigation', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+          { id: 2, firstName: 'Bob' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+        grid.setActiveCell(1, 1);
+        const result = grid.navigatePrev();
+
+        expect(result).toBe(true);
+        expect(grid.getActiveCellPosition()).toMatchObject({ left: 0 });
+        expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to previous cell and return false when calling navigatePrev with invalid navigation', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+          { id: 2, firstName: 'Bob' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+        grid.setActiveCell(1, 1);
+        grid.navigatePrev();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to next but decrease row count when calling navigateNext and cell is detected as out of bound', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+        grid.setActiveCell(1, 2);
+        grid.navigateNext();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(1, 2, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to next but return false when calling navigateNext and cannot find any first focusable cell', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(1, 2);
+        grid.navigateNext();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(1, 2, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to next cell and return true when calling navigateNext but cannot go further it will find next focusable cell nonetheless', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(0, 2);
+        const result = grid.navigateNext();
+
+        expect(result).toBe(true);
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to next cell and return true when calling navigateNext but scroll to 0,0 when providing out of bound cell', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(0, 3);
+        const result = grid.navigateNext();
+
+        expect(result).toBe(true);
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to next cell and return true when calling navigateNext with valid navigation', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+          { id: 2, firstName: 'Bob' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+        grid.setActiveCell(1, 1);
+        const result = grid.navigateNext();
+
+        expect(result).toBe(true);
+        expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to first row start but return false when calling navigateRowStart but cannot go further', () => {
+        const data = [{ id: 0, firstName: 'John' }];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        grid.setActiveCell(0, 0);
+        grid.navigateRowStart();
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to first row start and return true when calling navigateRowStart with valid navigation', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+          { id: 2, firstName: 'Bob' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+        grid.setActiveCell(1, 1);
+        const result = grid.navigateRowStart();
+
+        expect(result).toBe(true);
+        expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to end of row but return false when calling navigateRowEnd but cannot go further', () => {
+        const data = [{ id: 0, firstName: 'John' }];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
+        grid.setActiveCell(0, 2);
+        const result = grid.navigateRowEnd();
+
+        expect(result).toBe(false);
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should navigate to end of row and return true when calling navigateRowEnd with valid navigation', () => {
+        const data = [
+          { id: 0, firstName: 'John' },
+          { id: 1, firstName: 'Jane' },
+          { id: 2, firstName: 'Bob' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+        const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+        vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+        grid.setActiveCell(1, 1);
+        const result = grid.navigateRowEnd();
+
+        expect(result).toBe(true);
+        expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+        expect(onActiveCellSpy).toHaveBeenCalled();
+      });
     });
 
-    it('should do nothing when trying to navigateTop when the dataset is empty', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      grid.navigateTop();
-
-      expect(scrollCellSpy).not.toHaveBeenCalled();
-    });
-
-    it('should scroll when calling to navigateTop with dataset', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveRow(0, 0);
-      grid.navigateTop();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
-      expect(resetCellSpy).toHaveBeenCalled();
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should scroll when calling to navigateBottom with dataset', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-      grid.setActiveRow(0, 0);
-      grid.navigateBottom();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
-      expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
-      expect(resetCellSpy).toHaveBeenCalled();
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should scroll when calling to navigateBottom with dataset and rowspan', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, enableCellRowSpan: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-      const setActiveRowSpy = vi.spyOn(grid, 'setActiveRow');
-      grid.setActiveRow(0, 0);
-      grid.navigateBottom();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
-      expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
-      expect(resetCellSpy).toHaveBeenCalled();
-      expect(onActiveCellSpy).toHaveBeenCalled();
-      expect(setActiveRowSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to left then bottom and expect active cell to change with previous cell position that was activated by the left navigation', () => {
-      const data = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
-      const canCellActiveSpy = vi.spyOn(grid, 'canCellBeActive');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-      grid.setActiveCell(0, 1);
-      grid.navigateLeft();
-      grid.navigateBottom();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
-      expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
-      expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
-      expect(resetCellSpy).not.toHaveBeenCalled();
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to the right but jump over hidden column, from active cell 0 to 2', () => {
-      const data = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-        { id: 2, firstName: 'Bob', lastName: 'Smith', age: 22 },
-        { id: 3, firstName: 'David', lastName: 'Smith', age: 24 },
-      ];
+    describe('CSS Styles', () => {
       const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true, hidden: true },
-        { id: 'age', field: 'age', name: 'Age', sortable: true },
-        { id: 'gender', field: 'gender', name: 'Aender', sortable: true },
-      ] as Column[];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
-      const canCellActiveSpy = vi.spyOn(grid, 'canCellBeActive');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-      grid.setActiveCell(0, 0);
-      grid.navigateRight();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, true);
-      expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
-      expect(canCellActiveSpy).toHaveBeenCalled();
-      expect(resetCellSpy).not.toHaveBeenCalled();
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should add rowspan, then navigate to all possible sides', () => {
-      const data = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
       ];
-      const metadata: any = {
-        0: { columns: { 0: { colspan: 2, rowspan: 2 } } },
-        3: { columns: { 1: { colspan: 2, rowspan: 3 } } },
-      };
-      const customDV = { getItemMetadata: (row) => metadata[row], getLength: () => 2, getItem: (i) => data[i], getItems: () => data } as CustomDataView;
-      grid = new SlickGrid<any, Column>('#myGrid', customDV, columns, { ...defaultOptions, editable: true, enableCellRowSpan: true });
-      grid.setActiveCell(0, 1);
-      grid.navigateBottomEnd();
-      grid.navigatePrev();
+      let items: Array<{ id: number; name: string; age: number }> = [];
+      let hash: any = {};
 
-      grid.setActiveCell(0, 3);
-      grid.navigateUp();
-      grid.navigateBottomEnd();
-      expect(grid.navigateNext()).toBe(true);
-      expect(grid.navigatePrev()).toBe(true);
-      expect(grid.navigatePrev()).toBe(true);
-      expect(grid.navigateRowStart()).toBe(true);
-      expect(grid.navigateRowEnd()).toBe(true);
-      expect(grid.navigateNext()).toBe(true);
-      expect(grid.navigateNext()).toBe(true);
-      expect(grid.navigateDown()).toBe(true);
-    });
-
-    it('should navigate to left then page down and expect active cell to change with previous cell position that was activated by the left navigation', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
-      const canCellActiveSpy = vi.spyOn(grid, 'canCellBeActive');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-      grid.setActiveCell(0, 1);
-      grid.navigateLeft();
-      grid.navigatePageDown();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
-      expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
-      expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
-      expect(resetCellSpy).not.toHaveBeenCalled();
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should scroll when calling to navigatePageDown with dataset', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-      const renderSpy = vi.spyOn(grid, 'render');
-      grid.setActiveRow(0, 0);
-      grid.navigatePageDown();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
-      expect(scrollToSpy).toHaveBeenCalledWith(600);
-      expect(renderSpy).toHaveBeenCalled();
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should scroll when calling to navigatePageUp with dataset', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
-      const renderSpy = vi.spyOn(grid, 'render');
-      grid.setActiveRow(0, 0);
-      grid.navigatePageUp();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
-      expect(scrollToSpy).toHaveBeenCalledWith(-600);
-      expect(renderSpy).toHaveBeenCalled();
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should return false when trying to scroll to left but enableCellNavigation is disabled', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: false });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(0, 0);
-      const result = grid.navigateLeft();
-
-      expect(result).toBe(false);
-      expect(grid.getActiveCellNode()).toBeFalsy();
-      expect(scrollCellSpy).not.toHaveBeenCalled();
-      expect(onActiveCellSpy).not.toHaveBeenCalled();
-    });
-
-    it('should try to scroll to left but return false cell is already at column index 0 and cannot go further', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(0, 0);
-      const result = grid.navigateLeft();
-
-      expect(result).toBe(false);
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should scroll to left but return false when calling navigateLeft but cannot find first focusable cell', () => {
-      const data = [{ id: 0, firstName: 'John' }];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
-      grid.setActiveCell(0, 2);
-      grid.navigateLeft();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should scroll to left and return true when calling navigateLeft with valid navigation', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(0, 1);
-      const result = grid.navigateLeft();
-
-      expect(result).toBe(true);
-      expect(grid.getGridPosition()).toMatchObject({ left: 0 });
-      expect(grid.getActiveCellPosition()).toMatchObject({ left: 0 });
-      expect(grid.getActiveCellNode()).toBeTruthy();
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should scroll to left and return true but stay at same cell column when calling navigateLeft with an active editor', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
-      grid.setActiveCell(0, 1);
-      const result = grid.navigateLeft();
-
-      expect(result).toBe(true);
-    });
-
-    it('should scroll to right but return false when calling navigateRight but cannot go further', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(0, 2);
-      const result = grid.navigateRight();
-
-      expect(result).toBe(false);
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should scroll to right and return true when calling navigateRight with valid navigation', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(0, 1);
-      grid.navigateRight();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, true);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate left but return false when calling navigateLeft and nothing is available on the left & right with frozenRow/frozenBottom', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-        { id: 2, firstName: 'Bob' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 2, frozenBottom: true });
-      vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(2, 1);
-      // @ts-ignore
-      vi.spyOn(grid, 'gotoRight').mockReturnValueOnce(null);
-      const result = grid.navigateLeft();
-
-      expect(result).toBe(false);
-      expect(scrollCellSpy).toHaveBeenCalledWith(2, 1, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate left but return false when calling navigateLeft and nothing is available on the left & right with frozenRow', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-        { id: 2, firstName: 'Bob' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 2, frozenBottom: false });
-      vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(2, 1);
-      // @ts-ignore
-      vi.spyOn(grid, 'gotoRight').mockReturnValueOnce(null);
-      const result = grid.navigateLeft();
-
-      expect(result).toBe(false);
-      expect(scrollCellSpy).toHaveBeenCalledWith(2, 1, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate left and return true when calling navigateLeft and only right is available', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-        { id: 2, firstName: 'Bob' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 2, frozenBottom: true });
-      vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(2, 1);
-      // @ts-ignore
-      vi.spyOn(grid, 'gotoRight').mockReturnValueOnce({ cell: 0, posX: 0, row: 1 });
-      const result = grid.navigateLeft();
-
-      expect(result).toBe(true);
-      expect(scrollCellSpy).toHaveBeenCalledWith(2, 1, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should scroll up but return false when calling navigateUp but cannot go further', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(0, 0);
-      const result = grid.navigateUp();
-      grid.focus();
-
-      expect(result).toBe(false);
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should scroll to right and return true when calling navigateUp with valid navigation', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-        { id: 2, firstName: 'Bob' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
-      grid.setActiveCell(1, 1);
-      const result = grid.navigateUp();
-
-      expect(result).toBe(true);
-      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should scroll down but return false when calling navigateDown but cannot go further', () => {
-      const data = [{ id: 0, firstName: 'John' }];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(0, 0);
-      const result = grid.navigateDown();
-
-      expect(result).toBe(false);
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to previous cell but return false when calling navigatePrev but cannot go further', () => {
-      const data = [{ id: 0, firstName: 'John' }];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(0, 0);
-      const result = grid.navigatePrev();
-
-      expect(result).toBe(false);
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to previous cell and return true when calling navigatePrev but scroll to 0,0 when providing out of bound cell', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(0, -1);
-      const result = grid.navigatePrev();
-
-      expect(result).toBe(true);
-      expect(scrollCellSpy).toHaveBeenCalledWith(1, 2, true);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to previous cell and return true when calling navigatePrev with valid navigation', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-        { id: 2, firstName: 'Bob' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
-      grid.setActiveCell(1, 1);
-      const result = grid.navigatePrev();
-
-      expect(result).toBe(true);
-      expect(grid.getActiveCellPosition()).toMatchObject({ left: 0 });
-      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to previous cell and return false when calling navigatePrev with invalid navigation', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-        { id: 2, firstName: 'Bob' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
-      grid.setActiveCell(1, 1);
-      grid.navigatePrev();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to next but decrease row count when calling navigateNext and cell is detected as out of bound', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
-      grid.setActiveCell(1, 2);
-      grid.navigateNext();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(1, 2, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to next but return false when calling navigateNext and cannot find any first focusable cell', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(1, 2);
-      grid.navigateNext();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(1, 2, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to next cell and return true when calling navigateNext but cannot go further it will find next focusable cell nonetheless', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(0, 2);
-      const result = grid.navigateNext();
-
-      expect(result).toBe(true);
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to next cell and return true when calling navigateNext but scroll to 0,0 when providing out of bound cell', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(0, 3);
-      const result = grid.navigateNext();
-
-      expect(result).toBe(true);
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to next cell and return true when calling navigateNext with valid navigation', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-        { id: 2, firstName: 'Bob' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
-      grid.setActiveCell(1, 1);
-      const result = grid.navigateNext();
-
-      expect(result).toBe(true);
-      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to first row start but return false when calling navigateRowStart but cannot go further', () => {
-      const data = [{ id: 0, firstName: 'John' }];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      grid.setActiveCell(0, 0);
-      grid.navigateRowStart();
-
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to first row start and return true when calling navigateRowStart with valid navigation', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-        { id: 2, firstName: 'Bob' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
-      grid.setActiveCell(1, 1);
-      const result = grid.navigateRowStart();
-
-      expect(result).toBe(true);
-      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to end of row but return false when calling navigateRowEnd but cannot go further', () => {
-      const data = [{ id: 0, firstName: 'John' }];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      vi.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
-      grid.setActiveCell(0, 2);
-      const result = grid.navigateRowEnd();
-
-      expect(result).toBe(false);
-      expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-
-    it('should navigate to end of row and return true when calling navigateRowEnd with valid navigation', () => {
-      const data = [
-        { id: 0, firstName: 'John' },
-        { id: 1, firstName: 'Jane' },
-        { id: 2, firstName: 'Bob' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
-      vi.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
-      grid.setActiveCell(1, 1);
-      const result = grid.navigateRowEnd();
-
-      expect(result).toBe(true);
-      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
-      expect(onActiveCellSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('CSS Styles', () => {
-    const columns = [
-      { id: 'name', field: 'name', name: 'Name' },
-      { id: 'age', field: 'age', name: 'Age' },
-    ];
-    let items: Array<{ id: number; name: string; age: number }> = [];
-    let hash: any = {};
-
-    beforeEach(() => {
-      items = [
-        { id: 0, name: 'Avery', age: 44 },
-        { id: 1, name: 'Bob', age: 20 },
-        { id: 2, name: 'Rachel', age: 46 },
-        { id: 3, name: 'Jane', age: 24 },
-        { id: 4, name: 'John', age: 20 },
-        { id: 5, name: 'Arnold', age: 50 },
-        { id: 6, name: 'Carole', age: 40 },
-        { id: 7, name: 'Jason', age: 48 },
-        { id: 8, name: 'Julie', age: 42 },
-        { id: 9, name: 'Aaron', age: 23 },
-        { id: 10, name: 'Ariane', age: 43 },
-      ];
-      hash = {};
-      for (const item of items) {
-        if (item.age >= 30) {
-          hash[item.id] = { age: 'highlight' };
+      beforeEach(() => {
+        items = [
+          { id: 0, name: 'Avery', age: 44 },
+          { id: 1, name: 'Bob', age: 20 },
+          { id: 2, name: 'Rachel', age: 46 },
+          { id: 3, name: 'Jane', age: 24 },
+          { id: 4, name: 'John', age: 20 },
+          { id: 5, name: 'Arnold', age: 50 },
+          { id: 6, name: 'Carole', age: 40 },
+          { id: 7, name: 'Jason', age: 48 },
+          { id: 8, name: 'Julie', age: 42 },
+          { id: 9, name: 'Aaron', age: 23 },
+          { id: 10, name: 'Ariane', age: 43 },
+        ];
+        hash = {};
+        for (const item of items) {
+          if (item.age >= 30) {
+            hash[item.id] = { age: 'highlight' };
+          }
         }
-      }
-    });
-
-    it('should throw when trying to add already existing hash', () => {
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-
-      grid.setCellCssStyles('age_greater30_highlight', hash);
-      expect(() => grid.addCellCssStyles('age_greater30_highlight', hash)).toThrow(
-        'SlickGrid addCellCssStyles: cell CSS hash with key "age_greater30_highlight" already exists.'
-      );
-    });
-
-    it('should support CSS style keys that match Object prototype properties', () => {
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-      const hash = { 0: { age: 'highlight' } };
-
-      grid.addCellCssStyles('__proto__', hash);
-      grid.addCellCssStyles('constructor', hash);
-      grid.addCellCssStyles('toString', hash);
-
-      expect(grid.getCellCssStyles('__proto__')).toBe(hash);
-      expect(grid.getCellCssStyles('constructor')).toBe(hash);
-      expect(grid.getCellCssStyles('toString')).toBe(hash);
-      expect((Object.prototype as any).polluted).toBeUndefined();
-    });
-
-    it('should exit early when trying to remove CSS Style key that does not exist in hash', () => {
-      const hashCopy = { ...hash };
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-
-      grid.setCellCssStyles('age_greater30_highlight', hash);
-      grid.removeCellCssStyles('something_else');
-
-      expect(hash).toEqual(hashCopy);
-    });
-
-    it('should addCellCssStyles/removeCellCssStyles with CSS style hashes and expect onCellCssStylesChanged event to be triggered and styling applied to cells', () => {
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-      const onCellStyleSpy = vi.spyOn(grid.onCellCssStylesChanged, 'notify');
-
-      // 1. add CSS Cell Style
-      grid.addCellCssStyles('age_greater30_highlight', hash);
-      grid.render();
-
-      let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
-      let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
-
-      expect(onCellStyleSpy).toHaveBeenNthCalledWith(1, { key: 'age_greater30_highlight', hash, grid }, expect.anything(), grid);
-      expect(firstItemAgeCell.textContent).toBe('44');
-      expect(firstItemAgeCell.classList.contains('highlight')).toBeTruthy();
-      expect(secondItemAgeCell.textContent).toBe('20');
-      expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
-
-      // 2. then remove CSS Cell Style
-      grid.removeCellCssStyles('age_greater30_highlight');
-
-      firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
-      secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
-
-      expect(onCellStyleSpy).toHaveBeenLastCalledWith({ key: 'age_greater30_highlight', hash: null, grid }, expect.anything(), grid);
-      expect(onCellStyleSpy).toHaveBeenCalledWith({ key: 'age_greater30_highlight', hash, grid }, expect.anything(), grid);
-      expect(firstItemAgeCell.textContent).toBe('44');
-      expect(firstItemAgeCell.classList.contains('highlight')).toBeFalsy();
-      expect(secondItemAgeCell.textContent).toBe('20');
-      expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
-    });
-
-    it('should merge keyed CSS style overlays before creating a cell', () => {
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-      grid.addCellCssStyles('primary', { 0: { age: 'primary-highlight' } });
-      grid.addCellCssStyles('secondary', { 0: { age: 'secondary-highlight' } });
-
-      const initialRow = document.createElement('div');
-      (grid as any).appendCellHtml(initialRow, 0, 1, 1, 1, null, items[0]);
-      expect(initialRow.firstElementChild?.classList.contains('primary-highlight')).toBe(true);
-      expect(initialRow.firstElementChild?.classList.contains('secondary-highlight')).toBe(true);
-
-      grid.setCellCssStyles('primary', { 0: { age: 'replacement-highlight' } });
-      grid.removeCellCssStyles('secondary');
-
-      const updatedRow = document.createElement('div');
-      (grid as any).appendCellHtml(updatedRow, 0, 1, 1, 1, null, items[0]);
-      expect(updatedRow.firstElementChild?.classList.contains('primary-highlight')).toBe(false);
-      expect(updatedRow.firstElementChild?.classList.contains('secondary-highlight')).toBe(false);
-      expect(updatedRow.firstElementChild?.classList.contains('replacement-highlight')).toBe(true);
-    });
-
-    it('should removeCellCssStyles of all matching keys by predicate', () => {
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-      const onCellStyleSpy = vi.spyOn(grid.onCellCssStylesChanged, 'notify');
-
-      // 1. add CSS Cell Style
-      grid.addCellCssStyles('age_greater30_highlight', hash);
-      const toBeDeletedHash = { age: 'to-be-deleted-highlight' };
-      grid.addCellCssStyles('the_deletion_target', { 0: toBeDeletedHash, 1: toBeDeletedHash });
-      grid.addCellCssStyles('also_the_deletion_target', { 0: toBeDeletedHash, 1: toBeDeletedHash });
-      grid.render();
-
-      let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
-      let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
-
-      expect(onCellStyleSpy).toHaveBeenNthCalledWith(1, { key: 'age_greater30_highlight', hash, grid }, expect.anything(), grid);
-      expect(firstItemAgeCell.textContent).toBe('44');
-      expect(firstItemAgeCell.classList.contains('highlight')).toBeTruthy();
-      expect(firstItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeTruthy();
-      expect(secondItemAgeCell.textContent).toBe('20');
-      expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
-      expect(secondItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeTruthy();
-
-      // 2. then remove CSS Cell Style
-      grid.removeCellCssStylesBatch((key, _hash) => key.includes('deletion_target'));
-
-      firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
-      secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
-
-      expect(firstItemAgeCell.textContent).toBe('44');
-      expect(firstItemAgeCell.classList.contains('highlight')).toBeTruthy();
-      expect(firstItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeFalsy();
-      expect(secondItemAgeCell.textContent).toBe('20');
-      expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
-      expect(secondItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeFalsy();
-    });
-
-    it('should trigger focusGridCell() when user typed Tab and filter element equals the ancestor header row an', () => {
-      // Use a real DOM structure to avoid infinite recursion
-      const testGridInstance = new TestGrid(container, items, columns, { ...defaultOptions, enableCellNavigation: true, autoEditByKeypress: true });
-      const focusGridCellSpy = vi.spyOn(testGridInstance, 'focusGridCell');
-      const headerRowLeftCols = createDomElement('div', { className: 'slick-headerrow-columns slick-headerrow-columns-left' });
-      const headerRowCol = createDomElement('div', { className: 'slick-headerrow-column' });
-      const inputFilterElm = createDomElement('input', { className: 'slick-filter-input', tabIndex: 0 });
-      headerRowCol.appendChild(inputFilterElm);
-      headerRowLeftCols.appendChild(headerRowCol);
-      container.appendChild(headerRowLeftCols);
-      Object.defineProperty(inputFilterElm, 'offsetParent', { value: 5 });
-      const tabEvent = new KeyboardEvent('keydown', { key: 'Tab' }) as any;
-      Object.defineProperty(tabEvent, 'target', { value: inputFilterElm });
-      testGridInstance.callHandleContainerKeyDown(tabEvent);
-
-      const keyEvent = {
-        key: 'a',
-        ctrlKey: false,
-        originalEvent: {},
-        target: container.querySelector('.slick-cell.l1.r1'),
-        stopPropagation: vi.fn(),
-        preventDefault: vi.fn(),
-      } as any;
-      testGridInstance.setActiveCell(0, 1);
-      testGridInstance.callHandleGridKeyDown(keyEvent);
-      skipGridDestroy = true;
-
-      expect(focusGridCellSpy).toHaveBeenCalled();
-    });
-
-    it('should trigger focusGridMenu() when user typed Shift+Tab and filter element equals the ancestor header row an', () => {
-      // Use a real DOM structure to avoid infinite recursion
-      const testGridInstance = new TestGrid(container, items, columns, { ...defaultOptions, enableCellNavigation: true, autoEditByKeypress: true });
-      const focusGridMenuSpy = vi.spyOn(testGridInstance, 'focusGridMenu');
-      const headerRowLeftCols = createDomElement('div', { className: 'slick-headerrow-columns slick-headerrow-columns-left' });
-      const headerRowCol = createDomElement('div', { className: 'slick-headerrow-column' });
-      const inputFilterElm = createDomElement('input', { className: 'slick-filter-input', tabIndex: 0 });
-      headerRowCol.appendChild(inputFilterElm);
-      headerRowLeftCols.appendChild(headerRowCol);
-      container.appendChild(headerRowLeftCols);
-      Object.defineProperty(inputFilterElm, 'offsetParent', { value: 5 });
-      const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true }) as any;
-      Object.defineProperty(tabEvent, 'target', { value: inputFilterElm });
-      testGridInstance.callHandleContainerKeyDown(tabEvent);
-
-      const keyEvent = {
-        key: 'a',
-        ctrlKey: false,
-        originalEvent: {},
-        target: container.querySelector('.slick-cell.l1.r1'),
-        stopPropagation: vi.fn(),
-        preventDefault: vi.fn(),
-      } as any;
-      testGridInstance.setActiveCell(0, 1);
-      testGridInstance.callHandleGridKeyDown(keyEvent);
-      skipGridDestroy = true;
-
-      expect(focusGridMenuSpy).toHaveBeenCalled();
-    });
-
-    it('should trigger onHeaderKeyDown and sortCallback on Enter/Space', () => {
-      const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
-      ] as Column[];
-      const data = [
-        { id: 0, firstName: 'John', lastName: 'Doe' },
-        { id: 1, firstName: 'Jane', lastName: 'Smith' },
-      ];
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableColumnReorder: true });
-      grid.init();
-      const header = container.querySelector('.slick-header-column');
-      // Mock Utils.storage.get to return a column
-      const origStorage = (globalThis as any).Utils?.storage?.get;
-      (globalThis as any).Utils = (globalThis as any).Utils || {};
-      (globalThis as any).Utils.storage = { get: () => columns[0] };
-      // Spy on onHeaderKeyDown and onSort
-      const onHeaderKeyDownSpy = vi.spyOn(grid.onHeaderKeyDown, 'notify');
-      const onSortSpy = vi.spyOn(grid.onSort, 'notify');
-      // Simulate keydown Enter
-      const eventEnter = new window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }) as any;
-      Object.defineProperty(eventEnter, 'target', { value: header });
-      header?.dispatchEvent(eventEnter);
-      // Simulate keydown Space
-      const eventSpace = new window.KeyboardEvent('keydown', { key: ' ', bubbles: true }) as any;
-      Object.defineProperty(eventSpace, 'target', { value: header });
-      header?.dispatchEvent(eventSpace);
-      expect(onHeaderKeyDownSpy).toHaveBeenCalled();
-      expect(onSortSpy).toHaveBeenCalled();
-      // Restore original
-      if (origStorage) {
-        (globalThis as any).Utils.storage.get = origStorage;
-      }
-    });
-
-    it('should return cell CSS styles for a given key', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
-      (grid as any).cellCssClasses = { testKey: { 0: { firstName: 'highlight' } } };
-      const result = grid.getCellCssStyles('testKey');
-      expect(result).toEqual({ 0: { firstName: 'highlight' } });
-    });
-
-    it('should bind container keydown when enableFiltering is true', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      const gridOptions = { ...defaultOptions, enableFiltering: true };
-      grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
-      grid.init();
-      // If no error, the code path is covered. Optionally, check event listeners count.
-      expect(grid).toBeTruthy();
-    });
-  });
-
-  describe('Slick Cell', () => {
-    const columns = [
-      { id: 'firstName', field: 'firstName', name: 'First Name' },
-      { id: 'lastName', field: 'lastName', name: 'Last Name' },
-      { id: 'age', field: 'age', name: 'Age' },
-      { id: 'gender', field: 'gender', name: 'Gender', hidden: true },
-    ] as Column[];
-    const data = [
-      { id: 0, firstName: 'John', lastName: 'Doe', age: 30, gender: 'male' },
-      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28, gender: 'female' },
-      { id: 2, firstName: 'Bob', lastName: 'Smith', age: 48, gender: 'male' },
-      { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37, gender: 'male' },
-    ];
-
-    describe('absBox() method', () => {
-      it('should expect abs box to be visible with unchanged abs box properties', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-
-        grid.setActiveCell(0, 1);
-        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-        const gridContainer = grid['_container'];
-
-        // Cell is inside grid
-        slickCellElm.getBoundingClientRect = vi.fn(() => ({ top: 10, left: 10, bottom: 30, right: 30, width: 20, height: 20 }) as DOMRect);
-        gridContainer.getBoundingClientRect = vi.fn(() => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }) as DOMRect);
-
-        const result = grid.getActiveCellPosition();
-        expect(result).toEqual({
-          top: 10,
-          left: 10,
-          bottom: 30,
-          right: 30,
-          width: 20,
-          height: 20,
-          visible: true,
-        });
       });
 
-      it('should expect abs box to not be visible when top position is lower than grid container', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+      it('should throw when trying to add already existing hash', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
 
-        grid.setActiveCell(0, 1);
-        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-        const gridContainer = grid['_container'];
-
-        // Cell is above grid
-        slickCellElm.getBoundingClientRect = vi.fn(() => ({ top: -50, left: 10, bottom: -30, right: 30, width: 20, height: 20 }) as DOMRect);
-        gridContainer.getBoundingClientRect = vi.fn(() => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }) as DOMRect);
-
-        const result = grid.getActiveCellPosition();
-        expect(result).toEqual({
-          top: -50,
-          left: 10,
-          bottom: -30,
-          right: 30,
-          width: 20,
-          height: 20,
-          visible: false,
-        });
+        grid.setCellCssStyles('age_greater30_highlight', hash);
+        expect(() => grid.addCellCssStyles('age_greater30_highlight', hash)).toThrow(
+          'SlickGrid addCellCssStyles: cell CSS hash with key "age_greater30_highlight" already exists.'
+        );
       });
 
-      it('should expect abs box to not be visible when left position is lower than grid container', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+      it('should support CSS style keys that match Object prototype properties', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const hash = { 0: { age: 'highlight' } };
 
-        grid.setActiveCell(0, 1);
-        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-        const gridContainer = grid['_container'];
+        grid.addCellCssStyles('__proto__', hash);
+        grid.addCellCssStyles('constructor', hash);
+        grid.addCellCssStyles('toString', hash);
 
-        // Cell is left of grid
-        slickCellElm.getBoundingClientRect = vi.fn(() => ({ top: 10, left: -50, bottom: 30, right: -30, width: 20, height: 20 }) as DOMRect);
-        gridContainer.getBoundingClientRect = vi.fn(() => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }) as DOMRect);
-
-        const result = grid.getActiveCellPosition();
-        expect(result).toEqual({
-          top: 10,
-          left: -50,
-          bottom: 30,
-          right: -30,
-          width: 20,
-          height: 20,
-          visible: false,
-        });
+        expect(grid.getCellCssStyles('__proto__')).toBe(hash);
+        expect(grid.getCellCssStyles('constructor')).toBe(hash);
+        expect(grid.getCellCssStyles('toString')).toBe(hash);
+        expect((Object.prototype as any).polluted).toBeUndefined();
       });
 
-      it('should expect abs box to not be visible when left position is lower than grid container and also increase left/top position when offsetParent is same as slick-row element', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+      it('should exit early when trying to remove CSS Style key that does not exist in hash', () => {
+        const hashCopy = { ...hash };
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
 
-        grid.setActiveCell(0, 1);
-        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-        const gridContainer = grid['_container'];
+        grid.setCellCssStyles('age_greater30_highlight', hash);
+        grid.removeCellCssStyles('something_else');
 
-        // Cell is left of grid, with offsetParent logic
-        slickCellElm.getBoundingClientRect = vi.fn(() => ({ top: 10, left: -60, bottom: 30, right: -40, width: 20, height: 20 }) as DOMRect);
-        gridContainer.getBoundingClientRect = vi.fn(() => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }) as DOMRect);
+        expect(hash).toEqual(hashCopy);
+      });
 
-        const result = grid.getActiveCellPosition();
-        expect(result).toEqual({
-          top: 10,
-          left: -60,
-          bottom: 30,
-          right: -40,
-          width: 20,
-          height: 20,
-          visible: false,
-        });
+      it('should addCellCssStyles/removeCellCssStyles with CSS style hashes and expect onCellCssStylesChanged event to be triggered and styling applied to cells', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onCellStyleSpy = vi.spyOn(grid.onCellCssStylesChanged, 'notify');
+
+        // 1. add CSS Cell Style
+        grid.addCellCssStyles('age_greater30_highlight', hash);
+        grid.render();
+
+        let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+        let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+        expect(onCellStyleSpy).toHaveBeenNthCalledWith(1, { key: 'age_greater30_highlight', hash, grid }, expect.anything(), grid);
+        expect(firstItemAgeCell.textContent).toBe('44');
+        expect(firstItemAgeCell.classList.contains('highlight')).toBeTruthy();
+        expect(secondItemAgeCell.textContent).toBe('20');
+        expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
+
+        // 2. then remove CSS Cell Style
+        grid.removeCellCssStyles('age_greater30_highlight');
+
+        firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+        secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+        expect(onCellStyleSpy).toHaveBeenLastCalledWith({ key: 'age_greater30_highlight', hash: null, grid }, expect.anything(), grid);
+        expect(onCellStyleSpy).toHaveBeenCalledWith({ key: 'age_greater30_highlight', hash, grid }, expect.anything(), grid);
+        expect(firstItemAgeCell.textContent).toBe('44');
+        expect(firstItemAgeCell.classList.contains('highlight')).toBeFalsy();
+        expect(secondItemAgeCell.textContent).toBe('20');
+        expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
+      });
+
+      it('should merge keyed CSS style overlays before creating a cell', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        grid.addCellCssStyles('primary', { 0: { age: 'primary-highlight' } });
+        grid.addCellCssStyles('secondary', { 0: { age: 'secondary-highlight' } });
+
+        const initialRow = document.createElement('div');
+        (grid as any).appendCellHtml(initialRow, 0, 1, 1, 1, null, items[0]);
+        expect(initialRow.firstElementChild?.classList.contains('primary-highlight')).toBe(true);
+        expect(initialRow.firstElementChild?.classList.contains('secondary-highlight')).toBe(true);
+
+        grid.setCellCssStyles('primary', { 0: { age: 'replacement-highlight' } });
+        grid.removeCellCssStyles('secondary');
+
+        const updatedRow = document.createElement('div');
+        (grid as any).appendCellHtml(updatedRow, 0, 1, 1, 1, null, items[0]);
+        expect(updatedRow.firstElementChild?.classList.contains('primary-highlight')).toBe(false);
+        expect(updatedRow.firstElementChild?.classList.contains('secondary-highlight')).toBe(false);
+        expect(updatedRow.firstElementChild?.classList.contains('replacement-highlight')).toBe(true);
+      });
+
+      it('should removeCellCssStyles of all matching keys by predicate', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onCellStyleSpy = vi.spyOn(grid.onCellCssStylesChanged, 'notify');
+
+        // 1. add CSS Cell Style
+        grid.addCellCssStyles('age_greater30_highlight', hash);
+        const toBeDeletedHash = { age: 'to-be-deleted-highlight' };
+        grid.addCellCssStyles('the_deletion_target', { 0: toBeDeletedHash, 1: toBeDeletedHash });
+        grid.addCellCssStyles('also_the_deletion_target', { 0: toBeDeletedHash, 1: toBeDeletedHash });
+        grid.render();
+
+        let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+        let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+        expect(onCellStyleSpy).toHaveBeenNthCalledWith(1, { key: 'age_greater30_highlight', hash, grid }, expect.anything(), grid);
+        expect(firstItemAgeCell.textContent).toBe('44');
+        expect(firstItemAgeCell.classList.contains('highlight')).toBeTruthy();
+        expect(firstItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeTruthy();
+        expect(secondItemAgeCell.textContent).toBe('20');
+        expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
+        expect(secondItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeTruthy();
+
+        // 2. then remove CSS Cell Style
+        grid.removeCellCssStylesBatch((key, _hash) => key.includes('deletion_target'));
+
+        firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+        secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+        expect(firstItemAgeCell.textContent).toBe('44');
+        expect(firstItemAgeCell.classList.contains('highlight')).toBeTruthy();
+        expect(firstItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeFalsy();
+        expect(secondItemAgeCell.textContent).toBe('20');
+        expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
+        expect(secondItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeFalsy();
+      });
+
+      it('should trigger focusGridCell() when user typed Tab and filter element equals the ancestor header row an', () => {
+        // Use a real DOM structure to avoid infinite recursion
+        const testGridInstance = new TestGrid(container, items, columns, { ...defaultOptions, enableCellNavigation: true, autoEditByKeypress: true });
+        const focusGridCellSpy = vi.spyOn(testGridInstance, 'focusGridCell');
+        const headerRowLeftCols = createDomElement('div', { className: 'slick-headerrow-columns slick-headerrow-columns-left' });
+        const headerRowCol = createDomElement('div', { className: 'slick-headerrow-column' });
+        const inputFilterElm = createDomElement('input', { className: 'slick-filter-input', tabIndex: 0 });
+        headerRowCol.appendChild(inputFilterElm);
+        headerRowLeftCols.appendChild(headerRowCol);
+        container.appendChild(headerRowLeftCols);
+        Object.defineProperty(inputFilterElm, 'offsetParent', { value: 5 });
+        const tabEvent = new KeyboardEvent('keydown', { key: 'Tab' }) as any;
+        Object.defineProperty(tabEvent, 'target', { value: inputFilterElm });
+        testGridInstance.callHandleContainerKeyDown(tabEvent);
+
+        const keyEvent = {
+          key: 'a',
+          ctrlKey: false,
+          originalEvent: {},
+          target: container.querySelector('.slick-cell.l1.r1'),
+          stopPropagation: vi.fn(),
+          preventDefault: vi.fn(),
+        } as any;
+        testGridInstance.setActiveCell(0, 1);
+        testGridInstance.callHandleGridKeyDown(keyEvent);
+        skipGridDestroy = true;
+
+        expect(focusGridCellSpy).toHaveBeenCalled();
+      });
+
+      it('should trigger focusGridMenu() when user typed Shift+Tab and filter element equals the ancestor header row an', () => {
+        // Use a real DOM structure to avoid infinite recursion
+        const testGridInstance = new TestGrid(container, items, columns, { ...defaultOptions, enableCellNavigation: true, autoEditByKeypress: true });
+        const focusGridMenuSpy = vi.spyOn(testGridInstance, 'focusGridMenu');
+        const headerRowLeftCols = createDomElement('div', { className: 'slick-headerrow-columns slick-headerrow-columns-left' });
+        const headerRowCol = createDomElement('div', { className: 'slick-headerrow-column' });
+        const inputFilterElm = createDomElement('input', { className: 'slick-filter-input', tabIndex: 0 });
+        headerRowCol.appendChild(inputFilterElm);
+        headerRowLeftCols.appendChild(headerRowCol);
+        container.appendChild(headerRowLeftCols);
+        Object.defineProperty(inputFilterElm, 'offsetParent', { value: 5 });
+        const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true }) as any;
+        Object.defineProperty(tabEvent, 'target', { value: inputFilterElm });
+        testGridInstance.callHandleContainerKeyDown(tabEvent);
+
+        const keyEvent = {
+          key: 'a',
+          ctrlKey: false,
+          originalEvent: {},
+          target: container.querySelector('.slick-cell.l1.r1'),
+          stopPropagation: vi.fn(),
+          preventDefault: vi.fn(),
+        } as any;
+        testGridInstance.setActiveCell(0, 1);
+        testGridInstance.callHandleGridKeyDown(keyEvent);
+        skipGridDestroy = true;
+
+        expect(focusGridMenuSpy).toHaveBeenCalled();
+      });
+
+      it('should trigger onHeaderKeyDown and sortCallback on Enter/Space', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+        ] as Column[];
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe' },
+          { id: 1, firstName: 'Jane', lastName: 'Smith' },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableColumnReorder: true });
+        grid.init();
+        const header = container.querySelector('.slick-header-column');
+        // Mock Utils.storage.get to return a column
+        const origStorage = (globalThis as any).Utils?.storage?.get;
+        (globalThis as any).Utils = (globalThis as any).Utils || {};
+        (globalThis as any).Utils.storage = { get: () => columns[0] };
+        // Spy on onHeaderKeyDown and onSort
+        const onHeaderKeyDownSpy = vi.spyOn(grid.onHeaderKeyDown, 'notify');
+        const onSortSpy = vi.spyOn(grid.onSort, 'notify');
+        // Simulate keydown Enter
+        const eventEnter = new window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }) as any;
+        Object.defineProperty(eventEnter, 'target', { value: header });
+        header?.dispatchEvent(eventEnter);
+        // Simulate keydown Space
+        const eventSpace = new window.KeyboardEvent('keydown', { key: ' ', bubbles: true }) as any;
+        Object.defineProperty(eventSpace, 'target', { value: header });
+        header?.dispatchEvent(eventSpace);
+        expect(onHeaderKeyDownSpy).toHaveBeenCalled();
+        expect(onSortSpy).toHaveBeenCalled();
+        // Restore original
+        if (origStorage) {
+          (globalThis as any).Utils.storage.get = origStorage;
+        }
+      });
+
+      it('should return cell CSS styles for a given key', () => {
+        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
+        (grid as any).cellCssClasses = { testKey: { 0: { firstName: 'highlight' } } };
+        const result = grid.getCellCssStyles('testKey');
+        expect(result).toEqual({ 0: { firstName: 'highlight' } });
+      });
+
+      it('should bind container keydown when enableFiltering is true', () => {
+        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+        const gridOptions = { ...defaultOptions, enableFiltering: true };
+        grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
+        grid.init();
+        // If no error, the code path is covered. Optionally, check event listeners count.
+        expect(grid).toBeTruthy();
       });
     });
 
-    describe('getCellFromPoint() method', () => {
+    describe('Slick Cell', () => {
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name' },
-        { id: 'middleName', field: 'middleName', name: 'Middle Name' },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },
         { id: 'age', field: 'age', name: 'Age' },
-        { id: 'gender', field: 'gender', name: 'Gender' },
-        { id: 'doorNumber', field: 'doorNumber', name: 'Door Number', hidden: true },
-        { id: 'streetName', field: 'streetName', name: 'Street Name', hidden: true },
+        { id: 'gender', field: 'gender', name: 'Gender', hidden: true },
       ] as Column[];
       const data = [
         { id: 0, firstName: 'John', lastName: 'Doe', age: 30, gender: 'male' },
@@ -6675,315 +6476,503 @@ describe('SlickGrid core file', () => {
         { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37, gender: 'male' },
       ];
 
-      it('should return correct row/cell when providing x,y coordinates', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+      describe('absBox() method', () => {
+        it('should expect abs box to be visible with unchanged abs box properties', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
-        const result1 = grid.getCellFromPoint(0, 0);
-        const result2 = grid.getCellFromPoint(0, DEFAULT_COLUMN_HEIGHT + 5);
-        const result3 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH + 5, 0);
-        const result4 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH + 5, DEFAULT_COLUMN_HEIGHT + 5);
-        const result5 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 2 + 5, DEFAULT_COLUMN_HEIGHT * 2 + 5);
-        const result6 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 3 + 5, DEFAULT_COLUMN_HEIGHT * 3 + 5);
-        const result7 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 4 + 5, DEFAULT_COLUMN_HEIGHT * 4 + 5);
+          grid.setActiveCell(0, 1);
+          const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+          const gridContainer = grid['_container'];
 
-        expect(result1).toEqual({ cell: 0, row: 0 });
-        expect(result2).toEqual({ cell: 0, row: 1 });
-        expect(result3).toEqual({ cell: 1, row: 0 });
-        expect(result4).toEqual({ cell: 1, row: 1 });
-        expect(result5).toEqual({ cell: 2, row: 2 });
-        expect(result6).toEqual({ cell: 3, row: 3 });
-        expect(result7).toEqual({ cell: 4, row: 4 });
+          // Cell is inside grid
+          slickCellElm.getBoundingClientRect = vi.fn(() => ({ top: 10, left: 10, bottom: 30, right: 30, width: 20, height: 20 }) as DOMRect);
+          gridContainer.getBoundingClientRect = vi.fn(() => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }) as DOMRect);
+
+          const result = grid.getActiveCellPosition();
+          expect(result).toEqual({
+            top: 10,
+            left: 10,
+            bottom: 30,
+            right: 30,
+            width: 20,
+            height: 20,
+            visible: true,
+          });
+        });
+
+        it('should expect abs box to not be visible when top position is lower than grid container', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+
+          grid.setActiveCell(0, 1);
+          const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+          const gridContainer = grid['_container'];
+
+          // Cell is above grid
+          slickCellElm.getBoundingClientRect = vi.fn(() => ({ top: -50, left: 10, bottom: -30, right: 30, width: 20, height: 20 }) as DOMRect);
+          gridContainer.getBoundingClientRect = vi.fn(() => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }) as DOMRect);
+
+          const result = grid.getActiveCellPosition();
+          expect(result).toEqual({
+            top: -50,
+            left: 10,
+            bottom: -30,
+            right: 30,
+            width: 20,
+            height: 20,
+            visible: false,
+          });
+        });
+
+        it('should expect abs box to not be visible when left position is lower than grid container', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+
+          grid.setActiveCell(0, 1);
+          const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+          const gridContainer = grid['_container'];
+
+          // Cell is left of grid
+          slickCellElm.getBoundingClientRect = vi.fn(() => ({ top: 10, left: -50, bottom: 30, right: -30, width: 20, height: 20 }) as DOMRect);
+          gridContainer.getBoundingClientRect = vi.fn(() => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }) as DOMRect);
+
+          const result = grid.getActiveCellPosition();
+          expect(result).toEqual({
+            top: 10,
+            left: -50,
+            bottom: 30,
+            right: -30,
+            width: 20,
+            height: 20,
+            visible: false,
+          });
+        });
+
+        it('should expect abs box to not be visible when left position is lower than grid container and also increase left/top position when offsetParent is same as slick-row element', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+
+          grid.setActiveCell(0, 1);
+          const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+          const gridContainer = grid['_container'];
+
+          // Cell is left of grid, with offsetParent logic
+          slickCellElm.getBoundingClientRect = vi.fn(() => ({ top: 10, left: -60, bottom: 30, right: -40, width: 20, height: 20 }) as DOMRect);
+          gridContainer.getBoundingClientRect = vi.fn(() => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }) as DOMRect);
+
+          const result = grid.getActiveCellPosition();
+          expect(result).toEqual({
+            top: 10,
+            left: -60,
+            bottom: 30,
+            right: -40,
+            width: 20,
+            height: 20,
+            visible: false,
+          });
+        });
       });
 
-      it('should return negative row/cell when x,y coordinates is outside the grid canvas', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-
-        const result1 = grid.getCellFromPoint(0, -999);
-        const result2 = grid.getCellFromPoint(-777, 0);
-        const result3 = grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH + 5), -(DEFAULT_COLUMN_HEIGHT + 5));
-        const result4 = grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH * 2 + 5), -(DEFAULT_COLUMN_HEIGHT * 2 + 5));
-        const result5 = grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH * 3 + 5), -(DEFAULT_COLUMN_HEIGHT * 3 + 5));
-
-        expect(result1).toEqual({ cell: 0, row: -1 });
-        expect(result2).toEqual({ cell: -1, row: 0 });
-        expect(result3).toEqual({ cell: -1, row: -1 });
-        expect(result4).toEqual({ cell: -1, row: -1 });
-        expect(result5).toEqual({ cell: -1, row: -1 });
-      });
-
-      it('should skip hidden columns and return last visible column cell when x coordinate falls beyond visible canvas', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-
-        const result1 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 5 + 5, DEFAULT_COLUMN_HEIGHT * 5 + 5);
-        const result2 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 6 + 5, DEFAULT_COLUMN_HEIGHT * 6 + 5);
-
-        expect(result1).toEqual({ cell: 4, row: 5 });
-        expect(result2).toEqual({ cell: 4, row: 6 });
-      });
-    });
-
-    describe('getCellFromEvent() method', () => {
-      it('should throw when cell node is not found in the grid', () => {
-        const slickCell = createDomElement('div', { className: 'slick-cell' });
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: slickCell });
-
-        expect(() => grid.getCellFromEvent(event)).toThrow('SlickGrid getCellFromNode: cannot get cell - slick-cell');
-      });
-
-      it('should return null if either the native event or passed in event is not set', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-
-        expect(grid.getCellFromEvent(null as any)).toBeNull();
-        expect(grid.getCellFromEvent(new SlickEventData(null))).toBeNull();
-      });
-
-      it('should return null when clicked cell is not a slick-cell closest ancestor', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(1)');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[0] });
-        const result = grid.getCellFromEvent(event);
-
-        expect(result).toBeNull();
-      });
-
-      it('should return { row:0, cell:0 } when clicked cell is first cell top left a native Event', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(1) .slick-cell');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[0] });
-        const result = grid.getCellFromEvent(event);
-
-        expect(result).toEqual({ row: 0, cell: 0 });
-      });
-
-      it('should return { row:0, cell:0 } when clicked cell is first cell top left and is provided as a SlickEventData', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(1) .slick-cell');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[0] });
-        const sed = new SlickEventData(event);
-        const result = grid.getCellFromEvent(sed);
-
-        expect(result).toEqual({ row: 0, cell: 0 });
-      });
-
-      it('should return { row:1, cell:1 } when clicked cell is second cell of second row', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        const result = grid.getCellFromEvent(event);
-
-        expect(result).toEqual({ row: 1, cell: 1 });
-      });
-
-      it('should return { row:1, cell:1 } when clicked cell is second cell of second row with a frozenRow is outside of range', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 2 });
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        Object.defineProperty(event, 'clientX', { writable: true, value: DEFAULT_COLUMN_WIDTH * 2 + 5 });
-        Object.defineProperty(event, 'clientY', { writable: true, value: DEFAULT_COLUMN_HEIGHT * 1 + 5 });
-        const result = grid.getCellFromEvent(event);
-
-        expect(result).toEqual({ row: 1, cell: 1 });
-      });
-
-      it('should return { row:1, cell:1 } when clicked cell is second cell of second row with a frozenRow and frozenBottom is outside of range', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 2, frozenBottom: true });
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        Object.defineProperty(event, 'clientX', { writable: true, value: DEFAULT_COLUMN_WIDTH * 2 + 5 });
-        Object.defineProperty(event, 'clientY', { writable: true, value: DEFAULT_COLUMN_HEIGHT * 1 + 5 });
-        const result = grid.getCellFromEvent(event);
-
-        expect(result).toEqual({ row: 1, cell: 1 });
-      });
-    });
-  });
-
-  describe('Sanitizer', () => {
-    const columns = [
-      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
-      { id: 'age', field: 'age', name: 'Age', sortable: true },
-    ] as Column[];
-
-    it('should use sanitizer when provided in grid options and expect <script> to be removed', () => {
-      const sanitizer = (dirtyHtml: string) =>
-        typeof dirtyHtml === 'string'
-          ? dirtyHtml.replace(
-              /(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi,
-              ''
-            )
-          : dirtyHtml;
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, sanitizer });
-
-      const dirtyHtml = '<div class="some-class"><script>alert("hello world")</script></div>';
-      const cleanHtml = '<div class="some-class"></div>';
-
-      expect(grid.sanitizeHtmlString(dirtyHtml)).toBe(cleanHtml);
-    });
-
-    it('should return same input string when no sanitizer provided', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, sanitizer: undefined });
-
-      const dirtyHtml = '<div class="some-class"><script>alert("hello world")</script></div>';
-
-      expect(grid.sanitizeHtmlString(dirtyHtml)).toBe(dirtyHtml);
-    });
-  });
-
-  describe('Update UI', () => {
-    describe('updateCell() method', () => {
-      it('should change an item property then call updateCell() and expect it to be updated in the UI with Formatter result', () => {
+      describe('getCellFromPoint() method', () => {
         const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', formatter: (_row: number, _cell: number, val: any) => (val > 20 ? `<strong>${val}</strong>` : null) } as any,
-        ];
-        const items = [
-          { id: 0, name: 'Avery', age: 44 },
-          { id: 1, name: 'Bob', age: 20 },
-          { id: 2, name: 'Rachel', age: 46 },
-        ];
-
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const getDataItemSpy = vi.spyOn(grid, 'getDataItem');
-        items[1].age = 25;
-        grid.updateCell(1, 1);
-
-        const secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
-
-        expect(getDataItemSpy).toHaveBeenCalledTimes(1);
-        expect(secondItemAgeCell.innerHTML).toBe('<strong>25</strong>');
-      });
-
-      it('should change an item property then call updateCell() on a cell that does not exist and expect it to be an empty string cell', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', formatter: (_row: number, _cell: number, val: any) => (val > 20 ? `<strong>${val}</strong>` : null) } as any,
-        ];
-        const items = [
-          { id: 0, name: 'Avery', age: 44 },
-          { id: 1, name: 'Bob', age: 20 },
-          { id: 2, name: 'Rachel', age: 46 },
-        ];
-
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        vi.spyOn(grid, 'getCellNode').mockReturnValueOnce(document.createElement('div'));
-        const getDataItemSpy = vi.spyOn(grid, 'getDataItem').mockReturnValueOnce(null);
-        items[1].age = 25;
-        grid.updateCell(3, 3);
-
-        const secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
-
-        expect(getDataItemSpy).toHaveBeenCalledTimes(1);
-        expect(secondItemAgeCell.innerHTML).toBe('');
-      });
-
-      it('should change an item value via asyncPostRenderer then call updateCell() and expect it to be updated in the UI with Formatter result', () => {
-        const newValue = '25';
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', asyncPostRender: (node) => (node.textContent = newValue) },
+          { id: 'firstName', field: 'firstName', name: 'First Name' },
+          { id: 'middleName', field: 'middleName', name: 'Middle Name' },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'Age' },
+          { id: 'gender', field: 'gender', name: 'Gender' },
+          { id: 'doorNumber', field: 'doorNumber', name: 'Door Number', hidden: true },
+          { id: 'streetName', field: 'streetName', name: 'Street Name', hidden: true },
         ] as Column[];
-        const items = [
-          { id: 0, name: 'Avery', age: 44 },
-          { id: 1, name: 'Bob', age: 20 },
-          { id: 2, name: 'Rachel', age: 46 },
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30, gender: 'male' },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28, gender: 'female' },
+          { id: 2, firstName: 'Bob', lastName: 'Smith', age: 48, gender: 'male' },
+          { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37, gender: 'male' },
         ];
-        const gridOptions = {
-          ...defaultOptions,
-          enableCellNavigation: true,
-          enableAsyncPostRender: true,
-          enableAsyncPostRenderCleanup: true,
-          asyncPostRenderDelay: 1,
-          asyncPostRenderCleanupDelay: 1,
-        };
-        grid = new SlickGrid<any, Column>(container, items, columns, gridOptions);
-        let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
-        expect(firstItemAgeCell.innerHTML).toBe('44');
 
-        const getDataItemSpy = vi.spyOn(grid, 'getDataItem');
-        grid.updateCell(0, 1);
-        grid.invalidateRows([0]);
-        vi.advanceTimersByTime(1);
+        it('should return correct row/cell when providing x,y coordinates', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
-        firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
-        expect(getDataItemSpy).toHaveBeenCalledTimes(2);
-        expect(firstItemAgeCell.innerHTML).toBe('25');
+          const result1 = grid.getCellFromPoint(0, 0);
+          const result2 = grid.getCellFromPoint(0, DEFAULT_COLUMN_HEIGHT + 5);
+          const result3 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH + 5, 0);
+          const result4 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH + 5, DEFAULT_COLUMN_HEIGHT + 5);
+          const result5 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 2 + 5, DEFAULT_COLUMN_HEIGHT * 2 + 5);
+          const result6 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 3 + 5, DEFAULT_COLUMN_HEIGHT * 3 + 5);
+          const result7 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 4 + 5, DEFAULT_COLUMN_HEIGHT * 4 + 5);
+
+          expect(result1).toEqual({ cell: 0, row: 0 });
+          expect(result2).toEqual({ cell: 0, row: 1 });
+          expect(result3).toEqual({ cell: 1, row: 0 });
+          expect(result4).toEqual({ cell: 1, row: 1 });
+          expect(result5).toEqual({ cell: 2, row: 2 });
+          expect(result6).toEqual({ cell: 3, row: 3 });
+          expect(result7).toEqual({ cell: 4, row: 4 });
+        });
+
+        it('should return negative row/cell when x,y coordinates is outside the grid canvas', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+
+          const result1 = grid.getCellFromPoint(0, -999);
+          const result2 = grid.getCellFromPoint(-777, 0);
+          const result3 = grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH + 5), -(DEFAULT_COLUMN_HEIGHT + 5));
+          const result4 = grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH * 2 + 5), -(DEFAULT_COLUMN_HEIGHT * 2 + 5));
+          const result5 = grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH * 3 + 5), -(DEFAULT_COLUMN_HEIGHT * 3 + 5));
+
+          expect(result1).toEqual({ cell: 0, row: -1 });
+          expect(result2).toEqual({ cell: -1, row: 0 });
+          expect(result3).toEqual({ cell: -1, row: -1 });
+          expect(result4).toEqual({ cell: -1, row: -1 });
+          expect(result5).toEqual({ cell: -1, row: -1 });
+        });
+
+        it('should skip hidden columns and return last visible column cell when x coordinate falls beyond visible canvas', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+
+          const result1 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 5 + 5, DEFAULT_COLUMN_HEIGHT * 5 + 5);
+          const result2 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 6 + 5, DEFAULT_COLUMN_HEIGHT * 6 + 5);
+
+          expect(result1).toEqual({ cell: 4, row: 5 });
+          expect(result2).toEqual({ cell: 4, row: 6 });
+        });
       });
 
-      it('should change an item from an Editor then call updateCell() and expect it call the editor loadValue() method', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        const items = [
-          { id: 0, name: 'Avery', age: 44 },
-          { id: 1, name: 'Bob', age: 20 },
-          { id: 2, name: 'Rachel', age: 46 },
-        ];
+      describe('getCellFromEvent() method', () => {
+        it('should throw when cell node is not found in the grid', () => {
+          const slickCell = createDomElement('div', { className: 'slick-cell' });
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+          const event = new CustomEvent('click');
+          Object.defineProperty(event, 'target', { writable: true, value: slickCell });
 
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        grid.setActiveCell(0, 1);
-        grid.editActiveCell(InputEditor as any, true);
-        const currentEditor = grid.getCellEditor() as Editor;
-        const editorSpy = vi.spyOn(currentEditor, 'loadValue');
+          expect(() => grid.getCellFromEvent(event)).toThrow('SlickGrid getCellFromNode: cannot get cell - slick-cell');
+        });
 
-        grid.updateCell(0, 1);
+        it('should return null if either the native event or passed in event is not set', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
-        expect(editorSpy).toHaveBeenCalledWith({ id: 0, name: 'Avery', age: 44 });
-      });
+          expect(grid.getCellFromEvent(null as any)).toBeNull();
+          expect(grid.getCellFromEvent(new SlickEventData(null))).toBeNull();
+        });
 
-      it('should call navigateDown() when calling save() on default editor', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        const items = [
-          { id: 0, name: 'Avery', age: 44 },
-          { id: 1, name: 'Bob', age: 20 },
-          { id: 2, name: 'Rachel', age: 46 },
-        ];
+        it('should return null when clicked cell is not a slick-cell closest ancestor', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(1)');
+          const event = new CustomEvent('click');
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[0] });
+          const result = grid.getCellFromEvent(event);
 
-        const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        grid.setActiveCell(0, 1);
-        grid.editActiveCell(InputEditor as any, true);
-        const currentEditor = grid.getCellEditor() as Editor;
-        currentEditor.save!();
+          expect(result).toBeNull();
+        });
 
-        expect(navigateDownSpy).not.toHaveBeenCalled();
-      });
+        it('should return null when a row node is not present in the row cache', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
-      it('should NOT call navigateDown() when calling save() on an AutoCompleterEditor that disabled navigate down', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: AutocompleterEditor },
-        ] as Column[];
-        const items = [
-          { id: 0, name: 'Avery', age: 44 },
-          { id: 1, name: 'Bob', age: 20 },
-          { id: 2, name: 'Rachel', age: 46 },
-        ];
+          expect((grid as any).getRowFromNode(document.createElement('div'))).toBeNull();
+        });
 
-        const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        grid.setActiveCell(0, 1);
-        grid.editActiveCell(AutocompleterEditor as any, true);
-        const currentEditor = grid.getCellEditor() as Editor;
-        currentEditor.save!();
+        it('should return { row:0, cell:0 } when clicked cell is first cell top left a native Event', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(1) .slick-cell');
+          const event = new CustomEvent('click');
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[0] });
+          const result = grid.getCellFromEvent(event);
 
-        expect(navigateDownSpy).not.toHaveBeenCalled();
+          expect(result).toEqual({ row: 0, cell: 0 });
+        });
+
+        it('should return { row:0, cell:0 } when clicked cell is first cell top left and is provided as a SlickEventData', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(1) .slick-cell');
+          const event = new CustomEvent('click');
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[0] });
+          const sed = new SlickEventData(event);
+          const result = grid.getCellFromEvent(sed);
+
+          expect(result).toEqual({ row: 0, cell: 0 });
+        });
+
+        it('should return { row:1, cell:1 } when clicked cell is second cell of second row', () => {
+          grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+          const event = new CustomEvent('click');
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+          const result = grid.getCellFromEvent(event);
+
+          expect(result).toEqual({ row: 1, cell: 1 });
+        });
       });
     });
 
-    describe('updateRow() method', () => {
+    describe('Sanitizer', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+        { id: 'age', field: 'age', name: 'Age', sortable: true },
+      ] as Column[];
+
+      it('should use sanitizer when provided in grid options and expect <script> to be removed', () => {
+        const sanitizer = (dirtyHtml: string) =>
+          typeof dirtyHtml === 'string'
+            ? dirtyHtml.replace(
+                /(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi,
+                ''
+              )
+            : dirtyHtml;
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, sanitizer });
+
+        const dirtyHtml = '<div class="some-class"><script>alert("hello world")</script></div>';
+        const cleanHtml = '<div class="some-class"></div>';
+
+        expect(grid.sanitizeHtmlString(dirtyHtml)).toBe(cleanHtml);
+      });
+
+      it('should return same input string when no sanitizer provided', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, sanitizer: undefined });
+
+        const dirtyHtml = '<div class="some-class"><script>alert("hello world")</script></div>';
+
+        expect(grid.sanitizeHtmlString(dirtyHtml)).toBe(dirtyHtml);
+      });
+    });
+
+    describe('Update UI', () => {
+      describe('updateCell() method', () => {
+        it('should change an item property then call updateCell() and expect it to be updated in the UI with Formatter result', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            {
+              id: 'age',
+              field: 'age',
+              name: 'Age',
+              formatter: (_row: number, _cell: number, val: any) => (val > 20 ? `<strong>${val}</strong>` : null),
+            } as any,
+          ];
+          const items = [
+            { id: 0, name: 'Avery', age: 44 },
+            { id: 1, name: 'Bob', age: 20 },
+            { id: 2, name: 'Rachel', age: 46 },
+          ];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const getDataItemSpy = vi.spyOn(grid, 'getDataItem');
+          items[1].age = 25;
+          grid.updateCell(1, 1);
+
+          const secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+          expect(getDataItemSpy).toHaveBeenCalledTimes(1);
+          expect(secondItemAgeCell.innerHTML).toBe('<strong>25</strong>');
+        });
+
+        it('should change an item property then call updateCell() on a cell that does not exist and expect it to be an empty string cell', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            {
+              id: 'age',
+              field: 'age',
+              name: 'Age',
+              formatter: (_row: number, _cell: number, val: any) => (val > 20 ? `<strong>${val}</strong>` : null),
+            } as any,
+          ];
+          const items = [
+            { id: 0, name: 'Avery', age: 44 },
+            { id: 1, name: 'Bob', age: 20 },
+            { id: 2, name: 'Rachel', age: 46 },
+          ];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          vi.spyOn(grid, 'getCellNode').mockReturnValueOnce(document.createElement('div'));
+          const getDataItemSpy = vi.spyOn(grid, 'getDataItem').mockReturnValueOnce(null);
+          items[1].age = 25;
+          grid.updateCell(3, 3);
+
+          const secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+          expect(getDataItemSpy).toHaveBeenCalledTimes(1);
+          expect(secondItemAgeCell.innerHTML).toBe('');
+        });
+
+        it('should change an item value via asyncPostRenderer then call updateCell() and expect it to be updated in the UI with Formatter result', () => {
+          const newValue = '25';
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', asyncPostRender: (node) => (node.textContent = newValue) },
+          ] as Column[];
+          const items = [
+            { id: 0, name: 'Avery', age: 44 },
+            { id: 1, name: 'Bob', age: 20 },
+            { id: 2, name: 'Rachel', age: 46 },
+          ];
+          const gridOptions = {
+            ...defaultOptions,
+            enableCellNavigation: true,
+            enableAsyncPostRender: true,
+            enableAsyncPostRenderCleanup: true,
+            asyncPostRenderDelay: 1,
+            asyncPostRenderCleanupDelay: 1,
+          };
+          grid = new SlickGrid<any, Column>(container, items, columns, gridOptions);
+          let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+          expect(firstItemAgeCell.innerHTML).toBe('44');
+
+          const getDataItemSpy = vi.spyOn(grid, 'getDataItem');
+          grid.updateCell(0, 1);
+          grid.invalidateRows([0]);
+          vi.advanceTimersByTime(1);
+
+          firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+          expect(getDataItemSpy).toHaveBeenCalledTimes(2);
+          expect(firstItemAgeCell.innerHTML).toBe('25');
+        });
+
+        it('should change an item from an Editor then call updateCell() and expect it call the editor loadValue() method', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          const items = [
+            { id: 0, name: 'Avery', age: 44 },
+            { id: 1, name: 'Bob', age: 20 },
+            { id: 2, name: 'Rachel', age: 46 },
+          ];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          grid.setActiveCell(0, 1);
+          grid.editActiveCell(InputEditor as any, true);
+          const currentEditor = grid.getCellEditor() as Editor;
+          const editorSpy = vi.spyOn(currentEditor, 'loadValue');
+
+          grid.updateCell(0, 1);
+
+          expect(editorSpy).toHaveBeenCalledWith({ id: 0, name: 'Avery', age: 44 });
+        });
+
+        it('should call navigateDown() when calling save() on default editor', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          const items = [
+            { id: 0, name: 'Avery', age: 44 },
+            { id: 1, name: 'Bob', age: 20 },
+            { id: 2, name: 'Rachel', age: 46 },
+          ];
+
+          const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          grid.setActiveCell(0, 1);
+          grid.editActiveCell(InputEditor as any, true);
+          const currentEditor = grid.getCellEditor() as Editor;
+          currentEditor.save!();
+
+          expect(navigateDownSpy).not.toHaveBeenCalled();
+        });
+
+        it('should NOT call navigateDown() when calling save() on an AutoCompleterEditor that disabled navigate down', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: AutocompleterEditor },
+          ] as Column[];
+          const items = [
+            { id: 0, name: 'Avery', age: 44 },
+            { id: 1, name: 'Bob', age: 20 },
+            { id: 2, name: 'Rachel', age: 46 },
+          ];
+
+          const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          grid.setActiveCell(0, 1);
+          grid.editActiveCell(AutocompleterEditor as any, true);
+          const currentEditor = grid.getCellEditor() as Editor;
+          currentEditor.save!();
+
+          expect(navigateDownSpy).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('updateRow() method', () => {
+        let items: Array<{ id: number; name: string; age: number }> = [];
+
+        beforeEach(() => {
+          items = [
+            { id: 0, name: 'Avery', age: 44 },
+            { id: 1, name: 'Bob', age: 20 },
+            { id: 2, name: 'Rachel', age: 46 },
+            { id: 3, name: 'Jane', age: 24 },
+            { id: 4, name: 'John', age: 20 },
+            { id: 5, name: 'Arnold', age: 50 },
+            { id: 6, name: 'Carole', age: 40 },
+            { id: 7, name: 'Jason', age: 48 },
+            { id: 8, name: 'Julie', age: 42 },
+            { id: 9, name: 'Aaron', age: 23 },
+            { id: 10, name: 'Ariane', age: 43 },
+          ];
+        });
+
+        it('should call the method but expect nothing to happen when row number is invalid', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', formatter: (_row: number, _cell: number, val: any) => `<strong>${val}</strong>` },
+          ];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const getDataItemSpy = vi.spyOn(grid, 'getDataItem');
+          grid.updateRow(999);
+
+          expect(getDataItemSpy).not.toHaveBeenCalled();
+        });
+
+        it('should call the method but expect it to empty the cell node when getDataItem() returns no item', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const getDataItemSpy = vi.spyOn(grid, 'getDataItem').mockReturnValueOnce(null);
+          items[1].age = 25;
+          grid.updateRow(1);
+
+          const secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+          expect(getDataItemSpy).toHaveBeenCalledTimes(1);
+          expect(secondItemAgeCell.innerHTML).toBe('');
+        });
+
+        it('should change an item property then call updateRow() and expect it to be updated in the UI with Formatter result', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', formatter: (_row: number, _cell: number, val: any) => `<strong>${val}</strong>` },
+          ];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const getDataItemSpy = vi.spyOn(grid, 'getDataItem');
+          items[1].age = 25;
+          grid.updateRow(1);
+
+          const secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+          expect(getDataItemSpy).toHaveBeenCalledTimes(1);
+          expect(secondItemAgeCell.innerHTML).toBe('<strong>25</strong>');
+        });
+
+        it('should change an item from an Editor then call updateRow() and expect it call the editor loadValue() method', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          grid.setActiveCell(0, 1);
+          grid.editActiveCell(InputEditor as any, true);
+          const currentEditor = grid.getCellEditor() as Editor;
+          const editorSpy = vi.spyOn(currentEditor, 'loadValue');
+
+          grid.updateRow(0);
+
+          expect(editorSpy).toHaveBeenCalledWith({ id: 0, name: 'Avery', age: 44 });
+        });
+      });
+    });
+
+    describe('Activate Cell/Row methods', () => {
       let items: Array<{ id: number; name: string; age: number }> = [];
 
       beforeEach(() => {
@@ -7002,1543 +6991,1472 @@ describe('SlickGrid core file', () => {
         ];
       });
 
-      it('should call the method but expect nothing to happen when row number is invalid', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', formatter: (_row: number, _cell: number, val: any) => `<strong>${val}</strong>` },
+      describe('setActiveRow() method', () => {
+        it('should do nothing when row to activate is greater than data length or cell is greater than available column length', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const scrollViewSpy = vi.spyOn(grid, 'scrollCellIntoView');
+          grid.setActiveRow(99, 1);
+          grid.setActiveRow(1, 99);
+
+          expect(scrollViewSpy).not.toHaveBeenCalled();
+        });
+
+        it('should do nothing when row or cell is a negative number', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const scrollViewSpy = vi.spyOn(grid, 'scrollCellIntoView');
+          grid.setActiveRow(-1, 1);
+          grid.setActiveRow(1, -1);
+
+          expect(scrollViewSpy).not.toHaveBeenCalled();
+        });
+
+        it('should do nothing when row to activate is greater than data length', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const scrollViewSpy = vi.spyOn(grid, 'scrollCellIntoView');
+          grid.setActiveRow(1, 1);
+
+          expect(scrollViewSpy).toHaveBeenCalledWith(1, 1, false);
+        });
+      });
+
+      describe('gotoCell() method', () => {
+        it('should restore focus when gotoCell does not create an editor', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const setFocusSpy = vi.spyOn(grid, 'setFocus');
+          grid.gotoCell(0, 0);
+
+          expect(setFocusSpy).toHaveBeenCalled();
+        });
+
+        it('should call gotoCell() and expect it to scroll to the cell', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+          grid.gotoCell(0, 1);
+
+          expect(scrollCellSpy).toHaveBeenCalledWith(0, 1, false);
+        });
+
+        it('should call gotoCell() with invalid cell and expect to NOT scroll to the cell', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+          grid.gotoCell(99, 1);
+
+          expect(scrollCellSpy).not.toHaveBeenCalled();
+        });
+
+        it('should call gotoCell() with commitCurrentEdit() returning false and expect to NOT scroll to the cell', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+          vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+          grid.gotoCell(0, 1);
+
+          expect(scrollCellSpy).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('canCellBeActive() method', () => {
+        it('should return false when no items provided', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+          grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const result = grid.canCellBeActive(0, 0);
+
+          expect(result).toBe(false);
+        });
+
+        it('should return false when column is hidden', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name', hidden: true }] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const result = grid.canCellBeActive(0, 0);
+
+          expect(result).toBe(false);
+        });
+
+        it('should return true when cell is assign with default props', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const result = grid.canCellBeActive(0, 0);
+
+          expect(result).toBe(true);
+        });
+
+        it('should return false when column has column focusable assigned as false', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name', focusable: false }] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const result = grid.canCellBeActive(0, 0);
+
+          expect(result).toBe(false);
+        });
+
+        it('should return true when using DataView with a getItemMetadata() method available returning column focusable as true', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+          const dv = new SlickDataView();
+          dv.setItems(items);
+          grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ focusable: true });
+          const result = grid.canCellBeActive(0, 0);
+
+          expect(result).toBe(true);
+        });
+
+        it('should return true when using DataView with a getItemMetadata() method available returning column focusable as false', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+          const dv = new SlickDataView();
+          dv.setItems(items);
+          grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ focusable: false });
+          const result = grid.canCellBeActive(0, 0);
+
+          expect(result).toBe(false);
+        });
+
+        it('should return true when using DataView with a getItemMetadata() method available returning column focusable as true', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+          const dv = new SlickDataView();
+          dv.setItems(items);
+          grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns } as any);
+          const result = grid.canCellBeActive(0, 0);
+
+          expect(result).toBe(true);
+        });
+
+        it('should return true when using DataView with a getItemMetadata() method available returning column focusable as false', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name', focusable: false }] as Column[];
+          const dv = new SlickDataView();
+          dv.setItems(items);
+          grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { name: { focusable: false } } } as any);
+          const result = grid.canCellBeActive(0, 0);
+
+          expect(result).toBe(false);
+        });
+      });
+
+      describe('canCellBeSelected() method', () => {
+        it('should return false when no items provided', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+          grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const result = grid.canCellBeSelected(0, 0);
+
+          expect(result).toBe(false);
+        });
+
+        it('should return false when column is hidden', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name', hidden: true }] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const result = grid.canCellBeSelected(0, 0);
+
+          expect(result).toBe(false);
+        });
+
+        it('should return true when cell is assign with default props', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const result = grid.canCellBeSelected(0, 0);
+
+          expect(result).toBe(true);
+        });
+
+        it('should return false when column has column selectable assigned as false', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name', selectable: false }] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const result = grid.canCellBeSelected(0, 0);
+
+          expect(result).toBe(false);
+        });
+
+        it('should return true when using DataView with a getItemMetadata() method available returning column selectable as true', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+          const dv = new SlickDataView();
+          dv.setItems(items);
+          grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ selectable: true });
+          const result = grid.canCellBeSelected(0, 0);
+
+          expect(result).toBe(true);
+        });
+
+        it('should return true when using DataView with a getItemMetadata() method available returning column selectable as false', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+          const dv = new SlickDataView();
+          dv.setItems(items);
+          grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ selectable: false });
+          const result = grid.canCellBeSelected(0, 0);
+
+          expect(result).toBe(false);
+        });
+
+        it('should return true when using DataView with a getItemMetadata() method available returning column selectable as true', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+          const dv = new SlickDataView();
+          dv.setItems(items);
+          grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns } as any);
+          const result = grid.canCellBeSelected(0, 0);
+
+          expect(result).toBe(true);
+        });
+
+        it('should return true when using DataView with a getItemMetadata() method available returning column selectable as false', () => {
+          const columns = [{ id: 'name', field: 'name', name: 'Name', selectable: false }] as Column[];
+          const dv = new SlickDataView();
+          dv.setItems(items);
+          grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns } as any);
+          const result = grid.canCellBeSelected(0, 0);
+
+          expect(result).toBe(false);
+        });
+      });
+    });
+
+    describe('Grid Events', () => {
+      let items: Array<{ id: number; name: string; age: number }> = [];
+
+      beforeEach(() => {
+        items = [
+          { id: 0, name: 'Avery', age: 44 },
+          { id: 1, name: 'Bob', age: 20 },
+          { id: 2, name: 'Rachel', age: 46 },
+          { id: 3, name: 'Jane', age: 24 },
+          { id: 4, name: 'John', age: 20 },
+          { id: 5, name: 'Arnold', age: 50 },
+          { id: 6, name: 'Carole', age: 40 },
+          { id: 7, name: 'Jason', age: 48 },
+          { id: 8, name: 'Julie', age: 42 },
+          { id: 9, name: 'Aaron', age: 23 },
+          { id: 10, name: 'Ariane', age: 43 },
         ];
-
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const getDataItemSpy = vi.spyOn(grid, 'getDataItem');
-        grid.updateRow(999);
-
-        expect(getDataItemSpy).not.toHaveBeenCalled();
       });
 
-      it('should call the method but expect it to empty the cell node when getDataItem() returns no item', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ];
-
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const getDataItemSpy = vi.spyOn(grid, 'getDataItem').mockReturnValueOnce(null);
-        items[1].age = 25;
-        grid.updateRow(1);
-
-        const secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
-
-        expect(getDataItemSpy).toHaveBeenCalledTimes(1);
-        expect(secondItemAgeCell.innerHTML).toBe('');
-      });
-
-      it('should change an item property then call updateRow() and expect it to be updated in the UI with Formatter result', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', formatter: (_row: number, _cell: number, val: any) => `<strong>${val}</strong>` },
-        ];
-
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const getDataItemSpy = vi.spyOn(grid, 'getDataItem');
-        items[1].age = 25;
-        grid.updateRow(1);
-
-        const secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
-
-        expect(getDataItemSpy).toHaveBeenCalledTimes(1);
-        expect(secondItemAgeCell.innerHTML).toBe('<strong>25</strong>');
-      });
-
-      it('should change an item from an Editor then call updateRow() and expect it call the editor loadValue() method', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        grid.setActiveCell(0, 1);
-        grid.editActiveCell(InputEditor as any, true);
-        const currentEditor = grid.getCellEditor() as Editor;
-        const editorSpy = vi.spyOn(currentEditor, 'loadValue');
-
-        grid.updateRow(0);
-
-        expect(editorSpy).toHaveBeenCalledWith({ id: 0, name: 'Avery', age: 44 });
-      });
-    });
-  });
-
-  describe('Activate Cell/Row methods', () => {
-    let items: Array<{ id: number; name: string; age: number }> = [];
-
-    beforeEach(() => {
-      items = [
-        { id: 0, name: 'Avery', age: 44 },
-        { id: 1, name: 'Bob', age: 20 },
-        { id: 2, name: 'Rachel', age: 46 },
-        { id: 3, name: 'Jane', age: 24 },
-        { id: 4, name: 'John', age: 20 },
-        { id: 5, name: 'Arnold', age: 50 },
-        { id: 6, name: 'Carole', age: 40 },
-        { id: 7, name: 'Jason', age: 48 },
-        { id: 8, name: 'Julie', age: 42 },
-        { id: 9, name: 'Aaron', age: 23 },
-        { id: 10, name: 'Ariane', age: 43 },
-      ];
-    });
-
-    describe('setActiveRow() method', () => {
-      it('should do nothing when row to activate is greater than data length or cell is greater than available column length', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const scrollViewSpy = vi.spyOn(grid, 'scrollCellIntoView');
-        grid.setActiveRow(99, 1);
-        grid.setActiveRow(1, 99);
-
-        expect(scrollViewSpy).not.toHaveBeenCalled();
-      });
-
-      it('should do nothing when row or cell is a negative number', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const scrollViewSpy = vi.spyOn(grid, 'scrollCellIntoView');
-        grid.setActiveRow(-1, 1);
-        grid.setActiveRow(1, -1);
-
-        expect(scrollViewSpy).not.toHaveBeenCalled();
-      });
-
-      it('should do nothing when row to activate is greater than data length', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const scrollViewSpy = vi.spyOn(grid, 'scrollCellIntoView');
-        grid.setActiveRow(1, 1);
-
-        expect(scrollViewSpy).toHaveBeenCalledWith(1, 1, false);
-      });
-    });
-
-    describe('gotoCell() method', () => {
-      it('should call gotoCell() and expect it to scroll to the cell', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-        grid.gotoCell(0, 1);
-
-        expect(scrollCellSpy).toHaveBeenCalledWith(0, 1, false);
-      });
-
-      it('should call gotoCell() with invalid cell and expect to NOT scroll to the cell', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-        grid.gotoCell(99, 1);
-
-        expect(scrollCellSpy).not.toHaveBeenCalled();
-      });
-
-      it('should call gotoCell() with commitCurrentEdit() returning false and expect to NOT scroll to the cell', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
-        vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
-        grid.gotoCell(0, 1);
-
-        expect(scrollCellSpy).not.toHaveBeenCalled();
-      });
-    });
-
-    describe('canCellBeActive() method', () => {
-      it('should return false when no items provided', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
-        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const result = grid.canCellBeActive(0, 0);
-
-        expect(result).toBe(false);
-      });
-
-      it('should return false when column is hidden', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name', hidden: true }] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const result = grid.canCellBeActive(0, 0);
-
-        expect(result).toBe(false);
-      });
-
-      it('should return true when cell is assign with default props', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const result = grid.canCellBeActive(0, 0);
-
-        expect(result).toBe(true);
-      });
-
-      it('should return false when column has column focusable assigned as false', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name', focusable: false }] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const result = grid.canCellBeActive(0, 0);
-
-        expect(result).toBe(false);
-      });
-
-      it('should return true when using DataView with a getItemMetadata() method available returning column focusable as true', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
-        const dv = new SlickDataView();
-        dv.setItems(items);
-        grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ focusable: true });
-        const result = grid.canCellBeActive(0, 0);
-
-        expect(result).toBe(true);
-      });
-
-      it('should return true when using DataView with a getItemMetadata() method available returning column focusable as false', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
-        const dv = new SlickDataView();
-        dv.setItems(items);
-        grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ focusable: false });
-        const result = grid.canCellBeActive(0, 0);
-
-        expect(result).toBe(false);
-      });
-
-      it('should return true when using DataView with a getItemMetadata() method available returning column focusable as true', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
-        const dv = new SlickDataView();
-        dv.setItems(items);
-        grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns } as any);
-        const result = grid.canCellBeActive(0, 0);
-
-        expect(result).toBe(true);
-      });
-
-      it('should return true when using DataView with a getItemMetadata() method available returning column focusable as false', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name', focusable: false }] as Column[];
-        const dv = new SlickDataView();
-        dv.setItems(items);
-        grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { name: { focusable: false } } } as any);
-        const result = grid.canCellBeActive(0, 0);
-
-        expect(result).toBe(false);
-      });
-    });
-
-    describe('canCellBeSelected() method', () => {
-      it('should return false when no items provided', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
-        grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const result = grid.canCellBeSelected(0, 0);
-
-        expect(result).toBe(false);
-      });
-
-      it('should return false when column is hidden', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name', hidden: true }] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const result = grid.canCellBeSelected(0, 0);
-
-        expect(result).toBe(false);
-      });
-
-      it('should return true when cell is assign with default props', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const result = grid.canCellBeSelected(0, 0);
-
-        expect(result).toBe(true);
-      });
-
-      it('should return false when column has column selectable assigned as false', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name', selectable: false }] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const result = grid.canCellBeSelected(0, 0);
-
-        expect(result).toBe(false);
-      });
-
-      it('should return true when using DataView with a getItemMetadata() method available returning column selectable as true', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
-        const dv = new SlickDataView();
-        dv.setItems(items);
-        grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ selectable: true });
-        const result = grid.canCellBeSelected(0, 0);
-
-        expect(result).toBe(true);
-      });
-
-      it('should return true when using DataView with a getItemMetadata() method available returning column selectable as false', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
-        const dv = new SlickDataView();
-        dv.setItems(items);
-        grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ selectable: false });
-        const result = grid.canCellBeSelected(0, 0);
-
-        expect(result).toBe(false);
-      });
-
-      it('should return true when using DataView with a getItemMetadata() method available returning column selectable as true', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
-        const dv = new SlickDataView();
-        dv.setItems(items);
-        grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns } as any);
-        const result = grid.canCellBeSelected(0, 0);
-
-        expect(result).toBe(true);
-      });
-
-      it('should return true when using DataView with a getItemMetadata() method available returning column selectable as false', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name', selectable: false }] as Column[];
-        const dv = new SlickDataView();
-        dv.setItems(items);
-        grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns } as any);
-        const result = grid.canCellBeSelected(0, 0);
-
-        expect(result).toBe(false);
-      });
-    });
-  });
-
-  describe('Grid Events', () => {
-    let items: Array<{ id: number; name: string; age: number }> = [];
-
-    beforeEach(() => {
-      items = [
-        { id: 0, name: 'Avery', age: 44 },
-        { id: 1, name: 'Bob', age: 20 },
-        { id: 2, name: 'Rachel', age: 46 },
-        { id: 3, name: 'Jane', age: 24 },
-        { id: 4, name: 'John', age: 20 },
-        { id: 5, name: 'Arnold', age: 50 },
-        { id: 6, name: 'Carole', age: 40 },
-        { id: 7, name: 'Jason', age: 48 },
-        { id: 8, name: 'Julie', age: 42 },
-        { id: 9, name: 'Aaron', age: 23 },
-        { id: 10, name: 'Ariane', age: 43 },
-      ];
-    });
-
-    describe('Cell Click', () => {
-      test('double-click event triggered on header resize handle should call "onColumnsResizeDblClick" notify', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onColumnsResizeDblClickSpy = vi.spyOn(grid.onColumnsResizeDblClick, 'notify');
-        const columnElms = container.querySelectorAll('.slick-header-column');
-        const resizeHandleElm = columnElms[0].querySelector('.slick-resizable-handle') as HTMLDivElement;
-
-        const dblClickEvent = new Event('dblclick');
-        resizeHandleElm.dispatchEvent(dblClickEvent);
-
-        expect(onColumnsResizeDblClickSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[0].id, grid }, expect.anything(), grid);
-      });
-
-      it('should not scroll or do anything when getCellFromEvent() returns null', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
-        const scrollViewSpy = vi.spyOn(grid, 'scrollRowIntoView');
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2)');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(scrollViewSpy).not.toHaveBeenCalled();
-      });
-
-      it('should goto cell or do anything when event default is prevented', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const scrollViewSpy = vi.spyOn(grid, 'scrollRowIntoView');
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'defaultPrevented', { writable: true, value: true });
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(scrollViewSpy).not.toHaveBeenCalled();
-      });
-
-      it('should scroll to cell when clicking on cell', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onClickSpy = vi.spyOn(grid.onClick, 'notify');
-        const scrollViewSpy = vi.spyOn(grid, 'scrollRowIntoView');
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(scrollViewSpy).toHaveBeenCalledWith(1, false);
-        expect(onClickSpy).toHaveBeenCalled();
-      });
-
-      it('should scroll to cell when clicking on cell and expect window.getSelection to call removeAllRanges() and addRange() which is a hack to keep text selection on IE/Firefox', () => {
-        const addRangeMock = vi.fn();
-        const removeRangeMock = vi.fn();
-        vi.spyOn(window, 'getSelection')
-          .mockReturnValueOnce({ rangeCount: 2, getRangeAt: () => items[1].name } as any)
-          .mockReturnValueOnce({ removeAllRanges: removeRangeMock, addRange: addRangeMock } as any);
-
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onClickSpy = vi.spyOn(grid.onClick, 'notify');
-        const scrollViewSpy = vi.spyOn(grid, 'scrollRowIntoView');
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(removeRangeMock).toHaveBeenCalled();
-        expect(addRangeMock).toHaveBeenCalledWith(items[1].name);
-        expect(scrollViewSpy).toHaveBeenCalledWith(1, false);
-        expect(onClickSpy).toHaveBeenCalled();
-      });
-    });
-
-    describe('Cell Double-Click', () => {
-      it('should goto cell or do anything when getCellFromEvent() returns null', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
-        const gotoCellSpy = vi.spyOn(grid, 'gotoCell');
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2)');
-        const event = new CustomEvent('dblclick');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(gotoCellSpy).not.toHaveBeenCalled();
-      });
-
-      it('should goto cell or do anything when event default is prevented', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const gotoCellSpy = vi.spyOn(grid, 'gotoCell');
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
-        const event = new CustomEvent('dblclick');
-        Object.defineProperty(event, 'defaultPrevented', { writable: true, value: true });
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(gotoCellSpy).not.toHaveBeenCalled();
-      });
-
-      it('should scroll to cell when clicking on cell', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const gotoCellSpy = vi.spyOn(grid, 'gotoCell');
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
-        const event = new CustomEvent('dblclick');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(gotoCellSpy).toHaveBeenCalled();
-      });
-    });
-
-    describe('Cell Context Menu', () => {
-      it('should trigger onContextMenu event when trigger from viewport even if we cannot find closest slick-cell', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onContextMenuSpy = vi.spyOn(grid.onContextMenu, 'notify');
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2)');
-        const event = new CustomEvent('contextmenu');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[0] });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onContextMenuSpy).toHaveBeenCalled();
-      });
-
-      it('should not trigger onContextMenu event when current cell is active and is editable', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        grid.setActiveCell(1, 1);
-        const onContextMenuSpy = vi.spyOn(grid.onContextMenu, 'notify');
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
-        const event = new CustomEvent('contextmenu');
-        Object.defineProperty(event, 'defaultPrevented', { writable: true, value: true });
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onContextMenuSpy).not.toHaveBeenCalled();
-      });
-
-      it('should trigger onContextMenu event when current cell is not active and not editable', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onContextMenuSpy = vi.spyOn(grid.onContextMenu, 'notify');
-        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
-        const event = new CustomEvent('contextmenu');
-        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onContextMenuSpy).toHaveBeenCalled();
-      });
-    });
-
-    describe('Cell Mouse Events', () => {
-      it('should trigger onMouseEnter notify when hovering a cell', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const onMouseEnterSpy = vi.spyOn(grid.onMouseEnter, 'notify');
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(new CustomEvent('mouseover'));
-
-        expect(onMouseEnterSpy).toHaveBeenCalled();
-      });
-
-      it('should trigger onHeaderMouseLeave notify when leaving the hovering of a cell', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const onMouseLeaveSpy = vi.spyOn(grid.onMouseLeave, 'notify');
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(new CustomEvent('mouseout'));
-
-        expect(onMouseLeaveSpy).toHaveBeenCalled();
-      });
-    });
-
-    describe('Pre-Header Click', () => {
-      it('should trigger onPreHeaderClick notify when not column resizing', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, {
-          ...defaultOptions,
-          enableCellNavigation: true,
-          editable: true,
-          createPreHeaderPanel: true,
-          showPreHeaderPanel: true,
+      describe('Cell Click', () => {
+        test('double-click event triggered on header resize handle should call "onColumnsResizeDblClick" notify', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onColumnsResizeDblClickSpy = vi.spyOn(grid.onColumnsResizeDblClick, 'notify');
+          const columnElms = container.querySelectorAll('.slick-header-column');
+          const resizeHandleElm = columnElms[0].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+          const dblClickEvent = new Event('dblclick');
+          resizeHandleElm.dispatchEvent(dblClickEvent);
+
+          expect(onColumnsResizeDblClickSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[0].id, grid }, expect.anything(), grid);
         });
-        vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
-        const onPreHeaderClickSpy = vi.spyOn(grid.onPreHeaderClick, 'notify');
-        const preHeaderElms = container.querySelectorAll('.slick-preheader-panel');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: preHeaderElms[0] });
-        preHeaderElms[0].dispatchEvent(event);
 
-        expect(onPreHeaderClickSpy).toHaveBeenCalledWith({ node: preHeaderElms[0], grid }, expect.anything(), grid);
-      });
-    });
+        it('should not scroll or do anything when getCellFromEvent() returns null', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
+          const scrollViewSpy = vi.spyOn(grid, 'scrollRowIntoView');
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2)');
+          const event = new CustomEvent('click');
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-    describe('Pre-Header Context Menu', () => {
-      it('should trigger onHeaderClick notify grid context menu event is triggered', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, {
-          ...defaultOptions,
-          enableCellNavigation: true,
-          editable: true,
-          createPreHeaderPanel: true,
-          showPreHeaderPanel: true,
+          expect(scrollViewSpy).not.toHaveBeenCalled();
         });
-        const onContextSpy = vi.spyOn(grid.onPreHeaderContextMenu, 'notify');
-        const preHeaderElms = container.querySelectorAll('.slick-preheader-panel');
-        const event = new CustomEvent('contextmenu');
-        Object.defineProperty(event, 'target', { writable: true, value: preHeaderElms[0] });
-        preHeaderElms[0].dispatchEvent(event);
 
-        expect(onContextSpy).toHaveBeenCalledWith({ node: preHeaderElms[0], grid }, expect.anything(), grid);
-      });
-    });
+        it('should goto cell or do anything when event default is prevented', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const scrollViewSpy = vi.spyOn(grid, 'scrollRowIntoView');
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+          const event = new CustomEvent('click');
+          Object.defineProperty(event, 'defaultPrevented', { writable: true, value: true });
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-    describe('Header Events', () => {
-      it('should trigger onHeaderClick notify when not column resizing', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
-        const onHeaderClickSpy = vi.spyOn(grid.onHeaderClick, 'notify');
-        const headerColumns = container.querySelectorAll('.slick-header-column');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: headerColumns[0] });
-        container.querySelector('.slick-header.slick-header-left')!.dispatchEvent(event);
-
-        expect(onHeaderClickSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
-      });
-    });
-
-    describe('Header Context Menu', () => {
-      it('should trigger onHeaderClick notify grid context menu event is triggered', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onContextSpy = vi.spyOn(grid.onHeaderContextMenu, 'notify');
-        const headerColumns = container.querySelectorAll('.slick-header-column');
-        const event = new CustomEvent('contextmenu');
-        Object.defineProperty(event, 'target', { writable: true, value: headerColumns[0] });
-        container.querySelector('.slick-header.slick-header-left')!.dispatchEvent(event);
-
-        expect(onContextSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
-      });
-    });
-
-    describe('Header Mouse Events', () => {
-      it('should trigger onHeaderMouseEnter notify when hovering a header', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const onHeaderMouseEnterSpy = vi.spyOn(grid.onHeaderMouseEnter, 'notify');
-        container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseenter'));
-
-        expect(onHeaderMouseEnterSpy).toHaveBeenCalled();
-      });
-
-      it('should NOT trigger onHeaderMouseEnter notify when hovering a header when "slick-header-column" class is not found', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const onHeaderMouseEnterSpy = vi.spyOn(grid.onHeaderMouseEnter, 'notify');
-        const headerRowElm = container.querySelector('.slick-header-column');
-        headerRowElm!.classList.remove('slick-header-column');
-        headerRowElm!.dispatchEvent(new CustomEvent('mouseenter'));
-
-        expect(onHeaderMouseEnterSpy).not.toHaveBeenCalled();
-      });
-
-      it('should trigger onHeaderMouseOver notify when hovering a header', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const onHeaderMouseOverSpy = vi.spyOn(grid.onHeaderMouseOver, 'notify');
-        container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseover'));
-
-        expect(onHeaderMouseOverSpy).toHaveBeenCalled();
-      });
-
-      it('should NOT trigger onHeaderMouseOver notify when hovering a header when "slick-header-column" class is not found', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const onHeaderMouseOverSpy = vi.spyOn(grid.onHeaderMouseOver, 'notify');
-        const headerRowElm = container.querySelector('.slick-header-column');
-        headerRowElm!.classList.remove('slick-header-column');
-        headerRowElm!.dispatchEvent(new CustomEvent('mouseover'));
-
-        expect(onHeaderMouseOverSpy).not.toHaveBeenCalled();
-      });
-
-      it('should trigger onHeaderMouseLeave notify when leaving the hovering of a header when "slick-header-column" class is not found', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const onHeaderMouseLeaveSpy = vi.spyOn(grid.onHeaderMouseLeave, 'notify');
-        container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseleave'));
-
-        expect(onHeaderMouseLeaveSpy).toHaveBeenCalled();
-      });
-
-      it('should NOT trigger onHeaderMouseLeave notify when leaving the hovering of a header', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const onHeaderMouseLeaveSpy = vi.spyOn(grid.onHeaderMouseLeave, 'notify');
-        const headerRowElm = container.querySelector('.slick-header-column');
-        headerRowElm!.classList.remove('slick-header-column');
-        headerRowElm!.dispatchEvent(new CustomEvent('mouseleave'));
-
-        expect(onHeaderMouseLeaveSpy).not.toHaveBeenCalled();
-      });
-
-      it('should trigger onHeaderMouseOut notify when leaving the hovering of a header when "slick-header-column" class is not found', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const onHeaderMouseOutSpy = vi.spyOn(grid.onHeaderMouseOut, 'notify');
-        container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseout'));
-
-        expect(onHeaderMouseOutSpy).toHaveBeenCalled();
-      });
-
-      it('should NOT trigger onHeaderMouseOut notify when leaving the hovering of a header', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
-        const onHeaderMouseOutSpy = vi.spyOn(grid.onHeaderMouseOut, 'notify');
-        const headerRowElm = container.querySelector('.slick-header-column');
-        headerRowElm!.classList.remove('slick-header-column');
-        headerRowElm!.dispatchEvent(new CustomEvent('mouseout'));
-
-        expect(onHeaderMouseOutSpy).not.toHaveBeenCalled();
-      });
-
-      it('should trigger onHeaderRowMouseEnter notify when hovering a header', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
-        const onHeaderRowMouseEnterSpy = vi.spyOn(grid.onHeaderRowMouseEnter, 'notify');
-        container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseenter'));
-
-        expect(onHeaderRowMouseEnterSpy).toHaveBeenCalled();
-      });
-
-      it('should trigger onHeaderRowMouseOver notify when hovering a header', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
-        const onHeaderRowMouseOverSpy = vi.spyOn(grid.onHeaderRowMouseOver, 'notify');
-        container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseover'));
-
-        expect(onHeaderRowMouseOverSpy).toHaveBeenCalled();
-      });
-
-      it('should update the shared horizontal scroller when scrolling in headerRow DOM element', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
-        const headerRowElm = container.querySelector('.slick-headerrow') as HTMLDivElement;
-        Object.defineProperty(headerRowElm, 'scrollLeft', { writable: true, value: 25 });
-
-        headerRowElm.dispatchEvent(new CustomEvent('scroll'));
-
-        expect((grid as any)._dockingHorizontalScroller.scrollLeft).toBe(25);
-      });
-
-      it('should update the shared horizontal scroller when scrolling in footerRow DOM element', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, {
-          ...defaultOptions,
-          createFooterRow: true,
-          showFooterRow: true,
-          enableCellNavigation: true,
+          expect(scrollViewSpy).not.toHaveBeenCalled();
         });
-        const footerRowElm = container.querySelector('.slick-footerrow') as HTMLDivElement;
-        Object.defineProperty(footerRowElm, 'scrollLeft', { writable: true, value: 25 });
 
-        footerRowElm.dispatchEvent(new CustomEvent('scroll'));
+        it('should scroll to cell when clicking on cell', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onClickSpy = vi.spyOn(grid.onClick, 'notify');
+          const scrollViewSpy = vi.spyOn(grid, 'scrollRowIntoView');
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+          const event = new CustomEvent('click');
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-        expect((grid as any)._dockingHorizontalScroller.scrollLeft).toBe(25);
-      });
-
-      it('should update the shared horizontal scroller when scrolling in preHeader DOM element', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, {
-          ...defaultOptions,
-          createPreHeaderPanel: true,
-          preHeaderPanelHeight: 44,
-          showPreHeaderPanel: true,
-          enableCellNavigation: true,
+          expect(scrollViewSpy).toHaveBeenCalledWith(1, false);
+          expect(onClickSpy).toHaveBeenCalled();
         });
-        const preheaderElm = container.querySelector('.slick-preheader-panel') as HTMLDivElement;
-        Object.defineProperty(preheaderElm, 'scrollLeft', { writable: true, value: 25 });
 
-        preheaderElm.dispatchEvent(new CustomEvent('scroll'));
+        it('should scroll to cell when clicking on cell and expect window.getSelection to call removeAllRanges() and addRange() which is a hack to keep text selection on IE/Firefox', () => {
+          const addRangeMock = vi.fn();
+          const removeRangeMock = vi.fn();
+          vi.spyOn(window, 'getSelection')
+            .mockReturnValueOnce({ rangeCount: 2, getRangeAt: () => items[1].name } as any)
+            .mockReturnValueOnce({ removeAllRanges: removeRangeMock, addRange: addRangeMock } as any);
 
-        expect((grid as any)._dockingHorizontalScroller.scrollLeft).toBe(25);
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onClickSpy = vi.spyOn(grid.onClick, 'notify');
+          const scrollViewSpy = vi.spyOn(grid, 'scrollRowIntoView');
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+          const event = new CustomEvent('click');
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-        // when enableTextSelectionOnCells isn't enabled and trigger IE related code
-        const selectStartEvent = new CustomEvent('selectstart');
-        const eventStartSpy = vi.spyOn(selectStartEvent, 'preventDefault');
-        Object.defineProperty(selectStartEvent, 'target', { writable: true, value: document.createElement('TextArea') });
-        grid.getViewportNode()!.dispatchEvent(selectStartEvent);
-
-        expect(eventStartSpy).not.toHaveBeenCalled();
-      });
-
-      it('should update the shared horizontal scroller when scrolling in topHeader DOM element', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, {
-          ...defaultOptions,
-          createTopHeaderPanel: true,
-          topHeaderPanelHeight: 44,
-          showTopHeaderPanel: true,
-          enableCellNavigation: true,
+          expect(removeRangeMock).toHaveBeenCalled();
+          expect(addRangeMock).toHaveBeenCalledWith(items[1].name);
+          expect(scrollViewSpy).toHaveBeenCalledWith(1, false);
+          expect(onClickSpy).toHaveBeenCalled();
         });
-        const topheaderElm = container.querySelector('.slick-topheader-panel') as HTMLDivElement;
-        Object.defineProperty(topheaderElm, 'scrollLeft', { writable: true, value: 25 });
-
-        topheaderElm.dispatchEvent(new CustomEvent('scroll'));
-
-        expect((grid as any)._dockingHorizontalScroller.scrollLeft).toBe(25);
-
-        // when enableTextSelectionOnCells isn't enabled and trigger IE related code
-        const selectStartEvent = new CustomEvent('selectstart');
-        const eventStartSpy = vi.spyOn(selectStartEvent, 'preventDefault');
-        Object.defineProperty(selectStartEvent, 'target', { writable: true, value: null });
-        grid.getViewportNode()!.dispatchEvent(selectStartEvent);
-
-        expect(eventStartSpy).toHaveBeenCalled();
       });
 
-      it('should NOT trigger onHeaderRowMouseEnter notify when hovering a header when "slick-headerrow-column" class is not found', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
-        const onHeaderRowMouseEnterSpy = vi.spyOn(grid.onHeaderRowMouseEnter, 'notify');
-        const headerRowElm = container.querySelector('.slick-headerrow-column');
-        headerRowElm!.classList.remove('slick-headerrow-column');
-        headerRowElm!.dispatchEvent(new CustomEvent('mouseenter'));
+      describe('Cell Double-Click', () => {
+        it('should goto cell or do anything when getCellFromEvent() returns null', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
+          const gotoCellSpy = vi.spyOn(grid, 'gotoCell');
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2)');
+          const event = new CustomEvent('dblclick');
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-        expect(onHeaderRowMouseEnterSpy).not.toHaveBeenCalled();
-      });
-
-      it('should NOT trigger onHeaderRowMouseOver notify when hovering a header when "slick-headerrow-column" class is not found', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
-        const onHeaderRowMouseOverSpy = vi.spyOn(grid.onHeaderRowMouseOver, 'notify');
-        const headerRowElm = container.querySelector('.slick-headerrow-column');
-        headerRowElm!.classList.remove('slick-headerrow-column');
-        headerRowElm!.dispatchEvent(new CustomEvent('mouseover'));
-
-        expect(onHeaderRowMouseOverSpy).not.toHaveBeenCalled();
-      });
-
-      it('should trigger onHeaderRowMouseLeave notify when leaving the hovering of a header', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
-        const onHeaderRowMouseLeaveSpy = vi.spyOn(grid.onHeaderRowMouseLeave, 'notify');
-        container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseleave'));
-
-        expect(onHeaderRowMouseLeaveSpy).toHaveBeenCalled();
-      });
-
-      it('should NOT trigger onHeaderRowMouseLeave notify when leaving the hovering of a header when "slick-headerrow-column" class is not found', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
-        const onHeaderRowMouseLeaveSpy = vi.spyOn(grid.onHeaderRowMouseLeave, 'notify');
-        const headerRowElm = container.querySelector('.slick-headerrow-column');
-        headerRowElm!.classList.remove('slick-headerrow-column');
-        headerRowElm!.dispatchEvent(new CustomEvent('mouseleave'));
-
-        expect(onHeaderRowMouseLeaveSpy).not.toHaveBeenCalled();
-      });
-
-      it('should trigger onHeaderRowMouseOut notify when leaving the hovering of a header', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
-        const onHeaderRowMouseOutSpy = vi.spyOn(grid.onHeaderRowMouseOut, 'notify');
-        container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseout'));
-
-        expect(onHeaderRowMouseOutSpy).toHaveBeenCalled();
-      });
-
-      it('should NOT trigger onHeaderRowMouseOut notify when leaving the hovering of a header when "slick-headerrow-column" class is not found', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
-        const onHeaderRowMouseOutSpy = vi.spyOn(grid.onHeaderRowMouseOut, 'notify');
-        const headerRowElm = container.querySelector('.slick-headerrow-column');
-        headerRowElm!.classList.remove('slick-headerrow-column');
-        headerRowElm!.dispatchEvent(new CustomEvent('mouseout'));
-
-        expect(onHeaderRowMouseOutSpy).not.toHaveBeenCalled();
-      });
-    });
-
-    describe('Footer Click', () => {
-      it('should trigger onFooterClick notify when not column resizing', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, enableCellNavigation: true });
-        const onFooterClickSpy = vi.spyOn(grid.onFooterClick, 'notify');
-        const FooterColumns = container.querySelectorAll('.slick-footerrow-column');
-        const event = new CustomEvent('click');
-        Object.defineProperty(event, 'target', { writable: true, value: FooterColumns[0] });
-        container.querySelector('.slick-footerrow-columns.slick-footerrow-columns-left')!.dispatchEvent(event);
-
-        expect(onFooterClickSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
-      });
-    });
-
-    describe('Footer Context Menu', () => {
-      it('should trigger onFooterClick notify grid context menu event is triggered', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, enableCellNavigation: true });
-        const onContextSpy = vi.spyOn(grid.onFooterContextMenu, 'notify');
-        const footerColumns = container.querySelectorAll('.slick-footerrow-column');
-        const event = new CustomEvent('contextmenu');
-        Object.defineProperty(event, 'target', { writable: true, value: footerColumns[0] });
-        container.querySelector('.slick-footerrow-columns.slick-footerrow-columns-left')!.dispatchEvent(event);
-
-        expect(onContextSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
-      });
-    });
-
-    describe('Keydown Events', () => {
-      it('should copy cell value to clipboard when triggering Ctrl+C key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, {
-          ...defaultOptions,
-          enableCellNavigation: true,
-          enableExcelCopyBuffer: false,
-          editable: true,
+          expect(gotoCellSpy).not.toHaveBeenCalled();
         });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'C' });
-        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(copyCellToClipboard).toHaveBeenCalled();
-      });
+        it('should goto cell or do anything when event default is prevented', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const gotoCellSpy = vi.spyOn(grid, 'gotoCell');
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+          const event = new CustomEvent('dblclick');
+          Object.defineProperty(event, 'defaultPrevented', { writable: true, value: true });
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-      it('should call navigateRowStart() when triggering Home key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateRowStartSpy = vi.spyOn(grid, 'navigateRowStart');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'Home' });
-        Object.defineProperty(event, 'ctrlKey', { writable: true, value: false });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateRowStartSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateRowStart() when triggering Ctrl+ArrowLeft key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateRowStartSpy = vi.spyOn(grid, 'navigateRowStart');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowLeft' });
-        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateRowStartSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateTopStart() when triggering Ctrl+Home key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateTopStartSpy = vi.spyOn(grid, 'navigateTopStart');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'Home' });
-        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateTopStartSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateTop() when triggering Ctrl+ArrowUp key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateTopSpy = vi.spyOn(grid, 'navigateTop');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowUp' });
-        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateTopSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateBottomEnd() when triggering Ctrl+End key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateBottomEndSpy = vi.spyOn(grid, 'navigateBottomEnd');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'End' });
-        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateBottomEndSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateRowEnd() when triggering End key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateRowEndSpy = vi.spyOn(grid, 'navigateRowEnd');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'End' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateRowEndSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateRowEnd() when triggering Ctrl+ArrowRight key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateRowEndSpy = vi.spyOn(grid, 'navigateRowEnd');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowRight' });
-        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateRowEndSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateBottom() when triggering Ctrl+ArrowDown key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateBottomSpy = vi.spyOn(grid, 'navigateBottom');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowDown' });
-        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateBottomSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateTop() when triggering Ctrl+ArrowUp key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateTopSpy = vi.spyOn(grid, 'navigateTop');
-        const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowUp' });
-        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateTopSpy).toHaveBeenCalled();
-        expect(unsetActiveCellSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigatePageDown() when triggering PageDown key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigatePageDownSpy = vi.spyOn(grid, 'navigatePageDown');
-        const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'PageDown' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigatePageDownSpy).toHaveBeenCalled();
-        expect(unsetActiveCellSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigatePageUp() when triggering PageDown key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigatePageUpSpy = vi.spyOn(grid, 'navigatePageUp');
-        const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'PageUp' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigatePageUpSpy).toHaveBeenCalled();
-        expect(unsetActiveCellSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateLeft() when triggering PageDown key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateLeftSpy = vi.spyOn(grid, 'navigateLeft');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowLeft' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateLeftSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateRight() when triggering PageDown key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateRightSpy = vi.spyOn(grid, 'navigateRight');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowRight' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateRightSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateUp() when triggering PageDown key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateUpSpy = vi.spyOn(grid, 'navigateUp');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowUp' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateUpSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateDown() when triggering PageDown key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowDown' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateDownSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateNext() when triggering PageDown key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigateNextSpy = vi.spyOn(grid, 'navigateNext');
-        const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigateNextSpy).toHaveBeenCalled();
-        expect(unsetActiveCellSpy).toHaveBeenCalled();
-      });
-
-      it('should focus first header entry point when tabbing from leading focus sink', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-
-        const focusHeaderMenuSpy = vi.spyOn(grid, 'focusHeaderMenuOrColumn');
-        const navigateNextSpy = vi.spyOn(grid, 'navigateNext');
-        const event = new window.KeyboardEvent('keydown', { key: 'Tab', bubbles: true });
-
-        ((grid as any)._focusSink as HTMLElement).dispatchEvent(event);
-
-        expect(focusHeaderMenuSpy).toHaveBeenCalledWith(0);
-        expect(navigateNextSpy).not.toHaveBeenCalled();
-      });
-
-      it('should focus header-row filter when shift+tabbing from trailing focus sink at first cell', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, {
-          ...defaultOptions,
-          enableCellNavigation: true,
-          editable: true,
-          showHeaderRow: true,
+          expect(gotoCellSpy).not.toHaveBeenCalled();
         });
-        grid.setActiveRow(0, 0);
-        grid.setActiveCell(0, 0);
 
-        const focusHeaderRowFilterSpy = vi.spyOn(grid, 'focusHeaderRowFilter');
-        const navigatePrevSpy = vi.spyOn(grid, 'navigatePrev');
-        const event = new window.KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true });
+        it('should scroll to cell when clicking on cell', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const gotoCellSpy = vi.spyOn(grid, 'gotoCell');
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+          const event = new CustomEvent('dblclick');
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-        ((grid as any)._focusSink2 as HTMLElement).dispatchEvent(event);
-
-        expect(focusHeaderRowFilterSpy).toHaveBeenCalledWith(true);
-        expect(navigatePrevSpy).not.toHaveBeenCalled();
-      });
-
-      it('should focus grid-menu fallback when shift+tabbing from trailing focus sink and header-row is hidden', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, {
-          ...defaultOptions,
-          enableCellNavigation: true,
-          editable: true,
-          showHeaderRow: false,
+          expect(gotoCellSpy).toHaveBeenCalled();
         });
-        grid.setActiveRow(0, 0);
-        grid.setActiveCell(0, 0);
-
-        const focusGridMenuSpy = vi.spyOn(grid, 'focusGridMenu');
-        const focusHeaderRowFilterSpy = vi.spyOn(grid, 'focusHeaderRowFilter');
-        const event = new window.KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true });
-
-        ((grid as any)._focusSink2 as HTMLElement).dispatchEvent(event);
-
-        expect(focusGridMenuSpy).toHaveBeenCalled();
-        expect(focusHeaderRowFilterSpy).not.toHaveBeenCalled();
       });
 
-      it('should call navigatePrev() when triggering Enter key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const navigatePrevSpy = vi.spyOn(grid, 'navigatePrev');
-        const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
-        Object.defineProperty(event, 'shiftKey', { writable: true, value: true });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+      describe('Cell Context Menu', () => {
+        it('should trigger onContextMenu event when trigger from viewport even if we cannot find closest slick-cell', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onContextMenuSpy = vi.spyOn(grid.onContextMenu, 'notify');
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2)');
+          const event = new CustomEvent('contextmenu');
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[0] });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(navigatePrevSpy).toHaveBeenCalled();
-        expect(unsetActiveCellSpy).toHaveBeenCalled();
-      });
-
-      it('should focus on last header row filter when triggering Shift+Tab key when currently focus on first grid cell', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        grid.setActiveRow(0, 0);
-        grid.setActiveCell(0, 0);
-
-        const focusHeaderRowSpy = vi.spyOn(grid, 'focusHeaderRowFilter');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
-        Object.defineProperty(event, 'shiftKey', { writable: true, value: true });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(focusHeaderRowSpy).toHaveBeenCalled();
-      });
-
-      it('should do nothing when triggering Escape key without any editor to cancel', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const event = new CustomEvent('keydown');
-        const cancelEditSpy = vi.spyOn(grid.getEditorLock(), 'cancelCurrentEdit');
-        Object.defineProperty(event, 'key', { writable: true, value: 'Escape' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(cancelEditSpy).not.toHaveBeenCalled();
-      });
-
-      it('should open the editor in the active cell if F2 is pressed', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, {
-          ...defaultOptions,
-          enableCellNavigation: true,
-          editable: true,
-          autoEdit: false,
+          expect(onContextMenuSpy).toHaveBeenCalled();
         });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const event = new CustomEvent('keydown');
-        const activateEditorSpy = vi.spyOn(grid.getEditorLock(), 'activate');
-        Object.defineProperty(event, 'key', { writable: true, value: 'F2' });
-        grid.setActiveCell(0, 1, false);
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(activateEditorSpy).toHaveBeenCalled();
-      });
+        it('should not trigger onContextMenu event when current cell is active and is editable', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          grid.setActiveCell(1, 1);
+          const onContextMenuSpy = vi.spyOn(grid.onContextMenu, 'notify');
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+          const event = new CustomEvent('contextmenu');
+          Object.defineProperty(event, 'defaultPrevented', { writable: true, value: true });
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-      it('should call focusHeaderColumn when triggering F6 key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const focusHeaderColumnSpy = vi.spyOn(grid, 'focusHeaderColumn');
-        const event = new window.KeyboardEvent('keydown', { key: 'F6', bubbles: true });
-        container.querySelector('.grid-canvas')?.dispatchEvent(event);
-        expect(focusHeaderColumnSpy).toHaveBeenCalled();
-      });
-
-      it('should cancel opened editor when triggering Escape key and editor is active', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const event = new CustomEvent('keydown');
-        vi.spyOn(grid.getEditorLock(), 'isActive').mockReturnValue(true);
-        const cancelEditSpy = vi.spyOn(grid.getEditorLock(), 'cancelCurrentEdit');
-        Object.defineProperty(event, 'key', { writable: true, value: 'Escape' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(cancelEditSpy).toHaveBeenCalled();
-      });
-
-      it('should call navigateDown() when triggering Enter key', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-      });
-
-      it('should commit editor & set focus to next down cell when triggering Enter key with an active Editor', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(true);
-        grid.setActiveCell(0, 1);
-        grid.editActiveCell(InputEditor as any, true);
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const event = new CustomEvent('keydown');
-        const stopPropagationSpy = vi.spyOn(event, 'stopPropagation');
-        Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(stopPropagationSpy).toHaveBeenCalled();
-      });
-
-      it('should navigateDown() when triggering Enter key with an active Editor that is considered a new row', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        grid.setActiveCell(0, 1);
-        grid.editActiveCell(InputEditor as any, true);
-        vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(0);
-        const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const event = new CustomEvent('keydown');
-        const stopPropagationSpy = vi.spyOn(event, 'stopPropagation');
-        Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(stopPropagationSpy).toHaveBeenCalled();
-        expect(navigateDownSpy).toHaveBeenCalled();
-      });
-
-      it('should do nothing when active Editor has multiple keyCaptureList and event is triggered is part of that list', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
-        grid.setActiveCell(0, 1);
-        grid.editActiveCell(InputEditor as any, true);
-        (InputEditor.prototype as any).keyCaptureList = [1, 2, 3];
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const event = new CustomEvent('keydown');
-        const stopPropagationSpy = vi.spyOn(event, 'stopPropagation');
-        Object.defineProperty(event, 'which', { writable: true, value: 2 });
-        Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
-
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(stopPropagationSpy).not.toHaveBeenCalled();
-      });
-
-      it('should open editor when "autoEditByKeypress" is enabled and we start typing a character on an active cell', () => {
-        const columns = [
-          { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, {
-          ...defaultOptions,
-          enableCellNavigation: true,
-          enableExcelCopyBuffer: false,
-          editable: true,
-          autoEdit: false,
-          autoEditByKeypress: true,
+          expect(onContextMenuSpy).not.toHaveBeenCalled();
         });
-        const activeCell = { row: 0, cell: 1 };
-        grid.setActiveCell(activeCell.row, activeCell.cell);
-        vi.spyOn(grid, 'getActiveCell').mockReturnValue(activeCell);
-        vi.spyOn(grid, 'getCellNode').mockReturnValue(document.createElement('div'));
-        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
-        const event = new CustomEvent('keydown');
-        Object.defineProperty(event, 'key', { writable: true, value: 'C' });
-        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-        expect(onKeyDownSpy).toHaveBeenCalled();
-        expect(grid.getCellEditor()).toBeTruthy();
+        it('should trigger onContextMenu event when current cell is not active and not editable', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onContextMenuSpy = vi.spyOn(grid.onContextMenu, 'notify');
+          const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+          const event = new CustomEvent('contextmenu');
+          Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onContextMenuSpy).toHaveBeenCalled();
+        });
+      });
+
+      describe('Cell Mouse Events', () => {
+        it('should trigger onMouseEnter notify when hovering a cell', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const onMouseEnterSpy = vi.spyOn(grid.onMouseEnter, 'notify');
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(new CustomEvent('mouseover'));
+
+          expect(onMouseEnterSpy).toHaveBeenCalled();
+        });
+
+        it('should trigger onHeaderMouseLeave notify when leaving the hovering of a cell', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const onMouseLeaveSpy = vi.spyOn(grid.onMouseLeave, 'notify');
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(new CustomEvent('mouseout'));
+
+          expect(onMouseLeaveSpy).toHaveBeenCalled();
+        });
+      });
+
+      describe('Pre-Header Click', () => {
+        it('should trigger onPreHeaderClick notify when not column resizing', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, {
+            ...defaultOptions,
+            enableCellNavigation: true,
+            editable: true,
+            createPreHeaderPanel: true,
+            showPreHeaderPanel: true,
+          });
+          vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
+          const onPreHeaderClickSpy = vi.spyOn(grid.onPreHeaderClick, 'notify');
+          const preHeaderElms = container.querySelectorAll('.slick-preheader-panel');
+          const event = new CustomEvent('click');
+          Object.defineProperty(event, 'target', { writable: true, value: preHeaderElms[0] });
+          preHeaderElms[0].dispatchEvent(event);
+
+          expect(onPreHeaderClickSpy).toHaveBeenCalledWith({ node: preHeaderElms[0], grid }, expect.anything(), grid);
+        });
+      });
+
+      describe('Pre-Header Context Menu', () => {
+        it('should trigger onHeaderClick notify grid context menu event is triggered', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, {
+            ...defaultOptions,
+            enableCellNavigation: true,
+            editable: true,
+            createPreHeaderPanel: true,
+            showPreHeaderPanel: true,
+          });
+          const onContextSpy = vi.spyOn(grid.onPreHeaderContextMenu, 'notify');
+          const preHeaderElms = container.querySelectorAll('.slick-preheader-panel');
+          const event = new CustomEvent('contextmenu');
+          Object.defineProperty(event, 'target', { writable: true, value: preHeaderElms[0] });
+          preHeaderElms[0].dispatchEvent(event);
+
+          expect(onContextSpy).toHaveBeenCalledWith({ node: preHeaderElms[0], grid }, expect.anything(), grid);
+        });
+      });
+
+      describe('Header Events', () => {
+        it('should trigger onHeaderClick notify when not column resizing', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
+          const onHeaderClickSpy = vi.spyOn(grid.onHeaderClick, 'notify');
+          const headerColumns = container.querySelectorAll('.slick-header-column');
+          const event = new CustomEvent('click');
+          Object.defineProperty(event, 'target', { writable: true, value: headerColumns[0] });
+          container.querySelector('.slick-header.slick-header-left')!.dispatchEvent(event);
+
+          expect(onHeaderClickSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+        });
+      });
+
+      describe('Header Context Menu', () => {
+        it('should trigger onHeaderClick notify grid context menu event is triggered', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onContextSpy = vi.spyOn(grid.onHeaderContextMenu, 'notify');
+          const headerColumns = container.querySelectorAll('.slick-header-column');
+          const event = new CustomEvent('contextmenu');
+          Object.defineProperty(event, 'target', { writable: true, value: headerColumns[0] });
+          container.querySelector('.slick-header.slick-header-left')!.dispatchEvent(event);
+
+          expect(onContextSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+        });
+      });
+
+      describe('Header Mouse Events', () => {
+        it('should trigger onHeaderMouseEnter notify when hovering a header', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const onHeaderMouseEnterSpy = vi.spyOn(grid.onHeaderMouseEnter, 'notify');
+          container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseenter'));
+
+          expect(onHeaderMouseEnterSpy).toHaveBeenCalled();
+        });
+
+        it('should NOT trigger onHeaderMouseEnter notify when hovering a header when "slick-header-column" class is not found', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const onHeaderMouseEnterSpy = vi.spyOn(grid.onHeaderMouseEnter, 'notify');
+          const headerRowElm = container.querySelector('.slick-header-column');
+          headerRowElm!.classList.remove('slick-header-column');
+          headerRowElm!.dispatchEvent(new CustomEvent('mouseenter'));
+
+          expect(onHeaderMouseEnterSpy).not.toHaveBeenCalled();
+        });
+
+        it('should trigger onHeaderMouseOver notify when hovering a header', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const onHeaderMouseOverSpy = vi.spyOn(grid.onHeaderMouseOver, 'notify');
+          container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseover'));
+
+          expect(onHeaderMouseOverSpy).toHaveBeenCalled();
+        });
+
+        it('should NOT trigger onHeaderMouseOver notify when hovering a header when "slick-header-column" class is not found', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const onHeaderMouseOverSpy = vi.spyOn(grid.onHeaderMouseOver, 'notify');
+          const headerRowElm = container.querySelector('.slick-header-column');
+          headerRowElm!.classList.remove('slick-header-column');
+          headerRowElm!.dispatchEvent(new CustomEvent('mouseover'));
+
+          expect(onHeaderMouseOverSpy).not.toHaveBeenCalled();
+        });
+
+        it('should trigger onHeaderMouseLeave notify when leaving the hovering of a header when "slick-header-column" class is not found', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const onHeaderMouseLeaveSpy = vi.spyOn(grid.onHeaderMouseLeave, 'notify');
+          container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseleave'));
+
+          expect(onHeaderMouseLeaveSpy).toHaveBeenCalled();
+        });
+
+        it('should NOT trigger onHeaderMouseLeave notify when leaving the hovering of a header', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const onHeaderMouseLeaveSpy = vi.spyOn(grid.onHeaderMouseLeave, 'notify');
+          const headerRowElm = container.querySelector('.slick-header-column');
+          headerRowElm!.classList.remove('slick-header-column');
+          headerRowElm!.dispatchEvent(new CustomEvent('mouseleave'));
+
+          expect(onHeaderMouseLeaveSpy).not.toHaveBeenCalled();
+        });
+
+        it('should trigger onHeaderMouseOut notify when leaving the hovering of a header when "slick-header-column" class is not found', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const onHeaderMouseOutSpy = vi.spyOn(grid.onHeaderMouseOut, 'notify');
+          container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseout'));
+
+          expect(onHeaderMouseOutSpy).toHaveBeenCalled();
+        });
+
+        it('should NOT trigger onHeaderMouseOut notify when leaving the hovering of a header', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+          const onHeaderMouseOutSpy = vi.spyOn(grid.onHeaderMouseOut, 'notify');
+          const headerRowElm = container.querySelector('.slick-header-column');
+          headerRowElm!.classList.remove('slick-header-column');
+          headerRowElm!.dispatchEvent(new CustomEvent('mouseout'));
+
+          expect(onHeaderMouseOutSpy).not.toHaveBeenCalled();
+        });
+
+        it('should trigger onHeaderRowMouseEnter notify when hovering a header', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+          const onHeaderRowMouseEnterSpy = vi.spyOn(grid.onHeaderRowMouseEnter, 'notify');
+          container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseenter'));
+
+          expect(onHeaderRowMouseEnterSpy).toHaveBeenCalled();
+        });
+
+        it('should trigger onHeaderRowMouseOver notify when hovering a header', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+          const onHeaderRowMouseOverSpy = vi.spyOn(grid.onHeaderRowMouseOver, 'notify');
+          container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseover'));
+
+          expect(onHeaderRowMouseOverSpy).toHaveBeenCalled();
+        });
+
+        it('should update the shared horizontal scroller when scrolling in headerRow DOM element', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+          const headerRowElm = container.querySelector('.slick-headerrow') as HTMLDivElement;
+          Object.defineProperty(headerRowElm, 'scrollLeft', { writable: true, value: 25 });
+
+          headerRowElm.dispatchEvent(new CustomEvent('scroll'));
+
+          expect((grid as any)._dockingHorizontalScroller.scrollLeft).toBe(25);
+        });
+
+        it('should update the shared horizontal scroller when scrolling in footerRow DOM element', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, {
+            ...defaultOptions,
+            createFooterRow: true,
+            showFooterRow: true,
+            enableCellNavigation: true,
+          });
+          const footerRowElm = container.querySelector('.slick-footerrow') as HTMLDivElement;
+          Object.defineProperty(footerRowElm, 'scrollLeft', { writable: true, value: 25 });
+
+          footerRowElm.dispatchEvent(new CustomEvent('scroll'));
+
+          expect((grid as any)._dockingHorizontalScroller.scrollLeft).toBe(25);
+        });
+
+        it('should update the shared horizontal scroller when scrolling in preHeader DOM element', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, {
+            ...defaultOptions,
+            createPreHeaderPanel: true,
+            preHeaderPanelHeight: 44,
+            showPreHeaderPanel: true,
+            enableCellNavigation: true,
+          });
+          const preheaderElm = container.querySelector('.slick-preheader-panel') as HTMLDivElement;
+          Object.defineProperty(preheaderElm, 'scrollLeft', { writable: true, value: 25 });
+
+          preheaderElm.dispatchEvent(new CustomEvent('scroll'));
+
+          expect((grid as any)._dockingHorizontalScroller.scrollLeft).toBe(25);
+
+          // when enableTextSelectionOnCells isn't enabled and trigger IE related code
+          const selectStartEvent = new CustomEvent('selectstart');
+          const eventStartSpy = vi.spyOn(selectStartEvent, 'preventDefault');
+          Object.defineProperty(selectStartEvent, 'target', { writable: true, value: document.createElement('TextArea') });
+          grid.getViewportNode()!.dispatchEvent(selectStartEvent);
+
+          expect(eventStartSpy).not.toHaveBeenCalled();
+        });
+
+        it('should update the shared horizontal scroller when scrolling in topHeader DOM element', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, {
+            ...defaultOptions,
+            createTopHeaderPanel: true,
+            topHeaderPanelHeight: 44,
+            showTopHeaderPanel: true,
+            enableCellNavigation: true,
+          });
+          const topheaderElm = container.querySelector('.slick-topheader-panel') as HTMLDivElement;
+          Object.defineProperty(topheaderElm, 'scrollLeft', { writable: true, value: 25 });
+
+          topheaderElm.dispatchEvent(new CustomEvent('scroll'));
+
+          expect((grid as any)._dockingHorizontalScroller.scrollLeft).toBe(25);
+
+          // when enableTextSelectionOnCells isn't enabled and trigger IE related code
+          const selectStartEvent = new CustomEvent('selectstart');
+          const eventStartSpy = vi.spyOn(selectStartEvent, 'preventDefault');
+          Object.defineProperty(selectStartEvent, 'target', { writable: true, value: null });
+          grid.getViewportNode()!.dispatchEvent(selectStartEvent);
+
+          expect(eventStartSpy).toHaveBeenCalled();
+        });
+
+        it('should NOT trigger onHeaderRowMouseEnter notify when hovering a header when "slick-headerrow-column" class is not found', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+          const onHeaderRowMouseEnterSpy = vi.spyOn(grid.onHeaderRowMouseEnter, 'notify');
+          const headerRowElm = container.querySelector('.slick-headerrow-column');
+          headerRowElm!.classList.remove('slick-headerrow-column');
+          headerRowElm!.dispatchEvent(new CustomEvent('mouseenter'));
+
+          expect(onHeaderRowMouseEnterSpy).not.toHaveBeenCalled();
+        });
+
+        it('should NOT trigger onHeaderRowMouseOver notify when hovering a header when "slick-headerrow-column" class is not found', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+          const onHeaderRowMouseOverSpy = vi.spyOn(grid.onHeaderRowMouseOver, 'notify');
+          const headerRowElm = container.querySelector('.slick-headerrow-column');
+          headerRowElm!.classList.remove('slick-headerrow-column');
+          headerRowElm!.dispatchEvent(new CustomEvent('mouseover'));
+
+          expect(onHeaderRowMouseOverSpy).not.toHaveBeenCalled();
+        });
+
+        it('should trigger onHeaderRowMouseLeave notify when leaving the hovering of a header', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+          const onHeaderRowMouseLeaveSpy = vi.spyOn(grid.onHeaderRowMouseLeave, 'notify');
+          container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseleave'));
+
+          expect(onHeaderRowMouseLeaveSpy).toHaveBeenCalled();
+        });
+
+        it('should NOT trigger onHeaderRowMouseLeave notify when leaving the hovering of a header when "slick-headerrow-column" class is not found', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+          const onHeaderRowMouseLeaveSpy = vi.spyOn(grid.onHeaderRowMouseLeave, 'notify');
+          const headerRowElm = container.querySelector('.slick-headerrow-column');
+          headerRowElm!.classList.remove('slick-headerrow-column');
+          headerRowElm!.dispatchEvent(new CustomEvent('mouseleave'));
+
+          expect(onHeaderRowMouseLeaveSpy).not.toHaveBeenCalled();
+        });
+
+        it('should trigger onHeaderRowMouseOut notify when leaving the hovering of a header', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+          const onHeaderRowMouseOutSpy = vi.spyOn(grid.onHeaderRowMouseOut, 'notify');
+          container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseout'));
+
+          expect(onHeaderRowMouseOutSpy).toHaveBeenCalled();
+        });
+
+        it('should NOT trigger onHeaderRowMouseOut notify when leaving the hovering of a header when "slick-headerrow-column" class is not found', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+          const onHeaderRowMouseOutSpy = vi.spyOn(grid.onHeaderRowMouseOut, 'notify');
+          const headerRowElm = container.querySelector('.slick-headerrow-column');
+          headerRowElm!.classList.remove('slick-headerrow-column');
+          headerRowElm!.dispatchEvent(new CustomEvent('mouseout'));
+
+          expect(onHeaderRowMouseOutSpy).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('Footer Click', () => {
+        it('should trigger onFooterClick notify when not column resizing', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, enableCellNavigation: true });
+          const onFooterClickSpy = vi.spyOn(grid.onFooterClick, 'notify');
+          const FooterColumns = container.querySelectorAll('.slick-footerrow-column');
+          const event = new CustomEvent('click');
+          Object.defineProperty(event, 'target', { writable: true, value: FooterColumns[0] });
+          container.querySelector('.slick-footerrow-columns.slick-footerrow-columns-left')!.dispatchEvent(event);
+
+          expect(onFooterClickSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+        });
+      });
+
+      describe('Footer Context Menu', () => {
+        it('should trigger onFooterClick notify grid context menu event is triggered', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, enableCellNavigation: true });
+          const onContextSpy = vi.spyOn(grid.onFooterContextMenu, 'notify');
+          const footerColumns = container.querySelectorAll('.slick-footerrow-column');
+          const event = new CustomEvent('contextmenu');
+          Object.defineProperty(event, 'target', { writable: true, value: footerColumns[0] });
+          container.querySelector('.slick-footerrow-columns.slick-footerrow-columns-left')!.dispatchEvent(event);
+
+          expect(onContextSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+        });
+      });
+
+      describe('Keydown Events', () => {
+        it('should copy cell value to clipboard when triggering Ctrl+C key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, {
+            ...defaultOptions,
+            enableCellNavigation: true,
+            enableExcelCopyBuffer: false,
+            editable: true,
+          });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'C' });
+          Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(copyCellToClipboard).toHaveBeenCalled();
+        });
+
+        it('should call navigateRowStart() when triggering Home key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateRowStartSpy = vi.spyOn(grid, 'navigateRowStart');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'Home' });
+          Object.defineProperty(event, 'ctrlKey', { writable: true, value: false });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateRowStartSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateRowStart() when triggering Ctrl+ArrowLeft key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateRowStartSpy = vi.spyOn(grid, 'navigateRowStart');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'ArrowLeft' });
+          Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateRowStartSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateTopStart() when triggering Ctrl+Home key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateTopStartSpy = vi.spyOn(grid, 'navigateTopStart');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'Home' });
+          Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateTopStartSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateTop() when triggering Ctrl+ArrowUp key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateTopSpy = vi.spyOn(grid, 'navigateTop');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'ArrowUp' });
+          Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateTopSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateBottomEnd() when triggering Ctrl+End key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateBottomEndSpy = vi.spyOn(grid, 'navigateBottomEnd');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'End' });
+          Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateBottomEndSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateRowEnd() when triggering End key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateRowEndSpy = vi.spyOn(grid, 'navigateRowEnd');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'End' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateRowEndSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateRowEnd() when triggering Ctrl+ArrowRight key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateRowEndSpy = vi.spyOn(grid, 'navigateRowEnd');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'ArrowRight' });
+          Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateRowEndSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateBottom() when triggering Ctrl+ArrowDown key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateBottomSpy = vi.spyOn(grid, 'navigateBottom');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'ArrowDown' });
+          Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateBottomSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateTop() when triggering Ctrl+ArrowUp key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateTopSpy = vi.spyOn(grid, 'navigateTop');
+          const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'ArrowUp' });
+          Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateTopSpy).toHaveBeenCalled();
+          expect(unsetActiveCellSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigatePageDown() when triggering PageDown key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigatePageDownSpy = vi.spyOn(grid, 'navigatePageDown');
+          const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'PageDown' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigatePageDownSpy).toHaveBeenCalled();
+          expect(unsetActiveCellSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigatePageUp() when triggering PageDown key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigatePageUpSpy = vi.spyOn(grid, 'navigatePageUp');
+          const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'PageUp' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigatePageUpSpy).toHaveBeenCalled();
+          expect(unsetActiveCellSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateLeft() when triggering PageDown key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateLeftSpy = vi.spyOn(grid, 'navigateLeft');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'ArrowLeft' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateLeftSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateRight() when triggering PageDown key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateRightSpy = vi.spyOn(grid, 'navigateRight');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'ArrowRight' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateRightSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateUp() when triggering PageDown key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateUpSpy = vi.spyOn(grid, 'navigateUp');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'ArrowUp' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateUpSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateDown() when triggering PageDown key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'ArrowDown' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateDownSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateNext() when triggering PageDown key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigateNextSpy = vi.spyOn(grid, 'navigateNext');
+          const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigateNextSpy).toHaveBeenCalled();
+          expect(unsetActiveCellSpy).toHaveBeenCalled();
+        });
+
+        it('should focus first header entry point when tabbing from leading focus sink', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+
+          const focusHeaderMenuSpy = vi.spyOn(grid, 'focusHeaderMenuOrColumn');
+          const navigateNextSpy = vi.spyOn(grid, 'navigateNext');
+          const event = new window.KeyboardEvent('keydown', { key: 'Tab', bubbles: true });
+
+          ((grid as any)._focusSink as HTMLElement).dispatchEvent(event);
+
+          expect(focusHeaderMenuSpy).toHaveBeenCalledWith(0);
+          expect(navigateNextSpy).not.toHaveBeenCalled();
+        });
+
+        it('should focus header-row filter when shift+tabbing from trailing focus sink at first cell', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, {
+            ...defaultOptions,
+            enableCellNavigation: true,
+            editable: true,
+            showHeaderRow: true,
+          });
+          grid.setActiveRow(0, 0);
+          grid.setActiveCell(0, 0);
+
+          const focusHeaderRowFilterSpy = vi.spyOn(grid, 'focusHeaderRowFilter');
+          const navigatePrevSpy = vi.spyOn(grid, 'navigatePrev');
+          const event = new window.KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true });
+
+          ((grid as any)._focusSink2 as HTMLElement).dispatchEvent(event);
+
+          expect(focusHeaderRowFilterSpy).toHaveBeenCalledWith(true);
+          expect(navigatePrevSpy).not.toHaveBeenCalled();
+        });
+
+        it('should focus grid-menu fallback when shift+tabbing from trailing focus sink and header-row is hidden', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, {
+            ...defaultOptions,
+            enableCellNavigation: true,
+            editable: true,
+            showHeaderRow: false,
+          });
+          grid.setActiveRow(0, 0);
+          grid.setActiveCell(0, 0);
+
+          const focusGridMenuSpy = vi.spyOn(grid, 'focusGridMenu');
+          const focusHeaderRowFilterSpy = vi.spyOn(grid, 'focusHeaderRowFilter');
+          const event = new window.KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true });
+
+          ((grid as any)._focusSink2 as HTMLElement).dispatchEvent(event);
+
+          expect(focusGridMenuSpy).toHaveBeenCalled();
+          expect(focusHeaderRowFilterSpy).not.toHaveBeenCalled();
+        });
+
+        it('should call navigatePrev() when triggering Enter key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const navigatePrevSpy = vi.spyOn(grid, 'navigatePrev');
+          const unsetActiveCellSpy = vi.spyOn(grid, 'unsetActiveCell');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
+          Object.defineProperty(event, 'shiftKey', { writable: true, value: true });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(navigatePrevSpy).toHaveBeenCalled();
+          expect(unsetActiveCellSpy).toHaveBeenCalled();
+        });
+
+        it('should focus on last header row filter when triggering Shift+Tab key when currently focus on first grid cell', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          grid.setActiveRow(0, 0);
+          grid.setActiveCell(0, 0);
+
+          const focusHeaderRowSpy = vi.spyOn(grid, 'focusHeaderRowFilter');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
+          Object.defineProperty(event, 'shiftKey', { writable: true, value: true });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(focusHeaderRowSpy).toHaveBeenCalled();
+        });
+
+        it('should do nothing when triggering Escape key without any editor to cancel', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const event = new CustomEvent('keydown');
+          const cancelEditSpy = vi.spyOn(grid.getEditorLock(), 'cancelCurrentEdit');
+          Object.defineProperty(event, 'key', { writable: true, value: 'Escape' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(cancelEditSpy).not.toHaveBeenCalled();
+        });
+
+        it('should open the editor in the active cell if F2 is pressed', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, {
+            ...defaultOptions,
+            enableCellNavigation: true,
+            editable: true,
+            autoEdit: false,
+          });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const event = new CustomEvent('keydown');
+          const activateEditorSpy = vi.spyOn(grid.getEditorLock(), 'activate');
+          Object.defineProperty(event, 'key', { writable: true, value: 'F2' });
+          grid.setActiveCell(0, 1, false);
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(activateEditorSpy).toHaveBeenCalled();
+        });
+
+        it('should call focusHeaderColumn when triggering F6 key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const focusHeaderColumnSpy = vi.spyOn(grid, 'focusHeaderColumn');
+          const event = new window.KeyboardEvent('keydown', { key: 'F6', bubbles: true });
+          container.querySelector('.grid-canvas')?.dispatchEvent(event);
+          expect(focusHeaderColumnSpy).toHaveBeenCalled();
+        });
+
+        it('should cancel opened editor when triggering Escape key and editor is active', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const event = new CustomEvent('keydown');
+          vi.spyOn(grid.getEditorLock(), 'isActive').mockReturnValue(true);
+          const cancelEditSpy = vi.spyOn(grid.getEditorLock(), 'cancelCurrentEdit');
+          Object.defineProperty(event, 'key', { writable: true, value: 'Escape' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(cancelEditSpy).toHaveBeenCalled();
+        });
+
+        it('should call navigateDown() when triggering Enter key', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+        });
+
+        it('should commit editor & set focus to next down cell when triggering Enter key with an active Editor', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(true);
+          grid.setActiveCell(0, 1);
+          grid.editActiveCell(InputEditor as any, true);
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const event = new CustomEvent('keydown');
+          const stopPropagationSpy = vi.spyOn(event, 'stopPropagation');
+          Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(stopPropagationSpy).toHaveBeenCalled();
+        });
+
+        it('should navigateDown() when triggering Enter key with an active Editor that is considered a new row', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          grid.setActiveCell(0, 1);
+          grid.editActiveCell(InputEditor as any, true);
+          vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(0);
+          const navigateDownSpy = vi.spyOn(grid, 'navigateDown');
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const event = new CustomEvent('keydown');
+          const stopPropagationSpy = vi.spyOn(event, 'stopPropagation');
+          Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(stopPropagationSpy).toHaveBeenCalled();
+          expect(navigateDownSpy).toHaveBeenCalled();
+        });
+
+        it('should do nothing when active Editor has multiple keyCaptureList and event is triggered is part of that list', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+          grid.setActiveCell(0, 1);
+          grid.editActiveCell(InputEditor as any, true);
+          (InputEditor.prototype as any).keyCaptureList = [1, 2, 3];
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const event = new CustomEvent('keydown');
+          const stopPropagationSpy = vi.spyOn(event, 'stopPropagation');
+          Object.defineProperty(event, 'which', { writable: true, value: 2 });
+          Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(stopPropagationSpy).not.toHaveBeenCalled();
+        });
+
+        it('should open editor when "autoEditByKeypress" is enabled and we start typing a character on an active cell', () => {
+          const columns = [
+            { id: 'name', field: 'name', name: 'Name' },
+            { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+          ] as Column[];
+          grid = new SlickGrid<any, Column>(container, items, columns, {
+            ...defaultOptions,
+            enableCellNavigation: true,
+            enableExcelCopyBuffer: false,
+            editable: true,
+            autoEdit: false,
+            autoEditByKeypress: true,
+          });
+          const activeCell = { row: 0, cell: 1 };
+          grid.setActiveCell(activeCell.row, activeCell.cell);
+          vi.spyOn(grid, 'getActiveCell').mockReturnValue(activeCell);
+          vi.spyOn(grid, 'getCellNode').mockReturnValue(document.createElement('div'));
+          const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+          const event = new CustomEvent('keydown');
+          Object.defineProperty(event, 'key', { writable: true, value: 'C' });
+          container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+          expect(onKeyDownSpy).toHaveBeenCalled();
+          expect(grid.getCellEditor()).toBeTruthy();
+        });
       });
     });
   });

@@ -1,51 +1,15 @@
-import type { Column, DockingOption, DockingSide, PinnedRows, StickyRows } from '../interfaces/index.js';
-
-export type ColumnDockingBand = 'left' | 'center' | 'right';
-export type RowDockingBand = 'top' | 'center' | 'bottom';
-
-export interface DockedColumn {
-  band: ColumnDockingBand;
-  index: number;
-  naturalOffset: number;
-  offset: number;
-  sticky: boolean;
-  width: number;
-}
-
-export interface ColumnDockingLayout {
-  center: DockedColumn[];
-  centerWidth: number;
-  contentWidth: number;
-  left: DockedColumn[];
-  leftBaseWidth: number;
-  leftWidth: number;
-  revision: number;
-  right: DockedColumn[];
-  rightBaseWidth: number;
-  rightWidth: number;
-}
-
-export interface DockingRow {
-  height: number;
-  id: number | string;
-  index: number;
-  top: number;
-}
-
-export interface DockedRow extends DockingRow {
-  band: RowDockingBand;
-  offset: number;
-  sticky: boolean;
-}
-
-export interface RowDockingLayout {
-  bottom: DockedRow[];
-  bottomHeight: number;
-  center: DockedRow[];
-  revision: number;
-  top: DockedRow[];
-  topHeight: number;
-}
+import type {
+  Column,
+  ColumnDockingLayout,
+  DockedColumn,
+  DockedRow,
+  DockingOption,
+  DockingRow,
+  DockingSide,
+  PinnedRows,
+  RowDockingLayout,
+  StickyRows,
+} from '../interfaces/index.js';
 
 const DEFAULT_OPTIONS: Required<DockingOption> = {
   maxColumnViewportWidthPercent: 60,

@@ -543,7 +543,7 @@ export class SlickVanillaGridBundle<TData = any> {
     // directly into the array below, so both `_columns` & `sharedService.allColumns` stay in sync
     this.extensionService.createExtensionsBeforeGridCreation(this._columns, this._gridOptions);
 
-    // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+    // if user entered some Pinning "presets", we need to apply them in the grid options
     if (this.gridOptions.presets?.pinning) {
       this.gridOptions = { ...this.gridOptions, ...this.gridOptions.presets.pinning };
     }
@@ -571,9 +571,6 @@ export class SlickVanillaGridBundle<TData = any> {
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView as SlickDataView);
     this._slickgridInitialized = true;
-
-    // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-    this.sharedService.frozenVisibleColumnId = this.slickGrid.getFrozenColumnId();
 
     // initialize the SlickGrid grid
     this.slickGrid.init();

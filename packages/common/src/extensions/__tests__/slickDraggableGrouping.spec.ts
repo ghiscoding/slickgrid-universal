@@ -839,9 +839,8 @@ describe('Draggable Grouping Plugin', () => {
       });
     });
 
-    describe('with Frozen Grid', () => {
+    describe('with Pinned Grid', () => {
       beforeEach(() => {
-        gridOptionsMock.frozenColumn = 2;
         setColumnsSpy.mockClear();
         vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
         getColumnIndexSpy.mockReturnValueOnce(0).mockReturnValueOnce(1).mockReturnValueOnce(2).mockReturnValueOnce(3).mockReturnValueOnce(4);

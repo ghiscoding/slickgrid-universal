@@ -700,7 +700,8 @@ export class ResizerService {
 
   /**
    * Checks wether the new calculated column width is valid or not, if it's not then return a lower and acceptable width.
-   * When using frozen (pinned) column, we cannot make our column wider than the grid viewport because it would become unusable/unscrollable
+   * When using pinned columns, they cannot become wider than the grid viewport because the center
+   * region would become unusable and unscrollable.
    * and so if we do reach that threshold then our calculated column width becomes officially invalid
    * @param {Object} column - column definition
    * @param {Number} newColumnWidth - calculated column width input

@@ -38,9 +38,9 @@
         type="number"
         data-test="frozen-column-count"
         class="frozen-column-count is-narrow input is-small"
-        value.bind="frozenColumnCount"
+        value.bind="pinnedColumnCount"
       />
-      <button class="button is-small" data-test="set-frozen-columns-btn" onclick.trigger="changeFrozenColumnCount()">Set</button>
+      <button class="button is-small" data-test="set-frozen-columns-btn" onclick.trigger="changePinnedColumnCount()">Set</button>
     </span>
     <label for="is-autoscroll">Auto Scroll: </label>
     <input id="is-autoscroll" type="checkbox" data-test="is-autoscroll-chk" checked.bind="isAutoScroll" />

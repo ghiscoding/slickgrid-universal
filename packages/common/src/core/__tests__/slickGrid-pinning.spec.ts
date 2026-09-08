@@ -47,58 +47,24 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getPinnedColumns('right').map((column) => column.id)).toEqual(['d']);
     expect(container.querySelector('.slick-docking-horizontal-scroller')).toBeTruthy();
     expect(container.querySelector('.slick-docking-overlay')).toBeTruthy();
+    expect((slickGrid as any)._paneTopL.style.left).toBe('');
+    expect((slickGrid as any)._paneTopL.style.width).toBe('100%');
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
-  });
-
-  it('covers legacy freeze validation and full-width calculations', () => {
-    const invalidPicker = vi.fn();
-    const invalidWidth = vi.fn();
-    const slickGrid = createGrid({ invalidColumnFreezePickerCallback: invalidPicker, invalidColumnFreezeWidthCallback: invalidWidth });
-    const internals = slickGrid as any;
-    internals._options.pinning = undefined;
-    internals._options.frozenColumn = 0;
-    internals._options.skipFreezeColumnValidation = false;
-    internals._options.invalidColumnFreezePickerCallback = invalidPicker;
-    internals._prevFrozenColumnIdx = -1;
-    internals.viewportW = 800;
-    internals._options.fullWidthRows = true;
-    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => undefined);
-    internals._defaults.invalidColumnFreezePickerCallback('invalid');
-    expect(alertSpy).toHaveBeenCalledWith('invalid');
-
-    expect(slickGrid.validateColumnFreeze()).toBeTruthy();
-    expect(slickGrid.validateColumnFreeze('b')).toBeTruthy();
-    expect(slickGrid.validateColumnFreeze('a', true)).toBeFalsy();
-    expect(invalidPicker).toHaveBeenCalledTimes(1);
-
-    internals._options.frozenColumn = 2;
-    expect(slickGrid.validateColumnFreeze('a')).toBeTruthy();
-    internals._options.frozenColumn = 0;
-    internals._options.invalidColumnFreezeWidthCallback = invalidWidth;
-    internals._invalidfrozenAlerted = false;
-    container.style.width = '100px';
-    Object.defineProperty(container, 'clientWidth', { configurable: true, value: 100 });
-    vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({ width: 100 } as DOMRect);
-    expect(slickGrid.validateColumnFreezeWidth(2)).toBeFalsy();
-    expect(invalidWidth).toHaveBeenCalled();
-
-    internals._options.pinning = { columns: { left: ['a'], right: [] } };
-    expect(slickGrid.validateColumnFreeze('a')).toBeTruthy();
-
-    const canvasWidth = slickGrid.getCanvasWidth();
-    expect(canvasWidth).toBeGreaterThan(0);
-    expect(internals.canvasWidthR).toBeGreaterThan(internals.canvasWidthL);
   });
 
   it('covers pinning validation, row identity resolution, and cleanup timer cancellation', () => {
     const invalidPicker = vi.fn();
     const invalidWidth = vi.fn();
-    const slickGrid = createGrid({ invalidColumnFreezePickerCallback: invalidPicker, invalidColumnFreezeWidthCallback: invalidWidth });
+    const slickGrid = createGrid({ invalidColumnPinningPickerCallback: invalidPicker, invalidColumnPinningWidthCallback: invalidWidth });
     const internals = slickGrid as any;
-    internals._options.invalidColumnFreezePickerCallback = invalidPicker;
-    internals._options.invalidColumnFreezeWidthCallback = invalidWidth;
-    internals._options.skipFreezeColumnValidation = false;
-    internals._invalidfrozenAlerted = false;
+    const alertSpy = vi.spyOn(globalThis, 'alert').mockImplementation(() => undefined);
+    internals._defaults.invalidColumnPinningWidthCallback('default callback');
+    expect(alertSpy).toHaveBeenCalledWith('default callback');
+    alertSpy.mockRestore();
+    internals._options.invalidColumnPinningPickerCallback = invalidPicker;
+    internals._options.invalidColumnPinningWidthCallback = invalidWidth;
+    internals._options.skipPinningValidation = false;
+    internals._invalidPinningAlerted = false;
     Object.defineProperty(internals._viewportTopL, 'clientWidth', { configurable: true, value: 100 });
     vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({ width: 100 } as DOMRect);
     const invalidPinned = new Map([
@@ -109,8 +75,11 @@ describe('SlickGrid unified pinning', () => {
     ]);
     expect(internals.validatePinnedColumnIndexes(invalidPinned, true)).toBe(false);
     expect(invalidPicker).toHaveBeenCalled();
-    internals._invalidfrozenAlerted = false;
     expect(internals.validatePinnedColumnIndexes(new Map([[0, 'left']]), true)).toBe(true);
+    slickGrid.getColumns()[1].hidden = true;
+    expect(internals.validatePinnedColumnIndexes(new Map([[1, 'left']]), true)).toBe(true);
+    expect(internals.validatePinnedColumnWidth(new Map([[1, 'left']]), true)).toBe(true);
+    slickGrid.getColumns()[1].hidden = false;
     slickGrid.getColumns()[0].minWidth = 90;
     slickGrid.getColumns()[0].maxWidth = 95;
     expect(
@@ -123,11 +92,24 @@ describe('SlickGrid unified pinning', () => {
       )
     ).toBe(false);
     expect(invalidWidth).toHaveBeenCalled();
+    expect(internals.validatePinnedColumnWidth(invalidPinned, true)).toBe(false);
     internals.pinningColumnsState.set('a', 'right');
     slickGrid.getColumns()[0].pinned = 'left';
     internals.applyColumnPinningOptions(slickGrid.getColumns());
     expect(slickGrid.getColumns()[0].pinned).toBe('right');
     expect(internals.getPinnedColumnIndexes()).toEqual(new Map([[0, 'right']]));
+
+    const hasDockedColumnsSpy = vi.spyOn(internals, 'hasDockedColumns').mockReturnValue(true);
+    internals._options.fullWidthRows = true;
+    internals.viewportW = 1000;
+    internals.viewportHasVScroll = false;
+    expect(internals.getCanvasWidth()).toBeGreaterThan(0);
+    hasDockedColumnsSpy.mockRestore();
+
+    internals._options.pinning = { columns: { left: ['a', 'b', 'c', 'd'] } };
+    internals._invalidPinningAlerted = false;
+    expect(internals.validateColumnPinning(undefined, true)).toBe(false);
+    expect(internals.validateColumnPinning('a', true)).toBe(false);
 
     expect(internals.getRowIdentity(0)).toBe(0);
     expect(internals.getRowIdentity(99)).toBe(99);
@@ -172,14 +154,6 @@ describe('SlickGrid unified pinning', () => {
     const applyRowTopOffsetSpy = vi.spyOn(internals, 'applyRowTopOffset').mockImplementation(() => undefined);
     internals.updateRowPositions(true);
     expect(applyRowTopOffsetSpy).toHaveBeenCalledWith(row, 0);
-
-    internals._options.frozenBottom = true;
-    internals.actualFrozenRow = 1;
-    vi.spyOn(slickGrid as any, 'getRowPosition').mockImplementation((...args: unknown[]) => (args[0] as number) * 10);
-    expect(internals.computeFrozenRowsHeight(4)).toBe(30);
-    internals._options.frozenBottom = false;
-    internals._options.frozenRow = 2;
-    expect(internals.computeFrozenRowsHeight(4)).toBe(20);
 
     expect(internals.getColumnByIndex(-1)).toBeUndefined();
     const hiddenColumns = slickGrid.getColumns();
@@ -259,17 +233,11 @@ describe('SlickGrid unified pinning', () => {
 
   it('covers compatibility getters, scrollTo, option rejection, and wheel setup', () => {
     const invalidPicker = vi.fn();
-    const slickGrid = createGrid({ invalidColumnFreezePickerCallback: invalidPicker });
+    const slickGrid = createGrid({ invalidColumnPinningPickerCallback: invalidPicker });
     const internals = slickGrid as any;
-
-    const hasFrozenColumnsSpy = vi.spyOn(internals, 'hasFrozenColumns');
-    hasFrozenColumnsSpy.mockReturnValue(false);
-    slickGrid.getHeader();
-    hasFrozenColumnsSpy.mockRestore();
 
     const usesDockingChromeSpy = vi.spyOn(internals, 'usesDockingChromeRegions');
     usesDockingChromeSpy.mockReturnValue(false);
-    internals._options.frozenColumn = -1;
     slickGrid.getHeader();
     slickGrid.getHeaderColumn(0);
     slickGrid.getHeaderRowColumn(0);
@@ -280,24 +248,8 @@ describe('SlickGrid unified pinning', () => {
     slickGrid.getHeaderColumn(0);
     slickGrid.getHeaderRowColumn(0);
     slickGrid.getFooterRowColumn(0);
-    internals._options.frozenColumn = 0;
     usesDockingChromeSpy.mockRestore();
 
-    internals._options.pinning = undefined;
-    internals._options.frozenColumn = 0;
-    internals._headers = [internals._headerL];
-    expect(slickGrid.getColumnByIndex(0)).toBe(internals._headerL.children[0]);
-    expect(slickGrid.getHeaderColumn(0)).toBe(internals._headerL.children[0]);
-
-    internals.hasFrozenRows = true;
-    internals._options.frozenBottom = false;
-    internals.actualFrozenRow = 0;
-    internals._viewportTopL = document.createElement('div');
-    internals._viewportBottomL = document.createElement('div');
-    internals._viewportBottomR = document.createElement('div');
-    internals._viewportTopL.scrollTop = 0;
-    internals._viewportBottomL.scrollTop = 0;
-    internals._viewportBottomR.scrollTop = 0;
     slickGrid.scrollTo(10);
 
     const dockingScrollerSpy = vi.spyOn(internals, 'hasDockingHorizontalScroller').mockReturnValue(false);
@@ -320,12 +272,8 @@ describe('SlickGrid unified pinning', () => {
     internals._viewportTopR = document.createElement('div');
     internals._headerRowScrollerR = document.createElement('div');
     internals._headerRowScrollerL = document.createElement('div');
-    internals._options.frozenColumn = 0;
-    internals.hasFrozenRows = true;
     slickGrid.scrollToX(20);
-    internals._options.frozenColumn = -1;
     slickGrid.scrollToX(25);
-    internals._options.frozenColumn = 0;
     dockingScrollerSpy.mockRestore();
 
     const columnsWithGap = [undefined, ...slickGrid.getColumns()];
@@ -335,14 +283,11 @@ describe('SlickGrid unified pinning', () => {
     internals.rowDockingLayout.top = [{ index: 0, height: 20, sticky: false }];
     expect(internals.getTopPinnedRowsHeight()).toBe(20);
 
-    internals._options.skipFreezeColumnValidation = true;
+    internals._options.skipPinningValidation = true;
     expect(internals.validatePinnedColumnIndexes(new Map())).toBe(true);
-    internals._options.skipFreezeColumnValidation = false;
+    internals._options.skipPinningValidation = false;
     slickGrid.setColumnStickiness('a', false);
     slickGrid.setColumnStickiness('a', false);
-    internals._options.frozenColumn = 0;
-    expect(slickGrid.getFrozenColumnId()).toBe('a');
-
     const getColumnByIdSpy = vi.spyOn(internals, 'getColumnById').mockReturnValue(slickGrid.getColumns()[0]);
     const getColumnIndexSpy = vi.spyOn(internals, 'getColumnIndex').mockReturnValue(undefined);
     slickGrid.getColumns()[0].pinned = null;
@@ -350,16 +295,14 @@ describe('SlickGrid unified pinning', () => {
     getColumnByIdSpy.mockRestore();
     getColumnIndexSpy.mockRestore();
 
-    const originalValidate = internals.validateColumnFreeze;
-    internals.validateColumnFreeze = vi.fn().mockReturnValue(false);
+    const originalValidate = internals.validateColumnPinning;
+    internals.validateColumnPinning = vi.fn().mockReturnValue(false);
     slickGrid.setColumns(slickGrid.getColumns());
-    internals.validateColumnFreeze = originalValidate;
+    internals.validateColumnPinning = originalValidate;
 
-    vi.spyOn(internals, 'validateColumnFreezeWidth').mockReturnValue(true);
+    vi.spyOn(internals, 'validatePinnedColumnWidth').mockReturnValue(true);
     vi.spyOn(internals, 'getViewports').mockReturnValue([internals._viewportScrollContainerX]);
-    const handleScrollSpy = vi.spyOn(internals, 'handleScroll').mockImplementation(() => undefined);
-    slickGrid.setOptions({ frozenColumn: 0 }, true, true, true);
-    expect(handleScrollSpy).toHaveBeenCalled();
+    slickGrid.setOptions({ pinning: { columns: { left: 0 } } }, true, true, true);
 
     vi.spyOn(internals, 'shouldRefreshFormattedCachePlanner').mockReturnValue(true);
     const syncPlannerSpy = vi.spyOn(internals, 'syncDataViewFormattedCachePlanner').mockImplementation(() => undefined);
@@ -367,7 +310,7 @@ describe('SlickGrid unified pinning', () => {
     expect(syncPlannerSpy).toHaveBeenCalledWith(true);
 
     internals._options.pinning = { columns: { left: ['a', 'b', 'c', 'd'], right: [] } };
-    internals._invalidfrozenAlerted = false;
+    internals._invalidPinningAlerted = false;
     slickGrid.setOptions({ pinning: { columns: { left: ['a', 'b', 'c', 'd'], right: [] } } }, true, true, true);
     expect(invalidPicker).toHaveBeenCalled();
 
@@ -427,15 +370,13 @@ describe('SlickGrid unified pinning', () => {
 
   it('covers legacy resize calculations and column cache cleanup paths', () => {
     vi.useFakeTimers();
-    const slickGrid = createGrid({ forceFitColumns: true, autoScrollOnColumnResize: false });
+    const slickGrid = createGrid({ forceFitColumns: true, autoScrollOnColumnResize: false, pinning: { columns: { right: ['d'] } } });
     const internals = slickGrid as any;
     slickGrid.getColumns().forEach((column) => {
       column.resizable = true;
       column.width = 100;
       column.previousWidth = 100;
     });
-    internals._options.frozenColumn = 0;
-    internals._options.frozenRightViewportMinWidth = 10;
     internals.canvasWidthL = 100;
     internals.canvasWidthR = 300;
     internals.viewportW = 250;
@@ -489,6 +430,7 @@ describe('SlickGrid unified pinning', () => {
     autoHandle.dispatchEvent(down);
     container.dispatchEvent(down);
     document.body.dispatchEvent(autoMove);
+    document.body.dispatchEvent(autoMove);
     internals.initialized = false;
     vi.advanceTimersByTime(30);
     document.body.dispatchEvent(autoMove);
@@ -541,90 +483,6 @@ describe('SlickGrid unified pinning', () => {
     vi.useRealTimers();
   });
 
-  it('covers frozen canvas resize branches and variable row-height recalculation', () => {
-    const slickGrid = createGrid({ createPreHeaderPanel: true, showPreHeaderPanel: true });
-    const internals = slickGrid as any;
-    internals.viewportW = 200;
-    internals.viewportH = 400;
-    internals.frozenRowsHeight = 50;
-    internals.hasFrozenRows = true;
-    internals._options.frozenColumn = 0;
-    internals._options.frozenRow = 0;
-    internals._options.frozenBottom = true;
-    internals._options.autoHeight = false;
-    Object.defineProperty(internals._viewportTopL, 'clientWidth', { configurable: true, value: 100 });
-    internals.dockingLayout.contentWidth = 500;
-    internals.scrollbarDimensions = { width: 15, height: 15 };
-
-    vi.spyOn(internals, 'getViewportWidth').mockImplementation(() => internals.viewportW);
-    vi.spyOn(internals, 'getViewportHeight').mockImplementation(() => internals.viewportH);
-    vi.spyOn(internals, 'hasDockingHorizontalScroller').mockReturnValue(true);
-    vi.spyOn(internals, 'refreshDockingLayout').mockReturnValueOnce(false).mockReturnValueOnce(true).mockReturnValue(false);
-    vi.spyOn(internals, 'updateDockingOverlayDimensions').mockImplementation(() => undefined);
-    vi.spyOn(internals, 'updateDockingHorizontalScrollerDimensions').mockImplementation(() => undefined);
-    vi.spyOn(internals, 'measureScrollbar').mockReturnValue({ width: 15, height: 15 });
-    vi.spyOn(internals, 'updateColumnCaches').mockImplementation(() => undefined);
-    vi.spyOn(internals, 'applyColumnWidths').mockImplementation(() => undefined);
-    vi.spyOn(internals, 'applyDockingToColumnChrome').mockImplementation(() => undefined);
-    vi.spyOn(internals, 'invalidateAllRows').mockImplementation(() => undefined);
-    vi.spyOn(internals, 'scrollToX').mockImplementation(() => undefined);
-    vi.spyOn(internals, 'updateRowCount').mockImplementation(() => undefined);
-    vi.spyOn(internals, 'handleScroll').mockImplementation(() => undefined);
-    vi.spyOn(internals, 'render').mockImplementation(() => undefined);
-
-    internals.resizeCanvas();
-
-    internals._options.autoHeight = true;
-    internals._options.frozenBottom = false;
-    internals.hasFrozenRows = false;
-    internals._options.showPreHeaderPanel = true;
-    internals._options.showTopHeaderPanel = true;
-    internals._options.topHeaderPanelHeight = 5;
-    internals._paneHeaderL.style.height = '10px';
-    Object.defineProperty(internals._paneHeaderL, 'offsetHeight', { configurable: true, value: 10 });
-    vi.spyOn(internals._paneHeaderL, 'getBoundingClientRect').mockReturnValue({ height: 10 } as DOMRect);
-    internals.resizeCanvas();
-
-    internals._options.autoHeight = false;
-    internals.hasFrozenRows = true;
-    internals._options.frozenColumn = -1;
-    internals.resizeCanvas();
-
-    internals._dockingHorizontalScroller = undefined;
-    (internals.updateDockingHorizontalScrollerDimensions as any).mockRestore();
-    internals.updateDockingHorizontalScrollerDimensions();
-    internals._options.enableVariableRowHeight = true;
-    internals.rowPositionIndexer = undefined;
-    internals.rowHeightsDirty = true;
-    internals.frozenRowHeightsChanged = false;
-    vi.spyOn(internals, 'computeFrozenRowsHeight').mockReturnValue(55);
-    internals.hasFrozenRows = true;
-    internals.actualFrozenRow = 1;
-    internals.ensureRowPositionIndexer(3);
-    expect(internals.frozenRowHeightsChanged).toBe(true);
-
-    internals.rowsCache = { 0: { rowNode: [document.createElement('div')], cellNodesByColumnIdx: {} } };
-    internals._options.frozenRow = 0;
-    internals.cleanUpCells({ top: 0, bottom: 0, leftPx: 0, rightPx: 100 } as any, 0);
-    internals.rowsCache = { 0: { rowNode: [document.createElement('div')], cellRenderQueue: [], cellNodesByColumnIdx: {}, cellColSpans: {} } };
-    internals.dockingByColumn = new Map([[3, { band: 'right' }]]);
-    internals.columnPosLeft = [100, 100, 100, 100];
-    vi.spyOn(internals, 'hasDockedColumns').mockReturnValue(true);
-    vi.spyOn(internals, 'cleanUpCells').mockImplementation(() => undefined);
-    internals.cleanUpAndRenderCells({ top: 0, bottom: 0, leftPx: 0, rightPx: 0 });
-    expect(() => slickGrid.getSelectedRows()).toThrow('SlickGrid Selection model is not set');
-  });
-
-  it('re-applies canvas sizing when frozen row heights change', () => {
-    const slickGrid = createGrid();
-    const internals = slickGrid as any;
-    internals.frozenRowHeightsChanged = true;
-    const resizeSpy = vi.spyOn(internals, 'resizeCanvas').mockImplementation(() => undefined);
-    internals.updateRowCount();
-    expect(resizeSpy).toHaveBeenCalled();
-    expect(internals.frozenRowHeightsChanged).toBe(false);
-  });
-
   it('calculates cell boxes across top/bottom rows and left/right pinned columns', () => {
     const slickGrid = createGrid({
       pinning: { columns: { left: 0, right: ['d'] }, rows: { top: [0], bottom: [2] } },
@@ -644,7 +502,7 @@ describe('SlickGrid unified pinning', () => {
     const invalidPinning = vi.fn();
     const slickGrid = createGrid({
       pinning: { columns: { left: [] } },
-      invalidColumnFreezePickerCallback: invalidPinning,
+      invalidColumnPinningPickerCallback: invalidPinning,
     });
 
     slickGrid.setColumnPinning('b', 'left');
@@ -693,84 +551,6 @@ describe('SlickGrid unified pinning', () => {
     (slickGrid as any).setActiveCellInternal(dockedCell);
 
     expect(slickGrid.getActiveCell()).toEqual({ row: 0, cell: 0 });
-  });
-
-  it('resolves legacy bottom-row coordinates and restores focus when no editor is created', () => {
-    const slickGrid = createGrid({});
-    const canvas = document.createElement('div');
-    canvas.className = 'grid-canvas grid-canvas-bottom';
-    const rowNode = document.createElement('div');
-    rowNode.className = 'slick-row';
-    rowNode.dataset.row = '1';
-    const cell = document.createElement('div');
-    cell.className = 'slick-cell';
-    rowNode.appendChild(cell);
-    canvas.appendChild(rowNode);
-    container.appendChild(canvas);
-
-    (slickGrid as any).hasFrozenRows = true;
-    (slickGrid as any).actualFrozenRow = 1;
-    vi.spyOn(slickGrid as any, 'getFrozenRowOffset').mockReturnValue(5);
-    vi.spyOn(slickGrid as any, 'getCellFromPoint').mockReturnValue({ row: 1, cell: 0 });
-    vi.spyOn(slickGrid as any, 'getCellFromNode').mockReturnValue(0);
-    (slickGrid as any).setActiveCellInternal(cell);
-
-    const focusSpy = vi.spyOn(slickGrid, 'setFocus');
-    slickGrid.gotoCell(0, 0);
-    expect(focusSpy).toHaveBeenCalled();
-  });
-
-  it('maps events from a frozen bottom canvas through the frozen-row offset', () => {
-    const slickGrid = createGrid({});
-    const canvas = document.createElement('div');
-    canvas.className = 'grid-canvas grid-canvas-bottom';
-    const rowNode = document.createElement('div');
-    rowNode.className = 'slick-row';
-    rowNode.dataset.row = '1';
-    const cell = document.createElement('div');
-    cell.className = 'slick-cell';
-    rowNode.appendChild(cell);
-    canvas.appendChild(rowNode);
-    container.appendChild(canvas);
-
-    (slickGrid as any).hasFrozenRows = true;
-    (slickGrid as any).actualFrozenRow = 1;
-    vi.spyOn(slickGrid as any, 'getFrozenRowOffset').mockReturnValue(25);
-    vi.spyOn(slickGrid as any, 'getRowFromNode').mockReturnValue(1);
-    vi.spyOn(slickGrid as any, 'getCellFromPoint').mockReturnValue({ row: 1, cell: 0 });
-    vi.spyOn(slickGrid as any, 'getCellFromNode').mockReturnValue(0);
-    const event = new MouseEvent('click', { bubbles: true, clientX: 5, clientY: 5 });
-    Object.defineProperty(event, 'target', { configurable: true, value: cell });
-
-    expect(slickGrid.getCellFromEvent(event)).toEqual({ row: 1, cell: 0 });
-  });
-
-  it('returns zero for rows above a frozen top boundary', () => {
-    const slickGrid = createGrid({});
-    (slickGrid as any).hasFrozenRows = true;
-    (slickGrid as any)._options.frozenBottom = false;
-    (slickGrid as any).actualFrozenRow = 2;
-    (slickGrid as any).frozenRowsHeight = 50;
-
-    expect(slickGrid.getFrozenRowOffset(1)).toBe(0);
-    expect(slickGrid.getFrozenRowOffset(2)).toBe(50);
-  });
-
-  it('covers frozen-bottom offset calculations and missing row lookup', () => {
-    const slickGrid = createGrid({});
-    expect((slickGrid as any).getRowFromNode(document.createElement('div'))).toBeNull();
-
-    (slickGrid as any).hasFrozenRows = true;
-    (slickGrid as any)._options.frozenBottom = true;
-    (slickGrid as any).actualFrozenRow = 2;
-    (slickGrid as any).h = 20;
-    (slickGrid as any).viewportTopH = 30;
-    vi.spyOn(slickGrid, 'getRowPosition').mockReturnValue(55);
-    expect(slickGrid.getFrozenRowOffset(2)).toBe(55);
-
-    (slickGrid as any).viewportTopH = 10;
-    expect(slickGrid.getFrozenRowOffset(2)).toBe(20);
-    expect(slickGrid.getFrozenRowOffset(1)).toBe(0);
   });
 
   it('queues one deferred sticky-column layout and falls back when animation frames are unavailable', () => {
@@ -892,11 +672,6 @@ describe('SlickGrid unified pinning', () => {
     Object.defineProperty(verticalScroller, 'scrollTop', { configurable: true, writable: true, value: 30 });
     Object.defineProperty(verticalScroller, 'scrollHeight', { configurable: true, value: 500 });
     const handleScrollSpy = vi.spyOn(slickGrid as any, '_handleScroll').mockReturnValue(true);
-    const frozenColumnsSpy = vi
-      .spyOn(slickGrid as any, 'hasFrozenColumns')
-      .mockReturnValueOnce(false)
-      .mockReturnValueOnce(true);
-
     const regularEvent = new MouseEvent('mousewheel', { cancelable: true });
     (slickGrid as any).handleMouseWheel(regularEvent, 0, 2, 1);
     expect((slickGrid as any).scrollTop).toBe(5);
@@ -908,7 +683,106 @@ describe('SlickGrid unified pinning', () => {
     expect((slickGrid as any).scrollLeft).toBe(22);
     expect(shiftEvent.defaultPrevented).toBe(true);
     expect(handleScrollSpy).toHaveBeenCalledTimes(2);
-    expect(frozenColumnsSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('renders when horizontal scrolling changes the pinned-column layout', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });
+    const internals = slickGrid as any;
+    Object.defineProperty(internals._viewportScrollContainerX, 'scrollLeft', { configurable: true, writable: true, value: 10 });
+    Object.defineProperty(internals._viewportScrollContainerX, 'scrollWidth', { configurable: true, value: 900 });
+    Object.defineProperty(internals._viewportScrollContainerX, 'clientWidth', { configurable: true, value: 400 });
+    vi.spyOn(internals, 'refreshDockingLayout').mockReturnValue(true);
+    const renderSpy = vi.spyOn(slickGrid, 'render').mockImplementation(() => undefined);
+
+    internals.handleScroll({ target: internals._viewportScrollContainerX } as Event);
+
+    expect(renderSpy).toHaveBeenCalled();
+  });
+
+  it('handles a vertical mouse-wheel scroll through the internal scroll path', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+    Object.defineProperty(internals._viewportScrollContainerY, 'scrollTop', { configurable: true, writable: true, value: 0 });
+    Object.defineProperty(internals._viewportScrollContainerY, 'scrollHeight', { configurable: true, value: 900 });
+    Object.defineProperty(internals._viewportScrollContainerY, 'clientHeight', { configurable: true, value: 400 });
+    internals.scrollTop = 25;
+    internals.prevScrollTop = 0;
+    internals.viewportH = 400;
+    vi.spyOn(slickGrid, 'scrollTo').mockImplementation(() => undefined);
+
+    internals._handleScroll('mousewheel');
+
+    expect(internals._viewportScrollContainerY.scrollTop).toBe(25);
+  });
+
+  it('invalidates rows when a resize changes the docking layout', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });
+    const internals = slickGrid as any;
+    vi.spyOn(internals, 'refreshDockingLayout').mockReturnValue(true);
+    const invalidateSpy = vi.spyOn(internals, 'invalidateAllRows');
+
+    slickGrid.resizeCanvas();
+
+    expect(invalidateSpy).toHaveBeenCalled();
+  });
+
+  it('returns early when the docking horizontal scrollbar has not been created', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+    internals._dockingHorizontalScroller = undefined;
+    internals._dockingHorizontalSpacer = undefined;
+
+    expect(internals.updateDockingHorizontalScrollerDimensions()).toBeUndefined();
+  });
+
+  it('skips center cells outside a pinned render range', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });
+    const internals = slickGrid as any;
+
+    internals.cleanUpAndRenderCells({ top: 0, bottom: 0, leftPx: 0, rightPx: 0 });
+
+    expect(slickGrid.getCellNode(0, 0)).toBeTruthy();
+  });
+
+  it('defers sticky-column membership changes during horizontal scrolling', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+    slickGrid.getColumns()[1].sticky = 'left';
+    Object.defineProperty(internals._viewportScrollContainerX, 'scrollLeft', { configurable: true, writable: true, value: 10 });
+    Object.defineProperty(internals._viewportScrollContainerX, 'scrollWidth', { configurable: true, value: 900 });
+    Object.defineProperty(internals._viewportScrollContainerX, 'clientWidth', { configurable: true, value: 400 });
+    const enqueueSpy = vi.spyOn(internals, 'enqueueStickyColumnLayout').mockImplementation(() => undefined);
+
+    internals.handleScroll({ target: internals._viewportScrollContainerX } as Event);
+
+    expect(enqueueSpy).toHaveBeenCalled();
+  });
+
+  it('synchronizes header and viewport scroll positions for bottom row docking', () => {
+    const rightDockedGrid = createGrid({
+      pinning: { columns: { left: 0 }, rows: { bottom: [2] } },
+      createFooterRow: true,
+      showFooterRow: true,
+      showHeaderRow: true,
+    });
+    (rightDockedGrid as any).scrollToX(10);
+
+    const leftOnlyGrid = createGrid({ pinning: { rows: { bottom: [2] } }, showHeaderRow: true });
+    (leftOnlyGrid as any).scrollToX(10);
+
+    expect((leftOnlyGrid as any)._viewportTopL).toBeTruthy();
+  });
+
+  it('reserves horizontal scrollbar height during a resize with docking overflow', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });
+    const internals = slickGrid as any;
+    Object.defineProperty(internals._viewportTopL, 'clientWidth', { configurable: true, value: 100 });
+    internals.scrollbarDimensions = { width: 15, height: 15 };
+    const initialViewportHeight = internals.viewportH;
+
+    slickGrid.resizeCanvas();
+
+    expect(internals.viewportH).toBeLessThan(initialViewportHeight);
   });
 
   it('focuses a keyboard target without allowing the event to bubble', () => {
@@ -924,164 +798,6 @@ describe('SlickGrid unified pinning', () => {
 
     (slickGrid as any).focusElementWithoutBubbling(event, null);
     expect(stopBubblingSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it('moves focus between compatibility frozen panes when tabbing filter controls', () => {
-    const slickGrid = createGrid();
-    (slickGrid as any)._options.frozenColumn = 0;
-
-    const leftPane = document.createElement('div');
-    leftPane.className = 'slick-pane-left';
-    const leftHeader = document.createElement('div');
-    leftHeader.className = 'slick-header-columns';
-    const leftFilter = document.createElement('button');
-    leftFilter.tabIndex = 0;
-    leftHeader.appendChild(leftFilter);
-    leftPane.appendChild(leftHeader);
-
-    const rightPane = document.createElement('div');
-    rightPane.className = 'slick-pane-right';
-    const rightHeader = document.createElement('div');
-    rightHeader.className = 'slick-header-columns';
-    const rightFilter = document.createElement('button');
-    rightFilter.tabIndex = 0;
-    rightHeader.appendChild(rightFilter);
-    rightPane.appendChild(rightHeader);
-    container.append(leftPane, rightPane);
-
-    for (const element of [leftFilter, rightFilter]) {
-      Object.defineProperty(element, 'offsetParent', { configurable: true, value: container });
-    }
-
-    const shiftTabEvent = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'Tab', shiftKey: true });
-    Object.defineProperty(shiftTabEvent, 'target', { configurable: true, value: rightFilter });
-    (slickGrid as any).handleContainerKeyDown(shiftTabEvent);
-    expect(document.activeElement).toBe(leftFilter);
-
-    const tabEvent = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'Tab' });
-    Object.defineProperty(tabEvent, 'target', { configurable: true, value: leftFilter });
-    (slickGrid as any).handleContainerKeyDown(tabEvent);
-    expect(document.activeElement).toBe(rightFilter);
-  });
-
-  it('covers compatibility pane layout updates with frozen rows and columns', () => {
-    const slickGrid = createGrid({
-      createFooterRow: true,
-      createPreHeaderPanel: true,
-      showHeaderRow: true,
-      showPreHeaderPanel: true,
-    });
-    const internals = slickGrid as any;
-    internals._options.frozenColumn = 0;
-    internals._options.frozenRow = 0;
-    internals._options.pinning = undefined;
-    internals.hasFrozenRows = true;
-    internals.actualFrozenRow = 0;
-    const headerRight = document.createElement('div');
-    const headerRowRight = document.createElement('div');
-    const footerRight = document.createElement('div');
-    container.append(headerRight, headerRowRight, footerRight);
-    internals._headerR = headerRight;
-    internals._headerRowR = headerRowRight;
-    internals._footerRowR = footerRight;
-    internals._headers = [internals._headerL, headerRight];
-    internals._headerRows = [internals._headerRowL, headerRowRight];
-    internals._footerRow = [internals._footerRowL, footerRight];
-
-    expect(() => {
-      internals.createColumnHeaders();
-      internals.createColumnFooter();
-      internals.createColumnHeaders();
-      internals.createColumnFooter();
-      expect(slickGrid.getHeader()).toEqual(internals._headers);
-      expect(slickGrid.getHeader(slickGrid.getColumns()[0])).toBe(internals._headerL);
-      expect(slickGrid.getHeader(slickGrid.getColumns()[1])).toBe(internals._headerR);
-      expect(slickGrid.getHeaderColumn(1)).toBe(internals._headerR.children[0]);
-      expect(slickGrid.getHeaderRowColumn(0)).toBe(internals._headerRowL.children[0]);
-      expect(slickGrid.getHeaderRowColumn(1)).toBe(internals._headerRowR.children[0]);
-      expect(slickGrid.getFooterRowColumn(0)).toBe(internals._footerRowL.children[0]);
-      expect(slickGrid.getFooterRowColumn(1)).toBe(internals._footerRowR.children[0]);
-      (slickGrid as any).updateCanvasWidth(true);
-      internals.resizeCanvas();
-      slickGrid.scrollToX(10);
-      internals._viewport = [internals._viewportTopL, internals._viewportTopR, internals._viewportBottomL, internals._viewportBottomR];
-      internals._headers = [internals._headerL, internals._headerR];
-      internals._headerScroller = [internals._headerScrollerL, internals._headerScrollerR];
-      internals._topPanelScrollers = [internals._topPanelScrollerL, internals._topPanelScrollerR];
-      internals._footerRowScrollContainer = internals._footerRowScrollerL;
-      internals._options.createTopHeaderPanel = true;
-      internals._options.createPreHeaderPanel = true;
-      internals._options.createFooterRow = true;
-      internals._topHeaderPanel = document.createElement('div');
-      internals._topHeaderPanelScroller = document.createElement('div');
-      internals._preHeaderPanelScroller = document.createElement('div');
-      internals._preHeaderPanelScrollerR = document.createElement('div');
-      slickGrid.scrollToX(20);
-      internals._options.frozenColumn = -1;
-      internals.updateCanvasWidth(true);
-    }).not.toThrow();
-  });
-
-  it('handles vertical scroll synchronization across compatibility frozen panes', () => {
-    const slickGrid = createGrid();
-    const internals = slickGrid as any;
-    internals._options.frozenColumn = 0;
-    internals._options.autoHeight = false;
-    Object.defineProperties(internals._viewportScrollContainerY, {
-      scrollHeight: { configurable: true, value: 500 },
-      scrollTop: { configurable: true, writable: true, value: 20 },
-      clientHeight: { configurable: true, value: 100 },
-    });
-    Object.defineProperties(internals._viewportScrollContainerX, {
-      scrollWidth: { configurable: true, value: 500 },
-      scrollLeft: { configurable: true, writable: true, value: 20 },
-      clientWidth: { configurable: true, value: 100 },
-    });
-    internals.scrollTop = 20;
-    internals.scrollLeft = 20;
-    internals.prevScrollTop = 0;
-    internals.prevScrollLeft = 0;
-    internals.lastRenderedScrollTop = -100;
-    internals.lastRenderedScrollLeft = -100;
-    internals.viewportH = 100;
-    internals.viewportW = 100;
-    internals.hasFrozenRows = true;
-    internals._options.frozenBottom = false;
-    vi.spyOn(slickGrid as any, 'scrollTo').mockImplementation(() => undefined);
-    vi.spyOn(slickGrid as any, 'scrollToX').mockImplementation(() => undefined);
-    vi.spyOn(slickGrid as any, 'refreshDockingLayout')
-      .mockReturnValueOnce(true)
-      .mockReturnValue(false);
-    vi.spyOn(slickGrid as any, 'applyDockingScrollOffsets').mockImplementation(() => undefined);
-    vi.spyOn(slickGrid as any, 'refreshRowDockingLayout').mockReturnValue(false);
-    vi.spyOn(slickGrid as any, 'updateColumnCaches').mockImplementation(() => undefined);
-    vi.spyOn(slickGrid as any, 'applyColumnWidths').mockImplementation(() => undefined);
-    vi.spyOn(slickGrid as any, 'applyDockingToColumnChrome').mockImplementation(() => undefined);
-    vi.spyOn(slickGrid as any, 'invalidateAllRows').mockImplementation(() => undefined);
-    vi.spyOn(slickGrid, 'render').mockImplementation(() => undefined);
-    const enqueueStickyColumnLayoutSpy = vi.spyOn(slickGrid as any, 'enqueueStickyColumnLayout').mockImplementation(() => undefined);
-
-    vi.useFakeTimers();
-    try {
-      expect((slickGrid as any)._handleScroll('mousewheel')).toBe(true);
-      expect(internals._viewportBottomL.scrollTop).toBe(20);
-
-      internals.hasFrozenRows = false;
-      internals.prevScrollTop = 20;
-      internals.scrollTop = 30;
-      Object.defineProperty(internals._viewportScrollContainerY, 'scrollTop', { configurable: true, writable: true, value: 30 });
-      expect((slickGrid as any)._handleScroll('mousewheel')).toBe(true);
-      expect(internals._viewportTopL.scrollTop).toBe(30);
-
-      slickGrid.getColumns()[0].sticky = 'left';
-      internals.prevScrollLeft = 30;
-      internals.scrollLeft = 40;
-      Object.defineProperty(internals._viewportScrollContainerX, 'scrollLeft', { configurable: true, writable: true, value: 40 });
-      expect((slickGrid as any)._handleScroll('scroll')).toBe(true);
-      expect(enqueueStickyColumnLayoutSpy).toHaveBeenCalledTimes(1);
-    } finally {
-      vi.useRealTimers();
-    }
   });
 
   it('updates rendered docking rows and chrome when using native horizontal scrolling', () => {

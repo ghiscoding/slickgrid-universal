@@ -78,7 +78,7 @@ const gridStub = {
   setPreHeaderPanelVisibility: vi.fn(),
   setOptions: vi.fn(),
   scrollColumnIntoView: vi.fn(),
-  validateColumnFreeze: vi.fn(),
+  validateColumnPinning: vi.fn(),
   onBeforeDestroy: new SlickEvent(),
   onClick: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
@@ -123,7 +123,7 @@ describe('GridMenuControl', () => {
     commandLabels: {
       clearAllFiltersCommandKey: 'CLEAR_ALL_FILTERS',
       clearAllSortingCommandKey: 'CLEAR_ALL_SORTING',
-      clearFrozenColumnsCommandKey: 'CLEAR_PINNING',
+      clearPinningCommandKey: 'CLEAR_PINNING',
       exportCsvCommandKey: 'EXPORT_TO_CSV',
       exportExcelCommandKey: 'EXPORT_TO_EXCEL',
       exportTextDelimitedCommandKey: 'EXPORT_TO_TAB_DELIMITED',
@@ -134,7 +134,7 @@ describe('GridMenuControl', () => {
     commandTitleKey: 'COMMANDS',
     commandItems: [],
     hideClearAllFiltersCommand: false,
-    hideClearFrozenColumnsCommand: true,
+    hideClearPinningCommand: true,
     hideForceFitButton: false,
     hideSyncResizeButton: true,
     hideToggleDarkModeCommand: true,
@@ -227,9 +227,9 @@ describe('GridMenuControl', () => {
         expect(control).toBeTruthy();
       });
 
-      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnFreeze()" returns false', () => {
+      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnPinning()" returns false', () => {
         const mockRowSelection = [0, 3, 5];
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(false);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(false);
         vi.spyOn(control.eventHandler, 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
@@ -252,9 +252,9 @@ describe('GridMenuControl', () => {
         expect(setSelectionSpy).not.toHaveBeenCalled();
       });
 
-      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnFreeze()" returns false and Hybrid Selection is enabled', () => {
+      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnPinning()" returns false and Hybrid Selection is enabled', () => {
         const mockRowSelection = [0, 3, 5];
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(false);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(false);
         vi.spyOn(control.eventHandler, 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
@@ -285,7 +285,7 @@ describe('GridMenuControl', () => {
           .mockReturnValue(1);
         vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
         const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
 
         gridOptionsMock.enableSelection = true;
         control.columns = columnsMock;
@@ -372,9 +372,8 @@ describe('GridMenuControl', () => {
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
 
-        gridOptionsMock.frozenColumn = 0;
         control.columns = columnsMock;
         control.initEventHandlers();
         control.init();
@@ -397,11 +396,10 @@ describe('GridMenuControl', () => {
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
 
         gridOptionsMock.gridMenu!.headerColumnValueExtractor = (column: Column) => `${column?.columnGroup || ''} - ${column.name}`;
         control.columns = columnsMock;
-        gridOptionsMock.frozenColumn = 0;
         control.initEventHandlers();
         control.init();
         const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
@@ -420,11 +418,10 @@ describe('GridMenuControl', () => {
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
 
         gridOptionsMock.gridMenu!.headerColumnValueExtractor = null as any;
         control.columns = columnsMock;
-        gridOptionsMock.frozenColumn = 0;
         control.initEventHandlers();
         control.init();
         const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
@@ -566,7 +563,7 @@ describe('GridMenuControl', () => {
 
       it('should open the Grid Menu and expect "onColumnsChanged" to be called when defined', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         const onColChangedMock = vi.fn();
         vi.spyOn(gridStub, 'getColumnIndex')
@@ -780,7 +777,7 @@ describe('GridMenuControl', () => {
         gridOptionsMock.enableAutoSizeColumns = true;
         const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
 
         control.columns = columnsMock;
         control.init();
@@ -811,7 +808,7 @@ describe('GridMenuControl', () => {
         gridOptionsMock.enableAutoSizeColumns = true;
         const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
 
         control.columns = columnsMock;
         control.init();
@@ -832,7 +829,7 @@ describe('GridMenuControl', () => {
         gridOptionsMock.enableAutoSizeColumns = true;
         const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
 
         control.columns = columnsMock;
         control.init();
@@ -1062,7 +1059,7 @@ describe('GridMenuControl', () => {
       it('should not create Column Picker section when "hideColumnPickerSection" is set', () => {
         gridOptionsMock.gridMenu!.hideColumnPickerSection = true;
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
 
         control.columns = columnsMock;
         control.init();
@@ -1721,7 +1718,7 @@ describe('GridMenuControl', () => {
         it('should expect menu related to "Unfreeze Columns/Rows"', () => {
           const copyGridOptionsMock = {
             ...gridOptionsMock,
-            gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: false, hideToggleDarkModeCommand: true },
+            gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearPinningCommand: false, hideToggleDarkModeCommand: true },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
@@ -1817,7 +1814,7 @@ describe('GridMenuControl', () => {
             showHeaderRow: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideToggleFilterCommand: true,
               hideRefreshDatasetCommand: true,
               hideToggleDarkModeCommand: true,
@@ -1850,7 +1847,7 @@ describe('GridMenuControl', () => {
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
               // @deprecated `hideXYZ`, replace by `hideCommands` in next major
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideClearAllFiltersCommand: true,
               hideToggleDarkModeCommand: true,
               hideRefreshDatasetCommand: true,
@@ -1881,7 +1878,7 @@ describe('GridMenuControl', () => {
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
               // @deprecated `hideXYZ`, replace by `hideCommands` in next major
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideClearAllFiltersCommand: true,
               hideToggleFilterCommand: true,
               hideToggleDarkModeCommand: false,
@@ -1915,7 +1912,7 @@ describe('GridMenuControl', () => {
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
               // @deprecated `hideXYZ`, replace by `hideCommands` in next major
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideClearAllFiltersCommand: true,
               hideToggleDarkModeCommand: true,
               hideToggleFilterCommand: true,
@@ -1967,7 +1964,7 @@ describe('GridMenuControl', () => {
             showPreHeaderPanel: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideTogglePreHeaderCommand: true,
               hideToggleDarkModeCommand: true,
             },
@@ -2007,7 +2004,7 @@ describe('GridMenuControl', () => {
             enableSorting: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideClearAllSortingCommand: true,
               hideToggleDarkModeCommand: true,
             },
@@ -2026,7 +2023,7 @@ describe('GridMenuControl', () => {
             enableTextExport: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideExportExcelCommand: true,
               hideExportTextDelimitedCommand: true,
               hideToggleDarkModeCommand: true,
@@ -2057,7 +2054,7 @@ describe('GridMenuControl', () => {
             enableTextExport: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideExportExcelCommand: true,
               hideExportCsvCommand: true,
               hideExportTextDelimitedCommand: true,
@@ -2079,7 +2076,7 @@ describe('GridMenuControl', () => {
             enableTextExport: false,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideExportCsvCommand: true,
               hideExportExcelCommand: false,
               hideToggleDarkModeCommand: true,
@@ -2112,7 +2109,7 @@ describe('GridMenuControl', () => {
             enableTextExport: false,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideExportCsvCommand: true,
               hideExportExcelCommand: true,
               hideExportPdfCommand: false,
@@ -2146,7 +2143,7 @@ describe('GridMenuControl', () => {
             enableTextExport: false,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideExportCsvCommand: true,
               hideExportExcelCommand: true,
               hideExportPdfCommand: false,
@@ -2178,7 +2175,7 @@ describe('GridMenuControl', () => {
             enableTextExport: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideExportCsvCommand: true,
               hideExportExcelCommand: true,
               hideToggleDarkModeCommand: true,
@@ -2209,7 +2206,7 @@ describe('GridMenuControl', () => {
             enableTextExport: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearFrozenColumnsCommand: true,
+              hideClearPinningCommand: true,
               hideExportExcelCommand: true,
               hideExportCsvCommand: true,
               hideExportTextDelimitedCommand: true,
@@ -2232,13 +2229,13 @@ describe('GridMenuControl', () => {
           vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock.slice(0, 1));
         });
 
-        it('should call "clearFrozenColumns" when the command triggered is "clear-pinning"', () => {
+        it('should call "clearPinning" when the command triggered is "clear-pinning"', () => {
           const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
           const updateColumnsSpy = vi.spyOn(gridStub, 'updateColumns');
           const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
           const copyGridOptionsMock = {
             ...gridOptionsMock,
-            gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: false },
+            gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearPinningCommand: false },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);

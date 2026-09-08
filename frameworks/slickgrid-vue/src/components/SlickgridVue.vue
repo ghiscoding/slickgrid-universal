@@ -375,16 +375,6 @@ function initialization() {
   _gridOptions.value.translater = translaterService;
   isAutosizeColsCalled = false;
 
-  // when detecting a frozen grid, we'll automatically enable the mousewheel scroll handler so that we can scroll from both left/right frozen containers
-  if (
-    _gridOptions.value &&
-    ((_gridOptions.value.frozenRow !== undefined && _gridOptions.value.frozenRow >= 0) ||
-      (_gridOptions.value.frozenColumn !== undefined && _gridOptions.value.frozenColumn >= 0)) &&
-    _gridOptions.value.enableMouseWheelScrollHandler === undefined
-  ) {
-    _gridOptions.value.enableMouseWheelScrollHandler = true;
-  }
-
   eventPubSubService.eventNamingStyle = _gridOptions.value.eventNamingStyle ?? 'camelCaseWithExtraOnPrefix';
   eventPubSubService.publish('onBeforeGridCreate', true);
 
@@ -462,7 +452,7 @@ function initialization() {
   // directly into the array below, so both `_columns` & `sharedService.allColumns` stay in sync
   extensionService.createExtensionsBeforeGridCreation(_columns.value as Column[], _gridOptions.value as GridOption);
 
-  // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+  // if user entered some Pinning "presets", we need to apply them in the grid options
   if (_gridOptions.value.presets?.pinning) {
     _gridOptions.value = { ..._gridOptions.value, ..._gridOptions.value.presets.pinning };
   }
@@ -490,9 +480,6 @@ function initialization() {
 
   extensionService.bindDifferentExtensions();
   bindDifferentHooks(grid, _gridOptions.value as GridOption, dataview);
-
-  // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-  sharedService.frozenVisibleColumnId = grid.getFrozenColumnId();
 
   // initialize the SlickGrid grid
   grid.init();

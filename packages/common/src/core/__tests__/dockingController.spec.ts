@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Column } from '../../interfaces/index.js';
-import { DockingController, type DockingRow } from '../dockingController.js';
+import type { Column, DockingRow } from '../../interfaces/index.js';
+import { DockingController } from '../dockingController.js';
 
 const column = (id: string, width: number, options: Partial<Column> = {}): Column => ({ id, field: id, width, ...options });
 

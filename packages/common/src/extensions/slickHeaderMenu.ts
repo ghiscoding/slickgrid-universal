@@ -100,10 +100,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   hideColumn(column: Column): void {
     if (this.grid) {
       // check if column freezing is allowed
-      const isFrozenAllowed = this.grid.validateColumnFreeze(column.id, true);
+      const isPinningAllowed = this.grid.validateColumnPinning(column.id, true);
 
       // when valid, update column hidden prop
-      if (isFrozenAllowed) {
+      if (isPinningAllowed) {
         this.grid.updateColumnById(column.id, { hidden: true });
 
         // then proceed with hiding the column in SlickGrid & trigger an event when done
@@ -314,9 +314,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
           // Bulk index-based pinning (kept under the existing Freeze Columns
           // label for users migrating from the old command).
-          let hasFrozenOrResizeCommand = false;
-          if (headerMenuOptions && !headerMenuOptions.hideFreezeColumnsCommand) {
-            hasFrozenOrResizeCommand = true;
+          let hasPinningOrResizeCommand = false;
+          if (headerMenuOptions && !headerMenuOptions.hidePinningColumnsCommand) {
+            hasPinningOrResizeCommand = true;
             const columnPosition = columns.findIndex((col) => col.id === columnDef.id);
             const leftPinning = gridOptions.pinning?.columns?.left;
             const isBulkPinned =
@@ -332,8 +332,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               const cmdUnfreeze = 'unfreeze-columns';
               this.addMissingCommandOrAction(
                 {
-                  _orgTitle: commandLabels?.unfreezeColumnsCommand || '',
-                  iconCssClass: headerMenuOptions.iconUnfreezeColumns || 'mdi mdi-pin-off-outline',
+                  _orgTitle: commandLabels?.unpinningColumnsCommand || '',
+                  iconCssClass: headerMenuOptions.iconUnpinningColumns || 'mdi mdi-pin-off-outline',
                   titleKey: `${translationPrefix}UNFREEZE_COLUMNS`,
                   command: cmdUnfreeze,
                   positionOrder: 45,
@@ -350,8 +350,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               const cmdFreeze = 'freeze-columns';
               this.addMissingCommandOrAction(
                 {
-                  _orgTitle: commandLabels?.freezeColumnsCommand || '',
-                  iconCssClass: headerMenuOptions.iconFreezeColumns || 'mdi mdi-pin-outline',
+                  _orgTitle: commandLabels?.pinningColumnsCommand || '',
+                  iconCssClass: headerMenuOptions.iconPinningColumns || 'mdi mdi-pin-outline',
                   titleKey: `${translationPrefix}FREEZE_COLUMNS`,
                   command: cmdFreeze,
                   positionOrder: 45,
@@ -366,7 +366,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           // Single-column pinning. This is independent of the bulk index
           // command above and writes only the selected column definition.
           if (headerMenuOptions && !this._addonOptions?.hidePinColumnCommand) {
-            hasFrozenOrResizeCommand = true;
+            hasPinningOrResizeCommand = true;
             const isPinned = columnDef.pinned === 'left' || columnDef.pinned === 'right';
             if (isPinned) {
               this.removeCommandWhenFound(columnHeaderMenuItems, 'pin-column');
@@ -408,7 +408,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             !headerMenuOptions.hideCommands?.includes('column-resize-by-content') &&
             this.sharedService.gridOptions.enableColumnResizeOnDoubleClick
           ) {
-            hasFrozenOrResizeCommand = true;
+            hasPinningOrResizeCommand = true;
             this.addMissingCommandOrAction(
               {
                 _orgTitle: commandLabels?.columnResizeByContentCommand || '',
@@ -424,7 +424,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           }
 
           // add a divider (separator) between the top freeze columns commands and the rest of the commands
-          if (hasFrozenOrResizeCommand && !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 48)) {
+          if (hasPinningOrResizeCommand && !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 48)) {
             columnHeaderMenuItems.push({ divider: true, command: 'divider-1', positionOrder: 48 });
           }
 
@@ -520,7 +520,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
             // add a divider (separator) between the top freeze columns commands and the rest of the commands
             if (
-              hasFrozenOrResizeCommand &&
+              hasPinningOrResizeCommand &&
               !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === filterShortcutsPositionOrder + 1)
             ) {
               columnHeaderMenuItems.push({ divider: true, command: 'divider-3', positionOrder: filterShortcutsPositionOrder + 1 });

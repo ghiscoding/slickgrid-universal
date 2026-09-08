@@ -22,13 +22,13 @@
 <div class="row mb-3">
   <span>
     <label for="">Pinned Rows: </label>
-    <input type="number" class="frozen-row-count is-narrow input is-small" value.bind="frozenRowCount" />
-    <button class="button is-small" onclick.trigger="changeFrozenRowCount()">Set</button>
+    <input type="number" class="frozen-row-count is-narrow input is-small" value.bind="pinnedRowCount" />
+    <button class="button is-small" onclick.trigger="changePinnedRowCount()">Set</button>
   </span>
   <span class="ml-1">
     <label for="">Pinned Columns: </label>
-    <input type="number" class="frozen-column-count is-narrow input is-small" value.bind="frozenColumnCount" />
-    <button class="button is-small" onclick.trigger="changeFrozenColumnCount()">Set</button>
+    <input type="number" class="frozen-column-count is-narrow input is-small" value.bind="pinnedColumnCount" />
+    <button class="button is-small" onclick.trigger="changePinnedColumnCount()">Set</button>
   </span>
   <span class="ml-1">
     <label for="">Pinned Right: </label>
@@ -48,7 +48,7 @@
       <span class="mdi mdi-pin-outline"></span>
       <span>Toggle Right Pinning</span>
     </button>
-    <button class="button is-small" data-test="toggle-frozen-bottom" onclick.trigger="toggleFrozenBottomRows()">
+    <button class="button is-small" data-test="toggle-frozen-bottom" onclick.trigger="togglePinnedBottomRows()">
       <span class="mdi mdi-flip-vertical"></span>
       <span>Toggle Pinned Rows (top/bottom)</span>
     </button>
@@ -56,7 +56,7 @@
       <span class="mdi mdi-swap-horizontal mdi-rotate-90"></span>
       <span>Toggle which row to show "Select All" checkbox</span>
     </button>
-    <button class="button is-small ml-3" data-test="set-large-freezed-columns" onclick.trigger="setLargeFreezedColumns()">
+    <button class="button is-small ml-3" data-test="set-large-pinned-columns" onclick.trigger="setLargePinnedColumns()">
       <span>Set Large Pinned Columns</span>
     </button>
   </span>

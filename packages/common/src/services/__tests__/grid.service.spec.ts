@@ -77,7 +77,6 @@ const gridStub = {
   autosizeColumns: vi.fn(),
   insertItem: vi.fn(),
   invalidate: vi.fn(),
-  getFrozenColumnId: vi.fn(),
   getColumnByIdx: vi.fn(),
   getColumnIndex: vi.fn(),
   getData: () => dataviewStub,
@@ -99,7 +98,7 @@ const gridStub = {
   updateColumnById: vi.fn(),
   updateColumns: vi.fn(),
   updateRow: vi.fn(),
-  validateColumnFreezeWidth: vi.fn(),
+  validatePinnedColumnWidth: vi.fn(),
 } as unknown as SlickGrid;
 
 const paginationServiceStub = {
@@ -1633,7 +1632,7 @@ describe('Grid Service', () => {
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-      vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
+      vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
 
       service.setPinning(mockPinning);
 
@@ -1647,7 +1646,7 @@ describe('Grid Service', () => {
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-      vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
+      vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
 
       service.setPinning(mockPinning, false);
 

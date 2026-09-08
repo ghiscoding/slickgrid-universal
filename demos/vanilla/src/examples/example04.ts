@@ -54,10 +54,10 @@ export default class Example04 {
   dataset: any[];
   dataViewObj: SlickDataView;
   commandQueue: EditCommand[] = [];
-  frozenColumnCount = 2;
+  pinnedColumnCount = 2;
   pinnedRightColumnCount = 1;
-  frozenRowCount = 3;
-  isFrozenBottom = false;
+  pinnedRowCount = 3;
+  isPinnedBottom = false;
   sgb: SlickVanillaGridBundle;
   checkboxSelectorInstance: SlickCheckboxSelectColumn;
   isSelectAllShownAsColumnTitle = false;
@@ -425,7 +425,7 @@ export default class Example04 {
       enableSelection: true,
       pinning: {
         columns: {
-          left: this.frozenColumnCount,
+          left: this.pinnedColumnCount,
           // Keep the Action column on the trailing edge without depending on
           // extension columns (such as the checkbox selector) being inserted.
           right: this.pinnedRightColumnCount > 0 ? ['action'] : [],
@@ -452,13 +452,14 @@ export default class Example04 {
           }
         },
       },
-      gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false },
+      gridMenu: { hideClearPinningCommand: false },
+      headerMenu: { hidePinningColumnsCommand: false },
       enableContextMenu: true,
       contextMenu: {
         optionShownOverColumnIds: ['percentComplete'],
         subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
         hideCloseButton: true,
+        dropSide: 'right',
         optionTitle: 'Change Percent Complete',
         onOptionSelected: (_e, args) => {
           // e.preventDefault(); // you could do if you wish to keep the menu open
@@ -594,58 +595,58 @@ export default class Example04 {
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
-  changeFrozenColumnCount() {
-    this.setPinnedColumns(+this.frozenColumnCount, this.pinnedRightColumnCount);
+  changePinnedColumnCount() {
+    this.setPinnedColumns(+this.pinnedColumnCount, this.pinnedRightColumnCount);
   }
 
   changePinnedRightColumnCount() {
-    this.setPinnedColumns(this.frozenColumnCount, +this.pinnedRightColumnCount);
+    this.setPinnedColumns(this.pinnedColumnCount, +this.pinnedRightColumnCount);
   }
 
   /** Toggle the demo's right-pinned Action column while preserving left pinning. */
   toggleRightPinning() {
-    this.setPinnedColumns(this.frozenColumnCount, this.pinnedRightColumnCount > 0 ? 0 : 1);
+    this.setPinnedColumns(this.pinnedColumnCount, this.pinnedRightColumnCount > 0 ? 0 : 1);
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
-  changeFrozenRowCount() {
+  changePinnedRowCount() {
     if (this.sgb?.slickGrid?.setOptions) {
       const rows = this.getPinnedRowIndexes();
       this.sgb.slickGrid.setOptions({
-        pinning: { rows: this.isFrozenBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } },
+        pinning: { rows: this.isPinnedBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } },
       });
     }
   }
 
-  setPinnedColumns(frozenCols: number, rightCols = this.pinnedRightColumnCount) {
+  setPinnedColumns(pinnedCols: number, rightCols = this.pinnedRightColumnCount) {
     this.sgb?.slickGrid?.setOptions({
       pinning: {
         columns: {
-          left: frozenCols,
+          left: pinnedCols,
           right: Math.max(0, rightCols),
         },
       },
     });
     this.gridOptions = this.sgb?.slickGrid?.getOptions() ?? {};
-    this.frozenColumnCount = frozenCols;
+    this.pinnedColumnCount = pinnedCols;
     this.pinnedRightColumnCount = Math.max(0, rightCols);
   }
 
   /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
-  toggleFrozenBottomRows() {
+  togglePinnedBottomRows() {
     if (this.sgb?.slickGrid && this.sgb?.slickGrid.setOptions) {
-      this.isFrozenBottom = !this.isFrozenBottom;
+      this.isPinnedBottom = !this.isPinnedBottom;
       const rows = this.getPinnedRowIndexes();
       this.sgb.slickGrid.setOptions({
-        pinning: { rows: this.isFrozenBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } },
+        pinning: { rows: this.isPinnedBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } },
       });
     }
   }
 
   private getPinnedRowIndexes() {
-    const rowCount = Math.max(0, +this.frozenRowCount);
+    const rowCount = Math.max(0, +this.pinnedRowCount);
     const dataLength = this.sgb?.slickGrid?.getDataLength?.() ?? this.dataset?.length ?? ITEMS_COUNT;
-    const firstPinnedRow = this.isFrozenBottom ? Math.max(0, dataLength - rowCount) : 0;
+    const firstPinnedRow = this.isPinnedBottom ? Math.max(0, dataLength - rowCount) : 0;
     return Array.from({ length: rowCount }, (_value, index) => firstPinnedRow + index);
   }
 
@@ -686,7 +687,7 @@ export default class Example04 {
     }
   }
 
-  setLargeFreezedColumns() {
+  setLargePinnedColumns() {
     // Apply target widths before pinning. Pinning validates against the
     // currently rendered widths, which may still reflect a prior resize.
     this.sgb.gridStateService.applyColumnLayout(
@@ -705,7 +706,7 @@ export default class Example04 {
       false
     );
     this.setPinnedColumns(2, this.pinnedRightColumnCount);
-    // console.log('setLargeFreezedColumns', this.sgb.gridStateService.getCurrentColumns());
+    // console.log('setLargePinnedColumns', this.sgb.gridStateService.getCurrentColumns());
   }
 
   toggleSubTitle() {

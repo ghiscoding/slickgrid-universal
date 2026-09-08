@@ -373,7 +373,7 @@ export class AureliaSlickgridCustomElement {
     // directly into the array below, so both `_columns` & `sharedService.allColumns` stay in sync
     this.extensionService.createExtensionsBeforeGridCreation(this._columns, this.options);
 
-    // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+    // if user entered some Pinning "presets", we need to apply them in the grid options
     if (this.options.presets?.pinning) {
       this.options = { ...this.options, ...this.options.presets.pinning };
     }
@@ -401,9 +401,6 @@ export class AureliaSlickgridCustomElement {
 
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.grid, this.options, this.dataview);
-
-    // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-    this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
 
     // initialize the SlickGrid grid
     this.grid.init();

@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness POC — progress handoff
 
-Last updated: 2026-09-08 (first legacy-freeze removal pass complete; follow-up audit still required)
+Last updated: 2026-09-08 (legacy runtime option/interface removal complete; structural alias audit remains)
 
 ## Goal
 
@@ -17,9 +17,10 @@ The POC supports per-column pinning and the canonical nested `pinning` option.
 `pinning.columns.left` accepts an inclusive edge-boundary number for contiguous
 left pinning, while `pinning.columns.right` accepts a count from the trailing
 edge. Either side also accepts arrays of stable column ids/indexes for
-non-contiguous pinning. An inclusive legacy boundary such as `frozenColumn: 2`
-is therefore simply written as `pinning.columns.left: 2`; users do not need to
-expand it into an index array.
+non-contiguous pinning. An inclusive v11-and-lower boundary such as
+`frozenColumn: 2` is therefore written as `pinning.columns.left: 2`; users do not
+need to expand it into an index array. The old name is retained here only as a
+migration reference.
 There is no separate `pinnedColumn` or `pinnedRows` grid option; those temporary
 aliases were removed after the canonical shape was wired through core and state.
 The POC does not target compatibility with the old frozen-pane UX.
@@ -36,36 +37,38 @@ Vanilla Example 11 serializes the new nested `CurrentPinning` shape in its
 saved views and intentionally opts into both pinning header commands to
 exercise the new behavior. The single-column menu action calls
 `SlickGrid.setColumnPinning` and updates `Column.pinned`; the bulk “Freeze
-Columns” menu action now updates `pinning.columns.left`, which applies the same
-left pins through the unified pinning resolver. Neither action
-changes `frozenColumn` or invokes legacy freeze-width validation. The existing
-`hideFreezeColumnsCommand` setting currently controls the bulk command, while
-the new `hidePinColumnCommand` setting controls the single-column command.
+Columns” menu action retains its migration-friendly terminology but updates
+`pinning.columns.left`, which applies the same left pins through the unified
+pinning resolver. Neither action uses the removed `frozenColumn` option or the
+removed legacy freeze validation. The current `hidePinningColumnsCommand`
+setting controls the bulk command, while `hidePinColumnCommand` controls the
+single-column command.
 
 The header commands are now pinning-aware: bulk actions emit
 `freeze-columns`/`unfreeze-columns` for migration familiarity, while the
 single-column actions emit `pin-column`/`unpin-column` and use `PIN_COLUMN`/
 `UNPIN_COLUMN` labels. None recreates the old two-pane freeze layout.
 
-The POC has now gone through visual hardening, selected Cypress migration, and a first
-legacy-freeze removal pass. Unit tests, coverage, the full Cypress matrix, framework validation,
-and documentation are now follow-up work in progress. The legacy deletion is not considered
-complete yet; another audit pass is still required.
+The POC has gone through visual hardening, selected Cypress migration, and removal of the
+legacy frozen options/interfaces and runtime branches. The common unit suite and focused
+coverage checks pass; framework and browser validation remain follow-up work. The remaining
+cleanup is limited to internal pane-shaped aliases, historical CSS variable names, and
+intentional migration-facing terminology/documentation.
 
 ## Refactoring status and immediate follow-up
 
-The behavior-preserving cleanup pass and a first legacy-freeze deletion pass are complete, but
-the refactoring is **not complete**. The first deletion pass substantially reduced the old
-multi-pane branches in `SlickGrid` and related service, extension, and wrapper paths. A second
-audit is still required before this work can be treated as finished.
+The legacy frozen option/interface/state/service branches have been removed from the runtime
+implementation. The current code no longer defines or reads `frozenColumn`, `frozenRow`,
+`frozenBottom`, `frozenVisibleColumnId`, `pinnedColumn`, or `pinnedRows` configuration.
 
-Remaining references include legacy names and compatibility paths in shared state/services,
-empty-warning and resizer options, extension assumptions, tests, and framework integrations.
-Remove or deliberately rename those references while preserving the single-viewport invariants;
-do not add new compatibility branches.
+A structural cleanup remains for the internal `_pane*`, `_viewport*`, and `_canvas*` aliases,
+which now point to the single live nodes and do not create additional panes or scrollbars. The
+historical `--slick-frozen-*` theme variables, old demo selectors, migration documentation,
+locale wording, and `freeze-columns`/`unfreeze-columns` command IDs are intentionally retained
+where they provide styling or migration continuity. Do not reintroduce legacy runtime branches.
 
 The previous working-tree LOC estimate is stale after the deletion pass. Recalculate production
-LOC after the follow-up audit rather than using the earlier planning estimate.
+LOC after the remaining alias/style audit rather than using the earlier planning estimate.
 
 ## Maintainability acceptance gate
 
@@ -77,20 +80,21 @@ off at runtime.
 
 The final implementation must satisfy all of the following:
 
-- construct one header, header-row, footer-row, viewport, and canvas rather than creating
-  left/right/top/bottom pane elements and detaching most of them;
+- construct one live header, header-row, footer-row, viewport, and canvas; the remaining pane-
+  shaped fields must be aliases only and must not become separate DOM/scroll containers;
 - make ordinary header/footer creation and column-element lookup direct single-container
   operations, without `hasFrozenColumns()` / `hasFrozenRows()` target selection;
-- delete the old frozen option fields, state/menu/service plumbing, pane fields, synchronized
-  scroll branches, resize branches, and frozen SCSS instead of retaining a disabled
-  compatibility path; this includes the obsolete `-1000px` header-container offset introduced
-  for the legacy multi-pane/IE-era renderer;
+- keep the old frozen option fields, state/menu/service plumbing, synchronized-scroll branches,
+  and resize branches deleted; intentionally retained migration-facing command IDs, locale
+  wording, and theme variable names must not turn into compatibility code. The obsolete
+  `-1000px` header-container offset is also deleted;
 - keep pinning-specific behavior in the DOM-free `DockingController` plus a small docking DOM
   layer that applies per-row left/center/right regions and pinned chrome offsets;
 - remove the obsolete `HEADER_WIDTH_SLACK`/`1000px` header-coordinate workaround as part of the
   rewrite; header titles, grouped headers, and header regions now use ordinary coordinates;
-- rename surviving singular DOM fields to neutral names (`_header`, `_headerRow`, `_footerRow`,
-  `_viewport`, `_canvas`) so the old `L`/`R` pane model cannot leak back into normal code;
+- rename the remaining pane-shaped internal fields to neutral names (`_header`, `_headerRow`,
+  `_footerRow`, `_viewport`, `_canvas`) so the old `L`/`R` pane model cannot leak back into normal
+  code;
 - complete sticky docking or remove any temporary feature-flag path; a dormant sticky API is
   not an acceptable final design.
 
@@ -113,26 +117,27 @@ documentation work may continue while the follow-up deletion audit is underway.
   even when no row is currently active.
 - rowspan z-index is problematic with new docking overlay, need further investigation
 - using Cypress with `.scrollTo()` doesn't actually scroll the header titles & scrollbar, but the data is being scrolled
-- [x] Legacy freeze validation callbacks are restored at the new pinning API boundary. Requests that
-  pin every visible column or whose permanent left/right bands consume the viewport are rejected,
-  preserve the previous state, and invoke the configured legacy alert callback/message.
+- [x] Pinning validation now uses the canonical `invalidColumnPinning*` and
+  `skipPinningValidation` options. Requests that pin every visible column or whose permanent
+  left/right bands consume the viewport are rejected and preserve the previous state.
 - [x] Header regions expose `.slick-header-columns-left/center/right` (and equivalent header-row/
   footer-row classes), so consumers can identify each region without relying on removed pane roots.
 - a11y issues with sticky example when using arrows to navigate, it jumps from a center column to a sticky column, is that expected? I would think that it should rather move the scroll instead and show next data cell instead (that is what we were doing in the legacy freezing, also need to verify new pinning feature).
 - probably need more pinning Cypress test in vanilla example04.cy.ts to cover the new feature vs legacy frozen feature.
 - why is context menu opened outside of the grid viewport in vanilla example04.cy.ts? The context menu position is unexpected (seemed to be the tests in describe "accessibility sub-menus tests").
-- did we remove all frozen legacy stuff? We didn't, for example: change `frozenVisibleColumnId` according to new pinning naming
+- [x] Audited legacy frozen configuration names. `frozenVisibleColumnId` and the old flat
+  frozen/pinned options are removed from runtime code; historical references remain only where
+  they are explicitly needed for migration docs, command IDs, locale text, demo labels/selectors,
+  or theme-variable compatibility.
 - address comment brought up in SlickGrid for new pinning/sticky features:
   > I think the major version would indicate this well enough. yeah its a bit more than a break, its a feature deprecation sort of, but the replacement is subjectively better for me.
   > what the latest push in AI development made me think of though is that we might should start thinking about shipping curated skills along with the library. that would serve two purposes. first, LLMs would know better how to apply specific features from slickgrid on the consumer end. but secondly, the skills could also act as a verification of the docs and thus overall improve the development of new features as LLMs could check up on skills when touching existing features
 - identify and document breaking changes (docs folder)
-- **IMMEDIATE POST-PR MAJOR CLEANUP:** remove all legacy frozen grid options and the old
-  multi-pane renderer immediately after the first POC PR is created. The audit found this
-  is feasible, but it requires coordinated refactoring across `SlickGrid`,
-  GridState/GridService, header grouping, resizer, extensions, framework wrappers, and
-  frozen SCSS. The prior 950–1,560-line deletion estimate is only a planning range; the
-  exact production LOC must be measured again after the deletion pass. Do not continue
-  layering compatibility branches onto the current hybrid implementation.
+- **COMPLETED MAJOR CLEANUP:** removed the legacy frozen grid options, public interfaces,
+  runtime validation names, state/service plumbing, and old multi-pane behavior across
+  `SlickGrid`, GridState/GridService, header grouping, resizer, extensions, and framework
+  integrations. Remaining work is the neutralization/removal of internal pane aliases and the
+  audit of intentionally historical CSS/demo terminology; do not add compatibility branches.
 
 ## Starting point
 
@@ -147,13 +152,16 @@ documentation work may continue while the follow-up deletion audit is underway.
 
 ### One live scroll viewport
 
-`SlickGrid.activateSingleViewportLayout()` detaches the legacy right and bottom panes from the live DOM and changes the public/internal active collections to one viewport and one canvas:
+`SlickGrid.activateSingleViewportLayout()` configures the public/internal active collections to
+one live viewport and one live canvas:
 
 - `_viewport = [_viewportTopL]`
 - `_canvas = [_canvasTopL]`
 - the active header/header-row/top-panel/footer collections likewise contain only their left/single instance.
 
-Legacy pane fields still exist temporarily so unrelated old code compiles, but their elements are detached and do not own scrollbars.
+Pane-shaped fields still exist temporarily as internal aliases to those same live nodes. They do
+not represent separate DOM panes or own additional scrollbars and are the remaining structural
+cleanup item.
 
 ### Per-row left/center/right regions
 
@@ -275,8 +283,9 @@ change as `scrollTop` changes. Transforms remain available for ordinary rows bec
 growing transform on a row inside the scrolling canvas produced visible jumps during
 virtual-page recycling. Virtual-page changes update row positions only after the physical
 scroll position and page offset have both been committed, avoiding a transient mixed-coordinate
-frame. Pinned region boundaries use the existing `--slick-frozen-border-right` and
-`--slick-frozen-border-bottom` theme variables for body rows and column chrome. The horizontal
+frame. Pinned region boundaries currently use the existing `--slick-frozen-border-right` and
+`--slick-frozen-border-bottom` theme variables for body rows and column chrome; these historical
+theme names remain for styling compatibility. The horizontal
 row boundary is emitted only on the last top-pinned row (or first bottom-pinned row), rather
 than repeating across every pinned row. Per-scroll vertical updates no longer rewrite pinned rows; normal
 virtual rows are repositioned only when a page offset actually changes. The overlay now
@@ -297,7 +306,7 @@ content during width updates.
 For ordinary scrolling rows, the permanently left-pinned region uses native CSS sticky
 positioning at the leading edge. The canvas and pinned-row overlay now share the same
 CSS-variable horizontal transform as headers and filters, while scroll-activated sticky docking
-remains disabled.
+is resolved through the shared controller.
 
 ## New POC APIs
 
@@ -395,8 +404,7 @@ Vanilla Example 47 reproduces the report shape from Discussion 1237's animated m
   seen; they retain the dark summary band from the mockup;
 - follow-on Capex, headcount, R&D, grants, FX, and provisions rows remain after Net Profit,
   allowing the statement totals to be crossed in both vertical scroll directions;
-- a small horizontal auto-scroll control makes it easy to inspect the eventual sticky
-  transitions without manually dragging the scrollbar.
+- normal manual grid scrolling is used to inspect the sticky transitions.
 
 Example 47 is the primary fixture for validating sticky columns, future sticky summary rows,
 and later group-header behavior without conflating those semantics with Example 04's
@@ -425,7 +433,8 @@ Core implementation:
 - `packages/common/src/services/headerGrouping.service.ts` — grouped/pre-header titles now use
   normal coordinates without the legacy 1000px offset.
 - `packages/common/src/styles/slick-grid.scss` — three-region row layout and docked stacking styles.
-- `packages/common/src/core/index.ts` — public controller exports.
+- `packages/common/src/core/index.ts` — public `DockingController` class export; its data types
+  are exported from the interfaces barrel.
 
 Public types:
 
@@ -455,7 +464,9 @@ git diff --check
 ```
 
 Static validation for the recent cleanup passed: common-package TypeScript, Oxlint,
-Prettier, and `git diff --check`. The framework Cypress TypeScript configs also pass after
+Prettier, and `git diff --check`. The focused DockingController/pinning unit suite passes
+(34 tests), and the common SlickGrid coverage run reports 100% statements, functions, and lines
+for `slickGrid.ts`. The framework Cypress TypeScript configs also pass after
 the custom-command typing fix. The root Cypress config still reports unrelated existing
 errors in `test/cypress/support/common.ts` and `test/cypress/support/index.ts`; a Cypress
 run in the current agent environment exits with code 132 before browser startup.
@@ -476,13 +487,12 @@ They are calculated from the current diff, counting the two new files as additio
   relative to `HEAD` (packages, excluding tests/demos);
 - this includes the new `DockingController` and docking types, single-viewport/per-row
   routing, sticky/pinning hardening, and the pinning/docking stylesheet changes;
-- this is not the expected final size because the old frozen-pane implementation is still
-  present and forcibly disabled for the POC.
+- this remains a provisional figure because internal pane-shaped aliases and historical style
+  names still need to be assessed separately from the removed runtime frozen implementation.
 
 The earlier 800–1,200-line removal estimate is retained only as a planning range. It is not a
-final forecast: the exact permanent-pinning LOC must be measured immediately after deleting
-the old full-height pane/frozen-row/frozen-column plumbing, core branches, option/state/menu
-wiring, and frozen SCSS.
+final forecast: the exact permanent-pinning LOC must be measured after the remaining internal
+alias cleanup and the decision on whether historical theme variable names are retained.
 
 Hardening basic sticky columns/rows would add roughly **+150–300 LOC**, giving an estimated
 **+120 to +670 net LOC** after cleanup. Supporting grouped quarterly sticky headers would add
@@ -559,11 +569,12 @@ requirements are the two largest sources of variance.
 - Reworked the Vanilla Example 04 Cypress spec for the persistent docking DOM:
   header assertions now query `.slick-header-column` descendants, row assertions
   target `data-row` plus cell index, and no-pinning checks expect stable empty
-  left/right regions rather than removed panes. Previously skipped autocomplete,
-  header-menu, accessibility, large-scroll, and reorder cases are enabled again.
-- Restored the legacy invalid-hide alert contract for pinning. `validateColumnFreeze()`
-  now validates the prospective visible set against the canonical pinning layout,
-  so hiding the last available center column is rejected without mutating the grid.
+  left/right regions rather than removed panes. Header-menu, accessibility, large-scroll,
+  and reorder cases are enabled again; the two autocomplete-editor cases remain skipped
+  pending browser/component follow-up.
+- Restored the invalid-hide alert contract for pinning. The canonical pinning validation
+  now checks the prospective visible set against the docking layout, so hiding the last
+  available center column is rejected without mutating the grid.
 - Column reorder now creates Sortable instances for the persistent left, center,
   and right docking wrappers and combines their order on drop. This keeps drag
   auto-scroll and reorder functional after the old right pane is removed.
@@ -611,11 +622,14 @@ requirements are the two largest sources of variance.
   remaining bottom-edge assertion that still needs follow-up; do not spend more
   migration time here until the other spec failures are triaged.
 
-1. **The first legacy deletion pass is not the final cleanup.** Remaining `frozen*` names,
-   compatibility branches, state/service fields, extension assumptions, tests, styles, and
-   public option remnants still need a deliberate second audit. `frozenVisibleColumnId` and
-   frozen-related empty-warning/resizer options are examples that still require review.
-2. **Old options intentionally no longer work.** `frozenColumn`, `frozenRow`, and `frozenBottom` are not valid ways to configure this POC. The existing `Freeze Columns` menu label remains for migration familiarity, but its implementation writes the canonical `pinning` option. `GridService.setPinning()` accepts the unified nested shape.
+1. **Legacy runtime removal is complete.** The old frozen options, interfaces, state/service
+   fields, validation names, and pane behavior have been removed. Internal pane-shaped aliases
+   and historical CSS variable names remain as separate cleanup/documentation decisions; they
+   must not become compatibility branches.
+2. **Old options intentionally no longer work.** `frozenColumn`, `frozenRow`, and `frozenBottom`
+   are not valid ways to configure this POC. The `Freeze Columns` label and command IDs remain
+   only for migration familiarity, while their implementation writes the canonical `pinning`
+   option. `GridService.setPinning()` accepts the unified nested shape.
 3. **Visual/browser validation is incomplete.** Left/right pinning, bottom rows, sticky transitions, resize, reorder, RTL, variable row height, row/column spans, editors, selection, and all four framework wrappers need manual follow-up.
 4. **Colspans crossing docking bands are not defined.** A colspan beginning in one band and ending in another can produce incorrect geometry. The final design should reject, split, or explicitly define this case.
 5. **Grouped/pre-header chrome is not dock-aware yet.** Standard column headers, header-row cells, footer cells, and body cells are wired. Multi-level/group header layout needs a dedicated band implementation.
@@ -623,16 +637,18 @@ requirements are the two largest sources of variance.
 7. **Numeric row reference ambiguity.** An in-range number is treated as a row index before it is treated as a dataset ID. A tagged `{ id } | { index }` row reference would remove this ambiguity.
 8. **Pinned rows remain part of the normal dataset height.** They reuse/move the real row node and their natural dataset slot remains represented in scroll geometry. Confirm this product semantic against the desired AG Grid behavior.
 9. **Permanent pin over-allocation is rejected at the API boundary.** Pinning every visible
-   column or consuming the whole viewport invokes the configured legacy validation callback and
-   leaves the prior pinning state intact. The final API may still rename those legacy callback and
-   message options during the cleanup pass.
+   column or consuming the whole viewport invokes the configured canonical pinning validation
+   callback and leaves the prior pinning state intact.
 10. **Column reorder policy is undecided.** The visual order groups permanent pins at the edges, but dragging between center and pinned regions does not yet automatically change `pinned` state.
 11. **Header Menu terminology is provisional.** The bulk `Freeze Columns` command is
     retained as a migration-friendly label and writes `pinning.columns.left`; the
     single-column `Pin Column` command writes `Column.pinned`. Add explicit left/right
     submenu actions only if the final public UX requires them.
 12. **Public controller surface is provisional.** `DockingController` is currently exported for the POC; it may be better kept internal in the final API.
-13. **No compatibility/migration layer is intended.** Any temporary legacy fields should be deleted, not deprecated, once this direction is approved.
+13. **Migration references are intentionally narrow.** Historical option names belong in the
+    v11 migration guide, while freeze-themed command IDs, locale labels, demo selectors, and
+    theme variables may remain where changing them would unnecessarily break consumers. None
+    of these references should be read or mapped by the runtime configuration API.
 
 ## Documentation scope
 
@@ -653,46 +669,41 @@ deferred until the vanilla guide and API cleanup are settled; do not add framewo
 3. Use Example 47's Account/Q1–Q4/YTD sticky columns and bottom sticky totals to confirm activation/deactivation/hysteresis. Add a top sticky-row counterpart only after deciding its report hierarchy/push-off behavior.
 4. Fix visual/interaction problems before adding tests.
 5. Review the implemented unified `GridOption.pinning` shape and `CurrentColumn.pinning` precedence before freezing the public API. The former `pinnedColumn`/`pinnedRows` shorthands have been removed.
-6. Review the provisional Header Menu terminology: retain `Freeze Columns` only as the
-   migration-friendly bulk command while the POC is being validated, and keep `Pin Column`/
-   `Unpin Column` for the single-column action. Remove the legacy terminology during the final
-   major-version API cleanup if the migration window no longer requires it.
-7. Perform a second legacy-cleanup audit rather than layering compatibility over the first pass:
-   - remove frozen options/defaults/validation/messages;
-   - remove right/bottom pane fields and DOM construction entirely;
-   - collapse canvas/viewport/header collections to single objects where practical;
-   - remove old synchronized-scroll branches;
-   - replace `CurrentPinning`, GridService, GridStateService, menus, and extensions with the new shapes;
-   - remove obsolete frozen SCSS and framework assumptions.
-8. Recalculate production LOC after the follow-up audit.
+6. Review the migration-friendly Header Menu terminology: `Freeze Columns` remains the bulk
+   command label/ID, while `Pin Column`/`Unpin Column` are the single-column actions. Keep the
+   historical references documented for v11-and-lower users without adding runtime aliases.
+7. Complete the remaining structural audit:
+   - rename/remove internal `_pane*`, `_viewport*`, and `_canvas*` aliases where practical;
+   - decide whether the historical `--slick-frozen-*` theme variables need a documented rename;
+   - update remaining demo labels/selectors only where it does not conflict with migration coverage.
+8. Recalculate production LOC after the structural audit.
 9. Keep unit, coverage, Cypress, framework, and documentation work aligned with the cleaned API;
-   do not declare the legacy removal complete until the audit and focused regressions pass.
+   do not reintroduce the removed frozen runtime options or pane renderer.
 
 ## New-context handoff checklist
 
 - Treat this file and the current working tree as the source of truth; do not restart the POC
   from the old PR 1238 frozen-pane branch.
-- The safe cleanup pass and first legacy deletion pass are finished, but no claim has been made
-  that the full refactor is done. Continue with the follow-up audit before calling legacy removal
-  complete.
+- The legacy frozen runtime options/interfaces and pane behavior are removed. Continue with the
+  structural alias/style audit, but do not restore compatibility branches for old configuration.
 - Before changing layout code, preserve the current invariants: one native horizontal scroll,
   one native vertical scroll, one rendered row with left/center/right regions, stable header /
   header-row / footer region wrappers, and one shared `DockingController`.
 - Re-run the focused checks after edits. A browser/Cypress failure in the current agent
   environment may be infrastructure-related when the process exits with code 132 before
   browser startup; distinguish that from a real spec failure.
-- When the legacy deletion pass begins, audit every reference to frozen options, pane roots,
-  synchronized scroll branches, header-width slack, frozen SCSS, GridState/GridService,
-  resizer, header menus, extensions, and all four framework wrappers. Then recalculate LOC
-  from `git diff HEAD` and update this file again.
+- During the structural audit, distinguish intentional migration references (docs, command IDs,
+  locale text, demo selectors, and theme variables) from runtime configuration. Audit pane aliases,
+  synchronized scroll branches, header-width slack, GridState/GridService, resizer, header menus,
+  extensions, and all four framework wrappers, then recalculate LOC from `git diff HEAD` and update
+  this file again.
 
 ## Suggested resume prompt
 
 > Read `PINNING-POC-PROGRESS.md` and inspect the current diff. This is a major-breaking
 > single-native-scroll pinning/stickiness rewrite, not an extension of SlickGrid frozen panes.
-> The immediate task after the first PR is to remove all dead freeze/pane code. Preserve one
-> live viewport, one row node with left/center/right cell regions, and the shared
-> `DockingController`; do not add more frozen compatibility branches. Coordinate the deletion
-> across `SlickGrid`, GridState/GridService, header grouping, resizer, extensions, framework
-> wrappers, menus, and frozen SCSS, then run focused Cypress specs and recalculate the
-> production-library LOC.
+> The legacy frozen runtime options/interfaces and pane behavior have already been removed.
+> Preserve one live viewport, one row node with left/center/right cell regions, and the shared
+> `DockingController`; do not add frozen compatibility branches. Finish the structural alias/style
+> audit across `SlickGrid`, framework wrappers, menus, and theme variables, then run focused
+> regressions and recalculate the production-library LOC.

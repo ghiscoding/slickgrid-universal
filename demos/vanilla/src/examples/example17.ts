@@ -30,7 +30,7 @@ export default class Example17 {
   minInterval = 30;
   maxInterval = 600;
   delayCursor = 5;
-  frozenColumnCount = -1;
+  pinnedColumnCount = -1;
   subTitleStyle = 'display: block';
 
   attached() {
@@ -156,7 +156,7 @@ export default class Example17 {
       rowHeight: 35,
       // enableExcelCopyBuffer: true,
       headerMenu: {
-        hideFreezeColumnsCommand: false,
+        hidePinningColumnsCommand: false,
       },
     };
 
@@ -193,14 +193,14 @@ export default class Example17 {
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
-  changeFrozenColumnCount() {
+  changePinnedColumnCount() {
     if (this.sgb1?.slickGrid?.setOptions) {
       const currentPinning = this.sgb1.slickGrid.getOptions().pinning ?? {};
       this.sgb1?.slickGrid.setOptions({
         pinning: {
           ...currentPinning,
           columns: {
-            left: +this.frozenColumnCount >= 0 ? +this.frozenColumnCount : [],
+            left: +this.pinnedColumnCount >= 0 ? +this.pinnedColumnCount : [],
             right: currentPinning.columns?.right ?? [],
           },
         },

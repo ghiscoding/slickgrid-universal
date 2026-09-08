@@ -15,8 +15,6 @@ const addVanillaEventPropagation = function <T = any>(event: T) {
 };
 
 const mockGridOptions = {
-  frozenColumn: 1,
-  frozenRow: -1,
   rowHeight: 30,
 } as GridOption;
 
@@ -91,9 +89,6 @@ describe('CellRangeSelector Plugin', () => {
   afterEach(() => {
     vi.clearAllMocks();
     plugin?.dispose();
-    mockGridOptions.frozenColumn = -1;
-    mockGridOptions.frozenRow = -1;
-    mockGridOptions.frozenBottom = false;
     mockGridOptions.rowHeight = 30;
   });
 
@@ -209,7 +204,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag in bottom left canvas', () => {
-    mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -260,7 +254,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag in bottom right canvas with decorator showing dragging range', () => {
-    mockGridOptions.frozenColumn = 3;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -314,7 +307,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag end in bottom right canvas with "onCellRangeSelected" published', () => {
-    mockGridOptions.frozenColumn = 3;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -388,7 +380,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag and return when "canCellBeSelected" returns False', () => {
-    mockGridOptions.frozenColumn = 3;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -451,7 +442,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag and cell range selection to be changed when "canCellBeSelected" returns True', () => {
-    mockGridOptions.frozenColumn = 3;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -523,7 +513,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag and cell range selection to be changed and should call normalRangeOppositeCellFromCopy() when "canCellBeSelected" has a previous selected range', () => {
-    mockGridOptions.frozenColumn = -1;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -587,8 +576,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag and expect the decorator to NOT call the "show" method and return (frozen row) with canvas bottom right', () => {
-    mockGridOptions.frozenColumn = 3;
-    mockGridOptions.frozenRow = 1;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -639,8 +626,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag and expect the decorator to NOT call the "show" method and return (frozen column) with canvas top right', () => {
-    mockGridOptions.frozenColumn = 5;
-    mockGridOptions.frozenRow = 1;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -697,7 +682,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should call onDrag and handle drag outside the viewport when drag is detected as outside the viewport', () => {
-    mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -760,7 +744,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should call onDrag and handle drag outside the viewport and expect drag to be moved to a new position', () => {
-    mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -828,7 +811,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should call normalRangeOppositeCellFromCopy() when onDrag has a previous selected range', () => {
-    mockGridOptions.frozenColumn = -1;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -894,7 +876,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should call onDrag and handle drag outside the viewport with negative offset and expect drag to be moved to a new position', () => {
-    mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -961,7 +942,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should maintain propagation only if editor is on current cell', () => {
-    mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -1014,7 +994,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should stop propagation if the editor is not on the current cell', () => {
-    mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';

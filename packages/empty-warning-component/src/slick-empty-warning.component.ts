@@ -62,8 +62,8 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     const gridCanvasElm = gridCanvasLeftElm || document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas`);
     const leftElementMarginLeft = mergedOptions.leftViewportMarginLeft ?? 0;
     const rightElementMarginLeft = mergedOptions.rightViewportMarginLeft ?? 0;
-    const leftElementFrozenMarginLeft = mergedOptions.frozenLeftViewportMarginLeft ?? 0;
-    const rightElementFrozenMarginLeft = mergedOptions.frozenRightViewportMarginLeft ?? 0;
+    const leftElementPinnedMarginLeft = mergedOptions.pinnedLeftViewportMarginLeft ?? 0;
+    const rightElementPinnedMarginLeft = mergedOptions.pinnedRightViewportMarginLeft ?? 0;
     const isPinnedGrid = this.gridOptions?.pinning?.columns !== undefined;
     const leftViewportMarginLeft = typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
     const rightViewportMarginLeft = typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
@@ -113,34 +113,21 @@ export class SlickEmptyWarningComponent implements ExternalResource {
       gridCanvasElm.appendChild(this._warningLeftElement);
     }
 
-    // if we did find the Slick-Empty-Warning element then we'll display/hide at the grid position with some margin offsets (we need to position under the headerRow and filterRow)
-    // when using a frozen/pinned grid, we also have extra options to hide left/right message
+    // if we did find the Slick-Empty-Warning element then display it with the configured margin offsets
     if (this._warningLeftElement) {
-      // display/hide right/left messages
-      let leftDisplay = isShowing ? 'flex' : 'none';
-      if (isPinnedGrid && isShowing) {
-        leftDisplay = mergedOptions.hideFrozenLeftWarning ? 'none' : 'flex';
-      }
-      this._warningLeftElement.style.display = leftDisplay;
+      this._warningLeftElement.style.display = isShowing ? 'flex' : 'none';
 
-      // use correct left margin (defaults to 40% on regular grid or 10px on pinned grid)
-      const leftFrozenMarginLeft =
-        typeof leftElementFrozenMarginLeft === 'string' ? leftElementFrozenMarginLeft : `${leftElementFrozenMarginLeft}px`;
-      this._warningLeftElement.style.marginLeft = isPinnedGrid ? leftFrozenMarginLeft : leftViewportMarginLeft;
+      const leftPinnedMarginLeft =
+        typeof leftElementPinnedMarginLeft === 'string' ? leftElementPinnedMarginLeft : `${leftElementPinnedMarginLeft}px`;
+      this._warningLeftElement.style.marginLeft = isPinnedGrid ? leftPinnedMarginLeft : leftViewportMarginLeft;
     }
 
     if (this._warningRightElement) {
-      // use correct left margin (defaults to 40% on regular grid or 10px on pinned grid)
-      let rightDisplay = isShowing ? 'flex' : 'none';
-      if (isPinnedGrid && isShowing) {
-        rightDisplay = mergedOptions.hideFrozenRightWarning ? 'none' : 'flex';
-      }
-      this._warningRightElement.style.display = rightDisplay;
+      this._warningRightElement.style.display = isShowing ? 'flex' : 'none';
 
-      // use correct left margin (defaults to 40% on regular grid or 10px on pinned grid)
-      const rightFrozenMarginLeft =
-        typeof rightElementFrozenMarginLeft === 'string' ? rightElementFrozenMarginLeft : `${rightElementFrozenMarginLeft}px`;
-      this._warningRightElement.style.marginLeft = isPinnedGrid ? rightFrozenMarginLeft : rightViewportMarginLeft;
+      const rightPinnedMarginLeft =
+        typeof rightElementPinnedMarginLeft === 'string' ? rightElementPinnedMarginLeft : `${rightElementPinnedMarginLeft}px`;
+      this._warningRightElement.style.marginLeft = isPinnedGrid ? rightPinnedMarginLeft : rightViewportMarginLeft;
     }
 
     return isShowing;

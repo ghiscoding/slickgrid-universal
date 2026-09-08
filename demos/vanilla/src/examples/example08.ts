@@ -147,8 +147,8 @@ export default class Example08 {
       pinning: { columns: { left: 2 } },
       rowHeight: 33,
       showCustomFooter: true,
-      gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false },
+      gridMenu: { hideClearPinningCommand: false },
+      headerMenu: { hidePinningColumnsCommand: false },
 
       // enable the filtering but hide the user filter row since we use our own single filter
       enableFiltering: true,
@@ -174,11 +174,11 @@ export default class Example08 {
     return mockDataset;
   }
 
-  setFrozenColumns2(frozenCols: number) {
+  setPinnedColumns2(pinnedCols: number) {
     this.sgb2.slickGrid?.setOptions({
       pinning: {
         columns: {
-          left: frozenCols >= 0 ? frozenCols : [],
+          left: pinnedCols >= 0 ? pinnedCols : [],
         },
       },
       alwaysShowVerticalScroll: false,

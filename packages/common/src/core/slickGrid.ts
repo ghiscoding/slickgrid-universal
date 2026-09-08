@@ -25,11 +25,14 @@ import type {
   CellSelectionMode,
   CellViewportRange,
   Column,
+  ColumnDockingBand,
+  ColumnDockingLayout,
   ColumnMetadata,
   ColumnPinningReferences,
   ColumnSort,
   CssStyleHash,
   CustomDataView,
+  DockedRow,
   DockingSide,
   DOMEvent,
   DragPosition,
@@ -91,16 +94,11 @@ import type {
   OnValidationErrorEventArgs,
   PagingInfo,
   PinnedColumns,
+  RowDockingLayout,
   SingleColumnSort,
   SlickPlugin,
 } from '../interfaces/index.js';
-import {
-  DockingController,
-  type ColumnDockingBand,
-  type ColumnDockingLayout,
-  type DockedRow,
-  type RowDockingLayout,
-} from './dockingController.js';
+import { DockingController } from './dockingController.js';
 import {
   preClickClassName,
   RowPositionIndexer,
@@ -258,15 +256,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   // settings
   protected _options!: O;
   protected _defaults: BaseGridOption = {
-    invalidColumnFreezePickerCallback: (error) => alert(error),
-    invalidColumnFreezeWidthCallback: (error) => alert(error),
-    invalidColumnFreezeWidthMessage:
-      '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
+    invalidColumnPinningPickerCallback: (error) => alert(error),
+    invalidColumnPinningWidthCallback: (error) => alert(error),
+    invalidColumnPinningWidthMessage:
+      '[SlickGrid] You are trying to pin more columns than the grid can support. ' +
       'Make sure to have less columns pinned (on the left) than the actual visible grid width.',
-    invalidColumnFreezePickerMessage:
-      '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
-      'You could alternatively "Unfreeze all the columns" before trying again.',
-    skipFreezeColumnValidation: false,
+    invalidColumnPinningPickerMessage:
+      '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column in the center section of the grid. ' +
+      'You could alternatively unpin columns before trying again.',
+    skipPinningValidation: false,
     allowDragFromClosest: 'div.slick-cell.dnd, div.slick-cell.cell-reorder',
     alwaysShowVerticalScroll: false,
     alwaysAllowHorizontalScroll: false,
@@ -332,10 +330,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       overflowStrategy: 'conveyor',
       stickyHysteresis: 2,
     },
-    frozenBottom: false,
-    frozenColumn: -1,
-    frozenRow: -1,
-    frozenRightViewportMinWidth: 100,
     fullWidthRows: false,
     multiColumnSort: false,
     numberedMultiColumnSort: false,
@@ -445,15 +439,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected cellWidthDiff = 0;
   protected cellHeightDiff = 0;
   protected absoluteColumnMinWidth!: number;
-  protected hasFrozenRows = false;
-  protected frozenRowsHeight = 0;
-  protected actualFrozenRow = -1;
   protected rowPositionIndexer?: RowPositionIndexer; // row top positions (variable row height mode only)
   protected rowHeightsDirty = true; // set when row heights may have changed; the index is rebuilt on the next updateRowCount()
-  protected frozenRowHeightsChanged = false; // set when an index rebuild changed the frozen rows height; consumed at the end of updateRowCount()
-  protected _prevFrozenColumnIdx = -1;
-  /** flag to indicate if invalid frozen alert has been shown already or not? This is to avoid showing it more than once */
-  protected _invalidfrozenAlerted = false;
+  /** flag to indicate if an invalid pinning alert has been shown already or not */
+  protected _invalidPinningAlerted = false;
   protected paneTopH = 0;
   protected paneBottomH = 0;
   protected viewportTopH = 0;
@@ -592,7 +581,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected cssShow = { position: 'absolute', visibility: 'hidden', display: 'block' };
   protected _hiddenParents: HTMLElement[] = [];
   protected oldProps: Array<Partial<CSSStyleDeclaration>> = [];
-  protected enforceFrozenRowHeightRecalc = false;
   protected columnResizeDragging = false;
   protected slickDraggableInstance: InteractionBase | null = null;
   protected slickMouseWheelInstances: Array<InteractionBase> = [];
@@ -728,7 +716,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.validateAndEnforceOptions();
     this.applyColumnPinningOptions(this.columns);
     this._columnDefaults.width = this._options.defaultColumnWidth;
-    this._prevFrozenColumnIdx = this.getFrozenColumnIdx();
 
     if (!this._options.suppressCssChangesOnHiddenInit) {
       this.cacheCssForHiddenInit();
@@ -983,7 +970,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         });
       }
 
-      this.setFrozenOptions();
       this.activateSingleViewportLayout();
       this.setScroller();
       this.setOverflow();
@@ -1122,18 +1108,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  protected hasFrozenColumns(): boolean {
-    return this._options.frozenColumn! > -1;
-  }
-
-  /** Whether the row renders in the bottom canvas (rows >= actualFrozenRow). */
-  protected isBottomBandRow(row: number): boolean {
-    return this.hasFrozenRows && row >= this.actualFrozenRow;
-  }
-
-  /** Whether the row index belongs to the frozen (pinned) row band. */
-  protected isFrozenRowIdx(row: number): boolean {
-    return this.hasFrozenRows && (this._options.frozenBottom ? row >= this.actualFrozenRow : row < this.actualFrozenRow);
+  /** Whether the row index belongs to a pinned row band. */
+  protected isPinnedRowIdx(row: number): boolean {
+    return this.dockingByRow.get(row)?.band !== undefined && this.dockingByRow.get(row)?.band !== 'center';
   }
 
   /** Register an external Plugin */
@@ -1261,8 +1238,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const idx = typeof columnIdOrIdx === 'number' ? columnIdOrIdx : this.getColumnIndex(columnIdOrIdx);
 
-    const isBottomSide = this.isBottomBandRow(rowIndex);
-    const isRightSide = this.hasFrozenColumns() && idx > this._options.frozenColumn!;
+    const isBottomSide = this.dockingByRow.get(rowIndex)?.band === 'bottom';
+    const isRightSide = this.getColumnDockingBand(idx) === 'right';
 
     return targetContainers[(isBottomSide ? 2 : 0) + (isRightSide ? 1 : 0)];
   }
@@ -1298,7 +1275,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         continue;
       }
       const width = this.columns[i].width;
-      if (this._options.frozenColumn! > -1 && i > this._options.frozenColumn!) {
+      if (this.getColumnDockingBand(i) === 'right') {
         this.headersWidthR += width || 0;
       } else {
         this.headersWidthL += width || 0;
@@ -1306,16 +1283,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     if (includeScrollbar) {
-      // attribute the scrollbar width to the active scrollable band: the right band
-      // when frozen columns are enabled, otherwise the left band.
-      if (this.hasFrozenColumns()) {
+      // Attribute the scrollbar width to the active scrollable band: the right band
+      // when columns are pinned, otherwise the left band.
+      if (this.hasDockedColumns()) {
         this.headersWidthR += this.scrollbarDimensions?.width || 0;
       } else {
         this.headersWidthL += this.scrollbarDimensions?.width || 0;
       }
     }
 
-    if (this.hasFrozenColumns()) {
+    if (this.hasDockedColumns()) {
       this.headersWidthR = Math.max(this.headersWidthR, this.viewportW);
     } else {
       this.headersWidthL = Math.max(this.headersWidthL, this.viewportW);
@@ -1337,7 +1314,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         continue;
       }
 
-      if (this.hasFrozenColumns() && i > this._options.frozenColumn!) {
+      if (this.getColumnDockingBand(i) === 'right') {
         this.canvasWidthR += this.columns[i].width || 0;
       } else {
         this.canvasWidthL += this.columns[i].width || 0;
@@ -1348,7 +1325,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const extraWidth = Math.max(totalRowWidth, availableWidth) - totalRowWidth;
       if (extraWidth > 0) {
         totalRowWidth += extraWidth;
-        if (this.hasFrozenColumns()) {
+        if (this.hasDockedColumns()) {
           this.canvasWidthR += extraWidth;
         } else {
           this.canvasWidthL += extraWidth;
@@ -1359,99 +1336,63 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Validate that the column freeze is allowed in the browser by making sure that the frozen column is not exceeding the available and visible left canvas width.
-   * Note that it will only validate when `invalidColumnFreezeWidthCallback` grid option is enabled.
-   * @param {Number} frozenColumn the column index to freeze at
+   * Validate that pinned columns fit within the available grid width.
+   * @param pinnedIndexes the columns to validate
    *  - if `undefined` it will do the condition check and never alert more than once
    *  - if `true` it will do the condition check and always alert even if it was called before
    *  - if `false` it will do the condition check but always skip the alert
    */
-  validateColumnFreezeWidth(frozenColumn = -1): boolean {
-    if (frozenColumn >= 0) {
-      let canvasWidthL = 0;
-      this.columns.forEach((col, i) => {
-        if (!col.hidden && i <= frozenColumn) {
-          const { minWidth = 0, maxWidth = 0, width = this._options.defaultColumnWidth! } = col;
-          let fwidth = width < minWidth ? minWidth : width;
-          if (maxWidth > 0 && fwidth > maxWidth) {
-            fwidth = maxWidth;
-          }
-          canvasWidthL += fwidth;
-        }
-      });
-
-      const cWidth = Utils.width(this._container) || 0;
-      if (cWidth > 0 && canvasWidthL > cWidth && !this._options.skipFreezeColumnValidation) {
-        if (this._options.invalidColumnFreezeWidthCallback) {
-          this._options.invalidColumnFreezeWidthCallback?.(this._options.invalidColumnFreezeWidthMessage!);
-          this._invalidfrozenAlerted = true;
-        }
-        return false;
+  protected validatePinnedColumnWidth(pinnedIndexes: Map<number, DockingSide>, forceAlert = false, columns: C[] = this.columns): boolean {
+    const widths = { left: 0, right: 0 };
+    pinnedIndexes.forEach((side, index) => {
+      const column = columns[index];
+      if (!column || column.hidden) {
+        return;
       }
+      const { minWidth = 0, maxWidth = 0, width = this._options.defaultColumnWidth! } = column;
+      widths[side] += Math.min(maxWidth || Number.POSITIVE_INFINITY, Math.max(width, minWidth));
+    });
+    const viewportWidth = this._viewportTopL?.clientWidth || this.getViewportInnerWidth() || Utils.width(this._container) || 0;
+    if (viewportWidth > 0 && widths.left + widths.right >= viewportWidth && !this._options.skipPinningValidation) {
+      if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningWidthCallback) {
+        this._options.invalidColumnPinningWidthCallback(this._options.invalidColumnPinningWidthMessage!);
+        this._invalidPinningAlerted = true;
+      }
+      return false;
     }
     return true;
   }
 
   /**
-   * Validate that the frozen column is allowed by verifying there is at least 1, or more, column to the right of the frozen column otherwise show an error
-   * Note that it will only validate when `invalidColumnFreezePickerCallback` grid option is enabled.
+   * Validate that a pinning change leaves at least one visible center column.
    * @param {Number|String} [columnId] column id
-   * @param {Boolean} [forceAlert] tri-state flag to alert when frozen column is invalid
+   * @param {Boolean} [forceAlert] tri-state flag to alert when pinning is invalid
    * @param {Array<Column>} [colums] optionally provide new columns to validate
    *  - if `undefined` it will do the condition check and never alert more than once
    *  - if `true` it will do the condition check and always alert even if it was called before
    *  - if `false` it will do the condition check but always skip the alert
    */
-  validateColumnFreeze(columnId?: number | string, forceAlert = false, columns?: Column[]): boolean {
+  validateColumnPinning(columnId?: number | string, forceAlert = false, columns: C[] = this.columns): boolean {
     const hasColummnIdArg = columnId !== undefined;
-    columns ??= this.columns;
-
-    // The column picker and header menu still call this compatibility method.
-    // When the grid uses the new pinning model, validate the resulting visible
-    // set as if the requested column were hidden. This keeps the legacy
-    // callback/alert contract while enforcing the same invariant as pinning:
-    // at least one unpinned center column must remain visible.
-    if (this._options.pinning?.columns !== undefined) {
-      const prospectiveColumns = hasColummnIdArg
-        ? columns.map((column) => (column?.id === columnId && !column.hidden ? { ...column, hidden: true } : column))
-        : columns;
-      return this.validatePinnedColumnIndexes(
-        this.getPinnedColumnIndexes(this._options.pinning.columns),
-        forceAlert,
-        prospectiveColumns as C[]
-      );
-    }
-
-    if (columnId === undefined && (this._prevFrozenColumnIdx >= 0 || this._options.frozenColumn! >= 0)) {
-      const column = columns[this._prevFrozenColumnIdx] ?? columns[this._options.frozenColumn!];
-      columnId = column?.id ?? '';
-    }
-    const currentFrozenIdx = this._options.frozenColumn!;
-    const frozenColumnId = currentFrozenIdx >= 0 && currentFrozenIdx <= columns.length ? columns[currentFrozenIdx].id : '';
-    if (!frozenColumnId || !columnId) {
-      return true;
-    }
-
-    const visibleColumns = columns.filter((col) => !col.hidden);
-    const colIdx = visibleColumns.findIndex((c) => c.id === columnId);
-    const frozenColIdx = visibleColumns.findIndex((c) => c.id === frozenColumnId);
-    let currentFrozenColumn = this._options.frozenColumn!;
-    if ((frozenColIdx > colIdx && colIdx <= currentFrozenColumn) || currentFrozenColumn === -1) {
-      return true;
-    }
-
-    if (
-      (currentFrozenColumn >= 0 && currentFrozenColumn >= visibleColumns.length - 2 && !this._options.skipFreezeColumnValidation) ||
-      (hasColummnIdArg && currentFrozenColumn === 0 && columnId !== undefined && this.columns[0].id === columnId)
-    ) {
-      if ((forceAlert !== false && !this._invalidfrozenAlerted) || forceAlert === true) {
-        this._options.invalidColumnFreezePickerCallback?.(this._options.invalidColumnFreezePickerMessage!);
-        this._invalidfrozenAlerted = true;
+    const prospectiveColumns = hasColummnIdArg
+      ? columns.map((column) => (column?.id === columnId && !column.hidden ? { ...column, hidden: true } : column))
+      : columns;
+    const pinnedIndexes = this.getPinnedColumnIndexes(this._options.pinning?.columns);
+    const visibleIndexes = prospectiveColumns.reduce<number[]>((indexes, column, index) => {
+      if (column && !column.hidden) {
+        indexes.push(index);
+      }
+      return indexes;
+    }, []);
+    const hasCenterColumn = visibleIndexes.some((index) => !pinnedIndexes.has(index));
+    if (!hasCenterColumn && visibleIndexes.length && !this._options.skipPinningValidation) {
+      if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningPickerCallback) {
+        this._options.invalidColumnPinningPickerCallback(this._options.invalidColumnPinningPickerMessage!);
+        this._invalidPinningAlerted = true;
       }
       return false;
     }
-
-    return true;
+    return this.validatePinnedColumnWidth(pinnedIndexes, forceAlert, prospectiveColumns);
   }
 
   protected updateCanvasWidth(forceColumnWidthsUpdate?: boolean): void {
@@ -1476,78 +1417,38 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const widthChanged =
       this.canvasWidth !== oldCanvasWidth || this.canvasWidthL !== oldCanvasWidthL || this.canvasWidthR !== oldCanvasWidthR;
 
-    if (widthChanged || this.hasFrozenColumns() || this.hasFrozenRows) {
+    if (widthChanged) {
       Utils.width(this._canvasTopL, this.canvasWidthL);
 
       this.getHeadersWidth();
 
       Utils.width(this._headerL, this.getDockingChromeRootWidth());
-      if (this._headerR !== this._headerL) {
-        Utils.width(this._headerR, this.headersWidthR);
+      // v11 uses one live pane for both pinned and center columns. The old
+      // split-pane sizing must not be applied to the aliased right/bottom
+      // nodes, otherwise pinning can collapse the viewport to the scrollbar
+      // strip by assigning the pane's left offset and residual width.
+      this._paneHeaderL.style.left = '';
+      this._paneTopL.style.left = '';
+      Utils.width(this._paneHeaderL, '100%');
+      Utils.width(this._paneTopL, '100%');
+      Utils.width(this._headerRowScrollerL, '100%');
+      Utils.width(this._headerRowL, this.canvasWidth);
+
+      if (this._options.createFooterRow) {
+        Utils.width(this._footerRowScrollerL, '100%');
+        Utils.width(this._footerRowL, this.canvasWidth);
       }
 
-      if (this.hasFrozenColumns()) {
-        Utils.width(this._canvasTopR, this.canvasWidthR);
+      if (this._options.createPreHeaderPanel && !this._isResizingColumn) {
+        const panelWidth = this._options.preHeaderPanelWidth ?? this.canvasWidth;
+        this._preHeaderPanel.style.width = typeof panelWidth === 'string' ? panelWidth : `${panelWidth}px`;
+      }
+      Utils.width(this._viewportTopL, '100%');
 
-        Utils.width(this._paneHeaderL, this.canvasWidthL);
-        Utils.setStyleSize(this._paneHeaderR, 'left', this.canvasWidthL);
-        Utils.setStyleSize(this._paneHeaderR, 'width', this.viewportW - this.canvasWidthL);
-
-        Utils.width(this._paneTopL, this.canvasWidthL);
-        Utils.setStyleSize(this._paneTopR, 'left', this.canvasWidthL);
-        Utils.width(this._paneTopR, this.viewportW - this.canvasWidthL);
-
-        Utils.width(this._headerRowScrollerL, this.canvasWidthL);
-        Utils.width(this._headerRowScrollerR, this.viewportW - this.canvasWidthL);
-
-        Utils.width(this._headerRowL, this.canvasWidthL);
-        Utils.width(this._headerRowR, this.canvasWidthR);
-
-        if (this._options.createFooterRow) {
-          Utils.width(this._footerRowScrollerL, this.canvasWidthL);
-          Utils.width(this._footerRowScrollerR, this.viewportW - this.canvasWidthL);
-
-          Utils.width(this._footerRowL, this.canvasWidthL);
-          Utils.width(this._footerRowR, this.canvasWidthR);
-        }
-        if (this._options.createPreHeaderPanel && !this._isResizingColumn) {
-          const panelWidth = this._options.preHeaderPanelWidth ?? this.canvasWidth;
-          this._preHeaderPanel.style.width = typeof panelWidth === 'string' ? panelWidth : `${panelWidth}px`;
-        }
-        Utils.width(this._viewportTopL, this.canvasWidthL);
-        Utils.width(this._viewportTopR, this.viewportW - this.canvasWidthL);
-
-        if (this.hasFrozenRows) {
-          Utils.width(this._paneBottomL, this.canvasWidthL);
-          Utils.setStyleSize(this._paneBottomR, 'left', this.canvasWidthL);
-
-          Utils.width(this._viewportBottomL, this.canvasWidthL);
-          Utils.width(this._viewportBottomR, this.viewportW - this.canvasWidthL);
-
-          Utils.width(this._canvasBottomL, this.canvasWidthL);
-          Utils.width(this._canvasBottomR, this.canvasWidthR);
-        }
-      } else {
-        Utils.width(this._paneHeaderL, '100%');
-        Utils.width(this._paneTopL, '100%');
-        Utils.width(this._headerRowScrollerL, '100%');
-        Utils.width(this._headerRowL, this.canvasWidth);
-
-        if (this._options.createFooterRow) {
-          Utils.width(this._footerRowScrollerL, '100%');
-          Utils.width(this._footerRowL, this.canvasWidth);
-        }
-
-        if (this._options.createPreHeaderPanel && !this._isResizingColumn) {
-          const panelWidth = this._options.preHeaderPanelWidth ?? this.canvasWidth;
-          this._preHeaderPanel.style.width = typeof panelWidth === 'string' ? panelWidth : `${panelWidth}px`;
-        }
-        Utils.width(this._viewportTopL, '100%');
-
-        if (this.hasFrozenRows) {
-          Utils.width(this._viewportBottomL, '100%');
-          Utils.width(this._canvasBottomL, this.canvasWidthL);
-        }
+      if (this.rowDockingLayout.bottom.length > 0) {
+        this._paneBottomL.style.left = '';
+        Utils.width(this._viewportBottomL, '100%');
+        Utils.width(this._canvasBottomL, this.canvasWidthL);
       }
     }
 
@@ -1806,13 +1707,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   getHeader(columnDef?: C): HTMLDivElement | HTMLDivElement[] {
     if (!columnDef) {
-      return this.hasFrozenColumns() ? this._headers : this._headerL;
-    }
-    const idx = this.getColumnIndex(columnDef.id);
-    if (this.usesDockingChromeRegions()) {
       return this._headerL;
     }
-    return this.hasFrozenColumns() ? (idx <= this._options.frozenColumn! ? this._headerL : this._headerR) : this._headerL;
+    const idx = this.getColumnIndex(columnDef.id);
+    return this.usesDockingChromeRegions() ? this.getDockingChromeRegion('header', this.getColumnDockingBand(idx)) : this._headerL;
   }
 
   /**
@@ -1826,8 +1724,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         `.slick-header-column[data-id="${String(this.columns[idx]?.id ?? columnIdOrIdx)}"]`
       ) as HTMLDivElement;
     }
-    const targetHeader = this.hasFrozenColumns() ? (idx <= this._options.frozenColumn! ? this._headerL : this._headerR) : this._headerL;
-    const targetIndex = this.hasFrozenColumns() ? (idx <= this._options.frozenColumn! ? idx : idx - this._options.frozenColumn! - 1) : idx;
+    const targetHeader = this.usesDockingChromeRegions()
+      ? this.getDockingChromeRegion('header', this.getColumnDockingBand(idx))
+      : this._headerL;
+    const targetIndex = idx;
     const directMatch = targetHeader.children[targetIndex] as HTMLDivElement | undefined;
     const targetColumnId = String(this.columns[idx]?.id ?? columnIdOrIdx);
     const directMatchColumn = Utils.storage.get(directMatch, 'column') as C | undefined;
@@ -1843,12 +1743,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Get the Header Row DOM element */
   getHeaderRow(): HTMLDivElement | HTMLDivElement[] {
-    return this.hasFrozenColumns() ? this._headerRows : this._headerRows?.[0];
+    return this._headerRowL;
   }
 
   /** Get the Footer DOM element */
   getFooterRow(): HTMLDivElement | HTMLDivElement[] {
-    return this.hasFrozenColumns() ? this._footerRow : this._footerRow?.[0];
+    return this._footerRowL;
   }
 
   /** @alias `getPreHeaderPanelLeft` */
@@ -1880,20 +1780,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.usesDockingChromeRegions()) {
       return this._headerRowL.querySelector(`.slick-headerrow-column.l${idx}`) as HTMLDivElement;
     }
-    let headerRowTarget: HTMLDivElement;
-
-    if (this.hasFrozenColumns()) {
-      if (idx <= this._options.frozenColumn!) {
-        headerRowTarget = this._headerRowL;
-      } else {
-        headerRowTarget = this._headerRowR;
-        idx -= this._options.frozenColumn! + 1;
-      }
-    } else {
-      headerRowTarget = this._headerRowL;
-    }
-
-    return headerRowTarget.children[idx] as HTMLDivElement;
+    const headerRowTarget = this.usesDockingChromeRegions()
+      ? this.getDockingChromeRegion('headerRow', this.getColumnDockingBand(idx))
+      : this._headerRowL;
+    return (headerRowTarget.querySelector(`.slick-headerrow-column.l${idx}`) || headerRowTarget.children[idx]) as HTMLDivElement;
   }
 
   /**
@@ -1905,20 +1795,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.usesDockingChromeRegions()) {
       return this._footerRowL?.querySelector(`.slick-footerrow-column.l${idx}`) as HTMLDivElement;
     }
-    let footerRowTarget: HTMLDivElement | null;
-
-    if (this.hasFrozenColumns()) {
-      if (idx <= this._options.frozenColumn!) {
-        footerRowTarget = this._footerRowL;
-      } else {
-        footerRowTarget = this._footerRowR;
-        idx -= this._options.frozenColumn! + 1;
-      }
-    } else {
-      footerRowTarget = this._footerRowL;
-    }
-
-    return footerRowTarget?.children[idx] as HTMLDivElement;
+    const footerRowTarget = this.usesDockingChromeRegions()
+      ? this.getDockingChromeRegion('footerRow', this.getColumnDockingBand(idx))
+      : this._footerRowL;
+    return (footerRowTarget?.querySelector(`.slick-footerrow-column.l${idx}`) || footerRowTarget?.children[idx]) as HTMLDivElement;
   }
 
   protected createColumnFooter(): void {
@@ -1955,13 +1835,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         const footerRowCell = createDomElement(
           'div',
           { className: `slick-state-default slick-footerrow-column l${i} r${i}` },
-          this.usesDockingChromeRegions()
-            ? this.getDockingChromeRegion('footerRow', band)
-            : this.hasFrozenColumns() && i > this._options.frozenColumn!
-              ? this._footerRowR
-              : this._footerRowL
+          this.getDockingChromeRegion('footerRow', band)
         );
-        const className = this.hasFrozenColumns() && i <= this._options.frozenColumn! ? 'frozen' : null;
+        const className = band !== 'center' ? 'pinned' : null;
         if (className) {
           footerRowCell.classList.add(className);
         }
@@ -2061,16 +1937,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.dockingHeaderRegions = undefined;
       this.dockingHeaderRowRegions = undefined;
     }
-    if (this._headerR !== this._headerL) {
-      emptyElement(this._headerR);
-    }
-
     this.getHeadersWidth();
 
     Utils.width(this._headerL, this.getDockingChromeRootWidth());
-    if (this._headerR !== this._headerL) {
-      Utils.width(this._headerR, this.headersWidthR);
-    }
 
     this._headerRows.forEach((row) => {
       const columnElements = row.querySelectorAll('.slick-headerrow-column');
@@ -2086,10 +1955,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       });
     });
 
-    if (this._headerRowR !== this._headerRowL) {
-      emptyElement(this._headerRowR);
-    }
-
     for (let i = 0, ln = this.columns.length; i < ln; i++) {
       const m: C = this.columns[i];
       if (!m || m.hidden) {
@@ -2097,20 +1962,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       const band = this.getColumnDockingBand(i);
-      const headerTarget = this.usesDockingChromeRegions()
-        ? this.getDockingChromeRegion('header', band)
-        : this.hasFrozenColumns()
-          ? i <= this._options.frozenColumn!
-            ? this._headerL
-            : this._headerR
-          : this._headerL;
-      const headerRowTarget = this.usesDockingChromeRegions()
-        ? this.getDockingChromeRegion('headerRow', band)
-        : this.hasFrozenColumns()
-          ? i <= this._options.frozenColumn!
-            ? this._headerRowL
-            : this._headerRowR
-          : this._headerRowL;
+      const headerTarget = this.getDockingChromeRegion('header', band);
+      const headerRowTarget = this.getDockingChromeRegion('headerRow', band);
 
       const header = createDomElement(
         'div',
@@ -2147,7 +2000,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (classname) {
         header.classList.add(...classNameToList(classname));
       }
-      classname = this.hasFrozenColumns() && i <= this._options.frozenColumn! ? 'frozen' : null;
+      classname = band !== 'center' ? 'pinned' : null;
       if (classname) {
         header.classList.add(classname);
       }
@@ -2198,9 +2051,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           { className: `slick-state-default slick-headerrow-column l${i} r${i}`, role: 'gridcell' },
           headerRowTarget
         );
-        const frozenClasses = this.hasFrozenColumns() && i <= this._options.frozenColumn! ? 'frozen' : null;
-        if (frozenClasses) {
-          headerRowCell.classList.add(frozenClasses);
+        const pinnedClasses = band !== 'center' ? 'pinned' : null;
+        if (pinnedClasses) {
+          headerRowCell.classList.add(pinnedClasses);
         }
 
         // prettier-ignore
@@ -2708,8 +2561,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // allow column to be resized even when they are not orderable
       preventOnFilter: false,
       revertClone: true,
-      // use built-in SortableJS proximity scroll for non-frozen grids; frozen grids need custom scroll (wrong pane would be scrolled)
-      scroll: !this.hasFrozenColumns(),
+      // Use built-in SortableJS proximity scroll for unpinned grids; pinned grids use custom scroll.
+      scroll: !this.hasDockedColumns(),
       // lock unorderable columns by using a combo of filter + onMove
       filter: `.${this._options.unorderableColumnCssClass}`,
       onMove: (event) => {
@@ -2717,10 +2570,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       },
       onStart: (e) => {
         e.item.classList.add('slick-header-column-active');
-        // only right-section columns (non-frozen) should auto-scroll; use contains() since
-        // _headerR has `left:-1000px` which breaks offset-based comparisons
+        // Only scrolling columns should auto-scroll; use contains() since offset comparisons
+        // are not reliable across the header regions.
         const leftHeader = this.usesDockingChromeRegions() ? this.getDockingChromeRegion('header', 'left') : this._headerL;
-        if (!this.hasFrozenColumns() || !leftHeader.contains(e.item)) {
+        if (!this.hasDockedColumns() || !leftHeader.contains(e.item)) {
           // bind 'drag' for native HTML5 drag and 'mousemove' for SortableJS forceFallback
           this._bindingEventService.bind(document, 'drag', autoScrollHandler as EventListener, {}, 'colreorder');
           this._bindingEventService.bind(document, 'mousemove', autoScrollHandler as EventListener, {}, 'colreorder');
@@ -2753,7 +2606,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         e.stopPropagation();
         if (!this.arrayEquals(prevColumnIds, reorderedIds)) {
           this.setColumns(finalColumns);
-          // reapply previous scroll position since it might move back to x=0 after calling `setColumns()` (especially when `frozenColumn` is set)
+          // reapply previous scroll position since it might move back to x=0 after calling `setColumns()`
           this.scrollToX(prevScrollLeft);
           this.triggerEvent(this.onColumnsReordered, { impactedColumns: this.columns, previousColumnOrder: prevColumnIds });
           this.setupColumnResize();
@@ -2795,7 +2648,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let pageX: number, minPageX: number, maxPageX: number;
     let firstResizable: number | undefined;
     let lastResizable = -1;
-    let frozenLeftColMaxWidth = 0;
     let resizeAutoScrollDeltaX = 0;
     let autoScrollClientX: number | undefined;
     let autoScrollOffsetX = 0;
@@ -2929,7 +2781,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         let newCanvasWidthL = 0;
         // oxlint-disable-next-line no-unused-vars
         let newCanvasWidthR = 0;
-        const viewportWidth = this.getViewportInnerWidth();
 
         if (d < 0) {
           x = d;
@@ -2951,7 +2802,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           for (k = 0; k <= i; k++) {
             c = vc[k];
             if (c && !c.hidden) {
-              if (this.hasFrozenColumns() && k > this._options.frozenColumn!) {
+              if (this.getColumnDockingBand(k) === 'right') {
                 newCanvasWidthR += c.width || 0;
               } else {
                 newCanvasWidthL += c.width || 0;
@@ -2973,7 +2824,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                     x = 0;
                   }
 
-                  if (this.hasFrozenColumns() && j > this._options.frozenColumn!) {
+                  if (this.getColumnDockingBand(j) === 'right') {
                     newCanvasWidthR += c.width || 0;
                   } else {
                     newCanvasWidthL += c.width || 0;
@@ -2985,7 +2836,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             for (j = i + 1; j < vc.length; j++) {
               c = vc[j];
               if (c && !c.hidden) {
-                if (this.hasFrozenColumns() && j > this._options.frozenColumn!) {
+                if (this.getColumnDockingBand(j) === 'right') {
                   newCanvasWidthR += c.width || 0;
                 } else {
                   newCanvasWidthL += c.width || 0;
@@ -3024,19 +2875,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                 c.width = c.maxWidth;
               } else {
                 const newWidth = (c.previousWidth || 0) + x;
-                const resizedCanvasWidthL = this.canvasWidthL + x;
-
-                if (this.hasFrozenColumns() && j <= this._options.frozenColumn!) {
-                  // if we're on the left frozen side, we need to make sure that our left section width never goes over the total viewport width
-                  // prettier-ignore
-                  if (newWidth > frozenLeftColMaxWidth && resizedCanvasWidthL < viewportWidth - this._options.frozenRightViewportMinWidth!) {
-                    frozenLeftColMaxWidth = newWidth;
-                  }
-                  // prettier-ignore
-                  c.width = resizedCanvasWidthL + this._options.frozenRightViewportMinWidth! > viewportWidth ? frozenLeftColMaxWidth : newWidth;
-                } else {
-                  c.width = newWidth;
-                }
+                c.width = newWidth;
                 x = 0;
               }
             }
@@ -3045,7 +2884,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           for (k = 0; k <= i; k++) {
             c = vc[k];
             if (c && !c.hidden) {
-              if (this.hasFrozenColumns() && k > this._options.frozenColumn!) {
+              if (this.getColumnDockingBand(k) === 'right') {
                 newCanvasWidthR += c.width || 0;
               } else {
                 newCanvasWidthL += c.width || 0;
@@ -3068,7 +2907,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                   x = 0;
                 }
 
-                if (this.hasFrozenColumns() && j > this._options.frozenColumn!) {
+                if (this.getColumnDockingBand(j) === 'right') {
                   newCanvasWidthR += c.width || 0;
                 } else {
                   newCanvasWidthL += c.width || 0;
@@ -3079,7 +2918,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             for (j = i + 1; j < vc.length; j++) {
               c = vc[j];
               if (c && !c.hidden) {
-                if (this.hasFrozenColumns() && j > this._options.frozenColumn!) {
+                if (this.getColumnDockingBand(j) === 'right') {
                   // eslint-disable-next-line
                   newCanvasWidthR += c.width || 0;
                 } else {
@@ -3088,11 +2927,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               }
             }
           }
-        }
-
-        if (this.hasFrozenColumns() && newCanvasWidthL !== this.canvasWidthL) {
-          Utils.width(this._headerL, newCanvasWidthL);
-          Utils.setStyleSize(this._paneHeaderR, 'left', newCanvasWidthL);
         }
 
         this.applyColumnHeaderWidths();
@@ -3138,7 +2972,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               return false;
             }
             pageX = (targetEvent as MouseEvent).pageX;
-            frozenLeftColMaxWidth = 0;
             resizeElms.resizeableElement.classList.add('slick-header-column-active');
             let shrinkLeewayOnRight: number | null = null;
             let stretchLeewayOnRight: number | null = null;
@@ -3253,17 +3086,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let delta = 0;
     p.forEach((val) => (delta += Utils.toFloat(styles[val as any])));
     return delta;
-  }
-
-  protected setFrozenOptions(): void {
-    // The old pane-freezing options are intentionally inert in the new renderer. They remain
-    // typed only while the POC is being cut over; pinning is declared on columns/rows instead.
-    this._options.frozenColumn = -1;
-    this._options.frozenRow = -1;
-    this._options.frozenBottom = false;
-    this.hasFrozenRows = false;
-    this.actualFrozenRow = -1;
-    this.frozenRowsHeight = 0;
   }
 
   protected activateSingleViewportLayout(): void {
@@ -3414,19 +3236,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     events.forEach(([eventName, listener]) =>
       this._bindingEventService.bind(this._dockingOverlay!, eventName, listener, {}, 'docking-overlay')
     );
-  }
-
-  /**
-   * Computes the combined pixel height of the frozen rows: the first `frozenRow` rows, or the
-   * last `frozenRow` rows (i.e. from `actualFrozenRow` onward) when `frozenBottom` is enabled.
-   *
-   * @param {number} dataLength - The current dataset length.
-   * @returns {number} The combined frozen rows height in pixels.
-   */
-  protected computeFrozenRowsHeight(dataLength: number): number {
-    return this._options.frozenBottom
-      ? this.getRowPosition(dataLength) - this.getRowPosition(this.actualFrozenRow)
-      : this.getRowPosition(this._options.frozenRow!);
   }
 
   protected setOverflow(): void {
@@ -4232,7 +4041,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Keep a scrollable center column and reject bands that consume the viewport. */
   protected validatePinnedColumnIndexes(pinnedIndexes: Map<number, DockingSide>, forceAlert = false, columns: C[] = this.columns): boolean {
-    if (this._options.skipFreezeColumnValidation) {
+    if (this._options.skipPinningValidation) {
       return true;
     }
 
@@ -4243,9 +4052,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return indexes;
     }, []);
     if (visibleIndexes.length && visibleIndexes.every((index) => pinnedIndexes.has(index))) {
-      if ((forceAlert || !this._invalidfrozenAlerted) && this._options.invalidColumnFreezePickerCallback) {
-        this._options.invalidColumnFreezePickerCallback(this._options.invalidColumnFreezePickerMessage!);
-        this._invalidfrozenAlerted = true;
+      if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningPickerCallback) {
+        this._options.invalidColumnPinningPickerCallback(this._options.invalidColumnPinningPickerMessage!);
+        this._invalidPinningAlerted = true;
       }
       return false;
     }
@@ -4271,9 +4080,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const outerGridWidth = Utils.width(this._container) || 0;
     const availablePinningWidth = Math.max(viewportWidth + scrollbarWidth, outerGridWidth);
     if (viewportWidth > 0 && widths.left + widths.right >= availablePinningWidth) {
-      if ((forceAlert || !this._invalidfrozenAlerted) && this._options.invalidColumnFreezeWidthCallback) {
-        this._options.invalidColumnFreezeWidthCallback(this._options.invalidColumnFreezeWidthMessage!);
-        this._invalidfrozenAlerted = true;
+      if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningWidthCallback) {
+        this._options.invalidColumnPinningWidthCallback(this._options.invalidColumnPinningWidthMessage!);
+        this._invalidPinningAlerted = true;
       }
       return false;
     }
@@ -4605,8 +4414,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   setColumns(newColumns: C[], waitNextCycle = false): void {
     this.applyColumnPinningOptions(newColumns);
     this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns, grid: this });
-    if (!this.validateColumnFreeze(undefined, true)) {
-      return; // exit early if freeze is invalid
+    if (!this.validateColumnPinning(undefined, true)) {
+      return; // exit early if pinning is invalid
     }
     this.dockingController.reset();
     this.columns = newColumns;
@@ -4674,7 +4483,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return;
     }
 
-    this._invalidfrozenAlerted = false;
+    this._invalidPinningAlerted = false;
     const prospectivePinnedIndexes = this.getPinnedColumnIndexes();
     if (pinned) {
       prospectivePinnedIndexes.set(columnIndex, pinned);
@@ -4720,22 +4529,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Get the Column ID of the currently frozen column or `null` when not frozen
-   * @returns {String|Number|null} Frozen Column ID
-   */
-  getFrozenColumnId(): string | number | null {
-    const frozenColIndex = this.getFrozenColumnIdx();
-    if (frozenColIndex >= 0 && this.columns[frozenColIndex]) {
-      return this.columns[frozenColIndex].id;
-    }
-    return null;
-  }
-
-  protected getFrozenColumnIdx(): number {
-    return this._options.frozenColumn ?? -1;
-  }
-
-  /**
    * Extends grid options with a given hash. If an there is an active edit, the grid will attempt to commit the changes and only continue if the attempt succeeds.
    * @param {Object} options - an object with configuration options.
    * @param {Boolean} [suppressRender] - do we want to supress the grid re-rendering? (defaults to false)
@@ -4750,7 +4543,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // place but still permits a sibling row-pinning update in the same call.
     if (newOptions.pinning?.columns !== undefined) {
       if (!suppressColumnSet) {
-        this._invalidfrozenAlerted = false;
+        this._invalidPinningAlerted = false;
       }
       if (!this.validatePinnedColumnIndexes(this.getProspectivePinnedColumnIndexes(newOptions.pinning.columns), true)) {
         const pinningWithoutColumns = { ...newOptions.pinning };
@@ -4766,22 +4559,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (this._options.enableAddRow !== newOptions.enableAddRow) {
       this.invalidateRow(this.getDataLength());
-    }
-
-    // before applying column freeze, we need our viewports to be scrolled back to left to avoid misaligned column headers
-    if (newOptions.frozenColumn !== undefined && newOptions.frozenColumn >= 0) {
-      this._prevFrozenColumnIdx = this.getFrozenColumnIdx(); // keep ref of previous frozen column for later usage
-
-      // make sure the freeze is also valid without breaking the UI (e.g. we can't freeze columns on left canvas wider than visible canvas width in the browser)
-      if (!suppressColumnSet) {
-        this._invalidfrozenAlerted = false; // reset frozen alert
-      }
-      if (this.validateColumnFreezeWidth(newOptions.frozenColumn)) {
-        this.getViewports().forEach((vp) => (vp.scrollLeft = 0));
-        this.handleScroll(); // trigger scroll to realign column headers as well
-      } else {
-        newOptions.frozenColumn = this._prevFrozenColumnIdx < newOptions.frozenColumn ? this._prevFrozenColumnIdx : -1;
-      }
     }
 
     const originalOptions = extend(true, {}, this._options);
@@ -4874,7 +4651,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.setColumnHeaderVisibility(this._options.showColumnHeader);
     }
     this.validateAndEnforceOptions();
-    this.setFrozenOptions();
     this.applyColumnPinningOptions(this.columns);
     this.refreshDockingLayout();
     this.refreshRowDockingLayout(this.scrollTop, true);
@@ -4885,11 +4661,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._footerRowScroller.forEach((scroller) => {
         Utils.hide(scroller);
       });
-    }
-
-    // when user changed frozen row option, we need to force a recalculation of each viewport heights
-    if (this._options.frozenBottom !== undefined) {
-      this.enforceFrozenRowHeightRecalc = true;
     }
 
     this._viewport.forEach((view) => {
@@ -4949,9 +4720,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._options.rowTopOffsetRenderType = 'top';
     }
 
-    // make sure the freeze is also valid without breaking the UI (e.g. we can't left freeze columns wider than visible left canvas width)
-    if (!this.validateColumnFreezeWidth(this._options.frozenColumn)) {
-      this._options.frozenColumn = this._prevFrozenColumnIdx < this._options.frozenColumn! ? this._prevFrozenColumnIdx : -1;
+    if (this._options.pinning?.columns) {
+      this.validatePinnedColumnIndexes(this.getPinnedColumnIndexes(), false);
     }
   }
 
@@ -5275,7 +5045,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       y,
       (this.th || 0) -
         (Utils.height(this._viewportScrollContainerY) as number) +
-        (this.viewportHasHScroll || this.hasFrozenColumns() ? this.scrollbarDimensions?.height || 0 : 0)
+        (this.viewportHasHScroll ? this.scrollbarDimensions?.height || 0 : 0)
     );
 
     const oldOffset = this.offset;
@@ -5294,11 +5064,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.vScrollDir = this.prevScrollTop + oldOffset < newScrollTop + this.offset ? 1 : -1;
       this.scrollTop = this.prevScrollTop = newScrollTop;
 
-      if (this.hasFrozenColumns()) {
+      if (this.hasDockedColumns()) {
         this._viewportTopL.scrollTop = newScrollTop;
       }
 
-      if (this.hasFrozenRows) {
+      if (this.rowDockingLayout.bottom.length > 0) {
         this._viewportBottomL.scrollTop = this._viewportBottomR.scrollTop = newScrollTop;
       }
 
@@ -5353,48 +5123,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // compositor. Keep header/filter/footer content in that same coordinate
     // system with compositor transforms instead of assigning scrollLeft on
     // several independent containers (which paints one or more frames late).
-    if (this._viewport.length === 1) {
-      const translateX = `translate3d(${-x}px, 0, 0)`;
-      this._headerL.style.transform = translateX;
-      this._headerRowL.style.transform = translateX;
-      if (this._footerRowL) {
-        this._footerRowL.style.transform = translateX;
-      }
-      if (this._options.createPreHeaderPanel) {
-        this._preHeaderPanel.style.transform = translateX;
-      }
-      if (this._options.createTopHeaderPanel) {
-        this._topHeaderPanel.style.transform = translateX;
-      }
-      return;
-    }
-
-    this._headerScrollContainer.scrollLeft = x;
-    this._topPanelScrollers[0].scrollLeft = x;
-    if (this._options.createFooterRow) {
-      this._footerRowScrollContainer.scrollLeft = x;
+    const translateX = `translate3d(${-x}px, 0, 0)`;
+    this._headerL.style.transform = translateX;
+    this._headerRowL.style.transform = translateX;
+    if (this._footerRowL) {
+      this._footerRowL.style.transform = translateX;
     }
     if (this._options.createPreHeaderPanel) {
-      if (this.hasFrozenColumns()) {
-        this._preHeaderPanelScrollerR.scrollLeft = x;
-      } else {
-        this._preHeaderPanelScroller.scrollLeft = x;
-      }
+      this._preHeaderPanel.style.transform = translateX;
     }
     if (this._options.createTopHeaderPanel) {
-      this._topHeaderPanelScroller.scrollLeft = x;
-    }
-
-    if (this.hasFrozenColumns()) {
-      if (this.hasFrozenRows) {
-        this._viewportTopR.scrollLeft = x;
-      }
-      this._headerRowScrollerR.scrollLeft = x; // right header row scrolling with frozen grid
-    } else {
-      if (this.hasFrozenRows) {
-        this._viewportTopL.scrollLeft = x;
-      }
-      this._headerRowScrollerL.scrollLeft = x; // left header row scrolling with regular grid
+      this._topHeaderPanel.style.transform = translateX;
     }
   }
 
@@ -5461,7 +5200,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const dataLoading = row < dataLength && !d;
     let rowCss =
       'slick-row' +
-      (this.isFrozenRowIdx(row) ? ' frozen' : '') +
+      (this.isPinnedRowIdx(row) ? ' pinned' : '') +
       (dataLoading ? ' loading' : '') +
       (row === this.activeRow && this._options.showCellSelection ? ' active' : '') +
       (row % 2 === 1 ? ' odd' : ' even');
@@ -5596,11 +5335,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               band === 'left' ? rowRegionLeft || rowDiv : band === 'right' ? rowRegionRight || rowDiv : rowRegionCenter;
             this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d);
           }
-        } else if (
-          m.alwaysRenderColumn ||
-          this.getColumnDockingBand(i) !== 'center' ||
-          (this.hasFrozenColumns() && i <= this._options.frozenColumn!)
-        ) {
+        } else if (m.alwaysRenderColumn || this.getColumnDockingBand(i) !== 'center' || this.getColumnDockingBand(i) !== 'center') {
           const band = this.getColumnDockingBand(i);
           const targetedRowDiv = band === 'left' ? rowRegionLeft || rowDiv : band === 'right' ? rowRegionRight || rowDiv : rowRegionCenter;
           this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d);
@@ -5618,7 +5353,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Keep RowSpan host rows top-positioned so their cells escape transformed sibling stacking contexts. */
   protected applyRowTopOffset(rowNode: HTMLElement, row: number): void {
     const rowDocking = this.dockingByRow.get(row);
-    let top = this.getRowTop(row) - this.getFrozenRowOffset(row);
+    let top = this.getRowTop(row);
     if (rowDocking?.band === 'top') {
       top = rowDocking.offset;
     } else if (rowDocking?.band === 'bottom') {
@@ -5705,10 +5440,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (docking?.sticky) {
         cellCss += ' slick-cell-sticky';
       }
-    }
-
-    if (this.hasFrozenColumns() && cell <= this._options.frozenColumn!) {
-      cellCss += ' frozen';
     }
 
     if (row === this.activeRow && cell === this.activeCell && this._options.showCellSelection) {
@@ -5812,17 +5543,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     Object.keys(this.rowsCache).forEach((rowId) => {
       if (this.rowsCache) {
         let i = +rowId;
-        let removeFrozenRow = true;
+        let removePinnedRow = true;
 
         const dockingBand = this.dockingByRow.get(i)?.band;
-        if (this.isFrozenRowIdx(i) || (dockingBand !== undefined && dockingBand !== 'center')) {
-          removeFrozenRow = false;
+        if (this.isPinnedRowIdx(i) || (dockingBand !== undefined && dockingBand !== 'center')) {
+          removePinnedRow = false;
         }
 
         if (
           (i = parseInt(rowId, 10)) !== this.activeRow &&
           (i < rangeToKeep.top || i > rangeToKeep.bottom) &&
-          removeFrozenRow &&
+          removePinnedRow &&
           !mandatoryRows.has(i)
         ) {
           this.removeRowFromCache(i);
@@ -6249,7 +5980,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   getViewportHeight(): number {
-    if (!this._options.autoHeight || this._options.frozenColumn !== -1) {
+    if (!this._options.autoHeight) {
       this.topPanelH = this._options.showTopPanel ? this._options.topPanelHeight! + this.getVBoxDelta(this._topPanelScrollers[0]) : 0;
       this.headerRowH = this._options.showHeaderRow ? this._options.headerRowHeight! + this.getVBoxDelta(this._headerRowScroller[0]) : 0;
       this.footerRowH =
@@ -6270,7 +6001,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           : 0;
       fullHeight += this.getCanvasWidth() > this.viewportW ? this.scrollbarDimensions?.height || 0 : 0;
 
-      this.viewportH = this.getRowPosition(this.getDataLengthIncludingAddNew()) + (this._options.frozenColumn === -1 ? fullHeight : 0);
+      this.viewportH = this.getRowPosition(this.getDataLengthIncludingAddNew()) + fullHeight;
     } else {
       const style = getComputedStyle(this._container);
       const containerBoxH = style.boxSizing !== 'content-box' ? this.getVBoxDelta(this._container) : 0;
@@ -6339,39 +6070,21 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this.viewportH = Math.max(0, this.viewportH - dockingHorizontalScrollbarHeight);
       }
 
-      // Account for Frozen Rows
-      if (this.hasFrozenRows) {
-        if (this._options.frozenBottom) {
-          this.paneTopH = this.viewportH - this.frozenRowsHeight - (this.scrollbarDimensions?.height || 0);
-          this.paneBottomH = this.frozenRowsHeight + (this.scrollbarDimensions?.height || 0);
-        } else {
-          this.paneTopH = this.frozenRowsHeight;
-          this.paneBottomH = this.viewportH - this.frozenRowsHeight;
-        }
-      } else {
-        this.paneTopH = this.viewportH + dockingHorizontalScrollbarHeight;
-      }
+      this.paneTopH = this.viewportH + dockingHorizontalScrollbarHeight;
 
       // The top pane includes the top panel and the header row
       this.paneTopH += this.topPanelH + this.headerRowH + this.footerRowH;
-
-      if (this.hasFrozenColumns() && this._options.autoHeight) {
-        this.paneTopH += this.scrollbarDimensions?.height || 0;
-      }
 
       // The top viewport does not contain the top panel or header row
       this.viewportTopH = this.paneTopH - this.topPanelH - this.headerRowH - this.footerRowH - dockingHorizontalScrollbarHeight;
 
       if (this._options.autoHeight) {
-        if (this.hasFrozenColumns()) {
-          let fullHeight = this.paneTopH + this._headerScrollerL.offsetHeight;
-          fullHeight += this.getVBoxDelta(this._container);
-          if (this._options.showPreHeaderPanel) {
-            fullHeight += this._options.preHeaderPanelHeight!;
-          }
-          Utils.height(this._container, fullHeight);
+        let fullHeight = this.paneTopH + this._headerScrollerL.offsetHeight;
+        fullHeight += this.getVBoxDelta(this._container);
+        if (this._options.showPreHeaderPanel) {
+          fullHeight += this._options.preHeaderPanelHeight!;
         }
-
+        Utils.height(this._container, fullHeight);
         this._paneTopL.style.position = 'relative';
       }
 
@@ -6385,8 +6098,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
       Utils.setStyleSize(this._paneTopL, 'top', topHeightOffset);
       Utils.height(this._paneTopL, this.paneTopH);
-
-      const paneBottomTop = this._paneTopL.offsetTop + this.paneTopH;
 
       if (!this._options.autoHeight) {
         Utils.height(this._viewportTopL, this.viewportTopH);
@@ -6403,49 +6114,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.scrollLeft = this._viewportScrollContainerX?.scrollLeft ?? this.scrollLeft;
       dockingChanged = this.refreshDockingLayout(this.scrollLeft) || dockingChanged;
 
-      if (this.hasFrozenColumns()) {
-        let topHeightOffset = Utils.height(this._paneHeaderL);
-        if (topHeightOffset) {
-          topHeightOffset += this._options.showTopHeaderPanel ? this._options.topHeaderPanelHeight! : 0;
-        }
-        Utils.setStyleSize(this._paneTopR, 'top', topHeightOffset as number);
-        Utils.height(this._paneTopR, this.paneTopH);
-        Utils.height(this._viewportTopR, this.viewportTopH);
-
-        if (this.hasFrozenRows) {
-          Utils.setStyleSize(this._paneBottomL, 'top', paneBottomTop);
-          Utils.height(this._paneBottomL, this.paneBottomH);
-          Utils.setStyleSize(this._paneBottomR, 'top', paneBottomTop);
-          Utils.height(this._paneBottomR, this.paneBottomH);
-          Utils.height(this._viewportBottomR, this.paneBottomH);
-        }
-      } else {
-        if (this.hasFrozenRows) {
-          Utils.width(this._paneBottomL, '100%');
-          Utils.height(this._paneBottomL, this.paneBottomH);
-          Utils.setStyleSize(this._paneBottomL, 'top', paneBottomTop);
-        }
-      }
-
-      if (this.hasFrozenRows) {
-        Utils.height(this._viewportBottomL, this.paneBottomH);
-
-        if (this._options.frozenBottom) {
-          Utils.height(this._canvasBottomL, this.frozenRowsHeight);
-
-          if (this.hasFrozenColumns()) {
-            Utils.height(this._canvasBottomR, this.frozenRowsHeight);
-          }
-        } else {
-          Utils.height(this._canvasTopL, this.frozenRowsHeight);
-
-          if (this.hasFrozenColumns()) {
-            Utils.height(this._canvasTopR, this.frozenRowsHeight);
-          }
-        }
-      } else {
-        Utils.height(this._viewportTopR, this.viewportTopH);
-      }
+      Utils.height(this._viewportTopL, this.viewportTopH);
 
       if (!this.scrollbarDimensions || !this.scrollbarDimensions.width) {
         this.scrollbarDimensions = this.measureScrollbar();
@@ -6528,8 +6197,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /**
    * (re)Builds the row position index used in variable row height mode when needed, i.e. when it is
    * marked dirty (see invalidateRowHeights) or when the indexed row count no longer matches the
-   * dataset length. Since the frozen rows height depends on individual row heights, it is refreshed
-   * after every rebuild. Does nothing (and drops the index) when variable row height is disabled.
+   * dataset length. The row position index is rebuilt whenever row heights are invalidated or the
+   * dataset length changes. Does nothing (and drops the index) when variable row height is disabled.
    *
    * @param {number} rowCount - The number of rows to index (including the Add-New row when enabled).
    */
@@ -6548,12 +6217,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         provider?.(this as unknown as SlickGrid, row, this.getDataItem(row))
       );
       this.rowHeightsDirty = false;
-      if (this.hasFrozenRows) {
-        const prevFrozenRowsHeight = this.frozenRowsHeight;
-        this.frozenRowsHeight = this.computeFrozenRowsHeight(this.getDataLength());
-        // pane splits and frozen canvas sizes derive from this value, so a change requires a canvas resize
-        this.frozenRowHeightsChanged = this.frozenRowsHeight !== prevFrozenRowsHeight;
-      }
     }
   }
 
@@ -6587,27 +6250,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       const dataLengthIncludingAddNew = this.getDataLengthIncludingAddNew();
       let numberOfRows = 0;
-      let oldH = (
-        this.hasFrozenRows && !this._options.frozenBottom ? Utils.height(this._canvasBottomL) : Utils.height(this._canvasTopL)
-      ) as number;
-
-      if (this.hasFrozenRows) {
-        numberOfRows = this.getDataLength() - this._options.frozenRow!;
-      } else {
-        numberOfRows = dataLengthIncludingAddNew + (this._options.leaveSpaceForNewRows ? this.numVisibleRows - 1 : 0);
-      }
+      let oldH = Utils.height(this._canvasTopL) as number;
+      numberOfRows = dataLengthIncludingAddNew + (this._options.leaveSpaceForNewRows ? this.numVisibleRows - 1 : 0);
 
       // (re)build the row position index (variable row height mode) before any height computations
       this.ensureRowPositionIndexer(dataLengthIncludingAddNew);
 
-      // pixel height of the rows contained in the scrolling canvas; for frozen-top grids with variable
-      // row heights the scrolling rows are the ones after the frozen rows, so their combined height is
-      // the remainder after subtracting the frozen rows height (in fixed mode any `numberOfRows` rows
-      // have the same combined height, so the simple multiplication covers all layouts)
-      const scrollableRowsHeight =
-        this._options.enableVariableRowHeight && this.hasFrozenRows && !this._options.frozenBottom
-          ? this.getRowPosition(dataLength) - this.frozenRowsHeight
-          : this.getRowPosition(numberOfRows);
+      const scrollableRowsHeight = this.getRowPosition(numberOfRows);
 
       const tempViewportH = Utils.height(this._viewportScrollContainerY) as number;
       const oldViewportHasVScroll = this.viewportHasVScroll;
@@ -6656,21 +6305,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
       }
 
-      if (this.h !== oldH || this.enforceFrozenRowHeightRecalc) {
-        if (this.hasFrozenRows && !this._options.frozenBottom) {
-          Utils.height(this._canvasBottomL, this.h);
-
-          if (this.hasFrozenColumns()) {
-            Utils.height(this._canvasBottomR, this.h);
-          }
-        } else {
-          Utils.height(this._canvasTopL, this.h);
-          Utils.height(this._canvasTopR, this.h);
-        }
+      if (this.h !== oldH) {
+        Utils.height(this._canvasTopL, this.h);
 
         this.scrollTop = this._viewportScrollContainerY.scrollTop;
         this.scrollHeight = this._viewportScrollContainerY.scrollHeight;
-        this.enforceFrozenRowHeightRecalc = false; // reset enforce flag
       }
 
       const oldScrollTopInRange = this.scrollTop + this.offset <= this.th - tempViewportH;
@@ -6687,14 +6326,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       if (this.h !== oldH && this._options.autoHeight) {
-        this.resizeCanvas();
-      }
-
-      if (this.frozenRowHeightsChanged) {
-        this.frozenRowHeightsChanged = false;
-        // re-apply the pane splits and frozen canvas sizes that were computed from the previous
-        // frozen rows height (same self-limiting recursion pattern as the autoHeight resize above:
-        // the nested updateRowCount recomputes an unchanged value, so it cannot re-trigger)
         this.resizeCanvas();
       }
 
@@ -6814,7 +6445,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected cleanUpCells(range: CellViewportRange, row: number): void {
-    if (this.isFrozenRowIdx(row)) {
+    if (this.isPinnedRowIdx(row)) {
       return;
     }
 
@@ -6833,7 +6464,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const i = +cellNodeIdx;
 
       // Docked columns are always materialized; only the center band is horizontally virtualized.
-      if (this.getColumnDockingBand(i) !== 'center' || i <= this._options.frozenColumn!) {
+      if (this.getColumnDockingBand(i) !== 'center') {
         return;
       }
 
@@ -6885,9 +6516,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const hasAlwaysRenderColumn = this.columns.some((column) => column?.alwaysRenderColumn);
     let firstColumnIndex = 0;
 
-    // columnPosRight is monotonic only when there are no frozen columns, so use a lower-bound lookup
+    // Column positions are monotonic when there are no pinned columns, so use a lower-bound lookup
     // to avoid scanning columns that are entirely left of the rendered range in the common case.
-    if (!this.hasFrozenColumns() && !this.hasDockedColumns() && !hasAlwaysRenderColumn) {
+    if (!this.hasDockedColumns() && !hasAlwaysRenderColumn) {
       firstColumnIndex = this.getFirstColumnIndexAtOrAfter(range.leftPx);
     }
 
@@ -7035,7 +6666,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const renderingRows = new Set<number>();
 
     for (let i = range.top as number, ii = range.bottom as number; i <= ii; i++) {
-      if (this.rowsCache[i] || (this.hasFrozenRows && this._options.frozenBottom && i === this.getDataLength())) {
+      if (this.rowsCache[i]) {
         continue;
       }
       this.renderedRows++;
@@ -7320,13 +6951,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this._viewportScrollContainerY.scrollTop = this.scrollTop;
       }
 
-      if (this.hasFrozenColumns()) {
-        if (this.hasFrozenRows && !this._options.frozenBottom) {
-          this._viewportBottomL.scrollTop = this.scrollTop;
-        } else {
-          this._viewportTopL.scrollTop = this.scrollTop;
-        }
-      }
+      this._viewportScrollContainerY.scrollTop = this.scrollTop;
 
       // switch virtual pages if needed
       if (vScrollDist < this.viewportH) {
@@ -7857,13 +7482,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const handled = this._handleScroll('mousewheel');
     if (handled) {
       e.stopPropagation();
-      // Frozen columns use a second viewport whose vertical position is mirrored
-      // from the scrolling pane. Letting the browser also process this wheel event
-      // advances the source pane a second time, briefly putting it ahead of the
-      // frozen viewport until its subsequent scroll event is handled.
-      if (this.hasFrozenColumns()) {
-        e.preventDefault();
-      }
+      // The handler owns the wheel event after translating it into grid scroll coordinates.
+      e.preventDefault();
     }
   }
 
@@ -7914,8 +7534,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const isInHeaderRow = e.target.closest('.slick-headerrow-columns');
       const headerSelector = `.slick-${isInHeaderRow ? 'headerrow-column' : 'header-columns'} *[tabIndex="0"]`;
       const allFilterElms = this.getVisibleElements(this._container, headerSelector);
-      const allLeftFilterElms = this.getVisibleElements(this._container, `.slick-pane-left ${headerSelector}`);
-      const allRightFilterElms = this.getVisibleElements(this._container, `.slick-pane-right ${headerSelector}`);
       const ancestorHeaderRow = e.target instanceof HTMLElement ? e.target.closest(headerSelector) : null;
 
       if (allFilterElms.length > 0) {
@@ -7925,16 +7543,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           // focus grid menu when Shift+Tab OR focus on first cell when using Tab
           this.stopFullBubbling(e);
           e.shiftKey ? this.focusGridMenu() : this.focusGridCell();
-        } else if (this._options.frozenColumn! >= 0) {
-          // when using frozen columns
-          const lastLeftFilterElm = allLeftFilterElms[allLeftFilterElms.length - 1];
-          if (e.shiftKey && e.target === allRightFilterElms[0]) {
-            // using Shift+Tab and we're on the first filter element of the right pane, let's focus on last element of the left pane
-            this.focusElementWithoutBubbling(e, lastLeftFilterElm);
-          } else if (!e.shiftKey && e.target === lastLeftFilterElm) {
-            // using frozen columns and we're on the last filter element on the left pane, let's focus on the first element of the right pane
-            this.focusElementWithoutBubbling(e, allRightFilterElms[0]);
-          }
         }
       }
     }
@@ -8316,37 +7924,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Get frozen (pinned) row offset
-   * @param {Number} row - grid row number
-   */
-  getFrozenRowOffset(row: number): number {
-    let offset = 0;
-    if (this.hasFrozenRows) {
-      if (this._options.frozenBottom) {
-        if (row >= this.actualFrozenRow) {
-          if (this.h < this.viewportTopH) {
-            offset = this.getRowPosition(this.actualFrozenRow);
-          } else {
-            offset = this.h;
-          }
-        } else {
-          offset = 0;
-        }
-      } else {
-        if (row >= this.actualFrozenRow) {
-          offset = this.frozenRowsHeight;
-        } else {
-          offset = 0;
-        }
-      }
-    } else {
-      offset = 0;
-    }
-
-    return offset;
-  }
-
-  /**
    * Returns row and cell indexes by providing a standard W3C event.
    * @param {*} event A standard W3C event.
    */
@@ -8356,28 +7933,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return null;
     }
 
-    const targetEvent: any = (e as TouchEvent).touches ? (e as TouchEvent).touches[0] : e;
-
     const cellNode = (e as Event & { target?: HTMLElement }).target?.closest('.slick-cell');
     if (!cellNode) {
       return null;
     }
 
     let row = this.getRowFromNode(cellNode.closest('.slick-row') as HTMLElement);
-
-    if (this.hasFrozenRows) {
-      let rowOffset = 0;
-      const c = getOffset(Utils.parents(cellNode, '.grid-canvas')[0] as HTMLElement);
-      const isBottom = Utils.parents(cellNode, '.grid-canvas-bottom').length;
-
-      if (isBottom) {
-        rowOffset = this.getFrozenRowOffset(this.actualFrozenRow);
-      }
-
-      const x = targetEvent.clientX - c.left;
-      const y = targetEvent.clientY - c.top + rowOffset + document.documentElement.scrollTop;
-      row = this.getCellFromPoint(x, y).row;
-    }
 
     const cell = this.getCellFromNode(cellNode as HTMLElement);
 
@@ -8397,9 +7958,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return null;
     }
 
-    const frozenRowOffset = this.getFrozenRowOffset(row);
     const rowDocking = this.dockingByRow.get(row);
-    let y1 = this.getRowTop(row) - frozenRowOffset;
+    let y1 = this.getRowTop(row);
     if (rowDocking?.band === 'top') {
       y1 = this.scrollTop + rowDocking.offset;
     } else if (rowDocking?.band === 'bottom') {
@@ -8473,7 +8033,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const isPermanentPinnedColumn = docking && docking.band !== 'center' && !docking.sticky;
     // Permanent pins are already visible; sticky columns must reveal their
     // natural position before keyboard navigation activates them.
-    if (cell > this._options.frozenColumn! && !isPermanentPinnedColumn) {
+    if (!isPermanentPinnedColumn && docking?.band === 'center') {
       const colspan = this.getColspan(row, cell);
       const lastCell = cell + (colspan > 1 ? colspan - 1 : 0);
       const { left, right } = this.getNaturalColumnRange(cell, lastCell);
@@ -8556,12 +8116,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       } else {
         const activeCellOffset = getOffset(this.activeCellNode);
         let rowOffset = Math.floor(getOffset(Utils.parents(this.activeCellNode, '.grid-canvas')[0] as HTMLElement).top);
-        const isBottom = Utils.parents(this.activeCellNode, '.grid-canvas-bottom').length;
-
-        if (this.hasFrozenRows && isBottom) {
-          rowOffset -= this.getFrozenRowOffset(this.actualFrozenRow);
-        }
-
         const cell = this.getCellFromPoint(activeCellOffset.left, Math.ceil(activeCellOffset.top) - rowOffset);
         this.activeRow = this.activePosY = cell.row;
         this.activeCell = this.activePosX = this.getCellFromNode(this.activeCellNode);
@@ -8865,7 +8419,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   scrollRowIntoView(row: number, doPaging?: boolean): void {
     const dockingBand = this.dockingByRow.get(row)?.band;
-    if (!this.isFrozenRowIdx(row) && (dockingBand === undefined || dockingBand === 'center')) {
+    if (!this.isPinnedRowIdx(row) && (dockingBand === undefined || dockingBand === 'center')) {
       // Use the remaining center-band height so top-pinned rows do not make
       // range-selector auto-scroll stall at scrollTop 0.
       const viewportScrollH = Math.max(
@@ -8873,12 +8427,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         (Utils.height(this._viewportScrollContainerY) as number) - this.rowDockingLayout.topHeight - this.rowDockingLayout.bottomHeight
       );
 
-      // if frozen row on top
-      // subtract number of frozen row
-      const rowAtTop =
-        this.hasFrozenRows && !this._options.frozenBottom
-          ? this.getRowPosition(row) - this.frozenRowsHeight
-          : this.getRowPosition(row) - this.rowDockingLayout.topHeight;
+      const rowAtTop = this.getRowPosition(row) - this.rowDockingLayout.topHeight;
       const rowBottomPosition = rowAtTop + this.getRowHeight(row);
       const rowAtBottom = rowBottomPosition - viewportScrollH + (this.viewportHasHScroll ? this.scrollbarDimensions?.height || 0 : 0);
 
@@ -8900,10 +8449,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Number} row - grid row number
    */
   scrollRowToTop(row: number): void {
-    const rowAtTop =
-      this.hasFrozenRows && !this._options.frozenBottom
-        ? this.getRowPosition(row) - this.frozenRowsHeight
-        : this.getRowPosition(row) - this.getTopPinnedRowsHeight();
+    const rowAtTop = this.getRowPosition(row) - this.getTopPinnedRowsHeight();
     this.scrollTo(rowAtTop);
     this.render();
   }
@@ -9496,13 +9042,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected navigateToPos(pos: CellPosition | null): boolean | undefined {
     if (pos) {
-      if (this.hasFrozenRows && this._options.frozenBottom && pos.row === this.getDataLength()) {
-        return;
-      }
-
       const isAddNewRow = pos.row === this.getDataLength();
 
-      if (!this.isFrozenRowIdx(pos.row)) {
+      if (!this.isPinnedRowIdx(pos.row)) {
         this.scrollCellIntoView(pos.row, pos.cell, !isAddNewRow && this._options.emulatePagingWhenScrolling);
       }
       this.setActiveCellInternal(this.getCellNode(pos.row, pos.cell));

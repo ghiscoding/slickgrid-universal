@@ -284,7 +284,7 @@ const mockGrid = {
   getViewportNode: () => viewportElm,
   getUID: () => 'slickgrid_12345',
   getContainerNode: vi.fn(),
-  getFrozenColumnId: vi.fn(),
+  getPinnedColumnId: vi.fn(),
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
   getRenderedRange: vi.fn(),
@@ -301,7 +301,7 @@ const mockGrid = {
   setHeaderRowVisibility: vi.fn(),
   setOptions: vi.fn(),
   setSelectedRows: vi.fn(),
-  validateColumnFreeze: vi.fn(),
+  validateColumnPinning: vi.fn(),
   onClick: new MockSlickEvent(),
   onClicked: new MockSlickEvent(),
   onColumnsReordered: new MockSlickEvent(),
@@ -487,16 +487,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     expect((instance.extensionService as any).lazyGridService()).toBeDefined();
   });
 
-  it('should load enable mousewheel event scrolling when using a frozen grid', () => {
-    component.options = gridOptions;
-    component.options.enableMouseWheelScrollHandler = undefined;
-    component.options.frozenRow = 3;
-
-    component.ngAfterViewInit();
-
-    expect(component.options.enableMouseWheelScrollHandler).toBe(true);
-  });
-
   it('should throw an error when [columns] is undefined', () =>
     new Promise((done: any) => {
       try {
@@ -510,18 +500,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         done();
       }
     }));
-
-  it('should keep frozen column index reference (via frozenVisibleColumnId) when grid is a frozen grid', () => {
-    vi.spyOn(mockGrid, 'getFrozenColumnId').mockReturnValue('name');
-    component.columns = columns;
-    component.options = gridOptions;
-    component.options.frozenColumn = 0;
-
-    component.initialization(slickEventHandler);
-
-    expect(component.eventHandler).toBe(slickEventHandler);
-    expect(sharedService.frozenVisibleColumnId).toBe('name');
-  });
 
   it('should assign "hasColumnReordered: true" when "onColumnsReordered" event is triggered', () => {
     const newVisibleColumns = [
@@ -1353,7 +1331,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       });
 
       it('should override frozen grid options when "pinning" is defined in the "presets" property', () => {
-        const pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
+        const pinningMock = { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } } as CurrentPinning;
 
         component.options.presets = { pinning: pinningMock };
         component.initialization(slickEventHandler);

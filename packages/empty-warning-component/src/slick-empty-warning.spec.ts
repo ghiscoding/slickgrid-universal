@@ -142,32 +142,6 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.textContent).toBe('No data to display.');
     });
 
-    it('should expect the Slick-Empty-Warning to be created in both viewports when using pinned columns but NOT displayed on left when "hideFrozenLeftWarning" flag is enabled', () => {
-      mockGridOptions.pinning = { columns: { left: 2 } };
-      (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenLeftWarning = true;
-      (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenRightWarning = false;
-      component = new SlickEmptyWarningComponent();
-      component.init(gridStub, container);
-      component.showEmptyDataMessage(true);
-
-      const componentLeftElm = document.querySelector<HTMLSelectElement>(
-        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
-      ) as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>(
-        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
-      ) as HTMLSelectElement;
-
-      expect(component).toBeTruthy();
-      expect(component.constructor).toBeDefined();
-      expect(componentLeftElm).toBeTruthy();
-      expect(componentLeftElm.style.display).toBe('none');
-      expect(componentRightElm.style.display).toBe('flex');
-      expect(componentLeftElm.style.marginLeft).toBe('0px');
-      expect(componentRightElm.style.marginLeft).toBe('0px');
-      expect(componentLeftElm.textContent).toBe('No data to display.');
-      expect(componentRightElm.textContent).toBe('No data to display.');
-    });
-
     it('should expect the Slick-Empty-Warning to be created and use different left margin when "leftViewportMarginLeft" is set', () => {
       mockGridOptions.pinning = undefined;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
@@ -319,10 +293,10 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.textContent).toBe('No data to display.');
     });
 
-    it('should expect the Slick-Empty-Warning to be created in both viewports and use different left margin when "frozenLeftViewportMarginLeft" is set', () => {
+    it('should expect the Slick-Empty-Warning to be created in both viewports and use different left margin when "pinnedLeftViewportMarginLeft" is set', () => {
       mockGridOptions.pinning = { columns: { left: 2 } };
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
-      (mockGridOptions.emptyDataWarning as EmptyWarning).frozenLeftViewportMarginLeft = '15px';
+      (mockGridOptions.emptyDataWarning as EmptyWarning).pinnedLeftViewportMarginLeft = '15px';
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
       component.showEmptyDataMessage(true);
@@ -345,10 +319,10 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.textContent).toBe('No data to display.');
     });
 
-    it('should expect the Slick-Empty-Warning to be created in both viewports and use different left margin when "frozenRightViewportMarginLeft" is set', () => {
+    it('should expect the Slick-Empty-Warning to be created in both viewports and use different left margin when "pinnedRightViewportMarginLeft" is set', () => {
       mockGridOptions.pinning = { columns: { left: 2 } };
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
-      (mockGridOptions.emptyDataWarning as EmptyWarning).frozenRightViewportMarginLeft = '22px';
+      (mockGridOptions.emptyDataWarning as EmptyWarning).pinnedRightViewportMarginLeft = '22px';
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
       component.showEmptyDataMessage(true);
@@ -367,30 +341,6 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.style.display).toBe('flex');
       expect(componentLeftElm.style.marginLeft).toBe('0px');
       expect(componentRightElm.style.marginLeft).toBe('22px');
-      expect(componentLeftElm.textContent).toBe('No data to display.');
-      expect(componentRightElm.textContent).toBe('No data to display.');
-    });
-
-    it('should expect the Slick-Empty-Warning to be created in both viewports when using pinned columns but NOT displayed on right when "hideFrozenRightWarning" flag is enabled', () => {
-      mockGridOptions.pinning = { columns: { left: 2 } };
-      (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenLeftWarning = false;
-      (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenRightWarning = true;
-      component = new SlickEmptyWarningComponent();
-      component.init(gridStub, container);
-      component.showEmptyDataMessage(true);
-
-      const componentLeftElm = document.querySelector<HTMLSelectElement>(
-        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
-      ) as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>(
-        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
-      ) as HTMLSelectElement;
-
-      expect(component).toBeTruthy();
-      expect(component.constructor).toBeDefined();
-      expect(componentLeftElm).toBeTruthy();
-      expect(componentLeftElm.style.display).toBe('flex');
-      expect(componentRightElm.style.display).toBe('none');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
     });

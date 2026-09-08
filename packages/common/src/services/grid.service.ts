@@ -355,7 +355,7 @@ export class GridService {
    * The reset will clear the Filters & Sort, then will reset the Columns to their original state
    */
   resetGrid(columns?: Column[]): void {
-    // clear any Pinning/Frozen columns/rows
+    // clear any Pinning columns/rows
     // do it prior to setting the Columns back on the next few lines
     this.clearPinning(false);
 

@@ -555,13 +555,13 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const commandLabels = this._addonOptions?.commandLabels;
 
     if (this._addonOptions && this.gridOptions) {
-      // show grid menu: Unfreeze Columns/Rows
-      if (!this._addonOptions.hideClearFrozenColumnsCommand) {
+      // show grid menu: Clear Pinning
+      if (!this._addonOptions.hideClearPinningCommand) {
         this.addMissingCommandOrAction(
           {
-            iconCssClass: this._addonOptions.iconClearFrozenColumnsCommand || 'mdi mdi-pin-off-outline',
-            _orgTitle: commandLabels?.clearFrozenColumnsCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.clearFrozenColumnsCommandKey ?? 'CLEAR_PINNING'}`,
+            iconCssClass: this._addonOptions.iconClearPinningCommand || 'mdi mdi-pin-off-outline',
+            _orgTitle: commandLabels?.clearPinningCommand || '',
+            titleKey: `${translationPrefix}${commandLabels?.clearPinningCommandKey ?? 'CLEAR_PINNING'}`,
             disabled: false,
             command: 'clear-pinning',
             positionOrder: 52,
@@ -788,9 +788,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   }
 
   protected clearPinning(): void {
-    // Clear the unified pinning state. The old frozen-pane options are inert
-    // in the pinning renderer, so changing them here would leave the pinned
-    // column/row definitions untouched.
+    // Clear the unified pinning state.
     const newGridOptions: Partial<GridOption> = {
       pinning: {
         columns: { left: [], right: [] },

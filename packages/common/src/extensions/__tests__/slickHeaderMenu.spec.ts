@@ -26,7 +26,7 @@ const gridOptionsMock = {
   },
   headerMenu: {
     buttonCssClass: 'mdi mdi-chevron-down',
-    hideFreezeColumnsCommand: false,
+    hidePinningColumnsCommand: false,
     hideColumnResizeByContentCommand: false,
     hideForceFitButton: false,
     hideSyncResizeButton: true,
@@ -49,7 +49,6 @@ const gridStub = {
   getColumns: vi.fn(),
   getColumnIndex: vi.fn(),
   getContainerNode: vi.fn(),
-  getFrozenColumnId: vi.fn(),
   getGridPosition: () => ({ width: 10, left: 0 }),
   getVisibleColumns: vi.fn(),
   getUID: () => 'slickgrid12345',
@@ -63,8 +62,8 @@ const gridStub = {
   updateColumnHeader: vi.fn(),
   updateColumnById: vi.fn(),
   updateColumns: vi.fn(),
-  validateColumnFreezeWidth: vi.fn(),
-  validateColumnFreeze: vi.fn(),
+  validatePinnedColumnWidth: vi.fn(),
+  validateColumnPinning: vi.fn(),
   onBeforeSort: new SlickEvent(),
   onBeforeSetColumns: new SlickEvent(),
   onBeforeHeaderCellDestroy: new SlickEvent(),
@@ -285,7 +284,7 @@ describe('HeaderMenu Plugin', () => {
 
     it('should populate a Header Menu when cell is being rendered and a 2nd button item visibility & usability callbacks returns true', () => {
       plugin.dispose();
-      plugin.init({ hideFreezeColumnsCommand: false, hideFilterCommand: false });
+      plugin.init({ hidePinningColumnsCommand: false, hideFilterCommand: false });
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
 
@@ -683,9 +682,9 @@ describe('HeaderMenu Plugin', () => {
         sharedService.slickGrid = gridStub;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: false, hideColumnResizeByContentCommand: true },
         });
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
         vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
         const updateColumnsSpy = vi.spyOn(gridStub, 'updateColumns');
@@ -699,27 +698,6 @@ describe('HeaderMenu Plugin', () => {
         expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: columnsMock, hiddenColumn: columnsMock[1] });
       });
 
-      it('should call hideColumn and expect "setOptions" to be called with new "frozenColumn" index when the grid is detected to be a frozen grid', () => {
-        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
-        sharedService.slickGrid = gridStub;
-        sharedService.frozenVisibleColumnId = 'field1';
-        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock,
-          frozenColumn: 1,
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true },
-        });
-
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
-        vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-        const updateColumnsSpy = vi.spyOn(gridStub, 'updateColumns');
-
-        plugin.hideColumn(columnsMock[1]);
-
-        expect(updateColumnsSpy).toHaveBeenCalled();
-        expect(columnsMock[1].hidden).toBeTruthy();
-        expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: columnsMock, hiddenColumn: columnsMock[1] });
-      });
     });
 
     describe('with sub-menus', () => {
@@ -1322,8 +1300,8 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       });
 
-      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
-        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
+      it('should expect menu related to Freeze Columns when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
+        vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
@@ -1377,12 +1355,12 @@ describe('HeaderMenu Plugin', () => {
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
-      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
-        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
+      it('should expect menu related to Freeze Columns when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
+        vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
@@ -1430,13 +1408,13 @@ describe('HeaderMenu Plugin', () => {
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
-      it('should expect menu related to Unfreeze Columns when "hideFreezeColumnsCommand" is disabled and column is already frozen to that index and then also expect grid "setOptions" method to be called with current column position', async () => {
-        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
+      it('should expect menu related to Unfreeze Columns when "hidePinningColumnsCommand" is disabled and column is already frozen to that index and then also expect grid "setOptions" method to be called with current column position', async () => {
+        vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           // @deprecated `hideXYZ`, replace by `hideCommands` in next major
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
           pinning: { columns: { left: 1 } },
         });
 
@@ -1485,17 +1463,17 @@ describe('HeaderMenu Plugin', () => {
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
-      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with frozen column of -1 because the column found is not visible', () => {
+      it('should expect menu related to Freeze Columns when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with frozen column of -1 because the column found is not visible', () => {
         sharedService.hasColumnsReordered = true;
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
-        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           // @deprecated `hideXYZ`, replace by `hideCommands` in next major
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
-        vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ frozenColumn: -1 } as GridOption);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ pinning: { columns: { left: [] } } } as GridOption);
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[2], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
@@ -1533,7 +1511,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           // @deprecated `hideXYZ`, replace by `hideCommands` in next major
           headerMenu: {
-            hideFreezeColumnsCommand: false,
+            hidePinningColumnsCommand: false,
             hideColumnHideCommand: true,
             hideColumnResizeByContentCommand: true,
           },
@@ -1567,7 +1545,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableFiltering: true,
           // @deprecated `hideXYZ`, replace by `hideCommands` in next major
-          headerMenu: { hideFilterCommand: false, hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hideFilterCommand: false, hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         plugin.init({ onAfterMenuShow: () => false });
@@ -1612,7 +1590,7 @@ describe('HeaderMenu Plugin', () => {
       it('should have the commands "column-resize-by-content" and "hide-column" in the header menu list and also expect the command to execute necessary callback', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnResizeByContentCommand: false },
+          headerMenu: { hidePinningColumnsCommand: true, hideColumnResizeByContentCommand: false },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate any column menus
@@ -1806,7 +1784,7 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableFiltering: true,
-          headerMenu: { hideFilterCommand: false, hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hideFilterCommand: false, hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear filter menu
@@ -1844,7 +1822,7 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableSorting: true,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
@@ -1929,21 +1907,21 @@ describe('HeaderMenu Plugin', () => {
         expect(clearSortSpy).toHaveBeenCalledWith(clickEvent, 'field2');
       });
 
-      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect "updateColumns" to be called', () => {
+      it('should expect menu related to Freeze Columns when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called', () => {
         const originalColumnDefinitions = [
           { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', width: 75 },
         ];
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
-        vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ frozenColumn: 0 } as GridOption);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ pinning: { columns: { left: 0 } } } as GridOption);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
-        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(originalColumnDefinitions);
         sharedService.hasColumnsReordered = false;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: originalColumnDefinitions, grid: gridStub }, eventData as any, gridStub);
@@ -1970,7 +1948,7 @@ describe('HeaderMenu Plugin', () => {
         expect(updateColumnSpy).toHaveBeenCalled();
       });
 
-      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect "updateColumns" to be called when hasColumnsReordered returns true', () => {
+      it('should expect menu related to Freeze Columns when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called when hasColumnsReordered returns true', () => {
         const originalColumnDefinitions = [
           { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', width: 75 },
@@ -1981,14 +1959,14 @@ describe('HeaderMenu Plugin', () => {
         ];
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
-        vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ frozenColumn: 0 } as GridOption);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ pinning: { columns: { left: 0 } } } as GridOption);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
-        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(visibleColumnDefinitions);
         sharedService.hasColumnsReordered = true;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: visibleColumnDefinitions, grid: gridStub }, eventData as any, gridStub);
@@ -2029,7 +2007,7 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableSorting: true,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -2091,7 +2069,7 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableSorting: true,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -2153,7 +2131,7 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableSorting: true,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         // cancel onBeforeSort event
@@ -2191,7 +2169,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableSorting: true,
           backendServiceApi: undefined,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -2222,7 +2200,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableSorting: true,
           backendServiceApi: undefined,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -2253,7 +2231,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableSorting: true,
           backendServiceApi: undefined,
-          headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         // cancel onBeforeSort event

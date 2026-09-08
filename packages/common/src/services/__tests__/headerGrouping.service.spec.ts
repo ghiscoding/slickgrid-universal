@@ -248,7 +248,7 @@ describe('HeaderGroupingService', () => {
       expect(divHeaderColumns[0].outerHTML).toEqual(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns">All your colums div here</div>`);
     });
 
-    it('should render the pre-header row grouping title after changing "frozenColumn" with DataView "onRowCountChanged"', () => {
+    it('should render the pre-header row grouping title after changing pinning with DataView "onRowCountChanged"', () => {
       const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');

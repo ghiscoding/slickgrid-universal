@@ -436,12 +436,12 @@ export default class Example11 {
         onCommand: (e, args) => this.executeCommand(e, args),
       },
       headerMenu: {
-        hideFreezeColumnsCommand: false,
+        hidePinningColumnsCommand: false,
         hidePinColumnCommand: false,
         subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
       },
       gridMenu: {
-        hideClearFrozenColumnsCommand: false,
+        hideClearPinningCommand: false,
         commandItems: [
           {
             command: 'modal',

@@ -23,14 +23,14 @@ export interface HeaderMenuLabel {
   /** Defaults to "FILTER_SHORTCUTS" translation key */
   filterShortcutsCommandKey?: string;
 
-  /** Defaults to "Freeze Columns" */
-  freezeColumnsCommand?: string;
+  /** Defaults to "Pin Columns" */
+  pinningColumnsCommand?: string;
 
   /** Label for the pin-column command. */
   pinColumnCommand?: string;
 
   /** Defaults to "FREEZE_COLUMNS" translation key */
-  freezeColumnsCommandKey?: string;
+  pinningColumnsCommandKey?: string;
 
   /** Defaults to "Hide Column" */
   hideColumnCommand?: string;
@@ -50,12 +50,12 @@ export interface HeaderMenuLabel {
   /** Defaults to "SORT_DESCENDING" translation key */
   sortDescCommandKey?: string;
 
-  /** Defaults to "Unfreeze Columns" */
-  unfreezeColumnsCommand?: string;
+  /** Defaults to "Unpin Columns" */
+  unpinningColumnsCommand?: string;
 
   /** Label for the unpin-column command. */
   unpinColumnCommand?: string;
 
   /** Defaults to "UNFREEZE_COLUMNS" translation key */
-  unfreezeColumnsCommandKey?: string;
+  unpinningColumnsCommandKey?: string;
 }

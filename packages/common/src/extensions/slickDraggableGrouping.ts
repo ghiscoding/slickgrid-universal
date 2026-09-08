@@ -367,7 +367,7 @@ export class SlickDraggableGrouping {
 
         const reorderedIds = this.sortableLeftInstance?.toArray() ?? [];
 
-        // when frozen columns are used, headers has more than one entry and we need the ids from all of them.
+        // when pinned columns are used, headers has more than one entry and we need the ids from all of them.
         // though there is only really a left and right header, this will work even if that should change.
         if (headers.length > 1) {
           const ids = this._sortableRightInstance?.toArray() ?? [];

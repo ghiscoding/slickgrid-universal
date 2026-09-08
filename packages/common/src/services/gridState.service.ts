@@ -692,7 +692,8 @@ export class GridStateService {
   }
 
   /**
-   * Bind a Grid Event (of grid option changes) to a Grid State change event, if we detect that any of the pinning (frozen) options changes then we'll trigger a Grid State change
+   * Bind a Grid Event (of grid option changes) to a Grid State change event. If any pinning
+   * option changes, trigger a Grid State change.
    * @param grid - SlickGrid object
    */
   protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid): void {

@@ -226,10 +226,10 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       const columnId = event.target.dataset.columnid || '';
 
       // validate that the checkbox changes is allowed before going any further
-      const isFrozenAllowed = this.grid.validateColumnFreeze(columnId, true);
+      const isPinningAllowed = this.grid.validateColumnPinning(columnId, true);
       let visibleColumns = this.grid.getVisibleColumns();
 
-      if (!isFrozenAllowed || (visibleColumns.length - 1 < 1 && !isChecked)) {
+      if (!isPinningAllowed || (visibleColumns.length - 1 < 1 && !isChecked)) {
         event.target.checked = true;
         this.togglePickerCheckbox(iconElm, true);
         return;

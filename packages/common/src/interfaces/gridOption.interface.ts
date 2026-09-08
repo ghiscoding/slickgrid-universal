@@ -168,7 +168,7 @@ export interface GridOption<C extends Column = Column> {
 
   /**
    * Defaults to false. When enabled, measures rendered column headers and adjusts their shared height to fit multi-line text, HTML, or DOM content.
-   * Header heights are kept in sync when frozen columns are used and recalculated after column width changes.
+   * Header heights are kept in sync when columns are pinned and recalculated after column width changes.
    */
   autoHeaderHeight?: boolean;
 
@@ -565,8 +565,8 @@ export interface GridOption<C extends Column = Column> {
   /**
    * Do we want to always enable the mousewheel scroll handler?
    * In other words, do we want the mouse scrolling would work from anywhere.
-   * Typically we should only enable it when using a Frozen/Pinned grid and if it does detect it to be a frozen grid,
-   * then it will automatically enable the scroll handler if this flag was originally set to undefined (which it is by default unless the user specifically disabled it).
+   * This option is disabled by default and can be enabled when scrolling should work from anywhere
+   * in a grid with pinned regions.
    */
   enableMouseWheelScrollHandler?: boolean;
 
@@ -659,27 +659,8 @@ export interface GridOption<C extends Column = Column> {
   /** Formatter options that are defined and used for the entire grid */
   formatterOptions?: FormatterOption;
 
-  /** Optional frozen border in pixel to remove from total header width calculation (depending on your border width, it should be 0, 1 or 2 defaults is 1) */
-  frozenHeaderWidthCalcDifferential?: number;
-
-  /** Defaults to false, do we want to freeze (pin) the bottom portion instead of the top */
-  frozenBottom?: boolean;
-
   /** Unified permanent pinning for columns and rows. Explicit column references are ids or zero-based indexes. */
   pinning?: PinningOption;
-
-  /** @deprecated Removed with the legacy frozen-pane renderer; use `pinning` or `Column.pinned`. */
-  frozenColumn?: number;
-
-  /** Number of row index(es) to freeze (pin) in the grid */
-  frozenRow?: number;
-
-  /**
-   * Defaults to 100, what is the minimum width to keep for the section on the right of a frozen grid?
-   * This basically fixes an issue that if the user expand any column on the left of the frozen (pinning) section
-   * and make it bigger than the viewport width, then the grid becomes unusable because the right section goes into a void/hidden area.
-   */
-  frozenRightViewportMinWidth?: number;
 
   /** Defaults to false, which leads to have row(s) taking full width */
   fullWidthRows?: boolean;
@@ -975,29 +956,27 @@ export interface GridOption<C extends Column = Column> {
   /** Some default options to set for the PDF export service */
   pdfExportOptions?: PdfExportOption;
 
-  /** When set to true, it will skip the validation check to make sure frozen columns are not wider than the grid visible canvas width */
-  skipFreezeColumnValidation?: boolean;
+  /** When set to true, it will skip validation that pinned columns fit within the grid viewport. */
+  skipPinningValidation?: boolean;
 
   /** Stable row ids (or row indexes) that dock to an edge only after normal scrolling would clip them. */
   stickyRows?: StickyRows;
 
-  /** Message to show when the frozen column is invalid and `invalidColumnFreezeWidthCallbackPicker` is enabled */
-  invalidColumnFreezePickerMessage?: string;
+  /** Message to show when a pinning change would leave no center column. */
+  invalidColumnPinningPickerMessage?: string;
 
   /**
-   * Defaults to `alert(error)`, which will trigger when the user tries to uncheck too many columns via ColumnPicker/GridMenu.
-   * We need to have 1 or more columns visible on the right side of the frozen column.
+   * Defaults to `alert(error)`, which will trigger when a pinning change would hide all center columns.
    */
-  invalidColumnFreezePickerCallback?: (error: string) => void;
+  invalidColumnPinningPickerCallback?: (error: string) => void;
 
-  /** Message to show when the frozen column width is invalid and `invalidColumnFreezeWidthCallbackWidth` is enabled */
-  invalidColumnFreezeWidthMessage?: string;
+  /** Message to show when pinned columns consume the viewport width. */
+  invalidColumnPinningWidthMessage?: string;
 
   /**
-   * Defaults to `alert(error)`, which will trigger when the user tries to set a `frozenColumn` that is wider than the visible grid viewport width in the browser.
-   * We can't freeze wider than the viewport because the right canvas will never be visible and since the left canvas is never scrollable this would break the UX.
+   * Defaults to `alert(error)`, which will trigger when pinned columns consume the visible grid viewport width.
    */
-  invalidColumnFreezeWidthCallback?: (error: string) => void;
+  invalidColumnPinningWidthCallback?: (error: string) => void;
 
   /** What is the top panel height in pixels (only accepts an integer) */
   topPanelHeight?: number;
