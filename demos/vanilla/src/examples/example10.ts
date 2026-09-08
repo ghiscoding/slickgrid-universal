@@ -42,6 +42,7 @@ export default class Example10 {
   selectedLanguageFile = 'en.json';
   status = '';
   statusClass = 'is-success';
+  subTitleStyle = 'display: block';
   translateService: TranslateService;
   serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
 
@@ -453,6 +454,11 @@ export default class Example10 {
       document.body.setAttribute('data-theme', 'light');
       document.querySelector('.demo-container')?.classList.remove('dark-mode');
     }
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 
   private resetOptions(options: Partial<GraphqlServiceOption>) {

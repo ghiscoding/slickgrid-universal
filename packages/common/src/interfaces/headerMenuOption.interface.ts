@@ -31,8 +31,11 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Clear Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideFilterCommand?: boolean;
 
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true (opt-in feature), which will hide the "Freeze Columns" command in the Header Menu */
+  /** Defaults to true (opt-in feature), which hides the "Pin Column" command in the Header Menu. */
   hideFreezeColumnsCommand?: boolean;
+
+  /** Defaults to true (opt-in feature), which hides the single-column "Pin Column" command. */
+  hidePinColumnCommand?: boolean;
 
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide Sort (Asc/Desc & Clear Sort) commands in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideSortCommands?: boolean;
@@ -61,8 +64,14 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
   /** icon for the "Freeze Columns" command */
   iconFreezeColumns?: string;
 
+  /** Icon for the "Pin Column" command. */
+  iconPinColumn?: string;
+
   /** icon for the "Unfreeze Columns" command */
   iconUnfreezeColumns?: string;
+
+  /** Icon for the "Unpin Column" command. */
+  iconUnpinColumn?: string;
 
   /** icon for the "Sort Ascending" command */
   iconSortAscCommand?: string;

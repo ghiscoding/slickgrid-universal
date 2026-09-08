@@ -1,0 +1,31 @@
+<h3 class="title is-3">
+  Example 47 - Sticky Financial Report
+  <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example47.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h6 class="italic content example-details" style.bind="subTitleStyle">
+  Financial report fixture for the sticky rows/columns design. Account, Q1–Q4, and YTD dock to whichever edge is closest after normal
+  scrolling would clip them. Total Revenue, Total Expenses, and Net Profit also use two-sided stickiness and dock to whichever vertical edge
+  is closest after they have been seen.
+</h6>
+
+<div class="grid47 financial-report-grid"></div>
+
+<div class="financial-report-legend">
+  <span><i class="financial-report-legend-swatch financial-report-legend-account"></i> left sticky column</span>
+  <span><i class="financial-report-legend-swatch financial-report-legend-total"></i> bottom sticky row</span>
+  <span><i class="financial-report-legend-swatch financial-report-legend-intersection"></i> sticky intersection</span>
+  <span><i class="financial-report-legend-swatch financial-report-legend-sticky"></i> sticky quarter</span>
+</div>

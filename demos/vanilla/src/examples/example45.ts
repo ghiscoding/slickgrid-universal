@@ -22,6 +22,7 @@ export default class Example45 {
   isCompact = false;
   excelExportService = new ExcelExportService();
   pdfExportService = new PdfExportService();
+  subTitleStyle = 'display: block';
 
   attached() {
     this.defineGrid();
@@ -86,7 +87,10 @@ export default class Example45 {
         includeColumnWidth: true,
       },
       rowHeight: 40,
-      frozenRow: 2,
+      // Use the single-viewport pinning model for the two top rows. The
+      // legacy frozen-row option creates a pane that no longer participates in
+      // the POC renderer.
+      pinning: { rows: { top: [0, 1] } },
       gridHeight: 560,
       gridWidth: 1080,
       dataView: {
@@ -142,5 +146,10 @@ export default class Example45 {
 
   exportToPdf() {
     this.pdfExportService.exportToPdf({ filename: 'Export' });
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

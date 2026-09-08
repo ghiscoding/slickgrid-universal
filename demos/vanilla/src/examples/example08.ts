@@ -144,7 +144,7 @@ export default class Example08 {
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 35,
       explicitInitialization: true,
-      frozenColumn: 2,
+      pinning: { columns: { left: 2 } },
       rowHeight: 33,
       showCustomFooter: true,
       gridMenu: { hideClearFrozenColumnsCommand: false },
@@ -175,7 +175,14 @@ export default class Example08 {
   }
 
   setFrozenColumns2(frozenCols: number) {
-    this.sgb2.slickGrid?.setOptions({ frozenColumn: frozenCols, alwaysShowVerticalScroll: false });
+    this.sgb2.slickGrid?.setOptions({
+      pinning: {
+        columns: {
+          left: frozenCols >= 0 ? frozenCols : [],
+        },
+      },
+      alwaysShowVerticalScroll: false,
+    });
     this.gridOptions2 = this.sgb2.slickGrid!.getOptions();
   }
 

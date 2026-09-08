@@ -88,13 +88,13 @@ export class GridService {
     this.filterService?.clearFilters();
   }
 
-  /** Clear all the pinning (frozen) options */
+  /** Clear all permanent pinning options. */
   clearPinning(resetColumns = true): void {
     this.sharedService.slickGrid.setOptions({
-      frozenColumn: -1,
-      frozenRow: -1,
-      frozenBottom: false,
-      enableMouseWheelScrollHandler: false,
+      pinning: {
+        columns: { left: [], right: [] },
+        rows: { top: [], bottom: [] },
+      },
     });
 
     // SlickGrid seems to be somehow resetting the columns to their original positions,
@@ -105,8 +105,8 @@ export class GridService {
   }
 
   /**
-   * Set pinning (frozen) grid options
-   * @param  {Object} pinningOptions - which pinning/frozen options to modify
+   * Set permanent pinning options for either axis.
+   * @param  {Object} pinningOptions - which column and/or row pinning options to modify
    * @param {Boolean} shouldAutosizeColumns - defaults to True, should we call an `autosizeColumns()` after the pinning is done?
    * @param {Boolean} suppressRender - do we want to supress the grid re-rendering? (defaults to false)
    * @param {Boolean} suppressColumnSet - do we want to supress the columns set, via `setColumns()` method? (defaults to true)
@@ -122,8 +122,7 @@ export class GridService {
     if (isObjectEmpty(pinningOptions)) {
       this.clearPinning();
     } else {
-      this.sharedService.slickGrid.setOptions(pinningOptions, suppressRender, suppressColumnSet);
-      this.sharedService.frozenVisibleColumnId = this._grid.getFrozenColumnId();
+      this.sharedService.slickGrid.setOptions({ pinning: pinningOptions }, suppressRender, suppressColumnSet);
       this.sharedService.gridOptions = this._grid.getOptions();
     }
 

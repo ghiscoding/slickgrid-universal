@@ -26,6 +26,9 @@ export interface HeaderMenuLabel {
   /** Defaults to "Freeze Columns" */
   freezeColumnsCommand?: string;
 
+  /** Label for the pin-column command. */
+  pinColumnCommand?: string;
+
   /** Defaults to "FREEZE_COLUMNS" translation key */
   freezeColumnsCommandKey?: string;
 
@@ -49,6 +52,9 @@ export interface HeaderMenuLabel {
 
   /** Defaults to "Unfreeze Columns" */
   unfreezeColumnsCommand?: string;
+
+  /** Label for the unpin-column command. */
+  unpinColumnCommand?: string;
 
   /** Defaults to "UNFREEZE_COLUMNS" translation key */
   unfreezeColumnsCommandKey?: string;

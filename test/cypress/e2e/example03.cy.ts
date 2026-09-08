@@ -697,8 +697,12 @@ describe('Example 03 - Draggable Grouping', () => {
     it('should open Cost column Header Menu then click on "Hide Column" and still expect all headers shown', () => {
       const headerTitles = ['', 'Title', 'Duration', 'Start', 'Finish', '% Complete', 'Effort-Driven', 'Action'];
 
-      cy.get('.slick-header:not(.slick-preheader-panel).slick-header-right .slick-header-columns')
-        .find('.slick-header-column:nth(2)')
+      // Pinning now uses one live header row instead of the legacy right header
+      // pane. Locate Cost by its column content so this test follows the
+      // single-viewport DOM contract.
+      cy.get('.grid3')
+        .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
+        .contains('.slick-header-column', 'Cost')
         .should('contain', 'Cost')
         .trigger('mouseover')
         .children('.slick-header-menu-button')
@@ -726,8 +730,9 @@ describe('Example 03 - Draggable Grouping', () => {
     it('should open Column Picker then hide "Finish" column and still expect all headers shown', () => {
       const headerTitles = ['', 'Title', 'Duration', 'Start', '% Complete', 'Effort-Driven', 'Action'];
 
-      cy.get('.slick-header:not(.slick-preheader-panel).slick-header-right .slick-header-columns')
-        .find('.slick-header-column:nth(2)')
+      cy.get('.grid3')
+        .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns .slick-header-column')
+        .first()
         .trigger('mouseover')
         .trigger('contextmenu')
         .invoke('show');

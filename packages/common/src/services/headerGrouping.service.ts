@@ -102,7 +102,7 @@ export class HeaderGroupingService {
   renderHeaderGroups(preHeaderPanel: HTMLElement, start: number, end: number): void {
     emptyElement(preHeaderPanel);
     preHeaderPanel.className = 'slick-header-columns';
-    preHeaderPanel.style.left = '-1000px';
+    preHeaderPanel.style.removeProperty('left');
     preHeaderPanel.style.width = `${this._grid.getHeadersWidth()}px`;
     preHeaderPanel.parentElement?.classList.add('slick-header');
 

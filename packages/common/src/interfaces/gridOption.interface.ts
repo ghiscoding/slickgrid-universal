@@ -17,6 +17,7 @@ import type {
   ContextMenu,
   CustomFooterOption,
   CustomTooltipOption,
+  DockingOption,
   DraggableGrouping,
   EditCommand,
   EditorConstructor,
@@ -40,12 +41,14 @@ import type {
   OperatorDetailAlt,
   Pagination,
   PdfExportOption,
+  PinningOption,
   ResizeByContentOption,
   RowBasedEditOptions,
   RowDetailView,
   RowMoveManager,
   SliderOption,
   SliderRangeOption,
+  StickyRows,
   TextExportOption,
   TreeDataOption,
   VanillaCalendarOption,
@@ -92,6 +95,9 @@ export type Sanitizer = ((dirtyHtml: string) => string) | ((dirtyHtml: string) =
 export interface GridOption<C extends Column = Column> {
   /** query selector to use to allow dragging from closest element, defaults to ` 'div.slick-cell.dnd, div.slick-cell.cell-reorder'` */
   allowDragFromClosest?: string;
+
+  /** Shared pixel budgets and overflow behavior for pinned and sticky rows/columns. */
+  docking?: DockingOption;
 
   /** Defaults to true, should we always allow the use of horizontal scrolling? */
   alwaysAllowHorizontalScroll?: boolean;
@@ -659,7 +665,10 @@ export interface GridOption<C extends Column = Column> {
   /** Defaults to false, do we want to freeze (pin) the bottom portion instead of the top */
   frozenBottom?: boolean;
 
-  /** Number of column index(es) to freeze (pin) in the grid */
+  /** Unified permanent pinning for columns and rows. Explicit column references are ids or zero-based indexes. */
+  pinning?: PinningOption;
+
+  /** @deprecated Removed with the legacy frozen-pane renderer; use `pinning` or `Column.pinned`. */
   frozenColumn?: number;
 
   /** Number of row index(es) to freeze (pin) in the grid */
@@ -968,6 +977,9 @@ export interface GridOption<C extends Column = Column> {
 
   /** When set to true, it will skip the validation check to make sure frozen columns are not wider than the grid visible canvas width */
   skipFreezeColumnValidation?: boolean;
+
+  /** Stable row ids (or row indexes) that dock to an edge only after normal scrolling would clip them. */
+  stickyRows?: StickyRows;
 
   /** Message to show when the frozen column is invalid and `invalidColumnFreezeWidthCallbackPicker` is enabled */
   invalidColumnFreezePickerMessage?: string;

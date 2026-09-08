@@ -44,6 +44,7 @@ import Example43 from './examples/example43.js';
 import Example44 from './examples/example44.js';
 import Example45 from './examples/example45.js';
 import Example46 from './examples/example46.js';
+import Example47 from './examples/example47.js';
 import Icons from './examples/icons.js';
 import type { RouterConfig } from './interfaces.js';
 
@@ -98,6 +99,7 @@ export class AppRouting {
       { route: 'example44', name: 'example44', view: './examples/example44.html', viewModel: Example44, title: 'Example44' },
       { route: 'example45', name: 'example45', view: './examples/example45.html', viewModel: Example45, title: 'Example45' },
       { route: 'example46', name: 'example46', view: './examples/example46.html', viewModel: Example46, title: 'Example46' },
+      { route: 'example47', name: 'example47', view: './examples/example47.html', viewModel: Example47, title: 'Example47' },
       { route: '', redirect: 'example01' },
       { route: '**', redirect: 'example01' },
     ];

@@ -1,6 +1,9 @@
 <h3 class="title is-3">
   Example 45 - Variable Row Height (item metadata)
 
+  <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -13,7 +16,7 @@
   </div>
 </h3>
 
-<h6 class="title is-6 italic">
+<h6 class="title is-6 italic" style.bind="subTitleStyle">
   Variable row heights via <code>ItemMetadata.height</code> fallback, with compact mode rebuilding heights through
   <code>invalidateRowHeights()</code>.
 </h6>

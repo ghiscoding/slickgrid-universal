@@ -310,15 +310,23 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
           let columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef?.header?.menu?.commandItems ?? [];
 
-          // Freeze Column (pinning)
+          // Bulk index-based pinning (kept under the existing Freeze Columns
+          // label for users migrating from the old command).
           let hasFrozenOrResizeCommand = false;
           if (headerMenuOptions && !headerMenuOptions.hideFreezeColumnsCommand) {
             hasFrozenOrResizeCommand = true;
-            if (gridOptions.frozenColumn === columns.findIndex((col) => col.id === columnDef.id)) {
-              // make sure the "freeze-columns" doesn't exist before adding the "unfreeze-columns"
+            const columnPosition = columns.findIndex((col) => col.id === columnDef.id);
+            const leftPinning = gridOptions.pinning?.columns?.left;
+            const isBulkPinned =
+              typeof leftPinning === 'number'
+                ? leftPinning === columnPosition
+                : Array.isArray(leftPinning) && (leftPinning.includes(columnPosition) || leftPinning.includes(columnDef.id));
+            if (isBulkPinned) {
+              // make sure the "freeze-columns" command doesn't exist before adding the "unfreeze-columns"
               this.removeCommandWhenFound(columnHeaderMenuItems, 'freeze-columns');
 
-              // add unfreeze command
+              // add unfreeze command (the implementation clears generated
+              // `Column.pinned` values through the new index option)
               const cmdUnfreeze = 'unfreeze-columns';
               this.addMissingCommandOrAction(
                 {
@@ -333,19 +341,57 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 columnHeaderMenuItems
               );
             } else {
-              // make sure the "unfreeze-columns" doesn't exist before adding the "freeze-columns"
+              // make sure the "unfreeze-columns" command doesn't exist before adding the "freeze-columns"
               this.removeCommandWhenFound(columnHeaderMenuItems, 'unfreeze-columns');
 
-              // add freeze command
+              // add bulk freeze/pinning command
               const cmdFreeze = 'freeze-columns';
               this.addMissingCommandOrAction(
                 {
                   _orgTitle: commandLabels?.freezeColumnsCommand || '',
                   iconCssClass: headerMenuOptions.iconFreezeColumns || 'mdi mdi-pin-outline',
                   titleKey: `${translationPrefix}FREEZE_COLUMNS`,
-                  command: 'freeze-columns',
+                  command: cmdFreeze,
                   positionOrder: 45,
                   action: (_e, args) => this.freezeOrUnfreezeColumns(args.column, cmdFreeze),
+                },
+                headerMenuOptions.hideCommands,
+                columnHeaderMenuItems
+              );
+            }
+          }
+
+          // Single-column pinning. This is independent of the bulk index
+          // command above and writes only the selected column definition.
+          if (headerMenuOptions && !headerMenuOptions.hidePinColumnCommand) {
+            hasFrozenOrResizeCommand = true;
+            const isPinned = columnDef.pinned === 'left' || columnDef.pinned === 'right';
+            if (isPinned) {
+              this.removeCommandWhenFound(columnHeaderMenuItems, 'pin-column');
+              const cmdUnpin = 'unpin-column';
+              this.addMissingCommandOrAction(
+                {
+                  _orgTitle: commandLabels?.unpinColumnCommand || '',
+                  iconCssClass: headerMenuOptions.iconUnpinColumn || 'mdi mdi-pin-off-outline',
+                  titleKey: `${translationPrefix}UNPIN_COLUMN`,
+                  command: cmdUnpin,
+                  positionOrder: 46,
+                  action: (_e, args) => this.pinOrUnpinColumn(args.column, cmdUnpin),
+                },
+                headerMenuOptions.hideCommands,
+                columnHeaderMenuItems
+              );
+            } else {
+              this.removeCommandWhenFound(columnHeaderMenuItems, 'unpin-column');
+              const cmdPin = 'pin-column';
+              this.addMissingCommandOrAction(
+                {
+                  _orgTitle: commandLabels?.pinColumnCommand || '',
+                  iconCssClass: headerMenuOptions.iconPinColumn || 'mdi mdi-pin-outline',
+                  titleKey: `${translationPrefix}PIN_COLUMN`,
+                  command: cmdPin,
+                  positionOrder: 46,
+                  action: (_e, args) => this.pinOrUnpinColumn(args.column, cmdPin),
                 },
                 headerMenuOptions.hideCommands,
                 columnHeaderMenuItems
@@ -556,35 +602,26 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
   }
 
-  /** freeze or unfreeze columns command */
+  /** Pin or unpin a column at the left edge through the column definition. */
+  protected pinOrUnpinColumn(column: Column, command: 'pin-column' | 'unpin-column'): void {
+    this.grid.setColumnPinning(column.id, command === 'unpin-column' ? null : 'left');
+
+    // remove the last pin/unpin command called from Header Menu since it will be replaced by the other one when reopening the menu
+    const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = column?.header?.menu?.commandItems ?? [];
+    this.removeCommandWhenFound(columnHeaderMenuItems, command);
+    this.recreateHeaderMenu(this.grid.getColumns());
+  }
+
+  /** Apply or clear the bulk index-based pinning option. */
   protected freezeOrUnfreezeColumns(column: Column, command: 'freeze-columns' | 'unfreeze-columns'): void {
-    const columnPosition = this.grid.getVisibleColumns().findIndex((col) => col.id === column.id);
-    const newGridOptions = {
-      frozenColumn: command === 'unfreeze-columns' ? -1 : columnPosition,
-      enableMouseWheelScrollHandler: true,
-    };
+    const columnPosition = this.grid.getColumns().findIndex((col) => col.id === column.id);
+    this.grid.setOptions({ pinning: { columns: { left: command === 'unfreeze-columns' ? [] : columnPosition } } }, false, true);
 
-    // make sure column freeze is allowed before applying the change
-    if (this.grid.validateColumnFreezeWidth(newGridOptions.frozenColumn)) {
-      this.grid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
-
-      // remove the last freeze/unfreeze command called from Header Menu since it will be replaced by the other one when reopening the menu
-      const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = column?.header?.menu?.commandItems ?? [];
-      this.removeCommandWhenFound(columnHeaderMenuItems, command);
-
-      this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
-      this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
-      this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
-
-      this.grid.updateColumns();
-      this.recreateHeaderMenu(this.grid.getColumns());
-
-      // we also need to autosize columns if the option is enabled
-      const gridOptions = this.grid.getOptions();
-      if (gridOptions.enableAutoSizeColumns) {
-        this.grid.autosizeColumns();
-      }
-    }
+    const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = column?.header?.menu?.commandItems ?? [];
+    this.removeCommandWhenFound(columnHeaderMenuItems, command);
+    this.sharedService.gridOptions = this.grid.getOptions();
+    this.grid.updateColumns();
+    this.recreateHeaderMenu(this.grid.getColumns());
   }
 
   protected createParentMenu(e: DOMMouseOrTouchEvent<HTMLDivElement>, columnDef: Column, menu: HeaderMenuItems): void {

@@ -1,5 +1,8 @@
 <h3 class="title is-3">
-  Example 04 - Pinned (frozen) Columns/Rows
+  Example 04 - Pinned Columns/Rows
+  <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -10,7 +13,7 @@
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
-  <h6 class="italic content example-details">
+  <h6 class="italic content example-details" style.bind="subTitleStyle">
     The Autocomplete Editor (City of Origin) might throw some console errors because it uses "http://gd.geobytes.com/" request (which is not
     using https). You can allow "Insecure content" in your browser for this website only to test the Autocomplete
   </h6>
@@ -27,14 +30,23 @@
     <input type="number" class="frozen-column-count is-narrow input is-small" value.bind="frozenColumnCount" />
     <button class="button is-small" onclick.trigger="changeFrozenColumnCount()">Set</button>
   </span>
+  <span class="ml-1">
+    <label for="">Pinned Right: </label>
+    <input type="number" min="0" class="pinned-right-column-count is-narrow input is-small" value.bind="pinnedRightColumnCount" />
+    <button class="button is-small" onclick.trigger="changePinnedRightColumnCount()">Set</button>
+  </span>
   <span class="ml-3">
-    <button class="button is-small" onclick.trigger="setFrozenColumns(-1)" data-test="remove-frozen-column-button">
+    <button class="button is-small" onclick.trigger="setPinnedColumns(-1, 0)" data-test="remove-frozen-column-button">
       <span class="mdi mdi-close"></span>
-      <span>Remove Frozen Columns</span>
+      <span>Remove Pinned Columns</span>
     </button>
-    <button class="button is-small" data-test="set-3frozen-columns" onclick.trigger="setFrozenColumns(2)">
+    <button class="button is-small" data-test="set-3frozen-columns" onclick.trigger="setPinnedColumns(2)">
       <span class="mdi mdi-pin-outline"></span>
-      <span>Set 3 Frozen Columns</span>
+      <span>Pin 3 Columns</span>
+    </button>
+    <button class="button is-small" data-test="toggle-pinned-right" onclick.trigger="toggleRightPinning()">
+      <span class="mdi mdi-pin-outline"></span>
+      <span>Toggle Right Pinning</span>
     </button>
     <button class="button is-small" data-test="toggle-frozen-bottom" onclick.trigger="toggleFrozenBottomRows()">
       <span class="mdi mdi-flip-vertical"></span>
@@ -45,7 +57,7 @@
       <span>Toggle which row to show "Select All" checkbox</span>
     </button>
     <button class="button is-small ml-3" data-test="set-large-freezed-columns" onclick.trigger="setLargeFreezedColumns()">
-      <span>Set Large Freezed Columns</span>
+      <span>Set Large Pinned Columns</span>
     </button>
   </span>
 </div>

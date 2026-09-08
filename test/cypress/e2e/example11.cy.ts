@@ -4,7 +4,6 @@ import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 11 - Batch Editing', () => {
   const LOCAL_STORAGE_KEY = 'gridViewPreset';
-  const GRID_ROW_HEIGHT = 33;
   const EDITABLE_CELL_RGB_COLOR = 'rgba(227, 240, 251, 0.57)';
   const UNSAVED_RGB_COLOR = 'rgb(251, 253, 209)';
   const fullTitles = [
@@ -230,88 +229,67 @@ describe('Example 11 - Batch Editing', () => {
     });
 
     it('should have "TASK 0" (uppercase) incremented by 1 after each row', () => {
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`)
-        .contains('TASK 0', { matchCase: false })
-        .should('have.css', 'text-transform', 'uppercase');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).contains('TASK 1', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).contains('TASK 2', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).contains('TASK 3', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(1)`).contains('TASK 4', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 5}px);"] > .slick-cell:nth(1)`).contains('TASK 5', { matchCase: false });
+      cy.get('[data-row=0] .slick-cell:nth(1)').contains('TASK 0', { matchCase: false }).should('have.css', 'text-transform', 'uppercase');
+      cy.get('[data-row=1] .slick-cell:nth(1)').contains('TASK 1', { matchCase: false });
+      cy.get('[data-row=2] .slick-cell:nth(1)').contains('TASK 2', { matchCase: false });
+      cy.get('[data-row=3] .slick-cell:nth(1)').contains('TASK 3', { matchCase: false });
+      cy.get('[data-row=4] .slick-cell:nth(1)').contains('TASK 4', { matchCase: false });
+      cy.get('[data-row=5] .slick-cell:nth(1)').contains('TASK 5', { matchCase: false });
     });
 
     it('should be able to change "Duration" values of first 4 rows', () => {
       // change duration
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`)
-        .should('contain', 'days')
-        .click();
+      cy.get('[data-row=0] .slick-cell:nth(2)').should('contain', 'days').click();
       cy.get('.editor-duration').type('0').type('{enter}', { force: true });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`)
+      cy.get('[data-row=0] .slick-cell:nth(2)')
         .should('contain', '0 day')
         .should('have.css', 'background-color')
         .and('eq', UNSAVED_RGB_COLOR);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`)
-        .click()
-        .type('1{enter}');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`)
+      cy.get('[data-row=1] .slick-cell:nth(2)').click().type('1{enter}');
+      cy.get('[data-row=1] .slick-cell:nth(2)')
         .should('contain', '1 day')
         .should('have.css', 'background-color')
         .and('eq', UNSAVED_RGB_COLOR);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(2)`)
-        .click()
-        .type('2{enter}');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(2)`)
+      cy.get('[data-row=2] .slick-cell:nth(2)').click().type('2{enter}');
+      cy.get('[data-row=2] .slick-cell:nth(2)')
         .should('contain', '2 days')
         .should('have.css', 'background-color')
         .and('eq', UNSAVED_RGB_COLOR);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(2)`)
-        .click()
-        .type('3{enter}');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(2)`)
+      cy.get('[data-row=3] .slick-cell:nth(2)').click().type('3{enter}');
+      cy.get('[data-row=3] .slick-cell:nth(2)')
         .should('contain', '3 days')
         .should('have.css', 'background-color')
         .and('eq', UNSAVED_RGB_COLOR);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(2)`)
-        .click()
-        .type('{esc}');
+      cy.get('[data-row=3] .slick-cell:nth(2)').click().type('{esc}');
       cy.get('.editor-duration').should('not.exist');
     });
 
     it('should be able to change "Title" values of row indexes 1-3', () => {
       // change title
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`)
-        .contains('TASK 1', { matchCase: false })
-        .click();
+      cy.get('[data-row=1] .slick-cell:nth(1)').contains('TASK 1', { matchCase: false }).click();
       cy.get('.editor-title').type('task 1111').type('{enter}');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`)
+      cy.get('[data-row=1] .slick-cell:nth(1)')
         .contains('TASK 1111', { matchCase: false })
         .should('have.css', 'background-color')
         .and('eq', UNSAVED_RGB_COLOR);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`)
-        .click()
-        .type('task 2222{enter}');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`)
+      cy.get('[data-row=2] .slick-cell:nth(1)').click().type('task 2222{enter}');
+      cy.get('[data-row=2] .slick-cell:nth(1)')
         .contains('TASK 2222', { matchCase: false })
         .should('have.css', 'background-color')
         .and('eq', UNSAVED_RGB_COLOR);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`)
-        .click()
-        .type('task 3333')
-        .type('{enter}');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`)
+      cy.get('[data-row=3] .slick-cell:nth(1)').click().type('task 3333').type('{enter}');
+      cy.get('[data-row=3] .slick-cell:nth(1)')
         .contains('TASK 3333', { matchCase: false })
         .should('have.css', 'background-color')
         .and('eq', UNSAVED_RGB_COLOR);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`)
-        .click()
-        .type('{esc}');
+      cy.get('[data-row=3] .slick-cell:nth(1)').click().type('{esc}');
       cy.get('.editor-title').should('not.exist');
 
       cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
@@ -319,26 +297,17 @@ describe('Example 11 - Batch Editing', () => {
 
     it('should be able to change "% Complete" values of row indexes 2-4', () => {
       // change % complete
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(4)`).click();
+      cy.get('[data-row=2] .slick-cell:nth(4)').click();
       cy.get('.slider-editor input[type=range]').as('range').invoke('val', 5).trigger('change', { force: true });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(4)`)
-        .should('contain', '5')
-        .should('have.css', 'background-color')
-        .and('eq', UNSAVED_RGB_COLOR);
+      cy.get('[data-row=2] .slick-cell:nth(4)').should('contain', '5').should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(4)`).click();
+      cy.get('[data-row=3] .slick-cell:nth(4)').click();
       cy.get('.slider-editor input[type=range]').as('range').invoke('val', 6).trigger('change', { force: true });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(4)`)
-        .should('contain', '6')
-        .should('have.css', 'background-color')
-        .and('eq', UNSAVED_RGB_COLOR);
+      cy.get('[data-row=3] .slick-cell:nth(4)').should('contain', '6').should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(4)`).click();
+      cy.get('[data-row=4] .slick-cell:nth(4)').click();
       cy.get('.slider-editor input[type=range]').as('range').invoke('val', 7).trigger('change', { force: true });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(4)`)
-        .should('contain', '7')
-        .should('have.css', 'background-color')
-        .and('eq', UNSAVED_RGB_COLOR);
+      cy.get('[data-row=4] .slick-cell:nth(4)').should('contain', '7').should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
       cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
     });
@@ -355,25 +324,23 @@ describe('Example 11 - Batch Editing', () => {
       }
 
       // change Finish date to today's date
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(6)`)
-        .should('contain', '')
-        .click(); // this date should also always be initially empty
+      cy.get('[data-row=0] .slick-cell:nth(6)').should('contain', '').click(); // this date should also always be initially empty
       cy.get('[data-vc-date-today]:visible button').click('bottom', { force: true });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(6)`)
+      cy.get('[data-row=0] .slick-cell:nth(6)')
         .should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
         .should('have.css', 'background-color')
         .and('eq', UNSAVED_RGB_COLOR);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(6)`).click();
+      cy.get('[data-row=1] .slick-cell:nth(6)').click();
       cy.get('[data-vc-date-today]:visible button').click('bottom', { force: true });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(6)`)
+      cy.get('[data-row=1] .slick-cell:nth(6)')
         .should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
         .should('have.css', 'background-color')
         .and('eq', UNSAVED_RGB_COLOR);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(6)`).click();
+      cy.get('[data-row=2] .slick-cell:nth(6)').click();
       cy.get('[data-vc-date-today]:visible button').click('bottom', { force: true });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(6)`)
+      cy.get('[data-row=2] .slick-cell:nth(6)')
         .should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
         .should('have.css', 'background-color')
         .and('eq', UNSAVED_RGB_COLOR);
@@ -390,7 +357,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.unsaved-editable-field').should('have.length', 12);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(6)`)
+      cy.get('[data-row=2] .slick-cell:nth(6)')
         .should('contain', '')
         .should('have.css', 'background-color')
         .and('eq', EDITABLE_CELL_RGB_COLOR);
@@ -402,7 +369,7 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.vc').should('not.exist');
 
       cy.get('.unsaved-editable-field').should('have.length', 11);
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(6)`)
+      cy.get('[data-row=2] .slick-cell:nth(6)')
         .should('contain', '')
         .should('have.css', 'background-color')
         .and('eq', EDITABLE_CELL_RGB_COLOR);
@@ -469,25 +436,13 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.search-filter.filter-completed .ms-choice').should('contain', 'True');
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
+      cy.get('[data-row=0] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get('[data-row=1] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get('[data-row=2] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`)
-        .find('.checkmark-icon')
-        .should('have.length', 1);
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(7)`)
-        .find('.checkmark-icon')
-        .should('have.length', 1);
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(7)`)
-        .find('.checkmark-icon')
-        .should('have.length', 1);
+      cy.get('[data-row=0] .slick-cell:nth(7)').find('.checkmark-icon').should('have.length', 1);
+      cy.get('[data-row=1] .slick-cell:nth(7)').find('.checkmark-icon').should('have.length', 1);
+      cy.get('[data-row=2] .slick-cell:nth(7)').find('.checkmark-icon').should('have.length', 1);
     });
 
     it('should have 3 filters with "filled" css class when having values', () => {
@@ -574,27 +529,21 @@ describe('Example 11 - Batch Editing', () => {
         expect(Object.keys(savedDefinedFilters)).to.have.lengthOf(3);
       });
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', '0');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', '0');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', '0');
+      cy.get('[data-row=0] .slick-cell:nth(1)').should('contain', '0');
+      cy.get('[data-row=1] .slick-cell:nth(1)').should('contain', '0');
+      cy.get('[data-row=2] .slick-cell:nth(1)').should('contain', '0');
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
+      cy.get('[data-row=0] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get('[data-row=1] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get('[data-row=2] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`).click();
+      cy.get('[data-row=0] .slick-cell:nth(7)').click();
       cy.get('[data-name="editor-completed"]')
         .find('li.selected')
         .find('input[data-name=selectItemeditor-completed][value=true]')
         .should('exist');
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`).click();
+      cy.get('[data-row=0] .slick-cell:nth(7)').click();
 
       cy.get('.selected-view').should('have.value', 'CustomViewTest');
     });
@@ -643,12 +592,12 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(6)`).should('not.equal', '');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(6)`).should('not.contain', currentYear);
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(6)`).should('not.equal', '');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(6)`).should('not.contain', currentYear);
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(6)`).should('not.equal', '');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(6)`).should('not.contain', currentYear);
+      cy.get('[data-row=0] .slick-cell:nth(6)').should('not.equal', '');
+      cy.get('[data-row=0] .slick-cell:nth(6)').should('not.contain', currentYear);
+      cy.get('[data-row=1] .slick-cell:nth(6)').should('not.equal', '');
+      cy.get('[data-row=1] .slick-cell:nth(6)').should('not.contain', currentYear);
+      cy.get('[data-row=2] .slick-cell:nth(6)').should('not.equal', '');
+      cy.get('[data-row=2] .slick-cell:nth(6)').should('not.contain', currentYear);
     });
 
     it('should NOT be able to Delete/Update a System Defined View', () => {
@@ -673,19 +622,13 @@ describe('Example 11 - Batch Editing', () => {
       cy.reload();
       cy.wait(50);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', '0');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should('contain', '0');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', '0');
+      cy.get('[data-row=0] .slick-cell:nth(1)').should('contain', '0');
+      cy.get('[data-row=1] .slick-cell:nth(1)').should('contain', '0');
+      cy.get('[data-row=2] .slick-cell:nth(1)').should('contain', '0');
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(4)`).should(($elm) =>
-        expect(+$elm.text()).to.be.greaterThan(50)
-      );
+      cy.get('[data-row=0] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get('[data-row=1] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get('[data-row=2] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
 
       cy.should(() => {
         const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) as string);
@@ -828,51 +771,45 @@ describe('Example 11 - Batch Editing', () => {
         const stub = cy.stub(win, 'confirm').returns(true);
         cy.wrap(stub).as('confirmStub');
       });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).contains('TASK 1', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).contains('TASK 2', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).contains('TASK 3', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(1)`).contains('TASK 4', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 5}px);"] > .slick-cell:nth(1)`).contains('TASK 5', { matchCase: false });
+      cy.get('[data-row=0] .slick-cell:nth(1)').contains('TASK 0', { matchCase: false });
+      cy.get('[data-row=1] .slick-cell:nth(1)').contains('TASK 1', { matchCase: false });
+      cy.get('[data-row=2] .slick-cell:nth(1)').contains('TASK 2', { matchCase: false });
+      cy.get('[data-row=3] .slick-cell:nth(1)').contains('TASK 3', { matchCase: false });
+      cy.get('[data-row=4] .slick-cell:nth(1)').contains('TASK 4', { matchCase: false });
+      cy.get('[data-row=5] .slick-cell:nth(1)').contains('TASK 5', { matchCase: false });
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(10)`)
-        .find('.mdi-close')
-        .click();
+      cy.get('[data-row=1] .slick-cell:nth(10)').find('.mdi-close').click();
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).contains('TASK 2', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).contains('TASK 3', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).contains('TASK 4', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(1)`).contains('TASK 5', { matchCase: false });
+      cy.get('[data-row=0] .slick-cell:nth(1)').contains('TASK 0', { matchCase: false });
+      cy.get('[data-row=1] .slick-cell:nth(1)').contains('TASK 2', { matchCase: false });
+      cy.get('[data-row=2] .slick-cell:nth(1)').contains('TASK 3', { matchCase: false });
+      cy.get('[data-row=3] .slick-cell:nth(1)').contains('TASK 4', { matchCase: false });
+      cy.get('[data-row=4] .slick-cell:nth(1)').contains('TASK 5', { matchCase: false });
     });
 
     it('should be able to click on the checked 2nd button from the "Action" column of the 2nd row and expect "Task 2" to be completed', () => {
       cy.window().then((win) => {
         cy.stub(win, 'alert').as('alertStub');
       });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).contains('TASK 2', { matchCase: false });
+      cy.get('[data-row=0] .slick-cell:nth(1)').contains('TASK 0', { matchCase: false });
+      cy.get('[data-row=1] .slick-cell:nth(1)').contains('TASK 2', { matchCase: false });
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(10)`)
-        .find('.mdi-check-underline')
-        .click();
+      cy.get('[data-row=1] .slick-cell:nth(10)').find('.mdi-check-underline').click();
 
       cy.get('@alertStub').should('have.been.calledWith', 'The "Task 2" is now Completed');
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(7)`)
-        .find('.checkmark-icon')
-        .should('have.length', 1);
+      cy.get('[data-row=1] .slick-cell:nth(7)').find('.checkmark-icon').should('have.length', 1);
     });
 
     it('should be able to filter "Country of Origin" with a text range filter "b..e" and expect to see only Canada showing up', () => {
       cy.get('.slick-header-columns .slick-header-column:nth(9)').trigger('mouseover'); // mouseover column headers to get rid of cell tooltip
       cy.get('input.search-filter.filter-countryOfOrigin').type('b..e');
       cy.get('input.search-filter.filter-countryOfOrigin.filled').should('exist');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(9)`).should('contain', 'Canada');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(9)`).should('contain', 'Canada');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(9)`).should('contain', 'Canada');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(9)`).should('contain', 'Canada');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(9)`).should('contain', 'Canada');
+      cy.get('[data-row=0] .slick-cell:nth(9)').should('contain', 'Canada');
+      cy.get('[data-row=1] .slick-cell:nth(9)').should('contain', 'Canada');
+      cy.get('[data-row=2] .slick-cell:nth(9)').should('contain', 'Canada');
+      cy.get('[data-row=3] .slick-cell:nth(9)').should('contain', 'Canada');
+      cy.get('[data-row=4] .slick-cell:nth(9)').should('contain', 'Canada');
     });
 
     it('should be able to filter "Duration" with greater than symbol ">8"', () => {
@@ -918,20 +855,21 @@ describe('Example 11 - Batch Editing', () => {
         .click();
     });
 
-    it('should have a frozen grid with 4 containers on page load with 3 columns on the left and 8 columns on the right', () => {
-      cy.get('[style="transform: translateY(0px);"]').should('have.length', 2);
-      cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]').children().should('have.length', 3);
-      cy.get('.grid-canvas-right > [style="transform: translateY(0px);"]').children().should('have.length', 8);
+    it('should have one docked row with 3 pinned columns and 8 scrolling columns', () => {
+      const firstRow = '.grid11 .slick-row[data-row="0"]';
+      cy.get(firstRow).should('have.length', 1);
+      cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell`).should('have.length', 3);
+      cy.get(`${firstRow} .slick-scrolling-cells .slick-cell`).should('have.length', 8);
 
-      cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '');
-      cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').contains(/^TASK [0-9]*$/i);
-      cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(2)').contains(/^[0-9]*\sday[s]?$/);
+      cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell:nth(0)`).should('contain', '');
+      cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell:nth(1)`).contains(/^TASK [0-9]*$/i);
+      cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell:nth(2)`).contains(/^[0-9]*\sday[s]?$/);
 
-      cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').contains(/\$[0-9.]*/);
+      cy.get(`${firstRow} .slick-scrolling-cells .slick-cell:nth(0)`).contains(/\$[0-9.]*/);
 
-      cy.get('.slick-pane-left').find('.slick-grid-menu-button').should('not.exist');
-
-      cy.get('.slick-pane-right').find('.slick-grid-menu-button').should('exist');
+      // Pinning uses one viewport/menu instead of the legacy left/right panes.
+      cy.get('.grid11').find('.slick-grid-menu-button').should('exist');
+      cy.get('.grid11 .slick-pane-right').should('not.exist');
     });
 
     it('should create a new View with current pinning & filters', () => {
@@ -979,12 +917,10 @@ describe('Example 11 - Batch Editing', () => {
         .invoke('val')
         .then((text) => expect(text).to.eq(`${currentYear}-01-01`));
 
-      cy.get('[style="transform: translateY(0px);"]').should('have.length', 1);
-      cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]').children().should('have.length', 9);
+      cy.get('.grid11 .slick-row[data-row="0"] .slick-cell').should('have.length', 9);
 
-      cy.get('.slick-pane-left').find('.slick-grid-menu-button').should('exist');
-
-      cy.get('.slick-pane-right').find('.slick-grid-menu-button').should('not.exist');
+      cy.get('.grid11').find('.slick-grid-menu-button').should('exist');
+      cy.get('.grid11 .slick-pane-right').should('not.exist');
     });
 
     it('should change pre-defined view back to the Custom View Test', () => {
@@ -1016,20 +952,20 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.filter-countryOfOrigin.filled').should('exist');
     });
 
-    it('should have back the frozen columns from CustomViewTest on the right side of the "Duration" column', () => {
-      cy.get('[style="transform: translateY(0px);"]').should('have.length', 2);
-      cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]').children().should('have.length', 3);
-      cy.get('.grid-canvas-right > [style="transform: translateY(0px);"]').children().should('have.length', 8);
+    it('should have back the pinned columns from CustomViewTest on the right side of the "Duration" column', () => {
+      const firstRow = '.grid11 .slick-row[data-row="0"]';
+      cy.get(firstRow).should('have.length', 1);
+      cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell`).should('have.length', 3);
+      cy.get(`${firstRow} .slick-scrolling-cells .slick-cell`).should('have.length', 8);
 
-      cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '');
-      cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').contains(/^TASK [0-9]*$/i);
-      cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(2)').contains(/^[0-9]*\sday[s]?$/);
+      cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell:nth(0)`).should('contain', '');
+      cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell:nth(1)`).contains(/^TASK [0-9]*$/i);
+      cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell:nth(2)`).contains(/^[0-9]*\sday[s]?$/);
 
-      cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').contains(/\$?[0-9.]*/);
+      cy.get(`${firstRow} .slick-scrolling-cells .slick-cell:nth(0)`).contains(/\$?[0-9.]*/);
 
-      cy.get('.slick-pane-left').find('.slick-grid-menu-button').should('not.exist');
-
-      cy.get('.slick-pane-right').find('.slick-grid-menu-button').should('exist');
+      cy.get('.grid11').find('.slick-grid-menu-button').should('exist');
+      cy.get('.grid11 .slick-pane-right').should('not.exist');
     });
 
     it('should have the same 3 filters defined in the CustomViewTest', () => {
@@ -1061,11 +997,11 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('input.search-filter.filter-countryOfOrigin')
         .invoke('val')
         .then((text) => expect(text).to.eq('b..e'));
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(9)`).should('contain', 'Canada');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(9)`).should('contain', 'Canada');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(9)`).should('contain', 'Canada');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(9)`).should('contain', 'Canada');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(9)`).should('contain', 'Canada');
+      cy.get('[data-row=0] .slick-cell:nth(9)').should('contain', 'Canada');
+      cy.get('[data-row=1] .slick-cell:nth(9)').should('contain', 'Canada');
+      cy.get('[data-row=2] .slick-cell:nth(9)').should('contain', 'Canada');
+      cy.get('[data-row=3] .slick-cell:nth(9)').should('contain', 'Canada');
+      cy.get('[data-row=4] .slick-cell:nth(9)').should('contain', 'Canada');
     });
 
     it('should clear pinning from Grid Menu & expect to no longer have any columns freezed', () => {
@@ -1073,8 +1009,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.contains('Unfreeze Columns/Rows').click({ force: true });
 
-      cy.get('[style="transform: translateY(0px);"]').should('have.length', 1);
-      cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]').children().should('have.length', 11);
+      cy.get('.grid11 .slick-row[data-row="0"] .slick-cell').should('have.length', 11);
     });
 
     it('should filter the "Completed" column to True and expect only completed rows to be displayed', () => {
@@ -1109,7 +1044,7 @@ describe('Example 11 - Batch Editing', () => {
     });
 
     it('should display 2 different tooltips when hovering icons from "Action" column', () => {
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(10)`).as('first-row-action-cell');
+      cy.get('[data-row=0] .slick-cell:nth(10)').as('first-row-action-cell');
       cy.get('@first-row-action-cell').find('.action-btns .mdi-close').as('delete-row-btn');
       cy.get('@first-row-action-cell').find('.action-btns .mdi-check-underline').as('mark-completed-btn');
 
@@ -1131,11 +1066,11 @@ describe('Example 11 - Batch Editing', () => {
 
   describe('with Date Editor', () => {
     it('should input values directly in input of datepicker', () => {
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(5)`).click();
+      cy.get('[data-row=0] .slick-cell:nth(5)').click();
 
-      cy.get(`.input-group-editor`).focus().type('{backspace}'.repeat(10)).type('1970-01-01').type('{enter}');
+      cy.get('.input-group-editor').focus().type('{backspace}'.repeat(10)).type('1970-01-01').type('{enter}');
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(5)`).should('contain', '1970-01-01');
+      cy.get('[data-row=0] .slick-cell:nth(5)').should('contain', '1970-01-01');
     });
   });
 
@@ -1182,18 +1117,18 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.slick-grid-menu .slick-column-picker-list li:not(.hidden)').find('input[type="checkbox"]:checked').should('have.length', 8);
       cy.get('.slick-grid-menu:visible').find('.close').click({ force: true });
 
-      cy.get('.slick-header-left .slick-header-column').should('have.length', 3);
-      cy.get('.slick-header-right .slick-header-column').should('have.length', 6);
-      cy.get('.slick-header-left .slick-header-column').last().get('.slick-column-name').should('contain', 'Cost');
+      cy.get('.grid11 .slick-header-columns .slick-header-column').should('have.length', 9);
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left .slick-column-name').last().should('contain', 'Cost');
 
       cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
       cy.get('.slick-column-picker-list li:nth(2)').click();
       cy.get('.slick-column-picker-list li:nth(9)').click();
       cy.get('.slick-column-picker button.close').click();
 
-      cy.get('.slick-header-left .slick-header-column').should('have.length', 4);
-      cy.get('.slick-header-right .slick-header-column').should('have.length', 7);
-      cy.get('.slick-header-left .slick-header-column').last().get('.slick-column-name').should('contain', 'Cost');
+      cy.get('.grid11 .slick-header-columns .slick-header-column').should('have.length', 11);
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left').should('have.length', 4);
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left .slick-column-name').last().should('contain', 'Cost');
     });
 
     it('should reload the page and expect Cost column to still be pinned and the other 2 columns to still be hidden', () => {
@@ -1204,9 +1139,9 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.slick-grid-menu .slick-column-picker-list li:not(.hidden)').find('input[type="checkbox"]:checked').should('have.length', 8);
       cy.get('.slick-grid-menu:visible').find('.close').click({ force: true });
 
-      cy.get('.slick-header-left .slick-header-column').should('have.length', 3);
-      cy.get('.slick-header-right .slick-header-column').should('have.length', 6);
-      cy.get('.slick-header-left .slick-header-column').last().get('.slick-column-name').should('contain', 'Cost');
+      cy.get('.grid11 .slick-header-columns .slick-header-column').should('have.length', 9);
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left .slick-column-name').last().should('contain', 'Cost');
     });
 
     it('should display both hidden columns and still expect Cost to be the pinned column', () => {
@@ -1215,9 +1150,11 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.slick-column-picker-list li:nth(9)').click();
       cy.get('.slick-column-picker button.close').click();
 
-      cy.get('.slick-header-left .slick-header-column').should('have.length', 4);
-      cy.get('.slick-header-right .slick-header-column').should('have.length', 7);
-      cy.get('.slick-header-left .slick-header-column').last().get('.slick-column-name').should('contain', 'Cost');
+      cy.get('.grid11 .slick-header-columns .slick-header-column').should('have.length', 11);
+      // The persisted preset stores the exact pinned column IDs (checkbox,
+      // Title, and Cost), rather than the original numeric freeze shorthand.
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left .slick-column-name').last().should('contain', 'Cost');
     });
 
     it('should change back pre-defined view to "Tasks Finishing in Future Years", then be able to show the hidden column "Cost"', () => {

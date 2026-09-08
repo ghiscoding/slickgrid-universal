@@ -802,17 +802,17 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   }
 
   protected clearPinning(): void {
-    // reset frozen props on both SlickGrid options and shared service options
+    // Clear the unified pinning state. The old frozen-pane options are inert
+    // in the pinning renderer, so changing them here would leave the pinned
+    // column/row definitions untouched.
     const newGridOptions: Partial<GridOption> = {
-      frozenColumn: -1,
-      frozenRow: -1,
-      frozenBottom: false,
-      enableMouseWheelScrollHandler: false,
+      pinning: {
+        columns: { left: [], right: [] },
+        rows: { top: [], bottom: [] },
+      },
     };
     this.grid.setOptions(newGridOptions);
-    Object.keys(newGridOptions).forEach(
-      (c) => (this.sharedService.gridOptions[c as keyof GridOption] = newGridOptions[c as keyof GridOption])
-    );
+    this.sharedService.gridOptions.pinning = newGridOptions.pinning;
 
     // re-update columns to reflect any possible changes
     this.grid.updateColumns();

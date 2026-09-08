@@ -2271,7 +2271,12 @@ describe('GridMenuControl', () => {
           control.menuElement!.querySelector('.slick-menu-item[data-command=clear-pinning]')!.dispatchEvent(clickEvent);
 
           expect(updateColumnsSpy).toHaveBeenCalled();
-          expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false });
+          expect(setOptionsSpy).toHaveBeenCalledWith({
+            pinning: {
+              columns: { left: [], right: [] },
+              rows: { top: [], bottom: [] },
+            },
+          });
           expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuClearAllPinning');
         });
 

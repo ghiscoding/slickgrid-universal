@@ -2,6 +2,9 @@
   Example 05 - Tree Data
   <span class="mdi mdi-file-tree font-25px"></span>
   <span class="subtitle">(from a flat dataset with <code>parentId</code> references)</span>
+  <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -14,7 +17,7 @@
   </div>
 </h3>
 
-<h6 class="italic content example-details">
+<h6 class="italic content example-details" style.bind="subTitleStyle">
   NOTE: The grid will automatically sort Ascending with the column that has the Tree Data, you could add a "sortByFieldId" in your column
   "treeData" option if you wish to sort on a different column
 </h6>

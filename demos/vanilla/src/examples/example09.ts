@@ -36,6 +36,7 @@ export default class Example09 {
   errorStatusClass = 'hidden';
   status = '';
   statusClass = 'is-success';
+  subTitleStyle = 'display: block';
   isPageErrorTest = false;
 
   constructor() {
@@ -525,6 +526,11 @@ export default class Example09 {
     this.odataVersion = version;
     this.resetOptions({ version: this.odataVersion });
     return true;
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 
   private resetOptions(options: Partial<OdataOption>) {

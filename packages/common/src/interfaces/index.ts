@@ -35,6 +35,7 @@ export type * from './currentColumn.interface.js';
 export type * from './currentFilter.interface.js';
 export type * from './currentPagination.interface.js';
 export type * from './currentPinning.interface.js';
+export type * from './docking.interface.js';
 export type * from './currentRowSelection.interface.js';
 export type * from './currentSorter.interface.js';
 export type * from './cursorPageInfo.interface.js';

@@ -2,6 +2,9 @@
   Example 03 - Draggable Grouping
   <span class="subtitle">(with Salesforce Theme)</span>
   <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
     <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
@@ -19,7 +22,7 @@
   </div>
 </h3>
 
-<h5 class="mb-3 italic example-details">
+<h5 class="mb-3 italic example-details" style.bind="subTitleStyle">
   Please note that the grid below initially has its first column "Title" hidden by default for E2E testing.
 </h5>
 

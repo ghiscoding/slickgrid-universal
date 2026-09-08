@@ -50,6 +50,7 @@ export default class Example03 {
   draggableGroupingPlugin: SlickDraggableGrouping;
   loadingClass = '';
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
+  subTitleStyle = 'display: block';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -390,7 +391,7 @@ export default class Example03 {
       rowHeight: 33,
       headerRowHeight: 35,
       enableDraggableGrouping: true,
-      // frozenColumn: 2,
+      // pinning: { columns: { left: 2  } },
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
         // hideGroupSortIcons: true,
@@ -635,5 +636,10 @@ export default class Example03 {
       command.undo();
       this.sgb?.slickGrid?.gotoCell(command.row, command.cell, false);
     }
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

@@ -176,7 +176,11 @@ export default class Example32 {
       autoEdit: true,
       editable: false,
       datasetIdPropertyName: 'employeeID',
-      frozenColumn: 0,
+      // Keep the Employee ID visible while horizontally scrolling. The old
+      // frozen-pane option is intentionally no longer used by the POC.
+      pinning: {
+        columns: { left: 0 },
+      },
       gridHeight: 348,
       rowHeight: 30,
       dataView: {
@@ -476,7 +480,7 @@ export default class Example32 {
         newMetadata[row].columns[Number(col) + colDirIdx] = (this.metadata as any)[row].columns[col];
       }
     }
-    this.sgb.slickGrid?.setOptions({ frozenColumn: this.showEmployeeId ? 0 : 1 });
+    this.sgb.slickGrid?.setOptions({ pinning: { columns: { left: this.showEmployeeId ? 0 : 1 } } });
     this.sgb.slickGrid?.updateColumnById('employeeID', { hidden: !this.showEmployeeId });
     this.sgb.slickGrid?.updateColumns();
     */

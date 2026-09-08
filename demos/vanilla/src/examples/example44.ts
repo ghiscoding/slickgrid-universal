@@ -22,6 +22,7 @@ export default class Example44 {
   sgb!: SlickVanillaGridBundle;
   excelExportService = new ExcelExportService();
   pdfExportService = new PdfExportService();
+  subTitleStyle = 'display: block';
 
   attached() {
     this.defineGrid();
@@ -119,5 +120,10 @@ export default class Example44 {
 
   exportToPdf() {
     this.pdfExportService.exportToPdf({ filename: 'Export' });
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

@@ -307,8 +307,8 @@ export class SlickDraggableGrouping {
     _uid: string,
     trigger: (slickEvent: SlickEvent, data?: any) => void
   ): {
-    sortableLeftInstance: Sortable;
-    sortableRightInstance: Sortable;
+    sortableLeftInstance?: Sortable;
+    sortableRightInstance?: Sortable;
   } {
     this.destroySortableInstances();
     const dropzoneElm = grid.getTopHeaderPanel() || grid.getPreHeaderPanel();
@@ -392,14 +392,15 @@ export class SlickDraggableGrouping {
       },
     } as SortableOptions;
 
-    this._sortableLeftInstance = Sortable.create(
-      this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-left`) as HTMLDivElement,
-      sortableOptions
-    );
-    this._sortableRightInstance = Sortable.create(
-      this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-right`) as HTMLDivElement,
-      sortableOptions
-    );
+    const headerRoot = `.${grid.getUID()} .slick-header-columns`;
+    const leftHeader = this.gridContainer.querySelector<HTMLDivElement>(`${headerRoot}.slick-header-columns-left`);
+    const rightHeader = this.gridContainer.querySelector<HTMLDivElement>(`${headerRoot}.slick-header-columns-right`);
+    if (leftHeader) {
+      this._sortableLeftInstance = Sortable.create(leftHeader, sortableOptions);
+    }
+    if (rightHeader) {
+      this._sortableRightInstance = Sortable.create(rightHeader, sortableOptions);
+    }
 
     // user can optionally provide initial groupBy columns
     const initialGroupIds = this._addonOptions.initialGroupBy ?? this.gridOptions.presets?.grouping;

@@ -1,4 +1,5 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import { queueMicrotaskPolyfill } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { SlickEventHandler } from '../core/slickCore.js';
 import { type SlickDataView } from '../core/slickDataView.js';
@@ -11,6 +12,7 @@ import type {
   CurrentColumn,
   CurrentFilter,
   CurrentPagination,
+  CurrentPinning,
   CurrentRowSelection,
   CurrentSorter,
   GridOption,
@@ -34,6 +36,7 @@ export class GridStateService {
   protected _selectedRowIndexes: number[] | undefined = [];
   protected _selectedRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
   protected _wasRecheckedAfterPageChange = true; // used with row selection & pagination
+  protected _lastPinningState?: CurrentPinning;
 
   constructor(
     protected readonly extensionService: ExtensionService,
@@ -214,12 +217,11 @@ export class GridStateService {
    */
   getCurrentGridState(includeHiddenColumns = false): GridState {
     const isIncludingHiddenProps = !!(includeHiddenColumns || this._gridOptions.gridStateIncludeHiddenProps);
-    const { frozenColumn, frozenRow, frozenBottom } = this.sharedService.gridOptions;
     const gridState: GridState = {
       columns: this.getCurrentColumns(isIncludingHiddenProps),
       filters: this.getCurrentFilters(),
       sorters: this.getCurrentSorters(),
-      pinning: { frozenColumn, frozenRow, frozenBottom },
+      pinning: this.getCurrentPinning(),
     };
 
     // optional Grouping
@@ -253,6 +255,22 @@ export class GridStateService {
     return gridState;
   }
 
+  /** Get the current permanent pinning state using stable column references. */
+  getCurrentPinning(): CurrentPinning {
+    const columns = this._grid?.getColumns() ?? [];
+    const pinningRows = this._gridOptions.pinning?.rows ?? {};
+    return {
+      columns: {
+        left: columns.filter((column) => column.pinned === 'left').map((column) => column.id),
+        right: columns.filter((column) => column.pinned === 'right').map((column) => column.id),
+      },
+      rows: {
+        top: [...(pinningRows.top ?? [])],
+        bottom: [...(pinningRows.bottom ?? [])],
+      },
+    };
+  }
+
   /**
    * Get the Columns (and their state: visibility/position) that are currently applied in the grid
    * @return {Array<Column>} current columns
@@ -279,6 +297,9 @@ export class GridStateService {
             headerCssClass: column.headerCssClass || '',
             width: column.width || 0,
           };
+          if (column.pinned !== undefined) {
+            currColumn.pinning = column.pinned;
+          }
           if (includeHiddenProps) {
             currColumn.hidden = column.hidden;
           }
@@ -313,6 +334,9 @@ export class GridStateService {
             // since we don't want to use the default width that SlickGrid uses internally (which is 60px),
             // because that would cancel any column resize done by Slickgrid-Universal (like autoResizeColumnsByCellContent)
             width: currentColumn.width,
+            // Column-level pinning is the granular preset representation. The
+            // unified grid-level option remains available for axis-wide state.
+            pinned: currentColumn.pinning !== undefined ? currentColumn.pinning : gridColumn.pinned,
           });
         }
       });
@@ -672,21 +696,23 @@ export class GridStateService {
    * @param grid - SlickGrid object
    */
   protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid): void {
-    const onSetOptionsHandler = grid.onSetOptions;
-    this._eventHandler.subscribe(onSetOptionsHandler, (_e, args) => {
-      const { frozenBottom: frozenBottomBefore, frozenColumn: frozenColumnBefore, frozenRow: frozenRowBefore } = args.optionsBefore;
-      const { frozenBottom: frozenBottomAfter, frozenColumn: frozenColumnAfter, frozenRow: frozenRowAfter } = args.optionsAfter;
-
-      if (frozenBottomBefore !== frozenBottomAfter || frozenColumnBefore !== frozenColumnAfter || frozenRowBefore !== frozenRowAfter) {
-        const isIncludingHiddenProps = !!this._gridOptions.gridStateIncludeHiddenProps;
-        const newValues = { frozenBottom: frozenBottomAfter, frozenColumn: frozenColumnAfter, frozenRow: frozenRowAfter };
-        const currentGridState = this.getCurrentGridState(isIncludingHiddenProps);
-        this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues, type: 'pinning' },
-          gridState: currentGridState,
-        });
+    this._lastPinningState = this.getCurrentPinning();
+    const publishPinningChange = () => {
+      const currentPinning = this.getCurrentPinning();
+      if (dequal(currentPinning, this._lastPinningState)) {
+        return;
       }
-    });
+
+      this._lastPinningState = currentPinning;
+      const isIncludingHiddenProps = !!this._gridOptions.gridStateIncludeHiddenProps;
+      this.pubSubService.publish('onGridStateChanged', {
+        change: { newValues: currentPinning, type: 'pinning' },
+        gridState: this.getCurrentGridState(isIncludingHiddenProps),
+      });
+    };
+
+    this._eventHandler.subscribe(grid.onSetOptions, () => queueMicrotaskPolyfill(publishPinningChange));
+    this._eventHandler.subscribe(grid.onAfterUpdateColumns, publishPinningChange);
   }
 
   /** Check wether the grid has the Row Selection enabled */

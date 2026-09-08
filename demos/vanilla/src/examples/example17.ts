@@ -154,8 +154,6 @@ export default class Example17 {
       gridHeight: 350,
       gridWidth: 800,
       rowHeight: 35,
-      frozenColumn: -1,
-      frozenRow: -1,
       // enableExcelCopyBuffer: true,
       headerMenu: {
         hideFreezeColumnsCommand: false,
@@ -197,8 +195,15 @@ export default class Example17 {
   /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
   changeFrozenColumnCount() {
     if (this.sgb1?.slickGrid?.setOptions) {
+      const currentPinning = this.sgb1.slickGrid.getOptions().pinning ?? {};
       this.sgb1?.slickGrid.setOptions({
-        frozenColumn: +this.frozenColumnCount,
+        pinning: {
+          ...currentPinning,
+          columns: {
+            left: +this.frozenColumnCount >= 0 ? +this.frozenColumnCount : [],
+            right: currentPinning.columns?.right ?? [],
+          },
+        },
       });
     }
   }
@@ -276,12 +281,16 @@ export default class Example17 {
   }
 
   toggleFrozen() {
-    const option = this.sgb1.slickGrid?.getOptions() as GridOption;
-    const frozenRow = option.frozenRow;
-    const frozenColumn = option.frozenColumn;
-    const newOption = {
-      frozenColumn: frozenColumn === -1 ? 1 : -1,
-      frozenRow: frozenRow === -1 ? 3 : -1,
+    const currentPinning = this.sgb1.slickGrid?.getOptions().pinning;
+    const isPinned = !!(
+      currentPinning?.columns?.left &&
+      (Array.isArray(currentPinning.columns.left) ? currentPinning.columns.left.length : currentPinning.columns.left >= 0)
+    );
+    const newOption: Pick<GridOption, 'pinning'> = {
+      pinning: {
+        columns: { left: isPinned ? [] : 1, right: [] },
+        rows: { top: isPinned ? [] : [0, 1, 2], bottom: [] },
+      },
     };
     this.sgb1.slickGrid?.setOptions(newOption);
     this.sgb2.slickGrid?.setOptions(newOption);

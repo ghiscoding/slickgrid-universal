@@ -22,33 +22,38 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
   const frozenTopHeight = (hOf: (row: number) => number) => topOf(FROZEN_ROW_COUNT, hOf);
 
   const relativeTopInCanvas = (r: number, hOf: (row: number) => number) => {
-    if (r < FROZEN_ROW_COUNT) {
-      return topOf(r, hOf);
-    }
-    return topOf(r, hOf) - frozenTopHeight(hOf);
+    // Pinned rows are moved into the overlay, but center rows retain their
+    // natural document coordinates behind that overlay.
+    return topOf(r, hOf);
   };
 
-  const canvasSelector = (r: number) => (r < FROZEN_ROW_COUNT ? '.grid45 .grid-canvas-top' : '.grid45 .grid-canvas-bottom');
+  const rowHostSelector = (r: number) => (r < FROZEN_ROW_COUNT ? '.grid45 .slick-docking-overlay' : '.grid45 .grid-canvas-top');
 
   const assertRowStyle = (row: number, hOf: (row: number) => number) => {
     const expectedHeight = hOf(row);
     const expectedTop = relativeTopInCanvas(row, hOf);
 
-    cy.get(`${canvasSelector(row)} .slick-row[data-row=${row}]`)
+    cy.get(`${rowHostSelector(row)} .slick-row[data-row=${row}]`)
       .should('have.attr', 'style')
       .and('contain', `transform: translateY(${expectedTop}px)`)
       .then((style) => {
         if (expectedHeight !== BASE_ROW_HEIGHT) {
           expect(style).to.contain(`height: ${expectedHeight}px`);
         } else {
-          expect(style).not.to.contain('height:');
+          // Docked rows carry their resolved height inline so editor/content
+          // styles cannot collapse the pinned row. The base-height case is
+          // therefore valid with either the stylesheet fallback or an
+          // explicit `height: 40px` declaration.
+          expect(style).to.match(/(?:height: 40px;|^(?!.*height:))/);
         }
       });
-    cy.get(`[data-row="${row}"] > .slick-cell:nth(3)`).should('contain', `${expectedHeight}px`);
+    // Rows are split into left/center/right docking regions, so cells are
+    // nested under their region wrapper rather than being direct row children.
+    cy.get(`[data-row="${row}"] .slick-cell:nth(3)`).should('contain', `${expectedHeight}px`);
   };
 
   const ensureDefaultDensity = () => {
-    cy.get('.grid45 .grid-canvas-top .slick-row[data-row=1]')
+    cy.get('.grid45 .slick-docking-overlay .slick-row[data-row=1]')
       .invoke('attr', 'style')
       .then((style) => {
         if ((style ?? '').includes('height: 50px')) {
@@ -56,7 +61,7 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
         }
       });
 
-    cy.get('.grid45 .grid-canvas-top .slick-row[data-row=1]').should('have.attr', 'style').and('contain', 'height: 44px');
+    cy.get('.grid45 .slick-docking-overlay .slick-row[data-row=1]').should('have.attr', 'style').and('contain', 'height: 44px');
   };
 
   beforeEach(() => {
@@ -91,7 +96,7 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
 
     cy.get('[data-test="scroll-row-90-example45"]').click();
 
-    cy.get('.grid45 .slick-viewport-bottom.slick-viewport-left').should(($viewport) => {
+    cy.get('.grid45 .slick-viewport-top.slick-viewport-left').should(($viewport) => {
       expect($viewport.scrollTop()).to.be.closeTo(expectedScrollTop, 2);
     });
 

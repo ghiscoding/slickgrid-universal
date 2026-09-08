@@ -81,16 +81,27 @@ export function getScrollDistanceWhenDragOutsideGrid(
 ) {
   return (cy as any).convertPosition(viewport).then((_viewportPosition: { x: number; y: number }) => {
     const viewportSelector = `${selector} .slick-viewport-${_viewportPosition.x}.slick-viewport-${_viewportPosition.y}`;
-    (cy as any).getNthCell(fromRow, fromCol, viewport, { parentSelector: selector }).dragStart();
-    return cy.get(viewportSelector).then(($viewport) => {
-      const scrollTopBefore = $viewport.scrollTop();
-      const scrollLeftBefore = $viewport.scrollLeft();
+    const cellViewport = cy.$$(selector).find('.slick-viewport').length === 1 ? 'topLeft' : viewport;
+    (cy as any).getNthCell(fromRow, fromCol, cellViewport, { parentSelector: selector }).dragStart();
+    return cy.get(selector).then(($grid) => {
+      // Pinning uses one dedicated horizontal scroll owner. Keep this helper
+      // compatible with both the legacy pane viewport and the new proxy so
+      // drag auto-scroll assertions observe the actual scroll position.
+      const viewport = ($grid.find(viewportSelector)[0] || $grid.find('.slick-viewport')[0]) as HTMLElement;
+      const horizontalScroller = $grid.find('.slick-docking-horizontal-scroller')[0] as HTMLElement | undefined;
+      const horizontalOwner = horizontalScroller || viewport;
+      const scrollTopBefore = viewport.scrollTop;
+      const scrollLeftBefore = horizontalOwner.scrollLeft;
       cy.dragOutside(dragDirection, 300, px, { parentSelector: selector });
-      return cy.get(viewportSelector).then(($viewportAfter) => {
+      return cy.get(selector).then(($gridAfter) => {
+        const viewportAfter = ($gridAfter.find(viewportSelector)[0] || $gridAfter.find('.slick-viewport')[0]) as HTMLElement;
+        const horizontalScrollerAfter = $gridAfter.find('.slick-docking-horizontal-scroller')[0] as HTMLElement | undefined;
+        const horizontalOwnerAfter = horizontalScrollerAfter || viewportAfter;
         cy.dragEnd(selector);
-        const scrollTopAfter = $viewportAfter.scrollTop();
-        const scrollLeftAfter = $viewportAfter.scrollLeft();
-        cy.get(viewportSelector).scrollTo(0, 0, { ensureScrollable: false });
+        const scrollTopAfter = viewportAfter.scrollTop;
+        const scrollLeftAfter = horizontalOwnerAfter.scrollLeft;
+        horizontalOwnerAfter.scrollLeft = 0;
+        viewportAfter.scrollTop = 0;
         return cy.wrap({
           scrollTopBefore,
           scrollLeftBefore,

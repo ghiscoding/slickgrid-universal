@@ -56,14 +56,14 @@ describe('Example 46 - RTL (Right-to-Left)', () => {
 
   describe('Scrolling Behavior', () => {
     it('should have horizontal scroll enabled', () => {
-      cy.get('.grid46 .slick-viewport').then(($viewport) => {
+      cy.get('.grid46 .slick-docking-horizontal-scroller').then(($viewport) => {
         const viewport = $viewport[0] as HTMLElement;
         expect(viewport.scrollWidth).to.be.greaterThan(viewport.clientWidth);
       });
     });
 
     it('should update visible header columns when scrolling', () => {
-      cy.get('.grid46 .slick-viewport').then(($viewport) => {
+      cy.get('.grid46 .slick-docking-horizontal-scroller').then(($viewport) => {
         const viewport = $viewport[0] as HTMLElement;
         const maxScroll = viewport.scrollWidth - viewport.clientWidth;
         viewport.scrollLeft = maxScroll;
@@ -74,7 +74,7 @@ describe('Example 46 - RTL (Right-to-Left)', () => {
 
       cy.wait(150);
 
-      cy.get('.grid46 .slick-viewport').then(($viewport) => {
+      cy.get('.grid46 .slick-docking-horizontal-scroller').then(($viewport) => {
         const viewport = $viewport[0] as HTMLElement;
         expect(Math.abs(viewport.scrollLeft)).to.be.greaterThan(0);
       });
@@ -83,7 +83,7 @@ describe('Example 46 - RTL (Right-to-Left)', () => {
 
   describe('Edge Cases & Stability', () => {
     it('should handle max horizontal scroll in RTL mode', () => {
-      cy.get('.grid46 .slick-viewport').then(($viewport) => {
+      cy.get('.grid46 .slick-docking-horizontal-scroller').then(($viewport) => {
         const viewport = $viewport[0] as HTMLElement;
         const maxScroll = viewport.scrollWidth - viewport.clientWidth;
         viewport.scrollLeft = maxScroll;

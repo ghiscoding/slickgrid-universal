@@ -56,11 +56,17 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     this._warningLeftElement = document.querySelector<HTMLDivElement>(`.${gridUid} .${emptyDataClassName}`);
     const gridCanvasLeftElm = document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas.grid-canvas-left`);
     const gridCanvasRightElm = document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas.grid-canvas-right`);
+    // The pinning renderer uses one live canvas. Keep the legacy left/right
+    // lookup for split-pane grids, but fall back to that single canvas when no
+    // right pane exists.
+    const gridCanvasElm = gridCanvasLeftElm || document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas`);
     const leftElementMarginLeft = mergedOptions.leftViewportMarginLeft ?? 0;
     const rightElementMarginLeft = mergedOptions.rightViewportMarginLeft ?? 0;
     const leftElementFrozenMarginLeft = mergedOptions.frozenLeftViewportMarginLeft ?? 0;
     const rightElementFrozenMarginLeft = mergedOptions.frozenRightViewportMarginLeft ?? 0;
-    const isFrozenGrid = this.gridOptions?.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0;
+    const isFrozenGrid =
+      (this.gridOptions?.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0) ||
+      this.gridOptions?.pinning?.columns !== undefined;
     const leftViewportMarginLeft = typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
     const rightViewportMarginLeft = typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
 
@@ -68,7 +74,7 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     // that is because it is not aware that we are adding this slick empty element in this grid DOM
     if (this.gridOptions.autoHeight) {
       const leftPaneElm = document.querySelector<HTMLDivElement>(`.${gridUid} .slick-pane.slick-pane-top.slick-pane-left`);
-      if (leftPaneElm && leftPaneElm.style && gridCanvasLeftElm && gridCanvasLeftElm.style) {
+      if (leftPaneElm && leftPaneElm.style && gridCanvasElm && gridCanvasElm.style) {
         const leftPaneHeight = parseInt(leftPaneElm.style.height, 10) || 0; // this field auto calc by row height
 
         // get row height of each feature when enabled (rowHeight will always be defined because that is the cell height)
@@ -83,7 +89,7 @@ export class SlickEmptyWarningComponent implements ExternalResource {
           let leftPaneMinHeight = leftPaneHeight !== null && leftPaneHeight < 100 ? leftPaneHeight : 100;
           leftPaneMinHeight += filterRowHeight + preHeaderRowHeight; // add preHeader & filter height when enabled
           leftPaneElm.style.minHeight = `${leftPaneMinHeight}px`;
-          gridCanvasLeftElm.style.minHeight = `${cellRowHeight}px`;
+          gridCanvasElm.style.minHeight = `${cellRowHeight}px`;
         }
       }
     }
@@ -94,18 +100,19 @@ export class SlickEmptyWarningComponent implements ExternalResource {
       warningMessage = this._translaterService.translate(mergedOptions.messageKey);
     }
 
-    if (!this._warningLeftElement && gridCanvasLeftElm && gridCanvasRightElm) {
+    if (!this._warningLeftElement && gridCanvasElm) {
       this._warningLeftElement = document.createElement('div');
       this._warningLeftElement.classList.add(...classNameToList(emptyDataClassName), 'left');
       applyHtmlToElement(this._warningLeftElement, warningMessage, this.gridOptions);
 
-      // clone the warning element and add the "right" class to it so we can distinguish
-      this._warningRightElement = this._warningLeftElement.cloneNode(true) as HTMLDivElement;
-      this._warningRightElement.classList.add('right');
-
-      // append both warning elements to both left/right canvas
-      gridCanvasRightElm.appendChild(this._warningRightElement);
-      gridCanvasLeftElm.appendChild(this._warningLeftElement);
+      // Split-pane grids receive a clone in the right canvas. Single-canvas
+      // pinning grids only need the one warning element.
+      if (gridCanvasRightElm && gridCanvasRightElm !== gridCanvasElm) {
+        this._warningRightElement = this._warningLeftElement.cloneNode(true) as HTMLDivElement;
+        this._warningRightElement.classList.add('right');
+        gridCanvasRightElm.appendChild(this._warningRightElement);
+      }
+      gridCanvasElm.appendChild(this._warningLeftElement);
     }
 
     // if we did find the Slick-Empty-Warning element then we'll display/hide at the grid position with some margin offsets (we need to position under the headerRow and filterRow)

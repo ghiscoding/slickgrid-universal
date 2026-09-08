@@ -107,6 +107,9 @@ export interface Locale {
   /** Text "Freeze Columns" shown in Header Menu (when enabled) */
   TEXT_FREEZE_COLUMNS?: string;
 
+  /** Text "Pin Column" shown in Header Menu (when enabled) */
+  TEXT_PIN_COLUMN?: string;
+
   /** Text "Greater than" shown in Compound Editors/Filters as an Operator */
   TEXT_GREATER_THAN: string;
 
@@ -214,6 +217,9 @@ export interface Locale {
 
   /** Text "Unfreeze Columns" shown in Grid Menu, this is an alternative to the text (CLEAR_PINNING: Unfreeze Columns/Rows) */
   TEXT_UNFREEZE_COLUMNS?: string;
+
+  /** Text "Unpin Column" shown in Header Menu (when enabled) */
+  TEXT_UNPIN_COLUMN?: string;
 
   /** Text "x of y selected" displayed in the Multiple Select Editor/Filter */
   TEXT_X_OF_Y_SELECTED: string;
