@@ -6,6 +6,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       // triggerHover: (elements: NodeListOf<HTMLElement>) => void;
+      drag(target: string | HTMLElement | JQuery<HTMLElement>, options?: any): Chainable<any>;
       dragOutside(
         viewport?: string,
         ms?: number,
@@ -18,6 +19,53 @@ declare global {
     }
   }
 }
+
+Cypress.Commands.overwrite('drag', (_originalFn: any, subject: any, target: any, _options: any = {}) => {
+  return cy.wrap(subject as JQuery<HTMLElement>).then(($source) => {
+    const rawSourceElm = $source?.[0] as HTMLElement | undefined;
+    const rawTargetElm =
+      typeof target === 'string'
+        ? (Cypress.$(target).first()?.[0] as HTMLElement | undefined)
+        : ((target as JQuery<HTMLElement>)?.[0] as HTMLElement | undefined);
+    const sourceElm =
+      rawSourceElm?.closest<HTMLElement>('.slick-header-column, .slick-dropped-grouping, [draggable="true"]') ?? rawSourceElm;
+    const targetElm =
+      rawTargetElm?.closest<HTMLElement>('.slick-header-column, .slick-dropped-grouping, [draggable="true"]') ?? rawTargetElm;
+
+    if (!sourceElm || !targetElm) {
+      return $source;
+    }
+
+    const sourceRect = sourceElm.getBoundingClientRect();
+    const targetRect = targetElm.getBoundingClientRect();
+    const sourceX = Number.isFinite(sourceRect.left + sourceRect.width / 2) ? sourceRect.left + sourceRect.width / 2 : 0;
+    const sourceY = Number.isFinite(sourceRect.top + sourceRect.height / 2) ? sourceRect.top + sourceRect.height / 2 : 0;
+    const targetX = Number.isFinite(targetRect.left + targetRect.width / 2) ? targetRect.left + targetRect.width / 2 : 0;
+    const targetY = Number.isFinite(targetRect.top + targetRect.height / 2) ? targetRect.top + targetRect.height / 2 : 0;
+
+    const dataTransfer = new DataTransfer();
+    const createDragLikeEvent = (eventName: string, x: number, y: number): Event => {
+      const evt = new Event(eventName, { bubbles: true, cancelable: true });
+      Object.defineProperty(evt, 'dataTransfer', { value: dataTransfer });
+      Object.defineProperty(evt, 'clientX', { value: x });
+      Object.defineProperty(evt, 'clientY', { value: y });
+      Object.defineProperty(evt, 'pageX', { value: x });
+      Object.defineProperty(evt, 'pageY', { value: y });
+      Object.defineProperty(evt, 'screenX', { value: x });
+      Object.defineProperty(evt, 'screenY', { value: y });
+      return evt;
+    };
+
+    sourceElm.dispatchEvent(createDragLikeEvent('dragstart', sourceX, sourceY));
+    targetElm.dispatchEvent(createDragLikeEvent('dragenter', targetX, targetY));
+    targetElm.dispatchEvent(createDragLikeEvent('dragover', targetX, targetY));
+    targetElm.dispatchEvent(createDragLikeEvent('drop', targetX, targetY));
+    sourceElm.dispatchEvent(createDragLikeEvent('dragend', targetX, targetY));
+
+    return $source;
+  });
+});
+
 // @ts-ignore
 Cypress.Commands.add('dragStart', { prevSubject: true }, (subject: HTMLElement, { cellWidth = 90, cellHeight = 35 } = {}) => {
   return cy
