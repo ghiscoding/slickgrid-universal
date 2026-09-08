@@ -48,8 +48,8 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should click on the "Remove Frozen Columns" button to switch to a regular grid without pinned columns', () => {
-    cy.get('[data-test="remove-frozen-column-button"]').click();
+  it('should click on the "Remove Pinned Columns" button to switch to a regular grid without pinned columns', () => {
+    cy.get('[data-test="remove-pinned-column-button"]').click();
 
     const firstRow = '.grid2 .slick-row[data-row="0"]';
     cy.get(firstRow).should('have.length', 1);
@@ -74,8 +74,8 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should click on the "Set 3 Frozen Columns" button to pin 3 columns and leave 4 scrolling columns', () => {
-    cy.contains('Set 3 Frozen Columns').click({ force: true });
+  it('should click on the "Set 3 Pinned Columns" button to pin 3 columns and leave 4 scrolling columns', () => {
+    cy.contains('Set 3 Pinned Columns').click({ force: true });
 
     const firstRow = '.grid2 .slick-row[data-row="0"]';
     cy.get(firstRow).should('have.length', 1);
@@ -102,10 +102,10 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should click on the Grid Menu command "Unfreeze Columns/Rows" to switch to a regular grid without pinned columns', () => {
+  it('should click on the Grid Menu command "Unpin Columns/Rows" to switch to a regular grid without pinned columns', () => {
     cy.get('.grid2').find('button.slick-grid-menu-button').click({ force: true });
 
-    cy.contains('Unfreeze Columns/Rows').click({ force: true });
+    cy.contains('Unpin Columns/Rows').click({ force: true });
 
     const firstRow = '.grid2 .slick-row[data-row="0"]';
     cy.get(firstRow).should('have.length', 1);
@@ -185,8 +185,8 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       });
   });
 
-  it('should reapply 3 frozen columns on 2nd grid', () => {
-    cy.contains('Set 3 Frozen Columns').click({ force: true });
+  it('should reapply 3 pinned columns on 2nd grid', () => {
+    cy.contains('Set 3 Pinned Columns').click({ force: true });
 
     cy.get('.grid2 .slick-header.slick-header-left .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
     cy.get('.grid2 .slick-header.slick-header-left .slick-header-columns .slick-header-column:not(.slick-column-pinned-left)').should(
@@ -195,7 +195,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
     );
   });
 
-  it('should be able to "Unfreeze Columns" from header menu', () => {
+  it('should be able to "Unpin All Columns" from header menu', () => {
     cy.get('.grid2')
       .find('.slick-header.slick-header-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(2)')
       .trigger('mouseover')
@@ -203,17 +203,13 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(1)')
-      .children('.slick-menu-content')
-      .should('contain', 'Unfreeze Columns')
-      .click();
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').find('[data-command="pin-column"]').click();
+    cy.get('.slick-submenu [data-command="unpin-columns"]').should('contain', 'Unpin All Columns').click();
 
     cy.get('.grid2 .slick-header.slick-header-left .slick-header-columns .slick-header-column').should('have.length', 7);
   });
 
-  it('should be able to "Freeze Columns" back from header menu', () => {
+  it('should be able to "Pin Through Here" back from header menu', () => {
     cy.get('.grid2')
       .find('.slick-header.slick-header-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(2)')
       .trigger('mouseover')
@@ -223,10 +219,11 @@ describe('Example 08 - Column Span & Header Grouping', () => {
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(1)')
-      .children('.slick-menu-content')
-      .should('contain', 'Freeze Columns')
+      .find('[data-command="pin-column"]')
+      .should('contain', 'Column Pinning')
       .click();
+
+    cy.get('.slick-submenu [data-command="pin-columns"]').should('contain', 'Pin Through Here').click();
 
     cy.get('.grid2 .slick-header.slick-header-left .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
     cy.get('.grid2 .slick-header.slick-header-left .slick-header-columns .slick-header-column:not(.slick-column-pinned-left)').should(
@@ -237,7 +234,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
 
   describe('Basic Key Navigations', () => {
     it('should remove any freezing', () => {
-      cy.get('[data-test="remove-frozen-column-button"]').click();
+      cy.get('[data-test="remove-pinned-column-button"]').click();
 
       cy.get('.grid2 .slick-header.slick-header-left .slick-header-columns .slick-header-column').should('have.length', 7);
     });

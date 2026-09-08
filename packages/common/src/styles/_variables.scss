@@ -173,10 +173,9 @@ $slick-header-resizable-hover-opacity:                      0.4 !default;
 $slick-header-resizable-hover-height:                       80% !default;
 $slick-header-resizable-hover-top:                          10% !default;
 
-/* Frozen pinned rows/columns */
-$slick-frozen-border-bottom:                                1px solid #a5a5a5 !default;
-$slick-frozen-border-right:                                 1px solid #a5a5a5 !default;
-$slick-frozen-overflow-right:                               scroll !default;                      // typically we would like to always have the scroll displayed when using hamburger menu (top right)
+/* Pinned rows/columns */
+$slick-pinned-border-bottom:                                1px solid #a5a5a5 !default;
+$slick-pinned-border-right:                                 1px solid #a5a5a5 !default;
 
 /* icons */
 $slick-icon-color:                                          inherit !default;

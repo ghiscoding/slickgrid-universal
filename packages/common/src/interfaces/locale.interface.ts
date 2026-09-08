@@ -26,7 +26,7 @@ export interface Locale {
   /** Text "Clear all Sorting" shown in Header Menu */
   TEXT_CLEAR_ALL_SORTING: string;
 
-  /** Text "Unfreeze Columns/Rows" shown in Grid Menu */
+  /** Text "Unpin Columns/Rows" shown in Grid Menu */
   TEXT_CLEAR_PINNING: string;
 
   /** Text "Clone" displayed in the Composite Editor with a "clone" modal type. */
@@ -104,11 +104,17 @@ export interface Locale {
   /** Text "Force fit Columns" displayed in the Column Picker & Grid Menu (when enabled) */
   TEXT_FORCE_FIT_COLUMNS: string;
 
-  /** Text "Freeze Columns" shown in Header Menu (when enabled) */
-  TEXT_FREEZE_COLUMNS?: string;
+  /** Text "Pin Through Here" shown in Header Menu (when enabled) */
+  TEXT_PIN_COLUMNS?: string;
 
-  /** Text "Pin Column" shown in Header Menu (when enabled) */
+  /** Text "Column Pinning" shown in Header Menu (when enabled) */
   TEXT_PIN_COLUMN?: string;
+
+  /** Text "Pin Left" shown in the Header Menu pin-column sub-menu (when enabled) */
+  TEXT_PIN_LEFT?: string;
+
+  /** Text "Pin Right" shown in the Header Menu pin-column sub-menu (when enabled) */
+  TEXT_PIN_RIGHT?: string;
 
   /** Text "Greater than" shown in Compound Editors/Filters as an Operator */
   TEXT_GREATER_THAN: string;
@@ -215,8 +221,8 @@ export interface Locale {
   /** Text "Toggle Pre-Header Row" shown in Grid Menu (when enabled) */
   TEXT_TOGGLE_PRE_HEADER_ROW?: string;
 
-  /** Text "Unfreeze Columns" shown in Grid Menu, this is an alternative to the text (CLEAR_PINNING: Unfreeze Columns/Rows) */
-  TEXT_UNFREEZE_COLUMNS?: string;
+  /** Text "Unpin All Columns" shown in Header Menu */
+  TEXT_UNPIN_COLUMNS?: string;
 
   /** Text "Unpin Column" shown in Header Menu (when enabled) */
   TEXT_UNPIN_COLUMN?: string;

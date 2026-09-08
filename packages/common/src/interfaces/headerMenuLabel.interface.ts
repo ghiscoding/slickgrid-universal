@@ -23,13 +23,19 @@ export interface HeaderMenuLabel {
   /** Defaults to "FILTER_SHORTCUTS" translation key */
   filterShortcutsCommandKey?: string;
 
-  /** Defaults to "Pin Columns" */
+  /** Defaults to "Pin Through Here" */
   pinningColumnsCommand?: string;
 
-  /** Label for the pin-column command. */
+  /** Defaults to "Column Pinning" for the pinning submenu. */
   pinColumnCommand?: string;
 
-  /** Defaults to "FREEZE_COLUMNS" translation key */
+  /** Defaults to "Pin Left" */
+  pinLeftCommand?: string;
+
+  /** Defaults to "Pin Right" */
+  pinRightCommand?: string;
+
+  /** Defaults to "PIN_COLUMNS" translation key */
   pinningColumnsCommandKey?: string;
 
   /** Defaults to "Hide Column" */
@@ -50,12 +56,12 @@ export interface HeaderMenuLabel {
   /** Defaults to "SORT_DESCENDING" translation key */
   sortDescCommandKey?: string;
 
-  /** Defaults to "Unpin Columns" */
+  /** Defaults to "Unpin All Columns" */
   unpinningColumnsCommand?: string;
 
   /** Label for the unpin-column command. */
   unpinColumnCommand?: string;
 
-  /** Defaults to "UNFREEZE_COLUMNS" translation key */
+  /** Defaults to "UNPIN_COLUMNS" translation key */
   unpinningColumnsCommandKey?: string;
 }

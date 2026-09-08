@@ -279,7 +279,7 @@
       // An empty left region is still present to keep the three-band row
       // layout stable, but it must not paint a separator at the viewport edge.
       > .slick-pinned-left-cells.slick-pinned-left-cells-active {
-        border-inline-end: var(--slick-frozen-border-right, v.$slick-frozen-border-right);
+        border-inline-end: var(--slick-pinned-border-right, v.$slick-pinned-border-right);
       }
 
       > .slick-scrolling-cells {
@@ -296,7 +296,7 @@
       }
 
       > .slick-pinned-right-cells.slick-pinned-right-cells-active {
-        border-inline-start: var(--slick-frozen-border-right, v.$slick-frozen-border-right);
+        border-inline-start: var(--slick-pinned-border-right, v.$slick-pinned-border-right);
       }
 
       // A RowSpan cell extends beyond its host row. The normal region clip is
@@ -339,11 +339,11 @@
     }
 
     &.slick-row-pinned-top-edge {
-      border-bottom: var(--slick-frozen-border-bottom, v.$slick-frozen-border-bottom);
+      border-bottom: var(--slick-pinned-border-bottom, v.$slick-pinned-border-bottom);
     }
 
     &.slick-row-pinned-bottom-edge {
-      border-top: var(--slick-frozen-border-bottom, v.$slick-frozen-border-bottom);
+      border-top: var(--slick-pinned-border-bottom, v.$slick-pinned-border-bottom);
     }
 
     &:hover {
@@ -1129,14 +1129,14 @@
     }
   }
 
-  /** Frozen/Pinned styling */
+  /** Pinned styling */
   .slick-column-pinned-left-edge {
-    border-inline-end: var(--slick-frozen-border-right, v.$slick-frozen-border-right) !important;
+    border-inline-end: var(--slick-pinned-border-right, v.$slick-pinned-border-right) !important;
     box-sizing: border-box;
   }
 
   .slick-column-pinned-right-edge {
-    border-inline-start: var(--slick-frozen-border-right, v.$slick-frozen-border-right) !important;
+    border-inline-start: var(--slick-pinned-border-right, v.$slick-pinned-border-right) !important;
     box-sizing: border-box;
   }
 
@@ -1160,7 +1160,7 @@
   .slick-header-column.slick-column-pinned-right-edge,
   .slick-headerrow-column.slick-column-pinned-right-edge,
   .slick-footerrow-column.slick-column-pinned-right-edge {
-    border-inline-start: var(--slick-frozen-border-right, v.$slick-frozen-border-right) !important;
+    border-inline-start: var(--slick-pinned-border-right, v.$slick-pinned-border-right) !important;
   }
 
   .slick-footerrow-column.slick-column-pinned-left,
@@ -1169,16 +1169,6 @@
     background-color: var(--slick-grid-footer-bg-color, v.$slick-grid-footer-bg-color);
   }
 
-  .slick-pane-left.frozen {
-    border-right: var(--slick-frozen-border-right, v.$slick-frozen-border-right);
-  }
-
-  .slick-pane-bottom {
-    border-top: var(--slick-frozen-border-bottom, v.$slick-frozen-border-bottom);
-  }
-  .slick-viewport-bottom.slick-viewport-right {
-    overflow-y: var(--slick-frozen-overflow-right, v.$slick-frozen-overflow-right) !important;
-  }
   .input-group {
     display: flex;
 

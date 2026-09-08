@@ -35,7 +35,7 @@ describe('Example 32 - colspan/rowspan - Employees Timesheets', { retries: 0 }, 
 
   it('should expect 1st column to be pinned', () => {
     // Pinning uses one live canvas and splits each row into left/center/right
-    // regions; the old grid-canvas-left/right frozen panes no longer exist.
+    // regions; the old grid-canvas-left/right pinned panes no longer exist.
     cy.get('.slick-pinned-left-cells .slick-cell.slick-cell-pinned-left').should('have.length', 10);
     cy.get('.slick-scrolling-cells .slick-cell').should('have.length.above', 60);
   });

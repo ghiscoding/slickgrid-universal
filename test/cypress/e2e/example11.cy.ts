@@ -436,9 +436,9 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.search-filter.filter-completed .ms-choice').should('contain', 'True');
 
-      cy.get('[data-row=0] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
-      cy.get('[data-row=1] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
-      cy.get('[data-row=2] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get('[data-row=0] .slick-cell.l4.r4').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get('[data-row=1] .slick-cell.l4.r4').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get('[data-row=2] .slick-cell.l4.r4').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
 
       cy.get('[data-row=0] .slick-cell:nth(7)').find('.checkmark-icon').should('have.length', 1);
       cy.get('[data-row=1] .slick-cell:nth(7)').find('.checkmark-icon').should('have.length', 1);
@@ -517,6 +517,18 @@ describe('Example 11 - Batch Editing', () => {
       });
 
       cy.get('input.search-filter.filter-title').type('*0');
+      cy.get('.filter-title.filled').should('exist');
+      cy.get('.grid11')
+        .find('.slick-custom-footer')
+        .find('.right-footer .item-count')
+        .should(($span) => {
+          expect(Number($span.text())).to.be.greaterThan(2);
+        });
+      // The input value updates before the grid's filtered rows finish rendering.
+      // Wait for the rendered rows to reflect the complete `*0` expression.
+      cy.get('.grid11 .slick-row[data-row="0"] .slick-cell.l1.r1').should('contain', '0');
+      cy.get('.grid11 .slick-row[data-row="1"] .slick-cell.l1.r1').should('contain', '0');
+      cy.get('.grid11 .slick-row[data-row="2"] .slick-cell.l1.r1').should('contain', '0');
 
       cy.get('.action.dropdown').click();
 
@@ -529,23 +541,24 @@ describe('Example 11 - Batch Editing', () => {
         expect(Object.keys(savedDefinedFilters)).to.have.lengthOf(3);
       });
 
-      cy.get('[data-row=0] .slick-cell:nth(1)').should('contain', '0');
-      cy.get('[data-row=1] .slick-cell:nth(1)').should('contain', '0');
-      cy.get('[data-row=2] .slick-cell:nth(1)').should('contain', '0');
+      // Target the Title column by its stable classes instead of relying on
+      // the DOM child order of the pinned/scrolling cell regions.
+      cy.get('.selected-view').should('have.value', 'CustomViewTest');
+      cy.get('.grid11 .slick-row[data-row="0"] .slick-cell.l1.r1').should('contain', '0');
+      cy.get('.grid11 .slick-row[data-row="1"] .slick-cell.l1.r1').should('contain', '0');
+      cy.get('.grid11 .slick-row[data-row="2"] .slick-cell.l1.r1').should('contain', '0');
 
-      cy.get('[data-row=0] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
-      cy.get('[data-row=1] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
-      cy.get('[data-row=2] .slick-cell:nth(4)').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get('[data-row=0] .slick-cell.l4.r4').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get('[data-row=1] .slick-cell.l4.r4').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
+      cy.get('[data-row=2] .slick-cell.l4.r4').should(($elm) => expect(+$elm.text()).to.be.greaterThan(50));
 
-      cy.get('[data-row=0] .slick-cell:nth(7)').click();
+      cy.get('[data-row=0] .slick-cell.l7.r7').click();
       cy.get('[data-name="editor-completed"]')
         .find('li.selected')
         .find('input[data-name=selectItemeditor-completed][value=true]')
         .should('exist');
 
-      cy.get('[data-row=0] .slick-cell:nth(7)').click();
-
-      cy.get('.selected-view').should('have.value', 'CustomViewTest');
+      cy.get('[data-row=0] .slick-cell.l7.r7').click();
     });
 
     it('should change pre-defined view to "Tasks Finishing in Future Years" and expect data to be filtered accordingly', () => {
@@ -838,7 +851,7 @@ describe('Example 11 - Batch Editing', () => {
         });
     });
 
-    it('should be able to freeze "Duration" column', () => {
+    it('should be able to pin "Duration" column', () => {
       cy.get('.grid11')
         .find('.slick-header-columns')
         .find('.slick-header-column:nth(2)')
@@ -849,10 +862,11 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(1)')
-        .children('.slick-menu-content')
-        .should('contain', 'Freeze Column')
+        .find('[data-command="pin-column"]')
+        .should('contain', 'Column Pinning')
         .click();
+
+      cy.get('.slick-submenu [data-command="pin-columns"]').should('be.visible').and('contain', 'Pin Through Here').click();
     });
 
     it('should have one docked row with 3 pinned columns and 8 scrolling columns', () => {
@@ -1004,10 +1018,10 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('[data-row=4] .slick-cell:nth(9)').should('contain', 'Canada');
     });
 
-    it('should clear pinning from Grid Menu & expect to no longer have any columns freezed', () => {
+    it('should clear pinning from Grid Menu & expect to no longer have any columns pinned', () => {
       cy.get('.grid11').find('button.slick-grid-menu-button').click({ force: true });
 
-      cy.contains('Unfreeze Columns/Rows').click({ force: true });
+      cy.contains('Unpin Columns/Rows').click({ force: true });
 
       cy.get('.grid11 .slick-row[data-row="0"] .slick-cell').should('have.length', 11);
     });
@@ -1074,12 +1088,12 @@ describe('Example 11 - Batch Editing', () => {
     });
   });
 
-  describe('with hidden & frozen columns', () => {
+  describe('with hidden & pinned columns', () => {
     it('should reset defined views before next View test', () => {
       cy.get('[data-test="clear-storage-btn"]').click({ force: true });
     });
 
-    it('should be able to freeze/pin "Cost" column', () => {
+    it('should be able to pin/pin "Cost" column', () => {
       cy.get('.grid11')
         .find('.slick-header-columns')
         .find('.slick-header-column:nth(3)')
@@ -1090,10 +1104,11 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(1)')
-        .children('.slick-menu-content')
-        .should('contain', 'Freeze Column')
+        .find('[data-command="pin-column"]')
+        .should('contain', 'Column Pinning')
         .click();
+
+      cy.get('.slick-submenu [data-command="pin-columns"]').should('be.visible').and('contain', 'Pin Through Here').click();
     });
 
     it('should hide "Duration" and "Country of Origin" columns and Save as a New View', () => {
@@ -1152,7 +1167,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.grid11 .slick-header-columns .slick-header-column').should('have.length', 11);
       // The persisted preset stores the exact pinned column IDs (checkbox,
-      // Title, and Cost), rather than the original numeric freeze shorthand.
+      // Title, and Cost), rather than the original numeric pin shorthand.
       cy.get('.grid11 .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
       cy.get('.grid11 .slick-header-columns .slick-column-pinned-left .slick-column-name').last().should('contain', 'Cost');
     });

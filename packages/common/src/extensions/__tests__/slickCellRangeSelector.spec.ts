@@ -575,7 +575,7 @@ describe('CellRangeSelector Plugin', () => {
     });
   });
 
-  it('should handle drag and expect the decorator to NOT call the "show" method and return (frozen row) with canvas bottom right', () => {
+  it('should handle drag and expect the decorator to NOT call the "show" method and return (pinned row) with canvas bottom right', () => {
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -625,7 +625,7 @@ describe('CellRangeSelector Plugin', () => {
     // });
   });
 
-  it('should handle drag and expect the decorator to NOT call the "show" method and return (frozen column) with canvas top right', () => {
+  it('should handle drag and expect the decorator to NOT call the "show" method and return (pinned column) with canvas top right', () => {
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';

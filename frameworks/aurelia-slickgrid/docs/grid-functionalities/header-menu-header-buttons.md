@@ -72,12 +72,12 @@ this.columns = [
             ...builtInItems,
             'divider',
             {
-              command: 'freeze-column',
-              title: 'Freeze Column',
+              command: 'custom-pin-column',
+              title: 'Pin Column',
               iconCssClass: 'mdi mdi-pin',
               action: (e, args) => {
-                // Implement column freezing
-                console.log('Freeze column:', args.column.name);
+                // Implement column pinning
+                console.log('Pin column:', args.column.name);
               }
             }
           ];

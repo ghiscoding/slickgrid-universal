@@ -70,7 +70,7 @@ export const SalesforceGlobalGridOptions = {
   },
   gridMenu: {
     commandLabels: {
-      clearPinningCommandKey: 'UNFREEZE_COLUMNS',
+      clearPinningCommandKey: 'UNPIN_COLUMNS',
     },
     hideToggleDarkModeCommand: true,
     hideTogglePreHeaderCommand: true,
@@ -79,6 +79,7 @@ export const SalesforceGlobalGridOptions = {
     hideForceFitButton: true,
   },
   headerMenu: {
+    hidePinColumnCommand: false,
     hidePinningColumnsCommand: false,
     iconSortAscCommand: 'mdi mdi-arrow-up',
     iconSortDescCommand: 'mdi mdi-arrow-down',

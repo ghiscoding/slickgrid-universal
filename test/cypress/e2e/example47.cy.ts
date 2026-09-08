@@ -121,6 +121,50 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
     }
   });
 
+  it('should continue resizing a sticky column through multiple pointer moves', () => {
+    cy.get(scrollOwner).scrollTo(0, 0, { ensureScrollable: false });
+    cy.get('.slick-header-column[data-id="q2"] .slick-resizable-handle')
+      .should('exist')
+      .then(($handle) => {
+        const header = $handle.closest('.slick-header-column')[0] as HTMLElement;
+        const initialRect = header.getBoundingClientRect();
+        const initialWidth = initialRect.width;
+
+        // Use explicit coordinates so the move is delivered to the resize
+        // handler even though the sticky header is positioned at the trailing
+        // edge of the viewport.
+        cy.wrap($handle).trigger('mousedown', { which: 1, pageX: 100, clientX: 100, force: true });
+        cy.get('body').trigger('mousemove', { which: 1, pageX: 125, clientX: 125, force: true });
+        cy.get('body').trigger('mousemove', { which: 1, pageX: 150, clientX: 150, force: true });
+        cy.get('body').trigger('mouseup', { which: 1, pageX: 150, clientX: 150, force: true });
+
+        cy.get('.slick-header-column[data-id="q2"]').should(($updatedHeader) => {
+          expect($updatedHeader[0].getBoundingClientRect().width).to.be.greaterThan(initialWidth);
+        });
+      });
+  });
+
+  it('should resize a sticky column docked at the leading edge', () => {
+    cy.get(scrollOwner).scrollTo('right');
+    cy.get('.slick-header-column[data-id="account"]')
+      .should('have.class', 'slick-column-sticky')
+      .and('have.class', 'slick-column-pinned-left')
+      .find('.slick-resizable-handle')
+      .then(($handle) => {
+        const header = $handle.closest('.slick-header-column')[0] as HTMLElement;
+        const initialWidth = header.getBoundingClientRect().width;
+
+        cy.wrap($handle).trigger('mousedown', { which: 1, pageX: 100, clientX: 100, force: true });
+        cy.get('body').trigger('mousemove', { which: 1, pageX: 125, clientX: 125, force: true });
+        cy.get('body').trigger('mousemove', { which: 1, pageX: 150, clientX: 150, force: true });
+        cy.get('body').trigger('mouseup', { which: 1, pageX: 150, clientX: 150, force: true });
+
+        cy.get('.slick-header-column[data-id="account"]').should(($updatedHeader) => {
+          expect($updatedHeader[0].getBoundingClientRect().width).to.be.greaterThan(initialWidth);
+        });
+      });
+  });
+
   it('should scroll to the natural position before activating a sticky column with ArrowRight', () => {
     // At the initial position Q2 is docked at the trailing edge. ArrowRight
     // must reveal its natural position before making it active.

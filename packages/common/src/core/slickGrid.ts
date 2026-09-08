@@ -1724,9 +1724,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         `.slick-header-column[data-id="${String(this.columns[idx]?.id ?? columnIdOrIdx)}"]`
       ) as HTMLDivElement;
     }
-    const targetHeader = this.usesDockingChromeRegions()
-      ? this.getDockingChromeRegion('header', this.getColumnDockingBand(idx))
-      : this._headerL;
+    const targetHeader = this._headerL;
     const targetIndex = idx;
     const directMatch = targetHeader.children[targetIndex] as HTMLDivElement | undefined;
     const targetColumnId = String(this.columns[idx]?.id ?? columnIdOrIdx);
@@ -1780,9 +1778,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.usesDockingChromeRegions()) {
       return this._headerRowL.querySelector(`.slick-headerrow-column.l${idx}`) as HTMLDivElement;
     }
-    const headerRowTarget = this.usesDockingChromeRegions()
-      ? this.getDockingChromeRegion('headerRow', this.getColumnDockingBand(idx))
-      : this._headerRowL;
+    const headerRowTarget = this._headerRowL;
     return (headerRowTarget.querySelector(`.slick-headerrow-column.l${idx}`) || headerRowTarget.children[idx]) as HTMLDivElement;
   }
 
@@ -1795,9 +1791,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.usesDockingChromeRegions()) {
       return this._footerRowL?.querySelector(`.slick-footerrow-column.l${idx}`) as HTMLDivElement;
     }
-    const footerRowTarget = this.usesDockingChromeRegions()
-      ? this.getDockingChromeRegion('footerRow', this.getColumnDockingBand(idx))
-      : this._footerRowL;
+    const footerRowTarget = this._footerRowL;
     return (footerRowTarget?.querySelector(`.slick-footerrow-column.l${idx}`) || footerRowTarget?.children[idx]) as HTMLDivElement;
   }
 
@@ -8032,8 +8026,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const docking = this.dockingByColumn.get(cell);
     const isPermanentPinnedColumn = docking && docking.band !== 'center' && !docking.sticky;
     // Permanent pins are already visible; sticky columns must reveal their
-    // natural position before keyboard navigation activates them.
-    if (!isPermanentPinnedColumn && docking?.band === 'center') {
+    // natural position before keyboard navigation activates them, regardless
+    // of which edge currently owns the sticky column. Center columns retain
+    // the existing scroll-into-view behavior.
+    if (!isPermanentPinnedColumn && (docking?.sticky || docking?.band === 'center')) {
       const colspan = this.getColspan(row, cell);
       const lastCell = cell + (colspan > 1 ? colspan - 1 : 0);
       const { left, right } = this.getNaturalColumnRange(cell, lastCell);

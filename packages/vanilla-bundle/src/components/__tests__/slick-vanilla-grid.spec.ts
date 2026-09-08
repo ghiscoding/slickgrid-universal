@@ -1199,7 +1199,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(backendSpy).toHaveBeenCalledWith(mockColumnFilter as unknown as CurrentFilter[], false);
       });
 
-      it('should override frozen grid options when "pinning" is defined in the "presets" property', () => {
+      it('should override pinned grid options when "pinning" is defined in the "presets" property', () => {
         const pinningMock = { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } } as CurrentPinning;
         const gridOptionSetterSpy = vi.spyOn(component, 'gridOptions', 'set');
 

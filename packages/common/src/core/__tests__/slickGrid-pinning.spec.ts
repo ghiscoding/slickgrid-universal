@@ -664,7 +664,7 @@ describe('SlickGrid unified pinning', () => {
     }
   });
 
-  it('handles regular and shift mouse-wheel scrolling and prevents native scrolling for frozen columns', () => {
+  it('handles regular and shift mouse-wheel scrolling and prevents native scrolling for pinned columns', () => {
     const slickGrid = createGrid();
     const horizontalScroller = (slickGrid as any)._viewportScrollContainerX as HTMLDivElement;
     const verticalScroller = (slickGrid as any)._viewportScrollContainerY as HTMLDivElement;

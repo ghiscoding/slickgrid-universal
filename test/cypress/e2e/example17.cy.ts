@@ -2,7 +2,7 @@
 import { getScrollDistanceWhenDragOutsideGrid } from '../support/drag';
 
 describe('Example 17 - Auto-Scroll with Range Selector', () => {
-  // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
+  // NOTE:  everywhere there's a * 2 is because we have a top+bottom (pinned rows) containers even after Unpin Columns/Rows
   const CELL_WIDTH = 80;
   const CELL_HEIGHT = 35;
   const SCROLLBAR_DIMENSION = 17;
@@ -224,11 +224,11 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     });
   });
 
-  it('should have a pinned grid with 2 columns on the left and 3 rows on the top after click Set/Clear Frozen button', () => {
+  it('should have a pinned grid with 2 columns on the left and 3 rows on the top after click Set/Clear Pinned button', () => {
     cy.get('.grid17-1 .slick-row-pinned-top').should('not.exist');
     cy.get('.grid17-2 .slick-row-pinned-top').should('not.exist');
 
-    cy.get('[data-test="set-clear-frozen-btn"]').click();
+    cy.get('[data-test="set-clear-pinned-btn"]').click();
 
     cy.get('.grid17-1 .slick-row-pinned-top').should('have.length', 3);
     cy.get('.grid17-2 .slick-row-pinned-top').should('have.length', 3);
@@ -236,7 +236,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     cy.get('.grid17-2 .slick-row-pinned-top').first().find('.slick-pinned-left-cells > .slick-cell').should('have.length', 2);
   });
 
-  function resetScrollInFrozen() {
+  function resetScrollInPinned() {
     cy.get('.grid17-1 .slick-docking-horizontal-scroller').scrollTo(0, 0);
     cy.get('.grid17-2 .slick-docking-horizontal-scroller').scrollTo(0, 0);
     cy.get('.grid17-1 .slick-viewport:last').scrollTo(0, 0);
@@ -265,7 +265,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
       expect(result.scrollTopBefore).to.be.lte(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
-    resetScrollInFrozen();
+    resetScrollInPinned();
 
     // bottom left - to bottomRight
     getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomLeft', 'bottomRight', 3, 1).then((result: any) => {
@@ -276,7 +276,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
       expect(result.scrollTopBefore).to.be.lte(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
-    resetScrollInFrozen();
+    resetScrollInPinned();
 
     // bottom right - to bottomRight
     getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomRight', 'bottomRight', 3, 2).then((result: any) => {
@@ -287,7 +287,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
       expect(result.scrollTopBefore).to.be.lte(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
-    resetScrollInFrozen();
+    resetScrollInPinned();
     cy.get('.grid17-1 .slick-docking-horizontal-scroller').scrollTo(CELL_WIDTH * 3, 0);
     cy.get('.grid17-2 .slick-docking-horizontal-scroller').scrollTo(CELL_WIDTH * 3, 0);
     cy.get('.grid17-1 .slick-viewport:first').scrollTo(0, CELL_HEIGHT * 3);
@@ -304,11 +304,11 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
       expect(result.scrollTopBefore).to.be.equal(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.greaterThan(result.scrollLeftAfter);
     });
-    resetScrollInFrozen();
+    resetScrollInPinned();
   });
 
   it(
-    'should have a frozen & grouping by Duration grid after click Set/Clear grouping by Duration button',
+    'should have a pinned & grouping by Duration grid after click Set/Clear grouping by Duration button',
     { scrollBehavior: false },
     () => {
       cy.get('[data-test="set-clear-grouping-btn"]').trigger('click');
@@ -348,33 +348,33 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     }
   );
 
-  it('should reset to default grid when click Set/Clear Frozen button and Set/Clear grouping button', () => {
-    cy.get('[data-test="set-clear-frozen-btn"]').trigger('click');
+  it('should reset to default grid when click Set/Clear Pinned button and Set/Clear grouping button', () => {
+    cy.get('[data-test="set-clear-pinned-btn"]').trigger('click');
     cy.get('[data-test="set-clear-grouping-btn"]').trigger('click');
     cy.get('.grid17-1 .slick-row-pinned-top').should('not.exist');
     cy.get('.grid17-2 .slick-row-pinned-top').should('not.exist');
   });
 
-  describe('Frozen Columns', () => {
-    it('should set 3 frozen columns in first grid', () => {
-      cy.get('[data-test="frozen-column-count"]').clear().type('3');
-      cy.get('[data-test="set-frozen-columns-btn"]').click();
+  describe('Pinned Columns', () => {
+    it('should set 3 pinned columns in first grid', () => {
+      cy.get('[data-test="pinned-column-count"]').clear().type('3');
+      cy.get('[data-test="set-pinned-columns-btn"]').click();
 
       cy.get('.grid17-1 .slick-header-columns-left .slick-header-column').should('have.length', 4);
       cy.get('.grid17-1 .slick-header-columns-center .slick-header-column').should('have.length', 34);
     });
 
-    it('should try to set frozen columns wider than possible and expect an error and abort of the execution', () => {
+    it('should try to set pinned columns wider than possible and expect an error and abort of the execution', () => {
       cy.window().then((win) => {
         cy.stub(win, 'alert').as('alertStub');
       });
-      cy.get('[data-test="frozen-column-count"]').clear().type('12');
-      cy.get('[data-test="set-frozen-columns-btn"]')
+      cy.get('[data-test="pinned-column-count"]').clear().type('12');
+      cy.get('[data-test="set-pinned-columns-btn"]')
         .click()
         .then(() => {
           cy.get('@alertStub').should(
             'have.been.calledWith',
-            '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
+            '[SlickGrid] You are trying to pin more columns than the grid can support. ' +
               'Make sure to have less columns pinned (on the left) than the actual visible grid width.'
           );
 

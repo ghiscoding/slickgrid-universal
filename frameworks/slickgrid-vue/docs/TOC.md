@@ -74,7 +74,7 @@
 * [Header & Footer Slots](grid-functionalities/header-footer-slots.md)
 * [Custom Menu Slots](grid-functionalities/menu-slots.md)
 * [Infinite Scroll](grid-functionalities/infinite-scroll.md)
-* [Pinning (frozen) of Columns/Rows](grid-functionalities/frozen-columns-rows.md)
+* [Pinning of Columns/Rows](grid-functionalities/pinning.md)
 * [Variable Row Height](grid-functionalities/variable-row-height.md)
 * [Providing data to the grid](grid-functionalities/providing-grid-data.md)
 * [Row Detail](grid-functionalities/row-detail.md)
@@ -111,4 +111,3 @@
 
 * [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)
 * [Migration Guide to 10.x (2026-03-02)](migrations/migration-to-10.x.md)
-

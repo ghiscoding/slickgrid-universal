@@ -1,6 +1,6 @@
 describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () => {
   const BASE_ROW_HEIGHT = 40;
-  const FROZEN_ROW_COUNT = 2;
+  const PINNED_ROW_COUNT = 2;
 
   // mirrors example45 metadata fallback output pattern
   const hDefault = (r: number) => {
@@ -19,7 +19,7 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
     return t;
   };
 
-  const frozenTopHeight = (hOf: (row: number) => number) => topOf(FROZEN_ROW_COUNT, hOf);
+  const pinnedTopHeight = (hOf: (row: number) => number) => topOf(PINNED_ROW_COUNT, hOf);
 
   const relativeTopInCanvas = (r: number, hOf: (row: number) => number) => {
     // Pinned rows are moved into the overlay, but center rows retain their
@@ -27,7 +27,7 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
     return topOf(r, hOf);
   };
 
-  const rowHostSelector = (r: number) => (r < FROZEN_ROW_COUNT ? '.slick-docking-overlay' : '.grid-canvas-top');
+  const rowHostSelector = (r: number) => (r < PINNED_ROW_COUNT ? '.slick-docking-overlay' : '.grid-canvas-top');
 
   const assertRowStyle = (row: number, hOf: (row: number) => number) => {
     const expectedHeight = hOf(row);
@@ -73,7 +73,7 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
     cy.get('h3').should('contain', 'Example 45 - Variable Row Height (item metadata)');
   });
 
-  it('should render frozen and scrollable rows with expected transform and row heights from metadata fallback', () => {
+  it('should render pinned and scrollable rows with expected transform and row heights from metadata fallback', () => {
     for (const r of [0, 1, 2, 3, 4, 5, 6]) {
       assertRowStyle(r, hDefault);
     }
@@ -91,8 +91,8 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
     }
   });
 
-  it('should scroll row 90 to top of scrollable pane with frozen top rows', () => {
-    const expectedScrollTop = topOf(90, hDefault) - frozenTopHeight(hDefault);
+  it('should scroll row 90 to top of scrollable pane with pinned top rows', () => {
+    const expectedScrollTop = topOf(90, hDefault) - pinnedTopHeight(hDefault);
 
     cy.get('[data-test="scroll-row-90-example45"]').click();
 

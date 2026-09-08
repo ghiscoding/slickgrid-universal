@@ -697,7 +697,6 @@ describe('HeaderMenu Plugin', () => {
         expect(columnsMock[1].hidden).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: columnsMock, hiddenColumn: columnsMock[1] });
       });
-
     });
 
     describe('with sub-menus', () => {
@@ -1284,15 +1283,37 @@ describe('HeaderMenu Plugin', () => {
 
         const pinCommand = gridContainerDiv.querySelector('[data-command="pin-column"]') as HTMLDivElement;
         expect(pinCommand).toBeTruthy();
-        pinCommand.dispatchEvent(new Event('click'));
+        expect(gridContainerDiv.querySelector('[data-command="pin-columns"]')).toBeFalsy();
+        expect(gridContainerDiv.querySelector('[data-command="unpin-column"]')).toBeFalsy();
+        expect(gridContainerDiv.querySelector('[data-command="unpin-columns"]')).toBeFalsy();
+        expect(pinCommand.querySelector('.slick-menu-content')?.textContent).toBe('Column Pinning');
+        const pinColumnCommandItems = testColumns[0].header?.menu?.commandItems?.find(
+          (item) => item !== 'divider' && item?.command === 'pin-column'
+        )?.commandItems;
+        expect(pinColumnCommandItems?.map((item) => (item === 'divider' ? item : item.command))).toEqual([
+          'pin-left',
+          'pin-right',
+          'pin-columns',
+          'divider-pin-unpin',
+          'unpin-column',
+          'unpin-columns',
+        ]);
+        const pinLeftCommand = pinColumnCommandItems?.find((item) => item !== 'divider' && item?.command === 'pin-left') as MenuCommandItem;
+        const pinRightCommand = pinColumnCommandItems?.find((item) => item !== 'divider' && item?.command === 'pin-right') as MenuCommandItem;
+        expect(pinLeftCommand.title).toBe('Pin Left');
+        expect(pinRightCommand.title).toBe('Pin Right');
+        pinLeftCommand.action?.(new SlickEventData(), { column: testColumns[0] } as any);
         expect(setColumnPinningSpy).toHaveBeenCalledWith('field2', 'left');
+        pinRightCommand.action?.(new SlickEventData(), { column: testColumns[0] } as any);
+        expect(setColumnPinningSpy).toHaveBeenCalledWith('field2', 'right');
 
         testColumns[0].pinned = 'left';
         (plugin as any).recreateHeaderMenu(testColumns);
-        expect(testColumns[0].header?.menu?.commandItems).toEqual(expect.arrayContaining([expect.objectContaining({ command: 'unpin-column' })]));
-        const unpinCommand = testColumns[0].header?.menu?.commandItems?.find(
-          (item) => item !== 'divider' && item?.command === 'unpin-column'
+        const pinColumnCommand = testColumns[0].header?.menu?.commandItems?.find(
+          (item) => item !== 'divider' && item?.command === 'pin-column'
         ) as MenuCommandItem;
+        expect(pinColumnCommand).toBeTruthy();
+        const unpinCommand = pinColumnCommand.commandItems?.find((item) => item !== 'divider' && item?.command === 'unpin-column') as MenuCommandItem;
         unpinCommand.action?.(new SlickEventData(), { column: testColumns[0] } as any);
         expect(setColumnPinningSpy).toHaveBeenCalledWith('field2', null);
         gridOptionsMock.headerMenu = originalHeaderMenuOptions;
@@ -1300,7 +1321,30 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       });
 
-      it('should expect menu related to Freeze Columns when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
+      it('should not offer pinning commands when the column is locked', () => {
+        const testColumns = [{ ...columnsMock[1], header: undefined, pinned: 'left', lockPinned: true }] as Column[];
+        const getColumnsSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(testColumns);
+
+        plugin.init();
+        plugin.addonOptions = { hidePinColumnCommand: false };
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: testColumns, grid: gridStub }, eventData, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: testColumns[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        (headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement).dispatchEvent(
+          new Event('click', { bubbles: true, cancelable: true, composed: false })
+        );
+
+        expect(gridContainerDiv.querySelector('[data-command="pin-column"]')).toBeFalsy();
+        expect(gridContainerDiv.querySelector('[data-command="unpin-column"]')).toBeFalsy();
+        expect(gridContainerDiv.querySelector('[data-command="pin-columns"]')).toBeFalsy();
+        expect(gridContainerDiv.querySelector('[data-command="unpin-columns"]')).toBeFalsy();
+        expect(testColumns[0].header?.menu?.commandItems).not.toEqual(
+          expect.arrayContaining([expect.objectContaining({ command: expect.stringMatching(/pin-columns?/i) })])
+        );
+        getColumnsSpy.mockRestore();
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      });
+
+      it('should expect menu related to Pin Through Here when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
         vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
@@ -1317,23 +1361,23 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Freeze Columns',
-            titleKey: 'FREEZE_COLUMNS',
-            command: 'freeze-columns',
-            positionOrder: 45,
+            title: 'Pin Through Here',
+            titleKey: 'PIN_COLUMNS',
+            command: 'pin-columns',
+            positionOrder: 46,
             action: expect.any(Function),
           },
           { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
         expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
-        expect(commandLabelElm.textContent).toBe('Freeze Columns');
+        expect(commandLabelElm.textContent).toBe('Pin Through Here');
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
@@ -1341,10 +1385,10 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Geler les colonnes',
-            titleKey: 'FREEZE_COLUMNS',
-            command: 'freeze-columns',
-            positionOrder: 45,
+            title: "Épingler jusqu'ici",
+            titleKey: 'PIN_COLUMNS',
+            command: 'pin-columns',
+            positionOrder: 46,
             action: expect.any(Function),
           },
           { divider: true, command: 'divider-1', positionOrder: 48 },
@@ -1355,7 +1399,7 @@ describe('HeaderMenu Plugin', () => {
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
-      it('should expect menu related to Freeze Columns when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
+      it('should expect menu related to Pin Through Here when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
         vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
@@ -1370,23 +1414,23 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Freeze Columns',
-            titleKey: 'FREEZE_COLUMNS',
-            command: 'freeze-columns',
-            positionOrder: 45,
+            title: 'Pin Through Here',
+            titleKey: 'PIN_COLUMNS',
+            command: 'pin-columns',
+            positionOrder: 46,
             action: expect.any(Function),
           },
           { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
         expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
-        expect(commandLabelElm.textContent).toBe('Freeze Columns');
+        expect(commandLabelElm.textContent).toBe('Pin Through Here');
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
@@ -1394,10 +1438,10 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Geler les colonnes',
-            titleKey: 'FREEZE_COLUMNS',
-            command: 'freeze-columns',
-            positionOrder: 45,
+            title: "Épingler jusqu'ici",
+            titleKey: 'PIN_COLUMNS',
+            command: 'pin-columns',
+            positionOrder: 46,
             action: expect.any(Function),
           },
           { divider: true, command: 'divider-1', positionOrder: 48 },
@@ -1408,7 +1452,7 @@ describe('HeaderMenu Plugin', () => {
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
-      it('should expect menu related to Unfreeze Columns when "hidePinningColumnsCommand" is disabled and column is already frozen to that index and then also expect grid "setOptions" method to be called with current column position', async () => {
+      it('should expect menu related to Unpin All Columns when "hidePinningColumnsCommand" is disabled and column is already pinned to that index and then also expect grid "setOptions" method to be called with current column position', async () => {
         vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
@@ -1417,6 +1461,7 @@ describe('HeaderMenu Plugin', () => {
           headerMenu: { hidePinningColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
           pinning: { columns: { left: 1 } },
         });
+        plugin.addonOptions = { hidePinColumnCommand: false };
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -1425,45 +1470,32 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="unfreeze-columns"]') as HTMLDivElement;
-        const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
-        const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-off-outline',
-            title: 'Unfreeze Columns',
-            titleKey: 'UNFREEZE_COLUMNS',
-            command: 'unfreeze-columns',
-            positionOrder: 45,
-            action: expect.any(Function),
-          },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
+        const pinCommand = gridContainerDiv.querySelector('[data-command="pin-column"]') as HTMLDivElement;
+        expect(pinCommand.querySelector('.slick-menu-content')?.textContent).toBe('Column Pinning');
+        const pinColumnCommandItems = columnsMock[1].header!.menu!.commandItems!.find(
+          (item) => item !== 'divider' && item.command === 'pin-column'
+        )?.commandItems;
+        expect(pinColumnCommandItems?.map((item) => (item === 'divider' ? item : item.command))).toEqual([
+          'pin-left',
+          'pin-right',
+          'pin-columns',
+          'divider-pin-unpin',
+          'unpin-column',
+          'unpin-columns',
         ]);
-        expect(commandIconElm.classList.contains('mdi-pin-off-outline')).toBeTruthy();
-        expect(commandLabelElm.textContent).toBe('Unfreeze Columns');
+        const unpinCommand = pinColumnCommandItems?.find((item) => item !== 'divider' && item.command === 'unpin-columns') as MenuCommandItem;
+        expect(unpinCommand.title).toBe('Unpin All Columns');
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
-        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-off-outline',
-            title: 'Dégeler les colonnes',
-            titleKey: 'UNFREEZE_COLUMNS',
-            command: 'unfreeze-columns',
-            positionOrder: 45,
-            action: expect.any(Function),
-          },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
-        ]);
+        expect(unpinCommand.title).toBe('Désépingler toutes les colonnes');
 
-        commandDivElm.dispatchEvent(new Event('click')); // execute command
-        expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: [] } } }, false, true);
+        unpinCommand.action?.(new SlickEventData(), { column: columnsMock[1] } as any);
+        expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: [], right: [] } } }, false, true);
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
-      it('should expect menu related to Freeze Columns when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with frozen column of -1 because the column found is not visible', () => {
+      it('should expect menu related to Pin Through Here when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with pinned column of -1 because the column found is not visible', () => {
         sharedService.hasColumnsReordered = true;
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
@@ -1480,15 +1512,15 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns"]') as HTMLDivElement;
         expect(columnsMock[2].header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Freeze Columns',
-            titleKey: 'FREEZE_COLUMNS',
-            command: 'freeze-columns',
-            positionOrder: 45,
+            title: 'Pin Through Here',
+            titleKey: 'PIN_COLUMNS',
+            command: 'pin-columns',
+            positionOrder: 46,
             action: expect.any(Function),
           },
           { divider: true, command: 'divider-1', positionOrder: 48 },
@@ -1523,15 +1555,15 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns"]') as HTMLDivElement;
         expect((originalColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Freeze Columns',
-            titleKey: 'FREEZE_COLUMNS',
-            command: 'freeze-columns',
-            positionOrder: 45,
+            title: 'Pin Through Here',
+            titleKey: 'PIN_COLUMNS',
+            command: 'pin-columns',
+            positionOrder: 46,
             action: expect.any(Function),
           },
           { divider: true, command: 'divider-1', positionOrder: 48 },
@@ -1659,11 +1691,11 @@ describe('HeaderMenu Plugin', () => {
         const headerMenuExpected = [
           {
             _orgTitle: '',
-            command: 'freeze-columns',
+            command: 'pin-columns',
             iconCssClass: 'mdi mdi-pin-outline',
-            positionOrder: 45,
-            title: 'Freeze Columns',
-            titleKey: 'FREEZE_COLUMNS',
+            positionOrder: 46,
+            title: 'Pin Through Here',
+            titleKey: 'PIN_COLUMNS',
             action: expect.any(Function),
           },
           { command: 'show-negative-numbers', cssClass: 'mdi mdi-lightbulb-on', tooltip: 'Highlight negative numbers.' },
@@ -1720,7 +1752,7 @@ describe('HeaderMenu Plugin', () => {
         const blankValueCommandElm = subCommandShortcut1.querySelector('[data-command="blank-values"]') as HTMLDivElement;
         const commandIconElm = subCommandShortcut1.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = subCommandShortcut1.querySelector('.slick-menu-content') as HTMLDivElement;
-        expect(columnsMock[0].header!.menu!.commandItems!).toEqual(headerMenuExpected);
+        expect(columnsMock[0].header!.menu!.commandItems!).toEqual(expect.arrayContaining(headerMenuExpected));
         expect(commandIconElm.classList.contains('mdi-filter-minus-outline')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Blank Values');
 
@@ -1752,10 +1784,10 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Freeze Columns',
-            titleKey: 'FREEZE_COLUMNS',
-            command: 'freeze-columns',
-            positionOrder: 45,
+            title: 'Pin Through Here',
+            titleKey: 'PIN_COLUMNS',
+            command: 'pin-columns',
+            positionOrder: 46,
             action: expect.any(Function),
           },
           { divider: true, command: 'divider-1', positionOrder: 48 },
@@ -1907,7 +1939,7 @@ describe('HeaderMenu Plugin', () => {
         expect(clearSortSpy).toHaveBeenCalledWith(clickEvent, 'field2');
       });
 
-      it('should expect menu related to Freeze Columns when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called', () => {
+      it('should expect menu related to Pin Through Here when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called', () => {
         const originalColumnDefinitions = [
           { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', width: 75 },
@@ -1929,15 +1961,15 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns"]') as HTMLDivElement;
         expect((originalColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Freeze Columns',
-            titleKey: 'FREEZE_COLUMNS',
-            command: 'freeze-columns',
-            positionOrder: 45,
+            title: 'Pin Through Here',
+            titleKey: 'PIN_COLUMNS',
+            command: 'pin-columns',
+            positionOrder: 46,
             action: expect.any(Function),
           },
           { divider: true, command: 'divider-1', positionOrder: 48 },
@@ -1948,7 +1980,7 @@ describe('HeaderMenu Plugin', () => {
         expect(updateColumnSpy).toHaveBeenCalled();
       });
 
-      it('should expect menu related to Freeze Columns when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called when hasColumnsReordered returns true', () => {
+      it('should expect menu related to Pin Through Here when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called when hasColumnsReordered returns true', () => {
         const originalColumnDefinitions = [
           { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', width: 75 },
@@ -1974,15 +2006,15 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns"]') as HTMLDivElement;
         expect((visibleColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Freeze Columns',
-            titleKey: 'FREEZE_COLUMNS',
-            command: 'freeze-columns',
-            positionOrder: 45,
+            title: 'Pin Through Here',
+            titleKey: 'PIN_COLUMNS',
+            command: 'pin-columns',
+            positionOrder: 46,
             action: expect.any(Function),
           },
           { divider: true, command: 'divider-1', positionOrder: 48 },

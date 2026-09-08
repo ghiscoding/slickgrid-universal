@@ -542,7 +542,7 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
         .each(($child, index) => expect($child.text()).to.eq(titlesWithTitleDuration[index]));
     });
 
-    it('should open Header Menu on Duration column and freeze column', () => {
+    it('should open Header Menu on Duration column and pin columns through it', () => {
       cy.get('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
         .find('.slick-header-column:nth(2)')
         .trigger('mouseover')
@@ -552,10 +552,11 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(1)')
-        .children('.slick-menu-content')
-        .contains('Freeze Columns')
+        .find('[data-command="pin-column"]')
+        .should('contain', 'Column Pinning')
         .click();
+
+      cy.get('.slick-submenu [data-command="pin-columns"]').should('be.visible').and('contain', 'Pin Through Here').click();
     });
 
     it('should open Cost column Header Menu then click on "Hide Column" and still expect all headers shown', () => {

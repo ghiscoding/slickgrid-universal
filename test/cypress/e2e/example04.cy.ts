@@ -1,4 +1,4 @@
-describe('Example 04 - Frozen Grid', () => {
+describe('Example 04 - Pinned Grid', () => {
   const withTitleRowTitles = ['Sel', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
   const withoutTitleRowTitles = ['', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
   const getCell = (rowIndex: number, columnIndex: number) =>
@@ -29,7 +29,7 @@ describe('Example 04 - Frozen Grid', () => {
     const row0 = '.grid4 .slick-row[data-row="0"]';
 
     // Pinning uses one row node split into regions and a single docking overlay;
-    // it no longer duplicates rows into legacy left/right frozen canvases.
+    // it no longer duplicates rows into legacy left/right pinned canvases.
     cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-top').should('have.length', 3);
     cy.get(`${row0} .slick-pinned-left-cells > .slick-cell`).should('have.length', 3);
     cy.get(`${row0} .slick-scrolling-cells > .slick-cell`).should('have.length', 5);
@@ -64,7 +64,7 @@ describe('Example 04 - Frozen Grid', () => {
     setRightPinning(2);
     // The default fixture fits in the viewport, so use the demo's wide layout
     // to exercise an actual horizontal scroll rather than a no-op scroll.
-    cy.get('[data-test="set-large-freezed-columns"]').click();
+    cy.get('[data-test="set-large-pinned-columns"]').click();
     const actionCell = '.grid4 .slick-row[data-row="10"] .slick-pinned-right-cells .slick-cell.l8';
 
     cy.get(actionCell).then(($cell) => {
@@ -78,6 +78,39 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.grid4 .slick-docking-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
     // Restore the initial fixture after exercising the wide layout so the
     // following serial tests do not inherit resized columns.
+    cy.visit(`${Cypress.config('baseUrl')}/example04`);
+  });
+
+  it('should resize columns while left and right pinning are active', () => {
+    cy.visit(`${Cypress.config('baseUrl')}/example04`);
+
+    const resizeColumn = (columnSelector: string, pinClass: string) => {
+      cy.get(columnSelector).should('have.class', pinClass);
+      cy.get(`${columnSelector} .slick-resizable-handle`)
+        .should('exist')
+        .then(($handle) => {
+          const header = $handle.closest('.slick-header-column')[0] as HTMLElement;
+          const initialWidth = header.getBoundingClientRect().width;
+
+          cy.wrap($handle).trigger('mousedown', { which: 1, pageX: 100, clientX: 100, force: true });
+          cy.get('body').trigger('mousemove', { which: 1, pageX: 125, clientX: 125, force: true });
+          cy.get('body').trigger('mousemove', { which: 1, pageX: 150, clientX: 150, force: true });
+          cy.get('body').trigger('mouseup', { which: 1, pageX: 150, clientX: 150, force: true });
+
+          cy.get(columnSelector).should(($updatedHeader) => {
+            expect($updatedHeader[0].getBoundingClientRect().width).to.be.greaterThan(initialWidth);
+          });
+        });
+    };
+
+    resizeColumn('.grid4 .slick-header-columns-left [data-id="title"]', 'slick-column-pinned-left');
+
+    // Use City of Origin here because Action has a maxWidth of 100px and
+    // would correctly refuse a wider resize.
+    setRightPinning(2);
+    resizeColumn('.grid4 .slick-header-columns-right [data-id="cityOfOrigin"]', 'slick-column-pinned-right');
+
+    // Keep the following serial tests on the demo's default configuration.
     cy.visit(`${Cypress.config('baseUrl')}/example04`);
   });
 
@@ -112,7 +145,7 @@ describe('Example 04 - Frozen Grid', () => {
     setRightPinning(1);
   });
 
-  it('should hide "Title" column from Grid Menu and expect last frozen column to be "% Complete"', () => {
+  it('should hide "Title" column from Grid Menu and expect last pinned column to be "% Complete"', () => {
     const newColumnList = ['Sel', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
     const row0 = '.grid4 .slick-row[data-row="0"]';
 
@@ -140,7 +173,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get(`${row0} .slick-scrolling-cells > .slick-cell:nth(1)`).should('contain', '2009-05-05');
   });
 
-  it('should show again "Title" column from Grid Menu and expect last frozen column to still be "% Complete"', () => {
+  it('should show again "Title" column from Grid Menu and expect last pinned column to still be "% Complete"', () => {
     cy.get('.grid4')
       .get('.slick-grid-menu:visible')
       .find('.slick-column-picker-list')
@@ -166,7 +199,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.slick-scrolling-cells .slick-cell:nth(1)').should('contain', '2009-05-05');
   });
 
-  it('should hide "Title" column from Header Menu and expect last frozen column to be "% Complete"', () => {
+  it('should hide "Title" column from Header Menu and expect last pinned column to be "% Complete"', () => {
     const newColumnList = ['Sel', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
 
     cy.get('.grid4').find('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
@@ -200,7 +233,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell').should('not.exist');
   });
 
-  it('should show again "Title" column from Column Picker and expect last frozen column to still be "% Complete"', () => {
+  it('should show again "Title" column from Column Picker and expect last pinned column to still be "% Complete"', () => {
     cy.get('.grid4').find('.slick-header-column:nth(4)').trigger('mouseover').trigger('contextmenu').invoke('show');
 
     cy.get('.slick-column-picker')
@@ -226,8 +259,8 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.slick-row[data-row="0"] .slick-scrolling-cells > .slick-cell:nth(1)').should('contain', '2009-05-05');
   });
 
-  it('should click on the "Remove Frozen Columns" button to switch to a regular grid view without frozen columns and expect 7 columns on the left container', () => {
-    cy.get('[data-test=remove-frozen-column-button]').click({ force: true });
+  it('should click on the "Remove Pinned Columns" button to switch to a regular grid view without pinned columns and expect 7 columns on the left container', () => {
+    cy.get('[data-test=remove-pinned-column-button]').click({ force: true });
 
     cy.get('.grid4 .slick-row[data-row="0"]').should('have.length.at.least', 1);
     cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').should('exist').and('not.have.class', 'slick-pinned-left-cells-active');
@@ -245,8 +278,8 @@ describe('Example 04 - Frozen Grid', () => {
       .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
   });
 
-  it('should click on the "Set 3 Frozen Columns" button to switch frozen columns grid and expect 3 frozen columns on the left and 4 columns on the right', () => {
-    cy.get('[data-test=set-3frozen-columns]').click({ force: true });
+  it('should click on the "Set 3 Pinned Columns" button to switch pinned columns grid and expect 3 pinned columns on the left and 4 columns on the right', () => {
+    cy.get('[data-test=set-3pinned-columns]').click({ force: true });
 
     cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').children().should('have.length', 3);
     cy.get('.slick-row[data-row="0"] .slick-scrolling-cells').children().should('have.length', 6);
@@ -264,10 +297,10 @@ describe('Example 04 - Frozen Grid', () => {
       .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
   });
 
-  it('should click on the Grid Menu command "Unfreeze Columns/Rows" to switch to a regular grid without frozen columns/rows', () => {
+  it('should click on the Grid Menu command "Unpin Columns/Rows" to switch to a regular grid without pinned columns/rows', () => {
     cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
 
-    cy.contains('Unfreeze Columns/Rows').click({ force: true });
+    cy.contains('Unpin Columns/Rows').click({ force: true });
 
     cy.get('.grid4 .slick-row[data-row="0"]').should('have.length.at.least', 1);
     cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').should('exist').and('not.have.class', 'slick-pinned-left-cells-active');
@@ -580,7 +613,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.window().then((win) => {
       cy.stub(win, 'alert').as('alertStub');
     });
-    cy.get('[data-test=set-3frozen-columns]').click({ force: true });
+    cy.get('[data-test=set-3pinned-columns]').click({ force: true });
 
     const leftColumns = ['', 'Title', '% Complete'];
     const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
@@ -602,8 +635,8 @@ describe('Example 04 - Frozen Grid', () => {
                 .then(() => {
                   cy.get('@alertStub').should(
                     'have.been.calledWith',
-                    '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
-                      'You could alternatively "Unfreeze all the columns" before trying again.'
+                    '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column in the center section of the grid. ' +
+                      'You could alternatively unpin columns before trying again.'
                   );
                 });
             }
@@ -630,8 +663,8 @@ describe('Example 04 - Frozen Grid', () => {
       .then(() => {
         cy.get('@alertStub').should(
           'have.been.calledWith',
-          '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
-            'You could alternatively "Unfreeze all the columns" before trying again.'
+          '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column in the center section of the grid. ' +
+            'You could alternatively unpin columns before trying again.'
         );
       });
 
@@ -683,10 +716,10 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   describe('Test UI rendering after Scrolling with large columns', () => {
-    it('should unfreeze all columns/rows', () => {
+    it('should unpin all columns/rows', () => {
       cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
 
-      cy.contains('Unfreeze Columns/Rows').click({ force: true });
+      cy.contains('Unpin Columns/Rows').click({ force: true });
     });
 
     it('should resize all columns and make them wider', () => {
@@ -878,8 +911,8 @@ describe('Example 04 - Frozen Grid', () => {
       cy.focused().type('{enter}');
     });
 
-    it('should reapply 3 Frozen Columns and expect to be able to focus on first filter and go left/right between both viewports without problems', () => {
-      cy.get('[data-test="set-3frozen-columns"]').click();
+    it('should reapply 3 Pinned Columns and expect to be able to focus on first filter and go left/right between both viewports without problems', () => {
+      cy.get('[data-test="set-3pinned-columns"]').click();
       cy.get('.slick-headerrow-column.l1 input').focus();
       cy.press(Cypress.Keyboard.Keys.TAB);
       cy.get('.slick-headerrow-column.l2 input').should('have.focus');
@@ -910,7 +943,7 @@ describe('Example 04 - Frozen Grid', () => {
         $viewport[0].dispatchEvent(new Event('scroll', { bubbles: true }));
       });
       cy.get('.slick-viewport-top .slick-scrolling-cells').its('0.scrollLeft').should('equal', 0);
-      cy.get('[data-test="set-large-freezed-columns"]').click();
+      cy.get('[data-test="set-large-pinned-columns"]').click();
 
       // Step 1: call SortableJS onStart for the "Start" column (1st center-section column).
       // This binds the document 'drag' auto-scroll listener for the shared proxy scrollbar.

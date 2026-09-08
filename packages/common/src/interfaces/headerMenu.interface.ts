@@ -9,11 +9,15 @@ export type BuiltInHeaderMenuCommand =
   | 'divider-1'
   | 'divider-2'
   | 'divider-3'
-  | 'freeze-columns'
+  | 'pin-column'
+  | 'pin-left'
+  | 'pin-columns'
+  | 'pin-right'
   | 'hide-column'
   | 'sort-asc'
   | 'sort-desc'
-  | 'unfreeze-columns';
+  | 'unpin-column'
+  | 'unpin-columns';
 
 export interface HeaderMenuCommandItemCallbackArgs {
   /** Column definition */

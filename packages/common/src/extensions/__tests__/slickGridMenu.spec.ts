@@ -1715,7 +1715,7 @@ describe('GridMenuControl', () => {
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([]);
         });
 
-        it('should expect menu related to "Unfreeze Columns/Rows"', () => {
+        it('should expect menu related to "Unpin Columns/Rows"', () => {
           const copyGridOptionsMock = {
             ...gridOptionsMock,
             gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearPinningCommand: false, hideToggleDarkModeCommand: true },
@@ -1728,7 +1728,7 @@ describe('GridMenuControl', () => {
               _orgTitle: '',
               iconCssClass: 'mdi mdi-pin-off-outline',
               titleKey: 'CLEAR_PINNING',
-              title: 'Dégeler les colonnes/rangées',
+              title: 'Désépingler les colonnes/rangées',
               disabled: false,
               command: 'clear-pinning',
               positionOrder: 52,

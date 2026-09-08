@@ -34,7 +34,7 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
   /** Defaults to true (opt-in feature), which hides the bulk pin-columns command in the Header Menu. */
   hidePinningColumnsCommand?: boolean;
 
-  /** Defaults to true (opt-in feature), which hides the single-column "Pin Column" command. */
+  /** Defaults to true (opt-in feature), which hides the "Column Pinning" submenu. */
   hidePinColumnCommand?: boolean;
 
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide Sort (Asc/Desc & Clear Sort) commands in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
@@ -64,8 +64,14 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
   /** icon for the bulk pin-columns command */
   iconPinningColumns?: string;
 
-  /** Icon for the "Pin Column" command. */
+  /** Icon for the "Column Pinning" submenu. */
   iconPinColumn?: string;
+
+  /** Icon for the "Pin Left" command in the pin-column sub-menu. */
+  iconPinLeft?: string;
+
+  /** Icon for the "Pin Right" command in the pin-column sub-menu. */
+  iconPinRight?: string;
 
   /** icon for the bulk unpin-columns command */
   iconUnpinningColumns?: string;

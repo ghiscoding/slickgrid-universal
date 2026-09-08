@@ -1747,7 +1747,7 @@ describe('SlickGrid core file', () => {
       expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
     });
 
-    it('should show footer when "showFooterRow" is enabled with frozen column', () => {
+    it('should show footer when "showFooterRow" is enabled with pinned column', () => {
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name', alwaysRenderColumn: true },
         { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
@@ -2308,10 +2308,11 @@ describe('SlickGrid core file', () => {
     describe('getActiveCanvasNode() function', () => {
       it('should return the active canvas when calling the method when the Event does not include any target', () => {
         grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
+        (grid as any)._activeCanvasNode = undefined;
         const mockEvent = new CustomEvent('click');
         const result = grid.getActiveCanvasNode(mockEvent);
 
-        expect(result).toBe(grid.getActiveCanvasNode());
+        expect(result).toBe(container.querySelector('.grid-canvas'));
       });
 
       it('should return closest grid canvas when calling the method when the Event includes grid canvas', () => {
@@ -2346,6 +2347,7 @@ describe('SlickGrid core file', () => {
     describe('getActiveViewportNode() function', () => {
       it('should return the active viewport when calling the method when the Event does not include any target', () => {
         grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
+        (grid as any)._activeViewportNode = undefined;
         const mockEvent = new CustomEvent('click');
         const result = grid.getActiveViewportNode(mockEvent);
 
@@ -2408,6 +2410,51 @@ describe('SlickGrid core file', () => {
 
         expect(result).toBeFalsy();
       });
+    });
+
+    it('should apply sticky docking chrome offsets and preserve a hidden range endpoint', () => {
+      const dockingColumns = [
+        { id: 'a', field: 'a', name: 'A', width: 80 },
+        { id: 'b', field: 'b', name: 'B', width: 80 },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [{ id: 0, a: 'a0', b: 'b0' }], dockingColumns, {
+        ...defaultOptions,
+        pinning: { columns: { right: ['b'] } },
+      });
+      grid.init();
+
+      const internals = grid as any;
+      const rightDocking = internals.dockingLayout.right[0];
+      rightDocking.sticky = true;
+      rightDocking.naturalOffset = 80;
+      internals.dockingLayout.contentWidth = 160;
+      internals.dockingLayout.leftBaseWidth = 0;
+      internals.dockingLayout.rightWidth = 80;
+      internals.viewportW = 200;
+      internals.scrollLeft = 10;
+      Object.defineProperty(internals._viewportScrollContainerX, 'clientWidth', { configurable: true, value: 200 });
+      internals._dockingHorizontalScroller = undefined;
+
+      internals.applyDockingChromeScrollOffsets();
+      const rightHeader = container.querySelector<HTMLElement>('.slick-header-column[data-id="b"]');
+      expect(rightHeader?.style.transform).toContain('translateX');
+
+      internals.applyDockingToColumnChrome();
+      expect(rightHeader?.classList.contains('slick-column-sticky')).toBe(true);
+
+      internals.columns[0].hidden = true;
+      internals.dockingByColumn = new Map([[1, { band: 'right' }]]);
+      internals.columnPosRight = [77, 160];
+      expect(internals.getColumnRangeRight(0, 0)).toBe(77);
+    });
+
+    it('should merge row-only pinning without creating a columns option', () => {
+      grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'John' }], columns, defaultOptions);
+      grid.init();
+
+      grid.setOptions({ pinning: { rows: { top: [0] } } });
+
+      expect(grid.getOptions().pinning).toEqual({ rows: { top: [0], bottom: [] } });
     });
 
     describe('getCellNodeBox() function', () => {
@@ -3993,7 +4040,7 @@ describe('SlickGrid core file', () => {
         expect(columns[4].width).toBe(80);
       });
 
-      it('should resize 3rd column that has a "minWidth" defined using default sizing grid options with a frozen column', () => {
+      it('should resize 3rd column that has a "minWidth" defined using default sizing grid options with a pinned column', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, {
           ...defaultOptions,
           forceFitColumns: false,
@@ -4041,7 +4088,7 @@ describe('SlickGrid core file', () => {
         expect(columns[4].width).toBe(80);
       });
 
-      it('should resize 3rd column that has a "minWidth" with a frozen column that is greater than available columns', () => {
+      it('should resize 3rd column that has a "minWidth" with a pinned column that is greater than available columns', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, {
           ...defaultOptions,
           forceFitColumns: false,
@@ -4298,7 +4345,7 @@ describe('SlickGrid core file', () => {
         expect(columns[4].width).toBe(199);
       });
 
-      it('should resize 3rd column with forceFitColumns option enabled with a frozen column', () => {
+      it('should resize 3rd column with forceFitColumns option enabled with a pinned column', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true, pinning: { columns: { left: 0 } } });
         grid.init();
         grid.autosizeColumns();
@@ -4338,7 +4385,7 @@ describe('SlickGrid core file', () => {
         expect(columns[4].width).toBe(199);
       });
 
-      it('should resize 3rd column without forceFitColumns option but with a frozen column', () => {
+      it('should resize 3rd column without forceFitColumns option but with a pinned column', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false, pinning: { columns: { left: 0 } } });
         grid.init();
         grid.autosizeColumns();
@@ -4378,7 +4425,7 @@ describe('SlickGrid core file', () => {
         expect(columns[4].width).toBeGreaterThanOrEqual(550);
       });
 
-      it('should resize 4th column with forceFitColumns option enabled and a column with maxWidth and a frozen column', () => {
+      it('should resize 4th column with forceFitColumns option enabled and a column with maxWidth and a pinned column', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true, pinning: { columns: { left: 0 } } });
         grid.init();
         grid.autosizeColumns();
@@ -5211,7 +5258,7 @@ describe('SlickGrid core file', () => {
         { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
       ];
 
-      it('should scroll when calling scrollCellIntoView() with lower position than frozen column', () => {
+      it('should scroll when calling scrollCellIntoView() with lower position than pinned column', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, pinning: { columns: { left: 0 } } });
         grid.init();
         const renderSpy = vi.spyOn(grid, 'render');
@@ -5243,6 +5290,22 @@ describe('SlickGrid core file', () => {
         grid.scrollCellIntoView(0, 3);
 
         expect(horizontalScroller.scrollLeft).toBeGreaterThan(0);
+      });
+
+      it('should reveal the natural position of a sticky column currently docked at the right edge', () => {
+        grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }], columns, {
+          ...defaultOptions,
+          pinning: { columns: { left: 0, right: [] } },
+        });
+        grid.init();
+
+        const internals = grid as any;
+        internals.dockingByColumn.set(1, { band: 'right', sticky: true, naturalOffset: 80, width: 80 });
+        const scrollSpy = vi.spyOn(internals, 'internalScrollColumnIntoView').mockImplementation(() => undefined);
+
+        grid.scrollCellIntoView(0, 1);
+
+        expect(scrollSpy).toHaveBeenCalled();
       });
 
       it('should find the first column intersecting the horizontal render range', () => {

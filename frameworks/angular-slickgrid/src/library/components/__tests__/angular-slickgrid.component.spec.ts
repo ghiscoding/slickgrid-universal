@@ -1330,7 +1330,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         expect(backendSpy).toHaveBeenCalledWith(mockColumnFilter, false);
       });
 
-      it('should override frozen grid options when "pinning" is defined in the "presets" property', () => {
+      it('should override pinned grid options when "pinning" is defined in the "presets" property', () => {
         const pinningMock = { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } } as CurrentPinning;
 
         component.options.presets = { pinning: pinningMock };

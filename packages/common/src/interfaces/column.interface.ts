@@ -227,6 +227,9 @@ export interface Column<T = any> {
   /** Permanently dock this column at the left or right edge of the single grid viewport. */
   pinned?: DockingSide | null;
 
+  /** Set to true to prevent the user from pinning or unpinning this column through the UI. */
+  lockPinned?: boolean;
+
   /** Maximum Width of the column in pixels (number only). */
   maxWidth?: number;
 

@@ -74,7 +74,7 @@
 * [Custom Menu Slots](grid-functionalities/menu-slots.md)
 * [Header Menu & Header Buttons](grid-functionalities/header-menu-header-buttons.md)
 * [Infinite Scroll](grid-functionalities/infinite-scroll.md)
-* [Pinning (frozen) of Columns/Rows](grid-functionalities/frozen-columns-rows.md)
+* [Pinning of Columns/Rows](grid-functionalities/pinning.md)
 * [Variable Row Height](grid-functionalities/variable-row-height.md)
 * [Providing data to the grid](grid-functionalities/providing-grid-data.md)
 * [Row Detail](grid-functionalities/row-detail.md)
