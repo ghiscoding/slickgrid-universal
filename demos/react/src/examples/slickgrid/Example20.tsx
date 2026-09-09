@@ -296,9 +296,10 @@ const Example20: React.FC = () => {
   function updatePinnedRowCount() {
     const inputValue = pinnedRowCountInputRef.current?.value;
     const nextPinnedRowCount = Math.max(0, Number(inputValue ?? pinnedRowCount) || 0);
-    const rows = Array.from({ length: nextPinnedRowCount }, (_v, i) => i);
-
     const slickGrid = reactGridRef.current?.slickGrid;
+    const dataLength = slickGrid?.getDataLength?.() ?? dataset.length;
+    const firstPinnedRow = isPinnedBottom ? Math.max(0, dataLength - nextPinnedRowCount) : 0;
+    const rows = Array.from({ length: nextPinnedRowCount }, (_v, index) => firstPinnedRow + index);
     slickGrid?.setOptions({
       pinning: { rows: isPinnedBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } },
     });
@@ -466,8 +467,12 @@ const Example20: React.FC = () => {
   /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
   function togglePinnedBottomRows() {
     const newIsPinnedBottom = !isPinnedBottom;
-    const rows = Array.from({ length: Math.max(0, pinnedRowCount) }, (_value, index) => index);
-    reactGridRef.current?.slickGrid.setOptions({
+    const slickGrid = reactGridRef.current?.slickGrid;
+    const dataLength = slickGrid?.getDataLength?.() ?? dataset.length;
+    const rowCount = Math.max(0, pinnedRowCount);
+    const firstPinnedRow = newIsPinnedBottom ? Math.max(0, dataLength - rowCount) : 0;
+    const rows = Array.from({ length: rowCount }, (_value, index) => firstPinnedRow + index);
+    slickGrid?.setOptions({
       pinning: { rows: newIsPinnedBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } },
     });
     setIsPinnedBottom(newIsPinnedBottom);
@@ -592,7 +597,7 @@ const Example20: React.FC = () => {
               data-test="toggle-pinned-bottom"
               onClick={() => togglePinnedBottomRows()}
             >
-              <i className="mdi mdi-flip-vertical"></i> Toggle Pinned Rows
+              <i className="mdi mdi-flip-vertical"></i> Toggle Pinned Rows (top/bottom)
             </button>
             <span style={{ fontWeight: 'bold' }}>: {isPinnedBottom ? 'Bottom' : 'Top'}</span>
           </span>

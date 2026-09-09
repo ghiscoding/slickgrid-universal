@@ -563,6 +563,7 @@ requirements are the two largest sources of variance.
 - The right-edge pinned header-row cell is positioned by the computed physical separator border width (with RTL-aware direction), rather than a hard-coded 1px, to match customized or hidden borders.
 - Example04 now clears the opposite `pinning.rows` side when toggling top/bottom. This is required because `setOptions()` deep-merges nested option objects; supplying only `{ bottom }` previously left the old top references active.
 - Example04 bottom mode now pins the last configured rows instead of reusing indexes `0..N`. This matches the former bottom-pinning behavior and prevents the first rows' natural slots from becoming blank when they move to the bottom overlay.
+- Framework Example20 bottom mode now matches Example04 by pinning the last dataset rows (`Task 497` through `Task 499`) when toggled from the top.
 - Docked left/right row regions now mirror odd-row striping and hover backgrounds. Their opaque pinning backgrounds no longer hide the configured gray odd-row color.
 - Docked rows no longer receive the legacy active-row padding, preventing every cell in a clicked row from shrinking. Active-cell coordinate resolution now handles rows rendered in the docking overlay, allowing editors to open on top-pinned cells.
 - Docked rows now receive an explicit resolved `rowHeight` inline, including the default value. This prevents active/editor box-model styles from reducing a configured 45px row to its 35px content height.

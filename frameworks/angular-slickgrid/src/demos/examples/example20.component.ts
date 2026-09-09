@@ -266,8 +266,15 @@ export class Example20Component implements OnInit {
     this.setPinnedColumns(this.pinnedColumnCount);
   }
   changePinnedRowCount() {
-    const rows = Array.from({ length: Math.max(0, this.pinnedRowCount) }, (_v, i) => i);
+    const rows = this.getPinnedRowIndexes();
     this.gridObj?.setOptions({ pinning: { rows: this.isPinnedBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } } });
+  }
+
+  private getPinnedRowIndexes() {
+    const rowCount = Math.max(0, Number(this.pinnedRowCount) || 0);
+    const dataLength = this.gridObj?.getDataLength?.() ?? this.dataset.length;
+    const firstPinnedRow = this.isPinnedBottom ? Math.max(0, dataLength - rowCount) : 0;
+    return Array.from({ length: rowCount }, (_v, index) => firstPinnedRow + index);
   }
   toggleRightPinning() {
     this.setPinnedColumns(this.pinnedColumnCount, this.pinnedRightColumnCount > 0 ? 0 : 1);

@@ -463,7 +463,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <i class="mdi mdi-pin-outline"></i> Toggle Pinned Right
       </button>
       <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-pinned-bottom" @click="togglePinnedBottomRows()">
-        <i class="mdi mdi-flip-vertical"></i> Toggle Pinned Rows
+        <i class="mdi mdi-flip-vertical"></i> Toggle Pinned Rows (top/bottom)
       </button>
       <button
         class="btn btn-outline-secondary btn-sm btn-icon mx-1"
@@ -475,7 +475,6 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-large-pinned-columns" @click="setLargePinnedColumns()">
         <i class="mdi mdi-arrow-expand-horizontal"></i> Set Large Columns
       </button>
-      <span class="fw-bold mx-1">: {{ isPinnedBottom ? 'Bottom' : 'Top' }}</span>
     </div>
   </div>
   <div class="col-sm-12"><hr /></div>
