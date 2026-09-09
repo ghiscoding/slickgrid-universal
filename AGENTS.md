@@ -56,6 +56,39 @@ pnpm build
 - Use `pnpm lint:fix` and `pnpm prettier:write` only when autofix or formatting changes are intended.
 - Check the applicable `.oxlintrc.json` when working in Angular or framework-plugin code. The repository has three configurations: root `.oxlintrc.json`, `frameworks/angular-slickgrid/.oxlintrc.json`, and `frameworks-plugins/angular-row-detail-plugin/.oxlintrc.json`.
 
+## Documentation
+
+ Update corresponding framework documentation under `frameworks/*/docs/` when applicable.
+ Include code examples that work across all supported frameworks.
+
+## Common commands
+
+- `pnpm build` builds all packages and frameworks; it is also the `Build Everything` task.
+- `pnpm lint` runs OXLint across the repository.
+- `pnpm lint:fix` applies available OXLint fixes.
+- `pnpm prettier:check` checks formatting; `pnpm prettier:write` formats files.
+- `pnpm test` runs Vitest; `pnpm test:coverage` runs Vitest with coverage.
+- `pnpm dev` starts the Vanilla demo; use `pnpm dev:angular`, `pnpm dev:react`, `pnpm dev:vue`, or `pnpm dev:aurelia` for framework demos.
+
+## Monorepo structure
+
+- Changes to `packages/` affect all framework wrappers.
+- Framework wrappers depend on core packages; prefer relative imports within packages.
+- Avoid circular dependencies.
+
+## Code review focus
+
+- Verify tests pass and coverage remains high.
+- Check impact across all four framework implementations.
+- Ensure new options do not contradict or overlap with existing ones.
+- Check that examples work in all framework demos.
+
+## Completion checklist
+
+- Review the diff for unrelated changes and accidental generated files.
+- Verify affected tests, lint, and formatting.
+- Mention any checks that could not be run and why.
+
 <!-- rtk-instructions v2 -->
 # RTK - Token-Optimized CLI
 
@@ -166,36 +199,4 @@ When VEXP is available, use `run_pipeline` before built-in file search, grep, or
 ### Smart features
 
 VEXP can auto-detect intent, combine hybrid ranking, use session memory, and expand its context budget as needed.
-
-## Documentation
-
- Update corresponding framework documentation under `frameworks/*/docs/` when applicable.
- Include code examples that work across all supported frameworks.
-
-## Common commands
-
-- `pnpm build` builds all packages and frameworks; it is also the `Build Everything` task.
-- `pnpm lint` runs OXLint across the repository.
-- `pnpm lint:fix` applies available OXLint fixes.
-- `pnpm prettier:check` checks formatting; `pnpm prettier:write` formats files.
-- `pnpm test` runs Vitest; `pnpm test:coverage` runs Vitest with coverage.
-- `pnpm dev` starts the Vanilla demo; use `pnpm dev:angular`, `pnpm dev:react`, `pnpm dev:vue`, or `pnpm dev:aurelia` for framework demos.
-
-## Monorepo structure
-
-- Changes to `packages/` affect all framework wrappers.
-- Framework wrappers depend on core packages; prefer relative imports within packages.
-- Avoid circular dependencies.
-
-## Code review focus
-
-- Verify tests pass and coverage remains high.
-- Check impact across all four framework implementations.
-- Ensure new options do not contradict or overlap with existing ones.
-- Check that examples work in all framework demos.
-
-## Completion checklist
-
-- Review the diff for unrelated changes and accidental generated files.
-- Verify affected tests, lint, and formatting.
-- Mention any checks that could not be run and why.
+<!-- /vexp -->
