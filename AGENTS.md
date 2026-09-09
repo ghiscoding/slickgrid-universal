@@ -56,34 +56,38 @@ pnpm build
 - Use `pnpm lint:fix` and `pnpm prettier:write` only when autofix or formatting changes are intended.
 - Check the applicable `.oxlintrc.json` when working in Angular or framework-plugin code. The repository has three configurations: root `.oxlintrc.json`, `frameworks/angular-slickgrid/.oxlintrc.json`, and `frameworks-plugins/angular-row-detail-plugin/.oxlintrc.json`.
 
-## VEXP context tools <!-- vexp v2.0.31 -->
+## Documentation
 
-When VEXP context tools are available, `run_pipeline` is the primary tool and must be called first for repository tasks. VEXP returns pre-indexed, graph-ranked context in a single call.
+ Update corresponding framework documentation under `frameworks/*/docs/` when applicable.
+ Include code examples that work across all supported frameworks.
 
-### Workflow
+## Common commands
 
-1. Call `run_pipeline` with the task description before other repository searches.
-2. Make targeted changes from the returned context.
-3. Call `run_pipeline` again only when more context is needed.
+- `pnpm build` builds all packages and frameworks; it is also the `Build Everything` task.
+- `pnpm lint` runs OXLint across the repository.
+- `pnpm lint:fix` applies available OXLint fixes.
+- `pnpm prettier:check` checks formatting; `pnpm prettier:write` formats files.
+- `pnpm test` runs Vitest; `pnpm test:coverage` runs Vitest with coverage.
+- `pnpm dev` starts the Vanilla demo; use `pnpm dev:angular`, `pnpm dev:react`, `pnpm dev:vue`, or `pnpm dev:aurelia` for framework demos.
 
-### Available MCP tools
+## Monorepo structure
 
-- `run_pipeline` - primary tool; runs capsule, impact, and memory in one call.
-- `get_skeleton` - compact file structure.
-- `index_status` - indexing status.
-- `expand_vexp_ref` - expand V-REF placeholders in VEXP output.
+- Changes to `packages/` affect all framework wrappers.
+- Framework wrappers depend on core packages; prefer relative imports within packages.
+- Avoid circular dependencies.
 
-### Agentic search
+## Code review focus
 
-When VEXP is available, use `run_pipeline` before built-in file search, grep, or codebase indexing. If spawning sub-agents or background tasks, pass them the context from `run_pipeline` rather than letting them search independently.
+- Verify tests pass and coverage remains high.
+- Check impact across all four framework implementations.
+- Ensure new options do not contradict or overlap with existing ones.
+- Check that examples work in all framework demos.
 
-### Multi-repo
+## Completion checklist
 
-`run_pipeline` can query all indexed repositories. Use `repos: ["alias"]` to scope it, and use `index_status` to see aliases. If VEXP is unavailable, use the normal repository tools.
-
-### Smart features
-
-VEXP can auto-detect intent, combine hybrid ranking, use session memory, and expand its context budget as needed.
+- Review the diff for unrelated changes and accidental generated files.
+- Verify affected tests, lint, and formatting.
+- Mention any checks that could not be run and why.
 
 <!-- rtk-instructions v2 -->
 # RTK - Token-Optimized CLI
@@ -192,37 +196,7 @@ When VEXP is available, use `run_pipeline` before built-in file search, grep, or
 
 `run_pipeline` can query all indexed repositories. Use `repos: ["alias"]` to scope it, and use `index_status` to see aliases. If VEXP is unavailable, use the normal repository tools.
 
-## Documentation
+### Smart features
 
- Update corresponding framework documentation under `frameworks/*/docs/` when applicable.
- Include code examples that work across all supported frameworks.
-
-## Common commands
-
-- `pnpm build` builds all packages and frameworks; it is also the `Build Everything` task.
-- `pnpm lint` runs OXLint across the repository.
-- `pnpm lint:fix` applies available OXLint fixes.
-- `pnpm prettier:check` checks formatting; `pnpm prettier:write` formats files.
-- `pnpm test` runs Vitest; `pnpm test:coverage` runs Vitest with coverage.
-- `pnpm dev` starts the Vanilla demo; use `pnpm dev:angular`, `pnpm dev:react`, `pnpm dev:vue`, or `pnpm dev:aurelia` for framework demos.
-
-## Monorepo structure
-
-- Changes to `packages/` affect all framework wrappers.
-- Framework wrappers depend on core packages; prefer relative imports within packages.
-- Avoid circular dependencies.
-
-## Code review focus
-
-- Verify tests pass and coverage remains high.
-- Check impact across all four framework implementations.
-- Ensure new options do not contradict or overlap with existing ones.
-- Check that examples work in all framework demos.
-
-## Completion checklist
-
-- Review the diff for unrelated changes and accidental generated files.
-- Verify affected tests, lint, and formatting.
-- Mention any checks that could not be run and why.
-
-@RTK.md
+VEXP can auto-detect intent, combine hybrid ranking, use session memory, and expand its context budget as needed.
+<!-- /vexp -->
