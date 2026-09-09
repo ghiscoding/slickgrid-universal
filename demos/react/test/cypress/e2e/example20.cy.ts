@@ -35,6 +35,13 @@ describe('Example 20 - Pinned Grid', () => {
       .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
   });
 
+  it('should not show Column Pinning for the non-pinnable City of Origin column', () => {
+    cy.get('#grid20 [data-id="cityOfOrigin"] .slick-header-menu-button').click({ force: true });
+    cy.get('.slick-header-menu:visible [data-command="pin-column"]').should('not.exist');
+    cy.get('.slick-header-menu:visible [data-command="pin-columns"]').should('not.exist');
+    cy.get('body').trigger('mousedown');
+  });
+
   it('should have three top-pinned rows and left/center/right cells on page load', () => {
     const row0 = '#grid20 .slick-row[data-row="0"]';
 

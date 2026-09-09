@@ -98,15 +98,20 @@ grid.setOptions({
 
 ### Column pinning and stickiness
 
+For the complete sticky-column and sticky-row guide, see [Sticky Columns and Rows](../grid-functionalities/sticky.md).
+
 Use `Column.pinned` for a permanent per-column pin. The value is a physical edge (`left` or
 `right`); `null` explicitly returns a column to the center band.
 
-Set `Column.lockPinned: true` when users must not be able to change that column's pinning from
-the Header Menu. Programmatic pinning through the grid API remains available.
+Set `Column.pinnable: false` when users must not be able to change that column's pinning from
+the Header Menu. The option defaults to `true`, only controls the built-in UI, and leaves
+programmatic pinning through the grid API available. v11 does not need a `Column.stickable`
+counterpart because sticky columns do not have built-in Header Menu commands; use
+`Column.sticky` or `setColumnStickiness()` when the application controls sticky behavior.
 
 ```ts
 const columns: Column[] = [
-  { id: 'account', field: 'account', name: 'Account', pinned: 'left' },
+  { id: 'account', field: 'account', name: 'Account', pinned: 'left', pinnable: false },
   { id: 'amount', field: 'amount', name: 'Amount' },
   { id: 'actions', field: 'actions', name: 'Actions', pinned: 'right' },
 ];
@@ -218,6 +223,7 @@ properties are replaced; the one service method rename is intentional and breaki
 | `CurrentPinning.frozenColumn`, `frozenRow`, `frozenBottom` | `CurrentPinning.columns` / `CurrentPinning.rows` | Saved state shape changed |
 | `CurrentColumn` | `CurrentColumn.pinning` | Per-column pin side is persisted with the layout |
 | `Column` | `Column.pinned` / `Column.sticky` | Permanent and scroll-activated column docking |
+| `Column.lockPinned` | `Column.pinnable` | Set `pinnable: false` to hide Header Menu pinning commands; programmatic pinning remains available |
 | `GridStateService.changeColumnsArrangement()` | `GridStateService.applyColumnLayout()` | Method renamed |
 
 The following public interface members were also renamed or removed. The left-hand names below
@@ -307,8 +313,8 @@ expose the same `GridStateService` API.
 ### Header Menu commands
 
 Header menus now expose a `Column Pinning` root command with one directional pinning sub-menu.
-The sub-menu always contains all five commands, regardless of the selected column's current
-state:
+For pinnable columns, the sub-menu always contains all five commands, regardless of the selected
+column's current state. Set `pinnable: false` to remove the `Column Pinning` menu for a column.
 
 - `pin-left` pins the selected column to the left edge;
 - `pin-right` pins the selected column to the right edge;
@@ -423,6 +429,7 @@ integrations or extensions.
 - Replace `frozenColumn`, `frozenRow`, and `frozenBottom` with `pinning.columns` and `pinning.rows`.
 - Convert numeric right-edge requirements to a trailing count or stable id array.
 - Add `Column.pinned` or `Column.sticky` where pinning is per-column or scroll-activated.
+- Set `Column.pinnable: false` for columns that users must not pin or unpin from the Header Menu.
 - Migrate `GridState.pinning` and saved `CurrentPinning` values to the nested shape.
 - Add `CurrentColumn.pinning` to custom column presets that preserve individual pin sides.
 - Rename `changeColumnsArrangement()` to `applyColumnLayout()`.

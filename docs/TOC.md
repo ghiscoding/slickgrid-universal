@@ -70,6 +70,7 @@
 * [Pagination](grid-functionalities/pagination.md)
 * [Infinite Scroll](grid-functionalities/infinite-scroll.md)
 * [Pinning of Columns/Rows](grid-functionalities/pinning.md)
+* [Sticky Columns and Rows](grid-functionalities/sticky.md)
 * [Variable Row Height](grid-functionalities/variable-row-height.md)
 * [Row Detail](grid-functionalities/row-detail.md)
 * [Row Move (dragging)](grid-functionalities/row-move.md)

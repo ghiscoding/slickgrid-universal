@@ -128,7 +128,7 @@ function defineGrid() {
         } as ColumnEditorDualInput,
       },
     },
-    { id: 'cityOfOrigin', name: 'City of Origin', field: 'cityOfOrigin', minWidth: 100, sortable: true, filterable: true },
+    { id: 'cityOfOrigin', name: 'City of Origin', field: 'cityOfOrigin', minWidth: 100, sortable: true, filterable: true, pinnable: false },
     {
       id: 'action',
       name: 'Action',

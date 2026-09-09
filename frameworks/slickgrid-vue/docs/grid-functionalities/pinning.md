@@ -3,12 +3,17 @@
 - [Rows Pinning starting from Bottom](#rows-pinning-starting-from-bottom)
 - [Change Pinning Dynamically](#change-pinning-dynamically)
 - [Animated Gif Demo](#animated-gif-demo)
+- [Sticky Columns and Rows](sticky.md)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example20) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example20.vue)
 
 ### Introduction
 Pinning keeps selected columns or rows attached to a grid edge while the remaining content scrolls. Columns can be pinned on the left or right, and rows can be pinned at the top or bottom. You can also change pinning dynamically with `setOptions()`.
+
+Set `Column.pinnable` to `false` when a column must not be pinned or unpinned from the Header Menu. It defaults to `true` and only controls the built-in UI; `Column.pinned` and the programmatic pinning APIs remain available for application-controlled state.
+
+For scroll-activated docking, see [Sticky Columns and Rows](sticky.md). Sticky columns have no built-in Header Menu commands, so a separate `Column.stickable` flag is not needed.
 
 ## Columns/Rows Pinning basic
 To configure pinning for the entire lifetime of the grid, use the nested `pinning` Grid Option.

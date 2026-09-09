@@ -323,9 +323,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           let hasPinningOrResizeCommand = false;
           let bulkPinningCommandItem: MenuCommandItem | undefined;
           const columnPosition = columns.findIndex((col) => col.id === columnDef.id);
-          const isBulkPinningLocked =
-            columnPosition >= 0 && columns.slice(0, columnPosition + 1).some((column) => column?.lockPinned === true);
-          if (headerMenuOptions && !headerMenuOptions.hidePinningColumnsCommand && !isBulkPinningLocked) {
+          const hasNonPinnableColumnInRange =
+            columnPosition >= 0 && columns.slice(0, columnPosition + 1).some((column) => column?.pinnable === false);
+          if (headerMenuOptions && !headerMenuOptions.hidePinningColumnsCommand && !hasNonPinnableColumnInRange) {
             hasPinningOrResizeCommand = true;
             const cmdPin = 'pin-columns';
             bulkPinningCommandItem = {
@@ -341,7 +341,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           }
 
           // Single-column pinning writes only the selected column definition.
-          if (headerMenuOptions && !this._addonOptions?.hidePinColumnCommand && !columnDef.lockPinned) {
+          if (headerMenuOptions && !this._addonOptions?.hidePinColumnCommand && columnDef.pinnable !== false) {
             hasPinningOrResizeCommand = true;
             const cmdPin = 'pin-column';
             const existingPinColumnCommand = columnHeaderMenuItems.find((item) => item !== 'divider' && item?.command === cmdPin) as

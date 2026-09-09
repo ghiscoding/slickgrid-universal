@@ -179,6 +179,7 @@ const Example20: React.FC = () => {
         name: 'City of Origin',
         field: 'cityOfOrigin',
         minWidth: 100,
+        pinnable: false,
         filterable: true,
         sortable: true,
       },

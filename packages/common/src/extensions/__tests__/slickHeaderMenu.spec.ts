@@ -1321,8 +1321,8 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       });
 
-      it('should not offer pinning commands when the column is locked', () => {
-        const testColumns = [{ ...columnsMock[1], header: undefined, pinned: 'left', lockPinned: true }] as Column[];
+      it('should not offer pinning commands when the column is not pinnable', () => {
+        const testColumns = [{ ...columnsMock[1], header: undefined, pinned: 'left', pinnable: false }] as Column[];
         const getColumnsSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(testColumns);
 
         plugin.init();

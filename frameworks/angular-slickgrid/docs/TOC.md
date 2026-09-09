@@ -77,6 +77,7 @@
 * [Header Menu & Header Buttons](grid-functionalities/header-menu-header-buttons.md)
 * [Infinite Scroll](grid-functionalities/infinite-scroll.md)
 * [Pinning of Columns/Rows](grid-functionalities/pinning.md)
+* [Sticky Columns and Rows](grid-functionalities/sticky.md)
 * [Variable Row Height](grid-functionalities/variable-row-height.md)
 * [Providing data to the grid](grid-functionalities/providing-grid-data.md)
 * [Row Detail](grid-functionalities/row-detail.md)

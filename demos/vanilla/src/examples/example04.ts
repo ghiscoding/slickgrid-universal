@@ -258,6 +258,7 @@ export default class Example04 {
         id: 'cityOfOrigin',
         name: 'City of Origin',
         field: 'cityOfOrigin',
+        pinnable: false,
         filterable: true,
         sortable: true,
         minWidth: 100,

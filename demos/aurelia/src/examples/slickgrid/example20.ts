@@ -111,7 +111,15 @@ export class Example20 {
         filter: { model: Filters.compoundSlider },
         editor: { model: Editors.dualInput, params: dual },
       },
-      { id: 'cityOfOrigin', name: 'City of Origin', field: 'cityOfOrigin', minWidth: 100, sortable: true, filterable: true },
+      {
+        id: 'cityOfOrigin',
+        name: 'City of Origin',
+        field: 'cityOfOrigin',
+        minWidth: 100,
+        sortable: true,
+        filterable: true,
+        pinnable: false,
+      },
       {
         id: 'action',
         name: 'Action',

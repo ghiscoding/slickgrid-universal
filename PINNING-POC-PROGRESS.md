@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness POC — progress handoff
 
-Last updated: 2026-09-09 (framework cell-menu parity and migration documentation reviewed; legacy runtime removal and structural alias audit remain)
+Last updated: 2026-09-09 (Header Menu pinning guard renamed to `pinnable`; pinning and v11 migration docs reviewed; legacy runtime removal and structural alias audit remain)
 
 ## Goal
 
@@ -33,8 +33,9 @@ and write the unified shape; sticky configuration remains separate because it ha
 different scroll-activated semantics. `CurrentColumn.pinning` also carries the
 per-column side in column layouts, providing a hybrid preset representation for
 consumers that do not want to persist a separate aggregate pinning object.
-`Column.lockPinned` prevents Header Menu pinning changes for protected columns while leaving
-programmatic pinning available.
+`Column.pinnable` defaults to `true`; setting it to `false` prevents Header Menu pinning changes
+for protected columns while leaving programmatic pinning available. Sticky columns do not expose
+Header Menu commands, so there is no separate `Column.stickable` option.
 
 Vanilla Example 11 serializes the new nested `CurrentPinning` shape in its
 saved views and intentionally opts into both pinning header commands to
@@ -47,12 +48,21 @@ pinning resolver. Neither action uses removed legacy options or validation. The 
 setting controls the bulk command, while `hidePinColumnCommand` controls the
 single-column command.
 
+Vanilla Example 04 and the Angular, Aurelia, React, and Vue Example 20 fixtures mark
+`City of Origin` as `pinnable: false`; their Cypress suites verify that its Header Menu omits
+the `Column Pinning` commands while programmatic right pinning remains available.
+
+Sticky usage is documented separately in `docs/grid-functionalities/sticky.md` and the matching
+framework documentation, with links from each pinning guide and documentation TOC.
+
 The Header Menu now exposes a `pin-column` root command displayed as `Column Pinning`. Its
 sub-menu always contains `pin-left`, `pin-right`, and `pin-columns`, followed by a separator,
 then `unpin-column` and `unpin-columns`. The first two commands set the selected column's
 `Column.pinned` side, `pin-columns` writes the aggregate `pinning.columns.left` boundary, and the
 two unpin commands clear the selected column or all aggregate column edges. All five commands
-remain visible regardless of the current pin state.
+remain visible regardless of the current pin state when `Column.pinnable !== false`; setting
+`pinnable: false` removes the `Column Pinning` menu for that column and excludes it from bulk
+pin-through operations.
 The old bulk command ids and translation keys are documented only in the v11 migration guide;
 none recreates the old two-pane layout.
 
@@ -328,6 +338,7 @@ is resolved through the shared controller.
 ```ts
 interface Column {
   pinned?: 'left' | 'right' | null;
+  pinnable?: boolean;
   sticky?: 'left' | 'right' | 'both' | boolean;
 }
 ```
@@ -680,10 +691,10 @@ requirements are the two largest sources of variance.
 10. **Column reorder policy is undecided.** The visual order groups permanent pins at the edges, but dragging between center and pinned regions does not yet automatically change `pinned` state.
 11. **Header Menu terminology is now pinning-based.** The `Column Pinning` root opens an
     always-visible sub-menu containing `Pin Left`, `Pin Right`, `Pin Through Here`, a separator,
-    `Unpin Column`, and `Unpin All Columns`. The directional commands write `Column.pinned`, the
-    through-here command writes `pinning.columns.left`, and the unpin commands clear the selected
-    column or all aggregate column edges. The removed v10 names remain documented in the migration
-    guide only.
+    `Unpin Column`, and `Unpin All Columns` for pinnable columns. The directional commands write
+    `Column.pinned`, the through-here command writes `pinning.columns.left`, and the unpin commands
+    clear the selected column or all aggregate column edges. The removed v10 names remain documented
+    in the migration guide only.
 12. **Public controller surface is provisional.** `DockingController` is currently exported for the POC; it may be better kept internal in the final API.
 13. **Migration references are intentionally narrow.** Historical option names, command ids,
     translation keys, and labels belong in the v11 migration guide. Active runtime code and
