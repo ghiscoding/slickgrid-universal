@@ -648,7 +648,6 @@
 
   .slick-header-column.slick-state-default {
     position: relative;
-    display: inline-block;
     // Header roots are flex containers in the docking layout. Keep each
     // column's explicit width intact instead of allowing flex-shrink to
     // silently reduce it when the total columns exceed the viewport.
@@ -663,11 +662,6 @@
     border-left: 0px !important;
     border-top: 0px !important;
     border-bottom: 0px !important;
-    float: left;
-
-    .slick-rtl & {
-      float: right;
-    }
   }
 
   .slick-header-column {

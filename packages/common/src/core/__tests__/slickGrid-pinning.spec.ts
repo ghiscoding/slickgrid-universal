@@ -709,6 +709,25 @@ describe('SlickGrid unified pinning', () => {
     expect(handleScrollSpy).toHaveBeenCalledTimes(3);
   });
 
+  it('floors mouse-wheel and internal scroll offsets at zero', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+    Object.defineProperty(internals._viewportScrollContainerX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
+
+    internals.handleMouseWheel(new WheelEvent('wheel', { deltaX: -18 }), 0, 0, 0);
+
+    expect(internals.scrollLeft).toBe(0);
+
+    internals.scrollLeft = -18;
+    internals.scrollTop = -25;
+    internals.prevScrollLeft = 0;
+    internals.prevScrollTop = 0;
+    internals._handleScroll('mousewheel');
+
+    expect(internals.scrollLeft).toBe(0);
+    expect(internals.scrollTop).toBe(0);
+  });
+
   it('renders when horizontal scrolling changes the pinned-column layout', () => {
     const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });
     const internals = slickGrid as any;

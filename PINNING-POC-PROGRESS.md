@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness POC — progress handoff
 
-Last updated: 2026-09-09 (horizontal scroll hardening and fast vertical-scroll audit, Example 58 framework parity, pinning locale audit, and progress/TODO review; legacy runtime removal and structural alias audit remain)
+Last updated: 2026-09-09 (header flex cleanup, horizontal scroll hardening and fast vertical-scroll audit, Example 58 framework parity, pinning locale audit, and progress/TODO review; legacy runtime removal and structural alias audit remain)
 
 ## Goal
 
@@ -95,6 +95,12 @@ distances without flooring either at zero. A negative `scrollLeft` produced a ne
 `--slick-docking-scroll-left` custom property, which showed up as a white gap on the left side of
 pinned/docked examples (e.g. vanilla Example 04) along with misaligned pinned-right columns.
 Both `handleMouseWheel` and `_handleScroll` now floor `scrollLeft` (and `scrollTop`) at zero.
+
+Header columns now rely exclusively on their existing flex root and `flex: 0 0 auto`; the obsolete
+column-level inline-block and LTR/RTL float declarations were removed after the old ±1000px header
+offset disappeared. Vanilla Example 42 and framework Example 53 Cypress coverage verify flex
+layout, `float: none`, and the configured `--slick-header-row-count`, while Example 33 retains
+auto-header-height coverage.
 
 The POC has gone through visual hardening, selected Cypress migration, framework demo parity,
 and removal of the legacy pane options/interfaces and runtime branches. The common unit suite
