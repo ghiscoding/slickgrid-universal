@@ -354,7 +354,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
       .find('[data-command="pin-column"]')
-      .should('contain', 'Épinglage de colonnes')
+      .should('contain', 'Épinglage de colonne')
       .trigger('mouseover');
 
     cy.get('.slick-submenu:visible [data-command="pin-columns"]').should('contain', "Épingler jusqu'ici").click();

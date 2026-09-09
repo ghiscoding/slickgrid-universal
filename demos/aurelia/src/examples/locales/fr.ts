@@ -19,7 +19,7 @@ export const localeFrench = {
   TEXT_EXPORT_TO_TEXT_FORMAT: 'Exporter en format texte',
   TEXT_FILTER_SHORTCUTS: 'Raccourcis de filtre',
   TEXT_FORCE_FIT_COLUMNS: 'Ajustement forcé des colonnes',
-  TEXT_PIN_COLUMN: 'Épinglage de colonnes',
+  TEXT_PIN_COLUMN: 'Épinglage de colonne',
   TEXT_PIN_COLUMNS: "Épingler jusqu'ici",
   TEXT_PIN_LEFT: 'Épingler à gauche',
   TEXT_PIN_RIGHT: 'Épingler à droite',

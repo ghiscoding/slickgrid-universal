@@ -93,7 +93,7 @@ export class TranslateServiceStub {
         output = this.currentLang === 'en' ? 'Force fit columns' : 'Ajustement forcé des colonnes';
         break;
       case 'PIN_COLUMN':
-        output = this.currentLang === 'en' ? 'Column Pinning' : 'Épinglage de colonnes';
+        output = this.currentLang === 'en' ? 'Column Pinning' : 'Épinglage de colonne';
         break;
       case 'PIN_COLUMNS':
         output = this.currentLang === 'en' ? 'Pin Through Here' : "Épingler jusqu'ici";

@@ -96,7 +96,7 @@ export class TranslaterServiceStub implements TranslaterService {
         output = this._locale === 'en' ? 'Force fit columns' : 'Ajustement forcé des colonnes';
         break;
       case 'PIN_COLUMN':
-        output = this._locale === 'en' ? 'Column Pinning' : 'Épinglage de colonnes';
+        output = this._locale === 'en' ? 'Column Pinning' : 'Épinglage de colonne';
         break;
       case 'PIN_COLUMNS':
         output = this._locale === 'en' ? 'Pin Through Here' : "Épingler jusqu'ici";
