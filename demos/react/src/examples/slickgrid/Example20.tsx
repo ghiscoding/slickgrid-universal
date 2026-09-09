@@ -26,6 +26,7 @@ const Example20: React.FC = () => {
   const [isSelectAllShownAsColumnTitle, setIsSelectAllShownAsColumnTitle] = useState(false);
   const checkboxSelectorRef = useRef<any>(null);
   const pinnedColumnCountRef = useRef(2);
+  const pinnedRowCountInputRef = useRef<HTMLInputElement>(null);
   const pinnedRightColumnInputRef = useRef<HTMLInputElement>(null);
   const pinnedRightColumnCountRef = useRef(1);
 
@@ -283,7 +284,8 @@ const Example20: React.FC = () => {
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
   function changePinnedColumnCount(e: React.FormEvent<HTMLInputElement>) {
-    setPinnedColumnCount(+(e.target as HTMLInputElement).value || 0);
+    const value = +(e.currentTarget.value || 0);
+    setPinnedColumnCount(value);
   }
 
   function updatePinnedColumnCount() {
@@ -291,16 +293,17 @@ const Example20: React.FC = () => {
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
-  function changePinnedRowCount(e: React.FormEvent<HTMLInputElement>) {
-    const pinnedRow = +((e.target as HTMLInputElement)?.value ?? 0);
-    setPinnedRowCount(pinnedRow);
-  }
-
   function updatePinnedRowCount() {
-    const rows = Array.from({ length: Math.max(0, pinnedRowCount) }, (_v, i) => i);
-    reactGridRef.current?.slickGrid?.setOptions({
+    const inputValue = pinnedRowCountInputRef.current?.value;
+    const nextPinnedRowCount = Math.max(0, Number(inputValue ?? pinnedRowCount) || 0);
+    const rows = Array.from({ length: nextPinnedRowCount }, (_v, i) => i);
+
+    const slickGrid = reactGridRef.current?.slickGrid;
+    slickGrid?.setOptions({
       pinning: { rows: isPinnedBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } },
     });
+
+    setPinnedRowCount(nextPinnedRowCount);
   }
 
   function getContextMenuOptions(): any {
@@ -406,29 +409,28 @@ const Example20: React.FC = () => {
 
   function setPinnedColumns(left: number, right = pinnedRightColumnCount) {
     const nextRight = Math.max(0, Number(right) || 0);
-    const leftIds = left >= 0 ? ['_checkbox_selector', 'title', 'percentComplete'].slice(0, left + 1) : [];
     const rightIds = ['cityOfOrigin', 'action'].slice(Math.max(0, 2 - nextRight));
     pinnedColumnCountRef.current = left;
     pinnedRightColumnCountRef.current = nextRight;
-    reactGridRef.current?.slickGrid.setOptions({ pinning: { columns: { left: leftIds, right: rightIds } } });
+    reactGridRef.current?.slickGrid.setOptions({
+      pinning: { columns: { left: left >= 0 ? left : [], right: rightIds } },
+    });
     setPinnedColumnCount(left);
     setPinnedRightColumnCount(nextRight);
+    if (pinnedRightColumnInputRef.current) {
+      pinnedRightColumnInputRef.current.value = `${nextRight}`;
+    }
   }
 
   function reapplyPinnedColumns() {
     const left = pinnedColumnCountRef.current;
     const right = pinnedRightColumnCountRef.current;
-    const leftIds = left >= 0 ? ['_checkbox_selector', 'title', 'percentComplete'].slice(0, left + 1) : [];
     const rightIds = ['cityOfOrigin', 'action'].slice(Math.max(0, 2 - right));
-    reactGridRef.current?.slickGrid.setOptions({ pinning: { columns: { left: leftIds, right: rightIds } } });
-  }
-
-  function changePinnedRightColumnCount(e: React.FormEvent<HTMLInputElement>) {
-    setPinnedRightColumnCount(+(e.target as HTMLInputElement).value || 0);
+    reactGridRef.current?.slickGrid.setOptions({ pinning: { columns: { left: left >= 0 ? left : [], right: rightIds } } });
   }
 
   function updatePinnedRightColumnCount() {
-    const nextRight = +(pinnedRightColumnInputRef.current?.value ?? pinnedRightColumnCount) || 0;
+    const nextRight = Math.max(0, Number(pinnedRightColumnInputRef.current?.value ?? pinnedRightColumnCount) || 0);
     setPinnedColumns(pinnedColumnCount, nextRight);
   }
 
@@ -524,14 +526,19 @@ const Example20: React.FC = () => {
         <div className="col-sm-12">
           <span>
             <label htmlFor="">Pinned Rows: </label>
-            <input type="number" defaultValue={pinnedRowCount} onInput={($event) => changePinnedRowCount($event)} />
+            <input ref={pinnedRowCountInputRef} type="number" defaultValue={pinnedRowCount} />
             <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" onClick={() => updatePinnedRowCount()}>
               Set
             </button>
           </span>
           <span style={{ marginLeft: '10px' }}>
             <label htmlFor="">Pinned Columns: </label>
-            <input type="number" value={pinnedColumnCount} onChange={($event) => changePinnedColumnCount($event)} />
+            <input
+              className="pinned-column-count"
+              type="number"
+              value={pinnedColumnCount}
+              onChange={($event) => changePinnedColumnCount($event)}
+            />
             <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" onClick={() => updatePinnedColumnCount()}>
               Set
             </button>
@@ -539,12 +546,11 @@ const Example20: React.FC = () => {
           <span style={{ marginLeft: '10px' }}>
             <label htmlFor="">Pinned Right: </label>
             <input
-              ref={pinnedRightColumnInputRef}
               className="pinned-right-column-count"
               type="number"
               min="0"
-              value={pinnedRightColumnCount}
-              onChange={($event) => changePinnedRightColumnCount($event)}
+              defaultValue={pinnedRightColumnCount}
+              ref={pinnedRightColumnInputRef}
             />
             <button
               className="btn btn-outline-secondary btn-xs btn-icon mx-1"
