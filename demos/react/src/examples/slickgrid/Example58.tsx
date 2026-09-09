@@ -22,7 +22,8 @@ interface FinancialRow extends Record<PeriodField, number> {
   summaryKind?: SummaryKind;
 }
 
-const numberFormatter: Formatter<FinancialRow> = (_row, _cell, value) => new Intl.NumberFormat('en-US').format(Number(value));
+const numberFormat = new Intl.NumberFormat('en-US');
+const numberFormatter: Formatter<FinancialRow> = (_row, _cell, value) => numberFormat.format(Number(value));
 
 const summaryAccountFormatter: Formatter<FinancialRow> = (_row, _cell, value, _column, item) =>
   item.summaryKind ? `<span class="financial-summary-label">${value}</span>` : value;

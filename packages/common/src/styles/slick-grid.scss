@@ -180,8 +180,7 @@
       height: 1px;
     }
 
-    .grid-canvas,
-    .slick-docking-overlay {
+    .grid-canvas {
       will-change: transform;
     }
 
@@ -190,6 +189,7 @@
     // transformed window to the viewport's content width, however, so the
     // overlay rows cannot paint over the native vertical scrollbar.
     .slick-docking-overlay {
+      will-change: transform, clip-path;
       clip-path: inset(
         0 calc(100% - var(--slick-docking-scroll-left, 0px) - var(--slick-docking-viewport-width, 100%)) 0
           var(--slick-docking-scroll-left, 0px)

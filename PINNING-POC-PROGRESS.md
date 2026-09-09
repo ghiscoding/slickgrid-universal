@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness POC — progress handoff
 
-Last updated: 2026-09-09 (Header Menu pinning guard renamed to `pinnable`; pinning and v11 migration docs reviewed; legacy runtime removal and structural alias audit remain)
+Last updated: 2026-09-09 (horizontal scroll hardening and fast vertical-scroll audit, Example 58 framework parity, pinning locale audit, and progress/TODO review; legacy runtime removal and structural alias audit remain)
 
 ## Goal
 
@@ -55,6 +55,17 @@ the `Column Pinning` commands while programmatic right pinning remains available
 Sticky usage is documented separately in `docs/grid-functionalities/sticky.md` and the matching
 framework documentation, with links from each pinning guide and documentation TOC.
 
+The sticky financial-report fixture from Vanilla Example 47 is also available as Example 58 in
+the Angular, Aurelia, React, and Vue demos. Each framework route includes the same 18-column
+report, two-sided sticky columns, sticky summary rows, docking budgets, and a focused Cypress
+smoke test. The recent `Column.pinnable` behavior is covered by Vanilla Example 04 and all
+framework Example 20 equivalents.
+
+All available pinning locale assets and translation stubs were reviewed. The French singular
+`PIN_COLUMN`/`TEXT_PIN_COLUMN` label is now `Épinglage de colonne`, matching the singular
+`UNPIN_COLUMN` label; plural bulk actions remain plural. The English `Column Pinning` text is
+intentionally retained as the Header Menu root label.
+
 The Header Menu now exposes a `pin-column` root command displayed as `Column Pinning`. Its
 sub-menu always contains `pin-left`, `pin-right`, and `pin-columns`, followed by a separator,
 then `unpin-column` and `unpin-columns`. The first two commands set the selected column's
@@ -65,6 +76,17 @@ remain visible regardless of the current pin state when `Column.pinnable !== fal
 pin-through operations.
 The old bulk command ids and translation keys are documented only in the v11 migration guide;
 none recreates the old two-pane layout.
+
+Horizontal scrolling now uses the browser's native `WheelEvent` pixel deltas for trackpads and
+physical horizontal-wheel mice. Legacy horizontal-wheel clicks advance by at least 40px instead
+of the old 10px increment, while Shift+wheel falls back to the vertical delta when needed. In
+docking mode a scroll event applies compositor transforms once rather than twice, and horizontal
+virtual-cell rendering is coalesced on `requestAnimationFrame`. Sticky-column band resolution
+uses the same frame cadence, keeping Vanilla Example 47's sticky transitions responsive without
+performing repeated resolver/render work during a rapid horizontal scroll. The financial-report
+examples also reuse one `Intl.NumberFormat` instance instead of allocating one per rendered cell.
+Unchanged sticky passes now preserve the active layout/map, per-scroll updates no longer rewrite
+invariant docking offsets, and the moving sticky-row clip is compositor-promoted.
 
 The POC has gone through visual hardening, selected Cypress migration, framework demo parity,
 and removal of the legacy pane options/interfaces and runtime branches. The common unit suite
@@ -133,7 +155,9 @@ documentation work may continue while the follow-up deletion audit is underway.
 - [x] The optional `.slick-docking-overlay` is not created for a grid without row pinning or
   sticky-row configuration. Once row docking is configured, the overlay remains a stable row layer
   even when no row is currently active.
-- rowspan z-index is problematic with new docking overlay, need further investigation
+- [x] Rowspan stacking was reviewed for the docking overlay. The spanning cell retains its own
+  elevated z-index while the host row keeps normal stacking, and active rowspan rows no longer
+  receive padding that can clip the span.
 - [x] Restored the original `.slick-viewport` horizontal scroll element for ordinary grids. The
   active horizontal scroll element always receives the generic `.slick-horizontal-scroller`
   class: ordinary grids apply it to `.slick-viewport`, while grids with pinning/sticky docking
@@ -146,16 +170,29 @@ documentation work may continue while the follow-up deletion audit is underway.
   left/right bands consume the viewport are rejected and preserve the previous state.
 - [x] Header regions expose `.slick-header-columns-left/center/right` (and equivalent header-row/
   footer-row classes), so consumers can identify each region without relying on removed pane roots.
-- a11y issues with sticky example when using arrows to navigate, it jumps from a center column to a sticky column, is that expected? I would think that it should rather move the scroll instead and show next data cell instead (that is what the legacy pane implementation did, also need to verify new pinning feature).
-- probably need more pinning Cypress test in vanilla example04.cy.ts to cover the new feature.
-- why is context menu opened outside of the grid viewport in vanilla example04.cy.ts? The context menu position is unexpected (seemed to be the tests in describe "accessibility sub-menus tests").
+- [x] Sticky keyboard navigation now scrolls to a candidate's natural position before activating
+  it, so ArrowRight does not unexpectedly jump from a center cell into a docked sticky cell.
+  Example 47 Cypress coverage also verifies sticky summary rows remain keyboard-addressable.
+- [x] Added dedicated right-pinning Cypress coverage to Vanilla Example 04, including multiple
+  right columns, chrome alignment, scrolling, dynamic disable/re-enable, and edge removal.
+- [x] Root context menus are clamped to the visible grid container when a target cell is outside
+  the viewport, preventing the accessibility sub-menu tests from opening the menu off-grid.
 - [x] Audited legacy configuration names. The former flat pinning options are removed from
   runtime code; historical references remain only in the
   migration guide and documented theme-variable compatibility notes.
-- address comment brought up in SlickGrid for new pinning/sticky features:
+- [ ] Revisit fast vertical-scroll blanking as a separate virtual-rendering task after the
+  pinning/sticky work is merged. Example 47 has 29 rows, but its initial neutral-direction range
+  renders only the visible rows plus the default 3-row buffer on each side; the full one-viewport
+  directional buffer is added only after scrolling starts. Jumps of at least one viewport use the
+  `scrollRenderThrottling` path (10ms by default), which can briefly expose rows before a queued
+  render. Profile that independently from `refreshRowDockingLayout()`, which currently resolves
+  sticky rows and synchronizes the rendered row cache on every vertical scroll event.
+- address comment brought up in SlickGrid for new pinning/sticky features (deferred; revisit later
+  as a separate curated-skills task):
   > I think the major version would indicate this well enough. yeah its a bit more than a break, its a feature deprecation sort of, but the replacement is subjectively better for me.
   > what the latest push in AI development made me think of though is that we might should start thinking about shipping curated skills along with the library. that would serve two purposes. first, LLMs would know better how to apply specific features from slickgrid on the consumer end. but secondly, the skills could also act as a verification of the docs and thus overall improve the development of new features as LLMs could check up on skills when touching existing features
-- identify and document breaking changes (docs folder)
+- [x] Identify and document breaking changes in the v11 migration guide, including canonical
+  pinning, sticky docking, `pinnable`, removed legacy options, and Header Menu terminology.
 - **COMPLETED MAJOR CLEANUP:** removed the legacy grid options, public interfaces,
   runtime validation names, state/service plumbing, and old multi-pane behavior across
   `SlickGrid`, GridState/GridService, header grouping, resizer, extensions, and framework
@@ -310,8 +347,9 @@ frame. Pinned region boundaries use the current `--slick-pinned-border-right` an
 `--slick-pinned-border-bottom` theme variables for body rows and column chrome. The former
 Legacy theme variable names are migration-guide references only. The horizontal
 row boundary is emitted only on the last top-pinned row (or first bottom-pinned row), rather
-than repeating across every pinned row. Per-scroll vertical updates no longer rewrite pinned rows; normal
-virtual rows are repositioned only when a page offset actually changes. The overlay now
+than repeating across every pinned row. Normal virtual rows are repositioned only when a page
+offset actually changes; the separate follow-up above will audit the row-docking synchronization
+that still runs during vertical scrolling. The overlay now
 inherits the normal grid-cell typography, borders, alternating backgrounds, and selection
 styles, and is stacked above hovered scrolling rows so the pinned content cannot show through.
 Header-row and footer cells in pinned bands now receive explicit border-box widths, so filter
@@ -502,6 +540,16 @@ for `slickGrid.ts`. The framework Cypress TypeScript configs also pass after
 the custom-command typing fix. The root Cypress config still reports unrelated existing
 errors in `test/cypress/support/common.ts` and `test/cypress/support/index.ts`; a Cypress
 run in the current agent environment exits with code 132 before browser startup.
+
+The Angular, Aurelia, React, and Vue demo builds pass with the Example 58 framework parity
+implementation. Prettier and `git diff --check` also pass for the new demo routes, styles, and
+focused Cypress smoke specs. The new framework Cypress specs were added but not run in this
+session because the developer watch/Cypress UI session was already active.
+
+The focused SlickGrid pinning/interaction unit tests, common-package TypeScript check, Oxlint,
+and `git diff --check` pass after the horizontal wheel/scroll performance change. Focused
+SlickGrid coverage executes every changed performance line; the aggregate report remains at
+99.97% lines because of the pre-existing untested `getSelectedRows()` no-selection error path.
 
 The Cypress custom-command return-type fix was applied consistently to the root, Angular,
 Aurelia, React, and Vue support copies: `getCell`/`getNthCell` now return

@@ -508,7 +508,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected scrollThrottle!: { enqueue: () => void; dequeue: () => void };
   /** Defers expensive horizontal virtual-cell renders so compositor offsets can paint first. */
-  protected singleViewportRenderTimer?: ReturnType<typeof setTimeout>;
+  protected singleViewportRenderTimer?: number;
   /** Coalesces sticky-column resolution to one layout pass per animation frame. */
   protected stickyColumnLayoutFrame?: number;
 
@@ -3423,21 +3423,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.h_editorLoader,
       this.h_postrender,
       this.h_postrenderCleanup,
-      this.singleViewportRenderTimer,
     ].forEach((timer) => {
       if (timer) {
         clearTimeout(timer);
       }
     });
-    this.singleViewportRenderTimer = undefined;
-    if (this.stickyColumnLayoutFrame !== undefined) {
-      if (typeof cancelAnimationFrame === 'function') {
-        cancelAnimationFrame(this.stickyColumnLayoutFrame);
-      } else {
-        clearTimeout(this.stickyColumnLayoutFrame);
-      }
-      this.stickyColumnLayoutFrame = undefined;
-    }
+    this.cancelSingleViewportRender();
+    this.cancelScheduledAnimationFrame(this.stickyColumnLayoutFrame);
+    this.stickyColumnLayoutFrame = undefined;
   }
 
   protected clearAutoScrollTimer(): void {
@@ -4242,10 +4235,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return true;
   }
 
-  protected refreshDockingLayout(scrollLeft: number = this.scrollLeft): boolean {
+  protected refreshDockingLayout(scrollLeft: number = this.scrollLeft, preserveUnchanged = false): boolean {
     const previousRevision = this.dockingLayout.revision;
     this.dockingController.setOptions(this._options.docking);
-    this.dockingLayout = this.dockingController.resolveColumns(
+    const nextLayout = this.dockingController.resolveColumns(
       this.columns,
       scrollLeft,
       // Sticky thresholds must use the body viewport's visible width. The
@@ -4255,6 +4248,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.getViewportInnerWidth() || this.viewportW || Utils.width(this._container) || 0,
       this._options.rtl ? 'right' : 'left'
     );
+    if (preserveUnchanged && nextLayout.revision === previousRevision) {
+      return false;
+    }
+    this.dockingLayout = nextLayout;
     this.dockingByColumn.clear();
     for (const entry of [...this.dockingLayout.left, ...this.dockingLayout.center, ...this.dockingLayout.right]) {
       this.dockingByColumn.set(entry.index, entry);
@@ -5108,11 +5105,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Number} x
    */
   scrollToX(x: number): void {
-    this._viewportScrollContainerX.scrollLeft = x;
+    if (this._viewportScrollContainerX.scrollLeft !== x) {
+      this._viewportScrollContainerX.scrollLeft = x;
+    }
 
     if (this.hasDockingHorizontalScroller()) {
       const translateX = `translate3d(${-x}px, 0, 0)`;
-      const viewportWidth = this._dockingHorizontalScroller!.clientWidth || this.viewportW;
       this._canvasTopL.style.transform = translateX;
       if (this._dockingOverlay) {
         this._dockingOverlay.style.transform = translateX;
@@ -5129,8 +5127,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this._topHeaderPanel.style.transform = translateX;
       }
       this._container.style.setProperty('--slick-docking-scroll-left', `${x}px`);
-      this._container.style.setProperty('--slick-docking-right-offset', `${viewportWidth - this.dockingLayout.contentWidth}px`);
-      this._container.style.setProperty('--slick-docking-row-right-offset', `${viewportWidth - this.getDockingRenderedWidth()}px`);
       return;
     }
 
@@ -6901,7 +6897,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const handled = this._handleScroll(e ? 'scroll' : 'system');
     // Reapply transforms even when the numeric offset is unchanged after a
     // route transition or explicit reset.
-    if (this.hasDockingHorizontalScroller()) {
+    if (this.hasDockingHorizontalScroller() && !handled) {
       this.scrollToX(this.scrollLeft);
     }
     return handled;
@@ -7089,21 +7085,41 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Queue a render behind the current scroll task in the single-viewport POC.
+   * Queue a render for the next paint in the single-viewport POC.
    *
    * Native body scrolling is compositor-driven, while rendering missing center
    * cells is main-thread work. Running that work synchronously from the scroll
    * handler can prevent the already-updated header transform from painting in
-   * the same frame, especially during fast trackpad/wheel scrolling.
+   * the same frame, especially during fast trackpad/wheel scrolling. Sticky
+   * layout resolution is also queued on animation frames, so both operations
+   * resolve in the same paint cycle.
    */
   protected enqueueSingleViewportRender(): void {
-    if (this.singleViewportRenderTimer) {
+    if (this.singleViewportRenderTimer !== undefined) {
       return;
     }
-    this.singleViewportRenderTimer = setTimeout(() => {
+
+    const render = () => {
       this.singleViewportRenderTimer = undefined;
       this.render();
-    }, 0);
+    };
+    this.singleViewportRenderTimer = this.scheduleAnimationFrame(render);
+  }
+
+  protected cancelSingleViewportRender(): void {
+    this.cancelScheduledAnimationFrame(this.singleViewportRenderTimer);
+    this.singleViewportRenderTimer = undefined;
+  }
+
+  protected scheduleAnimationFrame(callback: FrameRequestCallback): number {
+    return typeof requestAnimationFrame === 'function' ? requestAnimationFrame(callback) : (setTimeout(callback, 16) as unknown as number);
+  }
+
+  protected cancelScheduledAnimationFrame(frame?: number): void {
+    if (frame !== undefined) {
+      globalThis.cancelAnimationFrame?.(frame);
+      clearTimeout(frame);
+    }
   }
 
   /** Whether the current column definitions contain scroll-activated sticky candidates. */
@@ -7127,7 +7143,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         return;
       }
 
-      const dockingChanged = this.refreshDockingLayout(this.scrollLeft);
+      const dockingChanged = this.refreshDockingLayout(this.scrollLeft, true);
       if (!dockingChanged) {
         return;
       }
@@ -7137,7 +7153,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // second sticky resolver pass in the same animation frame.
       this.updateColumnPositionCaches();
       this.applyColumnWidths();
-      this.scrollToX(this.scrollLeft);
       this.applyDockingToColumnChrome();
 
       // A sticky transition normally only moves a few columns between the
@@ -7159,19 +7174,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // regions to reuse. Keep the conservative full render for that uncommon
       // structural change.
       this.invalidateAllRows();
-      if (this.singleViewportRenderTimer) {
-        clearTimeout(this.singleViewportRenderTimer);
-        this.singleViewportRenderTimer = undefined;
-      }
+      this.cancelSingleViewportRender();
       this.lastRenderedScrollLeft = Number.NaN;
       this.render();
     };
 
-    if (typeof requestAnimationFrame === 'function') {
-      this.stickyColumnLayoutFrame = requestAnimationFrame(update);
-    } else {
-      this.stickyColumnLayoutFrame = setTimeout(update, 16) as unknown as number;
-    }
+    this.stickyColumnLayoutFrame = this.scheduleAnimationFrame(update);
   }
 
   protected asyncPostProcessRows(): void {
@@ -7492,12 +7500,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected handleMouseWheel(e: MouseEvent, _delta: number, deltaX: number, deltaY: number): void {
     this.scrollHeight = this._viewportScrollContainerY.scrollHeight;
-    if (e.shiftKey) {
-      this.scrollLeft = this._viewportScrollContainerX.scrollLeft + deltaX * 10;
-    } else {
+    const wheelEvent = e as WheelEvent;
+    const lineSize = Math.max(40, this._options.rowHeight!);
+    const nativeDelta = wheelEvent.deltaX || (e.shiftKey ? wheelEvent.deltaY : 0);
+    const deltaModeFactor = wheelEvent.deltaMode === 1 ? lineSize : wheelEvent.deltaMode === 2 ? this.viewportW : 1;
+    const horizontalDelta = nativeDelta ? nativeDelta * deltaModeFactor : (deltaX || (e.shiftKey ? -deltaY : 0)) * lineSize;
+    if (!e.shiftKey) {
       this.scrollTop = Math.max(0, this._viewportScrollContainerY.scrollTop - deltaY * this._options.rowHeight!);
-      this.scrollLeft = this._viewportScrollContainerX.scrollLeft + deltaX * 10;
     }
+    this.scrollLeft = this._viewportScrollContainerX.scrollLeft + horizontalDelta;
     const handled = this._handleScroll('mousewheel');
     if (handled) {
       e.stopPropagation();

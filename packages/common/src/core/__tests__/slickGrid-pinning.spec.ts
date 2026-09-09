@@ -643,8 +643,10 @@ describe('SlickGrid unified pinning', () => {
   it('defers a single-viewport render until the scheduled render callback runs', () => {
     const slickGrid = createGrid();
     const renderSpy = vi.spyOn(slickGrid, 'render').mockImplementation(() => undefined);
+    const originalRequestAnimationFrame = globalThis.requestAnimationFrame;
     vi.useFakeTimers();
     try {
+      Object.defineProperty(globalThis, 'requestAnimationFrame', { configurable: true, value: undefined });
       (slickGrid as any).enqueueSingleViewportRender();
       (slickGrid as any).enqueueSingleViewportRender();
       expect(renderSpy).not.toHaveBeenCalled();
@@ -653,6 +655,7 @@ describe('SlickGrid unified pinning', () => {
       expect(renderSpy).toHaveBeenCalledTimes(1);
     } finally {
       vi.useRealTimers();
+      Object.defineProperty(globalThis, 'requestAnimationFrame', { configurable: true, value: originalRequestAnimationFrame });
     }
   });
 
@@ -691,14 +694,19 @@ describe('SlickGrid unified pinning', () => {
     const regularEvent = new MouseEvent('mousewheel', { cancelable: true });
     (slickGrid as any).handleMouseWheel(regularEvent, 0, 2, 1);
     expect((slickGrid as any).scrollTop).toBe(5);
-    expect((slickGrid as any).scrollLeft).toBe(32);
+    expect((slickGrid as any).scrollLeft).toBe(92);
     expect(regularEvent.cancelBubble).toBe(true);
 
     const shiftEvent = new MouseEvent('mousewheel', { cancelable: true, shiftKey: true });
     (slickGrid as any).handleMouseWheel(shiftEvent, 0, 1, 10);
-    expect((slickGrid as any).scrollLeft).toBe(22);
+    expect((slickGrid as any).scrollLeft).toBe(52);
     expect(shiftEvent.defaultPrevented).toBe(true);
-    expect(handleScrollSpy).toHaveBeenCalledTimes(2);
+
+    const nativeHorizontalEvent = new WheelEvent('wheel', { cancelable: true, deltaX: 18 });
+    (slickGrid as any).handleMouseWheel(nativeHorizontalEvent, 0, 0, 0);
+    expect((slickGrid as any).scrollLeft).toBe(30);
+    expect(nativeHorizontalEvent.defaultPrevented).toBe(true);
+    expect(handleScrollSpy).toHaveBeenCalledTimes(3);
   });
 
   it('renders when horizontal scrolling changes the pinned-column layout', () => {
@@ -713,6 +721,32 @@ describe('SlickGrid unified pinning', () => {
     internals.handleScroll({ target: internals._viewportScrollContainerX } as Event);
 
     expect(renderSpy).toHaveBeenCalled();
+  });
+
+  it('preserves the resolved docking map when sticky membership is unchanged', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+    const currentLayout = internals.dockingLayout;
+    const currentDocking = [...internals.dockingByColumn];
+
+    expect(internals.refreshDockingLayout(1, true)).toBe(false);
+    expect(internals.dockingLayout).toBe(currentLayout);
+    expect([...internals.dockingByColumn]).toEqual(currentDocking);
+  });
+
+  it('applies the docking compositor transform once per horizontal scroll event', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });
+    const internals = slickGrid as any;
+    Object.defineProperty(internals._viewportScrollContainerX, 'scrollLeft', { configurable: true, writable: true, value: 24 });
+    Object.defineProperty(internals._viewportScrollContainerX, 'scrollWidth', { configurable: true, value: 900 });
+    Object.defineProperty(internals._viewportScrollContainerX, 'clientWidth', { configurable: true, value: 400 });
+    internals.prevScrollLeft = 0;
+    const scrollToXSpy = vi.spyOn(slickGrid, 'scrollToX').mockImplementation(() => undefined);
+
+    internals.handleScroll({ target: internals._viewportScrollContainerX } as Event);
+
+    expect(scrollToXSpy).toHaveBeenCalledOnce();
+    expect(scrollToXSpy).toHaveBeenCalledWith(24);
   });
 
   it('handles a vertical mouse-wheel scroll through the internal scroll path', () => {

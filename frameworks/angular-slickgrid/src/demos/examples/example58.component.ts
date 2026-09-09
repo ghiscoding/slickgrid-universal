@@ -37,7 +37,8 @@ export class Example58Component implements OnInit {
   }
 
   private defineGrid() {
-    const numberFormatter = (_row: number, _cell: number, value: unknown) => new Intl.NumberFormat('en-US').format(Number(value));
+    const numberFormat = new Intl.NumberFormat('en-US');
+    const numberFormatter = (_row: number, _cell: number, value: unknown) => numberFormat.format(Number(value));
     const summaryAccountFormatter = (_row: number, _cell: number, value: unknown, _column: unknown, item: FinancialRow) =>
       item.summaryKind ? `<span class="financial-summary-label">${value}</span>` : String(value);
     const createPeriodColumn = (id: PeriodField, name: string, sticky = false): Column => ({
