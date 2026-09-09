@@ -27,12 +27,11 @@ vi.mock('excel-builder-vanilla', async (importOriginal) => ({
   ...((await importOriginal()) as any),
   downloadExcelFile: vi.fn().mockResolvedValue(true),
   createExcelFileStream: vi.fn(() => {
-    return new ReadableStream({
-      async pull(controller) {
-        controller.enqueue('streaming content');
-        controller.close();
+    return {
+      async *[Symbol.asyncIterator]() {
+        yield new Uint8Array([115, 116, 114, 101, 97, 109, 105, 110, 103, 32, 99, 111, 110, 116, 101, 110, 116]);
       },
-    });
+    };
   }),
 }));
 
