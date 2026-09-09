@@ -3091,20 +3091,24 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._topPanels = [this._topPanelL];
     this._viewport = [this._viewportTopL];
     this._canvas = [this._canvasTopL];
-    if (this.hasConfiguredColumnDocking()) {
+    // Keep the original viewport as the horizontal scroll owner for ordinary
+    // grids. The dedicated scrollbar is only required once pinning/sticky
+    // docking is configured; creating it for every grid breaks integrations
+    // that scroll `.slick-viewport` directly.
+    if (this.hasConfiguredDocking()) {
       this.createDockingChromeRegions();
+      this._container.classList.add('slick-docking-horizontal-scroll-proxy');
+      this._dockingHorizontalScroller ??= createDomElement(
+        'div',
+        { className: 'slick-docking-horizontal-scroller', role: 'presentation' },
+        this._paneTopL
+      );
+      this._dockingHorizontalSpacer ??= createDomElement(
+        'div',
+        { className: 'slick-docking-horizontal-spacer' },
+        this._dockingHorizontalScroller
+      );
     }
-    this._container.classList.add('slick-docking-horizontal-scroll-proxy');
-    this._dockingHorizontalScroller ??= createDomElement(
-      'div',
-      { className: 'slick-docking-horizontal-scroller', role: 'presentation' },
-      this._paneTopL
-    );
-    this._dockingHorizontalSpacer ??= createDomElement(
-      'div',
-      { className: 'slick-docking-horizontal-spacer' },
-      this._dockingHorizontalScroller
-    );
     if (this._footerRowL) {
       this._footerRowScroller = [this._footerRowScrollerL];
       this._footerRow = [this._footerRowL];
@@ -3252,6 +3256,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._footerRowScrollContainer = this._footerRowScrollerL;
     this._viewportScrollContainerY = this._viewportTopL;
     this._viewportScrollContainerX = this._dockingHorizontalScroller ?? this._viewportTopL;
+
+    // Expose the active horizontal scroll element through one stable selector.
+    // The docking-specific class remains available for styling and diagnostics.
+    this._viewportTopL.classList.toggle('slick-horizontal-scroller', this._viewportScrollContainerX === this._viewportTopL);
+    this._dockingHorizontalScroller?.classList.toggle(
+      'slick-horizontal-scroller',
+      this._viewportScrollContainerX === this._dockingHorizontalScroller
+    );
+    this._viewportScrollContainerY.classList.add('slick-vertical-scroller');
   }
 
   protected measureCellPaddingAndBorder(): void {
@@ -4438,6 +4451,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.updateColumnCaches();
 
     if (this.initialized) {
+      // Materialize the docking scrollbar lazily when pinning/sticky state is
+      // introduced after initialization, while preserving the legacy
+      // viewport scroll owner for ordinary grids.
+      if (this.hasConfiguredDocking() && !this.hasDockingHorizontalScroller()) {
+        this.activateSingleViewportLayout();
+        this.setScroller();
+        this._bindingEventService.bind(this._dockingHorizontalScroller!, 'scroll', this.handleScroll.bind(this));
+      }
       this.setOverflow();
       this.invalidateAllRows();
       this.createColumnHeaders();
@@ -6425,10 +6446,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected getRowCellChildren(rowNode: HTMLElement): HTMLElement[] {
     const children = Array.from(rowNode.children) as HTMLElement[];
+    // Row detail formatters can insert a non-cell sibling after the detail-toggle cell.
+    // Only actual cells belong in cellNodesByColumnIdx; otherwise cache rebuilding tries
+    // to parse a column index from classes such as `dynamic-cell-detail`.
+    const cellChildren = (nodes: HTMLElement[]) => nodes.filter((node) => node.classList.contains('slick-cell'));
     if (!rowNode.classList.contains('slick-row-docked')) {
-      return children;
+      return cellChildren(children);
     }
-    return children.flatMap((region) => Array.from(region.children) as HTMLElement[]);
+    return cellChildren(children.flatMap((region) => Array.from(region.children) as HTMLElement[]));
   }
 
   protected getRowDockingRegion(rowNode: HTMLElement, columnIdx: number): HTMLElement {

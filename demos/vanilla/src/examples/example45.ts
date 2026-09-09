@@ -88,7 +88,7 @@ export default class Example45 {
       },
       rowHeight: 40,
       // Use the single-viewport pinning model for the two top rows. The
-      // legacy frozen-row option creates a pane that no longer participates in
+      // legacy pinned-row option creates a pane that no longer participates in
       // the POC renderer.
       pinning: { rows: { top: [0, 1] } },
       gridHeight: 560,
@@ -123,7 +123,7 @@ export default class Example45 {
     const statuses: Array<TaskItem['status']> = ['Todo', 'In Progress', 'Done'];
     const notesPool = [
       'Short note.',
-      'Need to validate keyboard navigation and ensure screen reader output remains stable across frozen panes.',
+      'Need to validate keyboard navigation and ensure screen reader output remains stable across pinned panes.',
       'Review row height invalidation path when data changes quickly due to live updates from backend polling.',
       'Longer QA note: validate scrolling behavior at top and bottom boundaries, compare rendered range against expected rows, and confirm no visual clipping for wrapped cells.',
     ];

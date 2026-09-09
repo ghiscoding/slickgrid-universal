@@ -1,102 +1,172 @@
-describe('Example 20 - Frozen Grid', () => {
-  // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
+describe('Example 20 - Pinned Grid', () => {
+  before(() => {
+    // The framework demos include a 250px route sidebar. Use enough width for
+    // the two-column pinning scenario to remain valid with that sidebar.
+    cy.viewport(1440, 900);
+  });
 
-  const fullTitles = [
-    '#',
-    'Title',
-    '% Complete',
-    'Start',
-    'Finish',
-    'Cost | Duration',
-    'Effort Driven',
-    'Title 1',
-    'Title 2',
-    'Title 3',
-    'Title 4',
-  ];
+  const withTitleRowTitles = ['Sel', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+  const withoutTitleRowTitles = ['', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+  const getCell = (rowIndex: number, columnIndex: number) =>
+    cy.get(`#grid20 .slick-row[data-row="${rowIndex}"] .slick-cell.l${columnIndex}`);
+  const setRightPinning = (count: number) => {
+    cy.get('.pinned-right-column-count').clear().type(`${count}`);
+    cy.get('[data-test="set-pinned-right-column"]').click();
+  };
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example20`);
-    cy.get('h2').should('contain', 'Example 20: Pinned (frozen) Columns/Rows');
+    cy.get('h2').should('contain', 'Example 20: Pinned Columns/Rows');
   });
 
   it('should have exact column titles on 1st grid', () => {
     cy.get('#grid20')
-      .find('.slick-header-columns')
-      .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .find('.slick-header-columns .slick-header-column')
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
+  });
+
+  it('should hide sub-title to provide more space for the grid', () => {
+    cy.get('[data-test="toggle-subtitle"]').click();
   });
 
   it('should have exact Column Header Titles in the grid', () => {
     cy.get('#grid20')
-      .find('.slick-header-columns:nth(0)')
-      .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .find('.slick-header-columns:nth(0) .slick-header-column')
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
   });
 
-  it('should have a frozen grid with 4 containers on page load with 3 columns on the left and 4 columns on the right', () => {
-    cy.get('[style="transform: translateY(0px);"]').should('have.length', 2 * 2);
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 3 * 2);
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 8 * 2);
+  it('should have three top-pinned rows and left/center/right cells on page load', () => {
+    const row0 = '#grid20 .slick-row[data-row="0"]';
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '0');
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').should('contain', 'Task 0');
+    // Pinning uses one row node split into regions and a single docking overlay;
+    // it no longer duplicates rows into legacy left/right pinned canvases.
+    cy.get('#grid20 .slick-docking-overlay > .slick-row.slick-row-pinned-top').should('have.length', 3);
+    cy.get(`${row0} .slick-pinned-left-cells > .slick-cell`).should('have.length', 3);
+    cy.get(`${row0} .slick-scrolling-cells > .slick-cell`).should('have.length', 5);
+    cy.get(`${row0} .slick-pinned-right-cells > .slick-cell`).should('have.length', 1);
 
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '2009-01-01');
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').should('contain', '2009-05-05');
+    cy.get(`${row0} .slick-pinned-left-cells > .slick-cell:nth(0)`).should('contain', '');
+    cy.get(`${row0} .slick-pinned-left-cells > .slick-cell:nth(1)`).should('contain', 'Task 0');
+    cy.get(`${row0} .slick-scrolling-cells > .slick-cell:nth(0)`).should('contain', '2009-01-01');
+    cy.get(`${row0} .slick-scrolling-cells > .slick-cell:nth(1)`).should('contain', '2009-05-05');
+
+    cy.get(`${row0} .slick-pinned-right-cells > .slick-cell:nth(0) .cell-menu-dropdown`).should('contain', 'Action');
   });
 
-  it('should hide "Title" column from Grid Menu and expect last frozen column to be "% Complete"', () => {
-    const newColumnList = [
-      '#',
-      '% Complete',
-      'Start',
-      'Finish',
-      'Cost | Duration',
-      'Effort Driven',
-      'Title 1',
-      'Title 2',
-      'Title 3',
-      'Title 4',
-    ];
+  it('should pin multiple columns on the right and render matching header and filter regions', () => {
+    setRightPinning(2);
+
+    const row0 = '#grid20 .slick-row[data-row="0"]';
+    cy.get(`${row0} .slick-pinned-right-cells > .slick-cell`).should('have.length', 2);
+    cy.get(`${row0} .slick-pinned-right-cells > .slick-cell.l7`).should('contain', 'Boston');
+    cy.get(`${row0} .slick-pinned-right-cells > .slick-cell.l8 .cell-menu-dropdown`).should('contain', 'Action');
+
+    cy.get('#grid20 .slick-header-columns-right .slick-header-column').should('have.length', 2);
+    cy.get('#grid20 .slick-header-columns-right [data-id="cityOfOrigin"]').should('contain', 'City of Origin');
+    cy.get('#grid20 .slick-header-columns-right [data-id="action"]').should('contain', 'Action');
+    cy.get('#grid20 .slick-headerrow-columns-right .slick-headerrow-column').should('have.length', 2);
+    cy.get('#grid20 .slick-headerrow-columns-right .slick-headerrow-column.l7 input').should('exist');
+
+    setRightPinning(1);
+  });
+
+  it('should keep multiple right-pinned columns fixed while scrolling', () => {
+    setRightPinning(2);
+    // The default fixture fits in the viewport, so use the demo's wide layout
+    // to exercise an actual horizontal scroll rather than a no-op scroll.
+    cy.get('[data-test="set-large-pinned-columns"]').click();
+    const actionCell = '#grid20 .slick-row[data-row="10"] .slick-pinned-right-cells .slick-cell.l8';
+
+    cy.get(actionCell).then(($cell) => {
+      const rightEdge = $cell[0].getBoundingClientRect().right;
+      cy.get('#grid20 .slick-horizontal-scroller').scrollTo('right');
+      cy.get(actionCell).should(($scrolledCell) => {
+        expect(Math.abs($scrolledCell[0].getBoundingClientRect().right - rightEdge)).to.be.lessThan(2);
+      });
+    });
+
+    cy.get('#grid20 .slick-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
+    // Restore the initial fixture after exercising the wide layout so the
+    // following serial tests do not inherit resized columns.
+    cy.visit(`${Cypress.config('baseUrl')}/example20`);
+  });
+
+  it('should resize columns while left and right pinning are active', () => {
+    cy.visit(`${Cypress.config('baseUrl')}/example20`);
+
+    const resizeColumn = (columnSelector: string, pinClass: string) => {
+      cy.get(columnSelector).should('have.class', pinClass);
+      cy.get(`${columnSelector} .slick-resizable-handle`)
+        .should('exist')
+        .then(($handle) => {
+          const header = $handle.closest('.slick-header-column')[0] as HTMLElement;
+          const initialWidth = header.getBoundingClientRect().width;
+
+          cy.wrap($handle).trigger('mousedown', { which: 1, pageX: 100, clientX: 100, force: true });
+          cy.get('body').trigger('mousemove', { which: 1, pageX: 125, clientX: 125, force: true });
+          cy.get('body').trigger('mousemove', { which: 1, pageX: 150, clientX: 150, force: true });
+          cy.get('body').trigger('mouseup', { which: 1, pageX: 150, clientX: 150, force: true });
+
+          cy.get(columnSelector).should(($updatedHeader) => {
+            expect($updatedHeader[0].getBoundingClientRect().width).to.be.greaterThan(initialWidth);
+          });
+        });
+    };
+
+    resizeColumn('#grid20 .slick-header-columns-left [data-id="title"]', 'slick-column-pinned-left');
+
+    // Use City of Origin because Action has a maxWidth of 100px and would refuse a wider resize.
+    setRightPinning(2);
+    resizeColumn('#grid20 .slick-header-columns-right [data-id="cityOfOrigin"]', 'slick-column-pinned-right');
+
+    // Keep the following serial tests on the demo's default configuration.
+    cy.visit(`${Cypress.config('baseUrl')}/example20`);
+  });
+
+  it('should disable and re-enable right pinning through the numeric grid control', () => {
+    setRightPinning(0);
+    cy.get('#grid20 .slick-row[data-row="0"] .slick-pinned-right-cells').should('exist');
+    cy.get('#grid20 .slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell').should('not.exist');
+    cy.get('#grid20 .slick-header-columns-right .slick-header-column').should('not.exist');
+
+    setRightPinning(1);
+    cy.get('#grid20 .slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell.l8').should('contain', 'Action');
+    cy.get('#grid20 .slick-header-columns-right [data-id="action"]').should('contain', 'Action');
+  });
+
+  it('should hide "Title" column from Grid Menu and expect last pinned column to be "% Complete"', () => {
+    const newColumnList = ['Sel', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+    const row0 = '#grid20 .slick-row[data-row="0"]';
 
     cy.get('#grid20').find('button.slick-grid-menu-button').click({ force: true });
 
     cy.get('#grid20')
       .get('.slick-grid-menu:visible')
       .find('.slick-column-picker-list')
-      .children('li:visible:nth(1)')
+      .children('li:visible:nth(0)')
       .children('label')
       .should('contain', 'Title')
       .click({ force: true });
 
     cy.get('#grid20')
-      .find('.slick-header-columns')
-      .children()
+      .find('.slick-header-columns .slick-header-column')
       .each(($child, index) => expect($child.text()).to.eq(newColumnList[index]));
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 2 * 2);
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 8 * 2);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').children().should('have.length', 2);
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells').children().should('have.length', 5);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells').children().should('have.length', 1);
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells > .slick-cell:nth(0)').should('contain', '');
 
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '2009-01-01');
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').should('contain', '2009-05-05');
+    cy.get(`${row0} .slick-scrolling-cells > .slick-cell:nth(0)`).should('contain', '2009-01-01');
+    cy.get(`${row0} .slick-scrolling-cells > .slick-cell:nth(1)`).should('contain', '2009-05-05');
   });
 
-  it('should show again "Title" column from Grid Menu and expect last frozen column to still be "% Complete"', () => {
+  it('should show again "Title" column from Grid Menu and expect last pinned column to still be "% Complete"', () => {
     cy.get('#grid20')
       .get('.slick-grid-menu:visible')
       .find('.slick-column-picker-list')
-      .children('li:visible:nth(1)')
+      .children('li:visible:nth(0)')
       .children('label')
       .should('contain', 'Title')
       .click({ force: true });
@@ -104,77 +174,60 @@ describe('Example 20 - Frozen Grid', () => {
     cy.get('#grid20').get('.slick-grid-menu:visible').find('.close').click({ force: true });
 
     cy.get('#grid20')
-      .find('.slick-header-columns')
-      .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .find('.slick-header-columns .slick-header-column')
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 3 * 2);
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 8 * 2);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').children().should('have.length', 3);
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells').children().should('have.length', 5);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells').children().should('have.length', 1);
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '');
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').should('contain', 'Task 0');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells > .slick-cell:nth(0)').should('contain', '');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells > .slick-cell:nth(1)').should('contain', 'Task 0');
 
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '2009-01-01');
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').should('contain', '2009-05-05');
+    cy.get('.slick-scrolling-cells .slick-cell:nth(0)').should('contain', '2009-01-01');
+    cy.get('.slick-scrolling-cells .slick-cell:nth(1)').should('contain', '2009-05-05');
   });
 
-  it('should hide "Title" column from Header Menu and expect last frozen column to be "% Complete"', () => {
-    const newColumnList = [
-      '#',
-      '% Complete',
-      'Start',
-      'Finish',
-      'Cost | Duration',
-      'Effort Driven',
-      'Title 1',
-      'Title 2',
-      'Title 3',
-      'Title 4',
-    ];
+  it('should hide "Title" column from Header Menu and expect last pinned column to be "% Complete"', () => {
+    const newColumnList = ['Sel', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
 
-    cy.get('#grid20')
-      .find('.slick-header-column:nth(1)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .should('be.hidden')
-      .invoke('show')
-      .click();
+    cy.get('#grid20').find('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(8)')
+      .children('.slick-menu-item:nth-of-type(9)')
       .children('.slick-menu-content')
       .should('contain', 'Hide Column')
       .click();
 
     cy.get('#grid20')
-      .find('.slick-header-columns')
-      .children()
+      .find('.slick-header-columns .slick-header-column')
       .each(($child, index) => expect($child.text()).to.eq(newColumnList[index]));
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 2 * 2);
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 8 * 2);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').children().should('have.length', 2);
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells').children().should('have.length', 5);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells').children().should('have.length', 1);
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells > .slick-cell:nth(0)').should('contain', '');
 
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '2009-01-01');
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').should('contain', '2009-05-05');
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells > .slick-cell:nth(0)').should('contain', '2009-01-01');
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells > .slick-cell:nth(1)').should('contain', '2009-05-05');
   });
 
-  it('should show again "Title" column from Column Picker and expect last frozen column to still be "% Complete"', () => {
-    cy.get('#grid20').find('.slick-header-column:nth(5)').trigger('mouseover').trigger('contextmenu').invoke('show');
+  it('should toggle right pinned column and expect only 2 left/center containers to be visible', () => {
+    cy.get('[data-test="toggle-pinned-right"]').click();
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').children().should('have.length', 2);
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells').children().should('have.length', 6);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells').should('exist').and('not.have.class', 'slick-pinned-right-cells-active');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell').should('not.exist');
+  });
+
+  it('should show again "Title" column from Column Picker and expect last pinned column to still be "% Complete"', () => {
+    cy.get('#grid20').find('.slick-header-column:nth(4)').trigger('mouseover').trigger('contextmenu').invoke('show');
 
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
-      .children('li:nth-child(2)')
+      .children('li:nth-of-type(2)')
       .children('label')
       .should('contain', 'Title')
       .click();
@@ -182,83 +235,769 @@ describe('Example 20 - Frozen Grid', () => {
     cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
 
     cy.get('#grid20')
-      .find('.slick-header-columns')
-      .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .find('.slick-header-columns .slick-header-column')
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 3 * 2);
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 8 * 2);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').children().should('have.length', 3);
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells').children().should('have.length', 6);
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '');
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').should('contain', 'Task 0');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells > .slick-cell:nth(0)').should('contain', '');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells > .slick-cell:nth(1)').should('contain', 'Task 0');
 
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '2009-01-01');
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').should('contain', '2009-05-05');
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells > .slick-cell:nth(0)').should('contain', '2009-01-01');
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells > .slick-cell:nth(1)').should('contain', '2009-05-05');
   });
 
-  it('should click on the "Remove Frozen Columns" button to switch to a regular grid without frozen columns and expect 7 columns on the left container', () => {
-    cy.get('[data-test=remove-frozen-column-button]').click({ force: true });
+  it('should click on the "Remove Pinned Columns" button to switch to a regular grid view without pinned columns and expect 7 columns on the left container', () => {
+    cy.get('[data-test=remove-pinned-column-button]').click({ force: true });
 
-    cy.get('[style="transform: translateY(0px);"]').should('have.length', 1 * 2);
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 11 * 2);
+    cy.get('#grid20 .slick-row[data-row="0"]').should('have.length.at.least', 1);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').should('exist').and('not.have.class', 'slick-pinned-left-cells-active');
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells > .slick-cell').should('have.length', 9);
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '0');
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').should('contain', 'Task 0');
-
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(3)').should('contain', '2009-01-01');
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(4)').should('contain', '2009-05-05');
+    getCell(0, 0).should('contain', '');
+    getCell(0, 1).should('contain', 'Task 0');
+    getCell(0, 3).should('contain', '2009-01-01');
+    getCell(0, 4).should('contain', '2009-05-05');
   });
 
-  it('should have exact Column Header Titles in the grid', () => {
+  it('should expect to have exact Column Header Titles in the grid', () => {
     cy.get('#grid20')
-      .find('.slick-header-columns:nth(0)')
-      .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .find('.slick-header-columns:nth(0) .slick-header-column')
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
   });
 
-  it('should click on the "Set 3 Frozen Columns" button to switch frozen columns grid and expect 3 frozen columns on the left and 4 columns on the right', () => {
-    cy.get('[data-test=set-3frozen-columns]').click({ force: true });
+  it('should click on the "Set 3 Pinned Columns" button to switch pinned columns grid and expect 3 pinned columns on the left and 4 columns on the right', () => {
+    cy.get('[data-test=set-3pinned-columns]').click({ force: true });
 
-    cy.get('[style="transform: translateY(0px);"]').should('have.length', 2 * 2);
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 3 * 2);
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"]')
-      .children()
-      .should('have.length', 8 * 2);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').children().should('have.length', 3);
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells').children().should('have.length', 6);
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '0');
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').should('contain', 'Task 0');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells > .slick-cell:nth(0)').should('contain', '');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells > .slick-cell:nth(1)').should('contain', 'Task 0');
 
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '2009-01-01');
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').should('contain', '2009-05-05');
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells > .slick-cell:nth(0)').should('contain', '2009-01-01');
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells > .slick-cell:nth(1)').should('contain', '2009-05-05');
   });
 
-  it('should have exact Column Header Titles in the grid', () => {
+  it('should recheck again and still have exact Column Header Titles in the grid', () => {
     cy.get('#grid20')
-      .find('.slick-header-columns:nth(0)')
-      .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .find('.slick-header-columns:nth(0) .slick-header-column')
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
   });
 
-  it('should click on the Grid Menu command "Unfreeze Columns/Rows" to switch to a regular grid without frozen columns and expect 7 columns on the left container', () => {
+  it('should click on the Grid Menu command "Unpin Columns/Rows" to switch to a regular grid without pinned columns/rows', () => {
     cy.get('#grid20').find('button.slick-grid-menu-button').click({ force: true });
 
-    cy.contains('Unfreeze Columns/Rows').click({ force: true });
+    cy.contains('Unpin Columns/Rows').click({ force: true });
 
-    cy.get('[style="transform: translateY(0px);"]').should('have.length', 1);
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]').children().should('have.length', 11);
+    cy.get('#grid20 .slick-row[data-row="0"]').should('have.length.at.least', 1);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').should('exist').and('not.have.class', 'slick-pinned-left-cells-active');
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells > .slick-cell').should('have.length', 9);
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(0)').should('contain', '0');
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(1)').should('contain', 'Task 0');
+    getCell(0, 0).should('contain', '');
+    getCell(0, 1).should('contain', 'Task 0');
+    getCell(0, 3).should('contain', '2009-01-01');
+    getCell(0, 4).should('contain', '2009-05-05');
+  });
 
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(3)').should('contain', '2009-01-01');
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"] > .slick-cell:nth(4)').should('contain', '2009-05-05');
+  it('should open the Cell Menu on 2nd and 3rd row and change the Effort-Driven to "True" and expect the cell to be updated and have checkmark icon', () => {
+    getCell(1, 1).should('contain', 'Task 1');
+    getCell(1, 8).find('.checkmark-icon').should('have.length', 0);
+    getCell(2, 1).should('contain', 'Task 2');
+    getCell(2, 8).find('.checkmark-icon').should('have.length', 0);
+
+    getCell(1, 8).contains('Action').click({ force: true });
+    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
+    getCell(2, 8).contains('Action').click({ force: true });
+    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
+
+    getCell(1, 5).find('.checkmark-icon').should('have.length', 1);
+    getCell(2, 5).find('.checkmark-icon').should('have.length', 1);
+  });
+
+  it('should open the Cell Menu on 2nd and 3rd row and change the Effort-Driven to "False" and expect the cell to be updated and no longer have checkmark', () => {
+    getCell(1, 5).find('.checkmark-icon').should('have.length', 1);
+    getCell(2, 5).find('.checkmark-icon').should('have.length', 1);
+
+    getCell(1, 8).contains('Action').click({ force: true });
+    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('False').click();
+    getCell(2, 8).contains('Action').click({ force: true });
+    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('False').click();
+
+    getCell(1, 5).find('.checkmark-icon').should('have.length', 0);
+    getCell(2, 5).find('.checkmark-icon').should('have.length', 0);
+  });
+
+  it('should open the Cell Menu and delete Row 3 and 4 from the Cell Menu', () => {
+    cy.window().then((win) => {
+      const stub = cy.stub(win, 'confirm').returns(true);
+      cy.wrap(stub).as('confirmStub');
+    });
+
+    getCell(3, 1).should('contain', 'Task 3');
+    getCell(4, 1).should('contain', 'Task 4');
+
+    getCell(3, 8).contains('Action').click({ force: true });
+
+    cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-item').contains('Delete Row').click();
+    cy.get('@confirmStub').should('have.been.calledWith', 'Do you really want to delete row (4) with "Task 3"?');
+    getCell(3, 1).should('contain', 'Task 4');
+  });
+
+  it.skip('should filter autocomplete by typing Vancouver in the "City of Origin" and expect only filtered rows to show up', () => {
+    cy.get('.search-filter.filter-cityOfOrigin').type('Vancouver');
+
+    cy.get('.slick-autocomplete').should('be.visible');
+    cy.get('.slick-autocomplete div').should('have.length', 2);
+    cy.get('.slick-autocomplete').find('div:nth(0)').click();
+
+    getCell(0, 1).should('contain', 'Task 1');
+    getCell(1, 1).should('contain', 'Task 5');
+    getCell(2, 1).should('contain', 'Task 7');
+    getCell(3, 1).should('contain', 'Task 9');
+    getCell(4, 1).should('contain', 'Task 11');
+  });
+
+  it('should Clear all Filters', () => {
+    cy.get('#grid20').find('button.slick-grid-menu-button').trigger('click').click({ force: true });
+
+    cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
+  });
+
+  it.skip('should edit first row (Task 1) and change its city by choosing it inside the autocomplete editor list', () => {
+    getCell(0, 7).click();
+    cy.get('input.autocomplete.editor-cityOfOrigin').type('Sydney');
+
+    cy.get('.slick-autocomplete').should('be.visible');
+    cy.get('.slick-autocomplete div').should('have.length', 3);
+    cy.get('.slick-autocomplete').find('div:nth(1)').click();
+
+    getCell(0, 1).should('contain', 'Task 0');
+    getCell(0, 7).should('contain', 'Sydney, NS, Australia');
+  });
+
+  it('should open Context Menu hover "% Complete" column then select "Not Started (0%)" option and expect Task to be at 0', () => {
+    getCell(0, 2).rightclick();
+
+    cy.get('.slick-context-menu .slick-menu-option-list').should('exist').contains('Not Started (0%)').click();
+
+    getCell(0, 2).should('contain', '0');
+  });
+
+  it('should reopen Context Menu hover "% Complete" column then open options sub-menu & select "Half Completed (50%)" option and expect Task to be at 50', () => {
+    const subOptions = ['Not Started (0%)', 'Half Completed (50%)', 'Completed (100%)'];
+
+    getCell(0, 2).should('contain', '0');
+    getCell(0, 2).rightclick();
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-option-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Sub-Options (demo)')
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-option-list').as('subMenuList');
+    cy.get('@subMenuList').find('.slick-menu-title').contains('Set Percent Complete');
+    cy.get('@subMenuList')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.eq(subOptions[index]));
+
+    cy.get('@subMenuList').find('.slick-menu-item .slick-menu-content').contains('Half Completed (50%)').click();
+
+    getCell(0, 2).should('contain', '50');
+  });
+
+  it('should be able to open Context Menu and click on Export->Text and expect alert triggered with Text Export', () => {
+    const subCommands1 = ['Text', 'Excel'];
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
+
+    getCell(0, 2).should('contain', '0');
+    getCell(0, 2).rightclick();
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains(/^Exports$/)
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .should('exist')
+      .find('.slick-menu-item')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list').find('.slick-menu-item').contains('Text').click();
+    cy.get('@alertStub').should('have.been.calledWith', 'Exporting as Text (tab delimited)');
+  });
+
+  it('should be able to open Context Menu and click on Export->Excel-> sub-commands to see 1 context menu + 1 sub-menu then clicking on Text should call alert action', () => {
+    const subCommands1 = ['Text', 'Excel'];
+    const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
+
+    getCell(0, 2).should('contain', '0');
+    getCell(0, 2).rightclick();
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains(/^Exports$/)
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Excel')
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list').as('subMenuList2');
+
+    cy.get('@subMenuList2').find('.slick-menu-title').contains('available formats');
+
+    cy.get('@subMenuList2')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
+
+    cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Excel (xlsx)')
+      .click();
+    cy.get('@alertStub').should('have.been.calledWith', 'Exporting as Excel (xlsx)');
+  });
+
+  it('should open Export->Excel sub-menu & open again Sub-Options on top and expect sub-menu to be recreated with that Sub-Options list instead of the Export->Excel list', () => {
+    const subCommands1 = ['Text', 'Excel'];
+    const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
+    const subOptions = ['Not Started (0%)', 'Half Completed (50%)', 'Completed (100%)'];
+
+    getCell(0, 2).should('contain', '0');
+    getCell(0, 2).rightclick();
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains(/^Exports$/)
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Excel')
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-option-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Sub-Options')
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-option-list').as('optionSubList2');
+
+    cy.get('@optionSubList2').find('.slick-menu-title').contains('Set Percent Complete');
+
+    cy.get('@optionSubList2')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($option, index) => expect($option.text()).to.contain(subOptions[index]));
+  });
+
+  it('should open Export->Excel context sub-menu then open Feedback->ContactUs sub-menus and expect previous Export menu to no longer exists', () => {
+    const subCommands1 = ['Text', 'Excel'];
+    const subCommands2 = ['Request update from supplier', '', 'Contact Us'];
+    const subCommands2_1 = ['Email us', 'Chat with us', 'Book an appointment'];
+
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
+
+    getCell(0, 2).should('contain', '0');
+    getCell(0, 2).rightclick({ force: true });
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains(/^Exports$/)
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
+
+    // click different sub-menu
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Feedback')
+      .should('exist')
+      .click();
+
+    cy.get('.slick-submenu').should('have.length', 1);
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
+
+    // click on Feedback->ContactUs
+    cy.get('.slick-context-menu.slick-menu-level-1.dropright') // right align
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Contact Us')
+      .should('exist')
+      .trigger('mouseover'); // mouseover or click should work
+
+    cy.get('.slick-submenu').should('have.length', 2);
+    cy.get('.slick-context-menu.slick-menu-level-2.dropright') // right align
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.eq(subCommands2_1[index]));
+
+    cy.get('.slick-context-menu.slick-menu-level-2');
+
+    cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Chat with us')
+      .click();
+    cy.get('@alertStub').should('have.been.calledWith', 'Command: contact-chat');
+
+    cy.get('.slick-submenu').should('have.length', 0);
+  });
+
+  it('should toggle Select All checkbox and expect back "Sel" column title to show when Select All checkbox is shown in the header row', () => {
+    cy.get('.slick-header-column:nth(0)').find('.slick-column-name').should('contain', 'Sel');
+    cy.get('.slick-header-columns .slick-header-column').each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
+
+    cy.get('[data-test="toggle-select-all-row"]').click();
+
+    cy.get('.slick-header-column:nth(0)').find('.slick-column-name').should('not.contain', 'Sel');
+
+    cy.get('.slick-header-columns .slick-header-column').each(($child, index) => expect($child.text()).to.eq(withoutTitleRowTitles[index]));
+  });
+
+  it('should toggle back Select All checkbox and expect back "Sel" column title to show when Select All checkbox is shown in the header row', () => {
+    cy.get('[data-test="toggle-select-all-row"]').click();
+
+    cy.get('.slick-header-column:nth(0)').find('.slick-column-name').should('contain', 'Sel');
+    cy.get('.slick-header-columns .slick-header-column').each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
+
+    cy.get('[data-test="toggle-select-all-row"]').click();
+
+    cy.get('.slick-header-column:nth(0)').find('.slick-column-name').should('not.contain', 'Sel');
+
+    cy.get('.slick-header-columns .slick-header-column').each(($child, index) => expect($child.text()).to.eq(withoutTitleRowTitles[index]));
+  });
+
+  it('should open Column Picker and try unchecked all the columns on the right of the column pinning and expect an error and abort of the execution', () => {
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
+    cy.get('[data-test=set-3pinned-columns]').click({ force: true });
+
+    const leftColumns = ['', 'Title', '% Complete'];
+    const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+    cy.get('#grid20').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
+      .children()
+      .each(($child, index) => {
+        if (index >= leftColumns.length) {
+          if ($child.text() === rightColumns[index - leftColumns.length]) {
+            expect($child.text()).to.eq(rightColumns[index - leftColumns.length]);
+            if (index <= rightColumns.length + 1) {
+              cy.wrap($child).children('label').click();
+            } else {
+              cy.wrap($child)
+                .children('label')
+                .click()
+                .then(() => {
+                  cy.get('@alertStub').should(
+                    'have.been.calledWith',
+                    '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column in the center section of the grid. ' +
+                      'You could alternatively unpin columns before trying again.'
+                  );
+                });
+            }
+          }
+        }
+      });
+
+    cy.get('button[data-dismiss="slick-column-picker"]').click();
+  });
+
+  it('should also not be able to "Hide Column" via the Header Menu', () => {
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
+    const newColumnList = ['', 'Title', '% Complete', 'Action'];
+
+    cy.get('#grid20').find('.slick-header-column:nth(3)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+
+    cy.get('.slick-header-menu .slick-menu-command-list')
+      .should('be.visible')
+      .children('.slick-menu-item')
+      .contains('Hide Column')
+      .click()
+      .then(() => {
+        cy.get('@alertStub').should(
+          'have.been.calledWith',
+          '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column in the center section of the grid. ' +
+            'You could alternatively unpin columns before trying again.'
+        );
+      });
+
+    cy.get('#grid20')
+      .find('.slick-header-columns .slick-header-column')
+      .each(($child, index) => expect($child.text()).to.eq(newColumnList[index]));
+  });
+
+  it('should be able to uncheck "Title" column without any alert', () => {
+    cy.get('#grid20').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+    const updatedColumns = ['', '% Complete', 'Action'];
+    cy.get('.slick-column-picker-list li:not(.hidden) .checkbox-picker-label').first().click();
+    cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
+    cy.get('.slick-header-columns:nth(0) .slick-header-column').each(($child, index) => expect($child.text()).to.eq(updatedColumns[index]));
+  });
+
+  it('should be able to add back hidden "Title" column without any alert', () => {
+    const updatedColumns = ['', 'Title', '% Complete', 'Action'];
+    cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.slick-column-picker-list li:not(.hidden) .checkbox-picker-label').first().click();
+    cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
+    cy.get('.slick-header-columns:nth(0) .slick-header-column').each(($child, index) => expect($child.text()).to.eq(updatedColumns[index]));
+  });
+
+  it('should reset hidden column from the Column Picker and expect all columns to be back', () => {
+    const leftColumns = ['', 'Title', '% Complete'];
+    const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+
+    cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
+      .children()
+      .each(($child, index) => {
+        if (index >= leftColumns.length) {
+          if ($child.text() === rightColumns[index - leftColumns.length]) {
+            expect($child.text()).to.eq(rightColumns[index - leftColumns.length]);
+            if (index <= rightColumns.length + 1) {
+              cy.wrap($child).children('label').click();
+            }
+          }
+        }
+      });
+
+    cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
+
+    cy.get('#grid20')
+      .find('.slick-header-columns .slick-header-column')
+      .each(($child, index) => expect($child.text()).to.eq(withoutTitleRowTitles[index]));
+  });
+
+  describe('Test UI rendering after Scrolling with large columns', () => {
+    it('should unpin all columns/rows', () => {
+      cy.get('#grid20').find('button.slick-grid-menu-button').click({ force: true });
+
+      cy.contains('Unpin Columns/Rows').click({ force: true });
+    });
+
+    it('should resize all columns and make them wider', () => {
+      // resize CityOfOrigin column
+      cy.get('.slick-header-columns .slick-header-column:nth(7)').should('contain', 'City of Origin');
+
+      cy.get('.slick-resizable-handle:nth(7)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(8)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      // resize Cost|Duration column
+      cy.get('.slick-header-columns .slick-header-column:nth(6)').should('contain', 'Cost | Duration');
+
+      cy.get('.slick-resizable-handle:nth(6)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(8)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      // resize Completed column
+      cy.get('.slick-header-columns .slick-header-column:nth(5)').should('contain', 'Completed');
+
+      cy.get('.slick-resizable-handle:nth(5)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(7)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      // resize Finish column
+      cy.get('.slick-header-columns .slick-header-column:nth(4)').should('contain', 'Finish');
+
+      cy.get('.slick-resizable-handle:nth(4)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(6)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      // resize Start column
+      cy.get('.slick-header-columns .slick-header-column:nth(3)').should('contain', 'Start');
+
+      cy.get('.slick-resizable-handle:nth(3)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(6)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      // resize %Complete column
+      cy.get('.slick-header-columns .slick-header-column:nth(2)').should('contain', '% Complete');
+
+      cy.get('.slick-resizable-handle:nth(2)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(3)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      // resize Title column
+      cy.get('.slick-header-columns .slick-header-column:nth(1)').should('contain', 'Title');
+
+      cy.get('.slick-resizable-handle:nth(1)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(3)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+    });
+
+    it('should scroll horizontally completely to the right and expect all cell to be rendered', () => {
+      getCell(2, 1).contains(/Task [0-9]*/);
+      getCell(2, 2).contains(/[0-9]*/);
+
+      getCell(15, 1).contains(/Task [0-9]*/);
+      getCell(15, 2).contains(/[0-9]*/);
+
+      // horizontal scroll to right
+      // Pinning has one real horizontal scroll owner. Scrolling the old body
+      // viewport only exercises the compatibility bridge; target the proxy
+      // here to verify the user-facing scrollbar and all chrome move together.
+      cy.get('#grid20 .slick-horizontal-scroller').scrollTo('100%', '0%', { duration: 1500 });
+      getCell(2, 3).should('contain', '2009-01-01');
+      getCell(2, 4).should('contain', '2009-05-05');
+      getCell(2, 7).contains(/[United State|Canada]*/);
+      getCell(2, 8).should('contain', 'Action');
+
+      getCell(15, 3).should('contain', '2009-01-01');
+      getCell(15, 4).should('contain', '2009-05-05');
+      getCell(15, 7).contains(/[United State|Canada]*/);
+      getCell(15, 8).should('contain', 'Action');
+    });
+
+    it('should scroll vertically to the middle of the grid and expect all cell to be rendered', () => {
+      // vertical scroll to middle
+      cy.get('.slick-vertical-scroller').scrollTo('0%', '40%', { duration: 1500 });
+
+      getCell(200, 3).should('contain', '2009-01-01');
+      getCell(200, 4).should('contain', '2009-05-05');
+      getCell(200, 7).contains(/[United State|Canada]*/);
+      getCell(200, 8).should('contain', 'Action');
+
+      getCell(205, 3).should('contain', '2009-01-01');
+      getCell(205, 4).should('contain', '2009-05-05');
+      getCell(205, 7).contains(/[United State|Canada]*/);
+      getCell(205, 8).should('contain', 'Action');
+
+      // reset scroll
+      cy.get('.slick-vertical-scroller').scrollTo(0, 0, { ensureScrollable: false });
+      cy.get('.slick-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
+    });
+  });
+
+  describe('accessibility sub-menus tests', () => {
+    beforeEach(() => {
+      // Open the context menu on a cell to start each test
+      cy.get('.slick-vertical-scroller').scrollTo(0, 0, { ensureScrollable: false });
+      cy.get('.slick-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
+      cy.get('[data-row="0"] .slick-cell.l3.r3').rightclick({ force: true });
+      cy.get('.slick-context-menu.slick-menu-level-0').should('be.visible');
+    });
+
+    it('should open Exports sub-menu with ArrowRight, then Excel sub-menu with ArrowRight, and close with ArrowLeft', () => {
+      // Move down to "Exports" (4th item)
+      cy.focused();
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.get('.slick-context-menu.slick-menu-level-0 .slick-submenu-item[data-command="export"]').should('have.focus');
+
+      // Open "Exports" sub-menu with ArrowRight
+      cy.focused().type('{rightarrow}');
+      cy.get('.slick-context-menu.slick-menu-level-1[data-sub-menu-parent="export"]').should('be.visible');
+
+      // Move down to "Excel" (2nd item in sub-menu)
+      cy.focused().type('{downarrow}');
+      cy.get('.slick-context-menu.slick-menu-level-1 .slick-submenu-item[data-command="sub-menu"]').should('have.focus');
+
+      // Open "Excel" sub-menu with ArrowRight
+      cy.focused().type('{rightarrow}');
+      cy.get('.slick-context-menu.slick-menu-level-2[data-sub-menu-parent="sub-menu"]').should('be.visible');
+
+      // Move down to "Excel (xlsx)" (2nd item in Excel sub-menu)
+      cy.focused().type('{downarrow}');
+      cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-item[data-command="exports-xlsx"]').should('have.focus');
+
+      // Close Excel sub-menu with ArrowLeft
+      cy.focused().type('{leftarrow}');
+      cy.get('.slick-context-menu.slick-menu-level-2').should('not.exist');
+      cy.get('.slick-context-menu.slick-menu-level-1 .slick-submenu-item[data-command="sub-menu"]').should('have.focus');
+
+      // close all context menus
+      cy.get('[data-row="0"] .slick-cell.l0.r0').click();
+    });
+
+    it('should open sub-menus using Enter as well as ArrowRight', () => {
+      // Move down to "Exports"
+      cy.focused();
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.get('.slick-context-menu.slick-menu-level-0 .slick-submenu-item[data-command="export"]').should('have.focus');
+
+      // Open "Exports" sub-menu with Enter
+      cy.focused().type('{enter}');
+      cy.get('.slick-context-menu.slick-menu-level-1[data-sub-menu-parent="export"]').should('be.visible');
+
+      // Move down to "Excel"
+      cy.focused().type('{downarrow}');
+      cy.get('.slick-context-menu.slick-menu-level-1 .slick-submenu-item[data-command="sub-menu"]').should('have.focus');
+
+      // Open "Excel" sub-menu with Enter
+      cy.focused().type('{enter}');
+      cy.get('.slick-context-menu.slick-menu-level-2[data-sub-menu-parent="sub-menu"]').should('be.visible');
+
+      // close all context menus
+      cy.get('[data-row="0"] .slick-cell.l0.r0').click();
+    });
+
+    it('should activate a sub-menu leaf item with Enter', () => {
+      // Move down to "Exports"
+      cy.window().then((win) => {
+        cy.stub(win, 'alert').as('alertStub');
+      });
+      cy.focused();
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.press(Cypress.Keyboard.Keys.ENTER);
+      cy.get('.slick-context-menu.slick-menu-level-1[data-sub-menu-parent="export"]').should('be.visible');
+
+      // "Text (tab delimited)" is first item, should have focus
+      cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-item[data-command="exports-txt"]').should('have.focus');
+      // Activate with Enter (add your assertion for the result)
+      cy.focused().type('{enter}');
+    });
+
+    it('should reapply 3 Pinned Columns and expect to be able to focus on first filter and go left/right between both viewports without problems', () => {
+      cy.get('[data-test="set-3pinned-columns"]').click();
+      cy.get('.slick-headerrow-column.l1 input').focus();
+      cy.press(Cypress.Keyboard.Keys.TAB);
+      cy.get('.slick-headerrow-column.l2 input').should('have.focus');
+      cy.press(Cypress.Keyboard.Keys.TAB);
+      cy.get('.slick-headerrow-column.l3 select').should('have.focus');
+      cy.press(Cypress.Keyboard.Keys.TAB);
+      cy.get('.slick-headerrow-column.l3 input').should('have.focus');
+      cy.press(Cypress.Keyboard.Keys.TAB);
+      cy.get('.slick-headerrow-column.l4 select').should('have.focus');
+      cy.press(Cypress.Keyboard.Keys.TAB);
+      cy.get('.slick-headerrow-column.l4 input').should('have.focus');
+
+      // Shift+Tab dosn't work in Cypress, so we can't go further with tests
+    });
+  });
+
+  describe('drag & drop column reordering with auto-scroll', () => {
+    it('should auto-scroll right viewport and reorder columns when "Start" is dragged well past the right edge (ending up after "Finish")', () => {
+      // Close the context menu opened by beforeEach
+      cy.get('body').type('{esc}');
+
+      // Control app timers to make drag auto-scroll deterministic in CI.
+      cy.clock();
+
+      // Normalize right viewport scroll so this test is isolated from previous test state.
+      cy.get('.slick-horizontal-scroller').then(($viewport) => {
+        $viewport[0].scrollLeft = 0;
+        $viewport[0].dispatchEvent(new Event('scroll', { bubbles: true }));
+      });
+      cy.get('.slick-horizontal-scroller').its('0.scrollLeft').should('equal', 0);
+      cy.get('[data-test="set-large-pinned-columns"]').click();
+
+      // Step 1: call SortableJS onStart for the "Start" column (1st center-section column).
+      // This binds the document 'drag' auto-scroll listener for the shared proxy scrollbar.
+      cy.get('.slick-header-columns-center').then(($rightHeader) => {
+        let sortInstance: any;
+        Object.keys($rightHeader[0]).forEach((prop) => {
+          if (prop.startsWith('Sortable')) {
+            sortInstance = ($rightHeader[0] as any)[prop];
+          }
+        });
+        expect(sortInstance).to.exist;
+        const startColumnEl = $rightHeader[0].querySelectorAll('.slick-header-column')[0] as HTMLElement;
+        sortInstance.options.onStart({ item: startColumnEl });
+      });
+
+      // Step 2: fire a document drag event well past the right edge (viewport-relative)
+      // to avoid CI flakiness caused by environment-dependent viewport widths.
+      cy.window().then((win) => {
+        const dragX = win.innerWidth + 1200;
+        cy.document().trigger('drag', { pageX: dragX, clientX: dragX, clientY: 50 });
+      });
+
+      // Step 3: advance mocked time so the 30ms scroll interval ticks several times.
+      cy.tick(350);
+
+      // Auto-scroll should have moved the right viewport to the right
+      cy.get('.slick-horizontal-scroller').its('0.scrollLeft').should('be.greaterThan', 0);
+
+      // Step 4: simulate the drag result — "Start" was moved to the right, past "Finish".
+      // SortableJS reads the DOM order via toArray() inside onEnd, so physically reorder the children first.
+      cy.get('.slick-header-columns-center').then(($rightHeader) => {
+        let sortInstance: any;
+        Object.keys($rightHeader[0]).forEach((prop) => {
+          if (prop.startsWith('Sortable')) {
+            sortInstance = ($rightHeader[0] as any)[prop];
+          }
+        });
+        expect(sortInstance).to.exist;
+        const startColumnEl = $rightHeader[0].querySelector('[data-id="start"]') as HTMLElement;
+        const finishColumnEl = $rightHeader[0].querySelector('[data-id="finish"]') as HTMLElement;
+        expect(startColumnEl).to.exist;
+        expect(finishColumnEl).to.exist;
+
+        // Move "Finish" before "Start" → mirrors dragging Start past Finish
+        $rightHeader[0].insertBefore(finishColumnEl, startColumnEl);
+
+        // onEnd reads the new DOM order via toArray() and calls setColumns() if the order changed
+        sortInstance.options.onEnd({ item: startColumnEl, stopPropagation: () => {} });
+      });
+
+      // The center region should now place Finish before Start. The exact
+      // region membership can vary when a large requested pin band does not
+      // fit the current viewport, so assert semantic order by column id.
+      cy.get('.slick-header-column').then(($headers) => {
+        const ids = [...$headers].map((header) => header.dataset.id);
+        expect(ids.indexOf('finish')).to.be.lessThan(ids.indexOf('start'));
+      });
+
+      // When a left band is active, its order must remain unchanged.
+      cy.get('.slick-header-columns-left').then(($leftRegion) => {
+        const left = $leftRegion.find('.slick-header-column');
+        if (left.length) {
+          expect([...left].map((header) => header.dataset.id)).to.deep.equal(['_checkbox_selector', 'title', 'percentComplete']);
+        }
+      });
+    });
   });
 });

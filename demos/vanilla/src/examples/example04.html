@@ -22,12 +22,12 @@
 <div class="row mb-3">
   <span>
     <label for="">Pinned Rows: </label>
-    <input type="number" class="frozen-row-count is-narrow input is-small" value.bind="pinnedRowCount" />
+    <input type="number" class="pinned-row-count is-narrow input is-small" value.bind="pinnedRowCount" />
     <button class="button is-small" onclick.trigger="changePinnedRowCount()">Set</button>
   </span>
   <span class="ml-1">
     <label for="">Pinned Columns: </label>
-    <input type="number" class="frozen-column-count is-narrow input is-small" value.bind="pinnedColumnCount" />
+    <input type="number" class="pinned-column-count is-narrow input is-small" value.bind="pinnedColumnCount" />
     <button class="button is-small" onclick.trigger="changePinnedColumnCount()">Set</button>
   </span>
   <span class="ml-1">
@@ -36,11 +36,11 @@
     <button class="button is-small" onclick.trigger="changePinnedRightColumnCount()">Set</button>
   </span>
   <span class="ml-3">
-    <button class="button is-small" onclick.trigger="setPinnedColumns(-1, 0)" data-test="remove-frozen-column-button">
+    <button class="button is-small" onclick.trigger="setPinnedColumns(-1, 0)" data-test="remove-pinned-column-button">
       <span class="mdi mdi-close"></span>
       <span>Remove Pinned Columns</span>
     </button>
-    <button class="button is-small" data-test="set-3frozen-columns" onclick.trigger="setPinnedColumns(2)">
+    <button class="button is-small" data-test="set-3pinned-columns" onclick.trigger="setPinnedColumns(2)">
       <span class="mdi mdi-pin-outline"></span>
       <span>Pin 3 Columns</span>
     </button>
@@ -48,7 +48,7 @@
       <span class="mdi mdi-pin-outline"></span>
       <span>Toggle Right Pinning</span>
     </button>
-    <button class="button is-small" data-test="toggle-frozen-bottom" onclick.trigger="togglePinnedBottomRows()">
+    <button class="button is-small" data-test="toggle-pinned-bottom" onclick.trigger="togglePinnedBottomRows()">
       <span class="mdi mdi-flip-vertical"></span>
       <span>Toggle Pinned Rows (top/bottom)</span>
     </button>

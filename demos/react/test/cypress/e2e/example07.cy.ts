@@ -75,7 +75,7 @@ describe('Example 7 - Header Button Plugin', () => {
     });
 
     it('should go over the last "Column J" and expect to find the button to have the disabled class and clicking it should not turn the negative numbers to red neither expect console log after clicking the disabled button', () => {
-      cy.get('#grid7-1 .slick-viewport-top.slick-viewport-left').scrollTo('right').wait(50);
+      cy.get('#grid7-1 .slick-horizontal-scroller').scrollTo('right').wait(50);
 
       cy.get('#grid7-1 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
@@ -109,7 +109,7 @@ describe('Example 7 - Header Button Plugin', () => {
     });
 
     it('should resize 1st column and make it wider', () => {
-      cy.get('#grid7-1 .slick-viewport-top.slick-viewport-left').scrollTo('left').wait(50);
+      cy.get('#grid7-1 .slick-horizontal-scroller').scrollTo('left').wait(50);
 
       cy.get('#grid7-1 .slick-header-columns').children('.slick-header-column:nth(0)').should('contain', 'Resize me!');
 
@@ -220,7 +220,7 @@ describe('Example 7 - Header Button Plugin', () => {
     });
 
     it('should go over the last "Column J" and expect to find the button to have the disabled class and clicking it should not turn the negative numbers to red neither expect console log after clicking the disabled button', () => {
-      cy.get('#grid7-2 .slick-viewport-top.slick-viewport-left').scrollTo('right').wait(50);
+      cy.get('#grid7-2 .slick-horizontal-scroller').scrollTo('right').wait(50);
 
       cy.get('#grid7-2 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
@@ -254,7 +254,7 @@ describe('Example 7 - Header Button Plugin', () => {
     });
 
     it('should resize 1st column and make it wider', () => {
-      cy.get('#grid7-2 .slick-viewport-top.slick-viewport-left').scrollTo('left').wait(50);
+      cy.get('#grid7-2 .slick-horizontal-scroller').scrollTo('left').wait(50);
 
       cy.get('#grid7-2 .slick-header-columns').children('.slick-header-column:nth(0)').should('contain', 'Resize me!');
 
@@ -364,7 +364,7 @@ describe('Example 7 - Header Button Plugin', () => {
     });
 
     it('should expect first few items of "Column C" to be negative numbers and be red', () => {
-      cy.get('#grid7-2 .slick-viewport-top.slick-viewport-left').scrollTo('top').wait(50);
+      cy.get('#grid7-2 .slick-vertical-scroller').scrollTo('top').wait(50);
 
       cy.get('#grid7-2 .slick-row').each(($row, index) => {
         if (index > 10) {

@@ -224,9 +224,9 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should scroll down when the row detail is just barely visible and then scroll back up and still expect same filters/sorting', () => {
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 350);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 350);
         cy.wait(50);
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 0);
 
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
@@ -236,9 +236,9 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
       it('should scroll down by 2 pages down and then scroll back up and no longer the same filters/sorting', () => {
         cy.get('#grid45 [data-row="0"] .slick-cell.r2.l2').first().click().type('{pagedown}');
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 2000);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 2000);
         cy.wait(50);
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 0);
 
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should(
           'not.contain',
@@ -419,7 +419,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('#grid45').type('{pageDown}{pageDown}', { release: false });
         cy.wait(50);
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 350);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 350);
 
         // expect same grid details for both grids
         // 2nd row detail
@@ -520,9 +520,9 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should scroll far down (out of viewport) and back up and expect inner grid sort/filter state is PRESERVED (keepComponentAlive)', () => {
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 800);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 800);
         cy.wait(50);
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 0);
 
         // state should be PRESERVED because keepComponentAlive is enabled
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
@@ -532,9 +532,9 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should scroll out of viewport a second time and back up and still expect inner grid sort/filter state is PRESERVED', () => {
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 800);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 800);
         cy.wait(50);
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 0);
 
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');

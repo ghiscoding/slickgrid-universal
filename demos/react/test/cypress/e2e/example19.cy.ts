@@ -80,7 +80,7 @@ describe('Example 19 - Row Detail View', () => {
 
     cy.get('@detailContainer').find('[data-test=delete-btn]').click();
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     cy.get('#grid19')
       .find('.slick-row')
@@ -111,7 +111,7 @@ describe('Example 19 - Row Detail View', () => {
 
     cy.get('[data-test=collapse-all-btn]').click();
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_0 .container_0').should('not.exist');
 
@@ -175,7 +175,7 @@ describe('Example 19 - Row Detail View', () => {
 
     cy.get('#grid19').find('.slick-header-column:nth(1)').find('.slick-sort-indicator-asc').should('have.length', 1);
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_0 .container_0').should('not.exist');
 

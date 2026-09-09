@@ -87,7 +87,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should expect the row to have moved to another row index', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
 
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
@@ -126,7 +126,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('@moveIconTask5').trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
 
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
@@ -175,7 +175,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('.vc:visible [data-vc-date-btn]:visible').contains(/22$/).first().click();
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(7)`).should('contain', '2009-01-22');
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
     });
 
     it('should dynamically add 2x new "Title" columns', () => {
@@ -1320,7 +1320,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should scroll to "Task 45", open "Title" editor and expect the editor to follow scroll until it goes outside the viewport', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1500);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1500);
       cy.wait(10);
       cy.get('[data-row="35"] > .slick-cell:nth(2)').should('contain', 'Task 35');
 
@@ -1328,22 +1328,22 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1300).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1300).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1150).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1150).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1000).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1000).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1600).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1600).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 2000).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 2000).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('not.be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 0).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('not.be.visible');
     });
 

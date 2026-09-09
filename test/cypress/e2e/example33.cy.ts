@@ -58,7 +58,7 @@ describe('Example 33 - Column & Row Span', { retries: 0 }, () => {
   it('should auto-scroll horizontally when a column is dragged past the viewport', () => {
     let sortInstance: any;
     let draggedColumn: HTMLElement;
-    const horizontalScroller = '.grid33 .slick-docking-horizontal-scroller';
+    const horizontalScroller = '.grid33 .slick-horizontal-scroller';
 
     cy.clock();
     cy.get(horizontalScroller).scrollTo(0, 0).its('0.scrollLeft').should('equal', 0);
@@ -211,7 +211,7 @@ describe('Example 33 - Column & Row Span', { retries: 0 }, () => {
     });
 
     it('should scroll to the right and still expect spans without any extra texts', () => {
-      cy.get('.grid33 .slick-docking-horizontal-scroller').scrollTo(400, 0).wait(10);
+      cy.get('.grid33 .slick-horizontal-scroller').scrollTo(400, 0).wait(10);
 
       cy.get(`[data-row=3] > .slick-cell:nth(1)`).contains(/\d+$/);
       cy.get(`[data-row=3] > .slick-cell.l1.r2.rowspan`).should('exist');
@@ -232,7 +232,7 @@ describe('Example 33 - Column & Row Span', { retries: 0 }, () => {
     });
 
     it('should scroll back to left and expect Task 8 to have 2 different spans (Revenue Grow: rowspan=80, Policy Index: rowspan=2000,colspan=2)', () => {
-      cy.get('.grid33 .slick-docking-horizontal-scroller').scrollTo(0, 0).wait(10);
+      cy.get('.grid33 .slick-horizontal-scroller').scrollTo(0, 0).wait(10);
 
       cy.get(`[data-row=8] > .slick-cell.l0.r0`).should('contain', 'Task 8');
       cy.get(`[data-row=8] > .slick-cell.l1.r1.rowspan`).should(($el) => {
@@ -355,8 +355,8 @@ describe('Example 33 - Column & Row Span', { retries: 0 }, () => {
     it('should start at RevenueGrowth column on first dashed cell, then type "Ctrl+End" then "Ctrl+Home" keys and expect active cell to go to bottom/top of grid on same column', () => {
       // The preceding span/scroll cases share state. Reset both axes through
       // the POC's actual scroll owners before interacting with the first row.
-      cy.get('.grid33 .slick-docking-horizontal-scroller').scrollTo(0, 0);
-      cy.get('.grid33 .slick-viewport-top.slick-viewport-left').scrollTo(0, 0);
+      cy.get('.grid33 .slick-horizontal-scroller').scrollTo(0, 0);
+      cy.get('.grid33 .slick-vertical-scroller').scrollTo(0, 0);
       cy.get('[data-row=0] > .slick-cell.l2.r2').as('active_cell').click();
       cy.get('[data-row=0] > .slick-cell.l2.r2.active').should('have.length', 1);
       cy.get('@active_cell').type('{ctrl}{end}', { release: false });

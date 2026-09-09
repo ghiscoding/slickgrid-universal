@@ -46,10 +46,26 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getPinnedColumns('left').map((column) => column.id)).toEqual(['a']);
     expect(slickGrid.getPinnedColumns('right').map((column) => column.id)).toEqual(['d']);
     expect(container.querySelector('.slick-docking-horizontal-scroller')).toBeTruthy();
+    expect(container.querySelector('.slick-horizontal-scroller')).toBe(container.querySelector('.slick-docking-horizontal-scroller'));
+    expect(container.querySelector('.slick-vertical-scroller')).toBe((slickGrid as any)._viewportTopL);
     expect(container.querySelector('.slick-docking-overlay')).toBeTruthy();
     expect((slickGrid as any)._paneTopL.style.left).toBe('');
     expect((slickGrid as any)._paneTopL.style.width).toBe('100%');
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
+  });
+
+  it('keeps the native viewport scroll owner until docking is enabled', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+
+    expect(container.querySelector('.slick-docking-horizontal-scroller')).toBeNull();
+    expect(internals._viewportTopL.style.overflowX).toBe('auto');
+
+    slickGrid.setColumnPinning('a', 'left');
+
+    expect(container.querySelector('.slick-docking-horizontal-scroller')).toBeTruthy();
+    expect(container.querySelector('.slick-horizontal-scroller')).toBe(container.querySelector('.slick-docking-horizontal-scroller'));
+    expect(slickGrid.getPinnedColumns('left').map((column) => column.id)).toEqual(['a']);
   });
 
   it('covers pinning validation, row identity resolution, and cleanup timer cancellation', () => {

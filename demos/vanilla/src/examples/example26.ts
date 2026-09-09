@@ -122,6 +122,7 @@ export default class Example26 {
       enableSelection: true,
       enableGrouping: true,
       headerMenu: {
+        hidePinColumnCommand: false,
         hidePinningColumnsCommand: false,
       },
       presets: {

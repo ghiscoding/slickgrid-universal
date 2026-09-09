@@ -35,8 +35,8 @@ export class TranslaterServiceStub implements TranslaterService {
       case 'CLEAR_ALL_SORTING':
         output = this._locale === 'en' ? 'Clear all Sorting' : 'Supprimer tous les tris';
         break;
-      case 'CLEAR_FROZEN_COLUMNS':
-        output = this._locale === 'en' ? 'Unfreeze Columns/Rows' : 'Dégeler les colonnes/rangées';
+      case 'CLEAR_PINNED_COLUMNS':
+        output = this._locale === 'en' ? 'Unpin Columns/Rows' : 'Désépingler les colonnes/rangées';
         break;
       case 'COLUMNS':
         output = this._locale === 'en' ? 'Columns' : 'Colonnes';
@@ -95,8 +95,23 @@ export class TranslaterServiceStub implements TranslaterService {
       case 'FORCE_FIT_COLUMNS':
         output = this._locale === 'en' ? 'Force fit columns' : 'Ajustement forcé des colonnes';
         break;
-      case 'FREEZE_COLUMNS':
-        output = this._locale === 'en' ? 'Freeze Columns' : 'Geler les colonnes';
+      case 'PIN_COLUMN':
+        output = this._locale === 'en' ? 'Column Pinning' : 'Épinglage de colonnes';
+        break;
+      case 'PIN_COLUMNS':
+        output = this._locale === 'en' ? 'Pin Through Here' : "Épingler jusqu'ici";
+        break;
+      case 'PIN_LEFT':
+        output = this._locale === 'en' ? 'Pin Left' : 'Épingler à gauche';
+        break;
+      case 'PIN_RIGHT':
+        output = this._locale === 'en' ? 'Pin Right' : 'Épingler à droite';
+        break;
+      case 'UNPIN_COLUMN':
+        output = this._locale === 'en' ? 'Unpin Column' : 'Désépingler la colonne';
+        break;
+      case 'UNPIN_COLUMNS':
+        output = this._locale === 'en' ? 'Unpin All Columns' : 'Désépingler toutes les colonnes';
         break;
       case 'GREATER_THAN':
         output = this._locale === 'en' ? 'Greater than' : 'Plus grand que';

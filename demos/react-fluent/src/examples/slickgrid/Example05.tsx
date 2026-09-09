@@ -22,9 +22,9 @@ const Example05: React.FC = () => {
   const [dataset] = useState<any[]>(getData());
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [darkModeGrid, setDarkModeGrid] = useState(false);
-  const [frozenColumnCount, setFrozenColumnCount] = useState(2);
-  const [frozenRowCount, setFrozenRowCount] = useState(3);
-  const [isFrozenBottom, setIsFrozenBottom] = useState(false);
+  const [pinnedColumnCount, setPinnedColumnCount] = useState(2);
+  const [pinnedRowCount, setPinnedRowCount] = useState(3);
+  const [isPinnedBottom, setIsPinnedBottom] = useState(false);
 
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
   const slickEventHandler = new SlickEventHandler();
@@ -41,8 +41,7 @@ const Example05: React.FC = () => {
   function reactGridReady(reactGrid: SlickgridReactInstance) {
     reactGridRef.current = reactGrid;
 
-    // with frozen (pinned) grid, in order to see the entire row being highlighted when hovering
-    // we need to do some extra tricks (that is because frozen grids use 2 separate div containers)
+    // With a pinned grid, the entire row is highlighted through its shared row regions.
     // the trick is to use row selection to highlight when hovering current row and remove selection once we're not
     slickEventHandler.subscribe(reactGridRef.current?.slickGrid.onMouseEnter, (event) => highlightRow(event, true));
     slickEventHandler.subscribe(reactGridRef.current?.slickGrid.onMouseLeave, (event) => highlightRow(event, false));
@@ -253,13 +252,11 @@ const Example05: React.FC = () => {
       editable: true,
       autoEdit: true,
       enableExcelCopyBuffer: true,
-      frozenColumn: 2,
-      frozenRow: 3,
-      // frozenBottom: true, // if you want to freeze the bottom instead of the top, you can enable this property
+      pinning: { columns: { left: 2 }, rows: { top: [0, 1, 2] } },
 
-      // show both Frozen Columns in HeaderMenu & GridMenu, these are opt-in commands so they're disabled by default
-      gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false },
+      // show both single-column and bulk pinning commands in HeaderMenu & GridMenu; these are opt-in commands
+      gridMenu: { hideClearPinningCommand: false },
+      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
       ...baseFluentGridOption,
     };
 
@@ -290,26 +287,26 @@ const Example05: React.FC = () => {
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
-  function changeFrozenColumnCount(e: React.FormEvent<HTMLInputElement>) {
-    const frozenColumn = +((e.target as HTMLInputElement)?.value ?? 0);
-    setFrozenColumnCount(frozenColumn);
+  function changePinnedColumnCount(e: React.FormEvent<HTMLInputElement>) {
+    const pinnedColumn = +((e.target as HTMLInputElement)?.value ?? 0);
+    setPinnedColumnCount(pinnedColumn);
   }
 
-  function updateFrozenColumnCount() {
+  function updatePinnedColumnCount() {
     reactGridRef.current?.slickGrid?.setOptions({
-      frozenColumn: frozenColumnCount,
+      pinning: { columns: { left: pinnedColumnCount } },
     });
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
-  function changeFrozenRowCount(e: React.FormEvent<HTMLInputElement>) {
-    const frozenRow = +((e.target as HTMLInputElement)?.value ?? 0);
-    setFrozenRowCount(frozenRow);
+  function changePinnedRowCount(e: React.FormEvent<HTMLInputElement>) {
+    const pinnedRow = +((e.target as HTMLInputElement)?.value ?? 0);
+    setPinnedRowCount(pinnedRow);
   }
 
-  function updateFrozenRowCount() {
+  function updatePinnedRowCount() {
     reactGridRef.current?.slickGrid?.setOptions({
-      frozenRow: frozenRowCount,
+      pinning: { rows: { top: Array.from({ length: Math.max(0, pinnedRowCount) }, (_value, index) => index) } },
     });
   }
 
@@ -330,8 +327,8 @@ const Example05: React.FC = () => {
     showToast(args.validationResults.msg, 'danger');
   }
 
-  function setFrozenColumns(frozenCols: number) {
-    reactGridRef.current?.slickGrid.setOptions({ frozenColumn: frozenCols });
+  function setPinnedColumns(pinnedCols: number) {
+    reactGridRef.current?.slickGrid.setOptions({ pinning: { columns: { left: pinnedCols } } });
     const updatedGridOptions = reactGridRef.current?.slickGrid.getOptions();
     setGridOptions(updatedGridOptions);
   }
@@ -348,20 +345,20 @@ const Example05: React.FC = () => {
   }
 
   /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
-  function toggleFrozenBottomRows() {
+  function togglePinnedBottomRows() {
     reactGridRef.current?.slickGrid.setOptions({
-      frozenBottom: !isFrozenBottom,
+      pinning: { rows: { top: isPinnedBottom ? [0, 1, 2] : [], bottom: isPinnedBottom ? [] : [0, 1, 2] } },
     });
 
-    const newIsFrozenBottom = !isFrozenBottom;
-    setIsFrozenBottom(newIsFrozenBottom);
+    const newIsPinnedBottom = !isPinnedBottom;
+    setIsPinnedBottom(newIsPinnedBottom);
   }
 
   return !gridOptions ? (
     ''
   ) : (
     <div id="demo-container" className="container-fluid">
-      <h2>Example 5: Pinned (frozen) Columns/Rows</h2>
+      <h2>Example 5: Pinned Columns/Rows</h2>
 
       <div className="row">
         <div className="col-sm-12">
@@ -370,10 +367,10 @@ const Example05: React.FC = () => {
             <input
               type="number"
               style={{ height: '24px', width: '55px' }}
-              defaultValue={frozenRowCount}
-              onInput={($event) => changeFrozenRowCount($event)}
+              defaultValue={pinnedRowCount}
+              onInput={($event) => changePinnedRowCount($event)}
             />
-            <Button className="mx-1" onClick={() => updateFrozenRowCount()}>
+            <Button className="mx-1" onClick={() => updatePinnedRowCount()}>
               Set
             </Button>
           </span>
@@ -382,10 +379,10 @@ const Example05: React.FC = () => {
             <input
               type="number"
               style={{ height: '24px', width: '55px' }}
-              defaultValue={frozenColumnCount}
-              onInput={($event) => changeFrozenColumnCount($event)}
+              defaultValue={pinnedColumnCount}
+              onInput={($event) => changePinnedColumnCount($event)}
             />
-            <Button className="mx-1" onClick={() => updateFrozenColumnCount()}>
+            <Button className="mx-1" onClick={() => updatePinnedColumnCount()}>
               Set
             </Button>
           </span>
@@ -398,17 +395,17 @@ const Example05: React.FC = () => {
             <i className="fi fi-dark-theme"></i>
             <span className="ms-1">Toggle Dark Mode</span>
           </Button>
-          <Button className="btn-icon mx-1" onClick={() => setFrozenColumns(-1)} data-test="remove-frozen-column-button">
-            <i className="fi fi-dismiss"></i> Remove Frozen Columns
+          <Button className="btn-icon mx-1" onClick={() => setPinnedColumns(-1)} data-test="remove-pinned-column-button">
+            <i className="fi fi-dismiss"></i> Remove Pinned Columns
           </Button>
-          <Button className="btn-icon" onClick={() => setFrozenColumns(2)} data-test="set-3frozen-columns">
-            <i className="fi fi-pin"></i> Set 3 Frozen Columns
+          <Button className="btn-icon" onClick={() => setPinnedColumns(2)} data-test="set-3pinned-columns">
+            <i className="fi fi-pin"></i> Set 3 Pinned Columns
           </Button>
           <span style={{ marginLeft: '15px' }}>
-            <Button className="btn-icon" onClick={() => toggleFrozenBottomRows()}>
+            <Button className="btn-icon" onClick={() => togglePinnedBottomRows()}>
               <i className="fi fi-split-horizontal"></i> Toggle Pinned Rows
             </Button>
-            <span style={{ fontWeight: 'bold' }}>: {isFrozenBottom ? 'Bottom' : 'Top'}</span>
+            <span style={{ fontWeight: 'bold' }}>: {isPinnedBottom ? 'Bottom' : 'Top'}</span>
           </span>
         </div>
       </div>

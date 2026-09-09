@@ -2,7 +2,6 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
   const BASE_ROW_HEIGHT = 40;
   const PINNED_ROW_COUNT = 2;
 
-  // mirrors example45 metadata fallback output pattern
   const hDefault = (r: number) => {
     const cycle = [33, 44, 44, 80];
     return cycle[r % cycle.length];
@@ -96,7 +95,7 @@ describe('Example 45 - Variable Row Height (item metadata)', { retries: 1 }, () 
 
     cy.get('[data-test="scroll-row-90-example45"]').click();
 
-    cy.get('.slick-viewport-top.slick-viewport-left').should(($viewport) => {
+    cy.get('.slick-vertical-scroller').should(($viewport) => {
       expect($viewport.scrollTop()).to.be.closeTo(expectedScrollTop, 2);
     });
 

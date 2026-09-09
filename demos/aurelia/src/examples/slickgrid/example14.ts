@@ -56,6 +56,7 @@ export class Example14 {
       preHeaderPanelHeight: 28,
       gridHeight: 275,
       gridWidth: 800,
+      rowHeight: 33,
       enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {
@@ -104,15 +105,16 @@ export class Example14 {
       explicitInitialization: true,
       gridHeight: 275,
       gridWidth: 800,
-      frozenColumn: 2,
+      rowHeight: 33,
+      pinning: { columns: { left: 2 } },
       enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: false,
       },
       externalResources: [new ExcelExportService(), new PdfExportService()],
-      gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false },
+      gridMenu: { hideClearPinningCommand: false },
+      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
     };
   }
 
@@ -134,8 +136,8 @@ export class Example14 {
     return mockDataset;
   }
 
-  setFrozenColumns2(frozenCols: number) {
-    this.gridObj2.setOptions({ frozenColumn: frozenCols });
+  setPinnedColumns2(pinnedCols: number) {
+    this.gridObj2.setOptions({ pinning: { columns: { left: pinnedCols } } });
     this.gridOptions2 = this.gridObj2.getOptions();
   }
 

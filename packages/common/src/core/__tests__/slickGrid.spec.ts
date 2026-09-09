@@ -130,6 +130,45 @@ describe('SlickGrid core file', () => {
     expect(grid.getGridPosition()).toBeTruthy();
   });
 
+  it('should keep the viewport as the horizontal scroll element when docking is not configured', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name', width: 300 },
+      { id: 'lastName', field: 'lastName', name: 'Last Name', width: 300 },
+      { id: 'age', field: 'age', name: 'Age', width: 300 },
+    ] as Column[];
+    grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }], columns, defaultOptions);
+
+    const viewport = container.querySelector('.slick-viewport-top.slick-viewport-left');
+
+    expect(viewport).toBeTruthy();
+    expect((grid as any)._viewportScrollContainerX).toBe(viewport);
+    expect(container.querySelector('.slick-docking-horizontal-scroller')).toBeNull();
+    expect(viewport?.classList.contains('slick-horizontal-scroller')).toBe(true);
+    expect(viewport?.classList.contains('slick-vertical-scroller')).toBe(true);
+  });
+
+  it('should ignore non-cell row-detail siblings when rebuilding the row cell cache', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'John' }], columns, defaultOptions);
+
+    const rowNode = document.createElement('div');
+    rowNode.className = 'slick-row';
+    const cellNode = createDomElement('div', { className: 'slick-cell l0 r0' });
+    const detailNode = createDomElement('div', { className: 'dynamic-cell-detail cellDetailView_32' });
+    rowNode.append(cellNode, detailNode);
+
+    const cacheEntry = {
+      rowNode: [rowNode],
+      cellRenderQueue: [0],
+      cellNodesByColumnIdx: {},
+    };
+    (grid as any).rowsCache[0] = cacheEntry;
+
+    expect(() => (grid as any).ensureCellNodesInRowsCache(0)).not.toThrow();
+    expect(cacheEntry.cellNodesByColumnIdx).toEqual({ 0: cellNode });
+    expect(cacheEntry.cellRenderQueue).toHaveLength(0);
+  });
+
   it('should handle ancestor scrolling after the grid container is moved', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     const oldScrollContainer = document.createElement('div');
@@ -7759,7 +7798,12 @@ describe('SlickGrid core file', () => {
             { id: 'name', field: 'name', name: 'Name' },
             { id: 'age', field: 'age', name: 'Age' },
           ] as Column[];
-          grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+          grid = new SlickGrid<any, Column>(container, items, columns, {
+            ...defaultOptions,
+            pinning: { columns: { left: 0 } },
+            showHeaderRow: true,
+            enableCellNavigation: true,
+          });
           const headerRowElm = container.querySelector('.slick-headerrow') as HTMLDivElement;
           Object.defineProperty(headerRowElm, 'scrollLeft', { writable: true, value: 25 });
 
@@ -7775,6 +7819,7 @@ describe('SlickGrid core file', () => {
           ] as Column[];
           grid = new SlickGrid<any, Column>(container, items, columns, {
             ...defaultOptions,
+            pinning: { columns: { left: 0 } },
             createFooterRow: true,
             showFooterRow: true,
             enableCellNavigation: true,
@@ -7794,6 +7839,7 @@ describe('SlickGrid core file', () => {
           ] as Column[];
           grid = new SlickGrid<any, Column>(container, items, columns, {
             ...defaultOptions,
+            pinning: { columns: { left: 0 } },
             createPreHeaderPanel: true,
             preHeaderPanelHeight: 44,
             showPreHeaderPanel: true,
@@ -7822,6 +7868,7 @@ describe('SlickGrid core file', () => {
           ] as Column[];
           grid = new SlickGrid<any, Column>(container, items, columns, {
             ...defaultOptions,
+            pinning: { columns: { left: 0 } },
             createTopHeaderPanel: true,
             topHeaderPanelHeight: 44,
             showTopHeaderPanel: true,

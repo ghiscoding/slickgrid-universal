@@ -74,7 +74,7 @@ describe('Example 20 - Row Detail View', () => {
     cy.get('.grid20').find('.dynamic-cell-detail .innerDetailView_3').as('detailContainer3');
 
     cy.get('@detailContainer3').find('[data-test=delete-btn]').click();
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     cy.get('.grid20')
       .find('.slick-row')
@@ -105,7 +105,7 @@ describe('Example 20 - Row Detail View', () => {
     cy.get('@detailContainer1').find('h4').contains('Task 1');
 
     cy.get('[data-test=collapse-all-btn]').click();
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
     cy.get('.grid20').find('.dynamic-cell-detail .innerDetailView_1').should('not.exist');
     cy.get('.grid20').find('.dynamic-cell-detail .innerDetailView_1').should('not.exist');
 
@@ -162,7 +162,7 @@ describe('Example 20 - Row Detail View', () => {
       .click();
 
     cy.get('.grid20').find('.slick-header-column:nth(2)').find('.slick-sort-indicator-asc').should('have.length', 1);
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
     cy.get('.grid20').find('.dynamic-cell-detail .innerDetailView_0').should('not.exist');
     cy.get('.grid20').find('.dynamic-cell-detail .innerDetailView_5').should('not.exist');
     cy.get('.grid20')
@@ -219,7 +219,7 @@ describe('Example 20 - Row Detail View', () => {
   });
 
   it('should open two Row Details and expect 2 detail panels opened', () => {
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     cy.get(`.slick-row[style*="translateY(${GRID_ROW_HEIGHT * 8}px)"] .slick-cell:nth(2)`)
       .click()
@@ -239,7 +239,7 @@ describe('Example 20 - Row Detail View', () => {
       const stub = cy.stub(win, 'confirm').returns(true);
       cy.wrap(stub).as('confirmStub');
     });
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
     cy.get('.slick-cell.detail-view-toggle:nth(1)').click().wait(40);
 
     cy.get('.dynamic-cell-detail').should('have.length', 1);

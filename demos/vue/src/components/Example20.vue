@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   Editors,
   Filters,
   formatNumber,
   Formatters,
-  SlickEventHandler,
   SlickgridVue,
   type Column,
   type ColumnEditorDualInput,
@@ -19,96 +19,101 @@ const gridOptions = ref<GridOption>();
 const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
-const frozenColumnCount = ref(2);
-const frozenRowCount = ref(3);
-const isFrozenBottom = ref(false);
+const pinnedColumnCount = ref(2);
+const pinnedRightColumnCount = ref(1);
+const pinnedRowCount = ref(3);
+const isPinnedBottom = ref(false);
+const isSelectAllShownAsColumnTitle = ref(false);
 let vueGrid!: SlickgridVueInstance;
-let slickEventHandler: any;
+let checkboxSelectorInstance: any;
+
+const customEditableInputFormatter = (_row: number, _cell: number, value: any) => value ?? '';
+const myCustomTitleValidator = (value: any) => {
+  if (value === null || value === undefined || !value.length) {
+    return { valid: false, msg: 'This is a required field' };
+  }
+  if (!/^Task\s\d+$/.test(value)) {
+    return { valid: false, msg: 'Your title is invalid, it must start with "Task" followed by a number' };
+  }
+  return { valid: true, msg: '' };
+};
 
 onBeforeMount(() => {
   defineGrid();
-  // mock some data (different in each dataset)
   dataset.value = mockData(NB_ITEMS);
-  slickEventHandler = new SlickEventHandler();
 });
 
-onBeforeMount(() => {
-  slickEventHandler.unsubscribeAll();
-});
-
-/* Define grid Options and Columns */
 function defineGrid() {
   columns.value = [
-    {
-      id: 'sel',
-      name: '#',
-      field: 'id',
-      minWidth: 40,
-      width: 40,
-      maxWidth: 40,
-      cannotTriggerInsert: true,
-      resizable: false,
-      unselectable: true,
-    },
     {
       id: 'title',
       name: 'Title',
       field: 'title',
-      minWidth: 100,
       width: 120,
-      filterable: true,
+      minWidth: 100,
       sortable: true,
+      filterable: true,
+      editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator },
+      formatter: customEditableInputFormatter,
     },
     {
       id: 'percentComplete',
       name: '% Complete',
       field: 'percentComplete',
-      resizable: false,
-      minWidth: 130,
       width: 140,
-      formatter: Formatters.percentCompleteBar,
+      minWidth: 130,
       type: 'number',
+      sortable: true,
       filterable: true,
       filter: { model: Filters.slider, operator: '>=' },
-      sortable: true,
+      editor: { model: Editors.singleSelect, collection: Array.from({ length: 101 }, (_v, i) => ({ value: i, label: i })) },
     },
     {
       id: 'start',
       name: 'Start',
       field: 'start',
-      minWidth: 100,
-      width: 120,
-      filterable: true,
+      type: 'dateIso',
       sortable: true,
+      filterable: true,
       formatter: Formatters.dateIso,
+      filter: { model: Filters.compoundDate },
     },
     {
       id: 'finish',
       name: 'Finish',
       field: 'finish',
-      minWidth: 100,
-      width: 120,
-      filterable: true,
+      type: 'dateIso',
       sortable: true,
+      filterable: true,
       formatter: Formatters.dateIso,
+      filter: { model: Filters.compoundDate },
+    },
+    {
+      id: 'completed',
+      name: 'Completed',
+      field: 'completed',
+      sortable: true,
+      filterable: true,
+      formatter: Formatters.checkmarkMaterial,
+      editor: { model: Editors.checkbox },
+      filter: {
+        model: Filters.singleSelect,
+        collection: [
+          { value: '', label: '' },
+          { value: true, label: 'True' },
+          { value: false, label: 'False' },
+        ],
+      },
     },
     {
       id: 'cost',
       name: 'Cost | Duration',
       field: 'cost',
       formatter: costDurationFormatter,
-      minWidth: 150,
-      width: 170,
       sortable: true,
-      // filterable: true,
-      filter: {
-        model: Filters.compoundSlider,
-      },
+      filter: { model: Filters.compoundSlider },
       editor: {
         model: Editors.dualInput,
-        // the DualInputEditor is of Type ColumnEditorDualInput and MUST include (leftInput/rightInput) in its params object
-        // in each of these 2 properties, you can pass any regular properties of a column editor
-        // and they will be executed following the options defined in each
         params: {
           leftInput: {
             field: 'cost',
@@ -119,298 +124,361 @@ function defineGrid() {
             placeholder: '< 50K',
             errorMessage: 'Cost must be positive and below $50K.',
           },
-          rightInput: {
-            field: 'duration',
-            type: 'float', // you could have 2 different input type as well
-            minValue: 0,
-            maxValue: 100,
-            title: 'make sure Duration is withing its range of 0 to 100',
-            errorMessage: 'Duration must be between 0 and 100.',
-
-            // Validator Option #1
-            // You could also optionally define a custom validator in 1 or both inputs
-            /*
-              validator: (value, args) => {
-                let isValid = true;
-                let errorMsg = '';
-                if (value < 0 || value > 120) {
-                  isValid = false;
-                  errorMsg = 'Duration MUST be between 0 and 120.';
-                }
-                return { valid: isValid, msg: errorMsg };
-              }
-              */
-          },
+          rightInput: { field: 'duration', type: 'float', minValue: 0, maxValue: 100, errorMessage: 'Duration must be between 0 and 100.' },
         } as ColumnEditorDualInput,
-
-        // Validator Option #2 (shared Validator) - this is the last alternative, option #1 (independent Validators) is still the recommended way
-        // You can also optionally use a common Validator (if you do then you cannot use the leftInput/rightInput validators at same time)
-        // to compare both values at the same time.
-        /*
-          validator: (values, args) => {
-            let isValid = true;
-            let errorMsg = '';
-            if (values.cost < 0 || values.cost > 50000) {
-              isValid = false;
-              errorMsg = 'Cost MUST be between 0 and 50k.';
-            }
-            if (values.duration < 0 || values.duration > 120) {
-              isValid = false;
-              errorMsg = 'Duration MUST be between 0 and 120.';
-            }
-            if (values.cost < values.duration) {
-              isValid = false;
-              errorMsg = 'Cost can never be lower than its Duration.';
-            }
-            return { valid: isValid, msg: errorMsg };
-          }
-          */
       },
     },
+    { id: 'cityOfOrigin', name: 'City of Origin', field: 'cityOfOrigin', minWidth: 100, sortable: true, filterable: true },
     {
-      id: 'effortDriven',
-      name: 'Effort Driven',
-      field: 'effortDriven',
-      minWidth: 100,
-      width: 120,
-      formatter: Formatters.checkmarkMaterial,
-      filterable: true,
-      filter: {
-        collection: [
-          { value: '', label: '' },
-          { value: true, label: 'True' },
-          { value: false, label: 'False' },
+      id: 'action',
+      name: 'Action',
+      field: 'action',
+      width: 100,
+      maxWidth: 100,
+      excludeFromExport: true,
+      formatter: () => '<div class="cell-menu-dropdown">Action<i class="mdi mdi-chevron-down"></i></div>',
+      cellMenu: {
+        commandTitle: 'Commands',
+        commandItems: [
+          { command: 'command1', title: 'Command 1' },
+          { command: 'command2', title: 'Command 2', itemUsabilityOverride: (args: any) => !args.dataContext.completed },
+          { command: 'delete-row', title: 'Delete Row', itemVisibilityOverride: (args: any) => !args.dataContext.completed },
+          { divider: true, command: '' },
+          { command: 'help', title: 'Help' },
+          { command: 'something', title: 'Disabled Command', disabled: true },
         ],
-        model: Filters.singleSelect,
+        optionTitle: 'Change Complete Flag',
+        optionItems: [
+          { option: true, title: 'True' },
+          { option: false, title: 'False' },
+        ],
       },
-      sortable: true,
-    },
-    {
-      id: 'title1',
-      name: 'Title 1',
-      field: 'title1',
-      minWidth: 100,
-      width: 120,
-      filterable: true,
-      sortable: true,
-    },
-    {
-      id: 'title2',
-      name: 'Title 2',
-      field: 'title2',
-      minWidth: 100,
-      width: 120,
-      filterable: true,
-      sortable: true,
-    },
-    {
-      id: 'title3',
-      name: 'Title 3',
-      field: 'title3',
-      minWidth: 100,
-      width: 120,
-      filterable: true,
-      sortable: true,
-    },
-    {
-      id: 'title4',
-      name: 'Title 4',
-      field: 'title4',
-      minWidth: 100,
-      width: 120,
-      filterable: true,
-      sortable: true,
     },
   ];
 
   gridOptions.value = {
-    autoResize: {
-      container: '#demo-container',
-      rightPadding: 10,
-    },
-    gridWidth: 920,
+    autoResize: { container: '#demo-container', rightPadding: 10 },
+    // Keep the left-pinned columns compact so two right-pinned columns fit
+    // beside the framework demo's route sidebar.
+    autoFitColumnsOnFirstLoad: false,
+    enableAutoResize: true,
+    enableAutoSizeColumns: true,
     enableCellNavigation: true,
+    enableFiltering: true,
     editable: true,
     autoEdit: true,
     enableExcelCopyBuffer: true,
-    frozenColumn: frozenColumnCount.value,
-    frozenRow: frozenRowCount.value,
-    // frozenBottom: true, // if you want to freeze the bottom instead of the top, you can enable this property
-
-    // show both Frozen Columns in HeaderMenu & GridMenu, these are opt-in commands so they're disabled by default
-    gridMenu: { hideClearFrozenColumnsCommand: false },
-    headerMenu: { hideFreezeColumnsCommand: false },
+    enableExcelExport: true,
+    externalResources: [new ExcelExportService()],
+    enableSelection: true,
+    enableCheckboxSelector: true,
+    selectionOptions: { selectActiveRow: false },
+    checkboxSelector: {
+      hideInColumnTitleRow: !isSelectAllShownAsColumnTitle.value,
+      hideInFilterHeaderRow: isSelectAllShownAsColumnTitle.value,
+      name: 'Sel',
+      onExtensionRegistered: (instance: any) => (checkboxSelectorInstance = instance),
+    },
+    pinning: {
+      columns: { left: ['_checkbox_selector', 'title', 'percentComplete'], right: ['action'] },
+      rows: { top: getPinnedRowIndexes() },
+    },
+    enableCellMenu: true,
+    cellMenu: {
+      onCommand: (_e: unknown, args: any) => executeCommand(args),
+      onOptionSelected: (_e: unknown, args: any) => {
+        if (args?.dataContext && Object.prototype.hasOwnProperty.call(args.dataContext, 'completed')) {
+          args.dataContext.completed = args.item.option;
+          vueGrid?.gridService?.updateItem(args.dataContext);
+        }
+      },
+    },
+    enableContextMenu: true,
+    contextMenu: getContextMenuOptions(),
+    gridMenu: { hideClearPinningCommand: false },
+    headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
   };
 }
 
-function colorizeHoveringRow(event: Event, isMouseEnter: boolean) {
-  const cell = vueGrid.slickGrid.getCellFromEvent(event);
-  const rows = isMouseEnter ? [cell?.row ?? 0] : [];
-  vueGrid.slickGrid.setSelectedRows(rows); // highlight current row
-  event.preventDefault();
-}
-
 function mockData(count: number) {
-  // Set up some test columns.
-  const mockDataset: any[] = [];
-  for (let i = 0; i < count; i++) {
-    mockDataset[i] = {
-      id: i,
-      title: 'Task ' + i,
-      cost: i % 33 === 0 ? null : Math.random() * 10000,
-      duration: i % 8 ? Math.round(Math.random() * 100) + '' : null,
-      percentComplete: Math.round(Math.random() * 100),
-      start: new Date(2009, 0, 1),
-      finish: new Date(2009, 4, 5),
-      effortDriven: i % 5 === 0,
-      title1: `Some Text ${Math.round(Math.random() * 25)}`,
-      title2: `Some Text ${Math.round(Math.random() * 25)}`,
-      title3: `Some Text ${Math.round(Math.random() * 25)}`,
-      title4: `Some Text ${Math.round(Math.random() * 25)}`,
-    };
-  }
-
-  return mockDataset;
+  return Array.from({ length: count }, (_v, i) => ({
+    id: i,
+    title: `Task ${i}`,
+    duration: i % 8 ? `${Math.round(Math.random() * 100)}` : null,
+    percentComplete: Math.round(Math.random() * 100),
+    start: new Date(2009, 0, 1),
+    finish: new Date(2009, 4, 5),
+    cost: i % 33 === 0 ? null : Math.random() * 10000,
+    completed: i % 5 === 0,
+    cityOfOrigin: i % 2 ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',
+  }));
 }
 
-/** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
-function changeFrozenColumnCount() {
-  if (vueGrid.slickGrid?.setOptions) {
-    vueGrid.slickGrid.setOptions({
-      frozenColumn: frozenColumnCount.value,
-    });
-  }
-}
-
-/** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
-function changeFrozenRowCount() {
-  if (vueGrid.slickGrid?.setOptions) {
-    vueGrid.slickGrid.setOptions({
-      frozenRow: frozenRowCount.value,
-    });
-  }
+function getPinnedRowIndexes() {
+  const count = Math.max(0, Number(pinnedRowCount.value) || 0);
+  const dataLength = vueGrid?.slickGrid?.getDataLength?.() ?? dataset.value.length;
+  const first = isPinnedBottom.value ? Math.max(0, dataLength - count) : 0;
+  return Array.from({ length: count }, (_v, i) => first + i);
 }
 
 function costDurationFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, dataContext: any) {
   const costText = isNullUndefinedOrEmpty(dataContext.cost) ? 'n/a' : formatNumber(dataContext.cost, 0, 2, false, '$', '', '.', ',');
-  let durationText = 'n/a';
-  if (!isNullUndefinedOrEmpty(dataContext.duration) && dataContext.duration >= 0) {
-    durationText = `${dataContext.duration} ${dataContext.duration > 1 ? 'days' : 'day'}`;
-  }
+  const durationText =
+    !isNullUndefinedOrEmpty(dataContext.duration) && dataContext.duration >= 0
+      ? `${dataContext.duration} ${dataContext.duration > 1 ? 'days' : 'day'}`
+      : 'n/a';
   return `<b>${costText}</b> | ${durationText}`;
 }
-
 function isNullUndefinedOrEmpty(data: any) {
   return data === '' || data === null || data === undefined;
 }
 
-function onCellValidationError(_e: Event, args: any) {
-  showToast(args.validationResults.msg, 'danger');
+function getContextMenuOptions(): any {
+  const percentItems = [
+    { option: 0, title: 'Not Started (0%)' },
+    { option: 50, title: 'Half Completed (50%)' },
+    { option: 100, title: 'Completed (100%)' },
+  ];
+  return {
+    optionShownOverColumnIds: ['percentComplete'],
+    hideCloseButton: true,
+    dropSide: 'right',
+    optionTitle: 'Change Percent Complete',
+    optionItems: [
+      ...percentItems,
+      'divider',
+      { option: null, title: 'Sub-Options (demo)', subMenuTitle: 'Set Percent Complete', optionItems: percentItems },
+    ],
+    commandItems: [
+      { command: '', divider: true, positionOrder: 98 },
+      {
+        command: 'export',
+        title: 'Exports',
+        positionOrder: 99,
+        commandItems: [
+          { command: 'exports-txt', title: 'Text (tab delimited)' },
+          {
+            command: 'sub-menu',
+            title: 'Excel',
+            subMenuTitle: 'available formats',
+            commandItems: [
+              { command: 'exports-csv', title: 'Excel (csv)' },
+              { command: 'exports-xlsx', title: 'Excel (xlsx)' },
+            ],
+          },
+        ],
+      },
+      {
+        command: 'feedback',
+        title: 'Feedback',
+        positionOrder: 100,
+        commandItems: [
+          { command: 'request-update', title: 'Request update from supplier' },
+          'divider',
+          {
+            command: 'sub-menu',
+            title: 'Contact Us',
+            subMenuTitle: 'contact us...',
+            commandItems: [
+              { command: 'contact-email', title: 'Email us' },
+              { command: 'contact-chat', title: 'Chat with us' },
+              { command: 'contact-meeting', title: 'Book an appointment' },
+            ],
+          },
+        ],
+      },
+    ],
+    onOptionSelected: (_e: unknown, args: any) => {
+      if (args?.dataContext) {
+        args.dataContext.percentComplete = args.item.option;
+        vueGrid?.slickGrid?.updateRow(args.row || 0);
+      }
+    },
+    onCommand: (_e: unknown, args: any) => executeCommand(args),
+  };
 }
 
-function setFrozenColumns(frozenCols: number) {
-  vueGrid.slickGrid.setOptions({ frozenColumn: frozenCols });
-  gridOptions.value = vueGrid.slickGrid.getOptions();
-  frozenColumnCount.value = frozenCols;
-}
-
-/** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
-function toggleFrozenBottomRows() {
-  if (vueGrid.slickGrid?.setOptions) {
-    vueGrid.slickGrid.setOptions({
-      frozenBottom: !isFrozenBottom.value,
-    });
-    isFrozenBottom.value = !isFrozenBottom.value; // toggle the variable
+function executeCommand(args: any) {
+  switch (args.command) {
+    case 'delete-row':
+      if (confirm(`Do you really want to delete row (${args.row + 1}) with "${args.dataContext.title}"?`)) {
+        vueGrid?.gridService?.deleteItemById(args.dataContext.id);
+      }
+      break;
+    case 'command1':
+    case 'command2':
+    case 'help':
+      alert(args.item.title);
+      break;
+    case 'exports-csv':
+    case 'exports-txt':
+    case 'exports-xlsx':
+      alert(`Exporting as ${args.item.title}`);
+      break;
+    default:
+      alert(`Command: ${args.command}`);
   }
 }
 
+function setPinnedColumns(left: number, right = pinnedRightColumnCount.value) {
+  const nextRight = Math.max(0, Number(right) || 0);
+  // Keep both edges stable by column ID. Numeric edge shorthands are resolved
+  // against visible indexes, which can shift when columns are hidden/shown.
+  const leftIds = left >= 0 ? ['_checkbox_selector', 'title', 'percentComplete'].slice(0, left + 1) : [];
+  const rightIds = ['cityOfOrigin', 'action'].slice(Math.max(0, 2 - nextRight));
+  vueGrid?.slickGrid?.setOptions({ pinning: { columns: { left: leftIds, right: rightIds } } });
+  pinnedColumnCount.value = left;
+  pinnedRightColumnCount.value = nextRight;
+}
+function changePinnedColumnCount() {
+  setPinnedColumns(Number(pinnedColumnCount.value), pinnedRightColumnCount.value);
+}
+function changePinnedRightColumnCount() {
+  setPinnedColumns(pinnedColumnCount.value, Number(pinnedRightColumnCount.value));
+}
+function toggleRightPinning() {
+  setPinnedColumns(pinnedColumnCount.value, pinnedRightColumnCount.value > 0 ? 0 : 1);
+}
+function changePinnedRowCount() {
+  vueGrid?.slickGrid?.setOptions({
+    pinning: { rows: isPinnedBottom.value ? { top: [], bottom: getPinnedRowIndexes() } : { top: getPinnedRowIndexes(), bottom: [] } },
+  });
+}
+function removePinnedColumns() {
+  setPinnedColumns(-1, 0);
+}
+function togglePinnedBottomRows() {
+  isPinnedBottom.value = !isPinnedBottom.value;
+  changePinnedRowCount();
+}
+function toggleWhichRowToShowSelectAll() {
+  isSelectAllShownAsColumnTitle.value = !isSelectAllShownAsColumnTitle.value;
+  checkboxSelectorInstance?.setOptions({
+    hideInColumnTitleRow: !isSelectAllShownAsColumnTitle.value,
+    hideInFilterHeaderRow: isSelectAllShownAsColumnTitle.value,
+  });
+}
+function setLargePinnedColumns() {
+  vueGrid?.gridStateService?.applyColumnLayout?.(
+    [
+      { columnId: '_checkbox_selector', cssClass: 'slick-cell-checkboxsel', headerCssClass: '', width: 40 },
+      { columnId: 'title', cssClass: '', headerCssClass: '', width: 220 },
+      { columnId: 'percentComplete', cssClass: '', headerCssClass: '', width: 280 },
+      { columnId: 'start', cssClass: '', headerCssClass: '', width: 150 },
+      { columnId: 'finish', cssClass: '', headerCssClass: '', width: 280 },
+      { columnId: 'completed', cssClass: '', headerCssClass: '', width: 180 },
+      { columnId: 'cost', cssClass: '', headerCssClass: '', width: 220 },
+      { columnId: 'cityOfOrigin', cssClass: '', headerCssClass: '', width: 180 },
+      { columnId: 'action', cssClass: '', headerCssClass: '', width: 110 },
+    ],
+    false,
+    false
+  );
+  setPinnedColumns(2, pinnedRightColumnCount.value);
+}
 function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
   const action = showSubTitle.value ? 'remove' : 'add';
   document.querySelector('.subtitle')?.classList[action]('hidden');
-  queueMicrotask(() => vueGrid.resizerService.resizeGrid());
+  queueMicrotask(() => vueGrid?.resizerService?.resizeGrid());
 }
-
+function onCellValidationError(_e: Event, args: any) {
+  showToast(args.validationResults.msg, 'danger');
+}
 function vueGridReady(grid: SlickgridVueInstance) {
   vueGrid = grid;
-
-  // with frozen (pinned) grid, in order to see the entire row being highlighted when hovering
-  // we need to do some extra tricks (that is because frozen grids use 2 separate div containers)
-  // the trick is to use row selection to highlight when hovering current row and remove selection once we're not
-  slickEventHandler.subscribe(vueGrid.slickGrid.onMouseEnter, (event: Event) => colorizeHoveringRow(event, true));
-  slickEventHandler.subscribe(vueGrid.slickGrid.onMouseLeave, (event: Event) => colorizeHoveringRow(event, false));
 }
 </script>
 
 <template>
   <h2>
-    Example 20: Pinned (frozen) Columns/Rows
-    <span class="float-end">
-      <a
+    Example 20: Pinned Columns/Rows
+    <span class="float-end"
+      ><a
         style="font-size: 18px"
         target="_blank"
         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example20.vue"
-      >
-        <span class="mdi mdi-link-variant"></span> code
-      </a>
-    </span>
-    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
+        ><span class="mdi mdi-link-variant"></span> code</a
+      ></span
+    ><button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" @click="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
   </h2>
-
   <div class="subtitle">
-    This example demonstrates the use of Pinned (aka frozen) Columns and/or Rows (<a
-      href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/frozen-columns-rows"
+    This example demonstrates the use of Pinned (aka pinned) Columns and/or Rows (<a
+      href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/pinning"
       target="_blank"
       >Wiki docs</a
     >)
     <ul>
-      <li>Option to pin any number of columns (left only) or rows</li>
+      <li>Option to pin any number of columns or rows</li>
       <li>Option to pin the rows at the bottom instead of the top (default)</li>
-      <li>You can also dynamically any of these options, through SlickGrid "setOptions()"</li>
-      <li>Possibility to change the styling of the line border between pinned columns/rows</li>
+      <li>You can dynamically change these options through SlickGrid setOptions()</li>
     </ul>
   </div>
-
   <br />
-
   <div class="row">
     <div class="col-sm-12">
-      <span>
-        <label for="">Pinned Rows: </label>
-        <input v-model="frozenRowCount" type="number" />
-        <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" @click="changeFrozenRowCount()">Set</button>
-      </span>
-      <span style="margin-left: 10px">
-        <label for="">Pinned Columns: </label>
-        <input v-model="frozenColumnCount" type="number" />
-        <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" @click="changeFrozenColumnCount()">Set</button>
-      </span>
+      <span
+        ><label>Pinned Rows: </label><input v-model="pinnedRowCount" type="number" /><button
+          class="btn btn-outline-secondary btn-xs btn-icon mx-1"
+          @click="changePinnedRowCount()"
+        >
+          Set
+        </button></span
+      >
+      <span style="margin-left: 10px"
+        ><label>Pinned Columns: </label><input v-model="pinnedColumnCount" type="number" /><button
+          class="btn btn-outline-secondary btn-xs btn-icon mx-1"
+          @click="changePinnedColumnCount()"
+        >
+          Set
+        </button></span
+      >
+      <span style="margin-left: 10px"
+        ><label>Pinned Right: </label
+        ><input v-model="pinnedRightColumnCount" class="pinned-right-column-count" type="number" min="0" /><button
+          class="btn btn-outline-secondary btn-xs btn-icon mx-1"
+          data-test="set-pinned-right-column"
+          @click="changePinnedRightColumnCount()"
+        >
+          Set
+        </button></span
+      >
     </div>
   </div>
-
   <div class="row mt-2">
     <div class="col-sm-12">
-      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="remove-frozen-column-button" @click="setFrozenColumns(-1)">
-        <i class="mdi mdi-close"></i> Remove Frozen Columns
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="remove-pinned-column-button" @click="removePinnedColumns()">
+        <i class="mdi mdi-close"></i> Remove Pinned Columns
       </button>
-      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-3frozen-columns" @click="setFrozenColumns(2)">
-        <i class="mdi mdi-pin-outline"></i> Set 3 Frozen Columns
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+        data-test="set-3pinned-columns"
+        @click="setPinnedColumns(2, pinnedRightColumnCount)"
+      >
+        <i class="mdi mdi-pin-outline"></i> Pin 3 Columns
       </button>
-      <span style="margin-left: 15px">
-        <button class="btn btn-outline-secondary btn-sm btn-icon" @click="toggleFrozenBottomRows()">
-          <i class="mdi mdi-flip-vertical"></i> Toggle Pinned Rows
-        </button>
-        <span class="fw-bold mx-1">: {{ isFrozenBottom ? 'Bottom' : 'Top' }}</span>
-      </span>
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-pinned-right" @click="toggleRightPinning()">
+        <i class="mdi mdi-pin-outline"></i> Toggle Pinned Right
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-pinned-bottom" @click="togglePinnedBottomRows()">
+        <i class="mdi mdi-flip-vertical"></i> Toggle Pinned Rows
+      </button>
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+        data-test="toggle-select-all-row"
+        @click="toggleWhichRowToShowSelectAll()"
+      >
+        <i class="mdi mdi-checkbox-marked-circle-outline"></i> Toggle Select All
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-large-pinned-columns" @click="setLargePinnedColumns()">
+        <i class="mdi mdi-arrow-expand-horizontal"></i> Set Large Columns
+      </button>
+      <span class="fw-bold mx-1">: {{ isPinnedBottom ? 'Bottom' : 'Top' }}</span>
     </div>
   </div>
-
-  <div class="col-sm-12">
-    <hr />
-  </div>
-
+  <div class="col-sm-12"><hr /></div>
   <slickgrid-vue
     v-model:options="gridOptions"
     v-model:columns="columns"
@@ -418,19 +486,15 @@ function vueGridReady(grid: SlickgridVueInstance) {
     grid-id="grid20"
     @onValidationError="onCellValidationError($event.detail.eventData, $event.detail.args)"
     @onVueGridCreated="vueGridReady($event.detail)"
-  >
-  </slickgrid-vue>
+  />
 </template>
 
 <style lang="scss" scoped>
-/** You can change the pinned/frozen border styling through this css override */
-
-.slick-row .slick-cell.frozen:last-child,
-.slick-headerrow-column.frozen:last-child,
-.slick-footerrow-column.frozen:last-child {
+.slick-row .slick-cell.pinned:last-child,
+.slick-headerrow-column.pinned:last-child,
+.slick-footerrow-column.pinned:last-child {
   border-right: 1px solid #969696 !important;
 }
-
 .slick-pane-bottom {
   border-top: 1px solid #969696 !important;
 }

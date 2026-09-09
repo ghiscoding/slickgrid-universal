@@ -177,7 +177,7 @@ export default class Example32 {
       editable: false,
       datasetIdPropertyName: 'employeeID',
       // Keep the Employee ID visible while horizontally scrolling. The old
-      // frozen-pane option is intentionally no longer used by the POC.
+      // pinned-pane option is intentionally no longer used by the POC.
       pinning: {
         columns: { left: 0 },
       },

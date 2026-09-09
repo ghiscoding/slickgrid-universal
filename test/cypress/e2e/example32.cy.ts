@@ -127,7 +127,7 @@ describe('Example 32 - colspan/rowspan - Employees Timesheets', { retries: 0 }, 
     it('should be on Employee 10004 row at previous "Development" cell, then type "ArrowLeft" key once and expect to be in "Lunch Break"', () => {
       // The proxy scrollbar is a sibling of the canvas, so native
       // scrollIntoView() cannot reveal a horizontally virtualized cell.
-      cy.get('.slick-docking-horizontal-scroller').scrollTo('right', { ensureScrollable: false });
+      cy.get('.slick-horizontal-scroller').scrollTo('right', { ensureScrollable: false });
       cy.get(`[data-row=1] .slick-cell.l13.r14.rowspan`).as('active_cell').scrollIntoView().click();
       cy.get(`[data-row=1] .slick-cell.l13.r14.rowspan`).should('contain', 'Development');
       cy.get('@active_cell').type('{leftarrow}');
@@ -172,7 +172,7 @@ describe('Example 32 - colspan/rowspan - Employees Timesheets', { retries: 0 }, 
 
     // going down
     it('should start at 10am "Team Meeting, then type "ArrowDown" key once and expect to be in "Support" between 9:30-11:00am', () => {
-      cy.get('.slick-docking-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
+      cy.get('.slick-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
       cy.get('[data-row=0] .slick-cell.l4.r4').as('active_cell').scrollIntoView().click();
       cy.get('[data-row=0] .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
       cy.get('@active_cell').type('{downarrow}');
@@ -260,7 +260,7 @@ describe('Example 32 - colspan/rowspan - Employees Timesheets', { retries: 0 }, 
 
     // then rollback by going backward
     it('should be on Employee 10004 row at previous "Development" cell, then type "Navigate Left" once and expect to be in "Lunch Break"', () => {
-      cy.get('.slick-docking-horizontal-scroller').scrollTo('right', { ensureScrollable: false });
+      cy.get('.slick-horizontal-scroller').scrollTo('right', { ensureScrollable: false });
       cy.get(`[data-row=1] .slick-cell.l13.r14.rowspan`).as('active_cell').scrollIntoView().click();
       cy.get(`[data-row=1] .slick-cell.l13.r14.rowspan`).should('contain', 'Development');
       cy.get('[data-test="goto-prev"]').click();
@@ -305,7 +305,7 @@ describe('Example 32 - colspan/rowspan - Employees Timesheets', { retries: 0 }, 
 
     // going down
     it('should start at 10am "Team Meeting, then type "ArrowDown" key once and expect to be in "Support" between 9:30-11:00am', () => {
-      cy.get('.slick-docking-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
+      cy.get('.slick-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
       cy.get('[data-row=0] .slick-cell.l4.r4').as('active_cell').scrollIntoView().click();
       cy.get('[data-row=0] .slick-cell.l4.r4.active').should('contain', 'Team Meeting');
       cy.get('[data-test="goto-down"]').click();

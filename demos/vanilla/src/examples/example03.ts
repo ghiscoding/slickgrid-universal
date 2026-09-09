@@ -349,6 +349,7 @@ export default class Example03 {
       },
       enableFormattedDataCache: false, // enable it when you have a large dataset (e.g. we'll enable it when loading over 10K)
       headerMenu: {
+        hidePinColumnCommand: false,
         hidePinningColumnsCommand: false,
       },
       gridMenu: {

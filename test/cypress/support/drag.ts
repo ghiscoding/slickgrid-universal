@@ -87,15 +87,15 @@ export function getScrollDistanceWhenDragOutsideGrid(
       // Pinning uses one dedicated horizontal scroll owner. Keep this helper
       // compatible with both the legacy pane viewport and the new proxy so
       // drag auto-scroll assertions observe the actual scroll position.
-      const viewport = ($grid.find(viewportSelector)[0] || $grid.find('.slick-viewport')[0]) as HTMLElement;
-      const horizontalScroller = $grid.find('.slick-docking-horizontal-scroller')[0] as HTMLElement | undefined;
+      const viewport = ($grid.find(viewportSelector)[0] || $grid.find('.slick-vertical-scroller')[0]) as HTMLElement;
+      const horizontalScroller = $grid.find('.slick-horizontal-scroller')[0] as HTMLElement | undefined;
       const horizontalOwner = horizontalScroller || viewport;
       const scrollTopBefore = viewport.scrollTop;
       const scrollLeftBefore = horizontalOwner.scrollLeft;
       cy.dragOutside(dragDirection, 300, px, { parentSelector: selector });
       return cy.get(selector).then(($gridAfter) => {
-        const viewportAfter = ($gridAfter.find(viewportSelector)[0] || $gridAfter.find('.slick-viewport')[0]) as HTMLElement;
-        const horizontalScrollerAfter = $gridAfter.find('.slick-docking-horizontal-scroller')[0] as HTMLElement | undefined;
+        const viewportAfter = ($gridAfter.find(viewportSelector)[0] || $gridAfter.find('.slick-vertical-scroller')[0]) as HTMLElement;
+        const horizontalScrollerAfter = $gridAfter.find('.slick-horizontal-scroller')[0] as HTMLElement | undefined;
         const horizontalOwnerAfter = horizontalScrollerAfter || viewportAfter;
         cy.dragEnd(selector);
         const scrollTopAfter = viewportAfter.scrollTop;

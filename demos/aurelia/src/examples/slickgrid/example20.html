@@ -1,77 +1,81 @@
-<h2>
-  Example 20: Pinned (frozen) Columns/Rows
-  <span class="float-end">
-    <a
-      style="font-size: 18px"
+<div id="demo-container" class="container-fluid">
+  <h2>
+    Example 20: Pinned Columns/Rows
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleSubTitle()" data-test="toggle-subtitle">
+      <span class="mdi mdi-information-outline"></span>
+    </button>
+  </h2>
+  <div class="subtitle">
+    This example demonstrates the use of Pinned (aka pinned) Columns and/or Rows (<a
+      href="https://ghiscoding.gitbook.io/slickgrid-aurelia/grid-functionalities/pinning"
       target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example20.ts"
-    >
-      <span class="mdi mdi-link-variant"></span> code
-    </a>
-  </span>
-  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
-    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
-  </button>
-</h2>
-
-<div class="subtitle">
-  This example demonstrates the use of Pinned (aka frozen) Columns and/or Rows (<a
-    href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/frozen-columns-rows"
-    target="_blank"
-    >Wiki docs</a
-  >)
-  <ul>
-    <li>Option to pin any number of columns (left only) or rows</li>
-    <li>Option to pin the rows at the bottom instead of the top (default)</li>
-    <li>You can also dynamically any of these options, through SlickGrid "setOptions()"</li>
-    <li>Possibility to change the styling of the line border between pinned columns/rows</li>
-  </ul>
-</div>
-
-<br />
-
-<div class="row">
-  <div class="col-sm-12">
-    <span>
-      <label for="">Pinned Rows: </label>
-      <input type="number" value.bind="frozenRowCount" />
-      <button class="btn btn-outline-secondary btn-xs btn-icon" click.trigger="changeFrozenRowCount()">Set</button>
-    </span>
-    <span style="margin-left: 10px">
-      <label for="">Pinned Columns: </label>
-      <input type="number" value.bind="frozenColumnCount" />
-      <button class="btn btn-outline-secondary btn-xs btn-icon" click.trigger="changeFrozenColumnCount()">Set</button>
-    </span>
+      >Wiki docs</a
+    >)
   </div>
-</div>
-
-<div class="row mt-2">
-  <div class="col-sm-12">
-    <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="setFrozenColumns(-1)" data-test="remove-frozen-column-button">
-      <i class="mdi mdi-close"></i> Remove Frozen Columns
-    </button>
-    <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="setFrozenColumns(2)" data-test="set-3frozen-columns">
-      <i class="mdi mdi-pin-outline"></i> Set 3 Frozen Columns
-    </button>
-    <span style="margin-left: 15px">
-      <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleFrozenBottomRows()">
-        <i class="mdi mdi-flip-vertical"></i> Toggle Pinned Rows
+  <div class="row gx-2 mb-2 align-items-end">
+    <div class="col-auto"><label>Pinned Rows: </label><input class="form-control" type="number" value.bind="pinnedRowCount" /></div>
+    <div class="col-auto"><button class="btn btn-outline-secondary btn-sm" click.trigger="changePinnedRowCount()">Set</button></div>
+    <div class="col-auto"><label>Pinned Columns: </label><input class="form-control" type="number" value.bind="pinnedColumnCount" /></div>
+    <div class="col-auto"><button class="btn btn-outline-secondary btn-sm" click.trigger="changePinnedColumnCount()">Set</button></div>
+    <div class="col-auto">
+      <label>Pinned Right: </label
+      ><input class="form-control pinned-right-column-count" type="number" min="0" value.bind="pinnedRightColumnCount" />
+    </div>
+    <div class="col-auto">
+      <button
+        class="btn btn-outline-secondary btn-sm"
+        click.trigger="setPinnedColumns(pinnedColumnCount, pinnedRightColumnCount)"
+        data-test="set-pinned-right-column"
+      >
+        Set
       </button>
-      <span style="font-weight: bold">: ${ isFrozenBottom ? 'Bottom' : 'Top' }</span>
-    </span>
+    </div>
   </div>
-</div>
-
-<div class="col-sm-12">
+  <div class="row mb-2">
+    <div class="col-12">
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon"
+        click.trigger="setPinnedColumns(-1)"
+        data-test="remove-pinned-column-button"
+      >
+        Remove Pinned Columns
+      </button>
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+        click.trigger="setPinnedColumns(2, pinnedRightColumnCount)"
+        data-test="set-3pinned-columns"
+      >
+        Pin 3 Columns
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" click.trigger="toggleRightPinning()" data-test="toggle-pinned-right">
+        Toggle Pinned Right
+      </button>
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+        click.trigger="togglePinnedBottomRows()"
+        data-test="toggle-pinned-bottom"
+      >
+        Toggle Pinned Rows
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" click.trigger="toggleSelectAllRow()" data-test="toggle-select-all-row">
+        Toggle Select All
+      </button>
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon mx-1"
+        click.trigger="setLargePinnedColumns()"
+        data-test="set-large-pinned-columns"
+      >
+        Set Large Columns
+      </button>
+    </div>
+  </div>
   <hr />
+  <aurelia-slickgrid
+    grid-id="grid20"
+    columns.bind="columns"
+    options.bind="gridOptions"
+    dataset.bind="dataset"
+    on-validation-error.trigger="onCellValidationError($event.detail.eventData, $event.detail.args)"
+    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+  ></aurelia-slickgrid>
 </div>
-
-<aurelia-slickgrid
-  grid-id="grid20"
-  columns.bind="columns"
-  options.bind="gridOptions"
-  dataset.bind="dataset"
-  on-validation-error.trigger="onCellValidationError($event.detail.eventData, $event.detail.args)"
-  on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
->
-</aurelia-slickgrid>

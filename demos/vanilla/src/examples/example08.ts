@@ -148,7 +148,7 @@ export default class Example08 {
       rowHeight: 33,
       showCustomFooter: true,
       gridMenu: { hideClearPinningCommand: false },
-      headerMenu: { hidePinningColumnsCommand: false },
+      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
 
       // enable the filtering but hide the user filter row since we use our own single filter
       enableFiltering: true,

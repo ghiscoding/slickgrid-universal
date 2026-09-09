@@ -72,8 +72,6 @@ export class Example7Component implements OnInit {
       ...this.gridOptions1,
       enableHeaderMenu: true,
       enableFiltering: true,
-      // frozenColumn: 2,
-      // frozenRow: 2,
       headerButton: {
         // when floating to left, you might want to inverse the icon orders
         onCommand: (_e, args) => this.handleOnCommand(_e, args, 2),

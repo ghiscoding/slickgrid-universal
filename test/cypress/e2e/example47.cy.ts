@@ -1,5 +1,5 @@
 describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
-  const scrollOwner = '.slick-docking-horizontal-scroller';
+  const scrollOwner = '.slick-horizontal-scroller';
   const row = (index: number) => `.slick-row[data-row="${index}"]`;
   const cell = (rowIndex: number, columnIndex: number) => `${row(rowIndex)} .slick-cell.l${columnIndex}.r${columnIndex}`;
 
@@ -188,7 +188,7 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
 
   it('should keep sticky summary rows keyboard-addressable after scrolling to the report totals', () => {
     cy.get(scrollOwner).scrollTo('right');
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.get('.slick-vertical-scroller').scrollTo('bottom');
     cy.get(`${row(20)} .slick-cell`).should('exist');
     cy.get(`${row(20)} .slick-cell.l0.r0`)
       .click()
@@ -197,7 +197,7 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
   });
 
   it('should dock all three summary rows to the bottom after they have been seen', () => {
-    const viewport = '.slick-viewport-top.slick-viewport-left';
+    const viewport = '.slick-vertical-scroller';
 
     // First reveal the summary rows so two-sided stickiness is eligible.
     cy.get(viewport).scrollTo('bottom');

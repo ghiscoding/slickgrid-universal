@@ -39,7 +39,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should expect the row to have moved to another row index', () => {
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
@@ -76,7 +76,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     cy.get('@moveIconTask5').trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 1');

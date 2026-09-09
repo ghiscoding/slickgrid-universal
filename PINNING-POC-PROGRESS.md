@@ -1,12 +1,14 @@
 # Single-viewport pinning/stickiness POC — progress handoff
 
-Last updated: 2026-09-08 (legacy runtime removal and Header Menu pinning structure updated; structural alias audit remains)
+Last updated: 2026-09-09 (framework cell-menu parity and migration documentation reviewed; legacy runtime removal and structural alias audit remain)
 
 ## Goal
 
 Replace SlickGrid's multi-pane column/row architecture with an AG Grid-style docking model:
 
-- exactly one live body viewport with one native horizontal scrollbar and one native vertical scrollbar;
+- exactly one live body viewport with one native vertical scrollbar; ordinary grids use the
+  viewport for horizontal scrolling, while pinning/sticky grids use one dedicated docking
+  horizontal scrollbar;
 - one virtualized DOM row per data row;
 - each rendered row contains stable sibling left, center, and right cell regions;
 - permanent pinning and scroll-activated stickiness use the same internal docking resolver;
@@ -54,11 +56,11 @@ remain visible regardless of the current pin state.
 The old bulk command ids and translation keys are documented only in the v11 migration guide;
 none recreates the old two-pane layout.
 
-The POC has gone through visual hardening, selected Cypress migration, and removal of the
-legacy pane options/interfaces and runtime branches. The common unit suite and focused
-coverage checks pass; framework and browser validation remain follow-up work. The remaining
-cleanup is limited to internal pane-shaped aliases, historical CSS variable names, and
-intentional migration-facing terminology/documentation.
+The POC has gone through visual hardening, selected Cypress migration, framework demo parity,
+and removal of the legacy pane options/interfaces and runtime branches. The common unit suite
+and focused coverage checks pass; framework browser validation remains follow-up work. The
+remaining cleanup is limited to internal pane-shaped aliases, historical CSS variable names,
+and intentional migration-facing terminology/documentation.
 
 ## Refactoring status and immediate follow-up
 
@@ -122,7 +124,13 @@ documentation work may continue while the follow-up deletion audit is underway.
   sticky-row configuration. Once row docking is configured, the overlay remains a stable row layer
   even when no row is currently active.
 - rowspan z-index is problematic with new docking overlay, need further investigation
-- using Cypress with `.scrollTo()` doesn't actually scroll the header titles & scrollbar, but the data is being scrolled
+- [x] Restored the original `.slick-viewport` horizontal scroll element for ordinary grids. The
+  active horizontal scroll element always receives the generic `.slick-horizontal-scroller`
+  class: ordinary grids apply it to `.slick-viewport`, while grids with pinning/sticky docking
+  apply it to `.slick-docking-horizontal-scroller`. The docking-specific class remains available
+  for code that needs to identify the docking scrollbar.
+- [x] Added `.slick-vertical-scroller` as the stable selector for the native vertical scroll
+  element. It currently points to the single `.slick-viewport` in all grid configurations.
 - [x] Pinning validation now uses the canonical `invalidColumnPinning*` and
   `skipPinningValidation` options. Requests that pin every visible column or whose permanent
   left/right bands consume the viewport are rejected and preserve the previous state.
@@ -428,6 +436,13 @@ permanent-pinning controls.
 - The stable docking-region DOM is now implemented and the old 1000px header offset has been
   removed. Header/row/footer regions and per-row body regions should now be selected by their
   explicit left/center/right classes rather than by legacy pane roots.
+- Horizontal scrolling is conditional: the active horizontal scroll element is always
+  exposed as `.slick-horizontal-scroller`. Ordinary grids apply that class to the legacy
+  `.slick-viewport.slick-viewport-top.slick-viewport-left`, while grids with permanent pinning
+  or sticky docking apply it to `.slick-docking-horizontal-scroller`. The docking scroller is
+  materialized lazily if pinning/sticky state is enabled after initialization.
+- The native vertical scroll element is always exposed as `.slick-vertical-scroller` and remains
+  separate from the docking horizontal scroller when pinning or sticky docking is active.
 
 ## Files changed
 
@@ -507,6 +522,22 @@ These ranges are planning numbers, not a final count; the deletion pass and grou
 requirements are the two largest sources of variance.
 
 ## Known limitations and likely breakage
+
+### Framework parity and recent Cypress regressions (2026-09-09)
+
+- Angular and React Example 20 no longer install the obsolete hover-selection handlers that
+  selected a row and called `preventDefault()` on mouse enter/leave. Those handlers were tied to
+  the old split-pane renderer and could interfere with opening a Cell Menu from a pinned Action
+  cell. Their behavior now matches Vue and Aurelia.
+- The Example 20 cell-menu option callback uses each framework's grid service to update the
+  selected item. Angular no longer calls the removed SlickGrid `updateItem()` method directly.
+- Angular Example 25's grid-menu regression was caused by a stale Cypress double-click pattern;
+  its menu-opening step now uses one click, matching Vue. The subsequent French metrics failure
+  was a cascade from the filters not being cleared.
+- These framework/demo fixes preserve the single horizontal scroll-owner contract: use
+  `.slick-horizontal-scroller` for horizontal scrolling and `.slick-vertical-scroller` for
+  vertical scrolling. The more specific `.slick-docking-horizontal-scroller` remains available
+  for docking grids.
 
 ### Latest visual fixes (2026-09-03)
 

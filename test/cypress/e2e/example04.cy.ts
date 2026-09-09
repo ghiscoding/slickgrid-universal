@@ -69,13 +69,13 @@ describe('Example 04 - Pinned Grid', () => {
 
     cy.get(actionCell).then(($cell) => {
       const rightEdge = $cell[0].getBoundingClientRect().right;
-      cy.get('.grid4 .slick-docking-horizontal-scroller').scrollTo('right');
+      cy.get('.grid4 .slick-horizontal-scroller').scrollTo('right');
       cy.get(actionCell).should(($scrolledCell) => {
         expect(Math.abs($scrolledCell[0].getBoundingClientRect().right - rightEdge)).to.be.lessThan(2);
       });
     });
 
-    cy.get('.grid4 .slick-docking-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
+    cy.get('.grid4 .slick-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
     // Restore the initial fixture after exercising the wide layout so the
     // following serial tests do not inherit resized columns.
     cy.visit(`${Cypress.config('baseUrl')}/example04`);
@@ -798,7 +798,7 @@ describe('Example 04 - Pinned Grid', () => {
       // Pinning has one real horizontal scroll owner. Scrolling the old body
       // viewport only exercises the compatibility bridge; target the proxy
       // here to verify the user-facing scrollbar and all chrome move together.
-      cy.get('.grid4 .slick-docking-horizontal-scroller').scrollTo('100%', '0%', { duration: 1500 });
+      cy.get('.grid4 .slick-horizontal-scroller').scrollTo('100%', '0%', { duration: 1500 });
       getCell(2, 3).should('contain', '2009-01-01');
       getCell(2, 4).should('contain', '2009-05-05');
       getCell(2, 7).contains(/[United State|Canada]*/);
@@ -812,7 +812,7 @@ describe('Example 04 - Pinned Grid', () => {
 
     it('should scroll vertically to the middle of the grid and expect all cell to be rendered', () => {
       // vertical scroll to middle
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('0%', '40%', { duration: 1500 });
+      cy.get('.slick-vertical-scroller').scrollTo('0%', '40%', { duration: 1500 });
 
       getCell(200, 3).should('contain', '2009-01-01');
       getCell(200, 4).should('contain', '2009-05-05');
@@ -825,16 +825,16 @@ describe('Example 04 - Pinned Grid', () => {
       getCell(205, 8).should('contain', 'Action');
 
       // reset scroll
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0, { ensureScrollable: false });
-      cy.get('.slick-docking-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
+      cy.get('.slick-vertical-scroller').scrollTo(0, 0, { ensureScrollable: false });
+      cy.get('.slick-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
     });
   });
 
   describe('accessibility sub-menus tests', () => {
     beforeEach(() => {
       // Open the context menu on a cell to start each test
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0, { ensureScrollable: false });
-      cy.get('.slick-docking-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
+      cy.get('.slick-vertical-scroller').scrollTo(0, 0, { ensureScrollable: false });
+      cy.get('.slick-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
       cy.get('[data-row="0"] .slick-cell.l3.r3').rightclick({ force: true });
       cy.get('.slick-context-menu.slick-menu-level-0').should('be.visible');
     });
@@ -938,11 +938,11 @@ describe('Example 04 - Pinned Grid', () => {
       cy.clock();
 
       // Normalize right viewport scroll so this test is isolated from previous test state.
-      cy.get('.slick-viewport-top .slick-scrolling-cells').then(($viewport) => {
+      cy.get('.slick-horizontal-scroller').then(($viewport) => {
         $viewport[0].scrollLeft = 0;
         $viewport[0].dispatchEvent(new Event('scroll', { bubbles: true }));
       });
-      cy.get('.slick-viewport-top .slick-scrolling-cells').its('0.scrollLeft').should('equal', 0);
+      cy.get('.slick-horizontal-scroller').its('0.scrollLeft').should('equal', 0);
       cy.get('[data-test="set-large-pinned-columns"]').click();
 
       // Step 1: call SortableJS onStart for the "Start" column (1st center-section column).
@@ -970,7 +970,7 @@ describe('Example 04 - Pinned Grid', () => {
       cy.tick(350);
 
       // Auto-scroll should have moved the right viewport to the right
-      cy.get('.slick-docking-horizontal-scroller').its('0.scrollLeft').should('be.greaterThan', 0);
+      cy.get('.slick-horizontal-scroller').its('0.scrollLeft').should('be.greaterThan', 0);
 
       // Step 4: simulate the drag result — "Start" was moved to the right, past "Finish".
       // SortableJS reads the DOM order via toArray() inside onEnd, so physically reorder the children first.

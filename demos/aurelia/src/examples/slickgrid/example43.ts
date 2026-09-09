@@ -144,7 +144,6 @@ export class Example43 {
       autoResize: {
         container: '#demo-container',
         bottomPadding: 30,
-        rightPadding: 50,
       },
       enableCellNavigation: true,
       enableColumnReorder: true,
@@ -156,7 +155,7 @@ export class Example43 {
       autoEdit: true,
       editable: false,
       datasetIdPropertyName: 'employeeID',
-      frozenColumn: 0,
+      pinning: { columns: { left: 0 } },
       gridHeight: 348,
       rowHeight: 30,
       dataView: {
@@ -451,7 +450,7 @@ export class Example43 {
         newMetadata[row].columns[Number(col) + colDirIdx] = (this.metadata as any)[row].columns[col];
       }
     }
-    this.aureliaGrid.slickGrid?.setOptions({ frozenColumn: newShowEmployeeId ? 0 : 1 });
+    this.aureliaGrid.slickGrid?.setOptions({ pinning: { columns: { left: newShowEmployeeId ? 0 : 1 } } });
     this.aureliaGrid.slickGrid?.updateColumnById('employeeID', { hidden: !newShowEmployeeId });
     this.aureliaGrid.slickGrid?.updateColumns();
     */

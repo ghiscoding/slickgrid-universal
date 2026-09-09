@@ -292,7 +292,7 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('[data-row=3] .slick-cell:nth(1)').click().type('{esc}');
       cy.get('.editor-title').should('not.exist');
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
     });
 
     it('should be able to change "% Complete" values of row indexes 2-4', () => {
@@ -309,7 +309,7 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.slider-editor input[type=range]').as('range').invoke('val', 7).trigger('change', { force: true });
       cy.get('[data-row=4] .slick-cell:nth(4)').should('contain', '7').should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
     });
 
     it('should be able to change "Finish" values of row indexes 0-2', () => {
@@ -347,7 +347,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.unsaved-editable-field').should('have.length', 13);
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
     });
 
     it('should undo last edit and expect the date editor to be opened as well when clicking the associated last undo with editor button', () => {

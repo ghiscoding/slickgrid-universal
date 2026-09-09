@@ -92,7 +92,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   });
 
   function getIntervalUntilRow12Displayed(selector: string, px: number, rowNumber = 12) {
-    const viewportSelector = `${selector} .slick-viewport:first`;
+    const viewportSelector = `${selector} .slick-vertical-scroller:first`;
     cy.getNthCell(0, 1, '', { parentSelector: selector, rowHeight: CELL_HEIGHT }).dragStart();
 
     return cy
@@ -237,10 +237,10 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   });
 
   function resetScrollInPinned() {
-    cy.get('.grid17-1 .slick-docking-horizontal-scroller').scrollTo(0, 0);
-    cy.get('.grid17-2 .slick-docking-horizontal-scroller').scrollTo(0, 0);
-    cy.get('.grid17-1 .slick-viewport:last').scrollTo(0, 0);
-    cy.get('.grid17-2 .slick-viewport:last').scrollTo(0, 0);
+    cy.get('.grid17-1 .slick-horizontal-scroller').scrollTo(0, 0);
+    cy.get('.grid17-2 .slick-horizontal-scroller').scrollTo(0, 0);
+    cy.get('.grid17-1 .slick-vertical-scroller:last').scrollTo(0, 0);
+    cy.get('.grid17-2 .slick-vertical-scroller:last').scrollTo(0, 0);
   }
 
   it('should auto scroll to display the selecting element when dragging in pinned grid', { scrollBehavior: false }, () => {
@@ -288,10 +288,10 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
     resetScrollInPinned();
-    cy.get('.grid17-1 .slick-docking-horizontal-scroller').scrollTo(CELL_WIDTH * 3, 0);
-    cy.get('.grid17-2 .slick-docking-horizontal-scroller').scrollTo(CELL_WIDTH * 3, 0);
-    cy.get('.grid17-1 .slick-viewport:first').scrollTo(0, CELL_HEIGHT * 3);
-    cy.get('.grid17-2 .slick-viewport:first').scrollTo(0, CELL_HEIGHT * 3);
+    cy.get('.grid17-1 .slick-horizontal-scroller').scrollTo(CELL_WIDTH * 3, 0);
+    cy.get('.grid17-2 .slick-horizontal-scroller').scrollTo(CELL_WIDTH * 3, 0);
+    cy.get('.grid17-1 .slick-vertical-scroller:first').scrollTo(0, CELL_HEIGHT * 3);
+    cy.get('.grid17-2 .slick-vertical-scroller:first').scrollTo(0, CELL_HEIGHT * 3);
 
     // bottom right - to topLeft
     getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomRight', 'topLeft', 6, 6, 140).then((result: any) => {
@@ -321,7 +321,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
 
   function testDragInGrouping(selector: string) {
     cy.getNthCell(7, 0, 'topLeft', { parentSelector: selector, rowHeight: CELL_HEIGHT }).dragStart();
-    cy.get(`${selector} .slick-viewport:last`)
+    cy.get(`${selector} .slick-vertical-scroller:last`)
       .as('viewport')
       .invoke('scrollTop')
       .then((scrollBefore) => {

@@ -1,9 +1,13 @@
 ## Single-viewport pinning, stickiness and modernization
 
 SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking
-renderer. This is a major breaking change: a grid now has one native horizontal scrollbar,
-one native vertical scrollbar, and one DOM row per data item. Permanently pinned columns and
-rows, as well as scroll-activated sticky columns and rows, are rendered inside that viewport.
+renderer. This is a major breaking change: a grid now has one native vertical scrollbar and
+one DOM row per data item. The native vertical scrollbar is exposed through
+`.slick-vertical-scroller`. An ordinary grid keeps its native horizontal scrollbar on
+`.slick-viewport`; a grid with permanent pinning or sticky docking uses one dedicated
+`.slick-docking-horizontal-scroller` instead. The active horizontal scroll element always also
+has the generic `.slick-horizontal-scroller` class. Permanently pinned columns and rows, as well
+as scroll-activated sticky columns and rows, are rendered inside that viewport.
 
 The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer valid ways to
 configure pinning. Update your grid options, persisted grid state, custom menu commands, and
@@ -197,6 +201,14 @@ When both forms are present, `CurrentColumn.pinning` is the granular column-layo
 `GridState.pinning` is the aggregate row/column state. Keep them consistent when persisting a
 custom preset.
 
+The new pinning and docking data types are consolidated in
+`packages/common/src/interfaces/docking.interface.ts` and re-exported from the common interfaces
+barrel. The v11 names are `ColumnPinningReferences`, `PinnedColumns`, `PinnedRows`,
+`PinningOption`, `StickyRows`, and `DockingOption`. The resolver layout types are
+`DockedColumn`, `ColumnDockingLayout`, `DockingRow`, `DockedRow`, and `RowDockingLayout`.
+These replace any application-owned frozen-pane state types; `DockingController` itself remains
+an internal implementation detail.
+
 The public mapping is summarized below. Most names remain stable while their frozen-pane
 properties are replaced; the one service method rename is intentional and breaking:
 
@@ -294,13 +306,20 @@ expose the same `GridStateService` API.
 
 ### Header Menu commands
 
-Header menus now expose a directional single-column pinning sub-menu and a bulk pinning action:
+Header menus now expose a `Column Pinning` root command with one directional pinning sub-menu.
+The sub-menu always contains all five commands, regardless of the selected column's current
+state:
 
-- `pin-column` opens `pin-left`, `pin-right`, and the final `pin-columns` action for the current
-  column; when the column is already pinned, the menu replaces this sub-menu with `unpin-column`.
-- `pin-columns` pins every column from the left edge through the selected column, while
-  `unpin-columns` clears all pinned columns on both edges. They update `pinning.columns` and no
-  longer create a second pane. The v10 `freeze-columns` / `unfreeze-columns` ids are removed.
+- `pin-left` pins the selected column to the left edge;
+- `pin-right` pins the selected column to the right edge;
+- `pin-columns` (displayed as `Pin Through Here`) pins every column from the left edge through the
+  selected column;
+- `unpin-column` clears the selected column's pin; and
+- `unpin-columns` (displayed as `Unpin All Columns`) clears all pinned columns on both edges.
+
+The first three are separated from the two unpin commands by a menu separator. All commands
+update `pinning.columns` and no longer create a second pane. The v10 `freeze-columns` /
+`unfreeze-columns` ids are removed.
 
 The new header-menu options and labels are:
 
@@ -354,6 +373,26 @@ synchronized pane scroll positions must be removed.
 The old `-1000px` header offset and `HEADER_WIDTH_SLACK` workaround are gone. Header and grouped
 header coordinates are ordinary document coordinates; custom code must not add or subtract the
 legacy 1000px adjustment.
+
+#### Horizontal scroll element
+
+The horizontal scroll element depends on whether docking is active:
+
+- grids without pinning or sticky configuration keep `.slick-viewport.slick-viewport-top.slick-viewport-left`
+  as the native horizontal scroll element and add `.slick-horizontal-scroller`;
+- grids with permanent pinning or sticky docking use `.slick-docking-horizontal-scroller` as
+  the scroll element and add `.slick-horizontal-scroller`, while the viewport remains the
+  vertical scroll container.
+
+Use `.slick-horizontal-scroller` in Cypress helpers and direct DOM scrolling code when you need
+the active horizontal scroll element. The more specific `.slick-docking-horizontal-scroller`
+class remains available when code specifically needs to identify the docking scrollbar. Do not
+assume that the docking scrollbar exists on ordinary grids, and do not use the viewport to
+horizontally scroll a grid that has active pinning or sticky docking.
+
+The vertical scroll element is always exposed as `.slick-vertical-scroller`. On the current
+single-viewport renderer this is the same element as `.slick-viewport`; pinned/sticky grids keep
+the dedicated horizontal scroller separate from it.
 
 ### Row Detail and row positioning
 

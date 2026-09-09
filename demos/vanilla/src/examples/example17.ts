@@ -156,6 +156,7 @@ export default class Example17 {
       rowHeight: 35,
       // enableExcelCopyBuffer: true,
       headerMenu: {
+        hidePinColumnCommand: false,
         hidePinningColumnsCommand: false,
       },
     };
@@ -280,7 +281,7 @@ export default class Example17 {
       : this.groupByDuration2();
   }
 
-  toggleFrozen() {
+  togglePinned() {
     const currentPinning = this.sgb1.slickGrid?.getOptions().pinning;
     const isPinned = !!(
       currentPinning?.columns?.left &&
