@@ -88,6 +88,14 @@ examples also reuse one `Intl.NumberFormat` instance instead of allocating one p
 Unchanged sticky passes now preserve the active layout/map, per-scroll updates no longer rewrite
 invariant docking offsets, and the moving sticky-row clip is compositor-promoted.
 
+A horizontal-wheel mouse (a second, dedicated tilt/horizontal wheel, as opposed to Shift+wheel)
+could push `scrollLeft` below zero because `handleMouseWheel` added the raw wheel delta without a
+floor and `_handleScroll` only ceilinged `scrollTop`/`scrollLeft` against their max scroll
+distances without flooring either at zero. A negative `scrollLeft` produced a negative
+`--slick-docking-scroll-left` custom property, which showed up as a white gap on the left side of
+pinned/docked examples (e.g. vanilla Example 04) along with misaligned pinned-right columns.
+Both `handleMouseWheel` and `_handleScroll` now floor `scrollLeft` (and `scrollTop`) at zero.
+
 The POC has gone through visual hardening, selected Cypress migration, framework demo parity,
 and removal of the legacy pane options/interfaces and runtime branches. The common unit suite
 and focused coverage checks pass; framework browser validation remains follow-up work. The

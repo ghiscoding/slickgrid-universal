@@ -6920,6 +6920,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.scrollLeft > maxScrollDistanceX) {
       this.scrollLeft = maxScrollDistanceX;
     }
+    // A horizontal-wheel mouse (or a fast tilt-wheel burst) can push scrollLeft
+    // past either bound; floor it so docking offsets never go negative.
+    if (this.scrollTop < 0) {
+      this.scrollTop = 0;
+    }
+    if (this.scrollLeft < 0) {
+      this.scrollLeft = 0;
+    }
 
     const vScrollDist = Math.abs(this.scrollTop - this.prevScrollTop);
     const hScrollDist = Math.abs(this.scrollLeft - this.prevScrollLeft);
@@ -7508,7 +7516,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!e.shiftKey) {
       this.scrollTop = Math.max(0, this._viewportScrollContainerY.scrollTop - deltaY * this._options.rowHeight!);
     }
-    this.scrollLeft = this._viewportScrollContainerX.scrollLeft + horizontalDelta;
+    this.scrollLeft = Math.max(0, this._viewportScrollContainerX.scrollLeft + horizontalDelta);
     const handled = this._handleScroll('mousewheel');
     if (handled) {
       e.stopPropagation();
