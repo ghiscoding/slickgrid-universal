@@ -33,6 +33,12 @@ class TestGrid extends SlickGrid<any, Column> {
   public setCurrentEditorNull() {
     (this as any).currentEditor = null;
   }
+  public callActionThrottle(action: () => void, minPeriodMs: number) {
+    return this.actionThrottle(action, minPeriodMs);
+  }
+  public callForwardDockingHorizontalScroll(source: HTMLElement | null | undefined) {
+    return this.forwardDockingHorizontalScroll(source);
+  }
 }
 
 vi.mock('../../formatters/formatterUtilities.js');
@@ -190,6 +196,38 @@ describe('SlickGrid core file', () => {
     newScrollContainer.dispatchEvent(new Event('scroll', { bubbles: false }));
 
     expect(positionChangedSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not forward a zero horizontal scroll offset from a docking source', () => {
+    const dockingColumns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name', width: 300 },
+      { id: 'lastName', field: 'lastName', name: 'Last Name', width: 300 },
+    ] as Column[];
+    grid = new TestGrid<any, Column>(container, [{ id: 0, firstName: 'John', lastName: 'Doe' }], dockingColumns, {
+      ...defaultOptions,
+      pinning: { columns: { left: 0 } },
+    });
+    grid.init();
+
+    const source = (grid as any)._headerScrollerL as HTMLElement;
+    expect((grid as TestGrid<any, Column>).callForwardDockingHorizontalScroll(source)).toBe(false);
+  });
+
+  it('should queue throttled actions and clear the throttle after the queued action completes', () => {
+    grid = new TestGrid<any, Column>(container, [], [{ id: 'firstName', field: 'firstName', name: 'First Name' }], defaultOptions);
+    const action = vi.fn();
+    const throttled = (grid as TestGrid<any, Column>).callActionThrottle(action, 10);
+
+    throttled.enqueue();
+    throttled.enqueue();
+    expect(action).toHaveBeenCalledTimes(1);
+
+    vi.advanceTimersByTime(10);
+    expect(action).toHaveBeenCalledTimes(2);
+
+    vi.advanceTimersByTime(10);
+    throttled.enqueue();
+    expect(action).toHaveBeenCalledTimes(3);
   });
 
   it('should be able to instantiate SlickGrid with an external PubSub Service', () => {
