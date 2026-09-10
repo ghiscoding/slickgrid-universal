@@ -931,10 +931,7 @@ describe('SlickGrid core file', () => {
         const firstRowItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l0.r0') as HTMLDivElement;
         const secondRowItemCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l0.r0') as HTMLDivElement;
 
-        expect(setRangeSpy).toHaveBeenCalledWith(
-          [new SlickRange(0, 0, 1, 0)],
-          'SlickGrid.setSelectedRows'
-        );
+        expect(setRangeSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 1, 0)], 'SlickGrid.setSelectedRows');
         expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();
         expect(secondRowItemCell.classList.contains('selected')).toBeTruthy();
       });
@@ -955,10 +952,7 @@ describe('SlickGrid core file', () => {
         const firstRowItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l0.r0') as HTMLDivElement;
         const secondRowItemCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l0.r0') as HTMLDivElement;
 
-        expect(setRangeSpy).toHaveBeenCalledWith(
-          [new SlickRange(0, 0, 1, 0)],
-          'SlickGrid.setSelectedRows'
-        );
+        expect(setRangeSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 1, 0)], 'SlickGrid.setSelectedRows');
         expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();
         expect(secondRowItemCell.classList.contains('selected')).toBeTruthy();
       });

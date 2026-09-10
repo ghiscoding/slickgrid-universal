@@ -94,6 +94,7 @@ import type {
 import {
   preClickClassName,
   RowPositionIndexer,
+  rowsToRanges,
   SlickDragExtendHandle,
   SlickEvent,
   SlickEventData,
@@ -101,7 +102,6 @@ import {
   SlickRange,
   SlickSelectionUtils,
   Utils,
-  rowsToRanges,
   type BasePubSub,
   type SlickEditorLock,
 } from './slickCore.js';
@@ -6318,7 +6318,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected isCellSelected(row: number, cell: number): boolean {
-    return !!this._options.selectedCellCssClass && this.selectedRanges.some((range) => range.contains(row, cell)) && this.canCellBeSelected(row, cell);
+    return (
+      !!this._options.selectedCellCssClass &&
+      this.selectedRanges.some((range) => range.contains(row, cell)) &&
+      this.canCellBeSelected(row, cell)
+    );
   }
 
   /**

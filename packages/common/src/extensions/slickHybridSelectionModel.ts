@@ -1,5 +1,5 @@
 import { isDefined } from '@slickgrid-universal/utils';
-import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange, rowsToRanges } from '../core/slickCore.js';
+import { rowsToRanges, SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/slickCore.js';
 import type { SlickDataView } from '../core/slickDataView.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import type { SelectionModel } from '../enums/selectionModel.type.js';
