@@ -8334,10 +8334,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return true;
   }
 
-  protected rowsToRanges(rows: number[]): SlickRange[] {
+  protected rowsToRanges(rows: number[], compactRows = false): SlickRange[] {
     const columns = this.getVisibleColumns();
     const lastCell = this.getColumnIndex(columns[columns.length - 1].id);
-    return rowsToRanges(rows, lastCell);
+    return rowsToRanges(rows, lastCell, compactRows);
   }
 
   /** Returns an array of row indices corresponding to the currently selected rows. */
@@ -8360,7 +8360,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const elock = this.getEditorLock();
     if (typeof elock?.isActive === 'function' && !elock.isActive()) {
-      this.selectionModel.setSelectedRanges(this.rowsToRanges(rows), caller || 'SlickGrid.setSelectedRows');
+      this.selectionModel.setSelectedRanges(this.rowsToRanges(rows, caller === 'click.selectAll'), caller || 'SlickGrid.setSelectedRows');
     }
   }
 

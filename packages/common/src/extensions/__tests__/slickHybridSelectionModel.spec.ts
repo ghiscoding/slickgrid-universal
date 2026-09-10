@@ -421,7 +421,12 @@ describe('Row Selection Model Plugin', () => {
     const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), ['shiftKey'], 'ArrowDown');
     gridStub.onKeyDown.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
-    expect(setSelectRangeSpy).toHaveBeenCalledWith([new SlickRange(2, 0, 5, 2)]);
+    expect(setSelectRangeSpy).toHaveBeenCalledWith([
+      { fromCell: 0, fromRow: 2, toCell: 2, toRow: 2 },
+      { fromCell: 0, fromRow: 3, toCell: 2, toRow: 3 },
+      { fromCell: 0, fromRow: 4, toCell: 2, toRow: 4 },
+      { fromCell: 0, fromRow: 5, toCell: 2, toRow: 5 },
+    ]);
   });
 
   it('should call "setSelectedRanges" with Slick Range with an Up direction when triggered by "onKeyDown" with key combo of Shift+ArrowUp and expect 2 ranges', () => {
@@ -438,7 +443,10 @@ describe('Row Selection Model Plugin', () => {
     const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), ['shiftKey'], 'ArrowUp');
     gridStub.onKeyDown.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
-    expect(setSelectRangeSpy).toHaveBeenCalledWith([new SlickRange(2, 0, 3, 2)]);
+    expect(setSelectRangeSpy).toHaveBeenCalledWith([
+      { fromCell: 0, fromRow: 2, toCell: 2, toRow: 2 },
+      { fromCell: 0, fromRow: 3, toCell: 2, toRow: 3 },
+    ]);
   });
 
   it('should call "setSelectedRanges" with Slick Range with an Up direction when triggered by "onKeyDown" with key combo of Shift+ArrowUp and expect only 1 range when getRowsRange Top is higher than Bottom', () => {
@@ -474,7 +482,10 @@ describe('Row Selection Model Plugin', () => {
     const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), ['shiftKey'], 'ArrowUp');
     gridStub.onKeyDown.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
-    expect(setSelectRangeSpy).toHaveBeenCalledWith([new SlickRange(2, 0, 3, 2)]);
+    expect(setSelectRangeSpy).toHaveBeenCalledWith([
+      { fromCell: 0, fromRow: 2, toCell: 2, toRow: 2 },
+      { fromCell: 0, fromRow: 3, toCell: 2, toRow: 3 },
+    ]);
   });
 
   it('should keep single row range on Shift+ArrowDown when multiSelect is false in row mode', () => {
@@ -546,7 +557,11 @@ describe('Row Selection Model Plugin', () => {
     const keyDownEvent = addVanillaEventPropagation(new Event('click'), ['ctrlKey']);
     gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
-    expect(setSelectRangeSpy).toHaveBeenCalledWith([new SlickRange(2, 0, 2, 2), new SlickRange(4, 0, 4, 2)]);
+    expect(setSelectRangeSpy).toHaveBeenCalledWith([
+      { fromCell: 0, fromRow: 2, toCell: 2, toRow: 2 },
+      { fromCell: 0, fromRow: 4, toCell: 2, toRow: 4 },
+      { fromCell: 0, fromRow: 4, toCell: 2, toRow: 4 },
+    ]);
   });
 
   it('should call "setSelectedRanges" with Slick Range when triggered by "onClick" with ShiftKey and expect 2 ranges and "setActiveCell" to be called', () => {
@@ -566,7 +581,10 @@ describe('Row Selection Model Plugin', () => {
     gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
     expect(setActiveCellSpy).toHaveBeenCalledWith(3, 2);
-    expect(setSelectRangeSpy).toHaveBeenCalledWith([new SlickRange(3, 0, 4, 2)]);
+    expect(setSelectRangeSpy).toHaveBeenCalledWith([
+      { fromCell: 0, fromRow: 3, toCell: 2, toRow: 3 },
+      { fromCell: 0, fromRow: 4, toCell: 2, toRow: 4 },
+    ]);
   });
 
   it('should call "setSelectedRanges" with Slick Range when triggered by "onClick" with ShiftKey and expect 4 ranges and "setActiveCell" to be called when cell row is not found in selection', () => {
@@ -586,7 +604,12 @@ describe('Row Selection Model Plugin', () => {
     gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
     expect(setActiveCellSpy).toHaveBeenCalledWith(1, 0);
-    expect(setSelectRangeSpy).toHaveBeenCalledWith([new SlickRange(1, 0, 4, 2)]);
+    expect(setSelectRangeSpy).toHaveBeenCalledWith([
+      { fromCell: 0, fromRow: 1, toCell: 2, toRow: 1 },
+      { fromCell: 0, fromRow: 2, toCell: 2, toRow: 2 },
+      { fromCell: 0, fromRow: 3, toCell: 2, toRow: 3 },
+      { fromCell: 0, fromRow: 4, toCell: 2, toRow: 4 },
+    ]);
   });
 
   it('should not call "setSelectedRanges" when triggered by "onClick" and cell row is not found in selection', () => {
@@ -604,7 +627,14 @@ describe('Row Selection Model Plugin', () => {
     const keyDownEvent = addVanillaEventPropagation(new Event('click'), ['ctrlKey']);
     gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
-    expect(setSelectRangeSpy).toHaveBeenCalledWith([new SlickRange(2, 0, 4, 2), new SlickRange(1, 0, 1, 2)]);
+    expect(setSelectRangeSpy).toHaveBeenCalledWith([
+      { fromCell: 0, fromRow: 2, toCell: 2, toRow: 2 },
+      { fromCell: 0, fromRow: 3, toCell: 2, toRow: 3 },
+      { fromCell: 0, fromRow: 4, toCell: 2, toRow: 4 },
+      { fromCell: 0, fromRow: 3, toCell: 2, toRow: 3 },
+      { fromCell: 0, fromRow: 4, toCell: 2, toRow: 4 },
+      { fromCell: 0, fromRow: 1, toCell: 2, toRow: 1 },
+    ]);
   });
 
   it('should cancel bubbling when no selector is available and "dragToSelect" is disabled and "onDragInit" grid event is triggered', () => {

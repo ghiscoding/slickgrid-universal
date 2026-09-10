@@ -30,6 +30,12 @@ class TestGrid extends SlickGrid<any, Column> {
   public callGetFormatter(row: number, column: Column) {
     return this.getFormatter(row, column);
   }
+  public callAppendSelectedCellHtml(row: number, cell: number) {
+    const divRow = document.createElement('div');
+    this.selectedRanges = [new SlickRange(row, cell)];
+    this.appendCellHtml(divRow, row, cell, 1, 1, null, this.getDataItem(row));
+    return divRow.firstElementChild as HTMLDivElement;
+  }
   public setCurrentEditorNull() {
     (this as any).currentEditor = null;
   }
@@ -931,7 +937,13 @@ describe('SlickGrid core file', () => {
         const firstRowItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l0.r0') as HTMLDivElement;
         const secondRowItemCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l0.r0') as HTMLDivElement;
 
-        expect(setRangeSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 1, 0)], 'SlickGrid.setSelectedRows');
+        expect(setRangeSpy).toHaveBeenCalledWith(
+          [
+            { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
+            { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 },
+          ],
+          'SlickGrid.setSelectedRows'
+        );
         expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();
         expect(secondRowItemCell.classList.contains('selected')).toBeTruthy();
       });
@@ -952,9 +964,28 @@ describe('SlickGrid core file', () => {
         const firstRowItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l0.r0') as HTMLDivElement;
         const secondRowItemCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l0.r0') as HTMLDivElement;
 
-        expect(setRangeSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 1, 0)], 'SlickGrid.setSelectedRows');
+        expect(setRangeSpy).toHaveBeenCalledWith(
+          [
+            { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
+            { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 },
+          ],
+          'SlickGrid.setSelectedRows'
+        );
         expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();
         expect(secondRowItemCell.classList.contains('selected')).toBeTruthy();
+      });
+
+      it('should compact contiguous row ranges when Select All is clicked', () => {
+        const rowSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row' });
+        const setRangeSpy = vi.spyOn(rowSelectionModel, 'setSelectedRanges');
+
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.setSelectionModel(rowSelectionModel);
+        vi.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(false);
+
+        grid.setSelectedRows([0, 1], 'click.selectAll');
+
+        expect(setRangeSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 1, 0)], 'click.selectAll');
       });
 
       it('should select rows when the last column is hidden', () => {
@@ -970,6 +1001,14 @@ describe('SlickGrid core file', () => {
 
         expect(rowSelectionModel.getSelectedRanges()).toEqual([{ fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 }]);
         expect(grid.getSelectedRows()).toEqual([1]);
+      });
+
+      it('should add selected CSS when rendering a selected cell without a CSS hash', () => {
+        grid = new TestGrid(container, data, columns, defaultOptions);
+
+        const cell = (grid as TestGrid).callAppendSelectedCellHtml(1, 0);
+
+        expect(cell.classList.contains('selected')).toBeTruthy();
       });
 
       it('should call SlickHybridSelectionModel.onDragReplaceCells() when selection mode is REP and range is expanding', () => {

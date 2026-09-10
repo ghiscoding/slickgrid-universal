@@ -23,8 +23,13 @@ interface PubSubPublishType<ArgType = any> {
   nativeEvent?: Event;
 }
 
-export function rowsToRanges(rows: number[], lastCell: number): SlickRange[] {
+export function rowsToRanges(rows: number[], lastCell: number, compactRows = false): SlickRange[] {
   const ranges: SlickRange[] = [];
+  if (!compactRows) {
+    rows.forEach((row) => ranges.push(new SlickRange(row, 0, row, lastCell)));
+    return ranges;
+  }
+
   const seenRows = new Set<number>();
   let rangeStart: number | undefined;
   let previousRow: number | undefined;
