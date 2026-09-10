@@ -12,6 +12,7 @@ import type {
   GridOption,
   OnHeaderClickEventArgs,
   OnKeyDownEventArgs,
+  OnSelectedRowIdsChangedEventArgs,
   SelectableOverrideCallback,
 } from '../interfaces/index.js';
 import { createDocumentFragmentOrElement } from '../services/utilities.js';
@@ -429,8 +430,8 @@ export class SlickCheckboxSelectColumn<T = any> {
     return `sgi ${iconClass}`;
   }
 
-  protected handleDataViewSelectedIdsChanged(): void {
-    const selectedIds = this._dataView.getAllSelectedFilteredIds();
+  protected handleDataViewSelectedIdsChanged(_e?: SlickEventData, args?: Partial<OnSelectedRowIdsChangedEventArgs>): void {
+    const selectedIds = Array.isArray(args?.filteredIds) ? args.filteredIds : this._dataView.getAllSelectedFilteredIds();
     const filteredItems = this._dataView.getFilteredItems();
     let disabledCount = 0;
 
@@ -539,7 +540,12 @@ export class SlickCheckboxSelectColumn<T = any> {
         isAllSelected = true;
       }
 
-      if (this._isUsingDataView && this._dataView && this._addonOptions.applySelectOnAllPages) {
+      if (
+        this._isUsingDataView &&
+        this._dataView &&
+        this._addonOptions.applySelectOnAllPages &&
+        (!isAllSelected || this._selectableOverride || this._dataView.getFilteredItems().length !== newSelectedRows.length)
+      ) {
         const ids = [];
         const filteredItems = this._dataView.getFilteredItems();
         for (let j = 0; j < filteredItems.length; j++) {
@@ -549,7 +555,7 @@ export class SlickCheckboxSelectColumn<T = any> {
             ids.push(dataviewRowItem[this._dataView.getIdPropertyName()]);
           }
         }
-        this._dataView.setSelectedIds(ids, { isRowBeingAdded: isAllSelected });
+        this._dataView.setSelectedIds(ids, { isRowBeingAdded: isAllSelected, applyRowSelectionToGrid: false });
       }
 
       // we finally need to call the actual row selection from SlickGrid method

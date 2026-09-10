@@ -1392,8 +1392,14 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       if (rowIds === false) {
         this.selectedRowIds = [];
       } else {
-        if (this.selectedRowIds!.sort().join(',') !== rowIds.sort().join(',')) {
-          this.selectedRowIds = rowIds;
+        const sortedRowIds = rowIds.every((id, index) => index === 0 || `${rowIds[index - 1]}` <= `${id}`) ? rowIds : rowIds.slice().sort();
+        let selectedRowIdsChanged = this.selectedRowIds!.length !== sortedRowIds.length;
+        if (!selectedRowIdsChanged) {
+          const selectedRowIdsSet = new Set(this.selectedRowIds);
+          selectedRowIdsChanged = sortedRowIds.some((id) => !selectedRowIdsSet.has(id));
+        }
+        if (selectedRowIdsChanged) {
+          this.selectedRowIds = sortedRowIds;
         }
       }
     };
@@ -1413,7 +1419,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
           this.onSelectedRowIdsChanged.notify(
             Object.assign(selectedRowsChangedArgs, {
               selectedRowIds: this.selectedRowIds,
-              filteredIds: this.getAllSelectedFilteredIds() as DataIdType[],
+              filteredIds: selectedRowsChangedArgs.ids,
             }),
             new SlickEventData(),
             this
@@ -1438,7 +1444,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
         this.onSelectedRowIdsChanged.notify(
           Object.assign(selectedRowsChangedArgs, {
             selectedRowIds: this.selectedRowIds,
-            filteredIds: this.getAllSelectedFilteredIds() as DataIdType[],
+            filteredIds: preserveHidden ? (this.getAllSelectedFilteredIds() as DataIdType[]) : newSelectedRowIds,
           }),
           new SlickEventData(),
           this

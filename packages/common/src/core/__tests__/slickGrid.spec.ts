@@ -932,10 +932,7 @@ describe('SlickGrid core file', () => {
         const secondRowItemCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l0.r0') as HTMLDivElement;
 
         expect(setRangeSpy).toHaveBeenCalledWith(
-          [
-            { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
-            { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 },
-          ],
+          [new SlickRange(0, 0, 1, 0)],
           'SlickGrid.setSelectedRows'
         );
         expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();
@@ -959,10 +956,7 @@ describe('SlickGrid core file', () => {
         const secondRowItemCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l0.r0') as HTMLDivElement;
 
         expect(setRangeSpy).toHaveBeenCalledWith(
-          [
-            { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
-            { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 },
-          ],
+          [new SlickRange(0, 0, 1, 0)],
           'SlickGrid.setSelectedRows'
         );
         expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();

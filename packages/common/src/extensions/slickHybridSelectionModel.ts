@@ -1,5 +1,5 @@
 import { isDefined } from '@slickgrid-universal/utils';
-import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/slickCore.js';
+import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange, rowsToRanges } from '../core/slickCore.js';
 import type { SlickDataView } from '../core/slickDataView.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import type { SelectionModel } from '../enums/selectionModel.type.js';
@@ -194,10 +194,8 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
   }
 
   protected rowsToRanges(rows: number[]): SlickRange[] {
-    const ranges: SlickRange[] = [];
     const lastCell = this._grid.getColumns().length - 1;
-    rows.forEach((row) => ranges.push(new SlickRange(row, 0, row, lastCell)));
-    return ranges;
+    return rowsToRanges(rows, lastCell);
   }
 
   protected getRowsRange(from: number, to: number): number[] {

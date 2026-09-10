@@ -331,7 +331,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 2], 'click.selectAll');
     expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined });
     expect(onToggleEndMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined, rows: [0, 2] });
-    expect(setSelectedIdsSpy).toHaveBeenCalledWith([22], { isRowBeingAdded: true });
+    expect(setSelectedIdsSpy).toHaveBeenCalledWith([22], { isRowBeingAdded: true, applyRowSelectionToGrid: false });
   });
 
   it('should create the plugin and call "setOptions" and expect options changed and hide both Select All toggle when setting "hideSelectAllCheckbox: false" and "hideInColumnTitleRow: true"', () => {
@@ -1064,6 +1064,6 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 2], 'click.selectAll');
     expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: [] });
     expect(onToggleEndMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: [], rows: [0, 2] });
-    expect(setSelectedIdsSpy).toHaveBeenCalledWith([22], { isRowBeingAdded: true });
+    expect(setSelectedIdsSpy).toHaveBeenCalledWith([22], { isRowBeingAdded: true, applyRowSelectionToGrid: false });
   });
 });
