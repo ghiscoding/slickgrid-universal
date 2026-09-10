@@ -31,13 +31,6 @@
   .slick-row:not(.slick-group) > .cell-unselectable {
     background: #f4f4f4 !important;
   }
-  .slick-row .slick-cell.pinned:last-child,
-  .slick-header-column.pinned:last-child,
-  .slick-headerrow-column.pinned:last-child,
-  .slick-footerrow-column.pinned:last-child {
-    border-right: 1px solid red;
-  }
-
   .slick-row.pinned:last-child .slick-cell,
   .slick-row.pinned:last-child .slick-cell {
     border-bottom: 1px solid red;

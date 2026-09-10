@@ -4,6 +4,7 @@ import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   Aggregators,
+  Editors,
   Filters,
   Formatters,
   GroupTotalFormatters,
@@ -51,9 +52,6 @@ function defineGrid() {
       name: 'Title',
       field: 'title',
       columnGroup: 'Common Factor',
-      width: 70,
-      minWidth: 50,
-      cssClass: 'cell-title',
       hidden: true, // column initially hidden
       filterable: true,
       sortable: true,
@@ -70,10 +68,10 @@ function defineGrid() {
       name: 'Duration',
       field: 'duration',
       columnGroup: 'Common Factor',
-      width: 70,
       sortable: true,
       filterable: true,
       filter: { model: Filters.slider, operator: '>=' },
+      editor: { model: Editors.float },
       type: 'number',
       groupTotalsFormatter: GroupTotalFormatters.sumTotals,
       grouping: {
@@ -92,11 +90,11 @@ function defineGrid() {
       name: 'Start',
       field: 'start',
       columnGroup: 'Period',
-      minWidth: 60,
       sortable: true,
       filterable: true,
       filter: { model: Filters.compoundDate },
       formatter: Formatters.dateIso,
+      editor: { model: Editors.date },
       type: 'dateUtc',
       outputType: 'dateIso',
       exportWithFormatter: true,
@@ -113,11 +111,11 @@ function defineGrid() {
       name: 'Finish',
       field: 'finish',
       columnGroup: 'Period',
-      minWidth: 60,
       sortable: true,
       filterable: true,
       filter: { model: Filters.compoundDate },
       formatter: Formatters.dateIso,
+      editor: { model: Editors.date },
       type: 'dateUtc',
       outputType: 'dateIso',
       exportWithFormatter: true,
@@ -155,8 +153,6 @@ function defineGrid() {
       name: '% Complete',
       field: 'percentComplete',
       columnGroup: 'Analysis',
-      minWidth: 70,
-      width: 90,
       formatter: Formatters.percentCompleteBar,
       type: 'number',
       filterable: true,
@@ -199,6 +195,24 @@ function defineGrid() {
         collapsed: false,
       },
     },
+    {
+      id: 'action',
+      name: 'Action',
+      field: 'action',
+      width: 90,
+      maxWidth: 90,
+      excludeFromExport: true,
+      formatter: () => '<div class="fake-hyperlink color-primary flex justify-center">Action <i class="mdi mdi-chevron-down"></i></div>',
+      cellMenu: {
+        commandTitle: 'Commands',
+        commandItems: [{ command: 'help', title: 'Help' }],
+        optionTitle: 'Change Effort-Driven Flag',
+        optionItems: [
+          { option: true, title: 'True' },
+          { option: false, title: 'False' },
+        ],
+      },
+    },
   ];
 
   gridOptions.value = {
@@ -207,12 +221,29 @@ function defineGrid() {
       rightPadding: 10,
     },
     enableDraggableGrouping: true,
+    autoEdit: true,
+    autoCommitEdit: true,
+    editable: true,
+    enableCellNavigation: true,
+    enableSelection: true,
+    enableCheckboxSelector: true,
+    selectionOptions: { selectActiveRow: false },
+    checkboxSelector: { hideInColumnTitleRow: true, hideInFilterHeaderRow: false },
+    enableCellMenu: true,
+    cellMenu: {
+      onOptionSelected: (_e: unknown, args: any) => {
+        if (args?.dataContext) {
+          args.dataContext.effortDriven = args.item.option;
+          vueGrid?.gridService?.updateItem(args.dataContext);
+        }
+      },
+    },
 
     // pre-header will include our Header Grouping (i.e. "Common Factor")
     // Draggable Grouping could be located in either the Pre-Header OR the new Top-Header
     createPreHeaderPanel: true,
     showPreHeaderPanel: true,
-    preHeaderPanelHeight: 30,
+    preHeaderPanelHeight: 26,
 
     // when Top-Header is created, it will be used by the Draggable Grouping (otherwise the Pre-Header will be used)
     createTopHeaderPanel: true,
@@ -225,7 +256,12 @@ function defineGrid() {
     // filterTypingDebounce: 250,
     enableSorting: true,
     enableColumnReorder: true,
+    headerMenu: {
+      hidePinColumnCommand: false,
+      hidePinningColumnsCommand: false,
+    },
     gridMenu: {
+      hideClearPinningCommand: false,
       onCommand: (_e, args) => {
         if (args.command === 'toggle-preheader') {
           // in addition to the grid menu pre-header toggling (internally), we will also clear grouping
@@ -259,24 +295,24 @@ function defineGrid() {
 }
 
 function loadData(rowCount: number) {
-  // mock a dataset
+  // mock data
   const tmpData: any[] = [];
+  const currentYear = new Date().getFullYear();
+
   for (let i = 0; i < rowCount; i++) {
-    const randomYear = 2000 + Math.floor(Math.random() * 10);
-    const randomMonth = Math.floor(Math.random() * 11);
+    const randomFinishYear = currentYear - 3 + Math.floor(Math.random() * 10);
+    const randomMonth = Math.floor(Math.random() * 10);
     const randomDay = Math.floor(Math.random() * 29);
-    const randomPercent = Math.round(Math.random() * 100);
+    const randomFinish = new Date(randomFinishYear, randomMonth + 1, randomDay);
     const randomCost = Math.round(Math.random() * 10000) / 100;
 
     tmpData[i] = {
-      id: 'id_' + i,
-      num: i,
+      id: i,
       title: 'Task ' + i,
       duration: Math.round(Math.random() * 100) + '',
-      percentComplete: randomPercent,
-      percentCompleteNumber: randomPercent,
-      start: new Date(randomYear, randomMonth, randomDay),
-      finish: new Date(randomYear, randomMonth + 1, randomDay),
+      percentComplete: Math.round(Math.random() * 100),
+      start: new Date(currentYear - 2, randomMonth, randomDay),
+      finish: randomFinish < new Date() ? '' : randomFinish,
       cost: i % 33 === 0 ? -randomCost : randomCost,
       effortDriven: i % 5 === 0,
     };
@@ -475,8 +511,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <div class="row">
       <div class="col-sm-12">
         <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-5k-rows-btn" @click="loadData(5000)">5K rows</button>
-        <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" @click="loadData(50000)">
-          50K rows
+        <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-500k-rows-btn" @click="loadData(500000)">
+          500K rows
         </button>
         <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn" @click="clearGroupsAndSelects()">
           <i class="mdi mdi-close"></i> Clear grouping
@@ -487,7 +523,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="expand-all-btn" @click="expandAllGroups()">
           <i class="mdi mdi-arrow-expand"></i> Expand all groups
         </button>
-        <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" @click="toggleDraggableGroupingRow()">
+        <button
+          class="btn btn-outline-secondary btn-xs btn-icon mx-1"
+          data-test="toggle-draggable-grouping-row"
+          @click="toggleDraggableGroupingRow()"
+        >
           Toggle Draggable Grouping Row
         </button>
         <button class="btn btn-outline-secondary btn-xs btn-icon" @click="exportToExcel()">

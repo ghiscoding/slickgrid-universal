@@ -2136,10 +2136,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           element.style.marginLeft = '';
           element.style.marginRight = '';
         }
-        const isRightHeaderRowEdge =
-          band === 'right' &&
-          element.classList.contains('slick-headerrow-column') &&
-          element.classList.contains('slick-column-pinned-right-edge');
         // Header-row and footer cells do not receive the header element's
         // inline width. Once a cell is taken out of the normal left/right
         // constraint layout, give it an explicit content-box width so its
@@ -2153,29 +2149,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             parseFloat(elementStyle.borderLeftWidth) +
             parseFloat(elementStyle.borderRightWidth);
           const targetOuterWidth = headerOuterWidth || column.width || 0;
-          // Pinned edge cells have a separator border. The separator is part of
-          // the cell's outer width (the same width used by the body grid track),
-          // so keep those cells border-box. Otherwise the 1px edge border is
-          // subtracted twice and an empty filter/footer cell renders narrower
-          // than its corresponding data cells (for example 98px vs 100px).
+          // Preserve the normal theme border-box geometry at a pinned edge.
+          // The pinning cue itself is an inset shadow and therefore does not
+          // contribute to this measured width.
           const isPinnedEdge =
             element.classList.contains('slick-column-pinned-left-edge') || element.classList.contains('slick-column-pinned-right-edge');
-          const extendsIntoScrollbarGutter = isRightHeaderRowEdge && this.viewportHasVScroll;
-          // Header rows do not have the body's native vertical scrollbar.
-          // Extend the right edge filter cell across that unused gutter so a
-          // translated center column cannot show through after resizing.
-          const verticalScrollbarGutter = extendsIntoScrollbarGutter ? this.scrollbarDimensions?.width || 0 : 0;
-          // The last header title can be reduced by grid-menu compensation,
-          // while the body track still uses the declared column width. Use the
-          // larger value for this gutter-filling cell so it never shrinks below
-          // its corresponding data column (98px header vs 100px body).
-          const rightHeaderRowBaseWidth = isRightHeaderRowEdge ? Math.max(targetOuterWidth, column.width || 0) : targetOuterWidth;
-          const adjustedTargetOuterWidth = rightHeaderRowBaseWidth + verticalScrollbarGutter;
+          // Keep the measured header outer width so title/filter/footer edges
+          // share the same fractional border geometry. Do not extend a right
+          // filter into the scrollbar gutter: that overlaps its neighbor.
           element.style.boxSizing = isPinnedEdge ? 'border-box' : 'content-box';
-          element.style.width = `${Math.max(
-            0,
-            isPinnedEdge ? adjustedTargetOuterWidth : adjustedTargetOuterWidth - elementHorizontalBox
-          )}px`;
+          element.style.width = `${Math.max(0, isPinnedEdge ? targetOuterWidth : targetOuterWidth - elementHorizontalBox)}px`;
         }
         if (!docking || band === 'center') {
           element.style.removeProperty('--slick-docking-chrome-offset');
@@ -3723,6 +3706,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected applyColumnWidths(): void {
     let rule: any;
+    const centerWidth = this.hasDockedColumns() ? this.getDockingRenderedCenterWidth() : this.dockingLayout.centerWidth;
     for (let i = 0; i < this.columns.length; i++) {
       if (this.columns[i]) {
         const w = this.columns[i].hidden ? 0 : this.columns[i].width || 0;
@@ -3730,11 +3714,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         const x = this.columnPosLeft[i] ?? docked?.offset ?? 0;
         const rightEdge = this.columnPosRight[i] ?? x + w;
         const bandWidth =
-          docked?.band === 'left'
-            ? this.dockingLayout.leftWidth
-            : docked?.band === 'right'
-              ? this.dockingLayout.rightWidth
-              : this.dockingLayout.centerWidth;
+          docked?.band === 'left' ? this.dockingLayout.leftWidth : docked?.band === 'right' ? this.dockingLayout.rightWidth : centerWidth;
 
         rule = this.getColumnCssRules(i);
         if (this._options.rtl) {
@@ -4221,13 +4201,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         const cellNode = cacheEntry.cellNodesByColumnIdx[index];
         const docking = this.dockingByColumn.get(index);
         const band = docking?.band || 'center';
+        const isFullWidthGroup = rowNode.classList.contains('slick-row-full-width-group');
 
-        cellNode.classList.toggle('slick-cell-pinned-left', band === 'left');
-        cellNode.classList.toggle('slick-cell-pinned-right', band === 'right');
-        cellNode.classList.toggle('slick-cell-sticky', band !== 'center' && !!docking?.sticky);
+        cellNode.classList.toggle('slick-cell-full-width-group', isFullWidthGroup);
+        cellNode.classList.toggle('slick-cell-pinned-left', !isFullWidthGroup && band === 'left');
+        cellNode.classList.toggle('slick-cell-pinned-right', !isFullWidthGroup && band === 'right');
+        cellNode.classList.toggle('slick-cell-sticky', !isFullWidthGroup && band !== 'center' && !!docking?.sticky);
 
         const region = this.getRowDockingRegion(rowNode, index);
-        if (region !== rowNode && cellNode.parentElement !== region) {
+        if (cellNode.parentElement !== region) {
           region.appendChild(cellNode);
         }
       });
@@ -5322,6 +5304,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
 
         let ncolspan = colspan as number; // at this point colspan is for sure a number
+        const isFullWidthGroup = this.usesDockingRowRegions() && this.isFullWidthGroupCell(metadata, columnData, i, ncolspan);
+        if (isFullWidthGroup) {
+          rowDiv.classList.add('slick-row-full-width-group');
+        }
 
         // don't render child cell of a rowspan cell
         if (this.getParentRowSpanByCell(row, i)) {
@@ -5341,15 +5327,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
           // All columns to the right are outside the range, so no need to render them
           if (isRenderCell) {
-            const band = this.getColumnDockingBand(i);
-            const targetedRowDiv =
-              band === 'left' ? rowRegionLeft || rowDiv : band === 'right' ? rowRegionRight || rowDiv : rowRegionCenter;
-            this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d);
+            const targetedRowDiv = isFullWidthGroup ? rowDiv : this.getRowDockingRegion(rowDiv, i);
+            this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d, isFullWidthGroup);
           }
-        } else if (m.alwaysRenderColumn || this.getColumnDockingBand(i) !== 'center' || this.getColumnDockingBand(i) !== 'center') {
-          const band = this.getColumnDockingBand(i);
-          const targetedRowDiv = band === 'left' ? rowRegionLeft || rowDiv : band === 'right' ? rowRegionRight || rowDiv : rowRegionCenter;
-          this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d);
+        } else if (m.alwaysRenderColumn || this.getColumnDockingBand(i) !== 'center') {
+          const targetedRowDiv = isFullWidthGroup ? rowDiv : this.getRowDockingRegion(rowDiv, i);
+          this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d, isFullWidthGroup);
         }
 
         if (ncolspan > 1) {
@@ -5431,7 +5414,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     colspan: number,
     rowspan: number,
     columnMetadata: ColumnMetadata | null,
-    item: TData
+    item: TData,
+    isFullWidthGroup = false
   ): void {
     // divRow: the html element to append items too
     // row, cell: row and column index
@@ -5445,8 +5429,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       (rowspan > 1 ? ' rowspan' : '') +
       (columnMetadata?.cssClass ? ` ${columnMetadata.cssClass}` : '');
 
+    if (isFullWidthGroup) {
+      cellCss += ' slick-cell-full-width-group';
+    }
     const docking = this.dockingByColumn.get(cell);
-    if (docking && docking.band !== 'center') {
+    if (!isFullWidthGroup && docking && docking.band !== 'center') {
       cellCss += ` slick-cell-pinned-${docking.band}`;
       if (docking?.sticky) {
         cellCss += ' slick-cell-sticky';
@@ -6449,10 +6436,34 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!rowNode.classList.contains('slick-row-docked')) {
       return cellChildren(children);
     }
-    return cellChildren(children.flatMap((region) => Array.from(region.children) as HTMLElement[]));
+    const regions = children.filter(
+      (node) =>
+        node.classList.contains('slick-pinned-left-cells') ||
+        node.classList.contains('slick-scrolling-cells') ||
+        node.classList.contains('slick-pinned-right-cells')
+    );
+    return [...cellChildren(children), ...cellChildren(regions.flatMap((region) => Array.from(region.children) as HTMLElement[]))];
+  }
+
+  protected isFullWidthGroupCell(
+    metadata: ItemMetadata | null | undefined,
+    columnMetadata: ColumnMetadata | null,
+    columnIdx: number,
+    colspan: number
+  ): boolean {
+    const configuredColspan = columnMetadata?.colspan;
+    return (
+      !!metadata?.isGroup &&
+      configuredColspan !== undefined &&
+      (configuredColspan === '*' || Number(configuredColspan) >= this.columns.length - columnIdx) &&
+      colspan >= this.columns.length - columnIdx
+    );
   }
 
   protected getRowDockingRegion(rowNode: HTMLElement, columnIdx: number): HTMLElement {
+    if (rowNode.classList.contains('slick-row-full-width-group')) {
+      return rowNode;
+    }
     const band = this.getColumnDockingBand(columnIdx);
     const selector =
       band === 'left' ? '.slick-pinned-left-cells' : band === 'right' ? '.slick-pinned-right-cells' : '.slick-scrolling-cells';
@@ -6600,7 +6611,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               this.getColumnRangeRight(Math.min(ii - 1, i + ncolspan - 1), i) > range.leftPx
             ) {
               const rowspan = this.getRowspan(row, i);
-              this.appendCellHtml(divRow, row, i, ncolspan, rowspan, columnData, d);
+              const isFullWidthGroup = this.usesDockingRowRegions() && this.isFullWidthGroupCell(metadata, columnData, i, ncolspan);
+              cacheEntry.rowNode?.[0].classList.toggle('slick-row-full-width-group', isFullWidthGroup);
+              this.appendCellHtml(divRow, row, i, ncolspan, rowspan, columnData, d, isFullWidthGroup);
               cellsAdded++;
             }
 

@@ -119,6 +119,7 @@ $slick-preheader-border-left:                               none !default;
 $slick-preheader-border-left-first-element:                 none !default;
 $slick-preheader-border-right:                              none !default;
 $slick-preheader-border-right-last-element:                 none !default;
+$slick-preheader-border-color:                              transparent !default;
 $slick-preheader-border-bottom:                             none !default;
 $slick-preheader-border-top:                                none !default;
 $slick-preheader-font-size:                                 calc(#{$slick-font-size-base} + 3px) !default;
@@ -175,7 +176,9 @@ $slick-header-resizable-hover-top:                          10% !default;
 
 /* Pinned rows/columns */
 $slick-pinned-border-bottom:                                1px solid #a5a5a5 !default;
-$slick-pinned-border-right:                                 1px solid #a5a5a5 !default;
+$slick-pinned-border-color:                                 #a5a5a5 !default;
+$slick-pinned-border-box-shadow-left:                       inset -1px 0 0 var(--slick-pinned-border-color, #{$slick-pinned-border-color}) !default;
+$slick-pinned-border-box-shadow-right:                      inset 1px 0 0 var(--slick-pinned-border-color, #{$slick-pinned-border-color}) !default;
 
 /* icons */
 $slick-icon-color:                                          inherit !default;
@@ -1045,7 +1048,7 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-header-text-color:                              #e4e4e4;
   --slick-hover-header-color:                             var(--slick-base-dark-text-color);
   --slick-header-row-background-color:                    #2d2d2d;
-  --slick-preheader-border-right:                         1px solid #3e3e3e;
+  --slick-preheader-border-color:                         #3e3e3e;
   --slick-pane-top-border-top:                            1px solid #606060;
   --slick-empty-data-warning-color:                       var(--slick-base-dark-text-color);
   --slick-grid-header-background:                         #2d2d2d;

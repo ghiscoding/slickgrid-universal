@@ -489,11 +489,6 @@ function vueGridReady(grid: SlickgridVueInstance) {
 </template>
 
 <style lang="scss" scoped>
-.slick-row .slick-cell.pinned:last-child,
-.slick-headerrow-column.pinned:last-child,
-.slick-footerrow-column.pinned:last-child {
-  border-right: 1px solid #969696 !important;
-}
 .slick-pane-bottom {
   border-top: 1px solid #969696 !important;
 }

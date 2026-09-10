@@ -34,6 +34,7 @@ const gridStub = {
   getData: () => dataViewStub,
   getOptions: () => gridOptionMock,
   getColumns: vi.fn(),
+  getPinnedColumns: vi.fn().mockReturnValue([]),
   getVisibleColumns: vi.fn(),
   getHeadersWidth: vi.fn(),
   getHeaderColumnWidthDiff: vi.fn(),
@@ -130,6 +131,7 @@ describe('HeaderGroupingService', () => {
         { id: 'start', name: 'Start', field: 'start' },
       ];
       gridStub.getColumns = vi.fn();
+      gridStub.getPinnedColumns = vi.fn().mockReturnValue([]);
       gridStub.getVisibleColumns = vi.fn();
       vi.spyOn(gridStub, 'getPluginByName').mockReturnValue(resizerPluginStub);
       vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
@@ -231,6 +233,39 @@ describe('HeaderGroupingService', () => {
       expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
       expect(divHeaderColumns.length).toBeGreaterThan(2);
       expect(divHeaderColumns[0].outerHTML).toEqual(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns">All your colums div here</div>`);
+    });
+
+    it('should split and align a column group across docking bands', () => {
+      const columnsWithSplitGroup: Column[] = [
+        { id: 'select', name: '', field: 'select', width: 40 },
+        { id: 'start', name: 'Start', field: 'start', width: 100, columnGroup: 'Period' },
+        { id: 'duration', name: 'Duration', field: 'duration', width: 80, columnGroup: 'Common Factor' },
+        { id: 'finish', name: 'Finish', field: 'finish', width: 100, columnGroup: 'Period' },
+        { id: 'action', name: 'Action', field: 'action', width: 60 },
+      ];
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsWithSplitGroup);
+      vi.spyOn(gridStub, 'getPinnedColumns').mockImplementation((side) => (side === 'left' ? [columnsWithSplitGroup[1]] : [columnsWithSplitGroup[4]]));
+      vi.spyOn(gridStub, 'getHeaderColumnWidthDiff').mockReturnValue(0);
+
+      service.init(gridStub);
+      vi.runAllTimers();
+
+      const groupHeaders = Array.from(gridStub.getPreHeaderPanel().children) as HTMLElement[];
+      expect(groupHeaders.map((header) => header.textContent)).toEqual(['Period', '', 'Common Factor', 'Period', '']);
+      expect(groupHeaders[0].classList.contains('slick-column-pinned-left')).toBe(true);
+      expect(groupHeaders[4].classList.contains('slick-column-pinned-right')).toBe(true);
+      expect(groupHeaders.slice(1, 4).every((header) => !header.className.includes('slick-column-pinned-'))).toBe(true);
+      expect(groupHeaders.map((header) => header.style.width)).toEqual(['100px', '40px', '80px', '100px', '60px']);
+    });
+
+    it('should preserve pre-header elements when the rendered layout is unchanged', () => {
+      service.init(gridStub);
+      vi.runAllTimers();
+      const firstGroupHeader = gridStub.getPreHeaderPanel().firstElementChild;
+
+      gridStub.onRendered.notify({ startRow: 0, endRow: 10, grid: gridStub }, new SlickEventData(), gridStub);
+
+      expect(gridStub.getPreHeaderPanel().firstElementChild).toBe(firstGroupHeader);
     });
 
     it('should keep rendering the pre-header row grouping title after grid options change', () => {

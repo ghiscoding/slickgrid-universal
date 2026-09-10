@@ -258,7 +258,7 @@ interfaces or runtime.
 | `Locale.TEXT_FREEZE_COLUMNS` | `Locale.TEXT_PIN_COLUMNS` | Bulk pinning translation key renamed |
 | `Locale.TEXT_UNFREEZE_COLUMNS` | `Locale.TEXT_UNPIN_COLUMNS` | Bulk unpinning translation key renamed |
 | `$slick-frozen-border-bottom` | `$slick-pinned-border-bottom` | Pinned-row separator variable renamed |
-| `$slick-frozen-border-right` | `$slick-pinned-border-right` | Pinned-column separator variable renamed |
+| `$slick-frozen-border-right` | `$slick-pinned-border-color` plus `$slick-pinned-border-box-shadow-left/right` | Pinned-column separator now uses non-layout shadows |
 
 For example, update the renamed menu and validation options together:
 

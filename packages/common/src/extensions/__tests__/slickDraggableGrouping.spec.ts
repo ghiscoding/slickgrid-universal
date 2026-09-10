@@ -247,6 +247,7 @@ describe('Draggable Grouping Plugin', () => {
     let headerColumnDiv3: HTMLDivElement;
     let headerColumnDiv4: HTMLDivElement;
     let mockHeaderLeftDiv1: HTMLDivElement;
+    let mockHeaderCenterDiv: HTMLDivElement;
     let mockHeaderLeftDiv2: HTMLDivElement;
     const setColumnsSpy = vi.fn();
     const setColumnResizeSpy = vi.fn();
@@ -261,11 +262,14 @@ describe('Draggable Grouping Plugin', () => {
       const mockDivPaneContainerElm2 = document.createElement('div');
       mockDivPaneContainerElm2.className = 'slick-pane-header';
       mockHeaderLeftDiv1 = document.createElement('div');
+      mockHeaderCenterDiv = document.createElement('div');
       mockHeaderLeftDiv2 = document.createElement('div');
       mockHeaderLeftDiv1.className = 'slick-header-columns slick-header-columns-left';
+      mockHeaderCenterDiv.className = 'slick-header-columns slick-header-columns-center';
       mockHeaderLeftDiv2.className = 'slick-header-columns slick-header-columns-right';
 
       mockDivPaneContainerElm.appendChild(mockHeaderLeftDiv1);
+      mockDivPaneContainerElm.appendChild(mockHeaderCenterDiv);
       mockDivPaneContainerElm2.appendChild(mockHeaderLeftDiv2);
       gridContainerDiv.appendChild(mockDivPaneContainerElm);
       gridContainerDiv.appendChild(mockDivPaneContainerElm2);
@@ -299,7 +303,7 @@ describe('Draggable Grouping Plugin', () => {
       vi.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
 
       const onStartItem = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
-      fn.sortableLeftInstance!.options.onStart!({ item: onStartItem } as any);
+      fn.sortableCenterInstance!.options.onStart!({ item: onStartItem } as any);
       plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
 
       let groupByRemoveElm = preHeaderDiv.querySelector('.slick-groupby-remove') as HTMLDivElement;
@@ -307,6 +311,7 @@ describe('Draggable Grouping Plugin', () => {
       let placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
 
       expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
+      expect(fn.sortableCenterInstance).toEqual(plugin.sortableCenterInstance);
       expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
       expect(fn.sortableLeftInstance.destroy).toBeTruthy();
       expect(groupByRemoveElm).toBeTruthy();

@@ -208,6 +208,16 @@
       ) !important;
     }
 
+    // Full-span group headers stay fixed to the visible viewport.
+    .slick-row-docked > .slick-cell-full-width-group {
+      left: 0 !important;
+      right: auto !important;
+      width: var(--slick-docking-viewport-width, 100%) !important;
+      transform: translate3d(var(--slick-docking-scroll-left, 0px), 0, 0);
+      z-index: 21 !important;
+      will-change: transform;
+    }
+
     .slick-header-column.slick-column-pinned-left,
     .slick-headerrow-column.slick-column-pinned-left,
     .slick-footerrow-column.slick-column-pinned-left {
@@ -253,14 +263,14 @@
 
     &.slick-row-docked {
       display: grid;
+      background: var(--slick-cell-even-background-color, v.$slick-cell-even-background-color);
 
-      > .slick-pinned-left-cells,
-      > .slick-scrolling-cells,
-      > .slick-pinned-right-cells {
+      > :is(.slick-pinned-left-cells, .slick-scrolling-cells, .slick-pinned-right-cells) {
         position: relative;
         grid-row: 1;
         height: 100%;
         overflow: hidden;
+        background: inherit;
       }
 
       > .slick-pinned-left-cells {
@@ -268,18 +278,11 @@
         position: sticky;
         inset-inline-start: 0;
         z-index: 20;
-        background: var(--slick-canvas-bg-color, v.$slick-canvas-bg-color);
         // Keep the boundary outside the measured content width. The header
         // tracks use content-box sizing, so border-box here would make every
         // pinned data cell slightly narrower than its header counterpart.
         box-sizing: content-box;
         will-change: transform;
-      }
-
-      // An empty left region is still present to keep the three-band row
-      // layout stable, but it must not paint a separator at the viewport edge.
-      > .slick-pinned-left-cells.slick-pinned-left-cells-active {
-        border-inline-end: var(--slick-pinned-border-right, v.$slick-pinned-border-right);
       }
 
       > .slick-scrolling-cells {
@@ -290,37 +293,33 @@
         grid-column: 3;
         justify-self: end;
         z-index: 20;
-        background: var(--slick-canvas-bg-color, v.$slick-canvas-bg-color);
         box-sizing: content-box;
         will-change: transform;
       }
 
-      > .slick-pinned-right-cells.slick-pinned-right-cells-active {
-        border-inline-start: var(--slick-pinned-border-right, v.$slick-pinned-border-right);
+      // Paint the separator only on boundary data cells, not full-width rows.
+      > .slick-pinned-left-cells.slick-pinned-left-cells-active > .slick-cell:last-child::after,
+      > .slick-pinned-right-cells.slick-pinned-right-cells-active > .slick-cell:first-child::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      > .slick-pinned-left-cells.slick-pinned-left-cells-active > .slick-cell:last-child::after {
+        box-shadow: var(--slick-pinned-border-box-shadow-left, v.$slick-pinned-border-box-shadow-left);
+      }
+
+      > .slick-pinned-right-cells.slick-pinned-right-cells-active > .slick-cell:first-child::after {
+        box-shadow: var(--slick-pinned-border-box-shadow-right, v.$slick-pinned-border-box-shadow-right);
       }
 
       // A RowSpan cell extends beyond its host row. The normal region clip is
       // still required for virtualized rows, but would hide the spanning cell
       // (and make it impossible to click) when columns are docked.
-      &.slick-rowspan {
-        > .slick-pinned-left-cells,
-        > .slick-scrolling-cells,
-        > .slick-pinned-right-cells {
-          overflow: visible;
-        }
-      }
-
-      // Docked side regions have their own opaque background to cover rows
-      // underneath. Mirror the row striping there as well; otherwise odd-row
-      // gray styling only appears in the scrolling center region.
-      &.odd > .slick-pinned-left-cells,
-      &.odd > .slick-pinned-right-cells {
-        background-color: var(--slick-cell-odd-background-color, v.$slick-cell-odd-background-color);
-      }
-
-      &:hover > .slick-pinned-left-cells,
-      &:hover > .slick-pinned-right-cells {
-        background-color: var(--slick-row-mouse-hover-color, v.$slick-row-mouse-hover-color);
+      &.slick-rowspan > :is(.slick-pinned-left-cells, .slick-scrolling-cells, .slick-pinned-right-cells) {
+        overflow: visible;
       }
     }
 
@@ -1108,30 +1107,21 @@
 
       .slick-header-column {
         height: var(--slick-preheader-height, v.$slick-preheader-height);
-        border-left: var(--slick-preheader-border-left, v.$slick-preheader-border-left);
-        border-right: var(--slick-preheader-border-right, v.$slick-preheader-border-right);
+        box-shadow: inset -1px 0 0 var(--slick-preheader-border-color, v.$slick-preheader-border-color);
         font-size: var(--slick-preheader-font-size, v.$slick-preheader-font-size);
         justify-content: var(--slick-preheader-grouped-title-justify, v.$slick-preheader-grouped-title-justify);
         display: var(--slick-preheader-grouped-title-display, v.$slick-preheader-grouped-title-display);
-      }
-      .slick-header-column:first-child {
-        border-left: var(--slick-preheader-border-left-first-element, v.$slick-preheader-border-left-first-element);
-      }
-      .slick-header-column:last-child {
-        border-right: var(--slick-preheader-border-right-last-element, v.$slick-preheader-border-right-last-element);
       }
     }
   }
 
   /** Pinned styling */
   .slick-column-pinned-left-edge {
-    border-inline-end: var(--slick-pinned-border-right, v.$slick-pinned-border-right) !important;
-    box-sizing: border-box;
+    box-shadow: var(--slick-pinned-border-box-shadow-left, v.$slick-pinned-border-box-shadow-left) !important;
   }
 
   .slick-column-pinned-right-edge {
-    border-inline-start: var(--slick-pinned-border-right, v.$slick-pinned-border-right) !important;
-    box-sizing: border-box;
+    box-shadow: var(--slick-pinned-border-box-shadow-right, v.$slick-pinned-border-box-shadow-right) !important;
   }
 
   // Pinned header/filter cells must paint above center cells when their
@@ -1146,15 +1136,6 @@
   .slick-headerrow-column.slick-column-pinned-right {
     z-index: 20;
     background-color: var(--slick-header-row-background-color, v.$slick-header-row-background-color);
-  }
-
-  // Header chrome has a physical border-left declaration in its base rule.
-  // Re-assert the logical separator with higher specificity so the first
-  // right-sticky title/filter/footer cell matches the body region border.
-  .slick-header-column.slick-column-pinned-right-edge,
-  .slick-headerrow-column.slick-column-pinned-right-edge,
-  .slick-footerrow-column.slick-column-pinned-right-edge {
-    border-inline-start: var(--slick-pinned-border-right, v.$slick-pinned-border-right) !important;
   }
 
   .slick-footerrow-column.slick-column-pinned-left,

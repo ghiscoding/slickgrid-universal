@@ -76,9 +76,6 @@ export class Example18Component implements OnInit, OnDestroy {
         field: 'title',
         columnGroup: 'Common Factor',
         hidden: true,
-        width: 70,
-        minWidth: 50,
-        cssClass: 'cell-title',
         filterable: true,
         sortable: true,
         grouping: {
@@ -94,7 +91,6 @@ export class Example18Component implements OnInit, OnDestroy {
         name: 'Duration',
         field: 'duration',
         columnGroup: 'Common Factor',
-        width: 70,
         sortable: true,
         filterable: true,
         editor: {
@@ -124,11 +120,11 @@ export class Example18Component implements OnInit, OnDestroy {
         name: 'Start',
         field: 'start',
         columnGroup: 'Period',
-        minWidth: 60,
         sortable: true,
         filterable: true,
         filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
+        editor: { model: Editors.date },
         type: 'dateUtc',
         outputType: 'dateIso',
         exportWithFormatter: true,
@@ -145,11 +141,11 @@ export class Example18Component implements OnInit, OnDestroy {
         name: 'Finish',
         field: 'finish',
         columnGroup: 'Period',
-        minWidth: 60,
         sortable: true,
         filterable: true,
         filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
+        editor: { model: Editors.date },
         type: 'dateUtc',
         outputType: 'dateIso',
         exportWithFormatter: true,
@@ -186,8 +182,6 @@ export class Example18Component implements OnInit, OnDestroy {
         name: '% Complete',
         field: 'percentComplete',
         columnGroup: 'Analysis',
-        minWidth: 70,
-        width: 90,
         formatter: Formatters.percentCompleteBar,
         type: 'number',
         filterable: true,
@@ -230,6 +224,24 @@ export class Example18Component implements OnInit, OnDestroy {
           collapsed: false,
         },
       },
+      {
+        id: 'action',
+        name: 'Action',
+        field: 'action',
+        width: 90,
+        maxWidth: 90,
+        excludeFromExport: true,
+        formatter: () => '<div class="fake-hyperlink color-primary flex justify-center">Action <i class="mdi mdi-chevron-down"></i></div>',
+        cellMenu: {
+          commandTitle: 'Commands',
+          commandItems: [{ command: 'help', title: 'Help' }],
+          optionTitle: 'Change Effort-Driven Flag',
+          optionItems: [
+            { option: true, title: 'True' },
+            { option: false, title: 'False' },
+          ],
+        },
+      },
     ];
 
     this.gridOptions = {
@@ -238,6 +250,19 @@ export class Example18Component implements OnInit, OnDestroy {
         rightPadding: 10,
       },
       enableDraggableGrouping: true,
+      enableSelection: true,
+      enableCheckboxSelector: true,
+      selectionOptions: { selectActiveRow: false },
+      checkboxSelector: { hideInColumnTitleRow: true, hideInFilterHeaderRow: false },
+      enableCellMenu: true,
+      cellMenu: {
+        onOptionSelected: (_e: any, args: any) => {
+          if (args?.dataContext) {
+            args.dataContext.effortDriven = args.item.option;
+            this.angularGrid?.gridService?.updateItem(args.dataContext);
+          }
+        },
+      },
       autoEdit: true, // true single click (false for double-click)
       autoCommitEdit: true,
       editable: true,
@@ -247,7 +272,7 @@ export class Example18Component implements OnInit, OnDestroy {
       // Draggable Grouping could be located in either the Pre-Header OR the new Top-Header
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
-      preHeaderPanelHeight: 30,
+      preHeaderPanelHeight: 26,
 
       // when Top-Header is created, it will be used by the Draggable Grouping (otherwise the Pre-Header will be used)
       createTopHeaderPanel: true,
@@ -262,7 +287,12 @@ export class Example18Component implements OnInit, OnDestroy {
       textExportOptions: {
         sanitizeDataExport: true,
       },
+      headerMenu: {
+        hidePinColumnCommand: false,
+        hidePinningColumnsCommand: false,
+      },
       gridMenu: {
+        hideClearPinningCommand: false,
         onCommand: (e, args) => {
           if (args.command === 'toggle-preheader') {
             // in addition to the grid menu pre-header toggling (internally), we will also clear grouping
@@ -292,29 +322,27 @@ export class Example18Component implements OnInit, OnDestroy {
         documentTitle: 'Grouping Grid',
       },
     };
-
-    this.loadData(500);
   }
 
   loadData(rowCount: number) {
-    // mock a dataset
-    const tmpData = [];
+    // mock data
+    const tmpData: any[] = [];
+    const currentYear = new Date().getFullYear();
+
     for (let i = 0; i < rowCount; i++) {
-      const randomYear = 2000 + Math.floor(Math.random() * 10);
-      const randomMonth = Math.floor(Math.random() * 11);
+      const randomFinishYear = currentYear - 3 + Math.floor(Math.random() * 10);
+      const randomMonth = Math.floor(Math.random() * 10);
       const randomDay = Math.floor(Math.random() * 29);
-      const randomPercent = Math.round(Math.random() * 100);
+      const randomFinish = new Date(randomFinishYear, randomMonth + 1, randomDay);
       const randomCost = Math.round(Math.random() * 10000) / 100;
 
       tmpData[i] = {
-        id: 'id_' + i,
-        num: i,
+        id: i,
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 100) + '',
-        percentComplete: randomPercent,
-        percentCompleteNumber: randomPercent,
-        start: new Date(randomYear, randomMonth, randomDay),
-        finish: new Date(randomYear, randomMonth + 1, randomDay),
+        percentComplete: Math.round(Math.random() * 100),
+        start: new Date(currentYear - 2, randomMonth, randomDay),
+        finish: randomFinish < new Date() ? '' : randomFinish,
         cost: i % 33 === 0 ? -randomCost : randomCost,
         effortDriven: i % 5 === 0,
       };
@@ -457,7 +485,7 @@ export class Example18Component implements OnInit, OnDestroy {
 
   toggleDraggableGroupingRow() {
     this.clearGrouping();
-    this.gridObj.setPreHeaderPanelVisibility(!this.gridObj.getOptions().showPreHeaderPanel);
+    this.gridObj.setTopHeaderPanelVisibility(!this.gridObj.getOptions().showTopHeaderPanel);
   }
 
   toggleDarkMode() {

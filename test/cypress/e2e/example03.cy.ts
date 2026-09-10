@@ -2,8 +2,7 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
   const preHeaders = ['', 'Common Factor', 'Period', 'Analysis', ''];
   const originalTitles = ['', 'Duration', 'Start', 'Finish', 'Cost', '% Complete', 'Effort-Driven', 'Action'];
   const fullTitles = ['', 'Title', 'Duration', 'Start', 'Finish', 'Cost', '% Complete', 'Effort-Driven', 'Action'];
-  const gridMenuTitles = [
-    '',
+  const columnPickerTitles = [
     'Common Factor - Title',
     'Common Factor - Duration',
     'Period - Start',
@@ -13,6 +12,30 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
     'Analysis - Effort-Driven',
     'Action',
   ];
+  const expectColumnPickerTitles = (menuSelector: string) => {
+    cy.get(menuSelector)
+      .find('.slick-column-picker-list')
+      .children('li:not(.hidden)')
+      .then(($items) => {
+        const actual = Array.from($items, (item) => item.textContent || '').slice(0, columnPickerTitles.length);
+        expect(actual).to.deep.eq(columnPickerTitles);
+      });
+  };
+  const expectPreHeadersInOrder = (expected: string[]) => {
+    cy.get('.grid3 .slick-preheader-panel .slick-header-columns')
+      .children()
+      .then(($children) => {
+        const actual = Array.from($children, (child) => child.textContent || '');
+        expect(actual.every((title) => expected.includes(title))).to.eq(true);
+
+        let actualIndex = 0;
+        expected.forEach((title) => {
+          const titleIndex = actual.indexOf(title, actualIndex);
+          expect(titleIndex, `missing pre-header title: ${title}`).to.be.gte(0);
+          actualIndex = titleIndex + 1;
+        });
+      });
+  };
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example03`);
@@ -53,14 +76,7 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
       .find('.sgi')
       .should('have.class', 'sgi-icon-picker-uncheck');
 
-    cy.get('.slick-column-picker-list li')
-      .children()
-
-      .each(($child, index) => {
-        if (index <= 5) {
-          expect($child.text()).to.eq(gridMenuTitles[index]);
-        }
-      });
+    expectColumnPickerTitles('.slick-grid-menu:visible');
 
     cy.get('.slick-grid-menu:visible')
       .find('.slick-column-picker-list')
@@ -364,28 +380,9 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
 
   describe('Column Picker tests', () => {
     it('should open Column Picker from 2nd header column and hide Title & Duration which will hide Common Factor Group as well', () => {
-      const fullTitlesWithGroupNames = [
-        '',
-        'Common Factor - Title',
-        'Common Factor - Duration',
-        'Period - Start',
-        'Period - Finish',
-        'Analysis - Cost',
-        'Analysis - % Complete',
-        'Analysis - Effort-Driven',
-        'Action',
-      ];
-
       cy.get('.grid3').find('.slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children()
-        .each(($child, index) => {
-          if (index <= 5) {
-            expect($child.text()).to.eq(fullTitlesWithGroupNames[index]);
-          }
-        });
+      expectColumnPickerTitles('.slick-column-picker');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
@@ -398,28 +395,9 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
     });
 
     it('should open Column Picker from 2nd header column name and hide Duration which will hide Common Factor Group as well', () => {
-      const fullTitlesWithGroupNames = [
-        '',
-        'Common Factor - Title',
-        'Common Factor - Duration',
-        'Period - Start',
-        'Period - Finish',
-        'Analysis - Cost',
-        'Analysis - % Complete',
-        'Analysis - Effort-Driven',
-        'Action',
-      ];
-
       cy.get('.grid3').find('.slick-header-column:nth(1) .slick-column-name').trigger('mouseover').trigger('contextmenu').invoke('show');
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children()
-        .each(($child, index) => {
-          if (index <= 5) {
-            expect($child.text()).to.eq(fullTitlesWithGroupNames[index]);
-          }
-        });
+      expectColumnPickerTitles('.slick-column-picker');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
@@ -449,32 +427,13 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
     });
 
     it('should open Column Picker from Pre-Header column and show again Title column', () => {
-      const fullTitlesWithGroupNames = [
-        '',
-        'Common Factor - Title',
-        'Common Factor - Duration',
-        'Period - Start',
-        'Period - Finish',
-        'Analysis - Cost',
-        'Analysis - % Complete',
-        'Analysis - Effort-Driven',
-        'Action',
-      ];
-
       cy.get('.grid3')
         .find('.slick-preheader-panel .slick-header-column:nth(1)')
         .trigger('mouseover')
         .trigger('contextmenu')
         .invoke('show');
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children()
-        .each(($child, index) => {
-          if (index <= 5) {
-            expect($child.text()).to.eq(fullTitlesWithGroupNames[index]);
-          }
-        });
+      expectColumnPickerTitles('.slick-column-picker');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
@@ -488,32 +447,13 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
     });
 
     it('should open Column Picker from Pre-Header column name and show again Duration column', () => {
-      const fullTitlesWithGroupNames = [
-        '',
-        'Common Factor - Title',
-        'Common Factor - Duration',
-        'Period - Start',
-        'Period - Finish',
-        'Analysis - Cost',
-        'Analysis - % Complete',
-        'Analysis - Effort-Driven',
-        'Action',
-      ];
-
       cy.get('.grid3')
         .find('.slick-preheader-panel .slick-header-column:nth(1)')
         .trigger('mouseover')
         .trigger('contextmenu')
         .invoke('show');
 
-      cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children()
-        .each(($child, index) => {
-          if (index <= 5) {
-            expect($child.text()).to.eq(fullTitlesWithGroupNames[index]);
-          }
-        });
+      expectColumnPickerTitles('.slick-column-picker');
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
@@ -559,8 +499,83 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
       cy.get('.slick-submenu [data-command="pin-columns"]').should('be.visible').and('contain', 'Pin Through Here').click();
     });
 
+    it('should keep grouping, pinning, pre-header bands, and row styling aligned', () => {
+      // Split the Period pre-header across the center/right docking bands, then
+      // verify that a center column can still be dragged into the dropzone.
+      cy.get('.grid3 .slick-header-columns-center .slick-header-column[data-id="finish"]')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+      cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+      cy.get('.slick-submenu:visible [data-command="pin-right"]').click();
+
+      cy.get('.grid3 .slick-header-columns-right .slick-header-column[data-id="finish"]').should('be.visible');
+      cy.get('.grid3 .slick-preheader-panel .slick-header-column[data-group="Period"]')
+        .should('have.length', 2)
+        .then(($periodHeaders) => {
+          expect($periodHeaders[0].classList.contains('slick-column-pinned-right')).to.eq(false);
+          expect($periodHeaders[1].classList.contains('slick-column-pinned-right')).to.eq(true);
+        });
+
+      cy.get('.grid3 .slick-header-columns-center .slick-header-column[data-id="start"]').drag('.slick-dropzone', { force: true });
+      cy.get('.slick-dropped-grouping').should('contain', 'Start');
+
+      cy.get('.grid3 .slick-row.slick-group')
+        .first()
+        .should('have.class', 'slick-row-full-width-group')
+        .then(($groupRow) => {
+          expect($groupRow[0].querySelector('.slick-pinned-left-cells .slick-cell')).to.be.null;
+          expect($groupRow[0].querySelector('.slick-pinned-right-cells .slick-cell')).to.be.null;
+        })
+        .children('.slick-cell-full-width-group')
+        .should('contain', 'Start:')
+        .click('center', { force: true })
+        .should('have.class', 'active')
+        .and('have.css', 'z-index', '21')
+        .then(($groupCell) => {
+          const groupCellRect = $groupCell[0].getBoundingClientRect();
+          const viewport = Cypress.$('.grid3 .slick-viewport')[0];
+          expect(groupCellRect.left).to.be.closeTo(viewport.getBoundingClientRect().left, 1);
+          expect(groupCellRect.width).to.be.closeTo(viewport.clientWidth, 1);
+        });
+
+      cy.get('.grid3 .slick-row.slick-row-docked:not(.slick-group)')
+        .filter('.odd')
+        .first()
+        .then(($row) => {
+          const row = $row[0];
+          const leftRegion = row.querySelector('.slick-pinned-left-cells') as HTMLElement;
+          const centerRegion = row.querySelector('.slick-scrolling-cells') as HTMLElement;
+          const rightRegion = row.querySelector('.slick-pinned-right-cells') as HTMLElement;
+          const leftBoundary = leftRegion.querySelector('.slick-cell:last-child') as HTMLElement;
+          const rightBoundary = rightRegion.querySelector('.slick-cell:first-child') as HTMLElement;
+
+          expect(getComputedStyle(leftRegion).backgroundColor).to.eq(getComputedStyle(centerRegion).backgroundColor);
+          expect(getComputedStyle(rightRegion).backgroundColor).to.eq(getComputedStyle(centerRegion).backgroundColor);
+          expect(getComputedStyle(leftBoundary, '::after').boxShadow).not.to.eq('none');
+          expect(getComputedStyle(rightBoundary, '::after').boxShadow).not.to.eq('none');
+        });
+
+      cy.get('[data-test="clear-grouping-btn"]').click();
+      cy.get('.slick-draggable-dropzone-placeholder').should('be.visible');
+
+      cy.get('.grid3 .slick-header-columns-right .slick-header-column[data-id="finish"]')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+      cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+      cy.get('.slick-submenu:visible [data-command="unpin-column"]').click();
+      cy.get('.grid3 .slick-header-columns-right .slick-header-column[data-id="finish"]').should('not.exist');
+      cy.get('.grid3 .slick-header-columns-center .slick-header-column[data-id="finish"]').should('be.visible');
+    });
+
     it('should open Cost column Header Menu then click on "Hide Column" and still expect all headers shown', () => {
-      const headerTitles = ['', 'Title', 'Duration', 'Start', 'Finish', '% Complete', 'Effort-Driven', 'Action'];
+      // Finish was temporarily pinned right by the previous test. Once it is
+      // unpinned it remains last in the current column order, but is no longer
+      // part of the right docking region.
+      const headerTitles = ['', 'Title', 'Duration', 'Start', '% Complete', 'Effort-Driven', 'Action', 'Finish'];
 
       // Pinning now uses one live header row instead of the legacy right header
       // pane. Locate Cost by its column content so this test follows the
@@ -581,15 +596,23 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
         .contains('Hide Column')
         .click();
 
-      cy.get('.grid3')
-        .find('.slick-preheader-panel .slick-header-columns')
-        .children()
-        .each(($child, index) => expect($child.text()).to.eq(preHeaders[index]));
+      expectPreHeadersInOrder(preHeaders);
 
       cy.get('.grid3')
         .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
         .children()
         .each(($child, index) => expect($child.text()).to.eq(headerTitles[index]));
+
+      cy.get('.grid3 .slick-header-column[data-id="action"]').then(($header) => {
+        const headerRect = $header[0].getBoundingClientRect();
+        cy.get('.grid3 .slick-row.slick-row-docked:not(.slick-group) .slick-cell.l7')
+          .first()
+          .then(($cell) => {
+            const cellRect = $cell[0].getBoundingClientRect();
+            expect(cellRect.left).to.be.closeTo(headerRect.left, 1);
+            expect(cellRect.width).to.be.closeTo(headerRect.width, 1);
+          });
+      });
     });
 
     it('should open Column Picker then hide "Finish" column and still expect all headers shown', () => {
@@ -603,18 +626,15 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
         .invoke('show');
 
       cy.get('.slick-column-picker')
-        .find('.slick-column-picker-list')
-        .children('li:visible:nth-child(5)')
+        .find('.slick-column-picker-list input[data-columnid="finish"]')
+        .closest('li')
         .children('label')
         .should('contain', 'Period - Finish')
         .click();
 
       cy.get('.slick-column-picker .close').click();
 
-      cy.get('.grid3')
-        .find('.slick-preheader-panel .slick-header-columns')
-        .children()
-        .each(($child, index) => expect($child.text()).to.eq(preHeaders[index]));
+      expectPreHeadersInOrder(preHeaders);
 
       cy.get('.grid3')
         .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')

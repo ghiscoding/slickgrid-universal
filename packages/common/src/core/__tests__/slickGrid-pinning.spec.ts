@@ -54,6 +54,64 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
   });
 
+  it('renders full-width group rows across docking regions without moving regular cells', () => {
+    container = document.createElement('div');
+    container.style.width = '800px';
+    container.style.height = '400px';
+    document.body.appendChild(container);
+    const groupedRows = [...data, { id: 3, a: 'total', b: 'total', c: 'total', d: 'total' }];
+    const groupedData = {
+      getLength: () => groupedRows.length,
+      getItem: (row: number) => groupedRows[row],
+      getItemMetadata: (row: number) =>
+        row === 0
+          ? {
+              cssClasses: 'slick-group slick-group-level-0',
+              isGroup: true,
+              columns: { 0: { colspan: '*', formatter: () => 'Group A' } },
+            }
+          : row === 2
+            ? {
+                cssClasses: 'slick-group slick-group-level-0',
+                isGroup: true,
+                columns: { 0: { colspan: columns.length, formatter: () => 'Group B' } },
+              }
+            : row === 3
+              ? { cssClasses: 'slick-group-totals', isGroup: true }
+              : undefined,
+    };
+    grid = new SlickGrid(container, groupedData as any, columns.map((column) => ({ ...column })) as Column[], {
+      devMode: { ownerNodeIndex: 0 },
+      pinning: { columns: { left: ['b'], right: ['d'] } },
+    });
+
+    const groupRow = container.querySelector<HTMLElement>('[data-row="0"]')!;
+    const regularRow = container.querySelector<HTMLElement>('[data-row="1"]')!;
+    const numericSpanGroupRow = container.querySelector<HTMLElement>('[data-row="2"]')!;
+    const totalsRow = container.querySelector<HTMLElement>('[data-row="3"]')!;
+    const groupCell = groupRow.querySelector<HTMLElement>('.slick-cell')!;
+
+    expect(groupCell.parentElement).toBe(groupRow);
+    expect(groupCell.classList.contains('slick-cell-full-width-group')).toBe(true);
+    expect(groupCell.textContent).toBe('Group A');
+    expect(regularRow.querySelector('.slick-cell.l0')?.parentElement?.classList.contains('slick-scrolling-cells')).toBe(true);
+    expect(regularRow.querySelector('.slick-cell.l1')?.parentElement?.classList.contains('slick-pinned-left-cells')).toBe(true);
+    expect(regularRow.querySelector('.slick-cell.l3')?.parentElement?.classList.contains('slick-pinned-right-cells')).toBe(true);
+    expect(regularRow.querySelector('.slick-cell.l0')?.textContent).toBe('a1');
+    expect(regularRow.querySelector('.slick-cell.l1')?.textContent).toBe('b1');
+    expect(numericSpanGroupRow.querySelector('.slick-cell')?.parentElement).toBe(numericSpanGroupRow);
+    expect(totalsRow.classList.contains('slick-row-full-width-group')).toBe(false);
+    expect(totalsRow.querySelector('.slick-cell.l1')?.parentElement?.classList.contains('slick-pinned-left-cells')).toBe(true);
+
+    grid.setActiveCell(0, 0);
+    expect(groupCell.classList.contains('active')).toBe(true);
+    expect(groupCell.parentElement).toBe(groupRow);
+    expect(groupCell.textContent).toBe('Group A');
+
+    (grid as any).updateRenderedCellDocking();
+    expect(groupCell.parentElement).toBe(groupRow);
+  });
+
   it('keeps the native viewport scroll owner until docking is enabled', () => {
     const slickGrid = createGrid();
     const internals = slickGrid as any;
@@ -887,6 +945,10 @@ describe('SlickGrid unified pinning', () => {
     internals._options.rtl = true;
     internals.applyDockingToColumnChrome();
     internals._options.rtl = false;
+    internals.applyDockingToColumnChrome();
+    expect((container.querySelector('.slick-headerrow-column.l0') as HTMLElement).style.width).toBe('80px');
+    expect((container.querySelector('.slick-headerrow-column.l3') as HTMLElement).style.width).toBe('80px');
+    expect((container.querySelector('.slick-footerrow-column.l3') as HTMLElement).style.width).toBe('80px');
     Object.defineProperty(internals._viewportScrollContainerX, 'clientWidth', { configurable: true, value: 200 });
     internals.viewportW = 200;
     internals.scrollLeft = 15;

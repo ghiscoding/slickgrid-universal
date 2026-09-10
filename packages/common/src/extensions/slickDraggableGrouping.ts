@@ -59,6 +59,7 @@ export class SlickDraggableGrouping {
   protected _groupToggler?: HTMLDivElement;
   protected _isInitialized = false;
   protected _reorderedColumns: Column[] = [];
+  protected _sortableCenterInstance?: Sortable;
   protected _sortableLeftInstance?: Sortable;
   protected _sortableRightInstance?: Sortable;
   protected _subscriptions: EventSubscription[] = [];
@@ -100,6 +101,10 @@ export class SlickDraggableGrouping {
 
   get sortableLeftInstance(): Sortable | undefined {
     return this._sortableLeftInstance;
+  }
+
+  get sortableCenterInstance(): Sortable | undefined {
+    return this._sortableCenterInstance;
   }
 
   get sortableRightInstance(): Sortable | undefined {
@@ -258,12 +263,12 @@ export class SlickDraggableGrouping {
   }
 
   destroySortableInstances(): void {
-    if (this._sortableLeftInstance?.el) {
-      this._sortableLeftInstance?.destroy();
+    for (const instance of [this._sortableLeftInstance, this._sortableCenterInstance, this._sortableRightInstance]) {
+      if (instance?.el) {
+        instance.destroy();
+      }
     }
-    if (this._sortableRightInstance?.el) {
-      this._sortableRightInstance?.destroy();
-    }
+    this._sortableLeftInstance = this._sortableCenterInstance = this._sortableRightInstance = undefined;
   }
 
   setAddonOptions(options: Partial<DraggableGroupingOption>): void {
@@ -298,7 +303,7 @@ export class SlickDraggableGrouping {
    */
   setupColumnReorder(
     grid: SlickGrid,
-    headers: any,
+    _headers: any,
     _headerColumnWidthDiff: any,
     setColumns: (columns: Column[]) => void,
     setupColumnResize: () => void,
@@ -308,6 +313,7 @@ export class SlickDraggableGrouping {
     trigger: (slickEvent: SlickEvent, data?: any) => void
   ): {
     sortableLeftInstance?: Sortable;
+    sortableCenterInstance?: Sortable;
     sortableRightInstance?: Sortable;
   } {
     this.destroySortableInstances();
@@ -365,20 +371,9 @@ export class SlickDraggableGrouping {
           return;
         }
 
-        const reorderedIds = this.sortableLeftInstance?.toArray() ?? [];
-
-        // when pinned columns are used, headers has more than one entry and we need the ids from all of them.
-        // though there is only really a left and right header, this will work even if that should change.
-        if (headers.length > 1) {
-          const ids = this._sortableRightInstance?.toArray() ?? [];
-
-          // Note: the loop below could be simplified with:
-          // reorderedIds.push.apply(reorderedIds,ids);
-          // However, the loop is more in keeping with way-backward compatibility
-          for (const id of ids) {
-            reorderedIds.push(id);
-          }
-        }
+        const reorderedIds = [this._sortableLeftInstance, this._sortableCenterInstance, this._sortableRightInstance].flatMap(
+          (instance) => instance?.toArray() ?? []
+        );
 
         const finalReorderedColumns: Column[] = [];
         const reorderedColumns = grid.getColumns();
@@ -394,9 +389,13 @@ export class SlickDraggableGrouping {
 
     const headerRoot = `.${grid.getUID()} .slick-header-columns`;
     const leftHeader = this.gridContainer.querySelector<HTMLDivElement>(`${headerRoot}.slick-header-columns-left`);
+    const centerHeader = this.gridContainer.querySelector<HTMLDivElement>(`${headerRoot}.slick-header-columns-center`);
     const rightHeader = this.gridContainer.querySelector<HTMLDivElement>(`${headerRoot}.slick-header-columns-right`);
     if (leftHeader) {
       this._sortableLeftInstance = Sortable.create(leftHeader, sortableOptions);
+    }
+    if (centerHeader) {
+      this._sortableCenterInstance = Sortable.create(centerHeader, sortableOptions);
     }
     if (rightHeader) {
       this._sortableRightInstance = Sortable.create(rightHeader, sortableOptions);
@@ -411,6 +410,7 @@ export class SlickDraggableGrouping {
 
     return {
       sortableLeftInstance: this._sortableLeftInstance,
+      sortableCenterInstance: this._sortableCenterInstance,
       sortableRightInstance: this._sortableRightInstance,
     };
   }

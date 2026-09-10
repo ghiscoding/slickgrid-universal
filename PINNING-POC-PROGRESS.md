@@ -1,11 +1,13 @@
 # Single-viewport pinning/stickiness POC — progress handoff
 
-Last updated: 2026-09-09 (header flex cleanup, horizontal scroll hardening and fast vertical-scroll audit, Example 58 framework parity, pinning locale audit, and progress/TODO review; legacy runtime removal and structural alias audit remain)
+Last updated: 2026-09-10 (core/service DRY and render-path audit, header flex cleanup, horizontal scroll hardening, grouping/pinning visual hardening, hidden-column docking alignment, Example 58 framework parity, pinning locale audit, and progress/TODO review; legacy runtime removal and structural alias audit remain)
 
 ## Goal
 
 Replace SlickGrid's multi-pane column/row architecture with an AG Grid-style docking model:
 
+- performance is a highest-priority invariant: preserve smooth scrolling and rendering efficiency,
+  especially with very large datasets (500K+ rows), and avoid per-scroll layout, DOM, or style work;
 - exactly one live body viewport with one native vertical scrollbar; ordinary grids use the
   viewport for horizontal scrolling, while pinning/sticky grids use one dedicated docking
   horizontal scrollbar;
@@ -95,6 +97,51 @@ distances without flooring either at zero. A negative `scrollLeft` produced a ne
 `--slick-docking-scroll-left` custom property, which showed up as a white gap on the left side of
 pinned/docked examples (e.g. vanilla Example 04) along with misaligned pinned-right columns.
 Both `handleMouseWheel` and `_handleScroll` now floor `scrollLeft` (and `scrollTop`) at zero.
+
+Full-span group headers now render as one viewport-wide row above all three docking regions, matching
+the group-row model used by AG Grid: pinned columns still clip ordinary data rows, but group labels
+remain fully visible across the grid. Ordinary cells (including injected row-selection checkboxes)
+and group-total cells remain in their resolved bands. This fixes the blank/misaligned left side
+described by the long-standing SlickGrid grouping-plus-frozen-columns issue.
+
+HeaderGroupingService pre-header titles are also split at docking boundaries and rendered in the
+same left/center/right band order as the column headers. A group such as `Period` therefore gets
+separate correctly aligned title segments when `Start` is pinned and `Finish` remains scrollable.
+Unchanged pre-header layouts are now identified by their dimensions, visible column groups, and
+docking bands so ordinary grid renders do not destroy and recreate identical grouped-header DOM.
+
+Draggable Grouping now creates a Sortable source for the center header band in addition to the left
+and right bands, so dragging a scrollable column into the grouping dropzone continues to work with
+either edge pinned. Focused full-span group cells also retain their full viewport width and remain
+above the pinned-band backgrounds instead of hiding their group label.
+The three Sortable source instances share one cleanup loop, and column-width application resolves
+the rendered center width once per pass instead of once per column. The related cell-render branch
+also no longer evaluates a duplicated docking-band predicate.
+
+Vanilla Example 03 Cypress coverage now pins a right column temporarily and verifies split
+pre-header titles, center-band grouping drag/drop, viewport-wide active group rows without pinned
+separator cells, ordinary left/right separator overlays, and matching odd-row backgrounds across
+all three row regions before restoring the original right-pin state.
+
+The equivalent framework Example 18 Cypress suites now cover the same grouping/pinning contract
+using their native column set: left and right pinning, split `Period` pre-header bands, grouping a
+center column, viewport-wide active group rows, pinned-band separators, matching odd-row backgrounds,
+and clearing pinning after the check.
+
+Full-width group rows no longer paint left/right pinned separators through the group label. Regular
+rows retain their existing pinned-band separators. Pinned edge filter/footer cells use their header
+title's measured outer width but no longer extend into the vertical-scrollbar gutter; this keeps the
+header chrome aligned and prevents a right-edge filter such as `Effort-Driven` from overlapping its
+neighboring `Action` cell.
+
+Docked body cells now calculate center-band right offsets from the rendered center-region width when
+left/right pinning expands that region to the viewport. This prevents the last remaining center
+cell, such as `Action` after hiding `Finish`, from stretching away from its header. Vanilla Example
+03 Cypress coverage compares the header and body bounds for this case.
+
+Removed the old Angular Example 14/20 last-pinned-cell `border-right` override so it cannot add a
+second separator beside the docking pinning cue. The same stale override was removed from the
+equivalent Aurelia, React, React Fluent, and Vanilla Example 17 demo styles.
 
 Header columns now rely exclusively on their existing flex root and `flex: 0 0 auto`; the obsolete
 column-level inline-block and LTR/RTL float declarations were removed after the old ±1000px header
@@ -357,8 +404,8 @@ change as `scrollTop` changes. Transforms remain available for ordinary rows bec
 growing transform on a row inside the scrolling canvas produced visible jumps during
 virtual-page recycling. Virtual-page changes update row positions only after the physical
 scroll position and page offset have both been committed, avoiding a transient mixed-coordinate
-frame. Pinned region boundaries use the current `--slick-pinned-border-right` and
-`--slick-pinned-border-bottom` theme variables for body rows and column chrome. The former
+frame. Pinned region boundaries use the current pinned-border color and
+`--slick-pinned-border-bottom` theme variable for body rows and column chrome. The former
 Legacy theme variable names are migration-guide references only. The horizontal
 row boundary is emitted only on the last top-pinned row (or first bottom-pinned row), rather
 than repeating across every pinned row. Normal virtual rows are repositioned only when a page
@@ -371,8 +418,10 @@ controls track left- and right-pinned column resizing equally.
 Their width calculation now preserves content-box semantics and subtracts each element's
 horizontal padding/border from the rendered header width, preventing fractional header/body
 boundary offsets.
-Pinned body-region borders no longer consume the measured content width (`content-box`), keeping
-body cell widths consistent with the fractional header/filter widths.
+Pinned boundary data cells now paint their inset separator in a transparent overlay, leaving each
+theme's normal cell borders/shadows untouched. Full-width group rows have no boundary cells, so they
+remain free of pinned separators. All three docked row regions now also receive the same
+even/odd/hover background state, so striping cannot differ between pinned and scrolling sections.
 Column-resize auto-scroll is now limited to center columns; resizing a permanently pinned
 right column no longer forces the native horizontal viewport to jump to its maximum position.
 Pinned body regions and header/filter/footer chrome now use opaque theme backgrounds and a
@@ -565,6 +614,10 @@ and `git diff --check` pass after the horizontal wheel/scroll performance change
 SlickGrid coverage executes every changed performance line; the aggregate report remains at
 99.97% lines because of the pre-existing untested `getSelectedRows()` no-selection error path.
 
+The 2026-09-10 core/service audit passed all 71 focused SlickGrid pinning, Draggable Grouping, and
+HeaderGroupingService tests. The common-package TypeScript check, targeted Oxlint, Prettier, and
+`git diff --check` also pass. No example or Cypress changes were part of this audit.
+
 The Cypress custom-command return-type fix was applied consistently to the root, Angular,
 Aurelia, React, and Vue support copies: `getCell`/`getNthCell` now return
 `Chainable<JQuery<HTMLElement>>`, and `convertPosition` has its concrete chainable shape.
@@ -623,17 +676,17 @@ requirements are the two largest sources of variance.
 - The initial leftmost sticky-column pass now seeds configured candidates as eligible, allowing offscreen-right Q3/Q4/YTD columns to dock immediately at load instead of requiring a right-and-back scroll first.
 - The initial top sticky-row pass likewise seeds configured rows as eligible, allowing two-sided report summary rows to dock at their nearest vertical edge immediately at load.
 - Example 47's YTD definition now retains the shared sticky-candidate classes when adding its YTD-specific classes, so it keeps the sticky blue background even when it reaches its natural right edge and Q4 takes over the separator.
-- Added a higher-specificity right-edge separator rule for header, header-row, and footer chrome so the first right-sticky column title/filter receives the same `--slick-pinned-border-right` separator as the body region.
+- Added a higher-specificity right-edge inset-shadow rule for header, header-row, and footer chrome so the first right-sticky column title/filter receives the same pinned separator cue as the body region without changing its width.
 - Removed the non-user-facing Example 47 auto-scroll control and timer; the fixture now uses only normal manual grid scrolling.
 - Draggable Grouping now tolerates the single-viewport layout: it creates a Sortable instance only for header containers that actually exist, instead of passing a removed right header (`null`) to SortableJS.
-- Pinned left/right edge header-row and footer cells now use border-box sizing with the full measured header outer width. This keeps an empty edge filter cell aligned with its data cells when the pinning separator contributes a border (for example, 100px data cell versus 98px header-row cell).
+- Pinned left/right edge header-row and footer cells use the measured header outer width without extending into the vertical-scrollbar gutter. This keeps an empty edge filter cell aligned with its data cells without overlapping its neighbor.
 - The single horizontal scrollbar proxy now has an opaque canvas background, themed `scrollbar-color`, pointer events, and an isolated stacking context. Its z-index remains above grid rows but below application overlays such as Bulma navbar menus, and its track is aligned to the pane content edge.
 - The docking scrollbar now uses `overflow-x: auto` and sizes its spacer from the natural docking content width. When all columns fit the viewport, the proxy has zero height and no horizontal track is shown; when overflow exists, its height still comes from the measured native scrollbar dimensions.
 - The full-width docked-row overlay now uses a scroll-aware clip window equal to the viewport's content width. It can still retain enough translated width for right-pinned cells, while excluding the native vertical scrollbar strip from overlay painting.
 - The docked-row overlay stacking layer is now `z-index: 5`, matching the normal pinned-row layer. This keeps pinned rows above scrolling cells but below application overlays such as Bulma navbar dropdowns (`z-index: 20`).
 - In single-viewport mode the header-row scroller now gets an opaque header-row background. Its unused trailing gutter (the body viewport's scrollbar space) no longer reveals translated center columns when widths change; logical right-pinned column widths remain unchanged.
-- The right-edge pinned header-row cell now extends by the measured vertical scrollbar width when that scrollbar is present. This fills the header-only gutter directly while leaving body cells and right-pinning offsets at their normal widths.
-- The right-edge pinned header-row cell is positioned by the computed physical separator border width (with RTL-aware direction), rather than a hard-coded 1px, to match customized or hidden borders.
+- Right-edge pinned header-row cells stop at the body's visible edge and retain their header title's measured outer width. They do not extend into the vertical-scrollbar gutter, which would overlap the next right-pinned filter cell.
+- Pinned column separators use inset box shadows rather than layout borders, preserving header/body width alignment in Bootstrap, Salesforce, and other themes. Header grouping separators use the same non-layout approach, so a split pre-header title cannot accumulate extra width.
 - Example04 now clears the opposite `pinning.rows` side when toggling top/bottom. This is required because `setOptions()` deep-merges nested option objects; supplying only `{ bottom }` previously left the old top references active.
 - Example04 bottom mode now pins the last configured rows instead of reusing indexes `0..N`. This matches the former bottom-pinning behavior and prevents the first rows' natural slots from becoming blank when they move to the bottom overlay.
 - Framework Example20 bottom mode now matches Example04 by pinning the last dataset rows (`Task 497` through `Task 499`) when toggled from the top.
@@ -667,9 +720,9 @@ requirements are the two largest sources of variance.
 - Empty left docking regions no longer paint the left separator: the pinned
   border is now enabled only while the left region contains an active docked
   column, including when sticky membership changes during scrolling.
-- Right-edge sticky/pinned header, header-row, and footer chrome now offsets
-  its physical start coordinate by the configured separator border width, so
-  the title/filter border aligns with the body separator for any border size.
+- Right-edge sticky/pinned header, header-row, and footer chrome retains the
+  measured title width while its separator is painted as a non-layout inset
+  shadow, so the title/filter cue aligns with the body without changing size.
 - Vanilla Example 11 view presets now retain and restore the complete pinning
   state again. Creating/updating a view serializes `GridState.pinning`, reset
   clears permanent pinning, and selecting a view reapplies pinning after its
@@ -743,7 +796,7 @@ requirements are the two largest sources of variance.
    `pinning` option. `GridService.setPinning()` accepts the unified nested shape.
 3. **Visual/browser validation is incomplete.** Left/right pinning, bottom rows, sticky transitions, resize, reorder, RTL, variable row height, row/column spans, editors, selection, and all four framework wrappers need manual follow-up.
 4. **Colspans crossing docking bands are not defined.** A colspan beginning in one band and ending in another can produce incorrect geometry. The final design should reject, split, or explicitly define this case.
-5. **Grouped/pre-header chrome is not dock-aware yet.** Standard column headers, header-row cells, footer cells, and body cells are wired. Multi-level/group header layout needs a dedicated band implementation.
+5. **Grouped/pre-header chrome is dock-aware.** `HeaderGroupingService` orders visible columns by docking band and splits a repeated `columnGroup` title at each left/center/right boundary. Remaining cross-framework visual validation is covered by item 3.
 6. **Sticky activation can be skipped by a very large scroll jump.** Candidates currently must first be fully visible. A final implementation should detect that the scroll path crossed a candidate even if no intermediate frame showed it fully.
 7. **Numeric row reference ambiguity.** An in-range number is treated as a row index before it is treated as a dataset ID. A tagged `{ id } | { index }` row reference would remove this ambiguity.
 8. **Pinned rows remain part of the normal dataset height.** They reuse/move the real row node and their natural dataset slot remains represented in scroll geometry. Confirm this product semantic against the desired AG Grid behavior.

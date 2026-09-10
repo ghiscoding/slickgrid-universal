@@ -257,14 +257,6 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 </template>
 
 <style lang="scss" scoped>
-/** You can change the pinned/pinned border styling through this css override */
-
-.slick-row .slick-cell.pinned:last-child,
-.slick-headerrow-column.pinned:last-child,
-.slick-footerrow-column.pinned:last-child {
-  border-right: 1px solid #969696 !important;
-}
-
 .slick-pane-bottom {
   border-top: 1px solid #969696 !important;
 }

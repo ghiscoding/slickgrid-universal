@@ -10,6 +10,7 @@ export class HeaderGroupingService {
   readonly pluginName = 'HeaderGroupingService';
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
+  protected _lastRenderSignature = '';
   protected _subscriptions: EventSubscription[] = [];
   protected _timer?: any;
 
@@ -66,6 +67,7 @@ export class HeaderGroupingService {
     // unsubscribe all SlickGrid events
     clearTimeout(this._timer);
     this._eventHandler.unsubscribeAll();
+    this._lastRenderSignature = '';
   }
 
   /** call "renderPreHeaderRowGroupingTitles()" with a setTimeout delay */
@@ -82,24 +84,45 @@ export class HeaderGroupingService {
   }
 
   renderHeaderGroups(preHeaderPanel: HTMLElement, start: number, end: number): void {
+    const headersWidth = this._grid.getHeadersWidth();
+    const headerColumnWidthDiff = this._grid.getHeaderColumnWidthDiff();
+    const leftColumnIds = new Set(this._grid.getPinnedColumns('left').map((column) => column.id));
+    const rightColumnIds = new Set(this._grid.getPinnedColumns('right').map((column) => column.id));
+    const allVisibleColumns = this._grid.getVisibleColumns();
+    const getDockingBand = (column: (typeof allVisibleColumns)[number]) =>
+      leftColumnIds.has(column.id) ? 'left' : rightColumnIds.has(column.id) ? 'right' : 'center';
+    const visibleColumns = (['left', 'center', 'right'] as const).flatMap((band) =>
+      allVisibleColumns.filter((column) => getDockingBand(column) === band)
+    );
+    const renderSignature = JSON.stringify([
+      start,
+      end,
+      headersWidth,
+      headerColumnWidthDiff,
+      visibleColumns.map((column) => [column.id, column.width, column.columnGroup, getDockingBand(column)]),
+    ]);
+    if (this._lastRenderSignature === renderSignature) {
+      return;
+    }
+    this._lastRenderSignature = renderSignature;
+
     emptyElement(preHeaderPanel);
     preHeaderPanel.className = 'slick-header-columns';
     preHeaderPanel.style.removeProperty('left');
-    preHeaderPanel.style.width = `${this._grid.getHeadersWidth()}px`;
+    preHeaderPanel.style.width = `${headersWidth}px`;
     preHeaderPanel.parentElement?.classList.add('slick-header');
-
-    const headerColumnWidthDiff = this._grid.getHeaderColumnWidthDiff();
 
     let colDef;
     let headerElm: HTMLDivElement | null = null;
     let lastColumnGroup = '';
+    let lastDockingBand = '';
     let widthTotal = 0;
-    const visibleColumns = this._grid.getVisibleColumns();
 
     for (let i = start; i < end; i++) {
       colDef = visibleColumns[i];
       if (colDef) {
-        if (lastColumnGroup === colDef.columnGroup && i > 0) {
+        const dockingBand = getDockingBand(colDef);
+        if (lastColumnGroup === colDef.columnGroup && lastDockingBand === dockingBand && i > 0) {
           widthTotal += colDef.width || 0;
           if (headerElm?.style) {
             headerElm.style.width = `${widthTotal - headerColumnWidthDiff}px`;
@@ -107,7 +130,7 @@ export class HeaderGroupingService {
         } else {
           widthTotal = colDef.width || 0;
           headerElm = createDomElement('div', {
-            className: 'slick-state-default slick-header-column',
+            className: `slick-state-default slick-header-column${dockingBand === 'center' ? '' : ` slick-column-pinned-${dockingBand}`}`,
             dataset: { group: colDef.columnGroup },
             style: { width: `${widthTotal - headerColumnWidthDiff}px` },
           });
@@ -117,6 +140,7 @@ export class HeaderGroupingService {
           preHeaderPanel.appendChild(headerElm);
         }
         lastColumnGroup = colDef.columnGroup || '';
+        lastDockingBand = dockingBand;
       }
     }
   }
