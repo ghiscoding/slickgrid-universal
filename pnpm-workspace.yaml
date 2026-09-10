@@ -71,7 +71,7 @@ overrides:
   '@babel/core': ^7.29.7
   '@hono/node-server': ^2.1.1
   esbuild: ^0.28.2
-  hono: ^4.13.4
+  hono: ^4.13.7
   ip-address: ^10.5.0
   minimatch: ^10.2.6
   picomatch: ^4.0.7
