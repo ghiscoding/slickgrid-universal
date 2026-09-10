@@ -3544,6 +3544,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected handleSelectedRangesChanged(e: SlickEventData, ranges: SlickRange[]): void {
     const ne = e.getNativeEvent<CustomEvent>();
     const selectionMode: CellSelectionMode = ne?.detail?.selectionMode ?? '';
+    const caller = ne?.detail?.caller ?? 'click';
     let addDragHandle = !!ne?.detail?.addDragHandle;
     const selectedCellCssClass = this._options.selectedCellCssClass || '';
 
@@ -3592,16 +3593,25 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.dragReplaceEl.removeEl();
     this.selectedRows = [];
     const hash: CssStyleHash = Object.create(null);
+    const selectedRowsSet = ranges.length > 1 ? new Set<number>() : undefined;
     for (let i = 0; i < ranges.length; i++) {
       for (let j = ranges[i].fromRow; j <= ranges[i].toRow; j++) {
+        if (!selectedRowsSet || !selectedRowsSet.has(j)) {
+          selectedRowsSet?.add(j);
+          this.selectedRows.push(j);
+        }
         const rowHash = this.rowsCache[j] ? (hash[j] ??= Object.create(null)) : undefined;
         for (let k = ranges[i].fromCell; k <= ranges[i].toCell; k++) {
           if (rowHash && this.canCellBeSelected(j, k)) {
             rowHash[this.columns[k].id] = selectedCellCssClass;
           }
         }
-        this.selectedRows.push(j);
       }
+    }
+
+    if (caller !== 'click.selectAll' && caller !== 'click.unselectAll') {
+      // Preserve the legacy default sort order (numeric values are compared as strings).
+      this.selectedRows.sort();
     }
 
     const activeRange = ranges[ranges.length - 1];
@@ -3623,7 +3633,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       selectedRowsChanged = this.selectedRows.some((row) => !previousSelectedRowsSet.has(row));
     }
     if (selectedRowsChanged) {
-      const caller = ne?.detail?.caller ?? 'click';
       const selectedRows = this.getSelectedRows();
       const selectedRowsSet = selectedRows.length ? new Set(selectedRows) : undefined;
       const previousSelectedRowsSet = previousSelectedRows.length ? new Set(previousSelectedRows) : undefined;
