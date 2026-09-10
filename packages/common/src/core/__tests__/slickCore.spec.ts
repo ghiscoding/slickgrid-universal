@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { EditController } from '../../interfaces/editController.interface.js';
 import {
   RowPositionIndexer,
+  rowsToRanges,
   SlickCopyRange,
   SlickEditorLock,
   SlickEvent,
@@ -277,6 +278,12 @@ describe('SlickCore file', () => {
   });
 
   describe('SlickRange class', () => {
+    it('should compact contiguous rows into ranges while ignoring duplicate rows', () => {
+      const ranges = rowsToRanges([0, 1, 1, 3], 2, true);
+
+      expect(ranges).toEqual([new SlickRange(0, 0, 1, 2), new SlickRange(3, 0, 3, 2)]);
+    });
+
     it('should call isSingleCell() and expect truthy when fromRow equals toRow', () => {
       const range = new SlickRange(0, 2);
       range.fromCell = 0;
