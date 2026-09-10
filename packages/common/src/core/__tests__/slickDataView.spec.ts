@@ -2218,6 +2218,44 @@ describe('SlickDatView core file', () => {
       expect(onSelectedRowIdsSpy).toHaveBeenLastCalledWith(expect.objectContaining({ filteredIds: [4, 3, 1, 8] }), expect.anything(), dv);
     });
 
+    it('should normalize an existing unsorted selection when the same IDs are selected again', () => {
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
+      const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      grid.setSelectionModel(new SlickHybridSelectionModel({ selectActiveRow: false, selectionType: 'row' }));
+      dv.setItems(items);
+      grid.setSelectedRows([0, 1]);
+      dv.syncGridSelection(grid, false, true);
+
+      dv.setSelectedIds([3, 4], { isRowBeingAdded: true, applyRowSelectionToGrid: false });
+
+      expect(dv.getAllSelectedIds()).toEqual([3, 4]);
+    });
+
+    it('should reuse pending filtered IDs for bulk grid selection', () => {
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
+      const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      const onSelectedRowIdsSpy = vi.spyOn(dv.onSelectedRowIdsChanged, 'notify');
+      grid.setSelectionModel(new SlickHybridSelectionModel({ selectActiveRow: false, selectionType: 'row' }));
+      dv.setItems(items);
+      dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
+      dv.syncGridSelection(grid, false, true);
+      dv.setSelectedIds([3, 4, 8], { isRowBeingAdded: true, shouldTriggerEvent: false, applyRowSelectionToGrid: false });
+
+      grid.setSelectedRows([0, 1], 'click.selectAll');
+
+      expect(onSelectedRowIdsSpy).toHaveBeenLastCalledWith(expect.objectContaining({ filteredIds: [3, 4, 8] }), expect.anything(), dv);
+    });
+
     it('should not expect row selections to be preserved when using "multiSelect:false" and setSelectedIds() even when either preseve is enabled ("preserveHidden" or "preserveHiddenOnSelectionChange")', () => {
       const columns = [
         { id: 'name', field: 'name', name: 'Name' },
