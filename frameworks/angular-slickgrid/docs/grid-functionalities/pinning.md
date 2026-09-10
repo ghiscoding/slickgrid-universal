@@ -91,14 +91,14 @@ You can change the number of pinned columns/rows and even the pinning of columns
 <div class="row col-sm-12">
     <span>
         <label for="">Pinned Rows: </label>
-        <input type="number" [(ngModel)]="pinnedRowCount">
+        <input type="number" min="-1" [(ngModel)]="pinnedRowCount">
         <button class="btn btn-default btn-xs" (click)="changePinnedRowCount()">
             Set
         </button>
     </span>
     <span style="margin-left: 10px">
         <label for="">Pinned Columns: </label>
-        <input type="number" [(ngModel)]="pinnedColumnCount">
+        <input type="number" min="-1" [(ngModel)]="pinnedColumnCount">
         <button class="btn btn-default btn-xs" (click)="changePinnedColumnCount()">
             Set
         </button>

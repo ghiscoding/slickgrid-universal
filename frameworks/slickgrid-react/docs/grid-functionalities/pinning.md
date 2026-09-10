@@ -150,14 +150,14 @@ const Example: React.FC = () => {
       <div className="col-sm-12">
         <span>
           <label htmlFor="">Pinned Rows: </label>
-          <input type="number" defaultValue={pinnedRowCount} onInput={($event) => changePinnedRowCount($event)} />
+          <input type="number" min="-1" defaultValue={pinnedRowCount} onInput={($event) => changePinnedRowCount($event)} />
           <button className="btn btn-outline-secondary btn-xs btn-icon" onClick={() => changePinnedRowCount()}>
             Set
           </button>
         </span>
         <span style={{ marginLeft: '10px' }}>
           <label htmlFor="">Pinned Columns: </label>
-          <input type="number" defaultValue={pinnedColumnCount} onInput={($event) => changePinnedColumnCount($event)} />
+          <input type="number" min="-1" defaultValue={pinnedColumnCount} onInput={($event) => changePinnedColumnCount($event)} />
           <button className="btn btn-outline-secondary btn-xs btn-icon" onClick={() => changePinnedColumnCount()}>
             Set
           </button>

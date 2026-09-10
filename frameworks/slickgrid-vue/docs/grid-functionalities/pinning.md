@@ -165,14 +165,14 @@ function togglePinnedBottomRows() {
     <div class="col-sm-12">
       <span>
         <label htmlFor="">Pinned Rows: </label>
-        <input type="number" :value="pinnedRowCount" @input="changePinnedRowCount($event)" />
+        <input type="number" min="-1" :value="pinnedRowCount" @input="changePinnedRowCount($event)" />
         <button class="btn btn-outline-secondary btn-xs btn-icon" @click="changePinnedRowCount()">
           Set
         </button>
       </span>
       <span style={{ marginLeft: '10px' }}>
         <label htmlFor="">Pinned Columns: </label>
-        <input type="number" :value="pinnedColumnCount" @input="changePinnedColumnCount($event)" />
+        <input type="number" min="-1" :value="pinnedColumnCount" @input="changePinnedColumnCount($event)" />
         <button class="btn btn-outline-secondary btn-xs btn-icon" @click="changePinnedColumnCount()">
           Set
         </button>

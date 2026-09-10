@@ -95,8 +95,11 @@ export class TranslateServiceStub {
       case 'PIN_COLUMN':
         output = this.currentLang === 'en' ? 'Column Pinning' : 'Épinglage de colonne';
         break;
-      case 'PIN_COLUMNS':
-        output = this.currentLang === 'en' ? 'Pin Through Here' : "Épingler jusqu'ici";
+      case 'PIN_COLUMNS_LEFT':
+        output = this.currentLang === 'en' ? 'Pin Through Here (left)' : "Épingler jusqu'ici (gauche)";
+        break;
+      case 'PIN_COLUMNS_RIGHT':
+        output = this.currentLang === 'en' ? 'Pin Through Here (right)' : "Épingler jusqu'ici (droit)";
         break;
       case 'PIN_LEFT':
         output = this.currentLang === 'en' ? 'Pin Left' : 'Épingler à gauche';

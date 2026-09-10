@@ -23,7 +23,13 @@ export interface HeaderMenuLabel {
   /** Defaults to "FILTER_SHORTCUTS" translation key */
   filterShortcutsCommandKey?: string;
 
-  /** Defaults to "Pin Through Here" */
+  /** Defaults to "Pin Through Here (left)" */
+  pinningColumnsLeftCommand?: string;
+
+  /** Defaults to "Pin Through Here (right)" */
+  pinningColumnsRightCommand?: string;
+
+  /** @deprecated Use `pinningColumnsLeftCommand` instead. */
   pinningColumnsCommand?: string;
 
   /** Defaults to "Column Pinning" for the pinning submenu. */
@@ -35,7 +41,7 @@ export interface HeaderMenuLabel {
   /** Defaults to "Pin Right" */
   pinRightCommand?: string;
 
-  /** Defaults to "PIN_COLUMNS" translation key */
+  /** @deprecated Retained for compatibility; use the PIN_COLUMNS_LEFT/PIN_COLUMNS_RIGHT locale keys. */
   pinningColumnsCommandKey?: string;
 
   /** Defaults to "Hide Column" */

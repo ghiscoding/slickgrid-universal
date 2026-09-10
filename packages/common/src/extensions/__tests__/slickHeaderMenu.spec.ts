@@ -1283,7 +1283,8 @@ describe('HeaderMenu Plugin', () => {
 
         const pinCommand = gridContainerDiv.querySelector('[data-command="pin-column"]') as HTMLDivElement;
         expect(pinCommand).toBeTruthy();
-        expect(gridContainerDiv.querySelector('[data-command="pin-columns"]')).toBeFalsy();
+        expect(gridContainerDiv.querySelector('[data-command="pin-columns-left"]')).toBeFalsy();
+        expect(gridContainerDiv.querySelector('[data-command="pin-columns-right"]')).toBeFalsy();
         expect(gridContainerDiv.querySelector('[data-command="unpin-column"]')).toBeFalsy();
         expect(gridContainerDiv.querySelector('[data-command="unpin-columns"]')).toBeFalsy();
         expect(pinCommand.querySelector('.slick-menu-content')?.textContent).toBe('Column Pinning');
@@ -1293,8 +1294,10 @@ describe('HeaderMenu Plugin', () => {
         expect(pinColumnCommandItems?.map((item) => (item === 'divider' ? item : item.command))).toEqual([
           'pin-left',
           'pin-right',
-          'pin-columns',
-          'divider-pin-unpin',
+          'divider-pin-direction',
+          'pin-columns-left',
+          'pin-columns-right',
+          'divider-pin-through',
           'unpin-column',
           'unpin-columns',
         ]);
@@ -1335,13 +1338,37 @@ describe('HeaderMenu Plugin', () => {
 
         expect(gridContainerDiv.querySelector('[data-command="pin-column"]')).toBeFalsy();
         expect(gridContainerDiv.querySelector('[data-command="unpin-column"]')).toBeFalsy();
-        expect(gridContainerDiv.querySelector('[data-command="pin-columns"]')).toBeFalsy();
+        expect(gridContainerDiv.querySelector('[data-command="pin-columns-left"]')).toBeFalsy();
+        expect(gridContainerDiv.querySelector('[data-command="pin-columns-right"]')).toBeFalsy();
         expect(gridContainerDiv.querySelector('[data-command="unpin-columns"]')).toBeFalsy();
         expect(testColumns[0].header?.menu?.commandItems).not.toEqual(
           expect.arrayContaining([expect.objectContaining({ command: expect.stringMatching(/pin-columns?/i) })])
         );
         getColumnsSpy.mockRestore();
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      });
+
+      it('should place only one separator between each visible pinning command group', () => {
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
+          headerMenu: { ...gridOptionsMock.headerMenu, hideCommands: ['pin-columns-right'] },
+        });
+        plugin.init({ hidePinColumnCommand: false });
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
+
+        const pinColumnCommandItems = columnsMock[1].header?.menu?.commandItems?.find(
+          (item) => item !== 'divider' && item?.command === 'pin-column'
+        )?.commandItems;
+        expect(pinColumnCommandItems?.map((item) => (item === 'divider' ? item : item.command))).toEqual([
+          'pin-left',
+          'pin-right',
+          'divider-pin-direction',
+          'pin-columns-left',
+          'divider-pin-through',
+          'unpin-column',
+          'unpin-columns',
+        ]);
       });
 
       it('should expect menu related to Pin Through Here when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
@@ -1361,23 +1388,32 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns"]') as HTMLDivElement;
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns-left"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here',
-            titleKey: 'PIN_COLUMNS',
-            command: 'pin-columns',
+            title: 'Pin Through Here (left)',
+            titleKey: 'PIN_COLUMNS_LEFT',
+            command: 'pin-columns-left',
+            positionOrder: 46,
+            action: expect.any(Function),
+          },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: 'Pin Through Here (right)',
+            titleKey: 'PIN_COLUMNS_RIGHT',
+            command: 'pin-columns-right',
             positionOrder: 46,
             action: expect.any(Function),
           },
           { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
         expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
-        expect(commandLabelElm.textContent).toBe('Pin Through Here');
+        expect(commandLabelElm.textContent).toBe('Pin Through Here (left)');
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
@@ -1385,9 +1421,18 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: "Épingler jusqu'ici",
-            titleKey: 'PIN_COLUMNS',
-            command: 'pin-columns',
+            title: "Épingler jusqu'ici (gauche)",
+            titleKey: 'PIN_COLUMNS_LEFT',
+            command: 'pin-columns-left',
+            positionOrder: 46,
+            action: expect.any(Function),
+          },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: "Épingler jusqu'ici (droit)",
+            titleKey: 'PIN_COLUMNS_RIGHT',
+            command: 'pin-columns-right',
             positionOrder: 46,
             action: expect.any(Function),
           },
@@ -1414,23 +1459,32 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns"]') as HTMLDivElement;
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns-left"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here',
-            titleKey: 'PIN_COLUMNS',
-            command: 'pin-columns',
+            title: 'Pin Through Here (left)',
+            titleKey: 'PIN_COLUMNS_LEFT',
+            command: 'pin-columns-left',
+            positionOrder: 46,
+            action: expect.any(Function),
+          },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: 'Pin Through Here (right)',
+            titleKey: 'PIN_COLUMNS_RIGHT',
+            command: 'pin-columns-right',
             positionOrder: 46,
             action: expect.any(Function),
           },
           { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
         expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
-        expect(commandLabelElm.textContent).toBe('Pin Through Here');
+        expect(commandLabelElm.textContent).toBe('Pin Through Here (left)');
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
@@ -1438,9 +1492,18 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: "Épingler jusqu'ici",
-            titleKey: 'PIN_COLUMNS',
-            command: 'pin-columns',
+            title: "Épingler jusqu'ici (gauche)",
+            titleKey: 'PIN_COLUMNS_LEFT',
+            command: 'pin-columns-left',
+            positionOrder: 46,
+            action: expect.any(Function),
+          },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: "Épingler jusqu'ici (droit)",
+            titleKey: 'PIN_COLUMNS_RIGHT',
+            command: 'pin-columns-right',
             positionOrder: 46,
             action: expect.any(Function),
           },
@@ -1478,8 +1541,10 @@ describe('HeaderMenu Plugin', () => {
         expect(pinColumnCommandItems?.map((item) => (item === 'divider' ? item : item.command))).toEqual([
           'pin-left',
           'pin-right',
-          'pin-columns',
-          'divider-pin-unpin',
+          'divider-pin-direction',
+          'pin-columns-left',
+          'pin-columns-right',
+          'divider-pin-through',
           'unpin-column',
           'unpin-columns',
         ]);
@@ -1512,14 +1577,23 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns"]') as HTMLDivElement;
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns-left"]') as HTMLDivElement;
         expect(columnsMock[2].header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here',
-            titleKey: 'PIN_COLUMNS',
-            command: 'pin-columns',
+            title: 'Pin Through Here (left)',
+            titleKey: 'PIN_COLUMNS_LEFT',
+            command: 'pin-columns-left',
+            positionOrder: 46,
+            action: expect.any(Function),
+          },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: 'Pin Through Here (right)',
+            titleKey: 'PIN_COLUMNS_RIGHT',
+            command: 'pin-columns-right',
             positionOrder: 46,
             action: expect.any(Function),
           },
@@ -1555,14 +1629,23 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns"]') as HTMLDivElement;
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns-left"]') as HTMLDivElement;
         expect((originalColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here',
-            titleKey: 'PIN_COLUMNS',
-            command: 'pin-columns',
+            title: 'Pin Through Here (left)',
+            titleKey: 'PIN_COLUMNS_LEFT',
+            command: 'pin-columns-left',
+            positionOrder: 46,
+            action: expect.any(Function),
+          },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: 'Pin Through Here (right)',
+            titleKey: 'PIN_COLUMNS_RIGHT',
+            command: 'pin-columns-right',
             positionOrder: 46,
             action: expect.any(Function),
           },
@@ -1691,11 +1774,20 @@ describe('HeaderMenu Plugin', () => {
         const headerMenuExpected = [
           {
             _orgTitle: '',
-            command: 'pin-columns',
+            command: 'pin-columns-left',
             iconCssClass: 'mdi mdi-pin-outline',
             positionOrder: 46,
-            title: 'Pin Through Here',
-            titleKey: 'PIN_COLUMNS',
+            title: 'Pin Through Here (left)',
+            titleKey: 'PIN_COLUMNS_LEFT',
+            action: expect.any(Function),
+          },
+          {
+            _orgTitle: '',
+            command: 'pin-columns-right',
+            iconCssClass: 'mdi mdi-pin-outline',
+            positionOrder: 46,
+            title: 'Pin Through Here (right)',
+            titleKey: 'PIN_COLUMNS_RIGHT',
             action: expect.any(Function),
           },
           { command: 'show-negative-numbers', cssClass: 'mdi mdi-lightbulb-on', tooltip: 'Highlight negative numbers.' },
@@ -1784,9 +1876,18 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here',
-            titleKey: 'PIN_COLUMNS',
-            command: 'pin-columns',
+            title: 'Pin Through Here (left)',
+            titleKey: 'PIN_COLUMNS_LEFT',
+            command: 'pin-columns-left',
+            positionOrder: 46,
+            action: expect.any(Function),
+          },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: 'Pin Through Here (right)',
+            titleKey: 'PIN_COLUMNS_RIGHT',
+            command: 'pin-columns-right',
             positionOrder: 46,
             action: expect.any(Function),
           },
@@ -1961,14 +2062,23 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns"]') as HTMLDivElement;
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns-left"]') as HTMLDivElement;
         expect((originalColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here',
-            titleKey: 'PIN_COLUMNS',
-            command: 'pin-columns',
+            title: 'Pin Through Here (left)',
+            titleKey: 'PIN_COLUMNS_LEFT',
+            command: 'pin-columns-left',
+            positionOrder: 46,
+            action: expect.any(Function),
+          },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: 'Pin Through Here (right)',
+            titleKey: 'PIN_COLUMNS_RIGHT',
+            command: 'pin-columns-right',
             positionOrder: 46,
             action: expect.any(Function),
           },
@@ -2006,14 +2116,23 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns"]') as HTMLDivElement;
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns-left"]') as HTMLDivElement;
         expect((visibleColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here',
-            titleKey: 'PIN_COLUMNS',
-            command: 'pin-columns',
+            title: 'Pin Through Here (left)',
+            titleKey: 'PIN_COLUMNS_LEFT',
+            command: 'pin-columns-left',
+            positionOrder: 46,
+            action: expect.any(Function),
+          },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: 'Pin Through Here (right)',
+            titleKey: 'PIN_COLUMNS_RIGHT',
+            command: 'pin-columns-right',
             positionOrder: 46,
             action: expect.any(Function),
           },

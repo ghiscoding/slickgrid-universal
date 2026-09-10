@@ -420,7 +420,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <div class="row">
     <div class="col-sm-12">
       <span
-        ><label>Pinned Rows: </label><input v-model="pinnedRowCount" type="number" /><button
+        ><label>Pinned Rows: </label><input v-model="pinnedRowCount" type="number" min="-1" /><button
           class="btn btn-outline-secondary btn-xs btn-icon mx-1"
           @click="changePinnedRowCount()"
         >
@@ -428,7 +428,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         </button></span
       >
       <span style="margin-left: 10px"
-        ><label>Pinned Columns: </label><input v-model="pinnedColumnCount" type="number" /><button
+        ><label>Pinned Columns: </label><input v-model="pinnedColumnCount" type="number" min="-1" /><button
           class="btn btn-outline-secondary btn-xs btn-icon mx-1"
           @click="changePinnedColumnCount()"
         >

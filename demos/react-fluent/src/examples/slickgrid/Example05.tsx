@@ -366,6 +366,7 @@ const Example05: React.FC = () => {
             <label htmlFor="">Pinned Rows: </label>
             <input
               type="number"
+              min="-1"
               style={{ height: '24px', width: '55px' }}
               defaultValue={pinnedRowCount}
               onInput={($event) => changePinnedRowCount($event)}
@@ -378,6 +379,7 @@ const Example05: React.FC = () => {
             <label htmlFor="">Pinned Columns: </label>
             <input
               type="number"
+              min="-1"
               style={{ height: '24px', width: '55px' }}
               defaultValue={pinnedColumnCount}
               onInput={($event) => changePinnedColumnCount($event)}

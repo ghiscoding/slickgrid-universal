@@ -13,9 +13,13 @@
     >)
   </div>
   <div class="row gx-2 mb-2 align-items-end">
-    <div class="col-auto"><label>Pinned Rows: </label><input class="form-control" type="number" [(ngModel)]="pinnedRowCount" /></div>
+    <div class="col-auto">
+      <label>Pinned Rows: </label><input class="form-control" type="number" min="-1" [(ngModel)]="pinnedRowCount" />
+    </div>
     <div class="col-auto"><button class="btn btn-outline-secondary btn-sm" (click)="changePinnedRowCount()">Set</button></div>
-    <div class="col-auto"><label>Pinned Columns: </label><input class="form-control" type="number" [(ngModel)]="pinnedColumnCount" /></div>
+    <div class="col-auto">
+      <label>Pinned Columns: </label><input class="form-control" type="number" min="-1" [(ngModel)]="pinnedColumnCount" />
+    </div>
     <div class="col-auto"><button class="btn btn-outline-secondary btn-sm" (click)="changePinnedColumnCount()">Set</button></div>
     <div class="col-auto">
       <label>Pinned Right: </label

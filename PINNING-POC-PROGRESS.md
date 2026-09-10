@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness POC — progress handoff
 
-Last updated: 2026-09-10 (core/service DRY and render-path audit, header flex cleanup, horizontal scroll hardening, grouping/pinning visual hardening, hidden-column docking alignment, Example 58 framework parity, pinning locale audit, and progress/TODO review; legacy runtime removal and structural alias audit remain)
+Last updated: 2026-09-10 (core/service DRY and render-path audit, directional pin-through commands, separator filtering, header flex cleanup, horizontal scroll hardening, grouping/pinning visual hardening, hidden-column docking alignment, Example 58 framework parity, pinning locale audit, and progress/TODO review; legacy runtime removal and structural alias audit remain)
 
 ## Goal
 
@@ -69,15 +69,13 @@ All available pinning locale assets and translation stubs were reviewed. The Fre
 intentionally retained as the Header Menu root label.
 
 The Header Menu now exposes a `pin-column` root command displayed as `Column Pinning`. Its
-sub-menu always contains `pin-left`, `pin-right`, and `pin-columns`, followed by a separator,
-then `unpin-column` and `unpin-columns`. The first two commands set the selected column's
-`Column.pinned` side, `pin-columns` writes the aggregate `pinning.columns.left` boundary, and the
-two unpin commands clear the selected column or all aggregate column edges. All five commands
-remain visible regardless of the current pin state when `Column.pinnable !== false`; setting
-`pinnable: false` removes the `Column Pinning` menu for that column and excludes it from bulk
-pin-through operations.
-The old bulk command ids and translation keys are documented only in the v11 migration guide;
-none recreates the old two-pane layout.
+sub-menu contains three command groups: `pin-left`/`pin-right`,
+`pin-columns-left`/`pin-columns-right`, and `unpin-column`/`unpin-columns`, with separators only
+between groups that still contain visible commands. The first group sets the selected column's
+`Column.pinned` side, the through-here commands write the corresponding aggregate left/right
+boundary, and the unpin commands clear the selected column or all aggregate column edges.
+Setting `pinnable: false` removes the `Column Pinning` menu for that column and excludes it from
+bulk pin-through operations. None of these commands recreates the old two-pane layout.
 
 Horizontal scrolling now uses the browser's native `WheelEvent` pixel deltas for trackpads and
 physical horizontal-wheel mice. Legacy horizontal-wheel clicks advance by at least 40px instead
@@ -206,7 +204,7 @@ documentation work may continue while the follow-up deletion audit is underway.
 
 ## leftover TODOs identified by user
 - [x] Unified grid options support pinning (left, right, top, bottom)
-- [x] Header Menu exposes a `Column Pinning` sub-menu with always-visible `Pin Left`, `Pin Right`, and `Pin Through Here` commands, a separator, and `Unpin Column`/`Unpin All Columns` commands
+- [x] Header Menu exposes a `Column Pinning` sub-menu with `Pin Left`, `Pin Right`, directional `Pin Through Here` commands, and `Unpin Column`/`Unpin All Columns`; separators are added only between visible command groups
 - [x] `CurrentColumn.pinning` provides a per-column Grid State/Preset representation alongside aggregate `GridState.pinning`
 - [x] Row/body/header/footer docking regions have a predictable left/center/right DOM shape. Row
   regions use the compatibility-oriented names `.slick-pinned-left-cells`,
@@ -792,7 +790,7 @@ requirements are the two largest sources of variance.
    must not become compatibility branches.
 2. **Old options intentionally no longer work.** The former flat options are not valid ways to
    configure this POC. The old names and command ids are migration-guide
-   references only; active menus use `Pin Through Here`/`Unpin All Columns` and write the canonical
+   references only; active menus use directional through-here commands and `Unpin All Columns` and write the canonical
    `pinning` option. `GridService.setPinning()` accepts the unified nested shape.
 3. **Visual/browser validation is incomplete.** Left/right pinning, bottom rows, sticky transitions, resize, reorder, RTL, variable row height, row/column spans, editors, selection, and all four framework wrappers need manual follow-up.
 4. **Colspans crossing docking bands are not defined.** A colspan beginning in one band and ending in another can produce incorrect geometry. The final design should reject, split, or explicitly define this case.
@@ -804,12 +802,13 @@ requirements are the two largest sources of variance.
    column or consuming the whole viewport invokes the configured canonical pinning validation
    callback and leaves the prior pinning state intact.
 10. **Column reorder policy is undecided.** The visual order groups permanent pins at the edges, but dragging between center and pinned regions does not yet automatically change `pinned` state.
-11. **Header Menu terminology is now pinning-based.** The `Column Pinning` root opens an
-    always-visible sub-menu containing `Pin Left`, `Pin Right`, `Pin Through Here`, a separator,
-    `Unpin Column`, and `Unpin All Columns` for pinnable columns. The directional commands write
-    `Column.pinned`, the through-here command writes `pinning.columns.left`, and the unpin commands
-    clear the selected column or all aggregate column edges. The removed v10 names remain documented
-    in the migration guide only.
+11. **Header Menu terminology is now pinning-based.** The `Column Pinning` root opens a
+    sub-menu containing `Pin Left`, `Pin Right`, `Pin Through Here (left)`,
+    `Pin Through Here (right)`, `Unpin Column`, and `Unpin All Columns` for pinnable columns.
+    Separators appear only between non-empty command groups. The directional commands write
+    `Column.pinned`, the through-here commands write the corresponding `pinning.columns` edge,
+    and the unpin commands clear the selected column or all aggregate column edges. The removed
+    v10 names remain documented in the migration guide only.
 12. **Public controller surface is provisional.** `DockingController` is currently exported for the POC; it may be better kept internal in the final API.
 13. **Migration references are intentionally narrow.** Historical option names, command ids,
     translation keys, and labels belong in the v11 migration guide. Active runtime code and
@@ -835,10 +834,10 @@ deferred until the vanilla guide and API cleanup are settled; do not add framewo
 3. Use Example 47's Account/Q1–Q4/YTD sticky columns and bottom sticky totals to confirm activation/deactivation/hysteresis. Add a top sticky-row counterpart only after deciding its report hierarchy/push-off behavior.
 4. Fix visual/interaction problems before adding tests.
 5. Review the implemented unified `GridOption.pinning` shape and `CurrentColumn.pinning` precedence before freezing the public API. The former `pinnedColumn`/`pinnedRows` shorthands have been removed.
-6. Review the pinning-based Header Menu: `Column Pinning` must keep `Pin Left`, `Pin Right`, and
-   `Pin Through Here`, a separator, and `Unpin Column`/`Unpin All Columns` visible in the same
-   sub-menu. Keep the old references documented for v11-and-lower users without adding runtime
-   aliases.
+6. Review the pinning-based Header Menu: `Column Pinning` must keep `Pin Left`, `Pin Right`,
+   both directional through-here commands, and `Unpin Column`/`Unpin All Columns` visible in the
+   same sub-menu. Separators must not be duplicated or left orphaned when commands are hidden.
+   Keep the old references documented for v11-and-lower users without adding runtime aliases.
 7. Complete the remaining structural audit:
    - rename/remove internal `_pane*`, `_viewport*`, and `_canvas*` aliases where practical;
    - document the current `--slick-pinned-*` theme variables and their v11-and-lower names;

@@ -249,13 +249,13 @@ interfaces or runtime.
 | `HeaderMenuOption.hideFreezeColumnsCommand` | `HeaderMenuOption.hidePinningColumnsCommand` | Bulk pinning visibility option renamed |
 | `HeaderMenuOption.iconFreezeColumns` | `HeaderMenuOption.iconPinningColumns` | Bulk pinning icon option renamed |
 | `HeaderMenuOption.iconUnfreezeColumns` | `HeaderMenuOption.iconUnpinningColumns` | Bulk unpinning icon option renamed |
-| `HeaderMenuLabel.freezeColumnsCommand` | `HeaderMenuLabel.pinningColumnsCommand` | Bulk pinning label renamed |
-| `HeaderMenuLabel.freezeColumnsCommandKey` | `HeaderMenuLabel.pinningColumnsCommandKey` | Bulk pinning translation-key option renamed |
+| `HeaderMenuLabel.freezeColumnsCommand` | `HeaderMenuLabel.pinningColumnsLeftCommand`, `HeaderMenuLabel.pinningColumnsRightCommand` | Bulk pinning labels split by direction |
+| `HeaderMenuLabel.freezeColumnsCommandKey` | `PIN_COLUMNS_LEFT`, `PIN_COLUMNS_RIGHT` | Bulk pinning translation keys split by direction |
 | `HeaderMenuLabel.unfreezeColumnsCommand` | `HeaderMenuLabel.unpinningColumnsCommand` | Bulk unpinning label renamed |
 | `HeaderMenuLabel.unfreezeColumnsCommandKey` | `HeaderMenuLabel.unpinningColumnsCommandKey` | Bulk unpinning translation-key option renamed |
-| `HeaderMenuCommand.freeze-columns` | `HeaderMenuCommand.pin-columns` | Bulk pinning command id renamed |
+| `HeaderMenuCommand.freeze-columns` | `HeaderMenuCommand.pin-columns-left`, `HeaderMenuCommand.pin-columns-right` | Bulk pinning command ids split by direction |
 | `HeaderMenuCommand.unfreeze-columns` | `HeaderMenuCommand.unpin-columns` | Bulk unpinning command id renamed |
-| `Locale.TEXT_FREEZE_COLUMNS` | `Locale.TEXT_PIN_COLUMNS` | Bulk pinning translation key renamed |
+| `Locale.TEXT_FREEZE_COLUMNS` | `Locale.TEXT_PIN_COLUMNS_LEFT`, `Locale.TEXT_PIN_COLUMNS_RIGHT` | Bulk pinning translation keys split by direction |
 | `Locale.TEXT_UNFREEZE_COLUMNS` | `Locale.TEXT_UNPIN_COLUMNS` | Bulk unpinning translation key renamed |
 | `$slick-frozen-border-bottom` | `$slick-pinned-border-bottom` | Pinned-row separator variable renamed |
 | `$slick-frozen-border-right` | `$slick-pinned-border-color` plus `$slick-pinned-border-box-shadow-left/right` | Pinned-column separator now uses non-layout shadows |
@@ -291,10 +291,12 @@ const gridOptions: GridOption = {
 
 The old `freeze-columns`/`unfreeze-columns` command ids and
 `FREEZE_COLUMNS`/`UNFREEZE_COLUMNS` translation keys are documented here for migration purposes;
-v11 uses `pin-columns`/`unpin-columns` and `PIN_COLUMNS`/`UNPIN_COLUMNS`. The public label
-properties are `pinningColumnsCommand` and `unpinningColumnsCommand` (with the corresponding
-`...CommandKey` names). New application code should prefer the `pin-column` and `unpin-column`
-commands for single-column actions.
+v11 uses directional `pin-columns-left`/`pin-columns-right` commands alongside
+`unpin-columns`. Their translation keys are `PIN_COLUMNS_LEFT`/`PIN_COLUMNS_RIGHT` and
+`UNPIN_COLUMNS`. The public label properties are `pinningColumnsLeftCommand`,
+`pinningColumnsRightCommand`, and `unpinningColumnsCommand`. The older
+`pinningColumnsCommand` property is deprecated but remains a fallback for the left command;
+`PIN_COLUMNS` is no longer an active translation key.
 
 ### Rename `changeColumnsArrangement()`
 
@@ -318,13 +320,15 @@ column's current state. Set `pinnable: false` to remove the `Column Pinning` men
 
 - `pin-left` pins the selected column to the left edge;
 - `pin-right` pins the selected column to the right edge;
-- `pin-columns` (displayed as `Pin Through Here`) pins every column from the left edge through the
-  selected column;
+- `pin-columns-left` (displayed as `Pin Through Here (left)`) pins every column from the left edge
+  through the selected column;
+- `pin-columns-right` (displayed as `Pin Through Here (right)`) pins every column from the right
+  edge through the selected column;
 - `unpin-column` clears the selected column's pin; and
 - `unpin-columns` (displayed as `Unpin All Columns`) clears all pinned columns on both edges.
 
-The first three are separated from the two unpin commands by a menu separator. All commands
-update `pinning.columns` and no longer create a second pane. The v10 `freeze-columns` /
+Each command group is separated from the next visible group. Hidden commands do not leave
+duplicate or orphaned separators. All commands update `pinning.columns` and no longer create a second pane. The v10 `freeze-columns` /
 `unfreeze-columns` ids are removed.
 
 The new header-menu options and labels are:
@@ -342,7 +346,8 @@ headerMenu: {
     pinLeftCommand: 'Pin Left',
     pinRightCommand: 'Pin Right',
     unpinColumnCommand: 'Unpin Column',
-    pinningColumnsCommand: 'Pin Through Here',
+    pinningColumnsLeftCommand: 'Pin Through Here (left)',
+    pinningColumnsRightCommand: 'Pin Through Here (right)',
     unpinningColumnsCommand: 'Unpin All Columns',
   },
 }

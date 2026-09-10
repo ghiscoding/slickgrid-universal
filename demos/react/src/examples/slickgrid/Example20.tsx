@@ -532,7 +532,7 @@ const Example20: React.FC = () => {
         <div className="col-sm-12">
           <span>
             <label htmlFor="">Pinned Rows: </label>
-            <input ref={pinnedRowCountInputRef} type="number" defaultValue={pinnedRowCount} />
+            <input ref={pinnedRowCountInputRef} type="number" min="-1" defaultValue={pinnedRowCount} />
             <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" onClick={() => updatePinnedRowCount()}>
               Set
             </button>
@@ -542,6 +542,7 @@ const Example20: React.FC = () => {
             <input
               className="pinned-column-count"
               type="number"
+              min="-1"
               value={pinnedColumnCount}
               onChange={($event) => changePinnedColumnCount($event)}
             />

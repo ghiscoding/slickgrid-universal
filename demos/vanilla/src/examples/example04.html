@@ -22,17 +22,17 @@
 <div class="row mb-3">
   <span>
     <label for="">Pinned Rows: </label>
-    <input type="number" class="pinned-row-count is-narrow input is-small" value.bind="pinnedRowCount" />
+    <input type="number" class="pinned-row-count is-narrow input is-small" min="-1" value.bind="pinnedRowCount" />
     <button class="button is-small" onclick.trigger="changePinnedRowCount()">Set</button>
   </span>
   <span class="ml-1">
     <label for="">Pinned Columns: </label>
-    <input type="number" class="pinned-column-count is-narrow input is-small" value.bind="pinnedColumnCount" />
+    <input type="number" class="pinned-column-count is-narrow input is-small" min="-1" value.bind="pinnedColumnCount" />
     <button class="button is-small" onclick.trigger="changePinnedColumnCount()">Set</button>
   </span>
   <span class="ml-1">
     <label for="">Pinned Right: </label>
-    <input type="number" min="0" class="pinned-right-column-count is-narrow input is-small" value.bind="pinnedRightColumnCount" />
+    <input type="number" class="pinned-right-column-count is-narrow input is-small" min="0" value.bind="pinnedRightColumnCount" />
     <button class="button is-small" onclick.trigger="changePinnedRightColumnCount()">Set</button>
   </span>
   <span class="ml-3">

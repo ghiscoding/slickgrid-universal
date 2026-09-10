@@ -88,14 +88,14 @@ You can change the number of pinned columns/rows and even the pinning of columns
 <div class="row col-sm-12">
     <span>
         <label for="">Pinned Rows: </label>
-        <input type="number" value.bind="pinnedRowCount">
+        <input type="number" min="-1" value.bind="pinnedRowCount">
         <button class="btn btn-default btn-xs" click.trigger="changePinnedRowCount()">
             Set
         </button>
     </span>
     <span style="margin-left: 10px">
         <label for="">Pinned Columns: </label>
-        <input type="number" value.bind="pinnedColumnCount">
+        <input type="number" min="-1" value.bind="pinnedColumnCount">
         <button class="btn btn-default btn-xs" click.trigger="changePinnedColumnCount()">
             Set
         </button>

@@ -38,7 +38,8 @@ describe('Example 20 - Pinned Grid', () => {
   it('should not show Column Pinning for the non-pinnable City of Origin column', () => {
     cy.get('#grid20 [data-id="cityOfOrigin"] .slick-header-menu-button').click({ force: true });
     cy.get('.slick-header-menu:visible [data-command="pin-column"]').should('not.exist');
-    cy.get('.slick-header-menu:visible [data-command="pin-columns"]').should('not.exist');
+    cy.get('.slick-header-menu:visible [data-command="pin-columns-left"]').should('not.exist');
+    cy.get('.slick-header-menu:visible [data-command="pin-columns-right"]').should('not.exist');
     cy.get('body').trigger('mousedown');
   });
 
