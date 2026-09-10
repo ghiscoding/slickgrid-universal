@@ -23,36 +23,6 @@ interface PubSubPublishType<ArgType = any> {
   nativeEvent?: Event;
 }
 
-export function rowsToRanges(rows: number[], lastCell: number, compactRows = false): SlickRange[] {
-  const ranges: SlickRange[] = [];
-  if (!compactRows) {
-    rows.forEach((row) => ranges.push(new SlickRange(row, 0, row, lastCell)));
-    return ranges;
-  }
-
-  const seenRows = new Set<number>();
-  let rangeStart: number | undefined;
-  let previousRow: number | undefined;
-
-  for (const row of rows) {
-    if (seenRows.has(row)) {
-      continue;
-    }
-    seenRows.add(row);
-    if (rangeStart === undefined) {
-      rangeStart = row;
-    } else if (previousRow !== undefined && row !== previousRow + 1) {
-      ranges.push(new SlickRange(rangeStart, 0, previousRow, lastCell));
-      rangeStart = row;
-    }
-    previousRow = row;
-  }
-  if (rangeStart !== undefined && previousRow !== undefined) {
-    ranges.push(new SlickRange(rangeStart, 0, previousRow, lastCell));
-  }
-  return ranges;
-}
-
 /**
  * An event object for passing data to event handlers and letting them control propagation.
  * <p>This is pretty much identical to how W3C and jQuery implement events.</p>

@@ -30,6 +30,9 @@ class TestGrid extends SlickGrid<any, Column> {
   public callGetFormatter(row: number, column: Column) {
     return this.getFormatter(row, column);
   }
+  public callRowsToRanges(rows: number[], compactRows = false) {
+    return this.rowsToRanges(rows, compactRows);
+  }
   public callAppendSelectedCellHtml(row: number, cell: number) {
     const divRow = document.createElement('div');
     this.selectedRanges = [new SlickRange(row, cell)];
@@ -988,6 +991,25 @@ describe('SlickGrid core file', () => {
         expect(setRangeSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 1, 0)], 'click.selectAll');
       });
 
+      it('should compact non-contiguous ascending rows and allow an empty selection', () => {
+        grid = new TestGrid(container, data, columns, defaultOptions);
+
+        expect((grid as TestGrid).callRowsToRanges([0, 2], true)).toEqual([new SlickRange(0, 0, 0, 0), new SlickRange(2, 0, 2, 0)]);
+        expect((grid as TestGrid).callRowsToRanges([], true)).toEqual([]);
+      });
+
+      it('should retain legacy selection order when Select All receives non-ascending rows', () => {
+        const rowSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row' });
+
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.setSelectionModel(rowSelectionModel);
+        vi.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(false);
+
+        grid.setSelectedRows([2, 1], 'click.selectAll');
+
+        expect(grid.getSelectedRows()).toEqual([1, 2]);
+      });
+
       it('should select rows when the last column is hidden', () => {
         const columnsWithHiddenLastColumn = [
           { id: 'firstName', field: 'firstName', name: 'First Name' },
@@ -1009,6 +1031,16 @@ describe('SlickGrid core file', () => {
         const cell = (grid as TestGrid).callAppendSelectedCellHtml(1, 0);
 
         expect(cell.classList.contains('selected')).toBeTruthy();
+      });
+
+      it('should add selected CSS alongside an existing cell CSS hash', () => {
+        grid = new TestGrid(container, data, columns, defaultOptions);
+        grid.setCellCssStyles('highlight', { 1: { firstName: 'highlight' } });
+
+        const cell = (grid as TestGrid).callAppendSelectedCellHtml(1, 0);
+
+        expect(cell.classList).toContain('highlight');
+        expect(cell.classList).toContain('selected');
       });
 
       it('should call SlickHybridSelectionModel.onDragReplaceCells() when selection mode is REP and range is expanding', () => {
