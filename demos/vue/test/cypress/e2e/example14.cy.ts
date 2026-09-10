@@ -139,7 +139,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
     cy.get('#grid2 .slick-header.slick-header-left .slick-header-columns .slick-header-column').should('have.length', 7);
   });
 
-  it('should be able to "Pin Through Here (left)" back from header menu', () => {
+  it('should be able to "Pin Columns Left" back from header menu', () => {
     cy.get('#grid2')
       .find('.slick-header.slick-header-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(2)')
       .trigger('mouseover')
@@ -153,7 +153,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
       .should('contain', 'Column Pinning')
       .click();
 
-    cy.get('.slick-submenu [data-command="pin-columns-left"]').should('contain', 'Pin Through Here (left)').click();
+    cy.get('.slick-submenu [data-command="pin-columns-left"]').should('contain', 'Pin Columns Left').click();
 
     cy.get('#grid2 .slick-header.slick-header-left .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
     cy.get('#grid2 .slick-header.slick-header-left .slick-header-columns .slick-header-column:not(.slick-column-pinned-left)').should(

@@ -1371,7 +1371,18 @@ describe('HeaderMenu Plugin', () => {
         ]);
       });
 
-      it('should expect menu related to Pin Through Here when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
+      it('should use -1 for right pin-through when the selected column is not visible', () => {
+        const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+        const getColumnsSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+
+        (plugin as any).pinOrUnpinColumns(columnsMock[1], 'pin-columns-right');
+
+        expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { right: -1 } } }, false, true);
+        getColumnsSpy.mockRestore();
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      });
+
+      it('should expect menu related to Pin Columns when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
         vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
@@ -1395,7 +1406,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (left)',
+            title: 'Pin Columns Left',
             titleKey: 'PIN_COLUMNS_LEFT',
             command: 'pin-columns-left',
             positionOrder: 46,
@@ -1404,7 +1415,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (right)',
+            title: 'Pin Columns Right',
             titleKey: 'PIN_COLUMNS_RIGHT',
             command: 'pin-columns-right',
             positionOrder: 46,
@@ -1413,7 +1424,7 @@ describe('HeaderMenu Plugin', () => {
           { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
         expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
-        expect(commandLabelElm.textContent).toBe('Pin Through Here (left)');
+        expect(commandLabelElm.textContent).toBe('Pin Columns Left');
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
@@ -1421,7 +1432,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: "Épingler jusqu'ici (gauche)",
+            title: 'Épingler les colonnes à gauche',
             titleKey: 'PIN_COLUMNS_LEFT',
             command: 'pin-columns-left',
             positionOrder: 46,
@@ -1430,7 +1441,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: "Épingler jusqu'ici (droit)",
+            title: 'Épingler les colonnes à droite',
             titleKey: 'PIN_COLUMNS_RIGHT',
             command: 'pin-columns-right',
             positionOrder: 46,
@@ -1444,7 +1455,7 @@ describe('HeaderMenu Plugin', () => {
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
-      it('should expect menu related to Pin Through Here when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
+      it('should expect menu related to Pin Columns when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
         vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
@@ -1466,7 +1477,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (left)',
+            title: 'Pin Columns Left',
             titleKey: 'PIN_COLUMNS_LEFT',
             command: 'pin-columns-left',
             positionOrder: 46,
@@ -1475,7 +1486,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (right)',
+            title: 'Pin Columns Right',
             titleKey: 'PIN_COLUMNS_RIGHT',
             command: 'pin-columns-right',
             positionOrder: 46,
@@ -1484,7 +1495,7 @@ describe('HeaderMenu Plugin', () => {
           { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
         expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
-        expect(commandLabelElm.textContent).toBe('Pin Through Here (left)');
+        expect(commandLabelElm.textContent).toBe('Pin Columns Left');
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
@@ -1492,7 +1503,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: "Épingler jusqu'ici (gauche)",
+            title: 'Épingler les colonnes à gauche',
             titleKey: 'PIN_COLUMNS_LEFT',
             command: 'pin-columns-left',
             positionOrder: 46,
@@ -1501,7 +1512,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: "Épingler jusqu'ici (droit)",
+            title: 'Épingler les colonnes à droite',
             titleKey: 'PIN_COLUMNS_RIGHT',
             command: 'pin-columns-right',
             positionOrder: 46,
@@ -1560,7 +1571,7 @@ describe('HeaderMenu Plugin', () => {
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
-      it('should expect menu related to Pin Through Here when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with pinned column of -1 because the column found is not visible', () => {
+      it('should expect menu related to Pin Columns when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with pinned column of -1 because the column found is not visible', () => {
         sharedService.hasColumnsReordered = true;
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
@@ -1582,7 +1593,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (left)',
+            title: 'Pin Columns Left',
             titleKey: 'PIN_COLUMNS_LEFT',
             command: 'pin-columns-left',
             positionOrder: 46,
@@ -1591,7 +1602,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (right)',
+            title: 'Pin Columns Right',
             titleKey: 'PIN_COLUMNS_RIGHT',
             command: 'pin-columns-right',
             positionOrder: 46,
@@ -1634,7 +1645,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (left)',
+            title: 'Pin Columns Left',
             titleKey: 'PIN_COLUMNS_LEFT',
             command: 'pin-columns-left',
             positionOrder: 46,
@@ -1643,7 +1654,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (right)',
+            title: 'Pin Columns Right',
             titleKey: 'PIN_COLUMNS_RIGHT',
             command: 'pin-columns-right',
             positionOrder: 46,
@@ -1777,7 +1788,7 @@ describe('HeaderMenu Plugin', () => {
             command: 'pin-columns-left',
             iconCssClass: 'mdi mdi-pin-outline',
             positionOrder: 46,
-            title: 'Pin Through Here (left)',
+            title: 'Pin Columns Left',
             titleKey: 'PIN_COLUMNS_LEFT',
             action: expect.any(Function),
           },
@@ -1786,7 +1797,7 @@ describe('HeaderMenu Plugin', () => {
             command: 'pin-columns-right',
             iconCssClass: 'mdi mdi-pin-outline',
             positionOrder: 46,
-            title: 'Pin Through Here (right)',
+            title: 'Pin Columns Right',
             titleKey: 'PIN_COLUMNS_RIGHT',
             action: expect.any(Function),
           },
@@ -1876,7 +1887,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (left)',
+            title: 'Pin Columns Left',
             titleKey: 'PIN_COLUMNS_LEFT',
             command: 'pin-columns-left',
             positionOrder: 46,
@@ -1885,7 +1896,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (right)',
+            title: 'Pin Columns Right',
             titleKey: 'PIN_COLUMNS_RIGHT',
             command: 'pin-columns-right',
             positionOrder: 46,
@@ -2040,7 +2051,7 @@ describe('HeaderMenu Plugin', () => {
         expect(clearSortSpy).toHaveBeenCalledWith(clickEvent, 'field2');
       });
 
-      it('should expect menu related to Pin Through Here when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called', () => {
+      it('should expect menu related to Pin Columns when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called', () => {
         const originalColumnDefinitions = [
           { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', width: 75 },
@@ -2067,7 +2078,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (left)',
+            title: 'Pin Columns Left',
             titleKey: 'PIN_COLUMNS_LEFT',
             command: 'pin-columns-left',
             positionOrder: 46,
@@ -2076,7 +2087,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (right)',
+            title: 'Pin Columns Right',
             titleKey: 'PIN_COLUMNS_RIGHT',
             command: 'pin-columns-right',
             positionOrder: 46,
@@ -2090,7 +2101,7 @@ describe('HeaderMenu Plugin', () => {
         expect(updateColumnSpy).toHaveBeenCalled();
       });
 
-      it('should expect menu related to Pin Through Here when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called when hasColumnsReordered returns true', () => {
+      it('should expect menu related to Pin Columns when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called when hasColumnsReordered returns true', () => {
         const originalColumnDefinitions = [
           { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', width: 75 },
@@ -2121,7 +2132,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (left)',
+            title: 'Pin Columns Left',
             titleKey: 'PIN_COLUMNS_LEFT',
             command: 'pin-columns-left',
             positionOrder: 46,
@@ -2130,7 +2141,7 @@ describe('HeaderMenu Plugin', () => {
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Through Here (right)',
+            title: 'Pin Columns Right',
             titleKey: 'PIN_COLUMNS_RIGHT',
             command: 'pin-columns-right',
             positionOrder: 46,

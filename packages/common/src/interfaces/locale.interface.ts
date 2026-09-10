@@ -104,10 +104,10 @@ export interface Locale {
   /** Text "Force fit Columns" displayed in the Column Picker & Grid Menu (when enabled) */
   TEXT_FORCE_FIT_COLUMNS: string;
 
-  /** Text "Pin Through Here (left)" shown in Header Menu (when enabled) */
+  /** Text "Pin Columns Left" shown in Header Menu (when enabled) */
   TEXT_PIN_COLUMNS_LEFT?: string;
 
-  /** Text "Pin Through Here (right)" shown in Header Menu (when enabled) */
+  /** Text "Pin Columns Right" shown in Header Menu (when enabled) */
   TEXT_PIN_COLUMNS_RIGHT?: string;
 
   /** Text "Column Pinning" shown in Header Menu (when enabled) */

@@ -204,7 +204,7 @@ documentation work may continue while the follow-up deletion audit is underway.
 
 ## leftover TODOs identified by user
 - [x] Unified grid options support pinning (left, right, top, bottom)
-- [x] Header Menu exposes a `Column Pinning` sub-menu with `Pin Left`, `Pin Right`, directional `Pin Through Here` commands, and `Unpin Column`/`Unpin All Columns`; separators are added only between visible command groups
+- [x] Header Menu exposes a `Column Pinning` sub-menu with `Pin Left`, `Pin Right`, directional `Pin Columns` commands, and `Unpin Column`/`Unpin All Columns`; separators are added only between visible command groups
 - [x] `CurrentColumn.pinning` provides a per-column Grid State/Preset representation alongside aggregate `GridState.pinning`
 - [x] Row/body/header/footer docking regions have a predictable left/center/right DOM shape. Row
   regions use the compatibility-oriented names `.slick-pinned-left-cells`,
@@ -803,8 +803,8 @@ requirements are the two largest sources of variance.
    callback and leaves the prior pinning state intact.
 10. **Column reorder policy is undecided.** The visual order groups permanent pins at the edges, but dragging between center and pinned regions does not yet automatically change `pinned` state.
 11. **Header Menu terminology is now pinning-based.** The `Column Pinning` root opens a
-    sub-menu containing `Pin Left`, `Pin Right`, `Pin Through Here (left)`,
-    `Pin Through Here (right)`, `Unpin Column`, and `Unpin All Columns` for pinnable columns.
+    sub-menu containing `Pin Left`, `Pin Right`, `Pin Columns Left`,
+    `Pin Columns Right`, `Unpin Column`, and `Unpin All Columns` for pinnable columns.
     Separators appear only between non-empty command groups. The directional commands write
     `Column.pinned`, the through-here commands write the corresponding `pinning.columns` edge,
     and the unpin commands clear the selected column or all aggregate column edges. The removed

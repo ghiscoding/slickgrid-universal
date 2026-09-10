@@ -496,7 +496,7 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
         .should('contain', 'Column Pinning')
         .click();
 
-      cy.get('.slick-submenu [data-command="pin-columns-left"]').should('be.visible').and('contain', 'Pin Through Here (left)').click();
+      cy.get('.slick-submenu [data-command="pin-columns-left"]').should('be.visible').and('contain', 'Pin Columns Left').click();
     });
 
     it('should keep grouping, pinning, pre-header bands, and row styling aligned', () => {

@@ -320,9 +320,9 @@ column's current state. Set `pinnable: false` to remove the `Column Pinning` men
 
 - `pin-left` pins the selected column to the left edge;
 - `pin-right` pins the selected column to the right edge;
-- `pin-columns-left` (displayed as `Pin Through Here (left)`) pins every column from the left edge
+- `pin-columns-left` (displayed as `Pin Columns Left`) pins every column from the left edge
   through the selected column;
-- `pin-columns-right` (displayed as `Pin Through Here (right)`) pins every column from the right
+- `pin-columns-right` (displayed as `Pin Columns Right`) pins every column from the right
   edge through the selected column;
 - `unpin-column` clears the selected column's pin; and
 - `unpin-columns` (displayed as `Unpin All Columns`) clears all pinned columns on both edges.
@@ -346,8 +346,8 @@ headerMenu: {
     pinLeftCommand: 'Pin Left',
     pinRightCommand: 'Pin Right',
     unpinColumnCommand: 'Unpin Column',
-    pinningColumnsLeftCommand: 'Pin Through Here (left)',
-    pinningColumnsRightCommand: 'Pin Through Here (right)',
+    pinningColumnsLeftCommand: 'Pin Columns Left',
+    pinningColumnsRightCommand: 'Pin Columns Right',
     unpinningColumnsCommand: 'Unpin All Columns',
   },
 }
