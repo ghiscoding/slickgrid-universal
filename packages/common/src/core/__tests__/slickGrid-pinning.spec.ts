@@ -112,6 +112,73 @@ describe('SlickGrid unified pinning', () => {
     expect(groupCell.parentElement).toBe(groupRow);
   });
 
+  it('splits colspans that cross docking regions into visual fragments', () => {
+    container = document.createElement('div');
+    container.style.width = '800px';
+    container.style.height = '400px';
+    document.body.appendChild(container);
+    const spanData = {
+      getLength: () => data.length,
+      getItem: (row: number) => data[row],
+      getItemMetadata: (row: number) => (row === 0 ? { columns: { 0: { colspan: columns.length, formatter: () => 'Spanned' } } } : undefined),
+    };
+    grid = new SlickGrid(container, spanData as any, columns.map((column) => ({ ...column })) as Column[], {
+      devMode: { ownerNodeIndex: 0 },
+      pinning: { columns: { left: ['a'], right: ['d'] } },
+    });
+
+    const row = container.querySelector<HTMLElement>('[data-row="0"]')!;
+    const host = row.querySelector<HTMLElement>('.slick-cell.l0:not(.slick-cell-colspan-part)')!;
+    const fragments = row.querySelectorAll<HTMLElement>('.slick-cell-colspan-part');
+
+    expect(host.textContent).toBe('Spanned');
+    expect(row.querySelectorAll('.slick-cell-colspan-crossing-docking')).toHaveLength(3);
+    expect(fragments[1].classList.contains('slick-cell-colspan-end')).toBe(true);
+    expect(fragments).toHaveLength(2);
+    expect(host.parentElement?.classList.contains('slick-pinned-left-cells')).toBe(true);
+    expect(fragments[0].parentElement?.classList.contains('slick-scrolling-cells')).toBe(true);
+    expect(fragments[1].parentElement?.classList.contains('slick-pinned-right-cells')).toBe(true);
+    expect(fragments[0].getAttribute('aria-hidden')).toBe('true');
+    expect((grid as any).getCellNode(0, 0)).toBe(host);
+
+    grid.setActiveCell(0, 0);
+    expect(row.querySelectorAll('.slick-cell.active')).toHaveLength(3);
+    expect((grid as any).getCellFromEvent({ target: fragments[0] })).toEqual({ row: 0, cell: 0 });
+  });
+
+  it('rejects non-sequential pinning when a rendered colspan crosses docking regions', () => {
+    const invalidPinning = vi.fn();
+    const spanData = {
+      getLength: () => data.length,
+      getItem: (row: number) => data[row],
+      getItemMetadata: (row: number) => (row === 0 ? { columns: { 1: { colspan: 3 } } } : undefined),
+    };
+    container = document.createElement('div');
+    container.style.width = '800px';
+    container.style.height = '400px';
+    document.body.appendChild(container);
+    grid = new SlickGrid(container, spanData as any, columns.map((column) => ({ ...column })) as Column[], {
+      devMode: { ownerNodeIndex: 0 },
+      invalidColumnPinningPickerCallback: invalidPinning,
+    });
+
+    grid.setColumnPinning('b', 'left');
+    expect(invalidPinning).toHaveBeenCalledWith(expect.stringContaining('non-sequential order'));
+    expect(grid.getColumns()[1].pinned).toBeFalsy();
+
+    grid.setColumnPinning('c', 'right');
+    expect(grid.getColumns()[2].pinned).toBeFalsy();
+
+    grid.setColumnPinning('a', 'left');
+    grid.setColumnPinning('b', 'left');
+    expect(
+      grid
+        .getColumns()
+        .slice(0, 2)
+        .every((column) => column.pinned === 'left')
+    ).toBe(true);
+  });
+
   it('keeps the native viewport scroll owner until docking is enabled', () => {
     const slickGrid = createGrid();
     const internals = slickGrid as any;

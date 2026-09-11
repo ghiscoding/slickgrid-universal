@@ -1455,6 +1455,7 @@ describe('HeaderMenu Plugin', () => {
         ]);
         expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Pin Columns Left');
+        expect((plugin as any).getPinnableColumnReferences(columnsMock[1], 'right')).toBe(2);
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();

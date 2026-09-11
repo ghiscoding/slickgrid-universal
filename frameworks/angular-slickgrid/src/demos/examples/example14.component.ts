@@ -60,6 +60,10 @@ export class Example14Component implements OnInit {
           getRowMetadata: (item: any) => this.renderDifferentColspan(item),
         },
       },
+      headerMenu: {
+        hidePinColumnCommand: false,
+        hidePinningColumnsCommand: false,
+      },
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
       },

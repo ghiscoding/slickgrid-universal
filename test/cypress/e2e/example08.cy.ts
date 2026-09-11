@@ -307,7 +307,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
+        .children('.slick-menu-item:nth-of-type(4)')
         .children('.slick-menu-content')
         .should('contain', 'Hide Column')
         .click();
@@ -365,7 +365,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
+        .children('.slick-menu-item:nth-of-type(4)')
         .children('.slick-menu-content')
         .should('contain', 'Hide Column')
         .click();
@@ -424,6 +424,45 @@ describe('Example 08 - Column Span & Header Grouping', () => {
         .find('.slick-header-columns:nth(1)')
         .children()
         .each(($child, index) => expect($child.text()).to.eq(newHeaderTitles[index]));
+    });
+
+    it('should keep a Duration colspan visually continuous across a valid docking boundary', () => {
+      const setPinning = (headerSelector: string, command: 'pin-left' | 'unpin-column') => {
+        cy.get(headerSelector).trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+        cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+        cy.get(`.slick-submenu:visible [data-command="${command}"]`).click();
+      };
+      const hostSelector = '.grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l1:not(.slick-cell-colspan-part)';
+      const fragmentSelector = '.grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell-colspan-part';
+
+      setPinning('.grid1 .slick-header:not(.slick-preheader-panel) .slick-header-columns [data-id="title"]', 'pin-left');
+
+      cy.get('.grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l0').should(($cell) => {
+        expect(getComputedStyle($cell[0], '::after').boxShadow).not.to.eq('none');
+      });
+
+      setPinning('.grid1 .slick-header-columns-center [data-id="duration"]', 'pin-left');
+
+      cy.get(hostSelector).should('contain', '5 days').and('have.class', 'slick-cell-colspan-crossing-docking');
+      cy.get('.grid1 [data-row="1"] .slick-cell-colspan-part').should('have.length', 1);
+      cy.get(fragmentSelector).should('have.length', 1).click({ force: true }).should('have.class', 'active');
+      cy.get(fragmentSelector).should(($cell) => {
+        const style = getComputedStyle($cell[0], '::after');
+        expect(getComputedStyle($cell[0]).boxShadow).to.eq('none');
+        expect(style.borderLeftStyle).to.eq('none');
+        expect(style.borderRightStyle).to.eq('solid');
+      });
+      cy.get(hostSelector)
+        .should('have.class', 'active')
+        .and('contain', '5 days')
+        .should(($cell) => {
+          expect(getComputedStyle($cell[0]).boxShadow).to.eq('none');
+          expect(getComputedStyle($cell[0], '::after').borderRightStyle).to.eq('none');
+        });
+
+      setPinning('.grid1 .slick-header-columns-left [data-id="duration"]', 'unpin-column');
+      setPinning('.grid1 .slick-header-columns-left [data-id="title"]', 'unpin-column');
+      cy.get('.grid1 [data-row="1"] .slick-cell-colspan-part').should('not.exist');
     });
   });
 

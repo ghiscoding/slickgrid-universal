@@ -74,6 +74,10 @@ export default class Example08 {
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
       },
+      headerMenu: {
+        hidePinColumnCommand: false,
+        hidePinningColumnsCommand: false,
+      },
       externalResources: [new TextExportService(), new ExcelExportService(), new PdfExportService()],
       enableCellNavigation: true,
       enableColumnReorder: false,

@@ -169,52 +169,52 @@ describe('Example 14 - Column Span & Header Grouping', () => {
       cy.get('#grid2 .slick-header.slick-header-left .slick-header-columns .slick-header-column').should('have.length', 7);
     });
 
-    it('should start at Task 1 on Duration colspan 5 days and type "PageDown" key once and land on a full colspan', () => {
-      cy.get('#grid1 [data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+    it('should start at Task 1 on Duration colspan 5 days and type "PageDown" key once and be on Task 8 with full colspan', () => {
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
       cy.get('@active_cell').type('{pagedown}');
-      cy.get('#grid1 .slick-cell.l0.r5.active').should('have.length', 1);
+      cy.get('[data-row=8] > .slick-cell.l0.r5.active').should('have.length', 1);
     });
 
-    it('should start at Task 1 on Duration colspan 5 days and type "PageDown" key 2x times and land on a colspan of 3', () => {
-      cy.get('#grid1 [data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+    it('should start at Task 1 on Duration colspan 5 days and type "PageDown" key 2x times and be on Task 15 with colspan of 3', () => {
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
       cy.get('@active_cell').type('{pagedown}{pagedown}');
-      cy.get('#grid1 .slick-cell.l1.r3.active').should('have.length', 1);
+      cy.get('[data-row=15] > .slick-cell.l1.r3.active').should('have.length', 1);
     });
 
-    it('should navigate PageUp twice from a colspan of 3 back to the starting colspan of 3', () => {
-      cy.get('#grid1 [data-row=15] > .slick-cell.l1.r3').as('active_cell').click();
+    it('should start at Task 15 on Duration colspan 5 days and type "PageUp" key 2x times and be on Task 1 with full colspan', () => {
+      cy.get('[data-row=15] > .slick-cell.l1.r3').as('active_cell').click();
       cy.get('@active_cell').type('{pageup}{pageup}');
-      cy.get('#grid1 .slick-cell.l1.r3.active').should('have.length', 1);
+      cy.get('[data-row=1] > .slick-cell.l1.r3.active').should('have.length', 1);
     });
 
     it('should start at Task 2 on Duration colspan 5 days and type "PageDown" key 2x times and "PageUp" twice and be back to Task 1 with colspan of 3', () => {
-      cy.get('#grid1 [data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
       cy.get('@active_cell').type('{pagedown}{pagedown}{pageup}{pageup}');
-      cy.get('#grid1 .slick-cell.l1.r3.active').should('have.length', 1);
+      cy.get('[data-row=1] > .slick-cell.l1.r3.active').should('have.length', 1);
     });
 
     it('should start at Task 2 on Duration colspan 5 days and type "PageDown" key 2x times and "PageUp" 3x times and be on Task 0 with full colspan', () => {
-      cy.get('#grid1 [data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
       cy.get('@active_cell').type('{pagedown}{pagedown}{pageup}{pageup}{pageup}');
-      cy.get('#grid1 .slick-cell.l0.r5.active').should('have.length', 1);
+      cy.get('[data-row=0] > .slick-cell.l0.r5.active').should('have.length', 1);
     });
 
     it('should start at Task 1 on Duration colspan 5 days and type "ArrowDown" key once and be on Task 2 with full colspan', () => {
-      cy.get('#grid1 [data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
       cy.get('@active_cell').type('{downarrow}');
-      cy.get('#grid1 .slick-cell.l0.r5.active').should('have.length', 1);
+      cy.get('[data-row=2] > .slick-cell.l0.r5.active').should('have.length', 1);
     });
 
     it('should start at Task 1 on Duration colspan 5 days and type "ArrowDown" key 2x times and be on Task 1 with colspan of 3', () => {
-      cy.get('#grid1 [data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
       cy.get('@active_cell').type('{downarrow}{downarrow}');
-      cy.get('#grid1 .slick-cell.l1.r3.active').should('have.length', 1);
+      cy.get('[data-row=3] > .slick-cell.l1.r3.active').should('have.length', 1);
     });
 
     it('should start at Task 1 on Duration colspan 5 days and type "ArrowDown" key 2x times, then "ArrowUp" key 2x times and be back on Task 1 with colspan of 3', () => {
-      cy.get('#grid1 [data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
       cy.get('@active_cell').type('{downarrow}{downarrow}{uparrow}{uparrow}');
-      cy.get('#grid1 .slick-cell.l1.r3.active').should('have.length', 1);
+      cy.get('[data-row=1] > .slick-cell.l1.r3.active').should('have.length', 1);
     });
   });
 
@@ -237,7 +237,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
+        .children('.slick-menu-item:nth-of-type(4)')
         .children('.slick-menu-content')
         .should('contain', 'Hide Column')
         .click();
@@ -295,7 +295,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
+        .children('.slick-menu-item:nth-of-type(4)')
         .children('.slick-menu-content')
         .should('contain', 'Hide Column')
         .click();
@@ -354,6 +354,66 @@ describe('Example 14 - Column Span & Header Grouping', () => {
         .find('.slick-header-columns:nth(1)')
         .children()
         .each(($child, index) => expect($child.text()).to.eq(newHeaderTitles[index]));
+    });
+
+    it('should keep a Duration colspan visually continuous across a valid docking boundary', () => {
+      cy.get('#grid1 .slick-header:not(.slick-preheader-panel) .slick-header-columns [data-id="title"]')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+      cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+      cy.get('.slick-submenu:visible [data-command="pin-left"]').click();
+
+      cy.get('#grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l0').should(($cell) => {
+        expect(getComputedStyle($cell[0], '::after').boxShadow).not.to.eq('none');
+      });
+
+      cy.get('#grid1 .slick-header-columns-center [data-id="duration"]')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+      cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+      cy.get('.slick-submenu:visible [data-command="pin-left"]').click();
+
+      cy.get('#grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l1:not(.slick-cell-colspan-part)')
+        .should('contain', '5 days')
+        .and('have.class', 'slick-cell-colspan-crossing-docking');
+      cy.get('#grid1 [data-row="1"] .slick-cell-colspan-part').should('have.length', 1);
+      cy.get('#grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell-colspan-part').should('have.length', 1);
+      cy.get('#grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell-colspan-part')
+        .click({ force: true })
+        .should('have.class', 'active');
+      cy.get('#grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell-colspan-part').should(($cell) => {
+        const style = getComputedStyle($cell[0], '::after');
+        expect(getComputedStyle($cell[0]).boxShadow).to.eq('none');
+        expect(style.borderLeftStyle).to.eq('none');
+        expect(style.borderRightStyle).to.eq('solid');
+      });
+      cy.get('#grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l1:not(.slick-cell-colspan-part)')
+        .should('have.class', 'active')
+        .and('contain', '5 days')
+        .should(($cell) => {
+          expect(getComputedStyle($cell[0]).boxShadow).to.eq('none');
+          expect(getComputedStyle($cell[0], '::after').borderRightStyle).to.eq('none');
+        });
+
+      cy.get('#grid1 .slick-header-columns-left [data-id="duration"]')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+      cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+      cy.get('.slick-submenu:visible [data-command="unpin-column"]').click();
+      cy.get('#grid1 .slick-header-columns-left [data-id="title"]')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+      cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+      cy.get('.slick-submenu:visible [data-command="unpin-column"]').click();
+      cy.get('#grid1 [data-row="1"] .slick-cell-colspan-part').should('not.exist');
     });
   });
 

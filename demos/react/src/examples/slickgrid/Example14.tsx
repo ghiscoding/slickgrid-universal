@@ -63,6 +63,10 @@ const Example14: React.FC = () => {
           getRowMetadata: (item: any, row: number) => renderDifferentColspan(item, row),
         },
       },
+      headerMenu: {
+        hidePinColumnCommand: false,
+        hidePinningColumnsCommand: false,
+      },
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
       },

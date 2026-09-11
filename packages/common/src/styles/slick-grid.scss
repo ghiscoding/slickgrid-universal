@@ -298,8 +298,9 @@
       }
 
       // Paint the separator only on boundary data cells, not full-width rows.
-      > .slick-pinned-left-cells.slick-pinned-left-cells-active > .slick-cell:last-child::after,
-      > .slick-pinned-right-cells.slick-pinned-right-cells-active > .slick-cell:first-child::after {
+      > .slick-pinned-left-cells.slick-pinned-left-cells-active > .slick-cell:last-child:not(.slick-cell-colspan-crossing-docking)::after,
+      > .slick-pinned-right-cells.slick-pinned-right-cells-active
+        > .slick-cell:first-child:not(.slick-cell-colspan-crossing-docking)::after {
         content: '';
         position: absolute;
         inset: 0;
@@ -307,12 +308,38 @@
         z-index: 1;
       }
 
-      > .slick-pinned-left-cells.slick-pinned-left-cells-active > .slick-cell:last-child::after {
+      > .slick-pinned-left-cells.slick-pinned-left-cells-active > .slick-cell:last-child:not(.slick-cell-colspan-crossing-docking)::after {
         box-shadow: var(--slick-pinned-border-box-shadow-left, v.$slick-pinned-border-box-shadow-left);
       }
 
-      > .slick-pinned-right-cells.slick-pinned-right-cells-active > .slick-cell:first-child::after {
+      > .slick-pinned-right-cells.slick-pinned-right-cells-active
+        > .slick-cell:first-child:not(.slick-cell-colspan-crossing-docking)::after {
         box-shadow: var(--slick-pinned-border-box-shadow-right, v.$slick-pinned-border-box-shadow-right);
+      }
+
+      // Use a border overlay for active cross-band colspans. It does not affect cell size.
+      > :is(.slick-pinned-left-cells, .slick-scrolling-cells, .slick-pinned-right-cells) {
+        > .slick-cell-colspan-crossing-docking.active {
+          box-shadow: none;
+
+          &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            box-sizing: border-box;
+            border: 1px solid var(--slick-cell-active-border-color, v.$slick-cell-active-border-color);
+            pointer-events: none;
+            z-index: 1;
+          }
+
+          &:not(.slick-cell-colspan-end)::after {
+            border-inline-end: 0;
+          }
+        }
+
+        > .slick-cell-colspan-part.active::after {
+          border-inline-start: 0;
+        }
       }
 
       // A RowSpan cell extends beyond its host row. The normal region clip is

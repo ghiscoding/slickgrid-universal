@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness POC — progress handoff
 
-Last updated: 2026-09-10 (core/service DRY and render-path audit, directional pin-through commands, separator filtering, header flex cleanup, horizontal scroll hardening, grouping/pinning visual hardening, hidden-column docking alignment, Example 58 framework parity, pinning locale audit, progress/TODO review, and pane-root cleanup)
+Last updated: 2026-09-11 (core/service DRY and render-path audit, directional pin-through commands, separator filtering, header flex cleanup, horizontal scroll hardening, grouping/pinning visual hardening, hidden-column docking alignment, cross-band colspan rendering, Example 58 framework parity, pinning locale audit, progress/TODO review, and pane-root cleanup)
 
 ## Goal
 
@@ -27,6 +27,14 @@ Legacy option names are documented only in the v11 migration guide.
 There is no separate `pinnedColumn` or `pinnedRows` grid option; those temporary
 aliases were removed after the canonical shape was wired through core and state.
 The POC does not target compatibility with the old pane-based UX.
+
+For ordinary colspans that cross docking bands, pinning is accepted only when the
+resolved bands remain sequential (`left → center → right`). A non-sequential
+change such as pinning the second column while leaving the first column in the
+center is rejected through `invalidColumnPinningPickerCallback`; the default
+message can be customized with `invalidColumnPinningSequenceMessage`. This
+validation runs during pinning changes and does not add work to horizontal
+scrolling.
 
 The canonical grid-state shape is now a single nested `GridOption.pinning` object:
 `{ columns: { left, right }, rows: { top, bottom } }`. `Column.pinned` remains the
@@ -131,6 +139,14 @@ rows retain their existing pinned-band separators. Pinned edge filter/footer cel
 title's measured outer width but no longer extend into the vertical-scrollbar gutter; this keeps the
 header chrome aligned and prevents a right-edge filter such as `Effort-Driven` from overlapping its
 neighboring `Action` cell.
+
+Ordinary colspans that cross left, center, or right docking bands now keep one logical/content host
+cell and render lightweight visual continuation fragments in each affected band. Fragments share
+the host's styling but are excluded from logical-cell caching and are removed/rebuilt with the host,
+so formatters, selection, and virtualization continue to operate on one cell. Clicking any
+fragment activates the complete span; keyboard arrows continue to navigate between logical cells,
+skipping continuation fragments. The docking separator is suppressed only at an internal colspan
+split, so the span remains visually continuous while real outer docking boundaries keep their cue.
 
 Docked body cells now calculate center-band right offsets from the rendered center-region width when
 left/right pinning expands that region to the viewport. This prevents the last remaining center
@@ -787,7 +803,10 @@ requirements are the two largest sources of variance.
    references only; active menus use `Pin Columns Left`/`Pin Columns Right` and `Unpin All Columns` and write the canonical
    `pinning` option. `GridService.setPinning()` accepts the unified nested shape.
 3. **Visual/browser validation is incomplete.** Left/right pinning, bottom rows, sticky transitions, resize, reorder, RTL, variable row height, row/column spans, editors, selection, and all four framework wrappers need manual follow-up.
-4. **Colspans crossing docking bands are not defined.** A colspan beginning in one band and ending in another can produce incorrect geometry. The final design should reject, split, or explicitly define this case.
+4. **Cross-band colspans are defined.** The logical cell remains one host while visual continuation
+   fragments are rendered in each affected docking region; full-width group rows retain their
+   dedicated viewport-wide rendering. A separator is omitted only when it would cut through the
+   logical span.
 5. **Grouped/pre-header chrome is dock-aware.** `HeaderGroupingService` orders visible columns by docking band and splits a repeated `columnGroup` title at each left/center/right boundary. Remaining cross-framework visual validation is covered by item 3.
 6. **Sticky activation can be skipped by a very large scroll jump.** Candidates currently must first be fully visible. A final implementation should detect that the scroll path crossed a candidate even if no intermediate frame showed it fully.
 7. **Numeric row reference ambiguity.** An in-range number is treated as a row index before it is treated as a dataset ID. A tagged `{ id } | { index }` row reference would remove this ambiguity.

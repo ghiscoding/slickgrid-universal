@@ -149,6 +149,8 @@ interface RowCaching {
   cellColSpans: Array<number | '*'>;
   cellNodesByColumnIdx: HTMLElement[];
   cellRenderQueue: any[];
+  cellSpanFragments: Record<number, HTMLElement[]>;
+  cellSpanSegments: Record<number, Array<{ start: number; end: number; band: ColumnDockingBand }>>;
 }
 
 const EMPTY_DOCKING_LAYOUT: ColumnDockingLayout = {
@@ -264,6 +266,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     invalidColumnPinningPickerMessage:
       '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column in the center section of the grid. ' +
       'You could alternatively unpin columns before trying again.',
+    invalidColumnPinningSequenceMessage:
+      '[SlickGrid] Action not allowed and aborted because pinning would split a colspan across the grid in a non-sequential order. ' +
+      'Pin columns from the left or right edge without skipping columns.',
     skipPinningValidation: false,
     allowDragFromClosest: 'div.slick-cell.dnd, div.slick-cell.cell-reorder',
     alwaysShowVerticalScroll: false,
@@ -1357,12 +1362,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       ? columns.map((column) => (column?.id === columnId && !column.hidden ? { ...column, hidden: true } : column))
       : columns;
     const pinnedIndexes = this.getPinnedColumnIndexes(this._options.pinning?.columns);
-    const visibleIndexes = prospectiveColumns.reduce<number[]>((indexes, column, index) => {
-      if (column && !column.hidden) {
-        indexes.push(index);
-      }
-      return indexes;
-    }, []);
+    if (!this.validateColspanPinningSequence(pinnedIndexes, forceAlert, prospectiveColumns)) {
+      return false;
+    }
+    const visibleIndexes = this.getVisibleColumnIndexes(prospectiveColumns);
     const hasCenterColumn = visibleIndexes.some((index) => !pinnedIndexes.has(index));
     if (!hasCenterColumn && visibleIndexes.length && !this._options.skipPinningValidation) {
       if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningPickerCallback) {
@@ -3591,6 +3594,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return this.columns.filter((c) => !c.hidden);
   }
 
+  protected getVisibleColumnIndexes(columns: C[] = this.columns): number[] {
+    return columns.reduce<number[]>((indexes, column, index) => {
+      if (column && !column.hidden) {
+        indexes.push(index);
+      }
+      return indexes;
+    }, []);
+  }
+
   // General
 
   triggerEvent<ArgType = any>(evt: SlickEvent, args?: ArgType, e?: Event | SlickEventData): SlickEventData<any> {
@@ -4014,12 +4026,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return true;
     }
 
-    const visibleIndexes = columns.reduce<number[]>((indexes, column, index) => {
-      if (column && !column.hidden) {
-        indexes.push(index);
-      }
-      return indexes;
-    }, []);
+    if (!this.validateColspanPinningSequence(pinnedIndexes, forceAlert, columns)) {
+      return false;
+    }
+
+    const visibleIndexes = this.getVisibleColumnIndexes(columns);
     if (visibleIndexes.length && visibleIndexes.every((index) => pinnedIndexes.has(index))) {
       if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningPickerCallback) {
         this._options.invalidColumnPinningPickerCallback(this._options.invalidColumnPinningPickerMessage!);
@@ -4056,6 +4067,68 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return false;
     }
     return true;
+  }
+
+  /** Reject only non-sequential pinning that would visually split a rendered colspan. */
+  protected validateColspanPinningSequence(
+    pinnedIndexes: Map<number, DockingSide>,
+    forceAlert = false,
+    columns: C[] = this.columns
+  ): boolean {
+    const visibleIndexes = this.getVisibleColumnIndexes(columns);
+
+    let previousBandOrder = 0;
+    const isSequential = visibleIndexes.every((index) => {
+      const band = pinnedIndexes.get(index) || 'center';
+      const bandOrder = band === 'left' ? 0 : band === 'center' ? 1 : 2;
+      if (bandOrder < previousBandOrder) {
+        return false;
+      }
+      previousBandOrder = bandOrder;
+      return true;
+    });
+    if (isSequential) {
+      return true;
+    }
+
+    const hasCrossBandColspan = Object.keys(this.rowsCache).some((rowId) => {
+      const metadata = this.getItemMetadaWhenExists(Number(rowId));
+      if (!metadata?.columns || metadata.isGroup) {
+        return false;
+      }
+
+      return Object.entries(metadata.columns).some(([columnRef, columnMetadata]) => {
+        const columnIndex = Number(columnRef);
+        const start = Number.isNaN(columnIndex) ? this.getColumnIndex(columnRef) : columnIndex;
+        const span = columnMetadata?.colspan === '*' ? columns.length - start : Number(columnMetadata?.colspan || 1);
+        if (!isDefinedNumber(start) || span <= 1) {
+          return false;
+        }
+        const end = Math.min(columns.length - 1, start + span - 1);
+        let firstBand: ColumnDockingBand | undefined;
+        return visibleIndexes.some((index) => {
+          if (index < start || index > end) {
+            return false;
+          }
+          const band = pinnedIndexes.get(index) || 'center';
+          if (!firstBand) {
+            firstBand = band;
+            return false;
+          }
+          return band !== firstBand;
+        });
+      });
+    });
+
+    if (!hasCrossBandColspan) {
+      return true;
+    }
+
+    if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningPickerCallback) {
+      this._options.invalidColumnPinningPickerCallback(this._options.invalidColumnPinningSequenceMessage!);
+      this._invalidPinningAlerted = true;
+    }
+    return false;
   }
 
   /** Merge a partial pinning update before validating it. */
@@ -4171,6 +4244,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     for (const cacheEntry of Object.values(this.rowsCache)) {
       const rowNode = cacheEntry.rowNode?.[0];
       if (rowNode && !rowNode.classList.contains('slick-row-docked')) {
+        return false;
+      }
+      if (Object.keys(cacheEntry.cellSpanFragments || {}).length) {
         return false;
       }
     }
@@ -5400,16 +5476,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     rowspan: number,
     columnMetadata: ColumnMetadata | null,
     item: TData,
-    isFullWidthGroup = false
+    isFullWidthGroup = false,
+    deferFragments = false
   ): void {
     // divRow: the html element to append items too
     // row, cell: row and column index
     // colspan: HTML colspan
     // item: grid data for row
 
+    const segments = colspan > 1 && !isFullWidthGroup && this.usesDockingRowRegions() ? this.getColspanSegments(cell, colspan) : [];
+    const renderedColspan = segments.length > 1 ? segments[0].end - cell + 1 : colspan;
     const m = this.columns[cell];
     let cellCss =
-      `slick-cell l${cell} r${Math.min(this.columns.length - 1, cell + colspan - 1)}` +
+      `slick-cell l${cell} r${Math.min(this.columns.length - 1, cell + renderedColspan - 1)}` +
       (m.cssClass ? ` ${m.cssClass}` : '') +
       (rowspan > 1 ? ' rowspan' : '') +
       (columnMetadata?.cssClass ? ` ${columnMetadata.cssClass}` : '');
@@ -5511,6 +5590,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     this.rowsCache[row].cellRenderQueue.push(cell);
     this.rowsCache[row].cellColSpans[cell] = colspan;
+    if (segments.length > 1) {
+      this.appendColspanFragments(row, cell, cellDiv, segments, deferFragments);
+    }
   }
 
   protected cleanupRows(rangeToKeep: { bottom: number; top: number }): void {
@@ -6420,7 +6502,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // Row detail formatters can insert a non-cell sibling after the detail-toggle cell.
     // Only actual cells belong in cellNodesByColumnIdx; otherwise cache rebuilding tries
     // to parse a column index from classes such as `dynamic-cell-detail`.
-    const cellChildren = (nodes: HTMLElement[]) => nodes.filter((node) => node.classList.contains('slick-cell'));
+    const cellChildren = (nodes: HTMLElement[]) =>
+      nodes.filter((node) => node.classList.contains('slick-cell') && !node.classList.contains('slick-cell-colspan-part'));
     if (!rowNode.classList.contains('slick-row-docked')) {
       return cellChildren(children);
     }
@@ -6456,6 +6539,82 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const selector =
       band === 'left' ? '.slick-pinned-left-cells' : band === 'right' ? '.slick-pinned-right-cells' : '.slick-scrolling-cells';
     return (rowNode.querySelector(`:scope > ${selector}`) as HTMLElement) || rowNode;
+  }
+
+  protected toggleCellSpanFragmentsActive(row: number, cell: number, active: boolean): void {
+    this.rowsCache[row]?.cellSpanFragments?.[cell]?.forEach((fragment) => fragment.classList.toggle('active', active));
+  }
+
+  protected getColspanSegments(cell: number, colspan: number): Array<{ start: number; end: number; band: ColumnDockingBand }> {
+    const segments: Array<{ start: number; end: number; band: ColumnDockingBand }> = [];
+    const end = Math.min(this.columns.length - 1, cell + colspan - 1);
+
+    for (let index = cell; index <= end; index++) {
+      if (this.columns[index]?.hidden) {
+        continue;
+      }
+      const band = this.getColumnDockingBand(index);
+      const previous = segments[segments.length - 1];
+      if (previous?.band === band) {
+        previous.end = index;
+      } else {
+        segments.push({ start: index, end: index, band });
+      }
+    }
+    return segments;
+  }
+
+  protected appendColspanFragments(
+    row: number,
+    cell: number,
+    host: HTMLElement,
+    segments: Array<{ start: number; end: number; band: ColumnDockingBand }>,
+    deferToRow: boolean
+  ): void {
+    host.classList.add('slick-cell-colspan-crossing-docking');
+    const fragments = segments.slice(1).map((segment, index, allFragments) => {
+      const fragment = host.cloneNode(false) as HTMLElement;
+      fragment.classList.add('slick-cell-colspan-part');
+      fragment.classList.toggle('slick-cell-colspan-end', index === allFragments.length - 1);
+      fragment.classList.remove('slick-cell-pinned-left', 'slick-cell-pinned-right', 'slick-cell-sticky');
+      if (segment.band !== 'center') {
+        fragment.classList.add(`slick-cell-pinned-${segment.band}`);
+        if (this.dockingByColumn.get(segment.start)?.sticky) {
+          fragment.classList.add('slick-cell-sticky');
+        }
+      }
+      fragment.setAttribute('aria-hidden', 'true');
+      fragment.setAttribute('role', 'presentation');
+      fragment.removeAttribute('aria-describedby');
+      fragment.removeAttribute('tabindex');
+
+      const bandWidth =
+        segment.band === 'left'
+          ? this.dockingLayout.leftWidth
+          : segment.band === 'right'
+            ? this.dockingLayout.rightWidth
+            : this.getDockingRenderedCenterWidth();
+      const left = this.columnPosLeft[segment.start] ?? 0;
+      const right = this.columnPosRight[segment.end] ?? left;
+      if (this._options.rtl) {
+        fragment.style.right = `${left}px`;
+        fragment.style.left = `${Math.max(0, bandWidth - right)}px`;
+      } else {
+        fragment.style.left = `${left}px`;
+        fragment.style.right = `${Math.max(0, bandWidth - right)}px`;
+      }
+      return fragment;
+    });
+
+    this.rowsCache[row].cellSpanFragments[cell] = fragments;
+    this.rowsCache[row].cellSpanSegments[cell] = segments;
+    fragments.forEach((fragment, index) => {
+      if (deferToRow) {
+        host.parentElement?.insertBefore(fragment, host);
+      } else {
+        this.getRowDockingRegion(host.closest('.slick-row') as HTMLElement, segments[index + 1].start).appendChild(fragment);
+      }
+    });
   }
 
   protected cleanUpCells(range: CellViewportRange, row: number): void {
@@ -6510,8 +6669,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         cellNode.parentElement?.removeChild(cellNode);
       }
 
+      cacheEntry.cellSpanFragments?.[cellToRemove]?.forEach((fragment) => fragment.remove());
+
       delete cacheEntry.cellColSpans[cellToRemove];
       delete cacheEntry.cellNodesByColumnIdx[cellToRemove];
+      delete cacheEntry.cellSpanFragments?.[cellToRemove];
+      delete cacheEntry.cellSpanSegments?.[cellToRemove];
       /* v8 ignore if */
       if (this.postProcessedRows[row]) {
         delete this.postProcessedRows[row][cellToRemove];
@@ -6520,7 +6683,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected cleanUpAndRenderCells(range: CellViewportRange): void {
-    let cacheEntry;
+    let cacheEntry: RowCaching;
     const divRow: HTMLElement = document.createElement('div');
     const processedRows: number[] = [];
     let cellsAdded: number;
@@ -6601,7 +6764,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               const rowspan = this.getRowspan(row, i);
               const isFullWidthGroup = this.usesDockingRowRegions() && this.isFullWidthGroupCell(metadata, columnData, i, ncolspan);
               cacheEntry.rowNode?.[0].classList.toggle('slick-row-full-width-group', isFullWidthGroup);
-              this.appendCellHtml(divRow, row, i, ncolspan, rowspan, columnData, d, isFullWidthGroup);
+              this.appendCellHtml(divRow, row, i, ncolspan, rowspan, columnData, d, isFullWidthGroup, true);
               cellsAdded++;
             }
 
@@ -6635,6 +6798,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             cacheEntry.rowNode![0].appendChild(node);
           }
           cacheEntry.cellNodesByColumnIdx![columnIdx] = node;
+
+          const fragments = cacheEntry.cellSpanFragments?.[columnIdx];
+          const segments = cacheEntry.cellSpanSegments?.[columnIdx];
+          fragments?.forEach((fragment, index) => {
+            this.getRowDockingRegion(cacheEntry.rowNode![0], segments[index + 1].start).appendChild(fragment);
+          });
         }
       }
       cacheEntry.rowNode?.forEach((rowNode) => this.applyRowTopOffset(rowNode, processedRow!));
@@ -6670,6 +6839,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // cellNodesByColumnIdx.  These are in the same order as cell nodes added at the
       // end of the row.
       cellRenderQueue: [],
+
+      // Continuation fragments for colspans crossing docking bands, keyed by host cell.
+      cellSpanFragments: {},
+      cellSpanSegments: {},
     };
   }
 
@@ -8041,8 +8214,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Clear active cell by making cell normal & removing "active" CSS class. */
   unsetActiveCell(): void {
     if (isDefined(this.activeCellNode)) {
+      const activeRow = this.activeRow;
+      const activeCell = this.getCellFromNode(this.activeCellNode);
       this.makeActiveCellNormal();
       this.activeCellNode.classList.remove('active');
+      if (isDefinedNumber(activeRow)) {
+        this.toggleCellSpanFragmentsActive(activeRow, activeCell, false);
+      }
       this.rowsCache[this.activeRow]?.rowNode?.forEach((node) => node.classList.remove('active'));
     }
   }
@@ -8179,6 +8357,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // v8 ignore next
         document.querySelectorAll('.slick-cell.active').forEach((node) => node.classList.remove('active'));
         this.activeCellNode.classList.add('active');
+        if (isDefinedNumber(this.activeRow) && isDefinedNumber(this.activeCell)) {
+          this.toggleCellSpanFragmentsActive(this.activeRow, this.activeCell, true);
+        }
         this.rowsCache[this.activeRow]?.rowNode?.forEach((node) => node.classList.add('active'));
       }
 

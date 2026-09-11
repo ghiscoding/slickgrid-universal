@@ -965,6 +965,9 @@ export interface GridOption<C extends Column = Column> {
   /** Message to show when a pinning change would leave no center column. */
   invalidColumnPinningPickerMessage?: string;
 
+  /** Message to show when pinning would split a colspan in a non-sequential order. */
+  invalidColumnPinningSequenceMessage?: string;
+
   /**
    * Defaults to `alert(error)`, which will trigger when a pinning change would hide all center columns.
    */

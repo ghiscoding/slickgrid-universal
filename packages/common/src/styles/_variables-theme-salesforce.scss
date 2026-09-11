@@ -31,6 +31,7 @@ $slick-editor-grid-cell-border-width-modified:                  1px 7px 1px 1px 
   $slick-icon-font-size:                                        18px !default,
   $slick-input-focus-border-color:                              color.adjust($slick-primary-color, $lightness: 12%) !default,
   $slick-cell-active-box-shadow:                                inset 0 0 0 1px #{$slick-highlight-color} !default,
+  $slick-cell-active-border-color:                              $slick-highlight-color !default,
   $slick-cell-border-top:                                       none !default,
   $slick-cell-border-bottom:                                    none !default,
   $slick-cell-box-shadow:                                       #{inset 0px 1px 0px #dddbda, inset 0px -1px 0px #dddbda} !default,
