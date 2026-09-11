@@ -156,6 +156,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected toggledGroupsByLevel: any[] = [];
   protected groupingDelimiter = ':|:';
   protected selectedRowIds: DataIdType[] = [];
+  protected pendingSelectedFilteredIds?: { ids: DataIdType[]; selectedRowIds: DataIdType[] };
   protected preSelectedRowIdsChangeFn?: (args?: any) => void;
 
   protected pagesize = 0;
@@ -1392,8 +1393,21 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       if (rowIds === false) {
         this.selectedRowIds = [];
       } else {
-        if (this.selectedRowIds!.sort().join(',') !== rowIds.sort().join(',')) {
-          this.selectedRowIds = rowIds;
+        const sortedRowIds = rowIds.every((id, index) => index === 0 || `${rowIds[index - 1]}` <= `${id}`) ? rowIds : rowIds.slice().sort();
+        const sortedSelectedRowIds = this.selectedRowIds!.every(
+          (id, index) => index === 0 || `${this.selectedRowIds![index - 1]}` <= `${id}`
+        )
+          ? this.selectedRowIds
+          : this.selectedRowIds!.slice().sort();
+        let selectedRowIdsChanged = this.selectedRowIds!.length !== sortedRowIds.length;
+        if (!selectedRowIdsChanged) {
+          const selectedRowIdsSet = new Set(this.selectedRowIds);
+          selectedRowIdsChanged = sortedRowIds.some((id) => !selectedRowIdsSet.has(id));
+        }
+        if (selectedRowIdsChanged) {
+          this.selectedRowIds = sortedRowIds;
+        } else if (sortedSelectedRowIds !== this.selectedRowIds) {
+          this.selectedRowIds = sortedSelectedRowIds;
         }
       }
     };
@@ -1435,10 +1449,17 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
           dataView: this,
         };
         this.preSelectedRowIdsChangeFn!(selectedRowsChangedArgs);
+        const isBulkSelection = args.caller === 'click.selectAll' || args.caller === 'click.unselectAll';
+        const pendingSelectedFilteredIds = this.pendingSelectedFilteredIds;
+        const filteredIds =
+          isBulkSelection && pendingSelectedFilteredIds?.selectedRowIds === this.selectedRowIds
+            ? pendingSelectedFilteredIds.ids
+            : (this.getAllSelectedFilteredIds() as DataIdType[]);
+        this.pendingSelectedFilteredIds = undefined;
         this.onSelectedRowIdsChanged.notify(
           Object.assign(selectedRowsChangedArgs, {
             selectedRowIds: this.selectedRowIds,
-            filteredIds: this.getAllSelectedFilteredIds() as DataIdType[],
+            filteredIds,
           }),
           new SlickEventData(),
           this
@@ -1531,6 +1552,10 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       dataView: this,
     };
     this.preSelectedRowIdsChangeFn?.(selectedRowsChangedArgs);
+
+    if (shouldTriggerEvent === false && applyRowSelectionToGrid === false) {
+      this.pendingSelectedFilteredIds = { ids: isRowBeingAdded ? selectedIds.slice() : [], selectedRowIds: this.selectedRowIds };
+    }
 
     if (shouldTriggerEvent !== false) {
       this.onSelectedRowIdsChanged.notify(

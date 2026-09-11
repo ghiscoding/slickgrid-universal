@@ -71,11 +71,13 @@ overrides:
   '@babel/core': ^7.29.7
   '@hono/node-server': ^2.1.1
   esbuild: ^0.28.2
-  hono: ^4.13.4
-  ip-address: ^10.5.0
+  fast-uri: ^3.1.7
+  hono: ^4.13.7
+  ip-address: ^10.7.0
   minimatch: ^10.2.6
   picomatch: ^4.0.7
-  postcss: ^8.5.26
-  qs: ^6.15.3
+  postcss: ^8.5.28
+  qs: ^6.16.0
+  svgo: ^4.1.0
   undici: ^7.29.0
   vite: 'catalog:'
