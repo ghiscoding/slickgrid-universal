@@ -141,9 +141,36 @@ describe('SlickGrid unified pinning', () => {
     expect(fragments[0].getAttribute('aria-hidden')).toBe('true');
     expect((grid as any).getCellNode(0, 0)).toBe(host);
 
+    grid.getColumns()[1].hidden = true;
+    expect((grid as any).getColspanSegments(0, columns.length)).toHaveLength(3);
+    grid.getColumns()[1].hidden = false;
+
     grid.setActiveCell(0, 0);
     expect(row.querySelectorAll('.slick-cell.active')).toHaveLength(3);
     expect((grid as any).getCellFromEvent({ target: fragments[0] })).toEqual({ row: 0, cell: 0 });
+
+    const deferredHost = document.createElement('div');
+    row.appendChild(deferredHost);
+    (grid as any).dockingByColumn.get(0).sticky = true;
+    (grid as any)._options.rtl = true;
+    (grid as any).appendColspanFragments(
+      0,
+      5,
+      deferredHost,
+      [
+        { start: 1, end: 1, band: 'center' },
+        { start: 0, end: 0, band: 'left' },
+      ],
+      true
+    );
+    expect(deferredHost.previousElementSibling?.classList.contains('slick-cell-sticky')).toBe(true);
+    (grid as any)._options.rtl = false;
+
+    const cacheEntry = (grid as any).rowsCache[0];
+    delete cacheEntry.cellNodesByColumnIdx[0];
+    delete cacheEntry.cellColSpans[0];
+    (grid as any).cleanUpAndRenderCells({ top: 0, bottom: 0, leftPx: 0, rightPx: 320 });
+    expect((grid as any).rowsCache[0].cellSpanFragments[0][0].parentElement).toBe(row.querySelector('.slick-scrolling-cells'));
   });
 
   it('rejects non-sequential pinning when a rendered colspan crosses docking regions', () => {
@@ -151,7 +178,7 @@ describe('SlickGrid unified pinning', () => {
     const spanData = {
       getLength: () => data.length,
       getItem: (row: number) => data[row],
-      getItemMetadata: (row: number) => (row === 0 ? { columns: { 1: { colspan: 3 } } } : undefined),
+      getItemMetadata: (row: number) => (row === 0 ? { columns: { 0: { colspan: 1 }, 1: { colspan: 3 } } } : undefined),
     };
     container = document.createElement('div');
     container.style.width = '800px';
@@ -165,6 +192,8 @@ describe('SlickGrid unified pinning', () => {
     grid.setColumnPinning('b', 'left');
     expect(invalidPinning).toHaveBeenCalledWith(expect.stringContaining('non-sequential order'));
     expect(grid.getColumns()[1].pinned).toBeFalsy();
+    (grid as any)._options.pinning = { columns: { left: ['b'], right: ['d'] } };
+    expect((grid as any).validateColumnPinning(undefined, true)).toBe(false);
 
     grid.setColumnPinning('c', 'right');
     expect(grid.getColumns()[2].pinned).toBeFalsy();
@@ -605,10 +634,11 @@ describe('SlickGrid unified pinning', () => {
       0: {
         rowNode: [dockingRow],
         cellNodesByColumnIdx: { 0: document.createElement('div'), hasOwnProperty: () => false },
+        cellSpanFragments: { 0: [] },
       },
     };
     internals.dockingByColumn = new Map([[0, { band: 'left' }]]);
-    internals.updateRenderedCellDocking();
+    expect(internals.updateRenderedCellDocking()).toBe(false);
 
     const planner = internals.formattedDataCachePlanner;
     expect(planner(slickGrid.getColumns()[0], { excelExportOptions: { exportWithFormatter: true } })).toBeDefined();
