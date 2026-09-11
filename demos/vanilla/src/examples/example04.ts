@@ -54,10 +54,10 @@ export default class Example04 {
   dataset: any[];
   dataViewObj: SlickDataView;
   commandQueue: EditCommand[] = [];
-  pinnedColumnCount = 2;
+  pinnedLeftColumnCount = 2;
   pinnedRightColumnCount = 1;
-  pinnedRowCount = 3;
-  isPinnedBottom = false;
+  pinnedTopRowCount = 3;
+  pinnedBottomRowCount = 2;
   sgb: SlickVanillaGridBundle;
   checkboxSelectorInstance: SlickCheckboxSelectColumn;
   isSelectAllShownAsColumnTitle = false;
@@ -426,12 +426,15 @@ export default class Example04 {
       enableSelection: true,
       pinning: {
         columns: {
-          left: this.pinnedColumnCount,
+          left: this.pinnedLeftColumnCount,
           // Keep the Action column on the trailing edge without depending on
           // extension columns (such as the checkbox selector) being inserted.
           right: this.pinnedRightColumnCount > 0 ? ['action'] : [],
         },
-        rows: { top: this.getPinnedRowIndexes() },
+        rows: {
+          top: this.getPinnedRowIndexes(this.pinnedTopRowCount),
+          bottom: this.getPinnedRowIndexes(this.pinnedBottomRowCount, true),
+        },
       },
       editCommandHandler: (_item, _column, editCommand) => {
         this.commandQueue.push(editCommand);
@@ -596,27 +599,23 @@ export default class Example04 {
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
-  changePinnedColumnCount() {
-    this.setPinnedColumns(+this.pinnedColumnCount, this.pinnedRightColumnCount);
-  }
-
-  changePinnedRightColumnCount() {
-    this.setPinnedColumns(this.pinnedColumnCount, +this.pinnedRightColumnCount);
+  changePinnedColumnCount(value: string, side: 'left' | 'right') {
+    this.setPinnedColumns(side === 'left' ? +value : this.pinnedLeftColumnCount, side === 'right' ? +value : this.pinnedRightColumnCount);
   }
 
   /** Toggle the demo's right-pinned Action column while preserving left pinning. */
   toggleRightPinning() {
-    this.setPinnedColumns(this.pinnedColumnCount, this.pinnedRightColumnCount > 0 ? 0 : 1);
+    this.setPinnedColumns(this.pinnedLeftColumnCount, this.pinnedRightColumnCount > 0 ? 0 : 1);
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
-  changePinnedRowCount() {
-    if (this.sgb?.slickGrid?.setOptions) {
-      const rows = this.getPinnedRowIndexes();
-      this.sgb.slickGrid.setOptions({
-        pinning: { rows: this.isPinnedBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } },
-      });
+  changePinnedRowCount(value: string, side: 'top' | 'bottom') {
+    if (side === 'top') {
+      this.pinnedTopRowCount = +value;
+    } else {
+      this.pinnedBottomRowCount = +value;
     }
+    this.setPinnedRows();
   }
 
   setPinnedColumns(pinnedCols: number, rightCols = this.pinnedRightColumnCount) {
@@ -629,25 +628,25 @@ export default class Example04 {
       },
     });
     this.gridOptions = this.sgb?.slickGrid?.getOptions() ?? {};
-    this.pinnedColumnCount = pinnedCols;
+    this.pinnedLeftColumnCount = pinnedCols;
     this.pinnedRightColumnCount = Math.max(0, rightCols);
   }
 
-  /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
-  togglePinnedBottomRows() {
-    if (this.sgb?.slickGrid && this.sgb?.slickGrid.setOptions) {
-      this.isPinnedBottom = !this.isPinnedBottom;
-      const rows = this.getPinnedRowIndexes();
-      this.sgb.slickGrid.setOptions({
-        pinning: { rows: this.isPinnedBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } },
-      });
-    }
+  private setPinnedRows() {
+    this.sgb?.slickGrid?.setOptions({
+      pinning: {
+        rows: {
+          top: this.getPinnedRowIndexes(this.pinnedTopRowCount),
+          bottom: this.getPinnedRowIndexes(this.pinnedBottomRowCount, true),
+        },
+      },
+    });
   }
 
-  private getPinnedRowIndexes() {
-    const rowCount = Math.max(0, +this.pinnedRowCount);
+  private getPinnedRowIndexes(rowCount: number, isBottom = false) {
+    rowCount = Math.max(0, +rowCount);
     const dataLength = this.sgb?.slickGrid?.getDataLength?.() ?? this.dataset?.length ?? ITEMS_COUNT;
-    const firstPinnedRow = this.isPinnedBottom ? Math.max(0, dataLength - rowCount) : 0;
+    const firstPinnedRow = isBottom ? Math.max(0, dataLength - rowCount) : 0;
     return Array.from({ length: rowCount }, (_value, index) => firstPinnedRow + index);
   }
 

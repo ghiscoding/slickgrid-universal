@@ -14,25 +14,47 @@
   </div>
   <div class="row gx-2 mb-2 align-items-end">
     <div class="col-auto">
-      <label>Pinned Rows: </label><input class="form-control" type="number" min="-1" [(ngModel)]="pinnedRowCount" />
-    </div>
-    <div class="col-auto"><button class="btn btn-outline-secondary btn-sm" (click)="changePinnedRowCount()">Set</button></div>
-    <div class="col-auto">
-      <label>Pinned Columns: </label><input class="form-control" type="number" min="-1" [(ngModel)]="pinnedColumnCount" />
-    </div>
-    <div class="col-auto"><button class="btn btn-outline-secondary btn-sm" (click)="changePinnedColumnCount()">Set</button></div>
-    <div class="col-auto">
-      <label>Pinned Right: </label
-      ><input class="form-control pinned-right-column-count" type="number" min="0" [(ngModel)]="pinnedRightColumnCount" />
-    </div>
-    <div class="col-auto">
-      <button
-        class="btn btn-outline-secondary btn-sm"
-        (click)="setPinnedColumns(pinnedColumnCount, pinnedRightColumnCount)"
-        data-test="set-pinned-right-column"
+      <label>Pinned Rows (top/bottom): </label>
+      <select
+        class="form-select form-select-sm d-inline-block w-auto pinned-top-row-count"
+        [(ngModel)]="pinnedTopRowCount"
+        (ngModelChange)="changePinnedRowCount($event, 'top')"
       >
-        Set
-      </button>
+        @for (count of [0, 1, 2, 3, 4, 5]; track count) {
+          <option [ngValue]="count">{{ count }}</option>
+        }
+      </select>
+      <select
+        class="form-select form-select-sm d-inline-block w-auto pinned-bottom-row-count"
+        [(ngModel)]="pinnedBottomRowCount"
+        (ngModelChange)="changePinnedRowCount($event, 'bottom')"
+      >
+        @for (count of [0, 1, 2, 3, 4, 5]; track count) {
+          <option [ngValue]="count">{{ count }}</option>
+        }
+      </select>
+    </div>
+    <div class="col-auto">
+      <label>Pinned Columns (left/right): </label>
+      <select
+        class="form-select form-select-sm d-inline-block w-auto pinned-left-column-count"
+        [(ngModel)]="pinnedColumnCount"
+        (ngModelChange)="changePinnedColumnCount($event, 'left')"
+      >
+        <option [ngValue]="-1">None</option>
+        @for (count of [0, 1, 2, 3, 4, 5]; track count) {
+          <option [ngValue]="count">{{ count }}</option>
+        }
+      </select>
+      <select
+        class="form-select form-select-sm d-inline-block w-auto pinned-right-column-count"
+        [(ngModel)]="pinnedRightColumnCount"
+        (ngModelChange)="changePinnedColumnCount($event, 'right')"
+      >
+        @for (count of [0, 1, 2]; track count) {
+          <option [ngValue]="count">{{ count }}</option>
+        }
+      </select>
     </div>
   </div>
   <div class="row mb-2">
@@ -49,9 +71,6 @@
       </button>
       <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" (click)="toggleRightPinning()" data-test="toggle-pinned-right">
         Toggle Pinned Right
-      </button>
-      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" (click)="togglePinnedBottomRows()" data-test="toggle-pinned-bottom">
-        Toggle Pinned Rows (top/bottom)
       </button>
       <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" (click)="toggleSelectAllRow()" data-test="toggle-select-all-row">
         Toggle Select All

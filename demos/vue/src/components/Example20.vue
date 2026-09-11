@@ -21,8 +21,8 @@ const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const pinnedColumnCount = ref(2);
 const pinnedRightColumnCount = ref(1);
-const pinnedRowCount = ref(3);
-const isPinnedBottom = ref(false);
+const pinnedTopRowCount = ref(3);
+const pinnedBottomRowCount = ref(2);
 const isSelectAllShownAsColumnTitle = ref(false);
 let vueGrid!: SlickgridVueInstance;
 let checkboxSelectorInstance: any;
@@ -39,8 +39,8 @@ const myCustomTitleValidator = (value: any) => {
 };
 
 onBeforeMount(() => {
-  defineGrid();
   dataset.value = mockData(NB_ITEMS);
+  defineGrid();
 });
 
 function defineGrid() {
@@ -181,7 +181,7 @@ function defineGrid() {
     },
     pinning: {
       columns: { left: ['_checkbox_selector', 'title', 'percentComplete'], right: ['action'] },
-      rows: { top: getPinnedRowIndexes() },
+      rows: { top: getPinnedRowIndexes(pinnedTopRowCount.value), bottom: getPinnedRowIndexes(pinnedBottomRowCount.value, true) },
     },
     enableCellMenu: true,
     cellMenu: {
@@ -214,10 +214,10 @@ function mockData(count: number) {
   }));
 }
 
-function getPinnedRowIndexes() {
-  const count = Math.max(0, Number(pinnedRowCount.value) || 0);
+function getPinnedRowIndexes(rowCount: number, isBottom = false) {
+  const count = Math.max(0, Number(rowCount) || 0);
   const dataLength = vueGrid?.slickGrid?.getDataLength?.() ?? dataset.value.length;
-  const first = isPinnedBottom.value ? Math.max(0, dataLength - count) : 0;
+  const first = isBottom ? Math.max(0, dataLength - count) : 0;
   return Array.from({ length: count }, (_v, i) => first + i);
 }
 
@@ -330,26 +330,29 @@ function setPinnedColumns(left: number, right = pinnedRightColumnCount.value) {
   pinnedColumnCount.value = left;
   pinnedRightColumnCount.value = nextRight;
 }
-function changePinnedColumnCount() {
-  setPinnedColumns(Number(pinnedColumnCount.value), pinnedRightColumnCount.value);
-}
-function changePinnedRightColumnCount() {
-  setPinnedColumns(pinnedColumnCount.value, Number(pinnedRightColumnCount.value));
+function changePinnedColumnCount(value: number, side: 'left' | 'right') {
+  setPinnedColumns(side === 'left' ? value : pinnedColumnCount.value, side === 'right' ? value : pinnedRightColumnCount.value);
 }
 function toggleRightPinning() {
   setPinnedColumns(pinnedColumnCount.value, pinnedRightColumnCount.value > 0 ? 0 : 1);
 }
-function changePinnedRowCount() {
+function changePinnedRowCount(value: number, side: 'top' | 'bottom') {
+  if (side === 'top') {
+    pinnedTopRowCount.value = value;
+  } else {
+    pinnedBottomRowCount.value = value;
+  }
   vueGrid?.slickGrid?.setOptions({
-    pinning: { rows: isPinnedBottom.value ? { top: [], bottom: getPinnedRowIndexes() } : { top: getPinnedRowIndexes(), bottom: [] } },
+    pinning: {
+      rows: {
+        top: getPinnedRowIndexes(pinnedTopRowCount.value),
+        bottom: getPinnedRowIndexes(pinnedBottomRowCount.value, true),
+      },
+    },
   });
 }
 function removePinnedColumns() {
   setPinnedColumns(-1, 0);
-}
-function togglePinnedBottomRows() {
-  isPinnedBottom.value = !isPinnedBottom.value;
-  changePinnedRowCount();
 }
 function toggleWhichRowToShowSelectAll() {
   isSelectAllShownAsColumnTitle.value = !isSelectAllShownAsColumnTitle.value;
@@ -417,34 +420,41 @@ function vueGridReady(grid: SlickgridVueInstance) {
     </ul>
   </div>
   <br />
-  <div class="row">
-    <div class="col-sm-12">
-      <span
-        ><label>Pinned Rows: </label><input v-model="pinnedRowCount" type="number" min="-1" /><button
-          class="btn btn-outline-secondary btn-xs btn-icon mx-1"
-          @click="changePinnedRowCount()"
-        >
-          Set
-        </button></span
+  <div class="row gx-2 mb-2 align-items-end">
+    <div class="col-auto">
+      <label>Pinned Rows (top/bottom): </label>
+      <select
+        v-model.number="pinnedTopRowCount"
+        class="form-select form-select-sm d-inline-block w-auto pinned-top-row-count"
+        @change="changePinnedRowCount(pinnedTopRowCount, 'top')"
       >
-      <span style="margin-left: 10px"
-        ><label>Pinned Columns: </label><input v-model="pinnedColumnCount" type="number" min="-1" /><button
-          class="btn btn-outline-secondary btn-xs btn-icon mx-1"
-          @click="changePinnedColumnCount()"
-        >
-          Set
-        </button></span
+        <option v-for="count in [0, 1, 2, 3, 4, 5]" :key="count" :value="count">{{ count }}</option>
+      </select>
+      <select
+        v-model.number="pinnedBottomRowCount"
+        class="form-select form-select-sm d-inline-block w-auto pinned-bottom-row-count"
+        @change="changePinnedRowCount(pinnedBottomRowCount, 'bottom')"
       >
-      <span style="margin-left: 10px"
-        ><label>Pinned Right: </label
-        ><input v-model="pinnedRightColumnCount" class="pinned-right-column-count" type="number" min="0" /><button
-          class="btn btn-outline-secondary btn-xs btn-icon mx-1"
-          data-test="set-pinned-right-column"
-          @click="changePinnedRightColumnCount()"
-        >
-          Set
-        </button></span
+        <option v-for="count in [0, 1, 2, 3, 4, 5]" :key="count" :value="count">{{ count }}</option>
+      </select>
+    </div>
+    <div class="col-auto">
+      <label>Pinned Columns (left/right): </label>
+      <select
+        v-model.number="pinnedColumnCount"
+        class="form-select form-select-sm d-inline-block w-auto pinned-left-column-count"
+        @change="changePinnedColumnCount(pinnedColumnCount, 'left')"
       >
+        <option value="-1">None</option>
+        <option v-for="count in [0, 1, 2, 3, 4, 5]" :key="count" :value="count">{{ count }}</option>
+      </select>
+      <select
+        v-model.number="pinnedRightColumnCount"
+        class="form-select form-select-sm d-inline-block w-auto pinned-right-column-count"
+        @change="changePinnedColumnCount(pinnedRightColumnCount, 'right')"
+      >
+        <option v-for="count in [0, 1, 2]" :key="count" :value="count">{{ count }}</option>
+      </select>
     </div>
   </div>
   <div class="row mt-2">
@@ -461,9 +471,6 @@ function vueGridReady(grid: SlickgridVueInstance) {
       </button>
       <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-pinned-right" @click="toggleRightPinning()">
         <i class="mdi mdi-pin-outline"></i> Toggle Pinned Right
-      </button>
-      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="toggle-pinned-bottom" @click="togglePinnedBottomRows()">
-        <i class="mdi mdi-flip-vertical"></i> Toggle Pinned Rows (top/bottom)
       </button>
       <button
         class="btn btn-outline-secondary btn-sm btn-icon mx-1"

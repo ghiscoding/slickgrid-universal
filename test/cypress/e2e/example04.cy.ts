@@ -4,8 +4,7 @@ describe('Example 04 - Pinned Grid', () => {
   const getCell = (rowIndex: number, columnIndex: number) =>
     cy.get(`.grid4 .slick-row[data-row="${rowIndex}"] .slick-cell.l${columnIndex}`);
   const setRightPinning = (count: number) => {
-    cy.get('.pinned-right-column-count').clear().type(`${count}`);
-    cy.get('.pinned-right-column-count').next('button').click();
+    cy.get('.pinned-right-column-count').select(`${count}`);
   };
 
   it('should display Example title', () => {
@@ -33,12 +32,13 @@ describe('Example 04 - Pinned Grid', () => {
     cy.get('body').trigger('mousedown');
   });
 
-  it('should have three top-pinned rows and left/center/right cells on page load', () => {
+  it('should have top/bottom-pinned rows and left/center/right cells on page load', () => {
     const row0 = '.grid4 .slick-row[data-row="0"]';
 
     // Pinning uses one row node split into regions and a single docking overlay;
     // it no longer duplicates rows into legacy left/right pinned canvases.
     cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-top').should('have.length', 3);
+    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-bottom').should('have.length', 2);
     cy.get(`${row0} .slick-pinned-left-cells > .slick-cell`).should('have.length', 3);
     cy.get(`${row0} .slick-scrolling-cells > .slick-cell`).should('have.length', 5);
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell`).should('have.length', 1);
@@ -51,17 +51,22 @@ describe('Example 04 - Pinned Grid', () => {
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell:nth(0) .cell-menu-dropdown`).should('contain', 'Action');
   });
 
-  it('should pin the last dataset rows when toggling pinned rows to the bottom', () => {
-    cy.get('[data-test="toggle-pinned-bottom"]').click();
+  it('should clear top-pinned rows when selecting zero rows', () => {
+    cy.get('.pinned-top-row-count').select('0');
+    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-top').should('not.exist');
 
-    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-bottom').should('have.length', 3);
-    cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-bottom[data-row="497"] .slick-cell.l1').should('contain', 'Task 497');
+    cy.get('.pinned-top-row-count').select('3');
+    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-top').should('have.length', 3);
+  });
+
+  it('should independently update and clear bottom-pinned rows', () => {
+    cy.get('.pinned-bottom-row-count').select('0');
+    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-bottom').should('not.exist');
+
+    cy.get('.pinned-bottom-row-count').select('2');
+    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-bottom').should('have.length', 2);
     cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-bottom[data-row="498"] .slick-cell.l1').should('contain', 'Task 498');
     cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-bottom[data-row="499"] .slick-cell.l1').should('contain', 'Task 499');
-    cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-bottom[data-row="0"]').should('not.exist');
-
-    cy.get('[data-test="toggle-pinned-bottom"]').click();
-    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-top').should('have.length', 3);
   });
 
   it('should pin multiple columns on the right and render matching header and filter regions', () => {

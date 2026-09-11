@@ -1348,6 +1348,36 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       });
 
+      it('should offer bulk pinning commands around non-pinnable columns', () => {
+        const testColumns = [
+          { ...columnsMock[0], header: undefined },
+          { ...columnsMock[1], header: undefined, pinnable: false },
+          { ...columnsMock[2], header: undefined },
+        ] as Column[];
+        const getColumnsSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(testColumns);
+        const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+
+        plugin.init();
+        plugin.addonOptions = { hidePinColumnCommand: false };
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: testColumns, grid: gridStub }, eventData, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: testColumns[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        (headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement).dispatchEvent(
+          new Event('click', { bubbles: true, cancelable: true, composed: false })
+        );
+
+        const pinColumnCommand = testColumns[0].header?.menu?.commandItems?.find(
+          (item) => item !== 'divider' && item.command === 'pin-column'
+        ) as MenuCommandItem;
+        const pinRightCommand = pinColumnCommand.commandItems?.find((item) => item !== 'divider' && item.command === 'pin-columns-right') as MenuCommandItem;
+        expect(pinRightCommand).toBeTruthy();
+
+        pinRightCommand.action?.(new SlickEventData(), { column: testColumns[0] } as any);
+        expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { right: ['field1', 'field3'] } } }, false, true);
+
+        getColumnsSpy.mockRestore();
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      });
+
       it('should place only one separator between each visible pinning command group', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,

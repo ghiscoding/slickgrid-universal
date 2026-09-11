@@ -167,8 +167,7 @@ references, while the active stylesheet now uses `--slick-pinned-*`. Old command
 IDs, locale keys, and demo selectors are removed from active examples/runtime and remain only in
 migration docs where needed. Do not reintroduce legacy runtime branches.
 
-The previous working-tree LOC estimate is stale after the deletion pass. Recalculate production
-LOC after the remaining alias/style audit rather than using the earlier planning estimate.
+The production LOC estimate below has been recalculated after the alias/style audit.
 
 ## Maintainability acceptance gate
 
@@ -625,19 +624,16 @@ are separate pre-existing typing issues and should be handled independently.
 
 These are rough **library-only** figures for `packages/common` (including SCSS and public
 interfaces, excluding Example 04, tests, generated output, and framework-wrapper changes).
-They are calculated from the current diff, counting the two new files as additions:
+They are calculated from the current diff:
 
-- current working-tree library diff: approximately `+2,886 / -387`, or **+2,499 net LOC**
-  relative to `HEAD` (packages, excluding tests/demos);
-- this includes the new `DockingController` and docking types, single-viewport/per-row
-  routing, sticky/pinning hardening, and the pinning/docking stylesheet changes;
-- this remains a provisional figure because the working tree includes the broader docking
-  implementation and intentional migration-facing historical style names separately from the
-  removed runtime pane implementation.
+- current production-ish library diff: approximately `+3,430 / -1,509`, or **+1,921 net LOC**
+  relative to base commit `e757539c2` (packages, excluding tests/demos);
+- this includes the new `DockingController` and docking types, single-viewport/per-row routing,
+  sticky/pinning hardening, and the pinning/docking stylesheet changes;
+- this excludes test files and changelogs; historical migration references are documentation-only.
 
-The earlier 800–1,200-line removal estimate is retained only as a planning range. It is not a
-final forecast: the exact permanent-pinning LOC must be measured after the full working-tree
-diff is finalized.
+The earlier 800–1,200-line removal estimate is retained only as a planning range and is not a
+forecast of the current implementation.
 
 Hardening basic sticky columns/rows would add roughly **+150–300 LOC**, giving an estimated
 **+120 to +670 net LOC** after cleanup. Supporting grouped quarterly sticky headers would add
@@ -774,15 +770,13 @@ requirements are the two largest sources of variance.
   header-row root also receives `headerRowHeight`; without that root height,
   `display: contents` band wrappers collapsed the visible filter bar to the
   1px spacer height.
-- Example 17 Cypress migration is in progress. Its demo now uses canonical
+- Example 17 Cypress migration is complete for the current scope. Its demo uses canonical
   `pinning` instead of inert legacy options, and the shared drag helper reads the
   docking horizontal scrollbar for single-viewport grids. Active canvas/viewport
   fallback now also supports drag selection from pinned-row overlays. A related
   `scrollRowIntoView()` fix accounts for top/bottom docked-row height when
-  determining the usable center viewport. Firefox currently reports 12 passing,
-  1 pending (the intentionally skipped grouping auto-scroll case), and one
-  remaining bottom-edge assertion that still needs follow-up; do not spend more
-  migration time here until the other spec failures are triaged.
+  determining the usable center viewport. Bottom-edge drag coverage is complete; the
+  only pending case is the intentionally skipped flaky grouping auto-scroll test.
 
 1. **Legacy runtime removal is complete.** The old options, interfaces, state/service
    fields, validation names, pane behavior, and redundant viewport/canvas aliases have been
@@ -842,7 +836,8 @@ deferred until the vanilla guide and API cleanup are settled; do not add framewo
    neutral single-node fields. Continue to:
    - document the current `--slick-pinned-*` theme variables and their v11-and-lower names;
    - update remaining demo labels/selectors only where it does not conflict with migration coverage.
-8. Recalculate production LOC after the structural audit.
+8. [x] Recalculate production LOC after the structural audit: `+3,430 / -1,509`
+   (**+1,921 net LOC**) from `e757539c2`, excluding tests and changelogs.
 9. Keep unit, coverage, Cypress, framework, and documentation work aligned with the cleaned API;
    do not reintroduce the removed runtime options or pane renderer.
 
@@ -861,8 +856,8 @@ deferred until the vanilla guide and API cleanup are settled; do not add framewo
 - During the structural audit, distinguish intentional migration references (docs, command IDs,
   locale text, demo selectors, and theme variables) from runtime configuration. Verify pane aliases,
   synchronized scroll branches, header-width slack, GridState/GridService, resizer, header menus,
-  extensions, and all four framework wrappers, then recalculate LOC from `git diff HEAD` and update
-  this file again.
+  extensions, and all four framework wrappers; the current production LOC estimate is recorded
+  above.
 
 ## Suggested resume prompt
 

@@ -330,23 +330,16 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           // consistent regardless of the selected column's current state.
           let hasPinningOrResizeCommand = false;
           const bulkPinningCommandItems: MenuCommandItem[] = [];
-          const columnPosition = columns.findIndex((col) => col.id === columnDef.id);
-          const hasNonPinnableColumnInRange = (side: 'left' | 'right') =>
-            columnPosition >= 0 &&
-            (side === 'left' ? columns.slice(0, columnPosition + 1) : columns.slice(columnPosition)).some(
-              (column) => column?.pinnable === false
-            );
           if (headerMenuOptions && !headerMenuOptions.hidePinningColumnsCommand) {
-            for (const [side, command, titleKey, title] of [
+            for (const [command, titleKey, title] of [
               [
-                'left',
                 'pin-columns-left',
                 'PIN_COLUMNS_LEFT',
                 commandLabels?.pinningColumnsLeftCommand || commandLabels?.pinningColumnsCommand || '',
               ],
-              ['right', 'pin-columns-right', 'PIN_COLUMNS_RIGHT', commandLabels?.pinningColumnsRightCommand || ''],
+              ['pin-columns-right', 'PIN_COLUMNS_RIGHT', commandLabels?.pinningColumnsRightCommand || ''],
             ] as const) {
-              if (!hasNonPinnableColumnInRange(side)) {
+              if (columnDef.pinnable !== false) {
                 bulkPinningCommandItems.push({
                   _orgTitle: title,
                   iconCssClass: headerMenuOptions.iconPinningColumns || 'mdi mdi-pin-outline',
@@ -713,13 +706,12 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
   /** Apply or clear the bulk index-based pinning option. */
   protected pinOrUnpinColumns(column: Column, command: 'pin-columns-left' | 'pin-columns-right' | 'unpin-columns'): void {
-    const columnPosition = this.grid.getColumns().findIndex((col) => col.id === column.id);
     const pinning =
       command === 'unpin-columns'
         ? { left: [], right: [] }
         : command === 'pin-columns-right'
-          ? { right: columnPosition < 0 ? -1 : this.grid.getColumns().length - columnPosition }
-          : { left: columnPosition };
+          ? { right: this.getPinnableColumnReferences(column, 'right') }
+          : { left: this.getPinnableColumnReferences(column, 'left') };
     this.grid.setOptions(
       {
         pinning: { columns: pinning },
@@ -733,6 +725,22 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this.sharedService.gridOptions = this.grid.getOptions();
     this.grid.updateColumns();
     this.recreateHeaderMenu(this.grid.getColumns());
+  }
+
+  /** Return the numeric range when all columns are pinnable, otherwise use pinnable column ids. */
+  protected getPinnableColumnReferences(column: Column, side: 'left' | 'right'): number | (string | number)[] {
+    const columns = this.grid.getColumns();
+    const columnPosition = columns.findIndex((col) => col.id === column.id);
+    if (columnPosition < 0) {
+      return -1;
+    }
+
+    const columnRange = side === 'left' ? columns.slice(0, columnPosition + 1) : columns.slice(columnPosition);
+    return columnRange.some((col) => col.pinnable === false)
+      ? columnRange.filter((col) => col.pinnable !== false).map((col) => col.id)
+      : side === 'left'
+        ? columnPosition
+        : columns.length - columnPosition;
   }
 
   protected createParentMenu(e: DOMMouseOrTouchEvent<HTMLDivElement>, columnDef: Column, menu: HeaderMenuItems): void {

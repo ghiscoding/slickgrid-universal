@@ -18,15 +18,13 @@ const Example20: React.FC = () => {
   const [dataset] = useState<any[]>(getData());
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [pinnedColumnCount, setPinnedColumnCount] = useState(2);
-  const [pinnedRowCount, setPinnedRowCount] = useState(3);
+  const [pinnedTopRowCount, setPinnedTopRowCount] = useState(3);
+  const [pinnedBottomRowCount, setPinnedBottomRowCount] = useState(2);
   const [pinnedRightColumnCount, setPinnedRightColumnCount] = useState(1);
-  const [isPinnedBottom, setIsPinnedBottom] = useState(false);
   const [hideSubTitle, setHideSubTitle] = useState(false);
   const [isSelectAllShownAsColumnTitle, setIsSelectAllShownAsColumnTitle] = useState(false);
   const checkboxSelectorRef = useRef<any>(null);
   const pinnedColumnCountRef = useRef(2);
-  const pinnedRowCountInputRef = useRef<HTMLInputElement>(null);
-  const pinnedRightColumnInputRef = useRef<HTMLInputElement>(null);
   const pinnedRightColumnCountRef = useRef(1);
 
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
@@ -233,8 +231,10 @@ const Example20: React.FC = () => {
         name: 'Sel',
         onExtensionRegistered: (instance: any) => (checkboxSelectorRef.current = instance),
       },
-      pinning: { columns: { left: ['_checkbox_selector', 'title', 'percentComplete'], right: ['action'] }, rows: { top: [0, 1, 2] } },
-      // pinnedBottom: true, // if you want to pin the bottom instead of the top, you can enable this property
+      pinning: {
+        columns: { left: ['_checkbox_selector', 'title', 'percentComplete'], right: ['action'] },
+        rows: { top: [0, 1, 2], bottom: [498, 499] },
+      },
 
       // show both single-column and bulk pinning commands in HeaderMenu & GridMenu; these are opt-in commands
       gridMenu: {
@@ -282,29 +282,26 @@ const Example20: React.FC = () => {
     return mockDataset;
   }
 
-  /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
-  function changePinnedColumnCount(e: React.FormEvent<HTMLInputElement>) {
-    const value = +(e.currentTarget.value || 0);
-    setPinnedColumnCount(value);
-  }
-
-  function updatePinnedColumnCount() {
-    setPinnedColumns(pinnedColumnCount, pinnedRightColumnCount);
-  }
-
   /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
-  function updatePinnedRowCount() {
-    const inputValue = pinnedRowCountInputRef.current?.value;
-    const nextPinnedRowCount = Math.max(0, Number(inputValue ?? pinnedRowCount) || 0);
+  function updatePinnedRowCount(value: number, side: 'top' | 'bottom') {
+    const nextPinnedRowCount = Math.max(0, Number(value) || 0);
     const slickGrid = reactGridRef.current?.slickGrid;
     const dataLength = slickGrid?.getDataLength?.() ?? dataset.length;
-    const firstPinnedRow = isPinnedBottom ? Math.max(0, dataLength - nextPinnedRowCount) : 0;
-    const rows = Array.from({ length: nextPinnedRowCount }, (_v, index) => firstPinnedRow + index);
+    const topCount = side === 'top' ? nextPinnedRowCount : pinnedTopRowCount;
+    const bottomCount = side === 'bottom' ? nextPinnedRowCount : pinnedBottomRowCount;
+    const getRows = (count: number, isBottom = false) => {
+      const firstPinnedRow = isBottom ? Math.max(0, dataLength - count) : 0;
+      return Array.from({ length: count }, (_v, index) => firstPinnedRow + index);
+    };
     slickGrid?.setOptions({
-      pinning: { rows: isPinnedBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } },
+      pinning: { rows: { top: getRows(topCount), bottom: getRows(bottomCount, true) } },
     });
 
-    setPinnedRowCount(nextPinnedRowCount);
+    if (side === 'top') {
+      setPinnedTopRowCount(nextPinnedRowCount);
+    } else {
+      setPinnedBottomRowCount(nextPinnedRowCount);
+    }
   }
 
   function getContextMenuOptions(): any {
@@ -418,9 +415,6 @@ const Example20: React.FC = () => {
     });
     setPinnedColumnCount(left);
     setPinnedRightColumnCount(nextRight);
-    if (pinnedRightColumnInputRef.current) {
-      pinnedRightColumnInputRef.current.value = `${nextRight}`;
-    }
   }
 
   function reapplyPinnedColumns() {
@@ -428,11 +422,6 @@ const Example20: React.FC = () => {
     const right = pinnedRightColumnCountRef.current;
     const rightIds = ['cityOfOrigin', 'action'].slice(Math.max(0, 2 - right));
     reactGridRef.current?.slickGrid.setOptions({ pinning: { columns: { left: left >= 0 ? left : [], right: rightIds } } });
-  }
-
-  function updatePinnedRightColumnCount() {
-    const nextRight = Math.max(0, Number(pinnedRightColumnInputRef.current?.value ?? pinnedRightColumnCount) || 0);
-    setPinnedColumns(pinnedColumnCount, nextRight);
   }
 
   function toggleRightPinning() {
@@ -462,20 +451,6 @@ const Example20: React.FC = () => {
       false
     );
     setPinnedColumns(pinnedColumnCount, pinnedRightColumnCount);
-  }
-
-  /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
-  function togglePinnedBottomRows() {
-    const newIsPinnedBottom = !isPinnedBottom;
-    const slickGrid = reactGridRef.current?.slickGrid;
-    const dataLength = slickGrid?.getDataLength?.() ?? dataset.length;
-    const rowCount = Math.max(0, pinnedRowCount);
-    const firstPinnedRow = newIsPinnedBottom ? Math.max(0, dataLength - rowCount) : 0;
-    const rows = Array.from({ length: rowCount }, (_value, index) => firstPinnedRow + index);
-    slickGrid?.setOptions({
-      pinning: { rows: newIsPinnedBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } },
-    });
-    setIsPinnedBottom(newIsPinnedBottom);
   }
 
   function toggleSubTitle() {
@@ -527,45 +502,57 @@ const Example20: React.FC = () => {
 
       <br />
 
-      <div className="row">
-        <div className="col-sm-12">
-          <span>
-            <label htmlFor="">Pinned Rows: </label>
-            <input ref={pinnedRowCountInputRef} type="number" min="-1" defaultValue={pinnedRowCount} />
-            <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" onClick={() => updatePinnedRowCount()}>
-              Set
-            </button>
-          </span>
-          <span style={{ marginLeft: '10px' }}>
-            <label htmlFor="">Pinned Columns: </label>
-            <input
-              className="pinned-column-count"
-              type="number"
-              min="-1"
-              value={pinnedColumnCount}
-              onChange={($event) => changePinnedColumnCount($event)}
-            />
-            <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" onClick={() => updatePinnedColumnCount()}>
-              Set
-            </button>
-          </span>
-          <span style={{ marginLeft: '10px' }}>
-            <label htmlFor="">Pinned Right: </label>
-            <input
-              className="pinned-right-column-count"
-              type="number"
-              min="0"
-              defaultValue={pinnedRightColumnCount}
-              ref={pinnedRightColumnInputRef}
-            />
-            <button
-              className="btn btn-outline-secondary btn-xs btn-icon mx-1"
-              data-test="set-pinned-right-column"
-              onClick={() => updatePinnedRightColumnCount()}
-            >
-              Set
-            </button>
-          </span>
+      <div className="row gx-2 mb-2 align-items-end">
+        <div className="col-auto">
+          <label htmlFor="">Pinned Rows (top/bottom): </label>
+          <select
+            className="form-select form-select-sm d-inline-block w-auto pinned-top-row-count"
+            value={pinnedTopRowCount}
+            onChange={(e) => updatePinnedRowCount(+e.currentTarget.value, 'top')}
+          >
+            {[0, 1, 2, 3, 4, 5].map((count) => (
+              <option key={count} value={count}>
+                {count}
+              </option>
+            ))}
+          </select>
+          <select
+            className="form-select form-select-sm d-inline-block w-auto pinned-bottom-row-count"
+            value={pinnedBottomRowCount}
+            onChange={(e) => updatePinnedRowCount(+e.currentTarget.value, 'bottom')}
+          >
+            {[0, 1, 2, 3, 4, 5].map((count) => (
+              <option key={count} value={count}>
+                {count}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="col-auto">
+          <label htmlFor="">Pinned Columns (left/right): </label>
+          <select
+            className="form-select form-select-sm d-inline-block w-auto pinned-left-column-count"
+            value={pinnedColumnCount}
+            onChange={(e) => setPinnedColumns(+e.currentTarget.value, pinnedRightColumnCount)}
+          >
+            <option value={-1}>None</option>
+            {[0, 1, 2, 3, 4, 5].map((count) => (
+              <option key={count} value={count}>
+                {count}
+              </option>
+            ))}
+          </select>
+          <select
+            className="form-select form-select-sm d-inline-block w-auto pinned-right-column-count"
+            value={pinnedRightColumnCount}
+            onChange={(e) => setPinnedColumns(pinnedColumnCount, +e.currentTarget.value)}
+          >
+            {[0, 1, 2].map((count) => (
+              <option key={count} value={count}>
+                {count}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -592,16 +579,6 @@ const Example20: React.FC = () => {
           >
             <i className="mdi mdi-pin-outline"></i> Toggle Pinned Right
           </button>
-          <span style={{ marginLeft: '15px' }}>
-            <button
-              className="btn btn-outline-secondary btn-sm btn-icon"
-              data-test="toggle-pinned-bottom"
-              onClick={() => togglePinnedBottomRows()}
-            >
-              <i className="mdi mdi-flip-vertical"></i> Toggle Pinned Rows (top/bottom)
-            </button>
-            <span style={{ fontWeight: 'bold' }}>: {isPinnedBottom ? 'Bottom' : 'Top'}</span>
-          </span>
           <button
             className="btn btn-outline-secondary btn-sm btn-icon mx-1"
             data-test="toggle-select-all-row"

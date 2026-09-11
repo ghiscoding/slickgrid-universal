@@ -21,19 +21,68 @@
 
 <div class="row mb-3">
   <span>
-    <label for="">Pinned Rows: </label>
-    <input type="number" class="pinned-row-count is-narrow input is-small" min="-1" value.bind="pinnedRowCount" />
-    <button class="button is-small" onclick.trigger="changePinnedRowCount()">Set</button>
+    <label for="">Pinned Rows (top/bottom): </label>
+    <div class="select is-small">
+      <select
+        class="pinned-top-row-count"
+        value.bind="pinnedTopRowCount"
+        onchange.trigger="changePinnedRowCount(event.target.value, 'top')"
+      >
+        <option value="0">None</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+    <div class="select is-small">
+      <select
+        class="pinned-bottom-row-count"
+        value.bind="pinnedBottomRowCount"
+        onchange.trigger="changePinnedRowCount(event.target.value, 'bottom')"
+      >
+        <option value="0">None</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
   </span>
   <span class="ml-1">
-    <label for="">Pinned Columns: </label>
-    <input type="number" class="pinned-column-count is-narrow input is-small" min="-1" value.bind="pinnedColumnCount" />
-    <button class="button is-small" onclick.trigger="changePinnedColumnCount()">Set</button>
-  </span>
-  <span class="ml-1">
-    <label for="">Pinned Right: </label>
-    <input type="number" class="pinned-right-column-count is-narrow input is-small" min="0" value.bind="pinnedRightColumnCount" />
-    <button class="button is-small" onclick.trigger="changePinnedRightColumnCount()">Set</button>
+    <label for="">Pinned Columns (left/right): </label>
+    <div class="select is-small">
+      <select
+        class="pinned-left-column-count"
+        value.bind="pinnedLeftColumnCount"
+        onchange.trigger="changePinnedColumnCount(event.target.value, 'left')"
+      >
+        <option value="-1">None</option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+    <div class="select is-small">
+      <select
+        class="pinned-right-column-count"
+        value.bind="pinnedRightColumnCount"
+        onchange.trigger="changePinnedColumnCount(event.target.value, 'right')"
+      >
+        <option value="-1">None</option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
   </span>
   <span class="ml-3">
     <button class="button is-small" onclick.trigger="setPinnedColumns(-1, 0)" data-test="remove-pinned-column-button">
@@ -47,10 +96,6 @@
     <button class="button is-small" data-test="toggle-pinned-right" onclick.trigger="toggleRightPinning()">
       <span class="mdi mdi-pin-outline"></span>
       <span>Toggle Right Pinning</span>
-    </button>
-    <button class="button is-small" data-test="toggle-pinned-bottom" onclick.trigger="togglePinnedBottomRows()">
-      <span class="mdi mdi-flip-vertical"></span>
-      <span>Toggle Pinned Rows (top/bottom)</span>
     </button>
     <button class="button is-small ml-3" data-test="toggle-select-all-row" onclick.trigger="toggleWhichRowToShowSelectAll()">
       <span class="mdi mdi-swap-horizontal mdi-rotate-90"></span>

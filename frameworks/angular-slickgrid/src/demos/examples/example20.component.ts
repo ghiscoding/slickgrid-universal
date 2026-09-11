@@ -27,9 +27,9 @@ export class Example20Component implements OnInit {
   dataset: any[] = [];
   pinnedColumnCount = 2;
   pinnedRightColumnCount = 1;
-  pinnedRowCount = 3;
+  pinnedTopRowCount = 3;
+  pinnedBottomRowCount = 2;
   hideSubTitle = false;
-  isPinnedBottom = false;
   isSelectAllShownAsColumnTitle = false;
   checkboxSelectorInstance: any;
   ngOnInit(): void {
@@ -157,7 +157,10 @@ export class Example20Component implements OnInit {
         name: 'Sel',
         onExtensionRegistered: (i: any) => (this.checkboxSelectorInstance = i),
       },
-      pinning: { columns: { left: ['_checkbox_selector', 'title', 'percentComplete'], right: ['action'] }, rows: { top: [0, 1, 2] } },
+      pinning: {
+        columns: { left: ['_checkbox_selector', 'title', 'percentComplete'], right: ['action'] },
+        rows: { top: [0, 1, 2], bottom: [498, 499] },
+      },
       enableCellMenu: true,
       cellMenu: {
         onCommand: (_e: any, a: any) => this.executeCommand(a),
@@ -269,26 +272,33 @@ export class Example20Component implements OnInit {
     this.pinnedColumnCount = left;
     this.pinnedRightColumnCount = n;
   }
-  changePinnedColumnCount() {
-    this.setPinnedColumns(this.pinnedColumnCount);
+  changePinnedColumnCount(value: number, side: 'left' | 'right') {
+    this.setPinnedColumns(side === 'left' ? value : this.pinnedColumnCount, side === 'right' ? value : this.pinnedRightColumnCount);
   }
-  changePinnedRowCount() {
-    const rows = this.getPinnedRowIndexes();
-    this.gridObj?.setOptions({ pinning: { rows: this.isPinnedBottom ? { top: [], bottom: rows } : { top: rows, bottom: [] } } });
+  changePinnedRowCount(value: number, side: 'top' | 'bottom') {
+    if (side === 'top') {
+      this.pinnedTopRowCount = value;
+    } else {
+      this.pinnedBottomRowCount = value;
+    }
+    this.gridObj?.setOptions({
+      pinning: {
+        rows: {
+          top: this.getPinnedRowIndexes(this.pinnedTopRowCount),
+          bottom: this.getPinnedRowIndexes(this.pinnedBottomRowCount, true),
+        },
+      },
+    });
   }
 
-  private getPinnedRowIndexes() {
-    const rowCount = Math.max(0, Number(this.pinnedRowCount) || 0);
+  private getPinnedRowIndexes(rowCount: number, isBottom = false) {
+    rowCount = Math.max(0, Number(rowCount) || 0);
     const dataLength = this.gridObj?.getDataLength?.() ?? this.dataset.length;
-    const firstPinnedRow = this.isPinnedBottom ? Math.max(0, dataLength - rowCount) : 0;
+    const firstPinnedRow = isBottom ? Math.max(0, dataLength - rowCount) : 0;
     return Array.from({ length: rowCount }, (_v, index) => firstPinnedRow + index);
   }
   toggleRightPinning() {
     this.setPinnedColumns(this.pinnedColumnCount, this.pinnedRightColumnCount > 0 ? 0 : 1);
-  }
-  togglePinnedBottomRows() {
-    this.isPinnedBottom = !this.isPinnedBottom;
-    this.changePinnedRowCount();
   }
   toggleSelectAllRow() {
     this.isSelectAllShownAsColumnTitle = !this.isSelectAllShownAsColumnTitle;

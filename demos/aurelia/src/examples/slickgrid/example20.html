@@ -14,25 +14,39 @@
   </div>
   <div class="row gx-2 mb-2 align-items-end">
     <div class="col-auto">
-      <label>Pinned Rows: </label><input class="form-control" type="number" min="-1" value.bind="pinnedRowCount" />
-    </div>
-    <div class="col-auto"><button class="btn btn-outline-secondary btn-sm" click.trigger="changePinnedRowCount()">Set</button></div>
-    <div class="col-auto">
-      <label>Pinned Columns: </label><input class="form-control" type="number" min="-1" value.bind="pinnedColumnCount" />
-    </div>
-    <div class="col-auto"><button class="btn btn-outline-secondary btn-sm" click.trigger="changePinnedColumnCount()">Set</button></div>
-    <div class="col-auto">
-      <label>Pinned Right: </label
-      ><input class="form-control pinned-right-column-count" type="number" min="0" value.bind="pinnedRightColumnCount" />
-    </div>
-    <div class="col-auto">
-      <button
-        class="btn btn-outline-secondary btn-sm"
-        click.trigger="setPinnedColumns(pinnedColumnCount, pinnedRightColumnCount)"
-        data-test="set-pinned-right-column"
+      <label>Pinned Rows (top/bottom): </label>
+      <select
+        class="form-select form-select-sm d-inline-block w-auto pinned-top-row-count"
+        value.bind="pinnedTopRowCount"
+        change.trigger="changePinnedRowCount($event.target.value, 'top')"
       >
-        Set
-      </button>
+        <option repeat.for="count of [0, 1, 2, 3, 4, 5]" model.bind="count">${count}</option>
+      </select>
+      <select
+        class="form-select form-select-sm d-inline-block w-auto pinned-bottom-row-count"
+        value.bind="pinnedBottomRowCount"
+        change.trigger="changePinnedRowCount($event.target.value, 'bottom')"
+      >
+        <option repeat.for="count of [0, 1, 2, 3, 4, 5]" model.bind="count">${count}</option>
+      </select>
+    </div>
+    <div class="col-auto">
+      <label>Pinned Columns (left/right): </label>
+      <select
+        class="form-select form-select-sm d-inline-block w-auto pinned-left-column-count"
+        value.bind="pinnedColumnCount"
+        change.trigger="changePinnedColumnCount($event.target.value, 'left')"
+      >
+        <option model.bind="-1">None</option>
+        <option repeat.for="count of [0, 1, 2, 3, 4, 5]" model.bind="count">${count}</option>
+      </select>
+      <select
+        class="form-select form-select-sm d-inline-block w-auto pinned-right-column-count"
+        value.bind="pinnedRightColumnCount"
+        change.trigger="changePinnedColumnCount($event.target.value, 'right')"
+      >
+        <option repeat.for="count of [0, 1, 2]" model.bind="count">${count}</option>
+      </select>
     </div>
   </div>
   <div class="row mb-2">
@@ -53,13 +67,6 @@
       </button>
       <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" click.trigger="toggleRightPinning()" data-test="toggle-pinned-right">
         Toggle Pinned Right
-      </button>
-      <button
-        class="btn btn-outline-secondary btn-sm btn-icon mx-1"
-        click.trigger="togglePinnedBottomRows()"
-        data-test="toggle-pinned-bottom"
-      >
-        Toggle Pinned Rows (top/bottom)
       </button>
       <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" click.trigger="toggleSelectAllRow()" data-test="toggle-select-all-row">
         Toggle Select All
