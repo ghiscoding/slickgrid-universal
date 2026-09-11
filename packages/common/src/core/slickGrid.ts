@@ -3543,7 +3543,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected handleSelectedRangesChanged(e: SlickEventData, ranges: SlickRange[]): void {
     const ne = e.getNativeEvent<CustomEvent>();
     const selectionMode: CellSelectionMode = ne?.detail?.selectionMode ?? '';
+    const caller = ne?.detail?.caller ?? 'click';
+    const isBulkSelection = caller === 'click.selectAll' || caller === 'click.unselectAll';
     let addDragHandle = !!ne?.detail?.addDragHandle;
+    const selectedCellCssClass = this._options.selectedCellCssClass || '';
 
     const selectionType = this.getSelectionModel()?.getOptions()?.selectionType;
     const showDragHandle = this.getDragHandleVisibility();
@@ -3590,19 +3593,29 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.dragReplaceEl.removeEl();
     this.selectedRows = [];
     const hash: CssStyleHash = Object.create(null);
+    const selectedRowsSet = ranges.length > 1 ? new Set<number>() : undefined;
+    let rangesAreOrdered = true;
     for (let i = 0; i < ranges.length; i++) {
+      if (i > 0 && ranges[i - 1].toRow >= ranges[i].fromRow) {
+        rangesAreOrdered = false;
+      }
       for (let j = ranges[i].fromRow; j <= ranges[i].toRow; j++) {
-        if (!hash[j]) {
-          // prevent duplicates
+        if (!selectedRowsSet || !selectedRowsSet.has(j)) {
+          selectedRowsSet?.add(j);
           this.selectedRows.push(j);
-          hash[j] = Object.create(null);
         }
+        const rowHash = this.rowsCache[j] ? (hash[j] ??= Object.create(null)) : undefined;
         for (let k = ranges[i].fromCell; k <= ranges[i].toCell; k++) {
-          if (this.canCellBeSelected(j, k)) {
-            hash[j][this.columns[k].id] = this._options.selectedCellCssClass;
+          if (rowHash && this.canCellBeSelected(j, k)) {
+            rowHash[this.columns[k].id] = selectedCellCssClass;
           }
         }
       }
+    }
+
+    if (!isBulkSelection || !rangesAreOrdered) {
+      // Preserve the legacy default sort order (numeric values are compared as strings).
+      this.selectedRows.sort();
     }
 
     const activeRange = ranges[ranges.length - 1];
@@ -3611,27 +3624,29 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.selectionRightCell = activeRange.toCell;
     }
 
-    this.setCellCssStyles(this._options.selectedCellCssClass || '', hash);
+    this.setCellCssStyles(selectedCellCssClass, hash);
 
     if (this.selectionBottomRow >= 0 && this.selectionRightCell >= 0 && addDragHandle && showDragHandle !== false) {
       const lowerRightCell = this.getCellNode(this.selectionBottomRow, this.selectionRightCell);
       this.dragReplaceEl.createEl(lowerRightCell, showDragHandle);
     }
 
-    // check if the selected rows have changed (index order isn't important, so we'll sort them both before comparing them)
-    if (!this.arrayEquals(previousSelectedRows.sort(), this.selectedRows.sort())) {
-      const caller = ne?.detail?.caller ?? 'click';
-      // Use Set for faster performance
-      const selectedRowsSet = new Set(this.getSelectedRows());
+    let selectedRowsChanged = previousSelectedRows.length !== this.selectedRows.length;
+    if (!selectedRowsChanged) {
       const previousSelectedRowsSet = new Set(previousSelectedRows);
-
-      const newSelectedAdditions = Array.from(selectedRowsSet).filter((i) => !previousSelectedRowsSet.has(i));
-      const newSelectedDeletions = Array.from(previousSelectedRowsSet).filter((i) => !selectedRowsSet.has(i));
+      selectedRowsChanged = this.selectedRows.some((row) => !previousSelectedRowsSet.has(row));
+    }
+    if (selectedRowsChanged) {
+      const selectedRows = this.getSelectedRows();
+      const selectedRowsSet = selectedRows.length ? new Set(selectedRows) : undefined;
+      const previousSelectedRowsSet = previousSelectedRows.length ? new Set(previousSelectedRows) : undefined;
+      const newSelectedAdditions = previousSelectedRowsSet ? selectedRows.filter((i) => !previousSelectedRowsSet.has(i)) : selectedRows;
+      const newSelectedDeletions = selectedRowsSet ? previousSelectedRows.filter((i) => !selectedRowsSet.has(i)) : previousSelectedRows;
 
       this.triggerEvent(
         this.onSelectedRowsChanged,
         {
-          rows: this.getSelectedRows(),
+          rows: selectedRows,
           previousSelectedRows,
           caller,
           changedSelectedRows: newSelectedAdditions,
@@ -4538,6 +4553,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const cellCssClasses = this.cellCssClassesByCell[row]?.[m.id];
     if (cellCssClasses) {
       cellCss += ` ${cellCssClasses}`;
+    }
+    if (this.isCellSelected(row, cell) && !cellCssClasses?.includes(this._options.selectedCellCssClass || '')) {
+      cellCss += ` ${this._options.selectedCellCssClass}`;
     }
 
     let value: any = null;
@@ -6311,6 +6329,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   getCellCssStyles(key: string): CssStyleHash {
     return this.cellCssClasses[key];
+  }
+
+  protected isCellSelected(row: number, cell: number): boolean {
+    return (
+      !!this._options.selectedCellCssClass &&
+      this.selectedRanges.some((range) => range.contains(row, cell)) &&
+      this.canCellBeSelected(row, cell)
+    );
   }
 
   /**
@@ -8322,12 +8348,30 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return true;
   }
 
-  protected rowsToRanges(rows: number[]): SlickRange[] {
-    const ranges: SlickRange[] = [];
+  protected rowsToRanges(rows: number[], compactRows = false): SlickRange[] {
     const columns = this.getVisibleColumns();
     const lastCell = this.getColumnIndex(columns[columns.length - 1].id);
-    for (let i = 0; i < rows.length; i++) {
-      ranges.push(new SlickRange(rows[i], 0, rows[i], lastCell));
+    const ranges: SlickRange[] = [];
+    if (!compactRows) {
+      rows.forEach((row) => ranges.push(new SlickRange(row, 0, row, lastCell)));
+      return ranges;
+    }
+
+    let rangeStart = rows[0];
+    let previousRow = rangeStart;
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (row <= previousRow) {
+        return rows.map((row) => new SlickRange(row, 0, row, lastCell));
+      }
+      if (row !== previousRow + 1) {
+        ranges.push(new SlickRange(rangeStart, 0, previousRow, lastCell));
+        rangeStart = row;
+      }
+      previousRow = row;
+    }
+    if (rangeStart !== undefined) {
+      ranges.push(new SlickRange(rangeStart, 0, previousRow, lastCell));
     }
     return ranges;
   }
@@ -8352,7 +8396,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const elock = this.getEditorLock();
     if (typeof elock?.isActive === 'function' && !elock.isActive()) {
-      this.selectionModel.setSelectedRanges(this.rowsToRanges(rows), caller || 'SlickGrid.setSelectedRows');
+      this.selectionModel.setSelectedRanges(this.rowsToRanges(rows, caller === 'click.selectAll'), caller || 'SlickGrid.setSelectedRows');
     }
   }
 
