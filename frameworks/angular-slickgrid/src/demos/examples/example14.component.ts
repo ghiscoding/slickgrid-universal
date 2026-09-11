@@ -5,7 +5,6 @@ import { AngularSlickgridComponent, type AngularGridInstance, type Column, type 
 
 @Component({
   templateUrl: './example14.component.html',
-  styleUrls: ['./example14.component.scss'],
   imports: [AngularSlickgridComponent],
 })
 export class Example14Component implements OnInit {

@@ -532,12 +532,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected counter_rows_rendered = 0;
   protected counter_rows_removed = 0;
 
-  protected _paneHeaderL!: HTMLDivElement;
-  protected _paneHeaderR!: HTMLDivElement;
-  protected _paneTopL!: HTMLDivElement;
-  protected _paneTopR!: HTMLDivElement;
-  protected _paneBottomL!: HTMLDivElement;
-  protected _paneBottomR!: HTMLDivElement;
+  protected _headerRoot!: HTMLDivElement;
+  protected _contentRoot!: HTMLDivElement;
   protected _headerScrollerL!: HTMLDivElement;
   protected _headerScrollerR!: HTMLDivElement;
   protected _headerL!: HTMLDivElement;
@@ -556,14 +552,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected _topPanelScrollerR!: HTMLDivElement;
   protected _topPanelL!: HTMLDivElement;
   protected _topPanelR!: HTMLDivElement;
-  protected _viewportTopL!: HTMLDivElement;
-  protected _viewportTopR!: HTMLDivElement;
-  protected _viewportBottomL!: HTMLDivElement;
-  protected _viewportBottomR!: HTMLDivElement;
-  protected _canvasTopL!: HTMLDivElement;
-  protected _canvasTopR!: HTMLDivElement;
-  protected _canvasBottomL!: HTMLDivElement;
-  protected _canvasBottomR!: HTMLDivElement;
+  protected _viewportNode!: HTMLDivElement;
+  protected _canvasNode!: HTMLDivElement;
   protected _dockingOverlay?: HTMLDivElement;
   protected _dockingHorizontalScroller?: HTMLDivElement;
   protected _dockingHorizontalSpacer?: HTMLDivElement;
@@ -768,17 +758,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
 
-    // The grid uses one live header/body container. Legacy aliases are kept
-    // temporarily for internal call sites that are being migrated.
-    this._paneHeaderL = createDomElement('div', { className: 'slick-pane slick-pane-header' }, this._container);
-    this._paneHeaderR = this._paneHeaderL;
-    this._paneTopL = createDomElement('div', { className: 'slick-pane slick-pane-top' }, this._container);
-    this._paneTopR = this._paneTopL;
-    this._paneBottomL = this._paneTopL;
-    this._paneBottomR = this._paneTopL;
+    // The grid uses one live header and one live content root.
+    this._headerRoot = createDomElement('div', { className: 'slick-header-root' }, this._container);
+    this._contentRoot = createDomElement('div', { className: 'slick-content-root' }, this._container);
 
     if (this._options.createPreHeaderPanel) {
-      const headerContainer = createDomElement('div', { className: 'slick-preheader-container' }, this._paneHeaderL);
+      const headerContainer = createDomElement('div', { className: 'slick-preheader-container' }, this._headerRoot);
       this._preHeaderPanelScroller = createDomElement(
         'div',
         { className: 'slick-preheader-panel slick-state-default', style: { overflow: 'hidden', position: 'relative' } },
@@ -802,7 +787,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     // Append the header scroller containers
-    const headerContainerL = createDomElement('div', { className: 'slick-header-container' }, this._paneHeaderL);
+    const headerContainerL = createDomElement('div', { className: 'slick-header-container' }, this._headerRoot);
     this._headerScrollerL = createDomElement(
       'div',
       { className: 'slick-header slick-state-default slick-header-left', role: 'rowgroup' },
@@ -827,7 +812,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._headerRowScrollerL = createDomElement(
       'div',
       { className: 'slick-headerrow slick-state-default', role: 'rowgroup' },
-      this._paneTopL
+      this._contentRoot
     );
     this._headerRowScrollerR = this._headerRowScrollerL;
 
@@ -850,7 +835,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._headerRows = [this._headerRowL];
 
     // Append the top panel scroller
-    this._topPanelScrollerL = createDomElement('div', { className: 'slick-top-panel-scroller slick-state-default' }, this._paneTopL);
+    this._topPanelScrollerL = createDomElement('div', { className: 'slick-top-panel-scroller slick-state-default' }, this._contentRoot);
     this._topPanelScrollerR = this._topPanelScrollerL;
 
     this._topPanelScrollers = [this._topPanelScrollerL];
@@ -879,37 +864,31 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       });
     }
 
-    // Append the viewport containers
-    this._viewportTopL = createDomElement('div', { className: 'slick-viewport slick-viewport-top slick-viewport-left' }, this._paneTopL);
-    this._viewportTopR = this._viewportTopL;
-    this._viewportBottomL = this._viewportTopL;
-    this._viewportBottomR = this._viewportTopL;
+    // Append the viewport
+    this._viewportNode = createDomElement('div', { className: 'slick-viewport slick-viewport-top slick-viewport-left' }, this._contentRoot);
 
     // Cache the viewports
-    this._viewport = [this._viewportTopL];
+    this._viewport = [this._viewportNode];
     if (this._options.viewportClass) {
       this._viewport.forEach((view) => {
         view.classList.add(...classNameToList(this._options.viewportClass));
       });
     }
 
-    // Default the active viewport to the top left
-    this._activeViewportNode = this._viewportTopL;
+    // Default the active viewport
+    this._activeViewportNode = this._viewportNode;
 
-    // Append the canvas containers
-    this._canvasTopL = createDomElement('div', { className: 'grid-canvas grid-canvas-top grid-canvas-left' }, this._viewportTopL);
-    this._canvasTopR = this._canvasTopL;
-    this._canvasBottomL = this._canvasTopL;
-    this._canvasBottomR = this._canvasTopL;
+    // Append the canvas
+    this._canvasNode = createDomElement('div', { className: 'grid-canvas grid-canvas-top grid-canvas-left' }, this._viewportNode);
 
     // Cache the canvases
-    this._canvas = [this._canvasTopL];
+    this._canvas = [this._canvasNode];
 
     this.scrollbarDimensions = this.scrollbarDimensions || this.measureScrollbar();
     const canvasWithScrollbarWidth = this.getCanvasWidth() + this.scrollbarDimensions.width;
 
-    // Default the active canvas to the top left
-    this._activeCanvasNode = this._canvasTopL;
+    // Default the active canvas
+    this._activeCanvasNode = this._canvasNode;
 
     // top-header
     if (this._topHeaderPanelSpacer) {
@@ -1184,7 +1163,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._activeCanvasNode =
       ((e as Event & { target: HTMLElement })?.target?.closest('.grid-canvas') as HTMLDivElement | null) ||
       this._activeCanvasNode ||
-      this._canvasTopL;
+      this._canvasNode;
     return this._activeCanvasNode;
   }
 
@@ -1217,7 +1196,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._activeViewportNode =
       ((e as Event & { target: HTMLDivElement })?.target?.closest('.slick-viewport') as HTMLDivElement | null) ||
       this._activeViewportNode ||
-      this._viewportTopL;
+      this._viewportNode;
     return this._activeViewportNode;
   }
 
@@ -1352,7 +1331,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const { minWidth = 0, maxWidth = 0, width = this._options.defaultColumnWidth! } = column;
       widths[side] += Math.min(maxWidth || Number.POSITIVE_INFINITY, Math.max(width, minWidth));
     });
-    const viewportWidth = this._viewportTopL?.clientWidth || this.getViewportInnerWidth() || Utils.width(this._container) || 0;
+    const viewportWidth = this._viewportNode?.clientWidth || this.getViewportInnerWidth() || Utils.width(this._container) || 0;
     if (viewportWidth > 0 && widths.left + widths.right >= viewportWidth && !this._options.skipPinningValidation) {
       if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningWidthCallback) {
         this._options.invalidColumnPinningWidthCallback(this._options.invalidColumnPinningWidthMessage!);
@@ -1418,19 +1397,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.canvasWidth !== oldCanvasWidth || this.canvasWidthL !== oldCanvasWidthL || this.canvasWidthR !== oldCanvasWidthR;
 
     if (widthChanged) {
-      Utils.width(this._canvasTopL, this.canvasWidthL);
+      Utils.width(this._canvasNode, this.canvasWidthL);
 
       this.getHeadersWidth();
 
       Utils.width(this._headerL, this.getDockingChromeRootWidth());
-      // v11 uses one live pane for both pinned and center columns. The old
-      // split-pane sizing must not be applied to the aliased right/bottom
-      // nodes, otherwise pinning can collapse the viewport to the scrollbar
-      // strip by assigning the pane's left offset and residual width.
-      this._paneHeaderL.style.left = '';
-      this._paneTopL.style.left = '';
-      Utils.width(this._paneHeaderL, '100%');
-      Utils.width(this._paneTopL, '100%');
+      // v11 uses one live content root for both pinned and center columns.
+      this._headerRoot.style.left = '';
+      this._contentRoot.style.left = '';
+      Utils.width(this._headerRoot, '100%');
+      Utils.width(this._contentRoot, '100%');
       Utils.width(this._headerRowScrollerL, '100%');
       Utils.width(this._headerRowL, this.canvasWidth);
 
@@ -1443,12 +1419,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         const panelWidth = this._options.preHeaderPanelWidth ?? this.canvasWidth;
         this._preHeaderPanel.style.width = typeof panelWidth === 'string' ? panelWidth : `${panelWidth}px`;
       }
-      Utils.width(this._viewportTopL, '100%');
+      Utils.width(this._viewportNode, '100%');
 
       if (this.rowDockingLayout.bottom.length > 0) {
-        this._paneBottomL.style.left = '';
-        Utils.width(this._viewportBottomL, '100%');
-        Utils.width(this._canvasBottomL, this.canvasWidthL);
+        this._contentRoot.style.left = '';
       }
     }
 
@@ -1479,7 +1453,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * is wider than its unpinned center columns.
    */
   protected getDockingRenderedWidth(): number {
-    const viewportWidth = this._viewportTopL?.clientWidth || this._dockingHorizontalScroller?.clientWidth || this.getViewportInnerWidth();
+    const viewportWidth = this._viewportNode?.clientWidth || this._dockingHorizontalScroller?.clientWidth || this.getViewportInnerWidth();
     return Math.max(this.dockingLayout.contentWidth, viewportWidth || this.viewportW);
   }
 
@@ -1859,7 +1833,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected materializeFooterRow(): void {
     const canvasWithScrollbarWidth = this.getCanvasWidth() + (this.scrollbarDimensions?.width || 0);
 
-    this._footerRowScrollerL = createDomElement('div', { className: 'slick-footerrow slick-state-default' }, this._paneTopL);
+    this._footerRowScrollerL = createDomElement('div', { className: 'slick-footerrow slick-state-default' }, this._contentRoot);
     this._footerRowScrollerR = this._footerRowScrollerL;
     this._footerRowScroller = [this._footerRowScrollerL];
 
@@ -2306,7 +2280,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // the body does. Right pins must stop at the body's visible edge, not the
     // wider chrome scroller edge, otherwise they drift right by the scrollbar
     // width (for example 1551.11px instead of 1536px).
-    const dockingViewportWidth = this._viewportTopL?.clientWidth || chromeScroller.clientWidth;
+    const dockingViewportWidth = this._viewportNode?.clientWidth || chromeScroller.clientWidth;
     // The chrome container itself is translated by -scrollLeft. Add it back
     // before converting the target screen coordinate to the local `left`.
     const untransformedContainerLeft = chromeContainer.getBoundingClientRect().left + this.scrollLeft;
@@ -3072,8 +3046,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._headerRows = [this._headerRowL];
     this._topPanelScrollers = [this._topPanelScrollerL];
     this._topPanels = [this._topPanelL];
-    this._viewport = [this._viewportTopL];
-    this._canvas = [this._canvasTopL];
+    this._viewport = [this._viewportNode];
+    this._canvas = [this._canvasNode];
     // Keep the original viewport as the horizontal scroll owner for ordinary
     // grids. The dedicated scrollbar is only required once pinning/sticky
     // docking is configured; creating it for every grid breaks integrations
@@ -3084,7 +3058,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._dockingHorizontalScroller ??= createDomElement(
         'div',
         { className: 'slick-docking-horizontal-scroller', role: 'presentation' },
-        this._paneTopL
+        this._contentRoot
       );
       this._dockingHorizontalSpacer ??= createDomElement(
         'div',
@@ -3193,7 +3167,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Create the row overlay once for a configured row-docking grid. */
   protected ensureDockingOverlay(): HTMLDivElement {
-    this._dockingOverlay ??= createDomElement('div', { className: 'slick-docking-overlay', role: 'presentation' }, this._paneTopL);
+    this._dockingOverlay ??= createDomElement('div', { className: 'slick-docking-overlay', role: 'presentation' }, this._contentRoot);
     if (this.initialized) {
       this.bindDockingOverlayEvents();
     }
@@ -3220,8 +3194,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected setOverflow(): void {
-    this._viewportTopL.style.overflowX = this.hasDockingHorizontalScroller() ? 'hidden' : 'auto';
-    this._viewportTopL.style.overflowY = this._options.autoHeight ? 'hidden' : this._options.alwaysShowVerticalScroll ? 'scroll' : 'auto';
+    this._viewportNode.style.overflowX = this.hasDockingHorizontalScroller() ? 'hidden' : 'auto';
+    this._viewportNode.style.overflowY = this._options.autoHeight ? 'hidden' : this._options.alwaysShowVerticalScroll ? 'scroll' : 'auto';
     if (this._dockingHorizontalScroller) {
       this._dockingHorizontalScroller.style.overflowX = 'auto';
       this._dockingHorizontalScroller.style.overflowY = 'hidden';
@@ -3229,7 +3203,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (this._options.viewportClass) {
       const viewportClasses = classNameToList(this._options.viewportClass);
-      this._viewportTopL.classList.add(...viewportClasses);
+      this._viewportNode.classList.add(...viewportClasses);
     }
   }
 
@@ -3237,12 +3211,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._headerScrollContainer = this._headerScrollerL;
     this._headerRowScrollContainer = this._headerRowScrollerL;
     this._footerRowScrollContainer = this._footerRowScrollerL;
-    this._viewportScrollContainerY = this._viewportTopL;
-    this._viewportScrollContainerX = this._dockingHorizontalScroller ?? this._viewportTopL;
+    this._viewportScrollContainerY = this._viewportNode;
+    this._viewportScrollContainerX = this._dockingHorizontalScroller ?? this._viewportNode;
 
     // Expose the active horizontal scroll element through one stable selector.
     // The docking-specific class remains available for styling and diagnostics.
-    this._viewportTopL.classList.toggle('slick-horizontal-scroller', this._viewportScrollContainerX === this._viewportTopL);
+    this._viewportNode.classList.toggle('slick-horizontal-scroller', this._viewportScrollContainerX === this._viewportNode);
     this._dockingHorizontalScroller?.classList.toggle(
       'slick-horizontal-scroller',
       this._viewportScrollContainerX === this._dockingHorizontalScroller
@@ -4053,7 +4027,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       widths[side] += effectiveWidth;
     });
 
-    const viewportWidth = this._viewportTopL?.clientWidth || this.getViewportInnerWidth() || Utils.width(this._container) || 0;
+    const viewportWidth = this._viewportNode?.clientWidth || this.getViewportInnerWidth() || Utils.width(this._container) || 0;
     // Include the reserved scrollbar strip; clientWidth excludes it while the
     // legacy validation compared against the outer grid width.
     const scrollbarWidth = this.viewportHasVScroll ? this.scrollbarDimensions?.width || 0 : 0;
@@ -4342,7 +4316,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Keep permanent/active docked rows outside the native scrolling canvas. */
   protected syncDockedRowContainers(): void {
-    if (!this._dockingOverlay || !this._canvasTopL) {
+    if (!this._dockingOverlay || !this._canvasNode) {
       return;
     }
     Object.entries(this.rowsCache).forEach(([rowId, cacheEntry]) => {
@@ -4352,7 +4326,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         return;
       }
       const dockingBand = this.dockingByRow.get(row)?.band;
-      const target = dockingBand && dockingBand !== 'center' ? this._dockingOverlay! : this._canvasTopL;
+      const target = dockingBand && dockingBand !== 'center' ? this._dockingOverlay! : this._canvasNode;
       if (rowNode.parentElement !== target) {
         target.appendChild(rowNode);
       }
@@ -5058,12 +5032,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.vScrollDir = this.prevScrollTop + oldOffset < newScrollTop + this.offset ? 1 : -1;
       this.scrollTop = this.prevScrollTop = newScrollTop;
 
-      if (this.hasDockedColumns()) {
-        this._viewportTopL.scrollTop = newScrollTop;
-      }
-
-      if (this.rowDockingLayout.bottom.length > 0) {
-        this._viewportBottomL.scrollTop = this._viewportBottomR.scrollTop = newScrollTop;
+      if (this.hasDockedColumns() || this.rowDockingLayout.bottom.length > 0) {
+        this._viewportNode.scrollTop = newScrollTop;
       }
 
       if (this._viewportScrollContainerY) {
@@ -5093,7 +5063,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (this.hasDockingHorizontalScroller()) {
       const translateX = `translate3d(${-x}px, 0, 0)`;
-      this._canvasTopL.style.transform = translateX;
+      this._canvasNode.style.transform = translateX;
       if (this._dockingOverlay) {
         this._dockingOverlay.style.transform = translateX;
       }
@@ -5988,7 +5958,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     if (this._options.autoHeight) {
-      let fullHeight = this._paneHeaderL.offsetHeight;
+      let fullHeight = this._headerRoot.offsetHeight;
       fullHeight += this._options.showPreHeaderPanel
         ? this._options.preHeaderPanelHeight! + this.getVBoxDelta(this._preHeaderPanelScroller)
         : 0;
@@ -6057,7 +6027,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // sibling of the body viewport. Unlike a native viewport scrollbar it
       // does not reduce `clientHeight` on its own, so reserve its measured
       // height before calculating virtual rows and the body viewport.
-      const dockingViewportWidth = this._viewportTopL?.clientWidth || this.viewportW;
+      const dockingViewportWidth = this._viewportNode?.clientWidth || this.viewportW;
       const dockingContentWidth = this.dockingLayout.contentWidth || this.canvasWidth;
       const hasDockingHorizontalOverflow = dockingContentWidth > dockingViewportWidth;
       const dockingHorizontalScrollbarHeight =
@@ -6083,10 +6053,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           fullHeight += this._options.preHeaderPanelHeight!;
         }
         Utils.height(this._container, fullHeight);
-        this._paneTopL.style.position = 'relative';
+        this._contentRoot.style.position = 'relative';
       }
 
-      let topHeightOffset = Utils.height(this._paneHeaderL);
+      let topHeightOffset = Utils.height(this._headerRoot);
       if (topHeightOffset) {
         topHeightOffset += this._options.showTopHeaderPanel ? this._options.topHeaderPanelHeight! : 0;
       } else {
@@ -6094,11 +6064,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           (this._options.showHeaderRow ? this._options.headerRowHeight! : 0) +
           (this._options.showPreHeaderPanel ? this._options.preHeaderPanelHeight! : 0);
       }
-      Utils.setStyleSize(this._paneTopL, 'top', topHeightOffset);
-      Utils.height(this._paneTopL, this.paneTopH);
+      Utils.setStyleSize(this._contentRoot, 'top', topHeightOffset);
+      Utils.height(this._contentRoot, this.paneTopH);
 
       if (!this._options.autoHeight) {
-        Utils.height(this._viewportTopL, this.viewportTopH);
+        Utils.height(this._viewportNode, this.viewportTopH);
       }
       this.updateDockingOverlayDimensions();
       this.updateDockingHorizontalScrollerDimensions();
@@ -6112,7 +6082,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.scrollLeft = this._viewportScrollContainerX?.scrollLeft ?? this.scrollLeft;
       dockingChanged = this.refreshDockingLayout(this.scrollLeft) || dockingChanged;
 
-      Utils.height(this._viewportTopL, this.viewportTopH);
+      Utils.height(this._viewportNode, this.viewportTopH);
 
       if (!this.scrollbarDimensions || !this.scrollbarDimensions.width) {
         this.scrollbarDimensions = this.measureScrollbar();
@@ -6146,32 +6116,32 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    *
    * The layer itself receives the horizontal `-scrollLeft` transform used by
    * the dedicated scrollbar, so a viewport-width clipping box would expose a
-   * blank strip at the trailing edge. Its pane is the clipping boundary.
+   * blank strip at the trailing edge. Its viewport is the clipping boundary.
    */
   protected updateDockingOverlayDimensions(): void {
-    if (!this._dockingOverlay || !this._viewportTopL) {
+    if (!this._dockingOverlay || !this._viewportNode) {
       return;
     }
-    this._dockingOverlay.style.top = `${this._viewportTopL.offsetTop}px`;
-    this._dockingOverlay.style.left = `${this._viewportTopL.offsetLeft}px`;
-    const overlayWidth = Math.max(this.canvasWidth, this.dockingLayout.contentWidth, this._viewportTopL.clientWidth);
+    this._dockingOverlay.style.top = `${this._viewportNode.offsetTop}px`;
+    this._dockingOverlay.style.left = `${this._viewportNode.offsetLeft}px`;
+    const overlayWidth = Math.max(this.canvasWidth, this.dockingLayout.contentWidth, this._viewportNode.clientWidth);
     this._dockingOverlay.style.width = `${overlayWidth}px`;
-    this._dockingOverlay.style.height = `${this._viewportTopL.clientHeight}px`;
+    this._dockingOverlay.style.height = `${this._viewportNode.clientHeight}px`;
   }
 
   /** Keep the single horizontal scrollbar aligned with the vertical body viewport. */
   protected updateDockingHorizontalScrollerDimensions(): void {
-    if (!this._dockingHorizontalScroller || !this._dockingHorizontalSpacer || !this._viewportTopL) {
+    if (!this._dockingHorizontalScroller || !this._dockingHorizontalSpacer || !this._viewportNode) {
       return;
     }
     const scrollbarHeight = this.scrollbarDimensions?.height || 0;
-    const viewportWidth = this._viewportTopL.clientWidth;
+    const viewportWidth = this._viewportNode.clientWidth;
     const contentWidth = this.dockingLayout.contentWidth || this.canvasWidth;
     const hasHorizontalOverflow = contentWidth > viewportWidth;
     this._dockingHorizontalScroller.style.width = `${viewportWidth}px`;
     this._dockingHorizontalScroller.style.height = hasHorizontalOverflow ? `${scrollbarHeight}px` : '0px';
     this._dockingHorizontalSpacer.style.width = `${Math.max(contentWidth, viewportWidth)}px`;
-    this._container.style.setProperty('--slick-docking-viewport-width', `${this._viewportTopL.clientWidth}px`);
+    this._container.style.setProperty('--slick-docking-viewport-width', `${this._viewportNode.clientWidth}px`);
     this._container.style.setProperty('--slick-docking-scroll-left', `${this.scrollLeft}px`);
     this._container.style.setProperty(
       '--slick-docking-right-offset',
@@ -6248,7 +6218,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       const dataLengthIncludingAddNew = this.getDataLengthIncludingAddNew();
       let numberOfRows = 0;
-      let oldH = Utils.height(this._canvasTopL) as number;
+      let oldH = Utils.height(this._canvasNode) as number;
       numberOfRows = dataLengthIncludingAddNew + (this._options.leaveSpaceForNewRows ? this.numVisibleRows - 1 : 0);
 
       // (re)build the row position index (variable row height mode) before any height computations
@@ -6304,7 +6274,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       if (this.h !== oldH) {
-        Utils.height(this._canvasTopL, this.h);
+        Utils.height(this._canvasNode, this.h);
 
         this.scrollTop = this._viewportScrollContainerY.scrollTop;
         this.scrollHeight = this._viewportScrollContainerY.scrollHeight;
@@ -6741,7 +6711,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           const rowNode = x.firstChild as HTMLElement;
           this.rowsCache[row].rowNode = [rowNode];
           const dockingBand = this.dockingByRow.get(row)?.band;
-          (dockingBand && dockingBand !== 'center' ? this.ensureDockingOverlay() : this._canvasTopL).appendChild(rowNode);
+          (dockingBand && dockingBand !== 'center' ? this.ensureDockingOverlay() : this._canvasNode).appendChild(rowNode);
         }
       }
 
@@ -6884,7 +6854,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const scrollOwner = this._viewportScrollContainerX;
     const sources = new Set<HTMLElement>([
-      this._viewportTopL,
+      this._viewportNode,
       this._headerScrollerL,
       this._headerRowScrollerL,
       this._footerRowScrollerL,

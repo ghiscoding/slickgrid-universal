@@ -12,7 +12,6 @@ import {
   type SlickgridReactInstance,
 } from 'slickgrid-react';
 import { showToast } from './utilities.js';
-import './example20.scss'; // provide custom CSS/SASS styling
 
 const Example20: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([]);

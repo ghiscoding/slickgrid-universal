@@ -2,7 +2,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import React, { useEffect, useRef, useState } from 'react';
 import { SlickgridReact, type Column, type GridOption, type ItemMetadata, type SlickgridReactInstance } from 'slickgrid-react';
-import './example14.scss'; // provide custom CSS/SASS styling
 
 const Example14: React.FC = () => {
   const [gridOptions1, setGridOptions1] = useState<GridOption | undefined>(undefined);

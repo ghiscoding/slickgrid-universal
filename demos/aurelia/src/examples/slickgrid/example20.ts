@@ -11,7 +11,6 @@ import {
   type SlickGrid,
 } from 'aurelia-slickgrid';
 import { showToast } from './utilities.js';
-import './example20.scss';
 
 export class Example20 {
   aureliaGrid!: AureliaGridInstance;

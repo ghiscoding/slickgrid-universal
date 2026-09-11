@@ -38,20 +38,20 @@ describe('Slick-Empty-Warning Component', () => {
 
   beforeEach(() => {
     div = document.createElement('div');
-    const paneLeft = document.createElement('div');
-    paneLeft.className = 'slick-pane slick-pane-top slick-pane-left';
-    paneLeft.style.height = '44px';
+    const contentRoot = document.createElement('div');
+    contentRoot.className = 'slick-content-root';
+    contentRoot.style.height = '44px';
     const paneRight = document.createElement('div');
-    paneRight.className = 'slick-pane slick-pane-top slick-pane-right';
+    paneRight.className = 'slick-right-root';
     paneRight.style.height = '44px';
     const canvasLeft = document.createElement('div');
     const canvasRight = document.createElement('div');
     canvasLeft.className = 'grid-canvas grid-canvas-left';
     canvasRight.className = 'grid-canvas grid-canvas-right';
     div.className = `slickgrid-container ${GRID_UID}`;
-    div.appendChild(paneLeft);
+    div.appendChild(contentRoot);
     div.appendChild(paneRight);
-    paneLeft.appendChild(canvasLeft);
+    contentRoot.appendChild(canvasLeft);
     paneRight.appendChild(canvasRight);
     document.body.appendChild(div);
 
@@ -182,7 +182,7 @@ describe('Slick-Empty-Warning Component', () => {
       const componentRightElm = document.querySelector<HTMLSelectElement>(
         'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
       ) as HTMLSelectElement;
-      const gridPaneElm = document.querySelector<HTMLDivElement>('.slick-pane.slick-pane-top.slick-pane-left');
+      const contentRootElm = document.querySelector<HTMLDivElement>('.slick-content-root');
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -193,8 +193,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
-      expect(gridPaneElm!.style.minHeight).toBe('44px');
-      expect(gridPaneElm!.style.height).toBe('44px');
+      expect(contentRootElm!.style.minHeight).toBe('44px');
+      expect(contentRootElm!.style.height).toBe('44px');
     });
 
     it('should expect the Slick-Empty-Warning to be created with calculated height including preHeader & filter headerRow when they are both defined in the grid options with "autoHeight" as well', () => {
@@ -218,7 +218,7 @@ describe('Slick-Empty-Warning Component', () => {
       const componentRightElm = document.querySelector<HTMLSelectElement>(
         'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
       ) as HTMLSelectElement;
-      const gridPaneElm = document.querySelector<HTMLDivElement>('.slick-pane.slick-pane-top.slick-pane-left');
+      const contentRootElm = document.querySelector<HTMLDivElement>('.slick-content-root');
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -229,8 +229,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
-      expect(gridPaneElm!.style.minHeight).toBe('117px');
-      expect(gridPaneElm!.style.height).toBe('44px');
+      expect(contentRootElm!.style.minHeight).toBe('117px');
+      expect(contentRootElm!.style.height).toBe('44px');
     });
 
     it('should expect the Slick-Empty-Warning to be created when defining a grid that has the "autoHeight" grid option but hidden when calling it the show warning with True then False', () => {
@@ -251,7 +251,7 @@ describe('Slick-Empty-Warning Component', () => {
       const componentRightElm = document.querySelector<HTMLSelectElement>(
         'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
       ) as HTMLSelectElement;
-      const gridPaneElm = document.querySelector<HTMLDivElement>('.slick-pane.slick-pane-top.slick-pane-left');
+      const contentRootElm = document.querySelector<HTMLDivElement>('.slick-content-root');
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -262,8 +262,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
-      expect(gridPaneElm!.style.minHeight).toBe('44px');
-      expect(gridPaneElm!.style.height).toBe('44px');
+      expect(contentRootElm!.style.minHeight).toBe('44px');
+      expect(contentRootElm!.style.height).toBe('44px');
     });
 
     it('should expect the Slick-Empty-Warning to be created and use different left margin when "rightViewportMarginLeft" is set', () => {

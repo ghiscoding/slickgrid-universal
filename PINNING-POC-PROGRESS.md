@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness POC — progress handoff
 
-Last updated: 2026-09-10 (core/service DRY and render-path audit, directional pin-through commands, separator filtering, header flex cleanup, horizontal scroll hardening, grouping/pinning visual hardening, hidden-column docking alignment, Example 58 framework parity, pinning locale audit, and progress/TODO review; legacy runtime removal and structural alias audit remain)
+Last updated: 2026-09-10 (core/service DRY and render-path audit, directional pin-through commands, separator filtering, header flex cleanup, horizontal scroll hardening, grouping/pinning visual hardening, hidden-column docking alignment, Example 58 framework parity, pinning locale audit, progress/TODO review, and pane-root cleanup)
 
 ## Goal
 
@@ -72,7 +72,7 @@ The Header Menu now exposes a `pin-column` root command displayed as `Column Pin
 sub-menu contains three command groups: `pin-left`/`pin-right`,
 `pin-columns-left`/`pin-columns-right`, and `unpin-column`/`unpin-columns`, with separators only
 between groups that still contain visible commands. The first group sets the selected column's
-`Column.pinned` side, the through-here commands write the corresponding aggregate left/right
+`Column.pinned` side, the bulk directional commands write the corresponding aggregate left/right
 boundary, and the unpin commands clear the selected column or all aggregate column edges.
 Setting `pinnable: false` removes the `Column Pinning` menu for that column and excludes it from
 bulk pin-through operations. None of these commands recreates the old two-pane layout.
@@ -150,8 +150,8 @@ auto-header-height coverage.
 The POC has gone through visual hardening, selected Cypress migration, framework demo parity,
 and removal of the legacy pane options/interfaces and runtime branches. The common unit suite
 and focused coverage checks pass; framework browser validation remains follow-up work. The
-remaining cleanup is limited to internal pane-shaped aliases, historical CSS variable names,
-and intentional migration-facing terminology/documentation.
+remaining legacy terminology is limited to historical CSS variable names and intentional
+migration-facing documentation.
 
 ## Refactoring status and immediate follow-up
 
@@ -159,9 +159,10 @@ The legacy option/interface/state/service branches have been removed from the ru
 implementation. The current code no longer defines or reads the former flat pinning
 configuration or its legacy state fields.
 
-A structural cleanup remains for the internal `_pane*`, `_viewport*`, and `_canvas*` aliases,
-which now point to the single live nodes and do not create additional panes or scrollbars. The
-Migration documentation retains the old theme variable names as v11-and-lower
+A structural cleanup of the internal `_viewport*` and `_canvas*` aliases is complete: the
+single live nodes are now `_viewportNode` and `_canvasNode`. The former `_pane*` fields and
+`.slick-pane*` classes have been removed; they did not create additional panes in the current
+implementation. The Migration documentation retains the old theme variable names as v11-and-lower
 references, while the active stylesheet now uses `--slick-pinned-*`. Old command
 IDs, locale keys, and demo selectors are removed from active examples/runtime and remain only in
 migration docs where needed. Do not reintroduce legacy runtime branches.
@@ -191,9 +192,8 @@ The final implementation must satisfy all of the following:
   layer that applies per-row left/center/right regions and pinned chrome offsets;
 - remove the obsolete `HEADER_WIDTH_SLACK`/`1000px` header-coordinate workaround as part of the
   rewrite; header titles, grouped headers, and header regions now use ordinary coordinates;
-- rename the remaining pane-shaped internal fields to neutral names (`_header`, `_headerRow`,
-  `_footerRow`, `_viewport`, `_canvas`) so the old `L`/`R` pane model cannot leak back into normal
-  code;
+- keep the neutral viewport/canvas node names so the old `L`/`R` pane model cannot leak back into
+  normal code;
 - complete sticky docking or remove any temporary feature-flag path; a dormant sticky API is
   not an acceptable final design.
 
@@ -253,10 +253,10 @@ documentation work may continue while the follow-up deletion audit is underway.
 - [x] Identify and document breaking changes in the v11 migration guide, including canonical
   pinning, sticky docking, `pinnable`, removed legacy options, and Header Menu terminology.
 - **COMPLETED MAJOR CLEANUP:** removed the legacy grid options, public interfaces,
-  runtime validation names, state/service plumbing, and old multi-pane behavior across
-  `SlickGrid`, GridState/GridService, header grouping, resizer, extensions, and framework
-  integrations. Remaining work is the neutralization/removal of internal pane aliases and the
-  audit of intentionally historical CSS/demo terminology; do not add compatibility branches.
+  runtime validation names, state/service plumbing, old multi-pane behavior, and redundant
+  viewport/canvas aliases across `SlickGrid`, GridState/GridService, header grouping, resizer,
+  extensions, and framework integrations. Remaining historical CSS/demo terminology is
+  intentional; do not add compatibility branches.
 
 ## Starting point
 
@@ -274,13 +274,12 @@ documentation work may continue while the follow-up deletion audit is underway.
 `SlickGrid.activateSingleViewportLayout()` configures the public/internal active collections to
 one live viewport and one live canvas:
 
-- `_viewport = [_viewportTopL]`
-- `_canvas = [_canvasTopL]`
+- `_viewport = [_viewportNode]`
+- `_canvas = [_canvasNode]`
 - the active header/header-row/top-panel/footer collections likewise contain only their left/single instance.
 
-Pane-shaped fields still exist temporarily as internal aliases to those same live nodes. They do
-not represent separate DOM panes or own additional scrollbars and are the remaining structural
-cleanup item.
+The viewport and canvas are represented by neutral node fields; they do not create separate DOM
+panes or own additional scrollbars.
 
 ### Per-row left/center/right regions
 
@@ -295,7 +294,7 @@ with no active pinned columns (the side regions are then empty and have no activ
 </div>
 ```
 
-There is no left/right row clone and no second body canvas. `renderRows()` now appends exactly one row node to `_canvasTopL`.
+There is no left/right row clone and no second body canvas. `renderRows()` now appends exactly one row node to `_canvasNode`.
 
 The same stable-region principle applies to chrome. The single header, header-row, and footer
 roots each contain persistent `left`, `center`, and `right` semantic wrappers. They use
@@ -632,12 +631,13 @@ They are calculated from the current diff, counting the two new files as additio
   relative to `HEAD` (packages, excluding tests/demos);
 - this includes the new `DockingController` and docking types, single-viewport/per-row
   routing, sticky/pinning hardening, and the pinning/docking stylesheet changes;
-- this remains a provisional figure because internal pane-shaped aliases and historical style
-  names still need to be assessed separately from the removed runtime pane implementation.
+- this remains a provisional figure because the working tree includes the broader docking
+  implementation and intentional migration-facing historical style names separately from the
+  removed runtime pane implementation.
 
 The earlier 800–1,200-line removal estimate is retained only as a planning range. It is not a
-final forecast: the exact permanent-pinning LOC must be measured after the remaining internal
-alias cleanup and the decision on whether historical theme variable names are retained.
+final forecast: the exact permanent-pinning LOC must be measured after the full working-tree
+diff is finalized.
 
 Hardening basic sticky columns/rows would add roughly **+150–300 LOC**, giving an estimated
 **+120 to +670 net LOC** after cleanup. Supporting grouped quarterly sticky headers would add
@@ -785,12 +785,12 @@ requirements are the two largest sources of variance.
   migration time here until the other spec failures are triaged.
 
 1. **Legacy runtime removal is complete.** The old options, interfaces, state/service
-   fields, validation names, and pane behavior have been removed. Internal pane-shaped aliases
-   and historical CSS variable names remain as separate cleanup/documentation decisions; they
-   must not become compatibility branches.
+   fields, validation names, pane behavior, and redundant viewport/canvas aliases have been
+   removed. Historical CSS variable names remain documentation-only and must not become
+   compatibility branches.
 2. **Old options intentionally no longer work.** The former flat options are not valid ways to
    configure this POC. The old names and command ids are migration-guide
-   references only; active menus use directional through-here commands and `Unpin All Columns` and write the canonical
+   references only; active menus use `Pin Columns Left`/`Pin Columns Right` and `Unpin All Columns` and write the canonical
    `pinning` option. `GridService.setPinning()` accepts the unified nested shape.
 3. **Visual/browser validation is incomplete.** Left/right pinning, bottom rows, sticky transitions, resize, reorder, RTL, variable row height, row/column spans, editors, selection, and all four framework wrappers need manual follow-up.
 4. **Colspans crossing docking bands are not defined.** A colspan beginning in one band and ending in another can produce incorrect geometry. The final design should reject, split, or explicitly define this case.
@@ -806,7 +806,7 @@ requirements are the two largest sources of variance.
     sub-menu containing `Pin Left`, `Pin Right`, `Pin Columns Left`,
     `Pin Columns Right`, `Unpin Column`, and `Unpin All Columns` for pinnable columns.
     Separators appear only between non-empty command groups. The directional commands write
-    `Column.pinned`, the through-here commands write the corresponding `pinning.columns` edge,
+    `Column.pinned`, the bulk directional commands write the corresponding `pinning.columns` edge,
     and the unpin commands clear the selected column or all aggregate column edges. The removed
     v10 names remain documented in the migration guide only.
 12. **Public controller surface is provisional.** `DockingController` is currently exported for the POC; it may be better kept internal in the final API.
@@ -835,11 +835,11 @@ deferred until the vanilla guide and API cleanup are settled; do not add framewo
 4. Fix visual/interaction problems before adding tests.
 5. Review the implemented unified `GridOption.pinning` shape and `CurrentColumn.pinning` precedence before freezing the public API. The former `pinnedColumn`/`pinnedRows` shorthands have been removed.
 6. Review the pinning-based Header Menu: `Column Pinning` must keep `Pin Left`, `Pin Right`,
-   both directional through-here commands, and `Unpin Column`/`Unpin All Columns` visible in the
+   both `Pin Columns Left`/`Pin Columns Right` commands, and `Unpin Column`/`Unpin All Columns` visible in the
    same sub-menu. Separators must not be duplicated or left orphaned when commands are hidden.
    Keep the old references documented for v11-and-lower users without adding runtime aliases.
-7. Complete the remaining structural audit:
-   - rename/remove internal `_pane*`, `_viewport*`, and `_canvas*` aliases where practical;
+7. **Structural audit is complete:** internal `_viewport*` and `_canvas*` aliases now use
+   neutral single-node fields. Continue to:
    - document the current `--slick-pinned-*` theme variables and their v11-and-lower names;
    - update remaining demo labels/selectors only where it does not conflict with migration coverage.
 8. Recalculate production LOC after the structural audit.
@@ -859,7 +859,7 @@ deferred until the vanilla guide and API cleanup are settled; do not add framewo
   environment may be infrastructure-related when the process exits with code 132 before
   browser startup; distinguish that from a real spec failure.
 - During the structural audit, distinguish intentional migration references (docs, command IDs,
-  locale text, demo selectors, and theme variables) from runtime configuration. Audit pane aliases,
+  locale text, demo selectors, and theme variables) from runtime configuration. Verify pane aliases,
   synchronized scroll branches, header-width slack, GridState/GridService, resizer, header menus,
   extensions, and all four framework wrappers, then recalculate LOC from `git diff HEAD` and update
   this file again.

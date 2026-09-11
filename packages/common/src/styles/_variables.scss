@@ -101,8 +101,8 @@ $slick-icon-with-text-valign:                               middle !default;
 $slick-drag-selection-handle-color:                         gray !default;
 $slick-drag-selection-handle-size:                          7px !default;
 
-/** 4x available slick-pane (top, bottom, left, right) */
-$slick-pane-top-border-top:                                 none !default;
+/** Border above the grid content root */
+$slick-content-border-top:                                 none !default;
 
 /* row */
 $slick-row-mouse-hover-color:                               #eff5fc !default;
@@ -1049,7 +1049,7 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-hover-header-color:                             var(--slick-base-dark-text-color);
   --slick-header-row-background-color:                    #2d2d2d;
   --slick-preheader-border-color:                         #3e3e3e;
-  --slick-pane-top-border-top:                            1px solid #606060;
+  --slick-content-border-top:                            1px solid #606060;
   --slick-empty-data-warning-color:                       var(--slick-base-dark-text-color);
   --slick-grid-header-background:                         #2d2d2d;
   --slick-icon-sort-color:                                var(--slick-primary-color);

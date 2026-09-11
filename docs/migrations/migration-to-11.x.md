@@ -259,6 +259,7 @@ interfaces or runtime.
 | `Locale.TEXT_UNFREEZE_COLUMNS` | `Locale.TEXT_UNPIN_COLUMNS` | Bulk unpinning translation key renamed |
 | `$slick-frozen-border-bottom` | `$slick-pinned-border-bottom` | Pinned-row separator variable renamed |
 | `$slick-frozen-border-right` | `$slick-pinned-border-color` plus `$slick-pinned-border-box-shadow-left/right` | Pinned-column separator now uses non-layout shadows |
+| `$slick-pane-top-border-top` | `$slick-content-border-top` | Content-root border variable renamed |
 
 For example, update the renamed menu and validation options together:
 
@@ -362,7 +363,9 @@ them to the corresponding `$slick-pinned-*` variables when customizing pinned-re
 
 ### Single-viewport DOM and CSS
 
-The old pane roots and their independent scroll containers are removed. Do not target selectors
+The old pane roots and their independent scroll containers are removed. The single live structure
+uses `.slick-header-root` and `.slick-content-root` as its two outer roots; these are layout roots,
+not left/right docking panes. Do not target selectors
 such as `.slick-pane-left`, `.slick-pane-right`, `.slick-viewport-top`, `.slick-viewport-bottom`,
 `.grid-canvas-left`, or `.grid-canvas-right` in application CSS or Cypress tests.
 

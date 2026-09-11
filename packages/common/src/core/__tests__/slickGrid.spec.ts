@@ -1322,13 +1322,13 @@ describe('SlickGrid core file', () => {
       expect(grid.getTopHeaderPanel()).toBeTruthy();
       expect(grid.getTopHeaderPanel()).toEqual(grid.getTopHeaderPanel());
 
-      const paneHeader = container.querySelector<HTMLDivElement>('.slick-pane-header');
+      const paneHeader = container.querySelector<HTMLDivElement>('.slick-header-root');
       vi.spyOn(paneHeader!, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, height: paneHeight } as DOMRect);
 
       // calling resize should add top offset of pane + topHeader
       grid.resizeCanvas();
 
-      const paneTopLeftElm = container.querySelector('.slick-pane-top') as HTMLDivElement;
+      const paneTopLeftElm = container.querySelector('.slick-content-root') as HTMLDivElement;
 
       expect(paneTopLeftElm.style.top).toBe(`${paneHeight + topHeaderPanelHeight}px`);
     });

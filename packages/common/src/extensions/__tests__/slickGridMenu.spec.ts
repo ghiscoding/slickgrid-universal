@@ -91,14 +91,14 @@ const gridStub = {
 const template = `<div id="${containerId}" style="height: 800px; width: 600px;">
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid} slickgrid-container" style="width: 100%">
-        <div class="slick-pane slick-pane-header slick-pane-left">
+        <div class="slick-header-root">
           <div class="slick-preheader-container">
             <div class="slick-preheader-panel slick-state-default slick-header"></div>
           </div>
           <div class="slick-headerrow"></div>
           <div class="slick-header-left"></div>
         </div>
-        <div class="slick-pane slick-pane-header slick-pane-right">
+        <div class="slick-header-root">
           <div class="slick-headerrow"></div>
           <div class="slick-header-right"></div>
         </div>

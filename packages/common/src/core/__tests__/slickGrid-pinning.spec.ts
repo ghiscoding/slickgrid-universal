@@ -47,10 +47,10 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getPinnedColumns('right').map((column) => column.id)).toEqual(['d']);
     expect(container.querySelector('.slick-docking-horizontal-scroller')).toBeTruthy();
     expect(container.querySelector('.slick-horizontal-scroller')).toBe(container.querySelector('.slick-docking-horizontal-scroller'));
-    expect(container.querySelector('.slick-vertical-scroller')).toBe((slickGrid as any)._viewportTopL);
+    expect(container.querySelector('.slick-vertical-scroller')).toBe((slickGrid as any)._viewportNode);
     expect(container.querySelector('.slick-docking-overlay')).toBeTruthy();
-    expect((slickGrid as any)._paneTopL.style.left).toBe('');
-    expect((slickGrid as any)._paneTopL.style.width).toBe('100%');
+    expect((slickGrid as any)._contentRoot.style.left).toBe('');
+    expect((slickGrid as any)._contentRoot.style.width).toBe('100%');
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
   });
 
@@ -117,7 +117,7 @@ describe('SlickGrid unified pinning', () => {
     const internals = slickGrid as any;
 
     expect(container.querySelector('.slick-docking-horizontal-scroller')).toBeNull();
-    expect(internals._viewportTopL.style.overflowX).toBe('auto');
+    expect(internals._viewportNode.style.overflowX).toBe('auto');
 
     slickGrid.setColumnPinning('a', 'left');
 
@@ -139,7 +139,7 @@ describe('SlickGrid unified pinning', () => {
     internals._options.invalidColumnPinningWidthCallback = invalidWidth;
     internals._options.skipPinningValidation = false;
     internals._invalidPinningAlerted = false;
-    Object.defineProperty(internals._viewportTopL, 'clientWidth', { configurable: true, value: 100 });
+    Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 100 });
     vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({ width: 100 } as DOMRect);
     const invalidPinned = new Map([
       [0, 'left'],
@@ -327,7 +327,7 @@ describe('SlickGrid unified pinning', () => {
     slickGrid.scrollTo(10);
 
     const dockingScrollerSpy = vi.spyOn(internals, 'hasDockingHorizontalScroller').mockReturnValue(false);
-    internals._viewport = [internals._viewportTopL];
+    internals._viewport = [internals._viewportNode];
     internals._options.createFooterRow = true;
     internals._footerRow = [];
     internals._options.createPreHeaderPanel = true;
@@ -336,14 +336,13 @@ describe('SlickGrid unified pinning', () => {
     internals._preHeaderPanel = document.createElement('div');
     internals._topHeaderPanel = document.createElement('div');
     slickGrid.scrollToX(10);
-    internals._viewport = [internals._viewportTopL, document.createElement('div'), internals._viewportBottomL, internals._viewportBottomR];
+    internals._viewport = [internals._viewportNode, document.createElement('div'), document.createElement('div'), document.createElement('div')];
     internals._headerScrollContainer = document.createElement('div');
     internals._topPanelScrollers = [document.createElement('div')];
     internals._footerRowScrollContainer = document.createElement('div');
     internals._preHeaderPanelScroller = document.createElement('div');
     internals._preHeaderPanelScrollerR = document.createElement('div');
     internals._topHeaderPanelScroller = document.createElement('div');
-    internals._viewportTopR = document.createElement('div');
     internals._headerRowScrollerR = document.createElement('div');
     internals._headerRowScrollerL = document.createElement('div');
     slickGrid.scrollToX(20);
@@ -897,13 +896,13 @@ describe('SlickGrid unified pinning', () => {
     const leftOnlyGrid = createGrid({ pinning: { rows: { bottom: [2] } }, showHeaderRow: true });
     (leftOnlyGrid as any).scrollToX(10);
 
-    expect((leftOnlyGrid as any)._viewportTopL).toBeTruthy();
+    expect((leftOnlyGrid as any)._viewportNode).toBeTruthy();
   });
 
   it('reserves horizontal scrollbar height during a resize with docking overflow', () => {
     const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });
     const internals = slickGrid as any;
-    Object.defineProperty(internals._viewportTopL, 'clientWidth', { configurable: true, value: 100 });
+    Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 100 });
     internals.scrollbarDimensions = { width: 15, height: 15 };
     const initialViewportHeight = internals.viewportH;
 

@@ -1,3 +1,4 @@
+import { Button } from '@fluentui/react-components';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Editors,
@@ -11,9 +12,6 @@ import {
   type GridOption,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import './example05.scss'; // provide custom CSS/SASS styling
-
-import { Button } from '@fluentui/react-components';
 import { baseFluentGridOption } from './base-fluent-grid-options.js';
 import { showToast } from './utilities.js';
 

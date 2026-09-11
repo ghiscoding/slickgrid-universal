@@ -487,9 +487,3 @@ function vueGridReady(grid: SlickgridVueInstance) {
     @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
-
-<style lang="scss" scoped>
-.slick-pane-bottom {
-  border-top: 1px solid #969696 !important;
-}
-</style>

@@ -71,9 +71,9 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     // when dealing with a grid that has "autoHeight" option, we need to override 2 height that get miscalculated
     // that is because it is not aware that we are adding this slick empty element in this grid DOM
     if (this.gridOptions.autoHeight) {
-      const leftPaneElm = document.querySelector<HTMLDivElement>(`.${gridUid} .slick-pane.slick-pane-top`);
-      if (leftPaneElm && leftPaneElm.style && gridCanvasElm && gridCanvasElm.style) {
-        const leftPaneHeight = parseInt(leftPaneElm.style.height, 10) || 0; // this field auto calc by row height
+      const contentRootElm = document.querySelector<HTMLDivElement>(`.${gridUid} .slick-content-root`);
+      if (contentRootElm && contentRootElm.style && gridCanvasElm && gridCanvasElm.style) {
+        const contentRootHeight = parseInt(contentRootElm.style.height, 10) || 0; // this field auto calc by row height
 
         // get row height of each feature when enabled (rowHeight will always be defined because that is the cell height)
         const cellRowHeight = this.gridOptions?.rowHeight ?? 0;
@@ -84,9 +84,9 @@ export class SlickEmptyWarningComponent implements ExternalResource {
           // use when height with rows more that 100px
           // AutoHeight option collapse dataview to 100px when show message without data in huge grid
           // (default autoHeight for message - 100px you can add as param if needed)
-          let leftPaneMinHeight = leftPaneHeight !== null && leftPaneHeight < 100 ? leftPaneHeight : 100;
-          leftPaneMinHeight += filterRowHeight + preHeaderRowHeight; // add preHeader & filter height when enabled
-          leftPaneElm.style.minHeight = `${leftPaneMinHeight}px`;
+          let contentRootMinHeight = contentRootHeight !== null && contentRootHeight < 100 ? contentRootHeight : 100;
+          contentRootMinHeight += filterRowHeight + preHeaderRowHeight; // add preHeader & filter height when enabled
+          contentRootElm.style.minHeight = `${contentRootMinHeight}px`;
           gridCanvasElm.style.minHeight = `${cellRowHeight}px`;
         }
       }

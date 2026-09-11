@@ -537,14 +537,15 @@
     overflow: hidden;
   }
 
-  .slick-pane {
+  .slick-header-root,
+  .slick-content-root {
     position: absolute;
     outline: 0;
     overflow: hidden;
     width: 100%;
   }
 
-  .slick-pane-header {
+  .slick-header-root {
     display: block;
     background-color: var(--slick-header-background-color, v.$slick-header-background-color);
     border-bottom: var(--slick-header-border-bottom, v.$slick-header-border-bottom);
@@ -569,9 +570,9 @@
     }
   }
 
-  .slick-pane-top {
+  .slick-content-root {
     box-sizing: border-box;
-    border-top: var(--slick-pane-top-border-top, v.$slick-pane-top-border-top);
+    border-top: var(--slick-content-border-top, v.$slick-content-border-top);
   }
 
   .slick-viewport {

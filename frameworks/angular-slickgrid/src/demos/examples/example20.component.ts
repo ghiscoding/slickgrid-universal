@@ -16,7 +16,6 @@ import { showToast } from './utilities';
 
 @Component({
   templateUrl: './example20.component.html',
-  styleUrls: ['./example20.component.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [AngularSlickgridComponent, FormsModule],
 })
