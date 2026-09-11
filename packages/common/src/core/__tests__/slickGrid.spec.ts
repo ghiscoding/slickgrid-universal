@@ -1358,6 +1358,27 @@ describe('SlickGrid core file', () => {
   });
 
   describe('Top-Header Panel', () => {
+    it('should keep a draggable grouping dropzone fixed during horizontal scrolling', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, {
+        ...defaultOptions,
+        pinning: { columns: { left: ['firstName'] } },
+        topHeaderPanelHeight: 30,
+        showTopHeaderPanel: true,
+        createTopHeaderPanel: true,
+      });
+      grid.init();
+
+      const topheaderElm = grid.getTopHeaderPanel();
+      topheaderElm.classList.add('slick-dropzone');
+      grid.scrollToX(25);
+
+      expect(topheaderElm.style.transform).toBe('');
+    });
+
     it('should create a topheader panel when enabled', () => {
       const paneHeight = 25;
       const topHeaderPanelHeight = 30;

@@ -5088,10 +5088,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this._footerRowL.style.transform = translateX;
       }
       if (this._options.createPreHeaderPanel) {
-        this._preHeaderPanel.style.transform = translateX;
+        this._preHeaderPanel.style.transform = this._preHeaderPanel.classList.contains('slick-dropzone') ? '' : translateX;
       }
       if (this._options.createTopHeaderPanel) {
-        this._topHeaderPanel.style.transform = translateX;
+        this._topHeaderPanel.style.transform = this._topHeaderPanel.classList.contains('slick-dropzone') ? '' : translateX;
       }
       this._container.style.setProperty('--slick-docking-scroll-left', `${x}px`);
       return;
@@ -5108,10 +5108,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._footerRowL.style.transform = translateX;
     }
     if (this._options.createPreHeaderPanel) {
-      this._preHeaderPanel.style.transform = translateX;
+      this._preHeaderPanel.style.transform = this._preHeaderPanel.classList.contains('slick-dropzone') ? '' : translateX;
     }
     if (this._options.createTopHeaderPanel) {
-      this._topHeaderPanel.style.transform = translateX;
+      this._topHeaderPanel.style.transform = this._topHeaderPanel.classList.contains('slick-dropzone') ? '' : translateX;
     }
   }
 
