@@ -747,6 +747,16 @@ requirements are the two largest sources of variance.
   safe fallback when a layout gains its first docking region. Permanent-pinning-
   only grids retain the synchronous fast path; visual validation of Example 47
   is still required.
+- Horizontal scroll events no longer resolve permanent pinning layouts: fixed
+  memberships change only when columns, options, or the viewport are updated.
+  This leaves permanent-pinning scrolling on the compositor and deferred
+  virtual-render paths, while sticky candidates still resolve once per frame.
+- Single-viewport horizontal virtualization now consumes 80% of its existing
+  one-viewport cell buffer before refreshing cells, avoiding a cleanup/render
+  pass for every native scrollbar-arrow increment.
+- Follow-up: the held horizontal-scrollbar-arrow interaction still needs live
+  browser profiling and visual tuning; the current buffered refresh change did
+  not produce a clearly observable smoothness improvement.
 - Empty left docking regions no longer paint the left separator: the pinned
   border is now enabled only while the left region contains an active docked
   column, including when sticky membership changes during scrolling.

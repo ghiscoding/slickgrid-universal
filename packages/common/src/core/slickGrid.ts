@@ -7171,7 +7171,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const vScrollDist = Math.abs(this.scrollTop - this.prevScrollTop);
     const hScrollDist = Math.abs(this.scrollLeft - this.prevScrollLeft);
-    let columnDockingChanged = false;
 
     if (hScrollDist) {
       this.prevScrollLeft = this.scrollLeft;
@@ -7181,26 +7180,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // membership changes so rapid horizontal scrolling is not blocked by
         // repeated resolver/render work.
         this.enqueueStickyColumnLayout();
-      } else {
-        columnDockingChanged = this.refreshDockingLayout(this.scrollLeft);
-        if (columnDockingChanged) {
-          this.updateColumnCaches();
-          this.applyColumnWidths();
-          // Right chrome is measured relative to the translated header
-          // container. Commit the current compositor transform first so a
-          // docking transition cannot measure the previous scroll position.
-          this.scrollToX(this.scrollLeft);
-          this.applyDockingToColumnChrome();
-          this.invalidateAllRows();
-        }
       }
 
       // adjust scroll position of all div containers when scrolling the grid
       this.scrollToX(this.scrollLeft);
       this.applyDockingScrollOffsets();
-      if (columnDockingChanged) {
-        this.render();
-      }
     }
 
     // autoheight suppresses vertical scrolling, but editors can create a div larger than
@@ -7232,7 +7216,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (hScrollDist || vScrollDist) {
       const dx = Math.abs(this.lastRenderedScrollLeft - this.scrollLeft);
       const dy = Math.abs(this.lastRenderedScrollTop - this.scrollTop);
-      if (dx > 20 || dy > 20) {
+      // A single viewport has a full viewport-width horizontal cell buffer.
+      // Consume most of it before recycling virtual cells so scrollbar-arrow
+      // repeats stay on the native compositor path between renders.
+      const horizontalRenderThreshold = this._viewport.length === 1 ? this.viewportW * 0.8 : 20;
+      if (dx > horizontalRenderThreshold || dy > 20) {
         if (this._isResizingColumn && hScrollDist && !vScrollDist) {
           this.lastRenderedScrollLeft = this.scrollLeft;
           this.triggerEvent(this.onViewportChanged, {});

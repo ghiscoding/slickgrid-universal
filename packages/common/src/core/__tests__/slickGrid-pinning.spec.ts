@@ -992,18 +992,37 @@ describe('SlickGrid unified pinning', () => {
     expect(internals.scrollTop).toBe(0);
   });
 
-  it('renders when horizontal scrolling changes the pinned-column layout', () => {
+  it('keeps permanent pinning on the compositor path during horizontal scrolling', () => {
     const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });
     const internals = slickGrid as any;
     Object.defineProperty(internals._viewportScrollContainerX, 'scrollLeft', { configurable: true, writable: true, value: 10 });
     Object.defineProperty(internals._viewportScrollContainerX, 'scrollWidth', { configurable: true, value: 900 });
     Object.defineProperty(internals._viewportScrollContainerX, 'clientWidth', { configurable: true, value: 400 });
-    vi.spyOn(internals, 'refreshDockingLayout').mockReturnValue(true);
-    const renderSpy = vi.spyOn(slickGrid, 'render').mockImplementation(() => undefined);
+    const refreshSpy = vi.spyOn(internals, 'refreshDockingLayout');
+    const scrollToXSpy = vi.spyOn(slickGrid, 'scrollToX').mockImplementation(() => undefined);
 
     internals.handleScroll({ target: internals._viewportScrollContainerX } as Event);
 
-    expect(renderSpy).toHaveBeenCalled();
+    expect(refreshSpy).not.toHaveBeenCalled();
+    expect(scrollToXSpy).toHaveBeenCalledWith(10);
+  });
+
+  it('uses the horizontal render buffer before refreshing single-viewport cells', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });
+    const internals = slickGrid as any;
+    Object.defineProperty(internals._viewportScrollContainerX, 'scrollWidth', { configurable: true, value: 900 });
+    Object.defineProperty(internals._viewportScrollContainerX, 'clientWidth', { configurable: true, value: 400 });
+    internals.viewportW = 400;
+    internals.lastRenderedScrollLeft = 0;
+    const renderSpy = vi.spyOn(internals, 'enqueueSingleViewportRender').mockImplementation(() => undefined);
+
+    Object.defineProperty(internals._viewportScrollContainerX, 'scrollLeft', { configurable: true, writable: true, value: 100 });
+    internals.handleScroll({ target: internals._viewportScrollContainerX } as Event);
+    expect(renderSpy).not.toHaveBeenCalled();
+
+    internals._viewportScrollContainerX.scrollLeft = 321;
+    internals.handleScroll({ target: internals._viewportScrollContainerX } as Event);
+    expect(renderSpy).toHaveBeenCalledOnce();
   });
 
   it('preserves the resolved docking map when sticky membership is unchanged', () => {
