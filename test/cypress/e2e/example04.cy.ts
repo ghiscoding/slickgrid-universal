@@ -661,8 +661,7 @@ describe('Example 04 - Pinned Grid', () => {
                 .then(() => {
                   cy.get('@alertStub').should(
                     'have.been.calledWith',
-                    '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column in the center section of the grid. ' +
-                      'You could alternatively unpin columns before trying again.'
+                    '[SlickGrid] Cannot complete pinning because at least one visible center column is required.'
                   );
                 });
             }
@@ -689,8 +688,7 @@ describe('Example 04 - Pinned Grid', () => {
       .then(() => {
         cy.get('@alertStub').should(
           'have.been.calledWith',
-          '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column in the center section of the grid. ' +
-            'You could alternatively unpin columns before trying again.'
+          '[SlickGrid] Cannot complete pinning because at least one visible center column is required.'
         );
       });
 

@@ -374,8 +374,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
         .then(() => {
           cy.get('@alertStub').should(
             'have.been.calledWith',
-            '[SlickGrid] You are trying to pin more columns than the grid can support. ' +
-              'Make sure to have less columns pinned (on the left) than the actual visible grid width.'
+            '[SlickGrid] Cannot pin these columns because they exceed the available grid width.'
           );
 
           // it should still have previous pinning
