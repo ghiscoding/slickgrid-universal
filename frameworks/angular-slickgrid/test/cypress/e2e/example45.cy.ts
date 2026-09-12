@@ -46,12 +46,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       it('should sort 2nd Row Detail inner grid "Freight" column in ascending order and filter "Ship City" with "m" and expect 2 sorted rows', () => {
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
-        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list')
-          .should('be.visible')
-          .children('.slick-menu-item:nth-of-type(3)')
-          .children('.slick-menu-content')
-          .should('contain', 'Sort Ascending')
-          .click();
+        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 
@@ -157,12 +152,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
-        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list')
-          .should('be.visible')
-          .children('.slick-menu-item:nth-of-type(3)')
-          .children('.slick-menu-content')
-          .should('contain', 'Sort Ascending')
-          .click();
+        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
         cy.get('#innergrid-1 .search-filter.filter-orderId').clear().type('>102');
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
@@ -208,12 +198,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
-        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list')
-          .should('be.visible')
-          .children('.slick-menu-item:nth-of-type(3)')
-          .children('.slick-menu-content')
-          .should('contain', 'Sort Ascending')
-          .click();
+        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 
@@ -265,12 +250,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
-        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list')
-          .should('be.visible')
-          .children('.slick-menu-item:nth-of-type(3)')
-          .children('.slick-menu-content')
-          .should('contain', 'Sort Ascending')
-          .click();
+        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 
@@ -291,12 +271,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('#innergrid-2 .slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
-        cy.get('#innergrid-2 .slick-header-menu .slick-menu-command-list')
-          .should('be.visible')
-          .children('.slick-menu-item:nth-of-type(3)')
-          .children('.slick-menu-content')
-          .should('contain', 'Sort Ascending')
-          .click();
+        cy.get('#innergrid-2 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
         cy.get('#innergrid-2 .search-filter.filter-orderId').clear().type('>102');
         cy.get('#innergrid-2 .search-filter.filter-shipCity').clear().type('m*');
@@ -503,12 +478,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
-        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list')
-          .should('be.visible')
-          .children('.slick-menu-item:nth-of-type(3)')
-          .children('.slick-menu-content')
-          .should('contain', 'Sort Ascending')
-          .click();
+        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 

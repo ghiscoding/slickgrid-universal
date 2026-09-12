@@ -193,12 +193,7 @@ describe('Example 3 - Grid with Editors', () => {
   it('should hover over the last "Title" column and click on "Clear Filter" and expect grid to have all rows shown', () => {
     cy.get('.slick-header-column:nth-child(14)').first().trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(6)')
-      .children('.slick-menu-content')
-      .should('contain', 'Remove Filter')
-      .click();
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Remove Filter').click();
 
     cy.get('.slick-row').should('have.length.greaterThan', 1);
   });

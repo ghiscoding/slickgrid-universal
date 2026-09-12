@@ -165,8 +165,8 @@ gridOptions.value = {
   enableHeaderMenu: true,
   headerMenu: {
     iconColumnHideCommand: 'mdi mdi-close'
-    iconSortAscCommand: 'mdi mdi-sort-ascending'
-    iconSortDescCommand: 'mdi mdi-sort-descending',
+    iconSortAscCommand: 'mdi mdi-arrow-up',
+    iconSortDescCommand: 'mdi mdi-arrow-down',
   },
 };
 ```

@@ -94,9 +94,9 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
 
   it('should hover over the "Start" column header menu of 1st grid and click on "Sort Descending" command', () => {
     cy.get('[data-test="clear-filters-sorting"]').click();
-    cy.get('.grid28').find('.slick-header-column:nth(3)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').should('contain', 'Sort Descending').click();
+    cy.get('.grid28').find('.slick-header-column:nth(3)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Descending').click();
 
     cy.get('[data-row="0"] > .slick-cell:nth(3)').contains('2020');
   });

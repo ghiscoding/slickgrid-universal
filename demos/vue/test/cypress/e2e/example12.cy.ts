@@ -197,12 +197,7 @@ describe('Example 12: Localization (i18n)', () => {
         .invoke('show')
         .click();
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(4)')
-        .children('.slick-menu-content')
-        .should('contain', 'Sort Descending')
-        .click();
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Descending').click();
 
       cy.get('.slick-row').children('.slick-cell:nth(1)').first().should('contain', 'Task 1499');
     });

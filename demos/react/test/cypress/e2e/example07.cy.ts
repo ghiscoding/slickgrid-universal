@@ -336,12 +336,7 @@ describe('Example 7 - Header Button Plugin', () => {
         .invoke('show')
         .click();
 
-      cy.get('#grid7-2 .slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(6)')
-        .children('.slick-menu-content')
-        .should('contain', 'Remove Filter')
-        .click();
+      cy.get('#grid7-2 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Remove Filter').click();
 
       cy.get('.slick-row').should('have.length.greaterThan', 1);
     });
@@ -354,13 +349,7 @@ describe('Example 7 - Header Button Plugin', () => {
 
     it('should hover over the "Column C" and click on "Sort Ascending"', () => {
       cy.get('#grid7-2 .slick-header-column:nth(2)').first().trigger('mouseover').children('.slick-header-menu-button').click();
-
-      cy.get('#grid7-2 .slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
-        .children('.slick-menu-content')
-        .should('contain', 'Sort Ascending')
-        .click();
+      cy.get('#grid7-2 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
     });
 
     it('should expect first few items of "Column C" to be negative numbers and be red', () => {

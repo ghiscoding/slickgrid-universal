@@ -261,7 +261,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(7)')
+        .children('.slick-menu-item:nth-of-type(8)')
         .children('.slick-menu-content')
         .should('contain', 'Remove Filter')
         .click();
@@ -437,11 +437,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to toggle Sorting functionality (disable) and expect all header menu Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
       const expectedFullHeaderMenuCommands = [
-        'Column Pinning',
-        'Resize by Content',
-        '',
         'Sort Ascending',
         'Sort Descending',
+        '',
+        'Column Pinning',
+        '',
+        'Resize by Content',
         '',
         'Remove Filter',
         'Remove Sort',
@@ -494,11 +495,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to toggle Sorting functionality (re-enable) and expect all Sorting header menu commands to be visible and also Sort hints to show up also', () => {
       const expectedFullHeaderMenuCommands = [
-        'Column Pinning',
-        'Resize by Content',
-        '',
         'Sort Ascending',
         'Sort Descending',
+        '',
+        'Column Pinning',
+        '',
+        'Resize by Content',
         '',
         'Remove Filter',
         'Remove Sort',
@@ -547,11 +549,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to click disable Sorting functionality button and expect all Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
       const expectedFullHeaderMenuCommands = [
-        'Column Pinning',
-        'Resize by Content',
-        '',
         'Sort Ascending',
         'Sort Descending',
+        '',
+        'Column Pinning',
+        '',
+        'Resize by Content',
         '',
         'Remove Filter',
         'Remove Sort',
@@ -586,11 +589,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to click disable Filter functionality button and expect all Filter commands to be hidden and also not show Sort hint while hovering a column', () => {
       const expectedFullHeaderMenuCommands = [
-        'Column Pinning',
-        'Resize by Content',
-        '',
         'Sort Ascending',
         'Sort Descending',
+        '',
+        'Column Pinning',
+        '',
+        'Resize by Content',
         '',
         'Remove Filter',
         'Remove Sort',
@@ -938,11 +942,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should re-open Header Menu of last "Titre" column and expect all commands to be translated to French', () => {
       const expectedFullHeaderMenuCommands = [
-        'Épinglage de colonne',
-        'Redimensionner par contenu',
-        '',
         'Trier par ordre croissant',
         'Trier par ordre décroissant',
+        '',
+        'Épinglage de colonne',
+        '',
+        'Redimensionner par contenu',
         '',
         'Supprimer le filtre',
         'Supprimer le tri',
@@ -1404,13 +1409,9 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       pressKeyTimes('TAB', 7);
       cy.get('.slick-header-columns .slick-header-menu-button:nth(2)').should('have.focus');
       cy.press(Cypress.Keyboard.Keys.ENTER);
-      cy.press(Cypress.Keyboard.Keys.DOWN);
-      cy.press(Cypress.Keyboard.Keys.DOWN);
       cy.press(Cypress.Keyboard.Keys.ENTER);
       cy.get('.slick-header-columns .slick-header-column:nth(5) .slick-sort-indicator-asc').should('exist');
       cy.press(Cypress.Keyboard.Keys.ENTER);
-      cy.press(Cypress.Keyboard.Keys.DOWN);
-      cy.press(Cypress.Keyboard.Keys.DOWN);
       cy.press(Cypress.Keyboard.Keys.DOWN);
       cy.press(Cypress.Keyboard.Keys.ENTER);
       cy.get('.slick-header-columns .slick-header-column:nth(5) .slick-sort-indicator-desc').should('exist');

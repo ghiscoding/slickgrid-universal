@@ -370,6 +370,20 @@ implement new pinning behavior.
 The old `$slick-frozen-*` Sass variables are no longer consumed by the v11 stylesheet. Rename
 them to the corresponding `$slick-pinned-*` variables when customizing pinned-region styling.
 
+#### Cypress Header Menu selectors
+
+Header Menu commands were reorder to move the Sort Ascending/Descending commands to be on top of the list. If your Cypress tests locate Header Menu commands by their positional index, update them to use the command label instead. Menu command order can change as built-in commands and separators are added or rearranged, so `.slick-menu-item:nth-of-type()` selectors are fragile. Prefer `.contains()` to locate the command by its visible text:
+
+```diff
+cy.get('.slick-header-menu .slick-menu-command-list')
+  .should('be.visible')
+- .children('.slick-menu-item:nth-of-type(4)')
+- .children('.slick-menu-content')
+- .should('contain', 'Sort Descending')
++ .contains('Sort Descending')
+  .click();
+```
+
 ### Single-viewport DOM and CSS
 
 The old pane roots and their independent scroll containers are removed. The single live structure

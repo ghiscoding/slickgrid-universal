@@ -1,9 +1,16 @@
 describe('Example 1 - Basic Grids', () => {
   const fullTitles = ['Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 
+  beforeEach(() => {
+    // add a serve mode to avoid adding the GitHub Stars link since that can slowdown Cypress considerably
+    // because it keeps waiting for it to load, we also preserve the cookie for all other tests
+    cy.setCookie('serve-mode', 'cypress');
+  });
+
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/example01`);
+    cy.visit(`${Cypress.config('baseUrl')}/example01`, { timeout: 50000 });
     cy.get('h2').should('contain', 'Example 1: Basic Grids');
+    cy.getCookie('serve-mode').its('value').should('eq', 'cypress');
   });
 
   it('should have 2 grids of size 800 by 225px', () => {
@@ -37,12 +44,7 @@ describe('Example 1 - Basic Grids', () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(4)')
-      .children('.slick-menu-content')
-      .should('contain', 'Sort Descending')
-      .click();
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Descending').click();
 
     cy.get('.slick-row').first().children('.slick-cell').first().should('contain', 'Task 994');
   });
@@ -58,12 +60,7 @@ describe('Example 1 - Basic Grids', () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(3)')
-      .children('.slick-menu-content')
-      .should('contain', 'Sort Ascending')
-      .click();
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
     cy.get('#grid1-2')
       .find('.slick-row')
@@ -77,7 +74,7 @@ describe('Example 1 - Basic Grids', () => {
 
   it('should hover over the "Duration" column of 2nd grid, Sort Ascending and have 2 sorts', () => {
     cy.get('#grid1-2')
-      .find('.slick-header-column:nth-of-type(2)')
+      .find('.slick-header-column:nth-child(2)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
       .invoke('show')
@@ -86,7 +83,7 @@ describe('Example 1 - Basic Grids', () => {
     cy.get('#grid1-2')
       .find('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(4)')
+      .children('.slick-menu-item:nth-of-type(2)')
       .click();
 
     cy.get('#grid1-2').find('.slick-sort-indicator-asc').should('have.length', 1).siblings('.slick-sort-indicator-numbered').contains('1');
@@ -293,7 +290,7 @@ describe('Example 1 - Basic Grids', () => {
 
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
-      .children('li:nth-of-type(3)')
+      .children('li:nth-child(3)')
       .children('label')
       .should('contain', '% Complete')
       .click();

@@ -229,12 +229,7 @@ describe('Example 20 - Pinned Grid', () => {
 
     cy.get('#grid20').find('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(9)')
-      .children('.slick-menu-content')
-      .should('contain', 'Hide Column')
-      .click();
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Hide Column').click();
 
     cy.get('#grid20')
       .find('.slick-header-columns .slick-header-column')

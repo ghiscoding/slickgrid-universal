@@ -1288,8 +1288,8 @@ describe('HeaderMenu Plugin', () => {
         expect(gridContainerDiv.querySelector('[data-command="unpin-column"]')).toBeFalsy();
         expect(gridContainerDiv.querySelector('[data-command="unpin-columns"]')).toBeFalsy();
         expect(pinCommand.querySelector('.slick-menu-content')?.textContent).toBe('Column Pinning');
-        const pinColumnCommandItems = testColumns[0].header?.menu?.commandItems?.find(
-          (item) => item !== 'divider' && item?.command === 'pin-column'
+        const pinColumnCommandItems = (
+          testColumns[0].header?.menu?.commandItems?.find((item) => item !== 'divider' && item?.command === 'pin-column') as MenuCommandItem
         )?.commandItems;
         expect(pinColumnCommandItems?.map((item) => (item === 'divider' ? item : item.command))).toEqual([
           'pin-left',
@@ -1387,8 +1387,8 @@ describe('HeaderMenu Plugin', () => {
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
 
-        const pinColumnCommandItems = columnsMock[1].header?.menu?.commandItems?.find(
-          (item) => item !== 'divider' && item?.command === 'pin-column'
+        const pinColumnCommandItems = (
+          columnsMock[1].header?.menu?.commandItems?.find((item) => item !== 'divider' && item?.command === 'pin-column') as MenuCommandItem
         )?.commandItems;
         expect(pinColumnCommandItems?.map((item) => (item === 'divider' ? item : item.command))).toEqual([
           'pin-left',
@@ -1577,8 +1577,8 @@ describe('HeaderMenu Plugin', () => {
 
         const pinCommand = gridContainerDiv.querySelector('[data-command="pin-column"]') as HTMLDivElement;
         expect(pinCommand.querySelector('.slick-menu-content')?.textContent).toBe('Column Pinning');
-        const pinColumnCommandItems = columnsMock[1].header!.menu!.commandItems!.find(
-          (item) => item !== 'divider' && item.command === 'pin-column'
+        const pinColumnCommandItems = (
+          columnsMock[1].header!.menu!.commandItems!.find((item) => item !== 'divider' && item.command === 'pin-column') as MenuCommandItem
         )?.commandItems;
         expect(pinColumnCommandItems?.map((item) => (item === 'divider' ? item : item.command))).toEqual([
           'pin-left',
@@ -2014,23 +2014,23 @@ describe('HeaderMenu Plugin', () => {
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
-            iconCssClass: 'mdi mdi-sort-ascending',
+            iconCssClass: 'mdi mdi-arrow-up',
             title: 'Sort Ascending',
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
-            positionOrder: 50,
+            positionOrder: 40,
             action: expect.any(Function),
           },
           {
             _orgTitle: '',
-            iconCssClass: 'mdi mdi-sort-descending',
+            iconCssClass: 'mdi mdi-arrow-down',
             title: 'Sort Descending',
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
-            positionOrder: 51,
+            positionOrder: 41,
             action: expect.any(Function),
           },
-          { divider: true, command: 'divider-2', positionOrder: 52 },
+          { divider: true, command: 'divider-2', positionOrder: 42 },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',
@@ -2049,23 +2049,23 @@ describe('HeaderMenu Plugin', () => {
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
-            iconCssClass: 'mdi mdi-sort-ascending',
+            iconCssClass: 'mdi mdi-arrow-up',
             title: 'Trier par ordre croissant',
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
-            positionOrder: 50,
+            positionOrder: 40,
             action: expect.any(Function),
           },
           {
             _orgTitle: '',
-            iconCssClass: 'mdi mdi-sort-descending',
+            iconCssClass: 'mdi mdi-arrow-down',
             title: 'Trier par ordre décroissant',
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
-            positionOrder: 51,
+            positionOrder: 41,
             action: expect.any(Function),
           },
-          { divider: true, command: 'divider-2', positionOrder: 52 },
+          { divider: true, command: 'divider-2', positionOrder: 42 },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',
@@ -2080,6 +2080,32 @@ describe('HeaderMenu Plugin', () => {
         const clickEvent = new Event('click');
         commandDivElm.dispatchEvent(clickEvent);
         expect(clearSortSpy).toHaveBeenCalledWith(clickEvent, 'field2');
+      });
+
+      it('should place sorting commands before the pinning and resize commands', () => {
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
+          enableSorting: true,
+          headerMenu: { ...gridOptionsMock.headerMenu, hidePinningColumnsCommand: false },
+        });
+        plugin.addonOptions = { ...plugin.addonOptions, hidePinColumnCommand: false };
+
+        const column = { id: 'ordered-field', field: 'ordered-field', name: 'Ordered Field', sortable: true } as Column;
+        const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: [column], grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column, node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+
+        expect(column.header?.menu?.commandItems?.map((item) => (item === 'divider' ? item : item.command))).toEqual([
+          'sort-asc',
+          'sort-desc',
+          'divider-2',
+          'pin-column',
+          'divider-pin-column',
+          'column-resize-by-content',
+          'divider-1',
+          'clear-sort',
+          'hide-column',
+        ]);
       });
 
       it('should expect menu related to Pin Columns when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called', () => {
@@ -2212,23 +2238,23 @@ describe('HeaderMenu Plugin', () => {
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
-            iconCssClass: 'mdi mdi-sort-ascending',
+            iconCssClass: 'mdi mdi-arrow-up',
             title: 'Sort Ascending',
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
-            positionOrder: 50,
+            positionOrder: 40,
             action: expect.any(Function),
           },
           {
             _orgTitle: '',
-            iconCssClass: 'mdi mdi-sort-descending',
+            iconCssClass: 'mdi mdi-arrow-down',
             title: 'Sort Descending',
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
-            positionOrder: 51,
+            positionOrder: 41,
             action: expect.any(Function),
           },
-          { divider: true, command: 'divider-2', positionOrder: 52 },
+          { divider: true, command: 'divider-2', positionOrder: 42 },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',
@@ -2274,23 +2300,23 @@ describe('HeaderMenu Plugin', () => {
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           {
             _orgTitle: '',
-            iconCssClass: 'mdi mdi-sort-ascending',
+            iconCssClass: 'mdi mdi-arrow-up',
             title: 'Sort Ascending',
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
-            positionOrder: 50,
+            positionOrder: 40,
             action: expect.any(Function),
           },
           {
             _orgTitle: '',
-            iconCssClass: 'mdi mdi-sort-descending',
+            iconCssClass: 'mdi mdi-arrow-down',
             title: 'Sort Descending',
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
-            positionOrder: 51,
+            positionOrder: 41,
             action: expect.any(Function),
           },
-          { divider: true, command: 'divider-2', positionOrder: 52 },
+          { divider: true, command: 'divider-2', positionOrder: 42 },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',

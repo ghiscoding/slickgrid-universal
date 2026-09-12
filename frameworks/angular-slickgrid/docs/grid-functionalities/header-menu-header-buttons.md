@@ -164,12 +164,12 @@ See [Custom Menu Slots](../menu-slots.md) for detailed examples and best practic
 You can change any of the default command icon(s) by changing the `icon[X-command]`, for example, see below for the defaults.
 ```ts
 this.gridOptions = {
-   enableHeaderMenu: true,
-   headerMenu: {
-     iconColumnHideCommand: 'mdi mdi-close'
-     iconSortAscCommand: 'mdi mdi-sort-ascending'
-     iconSortDescCommand: 'mdi mdi-sort-descending',
-   },
+  enableHeaderMenu: true,
+  headerMenu: {
+    iconColumnHideCommand: 'mdi mdi-close'
+    iconSortAscCommand: 'mdi mdi-arrow-up',
+    iconSortDescCommand: 'mdi mdi-arrow-down',
+  },
 };
 ```
 ### How to Disable the Header Menu?

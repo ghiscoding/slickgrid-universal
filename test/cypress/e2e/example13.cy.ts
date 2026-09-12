@@ -420,7 +420,7 @@ describe('Example 13 - Header Button Plugin', () => {
 
       cy.get('.grid13-2 .slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
+        .children('.slick-menu-item:nth-of-type(1)')
         .children('.slick-menu-content')
         .should('contain', 'Sort Ascending')
         .click();

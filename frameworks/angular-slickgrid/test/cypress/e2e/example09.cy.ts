@@ -44,12 +44,7 @@ describe('Example 9 - Grid Menu', () => {
         .invoke('show')
         .trigger('click', { force: true });
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(4)')
-        .children('.slick-menu-content')
-        .should('contain', 'Hide Column')
-        .click({ force: true });
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Hide Column').click({ force: true });
 
       cy.get('#grid9')
         .find('.slick-header-columns')
@@ -138,12 +133,7 @@ describe('Example 9 - Grid Menu', () => {
         .invoke('show')
         .trigger('click', { force: true });
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(4)')
-        .children('.slick-menu-content')
-        .should('contain', 'Hide Column')
-        .click({ force: true });
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Hide Column').click({ force: true });
 
       cy.get('#grid9')
         .find('.slick-header-columns')
@@ -195,12 +185,7 @@ describe('Example 9 - Grid Menu', () => {
         .invoke('show')
         .trigger('click', { force: true });
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(4)')
-        .children('.slick-menu-content')
-        .should('contain', 'Cacher la colonne')
-        .click({ force: true });
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Cacher la colonne').click({ force: true });
 
       cy.get('#grid9')
         .find('.slick-header-columns')
@@ -237,12 +222,7 @@ describe('Example 9 - Grid Menu', () => {
         .invoke('show')
         .trigger('click', { force: true });
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(4)')
-        .children('.slick-menu-content')
-        .should('contain', 'Cacher la colonne')
-        .click({ force: true });
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Cacher la colonne').click({ force: true });
 
       cy.get('#grid9')
         .find('.slick-header-columns')

@@ -1,4 +1,3 @@
-/* eslint-disable n/file-extension-in-import */
 import { addDay, format } from '@formkit/tempo';
 import { removeWhitespaces } from '../plugins/utilities';
 
@@ -10,7 +9,7 @@ function removeSpaces(text: string) {
   return `${text}`.replace(/\s+/g, '');
 }
 
-describe('Example 6 - GraphQL Grid', () => {
+describe('Example 6 - GraphQL Grid', { retries: 0 }, () => {
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example06`);
     cy.get('h2').should('contain', 'Example 6: Grid with Backend GraphQL Service');
@@ -183,12 +182,7 @@ describe('Example 6 - GraphQL Grid', () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(6)')
-      .children('.slick-menu-content')
-      .should('contain', 'Remove Filter')
-      .click();
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Remove Filter').click();
 
     // wait for the query to finish
     cy.get('[data-test=status]').should('contain', 'finished');
@@ -216,12 +210,7 @@ describe('Example 6 - GraphQL Grid', () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(6)')
-      .children('.slick-menu-content')
-      .should('contain', 'Remove Filter')
-      .click();
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Remove Filter').click();
 
     // wait for the query to finish
     cy.get('[data-test=status]').should('contain', 'finished');
@@ -341,7 +330,6 @@ describe('Example 6 - GraphQL Grid', () => {
       .then((text) => expect(text).to.eq('Jane'));
 
     cy.get('.search-filter.filter-gender .ms-choice > span').contains('Female');
-
     cy.get('.search-filter.filter-company .ms-choice > span').contains('Acme');
 
     cy.get('.search-filter.filter-billingAddressZip select').should('have.value', '>=');
@@ -399,7 +387,6 @@ describe('Example 6 - GraphQL Grid', () => {
     cy.get('.vc:visible');
 
     cy.get('[data-vc="column"]:nth(0) [data-vc="month"]').should('have.text', 'January');
-
     cy.get('[data-vc="column"]:nth(1) [data-vc="month"]').should('have.text', 'February');
 
     cy.get('[data-vc="year"]:nth(0)').should('have.text', currentYear);
@@ -407,7 +394,6 @@ describe('Example 6 - GraphQL Grid', () => {
     cy.get('.vc:visible [data-vc-date-selected] button').should('have.length', 46);
 
     cy.get('.vc:visible [data-vc-date-selected]').first().should('have.text', '1');
-
     cy.get('.vc:visible [data-vc-date-selected]').last().should('have.text', '15');
   });
 
@@ -500,48 +486,22 @@ describe('Example 6 - GraphQL Grid', () => {
         .invoke('show')
         .click();
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
-        .children('.slick-menu-content')
-        .should('contain', 'Sort Ascending');
-
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(4)')
-        .children('.slick-menu-content')
-        .should('contain', 'Sort Descending');
-
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(6)')
-        .children('.slick-menu-content')
-        .should('contain', 'Remove Filter');
-
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(7)')
-        .children('.slick-menu-content')
-        .should('contain', 'Remove Sort');
-
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(8)')
-        .children('.slick-menu-content')
-        .should('contain', 'Hide Column');
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending');
+      cy.get('.slick-header-menu .slick-menu-command-list').contains('Sort Descending');
+      cy.get('.slick-header-menu .slick-menu-command-list').contains('Remove Filter');
+      cy.get('.slick-header-menu .slick-menu-command-list').contains('Remove Sort');
+      cy.get('.slick-header-menu .slick-menu-command-list').contains('Hide Column');
     });
 
     it('should open the Grid Menu and expect all commands be displayed in English', () => {
       cy.get('#grid6').find('button.slick-grid-menu-button').trigger('click');
 
       cy.get('.slick-grid-menu .slick-menu-title:nth(0)').contains('Commands');
-
       cy.get('.slick-grid-menu .slick-menu-item:nth(0) > span').contains('Clear all Filters');
-
       cy.get('.slick-grid-menu .slick-menu-item:nth(1) > span').contains('Clear all Sorting');
-
       cy.get('.slick-grid-menu .slick-menu-title:nth(1)').contains('Columns');
-
       cy.get('.slick-grid-menu .slick-column-picker-list li:nth(0)').contains('Customer Information - Name');
-
       cy.get('.slick-grid-menu .slick-column-picker-list li:nth(1)').contains('Customer Information - Gender');
-
       cy.get('.slick-grid-menu [data-dismiss=slick-grid-menu].close').click({ force: true });
     });
 
@@ -593,48 +553,23 @@ describe('Example 6 - GraphQL Grid', () => {
         .invoke('show')
         .click();
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
-        .children('.slick-menu-content')
-        .should('contain', 'Trier par ordre croissant');
-
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(4)')
-        .children('.slick-menu-content')
-        .should('contain', 'Trier par ordre décroissant');
-
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(6)')
-        .children('.slick-menu-content')
-        .should('contain', 'Supprimer le filtre');
-
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(7)')
-        .children('.slick-menu-content')
-        .should('contain', 'Supprimer le tri');
-
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(8)')
-        .children('.slick-menu-content')
-        .should('contain', 'Cacher la colonne');
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Trier par ordre croissant');
+      cy.get('.slick-header-menu .slick-menu-command-list').contains('Trier par ordre décroissant');
+      cy.get('.slick-header-menu .slick-menu-command-list').contains('Supprimer le filtre');
+      cy.get('.slick-header-menu .slick-menu-command-list').contains('Supprimer le tri');
+      cy.get('.slick-header-menu .slick-menu-command-list').contains('Cacher la colonne');
     });
 
     it('should open the Grid Menu and expect all commands be displayed in French', () => {
       cy.get('#grid6').find('button.slick-grid-menu-button').trigger('click');
 
       cy.get('.slick-grid-menu .slick-menu-title:nth(0)').contains('Commandes');
-
       cy.get('.slick-grid-menu .slick-menu-item:nth(0) > span').contains('Supprimer tous les filtres');
-
       cy.get('.slick-grid-menu .slick-menu-item:nth(1) > span').contains('Supprimer tous les tris');
 
       cy.get('.slick-grid-menu .slick-menu-title:nth(1)').contains('Colonnes');
-
       cy.get('.slick-grid-menu .slick-column-picker-list li:nth(0)').contains('Information Client - Nom');
-
       cy.get('.slick-grid-menu .slick-column-picker-list li:nth(1)').contains('Information Client - Sexe');
-
       cy.get('.slick-grid-menu [data-dismiss=slick-grid-menu].close').click({ force: true });
     });
 

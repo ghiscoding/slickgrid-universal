@@ -322,6 +322,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             'pin-columns-right',
             'unpin-column',
             'unpin-columns',
+            'divider-pin-column',
           ]) {
             this.removeCommandWhenFound(columnHeaderMenuItems, command);
           }
@@ -329,6 +330,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           // Keep all pinning actions under one submenu so the menu shape stays
           // consistent regardless of the selected column's current state.
           let hasPinningOrResizeCommand = false;
+          let hasSingleColumnPinningCommand = false;
           const bulkPinningCommandItems: MenuCommandItem[] = [];
           if (headerMenuOptions && !headerMenuOptions.hidePinningColumnsCommand) {
             for (const [command, titleKey, title] of [
@@ -478,6 +480,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               headerMenuOptions.hideCommands,
               columnHeaderMenuItems
             );
+            hasSingleColumnPinningCommand = columnHeaderMenuItems.some((item) => item !== 'divider' && item.command === cmdPin);
           }
 
           // Preserve the standalone bulk command when the submenu is hidden,
@@ -510,6 +513,15 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             );
           }
 
+          // Add a divider between the Column Pinning submenu and Resize by Content.
+          if (
+            hasSingleColumnPinningCommand &&
+            columnHeaderMenuItems.some((item) => item !== 'divider' && item.command === 'column-resize-by-content') &&
+            !columnHeaderMenuItems.some((item) => item !== 'divider' && item.command === 'divider-pin-column')
+          ) {
+            columnHeaderMenuItems.push({ divider: true, command: 'divider-pin-column', positionOrder: 46 });
+          }
+
           // add a divider (separator) between the top pin columns commands and the rest of the commands
           if (hasPinningOrResizeCommand && !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 48)) {
             columnHeaderMenuItems.push({ divider: true, command: 'divider-1', positionOrder: 48 });
@@ -528,10 +540,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             this.addMissingCommandOrAction(
               {
                 _orgTitle: commandLabels?.sortAscCommand || '',
-                iconCssClass: headerMenuOptions.iconSortAscCommand || 'mdi mdi-sort-ascending',
+                iconCssClass: headerMenuOptions.iconSortAscCommand || 'mdi mdi-arrow-up',
                 titleKey: `${translationPrefix}SORT_ASCENDING`,
                 command: 'sort-asc',
-                positionOrder: 50,
+                positionOrder: 40,
                 action: (e, args) => this.sortColumn(e, args, true),
               },
               headerMenuOptions.hideCommands,
@@ -542,19 +554,19 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             this.addMissingCommandOrAction(
               {
                 _orgTitle: commandLabels?.sortDescCommand || '',
-                iconCssClass: headerMenuOptions.iconSortDescCommand || 'mdi mdi-sort-descending',
+                iconCssClass: headerMenuOptions.iconSortDescCommand || 'mdi mdi-arrow-down',
                 titleKey: `${translationPrefix}SORT_DESCENDING`,
                 command: 'sort-desc',
-                positionOrder: 51,
+                positionOrder: 41,
                 action: (e, args) => this.sortColumn(e, args, false),
               },
               headerMenuOptions.hideCommands,
               columnHeaderMenuItems
             );
 
-            // add a divider (separator) between the top sort commands and the other clear commands
-            if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 52)) {
-              columnHeaderMenuItems.push({ divider: true, command: 'divider-2', positionOrder: 52 });
+            // add a divider (separator) between the top sort commands and the pinning/resize commands
+            if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 42)) {
+              columnHeaderMenuItems.push({ divider: true, command: 'divider-2', positionOrder: 42 });
             }
 
             if (!headerMenuOptions.hideClearSortCommand) {

@@ -592,12 +592,7 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
         .invoke('show')
         .click();
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(9)')
-        .children('.slick-menu-content')
-        .contains('Hide Column')
-        .click();
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Hide Column').click();
 
       expectPreHeadersInOrder(preHeaders);
 

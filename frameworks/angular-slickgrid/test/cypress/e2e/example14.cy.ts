@@ -235,12 +235,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
         .invoke('show')
         .click();
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(4)')
-        .children('.slick-menu-content')
-        .should('contain', 'Hide Column')
-        .click();
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Hide Column').click();
 
       // The colspan still spans the logical Duration/Start/Finish range, but
       // the hidden Finish track is zero-width. The host cell must remain
@@ -293,12 +288,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
         .invoke('show')
         .click();
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(4)')
-        .children('.slick-menu-content')
-        .should('contain', 'Hide Column')
-        .click();
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Hide Column').click();
 
       cy.get('#grid1').find('[data-row=1] .slick-cell.l0.r0').should('contain', 'Task 1');
       cy.get('#grid1').find('[data-row=2] .slick-cell.l0.r5').should('contain', 'Task 2');

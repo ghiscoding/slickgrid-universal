@@ -80,12 +80,7 @@ describe('Example 32 - Columns Resize by Content', () => {
         .invoke('show')
         .click();
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(1)')
-        .children('.slick-menu-content')
-        .should('contain', 'Resize by Content')
-        .click();
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Resize by Content').click();
 
       cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 120);
     });

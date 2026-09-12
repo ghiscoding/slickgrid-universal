@@ -337,8 +337,10 @@ describe('SlickGrid unified pinning', () => {
     const slickGrid = createGrid({ invalidColumnPinningPickerCallback: invalidPicker, invalidColumnPinningWidthCallback: invalidWidth });
     const internals = slickGrid as any;
     const alertSpy = vi.spyOn(globalThis, 'alert').mockImplementation(() => undefined);
-    internals._defaults.invalidColumnPinningWidthCallback('default callback');
-    expect(alertSpy).toHaveBeenCalledWith('default callback');
+    internals._defaults.invalidColumnPinningPickerCallback('default picker callback');
+    expect(alertSpy).toHaveBeenCalledWith('default picker callback');
+    internals._defaults.invalidColumnPinningWidthCallback('default width callback');
+    expect(alertSpy).toHaveBeenCalledWith('default width callback');
     alertSpy.mockRestore();
     internals._options.invalidColumnPinningPickerCallback = invalidPicker;
     internals._options.invalidColumnPinningWidthCallback = invalidWidth;
