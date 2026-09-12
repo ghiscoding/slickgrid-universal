@@ -724,8 +724,14 @@ requirements are the two largest sources of variance.
   or change the WYSIWYG export order.
 - Column reordering now reconstructs each docking band independently instead of flattening left,
   center, and right Sortable results into pinned slots when hidden columns exist. Vanilla Example 04
-  and all framework Example 20 suites include a regression check for reordering center columns after
-  hiding `Finish`; the added tests reset serial state with `cy.reload()`.
+  and all framework Example 20 suites include a regression check that hides `Finish`, swaps the third
+  and fourth center columns, and verifies all docking bands; the tests reset serial state with
+  `cy.reload()`. Vanilla Example 08 and all framework Example 14 suites cover colspan content,
+  fragments, and keyboard navigation across a valid pinning boundary.
+- Vanilla Example 04's non-pinnable `City of Origin` column now has the pink visual marker and
+  explanatory subtitle replicated in Angular, React, Vue, and Aurelia Example 20. The framework
+  Example 20 suites assert the rendered pink cell, while the long colspan fixture text from Example
+  08 is aligned across all four framework Example 14 demos.
 - Audited the v11 migration guide against the public `SlickGrid` surface and documented the removed
   `getFrozenColumnId()`, `getFrozenRowOffset()`, and `validateColumnFreezeWidth()` methods plus the
   renamed `validateColumnPinning()` method and additive rendered-order argument.

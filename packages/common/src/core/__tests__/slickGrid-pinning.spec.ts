@@ -268,6 +268,28 @@ describe('SlickGrid unified pinning', () => {
     ).toBe(true);
   });
 
+  it('keeps bulk right pinning anchored at the selected colspan column', () => {
+    const invalidPinning = vi.fn();
+    const spanData = {
+      getLength: () => data.length,
+      getItem: (row: number) => data[row],
+      getItemMetadata: (row: number) => (row === 0 ? { columns: { 1: { colspan: 3 } } } : undefined),
+    };
+    container = document.createElement('div');
+    container.style.width = '800px';
+    container.style.height = '400px';
+    document.body.appendChild(container);
+    grid = new SlickGrid(container, spanData as any, columns.map((column) => ({ ...column })) as Column[], {
+      devMode: { ownerNodeIndex: 0 },
+      invalidColumnPinningPickerCallback: invalidPinning,
+    });
+
+    grid.setOptions({ pinning: { columns: { right: 3 } } });
+
+    expect(grid.getColumns().map((column) => column.pinned)).toEqual([null, 'right', 'right', 'right']);
+    expect(invalidPinning).not.toHaveBeenCalled();
+  });
+
   it('keeps the native viewport scroll owner until docking is enabled', () => {
     const slickGrid = createGrid();
     const internals = slickGrid as any;

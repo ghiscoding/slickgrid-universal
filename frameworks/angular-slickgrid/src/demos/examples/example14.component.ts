@@ -130,7 +130,7 @@ export class Example14Component implements OnInit {
         id: i,
         num: i,
         title: 'Task ' + i,
-        duration: '5 days',
+        duration: '5 days with some long text to test column span',
         percentComplete: Math.round(Math.random() * 100),
         start: '01/01/2009',
         finish: '01/05/2009',

@@ -13,6 +13,7 @@ import {
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 import { showToast } from './utilities.js';
+import './example20.scss';
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
@@ -128,7 +129,16 @@ function defineGrid() {
         } as ColumnEditorDualInput,
       },
     },
-    { id: 'cityOfOrigin', name: 'City of Origin', field: 'cityOfOrigin', minWidth: 100, sortable: true, filterable: true, pinnable: false },
+    {
+      id: 'cityOfOrigin',
+      name: 'City of Origin',
+      field: 'cityOfOrigin',
+      cssClass: 'city-of-origin-column',
+      minWidth: 100,
+      sortable: true,
+      filterable: true,
+      pinnable: false,
+    },
     {
       id: 'action',
       name: 'Action',
@@ -412,7 +422,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/pinning"
       target="_blank"
       >Wiki docs</a
-    >)
+    >) City of Origin is intentionally non-pinnable and is highlighted with a subtle pink background.
     <ul>
       <li>Option to pin any number of columns or rows</li>
       <li>Option to pin the rows at the bottom instead of the top (default)</li>

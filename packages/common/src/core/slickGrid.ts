@@ -4647,7 +4647,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (!suppressColumnSet) {
         this._invalidPinningAlerted = false;
       }
-      if (!this.validatePinnedColumnIndexes(this.getProspectivePinnedColumnIndexes(newOptions.pinning.columns), true)) {
+      const prospectivePinnedIndexes = this.getProspectivePinnedColumnIndexes(newOptions.pinning.columns);
+      const validPinning = this.validatePinnedColumnIndexes(prospectivePinnedIndexes, true);
+      if (!validPinning) {
         const pinningWithoutColumns = { ...newOptions.pinning };
         delete pinningWithoutColumns.columns;
         const optionsWithoutPinning = { ...newOptions };

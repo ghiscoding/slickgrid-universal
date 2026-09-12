@@ -16,6 +16,7 @@ import { showToast } from './utilities';
 
 @Component({
   templateUrl: './example20.component.html',
+  styleUrls: ['./example20.component.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [AngularSlickgridComponent, FormsModule],
 })
@@ -108,6 +109,7 @@ export class Example20Component implements OnInit {
         id: 'cityOfOrigin',
         name: 'City of Origin',
         field: 'cityOfOrigin',
+        cssClass: 'city-of-origin-column',
         minWidth: 100,
         sortable: true,
         filterable: true,

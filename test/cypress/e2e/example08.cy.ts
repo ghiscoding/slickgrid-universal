@@ -506,4 +506,62 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       cy.get('.grid1 [data-row=1] > .slick-cell.l0.r0').should('contain', 'Task 1');
     });
   });
+
+  describe('First Grid - Bulk Right Pinning', () => {
+    it('should pin the selected column and following columns to the right', () => {
+      cy.reload();
+
+      cy.get('.grid1 .slick-header:not(.slick-preheader-panel) .slick-header-column[data-id="duration"]')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+      cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+      cy.get('.slick-submenu:visible [data-command="pin-columns-right"]').click();
+
+      cy.get('.grid1 .slick-header-columns-right [data-id]').then(($columns) => {
+        expect([...$columns].map((column) => column.getAttribute('data-id'))).to.deep.eq([
+          'duration',
+          'start',
+          'finish',
+          '%',
+          'effort-driven',
+        ]);
+      });
+      cy.get('.grid1 [data-row="1"] .slick-pinned-right-cells > .slick-cell').should('have.length', 3);
+      cy.get('.grid1 [data-row="1"] .slick-pinned-right-cells > .slick-cell.l1').should('contain', '5 days');
+    });
+  });
+
+  describe('First Grid - Pinned Colspan Content', () => {
+    it('should keep long colspan content usable and navigate over the pinned middle boundary', () => {
+      cy.reload();
+
+      const durationText = '5 days with some long text to test column span';
+      const host = '.grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l1:not(.slick-cell-colspan-part)';
+
+      const pinLeft = (columnId: string) => {
+        cy.get(`.grid1 .slick-header:not(.slick-preheader-panel) .slick-header-column[data-id="${columnId}"]`)
+          .trigger('mouseover')
+          .children('.slick-header-menu-button')
+          .invoke('show')
+          .click();
+        cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+        cy.get('.slick-submenu:visible [data-command="pin-left"]').click();
+      };
+
+      pinLeft('title');
+      pinLeft('duration');
+
+      cy.get(host)
+        .should('be.visible')
+        .and('contain', durationText)
+        .and('have.class', 'slick-cell-colspan-crossing-docking')
+        .click({ force: true })
+        .type('{rightArrow}');
+
+      cy.get('.grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell.active[aria-describedby*="%"]').should('exist');
+      cy.get('.grid1 [data-row="1"] .slick-cell-colspan-part').should('have.length', 1);
+    });
+  });
 });

@@ -1037,7 +1037,7 @@ describe('Example 04 - Pinned Grid', () => {
       });
     });
 
-    it('should keep left-pinned columns in place when reordering center columns after hiding "Finish"', () => {
+    it('should keep left-pinned columns in place when hiding "Finish" and swapping center columns', () => {
       cy.reload();
 
       cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
@@ -1051,19 +1051,56 @@ describe('Example 04 - Pinned Grid', () => {
         const sortInstance = Object.entries($center[0]).find(([key]) => key.startsWith('Sortable'))?.[1] as any;
         expect(sortInstance).to.exist;
 
-        const firstColumn = columns[0] as HTMLElement;
-        const secondColumn = columns[1] as HTMLElement;
-        sortInstance.options.onStart({ item: firstColumn });
-        $center[0].insertBefore(secondColumn, firstColumn);
-        sortInstance.options.onEnd({ item: firstColumn, stopPropagation: () => {} });
+        const thirdColumn = columns[2] as HTMLElement;
+        const fourthColumn = columns[3] as HTMLElement;
+        sortInstance.options.onStart({ item: thirdColumn });
+        $center[0].insertBefore(fourthColumn, thirdColumn);
+        sortInstance.options.onEnd({ item: thirdColumn, stopPropagation: () => {} });
       });
 
       cy.get('.grid4 .slick-header-columns-left .slick-header-column').should(($columns) =>
         expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['_checkbox_selector', 'title', 'percentComplete'])
       );
       cy.get('.grid4 .slick-header-columns-center .slick-header-column').should(($columns) =>
-        expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['completed', 'start', 'cost', 'cityOfOrigin'])
+        expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['start', 'completed', 'cityOfOrigin', 'cost'])
       );
+      cy.get('.grid4 .slick-header-columns-right .slick-header-column').should(($columns) =>
+        expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['action'])
+      );
+    });
+  });
+
+  describe('pinning regression coverage', () => {
+    it('should keep the non-pinnable City column visible and highlighted when pinning three columns from the right', () => {
+      cy.reload();
+
+      cy.get('.grid4 .slick-row[data-row="0"] .slick-cell.city-of-origin-column').should(($cell) => {
+        expect(getComputedStyle($cell[0]).backgroundColor).to.eq('rgb(255, 244, 247)');
+      });
+      setRightPinning(3);
+
+      cy.get('.grid4 .slick-header-columns-right [data-id]').should(($columns) => {
+        expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['cost', 'cityOfOrigin', 'action']);
+      });
+      cy.get('.grid4 .slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell').should('have.length', 3);
+      cy.get('.grid4 .slick-row[data-row="0"] .slick-pinned-right-cells .slick-cell.city-of-origin-column').should('exist');
+
+      setRightPinning(1);
+    });
+
+    it('should skip City when using the bulk pinning command from the Cost column', () => {
+      cy.get('.grid4 .slick-header-columns-center [data-id="cost"]')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+      cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+      cy.get('.slick-submenu:visible [data-command="pin-columns-right"]').click();
+
+      cy.get('.grid4 .slick-header-columns-right [data-id]').should(($columns) => {
+        expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['cost', 'action']);
+      });
+      cy.get('.grid4 .slick-header-columns-center [data-id="cityOfOrigin"]').should('exist');
     });
   });
 });

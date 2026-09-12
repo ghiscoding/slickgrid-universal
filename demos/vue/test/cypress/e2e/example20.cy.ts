@@ -92,6 +92,9 @@ describe('Example 20 - Pinned Grid', () => {
     const row0 = '#grid20 .slick-row[data-row="0"]';
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell`).should('have.length', 2);
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell.l7`).should('contain', 'Boston');
+    cy.get(`${row0} .slick-pinned-right-cells > .slick-cell.city-of-origin-column`).should(($cell) => {
+      expect(getComputedStyle($cell[0]).backgroundColor).to.eq('rgb(255, 244, 247)');
+    });
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell.l8 .cell-menu-dropdown`).should('contain', 'Action');
 
     cy.get('#grid20 .slick-header-columns-right .slick-header-column').should('have.length', 2);
@@ -1033,7 +1036,7 @@ describe('Example 20 - Pinned Grid', () => {
       });
     });
 
-    it('should keep left-pinned columns in place when reordering center columns after hiding "Finish"', () => {
+    it('should keep left-pinned columns in place when hiding "Finish" and swapping center columns', () => {
       cy.reload();
 
       cy.get('#grid20').find('button.slick-grid-menu-button').click({ force: true });
@@ -1047,18 +1050,21 @@ describe('Example 20 - Pinned Grid', () => {
         const sortInstance = Object.entries($center[0]).find(([key]) => key.startsWith('Sortable'))?.[1] as any;
         expect(sortInstance).to.exist;
 
-        const firstColumn = columns[0] as HTMLElement;
-        const secondColumn = columns[1] as HTMLElement;
-        sortInstance.options.onStart({ item: firstColumn });
-        $center[0].insertBefore(secondColumn, firstColumn);
-        sortInstance.options.onEnd({ item: firstColumn, stopPropagation: () => {} });
+        const thirdColumn = columns[2] as HTMLElement;
+        const fourthColumn = columns[3] as HTMLElement;
+        sortInstance.options.onStart({ item: thirdColumn });
+        $center[0].insertBefore(fourthColumn, thirdColumn);
+        sortInstance.options.onEnd({ item: thirdColumn, stopPropagation: () => {} });
       });
 
       cy.get('#grid20 .slick-header-columns-left .slick-header-column').should(($columns) =>
         expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['_checkbox_selector', 'title', 'percentComplete'])
       );
       cy.get('#grid20 .slick-header-columns-center .slick-header-column').should(($columns) =>
-        expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['completed', 'start', 'cost', 'cityOfOrigin'])
+        expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['start', 'completed', 'cityOfOrigin', 'cost'])
+      );
+      cy.get('#grid20 .slick-header-columns-right .slick-header-column').should(($columns) =>
+        expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['action'])
       );
     });
   });

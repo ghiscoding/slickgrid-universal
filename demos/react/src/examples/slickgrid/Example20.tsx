@@ -12,6 +12,7 @@ import {
   type SlickgridReactInstance,
 } from 'slickgrid-react';
 import { showToast } from './utilities.js';
+import './example20.scss';
 
 const Example20: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([]);
@@ -175,6 +176,7 @@ const Example20: React.FC = () => {
         id: 'cityOfOrigin',
         name: 'City of Origin',
         field: 'cityOfOrigin',
+        cssClass: 'city-of-origin-column',
         minWidth: 100,
         pinnable: false,
         filterable: true,
@@ -491,7 +493,7 @@ const Example20: React.FC = () => {
         <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/pinning" target="_blank">
           Docs
         </a>
-        )
+        ) City of Origin is intentionally non-pinnable and is highlighted with a subtle pink background.
         <ul>
           <li>Option to pin any number of columns (left only) or rows</li>
           <li>Option to pin the rows at the bottom instead of the top (default)</li>

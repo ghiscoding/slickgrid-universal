@@ -11,6 +11,7 @@ import {
   type SlickGrid,
 } from 'aurelia-slickgrid';
 import { showToast } from './utilities.js';
+import './example20.scss';
 
 export class Example20 {
   aureliaGrid!: AureliaGridInstance;
@@ -114,6 +115,7 @@ export class Example20 {
         id: 'cityOfOrigin',
         name: 'City of Origin',
         field: 'cityOfOrigin',
+        cssClass: 'city-of-origin-column',
         minWidth: 100,
         sortable: true,
         filterable: true,
