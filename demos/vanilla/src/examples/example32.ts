@@ -17,6 +17,7 @@ export default class Example32 {
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
   showEmployeeId = true;
+  subTitleStyle = 'display: block';
   metadata: ItemMetadata | Record<number, ItemMetadata> = {
     // 10001: Davolio
     0: {
@@ -489,5 +490,10 @@ export default class Example32 {
     this.metadata = newMetadata;
     this.sgb.slickGrid?.remapAllColumnsRowSpan();
     this.sgb.slickGrid?.invalidate();
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

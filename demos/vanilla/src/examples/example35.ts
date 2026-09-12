@@ -28,6 +28,7 @@ export default class Example35 {
   sgb: SlickVanillaGridBundle;
   searchString = '';
   serverApiDelay = 1000;
+  subTitleStyle = 'display: block';
 
   attached() {
     this.initializeGrid();
@@ -297,6 +298,11 @@ export default class Example35 {
       return span;
     }
     return val;
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 
   /** Generate a UUID version 4 RFC compliant */

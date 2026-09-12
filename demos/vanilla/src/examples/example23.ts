@@ -105,6 +105,7 @@ export default class Example23 {
   excelExportService: ExcelExportService;
   isDataGrouped = false;
   taxRate = 7.5;
+  subTitleStyle = 'display: block';
 
   constructor() {
     this.excelExportService = new ExcelExportService();
@@ -514,5 +515,10 @@ export default class Example23 {
     } as Grouping);
 
     this.sgb?.dataView?.refresh();
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

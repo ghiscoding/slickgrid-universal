@@ -443,7 +443,12 @@ describe('Example 08 - Column Span & Header Grouping', () => {
 
       setPinning('.grid1 .slick-header-columns-center [data-id="duration"]', 'pin-left');
 
-      cy.get(hostSelector).should('contain', '5 days').and('have.class', 'slick-cell-colspan-crossing-docking');
+      cy.get(hostSelector)
+        .should('contain', '5 days')
+        .and('have.class', 'slick-cell-colspan-crossing-docking')
+        .and('have.class', 'r3')
+        .and('not.have.class', 'r4');
+      cy.get('.grid1 [data-row="1"] .slick-cell.l4.r4').should('have.length', 1);
       cy.get('.grid1 [data-row="1"] .slick-cell-colspan-part').should('have.length', 1);
       cy.get(fragmentSelector).should('have.length', 1).click({ force: true }).should('have.class', 'active');
       cy.get(fragmentSelector).should(($cell) => {
@@ -457,7 +462,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
         .and('contain', '5 days')
         .should(($cell) => {
           expect(getComputedStyle($cell[0]).boxShadow).to.eq('none');
-          expect(getComputedStyle($cell[0], '::after').borderRightStyle).to.eq('none');
+          expect(getComputedStyle($cell[0], '::after').borderRightStyle).to.eq('solid');
         });
 
       setPinning('.grid1 .slick-header-columns-left [data-id="duration"]', 'unpin-column');

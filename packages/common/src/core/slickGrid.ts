@@ -4278,6 +4278,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           region.appendChild(cellNode);
         }
       });
+
+      Object.values(cacheEntry.cellRegions || {}).forEach((region) => {
+        const cells = Array.from(region.children) as HTMLElement[];
+        cells.sort((a, b) => this.getCellFromNode(a) - this.getCellFromNode(b)).forEach((cell) => region.appendChild(cell));
+      });
     }
     return true;
   }
@@ -5485,7 +5490,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // item: grid data for row
 
     const segments = colspan > 1 && !isFullWidthGroup && this.usesDockingRowRegions() ? this.getColspanSegments(cell, colspan) : [];
-    const renderedColspan = segments.length > 1 ? segments[0].end - cell + 1 : colspan;
+    // Keep the host's full colspan so its formatter content can flow through
+    // the docking bands; fragments only provide the clipped region geometry.
+    const renderedColspan = colspan;
     const m = this.columns[cell];
     let cellCss =
       `slick-cell l${cell} r${Math.min(this.columns.length - 1, cell + renderedColspan - 1)}` +
@@ -6572,8 +6579,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     deferToRow: boolean
   ): void {
     host.classList.add('slick-cell-colspan-crossing-docking');
+    const spanWidth = segments.reduce(
+      (width, segment) => width + (this.columnPosRight[segment.end] ?? 0) - (this.columnPosLeft[segment.start] ?? 0),
+      0
+    );
+    host.style.width = `${spanWidth}px`;
+    host.style[this._options.rtl ? 'left' : 'right'] = 'auto';
+    (this.rowsCache[row].rowNode?.[0] || host.closest('.slick-row'))?.classList.add('slick-row-colspan-crossing-docking');
     const fragments = segments.slice(1).map((segment, index, allFragments) => {
       const fragment = host.cloneNode(false) as HTMLElement;
+      fragment.style.width = '';
       fragment.classList.add('slick-cell-colspan-part');
       fragment.classList.toggle('slick-cell-colspan-end', index === allFragments.length - 1);
       fragment.classList.remove('slick-cell-pinned-left', 'slick-cell-pinned-right', 'slick-cell-sticky');

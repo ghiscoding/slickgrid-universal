@@ -132,6 +132,10 @@ describe('SlickGrid unified pinning', () => {
     const fragments = row.querySelectorAll<HTMLElement>('.slick-cell-colspan-part');
 
     expect(host.textContent).toBe('Spanned');
+    expect(host.classList.contains('r3')).toBe(true);
+    expect(host.style.width).toBe('320px');
+    expect(fragments[0].style.width).toBe('');
+    expect(row.classList.contains('slick-row-colspan-crossing-docking')).toBe(true);
     expect(row.querySelectorAll('.slick-cell-colspan-crossing-docking')).toHaveLength(3);
     expect(fragments[1].classList.contains('slick-cell-colspan-end')).toBe(true);
     expect(fragments).toHaveLength(2);
@@ -634,11 +638,14 @@ describe('SlickGrid unified pinning', () => {
       0: {
         rowNode: [dockingRow],
         cellNodesByColumnIdx: { 0: document.createElement('div'), hasOwnProperty: () => false },
+        cellRenderQueue: [],
         cellSpanFragments: { 0: [] },
       },
     };
     internals.dockingByColumn = new Map([[0, { band: 'left' }]]);
     expect(internals.updateRenderedCellDocking()).toBe(false);
+    internals.rowsCache[0].cellSpanFragments = {};
+    expect(internals.updateRenderedCellDocking()).toBe(true);
 
     const planner = internals.formattedDataCachePlanner;
     expect(planner(slickGrid.getColumns()[0], { excelExportOptions: { exportWithFormatter: true } })).toBeDefined();
@@ -1061,9 +1068,13 @@ describe('SlickGrid unified pinning', () => {
     const leftCell = document.createElement('div');
     const centerCell = document.createElement('div');
     const rightCell = document.createElement('div');
+    leftCell.className = 'slick-cell l0 r0';
+    centerCell.className = 'slick-cell l1 r1';
+    rightCell.className = 'slick-cell l3 r3';
     centerRegion.appendChild(leftCell);
-    rightRegion.appendChild(centerCell);
-    row.append(leftRegion, centerRegion, rightRegion, rightCell);
+    centerRegion.appendChild(centerCell);
+    rightRegion.appendChild(rightCell);
+    row.append(leftRegion, centerRegion, rightRegion);
     container.appendChild(row);
 
     internals.dockingLayout = {
@@ -1078,6 +1089,7 @@ describe('SlickGrid unified pinning', () => {
     };
     internals.dockingByColumn = new Map([
       [0, { band: 'left', index: 0, naturalOffset: 0, offset: 0, sticky: false, width: 80 }],
+      [1, { band: 'right', index: 1, naturalOffset: 80, offset: 0, sticky: true, width: 80 }],
       [3, { band: 'right', index: 3, naturalOffset: 240, offset: 0, sticky: false, width: 80 }],
     ]);
     internals.rowsCache = {
@@ -1102,6 +1114,7 @@ describe('SlickGrid unified pinning', () => {
     expect(internals.updateRenderedCellDocking()).toBe(true);
     expect(leftCell.parentElement).toBe(leftRegion);
     expect(rightCell.parentElement).toBe(rightRegion);
+    expect(Array.from(rightRegion.children).map((cell) => internals.getCellFromNode(cell))).toEqual([1, 3]);
     internals.applyDockingScrollOffsets();
     expect(leftRegion.style.transform).toBe('');
     expect(rightRegion.style.transform).toContain('translateX');

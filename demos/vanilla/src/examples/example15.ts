@@ -32,6 +32,7 @@ export default class Example15 {
     { value: 'male', label: 'male' },
     { value: 'female', label: 'female' },
   ];
+  subTitleStyle = 'display: block';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -491,5 +492,10 @@ export default class Example15 {
     odataService.clearFilters?.();
     this.sgb?.filterService.clearFilters();
     return true;
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

@@ -332,13 +332,23 @@
             z-index: 1;
           }
 
-          &:not(.slick-cell-colspan-end)::after {
+          &.slick-cell-colspan-part:not(.slick-cell-colspan-end)::after {
             border-inline-end: 0;
           }
         }
 
         > .slick-cell-colspan-part.active::after {
           border-inline-start: 0;
+        }
+      }
+
+      // A cross-band colspan keeps its content in the first segment, but that
+      // cell must be able to paint across the remaining docking regions.
+      &.slick-row-colspan-crossing-docking > :is(.slick-pinned-left-cells, .slick-scrolling-cells, .slick-pinned-right-cells) {
+        overflow: visible;
+
+        > .slick-cell-colspan-crossing-docking:not(.slick-cell-colspan-part) {
+          z-index: 21;
         }
       }
 
