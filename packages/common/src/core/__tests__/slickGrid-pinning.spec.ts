@@ -23,12 +23,12 @@ describe('SlickGrid unified pinning', () => {
     container?.remove();
   });
 
-  const createGrid = (options: GridOption = {}): SlickGrid<any, Column> => {
+  const createGrid = (options: GridOption = {}, gridColumns = columns): SlickGrid<any, Column> => {
     container = document.createElement('div');
     container.style.width = '800px';
     container.style.height = '400px';
     document.body.appendChild(container);
-    grid = new SlickGrid(container, data, columns.map((column) => ({ ...column })) as Column[], {
+    grid = new SlickGrid(container, data, gridColumns.map((column) => ({ ...column })) as Column[], {
       enableCellNavigation: true,
       devMode: { ownerNodeIndex: 0 },
       ...options,
@@ -52,6 +52,62 @@ describe('SlickGrid unified pinning', () => {
     expect((slickGrid as any)._contentRoot.style.left).toBe('');
     expect((slickGrid as any)._contentRoot.style.width).toBe('100%');
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
+  });
+
+  it('returns visible columns in rendered docking order', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: ['a', 'c'] } } });
+
+    expect(slickGrid.getColumnsInRenderedOrder().map((column) => column.id)).toEqual(['a', 'c', 'b', 'd']);
+  });
+
+  it('keeps hidden columns in their rendered docking position', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: ['a', 'c'] } } });
+    slickGrid.updateColumnById('b', { hidden: true });
+
+    expect(slickGrid.getColumnsInRenderedOrder(true).map((column) => column.id)).toEqual(['a', 'c', 'b', 'd']);
+  });
+
+  it('keeps a center reorder out of the pinned band when a middle column is hidden', () => {
+    const reorderColumns = [
+      ...columns.map((column) => ({ ...column })),
+      { id: 'e', field: 'e', name: 'E', width: 80 },
+      { id: 'f', field: 'f', name: 'F', width: 80 },
+      { id: 'g', field: 'g', name: 'G', width: 80 },
+    ];
+    const slickGrid = createGrid(
+      {
+        enableColumnReorder: true,
+        pinning: { columns: { left: ['a', 'c'], right: ['g'] } },
+      },
+      reorderColumns
+    );
+    slickGrid.updateColumnById('e', { hidden: true }, true);
+
+    const internals = slickGrid as any;
+    const left = internals.sortableSideLeftInstance;
+    const center = internals.sortableSideCenterInstance;
+    const item = center.el.querySelector('.slick-header-column');
+    left.toArray = vi.fn().mockReturnValue(['a', 'c']);
+    center.toArray = vi.fn().mockReturnValue(['d', 'b', 'f']);
+    internals.sortableSideRightInstance.toArray = vi.fn().mockReturnValue(['g']);
+
+    left.options.onStart({ item });
+    left.options.onEnd({ item, stopPropagation: vi.fn() });
+
+    expect(slickGrid.getColumns().map((column) => column.id)).toEqual(['a', 'd', 'c', 'b', 'e', 'f', 'g']);
+  });
+
+  it('keeps visible columns in definition order without column docking', () => {
+    const slickGrid = createGrid();
+
+    expect(slickGrid.getColumnsInRenderedOrder().map((column) => column.id)).toEqual(['a', 'b', 'c', 'd']);
+  });
+
+  it('includes hidden columns in definition order without column docking', () => {
+    const slickGrid = createGrid();
+    slickGrid.updateColumnById('d', { hidden: true });
+
+    expect(slickGrid.getColumnsInRenderedOrder(true).map((column) => column.id)).toEqual(['a', 'b', 'c', 'd']);
   });
 
   it('renders full-width group rows across docking regions without moving regular cells', () => {

@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness POC — progress handoff
 
-Last updated: 2026-09-11 (core/service DRY and render-path audit, directional pin-through commands, separator filtering, header flex cleanup, horizontal scroll hardening, grouping/pinning visual hardening, hidden-column docking alignment, cross-band colspan rendering, Example 58 framework parity, pinning locale audit, progress/TODO review, and pane-root cleanup)
+Last updated: 2026-09-11 (core/service DRY and render-path audit, directional pin-through commands, separator filtering, header flex cleanup, horizontal scroll hardening, grouping/pinning visual hardening, hidden-column docking alignment, cross-band colspan rendering, Example 58 framework parity, pinning locale audit, progress/TODO review, pane-root cleanup, rendered-order export/picker fixes, and Example 04/20 reorder regression coverage)
 
 ## Goal
 
@@ -718,6 +718,17 @@ requirements are the two largest sources of variance.
   column object identity. This preserves the generated-pin bookkeeping across
   `updateColumnProps()` cloning and makes the existing `Unpin All Columns` command
   reliably restore the pre-pinning state.
+- `getColumnsInRenderedOrder(includeHidden = false)` now returns the current left/center/right
+  docking order and preserves hidden columns in their logical positions when requested. Column Picker
+  and Excel/PDF/Text export consumers use that order so hiding a column does not move it to the end
+  or change the WYSIWYG export order.
+- Column reordering now reconstructs each docking band independently instead of flattening left,
+  center, and right Sortable results into pinned slots when hidden columns exist. Vanilla Example 04
+  and all framework Example 20 suites include a regression check for reordering center columns after
+  hiding `Finish`; the added tests reset serial state with `cy.reload()`.
+- Audited the v11 migration guide against the public `SlickGrid` surface and documented the removed
+  `getFrozenColumnId()`, `getFrozenRowOffset()`, and `validateColumnFreezeWidth()` methods plus the
+  renamed `validateColumnPinning()` method and additive rendered-order argument.
 - Sticky-column horizontal scrolling now keeps the scrollbar/compositor path
   immediate while coalescing sticky-band resolution to one animation-frame pass.
   On a band transition, rendered cells are moved between their existing

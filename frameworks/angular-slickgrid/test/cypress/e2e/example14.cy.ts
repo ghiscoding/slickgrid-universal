@@ -362,24 +362,24 @@ describe('Example 14 - Column Span & Header Grouping', () => {
         cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
         cy.get(`.slick-submenu:visible [data-command="${command}"]`).click();
       };
-      const hostSelector = '.grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l1:not(.slick-cell-colspan-part)';
-      const fragmentSelector = '.grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell-colspan-part';
+      const hostSelector = '#grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l1:not(.slick-cell-colspan-part)';
+      const fragmentSelector = '#grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell-colspan-part';
 
-      setPinning('.grid1 .slick-header:not(.slick-preheader-panel) .slick-header-columns [data-id="title"]', 'pin-left');
+      setPinning('#grid1 .slick-header:not(.slick-preheader-panel) .slick-header-columns [data-id="title"]', 'pin-left');
 
-      cy.get('.grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l0').should(($cell) => {
+      cy.get('#grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l0').should(($cell) => {
         expect(getComputedStyle($cell[0], '::after').boxShadow).not.to.eq('none');
       });
 
-      setPinning('.grid1 .slick-header-columns-center [data-id="duration"]', 'pin-left');
+      setPinning('#grid1 .slick-header-columns-center [data-id="duration"]', 'pin-left');
 
       cy.get(hostSelector)
         .should('contain', '5 days')
         .and('have.class', 'slick-cell-colspan-crossing-docking')
         .and('have.class', 'r3')
         .and('not.have.class', 'r4');
-      cy.get('.grid1 [data-row="1"] .slick-cell.l4.r4').should('have.length', 1);
-      cy.get('.grid1 [data-row="1"] .slick-cell-colspan-part').should('have.length', 1);
+      cy.get('#grid1 [data-row="1"] .slick-cell.l4.r4').should('have.length', 1);
+      cy.get('#grid1 [data-row="1"] .slick-cell-colspan-part').should('have.length', 1);
       cy.get(fragmentSelector).should('have.length', 1).click({ force: true }).should('have.class', 'active');
       cy.get(fragmentSelector).should(($cell) => {
         const style = getComputedStyle($cell[0], '::after');
@@ -395,9 +395,9 @@ describe('Example 14 - Column Span & Header Grouping', () => {
           expect(getComputedStyle($cell[0], '::after').borderRightStyle).to.eq('solid');
         });
 
-      setPinning('.grid1 .slick-header-columns-left [data-id="duration"]', 'unpin-column');
-      setPinning('.grid1 .slick-header-columns-left [data-id="title"]', 'unpin-column');
-      cy.get('.grid1 [data-row="1"] .slick-cell-colspan-part').should('not.exist');
+      setPinning('#grid1 .slick-header-columns-left [data-id="duration"]', 'unpin-column');
+      setPinning('#grid1 .slick-header-columns-left [data-id="title"]', 'unpin-column');
+      cy.get('#grid1 [data-row="1"] .slick-cell-colspan-part').should('not.exist');
     });
   });
 

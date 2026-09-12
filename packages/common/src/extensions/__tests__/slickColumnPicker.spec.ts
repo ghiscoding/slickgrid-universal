@@ -15,6 +15,7 @@ const gridUid = 'slickgrid_124343';
 const gridStub = {
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
+  getColumnsInRenderedOrder: vi.fn(() => gridStub.getColumns()),
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
   getSelectedRows: vi.fn(),
@@ -98,6 +99,21 @@ describe('ColumnPickerControl', () => {
     control?.eventHandler.unsubscribeAll();
     control?.dispose();
     vi.clearAllMocks();
+  });
+
+  it('should use the rendered docking order when synchronizing picker columns', () => {
+    const renderedColumns = [columnsMock[1], columnsMock[0], columnsMock[2], columnsMock[3]];
+    const renderedOrderSpy = vi.spyOn(gridStub, 'getColumnsInRenderedOrder').mockReturnValue(renderedColumns);
+    const columnIndexSpy = vi.spyOn(gridStub, 'getColumnIndex').mockImplementation((id) => columnsMock.findIndex((column) => column.id === id));
+
+    try {
+      (control as any).updateColumnPickerOrder();
+
+      expect(control.columns).toEqual(renderedColumns);
+    } finally {
+      renderedOrderSpy.mockRestore();
+      columnIndexSpy.mockRestore();
+    }
   });
 
   describe('registered control', () => {

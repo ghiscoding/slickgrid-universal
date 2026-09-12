@@ -1115,8 +1115,8 @@ describe('Example 11 - Batch Editing', () => {
       const viewName = 'Hidden Columns Test';
       const winPromptStub = () => viewName;
       cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
-      cy.get('.slick-column-picker-list li:nth(2)').click();
-      cy.get('.slick-column-picker-list li:nth(9)').click();
+      cy.get('.slick-column-picker-list input[data-columnid="duration"]').closest('label').click();
+      cy.get('.slick-column-picker-list input[data-columnid="countryOfOrigin"]').closest('label').click();
       cy.get('.slick-column-picker button.close').click();
 
       cy.window().then((win) => {
@@ -1137,8 +1137,8 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.grid11 .slick-header-columns .slick-column-pinned-left .slick-column-name').last().should('contain', 'Cost');
 
       cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
-      cy.get('.slick-column-picker-list li:nth(2)').click();
-      cy.get('.slick-column-picker-list li:nth(9)').click();
+      cy.get('.slick-column-picker-list input[data-columnid="duration"]').closest('label').click();
+      cy.get('.slick-column-picker-list input[data-columnid="countryOfOrigin"]').closest('label').click();
       cy.get('.slick-column-picker button.close').click();
 
       cy.get('.grid11 .slick-header-columns .slick-header-column').should('have.length', 11);
@@ -1161,8 +1161,8 @@ describe('Example 11 - Batch Editing', () => {
 
     it('should display both hidden columns and still expect Cost to be the pinned column', () => {
       cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
-      cy.get('.slick-column-picker-list li:nth(2)').click();
-      cy.get('.slick-column-picker-list li:nth(9)').click();
+      cy.get('.slick-column-picker-list input[data-columnid="duration"]').closest('label').click();
+      cy.get('.slick-column-picker-list input[data-columnid="countryOfOrigin"]').closest('label').click();
       cy.get('.slick-column-picker button.close').click();
 
       cy.get('.grid11 .slick-header-columns .slick-header-column').should('have.length', 11);

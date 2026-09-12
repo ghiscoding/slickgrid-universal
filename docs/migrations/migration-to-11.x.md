@@ -215,7 +215,7 @@ These replace any application-owned frozen-pane state types; `DockingController`
 an internal implementation detail.
 
 The public mapping is summarized below. Most names remain stable while their frozen-pane
-properties are replaced; the one service method rename is intentional and breaking:
+properties are replaced; the method renames are intentional and breaking:
 
 | v10 API | v11 API | Change |
 | --- | --- | --- |
@@ -224,6 +224,10 @@ properties are replaced; the one service method rename is intentional and breaki
 | `CurrentColumn` | `CurrentColumn.pinning` | Per-column pin side is persisted with the layout |
 | `Column` | `Column.pinned` / `Column.sticky` | Permanent and scroll-activated column docking |
 | `Column.lockPinned` | `Column.pinnable` | Set `pinnable: false` to hide Header Menu pinning commands; programmatic pinning remains available |
+| `SlickGrid.validateColumnFreeze()` | `SlickGrid.validateColumnPinning()` | Public validation method renamed |
+| `SlickGrid.validateColumnFreezeWidth()` | removed | Width validation is now internal; use the configured pinning validation callbacks |
+| `SlickGrid.getFrozenColumnId()` | `SlickGrid.getPinnedColumns(side?)` | Returns the pinned column definitions for an edge instead of one frozen boundary id |
+| `SlickGrid.getFrozenRowOffset(row)` | removed | Row docking offsets are internal to the single viewport; use `getCellNodeBox()` for rendered cell geometry |
 | `GridStateService.changeColumnsArrangement()` | `GridStateService.applyColumnLayout()` | Method renamed |
 
 The following public interface members were also renamed or removed. The left-hand names below
@@ -260,6 +264,11 @@ interfaces or runtime.
 | `$slick-frozen-border-bottom` | `$slick-pinned-border-bottom` | Pinned-row separator variable renamed |
 | `$slick-frozen-border-right` | `$slick-pinned-border-color` plus `$slick-pinned-border-box-shadow-left/right` | Pinned-column separator now uses non-layout shadows |
 | `$slick-pane-top-border-top` | `$slick-content-border-top` | Content-root border variable renamed |
+
+`SlickGrid.getColumnsInRenderedOrder(includeHidden = false)` now exposes the current left/center/right
+docking order. Passing `true` keeps hidden columns in their logical positions, which is useful when
+restoring a column layout or exporting a WYSIWYG column order. This is an additive signature change,
+not a rename.
 
 For example, update the renamed menu and validation options together:
 

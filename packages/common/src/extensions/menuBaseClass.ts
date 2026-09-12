@@ -284,7 +284,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
    * columns in their original ordinal position and interleaving the results of the current column sort.
    */
   protected updateColumnPickerOrder(): void {
-    const current = this.grid.getColumns().slice(0);
+    const current = this.grid.getColumnsInRenderedOrder(true).slice(0);
     const ordered = new Array(this._columns.length);
 
     for (let i = 0, ln = ordered.length; i < ln; i++) {

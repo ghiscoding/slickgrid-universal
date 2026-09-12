@@ -410,6 +410,7 @@ export default class Example04 {
       excelExportOptions: {
         exportWithFormatter: true,
         sanitizeDataExport: true,
+        // includeHidden: true,
       },
       externalResources: [new ExcelExportService()],
       selectionOptions: {

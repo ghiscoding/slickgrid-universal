@@ -2475,7 +2475,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       columnScrollDirection = 0;
     };
     let prevColumnIds: Array<string | number> = [];
-    let hiddenColumns: Map<string | number, C>;
 
     // fires on document during native drag; also bind 'mousemove' for SortableJS forceFallback mode
     const autoScrollHandler = (e: DragEvent | MouseEvent) => {
@@ -2534,7 +2533,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
 
         prevColumnIds = this.columns.map((c) => c.id);
-        hiddenColumns = new Map(this.columns.filter((column) => column.hidden).map((column) => [column.id, column]));
       },
       onEnd: (e) => {
         e.item.classList.remove('slick-header-column-active');
@@ -2546,19 +2544,36 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           return;
         }
 
-        const reorderedIds = [
-          ...(this.sortableSideLeftInstance?.toArray() || []),
-          ...(this.sortableSideCenterInstance?.toArray() || []),
-          ...(this.sortableSideRightInstance?.toArray() || []),
+        const reorderedIdsByBand = [
+          this.sortableSideLeftInstance?.toArray() || [],
+          this.sortableSideCenterInstance?.toArray() || [],
+          this.sortableSideRightInstance?.toArray() || [],
         ];
-        const reorderedColumns = reorderedIds.map((id) => this.columns[this.getColumnIndex(id)]);
+        const reorderedColumnsByBand = reorderedIdsByBand.map((ids: Array<string | number>) =>
+          ids.map((id) => this.columns[this.getColumnIndex(id)])
+        );
+        const finalColumns = this.columns.slice();
 
-        // Reconstruct final column array: insert hidden columns at their original indices
-        let visibleIdx = 0;
-        const finalColumns = this.columns.map((column) => hiddenColumns.get(column.id) ?? reorderedColumns[visibleIdx++]);
+        // Keep each docking band in its logical slots; flattening moves center columns into pinned slots.
+        if (this.usesDockingChromeRegions()) {
+          (['left', 'center', 'right'] as const).forEach((band, bandIndex) => {
+            this.dockingLayout[band].forEach(({ index }, reorderedIndex) => {
+              finalColumns[index] = reorderedColumnsByBand[bandIndex][reorderedIndex];
+            });
+          });
+        } else {
+          let reorderedIndex = 0;
+          const reorderedColumns = reorderedColumnsByBand.flat();
+          this.columns.forEach((column, index) => {
+            if (!column.hidden) {
+              finalColumns[index] = reorderedColumns[reorderedIndex++];
+            }
+          });
+        }
 
         e.stopPropagation();
-        if (!this.arrayEquals(prevColumnIds, reorderedIds)) {
+        const finalColumnIds = finalColumns.map(({ id }) => id);
+        if (!this.arrayEquals(prevColumnIds, finalColumnIds)) {
           this.setColumns(finalColumns);
           // reapply previous scroll position since it might move back to x=0 after calling `setColumns()`
           this.scrollToX(prevScrollLeft);
@@ -3592,6 +3607,29 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   getVisibleColumns(): C[] {
     return this.columns.filter((c) => !c.hidden);
+  }
+
+  /** Returns columns in their current rendered docking order. Hidden columns are optionally included. */
+  getColumnsInRenderedOrder(includeHidden = false): C[] {
+    const columns = includeHidden ? this.columns : this.getVisibleColumns();
+    if (!this.hasConfiguredColumnDocking()) {
+      return columns;
+    }
+
+    return (['left', 'center', 'right'] as const).flatMap((band) => {
+      const rendered = this.dockingLayout[band]
+        .map(({ index }) => this.columns[index])
+        .filter((column): column is C => !!column && !column.hidden);
+
+      if (includeHidden) {
+        for (const column of columns.filter((column) => column.hidden && (column.pinned ?? 'center') === band)) {
+          const columnIndex = columns.indexOf(column);
+          const insertAt = rendered.findIndex((current) => columns.indexOf(current) > columnIndex);
+          rendered.splice(insertAt < 0 ? rendered.length : insertAt, 0, column);
+        }
+      }
+      return rendered;
+    });
   }
 
   protected getVisibleColumnIndexes(columns: C[] = this.columns): number[] {

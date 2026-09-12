@@ -1036,5 +1036,34 @@ describe('Example 04 - Pinned Grid', () => {
         }
       });
     });
+
+    it('should keep left-pinned columns in place when reordering center columns after hiding "Finish"', () => {
+      cy.reload();
+
+      cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
+      cy.contains('.slick-grid-menu:visible .slick-column-picker-list li', 'Finish').children('label').click({ force: true });
+      cy.get('.slick-grid-menu:visible .close').click({ force: true });
+
+      cy.get('.grid4 .slick-header-columns-center').then(($center) => {
+        const columns = $center.find('.slick-header-column');
+        expect([...columns].map((column) => column.dataset.id)).to.deep.equal(['start', 'completed', 'cost', 'cityOfOrigin']);
+
+        const sortInstance = Object.entries($center[0]).find(([key]) => key.startsWith('Sortable'))?.[1] as any;
+        expect(sortInstance).to.exist;
+
+        const firstColumn = columns[0] as HTMLElement;
+        const secondColumn = columns[1] as HTMLElement;
+        sortInstance.options.onStart({ item: firstColumn });
+        $center[0].insertBefore(secondColumn, firstColumn);
+        sortInstance.options.onEnd({ item: firstColumn, stopPropagation: () => {} });
+      });
+
+      cy.get('.grid4 .slick-header-columns-left .slick-header-column').should(($columns) =>
+        expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['_checkbox_selector', 'title', 'percentComplete'])
+      );
+      cy.get('.grid4 .slick-header-columns-center .slick-header-column').should(($columns) =>
+        expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['completed', 'start', 'cost', 'cityOfOrigin'])
+      );
+    });
   });
 });

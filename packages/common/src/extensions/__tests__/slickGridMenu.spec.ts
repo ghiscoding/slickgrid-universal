@@ -62,6 +62,7 @@ const gridStub = {
   autosizeColumns: vi.fn(),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
+  getColumnsInRenderedOrder: vi.fn(() => gridStub.getColumns()),
   getContainerNode: vi.fn(),
   getGridPosition: () => ({ width: 10, left: 0 }),
   getOptions: vi.fn(),
