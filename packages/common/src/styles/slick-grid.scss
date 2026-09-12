@@ -99,7 +99,12 @@
   }
 
   .slick-header-column-active {
-    background-color: var(--slick-header-column-background-active, v.$slick-header-column-background-active) !important;
+    background:
+      linear-gradient(
+        var(--slick-header-column-background-active, v.$slick-header-column-background-active),
+        var(--slick-header-column-background-active, v.$slick-header-column-background-active)
+      ),
+      var(--slick-header-background-color, v.$slick-header-background-color) !important;
   }
 
   .slick-headerrow {
