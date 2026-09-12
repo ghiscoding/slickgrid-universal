@@ -95,11 +95,15 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('ExcelExportService', () => {
+  let anchorClickSpy: ReturnType<typeof vi.spyOn>;
+
   // Suppress console.error globally for all tests in this file
   beforeAll(() => {
+    anchorClickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
   afterAll(() => {
+    anchorClickSpy.mockRestore();
     (console.error as any).mockRestore?.();
   });
   let container: ContainerServiceStub;
