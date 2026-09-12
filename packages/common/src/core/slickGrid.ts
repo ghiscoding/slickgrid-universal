@@ -5589,6 +5589,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       tabIndex: -1,
     });
     cellDiv.setAttribute('aria-describedby', this.uid + m.id);
+    if (colspan > 1) {
+      const visibleColspan = this.columns.slice(cell, cell + colspan).filter((column) => !column.hidden).length;
+      if (visibleColspan > 1) {
+        cellDiv.setAttribute('aria-colspan', `${visibleColspan}`);
+      }
+    }
+    if (rowspan > 1) {
+      cellDiv.setAttribute('aria-rowspan', `${rowspan}`);
+    }
     if (toolTipText) {
       cellDiv.setAttribute('title', toolTipText);
     }
@@ -6641,6 +6650,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       fragment.setAttribute('aria-hidden', 'true');
       fragment.setAttribute('role', 'presentation');
       fragment.removeAttribute('aria-describedby');
+      fragment.removeAttribute('aria-colspan');
+      fragment.removeAttribute('aria-rowspan');
       fragment.removeAttribute('tabindex');
 
       const bandWidth =

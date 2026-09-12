@@ -732,6 +732,9 @@ requirements are the two largest sources of variance.
   explanatory subtitle replicated in Angular, React, Vue, and Aurelia Example 20. The framework
   Example 20 suites assert the rendered pink cell, while the long colspan fixture text from Example
   08 is aligned across all four framework Example 14 demos.
+- Docking accessibility audit: the left/center/right wrappers and row overlay remain presentational,
+  preserving one semantic grid/row/cell tree. Logical colspan/rowspan hosts now expose
+  `aria-colspan`/`aria-rowspan`; visual continuation fragments remain hidden and presentational.
 - Audited the v11 migration guide against the public `SlickGrid` surface and documented the removed
   `getFrozenColumnId()`, `getFrozenRowOffset()`, and `validateColumnFreezeWidth()` methods plus the
   renamed `validateColumnPinning()` method and additive rendered-order argument.

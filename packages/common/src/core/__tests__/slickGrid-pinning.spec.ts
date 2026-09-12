@@ -54,6 +54,22 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
   });
 
+  it('keeps docking wrappers presentational around the one semantic grid tree', () => {
+    createGrid({ pinning: { columns: { left: ['a'], right: ['d'] }, rows: { top: [0] } } });
+
+    const headerRoot = container.querySelector<HTMLElement>('.slick-header-columns-root')!;
+    const dockedRow = container.querySelector<HTMLElement>('.slick-docking-overlay .slick-row[data-row="0"]')!;
+
+    expect(headerRoot.getAttribute('role')).toBe('row');
+    expect(headerRoot.querySelectorAll('[role="presentation"]')).toHaveLength(3);
+    expect(headerRoot.querySelectorAll('[role="columnheader"]')).toHaveLength(4);
+    expect(dockedRow.getAttribute('role')).toBe('row');
+    expect(dockedRow.querySelectorAll(':scope > [role="presentation"]')).toHaveLength(3);
+    const cells = [...dockedRow.querySelectorAll<HTMLElement>('[role="gridcell"]')];
+    expect(cells.length).toBeGreaterThan(0);
+    expect(cells.every((cell) => !cell.hasAttribute('aria-hidden'))).toBe(true);
+  });
+
   it('returns visible columns in rendered docking order', () => {
     const slickGrid = createGrid({ pinning: { columns: { left: ['a', 'c'] } } });
 
@@ -176,10 +192,11 @@ describe('SlickGrid unified pinning', () => {
     const spanData = {
       getLength: () => data.length,
       getItem: (row: number) => data[row],
-      getItemMetadata: (row: number) => (row === 0 ? { columns: { 0: { colspan: columns.length, formatter: () => 'Spanned' } } } : undefined),
+      getItemMetadata: (row: number) => (row === 0 ? { columns: { 0: { colspan: columns.length, formatter: () => 'Spanned', rowspan: 2 } } } : undefined),
     };
     grid = new SlickGrid(container, spanData as any, columns.map((column) => ({ ...column })) as Column[], {
       devMode: { ownerNodeIndex: 0 },
+      enableCellRowSpan: true,
       pinning: { columns: { left: ['a'], right: ['d'] } },
     });
 
@@ -190,6 +207,8 @@ describe('SlickGrid unified pinning', () => {
     expect(host.textContent).toBe('Spanned');
     expect(host.classList.contains('r3')).toBe(true);
     expect(host.style.width).toBe('320px');
+    expect(host.getAttribute('aria-colspan')).toBe('4');
+    expect(host.getAttribute('aria-rowspan')).toBe('2');
     expect(fragments[0].style.width).toBe('');
     expect(row.classList.contains('slick-row-colspan-crossing-docking')).toBe(true);
     expect(row.querySelectorAll('.slick-cell-colspan-crossing-docking')).toHaveLength(3);
@@ -199,10 +218,16 @@ describe('SlickGrid unified pinning', () => {
     expect(fragments[0].parentElement?.classList.contains('slick-scrolling-cells')).toBe(true);
     expect(fragments[1].parentElement?.classList.contains('slick-pinned-right-cells')).toBe(true);
     expect(fragments[0].getAttribute('aria-hidden')).toBe('true');
+    expect(fragments[0].getAttribute('role')).toBe('presentation');
+    expect(fragments[0].getAttribute('aria-colspan')).toBeNull();
+    expect(fragments[0].getAttribute('aria-rowspan')).toBeNull();
     expect((grid as any).getCellNode(0, 0)).toBe(host);
 
     grid.getColumns()[1].hidden = true;
     expect((grid as any).getColspanSegments(0, columns.length)).toHaveLength(3);
+    const oneVisibleSpan = document.createElement('div');
+    (grid as any).appendCellHtml(oneVisibleSpan, 0, 0, 2, 1, null, data[0]);
+    expect(oneVisibleSpan.firstElementChild?.getAttribute('aria-colspan')).toBeNull();
     grid.getColumns()[1].hidden = false;
 
     grid.setActiveCell(0, 0);
