@@ -96,6 +96,8 @@ describe('SlickGrid core file', () => {
       asyncEditorLoadDelay: 1,
       asyncPostRenderDelay: 1,
       asyncPostRenderCleanupDelay: 2,
+      invalidColumnPinningPickerCallback: vi.fn(),
+      invalidColumnPinningWidthCallback: vi.fn(),
       devMode: { ownerNodeIndex: 0 },
     };
     container = document.createElement('div');
@@ -4925,20 +4927,18 @@ describe('SlickGrid core file', () => {
         Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 50 });
         Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
 
-        // Set prevScrollLeft and scrollLeft right before dispatching scroll event
+        // Set the scroll state right before invoking the scroll handler.
         (grid as any).prevScrollLeft = 0;
+        (grid as any).scrollLeft = 0;
+        (grid as any).viewportW = 50;
         viewportX.scrollLeft = 100;
-        (grid as any).scrollLeft = 100;
 
         // Stub scrollToX to avoid side effects
         vi.spyOn(grid as any, 'scrollToX').mockImplementation(() => {});
 
         const onViewportChangedSpy = vi.spyOn(grid, 'triggerEvent');
 
-        // Dispatch a real scroll event on the viewport element
         const scrollEvent = new Event('scroll');
-        viewportX.dispatchEvent(scrollEvent);
-        // Call handleScroll to simulate the grid's scroll handler
         (grid as any).handleScroll(scrollEvent);
 
         // Should update lastRenderedScrollLeft, trigger onViewportChanged

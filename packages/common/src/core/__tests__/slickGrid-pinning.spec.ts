@@ -31,6 +31,8 @@ describe('SlickGrid unified pinning', () => {
     grid = new SlickGrid(container, data, gridColumns.map((column) => ({ ...column })) as Column[], {
       enableCellNavigation: true,
       devMode: { ownerNodeIndex: 0 },
+      invalidColumnPinningPickerCallback: vi.fn(),
+      invalidColumnPinningWidthCallback: vi.fn(),
       ...options,
     });
     return grid;
@@ -275,7 +277,7 @@ describe('SlickGrid unified pinning', () => {
     });
 
     grid.setColumnPinning('b', 'left');
-    expect(invalidPinning).toHaveBeenCalledWith(expect.stringContaining('non-sequential order'));
+    expect(invalidPinning).toHaveBeenCalledWith(expect.stringContaining('split a colspan'));
     expect(grid.getColumns()[1].pinned).toBeFalsy();
     (grid as any)._options.pinning = { columns: { left: ['b'], right: ['d'] } };
     expect((grid as any).validateColumnPinning(undefined, true)).toBe(false);

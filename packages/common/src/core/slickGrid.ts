@@ -260,15 +260,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected _defaults: BaseGridOption = {
     invalidColumnPinningPickerCallback: (error) => alert(error),
     invalidColumnPinningWidthCallback: (error) => alert(error),
-    invalidColumnPinningWidthMessage:
-      '[SlickGrid] You are trying to pin more columns than the grid can support. ' +
-      'Make sure to have less columns pinned (on the left) than the actual visible grid width.',
-    invalidColumnPinningPickerMessage:
-      '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column in the center section of the grid. ' +
-      'You could alternatively unpin columns before trying again.',
+    invalidColumnPinningWidthMessage: '[SlickGrid] Cannot pin these columns because they exceed the available grid width.',
+    invalidColumnPinningPickerMessage: '[SlickGrid] Cannot complete pinning because at least one visible center column is required.',
     invalidColumnPinningSequenceMessage:
-      '[SlickGrid] Action not allowed and aborted because pinning would split a colspan across the grid in a non-sequential order. ' +
-      'Pin columns from the left or right edge without skipping columns.',
+      '[SlickGrid] Cannot change pinning because it would split a colspan. Pin columns sequentially from the left or right edge.',
     skipPinningValidation: false,
     allowDragFromClosest: 'div.slick-cell.dnd, div.slick-cell.cell-reorder',
     alwaysShowVerticalScroll: false,
