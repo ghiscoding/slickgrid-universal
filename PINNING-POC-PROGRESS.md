@@ -585,8 +585,9 @@ Core implementation:
 - `packages/common/src/services/headerGrouping.service.ts` — grouped/pre-header titles now use
   normal coordinates without the legacy 1000px offset.
 - `packages/common/src/styles/slick-grid.scss` — three-region row layout and docked stacking styles.
-- `packages/common/src/core/index.ts` — public `DockingController` class export; its data types
-  are exported from the interfaces barrel.
+- `packages/common/src/core/dockingController.ts` — internal DOM-free resolver kept in a separate
+  module for separation of concerns; its public docking data types remain exported from the
+  interfaces barrel.
 
 Public types:
 
@@ -857,12 +858,20 @@ bands would still be a separate feature and product decision.
    previous fully-visible frame. Columns and rows resolve directly from their natural geometry,
    so programmatic jumps, restored scroll positions, and post-scroll configuration cannot skip a
    candidate that should be docked.
-7. **Numeric row reference ambiguity.** An in-range number is treated as a row index before it is treated as a dataset ID. A tagged `{ id } | { index }` row reference would remove this ambiguity.
-8. **Pinned rows remain part of the normal dataset height.** They reuse/move the real row node and their natural dataset slot remains represented in scroll geometry. Confirm this product semantic against the desired AG Grid behavior.
+7. **Numeric row-reference semantics are resolved.** An in-range numeric reference is treated as
+   a row index first; string references resolve through `datasetIdPropertyName` as dataset IDs.
+   This preserves the existing low-LOC API without adding a second tagged reference shape.
+8. **Pinned-row dataset-height semantics are resolved.** Pinned rows reuse/move the real row
+   node into the docking overlay, while their natural dataset slot remains represented in scroll
+   geometry. This keeps scrollbar range, virtual-row mapping, restored scroll positions, and
+   variable-height row calculations stable when docking changes.
 9. **Permanent pin over-allocation is rejected at the API boundary.** Pinning every visible
    column or consuming the whole viewport invokes the configured canonical pinning validation
    callback and leaves the prior pinning state intact.
-10. **Column reorder policy is undecided.** The visual order groups permanent pins at the edges, but dragging between center and pinned regions does not yet automatically change `pinned` state.
+10. **Column reorder policy is resolved.** Columns reorder within their current docking band;
+    dragging does not move a column between center and pinned regions or implicitly change its
+    `pinned` state. Pin/unpin remains an explicit Header Menu or API action. This preserves the
+    existing pinned-section and center-section behavior covered by reorder tests.
 11. **Header Menu terminology is now pinning-based.** The `Column Pinning` root opens a
     sub-menu containing `Pin Left`, `Pin Right`, `Pin Columns Left`,
     `Pin Columns Right`, `Unpin Column`, and `Unpin All Columns` for pinnable columns.
@@ -870,7 +879,9 @@ bands would still be a separate feature and product decision.
     `Column.pinned`, the bulk directional commands write the corresponding `pinning.columns` edge,
     and the unpin commands clear the selected column or all aggregate column edges. The removed
     v10 names remain documented in the migration guide only.
-12. **Public controller surface is provisional.** `DockingController` is currently exported for the POC; it may be better kept internal in the final API.
+12. **`DockingController` API visibility is resolved.** The controller remains a separate internal
+    module for separation of concerns, but is not exported from the public common-package barrel.
+    Public consumers use the grid APIs and exported docking data types instead.
 13. **Migration references are intentionally narrow.** Historical option names, command ids,
     translation keys, and labels belong in the v11 migration guide. Active runtime code and
     examples use pinning terminology; only the `--slick-pinned-*` theme variables remain as
@@ -901,10 +912,8 @@ deferred until the vanilla guide and API cleanup are settled; do not add framewo
 3. [x] Example 47/58 sticky-column transitions, sticky summary rows, resizing, and keyboard
    navigation are covered by the Vanilla/framework sticky suites. Direct large-jump activation
    is also covered by focused controller tests.
-4. Sticky implementation is complete. Resolve only the remaining product/API decisions before
-   freezing the public API: numeric row-reference tagging, cross-region reorder semantics,
-   pinned-row dataset-height semantics, whether `DockingController` remains public, and
-   top-sticky-row hierarchy/push-off behavior.
+4. Sticky implementation is complete. Resolve only the remaining product/API decision before
+   freezing the public API: top-sticky-row hierarchy/push-off behavior.
 5. Review the implemented unified `GridOption.pinning` shape and `CurrentColumn.pinning` precedence before freezing the public API. The former `pinnedColumn`/`pinnedRows` shorthands have been removed.
 6. Review the pinning-based Header Menu: `Column Pinning` must keep `Pin Left`, `Pin Right`,
    both `Pin Columns Left`/`Pin Columns Right` commands, and `Unpin Column`/`Unpin All Columns` visible in the

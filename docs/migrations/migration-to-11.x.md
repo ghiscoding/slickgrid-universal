@@ -164,7 +164,8 @@ const gridOptions: GridOption = {
 
 The `docking` option is optional. It controls the shared pixel budgets and overflow behavior for
 permanent and sticky docking. Do not import `DockingController` for application code; it is an
-internal implementation detail and its public export is provisional.
+internal implementation detail and is not part of the public v11 API. The implementation remains
+in its own module for separation of concerns.
 
 ### Grid State and renamed interfaces
 
@@ -212,7 +213,7 @@ barrel. The v11 names are `ColumnPinningReferences`, `PinnedColumns`, `PinnedRow
 `PinningOption`, `StickyRows`, and `DockingOption`. The resolver layout types are
 `DockedColumn`, `ColumnDockingLayout`, `DockingRow`, `DockedRow`, and `RowDockingLayout`.
 These replace any application-owned frozen-pane state types; `DockingController` itself remains
-an internal implementation detail.
+an internal implementation detail and is not exported from the public common-package barrel.
 
 The public mapping is summarized below. Most names remain stable while their frozen-pane
 properties are replaced; the method renames are intentional and breaking:

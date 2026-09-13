@@ -1,4 +1,3 @@
-export * from './dockingController.js';
 export * from './slickCore.js';
 export * from './slickDataView.js';
 export * from './slickGrid.js';
