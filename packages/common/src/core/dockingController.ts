@@ -28,8 +28,6 @@ export class DockingController<C extends Column = Column> {
   protected lastColumnSignature = '';
   protected lastRowSignature = '';
   protected options: Required<DockingOption> = { ...DEFAULT_OPTIONS };
-  protected fullySeenColumns: Set<number> = new Set<number>();
-  protected fullySeenRows: Set<number | string> = new Set<number | string>();
 
   constructor(options?: DockingOption) {
     this.setOptions(options);
@@ -40,8 +38,6 @@ export class DockingController<C extends Column = Column> {
   }
 
   reset(): void {
-    this.fullySeenColumns.clear();
-    this.fullySeenRows.clear();
     this.lastColumnSignature = '';
     this.lastRowSignature = '';
   }
@@ -81,25 +77,9 @@ export class DockingController<C extends Column = Column> {
     const visibleEnd = scrollLeft + centerViewportWidth;
     const hysteresis = this.options.stickyHysteresis;
 
-    // First record which candidates have actually been visible. A sticky item
-    // must not materialize merely because the user jumped across it.
     center.forEach((entry) => {
       const sticky = columns[entry.index].sticky;
       if (!sticky) {
-        return;
-      }
-      const end = entry.offset + entry.width;
-      if (entry.offset >= visibleStart && end <= visibleEnd) {
-        this.fullySeenColumns.add(entry.index);
-      }
-      // On the initial leftmost view, two-sided sticky columns that are
-      // beyond the right edge should still be available to dock there. Without
-      // this seed, Q3/Q4/YTD remain in the center until the user scrolls right
-      // once and returns to the starting position.
-      if (scrollLeft === 0) {
-        this.fullySeenColumns.add(entry.index);
-      }
-      if (!this.fullySeenColumns.has(entry.index)) {
         return;
       }
       const side = sticky === true ? leadingSide : sticky;
@@ -255,19 +235,6 @@ export class DockingController<C extends Column = Column> {
       const isStickyTop = isStickyBoth || stickyTopIds.has(row.id) || stickyTopIds.has(row.index);
       const isStickyBottom = isStickyBoth || stickyBottomIds.has(row.id) || stickyBottomIds.has(row.index);
       if (!isStickyTop && !isStickyBottom) {
-        return;
-      }
-      if (row.top >= scrollTop && row.top + row.height <= visibleBottom) {
-        this.fullySeenRows.add(row.id);
-      }
-      // Match the initial sticky-column behavior: at the top of the grid,
-      // configured sticky rows are eligible immediately so a report summary
-      // below the first rendered rows can dock at its nearest edge without a
-      // preliminary scroll-through.
-      if (scrollTop === 0) {
-        this.fullySeenRows.add(row.id);
-      }
-      if (!this.fullySeenRows.has(row.id)) {
         return;
       }
       // Unlike columns, rows must transfer at the exact physical boundary. A

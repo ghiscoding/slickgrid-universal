@@ -213,6 +213,33 @@
       ) !important;
     }
 
+    // Sticky candidates remain at their natural center-band coordinates.
+    // Activation changes only this compositor transform, avoiding per-column
+    // CSSOM rewrites, chrome measurement, and per-row grid-track resizing.
+    .slick-cell-sticky,
+    .slick-column-sticky {
+      z-index: 20;
+      will-change: transform;
+    }
+
+    .slick-cell-sticky {
+      background: inherit;
+    }
+
+    .slick-cell-sticky-left,
+    .slick-column-sticky-left {
+      transform: translate3d(calc(var(--slick-docking-scroll-left, 0px) + var(--slick-sticky-column-offset, 0px)), 0, 0) !important;
+    }
+
+    .slick-cell-sticky-right,
+    .slick-column-sticky-right {
+      transform: translate3d(
+        calc(var(--slick-docking-scroll-left, 0px) + var(--slick-docking-viewport-width, 100%) + var(--slick-sticky-column-offset, 0px)),
+        0,
+        0
+      ) !important;
+    }
+
     // Full-span group headers stay fixed to the visible viewport.
     .slick-row-docked > .slick-cell-full-width-group {
       left: 0 !important;
@@ -223,15 +250,15 @@
       will-change: transform;
     }
 
-    .slick-header-column.slick-column-pinned-left,
-    .slick-headerrow-column.slick-column-pinned-left,
-    .slick-footerrow-column.slick-column-pinned-left {
+    .slick-header-column.slick-column-pinned-left:not(.slick-column-sticky),
+    .slick-headerrow-column.slick-column-pinned-left:not(.slick-column-sticky),
+    .slick-footerrow-column.slick-column-pinned-left:not(.slick-column-sticky) {
       transform: translate3d(calc(var(--slick-docking-scroll-left, 0px) + var(--slick-docking-chrome-offset, 0px)), 0, 0) !important;
     }
 
-    .slick-header-column.slick-column-pinned-right,
-    .slick-headerrow-column.slick-column-pinned-right,
-    .slick-footerrow-column.slick-column-pinned-right {
+    .slick-header-column.slick-column-pinned-right:not(.slick-column-sticky),
+    .slick-headerrow-column.slick-column-pinned-right:not(.slick-column-sticky),
+    .slick-footerrow-column.slick-column-pinned-right:not(.slick-column-sticky) {
       transform: translate3d(
         calc(var(--slick-docking-scroll-left, 0px) + var(--slick-docking-chrome-offset, var(--slick-docking-right-offset, 0px))),
         0,
@@ -1159,12 +1186,31 @@
   }
 
   /** Pinned styling */
-  .slick-column-pinned-left-edge {
+  .slick-column-pinned-left-edge,
+  .slick-column-sticky-left-edge {
     box-shadow: var(--slick-pinned-border-box-shadow-left, v.$slick-pinned-border-box-shadow-left) !important;
   }
 
-  .slick-column-pinned-right-edge {
+  .slick-column-pinned-right-edge,
+  .slick-column-sticky-right-edge {
     box-shadow: var(--slick-pinned-border-box-shadow-right, v.$slick-pinned-border-box-shadow-right) !important;
+  }
+
+  .slick-cell-sticky-left-edge::after,
+  .slick-cell-sticky-right-edge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .slick-cell-sticky-left-edge::after {
+    box-shadow: var(--slick-pinned-border-box-shadow-left, v.$slick-pinned-border-box-shadow-left);
+  }
+
+  .slick-cell-sticky-right-edge::after {
+    box-shadow: var(--slick-pinned-border-box-shadow-right, v.$slick-pinned-border-box-shadow-right);
   }
 
   // Pinned header/filter cells must paint above center cells when their

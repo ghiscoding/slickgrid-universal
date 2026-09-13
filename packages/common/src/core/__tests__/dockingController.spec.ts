@@ -33,11 +33,11 @@ describe('DockingController', () => {
     expect(controller.resolveColumns([column('left', 10, { pinned: 'left' })], 0, 100).revision).toBe(3);
   });
 
-  it('resolves sticky columns after they are seen and avoids materializing jumped-over candidates', () => {
+  it('resolves sticky columns after a direct scroll jump', () => {
     const columns = [column('left-sticky', 10, { sticky: 'left' }), column('middle', 10), column('right-sticky', 20, { sticky: 'right' })];
     const controller = new DockingController({ maxColumnViewportWidthPercent: 200, stickyHysteresis: 2 });
 
-    expect(controller.resolveColumns(columns, 100, 20).left).toHaveLength(0);
+    expect(controller.resolveColumns(columns, 100, 20).left.map((item) => item.index)).toEqual([0]);
     expect(controller.resolveColumns(columns, 0, 20).left).toHaveLength(0);
     const layout = controller.resolveColumns(columns, 15, 20);
 
@@ -97,11 +97,11 @@ describe('DockingController', () => {
     expect(scrolled.bottom.map((item) => item.id)).toContain('sticky-bottom');
   });
 
-  it('does not materialize a jumped-over sticky row and applies row budgets', () => {
-    const controller = new DockingController({ maxRowViewportHeightPercent: 10, overflowStrategy: 'priority' });
-    const rows = [row(1, 0, 0, 20), row(2, 1, 20, 20)];
-    expect(controller.resolveRows(rows, 100, 100, undefined, { top: [1], bottom: [2] }).top).toHaveLength(0);
-    const layout = controller.resolveRows(rows, 0, 100, undefined, { top: [1], bottom: [2] });
+  it('resolves a sticky row after a direct scroll jump', () => {
+    const controller = new DockingController({ maxRowViewportHeightPercent: 100, overflowStrategy: 'priority' });
+    const rows = [row('top', 0, 0, 20), row('bottom', 1, 20, 20)];
+    expect(controller.resolveRows(rows, 100, 100, undefined, { top: ['top'], bottom: ['bottom'] }).top.map((item) => item.id)).toEqual(['top']);
+    const layout = controller.resolveRows(rows, 0, 100, undefined, { top: ['top'], bottom: ['bottom'] });
     expect(layout.top.length + layout.bottom.length).toBeLessThanOrEqual(1);
   });
 

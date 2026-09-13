@@ -55,6 +55,10 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
       cy.get(`.slick-header-column[data-id="${columnId}"]`).should('have.class', 'slick-column-sticky');
       cy.get(cell(0, columnIndex)).should('have.class', 'slick-cell-sticky');
     }
+
+    cy.get(`${row(0)} .slick-cell-sticky-right-edge`).should(($cell) => {
+      expect(getComputedStyle($cell[0], '::after').boxShadow).not.to.equal('none');
+    });
   });
 
   it('should keep center cells visible when sticky columns occupy the trailing edge', () => {

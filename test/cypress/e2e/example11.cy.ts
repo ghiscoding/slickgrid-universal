@@ -906,6 +906,10 @@ describe('Example 11 - Batch Editing', () => {
       cy.then(() => {
         const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) as string);
         expect(Object.keys(savedDefinedFilters)).to.have.lengthOf(3);
+        expect(savedDefinedFilters[2].pinning).to.deep.include({
+          columns: { left: ['_checkbox_selector', 'title', 'duration'], right: [] },
+          rows: { top: [], bottom: [] },
+        });
       });
 
       cy.get('.selected-view').should('have.value', 'CustomViewTest');

@@ -908,6 +908,109 @@ describe('SlickGrid unified pinning', () => {
     }
   });
 
+  it('updates proxy-scrolled sticky columns without rebuilding band geometry', () => {
+    const stickyColumns = columns.map((column, index) => ({ ...column, sticky: index === 1 ? ('left' as const) : undefined }));
+    const slickGrid = createGrid({}, stickyColumns);
+    const internals = slickGrid as any;
+    const stickyHeader = slickGrid.getHeaderColumn('b');
+    const rowNode = document.createElement('div');
+    rowNode.className = 'slick-row slick-row-docked';
+    rowNode.dataset.row = '0';
+    const leftRegion = document.createElement('div');
+    leftRegion.className = 'slick-pinned-left-cells';
+    const centerRegion = document.createElement('div');
+    centerRegion.className = 'slick-scrolling-cells';
+    const rightRegion = document.createElement('div');
+    rightRegion.className = 'slick-pinned-right-cells';
+    const stickyCell = document.createElement('div');
+    stickyCell.className = 'slick-cell l1 r1';
+    centerRegion.appendChild(stickyCell);
+    rowNode.append(leftRegion, centerRegion, rightRegion);
+    container.appendChild(rowNode);
+    internals.rowsCache = {
+      0: {
+        cellNodesByColumnIdx: { 1: stickyCell },
+        cellRegions: { center: centerRegion, left: leftRegion, right: rightRegion },
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        rowNode: [rowNode],
+      },
+    };
+    internals.dockingLayout = {
+      ...internals.dockingLayout,
+      left: [{ band: 'left', index: 1, naturalOffset: 80, offset: 0, sticky: true, width: 80 }],
+      leftBaseWidth: 0,
+      leftWidth: 80,
+      revision: internals.dockingLayout.revision + 1,
+    };
+    internals.dockingByColumn.set(1, internals.dockingLayout.left[0]);
+
+    internals.updateRenderedCellDocking();
+
+    expect(stickyCell.parentElement?.classList.contains('slick-scrolling-cells')).toBe(true);
+    expect(stickyCell.classList.contains('slick-cell-sticky-left')).toBe(true);
+    expect(stickyCell.classList.contains('slick-cell-pinned-left')).toBe(true);
+    expect(stickyCell.style.getPropertyValue('--slick-sticky-column-offset')).toBe('-80px');
+
+    const rightSticky = { band: 'right', index: 1, naturalOffset: 80, offset: 0, sticky: true, width: 80 };
+    internals.dockingLayout.left = [];
+    internals.dockingLayout.right = [rightSticky];
+    internals.dockingLayout.rightWidth = 80;
+    internals.dockingByColumn.set(1, rightSticky);
+    internals.updateStickyColumnTransforms();
+    expect(stickyCell.classList.contains('slick-cell-sticky-right')).toBe(true);
+    expect(stickyCell.classList.contains('slick-cell-pinned-left')).toBe(false);
+    expect(stickyCell.style.getPropertyValue('--slick-sticky-column-offset')).toBe('-160px');
+
+    const inactiveSticky = { band: 'center', index: 1, naturalOffset: 80, offset: 80, sticky: false, width: 80 };
+    internals.dockingLayout.right = [];
+    internals.dockingLayout.rightWidth = 0;
+    internals.dockingByColumn.set(1, inactiveSticky);
+    internals.updateStickyColumnTransforms();
+    expect(stickyCell.classList.contains('slick-cell-sticky')).toBe(false);
+    expect(stickyCell.classList.contains('slick-cell-pinned-right')).toBe(false);
+    expect(stickyCell.style.getPropertyValue('--slick-sticky-column-offset')).toBe('');
+
+    internals.dockingLayout.left = [{ band: 'left', index: 1, naturalOffset: 80, offset: 0, sticky: true, width: 80 }];
+    internals.dockingLayout.leftWidth = 80;
+    internals.dockingByColumn.set(1, internals.dockingLayout.left[0]);
+
+    const updateTransformsSpy = vi.spyOn(internals, 'updateStickyColumnTransforms');
+    const updatePositionCachesSpy = vi.spyOn(internals, 'updateColumnPositionCaches');
+    const applyColumnWidthsSpy = vi.spyOn(internals, 'applyColumnWidths');
+    const applyChromeSpy = vi.spyOn(internals, 'applyDockingToColumnChrome');
+    const applyRowDimensionsSpy = vi.spyOn(internals, 'applyDockingDimensionsToRows');
+    const enqueueRenderSpy = vi.spyOn(internals, 'enqueueSingleViewportRender').mockImplementation(() => undefined);
+    vi.spyOn(internals, 'refreshDockingLayout').mockImplementation(() => {
+      internals.dockingByColumn.set(1, internals.dockingLayout.left[0]);
+      return true;
+    });
+
+    const originalRequestAnimationFrame = globalThis.requestAnimationFrame;
+    let runFrame: FrameRequestCallback | undefined;
+    Object.defineProperty(globalThis, 'requestAnimationFrame', {
+      configurable: true,
+      value: (callback: FrameRequestCallback) => {
+        runFrame = callback;
+        return 1;
+      },
+    });
+    try {
+      internals.enqueueStickyColumnLayout();
+      runFrame?.(0);
+
+      expect(updateTransformsSpy).toHaveBeenCalledOnce();
+      expect(enqueueRenderSpy).toHaveBeenCalledOnce();
+      expect(updatePositionCachesSpy).not.toHaveBeenCalled();
+      expect(applyColumnWidthsSpy).not.toHaveBeenCalled();
+      expect(applyChromeSpy).not.toHaveBeenCalled();
+      expect(applyRowDimensionsSpy).not.toHaveBeenCalled();
+      expect(stickyHeader.classList.contains('slick-column-sticky-left')).toBe(true);
+    } finally {
+      Object.defineProperty(globalThis, 'requestAnimationFrame', { configurable: true, value: originalRequestAnimationFrame });
+    }
+  });
+
   it('defers a single-viewport render until the scheduled render callback runs', () => {
     const slickGrid = createGrid();
     const renderSpy = vi.spyOn(slickGrid, 'render').mockImplementation(() => undefined);
