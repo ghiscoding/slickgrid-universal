@@ -16,8 +16,6 @@ const addVanillaEventPropagation = function <T = any>(event: T, target?: HTMLEle
 };
 
 const mockGridOptions = {
-  frozenColumn: 1,
-  frozenRow: -1,
   multiSelect: true,
 } as GridOption;
 
@@ -119,9 +117,6 @@ describe('SlickRowMoveManager Plugin', () => {
   afterEach(() => {
     vi.clearAllMocks();
     plugin?.destroy();
-    mockGridOptions.frozenColumn = -1;
-    mockGridOptions.frozenRow = -1;
-    mockGridOptions.frozenBottom = false;
     mockGridOptions.multiSelect = true;
     mockGridOptions.rowHeight = 25;
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);

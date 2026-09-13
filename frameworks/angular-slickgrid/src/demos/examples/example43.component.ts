@@ -157,7 +157,6 @@ export class Example43Component implements OnInit {
       autoResize: {
         container: '#demo-container',
         bottomPadding: 30,
-        rightPadding: 50,
       },
       enableCellNavigation: true,
       enableColumnReorder: true,
@@ -169,7 +168,7 @@ export class Example43Component implements OnInit {
       autoEdit: true,
       editable: false,
       datasetIdPropertyName: 'employeeID',
-      frozenColumn: 0,
+      pinning: { columns: { left: 0 } },
       gridHeight: 348,
       rowHeight: 30,
       dataView: {
@@ -464,7 +463,7 @@ export class Example43Component implements OnInit {
         newMetadata[row].columns[Number(col) + colDirIdx] = (this.metadata as any)[row].columns[col];
       }
     }
-    this.angularGrid.slickGrid?.setOptions({ frozenColumn: this.showEmployeeId ? 0 : 1 });
+    this.angularGrid.slickGrid?.setOptions({ pinning: { columns: { left: this.showEmployeeId ? 0 : 1 } } });
     this.angularGrid.slickGrid?.updateColumnById('employeeID', { hidden: !this.showEmployeeId });
     this.angularGrid.slickGrid?.updateColumns();
     */

@@ -45,6 +45,7 @@ function definedGrid1() {
     preHeaderPanelHeight: 28,
     gridHeight: 275,
     gridWidth: 800,
+    rowHeight: 33,
     enablePdfExport: true,
     enableExcelExport: true,
     excelExportOptions: {
@@ -56,6 +57,10 @@ function definedGrid1() {
       globalItemMetadataProvider: {
         getRowMetadata: (item: any, row: number) => renderDifferentColspan(item, row),
       },
+    },
+    headerMenu: {
+      hidePinColumnCommand: false,
+      hidePinningColumnsCommand: false,
     },
     gridMenu: {
       iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
@@ -93,15 +98,16 @@ function definedGrid2() {
     explicitInitialization: true,
     gridHeight: 275,
     gridWidth: 800,
-    frozenColumn: 2,
+    rowHeight: 33,
+    pinning: { columns: { left: 2 } },
     enablePdfExport: true,
     enableExcelExport: true,
     excelExportOptions: {
       exportWithFormatter: false,
     },
     externalResources: [new ExcelExportService(), new PdfExportService()],
-    gridMenu: { hideClearFrozenColumnsCommand: false },
-    headerMenu: { hideFreezeColumnsCommand: false },
+    gridMenu: { hideClearPinningCommand: false },
+    headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
   };
 }
 
@@ -113,7 +119,7 @@ function getData(count: number) {
       id: i,
       num: i,
       title: 'Task ' + i,
-      duration: '5 days',
+      duration: '5 days with some long text to test column span',
       percentComplete: Math.round(Math.random() * 100),
       start: '01/01/2009',
       finish: '01/05/2009',
@@ -123,8 +129,14 @@ function getData(count: number) {
   return mockDataset;
 }
 
-function setFrozenColumns2(frozenCols: number) {
-  vueGrid2.slickGrid.setOptions({ frozenColumn: frozenCols });
+function setPinnedColumns2(pinnedCols: number) {
+  vueGrid2.slickGrid.setOptions({
+    pinning: {
+      columns: {
+        left: pinnedCols >= 0 ? pinnedCols : [],
+      },
+    },
+  });
   gridOptions2.value = vueGrid2.slickGrid.getOptions();
 }
 
@@ -227,14 +239,14 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 
   <hr />
 
-  <h3>Grid 2 <small>(with Header Grouping &amp; Frozen/Pinned Columns)</small></h3>
+  <h3>Grid 2 <small>(with Header Grouping &amp; Pinned Columns)</small></h3>
 
   <div class="col-sm 12">
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="remove-frozen-column-button" @click="setFrozenColumns2(-1)">
-      <i class="mdi mdi-close"></i> Remove Frozen Columns
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="remove-pinned-column-button" @click="setPinnedColumns2(-1)">
+      <i class="mdi mdi-close"></i> Remove Pinned Columns
     </button>
-    <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="set-3frozen-columns" @click="setFrozenColumns2(2)">
-      <i class="mdi mdi-pin-outline"></i> Set 3 Frozen Columns
+    <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="set-3pinned-columns" @click="setPinnedColumns2(2)">
+      <i class="mdi mdi-pin-outline"></i> Set 3 Pinned Columns
     </button>
   </div>
 
@@ -247,17 +259,3 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
   >
   </slickgrid-vue>
 </template>
-
-<style lang="scss" scoped>
-/** You can change the pinned/frozen border styling through this css override */
-
-.slick-row .slick-cell.frozen:last-child,
-.slick-headerrow-column.frozen:last-child,
-.slick-footerrow-column.frozen:last-child {
-  border-right: 1px solid #969696 !important;
-}
-
-.slick-pane-bottom {
-  border-top: 1px solid #969696 !important;
-}
-</style>

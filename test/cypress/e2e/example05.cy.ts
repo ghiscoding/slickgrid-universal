@@ -174,7 +174,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
   it('should be able to update the 1st row item (Task 0)', () => {
     cy.get('[data-test=update-item-btn]').contains('Update 1st Row Item').click();
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     const now = new Date();
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -225,7 +225,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
         cy.get(`.slick-grid-menu.${gridUid}`).find('.slick-menu-item:nth(0)').find('span').contains('Clear all Filters').click();
       });
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
   });
 
   it('should be able to open "Task 1" and "Task 3" parents', () => {

@@ -1,7 +1,6 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { type AureliaGridInstance, type Column, type GridOption, type ItemMetadata } from 'aurelia-slickgrid';
-import './example14.scss'; // provide custom CSS/SASS styling
 
 export class Example14 {
   aureliaGrid1!: AureliaGridInstance;
@@ -56,6 +55,7 @@ export class Example14 {
       preHeaderPanelHeight: 28,
       gridHeight: 275,
       gridWidth: 800,
+      rowHeight: 33,
       enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {
@@ -67,6 +67,10 @@ export class Example14 {
         globalItemMetadataProvider: {
           getRowMetadata: (item: any, row: number) => this.renderDifferentColspan(item, row),
         },
+      },
+      headerMenu: {
+        hidePinColumnCommand: false,
+        hidePinningColumnsCommand: false,
       },
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
@@ -104,15 +108,16 @@ export class Example14 {
       explicitInitialization: true,
       gridHeight: 275,
       gridWidth: 800,
-      frozenColumn: 2,
+      rowHeight: 33,
+      pinning: { columns: { left: 2 } },
       enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: false,
       },
       externalResources: [new ExcelExportService(), new PdfExportService()],
-      gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false },
+      gridMenu: { hideClearPinningCommand: false },
+      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
     };
   }
 
@@ -124,7 +129,7 @@ export class Example14 {
         id: i,
         num: i,
         title: 'Task ' + i,
-        duration: '5 days',
+        duration: '5 days with some long text to test column span',
         percentComplete: Math.round(Math.random() * 100),
         start: '01/01/2009',
         finish: '01/05/2009',
@@ -134,8 +139,8 @@ export class Example14 {
     return mockDataset;
   }
 
-  setFrozenColumns2(frozenCols: number) {
-    this.gridObj2.setOptions({ frozenColumn: frozenCols });
+  setPinnedColumns2(pinnedCols: number) {
+    this.gridObj2.setOptions({ pinning: { columns: { left: pinnedCols } } });
     this.gridOptions2 = this.gridObj2.getOptions();
   }
 

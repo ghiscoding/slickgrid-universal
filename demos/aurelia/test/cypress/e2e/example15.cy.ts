@@ -1,7 +1,6 @@
 import { format } from '@formkit/tempo';
 
 describe('Example 15: Grid State & Presets using Local Storage', () => {
-  const GRID_ROW_HEIGHT = 35;
   const fullEnglishTitles = ['', 'Title', 'Description', 'Duration', '% Complete', 'Start', 'Completed'];
 
   beforeEach(() => {
@@ -12,16 +11,11 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
     cy.saveLocalStorage();
   });
 
-  it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/example15`);
+  it('should display Example title from a clean local-storage state', () => {
+    cy.visit(`${Cypress.config('baseUrl')}/example15`, {
+      onBeforeLoad: (window) => window.localStorage.clear(),
+    });
     cy.get('h2').should('contain', 'Example 15: Grid State & Presets using Local Storage');
-
-    cy.clearLocalStorage();
-    cy.get('[data-test=reset-button]').click();
-  });
-
-  it('should reload the page', () => {
-    cy.reload().wait(50);
   });
 
   it('should have exact Column Titles in the grid', () => {
@@ -147,12 +141,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(5)')
-      .children('.slick-menu-content')
-      .should('contain', 'Sort Descending')
-      .click();
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Descending').click();
 
     cy.get('.slick-header-columns')
       .children('.slick-header-column:nth(2)')
@@ -335,12 +324,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(9)')
-      .children('.slick-menu-content')
-      .should('contain', 'Cacher la colonne')
-      .click();
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Cacher la colonne').click();
 
     cy.get('#grid15')
       .find('.slick-header-columns')
@@ -348,7 +332,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .each(($child, index) => expect($child.find('.slick-column-name').text()).to.eq(expectedTitles[index]));
   });
 
-  it('should be able to freeze "Description" column', () => {
+  it('should be able to pin "Description" column', () => {
     cy.get('.slick-header-columns')
       .children('.slick-header-column:nth(1)')
       .trigger('mouseover')
@@ -359,10 +343,11 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(1)')
-      .children('.slick-menu-content')
-      .should('contain', 'Geler les colonnes')
-      .click();
+      .find('[data-command="pin-column"]')
+      .should('contain', 'Épinglage de colonne')
+      .trigger('mouseover');
+
+    cy.get('.slick-submenu:visible [data-command="pin-columns-left"]').should('contain', 'Épingler les colonnes à gauche').click();
   });
 
   it('should reload the page', () => {
@@ -423,10 +408,11 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       });
   });
 
-  it('should have a persisted frozen column after "Description" and a grid with 4 containers on page load with 2 columns on the left and 3 columns on the right', () => {
-    cy.get('[style="transform: translateY(0px);"]').should('have.length', 2);
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]').children().should('have.length', 2);
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"]').children().should('have.length', 3);
+  it('should have a persisted pinned column after "Description" with 2 pinned and 3 scrolling columns', () => {
+    const firstRow = '#grid15 .slick-row[data-row="0"]';
+    cy.get(firstRow).should('have.length', 1);
+    cy.get(`${firstRow} .slick-pinned-left-cells > .slick-cell`).should('have.length', 2);
+    cy.get(`${firstRow} .slick-scrolling-cells > .slick-cell`).should('have.length', 3);
   });
 
   it('should click on the reset button and have exact Column Titles position as in beginning', () => {
@@ -453,7 +439,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
   });
 
-  it('should be able to freeze "Description" 3rd column', () => {
+  it('should be able to pin "Description" 3rd column', () => {
     cy.get('.slick-header-columns')
       .children('.slick-header-column:nth(2)')
       .trigger('mouseover')
@@ -464,10 +450,11 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(1)')
-      .children('.slick-menu-content')
-      .should('contain', 'Freeze Columns')
-      .click();
+      .find('[data-command="pin-column"]')
+      .should('contain', 'Column Pinning')
+      .trigger('mouseover');
+
+    cy.get('.slick-submenu:visible [data-command="pin-columns-left"]').should('contain', 'Pin Columns Left').click();
   });
 
   it('should swap "Duration" and "% Complete" columns', () => {
@@ -481,7 +468,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
   });
 
-  it('should be able to freeze "% Complete" and expect 4th column to be freezed', () => {
+  it('should be able to pin "% Complete" and expect 4th column to be pinned', () => {
     cy.get('.slick-header-columns')
       .children('.slick-header-column:nth(3)')
       .trigger('mouseover')
@@ -492,16 +479,18 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(1)')
-      .children('.slick-menu-content')
-      .should('contain', 'Freeze Columns')
-      .click();
+      .find('[data-command="pin-column"]')
+      .should('contain', 'Column Pinning')
+      .trigger('mouseover');
+
+    cy.get('.slick-submenu:visible [data-command="pin-columns-left"]').should('contain', 'Pin Columns Left').click();
   });
 
-  it('should have a persisted frozen column after "Description" and a grid with 4 containers on page load with 2 columns on the left and 3 columns on the right', () => {
-    cy.get('[style="transform: translateY(0px);"]').should('have.length', 2);
-    cy.get('.grid-canvas-left > [style="transform: translateY(0px);"]').children().should('have.length', 4);
-    cy.get('.grid-canvas-right > [style="transform: translateY(0px);"]').children().should('have.length', 3);
+  it('should have a persisted pinned column after "Description" with 4 pinned and 3 scrolling columns', () => {
+    const firstRow = '#grid15 .slick-row[data-row="0"]';
+    cy.get(firstRow).should('have.length', 1);
+    cy.get(`${firstRow} .slick-pinned-left-cells > .slick-cell`).should('have.length', 4);
+    cy.get(`${firstRow} .slick-scrolling-cells > .slick-cell`).should('have.length', 3);
   });
 
   describe('Filter Shortcuts', () => {
@@ -599,9 +588,9 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
         expect(Number($span.text())).to.gt(80);
       });
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).contains('desc');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).contains('desc');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(2)`).contains('desc');
+      cy.get('#grid15 .slick-row[data-row="0"] .slick-cell.l2').contains('desc');
+      cy.get('#grid15 .slick-row[data-row="1"] .slick-cell.l2').contains('desc');
+      cy.get('#grid15 .slick-row[data-row="2"] .slick-cell.l2').contains('desc');
     });
   });
 });

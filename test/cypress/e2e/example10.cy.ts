@@ -503,12 +503,12 @@ describe('Example 10 - GraphQL Grid', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
+        .children('.slick-menu-item:nth-of-type(1)')
         .children('.slick-menu-content')
         .should('contain', 'Sort Ascending');
 
       cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(4)')
+        .children('.slick-menu-item:nth-of-type(2)')
         .children('.slick-menu-content')
         .should('contain', 'Sort Descending');
 
@@ -596,12 +596,12 @@ describe('Example 10 - GraphQL Grid', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
+        .children('.slick-menu-item:nth-of-type(1)')
         .children('.slick-menu-content')
         .should('contain', 'Trier par ordre croissant');
 
       cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(4)')
+        .children('.slick-menu-item:nth-of-type(2)')
         .children('.slick-menu-content')
         .should('contain', 'Trier par ordre décroissant');
 

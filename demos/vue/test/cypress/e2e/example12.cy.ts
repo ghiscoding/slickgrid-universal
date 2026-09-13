@@ -197,12 +197,7 @@ describe('Example 12: Localization (i18n)', () => {
         .invoke('show')
         .click();
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(4)')
-        .children('.slick-menu-content')
-        .should('contain', 'Sort Descending')
-        .click();
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Descending').click();
 
       cy.get('.slick-row').children('.slick-cell:nth(1)').first().should('contain', 'Task 1499');
     });
@@ -229,7 +224,7 @@ describe('Example 12: Localization (i18n)', () => {
     it('should scroll to bottom of the grid then select "Task 4"', () => {
       cy.get('#slickGridContainer-grid12').as('grid12');
 
-      cy.get('@grid12').find('.slick-viewport-top.slick-viewport-left').scrollTo('bottom').wait(10);
+      cy.get('@grid12').find('.slick-vertical-scroller').scrollTo('bottom').wait(10);
 
       cy.get('#grid12').contains('Task 4').parent().children('.slick-cell-checkboxsel').find('input[type=checkbox]').click({ force: true });
 
@@ -259,7 +254,7 @@ describe('Example 12: Localization (i18n)', () => {
 
       cy.get('.grid-canvas').find('.slick-row').should('be.visible');
 
-      cy.get('@grid12').find('.slick-viewport-top.slick-viewport-left').scrollTo('top').wait(10);
+      cy.get('@grid12').find('.slick-vertical-scroller').scrollTo('top').wait(10);
 
       cy.get('@grid12').find('.slick-row').children().filter('.slick-cell-checkboxsel.selected').should('have.length', 1);
 

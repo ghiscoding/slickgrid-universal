@@ -120,18 +120,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
     // subscribe to the grid, when it's destroyed, we should also destroy the Grid Menu
     this._eventHandler.subscribe(this.grid.onBeforeDestroy, this.dispose.bind(this));
-
-    // when a grid optionally changes from a regular grid to a frozen grid, we need to destroy & recreate the grid menu
-    // we do this change because the Grid Menu is on the left container for a regular grid, it should however be displayed on the right container for a frozen grid
-    this._eventHandler.subscribe(this.grid.onSetOptions, (_e, args) => {
-      if (args && args.optionsBefore && args.optionsAfter) {
-        const switchedFromRegularToFrozen = args.optionsBefore.frozenColumn! >= 0 && args.optionsAfter.frozenColumn === -1;
-        const switchedFromFrozenToRegular = args.optionsBefore.frozenColumn === -1 && args.optionsAfter.frozenColumn! >= 0;
-        if (switchedFromRegularToFrozen || switchedFromFrozenToRegular) {
-          this.recreateGridMenu();
-        }
-      }
-    });
   }
 
   /** Initialize plugin. */
@@ -208,13 +196,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   createGridMenu(): void {
     const gridMenuWidth = (this._addonOptions?.menuWidth || this._defaults.menuWidth) as number;
     const gridContainer = this.grid.getContainerNode();
-    const headerSide = this.gridOptions.hasOwnProperty('frozenColumn') && this.gridOptions.frozenColumn! >= 0 ? 'right' : 'left';
-
     // find the header or pre-header element where to insert the grid menu button
     this._headerElm =
       this._addonOptions?.iconButtonContainer === 'preheader'
         ? gridContainer.querySelector<HTMLDivElement>('.slick-preheader-panel')
-        : gridContainer.querySelector<HTMLDivElement>(`.slick-header-${headerSide}`);
+        : gridContainer.querySelector<HTMLDivElement>('.slick-header-left');
 
     if (this._headerElm?.parentElement && this._addonOptions) {
       if (this._addonOptions.showButton ?? this._defaults.showButton) {
@@ -569,13 +555,13 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const commandLabels = this._addonOptions?.commandLabels;
 
     if (this._addonOptions && this.gridOptions) {
-      // show grid menu: Unfreeze Columns/Rows
-      if (!this._addonOptions.hideClearFrozenColumnsCommand) {
+      // show grid menu: Clear Pinning
+      if (!this._addonOptions.hideClearPinningCommand) {
         this.addMissingCommandOrAction(
           {
-            iconCssClass: this._addonOptions.iconClearFrozenColumnsCommand || 'mdi mdi-pin-off-outline',
-            _orgTitle: commandLabels?.clearFrozenColumnsCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.clearFrozenColumnsCommandKey ?? 'CLEAR_PINNING'}`,
+            iconCssClass: this._addonOptions.iconClearPinningCommand || 'mdi mdi-pin-off-outline',
+            _orgTitle: commandLabels?.clearPinningCommand || '',
+            titleKey: `${translationPrefix}${commandLabels?.clearPinningCommandKey ?? 'CLEAR_PINNING'}`,
             disabled: false,
             command: 'clear-pinning',
             positionOrder: 52,
@@ -802,17 +788,15 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   }
 
   protected clearPinning(): void {
-    // reset frozen props on both SlickGrid options and shared service options
+    // Clear the unified pinning state.
     const newGridOptions: Partial<GridOption> = {
-      frozenColumn: -1,
-      frozenRow: -1,
-      frozenBottom: false,
-      enableMouseWheelScrollHandler: false,
+      pinning: {
+        columns: { left: [], right: [] },
+        rows: { top: [], bottom: [] },
+      },
     };
     this.grid.setOptions(newGridOptions);
-    Object.keys(newGridOptions).forEach(
-      (c) => (this.sharedService.gridOptions[c as keyof GridOption] = newGridOptions[c as keyof GridOption])
-    );
+    this.sharedService.gridOptions.pinning = newGridOptions.pinning;
 
     // re-update columns to reflect any possible changes
     this.grid.updateColumns();

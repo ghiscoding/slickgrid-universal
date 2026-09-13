@@ -11,11 +11,11 @@ export interface GridMenuLabel {
   /** Defaults to "CLEAR_ALL_SORTING" translation key */
   clearAllSortingCommandKey?: string;
 
-  /** Defaults to "Unfreeze Columns/Rows" */
-  clearFrozenColumnsCommand?: string;
+  /** Defaults to "Unpin Columns/Rows" */
+  clearPinningCommand?: string;
 
   /** Defaults to "CLEAR_PINNING" translation key */
-  clearFrozenColumnsCommandKey?: string;
+  clearPinningCommandKey?: string;
 
   /** Defaults to "Export to CSV" */
   exportCsvCommand?: string;

@@ -8,21 +8,15 @@ export interface EmptyWarning {
   /** DOM Element class name, defaults to "empty-data-warning" */
   className?: string;
 
-  /** Defaults to False, when using a frozen/pinned grid, do we want to hide the warning on the left side? */
-  hideFrozenLeftWarning?: boolean;
-
-  /** Defaults to False, when using a frozen/pinned grid, do we want to hide the warning on the right side? */
-  hideFrozenRightWarning?: boolean;
-
-  /** Defaults to "40%", what is the margin-left CSS style to use when we have a regular grid (non-frozen grid)? */
+  /** Defaults to "40%", what is the margin-left CSS style to use for a regular grid. */
   leftViewportMarginLeft?: number | string;
 
-  /** Defaults to "10px", what is the margin-left CSS style to use when the grid is a frozen/pinned grid? */
-  frozenLeftViewportMarginLeft?: number | string;
+  /** Defaults to "10px", what is the margin-left CSS style to use for a pinned grid. */
+  pinnedLeftViewportMarginLeft?: number | string;
 
-  /** Defaults to "40%", what is the margin-left CSS style to use when we have a regular grid (non-frozen grid)? */
+  /** Defaults to "40%", what is the margin-left CSS style to use for a regular grid. */
   rightViewportMarginLeft?: number | string;
 
-  /** Defaults to "10px", what is the margin-left CSS style to use when the grid is a frozen/pinned grid? */
-  frozenRightViewportMarginLeft?: number | string;
+  /** Defaults to "10px", what is the margin-left CSS style to use for a pinned grid. */
+  pinnedRightViewportMarginLeft?: number | string;
 }

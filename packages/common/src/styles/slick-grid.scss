@@ -85,6 +85,7 @@
 
   .slick-group-header-column,
   .slick-header-columns,
+  .slick-header-columns-root,
   .slick-header-column {
     box-sizing: content-box !important; /* this here only for Firefox! */
   }
@@ -98,7 +99,12 @@
   }
 
   .slick-header-column-active {
-    background-color: var(--slick-header-column-background-active, v.$slick-header-column-background-active) !important;
+    background:
+      linear-gradient(
+        var(--slick-header-column-background-active, v.$slick-header-column-background-active),
+        var(--slick-header-column-background-active, v.$slick-header-column-background-active)
+      ),
+      var(--slick-header-background-color, v.$slick-header-background-color) !important;
   }
 
   .slick-headerrow {
@@ -106,6 +112,168 @@
   }
   .grid-canvas {
     background: var(--slick-canvas-bg-color, v.$slick-canvas-bg-color);
+  }
+
+  // Permanent/active docked rows are rendered in this small overlay, outside
+  // the scrolling canvas. This keeps their vertical coordinates constant while
+  // the single native viewport scrolls through virtual pages.
+  .slick-docking-overlay {
+    position: absolute;
+    overflow: hidden;
+    // Keep docked rows above the normal viewport rows while leaving the grid
+    // below application-level overlays (for example Bulma dropdowns at z20).
+    // The previous overlay layer of 100 made pinned rows unexpectedly cover
+    // menus outside the grid.
+    z-index: 5;
+    pointer-events: none;
+
+    > .slick-row {
+      pointer-events: auto;
+
+      > .slick-pinned-left-cells {
+        position: relative !important;
+        inset-inline-start: auto !important;
+      }
+    }
+  }
+
+  &.slick-docking-horizontal-scroll-proxy {
+    // The outer header/header-row/footer elements remain the clipping boundary
+    // for the visible viewport. Their inner column containers cannot clip,
+    // however: a right-pinned column is translated from its natural content
+    // position to that boundary and would otherwise lose its title/filter when
+    // the natural columns are narrower than the viewport.
+    .slick-header-columns,
+    .slick-header-columns-root,
+    .slick-headerrow-columns,
+    .slick-headerrow-columns-root,
+    .slick-footerrow-columns {
+      overflow: visible;
+    }
+
+    // Header-row scrollers do not own a native vertical scrollbar, so their
+    // trailing gutter must still be painted. The default header background is
+    // intentionally translucent for legacy panes; in the single-viewport
+    // layout that lets translated columns show through when widths change.
+    .slick-headerrow {
+      background-color: var(--slick-header-row-background-color, v.$slick-header-row-background-color);
+    }
+
+    .slick-docking-horizontal-scroller {
+      position: absolute;
+      inset-inline-start: 0;
+      // Keep the track aligned with the pane's content edge. The proxy height
+      // is set from the same measured scrollbar dimensions used by the body.
+      bottom: 0;
+      // Keep the native scrollbar above transformed canvas/overlay layers. The
+      // canvas is promoted to its own compositor layer for large datasets and
+      // can otherwise paint over the scrollbar when a column is widened. Keep
+      // it below application overlays such as Bulma navbar menus (z-index 20)
+      // while remaining above the grid rows (z-index 5).
+      z-index: var(--slick-docking-scrollbar-z-index, 6);
+      isolation: isolate;
+      display: block;
+      box-sizing: border-box;
+      background: var(--slick-canvas-bg-color, v.$slick-canvas-bg-color);
+      scrollbar-color: var(--slick-scrollbar-color, v.$slick-scrollbar-color);
+      pointer-events: auto;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .slick-docking-horizontal-spacer {
+      height: 1px;
+    }
+
+    .grid-canvas {
+      will-change: transform;
+    }
+
+    // The overlay is intentionally as wide as the full canvas so its pinned
+    // right region remains available after horizontal translation. Clip its
+    // transformed window to the viewport's content width, however, so the
+    // overlay rows cannot paint over the native vertical scrollbar.
+    .slick-docking-overlay {
+      will-change: transform, clip-path;
+      clip-path: inset(
+        0 calc(100% - var(--slick-docking-scroll-left, 0px) - var(--slick-docking-viewport-width, 100%)) 0
+          var(--slick-docking-scroll-left, 0px)
+      );
+    }
+
+    .slick-row-docked > .slick-pinned-left-cells {
+      transform: translate3d(var(--slick-docking-scroll-left, 0px), 0, 0) !important;
+    }
+
+    .slick-row-docked > .slick-pinned-right-cells {
+      transform: translate3d(
+        calc(var(--slick-docking-scroll-left, 0px) + var(--slick-docking-row-right-offset, var(--slick-docking-right-offset, 0px))),
+        0,
+        0
+      ) !important;
+    }
+
+    // Sticky candidates remain at their natural center-band coordinates.
+    // Activation changes only this compositor transform, avoiding per-column
+    // CSSOM rewrites, chrome measurement, and per-row grid-track resizing.
+    .slick-cell-sticky,
+    .slick-column-sticky {
+      z-index: 20;
+      will-change: transform;
+    }
+
+    .slick-cell-sticky {
+      background: inherit;
+    }
+
+    .slick-cell-sticky-left,
+    .slick-column-sticky-left {
+      transform: translate3d(calc(var(--slick-docking-scroll-left, 0px) + var(--slick-sticky-column-offset, 0px)), 0, 0) !important;
+    }
+
+    .slick-cell-sticky-right,
+    .slick-column-sticky-right {
+      transform: translate3d(
+        calc(var(--slick-docking-scroll-left, 0px) + var(--slick-docking-viewport-width, 100%) + var(--slick-sticky-column-offset, 0px)),
+        0,
+        0
+      ) !important;
+    }
+
+    // Full-span group headers stay fixed to the visible viewport.
+    .slick-row-docked > .slick-cell-full-width-group {
+      left: 0 !important;
+      right: auto !important;
+      width: var(--slick-docking-viewport-width, 100%) !important;
+      transform: translate3d(var(--slick-docking-scroll-left, 0px), 0, 0);
+      z-index: 21 !important;
+      will-change: transform;
+    }
+
+    .slick-header-column.slick-column-pinned-left:not(.slick-column-sticky),
+    .slick-headerrow-column.slick-column-pinned-left:not(.slick-column-sticky),
+    .slick-footerrow-column.slick-column-pinned-left:not(.slick-column-sticky) {
+      transform: translate3d(calc(var(--slick-docking-scroll-left, 0px) + var(--slick-docking-chrome-offset, 0px)), 0, 0) !important;
+    }
+
+    .slick-header-column.slick-column-pinned-right:not(.slick-column-sticky),
+    .slick-headerrow-column.slick-column-pinned-right:not(.slick-column-sticky),
+    .slick-footerrow-column.slick-column-pinned-right:not(.slick-column-sticky) {
+      transform: translate3d(
+        calc(var(--slick-docking-scroll-left, 0px) + var(--slick-docking-chrome-offset, var(--slick-docking-right-offset, 0px))),
+        0,
+        0
+      ) !important;
+    }
+
+    // Right-pinned chrome is positioned directly in the translated header
+    // layer, unlike a row region. Do not apply the row/natural-content offset
+    // a second time or the title lands beside a center column.
+    .slick-header-column.slick-docking-chrome-right,
+    .slick-headerrow-column.slick-docking-chrome-right,
+    .slick-footerrow-column.slick-docking-chrome-right {
+      transform: translate3d(var(--slick-docking-scroll-left, 0px), 0, 0) !important;
+    }
   }
 
   .slick-group {
@@ -124,6 +292,127 @@
     color: var(--slick-cell-text-color, v.$slick-cell-text-color);
     font-family: var(--slick-cell-font-family, v.$slick-cell-font-family);
     font-weight: var(--slick-cell-font-weight, v.$slick-cell-font-weight);
+
+    &.slick-row-docked {
+      display: grid;
+      background: var(--slick-cell-even-background-color, v.$slick-cell-even-background-color);
+
+      > :is(.slick-pinned-left-cells, .slick-scrolling-cells, .slick-pinned-right-cells) {
+        position: relative;
+        grid-row: 1;
+        height: 100%;
+        overflow: hidden;
+        background: inherit;
+      }
+
+      > .slick-pinned-left-cells {
+        grid-column: 1;
+        position: sticky;
+        inset-inline-start: 0;
+        z-index: 20;
+        // Keep the boundary outside the measured content width. The header
+        // tracks use content-box sizing, so border-box here would make every
+        // pinned data cell slightly narrower than its header counterpart.
+        box-sizing: content-box;
+        will-change: transform;
+      }
+
+      > .slick-scrolling-cells {
+        grid-column: 2;
+      }
+
+      > .slick-pinned-right-cells {
+        grid-column: 3;
+        justify-self: end;
+        z-index: 20;
+        box-sizing: content-box;
+        will-change: transform;
+      }
+
+      // Paint the separator only on boundary data cells, not full-width rows.
+      > .slick-pinned-left-cells.slick-pinned-left-cells-active > .slick-cell:last-child:not(.slick-cell-colspan-crossing-docking)::after,
+      > .slick-pinned-right-cells.slick-pinned-right-cells-active
+        > .slick-cell:first-child:not(.slick-cell-colspan-crossing-docking)::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      > .slick-pinned-left-cells.slick-pinned-left-cells-active > .slick-cell:last-child:not(.slick-cell-colspan-crossing-docking)::after {
+        box-shadow: var(--slick-pinned-border-box-shadow-left, v.$slick-pinned-border-box-shadow-left);
+      }
+
+      > .slick-pinned-right-cells.slick-pinned-right-cells-active
+        > .slick-cell:first-child:not(.slick-cell-colspan-crossing-docking)::after {
+        box-shadow: var(--slick-pinned-border-box-shadow-right, v.$slick-pinned-border-box-shadow-right);
+      }
+
+      // Use a border overlay for active cross-band colspans. It does not affect cell size.
+      > :is(.slick-pinned-left-cells, .slick-scrolling-cells, .slick-pinned-right-cells) {
+        > .slick-cell-colspan-crossing-docking.active {
+          box-shadow: none;
+
+          &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            box-sizing: border-box;
+            border: 1px solid var(--slick-cell-active-border-color, v.$slick-cell-active-border-color);
+            pointer-events: none;
+            z-index: 1;
+          }
+
+          &.slick-cell-colspan-part:not(.slick-cell-colspan-end)::after {
+            border-inline-end: 0;
+          }
+        }
+
+        > .slick-cell-colspan-part.active::after {
+          border-inline-start: 0;
+        }
+      }
+
+      // A cross-band colspan keeps its content in the first segment, but that
+      // cell must be able to paint across the remaining docking regions.
+      &.slick-row-colspan-crossing-docking > :is(.slick-pinned-left-cells, .slick-scrolling-cells, .slick-pinned-right-cells) {
+        overflow: visible;
+
+        > .slick-cell-colspan-crossing-docking:not(.slick-cell-colspan-part) {
+          z-index: 21;
+        }
+      }
+
+      // A RowSpan cell extends beyond its host row. The normal region clip is
+      // still required for virtualized rows, but would hide the spanning cell
+      // (and make it impossible to click) when columns are docked.
+      &.slick-rowspan > :is(.slick-pinned-left-cells, .slick-scrolling-cells, .slick-pinned-right-cells) {
+        overflow: visible;
+      }
+    }
+
+    // Active-cell state is applied to every row region. The legacy active-row
+    // padding compensates for borders in the old flat-row renderer, but adds
+    // padding to this grid container and makes every docked cell appear smaller.
+    &.active.slick-row-docked {
+      padding: 0;
+    }
+
+    &.slick-row-pinned-top,
+    &.slick-row-pinned-bottom {
+      z-index: 5;
+      background: var(--slick-canvas-bg-color, v.$slick-canvas-bg-color);
+      box-sizing: border-box;
+    }
+
+    &.slick-row-pinned-top-edge {
+      border-bottom: var(--slick-pinned-border-bottom, v.$slick-pinned-border-bottom);
+    }
+
+    &.slick-row-pinned-bottom-edge {
+      border-top: var(--slick-pinned-border-bottom, v.$slick-pinned-border-bottom);
+    }
 
     &:hover {
       background-color: var(--slick-row-mouse-hover-color, v.$slick-row-mouse-hover-color);
@@ -266,9 +555,11 @@
     padding: 0;
   }
 
-  // Keep the complete RowSpan host row above selected/hovered transformed rows.
-  .slick-row.slick-rowspan {
-    z-index: var(--slick-rowspan-z-index, 10);
+  // Keep only the spanning cell above neighboring rows. The host row itself
+  // must retain normal stacking so its odd-row background and hover state do
+  // not paint over unrelated cells in the rows below it.
+  .slick-row.slick-rowspan .slick-cell.rowspan {
+    z-index: var(--slick-rowspan-z-index, 6);
   }
 
   .slick-group-header-columns {
@@ -315,14 +606,15 @@
     overflow: hidden;
   }
 
-  .slick-pane {
+  .slick-header-root,
+  .slick-content-root {
     position: absolute;
     outline: 0;
     overflow: hidden;
     width: 100%;
   }
 
-  .slick-pane-header {
+  .slick-header-root {
     display: block;
     background-color: var(--slick-header-background-color, v.$slick-header-background-color);
     border-bottom: var(--slick-header-border-bottom, v.$slick-header-border-bottom);
@@ -347,9 +639,9 @@
     }
   }
 
-  .slick-pane-top {
+  .slick-content-root {
     box-sizing: border-box;
-    border-top: var(--slick-pane-top-border-top, v.$slick-pane-top-border-top);
+    border-top: var(--slick-content-border-top, v.$slick-content-border-top);
   }
 
   .slick-viewport {
@@ -381,7 +673,9 @@
 
   .slick-top-panel,
   .slick-header-columns,
+  .slick-header-columns-root,
   .slick-headerrow-columns,
+  .slick-headerrow-columns-root,
   .slick-footerrow-columns {
     position: relative;
     white-space: nowrap;
@@ -423,7 +717,10 @@
 
   .slick-header-column.slick-state-default {
     position: relative;
-    display: inline-block;
+    // Header roots are flex containers in the docking layout. Keep each
+    // column's explicit width intact instead of allowing flex-shrink to
+    // silently reduce it when the total columns exceed the viewport.
+    flex: 0 0 auto;
     overflow: hidden;
     text-overflow: ellipsis;
     height: 16px;
@@ -434,11 +731,6 @@
     border-left: 0px !important;
     border-top: 0px !important;
     border-bottom: 0px !important;
-    float: left;
-
-    .slick-rtl & {
-      float: right;
-    }
   }
 
   .slick-header-column {
@@ -456,6 +748,7 @@
 
   .slick-header.slick-header-auto-height {
     .slick-header-columns,
+    .slick-header-columns-root,
     .slick-header-columns-left,
     .slick-header-columns-right {
       height: var(--slick-auto-header-height);
@@ -560,7 +853,8 @@
     }
   }
 
-  .grid-canvas {
+  .grid-canvas,
+  .slick-docking-overlay {
     .slick-cell,
     .slick-headerrow-column {
       border-top: var(--slick-cell-border-top, v.$slick-cell-border-top);
@@ -732,7 +1026,8 @@
       }
     }
   }
-  .slick-header-columns {
+  .slick-header-columns,
+  .slick-header-columns-root {
     display: flex;
     background: var(--slick-grid-header-background, v.$slick-grid-header-background);
     background-color: var(--slick-header-background-color, v.$slick-header-background-color);
@@ -755,6 +1050,11 @@
       border-bottom: var(--slick-header-column-border-bottom, v.$slick-header-column-border-bottom);
       border-left: var(--slick-header-column-border-left, v.$slick-header-column-border-left);
       white-space: normal;
+      &.slick-column-pinned-left,
+      &.slick-column-pinned-right {
+        z-index: 4;
+        background: var(--slick-header-background-color, v.$slick-header-background-color);
+      }
       &.slick-state-default {
         @include resetSlickCell();
       }
@@ -877,32 +1177,62 @@
 
       .slick-header-column {
         height: var(--slick-preheader-height, v.$slick-preheader-height);
-        border-left: var(--slick-preheader-border-left, v.$slick-preheader-border-left);
-        border-right: var(--slick-preheader-border-right, v.$slick-preheader-border-right);
+        box-shadow: inset -1px 0 0 var(--slick-preheader-border-color, v.$slick-preheader-border-color);
         font-size: var(--slick-preheader-font-size, v.$slick-preheader-font-size);
         justify-content: var(--slick-preheader-grouped-title-justify, v.$slick-preheader-grouped-title-justify);
         display: var(--slick-preheader-grouped-title-display, v.$slick-preheader-grouped-title-display);
       }
-      .slick-header-column:first-child {
-        border-left: var(--slick-preheader-border-left-first-element, v.$slick-preheader-border-left-first-element);
-      }
-      .slick-header-column:last-child {
-        border-right: var(--slick-preheader-border-right-last-element, v.$slick-preheader-border-right-last-element);
-      }
     }
   }
 
-  /** Frozen/Pinned styling */
-  .slick-pane-left.frozen {
-    border-right: var(--slick-frozen-border-right, v.$slick-frozen-border-right);
+  /** Pinned styling */
+  .slick-column-pinned-left-edge,
+  .slick-column-sticky-left-edge {
+    box-shadow: var(--slick-pinned-border-box-shadow-left, v.$slick-pinned-border-box-shadow-left) !important;
   }
 
-  .slick-pane-bottom {
-    border-top: var(--slick-frozen-border-bottom, v.$slick-frozen-border-bottom);
+  .slick-column-pinned-right-edge,
+  .slick-column-sticky-right-edge {
+    box-shadow: var(--slick-pinned-border-box-shadow-right, v.$slick-pinned-border-box-shadow-right) !important;
   }
-  .slick-viewport-bottom.slick-viewport-right {
-    overflow-y: var(--slick-frozen-overflow-right, v.$slick-frozen-overflow-right) !important;
+
+  .slick-cell-sticky-left-edge::after,
+  .slick-cell-sticky-right-edge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
   }
+
+  .slick-cell-sticky-left-edge::after {
+    box-shadow: var(--slick-pinned-border-box-shadow-left, v.$slick-pinned-border-box-shadow-left);
+  }
+
+  .slick-cell-sticky-right-edge::after {
+    box-shadow: var(--slick-pinned-border-box-shadow-right, v.$slick-pinned-border-box-shadow-right);
+  }
+
+  // Pinned header/filter cells must paint above center cells when their
+  // absolute positions overlap during a width update.
+  .slick-header-column.slick-column-pinned-left,
+  .slick-header-column.slick-column-pinned-right {
+    z-index: 20;
+    background-color: var(--slick-header-background-color, v.$slick-header-background-color);
+  }
+
+  .slick-headerrow-column.slick-column-pinned-left,
+  .slick-headerrow-column.slick-column-pinned-right {
+    z-index: 20;
+    background-color: var(--slick-header-row-background-color, v.$slick-header-row-background-color);
+  }
+
+  .slick-footerrow-column.slick-column-pinned-left,
+  .slick-footerrow-column.slick-column-pinned-right {
+    z-index: 20;
+    background-color: var(--slick-grid-footer-bg-color, v.$slick-grid-footer-bg-color);
+  }
+
   .input-group {
     display: flex;
 

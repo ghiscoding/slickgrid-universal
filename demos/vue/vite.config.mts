@@ -1,5 +1,4 @@
 import dns from 'node:dns';
-
 import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vite';
 
@@ -21,6 +20,13 @@ export default defineConfig({
     },
   },
   plugins: [vue()],
+  optimizeDeps: {
+    // The demo routes are lazy-loaded. Scan every component up front so that
+    // route-specific dependencies do not invalidate optimized-dep URLs during
+    // navigation and produce a 504 (Outdated Optimize Dep) response.
+    include: ['@faker-js/faker', '@fnando/sparkline'],
+    entries: ['src/components/**/*.vue'],
+  },
   preview: {
     port: 7000,
   },

@@ -93,7 +93,8 @@ function defineGrid() {
     enableSelection: true,
     enableGrouping: true,
     headerMenu: {
-      hideFreezeColumnsCommand: false,
+      hidePinColumnCommand: false,
+      hidePinningColumnsCommand: false,
     },
     presets: {
       // NOTE: pagination preset is NOT supported with infinite scroll

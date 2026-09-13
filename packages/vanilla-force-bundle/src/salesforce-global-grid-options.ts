@@ -65,22 +65,22 @@ export const SalesforceGlobalGridOptions = {
   formatterOptions: {
     thousandSeparator: ',',
   },
-  frozenHeaderWidthCalcDifferential: 2,
   columnPicker: {
     hideForceFitButton: true,
   },
   gridMenu: {
     commandLabels: {
-      clearFrozenColumnsCommandKey: 'UNFREEZE_COLUMNS',
+      clearPinningCommandKey: 'UNPIN_COLUMNS',
     },
     hideToggleDarkModeCommand: true,
     hideTogglePreHeaderCommand: true,
     hideRefreshDatasetCommand: true,
-    hideClearFrozenColumnsCommand: false,
+    hideClearPinningCommand: false,
     hideForceFitButton: true,
   },
   headerMenu: {
-    hideFreezeColumnsCommand: false,
+    hidePinColumnCommand: false,
+    hidePinningColumnsCommand: false,
     iconSortAscCommand: 'mdi mdi-arrow-up',
     iconSortDescCommand: 'mdi mdi-arrow-down',
   },

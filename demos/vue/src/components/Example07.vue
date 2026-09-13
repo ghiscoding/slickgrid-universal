@@ -59,8 +59,6 @@ function defineGrids() {
     ...gridOptions1.value,
     enableHeaderMenu: true,
     enableFiltering: true,
-    // frozenColumn: 2,
-    // frozenRow: 2,
     headerButton: {
       onCommand: (_e: any, args) => handleOnCommand(_e, args, 2),
     },

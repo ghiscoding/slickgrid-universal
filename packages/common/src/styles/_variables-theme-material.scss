@@ -41,7 +41,7 @@ $slick-editor-input-group-clear-btn-icon-color:               inherit !default;
   $slick-header-resizable-hover-border-radius:                8px !default,
   $slick-header-resizable-hover-right:                        0 !default,
   $slick-header-resizable-hover-opacity:                      0.4 !default,
-  $slick-pane-top-border-top:                                 1px solid #d0d0d0 !default,
+  $slick-content-border-top:                                 1px solid #d0d0d0 !default,
   $slick-container-border-top:                                1px solid #ccc !default,
   $slick-container-border-bottom:                             1px solid #ccc !default,
   $slick-container-border-left:                               1px solid #ccc !default,
@@ -85,7 +85,7 @@ $slick-editor-input-group-clear-btn-icon-color:               inherit !default;
   $slick-compound-filter-text-color:                          color.adjust($primary-color, $lightness: -20%) !default,
   $slick-multiselect-icon-checked-color:                      $slick-highlight-color !default,
   $slick-multiselect-option-highlight-bg-color:               #fafafa !default,
-  $slick-preheader-border-right:                              1px solid #e2e2e2 !default,
+  $slick-preheader-border-color:                              #e2e2e2 !default,
   $slick-row-move-plugin-cursor:                              grab !default,
   $slick-row-move-plugin-icon-color:                          inherit !default,
   $slick-editor-input-height:                                 100% !default,
@@ -125,7 +125,7 @@ $slick-dark-text-color:                                   #d4d4d4;
   --slick-container-border-bottom:                1px solid #505050;
   --slick-form-control-focus-border-color:        #66bb6a;
   --slick-form-control-focus-box-shadow:          #{0 0 0 2px rgba(#66bb6a, 0.25)};
-  --slick-pane-top-border-top:                    1px solid #505050;
+  --slick-content-border-top:                    1px solid #505050;
   --slick-filled-filter-color:                    #66bb6a;
   --slick-highlight-color:                        #49a54e;
   --slick-pagination-icon-color:                  #49a54e;

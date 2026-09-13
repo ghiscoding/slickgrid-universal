@@ -31,6 +31,7 @@ export default class Example06 {
   isRemoveLastInsertedPopSongDisabled = true;
   lastInsertedPopSongId: number | undefined;
   searchString = '';
+  subTitleStyle = 'display: block';
 
   attached() {
     this.initializeGrid();
@@ -477,5 +478,10 @@ export default class Example06 {
 
     // reset dataset to clear all tree data stat mutations (basically recreate the grid entirely to start from scratch)
     this.sgb.datasetHierarchical = this.mockDataset();
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

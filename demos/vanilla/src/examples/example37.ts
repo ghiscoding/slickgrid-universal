@@ -19,6 +19,7 @@ export default class Example37 {
   sgb2!: SlickVanillaGridBundle;
   enableMultiSelection = false;
   excelExportService = new ExcelExportService();
+  subTitleStyle = 'display: block';
 
   gridFocus() {
     this.sgb1.slickGrid?.focus();
@@ -254,5 +255,10 @@ export default class Example37 {
 
   exportGrid1ToExcel() {
     this.excelExportService.exportToExcel({ filename: 'export', format: 'xlsx' });
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb1.resizerService.resizeGrid();
   }
 }

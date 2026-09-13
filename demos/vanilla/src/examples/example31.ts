@@ -9,6 +9,7 @@ export default class Example31 {
   staticDataCsv = `First Name,Last Name,Age,Type\nBob,Smith,33,Teacher\nJohn,Doe,20,Student\nJane,Doe,21,Student`;
   private _bindingEventService: BindingEventService;
   sgb: SlickVanillaGridBundle;
+  subTitleStyle = 'display: block';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -99,5 +100,10 @@ export default class Example31 {
     gridContainerElm.className = 'grid31';
     document.querySelector('.grid-container-zone')!.appendChild(gridContainerElm);
     this.sgb = new Slicker.GridBundle(gridContainerElm, columns, { ...ExampleGridOptions, ...gridOptions }, dataset);
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

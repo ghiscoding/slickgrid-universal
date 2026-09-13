@@ -5,7 +5,6 @@ import { AngularSlickgridComponent, type AngularGridInstance, type Column, type 
 
 @Component({
   templateUrl: './example14.component.html',
-  styleUrls: ['./example14.component.scss'],
   imports: [AngularSlickgridComponent],
 })
 export class Example14Component implements OnInit {
@@ -54,11 +53,16 @@ export class Example14Component implements OnInit {
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 28,
+      rowHeight: 33,
       explicitInitialization: true,
       dataView: {
         globalItemMetadataProvider: {
           getRowMetadata: (item: any) => this.renderDifferentColspan(item),
         },
+      },
+      headerMenu: {
+        hidePinColumnCommand: false,
+        hidePinningColumnsCommand: false,
       },
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
@@ -103,9 +107,10 @@ export class Example14Component implements OnInit {
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 25,
       explicitInitialization: true,
-      frozenColumn: 2,
-      gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false },
+      pinning: { columns: { left: 2 } },
+      rowHeight: 33,
+      gridMenu: { hideClearPinningCommand: false },
+      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
       enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {
@@ -125,7 +130,7 @@ export class Example14Component implements OnInit {
         id: i,
         num: i,
         title: 'Task ' + i,
-        duration: '5 days',
+        duration: '5 days with some long text to test column span',
         percentComplete: Math.round(Math.random() * 100),
         start: '01/01/2009',
         finish: '01/05/2009',
@@ -135,8 +140,8 @@ export class Example14Component implements OnInit {
     return mockDataset;
   }
 
-  setFrozenColumns2(frozenCols: number) {
-    this.gridObj2.setOptions({ frozenColumn: frozenCols });
+  setPinnedColumns2(pinnedCols: number) {
+    this.gridObj2.setOptions({ pinning: { columns: { left: pinnedCols } } });
     this.gridOptions2 = this.gridObj2.getOptions();
   }
 

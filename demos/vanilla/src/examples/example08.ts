@@ -74,6 +74,10 @@ export default class Example08 {
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
       },
+      headerMenu: {
+        hidePinColumnCommand: false,
+        hidePinningColumnsCommand: false,
+      },
       externalResources: [new TextExportService(), new ExcelExportService(), new PdfExportService()],
       enableCellNavigation: true,
       enableColumnReorder: false,
@@ -144,11 +148,11 @@ export default class Example08 {
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 35,
       explicitInitialization: true,
-      frozenColumn: 2,
+      pinning: { columns: { left: 2 } },
       rowHeight: 33,
       showCustomFooter: true,
-      gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false },
+      gridMenu: { hideClearPinningCommand: false },
+      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
 
       // enable the filtering but hide the user filter row since we use our own single filter
       enableFiltering: true,
@@ -164,7 +168,7 @@ export default class Example08 {
         id: i,
         num: i,
         title: 'Task ' + i,
-        duration: '5 days',
+        duration: '5 days with some long text to test column span',
         percentComplete: Math.round(Math.random() * 100),
         start: '01/01/2009',
         finish: '01/05/2009',
@@ -174,8 +178,15 @@ export default class Example08 {
     return mockDataset;
   }
 
-  setFrozenColumns2(frozenCols: number) {
-    this.sgb2.slickGrid?.setOptions({ frozenColumn: frozenCols, alwaysShowVerticalScroll: false });
+  setPinnedColumns2(pinnedCols: number) {
+    this.sgb2.slickGrid?.setOptions({
+      pinning: {
+        columns: {
+          left: pinnedCols >= 0 ? pinnedCols : [],
+        },
+      },
+      alwaysShowVerticalScroll: false,
+    });
     this.gridOptions2 = this.sgb2.slickGrid!.getOptions();
   }
 

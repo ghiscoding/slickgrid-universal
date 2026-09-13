@@ -31,8 +31,11 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Clear Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideFilterCommand?: boolean;
 
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true (opt-in feature), which will hide the "Freeze Columns" command in the Header Menu */
-  hideFreezeColumnsCommand?: boolean;
+  /** Defaults to true (opt-in feature), which hides the bulk pin-columns command in the Header Menu. */
+  hidePinningColumnsCommand?: boolean;
+
+  /** Defaults to true (opt-in feature), which hides the "Column Pinning" submenu. */
+  hidePinColumnCommand?: boolean;
 
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide Sort (Asc/Desc & Clear Sort) commands in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideSortCommands?: boolean;
@@ -58,11 +61,23 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
   /** icon for the "Filter Shortcuts" menu (the shortcuts will be displayed as sub-menus of this parent menu) */
   iconFilterShortcutSubMenu?: string;
 
-  /** icon for the "Freeze Columns" command */
-  iconFreezeColumns?: string;
+  /** icon for the bulk pin-columns command */
+  iconPinningColumns?: string;
 
-  /** icon for the "Unfreeze Columns" command */
-  iconUnfreezeColumns?: string;
+  /** Icon for the "Column Pinning" submenu. */
+  iconPinColumn?: string;
+
+  /** Icon for the "Pin Left" command in the pin-column sub-menu. */
+  iconPinLeft?: string;
+
+  /** Icon for the "Pin Right" command in the pin-column sub-menu. */
+  iconPinRight?: string;
+
+  /** icon for the bulk unpin-columns command */
+  iconUnpinningColumns?: string;
+
+  /** Icon for the "Unpin Column" command. */
+  iconUnpinColumn?: string;
 
   /** icon for the "Sort Ascending" command */
   iconSortAscCommand?: string;

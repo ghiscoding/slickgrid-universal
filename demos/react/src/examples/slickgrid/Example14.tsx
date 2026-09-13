@@ -2,7 +2,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import React, { useEffect, useRef, useState } from 'react';
 import { SlickgridReact, type Column, type GridOption, type ItemMetadata, type SlickgridReactInstance } from 'slickgrid-react';
-import './example14.scss'; // provide custom CSS/SASS styling
 
 const Example14: React.FC = () => {
   const [gridOptions1, setGridOptions1] = useState<GridOption | undefined>(undefined);
@@ -49,6 +48,7 @@ const Example14: React.FC = () => {
       createPreHeaderPanel: true,
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 28,
+      rowHeight: 33,
       gridHeight: 275,
       gridWidth: 800,
       enableExcelExport: true,
@@ -62,6 +62,10 @@ const Example14: React.FC = () => {
         globalItemMetadataProvider: {
           getRowMetadata: (item: any, row: number) => renderDifferentColspan(item, row),
         },
+      },
+      headerMenu: {
+        hidePinColumnCommand: false,
+        hidePinningColumnsCommand: false,
       },
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
@@ -101,14 +105,15 @@ const Example14: React.FC = () => {
       explicitInitialization: true,
       gridHeight: 275,
       gridWidth: 800,
-      frozenColumn: 2,
+      rowHeight: 33,
+      pinning: { columns: { left: 2 } },
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: false,
       },
       externalResources: [new ExcelExportService(), new PdfExportService()],
-      gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false },
+      gridMenu: { hideClearPinningCommand: false },
+      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
     };
 
     setColumns2(columns2);
@@ -123,7 +128,7 @@ const Example14: React.FC = () => {
         id: i,
         num: i,
         title: 'Task ' + i,
-        duration: '5 days',
+        duration: '5 days with some long text to test column span',
         percentComplete: Math.round(Math.random() * 100),
         start: '01/01/2009',
         finish: '01/05/2009',
@@ -133,8 +138,8 @@ const Example14: React.FC = () => {
     return mockDataset;
   }
 
-  function setFrozenColumns2(frozenCols: number) {
-    reactGridRef2.current?.slickGrid.setOptions({ frozenColumn: frozenCols });
+  function setPinnedColumns2(pinnedCols: number) {
+    reactGridRef2.current?.slickGrid.setOptions({ pinning: { columns: { left: pinnedCols } } });
     const updatedGridOptions = reactGridRef2.current?.slickGrid.getOptions();
     setGridOptions2(updatedGridOptions);
   }
@@ -230,23 +235,23 @@ const Example14: React.FC = () => {
       <hr />
 
       <h3>
-        Grid 2 <small>(with Header Grouping &amp; Frozen/Pinned Columns)</small>
+        Grid 2 <small>(with Header Grouping &amp; Pinned Columns)</small>
       </h3>
 
       <div className="col-sm 12">
         <button
           className="btn btn-outline-secondary btn-sm btn-icon"
-          onClick={() => setFrozenColumns2(-1)}
-          data-test="remove-frozen-column-button"
+          onClick={() => setPinnedColumns2(-1)}
+          data-test="remove-pinned-column-button"
         >
-          <i className="mdi mdi-close"></i> Remove Frozen Columns
+          <i className="mdi mdi-close"></i> Remove Pinned Columns
         </button>
         <button
           className="btn btn-outline-secondary btn-sm btn-icon mx-1"
-          onClick={() => setFrozenColumns2(2)}
-          data-test="set-3frozen-columns"
+          onClick={() => setPinnedColumns2(2)}
+          data-test="set-3pinned-columns"
         >
-          <i className="mdi mdi-pin-outline"></i> Set 3 Frozen Columns
+          <i className="mdi mdi-pin-outline"></i> Set 3 Pinned Columns
         </button>
       </div>
 

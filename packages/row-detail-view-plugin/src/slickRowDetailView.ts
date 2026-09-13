@@ -719,7 +719,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     });
   }
 
-  /** Get or create the overlay layer for one of the grid's frozen/scrollable canvases. */
+  /** Get or create the overlay layer for the grid's scrolling canvas. */
   protected getOverlayHost(canvas: HTMLDivElement): HTMLDivElement {
     let host = this._overlayHosts.get(canvas);
     if (!host) {
@@ -783,7 +783,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Get the panel's offset immediately below its parent row. */
   protected getDetailPanelTopOffset(row: number): number {
-    return this._grid.getRowTop(row) - this._grid.getFrozenRowOffset(row) + this._grid.getRowHeight(row);
+    return this._grid.getRowTop(row) + this._grid.getRowHeight(row);
   }
 
   /** Render or replace the detail content inside a panel container. */

@@ -15,8 +15,6 @@ const addVanillaEventPropagation = function <T = any>(event: T) {
 };
 
 const mockGridOptions = {
-  frozenColumn: 1,
-  frozenRow: -1,
   rowHeight: 30,
 } as GridOption;
 
@@ -91,9 +89,6 @@ describe('CellRangeSelector Plugin', () => {
   afterEach(() => {
     vi.clearAllMocks();
     plugin?.dispose();
-    mockGridOptions.frozenColumn = -1;
-    mockGridOptions.frozenRow = -1;
-    mockGridOptions.frozenBottom = false;
     mockGridOptions.rowHeight = 30;
   });
 
@@ -121,6 +116,41 @@ describe('CellRangeSelector Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.getCellDecorator()).toBeTruthy();
+  });
+
+  it('should expose the grid UID and selector after initialization', () => {
+    expect(plugin.gridUid).toBe('');
+    expect(plugin.gridUidSelector).toBe('');
+
+    plugin.init(gridStub);
+
+    expect(plugin.gridUid).toBe(GRID_UID);
+    expect(plugin.gridUidSelector).toBe(`.${GRID_UID}`);
+  });
+
+  it('should use the grid scroll event offset when calculating the active viewport bounds', () => {
+    const viewport = document.createElement('div');
+    Object.defineProperties(viewport, {
+      scrollLeft: { configurable: true, value: 0 },
+      scrollTop: { configurable: true, value: 0 },
+    });
+    vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue({ left: 20, top: 30, right: 120, bottom: 80 } as DOMRect);
+    (plugin as any)._activeViewport = viewport;
+    (plugin as any)._viewportWidth = 100;
+    (plugin as any)._viewportHeight = 50;
+    plugin.init(gridStub);
+
+    gridStub.onScroll.notify({ scrollHeight: 1000, scrollTop: 40, scrollLeft: 60, grid: gridStub }, addVanillaEventPropagation(new Event('scroll')), gridStub);
+
+    const result = plugin.getMouseOffsetViewport({ pageX: 70, pageY: 50 } as MouseEvent, {} as any);
+
+    expect(result.viewport).toEqual({
+      left: 60,
+      top: 40,
+      right: 160,
+      bottom: 90,
+      offset: { left: 20, top: 30, right: 120, bottom: 80 },
+    });
   });
 
   it('should handle drag but return without executing anything when item cannot be dragged and cell cannot be selected', () => {
@@ -174,7 +204,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag in bottom left canvas', () => {
-    mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -225,7 +254,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag in bottom right canvas with decorator showing dragging range', () => {
-    mockGridOptions.frozenColumn = 3;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -279,7 +307,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag end in bottom right canvas with "onCellRangeSelected" published', () => {
-    mockGridOptions.frozenColumn = 3;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -353,7 +380,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag and return when "canCellBeSelected" returns False', () => {
-    mockGridOptions.frozenColumn = 3;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -416,7 +442,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag and cell range selection to be changed when "canCellBeSelected" returns True', () => {
-    mockGridOptions.frozenColumn = 3;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -488,7 +513,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag and cell range selection to be changed and should call normalRangeOppositeCellFromCopy() when "canCellBeSelected" has a previous selected range', () => {
-    mockGridOptions.frozenColumn = -1;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -551,9 +575,7 @@ describe('CellRangeSelector Plugin', () => {
     });
   });
 
-  it('should handle drag and expect the decorator to NOT call the "show" method and return (frozen row) with canvas bottom right', () => {
-    mockGridOptions.frozenColumn = 3;
-    mockGridOptions.frozenRow = 1;
+  it('should handle drag and expect the decorator to NOT call the "show" method and return (pinned row) with canvas bottom right', () => {
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -603,9 +625,7 @@ describe('CellRangeSelector Plugin', () => {
     // });
   });
 
-  it('should handle drag and expect the decorator to NOT call the "show" method and return (frozen column) with canvas top right', () => {
-    mockGridOptions.frozenColumn = 5;
-    mockGridOptions.frozenRow = 1;
+  it('should handle drag and expect the decorator to NOT call the "show" method and return (pinned column) with canvas top right', () => {
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -662,7 +682,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should call onDrag and handle drag outside the viewport when drag is detected as outside the viewport', () => {
-    mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -713,7 +732,7 @@ describe('CellRangeSelector Plugin', () => {
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
-    expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 14);
+    expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 4);
 
     vi.advanceTimersByTime(7);
     expect(onCellRangeSelectingSpy).not.toHaveBeenCalled();
@@ -725,7 +744,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should call onDrag and handle drag outside the viewport and expect drag to be moved to a new position', () => {
-    mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -776,7 +794,7 @@ describe('CellRangeSelector Plugin', () => {
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
-    expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 14);
+    expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 4);
 
     vi.advanceTimersByTime(7);
 
@@ -793,7 +811,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should call normalRangeOppositeCellFromCopy() when onDrag has a previous selected range', () => {
-    mockGridOptions.frozenColumn = -1;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -859,7 +876,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should call onDrag and handle drag outside the viewport with negative offset and expect drag to be moved to a new position', () => {
-    mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -909,7 +925,7 @@ describe('CellRangeSelector Plugin', () => {
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
-    expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 14);
+    expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 4);
 
     vi.advanceTimersByTime(7);
 
@@ -926,7 +942,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should maintain propagation only if editor is on current cell', () => {
-    mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
@@ -979,7 +994,6 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should stop propagation if the editor is not on the current cell', () => {
-    mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';

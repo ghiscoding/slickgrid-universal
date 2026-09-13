@@ -38,7 +38,7 @@ describe('Example 01 - Basic Grids', () => {
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(4)')
+      .children('.slick-menu-item:nth-of-type(2)')
       .children('.slick-menu-content')
       .should('contain', 'Sort Descending')
       .click();
@@ -81,7 +81,7 @@ describe('Example 01 - Basic Grids', () => {
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(3)')
+      .children('.slick-menu-item:nth-of-type(1)')
       .children('.slick-menu-content')
       .should('contain', 'Sort Ascending')
       .click();
@@ -104,7 +104,7 @@ describe('Example 01 - Basic Grids', () => {
     cy.get('.grid2')
       .find('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(4)')
+      .children('.slick-menu-item:nth-of-type(2)')
       .click();
 
     cy.get('.grid2').find('.slick-sort-indicator-asc').should('have.length', 1).siblings('.slick-sort-indicator-numbered').contains('1');

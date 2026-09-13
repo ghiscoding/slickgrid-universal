@@ -37,6 +37,8 @@ describe('SlickGrid RTL (Right-to-Left)', () => {
       enableCellNavigation: true,
       columnResizingDelay: 1,
       scrollRenderThrottling: 1,
+      invalidColumnPinningPickerCallback: vi.fn(),
+      invalidColumnPinningWidthCallback: vi.fn(),
       devMode: { ownerNodeIndex: 0 },
     };
     container = document.createElement('div');
@@ -139,11 +141,11 @@ describe('SlickGrid RTL (Right-to-Left)', () => {
   });
 
   describe('Mixed RTL Features', () => {
-    it('should support RTL with frozen columns', () => {
+    it('should support RTL with pinned columns', () => {
       const gridContainer = document.getElementById(gridId) as HTMLElement;
-      grid = new SlickGrid<any, Column>(gridContainer, items, columns, { ...defaultOptions, rtl: true, frozenColumn: 0 });
+      grid = new SlickGrid<any, Column>(gridContainer, items, columns, { ...defaultOptions, rtl: true, pinning: { columns: { left: 0 } } });
       expect(grid.getOptions().rtl).toBe(true);
-      expect(grid.getOptions().frozenColumn).toBe(0);
+      expect(grid.getOptions().pinning?.columns?.left).toBe(0);
     });
 
     it('should support RTL with sorting', () => {

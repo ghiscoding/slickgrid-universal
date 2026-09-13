@@ -428,16 +428,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     this._eventHandler = eventHandler;
     this._isAutosizeColsCalled = false;
 
-    // when detecting a frozen grid, we'll automatically enable the mousewheel scroll handler so that we can scroll from both left/right frozen containers
-    if (
-      this._options &&
-      ((this._options.frozenRow !== undefined && this._options.frozenRow >= 0) ||
-        (this._options.frozenColumn !== undefined && this._options.frozenColumn >= 0)) &&
-      this._options.enableMouseWheelScrollHandler === undefined
-    ) {
-      this._options.enableMouseWheelScrollHandler = true;
-    }
-
     this._eventPubSubService.eventNamingStyle = this._options?.eventNamingStyle ?? 'camelCase';
     this._eventPubSubService.publish(`onBeforeGridCreate`, true);
 
@@ -504,7 +494,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     // directly into the array below, so both `_columns` & `sharedService.allColumns` stay in sync
     this.extensionService.createExtensionsBeforeGridCreation(this._columns, this._options);
 
-    // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+    // if user entered some Pinning "presets", we need to apply them in the grid options
     if (this.options.presets?.pinning) {
       this.options = { ...this.options, ...this.options.presets.pinning };
     }
@@ -532,9 +522,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.grid, this._options, this.dataView);
-
-    // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-    this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
 
     // initialize the SlickGrid grid
     this.grid.init();

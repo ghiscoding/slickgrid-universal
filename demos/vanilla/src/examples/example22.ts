@@ -19,6 +19,7 @@ export default class Example22 {
   fetchResult = '';
   statusClass = 'is-success';
   statusStyle = 'display: none';
+  subTitleStyle = 'display: block';
   private _bindingEventService: BindingEventService;
 
   constructor() {
@@ -260,6 +261,11 @@ export default class Example22 {
     await this.translateService.use(nextLanguage);
     this.selectedLanguage = nextLanguage;
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }
 

@@ -130,7 +130,6 @@ export default function Example43() {
     autoResize: {
       container: '#demo-container',
       bottomPadding: 30,
-      rightPadding: 50,
     },
     enableCellNavigation: true,
     enableColumnReorder: true,
@@ -142,7 +141,7 @@ export default function Example43() {
     autoEdit: true,
     editable: false,
     datasetIdPropertyName: 'employeeID',
-    frozenColumn: 0,
+    pinning: { columns: { left: 0 } },
     gridHeight: 348,
     rowHeight: 30,
     dataView: {
@@ -443,7 +442,7 @@ export default function Example43() {
         newMetadata[row].columns[Number(col) + colDirIdx] = (this.metadata as any)[row].columns[col];
       }
     }
-    reactGrid?.slickGrid?.setOptions({ frozenColumn: newShowEmployeeId ? 0 : 1 });
+    reactGrid?.slickGrid?.setOptions({ pinning: { columns: { left: newShowEmployeeId ? 0 : 1 } } });
     reactGrid?.slickGrid?.updateColumnById('employeeID', { hidden: !newShowEmployeeId });
     reactGrid?.slickGrid?.updateColumns();
     */

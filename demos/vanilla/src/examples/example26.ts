@@ -37,6 +37,7 @@ export default class Example26 {
   status = '';
   statusClass = 'is-success';
   isPageErrorTest = false;
+  subTitleStyle = 'display: block';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -122,7 +123,8 @@ export default class Example26 {
       enableSelection: true,
       enableGrouping: true,
       headerMenu: {
-        hideFreezeColumnsCommand: false,
+        hidePinColumnCommand: false,
+        hidePinningColumnsCommand: false,
       },
       presets: {
         // NOTE: pagination preset is NOT supported with infinite scroll
@@ -453,5 +455,10 @@ export default class Example26 {
 
   setSortingDynamically() {
     this.sgb?.sortService.updateSorting([{ columnId: 'name', direction: 'DESC' }]);
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

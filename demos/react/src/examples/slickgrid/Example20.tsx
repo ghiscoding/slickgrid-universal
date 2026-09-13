@@ -1,10 +1,10 @@
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Editors,
   Filters,
   formatNumber,
   Formatters,
-  SlickEventHandler,
   SlickgridReact,
   type Column,
   type ColumnEditorDualInput,
@@ -12,60 +12,35 @@ import {
   type SlickgridReactInstance,
 } from 'slickgrid-react';
 import { showToast } from './utilities.js';
-import './example20.scss'; // provide custom CSS/SASS styling
+import './example20.scss';
 
 const Example20: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(getData());
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
-  const [frozenColumnCount, setFrozenColumnCount] = useState(2);
-  const [frozenRowCount, setFrozenRowCount] = useState(3);
-  const [isFrozenBottom, setIsFrozenBottom] = useState(false);
+  const [pinnedColumnCount, setPinnedColumnCount] = useState(2);
+  const [pinnedTopRowCount, setPinnedTopRowCount] = useState(3);
+  const [pinnedBottomRowCount, setPinnedBottomRowCount] = useState(2);
+  const [pinnedRightColumnCount, setPinnedRightColumnCount] = useState(1);
   const [hideSubTitle, setHideSubTitle] = useState(false);
+  const [isSelectAllShownAsColumnTitle, setIsSelectAllShownAsColumnTitle] = useState(false);
+  const checkboxSelectorRef = useRef<any>(null);
+  const pinnedColumnCountRef = useRef(2);
+  const pinnedRightColumnCountRef = useRef(1);
 
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
-  const slickEventHandler = new SlickEventHandler();
 
   useEffect(() => {
     defineGrid();
-
-    // when unmounting
-    return () => {
-      slickEventHandler.unsubscribeAll();
-    };
   }, []);
 
   function reactGridReady(reactGrid: SlickgridReactInstance) {
     reactGridRef.current = reactGrid;
-
-    // with frozen (pinned) grid, in order to see the entire row being highlighted when hovering
-    // we need to do some extra tricks (that is because frozen grids use 2 separate div containers)
-    // the trick is to use row selection to highlight when hovering current row and remove selection once we're not
-    slickEventHandler.subscribe(reactGridRef.current?.slickGrid.onMouseEnter, (event) => highlightRow(event, true));
-    slickEventHandler.subscribe(reactGridRef.current?.slickGrid.onMouseLeave, (event) => highlightRow(event, false));
-  }
-
-  function highlightRow(event: any, isMouseEnter: boolean) {
-    const cell = reactGridRef.current?.slickGrid.getCellFromEvent(event);
-    const rows = isMouseEnter ? [cell?.row ?? 0] : [];
-    reactGridRef.current?.slickGrid.setSelectedRows(rows); // highlight current row
-    event.preventDefault();
   }
 
   /* Define grid Options and Columns */
   function defineGrid() {
     const columns: Column[] = [
-      {
-        id: 'sel',
-        name: '#',
-        field: 'id',
-        minWidth: 40,
-        width: 40,
-        maxWidth: 40,
-        cannotTriggerInsert: true,
-        resizable: false,
-        unselectable: true,
-      },
       {
         id: 'title',
         name: 'Title',
@@ -82,7 +57,6 @@ const Example20: React.FC = () => {
         resizable: false,
         minWidth: 130,
         width: 140,
-        formatter: Formatters.percentCompleteBar,
         type: 'number',
         filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
@@ -92,29 +66,44 @@ const Example20: React.FC = () => {
         id: 'start',
         name: 'Start',
         field: 'start',
-        minWidth: 100,
-        width: 120,
+        type: 'dateIso',
         filterable: true,
         sortable: true,
         formatter: Formatters.dateIso,
+        filter: { model: Filters.compoundDate },
       },
       {
         id: 'finish',
         name: 'Finish',
         field: 'finish',
-        minWidth: 100,
-        width: 120,
+        type: 'dateIso',
         filterable: true,
         sortable: true,
         formatter: Formatters.dateIso,
+        filter: { model: Filters.compoundDate },
+      },
+      {
+        id: 'completed',
+        name: 'Completed',
+        field: 'completed',
+        sortable: true,
+        filterable: true,
+        formatter: Formatters.checkmarkMaterial,
+        editor: { model: Editors.checkbox },
+        filter: {
+          model: Filters.singleSelect,
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True' },
+            { value: false, label: 'False' },
+          ],
+        },
       },
       {
         id: 'cost',
         name: 'Cost | Duration',
         field: 'cost',
         formatter: costDurationFormatter,
-        minWidth: 150,
-        width: 170,
         sortable: true,
         // filterable: true,
         filter: {
@@ -184,58 +173,39 @@ const Example20: React.FC = () => {
         },
       },
       {
-        id: 'effortDriven',
-        name: 'Effort Driven',
-        field: 'effortDriven',
+        id: 'cityOfOrigin',
+        name: 'City of Origin',
+        field: 'cityOfOrigin',
+        cssClass: 'city-of-origin-column',
         minWidth: 100,
-        width: 120,
-        formatter: Formatters.checkmarkMaterial,
+        pinnable: false,
         filterable: true,
-        filter: {
-          collection: [
-            { value: '', label: '' },
-            { value: true, label: 'True' },
-            { value: false, label: 'False' },
+        sortable: true,
+      },
+      {
+        id: 'action',
+        name: 'Action',
+        field: 'action',
+        width: 100,
+        maxWidth: 100,
+        excludeFromExport: true,
+        formatter: () => '<div class="cell-menu-dropdown">Action<i class="mdi mdi-chevron-down"></i></div>',
+        cellMenu: {
+          commandTitle: 'Commands',
+          commandItems: [
+            { command: 'command1', title: 'Command 1' },
+            { command: 'command2', title: 'Command 2', itemUsabilityOverride: (args: any) => !args.dataContext.completed },
+            { command: 'delete-row', title: 'Delete Row', itemVisibilityOverride: (args: any) => !args.dataContext.completed },
+            { divider: true, command: '' },
+            { command: 'help', title: 'Help' },
+            { command: 'something', title: 'Disabled Command', disabled: true },
           ],
-          model: Filters.singleSelect,
+          optionTitle: 'Change Complete Flag',
+          optionItems: [
+            { option: true, title: 'True' },
+            { option: false, title: 'False' },
+          ],
         },
-        sortable: true,
-      },
-      {
-        id: 'title1',
-        name: 'Title 1',
-        field: 'title1',
-        minWidth: 100,
-        width: 120,
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'title2',
-        name: 'Title 2',
-        field: 'title2',
-        minWidth: 100,
-        width: 120,
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'title3',
-        name: 'Title 3',
-        field: 'title3',
-        minWidth: 100,
-        width: 120,
-        filterable: true,
-        sortable: true,
-      },
-      {
-        id: 'title4',
-        name: 'Title 4',
-        field: 'title4',
-        minWidth: 100,
-        width: 120,
-        filterable: true,
-        sortable: true,
       },
     ];
 
@@ -244,18 +214,51 @@ const Example20: React.FC = () => {
         container: '#demo-container',
         rightPadding: 10,
       },
-      gridWidth: 920,
+      // Keep the left-pinned columns compact so two right-pinned columns fit
+      // beside the framework demo's route sidebar.
+      autoFitColumnsOnFirstLoad: false,
       enableCellNavigation: true,
       editable: true,
       autoEdit: true,
       enableExcelCopyBuffer: true,
-      frozenColumn: 2,
-      frozenRow: 3,
-      // frozenBottom: true, // if you want to freeze the bottom instead of the top, you can enable this property
+      enableExcelExport: true,
+      externalResources: [new ExcelExportService()],
+      enableFiltering: true,
+      enableSelection: true,
+      enableCheckboxSelector: true,
+      selectionOptions: { selectActiveRow: false },
+      checkboxSelector: {
+        hideInColumnTitleRow: !isSelectAllShownAsColumnTitle,
+        hideInFilterHeaderRow: isSelectAllShownAsColumnTitle,
+        name: 'Sel',
+        onExtensionRegistered: (instance: any) => (checkboxSelectorRef.current = instance),
+      },
+      pinning: {
+        columns: { left: ['_checkbox_selector', 'title', 'percentComplete'], right: ['action'] },
+        rows: { top: [0, 1, 2], bottom: [498, 499] },
+      },
 
-      // show both Frozen Columns in HeaderMenu & GridMenu, these are opt-in commands so they're disabled by default
-      gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false },
+      // show both single-column and bulk pinning commands in HeaderMenu & GridMenu; these are opt-in commands
+      gridMenu: {
+        hideClearPinningCommand: false,
+        // Grid Menu visibility updates rebuild the column layout. Reassert the
+        // demo's current ID-based pinning after that rebuild so React's right
+        // pinning state cannot briefly fall back to the scrolling band.
+        onColumnsChanged: () => reapplyPinnedColumns(),
+      },
+      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
+      enableCellMenu: true,
+      cellMenu: {
+        onCommand: (_e: unknown, args: any) => executeCommand(args),
+        onOptionSelected: (_e: unknown, args: any) => {
+          if (args?.dataContext) {
+            args.dataContext.completed = args.item.option;
+            reactGridRef.current?.gridService?.updateItem(args.dataContext);
+          }
+        },
+      },
+      enableContextMenu: true,
+      contextMenu: getContextMenuOptions(),
     };
 
     setColumns(columns);
@@ -274,38 +277,112 @@ const Example20: React.FC = () => {
         percentComplete: Math.round(Math.random() * 100),
         start: new Date(2009, 0, 1),
         finish: new Date(2009, 4, 5),
-        effortDriven: i % 5 === 0,
-        title1: `Some Text ${Math.round(Math.random() * 25)}`,
-        title2: `Some Text ${Math.round(Math.random() * 25)}`,
-        title3: `Some Text ${Math.round(Math.random() * 25)}`,
-        title4: `Some Text ${Math.round(Math.random() * 25)}`,
+        completed: i % 5 === 0,
+        cityOfOrigin: i % 2 ? 'Vancouver, BC, Canada' : 'Boston, MA, United States',
       };
     }
     return mockDataset;
   }
 
-  /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
-  function changeFrozenColumnCount(e: React.FormEvent<HTMLInputElement>) {
-    const frozenColumn = +((e.target as HTMLInputElement)?.value ?? 0);
-    setFrozenColumnCount(frozenColumn);
-  }
-
-  function updateFrozenColumnCount() {
-    reactGridRef.current?.slickGrid?.setOptions({
-      frozenColumn: frozenColumnCount,
-    });
-  }
-
   /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
-  function changeFrozenRowCount(e: React.FormEvent<HTMLInputElement>) {
-    const frozenRow = +((e.target as HTMLInputElement)?.value ?? 0);
-    setFrozenRowCount(frozenRow);
+  function updatePinnedRowCount(value: number, side: 'top' | 'bottom') {
+    const nextPinnedRowCount = Math.max(0, Number(value) || 0);
+    const slickGrid = reactGridRef.current?.slickGrid;
+    const dataLength = slickGrid?.getDataLength?.() ?? dataset.length;
+    const topCount = side === 'top' ? nextPinnedRowCount : pinnedTopRowCount;
+    const bottomCount = side === 'bottom' ? nextPinnedRowCount : pinnedBottomRowCount;
+    const getRows = (count: number, isBottom = false) => {
+      const firstPinnedRow = isBottom ? Math.max(0, dataLength - count) : 0;
+      return Array.from({ length: count }, (_v, index) => firstPinnedRow + index);
+    };
+    slickGrid?.setOptions({
+      pinning: { rows: { top: getRows(topCount), bottom: getRows(bottomCount, true) } },
+    });
+
+    if (side === 'top') {
+      setPinnedTopRowCount(nextPinnedRowCount);
+    } else {
+      setPinnedBottomRowCount(nextPinnedRowCount);
+    }
   }
 
-  function updateFrozenRowCount() {
-    reactGridRef.current?.slickGrid?.setOptions({
-      frozenRow: frozenRowCount,
-    });
+  function getContextMenuOptions(): any {
+    const percentItems = [
+      { option: 0, title: 'Not Started (0%)' },
+      { option: 50, title: 'Half Completed (50%)' },
+      { option: 100, title: 'Completed (100%)' },
+    ];
+    return {
+      optionShownOverColumnIds: ['percentComplete'],
+      hideCloseButton: true,
+      dropSide: 'right',
+      optionTitle: 'Change Percent Complete',
+      optionItems: [
+        ...percentItems,
+        'divider',
+        { option: null, title: 'Sub-Options (demo)', subMenuTitle: 'Set Percent Complete', optionItems: percentItems },
+      ],
+      commandItems: [
+        { command: '', divider: true, positionOrder: 98 },
+        {
+          command: 'export',
+          title: 'Exports',
+          positionOrder: 99,
+          commandItems: [
+            { command: 'exports-txt', title: 'Text (tab delimited)' },
+            {
+              command: 'sub-menu',
+              title: 'Excel',
+              subMenuTitle: 'available formats',
+              commandItems: [
+                { command: 'exports-csv', title: 'Excel (csv)' },
+                { command: 'exports-xlsx', title: 'Excel (xlsx)' },
+              ],
+            },
+          ],
+        },
+        {
+          command: 'feedback',
+          title: 'Feedback',
+          positionOrder: 100,
+          commandItems: [
+            { command: 'request-update', title: 'Request update from supplier' },
+            'divider',
+            {
+              command: 'sub-menu',
+              title: 'Contact Us',
+              subMenuTitle: 'contact us...',
+              commandItems: [
+                { command: 'contact-email', title: 'Email us' },
+                { command: 'contact-chat', title: 'Chat with us' },
+                { command: 'contact-meeting', title: 'Book an appointment' },
+              ],
+            },
+          ],
+        },
+      ],
+      onOptionSelected: (_e: unknown, args: any) => {
+        if (args?.dataContext) {
+          args.dataContext.percentComplete = args.item.option;
+          reactGridRef.current?.slickGrid?.updateRow(args.row || 0);
+        }
+      },
+      onCommand: (_e: unknown, args: any) => executeCommand(args),
+    };
+  }
+
+  function executeCommand(args: any) {
+    if (args.command === 'delete-row') {
+      if (confirm(`Do you really want to delete row (${args.row + 1}) with "${args.dataContext.title}"?`)) {
+        reactGridRef.current?.gridService?.deleteItemById(args.dataContext.id);
+      }
+    } else if (['command1', 'command2', 'help'].includes(args.command)) {
+      alert(args.item.title);
+    } else if (['exports-csv', 'exports-txt', 'exports-xlsx'].includes(args.command)) {
+      alert(`Exporting as ${args.item.title}`);
+    } else {
+      alert(`Command: ${args.command}`);
+    }
   }
 
   function costDurationFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, dataContext: any) {
@@ -325,21 +402,57 @@ const Example20: React.FC = () => {
     showToast(args.validationResults.msg, 'danger');
   }
 
-  function setFrozenColumns(frozenCols: number) {
-    reactGridRef.current?.slickGrid.setOptions({ frozenColumn: frozenCols });
-    const updatedGridOptions = reactGridRef.current?.slickGrid.getOptions();
-    setGridOptions(updatedGridOptions);
-    setFrozenColumnCount(frozenCols);
+  function removePinnedColumns() {
+    setPinnedColumns(-1, 0);
+    setPinnedColumnCount(0);
   }
 
-  /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
-  function toggleFrozenBottomRows() {
+  function setPinnedColumns(left: number, right = pinnedRightColumnCount) {
+    const nextRight = Math.max(0, Number(right) || 0);
+    const rightIds = ['cityOfOrigin', 'action'].slice(Math.max(0, 2 - nextRight));
+    pinnedColumnCountRef.current = left;
+    pinnedRightColumnCountRef.current = nextRight;
     reactGridRef.current?.slickGrid.setOptions({
-      frozenBottom: !isFrozenBottom,
+      pinning: { columns: { left: left >= 0 ? left : [], right: rightIds } },
     });
+    setPinnedColumnCount(left);
+    setPinnedRightColumnCount(nextRight);
+  }
 
-    const newIsFrozenBottom = !isFrozenBottom;
-    setIsFrozenBottom(newIsFrozenBottom);
+  function reapplyPinnedColumns() {
+    const left = pinnedColumnCountRef.current;
+    const right = pinnedRightColumnCountRef.current;
+    const rightIds = ['cityOfOrigin', 'action'].slice(Math.max(0, 2 - right));
+    reactGridRef.current?.slickGrid.setOptions({ pinning: { columns: { left: left >= 0 ? left : [], right: rightIds } } });
+  }
+
+  function toggleRightPinning() {
+    setPinnedColumns(pinnedColumnCount, pinnedRightColumnCount > 0 ? 0 : 1);
+  }
+
+  function toggleSelectAllRow() {
+    const next = !isSelectAllShownAsColumnTitle;
+    setIsSelectAllShownAsColumnTitle(next);
+    checkboxSelectorRef.current?.setOptions({ hideInColumnTitleRow: !next, hideInFilterHeaderRow: next });
+  }
+
+  function setLargePinnedColumns() {
+    reactGridRef.current?.gridStateService?.applyColumnLayout?.(
+      [
+        { columnId: '_checkbox_selector', cssClass: 'slick-cell-checkboxsel', headerCssClass: '', width: 40 },
+        { columnId: 'title', cssClass: '', headerCssClass: '', width: 220 },
+        { columnId: 'percentComplete', cssClass: '', headerCssClass: '', width: 280 },
+        { columnId: 'start', cssClass: '', headerCssClass: '', width: 150 },
+        { columnId: 'finish', cssClass: '', headerCssClass: '', width: 280 },
+        { columnId: 'completed', cssClass: '', headerCssClass: '', width: 180 },
+        { columnId: 'cost', cssClass: '', headerCssClass: '', width: 220 },
+        { columnId: 'cityOfOrigin', cssClass: '', headerCssClass: '', width: 180 },
+        { columnId: 'action', cssClass: '', headerCssClass: '', width: 110 },
+      ],
+      false,
+      false
+    );
+    setPinnedColumns(pinnedColumnCount, pinnedRightColumnCount);
   }
 
   function toggleSubTitle() {
@@ -355,7 +468,7 @@ const Example20: React.FC = () => {
   ) : (
     <div id="demo-container" className="container-fluid">
       <h2>
-        Example 20: Pinned (frozen) Columns/Rows
+        Example 20: Pinned Columns/Rows
         <span className="float-end font18">
           see&nbsp;
           <a
@@ -376,11 +489,11 @@ const Example20: React.FC = () => {
       </h2>
 
       <div className="subtitle">
-        This example demonstrates the use of Pinned (aka frozen) Columns and/or Rows (
-        <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/frozen-columns-rows" target="_blank">
+        This example demonstrates the use of Pinned (aka pinned) Columns and/or Rows (
+        <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/pinning" target="_blank">
           Docs
         </a>
-        )
+        ) City of Origin is intentionally non-pinnable and is highlighted with a subtle pink background.
         <ul>
           <li>Option to pin any number of columns (left only) or rows</li>
           <li>Option to pin the rows at the bottom instead of the top (default)</li>
@@ -391,22 +504,57 @@ const Example20: React.FC = () => {
 
       <br />
 
-      <div className="row">
-        <div className="col-sm-12">
-          <span>
-            <label htmlFor="">Pinned Rows: </label>
-            <input type="number" defaultValue={frozenRowCount} onInput={($event) => changeFrozenRowCount($event)} />
-            <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" onClick={() => updateFrozenRowCount()}>
-              Set
-            </button>
-          </span>
-          <span style={{ marginLeft: '10px' }}>
-            <label htmlFor="">Pinned Columns: </label>
-            <input type="number" defaultValue={frozenColumnCount} onInput={($event) => changeFrozenColumnCount($event)} />
-            <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" onClick={() => updateFrozenColumnCount()}>
-              Set
-            </button>
-          </span>
+      <div className="row gx-2 mb-2 align-items-end">
+        <div className="col-auto">
+          <label htmlFor="">Pinned Rows (top/bottom): </label>
+          <select
+            className="form-select form-select-sm d-inline-block w-auto pinned-top-row-count"
+            value={pinnedTopRowCount}
+            onChange={(e) => updatePinnedRowCount(+e.currentTarget.value, 'top')}
+          >
+            {[0, 1, 2, 3, 4, 5].map((count) => (
+              <option key={count} value={count}>
+                {count}
+              </option>
+            ))}
+          </select>
+          <select
+            className="form-select form-select-sm d-inline-block w-auto pinned-bottom-row-count"
+            value={pinnedBottomRowCount}
+            onChange={(e) => updatePinnedRowCount(+e.currentTarget.value, 'bottom')}
+          >
+            {[0, 1, 2, 3, 4, 5].map((count) => (
+              <option key={count} value={count}>
+                {count}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="col-auto">
+          <label htmlFor="">Pinned Columns (left/right): </label>
+          <select
+            className="form-select form-select-sm d-inline-block w-auto pinned-left-column-count"
+            value={pinnedColumnCount}
+            onChange={(e) => setPinnedColumns(+e.currentTarget.value, pinnedRightColumnCount)}
+          >
+            <option value={-1}>None</option>
+            {[0, 1, 2, 3, 4, 5].map((count) => (
+              <option key={count} value={count}>
+                {count}
+              </option>
+            ))}
+          </select>
+          <select
+            className="form-select form-select-sm d-inline-block w-auto pinned-right-column-count"
+            value={pinnedRightColumnCount}
+            onChange={(e) => setPinnedColumns(pinnedColumnCount, +e.currentTarget.value)}
+          >
+            {[0, 1, 2].map((count) => (
+              <option key={count} value={count}>
+                {count}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -414,20 +562,39 @@ const Example20: React.FC = () => {
         <div className="col-sm-12">
           <button
             className="btn btn-outline-secondary btn-sm btn-icon mx-1"
-            onClick={() => setFrozenColumns(-1)}
-            data-test="remove-frozen-column-button"
+            onClick={() => removePinnedColumns()}
+            data-test="remove-pinned-column-button"
           >
-            <i className="mdi mdi-close"></i> Remove Frozen Columns
+            <i className="mdi mdi-close"></i> Remove Pinned Columns
           </button>
-          <button className="btn btn-outline-secondary btn-sm btn-icon" onClick={() => setFrozenColumns(2)} data-test="set-3frozen-columns">
-            <i className="mdi mdi-pin-outline"></i> Set 3 Frozen Columns
+          <button
+            className="btn btn-outline-secondary btn-sm btn-icon mx-1"
+            onClick={() => setPinnedColumns(2, pinnedRightColumnCount)}
+            data-test="set-3pinned-columns"
+          >
+            <i className="mdi mdi-pin-outline"></i> Pin 3 Columns
           </button>
-          <span style={{ marginLeft: '15px' }}>
-            <button className="btn btn-outline-secondary btn-sm btn-icon" onClick={() => toggleFrozenBottomRows()}>
-              <i className="mdi mdi-flip-vertical"></i> Toggle Pinned Rows
-            </button>
-            <span style={{ fontWeight: 'bold' }}>: {isFrozenBottom ? 'Bottom' : 'Top'}</span>
-          </span>
+          <button
+            className="btn btn-outline-secondary btn-sm btn-icon mx-1"
+            onClick={() => toggleRightPinning()}
+            data-test="toggle-pinned-right"
+          >
+            <i className="mdi mdi-pin-outline"></i> Toggle Pinned Right
+          </button>
+          <button
+            className="btn btn-outline-secondary btn-sm btn-icon mx-1"
+            data-test="toggle-select-all-row"
+            onClick={() => toggleSelectAllRow()}
+          >
+            <i className="mdi mdi-checkbox-marked-circle-outline"></i> Toggle Select All
+          </button>
+          <button
+            className="btn btn-outline-secondary btn-sm btn-icon mx-1"
+            data-test="set-large-pinned-columns"
+            onClick={() => setLargePinnedColumns()}
+          >
+            <i className="mdi mdi-arrow-expand-horizontal"></i> Set Large Columns
+          </button>
         </div>
       </div>
 

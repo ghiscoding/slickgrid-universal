@@ -494,16 +494,6 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   initialization(gridContainerElm: HTMLElement, eventHandler: SlickEventHandler, inputDataset?: TData[]): void {
-    // when detecting a frozen grid, we'll automatically enable the mousewheel scroll handler so that we can scroll from both left/right frozen containers
-    if (
-      this.gridOptions &&
-      ((this.gridOptions.frozenRow !== undefined && this.gridOptions.frozenRow >= 0) ||
-        (this.gridOptions.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0)) &&
-      this.gridOptions.enableMouseWheelScrollHandler === undefined
-    ) {
-      this.gridOptions.enableMouseWheelScrollHandler = true;
-    }
-
     // create the slickgrid container and add it to the user's grid container
     this._gridContainerElm = gridContainerElm;
     this._eventPubSubService.publish('onBeforeGridCreate', true);
@@ -553,7 +543,7 @@ export class SlickVanillaGridBundle<TData = any> {
     // directly into the array below, so both `_columns` & `sharedService.allColumns` stay in sync
     this.extensionService.createExtensionsBeforeGridCreation(this._columns, this._gridOptions);
 
-    // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+    // if user entered some Pinning "presets", we need to apply them in the grid options
     if (this.gridOptions.presets?.pinning) {
       this.gridOptions = { ...this.gridOptions, ...this.gridOptions.presets.pinning };
     }
@@ -581,9 +571,6 @@ export class SlickVanillaGridBundle<TData = any> {
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView as SlickDataView);
     this._slickgridInitialized = true;
-
-    // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-    this.sharedService.frozenVisibleColumnId = this.slickGrid.getFrozenColumnId();
 
     // initialize the SlickGrid grid
     this.slickGrid.init();

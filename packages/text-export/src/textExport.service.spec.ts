@@ -63,6 +63,7 @@ const gridStub = {
   getData: () => dataViewStub,
   getOptions: () => mockGridOptions,
   getColumns: vi.fn(),
+  getColumnsInRenderedOrder: vi.fn((includeHidden = false) => (includeHidden ? gridStub.getColumns() : gridStub.getVisibleColumns())),
   getVisibleColumns: vi.fn(),
   getGrouping: vi.fn(),
   getParentRowSpanByCell: vi.fn(),
@@ -77,9 +78,11 @@ describe('ExportService', () => {
   let mockExportTxtOptions: TextExportOption;
   let mockCsvBlob: Blob;
   let mockTxtBlob: Blob;
+  let anchorClickSpy: ReturnType<typeof vi.spyOn>;
 
   describe('with Translater Service', () => {
     beforeEach(() => {
+      anchorClickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
       translateService = new TranslateServiceStub();
       container = new ContainerServiceStub();
       container.registerInstance('PubSubService', pubSubServiceStub);
@@ -109,6 +112,7 @@ describe('ExportService', () => {
     afterEach(() => {
       delete mockGridOptions.backendServiceApi;
       service?.dispose();
+      anchorClickSpy.mockRestore();
       vi.clearAllMocks();
     });
 

@@ -68,8 +68,6 @@ export class Example07 {
       ...this.gridOptions1,
       enableHeaderMenu: true,
       enableFiltering: true,
-      // frozenColumn: 2,
-      // frozenRow: 2,
       headerButton: {
         onCommand: (_e: any, args) => this.handleOnCommand(_e, args, 2),
       },

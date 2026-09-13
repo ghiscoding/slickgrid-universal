@@ -1,5 +1,10 @@
 <h3 class="title is-3">
   Example 32 - colspan/rowspan - Employees Timesheets
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -12,7 +17,7 @@
   </div>
 </h3>
 
-<div class="columns">
+<div class="columns" style.bind="subTitleStyle">
   <div class="column">
     <p class="italic example-details">
       <b>NOTES</b>: <code>rowspan</code> is an opt-in feature, because of its small perf hit (it needs to loop through all row metadatas to
