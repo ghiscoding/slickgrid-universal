@@ -1,6 +1,6 @@
 export type DockingSide = 'left' | 'right';
 
-export type DockingOverflowStrategy = 'conveyor' | 'clamp' | 'priority';
+export type DockingOverflowStrategy = 'conveyor' | 'clamp';
 
 /** An edge boundary/count or explicit column indexes and ids used by pinning. */
 export type ColumnPinningReferences = number | Array<number | string>;

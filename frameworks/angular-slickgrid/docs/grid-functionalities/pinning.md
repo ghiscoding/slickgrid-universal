@@ -18,6 +18,8 @@ For scroll-activated docking, see [Sticky Columns and Rows](sticky.md). Sticky c
 ## Columns/Rows Pinning basic
 To configure pinning for the entire lifetime of the grid, use the nested `pinning` Grid Option.
 
+Explicit column and row references do not need to be contiguous. For example, `columns.left: ['account', 'status']` pins only those columns, while `rows.top: [0, 2, 4]` pins only those rows. Pinned rows remain part of the normal dataset height, and the unpinned rows are laid out contiguously so skipped row indexes do not create blank gaps.
+
 ```html
 <angular-slickgrid gridId="grid2"
      [columns]="columns"

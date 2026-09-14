@@ -330,11 +330,9 @@ export class DockingController<C extends Column = Column> {
     let used = 0;
     for (const item of candidates) {
       const size = sizeOf(item);
-      if (used + size <= budget || (this.options.overflowStrategy === 'clamp' && selected.length === 0)) {
+      if (used + size <= budget) {
         selected.push(item);
         used += size;
-      } else if (this.options.overflowStrategy === 'priority') {
-        break;
       }
     }
     return this.options.overflowStrategy === 'conveyor' ? selected.reverse() : selected;

@@ -493,13 +493,10 @@ const Example20: React.FC = () => {
         <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/pinning" target="_blank">
           Docs
         </a>
-        ) City of Origin is intentionally non-pinnable and is highlighted with a subtle pink background.
-        <ul>
-          <li>Option to pin any number of columns (left only) or rows</li>
-          <li>Option to pin the rows at the bottom instead of the top (default)</li>
-          <li>You can also dynamically any of these options, through SlickGrid "setOptions()"</li>
-          <li>Possibility to change the styling of the line border between pinned columns/rows</li>
-        </ul>
+        ) City of Origin is intentionally non-pinnable and is highlighted with a subtle pink background. Columns and rows can also be pinned
+        selectively, without requiring them to be sequential (for example, rows 0, 2, and 4). You can pin any number of columns or rows,
+        place rows at the bottom, change these options through SlickGrid `setOptions()`, and customize the border styling between pinned
+        columns and rows.
       </div>
 
       <br />

@@ -396,23 +396,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected dragReplaceEl: SlickDragExtendHandle = new SlickDragExtendHandle(this.uid);
   protected _focusSink!: HTMLDivElement;
   protected _focusSink2!: HTMLDivElement;
-  protected _groupHeaders: HTMLDivElement[] = [];
   protected _headerScroller: HTMLDivElement[] = [];
   protected _headers: HTMLDivElement[] = [];
   protected _headerRows!: HTMLDivElement[];
   protected _headerRowScroller!: HTMLDivElement[];
   protected _headerRowSpacerL!: HTMLDivElement;
-  protected _headerRowSpacerR!: HTMLDivElement;
   protected _footerRow!: HTMLDivElement[];
   protected _footerRowScroller!: HTMLDivElement[];
   protected _footerRowSpacerL!: HTMLDivElement;
-  protected _footerRowSpacerR!: HTMLDivElement;
   protected _preHeaderPanel!: HTMLDivElement;
   protected _preHeaderPanelScroller!: HTMLDivElement;
   protected _preHeaderPanelSpacer!: HTMLDivElement;
   protected _preHeaderPanelR!: HTMLDivElement;
-  protected _preHeaderPanelScrollerR!: HTMLDivElement;
-  protected _preHeaderPanelSpacerR!: HTMLDivElement;
   protected _topHeaderPanel!: HTMLDivElement;
   protected _topHeaderPanelScroller!: HTMLDivElement;
   protected _topHeaderPanelSpacer!: HTMLDivElement;
@@ -535,23 +530,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected _headerRoot!: HTMLDivElement;
   protected _contentRoot!: HTMLDivElement;
   protected _headerScrollerL!: HTMLDivElement;
-  protected _headerScrollerR!: HTMLDivElement;
   protected _headerL!: HTMLDivElement;
-  protected _headerR!: HTMLDivElement;
-  protected _groupHeadersL!: HTMLDivElement;
-  protected _groupHeadersR!: HTMLDivElement;
   protected _headerRowScrollerL!: HTMLDivElement;
-  protected _headerRowScrollerR!: HTMLDivElement;
   protected _footerRowScrollerL!: HTMLDivElement;
-  protected _footerRowScrollerR!: HTMLDivElement;
   protected _headerRowL!: HTMLDivElement;
-  protected _headerRowR!: HTMLDivElement;
   protected _footerRowL!: HTMLDivElement;
-  protected _footerRowR!: HTMLDivElement;
   protected _topPanelScrollerL!: HTMLDivElement;
-  protected _topPanelScrollerR!: HTMLDivElement;
   protected _topPanelL!: HTMLDivElement;
-  protected _topPanelR!: HTMLDivElement;
   protected _viewportNode!: HTMLDivElement;
   protected _canvasNode!: HTMLDivElement;
   protected _dockingOverlay?: HTMLDivElement;
@@ -777,9 +762,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this._preHeaderPanelScroller
       );
 
-      this._preHeaderPanelScrollerR = this._preHeaderPanelScroller;
       this._preHeaderPanelR = this._preHeaderPanel;
-      this._preHeaderPanelSpacerR = this._preHeaderPanelSpacer;
 
       if (!this._options.showPreHeaderPanel) {
         Utils.hide(this._preHeaderPanelScroller);
@@ -793,7 +776,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       { className: 'slick-header slick-state-default slick-header-left', role: 'rowgroup' },
       headerContainerL
     );
-    this._headerScrollerR = this._headerScrollerL;
 
     // Cache the header scroller containers
     this._headerScroller.push(this._headerScrollerL);
@@ -804,7 +786,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       { className: 'slick-header-columns slick-header-columns-left', role: 'row' },
       this._headerScrollerL
     );
-    this._headerR = this._headerL;
 
     // Cache the header columns
     this._headers = [this._headerL];
@@ -814,7 +795,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       { className: 'slick-headerrow slick-state-default', role: 'rowgroup' },
       this._contentRoot
     );
-    this._headerRowScrollerR = this._headerRowScrollerL;
 
     this._headerRowScroller = [this._headerRowScrollerL];
 
@@ -823,26 +803,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       { style: { display: 'block', height: '1px', position: 'absolute', top: '0px', left: '0px' } },
       this._headerRowScrollerL
     );
-    this._headerRowSpacerR = this._headerRowSpacerL;
 
     this._headerRowL = createDomElement(
       'div',
       { className: 'slick-headerrow-columns slick-headerrow-columns-left', role: 'row' },
       this._headerRowScrollerL
     );
-    this._headerRowR = this._headerRowL;
 
     this._headerRows = [this._headerRowL];
 
     // Append the top panel scroller
     this._topPanelScrollerL = createDomElement('div', { className: 'slick-top-panel-scroller slick-state-default' }, this._contentRoot);
-    this._topPanelScrollerR = this._topPanelScrollerL;
 
     this._topPanelScrollers = [this._topPanelScrollerL];
 
     // Append the top panel
     this._topPanelL = createDomElement('div', { className: 'slick-top-panel', style: { width: '10000px' } }, this._topPanelScrollerL);
-    this._topPanelR = this._topPanelL;
 
     this._topPanels = [this._topPanelL];
 
@@ -905,7 +881,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     });
 
     Utils.width(this._headerRowSpacerL, canvasWithScrollbarWidth);
-    Utils.width(this._headerRowSpacerR, canvasWithScrollbarWidth);
 
     // footer Row
     if (this._options.createFooterRow) {
@@ -1003,15 +978,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (this._options.createPreHeaderPanel) {
         this._bindingEventService.bind(this._preHeaderPanelScroller, 'scroll', this.handlePreHeaderPanelScroll.bind(this) as EventListener);
         this._bindingEventService.bind(
-          [this._preHeaderPanelScroller, this._preHeaderPanelScrollerR],
+          this._preHeaderPanelScroller,
           'contextmenu',
           this.handlePreHeaderContextMenu.bind(this) as EventListener
         );
-        this._bindingEventService.bind(
-          [this._preHeaderPanelScroller, this._preHeaderPanelScrollerR],
-          'click',
-          this.handlePreHeaderClick.bind(this) as EventListener
-        );
+        this._bindingEventService.bind(this._preHeaderPanelScroller, 'click', this.handlePreHeaderClick.bind(this) as EventListener);
       }
 
       this._bindingEventService.bind(this._focusSink, 'keydown', this.handleGridKeyDown.bind(this) as EventListener);
@@ -1427,11 +1398,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.viewportHasHScroll = this.canvasWidth >= this.viewportW - (this.scrollbarDimensions?.width || 0);
 
     Utils.width(this._headerRowSpacerL, this.canvasWidth + (this.viewportHasVScroll ? this.scrollbarDimensions?.width || 0 : 0));
-    Utils.width(this._headerRowSpacerR, this.canvasWidth + (this.viewportHasVScroll ? this.scrollbarDimensions?.width || 0 : 0));
 
     if (this._options.createFooterRow) {
       Utils.width(this._footerRowSpacerL, this.canvasWidth + (this.viewportHasVScroll ? this.scrollbarDimensions?.width || 0 : 0));
-      Utils.width(this._footerRowSpacerR, this.canvasWidth + (this.viewportHasVScroll ? this.scrollbarDimensions?.width || 0 : 0));
     }
 
     this.updateDockingHorizontalScrollerDimensions();
@@ -1791,10 +1760,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this.resetDockingChromeRegionSet(this._footerRowL, 'slick-footerrow-columns', 'left');
         this.dockingFooterRowRegions = undefined;
       }
-      if (this._footerRowR !== this._footerRowL) {
-        emptyElement(this._footerRowR);
-      }
-
       for (let i = 0; i < this.columns.length; i++) {
         const m = this.columns[i];
         if (!m || m.hidden) {
@@ -1825,18 +1790,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Builds the footer-row DOM (scrollers, spacers and footer-row containers) in both
-   * panes — the single construction path shared by init and by a runtime
-   * `setOptions({ createFooterRow: true })` enable. On an already-initialized grid it
-   * also binds the footer events (during init they are bound in `finishInitialization`).
-   * Runtime disable hides the footer rather than destroying it (symmetric with
-   * `showFooterRow`).
+   * Builds the footer-row DOM. This is shared by initial setup and runtime
+   * `setOptions({ createFooterRow: true })` enable; runtime disable hides it.
    */
   protected materializeFooterRow(): void {
     const canvasWithScrollbarWidth = this.getCanvasWidth() + (this.scrollbarDimensions?.width || 0);
 
     this._footerRowScrollerL = createDomElement('div', { className: 'slick-footerrow slick-state-default' }, this._contentRoot);
-    this._footerRowScrollerR = this._footerRowScrollerL;
     this._footerRowScroller = [this._footerRowScrollerL];
 
     this._footerRowSpacerL = createDomElement(
@@ -1846,14 +1806,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     );
     Utils.width(this._footerRowSpacerL, canvasWithScrollbarWidth);
 
-    this._footerRowSpacerR = this._footerRowSpacerL;
-
     this._footerRowL = createDomElement(
       'div',
       { className: 'slick-footerrow-columns slick-footerrow-columns-left' },
       this._footerRowScrollerL
     );
-    this._footerRowR = this._footerRowL;
     this._footerRow = [this._footerRowL];
 
     if (this.hasConfiguredColumnDocking()) {
@@ -2313,7 +2270,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Adds or removes the automatic header-height styles from both header panes. */
   protected handleAutoHeaderHeightChange(): void {
     const enabled = !!this._options.autoHeaderHeight;
-    const headers = [this._headerScrollerL, this._headerScrollerR].filter((header): header is HTMLDivElement => !!header);
+    const headers = [this._headerScrollerL];
 
     headers.forEach((header) => header.classList.toggle('slick-header-auto-height', enabled));
 
@@ -2328,7 +2285,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return;
     }
 
-    const headers = [this._headerScrollerL, this._headerScrollerR].filter((header): header is HTMLDivElement => !!header);
+    const headers = [this._headerScrollerL];
     const currentHeight = parseFloat(this._headerScrollerL.style.getPropertyValue('--slick-auto-header-height') || '0');
 
     // Remove the previous calculated height before measuring the rendered header content.
@@ -2611,8 +2568,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.sortableSideRightInstance = Sortable.create(this.getDockingChromeRegion('header', 'right'), sortableOptions);
     } else {
       this.sortableSideLeftInstance = Sortable.create(this._headerL, sortableOptions);
-      this.sortableSideRightInstance =
-        this._headerR !== this._headerL && this._headerR.isConnected ? Sortable.create(this._headerR, sortableOptions) : undefined;
+      this.sortableSideRightInstance = undefined;
     }
   }
 
@@ -5118,7 +5074,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Boolean} [visible] - optionally set if pre-header panel is visible or not
    */
   setPreHeaderPanelVisibility(visible?: boolean): void {
-    this.togglePanelVisibility('showPreHeaderPanel', [this._preHeaderPanelScroller, this._preHeaderPanelScrollerR], visible);
+    this.togglePanelVisibility('showPreHeaderPanel', this._preHeaderPanelScroller, visible);
   }
 
   /**
@@ -5194,6 +5150,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Height occupied by permanent top-pinned rows. */
   protected getTopPinnedRowsHeight(): number {
     return this.rowDockingLayout.top.filter((entry) => !entry.sticky).reduce((height, entry) => height + entry.height, 0);
+  }
+
+  protected getRenderedRowTop(row: number): number {
+    return (
+      this.getRowTop(row) +
+      this.rowDockingLayout.top.reduce((offset, entry) => offset + (!entry.sticky && entry.index >= row ? entry.height : 0), 0)
+    );
   }
 
   protected getRowFromPosition(y: number): number {
@@ -5561,7 +5524,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Keep RowSpan host rows top-positioned so their cells escape transformed sibling stacking contexts. */
   protected applyRowTopOffset(rowNode: HTMLElement, row: number): void {
     const rowDocking = this.dockingByRow.get(row);
-    let top = this.getRowTop(row);
+    let top = this.getRenderedRowTop(row);
     if (rowDocking?.band === 'top') {
       top = rowDocking.offset;
     } else if (rowDocking?.band === 'bottom') {
@@ -8365,7 +8328,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     const rowDocking = this.dockingByRow.get(row);
-    let y1 = this.getRowTop(row);
+    let y1 = this.getRenderedRowTop(row);
     if (rowDocking?.band === 'top') {
       y1 = this.scrollTop + rowDocking.offset;
     } else if (rowDocking?.band === 'bottom') {

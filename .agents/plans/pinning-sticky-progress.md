@@ -1,6 +1,6 @@
-# Single-viewport pinning/stickiness POC — progress handoff
+# Single-viewport pinning/stickiness — implementation progress
 
-Last updated: 2026-09-12 (core/service DRY and render-path audit, directional pin-through commands, separator filtering, header flex cleanup, horizontal scroll hardening, grouping/pinning visual hardening, hidden-column docking alignment, cross-band colspan rendering, Example 58 framework parity, pinning locale audit, progress/TODO review, pane-root cleanup, rendered-order export/picker fixes, Example 04/20 reorder regression coverage, large-jump sticky activation, transform-only sticky transitions, sticky boundary cue, scrollbar-arrow synchronization, and user-confirmed green Vanilla/framework Cypress CI)
+Last updated: 2026-09-13 (consolidated remaining-work audit, overflow-policy decisions, focused variable-height/span/coexistence coverage, and user-confirmed green Vanilla/framework Cypress CI)
 
 ## Goal
 
@@ -17,7 +17,7 @@ Replace SlickGrid's multi-pane column/row architecture with an AG Grid-style doc
 - vertical and horizontal virtualization must remain viable for large datasets;
 - this is intentionally a major-version breaking change; compatibility with the old pane renderer is not a design goal.
 
-The POC supports per-column pinning and the canonical nested `pinning` option.
+The implementation supports per-column pinning and the canonical nested `pinning` option.
 `pinning.columns.left` accepts an inclusive edge-boundary number for contiguous
 left pinning, while `pinning.columns.right` accepts a count from the trailing
 edge. Either side also accepts arrays of stable column ids/indexes for
@@ -26,7 +26,7 @@ non-contiguous pinning. An inclusive v11-and-lower boundary is written as
 Legacy option names are documented only in the v11 migration guide.
 There is no separate `pinnedColumn` or `pinnedRows` grid option; those temporary
 aliases were removed after the canonical shape was wired through core and state.
-The POC does not target compatibility with the old pane-based UX.
+The implementation does not target compatibility with the old pane-based UX.
 
 For ordinary colspans that cross docking bands, pinning is accepted only when the
 resolved bands remain sequential (`left → center → right`). A non-sequential
@@ -163,9 +163,9 @@ offset disappeared. Vanilla Example 42 and framework Example 53 Cypress coverage
 layout, `float: none`, and the configured `--slick-header-row-count`, while Example 33 retains
 auto-header-height coverage.
 
-The POC has gone through visual hardening, selected Cypress migration, framework demo parity,
-and removal of the legacy pane options/interfaces and runtime branches. The common unit suite
-and focused coverage checks pass; framework browser validation remains follow-up work. The
+The implementation has gone through visual hardening, selected Cypress migration, framework demo parity,
+and removal of the legacy pane options/interfaces and runtime branches. The common unit suite,
+focused coverage checks, and user-confirmed Vanilla/framework browser CI workflows pass. The
 remaining legacy terminology is limited to historical CSS variable names and intentional
 migration-facing documentation.
 
@@ -187,7 +187,7 @@ The production LOC estimate below has been recalculated after the alias/style au
 
 ## Maintainability acceptance gate
 
-The original PR 1238 motivation must be reviewed before this work is accepted: multi-pane layouts
+The original PR 1238 motivation was reviewed as part of this work: multi-pane layouts
 made `slickGrid.ts` harder to maintain because ordinary operations had to know about left/right
 headers, footers, viewports, and canvases. The single-viewport rewrite is successful only if it
 removes that model; it is **not** sufficient to create the old panes and force their options
@@ -214,8 +214,8 @@ The final implementation must satisfy all of the following:
 
 Do not revive a `ViewportMgr` merely to conceal the old multi-pane renderer. In this design,
 deleting the multi-pane renderer is simpler and better aligned with the major-version breaking
-change. This gate remains a required review item before final acceptance; focused tests and
-documentation work may continue while the follow-up deletion audit is underway.
+change. The single-renderer acceptance gate is satisfied; optional reduction of remaining
+compatibility aliases is recorded below as a maintainability follow-up.
 
 ## leftover TODOs identified by user
 - [x] Unified grid options support pinning (left, right, top, bottom)
@@ -254,15 +254,9 @@ documentation work may continue while the follow-up deletion audit is underway.
 - [x] Audited legacy configuration names. The former flat pinning options are removed from
   runtime code; historical references remain only in the
   migration guide and documented theme-variable compatibility notes.
-- [ ] Revisit fast vertical-scroll blanking as a separate virtual-rendering task after the
-  pinning/sticky work is merged. Example 47 has 29 rows, but its initial neutral-direction range
-  renders only the visible rows plus the default 3-row buffer on each side; the full one-viewport
-  directional buffer is added only after scrolling starts. Jumps of at least one viewport use the
-  `scrollRenderThrottling` path (10ms by default), which can briefly expose rows before a queued
-  render. Profile that independently from `refreshRowDockingLayout()`, which currently resolves
-  sticky rows and synchronizes the rendered row cache on every vertical scroll event.
-- address comment brought up in SlickGrid for new pinning/sticky features (deferred; revisit later
-  as a separate curated-skills task):
+- [x] Addressed the curated-skills suggestion for the pinning/sticky feature by adding the
+  repository-shipped `.agents/skills/pinning-sticky/SKILL.md` guidance and registering it in the
+  repository skills index:
   > I think the major version would indicate this well enough. yeah its a bit more than a break, its a feature deprecation sort of, but the replacement is subjectively better for me.
   > what the latest push in AI development made me think of though is that we might should start thinking about shipping curated skills along with the library. that would serve two purposes. first, LLMs would know better how to apply specific features from slickgrid on the consumer end. but secondly, the skills could also act as a verification of the docs and thus overall improve the development of new features as LLMs could check up on skills when touching existing features
 - [x] Identify and document breaking changes in the v11 migration guide, including canonical
@@ -279,11 +273,61 @@ documentation work may continue while the follow-up deletion audit is underway.
   extensions, and framework integrations. Remaining historical CSS/demo terminology is
   intentional; do not add compatibility branches.
 
+## Consolidated remaining work before declaring v1 complete
+
+All required v1 production behavior, policy decisions, focused tests, documentation, and
+user-confirmed Vanilla/framework Cypress validation are complete. The items below are retained
+for transparency, but are optional validation, maintainability cleanup, or intentionally separate
+future work; none currently requires a pinning/sticky runtime change.
+
+- [x] Removed the unused `priority` overflow strategy. It was never requested and had no
+  priority metadata or callback. A future release may add explicit priority support if users ask
+  for hierarchy-aware sticky selection.
+- [x] Changed `clamp` so it never selects a candidate larger than the remaining pixel budget;
+  oversized sticky candidates remain in their normal scroll flow.
+- [x] Added focused resolver coverage for oversized sticky candidates; they are skipped when they
+  exceed the remaining pixel budget. A new cross-framework demo is intentionally deferred because
+  this is an overflow-policy edge case, not a separate user-facing feature.
+- [x] Added focused resolver coverage for simultaneous top/bottom sticky stacks. The v1 rule is
+  one shared total budget after permanent rows, with the top stack resolved first; the bottom
+  stack uses the remaining space.
+- [x] Added focused coverage for sticky rows with variable heights, including measured offsets,
+  top/bottom budget sharing, and candidates that remain in the center when they do not fit.
+- [x] Added focused coverage for a sticky row containing a colspan/rowspan across docking
+  regions. Cross-band permanent-pinning spans remain covered; no new demo is needed for this
+  uncommon combination.
+- [x] Added dedicated coexistence coverage for permanent pins and sticky docking across both axes.
+  Permanent and scroll-activated bands retain their respective positions and offsets.
+- [x] Resolved permanent pinned-row overflow semantics: permanent rows always remain pinned and
+  part of the dataset height, even when their combined height exceeds the configured budget.
+  Sticky rows use the remaining space and remain in normal flow when no space remains.
+- [x] Decided hierarchical sticky-row push-off/priority behavior is a separate future product
+  feature, not part of v1. v11 uses natural-order stacking plus conveyor/clamp overflow.
+- [ ] Optional validation: run targeted UX trials for sticky-row transitions, fast scrolling, and
+  changing visible sticky sets. CI verifies correctness, while manual trials can assess feel and
+  transition comfort.
+- [ ] Separate virtual-rendering task: revisit fast vertical-scroll blanking after pinning/sticky
+  work is merged. This includes auditing the row-docking synchronization that still runs during
+  vertical scrolling; it is not part of sticky activation correctness.
+- [x] Removed the five verified redundant right-side header aliases
+  (`_headerScrollerR`, `_headerR`, `_headerRowScrollerR`, `_headerRowR`, `_headerRowSpacerR`),
+  reducing the production implementation by 14 net LOC. The widely used one-item arrays remain
+  unchanged because they still represent the active single-viewport collections.
+- [x] Removed the remaining unused single-viewport pane aliases and duplicate footer/pre-header
+  references, including dead group-header fields and top-panel aliases. This reduced the
+  production implementation by an additional 31 net LOC while preserving the public pre-header
+  right-panel getter and existing one-item collections.
+- [ ] Separate future feature: support grouped sticky header bands, such as a quarterly group
+  header spanning several columns. This would require approximately 150–300 additional library
+  LOC and explicit cross-band and push-off rules; ordinary sticky columns do not require it.
+- [ ] Deferred documentation: add framework-specific v11 migration guides if the release requires
+  them. The root migration guide is current, and the framework guides are intentionally deferred.
+
 ## Starting point
 
 - Branch: `master`
 - Base commit: `e757539c2`
-- Worktree was clean before this POC.
+- Worktree was clean before this implementation.
 - The earlier `feat/viewport-mgr`/PR 1238 approach was inspected but not reused because it extends the old full-height pane architecture.
 - GitHub Discussion 1237 was reviewed for arbitrary sticky rows/columns, pixel budgets, overflow policies, variable row heights, and hierarchical sticky-row semantics.
 - AG Grid v36's single-scroll DOM change was used as the structural reference.
@@ -340,7 +384,7 @@ the `HEADER_WIDTH_SLACK` value, and grouped/pre-header titles use the same norma
 system. This is intentional cleanup for the major-version rewrite; the offset was layout
 technical debt from the old pane renderer, not a pinning or virtualization requirement.
 
-An attempted shared sticky-canvas coordinate system was **reverted** because it broke the far-right scroll geometry (visible blank space and header/body misalignment). The replacement preserves the canvas as a normal full-width element and moves horizontal scrolling to one dedicated scrollbar overlay aligned with the body viewport. The body viewport is now vertical-only; its canvas, the pinned-row overlay, headers, header row, footer, and optional panels all receive the same `translate3d(-scrollLeft, 0, 0)` from the dedicated scrollbar's scroll event. A pair of scoped CSS variables applies the inverse offset to left/right pinned regions and pinned chrome, so regular rows no longer receive individual JavaScript positioning writes during horizontal scrolling. This is the POC's current single-scroll implementation and is covered by the passing Vanilla/framework Cypress suites.
+An attempted shared sticky-canvas coordinate system was **reverted** because it broke the far-right scroll geometry (visible blank space and header/body misalignment). The replacement preserves the canvas as a normal full-width element and moves horizontal scrolling to one dedicated scrollbar overlay aligned with the body viewport. The body viewport is now vertical-only; its canvas, the pinned-row overlay, headers, header row, footer, and optional panels all receive the same `translate3d(-scrollLeft, 0, 0)` from the dedicated scrollbar's scroll event. A pair of scoped CSS variables applies the inverse offset to left/right pinned regions and pinned chrome, so regular rows no longer receive individual JavaScript positioning writes during horizontal scrolling. This is the current single-scroll implementation and is covered by the passing Vanilla/framework Cypress suites.
 
 The always-created right-region wrapper is now marked active only when right pinning has a non-zero width. This prevents a zero-width `slick-pinned-right-cells` region (present for the stable left/center/right row shape) from drawing a spurious pinned-border line in left-only pinning scenarios.
 
@@ -363,7 +407,7 @@ New DOM-free `DockingController` resolves both axes:
 - permanent top/bottom rows;
 - sticky rows activated from their natural geometry when they cross an edge, including after a direct scroll jump;
 - viewport-percentage pixel budgets;
-- `conveyor`, `clamp`, and `priority` sticky overflow policies;
+- `conveyor` and `clamp` sticky overflow policies;
 - revision counters so DOM membership changes happen only when a docking boundary is crossed, not on every scroll pixel.
 
 Scroll-activated sticky docking is now enabled through the same resolver as permanent pins.
@@ -387,11 +431,12 @@ compositor transforms:
 - use the same width/height budgets, hysteresis, resize invalidation, and overlay stacking
   already needed for permanent pins.
 
-The basic sticky-column/sticky-row implementation, including coexistence with permanent pins,
-is complete. Large scroll jumps, RTL, resize/reorder, variable row heights, editors, selection,
-grouping, spans, and framework parity are covered by the user-confirmed CI runs. Deciding how
-sticky rows should be pushed off when several candidates compete remains a product decision,
-not an implementation defect.
+The basic sticky-column/sticky-row implementation is complete for the agreed v1 behavior. Large
+scroll jumps, RTL, resize/reorder, editors, selection, grouping, spans, and framework parity are
+covered by the user-confirmed CI runs. Focused resolver and rendering tests also cover variable
+sticky heights, sticky rows containing spans, and coexistence with permanent pins. Multiple active top sticky rows stack in natural order
+within the existing viewport-percentage budget; they do not push each other off, and no fixed
+row-count budget is used.
 
 The user's quarterly example is also feasible, but there are two different scopes:
 
@@ -407,14 +452,18 @@ while sticky candidates use the remaining center viewport. The performance model
 O(configured sticky candidates) per scroll event and O(1) DOM work between boundary crossings;
 large datasets continue to render only the normal virtual range plus the small docked set.
 Sticky activation is enabled for Example 47's quarterly columns. Permanent pinning and sticky
-transition visuals are accepted in the current user-confirmed CI/browser validation; only the
-remaining API/product decisions below need review before the API is finalized.
+transition visuals are accepted in the current user-confirmed CI/browser validation. The remaining
+future UX follow-ups are listed in the consolidated remaining-work section above.
 
 ### Pinned/sticky rows and virtual scrolling
 
 Pinned row references are resolved to row indexes and cached. With a plain array, resolving a string ID may scan the dataset once; subsequent vertical scroll events are O(number of configured docked rows). With a SlickDataView, `getRowById()` is used when available.
 
 The normal virtual rendered range is unchanged. Only configured top/bottom rows are additionally rendered, so a million-row dataset does not produce a million-row DOM.
+
+Non-contiguous permanent top-pinned rows are removed from the normal visual row flow while the
+canvas retains its natural dataset height. This prevents blank gaps behind rows such as
+`pinning.rows.top: [0, 2, 4]` without changing scrollbar range or virtual row coordinates.
 
 Pinned and active sticky rows reuse their normal cached row element, but are reparented into a small overlay outside the scrolling canvas. Their vertical `top`/`bottom` coordinates are constant during scrolling; only the center cell region follows horizontal scroll. No additional tall top/bottom canvas is created.
 
@@ -428,8 +477,8 @@ frame. Pinned region boundaries use the current pinned-border color and
 Legacy theme variable names are migration-guide references only. The horizontal
 row boundary is emitted only on the last top-pinned row (or first bottom-pinned row), rather
 than repeating across every pinned row. Normal virtual rows are repositioned only when a page
-offset actually changes; the separate follow-up above will audit the row-docking synchronization
-that still runs during vertical scrolling. The overlay now
+offset actually changes; the separate fast-scroll task in the consolidated remaining-work section
+will audit the row-docking synchronization that still runs during vertical scrolling. The overlay now
 inherits the normal grid-cell typography, borders, alternating backgrounds, and selection
 styles, and is stacked above hovered scrolling rows so the pinned content cannot show through.
 Header-row and footer cells in pinned bands now receive explicit border-box widths, so filter
@@ -451,7 +500,7 @@ positioning at the leading edge. The canvas and pinned-row overlay now share the
 CSS-variable horizontal transform as headers and filters, while scroll-activated sticky docking
 is resolved through the shared controller.
 
-## New POC APIs
+## Current APIs
 
 ### Column definition
 
@@ -494,7 +543,7 @@ interface GridOption {
   docking?: {
     maxColumnViewportWidthPercent?: number; // default 60
     maxRowViewportHeightPercent?: number;  // default 60
-    overflowStrategy?: 'conveyor' | 'clamp' | 'priority';
+    overflowStrategy?: 'conveyor' | 'clamp';
     stickyHysteresis?: number;              // default 2px
   };
 }
@@ -532,7 +581,7 @@ Vanilla Example 04 now loads the equivalent of its previous configuration throug
 - the existing column-count, row-count, remove, set-three, top/bottom, and large-width controls now mutate the nested `pinning` option;
 - Grid Menu/Header Menu pin commands now write the canonical `pinning` state without recreating
   a second pane;
-- the page title identifies it as the single-viewport POC.
+- the page title identifies it as the single-viewport implementation.
 
 Example variable/function names and Cypress `data-test` attributes now use pinning terminology.
 The old names remain only in the v11 migration guide where they are needed as migration inputs.
@@ -596,7 +645,7 @@ Public types:
 - `packages/common/src/interfaces/gridOption.interface.ts`
 - `packages/common/src/interfaces/index.ts`
 
-POC demonstration:
+Implementation demonstration:
 
 - `demos/vanilla/src/examples/example04.ts`
 - `demos/vanilla/src/examples/example04.html`
@@ -617,8 +666,8 @@ git diff --check
 ```
 
 Static validation for the recent cleanup passed: common-package TypeScript, Oxlint,
-Prettier, and `git diff --check`. The focused DockingController/pinning unit suite passes
-(34 tests), and the common SlickGrid coverage run reports 100% statements, functions, and lines
+Prettier, and `git diff --check`. The current focused DockingController/pinning unit run passes
+(51 tests across four suites), and the common SlickGrid coverage run reports 100% statements, functions, and lines
 for `slickGrid.ts`. The framework Cypress TypeScript configs also pass after
 the custom-command typing fix. The user subsequently confirmed that all Vanilla and framework
 Cypress CI workflows pass repeatedly, including the pinning/sticky regression coverage.
@@ -842,7 +891,7 @@ bands would still be a separate feature and product decision.
    removed. Historical CSS variable names remain documentation-only and must not become
    compatibility branches.
 2. **Old options intentionally no longer work.** The former flat options are not valid ways to
-   configure this POC. The old names and command ids are migration-guide
+   configure this implementation. The old names and command ids are migration-guide
    references only; active menus use `Pin Columns Left`/`Pin Columns Right` and `Unpin All Columns` and write the canonical
    `pinning` option. `GridService.setPinning()` accepts the unified nested shape.
 3. **Visual/browser validation is green.** The user confirms that all Vanilla and framework
@@ -865,9 +914,10 @@ bands would still be a separate feature and product decision.
    node into the docking overlay, while their natural dataset slot remains represented in scroll
    geometry. This keeps scrollbar range, virtual-row mapping, restored scroll positions, and
    variable-height row calculations stable when docking changes.
-9. **Permanent pin over-allocation is rejected at the API boundary.** Pinning every visible
+9. **Permanent column over-allocation is rejected at the API boundary.** Pinning every visible
    column or consuming the whole viewport invokes the configured canonical pinning validation
-   callback and leaves the prior pinning state intact.
+   callback and leaves the prior pinning state intact. Permanent rows always remain pinned and
+   remain part of dataset height; sticky rows use only the remaining budget.
 10. **Column reorder policy is resolved.** Columns reorder within their current docking band;
     dragging does not move a column between center and pinned regions or implicitly change its
     `pinned` state. Pin/unpin remains an explicit Header Menu or API action. This preserves the
@@ -912,45 +962,39 @@ deferred until the vanilla guide and API cleanup are settled; do not add framewo
 3. [x] Example 47/58 sticky-column transitions, sticky summary rows, resizing, and keyboard
    navigation are covered by the Vanilla/framework sticky suites. Direct large-jump activation
    is also covered by focused controller tests.
-4. Sticky implementation is complete. Resolve only the remaining product/API decision before
-   freezing the public API: top-sticky-row hierarchy/push-off behavior.
-5. Review the implemented unified `GridOption.pinning` shape and `CurrentColumn.pinning` precedence before freezing the public API. The former `pinnedColumn`/`pinnedRows` shorthands have been removed.
-6. Review the pinning-based Header Menu: `Column Pinning` must keep `Pin Left`, `Pin Right`,
-   both `Pin Columns Left`/`Pin Columns Right` commands, and `Unpin Column`/`Unpin All Columns` visible in the
-   same sub-menu. Separators must not be duplicated or left orphaned when commands are hidden.
-   Keep the old references documented for v11-and-lower users without adding runtime aliases.
-7. **Structural audit is complete:** internal `_viewport*` and `_canvas*` aliases now use
-   neutral single-node fields. Continue to:
-   - document the current `--slick-pinned-*` theme variables and their v11-and-lower names;
-   - update remaining demo labels/selectors only where it does not conflict with migration coverage.
-8. [x] Recalculate production LOC after the structural audit: `+3,989 / -1,550`
+4. [x] Sticky implementation policy is resolved for v1. Multiple active top sticky rows stack in
+   natural order within the existing viewport-percentage budget; they do not push each other off.
+   Hierarchical push-off is explicitly deferred as a separate future product feature.
+5. [x] Reviewed the unified `GridOption.pinning` shape, `CurrentColumn.pinning` precedence, and
+   pinning-based Header Menu. The former shorthands and runtime aliases are removed; migration
+   references remain documentation-only.
+6. [x] Structural audit is complete for the single-renderer architecture. Remaining compatibility
+   aliases are optional cleanup only and are listed in the consolidated remaining-work section.
+7. [x] Recalculate production LOC after the structural audit: `+3,989 / -1,550`
    (**+2,439 net LOC**) from `e757539c2`, excluding `__tests__` and demos.
-9. Keep unit, coverage, Cypress, framework, and documentation work aligned with the cleaned API;
+8. Keep unit, coverage, Cypress, framework, and documentation work aligned with the cleaned API;
    do not reintroduce the removed runtime options or pane renderer.
 
 ## New-context handoff checklist
 
-- Treat this file and the current working tree as the source of truth; do not restart the POC
+- Treat this file and the current working tree as the source of truth; do not restart the implementation
   from the old PR 1238 multi-pane branch.
-- The legacy runtime options/interfaces and pane behavior are removed. Continue with the
-  structural alias/style audit, but do not restore compatibility branches for old configuration.
+- The legacy runtime options/interfaces and pane behavior are removed. Do not restore compatibility
+  branches for old configuration. Remaining alias cleanup is optional and must not increase LOC.
 - Before changing layout code, preserve the current invariants: one native horizontal scroll,
   one native vertical scroll, one rendered row with left/center/right regions, stable header /
   header-row / footer region wrappers, and one shared `DockingController`.
 - Re-run the focused checks after edits and preserve the user-confirmed green Vanilla/framework
   Cypress CI baseline.
-- During the structural audit, distinguish intentional migration references (docs, command IDs,
-  locale text, demo selectors, and theme variables) from runtime configuration. Verify pane aliases,
-  synchronized scroll branches, header-width slack, GridState/GridService, resizer, header menus,
-  extensions, and all four framework wrappers; the current production LOC estimate is recorded
-  above.
+- During future changes, distinguish intentional migration references (docs, command IDs, locale
+  text, demo selectors, and theme variables) from runtime configuration. Preserve the current
+  production LOC estimate and user-confirmed green framework CI baseline.
 
 ## Suggested resume prompt
 
-> Read `PINNING-POC-PROGRESS.md` and inspect the current diff. This is a major-breaking
+> Read `.agents/plans/pinning-sticky-progress.md` and inspect the current diff. This is a major-breaking
 > single-native-scroll pinning/stickiness rewrite, not an extension of the old pane renderer.
 > The legacy runtime options/interfaces and pane behavior have already been removed.
 > Preserve one live viewport, one row node with left/center/right cell regions, and the shared
-> `DockingController`; do not add legacy compatibility branches. Finish the structural alias/style
-> audit across `SlickGrid`, framework wrappers, menus, and theme variables, then run focused
-> regressions and recalculate the production-library LOC.
+> `DockingController`; do not add legacy compatibility branches. Review the remaining TODOs,
+> run focused regressions, and preserve the production-library LOC estimate.

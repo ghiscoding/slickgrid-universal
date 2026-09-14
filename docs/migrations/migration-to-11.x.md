@@ -156,7 +156,7 @@ const gridOptions: GridOption = {
   docking: {
     maxColumnViewportWidthPercent: 60,
     maxRowViewportHeightPercent: 60,
-    overflowStrategy: 'conveyor', // 'conveyor' | 'clamp' | 'priority'
+    overflowStrategy: 'conveyor', // 'conveyor' | 'clamp'
     stickyHysteresis: 2,
   },
 };

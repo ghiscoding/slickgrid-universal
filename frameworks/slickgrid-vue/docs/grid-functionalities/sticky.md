@@ -53,6 +53,12 @@ const gridOptions: GridOption = {
 when they would be clipped. Sticky rows remain part of the normal dataset and reuse their regular
 row rendering when they move into the docking overlay.
 
+Multiple sticky rows may be non-contiguous, for example `top: [10, 20, 30]`. Active rows stack in
+their natural dataset order; they do not replace or push each other out. The available stack is
+limited by the docking budget rather than a fixed row count.
+Top and bottom sticky stacks share one total budget; the top stack is resolved first and the bottom
+stack uses the remaining space.
+
 ### Docking Budgets and Overflow
 The optional `docking` option controls how much of the viewport can be occupied by permanent and
 sticky docking:
@@ -62,15 +68,20 @@ const gridOptions: GridOption = {
   docking: {
     maxColumnViewportWidthPercent: 60,
     maxRowViewportHeightPercent: 60,
-    overflowStrategy: 'conveyor', // 'conveyor' | 'clamp' | 'priority'
+    overflowStrategy: 'conveyor', // 'conveyor' | 'clamp'
     stickyHysteresis: 2,
   },
 };
 ```
 
-The default budgets prevent sticky content from consuming the entire viewport. `conveyor` moves
-through candidates as space becomes available, `clamp` keeps the active set within the budget, and
-`priority` favors the highest-priority candidates.
+The default budgets prevent sticky content from consuming the entire viewport. They are calculated
+from the current grid viewport: by default, sticky row docking may use up to 60% of the viewport
+height after permanent pinned rows are accounted for. This adapts to different grid sizes and
+variable row heights instead of limiting the number of rows. `conveyor` moves through candidates
+as space becomes available, while `clamp` keeps naturally ordered candidates within the budget;
+an oversized candidate remains in its normal scroll flow.
+Permanent pinned rows always remain pinned, even if their combined height exceeds the configured
+budget; sticky rows then use the remaining space, or stay in normal flow when none remains.
 
 ### Permanent Pins and Header Menus
 Permanent pins take precedence over sticky candidates. Sticky columns do not have built-in Header

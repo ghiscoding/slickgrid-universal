@@ -1,3 +1,8 @@
+---
+name: create-slickgrid-package
+description: Create a new optional SlickGrid Universal package or external resource in the monorepo.
+---
+
 ## Create a new SlickGrid‑Universal package
 
 New packages in the slickgrid‑universal monorepo are typically created when adding a new optional **External Resource** (i.e. a plugin or component that integrates with the grid but is not part of the core). This skill documents the recommended steps and minimal references for doing so. Use `SlickEmptyWarningComponent` ([packages/empty-warning-component](packages/empty-warning-component)) as a simple reference implementation.

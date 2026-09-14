@@ -23,12 +23,12 @@ describe('SlickGrid unified pinning', () => {
     container?.remove();
   });
 
-  const createGrid = (options: GridOption = {}, gridColumns = columns): SlickGrid<any, Column> => {
+  const createGrid = (options: GridOption = {}, gridColumns = columns, gridData = data): SlickGrid<any, Column> => {
     container = document.createElement('div');
     container.style.width = '800px';
     container.style.height = '400px';
     document.body.appendChild(container);
-    grid = new SlickGrid(container, data, gridColumns.map((column) => ({ ...column })) as Column[], {
+    grid = new SlickGrid(container, gridData, gridColumns.map((column) => ({ ...column })) as Column[], {
       enableCellNavigation: true,
       devMode: { ownerNodeIndex: 0 },
       invalidColumnPinningPickerCallback: vi.fn(),
@@ -56,6 +56,30 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
   });
 
+  it('coexists with permanent pins and scroll-activated sticky docking', () => {
+    const stickyColumns = columns.map((column, index) => ({ ...column, sticky: index === 1 ? ('left' as const) : undefined }));
+    const slickGrid = createGrid(
+      {
+        devMode: { ownerNodeIndex: 0, containerClientWidth: 800 },
+        pinning: { columns: { left: ['a'], right: ['d'] }, rows: { top: [0], bottom: [2] } },
+        stickyRows: { top: [1] },
+      },
+      stickyColumns
+    );
+    const internals = slickGrid as any;
+
+    internals.refreshDockingLayout(20);
+    internals.refreshRowDockingLayout(30);
+
+    expect(internals.dockingLayout.left.map((item: any) => item.index)).toEqual([0, 1]);
+    expect(internals.dockingLayout.left.map((item: any) => item.sticky)).toEqual([false, true]);
+    expect(internals.dockingLayout.right.map((item: any) => item.index)).toEqual([3]);
+    expect(internals.rowDockingLayout.top.map((item: any) => item.index)).toEqual([0, 1]);
+    expect(internals.rowDockingLayout.top.map((item: any) => item.sticky)).toEqual([false, true]);
+    expect(internals.rowDockingLayout.bottom.map((item: any) => item.index)).toEqual([2]);
+    expect(container.querySelector('.slick-docking-overlay [data-row="1"]')).toBeTruthy();
+  });
+
   it('keeps docking wrappers presentational around the one semantic grid tree', () => {
     createGrid({ pinning: { columns: { left: ['a'], right: ['d'] }, rows: { top: [0] } } });
 
@@ -70,6 +94,22 @@ describe('SlickGrid unified pinning', () => {
     const cells = [...dockedRow.querySelectorAll<HTMLElement>('[role="gridcell"]')];
     expect(cells.length).toBeGreaterThan(0);
     expect(cells.every((cell) => !cell.hasAttribute('aria-hidden'))).toBe(true);
+  });
+
+  it('compacts normal rows around non-contiguous top-pinned rows without changing dataset height', () => {
+    const rows = Array.from({ length: 6 }, (_, id) => ({ id, a: `a${id}`, b: `b${id}`, c: `c${id}`, d: `d${id}` }));
+    const slickGrid = createGrid({ pinning: { rows: { top: [0, 2, 4] } } }, columns, rows);
+    const rowHeight = slickGrid.getOptions().rowHeight!;
+    const canvas = container.querySelector('.grid-canvas')!;
+
+    expect((canvas as HTMLElement).style.height).toBe(`${rowHeight * rows.length}px`);
+    expect(canvas.querySelector<HTMLElement>('[data-row="1"]')?.style.top).toBe(`${rowHeight * 3}px`);
+    expect(canvas.querySelector<HTMLElement>('[data-row="3"]')?.style.top).toBe(`${rowHeight * 4}px`);
+    expect(canvas.querySelector<HTMLElement>('[data-row="5"]')?.style.top).toBe(`${rowHeight * 5}px`);
+    expect(canvas.querySelector('[data-row="0"]')).toBeNull();
+    expect(canvas.querySelector('[data-row="2"]')).toBeNull();
+    expect(canvas.querySelector('[data-row="4"]')).toBeNull();
+    expect(container.querySelectorAll('.slick-docking-overlay > .slick-row-pinned-top')).toHaveLength(3);
   });
 
   it('returns visible columns in rendered docking order', () => {
@@ -186,7 +226,7 @@ describe('SlickGrid unified pinning', () => {
     expect(groupCell.parentElement).toBe(groupRow);
   });
 
-  it('splits colspans that cross docking regions into visual fragments', () => {
+  it('preserves colspan and rowspan fragments when the row becomes sticky', () => {
     container = document.createElement('div');
     container.style.width = '800px';
     container.style.height = '400px';
@@ -200,6 +240,7 @@ describe('SlickGrid unified pinning', () => {
       devMode: { ownerNodeIndex: 0 },
       enableCellRowSpan: true,
       pinning: { columns: { left: ['a'], right: ['d'] } },
+      stickyRows: { top: [0], bottom: [], both: [] },
     });
 
     const row = container.querySelector<HTMLElement>('[data-row="0"]')!;
@@ -224,6 +265,15 @@ describe('SlickGrid unified pinning', () => {
     expect(fragments[0].getAttribute('aria-colspan')).toBeNull();
     expect(fragments[0].getAttribute('aria-rowspan')).toBeNull();
     expect((grid as any).getCellNode(0, 0)).toBe(host);
+
+    const internals = grid as any;
+    Object.defineProperty(internals._viewportScrollContainerY, 'clientHeight', { configurable: true, value: 100 });
+    internals.refreshRowDockingLayout(30);
+    expect(row.parentElement).toBe(container.querySelector('.slick-docking-overlay'));
+    expect(row.classList.contains('slick-row-sticky')).toBe(true);
+    expect(row.querySelectorAll('.slick-cell-colspan-part')).toHaveLength(2);
+    expect(row.querySelector('.slick-cell.l0')?.parentElement?.classList.contains('slick-pinned-left-cells')).toBe(true);
+    expect(row.querySelector('.slick-cell-colspan-end')?.parentElement?.classList.contains('slick-pinned-right-cells')).toBe(true);
 
     grid.getColumns()[1].hidden = true;
     expect((grid as any).getColspanSegments(0, columns.length)).toHaveLength(3);
@@ -548,9 +598,7 @@ describe('SlickGrid unified pinning', () => {
     internals._topPanelScrollers = [document.createElement('div')];
     internals._footerRowScrollContainer = document.createElement('div');
     internals._preHeaderPanelScroller = document.createElement('div');
-    internals._preHeaderPanelScrollerR = document.createElement('div');
     internals._topHeaderPanelScroller = document.createElement('div');
-    internals._headerRowScrollerR = document.createElement('div');
     internals._headerRowScrollerL = document.createElement('div');
     slickGrid.scrollToX(20);
     slickGrid.scrollToX(25);
@@ -970,6 +1018,19 @@ describe('SlickGrid unified pinning', () => {
     expect(stickyCell.classList.contains('slick-cell-sticky')).toBe(false);
     expect(stickyCell.classList.contains('slick-cell-pinned-right')).toBe(false);
     expect(stickyCell.style.getPropertyValue('--slick-sticky-column-offset')).toBe('');
+
+    internals.rowsCache[1] = { rowNode: [] };
+    const pinnedLeftChrome = document.createElement('div');
+    const pinnedRightChrome = document.createElement('div');
+    slickGrid.getColumns()[0].pinned = 'left';
+    slickGrid.getColumns()[3].pinned = 'right';
+    internals.dockingChromeByColumn.set(0, [pinnedLeftChrome]);
+    internals.dockingChromeByColumn.set(3, [pinnedRightChrome]);
+    internals.dockingLayout.left = [{ band: 'left', index: 0, naturalOffset: 0, offset: 0, sticky: false, width: 80 }];
+    internals.dockingLayout.right = [{ band: 'right', index: 3, naturalOffset: 240, offset: 0, sticky: false, width: 80 }];
+    internals.updateStickyColumnTransforms();
+    expect(pinnedLeftChrome.classList.contains('slick-column-pinned-left-edge')).toBe(true);
+    expect(pinnedRightChrome.classList.contains('slick-column-pinned-right-edge')).toBe(true);
 
     internals.dockingLayout.left = [{ band: 'left', index: 1, naturalOffset: 80, offset: 0, sticky: true, width: 80 }];
     internals.dockingLayout.leftWidth = 80;

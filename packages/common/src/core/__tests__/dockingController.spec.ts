@@ -71,17 +71,17 @@ describe('DockingController', () => {
     expect(rightPreferred.right.map((item) => item.index)).toEqual([0]);
   });
 
-  it('supports clamp and priority overflow strategies', () => {
+  it('keeps clamp overflow within the pixel budget', () => {
     const columns = [column('sticky-a', 30, { sticky: 'left' }), column('sticky-b', 30, { sticky: 'left' })];
     const clampController = new DockingController({ maxColumnViewportWidthPercent: 10, overflowStrategy: 'clamp' });
     clampController.resolveColumns(columns, 0, 100);
     const clamped = clampController.resolveColumns(columns, 90, 100);
-    expect(clamped.left.length).toBe(1);
+    expect(clamped.left).toEqual([]);
 
-    const priorityController = new DockingController({ maxColumnViewportWidthPercent: 50, overflowStrategy: 'priority' });
-    priorityController.resolveColumns(columns, 0, 100);
-    const prioritized = priorityController.resolveColumns(columns, 90, 100);
-    expect(prioritized.left.length).toBe(1);
+    const smallCandidate = [column('sticky-a', 30, { sticky: 'left' }), column('sticky-b', 5, { sticky: 'left' })];
+    clampController.resolveColumns(smallCandidate, 0, 100);
+    const bounded = clampController.resolveColumns(smallCandidate, 90, 100);
+    expect(bounded.left.map((item) => item.index)).toEqual([1]);
   });
 
   it('resolves permanent and sticky rows, including both-sided candidates', () => {
@@ -98,7 +98,7 @@ describe('DockingController', () => {
   });
 
   it('resolves a sticky row after a direct scroll jump', () => {
-    const controller = new DockingController({ maxRowViewportHeightPercent: 100, overflowStrategy: 'priority' });
+    const controller = new DockingController({ maxRowViewportHeightPercent: 100, overflowStrategy: 'clamp' });
     const rows = [row('top', 0, 0, 20), row('bottom', 1, 20, 20)];
     expect(controller.resolveRows(rows, 100, 100, undefined, { top: ['top'], bottom: ['bottom'] }).top.map((item) => item.id)).toEqual(['top']);
     const layout = controller.resolveRows(rows, 0, 100, undefined, { top: ['top'], bottom: ['bottom'] });
@@ -134,6 +134,59 @@ describe('DockingController', () => {
     expect(layout.bottom.every((item) => item.sticky)).toBe(true);
   });
 
+  it('uses one shared budget for simultaneous top and bottom sticky stacks', () => {
+    const rows = [row('top-a', 0, 0, 20), row('top-b', 1, 20, 20), row('center', 2, 40, 20), row('bottom', 3, 140, 20)];
+    const stickyRows = { top: ['top-a', 'top-b'], bottom: ['bottom'] };
+
+    const withinBudget = new DockingController({ maxRowViewportHeightPercent: 60 });
+    const selected = withinBudget.resolveRows(rows, 50, 100, undefined, stickyRows);
+    expect(selected.top.map((item) => item.id)).toEqual(['top-a', 'top-b']);
+    expect(selected.bottom.map((item) => item.id)).toEqual(['bottom']);
+
+    const topPreferred = new DockingController({ maxRowViewportHeightPercent: 50 });
+    const constrained = topPreferred.resolveRows(rows, 50, 100, undefined, stickyRows);
+    expect(constrained.top.map((item) => item.id)).toEqual(['top-a', 'top-b']);
+    expect(constrained.bottom).toEqual([]);
+  });
+
+  it('uses measured row heights for variable-height sticky stacks', () => {
+    const rows = [
+      row('top-a', 0, 0, 12),
+      row('top-b', 1, 12, 28),
+      row('center', 2, 40, 20),
+      row('top-c', 3, 60, 32),
+      row('bottom-a', 4, 155, 18),
+      row('bottom-b', 5, 173, 27),
+    ];
+    const layout = new DockingController({ maxRowViewportHeightPercent: 60, overflowStrategy: 'clamp' }).resolveRows(rows, 70, 100, undefined, {
+      top: ['top-a', 'top-b', 'top-c'],
+      bottom: ['bottom-a', 'bottom-b'],
+    });
+
+    expect(layout.top.map((item) => item.id)).toEqual(['top-a', 'top-b']);
+    expect(layout.top.map((item) => item.offset)).toEqual([0, 12]);
+    expect(layout.topHeight).toBe(40);
+    expect(layout.bottom.map((item) => item.id)).toEqual(['bottom-a']);
+    expect(layout.bottom[0].offset).toBe(0);
+    expect(layout.bottomHeight).toBe(18);
+    expect(layout.center.map((item) => item.id)).toEqual(['center', 'top-c', 'bottom-b']);
+  });
+
+  it('keeps permanent rows when their height leaves no sticky budget', () => {
+    const rows = [row('permanent-top', 0, 0, 40), row('sticky', 1, 40, 20), row('permanent-bottom', 2, 60, 30)];
+    const layout = new DockingController({ maxRowViewportHeightPercent: 60 }).resolveRows(
+      rows,
+      50,
+      100,
+      { top: ['permanent-top'], bottom: ['permanent-bottom'] },
+      { top: ['sticky'] }
+    );
+
+    expect(layout.top.map((item) => item.id)).toEqual(['permanent-top']);
+    expect(layout.bottom.map((item) => item.id)).toEqual(['permanent-bottom']);
+    expect(layout.center.map((item) => item.id)).toEqual(['sticky']);
+  });
+
   it('covers the budget edge cases', () => {
     const controller = new DockingController();
     const applyBudget = (controller as any).applyBudget.bind(controller);
@@ -141,8 +194,7 @@ describe('DockingController', () => {
     expect(applyBudget([1], 0, () => 1, 'left')).toEqual([]);
     expect(applyBudget([1, 2, 3], 2, (item: number) => item, 'left')).toEqual([2]);
     controller.setOptions({ overflowStrategy: 'clamp' });
-    expect(applyBudget([3], 2, (item: number) => item, 'left')).toEqual([3]);
-    controller.setOptions({ overflowStrategy: 'priority' });
-    expect(applyBudget([1, 2], 3, (item: number) => item, 'left')).toEqual([1, 2]);
+    expect(applyBudget([3], 2, (item: number) => item, 'left')).toEqual([]);
+    expect(applyBudget([3, 1], 2, (item: number) => item, 'left')).toEqual([1]);
   });
 });

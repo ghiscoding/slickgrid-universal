@@ -422,12 +422,10 @@ function vueGridReady(grid: SlickgridVueInstance) {
       href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/pinning"
       target="_blank"
       >Wiki docs</a
-    >) City of Origin is intentionally non-pinnable and is highlighted with a subtle pink background.
-    <ul>
-      <li>Option to pin any number of columns or rows</li>
-      <li>Option to pin the rows at the bottom instead of the top (default)</li>
-      <li>You can dynamically change these options through SlickGrid setOptions()</li>
-    </ul>
+    >) City of Origin is intentionally non-pinnable and is highlighted with a subtle pink background. Columns and rows can also be pinned
+    selectively, without requiring them to be sequential (for example, rows 0, 2, and 4). You can pin any number of columns or rows, place
+    rows at the bottom, change these options through SlickGrid setOptions(), and customize the border styling between pinned columns and
+    rows.
   </div>
   <br />
   <div class="row gx-2 mb-2 align-items-end">
