@@ -118,6 +118,56 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getColumnsInRenderedOrder().map((column) => column.id)).toEqual(['a', 'c', 'b', 'd']);
   });
 
+  it('anchors the bottom pinned row band below the top band instead of overlapping it when the viewport is too small', () => {
+    const rows = Array.from({ length: 8 }, (_, id) => ({ id, a: `a${id}`, b: `b${id}`, c: `c${id}`, d: `d${id}` }));
+    const slickGrid = createGrid({ pinning: { rows: { top: [0, 1, 2], bottom: [5, 6] } } }, columns, rows);
+    // 5 pinned rows at the default 25px row height (125px) do not fit an 80px viewport.
+    container.style.height = '80px';
+    slickGrid.resizeCanvas();
+
+    const rowHeight = slickGrid.getOptions().rowHeight!;
+    const topBandHeight = rowHeight * 3;
+    const bottomRowNode = container.querySelector<HTMLElement>('.slick-docking-overlay [data-row="5"]')!;
+
+    expect(parseFloat(bottomRowNode.style.top)).toBeGreaterThanOrEqual(topBandHeight);
+  });
+
+  it('reserves docking.minCenterRowCount rows of breathing room between the top and bottom pinned bands', () => {
+    const rows = Array.from({ length: 8 }, (_, id) => ({ id, a: `a${id}`, b: `b${id}`, c: `c${id}`, d: `d${id}` }));
+    const slickGrid = createGrid({ pinning: { rows: { top: [0], bottom: [7] } }, docking: { minCenterRowCount: 4 } }, columns, rows);
+    container.style.height = '400px';
+    slickGrid.resizeCanvas();
+
+    const rowHeight = slickGrid.getOptions().rowHeight!;
+    const bottomRowNode = container.querySelector<HTMLElement>('.slick-docking-overlay [data-row="7"]')!;
+
+    // top band (1 row) + reserved center budget (4 rows) must precede the bottom band.
+    expect(parseFloat(bottomRowNode.style.top)).toBeGreaterThanOrEqual(rowHeight * 5);
+  });
+
+  it('converts docking.minCenterRowCount to pixels using the average measured height in variable row height mode', () => {
+    const rows = Array.from({ length: 8 }, (_, id) => ({ id, a: `a${id}`, b: `b${id}`, c: `c${id}`, d: `d${id}` }));
+    const slickGrid = createGrid(
+      {
+        pinning: { rows: { top: [0], bottom: [7] } },
+        docking: { minCenterRowCount: 2 },
+        enableVariableRowHeight: true,
+        rowHeightProvider: (_grid, row) => (row === 1 ? 100 : 25),
+      },
+      columns,
+      rows
+    );
+    container.style.height = '400px';
+    slickGrid.resizeCanvas();
+
+    const bottomRowNode = container.querySelector<HTMLElement>('.slick-docking-overlay [data-row="7"]')!;
+    const averageHeight = (slickGrid as any).getEstimatedRowHeight();
+    const topHeight = slickGrid.getRowHeight(0);
+
+    expect(averageHeight).toBeGreaterThan(25); // pulled up by the one 100px row
+    expect(parseFloat(bottomRowNode.style.top)).toBeGreaterThanOrEqual(topHeight + averageHeight * 2);
+  });
+
   it('keeps hidden columns in their rendered docking position', () => {
     const slickGrid = createGrid({ pinning: { columns: { left: ['a', 'c'] } } });
     slickGrid.updateColumnById('b', { hidden: true });

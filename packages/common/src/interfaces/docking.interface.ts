@@ -61,6 +61,18 @@ export interface DockingOption {
   /** Maximum percentage of the viewport height that top and bottom docked rows may occupy. Defaults to 60. */
   maxRowViewportHeightPercent?: number;
 
+  /**
+   * Minimum number of rows of breathing room reserved for the scrollable center-row viewport
+   * when permanent top/bottom pinned rows are present. Unlike `maxRowViewportHeightPercent`
+   * (which only budgets sticky rows), this guarantees the always-rendered permanent rows leave
+   * room for at least this many center rows: when the combined top/bottom pinned height would
+   * leave less room than that, the container is grown (via `min-height`) so both the pinned rows
+   * and this many center rows stay visible, rather than shrinking the center to zero. Expressed as
+   * a row count rather than a pixel height so it stays meaningful with variable row heights.
+   * Set to 0 to disable. Defaults to 3.
+   */
+  minCenterRowCount?: number;
+
   /** How sticky candidates are reduced when their pixel budget is exhausted. Defaults to `conveyor`. */
   overflowStrategy?: DockingOverflowStrategy;
 
