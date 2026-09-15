@@ -7556,6 +7556,22 @@ describe('SlickGrid core file', () => {
       expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
     });
 
+    it('should apply and remove space-separated CSS classes on rendered cells', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+      grid.render();
+
+      const ageCell = grid.getCellNode(0, 1)!;
+      const multiClassHash = { 0: { age: 'highlight important' } };
+
+      expect(() => grid.addCellCssStyles('multi_class_style', multiClassHash)).not.toThrow();
+      expect(ageCell.classList.contains('highlight')).toBe(true);
+      expect(ageCell.classList.contains('important')).toBe(true);
+
+      expect(() => grid.removeCellCssStyles('multi_class_style')).not.toThrow();
+      expect(ageCell.classList.contains('highlight')).toBe(false);
+      expect(ageCell.classList.contains('important')).toBe(false);
+    });
+
     it('should merge keyed CSS style overlays before creating a cell', () => {
       grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
       grid.addCellCssStyles('primary', { 0: { age: 'primary-highlight' } });
