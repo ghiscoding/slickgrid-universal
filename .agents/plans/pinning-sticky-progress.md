@@ -356,8 +356,48 @@ future work; none currently requires a pinning/sticky runtime change.
 - [x] Resolved permanent pinned-row overflow semantics: permanent rows always remain pinned and
   part of the dataset height, even when their combined height exceeds the configured budget.
   Sticky rows use the remaining space and remain in normal flow when no space remains.
+- [x] Fixed a permanent top/bottom row overlap bug reported against Example 04: `maxRowViewportHeightPercent`
+  only ever budgeted *sticky* rows (`applyBudget()` in `DockingController.resolveRows()`); permanent
+  `pinning.rows.top`/`bottom` rows have no budget and always render in full, by design. The bottom
+  band's screen position was computed as `viewportHeight - bottomHeight`, with no floor, so shrinking
+  the browser below `topHeight + bottomHeight` moved the bottom band above the bottom edge of the top
+  band, visually overlapping/cutting off rows instead of degrading gracefully. `SlickGrid.applyRowTopOffset()`
+  now anchors the bottom band at `Math.max(topHeight, viewportHeight - bottomHeight)` so the two permanent
+  bands never overlap; when there truly is not enough height for both, the bottom band is pushed down
+  and its own trailing rows are clipped at the viewport edge instead. There is intentionally no
+  automatic reduction of the number of pinned rows and no console warning (unlike the analogous
+  `invalidColumnPinningWidthCallback` used for columns) — reducing `pinning.rows.top`/`bottom` counts,
+  or ensuring the grid has enough height for its configured pinned rows, remains the consumer's
+  responsibility.
 - [x] Decided hierarchical sticky-row push-off/priority behavior is a separate future product
   feature, not part of v1. v11 uses natural-order stacking plus conveyor/clamp overflow.
+- [ ] **UNRESOLVED — `docking.minCenterRowCount` does not reliably reserve center rows in the
+  Vanilla demos.** Added `docking.minCenterRowCount` (default `3`) plus
+  `SlickGrid.getEstimatedRowHeight()` and `SlickGrid.enforceMinCenterRowBudget()`
+  (`packages/common/src/core/slickGrid.ts`): at the top of `resizeCanvas()`, the grid now clears
+  any previously applied `container.style.minHeight`, measures `viewportH`, and — if permanent
+  top/bottom pinned-row height plus `minCenterRowCount * getEstimatedRowHeight()` exceeds
+  `viewportH` — sets `container.style.minHeight` to grow the container by the shortfall, then
+  re-measures. `destroy()` clears that inline `min-height` again. This is unit-tested in
+  `slickGrid-pinning.spec.ts` (`reserves docking.minCenterRowCount rows of breathing room...`,
+  `converts docking.minCenterRowCount to pixels using the average measured height...`) and those
+  tests pass, but the user confirmed in the live Vanilla Example 04 demo that shrinking the
+  browser still does not reserve visible center rows — the fix is not working end-to-end.
+  Root cause identified but not yet fixed: `ResizerService.resizeGridWithDimensions()`
+  (`packages/common/src/services/resizer.service.ts`) independently and unconditionally sets
+  `this._gridDomElm.style.height = ${newHeight}px` (the same DOM node as `SlickGrid._container`)
+  on every resize pass, computed from `autoResize` (window/container available space, with
+  `autoResize.minHeight: 250` as its own floor — see `GlobalGridOptions.autoResize` in
+  `packages/common/src/global-grid-options.ts`), and calls `grid.resizeCanvas()` right after. That
+  external `style.height` write is not aware of `docking.minCenterRowCount` and keeps re-imposing
+  a small height, fighting the grid's own `min-height` override; the two height-management paths
+  (`ResizerService` owning `style.height`, `SlickGrid.enforceMinCenterRowBudget()` owning
+  `style.minHeight`) were never reconciled. A real fix likely needs `ResizerService` itself to
+  account for the configured docking row budget (e.g. ask the grid for a minimum required height
+  before computing `newHeight`, or skip shrinking below it) rather than SlickGrid unilaterally
+  fighting an external resize owner over the same element. Left as-is (current code kept, not
+  reverted) per user instruction; revisit `resizer.service.ts` coordination before relying on this
+  option in production.
 - [ ] Optional validation: run targeted UX trials for sticky-row transitions, fast scrolling, and
   changing visible sticky sets. CI verifies correctness, while manual trials can assess feel and
   transition comfort.

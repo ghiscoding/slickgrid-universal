@@ -1,4 +1,4 @@
-import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+﻿import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { AutocompleterEditor, CheckboxEditor, InputEditor, LongTextEditor } from '../../editors/index.js';
@@ -214,20 +214,20 @@ describe('SlickGrid core file', () => {
       { id: 'firstName', field: 'firstName', name: 'First Name', width: 300 },
       { id: 'lastName', field: 'lastName', name: 'Last Name', width: 300 },
     ] as Column[];
-    grid = new TestGrid<any, Column>(container, [{ id: 0, firstName: 'John', lastName: 'Doe' }], dockingColumns, {
+    grid = new TestGrid(container, [{ id: 0, firstName: 'John', lastName: 'Doe' }], dockingColumns, {
       ...defaultOptions,
       pinning: { columns: { left: 0 } },
     });
     grid.init();
 
     const source = (grid as any)._headerScrollerL as HTMLElement;
-    expect((grid as TestGrid<any, Column>).callForwardDockingHorizontalScroll(source)).toBe(false);
+    expect((grid as TestGrid).callForwardDockingHorizontalScroll(source)).toBe(false);
   });
 
   it('should queue throttled actions and clear the throttle after the queued action completes', () => {
-    grid = new TestGrid<any, Column>(container, [], [{ id: 'firstName', field: 'firstName', name: 'First Name' }], defaultOptions);
+    grid = new TestGrid(container, [], [{ id: 'firstName', field: 'firstName', name: 'First Name' }], defaultOptions);
     const action = vi.fn();
-    const throttled = (grid as TestGrid<any, Column>).callActionThrottle(action, 10);
+    const throttled = (grid as TestGrid).callActionThrottle(action, 10);
 
     throttled.enqueue();
     throttled.enqueue();
@@ -2597,6 +2597,23 @@ describe('SlickGrid core file', () => {
       internals.dockingByColumn = new Map([[1, { band: 'right' }]]);
       internals.columnPosRight = [77, 160];
       expect(internals.getColumnRangeRight(0, 0)).toBe(77);
+    });
+
+    it('should offset non-header sticky chrome elements using the right-edge calculation', () => {
+      const stickyColumns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', width: 80, sticky: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 80 },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'John', lastName: 'Doe' }], stickyColumns, {
+        ...defaultOptions,
+        showHeaderRow: true,
+      });
+      grid.init();
+
+      const headerRowCell = container.querySelector<HTMLElement>('.slick-headerrow-column.l0');
+
+      expect(headerRowCell?.style.position).toBe('absolute');
+      expect(headerRowCell?.style.right).toMatch(/^-?\d+(\.\d+)?px$/);
     });
 
     it('should merge row-only pinning without creating a columns option', () => {
@@ -6503,6 +6520,22 @@ describe('SlickGrid core file', () => {
         expect(firstItemAgeCell.classList.contains('highlight')).toBeFalsy();
         expect(secondItemAgeCell.textContent).toBe('20');
         expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
+      });
+
+      it('should apply and remove space-separated CSS classes on rendered cells', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        grid.render();
+
+        const ageCell = grid.getCellNode(0, 1)!;
+        const multiClassHash = { 0: { age: 'highlight important' } };
+
+        expect(() => grid.addCellCssStyles('multi_class_style', multiClassHash)).not.toThrow();
+        expect(ageCell.classList.contains('highlight')).toBe(true);
+        expect(ageCell.classList.contains('important')).toBe(true);
+
+        expect(() => grid.removeCellCssStyles('multi_class_style')).not.toThrow();
+        expect(ageCell.classList.contains('highlight')).toBe(false);
+        expect(ageCell.classList.contains('important')).toBe(false);
       });
 
       it('should merge keyed CSS style overlays before creating a cell', () => {

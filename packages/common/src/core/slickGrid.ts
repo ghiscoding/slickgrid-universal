@@ -329,6 +329,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     docking: {
       maxColumnViewportWidthPercent: 60,
       maxRowViewportHeightPercent: 60,
+      minCenterRowCount: 3,
       overflowStrategy: 'conveyor',
       stickyHysteresis: 2,
     },
@@ -3392,6 +3393,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // callbacks can finish after destruction and must not attempt to update a null container.
     this.initialized = false;
     emptyElement(this._container);
+    this._container.style.minHeight = '';
     this.removeCssRules();
 
     if (shouldDestroyAllElements) {
@@ -5074,6 +5076,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
+   * Returns a representative row height in pixels for converting a row-count budget (e.g.
+   * `docking.minCenterRowCount`) into pixels. In variable row height mode this is the average
+   * indexed row height; otherwise it is the configured `rowHeight`.
+   */
+  protected getEstimatedRowHeight(): number {
+    if (this._options.enableVariableRowHeight && this.rowPositionIndexer && this.rowPositionIndexer.count > 0) {
+      return this.rowPositionIndexer.top(this.rowPositionIndexer.count) / this.rowPositionIndexer.count;
+    }
+    return this._options.rowHeight!;
+  }
+
+  /**
    * Returns the virtual top pixel position of a row within the full grid content,
    * i.e. without the virtual-scrolling page offset applied. Since a row's top position equals
    * the combined height of all rows before it, this also serves as "the combined pixel height
@@ -5480,7 +5494,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       top = rowDocking.offset;
     } else if (rowDocking?.band === 'bottom') {
       const viewportHeight = this._dockingOverlay?.clientHeight || this._viewportScrollContainerY?.clientHeight || this.viewportH;
-      top = viewportHeight - this.rowDockingLayout.bottomHeight + rowDocking.offset;
+      // Anchor the bottom band below the top band (plus the configured minimum center row
+      // count converted to a pixel gap) instead of floating upward when permanent top+bottom
+      // rows combined are taller than the available viewport (see progress notes).
+      const minCenterRowCount = Math.max(0, this._options.docking?.minCenterRowCount || 0);
+      const minCenterHeight = minCenterRowCount * this.getEstimatedRowHeight();
+      const bottomStart = Math.max(this.rowDockingLayout.topHeight + minCenterHeight, viewportHeight - this.rowDockingLayout.bottomHeight);
+      top = bottomStart + rowDocking.offset;
     }
     rowNode.classList.toggle('slick-row-pinned-top', rowDocking?.band === 'top');
     rowNode.classList.toggle('slick-row-pinned-bottom', rowDocking?.band === 'bottom');
@@ -6184,6 +6204,30 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return this.viewportH;
   }
 
+  /**
+   * When permanent top/bottom pinned rows leave less than `docking.minCenterRowCount` rows of
+   * room for the scrollable center band, grow the container via `min-height` so both the pinned
+   * rows and the minimum center row budget stay visible. Unlike the earlier overlap fix (which
+   * only pushed the bottom band down and let it clip), this asks the page/ancestor layout for
+   * more room instead of shrinking the visible center band to nothing.
+   */
+  protected enforceMinCenterRowBudget(): void {
+    if (this._options.autoHeight) {
+      return;
+    }
+    const minCenterRowCount = Math.max(0, this._options.docking?.minCenterRowCount || 0);
+    if (!minCenterRowCount || (!this.rowDockingLayout.top.length && !this.rowDockingLayout.bottom.length)) {
+      return;
+    }
+    const requiredCenterHeight =
+      this.rowDockingLayout.topHeight + this.rowDockingLayout.bottomHeight + minCenterRowCount * this.getEstimatedRowHeight();
+    const shortfall = requiredCenterHeight - this.viewportH;
+    if (shortfall > 0) {
+      this._container.style.minHeight = `${this._container.getBoundingClientRect().height + shortfall}px`;
+      this.getViewportHeight();
+    }
+  }
+
   /** returns the available viewport inner width, that is the viewport width minus the scrollbar when shown */
   protected getViewportInnerWidth(): number {
     return this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width || 0) : this.viewportW;
@@ -6205,8 +6249,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.viewportTopH = 0;
       this.viewportBottomH = 0;
 
+      // Clear a previously applied minimum-height override before measuring, so the grid can
+      // shrink back down once the container is comfortably large again.
+      if (!this._options.autoHeight) {
+        this._container.style.minHeight = '';
+      }
       this.getViewportWidth();
       this.getViewportHeight();
+      this.enforceMinCenterRowBudget();
       let dockingChanged = this.refreshDockingLayout();
       // The docking POC's one horizontal scrollbar is an absolutely positioned
       // sibling of the body viewport. Unlike a native viewport scrollbar it
@@ -7561,7 +7611,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               if (!addedRowHash || removedRowHash![columnId] !== addedRowHash[columnId]) {
                 node = this.getCellNode(+row, this.getColumnIndex(columnId));
                 if (node) {
-                  node.classList.remove(removedRowHash[columnId]);
+                  node.classList.remove(...classNameToList(removedRowHash[columnId]));
                 }
               }
             });
@@ -7572,7 +7622,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               if (!removedRowHash || removedRowHash[columnId] !== addedRowHash[columnId]) {
                 node = this.getCellNode(+row, this.getColumnIndex(columnId));
                 if (node) {
-                  node.classList.add(addedRowHash[columnId]);
+                  node.classList.add(...classNameToList(addedRowHash[columnId]));
                 }
               }
             });
