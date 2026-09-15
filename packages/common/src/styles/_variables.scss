@@ -50,7 +50,8 @@ $slick-input-group-btn-border:                              1px solid #ccc !defa
 $slick-input-group-append-bg-color:                         #eee !default;
 $slick-input-focus-border-color:                            color.adjust($slick-primary-color, $lightness: 25%) !default;
 $slick-input-focus-box-shadow:                              $slick-form-control-focus-box-shadow !default;
-$slick-date-picker-bg-color:                                $slick-form-control-bg-color !default;
+$slick-date-input-bg-color:                                 $slick-form-control-bg-color !default;
+$slick-date-picker-border:                                  1px solid none !default;
 
 /* Slickgrid container, including headers but excluding pagination */
 $slick-container-border-top:                                0 none !default;
@@ -982,6 +983,7 @@ $slick-dark-base-dark-invalid-color:                      #ea868f !default;
 $slick-dark-highlight-color:                              $slick-dark-primary-color !default;
 $slick-dark-text-color:                                   #d4d4d4 !default;
 
+.vc[data-vc-theme="dark"],
 .ms-dark-mode,
 .ms-drop.ms-dark-mode,
 .slick-dark-mode .ms-dark-mode,
@@ -1078,7 +1080,8 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-input-group-btn-border:                         var(--slick-base-dark-menu-item-border);
   --slick-input-group-append-bg-color:                    #383838;
   --slick-compound-filter-bgcolor:                        var(--slick-base-dark-menu-bg-color);
-  --slick-date-picker-bg-color:                           var(--slick-base-dark-menu-bg-color);
+  --slick-date-input-bg-color:                            var(--slick-base-dark-menu-bg-color);
+  --slick-date-picker-border:                             var(--slick-base-dark-menu-border);
   --slick-footer-left-text-color:                         #acacac;
   --slick-footer-right-text-color:                        #acacac;
   --slick-grid-header-unorderable-bg-color:               #1c1c1c;
@@ -1200,6 +1203,9 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --ms-ok-button-bg-hover-color:                          #373c42;
   --ms-placeholder-color:                                 #999;
   --ms-select-all-label-hover-border:                     var(--slick-base-dark-menu-item-border);
+  --vc-bg:                                                var(--slick-base-dark-menu-bg-color);
+  --vc-date-bg:                                           var(--slick-base-dark-menu-bg-color);
+  --vc-date-today-bg:                                     #2b3035;
 
   .text-color-primary, .color-primary {
     color:                                                var(--slick-primary-color);
