@@ -1,10 +1,13 @@
 import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  // Prevent Vite from crawling repository HTML, including generated coverage
-  // pages, as dependency entries when running Vitest.
-  optimizeDeps: {
-    noDiscovery: true,
+  // VM tests load files directly; avoid Vite crawling generated HTML pages.
+  environments: {
+    __vitest_vm__: {
+      optimizeDeps: {
+        entries: [],
+      },
+    },
   },
   test: {
     // clearMocks: true,
