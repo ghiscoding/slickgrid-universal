@@ -104,6 +104,7 @@ export default class Example14 {
     { value: 3, label: 'Complex' },
     { value: 4, label: 'Very Complex' },
   ];
+  subTitleStyle = 'display: block';
 
   get slickerGridInstance() {
     return this.sgb?.instances;
@@ -1092,5 +1093,10 @@ export default class Example14 {
           <div class="autocomplete-bottom-left">${item.itemNameTranslated}</div>
           <span class="autocomplete-bottom-right">Type: <b>${item.itemTypeName === 'I' ? 'Item' : item.itemTypeName === 'C' ? 'PdCat' : 'Cat'}</b></span>
         </div>`;
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

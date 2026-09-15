@@ -101,7 +101,7 @@ describe('Example 47 - Row Detail View + Grouping', () => {
     cy.get('.detail-label label').should('contain', 'Assignee:');
     cy.get('.detail-label input').should('exist');
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
     cy.get('.dynamic-cell-detail').find('[data-test=delete-btn]').click();
     cy.get('.toast.text-bg-danger').contains(/Deleted row with Task [0-9]*/);
     cy.get('.dynamic-cell-detail').should('have.length', 0);
@@ -112,7 +112,7 @@ describe('Example 47 - Row Detail View + Grouping', () => {
     cy.on('window:alert', stub);
     let assigneeName = '';
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
     cy.get('[data-row="1"] > .slick-cell.l1').contains(/Task [0-9]*/);
     cy.get('[data-row="1"] > .slick-cell.l0').click().wait(40);
 

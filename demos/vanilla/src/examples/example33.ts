@@ -23,6 +23,7 @@ export default class Example33 {
   gridContainerElm: HTMLDivElement;
   filteringEnabledClass = 'mdi mdi-toggle-switch';
   scrollToRow = 100;
+  subTitleStyle = 'display: block';
   metadata: ItemMetadata | Record<number, ItemMetadata> = {
     0: {
       columns: {
@@ -385,5 +386,10 @@ export default class Example33 {
     // const args = event.detail && event.detail.args;
     this.sgb.slickGrid?.scrollRowToTop(this.scrollToRow);
     return false;
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

@@ -226,10 +226,10 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       const columnId = event.target.dataset.columnid || '';
 
       // validate that the checkbox changes is allowed before going any further
-      const isFrozenAllowed = this.grid.validateColumnFreeze(columnId, true);
+      const isPinningAllowed = this.grid.validateColumnPinning(columnId, true);
       let visibleColumns = this.grid.getVisibleColumns();
 
-      if (!isFrozenAllowed || (visibleColumns.length - 1 < 1 && !isChecked)) {
+      if (!isPinningAllowed || (visibleColumns.length - 1 < 1 && !isChecked)) {
         event.target.checked = true;
         this.togglePickerCheckbox(iconElm, true);
         return;
@@ -284,7 +284,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
    * columns in their original ordinal position and interleaving the results of the current column sort.
    */
   protected updateColumnPickerOrder(): void {
-    const current = this.grid.getColumns().slice(0);
+    const current = this.grid.getColumnsInRenderedOrder(true).slice(0);
     const ordered = new Array(this._columns.length);
 
     for (let i = 0, ln = ordered.length; i < ln; i++) {
@@ -963,10 +963,12 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
         }
         const gridPos = this.grid.getGridPosition();
         const browserWidth = document.documentElement.clientWidth;
+        const requestedDropSide = (addonOptions as CellMenu | ContextMenu)?.dropSide;
         const dropSide = subMenuPosCalc >= gridPos.width || subMenuPosCalc >= browserWidth ? 'left' : 'right';
+        const effectiveDropSide = isSubMenu && requestedDropSide === 'right' ? 'right' : dropSide;
 
         let needHeaderMenuOffsetLeftRecalc = false;
-        if (dropSide === 'left' || (!isSubMenu && (addonOptions as CellMenu | ContextMenu)?.dropSide === 'left')) {
+        if (effectiveDropSide === 'left' || (!isSubMenu && requestedDropSide === 'left')) {
           menuElm.classList.remove('dropright');
           menuElm.classList.add('dropleft');
           if (this.pluginName === 'HeaderMenu') {
@@ -1001,6 +1003,25 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
             menuOffsetLeft =
               menuOffsetLeft + targetElm.clientWidth - menuElm.clientWidth + ((addonOptions as HeaderMenuOption)?.autoAlignOffset || 0);
           }
+        }
+      }
+
+      // Context menus are appended to document.body and therefore use document
+      // coordinates. A right-click on a cell that is outside the visible area
+      // (for example after widening columns) can otherwise place the menu far
+      // outside the grid. Keep the root context menu within the grid viewport.
+      if (this.pluginName === 'ContextMenu' && !isSubMenu) {
+        const containerRect = containerElm.getBoundingClientRect();
+        const pageOffsetX = window.pageXOffset || document.documentElement.scrollLeft || 0;
+        const pageOffsetY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        const gridLeft = containerRect.left + pageOffsetX;
+        const gridTop = containerRect.top + pageOffsetY;
+        const gridRight = containerRect.right + pageOffsetX;
+        const gridBottom = containerRect.bottom + pageOffsetY;
+
+        if (gridRight > gridLeft && gridBottom > gridTop && Number.isFinite(menuOffsetLeft) && Number.isFinite(menuOffsetTop)) {
+          menuOffsetLeft = Math.min(Math.max(menuOffsetLeft, gridLeft), Math.max(gridLeft, gridRight - menuWidth));
+          menuOffsetTop = Math.min(Math.max(menuOffsetTop, gridTop), Math.max(gridTop, gridBottom - menuHeight));
         }
       }
 

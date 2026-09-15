@@ -42,6 +42,7 @@ export type * from './customFooterOption.interface.js';
 export type * from './customTooltipOption.interface.js';
 export type * from './dataViewEvents.interface.js';
 export type * from './dataViewHints.interface.js';
+export type * from './docking.interface.js';
 export type * from './domEvent.interface.js';
 export type * from './drag.interface.js';
 export type * from './draggableGrouping.interface.js';

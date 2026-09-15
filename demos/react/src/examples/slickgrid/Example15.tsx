@@ -72,10 +72,10 @@ const Example15: React.FC = () => {
       },
       gridMenu: {
         hideForceFitButton: true,
-        hideClearFrozenColumnsCommand: false,
+        hideClearPinningCommand: false,
       },
       headerMenu: {
-        hideFreezeColumnsCommand: false,
+        showPinningCommands: true,
       },
       enablePagination: true,
       pagination: {

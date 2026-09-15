@@ -8,7 +8,7 @@ export type GridStateType =
   | 'grouping'
   /** List of Current Pagination including these props (`pageNumber`, `pageSize`) */
   | 'pagination'
-  /** List of Current Pinning including these props (`frozenBottom`, `frozenColumn`, `frozenRow`) */
+  /** Current permanent pinning (`columns.left/right`, `rows.top/bottom`) */
   | 'pinning'
   /** List of Current Row Selections including these props (`gridRowIndexes`, `dataContextIds`, `filteredDataContextIds`) */
   | 'rowSelection'

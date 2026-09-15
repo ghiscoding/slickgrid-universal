@@ -457,6 +457,16 @@ describe('SlickCore file', () => {
       expect(lock.isActive()).toBe(true);
     });
 
+    it('should compare a provided controller against the active controller', () => {
+      const lock = new SlickEditorLock();
+      const active = { commitCurrentEdit: vi.fn(), cancelCurrentEdit: vi.fn() } as EditController;
+      const other = { commitCurrentEdit: vi.fn(), cancelCurrentEdit: vi.fn() } as EditController;
+      lock.activate(active);
+
+      expect(lock.isActive(active)).toBe(true);
+      expect(lock.isActive(other)).toBe(false);
+    });
+
     describe('parents() function', () => {
       it('should return all parents when selector is omitted', () => {
         const container = document.createElement('div');
@@ -567,6 +577,7 @@ describe('SlickCore file', () => {
         const col = { id: 'first', field: 'firstName', name: 'First Name' };
 
         Utils.storage.put(div, 'column', col);
+        Utils.storage.put(div, 'column-2', col);
         const result = Utils.storage.get(div, 'column');
 
         expect(result).toEqual(col);
@@ -674,6 +685,18 @@ describe('SlickCore file', () => {
         const result = Utils.parents(span, ':hidden') as HTMLElement[];
 
         expect(result).toEqual([div]);
+      });
+
+      it('should skip visible parents when querying :hidden', () => {
+        const container = document.createElement('div');
+        const div = document.createElement('div');
+        const span = document.createElement('span');
+        Object.defineProperty(div, 'offsetWidth', { writable: true, configurable: true, value: 12 });
+        Object.defineProperty(div, 'offsetHeight', { writable: true, configurable: true, value: 12 });
+        div.appendChild(span);
+        container.appendChild(div);
+
+        expect(Utils.parents(span, ':hidden')).toEqual([]);
       });
 
       it('should return no parent when container element is hidden and we pass :visible selector', () => {

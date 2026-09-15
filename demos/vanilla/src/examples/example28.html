@@ -1,6 +1,12 @@
 <div class="demo28">
   <h3 class="title is-3">
     Example 28 - Infinite Scroll from JSON data
+
+    <span class="d-inline-flex">
+      <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+        <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+      </button>
+    </span>
     <div class="subtitle code-link">
       <span class="is-size-6">see</span>
       <a
@@ -13,7 +19,7 @@
     </div>
   </h3>
 
-  <h6 class="italic content example-details">
+  <h6 class="italic content example-details" style.bind="subTitleStyle">
     <ul>
       <li>
         Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its simplest

@@ -63,6 +63,7 @@ const myRoutes: Routeable[] = [
   { path: 'example55', component: () => import('./examples/slickgrid/example55.js'), title: '55- Variable Row Height (provider)' },
   { path: 'example56', component: () => import('./examples/slickgrid/example56.js'), title: '56- Variable Row Height (metadata)' },
   { path: 'example57', component: () => import('./examples/slickgrid/example57.js'), title: '57- RTL (Right-to-Left)' },
+  { path: 'example58', component: () => import('./examples/slickgrid/example58.js'), title: '58- Sticky Financial Report' },
   { path: 'home', component: () => import('./home-page.js'), title: 'Home' },
 ];
 @route({

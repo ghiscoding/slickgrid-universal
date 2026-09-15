@@ -24,6 +24,7 @@ export default class Example30 {
   dataset: any[] = [];
   paginationPosition: 'bottom' | 'top' = 'top';
   sgb: SlickVanillaGridBundle;
+  subTitleStyle = 'display: block';
 
   attached() {
     // define the grid options & columns and then create the grid itself
@@ -194,5 +195,10 @@ export default class Example30 {
     this.paginationPosition = this.paginationPosition === 'top' ? 'bottom' : 'top';
     (this.sgb.paginationComponent as CustomPager)?.disposeElement();
     (this.sgb.paginationComponent as CustomPager)?.renderPagination(this.gridContainerElm, this.paginationPosition);
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

@@ -56,9 +56,10 @@ vi.mock('@slickgrid-universal/event-pub-sub', () => ({
 
 const gridOptionMock = {
   enableAutoResize: true,
-  frozenBottom: false,
-  frozenColumn: -1,
-  frozenRow: -1,
+  pinning: {
+    columns: { left: [], right: [] },
+    rows: { top: [], bottom: [] },
+  },
 } as GridOption;
 
 const backendServiceStub = {
@@ -93,6 +94,7 @@ const gridStub = {
   setSelectedRows: vi.fn(),
   onColumnsReordered: new SlickEvent(),
   onColumnsResized: new SlickEvent(),
+  onAfterUpdateColumns: new SlickEvent(),
   onSetOptions: new SlickEvent(),
   onSelectedRowsChanged: new SlickEvent(),
 } as unknown as SlickGrid;
@@ -197,6 +199,7 @@ describe('GridStateService', () => {
         ] as Column[];
         const getColSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
         const getVisibleColSpy = vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
+        getColSpy.mockClear();
 
         const output = service.getCurrentColumns();
 
@@ -580,15 +583,22 @@ describe('GridStateService', () => {
 
     describe('bindSlickGridOnSetOptionsEventToGridStateChange tests', () => {
       it('should subscribe to some SlickGrid events and expect the event to be triggered when a notify is triggered after service was initialized', () => {
-        const mockGridOptionsBefore = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as GridOption;
-        const mockGridOptionsAfter = { frozenBottom: true, frozenColumn: 1, frozenRow: 1 } as GridOption;
+        const mockGridOptionsBefore = { pinning: { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } } } as GridOption;
+        const mockGridOptionsAfter = { pinning: { columns: { left: ['field1'], right: [] }, rows: { top: [], bottom: [] } } } as GridOption;
         const gridStateMock = { pinning: mockGridOptionsBefore, columns: [], filters: [], sorters: [] } as GridState;
-        const stateChangeMock = { change: { newValues: mockGridOptionsAfter, type: 'pinning' }, gridState: gridStateMock } as GridStateChange;
+        const stateChangeMock = {
+          change: { newValues: mockGridOptionsAfter.pinning, type: 'pinning' },
+          gridState: gridStateMock,
+        } as GridStateChange;
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
         const gridStateSpy = vi.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
+        vi.spyOn(gridStub, 'getColumns')
+          .mockReturnValueOnce([])
+          .mockReturnValue([{ id: 'field1', field: 'field1', pinned: 'left' }] as Column[]);
 
         service.init(gridStub);
         gridStub.onSetOptions.notify({ optionsBefore: mockGridOptionsBefore, optionsAfter: mockGridOptionsAfter, grid: gridStub }, new SlickEventData());
+        vi.runAllTicks();
 
         expect(gridStateSpy).toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, stateChangeMock);
@@ -600,15 +610,16 @@ describe('GridStateService', () => {
     it('should call "getAssociatedCurrentColumns" and expect "getCurrentColumns" to return current cached Columns', () => {
       const columnsMock = [
         { id: 'field1', field: 'field1', width: 100, cssClass: 'red' },
-        { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue' },
+        { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue', pinned: 'left' },
         { id: 'field3', field: 'field3' },
       ] as Column[];
       const associatedColumnsMock = [
         { columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 },
-        { columnId: 'field2', cssClass: '', headerCssClass: 'blue', width: 150 },
+        { columnId: 'field2', cssClass: '', headerCssClass: 'blue', width: 150, pinning: 'left' },
         { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0 },
       ] as CurrentColumn[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
 
       const associatedColumns = service.getAssociatedCurrentColumns(columnsMock);
       const currentColumns = service.getCurrentColumns();
@@ -732,7 +743,11 @@ describe('GridStateService', () => {
     });
 
     it('should call "getCurrentGridState" method and return Pagination', () => {
-      const gridOptionsMock = { enablePagination: true, frozenBottom: false, frozenColumn: -1, frozenRow: -1, enableTreeData: true } as GridOption;
+      const gridOptionsMock = {
+        enablePagination: true,
+        pinning: { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } },
+        enableTreeData: true,
+      } as GridOption;
       const paginationMock = { pageNumber: 2, pageSize: 50 } as CurrentPagination;
       const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
       const filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }] as CurrentFilter[];
@@ -740,7 +755,7 @@ describe('GridStateService', () => {
         { columnId: 'field1', direction: 'ASC' },
         { columnId: 'field2', direction: 'DESC' },
       ] as CurrentSorter[];
-      const pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
+      const pinningMock = { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } } as CurrentPinning;
       const treeDataMock = { type: 'full-expand', previousFullToggleType: 'full-expand', toggledItems: null } as TreeToggleStateChange;
 
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
@@ -774,11 +789,11 @@ describe('GridStateService', () => {
 
     beforeEach(() => {
       vi.clearAllMocks();
-      pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
+      pinningMock = { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } } as CurrentPinning;
     });
 
     it('should return null when "enableCheckboxSelector" flag is disabled', () => {
-      const gridOptionsMock = { enableCheckboxSelector: false, enableSelection: false, ...pinningMock } as GridOption;
+      const gridOptionsMock = { enableCheckboxSelector: false, enableSelection: false, pinning: pinningMock } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
       const output = service.getCurrentRowSelections();
@@ -789,7 +804,7 @@ describe('GridStateService', () => {
     it('should call "getCurrentGridState" method and return the Row Selection when either "enableCheckboxSelector" or "enableSelection" flag is enabled', () => {
       const selectedGridRows = [2];
       const selectedRowIds = [99];
-      const gridOptionsMock = { enableCheckboxSelector: true, ...pinningMock } as GridOption;
+      const gridOptionsMock = { enableCheckboxSelector: true, pinning: pinningMock } as GridOption;
       vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(selectedGridRows);
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
@@ -838,8 +853,8 @@ describe('GridStateService', () => {
       beforeEach(() => {
         vi.clearAllMocks();
         service.dispose();
-        pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
-        const gridOptionsMock = { enablePagination: true, enableSelection: true, ...pinningMock } as GridOption;
+        pinningMock = { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } } as CurrentPinning;
+        const gridOptionsMock = { enablePagination: true, enableSelection: true, pinning: pinningMock } as GridOption;
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       });
@@ -1322,7 +1337,7 @@ describe('GridStateService', () => {
     let pinningMock: CurrentPinning;
 
     beforeEach(() => {
-      pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
+      pinningMock = { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } } as CurrentPinning;
       const gridOptionsMock = { enablePagination: false, enableCheckboxSelector: false, ...pinningMock } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
