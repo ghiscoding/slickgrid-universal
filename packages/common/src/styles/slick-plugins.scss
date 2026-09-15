@@ -11,6 +11,22 @@ li.hidden {
   display: none !important;
 }
 
+// ----------------------------------------------
+// Date Picker Filter
+// ----------------------------------------------
+
+.vc[data-vc='calendar'] {
+  padding: 0.9rem;
+  z-index: 9999;
+
+  [tabindex='0']:focus {
+    outline: 1px solid orange;
+  }
+}
+.vc[data-vc-theme='dark'] {
+  border: var(--slick-date-picker-border, v.$slick-date-picker-border);
+}
+
 .slick-grid-menu,
 .slick-column-picker {
   li {
@@ -888,18 +904,18 @@ li.hidden {
     cursor: pointer;
 
     .date-picker input.form-control {
-      background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
+      background-color: var(--slick-date-input-bg-color, v.$slick-date-input-bg-color);
       font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
       font-size: var(--slick-font-size-base, v.$slick-font-size-base);
       border-radius: var(--slick-compound-filter-border-radius, v.$slick-compound-filter-border-radius);
       width: 100%;
       &[readonly] {
-        background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
+        background-color: var(--slick-date-input-bg-color, v.$slick-date-input-bg-color);
       }
     }
     .form-control[readonly] {
       cursor: pointer;
-      background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
+      background-color: var(--slick-date-input-bg-color, v.$slick-date-input-bg-color);
     }
   }
   .date-picker input.form-control {
@@ -908,21 +924,8 @@ li.hidden {
     font-size: var(--slick-font-size-base, v.$slick-font-size-base);
     border-radius: var(--slick-date-range-filter-border-radius, v.$slick-date-range-filter-border-radius);
     &[readonly] {
-      background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
+      background-color: var(--slick-date-input-bg-color, v.$slick-date-input-bg-color);
     }
-  }
-}
-
-// ----------------------------------------------
-// Date Picker Filter
-// ----------------------------------------------
-
-.vc[data-vc='calendar'] {
-  padding: 0.9rem;
-  z-index: 9999;
-
-  [tabindex='0']:focus {
-    outline: 1px solid orange;
   }
 }
 

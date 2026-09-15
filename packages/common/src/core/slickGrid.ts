@@ -7514,7 +7514,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               if (!addedRowHash || removedRowHash![columnId] !== addedRowHash[columnId]) {
                 node = this.getCellNode(+row, this.getColumnIndex(columnId));
                 if (node) {
-                  node.classList.remove(removedRowHash[columnId]);
+                  node.classList.remove(...classNameToList(removedRowHash[columnId]));
                 }
               }
             });
@@ -7525,7 +7525,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               if (!removedRowHash || removedRowHash[columnId] !== addedRowHash[columnId]) {
                 node = this.getCellNode(+row, this.getColumnIndex(columnId));
                 if (node) {
-                  node.classList.add(addedRowHash[columnId]);
+                  node.classList.add(...classNameToList(addedRowHash[columnId]));
                 }
               }
             });
