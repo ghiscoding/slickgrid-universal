@@ -1318,20 +1318,51 @@ describe('SlickGrid unified pinning', () => {
     internals.updateDockingHorizontalScrollerDimensions();
 
     expect((internals._dockingHorizontalScroller as HTMLElement).style.height).toBe('15px');
+    internals.scrollbarDimensions = undefined;
+    vi.spyOn(internals, 'measureScrollbar').mockReturnValue({ width: 0, height: 0 });
+    expect(internals.getDockingScrollbarHeight()).toBe(15);
   });
 
   it('reserves Firefox overlay scrollbar space from docked rows', () => {
     const slickGrid = createGrid({ pinning: { rows: { top: [0], bottom: [2] } } });
     const internals = slickGrid as any;
+    Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 320 });
     internals.viewportHasVScroll = true;
     internals.scrollbarDimensions = { width: 0, height: 0 };
 
     internals.updateDockingOverlayDimensions();
 
-    expect(container.style.getPropertyValue('--slick-docking-vertical-overlay-width')).toBe('8px');
+    expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 8px 0 0px)');
     internals.scrollbarDimensions.width = 12;
     internals.updateDockingOverlayDimensions();
-    expect(container.style.getPropertyValue('--slick-docking-vertical-overlay-width')).toBe('0px');
+    expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 0px 0 0px)');
+  });
+
+  it('scopes proxy scroll offsets to docking targets instead of restyling the grid subtree', () => {
+    const slickGrid = createGrid({
+      pinning: { columns: { left: ['a'], right: ['d'] }, rows: { top: [0] } },
+      showHeaderRow: true,
+    });
+    const internals = slickGrid as any;
+
+    slickGrid.scrollToX(10);
+
+    const row = container.querySelector<HTMLElement>('.slick-row-docked')!;
+    expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
+    expect(row.querySelector<HTMLElement>('.slick-pinned-left-cells')!.style.getPropertyValue('--slick-docking-scroll-left')).toBe('10px');
+    expect(row.querySelector<HTMLElement>('.slick-pinned-right-cells')!.style.getPropertyValue('--slick-docking-scroll-left')).toBe('10px');
+    expect(row.querySelector<HTMLElement>('.slick-scrolling-cells')!.style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
+    expect(slickGrid.getHeaderColumn('a').style.getPropertyValue('--slick-docking-scroll-left')).toBe('10px');
+    expect(slickGrid.getHeaderColumn('d').style.getPropertyValue('--slick-docking-scroll-left')).toBe('10px');
+
+    const cacheEntry = internals.rowsCache[Number(row.dataset.row)];
+    internals.ensureCellNodesInRowsCache(Number(row.dataset.row));
+    internals.dockingLayout.left[0].sticky = true;
+    row.classList.add('slick-row-full-width-group');
+    cacheEntry.cellNodesByColumnIdx[0].classList.add('slick-cell-full-width-group');
+    internals.rowsCache[-1] = { rowNode: null };
+    internals.applyDockingProxyScrollOffsets(11);
+    expect(cacheEntry.cellNodesByColumnIdx[0].style.getPropertyValue('--slick-docking-scroll-left')).toBe('11px');
   });
 
   it('keeps the right-pinned filter/footer chrome over the Grid Menu allowance with collapsed scrollbars', () => {

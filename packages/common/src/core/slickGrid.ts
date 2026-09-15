@@ -1405,6 +1405,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return;
     }
     if (this.hasDockingHorizontalScroller()) {
+      const scrollLeft = `${this.scrollLeft}px`;
+      cacheEntry.cellRegions.left.style.setProperty('--slick-docking-scroll-left', scrollLeft);
+      cacheEntry.cellRegions.right.style.setProperty('--slick-docking-scroll-left', scrollLeft);
       return;
     }
     const viewportWidth = this._viewportScrollContainerX?.clientWidth || this.viewportW;
@@ -1433,6 +1436,33 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     });
     this.applyDockingChromeScrollOffsets();
+  }
+
+  /** Update only elements whose proxy-mode transforms consume the horizontal scroll offset. */
+  protected applyDockingProxyScrollOffsets(scrollLeft: number): void {
+    const value = `${scrollLeft}px`;
+    const stickyIndexes = [...this.dockingLayout.left, ...this.dockingLayout.right]
+      .filter((docking) => docking.sticky)
+      .map((docking) => docking.index);
+
+    Object.values(this.rowsCache).forEach((cacheEntry) => {
+      const row = cacheEntry.rowNode?.[0];
+      if (!row?.classList.contains('slick-row-docked') || !cacheEntry.cellRegions) {
+        return;
+      }
+      cacheEntry.cellRegions.left.style.setProperty('--slick-docking-scroll-left', value);
+      cacheEntry.cellRegions.right.style.setProperty('--slick-docking-scroll-left', value);
+      stickyIndexes.forEach((index) => cacheEntry.cellNodesByColumnIdx[index]?.style.setProperty('--slick-docking-scroll-left', value));
+      if (row.classList.contains('slick-row-full-width-group')) {
+        cacheEntry.cellNodesByColumnIdx
+          .find((cell) => cell?.classList.contains('slick-cell-full-width-group'))
+          ?.style.setProperty('--slick-docking-scroll-left', value);
+      }
+    });
+
+    for (const docking of [...this.dockingLayout.left, ...this.dockingLayout.right]) {
+      this.dockingChromeByColumn.get(docking.index)?.forEach((element) => element.style.setProperty('--slick-docking-scroll-left', value));
+    }
   }
 
   protected applyDockingChromeScrollOffsets(): void {
@@ -2069,6 +2099,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           element.style.transform = '';
           return;
         }
+
+        element.style.setProperty('--slick-docking-scroll-left', `${this.scrollLeft}px`);
 
         // The display-contents left wrapper already supplies the grouped edge
         // offset; only cancel the translated root layer here.
@@ -4266,6 +4298,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       docking.band === 'left'
         ? docking.offset - this.dockingLayout.leftBaseWidth - docking.naturalOffset
         : docking.offset - this.dockingLayout.rightWidth - this.dockingLayout.leftBaseWidth - docking.naturalOffset;
+    element.style.setProperty('--slick-docking-scroll-left', `${this.scrollLeft}px`);
     element.style.setProperty('--slick-sticky-column-offset', `${offset}px`);
   }
 
@@ -5204,7 +5237,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (this._dockingOverlay) {
         this._dockingOverlay.style.transform = translateX;
       }
-      this._container.style.setProperty('--slick-docking-scroll-left', `${x}px`);
+      this.updateDockingOverlayClip(x);
+      this.applyDockingProxyScrollOffsets(x);
     }
 
     // In the single-viewport layout the body is moved by the native scroll
@@ -5577,6 +5611,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       role: 'gridcell',
       tabIndex: -1,
     });
+    if (isFullWidthGroup && this.hasDockingHorizontalScroller()) {
+      cellDiv.style.setProperty('--slick-docking-scroll-left', `${this.scrollLeft}px`);
+    }
     if (usesStickyTransform) {
       this.applyStickyColumnTransform(cellDiv, cell, 'cell');
     }
@@ -6275,7 +6312,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const overlayWidth = Math.max(this.canvasWidth, this.dockingLayout.contentWidth, this._viewportNode.clientWidth);
     this._dockingOverlay.style.width = `${overlayWidth}px`;
     this._dockingOverlay.style.height = `${this._viewportNode.clientHeight}px`;
-    this._container.style.setProperty('--slick-docking-vertical-overlay-width', `${this.getDockingOverlayScrollbarWidth()}px`);
+    this.updateDockingOverlayClip();
+  }
+
+  /** Clip the translated row overlay without invalidating every grid descendant through an inherited CSS variable. */
+  protected updateDockingOverlayClip(scrollLeft: number = this.scrollLeft): void {
+    if (!this._dockingOverlay || !this._viewportNode) {
+      return;
+    }
+    const viewportWidth = this._viewportNode.clientWidth;
+    const overlayWidth = Math.max(this.canvasWidth, this.dockingLayout.contentWidth, viewportWidth);
+    const rightInset = overlayWidth - scrollLeft - viewportWidth + this.getDockingOverlayScrollbarWidth();
+    this._dockingOverlay.style.clipPath = `inset(0 ${rightInset}px 0 ${scrollLeft}px)`;
   }
 
   /** Keep the single horizontal scrollbar aligned with the vertical body viewport. */
@@ -6291,7 +6339,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._dockingHorizontalScroller.style.height = hasHorizontalOverflow ? `${scrollbarHeight}px` : '0px';
     this._dockingHorizontalSpacer.style.width = `${Math.max(contentWidth, viewportWidth)}px`;
     this._container.style.setProperty('--slick-docking-viewport-width', `${this._viewportNode.clientWidth}px`);
-    this._container.style.setProperty('--slick-docking-scroll-left', `${this.scrollLeft}px`);
     this._container.style.setProperty(
       '--slick-docking-right-offset',
       `${this._dockingHorizontalScroller.clientWidth - this.dockingLayout.contentWidth}px`

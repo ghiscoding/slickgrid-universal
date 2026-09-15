@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness — implementation progress
 
-Last updated: 2026-09-14 (consolidated remaining-work audit, overflow-policy decisions, focused variable-height/span/coexistence coverage, user-confirmed green Vanilla/framework Cypress CI, and clarified evolving pinning label compatibility)
+Last updated: 2026-09-15 (Firefox/Linux overlay-scrollbar findings and visual fixes, profiler-guided scroll-offset optimization, consolidated remaining-work audit, and user-confirmed green Vanilla/framework Cypress CI)
 
 ## Goal
 
@@ -109,6 +109,47 @@ performing repeated resolver/render work during a rapid horizontal scroll. The f
 examples also reuse one `Intl.NumberFormat` instance instead of allocating one per rendered cell.
 Unchanged sticky passes now preserve the active layout/map, per-scroll updates no longer rewrite
 invariant docking offsets, and the moving sticky-row clip is compositor-promoted.
+
+### Firefox/Linux scrollbar and scroll-linked-effect notes (2026-09-15)
+
+Firefox on Linux may use GTK overlay scrollbars. In that mode the scrollbar can be hidden until
+the grid is hovered, can appear as an overlay before the track is hovered, and can report zero
+width/height through DOM scrollbar measurements. This is browser/desktop scrollbar policy, not a
+missing SlickGrid scroll owner, and library CSS cannot force the user's Firefox scrollbar
+preference to become permanently visible. The docking proxy therefore uses a 15px fallback
+height when Firefox reports zero, while retaining measured dimensions everywhere else.
+
+When vertical overflow exists but Firefox reports a zero scrollbar width, the docked-row overlay
+clips an 8px trailing strip so the overlay scrollbar cannot paint behind top/bottom pinned rows.
+The last right-pinned filter/footer cell also restores the Grid Menu allowance in this zero-width
+case, preventing an adjacent center filter from showing through the `Action` column. These
+fallbacks are metric-based and are not Firefox user-agent branches.
+
+Firefox may also log its standard [“scroll-linked positioning effect” warning](https://firefox-source-docs.mozilla.org/performance/scroll-linked_effects.html). CSS `position: sticky`
+for the ordinary left-pinned region is compositor-aware; the warning specifically reflects the
+JavaScript scroll listener that synchronizes the dedicated horizontal proxy with the sibling
+canvas, overlay, and chrome transforms/clip updates. This diagnostic is expected for the current
+single-proxy architecture and is not an application exception. Async panning can still make this
+path feel different across browsers, and Firefox/Safari should be validated manually where
+available. The implementation keeps the scroll path compositor-oriented and does not attempt to
+suppress the browser warning.
+
+The Firefox profile supplied for Example 04/47 showed only a small JavaScript scroll-handler
+cost, but 18 scroll-triggered style passes restyled 386 descendants each (156.8ms total,
+8.7ms average, 20.2ms maximum). The cause was the inherited per-scroll
+`--slick-docking-scroll-left` value on the grid root. The optimization registers that property
+as non-inheriting, updates it only on moving docking targets, and writes the overlay `clip-path`
+directly. This preserves the stable DOM/compositor design for Chrome, Firefox, and Safari without
+user-agent detection. Focused tests and static checks pass; manual Firefox held-scroll and
+resize/scroll feel confirmation remains the final performance check.
+
+A follow-up Firefox capture from the localhost Example 04 tab confirms the profiler signature
+improved: the previous 18 style passes traversing/styling 386 elements (156.8ms total, 20.2ms
+maximum) are gone. The new capture has 15 larger style passes traversing 121 elements and styling
+77 (59.0ms total, 3.9ms average, 7.7ms maximum). Refresh-driver work also improved in this
+capture (3 frames over 16.7ms versus 7 previously). These captures are separate sessions, so
+they are directional rather than a controlled benchmark, but they confirm that the full-grid
+inherited-property restyle was removed. Manual perceived-smoothness validation remains useful.
 
 A horizontal-wheel mouse (a second, dedicated tilt/horizontal wheel, as opposed to Shift+wheel)
 could push `scrollLeft` below zero because `handleMouseWheel` added the raw wheel delta without a
@@ -637,6 +678,12 @@ permanent-pinning controls.
   materialized lazily if pinning/sticky state is enabled after initialization.
 - The native vertical scroll element is always exposed as `.slick-vertical-scroller` and remains
   separate from the docking horizontal scroller when pinning or sticky docking is active.
+- On Firefox/Linux, the user confirmed that overlay scrollbars may remain hidden until the grid
+  is hovered and then appear as a very narrow overlay. The user also observed Firefox's standard
+  scroll-linked-positioning warning; it is expected from the JavaScript proxy-to-canvas/chrome
+  synchronization, not CSS sticky itself or a runtime error. The zero-metric scrollbar fallbacks
+  and overlay clipping fix the reported pinned-row and right-filter bleed, while final
+  scroll-smoothness confirmation after the scoped offset optimization remains pending.
 
 ## Files changed
 
@@ -695,6 +742,12 @@ The focused SlickGrid pinning/interaction unit tests, common-package TypeScript 
 and `git diff --check` pass after the horizontal wheel/scroll performance change. Focused
 SlickGrid coverage executes every changed performance line; the aggregate report remains at
 99.97% lines because of the pre-existing untested `getSelectedRows()` no-selection error path.
+
+The 2026-09-15 Firefox scroll-offset optimization passed 454 focused common-core tests
+(48 pinning tests and 406 SlickGrid tests), common-package TypeScript, targeted Oxlint,
+Prettier, Sass compilation of the default theme, and `git diff --check`. Changed-range
+statement coverage found no uncovered statements. Browser confirmation of held horizontal
+scroll performance and resize/scroll feel remains a manual Firefox task.
 
 The 2026-09-10 core/service audit passed all 71 focused SlickGrid pinning, Draggable Grouping, and
 HeaderGroupingService tests. The common-package TypeScript check, targeted Oxlint, Prettier, and

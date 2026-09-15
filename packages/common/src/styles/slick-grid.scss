@@ -1,6 +1,12 @@
 @use './variables' as v;
 @use './svg-utilities' as svg;
 
+@property --slick-docking-scroll-left {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
 // ----------------------------------------------
 // Slick Grid default theme
 // ----------------------------------------------
@@ -195,14 +201,6 @@
     // overlay rows cannot paint over the native vertical scrollbar.
     .slick-docking-overlay {
       will-change: transform, clip-path;
-      clip-path: inset(
-        0
-          calc(
-            100% - var(--slick-docking-scroll-left, 0px) - var(--slick-docking-viewport-width, 100%) +
-              var(--slick-docking-vertical-overlay-width, 0px)
-          )
-          0 var(--slick-docking-scroll-left, 0px)
-      );
     }
 
     .slick-row-docked > .slick-pinned-left-cells {
