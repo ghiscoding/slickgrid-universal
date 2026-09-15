@@ -11,6 +11,22 @@ li.hidden {
   display: none !important;
 }
 
+// ----------------------------------------------
+// Date Picker Filter
+// ----------------------------------------------
+
+.vc[data-vc='calendar'] {
+  padding: 0.9rem;
+  z-index: 9999;
+
+  [tabindex='0']:focus {
+    outline: 1px solid orange;
+  }
+}
+.vc[data-vc-theme='dark'] {
+  border: var(--slick-date-picker-border, v.$slick-date-picker-border);
+}
+
 .slick-grid-menu,
 .slick-column-picker {
   li {
@@ -911,22 +927,6 @@ li.hidden {
       background-color: var(--slick-date-input-bg-color, v.$slick-date-input-bg-color);
     }
   }
-}
-
-// ----------------------------------------------
-// Date Picker Filter
-// ----------------------------------------------
-
-.vc[data-vc='calendar'] {
-  padding: 0.9rem;
-  z-index: 9999;
-
-  [tabindex='0']:focus {
-    outline: 1px solid orange;
-  }
-}
-.vc[data-vc-theme='dark'] {
-  border: var(--slick-date-picker-border, v.$slick-date-picker-border);
 }
 
 // ----------------------------------------------
