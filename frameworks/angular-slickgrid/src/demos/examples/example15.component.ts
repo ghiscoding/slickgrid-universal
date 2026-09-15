@@ -213,8 +213,7 @@ export class Example15Component implements OnInit, OnDestroy {
         hideClearPinningCommand: false,
       },
       headerMenu: {
-        hidePinColumnCommand: false,
-        hidePinningColumnsCommand: false,
+        showPinningCommands: true,
       },
       enablePagination: true,
       pagination: {

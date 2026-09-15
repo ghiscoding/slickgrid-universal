@@ -206,7 +206,7 @@ function defineGrid() {
     enableContextMenu: true,
     contextMenu: getContextMenuOptions(),
     gridMenu: { hideClearPinningCommand: false },
-    headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
+    headerMenu: { showPinningCommands: true },
   };
 }
 

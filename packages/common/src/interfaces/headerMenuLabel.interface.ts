@@ -29,9 +29,6 @@ export interface HeaderMenuLabel {
   /** Defaults to "Pin Columns Right" */
   pinningColumnsRightCommand?: string;
 
-  /** @deprecated Use `pinningColumnsLeftCommand` instead. */
-  pinningColumnsCommand?: string;
-
   /** Defaults to "Column Pinning" for the pinning submenu. */
   pinColumnCommand?: string;
 
@@ -40,9 +37,6 @@ export interface HeaderMenuLabel {
 
   /** Defaults to "Pin Right" */
   pinRightCommand?: string;
-
-  /** @deprecated Retained for compatibility; use the PIN_COLUMNS_LEFT/PIN_COLUMNS_RIGHT locale keys. */
-  pinningColumnsCommandKey?: string;
 
   /** Defaults to "Hide Column" */
   hideColumnCommand?: string;

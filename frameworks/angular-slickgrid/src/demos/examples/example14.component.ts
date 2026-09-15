@@ -61,8 +61,7 @@ export class Example14Component implements OnInit {
         },
       },
       headerMenu: {
-        hidePinColumnCommand: false,
-        hidePinningColumnsCommand: false,
+        showPinningCommands: true,
       },
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
@@ -110,7 +109,7 @@ export class Example14Component implements OnInit {
       pinning: { columns: { left: 2 } },
       rowHeight: 33,
       gridMenu: { hideClearPinningCommand: false },
-      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
+      headerMenu: { showPinningCommands: true },
       enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {

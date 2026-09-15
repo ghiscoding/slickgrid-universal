@@ -459,7 +459,6 @@ export default class Example04 {
         },
       },
       gridMenu: { hideClearPinningCommand: false },
-      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
       enableContextMenu: true,
       contextMenu: {
         optionShownOverColumnIds: ['percentComplete'],

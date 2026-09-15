@@ -176,7 +176,7 @@ export class Example20Component implements OnInit {
       enableContextMenu: true,
       contextMenu: this.getContextMenuOptions(),
       gridMenu: { hideClearPinningCommand: false },
-      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
+      headerMenu: { showPinningCommands: true },
     };
     this.dataset = Array.from({ length: 500 }, (_v, i) => ({
       id: i,

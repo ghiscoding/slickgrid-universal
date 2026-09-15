@@ -59,8 +59,7 @@ function definedGrid1() {
       },
     },
     headerMenu: {
-      hidePinColumnCommand: false,
-      hidePinningColumnsCommand: false,
+      showPinningCommands: true,
     },
     gridMenu: {
       iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
@@ -106,8 +105,10 @@ function definedGrid2() {
       exportWithFormatter: false,
     },
     externalResources: [new ExcelExportService(), new PdfExportService()],
+    headerMenu: {
+      showPinningCommands: true,
+    },
     gridMenu: { hideClearPinningCommand: false },
-    headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
   };
 }
 

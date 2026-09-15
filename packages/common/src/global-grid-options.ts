@@ -258,8 +258,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
     hideColumnHideCommand: false,
     hideClearFilterCommand: false,
     hideClearSortCommand: false,
-    hidePinningColumnsCommand: true, // opt-in command
-    hidePinColumnCommand: true, // opt-in command
     hideSortCommands: false,
     subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
   },

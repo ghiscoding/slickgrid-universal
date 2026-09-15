@@ -114,9 +114,9 @@ describe('DateEditor', () => {
     });
 
     it('should initialize the editor and expect to focus on the element after a small delay', () => {
+      editor = new DateEditor(editorArguments);
       const focusSpy = vi.spyOn(editor, 'focus');
       const showSpy = vi.spyOn(editor, 'show');
-      editor = new DateEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-startDate').length;
 
       vi.runAllTimers();

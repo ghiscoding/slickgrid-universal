@@ -15,6 +15,8 @@ Set `Column.pinnable` to `false` when a column must not be pinned or unpinned fr
 
 For scroll-activated docking, see [Sticky Columns and Rows](sticky.md). Sticky columns have no built-in Header Menu commands, so a separate `Column.stickable` flag is not needed.
 
+The built-in Column Pinning Header Menu is enabled automatically when `pinning` is defined. Set `headerMenu.showPinningCommands: true` when the menu should be available before any pin state is configured. Set `headerMenu.showPinningCommands: false` for programmatic-only pinning, and use `headerMenu.hideCommands` for individual command visibility.
+
 ## Columns/Rows Pinning basic
 To configure pinning for the entire lifetime of the grid, use the nested `pinning` Grid Option. The left and right column values accept an inclusive column boundary or explicit column IDs, while row pinning uses row indexes or IDs.
 

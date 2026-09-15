@@ -108,8 +108,7 @@ export class Example38Component implements OnInit {
       enableSelection: true,
       enableGrouping: true,
       headerMenu: {
-        hidePinColumnCommand: false,
-        hidePinningColumnsCommand: false,
+        showPinningCommands: true,
       },
       presets: {
         // NOTE: pagination preset is NOT supported with infinite scroll

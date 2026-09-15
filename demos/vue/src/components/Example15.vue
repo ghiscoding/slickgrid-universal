@@ -187,8 +187,7 @@ function defineGrid(gridStatePresets?: GridState) {
       hideClearPinningCommand: false,
     },
     headerMenu: {
-      hidePinColumnCommand: false,
-      hidePinningColumnsCommand: false,
+      showPinningCommands: true,
     },
     enablePagination: true,
     pagination: {

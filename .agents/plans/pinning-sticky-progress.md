@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness — implementation progress
 
-Last updated: 2026-09-13 (consolidated remaining-work audit, overflow-policy decisions, focused variable-height/span/coexistence coverage, and user-confirmed green Vanilla/framework Cypress CI)
+Last updated: 2026-09-14 (consolidated remaining-work audit, overflow-policy decisions, focused variable-height/span/coexistence coverage, user-confirmed green Vanilla/framework Cypress CI, and clarified evolving pinning label compatibility)
 
 ## Goal
 
@@ -48,15 +48,16 @@ for protected columns while leaving programmatic pinning available. Sticky colum
 Header Menu commands, so there is no separate `Column.stickable` option.
 
 Vanilla Example 11 serializes the new nested `CurrentPinning` shape in its
-saved views and intentionally opts into both pinning header commands to
+saved views and intentionally enables the pinning header commands to
 exercise the new behavior. The single-column menu action calls
 `SlickGrid.setColumnPinning` and updates `Column.pinned`; the bulk “Pin
 Columns” menu action updates
 `pinning.columns.left`, which applies the same left pins through the unified
-pinning resolver. Neither action uses removed legacy options or validation. The current
-`hidePinningColumnsCommand`
-setting controls the bulk command, while `hidePinColumnCommand` controls the
-single-column command.
+pinning resolver. Neither action uses removed legacy options or validation.
+The `headerMenu.showPinningCommands` option controls whether the Header Menu exposes these
+commands, while defining `pinning` automatically enables the same UI for
+declarative pinning configurations. Individual command visibility is handled by
+`headerMenu.hideCommands`.
 
 Vanilla Example 04 and the Angular, Aurelia, React, and Vue Example 20 fixtures mark
 `City of Origin` as `pinnable: false`; their Cypress suites verify that its Header Menu omits
@@ -84,6 +85,19 @@ between groups that still contain visible commands. The first group sets the sel
 boundary, and the unpin commands clear the selected column or all aggregate column edges.
 Setting `pinnable: false` removes the `Column Pinning` menu for that column and excludes it from
 bulk pin-through operations. None of these commands recreates the old two-pane layout.
+
+Pinning is opt-in in the Header Menu through `headerMenu.showPinningCommands`, which defaults to
+false when no `pinning` state is supplied, or automatically when the `pinning` option is defined.
+Applications set `headerMenu.showPinningCommands: true` when they want the `pin-column` root command before any pin state is
+configured. Explicit `headerMenu.showPinningCommands: false` keeps pinning programmatic-only, and use
+`headerMenu.hideCommands` only for individual command visibility. The former dedicated
+`hidePinningColumnsCommand` and `hidePinColumnCommand` options are removed rather than carried
+forward into v11.
+
+The pinning Header Menu uses the directional labels
+`pinningColumnsLeftCommand` and `pinningColumnsRightCommand`; the former generic
+`pinningColumnsCommand` and `pinningColumnsCommandKey` compatibility aliases are removed because
+the pinning API is still unreleased and the directional commands are the complete v11 design.
 
 Horizontal scrolling now uses the browser's native `WheelEvent` pixel deltas for trackpads and
 physical horizontal-wheel mice. Legacy horizontal-wheel clicks advance by at least 40px instead

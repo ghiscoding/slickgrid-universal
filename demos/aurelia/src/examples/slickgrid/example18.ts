@@ -268,8 +268,7 @@ export class Example18 {
       enableSorting: true,
       enableColumnReorder: true,
       headerMenu: {
-        hidePinColumnCommand: false,
-        hidePinningColumnsCommand: false,
+        showPinningCommands: true,
       },
       gridMenu: {
         hideClearPinningCommand: false,

@@ -254,7 +254,7 @@ const Example05: React.FC = () => {
 
       // show both single-column and bulk pinning commands in HeaderMenu & GridMenu; these are opt-in commands
       gridMenu: { hideClearPinningCommand: false },
-      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
+      headerMenu: { showPinningCommands: true },
       ...baseFluentGridOption,
     };
 

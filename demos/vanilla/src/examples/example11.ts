@@ -436,8 +436,7 @@ export default class Example11 {
         onCommand: (e, args) => this.executeCommand(e, args),
       },
       headerMenu: {
-        hidePinningColumnsCommand: false,
-        hidePinColumnCommand: false,
+        showPinningCommands: true,
         subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
       },
       gridMenu: {

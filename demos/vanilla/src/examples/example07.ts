@@ -394,10 +394,7 @@ export default class Example07 {
       dataView: {
         syncGridSelection: true, // enable this flag so that the row selection follows the row even if we move it to another position
       },
-      headerMenu: {
-        hidePinColumnCommand: false,
-        hidePinningColumnsCommand: false,
-      },
+      headerMenu: { showPinningCommands: true },
       enableRowMoveManager: true,
       rowMoveManager: {
         columnIndexPosition: 0,

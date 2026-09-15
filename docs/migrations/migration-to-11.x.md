@@ -1,17 +1,12 @@
 ## Single-viewport pinning, stickiness and modernization
 
-SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking
-renderer. This is a major breaking change: a grid now has one native vertical scrollbar and
-one DOM row per data item. The native vertical scrollbar is exposed through
-`.slick-vertical-scroller`. An ordinary grid keeps its native horizontal scrollbar on
-`.slick-viewport`; a grid with permanent pinning or sticky docking uses one dedicated
-`.slick-docking-horizontal-scroller` instead. The active horizontal scroll element always also
-has the generic `.slick-horizontal-scroller` class. Permanently pinned columns and rows, as well
-as scroll-activated sticky columns and rows, are rendered inside that viewport.
+SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer.
+This is a breaking change: pinned and sticky columns and rows now share one viewport, one native
+vertical scrollbar, and one DOM row per data item.
 
-The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer valid ways to
-configure pinning. Update your grid options, persisted grid state, custom menu commands, and
-DOM/CSS selectors as part of the migration.
+The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer valid. Update your
+grid options, persisted grid state, custom menu commands, and DOM/CSS selectors as part of the
+migration. The sections below focus on the changes application code normally needs to make.
 
 #### Major Changes - Quick Summary
 
@@ -55,16 +50,10 @@ const gridOptions: GridOption = {
 };
 ```
 
-Column references can also be arrays of stable column ids or indexes. This supports
-non-contiguous pinning and is preferred when columns can be hidden or reordered.
-
-Pinning is independent: use explicit column IDs, indexes, or `Column.pinned` values when
-individual columns should be pinned without including the columns between them. For applications
-that used the legacy contiguous behavior, v11 also keeps a numeric left boundary under
-`pinning.columns.left`. This provides the familiar “pin through index X” approach, similar to
-`frozenColumn` in v10 and lower: `frozenColumn: 2` becomes `pinning.columns.left: 2` and pins
-indexes `0`, `1`, and `2`. The numeric boundary is an optional migration-friendly shorthand;
-explicit references remain the recommended form for independent pinning.
+Use arrays of stable column ids or indexes for non-contiguous pinning. This is the preferred form
+when columns can be hidden or reordered. A numeric left value remains available as a migration
+shortcut: `frozenColumn: 2` becomes `pinning.columns.left: 2` and pins indexes `0`, `1`, and `2`.
+Explicit ids or indexes are recommended when individual columns should be pinned independently.
 
 ```ts
 pinning: {
@@ -79,8 +68,9 @@ pinning: {
 }
 ```
 
-Row references are indexes or values from `datasetIdPropertyName` (which defaults to `id`).
-An in-range numeric reference is interpreted as a row index first.
+Rows can be referenced by index or by the value of `datasetIdPropertyName` (which defaults to
+`id`). An in-range numeric reference is treated as a row index first; use a string id when the
+dataset id could otherwise be ambiguous.
 
 To change pinning at runtime, update the nested option rather than the removed frozen fields:
 
@@ -136,9 +126,8 @@ grid.setColumnStickiness('quarter', 'both');
 grid.setColumnStickiness('quarter', false);
 ```
 
-Permanent pins take precedence over sticky candidates. The docking resolver keeps center-column
-virtualization enabled; only configured pinned or active sticky cells are materialized outside the
-normal range.
+Permanent pins take precedence over sticky candidates. Center-column virtualization remains
+enabled; only configured pinned or active sticky cells are rendered outside the normal range.
 
 ### Sticky rows and docking options
 
@@ -207,13 +196,10 @@ When both forms are present, `CurrentColumn.pinning` is the granular column-layo
 `GridState.pinning` is the aggregate row/column state. Keep them consistent when persisting a
 custom preset.
 
-The new pinning and docking data types are consolidated in
-`packages/common/src/interfaces/docking.interface.ts` and re-exported from the common interfaces
-barrel. The v11 names are `ColumnPinningReferences`, `PinnedColumns`, `PinnedRows`,
-`PinningOption`, `StickyRows`, and `DockingOption`. The resolver layout types are
-`DockedColumn`, `ColumnDockingLayout`, `DockingRow`, `DockedRow`, and `RowDockingLayout`.
-These replace any application-owned frozen-pane state types; `DockingController` itself remains
-an internal implementation detail and is not exported from the public common-package barrel.
+The public pinning and docking types are re-exported from the common interfaces barrel. The main
+types used by application code are `PinningOption`, `PinnedColumns`, `PinnedRows`, `StickyRows`,
+and `DockingOption`. `DockingController` is an internal implementation detail and is not part of
+the public v11 API.
 
 The public mapping is summarized below. Most names remain stable while their frozen-pane
 properties are replaced; the method renames are intentional and breaking:
@@ -251,7 +237,8 @@ interfaces or runtime.
 | `GridMenuLabel.clearFrozenColumnsCommandKey` | `GridMenuLabel.clearPinningCommandKey` | Grid-menu translation key option renamed |
 | `GridMenuOption.hideClearFrozenColumnsCommand` | `GridMenuOption.hideClearPinningCommand` | Grid-menu visibility option renamed |
 | `GridMenuOption.iconClearFrozenColumnsCommand` | `GridMenuOption.iconClearPinningCommand` | Grid-menu icon option renamed |
-| `HeaderMenuOption.hideFreezeColumnsCommand` | `HeaderMenuOption.hidePinningColumnsCommand` | Bulk pinning visibility option renamed |
+| — | `HeaderMenuOption.showPinningCommands` | New opt-in control for displaying pinning commands before a `pinning` state is configured |
+| `HeaderMenuOption.hideFreezeColumnsCommand` | removed | Use `HeaderMenuOption.hideCommands` with the pinning command ids when individual visibility control is needed |
 | `HeaderMenuOption.iconFreezeColumns` | `HeaderMenuOption.iconPinningColumns` | Bulk pinning icon option renamed |
 | `HeaderMenuOption.iconUnfreezeColumns` | `HeaderMenuOption.iconUnpinningColumns` | Bulk unpinning icon option renamed |
 | `HeaderMenuLabel.freezeColumnsCommand` | `HeaderMenuLabel.pinningColumnsLeftCommand`, `HeaderMenuLabel.pinningColumnsRightCommand` | Bulk pinning labels split by direction |
@@ -293,7 +280,6 @@ const gridOptions: GridOption = {
 +   iconClearPinningCommand: 'mdi mdi-pin-off-outline',
 + },
 + headerMenu: {
-+   hidePinningColumnsCommand: false,
 +   iconPinningColumns: 'mdi mdi-pin-outline',
 +   iconUnpinningColumns: 'mdi mdi-pin-off-outline',
 + },
@@ -305,9 +291,8 @@ The old `freeze-columns`/`unfreeze-columns` command ids and
 v11 uses directional `pin-columns-left`/`pin-columns-right` commands alongside
 `unpin-columns`. Their translation keys are `PIN_COLUMNS_LEFT`/`PIN_COLUMNS_RIGHT` and
 `UNPIN_COLUMNS`. The public label properties are `pinningColumnsLeftCommand`,
-`pinningColumnsRightCommand`, and `unpinningColumnsCommand`. The older
-`pinningColumnsCommand` property is deprecated but remains a fallback for the left command;
-`PIN_COLUMNS` is no longer an active translation key.
+`pinningColumnsRightCommand`, and `unpinningColumnsCommand`. `PIN_COLUMNS` is no longer an
+active translation key.
 
 ### Rename `changeColumnsArrangement()`
 
@@ -325,29 +310,25 @@ expose the same `GridStateService` API.
 
 ### Header Menu commands
 
-Header menus now expose a `Column Pinning` root command with one directional pinning sub-menu.
-For pinnable columns, the sub-menu always contains all five commands, regardless of the selected
-column's current state. Set `pinnable: false` to remove the `Column Pinning` menu for a column.
+Header menus now expose a `Column Pinning` root command with a pinning sub-menu. For pinnable
+columns, the sub-menu contains these commands:
 
-- `pin-left` pins the selected column to the left edge;
-- `pin-right` pins the selected column to the right edge;
-- `pin-columns-left` (displayed as `Pin Columns Left`) pins every column from the left edge
-  through the selected column;
-- `pin-columns-right` (displayed as `Pin Columns Right`) pins every column from the right
-  edge through the selected column;
-- `unpin-column` clears the selected column's pin; and
-- `unpin-columns` (displayed as `Unpin All Columns`) clears all pinned columns on both edges.
+| Command | Action |
+| --- | --- |
+| `pin-left` / `pin-right` | Pin the selected column to the chosen edge |
+| `pin-columns-left` / `pin-columns-right` | Pin all columns between the chosen edge and the selected column |
+| `unpin-column` | Remove the selected column's pin |
+| `unpin-columns` | Remove all column pins |
 
-Each command group is separated from the next visible group. Hidden commands do not leave
-duplicate or orphaned separators. All commands update `pinning.columns` and no longer create a second pane. The v10 `freeze-columns` /
-`unfreeze-columns` ids are removed.
+Set `pinnable: false` to remove the `Column Pinning` menu for a column. Use
+`headerMenu.hideCommands` to hide individual commands. The old `freeze-columns` and
+`unfreeze-columns` command ids are removed.
 
 The new header-menu options and labels are:
 
 ```ts
 headerMenu: {
-  hidePinColumnCommand: false,
-  hidePinningColumnsCommand: false,
+  showPinningCommands: true,
   iconPinColumn: 'mdi mdi-pin-outline',
   iconPinLeft: 'mdi mdi-pin-outline',
   iconPinRight: 'mdi mdi-pin-outline',
@@ -364,16 +345,22 @@ headerMenu: {
 }
 ```
 
-`hidePinningColumnsCommand` controls the bulk command. Migrate the v10
-`hideFreezeColumnsCommand` option and do not use legacy frozen-column callbacks or menu state to
-implement new pinning behavior.
+Column pinning is opt-in in v11. Defining `pinning` enables the permanent pinning model and its
+Column Pinning menu automatically. Set `headerMenu.showPinningCommands: true` when the menu should
+be available before any pins are configured, or set it to `false` when pinning should remain
+programmatic-only. Use `headerMenu.hideCommands` to hide individual commands.
 
-The old `$slick-frozen-*` Sass variables are no longer consumed by the v11 stylesheet. Rename
-them to the corresponding `$slick-pinned-*` variables when customizing pinned-region styling.
+Migrate the v10 `hideFreezeColumnsCommand` option to `hideCommands` if individual pinning command
+visibility must be customized, and do not use legacy frozen-column callbacks or menu state to
+implement new pinning behavior.
 
 #### Cypress Header Menu selectors
 
-Header Menu commands were reorder to move the Sort Ascending/Descending commands to be on top of the list. If your Cypress tests locate Header Menu commands by their positional index, update them to use the command label instead. Menu command order can change as built-in commands and separators are added or rearranged, so `.slick-menu-item:nth-of-type()` selectors are fragile. Prefer `.contains()` to locate the command by its visible text:
+Header Menu commands were reordered so Sort Ascending and Sort Descending appear near the top of
+the list. If your Cypress tests locate commands by position, update them to use the command label
+instead. Menu order can change as built-in commands and separators are added or rearranged, so
+`.slick-menu-item:nth-of-type()` selectors are fragile. Prefer `.contains()` to locate a command
+by its visible text:
 
 ```diff
 cy.get('.slick-header-menu .slick-menu-command-list')
@@ -392,6 +379,8 @@ uses `.slick-header-root` and `.slick-content-root` as its two outer roots; thes
 not left/right docking panes. Do not target selectors
 such as `.slick-pane-left`, `.slick-pane-right`, `.slick-viewport-top`, `.slick-viewport-bottom`,
 `.grid-canvas-left`, or `.grid-canvas-right` in application CSS or Cypress tests.
+The old `$slick-frozen-*` Sass variables are also no longer consumed; rename them to the
+corresponding `$slick-pinned-*` variables when customizing pinned-region styling.
 
 Each rendered row has one stable set of regions:
 
@@ -462,6 +451,8 @@ integrations or extensions.
 - Convert numeric right-edge requirements to a trailing count or stable id array.
 - Add `Column.pinned` or `Column.sticky` where pinning is per-column or scroll-activated.
 - Set `Column.pinnable: false` for columns that users must not pin or unpin from the Header Menu.
+- Set `headerMenu.showPinningCommands` when the pinning commands must be available before pins are configured;
+  use `headerMenu.hideCommands` for individual command visibility.
 - Migrate `GridState.pinning` and saved `CurrentPinning` values to the nested shape.
 - Add `CurrentColumn.pinning` to custom column presets that preserve individual pin sides.
 - Rename `changeColumnsArrangement()` to `applyColumnLayout()`.

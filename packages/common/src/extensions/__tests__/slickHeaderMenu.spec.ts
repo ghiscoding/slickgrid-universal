@@ -8,6 +8,10 @@ import { BackendUtilityService, SharedService, type FilterService, type SortServ
 import { SlickHeaderMenu } from '../slickHeaderMenu.js';
 
 const removeExtraSpaces = (inputText: string) => `${inputText}`.replace(/[\n\r]\s+/g, '');
+const getPinningCommand = (column: Column, command: string) =>
+  (column.header?.menu?.commandItems?.find((item) => item !== 'divider' && item.command === 'pin-column') as MenuCommandItem | undefined)?.commandItems?.find(
+    (item) => item !== 'divider' && item.command === command
+  ) as MenuCommandItem | undefined;
 
 const mockEventCallback = () => {};
 const gridOptionsMock = {
@@ -26,7 +30,7 @@ const gridOptionsMock = {
   },
   headerMenu: {
     buttonCssClass: 'mdi mdi-chevron-down',
-    hidePinningColumnsCommand: false,
+    showPinningCommands: true,
     hideColumnResizeByContentCommand: false,
     hideForceFitButton: false,
     hideSyncResizeButton: true,
@@ -160,7 +164,6 @@ describe('HeaderMenu Plugin', () => {
       buttonCssClass: null,
       buttonImage: null,
       hideColumnHideCommand: false,
-      hidePinColumnCommand: true,
       hideSortCommands: false,
       minWidth: 100,
       title: '',
@@ -284,7 +287,7 @@ describe('HeaderMenu Plugin', () => {
 
     it('should populate a Header Menu when cell is being rendered and a 2nd button item visibility & usability callbacks returns true', () => {
       plugin.dispose();
-      plugin.init({ hidePinningColumnsCommand: false, hideFilterCommand: false });
+      plugin.init({ hideFilterCommand: false });
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
 
@@ -682,7 +685,7 @@ describe('HeaderMenu Plugin', () => {
         sharedService.slickGrid = gridStub;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hidePinningColumnsCommand: false, hideColumnResizeByContentCommand: true },
+          headerMenu: { showPinningCommands: true, hideColumnResizeByContentCommand: true },
         });
         vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
         vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
@@ -1274,7 +1277,6 @@ describe('HeaderMenu Plugin', () => {
         const getColumnsSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(testColumns);
 
         plugin.init();
-        plugin.addonOptions = { hidePinColumnCommand: false };
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: testColumns, grid: gridStub }, eventData, gridStub);
         gridStub.onHeaderCellRendered.notify({ column: testColumns[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
         (headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement).dispatchEvent(
@@ -1329,7 +1331,6 @@ describe('HeaderMenu Plugin', () => {
         const getColumnsSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(testColumns);
 
         plugin.init();
-        plugin.addonOptions = { hidePinColumnCommand: false };
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: testColumns, grid: gridStub }, eventData, gridStub);
         gridStub.onHeaderCellRendered.notify({ column: testColumns[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
         (headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement).dispatchEvent(
@@ -1348,6 +1349,21 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       });
 
+      it('should automatically offer pinning commands when the pinning option is defined', () => {
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
+          headerMenu: { ...gridOptionsMock.headerMenu, showPinningCommands: undefined },
+          pinning: { columns: { left: [] } },
+        });
+        const testColumns = [{ ...columnsMock[1], header: undefined }] as Column[];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(testColumns);
+
+        plugin.init();
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: testColumns, grid: gridStub }, eventData, gridStub);
+
+        expect(getPinningCommand(testColumns[0], 'pin-left')).toBeTruthy();
+      });
+
       it('should offer bulk pinning commands around non-pinnable columns', () => {
         const testColumns = [
           { ...columnsMock[0], header: undefined },
@@ -1358,7 +1374,6 @@ describe('HeaderMenu Plugin', () => {
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
 
         plugin.init();
-        plugin.addonOptions = { hidePinColumnCommand: false };
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: testColumns, grid: gridStub }, eventData, gridStub);
         gridStub.onHeaderCellRendered.notify({ column: testColumns[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
         (headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement).dispatchEvent(
@@ -1383,7 +1398,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           headerMenu: { ...gridOptionsMock.headerMenu, hideCommands: ['pin-columns-right'] },
         });
-        plugin.init({ hidePinColumnCommand: false });
+        plugin.init();
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
 
@@ -1412,12 +1427,13 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       });
 
-      it('should expect menu related to Pin Columns when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
+      it('should offer Pin Columns and expect grid "setOptions" method to be called with current column position', async () => {
         vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: {
+            showPinningCommands: true,
             hideCommands: ['column-resize-by-content', 'hide-column'],
           },
         });
@@ -1429,69 +1445,25 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns-left"]') as HTMLDivElement;
-        const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
-        const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Left',
-            titleKey: 'PIN_COLUMNS_LEFT',
-            command: 'pin-columns-left',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Right',
-            titleKey: 'PIN_COLUMNS_RIGHT',
-            command: 'pin-columns-right',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
-        ]);
-        expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
-        expect(commandLabelElm.textContent).toBe('Pin Columns Left');
+        const commandItem = getPinningCommand(columnsMock[1], 'pin-columns-left')!;
+        expect(commandItem.iconCssClass).toBe('mdi mdi-pin-outline');
+        expect(commandItem.title).toBe('Pin Columns Left');
         expect((plugin as any).getPinnableColumnReferences(columnsMock[1], 'right')).toBe(2);
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
-        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Épingler les colonnes à gauche',
-            titleKey: 'PIN_COLUMNS_LEFT',
-            command: 'pin-columns-left',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Épingler les colonnes à droite',
-            titleKey: 'PIN_COLUMNS_RIGHT',
-            command: 'pin-columns-right',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
-        ]);
-
-        commandDivElm.dispatchEvent(new Event('click')); // execute command
+        expect(commandItem.title).toBe('Épingler les colonnes à gauche');
+        commandItem.action?.(new SlickEventData(), { column: columnsMock[1] } as any);
         expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 1 } } }, false, true);
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
-      it('should expect menu related to Pin Columns when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
+      it('should offer Pin Columns and expect grid "setOptions" method to be called with current column position', async () => {
         vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hidePinningColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { showPinningCommands: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
@@ -1501,72 +1473,26 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns-left"]') as HTMLDivElement;
-        const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
-        const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Left',
-            titleKey: 'PIN_COLUMNS_LEFT',
-            command: 'pin-columns-left',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Right',
-            titleKey: 'PIN_COLUMNS_RIGHT',
-            command: 'pin-columns-right',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
-        ]);
-        expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
-        expect(commandLabelElm.textContent).toBe('Pin Columns Left');
+        const commandItem = getPinningCommand(columnsMock[1], 'pin-columns-left')!;
+        expect(commandItem.iconCssClass).toBe('mdi mdi-pin-outline');
+        expect(commandItem.title).toBe('Pin Columns Left');
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
-        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Épingler les colonnes à gauche',
-            titleKey: 'PIN_COLUMNS_LEFT',
-            command: 'pin-columns-left',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Épingler les colonnes à droite',
-            titleKey: 'PIN_COLUMNS_RIGHT',
-            command: 'pin-columns-right',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
-        ]);
-
-        commandDivElm.dispatchEvent(new Event('click')); // execute command
+        expect(commandItem.title).toBe('Épingler les colonnes à gauche');
+        commandItem.action?.(new SlickEventData(), { column: columnsMock[1] } as any);
         expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 1 } } }, false, true);
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
-      it('should expect menu related to Unpin All Columns when "hidePinningColumnsCommand" is disabled and column is already pinned to that index and then also expect grid "setOptions" method to be called with current column position', async () => {
+      it('should offer Unpin All Columns when a column is already pinned to that index and expect grid "setOptions" method to be called with current column position', async () => {
         vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          // @deprecated `hideXYZ`, replace by `hideCommands` in next major
-          headerMenu: { hidePinningColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { showPinningCommands: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
           pinning: { columns: { left: 1 } },
         });
-        plugin.addonOptions = { hidePinColumnCommand: false };
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -1602,15 +1528,14 @@ describe('HeaderMenu Plugin', () => {
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
-      it('should expect menu related to Pin Columns when "hidePinningColumnsCommand" is disabled and also expect grid "setOptions" method to be called with pinned column of -1 because the column found is not visible', () => {
+      it('should offer Pin Columns and expect grid "setOptions" method to be called with pinned column of -1 because the column found is not visible', () => {
         sharedService.hasColumnsReordered = true;
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
         vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          // @deprecated `hideXYZ`, replace by `hideCommands` in next major
-          headerMenu: { hidePinningColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { showPinningCommands: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
         vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ pinning: { columns: { left: [] } } } as GridOption);
 
@@ -1619,30 +1544,9 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns-left"]') as HTMLDivElement;
-        expect(columnsMock[2].header!.menu!.commandItems!).toEqual([
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Left',
-            titleKey: 'PIN_COLUMNS_LEFT',
-            command: 'pin-columns-left',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Right',
-            titleKey: 'PIN_COLUMNS_RIGHT',
-            command: 'pin-columns-right',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
-        ]);
-
-        commandDivElm.dispatchEvent(new Event('click')); // execute command
+        const commandItem = getPinningCommand(columnsMock[2], 'pin-columns-left')!;
+        expect(commandItem.title).toBe('Pin Columns Left');
+        commandItem.action?.(new SlickEventData(), { column: columnsMock[2] } as any);
         expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 2 } } }, false, true);
         expect(updateColumnSpy).toHaveBeenCalled();
       });
@@ -1657,9 +1561,8 @@ describe('HeaderMenu Plugin', () => {
         sharedService.hasColumnsReordered = true;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          // @deprecated `hideXYZ`, replace by `hideCommands` in next major
           headerMenu: {
-            hidePinningColumnsCommand: false,
+            showPinningCommands: true,
             hideColumnHideCommand: true,
             hideColumnResizeByContentCommand: true,
           },
@@ -1671,29 +1574,8 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns-left"]') as HTMLDivElement;
-        expect((originalColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Left',
-            titleKey: 'PIN_COLUMNS_LEFT',
-            command: 'pin-columns-left',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Right',
-            titleKey: 'PIN_COLUMNS_RIGHT',
-            command: 'pin-columns-right',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
-        ]);
-        expect(commandDivElm).toBeFalsy();
+        expect(getPinningCommand(originalColumnDefinitions[1], 'pin-columns-left')).toBeTruthy();
+        expect(gridContainerDiv.querySelector('[data-command="pin-columns-left"]')).toBeFalsy();
       });
 
       it('should expect menu to show and "onAfterMenuShow" callback to run when defined', () => {
@@ -1701,8 +1583,13 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableFiltering: true,
-          // @deprecated `hideXYZ`, replace by `hideCommands` in next major
-          headerMenu: { hideFilterCommand: false, hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: {
+            showPinningCommands: true,
+            hideFilterCommand: false,
+            hideCommands: ['pin-column', 'pin-left', 'pin-right', 'pin-columns-left', 'pin-columns-right', 'unpin-column', 'unpin-columns'],
+            hideColumnHideCommand: true,
+            hideColumnResizeByContentCommand: true,
+          },
         });
 
         plugin.init({ onAfterMenuShow: () => false });
@@ -1747,7 +1634,11 @@ describe('HeaderMenu Plugin', () => {
       it('should have the commands "column-resize-by-content" and "hide-column" in the header menu list and also expect the command to execute necessary callback', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hidePinningColumnsCommand: true, hideColumnResizeByContentCommand: false },
+          headerMenu: {
+            showPinningCommands: true,
+            hideCommands: ['pin-column', 'pin-left', 'pin-right', 'pin-columns-left', 'pin-columns-right', 'unpin-column', 'unpin-columns'],
+            hideColumnResizeByContentCommand: false,
+          },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate any column menus
@@ -1804,6 +1695,10 @@ describe('HeaderMenu Plugin', () => {
         const setValueMock = vi.fn();
         const filterMock = { columnDef: columnsMock[0], setValues: setValueMock } as unknown as Filter;
         vi.spyOn(filterServiceStub, 'getFiltersMetadata').mockReturnValueOnce([filterMock]);
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
+          headerMenu: { ...gridOptionsMock.headerMenu, hideCommands: ['pin-column'] },
+        });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate any column menus
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -1814,24 +1709,6 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         const headerMenuExpected = [
-          {
-            _orgTitle: '',
-            command: 'pin-columns-left',
-            iconCssClass: 'mdi mdi-pin-outline',
-            positionOrder: 46,
-            title: 'Pin Columns Left',
-            titleKey: 'PIN_COLUMNS_LEFT',
-            action: expect.any(Function),
-          },
-          {
-            _orgTitle: '',
-            command: 'pin-columns-right',
-            iconCssClass: 'mdi mdi-pin-outline',
-            positionOrder: 46,
-            title: 'Pin Columns Right',
-            titleKey: 'PIN_COLUMNS_RIGHT',
-            action: expect.any(Function),
-          },
           { command: 'show-negative-numbers', cssClass: 'mdi mdi-lightbulb-on', tooltip: 'Highlight negative numbers.' },
           {
             _orgTitle: '',
@@ -1842,7 +1719,6 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'COLUMN_RESIZE_BY_CONTENT',
             action: expect.any(Function),
           },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
           {
             _orgTitle: '',
             command: 'filter-shortcuts-root-menu',
@@ -1902,7 +1778,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableSorting: true,
           enableColumnResizeOnDoubleClick: false,
-          headerMenu: { hideColumnHideCommand: false, hideSortCommands: true },
+          headerMenu: { showPinningCommands: true, hideColumnHideCommand: false, hideSortCommands: true, hideCommands: ['pin-column'] },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate hide column menu
@@ -1915,25 +1791,6 @@ describe('HeaderMenu Plugin', () => {
         const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
 
         const headerMenuExpected = [
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Left',
-            titleKey: 'PIN_COLUMNS_LEFT',
-            command: 'pin-columns-left',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Right',
-            titleKey: 'PIN_COLUMNS_RIGHT',
-            command: 'pin-columns-right',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-close',
@@ -1959,7 +1816,13 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableFiltering: true,
-          headerMenu: { hideFilterCommand: false, hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: {
+            showPinningCommands: true,
+            hideFilterCommand: false,
+            hideCommands: ['pin-column', 'pin-left', 'pin-right', 'pin-columns-left', 'pin-columns-right', 'unpin-column', 'unpin-columns'],
+            hideColumnHideCommand: true,
+            hideColumnResizeByContentCommand: true,
+          },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear filter menu
@@ -1997,7 +1860,12 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableSorting: true,
-          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: {
+            showPinningCommands: true,
+            hideCommands: ['pin-column', 'pin-left', 'pin-right', 'pin-columns-left', 'pin-columns-right', 'unpin-column', 'unpin-columns'],
+            hideColumnHideCommand: true,
+            hideColumnResizeByContentCommand: true,
+          },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
@@ -2086,9 +1954,8 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableSorting: true,
-          headerMenu: { ...gridOptionsMock.headerMenu, hidePinningColumnsCommand: false },
+          headerMenu: { ...gridOptionsMock.headerMenu },
         });
-        plugin.addonOptions = { ...plugin.addonOptions, hidePinColumnCommand: false };
 
         const column = { id: 'ordered-field', field: 'ordered-field', name: 'Ordered Field', sortable: true } as Column;
         const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
@@ -2108,7 +1975,7 @@ describe('HeaderMenu Plugin', () => {
         ]);
       });
 
-      it('should expect menu related to Pin Columns when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called', () => {
+      it('should offer Pin Columns and expect "updateColumns" to be called', () => {
         const originalColumnDefinitions = [
           { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', width: 75 },
@@ -2122,7 +1989,7 @@ describe('HeaderMenu Plugin', () => {
         sharedService.hasColumnsReordered = false;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hidePinningColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { showPinningCommands: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: originalColumnDefinitions, grid: gridStub }, eventData as any, gridStub);
@@ -2130,35 +1997,14 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns-left"]') as HTMLDivElement;
-        expect((originalColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Left',
-            titleKey: 'PIN_COLUMNS_LEFT',
-            command: 'pin-columns-left',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Right',
-            titleKey: 'PIN_COLUMNS_RIGHT',
-            command: 'pin-columns-right',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
-        ]);
-
-        commandDivElm.dispatchEvent(new Event('click')); // execute command
+        const commandItem = getPinningCommand(originalColumnDefinitions[0], 'pin-columns-left')!;
+        expect(commandItem.title).toBe('Pin Columns Left');
+        commandItem.action?.(new SlickEventData(), { column: originalColumnDefinitions[0] } as any);
         expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 0 } } }, false, true);
         expect(updateColumnSpy).toHaveBeenCalled();
       });
 
-      it('should expect menu related to Pin Columns when "hidePinningColumnsCommand" is disabled and also expect "updateColumns" to be called when hasColumnsReordered returns true', () => {
+      it('should offer Pin Columns and expect "updateColumns" to be called when hasColumnsReordered returns true', () => {
         const originalColumnDefinitions = [
           { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', width: 75 },
@@ -2176,7 +2022,7 @@ describe('HeaderMenu Plugin', () => {
         sharedService.hasColumnsReordered = true;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hidePinningColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { showPinningCommands: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: visibleColumnDefinitions, grid: gridStub }, eventData as any, gridStub);
@@ -2184,30 +2030,9 @@ describe('HeaderMenu Plugin', () => {
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="pin-columns-left"]') as HTMLDivElement;
-        expect((visibleColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Left',
-            titleKey: 'PIN_COLUMNS_LEFT',
-            command: 'pin-columns-left',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-pin-outline',
-            title: 'Pin Columns Right',
-            titleKey: 'PIN_COLUMNS_RIGHT',
-            command: 'pin-columns-right',
-            positionOrder: 46,
-            action: expect.any(Function),
-          },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
-        ]);
-
-        commandDivElm.dispatchEvent(new Event('click')); // execute command
+        const commandItem = getPinningCommand(visibleColumnDefinitions[0], 'pin-columns-left')!;
+        expect(commandItem.title).toBe('Pin Columns Left');
+        commandItem.action?.(new SlickEventData(), { column: visibleColumnDefinitions[0] } as any);
         expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 1 } } }, false, true);
         expect(updateColumnSpy).toHaveBeenCalled();
       });
@@ -2226,7 +2051,12 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableSorting: true,
-          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: {
+            showPinningCommands: true,
+            hideCommands: ['pin-column', 'pin-left', 'pin-right', 'pin-columns-left', 'pin-columns-right', 'unpin-column', 'unpin-columns'],
+            hideColumnHideCommand: true,
+            hideColumnResizeByContentCommand: true,
+          },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -2288,7 +2118,12 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableSorting: true,
-          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: {
+            showPinningCommands: true,
+            hideCommands: ['pin-column', 'pin-left', 'pin-right', 'pin-columns-left', 'pin-columns-right', 'unpin-column', 'unpin-columns'],
+            hideColumnHideCommand: true,
+            hideColumnResizeByContentCommand: true,
+          },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -2350,7 +2185,12 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableSorting: true,
-          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: {
+            showPinningCommands: true,
+            hideCommands: ['pin-column', 'pin-left', 'pin-right', 'pin-columns-left', 'pin-columns-right', 'unpin-column', 'unpin-columns'],
+            hideColumnHideCommand: true,
+            hideColumnResizeByContentCommand: true,
+          },
         });
 
         // cancel onBeforeSort event
@@ -2388,7 +2228,12 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableSorting: true,
           backendServiceApi: undefined,
-          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: {
+            showPinningCommands: true,
+            hideCommands: ['pin-column', 'pin-left', 'pin-right', 'pin-columns-left', 'pin-columns-right', 'unpin-column', 'unpin-columns'],
+            hideColumnHideCommand: true,
+            hideColumnResizeByContentCommand: true,
+          },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -2419,7 +2264,12 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableSorting: true,
           backendServiceApi: undefined,
-          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: {
+            showPinningCommands: true,
+            hideCommands: ['pin-column', 'pin-left', 'pin-right', 'pin-columns-left', 'pin-columns-right', 'unpin-column', 'unpin-columns'],
+            hideColumnHideCommand: true,
+            hideColumnResizeByContentCommand: true,
+          },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
@@ -2450,7 +2300,11 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableSorting: true,
           backendServiceApi: undefined,
-          headerMenu: { hidePinningColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: {
+            hideCommands: ['pin-column', 'pin-left', 'pin-right', 'pin-columns-left', 'pin-columns-right', 'unpin-column', 'unpin-columns'],
+            hideColumnHideCommand: true,
+            hideColumnResizeByContentCommand: true,
+          },
         });
 
         // cancel onBeforeSort event

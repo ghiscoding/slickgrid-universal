@@ -353,7 +353,7 @@ describe('Example 11 - Batch Editing', () => {
     it('should undo last edit and expect the date editor to be opened as well when clicking the associated last undo with editor button', () => {
       cy.get('[data-test=undo-open-editor-btn]').click();
 
-      cy.get('.vc').should('exist');
+      cy.get('.vc:visible').should('exist');
 
       cy.get('.unsaved-editable-field').should('have.length', 12);
 
@@ -366,7 +366,7 @@ describe('Example 11 - Batch Editing', () => {
     it('should undo last edit and expect the date editor to NOT be opened when clicking undo last edit button', () => {
       cy.get('[data-test=undo-last-edit-btn]').click();
 
-      cy.get('.vc').should('not.exist');
+      cy.get('.vc:visible').should('not.exist');
 
       cy.get('.unsaved-editable-field').should('have.length', 11);
       cy.get('[data-row=2] .slick-cell:nth(6)')
@@ -595,11 +595,9 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.search-filter.filter-finish.filled input').click({ force: true });
 
-      cy.get('.vc:visible');
+      cy.get('.vc:visible').should('have.length', 1).find('[data-vc-date-selected]').should('have.length', 1);
 
-      cy.get('[data-vc-date-selected]').should('have.length', 1);
-
-      cy.get('[data-vc-date-selected]').should('have.text', '1');
+      cy.get('.vc:visible').find('[data-vc-date-selected]').should('have.text', '1');
 
       cy.get('.slick-column-name').contains('Finish').find('~ .slick-sort-indicator.slick-sort-indicator-asc').should('have.length', 1);
 
@@ -719,7 +717,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.search-filter.filter-finish').should('not.have.class', 'filled').click();
 
-      cy.get('[data-vc-date-selected]').should('have.length', 0);
+      cy.get('.vc:visible [data-vc-date-selected]').should('have.length', 0);
 
       cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
 

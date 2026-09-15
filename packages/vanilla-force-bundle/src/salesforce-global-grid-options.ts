@@ -79,10 +79,7 @@ export const SalesforceGlobalGridOptions = {
     hideForceFitButton: true,
   },
   headerMenu: {
-    hidePinColumnCommand: false,
-    hidePinningColumnsCommand: false,
-    iconSortAscCommand: 'mdi mdi-arrow-up',
-    iconSortDescCommand: 'mdi mdi-arrow-down',
+    showPinningCommands: true,
   },
   preventDocumentFragmentUsage: true,
   sanitizer: (dirtyHtml: string) =>

@@ -69,8 +69,7 @@ export class Example14 {
         },
       },
       headerMenu: {
-        hidePinColumnCommand: false,
-        hidePinningColumnsCommand: false,
+        showPinningCommands: true,
       },
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
@@ -117,7 +116,7 @@ export class Example14 {
       },
       externalResources: [new ExcelExportService(), new PdfExportService()],
       gridMenu: { hideClearPinningCommand: false },
-      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
+      headerMenu: { showPinningCommands: true },
     };
   }
 

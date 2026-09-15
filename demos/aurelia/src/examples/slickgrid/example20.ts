@@ -185,7 +185,7 @@ export class Example20 {
       enableContextMenu: true,
       contextMenu: this.getContextMenuOptions(),
       gridMenu: { hideClearPinningCommand: false },
-      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
+      headerMenu: { showPinningCommands: true },
     };
   }
   getContextMenuOptions(): any {

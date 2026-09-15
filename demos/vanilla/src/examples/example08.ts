@@ -75,9 +75,9 @@ export default class Example08 {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
       },
       headerMenu: {
-        hidePinColumnCommand: false,
-        hidePinningColumnsCommand: false,
+        showPinningCommands: true,
       },
+
       externalResources: [new TextExportService(), new ExcelExportService(), new PdfExportService()],
       enableCellNavigation: true,
       enableColumnReorder: false,
@@ -152,7 +152,7 @@ export default class Example08 {
       rowHeight: 33,
       showCustomFooter: true,
       gridMenu: { hideClearPinningCommand: false },
-      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
+      headerMenu: { showPinningCommands: true },
 
       // enable the filtering but hide the user filter row since we use our own single filter
       enableFiltering: true,

@@ -156,8 +156,7 @@ export default class Example17 {
       rowHeight: 35,
       // enableExcelCopyBuffer: true,
       headerMenu: {
-        hidePinColumnCommand: false,
-        hidePinningColumnsCommand: false,
+        showPinningCommands: true,
       },
     };
 

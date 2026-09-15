@@ -63,12 +63,11 @@ const Example14: React.FC = () => {
           getRowMetadata: (item: any, row: number) => renderDifferentColspan(item, row),
         },
       },
-      headerMenu: {
-        hidePinColumnCommand: false,
-        hidePinningColumnsCommand: false,
-      },
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
+      },
+      headerMenu: {
+        showPinningCommands: true,
       },
     };
 
@@ -113,7 +112,7 @@ const Example14: React.FC = () => {
       },
       externalResources: [new ExcelExportService(), new PdfExportService()],
       gridMenu: { hideClearPinningCommand: false },
-      headerMenu: { hidePinColumnCommand: false, hidePinningColumnsCommand: false },
+      headerMenu: { showPinningCommands: true },
     };
 
     setColumns2(columns2);

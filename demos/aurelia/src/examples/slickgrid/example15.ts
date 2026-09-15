@@ -196,8 +196,7 @@ export class Example15 {
         hideClearPinningCommand: false,
       },
       headerMenu: {
-        hidePinColumnCommand: false,
-        hidePinningColumnsCommand: false,
+        showPinningCommands: true,
       },
       enablePagination: true,
       pagination: {

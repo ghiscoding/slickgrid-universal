@@ -75,8 +75,7 @@ const Example15: React.FC = () => {
         hideClearPinningCommand: false,
       },
       headerMenu: {
-        hidePinColumnCommand: false,
-        hidePinningColumnsCommand: false,
+        showPinningCommands: true,
       },
       enablePagination: true,
       pagination: {

@@ -31,12 +31,6 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Clear Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideFilterCommand?: boolean;
 
-  /** Defaults to true (opt-in feature), which hides the bulk pin-columns command in the Header Menu. */
-  hidePinningColumnsCommand?: boolean;
-
-  /** Defaults to true (opt-in feature), which hides the "Column Pinning" submenu. */
-  hidePinColumnCommand?: boolean;
-
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide Sort (Asc/Desc & Clear Sort) commands in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideSortCommands?: boolean;
 
@@ -90,6 +84,9 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
 
   /** Minimum width that the drop menu will have */
   minWidth?: number;
+
+  /** Show the Column Pinning commands in this Header Menu. Defaults to false unless `GridOption.pinning` is defined. */
+  showPinningCommands?: boolean;
 
   /** CSS class that can be added on the right side of a sub-item parent (typically a chevron-right icon) */
   subItemChevronClass?: string;
