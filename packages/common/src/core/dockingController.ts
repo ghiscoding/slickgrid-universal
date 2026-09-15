@@ -14,6 +14,7 @@ import type {
 const DEFAULT_OPTIONS: Required<DockingOption> = {
   maxColumnViewportWidthPercent: 60,
   maxRowViewportHeightPercent: 60,
+  minCenterRowCount: 3,
   overflowStrategy: 'conveyor',
   stickyHysteresis: 2,
 };

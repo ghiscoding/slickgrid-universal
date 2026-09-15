@@ -3393,7 +3393,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // callbacks can finish after destruction and must not attempt to update a null container.
     this.initialized = false;
     emptyElement(this._container);
-    this._container.style.minHeight = '';
+    this._container?.style.setProperty('min-height', '');
     this.removeCssRules();
 
     if (shouldDestroyAllElements) {
@@ -6187,8 +6187,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           ? this._options.preHeaderPanelHeight! + this.getVBoxDelta(this._preHeaderPanelScroller)
           : 0;
       const columnNamesH = this._options.showColumnHeader ? Utils.toFloat(Utils.height(this._headerScroller[0]) as number) : 0;
+      // `min-height` can make the rendered box taller than its inline `height`.
+      // Measure the effective box so docking budgets are reflected in the child viewport.
+      const containerHeight = Math.max(Utils.toFloat(style.height), this._container.getBoundingClientRect().height || 0);
       this.viewportH =
-        Utils.toFloat(style.height) -
+        containerHeight -
         Utils.toFloat(style.paddingTop) -
         Utils.toFloat(style.paddingBottom) -
         this.topPanelH -
@@ -6372,7 +6375,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
     const viewportWidth = this._viewportNode.clientWidth;
     const overlayWidth = Math.max(this.canvasWidth, this.dockingLayout.contentWidth, viewportWidth);
-    const rightInset = overlayWidth - scrollLeft - viewportWidth + this.getDockingOverlayScrollbarWidth();
+    const overlayScrollbarWidth = this.viewportHasVScroll && !this.scrollbarDimensions?.width ? DEFAULT_DOCKING_OVERLAY_SCROLLBAR_WIDTH : 0;
+    const rightInset = overlayWidth - scrollLeft - viewportWidth + overlayScrollbarWidth;
     this._dockingOverlay.style.clipPath = `inset(0 ${rightInset}px 0 ${scrollLeft}px)`;
   }
 
@@ -6401,15 +6405,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Firefox/Linux may report zero for overlay scrollbar metrics. Keep the proxy track measurable. */
   protected getDockingScrollbarHeight(): number {
-    if (this.scrollbarDimensions) {
-      return this.scrollbarDimensions.height || DEFAULT_DOCKING_SCROLLBAR_HEIGHT;
-    }
-    return this.measureScrollbar().height || DEFAULT_DOCKING_SCROLLBAR_HEIGHT;
-  }
-
-  /** Reserve Firefox/Linux's unmeasurable overlay scrollbar from docked rows. */
-  protected getDockingOverlayScrollbarWidth(): number {
-    return this.viewportHasVScroll && !this.scrollbarDimensions?.width ? DEFAULT_DOCKING_OVERLAY_SCROLLBAR_WIDTH : 0;
+    return this.scrollbarDimensions
+      ? this.scrollbarDimensions.height || DEFAULT_DOCKING_SCROLLBAR_HEIGHT
+      : this.measureScrollbar().height || DEFAULT_DOCKING_SCROLLBAR_HEIGHT;
   }
 
   /**

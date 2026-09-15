@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness — implementation progress
 
-Last updated: 2026-09-15 (Firefox/Linux overlay-scrollbar findings and visual fixes, profiler-guided scroll-offset optimization, consolidated remaining-work audit, and user-confirmed green Vanilla/framework Cypress CI)
+Last updated: 2026-09-15 (Firefox/Linux overlay-scrollbar findings and visual fixes, profiler-guided scroll-offset optimization, minCenterRowCount resize fix, and user-confirmed green Vanilla/framework Cypress CI)
 
 ## Goal
 
@@ -371,33 +371,18 @@ future work; none currently requires a pinning/sticky runtime change.
   responsibility.
 - [x] Decided hierarchical sticky-row push-off/priority behavior is a separate future product
   feature, not part of v1. v11 uses natural-order stacking plus conveyor/clamp overflow.
-- [ ] **UNRESOLVED — `docking.minCenterRowCount` does not reliably reserve center rows in the
-  Vanilla demos.** Added `docking.minCenterRowCount` (default `3`) plus
-  `SlickGrid.getEstimatedRowHeight()` and `SlickGrid.enforceMinCenterRowBudget()`
-  (`packages/common/src/core/slickGrid.ts`): at the top of `resizeCanvas()`, the grid now clears
-  any previously applied `container.style.minHeight`, measures `viewportH`, and — if permanent
-  top/bottom pinned-row height plus `minCenterRowCount * getEstimatedRowHeight()` exceeds
-  `viewportH` — sets `container.style.minHeight` to grow the container by the shortfall, then
-  re-measures. `destroy()` clears that inline `min-height` again. This is unit-tested in
-  `slickGrid-pinning.spec.ts` (`reserves docking.minCenterRowCount rows of breathing room...`,
-  `converts docking.minCenterRowCount to pixels using the average measured height...`) and those
-  tests pass, but the user confirmed in the live Vanilla Example 04 demo that shrinking the
-  browser still does not reserve visible center rows — the fix is not working end-to-end.
-  Root cause identified but not yet fixed: `ResizerService.resizeGridWithDimensions()`
-  (`packages/common/src/services/resizer.service.ts`) independently and unconditionally sets
-  `this._gridDomElm.style.height = ${newHeight}px` (the same DOM node as `SlickGrid._container`)
-  on every resize pass, computed from `autoResize` (window/container available space, with
-  `autoResize.minHeight: 250` as its own floor — see `GlobalGridOptions.autoResize` in
-  `packages/common/src/global-grid-options.ts`), and calls `grid.resizeCanvas()` right after. That
-  external `style.height` write is not aware of `docking.minCenterRowCount` and keeps re-imposing
-  a small height, fighting the grid's own `min-height` override; the two height-management paths
-  (`ResizerService` owning `style.height`, `SlickGrid.enforceMinCenterRowBudget()` owning
-  `style.minHeight`) were never reconciled. A real fix likely needs `ResizerService` itself to
-  account for the configured docking row budget (e.g. ask the grid for a minimum required height
-  before computing `newHeight`, or skip shrinking below it) rather than SlickGrid unilaterally
-  fighting an external resize owner over the same element. Left as-is (current code kept, not
-  reverted) per user instruction; revisit `resizer.service.ts` coordination before relying on this
-  option in production.
+- [x] Fixed `docking.minCenterRowCount` end-to-end for auto-resized Vanilla grids. The grid still
+  clears and recomputes its `min-height` budget during `resizeCanvas()`, but `getViewportHeight()`
+  now measures the effective rendered container height (the larger of inline `height` and the
+  `getBoundingClientRect().height` produced by `min-height`). This lets the expanded container
+  size the child viewport correctly instead of continuing to calculate from the smaller inline
+  height that `ResizerService.resizeGridWithDimensions()` writes on each pass. The controller's
+  required defaults also now include `minCenterRowCount: 3`, fixing the strict TypeScript build.
+  Unit coverage remains in `slickGrid-pinning.spec.ts`; the user confirmed the live Example 04
+  UI now reserves the center rows. Note for future debugging: a watch server that stops rebuilding
+  after a TypeScript error can make this fix appear absent until the compile error is resolved.
+- [x] A post-Firefox cleanup inlined the single-use overlay-scrollbar-width fallback and simplified
+  the proxy scrollbar-height fallback without changing their metric-based behavior (`-5` production LOC).
 - [ ] Optional validation: run targeted UX trials for sticky-row transitions, fast scrolling, and
   changing visible sticky sets. CI verifies correctness, while manual trials can assess feel and
   transition comfort.
