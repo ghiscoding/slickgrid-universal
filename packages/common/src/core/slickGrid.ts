@@ -117,6 +117,8 @@ import { Draggable, MouseWheel, Resizable } from './slickInteractions.js';
 import { applyHtmlToElement, runOptionalHtmlSanitizer } from './utils.js';
 
 const COLUMN_AUTOSCROLL_DISTANCE_PX = 10;
+const DEFAULT_DOCKING_SCROLLBAR_HEIGHT = 15;
+const DEFAULT_DOCKING_OVERLAY_SCROLLBAR_WIDTH = 8;
 const COLUMN_AUTOSCROLL_INTERVAL_MS = 30;
 const RESIZE_AUTOSCROLL_BROWSER_EDGE_PX = 1;
 const RESIZE_AUTOSCROLL_BROWSER_EDGE_LEFT_DELAY_MS = 300;
@@ -1117,8 +1119,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /** Get Grid Canvas Node DOM Element */
-  getCanvasNode(columnIdOrIdx?: number | string, rowIndex?: number): HTMLDivElement {
-    return this._getContainerElement(this.getCanvases(), columnIdOrIdx, rowIndex) as HTMLDivElement;
+  getCanvasNode(_columnIdOrIdx?: number | string, _rowIndex?: number): HTMLDivElement {
+    return this._canvasNode;
   }
 
   /** Get the canvas DOM element */
@@ -1144,8 +1146,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /** Get the Viewport DOM node element */
-  getViewportNode(columnIdOrIdx?: number | string, rowIndex?: number): HTMLElement | undefined {
-    return this._getContainerElement(this.getViewports(), columnIdOrIdx, rowIndex);
+  getViewportNode(_columnIdOrIdx?: number | string, _rowIndex?: number): HTMLElement | undefined {
+    return this._viewportNode;
   }
 
   /** Get all the Viewport node elements */
@@ -1169,29 +1171,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._activeViewportNode ||
       this._viewportNode;
     return this._activeViewportNode;
-  }
-
-  protected _getContainerElement(
-    targetContainers: HTMLElement[],
-    columnIdOrIdx?: number | string,
-    rowIndex?: number
-  ): HTMLElement | undefined {
-    if (!targetContainers) {
-      return;
-    }
-    if (!columnIdOrIdx) {
-      columnIdOrIdx = 0;
-    }
-    if (!rowIndex) {
-      rowIndex = 0;
-    }
-
-    const idx = typeof columnIdOrIdx === 'number' ? columnIdOrIdx : this.getColumnIndex(columnIdOrIdx);
-
-    const isBottomSide = this.dockingByRow.get(rowIndex)?.band === 'bottom';
-    const isRightSide = this.getColumnDockingBand(idx) === 'right';
-
-    return targetContainers[(isBottomSide ? 2 : 0) + (isRightSide ? 1 : 0)];
   }
 
   protected measureScrollbar(): { width: number; height: number } {
@@ -1286,34 +1265,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Validate that pinned columns fit within the available grid width.
-   * @param pinnedIndexes the columns to validate
-   *  - if `undefined` it will do the condition check and never alert more than once
-   *  - if `true` it will do the condition check and always alert even if it was called before
-   *  - if `false` it will do the condition check but always skip the alert
-   */
-  protected validatePinnedColumnWidth(pinnedIndexes: Map<number, DockingSide>, forceAlert = false, columns: C[] = this.columns): boolean {
-    const widths = { left: 0, right: 0 };
-    pinnedIndexes.forEach((side, index) => {
-      const column = columns[index];
-      if (!column || column.hidden) {
-        return;
-      }
-      const { minWidth = 0, maxWidth = 0, width = this._options.defaultColumnWidth! } = column;
-      widths[side] += Math.min(maxWidth || Number.POSITIVE_INFINITY, Math.max(width, minWidth));
-    });
-    const viewportWidth = this._viewportNode?.clientWidth || this.getViewportInnerWidth() || Utils.width(this._container) || 0;
-    if (viewportWidth > 0 && widths.left + widths.right >= viewportWidth && !this._options.skipPinningValidation) {
-      if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningWidthCallback) {
-        this._options.invalidColumnPinningWidthCallback(this._options.invalidColumnPinningWidthMessage!);
-        this._invalidPinningAlerted = true;
-      }
-      return false;
-    }
-    return true;
-  }
-
-  /**
    * Validate that a pinning change leaves at least one visible center column.
    * @param {Number|String} [columnId] column id
    * @param {Boolean} [forceAlert] tri-state flag to alert when pinning is invalid
@@ -1323,24 +1274,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    *  - if `false` it will do the condition check but always skip the alert
    */
   validateColumnPinning(columnId?: number | string, forceAlert = false, columns: C[] = this.columns): boolean {
-    const hasColummnIdArg = columnId !== undefined;
-    const prospectiveColumns = hasColummnIdArg
-      ? columns.map((column) => (column?.id === columnId && !column.hidden ? { ...column, hidden: true } : column))
-      : columns;
-    const pinnedIndexes = this.getPinnedColumnIndexes(this._options.pinning?.columns);
-    if (!this.validateColspanPinningSequence(pinnedIndexes, forceAlert, prospectiveColumns)) {
-      return false;
-    }
-    const visibleIndexes = this.getVisibleColumnIndexes(prospectiveColumns);
-    const hasCenterColumn = visibleIndexes.some((index) => !pinnedIndexes.has(index));
-    if (!hasCenterColumn && visibleIndexes.length && !this._options.skipPinningValidation) {
-      if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningPickerCallback) {
-        this._options.invalidColumnPinningPickerCallback(this._options.invalidColumnPinningPickerMessage!);
-        this._invalidPinningAlerted = true;
-      }
-      return false;
-    }
-    return this.validatePinnedColumnWidth(pinnedIndexes, forceAlert, prospectiveColumns);
+    const prospectiveColumns =
+      columnId !== undefined
+        ? columns.map((column) => (column?.id === columnId && !column.hidden ? { ...column, hidden: true } : column))
+        : columns;
+    return this.validatePinnedColumnIndexes(this.getPinnedColumnIndexes(this._options.pinning?.columns), forceAlert, prospectiveColumns);
   }
 
   protected updateCanvasWidth(forceColumnWidthsUpdate?: boolean): void {
@@ -1429,17 +1367,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return this.usesDockingChromeRegions() ? this.getDockingRenderedWidth() : this.headersWidthL;
   }
 
-  protected getDockingRenderedCenterWidth(renderedWidth: number = this.getDockingRenderedWidth()): number {
-    const leftWidth = this.usesStickyColumnTransformPath() ? this.dockingLayout.leftBaseWidth : this.dockingLayout.leftWidth;
-    const rightWidth = this.usesStickyColumnTransformPath() ? this.dockingLayout.rightBaseWidth : this.dockingLayout.rightWidth;
-    return Math.max(0, renderedWidth - leftWidth - rightWidth);
+  protected getDockingRenderedWidths(renderedWidth: number = this.getDockingRenderedWidth()): Record<ColumnDockingBand, number> {
+    const useBaseWidths = this.usesStickyColumnTransformPath();
+    const left = useBaseWidths ? this.dockingLayout.leftBaseWidth : this.dockingLayout.leftWidth;
+    const right = useBaseWidths ? this.dockingLayout.rightBaseWidth : this.dockingLayout.rightWidth;
+    return { left, center: Math.max(0, renderedWidth - left - right), right };
   }
 
   protected applyDockingDimensionsToRows(): void {
     const renderedWidth = this.getDockingRenderedWidth();
-    const renderedCenterWidth = this.getDockingRenderedCenterWidth(renderedWidth);
-    const leftWidth = this.usesStickyColumnTransformPath() ? this.dockingLayout.leftBaseWidth : this.dockingLayout.leftWidth;
-    const rightWidth = this.usesStickyColumnTransformPath() ? this.dockingLayout.rightBaseWidth : this.dockingLayout.rightWidth;
+    const { left: leftWidth, center: renderedCenterWidth, right: rightWidth } = this.getDockingRenderedWidths(renderedWidth);
     Object.values(this.rowsCache).forEach((cacheEntry) => {
       const row = cacheEntry.rowNode?.[0];
       if (!row?.classList.contains('slick-row-docked')) {
@@ -2085,15 +2022,24 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             parseFloat(elementStyle.paddingRight) +
             parseFloat(elementStyle.borderLeftWidth) +
             parseFloat(elementStyle.borderRightWidth);
-          const targetOuterWidth = headerOuterWidth || column.width || 0;
+          // The last header makes room for the Grid Menu when a vertical
+          // scrollbar has no measurable gutter (notably Firefox overlay
+          // scrollbars). Its filter/footer cell still needs to cover the full
+          // right-pinned body column; otherwise the preceding filter shows
+          // through in that menu-width slice.
+          const gridMenuWidth =
+            isRightDockedChrome && index === this.columns.length - 1 && this._options.enableGridMenu && !this.scrollbarDimensions?.width
+              ? (this._options.gridMenu?.menuWidth ?? 18)
+              : 0;
+          const targetOuterWidth = headerOuterWidth ? headerOuterWidth + gridMenuWidth : column.width || 0;
           // Preserve the normal theme border-box geometry at a pinned edge.
           // The pinning cue itself is an inset shadow and therefore does not
           // contribute to this measured width.
           const isPinnedEdge =
             element.classList.contains('slick-column-pinned-left-edge') || element.classList.contains('slick-column-pinned-right-edge');
-          // Keep the measured header outer width so title/filter/footer edges
-          // share the same fractional border geometry. Do not extend a right
-          // filter into the scrollbar gutter: that overlaps its neighbor.
+          // Keep the measured header outer width (plus the restored Grid Menu
+          // allowance above) so title/filter/footer edges share the same
+          // fractional border geometry.
           element.style.boxSizing = isPinnedEdge ? 'border-box' : 'content-box';
           element.style.width = `${Math.max(0, isPinnedEdge ? targetOuterWidth : targetOuterWidth - elementHorizontalBox)}px`;
         }
@@ -3072,26 +3018,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Whether the grid needs the three-band chrome/row DOM. */
   protected hasConfiguredDocking(): boolean {
-    return this.hasConfiguredColumnDocking() || this.hasConfiguredRowDocking();
+    return this.hasConfiguredColumnDocking() || this._options.pinning !== undefined || this.hasConfiguredRowDocking();
   }
 
   /** Column docking is opt-in; ordinary grids retain the flat DOM. */
   protected hasConfiguredColumnDocking(): boolean {
     const configuredColumns = this._options.pinning?.columns;
-    const hasReferences = (references: ColumnPinningReferences | undefined, side: DockingSide): boolean => {
-      if (Array.isArray(references)) {
-        return references.length > 0;
-      }
-      return (
-        typeof references === 'number' &&
-        Number.isInteger(references) &&
-        references >= 0 &&
-        (side === 'left' ? this.columns.length > 0 : references > 0)
-      );
-    };
     return !!(
-      hasReferences(configuredColumns?.left, 'left') ||
-      hasReferences(configuredColumns?.right, 'right') ||
+      this.normalizeColumnPinningReferences(configuredColumns?.left, 'left', this.columns.length).length ||
+      this.normalizeColumnPinningReferences(configuredColumns?.right, 'right', this.columns.length).length ||
       this.columns.some((column) => !!column && (column.pinned || column.sticky))
     );
   }
@@ -3150,12 +3085,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return regions?.[band] || fallback;
   }
 
-  /** Whether row docking was configured, even when no row is currently docked. */
+  /** Whether row pinning or stickiness was configured. */
   protected hasConfiguredRowDocking(): boolean {
-    const stickyRows = this._options.stickyRows;
-    // Preserve the row-band DOM after an empty pinning update while keeping
-    // ordinary grids without pinning lightweight and flat.
-    return this._options.pinning !== undefined || stickyRows !== undefined;
+    return this._options.pinning?.rows !== undefined || this._options.stickyRows !== undefined;
   }
 
   /** Create the row overlay once for a configured row-docking grid. */
@@ -3705,7 +3637,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected applyColumnWidths(): void {
     let rule: any;
-    const centerWidth = this.hasDockedColumns() ? this.getDockingRenderedCenterWidth() : this.dockingLayout.centerWidth;
+    const centerWidth = this.hasDockedColumns() ? this.getDockingRenderedWidths().center : this.dockingLayout.centerWidth;
     for (let i = 0; i < this.columns.length; i++) {
       if (this.columns[i]) {
         const w = this.columns[i].hidden ? 0 : this.columns[i].width || 0;
@@ -5266,32 +5198,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._viewportScrollContainerX.scrollLeft = x;
     }
 
+    const translateX = `translate3d(${-x}px, 0, 0)`;
     if (this.hasDockingHorizontalScroller()) {
-      const translateX = `translate3d(${-x}px, 0, 0)`;
       this._canvasNode.style.transform = translateX;
       if (this._dockingOverlay) {
         this._dockingOverlay.style.transform = translateX;
       }
-      this._headerL.style.transform = translateX;
-      this._headerRowL.style.transform = translateX;
-      if (this._footerRowL) {
-        this._footerRowL.style.transform = translateX;
-      }
-      if (this._options.createPreHeaderPanel) {
-        this._preHeaderPanel.style.transform = this._preHeaderPanel.classList.contains('slick-dropzone') ? '' : translateX;
-      }
-      if (this._options.createTopHeaderPanel) {
-        this._topHeaderPanel.style.transform = this._topHeaderPanel.classList.contains('slick-dropzone') ? '' : translateX;
-      }
       this._container.style.setProperty('--slick-docking-scroll-left', `${x}px`);
-      return;
     }
 
     // In the single-viewport layout the body is moved by the native scroll
     // compositor. Keep header/filter/footer content in that same coordinate
     // system with compositor transforms instead of assigning scrollLeft on
     // several independent containers (which paints one or more frames late).
-    const translateX = `translate3d(${-x}px, 0, 0)`;
     this._headerL.style.transform = translateX;
     this._headerRowL.style.transform = translateX;
     if (this._footerRowL) {
@@ -5399,9 +5318,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.usesDockingRowRegions()) {
       rowDiv.classList.add('slick-row-docked');
       const renderedWidth = this.getDockingRenderedWidth();
-      const renderedCenterWidth = this.getDockingRenderedCenterWidth(renderedWidth);
-      const leftWidth = this.usesStickyColumnTransformPath() ? this.dockingLayout.leftBaseWidth : this.dockingLayout.leftWidth;
-      const rightWidth = this.usesStickyColumnTransformPath() ? this.dockingLayout.rightBaseWidth : this.dockingLayout.rightWidth;
+      const { left: leftWidth, center: renderedCenterWidth, right: rightWidth } = this.getDockingRenderedWidths(renderedWidth);
       rowDiv.style.width = `${renderedWidth}px`;
       rowDiv.style.gridTemplateColumns = `${leftWidth}px ${renderedCenterWidth}px ${rightWidth}px`;
       rowRegionLeft = createDomElement(
@@ -6263,7 +6180,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const hasDockingHorizontalOverflow = dockingContentWidth > dockingViewportWidth;
       const dockingHorizontalScrollbarHeight =
         !this._options.autoHeight && this.hasDockingHorizontalScroller() && hasDockingHorizontalOverflow
-          ? this.scrollbarDimensions?.height || this.measureScrollbar().height
+          ? this.getDockingScrollbarHeight()
           : 0;
       if (dockingHorizontalScrollbarHeight) {
         this.viewportH = Math.max(0, this.viewportH - dockingHorizontalScrollbarHeight);
@@ -6358,6 +6275,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const overlayWidth = Math.max(this.canvasWidth, this.dockingLayout.contentWidth, this._viewportNode.clientWidth);
     this._dockingOverlay.style.width = `${overlayWidth}px`;
     this._dockingOverlay.style.height = `${this._viewportNode.clientHeight}px`;
+    this._container.style.setProperty('--slick-docking-vertical-overlay-width', `${this.getDockingOverlayScrollbarWidth()}px`);
   }
 
   /** Keep the single horizontal scrollbar aligned with the vertical body viewport. */
@@ -6365,7 +6283,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!this._dockingHorizontalScroller || !this._dockingHorizontalSpacer || !this._viewportNode) {
       return;
     }
-    const scrollbarHeight = this.scrollbarDimensions?.height || 0;
+    const scrollbarHeight = this.getDockingScrollbarHeight();
     const viewportWidth = this._viewportNode.clientWidth;
     const contentWidth = this.dockingLayout.contentWidth || this.canvasWidth;
     const hasHorizontalOverflow = contentWidth > viewportWidth;
@@ -6382,6 +6300,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       '--slick-docking-row-right-offset',
       `${this._dockingHorizontalScroller.clientWidth - this.getDockingRenderedWidth()}px`
     );
+  }
+
+  /** Firefox/Linux may report zero for overlay scrollbar metrics. Keep the proxy track measurable. */
+  protected getDockingScrollbarHeight(): number {
+    if (this.scrollbarDimensions) {
+      return this.scrollbarDimensions.height || DEFAULT_DOCKING_SCROLLBAR_HEIGHT;
+    }
+    return this.measureScrollbar().height || DEFAULT_DOCKING_SCROLLBAR_HEIGHT;
+  }
+
+  /** Reserve Firefox/Linux's unmeasurable overlay scrollbar from docked rows. */
+  protected getDockingOverlayScrollbarWidth(): number {
+    return this.viewportHasVScroll && !this.scrollbarDimensions?.width ? DEFAULT_DOCKING_OVERLAY_SCROLLBAR_WIDTH : 0;
   }
 
   /**
@@ -6638,12 +6569,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!rowNode.classList.contains('slick-row-docked')) {
       return cellChildren(children);
     }
-    const regions = children.filter(
-      (node) =>
-        node.classList.contains('slick-pinned-left-cells') ||
-        node.classList.contains('slick-scrolling-cells') ||
-        node.classList.contains('slick-pinned-right-cells')
-    );
+    const regions = children.filter((node) => node.matches('.slick-pinned-left-cells, .slick-scrolling-cells, .slick-pinned-right-cells'));
     return [...cellChildren(children), ...cellChildren(regions.flatMap((region) => Array.from(region.children) as HTMLElement[]))];
   }
 
@@ -6735,7 +6661,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           ? this.dockingLayout.leftWidth
           : segment.band === 'right'
             ? this.dockingLayout.rightWidth
-            : this.getDockingRenderedCenterWidth();
+            : this.getDockingRenderedWidths().center;
       const left = this.columnPosLeft[segment.start] ?? 0;
       const right = this.columnPosRight[segment.end] ?? left;
       if (this._options.rtl) {
@@ -7295,7 +7221,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // A single viewport has a full viewport-width horizontal cell buffer.
       // Consume most of it before recycling virtual cells so scrollbar-arrow
       // repeats stay on the native compositor path between renders.
-      const horizontalRenderThreshold = this._viewport.length === 1 ? this.viewportW * 0.8 : 20;
+      const horizontalRenderThreshold = this.viewportW * 0.8;
       if (dx > horizontalRenderThreshold || dy > 20) {
         if (this._isResizingColumn && hScrollDist && !vScrollDist) {
           this.lastRenderedScrollLeft = this.scrollLeft;
@@ -7307,7 +7233,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // cell work in the single-viewport layout. A synchronous render here
         // can block the next paint while the native body scroll has already
         // advanced, making headers visibly trail the cells during fast scrolls.
-        if (this._viewport.length === 1 && hScrollDist) {
+        if (hScrollDist) {
           this.enqueueSingleViewportRender();
         } else if (this._options.forceSyncScrolling || (dy < this.viewportH && dx < this.viewportW)) {
           this.render();

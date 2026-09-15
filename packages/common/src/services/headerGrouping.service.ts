@@ -78,7 +78,7 @@ export class HeaderGroupingService {
 
   /** Create or Render the Pre-Header Row Grouping Titles */
   renderPreHeaderRowGroupingTitles(): void {
-    const colsCount = this._grid.getVisibleColumns().length;
+    const colsCount = this._grid.getColumnsInRenderedOrder().length;
 
     this.renderHeaderGroups(this._grid.getPreHeaderPanel(), 0, colsCount);
   }
@@ -88,12 +88,9 @@ export class HeaderGroupingService {
     const headerColumnWidthDiff = this._grid.getHeaderColumnWidthDiff();
     const leftColumnIds = new Set(this._grid.getPinnedColumns('left').map((column) => column.id));
     const rightColumnIds = new Set(this._grid.getPinnedColumns('right').map((column) => column.id));
-    const allVisibleColumns = this._grid.getVisibleColumns();
-    const getDockingBand = (column: (typeof allVisibleColumns)[number]) =>
+    const visibleColumns = this._grid.getColumnsInRenderedOrder();
+    const getDockingBand = (column: (typeof visibleColumns)[number]) =>
       leftColumnIds.has(column.id) ? 'left' : rightColumnIds.has(column.id) ? 'right' : 'center';
-    const visibleColumns = (['left', 'center', 'right'] as const).flatMap((band) =>
-      allVisibleColumns.filter((column) => getDockingBand(column) === band)
-    );
     const renderSignature = JSON.stringify([
       start,
       end,

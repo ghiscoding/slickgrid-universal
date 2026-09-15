@@ -34,8 +34,8 @@ const gridStub = {
   getData: () => dataViewStub,
   getOptions: () => gridOptionMock,
   getColumns: vi.fn(),
+  getColumnsInRenderedOrder: vi.fn(),
   getPinnedColumns: vi.fn().mockReturnValue([]),
-  getVisibleColumns: vi.fn(),
   getHeadersWidth: vi.fn(),
   getHeaderColumnWidthDiff: vi.fn(),
   getPluginByName: vi.fn(),
@@ -132,9 +132,9 @@ describe('HeaderGroupingService', () => {
       ];
       gridStub.getColumns = vi.fn();
       gridStub.getPinnedColumns = vi.fn().mockReturnValue([]);
-      gridStub.getVisibleColumns = vi.fn();
+      gridStub.getColumnsInRenderedOrder = vi.fn();
       vi.spyOn(gridStub, 'getPluginByName').mockReturnValue(resizerPluginStub);
-      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumnsInRenderedOrder').mockReturnValue(mockColumns);
       vi.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(mockPreHeaderPanelElm);
       vi.spyOn(gridStub, 'getPreHeaderPanelLeft').mockReturnValue(document.createElement('div'));
       vi.spyOn(gridStub, 'getPreHeaderPanelRight').mockReturnValue(document.createElement('div'));
@@ -243,7 +243,7 @@ describe('HeaderGroupingService', () => {
         { id: 'finish', name: 'Finish', field: 'finish', width: 100, columnGroup: 'Period' },
         { id: 'action', name: 'Action', field: 'action', width: 60 },
       ];
-      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsWithSplitGroup);
+      vi.spyOn(gridStub, 'getColumnsInRenderedOrder').mockReturnValue([columnsWithSplitGroup[1], columnsWithSplitGroup[0], ...columnsWithSplitGroup.slice(2)]);
       vi.spyOn(gridStub, 'getPinnedColumns').mockImplementation((side) => (side === 'left' ? [columnsWithSplitGroup[1]] : [columnsWithSplitGroup[4]]));
       vi.spyOn(gridStub, 'getHeaderColumnWidthDiff').mockReturnValue(0);
 

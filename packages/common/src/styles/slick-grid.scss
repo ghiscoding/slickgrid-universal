@@ -196,8 +196,12 @@
     .slick-docking-overlay {
       will-change: transform, clip-path;
       clip-path: inset(
-        0 calc(100% - var(--slick-docking-scroll-left, 0px) - var(--slick-docking-viewport-width, 100%)) 0
-          var(--slick-docking-scroll-left, 0px)
+        0
+          calc(
+            100% - var(--slick-docking-scroll-left, 0px) - var(--slick-docking-viewport-width, 100%) +
+              var(--slick-docking-vertical-overlay-width, 0px)
+          )
+          0 var(--slick-docking-scroll-left, 0px)
       );
     }
 
@@ -250,15 +254,11 @@
       will-change: transform;
     }
 
-    .slick-header-column.slick-column-pinned-left:not(.slick-column-sticky),
-    .slick-headerrow-column.slick-column-pinned-left:not(.slick-column-sticky),
-    .slick-footerrow-column.slick-column-pinned-left:not(.slick-column-sticky) {
+    :is(.slick-header-column, .slick-headerrow-column, .slick-footerrow-column).slick-column-pinned-left:not(.slick-column-sticky) {
       transform: translate3d(calc(var(--slick-docking-scroll-left, 0px) + var(--slick-docking-chrome-offset, 0px)), 0, 0) !important;
     }
 
-    .slick-header-column.slick-column-pinned-right:not(.slick-column-sticky),
-    .slick-headerrow-column.slick-column-pinned-right:not(.slick-column-sticky),
-    .slick-footerrow-column.slick-column-pinned-right:not(.slick-column-sticky) {
+    :is(.slick-header-column, .slick-headerrow-column, .slick-footerrow-column).slick-column-pinned-right:not(.slick-column-sticky) {
       transform: translate3d(
         calc(var(--slick-docking-scroll-left, 0px) + var(--slick-docking-chrome-offset, var(--slick-docking-right-offset, 0px))),
         0,
@@ -269,9 +269,7 @@
     // Right-pinned chrome is positioned directly in the translated header
     // layer, unlike a row region. Do not apply the row/natural-content offset
     // a second time or the title lands beside a center column.
-    .slick-header-column.slick-docking-chrome-right,
-    .slick-headerrow-column.slick-docking-chrome-right,
-    .slick-footerrow-column.slick-docking-chrome-right {
+    :is(.slick-header-column, .slick-headerrow-column, .slick-footerrow-column).slick-docking-chrome-right {
       transform: translate3d(var(--slick-docking-scroll-left, 0px), 0, 0) !important;
     }
   }

@@ -388,18 +388,13 @@ export class SlickDraggableGrouping {
     } as SortableOptions;
 
     const headerRoot = `.${grid.getUID()} .slick-header-columns`;
-    const leftHeader = this.gridContainer.querySelector<HTMLDivElement>(`${headerRoot}.slick-header-columns-left`);
-    const centerHeader = this.gridContainer.querySelector<HTMLDivElement>(`${headerRoot}.slick-header-columns-center`);
-    const rightHeader = this.gridContainer.querySelector<HTMLDivElement>(`${headerRoot}.slick-header-columns-right`);
-    if (leftHeader) {
-      this._sortableLeftInstance = Sortable.create(leftHeader, sortableOptions);
-    }
-    if (centerHeader) {
-      this._sortableCenterInstance = Sortable.create(centerHeader, sortableOptions);
-    }
-    if (rightHeader) {
-      this._sortableRightInstance = Sortable.create(rightHeader, sortableOptions);
-    }
+    const createSortable = (band: 'left' | 'center' | 'right') => {
+      const header = this.gridContainer.querySelector<HTMLDivElement>(`${headerRoot}.slick-header-columns-${band}`);
+      return header ? Sortable.create(header, sortableOptions) : undefined;
+    };
+    this._sortableLeftInstance = createSortable('left');
+    this._sortableCenterInstance = createSortable('center');
+    this._sortableRightInstance = createSortable('right');
 
     // user can optionally provide initial groupBy columns
     const initialGroupIds = this._addonOptions.initialGroupBy ?? this.gridOptions.presets?.grouping;

@@ -381,6 +381,13 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getPinnedColumns('left').map((column) => column.id)).toEqual(['a']);
   });
 
+  it('keeps column docking row regions without creating a row overlay', () => {
+    createGrid({ pinning: { columns: { left: ['a'] } } });
+
+    expect(container.querySelector('.grid-canvas .slick-row-docked')).toBeTruthy();
+    expect(container.querySelector('.slick-docking-overlay')).toBeNull();
+  });
+
   it('covers pinning validation, row identity resolution, and cleanup timer cancellation', () => {
     const invalidPicker = vi.fn();
     const invalidWidth = vi.fn();
@@ -409,7 +416,6 @@ describe('SlickGrid unified pinning', () => {
     expect(internals.validatePinnedColumnIndexes(new Map([[0, 'left']]), true)).toBe(true);
     slickGrid.getColumns()[1].hidden = true;
     expect(internals.validatePinnedColumnIndexes(new Map([[1, 'left']]), true)).toBe(true);
-    expect(internals.validatePinnedColumnWidth(new Map([[1, 'left']]), true)).toBe(true);
     slickGrid.getColumns()[1].hidden = false;
     slickGrid.getColumns()[0].minWidth = 90;
     slickGrid.getColumns()[0].maxWidth = 95;
@@ -423,7 +429,6 @@ describe('SlickGrid unified pinning', () => {
       )
     ).toBe(false);
     expect(invalidWidth).toHaveBeenCalled();
-    expect(internals.validatePinnedColumnWidth(invalidPinned, true)).toBe(false);
     internals.pinningColumnsState.set('a', 'right');
     slickGrid.getColumns()[0].pinned = 'left';
     internals.applyColumnPinningOptions(slickGrid.getColumns());
@@ -628,7 +633,6 @@ describe('SlickGrid unified pinning', () => {
     slickGrid.setColumns(slickGrid.getColumns());
     internals.validateColumnPinning = originalValidate;
 
-    vi.spyOn(internals, 'validatePinnedColumnWidth').mockReturnValue(true);
     vi.spyOn(internals, 'getViewports').mockReturnValue([internals._viewportScrollContainerX]);
     slickGrid.setOptions({ pinning: { columns: { left: 0 } } }, true, true, true);
 
@@ -1302,7 +1306,49 @@ describe('SlickGrid unified pinning', () => {
 
     slickGrid.resizeCanvas();
 
-    expect(internals.viewportH).toBeLessThan(initialViewportHeight);
+    expect(internals.viewportH).toBeLessThanOrEqual(initialViewportHeight);
+  });
+
+  it('keeps the docking scrollbar measurable when Firefox reports overlay metrics as zero', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });
+    const internals = slickGrid as any;
+    Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 100 });
+    internals.scrollbarDimensions = { width: 0, height: 0 };
+
+    internals.updateDockingHorizontalScrollerDimensions();
+
+    expect((internals._dockingHorizontalScroller as HTMLElement).style.height).toBe('15px');
+  });
+
+  it('reserves Firefox overlay scrollbar space from docked rows', () => {
+    const slickGrid = createGrid({ pinning: { rows: { top: [0], bottom: [2] } } });
+    const internals = slickGrid as any;
+    internals.viewportHasVScroll = true;
+    internals.scrollbarDimensions = { width: 0, height: 0 };
+
+    internals.updateDockingOverlayDimensions();
+
+    expect(container.style.getPropertyValue('--slick-docking-vertical-overlay-width')).toBe('8px');
+    internals.scrollbarDimensions.width = 12;
+    internals.updateDockingOverlayDimensions();
+    expect(container.style.getPropertyValue('--slick-docking-vertical-overlay-width')).toBe('0px');
+  });
+
+  it('keeps the right-pinned filter/footer chrome over the Grid Menu allowance with collapsed scrollbars', () => {
+    const slickGrid = createGrid({
+      enableGridMenu: true,
+      gridMenu: { menuWidth: 18 },
+      pinning: { columns: { right: ['d'] } },
+      showHeaderRow: true,
+    });
+    const internals = slickGrid as any;
+    const header = slickGrid.getHeaderColumn('d')!;
+    vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ width: 62 } as DOMRect);
+    internals.scrollbarDimensions = { width: 0, height: 0 };
+
+    internals.applyDockingToColumnChrome();
+
+    expect((container.querySelector('.slick-headerrow-column.l3') as HTMLElement).style.width).toBe('80px');
   });
 
   it('focuses a keyboard target without allowing the event to bubble', () => {

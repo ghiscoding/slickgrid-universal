@@ -2554,20 +2554,12 @@ describe('SlickGrid core file', () => {
     });
 
     describe('getViewportNode() function', () => {
-      it('should return viewport element when calling the function when found in the grid container', () => {
+      it('should return the single viewport element while accepting legacy pane arguments', () => {
         grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
-        const result = grid.getViewportNode();
+        const result = grid.getViewportNode('firstName', 3);
 
         expect(result).toBeTruthy();
         expect(result).toEqual(container.querySelector('.slick-viewport'));
-      });
-
-      it('should return undefined when calling the function when getViewports() is returning undefined', () => {
-        grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
-        vi.spyOn(grid, 'getViewports').mockReturnValueOnce(null as any);
-        const result = grid.getViewportNode();
-
-        expect(result).toBeFalsy();
       });
     });
 
