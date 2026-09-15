@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.10.0...v10.11.0) (2026-09-15)
+
+### Features
+
+* **common:** add automatic height for multiline column headers ([#2780](https://github.com/ghiscoding/slickgrid-universal/issues/2780)) ([70ae771](https://github.com/ghiscoding/slickgrid-universal/commit/70ae771a38c43b12303b97f495172e2ad3cb98c0)) - by @ghiscoding
+
+### Bug Fixes
+
+* **row-detail:** auto-select overlay for transformed rows ([#2776](https://github.com/ghiscoding/slickgrid-universal/issues/2776)) ([e757539](https://github.com/ghiscoding/slickgrid-universal/commit/e757539c2d8e11cf24d594963d883226b44767d4)) - by @ghiscoding
+* **selection:** preserve live previews for multi-row drag selection ([#2777](https://github.com/ghiscoding/slickgrid-universal/issues/2777)) ([9556ba1](https://github.com/ghiscoding/slickgrid-universal/commit/9556ba157b8c84e377883377c5e39718aa6d53b6)) - by @ghiscoding
+
+### Performance Improvements
+
+* **common:** improve Select All row selections toggling on large dataset by 9x faster ([#2785](https://github.com/ghiscoding/slickgrid-universal/issues/2785)) ([0ab9f41](https://github.com/ghiscoding/slickgrid-universal/commit/0ab9f41941fc157e73ea7da96f2240d9b66ed469)) - by @ghiscoding
+
 ## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
 
 ### Features

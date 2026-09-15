@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.10.0...v10.11.0) (2026-09-15)
+
+### Features
+
+* **common:** add automatic height for multiline column headers ([#2780](https://github.com/ghiscoding/slickgrid-universal/issues/2780)) ([70ae771](https://github.com/ghiscoding/slickgrid-universal/commit/70ae771a38c43b12303b97f495172e2ad3cb98c0)) - by @ghiscoding
+
+### Bug Fixes
+
+* **common:** rename changeColumnsArrangement to applyColumnLayout ([#2779](https://github.com/ghiscoding/slickgrid-universal/issues/2779)) ([33bfbb1](https://github.com/ghiscoding/slickgrid-universal/commit/33bfbb1d2bf19e446d96a9fa85f7faca292c7310)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2790](https://github.com/ghiscoding/slickgrid-universal/issues/2790)) ([d380950](https://github.com/ghiscoding/slickgrid-universal/commit/d380950fc33e90e3ab438039c45e336d413dbdb5)) - by @renovate-bot
+* **row-detail:** auto-select overlay for transformed rows ([#2776](https://github.com/ghiscoding/slickgrid-universal/issues/2776)) ([e757539](https://github.com/ghiscoding/slickgrid-universal/commit/e757539c2d8e11cf24d594963d883226b44767d4)) - by @ghiscoding
+
 ## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
 
 ### Features
