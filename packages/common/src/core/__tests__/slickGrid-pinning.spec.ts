@@ -85,15 +85,25 @@ describe('SlickGrid unified pinning', () => {
 
     const headerRoot = container.querySelector<HTMLElement>('.slick-header-columns-root')!;
     const dockedRow = container.querySelector<HTMLElement>('.slick-docking-overlay .slick-row[data-row="0"]')!;
+    const dockingScroller = container.querySelector<HTMLElement>('.slick-docking-horizontal-scroller')!;
 
     expect(headerRoot.getAttribute('role')).toBe('row');
     expect(headerRoot.querySelectorAll('[role="presentation"]')).toHaveLength(3);
-    expect(headerRoot.querySelectorAll('[role="columnheader"]')).toHaveLength(4);
+    const headers = [...headerRoot.querySelectorAll<HTMLElement>('[role="columnheader"]')];
+    expect(headers).toHaveLength(4);
+    expect(headers.map((header) => header.getAttribute('aria-colindex'))).toEqual(['1', '2', '3', '4']);
+    expect(dockingScroller.tabIndex).toBe(0);
+    expect(dockingScroller.ariaLabel).toBe('Horizontal grid scroll');
     expect(dockedRow.getAttribute('role')).toBe('row');
+    expect(dockedRow.getAttribute('aria-rowindex')).toBe('1');
     expect(dockedRow.querySelectorAll(':scope > [role="presentation"]')).toHaveLength(3);
     const cells = [...dockedRow.querySelectorAll<HTMLElement>('[role="gridcell"]')];
     expect(cells.length).toBeGreaterThan(0);
     expect(cells.every((cell) => !cell.hasAttribute('aria-hidden'))).toBe(true);
+    cells.forEach((cell) => {
+      const cellIndex = [...cell.classList].find((className) => /^l\d+$/.test(className))!;
+      expect(cell.getAttribute('aria-colindex')).toBe(`${Number(cellIndex.slice(1)) + 1}`);
+    });
   });
 
   it('compacts normal rows around non-contiguous top-pinned rows without changing dataset height', () => {
@@ -312,6 +322,7 @@ describe('SlickGrid unified pinning', () => {
     expect(fragments[1].parentElement?.classList.contains('slick-pinned-right-cells')).toBe(true);
     expect(fragments[0].getAttribute('aria-hidden')).toBe('true');
     expect(fragments[0].getAttribute('role')).toBe('presentation');
+    expect(fragments[0].getAttribute('aria-colindex')).toBeNull();
     expect(fragments[0].getAttribute('aria-colspan')).toBeNull();
     expect(fragments[0].getAttribute('aria-rowspan')).toBeNull();
     expect((grid as any).getCellNode(0, 0)).toBe(host);

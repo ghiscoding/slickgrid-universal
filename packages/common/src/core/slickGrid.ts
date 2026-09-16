@@ -1868,6 +1868,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           role: 'columnheader',
           className: 'slick-state-default slick-header-column',
           tabIndex: 0,
+          ariaColIndex: `${i + 1}`,
         },
         headerTarget
       );
@@ -1943,7 +1944,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (this._options.showHeaderRow) {
         const headerRowCell = createDomElement(
           'div',
-          { className: `slick-state-default slick-headerrow-column l${i} r${i}`, role: 'gridcell' },
+          { className: `slick-state-default slick-headerrow-column l${i} r${i}`, role: 'gridcell', ariaColIndex: `${i + 1}` },
           headerRowTarget
         );
         const pinnedClasses = band !== 'center' ? 'pinned' : null;
@@ -3029,7 +3030,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._container.classList.add('slick-docking-horizontal-scroll-proxy');
       this._dockingHorizontalScroller ??= createDomElement(
         'div',
-        { className: 'slick-docking-horizontal-scroller', role: 'presentation' },
+        { className: 'slick-docking-horizontal-scroller', tabIndex: 0, ariaLabel: 'Horizontal grid scroll' },
         this._contentRoot
       );
       this._dockingHorizontalSpacer ??= createDomElement(
@@ -5353,6 +5354,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const rowDiv = createDomElement('div', {
       className: `ui-widget-content ${rowCss}`,
       role: 'row',
+      ariaRowIndex: `${row + 1}`,
       dataset: { row: `${row}` },
     });
     const rowDocking = this.dockingByRow.get(row);
@@ -5630,6 +5632,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       className: classNameToList(`${cellCss} ${addlCssClasses || ''}`).join(' '),
       role: 'gridcell',
       tabIndex: -1,
+      ariaColIndex: `${cell + 1}`,
     });
     if (isFullWidthGroup && this.hasDockingHorizontalScroller()) {
       cellDiv.style.setProperty('--slick-docking-scroll-left', `${this.scrollLeft}px`);
@@ -6747,6 +6750,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       fragment.setAttribute('aria-hidden', 'true');
       fragment.setAttribute('role', 'presentation');
       fragment.removeAttribute('aria-describedby');
+      fragment.removeAttribute('aria-colindex');
       fragment.removeAttribute('aria-colspan');
       fragment.removeAttribute('aria-rowspan');
       fragment.removeAttribute('tabindex');

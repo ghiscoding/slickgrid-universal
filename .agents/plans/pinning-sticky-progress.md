@@ -17,6 +17,33 @@ Replace SlickGrid's multi-pane column/row architecture with an AG Grid-style doc
 - vertical and horizontal virtualization must remain viable for large datasets;
 - this is intentionally a major-version breaking change; compatibility with the old pane renderer is not a design goal.
 
+## Accessibility audit (2026-09-15)
+
+The pinning/sticky renderer was audited for semantic-tree integrity, keyboard navigation, and
+ARIA handling. No pinning/sticky-specific semantic regression was found in the current scope.
+
+- **Pass:** The grid keeps one semantic `grid`/`row`/`gridcell` tree. Left/center/right docking
+  wrappers and the row overlay use `role="presentation"`, so visual docking layers do not create
+  duplicate rows or cells for assistive technology.
+- **Pass:** Docked rows reuse the existing row node rather than cloning it. Overlay event binding
+  covers keyboard, click, double-click, and context-menu interactions.
+- **Pass:** Cross-band colspan/rowspan hosts expose `aria-colspan`/`aria-rowspan`; visual
+  continuation fragments are `aria-hidden="true"`, `role="presentation"`, and not focusable.
+- **Pass:** Sticky keyboard navigation reveals a candidate's natural position before activating
+  it, and sticky summary rows remain keyboard-addressable after vertical scrolling. Focused
+  coverage exists in the Vanilla, Angular, Aurelia, React, and Vue sticky Example 58 suites.
+- **Verified:** The focused common tests passed: 51 pinning tests and 19 targeted ARIA,
+  accessibility, docking-wrapper, and colspan tests in `slickGrid.spec.ts`.
+- **Coverage gap:** The repository has no automated axe/WCAG integration for these demos, and no
+  screen-reader session was run. The audit therefore verifies DOM contracts and keyboard behavior,
+  not complete assistive-technology compatibility.
+- **Resolved (minimal):** Virtualized/docked rows and cells now expose `aria-rowindex` and
+  `aria-colindex`, preserving their logical dataset and column positions through non-contiguous
+  pinning, band reordering, and docking-overlay moves. Visual colspan fragments omit the index.
+- **Resolved (minimal):** The dedicated docking horizontal scroller is keyboard-focusable and
+  labelled `Horizontal grid scroll`. It remains the browser's native overflow control rather than
+  a custom `role="scrollbar"`; screen-reader behaviour still needs manual validation.
+
 The implementation supports per-column pinning and the canonical nested `pinning` option.
 `pinning.columns.left` accepts an inclusive edge-boundary number for contiguous
 left pinning, while `pinning.columns.right` accepts a count from the trailing
@@ -880,9 +907,9 @@ bands would still be a separate feature and product decision.
   explanatory subtitle replicated in Angular, React, Vue, and Aurelia Example 20. The framework
   Example 20 suites assert the rendered pink cell, while the long colspan fixture text from Example
   08 is aligned across all four framework Example 14 demos.
-- Docking accessibility audit: the left/center/right wrappers and row overlay remain presentational,
-  preserving one semantic grid/row/cell tree. Logical colspan/rowspan hosts now expose
-  `aria-colspan`/`aria-rowspan`; visual continuation fragments remain hidden and presentational.
+- Docking accessibility audit is recorded in the dedicated Accessibility audit section near the
+  top of this file. The verified semantic and keyboard passes, plus the remaining positional ARIA,
+  automated-rule, screen-reader, and scrollbar-contract follow-ups, are kept explicit there.
 - Audited the v11 migration guide against the public `SlickGrid` surface and documented the removed
   `getFrozenColumnId()`, `getFrozenRowOffset()`, and `validateColumnFreezeWidth()` methods plus the
   renamed `validateColumnPinning()` method and additive rendered-order argument.
