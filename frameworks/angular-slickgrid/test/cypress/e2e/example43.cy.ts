@@ -84,6 +84,39 @@ describe('Example 43 - colspan/rowspan - Employees Timesheets', { retries: 0 }, 
         expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5)
       );
     });
+
+    it('should keep rowspan content above an active docked row', () => {
+      cy.get(`[data-row=3] .slick-cell.l0.r0`).click();
+      cy.get('[data-row=2]')
+        .trigger('mouseover')
+        .should(($row) => {
+          expect(getComputedStyle($row[0]).zIndex).to.eq('auto');
+        });
+
+      [
+        [2, 'Check Mail', 2],
+        [8, 'Development', 2],
+      ].forEach(([row, text, rowspan]) => {
+        cy.get(`[data-row=${row}] .slick-cell.rowspan`)
+          .should('contain', text as string)
+          .and(($el) => {
+            expect(getComputedStyle($el[0]).zIndex).to.eq('7');
+            expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * (rowspan as number));
+          });
+      });
+
+      cy.get(`[data-row=3] .slick-cell.l0.r0`).click().should('contain', '10004');
+      cy.get('[data-row=3]').should(($row) => {
+        expect(getComputedStyle($row[0]).zIndex).to.eq('auto');
+      });
+      cy.get(`[data-row=4] .slick-cell.l0.r0`).click();
+      cy.get(`[data-row=0] .slick-cell.l10.r12.rowspan`)
+        .should('contain', 'Lunch Break')
+        .and(($el) => {
+          expect(getComputedStyle($el[0]).zIndex).to.eq('7');
+          expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 10);
+        });
+    });
   });
 
   describe('Basic Key Navigations', () => {

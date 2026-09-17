@@ -10,7 +10,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
   it('should have exact Column Pre-Header & Column Header Titles in the grid', () => {
     cy.get('#grid2')
       .find('.slick-header-columns:nth(0)')
-      .children()
+      .children('.slick-header-column')
       .each(($child, index) => expect($child.text()).to.eq(fullPreTitles[index]));
 
     cy.get('#grid2')
@@ -36,7 +36,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
   it('should have exact Column Pre-Header & Column Header Titles in the grid again', () => {
     cy.get('#grid2')
       .find('.slick-header-columns:nth(0)')
-      .children()
+      .children('.slick-header-column')
       .each(($child, index) => expect($child.text()).to.eq(fullPreTitles[index]));
 
     cy.get('#grid2')
@@ -62,7 +62,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
   it('should have exact Column Pre-Header & Column Header Titles in the grid once again', () => {
     cy.get('#grid2')
       .find('.slick-header-columns:nth(0)')
-      .children()
+      .children('.slick-header-column')
       .each(($child, index) => expect($child.text()).to.eq(fullPreTitles[index]));
 
     cy.get('#grid2')
@@ -90,7 +90,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
   it('should have still exact Column Pre-Header & Column Header Titles in the grid', () => {
     cy.get('#grid2')
       .find('.slick-header-columns:nth(0)')
-      .children()
+      .children('.slick-header-column')
       .each(($child, index) => expect($child.text()).to.eq(fullPreTitles[index]));
 
     cy.get('#grid2')

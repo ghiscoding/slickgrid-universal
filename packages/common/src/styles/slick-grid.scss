@@ -385,14 +385,31 @@
       // (and make it impossible to click) when columns are docked.
       &.slick-rowspan > :is(.slick-pinned-left-cells, .slick-scrolling-cells, .slick-pinned-right-cells) {
         overflow: visible;
+
+        // Active docked rows create their own stacking context. Keep a
+        // spanning host above that context, but below the pinned-column
+        // regions so a center span cannot intercept clicks on pinned cells.
+        > .slick-cell.rowspan {
+          z-index: var(--slick-rowspan-docked-z-index, 7);
+        }
+      }
+
+      // The generic hover rule adds a lower stacking context to the whole
+      // row. Remove it for a rowspan host so the elevated cell above can
+      // remain visible over an adjacent active row.
+      &.slick-rowspan:hover {
+        z-index: auto;
       }
     }
 
     // Active-cell state is applied to every row region. The legacy active-row
     // padding compensates for borders in the old flat-row renderer, but adds
     // padding to this grid container and makes every docked cell appear smaller.
+    // Do not create a row-level stacking context for docked rows: the pinned
+    // region must be able to participate above an overflowing center rowspan.
     &.active.slick-row-docked {
       padding: 0;
+      z-index: auto;
     }
 
     &.slick-row-pinned-top,

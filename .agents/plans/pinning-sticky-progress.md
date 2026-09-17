@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness — implementation progress
 
-Last updated: 2026-09-16 (grouped pre-header pinning correction and reduced docking event subscriptions)
+Last updated: 2026-09-17 (rowspan stacking and pinned-cell hit-testing fix)
 
 ## Goal
 
@@ -330,6 +330,14 @@ compatibility aliases is recorded below as a maintainability follow-up.
 - [x] Rowspan stacking was reviewed for the docking overlay. The spanning cell retains its own
   elevated z-index while the host row keeps normal stacking, and active rowspan rows no longer
   receive padding that can clip the span.
+- [x] Fixed docked rowspan clipping in Vanilla Example 32 when an adjacent row is active or
+  hovered. Docked rowspan regions keep overflow visible, rowspan hosts remain above active rows,
+  and hovered rowspan hosts no longer create the lower generic hover stacking context that could
+  cover their content. Active docked rows retain normal row stacking so their pinned regions stay
+  above an overflowing center rowspan and remain clickable. Added regression coverage for
+  `Check Mail`, afternoon `Development`, and `Lunch Break` after selecting rows `10004` and
+  `10005`; the equivalent framework Example 43 Cypress specs now cover the same interaction.
+  The user confirmed the final UI is resolved.
 - [x] Restored the original `.slick-viewport` horizontal scroll element for ordinary grids. The
   active horizontal scroll element always receives the generic `.slick-horizontal-scroller`
   class: ordinary grids apply it to `.slick-viewport`, while grids with pinning/sticky docking
@@ -800,6 +808,11 @@ Prettier, and `git diff --check`. The current focused DockingController/pinning 
 for `slickGrid.ts`. The framework Cypress TypeScript configs also pass after
 the custom-command typing fix. The user subsequently confirmed that all Vanilla and framework
 Cypress CI workflows pass repeatedly, including the pinning/sticky regression coverage.
+
+The 2026-09-17 Example 32 rowspan stacking and pinned-cell hit-testing fix passed the focused
+51-test pinning suite, the focused Example 32 Cypress spec, targeted Oxlint, Prettier, Sass
+compilation of the Salesforce theme, and `git diff --check`. The user confirmed the browser
+behavior is correct for active and hovered rows, including the `10004`/`Fuller` reproduction.
 
 The Angular, Aurelia, React, and Vue demo builds pass with the Example 58 framework parity
 implementation. Prettier and `git diff --check` also pass for the new demo routes, styles, and
