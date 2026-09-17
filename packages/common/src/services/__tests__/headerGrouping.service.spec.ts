@@ -286,6 +286,12 @@ describe('HeaderGroupingService', () => {
       expect(pinnedMask?.style.transform).toBe('translateX(114.667px)');
     });
 
+    it('should exit early from "syncPinnedGroupHeaders" when there is no pre-header panel', () => {
+      vi.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(undefined as unknown as HTMLDivElement);
+
+      expect(() => service.syncPinnedGroupHeaders()).not.toThrow();
+    });
+
     it('should preserve pre-header elements when the rendered layout is unchanged', () => {
       service.init(gridStub);
       vi.runAllTimers();
