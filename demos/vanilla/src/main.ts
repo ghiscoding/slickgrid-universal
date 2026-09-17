@@ -15,7 +15,7 @@ class Main {
 
     const translate = new TranslateService();
     translate.setup({
-      loadPath: 'i18n/{{lang}}.json',
+      loadPath: '/i18n/{{lang}}.json',
       lang: 'en',
     });
     await translate.use('en');

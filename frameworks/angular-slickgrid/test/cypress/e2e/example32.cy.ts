@@ -115,8 +115,9 @@ describe('Example 32 - Columns Resize by Content', () => {
       cy.get('#filter-checkbox-selectall-container input[type=checkbox]').click({ force: true });
 
       cy.window().then((win) => {
-        expect(win.console.log).to.have.callCount(3);
+        const selectedIdsCalls = (win.console.log as any).getCalls().filter((call: any) => call.args[0] === 'Selected Ids:');
         expect(win.console.log).to.be.calledWith('Selected Ids:', expectedRowIds);
+        expect(selectedIdsCalls.some((call: any) => call.args[1]?.length === 401)).to.be.true;
       });
     });
 

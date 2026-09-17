@@ -6,6 +6,7 @@ const pageLayoutGlobs = import.meta.glob('./examples/**/*.html', { query: '?raw'
 
 export class App {
   private _boundedEventWithListeners: ElementEventListener[] = [];
+  private _currentRouteName = '';
   documentTitle = 'Slickgrid-Universal';
   defaultRouteName: string;
   stateBangChar: string;
@@ -45,22 +46,22 @@ export class App {
       }
     }
 
-    let route = this.routerConfig.pushState
-      ? location.pathname.replace(this.stateBangChar, '')
-      : location.hash.replace(this.stateBangChar, '');
-    if (!route || route === '/') {
-      route = this.defaultRouteName;
-    }
-    this.loadRoute(route);
+    const loadCurrentRoute = () => {
+      let route = this.routerConfig.pushState
+        ? location.pathname.replace(this.stateBangChar, '')
+        : location.hash.replace(this.stateBangChar, '');
+      if (!route || route === '/') {
+        route = this.defaultRouteName;
+      }
+      if (route !== this._currentRouteName) {
+        this.loadRoute(route, false);
+      }
+    };
+    loadCurrentRoute();
 
     // re-render on browser history navigation change
-    window.onpopstate = () => {
-      const winLoc = window.location;
-      const prevRoute = this.routerConfig.pushState
-        ? winLoc.pathname.replace(this.stateBangChar, '')
-        : winLoc.hash.replace(this.stateBangChar, '');
-      this.loadRoute(prevRoute || this.defaultRouteName, false);
-    };
+    window.onpopstate = loadCurrentRoute;
+    window.onhashchange = loadCurrentRoute;
   }
 
   addElementEventListener(element: Element, eventName: string, listener: EventListenerOrEventListenerObject) {
@@ -98,6 +99,7 @@ export class App {
 
   async loadRoute(routeName: string, changeBrowserState = true) {
     this.disposeAll(); // dispose all previous ViewModel & bindings before creating any new one
+    this._currentRouteName = routeName;
 
     if (this.renderer && routeName) {
       const mapRoute = this.routerConfig.routes.find((map) => map.route === routeName);
@@ -107,12 +109,6 @@ export class App {
       } else if (mapRoute?.view) {
         this.renderer.render('Loading...');
         const viewModel = this.renderer.loadViewModel(mapRoute.viewModel);
-        if (viewModel?.dispose) {
-          window.onunload = () => {
-            viewModel.dispose; // dispose when leaving SPA
-            this.disposeApp();
-          };
-        }
 
         // then load the new View
         const htmlModule = pageLayoutGlobs[mapRoute.view] as string;

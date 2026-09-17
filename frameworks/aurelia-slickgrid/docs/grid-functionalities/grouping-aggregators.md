@@ -92,7 +92,6 @@ this.gridOptions = {
 ```
 
 #### Top-Header
-##### requires v8.1 and higher
 This is the preferred section since the Top-Header is on top of all headers (including pre-header) and it will always be the full grid width. Using the Top-Header also frees up the Pre-Header section for the potential use of Header Grouping.
 
 When using Draggable Grouping and Header Grouping together, you need to enable both top-header and pre-header.

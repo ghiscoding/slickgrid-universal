@@ -429,7 +429,6 @@ this.columns = [
       // for version <=5.1
       // valueParserCallback: (data, col, excelFormatId, excelStylesheet) => {
 
-      // new args signature requires version >=5.1
       valueParserCallback: (data, { columnDef, excelFormatId, stylesheet }) => {
         // when returned as string, it will skip Excel style format
         return `Total: ${data}`;
@@ -442,10 +441,6 @@ this.columns = [
       }
     },
     groupTotalsExcelExportOptions: {
-      // for version <=5.1
-      // valueParserCallback: (totals, columnDef) => {
-
-      // new args signature requires version >=5.1
       valueParserCallback: (totals, { columnDef, groupType }) => {
         const fieldName = columnDef.field;
         return totals[groupType][fieldName];

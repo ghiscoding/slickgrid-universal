@@ -486,7 +486,7 @@
       }
       .vanilla-picker.form-control {
         cursor: pointer;
-        background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
+        background-color: var(--slick-date-input-bg-color, v.$slick-date-input-bg-color);
         &:disabled {
           cursor: initial;
         }

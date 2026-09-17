@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.10.0...v10.11.0) (2026-09-15)
+
+### Bug Fixes
+
+* **common:** rename changeColumnsArrangement to applyColumnLayout ([#2779](https://github.com/ghiscoding/slickgrid-universal/issues/2779)) ([33bfbb1](https://github.com/ghiscoding/slickgrid-universal/commit/33bfbb1d2bf19e446d96a9fa85f7faca292c7310)) - by @ghiscoding
+
 ## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
 
 ### Bug Fixes
