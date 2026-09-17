@@ -35,6 +35,7 @@ const gridStub = {
   getOptions: () => gridOptionMock,
   getColumns: vi.fn(),
   getColumnsInRenderedOrder: vi.fn(),
+  getHeaderColumn: vi.fn(),
   getPinnedColumns: vi.fn().mockReturnValue([]),
   getHeadersWidth: vi.fn(),
   getHeaderColumnWidthDiff: vi.fn(),
@@ -46,10 +47,12 @@ const gridStub = {
   invalidate: vi.fn(),
   onAutosizeColumns: new SlickEvent(),
   onAfterUpdateColumns: new SlickEvent(),
+  onColumnsDrag: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
   onColumnsResized: new SlickEvent(),
   onRendered: new SlickEvent(),
   onSetOptions: new SlickEvent(),
+  onScroll: new SlickEvent(),
   onSort: new SlickEvent(),
   render: vi.fn(),
   setColumns: vi.fn(),
@@ -181,11 +184,11 @@ describe('HeaderGroupingService', () => {
       expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
     });
 
-    it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onColumnsReordered"', () => {
+    it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onColumnsDrag"', () => {
       const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
       service.init(gridStub);
-      gridStub.onColumnsReordered.notify({ impactedColumns: [], previousColumnOrder: [], grid: gridStub }, new SlickEventData(), gridStub);
+      gridStub.onColumnsDrag.notify({ triggeredByColumn: '', resizeHandle: document.createElement('div'), grid: gridStub }, new SlickEventData(), gridStub);
       vi.runAllTimers(); // fast-forward timer
 
       expect(renderSpy).toHaveBeenCalledTimes(2);
@@ -258,6 +261,31 @@ describe('HeaderGroupingService', () => {
       expect(groupHeaders.map((header) => header.style.width)).toEqual(['100px', '40px', '80px', '100px', '60px']);
     });
 
+    it('should keep pinned group headers aligned during horizontal scrolling', () => {
+      vi.spyOn(gridStub, 'getPinnedColumns').mockImplementation((side) => (side === 'left' ? [mockColumns[3]] : []));
+      vi.spyOn(gridStub, 'getHeaderColumn').mockImplementation(() => {
+        const header = document.createElement('div');
+        Object.defineProperty(header, 'offsetWidth', { value: 120 });
+        return header;
+      });
+      vi.spyOn(gridStub, 'getColumnsInRenderedOrder').mockReturnValue([mockColumns[3], mockColumns[0], mockColumns[1], mockColumns[2]]);
+
+      service.init(gridStub);
+      vi.runAllTimers();
+
+      const preHeaderPanel = gridStub.getPreHeaderPanel();
+      const pinnedGroupHeader = preHeaderPanel.querySelector<HTMLElement>('.slick-column-pinned-left');
+      const pinnedMask = preHeaderPanel.querySelector<HTMLElement>('.slick-pinned-group-mask');
+      expect(pinnedGroupHeader).toBeTruthy();
+      expect(pinnedGroupHeader?.style.getPropertyValue('--slick-docking-scroll-left')).toBe('0px');
+      expect(pinnedMask?.style.width).toBe('120px');
+
+      gridStub.onScroll.notify({ scrollLeft: 114.667, scrollTop: 0, scrollHeight: 0, grid: gridStub }, new SlickEventData(), gridStub);
+
+      expect(pinnedGroupHeader?.style.getPropertyValue('--slick-docking-scroll-left')).toBe('114.667px');
+      expect(pinnedMask?.style.transform).toBe('translateX(114.667px)');
+    });
+
     it('should preserve pre-header elements when the rendered layout is unchanged', () => {
       service.init(gridStub);
       vi.runAllTimers();
@@ -266,21 +294,6 @@ describe('HeaderGroupingService', () => {
       gridStub.onRendered.notify({ startRow: 0, endRow: 10, grid: gridStub }, new SlickEventData(), gridStub);
 
       expect(gridStub.getPreHeaderPanel().firstElementChild).toBe(firstGroupHeader);
-    });
-
-    it('should keep rendering the pre-header row grouping title after grid options change', () => {
-      const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
-
-      service.init(gridStub);
-      gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: {}, optionsAfter: {} }, new SlickEventData(), gridStub);
-      vi.runAllTimers(); // fast-forward timer
-
-      expect(renderSpy).toHaveBeenCalledTimes(1);
-      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-      expect(divHeaderColumns.length).toBeGreaterThan(2);
-      expect(divHeaderColumns[0].outerHTML).toEqual(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns">All your colums div here</div>`);
     });
 
     it('should render the pre-header row grouping title after changing pinning with DataView "onRowCountChanged"', () => {

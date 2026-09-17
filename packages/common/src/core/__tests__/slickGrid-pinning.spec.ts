@@ -282,6 +282,9 @@ describe('SlickGrid unified pinning', () => {
     expect(groupCell.parentElement).toBe(groupRow);
     expect(groupCell.textContent).toBe('Group A');
 
+    grid.scrollToX(120);
+    expect(groupCell.style.transform).toBe('translate3d(120px, 0, 0)');
+
     (grid as any).updateRenderedCellDocking();
     expect(groupCell.parentElement).toBe(groupRow);
   });

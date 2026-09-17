@@ -1455,9 +1455,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       cacheEntry.cellRegions.right.style.setProperty('--slick-docking-scroll-left', value);
       stickyIndexes.forEach((index) => cacheEntry.cellNodesByColumnIdx[index]?.style.setProperty('--slick-docking-scroll-left', value));
       if (row.classList.contains('slick-row-full-width-group')) {
-        cacheEntry.cellNodesByColumnIdx
-          .find((cell) => cell?.classList.contains('slick-cell-full-width-group'))
-          ?.style.setProperty('--slick-docking-scroll-left', value);
+        const fullWidthGroupCell =
+          cacheEntry.cellNodesByColumnIdx.find((cell) => cell?.classList.contains('slick-cell-full-width-group')) ||
+          (row.querySelector(':scope > .slick-cell-full-width-group') as HTMLElement | null);
+        fullWidthGroupCell?.style.setProperty('--slick-docking-scroll-left', value);
+        fullWidthGroupCell?.style.setProperty('transform', `translate3d(${value}, 0, 0)`);
       }
     });
 

@@ -1166,17 +1166,19 @@
   /** Header Grouping **/
   .slick-preheader-panel.slick-state-default,
   .slick-topheader-panel.slick-state-default {
-    border-bottom: var(--slick-preheader-border-bottom, v.$slick-preheader-border-bottom);
+    border-bottom: 0 !important;
 
     .slick-header-columns {
-      border-top: var(--slick-preheader-border-top, v.$slick-preheader-border-top);
+      border-top: 0 !important;
+      border-bottom: 0 !important;
 
-      .slick-header-column {
+      .slick-header-column.slick-state-default {
         height: var(--slick-preheader-height, v.$slick-preheader-height);
         box-shadow: inset -1px 0 0 var(--slick-preheader-border-color, v.$slick-preheader-border-color);
         font-size: var(--slick-preheader-font-size, v.$slick-preheader-font-size);
         justify-content: var(--slick-preheader-grouped-title-justify, v.$slick-preheader-grouped-title-justify);
         display: var(--slick-preheader-grouped-title-display, v.$slick-preheader-grouped-title-display);
+        border-bottom: 0 !important;
       }
     }
   }

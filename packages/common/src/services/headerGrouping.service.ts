@@ -11,6 +11,7 @@ export class HeaderGroupingService {
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _lastRenderSignature = '';
+  protected _groupHeaderScrollLeft = 0;
   protected _subscriptions: EventSubscription[] = [];
   protected _timer?: any;
 
@@ -51,9 +52,10 @@ export class HeaderGroupingService {
 
         this._eventHandler
           .subscribe(grid.onAfterUpdateColumns, () => this.renderPreHeaderRowGroupingTitles())
-          .subscribe(grid.onColumnsReordered, () => this.renderPreHeaderRowGroupingTitles())
+          .subscribe(grid.onColumnsDrag, () => this.renderPreHeaderRowGroupingTitles())
           .subscribe(grid.onRendered, () => this.renderPreHeaderRowGroupingTitles())
           .subscribe(grid.onAutosizeColumns, () => this.renderPreHeaderRowGroupingTitles())
+          .subscribe(grid.onScroll, (_e, args) => this.syncPinnedGroupHeaders(args.scrollLeft))
           .subscribe(this._dataView.onRowCountChanged, () => this.delayRenderPreHeaderRowGroupingTitles(0));
 
         // also not sure why at this point, but it seems that I need to call the 1st create in a delayed execution
@@ -99,6 +101,7 @@ export class HeaderGroupingService {
       visibleColumns.map((column) => [column.id, column.width, column.columnGroup, getDockingBand(column)]),
     ]);
     if (this._lastRenderSignature === renderSignature) {
+      this.syncPinnedGroupHeaders();
       return;
     }
     this._lastRenderSignature = renderSignature;
@@ -140,6 +143,41 @@ export class HeaderGroupingService {
         lastDockingBand = dockingBand;
       }
     }
+
+    this.syncPinnedGroupHeaders();
+  }
+
+  syncPinnedGroupHeaders(scrollLeft: number = this._groupHeaderScrollLeft): void {
+    this._groupHeaderScrollLeft = scrollLeft;
+
+    const preHeaderPanel = this._grid?.getPreHeaderPanel();
+    if (!preHeaderPanel) {
+      return;
+    }
+
+    const pinnedLeftWidth = this._grid
+      .getPinnedColumns('left')
+      .reduce((width, column) => width + (this._grid.getHeaderColumn(column.id)?.offsetWidth || 0), 0);
+    let pinnedMask = preHeaderPanel.querySelector<HTMLElement>('.slick-pinned-group-mask');
+
+    if (pinnedLeftWidth > 0) {
+      pinnedMask ??= createDomElement(
+        'div',
+        {
+          className: 'slick-pinned-group-mask',
+          style: { position: 'absolute', left: '0', top: '0', bottom: '0', zIndex: '1', pointerEvents: 'none', backgroundColor: 'inherit' },
+        },
+        preHeaderPanel
+      );
+      pinnedMask.style.width = `${pinnedLeftWidth}px`;
+      pinnedMask.style.transform = `translateX(${scrollLeft}px)`;
+    } else {
+      pinnedMask?.remove();
+    }
+
+    preHeaderPanel.querySelectorAll<HTMLElement>(':scope > .slick-column-pinned-left').forEach((groupHeader) => {
+      groupHeader.style.setProperty('--slick-docking-scroll-left', `${scrollLeft}px`);
+    });
   }
 
   /** Translate Column Group texts and re-render them afterward. */

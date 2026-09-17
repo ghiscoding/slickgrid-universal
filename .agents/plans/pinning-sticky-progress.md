@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness — implementation progress
 
-Last updated: 2026-09-15 (Firefox/Linux overlay-scrollbar findings and visual fixes, profiler-guided scroll-offset optimization, minCenterRowCount resize fix, and user-confirmed green Vanilla/framework Cypress CI)
+Last updated: 2026-09-16 (grouped pre-header pinning correction and reduced docking event subscriptions)
 
 ## Goal
 
@@ -197,6 +197,22 @@ same left/center/right band order as the column headers. A group such as `Period
 separate correctly aligned title segments when `Start` is pinned and `Finish` remains scrollable.
 Unchanged pre-header layouts are now identified by their dimensions, visible column groups, and
 docking bands so ordinary grid renders do not destroy and recreate identical grouped-header DOM.
+
+Grouped pre-header titles now remain fixed with their left-pinned columns during the shared
+horizontal scroll. The service tracks the current scroll offset, identifies pinned title segments
+from their rendered docking class, applies the existing non-inheriting
+`--slick-docking-scroll-left` property to those segments, and places an opaque, explicitly left-
+anchored mask over the pinned width. The mask inherits the surrounding header background and the
+pre-header selectors use the current `slick-state-default` class with bottom borders removed.
+This supports both numeric pinning boundaries and explicit pinned column ids/indexes. The full-
+width group-row path also resolves group cells directly from the row when they are not present in
+the row cache and applies the compensating transform.
+
+The grouped-header service now listens only to distinct lifecycle paths: column updates, live
+column dragging/resizing, autosize, completed rendering, horizontal scroll, and DataView row
+changes. `onSetOptions`, `onColumnsReordered`, and `onColumnsResized` were removed as redundant;
+normal pinning, visibility, and reorder flows reach `onAfterUpdateColumns`, while live resizing
+uses `onColumnsDrag`. Focused common coverage passes for the grouped-header and pinning paths.
 
 Draggable Grouping now creates a Sortable source for the center header band in addition to the left
 and right bands, so dragging a scrollable column into the grouping dropzone continues to work with
