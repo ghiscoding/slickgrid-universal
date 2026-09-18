@@ -14,6 +14,9 @@ class TestMenuBase extends MenuBaseClass<GridMenu> {
   public testWireMenuKeyboardNavigation(menuElm: HTMLElement, options?: any) {
     return this.wireMenuKeyboardNavigation(menuElm, options);
   }
+  public testRepositionMenu(event: any, menuElm: HTMLElement, addonOptions?: any) {
+    return this.repositionMenu(event, menuElm, undefined, addonOptions);
+  }
   // Expose protected populateCommandOrOptionItems for direct testing
   public testPopulateCommandOrOptionItems(
     itemType: 'command' | 'option',
@@ -76,6 +79,40 @@ describe('MenuBaseClass', () => {
     menu.testPopulateCommandOrOptionTitle('command', undefined, menuElm, 0);
     const titleElm = menuElm.querySelector('.slick-menu-title');
     expect(titleElm).toBeFalsy();
+  });
+
+  it('should align header menus against the browser viewport for root and submenu menus', () => {
+    const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, sharedService);
+    menu.pluginName = 'HeaderMenu';
+    const container = createDomElement('div', { className: 'slickgrid-container' });
+    const target = createDomElement('button', {}, container);
+    Object.defineProperty(target, 'clientHeight', { configurable: true, value: 20 });
+    sharedService.gridContainerElement = container;
+    document.body.appendChild(container);
+
+    const originalInnerWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 50 });
+    try {
+      const rootMenu = createDomElement('div', { className: 'slick-header-menu' });
+      Object.defineProperty(rootMenu, 'offsetWidth', { configurable: true, value: 100 });
+      Object.defineProperty(rootMenu, 'clientWidth', { configurable: true, value: 100 });
+      const rootEvent = new MouseEvent('click', { bubbles: true });
+      Object.defineProperty(rootEvent, 'target', { configurable: true, value: target });
+      menu.testRepositionMenu(rootEvent, rootMenu, { autoAlign: true });
+      expect(rootMenu.classList.contains('dropleft')).toBe(true);
+
+      const menuItem = createDomElement('div', { className: 'slick-menu-item' }, container);
+      Object.defineProperty(menuItem, 'clientWidth', { configurable: true, value: 20 });
+      const submenu = createDomElement('div', { className: 'slick-submenu' }, menuItem);
+      Object.defineProperty(submenu, 'offsetWidth', { configurable: true, value: 100 });
+      const submenuEvent = new MouseEvent('click', { bubbles: true });
+      Object.defineProperty(submenuEvent, 'target', { configurable: true, value: submenu });
+      menu.testRepositionMenu(submenuEvent, submenu, { autoAlign: true });
+      expect(submenu.style.left).toBe('-100px');
+    } finally {
+      Object.defineProperty(window, 'innerWidth', { configurable: true, value: originalInnerWidth });
+      container.remove();
+    }
   });
 
   it('should call wireMenuKeyboardNavigation for sub-menu item (cover line 278)', () => {

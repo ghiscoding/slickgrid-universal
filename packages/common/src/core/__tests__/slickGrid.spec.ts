@@ -2912,7 +2912,7 @@ describe('SlickGrid core file', () => {
           });
           grid.init();
 
-          expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length + 50 + 44);
+          expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
           expect(grid.getCanvasWidth()).toBeGreaterThanOrEqual(799);
           expect(grid.getCanvasWidth()).toBeLessThanOrEqual(801);
         });
@@ -2930,7 +2930,7 @@ describe('SlickGrid core file', () => {
           });
           grid.init();
 
-          expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length + 50 + 40);
+          expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
           expect(grid.getCanvasWidth()).toBeGreaterThanOrEqual(799);
           expect(grid.getCanvasWidth()).toBeLessThanOrEqual(801);
         });

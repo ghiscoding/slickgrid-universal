@@ -209,6 +209,8 @@ export class DockingController<C extends Column = Column> {
     const stickyTopIds = new Set(stickyRows?.top || []);
     const stickyBottomIds = new Set(stickyRows?.bottom || []);
     const stickyBothIds = new Set(stickyRows?.both || []);
+    const matchesRowReference = (references: Set<number | string>, row: DockingRow): boolean =>
+      references.has(row.index) || (typeof row.id === 'string' && references.has(row.id));
     const top: DockedRow[] = [];
     const center: DockedRow[] = [];
     const bottom: DockedRow[] = [];
@@ -219,10 +221,10 @@ export class DockingController<C extends Column = Column> {
     let bottomHeight = 0;
 
     rows.forEach((row) => {
-      if (topIds.has(row.id) || topIds.has(row.index)) {
+      if (matchesRowReference(topIds, row)) {
         top.push({ ...row, band: 'top', offset: topHeight, sticky: false });
         topHeight += row.height;
-      } else if (bottomIds.has(row.id) || bottomIds.has(row.index)) {
+      } else if (matchesRowReference(bottomIds, row)) {
         bottom.push({ ...row, band: 'bottom', offset: bottomHeight, sticky: false });
         bottomHeight += row.height;
       } else {
@@ -232,16 +234,16 @@ export class DockingController<C extends Column = Column> {
 
     const visibleBottom = scrollTop + Math.max(0, viewportHeight - topHeight - bottomHeight);
     center.forEach((row) => {
-      const isStickyBoth = stickyBothIds.has(row.id) || stickyBothIds.has(row.index);
-      const isStickyTop = isStickyBoth || stickyTopIds.has(row.id) || stickyTopIds.has(row.index);
-      const isStickyBottom = isStickyBoth || stickyBottomIds.has(row.id) || stickyBottomIds.has(row.index);
+      const isStickyBoth = matchesRowReference(stickyBothIds, row);
+      const isStickyTop = isStickyBoth || matchesRowReference(stickyTopIds, row);
+      const isStickyBottom = isStickyBoth || matchesRowReference(stickyBottomIds, row);
       if (!isStickyTop && !isStickyBottom) {
         return;
       }
       // Unlike columns, rows must transfer at the exact physical boundary. A
       // pixel hysteresis creates a visible vertical jump when the row moves
       // from its natural position into the docked overlay.
-      if (isStickyTop && row.top < scrollTop) {
+      if (isStickyTop && row.top < scrollTop + topHeight) {
         stickyTop.push({ ...row, band: 'top', offset: 0, sticky: true });
       }
       if (isStickyBottom) {
@@ -253,7 +255,7 @@ export class DockingController<C extends Column = Column> {
     // consumes lower-edge space, so the preceding candidate activates when it
     // reaches that row rather than a full row-height too late.
     stickyBottomCandidates.sort((a, b) => b.top - a.top);
-    let stickyBottomHeight = bottomHeight;
+    let stickyBottomHeight = 0;
     for (const row of stickyBottomCandidates) {
       const availableBottom = visibleBottom - stickyBottomHeight;
       if (row.top + row.height > availableBottom) {
@@ -322,11 +324,12 @@ export class DockingController<C extends Column = Column> {
     return { bottom, bottomHeight, center: visibleCenter, revision: this.rowRevision, top, topHeight };
   }
 
-  protected applyBudget<T>(items: T[], budget: number, sizeOf: (item: T) => number, _edge: DockingSide | 'top' | 'bottom'): T[] {
+  protected applyBudget<T>(items: T[], budget: number, sizeOf: (item: T) => number, edge: DockingSide | 'top' | 'bottom'): T[] {
     if (budget <= 0 || items.length === 0) {
       return [];
     }
-    const candidates = this.options.overflowStrategy === 'conveyor' ? [...items].reverse() : items;
+    const reverseCandidates = this.options.overflowStrategy === 'conveyor' && (edge === 'left' || edge === 'top');
+    const candidates = reverseCandidates ? [...items].reverse() : items;
     const selected: T[] = [];
     let used = 0;
     for (const item of candidates) {
@@ -336,6 +339,6 @@ export class DockingController<C extends Column = Column> {
         used += size;
       }
     }
-    return this.options.overflowStrategy === 'conveyor' ? selected.reverse() : selected;
+    return reverseCandidates ? selected.reverse() : selected;
   }
 }

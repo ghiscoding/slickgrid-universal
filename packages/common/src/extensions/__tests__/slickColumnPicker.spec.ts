@@ -494,6 +494,7 @@ describe('ColumnPickerControl', () => {
     });
 
     it('should reposition menu to the left when no available space on the right', () => {
+      Object.defineProperty(window, 'innerWidth', { configurable: true, value: 350 });
       vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ left: 50, top: 0, right: 0, bottom: 200, height: 22, width: 300, visible: true });
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)

@@ -371,8 +371,13 @@ export class SlickCellRangeSelector {
     this._activeViewport = this._grid.getActiveViewportNode(e);
 
     const scrollbarDimensions = this._grid.getDisplayedScrollbarDimensions();
-    this._viewportWidth = this._activeViewport.offsetWidth - scrollbarDimensions.width;
-    this._viewportHeight = this._activeViewport.offsetHeight - scrollbarDimensions.height;
+    const dockingScroller = this._activeViewport.closest<HTMLElement>('.slick-widget')?.querySelector('.slick-docking-horizontal-scroller');
+    // Native scrolling reserves scrollbar space inside the viewport, while the
+    // docking proxy owns its horizontal scrollbar outside the viewport.
+    this._viewportWidth = dockingScroller ? this._activeViewport.clientWidth : this._activeViewport.offsetWidth - scrollbarDimensions.width;
+    this._viewportHeight = dockingScroller
+      ? this._activeViewport.clientHeight
+      : this._activeViewport.offsetHeight - scrollbarDimensions.height;
 
     this._moveDistanceForOneCell = {
       x: this._grid.getAbsoluteColumnMinWidth() / 2,

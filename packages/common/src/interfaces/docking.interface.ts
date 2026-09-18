@@ -13,14 +13,14 @@ export type ColumnPinningReferences = number | Array<number | string>;
 export interface PinnedColumns {
   /**
    * Column indexes or ids to pin to the left edge.
-   * A number is an inclusive zero-based boundary (`2` pins indexes `0`, `1`, and `2`).
+   * A number is an inclusive zero-based boundary among visible columns (`2` pins the first three visible columns).
    * An array accepts zero-based indexes and/or stable column ids for non-contiguous pinning.
    */
   left?: ColumnPinningReferences;
 
   /**
    * Column indexes or ids to pin to the right edge.
-   * A number is a count from the trailing edge (`1` pins the last column position; `0` pins none).
+   * A number is a count from the trailing edge of visible columns (`1` pins the last visible column; `0` pins none).
    * An array accepts zero-based indexes and/or stable column ids for non-contiguous pinning.
    */
   right?: ColumnPinningReferences;
@@ -76,7 +76,7 @@ export interface DockingOption {
   /** How sticky candidates are reduced when their pixel budget is exhausted. Defaults to `conveyor`. */
   overflowStrategy?: DockingOverflowStrategy;
 
-  /** Pixel hysteresis used before changing a sticky item's docked state. Defaults to 2. */
+  /** Pixel activation buffer used when resolving sticky columns. Defaults to 2; this is not temporal stateful hysteresis. */
   stickyHysteresis?: number;
 }
 

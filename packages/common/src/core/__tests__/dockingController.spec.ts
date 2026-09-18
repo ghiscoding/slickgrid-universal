@@ -94,7 +94,7 @@ describe('DockingController', () => {
 
     const scrolled = controller.resolveRows(rows, 25, 40, { top: ['top'], bottom: ['bottom'] }, { top: ['sticky-top'], bottom: ['sticky-bottom'] });
     expect(scrolled.top.map((item) => item.id)).toContain('sticky-top');
-    expect(scrolled.bottom.map((item) => item.id)).toContain('sticky-bottom');
+    expect(scrolled.bottom.map((item) => item.id)).not.toContain('sticky-bottom');
   });
 
   it('resolves a sticky row after a direct scroll jump', () => {

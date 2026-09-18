@@ -961,10 +961,10 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
         if (isSubMenu) {
           subMenuPosCalc += parentElm.clientWidth;
         }
-        const gridPos = this.grid.getGridPosition();
-        const browserWidth = document.documentElement.clientWidth;
+        const viewportRight =
+          (window.pageXOffset || document.documentElement.scrollLeft || 0) + (window.innerWidth || document.documentElement.clientWidth);
         const requestedDropSide = (addonOptions as CellMenu | ContextMenu)?.dropSide;
-        const dropSide = subMenuPosCalc >= gridPos.width || subMenuPosCalc >= browserWidth ? 'left' : 'right';
+        const dropSide = subMenuPosCalc > viewportRight ? 'left' : 'right';
         const effectiveDropSide = isSubMenu && requestedDropSide === 'right' ? 'right' : dropSide;
 
         let needHeaderMenuOffsetLeftRecalc = false;
@@ -999,7 +999,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
 
         if (needHeaderMenuOffsetLeftRecalc) {
           menuOffsetLeft = relativePos?.left ?? 0;
-          if ((addonOptions as HeaderMenu)?.autoAlign && gridPos?.width && menuOffsetLeft + (menuElm.clientWidth ?? 0) >= gridPos.width) {
+          if ((addonOptions as HeaderMenu)?.autoAlign && menuOffsetLeft + (menuElm.clientWidth ?? 0) >= viewportRight) {
             menuOffsetLeft =
               menuOffsetLeft + targetElm.clientWidth - menuElm.clientWidth + ((addonOptions as HeaderMenuOption)?.autoAlignOffset || 0);
           }

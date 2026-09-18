@@ -565,6 +565,7 @@ describe('SlickGrid unified pinning', () => {
 
     expect(internals.updateRenderedCellDocking()).toBe(false);
     internals._options.pinning = { columns: { left: ['a'] } };
+    internals.refreshDockingLayout();
     internals.rowsCache = { 0: { rowNode: [document.createElement('div')] } };
     expect(internals.updateRenderedCellDocking()).toBe(false);
     internals.rowsCache = { 0: { rowNode: undefined, cellNodesByColumnIdx: {} } };
@@ -766,7 +767,7 @@ describe('SlickGrid unified pinning', () => {
 
   it('covers legacy resize calculations and column cache cleanup paths', () => {
     vi.useFakeTimers();
-    const slickGrid = createGrid({ forceFitColumns: true, autoScrollOnColumnResize: false, pinning: { columns: { right: ['d'] } } });
+    const slickGrid = createGrid({ forceFitColumns: true, autoScrollOnColumnResize: false, pinning: { columns: { right: ['c'] } } });
     const internals = slickGrid as any;
     slickGrid.getColumns().forEach((column) => {
       column.resizable = true;
@@ -907,7 +908,7 @@ describe('SlickGrid unified pinning', () => {
 
     slickGrid.setColumnPinning('b', 'left');
     expect(slickGrid.getPinnedColumns('left').map((column) => column.id)).toEqual(['b']);
-    expect(slickGrid.getOptions().pinning?.columns?.left).toEqual(['b']);
+    expect(slickGrid.getOptions().pinning?.columns?.left).toEqual([1]);
 
     slickGrid.setColumnPinning('c', 'right');
     expect(slickGrid.getPinnedColumns('right').map((column) => column.id)).toEqual(['c']);
@@ -925,6 +926,79 @@ describe('SlickGrid unified pinning', () => {
     slickGrid.setColumnPinning('d', 'left');
     slickGrid.setColumnPinning('b', 'left');
     expect(invalidPinning).toHaveBeenCalled();
+  });
+
+  it('normalizes empty visible-column boundaries without producing invalid indexes', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+    const hiddenColumns = slickGrid.getColumns().map((column) => ({ ...column, hidden: true }));
+
+    expect(internals.normalizeColumnPinningReferences(0, 'right', slickGrid.getColumns())).toEqual([]);
+    expect(internals.normalizeColumnPinningReferences(1, 'left', hiddenColumns)).toEqual([]);
+  });
+
+  it('removes the docking proxy and chrome regions when pinning is cleared', () => {
+    const slickGrid = createGrid({
+      createFooterRow: true,
+      pinning: { columns: { left: ['a'], right: ['d'] } },
+      showFooterRow: true,
+      showHeaderRow: true,
+    });
+
+    expect(container.querySelector('.slick-docking-horizontal-scroller')).toBeTruthy();
+    slickGrid.setOptions({ pinning: undefined } as any);
+
+    expect(container.querySelector('.slick-docking-horizontal-scroller')).toBeNull();
+    expect(container.classList.contains('slick-docking-horizontal-scroll-proxy')).toBe(false);
+  });
+
+  it('covers auto-height scrollbar and top-header sizing plus clearing the owned height', () => {
+    const slickGrid = createGrid({
+      autoHeight: true,
+      createTopHeaderPanel: true,
+      showTopHeaderPanel: true,
+      topHeaderPanelHeight: 44,
+    });
+    const internals = slickGrid as any;
+    internals.viewportW = 1;
+    internals.scrollbarDimensions = { width: 15, height: 15 };
+    expect(slickGrid.getViewportHeight()).toBeGreaterThan(0);
+
+    internals._options.autoHeight = false;
+    slickGrid.resizeCanvas();
+    expect(container.style.height).toBe('');
+  });
+
+  it('cancels the timeout fallback used when requestAnimationFrame is unavailable', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+    const originalRequestAnimationFrame = globalThis.requestAnimationFrame;
+    vi.useFakeTimers();
+    try {
+      Object.defineProperty(globalThis, 'requestAnimationFrame', { configurable: true, value: undefined });
+      const callback = vi.fn();
+      const frame = internals.scheduleAnimationFrame(callback);
+      internals.cancelScheduledAnimationFrame(frame);
+      vi.advanceTimersByTime(16);
+      expect(callback).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+      Object.defineProperty(globalThis, 'requestAnimationFrame', { configurable: true, value: originalRequestAnimationFrame });
+    }
+  });
+
+  it('uses the rendered docked cell when resolving a point to a logical cell', () => {
+    const slickGrid = createGrid({ pinning: { rows: { top: [0] } } });
+    const dockedCell = container.querySelector('.slick-docking-overlay [data-row="0"] .slick-cell') as HTMLElement;
+    const originalElementFromPoint = document.elementFromPoint;
+    const elementFromPoint = vi.fn().mockReturnValue(dockedCell);
+    try {
+      Object.defineProperty(document, 'elementFromPoint', { configurable: true, value: elementFromPoint });
+      expect(slickGrid.getCellFromPoint(1, 1)).toEqual({ row: 0, cell: 0 });
+      expect(elementFromPoint).toHaveBeenCalled();
+    } finally {
+      Object.defineProperty(document, 'elementFromPoint', { configurable: true, value: originalElementFromPoint });
+    }
   });
 
   it('merges pinning options while replacing row lists atomically', () => {
@@ -1200,13 +1274,18 @@ describe('SlickGrid unified pinning', () => {
     const shiftEvent = new MouseEvent('mousewheel', { cancelable: true, shiftKey: true });
     (slickGrid as any).handleMouseWheel(shiftEvent, 0, 1, 10);
     expect((slickGrid as any).scrollLeft).toBe(52);
-    expect(shiftEvent.defaultPrevented).toBe(true);
+    expect(shiftEvent.defaultPrevented).toBe(false);
 
     const nativeHorizontalEvent = new WheelEvent('wheel', { cancelable: true, deltaX: 18 });
     (slickGrid as any).handleMouseWheel(nativeHorizontalEvent, 0, 0, 0);
     expect((slickGrid as any).scrollLeft).toBe(30);
-    expect(nativeHorizontalEvent.defaultPrevented).toBe(true);
-    expect(handleScrollSpy).toHaveBeenCalledTimes(3);
+    expect(nativeHorizontalEvent.defaultPrevented).toBe(false);
+
+    slickGrid.setOptions({ pinning: { columns: { left: 0 } } });
+    const pinnedEvent = new WheelEvent('wheel', { cancelable: true, deltaY: 10 });
+    (slickGrid as any).handleMouseWheel(pinnedEvent, 0, 0, 10);
+    expect(pinnedEvent.defaultPrevented).toBe(true);
+    expect(handleScrollSpy).toHaveBeenCalledTimes(6);
   });
 
   it('floors mouse-wheel and internal scroll offsets at zero', () => {
@@ -1396,7 +1475,7 @@ describe('SlickGrid unified pinning', () => {
 
     internals.updateDockingOverlayDimensions();
 
-    expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 8px 0 0px)');
+    expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 0px 0 0px)');
     internals.scrollbarDimensions.width = 12;
     internals.updateDockingOverlayDimensions();
     expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 0px 0 0px)');
