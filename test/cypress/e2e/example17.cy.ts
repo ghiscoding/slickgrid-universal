@@ -295,13 +295,11 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
 
     // bottom right - to topLeft
     getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomRight', 'topLeft', 6, 6, 140).then((result: any) => {
-      // The top-pinned rows are already visible, so dragging toward them only
-      // needs to move the shared horizontal scrollbar back to the left.
-      expect(result.scrollTopBefore).to.be.equal(result.scrollTopAfter);
+      expect(result.scrollTopBefore).to.be.greaterThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.greaterThan(result.scrollLeftAfter);
     });
     getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'bottomRight', 'topLeft', 6, 6, 140).then((result: any) => {
-      expect(result.scrollTopBefore).to.be.equal(result.scrollTopAfter);
+      expect(result.scrollTopBefore).to.be.greaterThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.greaterThan(result.scrollLeftAfter);
     });
     resetScrollInPinned();

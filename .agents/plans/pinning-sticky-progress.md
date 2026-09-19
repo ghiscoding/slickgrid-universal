@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness — implementation progress
 
-Last updated: 2026-09-19 (pinned header-filter focus preservation)
+Last updated: 2026-09-19 (6pac PR #1302 regression-fix port)
 
 ## Goal
 
@@ -16,6 +16,48 @@ Replace SlickGrid's multi-pane column/row architecture with an AG Grid-style doc
 - permanent pinning and scroll-activated stickiness use the same internal docking resolver;
 - vertical and horizontal virtualization must remain viable for large datasets;
 - this is intentionally a major-version breaking change; compatibility with the old pane renderer is not a design goal.
+
+## 6pac PR #1302 regression-fix port (2026-09-19)
+
+The compatible behavioral fixes from 6pac/SlickGrid PR #1302 are now ported to the Universal
+shared grid core and covered by focused common unit tests plus the existing Vanilla Example 08
+and Example 17 Cypress suites:
+
+- [x] `getCellFromPoint()` resolves LTR docking coordinates geometrically, including overlay
+  rows, non-contiguous permanent row pins, pinned column bands, and rows outside the render
+  cache. RTL and non-docking behavior retain their existing coordinate path.
+- [x] Bottom-pinned rows keep the full dataset canvas height. Their rendered offset collapses the
+  pinned slot beneath the bottom band, leaving the last scrollable row and add-new row reachable.
+- [x] Cross-band colspan fragments receive both added and removed cell CSS classes with their
+  logical host, including the built-in `selected` class.
+- [x] Header, header-row, and footer cells emit their matching before-destroy lifecycle event once
+  immediately before docking region creation/reset empties the chrome root. This covers runtime
+  pinning activation and removal without duplicate builder notifications.
+- [x] Pinned and sticky rows outside the vertical render range participate in horizontal center
+  cell virtualization; pinned column cells remain materialized.
+- [x] Native chrome/body horizontal scroll offsets are forwarded as deltas to the docking proxy;
+  reset-to-zero echoes are not copied back as absolute positions.
+- [x] Column-reorder drop slots follow each header's actual DOM band. A visually docked sticky
+  header that remains in the center DOM band no longer creates an undefined reorder slot; a
+  slot-count mismatch safely leaves the column order unchanged.
+- [x] The root Header Menu terminology is already `Column Pinning`, including the localized
+  Universal menu assets and tests, so the fork's width-preserving demo-label change required no
+  additional source edit here.
+- [x] `destroy(true)` clears retained element, element-array, and plain element-record references
+  reflectively and empties the docking chrome map.
+
+The fork's seven standalone `quirk-*.cy.ts` harnesses are intentionally not retained. They assume
+6pac's flat `/dist/browser` script layout and standalone HTML hosting, while Universal runs a Vite
+SPA with ESM package bundles. The common unit suite directly exercises these branches without
+adding brittle duplicate browser infrastructure. Existing Vanilla Example 08 and Example 17
+Cypress specs cover the user-visible colspan-selection and upward drag-auto-scroll regressions.
+
+The 6pac-only removal commit is intentionally **not** ported: Universal implements and documents
+the formatted-data cache, Grid Menu/Row Detail integration, `selectionOptions`,
+`datasetIdPropertyName`, `Column.pinnable`, composite editor support, Grid State, Header Menu,
+and localization. Likewise, the fork's flat-repository documentation rewrite is not copied because
+it would delete those Universal contracts. The equivalent Universal pinning/sticky docs, migration
+guide, and interfaces already document numeric references as indexes and string references as IDs.
 
 ## Accessibility audit (2026-09-15)
 

@@ -2,7 +2,6 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   classNameToList,
   createDomElement,
-  destroyAllElementProps,
   emptyElement,
   extend,
   getInnerSize,
@@ -33,6 +32,7 @@ import type {
   ColumnSort,
   CssStyleHash,
   CustomDataView,
+  DockedColumn,
   DockedRow,
   DockingSide,
   DOMEvent,
@@ -1593,6 +1593,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       document,
       'scroll',
       (event) => {
+        // A captured document scroll can already be queued when destroy(true)
+        // clears the retained DOM references. Ignore it rather than touching a
+        // null viewport/container from a disposed grid.
+        if (!this.initialized || !this._viewport || !this._container) {
+          return;
+        }
         const target = event.target;
         if (this._viewport.includes(target as HTMLDivElement) || (target instanceof Node && target.contains(this._container))) {
           this.handleActiveCellPositionChange();
@@ -1743,18 +1749,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected createColumnFooter(): void {
     if (this._options.createFooterRow) {
-      this._footerRow.forEach((footer) => {
-        const columnElements = footer.querySelectorAll('.slick-footerrow-column');
-        columnElements.forEach((column) => {
-          const columnDef = Utils.storage.get(column, 'column');
-          this.triggerEvent(this.onBeforeFooterRowCellDestroy, {
-            node: column,
-            column: columnDef,
-            grid: this,
-          });
-        });
-      });
-
       if (this.usesDockingChromeRegions()) {
         this.dockingFooterRowRegions = this.createDockingChromeRegionSet(this._footerRowL, 'slick-footerrow-columns');
       } else {
@@ -1842,20 +1836,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected createColumnHeaders(): void {
     this._bindingEventService.unbindAll('colheaders');
-    this._headers.forEach((header) => {
-      const columnElements = header.querySelectorAll('.slick-header-column');
-      columnElements.forEach((column) => {
-        const columnDef = Utils.storage.get(column, 'column');
-        if (columnDef) {
-          this.triggerEvent(this.onBeforeHeaderCellDestroy, {
-            node: column,
-            column: columnDef,
-            grid: this,
-          });
-        }
-      });
-    });
-
     if (this.hasConfiguredColumnDocking()) {
       this.dockingHeaderRegions = this.createDockingChromeRegionSet(this._headerL, 'slick-header-columns');
       this.dockingHeaderRowRegions = this.createDockingChromeRegionSet(this._headerRowL, 'slick-headerrow-columns');
@@ -1868,20 +1848,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.getHeadersWidth();
 
     Utils.width(this._headerL, this.getDockingChromeRootWidth());
-
-    this._headerRows.forEach((row) => {
-      const columnElements = row.querySelectorAll('.slick-headerrow-column');
-      columnElements.forEach((column) => {
-        const columnDef = Utils.storage.get(column, 'column');
-        if (columnDef) {
-          this.triggerEvent(this.onBeforeHeaderRowCellDestroy, {
-            node: this,
-            column: columnDef,
-            grid: this,
-          });
-        }
-      });
-    });
 
     for (let i = 0, ln = this.columns.length; i < ln; i++) {
       const m: C = this.columns[i];
@@ -2548,8 +2514,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
         // Keep each docking band in its logical slots; flattening moves center columns into pinned slots.
         if (this.usesDockingChromeRegions()) {
-          (['left', 'center', 'right'] as const).forEach((band, bandIndex) => {
-            this.dockingLayout[band].forEach(({ index }, reorderedIndex) => {
+          // Slots follow the DOM band each header lives in. An active sticky
+          // column is visually docked but its header remains in the center.
+          const transformPath = this.usesStickyColumnTransformPath();
+          const inDomBand = (entry: DockedColumn): boolean => !(transformPath && entry.sticky);
+          const leftSlots = this.dockingLayout.left.filter(inDomBand).map((entry) => entry.index);
+          const rightSlots = this.dockingLayout.right.filter(inDomBand).map((entry) => entry.index);
+          const pinnedSlots = new Set([...leftSlots, ...rightSlots]);
+          const centerSlots = this.columns
+            .map((column, index) => (column && !column.hidden && !pinnedSlots.has(index) ? index : -1))
+            .filter((index) => index >= 0);
+          const slotsByBand = [leftSlots, centerSlots, rightSlots];
+          if (slotsByBand.some((slots, bandIndex) => slots.length !== reorderedColumnsByBand[bandIndex].length)) {
+            return;
+          }
+          slotsByBand.forEach((slots, bandIndex) => {
+            slots.forEach((index, reorderedIndex) => {
               finalColumns[index] = reorderedColumnsByBand[bandIndex][reorderedIndex];
             });
           });
@@ -3144,16 +3124,43 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     className: 'slick-header-columns' | 'slick-headerrow-columns' | 'slick-footerrow-columns',
     side: 'left' | 'right'
   ): void {
+    this.notifyChromeCellsDestroy(root, className);
     emptyElement(root);
     root.classList.remove('slick-docking-chrome', `${className}-root`, `${className}-center`, `${className}-right`, `${className}-left`);
     root.classList.add(`${className}-${side}`);
     root.classList.add(className);
   }
 
+  /** Announce existing chrome cells immediately before their root is emptied. */
+  protected notifyChromeCellsDestroy(
+    root: HTMLDivElement,
+    className: 'slick-header-columns' | 'slick-headerrow-columns' | 'slick-footerrow-columns'
+  ): void {
+    const cellSelector =
+      className === 'slick-header-columns'
+        ? '.slick-header-column'
+        : className === 'slick-headerrow-columns'
+          ? '.slick-headerrow-column'
+          : '.slick-footerrow-column';
+    const destroyEvent =
+      className === 'slick-header-columns'
+        ? this.onBeforeHeaderCellDestroy
+        : className === 'slick-headerrow-columns'
+          ? this.onBeforeHeaderRowCellDestroy
+          : this.onBeforeFooterRowCellDestroy;
+    root.querySelectorAll<HTMLElement>(cellSelector).forEach((cell) => {
+      const column = Utils.storage.get(cell, 'column');
+      if (column) {
+        this.triggerEvent(destroyEvent, { node: cell, column, grid: this });
+      }
+    });
+  }
+
   protected createDockingChromeRegionSet(
     root: HTMLDivElement,
     className: 'slick-header-columns' | 'slick-headerrow-columns' | 'slick-footerrow-columns'
   ): Record<ColumnDockingBand, HTMLDivElement> {
+    this.notifyChromeCellsDestroy(root, className);
     emptyElement(root);
     // Keep bands as direct root children so the legacy chrome selector contract remains usable.
     root.classList.remove(className, `${className}-left`, `${className}-right`);
@@ -3477,8 +3484,28 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.removeCssRules();
 
     if (shouldDestroyAllElements) {
-      destroyAllElementProps(this);
+      this.destroyElementReferences();
     }
+  }
+
+  /** Drop every retained DOM reference, including future docking elements. */
+  protected destroyElementReferences(): void {
+    const isElement = (value: unknown): boolean => value instanceof Element;
+    const holdsElements = (value: unknown): boolean =>
+      isElement(value) ||
+      (Array.isArray(value) && value.length > 0 && value.every(isElement)) ||
+      (!!value &&
+        typeof value === 'object' &&
+        Object.getPrototypeOf(value) === Object.prototype &&
+        Object.values(value as object).length > 0 &&
+        Object.values(value as object).every(isElement));
+    const self = this as unknown as Record<string, unknown>;
+    Object.keys(self).forEach((key) => {
+      if (holdsElements(self[key])) {
+        self[key] = null;
+      }
+    });
+    this.dockingChromeByColumn.clear();
   }
 
   protected clearInternalDomCaches(): void {
@@ -5239,11 +5266,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return this.rowDockingLayout.top.filter((entry) => !entry.sticky).reduce((height, entry) => height + entry.height, 0);
   }
 
-  /** Height removed from the scrolling canvas by permanent bottom-pinned rows. */
-  protected getBottomPinnedRowsHeight(): number {
-    return this.rowDockingLayout.bottom.filter((entry) => !entry.sticky).reduce((height, entry) => height + entry.height, 0);
-  }
-
   protected getRenderedRowTop(row: number): number {
     return (
       this.getRowTop(row) +
@@ -6611,10 +6633,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // (re)build the row position index (variable row height mode) before any height computations
       this.ensureRowPositionIndexer(dataLengthIncludingAddNew);
 
-      // Bottom-pinned rows are removed from the scrolling canvas. Their
-      // overlay copy still occupies the bottom band, but their natural slots
-      // must not leave a gap.
-      const scrollableRowsHeight = Math.max(0, this.getRowPosition(numberOfRows) - this.getBottomPinnedRowsHeight());
+      // Retain the full canvas height. Rows after a bottom pin render one
+      // pinned-band height higher, leaving every scrolling row reachable.
+      const scrollableRowsHeight = this.getRowPosition(numberOfRows);
 
       const tempViewportH = Utils.height(this._viewportScrollContainerY) as number;
       const oldViewportHasVScroll = this.viewportHasVScroll;
@@ -6915,10 +6936,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected cleanUpCells(range: CellViewportRange, row: number): void {
-    if (this.isPinnedRowIdx(row)) {
-      return;
-    }
-
     const cacheEntry = this.rowsCache[row];
 
     // Remove cells outside the range.
@@ -6996,7 +7013,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       firstColumnIndex = this.getFirstColumnIndexAtOrAfter(range.leftPx);
     }
 
+    const rowsToProcess: number[] = [];
     for (let row = range.top as number, btm = range.bottom as number; row <= btm; row++) {
+      rowsToProcess.push(row);
+    }
+    for (const entry of [...this.rowDockingLayout.top, ...this.rowDockingLayout.bottom]) {
+      if (entry.index < (range.top as number) || entry.index > (range.bottom as number)) {
+        rowsToProcess.push(entry.index);
+      }
+    }
+
+    for (const row of rowsToProcess) {
       cacheEntry = this.rowsCache[row];
       if (cacheEntry) {
         // cellRenderQueue populated in renderRows() needs to be cleared first
@@ -7306,7 +7333,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected handleElementScroll(element: HTMLElement): void {
-    if (this.forwardDockingHorizontalScroll(element)) {
+    if (this.hasDockingHorizontalScroller()) {
+      // Proxy scrolling owns the absolute position. Native chrome scrolls are
+      // deltas, including focus-reveal scrolls initiated by the browser.
+      this.forwardDockingHorizontalScroll(element);
       return;
     }
     const scrollLeft = element.scrollLeft;
@@ -7330,7 +7360,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     this.clearDockingNativeHorizontalScrollOffsets();
-    this._viewportScrollContainerX.scrollLeft = scrollLeft;
+    this._viewportScrollContainerX.scrollLeft += scrollLeft;
     return true;
   }
 
@@ -7752,9 +7782,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           if (removedRowHash) {
             Object.keys(removedRowHash).forEach((columnId) => {
               if (!addedRowHash || removedRowHash![columnId] !== addedRowHash[columnId]) {
-                node = this.getCellNode(+row, this.getColumnIndex(columnId));
+                const cell = this.getColumnIndex(columnId);
+                node = this.getCellNode(+row, cell);
                 if (node) {
-                  node.classList.remove(...classNameToList(removedRowHash[columnId]));
+                  const classes = classNameToList(removedRowHash[columnId]);
+                  node.classList.remove(...classes);
+                  this.rowsCache[+row]?.cellSpanFragments?.[cell]?.forEach((fragment) => fragment.classList.remove(...classes));
                 }
               }
             });
@@ -7763,9 +7796,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           if (addedRowHash) {
             Object.keys(addedRowHash).forEach((columnId) => {
               if (!removedRowHash || removedRowHash[columnId] !== addedRowHash[columnId]) {
-                node = this.getCellNode(+row, this.getColumnIndex(columnId));
+                const cell = this.getColumnIndex(columnId);
+                node = this.getCellNode(+row, cell);
                 if (node) {
-                  node.classList.add(...classNameToList(addedRowHash[columnId]));
+                  const classes = classNameToList(addedRowHash[columnId]);
+                  node.classList.add(...classes);
+                  this.rowsCache[+row]?.cellSpanFragments?.[cell]?.forEach((fragment) => fragment.classList.add(...classes));
                 }
               }
             });
@@ -8415,21 +8451,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param y A y coordinate.
    */
   getCellFromPoint(x: number, y: number): { row: number; cell: number } {
-    // Docked cells are positioned by the rendered three-band layout rather
-    // than by their natural column/row offsets. Use the DOM hit target when
-    // docking is configured; ordinary grids retain coordinate-based behavior.
-    const canvas = this._activeCanvasNode || this._canvasNode;
-    if (this.hasConfiguredDocking() && canvas && typeof document.elementFromPoint === 'function') {
-      const canvasRect = canvas.getBoundingClientRect();
-      const target = document.elementFromPoint(canvasRect.left + x, canvasRect.top + y);
-      const cellNode = target?.closest('.slick-cell') as HTMLElement | null;
-      const rowNode = cellNode?.closest('.slick-row') as HTMLElement | null;
-      const rowFromDom = rowNode?.dataset.row;
-      if (cellNode && rowFromDom !== undefined) {
-        const row = Number(rowFromDom);
-        if (Number.isInteger(row)) {
-          return { row, cell: this.getCellFromNode(cellNode) };
-        }
+    if (this.usesDockingRowRegions() && !this._options.rtl) {
+      const docked = this.getCellFromDockedPoint(x, y);
+      if (docked) {
+        return docked;
       }
     }
 
@@ -8451,6 +8476,91 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     return { row, cell };
+  }
+
+  /** Resolves a canvas-relative point through the current docking layout. */
+  protected getCellFromDockedPoint(x: number, y: number): { row: number; cell: number } | null {
+    const scrollTop = this._viewportScrollContainerY?.scrollTop ?? this.scrollTop;
+    const viewportHeight = this._viewportScrollContainerY?.clientHeight || this.viewportH;
+    const viewportY = y - scrollTop;
+    const { top, bottom, topHeight, bottomHeight } = this.rowDockingLayout;
+    const bandRow = (entries: DockedRow[], start: number): number | undefined =>
+      entries.find((entry) => viewportY >= start + entry.offset && viewportY < start + entry.offset + entry.height)?.index;
+    let row: number | undefined;
+    if (viewportY < topHeight) {
+      row = bandRow(top, 0);
+    } else {
+      const bottomStart = Math.max(topHeight, viewportHeight - bottomHeight);
+      if (viewportY >= bottomStart) {
+        row = bandRow(bottom, bottomStart);
+      }
+    }
+    if (row === undefined) {
+      row = this.getRenderedRowFromPosition(y);
+    }
+
+    const scrollLeft = Math.max(0, this.scrollLeft);
+    const viewportWidth = this.getViewportInnerWidth() || this._viewportScrollContainerX?.clientWidth || this.viewportW;
+    const viewportX = x - scrollLeft;
+    const { left, center, right, leftBaseWidth, leftWidth, rightWidth } = this.dockingLayout;
+    const bandCell = (entries: DockedColumn[], start: number, position: number): number | undefined =>
+      entries.find((entry) => position >= start + entry.offset && position < start + entry.offset + entry.width)?.index;
+    let cell: number | undefined;
+    if (viewportX < leftWidth) {
+      cell = bandCell(left, 0, viewportX);
+    } else if (viewportX >= viewportWidth - rightWidth) {
+      cell = bandCell(right, viewportWidth - rightWidth, viewportX);
+    }
+    if (cell === undefined) {
+      cell = bandCell(center, 0, x - leftBaseWidth);
+    }
+    return cell === undefined ? null : { row, cell };
+  }
+
+  /** Inverse of getRenderedRowTop() for scrolling rows with out-of-flow pins. */
+  protected getRenderedRowFromPosition(y: number): number {
+    const lastRow = this.getDataLengthIncludingAddNew() - 1;
+    if (lastRow < 0) {
+      return 0;
+    }
+    const outOfFlow = (row: number): boolean => {
+      const docking = this.dockingByRow.get(row);
+      return !!docking && !docking.sticky && docking.band !== 'center';
+    };
+    const step = (row: number, direction: 1 | -1): number => {
+      let next = row + direction;
+      while (next >= 0 && next <= lastRow && outOfFlow(next)) {
+        next += direction;
+      }
+      return next;
+    };
+    let row = Math.min(lastRow, Math.max(0, this.getRowFromPosition(y)));
+    if (outOfFlow(row)) {
+      const next = step(row, 1);
+      row = next <= lastRow ? next : step(row, -1);
+      if (row < 0 || row > lastRow) {
+        return Math.min(lastRow, Math.max(0, row));
+      }
+    }
+    let guard = this.rowDockingLayout.top.length + this.rowDockingLayout.bottom.length + 2;
+    while (guard-- > 0) {
+      if (y < this.getRenderedRowTop(row)) {
+        const previous = step(row, -1);
+        if (previous < 0) {
+          break;
+        }
+        row = previous;
+      } else if (y >= this.getRenderedRowTop(row) + this.getRowHeight(row)) {
+        const next = step(row, 1);
+        if (next > lastRow) {
+          break;
+        }
+        row = next;
+      } else {
+        break;
+      }
+    }
+    return row;
   }
 
   protected getCellFromNode(cellNode: HTMLElement): number {

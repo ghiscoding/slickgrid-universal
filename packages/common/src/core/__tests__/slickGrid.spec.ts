@@ -6,7 +6,7 @@ import { SlickHybridSelectionModel } from '../../extensions/index.js';
 import { copyCellToClipboard } from '../../formatters/formatterUtilities.js';
 import { SelectionModel } from '../../index.js';
 import type { Column, CustomDataView, EditCommand, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces/index.js';
-import { SlickEvent, SlickEventData, SlickGlobalEditorLock, SlickRange, Utils } from '../slickCore.js';
+import { SlickEvent, SlickEventData, SlickGlobalEditorLock, SlickRange } from '../slickCore.js';
 import { SlickDataView } from '../slickDataView.js';
 import { SlickGrid } from '../slickGrid.js';
 
@@ -1992,17 +1992,12 @@ describe('SlickGrid core file', () => {
       grid = new SlickGrid<any>(container, [], columns, { ...defaultOptions, showHeaderRow: true });
       grid.init();
 
-      const headerRow = document.createElement('div');
-      const headerRowCell = document.createElement('div');
-      headerRowCell.className = 'slick-headerrow-column';
-      headerRow.appendChild(headerRowCell);
-      Utils.storage.put(headerRowCell, 'column', columns[0]);
-      (grid as any)._headerRows = [headerRow];
+      const headerRowCell = grid.getHeaderRowColumn('firstName');
       const destroySpy = vi.spyOn(grid.onBeforeHeaderRowCellDestroy, 'notify');
 
       (grid as any).createColumnHeaders();
 
-      expect(destroySpy).toHaveBeenCalledWith({ node: grid, column: columns[0], grid }, expect.anything(), grid);
+      expect(destroySpy).toHaveBeenCalledWith({ node: headerRowCell, column: columns[0], grid }, expect.anything(), grid);
     });
 
     it('should hide top panel div when "showHeaderRow" is disabled', () => {
@@ -3177,6 +3172,15 @@ describe('SlickGrid core file', () => {
 
         expect(() => grid.invalidate()).not.toThrow();
         expect(() => grid.updateRowCount()).not.toThrow();
+      });
+
+      it('should ignore a queued ancestor-scroll event after destroy(true)', () => {
+        grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+        grid.init();
+
+        grid.destroy(true);
+
+        expect(() => document.dispatchEvent(new Event('scroll', { bubbles: true }))).not.toThrow();
       });
 
       it('should return undefined editor when getDataItem() did not find any associated cell item', () => {

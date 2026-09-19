@@ -234,6 +234,28 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getColumns().map((column) => column.id)).toEqual(['a', 'd', 'c', 'b', 'e', 'f', 'g']);
   });
 
+  it('leaves the column order unchanged when DOM reorder slots do not match docking slots', () => {
+    const slickGrid = createGrid({
+      enableColumnReorder: true,
+      pinning: { columns: { left: ['a'], right: ['d'] } },
+    });
+    const internals = slickGrid as any;
+    const left = internals.sortableSideLeftInstance;
+    const center = internals.sortableSideCenterInstance;
+    const right = internals.sortableSideRightInstance;
+    const item = center.el.querySelector('.slick-header-column');
+    left.toArray = vi.fn().mockReturnValue(['a', 'b']);
+    center.toArray = vi.fn().mockReturnValue(['b', 'c']);
+    right.toArray = vi.fn().mockReturnValue(['d']);
+    const setColumnsSpy = vi.spyOn(slickGrid, 'setColumns');
+
+    left.options.onStart({ item });
+    left.options.onEnd({ item, stopPropagation: vi.fn() });
+
+    expect(setColumnsSpy).not.toHaveBeenCalled();
+    expect(slickGrid.getColumns().map((column) => column.id)).toEqual(['a', 'b', 'c', 'd']);
+  });
+
   it('keeps visible columns in definition order without column docking', () => {
     const slickGrid = createGrid();
 
@@ -1012,18 +1034,94 @@ describe('SlickGrid unified pinning', () => {
     }
   });
 
-  it('uses the rendered docked cell when resolving a point to a logical cell', () => {
+  it('uses docking geometry, rather than DOM hit testing, when resolving a point to a logical cell', () => {
     const slickGrid = createGrid({ pinning: { rows: { top: [0] } } });
-    const dockedCell = container.querySelector('.slick-docking-overlay [data-row="0"] .slick-cell') as HTMLElement;
     const originalElementFromPoint = document.elementFromPoint;
-    const elementFromPoint = vi.fn().mockReturnValue(dockedCell);
+    const elementFromPoint = vi.fn();
     try {
       Object.defineProperty(document, 'elementFromPoint', { configurable: true, value: elementFromPoint });
       expect(slickGrid.getCellFromPoint(1, 1)).toEqual({ row: 0, cell: 0 });
-      expect(elementFromPoint).toHaveBeenCalled();
+      expect(elementFromPoint).not.toHaveBeenCalled();
     } finally {
       Object.defineProperty(document, 'elementFromPoint', { configurable: true, value: originalElementFromPoint });
     }
+  });
+
+  it('resolves bottom, center and pinned column docking bands geometrically', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: ['a'], right: ['d'] }, rows: { top: [0], bottom: [2] } } });
+    const internals = slickGrid as any;
+    Object.defineProperty(internals._viewportScrollContainerY, 'clientHeight', { configurable: true, value: 100 });
+    Object.defineProperty(internals._viewportScrollContainerX, 'clientWidth', { configurable: true, value: 320 });
+    Object.defineProperty(internals._viewportScrollContainerY, 'scrollTop', { configurable: true, writable: true, value: 0 });
+    internals.viewportH = 100;
+    internals.viewportW = 320;
+    internals.scrollLeft = 0;
+    internals.rowDockingLayout = {
+      top: [{ index: 0, id: 0, top: 0, height: 25, offset: 0, band: 'top', sticky: false }],
+      bottom: [{ index: 2, id: 2, top: 50, height: 25, offset: 0, band: 'bottom', sticky: false }],
+      center: [{ index: 1, id: 1, top: 25, height: 25, offset: 25, band: 'center', sticky: false }],
+      topHeight: 25,
+      bottomHeight: 25,
+      revision: 1,
+    };
+    internals.dockingLayout = {
+      left: [{ index: 0, naturalOffset: 0, offset: 0, sticky: false, width: 80, band: 'left' }],
+      center: [{ index: 1, naturalOffset: 80, offset: 0, sticky: false, width: 80, band: 'center' }],
+      right: [{ index: 3, naturalOffset: 240, offset: 0, sticky: false, width: 80, band: 'right' }],
+      leftBaseWidth: 80,
+      leftWidth: 80,
+      rightWidth: 80,
+      centerWidth: 160,
+      contentWidth: 320,
+      rightBaseWidth: 80,
+      revision: 1,
+    };
+    internals.getRenderedRowFromPosition = vi.fn().mockReturnValue(1);
+
+    expect(internals.getCellFromDockedPoint(10, 10)).toEqual({ row: 0, cell: 0 });
+    expect(internals.getCellFromDockedPoint(90, 40)).toEqual({ row: 1, cell: 1 });
+    expect(internals.getCellFromDockedPoint(90, 80)).toEqual({ row: 2, cell: 1 });
+    expect(internals.getCellFromDockedPoint(250, 40)).toEqual({ row: 1, cell: 3 });
+  });
+
+  it('walks natural row geometry around permanent row pins', () => {
+    const slickGrid = createGrid({ pinning: { rows: { top: [0], bottom: [2] } } });
+    const internals = slickGrid as any;
+    internals.getDataLengthIncludingAddNew = vi.fn().mockReturnValue(3);
+    internals.getRowFromPosition = vi.fn().mockReturnValue(1);
+    internals.getRenderedRowTop = vi.fn((row: number) => row * 25);
+    internals.getRowHeight = vi.fn().mockReturnValue(25);
+    expect(internals.getRenderedRowFromPosition(25)).toBe(1);
+
+    internals.getDataLengthIncludingAddNew.mockReturnValue(0);
+    expect(internals.getRenderedRowFromPosition(25)).toBe(0);
+
+    const pinned = (index: number) => ({ index, sticky: false, band: 'top' });
+    internals.getDataLengthIncludingAddNew.mockReturnValue(5);
+    internals.getRowFromPosition.mockReturnValue(0);
+    internals.dockingByRow = new Map([0, 1, 2, 3, 4].map((index) => [index, pinned(index)]));
+    // The forward walk skips a contiguous out-of-flow chain, then the backward
+    // walk clamps an all-pinned dataset back to its first valid row.
+    expect(internals.getRenderedRowFromPosition(25)).toBe(0);
+
+    // Move upward from a normal row across an out-of-flow row.
+    internals.dockingByRow = new Map([[1, pinned(1)]]);
+    internals.getRowFromPosition.mockReturnValue(2);
+    expect(internals.getRenderedRowFromPosition(0)).toBe(0);
+
+    // Move downward across two separate out-of-flow rows.
+    internals.dockingByRow = new Map([
+      [1, pinned(1)],
+      [3, pinned(3)],
+    ]);
+    internals.getRowFromPosition.mockReturnValue(0);
+    expect(internals.getRenderedRowFromPosition(75)).toBe(4);
+
+    internals.dockingByRow = new Map();
+    internals.getRowFromPosition.mockReturnValue(0);
+    expect(internals.getRenderedRowFromPosition(-1)).toBe(0);
+    internals.getRowFromPosition.mockReturnValue(4);
+    expect(internals.getRenderedRowFromPosition(200)).toBe(4);
   });
 
   it('merges pinning options while replacing row lists atomically', () => {
