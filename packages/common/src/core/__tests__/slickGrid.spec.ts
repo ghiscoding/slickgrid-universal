@@ -3178,6 +3178,11 @@ describe('SlickGrid core file', () => {
         grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
         grid.init();
 
+        // Exercise the listener guard while the listener is still attached;
+        // destroy(true) subsequently clears the retained DOM references.
+        (grid as any).initialized = false;
+        expect(() => document.dispatchEvent(new Event('scroll', { bubbles: true }))).not.toThrow();
+        (grid as any).initialized = true;
         grid.destroy(true);
 
         expect(() => document.dispatchEvent(new Event('scroll', { bubbles: true }))).not.toThrow();

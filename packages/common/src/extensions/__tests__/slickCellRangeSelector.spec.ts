@@ -128,6 +128,37 @@ describe('CellRangeSelector Plugin', () => {
     expect(plugin.gridUidSelector).toBe(`.${GRID_UID}`);
   });
 
+  it('should use the full viewport height when dragging in a docked grid', () => {
+    const widget = document.createElement('div');
+    widget.className = 'slick-widget';
+    const viewport = document.createElement('div');
+    viewport.className = 'slick-viewport';
+    const canvas = document.createElement('div');
+    canvas.className = 'grid-canvas grid-canvas-bottom grid-canvas-left';
+    const dockingScroller = document.createElement('div');
+    dockingScroller.className = 'slick-docking-horizontal-scroller';
+    viewport.appendChild(canvas);
+    widget.append(viewport, dockingScroller);
+    document.body.appendChild(widget);
+    Object.defineProperties(viewport, {
+      clientHeight: { configurable: true, value: 321 },
+      clientWidth: { configurable: true, value: 654 },
+    });
+
+    vi.spyOn(gridStub, 'getCanvasNode').mockReturnValue(canvas);
+    vi.spyOn(gridStub, 'getActiveCanvasNode').mockReturnValue(canvas);
+    vi.spyOn(gridStub, 'getActiveViewportNode').mockReturnValue(viewport);
+    vi.spyOn(gridStub, 'getDisplayedScrollbarDimensions').mockReturnValue({ height: 17, width: 17 });
+    vi.spyOn(gridStub, 'getAbsoluteColumnMinWidth').mockReturnValue(40);
+
+    plugin.init(gridStub);
+    gridStub.onDragInit.notify({ matchClassTag: '' } as any, addVanillaEventPropagation(new Event('dragInit')), gridStub);
+
+    expect((plugin as any)._viewportWidth).toBe(654);
+    expect((plugin as any)._viewportHeight).toBe(321);
+    widget.remove();
+  });
+
   it('should use the grid scroll event offset when calculating the active viewport bounds', () => {
     const viewport = document.createElement('div');
     Object.defineProperties(viewport, {

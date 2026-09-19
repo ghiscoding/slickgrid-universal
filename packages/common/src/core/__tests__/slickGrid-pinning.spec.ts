@@ -427,6 +427,23 @@ describe('SlickGrid unified pinning', () => {
     const cacheEntry = internals.rowsCache[0];
     delete cacheEntry.cellNodesByColumnIdx[0];
     delete cacheEntry.cellColSpans[0];
+    internals.updateRenderedColspanFragmentGeometry();
+    expect(host.style.width).toBe('360px');
+
+    // A stale fragment queue can briefly contain one more fragment than its
+    // segment metadata; geometry refresh should safely skip that extra node.
+    expect(() =>
+      internals.updateColspanFragmentGeometry(host, [{ start: 0, end: 0, band: 'left' }], [fragments[0], document.createElement('div')])
+    ).not.toThrow();
+
+    // Empty fragment metadata is valid while a row is being rebuilt.
+    internals.rowsCache[1] = {
+      cellNodesByColumnIdx: [],
+      cellSpanFragments: { 0: [] },
+      cellSpanSegments: {},
+      rowNode: null,
+    };
+    expect(() => internals.updateRenderedColspanFragmentGeometry()).not.toThrow();
     (grid as any).cleanUpAndRenderCells({ top: 0, bottom: 0, leftPx: 0, rightPx: 320 });
     expect((grid as any).rowsCache[0].cellSpanFragments[0][0].parentElement).toBe(row.querySelector('.slick-scrolling-cells'));
   });
