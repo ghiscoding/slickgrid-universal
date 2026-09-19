@@ -1,6 +1,11 @@
 <h3 class="title is-3">
   Example 44 - Variable Row Height (provider)
 
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -13,7 +18,7 @@
   </div>
 </h3>
 
-<h6 class="title is-6 italic">
+<h6 class="title is-6 italic" style.bind="subTitleStyle">
   Variable row heights driven by <code>rowHeightProvider</code>. Short summaries stay compact while longer summaries grow.
 </h6>
 

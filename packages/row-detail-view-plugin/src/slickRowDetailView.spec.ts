@@ -59,7 +59,6 @@ const gridStub = {
   getRowCache: vi.fn(),
   getRowHeight: vi.fn(),
   getRowTop: vi.fn(),
-  getFrozenRowOffset: vi.fn(),
   getViewportNode: vi.fn(),
   invalidateRows: vi.fn(),
   registerPlugin: vi.fn(),
@@ -456,7 +455,6 @@ describe('SlickRowDetailView plugin', () => {
     vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
     vi.spyOn(gridStub, 'getViewportNode').mockReturnValue(viewport);
     vi.spyOn(gridStub, 'getRowTop').mockReturnValue(100);
-    vi.spyOn(gridStub, 'getFrozenRowOffset').mockReturnValue(0);
     vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(25);
     vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
     vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
@@ -1632,7 +1630,6 @@ describe('SlickRowDetailView plugin', () => {
       vi.spyOn(gridStub, 'getViewportNode').mockReturnValue(viewport);
       vi.spyOn(gridStub, 'getRowCache').mockReturnValue({ 0: { rowNode: [document.createElement('div')] } } as any);
       vi.spyOn(gridStub, 'getRowTop').mockReturnValue(100);
-      vi.spyOn(gridStub, 'getFrozenRowOffset').mockReturnValue(0);
       vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(25);
       vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(mockItem);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
@@ -1683,7 +1680,6 @@ describe('SlickRowDetailView plugin', () => {
       vi.spyOn(gridStub, 'getViewportNode').mockReturnValue(viewport);
       vi.spyOn(gridStub, 'getRowCache').mockReturnValue({ 0: { rowNode: [document.createElement('div')] } } as any);
       vi.spyOn(gridStub, 'getRowTop').mockReturnValue(100);
-      vi.spyOn(gridStub, 'getFrozenRowOffset').mockReturnValue(0);
       vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(25);
       vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(mockItem);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
@@ -1720,7 +1716,6 @@ describe('SlickRowDetailView plugin', () => {
       vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
       vi.spyOn(gridStub, 'getViewportNode').mockReturnValue(viewport);
       vi.spyOn(gridStub, 'getRowTop').mockReturnValue(100);
-      vi.spyOn(gridStub, 'getFrozenRowOffset').mockReturnValue(0);
       vi.spyOn(gridStub, 'getRowHeight').mockReturnValue(25);
       vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(mockItem);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);

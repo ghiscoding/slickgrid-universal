@@ -15,9 +15,9 @@ Look at your developer console before leaving the page
 
 ### Descriptions
 #### Grid State
-The `Grid State` are what we defined as the currently used `Columns` / `Filters` / `Sorters` / `Pagination` of the actual grid (pagination is only returned when used in combo with the Backend Service API).
+The `Grid State` are what we defined as the currently used `Columns` / `Filters` / `Sorters` / `Pagination` / permanent `Pinning` of the actual grid (pagination is only returned when used in combo with the Backend Service API).
 #### Presets
-Presets can be used to preset a grid with certain `Columns` / `Filters` / `Sorters` / `Pagination`. When we say `Columns`, we actually mean their size, order position and visibility (shown/hidden) in the grid.
+Presets can be used to preset a grid with certain `Columns` / `Filters` / `Sorters` / `Pagination` / permanent `Pinning`. When we say `Columns`, we actually mean their size, order position, visibility (shown/hidden), and optional permanent pinning side in the grid.
 #### Combining the two together
 So basically, the idea is to save the `Grid State` in Local Storage (or DB) before the grid gets destroyed and once we come back to that same page we can preset the grid with the exact same state as it was before leaving the page (just like if we were doing a forward/back button with browser history).
 
@@ -71,6 +71,18 @@ export interface CurrentColumn {
   cssClass?: string;
   headerCssClass?: string;
   width?: number;
+  pinning?: 'left' | 'right' | null;
+  hidden?: boolean;
+}
+export interface CurrentPinning {
+  columns?: {
+    left?: number | Array<number | string>;
+    right?: number | Array<number | string>;
+  };
+  rows?: {
+    top?: Array<number | string>;
+    bottom?: Array<number | string>;
+  };
 }
 export interface CurrentFilter {
   columnId: string;
@@ -95,6 +107,14 @@ export interface GridState {
   treeData?: Partial<TreeToggleStateChange> | null;
 }
 ```
+
+`GridState.pinning` stores permanent column and row pinning. A `CurrentColumn.pinning` value
+preserves the side of an individual column in a custom layout, which is useful for non-contiguous
+column presets. If both forms are persisted, keep them consistent. Sticky columns and rows are
+configured through `Column.sticky` and `GridOption.stickyRows`; their active membership is derived from
+the current scroll position and is therefore not part of a saved Grid State or preset. See the
+[v11 migration guide](../migrations/migration-to-11.x.md#grid-state-and-renamed-interfaces) when
+migrating saved state from the old frozen-property shape.
 
 {% hint style="note" %}
 You can get Grouping column Ids as Grid State but it is limited to Draggable Grouping **only** via Grid Presets and it will not work with regular Grouping.
@@ -147,6 +167,11 @@ export class GridExample {
           { columnId: 'duration', direction: 'DESC' },
           { columnId: 'complete', direction: 'ASC' }
         ],
+
+        pinning: {
+          columns: { left: ['duration'] },
+          rows: { top: [], bottom: [] }
+        },
 
         // with Backend Service ONLY, you can also add Pagination info
         pagination: { pageNumber: 2, pageSize: 20 }

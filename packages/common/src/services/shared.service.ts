@@ -21,9 +21,6 @@ export class SharedService {
   /** when `preParseDateColumns` grid option is enabled, did we already parsed all dates? */
   isItemsDateParsed = false;
 
-  /** Frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward */
-  frozenVisibleColumnId: string | number | null = null;
-
   /** Grid Container HTML Element */
   gridContainerElement!: HTMLElement;
 

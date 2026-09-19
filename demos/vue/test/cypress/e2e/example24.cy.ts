@@ -232,7 +232,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should check Context Menu "menuUsabilityOverride" condition and expect to not be able to open Context Menu from rows than are >= to Task 21', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('bottom').wait(25);
+      cy.get('.slick-vertical-scroller').scrollTo('bottom').wait(25);
 
       cy.get('#grid24').find('.slick-row:nth(3) .slick-cell:nth(1)').rightclick({ force: true });
 
@@ -240,7 +240,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should scroll back to top row and be able to open Context Menu', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top').wait(25);
+      cy.get('.slick-vertical-scroller').scrollTo('top').wait(25);
 
       cy.get('#grid24').find('.slick-row:nth(1) .slick-cell:nth(1)').rightclick({ force: true });
 

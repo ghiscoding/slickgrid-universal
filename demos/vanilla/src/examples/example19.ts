@@ -27,6 +27,7 @@ export default class Example19 {
   sgb: SlickVanillaGridBundle;
   isGridEditable = true;
   enableMultiSelection = false;
+  subTitleStyle = 'display: block';
 
   attached() {
     this._eventHandler = new SlickEventHandler();
@@ -272,5 +273,10 @@ export default class Example19 {
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
     // remove unsaved css class from that cell
     this.sgb.slickGrid?.removeCellCssStyles(`unsaved_highlight_${[column.field]}${row}`);
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

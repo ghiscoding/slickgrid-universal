@@ -20,7 +20,7 @@ vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
 
 const mockGridOptions = {
   enableTranslate: false,
-  frozenColumn: 0,
+  pinning: { columns: { left: 0 } },
 } as GridOption;
 
 const gridStub = {
@@ -38,20 +38,20 @@ describe('Slick-Empty-Warning Component', () => {
 
   beforeEach(() => {
     div = document.createElement('div');
-    const paneLeft = document.createElement('div');
-    paneLeft.className = 'slick-pane slick-pane-top slick-pane-left';
-    paneLeft.style.height = '44px';
+    const contentRoot = document.createElement('div');
+    contentRoot.className = 'slick-content-root';
+    contentRoot.style.height = '44px';
     const paneRight = document.createElement('div');
-    paneRight.className = 'slick-pane slick-pane-top slick-pane-right';
+    paneRight.className = 'slick-right-root';
     paneRight.style.height = '44px';
     const canvasLeft = document.createElement('div');
     const canvasRight = document.createElement('div');
     canvasLeft.className = 'grid-canvas grid-canvas-left';
     canvasRight.className = 'grid-canvas grid-canvas-right';
     div.className = `slickgrid-container ${GRID_UID}`;
-    div.appendChild(paneLeft);
+    div.appendChild(contentRoot);
     div.appendChild(paneRight);
-    paneLeft.appendChild(canvasLeft);
+    contentRoot.appendChild(canvasLeft);
     paneRight.appendChild(canvasRight);
     document.body.appendChild(div);
 
@@ -142,34 +142,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.textContent).toBe('No data to display.');
     });
 
-    it('should expect the Slick-Empty-Warning to be created in both viewports when using Frozen Grid but NOT displayed on left when "hideFrozenLeftWarning" flag is enabled', () => {
-      mockGridOptions.frozenColumn = 2;
-      (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenLeftWarning = true;
-      (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenRightWarning = false;
-      component = new SlickEmptyWarningComponent();
-      component.init(gridStub, container);
-      component.showEmptyDataMessage(true);
-
-      const componentLeftElm = document.querySelector<HTMLSelectElement>(
-        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
-      ) as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>(
-        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
-      ) as HTMLSelectElement;
-
-      expect(component).toBeTruthy();
-      expect(component.constructor).toBeDefined();
-      expect(componentLeftElm).toBeTruthy();
-      expect(componentLeftElm.style.display).toBe('none');
-      expect(componentRightElm.style.display).toBe('flex');
-      expect(componentLeftElm.style.marginLeft).toBe('0px');
-      expect(componentRightElm.style.marginLeft).toBe('0px');
-      expect(componentLeftElm.textContent).toBe('No data to display.');
-      expect(componentRightElm.textContent).toBe('No data to display.');
-    });
-
     it('should expect the Slick-Empty-Warning to be created and use different left margin when "leftViewportMarginLeft" is set', () => {
-      mockGridOptions.frozenColumn = -1;
+      mockGridOptions.pinning = undefined;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
@@ -194,7 +168,7 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to be created with proper height when defining a grid that has the "autoHeight" grid option', () => {
-      mockGridOptions.frozenColumn = -1;
+      mockGridOptions.pinning = undefined;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
@@ -208,7 +182,7 @@ describe('Slick-Empty-Warning Component', () => {
       const componentRightElm = document.querySelector<HTMLSelectElement>(
         'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
       ) as HTMLSelectElement;
-      const gridPaneElm = document.querySelector<HTMLDivElement>('.slick-pane.slick-pane-top.slick-pane-left');
+      const contentRootElm = document.querySelector<HTMLDivElement>('.slick-content-root');
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -219,12 +193,12 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
-      expect(gridPaneElm!.style.minHeight).toBe('44px');
-      expect(gridPaneElm!.style.height).toBe('44px');
+      expect(contentRootElm!.style.minHeight).toBe('44px');
+      expect(contentRootElm!.style.height).toBe('44px');
     });
 
     it('should expect the Slick-Empty-Warning to be created with calculated height including preHeader & filter headerRow when they are both defined in the grid options with "autoHeight" as well', () => {
-      mockGridOptions.frozenColumn = -1;
+      mockGridOptions.pinning = undefined;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
@@ -244,7 +218,7 @@ describe('Slick-Empty-Warning Component', () => {
       const componentRightElm = document.querySelector<HTMLSelectElement>(
         'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
       ) as HTMLSelectElement;
-      const gridPaneElm = document.querySelector<HTMLDivElement>('.slick-pane.slick-pane-top.slick-pane-left');
+      const contentRootElm = document.querySelector<HTMLDivElement>('.slick-content-root');
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -255,12 +229,12 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
-      expect(gridPaneElm!.style.minHeight).toBe('117px');
-      expect(gridPaneElm!.style.height).toBe('44px');
+      expect(contentRootElm!.style.minHeight).toBe('117px');
+      expect(contentRootElm!.style.height).toBe('44px');
     });
 
     it('should expect the Slick-Empty-Warning to be created when defining a grid that has the "autoHeight" grid option but hidden when calling it the show warning with True then False', () => {
-      mockGridOptions.frozenColumn = -1;
+      mockGridOptions.pinning = undefined;
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
@@ -277,7 +251,7 @@ describe('Slick-Empty-Warning Component', () => {
       const componentRightElm = document.querySelector<HTMLSelectElement>(
         'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
       ) as HTMLSelectElement;
-      const gridPaneElm = document.querySelector<HTMLDivElement>('.slick-pane.slick-pane-top.slick-pane-left');
+      const contentRootElm = document.querySelector<HTMLDivElement>('.slick-content-root');
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -288,12 +262,12 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
-      expect(gridPaneElm!.style.minHeight).toBe('44px');
-      expect(gridPaneElm!.style.height).toBe('44px');
+      expect(contentRootElm!.style.minHeight).toBe('44px');
+      expect(contentRootElm!.style.height).toBe('44px');
     });
 
     it('should expect the Slick-Empty-Warning to be created and use different left margin when "rightViewportMarginLeft" is set', () => {
-      mockGridOptions.frozenColumn = -1;
+      mockGridOptions.pinning = undefined;
       (mockGridOptions.emptyDataWarning as EmptyWarning).rightViewportMarginLeft = '40%';
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
@@ -319,10 +293,10 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.textContent).toBe('No data to display.');
     });
 
-    it('should expect the Slick-Empty-Warning to be created in both viewports and use different left margin when "frozenLeftViewportMarginLeft" is set', () => {
-      mockGridOptions.frozenColumn = 2;
+    it('should expect the Slick-Empty-Warning to be created in both viewports and use different left margin when "pinnedLeftViewportMarginLeft" is set', () => {
+      mockGridOptions.pinning = { columns: { left: 2 } };
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
-      (mockGridOptions.emptyDataWarning as EmptyWarning).frozenLeftViewportMarginLeft = '15px';
+      (mockGridOptions.emptyDataWarning as EmptyWarning).pinnedLeftViewportMarginLeft = '15px';
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
       component.showEmptyDataMessage(true);
@@ -345,10 +319,10 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.textContent).toBe('No data to display.');
     });
 
-    it('should expect the Slick-Empty-Warning to be created in both viewports and use different left margin when "frozenRightViewportMarginLeft" is set', () => {
-      mockGridOptions.frozenColumn = 2;
+    it('should expect the Slick-Empty-Warning to be created in both viewports and use different left margin when "pinnedRightViewportMarginLeft" is set', () => {
+      mockGridOptions.pinning = { columns: { left: 2 } };
       (mockGridOptions.emptyDataWarning as EmptyWarning).leftViewportMarginLeft = '40%';
-      (mockGridOptions.emptyDataWarning as EmptyWarning).frozenRightViewportMarginLeft = '22px';
+      (mockGridOptions.emptyDataWarning as EmptyWarning).pinnedRightViewportMarginLeft = '22px';
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
       component.showEmptyDataMessage(true);
@@ -367,30 +341,6 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.style.display).toBe('flex');
       expect(componentLeftElm.style.marginLeft).toBe('0px');
       expect(componentRightElm.style.marginLeft).toBe('22px');
-      expect(componentLeftElm.textContent).toBe('No data to display.');
-      expect(componentRightElm.textContent).toBe('No data to display.');
-    });
-
-    it('should expect the Slick-Empty-Warning to be created in both viewports when using Frozen Grid but NOT displayed on right when "hideFrozenRightWarning" flag is enabled', () => {
-      mockGridOptions.frozenColumn = 2;
-      (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenLeftWarning = false;
-      (mockGridOptions.emptyDataWarning as EmptyWarning).hideFrozenRightWarning = true;
-      component = new SlickEmptyWarningComponent();
-      component.init(gridStub, container);
-      component.showEmptyDataMessage(true);
-
-      const componentLeftElm = document.querySelector<HTMLSelectElement>(
-        'div.slickgrid_123456 .grid-canvas.grid-canvas-left .slick-empty-data-warning'
-      ) as HTMLSelectElement;
-      const componentRightElm = document.querySelector<HTMLSelectElement>(
-        'div.slickgrid_123456 .grid-canvas.grid-canvas-right .slick-empty-data-warning'
-      ) as HTMLSelectElement;
-
-      expect(component).toBeTruthy();
-      expect(component.constructor).toBeDefined();
-      expect(componentLeftElm).toBeTruthy();
-      expect(componentLeftElm.style.display).toBe('flex');
-      expect(componentRightElm.style.display).toBe('none');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
     });

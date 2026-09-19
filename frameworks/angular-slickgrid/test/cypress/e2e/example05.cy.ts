@@ -631,12 +631,7 @@ describe('Example 5 - OData Grid', () => {
         .invoke('show')
         .click();
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(6)')
-        .children('.slick-menu-content')
-        .should('contain', 'Remove Filter')
-        .click();
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Remove Filter').click();
 
       // wait for the query to finish
       cy.get('[data-test=status]').should('contain', 'finished');

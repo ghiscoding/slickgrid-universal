@@ -63,7 +63,7 @@ const Example51: React.FC = () => {
               {
                 command: 'sort-asc',
                 title: 'Sort Ascending',
-                positionOrder: 50,
+                positionOrder: 40,
                 // Slot renderer replaces entire menu item content (can be HTML string or native DOM elements)
                 slotRenderer: (cmdItem) => `
                   <div class="menu-item">
@@ -76,7 +76,7 @@ const Example51: React.FC = () => {
               {
                 command: 'sort-desc',
                 title: 'Sort Descending',
-                positionOrder: 51,
+                positionOrder: 41,
                 // Slot renderer using native DOM elements
                 slotRenderer: () => {
                   const menuItemElm = createDomElement('div', { className: 'menu-item' });
@@ -122,15 +122,15 @@ const Example51: React.FC = () => {
                 command: 'sort-asc',
                 title: 'Sort Ascending',
                 iconCssClass: 'mdi mdi-sort-ascending',
-                positionOrder: 50,
+                positionOrder: 40,
               },
               {
                 command: 'sort-desc',
                 title: 'Sort Descending',
                 iconCssClass: 'mdi mdi-sort-descending',
-                positionOrder: 51,
+                positionOrder: 41,
               },
-              { divider: true, command: '', positionOrder: 52 },
+              { divider: true, command: '', positionOrder: 42 },
               {
                 command: 'clear-filter',
                 iconCssClass: 'mdi mdi-filter-remove-outline',

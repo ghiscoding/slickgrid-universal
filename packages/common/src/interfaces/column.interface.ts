@@ -5,6 +5,7 @@ import type {
   ColumnExcelExportOption,
   ColumnFilter,
   CustomTooltipOption,
+  DockingSide,
   Editor,
   EditorConstructor,
   EditorValidator,
@@ -223,6 +224,12 @@ export interface Column<T = any> {
   /** Label key, for example this could be used as a property key for complex object label display (e.g. labelKey: 'name') */
   labelKey?: string;
 
+  /** Permanently dock this column at the left or right edge of the single grid viewport. */
+  pinned?: DockingSide | null;
+
+  /** Defaults to true, can the user pin or unpin this column through the Header Menu? */
+  pinnable?: boolean;
+
   /** Maximum Width of the column in pixels (number only). */
   maxWidth?: number;
 
@@ -317,6 +324,12 @@ export interface Column<T = any> {
 
   /** Is the column resizable, can we make it wider/thinner? A resize cursor icon will show on the right side of the column when enabled. */
   resizable?: boolean;
+
+  /**
+   * Dock this column only after normal scrolling would clip it. `true` uses
+   * the leading edge; `'both'` chooses the nearest edge at runtime.
+   */
+  sticky?: DockingSide | 'both' | boolean;
 
   /** defaults to false, if a column `width` is provided (or was previously calculated) should we recalculate it or not when resizing by cell content? */
   resizeAlwaysRecalculateWidth?: boolean;

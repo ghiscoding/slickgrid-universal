@@ -13,6 +13,7 @@ export default class Example29 {
   dragHelper: HTMLElement;
   dragRows: number[];
   dragMode = '';
+  subTitleStyle = 'display: block';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -212,5 +213,10 @@ export default class Example29 {
     } else {
       return { valid: true, msg: null };
     }
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }
