@@ -391,6 +391,22 @@ describe('SlickGrid unified pinning', () => {
     expect(row.querySelectorAll('.slick-cell.active')).toHaveLength(3);
     expect((grid as any).getCellFromEvent({ target: fragments[0] })).toEqual({ row: 0, cell: 0 });
 
+    // A resize must update both the content-bearing host and its visual
+    // continuation fragments. Otherwise the active outline remains at the
+    // pre-resize docking boundary and a second border appears at the new one.
+    Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 800 });
+    internals.applyColumnWidths();
+    const initialFragmentRight = `${Math.max(0, internals.getDockingRenderedWidths().center - internals.columnPosRight[2])}px`;
+    expect(fragments[0].style.right).toBe(initialFragmentRight);
+    grid.getColumns()[1].width = 120;
+    internals.updateColumnCaches();
+    internals.applyColumnWidths();
+    const resizedFragmentRight = `${Math.max(0, internals.getDockingRenderedWidths().center - internals.columnPosRight[2])}px`;
+    expect(host.style.width).toBe('360px');
+    expect(fragments[0].style.right).toBe(resizedFragmentRight);
+    expect(resizedFragmentRight).not.toBe(initialFragmentRight);
+    expect(fragments[0].classList.contains('active')).toBe(true);
+
     const deferredHost = document.createElement('div');
     row.appendChild(deferredHost);
     (grid as any).dockingByColumn.get(0).sticky = true;
@@ -408,7 +424,7 @@ describe('SlickGrid unified pinning', () => {
     expect(deferredHost.previousElementSibling?.classList.contains('slick-cell-sticky')).toBe(true);
     (grid as any)._options.rtl = false;
 
-    const cacheEntry = (grid as any).rowsCache[0];
+    const cacheEntry = internals.rowsCache[0];
     delete cacheEntry.cellNodesByColumnIdx[0];
     delete cacheEntry.cellColSpans[0];
     (grid as any).cleanUpAndRenderCells({ top: 0, bottom: 0, leftPx: 0, rightPx: 320 });

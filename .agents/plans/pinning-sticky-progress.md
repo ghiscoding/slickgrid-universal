@@ -30,6 +30,9 @@ and Example 17 Cypress suites:
   pinned slot beneath the bottom band, leaving the last scrollable row and add-new row reachable.
 - [x] Cross-band colspan fragments receive both added and removed cell CSS classes with their
   logical host, including the built-in `selected` class.
+- [x] Resizing a column refreshes every rendered cross-band colspan host and continuation
+  fragment from the current column geometry, so its active outline grows with the span instead
+  of retaining the old docking boundary or drawing a duplicate border.
 - [x] Header, header-row, and footer cells emit their matching before-destroy lifecycle event once
   immediately before docking region creation/reset empties the chrome root. This covers runtime
   pinning activation and removal without duplicate builder notifications.

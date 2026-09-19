@@ -563,5 +563,53 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       cy.get('.grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell.active[aria-describedby*="%"]').should('exist');
       cy.get('.grid1 [data-row="1"] .slick-cell-colspan-part').should('have.length', 1);
     });
+
+    it('should expand a selected cross-band colspan when a pinned column is resized', () => {
+      cy.reload();
+
+      const host = '.grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l1:not(.slick-cell-colspan-part)';
+      const fragment = '.grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell-colspan-part';
+      const pinLeft = (columnId: string) => {
+        cy.get(`.grid1 .slick-header:not(.slick-preheader-panel) .slick-header-column[data-id="${columnId}"]`)
+          .trigger('mouseover')
+          .children('.slick-header-menu-button')
+          .invoke('show')
+          .click();
+        cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+        cy.get('.slick-submenu:visible [data-command="pin-left"]').click();
+      };
+
+      pinLeft('title');
+      pinLeft('duration');
+
+      cy.get(host).click({ force: true }).should('have.class', 'active');
+      cy.get(fragment).should('have.class', 'active');
+
+      cy.get(host).then(($host) => {
+        const initialWidth = $host[0].getBoundingClientRect().width;
+        const durationHeader = '.grid1 .slick-header-columns-left [data-id="duration"]';
+        cy.get(`${durationHeader} .slick-resizable-handle`)
+          .should('exist')
+          .then(($handle) => {
+            cy.wrap($handle).trigger('mousedown', { which: 1, pageX: 100, clientX: 100, force: true });
+            cy.get('body')
+              .trigger('mousemove', { which: 1, pageX: 125, clientX: 125, force: true })
+              .trigger('mousemove', { which: 1, pageX: 150, clientX: 150, force: true })
+              .trigger('mouseup', { which: 1, pageX: 150, clientX: 150, force: true });
+          });
+
+        cy.get(host).should(($updatedHost) => {
+          expect($updatedHost[0].getBoundingClientRect().width).to.be.greaterThan(initialWidth);
+          expect($updatedHost).to.have.class('active');
+          expect(getComputedStyle($updatedHost[0], '::after').borderRightStyle).to.eq('solid');
+        });
+        cy.get(fragment).should(($updatedFragment) => {
+          expect($updatedFragment).to.have.class('active');
+          const style = getComputedStyle($updatedFragment[0], '::after');
+          expect(style.borderLeftStyle).to.eq('none');
+          expect(style.borderRightStyle).to.eq('solid');
+        });
+      });
+    });
   });
 });
