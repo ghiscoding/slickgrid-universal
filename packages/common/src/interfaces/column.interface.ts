@@ -39,6 +39,13 @@ export type Join<T extends (AllowedJoinTypes | unknown)[], D extends string> = T
       : string;
 
 export interface Column<T = any> {
+  /**
+   * Defaults to false, enable formula editing for this column when FormulaService is used.
+   * When FormulaService auto-assign is enabled (default), it injects its FormulaCellEditor automatically,
+   * so users typically only need to set this flag and do not need to define `editor.model` manually.
+   */
+  allowFormula?: boolean;
+
   /** Defaults to false, should we always render the column? */
   alwaysRenderColumn?: boolean;
 

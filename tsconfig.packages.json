@@ -9,6 +9,7 @@
     { "path": "./packages/empty-warning-component" },
     { "path": "./packages/event-pub-sub" },
     { "path": "./packages/excel-export" },
+    { "path": "./packages/formula-plugin" },
     { "path": "./packages/graphql" },
     { "path": "./packages/odata" },
     { "path": "./packages/pagination-component" },

@@ -4,7 +4,8 @@
 
 .slick-cell {
   input.dual-editor-text,
-  input.editor-text {
+  input.editor-text,
+  .formula-editor-input {
     border: var(--slick-text-editor-border, v.$slick-text-editor-border);
     border-radius: var(--slick-text-editor-border-radius, v.$slick-text-editor-border-radius);
     background: var(--slick-text-editor-background, v.$slick-text-editor-background);
@@ -17,6 +18,7 @@
     margin-bottom: var(--slick-text-editor-margin-bottom, v.$slick-text-editor-margin-bottom);
     margin-right: var(--slick-text-editor-margin-right, v.$slick-text-editor-margin-right);
     margin-top: var(--slick-text-editor-margin-top, v.$slick-text-editor-margin-top);
+    box-sizing: border-box;
     outline: 0;
     height: 100%;
     max-width: 100%;
@@ -40,6 +42,17 @@
     &.date-picker {
       cursor: pointer;
     }
+  }
+
+  .formula-editor-input {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    line-height: normal;
+    overflow: auto hidden;
+    white-space: nowrap;
+    scrollbar-width: none;
   }
 
   .slider-editor {

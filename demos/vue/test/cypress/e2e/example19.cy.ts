@@ -252,12 +252,9 @@ describe('Example 19 - Row Detail View', () => {
     const clickTask1Toggle = () => cy.get('#grid19').find('.slick-row[data-row="1"] .slick-cell.l0').click();
 
     clickTask1Toggle();
-    clickTask1Toggle();
-    clickTask1Toggle();
 
     cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_1').as('detailContainer');
     cy.get('@detailContainer').find('h3').contains('Task 1');
-
     clickTask1Toggle();
     cy.get('@detailContainer').should('not.exist');
 

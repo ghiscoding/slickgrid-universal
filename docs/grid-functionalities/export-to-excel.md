@@ -19,6 +19,17 @@ You can optionally install the Export to Excel resource, it will give you the fl
 
 **NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/excel-export` and instantiate it in your grid options via `externalResources`, see multiple examples below.
 
+### Compatibility Warning (Custom Workbook Functions)
+Workbook-defined custom functions are serialized with modern Excel-only LAMBDA conventions (for example `_xlfn.LAMBDA` and `_xlpm.` argument tokens).
+
+LibreOffice/OpenOffice can open the exported file structure, but they do not reliably execute workbook-defined custom functions.
+
+Built-in formulas (for example `SUM`, `IF`, arithmetic expressions) generally evaluate, while custom function formulas (for example `CUSTOMSUM(A2:C2)`) are not supported there and can return errors such as `Err:509`.
+
+If cross-suite reliability is required, treat custom functions as Excel-only and export precomputed scalar values from your app/example instead of exporting custom-function formulas.
+
+For Formula Service custom functions, see [Formula Service Plugin (Vanilla)](formula-service.md) and the portable export pattern used in [Example 46](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example46.ts).
+
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example02.ts)
 
