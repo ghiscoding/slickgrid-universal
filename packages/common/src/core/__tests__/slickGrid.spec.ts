@@ -2891,6 +2891,11 @@ describe('SlickGrid core file', () => {
 
           expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
         });
+        it('should reserve one row height when autoHeight has no rows', () => {
+          grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, autoHeight: true });
+          grid.init();
+          expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT);
+        });
 
         it('should return full viewport height by data size when "autoHeight" is enabled and has column pinning', () => {
           grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, autoHeight: true, pinning: { columns: { left: 1 } } });

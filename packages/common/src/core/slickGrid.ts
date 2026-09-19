@@ -6289,7 +6289,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           : 0;
       // viewportH is the body height. Header/pre-header heights belong to the
       // sibling header root and are added once by resizeCanvas below.
-      this.viewportH = this.getRowPosition(this.getDataLengthIncludingAddNew());
+      const dataLength = this.getDataLengthIncludingAddNew();
+      this.viewportH = this.getRowPosition(dataLength);
+      if (dataLength === 0) {
+        this.viewportH = this._options.rowHeight!;
+      }
       if (this.getCanvasWidth() > this.viewportW) {
         this.viewportH += this.scrollbarDimensions?.height || 0;
       }
