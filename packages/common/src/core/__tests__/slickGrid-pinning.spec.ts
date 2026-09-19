@@ -431,6 +431,26 @@ describe('SlickGrid unified pinning', () => {
     expect((grid as any).rowsCache[0].cellSpanFragments[0][0].parentElement).toBe(row.querySelector('.slick-scrolling-cells'));
   });
 
+  it('mirrors CSS class overlays between a cross-band colspan host and its fragments', () => {
+    const spanData = {
+      getLength: () => data.length,
+      getItem: (row: number) => data[row],
+      getItemMetadata: (row: number) => (row === 0 ? { columns: { 0: { colspan: columns.length } } } : undefined),
+    };
+    const slickGrid = createGrid({ pinning: { columns: { left: ['a'], right: ['d'] } } } as GridOption, columns, spanData as any);
+    const row = container.querySelector<HTMLElement>('[data-row="0"]')!;
+    const host = row.querySelector<HTMLElement>('.slick-cell.l0:not(.slick-cell-colspan-part)')!;
+    const fragments = row.querySelectorAll<HTMLElement>('.slick-cell-colspan-part');
+
+    slickGrid.setCellCssStyles('selection', { 0: { a: 'selected' } });
+    expect(host.classList.contains('selected')).toBe(true);
+    expect([...fragments].every((fragment) => fragment.classList.contains('selected'))).toBe(true);
+
+    slickGrid.removeCellCssStyles('selection');
+    expect(host.classList.contains('selected')).toBe(false);
+    expect([...fragments].every((fragment) => !fragment.classList.contains('selected'))).toBe(true);
+  });
+
   it('rejects non-sequential pinning when a rendered colspan crosses docking regions', () => {
     const invalidPinning = vi.fn();
     const spanData = {

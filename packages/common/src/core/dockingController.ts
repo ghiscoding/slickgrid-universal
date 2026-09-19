@@ -11,7 +11,7 @@ import type {
   StickyRows,
 } from '../interfaces/index.js';
 
-const DEFAULT_OPTIONS: Required<DockingOption> = {
+const DEFAULT_DOCKING_OPTIONS: Required<DockingOption> = {
   maxColumnViewportWidthPercent: 60,
   maxRowViewportHeightPercent: 60,
   minCenterRowCount: 3,
@@ -28,14 +28,14 @@ export class DockingController<C extends Column = Column> {
   protected rowRevision = 0;
   protected lastColumnSignature = '';
   protected lastRowSignature = '';
-  protected options: Required<DockingOption> = { ...DEFAULT_OPTIONS };
+  protected options: Required<DockingOption> = { ...DEFAULT_DOCKING_OPTIONS };
 
   constructor(options?: DockingOption) {
     this.setOptions(options);
   }
 
   setOptions(options?: DockingOption): void {
-    this.options = { ...DEFAULT_OPTIONS, ...options };
+    this.options = { ...DEFAULT_DOCKING_OPTIONS, ...options };
   }
 
   reset(): void {
