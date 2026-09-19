@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.10.0...v10.11.0) (2026-09-15)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2790](https://github.com/ghiscoding/slickgrid-universal/issues/2790)) ([d380950](https://github.com/ghiscoding/slickgrid-universal/commit/d380950fc33e90e3ab438039c45e336d413dbdb5)) - by @renovate-bot
+* **row-detail:** auto-select overlay for transformed rows ([#2776](https://github.com/ghiscoding/slickgrid-universal/issues/2776)) ([e757539](https://github.com/ghiscoding/slickgrid-universal/commit/e757539c2d8e11cf24d594963d883226b44767d4)) - by @ghiscoding
+
 ## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
 
 ### Bug Fixes

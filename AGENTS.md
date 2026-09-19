@@ -171,33 +171,3 @@ rtk discover          # Find missed rtk opportunities
 rtk proxy <cmd>       # Run raw (no filtering) but track usage
 ```
 <!-- /rtk-instructions -->
-
-## VEXP context tools <!-- vexp v2.0.31 -->
-
-When VEXP context tools are available, `run_pipeline` is the primary tool and must be called first for repository tasks. VEXP returns pre-indexed, graph-ranked context in a single call.
-
-### Workflow
-
-1. Call `run_pipeline` with the task description before other repository searches.
-2. Make targeted changes from the returned context.
-3. Call `run_pipeline` again only when more context is needed.
-
-### Available MCP tools
-
-- `run_pipeline` - primary tool; runs capsule, impact, and memory in one call.
-- `get_skeleton` - compact file structure.
-- `index_status` - indexing status.
-- `expand_vexp_ref` - expand V-REF placeholders in VEXP output.
-
-### Agentic search
-
-When VEXP is available, use `run_pipeline` before built-in file search, grep, or codebase indexing. If spawning sub-agents or background tasks, pass them the context from `run_pipeline` rather than letting them search independently.
-
-### Multi-repo
-
-`run_pipeline` can query all indexed repositories. Use `repos: ["alias"]` to scope it, and use `index_status` to see aliases. If VEXP is unavailable, use the normal repository tools.
-
-### Smart features
-
-VEXP can auto-detect intent, combine hybrid ranking, use session memory, and expand its context budget as needed.
-<!-- /vexp -->

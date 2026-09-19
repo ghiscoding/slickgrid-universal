@@ -4,6 +4,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.10.0...v10.11.0) (2026-09-15)
+
+### Features
+
+* **common:** add automatic height for multiline column headers ([#2780](https://github.com/ghiscoding/slickgrid-universal/issues/2780)) ([70ae771](https://github.com/ghiscoding/slickgrid-universal/commit/70ae771a38c43b12303b97f495172e2ad3cb98c0)) - by @ghiscoding
+* **styling:** align calendar picker CSS variables for Dark Theme ([#2793](https://github.com/ghiscoding/slickgrid-universal/issues/2793)) ([277fa5c](https://github.com/ghiscoding/slickgrid-universal/commit/277fa5c1aa3dd1b42560135891896924b3d72fae)) - by @ghiscoding
+
+### Bug Fixes
+
+* **common:** rename changeColumnsArrangement to applyColumnLayout ([#2779](https://github.com/ghiscoding/slickgrid-universal/issues/2779)) ([33bfbb1](https://github.com/ghiscoding/slickgrid-universal/commit/33bfbb1d2bf19e446d96a9fa85f7faca292c7310)) - by @ghiscoding
+* **common:** skip content resize when DataView has no items ([#2778](https://github.com/ghiscoding/slickgrid-universal/issues/2778)) ([2414a21](https://github.com/ghiscoding/slickgrid-universal/commit/2414a212514f7d7be28aee4d565e1401e1e5b99c)) - by @ghiscoding
+* **common:** support multiple CSS classes in cell style updates ([#2794](https://github.com/ghiscoding/slickgrid-universal/issues/2794)) ([014db0c](https://github.com/ghiscoding/slickgrid-universal/commit/014db0cd04c4c4448d369b7dad24b5de243fb8c7)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2790](https://github.com/ghiscoding/slickgrid-universal/issues/2790)) ([d380950](https://github.com/ghiscoding/slickgrid-universal/commit/d380950fc33e90e3ab438039c45e336d413dbdb5)) - by @renovate-bot
+* **row-detail:** auto-select overlay for transformed rows ([#2776](https://github.com/ghiscoding/slickgrid-universal/issues/2776)) ([e757539](https://github.com/ghiscoding/slickgrid-universal/commit/e757539c2d8e11cf24d594963d883226b44767d4)) - by @ghiscoding
+* **selection:** preserve live previews for multi-row drag selection ([#2777](https://github.com/ghiscoding/slickgrid-universal/issues/2777)) ([9556ba1](https://github.com/ghiscoding/slickgrid-universal/commit/9556ba157b8c84e377883377c5e39718aa6d53b6)) - by @ghiscoding
+* **styling:** ms-select used wrong light text color for Dark Theme ([10df611](https://github.com/ghiscoding/slickgrid-universal/commit/10df6115fcd855ae1a0002be7ef08cf418a72cb9)) - by @ghiscoding
+
+### Performance Improvements
+
+* **common:** improve Select All row selections toggling on large dataset by 9x faster ([#2785](https://github.com/ghiscoding/slickgrid-universal/issues/2785)) ([0ab9f41](https://github.com/ghiscoding/slickgrid-universal/commit/0ab9f41941fc157e73ea7da96f2240d9b66ed469)) - by @ghiscoding
+
 ## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
 
 ### Features
