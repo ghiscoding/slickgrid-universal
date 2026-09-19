@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness — implementation progress
 
-Last updated: 2026-09-17 (rowspan stacking and pinned-cell hit-testing fix)
+Last updated: 2026-09-19 (pinned header-filter focus preservation)
 
 ## Goal
 
@@ -862,6 +862,15 @@ virtualization, and the RTL/native-scroll fallback. Supporting grouped quarterly
 bands would still be a separate feature and product decision.
 
 ## Known limitations and likely breakage
+
+### Pinned header-filter focus regression (2026-09-19)
+
+- Pinned-grid header filters retain focus while local filtering refreshes the row count. The
+  docking chrome synchronizer previously re-appended every already ordered header, header-row,
+  and footer cell during layout refreshes; Chromium blurred a focused filter when its containing
+  header-row cell was reinserted. Synchronization now skips that DOM work when a region is already
+  ordered. Focused common coverage verifies the no-op path, and Vanilla Example 04 Cypress
+  coverage verifies that `% Complete` remains focused while typing.
 
 ### Framework parity and recent Cypress regressions (2026-09-09)
 

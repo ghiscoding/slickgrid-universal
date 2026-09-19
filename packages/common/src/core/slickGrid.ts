@@ -2225,7 +2225,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       Object.values(regions).forEach((region) => {
         const elements = Array.from(region.children).filter((element) => element.matches(selector)) as HTMLElement[];
-        elements.sort((a, b) => getColumnIndex(a) - getColumnIndex(b)).forEach((element) => region.appendChild(element));
+        const sortedElements = [...elements].sort((a, b) => getColumnIndex(a) - getColumnIndex(b));
+        if (elements.some((element, index) => element !== sortedElements[index])) {
+          sortedElements.forEach((element) => region.appendChild(element));
+        }
       });
     };
 

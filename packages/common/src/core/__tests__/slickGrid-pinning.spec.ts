@@ -106,6 +106,25 @@ describe('SlickGrid unified pinning', () => {
     });
   });
 
+  it('reorders docking chrome only when needed', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: ['a'], right: ['d'] } }, showHeaderRow: true });
+    const internals = slickGrid as any;
+    const regions = [...Object.values(internals.dockingHeaderRegions), ...Object.values(internals.dockingHeaderRowRegions)] as HTMLDivElement[];
+    const appendSpies = regions.map((region) => vi.spyOn(region, 'appendChild'));
+
+    internals.syncDockingChromeRegions();
+
+    appendSpies.forEach((spy) => expect(spy).not.toHaveBeenCalled());
+
+    const centerRegion = internals.dockingHeaderRegions.center as HTMLDivElement;
+    centerRegion.appendChild(centerRegion.firstElementChild!);
+    appendSpies.forEach((spy) => spy.mockClear());
+    internals.syncDockingChromeRegions();
+
+    expect([...centerRegion.children].map((element) => (element as HTMLElement).dataset.id)).toEqual(['b', 'c']);
+    expect(appendSpies.some((spy) => spy.mock.calls.length > 0)).toBe(true);
+  });
+
   it('compacts normal rows around non-contiguous top-pinned rows without changing dataset height', () => {
     const rows = Array.from({ length: 6 }, (_, id) => ({ id, a: `a${id}`, b: `b${id}`, c: `c${id}`, d: `d${id}` }));
     const slickGrid = createGrid({ pinning: { rows: { top: [0, 2, 4] } } }, columns, rows);

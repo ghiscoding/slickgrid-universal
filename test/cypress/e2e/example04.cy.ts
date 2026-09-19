@@ -1141,4 +1141,8 @@ describe('Example 04 - Pinned Grid', () => {
       cy.get('.grid4 .slick-header-columns-center [data-id="cityOfOrigin"]').should('exist');
     });
   });
+  it('should keep focus in the percent-complete filter while typing', () => {
+    cy.visit(Cypress.config('baseUrl') + '/example04');
+    cy.get('.grid4 .slick-headerrow-column.l2 input').click().type('3').should('have.focus').clear();
+  });
 });
