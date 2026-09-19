@@ -908,7 +908,7 @@ describe('SlickGrid unified pinning', () => {
 
     slickGrid.setColumnPinning('b', 'left');
     expect(slickGrid.getPinnedColumns('left').map((column) => column.id)).toEqual(['b']);
-    expect(slickGrid.getOptions().pinning?.columns?.left).toEqual([1]);
+    expect(slickGrid.getOptions().pinning?.columns?.left).toEqual(['b']);
 
     slickGrid.setColumnPinning('c', 'right');
     expect(slickGrid.getPinnedColumns('right').map((column) => column.id)).toEqual(['c']);
@@ -928,13 +928,19 @@ describe('SlickGrid unified pinning', () => {
     expect(invalidPinning).toHaveBeenCalled();
   });
 
-  it('normalizes empty visible-column boundaries without producing invalid indexes', () => {
+  it('normalizes numeric boundaries against the full column list', () => {
     const slickGrid = createGrid();
     const internals = slickGrid as any;
     const hiddenColumns = slickGrid.getColumns().map((column) => ({ ...column, hidden: true }));
 
-    expect(internals.normalizeColumnPinningReferences(0, 'right', slickGrid.getColumns())).toEqual([]);
-    expect(internals.normalizeColumnPinningReferences(1, 'left', hiddenColumns)).toEqual([]);
+    expect(internals.normalizeColumnPinningReferences(0, 'right', slickGrid.getColumns().length)).toEqual([]);
+    expect(internals.normalizeColumnPinningReferences(1, 'left', hiddenColumns.length)).toEqual([0, 1]);
+  });
+  it('keeps numeric right pinning on the original trailing columns after hiding one', () => {
+    const slickGrid = createGrid({ pinning: { columns: { right: 2 } } });
+    slickGrid.updateColumnById('c', { hidden: true });
+    expect((slickGrid as any).getPinnedColumnIndexes().get(2)).toBeUndefined();
+    expect((slickGrid as any).getPinnedColumnIndexes().get(3)).toBe('right');
   });
 
   it('removes the docking proxy and chrome regions when pinning is cleared', () => {

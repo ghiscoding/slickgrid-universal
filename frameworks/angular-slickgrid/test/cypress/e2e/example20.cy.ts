@@ -5,8 +5,28 @@ describe('Example 20 - Pinned Grid', () => {
     cy.viewport(1440, 900);
   });
 
-  const withTitleRowTitles = ['Sel', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
-  const withoutTitleRowTitles = ['', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+  const withTitleRowTitles = [
+    'Sel',
+    'Title',
+    '% Complete',
+    'Start',
+    'Finish',
+    'Completed',
+    'Cost | Duration',
+    'City of Origin (not pinnable)',
+    'Action',
+  ];
+  const withoutTitleRowTitles = [
+    '',
+    'Title',
+    '% Complete',
+    'Start',
+    'Finish',
+    'Completed',
+    'Cost | Duration',
+    'City of Origin (not pinnable)',
+    'Action',
+  ];
   const getCell = (rowIndex: number, columnIndex: number) =>
     cy.get(`#grid20 .slick-row[data-row="${rowIndex}"] .slick-cell.l${columnIndex}`);
   const setRightPinning = (count: number) => {
@@ -93,12 +113,12 @@ describe('Example 20 - Pinned Grid', () => {
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell`).should('have.length', 2);
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell.l7`).should('contain', 'Boston');
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell.city-of-origin-column`).should(($cell) => {
-      expect(getComputedStyle($cell[0]).backgroundColor).to.eq('rgb(255, 244, 247)');
+      expect(getComputedStyle($cell[0]).backgroundColor).to.eq('rgb(233, 233, 233)');
     });
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell.l8 .cell-menu-dropdown`).should('contain', 'Action');
 
     cy.get('#grid20 .slick-header-columns-right .slick-header-column').should('have.length', 2);
-    cy.get('#grid20 .slick-header-columns-right [data-id="cityOfOrigin"]').should('contain', 'City of Origin');
+    cy.get('#grid20 .slick-header-columns-right [data-id="cityOfOrigin"]').should('contain', 'City of Origin (not pinnable)');
     cy.get('#grid20 .slick-header-columns-right [data-id="action"]').should('contain', 'Action');
     cy.get('#grid20 .slick-headerrow-columns-right .slick-headerrow-column').should('have.length', 2);
     cy.get('#grid20 .slick-headerrow-columns-right .slick-headerrow-column.l7 input').should('exist');
@@ -171,7 +191,16 @@ describe('Example 20 - Pinned Grid', () => {
   });
 
   it('should hide "Title" column from Grid Menu and expect last pinned column to be "% Complete"', () => {
-    const newColumnList = ['Sel', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+    const newColumnList = [
+      'Sel',
+      '% Complete',
+      'Start',
+      'Finish',
+      'Completed',
+      'Cost | Duration',
+      'City of Origin (not pinnable)',
+      'Action',
+    ];
     const row0 = '#grid20 .slick-row[data-row="0"]';
 
     cy.get('#grid20').find('button.slick-grid-menu-button').click({ force: true });
@@ -225,7 +254,16 @@ describe('Example 20 - Pinned Grid', () => {
   });
 
   it('should hide "Title" column from Header Menu and expect last pinned column to be "% Complete"', () => {
-    const newColumnList = ['Sel', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+    const newColumnList = [
+      'Sel',
+      '% Complete',
+      'Start',
+      'Finish',
+      'Completed',
+      'Cost | Duration',
+      'City of Origin (not pinnable)',
+      'Action',
+    ];
 
     cy.get('#grid20').find('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
@@ -636,7 +674,7 @@ describe('Example 20 - Pinned Grid', () => {
     cy.get('[data-test=set-3pinned-columns]').click({ force: true });
 
     const leftColumns = ['', 'Title', '% Complete'];
-    const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+    const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin (not pinnable)', 'Action'];
     cy.get('#grid20').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
     cy.get('.slick-column-picker')
@@ -709,7 +747,7 @@ describe('Example 20 - Pinned Grid', () => {
 
   it('should reset hidden column from the Column Picker and expect all columns to be back', () => {
     const leftColumns = ['', 'Title', '% Complete'];
-    const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+    const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin (not pinnable)', 'Action'];
 
     cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
     cy.get('.slick-column-picker')
@@ -742,7 +780,7 @@ describe('Example 20 - Pinned Grid', () => {
 
     it('should resize all columns and make them wider', () => {
       // resize CityOfOrigin column
-      cy.get('.slick-header-columns .slick-header-column:nth(7)').should('contain', 'City of Origin');
+      cy.get('.slick-header-columns .slick-header-column:nth(7)').should('contain', 'City of Origin (not pinnable)');
 
       cy.get('.slick-resizable-handle:nth(7)').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
 

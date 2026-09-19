@@ -131,7 +131,7 @@ function defineGrid() {
     },
     {
       id: 'cityOfOrigin',
-      name: 'City of Origin',
+      name: 'City of Origin (not pinnable)',
       field: 'cityOfOrigin',
       cssClass: 'city-of-origin-column',
       minWidth: 100,
@@ -422,7 +422,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/pinning"
       target="_blank"
       >Wiki docs</a
-    >) City of Origin is intentionally non-pinnable and is highlighted with a subtle pink background. Columns and rows can also be pinned
+    >) City of Origin is intentionally non-pinnable and is highlighted with a subtle gray background. Columns and rows can also be pinned
     selectively, without requiring them to be sequential (for example, rows 0, 2, and 4). You can pin any number of columns or rows, place
     rows at the bottom, change these options through SlickGrid setOptions(), and customize the border styling between pinned columns and
     rows.

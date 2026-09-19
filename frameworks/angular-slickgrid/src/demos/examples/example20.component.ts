@@ -107,7 +107,7 @@ export class Example20Component implements OnInit {
       },
       {
         id: 'cityOfOrigin',
-        name: 'City of Origin',
+        name: 'City of Origin (not pinnable)',
         field: 'cityOfOrigin',
         cssClass: 'city-of-origin-column',
         minWidth: 100,
