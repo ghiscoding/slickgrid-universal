@@ -15,22 +15,21 @@ jobs:
         run: echo ${{ env.START_TIME }}
 
       - name: Clone repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install pnpm
+        uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2
+        with:
+          install: false
+
       - name: Set NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           registry-url: 'https://registry.npmjs.org/'
           node-version: 20
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 8
-          run_install: false
 
       - name: Run pnpm install dependencies
         run: pnpm install
@@ -43,7 +42,7 @@ jobs:
 
       - name: Deploy to gh-pages
         if: github.ref == 'refs/heads/master'
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./website
