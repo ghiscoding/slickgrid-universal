@@ -72,6 +72,7 @@
     "@angular/compiler-cli": "^21.2.23",
     "@angular/core": "^21.2.23",
     "@angular/forms": "^21.2.23",
+    "@angular/language-server": "^21.2.23",
     "@angular/language-service": "^21.2.23",
     "@angular/platform-browser": "^21.2.23",
     "@angular/router": "^21.2.23",
