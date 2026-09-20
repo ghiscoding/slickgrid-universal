@@ -12,7 +12,7 @@
     "noImplicitReturns": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    "rootDir": "./src",
+    "rootDir": ".",
     "target": "ES2022",
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2022", "dom"],
@@ -30,6 +30,5 @@
       }
     }
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.spec.ts"]
+  "include": ["src/**/*.ts"]
 }
