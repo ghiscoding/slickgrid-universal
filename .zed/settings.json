@@ -1,0 +1,16 @@
+{
+  "format_on_save": "on",
+  "formatter": {
+    "language_server": {
+      "name": "prettier"
+    }
+  },
+  "lsp": {
+    "angular": {
+      "initialization_options": {
+        "angular_language_server_path": "frameworks/angular-slickgrid/node_modules/@angular/language-server",
+        "max_ts_server_memory": 8192
+      }
+    }
+  }
+}
