@@ -84,6 +84,13 @@ an oversized candidate remains in its normal scroll flow.
 Permanent pinned rows always remain pinned, even if their combined height exceeds the configured
 budget; sticky rows then use the remaining space, or stay in normal flow when none remains.
 
+### Cross-band Colspans
+
+Colspans that cross a docking boundary keep one logical host cell for formatters, selection, and
+navigation, while each following band renders a clipped continuation. Continuations carry an
+`aria-hidden` presentational copy offset by the content already shown, so the text reads as one
+cell without painting over neighboring scrolling cells.
+
 ### Permanent Pins and Header Menus
 Permanent pins take precedence over sticky candidates. Sticky columns do not have built-in Header
 Menu commands, so there is no `Column.stickable` option. Use the column definition or

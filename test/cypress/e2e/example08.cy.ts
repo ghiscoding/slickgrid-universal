@@ -450,6 +450,18 @@ describe('Example 08 - Column Span & Header Grouping', () => {
         .and('not.have.class', 'r4');
       cy.get('.grid1 [data-row="1"] .slick-cell.l4.r4').should('have.length', 1);
       cy.get('.grid1 [data-row="1"] .slick-cell-colspan-part').should('have.length', 1);
+      cy.get(hostSelector).then(($host) => {
+        const host = $host[0].getBoundingClientRect();
+        const leftRegion = $host[0].parentElement!.getBoundingClientRect();
+        expect(host.right, 'host is clipped to the pinned band').to.be.at.most(leftRegion.right + 1);
+        cy.get(fragmentSelector).then(($fragment) => {
+          const fragment = $fragment[0].getBoundingClientRect();
+          expect(fragment.left, 'continuation starts at the host edge').to.be.closeTo(host.right, 1.5);
+          const content = $fragment[0].querySelector('.slick-cell-colspan-part-content') as HTMLElement;
+          expect(content, 'continuation carries a copy of the content').to.exist;
+          expect(content.textContent).to.eq($host[0].textContent);
+        });
+      });
       cy.get(fragmentSelector).should('have.length', 1).click({ force: true }).should('have.class', 'active');
       cy.get(fragmentSelector).should(($cell) => {
         const style = getComputedStyle($cell[0], '::after');
