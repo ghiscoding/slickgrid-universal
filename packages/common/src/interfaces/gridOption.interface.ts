@@ -660,8 +660,8 @@ export interface GridOption<C extends Column = Column> {
   /** Formatter options that are defined and used for the entire grid */
   formatterOptions?: FormatterOption;
 
-  /** Unified permanent pinning for columns and rows. Explicit column references are ids or zero-based indexes. */
-  pinning?: PinningOption;
+  /** Unified permanent pinning for columns and rows. Set to `null` or `undefined` to clear it. */
+  pinning?: PinningOption | null;
 
   /** Defaults to false, which leads to have row(s) taking full width */
   fullWidthRows?: boolean;
@@ -960,8 +960,8 @@ export interface GridOption<C extends Column = Column> {
   /** When set to true, it will skip validation that pinned columns fit within the grid viewport. */
   skipPinningValidation?: boolean;
 
-  /** Stable row ids (or row indexes) that dock to an edge only after normal scrolling would clip them. */
-  stickyRows?: StickyRows;
+  /** Stable row ids (or row indexes) that dock to an edge only after normal scrolling would clip them. Set to `null` to clear. */
+  stickyRows?: StickyRows | null;
 
   /** Message to show when a pinning change would leave no center column. */
   invalidColumnPinningPickerMessage?: string;

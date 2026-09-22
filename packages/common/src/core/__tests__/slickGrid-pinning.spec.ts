@@ -80,6 +80,31 @@ describe('SlickGrid unified pinning', () => {
     expect(container.querySelector('.slick-docking-overlay [data-row="1"]')).toBeTruthy();
   });
 
+  it('resolves object id references after data order changes and clears null docking options', () => {
+    const rows = [
+      { id: 10, a: 'a10', b: 'b10', c: 'c10', d: 'd10' },
+      { id: 11, a: 'a11', b: 'b11', c: 'c11', d: 'd11' },
+      { id: 12, a: 'a12', b: 'b12', c: 'c12', d: 'd12' },
+    ];
+    const slickGrid = createGrid({ pinning: { rows: { top: [{ id: 12 }], bottom: [{ id: 10 }] } } }, columns, rows);
+    const internals = slickGrid as any;
+
+    expect(internals.rowDockingLayout.top.map((entry: any) => entry.index)).toEqual([2]);
+    expect(internals.rowDockingLayout.bottom.map((entry: any) => entry.index)).toEqual([0]);
+
+    rows.reverse();
+    slickGrid.invalidateAllRows();
+    slickGrid.render();
+    expect(internals.rowDockingLayout.top.map((entry: any) => entry.index)).toEqual([0]);
+    expect(internals.rowDockingLayout.bottom.map((entry: any) => entry.index)).toEqual([2]);
+
+    slickGrid.setOptions({ pinning: { rows: { top: [0] } } });
+    expect(internals.rowDockingLayout.top.map((entry: any) => entry.index)).toEqual([0]);
+    slickGrid.setOptions({ pinning: null, stickyRows: null });
+    expect(slickGrid.getOptions().pinning).toBeUndefined();
+    expect(slickGrid.getOptions().stickyRows).toEqual({ top: [], bottom: [], both: [] });
+  });
+
   it('keeps docking wrappers presentational around the one semantic grid tree', () => {
     createGrid({ pinning: { columns: { left: ['a'], right: ['d'] }, rows: { top: [0] } } });
 

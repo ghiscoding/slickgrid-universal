@@ -35,7 +35,7 @@ describe('DockingController', () => {
 
   it('resolves sticky columns after a direct scroll jump', () => {
     const columns = [column('left-sticky', 10, { sticky: 'left' }), column('middle', 10), column('right-sticky', 20, { sticky: 'right' })];
-    const controller = new DockingController({ maxColumnViewportWidthPercent: 200, stickyHysteresis: 2 });
+    const controller = new DockingController({ maxColumnViewportWidthPercent: 200, stickyActivationBuffer: 2 });
 
     expect(controller.resolveColumns(columns, 100, 20).left.map((item) => item.index)).toEqual([0]);
     expect(controller.resolveColumns(columns, 0, 20).left).toHaveLength(0);
@@ -85,14 +85,14 @@ describe('DockingController', () => {
   });
 
   it('resolves permanent and sticky rows, including both-sided candidates', () => {
-    const controller = new DockingController({ maxRowViewportHeightPercent: 100, stickyHysteresis: 2 });
+    const controller = new DockingController({ maxRowViewportHeightPercent: 100, stickyActivationBuffer: 2 });
     const rows = [row('top', 0, 0, 10), row('sticky-top', 1, 10, 10), row('center', 2, 20, 10), row('sticky-bottom', 3, 30, 10), row('bottom', 4, 40, 10)];
-    const initial = controller.resolveRows(rows, 0, 40, { top: ['top'], bottom: ['bottom'] }, { top: ['sticky-top'], bottom: ['sticky-bottom'] });
+    const initial = controller.resolveRows(rows, 0, 40, { top: [0], bottom: [4] }, { top: [1], bottom: [3] });
     expect(initial.top.map((item) => item.id)).toEqual(['top']);
-    expect(initial.bottom.map((item) => item.id)).toEqual(['bottom', 'sticky-bottom']);
+    expect(initial.bottom.map((item) => item.id)).toEqual(['sticky-bottom', 'bottom']);
     expect(initial.center.map((item) => item.id)).toEqual(['sticky-top', 'center']);
 
-    const scrolled = controller.resolveRows(rows, 25, 40, { top: ['top'], bottom: ['bottom'] }, { top: ['sticky-top'], bottom: ['sticky-bottom'] });
+    const scrolled = controller.resolveRows(rows, 25, 40, { top: [0], bottom: [4] }, { top: [1], bottom: [3] });
     expect(scrolled.top.map((item) => item.id)).toContain('sticky-top');
     expect(scrolled.bottom.map((item) => item.id)).not.toContain('sticky-bottom');
   });
@@ -100,22 +100,22 @@ describe('DockingController', () => {
   it('resolves a sticky row after a direct scroll jump', () => {
     const controller = new DockingController({ maxRowViewportHeightPercent: 100, overflowStrategy: 'clamp' });
     const rows = [row('top', 0, 0, 20), row('bottom', 1, 20, 20)];
-    expect(controller.resolveRows(rows, 100, 100, undefined, { top: ['top'], bottom: ['bottom'] }).top.map((item) => item.id)).toEqual(['top']);
-    const layout = controller.resolveRows(rows, 0, 100, undefined, { top: ['top'], bottom: ['bottom'] });
+    expect(controller.resolveRows(rows, 100, 100, undefined, { top: [0], bottom: [1] }).top.map((item) => item.id)).toEqual(['top']);
+    const layout = controller.resolveRows(rows, 0, 100, undefined, { top: [0], bottom: [1] });
     expect(layout.top.length + layout.bottom.length).toBeLessThanOrEqual(1);
   });
 
   it('chooses the closest edge when a sticky row is configured for both sides', () => {
     const rows = [row('both', 0, 10, 30)];
     const topController = new DockingController({ maxRowViewportHeightPercent: 200 });
-    topController.resolveRows(rows, 0, 100, undefined, { both: ['both'] });
-    const topPreferred = topController.resolveRows(rows, 11, 20, undefined, { both: ['both'] });
+    topController.resolveRows(rows, 0, 100, undefined, { both: [0] });
+    const topPreferred = topController.resolveRows(rows, 11, 20, undefined, { both: [0] });
     expect(topPreferred.top.map((item) => item.id)).toEqual(['both']);
     expect(topPreferred.bottom).toEqual([]);
 
     const bottomController = new DockingController({ maxRowViewportHeightPercent: 200 });
-    bottomController.resolveRows(rows, 0, 100, undefined, { both: ['both'] });
-    const bottomPreferred = bottomController.resolveRows(rows, 20, 19, undefined, { both: ['both'] });
+    bottomController.resolveRows(rows, 0, 100, undefined, { both: [0] });
+    const bottomPreferred = bottomController.resolveRows(rows, 20, 19, undefined, { both: [0] });
     expect(bottomPreferred.bottom.map((item) => item.id)).toEqual(['both']);
     expect(bottomPreferred.top).toEqual([]);
   });
@@ -123,12 +123,12 @@ describe('DockingController', () => {
   it('resolves multiple bottom candidates from the lower viewport edge', () => {
     const controller = new DockingController({ maxRowViewportHeightPercent: 200 });
     const topRows = [row('top-a', 0, 0, 5), row('top-b', 1, 5, 5)];
-    controller.resolveRows(topRows, 0, 100, undefined, { top: ['top-a', 'top-b'] });
-    expect(controller.resolveRows(topRows, 10, 20, undefined, { top: ['top-a', 'top-b'] }).top).toHaveLength(2);
+    controller.resolveRows(topRows, 0, 100, undefined, { top: [0, 1] });
+    expect(controller.resolveRows(topRows, 10, 20, undefined, { top: [0, 1] }).top).toHaveLength(2);
 
     const rows = [row('bottom-a', 0, 35, 20), row('bottom-b', 1, 55, 20)];
-    controller.resolveRows(rows, 0, 100, undefined, { bottom: ['bottom-a', 'bottom-b'] });
-    const layout = controller.resolveRows(rows, 11, 20, undefined, { bottom: ['bottom-a', 'bottom-b'] });
+    controller.resolveRows(rows, 0, 100, undefined, { bottom: [0, 1] });
+    const layout = controller.resolveRows(rows, 11, 20, undefined, { bottom: [0, 1] });
 
     expect(layout.bottom.map((item) => item.id)).toEqual(['bottom-a', 'bottom-b']);
     expect(layout.bottom.every((item) => item.sticky)).toBe(true);
@@ -136,7 +136,7 @@ describe('DockingController', () => {
 
   it('uses one shared budget for simultaneous top and bottom sticky stacks', () => {
     const rows = [row('top-a', 0, 0, 20), row('top-b', 1, 20, 20), row('center', 2, 40, 20), row('bottom', 3, 140, 20)];
-    const stickyRows = { top: ['top-a', 'top-b'], bottom: ['bottom'] };
+    const stickyRows = { top: [0, 1], bottom: [3] };
 
     const withinBudget = new DockingController({ maxRowViewportHeightPercent: 60 });
     const selected = withinBudget.resolveRows(rows, 50, 100, undefined, stickyRows);
@@ -159,8 +159,8 @@ describe('DockingController', () => {
       row('bottom-b', 5, 173, 27),
     ];
     const layout = new DockingController({ maxRowViewportHeightPercent: 60, overflowStrategy: 'clamp' }).resolveRows(rows, 70, 100, undefined, {
-      top: ['top-a', 'top-b', 'top-c'],
-      bottom: ['bottom-a', 'bottom-b'],
+      top: [0, 1, 3],
+      bottom: [4, 5],
     });
 
     expect(layout.top.map((item) => item.id)).toEqual(['top-a', 'top-b']);
@@ -178,8 +178,8 @@ describe('DockingController', () => {
       rows,
       50,
       100,
-      { top: ['permanent-top'], bottom: ['permanent-bottom'] },
-      { top: ['sticky'] }
+      { top: [0], bottom: [2] },
+      { top: [1] }
     );
 
     expect(layout.top.map((item) => item.id)).toEqual(['permanent-top']);
