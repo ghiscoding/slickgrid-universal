@@ -537,12 +537,13 @@ describe('SlickGrid unified pinning', () => {
     expect(fragment.isConnected).toBe(false);
   });
 
-  it('rejects non-sequential pinning when a rendered colspan crosses docking regions', () => {
+  it('rejects non-sequential pinning when an offscreen colspan crosses docking regions', () => {
     const invalidPinning = vi.fn();
+    const manyRows = Array.from({ length: 40 }, (_, id) => ({ ...data[id % data.length], id }));
     const spanData = {
-      getLength: () => data.length,
-      getItem: (row: number) => data[row],
-      getItemMetadata: (row: number) => (row === 0 ? { columns: { 0: { colspan: 1 }, 1: { colspan: 3 } } } : undefined),
+      getLength: () => manyRows.length,
+      getItem: (row: number) => manyRows[row],
+      getItemMetadata: (row: number) => (row === manyRows.length - 1 ? { columns: { 0: { colspan: 1 }, 1: { colspan: 3 } } } : undefined),
     };
     container = document.createElement('div');
     container.style.width = '800px';
@@ -570,6 +571,34 @@ describe('SlickGrid unified pinning', () => {
         .slice(0, 2)
         .every((column) => column.pinned === 'left')
     ).toBe(true);
+  });
+
+  it('falls back to cached rows when a data provider has no metadata length', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+    expect(internals.rowMetadataIndexes()).toEqual([]);
+
+    internals.data = { getItemMetadata: () => undefined };
+    const cachedRows = Object.keys(internals.rowsCache).map(Number);
+    expect(internals.rowMetadataIndexes()).toEqual(cachedRows);
+  });
+
+  it('uses the proxy scroll owner client width without subtracting the scrollbar twice', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: ['a'], right: ['d'] } } });
+    const internals = slickGrid as any;
+    const scroller = internals._viewportScrollContainerX as HTMLElement;
+    Object.defineProperty(scroller, 'clientWidth', { configurable: true, value: 600 });
+    vi.spyOn(scroller, 'getBoundingClientRect').mockReturnValue({ width: 600 } as DOMRect);
+    Object.defineProperty(scroller, 'scrollLeft', { configurable: true, writable: true, value: 0 });
+    internals.scrollLeft = 0;
+    internals.dockingLayout.leftWidth = 80;
+    internals.dockingLayout.rightWidth = 80;
+    internals.viewportHasVScroll = true;
+    internals.scrollbarDimensions = { width: 15, height: 15 };
+
+    internals.internalScrollColumnIntoView(500, 510);
+
+    expect(scroller.scrollLeft).toBe(0);
   });
 
   it('keeps bulk right pinning anchored at the selected colspan column', () => {
@@ -919,6 +948,18 @@ describe('SlickGrid unified pinning', () => {
     internals._options.rtl = false;
 
     expect(internals.getRightDockedChromeLeft(document.createElement('div'), { offset: 0 })).toEqual(expect.any(Number));
+
+    const scaledHeader = document.createElement('div');
+    scaledHeader.className = 'slick-header-column';
+    internals._headerL.appendChild(scaledHeader);
+    const headerScroller = internals._headerScrollerL as HTMLElement;
+    Object.defineProperty(headerScroller, 'offsetWidth', { configurable: true, value: 1000 });
+    vi.spyOn(headerScroller, 'getBoundingClientRect').mockReturnValue({ left: 100, width: 1200 } as DOMRect);
+    vi.spyOn(internals._headerL, 'getBoundingClientRect').mockReturnValue({ left: 250 } as DOMRect);
+    vi.spyOn(internals, 'getViewportInnerWidth').mockReturnValue(900);
+    internals.scrollLeft = 40;
+    internals.dockingLayout.rightWidth = 100;
+    expect(internals.getRightDockedChromeLeft(scaledHeader, { offset: 25 })).toBeCloseTo(660);
 
     const invalidHeader = document.createElement('div');
     invalidHeader.className = 'slick-header-column';

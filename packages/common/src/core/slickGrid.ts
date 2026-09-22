@@ -1369,7 +1369,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
 
-    this.viewportHasHScroll = this.canvasWidth >= this.viewportW - (this.scrollbarDimensions?.width || 0);
+    this.viewportHasHScroll = this.hasDockingHorizontalScroller()
+      ? (this.dockingLayout.contentWidth || this.canvasWidth) > this._viewportNode.clientWidth
+      : this.canvasWidth > this.getViewportInnerWidth();
 
     Utils.width(this._headerRowSpacerL, this.canvasWidth + (this.viewportHasVScroll ? this.scrollbarDimensions?.width || 0 : 0));
 
@@ -2259,12 +2261,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // the body does. Right pins must stop at the body's visible edge, not the
     // wider chrome scroller edge, otherwise they drift right by the scrollbar
     // width (for example 1551.11px instead of 1536px).
-    const dockingViewportWidth = this._viewportNode?.clientWidth || chromeScroller.clientWidth;
-    // The chrome container itself is translated by -scrollLeft. Add it back
-    // before converting the target screen coordinate to the local `left`.
-    const untransformedContainerLeft = chromeContainer.getBoundingClientRect().left + this.scrollLeft;
-    const visibleRightStart = scrollerRect.left + dockingViewportWidth - this.dockingLayout.rightWidth + docking.offset;
-    return visibleRightStart - untransformedContainerLeft;
+    const dockingViewportWidth = this.getViewportInnerWidth() || this._viewportNode?.clientWidth || chromeScroller.clientWidth;
+    // getBoundingClientRect() reports screen pixels, which a CSS scale on any ancestor
+    // multiplies, while every other term here is a layout pixel. Convert the measured
+    // distance back to layout pixels; the factor is 1 for an unscaled grid.
+    const scale = chromeScroller.offsetWidth ? scrollerRect.width / chromeScroller.offsetWidth : 1;
+    // The chrome container itself is translated by -scrollLeft. Add it back before
+    // converting the target position to the container's local `left`.
+    const containerLeftInScroller = (chromeContainer.getBoundingClientRect().left - scrollerRect.left) / (scale || 1) + this.scrollLeft;
+    const visibleRightStart = dockingViewportWidth - this.dockingLayout.rightWidth + docking.offset;
+    return visibleRightStart - containerLeftInScroller;
   }
 
   /** Adds or removes the automatic header-height styles from both header panes. */
@@ -4189,7 +4195,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return true;
   }
 
-  /** Reject only non-sequential pinning that would visually split a rendered colspan. */
+  /**
+   * Every row index whose metadata may declare a colspan. Falls back to rendered rows
+   * when the data provider does not expose a length.
+   */
+  protected rowMetadataIndexes(): number[] {
+    if (!('getItemMetadata' in this.data)) {
+      return [];
+    }
+    const length = this.getDataLength();
+    if (length <= 0) {
+      return Object.keys(this.rowsCache).map(Number);
+    }
+    return Array.from({ length }, (_value, row) => row);
+  }
+
+  /** Reject only non-sequential pinning that would visually split a colspan. */
   protected validateColspanPinningSequence(
     pinnedIndexes: Map<number, DockingSide>,
     forceAlert = false,
@@ -4211,8 +4232,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return true;
     }
 
-    const hasCrossBandColspan = Object.keys(this.rowsCache).some((rowId) => {
-      const metadata = this.getItemMetadaWhenExists(Number(rowId));
+    const hasCrossBandColspan = this.rowMetadataIndexes().some((row) => {
+      const metadata = this.getItemMetadaWhenExists(row);
       if (!metadata?.columns || metadata.isGroup) {
         return false;
       }
@@ -8882,11 +8903,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const usesDynamicDockingBounds = this.hasDockedColumns();
     const leftDockedWidth = usesDynamicDockingBounds ? this.dockingLayout.leftWidth : this.dockingLayout.leftBaseWidth;
     const rightDockedWidth = usesDynamicDockingBounds ? this.dockingLayout.rightWidth : this.dockingLayout.rightBaseWidth;
-    const viewportWidth = Utils.width(this._viewportScrollContainerX) as number;
-    const availableWidth = Math.max(
-      0,
-      viewportWidth - leftDockedWidth - rightDockedWidth - (this.viewportHasVScroll ? this.scrollbarDimensions?.width || 0 : 0)
-    );
+    const viewportWidth = this._viewportScrollContainerX.clientWidth;
+    const availableWidth = Math.max(0, viewportWidth - leftDockedWidth - rightDockedWidth);
     const visibleStart = this.scrollLeft + leftDockedWidth;
     const scrollRight = this.scrollLeft + leftDockedWidth + availableWidth;
 
