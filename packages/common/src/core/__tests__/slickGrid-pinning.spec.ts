@@ -392,7 +392,9 @@ describe('SlickGrid unified pinning', () => {
 
     expect(host.textContent).toBe('Spanned');
     expect(host.classList.contains('r3')).toBe(true);
-    expect(host.style.width).toBe('320px');
+    expect(host.style.width).toBe('80px');
+    expect(fragments[0].querySelector('.slick-cell-colspan-part-content')?.textContent).toBe('Spanned');
+    expect(fragments[1].querySelector('.slick-cell-colspan-part-content')?.textContent).toBe('Spanned');
     expect(host.getAttribute('aria-colspan')).toBe('4');
     expect(host.getAttribute('aria-rowspan')).toBe('2');
     expect(fragments[0].style.width).toBe('');
@@ -441,7 +443,7 @@ describe('SlickGrid unified pinning', () => {
     internals.updateColumnCaches();
     internals.applyColumnWidths();
     const resizedFragmentRight = `${Math.max(0, internals.getDockingRenderedWidths().center - internals.columnPosRight[2])}px`;
-    expect(host.style.width).toBe('360px');
+    expect(host.style.width).toBe('80px');
     expect(fragments[0].style.right).toBe(resizedFragmentRight);
     expect(resizedFragmentRight).not.toBe(initialFragmentRight);
     expect(fragments[0].classList.contains('active')).toBe(true);
@@ -467,7 +469,7 @@ describe('SlickGrid unified pinning', () => {
     delete cacheEntry.cellNodesByColumnIdx[0];
     delete cacheEntry.cellColSpans[0];
     internals.updateRenderedColspanFragmentGeometry();
-    expect(host.style.width).toBe('360px');
+    expect(host.style.width).toBe('80px');
 
     // A stale fragment queue can briefly contain one more fragment than its
     // segment metadata; geometry refresh should safely skip that extra node.
