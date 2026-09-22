@@ -71,6 +71,19 @@ describe('Example 04 - Pinned Grid', () => {
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell:nth(0) .cell-menu-dropdown`).should('contain', 'Action');
   });
 
+  it('should move index-based pinned rows when filtering shortens the DataView', () => {
+    // Task 1, Task 10-19 and Task 100-199 yield 111 matching rows in this fixture.
+    const titleFilter = '.grid4 .slick-headerrow-column input[data-columnid="title"]';
+    cy.get(titleFilter).type('Task 1');
+
+    cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-top').should('have.length', 3);
+    cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-bottom').should('have.length', 2);
+    cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-bottom .slick-cell.l1').last().should('contain', 'Task 199');
+
+    // This suite is serial; restore the complete fixture for following cases.
+    cy.get(titleFilter).clear();
+  });
+
   it('should clear top-pinned rows when selecting zero rows', () => {
     cy.get('.pinned-top-row-count').select('0');
     cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-top').should('not.exist');

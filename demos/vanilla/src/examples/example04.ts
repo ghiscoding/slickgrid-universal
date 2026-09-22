@@ -75,6 +75,8 @@ export default class Example04 {
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleOnValidationError.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onitemsdeleted', this.handleOnItemsDeleted.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
+    this.dataViewObj = this.sgb.dataView!;
+    this.dataViewObj.onRowCountChanged.subscribe(() => this.refreshPinnedRows());
   }
 
   dispose() {
@@ -644,9 +646,28 @@ export default class Example04 {
     });
   }
 
+  /** Keep index-based row pinning aligned with the currently filtered DataView rows. */
+  private refreshPinnedRows() {
+    const grid = this.sgb?.slickGrid;
+    const pinnedRows = grid?.getOptions().pinning?.rows;
+    if (!grid || !pinnedRows) {
+      return;
+    }
+
+    const nextTop = this.getPinnedRowIndexes(this.pinnedTopRowCount);
+    const nextBottom = this.getPinnedRowIndexes(this.pinnedBottomRowCount, true);
+    if (String(nextTop) === String(pinnedRows.top ?? []) && String(nextBottom) === String(pinnedRows.bottom ?? [])) {
+      return;
+    }
+
+    // Do not rebuild columns while a header-row filter is receiving input.
+    grid.setOptions({ pinning: { rows: { top: nextTop, bottom: nextBottom } } }, false, true);
+  }
+
   private getPinnedRowIndexes(rowCount: number, isBottom = false) {
     rowCount = Math.max(0, +rowCount);
     const dataLength = this.sgb?.slickGrid?.getDataLength?.() ?? this.dataset?.length ?? ITEMS_COUNT;
+    rowCount = Math.min(rowCount, dataLength);
     const firstPinnedRow = isBottom ? Math.max(0, dataLength - rowCount) : 0;
     return Array.from({ length: rowCount }, (_value, index) => firstPinnedRow + index);
   }
