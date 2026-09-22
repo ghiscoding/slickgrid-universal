@@ -105,6 +105,20 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getOptions().stickyRows).toEqual({ top: [], bottom: [], both: [] });
   });
 
+  it('reports a rejected setColumns request without mutating the caller columns or publishing events', () => {
+    const slickGrid = createGrid({ pinning: { columns: { right: ['d'] } } });
+    const internals = slickGrid as any;
+    const candidateColumns = slickGrid.getColumns().map((column) => ({ ...column }));
+    candidateColumns[3].pinned = null;
+    const beforeSetColumns = vi.spyOn(slickGrid.onBeforeSetColumns, 'notify');
+    vi.spyOn(internals, 'validateColumnPinning').mockReturnValue(false);
+
+    expect(slickGrid.setColumns(candidateColumns)).toBe(false);
+    expect(candidateColumns[3].pinned).toBeNull();
+    expect(slickGrid.getColumns()[3].pinned).toBe('right');
+    expect(beforeSetColumns).not.toHaveBeenCalled();
+  });
+
   it('keeps docking wrappers presentational around the one semantic grid tree', () => {
     createGrid({ pinning: { columns: { left: ['a'], right: ['d'] }, rows: { top: [0] } } });
 

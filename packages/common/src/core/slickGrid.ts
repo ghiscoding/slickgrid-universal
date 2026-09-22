@@ -95,8 +95,8 @@ import type {
   OnValidationErrorEventArgs,
   PagingInfo,
   PinnedColumns,
-  RowReference,
   RowDockingLayout,
+  RowReference,
   SingleColumnSort,
   SlickPlugin,
 } from '../interfaces/index.js';
@@ -4595,14 +4595,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       both: this.resolveDockingRowIndexes(this._options.stickyRows?.both),
     };
     const references = [...permanentRows.top!, ...permanentRows.bottom!, ...stickyRows.top, ...stickyRows.bottom, ...stickyRows.both];
-    const rows = Array.from(new Set(references)).map(
-      (index) => ({
-        height: this.getRowHeight(index),
-        id: this.getRowIdentity(index),
-        index,
-        top: this.getRowPosition(index),
-      })
-    );
+    const rows = Array.from(new Set(references)).map((index) => ({
+      height: this.getRowHeight(index),
+      id: this.getRowIdentity(index),
+      index,
+      top: this.getRowPosition(index),
+    }));
     const previousRevision = this.rowDockingLayout.revision;
     this.rowDockingLayout = this.dockingController.resolveRows(
       rows,
@@ -4694,14 +4692,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Column[]} newColumns An array of column definitions.
    * @param {boolean} [waitNextCycle=false] - should we wait for a microtask cycle before updating column headers
    */
-  setColumns(newColumns: C[], waitNextCycle = false): void {
-    this.applyColumnPinningOptions(newColumns);
-    this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns, grid: this });
+  setColumns(newColumns: C[], waitNextCycle = false): boolean {
+    // Validate prospective pinning on a copy so a rejected request leaves the
+    // caller's column definitions untouched and does not publish column events.
     const shouldValidateProspectivePinning =
       this.hasConfiguredColumnDocking() || newColumns.some((column) => !!column?.pinned || !!column?.sticky);
-    if (!this.validateColumnPinning(undefined, true, shouldValidateProspectivePinning ? newColumns : undefined)) {
-      return; // exit early if pinning is invalid
+    if (shouldValidateProspectivePinning) {
+      const prospectiveColumns = newColumns.map((column) => (column ? { ...column } : column)) as C[];
+      if (!this.validateColumnPinning(undefined, true, prospectiveColumns)) {
+        return false;
+      }
     }
+    this.applyColumnPinningOptions(newColumns);
+    this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns, grid: this });
     this.dockingController.reset();
     this.columns = newColumns;
     this._container.setAttribute('aria-colcount', this.columns.length.toString());
@@ -4710,6 +4713,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.triggerEvent(this.onAfterSetColumns, { newColumns, grid: this });
     };
     waitNextCycle ? queueMicrotaskPolyfill(() => updateCols()) : updateCols();
+    return true;
   }
 
   /** Update columns for when a hidden property has changed but the column list itself has not changed. */
@@ -6423,7 +6427,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const permanentHeight = (entries: DockedRow[]): number =>
       entries.filter((entry) => !entry.sticky).reduce((height, entry) => height + entry.height, 0);
     const requiredCenterHeight =
-      permanentHeight(this.rowDockingLayout.top) + permanentHeight(this.rowDockingLayout.bottom) + minCenterRowCount * this.getEstimatedRowHeight();
+      permanentHeight(this.rowDockingLayout.top) +
+      permanentHeight(this.rowDockingLayout.bottom) +
+      minCenterRowCount * this.getEstimatedRowHeight();
     const shortfall = requiredCenterHeight - this.viewportH;
     if (shortfall > 0) {
       this._container.style.minHeight = `${this._container.getBoundingClientRect().height + shortfall}px`;
@@ -6896,11 +6902,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
     const docking = this.dockingByColumn.get(columnIdx);
     const band = this.usesStickyColumnTransformPath() && this.columns[columnIdx]?.sticky ? 'center' : docking?.band || 'center';
-    return (band === 'left' ? cellRegions?.left : band === 'right' ? cellRegions?.right : cellRegions?.center) ||
-      (rowNode.querySelector(
-        `:scope > .slick-${band === 'center' ? 'scrolling' : `pinned-${band}`}-cells`
-      ) as HTMLElement) ||
-      rowNode;
+    return (
+      (band === 'left' ? cellRegions?.left : band === 'right' ? cellRegions?.right : cellRegions?.center) ||
+      (rowNode.querySelector(`:scope > .slick-${band === 'center' ? 'scrolling' : `pinned-${band}`}-cells`) as HTMLElement) ||
+      rowNode
+    );
   }
 
   protected toggleCellSpanFragmentsActive(row: number, cell: number, active: boolean): void {
