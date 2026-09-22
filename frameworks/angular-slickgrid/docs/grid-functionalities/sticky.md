@@ -36,8 +36,8 @@ grid.setColumnStickiness('quarter', false);
 ```
 
 ### Sticky Rows
-Configure rows with `stickyRows`. Each list accepts row indexes or values from
-`datasetIdPropertyName`:
+Configure rows with `stickyRows`. Each list accepts row indexes, string values from
+`datasetIdPropertyName`, or `{ id }` references for numeric dataset IDs:
 
 ```ts
 const gridOptions: GridOption = {
@@ -57,7 +57,8 @@ Multiple sticky rows may be non-contiguous, for example `top: [10, 20, 30]`. Act
 their natural dataset order; they do not replace or push each other out. The available stack is
 limited by the docking budget rather than a fixed row count.
 Top and bottom sticky stacks share one total budget; the top stack is resolved first and the bottom
-stack uses the remaining space.
+stack uses the remaining space. Permanent rows stay at the outer edge of each band, so a sticky
+bottom row docks above a permanently pinned bottom row.
 
 ### Docking Budgets and Overflow
 The optional `docking` option controls how much of the viewport can be occupied by permanent and
@@ -69,7 +70,7 @@ const gridOptions: GridOption = {
     maxColumnViewportWidthPercent: 60,
     maxRowViewportHeightPercent: 60,
     overflowStrategy: 'conveyor', // 'conveyor' | 'clamp'
-    stickyHysteresis: 2,
+    stickyActivationBuffer: 2,
   },
 };
 ```

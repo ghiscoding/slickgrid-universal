@@ -14,9 +14,10 @@ or scroll-activated sticky docking.
   `columns.left/right` and `rows.top/bottom`.
 - Column references may be numeric boundaries or explicit IDs/indexes. Explicit arrays may be
   non-contiguous, for example `columns.left: ['account', 'status']`.
-- Row references may be indexes or `datasetIdPropertyName` values. An in-range numeric row
-  reference is interpreted as an index first. Non-contiguous rows are valid, for example
-  `rows.top: [0, 2, 4]`.
+- Row references may be indexes, string `datasetIdPropertyName` values, or `{ id }` values.
+  An in-range numeric row reference is interpreted as an index first; use `{ id: 5 }` to target
+  a numeric dataset id. ID references follow a row through sorting and filtering, while index
+  references remain positional. Non-contiguous rows are valid, for example `rows.top: [0, 2, 4]`.
 - `Column.pinned` is the per-column permanent-pin form. `Column.pinnable` only controls whether
   built-in pinning commands are exposed.
 - Do not infer pinning from drag operations across center/pinned bands. Reordering stays within a

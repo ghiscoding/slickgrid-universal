@@ -20,7 +20,7 @@ The built-in Column Pinning Header Menu is enabled automatically when `pinning` 
 ## Columns/Rows Pinning basic
 To configure pinning for the entire lifetime of the grid, use the nested `pinning` Grid Option.
 
-Explicit column and row references do not need to be contiguous. For example, `columns.left: ['account', 'status']` pins only those columns, while `rows.top: [0, 2, 4]` pins only those rows. Pinned rows remain part of the normal dataset height, and the unpinned rows are laid out contiguously so skipped row indexes do not create blank gaps.
+Explicit column and row references do not need to be contiguous. For example, `columns.left: ['account', 'status']` pins only those columns, while `rows.top: [0, 2, 4]` pins only those rows. A row reference is an index (`5`), a string dataset ID (`'order-5'`), or `{ id: 5 }` for a numeric dataset ID; a bare number always means an index. ID references follow their row through sorting and filtering, while index references remain positional. `setOptions({ pinning: null })` and `setOptions({ pinning: undefined })` both clear pinning.
 
 ##### Component
 ```vue
