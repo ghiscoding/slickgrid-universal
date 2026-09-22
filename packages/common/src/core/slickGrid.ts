@@ -1325,11 +1325,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const oldCanvasWidthL = this.canvasWidthL;
     const oldCanvasWidthR = this.canvasWidthR;
     this.canvasWidth = this.getCanvasWidth();
-    // A right-docked region is positioned at the visible edge, not immediately
-    // after the last center column. Keep the one real canvas at least as wide
-    // as the body viewport so an enlarged grid does not leave a blank area
-    // between the center cells and the right pin. The natural column width is
-    // still retained by dockingLayout for scroll/chrome coordinates.
+    // Keep the canvas at least viewport-wide so a right band at the visible edge leaves no
+    // gap after the last center column; dockingLayout keeps the natural width.
     if (this.hasDockedColumns()) {
       this.canvasWidth = Math.max(this.canvasWidth, this.getDockingRenderedWidth());
       this.canvasWidthL = this.canvasWidth;
@@ -4873,10 +4870,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (removePinning) {
       delete (this._options as Partial<O>).pinning;
     }
-    // Sticky and permanent row lists represent the complete docking state for each edge.
-    // The generic deep merge helper merges non-empty arrays by index, which
-    // leaves stale row references when a list is shortened (for example
-    // changing 4 pinned rows back to 3). Replace both lists atomically.
+    // Row lists are complete per edge: replace them instead of deep-merging by index,
+    // which would leave stale entries when a list shrinks.
     if (newOptions.stickyRows !== undefined) {
       const incomingStickyRows = newOptions.stickyRows ?? {};
       this._options.stickyRows = {
