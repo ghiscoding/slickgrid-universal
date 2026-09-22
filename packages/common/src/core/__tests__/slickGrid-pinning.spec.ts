@@ -1787,7 +1787,7 @@ describe('SlickGrid unified pinning', () => {
     expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 0px 0 0px)');
   });
 
-  it('scopes proxy scroll offsets to docking targets instead of restyling the grid subtree', () => {
+  it('publishes the proxy scroll offset once on the grid container', () => {
     const slickGrid = createGrid({
       pinning: { columns: { left: ['a'], right: ['d'] }, rows: { top: [0] } },
       showHeaderRow: true,
@@ -1797,12 +1797,12 @@ describe('SlickGrid unified pinning', () => {
     slickGrid.scrollToX(10);
 
     const row = container.querySelector<HTMLElement>('.slick-row-docked')!;
-    expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
-    expect(row.querySelector<HTMLElement>('.slick-pinned-left-cells')!.style.getPropertyValue('--slick-docking-scroll-left')).toBe('10px');
-    expect(row.querySelector<HTMLElement>('.slick-pinned-right-cells')!.style.getPropertyValue('--slick-docking-scroll-left')).toBe('10px');
+    expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('10px');
+    expect(row.querySelector<HTMLElement>('.slick-pinned-left-cells')!.style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
+    expect(row.querySelector<HTMLElement>('.slick-pinned-right-cells')!.style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
     expect(row.querySelector<HTMLElement>('.slick-scrolling-cells')!.style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
-    expect(slickGrid.getHeaderColumn('a').style.getPropertyValue('--slick-docking-scroll-left')).toBe('10px');
-    expect(slickGrid.getHeaderColumn('d').style.getPropertyValue('--slick-docking-scroll-left')).toBe('10px');
+    expect(slickGrid.getHeaderColumn('a').style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
+    expect(slickGrid.getHeaderColumn('d').style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
 
     const cacheEntry = internals.rowsCache[Number(row.dataset.row)];
     internals.ensureCellNodesInRowsCache(Number(row.dataset.row));
@@ -1811,7 +1811,9 @@ describe('SlickGrid unified pinning', () => {
     cacheEntry.cellNodesByColumnIdx[0].classList.add('slick-cell-full-width-group');
     internals.rowsCache[-1] = { rowNode: null };
     internals.applyDockingProxyScrollOffsets(11);
-    expect(cacheEntry.cellNodesByColumnIdx[0].style.getPropertyValue('--slick-docking-scroll-left')).toBe('11px');
+    expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('11px');
+    expect(cacheEntry.cellNodesByColumnIdx[0].style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
+    expect(cacheEntry.cellNodesByColumnIdx[0].style.transform).toBe('translate3d(11px, 0, 0)');
   });
 
   it('keeps the right-pinned filter/footer chrome over the Grid Menu allowance with collapsed scrollbars', () => {
