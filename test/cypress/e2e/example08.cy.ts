@@ -462,7 +462,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
           expect(content.textContent).to.eq($host[0].textContent);
         });
       });
-      cy.get(fragmentSelector).should('have.length', 1).click({ force: true }).should('have.class', 'active');
+      cy.get(fragmentSelector).should('have.length', 1).click({ scrollBehavior: false }).should('have.class', 'active');
       cy.get(fragmentSelector).should(($cell) => {
         const style = getComputedStyle($cell[0], '::after');
         expect(getComputedStyle($cell[0]).boxShadow).to.eq('none');
