@@ -641,5 +641,23 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
         .children()
         .each(($child, index) => expect($child.text()).to.eq(headerTitles[index]));
     });
+
+    it('should list group-qualified names and hide a pinned column from the pre-header picker', () => {
+      cy.get('.grid3 .slick-preheader-panel .slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+
+      expectColumnPickerTitles('.slick-column-picker');
+
+      cy.get('.slick-column-picker .slick-column-picker-list input[data-columnid="duration"]')
+        .closest('li')
+        .children('label')
+        .should('contain', 'Common Factor - Duration')
+        .click();
+      cy.get('.slick-column-picker .close').click();
+
+      cy.get('.grid3 .slick-header-columns-left .slick-header-column[data-id="title"]').should('be.visible');
+      cy.get('.grid3 .slick-header-columns-left .slick-header-column[data-id="duration"]').should('not.exist');
+      cy.get('.grid3 .slick-header-columns-center .slick-header-column[data-id="start"]').should('be.visible');
+      expectPreHeadersInOrder(['Common Factor', 'Period', 'Analysis']);
+    });
   });
 });
