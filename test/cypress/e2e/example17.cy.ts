@@ -246,11 +246,11 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   it('should auto scroll to display the selecting element when dragging in pinned grid', { scrollBehavior: false }, () => {
     // top left - to bottomRight
     getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'topLeft', 'bottomRight', 0, 1).then((result: any) => {
-      expect(result.scrollTopBefore).to.be.lte(result.scrollTopAfter);
+      expect(result.scrollTopBefore).to.be.lessThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
     getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'topLeft', 'bottomRight', 0, 1).then((result: any) => {
-      expect(result.scrollTopBefore).to.be.lte(result.scrollTopAfter);
+      expect(result.scrollTopBefore).to.be.lessThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
 
@@ -258,33 +258,33 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     // Pinning keeps a single viewport, so use the absolute index of the first
     // selectable column after the two left-pinned columns (# and Title).
     getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'topRight', 'bottomRight', 0, 2).then((result: any) => {
-      expect(result.scrollTopBefore).to.be.lte(result.scrollTopAfter);
+      expect(result.scrollTopBefore).to.be.lessThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
     getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'topRight', 'bottomRight', 0, 2).then((result: any) => {
-      expect(result.scrollTopBefore).to.be.lte(result.scrollTopAfter);
+      expect(result.scrollTopBefore).to.be.lessThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
     resetScrollInPinned();
 
     // bottom left - to bottomRight
     getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomLeft', 'bottomRight', 3, 1).then((result: any) => {
-      expect(result.scrollTopBefore).to.be.lte(result.scrollTopAfter);
+      expect(result.scrollTopBefore).to.be.lessThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
     getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'bottomLeft', 'bottomRight', 3, 1).then((result: any) => {
-      expect(result.scrollTopBefore).to.be.lte(result.scrollTopAfter);
+      expect(result.scrollTopBefore).to.be.lessThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
     resetScrollInPinned();
 
     // bottom right - to bottomRight
     getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomRight', 'bottomRight', 3, 2).then((result: any) => {
-      expect(result.scrollTopBefore).to.be.lte(result.scrollTopAfter);
+      expect(result.scrollTopBefore).to.be.lessThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
     getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'bottomRight', 'bottomRight', 3, 2).then((result: any) => {
-      expect(result.scrollTopBefore).to.be.lte(result.scrollTopAfter);
+      expect(result.scrollTopBefore).to.be.lessThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
     resetScrollInPinned();
