@@ -648,6 +648,8 @@ describe('SlickGrid unified pinning', () => {
     expect(internals.getRowIdentity(99)).toBe(99);
     internals.dockingRowIndexByReference.set('cached', 2);
     expect(internals.resolveDockingRowIndex('cached')).toBe(2);
+    expect(internals.resolveDockingRowIndex(-1)).toBeUndefined();
+    expect(internals.resolveDockingRowIndex(1.5)).toBeUndefined();
     internals.data = [{ id: 'row-a' }];
     expect(internals.resolveDockingRowIndex('row-a')).toBe(0);
     internals.data = { getRowById: vi.fn().mockReturnValueOnce(1).mockReturnValue(undefined) };
@@ -717,6 +719,24 @@ describe('SlickGrid unified pinning', () => {
     internals.stickyColumnLayoutFrame = 5;
     internals.clearAllTimers();
     Object.defineProperty(globalThis, 'cancelAnimationFrame', { configurable: true, value: originalCancelAnimationFrame });
+  });
+
+  it('skips duplicate docked-row synchronization within one layout revision', () => {
+    const slickGrid = createGrid({ pinning: { rows: { top: [0] } } });
+    const internals = slickGrid as any;
+    const row = document.createElement('div');
+    internals._canvasNode.appendChild(row);
+    internals.rowsCache = { 0: { rowNode: [row] } };
+    internals.dockingByRow = new Map();
+    internals.rowDockingLayout = { revision: 7, topHeight: 0, bottomHeight: 0 };
+    internals.scrollLeft = 0;
+    internals.rowsCache[0].dockingSyncSignature = '7:0:0:0:0';
+    Object.defineProperty(internals._dockingOverlay, 'clientHeight', { configurable: true, value: 0 });
+    const applyRowTopOffsetSpy = vi.spyOn(internals, 'applyRowTopOffset');
+
+    internals.syncDockedRowContainers();
+
+    expect(applyRowTopOffsetSpy).not.toHaveBeenCalled();
   });
 
   it('covers legacy sortable callbacks and column auto-scroll guards', () => {
