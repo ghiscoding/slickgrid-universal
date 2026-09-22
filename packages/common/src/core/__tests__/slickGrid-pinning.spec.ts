@@ -474,7 +474,10 @@ describe('SlickGrid unified pinning', () => {
     const cacheEntry = internals.rowsCache[0];
     delete cacheEntry.cellNodesByColumnIdx[0];
     delete cacheEntry.cellColSpans[0];
+    cacheEntry.cellRenderQueue.push(host);
     internals.updateRenderedColspanFragmentGeometry();
+    expect(cacheEntry.cellRenderQueue).toHaveLength(0);
+    expect(cacheEntry.cellNodesByColumnIdx[0]).toBe(host);
     expect(host.style.width).toBe('80px');
 
     // A stale fragment queue can briefly contain one more fragment than its
@@ -486,6 +489,7 @@ describe('SlickGrid unified pinning', () => {
     // Empty fragment metadata is valid while a row is being rebuilt.
     internals.rowsCache[1] = {
       cellNodesByColumnIdx: [],
+      cellRenderQueue: [],
       cellSpanFragments: { 0: [] },
       cellSpanSegments: {},
       rowNode: null,
