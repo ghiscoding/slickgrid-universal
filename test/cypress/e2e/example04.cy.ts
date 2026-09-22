@@ -1088,6 +1088,32 @@ describe('Example 04 - Pinned Grid', () => {
       });
     });
 
+    it('should follow a center column that is resized past the viewport edge', () => {
+      cy.reload();
+      cy.get('[data-test="set-large-pinned-columns"]').click();
+
+      const headerSelector = '.grid4 .slick-header-columns-center [data-id="start"]';
+      const scrollerSelector = '.grid4 .slick-horizontal-scroller';
+      cy.get(`${headerSelector} .slick-resizable-handle`).then(($handle) => {
+        const handle = $handle[0] as HTMLElement;
+        const rect = handle.getBoundingClientRect();
+        const startX = rect.left + rect.width / 2;
+        const startY = rect.top + rect.height / 2;
+        handle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 0, buttons: 1, clientX: startX, clientY: startY }));
+        document.body.dispatchEvent(
+          new MouseEvent('mousemove', { bubbles: true, buttons: 1, clientX: window.innerWidth + 800, clientY: startY })
+        );
+      });
+
+      cy.wait(400);
+      cy.get(scrollerSelector).should(($scroller) => expect($scroller[0].scrollLeft).to.be.greaterThan(0));
+      cy.get(headerSelector).should(($header) => {
+        expect($header[0].getBoundingClientRect().width).to.be.greaterThan(200);
+      });
+
+      cy.window().then((win) => win.document.body.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, button: 0 })));
+    });
+
     it('should keep left-pinned columns in place when hiding "Finish" and swapping center columns', () => {
       cy.reload();
 

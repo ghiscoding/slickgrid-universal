@@ -2901,7 +2901,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         ) {
           const columnRight = this.columnPosRight[i];
           const previousScrollLeft = this._viewportScrollContainerX.scrollLeft;
-          const viewportWidth = this._viewportScrollContainerX.clientWidth;
+          const viewportWidth = Math.max(
+            0,
+            this._viewportScrollContainerX.clientWidth - this.dockingLayout.leftWidth - this.dockingLayout.rightWidth
+          );
           const isLastVisibleColumn = i === vc.length - 1;
           if (isLastVisibleColumn) {
             this._isResizingColumn = true;
