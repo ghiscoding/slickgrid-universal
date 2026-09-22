@@ -2012,6 +2012,21 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const headersById = this.indexChromeElements(this._headerL, '.slick-header-column', (element) => element.dataset.id ?? '');
     const headerRowByIndex = this.indexChromeElements(this._headerRowL, '.slick-headerrow-column', columnIndexOf);
     const footerRowByIndex = this.indexChromeElements(this._footerRowL, '.slick-footerrow-column', columnIndexOf);
+    const horizontalBoxByClassName = new Map<string, number>();
+    const horizontalBoxOf = (element: HTMLElement) => {
+      const key = element.className;
+      let horizontalBox = horizontalBoxByClassName.get(key);
+      if (horizontalBox === undefined) {
+        const style = getComputedStyle(element);
+        horizontalBox =
+          parseFloat(style.paddingLeft) +
+          parseFloat(style.paddingRight) +
+          parseFloat(style.borderLeftWidth) +
+          parseFloat(style.borderRightWidth);
+        horizontalBoxByClassName.set(key, horizontalBox);
+      }
+      return horizontalBox;
+    };
     this.columns.forEach((column, index) => {
       const docking = this.dockingByColumn.get(index);
       const band = docking?.band || 'center';
@@ -2043,12 +2058,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // rendered outer width matches the corresponding header column.
         if (element !== header) {
           const headerOuterWidth = header?.getBoundingClientRect().width || 0;
-          const elementStyle = getComputedStyle(element);
-          const elementHorizontalBox =
-            parseFloat(elementStyle.paddingLeft) +
-            parseFloat(elementStyle.paddingRight) +
-            parseFloat(elementStyle.borderLeftWidth) +
-            parseFloat(elementStyle.borderRightWidth);
+          const elementHorizontalBox = horizontalBoxOf(element);
           // The last header makes room for the Grid Menu when a vertical
           // scrollbar has no measurable gutter (notably Firefox overlay
           // scrollbars). Its filter/footer cell still needs to cover the full
