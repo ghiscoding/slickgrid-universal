@@ -174,13 +174,7 @@ describe('DockingController', () => {
 
   it('keeps permanent rows when their height leaves no sticky budget', () => {
     const rows = [row('permanent-top', 0, 0, 40), row('sticky', 1, 40, 20), row('permanent-bottom', 2, 60, 30)];
-    const layout = new DockingController({ maxRowViewportHeightPercent: 60 }).resolveRows(
-      rows,
-      50,
-      100,
-      { top: [0], bottom: [2] },
-      { top: [1] }
-    );
+    const layout = new DockingController({ maxRowViewportHeightPercent: 60 }).resolveRows(rows, 50, 100, { top: [0], bottom: [2] }, { top: [1] });
 
     expect(layout.top.map((item) => item.id)).toEqual(['permanent-top']);
     expect(layout.bottom.map((item) => item.id)).toEqual(['permanent-bottom']);

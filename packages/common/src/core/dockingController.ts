@@ -7,8 +7,8 @@ import type {
   DockingRow,
   DockingSide,
   PinnedRows,
-  RowReference,
   RowDockingLayout,
+  RowReference,
   StickyRows,
 } from '../interfaces/index.js';
 
