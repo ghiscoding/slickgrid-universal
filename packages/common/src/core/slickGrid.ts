@@ -149,6 +149,10 @@ const RESIZE_AUTOSCROLL_BROWSER_EDGE_RIGHT_DELAY_MS = 1200;
 interface RowCaching {
   rowNode: HTMLElement[] | null;
   cellRegions?: { center: HTMLElement; left: HTMLElement; right: HTMLElement };
+  /** Signature of the row-docking state the row was last synchronized against. */
+  dockingSyncSignature?: string;
+  /** Whether the row hosts a rowspan (from rendered cells or metadata). */
+  rowSpanHost?: boolean;
   cellColSpans: Array<number | '*'>;
   cellNodesByColumnIdx: HTMLElement[];
   cellRenderQueue: any[];
@@ -2013,18 +2017,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // resize, which placed right-pinned titles at that stale edge (for example
     // `1537px` for a 1637px proxy) instead of the visible header edge.
     const viewportWidth = this._headerScrollerL?.clientWidth || this._viewportScrollContainerX?.clientWidth || this.viewportW;
+    const columnIndexOf = (element: HTMLElement) => /(?:^|\s)l(\d+)(?:\s|$)/.exec(element.className)?.[1] ?? '';
+    const headersById = this.indexChromeElements(this._headerL, '.slick-header-column', (element) => element.dataset.id ?? '');
+    const headerRowByIndex = this.indexChromeElements(this._headerRowL, '.slick-headerrow-column', columnIndexOf);
+    const footerRowByIndex = this.indexChromeElements(this._footerRowL, '.slick-footerrow-column', columnIndexOf);
     this.columns.forEach((column, index) => {
       const docking = this.dockingByColumn.get(index);
       const band = docking?.band || 'center';
       const usesStickyTransform = this.usesStickyColumnTransformPath() && !!column.sticky;
-      const header = Array.from(this._headerL?.querySelectorAll('.slick-header-column') || []).find(
-        (element) => (element as HTMLElement).dataset.id === String(column.id)
-      ) as HTMLElement;
-      const elements = [
-        header,
-        this._headerRowL?.querySelector(`.l${index}`) as HTMLElement,
-        this._footerRowL?.querySelector(`.l${index}`) as HTMLElement,
-      ].filter(Boolean);
+      const header = headersById.get(String(column.id));
+      const elements = [header, headerRowByIndex.get(String(index)), footerRowByIndex.get(String(index))].filter(Boolean) as HTMLElement[];
       this.dockingChromeByColumn.set(index, elements);
       const leftEdgeIndex = this.dockingLayout.left[this.dockingLayout.left.length - 1]?.index;
       const rightEdgeIndex = this.dockingLayout.right[0]?.index;
@@ -2160,6 +2162,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         element.style.transform = isRightDockedChrome ? 'translateX(0px)' : `translateX(${dockedOffset - naturalOffset}px)`;
       });
     });
+  }
+
+  /** Collect chrome elements under a root once per docking pass, keyed by column id or index. */
+  protected indexChromeElements(
+    root: HTMLElement | undefined,
+    selector: string,
+    keyOf: (element: HTMLElement) => string
+  ): Map<string, HTMLElement> {
+    const elements = new Map<string, HTMLElement>();
+    root?.querySelectorAll<HTMLElement>(selector).forEach((element) => {
+      const key = keyOf(element);
+      if (key && !elements.has(key)) {
+        elements.set(key, element);
+      }
+    });
+    return elements;
   }
 
   /** Move header/filter/footer cells to their current persistent docking bands. */
@@ -4381,7 +4399,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           cellNode.classList.toggle('slick-cell-sticky', !isFullWidthGroup && band !== 'center' && !!docking?.sticky);
         }
 
-        const region = this.getRowDockingRegion(rowNode, index);
+        const region = this.getRowDockingRegion(rowNode, index, cacheEntry.cellRegions);
         if (cellNode.parentElement !== region) {
           region.appendChild(cellNode);
         }
@@ -4619,6 +4637,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!this._dockingOverlay || !this._canvasNode) {
       return;
     }
+    const layout = this.rowDockingLayout;
+    const signature = `${layout.revision}:${layout.topHeight}:${layout.bottomHeight}:${this.scrollLeft}:${this._dockingOverlay.clientHeight}`;
     Object.entries(this.rowsCache).forEach(([rowId, cacheEntry]) => {
       const row = Number(rowId);
       const rowNode = cacheEntry.rowNode?.[0];
@@ -4629,7 +4649,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const target = dockingBand && dockingBand !== 'center' ? this._dockingOverlay! : this._canvasNode;
       if (rowNode.parentElement !== target) {
         target.appendChild(rowNode);
+      } else if (cacheEntry.dockingSyncSignature === signature) {
+        return;
       }
+      cacheEntry.dockingSyncSignature = signature;
       this.applyRowTopOffset(rowNode, row);
       this.applyDockingScrollOffsetToRow(rowNode, cacheEntry);
     });
@@ -5625,11 +5648,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
           // All columns to the right are outside the range, so no need to render them
           if (isRenderCell) {
-            const targetedRowDiv = isFullWidthGroup ? rowDiv : this.getRowDockingRegion(rowDiv, i);
+            const targetedRowDiv = isFullWidthGroup ? rowDiv : this.getRowDockingRegion(rowDiv, i, this.rowsCache[row].cellRegions);
             this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d, isFullWidthGroup);
           }
         } else if (m.alwaysRenderColumn || this.getColumnDockingBand(i) !== 'center') {
-          const targetedRowDiv = isFullWidthGroup ? rowDiv : this.getRowDockingRegion(rowDiv, i);
+          const targetedRowDiv = isFullWidthGroup ? rowDiv : this.getRowDockingRegion(rowDiv, i, this.rowsCache[row].cellRegions);
           this.appendCellHtml(targetedRowDiv, row, i, ncolspan, rowspan, columnData, d, isFullWidthGroup);
         }
 
@@ -5640,6 +5663,27 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     this.applyRowTopOffset(rowDiv, row);
+  }
+
+  /**
+   * Whether a row hosts a rowspan. A spanning cell may be outside the current
+   * horizontal render range and therefore not be present in the row DOM yet.
+   */
+  protected isRowSpanHost(rowNode: HTMLElement, row: number): boolean {
+    if (!this._options.enableCellRowSpan) {
+      return false;
+    }
+    if (rowNode.querySelector('.slick-cell.rowspan')) {
+      return true;
+    }
+    const rowMetadata = this.getItemMetadaWhenExists(row);
+    return (
+      !!rowMetadata?.columns &&
+      this.columns.some((column, index) => {
+        const columnMetadata = rowMetadata.columns?.[column.id] || (rowMetadata.columns as any)?.[index];
+        return Number(columnMetadata?.rowspan || 1) > 1;
+      })
+    );
   }
 
   /** Keep RowSpan host rows top-positioned so their cells escape transformed sibling stacking contexts. */
@@ -5670,23 +5714,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     );
     rowNode.classList.toggle('slick-row-sticky', !!rowDocking?.sticky);
     const isTransform = this._options.rowTopOffsetRenderType === 'transform';
-    // A spanning cell may be outside the current horizontal render range and
-    // therefore not be present in the row DOM yet. Detect the span from row
-    // metadata as well; otherwise the row can keep a translateY stacking
-    // context and a later-rendered span cell will paint underneath hovered or
-    // odd rows. Only the host row needs this treatment (not rows covered by a
-    // span), so inspect the metadata for a rowspan that starts on this row.
-    const hasRenderedRowSpan = !!rowNode.querySelector('.slick-cell.rowspan');
-    const rowMetadata = !hasRenderedRowSpan ? this.getItemMetadaWhenExists(row) : null;
-    const hasMetadataRowSpan =
-      !hasRenderedRowSpan &&
-      this._options.enableCellRowSpan &&
-      !!rowMetadata?.columns &&
-      this.columns.some((column, index) => {
-        const columnMetadata = rowMetadata.columns?.[column.id] || (rowMetadata.columns as any)?.[index];
-        return Number(columnMetadata?.rowspan || 1) > 1;
-      });
-    const hasRowSpan = this._options.enableCellRowSpan && (hasMetadataRowSpan || hasRenderedRowSpan);
+    const cacheEntry = this.rowsCache[row];
+    const hasRowSpan = cacheEntry?.rowSpanHost ?? this.isRowSpanHost(rowNode, row);
+    if (cacheEntry) {
+      cacheEntry.rowSpanHost = hasRowSpan;
+    }
     // Docked rows live in the non-scrolling overlay, so their vertical
     // coordinate is constant for the duration of a scroll. The transform
     // preference remains available for normal rows and row-detail rendering.
@@ -6860,15 +6892,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     );
   }
 
-  protected getRowDockingRegion(rowNode: HTMLElement, columnIdx: number): HTMLElement {
+  protected getRowDockingRegion(rowNode: HTMLElement, columnIdx: number, cellRegions?: RowCaching['cellRegions']): HTMLElement {
     if (rowNode.classList.contains('slick-row-full-width-group')) {
       return rowNode;
     }
     const docking = this.dockingByColumn.get(columnIdx);
     const band = this.usesStickyColumnTransformPath() && this.columns[columnIdx]?.sticky ? 'center' : docking?.band || 'center';
-    const selector =
-      band === 'left' ? '.slick-pinned-left-cells' : band === 'right' ? '.slick-pinned-right-cells' : '.slick-scrolling-cells';
-    return (rowNode.querySelector(`:scope > ${selector}`) as HTMLElement) || rowNode;
+    return (band === 'left' ? cellRegions?.left : band === 'right' ? cellRegions?.right : cellRegions?.center) ||
+      (rowNode.querySelector(
+        `:scope > .slick-${band === 'center' ? 'scrolling' : `pinned-${band}`}-cells`
+      ) as HTMLElement) ||
+      rowNode;
   }
 
   protected toggleCellSpanFragmentsActive(row: number, cell: number, active: boolean): void {
@@ -7178,7 +7212,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (node) {
           /* v8 ignore if */
           if (this.usesDockingRowRegions()) {
-            this.getRowDockingRegion(cacheEntry.rowNode![0], columnIdx).appendChild(node);
+            this.getRowDockingRegion(cacheEntry.rowNode![0], columnIdx, cacheEntry.cellRegions).appendChild(node);
           } else {
             cacheEntry.rowNode![0].appendChild(node);
           }
@@ -7187,7 +7221,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           const fragments = cacheEntry.cellSpanFragments?.[columnIdx];
           const segments = cacheEntry.cellSpanSegments?.[columnIdx];
           fragments?.forEach((fragment, index) => {
-            this.getRowDockingRegion(cacheEntry.rowNode![0], segments[index + 1].start).appendChild(fragment);
+            this.getRowDockingRegion(cacheEntry.rowNode![0], segments[index + 1].start, cacheEntry.cellRegions).appendChild(fragment);
           });
         }
       }
@@ -8107,7 +8141,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected handleMouseWheel(e: MouseEvent, _delta: number, deltaX: number, deltaY: number): void {
-    const hasDocking = this.hasConfiguredDocking();
+    const hasDocking = this.usesDockingRowRegions();
     this.scrollHeight = this._viewportScrollContainerY.scrollHeight;
     const wheelEvent = e as WheelEvent;
     const lineSize = Math.max(40, this._options.rowHeight!);
