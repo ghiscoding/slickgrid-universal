@@ -413,6 +413,12 @@ describe('SlickGrid unified pinning', () => {
     expect((grid as any).getCellNode(0, 0)).toBe(host);
 
     const internals = grid as any;
+    host.textContent = 'Updated span';
+    internals.refreshColspanContinuations(0, 0);
+    expect(fragments[0].querySelector('.slick-cell-colspan-part-content')?.textContent).toBe('Updated span');
+    expect(fragments[1].querySelector('.slick-cell-colspan-part-content')?.textContent).toBe('Updated span');
+    expect(() => internals.refreshColspanContinuations(-1, 0)).not.toThrow();
+
     Object.defineProperty(internals._viewportScrollContainerY, 'clientHeight', { configurable: true, value: 100 });
     internals.refreshRowDockingLayout(30);
     expect(row.parentElement).toBe(container.querySelector('.slick-docking-overlay'));
@@ -507,6 +513,28 @@ describe('SlickGrid unified pinning', () => {
     slickGrid.removeCellCssStyles('selection');
     expect(host.classList.contains('selected')).toBe(false);
     expect([...fragments].every((fragment) => !fragment.classList.contains('selected'))).toBe(true);
+  });
+
+  it('removes cached colspan continuation fragments when a center cell is virtualized out', () => {
+    const slickGrid = createGrid();
+    const row = container.querySelector<HTMLElement>('[data-row="0"]')!;
+    const host = document.createElement('div');
+    const fragment = document.createElement('div');
+    const internals = slickGrid as any;
+    const cacheEntry = internals.rowsCache[0];
+    host.classList.add('slick-cell', 'l1');
+    row.appendChild(fragment);
+    row.appendChild(host);
+    cacheEntry.cellNodesByColumnIdx[1] = host;
+    cacheEntry.cellSpanFragments[1] = [fragment];
+    cacheEntry.cellColSpans[1] = 1;
+    internals.columnPosLeft[1] = 5000;
+    internals.columnPosRight[1] = 5080;
+
+    internals.cleanUpCells({ top: 0, bottom: 0, leftPx: 0, rightPx: 100 }, 0);
+
+    expect(host.isConnected).toBe(false);
+    expect(fragment.isConnected).toBe(false);
   });
 
   it('rejects non-sequential pinning when a rendered colspan crosses docking regions', () => {
