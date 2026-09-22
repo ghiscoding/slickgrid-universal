@@ -44,6 +44,7 @@ The framework has many options; ensure new options do not contradict or interfer
 - Run the corresponding root CI command: `pnpm angular:cypress:ci`, `pnpm aurelia:cypress:ci`, `pnpm react:cypress:ci`, or `pnpm vue:cypress:ci` (for example, `pnpm aurelia:cypress:ci`). These commands use each framework's Cypress config and are preferred for validating framework-specific E2E suites.
 - Add or update tests for behavior changes, especially in core packages.
 - Maintain 100% statement, branch, function, and line coverage for changed production code. Scope coverage collection to the changed source files while including all tests needed to exercise them; passing tests alone is not sufficient.
+- Before committing, verify 100% line coverage for every changed production source file with unit tests. Do not rely on aggregate coverage: scope the report to the changed files and include all relevant tests. For changed test, documentation, or configuration files that are not production-code coverage targets, run the applicable tests or checks instead.
 - While actively iterating with the user, prefer cheap validation such as TypeScript diagnostics, targeted browser/manual checks, or focused benchmarks. Do not run Vitest entire test suite after every small prompt or exploratory edit; save focused Vitest runs for stable checkpoints, when the user asks, or final validation before handing off.
 - Run the smallest relevant checks first, then broader checks when practical:
 
