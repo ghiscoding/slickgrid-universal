@@ -1443,6 +1443,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return;
     }
     if (this.hasDockingHorizontalScroller()) {
+      if (cacheEntry.cellRegions.left.style.transform) {
+        cacheEntry.cellRegions.left.style.removeProperty('transform');
+      }
+      if (cacheEntry.cellRegions.right.style.transform) {
+        cacheEntry.cellRegions.right.style.removeProperty('transform');
+      }
       return;
     }
     const viewportWidth = this._viewportScrollContainerX?.clientWidth || this.viewportW;
@@ -1483,6 +1489,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (!row?.classList.contains('slick-row-docked') || !cacheEntry.cellRegions) {
         return;
       }
+      this.applyDockingScrollOffsetToRow(row, cacheEntry);
       if (row.classList.contains('slick-row-full-width-group')) {
         const fullWidthGroupCell =
           cacheEntry.cellNodesByColumnIdx.find((cell) => cell?.classList.contains('slick-cell-full-width-group')) ||

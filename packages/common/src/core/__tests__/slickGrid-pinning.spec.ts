@@ -1814,8 +1814,13 @@ describe('SlickGrid unified pinning', () => {
     row.classList.add('slick-row-full-width-group');
     cacheEntry.cellNodesByColumnIdx[0].classList.add('slick-cell-full-width-group');
     internals.rowsCache[-1] = { rowNode: null };
+    vi.spyOn(internals, 'hasDockingHorizontalScroller').mockReturnValue(true);
+    cacheEntry.cellRegions.left.style.transform = 'translateX(12px)';
+    cacheEntry.cellRegions.right.style.transform = 'translateX(-12px)';
     internals.applyDockingProxyScrollOffsets(11);
     expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('11px');
+    expect(cacheEntry.cellRegions.left.style.transform).toBe('');
+    expect(cacheEntry.cellRegions.right.style.transform).toBe('');
     expect(cacheEntry.cellNodesByColumnIdx[0].style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
     expect(cacheEntry.cellNodesByColumnIdx[0].style.transform).toBe('translate3d(11px, 0, 0)');
   });
