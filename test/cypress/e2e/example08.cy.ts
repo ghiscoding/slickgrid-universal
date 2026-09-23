@@ -450,6 +450,24 @@ describe('Example 08 - Column Span & Header Grouping', () => {
         .and('not.have.class', 'r4');
       cy.get('.grid1 [data-row="1"] .slick-cell.l4.r4').should('have.length', 1);
       cy.get('.grid1 [data-row="1"] .slick-cell-colspan-part').should('have.length', 1);
+      cy.document().then((doc) => {
+        const style = doc.createElement('style');
+        style.id = 'colspan-separator-test';
+        style.textContent = '.slick-cell { border-right: 1px dotted silver; }';
+        doc.head.appendChild(style);
+      });
+      cy.get(hostSelector).should(($host) => {
+        const border = getComputedStyle($host[0]);
+        expect(border.borderRightWidth).to.eq('1px');
+        expect(border.borderRightColor).to.eq('rgba(0, 0, 0, 0)');
+      });
+      cy.get(fragmentSelector).should(($fragment) => {
+        expect(getComputedStyle($fragment[0]).borderRightColor).to.eq('rgb(192, 192, 192)');
+      });
+      cy.get('.grid1 [data-row="1"] .slick-cell.l4.r4').should(($cell) => {
+        expect(getComputedStyle($cell[0]).borderRightColor).to.eq('rgb(192, 192, 192)');
+      });
+      cy.document().then((doc) => doc.getElementById('colspan-separator-test')?.remove());
       cy.get(hostSelector).then(($host) => {
         const host = $host[0].getBoundingClientRect();
         const leftRegion = $host[0].parentElement!.getBoundingClientRect();
@@ -474,7 +492,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
         .and('contain', '5 days')
         .should(($cell) => {
           expect(getComputedStyle($cell[0]).boxShadow).to.eq('none');
-          expect(getComputedStyle($cell[0], '::after').borderRightStyle).to.eq('solid');
+          expect(getComputedStyle($cell[0], '::after').borderRightStyle).to.eq('none');
         });
 
       setPinning('.grid1 .slick-header-columns-left [data-id="duration"]', 'unpin-column');

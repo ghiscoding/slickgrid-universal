@@ -360,7 +360,7 @@
             z-index: 1;
           }
 
-          &.slick-cell-colspan-part:not(.slick-cell-colspan-end)::after {
+          &:not(.slick-cell-colspan-end)::after {
             border-inline-end: 0;
           }
         }
@@ -378,6 +378,10 @@
         // The text continues in the next band, so each piece is cut rather than elided;
         // the copy inside the last continuation is what shows the ellipsis.
         text-overflow: clip;
+      }
+
+      .slick-cell-colspan-shared-edge {
+        border-right-color: transparent;
       }
 
       .slick-cell-colspan-part-content {

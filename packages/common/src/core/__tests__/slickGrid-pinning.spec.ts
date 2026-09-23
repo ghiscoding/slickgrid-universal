@@ -405,6 +405,9 @@ describe('SlickGrid unified pinning', () => {
     expect(host.parentElement?.classList.contains('slick-pinned-left-cells')).toBe(true);
     expect(fragments[0].parentElement?.classList.contains('slick-scrolling-cells')).toBe(true);
     expect(fragments[1].parentElement?.classList.contains('slick-pinned-right-cells')).toBe(true);
+    expect(host.classList.contains('slick-cell-colspan-shared-edge')).toBe(true);
+    expect(fragments[0].classList.contains('slick-cell-colspan-shared-edge')).toBe(true);
+    expect(fragments[1].classList.contains('slick-cell-colspan-shared-edge')).toBe(false);
     expect(fragments[0].getAttribute('aria-hidden')).toBe('true');
     expect(fragments[0].getAttribute('role')).toBe('presentation');
     expect(fragments[0].getAttribute('aria-colindex')).toBeNull();
@@ -468,7 +471,10 @@ describe('SlickGrid unified pinning', () => {
       ],
       true
     );
-    expect(deferredHost.previousElementSibling?.classList.contains('slick-cell-sticky')).toBe(true);
+    const rtlFragment = deferredHost.previousElementSibling as HTMLElement;
+    expect(rtlFragment.classList.contains('slick-cell-sticky')).toBe(true);
+    expect(rtlFragment.classList.contains('slick-cell-colspan-shared-edge')).toBe(true);
+    expect(deferredHost.classList.contains('slick-cell-colspan-shared-edge')).toBe(false);
     (grid as any)._options.rtl = false;
 
     const cacheEntry = internals.rowsCache[0];
