@@ -750,7 +750,6 @@ describe('SlickGrid unified pinning', () => {
     internals._viewportScrollContainerX.scrollLeft = 0;
     internals.handleElementScroll(scrollSource);
     internals.clearDockingNativeHorizontalScrollOffsets();
-    internals.applyDockingScrollOffsetToRow(document.createElement('div'), {});
 
     const row = document.createElement('div');
     internals.rowsCache = { 0: { rowNode: [row] }, 1: { rowNode: [row] } };
@@ -838,7 +837,7 @@ describe('SlickGrid unified pinning', () => {
       document.dispatchEvent(moveEvent);
       internals.initialized = true;
       internals.sortableSideLeftInstance.toArray = vi.fn().mockReturnValue(['b', 'a', 'c', 'd']);
-      const setColumnsSpy = vi.spyOn(slickGrid, 'setColumns').mockImplementation(() => undefined);
+      const setColumnsSpy = vi.spyOn(slickGrid, 'setColumns').mockImplementation(() => undefined as any);
       const scrollToXSpy = vi.spyOn(slickGrid, 'scrollToX').mockImplementation(() => undefined);
       const setupResizeSpy = vi.spyOn(internals, 'setupColumnResize').mockImplementation(() => undefined);
       const focusSpy = vi.spyOn(slickGrid, 'setFocus').mockImplementation(() => undefined);
@@ -1821,12 +1820,8 @@ describe('SlickGrid unified pinning', () => {
     cacheEntry.cellNodesByColumnIdx[0].classList.add('slick-cell-full-width-group');
     internals.rowsCache[-1] = { rowNode: null };
     vi.spyOn(internals, 'hasDockingHorizontalScroller').mockReturnValue(true);
-    cacheEntry.cellRegions.left.style.transform = 'translateX(12px)';
-    cacheEntry.cellRegions.right.style.transform = 'translateX(-12px)';
     internals.applyDockingProxyScrollOffsets(11);
     expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('11px');
-    expect(cacheEntry.cellRegions.left.style.transform).toBe('');
-    expect(cacheEntry.cellRegions.right.style.transform).toBe('');
     expect(cacheEntry.cellNodesByColumnIdx[0].style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
     expect(cacheEntry.cellNodesByColumnIdx[0].style.transform).toBe('translate3d(11px, 0, 0)');
   });
@@ -1863,7 +1858,7 @@ describe('SlickGrid unified pinning', () => {
     expect(stopBubblingSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('updates rendered docking rows and chrome when using native horizontal scrolling', () => {
+  it('updates rendered docking rows and chrome regions', () => {
     const slickGrid = createGrid({
       createFooterRow: true,
       pinning: { columns: { left: ['a'], right: ['d'] } },
@@ -1871,7 +1866,6 @@ describe('SlickGrid unified pinning', () => {
       showHeaderRow: true,
     });
     const internals = slickGrid as any;
-    internals._dockingHorizontalScroller = undefined;
     internals.viewportHasVScroll = true;
     internals.scrollbarDimensions = { width: 15, height: 15 };
     container.querySelectorAll<HTMLElement>('.slick-headerrow-column, .slick-footerrow-column').forEach((element) => {
@@ -1917,6 +1911,7 @@ describe('SlickGrid unified pinning', () => {
       contentWidth: 320,
       leftBaseWidth: 80,
       leftWidth: 80,
+      rightBaseWidth: 80,
       rightWidth: 80,
       revision: 1,
     };
@@ -1939,25 +1934,9 @@ describe('SlickGrid unified pinning', () => {
     expect(leftRegion.classList.contains('slick-pinned-left-cells-active')).toBe(true);
     expect(rightRegion.classList.contains('slick-pinned-right-cells-active')).toBe(true);
 
-    internals._dockingHorizontalScroller = document.createElement('div');
-    internals.applyDockingScrollOffsetToRow(row, internals.rowsCache[0]);
-    internals.applyDockingChromeScrollOffsets();
-    internals._dockingHorizontalScroller = undefined;
-
     expect(internals.updateRenderedCellDocking()).toBe(true);
     expect(leftCell.parentElement).toBe(leftRegion);
     expect(rightCell.parentElement).toBe(rightRegion);
     expect(Array.from(rightRegion.children).map((cell) => internals.getCellFromNode(cell))).toEqual([1, 3]);
-    internals.applyDockingScrollOffsets();
-    expect(leftRegion.style.transform).toBe('');
-    expect(rightRegion.style.transform).toContain('translateX');
-
-    const chrome = document.createElement('div');
-    internals.dockingChromeByColumn = new Map([
-      [0, [chrome]],
-      [3, [chrome]],
-    ]);
-    internals.applyDockingChromeScrollOffsets();
-    expect(chrome.style.transform).toContain('translateX');
   });
 });

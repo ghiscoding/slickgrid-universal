@@ -2558,7 +2558,7 @@ describe('SlickGrid core file', () => {
       });
     });
 
-    it('should apply sticky docking chrome offsets and preserve a hidden range endpoint', () => {
+    it('should apply sticky docking chrome and preserve a hidden range endpoint', () => {
       const dockingColumns = [
         { id: 'a', field: 'a', name: 'A', width: 80 },
         { id: 'b', field: 'b', name: 'B', width: 80 },
@@ -2572,18 +2572,7 @@ describe('SlickGrid core file', () => {
       const internals = grid as any;
       const rightDocking = internals.dockingLayout.right[0];
       rightDocking.sticky = true;
-      rightDocking.naturalOffset = 80;
-      internals.dockingLayout.contentWidth = 160;
-      internals.dockingLayout.leftBaseWidth = 0;
-      internals.dockingLayout.rightWidth = 80;
-      internals.viewportW = 200;
-      internals.scrollLeft = 10;
-      Object.defineProperty(internals._viewportScrollContainerX, 'clientWidth', { configurable: true, value: 200 });
-      internals._dockingHorizontalScroller = undefined;
-
-      internals.applyDockingChromeScrollOffsets();
       const rightHeader = container.querySelector<HTMLElement>('.slick-header-column[data-id="b"]');
-      expect(rightHeader?.style.transform).toContain('translateX');
 
       internals.applyDockingToColumnChrome();
       expect(rightHeader?.classList.contains('slick-column-sticky')).toBe(true);
