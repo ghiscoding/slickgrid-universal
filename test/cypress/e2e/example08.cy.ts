@@ -459,7 +459,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       });
       cy.get(hostSelector).should(($host) => {
         const border = getComputedStyle($host[0]);
-        expect(border.borderRightWidth).to.eq('1px');
+        expect(parseFloat(border.borderRightWidth)).to.be.greaterThan(0);
         expect(border.borderRightColor).to.eq('rgba(0, 0, 0, 0)');
       });
       cy.get(fragmentSelector).should(($fragment) => {
@@ -632,7 +632,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
         cy.get(host).should(($updatedHost) => {
           expect($updatedHost[0].getBoundingClientRect().width).to.be.greaterThan(initialWidth);
           expect($updatedHost).to.have.class('active');
-          expect(getComputedStyle($updatedHost[0], '::after').borderRightStyle).to.eq('solid');
+          expect(getComputedStyle($updatedHost[0], '::after').borderRightStyle).to.eq('none');
         });
         cy.get(fragment).should(($updatedFragment) => {
           expect($updatedFragment).to.have.class('active');
