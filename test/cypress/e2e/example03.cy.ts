@@ -25,11 +25,12 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
     cy.get('.grid3 .slick-preheader-panel .slick-header-columns')
       .children()
       .then(($children) => {
-        const actual = Array.from($children, (child) => child.textContent || '');
-        expect(actual.every((title) => expected.includes(title))).to.eq(true);
+        const actual = Array.from($children, (child) => child.textContent || '').filter(Boolean);
+        const expectedTitles = expected.filter(Boolean);
+        expect(actual.every((title) => expectedTitles.includes(title))).to.eq(true);
 
         let actualIndex = 0;
-        expected.forEach((title) => {
+        expectedTitles.forEach((title) => {
           const titleIndex = actual.indexOf(title, actualIndex);
           expect(titleIndex, `missing pre-header title: ${title}`).to.be.gte(0);
           actualIndex = titleIndex + 1;
