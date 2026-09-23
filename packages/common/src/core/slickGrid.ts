@@ -4089,6 +4089,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return pinnedIndexes;
   }
 
+  /** Reject a pinning request, telling the host once unless the caller forces an alert. */
+  protected rejectPinning(callback: ((error: string) => void) | undefined, message: string | undefined, forceAlert: boolean): false {
+    if ((forceAlert || !this._invalidPinningAlerted) && callback) {
+      callback(message!);
+      this._invalidPinningAlerted = true;
+    }
+    return false;
+  }
+
   /** Keep a scrollable center column and reject bands that consume the viewport. */
   protected validatePinnedColumnIndexes(pinnedIndexes: Map<number, DockingSide>, forceAlert = false, columns: C[] = this.columns): boolean {
     if (this._options.skipPinningValidation) {
@@ -4101,11 +4110,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const visibleIndexes = this.getVisibleColumnIndexes(columns);
     if (visibleIndexes.length && visibleIndexes.every((index) => pinnedIndexes.has(index))) {
-      if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningPickerCallback) {
-        this._options.invalidColumnPinningPickerCallback(this._options.invalidColumnPinningPickerMessage!);
-        this._invalidPinningAlerted = true;
-      }
-      return false;
+      return this.rejectPinning(
+        this._options.invalidColumnPinningPickerCallback,
+        this._options.invalidColumnPinningPickerMessage,
+        forceAlert
+      );
     }
 
     const widths = { left: 0, right: 0 };
@@ -4129,11 +4138,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const outerGridWidth = Utils.width(this._container) || 0;
     const availablePinningWidth = Math.max(viewportWidth + scrollbarWidth, outerGridWidth);
     if (viewportWidth > 0 && widths.left + widths.right >= availablePinningWidth) {
-      if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningWidthCallback) {
-        this._options.invalidColumnPinningWidthCallback(this._options.invalidColumnPinningWidthMessage!);
-        this._invalidPinningAlerted = true;
-      }
-      return false;
+      return this.rejectPinning(
+        this._options.invalidColumnPinningWidthCallback,
+        this._options.invalidColumnPinningWidthMessage,
+        forceAlert
+      );
     }
     return true;
   }
@@ -4208,11 +4217,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return true;
     }
 
-    if ((forceAlert || !this._invalidPinningAlerted) && this._options.invalidColumnPinningPickerCallback) {
-      this._options.invalidColumnPinningPickerCallback(this._options.invalidColumnPinningSequenceMessage!);
-      this._invalidPinningAlerted = true;
-    }
-    return false;
+    return this.rejectPinning(
+      this._options.invalidColumnPinningPickerCallback,
+      this._options.invalidColumnPinningSequenceMessage,
+      forceAlert
+    );
   }
 
   /** Merge a partial pinning update before validating it. */

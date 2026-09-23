@@ -853,6 +853,24 @@ describe('SlickGrid unified pinning', () => {
     }
   });
 
+  it('alerts once when rejecting pinning unless the caller forces an alert', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+    const callback = vi.fn();
+
+    expect(internals.rejectPinning(callback, 'invalid pinning', false)).toBe(false);
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback).toHaveBeenCalledWith('invalid pinning');
+    expect(internals._invalidPinningAlerted).toBe(true);
+
+    expect(internals.rejectPinning(callback, 'suppressed alert', false)).toBe(false);
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(internals.rejectPinning(callback, 'forced alert', true)).toBe(false);
+    expect(callback).toHaveBeenCalledTimes(2);
+    expect(callback).toHaveBeenLastCalledWith('forced alert');
+    expect(internals.rejectPinning(undefined, 'no callback', true)).toBe(false);
+  });
+
   it('covers compatibility getters, scrollTo, option rejection, and wheel setup', () => {
     const invalidPicker = vi.fn();
     const slickGrid = createGrid({ invalidColumnPinningPickerCallback: invalidPicker });
