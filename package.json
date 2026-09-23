@@ -113,7 +113,7 @@
     "node": "^22.22.2 || >=24.15.0",
     "pnpm": "11.x"
   },
-  "packageManager": "pnpm@11.17.0",
+  "packageManager": "pnpm@11.27.0",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
     "@formkit/tempo": "catalog:",
