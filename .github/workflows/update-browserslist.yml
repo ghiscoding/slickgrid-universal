@@ -1,0 +1,45 @@
+name: Update Browserslist Data
+
+on:
+  schedule:
+    - cron: '0 9 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-browserslist:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Install pnpm
+        uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2
+        with:
+          install: false
+
+      - name: Set NodeJS
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Update Browserslist data
+        run: pnpm browserslist:update
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
+        with:
+          branch: chore/update-browserslist-data
+          commit-message: 'chore: update Browserslist data'
+          title: 'chore: update Browserslist data'
+          body: |
+            Updates the `caniuse-lite` and Baseline browser-mapping data in `pnpm-lock.yaml`.
+          delete-branch: true

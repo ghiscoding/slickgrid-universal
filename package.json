@@ -15,6 +15,7 @@
     "docs:1": "// install the framework you want to use (ie: 'angular:install') or 'pnpm install' to install everything",
     "docs:2": "// Start Dev by choosing the appropriate framework below (ie: 'dev:angular'), the single word 'dev' is to start the Vanilla flavor (default)",
     "docs:3": "// Start Cypress tests by choosing your framework (ie: 'angular:cypress'), default is 'cypress' to test Vanilla flavor (default)",
+    "browserslist:update": "pnpm up --depth=9999 --no-save caniuse-lite baseline-browser-mapping",
     "dev": "pnpm build:universal && run-p -r dev:watch vite:watch",
     "dev:angular": "pnpm build:universal && pnpm angular:check-both-builds && run-p -r universal:watch angular:watch",
     "dev:aurelia": "pnpm build:universal && pnpm aurelia:check-both-builds && run-p -r universal:watch aurelia:watch",
