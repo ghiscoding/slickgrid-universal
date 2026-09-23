@@ -453,7 +453,8 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       cy.document().then((doc) => {
         const style = doc.createElement('style');
         style.id = 'colspan-separator-test';
-        style.textContent = '.slick-cell { border-right: 1px dotted silver; }';
+        style.textContent =
+          '.grid1 .grid-canvas .slick-cell { border-right-width: 1px; border-right-style: dotted; } .grid1 .grid-canvas .slick-cell:not(.slick-cell-colspan-shared-edge) { border-right-color: silver; }';
         doc.head.appendChild(style);
       });
       cy.get(hostSelector).should(($host) => {
