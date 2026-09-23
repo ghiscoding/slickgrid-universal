@@ -382,7 +382,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
         .and('contain', '5 days')
         .should(($cell) => {
           expect(getComputedStyle($cell[0]).boxShadow).to.eq('none');
-          expect(getComputedStyle($cell[0], '::after').borderRightStyle).to.eq('solid');
+          expect(getComputedStyle($cell[0], '::after').borderRightStyle).to.eq('none');
         });
 
       setPinning('#grid1 .slick-header-columns-left [data-id="duration"]', 'unpin-column');
