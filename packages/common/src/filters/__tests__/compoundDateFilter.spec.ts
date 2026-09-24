@@ -1,5 +1,5 @@
 import { format } from '@formkit/tempo';
-import type { Calendar } from 'vanilla-calendar-pro';
+import { months, time, type Calendar } from 'vanilla-calendar-pro';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
@@ -131,6 +131,7 @@ describe('CompoundDateFilter', () => {
     expect(filter.pickerOptions).toEqual({
       enableDateToggle: true,
       enableJumpToSelectedDate: true,
+      extensions: [time, months],
       firstWeekday: 0,
       inputMode: true,
       locale: 'en',
