@@ -119,8 +119,9 @@ import { Draggable, MouseWheel, Resizable } from './slickInteractions.js';
 import { applyHtmlToElement, runOptionalHtmlSanitizer } from './utils.js';
 
 const COLUMN_AUTOSCROLL_DISTANCE_PX = 10;
-const DEFAULT_DOCKING_SCROLLBAR_HEIGHT = 15;
 const COLUMN_AUTOSCROLL_INTERVAL_MS = 30;
+const DEFAULT_DOCKING_SCROLLBAR_HEIGHT = 15;
+const DEFAULT_DOCKING_OVERLAY_SCROLLBAR_WIDTH = 8;
 const RESIZE_AUTOSCROLL_BROWSER_EDGE_PX = 1;
 const RESIZE_AUTOSCROLL_BROWSER_EDGE_LEFT_DELAY_MS = 300;
 const RESIZE_AUTOSCROLL_BROWSER_EDGE_RIGHT_DELAY_MS = 1200;
@@ -6549,9 +6550,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
     const viewportWidth = this._viewportNode.clientWidth;
     const overlayWidth = Math.max(this.canvasWidth, this.dockingLayout.contentWidth, viewportWidth);
-    // Overlay-scrollbar platforms do not reserve a vertical gutter in
-    // clientWidth. Adding a guessed inset clips rightmost pinned-row cells.
-    const rightInset = overlayWidth - scrollLeft - viewportWidth;
+    const hasFirefoxOverlayScrollbar =
+      this.viewportHasVScroll &&
+      !this.scrollbarDimensions?.width &&
+      /firefox/i.test(navigator.userAgent) &&
+      /linux/i.test(navigator.userAgent);
+    const scrollbarInset = hasFirefoxOverlayScrollbar ? DEFAULT_DOCKING_OVERLAY_SCROLLBAR_WIDTH : 0;
+    const rightInset = overlayWidth - scrollLeft - viewportWidth + scrollbarInset;
     this._dockingOverlay.style.clipPath = `inset(0 ${rightInset}px 0 ${scrollLeft}px)`;
   }
 

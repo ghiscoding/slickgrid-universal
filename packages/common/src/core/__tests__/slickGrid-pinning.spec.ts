@@ -1843,13 +1843,30 @@ describe('SlickGrid unified pinning', () => {
     Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 320 });
     internals.viewportHasVScroll = true;
     internals.scrollbarDimensions = { width: 0, height: 0 };
+    const originalUserAgentDescriptor = Object.getOwnPropertyDescriptor(navigator, 'userAgent');
 
-    internals.updateDockingOverlayDimensions();
+    try {
+      Object.defineProperty(navigator, 'userAgent', { configurable: true, value: 'Mozilla/5.0 Chrome/140.0.0.0 Brave/140.0.0.0' });
+      internals.updateDockingOverlayDimensions();
+      expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 0px 0 0px)');
 
-    expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 0px 0 0px)');
-    internals.scrollbarDimensions.width = 12;
-    internals.updateDockingOverlayDimensions();
-    expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 0px 0 0px)');
+      Object.defineProperty(navigator, 'userAgent', {
+        configurable: true,
+        value: 'Mozilla/5.0 (X11; Linux x86_64; rv:151.0) Gecko/20100101 Firefox/151.0',
+      });
+      internals.updateDockingOverlayDimensions();
+      expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 8px 0 0px)');
+
+      internals.scrollbarDimensions.width = 12;
+      internals.updateDockingOverlayDimensions();
+      expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 0px 0 0px)');
+    } finally {
+      if (originalUserAgentDescriptor) {
+        Object.defineProperty(navigator, 'userAgent', originalUserAgentDescriptor);
+      } else {
+        Reflect.deleteProperty(navigator, 'userAgent');
+      }
+    }
   });
 
   it('publishes the proxy scroll offset once on the grid container', () => {
