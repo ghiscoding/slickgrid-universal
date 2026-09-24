@@ -1785,6 +1785,43 @@ describe('SlickGrid unified pinning', () => {
 
     expect(internals.viewportH).toBeLessThanOrEqual(initialViewportHeight);
   });
+  it('resizes the canvas when proxy scrollbar height reservation changes', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });
+    const internals = slickGrid as any;
+    Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 100 });
+    internals.scrollbarDimensions = { width: 15, height: 15 };
+    const resizeSpy = vi.spyOn(slickGrid, 'resizeCanvas').mockImplementation(() => undefined);
+    internals.dockingHorizontalScrollbarReserved = false;
+
+    // A zero-height measurement must not reserve space even when content overflows.
+    vi.spyOn(internals, 'getDockingScrollbarHeight').mockReturnValue(0);
+    internals.updateCanvasWidth();
+    expect(internals.dockingHorizontalScrollbarReserved).toBe(false);
+    expect(resizeSpy).not.toHaveBeenCalled();
+
+    vi.mocked(internals.getDockingScrollbarHeight).mockReturnValue(15);
+    internals.updateCanvasWidth();
+    expect(internals.dockingHorizontalScrollbarReserved).toBe(true);
+    expect(resizeSpy).toHaveBeenCalledOnce();
+
+    // Stable overflow does not resize again.
+    internals.updateCanvasWidth();
+    expect(resizeSpy).toHaveBeenCalledOnce();
+
+    // Narrowing the columns removes the reservation and restores the viewport height.
+    slickGrid.getColumns().forEach((column) => (column.width = 10));
+    internals.dockingLayout.contentWidth = 0;
+    internals.updateCanvasWidth();
+    expect(internals.dockingHorizontalScrollbarReserved).toBe(false);
+    expect(resizeSpy).toHaveBeenCalledTimes(2);
+
+    // A nested update is suppressed while resizeCanvas is handling the transition.
+    internals.dockingLayout.contentWidth = 320;
+    internals.resizingForDockingScrollbar = true;
+    internals.updateCanvasWidth();
+    expect(internals.dockingHorizontalScrollbarReserved).toBe(true);
+    expect(resizeSpy).toHaveBeenCalledTimes(2);
+  });
 
   it('keeps the docking scrollbar measurable when Firefox reports overlay metrics as zero', () => {
     const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });

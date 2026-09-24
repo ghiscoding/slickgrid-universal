@@ -557,6 +557,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected _canvasNode!: HTMLDivElement;
   protected _dockingOverlay?: HTMLDivElement;
   protected _dockingHorizontalScroller?: HTMLDivElement;
+  /** Whether the proxy track is currently taking layout height beside the viewport. */
+  protected dockingHorizontalScrollbarReserved = false;
+  /** Guards the viewport resize that a change in that reservation triggers. */
+  protected resizingForDockingScrollbar = false;
   protected _dockingHorizontalSpacer?: HTMLDivElement;
   /** Persistent semantic left/center/right wrappers for the single header roots. */
   protected dockingHeaderRegions?: Record<ColumnDockingBand, HTMLDivElement>;
@@ -1379,8 +1383,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       Utils.width(this._footerRowSpacerL, this.canvasWidth + (this.viewportHasVScroll ? this.scrollbarDimensions?.width || 0 : 0));
     }
 
+    const reservedTrackBefore = this.dockingHorizontalScrollbarReserved;
     this.updateDockingHorizontalScrollerDimensions();
     this.updateDockingOverlayDimensions();
+    if (this.dockingHorizontalScrollbarReserved !== reservedTrackBefore && !this.resizingForDockingScrollbar) {
+      this.resizingForDockingScrollbar = true;
+      try {
+        this.resizeCanvas();
+      } finally {
+        this.resizingForDockingScrollbar = false;
+      }
+    }
 
     if (widthChanged || forceColumnWidthsUpdate) {
       this.applyColumnWidths();
@@ -6552,6 +6565,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const contentWidth = this.dockingLayout.contentWidth || this.canvasWidth;
     const hasHorizontalOverflow = contentWidth > viewportWidth;
     this._dockingHorizontalScroller.style.width = `${viewportWidth}px`;
+    this.dockingHorizontalScrollbarReserved = hasHorizontalOverflow && scrollbarHeight > 0;
     this._dockingHorizontalScroller.style.height = hasHorizontalOverflow ? `${scrollbarHeight}px` : '0px';
     this._dockingHorizontalSpacer.style.width = `${Math.max(contentWidth, viewportWidth)}px`;
     this._container.style.setProperty('--slick-docking-viewport-width', `${this._viewportNode.clientWidth}px`);
