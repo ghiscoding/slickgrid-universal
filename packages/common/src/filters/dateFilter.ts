@@ -1,7 +1,7 @@
 import { format, parse } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, isDefined } from '@slickgrid-universal/utils';
-import { Calendar, type Options } from 'vanilla-calendar-pro';
+import { Calendar, months, time, type Options } from 'vanilla-calendar-pro';
 import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import { type OperatorType, type SearchTerm } from '../enums/index.js';
@@ -271,6 +271,7 @@ export class DateFilter implements Filter {
     }
 
     const pickerOptions: Options = {
+      extensions: [time, months],
       inputMode: true,
       enableJumpToSelectedDate: true,
       firstWeekday: 0,
