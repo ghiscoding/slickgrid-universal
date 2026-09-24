@@ -363,7 +363,8 @@ describe('SlickGrid unified pinning', () => {
     expect(groupCell.textContent).toBe('Group A');
 
     grid.scrollToX(120);
-    expect(groupCell.style.transform).toBe('translate3d(120px, 0, 0)');
+    expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('120px');
+    expect(groupCell.style.transform).toBe('');
 
     (grid as any).updateRenderedCellDocking();
     expect(groupCell.parentElement).toBe(groupRow);
@@ -1831,17 +1832,8 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getHeaderColumn('a').style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
     expect(slickGrid.getHeaderColumn('d').style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
 
-    const cacheEntry = internals.rowsCache[Number(row.dataset.row)];
-    internals.ensureCellNodesInRowsCache(Number(row.dataset.row));
-    internals.dockingLayout.left[0].sticky = true;
-    row.classList.add('slick-row-full-width-group');
-    cacheEntry.cellNodesByColumnIdx[0].classList.add('slick-cell-full-width-group');
-    internals.rowsCache[-1] = { rowNode: null };
-    vi.spyOn(internals, 'hasDockingHorizontalScroller').mockReturnValue(true);
     internals.applyDockingProxyScrollOffsets(11);
     expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('11px');
-    expect(cacheEntry.cellNodesByColumnIdx[0].style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
-    expect(cacheEntry.cellNodesByColumnIdx[0].style.transform).toBe('translate3d(11px, 0, 0)');
   });
 
   it('keeps the right-pinned filter/footer chrome over the Grid Menu allowance with collapsed scrollbars', () => {

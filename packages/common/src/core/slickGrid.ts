@@ -1439,21 +1439,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Update only elements whose proxy-mode transforms consume the horizontal scroll offset. */
   protected applyDockingProxyScrollOffsets(scrollLeft: number): void {
-    const value = `${scrollLeft}px`;
     this.syncDockingScrollOffsetVariable(scrollLeft);
-
-    Object.values(this.rowsCache).forEach((cacheEntry) => {
-      const row = cacheEntry.rowNode?.[0];
-      if (!row?.classList.contains('slick-row-docked') || !cacheEntry.cellRegions) {
-        return;
-      }
-      if (row.classList.contains('slick-row-full-width-group')) {
-        const fullWidthGroupCell =
-          cacheEntry.cellNodesByColumnIdx.find((cell) => cell?.classList.contains('slick-cell-full-width-group')) ||
-          (row.querySelector(':scope > .slick-cell-full-width-group') as HTMLElement | null);
-        fullWidthGroupCell?.style.setProperty('transform', `translate3d(${value}, 0, 0)`);
-      }
-    });
   }
 
   /** Publish the inherited proxy-mode scroll offset with one container style write. */
