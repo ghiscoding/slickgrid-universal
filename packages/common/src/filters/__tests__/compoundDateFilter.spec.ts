@@ -344,7 +344,17 @@ describe('CompoundDateFilter', () => {
     expect(hideSpy).toHaveBeenCalled();
   });
 
-  it('should hide picker when pressing Tab key', () => {
+  it('should hide picker when pressing Tab key while focus is outside of the picker', () => {
+    const hideSpy = vi.spyOn(filter, 'hide');
+
+    filter.init(filterArguments);
+    filter.show();
+
+    document.body.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
+    expect(hideSpy).toHaveBeenCalled();
+  });
+
+  it('should not hide picker when pressing Tab key while focus is still inside of the picker', () => {
     const hideSpy = vi.spyOn(filter, 'hide');
 
     filter.init(filterArguments);
@@ -354,7 +364,7 @@ describe('CompoundDateFilter', () => {
     expect(calendarElm).toBeTruthy();
 
     calendarElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
-    expect(hideSpy).toHaveBeenCalled();
+    expect(hideSpy).not.toHaveBeenCalled();
   });
 
   it('should clear picker when pressing Backspace key', () => {
