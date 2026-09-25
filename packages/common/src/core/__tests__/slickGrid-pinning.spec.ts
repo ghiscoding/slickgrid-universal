@@ -51,6 +51,8 @@ describe('SlickGrid unified pinning', () => {
     expect(container.querySelector('.slick-horizontal-scroller')).toBe(container.querySelector('.slick-docking-horizontal-scroller'));
     expect(container.querySelector('.slick-vertical-scroller')).toBe((slickGrid as any)._viewportNode);
     expect(container.querySelector('.slick-docking-overlay')).toBeTruthy();
+    expect((slickGrid as any)._dockingOverlay.parentElement).toBe((slickGrid as any)._viewportNode);
+    expect((slickGrid as any)._dockingOverlay.nextElementSibling).toBe((slickGrid as any)._canvasNode);
     expect((slickGrid as any)._contentRoot.style.left).toBe('');
     expect((slickGrid as any)._contentRoot.style.width).toBe('100%');
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
@@ -800,7 +802,7 @@ describe('SlickGrid unified pinning', () => {
     internals.rowDockingLayout = { revision: 7, topHeight: 0, bottomHeight: 0 };
     internals.scrollLeft = 0;
     internals.rowsCache[0].dockingSyncSignature = '7:0:0:0:0';
-    Object.defineProperty(internals._dockingOverlay, 'clientHeight', { configurable: true, value: 0 });
+    Object.defineProperty(internals._viewportNode, 'clientHeight', { configurable: true, value: 0 });
     const applyRowTopOffsetSpy = vi.spyOn(internals, 'applyRowTopOffset');
 
     internals.syncDockedRowContainers();
@@ -1837,36 +1839,23 @@ describe('SlickGrid unified pinning', () => {
     expect(internals.getDockingScrollbarHeight()).toBe(15);
   });
 
-  it('reserves Firefox overlay scrollbar space from docked rows', () => {
+  it('keeps the docked-row overlay inside the viewport without consuming scroll height', () => {
     const slickGrid = createGrid({ pinning: { rows: { top: [0], bottom: [2] } } });
     const internals = slickGrid as any;
+    const overlay = internals._dockingOverlay as HTMLElement;
     Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 320 });
-    internals.viewportHasVScroll = true;
-    internals.scrollbarDimensions = { width: 0, height: 0 };
-    const originalUserAgentDescriptor = Object.getOwnPropertyDescriptor(navigator, 'userAgent');
+    Object.defineProperty(internals._viewportNode, 'clientHeight', { configurable: true, value: 240 });
+    internals.canvasWidth = 500;
+    internals.dockingLayout.contentWidth = 420;
 
-    try {
-      Object.defineProperty(navigator, 'userAgent', { configurable: true, value: 'Mozilla/5.0 Chrome/140.0.0.0 Brave/140.0.0.0' });
-      internals.updateDockingOverlayDimensions();
-      expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 0px 0 0px)');
+    internals.updateDockingOverlayDimensions();
 
-      Object.defineProperty(navigator, 'userAgent', {
-        configurable: true,
-        value: 'Mozilla/5.0 (X11; Linux x86_64; rv:151.0) Gecko/20100101 Firefox/151.0',
-      });
-      internals.updateDockingOverlayDimensions();
-      expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 8px 0 0px)');
-
-      internals.scrollbarDimensions.width = 12;
-      internals.updateDockingOverlayDimensions();
-      expect((internals._dockingOverlay as HTMLElement).style.clipPath).toBe('inset(0 0px 0 0px)');
-    } finally {
-      if (originalUserAgentDescriptor) {
-        Object.defineProperty(navigator, 'userAgent', originalUserAgentDescriptor);
-      } else {
-        Reflect.deleteProperty(navigator, 'userAgent');
-      }
-    }
+    expect(overlay.parentElement).toBe(internals._viewportNode);
+    expect(overlay.style.top).toBe('0px');
+    expect(overlay.style.left).toBe('0px');
+    expect(overlay.style.width).toBe('500px');
+    expect(overlay.style.height).toBe('0px');
+    expect(overlay.style.clipPath).toBe('');
   });
 
   it('publishes the proxy scroll offset once on the grid container', () => {

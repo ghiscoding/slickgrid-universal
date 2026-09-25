@@ -120,12 +120,13 @@
     background: var(--slick-canvas-bg-color, v.$slick-canvas-bg-color);
   }
 
-  // Permanent/active docked rows are rendered in this small overlay, outside
-  // the scrolling canvas. This keeps their vertical coordinates constant while
-  // the single native viewport scrolls through virtual pages.
+  // Permanent/active docked rows are rendered in a zero-height overlay inside
+  // the native viewport so its scrollbar paints above the rows.
   .slick-docking-overlay {
-    position: absolute;
-    overflow: hidden;
+    position: sticky;
+    top: 0;
+    height: 0;
+    overflow: visible;
     // Keep docked rows above the normal viewport rows while leaving the grid
     // below application-level overlays (for example Bulma dropdowns at z20).
     // The previous overlay layer of 100 made pinned rows unexpectedly cover
@@ -195,12 +196,10 @@
       will-change: transform;
     }
 
-    // The overlay is intentionally as wide as the full canvas so its pinned
-    // right region remains available after horizontal translation. Clip its
-    // transformed window to the viewport's content width, however, so the
-    // overlay rows cannot paint over the native vertical scrollbar.
+    // Keep the full-width row overlay on the compositor path while translating
+    // it with the horizontal proxy scrollbar.
     .slick-docking-overlay {
-      will-change: transform, clip-path;
+      will-change: transform;
     }
 
     .slick-row-docked > .slick-pinned-left-cells {

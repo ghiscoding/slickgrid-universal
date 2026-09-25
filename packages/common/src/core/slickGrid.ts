@@ -121,7 +121,6 @@ import { applyHtmlToElement, runOptionalHtmlSanitizer } from './utils.js';
 const COLUMN_AUTOSCROLL_DISTANCE_PX = 10;
 const COLUMN_AUTOSCROLL_INTERVAL_MS = 30;
 const DEFAULT_DOCKING_SCROLLBAR_HEIGHT = 15;
-const DEFAULT_DOCKING_OVERLAY_SCROLLBAR_WIDTH = 8;
 const RESIZE_AUTOSCROLL_BROWSER_EDGE_PX = 1;
 const RESIZE_AUTOSCROLL_BROWSER_EDGE_LEFT_DELAY_MS = 300;
 const RESIZE_AUTOSCROLL_BROWSER_EDGE_RIGHT_DELAY_MS = 1200;
@@ -3171,7 +3170,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Create the row overlay once for a configured row-docking grid. */
   protected ensureDockingOverlay(): HTMLDivElement {
-    this._dockingOverlay ??= createDomElement('div', { className: 'slick-docking-overlay', role: 'presentation' }, this._contentRoot);
+    if (!this._dockingOverlay) {
+      this._dockingOverlay = createDomElement('div', { className: 'slick-docking-overlay', role: 'presentation' });
+      this._viewportNode.insertBefore(this._dockingOverlay, this._canvasNode);
+    }
     if (this.initialized) {
       this.bindDockingOverlayEvents();
       if (this._options.enableMouseWheelScrollHandler && !this.dockingOverlayMouseWheelBound) {
@@ -4604,11 +4606,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Keep permanent/active docked rows outside the native scrolling canvas. */
   protected syncDockedRowContainers(): void {
-    if (!this._dockingOverlay || !this._canvasNode) {
+    if (!this._dockingOverlay || !this._canvasNode || !this._viewportNode) {
       return;
     }
     const layout = this.rowDockingLayout;
-    const signature = `${layout.revision}:${layout.topHeight}:${layout.bottomHeight}:${this.scrollLeft}:${this._dockingOverlay.clientHeight}`;
+    const signature = `${layout.revision}:${layout.topHeight}:${layout.bottomHeight}:${this.scrollLeft}:${this._viewportNode.clientHeight}`;
     Object.entries(this.rowsCache).forEach(([rowId, cacheEntry]) => {
       const row = Number(rowId);
       const rowNode = cacheEntry.rowNode?.[0];
@@ -5400,7 +5402,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (this._dockingOverlay) {
         this._dockingOverlay.style.transform = translateX;
       }
-      this.updateDockingOverlayClip(x);
       this.applyDockingProxyScrollOffsets(x);
     }
 
@@ -5663,7 +5664,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (rowDocking?.band === 'top') {
       top = rowDocking.offset;
     } else if (rowDocking?.band === 'bottom') {
-      const viewportHeight = this._dockingOverlay?.clientHeight || this._viewportScrollContainerY?.clientHeight || this.viewportH;
+      const viewportHeight = this._viewportScrollContainerY?.clientHeight || this.viewportH;
       // Anchor the bottom band below the top band (plus the configured minimum center row
       // count converted to a pixel gap) instead of floating upward when permanent top+bottom
       // rows combined are taller than the available viewport (see progress notes).
@@ -6524,40 +6525,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  /**
-   * Size the non-scrolling docked-row layer to the full canvas width.
-   *
-   * The layer itself receives the horizontal `-scrollLeft` transform used by
-   * the dedicated scrollbar, so a viewport-width clipping box would expose a
-   * blank strip at the trailing edge. Its viewport is the clipping boundary.
-   */
+  /** Size the zero-height docked-row layer to the full canvas width. */
   protected updateDockingOverlayDimensions(): void {
     if (!this._dockingOverlay || !this._viewportNode) {
       return;
     }
-    this._dockingOverlay.style.top = `${this._viewportNode.offsetTop}px`;
-    this._dockingOverlay.style.left = `${this._viewportNode.offsetLeft}px`;
+    this._dockingOverlay.style.top = '0px';
+    this._dockingOverlay.style.left = '0px';
     const overlayWidth = Math.max(this.canvasWidth, this.dockingLayout.contentWidth, this._viewportNode.clientWidth);
     this._dockingOverlay.style.width = `${overlayWidth}px`;
-    this._dockingOverlay.style.height = `${this._viewportNode.clientHeight}px`;
-    this.updateDockingOverlayClip();
-  }
-
-  /** Clip the translated row overlay without invalidating every grid descendant through an inherited CSS variable. */
-  protected updateDockingOverlayClip(scrollLeft: number = this.scrollLeft): void {
-    if (!this._dockingOverlay || !this._viewportNode) {
-      return;
-    }
-    const viewportWidth = this._viewportNode.clientWidth;
-    const overlayWidth = Math.max(this.canvasWidth, this.dockingLayout.contentWidth, viewportWidth);
-    const hasFirefoxOverlayScrollbar =
-      this.viewportHasVScroll &&
-      !this.scrollbarDimensions?.width &&
-      /firefox/i.test(navigator.userAgent) &&
-      /linux/i.test(navigator.userAgent);
-    const scrollbarInset = hasFirefoxOverlayScrollbar ? DEFAULT_DOCKING_OVERLAY_SCROLLBAR_WIDTH : 0;
-    const rightInset = overlayWidth - scrollLeft - viewportWidth + scrollbarInset;
-    this._dockingOverlay.style.clipPath = `inset(0 ${rightInset}px 0 ${scrollLeft}px)`;
+    this._dockingOverlay.style.height = '0px';
   }
 
   /** Keep the single horizontal scrollbar aligned with the vertical body viewport. */
