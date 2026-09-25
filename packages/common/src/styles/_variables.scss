@@ -7,7 +7,10 @@
 @use 'sass:color';
 
 // import external lib CSS files (without the .css extension)
-@use 'vanilla-calendar-pro/styles/index';
+// only load the modular parts we actually use (core + time + months), skipping unused motion/annotations/weeks
+@use 'vanilla-calendar-pro/styles/core';
+@use 'vanilla-calendar-pro/styles/time';
+@use 'vanilla-calendar-pro/styles/months';
 
 /* this is the only variable without $slick prefix and exists so that user could use the same Bootstrap primary color without declaring $slick-primary-color variable (which also exists) */
 /** extra styling when Bootstrap isn't provided */
