@@ -1291,7 +1291,6 @@ describe('SlickRowDetailView plugin', () => {
       // simulate the parent row being filtered out of the DataView
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
       dataviewStub.onRowCountChanged.notify({} as any);
-      vi.advanceTimersByTime(1);
 
       expect(onRowOutOfViewportSpy).toHaveBeenCalled();
       expect(plugin.getExpandedRowIds()).toContain(itemMock.id); // stays expanded so it can reopen once the filter is cleared

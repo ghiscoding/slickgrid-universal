@@ -187,13 +187,19 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
 
     this._eventHandler.subscribe(this.dataView.onRowCountChanged, () => {
+      // filtering/sorting can remove an expanded row's parent from the DataView, hide its Row Detail without collapsing it
+      // this runs synchronously as part of the DataView refresh(), ahead of any framework-specific "onFilterChanged" redraw
+      this.hideRowDetailsForFilteredOutParents();
       this._grid.updateRowCount();
       this._grid.render();
-      // filtering/sorting can remove the parent row from the DataView, hide any Row Detail left open for it
-      this.recalculateOutOfRangeViews(true, 0);
+      // re-show any Row Detail whose parent row is back in the filtered/sorted dataset and within the rendered range
+      this.recalculateOutOfRangeViews(true);
     });
 
     this._eventHandler.subscribe(this.dataView.onRowsChanged, (_e, args) => {
+      // filtering/sorting can remove an expanded row's parent from the DataView, hide its Row Detail without collapsing it
+      this.hideRowDetailsForFilteredOutParents();
+
       // A suspended DataView only emits this event when endUpdate() releases its
       // accumulated changes. Pending details are safe to finish on the grid render
       // caused by this notification, not on an unrelated render in the meantime.
@@ -225,6 +231,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
       this._grid.invalidateRows(toInvalidateRows);
       this._grid.render();
+      // re-show any Row Detail whose parent row is back in the filtered/sorted dataset and within the rendered range
+      this.recalculateOutOfRangeViews(true);
     });
 
     // subscribe to the onAsyncResponse so that the plugin knows when the user server side calls finished
@@ -576,6 +584,20 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /**
+   * Hide any expanded Row Detail whose parent row is no longer part of the (filtered) DataView, without collapsing it,
+   * so that it reopens automatically once the parent row is back in the filtered/sorted dataset.
+   * Runs synchronously off DataView events, ahead of any framework-specific "onFilterChanged" redraw, to avoid removing
+   * a Row Detail container while a framework adapter is in the middle of (re)rendering into it.
+   */
+  protected hideRowDetailsForFilteredOutParents(): void {
+    this._expandedRowIds.forEach((itemId) => {
+      if (this._renderedViewportRowIds.has(itemId) && this.dataView.getRowById(itemId) === undefined) {
+        this.notifyViewportChange(this.dataView.getItemById(itemId) ?? {}, 'remove', true);
+      }
+    });
+  }
+
+  /**
    * (re)calculate/sync row detail views that are out of range of the viewport and trigger events (when enabled)
    * @param {Boolean} [triggerEvent] - should trigger notify event which will re-render the detail view
    * @param {Number} [delay] - optional delay to execute the calculation of out of range views
@@ -600,6 +622,10 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         const cachedRows = Object.keys(this._grid.getRowCache()).map(Number);
 
         const visible = this._grid.getRenderedRange();
+        // the grid hasn't rendered a viewport yet (e.g. very first data load), nothing to add/remove based on scroll position
+        if (!visible) {
+          return;
+        }
         const rowDetailCount = this.gridOptions.rowDetailView?.panelRows ?? 0;
         this._visibleRenderedCell = { startRow: visible.top, endRow: visible.bottom };
         let { startRow, endRow } = this._visibleRenderedCell;
