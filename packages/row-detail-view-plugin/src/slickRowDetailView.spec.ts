@@ -1296,6 +1296,42 @@ describe('SlickRowDetailView plugin', () => {
       expect(plugin.getExpandedRowIds()).toContain(itemMock.id); // stays expanded so it can reopen once the filter is cleared
     });
 
+    it('should call "recalculateOutOfRangeViews" directly and remove a rendered Row Detail whose parent row no longer resolves to a row index', () => {
+      const mockProcess = vi.fn();
+      const itemMock = {
+        id: 123,
+        firstName: 'John',
+        lastName: 'Doe',
+        __collapsed: true,
+        __detailViewLoaded: true,
+        __sizePadding: 1,
+        __height: 150,
+        __detailContent: '<span>loading...</span>',
+      };
+      vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(itemMock);
+      vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(2);
+      vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
+        2: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      });
+      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 0, bottom: 10, left: 33, right: 18 } as any);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+        ...gridOptionsMock,
+        rowDetailView: { process: mockProcess, preTemplate: () => '<span>loading...</span>', panelRows: 5 } as any,
+      });
+      plugin.init(gridStub);
+      plugin.expandDetailView(itemMock.id);
+      plugin.recalculateOutOfRangeViews(); // renders the Row Detail, adding it to the rendered viewport ids
+
+      const onRowOutOfViewportSpy = vi.spyOn(plugin.onRowOutOfViewportRange, 'notify');
+
+      // parent row no longer resolves to a row index, bypassing the "onRowCountChanged" hide step entirely
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
+      plugin.recalculateOutOfRangeViews();
+
+      expect(onRowOutOfViewportSpy).toHaveBeenCalled();
+    });
+
     it('should call "onScroll" and expect "onRowBackToViewportRange" be triggered when row is found out of range and direction is DOWN', () => {
       const mockProcess = vi.fn();
       const itemMock = {
