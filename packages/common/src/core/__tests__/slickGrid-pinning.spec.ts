@@ -82,6 +82,48 @@ describe('SlickGrid unified pinning', () => {
     expect(container.querySelector('.slick-docking-overlay [data-row="1"]')).toBeTruthy();
   });
 
+  it('resolves pinned columns, hit testing, and scroll offsets along the inline axis in RTL', () => {
+    const rtlColumns = columns.map((column, index) => ({ ...column, sticky: index === 1 ? ('left' as const) : undefined }));
+    const slickGrid = createGrid(
+      {
+        devMode: { ownerNodeIndex: 0, containerClientWidth: 160 },
+        pinning: { columns: { left: ['a'], right: ['d'] }, rows: { top: [0], bottom: [2] } },
+        rtl: true,
+      },
+      rtlColumns
+    );
+    const internals = slickGrid as any;
+
+    expect(internals.getInlineDirection()).toBe(-1);
+    expect(internals.usesStickyColumnTransformPath()).toBe(true);
+    expect(internals.getInlineOffsetFromLeft(280)).toBe(40);
+    Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 160 });
+    Object.defineProperty(internals._dockingHorizontalScroller, 'clientWidth', { configurable: true, value: 160 });
+    internals.updateDockingHorizontalScrollerDimensions();
+    expect(container.style.getPropertyValue('--slick-docking-direction')).toBe('-1');
+    expect(container.style.getPropertyValue('--slick-docking-right-offset')).toBe('160px');
+    expect(internals._dockingOverlay.style.right).toBe('0px');
+
+    internals.scrollLeft = -160;
+    internals.refreshDockingLayout(-160);
+    internals.applyDockingToColumnChrome();
+    expect(slickGrid.getCellFromPoint(120, 20).cell).toBe(0);
+    expect(internals.getTrailingDockedChromeInlineStart(slickGrid.getHeaderColumn('d'), { offset: 0 })).toEqual(expect.any(Number));
+    expect(slickGrid.getCellFromPoint(40, 20).cell).toBe(3);
+
+    const positioned = document.createElement('div');
+    internals.setInlinePosition(positioned, 25, null);
+    expect(positioned.style.right).toBe('25px');
+    expect(positioned.style.left).toBe('auto');
+    internals.dockingLayout.leftBaseWidth = 20;
+    internals.dockingByColumn.set(1, { band: 'left', index: 1, offset: 35, naturalOffset: 5, sticky: true, width: 80 });
+    internals.applyStickyColumnTransform(positioned, 1, 'cell');
+    expect(positioned.style.getPropertyValue('--slick-sticky-column-offset')).toBe('-10px');
+    internals.syncDockingScrollOffsetVariable(-12);
+
+    expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('12px');
+  });
+
   it('resolves object id references after data order changes and clears null docking options', () => {
     const rows = [
       { id: 10, a: 'a10', b: 'b10', c: 'c10', d: 'd10' },
@@ -977,7 +1019,7 @@ describe('SlickGrid unified pinning', () => {
     internals.applyDockingToColumnChrome();
     internals._options.rtl = false;
 
-    expect(internals.getRightDockedChromeLeft(document.createElement('div'), { offset: 0 })).toEqual(expect.any(Number));
+    expect(internals.getTrailingDockedChromeInlineStart(document.createElement('div'), { offset: 0 })).toEqual(expect.any(Number));
 
     const scaledHeader = document.createElement('div');
     scaledHeader.className = 'slick-header-column';
@@ -989,7 +1031,7 @@ describe('SlickGrid unified pinning', () => {
     vi.spyOn(internals, 'getViewportInnerWidth').mockReturnValue(900);
     internals.scrollLeft = 40;
     internals.dockingLayout.rightWidth = 100;
-    expect(internals.getRightDockedChromeLeft(scaledHeader, { offset: 25 })).toBeCloseTo(660);
+    expect(internals.getTrailingDockedChromeInlineStart(scaledHeader, { offset: 25 })).toBeCloseTo(660);
 
     const invalidHeader = document.createElement('div');
     invalidHeader.className = 'slick-header-column';

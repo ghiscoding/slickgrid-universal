@@ -1457,7 +1457,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Publish the inherited proxy-mode scroll offset with one container style write. */
   protected syncDockingScrollOffsetVariable(scrollLeft: number = this.scrollLeft): void {
-    this._container.style.setProperty('--slick-docking-scroll-left', `${scrollLeft}px`);
+    this._container.style.setProperty('--slick-docking-scroll-left', `${scrollLeft * this.getInlineDirection()}px`);
   }
 
   protected disableSelection(target: HTMLElement[]): void {
@@ -1949,7 +1949,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // proxy. The proxy can briefly retain an older width during a browser
     // resize, which placed right-pinned titles at that stale edge (for example
     // `1537px` for a 1637px proxy) instead of the visible header edge.
-    const viewportWidth = this._headerScrollerL?.clientWidth || this._viewportScrollContainerX?.clientWidth || this.viewportW;
     const columnIndexOf = (element: HTMLElement) => /(?:^|\s)l(\d+)(?:\s|$)/.exec(element.className)?.[1] ?? '';
     const headersById = this.indexChromeElements(this._headerL, '.slick-header-column', (element) => element.dataset.id ?? '');
     const headerRowByIndex = this.indexChromeElements(this._headerRowL, '.slick-headerrow-column', columnIndexOf);
@@ -1981,7 +1980,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       elements.forEach((element) => {
         element.classList.toggle('slick-column-pinned-left', !usesStickyTransform && band === 'left');
         element.classList.toggle('slick-column-pinned-right', !usesStickyTransform && band === 'right');
-        const isRightDockedChrome = !usesStickyTransform && band === 'right' && !this._options.rtl;
+        const isRightDockedChrome = !usesStickyTransform && band === 'right';
         element.classList.toggle('slick-docking-chrome-right', isRightDockedChrome);
         element.classList.toggle('slick-column-pinned-left-edge', !usesStickyTransform && band === 'left' && index === leftEdgeIndex);
         element.classList.toggle('slick-column-pinned-right-edge', !usesStickyTransform && band === 'right' && index === rightEdgeIndex);
@@ -2025,11 +2024,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (usesStickyTransform) {
           element.style.removeProperty('--slick-docking-chrome-offset');
           element.style.position = element === header ? '' : 'absolute';
-          element.style.left = element === header ? '' : `${this.dockingLayout.leftBaseWidth + (docking?.naturalOffset || 0)}px`;
-          element.style.right =
-            element === header
-              ? ''
-              : `${this.dockingLayout.contentWidth - this.dockingLayout.leftBaseWidth - (docking?.naturalOffset || 0) - (docking?.width || 0)}px`;
+          const stickyStart = this.dockingLayout.leftBaseWidth + (docking?.naturalOffset || 0);
+          this.setInlinePosition(
+            element,
+            element === header ? '' : stickyStart,
+            element === header ? '' : this.dockingLayout.contentWidth - stickyStart - (docking?.width || 0)
+          );
           element.style.order = '0';
           element.style.transform = '';
           this.applyStickyColumnTransform(element, index, 'column');
@@ -2039,11 +2039,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           const centerOffset = this.usesStickyColumnTransformPath() && !column.pinned ? docking?.naturalOffset || 0 : docking?.offset || 0;
           element.style.removeProperty('--slick-docking-chrome-offset');
           element.style.position = '';
-          element.style.left = element === header ? '' : `${this.dockingLayout.leftBaseWidth + centerOffset}px`;
-          element.style.right =
-            element === header
-              ? ''
-              : `${this.dockingLayout.contentWidth - this.dockingLayout.leftBaseWidth - centerOffset - (docking?.width || 0)}px`;
+          const centerStart = this.dockingLayout.leftBaseWidth + centerOffset;
+          this.setInlinePosition(
+            element,
+            element === header ? '' : centerStart,
+            element === header ? '' : this.dockingLayout.contentWidth - centerStart - (docking?.width || 0)
+          );
           element.style.order = '0';
           element.style.transform = '';
           return;
@@ -2053,8 +2054,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // offset; only cancel the translated root layer here.
         if (band === 'left') {
           element.style.position = element === header ? 'relative' : 'absolute';
-          element.style.left = element === header ? '' : `${docking.offset}px`;
-          element.style.right = 'auto';
+          this.setInlinePosition(element, element === header ? '' : docking.offset, null);
           element.style.order = '0';
           if (element === header && index === leftEdgeIndex) {
             const elementStyle = getComputedStyle(element);
@@ -2072,37 +2072,21 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           return;
         }
 
-        const naturalOffset = docking.sticky
-          ? this.dockingLayout.leftBaseWidth + docking.naturalOffset
-          : this.dockingLayout.contentWidth - this.dockingLayout.rightWidth + docking.offset;
-        const dockedOffset = this.scrollLeft + viewportWidth - this.dockingLayout.rightWidth + docking.offset;
-
-        // All right-docked chrome uses the visible viewport coordinate directly.
-        // Its parent layer is translated by -scrollLeft, so placing it at
-        // `scrollLeft + viewportWidth - rightBandWidth` keeps it at the right
-        // edge regardless of whether the natural content is narrower or wider
-        // than the viewport. This also keeps every column in a multi-column
-        // right band in the correct order.
-        element.style.position = isRightDockedChrome ? 'absolute' : element === header ? 'relative' : 'absolute';
-        element.style.left =
-          element === header && !isRightDockedChrome
-            ? ''
-            : `${isRightDockedChrome ? this.getRightDockedChromeLeft(element, docking) : naturalOffset}px`;
-        element.style.right = 'auto';
+        element.style.position = 'absolute';
+        this.setInlinePosition(element, this.getTrailingDockedChromeInlineStart(element, docking), null);
         element.style.order = docking.sticky ? '0' : '1';
-        // The container receives the current `-scrollLeft` transform once per
-        // frame. Keep the chrome's natural-to-docked delta separately so CSS
-        // can add the current scroll position without using a stale inline
-        // transform. This is essential for sticky Q1/Q2/etc.: a permanent
-        // left column needs no delta, while a later sticky column needs its
-        // natural offset subtracted to sit beside the existing sticky band.
-        element.style.setProperty(
-          '--slick-docking-chrome-offset',
-          `${isRightDockedChrome ? 0 : dockedOffset - naturalOffset - this.scrollLeft}px`
-        );
-        element.style.transform = isRightDockedChrome ? 'translateX(0px)' : `translateX(${dockedOffset - naturalOffset}px)`;
+        element.style.setProperty('--slick-docking-chrome-offset', '0px');
+        element.style.transform = 'translateX(0px)';
       });
     });
+  }
+
+  /** Position an element from the logical leading/trailing edges of its container. */
+  protected setInlinePosition(element: HTMLElement, start: number | '' | null, end: number | '' | null): void {
+    const startProperty = this._options.rtl ? 'right' : 'left';
+    const endProperty = this._options.rtl ? 'left' : 'right';
+    element.style[startProperty] = start === null ? 'auto' : start === '' ? '' : `${start}px`;
+    element.style[endProperty] = end === null ? 'auto' : end === '' ? '' : `${end}px`;
   }
 
   /** Collect chrome elements under a root once per docking pass, keyed by column id or index. */
@@ -2174,10 +2158,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Return the local CSS `left` coordinate that places a right-pinned chrome
+   * Return the local inline-start coordinate that places trailing pinned chrome
    * cell at its visible viewport edge.
    */
-  protected getRightDockedChromeLeft(element: HTMLElement, docking: Pick<ColumnDockingLayout['right'][number], 'offset'>): number {
+  protected getTrailingDockedChromeInlineStart(
+    element: HTMLElement,
+    docking: Pick<ColumnDockingLayout['right'][number], 'offset'>
+  ): number {
     const chromeScroller = element.classList.contains('slick-headerrow-column')
       ? this._headerRowScrollerL
       : element.classList.contains('slick-footerrow-column')
@@ -2192,9 +2179,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             ? this._footerRowL
             : this._headerL
         : directParent;
+    const direction = this.getInlineDirection();
     if (!chromeScroller || !chromeContainer) {
       return (
-        this.scrollLeft + (this._viewportScrollContainerX?.clientWidth || this.viewportW) - this.dockingLayout.rightWidth + docking.offset
+        this.scrollLeft * direction +
+        (this._viewportScrollContainerX?.clientWidth || this.viewportW) -
+        this.dockingLayout.rightWidth +
+        docking.offset
       );
     }
 
@@ -2208,11 +2199,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // multiplies, while every other term here is a layout pixel. Convert the measured
     // distance back to layout pixels; the factor is 1 for an unscaled grid.
     const scale = chromeScroller.offsetWidth ? scrollerRect.width / chromeScroller.offsetWidth : 1;
-    // The chrome container itself is translated by -scrollLeft. Add it back before
-    // converting the target position to the container's local `left`.
-    const containerLeftInScroller = (chromeContainer.getBoundingClientRect().left - scrollerRect.left) / (scale || 1) + this.scrollLeft;
-    const visibleRightStart = dockingViewportWidth - this.dockingLayout.rightWidth + docking.offset;
-    return visibleRightStart - containerLeftInScroller;
+    // Measure from the inline start, then restore the proxy's logical scroll offset.
+    const containerRect = chromeContainer.getBoundingClientRect();
+    const scrollerStart = direction > 0 ? scrollerRect.left : scrollerRect.right;
+    const containerStart = direction > 0 ? containerRect.left : containerRect.right;
+    const containerStartInScroller = ((containerStart - scrollerStart) * direction) / (scale || 1) + this.scrollLeft * direction;
+    const visibleTrailingStart = dockingViewportWidth - this.dockingLayout.rightWidth + docking.offset;
+    return visibleTrailingStart - containerStartInScroller;
   }
 
   /** Adds or removes the automatic header-height styles from both header panes. */
@@ -4410,7 +4403,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       docking.band === 'left'
         ? docking.offset - this.dockingLayout.leftBaseWidth - docking.naturalOffset
         : docking.offset - this.dockingLayout.rightWidth - this.dockingLayout.leftBaseWidth - docking.naturalOffset;
-    element.style.setProperty('--slick-sticky-column-offset', `${offset}px`);
+    element.style.setProperty('--slick-sticky-column-offset', `${offset * this.getInlineDirection()}px`);
   }
 
   protected clearStickyColumnTransform(element: HTMLElement, type: 'cell' | 'column'): void {
@@ -4469,13 +4462,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.dockingController.setOptions(this._options.docking);
     const nextLayout = this.dockingController.resolveColumns(
       this.columns,
-      scrollLeft,
+      scrollLeft * this.getInlineDirection(),
       // Sticky thresholds must use the body viewport's visible width. The
       // outer grid width includes the vertical scrollbar gutter, which made
       // right stickies wait until scrolling roughly one scrollbar-width past
       // the actual edge.
       this.getViewportInnerWidth() || this.viewportW || Utils.width(this._container) || 0,
-      this._options.rtl ? 'right' : 'left'
+      'left'
     );
     if (preserveUnchanged && nextLayout.revision === previousRevision) {
       return false;
@@ -6531,7 +6524,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return;
     }
     this._dockingOverlay.style.top = '0px';
-    this._dockingOverlay.style.left = '0px';
+    if (this._options.rtl) {
+      this._dockingOverlay.style.left = 'auto';
+      this._dockingOverlay.style.right = '0px';
+    } else {
+      this._dockingOverlay.style.right = 'auto';
+      this._dockingOverlay.style.left = '0px';
+    }
     const overlayWidth = Math.max(this.canvasWidth, this.dockingLayout.contentWidth, this._viewportNode.clientWidth);
     this._dockingOverlay.style.width = `${overlayWidth}px`;
     this._dockingOverlay.style.height = '0px';
@@ -6552,13 +6551,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._dockingHorizontalSpacer.style.width = `${Math.max(contentWidth, viewportWidth)}px`;
     this._container.style.setProperty('--slick-docking-viewport-width', `${this._viewportNode.clientWidth}px`);
     this.syncDockingScrollOffsetVariable();
+    const direction = this.getInlineDirection();
+    this._container.style.setProperty('--slick-docking-direction', `${direction}`);
     this._container.style.setProperty(
       '--slick-docking-right-offset',
-      `${this._dockingHorizontalScroller.clientWidth - this.dockingLayout.contentWidth}px`
+      `${direction * (this._dockingHorizontalScroller.clientWidth - this.dockingLayout.contentWidth)}px`
     );
     this._container.style.setProperty(
       '--slick-docking-row-right-offset',
-      `${this._dockingHorizontalScroller.clientWidth - this.getDockingRenderedWidth()}px`
+      `${direction * (this._dockingHorizontalScroller.clientWidth - this.getDockingRenderedWidth())}px`
     );
   }
 
@@ -7739,13 +7740,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * The proxy scroller exposes its horizontal position as a CSS variable, so
-   * LTR sticky candidates can stay in the center DOM and move on the
-   * compositor. Native scrolling and RTL keep the established band transition
-   * until their coordinate systems can use the same transform safely.
+   * The proxy scroller exposes its horizontal position as a CSS variable, so sticky candidates
+   * stay in the center DOM and move on the compositor. RTL uses the same path, with logical offsets
+   * converted by getInlineDirection().
    */
   protected usesStickyColumnTransformPath(): boolean {
-    return !!this._dockingHorizontalScroller && !this._options.rtl;
+    return !!this._dockingHorizontalScroller;
+  }
+
+  /** +1 when the inline axis runs left to right, -1 when it runs right to left. */
+  protected getInlineDirection(): number {
+    return this._options.rtl ? -1 : 1;
   }
 
   /**
@@ -8554,7 +8559,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param y A y coordinate.
    */
   getCellFromPoint(x: number, y: number): { row: number; cell: number } {
-    if (this.usesDockingRowRegions() && !this._options.rtl) {
+    if (this.usesDockingRowRegions()) {
       const docked = this.getCellFromDockedPoint(x, y);
       if (docked) {
         return docked;
@@ -8564,8 +8569,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let row = this.getRowFromPosition(y);
     let cell = 0;
 
+    // Walk the columns in inline-axis order, starting at the first column.
+    const inlineX = this.getInlineOffsetFromLeft(x);
     let w = 0;
-    for (let i = 0; i < this.columns.length && w <= x; i++) {
+    for (let i = 0; i < this.columns.length && w <= inlineX; i++) {
       if (this.columns[i] && !this.columns[i].hidden) {
         w += this.columns[i].width as number;
         cell = i + 1;
@@ -8579,6 +8586,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     return { row, cell };
+  }
+
+  /** Convert a canvas x-coordinate to a distance from the leading edge. */
+  protected getInlineOffsetFromLeft(x: number): number {
+    if (!this._options.rtl) {
+      return x;
+    }
+    const contentWidth = this.dockingLayout.contentWidth || this.canvasWidth;
+    return contentWidth - x;
   }
 
   /** Resolves a canvas-relative point through the current docking layout. */
@@ -8602,20 +8618,28 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       row = this.getRenderedRowFromPosition(y);
     }
 
-    const scrollLeft = Math.max(0, this.scrollLeft);
+    // Docking bands and column offsets run along the inline axis. RTL scrollLeft is negative.
+    const inlineScroll = Math.max(0, this.scrollLeft * this.getInlineDirection());
     const viewportWidth = this.getViewportInnerWidth() || this._viewportScrollContainerX?.clientWidth || this.viewportW;
-    const viewportX = x - scrollLeft;
+    const inlineX = this.getInlineOffsetFromLeft(x);
+    const inlineViewportX = inlineX - inlineScroll;
     const { left, center, right, leftBaseWidth, leftWidth, rightWidth } = this.dockingLayout;
     const bandCell = (entries: DockedColumn[], start: number, position: number): number | undefined =>
       entries.find((entry) => position >= start + entry.offset && position < start + entry.offset + entry.width)?.index;
     let cell: number | undefined;
-    if (viewportX < leftWidth) {
-      cell = bandCell(left, 0, viewportX);
-    } else if (viewportX >= viewportWidth - rightWidth) {
-      cell = bandCell(right, viewportWidth - rightWidth, viewportX);
+    if (inlineViewportX < leftWidth) {
+      cell = bandCell(left, 0, inlineViewportX);
+    } else if (inlineViewportX >= viewportWidth - rightWidth) {
+      cell = bandCell(right, viewportWidth - rightWidth, inlineViewportX);
     }
     if (cell === undefined) {
-      cell = bandCell(center, 0, x - leftBaseWidth);
+      // Sticky centre cells keep natural positions on the compositor transform path.
+      const usesNaturalCenter = this.usesStickyColumnTransformPath() && this.hasStickyColumns();
+      const centerPosition = inlineX - leftBaseWidth;
+      cell = center.find((entry) => {
+        const start = usesNaturalCenter ? entry.naturalOffset : entry.offset;
+        return centerPosition >= start && centerPosition < start + entry.width;
+      })?.index;
     }
     return cell === undefined ? null : { row, cell };
   }

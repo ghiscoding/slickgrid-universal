@@ -29,8 +29,8 @@ onUnmounted(() => {
 
 function defineGrid() {
   columns.value = [
-    { id: 'id', name: 'ID', field: 'id', filterable: true, sortable: true, minWidth: 60 },
-    { id: 'title', name: 'Title', field: 'title', filterable: true, sortable: true, minWidth: 100 },
+    { id: 'id', name: 'ID', field: 'id', filterable: true, sortable: true, minWidth: 60, pinned: 'left' },
+    { id: 'title', name: 'Title', field: 'title', filterable: true, sortable: true, minWidth: 100, sticky: 'left' },
     { id: 'duration', name: 'Duration (days)', field: 'duration', filterable: true, sortable: true, minWidth: 100, type: 'number' },
     { id: '%', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true, minWidth: 100, type: 'number' },
     {
@@ -49,7 +49,7 @@ function defineGrid() {
       exportWithFormatter: true,
       filterable: true,
     },
-    { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', minWidth: 80 },
+    { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', minWidth: 80, pinned: 'right' },
   ];
 
   gridOptions.value = {
@@ -60,6 +60,7 @@ function defineGrid() {
     gridWidth: 700,
     rowHeight: 33,
     rtl: true, // ← Enable RTL mode
+    pinning: { rows: { top: [0], bottom: [NB_ITEMS - 1] } },
   };
 }
 

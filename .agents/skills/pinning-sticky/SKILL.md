@@ -17,6 +17,9 @@ or scroll-activated sticky docking.
 - Row references may be indexes, string `datasetIdPropertyName` values, or `{ id }` values.
   An in-range numeric row reference is interpreted as an index first; use `{ id: 5 }` to target
   a numeric dataset id. ID references follow a row through sorting and filtering, while index
+- Pinning and sticky bands follow reading order in RTL: `left` is the leading band (displayed on
+  the right side), and `right` is the trailing band (displayed on the left). `sticky: true` always
+  docks at the leading edge.
   references remain positional. Non-contiguous rows are valid, for example `rows.top: [0, 2, 4]`.
 - `Column.pinned` is the per-column permanent-pin form. `Column.pinnable` only controls whether
   built-in pinning commands are exposed.
