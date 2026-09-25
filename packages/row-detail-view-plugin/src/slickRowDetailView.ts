@@ -189,6 +189,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this._eventHandler.subscribe(this.dataView.onRowCountChanged, () => {
       this._grid.updateRowCount();
       this._grid.render();
+      // filtering/sorting can remove the parent row from the DataView, hide any Row Detail left open for it
+      this.recalculateOutOfRangeViews(true, 0);
     });
 
     this._eventHandler.subscribe(this.dataView.onRowsChanged, (_e, args) => {
@@ -584,7 +586,17 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     const calculateFn = () =>
       this._expandedRowIds.forEach((itemId) => {
         const item = this.dataView.getItemById(itemId) ?? {};
-        const rowIdx = this.dataView.getRowById(itemId) as number;
+        const rowIdx = this.dataView.getRowById(itemId) as number | undefined;
+
+        // the parent row no longer exists in the (filtered) DataView, hide its Row Detail without collapsing it
+        // so that it can reopen automatically once the parent row is back in the filtered dataset
+        if (rowIdx === undefined) {
+          if (this._renderedViewportRowIds.has(itemId)) {
+            this.notifyViewportChange(item, 'remove', triggerEvent);
+          }
+          return;
+        }
+
         const cachedRows = Object.keys(this._grid.getRowCache()).map(Number);
 
         const visible = this._grid.getRenderedRange();
