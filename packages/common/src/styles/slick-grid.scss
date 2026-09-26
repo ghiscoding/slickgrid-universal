@@ -145,6 +145,41 @@
   }
 
   &.slick-docking-horizontal-scroll-proxy {
+    :is(.slick-header, .slick-headerrow, .slick-footerrow, .slick-preheader-panel, .slick-topheader-panel) {
+      // Header chrome spans the outer grid width while the body owns the scrollbar.
+      &::after {
+        content: '';
+        position: absolute;
+        inset-block: 0;
+        inset-inline-end: 0;
+        width: var(--slick-docking-vertical-scrollbar-width, 0px);
+        z-index: 30;
+        pointer-events: none;
+      }
+    }
+
+    // The Universal themes paint the backgrounds on inner roots/columns, so
+    // inheriting the panel background here would leave this cover transparent.
+    .slick-header::after,
+    .slick-preheader-panel::after,
+    .slick-topheader-panel::after {
+      background-color: var(--slick-header-background-color, v.$slick-header-background-color);
+    }
+
+    .slick-headerrow::after {
+      background-color: var(--slick-header-row-background-color, v.$slick-header-row-background-color);
+    }
+
+    .slick-footerrow::after {
+      background-color: var(--slick-grid-footer-bg-color, v.$slick-grid-footer-bg-color);
+    }
+
+    // Grid Menu already reserves the header's trailing space.
+    .slick-header-container:has(> .slick-grid-menu-container) > .slick-header::after,
+    .slick-preheader-container:has(> .slick-grid-menu-container) > .slick-preheader-panel::after {
+      width: 0;
+    }
+
     // The outer header/header-row/footer elements remain the clipping boundary
     // for the visible viewport. Their inner column containers cannot clip,
     // however: a right-pinned column is translated from its natural content
@@ -242,7 +277,10 @@
     .slick-cell-sticky-right,
     .slick-column-sticky-right {
       transform: translate3d(
-        calc(var(--slick-docking-scroll-left, 0px) + (var(--slick-docking-viewport-width, 100%) * var(--slick-docking-direction, 1)) + var(--slick-sticky-column-offset, 0px)),
+        calc(
+          var(--slick-docking-scroll-left, 0px) + (var(--slick-docking-viewport-width, 100%) * var(--slick-docking-direction, 1)) +
+            var(--slick-sticky-column-offset, 0px)
+        ),
         0,
         0
       ) !important;
