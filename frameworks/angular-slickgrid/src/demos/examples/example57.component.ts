@@ -34,7 +34,7 @@ export class Example57Component implements OnInit, OnDestroy {
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
-    angularGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : undefined);
+    angularGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : null);
     angularGrid.slickGrid.invalidate();
   }
 

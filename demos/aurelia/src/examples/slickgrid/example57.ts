@@ -20,7 +20,7 @@ export class Example57 {
   }
   aureliaGridReady(aureliaGrid: AureliaGridInstance) {
     this.aureliaGrid = aureliaGrid;
-    aureliaGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : undefined);
+    aureliaGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : null);
     aureliaGrid.slickGrid.invalidate();
   }
 

@@ -29,7 +29,7 @@ onUnmounted(() => {
 });
 function vueGridReady(vueGrid: SlickgridVueInstance) {
   gridInstance = vueGrid;
-  vueGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : undefined);
+  vueGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : null);
   vueGrid.slickGrid.invalidate();
 }
 

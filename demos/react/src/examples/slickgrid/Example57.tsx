@@ -27,7 +27,7 @@ const Example57: React.FC = () => {
   }, []);
   const reactGridReady = (reactGrid: SlickgridReactInstance) => {
     setGridInstance(reactGrid);
-    reactGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : undefined);
+    reactGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : null);
     reactGrid.slickGrid.invalidate();
   };
 
