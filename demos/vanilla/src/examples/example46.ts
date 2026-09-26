@@ -31,8 +31,6 @@ export default class Example46 {
       dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : null);
       this.sgb.slickGrid?.invalidate();
     }
-    document.querySelector('#setPinning')?.addEventListener('click', () => this.applyPinning());
-    document.querySelector('#clearPinning')?.addEventListener('click', () => this.clearPinning());
   }
 
   applyPinning() {

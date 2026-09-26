@@ -120,6 +120,7 @@ describe('Example 57 - RTL (Right-to-Left)', () => {
       cy.get('.slick-header-column:visible').last().should('exist');
     });
   });
+
   describe('Combined RTL pinning, sticky columns, and colspan', () => {
     it('renders both pinning edges, pinned rows, and a crossing colspan together', () => {
       cy.get('#grid57 .slick-header-column[data-id="title"]').should('have.class', 'slick-column-pinned-left');
@@ -145,6 +146,7 @@ describe('Example 57 - RTL (Right-to-Left)', () => {
       });
       cy.get('#grid57 .slick-header-column[data-id="priority"]').should('have.class', 'slick-column-sticky');
     });
+
     it('applies and removes two-sided column pinning at runtime', () => {
       cy.get('#clearPinning').click();
       cy.get('#grid57 .slick-header-column[data-id="title"]').should('not.have.class', 'slick-column-pinned-left');

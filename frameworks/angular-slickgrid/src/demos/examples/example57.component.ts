@@ -81,7 +81,6 @@ export class Example57Component implements OnInit, OnDestroy {
     this.gridOptions = {
       enableCellNavigation: true,
       enableFiltering: false,
-      // Preserve declared widths and horizontal overflow from the fork example.
       enableAutoSizeColumns: false,
       // Disabled in RTL because SortableJS lacks RTL support; patch SortableJS or use https://github.com/HamadHadi/Sortable-rtl to enable it.
       enableColumnReorder: false,

@@ -139,7 +139,7 @@ function mockData(count: number) {
     </h2>
     <div class="subtitle">RTL with dynamic two-sided column pinning, sticky columns, pinned rows, and a crossing colspan</div>
 
-    <div class="rtl-controls" dir="ltr" style="display: flex; align-items: center; gap: 12px; margin: 8px 0">
+    <div class="rtl-controls" style="display: flex; align-items: center; gap: 12px; margin: 8px 0">
       <label
         >Pinned at the start (right) edge:
         <input type="number" id="pinnedStartColumns" min="0" max="16" value="2" />
@@ -148,8 +148,10 @@ function mockData(count: number) {
         >Pinned at the end (left) edge:
         <input type="number" id="pinnedEndColumns" min="0" max="16" value="1" />
       </label>
-      <button id="setPinning" type="button" @click="applyPinning">Apply</button>
-      <button id="clearPinning" type="button" @click="clearPinning">Remove pinning</button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" id="setPinning" type="button" @click="applyPinning">Apply</button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" id="clearPinning" type="button" @click="clearPinning">
+        Remove pinning
+      </button>
     </div>
 
     <div dir="rtl">

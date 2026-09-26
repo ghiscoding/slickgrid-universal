@@ -18,6 +18,7 @@ export class Example57 {
     document.body.setAttribute('dir', 'rtl');
     this.dataset = this.mockData(NB_ITEMS);
   }
+
   aureliaGridReady(aureliaGrid: AureliaGridInstance) {
     this.aureliaGrid = aureliaGrid;
     aureliaGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : null);
@@ -75,7 +76,8 @@ export class Example57 {
     this.gridOptions = {
       enableCellNavigation: true,
       enableFiltering: false,
-      // Preserve declared widths and horizontal overflow from the fork example.
+      // Aurelia assigns the dataset after grid creation, which otherwise triggers first-load autofit.
+      autoFitColumnsOnFirstLoad: false,
       enableAutoSizeColumns: false,
       // Disabled in RTL because SortableJS lacks RTL support; patch SortableJS or use https://github.com/HamadHadi/Sortable-rtl to enable it.
       enableColumnReorder: false,

@@ -134,17 +134,17 @@ const Example57: React.FC = () => {
 
       <div className="subtitle">RTL with dynamic two-sided column pinning, sticky columns, pinned rows, and a crossing colspan.</div>
 
-      <div className="rtl-controls" dir="ltr" style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '8px 0' }}>
+      <div className="rtl-controls" style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '8px 0' }}>
         <label>
           Pinned at the start (right) edge: <input type="number" id="pinnedStartColumns" min="0" max="16" defaultValue="2" />
         </label>
         <label>
           Pinned at the end (left) edge: <input type="number" id="pinnedEndColumns" min="0" max="16" defaultValue="1" />
         </label>
-        <button id="setPinning" type="button" onClick={applyPinning}>
+        <button className="btn btn-outline-secondary btn-sm btn-icon" id="setPinning" type="button" onClick={applyPinning}>
           Apply
         </button>
-        <button id="clearPinning" type="button" onClick={clearPinning}>
+        <button className="btn btn-outline-secondary btn-sm btn-icon" id="clearPinning" type="button" onClick={clearPinning}>
           Remove pinning
         </button>
       </div>
