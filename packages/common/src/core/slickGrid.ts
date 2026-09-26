@@ -4806,6 +4806,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   setOptions(newOptions: Partial<O>, suppressRender?: boolean, suppressColumnSet?: boolean, suppressSetOverflow?: boolean): void {
     this.prepareForOptionsChange();
+    // RTL is applied once during initialization. Changing it later would leave the
+    // container direction out of sync with the docking geometry, so ignore that part
+    // of the update while still applying any other options in the same call.
+    if (newOptions.rtl !== undefined && !!newOptions.rtl !== !!this._options.rtl) {
+      console.warn('[SlickGrid] the "rtl" option is only applied when the grid is created; the change was ignored.');
+      const optionsWithoutRtl = { ...newOptions };
+      delete optionsWithoutRtl.rtl;
+      newOptions = optionsWithoutRtl as Partial<O>;
+    }
+
     const removePinning =
       Object.prototype.hasOwnProperty.call(newOptions, 'pinning') && (newOptions.pinning === undefined || newOptions.pinning === null);
 

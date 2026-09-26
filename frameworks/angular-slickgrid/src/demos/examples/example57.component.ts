@@ -1,5 +1,5 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
-import { AngularSlickgridComponent, Formatters, type Column, type GridOption } from '../../library';
+import { AngularSlickgridComponent, Formatters, type AngularGridInstance, type Column, type GridOption } from '../../library';
 
 const NB_ITEMS = 100;
 
@@ -29,6 +29,11 @@ export class Example57Component implements OnInit, OnDestroy {
     } else {
       document.body.removeAttribute('dir');
     }
+  }
+
+  angularGridReady(angularGrid: AngularGridInstance) {
+    angularGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : undefined);
+    angularGrid.slickGrid.invalidate();
   }
 
   prepareGrid() {

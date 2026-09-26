@@ -25,6 +25,12 @@ export default class Example46 {
       { ...ExampleGridOptions, ...this.gridOptions },
       this.dataset
     );
+    const dataView = this.sgb.dataView;
+    if (dataView) {
+      // Demonstrate one cell continuing from the leading pinned band into the scrolling band.
+      dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : undefined);
+      this.sgb.slickGrid?.invalidate();
+    }
   }
 
   dispose() {

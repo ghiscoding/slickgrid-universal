@@ -58,6 +58,27 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
   });
 
+  it('renders and hit-tests a colspan crossing the leading pinned boundary in RTL', () => {
+    const spanData = {
+      getLength: () => data.length,
+      getItem: (row: number) => data[row],
+      getItemMetadata: (row: number) => (row === 2 ? { columns: { 0: { colspan: 3, formatter: () => 'Spanned' } } } : undefined),
+    };
+    const slickGrid = createGrid({ rtl: true, pinning: { columns: { left: ['a'], right: ['d'] } } }, columns, spanData as any);
+    const row = container.querySelector<HTMLElement>('[data-row="2"]')!;
+    const host = row.querySelector<HTMLElement>('.slick-pinned-left-cells .slick-cell.l0:not(.slick-cell-colspan-part)')!;
+    const part = row.querySelector<HTMLElement>('.slick-scrolling-cells .slick-cell-colspan-part')!;
+
+    expect(host).toBeTruthy();
+    expect(row.querySelectorAll('.slick-scrolling-cells .slick-cell-colspan-part')).toHaveLength(1);
+    expect(host.classList.contains('slick-cell-colspan-shared-edge')).toBe(false);
+    expect(part.classList.contains('slick-cell-colspan-shared-edge')).toBe(true);
+    expect(host.textContent).toBe('Spanned');
+    expect(part.querySelector('.slick-cell-colspan-part-content')?.textContent).toBe('Spanned');
+    expect((slickGrid as any).getCellFromEvent({ target: host })).toEqual({ row: 2, cell: 0 });
+    expect((slickGrid as any).getCellFromEvent({ target: part })).toEqual({ row: 2, cell: 0 });
+  });
+
   it('coexists with permanent pins and scroll-activated sticky docking', () => {
     const stickyColumns = columns.map((column, index) => ({ ...column, sticky: index === 1 ? ('left' as const) : undefined }));
     const slickGrid = createGrid(

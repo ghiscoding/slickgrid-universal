@@ -28,6 +28,23 @@ describe('Example 46 - RTL (Right-to-Left)', () => {
         });
     });
 
+    it('renders a colspan across the leading pinned boundary as one RTL cell', () => {
+      const host =
+        '.slick-row[data-row="2"] > .slick-pinned-left-cells > .slick-cell-colspan-crossing-docking:not(.slick-cell-colspan-part)';
+      const part = '.slick-row[data-row="2"] > .slick-scrolling-cells > .slick-cell-colspan-part';
+
+      cy.get(host).should('have.length', 1).and('not.have.class', 'slick-cell-colspan-shared-edge');
+      cy.get(part).should('have.length', 1).and('have.class', 'slick-cell-colspan-shared-edge');
+      cy.get(host).then(($host) => {
+        const hostRect = $host[0].getBoundingClientRect();
+        cy.get(part).then(($part) => {
+          const partRect = $part[0].getBoundingClientRect();
+          expect(partRect.right).to.be.closeTo(hostRect.left, 1.5);
+          expect(partRect.left).to.be.lessThan(hostRect.left);
+        });
+      });
+    });
+
     it('should have proper RTL cell content alignment', () => {
       cy.get('.slick-cell:first').should('have.css', 'direction', 'rtl');
     });

@@ -1,4 +1,4 @@
-import { Formatters, type Column, type GridOption } from 'aurelia-slickgrid';
+import { Formatters, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 
 const NB_ITEMS = 100;
 
@@ -16,6 +16,10 @@ export class Example57 {
     this.previousBodyDir = document.body.getAttribute('dir');
     document.body.setAttribute('dir', 'rtl');
     this.dataset = this.mockData(NB_ITEMS);
+  }
+  aureliaGridReady(aureliaGrid: AureliaGridInstance) {
+    aureliaGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : undefined);
+    aureliaGrid.slickGrid.invalidate();
   }
 
   dispose() {

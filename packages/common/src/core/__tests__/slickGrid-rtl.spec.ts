@@ -64,6 +64,35 @@ describe('SlickGrid RTL (Right-to-Left)', () => {
       expect(grid.getOptions().rtl).toBe(false);
     });
 
+    it('should ignore a change from LTR to RTL after grid creation', () => {
+      const gridContainer = document.getElementById(gridId) as HTMLElement;
+      grid = new SlickGrid<any, Column>(gridContainer, items, columns, defaultOptions);
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+      grid.setOptions({ rtl: true, enableCellNavigation: false });
+
+      expect(grid.getOptions().rtl).toBe(false);
+      expect(grid.getOptions().enableCellNavigation).toBe(false);
+      expect(gridContainer.classList.contains('slick-rtl')).toBe(false);
+      expect(gridContainer.getAttribute('dir')).toBeNull();
+      expect(warnSpy).toHaveBeenCalledWith('[SlickGrid] the "rtl" option is only applied when the grid is created; the change was ignored.');
+      warnSpy.mockRestore();
+    });
+
+    it('should ignore a change from RTL to LTR after grid creation', () => {
+      const gridContainer = document.getElementById(gridId) as HTMLElement;
+      grid = new SlickGrid<any, Column>(gridContainer, items, columns, { ...defaultOptions, rtl: true });
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+      grid.setOptions({ rtl: false });
+
+      expect(grid.getOptions().rtl).toBe(true);
+      expect(gridContainer.classList.contains('slick-rtl')).toBe(true);
+      expect(gridContainer.getAttribute('dir')).toBe('rtl');
+      expect(warnSpy).toHaveBeenCalledWith('[SlickGrid] the "rtl" option is only applied when the grid is created; the change was ignored.');
+      warnSpy.mockRestore();
+    });
+
     it('should enable RTL mode when rtl option is set to true', () => {
       const gridContainer = document.getElementById(gridId) as HTMLElement;
       grid = new SlickGrid<any, Column>(gridContainer, items, columns, { ...defaultOptions, rtl: true });

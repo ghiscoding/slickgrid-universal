@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Formatters, SlickgridVue, type Column, type GridOption } from 'slickgrid-vue';
+import { Formatters, SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 100;
@@ -26,6 +26,10 @@ onUnmounted(() => {
     document.body.removeAttribute('dir');
   }
 });
+function vueGridReady(vueGrid: SlickgridVueInstance) {
+  vueGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : undefined);
+  vueGrid.slickGrid.invalidate();
+}
 
 function defineGrid() {
   columns.value = [
@@ -95,10 +99,16 @@ function mockData(count: number) {
         </a>
       </span>
     </h2>
-    <div class="subtitle">Basic grid with RTL (Right-to-Left) enabled for RTL languages</div>
+    <div class="subtitle">RTL pinning with a colspan crossing from the leading pinned column into the scrolling columns</div>
 
     <div dir="rtl">
-      <slickgrid-vue grid-id="grid57" :columns="columns" :options="gridOptions" :dataset="dataset"></slickgrid-vue>
+      <slickgrid-vue
+        grid-id="grid57"
+        :columns="columns"
+        :options="gridOptions"
+        :dataset="dataset"
+        @onVueGridCreated="vueGridReady($event.detail)"
+      ></slickgrid-vue>
     </div>
   </div>
 </template>

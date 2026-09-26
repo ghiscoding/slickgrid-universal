@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Formatters, SlickgridReact, type Column, type GridOption } from 'slickgrid-react';
+import { Formatters, SlickgridReact, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
 
 const NB_ITEMS = 100;
 
@@ -24,6 +24,10 @@ const Example57: React.FC = () => {
       }
     };
   }, []);
+  const reactGridReady = (reactGrid: SlickgridReactInstance) => {
+    reactGrid.dataView.getItemMetadata = (row) => (row % 7 === 2 ? { columns: { 0: { colspan: 3 } } } : undefined);
+    reactGrid.slickGrid.invalidate();
+  };
 
   const defineGrid = () => {
     const cols: Column[] = [
@@ -95,10 +99,16 @@ const Example57: React.FC = () => {
         </span>
       </h2>
 
-      <div className="subtitle">Basic grid with RTL (Right-to-Left) enabled for RTL languages.</div>
+      <div className="subtitle">RTL pinning with a colspan crossing from the leading pinned column into the scrolling columns.</div>
 
       <div dir="rtl">
-        <SlickgridReact gridId="grid57" columns={columns} options={gridOptions} dataset={dataset} />
+        <SlickgridReact
+          gridId="grid57"
+          columns={columns}
+          options={gridOptions}
+          dataset={dataset}
+          onReactGridCreated={(event) => reactGridReady(event.detail)}
+        />
       </div>
     </div>
   );
