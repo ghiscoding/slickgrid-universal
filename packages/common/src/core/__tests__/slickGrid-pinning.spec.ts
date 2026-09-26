@@ -1598,6 +1598,29 @@ describe('SlickGrid unified pinning', () => {
     }
   });
 
+  it('keeps sticky cell geometry synchronized during column resize', () => {
+    const resizableStickyColumns = columns.map((column, index) => ({
+      ...column,
+      resizable: true,
+      sticky: index === 1 ? ('left' as const) : undefined,
+    }));
+    const slickGrid = createGrid({}, resizableStickyColumns);
+    const internals = slickGrid as any;
+    const applyColumnWidthsSpy = vi.spyOn(internals, 'applyColumnWidths');
+    const updateStickyColumnTransformsSpy = vi.spyOn(internals, 'updateStickyColumnTransforms');
+    const resizeHandle = slickGrid.getHeaderColumn('b')!.querySelector('.slick-resizable-handle') as HTMLDivElement;
+    const mouseDown = new CustomEvent('mousedown');
+    const mouseMove = new CustomEvent('mousemove');
+    Object.defineProperty(mouseDown, 'pageX', { configurable: true, value: 100 });
+    Object.defineProperty(mouseMove, 'pageX', { configurable: true, value: 110 });
+
+    resizeHandle.dispatchEvent(mouseDown);
+    document.body.dispatchEvent(mouseMove);
+
+    expect(applyColumnWidthsSpy).toHaveBeenCalled();
+    expect(updateStickyColumnTransformsSpy).toHaveBeenCalled();
+  });
+
   it('defers a single-viewport render until the scheduled render callback runs', () => {
     const slickGrid = createGrid();
     const renderSpy = vi.spyOn(slickGrid, 'render').mockImplementation(() => undefined);
