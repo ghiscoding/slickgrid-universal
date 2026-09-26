@@ -754,6 +754,11 @@ export class Utils {
     return el.offsetWidth === 0 && el.offsetHeight === 0;
   }
 
+  /** Returns a copy of `incoming` when it is given, otherwise a copy of `current` (or an empty list). */
+  public static replaceList<T>(incoming: T[] | undefined, current?: T[]): T[] {
+    return incoming !== undefined ? [...incoming] : [...(current ?? [])];
+  }
+
   public static parents(el: HTMLElement | ParentNode, selector?: string): Array<HTMLElement | ParentNode> {
     const parents: Array<HTMLElement | ParentNode> = [];
     const visible = selector === ':visible';

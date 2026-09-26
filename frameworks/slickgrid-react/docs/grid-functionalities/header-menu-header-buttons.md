@@ -72,12 +72,12 @@ const columns = [
             ...builtInItems,
             'divider',
             {
-              command: 'freeze-column',
-              title: 'Freeze Column',
+              command: 'custom-pin-column',
+              title: 'Pin Column',
               iconCssClass: 'mdi mdi-pin',
               action: (e, args) => {
-                // Implement column freezing
-                console.log('Freeze column:', args.column.name);
+                // Implement column pinning
+                console.log('Pin column:', args.column.name);
               }
             }
           ];
@@ -167,8 +167,8 @@ const gridOptions = {
   enableHeaderMenu: true,
   headerMenu: {
     iconColumnHideCommand: 'mdi mdi-close'
-    iconSortAscCommand: 'mdi mdi-sort-ascending'
-    iconSortDescCommand: 'mdi mdi-sort-descending',
+    iconSortAscCommand: 'mdi mdi-arrow-up',
+    iconSortDescCommand: 'mdi mdi-arrow-down',
   },
 };
 ```

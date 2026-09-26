@@ -19,6 +19,8 @@ import fetchJsonp from './jsonp.js';
 import { showToast } from './utilities.js';
 import './example04.scss';
 
+const ITEMS_COUNT = 500;
+
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value) => {
   if (value === null || value === undefined || !value.length) {
@@ -52,12 +54,14 @@ export default class Example04 {
   dataset: any[];
   dataViewObj: SlickDataView;
   commandQueue: EditCommand[] = [];
-  frozenColumnCount = 2;
-  frozenRowCount = 3;
-  isFrozenBottom = false;
+  pinnedLeftColumnCount = 2;
+  pinnedRightColumnCount = 1;
+  pinnedTopRowCount = 3;
+  pinnedBottomRowCount = 2;
   sgb: SlickVanillaGridBundle;
   checkboxSelectorInstance: SlickCheckboxSelectColumn;
   isSelectAllShownAsColumnTitle = false;
+  subTitleStyle = 'display: block';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -71,6 +75,8 @@ export default class Example04 {
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleOnValidationError.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onitemsdeleted', this.handleOnItemsDeleted.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
+    this.dataViewObj = this.sgb.dataView!;
+    this.dataViewObj.onRowCountChanged.subscribe(() => this.refreshPinnedRows());
   }
 
   dispose() {
@@ -252,8 +258,10 @@ export default class Example04 {
       },
       {
         id: 'cityOfOrigin',
-        name: 'City of Origin',
+        name: 'City of Origin (not pinnable)',
         field: 'cityOfOrigin',
+        cssClass: 'city-of-origin-column',
+        pinnable: false,
         filterable: true,
         sortable: true,
         minWidth: 100,
@@ -394,6 +402,9 @@ export default class Example04 {
       autoTooltipOptions: {
         enableForHeaderCells: true,
       },
+      // Preserve the existing behavior: the resizer re-fits columns after a
+      // browser/container resize, including when the dedicated pinning
+      // scrollbar is active.
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
@@ -402,6 +413,7 @@ export default class Example04 {
       excelExportOptions: {
         exportWithFormatter: true,
         sanitizeDataExport: true,
+        // includeHidden: true,
       },
       externalResources: [new ExcelExportService()],
       selectionOptions: {
@@ -416,9 +428,18 @@ export default class Example04 {
         onExtensionRegistered: (instance) => (this.checkboxSelectorInstance = instance),
       },
       enableSelection: true,
-      frozenColumn: this.frozenColumnCount,
-      frozenRow: this.frozenRowCount,
-      // frozenBottom: true, // if you want to freeze the bottom instead of the top, you can enable this property
+      pinning: {
+        columns: {
+          left: this.pinnedLeftColumnCount,
+          // Keep the Action column on the trailing edge without depending on
+          // extension columns (such as the checkbox selector) being inserted.
+          right: this.pinnedRightColumnCount > 0 ? ['action'] : [],
+        },
+        rows: {
+          top: this.getPinnedRowIndexes(this.pinnedTopRowCount),
+          bottom: this.getPinnedRowIndexes(this.pinnedBottomRowCount, true),
+        },
+      },
       editCommandHandler: (_item, _column, editCommand) => {
         this.commandQueue.push(editCommand);
         editCommand.execute();
@@ -439,13 +460,13 @@ export default class Example04 {
           }
         },
       },
-      gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false },
+      gridMenu: { hideClearPinningCommand: false },
       enableContextMenu: true,
       contextMenu: {
         optionShownOverColumnIds: ['percentComplete'],
         subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
         hideCloseButton: true,
+        dropSide: 'right',
         optionTitle: 'Change Percent Complete',
         onOptionSelected: (_e, args) => {
           // e.preventDefault(); // you could do if you wish to keep the menu open
@@ -531,7 +552,7 @@ export default class Example04 {
 
     // mock data
     this.dataset = [];
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < ITEMS_COUNT; i++) {
       this.dataset[i] = {
         id: i,
         title: 'Task ' + i,
@@ -581,37 +602,74 @@ export default class Example04 {
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
-  changeFrozenColumnCount() {
-    if (this.sgb?.slickGrid?.setOptions) {
-      this.sgb?.slickGrid.setOptions({
-        frozenColumn: +this.frozenColumnCount,
-      });
-    }
+  changePinnedColumnCount(value: string, side: 'left' | 'right') {
+    this.setPinnedColumns(side === 'left' ? +value : this.pinnedLeftColumnCount, side === 'right' ? +value : this.pinnedRightColumnCount);
+  }
+
+  /** Toggle the demo's right-pinned Action column while preserving left pinning. */
+  toggleRightPinning() {
+    this.setPinnedColumns(this.pinnedLeftColumnCount, this.pinnedRightColumnCount > 0 ? 0 : 1);
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
-  changeFrozenRowCount() {
-    if (this.sgb?.slickGrid?.setOptions) {
-      this.sgb?.slickGrid.setOptions({
-        frozenRow: +this.frozenRowCount,
-      });
+  changePinnedRowCount(value: string, side: 'top' | 'bottom') {
+    if (side === 'top') {
+      this.pinnedTopRowCount = +value;
+    } else {
+      this.pinnedBottomRowCount = +value;
     }
+    this.setPinnedRows();
   }
 
-  setFrozenColumns(frozenCols: number) {
-    this.sgb?.slickGrid?.setOptions({ frozenColumn: frozenCols, alwaysShowVerticalScroll: false });
+  setPinnedColumns(pinnedCols: number, rightCols = this.pinnedRightColumnCount) {
+    this.sgb?.slickGrid?.setOptions({
+      pinning: {
+        columns: {
+          left: pinnedCols,
+          right: Math.max(0, rightCols),
+        },
+      },
+    });
     this.gridOptions = this.sgb?.slickGrid?.getOptions() ?? {};
-    this.frozenColumnCount = frozenCols;
+    this.pinnedLeftColumnCount = pinnedCols;
+    this.pinnedRightColumnCount = Math.max(0, rightCols);
   }
 
-  /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
-  toggleFrozenBottomRows() {
-    if (this.sgb?.slickGrid && this.sgb?.slickGrid.setOptions) {
-      this.sgb?.slickGrid.setOptions({
-        frozenBottom: !this.isFrozenBottom,
-      });
-      this.isFrozenBottom = !this.isFrozenBottom; // toggle the variable
+  private setPinnedRows() {
+    this.sgb?.slickGrid?.setOptions({
+      pinning: {
+        rows: {
+          top: this.getPinnedRowIndexes(this.pinnedTopRowCount),
+          bottom: this.getPinnedRowIndexes(this.pinnedBottomRowCount, true),
+        },
+      },
+    });
+  }
+
+  /** Keep index-based row pinning aligned with the currently filtered DataView rows. */
+  private refreshPinnedRows() {
+    const grid = this.sgb?.slickGrid;
+    const pinnedRows = grid?.getOptions().pinning?.rows;
+    if (!grid || !pinnedRows) {
+      return;
     }
+
+    const nextTop = this.getPinnedRowIndexes(this.pinnedTopRowCount);
+    const nextBottom = this.getPinnedRowIndexes(this.pinnedBottomRowCount, true);
+    if (String(nextTop) === String(pinnedRows.top ?? []) && String(nextBottom) === String(pinnedRows.bottom ?? [])) {
+      return;
+    }
+
+    // Do not rebuild columns while a header-row filter is receiving input.
+    grid.setOptions({ pinning: { rows: { top: nextTop, bottom: nextBottom } } }, false, true);
+  }
+
+  private getPinnedRowIndexes(rowCount: number, isBottom = false) {
+    rowCount = Math.max(0, +rowCount);
+    const dataLength = this.sgb?.slickGrid?.getDataLength?.() ?? this.dataset?.length ?? ITEMS_COUNT;
+    rowCount = Math.min(rowCount, dataLength);
+    const firstPinnedRow = isBottom ? Math.max(0, dataLength - rowCount) : 0;
+    return Array.from({ length: rowCount }, (_value, index) => firstPinnedRow + index);
   }
 
   toggleWhichRowToShowSelectAll() {
@@ -651,8 +709,9 @@ export default class Example04 {
     }
   }
 
-  setLargeFreezedColumns() {
-    this.setFrozenColumns(2);
+  setLargePinnedColumns() {
+    // Apply target widths before pinning. Pinning validates against the
+    // currently rendered widths, which may still reflect a prior resize.
     this.sgb.gridStateService.applyColumnLayout(
       [
         { columnId: '_checkbox_selector', cssClass: 'slick-cell-checkboxsel', headerCssClass: '', width: 40 },
@@ -663,11 +722,17 @@ export default class Example04 {
         { columnId: 'completed', cssClass: '', headerCssClass: '', width: 372 },
         { columnId: 'cost', cssClass: '', headerCssClass: '', width: 288 },
         { columnId: 'cityOfOrigin', cssClass: '', headerCssClass: '', width: 204 },
-        { columnId: 'action', cssClass: '', headerCssClass: '', width: 64 },
+        { columnId: 'action', cssClass: '', headerCssClass: '', width: 110 },
       ],
       false,
       false
     );
-    // console.log('setLargeFreezedColumns', this.sgb.gridStateService.getCurrentColumns());
+    this.setPinnedColumns(2, this.pinnedRightColumnCount);
+    // console.log('setLargePinnedColumns', this.sgb.gridStateService.getCurrentColumns());
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

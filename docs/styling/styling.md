@@ -115,7 +115,7 @@ export const GlobalGridOptions = {
     iconCssClass: 'mdi mdi-menu',
     iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',
     iconClearAllSortingCommand: 'mdi mdi-sort-variant-off',
-    iconClearFrozenColumnsCommand: 'mdi mdi-pin-off-outline',
+    iconUnpinningColumns: 'mdi mdi-pin-off-outline',
     iconExportCsvCommand: 'mdi mdi-download',
     iconExportExcelCommand: 'mdi mdi-file-excel-outline',
     iconExportTextDelimitedCommand: 'mdi mdi-download',

@@ -13,6 +13,7 @@ export default class Example43 {
   dataset: any[] = [];
   sgb!: SlickVanillaGridBundle;
   mcpService!: WebMcpService;
+  subTitleStyle = 'display: block';
   textResult = '';
 
   attached() {
@@ -86,6 +87,11 @@ export default class Example43 {
   async resetGrid() {
     await this.mcpService.applyGridState({ filters: [], sorters: [] });
     this.showOutput('// Grid state reset.');
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 
   // ---------------------------------------------------------------------------

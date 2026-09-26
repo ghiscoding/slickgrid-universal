@@ -24,8 +24,6 @@ const addVanillaEventPropagation = function <T = any>(event: T, commandKeys: str
 };
 
 const mockGridOptions = {
-  frozenColumn: 1,
-  frozenRow: -1,
   rowHeight: 25,
 } as GridOption;
 
@@ -127,9 +125,6 @@ describe('Row Selection Model Plugin', () => {
   afterEach(() => {
     vi.clearAllMocks();
     plugin?.dispose();
-    mockGridOptions.frozenColumn = -1;
-    mockGridOptions.frozenRow = -1;
-    mockGridOptions.frozenBottom = false;
     mockGridOptions.multiSelect = true;
     mockGridOptions.enableRowMoveManager = false;
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
@@ -848,9 +843,6 @@ describe('Cell Selection Model Plugin', () => {
   afterEach(() => {
     vi.clearAllMocks();
     plugin?.dispose();
-    mockGridOptions.frozenColumn = -1;
-    mockGridOptions.frozenRow = -1;
-    mockGridOptions.frozenBottom = false;
   });
 
   it('should create the plugin', () => {

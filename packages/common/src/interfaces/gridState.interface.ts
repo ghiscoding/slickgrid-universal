@@ -27,7 +27,7 @@ export interface GridState {
   /** Pagination (and it's state, pageNumber, pageSize) that are currently applied in the grid */
   pagination?: CurrentPagination | null;
 
-  /** Pinning (frozen) column & row position */
+  /** Pinning column and row position */
   pinning?: CurrentPinning;
 
   /** Row Selections (by their dataContext IDs and/or grid row indexes) */

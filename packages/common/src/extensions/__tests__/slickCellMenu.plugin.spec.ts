@@ -373,12 +373,12 @@ describe('CellMenu Plugin', () => {
         const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
 
         expect(cellMenuElm.classList.contains('dropdown')).toBeTruthy();
-        expect(cellMenuElm.classList.contains('dropleft')).toBeTruthy();
+        expect(cellMenuElm.classList.contains('dropright')).toBeTruthy();
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(
           removeExtraSpaces(
-            `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropleft" style="top: 0px; display: block; left: 0px;" data-keyboard-nav-bound="true">
+            `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropright" style="top: 0px; display: block; left: 0px;" data-keyboard-nav-bound="true">
             <div class="slick-menu-command-list" role="menu">
               <div class="slick-command-header no-title with-close">
                 <button aria-label="Close" class="close" type="button" data-dismiss="slick-menu">×</button>
