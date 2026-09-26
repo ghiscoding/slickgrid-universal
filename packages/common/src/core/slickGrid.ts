@@ -1453,11 +1453,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Update only elements whose proxy-mode transforms consume the horizontal scroll offset. */
   protected applyDockingProxyScrollOffsets(scrollLeft: number): void {
     this.syncDockingScrollOffsetVariable(scrollLeft);
+    // The stylesheet's pinned-chrome transforms are !important, so apply the matching
+    // scroll compensation directly to each pinned header/filter/footer element.
+    for (const docking of [...this.dockingLayout.left, ...this.dockingLayout.right]) {
+      if (!docking.sticky) {
+        this.dockingChromeByColumn.get(docking.index)?.forEach((element) => {
+          element.style.setProperty('transform', `translateX(${scrollLeft}px)`, 'important');
+        });
+      }
+    }
   }
 
-  /** Publish the inherited proxy-mode scroll offset with one container style write. */
+  /** Publish the physical proxy-mode scroll offset with one container style write. */
   protected syncDockingScrollOffsetVariable(scrollLeft: number = this.scrollLeft): void {
-    this._container.style.setProperty('--slick-docking-scroll-left', `${scrollLeft * this.getInlineDirection()}px`);
+    this._container.style.setProperty('--slick-docking-scroll-left', `${scrollLeft}px`);
   }
 
   protected disableSelection(target: HTMLElement[]): void {
@@ -2181,16 +2190,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     const scrollerRect = chromeScroller.getBoundingClientRect();
-    // Header/header-row/footer chrome has no native vertical scrollbar, while
-    // the body does. Right pins must stop at the body's visible edge, not the
-    // wider chrome scroller edge, otherwise they drift right by the scrollbar
-    // width (for example 1551.11px instead of 1536px).
-    const dockingViewportWidth = this.getViewportInnerWidth() || this._viewportNode?.clientWidth || chromeScroller.clientWidth;
+    // Chrome has no vertical scrollbar but the body does: right pins stop at the body's
+    // visible edge, not the wider chrome edge.
+    const configuredViewportWidth = parseFloat(this._container.style.getPropertyValue('--slick-docking-viewport-width'));
+    const dockingViewportWidth =
+      configuredViewportWidth || this._viewportNode?.clientWidth || this.getViewportInnerWidth() || chromeScroller.clientWidth;
     // getBoundingClientRect() reports screen pixels, which a CSS scale on any ancestor
-    // multiplies, while every other term here is a layout pixel. Convert the measured
+    // multiplies, while every other term here is a layout pixel. Convert the one measured
     // distance back to layout pixels; the factor is 1 for an unscaled grid.
     const scale = chromeScroller.offsetWidth ? scrollerRect.width / chromeScroller.offsetWidth : 1;
-    // Measure from the inline start, then restore the proxy's logical scroll offset.
+    // Measure along the inline axis, which starts at the left edge reading left to right and
+    // at the right edge reading right to left. The chrome container itself is translated by
+    // -scrollLeft, so add that back before converting to the container's local offset.
     const containerRect = chromeContainer.getBoundingClientRect();
     const scrollerStart = direction > 0 ? scrollerRect.left : scrollerRect.right;
     const containerStart = direction > 0 ? containerRect.left : containerRect.right;
@@ -2199,7 +2210,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return visibleTrailingStart - containerStartInScroller;
   }
 
-  /** Adds or removes the automatic header-height styles from both header panes. */
+  /**
+   * Enables or disables automatic header height handling.
+   */
   protected handleAutoHeaderHeightChange(): void {
     const enabled = !!this._options.autoHeaderHeight;
     const headers = [this._headerScrollerL];
@@ -6437,13 +6450,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (dockingChanged) {
         this.updateColumnCaches();
         this.applyColumnWidths();
-        this.applyDockingToColumnChrome();
         this.invalidateAllRows();
       }
 
       // Keep compositor transforms in sync even when the numeric scroll offset
       // itself did not change during resize.
       this.scrollToX(this.scrollLeft);
+      this.applyDockingToColumnChrome();
 
       this.updateRowCount();
       this.handleScroll();
@@ -6927,20 +6940,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
       consumedWidth += widthOf(segment);
 
-      const bandWidth =
-        segment.band === 'left'
-          ? this.dockingLayout.leftWidth
-          : segment.band === 'right'
-            ? this.dockingLayout.rightWidth
-            : this.getDockingRenderedWidths().center;
       const left = this.columnPosLeft[segment.start] ?? 0;
-      const right = this.columnPosRight[segment.end] ?? left;
+      // Use an explicit segment width and only one inset. If both insets are
+      // set, CSS resolves over-constrained positioning from the containing
+      // block's direction, which may differ from the grid's RTL setting.
+      fragment.style.width = `${widthOf(segment)}px`;
       if (this._options.rtl) {
         fragment.style.right = `${left}px`;
-        fragment.style.left = `${Math.max(0, bandWidth - right)}px`;
+        fragment.style.left = 'auto';
       } else {
         fragment.style.left = `${left}px`;
-        fragment.style.right = `${Math.max(0, bandWidth - right)}px`;
+        fragment.style.right = 'auto';
       }
     });
   }
@@ -7461,13 +7471,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.scrollLeft > maxScrollDistanceX) {
       this.scrollLeft = maxScrollDistanceX;
     }
-    // A horizontal-wheel mouse (or a fast tilt-wheel burst) can push scrollLeft
-    // past either bound; floor it so docking offsets never go negative.
+    // RTL browsers represent horizontal offsets as negative values. Keep that
+    // valid range while still clamping overscroll at both ends.
     if (this.scrollTop < 0) {
       this.scrollTop = 0;
     }
-    if (this.scrollLeft < 0) {
-      this.scrollLeft = 0;
+    if (this._options.rtl) {
+      this.scrollLeft = Math.max(-maxScrollDistanceX, Math.min(0, this.scrollLeft));
+    } else {
+      this.scrollLeft = Math.max(0, Math.min(maxScrollDistanceX, this.scrollLeft));
     }
 
     const vScrollDist = Math.abs(this.scrollTop - this.prevScrollTop);

@@ -1,5 +1,22 @@
 describe('Example 57 - RTL (Right-to-Left)', () => {
-  const titles = ['ID', 'Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
+  const titles = [
+    'Title',
+    'Duration',
+    'Start',
+    'Finish',
+    'Priority',
+    '% Complete',
+    'Assignee',
+    'Department',
+    'Project',
+    'Reviewer',
+    'Region',
+    'Stage',
+    'Budget',
+    'Spent',
+    'Notes',
+    'Effort Driven',
+  ];
 
   beforeEach(() => {
     cy.setCookie('serve-mode', 'cypress');
@@ -49,6 +66,15 @@ describe('Example 57 - RTL (Right-to-Left)', () => {
         .find('.slick-header-columns')
         .children()
         .each(($child, index) => expect($child.text()).to.eq(titles[index]));
+      cy.get('#grid57 .slick-docking-horizontal-scroller').then(($scroller) => {
+        const scroller = $scroller[0] as HTMLElement;
+        const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+        scroller.scrollLeft = -maxScroll;
+        if (scroller.scrollLeft === 0) {
+          scroller.scrollLeft = maxScroll;
+        }
+        expect(Math.abs(scroller.scrollLeft)).to.be.greaterThan(0);
+      });
     });
   });
 
@@ -64,9 +90,9 @@ describe('Example 57 - RTL (Right-to-Left)', () => {
       cy.get('#grid57 .slick-horizontal-scroller').then(($viewport) => {
         const viewport = $viewport[0] as HTMLElement;
         const maxScroll = viewport.scrollWidth - viewport.clientWidth;
-        viewport.scrollLeft = maxScroll;
+        viewport.scrollLeft = -maxScroll;
         if (viewport.scrollLeft === 0) {
-          viewport.scrollLeft = -maxScroll;
+          viewport.scrollLeft = maxScroll;
         }
       });
 
@@ -76,6 +102,42 @@ describe('Example 57 - RTL (Right-to-Left)', () => {
         const viewport = $viewport[0] as HTMLElement;
         expect(Math.abs(viewport.scrollLeft)).to.be.greaterThan(0);
       });
+    });
+  });
+  describe('Combined RTL pinning, sticky columns, and colspan', () => {
+    it('renders both pinning edges, pinned rows, and a crossing colspan together', () => {
+      cy.get('#grid57 .slick-header-column[data-id="title"]').should('have.class', 'slick-column-pinned-left');
+      cy.get('#grid57 .slick-header-column[data-id="effort-driven"]').should('have.class', 'slick-column-pinned-right');
+      cy.get('#grid57 .slick-docking-overlay .slick-row-pinned-top[data-row="0"]').should('exist');
+      cy.get('#grid57 .slick-docking-overlay .slick-row-pinned-bottom').should('not.exist');
+      const host =
+        '#grid57 .slick-row[data-row="2"] > .slick-pinned-left-cells > .slick-cell-colspan-crossing-docking:not(.slick-cell-colspan-part)';
+      const part = '#grid57 .slick-row[data-row="2"] > .slick-scrolling-cells > .slick-cell-colspan-part';
+      cy.get(host).should('exist').and('not.have.class', 'slick-cell-colspan-shared-edge');
+      cy.get(part).should('exist').and('have.class', 'slick-cell-colspan-shared-edge');
+      cy.get(host).then(($host) => {
+        const hostRect = $host[0].getBoundingClientRect();
+        cy.get(part).then(($part) => expect($part[0].getBoundingClientRect().right).to.be.closeTo(hostRect.left, 1.5));
+      });
+      cy.get('#grid57 .slick-horizontal-scroller').then(($scroller) => {
+        const element = $scroller[0] as HTMLElement;
+        const max = element.scrollWidth - element.clientWidth;
+        element.scrollLeft = -max;
+        if (element.scrollLeft === 0) {
+          element.scrollLeft = max;
+        }
+      });
+      cy.get('#grid57 .slick-header-column[data-id="priority"]').should('have.class', 'slick-column-sticky');
+    });
+    it('applies and removes two-sided column pinning at runtime', () => {
+      cy.get('#clearPinning').click();
+      cy.get('#grid57 .slick-header-column[data-id="title"]').should('not.have.class', 'slick-column-pinned-left');
+      cy.get('#grid57 .slick-header-column[data-id="effort-driven"]').should('not.have.class', 'slick-column-pinned-right');
+      cy.get('#grid57 .slick-docking-overlay .slick-row-pinned-top').should('not.exist');
+      cy.get('#setPinning').click();
+      cy.get('#grid57 .slick-header-column[data-id="title"]').should('have.class', 'slick-column-pinned-left');
+      cy.get('#grid57 .slick-header-column[data-id="effort-driven"]').should('have.class', 'slick-column-pinned-right');
+      cy.get('#grid57 .slick-docking-overlay .slick-row-pinned-top[data-row="0"]').should('exist');
     });
   });
 });

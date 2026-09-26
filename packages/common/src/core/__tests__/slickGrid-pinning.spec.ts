@@ -142,7 +142,7 @@ describe('SlickGrid unified pinning', () => {
     expect(positioned.style.getPropertyValue('--slick-sticky-column-offset')).toBe('-10px');
     internals.syncDockingScrollOffsetVariable(-12);
 
-    expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('12px');
+    expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('-12px');
   });
 
   it('resolves object id references after data order changes and clears null docking options', () => {
@@ -431,7 +431,7 @@ describe('SlickGrid unified pinning', () => {
     expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('120px');
     expect(groupCell.style.transform).toBe('');
 
-    (grid as any).updateRenderedCellDocking();
+    (grid as any).updateStickyColumnTransforms();
     expect(groupCell.parentElement).toBe(groupRow);
   });
 
@@ -463,7 +463,7 @@ describe('SlickGrid unified pinning', () => {
     expect(fragments[1].querySelector('.slick-cell-colspan-part-content')?.textContent).toBe('Spanned');
     expect(host.getAttribute('aria-colspan')).toBe('4');
     expect(host.getAttribute('aria-rowspan')).toBe('2');
-    expect(fragments[0].style.width).toBe('');
+    expect(fragments[0].style.width).toBe('160px');
     expect(row.classList.contains('slick-row-colspan-crossing-docking')).toBe(true);
     expect(row.querySelectorAll('.slick-cell-colspan-crossing-docking')).toHaveLength(3);
     expect(fragments[1].classList.contains('slick-cell-colspan-end')).toBe(true);
@@ -512,15 +512,16 @@ describe('SlickGrid unified pinning', () => {
     // pre-resize docking boundary and a second border appears at the new one.
     Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 800 });
     internals.applyColumnWidths();
-    const initialFragmentRight = `${Math.max(0, internals.getDockingRenderedWidths().center - internals.columnPosRight[2])}px`;
-    expect(fragments[0].style.right).toBe(initialFragmentRight);
+    expect(fragments[0].style.left).toBe(`${internals.columnPosLeft[1]}px`);
+    expect(fragments[0].style.right).toBe('auto');
+    expect(fragments[0].style.width).toBe('160px');
     grid.getColumns()[1].width = 120;
     internals.updateColumnCaches();
     internals.applyColumnWidths();
-    const resizedFragmentRight = `${Math.max(0, internals.getDockingRenderedWidths().center - internals.columnPosRight[2])}px`;
     expect(host.style.width).toBe('80px');
-    expect(fragments[0].style.right).toBe(resizedFragmentRight);
-    expect(resizedFragmentRight).not.toBe(initialFragmentRight);
+    expect(fragments[0].style.left).toBe(`${internals.columnPosLeft[1]}px`);
+    expect(fragments[0].style.right).toBe('auto');
+    expect(fragments[0].style.width).toBe('200px');
     expect(fragments[0].classList.contains('active')).toBe(true);
 
     const deferredHost = document.createElement('div');
@@ -832,13 +833,13 @@ describe('SlickGrid unified pinning', () => {
     expect(internals.getColumnRangeRight(1, 0)).toBe(80);
     hiddenColumns[1].hidden = false;
 
-    expect(internals.updateRenderedCellDocking()).toBe(false);
     internals._options.pinning = { columns: { left: ['a'] } };
     internals.refreshDockingLayout();
     internals.rowsCache = { 0: { rowNode: [document.createElement('div')] } };
-    expect(internals.updateRenderedCellDocking()).toBe(false);
+    const fullWidthGroupRow = document.createElement('div');
+    fullWidthGroupRow.classList.add('slick-row-full-width-group');
+    expect(internals.getRowDockingRegion(fullWidthGroupRow, 0)).toBe(fullWidthGroupRow);
     internals.rowsCache = { 0: { rowNode: undefined, cellNodesByColumnIdx: {} } };
-    expect(internals.updateRenderedCellDocking()).toBe(true);
     expect(internals.getRowDockingRegion(document.createElement('div'), 0)).toBeInstanceOf(HTMLElement);
     internals.syncDockedRowContainers();
 
@@ -1040,19 +1041,22 @@ describe('SlickGrid unified pinning', () => {
     internals.applyDockingToColumnChrome();
     internals._options.rtl = false;
 
-    expect(internals.getTrailingDockedChromeInlineStart(document.createElement('div'), { offset: 0 })).toEqual(expect.any(Number));
-
-    const scaledHeader = document.createElement('div');
-    scaledHeader.className = 'slick-header-column';
-    internals._headerL.appendChild(scaledHeader);
-    const headerScroller = internals._headerScrollerL as HTMLElement;
-    Object.defineProperty(headerScroller, 'offsetWidth', { configurable: true, value: 1000 });
-    vi.spyOn(headerScroller, 'getBoundingClientRect').mockReturnValue({ left: 100, width: 1200 } as DOMRect);
-    vi.spyOn(internals._headerL, 'getBoundingClientRect').mockReturnValue({ left: 250 } as DOMRect);
     vi.spyOn(internals, 'getViewportInnerWidth').mockReturnValue(900);
     internals.scrollLeft = 40;
     internals.dockingLayout.rightWidth = 100;
-    expect(internals.getTrailingDockedChromeInlineStart(scaledHeader, { offset: 25 })).toBeCloseTo(660);
+    const trailingHeader = slickGrid.getHeaderColumn('d');
+    vi.spyOn(internals._headerScrollerL, 'getBoundingClientRect').mockReturnValue({ left: 0, right: 900, width: 900 } as DOMRect);
+    vi.spyOn(internals._headerL, 'getBoundingClientRect').mockReturnValue({ left: -40, right: 860, width: 900 } as DOMRect);
+    expect(internals.getTrailingDockedChromeInlineStart(trailingHeader, { offset: 25 })).toBe(825);
+    const headerScroller = internals._headerScrollerL;
+    internals._headerScrollerL = null;
+    const fallbackInlineStart =
+      internals.scrollLeft * internals.getInlineDirection() +
+      (internals._viewportScrollContainerX?.clientWidth || internals.viewportW) -
+      internals.dockingLayout.rightWidth +
+      25;
+    expect(internals.getTrailingDockedChromeInlineStart(trailingHeader, { offset: 25 })).toBe(fallbackInlineStart);
+    internals._headerScrollerL = headerScroller;
 
     const invalidHeader = document.createElement('div');
     invalidHeader.className = 'slick-header-column';
@@ -1172,21 +1176,6 @@ describe('SlickGrid unified pinning', () => {
     internals.columnPosRight = [80, 80, 80, 320];
     expect(internals.getColumnRangeRight(1, 0)).toEqual(expect.any(Number));
     expect(internals.getColumnRangeRight(2, 0)).toEqual(expect.any(Number));
-
-    const dockingRow = document.createElement('div');
-    dockingRow.className = 'slick-row slick-row-docked';
-    internals.rowsCache = {
-      0: {
-        rowNode: [dockingRow],
-        cellNodesByColumnIdx: { 0: document.createElement('div'), hasOwnProperty: () => false },
-        cellRenderQueue: [],
-        cellSpanFragments: { 0: [] },
-      },
-    };
-    internals.dockingByColumn = new Map([[0, { band: 'left' }]]);
-    expect(internals.updateRenderedCellDocking()).toBe(false);
-    internals.rowsCache[0].cellSpanFragments = {};
-    expect(internals.updateRenderedCellDocking()).toBe(true);
 
     const planner = internals.formattedDataCachePlanner;
     expect(planner(slickGrid.getColumns()[0], { excelExportOptions: { exportWithFormatter: true } })).toBeDefined();
@@ -1427,20 +1416,10 @@ describe('SlickGrid unified pinning', () => {
   });
 
   it('queues one deferred sticky-column layout and falls back when animation frames are unavailable', () => {
-    const slickGrid = createGrid();
-    const renderSpy = vi.spyOn(slickGrid, 'render').mockImplementation(() => undefined);
+    const stickyColumns = columns.map((column, index) => ({ ...column, sticky: index === 1 ? ('left' as const) : undefined }));
+    const slickGrid = createGrid({}, stickyColumns);
     const refreshSpy = vi.spyOn(slickGrid as any, 'refreshDockingLayout').mockReturnValue(true);
-    const updateRenderedCellDockingSpy = vi
-      .spyOn(slickGrid as any, 'updateRenderedCellDocking')
-      .mockReturnValue(false)
-      .mockReturnValueOnce(false)
-      .mockReturnValueOnce(true);
-    const invalidateSpy = vi.spyOn(slickGrid as any, 'invalidateAllRows');
-    vi.spyOn(slickGrid as any, 'updateColumnPositionCaches');
-    vi.spyOn(slickGrid as any, 'applyColumnWidths');
-    vi.spyOn(slickGrid as any, 'scrollToX');
-    vi.spyOn(slickGrid as any, 'applyDockingToColumnChrome');
-    const applyDockingDimensionsToRowsSpy = vi.spyOn(slickGrid as any, 'applyDockingDimensionsToRows');
+    const updateStickyColumnTransformsSpy = vi.spyOn(slickGrid as any, 'updateStickyColumnTransforms');
     const enqueueSingleViewportRenderSpy = vi.spyOn(slickGrid as any, 'enqueueSingleViewportRender').mockImplementation(() => undefined);
 
     const originalRequestAnimationFrame = globalThis.requestAnimationFrame;
@@ -1456,17 +1435,16 @@ describe('SlickGrid unified pinning', () => {
       expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(1);
       runFrame?.(0);
       expect(refreshSpy).toHaveBeenCalledTimes(1);
-      expect(invalidateSpy).toHaveBeenCalledTimes(1);
-      expect(renderSpy).toHaveBeenCalledTimes(1);
+      expect(updateStickyColumnTransformsSpy).toHaveBeenCalledTimes(1);
+      expect(enqueueSingleViewportRenderSpy).toHaveBeenCalledTimes(1);
 
       (slickGrid as any).singleViewportRenderTimer = setTimeout(() => undefined, 100);
       (slickGrid as any).stickyColumnLayoutFrame = undefined;
       Object.defineProperty(globalThis, 'requestAnimationFrame', { configurable: true, value: requestAnimationFrameSpy });
       (slickGrid as any).enqueueStickyColumnLayout();
       runFrame?.(0);
-      expect(updateRenderedCellDockingSpy).toHaveBeenCalledTimes(2);
-      expect(applyDockingDimensionsToRowsSpy).toHaveBeenCalledTimes(1);
-      expect(enqueueSingleViewportRenderSpy).toHaveBeenCalledTimes(1);
+      expect(updateStickyColumnTransformsSpy).toHaveBeenCalledTimes(2);
+      expect(enqueueSingleViewportRenderSpy).toHaveBeenCalledTimes(2);
 
       (slickGrid as any).stickyColumnLayoutFrame = undefined;
       (slickGrid as any).initialized = false;
@@ -1489,8 +1467,8 @@ describe('SlickGrid unified pinning', () => {
       vi.advanceTimersByTime(16);
 
       expect(refreshSpy).toHaveBeenCalledTimes(4);
-      expect(invalidateSpy).toHaveBeenCalledTimes(2);
-      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(updateStickyColumnTransformsSpy).toHaveBeenCalledTimes(3);
+      expect(enqueueSingleViewportRenderSpy).toHaveBeenCalledTimes(3);
     } finally {
       vi.useRealTimers();
       Object.defineProperty(globalThis, 'requestAnimationFrame', { configurable: true, value: originalRequestAnimationFrame });
@@ -1534,7 +1512,7 @@ describe('SlickGrid unified pinning', () => {
     };
     internals.dockingByColumn.set(1, internals.dockingLayout.left[0]);
 
-    internals.updateRenderedCellDocking();
+    internals.updateStickyColumnTransforms();
 
     expect(stickyCell.parentElement?.classList.contains('slick-scrolling-cells')).toBe(true);
     expect(stickyCell.classList.contains('slick-cell-sticky-left')).toBe(true);
@@ -2014,7 +1992,7 @@ describe('SlickGrid unified pinning', () => {
     leftCell.className = 'slick-cell l0 r0';
     centerCell.className = 'slick-cell l1 r1';
     rightCell.className = 'slick-cell l3 r3';
-    centerRegion.appendChild(leftCell);
+    leftRegion.appendChild(leftCell);
     centerRegion.appendChild(centerCell);
     rightRegion.appendChild(rightCell);
     row.append(leftRegion, centerRegion, rightRegion);
@@ -2050,9 +2028,9 @@ describe('SlickGrid unified pinning', () => {
     expect(leftRegion.classList.contains('slick-pinned-left-cells-active')).toBe(true);
     expect(rightRegion.classList.contains('slick-pinned-right-cells-active')).toBe(true);
 
-    expect(internals.updateRenderedCellDocking()).toBe(true);
+    internals.updateStickyColumnTransforms();
     expect(leftCell.parentElement).toBe(leftRegion);
     expect(rightCell.parentElement).toBe(rightRegion);
-    expect(Array.from(rightRegion.children).map((cell) => internals.getCellFromNode(cell))).toEqual([1, 3]);
+    expect(Array.from(rightRegion.children).map((cell) => internals.getCellFromNode(cell))).toEqual([3]);
   });
 });
