@@ -2021,32 +2021,23 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           element.style.boxSizing = isPinnedEdge ? 'border-box' : 'content-box';
           element.style.width = `${Math.max(0, isPinnedEdge ? targetOuterWidth : targetOuterWidth - elementHorizontalBox)}px`;
         }
-        if (usesStickyTransform) {
+        if (usesStickyTransform || !docking || band === 'center') {
+          // Sticky and centre columns share their offset within the scrolling
+          // band; sticky columns are then moved by their compositor transform.
+          const natural = usesStickyTransform || (this.usesStickyColumnTransformPath() && !column.pinned);
+          const start = this.dockingLayout.leftBaseWidth + ((natural ? docking?.naturalOffset : docking?.offset) || 0);
           element.style.removeProperty('--slick-docking-chrome-offset');
-          element.style.position = element === header ? '' : 'absolute';
-          const stickyStart = this.dockingLayout.leftBaseWidth + (docking?.naturalOffset || 0);
+          element.style.position = usesStickyTransform && element !== header ? 'absolute' : '';
           this.setInlinePosition(
             element,
-            element === header ? '' : stickyStart,
-            element === header ? '' : this.dockingLayout.contentWidth - stickyStart - (docking?.width || 0)
+            element === header ? '' : start,
+            element === header ? '' : this.dockingLayout.contentWidth - start - (docking?.width || 0)
           );
           element.style.order = '0';
           element.style.transform = '';
-          this.applyStickyColumnTransform(element, index, 'column');
-          return;
-        }
-        if (!docking || band === 'center') {
-          const centerOffset = this.usesStickyColumnTransformPath() && !column.pinned ? docking?.naturalOffset || 0 : docking?.offset || 0;
-          element.style.removeProperty('--slick-docking-chrome-offset');
-          element.style.position = '';
-          const centerStart = this.dockingLayout.leftBaseWidth + centerOffset;
-          this.setInlinePosition(
-            element,
-            element === header ? '' : centerStart,
-            element === header ? '' : this.dockingLayout.contentWidth - centerStart - (docking?.width || 0)
-          );
-          element.style.order = '0';
-          element.style.transform = '';
+          if (usesStickyTransform) {
+            this.applyStickyColumnTransform(element, index, 'column');
+          }
           return;
         }
 
