@@ -71,6 +71,29 @@ describe('Example 04 - Pinned Grid', () => {
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell:nth(0) .cell-menu-dropdown`).should('contain', 'Action');
   });
 
+  it('should keep the docked-row overlay inside the viewport', () => {
+    cy.get('.grid4 .slick-viewport').then(($viewport) => {
+      const viewport = $viewport[0] as HTMLElement;
+      const viewportRect = viewport.getBoundingClientRect();
+      cy.get('.grid4 .slick-docking-overlay').should(($overlay) => {
+        const overlay = $overlay[0] as HTMLElement;
+        const overlayRect = overlay.getBoundingClientRect();
+        expect(overlay.parentElement, 'overlay parent').to.eq(viewport);
+        expect(getComputedStyle(overlay).position).to.eq('sticky');
+        expect(overlayRect.left).to.be.closeTo(viewportRect.left, 1);
+        expect(overlayRect.top).to.be.closeTo(viewportRect.top, 1);
+        expect(overlayRect.height, 'zero layout height').to.eq(0);
+        expect(overlay.style.clipPath, 'no clip-path workaround').to.eq('');
+        expect(getComputedStyle(viewport).overflowX).to.eq('hidden');
+      });
+      cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-top')
+        .first()
+        .should(($row) => {
+          expect($row[0].getBoundingClientRect().top).to.be.closeTo(viewportRect.top, 1);
+        });
+    });
+  });
+
   it('should move index-based pinned rows when filtering shortens the DataView', () => {
     // Task 1, Task 10-19 and Task 100-199 yield 111 matching rows in this fixture.
     const titleFilter = '.grid4 .slick-headerrow-column input[data-columnid="title"]';
