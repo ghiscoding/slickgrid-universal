@@ -1048,6 +1048,13 @@ describe('SlickGrid unified pinning', () => {
     vi.spyOn(internals._headerScrollerL, 'getBoundingClientRect').mockReturnValue({ left: 0, right: 900, width: 900 } as DOMRect);
     vi.spyOn(internals._headerL, 'getBoundingClientRect').mockReturnValue({ left: -40, right: 860, width: 900 } as DOMRect);
     expect(internals.getTrailingDockedChromeInlineStart(trailingHeader, { offset: 25 })).toBe(825);
+    const regularChromeContainer = document.createElement('div');
+    const regularChromeHeader = document.createElement('div');
+    regularChromeHeader.className = 'slick-header-column';
+    regularChromeContainer.appendChild(regularChromeHeader);
+    const regularContainerRectSpy = vi.spyOn(regularChromeContainer, 'getBoundingClientRect').mockReturnValue({ left: -40, right: 860, width: 900 } as DOMRect);
+    expect(internals.getTrailingDockedChromeInlineStart(regularChromeHeader, { offset: 25 })).toBe(825);
+    expect(regularContainerRectSpy).toHaveBeenCalled();
     const headerScroller = internals._headerScrollerL;
     internals._headerScrollerL = null;
     const fallbackInlineStart =
