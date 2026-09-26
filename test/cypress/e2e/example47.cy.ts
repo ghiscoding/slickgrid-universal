@@ -61,6 +61,17 @@ describe('Example 47 - Sticky Financial Report', { retries: 1 }, () => {
     });
   });
 
+  it('should paint docked sticky cells opaque on striped and unstriped rows', () => {
+    cy.get(scrollOwner).scrollTo('right');
+    for (const rowIndex of [3, 4]) {
+      cy.get(`${row(rowIndex)} .slick-cell-sticky`).should(($cell) => {
+        const background = getComputedStyle($cell[0]).backgroundColor;
+        expect(background, `row ${rowIndex} sticky cell background`).not.to.eq('rgba(0, 0, 0, 0)');
+        expect(background, `row ${rowIndex} sticky cell background`).not.to.eq('transparent');
+      });
+    }
+  });
+
   it('should keep center cells visible when sticky columns occupy the trailing edge', () => {
     cy.get(scrollOwner).scrollTo(167, 0, { ensureScrollable: false });
 

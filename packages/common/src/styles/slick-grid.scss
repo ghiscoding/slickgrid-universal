@@ -290,7 +290,7 @@
 
     &.slick-row-docked {
       display: grid;
-      background: var(--slick-cell-even-background-color, v.$slick-cell-even-background-color);
+      background-color: var(--alpine-bg-color, var(--slick-canvas-bg-color, v.$slick-canvas-bg-color));
 
       > :is(.slick-pinned-left-cells, .slick-scrolling-cells, .slick-pinned-right-cells) {
         position: relative;
