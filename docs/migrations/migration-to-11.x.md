@@ -1,23 +1,17 @@
-## Single-viewport pinning, stickiness and modernization
+## Single-viewport pinning and modernization
 
-SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer.
-This is a breaking change: pinned and sticky columns and rows now share one viewport, one native
-vertical scrollbar, and one DOM row per data item.
+SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer. This is a breaking change: pinned and sticky columns and rows now share one viewport, one native vertical scrollbar, and one DOM row per data item.
 
-The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer valid. Update your
-grid options, persisted grid state, custom menu commands, and DOM/CSS selectors as part of the
-migration. The examples below show the application changes; feature details belong in the linked
-guides.
+The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer valid. We now call this the Pinning feature because you can now pin any single column, the column index no longer matters and it's no longer a frozen range but rather an individual pinning (hence the new name). Update your grid options, persisted grid state, custom menu commands, and DOM/CSS selectors as part of the migration. The examples below show the application changes; feature details belong in the linked guides.
 
 #### Major Changes - Quick Summary
 
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
-- [Pin or stick individual columns](#column-pinning-and-stickiness)
-- [Sticky rows and docking budgets](#sticky-rows-and-docking-options)
+- [Column pinning](#column-pinning)
 - [Rename `changeColumnsArrangement()`](#rename-changecolumnsarrangement)
 - [Header Menu pin/unpin commands](#header-menu-commands)
 - [Single-viewport DOM and CSS changes](#single-viewport-dom-and-css)
-- [Row Detail and row positioning](#row-detail-and-row-positioning)
+- [Row Positioning](#row-positioning)
 
 > **Note:** If you are upgrading from a version earlier than v10, follow the previous migration
 > guides in order before applying these v11 changes.
@@ -25,11 +19,13 @@ guides.
 > **Important:** v11 intentionally does not provide a compatibility layer for the old full-height
 > frozen panes. The migration is a configuration and DOM contract change, not only a visual update.
 
+Also note that we also have a new Sticky docking that was introduced in v11, it shares similarities with Pinning, but it is an entirely new feature. See the [Sticky Docking guide](../grid-functionalities/sticky.md) for its configuration and behavior.
+
 ### Replace frozen options with `pinning`
 
-The old options configured a single contiguous left boundary to freeze columns and/or top (or bottom) rows, v11 uses one nested option for both axes. `frozenColumn: 2` can become an explicit list, `columns: { left: [0, 1, 2] }`, or keep the shorthand boundary as `columns: { left: 2 }` (which is interpreted as "pin columns from index 0 to 2").
+The old options configured a single contiguous left boundary to freeze columns and/or top (or bottom) rows. The new usage is to typically provide an array of columns indexes to pin, but you can define a single integer to define a range (which is similar to the legacy frozen options), this mean that `frozenColumn: 2` will migrate to `columns: { left: [0, 1, 2] }`, or just keep the shorthand boundary as `columns: { left: 2 }` (an integer is interpreted as "pin columns from index 0 to x").
 
-The new Pinning feature is a lot more flexible, it now allows the user to pin all sides (left/right/top/bottom) in the same grid (which wasn't possible before) and also allows you to pin individual columns or rows and even allow you to skip some (e.g. `columns: { left: [0, 2, 4] }`).
+The new Pinning feature is a lot more flexible, it now allows the user to pin all sides (left/right/top/bottom) in the same grid (which wasn't possible before) and also allows you to pin individual columns or rows and even allow you to skip some columns if you wish (e.g. `columns: { left: [0, 2, 4] }`).
 
 ```diff
 const gridOptions: GridOption = {
@@ -51,19 +47,18 @@ const gridOptions: GridOption = {
 };
 ```
 
-For non-contiguous pinning, use stable column ids or indexes and row indexes or dataset ids. For
-runtime changes, update the nested option or use `GridService.setPinning()` and
+For non-contiguous pinning, use stable column ids or indexes and row indexes or dataset ids. For runtime changes, update the nested option or use `GridService.setPinning()` and
 `GridService.clearPinning()`.
 
 See the [Pinning guide](../grid-functionalities/pinning.md) for reference semantics, validation,
 Header Menu commands, and runtime APIs.
 
-### Column pinning and stickiness
+### Column pinning
 
 Per-column permanent pinning moves from the old frozen-column behavior to `Column.pinned`.
-Scroll-activated docking is new in v11 and uses `Column.sticky`. `Column.pinnable: false` replaces
-the old per-column lock behavior for the built-in Header Menu. Sticky columns do not need a
-separate `stickable` option.
+`Column.pinnable: false` replaces the old per-column lock behavior for the built-in Header Menu.
+
+> Note, the `pinnable` flag is currently only used to show/hide the "Column Pinning" command from the Header Menu. It will not block a column from being pinnable using the `pinning` grid option, it is again simply used by the Header Menu. 
 
 ```ts
 const columns: Column[] = [
@@ -73,19 +68,8 @@ const columns: Column[] = [
 ];
 ```
 
-See the [Pinning guide](../grid-functionalities/pinning.md) and
-[Sticky Docking guide](../grid-functionalities/sticky.md) for the complete column options and
+See the [Pinning guide](../grid-functionalities/pinning.md) for the complete column options and
 runtime methods.
-
-### Sticky rows and docking options
-
-Sticky rows and viewport-aware docking budgets are new v11 features. They are configured separately
-from permanent pinning with `stickyRows` and the optional `docking` option.
-
-See the [Sticky Docking guide](../grid-functionalities/sticky.md) for `stickyRows`, overflow
-strategies, row stacking, variable row heights, and permanent-pin interaction.
-
-`DockingController` is an internal implementation detail and is not part of the public v11 API.
 
 ### Rename `changeColumnsArrangement()`
 
@@ -118,7 +102,7 @@ const gridOptions: GridOption = {
 + skipPinningValidation: true,
 + invalidColumnPinningWidthMessage: '...',
 + gridMenu: {
-+   hideClearPinningCommand: false,
++   hideCommands: ['clear-pinning'],
 +   iconClearPinningCommand: 'mdi mdi-pin-off-outline',
 + },
 + headerMenu: {
@@ -137,8 +121,7 @@ translation keys, and menu behavior.
 
 ### E2E Tests with Cypress Header Menu selectors
 
-Header Menu order can change as commands are added or removed. Replace positional selectors with
-label- or command-based selectors:
+Header Menu commands have changed order in the list. The Sort Asc/Desc are now showing at the top followed by the new "Column Pinning" (with sub-menu pinning commands). So if you were using positional selectors to retrieve specific Header Menu commands, you should migrate to a contain text selector instead (e.g. with Cypress shown below):
 
 ```diff
 cy.get('.slick-header-menu .slick-menu-command-list')
@@ -158,24 +141,26 @@ The old pane roots and independent scroll containers are removed. Replace select
 [Pinning guide](../grid-functionalities/pinning.md).
 
 Use `.slick-horizontal-scroller` for the active horizontal scroll owner and
-`.slick-vertical-scroller` for the vertical scroll owner. Pinned/sticky grids use the dedicated
+`.slick-vertical-scroller` for the vertical scroll owner. Docked grids use the dedicated
 `.slick-docking-horizontal-scroller` for horizontal scrolling.
 
 The legacy `-1000px` header offset and `HEADER_WIDTH_SLACK` workaround are gone. Remove manual
 pane scroll synchronization and update old `$slick-frozen-*` Sass variables to their current
 `$slick-pinned-*` equivalents.
 
-### Row Detail and row positioning
+### Row Positioning
 
-Overlay Row Detail is the v11 rendering mode. Remove inline Row Detail compatibility settings:
+We previously had a grid option `rowTopOffsetRenderType: 'top' | 'transform'` and that was mainly because `'transform'` was not working with certain features like Row Detail and/or ColSpan. However with v11, this limitation is gone we are dropping the grid option and internally we will use `'transform'` as the only row offset. Remove inline Row Detail compatibility settings:
 
 ```diff
 rowDetailView: {
 - renderMode: 'inline',
 + renderMode: 'overlay',
 }
-- rowTopOffsetRenderType: 'top',
+- rowTopOffsetRenderType: 'top', // for Row Detail or ColSpan
 ```
+
+> What was that legacy grid option anyway? SlickGrid was built with virtual-scroll which is what made it extremely performant, and in order to know which row is where, it was using a top offset calculation (row X * `rowHeight`). For example the legacy approach for the second row was to use `<div class="slick-row" style="top: 25px">` (assuming `rowHeight: 25`), but the new approach is to use transform so it now uses  `<div class="slick-row" style="transform: translateY(25px)">`, the reason to use transform is simply because it's more precise and has much better performance compared to top.
 
 If custom CSS or tests relied on `.slick-cell + .dynamic-cell-detail`, target
 `.dynamic-cell-detail` directly because the overlay is mounted in a sibling layer. See the
@@ -185,13 +170,13 @@ If custom CSS or tests relied on `.slick-cell + .dynamic-cell-detail`, target
 
 - Replace `frozenColumn`, `frozenRow`, and `frozenBottom` with `pinning`.
 - Migrate saved pinning state to the nested shape.
-- Add `Column.pinned` or `Column.sticky` where column docking is needed.
-- Rename `changeColumnsArrangement()` and `validateColumnFreeze()` calls.
+- Add `Column.pinned` where permanent column docking is needed.
+- Rename `changeColumnsArrangement()` to `applyColumnLayout()` and `validateColumnFreeze()` to
+  `validateColumnPinning()`.
 - Update custom menu handlers, selectors, and CSS that reference frozen panes.
 - Remove inline Row Detail compatibility settings.
-- Review the [Pinning](../grid-functionalities/pinning.md), [Sticky Docking](../grid-functionalities/sticky.md),
-  [Grid State](../grid-functionalities/grid-state-preset.md), and [Row Detail](../grid-functionalities/row-detail.md)
-  guides for affected custom behavior.
+- Review the [Pinning](../grid-functionalities/pinning.md), [Grid State](../grid-functionalities/grid-state-preset.md),
+  and [Row Detail](../grid-functionalities/row-detail.md) guides for affected custom behavior.
 
 If the project is useful to you, please give it a star ⭐ on the
 [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) umbrella project.
