@@ -6946,17 +6946,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
       consumedWidth += widthOf(segment);
 
+      const bandWidth =
+        segment.band === 'left'
+          ? this.dockingLayout.leftWidth
+          : segment.band === 'right'
+            ? this.dockingLayout.rightWidth
+            : this.getDockingRenderedWidths().center;
       const left = this.columnPosLeft[segment.start] ?? 0;
-      // Use an explicit segment width and only one inset. If both insets are
-      // set, CSS resolves over-constrained positioning from the containing
-      // block's direction, which may differ from the grid's RTL setting.
-      fragment.style.width = `${widthOf(segment)}px`;
+      const right = this.columnPosRight[segment.end] ?? left;
       if (this._options.rtl) {
         fragment.style.right = `${left}px`;
-        fragment.style.left = 'auto';
+        fragment.style.left = `${Math.max(0, bandWidth - right)}px`;
       } else {
         fragment.style.left = `${left}px`;
-        fragment.style.right = 'auto';
+        fragment.style.right = `${Math.max(0, bandWidth - right)}px`;
       }
     });
   }

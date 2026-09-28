@@ -463,7 +463,7 @@ describe('SlickGrid unified pinning', () => {
     expect(fragments[1].querySelector('.slick-cell-colspan-part-content')?.textContent).toBe('Spanned');
     expect(host.getAttribute('aria-colspan')).toBe('4');
     expect(host.getAttribute('aria-rowspan')).toBe('2');
-    expect(fragments[0].style.width).toBe('160px');
+    expect(fragments[0].style.width).toBe('');
     expect(row.classList.contains('slick-row-colspan-crossing-docking')).toBe(true);
     expect(row.querySelectorAll('.slick-cell-colspan-crossing-docking')).toHaveLength(3);
     expect(fragments[1].classList.contains('slick-cell-colspan-end')).toBe(true);
@@ -512,16 +512,18 @@ describe('SlickGrid unified pinning', () => {
     // pre-resize docking boundary and a second border appears at the new one.
     Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 800 });
     internals.applyColumnWidths();
+    const centerWidth = internals.getDockingRenderedWidths().center;
     expect(fragments[0].style.left).toBe(`${internals.columnPosLeft[1]}px`);
-    expect(fragments[0].style.right).toBe('auto');
-    expect(fragments[0].style.width).toBe('160px');
+    expect(fragments[0].style.right).toBe(`${Math.max(0, centerWidth - internals.columnPosRight[2])}px`);
+    expect(fragments[0].style.width).toBe('');
     grid.getColumns()[1].width = 120;
     internals.updateColumnCaches();
     internals.applyColumnWidths();
     expect(host.style.width).toBe('80px');
+    const resizedCenterWidth = internals.getDockingRenderedWidths().center;
     expect(fragments[0].style.left).toBe(`${internals.columnPosLeft[1]}px`);
-    expect(fragments[0].style.right).toBe('auto');
-    expect(fragments[0].style.width).toBe('200px');
+    expect(fragments[0].style.right).toBe(`${Math.max(0, resizedCenterWidth - internals.columnPosRight[2])}px`);
+    expect(fragments[0].style.width).toBe('');
     expect(fragments[0].classList.contains('active')).toBe(true);
 
     const deferredHost = document.createElement('div');
