@@ -88,7 +88,7 @@ describe('Example 46 - RTL (Right-to-Left)', () => {
               .trigger('mouseup', { clientX: targetX, pageX: targetX })
               .then(() => expect(column.getBoundingClientRect().width).to.be.greaterThan(initialWidth));
           });
-        });
+      });
 
       cy.get('.slick-header-columns')
         .children()
