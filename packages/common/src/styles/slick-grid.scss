@@ -249,6 +249,11 @@
       ) !important;
     }
 
+    // Keep center continuations aligned with their pinned colspan host while scrolling.
+    .slick-row-docked > .slick-scrolling-cells > .slick-cell-colspan-part {
+      transform: translate3d(var(--slick-docking-scroll-left, 0px), 0, 0);
+    }
+
     // Sticky candidates remain at their natural center-band coordinates.
     // Activation changes only this compositor transform, avoiding per-column
     // CSSOM rewrites, chrome measurement, and per-row grid-track resizing.

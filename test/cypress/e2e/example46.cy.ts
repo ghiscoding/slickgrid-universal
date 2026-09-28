@@ -69,15 +69,25 @@ describe('Example 46 - RTL (Right-to-Left)', () => {
 
   describe('UI Interactions', () => {
     it('should have resize handle on the left side', () => {
-      cy.get('.slick-header-column:first .slick-resizable-handle').should('exist').and('have.css', 'left', '0px');
+      cy.get('.slick-header-column[data-id="start"] .slick-resizable-handle').should('exist').and('have.css', 'left', '0px');
     });
 
     it('should maintain RTL column order after resize', () => {
-      cy.get('.slick-header-column:first .slick-resizable-handle')
-        .trigger('mousedown', { which: 1 })
-        .then(() => {
-          cy.get('body').trigger('mousemove', { clientX: 260, clientY: 0 });
-          cy.get('body').trigger('mouseup');
+      cy.get('.slick-header-column[data-id="start"] .slick-resizable-handle').then(($handle) => {
+        const handle = $handle[0] as HTMLElement;
+        const column = handle.closest('.slick-header-column') as HTMLElement;
+        const initialWidth = column.getBoundingClientRect().width;
+        const startX = handle.getBoundingClientRect().left;
+        const targetX = startX - 40;
+
+        cy.wrap($handle)
+          .trigger('mousedown', { which: 1, clientX: startX, pageX: startX })
+          .then(() => {
+            cy.get('body')
+              .trigger('mousemove', { clientX: targetX, pageX: targetX, clientY: 0 })
+              .trigger('mouseup', { clientX: targetX, pageX: targetX })
+              .then(() => expect(column.getBoundingClientRect().width).to.be.greaterThan(initialWidth));
+          });
         });
 
       cy.get('.slick-header-columns')
