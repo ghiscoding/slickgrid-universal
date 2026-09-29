@@ -338,6 +338,30 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getColumnsInRenderedOrder(true).map((column) => column.id)).toEqual(['a', 'c', 'b', 'd']);
   });
 
+  it('keeps sticky columns in their permanent band when pinned by boundary or at runtime', () => {
+    const stickyColumns = columns.map((column, index) => ({ ...column, sticky: index === 1 || index === 2 ? true : undefined }));
+    const slickGrid = createGrid(
+      { devMode: { ownerNodeIndex: 0, containerClientWidth: 800 }, pinning: { columns: { left: 1 } }, showHeaderRow: true },
+      stickyColumns
+    );
+    const internals = slickGrid as any;
+    const pinnedCell = container.querySelector<HTMLElement>('.slick-row[data-row="0"] .slick-cell.l1');
+
+    expect(pinnedCell, container.innerHTML).toBeTruthy();
+    expect(internals.isStickyTransformColumn(1)).toBe(false);
+    expect(pinnedCell.parentElement?.classList.contains('slick-pinned-left-cells')).toBe(true);
+    expect(pinnedCell.classList.contains('slick-cell-pinned-left')).toBe(true);
+    expect(slickGrid.getHeaderColumn('b').classList.contains('slick-column-pinned-left')).toBe(true);
+    expect(slickGrid.getHeaderColumn('b').classList.contains('slick-column-sticky')).toBe(false);
+
+    slickGrid.setColumnPinning('c', 'left');
+    const runtimePinnedCell = container.querySelector<HTMLElement>('.slick-row[data-row="0"] .slick-cell.l2')!;
+    expect(internals.isStickyTransformColumn(2)).toBe(false);
+    expect(runtimePinnedCell.parentElement?.classList.contains('slick-pinned-left-cells')).toBe(true);
+    expect(runtimePinnedCell.classList.contains('slick-cell-pinned-left')).toBe(true);
+    expect(slickGrid.getHeaderColumn('c').classList.contains('slick-column-pinned-left')).toBe(true);
+  });
+
   it('keeps a center reorder out of the pinned band when a middle column is hidden', () => {
     const reorderColumns = [
       ...columns.map((column) => ({ ...column })),
@@ -1853,9 +1877,9 @@ describe('SlickGrid unified pinning', () => {
   });
 
   it('defers sticky-column membership changes during horizontal scrolling', () => {
-    const slickGrid = createGrid();
+    const stickyColumns = columns.map((column, index) => ({ ...column, sticky: index === 1 ? ('left' as const) : undefined }));
+    const slickGrid = createGrid({}, stickyColumns);
     const internals = slickGrid as any;
-    slickGrid.getColumns()[1].sticky = 'left';
     Object.defineProperty(internals._viewportScrollContainerX, 'scrollLeft', { configurable: true, writable: true, value: 10 });
     Object.defineProperty(internals._viewportScrollContainerX, 'scrollWidth', { configurable: true, value: 900 });
     Object.defineProperty(internals._viewportScrollContainerX, 'clientWidth', { configurable: true, value: 400 });

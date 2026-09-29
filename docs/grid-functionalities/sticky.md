@@ -11,7 +11,7 @@
 ### Introduction
 Sticky docking keeps configured columns or rows attached to the nearest grid edge only while normal scrolling would clip them. Unlike [`Column.pinned`](pinning.md), sticky items return to their natural position when they are visible again.
 
-Sticky behavior is configured independently from permanent pinning. It uses the same single-viewport docking renderer and can be combined with left- or right-pinned columns and pinned rows.
+Sticky behavior is configured independently from permanent pinning. It uses the same single-viewport docking renderer and can be combined with left- or right-pinned columns and pinned rows. A permanently pinned column ignores its `sticky` flag because it remains docked in its pinned band.
 
 ### Sticky Columns
 Set Column `sticky` property to `true`, `'left'`, `'right'`, `'both'`, or `false`:

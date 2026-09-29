@@ -327,7 +327,7 @@ export interface Column<T = any> {
 
   /**
    * Dock this column only after normal scrolling would clip it. `true` uses
-   * the leading edge; `'both'` chooses the nearest edge at runtime.
+   * the leading edge; `'both'` chooses the nearest edge at runtime. Ignored while permanently pinned.
    */
   sticky?: DockingSide | 'both' | boolean;
 
