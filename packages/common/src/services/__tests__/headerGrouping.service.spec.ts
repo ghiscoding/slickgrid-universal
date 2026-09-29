@@ -284,6 +284,39 @@ describe('HeaderGroupingService', () => {
 
       expect(pinnedGroupHeader?.style.getPropertyValue('--slick-docking-scroll-left')).toBe('114.667px');
       expect(pinnedMask?.style.transform).toBe('translateX(114.667px)');
+      const headerMeasureCount = (gridStub.getHeaderColumn as any).mock.calls.length;
+
+      gridStub.onScroll.notify({ scrollLeft: 114.667, scrollTop: 50, scrollHeight: 0, grid: gridStub }, new SlickEventData(), gridStub);
+
+      expect(gridStub.getHeaderColumn).toHaveBeenCalledTimes(headerMeasureCount);
+      expect(pinnedMask?.style.transform).toBe('translateX(114.667px)');
+    });
+
+    it('should refresh the cached pinned width after columns are resized', () => {
+      let headerWidth = 120;
+      vi.spyOn(gridStub, 'getPinnedColumns').mockImplementation((side) => (side === 'left' ? [mockColumns[3]] : []));
+      vi.spyOn(gridStub, 'getHeaderColumn').mockImplementation(() => {
+        const header = document.createElement('div');
+        Object.defineProperty(header, 'offsetWidth', { value: headerWidth });
+        return header;
+      });
+      vi.spyOn(gridStub, 'getColumnsInRenderedOrder').mockReturnValue([mockColumns[3], mockColumns[0], mockColumns[1], mockColumns[2]]);
+
+      service.init(gridStub);
+      vi.runAllTimers();
+
+      const preHeaderPanel = gridStub.getPreHeaderPanel();
+      const pinnedMask = preHeaderPanel.querySelector<HTMLElement>('.slick-pinned-group-mask');
+      expect(pinnedMask?.style.width).toBe('120px');
+      const headerMeasureCount = (gridStub.getHeaderColumn as any).mock.calls.length;
+
+      headerWidth = 140;
+      mockColumns[3].width = (mockColumns[3].width || 0) + 1;
+      gridStub.onColumnsResized.notify({ triggeredByColumn: 'start', grid: gridStub }, new SlickEventData(), gridStub);
+
+      expect(gridStub.getHeaderColumn).toHaveBeenCalledTimes(headerMeasureCount + 1);
+      const resizedPinnedMask = preHeaderPanel.querySelector<HTMLElement>('.slick-pinned-group-mask');
+      expect(resizedPinnedMask?.style.width).toBe('140px');
     });
 
     it('should exit early from "syncPinnedGroupHeaders" when there is no pre-header panel', () => {

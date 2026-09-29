@@ -12,6 +12,8 @@ export class HeaderGroupingService {
   protected _grid!: SlickGrid;
   protected _lastRenderSignature = '';
   protected _groupHeaderScrollLeft = 0;
+  protected _pinnedGroupWidth = 0;
+  protected _pinnedGroupWidthDirty = true;
   protected _subscriptions: EventSubscription[] = [];
   protected _timer?: any;
 
@@ -55,6 +57,7 @@ export class HeaderGroupingService {
           .subscribe(grid.onColumnsDrag, () => this.renderPreHeaderRowGroupingTitles())
           .subscribe(grid.onRendered, () => this.renderPreHeaderRowGroupingTitles())
           .subscribe(grid.onAutosizeColumns, () => this.renderPreHeaderRowGroupingTitles())
+          .subscribe(grid.onColumnsResized, () => this.renderPreHeaderRowGroupingTitles())
           .subscribe(grid.onScroll, (_e, args) => this.syncPinnedGroupHeaders(args.scrollLeft))
           .subscribe(this._dataView.onRowCountChanged, () => this.delayRenderPreHeaderRowGroupingTitles(0));
 
@@ -70,6 +73,7 @@ export class HeaderGroupingService {
     clearTimeout(this._timer);
     this._eventHandler.unsubscribeAll();
     this._lastRenderSignature = '';
+    this._pinnedGroupWidthDirty = true;
   }
 
   /** call "renderPreHeaderRowGroupingTitles()" with a setTimeout delay */
@@ -105,6 +109,7 @@ export class HeaderGroupingService {
       return;
     }
     this._lastRenderSignature = renderSignature;
+    this._pinnedGroupWidthDirty = true;
 
     emptyElement(preHeaderPanel);
     preHeaderPanel.className = 'slick-header-columns';
@@ -148,6 +153,9 @@ export class HeaderGroupingService {
   }
 
   syncPinnedGroupHeaders(scrollLeft: number = this._groupHeaderScrollLeft): void {
+    if (scrollLeft === this._groupHeaderScrollLeft && !this._pinnedGroupWidthDirty) {
+      return;
+    }
     this._groupHeaderScrollLeft = scrollLeft;
 
     const preHeaderPanel = this._grid?.getPreHeaderPanel();
@@ -155,9 +163,13 @@ export class HeaderGroupingService {
       return;
     }
 
-    const pinnedLeftWidth = this._grid
-      .getPinnedColumns('left')
-      .reduce((width, column) => width + (this._grid.getHeaderColumn(column.id)?.offsetWidth || 0), 0);
+    if (this._pinnedGroupWidthDirty) {
+      this._pinnedGroupWidth = this._grid
+        .getPinnedColumns('left')
+        .reduce((width, column) => width + (this._grid.getHeaderColumn(column.id)?.offsetWidth || 0), 0);
+      this._pinnedGroupWidthDirty = false;
+    }
+    const pinnedLeftWidth = this._pinnedGroupWidth;
     let pinnedMask = preHeaderPanel.querySelector<HTMLElement>('.slick-pinned-group-mask');
 
     if (pinnedLeftWidth > 0) {

@@ -409,7 +409,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
             // Remove stale commands/separators while retaining custom versions of visible commands.
             for (const command of PINNING_MENU_COMMANDS) {
-              this.removeCommandWhenFound(columnHeaderMenuItems, command);
               if (command.startsWith('divider-') || hiddenCommands?.includes(command)) {
                 this.removeCommandWhenFound(pinColumnCommandItems, command);
               }
