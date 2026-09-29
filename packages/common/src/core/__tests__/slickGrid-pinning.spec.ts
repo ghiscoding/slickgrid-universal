@@ -347,7 +347,7 @@ describe('SlickGrid unified pinning', () => {
     const internals = slickGrid as any;
     const pinnedCell = container.querySelector<HTMLElement>('.slick-row[data-row="0"] .slick-cell.l1');
 
-    expect(pinnedCell, container.innerHTML).toBeTruthy();
+    expect(pinnedCell).toBeTruthy();
     expect(internals.isStickyTransformColumn(1)).toBe(false);
     expect(pinnedCell.parentElement?.classList.contains('slick-pinned-left-cells')).toBe(true);
     expect(pinnedCell.classList.contains('slick-cell-pinned-left')).toBe(true);
@@ -1305,6 +1305,27 @@ describe('SlickGrid unified pinning', () => {
     expect(internals.normalizeColumnPinningReferences(0, 'right', slickGrid.getColumns().length)).toEqual([]);
     expect(internals.normalizeColumnPinningReferences(1, 'left', hiddenColumns.length)).toEqual([0, 1]);
   });
+  it('finds a docked row region when its cached regions are unavailable', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: ['a'], right: ['d'] } } });
+    const row = container.querySelector<HTMLElement>('.slick-row-docked')!;
+    const getRegion = (columnIndex: number) => (slickGrid as any).getRowDockingRegion(row, columnIndex);
+
+    expect(getRegion(0)).toBe(row.querySelector('.slick-pinned-left-cells'));
+    expect(getRegion(1)).toBe(row.querySelector('.slick-scrolling-cells'));
+    expect(getRegion(3)).toBe(row.querySelector('.slick-pinned-right-cells'));
+
+    const emptyDockedRow = document.createElement('div');
+    emptyDockedRow.classList.add('slick-row-docked');
+    expect((slickGrid as any).getRowDockingRegion(emptyDockedRow, 0)).toBe(emptyDockedRow);
+  });
+
+  it('ignores unresolved and out-of-range explicit column references', () => {
+    const slickGrid = createGrid();
+    const indexes = (slickGrid as any).getPinnedColumnIndexes({ left: ['missing', -1, 99], right: [1, 'absent'] });
+
+    expect([...indexes]).toEqual([[1, 'right']]);
+  });
+
   it('keeps numeric right pinning on the original trailing columns after hiding one', () => {
     const slickGrid = createGrid({ pinning: { columns: { right: 2 } } });
     slickGrid.updateColumnById('c', { hidden: true });
@@ -1394,7 +1415,7 @@ describe('SlickGrid unified pinning', () => {
     };
     internals.dockingLayout = {
       left: [{ index: 0, naturalOffset: 0, offset: 0, sticky: false, width: 80, band: 'left' }],
-      center: [{ index: 1, naturalOffset: 80, offset: 0, sticky: false, width: 80, band: 'center' }],
+      center: [{ index: 1, naturalOffset: 0, offset: 0, sticky: false, width: 80, band: 'center' }],
       right: [{ index: 3, naturalOffset: 240, offset: 0, sticky: false, width: 80, band: 'right' }],
       leftBaseWidth: 80,
       leftWidth: 80,
@@ -1753,6 +1774,17 @@ describe('SlickGrid unified pinning', () => {
     expect(handleScrollSpy).toHaveBeenCalledTimes(6);
   });
 
+  it('preserves negative horizontal wheel offsets in RTL', () => {
+    const slickGrid = createGrid({ rtl: true, pinning: { columns: { left: ['a'] } } });
+    const internals = slickGrid as any;
+    Object.defineProperty(internals._viewportScrollContainerX, 'scrollLeft', { configurable: true, writable: true, value: -12 });
+    vi.spyOn(internals, '_handleScroll').mockReturnValue(true);
+
+    internals.handleMouseWheel(new WheelEvent('wheel', { deltaX: -18 }), 0, 0, 0);
+
+    expect(internals.scrollLeft).toBe(-30);
+  });
+
   it('floors mouse-wheel and internal scroll offsets at zero', () => {
     const slickGrid = createGrid();
     const internals = slickGrid as any;
@@ -1954,6 +1986,21 @@ describe('SlickGrid unified pinning', () => {
     expect(resizeSpy).toHaveBeenCalledTimes(2);
   });
 
+  it('refreshes pinned chrome when the vertical scrollbar appears', () => {
+    const slickGrid = createGrid({ pinning: { columns: { right: ['d'] } } });
+    const internals = slickGrid as any;
+    internals.viewportHasVScroll = false;
+    internals._options.alwaysShowVerticalScroll = true;
+    vi.spyOn(internals, 'updateCanvasWidth').mockImplementation(() => undefined);
+    const chromeSpy = vi.spyOn(internals, 'applyDockingToColumnChrome');
+    const rowsSpy = vi.spyOn(internals, 'applyDockingDimensionsToRows');
+
+    slickGrid.updateRowCount();
+
+    expect(chromeSpy).toHaveBeenCalledOnce();
+    expect(rowsSpy).toHaveBeenCalledOnce();
+  });
+
   it('keeps the docking scrollbar measurable when Firefox reports overlay metrics as zero', () => {
     const slickGrid = createGrid({ pinning: { columns: { left: 0 } } });
     const internals = slickGrid as any;
@@ -2024,6 +2071,10 @@ describe('SlickGrid unified pinning', () => {
 
     internals.applyDockingToColumnChrome();
 
+    expect((container.querySelector('.slick-headerrow-column.l3') as HTMLElement).style.width).toBe('80px');
+
+    internals._options.gridMenu = {};
+    internals.applyDockingToColumnChrome();
     expect((container.querySelector('.slick-headerrow-column.l3') as HTMLElement).style.width).toBe('80px');
   });
 

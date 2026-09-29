@@ -1932,24 +1932,51 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.handleAutoHeaderHeightChange();
   }
 
+  /** Applies docking classes, widths, and transforms to the rendered column chrome. */
   protected applyDockingToColumnChrome(): void {
     if (!this.usesDockingChromeRegions()) {
       return;
     }
     this.syncDockingChromeRegions();
     this.dockingChromeByColumn.clear();
-    // Chrome is clipped by the header scroller, not by the horizontal-scroll
-    // proxy. The proxy can briefly retain an older width during a browser
-    // resize, which placed right-pinned titles at that stale edge (for example
-    // `1537px` for a 1637px proxy) instead of the visible header edge.
     const columnIndexOf = (element: HTMLElement) => /(?:^|\s)l(\d+)(?:\s|$)/.exec(element.className)?.[1] ?? '';
     const headersById = this.indexChromeElements(this._headerL, '.slick-header-column', (element) => element.dataset.id ?? '');
     const headerRowByIndex = this.indexChromeElements(this._headerRowL, '.slick-headerrow-column', columnIndexOf);
     const footerRowByIndex = this.indexChromeElements(this._footerRowL, '.slick-footerrow-column', columnIndexOf);
-    // A band's pinned edge is its last permanently pinned column; a docked sticky column draws
-    // its own separator further in, matching the body cells.
+    // A band's pinned edge is its last permanently pinned column, as in the body; a docked
+    // sticky column marks its own edge further in.
     const leftEdgeIndex = this.dockingLayout.left.filter((entry) => !entry.sticky).pop()?.index;
     const rightEdgeIndex = this.dockingLayout.right.find((entry) => !entry.sticky)?.index;
+
+    // Pass 1 (writes only): docking classes, the chrome cache and margin resets.
+    const entries = this.columns.map((column, index) => {
+      const docking = this.dockingByColumn.get(index);
+      const band: ColumnDockingBand = docking?.band || 'center';
+      const usesStickyTransform = this.isStickyTransformColumn(index);
+      const header = headersById.get(String(column.id));
+      const elements = [header, headerRowByIndex.get(String(index)), footerRowByIndex.get(String(index))].filter(Boolean) as HTMLElement[];
+      const isLeftEdge = !usesStickyTransform && band === 'left' && index === leftEdgeIndex;
+      this.dockingChromeByColumn.set(index, elements);
+      elements.forEach((element) => {
+        element.classList.toggle('slick-column-pinned-left', !usesStickyTransform && band === 'left');
+        element.classList.toggle('slick-column-pinned-right', !usesStickyTransform && band === 'right');
+        element.classList.toggle('slick-docking-chrome-right', !usesStickyTransform && band === 'right');
+        element.classList.toggle('slick-column-pinned-left-edge', isLeftEdge);
+        element.classList.toggle('slick-column-pinned-right-edge', !usesStickyTransform && band === 'right' && index === rightEdgeIndex);
+        if (!usesStickyTransform) {
+          this.clearStickyColumnTransform(element, 'column');
+          element.classList.toggle('slick-column-sticky', !!docking?.sticky);
+        }
+        if (element === header) {
+          element.style.marginLeft = '';
+          element.style.marginRight = '';
+        }
+      });
+      return { column, index, docking, band, usesStickyTransform, header, elements, isLeftEdge };
+    });
+
+    // Pass 2 (reads only): measure after every class change and before any geometry write,
+    // so the pass forces at most one layout instead of one per column.
     const horizontalBoxOf = (element: HTMLElement) => {
       const style = getComputedStyle(element);
       return (
@@ -1959,104 +1986,48 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         parseFloat(style.borderRightWidth)
       );
     };
-    this.columns.forEach((column, index) => {
-      const docking = this.dockingByColumn.get(index);
-      const band = docking?.band || 'center';
-      const usesStickyTransform = this.isStickyTransformColumn(index);
-      const header = headersById.get(String(column.id));
-      const elements = [header, headerRowByIndex.get(String(index)), footerRowByIndex.get(String(index))].filter(Boolean) as HTMLElement[];
-      this.dockingChromeByColumn.set(index, elements);
+
+    const measurements = entries.map(({ header, elements, isLeftEdge }) => {
+      const headerOuterWidth = header?.getBoundingClientRect().width || 0;
+      const horizontalBoxes = new Map<HTMLElement, number>();
       elements.forEach((element) => {
-        element.classList.toggle('slick-column-pinned-left', !usesStickyTransform && band === 'left');
-        element.classList.toggle('slick-column-pinned-right', !usesStickyTransform && band === 'right');
-        const isRightDockedChrome = !usesStickyTransform && band === 'right';
-        element.classList.toggle('slick-docking-chrome-right', isRightDockedChrome);
-        element.classList.toggle('slick-column-pinned-left-edge', !usesStickyTransform && band === 'left' && index === leftEdgeIndex);
-        element.classList.toggle('slick-column-pinned-right-edge', !usesStickyTransform && band === 'right' && index === rightEdgeIndex);
-        if (!usesStickyTransform) {
-          this.clearStickyColumnTransform(element, 'column');
-          element.classList.toggle('slick-column-sticky', !!docking?.sticky);
-        }
-        // Reset the edge compensation before applying the current docking pass.
-        if (element === header) {
-          element.style.marginLeft = '';
-          element.style.marginRight = '';
-        }
-        // Header-row and footer cells do not receive the header element's
-        // inline width. Once a cell is taken out of the normal left/right
-        // constraint layout, give it an explicit content-box width so its
-        // rendered outer width matches the corresponding header column.
         if (element !== header) {
-          const headerOuterWidth = header?.getBoundingClientRect().width || 0;
-          const elementHorizontalBox = horizontalBoxOf(element);
-          // The last header makes room for the Grid Menu when a vertical
-          // scrollbar has no measurable gutter (notably Firefox overlay
-          // scrollbars). Its filter/footer cell still needs to cover the full
-          // right-pinned body column; otherwise the preceding filter shows
-          // through in that menu-width slice.
+          horizontalBoxes.set(element, horizontalBoxOf(element));
+        }
+      });
+      let separatorWidth = 0;
+      if (header && isLeftEdge) {
+        const style = getComputedStyle(header);
+        separatorWidth = parseFloat(this._options.rtl ? style.borderLeftWidth : style.borderRightWidth) || 0;
+      }
+      return { headerOuterWidth, horizontalBoxes, separatorWidth };
+    });
+
+    // Pass 3 (writes only): widths and placement.
+    entries.forEach(({ column, index, docking, band, usesStickyTransform, header, elements }, position) => {
+      const { headerOuterWidth, horizontalBoxes, separatorWidth } = measurements[position];
+      elements.forEach((element) => {
+        const isHeader = element === header;
+        if (!isHeader) {
+          // Header-row and footer cells get an explicit content-box width so their outer width
+          // matches the header column; a pinned edge keeps the theme's border-box geometry.
+          // With a collapsed scrollbar, the last right-pinned filter/footer cell must
+          // also cover the Grid Menu allowance beyond the header's measured width.
           const gridMenuWidth =
-            isRightDockedChrome && index === this.columns.length - 1 && this._options.enableGridMenu && !this.scrollbarDimensions?.width
+            band === 'right' &&
+            !usesStickyTransform &&
+            index === this.columns.length - 1 &&
+            this._options.enableGridMenu &&
+            !this.scrollbarDimensions?.width
               ? (this._options.gridMenu?.menuWidth ?? 18)
               : 0;
           const targetOuterWidth = headerOuterWidth ? headerOuterWidth + gridMenuWidth : column.width || 0;
-          // Preserve the normal theme border-box geometry at a pinned edge.
-          // The pinning cue itself is an inset shadow and therefore does not
-          // contribute to this measured width.
           const isPinnedEdge =
             element.classList.contains('slick-column-pinned-left-edge') || element.classList.contains('slick-column-pinned-right-edge');
-          // Keep the measured header outer width (plus the restored Grid Menu
-          // allowance above) so title/filter/footer edges share the same
-          // fractional border geometry.
           element.style.boxSizing = isPinnedEdge ? 'border-box' : 'content-box';
-          element.style.width = `${Math.max(0, isPinnedEdge ? targetOuterWidth : targetOuterWidth - elementHorizontalBox)}px`;
+          element.style.width = `${Math.max(0, isPinnedEdge ? targetOuterWidth : targetOuterWidth - (horizontalBoxes.get(element) || 0))}px`;
         }
-        if (usesStickyTransform || !docking || band === 'center') {
-          // Sticky and centre columns share their offset within the scrolling
-          // band; sticky columns are then moved by their compositor transform.
-          const natural = usesStickyTransform || (this.usesStickyColumnTransformPath() && !column.pinned);
-          const start = this.dockingLayout.leftBaseWidth + ((natural ? docking?.naturalOffset : docking?.offset) || 0);
-          element.style.removeProperty('--slick-docking-chrome-offset');
-          element.style.position = usesStickyTransform && element !== header ? 'absolute' : '';
-          this.setInlinePosition(
-            element,
-            element === header ? '' : start,
-            element === header ? '' : this.dockingLayout.contentWidth - start - (docking?.width || 0)
-          );
-          element.style.order = '0';
-          element.style.transform = '';
-          if (usesStickyTransform) {
-            this.applyStickyColumnTransform(element, index, 'column');
-          }
-          return;
-        }
-
-        // The display-contents left wrapper already supplies the grouped edge
-        // offset; only cancel the translated root layer here.
-        if (band === 'left') {
-          element.style.position = element === header ? 'relative' : 'absolute';
-          this.setInlinePosition(element, element === header ? '' : docking.offset, null);
-          element.style.order = '0';
-          if (element === header && index === leftEdgeIndex) {
-            const elementStyle = getComputedStyle(element);
-            const separatorWidth = parseFloat(this._options.rtl ? elementStyle.borderLeftWidth : elementStyle.borderRightWidth) || 0;
-            if (separatorWidth) {
-              if (this._options.rtl) {
-                element.style.marginLeft = `-${separatorWidth}px`;
-              } else {
-                element.style.marginRight = `-${separatorWidth}px`;
-              }
-            }
-          }
-          element.style.setProperty('--slick-docking-chrome-offset', '0px');
-          element.style.transform = 'translateX(0px)';
-          return;
-        }
-
-        element.style.position = 'absolute';
-        this.setInlinePosition(element, this.getTrailingDockedChromeInlineStart(element, docking), null);
-        element.style.order = docking.sticky ? '0' : '1';
-        element.style.setProperty('--slick-docking-chrome-offset', '0px');
-        element.style.transform = 'translateX(0px)';
+        this.placeDockedChromeElement(element, isHeader, index, docking, band, usesStickyTransform, separatorWidth);
       });
     });
   }
@@ -2067,6 +2038,64 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const endProperty = this._options.rtl ? 'left' : 'right';
     element.style[startProperty] = start === null ? 'auto' : start === '' ? '' : `${start}px`;
     element.style[endProperty] = end === null ? 'auto' : end === '' ? '' : `${end}px`;
+  }
+
+  protected placeDockedChromeElement(
+    element: HTMLElement,
+    isHeader: boolean,
+    index: number,
+    docking: Pick<DockedColumn, 'band' | 'naturalOffset' | 'offset' | 'sticky' | 'width'> | undefined,
+    band: ColumnDockingBand,
+    usesStickyTransform: boolean,
+    separatorWidth: number
+  ): void {
+    // A sticky column and a centre column both sit at their offset within the scrolling
+    // band; a sticky one is then moved by its transform. Sticky and unpinned centre columns
+    // on the transform path keep their natural offset, the rest the compacted one.
+    if (usesStickyTransform || !docking || band === 'center') {
+      const natural = this.usesStickyColumnTransformPath() && !this.columns[index]?.pinned;
+      const start = this.dockingLayout.leftBaseWidth + ((natural ? docking?.naturalOffset : docking?.offset) || 0);
+      element.style.removeProperty('--slick-docking-chrome-offset');
+      element.style.position = usesStickyTransform && !isHeader ? 'absolute' : '';
+      this.setInlinePosition(
+        element,
+        isHeader ? '' : start,
+        isHeader ? '' : this.dockingLayout.contentWidth - start - (docking?.width || 0)
+      );
+      element.style.order = '0';
+      element.style.transform = '';
+      if (usesStickyTransform) {
+        this.applyStickyColumnTransform(element, index, 'column');
+      }
+      return;
+    }
+
+    // The display-contents left wrapper already supplies the grouped edge
+    // offset; only cancel the translated root layer here.
+    if (band === 'left') {
+      element.style.position = isHeader ? 'relative' : 'absolute';
+      this.setInlinePosition(element, isHeader ? '' : docking.offset, null);
+      element.style.order = '0';
+      if (isHeader && separatorWidth) {
+        if (this._options.rtl) {
+          element.style.marginLeft = `-${separatorWidth}px`;
+        } else {
+          element.style.marginRight = `-${separatorWidth}px`;
+        }
+      }
+      element.style.setProperty('--slick-docking-chrome-offset', '0px');
+      element.style.transform = 'translateX(0px)';
+      return;
+    }
+
+    // Trailing-band chrome is placed at the visible viewport coordinate along the inline
+    // axis; its parent layer is translated by -scrollLeft, so it stays at the trailing edge
+    // in band order in either reading direction.
+    element.style.position = 'absolute';
+    this.setInlinePosition(element, this.getTrailingDockedChromeInlineStart(element, docking), null);
+    element.style.order = docking.sticky ? '0' : '1';
+    element.style.setProperty('--slick-docking-chrome-offset', '0px');
+    element.style.transform = 'translateX(0px)';
   }
 
   /** Collect chrome elements under a root once per docking pass, keyed by column id or index. */
@@ -2660,7 +2689,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
 
         let x;
-        let newCanvasWidthL = 0;
         // oxlint-disable-next-line no-unused-vars
         let newCanvasWidthR = 0;
 
@@ -2686,8 +2714,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             if (c && !c.hidden) {
               if (this.getColumnDockingBand(k) === 'right') {
                 newCanvasWidthR += c.width || 0;
-              } else {
-                newCanvasWidthL += c.width || 0;
               }
             }
           }
@@ -2708,8 +2734,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
                   if (this.getColumnDockingBand(j) === 'right') {
                     newCanvasWidthR += c.width || 0;
-                  } else {
-                    newCanvasWidthL += c.width || 0;
                   }
                 }
               }
@@ -2720,8 +2744,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               if (c && !c.hidden) {
                 if (this.getColumnDockingBand(j) === 'right') {
                   newCanvasWidthR += c.width || 0;
-                } else {
-                  newCanvasWidthL += c.width || 0;
                 }
               }
             }
@@ -2746,7 +2768,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         } else {
           x = d;
 
-          newCanvasWidthL = 0;
           newCanvasWidthR = 0;
 
           for (j = i; j >= 0; j--) {
@@ -2768,8 +2789,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             if (c && !c.hidden) {
               if (this.getColumnDockingBand(k) === 'right') {
                 newCanvasWidthR += c.width || 0;
-              } else {
-                newCanvasWidthL += c.width || 0;
               }
             }
           }
@@ -2791,8 +2810,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
                 if (this.getColumnDockingBand(j) === 'right') {
                   newCanvasWidthR += c.width || 0;
-                } else {
-                  newCanvasWidthL += c.width || 0;
                 }
               }
             }
@@ -2803,8 +2820,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                 if (this.getColumnDockingBand(j) === 'right') {
                   // eslint-disable-next-line
                   newCanvasWidthR += c.width || 0;
-                } else {
-                  newCanvasWidthL += c.width || 0;
                 }
               }
             }
@@ -4050,13 +4065,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         typeof reference === 'number' ? reference : columnDefinitions.findIndex((column) => column && String(column.id) === reference);
       leftReferences.forEach((reference) => {
         const index = resolveColumnIndex(reference);
-        if (isDefinedNumber(index) && !columnDefinitions[index]?.hidden) {
+        if (index >= 0 && index < columnDefinitions.length && columnDefinitions[index] && !columnDefinitions[index].hidden) {
           pinnedIndexes.set(index, 'left');
         }
       });
       rightReferences.forEach((reference) => {
         const index = resolveColumnIndex(reference);
-        if (isDefinedNumber(index) && !columnDefinitions[index]?.hidden && !pinnedIndexes.has(index)) {
+        if (
+          index >= 0 &&
+          index < columnDefinitions.length &&
+          columnDefinitions[index] &&
+          !columnDefinitions[index].hidden &&
+          !pinnedIndexes.has(index)
+        ) {
           pinnedIndexes.set(index, 'right');
         }
       });
@@ -5576,12 +5597,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       top = rowDocking.offset;
     } else if (rowDocking?.band === 'bottom') {
       const viewportHeight = this._viewportScrollContainerY?.clientHeight || this.viewportH;
-      // Anchor the bottom band below the top band (plus the configured minimum center row
-      // count converted to a pixel gap) instead of floating upward when permanent top+bottom
-      // rows combined are taller than the available viewport (see progress notes).
-      const minCenterRowCount = Math.max(0, this._options.docking?.minCenterRowCount || 0);
-      const minCenterHeight = minCenterRowCount * this.getEstimatedRowHeight();
-      const bottomStart = Math.max(this.rowDockingLayout.topHeight + minCenterHeight, viewportHeight - this.rowDockingLayout.bottomHeight);
+      // Anchor the bottom band to the bottom of the viewport; enforceMinCenterRowBudget()
+      // grows the container when the bands would leave too little room.
+      const bottomStart = Math.max(this.rowDockingLayout.topHeight, viewportHeight - this.rowDockingLayout.bottomHeight);
       top = bottomStart + rowDocking.offset;
     }
     rowNode.classList.toggle('slick-row-pinned-top', rowDocking?.band === 'top');
@@ -5606,18 +5624,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // preference remains available for normal rows and row-detail rendering.
     const useTransform = isTransform && !hasRowSpan;
 
-    // Mark every RowSpan host row, regardless of whether its vertical
-    // coordinate uses `top` or `transform`. Docked rows need this marker so
-    // their region wrappers can let the spanning cell extend over following
-    // rows and remain hit-testable.
+    // Mark every rowspan host row so docked region wrappers let the spanning cell
+    // extend over following rows and stay hit-testable.
     rowNode.classList.toggle('slick-rowspan', hasRowSpan);
     if (useTransform) {
       rowNode.style.top = '';
-      // Keep the established 2D transform syntax for row positioning. It still
-      // uses the compositor-friendly CSS transform path, while preserving the
-      // DOM contract used by integrations (and avoiding a needless change to
-      // selectors that inspect `translateY(...)`). The 3D form remains used by
-      // the horizontal docking conveyor where it is needed for scroll offsets.
+      // Keep the 2D translateY() syntax for row positioning: integrations inspect it.
       rowNode.style.transform = `translateY(${Math.round(top)}px)`;
     } else {
       rowNode.style.top = `${Math.round(top)}px`;
@@ -6340,8 +6352,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
       this.getViewportWidth();
       this.getViewportHeight();
-      this.enforceMinCenterRowBudget();
       let dockingChanged = this.refreshDockingLayout();
+      this.enforceMinCenterRowBudget();
       // The docking POC's one horizontal scrollbar is an absolutely positioned
       // sibling of the body viewport. Unlike a native viewport scrollbar it
       // does not reduce `clientHeight` on its own, so reserve its measured
@@ -6639,6 +6651,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
       this.refreshRowDockingLayout(this.scrollTop, true);
       this.updateCanvasWidth(false);
+      if (oldViewportHasVScroll !== this.viewportHasVScroll && this.hasConfiguredColumnDocking()) {
+        this.applyDockingToColumnChrome();
+        this.applyDockingDimensionsToRows();
+      }
     }
   }
 
@@ -6763,17 +6779,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     );
   }
 
-  protected getRowDockingRegion(rowNode: HTMLElement, columnIdx: number, cellRegions?: RowCaching['cellRegions']): HTMLElement {
-    if (rowNode.classList.contains('slick-row-full-width-group')) {
+  /** Returns the row region that should contain a cell for its resolved docking band. */
+  protected getRowDockingRegion(rowNode: HTMLElement, columnIdx: number, regions?: RowCaching['cellRegions']): HTMLElement {
+    if (rowNode.classList.contains('slick-row-full-width-group') || (!regions && !rowNode.classList.contains('slick-row-docked'))) {
       return rowNode;
     }
     const docking = this.dockingByColumn.get(columnIdx);
     const band = this.isStickyTransformColumn(columnIdx) ? 'center' : docking?.band || 'center';
-    return (
-      (band === 'left' ? cellRegions?.left : band === 'right' ? cellRegions?.right : cellRegions?.center) ||
-      (rowNode.querySelector(`:scope > .slick-${band === 'center' ? 'scrolling' : `pinned-${band}`}-cells`) as HTMLElement) ||
-      rowNode
-    );
+    if (regions) {
+      return regions[band];
+    }
+    const selector =
+      band === 'left' ? '.slick-pinned-left-cells' : band === 'right' ? '.slick-pinned-right-cells' : '.slick-scrolling-cells';
+    return (rowNode.querySelector(`:scope > ${selector}`) as HTMLElement) || rowNode;
   }
 
   protected toggleCellSpanFragmentsActive(row: number, cell: number, active: boolean): void {
@@ -8051,7 +8069,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!e.shiftKey) {
       this.scrollTop = Math.max(0, this._viewportScrollContainerY.scrollTop - deltaY * this._options.rowHeight!);
     }
-    this.scrollLeft = Math.max(0, this._viewportScrollContainerX.scrollLeft + horizontalDelta);
+    const nextScrollLeft = this._viewportScrollContainerX.scrollLeft + horizontalDelta;
+    this.scrollLeft = this._options.rtl ? nextScrollLeft : Math.max(0, nextScrollLeft);
     const handled = this._handleScroll('mousewheel');
     if (handled) {
       e.stopPropagation();
@@ -8527,7 +8546,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
     if (cell === undefined) {
       // Sticky centre cells keep natural positions on the compositor transform path.
-      const usesNaturalCenter = this.usesStickyColumnTransformPath() && this.hasStickyColumns();
+      const usesNaturalCenter = this.usesStickyColumnTransformPath();
       const centerPosition = inlineX - leftBaseWidth;
       cell = center.find((entry) => {
         const start = usesNaturalCenter ? entry.naturalOffset : entry.offset;
