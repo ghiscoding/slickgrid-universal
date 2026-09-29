@@ -1992,8 +1992,6 @@ describe('SlickGrid unified pinning', () => {
       pinning: { columns: { left: ['a'], right: ['d'] }, rows: { top: [0] } },
       showHeaderRow: true,
     });
-    const internals = slickGrid as any;
-
     slickGrid.scrollToX(10);
 
     const row = container.querySelector<HTMLElement>('.slick-row-docked')!;
@@ -2004,8 +2002,12 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getHeaderColumn('a').style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
     expect(slickGrid.getHeaderColumn('d').style.getPropertyValue('--slick-docking-scroll-left')).toBe('');
 
-    internals.applyDockingProxyScrollOffsets(11);
+    const headerTransform = slickGrid.getHeaderColumn('a').style.getPropertyValue('transform');
+    const filterTransform = container.querySelector<HTMLElement>('.slick-headerrow-column.l0')!.style.getPropertyValue('transform');
+    slickGrid.scrollToX(11);
     expect(container.style.getPropertyValue('--slick-docking-scroll-left')).toBe('11px');
+    expect(slickGrid.getHeaderColumn('a').style.getPropertyValue('transform')).toBe(headerTransform);
+    expect(container.querySelector<HTMLElement>('.slick-headerrow-column.l0')!.style.getPropertyValue('transform')).toBe(filterTransform);
   });
 
   it('keeps the right-pinned filter/footer chrome over the Grid Menu allowance with collapsed scrollbars', () => {
