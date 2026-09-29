@@ -1962,6 +1962,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const headersById = this.indexChromeElements(this._headerL, '.slick-header-column', (element) => element.dataset.id ?? '');
     const headerRowByIndex = this.indexChromeElements(this._headerRowL, '.slick-headerrow-column', columnIndexOf);
     const footerRowByIndex = this.indexChromeElements(this._footerRowL, '.slick-footerrow-column', columnIndexOf);
+    // A band's pinned edge is its last permanently pinned column; a docked sticky column draws
+    // its own separator further in, matching the body cells.
+    const leftEdgeIndex = this.dockingLayout.left.filter((entry) => !entry.sticky).pop()?.index;
+    const rightEdgeIndex = this.dockingLayout.right.find((entry) => !entry.sticky)?.index;
     const horizontalBoxByClassName = new Map<string, number>();
     const horizontalBoxOf = (element: HTMLElement) => {
       const key = element.className;
@@ -1984,8 +1988,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const header = headersById.get(String(column.id));
       const elements = [header, headerRowByIndex.get(String(index)), footerRowByIndex.get(String(index))].filter(Boolean) as HTMLElement[];
       this.dockingChromeByColumn.set(index, elements);
-      const leftEdgeIndex = this.dockingLayout.left[this.dockingLayout.left.length - 1]?.index;
-      const rightEdgeIndex = this.dockingLayout.right[0]?.index;
       elements.forEach((element) => {
         element.classList.toggle('slick-column-pinned-left', !usesStickyTransform && band === 'left');
         element.classList.toggle('slick-column-pinned-right', !usesStickyTransform && band === 'right');
@@ -4382,18 +4384,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     stickyIndexes.forEach((index) =>
       this.dockingChromeByColumn.get(index)?.forEach((element) => this.applyStickyColumnTransform(element, index, 'column'))
     );
-
-    const leftEdgeIndex = this.dockingLayout.left[this.dockingLayout.left.length - 1]?.index;
-    const rightEdgeIndex = this.dockingLayout.right[0]?.index;
-    this.columns.forEach((column, index) => {
-      if (!column.pinned) {
-        return;
-      }
-      this.dockingChromeByColumn.get(index)?.forEach((element) => {
-        element.classList.toggle('slick-column-pinned-left-edge', column.pinned === 'left' && index === leftEdgeIndex);
-        element.classList.toggle('slick-column-pinned-right-edge', column.pinned === 'right' && index === rightEdgeIndex);
-      });
-    });
   }
 
   protected refreshDockingLayout(scrollLeft: number = this.scrollLeft, preserveUnchanged = false): boolean {

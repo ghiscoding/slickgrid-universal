@@ -103,6 +103,36 @@ describe('SlickGrid unified pinning', () => {
     expect(container.querySelector('.slick-docking-overlay [data-row="1"]')).toBeTruthy();
   });
 
+  it('keeps the permanent header edge when a sticky column docks beside it', () => {
+    const stickyColumns = columns.map((column, index) => ({ ...column, sticky: index === 1 ? ('left' as const) : undefined }));
+    const slickGrid = createGrid(
+      {
+        devMode: { ownerNodeIndex: 0, containerClientWidth: 160 },
+        docking: { maxColumnViewportWidthPercent: 100 },
+        pinning: { columns: { left: ['a'] } },
+      },
+      stickyColumns
+    );
+    const internals = slickGrid as any;
+    internals.viewportW = 160;
+    internals.refreshDockingLayout(100);
+    internals.applyDockingToColumnChrome();
+    internals.updateStickyColumnTransforms();
+
+    const pinnedHeader = slickGrid.getHeaderColumn('a');
+    const stickyHeader = slickGrid.getHeaderColumn('b');
+    const row = container.querySelector<HTMLElement>('.grid-canvas .slick-row[data-row="0"]')!;
+
+    expect(internals.dockingLayout.left.map((entry: any) => [entry.index, entry.sticky])).toEqual([
+      [0, false],
+      [1, true],
+    ]);
+    expect(pinnedHeader.classList.contains('slick-column-pinned-left-edge')).toBe(true);
+    expect(stickyHeader.classList.contains('slick-column-sticky-left-edge')).toBe(true);
+    expect(row.querySelector('.slick-pinned-left-cells-active > .slick-cell:last-child')).toBeTruthy();
+    expect(row.querySelector('.slick-cell-sticky-left-edge')).toBeTruthy();
+  });
+
   it('resolves pinned columns, hit testing, and scroll offsets along the inline axis in RTL', () => {
     const rtlColumns = columns.map((column, index) => ({ ...column, sticky: index === 1 ? ('left' as const) : undefined }));
     const slickGrid = createGrid(
@@ -1556,6 +1586,8 @@ describe('SlickGrid unified pinning', () => {
     internals.dockingChromeByColumn.set(3, [pinnedRightChrome]);
     internals.dockingLayout.left = [{ band: 'left', index: 0, naturalOffset: 0, offset: 0, sticky: false, width: 80 }];
     internals.dockingLayout.right = [{ band: 'right', index: 3, naturalOffset: 240, offset: 0, sticky: false, width: 80 }];
+    pinnedLeftChrome.classList.add('slick-column-pinned-left-edge');
+    pinnedRightChrome.classList.add('slick-column-pinned-right-edge');
     internals.updateStickyColumnTransforms();
     expect(pinnedLeftChrome.classList.contains('slick-column-pinned-left-edge')).toBe(true);
     expect(pinnedRightChrome.classList.contains('slick-column-pinned-right-edge')).toBe(true);
