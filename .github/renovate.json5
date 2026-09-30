@@ -21,6 +21,10 @@
         enabled: false,
       },
     },
+    {
+      packageNames: ['pnpm'],
+      allowedVersions: '< 12.0.0',
+    },
     // Babel new major versions fail in Angular, let's ignore those
     {
       packageNames: ['@babel/core', 'undici'],
@@ -50,7 +54,7 @@
       minimumReleaseAge: '0',
     },
   ],
-  ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
+  ignoreDeps: ['lee-dohm/no-response', 'node', 'typescript'],
   prBodyColumns: ['Package', 'Change', 'Age', 'Confidence'],
   schedule: ['every 4 weeks on friday'],
 }

@@ -72,7 +72,7 @@
     "dequal": "catalog:",
     "multiple-select-vanilla": "catalog:",
     "sortablejs": "catalog:",
-    "vanilla-calendar-pro": "^3.3.2"
+    "vanilla-calendar-pro": "^3.4.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.6.0",

@@ -1,6 +1,6 @@
 import { parse } from '@formkit/tempo';
 import { createDomElement, emptyElement, extend, queueMicrotaskPolyfill, setDeepValue } from '@slickgrid-universal/utils';
-import { Calendar, type FormatDateString, type Options } from 'vanilla-calendar-pro';
+import { Calendar, time, type FormatDateString, type Options } from 'vanilla-calendar-pro';
 import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 import type { TranslaterService } from '../services/translater.service.js';
@@ -76,6 +76,7 @@ export class DateEditor extends BaseEditorClass implements Editor {
       const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? 'dateTimeIsoAM_PM' : 'dateIso');
 
       const pickerOptions: Options = {
+        extensions: [time],
         inputMode: true,
         enableJumpToSelectedDate: true,
         firstWeekday: 0,
@@ -239,7 +240,10 @@ export class DateEditor extends BaseEditorClass implements Editor {
     this.columnEditor.options ??= {};
     this.columnEditor.options[optionName] = newValue;
     this._pickerMergedOptions = extend(true, {}, this._pickerMergedOptions, { [optionName]: newValue });
-    this.calendarInstance?.set(this._pickerMergedOptions, { dates: true, locale: true, month: true, time: true, year: true });
+    // extensions are fixed at construction and cannot be passed to `.set()`
+    const pickerOptionsToSet = { ...this._pickerMergedOptions };
+    delete pickerOptionsToSet.extensions;
+    this.calendarInstance?.set(pickerOptionsToSet, { dates: true, locale: true, month: true, time: true, year: true });
   }
 
   focus(): void {

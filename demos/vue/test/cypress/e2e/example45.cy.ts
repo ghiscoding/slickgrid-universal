@@ -9,6 +9,10 @@ describe('Example 45 - Row Detail with inner Grid', () => {
     cy.get('h2').should('contain', 'Example 45: Row Detail with inner Grid');
   });
 
+  it('should hide sub-title', () => {
+    cy.get('[data-test=toggle-subtitle]').click();
+  });
+
   it('should have exact column titles on 1st grid', () => {
     cy.get('#grid45')
       .find('.slick-header-columns')
