@@ -190,6 +190,27 @@ describe('Example 20 - Pinned Grid', () => {
     cy.get('#grid20 .slick-header-columns-right [data-id="action"]').should('contain', 'Action');
   });
 
+  it('should retain explicit right-pinned column IDs when hiding a right-pinned column', () => {
+    setRightPinning(2);
+    cy.get('#grid20 [data-id="cityOfOrigin"] .slick-header-menu-button').click({ force: true });
+    cy.get('.slick-header-menu:visible .slick-menu-command-list .slick-menu-item').contains('Hide Column').click();
+
+    const row0 = '#grid20 .slick-row[data-row="0"]';
+    cy.get(`${row0} .slick-pinned-right-cells > .slick-cell`).should('have.length', 1);
+    cy.get(`${row0} .slick-pinned-right-cells > .slick-cell.l6`).should('not.exist');
+    cy.get(`${row0} .slick-pinned-right-cells > .slick-cell.l8`).should('contain', 'Action');
+    cy.get('#grid20 .slick-header-columns-right [data-id="cityOfOrigin"]').should('not.exist');
+    cy.get('#grid20 .slick-header-columns-right [data-id="cost"]').should('not.exist');
+    cy.get('#grid20 .slick-header-columns-right [data-id="action"]').should('contain', 'Action');
+
+    cy.get('#grid20').find('button.slick-grid-menu-button').click({ force: true });
+    cy.contains('.slick-grid-menu:visible .slick-column-picker-list li', 'City of Origin (not pinnable)')
+      .children('label')
+      .click({ force: true });
+    cy.get('.slick-grid-menu:visible .close').click({ force: true });
+    setRightPinning(1);
+  });
+
   it('should hide "Title" column from Grid Menu and expect last pinned column to be "% Complete"', () => {
     const newColumnList = [
       'Sel',
@@ -294,12 +315,7 @@ describe('Example 20 - Pinned Grid', () => {
   it('should show again "Title" column from Column Picker and expect last pinned column to still be "% Complete"', () => {
     cy.get('#grid20').find('.slick-header-column:nth(4)').trigger('mouseover').trigger('contextmenu').invoke('show');
 
-    cy.get('.slick-column-picker')
-      .find('.slick-column-picker-list')
-      .children('li:nth-of-type(2)')
-      .children('label')
-      .should('contain', 'Title')
-      .click();
+    cy.contains('.slick-column-picker .slick-column-picker-list li', 'Title').children('label').click();
 
     cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
 
@@ -732,7 +748,7 @@ describe('Example 20 - Pinned Grid', () => {
   it('should be able to uncheck "Title" column without any alert', () => {
     cy.get('#grid20').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
     const updatedColumns = ['', '% Complete', 'Action'];
-    cy.get('.slick-column-picker-list li:not(.hidden) .checkbox-picker-label').first().click();
+    cy.contains('.slick-column-picker-list li:not(.hidden) .checkbox-picker-label', 'Title').click();
     cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
     cy.get('.slick-header-columns:nth(0) .slick-header-column').each(($child, index) => expect($child.text()).to.eq(updatedColumns[index]));
   });
@@ -740,7 +756,7 @@ describe('Example 20 - Pinned Grid', () => {
   it('should be able to add back hidden "Title" column without any alert', () => {
     const updatedColumns = ['', 'Title', '% Complete', 'Action'];
     cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
-    cy.get('.slick-column-picker-list li:not(.hidden) .checkbox-picker-label').first().click();
+    cy.contains('.slick-column-picker-list li:not(.hidden) .checkbox-picker-label', 'Title').click();
     cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
     cy.get('.slick-header-columns:nth(0) .slick-header-column').each(($child, index) => expect($child.text()).to.eq(updatedColumns[index]));
   });

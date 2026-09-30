@@ -18,7 +18,7 @@ For scroll-activated docking, see [Sticky Columns and Rows](sticky.md). Sticky c
 The built-in Column Pinning Header Menu is enabled automatically when `pinning` is defined. Set `headerMenu.showPinningCommands: true` when the menu should be available before any pin state is configured. Set `headerMenu.showPinningCommands: false` for programmatic-only pinning, and use `headerMenu.hideCommands` for individual command visibility.
 
 ## Columns/Rows Pinning basic
-To configure pinning for the entire lifetime of the grid, use the nested `pinning` Grid Option. The left and right column values accept an inclusive column boundary or explicit column IDs. A row reference is an index (`5`), a string dataset ID (`'order-5'`), or `{ id: 5 }` for a numeric dataset ID; a bare number always means an index.
+To configure pinning for the entire lifetime of the grid, use the nested `pinning` Grid Option. A numeric left value is an inclusive boundary among visible columns; a numeric right value is a count from the trailing edge of the visible columns. Numeric boundaries are recalculated when columns are hidden. Use explicit arrays to pin specific columns: numeric entries are zero-based indexes, while string entries are column IDs (use a string for a numeric column ID). Explicit IDs keep the same columns pinned when visibility or order changes.
 
 Explicit column and row references do not need to be contiguous. For example, `columns.left: ['account', 'status']` pins only those columns, while `rows.top: [0, 2, 4]` pins only those rows. Pinned rows remain part of the normal dataset height, and the unpinned rows are laid out contiguously so skipped row indexes do not create blank gaps.
 

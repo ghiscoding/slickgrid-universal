@@ -911,11 +911,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._focusSink2 = this._focusSink.cloneNode(true) as HTMLDivElement;
     focusSinkParent.appendChild(this._focusSink2);
 
+    this.applyRTL(this._options.rtl ?? false);
     if (!this._options.explicitInitialization) {
       this.finishInitialization();
     }
-
-    this.applyRTL(this._options.rtl ?? false);
   }
 
   protected finishInitialization(): void {
@@ -3063,8 +3062,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected hasConfiguredColumnDocking(): boolean {
     const configuredColumns = this._options.pinning?.columns;
     return !!(
-      this.normalizeColumnPinningReferences(configuredColumns?.left, 'left', this.columns.length).length ||
-      this.normalizeColumnPinningReferences(configuredColumns?.right, 'right', this.columns.length).length ||
+      this.normalizeColumnPinningReferences(configuredColumns?.left, 'left', this.columns).length ||
+      this.normalizeColumnPinningReferences(configuredColumns?.right, 'right', this.columns).length ||
       this.columns.some((column) => !!column && (column.pinned || column.sticky))
     );
   }
@@ -4022,8 +4021,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const configuredColumns = this._options.pinning?.columns;
 
     if (configuredColumns !== undefined) {
-      const leftRefs = new Set(this.normalizeColumnPinningReferences(configuredColumns.left, 'left', columns.length));
-      const rightRefs = new Set(this.normalizeColumnPinningReferences(configuredColumns.right, 'right', columns.length));
+      const leftIndexes = new Set(this.normalizeColumnPinningReferences(configuredColumns.left, 'left', columns));
+      const rightIndexes = new Set(this.normalizeColumnPinningReferences(configuredColumns.right, 'right', columns));
 
       columns.forEach((column, index) => {
         if (!column) {
@@ -4033,8 +4032,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           this.pinningColumnsState.set(column.id, column.pinned);
         }
 
-        const isLeftPinned = leftRefs.has(index) || leftRefs.has(column.id);
-        const isRightPinned = rightRefs.has(index) || rightRefs.has(column.id);
+        const isLeftPinned = leftIndexes.has(index);
+        const isRightPinned = rightIndexes.has(index);
         column.pinned = isLeftPinned ? 'left' : isRightPinned ? 'right' : null;
       });
       return;
@@ -4059,25 +4058,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const pinnedIndexes = new Map<number, DockingSide>();
     const configured = configuredColumns ?? this._options.pinning?.columns;
     if (configured !== undefined) {
-      const leftReferences = this.normalizeColumnPinningReferences(configured.left, 'left', columnDefinitions.length);
-      const rightReferences = this.normalizeColumnPinningReferences(configured.right, 'right', columnDefinitions.length);
-      const resolveColumnIndex = (reference: number | string) =>
-        typeof reference === 'number' ? reference : columnDefinitions.findIndex((column) => column && String(column.id) === reference);
-      leftReferences.forEach((reference) => {
-        const index = resolveColumnIndex(reference);
-        if (index >= 0 && index < columnDefinitions.length && columnDefinitions[index] && !columnDefinitions[index].hidden) {
+      const leftIndexes = this.normalizeColumnPinningReferences(configured.left, 'left', columnDefinitions);
+      const rightIndexes = this.normalizeColumnPinningReferences(configured.right, 'right', columnDefinitions);
+      leftIndexes.forEach((index) => {
+        if (columnDefinitions[index] && !columnDefinitions[index].hidden) {
           pinnedIndexes.set(index, 'left');
         }
       });
-      rightReferences.forEach((reference) => {
-        const index = resolveColumnIndex(reference);
-        if (
-          index >= 0 &&
-          index < columnDefinitions.length &&
-          columnDefinitions[index] &&
-          !columnDefinitions[index].hidden &&
-          !pinnedIndexes.has(index)
-        ) {
+      rightIndexes.forEach((index) => {
+        if (columnDefinitions[index] && !columnDefinitions[index].hidden && !pinnedIndexes.has(index)) {
           pinnedIndexes.set(index, 'right');
         }
       });
@@ -4236,22 +4225,28 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     });
   }
 
-  /** Normalize a numeric edge shorthand to the explicit indexes consumed by the docking resolver. */
-  protected normalizeColumnPinningReferences(
-    references: ColumnPinningReferences | undefined,
-    side: DockingSide,
-    columnCount: number
-  ): Array<number | string> {
+  /** Resolve numeric visible-column boundaries or explicit references to column indexes. */
+  protected normalizeColumnPinningReferences(references: ColumnPinningReferences | undefined, side: DockingSide, columns: C[]): number[] {
     if (Array.isArray(references)) {
-      return [...references];
+      return references.flatMap((reference) => {
+        if (typeof reference === 'number') {
+          return Number.isInteger(reference) && reference >= 0 && reference < columns.length ? [reference] : [];
+        }
+        const index = columns.findIndex((column) => column && String(column.id) === reference);
+        return index >= 0 ? [index] : [];
+      });
     }
-    if (typeof references !== 'number' || !Number.isInteger(references) || references < 0 || columnCount === 0) {
+    if (typeof references !== 'number' || !Number.isInteger(references) || references < 0) {
       return [];
     }
+
+    const visibleIndexes = this.getVisibleColumnIndexes(columns);
     const requestedCount = side === 'left' ? references + 1 : references;
-    const count = Math.min(requestedCount, columnCount);
-    const firstIndex = side === 'left' ? 0 : columnCount - count;
-    return Array.from({ length: count }, (_value, index) => firstIndex + index);
+    const count = Math.min(requestedCount, visibleIndexes.length);
+    if (count === 0) {
+      return [];
+    }
+    return side === 'left' ? visibleIndexes.slice(0, count) : visibleIndexes.slice(-count);
   }
 
   protected updateColumnCaches(): void {
@@ -4696,17 +4691,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // Keep the unified option authoritative when callers change a column
     // interactively (for example through the Header Menu).
     if (this._options.pinning?.columns !== undefined) {
-      const removeReference = (reference: number | string) => reference !== column.id && reference !== columnIndex;
-      const left = this.normalizeColumnPinningReferences(this._options.pinning.columns.left, 'left', this.columns.length).filter(
-        removeReference
-      );
-      const right = this.normalizeColumnPinningReferences(this._options.pinning.columns.right, 'right', this.columns.length).filter(
-        removeReference
-      );
+      const idsOf = (references: PinnedColumns['left'], side: DockingSide) =>
+        this.normalizeColumnPinningReferences(references, side, this.columns)
+          .filter((index) => index !== columnIndex)
+          .map((index) => String(this.columns[index].id));
+      const left = idsOf(this._options.pinning.columns.left, 'left');
+      const right = idsOf(this._options.pinning.columns.right, 'right');
       if (pinned === 'left') {
-        left.push(column.id);
+        left.push(String(column.id));
       } else if (pinned === 'right') {
-        right.push(column.id);
+        right.push(String(column.id));
       }
       this._options.pinning.columns = { left, right };
     }
@@ -5280,7 +5274,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       y,
       (this.th || 0) -
         (Utils.height(this._viewportScrollContainerY) as number) +
-        (this.viewportHasHScroll ? this.scrollbarDimensions?.height || 0 : 0)
+        (this.viewportHasHScroll && !this.hasDockingHorizontalScroller() ? this.scrollbarDimensions?.height || 0 : 0)
     );
 
     const oldOffset = this.offset;
@@ -5295,18 +5289,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.cleanupRows(range);
     }
 
-    if (this.prevScrollTop !== newScrollTop) {
-      this.vScrollDir = this.prevScrollTop + oldOffset < newScrollTop + this.offset ? 1 : -1;
-      this.scrollTop = this.prevScrollTop = newScrollTop;
+    if (this._viewportScrollContainerY) {
+      this._viewportScrollContainerY.scrollTop = newScrollTop;
+    }
+    const committedScrollTop = this._viewportScrollContainerY?.scrollTop ?? newScrollTop;
+
+    if (this.prevScrollTop !== committedScrollTop) {
+      this.vScrollDir = this.prevScrollTop + oldOffset < committedScrollTop + this.offset ? 1 : -1;
+      this.scrollTop = this.prevScrollTop = committedScrollTop;
 
       if (this.hasDockedColumns() || this.rowDockingLayout.bottom.length > 0) {
-        this._viewportNode.scrollTop = newScrollTop;
+        this._viewportNode.scrollTop = committedScrollTop;
       }
-
-      if (this._viewportScrollContainerY) {
-        this._viewportScrollContainerY.scrollTop = newScrollTop;
-      }
-
       this.triggerEvent(this.onViewportChanged, {});
     }
 
@@ -9145,12 +9139,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // range-selector auto-scroll stall at scrollTop 0.
       const viewportScrollH = Math.max(
         0,
-        (Utils.height(this._viewportScrollContainerY) as number) - this.rowDockingLayout.topHeight - this.rowDockingLayout.bottomHeight
+        this._viewportScrollContainerY.clientHeight - this.rowDockingLayout.topHeight - this.rowDockingLayout.bottomHeight
       );
 
       const rowAtTop = this.getRenderedRowTop(row) + this.offset - this.rowDockingLayout.topHeight;
       const rowBottomPosition = rowAtTop + this.getRowHeight(row);
-      const rowAtBottom = rowBottomPosition - viewportScrollH + (this.viewportHasHScroll ? this.scrollbarDimensions?.height || 0 : 0);
+      const rowAtBottom = rowBottomPosition - viewportScrollH;
 
       // need to page down?
       if (rowBottomPosition > this.scrollTop + viewportScrollH + this.offset) {

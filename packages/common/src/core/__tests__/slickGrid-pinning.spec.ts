@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Column, GridOption } from '../../interfaces/index.js';
+import { Utils } from '../slickCore.js';
 import { SlickGrid } from '../slickGrid.js';
 
 const columns: Column[] = [
@@ -56,6 +57,21 @@ describe('SlickGrid unified pinning', () => {
     expect((slickGrid as any)._contentRoot.style.left).toBe('');
     expect((slickGrid as any)._contentRoot.style.width).toBe('100%');
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
+  });
+
+  it('applies RTL before the first implicit layout', () => {
+    const originalFinishInitialization = (SlickGrid.prototype as any).finishInitialization;
+    const finishInitializationSpy = vi.spyOn(SlickGrid.prototype as any, 'finishInitialization').mockImplementation(function (this: any) {
+      expect(this._container.getAttribute('dir')).toBe('rtl');
+      return originalFinishInitialization.call(this);
+    });
+
+    try {
+      createGrid({ rtl: true });
+      expect(finishInitializationSpy).toHaveBeenCalledOnce();
+    } finally {
+      finishInitializationSpy.mockRestore();
+    }
   });
 
   it('renders and hit-tests a colspan crossing the leading pinned boundary in RTL', () => {
@@ -994,6 +1010,102 @@ describe('SlickGrid unified pinning', () => {
     expect(internals.rejectPinning(undefined, 'no callback', true)).toBe(false);
   });
 
+  it('clamps proxy scrolling and records the browser-committed scroll position', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: ['a'] } } });
+    const internals = slickGrid as any;
+    const scrollOwner = internals._viewportScrollContainerY;
+    let committedScrollTop = 0;
+    Object.defineProperty(scrollOwner, 'scrollTop', {
+      configurable: true,
+      get: () => committedScrollTop,
+      set: (value: number) => {
+        committedScrollTop = Math.min(value, 850);
+      },
+    });
+
+    internals.th = 1000;
+    internals.ph = 0;
+    internals.n = 0;
+    internals.offset = 0;
+    internals.scrollTop = 0;
+    internals.prevScrollTop = 0;
+    internals.viewportHasHScroll = true;
+    internals.scrollbarDimensions = { width: 15, height: 15 };
+    const heightSpy = vi.spyOn(Utils, 'height').mockReturnValue(100);
+    const dockingScrollerSpy = vi.spyOn(internals, 'hasDockingHorizontalScroller').mockReturnValue(true);
+    const pageOffsetSpy = vi.spyOn(internals, 'getPageOffset').mockReturnValue(0);
+
+    try {
+      slickGrid.scrollTo(2000);
+
+      // The proxy owns horizontal scrolling, so its viewport has no native horizontal
+      // scrollbar to subtract. The owner then clamps the requested 900px to 850px.
+      expect(committedScrollTop).toBe(850);
+      expect(internals.scrollTop).toBe(850);
+      expect(internals.prevScrollTop).toBe(850);
+    } finally {
+      heightSpy.mockRestore();
+      dockingScrollerSpy.mockRestore();
+      pageOffsetSpy.mockRestore();
+    }
+  });
+
+  it('uses the requested scroll position when the scroll owner is unavailable', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+    const scrollOwner = internals._viewportScrollContainerY;
+    internals._viewportScrollContainerY = undefined;
+    internals.th = 1000;
+    internals.ph = 0;
+    internals.n = 0;
+    internals.offset = 0;
+    internals.scrollTop = 0;
+    internals.prevScrollTop = 0;
+    const heightSpy = vi.spyOn(Utils, 'height').mockReturnValue(100);
+    const pageOffsetSpy = vi.spyOn(internals, 'getPageOffset').mockReturnValue(0);
+
+    try {
+      slickGrid.scrollTo(500);
+      expect(internals.scrollTop).toBe(500);
+      expect(internals.prevScrollTop).toBe(500);
+    } finally {
+      internals._viewportScrollContainerY = scrollOwner;
+      heightSpy.mockRestore();
+      pageOffsetSpy.mockRestore();
+    }
+  });
+
+  it('uses the scroll owner client height when scrolling a row into view', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+    const scrollOwner = internals._viewportScrollContainerY;
+    Object.defineProperty(scrollOwner, 'clientHeight', { configurable: true, value: 100 });
+    internals.viewportHasHScroll = true;
+    internals.scrollbarDimensions = { width: 15, height: 15 };
+    internals.scrollTop = 0;
+    internals.offset = 0;
+    internals.rowDockingLayout.topHeight = 0;
+    internals.rowDockingLayout.bottomHeight = 0;
+    const heightSpy = vi.spyOn(Utils, 'height').mockReturnValue(400);
+    const topSpy = vi.spyOn(internals, 'getRenderedRowTop').mockReturnValue(500);
+    const rowHeightSpy = vi.spyOn(internals, 'getRowHeight').mockReturnValue(20);
+    const scrollSpy = vi.spyOn(slickGrid, 'scrollTo').mockImplementation(() => undefined);
+    const renderSpy = vi.spyOn(slickGrid, 'render').mockImplementation(() => undefined);
+
+    try {
+      slickGrid.scrollRowIntoView(1);
+
+      expect(scrollSpy).toHaveBeenCalledWith(420);
+      expect(renderSpy).toHaveBeenCalledOnce();
+    } finally {
+      heightSpy.mockRestore();
+      topSpy.mockRestore();
+      rowHeightSpy.mockRestore();
+      scrollSpy.mockRestore();
+      renderSpy.mockRestore();
+    }
+  });
+
   it('covers compatibility getters, scrollTo, option rejection, and wheel setup', () => {
     const invalidPicker = vi.fn();
     const slickGrid = createGrid({ invalidColumnPinningPickerCallback: invalidPicker });
@@ -1297,13 +1409,37 @@ describe('SlickGrid unified pinning', () => {
     expect(invalidPinning).toHaveBeenCalled();
   });
 
-  it('normalizes numeric boundaries against the full column list', () => {
+  it('normalizes numeric boundaries against visible columns', () => {
     const slickGrid = createGrid();
     const internals = slickGrid as any;
-    const hiddenColumns = slickGrid.getColumns().map((column) => ({ ...column, hidden: true }));
+    const hiddenColumns = slickGrid.getColumns().map((column, index) => ({ ...column, hidden: index === 1 }));
+    const allHiddenColumns = slickGrid.getColumns().map((column) => ({ ...column, hidden: true }));
 
-    expect(internals.normalizeColumnPinningReferences(0, 'right', slickGrid.getColumns().length)).toEqual([]);
-    expect(internals.normalizeColumnPinningReferences(1, 'left', hiddenColumns.length)).toEqual([0, 1]);
+    expect(internals.normalizeColumnPinningReferences(0, 'right', slickGrid.getColumns())).toEqual([]);
+    expect(internals.normalizeColumnPinningReferences(1, 'left', hiddenColumns)).toEqual([0, 2]);
+    expect(internals.normalizeColumnPinningReferences(2, 'right', hiddenColumns)).toEqual([2, 3]);
+    expect(internals.normalizeColumnPinningReferences(1, 'left', allHiddenColumns)).toEqual([]);
+  });
+
+  it('treats numeric array references as indexes even when a column has the same numeric id', () => {
+    const numericIdColumns: Column[] = [
+      { id: 1, field: 'a', name: 'Numeric id one', width: 80 },
+      { id: 'b', field: 'b', name: 'B', width: 80 },
+      { id: 'c', field: 'c', name: 'C', width: 80 },
+    ];
+    const slickGrid = createGrid({ pinning: { columns: { left: [1] } } }, numericIdColumns);
+
+    expect(slickGrid.getColumns().map((column) => column.pinned)).toEqual([null, 'left', null]);
+  });
+
+  it('resolves a string reference to a numeric column id', () => {
+    const numericIdColumns: Column[] = [
+      { id: 1, field: 'a', name: 'Numeric id one', width: 80 },
+      { id: 'b', field: 'b', name: 'B', width: 80 },
+    ];
+    const slickGrid = createGrid({ pinning: { columns: { left: ['1'] } } }, numericIdColumns);
+
+    expect(slickGrid.getColumns().map((column) => column.pinned)).toEqual(['left', null]);
   });
   it('finds a docked row region when its cached regions are unavailable', () => {
     const slickGrid = createGrid({ pinning: { columns: { left: ['a'], right: ['d'] } } });
@@ -1326,11 +1462,31 @@ describe('SlickGrid unified pinning', () => {
     expect([...indexes]).toEqual([[1, 'right']]);
   });
 
-  it('keeps numeric right pinning on the original trailing columns after hiding one', () => {
+  it('keeps the requested visible count on the trailing edge after hiding a pinned column', () => {
     const slickGrid = createGrid({ pinning: { columns: { right: 2 } } });
     slickGrid.updateColumnById('c', { hidden: true });
-    expect((slickGrid as any).getPinnedColumnIndexes().get(2)).toBeUndefined();
-    expect((slickGrid as any).getPinnedColumnIndexes().get(3)).toBe('right');
+    const pinnedIndexes = (slickGrid as any).getPinnedColumnIndexes() as Map<number, string>;
+
+    expect([...pinnedIndexes]).toEqual([
+      [1, 'right'],
+      [3, 'right'],
+    ]);
+  });
+
+  it('converts existing interactive pin references to IDs so they survive a reorder', () => {
+    const slickGrid = createGrid({ pinning: { columns: { left: [0, 2], right: [] } } });
+
+    slickGrid.setColumnPinning('d', 'right');
+
+    expect(slickGrid.getOptions().pinning?.columns).toEqual({ left: ['a', 'c'], right: ['d'] });
+
+    const reorderedColumns = [...slickGrid.getColumns()].reverse();
+    slickGrid.setColumns(reorderedColumns);
+    expect(reorderedColumns.filter((column) => column.pinned === 'left').map((column) => column.id)).toEqual(['c', 'a']);
+    expect(reorderedColumns.filter((column) => column.pinned === 'right').map((column) => column.id)).toEqual(['d']);
+
+    slickGrid.setColumnPinning('a', null);
+    expect(slickGrid.getOptions().pinning?.columns?.left).toEqual(['c']);
   });
 
   it('removes the docking proxy and chrome regions when pinning is cleared', () => {
