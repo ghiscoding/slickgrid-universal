@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.0...v10.11.1) (2026-09-30)
+
+### Bug Fixes
+
+* **plugin:** hide open Row Detail when parent row is filtered out ([#2804](https://github.com/ghiscoding/slickgrid-universal/issues/2804)) ([85d6b37](https://github.com/ghiscoding/slickgrid-universal/commit/85d6b37b8c08d3dccf30ea1299243a6ddff7bbe3)) - by @ghiscoding
+
 ## [10.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.10.0...v10.11.0) (2026-09-15)
 
 ### Bug Fixes
