@@ -151,7 +151,26 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         id: lerna-publish
-        run: pnpm exec ${{ env.LERNA_PUBLISH_QUERY }}
+        run: |
+          for attempt in 1 2 3; do
+            if output=$(pnpm exec ${{ env.LERNA_PUBLISH_QUERY }} 2>&1); then
+              printf '%s\n' "$output"
+              exit 0
+            fi
+
+            printf '%s\n' "$output"
+            if ! grep -q 'TLOG_CREATE_ENTRY_ERROR' <<< "$output"; then
+              exit 1
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              echo "Sigstore transparency-log conflict on attempt $attempt; retrying in 20 seconds."
+              sleep 20
+            fi
+          done
+
+          echo "Lerna publish failed after 3 Sigstore transparency-log retries." >&2
+          exit 1
 
       - name: Website Dev Build
         run: pnpm build:dev
