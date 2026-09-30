@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.0...v10.11.1) (2026-09-30)
+
+### Bug Fixes
+
+* **a11y:** don't close date filter picker on Tab for a11y ([#2801](https://github.com/ghiscoding/slickgrid-universal/issues/2801)) ([75cfac7](https://github.com/ghiscoding/slickgrid-universal/commit/75cfac7db7c4b14dd924e1f0c70b5b1a5ffcdaa3)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2812](https://github.com/ghiscoding/slickgrid-universal/issues/2812)) ([0b3a9f6](https://github.com/ghiscoding/slickgrid-universal/commit/0b3a9f68185833fe2c15d1fa887b23878253c3d3)) - by @renovate-bot
+* **deps:** upgrade vanilla-calendar-pro to v3.4.0 w/optional extensions ([#2800](https://github.com/ghiscoding/slickgrid-universal/issues/2800)) ([bca8e4c](https://github.com/ghiscoding/slickgrid-universal/commit/bca8e4c882d041f2948478c2916a34abfbb80a3c)) - by @ghiscoding
+* **selection:** preserve active cell when selecting all cells ([#2799](https://github.com/ghiscoding/slickgrid-universal/issues/2799)) ([a57a758](https://github.com/ghiscoding/slickgrid-universal/commit/a57a7583c8e2d96046e30df02b92f03cc149f33a)) - by @ghiscoding
+* **styles:** load modular vanilla-calendar-pro CSS parts not full CSS ([#2802](https://github.com/ghiscoding/slickgrid-universal/issues/2802)) ([8993f69](https://github.com/ghiscoding/slickgrid-universal/commit/8993f69472f92164b0e902512b0055bc7162252c)) - by @ghiscoding
+
 ## [10.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.10.0...v10.11.0) (2026-09-15)
 
 ### Features
