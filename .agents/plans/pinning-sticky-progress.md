@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness — implementation progress
 
-Last updated: 2026-09-19 (6pac PR #1302 regression-fix port)
+Last updated: 2026-09-30 (docked colspan scroll-after-resize regression)
 
 ## Goal
 
@@ -16,6 +16,20 @@ Replace SlickGrid's multi-pane column/row architecture with an AG Grid-style doc
 - permanent pinning and scroll-activated stickiness use the same internal docking resolver;
 - vertical and horizontal virtualization must remain viable for large datasets;
 - this is intentionally a major-version breaking change; compatibility with the old pane renderer is not a design goal.
+
+## Docked colspan scroll after column resize (2026-09-30)
+
+- Removed the extra `translate3d(scrollLeft)` from center-band colspan continuation fragments.
+  The center band already moves with the docking horizontal scroller, so the transform canceled
+  its natural scroll and left the continuation boundary and copied text behind.
+- Added matching regression coverage to Vanilla Example 08 and Angular, React, Vue, and Aurelia
+  Example 14. Each spec pins Title and Duration, resizes Start and Finish, scrolls horizontally,
+  and checks that the continuation boundary and copied text follow the scroll. Framework tests
+  verify the requested widths changed and restore them after the check.
+- The post-resize boundary check allows a 4px CSS-pixel offset, while a separate 1px assertion
+  verifies the copied text tracks the continuation itself.
+- User-reported browser validation: Vanilla and two framework suites passed. The other framework
+  suites were not explicitly confirmed after the final tolerance adjustment.
 
 ## 6pac PR #1302 regression-fix port (2026-09-19)
 
