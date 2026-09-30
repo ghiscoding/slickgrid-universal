@@ -21,8 +21,7 @@ describe('Example 04 - Pinned Grid', () => {
     'City of Origin (not pinnable)',
     'Action',
   ];
-  const getCell = (rowIndex: number, columnIndex: number) =>
-    cy.get(`.grid4 .slick-row[data-row="${rowIndex}"] .slick-cell.l${columnIndex}`);
+  const getCell = (rowIndex: number, columnIndex: number) => cy.get(`.slick-row[data-row="${rowIndex}"] .slick-cell.l${columnIndex}`);
   const setRightPinning = (count: number) => {
     cy.get('.pinned-right-column-count').select(`${count}`);
   };
@@ -33,15 +32,13 @@ describe('Example 04 - Pinned Grid', () => {
   });
 
   it('should have exact column titles on 1st grid', () => {
-    cy.get('.grid4')
-      .find('.slick-header-columns .slick-header-column')
-      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
+    cy.get('.slick-header-columns .slick-header-column').each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
   });
 
   it('should have exact Column Header Titles in the grid', () => {
-    cy.get('.grid4')
-      .find('.slick-header-columns:nth(0) .slick-header-column')
-      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
+    cy.get('.slick-header-columns:nth(0) .slick-header-column').each(($child, index) =>
+      expect($child.text()).to.eq(withTitleRowTitles[index])
+    );
   });
 
   it('should not show Column Pinning for the non-pinnable City of Origin column', () => {
@@ -53,12 +50,12 @@ describe('Example 04 - Pinned Grid', () => {
   });
 
   it('should have top/bottom-pinned rows and left/center/right cells on page load', () => {
-    const row0 = '.grid4 .slick-row[data-row="0"]';
+    const row0 = '.slick-row[data-row="0"]';
 
     // Pinning uses one row node split into regions and a single docking overlay;
     // it no longer duplicates rows into legacy left/right pinned canvases.
-    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-top').should('have.length', 3);
-    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-bottom').should('have.length', 2);
+    cy.get('.slick-docking-overlay > .slick-row.slick-row-pinned-top').should('have.length', 3);
+    cy.get('.slick-docking-overlay > .slick-row.slick-row-pinned-bottom').should('have.length', 2);
     cy.get(`${row0} .slick-pinned-left-cells > .slick-cell`).should('have.length', 3);
     cy.get(`${row0} .slick-scrolling-cells > .slick-cell`).should('have.length', 5);
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell`).should('have.length', 1);
@@ -72,10 +69,10 @@ describe('Example 04 - Pinned Grid', () => {
   });
 
   it('should keep the docked-row overlay inside the viewport', () => {
-    cy.get('.grid4 .slick-viewport').then(($viewport) => {
+    cy.get('.slick-viewport').then(($viewport) => {
       const viewport = $viewport[0] as HTMLElement;
       const viewportRect = viewport.getBoundingClientRect();
-      cy.get('.grid4 .slick-docking-overlay').should(($overlay) => {
+      cy.get('.slick-docking-overlay').should(($overlay) => {
         const overlay = $overlay[0] as HTMLElement;
         const overlayRect = overlay.getBoundingClientRect();
         expect(overlay.parentElement, 'overlay parent').to.eq(viewport);
@@ -86,7 +83,7 @@ describe('Example 04 - Pinned Grid', () => {
         expect(overlay.style.clipPath, 'no clip-path workaround').to.eq('');
         expect(getComputedStyle(viewport).overflowX).to.eq('hidden');
       });
-      cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-top')
+      cy.get('.slick-docking-overlay .slick-row.slick-row-pinned-top')
         .first()
         .should(($row) => {
           expect($row[0].getBoundingClientRect().top).to.be.closeTo(viewportRect.top, 1);
@@ -96,12 +93,12 @@ describe('Example 04 - Pinned Grid', () => {
 
   it('should move index-based pinned rows when filtering shortens the DataView', () => {
     // Task 1, Task 10-19 and Task 100-199 yield 111 matching rows in this fixture.
-    const titleFilter = '.grid4 .slick-headerrow-column input[data-columnid="title"]';
+    const titleFilter = '.slick-headerrow-column input[data-columnid="title"]';
     cy.get(titleFilter).type('Task 1');
 
-    cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-top').should('have.length', 3);
-    cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-bottom').should('have.length', 2);
-    cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-bottom .slick-cell.l1').last().should('contain', 'Task 199');
+    cy.get('.slick-docking-overlay .slick-row.slick-row-pinned-top').should('have.length', 3);
+    cy.get('.slick-docking-overlay .slick-row.slick-row-pinned-bottom').should('have.length', 2);
+    cy.get('.slick-docking-overlay .slick-row.slick-row-pinned-bottom .slick-cell.l1').last().should('contain', 'Task 199');
 
     // This suite is serial; restore the complete fixture for following cases.
     cy.get(titleFilter).clear();
@@ -109,35 +106,35 @@ describe('Example 04 - Pinned Grid', () => {
 
   it('should clear top-pinned rows when selecting zero rows', () => {
     cy.get('.pinned-top-row-count').select('0');
-    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-top').should('not.exist');
+    cy.get('.slick-docking-overlay > .slick-row.slick-row-pinned-top').should('not.exist');
 
     cy.get('.pinned-top-row-count').select('3');
-    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-top').should('have.length', 3);
+    cy.get('.slick-docking-overlay > .slick-row.slick-row-pinned-top').should('have.length', 3);
   });
 
   it('should independently update and clear bottom-pinned rows', () => {
     cy.get('.pinned-bottom-row-count').select('0');
-    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-bottom').should('not.exist');
+    cy.get('.slick-docking-overlay > .slick-row.slick-row-pinned-bottom').should('not.exist');
 
     cy.get('.pinned-bottom-row-count').select('2');
-    cy.get('.grid4 .slick-docking-overlay > .slick-row.slick-row-pinned-bottom').should('have.length', 2);
-    cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-bottom[data-row="498"] .slick-cell.l1').should('contain', 'Task 498');
-    cy.get('.grid4 .slick-docking-overlay .slick-row.slick-row-pinned-bottom[data-row="499"] .slick-cell.l1').should('contain', 'Task 499');
+    cy.get('.slick-docking-overlay > .slick-row.slick-row-pinned-bottom').should('have.length', 2);
+    cy.get('.slick-docking-overlay .slick-row.slick-row-pinned-bottom[data-row="498"] .slick-cell.l1').should('contain', 'Task 498');
+    cy.get('.slick-docking-overlay .slick-row.slick-row-pinned-bottom[data-row="499"] .slick-cell.l1').should('contain', 'Task 499');
   });
 
   it('should pin multiple columns on the right and render matching header and filter regions', () => {
     setRightPinning(2);
 
-    const row0 = '.grid4 .slick-row[data-row="0"]';
+    const row0 = '.slick-row[data-row="0"]';
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell`).should('have.length', 2);
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell.l7`).should('contain', 'Boston');
     cy.get(`${row0} .slick-pinned-right-cells > .slick-cell.l8 .cell-menu-dropdown`).should('contain', 'Action');
 
-    cy.get('.grid4 .slick-header-columns-right .slick-header-column').should('have.length', 2);
-    cy.get('.grid4 .slick-header-columns-right [data-id="cityOfOrigin"]').should('contain', 'City of Origin (not pinnable)');
-    cy.get('.grid4 .slick-header-columns-right [data-id="action"]').should('contain', 'Action');
-    cy.get('.grid4 .slick-headerrow-columns-right .slick-headerrow-column').should('have.length', 2);
-    cy.get('.grid4 .slick-headerrow-columns-right .slick-headerrow-column.l7 input').should('exist');
+    cy.get('.slick-header-columns-right .slick-header-column').should('have.length', 2);
+    cy.get('.slick-header-columns-right [data-id="cityOfOrigin"]').should('contain', 'City of Origin (not pinnable)');
+    cy.get('.slick-header-columns-right [data-id="action"]').should('contain', 'Action');
+    cy.get('.slick-headerrow-columns-right .slick-headerrow-column').should('have.length', 2);
+    cy.get('.slick-headerrow-columns-right .slick-headerrow-column.l7 input').should('exist');
 
     setRightPinning(1);
   });
@@ -147,17 +144,17 @@ describe('Example 04 - Pinned Grid', () => {
     // The default fixture fits in the viewport, so use the demo's wide layout
     // to exercise an actual horizontal scroll rather than a no-op scroll.
     cy.get('[data-test="set-large-pinned-columns"]').click();
-    const actionCell = '.grid4 .slick-row[data-row="10"] .slick-pinned-right-cells .slick-cell.l8';
+    const actionCell = '.slick-row[data-row="10"] .slick-pinned-right-cells .slick-cell.l8';
 
     cy.get(actionCell).then(($cell) => {
       const rightEdge = $cell[0].getBoundingClientRect().right;
-      cy.get('.grid4 .slick-horizontal-scroller').scrollTo('right');
+      cy.get('.slick-horizontal-scroller').scrollTo('right');
       cy.get(actionCell).should(($scrolledCell) => {
         expect(Math.abs($scrolledCell[0].getBoundingClientRect().right - rightEdge)).to.be.lessThan(2);
       });
     });
 
-    cy.get('.grid4 .slick-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
+    cy.get('.slick-horizontal-scroller').scrollTo(0, 0, { ensureScrollable: false });
     // Restore the initial fixture after exercising the wide layout so the
     // following serial tests do not inherit resized columns.
     cy.visit(`${Cypress.config('baseUrl')}/example04`);
@@ -185,12 +182,12 @@ describe('Example 04 - Pinned Grid', () => {
         });
     };
 
-    resizeColumn('.grid4 .slick-header-columns-left [data-id="title"]', 'slick-column-pinned-left');
+    resizeColumn('.slick-header-columns-left [data-id="title"]', 'slick-column-pinned-left');
 
     // Use City of Origin here because Action has a maxWidth of 100px and
     // would correctly refuse a wider resize.
     setRightPinning(2);
-    resizeColumn('.grid4 .slick-header-columns-right [data-id="cityOfOrigin"]', 'slick-column-pinned-right');
+    resizeColumn('.slick-header-columns-right [data-id="cityOfOrigin"]', 'slick-column-pinned-right');
 
     // Keep the following serial tests on the demo's default configuration.
     cy.visit(`${Cypress.config('baseUrl')}/example04`);
@@ -198,32 +195,32 @@ describe('Example 04 - Pinned Grid', () => {
 
   it('should disable and re-enable right pinning through the numeric grid control', () => {
     setRightPinning(0);
-    cy.get('.grid4 .slick-row[data-row="0"] .slick-pinned-right-cells').should('exist');
-    cy.get('.grid4 .slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell').should('not.exist');
-    cy.get('.grid4 .slick-header-columns-right .slick-header-column').should('not.exist');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells').should('exist');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell').should('not.exist');
+    cy.get('.slick-header-columns-right .slick-header-column').should('not.exist');
 
     setRightPinning(1);
-    cy.get('.grid4 .slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell.l8').should('contain', 'Action');
-    cy.get('.grid4 .slick-header-columns-right [data-id="action"]').should('contain', 'Action');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell.l8').should('contain', 'Action');
+    cy.get('.slick-header-columns-right [data-id="action"]').should('contain', 'Action');
   });
 
   it('should retain the numeric right pin count when hiding a right-pinned column', () => {
     setRightPinning(2);
-    cy.get('.grid4 .slick-header-columns-right [data-id="cityOfOrigin"]')
+    cy.get('.slick-header-columns-right [data-id="cityOfOrigin"]')
       .trigger('mouseover')
       .find('.slick-header-menu-button')
       .invoke('show')
       .click();
     cy.get('.slick-header-menu:visible .slick-menu-command-list .slick-menu-item').contains('Hide Column').click();
 
-    cy.get('.grid4 .slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell').should('have.length', 2);
-    cy.get('.grid4 .slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell.l6').should('exist');
-    cy.get('.grid4 .slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell.l8').should('contain', 'Action');
-    cy.get('.grid4 .slick-header-columns-right [data-id="cityOfOrigin"]').should('not.exist');
-    cy.get('.grid4 .slick-header-columns-right [data-id="cost"]').should('exist');
-    cy.get('.grid4 .slick-header-columns-right [data-id="action"]').should('contain', 'Action');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell').should('have.length', 2);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell.l6').should('exist');
+    cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell.l8').should('contain', 'Action');
+    cy.get('.slick-header-columns-right [data-id="cityOfOrigin"]').should('not.exist');
+    cy.get('.slick-header-columns-right [data-id="cost"]').should('exist');
+    cy.get('.slick-header-columns-right [data-id="action"]').should('contain', 'Action');
 
-    cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
+    cy.get('button.slick-grid-menu-button').click({ force: true });
     cy.contains('.slick-grid-menu:visible .slick-column-picker-list li', 'City of Origin (not pinnable)')
       .children('label')
       .click({ force: true });
@@ -242,21 +239,18 @@ describe('Example 04 - Pinned Grid', () => {
       'City of Origin (not pinnable)',
       'Action',
     ];
-    const row0 = '.grid4 .slick-row[data-row="0"]';
+    const row0 = '.slick-row[data-row="0"]';
 
-    cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
+    cy.get('button.slick-grid-menu-button').click({ force: true });
 
-    cy.get('.grid4')
-      .get('.slick-grid-menu:visible')
+    cy.get('.slick-grid-menu:visible')
       .find('.slick-column-picker-list')
       .children('li:visible:nth(0)')
       .children('label')
       .should('contain', 'Title')
       .click({ force: true });
 
-    cy.get('.grid4')
-      .find('.slick-header-columns .slick-header-column')
-      .each(($child, index) => expect($child.text()).to.eq(newColumnList[index]));
+    cy.get('.slick-header-columns .slick-header-column').each(($child, index) => expect($child.text()).to.eq(newColumnList[index]));
 
     cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').children().should('have.length', 3);
     cy.get('.slick-row[data-row="0"] .slick-scrolling-cells').children().should('have.length', 4);
@@ -268,19 +262,16 @@ describe('Example 04 - Pinned Grid', () => {
   });
 
   it('should show again "Title" column from Grid Menu and expect last pinned column to still be "% Complete"', () => {
-    cy.get('.grid4')
-      .get('.slick-grid-menu:visible')
+    cy.get('.slick-grid-menu:visible')
       .find('.slick-column-picker-list')
       .children('li:visible:nth(0)')
       .children('label')
       .should('contain', 'Title')
       .click({ force: true });
 
-    cy.get('.grid4').get('.slick-grid-menu:visible').find('.close').click({ force: true });
+    cy.get('.slick-grid-menu:visible').find('.close').click({ force: true });
 
-    cy.get('.grid4')
-      .find('.slick-header-columns .slick-header-column')
-      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
+    cy.get('.slick-header-columns .slick-header-column').each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
 
     cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').children().should('have.length', 3);
     cy.get('.slick-row[data-row="0"] .slick-scrolling-cells').children().should('have.length', 5);
@@ -305,7 +296,7 @@ describe('Example 04 - Pinned Grid', () => {
       'Action',
     ];
 
-    cy.get('.grid4').find('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+    cy.get('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
@@ -314,9 +305,7 @@ describe('Example 04 - Pinned Grid', () => {
       .should('contain', 'Hide Column')
       .click();
 
-    cy.get('.grid4')
-      .find('.slick-header-columns .slick-header-column')
-      .each(($child, index) => expect($child.text()).to.eq(newColumnList[index]));
+    cy.get('.slick-header-columns .slick-header-column').each(($child, index) => expect($child.text()).to.eq(newColumnList[index]));
 
     cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').children().should('have.length', 3);
     cy.get('.slick-row[data-row="0"] .slick-scrolling-cells').children().should('have.length', 4);
@@ -336,15 +325,13 @@ describe('Example 04 - Pinned Grid', () => {
   });
 
   it('should show again "Title" column from Column Picker and expect last pinned column to still be "% Complete"', () => {
-    cy.get('.grid4').find('.slick-header-column:nth(4)').trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.slick-header-column:nth(4)').trigger('mouseover').trigger('contextmenu').invoke('show');
 
     cy.contains('.slick-column-picker .slick-column-picker-list li', 'Title').children('label').click();
 
     cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
 
-    cy.get('.grid4')
-      .find('.slick-header-columns .slick-header-column')
-      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
+    cy.get('.slick-header-columns .slick-header-column').each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
 
     cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').children().should('have.length', 3);
     cy.get('.slick-row[data-row="0"] .slick-scrolling-cells').children().should('have.length', 6);
@@ -356,10 +343,10 @@ describe('Example 04 - Pinned Grid', () => {
     cy.get('.slick-row[data-row="0"] .slick-scrolling-cells > .slick-cell:nth(1)').should('contain', '2009-05-05');
   });
 
-  it('should click on the "Remove Pinned Columns" button to switch to a regular grid view without pinned columns and expect 7 columns on the left container', () => {
+  it('should click on the "Remove Pinned Columns" button to remove column pinning while keeping pinned-row markup', () => {
     cy.get('[data-test=remove-pinned-column-button]').click({ force: true });
 
-    cy.get('.grid4 .slick-row[data-row="0"]').should('have.length.at.least', 1);
+    cy.get('.slick-row[data-row="0"]').should('have.length.at.least', 1);
     cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').should('exist').and('not.have.class', 'slick-pinned-left-cells-active');
     cy.get('.slick-row[data-row="0"] .slick-scrolling-cells > .slick-cell').should('have.length', 9);
 
@@ -370,9 +357,9 @@ describe('Example 04 - Pinned Grid', () => {
   });
 
   it('should expect to have exact Column Header Titles in the grid', () => {
-    cy.get('.grid4')
-      .find('.slick-header-columns:nth(0) .slick-header-column')
-      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
+    cy.get('.slick-header-columns:nth(0) .slick-header-column').each(($child, index) =>
+      expect($child.text()).to.eq(withTitleRowTitles[index])
+    );
   });
 
   it('should click on the "Set 3 Pinned Columns" button to switch pinned columns grid and expect 3 pinned columns on the left and 4 columns on the right', () => {
@@ -389,19 +376,20 @@ describe('Example 04 - Pinned Grid', () => {
   });
 
   it('should recheck again and still have exact Column Header Titles in the grid', () => {
-    cy.get('.grid4')
-      .find('.slick-header-columns:nth(0) .slick-header-column')
-      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
+    cy.get('.slick-header-columns:nth(0) .slick-header-column').each(($child, index) =>
+      expect($child.text()).to.eq(withTitleRowTitles[index])
+    );
   });
 
-  it('should click on the Grid Menu command "Unpin Columns/Rows" to switch to a regular grid without pinned columns/rows', () => {
-    cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
+  it('should click on the Grid Menu command "Unpin Columns/Rows" to switch to a regular grid without pinned columns/rows and expect regular row markup', () => {
+    cy.get('button.slick-grid-menu-button').click({ force: true });
 
     cy.contains('Unpin Columns/Rows').click({ force: true });
 
-    cy.get('.grid4 .slick-row[data-row="0"]').should('have.length.at.least', 1);
-    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').should('exist').and('not.have.class', 'slick-pinned-left-cells-active');
-    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells > .slick-cell').should('have.length', 9);
+    cy.get('.slick-row[data-row="0"]').should('have.length.at.least', 1);
+    cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').should('not.exist');
+    cy.get('.slick-row[data-row="0"] .slick-scrolling-cells').should('not.exist');
+    cy.get('.slick-row[data-row="0"] > .slick-cell').should('have.length', 9);
 
     getCell(0, 0).should('contain', '');
     getCell(0, 1).should('contain', 'Task 0');
@@ -468,7 +456,7 @@ describe('Example 04 - Pinned Grid', () => {
   });
 
   it('should Clear all Filters', () => {
-    cy.get('.grid4').find('button.slick-grid-menu-button').trigger('click').click({ force: true });
+    cy.get('button.slick-grid-menu-button').trigger('click').click({ force: true });
 
     cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
   });
@@ -714,7 +702,7 @@ describe('Example 04 - Pinned Grid', () => {
 
     const leftColumns = ['', 'Title', '% Complete'];
     const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin (not pinnable)', 'Action'];
-    cy.get('.grid4').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
@@ -749,7 +737,7 @@ describe('Example 04 - Pinned Grid', () => {
     });
     const newColumnList = ['', 'Title', '% Complete', 'Action'];
 
-    cy.get('.grid4').find('.slick-header-column:nth(3)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+    cy.get('.slick-header-column:nth(3)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
@@ -763,15 +751,13 @@ describe('Example 04 - Pinned Grid', () => {
         );
       });
 
-    cy.get('.grid4')
-      .find('.slick-header-columns .slick-header-column')
-      .each(($child, index) => expect($child.text()).to.eq(newColumnList[index]));
+    cy.get('.slick-header-columns .slick-header-column').each(($child, index) => expect($child.text()).to.eq(newColumnList[index]));
   });
 
   it('should be able to uncheck "Title" column without any alert', () => {
     // Keep one center column available after the left boundary is recalculated.
     cy.get('.pinned-left-column-count').select('0');
-    cy.get('.grid4').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
     const updatedColumns = ['', '% Complete', 'Action'];
     cy.contains('.slick-column-picker-list li:not(.hidden) .checkbox-picker-label', 'Title').click();
     cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
@@ -807,16 +793,14 @@ describe('Example 04 - Pinned Grid', () => {
 
     cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
 
-    cy.get('.grid4')
-      .find('.slick-header-columns .slick-header-column')
-      .each(($child, index) => expect($child.text()).to.eq(withoutTitleRowTitles[index]));
+    cy.get('.slick-header-columns .slick-header-column').each(($child, index) => expect($child.text()).to.eq(withoutTitleRowTitles[index]));
 
     cy.get('.pinned-left-column-count').select('2');
   });
 
   describe('Test UI rendering after Scrolling with large columns', () => {
     it('should unpin all columns/rows', () => {
-      cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
+      cy.get('button.slick-grid-menu-button').click({ force: true });
 
       cy.contains('Unpin Columns/Rows').click({ force: true });
     });
@@ -897,7 +881,7 @@ describe('Example 04 - Pinned Grid', () => {
       // Pinning has one real horizontal scroll owner. Scrolling the old body
       // viewport only exercises the compatibility bridge; target the proxy
       // here to verify the user-facing scrollbar and all chrome move together.
-      cy.get('.grid4 .slick-horizontal-scroller').scrollTo('100%', '0%', { duration: 1500 });
+      cy.get('.slick-horizontal-scroller').scrollTo('100%', '0%', { duration: 1500 });
       getCell(2, 3).should('contain', '2009-01-01');
       getCell(2, 4).should('contain', '2009-05-05');
       getCell(2, 7).contains(/[United State|Canada]*/);
@@ -1115,8 +1099,8 @@ describe('Example 04 - Pinned Grid', () => {
       cy.get('[data-test="set-large-pinned-columns"]').click();
       cy.clock();
 
-      const headerSelector = '.grid4 .slick-header-columns-center [data-id="start"]';
-      const scrollerSelector = '.grid4 .slick-horizontal-scroller';
+      const headerSelector = '.slick-header-columns-center [data-id="start"]';
+      const scrollerSelector = '.slick-horizontal-scroller';
       cy.get(`${headerSelector} .slick-resizable-handle`).then(($handle) => {
         const handle = $handle[0] as HTMLElement;
         const win = handle.ownerDocument.defaultView!;
@@ -1141,11 +1125,11 @@ describe('Example 04 - Pinned Grid', () => {
     it('should keep left-pinned columns in place when hiding "Finish" and swapping center columns', () => {
       cy.reload();
 
-      cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
+      cy.get('button.slick-grid-menu-button').click({ force: true });
       cy.contains('.slick-grid-menu:visible .slick-column-picker-list li', 'Finish').children('label').click({ force: true });
       cy.get('.slick-grid-menu:visible .close').click({ force: true });
 
-      cy.get('.grid4 .slick-header-columns-center').then(($center) => {
+      cy.get('.slick-header-columns-center').then(($center) => {
         const columns = $center.find('.slick-header-column');
         expect([...columns].map((column) => column.dataset.id)).to.deep.equal(['start', 'completed', 'cost', 'cityOfOrigin']);
 
@@ -1159,13 +1143,13 @@ describe('Example 04 - Pinned Grid', () => {
         sortInstance.options.onEnd({ item: thirdColumn, stopPropagation: () => {} });
       });
 
-      cy.get('.grid4 .slick-header-columns-left .slick-header-column').should(($columns) =>
+      cy.get('.slick-header-columns-left .slick-header-column').should(($columns) =>
         expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['_checkbox_selector', 'title', 'percentComplete'])
       );
-      cy.get('.grid4 .slick-header-columns-center .slick-header-column').should(($columns) =>
+      cy.get('.slick-header-columns-center .slick-header-column').should(($columns) =>
         expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['start', 'completed', 'cityOfOrigin', 'cost'])
       );
-      cy.get('.grid4 .slick-header-columns-right .slick-header-column').should(($columns) =>
+      cy.get('.slick-header-columns-right .slick-header-column').should(($columns) =>
         expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['action'])
       );
     });
@@ -1175,22 +1159,22 @@ describe('Example 04 - Pinned Grid', () => {
     it('should keep the non-pinnable City column visible and highlighted when pinning three columns from the right', () => {
       cy.reload();
 
-      cy.get('.grid4 .slick-row[data-row="0"] .slick-cell.city-of-origin-column').should(($cell) => {
+      cy.get('.slick-row[data-row="0"] .slick-cell.city-of-origin-column').should(($cell) => {
         expect(getComputedStyle($cell[0]).backgroundColor).to.eq('rgb(233, 233, 233)');
       });
       setRightPinning(3);
 
-      cy.get('.grid4 .slick-header-columns-right [data-id]').should(($columns) => {
+      cy.get('.slick-header-columns-right [data-id]').should(($columns) => {
         expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['cost', 'cityOfOrigin', 'action']);
       });
-      cy.get('.grid4 .slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell').should('have.length', 3);
-      cy.get('.grid4 .slick-row[data-row="0"] .slick-pinned-right-cells .slick-cell.city-of-origin-column').should('exist');
+      cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells > .slick-cell').should('have.length', 3);
+      cy.get('.slick-row[data-row="0"] .slick-pinned-right-cells .slick-cell.city-of-origin-column').should('exist');
 
       setRightPinning(1);
     });
 
     it('should skip City when using the bulk pinning command from the Cost column', () => {
-      cy.get('.grid4 .slick-header-columns-center [data-id="cost"]')
+      cy.get('.slick-header-columns-center [data-id="cost"]')
         .trigger('mouseover')
         .children('.slick-header-menu-button')
         .invoke('show')
@@ -1198,14 +1182,14 @@ describe('Example 04 - Pinned Grid', () => {
       cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
       cy.get('.slick-submenu:visible [data-command="pin-columns-right"]').click();
 
-      cy.get('.grid4 .slick-header-columns-right [data-id]').should(($columns) => {
+      cy.get('.slick-header-columns-right [data-id]').should(($columns) => {
         expect([...$columns].map((column) => column.dataset.id)).to.deep.equal(['cost', 'action']);
       });
-      cy.get('.grid4 .slick-header-columns-center [data-id="cityOfOrigin"]').should('exist');
+      cy.get('.slick-header-columns-center [data-id="cityOfOrigin"]').should('exist');
     });
   });
   it('should keep focus in the percent-complete filter while typing', () => {
     cy.visit(Cypress.config('baseUrl') + '/example04');
-    cy.get('.grid4 .slick-headerrow-column.l2 input').click().type('3').should('have.focus').clear();
+    cy.get('.slick-headerrow-column.l2 input').click().type('3').should('have.focus').clear();
   });
 });
