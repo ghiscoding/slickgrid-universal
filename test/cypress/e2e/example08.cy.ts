@@ -4,6 +4,16 @@ import { removeExtraSpaces } from '../plugins/utilities';
 describe('Example 08 - Column Span & Header Grouping', () => {
   const fullPreTitles = ['', 'Common Factor', 'Period', 'Analysis'];
   const fullTitles = ['#', 'Title', 'Duration', 'Start', 'Finish', '% Complete', 'Effort Driven'];
+  let restoreGrid1Columns: (() => void) | undefined;
+
+  afterEach(() => {
+    if (restoreGrid1Columns) {
+      cy.then(() => {
+        restoreGrid1Columns?.();
+        restoreGrid1Columns = undefined;
+      });
+    }
+  });
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example08`);
@@ -426,14 +436,48 @@ describe('Example 08 - Column Span & Header Grouping', () => {
         .each(($child, index) => expect($child.text()).to.eq(newHeaderTitles[index]));
     });
 
-    it('should keep a Duration colspan visually continuous across a valid docking boundary', () => {
+    it('should keep a Duration colspan following horizontal scroll after resizing center columns', () => {
       const setPinning = (headerSelector: string, command: 'pin-left' | 'unpin-column') => {
         cy.get(headerSelector).trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
         cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
         cy.get(`.slick-submenu:visible [data-command="${command}"]`).click();
       };
+      const resizeCenterColumn = (columnId: string) => {
+        const headerSelector = `.grid1 .slick-header-columns-center [data-id="${columnId}"]`;
+        return cy.then(() => {
+          const originalWidth = grid1.getColumns().find((column: any) => column.id === columnId)?.width ?? 0;
+          return cy
+            .get(`${headerSelector} .slick-resizable-handle`)
+            .should('exist')
+            .then(($handle) => {
+              const handleRect = $handle[0].getBoundingClientRect();
+              const startX = handleRect.left + handleRect.width / 2;
+              const targetX = startX + 200;
+
+              cy.wrap($handle).trigger('mousedown', { which: 1, pageX: startX, clientX: startX, force: true });
+              cy.get('body')
+                .trigger('mousemove', { which: 1, pageX: targetX, clientX: targetX, force: true })
+                .trigger('mouseup', { which: 1, pageX: targetX, clientX: targetX, force: true });
+            })
+            .then(() => {
+              const resizedWidth = grid1.getColumns().find((column: any) => column.id === columnId)?.width ?? 0;
+              expect(resizedWidth, `${columnId} column width increased`).to.be.greaterThan(originalWidth);
+            });
+        });
+      };
       const hostSelector = '.grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l1:not(.slick-cell-colspan-part)';
       const fragmentSelector = '.grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell-colspan-part';
+      let grid1: any;
+      let originalGrid1Columns: any[] = [];
+
+      cy.window()
+        .its('main.app.viewModelObj', { timeout: 10000 })
+        .then((viewModelObj: Record<string, any>) => {
+          const viewModel = Object.values(viewModelObj).find((candidate) => candidate?.sgb1?.slickGrid);
+          grid1 = viewModel.sgb1.slickGrid;
+          originalGrid1Columns = grid1.getColumns().map((column: any) => ({ ...column }));
+          restoreGrid1Columns = () => grid1.setColumns(originalGrid1Columns);
+        });
 
       setPinning('.grid1 .slick-header:not(.slick-preheader-panel) .slick-header-columns [data-id="title"]', 'pin-left');
 
@@ -481,6 +525,37 @@ describe('Example 08 - Column Span & Header Grouping', () => {
           expect(content.textContent).to.eq($host[0].textContent);
         });
       });
+      resizeCenterColumn('start');
+      resizeCenterColumn('finish');
+      cy.get('.grid1 .slick-docking-horizontal-scroller')
+        .scrollTo(0, 0, { ensureScrollable: false })
+        .then(($scroller) => {
+          const scroller = $scroller[0];
+          const startScrollLeft = scroller.scrollLeft;
+          const fragment = Cypress.$(fragmentSelector)[0];
+          const startLeft = fragment.getBoundingClientRect().left;
+          const content = fragment.querySelector('.slick-cell-colspan-part-content') as HTMLElement;
+          const startContentLeft = content.getBoundingClientRect().left;
+          const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
+          const targetScrollLeft = Math.min(startScrollLeft + 60, maxScrollLeft);
+
+          expect(targetScrollLeft, 'the pinned grid has horizontal overflow').to.be.greaterThan(startScrollLeft);
+          cy.wrap($scroller).scrollTo(targetScrollLeft, 0);
+          cy.get(fragmentSelector).should(($fragment) => {
+            const scrollDelta = scroller.scrollLeft - startScrollLeft;
+            const fragmentLeft = $fragment[0].getBoundingClientRect().left;
+            const contentLeft = ($fragment[0].querySelector('.slick-cell-colspan-part-content') as HTMLElement).getBoundingClientRect()
+              .left;
+
+            expect(scrollDelta, 'the horizontal scroller moved').to.be.greaterThan(0);
+            const fragmentDelta = fragmentLeft - startLeft;
+            const contentDelta = contentLeft - startContentLeft;
+            expect(fragmentDelta, 'the colspan boundary follows horizontal scrolling').to.be.closeTo(-scrollDelta, 4);
+            expect(contentDelta, 'the continuation text follows horizontal scrolling').to.be.closeTo(-scrollDelta, 4);
+            expect(contentDelta, 'continuation text moves with its boundary').to.be.closeTo(fragmentDelta, 1);
+          });
+          cy.wrap($scroller).scrollTo(0, 0);
+        });
       cy.get(fragmentSelector).should('have.length', 1).click({ scrollBehavior: false }).should('have.class', 'active');
       cy.get(fragmentSelector).should(($cell) => {
         const style = getComputedStyle($cell[0], '::after');
@@ -496,8 +571,10 @@ describe('Example 08 - Column Span & Header Grouping', () => {
           expect(getComputedStyle($cell[0], '::after').borderRightStyle).to.eq('none');
         });
 
-      setPinning('.grid1 .slick-header-columns-left [data-id="duration"]', 'unpin-column');
-      setPinning('.grid1 .slick-header-columns-left [data-id="title"]', 'unpin-column');
+      cy.then(() => {
+        restoreGrid1Columns?.();
+        restoreGrid1Columns = undefined;
+      });
       cy.get('.grid1 [data-row="1"] .slick-cell-colspan-part').should('not.exist');
     });
   });

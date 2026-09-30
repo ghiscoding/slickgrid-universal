@@ -352,6 +352,29 @@ describe('Example 14 - Column Span & Header Grouping', () => {
         cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
         cy.get(`.slick-submenu:visible [data-command="${command}"]`).click();
       };
+      const resizeCenterColumn = (columnId: string, deltaX: number) => {
+        const headerSelector = `#grid1 .slick-header-columns-center [data-id="${columnId}"]`;
+        cy.get(headerSelector).then(($header) => {
+          const initialWidth = $header[0].getBoundingClientRect().width;
+          const handle = $header.find('.slick-resizable-handle');
+          const handleRect = handle[0].getBoundingClientRect();
+          const startX = handleRect.left + handleRect.width / 2;
+          const targetX = startX + deltaX;
+
+          cy.wrap(handle).trigger('mousedown', { which: 1, pageX: startX, clientX: startX, force: true });
+          cy.get('body')
+            .trigger('mousemove', { which: 1, pageX: targetX, clientX: targetX, force: true })
+            .trigger('mouseup', { which: 1, pageX: targetX, clientX: targetX, force: true });
+          cy.get(headerSelector).should(($resizedHeader) => {
+            const resizedWidth = $resizedHeader[0].getBoundingClientRect().width;
+            if (deltaX > 0) {
+              expect(resizedWidth, `${columnId} column widened`).to.be.greaterThan(initialWidth);
+            } else {
+              expect(resizedWidth, `${columnId} column restored`).to.be.lessThan(initialWidth);
+            }
+          });
+        });
+      };
       const hostSelector = '#grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l1:not(.slick-cell-colspan-part)';
       const fragmentSelector = '#grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell-colspan-part';
 
@@ -370,6 +393,50 @@ describe('Example 14 - Column Span & Header Grouping', () => {
         .and('not.have.class', 'r4');
       cy.get('#grid1 [data-row="1"] .slick-cell.l4.r4').should('have.length', 1);
       cy.get('#grid1 [data-row="1"] .slick-cell-colspan-part').should('have.length', 1);
+      cy.get(hostSelector).then(($host) => {
+        const host = $host[0].getBoundingClientRect();
+        const leftRegion = $host[0].parentElement!.getBoundingClientRect();
+        expect(host.right, 'host is clipped to the pinned band').to.be.at.most(leftRegion.right + 1);
+        cy.get(fragmentSelector).then(($fragment) => {
+          const fragment = $fragment[0].getBoundingClientRect();
+          expect(fragment.left, 'continuation starts at the host edge').to.be.closeTo(host.right, 1.5);
+          const content = $fragment[0].querySelector('.slick-cell-colspan-part-content') as HTMLElement;
+          expect(content, 'continuation carries a copy of the content').to.exist;
+          expect(content.textContent).to.eq($host[0].textContent);
+        });
+      });
+      resizeCenterColumn('start', 200);
+      resizeCenterColumn('finish', 200);
+      cy.get('#grid1 .slick-docking-horizontal-scroller')
+        .scrollTo(0, 0, { ensureScrollable: false })
+        .then(($scroller) => {
+          const scroller = $scroller[0];
+          const startScrollLeft = scroller.scrollLeft;
+          const fragment = Cypress.$(fragmentSelector)[0];
+          const startLeft = fragment.getBoundingClientRect().left;
+          const content = fragment.querySelector('.slick-cell-colspan-part-content') as HTMLElement;
+          const startContentLeft = content.getBoundingClientRect().left;
+          const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
+          const targetScrollLeft = Math.min(startScrollLeft + 60, maxScrollLeft);
+
+          expect(targetScrollLeft, 'resized columns create horizontal overflow').to.be.greaterThan(startScrollLeft);
+          cy.wrap($scroller).scrollTo(targetScrollLeft, 0);
+          cy.get(fragmentSelector).should(($fragment) => {
+            const scrollDelta = scroller.scrollLeft - startScrollLeft;
+            const fragmentDelta = $fragment[0].getBoundingClientRect().left - startLeft;
+            const contentDelta =
+              ($fragment[0].querySelector('.slick-cell-colspan-part-content') as HTMLElement).getBoundingClientRect().left -
+              startContentLeft;
+
+            expect(scrollDelta, 'the horizontal scroller moved').to.be.greaterThan(0);
+            expect(fragmentDelta, 'the colspan boundary follows horizontal scrolling').to.be.closeTo(-scrollDelta, 4);
+            expect(contentDelta, 'the continuation text follows horizontal scrolling').to.be.closeTo(-scrollDelta, 4);
+            expect(contentDelta, 'continuation text moves with its boundary').to.be.closeTo(fragmentDelta, 1);
+          });
+          cy.wrap($scroller).scrollTo(startScrollLeft, 0);
+          resizeCenterColumn('finish', -200);
+          resizeCenterColumn('start', -200);
+        });
       cy.get(fragmentSelector).should('have.length', 1).click({ force: true }).should('have.class', 'active');
       cy.get(fragmentSelector).should(($cell) => {
         const style = getComputedStyle($cell[0], '::after');
