@@ -167,7 +167,7 @@ describe('Example 47 - Row Detail View + Grouping', () => {
     cy.on('window:alert', stub);
 
     cy.get('[data-test=collapse-all-groups-btn]').click();
-    cy.wait(50);
+    cy.get('.dynamic-cell-detail').should('not.exist');
     cy.get('[data-test=expand-all-groups-btn]').click();
 
     let assigneeName = '';
