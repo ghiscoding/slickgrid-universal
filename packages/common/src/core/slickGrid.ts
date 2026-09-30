@@ -3055,7 +3055,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Whether the grid needs the three-band chrome/row DOM. */
   protected hasConfiguredDocking(): boolean {
-    return this.hasConfiguredColumnDocking() || this._options.pinning !== undefined || this.hasConfiguredRowDocking();
+    return this.hasConfiguredColumnDocking() || this.hasConfiguredRowDocking();
   }
 
   /** Column docking is opt-in; ordinary grids retain the flat DOM. */

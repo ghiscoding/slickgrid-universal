@@ -772,11 +772,13 @@ describe('SlickGrid unified pinning', () => {
     expect(invalidPinning).not.toHaveBeenCalled();
   });
 
-  it('keeps the native viewport scroll owner until docking is enabled', () => {
-    const slickGrid = createGrid();
+  it('keeps the native viewport scroll owner for empty pinning options until docking is enabled', () => {
+    const slickGrid = createGrid({ pinning: {} });
     const internals = slickGrid as any;
 
     expect(container.querySelector('.slick-docking-horizontal-scroller')).toBeNull();
+    expect(container.querySelector('.slick-docking-overlay')).toBeNull();
+    expect(container.classList.contains('slick-docking-horizontal-scroll-proxy')).toBe(false);
     expect(internals._viewportNode.style.overflowX).toBe('auto');
 
     slickGrid.setColumnPinning('a', 'left');
