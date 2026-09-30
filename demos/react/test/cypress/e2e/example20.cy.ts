@@ -226,13 +226,7 @@ describe('Example 20 - Pinned Grid', () => {
 
     cy.get('#grid20').find('button.slick-grid-menu-button').click({ force: true });
 
-    cy.get('#grid20')
-      .get('.slick-grid-menu:visible')
-      .find('.slick-column-picker-list')
-      .children('li:visible:nth(0)')
-      .children('label')
-      .should('contain', 'Title')
-      .click({ force: true });
+    cy.get('.slick-grid-menu:visible input[data-columnid="title"]').closest('label').click({ force: true });
 
     cy.get('#grid20')
       .find('.slick-header-columns .slick-header-column')
@@ -249,13 +243,7 @@ describe('Example 20 - Pinned Grid', () => {
   });
 
   it('should show again "Title" column from Grid Menu and expect last pinned column to still be "% Complete"', () => {
-    cy.get('#grid20')
-      .get('.slick-grid-menu:visible')
-      .find('.slick-column-picker-list')
-      .children('li:visible:nth(0)')
-      .children('label')
-      .should('contain', 'Title')
-      .click({ force: true });
+    cy.get('.slick-grid-menu:visible input[data-columnid="title"]').closest('label').click({ force: true });
 
     cy.get('#grid20').get('.slick-grid-menu:visible').find('.close').click({ force: true });
 

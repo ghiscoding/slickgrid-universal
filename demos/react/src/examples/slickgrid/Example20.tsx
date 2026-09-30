@@ -411,11 +411,12 @@ const Example20: React.FC = () => {
 
   function setPinnedColumns(left: number, right = pinnedRightColumnCount) {
     const nextRight = Math.max(0, Number(right) || 0);
+    const leftIds = left >= 0 ? ['_checkbox_selector', 'title', 'percentComplete'].slice(0, left + 1) : [];
     const rightIds = ['cityOfOrigin', 'action'].slice(Math.max(0, 2 - nextRight));
     pinnedColumnCountRef.current = left;
     pinnedRightColumnCountRef.current = nextRight;
     reactGridRef.current?.slickGrid.setOptions({
-      pinning: { columns: { left: left >= 0 ? left : [], right: rightIds } },
+      pinning: { columns: { left: leftIds, right: rightIds } },
     });
     setPinnedColumnCount(left);
     setPinnedRightColumnCount(nextRight);
@@ -424,8 +425,9 @@ const Example20: React.FC = () => {
   function reapplyPinnedColumns() {
     const left = pinnedColumnCountRef.current;
     const right = pinnedRightColumnCountRef.current;
+    const leftIds = left >= 0 ? ['_checkbox_selector', 'title', 'percentComplete'].slice(0, left + 1) : [];
     const rightIds = ['cityOfOrigin', 'action'].slice(Math.max(0, 2 - right));
-    reactGridRef.current?.slickGrid.setOptions({ pinning: { columns: { left: left >= 0 ? left : [], right: rightIds } } });
+    reactGridRef.current?.slickGrid.setOptions({ pinning: { columns: { left: leftIds, right: rightIds } } });
   }
 
   function toggleRightPinning() {

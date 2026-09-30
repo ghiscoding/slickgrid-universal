@@ -1135,8 +1135,9 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.slick-grid-menu:visible').find('.close').click({ force: true });
 
       cy.get('.grid11 .slick-header-columns .slick-header-column').should('have.length', 9);
-      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
-      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left .slick-column-name').last().should('contain', 'Cost');
+      // The numeric left boundary counts visible columns, so % Complete joins the pinned band when Duration is hidden.
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left').should('have.length', 4);
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left .slick-column-name').last().should('contain', '% Complete');
 
       cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
       cy.get('.slick-column-picker-list input[data-columnid="duration"]').closest('label').click();
@@ -1157,21 +1158,20 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.slick-grid-menu:visible').find('.close').click({ force: true });
 
       cy.get('.grid11 .slick-header-columns .slick-header-column').should('have.length', 9);
-      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
-      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left .slick-column-name').last().should('contain', 'Cost');
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left').should('have.length', 4);
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left .slick-column-name').last().should('contain', '% Complete');
     });
 
-    it('should display both hidden columns and still expect Cost to be the pinned column', () => {
+    it('should display both hidden columns and retain the saved pinned columns', () => {
       cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
       cy.get('.slick-column-picker-list input[data-columnid="duration"]').closest('label').click();
       cy.get('.slick-column-picker-list input[data-columnid="countryOfOrigin"]').closest('label').click();
       cy.get('.slick-column-picker button.close').click();
 
       cy.get('.grid11 .slick-header-columns .slick-header-column').should('have.length', 11);
-      // The persisted preset stores the exact pinned column IDs (checkbox,
-      // Title, and Cost), rather than the original numeric pin shorthand.
-      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
-      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left .slick-column-name').last().should('contain', 'Cost');
+      // The saved view stores the pinned IDs resolved while Duration was hidden.
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left').should('have.length', 4);
+      cy.get('.grid11 .slick-header-columns .slick-column-pinned-left .slick-column-name').last().should('contain', '% Complete');
     });
 
     it('should change back pre-defined view to "Tasks Finishing in Future Years", then be able to show the hidden column "Cost"', () => {
