@@ -95,6 +95,34 @@ describe('SlickGrid unified pinning', () => {
     expect((slickGrid as any).getCellFromEvent({ target: part })).toEqual({ row: 2, cell: 0 });
   });
 
+  it.each([false, true])('keeps permanent cell widths when recomputing rules with active sticky docking (rtl=%s)', (rtl) => {
+    const stickyColumns = columns.map((column, index) => ({ ...column, sticky: index === 1 ? ('left' as const) : undefined }));
+    const pinning = { columns: { left: ['a'], right: ['d'] } };
+    const slickGrid = createGrid(
+      { rtl, pinning, docking: { maxColumnViewportWidthPercent: 100 }, devMode: { ownerNodeIndex: 0, containerClientWidth: 800 } },
+      stickyColumns
+    );
+    const internals = slickGrid as any;
+    const rulesByColumn = columns.map(() => ({
+      left: { style: document.createElement('div').style },
+      right: { style: document.createElement('div').style },
+    }));
+    const rulesSpy = vi.spyOn(internals, 'getColumnCssRules').mockImplementation((...args: unknown[]) => rulesByColumn[args[0] as number]);
+    internals.refreshDockingLayout(rtl ? -20 : 20);
+    internals.updateColumnPositionCaches();
+    internals.applyColumnWidths();
+
+    expect(internals.dockingLayout.leftWidth).toBeGreaterThan(internals.dockingLayout.leftBaseWidth);
+    [0, 3].forEach((index) => {
+      const rules = rulesByColumn[index];
+      const start = Number.parseFloat(rules.left.style[rtl ? 'right' : 'left']);
+      const end = Number.parseFloat(rules.right.style[rtl ? 'left' : 'right']);
+      const bandWidth = internals.getDockingRenderedWidths()[index === 0 ? 'left' : 'right'];
+      expect(bandWidth - start - end).toBe(80);
+    });
+    rulesSpy.mockRestore();
+  });
+
   it('coexists with permanent pins and scroll-activated sticky docking', () => {
     const stickyColumns = columns.map((column, index) => ({ ...column, sticky: index === 1 ? ('left' as const) : undefined }));
     const slickGrid = createGrid(
@@ -365,8 +393,8 @@ describe('SlickGrid unified pinning', () => {
 
     expect(pinnedCell).toBeTruthy();
     expect(internals.isStickyTransformColumn(1)).toBe(false);
-    expect(pinnedCell.parentElement?.classList.contains('slick-pinned-left-cells')).toBe(true);
-    expect(pinnedCell.classList.contains('slick-cell-pinned-left')).toBe(true);
+    expect(pinnedCell?.parentElement?.classList.contains('slick-pinned-left-cells')).toBe(true);
+    expect(pinnedCell?.classList.contains('slick-cell-pinned-left')).toBe(true);
     expect(slickGrid.getHeaderColumn('b').classList.contains('slick-column-pinned-left')).toBe(true);
     expect(slickGrid.getHeaderColumn('b').classList.contains('slick-column-sticky')).toBe(false);
 
@@ -1193,6 +1221,44 @@ describe('SlickGrid unified pinning', () => {
     expect(internals.slickMouseWheelInstances.length).toBeGreaterThan(0);
     slickGrid.setOptions({ enableMouseWheelScrollHandler: false }, true, true, true);
     expect(destroyInstancesSpy).toHaveBeenCalled();
+  });
+
+  it.each([false, true])('clears native chrome offsets before positioning trailing pinned chrome (rtl=%s)', (rtl) => {
+    const slickGrid = createGrid({
+      rtl,
+      createFooterRow: true,
+      showHeaderRow: true,
+      pinning: { columns: { left: ['a'], right: ['d'] } },
+    });
+    const internals = slickGrid as any;
+    const direction = rtl ? -1 : 1;
+    internals.scrollLeft = direction * 120;
+    internals._container.style.setProperty('--slick-docking-viewport-width', '800px');
+    const chromePairs = [
+      [internals._headerScrollerL, internals._headerL],
+      [internals._headerRowScrollerL, internals._headerRowL],
+      [internals._footerRowScrollerL, internals._footerRowL],
+    ];
+    chromePairs.forEach(([scroller, root]) => {
+      scroller.scrollLeft = direction * 120;
+      vi.spyOn(scroller, 'getBoundingClientRect').mockReturnValue({ left: 0, right: 800, width: 800 } as DOMRect);
+      vi.spyOn(root, 'getBoundingClientRect').mockImplementation(
+        () =>
+          ({
+            left: -internals.scrollLeft - scroller.scrollLeft,
+            right: 800 - internals.scrollLeft - scroller.scrollLeft,
+            width: 800,
+          }) as DOMRect
+      );
+    });
+
+    internals.applyDockingToColumnChrome();
+
+    chromePairs.forEach(([scroller, root]) => {
+      expect(scroller.scrollLeft).toBe(0);
+      const column = root.querySelector('.slick-column-pinned-right') as HTMLElement;
+      expect(Number.parseFloat(column.style[rtl ? 'right' : 'left'])).toBe(720);
+    });
   });
 
   it('covers docking chrome guards, edge compensation, and post-render row cleanup', () => {

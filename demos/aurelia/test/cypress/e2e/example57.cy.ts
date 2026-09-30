@@ -18,6 +18,22 @@ describe('Example 57 - RTL (Right-to-Left)', () => {
     'Effort Driven',
   ];
 
+  const scrollHorizontally = (toEnd: boolean) =>
+    cy.get('#grid57 .slick-docking-horizontal-scroller').then(($scroller) => {
+      const element = $scroller[0];
+      const max = element.scrollWidth - element.clientWidth;
+      expect(max, 'the RTL grid has horizontal overflow').to.be.greaterThan(0);
+      cy.wrap($scroller).realMouseWheel({ deltaX: (toEnd ? -1 : 1) * element.scrollWidth, deltaY: 0 });
+      cy.get('#grid57 .slick-docking-horizontal-scroller').should(($current) => {
+        expect($current[0].scrollLeft, 'the browser reaches the requested RTL scroll edge').to.be.closeTo(toEnd ? -max : 0, 1);
+      });
+      return cy.get('#grid57').should(($grid) => {
+        const container = $grid.hasClass('slickgrid-container') ? $grid[0] : $grid.find('.slickgrid-container')[0];
+        const offset = Number.parseFloat(getComputedStyle(container).getPropertyValue('--slick-docking-scroll-left'));
+        expect(offset, 'SlickGrid synchronizes the horizontal scroll offset').to.be.closeTo(toEnd ? -max : 0, 1);
+      });
+    });
+
   beforeEach(() => {
     cy.setCookie('serve-mode', 'cypress');
     cy.visit(`${Cypress.config('baseUrl')}/example57`);
@@ -76,15 +92,7 @@ describe('Example 57 - RTL (Right-to-Left)', () => {
       cy.get('.slick-header-columns')
         .children()
         .each(($child, index) => expect($child.text()).to.eq(titles[index]));
-      cy.get('#grid57 .slick-docking-horizontal-scroller').then(($scroller) => {
-        const scroller = $scroller[0] as HTMLElement;
-        const maxScroll = scroller.scrollWidth - scroller.clientWidth;
-        scroller.scrollLeft = -maxScroll;
-        if (scroller.scrollLeft === 0) {
-          scroller.scrollLeft = maxScroll;
-        }
-        expect(Math.abs(scroller.scrollLeft)).to.be.greaterThan(0);
-      });
+      scrollHorizontally(true);
     });
   });
 
@@ -97,16 +105,7 @@ describe('Example 57 - RTL (Right-to-Left)', () => {
     });
 
     it('should update visible header columns when scrolling', () => {
-      cy.get('.slick-horizontal-scroller').then(($viewport) => {
-        const viewport = $viewport[0] as HTMLElement;
-        const maxScroll = viewport.scrollWidth - viewport.clientWidth;
-        viewport.scrollLeft = -maxScroll;
-        if (viewport.scrollLeft === 0) {
-          viewport.scrollLeft = maxScroll;
-        }
-      });
-
-      cy.wait(150);
+      scrollHorizontally(true);
 
       cy.get('.slick-horizontal-scroller').then(($viewport) => {
         const viewport = $viewport[0] as HTMLElement;
@@ -117,16 +116,7 @@ describe('Example 57 - RTL (Right-to-Left)', () => {
 
   describe('Edge Cases & Stability', () => {
     it('should handle max horizontal scroll in RTL mode', () => {
-      cy.get('.slick-horizontal-scroller').then(($viewport) => {
-        const viewport = $viewport[0] as HTMLElement;
-        const maxScroll = viewport.scrollWidth - viewport.clientWidth;
-        viewport.scrollLeft = -maxScroll;
-        if (viewport.scrollLeft === 0) {
-          viewport.scrollLeft = maxScroll;
-        }
-      });
-
-      cy.wait(150);
+      scrollHorizontally(true);
       cy.get('.slick-header-column:visible').last().should('exist');
     });
   });
@@ -142,22 +132,49 @@ describe('Example 57 - RTL (Right-to-Left)', () => {
       const part = '#grid57 .slick-row[data-row="2"] > .slick-scrolling-cells > .slick-cell-colspan-part';
       cy.get(host).should('exist').and('not.have.class', 'slick-cell-colspan-shared-edge');
       cy.get(part).should('exist').and('have.class', 'slick-cell-colspan-shared-edge');
-      cy.get(host).then(($host) => {
-        const hostRect = $host[0].getBoundingClientRect();
-        cy.get(part).then(($part) => expect($part[0].getBoundingClientRect().right).to.be.closeTo(hostRect.left, 1.5));
-      });
+      scrollHorizontally(false);
       cy.get('#grid57 .slick-horizontal-scroller').then(($scroller) => {
         const element = $scroller[0] as HTMLElement;
+        expect(element.scrollLeft, 'the RTL scroller resets to its origin').to.eq(0);
+        const startScrollLeft = element.scrollLeft;
+        const hostElement = Cypress.$(host)[0];
+        const partElement = Cypress.$(part)[0];
+        const initialHostRect = hostElement.getBoundingClientRect();
+        const initialPartRect = partElement.getBoundingClientRect();
+        const content = partElement.querySelector('.slick-cell-colspan-part-content') as HTMLElement;
+        const initialContentLeft = content.getBoundingClientRect().left;
+        expect(initialPartRect.right, 'continuation starts at the pinned host edge').to.be.closeTo(initialHostRect.left, 1.5);
+
         const max = element.scrollWidth - element.clientWidth;
-        element.scrollLeft = -max;
-        if (element.scrollLeft === 0) {
-          element.scrollLeft = max;
-        }
+        expect(max, 'the RTL grid has horizontal overflow').to.be.greaterThan(0);
+        scrollHorizontally(true);
+        cy.get(part).should(($part) => {
+          const scrollDelta = element.scrollLeft - startScrollLeft;
+          const partDelta = $part[0].getBoundingClientRect().right - initialPartRect.right;
+          const contentDelta =
+            ($part[0].querySelector('.slick-cell-colspan-part-content') as HTMLElement).getBoundingClientRect().left - initialContentLeft;
+          const hostDelta = Cypress.$(host)[0].getBoundingClientRect().left - initialHostRect.left;
+
+          expect(scrollDelta, 'the RTL scroller moved toward its negative maximum').to.be.lessThan(0);
+          expect(hostDelta, 'the pinned host stays fixed').to.be.closeTo(0, 1);
+          expect(partDelta, 'the continuation follows horizontal scrolling').to.be.closeTo(-scrollDelta, 1.5);
+          expect(contentDelta, 'the continuation text follows horizontal scrolling').to.be.closeTo(-scrollDelta, 1.5);
+        });
       });
       cy.get('#grid57 .slick-header-column[data-id="priority"]').should('have.class', 'slick-column-sticky');
     });
 
     it('applies and removes two-sided column pinning at runtime', () => {
+      const trailingHeaderOffset = { left: 0, right: 0 };
+      cy.get('#grid57 .slick-row[data-row="1"] .slick-cell.l15').then(($cell) => {
+        const header = Cypress.$('#grid57 .slick-header-column[data-id="effort-driven"]')[0];
+        const headerRect = header.getBoundingClientRect();
+        const cellRect = $cell[0].getBoundingClientRect();
+        const scale = headerRect.width / header.offsetWidth;
+        expect(cellRect.width - headerRect.width, 'the last header reserves its 2px Grid Menu allowance').to.be.closeTo(2 * scale, 1.5);
+        trailingHeaderOffset.left = headerRect.left - cellRect.left;
+        trailingHeaderOffset.right = headerRect.right - cellRect.right;
+      });
       cy.get('#clearPinning').click();
       cy.get('#grid57 .slick-header-column[data-id="title"]').should('not.have.class', 'slick-column-pinned-left');
       cy.get('#grid57 .slick-header-column[data-id="effort-driven"]').should('not.have.class', 'slick-column-pinned-right');
@@ -166,6 +183,28 @@ describe('Example 57 - RTL (Right-to-Left)', () => {
       cy.get('#grid57 .slick-header-column[data-id="title"]').should('have.class', 'slick-column-pinned-left');
       cy.get('#grid57 .slick-header-column[data-id="effort-driven"]').should('have.class', 'slick-column-pinned-right');
       cy.get('#grid57 .slick-docking-overlay .slick-row-pinned-top[data-row="0"]').should('exist');
+      const alignedColumns = [
+        { id: 'title', cell: 0 },
+        { id: 'duration', cell: 1 },
+        { id: 'priority', cell: 4 },
+        { id: 'notes', cell: 14 },
+        { id: 'effort-driven', cell: 15 },
+      ];
+      alignedColumns.forEach(({ id, cell }) => {
+        cy.get(`#grid57 .slick-row[data-row="1"] .slick-cell.l${cell}`).should(($cell) => {
+          const headerRect = Cypress.$(`#grid57 .slick-header-column[data-id="${id}"]`)[0].getBoundingClientRect();
+          const cellRect = $cell[0].getBoundingClientRect();
+          const headerOffset = id === 'effort-driven' ? trailingHeaderOffset : { left: 0, right: 0 };
+          expect(cellRect.left, `${id} cell aligns with its header after restoring pinning`).to.be.closeTo(
+            headerRect.left - headerOffset.left,
+            1.5
+          );
+          expect(cellRect.right, `${id} cell width matches its header after restoring pinning`).to.be.closeTo(
+            headerRect.right - headerOffset.right,
+            1.5
+          );
+        });
+      });
     });
   });
 });
