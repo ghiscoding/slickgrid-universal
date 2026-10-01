@@ -58,7 +58,7 @@ Header Menu commands, and runtime APIs.
 Per-column permanent pinning moves from the old frozen-column behavior to `Column.pinned`.
 `Column.pinnable: false` replaces the old per-column lock behavior for the built-in Header Menu.
 
-> Note, the `pinnable` flag is currently only used to show/hide the "Column Pinning" command from the Header Menu. It will not block a column from being pinnable using the `pinning` grid option, it is again simply used by the Header Menu. 
+> Note, the `pinnable` flag is currently only used to show/hide the "Column Pinning" command from the Header Menu. It will not block a column from being pinnable using the `pinning` grid option, it is again simply used by the Header Menu.
 
 ```ts
 const columns: Column[] = [

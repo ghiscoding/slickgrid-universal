@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness — implementation progress
 
-Last updated: 2026-09-30 (docked colspan scroll-after-resize regression)
+Last updated: 2026-10-01 (final LOC/performance audit and unresolved row-reference cache fix)
 
 ## Goal
 
@@ -16,6 +16,35 @@ Replace SlickGrid's multi-pane column/row architecture with an AG Grid-style doc
 - permanent pinning and scroll-activated stickiness use the same internal docking resolver;
 - vertical and horizontal virtualization must remain viable for large datasets;
 - this is intentionally a major-version breaking change; compatibility with the old pane renderer is not a design goal.
+
+## Final LOC/performance audit (2026-10-01)
+
+- Fixed repeated plain-array scans for unresolved pinned/sticky row IDs in the working tree.
+  The row-reference cache now retains unresolved IDs until the existing row/data/options
+  invalidation paths clear it. Both string IDs and explicit `{ id }` references are covered,
+  including a missing row becoming available after full or partial row invalidation.
+  Missing DataView IDs are cached as well.
+- A source-method check with 500,000 rows and 60 missing-ID lookups performed 60 scans before
+  the fix and one scan afterward. The fix adds no net production source lines.
+- All 526 focused SlickGrid, pinning, and RTL tests passed. Scoped `slickGrid.ts` coverage is
+  100% statements, functions, and lines; the row-reference resolver also has 100% branch
+  coverage. Whole-file branch coverage is 91.26%, so this run does not establish 100% branch
+  coverage for the entire renderer. Common TypeScript, targeted Oxlint, Prettier, and the
+  runtime-change diff check passed.
+- The preceding audit passed 550 focused tests including DockingController and header grouping.
+  DockingController coverage was 100% across all metrics. Madge found no runtime circular
+  dependencies in the audited entry points when TypeScript type imports were excluded.
+- Isolated column-resolver checks with roughly six sticky candidates averaged approximately
+  0.02ms for 100 columns and 0.09ms for 1,000 columns. These are local JavaScript measurements,
+  not browser frame or rendering measurements. No substantial LOC reduction justified another
+  structural refactor before merge.
+- The Firefox captures below are historical. Current CSS registers the scroll-offset property
+  with `inherits: true`, and horizontal scrolling writes it on the grid container. Commit
+  `f1800b16c` restored inheritance for correctness after the earlier non-inheriting optimization.
+  A fresh Firefox held-scroll/resize capture is needed to assess descendant restyling in the
+  current implementation; this audit did not measure current browser rendering performance.
+- Current production source-line counts and their scope are recorded in the LOC section below.
+  The prior +2,439 estimate is superseded.
 
 ## Docked colspan scroll after column resize (2026-09-30)
 
@@ -220,14 +249,16 @@ path feel different across browsers, and Firefox/Safari should be validated manu
 available. The implementation keeps the scroll path compositor-oriented and does not attempt to
 suppress the browser warning.
 
-The Firefox profile supplied for Example 04/47 showed only a small JavaScript scroll-handler
+The historical Firefox profile supplied for Example 04/47 showed only a small JavaScript scroll-handler
 cost, but 18 scroll-triggered style passes restyled 386 descendants each (156.8ms total,
 8.7ms average, 20.2ms maximum). The cause was the inherited per-scroll
 `--slick-docking-scroll-left` value on the grid root. The optimization registers that property
 as non-inheriting, updates it only on moving docking targets, and writes the overlay `clip-path`
 directly. This preserves the stable DOM/compositor design for Chrome, Firefox, and Safari without
-user-agent detection. Focused tests and static checks pass; manual Firefox held-scroll and
-resize/scroll feel confirmation remains the final performance check.
+user-agent detection. Focused tests and static checks passed for that revision. Commit
+`f1800b16c` subsequently restored inheritance because descendants used the registered zero
+default while the offset was published on the container. Current code therefore requires a
+fresh Firefox held-scroll and resize/scroll profile before claiming the same restyle improvement.
 
 A follow-up Firefox capture from the localhost Example 04 tab confirms the profiler signature
 improved: the previous 18 style passes traversing/styling 386 elements (156.8ms total, 20.2ms
@@ -235,7 +266,8 @@ maximum) are gone. The new capture has 15 larger style passes traversing 121 ele
 77 (59.0ms total, 3.9ms average, 7.7ms maximum). Refresh-driver work also improved in this
 capture (3 frames over 16.7ms versus 7 previously). These captures are separate sessions, so
 they are directional rather than a controlled benchmark, but they confirm that the full-grid
-inherited-property restyle was removed. Manual perceived-smoothness validation remains useful.
+inherited-property restyle was removed in the profiled revision. They do not validate the
+current inherited-property implementation; see the final audit above.
 
 A horizontal-wheel mouse (a second, dedicated tilt/horizontal wheel, as opposed to Shift+wheel)
 could push `scrollLeft` below zero because `handleMouseWheel` added the raw wheel delta without a
@@ -259,7 +291,7 @@ docking bands so ordinary grid renders do not destroy and recreate identical gro
 
 Grouped pre-header titles now remain fixed with their left-pinned columns during the shared
 horizontal scroll. The service tracks the current scroll offset, identifies pinned title segments
-from their rendered docking class, applies the existing non-inheriting
+from their rendered docking class, applies the existing
 `--slick-docking-scroll-left` property to those segments, and places an opaque, explicitly left-
 anchored mask over the pinned width. The mask inherits the surrounding header background and the
 pre-header selectors use the current `slick-state-default` class with bottom borders removed.
@@ -638,16 +670,22 @@ The user's quarterly example is also feasible, but there are two different scope
    cross a pinned/center boundary and for push-off/replacement as the next quarter enters.
 
 This is still compatible with permanent pinning: a permanent pin always wins its edge budget,
-while sticky candidates use the remaining center viewport. The performance model remains
-O(configured sticky candidates) per scroll event and O(1) DOM work between boundary crossings;
-large datasets continue to render only the normal virtual range plus the small docked set.
+while sticky candidates use the remaining center viewport. Sticky-column resolution is coalesced
+to animation frames and scans the configured columns; row resolution processes the configured
+row references. Between membership changes, proxy scrolling updates a fixed set of transforms
+and the inherited scroll-offset property. Browser restyling cost requires the fresh profile
+identified in the final audit. Large datasets continue to render only the normal virtual range
+plus the small docked set.
 Sticky activation is enabled for Example 47's quarterly columns. Permanent pinning and sticky
 transition visuals are accepted in the current user-confirmed CI/browser validation. The remaining
 future UX follow-ups are listed in the consolidated remaining-work section above.
 
 ### Pinned/sticky rows and virtual scrolling
 
-Pinned row references are resolved to row indexes and cached. With a plain array, resolving a string ID may scan the dataset once; subsequent vertical scroll events are O(number of configured docked rows). With a SlickDataView, `getRowById()` is used when available.
+Pinned row references are resolved to row indexes and cached. With a plain array, resolving a string
+or explicit `{ id }` reference may scan the dataset once per invalidation, including when the ID
+is missing. Subsequent vertical scroll events reuse both successful and unresolved lookups.
+With a SlickDataView, `getRowById()` is used when available.
 
 The normal virtual rendered range is unchanged. Only configured top/bottom rows are additionally rendered, so a million-row dataset does not produce a million-row DOM.
 
@@ -901,15 +939,22 @@ supersede the earlier agent-environment browser-startup limitation recorded duri
 
 ## Current production LOC delta and cleanup estimate
 
-These are rough **library-only** figures for `packages/common` (including SCSS and public
-interfaces, excluding Example 04, tests, generated output, and framework-wrapper changes).
-They are calculated from the current diff:
+These are **production source-line diff** counts for the audited working tree, including blank lines and
+comments. They include `.ts`, `.tsx`, `.vue`, `.scss`, `.css`, and `.html` files under library
+`src/` directories in `packages/`, `frameworks/`, and `frameworks-plugins/`. Tests, demos,
+documentation, generated output, and locale JSON are excluded.
 
-- current production-ish library diff: approximately `+3,989 / -1,550`, or **+2,439 net LOC**
-  relative to base commit `e757539c2` (packages, excluding `__tests__`/demos);
-- this includes the new `DockingController` and docking types, single-viewport/per-row routing,
-  sticky/pinning hardening, and the pinning/docking stylesheet changes;
-- this excludes test files and changelogs; historical migration references are documentation-only.
+| Comparison | Scope | Added | Removed | Net |
+| --- | --- | ---: | ---: | ---: |
+| Merge base with local `master` (`git diff master...HEAD`) | Common package | 4,493 | 1,761 | **+2,732** |
+| Merge base with local `master` (`git diff master...HEAD`) | All library packages and wrappers | 4,541 | 1,881 | **+2,660** |
+| Original base `e757539c2` | Common package | 4,664 | 1,838 | **+2,826** |
+| Original base `e757539c2` | All library packages and wrappers | 4,764 | 1,969 | **+2,795** |
+
+The original-base comparison also contains changes merged from `master`. The merge-base
+comparison is the better estimate of the feature branch's current source-line footprint.
+The main common-package net additions are `slickGrid.ts` (+1,673), `slick-grid.scss` (+386),
+and `DockingController` (+351). The prior +2,439 estimate is historical and superseded.
 
 The earlier 800–1,200-line removal estimate is retained only as a planning range and is not a
 forecast of the current implementation.
@@ -1186,8 +1231,10 @@ deferred until the vanilla guide and API cleanup are settled; do not add framewo
    references remain documentation-only.
 6. [x] Structural audit is complete for the single-renderer architecture. Remaining compatibility
    aliases are optional cleanup only and are listed in the consolidated remaining-work section.
-7. [x] Recalculate production LOC after the structural audit: `+3,989 / -1,550`
-   (**+2,439 net LOC**) from `e757539c2`, excluding `__tests__` and demos.
+7. [x] Recalculate production LOC after the final audit: common is **+2,732 net source lines**
+   against the merge base with local `master`, or **+2,826** against `e757539c2`.
+   All library packages and wrappers total **+2,660** against the merge base. See the LOC
+   section for exact counts and exclusions.
 8. Keep unit, coverage, Cypress, framework, and documentation work aligned with the cleaned API;
    do not reintroduce the removed runtime options or pane renderer.
 
