@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.1...v10.11.2) (2026-10-01)
+
+### Bug Fixes
+
+* **angular:** use correct lifecycle to pre-publish when using OIDC retry ([4fb1e74](https://github.com/ghiscoding/slickgrid-universal/commit/4fb1e748311e28979f93f7143c3e4529a2f558f4)) - by @ghiscoding
+* **angular:** use correct lifecycle to pre-publish when using OIDC retry ([6534e1b](https://github.com/ghiscoding/slickgrid-universal/commit/6534e1b13f4a1db6dd3759010f87cba77eadbf7f)) - by @ghiscoding
+
 ## [10.11.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.0...v10.11.1) (2026-09-30)
 
 ### Bug Fixes

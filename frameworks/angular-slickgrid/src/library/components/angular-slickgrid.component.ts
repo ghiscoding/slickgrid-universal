@@ -83,7 +83,7 @@ export interface AngularRowDetailView {
 @Component({
   selector: 'angular-slickgrid',
   template: `
-    <div id="slickGridContainer-{{ gridId }}" class="gridPane" [class]="containerClasses">
+    <div id="slickGridContainer-{{ gridId }}" class="gridPane grid-pane" [class]="containerClasses">
       <ng-container *ngTemplateOutlet="slickgridHeader"></ng-container>
       <div [attr.id]="gridId" class="slickgrid-container"></div>
       <ng-container *ngTemplateOutlet="slickgridFooter"></ng-container>
