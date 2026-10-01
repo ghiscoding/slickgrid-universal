@@ -107,7 +107,7 @@
     "vue:cypress:ci": "pnpm -r --stream --filter=slickgrid-vue-demo run vue:cypress:ci",
     "vue:serve": "pnpm -r --stream --filter=slickgrid-vue-demo run vue:preview",
     "docs:99": "// run Lerna-Lite lifecycle to patch Angular-Slickgrid dist/package.json (because of ng-packagr)",
-    "prepublish": "pnpm angular:replace-workspace"
+    "postversion": "pnpm angular:replace-workspace"
   },
   "engines": {
     "node": "^22.22.2 || >=24.15.0",

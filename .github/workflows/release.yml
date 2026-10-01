@@ -125,6 +125,10 @@ jobs:
         run: |
           echo "skip_version_retry_publish=true — lerna version is skipped; proceeding to publish-only run."
 
+      - name: Replace Angular workspace dependencies for publish retry
+        if: ${{ inputs.skip_version_retry_publish == true }}
+        run: pnpm angular:replace-workspace
+
       - name: Lerna Publish (build query)
         shell: bash
         run: |
