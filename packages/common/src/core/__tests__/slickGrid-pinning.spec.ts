@@ -59,6 +59,44 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
   });
 
+  it.each([false, true])('uses the calculated inner viewport width for docking with scrollbar overflow changes (rtl=%s)', (rtl) => {
+    const slickGrid = createGrid({ rtl, pinning: { columns: { right: ['d'] } } });
+    const internals = slickGrid as any;
+    internals.viewportW = 800;
+    internals.scrollbarDimensions = { width: 15, height: 15 };
+    Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 790 });
+    Object.defineProperty(internals._dockingHorizontalScroller, 'clientWidth', { configurable: true, value: 795 });
+
+    internals.viewportHasVScroll = true;
+    expect(internals.getDockingRenderedWidth()).toBe(785);
+    expect(internals.getDockingRenderedWidths()).toEqual({ left: 0, center: 705, right: 80 });
+
+    internals.viewportHasVScroll = false;
+    expect(internals.getDockingRenderedWidth()).toBe(800);
+
+    internals.viewportW = 700;
+    expect(internals.getDockingRenderedWidth()).toBe(700);
+
+    internals.dockingLayout.contentWidth = 900;
+    expect(internals.getDockingRenderedWidth()).toBe(900);
+  });
+
+  it('falls back to measured docking viewports when the calculated width is unavailable', () => {
+    const internals = createGrid({ pinning: { columns: { right: ['d'] } } }) as any;
+    const innerWidthSpy = vi.spyOn(internals, 'getViewportInnerWidth').mockReturnValue(0);
+    Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 780 });
+    Object.defineProperty(internals._dockingHorizontalScroller, 'clientWidth', { configurable: true, value: 790 });
+    expect(internals.getDockingRenderedWidth()).toBe(780);
+
+    Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 0 });
+    expect(internals.getDockingRenderedWidth()).toBe(790);
+
+    Object.defineProperty(internals._dockingHorizontalScroller, 'clientWidth', { configurable: true, value: 0 });
+    internals.viewportW = 800;
+    expect(internals.getDockingRenderedWidth()).toBe(800);
+    innerWidthSpy.mockRestore();
+  });
+
   it('applies RTL before the first implicit layout', () => {
     const originalFinishInitialization = (SlickGrid.prototype as any).finishInitialization;
     const finishInitializationSpy = vi.spyOn(SlickGrid.prototype as any, 'finishInitialization').mockImplementation(function (this: any) {

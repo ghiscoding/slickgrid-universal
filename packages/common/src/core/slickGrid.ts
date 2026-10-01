@@ -1406,7 +1406,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * is wider than its unpinned center columns.
    */
   protected getDockingRenderedWidth(): number {
-    const viewportWidth = this._viewportNode?.clientWidth || this._dockingHorizontalScroller?.clientWidth || this.getViewportInnerWidth();
+    const viewportWidth = this.getViewportInnerWidth() || this._viewportNode?.clientWidth || this._dockingHorizontalScroller?.clientWidth;
     return Math.max(this.dockingLayout.contentWidth, viewportWidth || this.viewportW);
   }
 
