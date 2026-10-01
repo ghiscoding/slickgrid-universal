@@ -41,10 +41,6 @@ export class Example20Component implements OnInit {
     this.gridObj = g.slickGrid;
   }
   prepareDataGrid() {
-    const dual = {
-      leftInput: { field: 'cost', type: 'float', decimal: 2, minValue: 0, maxValue: 50000 },
-      rightInput: { field: 'duration', type: 'float', minValue: 0, maxValue: 100 },
-    } as ColumnEditorDualInput;
     this.columns = [
       { id: 'title', name: 'Title', field: 'title', width: 120, minWidth: 100, sortable: true, filterable: true },
       {
@@ -64,6 +60,7 @@ export class Example20Component implements OnInit {
         name: 'Start',
         field: 'start',
         type: 'dateIso',
+        minWidth: 100,
         sortable: true,
         filterable: true,
         formatter: Formatters.dateIso,
@@ -73,6 +70,7 @@ export class Example20Component implements OnInit {
         id: 'finish',
         name: 'Finish',
         field: 'finish',
+        minWidth: 100,
         type: 'dateIso',
         sortable: true,
         filterable: true,
@@ -83,6 +81,7 @@ export class Example20Component implements OnInit {
         id: 'completed',
         name: 'Completed',
         field: 'completed',
+        minWidth: 60,
         sortable: true,
         filterable: true,
         formatter: Formatters.checkmarkMaterial,
@@ -100,10 +99,17 @@ export class Example20Component implements OnInit {
         id: 'cost',
         name: 'Cost | Duration',
         field: 'cost',
+        minWidth: 120,
         formatter: this.costDurationFormatter.bind(this),
         sortable: true,
         filter: { model: Filters.compoundSlider },
-        editor: { model: Editors.dualInput, params: dual },
+        editor: {
+          model: Editors.dualInput,
+          params: {
+            leftInput: { field: 'cost', type: 'float', decimal: 2, minValue: 0, maxValue: 50000 },
+            rightInput: { field: 'duration', type: 'float', minValue: 0, maxValue: 100 },
+          } as ColumnEditorDualInput,
+        },
       },
       {
         id: 'cityOfOrigin',
@@ -124,6 +130,7 @@ export class Example20Component implements OnInit {
         excludeFromExport: true,
         formatter: () => '<div class="cell-menu-dropdown">Action<i class="mdi mdi-chevron-down"></i></div>',
         cellMenu: {
+          commandTitle: 'Commands',
           commandItems: [
             { command: 'command1', title: 'Command 1' },
             { command: 'command2', title: 'Command 2' },
@@ -131,6 +138,7 @@ export class Example20Component implements OnInit {
             'divider',
             { command: 'help', title: 'Help' },
           ],
+          optionTitle: 'Change Complete Flag',
           optionItems: [
             { option: true, title: 'True' },
             { option: false, title: 'False' },
@@ -138,6 +146,7 @@ export class Example20Component implements OnInit {
         },
       },
     ];
+
     this.gridOptions = {
       autoResize: { container: '#demo-container', rightPadding: 10 },
       // Keep the left-pinned columns compact so two right-pinned columns fit

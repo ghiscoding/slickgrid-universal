@@ -28,17 +28,6 @@ const isSelectAllShownAsColumnTitle = ref(false);
 let vueGrid!: SlickgridVueInstance;
 let checkboxSelectorInstance: any;
 
-const customEditableInputFormatter = (_row: number, _cell: number, value: any) => value ?? '';
-const myCustomTitleValidator = (value: any) => {
-  if (value === null || value === undefined || !value.length) {
-    return { valid: false, msg: 'This is a required field' };
-  }
-  if (!/^Task\s\d+$/.test(value)) {
-    return { valid: false, msg: 'Your title is invalid, it must start with "Task" followed by a number' };
-  }
-  return { valid: true, msg: '' };
-};
-
 onBeforeMount(() => {
   dataset.value = mockData(NB_ITEMS);
   defineGrid();
@@ -46,17 +35,7 @@ onBeforeMount(() => {
 
 function defineGrid() {
   columns.value = [
-    {
-      id: 'title',
-      name: 'Title',
-      field: 'title',
-      width: 120,
-      minWidth: 100,
-      sortable: true,
-      filterable: true,
-      editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator },
-      formatter: customEditableInputFormatter,
-    },
+    { id: 'title', name: 'Title', field: 'title', width: 120, minWidth: 100, sortable: true, filterable: true },
     {
       id: 'percentComplete',
       name: '% Complete',
@@ -74,6 +53,7 @@ function defineGrid() {
       name: 'Start',
       field: 'start',
       type: 'dateIso',
+      minWidth: 100,
       sortable: true,
       filterable: true,
       formatter: Formatters.dateIso,
@@ -83,6 +63,7 @@ function defineGrid() {
       id: 'finish',
       name: 'Finish',
       field: 'finish',
+      minWidth: 100,
       type: 'dateIso',
       sortable: true,
       filterable: true,
@@ -93,6 +74,7 @@ function defineGrid() {
       id: 'completed',
       name: 'Completed',
       field: 'completed',
+      minWidth: 60,
       sortable: true,
       filterable: true,
       formatter: Formatters.checkmarkMaterial,
@@ -110,22 +92,15 @@ function defineGrid() {
       id: 'cost',
       name: 'Cost | Duration',
       field: 'cost',
+      minWidth: 120,
       formatter: costDurationFormatter,
       sortable: true,
       filter: { model: Filters.compoundSlider },
       editor: {
         model: Editors.dualInput,
         params: {
-          leftInput: {
-            field: 'cost',
-            type: 'float',
-            decimal: 2,
-            minValue: 0,
-            maxValue: 50000,
-            placeholder: '< 50K',
-            errorMessage: 'Cost must be positive and below $50K.',
-          },
-          rightInput: { field: 'duration', type: 'float', minValue: 0, maxValue: 100, errorMessage: 'Duration must be between 0 and 100.' },
+          leftInput: { field: 'cost', type: 'float', decimal: 2, minValue: 0, maxValue: 50000 },
+          rightInput: { field: 'duration', type: 'float', minValue: 0, maxValue: 100 },
         } as ColumnEditorDualInput,
       },
     },
@@ -151,11 +126,10 @@ function defineGrid() {
         commandTitle: 'Commands',
         commandItems: [
           { command: 'command1', title: 'Command 1' },
-          { command: 'command2', title: 'Command 2', itemUsabilityOverride: (args: any) => !args.dataContext.completed },
-          { command: 'delete-row', title: 'Delete Row', itemVisibilityOverride: (args: any) => !args.dataContext.completed },
-          { divider: true, command: '' },
+          { command: 'command2', title: 'Command 2' },
+          { command: 'delete-row', title: 'Delete Row' },
+          'divider',
           { command: 'help', title: 'Help' },
-          { command: 'something', title: 'Disabled Command', disabled: true },
         ],
         optionTitle: 'Change Complete Flag',
         optionItems: [

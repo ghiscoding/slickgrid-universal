@@ -1939,6 +1939,47 @@ describe('SlickGrid unified pinning', () => {
     }
   });
 
+  it.each([0, 1])('refreshes docking chrome when resizing column %s without changing the canvas width', (columnIndex) => {
+    const slickGrid = createGrid({
+      devMode: { ownerNodeIndex: 0, containerClientWidth: 800 },
+      fullWidthRows: false,
+      syncColumnCellResize: true,
+      createFooterRow: true,
+      showHeaderRow: true,
+      pinning: { columns: { left: ['a'], right: ['d'] } },
+    });
+    const internals = slickGrid as any;
+    internals.updateCanvasWidth(true);
+    const initialCanvasWidth = internals.canvasWidth;
+    const initialCanvasWidths = [internals.canvasWidth, internals.canvasWidthL, internals.canvasWidthR];
+    const columnId = slickGrid.getColumns()[columnIndex].id;
+    const header = slickGrid.getHeaderColumn(columnId)!;
+    const filter = slickGrid.getHeaderRowColumn(columnId)!;
+    const footer = slickGrid.getFooterRowColumn(columnId)!;
+    const row = internals.rowsCache[0].rowNode[0] as HTMLElement;
+    const regions = internals.rowsCache[0].cellRegions;
+    expect(filter.style.width).toBe('80px');
+    expect(footer.style.width).toBe('80px');
+    const chromeSpy = vi.spyOn(internals, 'applyDockingToColumnChrome');
+    slickGrid.getColumns()[columnIndex].width = 60;
+
+    internals.applyColumnHeaderWidths();
+    internals.updateCanvasWidth();
+
+    expect([internals.canvasWidth, internals.canvasWidthL, internals.canvasWidthR]).toEqual(initialCanvasWidths);
+    expect(chromeSpy).toHaveBeenCalled();
+    expect(header.style.width).toBe(`${60 - slickGrid.getHeaderColumnWidthDiff()}px`);
+    expect(filter.style.width).toBe('60px');
+    expect(footer.style.width).toBe('60px');
+    const leftWidth = columnIndex === 0 ? 60 : 80;
+    const centerWidth = initialCanvasWidth - leftWidth - 80;
+    expect(row.style.width).toBe(`${initialCanvasWidth}px`);
+    expect(row.style.gridTemplateColumns).toBe(`${leftWidth}px ${centerWidth}px 80px`);
+    expect(regions.left.style.width).toBe(`${leftWidth}px`);
+    expect(regions.center.style.width).toBe(`${centerWidth}px`);
+    expect(regions.right.style.width).toBe('80px');
+  });
+
   it('keeps sticky cell geometry synchronized during column resize', () => {
     const resizableStickyColumns = columns.map((column, index) => ({
       ...column,

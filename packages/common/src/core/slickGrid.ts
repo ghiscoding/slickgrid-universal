@@ -1392,7 +1392,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
 
-    if (widthChanged || forceColumnWidthsUpdate) {
+    if (widthChanged || forceColumnWidthsUpdate || this.hasDockedColumns()) {
       this.applyColumnWidths();
       this.applyDockingToColumnChrome();
       this.applyDockingDimensionsToRows();

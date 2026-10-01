@@ -41,34 +41,27 @@ const Example20: React.FC = () => {
   /* Define grid Options and Columns */
   function defineGrid() {
     const columns: Column[] = [
-      {
-        id: 'title',
-        name: 'Title',
-        field: 'title',
-        minWidth: 100,
-        width: 120,
-        filterable: true,
-        sortable: true,
-      },
+      { id: 'title', name: 'Title', field: 'title', width: 120, minWidth: 100, sortable: true, filterable: true },
       {
         id: 'percentComplete',
         name: '% Complete',
         field: 'percentComplete',
-        resizable: false,
-        minWidth: 130,
         width: 140,
+        minWidth: 130,
         type: 'number',
+        sortable: true,
         filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
-        sortable: true,
+        editor: { model: Editors.singleSelect, collection: Array.from({ length: 101 }, (_v, i) => ({ value: i, label: i })) },
       },
       {
         id: 'start',
         name: 'Start',
         field: 'start',
         type: 'dateIso',
-        filterable: true,
+        minWidth: 100,
         sortable: true,
+        filterable: true,
         formatter: Formatters.dateIso,
         filter: { model: Filters.compoundDate },
       },
@@ -76,9 +69,10 @@ const Example20: React.FC = () => {
         id: 'finish',
         name: 'Finish',
         field: 'finish',
+        minWidth: 100,
         type: 'dateIso',
-        filterable: true,
         sortable: true,
+        filterable: true,
         formatter: Formatters.dateIso,
         filter: { model: Filters.compoundDate },
       },
@@ -86,6 +80,7 @@ const Example20: React.FC = () => {
         id: 'completed',
         name: 'Completed',
         field: 'completed',
+        minWidth: 60,
         sortable: true,
         filterable: true,
         formatter: Formatters.checkmarkMaterial,
@@ -103,73 +98,16 @@ const Example20: React.FC = () => {
         id: 'cost',
         name: 'Cost | Duration',
         field: 'cost',
+        minWidth: 120,
         formatter: costDurationFormatter,
         sortable: true,
-        // filterable: true,
-        filter: {
-          model: Filters.compoundSlider,
-        },
+        filter: { model: Filters.compoundSlider },
         editor: {
           model: Editors.dualInput,
-          // the DualInputEditor is of Type ColumnEditorDualInput and MUST include (leftInput/rightInput) in its params object
-          // in each of these 2 properties, you can pass any regular properties of a column editor
-          // and they will be executed following the options defined in each
           params: {
-            leftInput: {
-              field: 'cost',
-              type: 'float',
-              decimal: 2,
-              minValue: 0,
-              maxValue: 50000,
-              placeholder: '< 50K',
-              errorMessage: 'Cost must be positive and below $50K.',
-            },
-            rightInput: {
-              field: 'duration',
-              type: 'float', // you could have 2 different input type as well
-              minValue: 0,
-              maxValue: 100,
-              title: 'make sure Duration is withing its range of 0 to 100',
-              errorMessage: 'Duration must be between 0 and 100.',
-
-              // Validator Option #1
-              // You could also optionally define a custom validator in 1 or both inputs
-              /*
-              validator: (value, args) => {
-                let isValid = true;
-                let errorMsg = '';
-                if (value < 0 || value > 120) {
-                  isValid = false;
-                  errorMsg = 'Duration MUST be between 0 and 120.';
-                }
-                return { valid: isValid, msg: errorMsg };
-              }
-              */
-            },
+            leftInput: { field: 'cost', type: 'float', decimal: 2, minValue: 0, maxValue: 50000 },
+            rightInput: { field: 'duration', type: 'float', minValue: 0, maxValue: 100 },
           } as ColumnEditorDualInput,
-
-          // Validator Option #2 (shared Validator) - this is the last alternative, option #1 (independent Validators) is still the recommended way
-          // You can also optionally use a common Validator (if you do then you cannot use the leftInput/rightInput validators at same time)
-          // to compare both values at the same time.
-          /*
-          validator: (values, args) => {
-            let isValid = true;
-            let errorMsg = '';
-            if (values.cost < 0 || values.cost > 50000) {
-              isValid = false;
-              errorMsg = 'Cost MUST be between 0 and 50k.';
-            }
-            if (values.duration < 0 || values.duration > 120) {
-              isValid = false;
-              errorMsg = 'Duration MUST be between 0 and 120.';
-            }
-            if (values.cost < values.duration) {
-              isValid = false;
-              errorMsg = 'Cost can never be lower than its Duration.';
-            }
-            return { valid: isValid, msg: errorMsg };
-          }
-          */
         },
       },
       {
@@ -178,9 +116,9 @@ const Example20: React.FC = () => {
         field: 'cityOfOrigin',
         cssClass: 'city-of-origin-column',
         minWidth: 100,
-        pinnable: false,
-        filterable: true,
         sortable: true,
+        filterable: true,
+        pinnable: false,
       },
       {
         id: 'action',
@@ -194,11 +132,10 @@ const Example20: React.FC = () => {
           commandTitle: 'Commands',
           commandItems: [
             { command: 'command1', title: 'Command 1' },
-            { command: 'command2', title: 'Command 2', itemUsabilityOverride: (args: any) => !args.dataContext.completed },
-            { command: 'delete-row', title: 'Delete Row', itemVisibilityOverride: (args: any) => !args.dataContext.completed },
-            { divider: true, command: '' },
+            { command: 'command2', title: 'Command 2' },
+            { command: 'delete-row', title: 'Delete Row' },
+            'divider',
             { command: 'help', title: 'Help' },
-            { command: 'something', title: 'Disabled Command', disabled: true },
           ],
           optionTitle: 'Change Complete Flag',
           optionItems: [

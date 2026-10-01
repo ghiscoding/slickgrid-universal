@@ -47,10 +47,6 @@ export class Example20 {
     this.gridObj = g.slickGrid;
   }
   defineGrid() {
-    const dual = {
-      leftInput: { field: 'cost', type: 'float', decimal: 2, minValue: 0, maxValue: 50000 },
-      rightInput: { field: 'duration', type: 'float', minValue: 0, maxValue: 100 },
-    } as ColumnEditorDualInput;
     this.columns = [
       { id: 'title', name: 'Title', field: 'title', width: 120, minWidth: 100, sortable: true, filterable: true },
       {
@@ -70,6 +66,7 @@ export class Example20 {
         name: 'Start',
         field: 'start',
         type: 'dateIso',
+        minWidth: 100,
         sortable: true,
         filterable: true,
         formatter: Formatters.dateIso,
@@ -79,6 +76,7 @@ export class Example20 {
         id: 'finish',
         name: 'Finish',
         field: 'finish',
+        minWidth: 100,
         type: 'dateIso',
         sortable: true,
         filterable: true,
@@ -89,6 +87,7 @@ export class Example20 {
         id: 'completed',
         name: 'Completed',
         field: 'completed',
+        minWidth: 60,
         sortable: true,
         filterable: true,
         formatter: Formatters.checkmarkMaterial,
@@ -106,10 +105,17 @@ export class Example20 {
         id: 'cost',
         name: 'Cost | Duration',
         field: 'cost',
+        minWidth: 120,
         formatter: this.costDurationFormatter.bind(this),
         sortable: true,
         filter: { model: Filters.compoundSlider },
-        editor: { model: Editors.dualInput, params: dual },
+        editor: {
+          model: Editors.dualInput,
+          params: {
+            leftInput: { field: 'cost', type: 'float', decimal: 2, minValue: 0, maxValue: 50000 },
+            rightInput: { field: 'duration', type: 'float', minValue: 0, maxValue: 100 },
+          } as ColumnEditorDualInput,
+        },
       },
       {
         id: 'cityOfOrigin',
@@ -133,11 +139,10 @@ export class Example20 {
           commandTitle: 'Commands',
           commandItems: [
             { command: 'command1', title: 'Command 1' },
-            { command: 'command2', title: 'Command 2', itemUsabilityOverride: (args: any) => !args.dataContext.completed },
-            { command: 'delete-row', title: 'Delete Row', itemVisibilityOverride: (args: any) => !args.dataContext.completed },
-            { divider: true, command: '' },
+            { command: 'command2', title: 'Command 2' },
+            { command: 'delete-row', title: 'Delete Row' },
+            'divider',
             { command: 'help', title: 'Help' },
-            { command: 'something', title: 'Disabled Command', disabled: true },
           ],
           optionTitle: 'Change Complete Flag',
           optionItems: [
@@ -147,6 +152,7 @@ export class Example20 {
         },
       },
     ];
+
     this.gridOptions = {
       autoResize: { container: '#demo-container', rightPadding: 10 },
       // Keep the left-pinned columns compact so two right-pinned columns fit
