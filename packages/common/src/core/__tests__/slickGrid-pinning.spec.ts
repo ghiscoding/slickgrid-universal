@@ -282,6 +282,68 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getOptions().stickyRows).toEqual({ top: [], bottom: [], both: [] });
   });
 
+  it.each([
+    { reference: 'pending-row', idProperty: 'a', invalidation: 'all' },
+    { reference: { id: 99 }, idProperty: 'id', invalidation: 'rows' },
+  ])('caches unresolved row references until $invalidation invalidation ($idProperty)', ({ reference, idProperty, invalidation }) => {
+    const rows = data.map((row) => ({ ...row }));
+    const slickGrid = createGrid(
+      {
+        datasetIdPropertyName: idProperty,
+        pinning: { rows: { top: [reference] } },
+        stickyRows: { bottom: [reference] },
+      },
+      columns,
+      rows
+    );
+    const internals = slickGrid as any;
+    const findIndexSpy = vi.spyOn(rows, 'findIndex');
+    internals.dockingRowIndexByReference.clear();
+
+    for (let scrollTop = 0; scrollTop < 60; scrollTop++) {
+      internals.refreshRowDockingLayout(scrollTop);
+    }
+
+    expect(findIndexSpy).toHaveBeenCalledOnce();
+    expect(internals.rowDockingLayout.top).toEqual([]);
+    expect(internals.rowDockingLayout.bottom).toEqual([]);
+
+    rows[2] = { ...rows[2], id: 99, a: 'pending-row' };
+    if (invalidation === 'all') {
+      slickGrid.invalidateAllRows();
+    } else {
+      slickGrid.invalidateRows([2]);
+    }
+    slickGrid.render();
+
+    expect(findIndexSpy).toHaveBeenCalledTimes(2);
+    expect(internals.rowDockingLayout.top.map((entry: any) => entry.index)).toEqual([2]);
+    findIndexSpy.mockRestore();
+  });
+
+  it('caches missing DataView row IDs and resolves them after the data changes', () => {
+    const slickGrid = createGrid();
+    const internals = slickGrid as any;
+    const getRowById = vi.fn().mockReturnValue(undefined);
+    internals.data = { getRowById };
+
+    expect(internals.resolveDockingRowIndex('pending-row')).toBeUndefined();
+    expect(internals.resolveDockingRowIndex('pending-row')).toBeUndefined();
+    expect(getRowById).toHaveBeenCalledOnce();
+
+    getRowById.mockReturnValue(0);
+    slickGrid.invalidateAllRows();
+
+    expect(internals.resolveDockingRowIndex('pending-row')).toBe(0);
+    expect(getRowById).toHaveBeenCalledTimes(2);
+  });
+
+  it('reports a missing selection model when requesting selected rows', () => {
+    const slickGrid = createGrid();
+
+    expect(() => slickGrid.getSelectedRows()).toThrow('SlickGrid Selection model is not set');
+  });
+
   it('reports a rejected setColumns request without mutating the caller columns or publishing events', () => {
     const slickGrid = createGrid({ pinning: { columns: { right: ['d'] } } });
     const internals = slickGrid as any;
