@@ -182,8 +182,7 @@ $slick-header-resizable-hover-top:                          10% !default;
 /* Pinned rows/columns */
 $slick-pinned-border-bottom:                                1px solid #a5a5a5 !default;
 $slick-pinned-border-color:                                 #a5a5a5 !default;
-$slick-pinned-border-box-shadow-left:                       inset -1px 0 0 var(--slick-pinned-border-color, #{$slick-pinned-border-color}) !default;
-$slick-pinned-border-box-shadow-right:                      inset 1px 0 0 var(--slick-pinned-border-color, #{$slick-pinned-border-color}) !default;
+
 
 /* icons */
 $slick-icon-color:                                          inherit !default;

@@ -2,7 +2,9 @@
   max-width: 1000px;
 
   .slick-cell.financial-account-column,
-  .slick-header-column.financial-account-header {
+  .slick-header-column.financial-account-header,
+  .slick-cell.financial-sticky-candidate,
+  .slick-header-column.financial-sticky-candidate-header {
     background-color: #e4edf7 !important;
     font-weight: 600;
   }
@@ -10,12 +12,6 @@
   .slick-cell.financial-month-column,
   .slick-cell.financial-sticky-candidate {
     text-align: right;
-  }
-
-  .slick-cell.financial-sticky-candidate,
-  .slick-header-column.financial-sticky-candidate-header {
-    background-color: #e4edf7 !important;
-    font-weight: 600;
   }
 
   // Active sticky columns retain the same report blue as their natural cells;
@@ -66,7 +62,8 @@
   width: 13px;
 }
 
-.financial-report-legend-account {
+.financial-report-legend-account,
+.financial-report-legend-sticky {
   background-color: #e4edf7;
 }
 
@@ -76,8 +73,4 @@
 
 .financial-report-legend-intersection {
   background-color: #173e68;
-}
-
-.financial-report-legend-sticky {
-  background-color: #e4edf7;
 }

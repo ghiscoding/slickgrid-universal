@@ -227,12 +227,9 @@
       height: 1px;
     }
 
-    .grid-canvas {
-      will-change: transform;
-    }
-
-    // Keep the full-width row overlay on the compositor path while translating
-    // it with the horizontal proxy scrollbar.
+    // Keep both row layers on the compositor path while translating them
+    // with the horizontal proxy scrollbar.
+    .grid-canvas,
     .slick-docking-overlay {
       will-change: transform;
     }
@@ -301,12 +298,6 @@
       ) !important;
     }
 
-    // Right-pinned chrome is positioned directly in the translated header
-    // layer, unlike a row region. Do not apply the row/natural-content offset
-    // a second time or the title lands beside a center column.
-    :is(.slick-header-column, .slick-headerrow-column, .slick-footerrow-column).slick-docking-chrome-right {
-      transform: translate3d(var(--slick-docking-scroll-left, 0px), 0, 0) !important;
-    }
   }
 
   .slick-group {
@@ -338,16 +329,20 @@
         background: inherit;
       }
 
-      > .slick-pinned-left-cells {
-        grid-column: 1;
-        position: sticky;
-        inset-inline-start: 0;
+      > .slick-pinned-left-cells,
+      > .slick-pinned-right-cells {
         z-index: 20;
         // Keep the boundary outside the measured content width. The header
         // tracks use content-box sizing, so border-box here would make every
         // pinned data cell slightly narrower than its header counterpart.
         box-sizing: content-box;
         will-change: transform;
+      }
+
+      > .slick-pinned-left-cells {
+        grid-column: 1;
+        position: sticky;
+        inset-inline-start: 0;
       }
 
       > .slick-scrolling-cells {
@@ -357,9 +352,6 @@
       > .slick-pinned-right-cells {
         grid-column: 3;
         justify-self: end;
-        z-index: 20;
-        box-sizing: content-box;
-        will-change: transform;
       }
 
       // Use a border overlay for active cross-band colspans. It does not affect cell size.
@@ -1282,13 +1274,8 @@
     );
   }
 
-  // Pinned header/filter cells must paint above center cells when their
+  // Pinned filter/footer cells must paint above center cells when their
   // absolute positions overlap during a width update.
-  .slick-header-column.slick-column-pinned-left,
-  .slick-header-column.slick-column-pinned-right {
-    z-index: 20;
-    background-color: var(--slick-header-background-color, v.$slick-header-background-color);
-  }
 
   .slick-headerrow-column.slick-column-pinned-left,
   .slick-headerrow-column.slick-column-pinned-right {

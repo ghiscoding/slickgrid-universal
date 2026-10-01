@@ -2,7 +2,9 @@
   max-width: 1000px;
 
   .slick-cell.financial-account-column,
-  .slick-header-column.financial-account-header {
+  .slick-header-column.financial-account-header,
+  .slick-cell.financial-sticky-candidate,
+  .slick-header-column.financial-sticky-candidate-header {
     background-color: #e4edf7 !important;
     font-weight: 600;
   }
@@ -10,12 +12,6 @@
   .slick-cell.financial-month-column,
   .slick-cell.financial-sticky-candidate {
     text-align: right;
-  }
-
-  .slick-cell.financial-sticky-candidate,
-  .slick-header-column.financial-sticky-candidate-header {
-    background-color: #e4edf7 !important;
-    font-weight: 600;
   }
 
   .slick-cell.slick-cell-sticky,
