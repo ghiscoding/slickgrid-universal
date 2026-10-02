@@ -1,6 +1,6 @@
 # Single-viewport pinning/stickiness — implementation progress
 
-Last updated: 2026-10-01 (final LOC/performance audit and unresolved row-reference cache fix)
+Last updated: 2026-10-02 (row-count geometry performance investigation)
 
 ## Goal
 
@@ -16,6 +16,24 @@ Replace SlickGrid's multi-pane column/row architecture with an AG Grid-style doc
 - permanent pinning and scroll-activated stickiness use the same internal docking resolver;
 - vertical and horizontal virtualization must remain viable for large datasets;
 - this is intentionally a major-version breaking change; compatibility with the old pane renderer is not a design goal.
+
+## Row-count geometry performance investigation (2026-10-02)
+
+- Investigated the fork's observation that `updateCanvasWidth()` reapplies docked
+  column/chrome/row geometry on every row-count update, including filtering.
+- Proposed one condition change: honor the explicit `false` passed by `updateRowCount()`
+  when canvas widths are unchanged. Default calls during column dragging, forced calls,
+  actual width changes, and the separate vertical-scrollbar transition refresh remain active.
+  Production scope is one changed condition and two comment lines; no new state or API.
+- Desktop Firefox paired measurements saved about 1.13ms per filter update in the pinned
+  example and 1.48ms in the sticky example inside the row-count path. Total synchronous
+  filtering averaged 68.54 → 68.02ms and 77.00 → 74.96ms respectively. Whole-filter timing
+  varied between runs; this is a modest avoided cost, not a demonstrated scrolling gain.
+- All 60 before/after geometry snapshots matched across both examples, LTR/RTL, horizontal
+  scroll positions, scrollbar transitions, empty filtering, and restoration. Shared TypeScript
+  build, targeted lint/formatting, and diff checks passed. Unit/Cypress suites and coverage
+  were not rerun in this investigation. Changes remain uncommitted for review.
+- Methodology and raw evidence: `.vitest/rowcount-audit/REPORT.md` (local, Git-ignored).
 
 ## Final LOC/performance audit (2026-10-01)
 
@@ -38,11 +56,12 @@ Replace SlickGrid's multi-pane column/row architecture with an AG Grid-style doc
   0.02ms for 100 columns and 0.09ms for 1,000 columns. These are local JavaScript measurements,
   not browser frame or rendering measurements. No substantial LOC reduction justified another
   structural refactor before merge.
-- The Firefox captures below are historical. Current CSS registers the scroll-offset property
-  with `inherits: true`, and horizontal scrolling writes it on the grid container. Commit
+- The Firefox captures below are historical. At the time of the LOC audit, CSS registered the
+  scroll-offset property with `inherits: true`, and scrolling wrote it on the grid container. Commit
   `f1800b16c` restored inheritance for correctness after the earlier non-inheriting optimization.
-  A fresh Firefox held-scroll/resize capture is needed to assess descendant restyling in the
-  current implementation; this audit did not measure current browser rendering performance.
+  That LOC audit did not measure current browser rendering performance. The subsequent Firefox
+  recheck above measured the descendant-restyle cost and native horizontal wheel/drag behavior;
+  hardware presentation timing, interactive resize, and trackpad momentum remain outside its scope.
 - Current production source-line counts and their scope are recorded in the LOC section below.
   The prior +2,439 estimate is superseded.
 
