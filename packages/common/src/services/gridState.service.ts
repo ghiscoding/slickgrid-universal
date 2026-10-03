@@ -298,7 +298,7 @@ export class GridStateService {
             width: column.width || 0,
           };
           if (column.pinned !== undefined) {
-            currColumn.pinning = column.pinned;
+            currColumn.pinned = column.pinned;
           }
           if (includeHiddenProps) {
             currColumn.hidden = column.hidden;
@@ -336,7 +336,7 @@ export class GridStateService {
             width: currentColumn.width,
             // Column-level pinning is the granular preset representation. The
             // unified grid-level option remains available for axis-wide state.
-            pinned: currentColumn.pinning !== undefined ? currentColumn.pinning : gridColumn.pinned,
+            pinned: currentColumn.pinned !== undefined ? currentColumn.pinned : gridColumn.pinned,
           });
         }
       });

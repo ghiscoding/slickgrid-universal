@@ -71,7 +71,7 @@ export interface CurrentColumn {
   cssClass?: string;
   headerCssClass?: string;
   width?: number;
-  pinning?: 'left' | 'right' | null;
+  pinned?: 'left' | 'right' | null;
   hidden?: boolean;
 }
 export interface CurrentPinning {
@@ -108,7 +108,7 @@ export interface GridState {
 }
 ```
 
-`GridState.pinning` stores permanent column and row pinning. A `CurrentColumn.pinning` value
+`GridState.pinning` stores permanent column and row pinning. A `CurrentColumn.pinned` value
 preserves the side of an individual column in a custom layout, which is useful for non-contiguous
 column presets. If both forms are persisted, keep them consistent. Sticky columns and rows are
 configured through `Column.sticky` and `GridOption.stickyRows`; their active membership is derived from

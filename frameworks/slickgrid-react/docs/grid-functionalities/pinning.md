@@ -77,7 +77,7 @@ const Example: React.FC = () => {
   useEffect(() => defineGrid(), []);
 
   function defineGrid() {
-      // your columns definition
+    // your columns definition
     setColumns([]);
     setOptions({
       alwaysShowVerticalScroll: false,
@@ -188,5 +188,3 @@ Pinning and sticky docking work in `rtl: true` grids. Band names follow reading 
 | `sticky: 'left'` / `'right'` | named edge | same logical band, mirrored |
 
 `getCellFromPoint(x, y)` still measures `x` from the grid’s physical left edge. In an RTL grid it counts back from the last column and resolves points over pinned or sticky bands to the column rendered there.
-## Animated Gif Demo
-![](https://user-images.githubusercontent.com/643976/50852303-28d57c80-134d-11e9-859c-aeb55af24c24.gif)

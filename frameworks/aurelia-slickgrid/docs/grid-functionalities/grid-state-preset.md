@@ -79,6 +79,7 @@ export interface CurrentColumn {
   cssClass?: string;
   headerCssClass?: string;
   width?: number;
+  pinned?: 'left' | 'right' | null;
 }
 export interface CurrentFilter {
   columnId: string;

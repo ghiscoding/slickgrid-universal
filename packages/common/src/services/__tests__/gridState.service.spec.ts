@@ -615,7 +615,7 @@ describe('GridStateService', () => {
       ] as Column[];
       const associatedColumnsMock = [
         { columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 },
-        { columnId: 'field2', cssClass: '', headerCssClass: 'blue', width: 150, pinning: 'left' },
+        { columnId: 'field2', cssClass: '', headerCssClass: 'blue', width: 150, pinned: 'left' },
         { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0 },
       ] as CurrentColumn[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
@@ -646,7 +646,7 @@ describe('GridStateService', () => {
       ] as Column[];
       const currentColumnsMock = [
         { columnId: 'field1', cssClass: 'purple', headerCssClass: 'custom-hdr', width: 100 },
-        { columnId: 'field2', cssClass: '', width: 150 },
+        { columnId: 'field2', cssClass: '', width: 150, pinned: 'left' },
         { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0 },
       ] as CurrentColumn[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
@@ -657,12 +657,12 @@ describe('GridStateService', () => {
       // cssClass: red will change to purple and headerCssClass will remain blue when defined in either
       expect(associatedGridColumns).toEqual([
         { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', hidden: false, headerCssClass: 'custom-hdr' },
-        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, hidden: false, headerCssClass: 'blue' },
+        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, hidden: false, headerCssClass: 'blue', pinned: 'left' },
         { id: 'field3', field: 'field3', width: 0, cssClass: undefined, hidden: false, headerCssClass: undefined },
       ]);
       expect(columns).toEqual([
         { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', hidden: false, headerCssClass: 'custom-hdr' },
-        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, hidden: false, headerCssClass: 'blue' },
+        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, hidden: false, headerCssClass: 'blue', pinned: 'left' },
         { id: 'field3', field: 'field3', width: 0, cssClass: undefined, hidden: false, headerCssClass: undefined },
       ]);
     });

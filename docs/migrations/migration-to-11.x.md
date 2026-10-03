@@ -1,25 +1,20 @@
-## Single-viewport pinning and modernization
+## Single-viewport pinning rewrite
 
-SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer. This is a breaking change: pinned and sticky columns and rows now share one viewport, one native vertical scrollbar, and one DOM row per data item.
+SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer and single-scrollbar. Frozen columns/rows is being replaced by a new Pinnning feature and as a bonus we also have a new Sticky columns/rows.
 
-The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer valid. We now call this the Pinning feature because you can now pin any single column, the column index no longer matters and it's no longer a frozen range but rather an individual pinning (hence the new name). Update your grid options, persisted grid state, custom menu commands, and DOM/CSS selectors as part of the migration. The examples below show the application changes; feature details belong in the linked guides.
+The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer valid and users have to migrate to the new `pinning` grid option. The new Pinning feature allows you to pin any single column, the column index no longer matters and it's no longer a frozen range but is rather individual pinning (hence the new name). Update your grid options, persisted grid state.
 
 #### Major Changes - Quick Summary
 
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
-- [Column pinning](#column-pinning)
-- [Rename `changeColumnsArrangement()`](#rename-changecolumnsarrangement)
-- [Header Menu pin/unpin commands](#header-menu-commands)
-- [Single-viewport DOM and CSS changes](#single-viewport-dom-and-css)
-- [Row Positioning](#row-positioning)
+- [Removed Deprecated Code](#removed-deprecated-code)
+- [Code Changes](#code-changes)
 
-> **Note:** If you are upgrading from a version earlier than v10, follow the previous migration
-> guides in order before applying these v11 changes.
+> **Note:** If you are upgrading from a version earlier than v10, follow the previous migration guides in order before applying these v11 changes.
 
-> **Important:** v11 intentionally does not provide a compatibility layer for the old full-height
-> frozen panes. The migration is a configuration and DOM contract change, not only a visual update.
+> **Important:** v11 intentionally does not provide a compatibility layer for the old full-height frozen panes. The migration is a configuration and DOM contract change, not only a visual update.
 
-Also note that we also have a new Sticky docking that was introduced in v11, it shares similarities with Pinning, but it is an entirely new feature. See the [Sticky Docking guide](../grid-functionalities/sticky.md) for its configuration and behavior.
+Also note that we also have a new Sticky docking that was also introduced in v11, it shares similarities with Pinning, but it is an entirely new feature. See the [Sticky Docking guide](../grid-functionalities/sticky.md) for its configuration and behavior.
 
 ### Replace frozen options with `pinning`
 
@@ -57,6 +52,9 @@ Header Menu commands, and runtime APIs.
 
 Per-column permanent pinning moves from the old frozen-column behavior to `Column.pinned`.
 `Column.pinnable: false` replaces the old per-column lock behavior for the built-in Header Menu.
+In saved Grid State and presets, rename the per-column field from `columns[].pinning` to
+`columns[].pinned`. The top-level `GridState.pinning` field remains unchanged for the full pinning
+configuration.
 
 > Note, the `pinnable` flag is currently only used to show/hide the "Column Pinning" command from the Header Menu. It will not block a column from being pinnable using the `pinning` grid option, it is again simply used by the Header Menu.
 
@@ -70,16 +68,6 @@ const columns: Column[] = [
 
 See the [Pinning guide](../grid-functionalities/pinning.md) for the complete column options and
 runtime methods.
-
-### Rename `changeColumnsArrangement()`
-
-```diff
-- gridStateService.changeColumnsArrangement(columnPreset, false);
-+ gridStateService.applyColumnLayout(columnPreset, false);
-```
-
-The method now describes its responsibility more accurately: it applies visibility, order, widths,
-and dynamic extension columns. This rename applies to all framework wrappers.
 
 ### Header Menu commands
 
@@ -116,6 +104,24 @@ The Header Menu now provides a `Column Pinning` sub-menu with directional pin, b
 unpin commands. Use `headerMenu.showPinningCommands` to expose it before a pinning state exists,
 and `headerMenu.hideCommands` for individual command visibility.
 
+#### Pinning locale keys and labels
+
+Update custom locale files that still use the frozen-column keys. The pinning menu now has distinct
+labels for directional and bulk actions:
+
+| Previous locale key / default locale property | Current locale key / default locale property | Label change |
+| --- | --- | --- |
+| `FREEZE_COLUMNS` / `TEXT_FREEZE_COLUMNS` | `PIN_COLUMNS_LEFT` / `TEXT_PIN_COLUMNS_LEFT`; `PIN_COLUMNS_RIGHT` / `TEXT_PIN_COLUMNS_RIGHT` | Replaced the single freeze action with directional bulk pin actions. |
+| `UNFREEZE_COLUMNS` / `TEXT_UNFREEZE_COLUMNS` | `UNPIN_COLUMNS` / `TEXT_UNPIN_COLUMNS` | “Unfreeze Columns” becomes “Unpin All Columns.” |
+| `PIN_COLUMN` / `TEXT_PIN_COLUMN` | Same keys | Retained for the menu root; its label is now “Column Pinning” (French: “Épinglage de colonne”). |
+| No previous key | `PIN_LEFT` / `TEXT_PIN_LEFT`; `PIN_RIGHT` / `TEXT_PIN_RIGHT` | New labels for pinning the selected column to either side. |
+| `UNPIN_COLUMN` / `TEXT_UNPIN_COLUMN` | Same keys | Retained for unpinning the selected column. |
+
+If you customize Header Menu labels through `headerMenu.commandLabels`, replace the removed
+`pinningColumnsCommand` and `pinningColumnsCommandKey` with `pinningColumnsLeftCommand` and
+`pinningColumnsRightCommand`. The English root label remains “Column Pinning”; bulk actions keep
+plural labels such as “Pin Columns Left” and “Unpin All Columns.”
+
 See the [Pinning guide](../grid-functionalities/pinning.md) for current command ids, labels,
 translation keys, and menu behavior.
 
@@ -140,17 +146,47 @@ The old pane roots and independent scroll containers are removed. Replace select
 `.grid-canvas-left`, and `.grid-canvas-right` with the single-viewport selectors documented in the
 [Pinning guide](../grid-functionalities/pinning.md).
 
+#### Main DOM class changes
+
+| Former pane/viewport selector | Current class or structure | Migration note |
+| --- | --- | --- |
+| `.slick-pane-header` | `.slick-header-root` | The single header root. |
+| `.slick-pane-top` | `.slick-content-root` | The single content root. |
+| `.slick-pane-left`, `.slick-pane-right`, `.slick-pane-bottom` | No separate pane equivalents; see the row cell regions below. | Docking no longer creates independent pane containers. |
+| `.slick-viewport-top`, `.slick-viewport-left` | `.slick-viewport` | These direction classes remain on the sole viewport, but no longer identify separate viewports. |
+| `.slick-viewport-right`, `.slick-viewport-bottom` | No equivalent. | Scroll owners are identified with the scroller classes below. |
+| Former viewport selected as horizontal/vertical scroll owner | `.slick-horizontal-scroller`, `.slick-vertical-scroller` | Stable markers for the active scroll owners. Docked grids put `.slick-horizontal-scroller` on `.slick-docking-horizontal-scroller`. |
+| `.grid-canvas-left`, `.grid-canvas-right` | `.grid-canvas` | One body canvas. Docked rows place cells in the sibling regions below. |
+| Split row cells in the pane canvases | `.slick-row-docked` with `.slick-pinned-left-cells`, `.slick-scrolling-cells`, and `.slick-pinned-right-cells` | One row contains sibling regions for pinned and scrolling cells. |
+| No previous row overlay selector | `.slick-docking-overlay` | Optional layer for configured pinned or sticky rows. |
+
 Use `.slick-horizontal-scroller` for the active horizontal scroll owner and
 `.slick-vertical-scroller` for the vertical scroll owner. Docked grids use the dedicated
 `.slick-docking-horizontal-scroller` for horizontal scrolling.
+
+#### Pinning and docking Sass/CSS variables
+
+| Previous Sass variable | Current Sass variable | Previous CSS custom property | Current CSS custom property | Migration note |
+| --- | --- | --- | --- | --- |
+| `$slick-pane-top-border-top` | `$slick-content-border-top` | `--slick-pane-top-border-top` | `--slick-content-border-top` | Renamed to describe the content root rather than the removed pane. |
+| `$slick-frozen-border-bottom` | `$slick-pinned-border-bottom` | `--slick-frozen-border-bottom` | `--slick-pinned-border-bottom` | Renamed for the bottom edge of pinned rows. |
+| `$slick-frozen-border-right` | `$slick-pinned-border-color` | `--slick-frozen-border-right` | `--slick-pinned-border-color` | Renamed and generalized as the color used by pinned edge separators. |
+| `$slick-preheader-border-right` | `$slick-preheader-border-color` | `--slick-preheader-border-right` | `--slick-preheader-border-color` | Replaced the directional right border with a shared preheader separator color. |
+| `$slick-preheader-border-left`, `$slick-preheader-border-left-first-element`, `$slick-preheader-border-right-last-element`, `$slick-preheader-border-top`, `$slick-preheader-border-bottom` | No equivalent | `--slick-preheader-border-left`, `--slick-preheader-border-left-first-element`, `--slick-preheader-border-right-last-element`, `--slick-preheader-border-top`, `--slick-preheader-border-bottom` | No equivalent | Per-side and first/last overrides were removed with the old pane-specific preheader borders. |
+| `$slick-frozen-overflow-right` | No equivalent | `--slick-frozen-overflow-right` | No equivalent | The old independent viewport overflow override was removed with the multi-pane layout. |
+| No previous variable | No Sass variable | No previous variable | `--slick-pinned-border-box-shadow-left`, `--slick-pinned-border-box-shadow-right` | New CSS-only hooks for customizing the left and right pinned-edge separators. |
+
+The current Sass variables supply fallback values for the corresponding CSS custom properties.
+Update theme overrides to the current names and remove overrides marked “No equivalent.”
 
 The legacy `-1000px` header offset and `HEADER_WIDTH_SLACK` workaround are gone. Remove manual
 pane scroll synchronization and update old `$slick-frozen-*` Sass variables to their current
 `$slick-pinned-*` equivalents.
 
-### Row Positioning
+## Removed Deprecated Code
+### Row Positioning `rowTopOffsetRenderType`
 
-We previously had a grid option `rowTopOffsetRenderType: 'top' | 'transform'` and that was mainly because `'transform'` was not working with certain features like Row Detail and/or ColSpan. However with v11, this limitation is gone we are dropping the grid option and internally we will use `'transform'` as the only row offset. Remove inline Row Detail compatibility settings:
+We previously had a grid option `rowTopOffsetRenderType: 'top' | 'transform'` and that existed mainly because `'transform'` was not working with certain features like Row Detail and/or ColSpan. However with v11, this limitation is gone which allows us to drop the grid option and just use `'transform'` as the only row offset internally. Remove inline Row Detail compatibility settings:
 
 ```diff
 rowDetailView: {
@@ -160,23 +196,23 @@ rowDetailView: {
 - rowTopOffsetRenderType: 'top', // for Row Detail or ColSpan
 ```
 
-> What was that legacy grid option anyway? SlickGrid was built with virtual-scroll which is what made it extremely performant, and in order to know which row is where, it was using a top offset calculation (row X * `rowHeight`). For example the legacy approach for the second row was to use `<div class="slick-row" style="top: 25px">` (assuming `rowHeight: 25`), but the new approach is to use transform so it now uses  `<div class="slick-row" style="transform: translateY(25px)">`, the reason to use transform is simply because it's more precise and has much better performance compared to top.
+> What was that legacy `rowTopOffsetRenderType` grid option anyway? SlickGrid was built with virtual-scroll which is what made SlickGrid extremely performant, and in order to know the position of a row, it was previously using a `top` offset calculation (row Y * `rowHeight`). For example the legacy approach for the second row was to use `<div class="slick-row" style="top: 25px">` (assuming a `rowHeight: 25`), but the new approach is to use `transform` so it now uses `<div class="slick-row" style="transform: translateY(25px)">`, the reason to use transform is simply because it's more precise and has much better performance compared to top.
 
 If custom CSS or tests relied on `.slick-cell + .dynamic-cell-detail`, target
 `.dynamic-cell-detail` directly because the overlay is mounted in a sibling layer. See the
 [Row Detail guide](../grid-functionalities/row-detail.md) for details.
 
-### Migration checklist
+## Code Changes
+### Rename `changeColumnsArrangement()`
 
-- Replace `frozenColumn`, `frozenRow`, and `frozenBottom` with `pinning`.
-- Migrate saved pinning state to the nested shape.
-- Add `Column.pinned` where permanent column docking is needed.
-- Rename `changeColumnsArrangement()` to `applyColumnLayout()` and `validateColumnFreeze()` to
-  `validateColumnPinning()`.
-- Update custom menu handlers, selectors, and CSS that reference frozen panes.
-- Remove inline Row Detail compatibility settings.
-- Review the [Pinning](../grid-functionalities/pinning.md), [Grid State](../grid-functionalities/grid-state-preset.md),
-  and [Row Detail](../grid-functionalities/row-detail.md) guides for affected custom behavior.
+```diff
+- gridStateService.changeColumnsArrangement(columnPreset, false);
++ gridStateService.applyColumnLayout(columnPreset, false);
+```
+
+The method now describes its responsibility more accurately: it applies visibility, order, widths, and dynamic extension columns.
+
+### Final Note
 
 If the project is useful to you, please give it a star ⭐ on the
 [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) umbrella project.
