@@ -1,5 +1,6 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
+import { dequal } from 'dequal/lite';
 import { SlickEventHandler } from '../core/slickCore.js';
 import { type SlickDataView } from '../core/slickDataView.js';
 import { type SlickGrid } from '../core/slickGrid.js';
@@ -10,7 +11,7 @@ export class HeaderGroupingService {
   readonly pluginName = 'HeaderGroupingService';
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
-  protected _lastRenderSignature = '';
+  protected _lastRenderSignature: unknown;
   protected _groupHeaderScrollLeft = 0;
   protected _pinnedGroupWidth = 0;
   protected _pinnedGroupWidthDirty = true;
@@ -97,14 +98,14 @@ export class HeaderGroupingService {
     const visibleColumns = this._grid.getColumnsInRenderedOrder();
     const getDockingBand = (column: (typeof visibleColumns)[number]) =>
       leftColumnIds.has(column.id) ? 'left' : rightColumnIds.has(column.id) ? 'right' : 'center';
-    const renderSignature = JSON.stringify([
+    const renderSignature = [
       start,
       end,
       headersWidth,
       headerColumnWidthDiff,
       visibleColumns.map((column) => [column.id, column.width, column.columnGroup, getDockingBand(column)]),
-    ]);
-    if (this._lastRenderSignature === renderSignature) {
+    ];
+    if (dequal(this._lastRenderSignature, renderSignature)) {
       this.syncPinnedGroupHeaders();
       return;
     }
