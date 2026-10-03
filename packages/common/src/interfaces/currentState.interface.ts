@@ -1,5 +1,5 @@
-import type { DockingSide, PinningOption } from './docking.interface.js';
 import type { OperatorType, SearchTerm } from '../enums/index.js';
+import type { DockingSide, PinningOption } from './docking.interface.js';
 
 export interface CurrentColumn {
   /** Column id (in the column definitions) */

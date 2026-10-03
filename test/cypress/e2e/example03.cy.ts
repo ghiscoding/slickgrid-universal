@@ -171,7 +171,6 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
 
       cy.get('[data-row=0] > .slick-cell:nth(0) .slick-group-toggle.collapsed').should('have.length', 1);
       cy.get('[data-row=0] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
-
       cy.get('[data-row=1] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 1');
       cy.get('[data-row=2] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 2');
       cy.get('[data-row=3] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 3');
@@ -211,7 +210,6 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
 
       cy.get('[data-row=0] > .slick-cell:nth(0) .slick-group-toggle.expanded').should('have.length', 1);
       cy.get('[data-row=0] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
-
       cy.get('[data-row=1] > .slick-cell:nth(1)').should('contain', 'Task');
       cy.get('[data-row=1] > .slick-cell:nth(2)').should('contain', '0');
     });
@@ -336,33 +334,26 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
 
     it('should add 5000 items and expect 5000 of 5000 items displayed', () => {
       cy.get('[data-test="add-5k-rows-btn"]').click();
-
       cy.get('.right-footer').contains('5000 of 5000 items');
     });
 
     it('should click on Select All checkbox in filter header row and expect all 5000 items to be selected and full selection count show in left footer', () => {
       cy.get('#filter-checkbox-selectall-container').click();
-
       cy.get('#filter-checkbox-selectall-container').find('input[type=checkbox]').should('be.checked');
-
       cy.get('.left-footer').contains('5000 items selected');
     });
 
     it('should uncheck 2 first rows and expect the Select All checkbox to become unchecked', () => {
       cy.get('[data-row=0] > .slick-cell:nth(0)').find('label').click();
-
       cy.get('[data-row=1] > .slick-cell:nth(0)').find('label').click();
-
       cy.get('#filter-checkbox-selectall-container').find('input[type=checkbox]').should('not.be.checked');
     });
 
     it('should recheck the 2 first rows and expect the Select All checkbox to become unchecked', () => {
       cy.get('[data-row=0] > .slick-cell:nth(0)').find('label').click();
-
       cy.get('#filter-checkbox-selectall-container').find('input[type=checkbox]').should('not.be.checked');
 
       cy.get('[data-row=1] > .slick-cell:nth(0)').find('label').click();
-
       cy.get('#filter-checkbox-selectall-container').find('input').should('be.checked');
     });
 
@@ -370,11 +361,9 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
       cy.get('.slick-topheader-panel').should('be.visible');
 
       cy.get('[data-test="toggle-draggable-grouping-row"]').click();
-
       cy.get('.slick-topheader-panel').should('be.hidden');
 
       cy.get('[data-test="toggle-draggable-grouping-row"]').click();
-
       cy.get('.slick-topheader-panel').should('be.visible');
     });
   });
