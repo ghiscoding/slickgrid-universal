@@ -564,10 +564,9 @@ export interface GridOption<C extends Column = Column> {
   enableMouseHoverHighlightRow?: boolean;
 
   /**
-   * Do we want to always enable the mousewheel scroll handler?
-   * In other words, do we want the mouse scrolling to work from anywhere?
-   * This option is disabled by default and can be enabled when scrolling should work from anywhere
-   * in a grid with pinned regions.
+   * Defaults to true. Enables the mousewheel handler on the grid viewport and docking overlay,
+   * allowing wheel scrolling across grid regions and custom horizontal-wheel support. Set to false
+   * to disable SlickGrid's mousewheel handler and rely on native browser scrolling.
    */
   enableMouseWheelScrollHandler?: boolean;
 
