@@ -35,6 +35,7 @@ import type {
 import type { SharedService } from '../services/shared.service.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { wireMenuKeyboardNavigation } from './keyboardNavigation.js';
+import { commandMatcher } from './menuUtils.js';
 
 export type ExtractMenuType<A, T> = T extends 'command' ? A : T extends 'option' ? A : A extends 'divider' ? A : never;
 export type MenuType = 'command' | 'option';
@@ -389,7 +390,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
 
     if (builtInMenuItem !== 'divider' && !skip) {
       const cmdName = builtInMenuItem.command;
-      const cmd = (originalMenuItems ?? targetMenuItems).find((item) => item !== 'divider' && item.command === cmdName);
+      const cmd = (originalMenuItems ?? targetMenuItems).find(commandMatcher<T>(cmdName));
 
       if (!cmd) {
         targetMenuItems.push(builtInMenuItem);

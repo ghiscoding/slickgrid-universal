@@ -23,6 +23,7 @@ import type { SortService } from '../services/sort.service.js';
 import { getTranslationPrefix } from '../services/utilities.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
+import { commandMatcher } from './menuUtils.js';
 
 const PINNING_COMMANDS = {
   root: 'pin-column',
@@ -402,9 +403,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           let hasSingleColumnPinningCommand = false;
           // Single-column pinning writes only the selected column definition.
           if (isPinningEnabled && columnDef.pinnable !== false) {
-            const existingPinColumnCommand = columnHeaderMenuItems.find(
-              (item) => item !== 'divider' && item?.command === PINNING_COMMANDS.root
-            ) as MenuCommandItem | undefined;
+            const existingPinColumnCommand = columnHeaderMenuItems.find(commandMatcher(PINNING_COMMANDS.root));
             const pinColumnCommandItems: Array<MenuCommandItem | 'divider'> = existingPinColumnCommand?.commandItems ?? [];
 
             // Remove stale commands/separators while retaining custom versions of visible commands.
@@ -461,13 +460,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             for (let i = 0; i < PINNING_COMMAND_GROUPS.length - 1; i++) {
               const currentGroup = PINNING_COMMAND_GROUPS[i];
               const nextGroup = PINNING_COMMAND_GROUPS[i + 1];
-              if (
-                currentGroup.some((command) => pinColumnCommandItems.some((item) => item !== 'divider' && item.command === command)) &&
-                nextGroup.some((command) => pinColumnCommandItems.some((item) => item !== 'divider' && item.command === command))
-              ) {
-                const nextGroupIndex = pinColumnCommandItems.findIndex(
-                  (item) => item !== 'divider' && nextGroup.some((command) => command === item.command)
-                );
+              if (pinColumnCommandItems.some(commandMatcher(currentGroup)) && pinColumnCommandItems.some(commandMatcher(nextGroup))) {
+                const nextGroupIndex = pinColumnCommandItems.findIndex(commandMatcher(nextGroup));
                 pinColumnCommandItems.splice(nextGroupIndex, 0, {
                   divider: true,
                   command: i === 0 ? PINNING_COMMANDS.directionDivider : PINNING_COMMANDS.bulkDivider,
@@ -488,9 +482,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               headerMenuOptions.hideCommands,
               columnHeaderMenuItems
             );
-            hasSingleColumnPinningCommand = columnHeaderMenuItems.some(
-              (item) => item !== 'divider' && item.command === PINNING_COMMANDS.root
-            );
+            hasSingleColumnPinningCommand = columnHeaderMenuItems.some(commandMatcher(PINNING_COMMANDS.root));
             hasPinningOrResizeCommand ||= hasSingleColumnPinningCommand;
           }
 
@@ -518,8 +510,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           // Add a divider between the Column Pinning submenu and Resize by Content.
           if (
             hasSingleColumnPinningCommand &&
-            columnHeaderMenuItems.some((item) => item !== 'divider' && item.command === 'column-resize-by-content') &&
-            !columnHeaderMenuItems.some((item) => item !== 'divider' && item.command === PINNING_COMMANDS.divider)
+            columnHeaderMenuItems.some(commandMatcher('column-resize-by-content')) &&
+            !columnHeaderMenuItems.some(commandMatcher(PINNING_COMMANDS.divider))
           ) {
             columnHeaderMenuItems.push({ divider: true, command: PINNING_COMMANDS.divider, positionOrder: 46 });
           }
@@ -531,10 +523,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
           // Filter Shortcuts via sub-menus
           const cmdShortcutName = 'filter-shortcuts-root-menu';
-          if (
-            columnDef.filter?.filterShortcuts &&
-            !columnHeaderMenuItems.some((item) => item !== 'divider' && 'command' in item && item.command === cmdShortcutName)
-          ) {
+          if (columnDef.filter?.filterShortcuts && !columnHeaderMenuItems.some(commandMatcher(cmdShortcutName))) {
             const shortcutSubItems: MenuCommandItem[] = [];
             columnDef.filter.filterShortcuts.forEach((fs) => {
               // use the Title name as the command key in kebab cas
@@ -642,9 +631,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
   protected removeCommandWhenFound(columnHeaderMenuItems: Array<MenuCommandItem | 'divider'>, command: string): void {
     for (
-      let commandIdx = columnHeaderMenuItems.findIndex((item) => item !== 'divider' && item?.command === command);
+      let commandIdx = columnHeaderMenuItems.findIndex(commandMatcher(command));
       commandIdx >= 0;
-      commandIdx = columnHeaderMenuItems.findIndex((item) => item !== 'divider' && item?.command === command)
+      commandIdx = columnHeaderMenuItems.findIndex(commandMatcher(command))
     ) {
       columnHeaderMenuItems.splice(commandIdx, 1);
     }
