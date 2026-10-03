@@ -22,6 +22,7 @@ export default class Example44 {
   sgb!: SlickVanillaGridBundle;
   excelExportService = new ExcelExportService();
   pdfExportService = new PdfExportService();
+  subTitleStyle = 'display: block';
 
   attached() {
     this.defineGrid();
@@ -89,7 +90,7 @@ export default class Example44 {
     const owners = ['Alex', 'Priya', 'Mia', 'Sam', 'Chris'];
     const fragments = [
       'Refactor keyboard shortcut handling for better readability.',
-      'Adjust frozen rows when view-model updates after grouping.',
+      'Adjust pinned rows when view-model updates after grouping.',
       'Improve screen-reader labels on grid menu actions.',
       'Align batch editor validation with backend constraints.',
       'Capture edge-case around hidden columns and row-span.',
@@ -119,5 +120,10 @@ export default class Example44 {
 
   exportToPdf() {
     this.pdfExportService.exportToPdf({ filename: 'Export' });
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

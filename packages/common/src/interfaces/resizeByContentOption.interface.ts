@@ -30,6 +30,6 @@ export interface ResizeByContentOption {
    */
   maxItemToInspectSingleColumnWidthByContent?: number;
 
-  /** Defaults to 50, what width to remove from new column width when the grid is a frozen (pinned) grid and its column width exceeds the viewport full width. */
+  /** Defaults to 50, what width to remove from new column width when pinned columns exceed the viewport width. */
   widthToRemoveFromExceededWidthReadjustment?: number;
 }

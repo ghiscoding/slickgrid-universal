@@ -389,14 +389,14 @@ describe('Example 10 - Multiple Grids with Row Selection', () => {
     it('should scroll to the bottom of 2nd Grid and still have 5 rows (Task 1,Task 3,Task 12,Task 13,Task 522) selected and find 2 row selected because we now have 2 rows that got rendered (first and last)', () => {
       cy.get('#slickGridContainer-grid2').as('grid2');
       cy.get('[data-test=grid2-selections]').should('contain', 'Task 1,Task 3,Task 12,Task 13,Task 522');
-      cy.get('@grid2').find('.slick-viewport-top.slick-viewport-left').scrollTo('bottom').wait(10);
+      cy.get('@grid2').find('.slick-vertical-scroller').scrollTo('bottom').wait(10);
       cy.get('@grid2').find('.slick-row').children().filter('.slick-cell-checkboxsel.selected').should('have.length', 2);
     });
 
     it('should have 2 rows (Task 3,Task 13) selected in 2nd grid after typing in a search filter (3)', () => {
       cy.get('#slickGridContainer-grid2').as('grid2');
       cy.get('@grid2').find('.filter-title').type('3');
-      cy.get('@grid2').find('.slick-viewport-top.slick-viewport-left').scrollTo('top').wait(10);
+      cy.get('@grid2').find('.slick-vertical-scroller').scrollTo('top').wait(10);
       cy.get('@grid2').find('.slick-row').should('not.have.length', 0);
 
       cy.wait(50);

@@ -1,5 +1,4 @@
 describe('Example 14 - Column Span & Header Grouping', () => {
-  // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
   const fullPreTitles = ['', 'Common Factor', 'Period', 'Analysis'];
   const fullTitles = ['#', 'Title', 'Duration', 'Start', 'Finish', '% Complete', 'Effort Driven'];
 
@@ -11,7 +10,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
   it('should have exact Column Pre-Header & Column Header Titles in the grid', () => {
     cy.get('#grid2')
       .find('.slick-header-columns:nth(0)')
-      .children()
+      .children('.slick-header-column')
       .each(($child, index) => expect($child.text()).to.eq(fullPreTitles[index]));
 
     cy.get('#grid2')
@@ -20,23 +19,24 @@ describe('Example 14 - Column Span & Header Grouping', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should have a frozen grid on page load with 3 columns on the left and 4 columns on the right', () => {
-    cy.get('#grid2').find('[data-row=0]').should('have.length', 2);
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0]').children().should('have.length', 3);
-    cy.get('#grid2').find('.grid-canvas-right > [data-row=0]').children().should('have.length', 4);
+  it('should have a pinned grid on page load with 3 pinned columns and 4 scrolling columns', () => {
+    const firstRow = '#grid2 .slick-row[data-row="0"]';
+    cy.get(firstRow).should('have.length', 1);
+    cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell`).should('have.length', 3);
+    cy.get(`${firstRow} .slick-scrolling-cells .slick-cell`).should('have.length', 4);
 
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0]> .slick-cell:nth(0)').should('contain', '0');
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0]> .slick-cell:nth(1)').should('contain', 'Task 0');
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0]> .slick-cell:nth(2)').should('contain', '5 days');
+    cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell:nth(0)`).should('contain', '0');
+    cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell:nth(1)`).should('contain', 'Task 0');
+    cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell:nth(2)`).should('contain', '5 days');
 
-    cy.get('#grid2').find('.grid-canvas-right > [data-row=0]> .slick-cell:nth(0)').should('contain', '01/01/2009');
-    cy.get('#grid2').find('.grid-canvas-right > [data-row=0]> .slick-cell:nth(1)').should('contain', '01/05/2009');
+    cy.get(`${firstRow} .slick-scrolling-cells .slick-cell:nth(0)`).should('contain', '01/01/2009');
+    cy.get(`${firstRow} .slick-scrolling-cells .slick-cell:nth(1)`).should('contain', '01/05/2009');
   });
 
   it('should have exact Column Pre-Header & Column Header Titles in the grid again', () => {
     cy.get('#grid2')
       .find('.slick-header-columns:nth(0)')
-      .children()
+      .children('.slick-header-column')
       .each(($child, index) => expect($child.text()).to.eq(fullPreTitles[index]));
 
     cy.get('#grid2')
@@ -45,23 +45,24 @@ describe('Example 14 - Column Span & Header Grouping', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should click on the "Remove Frozen Columns" button to switch to a regular grid without frozen columns and expect 7 columns on the left container', () => {
-    cy.get('[data-test="remove-frozen-column-button"]').click();
+  it('should click on the "Remove Pinned Columns" button to switch to a regular grid without pinned columns', () => {
+    cy.get('[data-test="remove-pinned-column-button"]').click();
 
-    cy.get('#grid2').find('[data-row=0]').should('have.length', 1);
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0]').children().should('have.length', 7);
+    const firstRow = '#grid2 .slick-row[data-row="0"]';
+    cy.get(firstRow).should('have.length', 1);
+    cy.get(`${firstRow} .slick-cell`).should('have.length', 7);
 
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(0)').should('contain', '0');
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(1)').should('contain', 'Task 0');
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(2)').should('contain', '5 days');
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(3)').should('contain', '01/01/2009');
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(4)').should('contain', '01/05/2009');
+    cy.get(`${firstRow} .slick-cell:nth(0)`).should('contain', '0');
+    cy.get(`${firstRow} .slick-cell:nth(1)`).should('contain', 'Task 0');
+    cy.get(`${firstRow} .slick-cell:nth(2)`).should('contain', '5 days');
+    cy.get(`${firstRow} .slick-cell:nth(3)`).should('contain', '01/01/2009');
+    cy.get(`${firstRow} .slick-cell:nth(4)`).should('contain', '01/05/2009');
   });
 
   it('should have exact Column Pre-Header & Column Header Titles in the grid once again', () => {
     cy.get('#grid2')
       .find('.slick-header-columns:nth(0)')
-      .children()
+      .children('.slick-header-column')
       .each(($child, index) => expect($child.text()).to.eq(fullPreTitles[index]));
 
     cy.get('#grid2')
@@ -70,25 +71,26 @@ describe('Example 14 - Column Span & Header Grouping', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should click on the "Set 3 Frozen Columns" button to switch frozen columns grid and expect 3 frozen columns on the left and 4 columns on the right', () => {
-    cy.contains('Set 3 Frozen Columns').click({ force: true });
+  it('should click on the "Set 3 Pinned Columns" button to pin 3 columns and leave 4 scrolling columns', () => {
+    cy.contains('Set 3 Pinned Columns').click({ force: true });
 
-    cy.get('#grid2').find('[data-row=0]').should('have.length', 2);
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0]').children().should('have.length', 3);
-    cy.get('#grid2').find('.grid-canvas-right > [data-row=0]').children().should('have.length', 4);
+    const firstRow = '#grid2 .slick-row[data-row="0"]';
+    cy.get(firstRow).should('have.length', 1);
+    cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell`).should('have.length', 3);
+    cy.get(`${firstRow} .slick-scrolling-cells .slick-cell`).should('have.length', 4);
 
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(0)').should('contain', '0');
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(1)').should('contain', 'Task 0');
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(2)').should('contain', '5 days');
+    cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell:nth(0)`).should('contain', '0');
+    cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell:nth(1)`).should('contain', 'Task 0');
+    cy.get(`${firstRow} .slick-pinned-left-cells .slick-cell:nth(2)`).should('contain', '5 days');
 
-    cy.get('#grid2').find('.grid-canvas-right > [data-row=0] > .slick-cell:nth(0)').should('contain', '01/01/2009');
-    cy.get('#grid2').find('.grid-canvas-right > [data-row=0] > .slick-cell:nth(1)').should('contain', '01/05/2009');
+    cy.get(`${firstRow} .slick-scrolling-cells .slick-cell:nth(0)`).should('contain', '01/01/2009');
+    cy.get(`${firstRow} .slick-scrolling-cells .slick-cell:nth(1)`).should('contain', '01/05/2009');
   });
 
   it('should have still exact Column Pre-Header & Column Header Titles in the grid', () => {
     cy.get('#grid2')
       .find('.slick-header-columns:nth(0)')
-      .children()
+      .children('.slick-header-column')
       .each(($child, index) => expect($child.text()).to.eq(fullPreTitles[index]));
 
     cy.get('#grid2')
@@ -97,36 +99,49 @@ describe('Example 14 - Column Span & Header Grouping', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should click on the Grid Menu command "Unfreeze Columns/Rows" to switch to a regular grid without frozen columns and expect 7 columns on the left container', () => {
+  it('should click on the Grid Menu command "Unpin Columns/Rows" to switch to a regular grid without pinned columns', () => {
     cy.get('#grid2').find('button.slick-grid-menu-button').click({ force: true });
 
-    cy.contains('Unfreeze Columns/Rows').click({ force: true });
+    cy.contains('Unpin Columns/Rows').click({ force: true });
 
-    cy.get('#grid2').find('[data-row=0]').should('have.length', 1);
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0]').children().should('have.length', 7);
+    const firstRow = '#grid2 .slick-row[data-row="0"]';
+    cy.get(firstRow).should('have.length', 1);
+    cy.get(`${firstRow} .slick-cell`).should('have.length', 7);
 
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(0)').should('contain', '0');
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(1)').should('contain', 'Task 0');
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(2)').should('contain', '5 days');
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(3)').should('contain', '01/01/2009');
-    cy.get('#grid2').find('.grid-canvas-left > [data-row=0] > .slick-cell:nth(4)').should('contain', '01/05/2009');
+    cy.get(`${firstRow} .slick-cell:nth(0)`).should('contain', '0');
+    cy.get(`${firstRow} .slick-cell:nth(1)`).should('contain', 'Task 0');
+    cy.get(`${firstRow} .slick-cell:nth(2)`).should('contain', '5 days');
+    cy.get(`${firstRow} .slick-cell:nth(3)`).should('contain', '01/01/2009');
+    cy.get(`${firstRow} .slick-cell:nth(4)`).should('contain', '01/05/2009');
   });
 
-  it('should reapply 3 frozen columns on 2nd grid', () => {
-    cy.contains('Set 3 Frozen Columns').click({ force: true });
+  it('should reapply 3 pinned columns on 2nd grid', () => {
+    cy.contains('Set 3 Pinned Columns').click({ force: true });
 
-    cy.get('#grid2')
-      .find('.slick-pane-left .slick-header.slick-header-left .slick-header-columns .slick-header-column')
-      .should('have.length', 3);
-
-    cy.get('#grid2')
-      .find('.slick-pane-right .slick-header.slick-header-right .slick-header-columns .slick-header-column')
-      .should('have.length', 4);
+    cy.get('#grid2 .slick-header.slick-header-left .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
+    cy.get('#grid2 .slick-header.slick-header-left .slick-header-columns .slick-header-column:not(.slick-column-pinned-left)').should(
+      'have.length',
+      4
+    );
   });
 
-  it('should be able to "Unfreeze Columns" from header menu', () => {
+  it('should be able to "Unpin All Columns" from header menu', () => {
     cy.get('#grid2')
-      .find('.slick-pane-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(2)')
+      .find('.slick-header.slick-header-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(2)')
+      .trigger('mouseover')
+      .children('.slick-header-menu-button')
+      .invoke('show')
+      .click();
+
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').find('[data-command="pin-column"]').click();
+    cy.get('.slick-submenu [data-command="unpin-columns"]').should('contain', 'Unpin All Columns').click();
+
+    cy.get('#grid2 .slick-header.slick-header-left .slick-header-columns .slick-header-column').should('have.length', 7);
+  });
+
+  it('should be able to "Pin Columns Left" back from header menu', () => {
+    cy.get('#grid2')
+      .find('.slick-header.slick-header-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(2)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
       .invoke('show')
@@ -134,47 +149,42 @@ describe('Example 14 - Column Span & Header Grouping', () => {
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(1)')
-      .children('.slick-menu-content')
-      .should('contain', 'Unfreeze Columns')
+      .find('[data-command="pin-column"]')
+      .should('contain', 'Column Pinning')
       .click();
 
-    cy.get('#grid2')
-      .find('.slick-pane-left .slick-header.slick-header-left .slick-header-columns .slick-header-column')
-      .should('have.length', 7);
-  });
+    cy.get('.slick-submenu [data-command="pin-columns-left"]').should('contain', 'Pin Columns Left').click();
 
-  it('should be able to "Freeze Columns" back from header menu', () => {
-    cy.get('#grid2')
-      .find('.slick-pane-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(2)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
-
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(1)')
-      .children('.slick-menu-content')
-      .should('contain', 'Freeze Columns')
-      .click();
-
-    cy.get('#grid2')
-      .find('.slick-pane-left .slick-header.slick-header-left .slick-header-columns .slick-header-column')
-      .should('have.length', 3);
-
-    cy.get('#grid2')
-      .find('.slick-pane-right .slick-header.slick-header-right .slick-header-columns .slick-header-column')
-      .should('have.length', 4);
+    cy.get('#grid2 .slick-header.slick-header-left .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
+    cy.get('#grid2 .slick-header.slick-header-left .slick-header-columns .slick-header-column:not(.slick-column-pinned-left)').should(
+      'have.length',
+      4
+    );
   });
 
   describe('Basic Key Navigations', () => {
     it('should remove any freezing', () => {
-      cy.get('[data-test="remove-frozen-column-button"]').click();
+      cy.get('[data-test="remove-pinned-column-button"]').click();
 
-      cy.get('#grid2')
-        .find('.slick-pane-left .slick-header.slick-header-left .slick-header-columns .slick-header-column')
-        .should('have.length', 7);
+      cy.get('#grid2 .slick-header.slick-header-left .slick-header-columns .slick-header-column').should('have.length', 7);
+    });
+
+    it('should start at Task 1 on Duration colspan 5 days and type "PageDown" key once and be on Task 8 with full colspan', () => {
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('@active_cell').type('{pagedown}');
+      cy.get('[data-row=8] > .slick-cell.l0.r5.active').should('have.length', 1);
+    });
+
+    it('should start at Task 1 on Duration colspan 5 days and type "PageDown" key 2x times and be on Task 15 with colspan of 3', () => {
+      cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('@active_cell').type('{pagedown}{pagedown}');
+      cy.get('[data-row=15] > .slick-cell.l1.r3.active').should('have.length', 1);
+    });
+
+    it('should start at Task 15 on Duration colspan 5 days and type "PageUp" key 2x times and be on Task 1 with full colspan', () => {
+      cy.get('[data-row=15] > .slick-cell.l1.r3').as('active_cell').click();
+      cy.get('@active_cell').type('{pageup}{pageup}');
+      cy.get('[data-row=1] > .slick-cell.l1.r3.active').should('have.length', 1);
     });
 
     it('should start at Task 2 on Duration colspan 5 days and type "PageDown" key 2x times and "PageUp" twice and be back to Task 1 with colspan of 3', () => {
@@ -219,18 +229,18 @@ describe('Example 14 - Column Span & Header Grouping', () => {
         .contains(/(true|false)+$/);
 
       cy.get('#grid1')
-        .find('.slick-pane-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(3)')
+        .find('.slick-header-columns .slick-header-column[role="columnheader"]:nth(3)')
         .trigger('mouseover')
         .children('.slick-header-menu-button')
         .invoke('show')
         .click();
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
-        .children('.slick-menu-content')
-        .should('contain', 'Hide Column')
-        .click();
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Hide Column').click();
+
+      // The colspan still spans the logical Duration/Start/Finish range, but
+      // the hidden Finish track is zero-width. The host cell must remain
+      // rendered and visibly cover the two remaining columns.
+      cy.get('#grid1 [data-row=1] .slick-cell.l1.r3').should('contain', '5 days').and('be.visible');
 
       // goto right
       cy.get('#grid1').find('[data-row=1] .slick-cell.l0.r0').click();
@@ -272,18 +282,13 @@ describe('Example 14 - Column Span & Header Grouping', () => {
         .contains(/(true|false)+$/);
 
       cy.get('#grid1')
-        .find('.slick-pane-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(3)')
+        .find('.slick-header-columns .slick-header-column[role="columnheader"]:nth(3)')
         .trigger('mouseover')
         .children('.slick-header-menu-button')
         .invoke('show')
         .click();
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
-        .children('.slick-menu-content')
-        .should('contain', 'Hide Column')
-        .click();
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Hide Column').click();
 
       cy.get('#grid1').find('[data-row=1] .slick-cell.l0.r0').should('contain', 'Task 1');
       cy.get('#grid1').find('[data-row=2] .slick-cell.l0.r5').should('contain', 'Task 2');
@@ -340,6 +345,117 @@ describe('Example 14 - Column Span & Header Grouping', () => {
         .children()
         .each(($child, index) => expect($child.text()).to.eq(newHeaderTitles[index]));
     });
+
+    it('should keep a Duration colspan visually continuous across a valid docking boundary', () => {
+      const setPinning = (headerSelector: string, command: 'pin-left' | 'unpin-column') => {
+        cy.get(headerSelector).trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+        cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+        cy.get(`.slick-submenu:visible [data-command="${command}"]`).click();
+      };
+      const resizeCenterColumn = (columnId: string, deltaX: number) => {
+        const headerSelector = `#grid1 .slick-header-columns-center [data-id="${columnId}"]`;
+        cy.get(headerSelector).then(($header) => {
+          const initialWidth = $header[0].getBoundingClientRect().width;
+          const handle = $header.find('.slick-resizable-handle');
+          const handleRect = handle[0].getBoundingClientRect();
+          const startX = handleRect.left + handleRect.width / 2;
+          const targetX = startX + deltaX;
+
+          cy.wrap(handle).trigger('mousedown', { which: 1, pageX: startX, clientX: startX, force: true });
+          cy.get('body')
+            .trigger('mousemove', { which: 1, pageX: targetX, clientX: targetX, force: true })
+            .trigger('mouseup', { which: 1, pageX: targetX, clientX: targetX, force: true });
+          cy.get(headerSelector).should(($resizedHeader) => {
+            const resizedWidth = $resizedHeader[0].getBoundingClientRect().width;
+            if (deltaX > 0) {
+              expect(resizedWidth, `${columnId} column widened`).to.be.greaterThan(initialWidth);
+            } else {
+              expect(resizedWidth, `${columnId} column restored`).to.be.lessThan(initialWidth);
+            }
+          });
+        });
+      };
+      const hostSelector = '#grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l1:not(.slick-cell-colspan-part)';
+      const fragmentSelector = '#grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell-colspan-part';
+
+      setPinning('#grid1 .slick-header:not(.slick-preheader-panel) .slick-header-columns [data-id="title"]', 'pin-left');
+
+      cy.get('#grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l0').should(($cell) => {
+        expect(getComputedStyle($cell[0], '::after').boxShadow).not.to.eq('none');
+      });
+
+      setPinning('#grid1 .slick-header-columns-center [data-id="duration"]', 'pin-left');
+
+      cy.get(hostSelector)
+        .should('contain', '5 days')
+        .and('have.class', 'slick-cell-colspan-crossing-docking')
+        .and('have.class', 'r3')
+        .and('not.have.class', 'r4');
+      cy.get('#grid1 [data-row="1"] .slick-cell.l4.r4').should('have.length', 1);
+      cy.get('#grid1 [data-row="1"] .slick-cell-colspan-part').should('have.length', 1);
+      cy.get(hostSelector).then(($host) => {
+        const host = $host[0].getBoundingClientRect();
+        const leftRegion = $host[0].parentElement!.getBoundingClientRect();
+        expect(host.right, 'host is clipped to the pinned band').to.be.at.most(leftRegion.right + 1);
+        cy.get(fragmentSelector).then(($fragment) => {
+          const fragment = $fragment[0].getBoundingClientRect();
+          expect(fragment.left, 'continuation starts at the host edge').to.be.closeTo(host.right, 1.5);
+          const content = $fragment[0].querySelector('.slick-cell-colspan-part-content') as HTMLElement;
+          expect(content, 'continuation carries a copy of the content').to.exist;
+          expect(content.textContent).to.eq($host[0].textContent);
+        });
+      });
+      resizeCenterColumn('start', 200);
+      resizeCenterColumn('finish', 200);
+      cy.get('#grid1 .slick-docking-horizontal-scroller')
+        .scrollTo(0, 0, { ensureScrollable: false })
+        .then(($scroller) => {
+          const scroller = $scroller[0];
+          const startScrollLeft = scroller.scrollLeft;
+          const fragment = Cypress.$(fragmentSelector)[0];
+          const startLeft = fragment.getBoundingClientRect().left;
+          const content = fragment.querySelector('.slick-cell-colspan-part-content') as HTMLElement;
+          const startContentLeft = content.getBoundingClientRect().left;
+          const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
+          const targetScrollLeft = Math.min(startScrollLeft + 60, maxScrollLeft);
+
+          expect(targetScrollLeft, 'resized columns create horizontal overflow').to.be.greaterThan(startScrollLeft);
+          cy.wrap($scroller).scrollTo(targetScrollLeft, 0);
+          cy.get(fragmentSelector).should(($fragment) => {
+            const scrollDelta = scroller.scrollLeft - startScrollLeft;
+            const fragmentDelta = $fragment[0].getBoundingClientRect().left - startLeft;
+            const contentDelta =
+              ($fragment[0].querySelector('.slick-cell-colspan-part-content') as HTMLElement).getBoundingClientRect().left -
+              startContentLeft;
+
+            expect(scrollDelta, 'the horizontal scroller moved').to.be.greaterThan(0);
+            expect(fragmentDelta, 'the colspan boundary follows horizontal scrolling').to.be.closeTo(-scrollDelta, 4);
+            expect(contentDelta, 'the continuation text follows horizontal scrolling').to.be.closeTo(-scrollDelta, 4);
+            expect(contentDelta, 'continuation text moves with its boundary').to.be.closeTo(fragmentDelta, 1);
+          });
+          cy.wrap($scroller).scrollTo(startScrollLeft, 0);
+          resizeCenterColumn('finish', -200);
+          resizeCenterColumn('start', -200);
+        });
+      cy.get(fragmentSelector).should('have.length', 1).click({ force: true }).should('have.class', 'active');
+      cy.get(fragmentSelector).should(($cell) => {
+        const style = getComputedStyle($cell[0], '::after');
+        expect(getComputedStyle($cell[0]).boxShadow).to.eq('none');
+        expect(style.borderLeftStyle).to.eq('none');
+        expect(style.borderRightStyle).to.eq('solid');
+      });
+      cy.get(hostSelector)
+        .should('have.class', 'active')
+        .and('contain', '5 days')
+        .should(($cell) => {
+          expect(getComputedStyle($cell[0]).boxShadow).to.eq('none');
+          expect(getComputedStyle($cell[0], '::after').borderRightStyle).to.eq('none');
+        });
+
+      setPinning('#grid1 .slick-header-columns-left [data-id="duration"]', 'unpin-column');
+      setPinning('#grid1 .slick-header-columns-left [data-id="title"]', 'unpin-column');
+      cy.get('#grid1 [data-row="1"] .slick-cell-colspan-part').should('not.exist');
+    });
   });
 
   describe('First Grid - Key Navigation', () => {
@@ -375,6 +491,33 @@ describe('Example 14 - Column Span & Header Grouping', () => {
       cy.get('#grid1 [data-row=1] > .slick-cell.l1.r4.active').should('contain', '5 days').type('{leftArrow}');
       cy.get('#grid1 [data-row=1] > .slick-cell.l0.r0.active');
       cy.get('#grid1 [data-row=1] > .slick-cell.l0.r0').should('contain', 'Task 1');
+    });
+  });
+  describe('First Grid - Pinned Colspan Content', () => {
+    it('should keep colspan content and keyboard navigation across the pinned boundary', () => {
+      cy.reload();
+
+      const pinLeft = (columnId: string) => {
+        cy.get('#grid1 .slick-header:not(.slick-preheader-panel) .slick-header-column[data-id="' + columnId + '"]')
+          .trigger('mouseover')
+          .children('.slick-header-menu-button')
+          .invoke('show')
+          .click();
+        cy.get('.slick-header-menu:visible [data-command="pin-column"]').click();
+        cy.get('.slick-submenu:visible [data-command="pin-left"]').click();
+      };
+
+      pinLeft('title');
+      pinLeft('duration');
+
+      cy.get('#grid1 [data-row="1"] .slick-pinned-left-cells > .slick-cell.l1:not(.slick-cell-colspan-part)')
+        .should('contain', '5 days')
+        .and('have.class', 'slick-cell-colspan-crossing-docking')
+        .click({ force: true })
+        .type('{rightArrow}');
+
+      cy.get('#grid1 [data-row="1"] .slick-scrolling-cells > .slick-cell.active[aria-describedby*="%"]').should('exist');
+      cy.get('#grid1 [data-row="1"] .slick-cell-colspan-part').should('have.length', 1);
     });
   });
 });

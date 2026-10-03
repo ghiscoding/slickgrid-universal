@@ -52,13 +52,13 @@
 
   <hr />
 
-  <h3>Grid 2 <small>(with Header Grouping &amp; Frozen/Pinned Columns)</small></h3>
+  <h3>Grid 2 <small>(with Header Grouping &amp; Pinned Columns)</small></h3>
   <div class="col-sm 12">
-    <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="setFrozenColumns2(-1)" data-test="remove-frozen-column-button">
-      <i class="mdi mdi-close"></i> Remove Frozen Columns
+    <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="setPinnedColumns2(-1)" data-test="remove-pinned-column-button">
+      <i class="mdi mdi-close"></i> Remove Pinned Columns
     </button>
-    <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="setFrozenColumns2(2)" data-test="set-3frozen-columns">
-      <i class="mdi mdi-pin-outline"></i> Set 3 Frozen Columns
+    <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="setPinnedColumns2(2)" data-test="set-3pinned-columns">
+      <i class="mdi mdi-pin-outline"></i> Set 3 Pinned Columns
     </button>
   </div>
   <angular-slickgrid

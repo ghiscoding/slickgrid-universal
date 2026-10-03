@@ -1,3 +1,8 @@
+---
+name: read-docs-and-interfaces
+description: Find the right SlickGrid documentation, interfaces, demos, and tests for a requested feature or API.
+---
+
 # Skill: Read Docs & Interfaces
 
 Purpose

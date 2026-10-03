@@ -63,10 +63,22 @@ const gridStub = {
   getData: () => dataViewStub,
   getOptions: () => mockGridOptions,
   getColumns: vi.fn(),
+  getColumnsInRenderedOrder: vi.fn((includeHidden = false) => (includeHidden ? gridStub.getColumns() : gridStub.getVisibleColumns())),
   getVisibleColumns: vi.fn(),
   getGrouping: vi.fn(),
   getParentRowSpanByCell: vi.fn(),
 } as unknown as SlickGrid;
+
+function withRenderedColumnsGridStub(Service: typeof PdfExportService): typeof PdfExportService {
+  const init = Service.prototype.init;
+  Service.prototype.init = function (grid, containerService) {
+    if (grid) {
+      Object.assign(grid, { getColumnsInRenderedOrder: grid.getColumnsInRenderedOrder || grid.getVisibleColumns });
+    }
+    return init.call(this, grid, containerService);
+  };
+  return Service;
+}
 
 // --- jsPDF module mock ---
 
@@ -133,6 +145,7 @@ describe('PdfExportService', () => {
     getTextSpy = () => (jspdfModule as any).textSpy;
     textSpy = getTextSpy();
     vi.spyOn(console, 'error').mockImplementation(() => {});
+    withRenderedColumnsGridStub(PdfExportService);
   });
   afterAll(() => {
     (console.error as any).mockRestore?.();
@@ -1009,7 +1022,7 @@ describe('PdfExportService', () => {
       };
       const pubSubService = { publish: vi.fn() };
       const container = { get: () => pubSubService };
-      return { Svc, gridStub, container, autoTableSpy, getDidParseCell: () => capturedDidParseCell };
+      return { Svc: withRenderedColumnsGridStub(Svc), gridStub, container, autoTableSpy, getDidParseCell: () => capturedDidParseCell };
     }
 
     afterEach(() => {
@@ -1138,7 +1151,7 @@ describe('PdfExportService', () => {
         }
         vi.doMock('jspdf', () => ({ __esModule: true, default: jsPDFMockWithAutoTable }));
         const { PdfExportService: Svc } = await import('./pdfExport.service.js');
-        return { PdfExportService: Svc, autoTableSpy, setDocumentPropertiesSpy };
+        return { PdfExportService: withRenderedColumnsGridStub(Svc), autoTableSpy, setDocumentPropertiesSpy };
       }
 
       function createStubs(columns: any[], rowCount = 1, rowFactory?: (idx: number) => any) {
@@ -2864,7 +2877,7 @@ describe('PdfExportService', () => {
       }
       vi.doMock('jspdf', () => ({ __esModule: true, default: jsPDFMockManual }));
       const { PdfExportService: Svc } = await import('./pdfExport.service.js');
-      return { PdfExportService: Svc, setFillColorSpy, setTextColorSpy, setDocumentPropertiesSpy };
+      return { PdfExportService: withRenderedColumnsGridStub(Svc), setFillColorSpy, setTextColorSpy, setDocumentPropertiesSpy };
     }
 
     afterEach(() => {
@@ -2985,6 +2998,7 @@ describe('PdfExportService', () => {
       }
       vi.doMock('jspdf', () => ({ __esModule: true, default: jsPDFMockManual }));
       const { PdfExportService: Svc } = await import('./pdfExport.service.js');
+      withRenderedColumnsGridStub(Svc);
 
       const columns = [
         { id: 'desc', field: 'desc', name: 'Description', width: 200 },
@@ -3048,6 +3062,7 @@ describe('PdfExportService', () => {
       }
       vi.doMock('jspdf', () => ({ __esModule: true, default: jsPDFMockManual }));
       const { PdfExportService: Svc } = await import('./pdfExport.service.js');
+      withRenderedColumnsGridStub(Svc);
 
       const columns = [
         { id: 'first', field: 'first', name: 'FirstHdr', width: 200 },

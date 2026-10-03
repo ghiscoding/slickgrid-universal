@@ -31,19 +31,19 @@ declare global {
   namespace Cypress {
     interface Chainable {
       // triggerHover: (elements: NodeListOf<HTMLElement>) => void;
-      convertPosition(viewport: string): Chainable<HTMLElement | JQuery<HTMLElement> | { x: string; y: string }>;
+      convertPosition(viewport: string): Chainable<{ x: string; y: string }>;
       getCell(
         row: number,
         col: number,
         viewport?: string,
         options?: { parentSelector?: string; rowHeight?: number }
-      ): Chainable<HTMLElement | JQuery<HTMLElement>>;
+      ): Chainable<JQuery<HTMLElement>>;
       getNthCell(
         row: number,
         nthCol: number,
         viewport?: string,
         options?: { parentSelector?: string; rowHeight?: number }
-      ): Chainable<HTMLElement | JQuery<HTMLElement>>;
+      ): Chainable<JQuery<HTMLElement>>;
       saveLocalStorage: () => void;
       restoreLocalStorage: () => void;
       getTransformValue(cssTransformMatrix: string, absoluteValue: boolean, transformType?: 'rotate' | 'scale'): Chainable<number>;

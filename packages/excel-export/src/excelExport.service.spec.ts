@@ -87,6 +87,7 @@ const gridStub = {
   getData: () => dataViewStub,
   getOptions: () => mockGridOptions,
   getColumns: vi.fn(),
+  getColumnsInRenderedOrder: vi.fn((includeHidden = false) => (includeHidden ? gridStub.getColumns() : gridStub.getVisibleColumns())),
   getVisibleColumns: vi.fn(),
   getGrouping: vi.fn(),
   getParentRowSpanByCell: vi.fn(),
@@ -94,11 +95,15 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('ExcelExportService', () => {
+  let anchorClickSpy: ReturnType<typeof vi.spyOn>;
+
   // Suppress console.error globally for all tests in this file
   beforeAll(() => {
+    anchorClickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
   afterAll(() => {
+    anchorClickSpy.mockRestore();
     (console.error as any).mockRestore?.();
   });
   let container: ContainerServiceStub;
