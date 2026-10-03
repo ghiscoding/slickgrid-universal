@@ -97,9 +97,6 @@ export interface GridOption<C extends Column = Column> {
   /** query selector to use to allow dragging from closest element, defaults to ` 'div.slick-cell.dnd, div.slick-cell.cell-reorder'` */
   allowDragFromClosest?: string;
 
-  /** Shared pixel budgets and overflow behavior for pinned and sticky rows/columns. */
-  docking?: DockingOption;
-
   /** Defaults to true, should we always allow the use of horizontal scrolling? */
   alwaysAllowHorizontalScroll?: boolean;
 
@@ -374,6 +371,9 @@ export interface GridOption<C extends Column = Column> {
   /** Escape hatch geared towards testing Slickgrid in JSDOM based environments to circumvent the lack of stylesheet.ownerNode and clientWidth calculations */
   devMode?: false | DevModeOption;
 
+  /** Shared pixel budgets and overflow behavior for pinned and sticky rows/columns. */
+  docking?: DockingOption;
+
   /** Do we have paging enabled? */
   doPaging?: boolean;
 
@@ -565,7 +565,7 @@ export interface GridOption<C extends Column = Column> {
 
   /**
    * Do we want to always enable the mousewheel scroll handler?
-   * In other words, do we want the mouse scrolling would work from anywhere.
+   * In other words, do we want the mouse scrolling to work from anywhere?
    * This option is disabled by default and can be enabled when scrolling should work from anywhere
    * in a grid with pinned regions.
    */
