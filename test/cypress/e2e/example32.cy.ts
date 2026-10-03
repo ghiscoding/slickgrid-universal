@@ -1,4 +1,4 @@
-describe('Example 32 - colspan/rowspan - Employees Timesheets', { retries: 0 }, () => {
+describe('Example 32 - colspan/rowspan - Employees Timesheets', () => {
   const GRID_ROW_HEIGHT = 30;
   const fullTitles = [
     'Employee ID',

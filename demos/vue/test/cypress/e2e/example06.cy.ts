@@ -9,7 +9,7 @@ function removeSpaces(text: string) {
   return `${text}`.replace(/\s+/g, '');
 }
 
-describe('Example 6 - GraphQL Grid', { retries: 0 }, () => {
+describe('Example 6 - GraphQL Grid', () => {
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example06`);
     cy.get('h2').should('contain', 'Example 6: Grid with Backend GraphQL Service');
