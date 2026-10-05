@@ -277,7 +277,16 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
   /** Remount views that were detached when SlickGrid replaced row DOM during a reflow. */
   protected redrawDetachedViewComponents(): void {
     this._views.forEach((view) => {
-      if (!this._renderedViewportRowIds.has(view.id) || (view.rendered && view.componentRef?.location.nativeElement?.isConnected)) {
+      const rowIndex = this.dataView.getRowById(view.id);
+      const renderedRange = this._grid.getRenderedRange();
+      if (
+        rowIndex === undefined ||
+        !renderedRange ||
+        rowIndex < renderedRange.top ||
+        rowIndex > renderedRange.bottom ||
+        !this._renderedViewportRowIds.has(view.id) ||
+        (view.rendered && view.componentRef?.location.nativeElement?.isConnected)
+      ) {
         return;
       }
 
