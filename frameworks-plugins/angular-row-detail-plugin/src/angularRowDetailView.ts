@@ -225,6 +225,10 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
           this.eventHandler.subscribe(this._grid.onSelectedRowsChanged, this.redrawAllViewComponents.bind(this, false));
         }
 
+        // A row reflow can replace the panel container without changing viewport membership.
+        // Remount Angular views whose host was detached by that render.
+        this.eventHandler.subscribe(this._grid.onRendered, this.redrawDetachedViewComponents.bind(this));
+
         // on sort, all row detail are collapsed so we can dispose of all the Views as well
         this.eventHandler.subscribe(this._grid.onSort, this.disposeAllViewComponents.bind(this));
 
@@ -268,6 +272,31 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
     if (containerElement) {
       this.renderViewModel(createdView.dataContext);
     }
+  }
+
+  /** Remount views that were detached when SlickGrid replaced row DOM during a reflow. */
+  protected redrawDetachedViewComponents(): void {
+    this._views.forEach((view) => {
+      const rowIndex = this.dataView.getRowById(view.id);
+      const renderedRange = this._grid.getRenderedRange();
+      if (
+        rowIndex === undefined ||
+        !renderedRange ||
+        rowIndex < renderedRange.top ||
+        rowIndex > renderedRange.bottom ||
+        !this._renderedViewportRowIds.has(view.id) ||
+        (view.rendered && view.componentRef?.location.nativeElement?.isConnected)
+      ) {
+        return;
+      }
+
+      if (this.rowDetailViewOptions?.keepComponentAlive && view.componentRef) {
+        view.rendered = false;
+      } else {
+        this.disposeView(view);
+      }
+      this.redrawViewComponent(view);
+    });
   }
 
   /** (re)Render the View Component (Row Detail) */

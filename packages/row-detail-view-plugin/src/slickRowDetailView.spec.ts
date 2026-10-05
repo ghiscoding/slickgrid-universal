@@ -113,6 +113,33 @@ describe('SlickRowDetailView plugin', () => {
     expect(plugin).toBeTruthy();
   });
 
+  it('should not notify before out of viewport when the item is missing', () => {
+    const onBeforeRowOutOfViewportSpy = vi.spyOn(plugin.onBeforeRowOutOfViewportRange, 'notify');
+
+    (plugin as any).notifyBeforeOutOfViewport(undefined);
+
+    expect(onBeforeRowOutOfViewportSpy).not.toHaveBeenCalled();
+  });
+
+  it('should retry notifying when the detail container is created after the grid render', () => {
+    const item = { id: 987, rowIndex: 2 };
+    plugin.init(gridStub);
+    const onRowBackToViewportSpy = vi.spyOn(plugin.onRowBackToViewportRange, 'notify');
+
+    (plugin as any).notifyViewportChange(item, 'add');
+
+    expect(onRowBackToViewportSpy).not.toHaveBeenCalled();
+    expect((plugin as any)._pendingBackToViewportRows.has(item.id)).toBe(true);
+
+    const detailContainer = createDomElement('div', { className: `cellDetailView_${item.id}` });
+    divContainer.appendChild(detailContainer);
+    gridStub.onRendered.notify({ startRow: 0, endRow: 10, grid: gridStub });
+
+    expect(onRowBackToViewportSpy).toHaveBeenCalledOnce();
+    expect((plugin as any)._pendingBackToViewportRows.has(item.id)).toBe(false);
+    detailContainer.remove();
+  });
+
   it('should be able to change plugin options and "collapseAll" be called when "singleRowExpand" is enabled', () => {
     const collapseAllSpy = vi.spyOn(plugin, 'collapseAll');
     const mockOptions = {
@@ -1589,8 +1616,11 @@ describe('SlickRowDetailView plugin', () => {
     });
 
     it('should notify out of viewport when "onGroupCollapsed" and then "onGroupExpanded" events are triggered for all groups', () => {
+      const lifecycle: string[] = [];
       const onRowOutOfViewportSpy = vi.spyOn(plugin.onRowOutOfViewportRange, 'notify');
       const recalOutOfRangeViewSpy = vi.spyOn(plugin, 'recalculateOutOfRangeViews');
+      plugin.onBeforeRowOutOfViewportRange.subscribe(() => lifecycle.push('before'));
+      plugin.onRowOutOfViewportRange.subscribe(() => lifecycle.push('out'));
 
       plugin.init(gridStub);
       plugin.onAsyncResponse.notify({ item: mockItem, detailView }, new SlickEventData());
@@ -1605,6 +1635,7 @@ describe('SlickRowDetailView plugin', () => {
 
       dataviewStub.onGroupCollapsed.notify({ level: 0, groupingKey: null }, new SlickEventData(), gridStub);
       expect(onRowOutOfViewportSpy).toHaveBeenCalled();
+      expect(lifecycle).toEqual(['before', 'out']);
 
       plugin.expandDetailView(mockItem.id);
       dataviewStub.onGroupExpanded.notify({ level: 0, groupingKey: null }, new SlickEventData(), gridStub);

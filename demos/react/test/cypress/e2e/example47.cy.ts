@@ -189,4 +189,49 @@ describe('Example 47 - Row Detail View + Grouping', () => {
       .click()
       .then(() => expect(stub.getCall(0)).to.be.calledWith(`Assignee on this task is: ${assigneeName.toUpperCase()}`));
   });
+
+  it('should keep all Row Details rendered when closing and reopening panels above one another', () => {
+    cy.get('[data-test=collapse-all-rowdetail-btn]').click();
+    cy.get('.dynamic-cell-detail').should('have.length', 0);
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+
+    cy.get('.slick-cell.l1:visible')
+      .filter((_, cell) => {
+        const row = cell.closest('.slick-row');
+        return /^Task \d+$/.test(cell.textContent?.trim() ?? '') && !!row?.querySelector('.slick-cell.l0')?.innerHTML.trim();
+      })
+      .then(($cells) => {
+        const taskTitles = $cells
+          .toArray()
+          .slice(0, 3)
+          .map((cell) => cell.textContent?.trim() ?? '');
+        expect(taskTitles).to.have.length(3);
+
+        const toggleTask = (title: string) =>
+          cy
+            .get('.slick-cell.l1:visible')
+            .filter((_, cell) => {
+              const row = cell.closest('.slick-row');
+              return cell.textContent?.trim() === title && !!row?.querySelector('.slick-cell.l0')?.innerHTML.trim();
+            })
+            .first()
+            .closest('.slick-row')
+            .find('.slick-cell.l0')
+            .click({ force: true });
+
+        toggleTask(taskTitles[0]);
+        toggleTask(taskTitles[1]);
+        toggleTask(taskTitles[2]);
+        cy.get('.dynamic-cell-detail h3').should('have.length', 3);
+
+        toggleTask(taskTitles[1]);
+        toggleTask(taskTitles[0]);
+        cy.get('.dynamic-cell-detail h3').should('have.length', 1);
+
+        toggleTask(taskTitles[1]);
+        toggleTask(taskTitles[0]);
+        cy.get('.dynamic-cell-detail').should('have.length', 3);
+        cy.get('.dynamic-cell-detail h3').should('have.length', 3);
+      });
+  });
 });
