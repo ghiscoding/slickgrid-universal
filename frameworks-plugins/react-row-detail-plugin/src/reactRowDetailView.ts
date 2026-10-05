@@ -281,7 +281,12 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   /** Remount React roots whose containers were detached when SlickGrid replaced row DOM. */
   protected redrawDetachedViewComponents(): void {
     this._views.forEach((view) => {
-      if (!view.rendered || view.container?.isConnected) {
+      if (!this._renderedViewportRowIds.has(view.id) || (view.rendered && view.container?.isConnected)) {
+        return;
+      }
+
+      if (this.rowDetailViewOptions?.keepComponentAlive && view.root && view.container?.isConnected) {
+        view.rendered = true;
         return;
       }
 

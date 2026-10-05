@@ -281,7 +281,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   /** Remount Vue views whose root elements were detached when SlickGrid replaced row DOM. */
   protected redrawDetachedViewComponents(): void {
     this._views.forEach((view) => {
-      if (!view.rendered || view.instance?.$el?.isConnected) {
+      if (!this._renderedViewportRowIds.has(view.id) || (view.rendered && view.instance?.$el?.isConnected)) {
         return;
       }
 
