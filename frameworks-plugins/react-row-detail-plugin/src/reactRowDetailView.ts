@@ -24,6 +24,7 @@ export interface CreatedView {
   id: string | number;
   dataContext: any;
   root: Root | null;
+  container?: HTMLElement;
   rendered?: boolean;
 }
 
@@ -225,6 +226,8 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
             this._eventHandler.subscribe(this._grid.onSelectedRowsChanged, () => this.redrawAllViewComponents(false));
           }
 
+          this._eventHandler.subscribe(this._grid.onRendered, this.redrawDetachedViewComponents.bind(this));
+
           // on column sort/reorder, all row detail are collapsed so we can dispose of all the Views as well
           this._eventHandler.subscribe(this._grid.onSort, this.disposeAllViewComponents.bind(this));
 
@@ -275,6 +278,18 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
+  /** Remount React roots whose containers were detached when SlickGrid replaced row DOM. */
+  protected redrawDetachedViewComponents(): void {
+    this._views.forEach((view) => {
+      if (!view.rendered || view.container?.isConnected) {
+        return;
+      }
+
+      this.disposeViewComponent(view);
+      this.redrawViewComponent(view);
+    });
+  }
+
   /** (re)Render the View Component (Row Detail) */
   renderPreloadView(item: any) {
     const containerElement = this.gridContainerElement.querySelector(`.${PRELOAD_CONTAINER_PREFIX}`);
@@ -321,9 +336,10 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
       }
       if (viewObj) {
         viewObj.root = root;
+        viewObj.container = containerElement;
         viewObj.rendered = true;
       } else {
-        this.upsertViewRefs(item, root);
+        this.upsertViewRefs(item, root, containerElement);
       }
     }
   }
@@ -332,12 +348,13 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   // protected functions
   // ------------------
 
-  protected upsertViewRefs(item: any, root: Root | null) {
+  protected upsertViewRefs(item: any, root: Root | null, container?: HTMLElement) {
     const viewIdx = this._views.findIndex((obj) => obj.id === item[this.datasetIdPropName]);
     const viewInfo: CreatedView = {
       id: item[this.datasetIdPropName],
       dataContext: item,
       root,
+      container,
       rendered: !!root,
     };
     if (viewIdx >= 0) {
@@ -365,6 +382,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
       const container = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
       expandedView.root.unmount();
       expandedView.root = null;
+      expandedView.container = undefined;
       if (container) {
         container.textContent = '';
       }
