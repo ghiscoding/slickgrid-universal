@@ -830,7 +830,7 @@ describe('CompositeEditorService', () => {
       const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       compositeContainerElm.dispatchEvent(
         new (window.window as any).KeyboardEvent('keydown', {
-          code: 'Escape',
+          key: 'Escape',
           bubbles: true,
         })
       );
@@ -854,7 +854,7 @@ describe('CompositeEditorService', () => {
       const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       compositeContainerElm.dispatchEvent(
         new (window.window as any).KeyboardEvent('keydown', {
-          code: 'Tab',
+          key: 'Tab',
           bubbles: true,
         })
       );
