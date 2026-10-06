@@ -414,8 +414,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             }
 
             for (const [command, titleKey, title, iconCssClass, positionOrder, allColumns] of [
-              [PINNING_COMMANDS.left, 'PIN_LEFT', commandLabels?.pinLeftCommand, headerMenuOptions.iconPinLeft, 1, false],
-              [PINNING_COMMANDS.right, 'PIN_RIGHT', commandLabels?.pinRightCommand, headerMenuOptions.iconPinRight, 2, false],
+              [PINNING_COMMANDS.left, 'PIN_LEFT', commandLabels?.pinLeftCommand, headerMenuOptions.iconPinCommand, 1, false],
+              [PINNING_COMMANDS.right, 'PIN_RIGHT', commandLabels?.pinRightCommand, headerMenuOptions.iconPinCommand, 2, false],
               [
                 PINNING_COMMANDS.bulkLeft,
                 'PIN_COLUMNS_LEFT',
