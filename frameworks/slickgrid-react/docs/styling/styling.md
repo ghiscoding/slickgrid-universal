@@ -56,12 +56,19 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 Some features are provided by extra packages that you install separately, like the Composite Editor (`@slickgrid-universal/composite-editor-component`) and the Custom Tooltip (`@slickgrid-universal/custom-tooltip-plugin`). Their styles are **not** included in the SlickGrid themes, so when you use any of these packages you **must** also import their CSS or SASS file yourself (otherwise they will be displayed without any styling), and it must always be loaded **after** the theme.
 
 ##### with CSS
-Pick the file matching your theme (`default`, `bootstrap`, `fluent`, `material` or `salesforce`)
-```scss
+Pick the file matching your theme (`default`, `bootstrap`, `fluent`, `material` or `salesforce`), use `@import` for plain CSS or `@use` when SASS is installed.
+```css
 /* style.css */
-@use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
-@use '@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor-bootstrap.css';
-@use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-bootstrap.css';
+@import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
+@import '@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor-bootstrap.css';
+@import '@slickgrid-universal/custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-bootstrap.css';
+```
+
+or import them directly from your main JS/TS file (in the same order)
+```ts
+import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
+import '@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor-bootstrap.css';
+import '@slickgrid-universal/custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-bootstrap.css';
 ```
 
 ##### with SASS
