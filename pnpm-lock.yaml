@@ -7112,8 +7112,8 @@ packages:
     peerDependencies:
       postcss: ^8.5.28
 
-  postcss-selector-parser@7.1.5:
-    resolution: {integrity: sha512-KvvtD7SrlBP7dlgkBghEE3r84CABm5SmV2aNcG4oCA+qDnJ/tvKonFVvwWAyyWUEwxuNawdfEAZKP9zM3oZ2Uw==}
+  postcss-selector-parser@7.1.6:
+    resolution: {integrity: sha512-7qASPzhKF2l2KLboRZux8CCTRMdGiV08vWmyKzPz22qZ7ZjQBOeY7rNzNoCLSUiftJ7HUq0GERHmxw/t0dCdMw==}
     engines: {node: '>=4'}
 
   postcss-svgo@9.0.4:
@@ -10877,7 +10877,7 @@ snapshots:
 
   '@npmcli/query@5.0.0':
     dependencies:
-      postcss-selector-parser: 7.1.5
+      postcss-selector-parser: 7.1.6
 
   '@npmcli/redact@4.0.0': {}
 
@@ -14449,7 +14449,7 @@ snapshots:
     dependencies:
       postcss: 8.5.28
 
-  postcss-selector-parser@7.1.5:
+  postcss-selector-parser@7.1.6:
     dependencies:
       cssesc: 3.0.0
       util-deprecate: 1.0.2
