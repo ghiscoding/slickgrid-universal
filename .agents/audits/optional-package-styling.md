@@ -78,6 +78,22 @@ Validation done:
 
 Not done:
 - Cypress E2E (needs demo servers), React/Vue/Aurelia demo builds (same Vite Sass path as vanilla).
-- Migration guide entry (no v11 migration doc exists yet).
+- v11 migration guide entry: intentionally not in this PR, the v11 migration guide is being added by another PR. Once that PR is merged, rebase this branch and add a breaking change entry (extra package styles must be imported after the theme, CSS `{name}-{theme}.css` or Sass, theme must be loaded first).
 - Watch mode: changing common Sass does not recompile optional packages CSS (demos use Sass so they are unaffected).
 - Zip ships optional packages CSS only (not their Sass sources).
+
+## Salesforce zip size analysis (2026-10-07)
+
+Zip on branch was ~2.1-2.3KB bigger than master. Breakdown (compressed bytes):
+- Bug (fixed): `scripts/build-package-styles.mjs` called PostCSS with `from: undefined`, so cssnano ignored the package `browserslist` and did not merge selectors with `:is()` -> composite CSS was 540B bigger (+478B raw per theme). Fixed by passing `from: outFile` (same plugin order as common: cssnano, autoprefixer). Raw theme CSS is now 62B smaller than master.
+- Compression locality: appending the package CSS at the end of each theme puts it >32KB away from similar editor rules, deflate (32KB window) can't reuse them -> ~+550-650B per full theme, ~+70-100B per lite theme. Brotli (larger window) is unaffected. Measured on default theme deflate: master 44912, append 45765, prepend 45197, insert at old position (before `li.hidden{`) 44866.
+- Zip only: new Sass partials (`_theme-base*.scss`, +~860B) and their zip entry headers (~+700B), offset by Sass sources moved out of common (`slick-editors.scss`, `_variables.scss`, `slick-plugins.scss`: -3.2KB). `_functions.scss` (+190B) was simply missing from master's committed zip (stale).
+- Applied: `compress.mjs` now inserts the package CSS before `li.hidden{` (first `slick-plugins` rule, same cascade position as before), fallback append. Result: zip 1,628B smaller than master (css full -297B, css lite -164B, sass -2,069B, +190B stale `_functions.scss`).
+
+### `li.hidden{` insertion marker (revisit notes)
+
+- Where: `packages/vanilla-force-bundle/compress.mjs` `getThemeCssWithOptionalStyles()`, `themeCss.indexOf('li.hidden{')`.
+- Why this rule: it is the first rule emitted by `slick-plugins.scss` (`li.hidden { display: none !important; }`), so inserting before it puts the package CSS right after `slick-editors` output, i.e. the exact cascade position and neighborhood the rules had on master. Verified present exactly once in all 9 minified theme CSS files (default/bootstrap/fluent/material/salesforce + lite).
+- Risk: plain string match on minified CSS. It breaks silently (falls back to appending at the end, still correct CSS) if that rule is removed, moved, renamed, or cssnano output changes (e.g. merged with another selector). Symptom: zip grows ~0.5-0.65KB per full theme with no other change.
+- How to check: count `li.hidden{` in `packages/common/dist/styles/css/*.css` (expect 1 each) or compare zip size against master.
+- Alternatives considered: prepend (robust but ~+0.3KB per full theme vs master), a dedicated `/*! marker */` comment emitted by Sass (robust but adds bytes to every published theme CSS for all users), optional `console.warn` when the marker is not found (cheap, not implemented yet).

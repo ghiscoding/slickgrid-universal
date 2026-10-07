@@ -51,7 +51,8 @@ for (const [theme, variablesModule] of Object.entries(themes)) {
     url: pathToFileURL(join(srcDir, `__${theme}.scss`)),
   });
   const outFile = join(cssOutDir, `${values.name}-${theme}.css`);
-  const result = await postcss([autoprefixer, cssnano]).process(css, { from: undefined, to: outFile });
+  // `from` is required for cssnano/autoprefixer to find the package `browserslist` (otherwise it falls back to older browser defaults)
+  const result = await postcss([cssnano, autoprefixer]).process(css, { from: outFile, to: outFile });
   writeFileSync(outFile, result.css);
   console.log(`Compiled "${outFile}"`);
 }

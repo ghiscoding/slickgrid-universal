@@ -42,11 +42,17 @@ styleFiles.forEach((file) => {
 function getThemeCssWithOptionalStyles(file) {
   const [, theme] = normalizePath(file).match(/css\/slickgrid-theme-(\w+)(?:\.lite)?\.css$/) || [];
   if (theme) {
-    const optionalStyles = [
+    const themeCss = readFileSync(file, 'utf8');
+    const optionalCss = [
       `../composite-editor-component/dist/styles/css/slick-composite-editor-${theme}.css`,
       `../custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-${theme}.css`,
-    ];
-    return [file, ...optionalStyles].map((cssFile) => readFileSync(cssFile, 'utf8')).join('\n');
+    ]
+      .map((cssFile) => readFileSync(cssFile, 'utf8'))
+      .join('\n');
+
+    // insert next to the editors styling (where it was before) so that zip compression can reuse similar rules
+    const insertIdx = themeCss.indexOf('li.hidden{');
+    return insertIdx >= 0 ? `${themeCss.slice(0, insertIdx)}${optionalCss}\n${themeCss.slice(insertIdx)}` : `${themeCss}\n${optionalCss}`;
   }
 }
 
