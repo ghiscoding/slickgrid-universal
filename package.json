@@ -111,9 +111,9 @@
   },
   "engines": {
     "node": "^22.22.2 || >=24.15.0",
-    "pnpm": "11.28.1"
+    "pnpm": "11.28.4"
   },
-  "packageManager": "pnpm@11.28.1",
+  "packageManager": "pnpm@11.28.4",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
     "@formkit/tempo": "catalog:",
@@ -127,7 +127,7 @@
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "@vitest/ui": "catalog:",
-    "conventional-changelog-conventionalcommits": "^10.4.0",
+    "conventional-changelog-conventionalcommits": "^10.4.1",
     "cross-env": "catalog:",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
