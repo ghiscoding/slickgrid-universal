@@ -35,12 +35,24 @@ const files = [
 const styleFiles = globSync('../common/dist/styles/**/*.*');
 styleFiles.forEach((file) => {
   const [styleName] = file.match(/(styles.*)/gi) || [];
-  files.push({ name: normalizePath(styleName), path: normalizePath(file) });
+  files.push({ name: normalizePath(styleName), path: normalizePath(file), content: getThemeCssWithOptionalStyles(file) });
 });
+
+/** the bundle includes optional packages, so their styling must also be part of every theme CSS file */
+function getThemeCssWithOptionalStyles(file) {
+  const [, theme] = normalizePath(file).match(/css\/slickgrid-theme-(\w+)(?:\.lite)?\.css$/) || [];
+  if (theme) {
+    const optionalStyles = [
+      `../composite-editor-component/dist/styles/css/slick-composite-editor-${theme}.css`,
+      `../custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-${theme}.css`,
+    ];
+    return [file, ...optionalStyles].map((cssFile) => readFileSync(cssFile, 'utf8')).join('\n');
+  }
+}
 
 let zipObj = {}; // create an object tree of the zip folders/files structure
 let left = files.length;
-const fileToU8 = (file, cb) => cb(strToU8(readFileSync(file.path)));
+const fileToU8 = (file, cb) => cb(strToU8(file.content ?? readFileSync(file.path)));
 
 // Yet again, this is necessary for parallelization.
 let processFile = (file) => {

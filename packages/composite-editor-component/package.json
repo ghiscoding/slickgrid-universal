@@ -9,6 +9,7 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./dist/styles/*": "./dist/styles/*",
     "./package.json": "./package.json"
   },
   "types": "./dist/index.d.ts",
@@ -20,11 +21,15 @@
     "/src"
   ],
   "scripts": {
-    "build": "pnpm run clean && tsc",
+    "build": "pnpm run clean && tsc && pnpm run sass:bundle",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "remove dist tsconfig.tsbuildinfo",
-    "dev": "pnpm build:incremental"
+    "dev": "pnpm build:incremental && pnpm run sass:bundle",
+    "sass:bundle": "node ../../scripts/build-package-styles.mjs --name slick-composite-editor"
   },
+  "browserslist": [
+    "baseline widely available"
+  ],
   "license": "MIT",
   "author": "Ghislain B.",
   "homepage": "https://github.com/ghiscoding/slickgrid-universal",
@@ -40,5 +45,11 @@
     "@slickgrid-universal/binding": "workspace:*",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.6.1",
+    "cssnano": "^9.1.1",
+    "postcss": "^8.5.28",
+    "sass": "catalog:"
   }
 }

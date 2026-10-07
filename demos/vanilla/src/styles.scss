@@ -10,6 +10,10 @@ $link-color: #006dcc;
   $slick-checkbox-opacity-hover: 0.35
 );
 
+// optional packages styling, must be loaded after the theme to reuse its SASS variables
+@use '@slickgrid-universal/composite-editor-component/dist/styles/sass/slick-composite-editor.scss';
+@use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/sass/slick-custom-tooltip.scss';
+
 @use './bulma.scss';
 
 :root {

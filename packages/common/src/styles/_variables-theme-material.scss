@@ -105,6 +105,8 @@ $slick-dark-base-dark-menu-bg-color:                      #212121;
 $slick-dark-highlight-color:                              $slick-dark-primary-color;
 $slick-dark-text-color:                                   #d4d4d4;
 
+// theme CSS output, included by the theme entry files (this module must not emit CSS)
+@mixin slick-theme-styles {
 .vc[data-vc-theme="dark"],
 .ms-dark-mode,
 .ms-drop.ms-dark-mode,
@@ -146,4 +148,5 @@ $slick-dark-text-color:                                   #d4d4d4;
   --ms-choice-focus-box-shadow:                   #{0 0 0 2px rgba(#66bb6a, 0.25)};
   --ms-ok-button-text-color:                      #66bb6a;
   --ms-ok-button-text-hover-color:                #{color.adjust(#66bb6a, $lightness: 5%)};
+}
 }

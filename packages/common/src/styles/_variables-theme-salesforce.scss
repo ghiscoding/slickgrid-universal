@@ -138,6 +138,8 @@ $slick-editor-grid-cell-border-width-modified:                  1px 7px 1px 1px 
 $slick-dark-primary-color:                  #66b8ff;
 $slick-dark-base-dark-menu-bg-color:        #212121;
 
+// theme CSS output, included by the theme entry files (this module must not emit CSS)
+@mixin slick-theme-styles {
 .vc[data-vc-theme="dark"],
 .ms-dark-mode,
 .ms-drop.ms-dark-mode,
@@ -171,4 +173,5 @@ $slick-dark-base-dark-menu-bg-color:        #212121;
   --slick-header-filter-row-border-bottom:        2px solid #0389ff;
   --slick-pagination-icon-color:                  #66b8ff;
   --slick-row-mouse-hover-box-shadow:             inset 0 0 0 2px #3a3a3a;
+}
 }

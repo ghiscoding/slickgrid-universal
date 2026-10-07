@@ -1,5 +1,6 @@
 #### index
 - [Using Built-in Themes (CSS or SASS)](#csssass-styles)
+- [Required Styles for Extra Packages](#required-styles-for-extra-packages)
 - [Using CSS Variables](#using-css-variables-instead-of-sass)
 - [Bootstrap & Other Frameworks](#bootstrap-support)
 - [SVG Icons](#svg-icons)
@@ -56,6 +57,32 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-fluent.scss';
 ```
+
+### Required Styles for Extra Packages
+Some features are provided by extra packages that you install separately, like the Composite Editor (`@slickgrid-universal/composite-editor-component`) and the Custom Tooltip (`@slickgrid-universal/custom-tooltip-plugin`). Their styles are **not** included in the SlickGrid themes, so when you use any of these packages you **must** also import their CSS or SASS file yourself (otherwise they will be displayed without any styling), and it must always be loaded **after** the theme.
+
+##### with CSS
+Pick the file matching your theme (`default`, `bootstrap`, `fluent`, `material` or `salesforce`)
+```scss
+/* style.css */
+@use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
+@use '@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor-bootstrap.css';
+@use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-bootstrap.css';
+```
+
+##### with SASS
+These package styles reuse the theme SASS variables, so any variables provided to the theme (including the package variables, e.g. `$slick-editor-modal-*` or `$slick-tooltip-*`) also apply to them.
+```scss
+/* style.scss */
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss' with (
+  $slick-primary-color: green,
+  $slick-editor-modal-container-width: 600px
+);
+@use '@slickgrid-universal/composite-editor-component/dist/styles/sass/slick-composite-editor.scss';
+@use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/sass/slick-custom-tooltip.scss';
+```
+
+> **Note** the theme must be loaded first, SASS throws an error when a module gets configured (`with (...)`) after it was already loaded.
 
 ### Using CSS Variables _(instead of SASS)_
 You could change the SlickGrid styling with your own customization using [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties). The variables that you can use (over 800 of them) are all predefined as SASS variables in the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file, you will simply have to rename the `$slick-` prefix with a `--slick-` prefix to the variable name to use them as CSS Variables. To be clear, you don't need SASS but the variables names were all declared as SASS and that is what the lib will use internally but you can optionally use them all as plain CSS Variables.

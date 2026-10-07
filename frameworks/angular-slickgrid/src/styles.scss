@@ -12,6 +12,10 @@ $primary-color: #0d6efd;
   $slick-primary-color: $primary-color // $slick-input-focus-box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.25),
 );
 
+// optional packages styling, must be loaded after the theme to reuse its SASS variables
+@use '@slickgrid-universal/composite-editor-component/dist/styles/sass/slick-composite-editor.scss';
+@use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/sass/slick-custom-tooltip.scss';
+
 // -- 2. load with legacy `@import`
 // $slick-primary-color: red;
 // $slick-link-color: red;

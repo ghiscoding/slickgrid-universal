@@ -1391,6 +1391,19 @@ importers:
       '@slickgrid-universal/utils':
         specifier: workspace:*
         version: link:../utils
+    devDependencies:
+      autoprefixer:
+        specifier: ^10.6.1
+        version: 10.6.1(postcss@8.5.28)
+      cssnano:
+        specifier: ^9.1.1
+        version: 9.1.1(postcss@8.5.28)
+      postcss:
+        specifier: ^8.5.28
+        version: 8.5.28
+      sass:
+        specifier: 'catalog:'
+        version: 1.105.0
 
   packages/custom-footer-component:
     dependencies:
@@ -1419,6 +1432,19 @@ importers:
       '@slickgrid-universal/utils':
         specifier: workspace:*
         version: link:../utils
+    devDependencies:
+      autoprefixer:
+        specifier: ^10.6.1
+        version: 10.6.1(postcss@8.5.28)
+      cssnano:
+        specifier: ^9.1.1
+        version: 9.1.1(postcss@8.5.28)
+      postcss:
+        specifier: ^8.5.28
+        version: 8.5.28
+      sass:
+        specifier: 'catalog:'
+        version: 1.105.0
 
   packages/empty-warning-component:
     dependencies:

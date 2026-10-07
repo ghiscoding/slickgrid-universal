@@ -65,6 +65,15 @@ $slick-icon-group-expanded-svg-path: 'M15.8 7.73c.28.3.27.78-.03 1.06l-5.25 5a.7
   $slick-form-control-focus-box-shadow: none !default,
 );
 
+// Dark Mode
+// -----------
+$slick-dark-primary-color: #96c6fa;
+$slick-dark-base-dark-menu-bg-color: #212121;
+$slick-dark-highlight-color: $slick-dark-primary-color;
+$slick-dark-text-color: #d4d4d4;
+
+// theme CSS output, included by the theme entry files (this module must not emit CSS)
+@mixin slick-theme-styles {
 .slickgrid-container {
   #filter-checkbox-selectall-container,
   .checkbox-selector-label.selectall,
@@ -84,13 +93,6 @@ $slick-icon-group-expanded-svg-path: 'M15.8 7.73c.28.3.27.78-.03 1.06l-5.25 5a.7
     --slick-form-control-focus-box-shadow: inset 0 -2px #{$primary-color};
   }
 }
-
-// Dark Mode
-// -----------
-$slick-dark-primary-color: #96c6fa;
-$slick-dark-base-dark-menu-bg-color: #212121;
-$slick-dark-highlight-color: $slick-dark-primary-color;
-$slick-dark-text-color: #d4d4d4;
 
 .vc[data-vc-theme="dark"],
 .ms-dark-mode,
@@ -149,4 +151,5 @@ $slick-dark-text-color: #d4d4d4;
   --ms-choice-focus-box-shadow: #{0 0 0 2px rgba(#96c6fa, 0.25)};
   --ms-ok-button-text-color: #96c6fa;
   --ms-ok-button-text-hover-color: #{color.adjust(#96c6fa, $lightness: 5%)};
+}
 }
