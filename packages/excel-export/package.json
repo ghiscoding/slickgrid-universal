@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/excel-export",
-  "version": "10.11.2",
+  "version": "10.11.3",
   "description": "Excel Export (xls/xlsx) Service.",
   "type": "module",
   "main": "./dist/index.js",
