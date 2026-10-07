@@ -39,7 +39,7 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 
 // or other Themes
 @use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
-@use '@slickgrid-universal/common/dist/styles/styles/css/slickgrid-theme-material.css';
+@use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-material.css';
 @use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-salesforce.css';
 @use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-fluent.css';
 ```
