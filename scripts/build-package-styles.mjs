@@ -1,19 +1,21 @@
 import { copyFileSync, globSync, mkdirSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { basename, join } from 'node:path';
+import { basename, extname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 
 /**
- * Build the styling of an optional package (run from the package folder), e.g. `node ../../scripts/build-package-styles.mjs --name slick-composite-editor`
+ * Build the styling of an optional package (run from the package folder), e.g. `node ../../scripts/build-package-styles.mjs src/styles/slick-composite-editor.scss`
  *  - copies `src/styles/*.scss` to `dist/styles/sass`
- *  - compiles `src/styles/{name}.scss` once per SlickGrid theme to `dist/styles/css/{name}-{theme}.css` (minified & autoprefixed)
+ *  - compiles the stylesheet once per SlickGrid theme to `dist/styles/css/{name}-{theme}.css` (minified & autoprefixed)
  */
-const { values } = parseArgs({ options: { name: { type: 'string' } } });
-if (!values.name) {
-  console.error('Please provide the stylesheet name to compile, e.g.: --name slick-composite-editor');
+const { positionals } = parseArgs({ allowPositionals: true });
+const entryFile = positionals[0];
+if (!entryFile?.endsWith('.scss')) {
+  console.error('Please provide the stylesheet to compile, e.g.: src/styles/slick-composite-editor.scss');
   process.exit(1);
 }
+const name = basename(entryFile, extname(entryFile));
 
 // theme name => common SASS variables module used by that theme
 const themes = {
@@ -43,14 +45,14 @@ for (const file of globSync('*.scss', { cwd: srcDir })) {
 
 for (const [theme, variablesModule] of Object.entries(themes)) {
   // load the theme variables first so the component reuses the same (theme configured) variables module
-  const source = `@use '@slickgrid-universal/common/dist/styles/sass/${variablesModule}';\n@use './${values.name}';\n`;
+  const source = `@use '@slickgrid-universal/common/dist/styles/sass/${variablesModule}';\n@use './${name}';\n`;
   const { css } = sass.compileString(source, {
     loadPaths: [join(cwd, 'node_modules')],
     quietDeps: true,
     style: 'compressed',
     url: pathToFileURL(join(srcDir, `__${theme}.scss`)),
   });
-  const outFile = join(cssOutDir, `${values.name}-${theme}.css`);
+  const outFile = join(cssOutDir, `${name}-${theme}.css`);
   // `from` is required for cssnano/autoprefixer to find the package `browserslist` (otherwise it falls back to older browser defaults)
   const result = await postcss([cssnano, autoprefixer]).process(css, { from: outFile, to: outFile });
   writeFileSync(outFile, result.css);

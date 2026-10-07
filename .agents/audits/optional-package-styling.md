@@ -97,3 +97,8 @@ Zip on branch was ~2.1-2.3KB bigger than master. Breakdown (compressed bytes):
 - Risk: plain string match on minified CSS. It breaks silently (falls back to appending at the end, still correct CSS) if that rule is removed, moved, renamed, or cssnano output changes (e.g. merged with another selector). Symptom: zip grows ~0.5-0.65KB per full theme with no other change.
 - How to check: count `li.hidden{` in `packages/common/dist/styles/css/*.css` (expect 1 each) or compare zip size against master.
 - Alternatives considered: prepend (robust but ~+0.3KB per full theme vs master), a dedicated `/*! marker */` comment emitted by Sass (robust but adds bytes to every published theme CSS for all users), optional `console.warn` when the marker is not found (cheap, not implemented yet).
+
+## Fallow dead-code (CI) notes
+
+- Fallow treats files referenced in `package.json` scripts as entry points (common's `sass src/styles/*.scss` scripts). The optional packages' `sass:bundle` therefore passes the stylesheet path (`node ../../scripts/build-package-styles.mjs src/styles/<name>.scss`) instead of `--name <name>`, otherwise Fallow reports the `.scss` files as unused.
+- `@use '@slickgrid-universal/common/dist/styles/sass/variables'` is correct for published packages but `dist` does not exist when Fallow runs in CI, so `.fallowrc.json` has `ignoreUnresolvedImports: ["@slickgrid-universal/common/dist/styles/sass/**"]` (specifier match only, other unresolved imports are still reported).

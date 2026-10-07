@@ -25,7 +25,7 @@
     "build:incremental": "tsc --incremental --declaration",
     "clean": "remove dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental && pnpm run sass:bundle",
-    "sass:bundle": "node ../../scripts/build-package-styles.mjs --name slick-custom-tooltip"
+    "sass:bundle": "node ../../scripts/build-package-styles.mjs src/styles/slick-custom-tooltip.scss"
   },
   "browserslist": [
     "baseline widely available"
