@@ -81,7 +81,16 @@ changeKeepingComponentAlive() {
 ## Usage
 
 ##### Component
-> Starting from version 11, import the Row Detail package styles after your grid theme. See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages).
+
+### Required Styles (v11+)
+Add `@slickgrid-universal/row-detail-view-plugin` as a direct dependency and import its styles after the SlickGrid theme in your application's global SCSS entry file:
+
+```scss
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@use '@slickgrid-universal/row-detail-view-plugin/dist/styles/sass/slick-row-detail-view.scss';
+```
+
+See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for plain CSS imports and theme configuration details.
 
 ```ts
 import {
