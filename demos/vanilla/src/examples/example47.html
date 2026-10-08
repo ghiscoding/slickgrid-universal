@@ -1,0 +1,92 @@
+<h3 class="title is-3">
+  Example 47 - Formula Service (MVP)
+  <span class="d-inline-flex">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span> Toggle Light/Dark</span>
+    </button>
+  </span>
+
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example47.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h5 class="title is-5 mb-2">
+  Use <code>allowFormula: true</code> columns with optional <code>FormulaService</code>, while keeping Excel export optional.
+</h5>
+<h6 class="is-6 mb-2 example-details">
+  This demo is based on Example23. It stores formulas in FormulaService (per rowId + columnId), and Excel Export migrates these formulas to
+  native Excel formulas when ungrouped. Group total rows still use <code>groupTotalsExcelExportOptions.valueParserCallback</code>.
+</h6>
+<h6 class="is-6 mb-2 example-details">
+  Excel-like UX: when editing any <code>allowFormula: true</code> column, headers are prefixed with Excel column letters (<code>A</code>,
+  <code>B</code>, ...).
+</h6>
+<h6 class="is-6 mb-4 example-details">
+  MVP note: formula editing is text-based and does not yet include token coloring, click-to-reference, or range composer UX.
+</h6>
+
+<section class="row mb-2">
+  <div class="mb-1">
+    <button class="button is-small" onclick.trigger="exportToExcel()" data-test="export-excel-btn">
+      <span class="mdi mdi-file-excel-outline color-success"></span>
+      <span>Export to Excel</span>
+    </button>
+    <button class="button is-small" onclick.trigger="exportToExcelPortable()" data-test="export-excel-portable-btn">
+      <span class="mdi mdi-file-excel-outline color-warning"></span>
+      <span>Export Portable Values</span>
+    </button>
+    <span>
+      <button class="button is-small" onclick.trigger="groupByTaxable()" data-test="group-by-btn">
+        <span>Group by Taxable</span>
+      </button>
+      <button class="button is-small" onclick.trigger="clearGrouping()" data-test="clear-grouping-btn">
+        <span>Clear grouping</span>
+      </button>
+      <button class="button is-small" onclick.trigger="loadDefaultFormulas()" data-test="reload-formulas-btn">
+        <span>Load Default Formulas</span>
+      </button>
+      <button class="button is-small" onclick.trigger="clearAllFormulas()" data-test="clear-formulas-btn">
+        <span>Clear Formula Store</span>
+      </button>
+    </span>
+    <span class="ml-4 text-bold">
+      Tax Rate (%):
+      <input type="number" value.bind="taxRate" class="is-narrow input is-small" step="0.25" data-test="taxrate" />
+      <button class="button is-small" onclick.trigger="updateTaxRate()" data-test="update-btn">Update</button>
+    </span>
+  </div>
+</section>
+
+<section class="row mb-2">
+  <div class="mb-1">
+    <b>Try formula input:</b>
+    edit any <em>Sub-Total</em>, <em>Taxes</em>, or <em>Total</em> cell and type for example
+    <code>=REF(COLUMN("price"),ROW("1"))*REF(COLUMN("qty"),ROW("1"))</code>
+  </div>
+</section>
+
+<section class="row mb-2">
+  <div class="mb-1">
+    <b>Compatibility note:</b>
+    workbook custom functions (for example <code>CUSTOMSUM(...)</code>) rely on modern Excel LAMBDA conventions. LibreOffice/OpenOffice
+    might show errors for these formulas. Use <em>Export Portable Values</em> when cross-suite compatibility is required.
+  </div>
+</section>
+
+<section class="row mb-3">
+  <div class="mb-1">
+    <b>Last Formula Event:</b>
+    <span>${lastFormulaEvent}</span>
+  </div>
+</section>
+
+<div class="grid47"></div>

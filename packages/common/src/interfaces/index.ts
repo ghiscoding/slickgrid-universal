@@ -70,6 +70,7 @@ export type * from './formattedDataCache.interface.js';
 export type * from './formatter.interface.js';
 export type * from './formatterOption.interface.js';
 export type * from './formatterResultObject.interface.js';
+export type * from './formulaProvider.interface.js';
 export type * from './gridEvents.interface.js';
 export type * from './gridMenu.interface.js';
 export type * from './gridMenuCommandItemCallbackArgs.interface.js';

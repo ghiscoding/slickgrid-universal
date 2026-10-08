@@ -20,7 +20,7 @@ export * from './global-grid-options.js';
 
 export * from './core/index.js';
 export * from './enums/index.js';
-export type * from './interfaces/index.js';
+export * from './interfaces/index.js';
 export * from './aggregators/aggregators.index.js';
 export * from './editors/index.js';
 export * from './editors/editors.index.js';
