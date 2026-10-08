@@ -88,6 +88,8 @@ There is currently a known problem with Row Detail when loading the Row Detail C
 
 > Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/react-row-detail-plugin`)
 
+> Starting from version 11, also add `@slickgrid-universal/row-detail-view-plugin` as a direct dependency and import its styles after your grid theme. See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages).
+
 ##### Component
 ```tsx
 import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above

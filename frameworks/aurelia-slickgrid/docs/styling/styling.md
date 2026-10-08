@@ -61,7 +61,7 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 ```
 
 ### Required Styles for Extra Packages
-Some features are provided by extra packages that you install separately, like the Composite Editor (`@slickgrid-universal/composite-editor-component`) and the Custom Tooltip (`@slickgrid-universal/custom-tooltip-plugin`). Their styles are **not** included in the SlickGrid themes, so when you use any of these packages you **must** also import their CSS or SASS file yourself (otherwise they will be displayed without any styling), and it must always be loaded **after** the theme.
+Some features are provided by extra packages that you install separately, like the Composite Editor (`@slickgrid-universal/composite-editor-component`), the Custom Tooltip (`@slickgrid-universal/custom-tooltip-plugin`), and Row Detail (`@slickgrid-universal/row-detail-view-plugin`). Their styles are **not** included in the SlickGrid themes, so when you use any of these packages you **must** also import their CSS or SASS file yourself (otherwise they will be displayed without any styling), and it must always be loaded **after** the theme.
 
 ##### with CSS
 Pick the file matching your theme (`default`, `bootstrap`, `fluent`, `material` or `salesforce`), use `@import` for plain CSS or `@use` when SASS is installed.
@@ -70,6 +70,7 @@ Pick the file matching your theme (`default`, `bootstrap`, `fluent`, `material` 
 @import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
 @import '@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor-bootstrap.css';
 @import '@slickgrid-universal/custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-bootstrap.css';
+@import '@slickgrid-universal/row-detail-view-plugin/dist/styles/css/slick-row-detail-view-bootstrap.css';
 ```
 
 or import them directly from your main JS/TS file (in the same order)
@@ -77,6 +78,7 @@ or import them directly from your main JS/TS file (in the same order)
 import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
 import '@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor-bootstrap.css';
 import '@slickgrid-universal/custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-bootstrap.css';
+import '@slickgrid-universal/row-detail-view-plugin/dist/styles/css/slick-row-detail-view-bootstrap.css';
 ```
 
 ##### with SASS
@@ -89,9 +91,12 @@ These package styles reuse the theme SASS variables, so any variables provided t
 );
 @use '@slickgrid-universal/composite-editor-component/dist/styles/sass/slick-composite-editor.scss';
 @use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/sass/slick-custom-tooltip.scss';
+@use '@slickgrid-universal/row-detail-view-plugin/dist/styles/sass/slick-row-detail-view.scss';
 ```
 
-> **Note** the theme must be loaded first, SASS throws an error when a module gets configured (`with (...)`) after it was already loaded.
+> **Note** load the theme and optional SASS styles in the **same SCSS entry file**, with the theme first. Separate compilations cannot share SASS overrides, and SASS throws an error when a module gets configured (`with (...)`) after it was already loaded. Import only the packages you use.
+
+Row Detail uses the same base package stylesheet with the Angular, Aurelia, React, and Vue Row Detail plugins. Add `@slickgrid-universal/row-detail-view-plugin` as a direct dependency when importing its styles, including when using a framework Row Detail plugin.
 
 ### Using CSS Variables _(instead of SASS)_
 You could change the SlickGrid styling with your own customization using [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties). The variables that you can use (over 800 of them) are all predefined as SASS variables in the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file, you will simply have to rename the `$slick-` prefix with a `--slick-` prefix to the variable name to use them as CSS Variables. To be clear, you don't need SASS but the variables names were all declared as SASS and that is what the lib will use internally but you can optionally use them all as plain CSS Variables.

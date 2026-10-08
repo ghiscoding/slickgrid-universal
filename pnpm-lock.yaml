@@ -1030,6 +1030,9 @@ importers:
       '@slickgrid-universal/pdf-export':
         specifier: workspace:*
         version: link:../../packages/pdf-export
+      '@slickgrid-universal/row-detail-view-plugin':
+        specifier: workspace:*
+        version: link:../../packages/row-detail-view-plugin
       '@slickgrid-universal/sql':
         specifier: workspace:*
         version: link:../../packages/sql
@@ -1533,6 +1536,18 @@ importers:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
         version: link:../event-pub-sub
+      autoprefixer:
+        specifier: ^10.6.1
+        version: 10.6.1(postcss@8.5.28)
+      cssnano:
+        specifier: ^9.1.1
+        version: 9.1.1(postcss@8.5.28)
+      postcss:
+        specifier: ^8.5.28
+        version: 8.5.28
+      sass:
+        specifier: 'catalog:'
+        version: 1.105.0
 
   packages/rxjs-observable:
     dependencies:

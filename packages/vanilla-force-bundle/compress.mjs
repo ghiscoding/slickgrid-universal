@@ -2,6 +2,7 @@ import { existsSync, globSync, mkdirSync, readFileSync, statSync, writeFileSync 
 import { parseArgs } from 'node:util';
 import { strToU8, zip } from 'fflate';
 import normalizePath from 'normalize-path';
+import { mergePackageStyles } from '../../scripts/merge-package-styles.mjs';
 
 const inputFolder1 = './dist/bundle';
 const inputFolder2 = '../common/dist/styles';
@@ -50,9 +51,7 @@ function getThemeCssWithOptionalStyles(file) {
       .map((cssFile) => readFileSync(cssFile, 'utf8'))
       .join('\n');
 
-    // insert next to the editors styling (where it was before) so that zip compression can reuse similar rules
-    const insertIdx = themeCss.indexOf('li.hidden{');
-    return insertIdx >= 0 ? `${themeCss.slice(0, insertIdx)}${optionalCss}\n${themeCss.slice(insertIdx)}` : `${themeCss}\n${optionalCss}`;
+    return mergePackageStyles(themeCss, optionalCss, file);
   }
 }
 

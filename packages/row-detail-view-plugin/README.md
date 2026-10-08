@@ -13,3 +13,16 @@ A plugin to add Row Detail View Panel that can be expanded/collapsed, the plugin
 
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)
+
+
+### Styling (v11+)
+Import the package styles after your grid theme, in the same SCSS entry file:
+
+```scss
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@use '@slickgrid-universal/row-detail-view-plugin/dist/styles/sass/slick-row-detail-view.scss';
+```
+
+For plain CSS, import `@slickgrid-universal/row-detail-view-plugin/dist/styles/css/slick-row-detail-view-bootstrap.css` after the theme CSS. Replace `bootstrap` with your theme name (`default`, `bootstrap`, `fluent`, `material`, or `salesforce`); lite themes use the same package stylesheet.
+
+These styles also support the Angular, Aurelia, React, and Vue Row Detail plugins. Add this base package as a direct dependency when importing its styles.

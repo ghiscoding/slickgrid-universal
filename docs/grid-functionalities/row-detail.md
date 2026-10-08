@@ -81,6 +81,8 @@ changeKeepingComponentAlive() {
 ## Usage
 
 ##### Component
+> Starting from version 11, import the Row Detail package styles after your grid theme. See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages).
+
 ```ts
 import {
   type Column,
