@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     // clearMocks: true,
     coverage: {
-      include: ['packages/**/*.ts', 'scripts/merge-package-styles.mjs'],
+      include: ['packages/**/*.ts'],
       exclude: [
         ...configDefaults.exclude,
         '**/frameworks/**',
