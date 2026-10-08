@@ -45,6 +45,7 @@ catalog:
   native-copyfiles: ^2.0.4
   npm-run-all2: ^9.0.3
   oxlint: ^1.86.0
+  postcss: ^8.5.28
   react: ^19.3.0
   react-dom: ^19.3.0
   react-router: ^8.4.0
@@ -76,7 +77,6 @@ overrides:
   ip-address: ^10.7.2
   minimatch: ^10.2.6
   picomatch: ^4.0.7
-  postcss: ^8.5.28
   qs: ^6.16.0
   svgo: ^4.1.0
   undici: ^7.30.0
