@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { mergePackageStyles } from '../../../../../scripts/merge-package-styles.mjs';
+import { mergePackageStyles } from '../../../../../packages/vanilla-force-bundle/merge-package-styles.mjs';
 
 interface ZipReader {
   unzipSync(data: Uint8Array): Record<string, Uint8Array>;

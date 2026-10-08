@@ -2,7 +2,7 @@ import { existsSync, globSync, mkdirSync, readFileSync, statSync, writeFileSync 
 import { parseArgs } from 'node:util';
 import { strToU8, zip } from 'fflate';
 import normalizePath from 'normalize-path';
-import { mergePackageStyles } from '../../scripts/merge-package-styles.mjs';
+import { mergePackageStyles } from './merge-package-styles.mjs';
 
 const inputFolder1 = './dist/bundle';
 const inputFolder2 = '../common/dist/styles';
