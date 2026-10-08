@@ -765,6 +765,11 @@ export function sortPresetColumns<T = any>(allColumns: Column<T>[], presetColumn
           headerCssClass: presetColumn.headerCssClass ?? column.headerCssClass,
           width: presetColumn.width ?? column.width,
           originalWidth: presetColumn.width,
+          // Preserve column-level pinning when a layout is sorted/rebuilt
+          // (for example after hiding and showing columns in a Grid State
+          // preset). Without this, rebuilding the visible column list drops
+          // the pinned flag even though the preset still contains it.
+          ...(presetColumn.pinned !== undefined ? { pinned: presetColumn.pinned } : {}),
         }),
         hidden: !presetColumnMap.has(column.id) || (presetColumns.find((c) => c.id === column.id)?.hidden ?? false),
         _originalIndex: originalIndex,

@@ -1,9 +1,11 @@
 <h3 class="title is-3">
   Example 17 - Auto-Scroll with Range Selector
   <span class="subtitle">(with Salesforce Theme)</span>
-  <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
-    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
-  </button>
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -36,11 +38,11 @@
       <label for="">Grid 1 - Pinned Columns: </label>
       <input
         type="number"
-        data-test="frozen-column-count"
-        class="frozen-column-count is-narrow input is-small"
-        value.bind="frozenColumnCount"
+        data-test="pinned-column-count"
+        class="pinned-column-count is-narrow input is-small"
+        value.bind="pinnedColumnCount"
       />
-      <button class="button is-small" data-test="set-frozen-columns-btn" onclick.trigger="changeFrozenColumnCount()">Set</button>
+      <button class="button is-small" data-test="set-pinned-columns-btn" onclick.trigger="changePinnedColumnCount()">Set</button>
     </span>
     <label for="is-autoscroll">Auto Scroll: </label>
     <input id="is-autoscroll" type="checkbox" data-test="is-autoscroll-chk" checked.bind="isAutoScroll" />
@@ -48,7 +50,7 @@
     <span class="ml-2">
       <button class="button is-small" data-test="set-options-btn" onclick.trigger="setOptions()">Set Options</button>
       <button class="button is-small" data-test="default-options-btn" onclick.trigger="setDefaultOptions()">Set Default Options</button>
-      <button class="button is-small" data-test="set-clear-frozen-btn" onclick.trigger="toggleFrozen()">Set/Clear Frozen</button>
+      <button class="button is-small" data-test="set-clear-pinned-btn" onclick.trigger="togglePinned()">Set/Clear Pinned</button>
       <button class="button is-small" data-test="set-clear-grouping-btn" onclick.trigger="toggleGroup()">
         Set/Clear Grouping by Duration
       </button>

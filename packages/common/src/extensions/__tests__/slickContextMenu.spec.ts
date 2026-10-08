@@ -355,6 +355,25 @@ describe('ContextMenu Plugin', () => {
       expect(contextMenuElm.classList.contains('dropleft')).toBeTruthy();
     });
 
+    it('should keep the root context menu inside the grid container bounds', () => {
+      parentContainer.className = 'slickgrid-container';
+      vi.spyOn(parentContainer, 'getBoundingClientRect').mockReturnValue({ left: 100, top: 200, right: 300, bottom: 400 } as DOMRect);
+      plugin.dispose();
+      plugin.init({ autoAdjustDrop: false, autoAlignSide: false });
+
+      Object.defineProperty(eventData, 'pageX', { configurable: true, value: 1000 });
+      Object.defineProperty(eventData, 'pageY', { configurable: true, value: 1000 });
+      gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
+
+      const menuElm = plugin.menuElement!;
+      Object.defineProperty(menuElm, 'offsetWidth', { configurable: true, value: 180 });
+      Object.defineProperty(menuElm, 'offsetHeight', { configurable: true, value: 120 });
+      (plugin as any).repositionMenu(eventData, menuElm, undefined, plugin.addonOptions);
+
+      expect(menuElm.style.left).toBe('120px');
+      expect(menuElm.style.top).toBe('280px');
+    });
+
     describe('with Command Items', () => {
       beforeEach(() => {
         sharedService.gridOptions.contextMenu!.commandTitle = '';

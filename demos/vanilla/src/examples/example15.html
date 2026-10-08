@@ -1,5 +1,11 @@
 <h3 class="title is-3">
   Example 15 - Grid with OData Backend Service using RxJS Observables
+
+  <span class="d-inline-flex">
+    <button class="button is-small mr-1" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -12,7 +18,7 @@
   </div>
 </h3>
 
-<h6 class="italic content example-details">
+<h6 class="italic content example-details" style.bind="subTitleStyle">
   <span class="has-text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an error and its only
   purpose is to demo what would happen when you encounter a backend server error (the UI should rollback to previous state before you did
   the action). Also changing Page Size to 50,000 will also throw which again is for demo purposes.

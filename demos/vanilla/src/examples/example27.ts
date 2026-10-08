@@ -39,6 +39,7 @@ export default class Example27 {
   statusClass = 'is-success';
   translateService: TranslateService;
   serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
+  subTitleStyle = 'display: block';
 
   constructor() {
     this.backendService = new GraphqlService();
@@ -376,5 +377,10 @@ export default class Example27 {
       document.body.setAttribute('data-theme', 'light');
       document.querySelector('.demo-container')?.classList.remove('dark-mode');
     }
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

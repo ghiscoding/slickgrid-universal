@@ -1,6 +1,14 @@
 import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  // VM tests load files directly; avoid Vite crawling generated HTML pages.
+  environments: {
+    __vitest_vm__: {
+      optimizeDeps: {
+        entries: [],
+      },
+    },
+  },
   test: {
     // clearMocks: true,
     coverage: {

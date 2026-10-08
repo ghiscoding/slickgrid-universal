@@ -1,6 +1,9 @@
 <h3 class="title is-3">
   Example 22 - Row Based Editing
   <span class="subtitle">(with Salesforce Theme)</span>
+  <button class="button is-small mr-1" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -11,7 +14,7 @@
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
-  <h6 class="italic content example-details">
+  <h6 class="italic content example-details" style.bind="subTitleStyle">
     <ul>
       <li>
         The Row Based Edit plugin allows you to edit either a single or multiple specific rows at a time, while disabling the rest of the

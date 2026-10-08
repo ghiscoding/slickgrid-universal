@@ -38,7 +38,7 @@ describe('Example 55 - Variable Row Height (provider)', { retries: 1 }, () => {
   it('should keep row 90 aligned at top after clicking scroll button', () => {
     cy.get('[data-test="scroll-row-90-example55"]').click();
 
-    cy.get('.slick-viewport-top.slick-viewport-left')
+    cy.get('.slick-vertical-scroller')
       .invoke('scrollTop')
       .then((scrollTop) => {
         expect(Number(scrollTop)).to.be.closeTo(topOf(90), 2);

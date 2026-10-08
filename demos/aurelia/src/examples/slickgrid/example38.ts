@@ -96,7 +96,7 @@ export class Example38 {
       enableSelection: true,
       enableGrouping: true,
       headerMenu: {
-        hideFreezeColumnsCommand: false,
+        showPinningCommands: true,
       },
       presets: {
         // NOTE: pagination preset is NOT supported with infinite scroll

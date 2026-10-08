@@ -1,3 +1,8 @@
+---
+name: webmcp
+description: Discover, configure, or review SlickGrid WebMCP tools, documentation, interfaces, demos, and tests.
+---
+
 # Skill: WebMCP / AI Toolkit
 
 Purpose

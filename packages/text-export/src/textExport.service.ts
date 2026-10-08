@@ -179,7 +179,8 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
   /** get columns might include hidden columns when `includeHidden` is enabled */
   protected getColumns(): Column[] {
-    return (this._exportOptions?.includeHidden ? this._grid?.getColumns() : this._grid.getVisibleColumns()) || [];
+    const includeHidden = !!this._exportOptions?.includeHidden;
+    return this._grid?.getColumnsInRenderedOrder(includeHidden) ?? [];
   }
 
   protected getDataOutput(): string {

@@ -1,5 +1,25 @@
-import type { OperatorType } from '../enums/index.js';
-import type { SearchTerm } from '../enums/searchTerm.type.js';
+import type { OperatorType, SearchTerm } from '../enums/index.js';
+import type { DockingSide, PinningOption } from './docking.interface.js';
+
+export interface CurrentColumn {
+  /** Column id (in the column definitions) */
+  columnId: string;
+
+  /** Column CSS Class  */
+  cssClass?: string;
+
+  /** Header CSS Class  */
+  headerCssClass?: string;
+
+  /** Column width */
+  width?: number;
+
+  /** Permanent pinned side for this column; `null` explicitly restores it to the center. */
+  pinned?: DockingSide | null;
+
+  /** when enabled, the "hidden" column property will be included (defaults to false) */
+  hidden?: boolean;
+}
 
 export interface CurrentFilter {
   /**
@@ -23,3 +43,14 @@ export interface CurrentFilter {
    */
   verbatimSearchTerms?: boolean;
 }
+
+export interface CurrentPagination {
+  /** Grid page number */
+  pageNumber: number;
+
+  /** Grid page size */
+  pageSize: number;
+}
+
+/** Current permanent pinning state used by GridState presets and change events. */
+export interface CurrentPinning extends PinningOption {}

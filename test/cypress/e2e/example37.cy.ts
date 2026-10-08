@@ -189,7 +189,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
     });
 
     it('should auto scroll take effect to display the selecting element when dragging', { scrollBehavior: false }, () => {
-      cy.get('.grid37-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.grid37-1 .slick-vertical-scroller').scrollTo('top');
 
       testScroll('.grid37-1', '.grid37-1', 0, 1).then((scrollDistance: any) => {
         expect(scrollDistance.cell.scrollBefore).to.be.lte(scrollDistance.cell.scrollAfter);
@@ -197,7 +197,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
       });
 
       cy.get('#selectionRange1').contains(/"fromRow":0,"fromCell":1,"toRow":1[45],"toCell":3/);
-      cy.get('.grid37-1 .slick-viewport-top.slick-viewport-left').scrollTo(0, 13 * 35);
+      cy.get('.grid37-1 .slick-vertical-scroller').scrollTo(0, 13 * 35);
     });
 
     it('should show "Command which should be shown" in context menu even when last column definition is hidden', () => {
@@ -209,7 +209,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
     });
 
     it('should toggle multiple cell selection ranges with the checkbox', () => {
-      cy.get('.grid37-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.grid37-1 .slick-vertical-scroller').scrollTo('top');
       cy.get('[data-test="enable-multi-selection"]').check();
 
       cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').click();
@@ -245,7 +245,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
     });
 
     it('should preserve row and column offsets when copying multiple cell ranges', () => {
-      cy.get('.grid37-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.grid37-1 .slick-vertical-scroller').scrollTo('top');
       cy.get('[data-test="enable-multi-selection"]').should('be.checked');
       cy.window().then((win) => {
         cy.stub(win.navigator.clipboard, 'writeText').as('clipboardWriteText');
@@ -323,7 +323,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
       });
 
       cy.get('#selectionRange2').contains(/"fromRow":0,"fromCell":0,"toRow":1[0-9],"toCell":7/);
-      cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo(0, 12 * 35);
+      cy.get('.grid37-2 .slick-vertical-scroller').scrollTo(0, 12 * 35);
     });
 
     it('should click on a cell outside of the selected range and expect previous selection to remain', () => {
@@ -331,7 +331,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
       cy.get('@task1x')
         .contains(/Task 1[0-9]/)
         .click();
-      cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.grid37-2 .slick-vertical-scroller').scrollTo('top');
       cy.get('.grid37-2 .slick-cell.selected').should('have.length.gte', 60);
       cy.get('#selectionRange2').contains(/"fromRow":0,"fromCell":0,"toRow":1[0-9],"toCell":7/);
     });
@@ -343,20 +343,20 @@ describe('Example 37 - Hybrid Selection Model', () => {
     it('should click on row 4 and 5 row checkbox and expect 5 full rows to be selected', () => {
       cy.get('.grid37-2 .slick-row[data-row="4"] .slick-cell.l1.r1').should('contain', '4');
       cy.get('.grid37-2 .slick-row[data-row="4"] input[type=checkbox]').click({ force: true });
-      cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.grid37-2 .slick-vertical-scroller').scrollTo('top');
       cy.get('.grid37-2 .slick-row[data-row="4"] .slick-cell.l0.r0').should('have.class', 'selected');
       cy.get('.grid37-2 .slick-cell.selected').should('have.length', 8 * 1);
 
       // select another row
       cy.get('.grid37-2 .slick-row[data-row="5"] .slick-cell.l1.r1').should('contain', '5');
       cy.get('.grid37-2 .slick-row[data-row="5"] input[type=checkbox]').click({ force: true });
-      cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.grid37-2 .slick-vertical-scroller').scrollTo('top');
       cy.get('.grid37-2 .slick-row[data-row="5"] .slick-cell.l0.r0').should('have.class', 'selected');
       cy.get('.grid37-2 .slick-cell.selected').should('have.length', 8 * 2);
     });
 
     it('should toggle multiple row selection ranges with the checkbox', () => {
-      cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.grid37-2 .slick-vertical-scroller').scrollTo('top');
       cy.get('.grid37-2 .slick-row[data-row="4"] input[type=checkbox]').uncheck({ force: true });
       cy.get('.grid37-2 .slick-row[data-row="5"] input[type=checkbox]').uncheck({ force: true });
       cy.get('[data-test="enable-multi-selection"]').should('be.checked');
@@ -380,7 +380,7 @@ describe('Example 37 - Hybrid Selection Model', () => {
       const secondRange = '{"fromRow":3,"fromCell":0,"toRow":4,"toCell":7}';
       const combinedRanges = `${firstRange}${secondRange}`;
 
-      cy.get(`${gridSelector} .slick-viewport-top.slick-viewport-left`).scrollTo('top');
+      cy.get(`${gridSelector} .slick-vertical-scroller`).scrollTo('top');
       cy.get(`${gridSelector} .slick-row[data-row="1"] input[type=checkbox]`).uncheck({ force: true });
       cy.get(`${gridSelector} .slick-row[data-row="2"] input[type=checkbox]`).uncheck({ force: true });
       cy.get(`${gridSelector} .slick-row[data-row="4"] input[type=checkbox]`).uncheck({ force: true });

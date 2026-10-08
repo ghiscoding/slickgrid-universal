@@ -659,16 +659,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this._eventHandler = eventHandler;
     this._isAutosizeColsCalled = false;
 
-    // when detecting a frozen grid, we'll automatically enable the mousewheel scroll handler so that we can scroll from both left/right frozen containers
-    if (
-      this.options &&
-      ((this.options.frozenRow !== undefined && this.options.frozenRow >= 0) ||
-        (this.options.frozenColumn !== undefined && this.options.frozenColumn >= 0)) &&
-      this.options.enableMouseWheelScrollHandler === undefined
-    ) {
-      this.options.enableMouseWheelScrollHandler = true;
-    }
-
     this._eventPubSubService.eventNamingStyle = this.options?.eventNamingStyle ?? 'camelCase';
     this._eventPubSubService.publish('onBeforeGridCreate', true);
 
@@ -728,7 +718,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     // directly into the array below, which also triggers the `onPluginColumnsChanged` subscription above
     this.extensionService.createExtensionsBeforeGridCreation(this._columns, this.options);
 
-    // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+    // if user entered some Pinning "presets", we need to apply them in the grid options
     if (this.options.presets?.pinning) {
       this.options = { ...this.options, ...this.options.presets.pinning };
     }
@@ -757,8 +747,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this.options, this.dataView);
 
-    // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-    this.sharedService.frozenVisibleColumnId = this.slickGrid.getFrozenColumnId();
     // initialize the SlickGrid grid
     this.slickGrid.init();
 
