@@ -84,7 +84,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     it('should expand "pdf" folder and expect all folders to be expanded', () => {
       cy.get('[data-row="4"] > .slick-cell:nth(0) .slick-group-toggle.collapsed').click();
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top', { force: true } as any);
+      cy.get('.slick-vertical-scroller').scrollTo('top', { force: true } as any);
     });
 
     it('should have default Files list', () => {
@@ -97,7 +97,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     });
 
     it('should have pop songs folder with aggregations of Sum(53.3MB) / Avg(26.65MB)', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('center', { force: true } as any);
+      cy.get('.slick-vertical-scroller').scrollTo('center', { force: true } as any);
 
       cy.get('[data-row="16"] > .slick-cell:nth(0)').should('contain', 'music');
       cy.get('[data-row="16"] > .slick-cell:nth(3)').should('contain', 'sum: 151.3 MB / avg: 50.43 MB');
@@ -118,7 +118,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     });
 
     it('should have pop songs folder with updated aggregations including new pop songs of Sum(218.3MB) / Avg(54.58MB)', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { force: true } as any);
+      cy.get('.slick-vertical-scroller').scrollTo('bottom', { force: true } as any);
 
       cy.get('[data-row="16"] > .slick-cell:nth(0)').should('contain', 'music');
       cy.get('[data-row="16"] > .slick-cell:nth(3)').should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
@@ -225,7 +225,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     });
 
     it('should have pop songs folder with updated aggregations including 4 pop songs of Sum(400.3MB) / Avg(66.72MB)', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { force: true } as any);
+      cy.get('.slick-vertical-scroller').scrollTo('bottom', { force: true } as any);
 
       cy.get('[data-row="16"] > .slick-cell:nth(0)').should('contain', 'music');
       cy.get('[data-row="16"] > .slick-cell:nth(3)').should('contain', 'sum: 400.3 MB / avg: 66.72 MB');
@@ -308,7 +308,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     });
 
     it('should have again the pop songs folder with updated aggregations including 4 pop songs of Sum(400.3MB) / Avg(66.72MB)', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('center', { force: true } as any);
+      cy.get('.slick-vertical-scroller').scrollTo('center', { force: true } as any);
 
       cy.get('[data-row="16"] > .slick-cell:nth(0)').should('contain', 'music');
       cy.get('[data-row="16"] > .slick-cell:nth(3)').should('contain', 'sum: 400.3 MB / avg: 66.72 MB');
@@ -336,7 +336,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     });
 
     it('should have pop songs folder with aggregation reflecting what is displayed, Sum(316.3MB) / Avg(63.26MB)', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('center', { force: true } as any);
+      cy.get('.slick-vertical-scroller').scrollTo('center', { force: true } as any);
 
       cy.get('[data-row="16"] > .slick-cell:nth(0)').should('contain', 'music');
       cy.get('[data-row="16"] > .slick-cell:nth(3)').should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
@@ -347,7 +347,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     });
 
     it('should have documents with same Sum as the beginning since auto-recalc is disabled, aggregation should be Sum(14.46MB) / Avg(1.45MB)', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top', { force: true } as any);
+      cy.get('.slick-vertical-scroller').scrollTo('top', { force: true } as any);
 
       cy.get('[data-row="1"] > .slick-cell:nth(0)').should('contain', 'documents');
       cy.get('[data-row="1"] > .slick-cell:nth(3)').should('contain', 'sum: 14.46 MB / avg: 1.45 MB (total)');

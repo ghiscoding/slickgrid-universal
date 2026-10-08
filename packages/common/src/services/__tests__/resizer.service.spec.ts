@@ -708,7 +708,6 @@ describe('Resizer Service', () => {
         vi.spyOn(gridStub, 'getViewports').mockReturnValue([viewportLeft, viewportRight]);
         const reRenderSpy = vi.spyOn(gridStub, 'reRenderColumns');
 
-        mockGridOptions.frozenColumn = 7;
         mockGridOptions.enableColumnResizeOnDoubleClick = true;
         mockGridOptions.resizeByContentOptions!.widthToRemoveFromExceededWidthReadjustment = 20;
         service.init(gridStub, divContainer);

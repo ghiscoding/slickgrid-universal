@@ -58,8 +58,6 @@ const Example7: React.FC = () => {
       ...gridOptions1,
       enableHeaderMenu: true,
       enableFiltering: true,
-      // frozenColumn: 2,
-      // frozenRow: 2,
       headerButton: {
         onCommand: (_e, args) => handleOnCommand(_e, args, 2),
       },

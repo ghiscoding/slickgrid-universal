@@ -1,6 +1,14 @@
 import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  // VM tests load files directly; avoid Vite crawling generated HTML pages.
+  environments: {
+    __vitest_vm__: {
+      optimizeDeps: {
+        entries: [],
+      },
+    },
+  },
   test: {
     // clearMocks: true,
     coverage: {
@@ -28,6 +36,9 @@ export default defineConfig({
     },
     exclude: [...configDefaults.exclude, 'frameworks/*'],
     environment: 'jsdom',
+    // Reuse the jsdom VM between files while retaining per-file isolation.
+    // This avoids creating a new jsdom environment for every test file.
+    pool: 'vmThreads',
     onUnhandledError: (error) => {
       // Ignore specific error patterns
       // not really sure why JSDOM throws these errors but it doesn't impact the tests

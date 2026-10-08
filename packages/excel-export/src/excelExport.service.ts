@@ -290,7 +290,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /** get columns might include hidden columns when `includeHidden` is enabled */
   protected getColumns(): Column[] {
-    return (this._excelExportOptions?.includeHidden ? this._grid?.getColumns() : this._grid.getVisibleColumns()) || [];
+    const includeHidden = !!this._excelExportOptions?.includeHidden;
+    return this._grid?.getColumnsInRenderedOrder(includeHidden) ?? [];
   }
 
   /**

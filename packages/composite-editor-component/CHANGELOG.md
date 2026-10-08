@@ -4,6 +4,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.2...v10.11.3) (2026-10-07)
+
+### Bug Fixes
+
+* **CompositeEditors:** use keyboard `key` instead of `code` for ([#2815](https://github.com/ghiscoding/slickgrid-universal/issues/2815)) ([eb190bb](https://github.com/ghiscoding/slickgrid-universal/commit/eb190bb57757a85141360400cf08db5bf35e2520)) - by @ghiscoding
+
+## [10.11.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.1...v10.11.2) (2026-10-01)
+
+**Note:** Version bump only for package @slickgrid-universal/composite-editor-component
+
+## [10.11.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.0...v10.11.1) (2026-09-30)
+
+**Note:** Version bump only for package @slickgrid-universal/composite-editor-component
+
+## [10.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.10.0...v10.11.0) (2026-09-15)
+
+**Note:** Version bump only for package @slickgrid-universal/composite-editor-component
+
 ## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
 
 ### Bug Fixes

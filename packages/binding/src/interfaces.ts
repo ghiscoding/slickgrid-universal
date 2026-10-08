@@ -24,5 +24,6 @@ export interface ElementEventListener {
   element: Element;
   eventName: string;
   listener: EventListenerOrEventListenerObject;
+  options?: AddEventListenerOptions;
   groupName?: string;
 }

@@ -46,7 +46,8 @@ export class BindingEventService {
   unbind(
     elementOrElements: Element | NodeListOf<Element>,
     eventNameOrNames: string | string[],
-    listener: EventListenerOrEventListenerObject
+    listener: EventListenerOrEventListenerObject,
+    listenerOptions?: boolean | EventListenerOptions
   ): void {
     // convert to array for looping in next task
     const elements = Array.isArray(elementOrElements) ? elementOrElements : [elementOrElements];
@@ -55,7 +56,7 @@ export class BindingEventService {
     for (const eventName of eventNames) {
       for (const element of elements) {
         if (typeof element?.removeEventListener === 'function') {
-          element.removeEventListener(eventName, listener);
+          element.removeEventListener(eventName, listener, listenerOptions);
         }
       }
     }
@@ -64,7 +65,7 @@ export class BindingEventService {
   unbindByEventName(element: Element | Window, eventName: string): void {
     const boundedEvent = this._boundedEvents.find((e) => e.element === element && e.eventName === eventName);
     if (boundedEvent) {
-      this.unbind(boundedEvent.element, boundedEvent.eventName, boundedEvent.listener);
+      this.unbind(boundedEvent.element, boundedEvent.eventName, boundedEvent.listener, boundedEvent.options);
     }
   }
 
@@ -80,8 +81,8 @@ export class BindingEventService {
       for (let i = this._boundedEvents.length - 1; i >= 0; --i) {
         const boundedEvent = this._boundedEvents[i];
         if (groupNames.some((g) => g === boundedEvent.groupName)) {
-          const { element, eventName, listener } = boundedEvent;
-          this.unbind(element, eventName, listener);
+          const { element, eventName, listener, options } = boundedEvent;
+          this.unbind(element, eventName, listener, options);
           this._boundedEvents.splice(i, 1);
         }
       }
@@ -89,8 +90,8 @@ export class BindingEventService {
       // unbind everything
       while (this._boundedEvents.length > 0) {
         const boundedEvent = this._boundedEvents.pop() as ElementEventListener;
-        const { element, eventName, listener } = boundedEvent;
-        this.unbind(element, eventName, listener);
+        const { element, eventName, listener, options } = boundedEvent;
+        this.unbind(element, eventName, listener, options);
       }
     }
   }
@@ -107,8 +108,9 @@ export class BindingEventService {
     groupName = ''
   ) {
     for (const eventName of eventNames) {
-      element.addEventListener(eventName, listener as EventListener, listenerOptions);
-      this._boundedEvents.push({ element, eventName, listener: listener as EventListener, groupName });
+      const eventOptions = typeof listenerOptions === 'boolean' ? { capture: listenerOptions } : listenerOptions;
+      element.addEventListener(eventName, listener as EventListener, eventOptions);
+      this._boundedEvents.push({ element, eventName, listener: listener as EventListener, options: eventOptions, groupName });
     }
   }
 }

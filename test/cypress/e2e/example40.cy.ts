@@ -135,29 +135,29 @@ describe('Example 40 - Menus with Slots', () => {
     cy.get('.slick-header-column:nth(0)').children('.slick-header-menu-button').invoke('show').click();
 
     // 1st item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item').find('i.mdi-sort-ascending').should('exist');
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item')
-      .find('i.mdi-arrow-expand-horizontal')
-      .should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item')
-      .find('span.menu-item-label')
-      .contains('Resize by Content');
-
-    // 2nd item - divider
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(1)').should('have.class', 'slick-menu-item-divider');
-
-    // 3rd item
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(2) .menu-item').find('i.mdi-sort-ascending').should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(2) .menu-item')
       .find('span.menu-item-label')
       .contains('Sort Ascending');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(2) .menu-item').find('kbd.key-hint').contains('Alt+↑');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item').find('kbd.key-hint').contains('Alt+↑');
 
-    // 4th item
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item').find('i.mdi-sort-descending').should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item')
+    // 2nd item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(1) .menu-item').find('i.mdi-sort-descending').should('exist');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(1) .menu-item')
       .find('span.menu-item-label')
       .contains('Sort Descending');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item').find('kbd.key-hint').contains('Alt+↓');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(1) .menu-item').find('kbd.key-hint').contains('Alt+↓');
+
+    // 3rd item - divider
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(2)').should('have.class', 'slick-menu-item-divider');
+
+    // 4th item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item')
+      .find('i.mdi-arrow-expand-horizontal')
+      .should('exist');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item')
+      .find('span.menu-item-label')
+      .contains('Resize by Content');
 
     // 5th item - divider
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(4)').should('have.class', 'slick-menu-item-divider');
@@ -192,28 +192,31 @@ describe('Example 40 - Menus with Slots', () => {
     cy.get('.slick-header-column:nth(1)').children('.slick-header-menu-button').invoke('show').click();
 
     // 1st item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item').find('i.mdi-sort-ascending').should('exist');
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item')
-      .find('i.mdi-arrow-expand-horizontal')
-      .should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item')
-      .find('span.menu-item-label')
-      .contains('Resize by Content');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item').find('span.key-hint.danger').contains('NEW');
-
-    // 2nd item - divider
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(1)').should('have.class', 'slick-menu-item-divider');
-
-    // 3rd item
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(2) .menu-item').find('i.mdi-sort-ascending').should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(2) .menu-item')
       .find('span.menu-item-label')
       .contains('Sort Ascending');
 
-    // 4th item
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item').find('i.mdi-sort-descending').should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item')
+    // 2nd item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(1) .menu-item').find('i.mdi-sort-descending').should('exist');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(1) .menu-item')
       .find('span.menu-item-label')
       .contains('Sort Descending');
+
+    // 3rd item - divider
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(2)').should('have.class', 'slick-menu-item-divider');
+
+    // 4th item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item')
+      .find('i.mdi-arrow-expand-horizontal')
+      .should('exist');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item')
+      .find('span.menu-item-label')
+      .contains('Resize by Content');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item').find('span.key-hint.danger').contains('NEW');
+
+    // 5th item - divider
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(4)').should('have.class', 'slick-menu-item-divider');
 
     // 5th item - divider
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(4)').should('have.class', 'slick-menu-item-divider');
@@ -392,7 +395,7 @@ describe('Example 40 - Menus with Slots', () => {
   it('should sort ascending "Duration" even though the header menu item was override without an action callback', () => {
     cy.get('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(2) .menu-item').should('contain', 'Sort Ascending').click();
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item').should('contain', 'Sort Ascending').click();
 
     cy.get('[data-row=0]').children('.slick-cell:nth(1)').should('contain', '0');
     cy.get('[data-row=1]').children('.slick-cell:nth(1)').should('contain', '0');
@@ -402,7 +405,7 @@ describe('Example 40 - Menus with Slots', () => {
   it('should sort descending "Duration" even though the header menu item was override without an action callback', () => {
     cy.get('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item').should('contain', 'Sort Descending').click();
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(1) .menu-item').should('contain', 'Sort Descending').click();
 
     cy.get('[data-row=0]').children('.slick-cell:nth(1)').should('contain', '100');
     cy.get('[data-row=1]').children('.slick-cell:nth(1)').should('contain', '100');

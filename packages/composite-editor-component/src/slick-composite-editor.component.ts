@@ -982,11 +982,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   protected handleKeyDown(event: KeyboardEvent): void {
-    if (event.code === 'Escape') {
+    if (event.key === 'Escape') {
       this.cancelEditing();
       event.stopPropagation();
       event.preventDefault();
-    } else if (event.code === 'Tab') {
+    } else if (event.key === 'Tab') {
       this.validateCurrentEditor();
     }
   }

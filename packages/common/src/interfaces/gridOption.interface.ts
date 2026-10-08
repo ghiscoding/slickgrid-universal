@@ -17,6 +17,7 @@ import type {
   ContextMenu,
   CustomFooterOption,
   CustomTooltipOption,
+  DockingOption,
   DraggableGrouping,
   EditCommand,
   EditorConstructor,
@@ -40,12 +41,14 @@ import type {
   OperatorDetailAlt,
   Pagination,
   PdfExportOption,
+  PinningOption,
   ResizeByContentOption,
   RowBasedEditOptions,
   RowDetailView,
   RowMoveManager,
   SliderOption,
   SliderRangeOption,
+  StickyRows,
   TextExportOption,
   TreeDataOption,
   VanillaCalendarOption,
@@ -64,6 +67,7 @@ export interface CustomDataView<T = any> {
   getLength(): number;
   getItemCount?: () => number;
   getFilteredItemCount?: () => number;
+  getIdPropertyName?: () => string;
   getItems?: () => T[];
   setItems?: (data: T[]) => void;
   setGrid?: (grid: SlickGrid) => void;
@@ -162,7 +166,7 @@ export interface GridOption<C extends Column = Column> {
 
   /**
    * Defaults to false. When enabled, measures rendered column headers and adjusts their shared height to fit multi-line text, HTML, or DOM content.
-   * Header heights are kept in sync when frozen columns are used and recalculated after column width changes.
+   * Header heights are kept in sync when columns are pinned and recalculated after column width changes.
    */
   autoHeaderHeight?: boolean;
 
@@ -367,6 +371,9 @@ export interface GridOption<C extends Column = Column> {
   /** Escape hatch geared towards testing Slickgrid in JSDOM based environments to circumvent the lack of stylesheet.ownerNode and clientWidth calculations */
   devMode?: false | DevModeOption;
 
+  /** Shared pixel budgets and overflow behavior for pinned and sticky rows/columns. */
+  docking?: DockingOption;
+
   /** Do we have paging enabled? */
   doPaging?: boolean;
 
@@ -557,10 +564,9 @@ export interface GridOption<C extends Column = Column> {
   enableMouseHoverHighlightRow?: boolean;
 
   /**
-   * Do we want to always enable the mousewheel scroll handler?
-   * In other words, do we want the mouse scrolling would work from anywhere.
-   * Typically we should only enable it when using a Frozen/Pinned grid and if it does detect it to be a frozen grid,
-   * then it will automatically enable the scroll handler if this flag was originally set to undefined (which it is by default unless the user specifically disabled it).
+   * Defaults to true. Enables the mousewheel handler on the grid viewport and docking overlay,
+   * allowing wheel scrolling across grid regions and custom horizontal-wheel support. Set to false
+   * to disable SlickGrid's mousewheel handler and rely on native browser scrolling.
    */
   enableMouseWheelScrollHandler?: boolean;
 
@@ -653,24 +659,8 @@ export interface GridOption<C extends Column = Column> {
   /** Formatter options that are defined and used for the entire grid */
   formatterOptions?: FormatterOption;
 
-  /** Optional frozen border in pixel to remove from total header width calculation (depending on your border width, it should be 0, 1 or 2 defaults is 1) */
-  frozenHeaderWidthCalcDifferential?: number;
-
-  /** Defaults to false, do we want to freeze (pin) the bottom portion instead of the top */
-  frozenBottom?: boolean;
-
-  /** Number of column index(es) to freeze (pin) in the grid */
-  frozenColumn?: number;
-
-  /** Number of row index(es) to freeze (pin) in the grid */
-  frozenRow?: number;
-
-  /**
-   * Defaults to 100, what is the minimum width to keep for the section on the right of a frozen grid?
-   * This basically fixes an issue that if the user expand any column on the left of the frozen (pinning) section
-   * and make it bigger than the viewport width, then the grid becomes unusable because the right section goes into a void/hidden area.
-   */
-  frozenRightViewportMinWidth?: number;
+  /** Unified permanent pinning for columns and rows. Set to `null` or `undefined` to clear it. */
+  pinning?: PinningOption | null;
 
   /** Defaults to false, which leads to have row(s) taking full width */
   fullWidthRows?: boolean;
@@ -966,26 +956,26 @@ export interface GridOption<C extends Column = Column> {
   /** Some default options to set for the PDF export service */
   pdfExportOptions?: PdfExportOption;
 
-  /** When set to true, it will skip the validation check to make sure frozen columns are not wider than the grid visible canvas width */
-  skipFreezeColumnValidation?: boolean;
+  /** When set to true, it will skip validation that pinned columns fit within the grid viewport. */
+  skipPinningValidation?: boolean;
 
-  /** Message to show when the frozen column is invalid and `invalidColumnFreezeWidthCallbackPicker` is enabled */
-  invalidColumnFreezePickerMessage?: string;
+  /** Stable row ids (or row indexes) that dock to an edge only after normal scrolling would clip them. Set to `null` to clear. */
+  stickyRows?: StickyRows | null;
 
-  /**
-   * Defaults to `alert(error)`, which will trigger when the user tries to uncheck too many columns via ColumnPicker/GridMenu.
-   * We need to have 1 or more columns visible on the right side of the frozen column.
-   */
-  invalidColumnFreezePickerCallback?: (error: string) => void;
+  /** Message passed to `invalidColumnPinningPickerCallback` when a pinning request would leave no visible center column. */
+  invalidColumnPinningPickerMessage?: string;
 
-  /** Message to show when the frozen column width is invalid and `invalidColumnFreezeWidthCallbackWidth` is enabled */
-  invalidColumnFreezeWidthMessage?: string;
+  /** Message passed to `invalidColumnPinningPickerCallback` when a pinning request that is not sequential from an edge would split a colspan. */
+  invalidColumnPinningSequenceMessage?: string;
 
-  /**
-   * Defaults to `alert(error)`, which will trigger when the user tries to set a `frozenColumn` that is wider than the visible grid viewport width in the browser.
-   * We can't freeze wider than the viewport because the right canvas will never be visible and since the left canvas is never scrollable this would break the UX.
-   */
-  invalidColumnFreezeWidthCallback?: (error: string) => void;
+  /** Defaults to `alert()`, called with the picker or sequence message when the grid rejects a pinning request. */
+  invalidColumnPinningPickerCallback?: (error: string) => void;
+
+  /** Message passed to `invalidColumnPinningWidthCallback` when the pinned columns together are wider than the grid. */
+  invalidColumnPinningWidthMessage?: string;
+
+  /** Defaults to `alert()`, called with the width message when the grid rejects a pinning request. */
+  invalidColumnPinningWidthCallback?: (error: string) => void;
 
   /** What is the top panel height in pixels (only accepts an integer) */
   topPanelHeight?: number;

@@ -52,6 +52,116 @@ describe('slickColumnReorderDrag', () => {
     expect(reconcileColumnOrder(columns, ['last'])).toEqual(columns);
   });
 
+  it('should reorder noncontiguous bands while preserving hidden, fixed, and numeric column IDs', () => {
+    const columns = [
+      { id: 1 },
+      { id: 'center1' },
+      { id: 'fixed', reorderable: false },
+      { id: 2 },
+      { id: 'hidden', hidden: true },
+      { id: 'right1' },
+      { id: 'center2' },
+      { id: 'right2' },
+    ];
+
+    expect(
+      reconcileColumnOrder(columns, [
+        ['2', '1'],
+        ['center2', 'center1'],
+        ['right2', 'right1'],
+      ])
+    ).toEqual([columns[3], columns[6], columns[2], columns[0], columns[4], columns[7], columns[1], columns[5]]);
+    expect(
+      reconcileColumnOrder(columns, [
+        ['1', '2'],
+        ['center1', 'center1'],
+        ['right1', 'right2'],
+      ])
+    ).toEqual(columns);
+    expect(reconcileColumnOrder([], [])).toEqual([]);
+  });
+
+  it.each(['native', 'touch'])('should reorder the center band and prevent pinned-band auto-scroll with %s dragging', (mode) => {
+    vi.useFakeTimers();
+    const elementFromPointDescriptor = Object.getOwnPropertyDescriptor(document, 'elementFromPoint');
+    const container = document.createElement('div');
+    const viewport = document.createElement('div');
+    const headerLeft = document.createElement('div');
+    const headerCenter = document.createElement('div');
+    const headerRight = document.createElement('div');
+    container.append(headerLeft, headerCenter, headerRight, viewport);
+    document.body.appendChild(container);
+    const left = createHeaderColumn('left');
+    const first = createHeaderColumn('first');
+    const last = createHeaderColumn('last');
+    const right = createHeaderColumn('right');
+    headerLeft.append(left);
+    headerCenter.append(first, last);
+    headerRight.append(right);
+    const onDragEnd = vi.fn();
+    const instance = setupColumnReorderDrag({
+      container,
+      viewportScrollContainerX: viewport,
+      headerLeft,
+      headerCenter,
+      headerRight,
+      hasFrozenColumns: () => true,
+      onDragEnd,
+    });
+    const start = (element: HTMLElement) => {
+      if (mode === 'native') {
+        element.dispatchEvent(createDragEvent('dragstart', { clientX: 10, clientY: 10 }));
+      } else {
+        element.dispatchEvent(createTouchEvent('touchstart', { touches: [{ clientX: 10, clientY: 10, pageX: 10 }] }));
+      }
+    };
+    const move = (clientX: number, target: HTMLElement) => {
+      if (mode === 'native') {
+        document.dispatchEvent(createDragEvent('drag', { clientX, clientY: 10, pageX: clientX }));
+      } else {
+        Object.defineProperty(document, 'elementFromPoint', { configurable: true, value: vi.fn(() => target) });
+        document.dispatchEvent(createTouchEvent('touchmove', { touches: [{ clientX, clientY: 10, pageX: clientX }] }));
+      }
+    };
+    const end = (element: HTMLElement) => {
+      if (mode === 'native') {
+        element.dispatchEvent(createDragEvent('dragend'));
+      } else {
+        document.dispatchEvent(createTouchEvent('touchend', { touches: [], changedTouches: [{ clientX: 1000, clientY: 10, pageX: 1000 }] }));
+      }
+    };
+
+    try {
+      for (const pinned of [left, right]) {
+        start(pinned);
+        move(1000, pinned);
+        vi.advanceTimersByTime(100);
+        expect(viewport.scrollLeft).toBe(0);
+        end(pinned);
+      }
+      start(first);
+      move(1000, last);
+      vi.advanceTimersByTime(100);
+      expect(viewport.scrollLeft).toBe(10);
+      // A pinned target must never receive a column from the center band.
+      headerRight.dispatchEvent(createDragEvent('dragover', { target: right, clientX: 1000 }));
+      expect(first.parentElement).toBe(headerCenter);
+      headerCenter.insertBefore(last, first);
+      end(first);
+      expect(onDragEnd).toHaveBeenLastCalledWith(['left', 'last', 'first', 'right'], [['left'], ['last', 'first'], ['right']]);
+      instance.destroy();
+      expect([left, first, last, right].every((column) => !column.draggable)).toBe(true);
+    } finally {
+      instance.destroy();
+      if (elementFromPointDescriptor) {
+        Object.defineProperty(document, 'elementFromPoint', elementFromPointDescriptor);
+      } else {
+        Reflect.deleteProperty(document, 'elementFromPoint');
+      }
+      vi.useRealTimers();
+    }
+  });
+
   it('should initialize draggable headers and clear draggable flags on destroy', () => {
     const headerLeft = document.createElement('div');
     const headerRight = document.createElement('div');

@@ -1,8 +1,18 @@
+.rtl-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  width: min(900px, 100%);
+  margin: 8px 0;
+  margin-inline-start: auto;
+}
+
 .grid46 {
   direction: rtl;
   --slick-header-menu-display: inline-block;
 }
 
-.demo-container.grid46 {
+.demo-container.grid46-rtl {
   inset-inline-start: 50px;
 }

@@ -37,17 +37,28 @@ const isRtl = (el: HTMLElement): boolean => getComputedStyle(el).direction === '
 /** Apply the reordered visible/movable IDs while keeping hidden and fixed columns at their original indices. */
 export function reconcileColumnOrder<T extends { id?: string | number; hidden?: boolean; reorderable?: boolean }>(
   columns: T[],
-  reorderedIds: string[]
+  reorderedIds: string[] | string[][]
 ): T[] {
+  const bands: string[][] = Array.isArray(reorderedIds[0]) ? (reorderedIds as string[][]) : [reorderedIds as string[]];
   const movableColumns = columns.filter((column) => !column.hidden && column.reorderable !== false);
   const columnMap = new Map(movableColumns.map((column) => [String(column.id), column]));
-  const reorderedColumns = reorderedIds.map((id) => columnMap.get(id)).filter((column): column is T => !!column);
+  const reorderedColumns = bands
+    .flat()
+    .map((id) => columnMap.get(id))
+    .filter((column): column is T => !!column);
   if (reorderedColumns.length !== movableColumns.length || new Set(reorderedColumns).size !== movableColumns.length) {
     return [...columns];
   }
 
-  let index = 0;
-  return columns.map((column) => (column.hidden || column.reorderable === false ? column : reorderedColumns[index++]));
+  const bandById = new Map(bands.flatMap((ids, band) => ids.map((id) => [id, band] as const)));
+  const bandIndexes = bands.map(() => 0);
+  return columns.map((column) => {
+    if (column.hidden || column.reorderable === false) {
+      return column;
+    }
+    const band = bandById.get(String(column.id))!;
+    return columnMap.get(bands[band][bandIndexes[band]++])!;
+  });
 }
 
 /**
@@ -63,7 +74,9 @@ export function reconcileColumnOrder<T extends { id?: string | number; hidden?: 
  * @returns `{ destroy }` – call to remove all listeners and clear draggable attributes.
  */
 export function setupColumnReorderDrag(options: ColumnReorderDragOption): { destroy: () => void } {
-  const { headerLeft, headerRight, container, viewportScrollContainerX, unorderableColumnCssClass } = options;
+  const { headerLeft, headerCenter, headerRight, container, viewportScrollContainerX, unorderableColumnCssClass } = options;
+  const headers = [...new Set(headerCenter ? [headerLeft, headerCenter, headerRight] : [headerLeft, headerRight])];
+  const canAutoScroll = (target: HTMLElement) => !options.hasFrozenColumns() || (headerCenter ?? headerRight).contains(target);
   const dragActiveClass = options.dragActiveClass ?? 'slick-header-column-active';
   const draggableSelector = options.draggableSelector ?? '.slick-header-column';
   const dropzoneSelector = options.dropzoneSelector ?? '.slick-dropzone';
@@ -125,8 +138,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     }
 
     // Only allow reordering within the dragged column's own header container so columns
-    // can never cross the frozen-column boundary (same behavior as SortableJS's two
-    // unconnected lists).
+    // can never cross a pinned-band boundary.
     const targetParent = target.parentElement;
     if (!targetParent || targetParent !== originalParent) {
       return;
@@ -160,8 +172,17 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       }
     });
   };
-  refreshDraggable(headerLeft);
-  refreshDraggable(headerRight);
+  headers.forEach(refreshDraggable);
+
+  const notifyDragEnd = () => {
+    const reorderedIdsByBand = headers.map(getColumnIds);
+    const reorderedIds = reorderedIdsByBand.flat();
+    if (headerCenter) {
+      options.onDragEnd(reorderedIds, reorderedIdsByBand);
+    } else {
+      options.onDragEnd(reorderedIds);
+    }
+  };
 
   const autoScrollHandler = (e: DragEvent) => {
     const { clientX, clientY, pageX } = e;
@@ -298,12 +319,11 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       originalParent.insertBefore(draggedHeader, originalNextSibling as Node | null);
     }
 
-    const reorderedIds = getColumnIds(headerLeft).concat(getColumnIds(headerRight));
     e.stopPropagation();
     if (droppedOnDropzone && draggedHeader) {
       options.onDrop?.(draggedHeader, e, draggedColumnId);
     } else {
-      options.onDragEnd(reorderedIds);
+      notifyDragEnd();
     }
     // clear stored original position (sets draggedEl = null, making a subsequent
     // dragend that follows a drop a harmless no-op via the !draggedEl guard below)
@@ -386,9 +406,8 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
           de.dataTransfer.setDragImage(target, clientX - rect.left, clientY - rect.top);
         }
       }
-      // Only non-frozen columns should trigger browser-edge auto-scroll
-      const canAutoScroll = !options.hasFrozenColumns() || headerRight.contains(target);
-      if (canAutoScroll) {
+      // Only scrolling columns should trigger browser-edge auto-scroll.
+      if (canAutoScroll(target)) {
         document.addEventListener('drag', autoScrollHandler as EventListener);
       }
     } else {
@@ -438,9 +457,9 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       const containerOffset = getOffset(container);
       const viewportLeft = getOffset(viewportScrollContainerX).left;
       const containerRight = containerOffset.left + container.clientWidth;
-      if (!columnScrollTimer && pageX > containerRight) {
+      if (canAutoScroll(draggedEl) && !columnScrollTimer && pageX > containerRight) {
         columnScrollTimer = setInterval(scrollColumnsRight, INTERVAL_TIME);
-      } else if (!columnScrollTimer && pageX < viewportLeft) {
+      } else if (canAutoScroll(draggedEl) && !columnScrollTimer && pageX < viewportLeft) {
         columnScrollTimer = setInterval(scrollColumnsLeft, INTERVAL_TIME);
       } else if (columnScrollTimer && pageX <= containerRight && pageX >= viewportLeft) {
         stopAutoScroll();
@@ -510,18 +529,17 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
         originalParentNode.insertBefore(draggedHeader, originalSiblingNode as Node | null);
       });
     }
-    const reorderedIds = getColumnIds(headerLeft).concat(getColumnIds(headerRight));
     if (pointerDragCommitted && droppedOnDropzone && draggedHeader) {
       options.onDrop?.(draggedHeader, e, draggedColumnId);
     } else if (pointerDragCommitted) {
-      options.onDragEnd(reorderedIds);
+      notifyDragEnd();
     }
     resetDragState();
     releaseBodyTextSelection?.();
     releaseBodyTextSelection = undefined;
   };
 
-  for (const parent of [headerLeft, headerRight]) {
+  for (const parent of headers) {
     parent.addEventListener('dragstart', onStart as EventListener);
     parent.addEventListener('dragover', onDragOver as EventListener);
     parent.addEventListener('dragend', onDragEnd as EventListener);
@@ -536,7 +554,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
 
   return {
     destroy() {
-      for (const parent of [headerLeft, headerRight]) {
+      for (const parent of headers) {
         parent.removeEventListener('dragstart', onStart as EventListener);
         parent.removeEventListener('dragover', onDragOver as EventListener);
         parent.removeEventListener('dragend', onDragEnd as EventListener);
@@ -554,7 +572,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       resetDragState();
       releaseBodyTextSelection?.();
       releaseBodyTextSelection = undefined;
-      [headerLeft, headerRight].forEach((parent) =>
+      headers.forEach((parent) =>
         Array.from(parent.querySelectorAll<HTMLElement>(draggableSelector)).forEach((el) => {
           el.draggable = false;
           el.classList.remove(dragActiveClass);

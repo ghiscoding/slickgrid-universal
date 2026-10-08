@@ -25,6 +25,7 @@ export default class Example05 {
   loadingClass = '';
   isLargeDataset = false;
   hasNoExpandCollapseChanged = true;
+  subTitleStyle = 'display: block';
   treeToggleItems: TreeToggledItem[] = [];
 
   constructor() {
@@ -531,5 +532,10 @@ export default class Example05 {
 
   reapplyToggledItems() {
     this.sgb.treeDataService.applyToggledItemStateChanges(this.treeToggleItems);
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

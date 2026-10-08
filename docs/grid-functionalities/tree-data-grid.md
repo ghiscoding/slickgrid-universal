@@ -301,7 +301,6 @@ Notes:
 - When reading or updating runtime options in code, prefer the `TreeDataService` methods above rather than mutating nested option objects directly.
 
 ### Tree Totals with Aggregators
-##### requires `v3.2.0` or higher
 
 You can calculate Tree Totals by adding Aggregators to your `treeDataOptions` configuration in your grid options. The Aggregators are the same ones that can be used for both Tree Data and/or Grouping usage (they were modified internally to work for both use case). This feature also comes with other options that you can choose to enable or not, below is a list of these extra options that can be configured
 - `aggregators`: list of Aggregators (one or more Aggregators), must be an array

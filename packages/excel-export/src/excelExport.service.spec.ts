@@ -27,12 +27,11 @@ vi.mock('excel-builder-vanilla', async (importOriginal) => ({
   ...((await importOriginal()) as any),
   downloadExcelFile: vi.fn().mockResolvedValue(true),
   createExcelFileStream: vi.fn(() => {
-    return new ReadableStream({
-      async pull(controller) {
-        controller.enqueue('streaming content');
-        controller.close();
+    return {
+      async *[Symbol.asyncIterator]() {
+        yield new Uint8Array([115, 116, 114, 101, 97, 109, 105, 110, 103, 32, 99, 111, 110, 116, 101, 110, 116]);
       },
-    });
+    };
   }),
 }));
 
@@ -88,6 +87,7 @@ const gridStub = {
   getData: () => dataViewStub,
   getOptions: () => mockGridOptions,
   getColumns: vi.fn(),
+  getColumnsInRenderedOrder: vi.fn((includeHidden = false) => (includeHidden ? gridStub.getColumns() : gridStub.getVisibleColumns())),
   getVisibleColumns: vi.fn(),
   getGrouping: vi.fn(),
   getParentRowSpanByCell: vi.fn(),
@@ -95,11 +95,15 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('ExcelExportService', () => {
+  let anchorClickSpy: ReturnType<typeof vi.spyOn>;
+
   // Suppress console.error globally for all tests in this file
   beforeAll(() => {
+    anchorClickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
   afterAll(() => {
+    anchorClickSpy.mockRestore();
     (console.error as any).mockRestore?.();
   });
   let container: ContainerServiceStub;

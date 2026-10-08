@@ -285,7 +285,7 @@ export class SlickDraggableGrouping {
    */
   setupColumnReorder(
     grid: SlickGrid,
-    headers: any,
+    _headers: any,
     _headerColumnWidthDiff: any,
     setColumns: (columns: Column[]) => void,
     setupColumnResize: () => void,
@@ -316,12 +316,16 @@ export class SlickDraggableGrouping {
       }
     };
 
+    const headerLeft = this.gridContainer.querySelector<HTMLDivElement>(`.${uid} .slick-header-columns.slick-header-columns-left`)!;
     this._columnReorderDrag = setupColumnReorderDrag({
-      headerLeft: this.gridContainer.querySelector<HTMLDivElement>(`.${uid} .slick-header-columns.slick-header-columns-left`)!,
-      headerRight: this.gridContainer.querySelector<HTMLDivElement>(`.${uid} .slick-header-columns.slick-header-columns-right`)!,
+      headerLeft,
+      headerCenter:
+        this.gridContainer.querySelector<HTMLDivElement>(`.${uid} .slick-header-columns.slick-header-columns-center`) ?? undefined,
+      headerRight:
+        this.gridContainer.querySelector<HTMLDivElement>(`.${uid} .slick-header-columns.slick-header-columns-right`) ?? headerLeft,
       container: this.gridContainer,
-      viewportScrollContainerX: (grid as any).getViewportNode?.() ?? this.gridContainer,
-      hasFrozenColumns: () => (gridOptions?.frozenColumn ?? -1) >= 0,
+      viewportScrollContainerX: this.gridContainer.querySelector<HTMLElement>('.slick-horizontal-scroller') ?? this.gridContainer,
+      hasFrozenColumns: () => this.gridContainer.querySelector('.slick-header-columns-center') !== null,
       draggableSelector: '.slick-header-column',
       unorderableColumnCssClass: gridOptions?.unorderableColumnCssClass,
       dropzoneSelector: `.${uid} .${DROPZONE_CLASS}`,
@@ -343,14 +347,14 @@ export class SlickDraggableGrouping {
           this.handleGroupByDrop(dropzoneElm, headerColumnElm);
         }
       },
-      onDragEnd: (reorderedIds) => {
+      onDragEnd: (reorderedIds, reorderedIdsByBand) => {
         restoreDropzoneState();
 
         if (!grid.getEditorLock().commitCurrentEdit()) {
           return;
         }
 
-        const finalReorderedColumns = reconcileColumnOrder(grid.getColumns(), reorderedIds);
+        const finalReorderedColumns = reconcileColumnOrder(grid.getColumns(), reorderedIdsByBand ?? reorderedIds);
         setColumns.call(grid, finalReorderedColumns);
         trigger.call(grid, grid.onColumnsReordered, { grid, impactedColumns: finalReorderedColumns });
         setupColumnResize.call(grid);

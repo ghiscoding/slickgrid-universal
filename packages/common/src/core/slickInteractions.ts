@@ -306,17 +306,19 @@ export function Resizable(options: ResizableOption): {
   }
 
   function addPointerListeners(): void {
-    resizeableHandleElement.addEventListener('pointermove', pointerResizingHandler as EventListener);
-    resizeableHandleElement.addEventListener('pointerup', pointerResizeEndHandler as EventListener);
-    resizeableHandleElement.addEventListener('pointercancel', pointerResizeEndHandler as EventListener);
-    resizeableHandleElement.addEventListener('lostpointercapture', pointerResizeEndHandler as EventListener);
+    // Track the pointer on the document because resizing can move or reparent
+    // the header that owns the handle (for example when pinning/sticky docking
+    // is active). A listener attached only to the handle stops receiving
+    // events after that layout update.
+    document.addEventListener('pointermove', pointerResizingHandler as EventListener);
+    document.addEventListener('pointerup', pointerResizeEndHandler as EventListener);
+    document.addEventListener('pointercancel', pointerResizeEndHandler as EventListener);
   }
 
   function removePointerListeners(): void {
-    resizeableHandleElement.removeEventListener('pointermove', pointerResizingHandler as EventListener);
-    resizeableHandleElement.removeEventListener('pointerup', pointerResizeEndHandler as EventListener);
-    resizeableHandleElement.removeEventListener('pointercancel', pointerResizeEndHandler as EventListener);
-    resizeableHandleElement.removeEventListener('lostpointercapture', pointerResizeEndHandler as EventListener);
+    document.removeEventListener('pointermove', pointerResizingHandler as EventListener);
+    document.removeEventListener('pointerup', pointerResizeEndHandler as EventListener);
+    document.removeEventListener('pointercancel', pointerResizeEndHandler as EventListener);
   }
 
   function executeResizeCallbackWhenDefined(

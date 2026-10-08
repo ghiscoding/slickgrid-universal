@@ -4,6 +4,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.2...v10.11.3) (2026-10-07)
+
+### Bug Fixes
+
+* **row-detail:** remount detached detail views after row reflow ([#2814](https://github.com/ghiscoding/slickgrid-universal/issues/2814)) ([86723d5](https://github.com/ghiscoding/slickgrid-universal/commit/86723d5fe9de8a89dd7095ca29b18658b52be572)) - by @ghiscoding
+
+## [10.11.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.1...v10.11.2) (2026-10-01)
+
+**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+
+## [10.11.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.0...v10.11.1) (2026-09-30)
+
+### Bug Fixes
+
+* **plugin:** hide open Row Detail when parent row is filtered out ([#2804](https://github.com/ghiscoding/slickgrid-universal/issues/2804)) ([85d6b37](https://github.com/ghiscoding/slickgrid-universal/commit/85d6b37b8c08d3dccf30ea1299243a6ddff7bbe3)) - by @ghiscoding
+
+## [10.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.10.0...v10.11.0) (2026-09-15)
+
+### Bug Fixes
+
+* **row-detail:** auto-select overlay for transformed rows ([#2776](https://github.com/ghiscoding/slickgrid-universal/issues/2776)) ([e757539](https://github.com/ghiscoding/slickgrid-universal/commit/e757539c2d8e11cf24d594963d883226b44767d4)) - by @ghiscoding
+
 ## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
 
 ### Bug Fixes

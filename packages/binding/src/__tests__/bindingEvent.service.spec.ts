@@ -59,7 +59,7 @@ describe('BindingEvent Service', () => {
 
     expect(service.boundedEvents.length).toBe(1);
     expect(addEventSpy).toHaveBeenCalledWith('click', mockCallback, undefined);
-    expect(unbindSpy).toHaveBeenCalledWith(mockElm, 'click', expect.anything());
+    expect(unbindSpy).toHaveBeenCalledWith(mockElm, 'click', expect.anything(), undefined);
   });
 
   it('should be able to bind an event with listener and options to an element', () => {
@@ -94,6 +94,21 @@ describe('BindingEvent Service', () => {
     expect(addEventSpy2).toHaveBeenCalledWith('click', mockCallback, { capture: true, passive: true });
   });
 
+  it('should normalize boolean listener options and remove capture listeners', () => {
+    const mockCallback = vi.fn();
+
+    service.bind(document, 'scroll', mockCallback, true);
+
+    expect(service.boundedEvents[0].options).toEqual({ capture: true });
+
+    document.dispatchEvent(new Event('scroll'));
+    expect(mockCallback).toHaveBeenCalledTimes(1);
+
+    service.unbindAll();
+    document.dispatchEvent(new Event('scroll'));
+    expect(mockCallback).toHaveBeenCalledTimes(1);
+  });
+
   it('should call unbindAll and expect as many removeEventListener be called', () => {
     const mockElm = { addEventListener: vi.fn(), removeEventListener: vi.fn() } as unknown as HTMLElement;
     const mockCallback1 = vi.fn();
@@ -109,8 +124,8 @@ describe('BindingEvent Service', () => {
     expect(service.boundedEvents.length).toBe(0);
     expect(mockElm.addEventListener).toHaveBeenCalledWith('keyup', mockCallback1, undefined);
     expect(mockElm.addEventListener).toHaveBeenCalledWith('click', mockCallback2, { capture: true, passive: true });
-    expect(mockElm.removeEventListener).toHaveBeenCalledWith('keyup', mockCallback1);
-    expect(mockElm.removeEventListener).toHaveBeenCalledWith('click', mockCallback2);
+    expect(mockElm.removeEventListener).toHaveBeenCalledWith('keyup', mockCallback1, undefined);
+    expect(mockElm.removeEventListener).toHaveBeenCalledWith('click', mockCallback2, { capture: true, passive: true });
   });
 
   it('should call unbindAll with a single group name and expect that group listeners to be removed but others kept', () => {
@@ -129,7 +144,7 @@ describe('BindingEvent Service', () => {
     service.bind(mockElm1, 'mouseout', mockCallback5, { capture: false, passive: false }, 'mouse-group');
 
     expect(service.boundedEvents.length).toBe(5);
-    expect(mockElm1.addEventListener).toHaveBeenCalledWith('keyup', mockCallback1, false);
+    expect(mockElm1.addEventListener).toHaveBeenCalledWith('keyup', mockCallback1, { capture: false });
     expect(mockElm1.addEventListener).toHaveBeenCalledWith('keydown', mockCallback2, { capture: true, passive: true });
     expect(mockElm1.addEventListener).toHaveBeenCalledWith('click', mockCallback3, { capture: true, passive: true });
     expect(mockElm1.addEventListener).toHaveBeenCalledWith('mouseover', mockCallback4, { capture: false, passive: true }); // mouse-group
@@ -141,8 +156,8 @@ describe('BindingEvent Service', () => {
     expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith('keyup', mockCallback1);
     expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith('keydown', mockCallback2);
     expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith('click', mockCallback3);
-    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseover', mockCallback4); // mouse-group
-    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseout', mockCallback5); // mouse-group
+    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseover', mockCallback4, { capture: false, passive: true }); // mouse-group
+    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseout', mockCallback5, { capture: false, passive: false }); // mouse-group
   });
 
   it('should call unbindAll with a multiple group names and expect those group listeners to be removed but others kept', () => {
@@ -159,7 +174,7 @@ describe('BindingEvent Service', () => {
     service.bind(mockElm1, ['mouseover', 'mouseout'], mockCallback4, { capture: false, passive: true }, 'mouse-group');
 
     expect(service.boundedEvents.length).toBe(5);
-    expect(mockElm1.addEventListener).toHaveBeenCalledWith('keyup', mockCallback1, false);
+    expect(mockElm1.addEventListener).toHaveBeenCalledWith('keyup', mockCallback1, { capture: false });
     expect(mockElm1.addEventListener).toHaveBeenCalledWith('keydown', mockCallback2, { capture: true, passive: true });
     expect(mockElm1.addEventListener).toHaveBeenCalledWith('click', mockCallback3, { capture: true, passive: true });
     expect(mockElm1.addEventListener).toHaveBeenCalledWith('mouseover', mockCallback4, { capture: false, passive: true }); // mouse-group
@@ -169,9 +184,9 @@ describe('BindingEvent Service', () => {
 
     expect(service.boundedEvents.length).toBe(2);
     expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith('keyup', mockCallback1);
-    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('keydown', mockCallback2); // magic
+    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('keydown', mockCallback2, { capture: true, passive: true }); // magic
     expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith('click', mockCallback3);
-    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseover', mockCallback4); // mouse-group
-    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseout', mockCallback4); // mouse-group
+    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseover', mockCallback4, { capture: false, passive: true }); // mouse-group
+    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseout', mockCallback4, { capture: false, passive: true }); // mouse-group
   });
 });

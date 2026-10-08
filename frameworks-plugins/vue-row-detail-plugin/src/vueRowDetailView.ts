@@ -227,6 +227,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
 
           // on column sort/reorder, all row detail are collapsed so we can dispose of all the Views as well
           this._eventHandler.subscribe(this._grid.onSort, this.disposeAllViewComponents.bind(this));
+          this._eventHandler.subscribe(this._grid.onRendered, this.redrawDetachedViewComponents.bind(this));
 
           // on filter changed, we need to re-render all Views
           this._subscriptions.push(
@@ -275,6 +276,27 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     if (containerElement) {
       this.renderViewModel(view.dataContext);
     }
+  }
+
+  /** Remount Vue views whose root elements were detached when SlickGrid replaced row DOM. */
+  protected redrawDetachedViewComponents(): void {
+    this._views.forEach((view) => {
+      const rowIndex = this.dataView.getRowById(view.id);
+      const renderedRange = this._grid.getRenderedRange();
+      if (
+        rowIndex === undefined ||
+        !renderedRange ||
+        rowIndex < renderedRange.top ||
+        rowIndex > renderedRange.bottom ||
+        !this._renderedViewportRowIds.has(view.id) ||
+        (view.rendered && view.instance?.$el?.isConnected)
+      ) {
+        return;
+      }
+
+      view.rendered = false;
+      this.redrawViewComponent(view);
+    });
   }
 
   /** (re)Render the Preload Component */

@@ -20,7 +20,7 @@ describe('Example 38 - Infinite Scroll with OData', () => {
     it('should scroll to bottom of the grid and expect next batch of 30 items appended to current dataset for a total of 60 items', () => {
       cy.get('[data-test="itemCount"]').should('have.text', '30');
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+      cy.get('.slick-vertical-scroller').scrollTo('bottom');
 
       cy.get('[data-test="itemCount"]').should('have.text', '60');
 
@@ -32,7 +32,7 @@ describe('Example 38 - Infinite Scroll with OData', () => {
     it('should scroll to bottom of the grid and expect next batch of 30 items appended to current dataset for a new total of 90 items', () => {
       cy.get('[data-test="itemCount"]').should('have.text', '60');
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+      cy.get('.slick-vertical-scroller').scrollTo('bottom');
 
       cy.get('[data-test="itemCount"]').should('have.text', '90');
 
@@ -48,7 +48,7 @@ describe('Example 38 - Infinite Scroll with OData', () => {
 
       cy.get('[data-test="data-loaded-tag"]').should('not.have.class', 'fully-loaded');
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+      cy.get('.slick-vertical-scroller').scrollTo('bottom');
 
       cy.get('[data-test="itemCount"]').should('have.text', '100');
 
@@ -78,7 +78,7 @@ describe('Example 38 - Infinite Scroll with OData', () => {
     it('should scroll to bottom again and expect next batch of 30 items appended to current dataset for a total of 60 items', () => {
       cy.get('[data-test="itemCount"]').should('have.text', '30');
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+      cy.get('.slick-vertical-scroller').scrollTo('bottom');
 
       cy.get('[data-test="itemCount"]').should('have.text', '60');
 
@@ -104,7 +104,7 @@ describe('Example 38 - Infinite Scroll with OData', () => {
     it('should scroll to bottom again and expect next batch to be only 20 females appended to current dataset for a total of 50 items found in DB', () => {
       cy.get('[data-test="itemCount"]').should('have.text', '30');
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+      cy.get('.slick-vertical-scroller').scrollTo('bottom');
 
       cy.get('[data-test="itemCount"]').should('have.text', '50');
 
@@ -119,7 +119,7 @@ describe('Example 38 - Infinite Scroll with OData', () => {
 
       cy.get('[data-test="itemCount"]').should('have.text', '30');
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
 
       cy.get('[data-test=odata-query-result]').should(($span) => {
         expect($span.text()).to.eq(`$count=true&$top=30`);
@@ -130,11 +130,11 @@ describe('Example 38 - Infinite Scroll with OData', () => {
     });
 
     it('should scroll to the bottom "Group by Gender" and expect 30 more items for a total of 60 items grouped', () => {
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+      cy.get('.slick-vertical-scroller').scrollTo('bottom');
 
       cy.get('[data-test="itemCount"]').should('have.text', '60');
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
 
       cy.get('[data-test=odata-query-result]').should(($span) => {
         expect($span.text()).to.eq(`$count=true&$top=30&$skip=30`);

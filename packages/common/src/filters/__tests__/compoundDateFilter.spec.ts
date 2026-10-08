@@ -1,5 +1,5 @@
 import { format } from '@formkit/tempo';
-import type { Calendar } from 'vanilla-calendar-pro';
+import { months, time, type Calendar } from 'vanilla-calendar-pro';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
@@ -131,6 +131,7 @@ describe('CompoundDateFilter', () => {
     expect(filter.pickerOptions).toEqual({
       enableDateToggle: true,
       enableJumpToSelectedDate: true,
+      extensions: [time, months],
       firstWeekday: 0,
       inputMode: true,
       locale: 'en',
@@ -343,7 +344,17 @@ describe('CompoundDateFilter', () => {
     expect(hideSpy).toHaveBeenCalled();
   });
 
-  it('should hide picker when pressing Tab key', () => {
+  it('should hide picker when pressing Tab key while focus is outside of the picker', () => {
+    const hideSpy = vi.spyOn(filter, 'hide');
+
+    filter.init(filterArguments);
+    filter.show();
+
+    document.body.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
+    expect(hideSpy).toHaveBeenCalled();
+  });
+
+  it('should not hide picker when pressing Tab key while focus is still inside of the picker', () => {
     const hideSpy = vi.spyOn(filter, 'hide');
 
     filter.init(filterArguments);
@@ -353,7 +364,7 @@ describe('CompoundDateFilter', () => {
     expect(calendarElm).toBeTruthy();
 
     calendarElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
-    expect(hideSpy).toHaveBeenCalled();
+    expect(hideSpy).not.toHaveBeenCalled();
   });
 
   it('should clear picker when pressing Backspace key', () => {

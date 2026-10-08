@@ -2,6 +2,11 @@
   Example 35 - Tree Data with Lazy Loading
   <span class="mdi mdi-file-tree font-25px"></span>
   <span class="subtitle">(from a Hierarchical Dataset)</span>
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -14,7 +19,7 @@
   </div>
 </h3>
 
-<h6 class="italic content example-details">
+<h6 class="italic content example-details" style.bind="subTitleStyle">
   <ul>
     <li>
       Lazy Loading only works with Hierarchical Tree Data, also when creating a Lazy Tree Data grid, you would typically assign the

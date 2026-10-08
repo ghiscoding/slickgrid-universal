@@ -5,13 +5,15 @@ export interface ColumnReorderDragOption {
   draggableSelector?: string;
   /** Left header container (.slick-header-columns-left) */
   headerLeft: HTMLElement;
+  /** Scrollable center header container when column docking uses three regions */
+  headerCenter?: HTMLElement;
   /** Right header container (.slick-header-columns-right) */
   headerRight: HTMLElement;
   /** Grid container – used for the right-edge auto-scroll boundary */
   container: HTMLElement;
   /** Scrollable viewport – used for the left-edge boundary and actual scrolling */
   viewportScrollContainerX: HTMLElement;
-  /** Returns true when the grid has frozen columns (determines which pane can auto-scroll) */
+  /** Returns true when the grid has docked columns (determines which region can auto-scroll) */
   hasFrozenColumns: () => boolean;
   /** CSS class that marks a column as non-reorderable */
   unorderableColumnCssClass?: string;
@@ -32,9 +34,10 @@ export interface ColumnReorderDragOption {
   onDragStart?: (draggedEl: HTMLElement) => void;
   /**
    * Called when drag ends with the new visible-column ID order read from the DOM.
+   * Docking grids also receive the separate left, center, and right band orders.
    * Responsible for applying the reorder (setColumns, triggerEvent, etc.).
    */
-  onDragEnd: (reorderedIds: string[]) => void;
+  onDragEnd: (reorderedIds: string[], reorderedIdsByBand?: string[][]) => void;
   /**
    * Called when the drag is dropped onto an external dropzone such as draggable grouping.
    */

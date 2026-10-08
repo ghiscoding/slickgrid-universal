@@ -69,8 +69,8 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Clear all Sorting" command in the Grid Menu (Grid Option "enableSorting: true" has to be enabled) */
   hideClearAllSortingCommand?: boolean;
 
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true, which will hide the "Unfreeze Columns/Rows" command in the Grid Menu */
-  hideClearFrozenColumnsCommand?: boolean;
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true, which will hide the "Clear Pinning" command in the Grid Menu */
+  hideClearPinningCommand?: boolean;
 
   /** Defaults to false, hide the Close button on top right */
   hideCloseButton?: boolean;
@@ -117,8 +117,8 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
   /** icon for the "Clear all Sorting" command */
   iconClearAllSortingCommand?: string;
 
-  /** icon for the "Unfreeze Columns/Rows" command */
-  iconClearFrozenColumnsCommand?: string;
+  /** icon for the "Clear Pinning" command */
+  iconClearPinningCommand?: string;
 
   /** icon for the "Export to CSV" command */
   iconExportCsvCommand?: string;

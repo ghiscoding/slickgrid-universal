@@ -4,6 +4,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.2...v10.11.3) (2026-10-07)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2820](https://github.com/ghiscoding/slickgrid-universal/issues/2820)) ([2b58da6](https://github.com/ghiscoding/slickgrid-universal/commit/2b58da63c3a6c98be2b9b53b7feaaa4b2c0b90be)) - by @renovate-bot
+
+## [10.11.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.1...v10.11.2) (2026-10-01)
+
+**Note:** Version bump only for package @slickgrid-universal/excel-export
+
+## [10.11.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.0...v10.11.1) (2026-09-30)
+
+**Note:** Version bump only for package @slickgrid-universal/excel-export
+
+## [10.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.10.0...v10.11.0) (2026-09-15)
+
+**Note:** Version bump only for package @slickgrid-universal/excel-export
+
 ## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
 
 ### Features

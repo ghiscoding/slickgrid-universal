@@ -33,9 +33,19 @@ declare global {
   namespace Cypress {
     interface Chainable {
       // triggerHover: (elements: NodeListOf<HTMLElement>) => void;
-      convertPosition(viewport: string): Chainable<any>;
-      getCell(row: number, col: number, viewport?: string, options?: { parentSelector?: string; rowHeight?: number }): Chainable<any>;
-      getNthCell(row: number, nthCol: number, viewport?: string, options?: { parentSelector?: string; rowHeight?: number }): Chainable<any>;
+      convertPosition(viewport: string): Chainable<{ x: string; y: string }>;
+      getCell(
+        row: number,
+        col: number,
+        viewport?: string,
+        options?: { parentSelector?: string; rowHeight?: number }
+      ): Chainable<JQuery<HTMLElement>>;
+      getNthCell(
+        row: number,
+        nthCol: number,
+        viewport?: string,
+        options?: { parentSelector?: string; rowHeight?: number }
+      ): Chainable<JQuery<HTMLElement>>;
       getTransformValue(cssTransformMatrix: string, absoluteValue: boolean, transformType?: 'rotate' | 'scale'): Chainable<number>;
       saveLocalStorage: () => void;
       restoreLocalStorage: () => void;
@@ -62,21 +72,29 @@ Cypress.Commands.add('convertPosition', (viewport = 'topLeft') => cy.wrap(conver
 
 Cypress.Commands.add('getCell', (row, col, viewport = 'topLeft', { parentSelector = '', rowHeight = 35 } = {}) => {
   const position = convertPosition(viewport);
-  const canvasSelectorX = position.x ? `.grid-canvas-${position.x}` : '';
-  const canvasSelectorY = position.y ? `.grid-canvas-${position.y}` : '';
+  const isSingleViewport = cy.$$(parentSelector).find('.grid-canvas').length === 1;
+  const canvasSelector = isSingleViewport
+    ? '.grid-canvas'
+    : `${position.x ? `.grid-canvas-${position.x}` : ''}${position.y ? `.grid-canvas-${position.y}` : ''}`;
 
   return cy.get(
-    `${parentSelector} ${canvasSelectorX}${canvasSelectorY} [style="transform: translateY(${row * rowHeight}px);"] > .slick-cell.l${col}.r${col}`
+    isSingleViewport
+      ? `${parentSelector} .slick-row[data-row="${row}"] .slick-cell.l${col}.r${col}`
+      : `${parentSelector} ${canvasSelector} [style="transform: translateY(${row * rowHeight}px);"] > .slick-cell.l${col}.r${col}`
   );
 });
 
 Cypress.Commands.add('getNthCell', (row, nthCol, viewport = 'topLeft', { parentSelector = '', rowHeight = 35 } = {}) => {
   const position = convertPosition(viewport);
-  const canvasSelectorX = position.x ? `.grid-canvas-${position.x}` : '';
-  const canvasSelectorY = position.y ? `.grid-canvas-${position.y}` : '';
+  const isSingleViewport = cy.$$(parentSelector).find('.grid-canvas').length === 1;
+  const canvasSelector = isSingleViewport
+    ? '.grid-canvas'
+    : `${position.x ? `.grid-canvas-${position.x}` : ''}${position.y ? `.grid-canvas-${position.y}` : ''}`;
 
   return cy.get(
-    `${parentSelector} ${canvasSelectorX}${canvasSelectorY} [style="transform: translateY(${row * rowHeight}px);"] > .slick-cell:nth(${nthCol})`
+    isSingleViewport
+      ? `${parentSelector} .slick-row[data-row="${row}"] .slick-cell:nth(${nthCol})`
+      : `${parentSelector} ${canvasSelector} [style="transform: translateY(${row * rowHeight}px);"] > .slick-cell:nth(${nthCol})`
   );
 });
 

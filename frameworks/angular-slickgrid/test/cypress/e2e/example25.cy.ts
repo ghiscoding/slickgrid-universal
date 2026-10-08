@@ -162,7 +162,7 @@ describe('Example 25 - GraphQL Basic API without Pagination', () => {
   });
 
   it('should Clear all Filters and expect all rows to be back', () => {
-    cy.get('#grid25').find('button.slick-grid-menu-button').trigger('click').click();
+    cy.get('#grid25').find('button.slick-grid-menu-button').click();
 
     cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
 

@@ -257,7 +257,6 @@ const mockGrid = {
   getEditorLock: () => mockGetEditorLock,
   getViewportNode: () => viewportElm,
   getUID: () => 'slickgrid_12345',
-  getFrozenColumnId: vi.fn(),
   getContainerNode: vi.fn(),
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
@@ -277,7 +276,7 @@ const mockGrid = {
   setHeaderRowVisibility: vi.fn(),
   setOptions: vi.fn(),
   setSelectedRows: vi.fn(),
-  validateColumnFreeze: vi.fn(),
+  validateColumnPinning: vi.fn(),
   onClick: new MockSlickEvent(),
   onClicked: new MockSlickEvent(),
   onColumnsReordered: new MockSlickEvent(),
@@ -414,22 +413,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     });
 
     expect((instance.extensionService as any).lazyGridService()).toBeDefined();
-  });
-
-  it('should load enabled mousewheel scrolling when using a frozen grid', () => {
-    component.gridOptions.enableMouseWheelScrollHandler = undefined;
-    component.gridOptions.frozenRow = 3;
-    component.initialization(divContainer, slickEventHandler);
-
-    expect(component.gridOptions.enableMouseWheelScrollHandler).toBe(true);
-  });
-
-  it('should keep frozen column index reference (via frozenVisibleColumnId) when grid is a frozen grid', () => {
-    vi.spyOn(mockGrid, 'getFrozenColumnId').mockReturnValueOnce('name');
-    component.gridOptions.frozenColumn = 0;
-    component.initialization(divContainer, slickEventHandler);
-
-    expect(sharedService.frozenVisibleColumnId).toBe('name');
   });
 
   it('should assign "hasColumnReordered: true" when "onColumnsReordered" event is triggered', () => {
@@ -1214,8 +1197,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(backendSpy).toHaveBeenCalledWith(mockColumnFilter as unknown as CurrentFilter[], false);
       });
 
-      it('should override frozen grid options when "pinning" is defined in the "presets" property', () => {
-        const pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
+      it('should override pinned grid options when "pinning" is defined in the "presets" property', () => {
+        const pinningMock = { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } } as CurrentPinning;
         const gridOptionSetterSpy = vi.spyOn(component, 'gridOptions', 'set');
 
         component.gridOptions.presets = { pinning: pinningMock };

@@ -4,6 +4,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.2...v10.11.3) (2026-10-07)
+
+**Note:** Version bump only for package slickgrid-react-fluent-demo
+
+## [10.11.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.1...v10.11.2) (2026-10-01)
+
+**Note:** Version bump only for package slickgrid-react-fluent-demo
+
+## [10.11.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.0...v10.11.1) (2026-09-30)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2812](https://github.com/ghiscoding/slickgrid-universal/issues/2812)) ([0b3a9f6](https://github.com/ghiscoding/slickgrid-universal/commit/0b3a9f68185833fe2c15d1fa887b23878253c3d3)) - by @renovate-bot
+
+## [10.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.10.0...v10.11.0) (2026-09-15)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2790](https://github.com/ghiscoding/slickgrid-universal/issues/2790)) ([d380950](https://github.com/ghiscoding/slickgrid-universal/commit/d380950fc33e90e3ab438039c45e336d413dbdb5)) - by @renovate-bot
+* **row-detail:** auto-select overlay for transformed rows ([#2776](https://github.com/ghiscoding/slickgrid-universal/issues/2776)) ([e757539](https://github.com/ghiscoding/slickgrid-universal/commit/e757539c2d8e11cf24d594963d883226b44767d4)) - by @ghiscoding
+
 ## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
 
 ### Bug Fixes

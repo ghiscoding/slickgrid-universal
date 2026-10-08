@@ -251,6 +251,7 @@ describe('Draggable Grouping Plugin', () => {
     let headerColumnDiv3: HTMLDivElement;
     let headerColumnDiv4: HTMLDivElement;
     let mockHeaderLeftDiv1: HTMLDivElement;
+    let mockHeaderCenterDiv: HTMLDivElement;
     let mockHeaderLeftDiv2: HTMLDivElement;
     const setColumnsSpy = vi.fn();
     const setColumnResizeSpy = vi.fn();
@@ -261,15 +262,18 @@ describe('Draggable Grouping Plugin', () => {
     beforeEach(() => {
       mockDivPaneContainer1 = document.createElement('div');
       const mockDivPaneContainerElm = document.createElement('div');
-      mockDivPaneContainerElm.className = 'slick-pane-header';
+      mockDivPaneContainerElm.className = 'slick-header-root';
       const mockDivPaneContainerElm2 = document.createElement('div');
-      mockDivPaneContainerElm2.className = 'slick-pane-header';
+      mockDivPaneContainerElm2.className = 'slick-header-root';
       mockHeaderLeftDiv1 = document.createElement('div');
+      mockHeaderCenterDiv = document.createElement('div');
       mockHeaderLeftDiv2 = document.createElement('div');
       mockHeaderLeftDiv1.className = 'slick-header-columns slick-header-columns-left';
+      mockHeaderCenterDiv.className = 'slick-header-columns slick-header-columns-center';
       mockHeaderLeftDiv2.className = 'slick-header-columns slick-header-columns-right';
 
       mockDivPaneContainerElm.appendChild(mockHeaderLeftDiv1);
+      mockDivPaneContainerElm.appendChild(mockHeaderCenterDiv);
       mockDivPaneContainerElm2.appendChild(mockHeaderLeftDiv2);
       gridContainerDiv.appendChild(mockDivPaneContainerElm);
       gridContainerDiv.appendChild(mockDivPaneContainerElm2);
@@ -384,6 +388,35 @@ describe('Draggable Grouping Plugin', () => {
       expect(setColumnsSpy).toHaveBeenCalledWith(mockColumns);
       expect(setColumnResizeSpy).toHaveBeenCalled();
       expect(triggerSpy).toHaveBeenCalledWith(gridStub.onColumnsReordered, { grid: gridStub, impactedColumns: mockColumns });
+    });
+
+    it('should preserve noncontiguous pinned bands and scroll the shared scrollbar with Draggable Grouping', () => {
+      vi.useFakeTimers();
+      const columns = [{ id: 'left1' }, { id: 'center1' }, { id: 'left2' }, { id: 'hidden', hidden: true }, { id: 'center2' }, { id: 'right' }] as Column[];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
+      plugin.init(gridStub, { ...addonOptions });
+      const center = mockHeaderCenterDiv;
+      const scrollbar = createDomElement('div', { className: 'slick-horizontal-scroller' }, gridContainerDiv);
+      createDomElement('div', { className: 'slick-header-column', dataset: { id: 'left1' } }, mockHeaderLeftDiv1);
+      createDomElement('div', { className: 'slick-header-column', dataset: { id: 'left2' } }, mockHeaderLeftDiv1);
+      createDomElement('div', { className: 'slick-header-column', dataset: { id: 'right' } }, mockHeaderLeftDiv2);
+      const first = createDomElement('div', { className: 'slick-header-column', dataset: { id: 'center1' } }, center);
+      const second = createDomElement('div', { className: 'slick-header-column', dataset: { id: 'center2' } }, center);
+      plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, columns, getColumnIndexSpy, GRID_UID, triggerSpy);
+
+      try {
+        fireDragStartOnHeader(first);
+        const drag = new MouseEvent('drag', { clientX: 1000, clientY: 10 });
+        document.dispatchEvent(drag);
+        vi.advanceTimersByTime(100);
+        expect(scrollbar.scrollLeft).toBe(10);
+        center.insertBefore(second, first);
+        fireDragEndOnHeader(first);
+        expect(setColumnsSpy).toHaveBeenCalledWith([columns[0], columns[4], columns[2], columns[3], columns[1], columns[5]]);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should preserve hidden and non-reorderable columns when reordering with Draggable Grouping', () => {
@@ -1055,9 +1088,8 @@ describe('Draggable Grouping Plugin', () => {
       });
     });
 
-    describe('with Frozen Grid', () => {
+    describe('with Pinned Grid', () => {
       beforeEach(() => {
-        gridOptionsMock.frozenColumn = 2;
         setColumnsSpy.mockClear();
         vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
         getColumnIndexSpy.mockReturnValueOnce(0).mockReturnValueOnce(1).mockReturnValueOnce(2).mockReturnValueOnce(3).mockReturnValueOnce(4);

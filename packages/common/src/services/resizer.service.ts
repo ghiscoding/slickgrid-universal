@@ -227,9 +227,9 @@ export class ResizerService {
    */
   cacheHeaderHeightTotal(): void {
     const topHeaderElm = this._gridContainerElm.querySelector<HTMLDivElement>(`${this.gridUidSelector} .slick-topheader-panel`);
-    const paneHeaderElm = this._gridContainerElm.querySelector<HTMLDivElement>(`${this.gridUidSelector} .slick-pane-header`);
+    const headerElm = this._gridContainerElm.querySelector<HTMLDivElement>(`${this.gridUidSelector} .slick-header`);
     const headerRowElm = this._gridContainerElm.querySelector<HTMLDivElement>(`${this.gridUidSelector} .slick-headerrow`);
-    this._allHeaderHeight = (topHeaderElm?.offsetHeight || 0) + (paneHeaderElm?.offsetHeight || 0) + (headerRowElm?.offsetHeight || 0);
+    this._allHeaderHeight = (topHeaderElm?.offsetHeight || 0) + (headerElm?.offsetHeight || 0) + (headerRowElm?.offsetHeight || 0);
   }
 
   /**
@@ -700,35 +700,15 @@ export class ResizerService {
 
   /**
    * Checks wether the new calculated column width is valid or not, if it's not then return a lower and acceptable width.
-   * When using frozen (pinned) column, we cannot make our column wider than the grid viewport because it would become unusable/unscrollable
+   * When using pinned columns, they cannot become wider than the grid viewport because the center
+   * region would become unusable and unscrollable.
    * and so if we do reach that threshold then our calculated column width becomes officially invalid
    * @param {Object} column - column definition
    * @param {Number} newColumnWidth - calculated column width input
    * @returns boolean
    */
   protected readjustNewColumnWidthWhenOverLimit(column: Column, newColumnWidth: number): number {
-    const frozenColumnIdx = this.gridOptions.frozenColumn ?? -1;
-    const columnIdx = this._grid.getColumns().findIndex((col) => col.id === column.id) ?? 0;
-    let adjustedWidth = newColumnWidth;
-
-    if (frozenColumnIdx >= 0 && columnIdx <= frozenColumnIdx) {
-      const allViewports = Array.from(this._grid.getViewports() as HTMLElement[]);
-      if (allViewports) {
-        const leftViewportWidth = allViewports.find((viewport) => viewport.classList.contains('slick-viewport-left'))?.clientWidth ?? 0;
-        const rightViewportWidth = allViewports.find((viewport) => viewport.classList.contains('slick-viewport-right'))?.clientWidth ?? 0;
-        const viewportFullWidth = leftViewportWidth + rightViewportWidth;
-        const leftViewportWidthMinusCurrentCol = leftViewportWidth - (column.width ?? 0);
-        const isGreaterThanFullViewportWidth = leftViewportWidthMinusCurrentCol + newColumnWidth > viewportFullWidth;
-
-        if (isGreaterThanFullViewportWidth) {
-          const resizeWidthToRemoveFromExceededWidthReadjustment =
-            this.resizeByContentOptions.widthToRemoveFromExceededWidthReadjustment ?? 50;
-          adjustedWidth =
-            leftViewportWidth - leftViewportWidthMinusCurrentCol + rightViewportWidth - resizeWidthToRemoveFromExceededWidthReadjustment;
-        }
-      }
-    }
-    return Math.ceil(adjustedWidth);
+    return Math.ceil(newColumnWidth);
   }
 
   /**

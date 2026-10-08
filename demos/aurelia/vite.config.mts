@@ -17,6 +17,17 @@ export default defineConfig({
     aurelia({
       useDev: true,
     }) as PluginOption,
+    {
+      name: 'aurelia-demo-full-reload',
+      handleHotUpdate({ server, modules, timestamp }) {
+        const invalidatedModules = new Set();
+        for (const module of modules) {
+          server.moduleGraph.invalidateModule(module, invalidatedModules, timestamp, true);
+        }
+        server.ws.send({ type: 'full-reload' });
+        return [];
+      },
+    },
   ],
   preview: {
     port: 7900,
@@ -27,6 +38,7 @@ export default defineConfig({
     host: 'localhost',
     hmr: {
       clientPort: 7900,
+      // Keep Vite's update channel enabled, but promote module updates to full reloads above.
     },
   },
   build: {

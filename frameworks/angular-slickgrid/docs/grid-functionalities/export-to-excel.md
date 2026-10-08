@@ -401,7 +401,6 @@ Below is a preview of the previous customizations shown above
 ![image](https://user-images.githubusercontent.com/643976/208590003-b637dcda-5164-42cc-bfad-e921a22c1837.png)
 
 ### Cell Format Auto-Detect Disable
-##### requires `v6.2.0` or higher
 The system will auto-detect the Excel format to use for Date and Number field types, if for some reason you wish to disable it then you provide the excel export options below
 
 ```ts
@@ -437,7 +436,6 @@ this.columns = [
       // for version <=8.1
       // valueParserCallback: (data, col, excelFormatId, excelStylesheet) => {
 
-      // new args signature requires version >=8.1
       valueParserCallback: (data, { columnDef, excelFormatId, stylesheet }) => {
         // when returned as string, it will skip Excel style format
         return `Total: ${data}`;
@@ -450,10 +448,6 @@ this.columns = [
       }
     },
     groupTotalsExcelExportOptions: {
-      // for version <=8.1
-      // valueParserCallback: (totals, columnDef) => {
-
-      // new args signature requires version >=8.1
       valueParserCallback: (totals, { columnDef, groupType }) => {
         const fieldName = columnDef.field;
         return totals[groupType][fieldName];

@@ -5,9 +5,13 @@
  */
 
 @use 'sass:color';
+@use './functions' as f;
 
 // import external lib CSS files (without the .css extension)
-@use 'vanilla-calendar-pro/styles/index';
+// only load the modular parts we actually use (core + time + months), skipping unused motion/annotations/weeks
+@use 'vanilla-calendar-pro/styles/core';
+@use 'vanilla-calendar-pro/styles/time';
+@use 'vanilla-calendar-pro/styles/months';
 
 /* this is the only variable without $slick prefix and exists so that user could use the same Bootstrap primary color without declaring $slick-primary-color variable (which also exists) */
 /** extra styling when Bootstrap isn't provided */
@@ -50,7 +54,8 @@ $slick-input-group-btn-border:                              1px solid #ccc !defa
 $slick-input-group-append-bg-color:                         #eee !default;
 $slick-input-focus-border-color:                            color.adjust($slick-primary-color, $lightness: 25%) !default;
 $slick-input-focus-box-shadow:                              $slick-form-control-focus-box-shadow !default;
-$slick-date-picker-bg-color:                                $slick-form-control-bg-color !default;
+$slick-date-input-bg-color:                                 $slick-form-control-bg-color !default;
+$slick-date-picker-border:                                  1px solid none !default;
 
 /* Slickgrid container, including headers but excluding pagination */
 $slick-container-border-top:                                0 none !default;
@@ -88,6 +93,7 @@ $slick-cell-border-right:                                   1px transparent !def
 $slick-cell-border-bottom:                                  1px transparent !default;
 $slick-cell-border-left:                                    1px transparent !default;
 $slick-cell-active-box-shadow:                              inset 0 0 0 1px #aaaaaa !default;
+$slick-cell-active-border-color:                             #aaaaaa !default;
 $slick-cell-active-z-index:                                 6 !default;
 $slick-cell-even-background-color: 			                    #ffffff !default;
 $slick-cell-odd-background-color:                           color.adjust($slick-grid-cell-color, $lightness: -3%) !default; // for striping every second row
@@ -101,8 +107,8 @@ $slick-icon-with-text-valign:                               middle !default;
 $slick-drag-selection-handle-color:                         gray !default;
 $slick-drag-selection-handle-size:                          7px !default;
 
-/** 4x available slick-pane (top, bottom, left, right) */
-$slick-pane-top-border-top:                                 none !default;
+/** Border above the grid content root */
+$slick-content-border-top:                                 none !default;
 
 /* row */
 $slick-row-mouse-hover-color:                               #eff5fc !default;
@@ -119,6 +125,7 @@ $slick-preheader-border-left:                               none !default;
 $slick-preheader-border-left-first-element:                 none !default;
 $slick-preheader-border-right:                              none !default;
 $slick-preheader-border-right-last-element:                 none !default;
+$slick-preheader-border-color:                              transparent !default;
 $slick-preheader-border-bottom:                             none !default;
 $slick-preheader-border-top:                                none !default;
 $slick-preheader-font-size:                                 calc(#{$slick-font-size-base} + 3px) !default;
@@ -173,10 +180,10 @@ $slick-header-resizable-hover-opacity:                      0.4 !default;
 $slick-header-resizable-hover-height:                       80% !default;
 $slick-header-resizable-hover-top:                          10% !default;
 
-/* Frozen pinned rows/columns */
-$slick-frozen-border-bottom:                                1px solid #a5a5a5 !default;
-$slick-frozen-border-right:                                 1px solid #a5a5a5 !default;
-$slick-frozen-overflow-right:                               scroll !default;                      // typically we would like to always have the scroll displayed when using hamburger menu (top right)
+/* Pinned rows/columns */
+$slick-pinned-border-bottom:                                1px solid #a5a5a5 !default;
+$slick-pinned-border-color:                                 #a5a5a5 !default;
+
 
 /* icons */
 $slick-icon-color:                                          inherit !default;
@@ -195,7 +202,7 @@ $slick-autocomplete-border:	                                1px solid rgba(0, 0,
 $slick-autocomplete-hover-bg-color:                         color.adjust($slick-row-mouse-hover-color, $lightness: -3%) !default;
 $slick-autocomplete-loading-input-bg-color:                 transparent !default;
 $slick-autocomplete-loading-icon-color:                     #777777 !default;
-$slick-autocomplete-loading-icon:                           url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-autocomplete-loading-icon-color)}" viewBox="0 0 24 24"><path d="M16,13V11H21V13H16M14.83,7.76L17.66,4.93L19.07,6.34L16.24,9.17L14.83,7.76M11,16H13V21H11V16M11,3H13V8H11V3M4.93,17.66L7.76,14.83L9.17,16.24L6.34,19.07L4.93,17.66M4.93,6.34L6.34,4.93L9.17,7.76L7.76,9.17L4.93,6.34M8,13H3V11H8V13M19.07,17.66L17.66,19.07L14.83,16.24L16.24,14.83L19.07,17.66Z"></path></svg>') !default;
+$slick-autocomplete-loading-icon:                           url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{f.encodecolor($slick-autocomplete-loading-icon-color)}" viewBox="0 0 24 24"><path d="M16,13V11H21V13H16M14.83,7.76L17.66,4.93L19.07,6.34L16.24,9.17L14.83,7.76M11,16H13V21H11V16M11,3H13V8H11V3M4.93,17.66L7.76,14.83L9.17,16.24L6.34,19.07L4.93,6.34M4.93,6.34L6.34,4.93L9.17,7.76L7.76,9.17L4.93,6.34M8,13H3V11H8V13M19.07,17.66L17.66,19.07L14.83,16.24L16.24,14.83L19.07,17.66Z"></path></svg>') !default;
 $slick-autocomplete-loading-icon-width:                     22px !default;
 $slick-autocomplete-loading-icon-margin:                    0 0 0 -26px !default;
 $slick-autocomplete-loading-icon-line-height:               0px !default;
@@ -760,7 +767,7 @@ $slick-slider-filter-thumb-size:                            14px !default;
 $slick-slider-filter-thumb-height:                          calc(#{$slick-slider-filter-thumb-size} - 4px) !default;
 $slick-slider-filter-thumb-width:                           $slick-slider-filter-thumb-height !default;
 $slick-slider-filter-number-padding:                        4px 8px !default;
-$slick-slider-filter-number-font-size:                      calc(#{$slick-font-size-base-value} - 1px) !default;
+$slick-slider-filter-number-font-size:                      calc(#{$slick-font-size-base-value * 1px} - 1px) !default;
 
 /* Multiple-Select Filter */
 $slick-multiselect-input-filter-border:                     $slick-form-control-border !default;
@@ -982,6 +989,7 @@ $slick-dark-base-dark-invalid-color:                      #ea868f !default;
 $slick-dark-highlight-color:                              $slick-dark-primary-color !default;
 $slick-dark-text-color:                                   #d4d4d4 !default;
 
+.vc[data-vc-theme="dark"],
 .ms-dark-mode,
 .ms-drop.ms-dark-mode,
 .slick-dark-mode .ms-dark-mode,
@@ -1046,8 +1054,8 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-header-text-color:                              #e4e4e4;
   --slick-hover-header-color:                             var(--slick-base-dark-text-color);
   --slick-header-row-background-color:                    #2d2d2d;
-  --slick-preheader-border-right:                         1px solid #3e3e3e;
-  --slick-pane-top-border-top:                            1px solid #606060;
+  --slick-preheader-border-color:                         #3e3e3e;
+  --slick-content-border-top:                            1px solid #606060;
   --slick-empty-data-warning-color:                       var(--slick-base-dark-text-color);
   --slick-grid-header-background:                         #2d2d2d;
   --slick-icon-sort-color:                                var(--slick-primary-color);
@@ -1078,7 +1086,8 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-input-group-btn-border:                         var(--slick-base-dark-menu-item-border);
   --slick-input-group-append-bg-color:                    #383838;
   --slick-compound-filter-bgcolor:                        var(--slick-base-dark-menu-bg-color);
-  --slick-date-picker-bg-color:                           var(--slick-base-dark-menu-bg-color);
+  --slick-date-input-bg-color:                            var(--slick-base-dark-menu-bg-color);
+  --slick-date-picker-border:                             var(--slick-base-dark-menu-border);
   --slick-footer-left-text-color:                         #acacac;
   --slick-footer-right-text-color:                        #acacac;
   --slick-grid-header-unorderable-bg-color:               #1c1c1c;
@@ -1193,13 +1202,16 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --ms-choice-border:                                     var(--slick-base-dark-menu-item-border);
   --ms-choice-focus-box-shadow:                           var(--slick-form-control-focus-box-shadow, $slick-form-control-focus-box-shadow);
   --ms-drop-background:                                   var(--slick-base-dark-menu-bg-color);
-  --ms-drop-color:                                        #bbbbbb;
+  --ms-drop-color:                                        #d4d4d4;
   --ms-drop-hide-radio-hover-bgcolor:                     var(--slick-base-dark-menu-item-hover-color);
   --ms-option-highlight-bg-color:                         var(--slick-multiselect-select-all-label-hover-bg-color);
   --ms-ok-button-bg-color:                                #262626;
   --ms-ok-button-bg-hover-color:                          #373c42;
   --ms-placeholder-color:                                 #999;
   --ms-select-all-label-hover-border:                     var(--slick-base-dark-menu-item-border);
+  --vc-bg:                                                var(--slick-base-dark-menu-bg-color);
+  --vc-date-bg:                                           var(--slick-base-dark-menu-bg-color);
+  --vc-date-today-bg:                                     #2b3035;
 
   .text-color-primary, .color-primary {
     color:                                                var(--slick-primary-color);
