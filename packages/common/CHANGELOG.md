@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.2...v10.11.3) (2026-10-07)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2820](https://github.com/ghiscoding/slickgrid-universal/issues/2820)) ([2b58da6](https://github.com/ghiscoding/slickgrid-universal/commit/2b58da63c3a6c98be2b9b53b7feaaa4b2c0b90be)) - by @renovate-bot
+* **styling:** bundling styles with postcss shouldn't show calc warnings ([51e8233](https://github.com/ghiscoding/slickgrid-universal/commit/51e82338f1607ab63d927473d290e37212ca3156)) - by @ghiscoding
+
 ## [10.11.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.1...v10.11.2) (2026-10-01)
 
 **Note:** Version bump only for package @slickgrid-universal/common

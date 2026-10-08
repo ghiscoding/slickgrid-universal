@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.11.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.2...v10.11.3) (2026-10-07)
+
+### Bug Fixes
+
+* **row-detail:** remount detached detail views after row reflow ([#2814](https://github.com/ghiscoding/slickgrid-universal/issues/2814)) ([86723d5](https://github.com/ghiscoding/slickgrid-universal/commit/86723d5fe9de8a89dd7095ca29b18658b52be572)) - by @ghiscoding
+
 ## [10.11.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.1...v10.11.2) (2026-10-01)
 
 **Note:** Version bump only for package @slickgrid-universal/vue-row-detail-plugin
