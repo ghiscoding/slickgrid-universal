@@ -1,0 +1,4 @@
+@use './theme-base';
+@use './variables-theme-salesforce' as vt;
+
+@include vt.slick-theme-styles;

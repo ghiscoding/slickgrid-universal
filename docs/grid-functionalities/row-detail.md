@@ -81,6 +81,17 @@ changeKeepingComponentAlive() {
 ## Usage
 
 ##### Component
+
+### Required Styles (v11+)
+Add `@slickgrid-universal/row-detail-plugin` as a direct dependency and import its styles after the SlickGrid theme in your application's global SCSS entry file:
+
+```scss
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail.scss';
+```
+
+See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for plain CSS imports and theme configuration details.
+
 ```ts
 import {
   type Column,

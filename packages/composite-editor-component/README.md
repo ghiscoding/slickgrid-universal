@@ -16,3 +16,13 @@ Vanilla Bundle implementation of a Composite Editor Modal Window which can do th
 
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation).
+
+### Styling (v11+)
+Import the Composite Editor stylesheet after your SlickGrid theme in your application's global SCSS entry file:
+
+```scss
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@use '@slickgrid-universal/composite-editor-component/dist/styles/sass/slick-composite-editor.scss';
+```
+
+For plain CSS, import `@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css` first, followed by `@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor-bootstrap.css`. Replace `bootstrap` with your theme name (`default`, `fluent`, `material`, or `salesforce`); lite themes use the same package stylesheet.

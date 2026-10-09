@@ -461,29 +461,6 @@ li.hidden {
   }
 }
 
-// ----------------------------------------------
-// Slick Tooltip Component
-// ----------------------------------------------
-
-.slick-custom-tooltip {
-  position: absolute;
-  background-color: var(--slick-tooltip-background-color, v.$slick-tooltip-background-color);
-  border: var(--slick-tooltip-border, v.$slick-tooltip-border);
-  border-radius: var(--slick-tooltip-border-radius, v.$slick-tooltip-border-radius);
-  padding: var(--slick-tooltip-padding, v.$slick-tooltip-padding);
-  font-size: var(--slick-tooltip-font-size, v.$slick-tooltip-font-size);
-  height: var(--slick-tooltip-height, v.$slick-tooltip-height);
-  width: var(--slick-tooltip-width, v.$slick-tooltip-width);
-  z-index: var(--slick-tooltip-z-index, v.$slick-tooltip-z-index);
-
-  .tooltip-body {
-    color: var(--slick-tooltip-color, v.$slick-tooltip-color);
-    overflow: var(--slick-tooltip-overflow, v.$slick-tooltip-overflow);
-    text-overflow: var(--slick-tooltip-text-overflow, v.$slick-tooltip-text-overflow);
-    white-space: var(--slick-tooltip-white-space, v.$slick-tooltip-white-space);
-  }
-}
-
 // ---------------------------------------------------------
 // Header Button Plugin - add button in header with command
 // ---------------------------------------------------------
@@ -1254,56 +1231,6 @@ li.hidden {
       box-shadow: var(--slick-slider-filter-focus-box-shadow, v.$slick-slider-filter-focus-box-shadow);
     }
   }
-}
-
-// ---------------------------------------------------------
-// Row Detail View Plugin
-// ---------------------------------------------------------
-
-.slick-row-detail-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 0;
-  overflow: visible;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.slick-row,
-.slick-row-detail-overlay {
-  .detail-view-toggle {
-    display: inline-block;
-
-    &.expand {
-      @include svg.generateSvgStyle('slick-detail-view-icon-expand-svg', v.$slick-detail-view-icon-expand-svg-path);
-    }
-    &.collapse {
-      @include svg.generateSvgStyle('slick-detail-view-icon-collapse-svg', v.$slick-detail-view-icon-collapse-svg-path);
-    }
-    &.expand,
-    &.collapse {
-      cursor: pointer;
-      color: var(--slick-detail-view-icon-color, v.$slick-detail-view-icon-color);
-      font-size: var(--slick-detail-view-icon-font-size, v.$slick-detail-view-icon-font-size);
-      &:hover {
-        color: var(--slick-detail-view-icon-color-hover, v.$slick-detail-view-icon-color-hover);
-        opacity: var(--slick-detail-view-icon-opacity-hover, v.$slick-detail-view-icon-opacity-hover);
-      }
-    }
-  }
-}
-
-.dynamic-cell-detail {
-  position: absolute;
-  width: 100%;
-  overflow: auto;
-  left: var(--slick-detail-view-container-left, v.$slick-detail-view-container-left);
-  border: var(--slick-detail-view-container-border, v.$slick-detail-view-container-border);
-  background-color: var(--slick-detail-view-container-bgcolor, v.$slick-detail-view-container-bgcolor);
-  padding: var(--slick-detail-view-container-padding, v.$slick-detail-view-container-padding);
-  z-index: var(--slick-detail-view-container-z-index, v.$slick-detail-view-container-z-index);
 }
 
 .slick-drag-replace-handle {

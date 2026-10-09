@@ -25,6 +25,16 @@ To specify a tooltip when hovering a cell
 
 **NOTE:** this is an opt-in plugin, you must import the necessary plugin from `@slickgrid-universal/custom-tooltip-plugin` and instantiate it in your grid options via `registerExternalResources`, see multiple examples below.
 
+### Required Styles (v11+)
+Import the Custom Tooltip stylesheet after the SlickGrid theme in your application's global SCSS entry file:
+
+```scss
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/sass/slick-custom-tooltip.scss';
+```
+
+See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for plain CSS imports and theme configuration details.
+
 ### Demo
 [Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example32) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example32.ts)
 

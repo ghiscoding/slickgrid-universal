@@ -11,6 +11,7 @@
 
 @forward './variables-theme-material';
 
+@use './theme-base-material';
 @use './colors';
 @use './extra-styling';
 @use './roboto-font';

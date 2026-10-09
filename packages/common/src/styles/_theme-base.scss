@@ -1,0 +1,42 @@
+// shared theme CSS output (3rd party libs & Dark Mode), loaded once by every theme entry file
+@use 'vanilla-calendar-pro/styles/core';
+@use 'vanilla-calendar-pro/styles/time';
+@use 'vanilla-calendar-pro/styles/months';
+@use './variables' as v;
+
+// override some multiple-select SASS variables with our variables
+@use 'multiple-select-vanilla/dist/styles/sass/multiple-select' with (
+  $ms-primary-color: v.$slick-primary-color,
+  $ms-drop-color: v.$slick-text-color,
+  $ms-checkbox-color: v.$slick-multiselect-icon-checked-color,
+  $ms-choice-bgcolor: v.$slick-form-control-bg-color,
+  $ms-choice-border: v.$slick-multiselect-input-filter-border,
+  $ms-choice-focus-box-shadow: v.$slick-form-control-focus-box-shadow,
+  $ms-choice-height: v.$slick-multiselect-input-filter-height,
+  $ms-drop-background: v.$slick-multiselect-dropdown-bg-color,
+  $ms-drop-list-padding: v.$slick-multiselect-dropdown-list-padding,
+  $ms-drop-list-item-align-items: center,
+  $ms-drop-list-item-display: flex,
+  $ms-drop-list-item-padding: v.$slick-multiselect-item-padding,
+  $ms-drop-hide-radio-hover-bgcolor: v.$slick-multiselect-item-hover-bg-color,
+  $ms-drop-hide-radio-selected-color: unset,
+  $ms-drop-hide-radio-selected-bgcolor: unset,
+  $ms-icon-color: v.$slick-icon-color,
+  $ms-icon-size: v.$slick-multiselect-icon-font-size,
+  $ms-chevron-icon-size: #{v.$slick-multiselect-icon-font-size + 3px},
+  $ms-loading-icon-size: #{v.$slick-multiselect-icon-font-size + 5px},
+  $ms-placeholder-color: v.$slick-placeholder-color,
+  $ms-label-padding: v.$slick-multiselect-item-padding,
+  $ms-ok-button-bg-color: v.$slick-multiselect-ok-button-bg-color,
+  $ms-ok-button-bg-hover-color: v.$slick-multiselect-ok-button-bg-hover-color,
+  $ms-ok-button-text-color: v.$slick-multiselect-ok-button-text-color,
+  $ms-ok-button-text-hover-color: v.$slick-multiselect-ok-button-text-hover-color,
+  $ms-option-highlight-bg-color: v.$slick-multiselect-option-highlight-bg-color,
+  $ms-search-icon-close-margin: v.$slick-multiselect-search-icon-close-margin,
+  $ms-select-all-label-hover-border: v.$slick-multiselect-select-all-label-hover-border,
+  $ms-select-all-label-padding: v.$slick-multiselect-select-all-padding,
+  $ms-select-all-line-height: v.$slick-multiselect-select-all-line-height,
+  $ms-select-all-text-color: v.$slick-multiselect-select-all-text-color
+);
+
+@include v.slick-dark-mode-styles;

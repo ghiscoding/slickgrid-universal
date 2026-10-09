@@ -1,0 +1,418 @@
+/**
+ * Slick Composite Editor Modal styling, load it after your SlickGrid theme so that it uses the same (configured) SASS variables.
+ * e.g.:
+ *   @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss' with ($slick-primary-color: blue);
+ *   @use '@slickgrid-universal/composite-editor-component/dist/styles/sass/slick-composite-editor.scss';
+ */
+@use '@slickgrid-universal/common/dist/styles/sass/variables' as v;
+
+.slick-modal-open {
+  overflow: hidden;
+}
+.slick-editor-modal {
+  position: fixed;
+  overflow-y: auto;
+  height: auto;
+  width: auto;
+  border: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 1;
+  background: var(--slick-editor-modal-backdrop-transition-background, v.$slick-editor-modal-backdrop-transition-background);
+  z-index: var(--slick-editor-modal-container-z-index, v.$slick-editor-modal-container-z-index);
+  transition: var(--slick-editor-modal-backdrop-transition-start, v.$slick-editor-modal-backdrop-transition-start);
+
+  .slick-editor-modal-content {
+    display: inline-block;
+    position: absolute;
+    border-radius: var(--slick-editor-modal-container-radius, v.$slick-editor-modal-container-radius);
+    font-family: var(--slick-font-family, v.$slick-font-family);
+    border: var(--slick-editor-modal-container-border, v.$slick-editor-modal-container-border);
+    color: var(--slick-editor-modal-text-color, v.$slick-editor-modal-text-color);
+    margin: var(--slick-editor-modal-container-margin, v.$slick-editor-modal-container-margin);
+    background-color: var(--slick-editor-modal-container-bg-color, v.$slick-editor-modal-container-bg-color);
+    box-shadow: var(--slick-editor-modal-container-box-shadow, v.$slick-editor-modal-container-box-shadow);
+    width: var(--slick-editor-modal-container-width, v.$slick-editor-modal-container-width);
+    min-width: var(--slick-editor-modal-container-min-width, v.$slick-editor-modal-container-min-width);
+    top: var(--slick-editor-modal-container-top, v.$slick-editor-modal-container-top);
+    left: var(--slick-editor-modal-container-left, v.$slick-editor-modal-container-left);
+    transform: var(--slick-editor-modal-container-transform, v.$slick-editor-modal-container-transform);
+    transition: var(--slick-editor-modal-backdrop-transition-end, v.$slick-editor-modal-backdrop-transition-end);
+    transition-property: opacity, transform;
+
+    @media only screen and (min-width: 768px) {
+      &.split-view {
+        width: calc(#{v.$slick-editor-modal-container-width} * 2);
+      }
+      &.triple-split-view {
+        width: calc(#{v.$slick-editor-modal-container-width} * 3);
+      }
+    }
+
+    /** we'll triple the width only a large screen */
+    @media only screen and (max-width: 1200px) {
+      &.triple-split-view {
+        width: calc(#{v.$slick-editor-modal-container-width} * 2);
+      }
+    }
+
+    @media only screen and (max-width: 768px) {
+      width: 100% !important;
+      margin: 0;
+      top: 0;
+    }
+
+    .reset-container {
+      width: 100%;
+      .reset-form.btn {
+        color: var(--slick-editor-modal-reset-btn-color, v.$slick-editor-modal-reset-btn-color);
+        background-color: var(--slick-editor-modal-reset-btn-bg-color, v.$slick-editor-modal-reset-btn-bg-color);
+        float: right;
+        span.mdi,
+        span.sgi {
+          margin-right: 5px;
+        }
+      }
+    }
+
+    .btn-editor-reset,
+    .reset-form.btn,
+    .footer-buttons .btn {
+      display: inline-flex;
+      margin: var(--slick-editor-modal-footer-btn-margin, v.$slick-editor-modal-footer-btn-margin);
+      height: var(--slick-editor-modal-footer-btn-height, v.$slick-editor-modal-footer-btn-height);
+      border: var(--slick-editor-modal-footer-btn-border, v.$slick-editor-modal-footer-btn-border);
+      border-radius: var(--slick-editor-modal-footer-btn-radius, v.$slick-editor-modal-footer-btn-radius);
+      &:hover {
+        border-color: var(--slick-editor-modal-footer-btn-border-hover-color, v.$slick-editor-modal-footer-btn-border-hover-color);
+        &.btn-default {
+          color: var(--slick-editor-modal-footer-btn-text-color-hover, v.$slick-editor-modal-footer-btn-text-color-hover);
+        }
+      }
+      &:disabled {
+        background-color: var(--slick-button-primary-bg-color-disabled, v.$slick-button-primary-bg-color-disabled);
+      }
+    }
+
+    .btn-editor-reset {
+      height: var(--slick-editor-modal-editor-btn-reset-height, v.$slick-editor-modal-editor-btn-reset-height);
+      background-color: var(--slick-editor-modal-editor-btn-reset-bg-color, v.$slick-editor-modal-editor-btn-reset-bg-color);
+      margin: var(--slick-editor-modal-editor-btn-reset-margin, v.$slick-editor-modal-editor-btn-reset-margin);
+    }
+
+    .input-group-btn .btn-default:disabled {
+      background-color: var(--slick-editor-modal-default-btn-disabled-bg-color, v.$slick-editor-modal-default-btn-disabled-bg-color);
+      color: var(--slick-editor-modal-default-btn-disabled-color, v.$slick-editor-modal-default-btn-disabled-color);
+    }
+
+    .close {
+      cursor: pointer;
+      position: absolute;
+      float: right;
+      line-height: 0;
+      background-color: var(--slick-editor-modal-close-btn-bg-color, v.$slick-editor-modal-close-btn-bg-color);
+      opacity: var(--slick-editor-modal-close-btn-opacity, v.$slick-editor-modal-close-btn-opacity);
+      border: var(--slick-editor-modal-close-btn-border, v.$slick-editor-modal-close-btn-border);
+      color: var(--slick-editor-modal-close-btn-color, v.$slick-editor-modal-close-btn-color);
+      font-family: var(--slick-editor-modal-close-btn-font-family, v.$slick-editor-modal-close-btn-font-family);
+      font-size: var(--slick-editor-modal-close-btn-font-size, v.$slick-editor-modal-close-btn-font-size);
+      font-weight: var(--slick-editor-modal-close-btn-font-weight, v.$slick-editor-modal-close-btn-font-weight);
+      height: var(--slick-editor-modal-close-btn-height, v.$slick-editor-modal-close-btn-height);
+      margin: var(--slick-editor-modal-close-btn-margin, v.$slick-editor-modal-close-btn-margin);
+      padding: var(--slick-editor-modal-close-btn-padding, v.$slick-editor-modal-close-btn-padding);
+      width: var(--slick-editor-modal-close-btn-width, v.$slick-editor-modal-close-btn-width);
+      right: var(--slick-editor-modal-close-btn-right, v.$slick-editor-modal-close-btn-right);
+      top: var(--slick-editor-modal-close-btn-top, v.$slick-editor-modal-close-btn-top);
+      &:hover {
+        color: var(--slick-editor-modal-close-btn-color-hover, v.$slick-editor-modal-close-btn-color-hover);
+      }
+      &.outside {
+        @media only screen and (min-width: 769px) {
+          color: var(--slick-editor-modal-close-btn-outside-color, v.$slick-editor-modal-close-btn-outside-color);
+          font-size: var(--slick-editor-modal-close-btn-outside-font-size, v.$slick-editor-modal-close-btn-outside-font-size);
+          right: var(--slick-editor-modal-close-btn-outside-right, v.$slick-editor-modal-close-btn-outside-right);
+          top: var(--slick-editor-modal-close-btn-outside-top, v.$slick-editor-modal-close-btn-outside-top);
+          &:hover {
+            color: var(--slick-editor-modal-close-btn-outside-color-hover, v.$slick-editor-modal-close-btn-outside-color-hover);
+          }
+        }
+      }
+    }
+
+    .slick-editor-modal-title {
+      font-size: var(--slick-editor-modal-title-font-size, v.$slick-editor-modal-title-font-size);
+      font-weight: var(--slick-editor-modal-title-font-weight, v.$slick-editor-modal-title-font-weight);
+      line-height: var(--slick-editor-modal-title-line-height, v.$slick-editor-modal-title-line-height);
+      color: var(--slick-editor-modal-title-font-color, v.$slick-editor-modal-title-font-color);
+      height: var(--slick-editor-modal-title-height, v.$slick-editor-modal-title-height);
+      overflow: hidden auto;
+      text-align: var(--slick-editor-modal-title-text-align, v.$slick-editor-modal-title-text-align);
+      text-overflow: ellipsis;
+      width: calc(100% - #{v.$slick-editor-modal-close-btn-width} - #{v.$slick-editor-modal-close-btn-right});
+      white-space: nowrap;
+      &.outside {
+        width: 100%;
+      }
+    }
+
+    .slick-editor-modal-body {
+      padding: var(--slick-editor-modal-body-padding, v.$slick-editor-modal-body-padding);
+      min-height: var(--slick-editor-modal-body-min-height, v.$slick-editor-modal-body-min-height);
+      max-height: var(--slick-editor-modal-body-max-height, v.$slick-editor-modal-body-max-height);
+      overflow: var(--slick-editor-modal-body-overflow, v.$slick-editor-modal-body-overflow);
+      scrollbar-color: var(--slick-scrollbar-color, v.$slick-scrollbar-color);
+      display: flex;
+      flex-wrap: wrap;
+
+      .slick-cell {
+        height: inherit;
+      }
+
+      .validation-summary {
+        padding: var(--slick-editor-modal-validation-summary-padding, v.$slick-editor-modal-validation-summary-padding);
+        color: var(--slick-editor-modal-validation-summary-color, v.$slick-editor-modal-validation-summary-color);
+        width: var(--slick-editor-modal-validation-summary-width, v.$slick-editor-modal-validation-summary-width);
+        margin-bottom: var(--slick-editor-modal-validation-summary-margin-bottom, v.$slick-editor-modal-validation-summary-margin-bottom);
+        font-size: var(--slick-editor-modal-validation-summary-font-size, v.$slick-editor-modal-validation-summary-font-size);
+        font-style: var(--slick-editor-modal-validation-summary-font-style, v.$slick-editor-modal-validation-summary-font-style);
+      }
+    }
+
+    .slick-editor-modal-header {
+      padding: var(--slick-editor-modal-header-padding, v.$slick-editor-modal-header-padding);
+      height: var(--slick-editor-modal-header-height, v.$slick-editor-modal-header-height);
+      border-bottom: var(--slick-editor-modal-header-border-bottom, v.$slick-editor-modal-header-border-bottom);
+      background-color: var(--slick-editor-modal-header-bg-color, v.$slick-editor-modal-header-bg-color);
+    }
+
+    .slick-editor-modal-footer {
+      background-color: var(--slick-editor-modal-footer-bg-color, v.$slick-editor-modal-footer-bg-color);
+      border-top: var(--slick-editor-modal-footer-border-top, v.$slick-editor-modal-footer-border-top);
+      min-height: var(--slick-editor-modal-footer-height, v.$slick-editor-modal-footer-height);
+      padding: var(--slick-editor-modal-footer-padding, v.$slick-editor-modal-footer-padding);
+      line-height: var(--slick-editor-modal-footer-line-height, v.$slick-editor-modal-footer-line-height);
+
+      .footer-buttons {
+        float: right;
+        text-align: right;
+        width: var(--slick-editor-modal-footer-buttons-width, v.$slick-editor-modal-footer-buttons-width);
+
+        button {
+          max-width: var(--slick-editor-modal-footer-btn-max-width, v.$slick-editor-modal-footer-btn-max-width);
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .saving:before {
+          height: var(--slick-editor-modal-footer-btn-saving-icon-height, v.$slick-editor-modal-footer-btn-saving-icon-height);
+          width: var(--slick-editor-modal-footer-btn-saving-icon-width, v.$slick-editor-modal-footer-btn-saving-icon-width);
+          display: var(--slick-editor-modal-footer-btn-saving-icon-display, v.$slick-editor-modal-footer-btn-saving-icon-display);
+          vertical-align: var(
+            --slick-editor-modal-footer-btn-saving-icon-vertical-align,
+            v.$slick-editor-modal-footer-btn-saving-icon-vertical-align
+          );
+          margin: var(--slick-editor-modal-footer-btn-saving-icon-margin, v.$slick-editor-modal-footer-btn-saving-icon-margin);
+          animation: var(--slick-editor-modal-footer-btn-saving-icon-animation, v.$slick-editor-modal-footer-btn-saving-icon-animation);
+          content: var(--slick-editor-modal-footer-btn-saving-icon-content, v.$slick-editor-modal-footer-btn-saving-icon-content);
+        }
+      }
+      .footer-status-text {
+        float: left;
+        text-align: left;
+        width: var(--slick-editor-modal-footer-status-text-width, v.$slick-editor-modal-footer-status-text-width);
+        font-size: var(--slick-editor-modal-status-text-font-size, v.$slick-editor-modal-status-text-font-size);
+        color: var(--slick-editor-modal-status-text-color, v.$slick-editor-modal-status-text-color);
+      }
+    }
+
+    .item-details-label {
+      display: block;
+      margin: var(--slick-editor-modal-detail-label-margin, v.$slick-editor-modal-detail-label-margin);
+      color: var(--slick-editor-modal-detail-label-color, v.$slick-editor-modal-detail-label-color);
+      font-size: var(--slick-editor-modal-detail-label-font-size, v.$slick-editor-modal-detail-label-font-size);
+      font-style: var(--slick-editor-modal-detail-label-font-style, v.$slick-editor-modal-detail-label-font-style);
+      font-weight: var(--slick-editor-modal-detail-label-font-weight, v.$slick-editor-modal-detail-label-font-weight);
+      &.invalid {
+        color: var(--slick-editor-modal-detail-label-color-invalid, v.$slick-editor-modal-detail-label-color-invalid);
+      }
+    }
+
+    .item-details-editor-container {
+      display: block;
+      box-sizing: border-box;
+      border: var(--slick-editor-modal-detail-container-border, v.$slick-editor-modal-detail-container-border);
+      border-radius: var(--slick-editor-modal-detail-container-border-radius, v.$slick-editor-modal-detail-container-border-radius);
+      line-height: var(--slick-editor-modal-detail-container-line-height, v.$slick-editor-modal-detail-container-line-height);
+      margin: var(--slick-editor-modal-detail-container-margin, v.$slick-editor-modal-detail-container-margin);
+      padding: var(--slick-editor-modal-detail-container-padding, v.$slick-editor-modal-detail-container-padding);
+
+      input,
+      .input-group,
+      .input-group input {
+        height: var(--slick-editor-modal-input-editor-height, v.$slick-editor-modal-input-editor-height);
+      }
+      input {
+        color: var(--slick-editor-modal-text-color, v.$slick-editor-modal-text-color);
+        margin: var(--slick-editor-modal-input-editor-margin, v.$slick-editor-modal-input-editor-margin);
+        border: var(--slick-editor-modal-input-editor-border, v.$slick-editor-modal-input-editor-border);
+        padding: var(--slick-editor-modal-input-editor-padding, v.$slick-editor-modal-input-editor-padding);
+      }
+      .input-group {
+        display: flex;
+        position: relative;
+      }
+      .slick-large-editor-text {
+        border: var(--slick-editor-modal-large-editor-border, v.$slick-editor-modal-large-editor-border);
+        border-radius: var(--slick-editor-modal-large-editor-border-radius, v.$slick-editor-modal-large-editor-border-radius);
+        padding: var(--slick-editor-modal-large-editor-padding, v.$slick-editor-modal-large-editor-padding);
+        textarea {
+          width: 100%;
+          height: 100%;
+        }
+        .editor-footer {
+          height: var(--slick-editor-modal-large-editor-footer-height, v.$slick-editor-modal-large-editor-footer-height);
+          line-height: var(--slick-editor-modal-large-editor-footer-line-height, v.$slick-editor-modal-large-editor-footer-line-height);
+          color: var(--slick-editor-modal-large-editor-count-color, v.$slick-editor-modal-large-editor-count-color);
+          .counter {
+            font-size: var(--slick-editor-modal-large-editor-count-font-size, v.$slick-editor-modal-large-editor-count-font-size);
+            margin: var(--slick-editor-modal-large-editor-count-margin, v.$slick-editor-modal-large-editor-count-margin);
+          }
+        }
+
+        &.invalid {
+          border: var(--slick-editor-modal-detail-container-border-invalid, v.$slick-editor-modal-detail-container-border-invalid);
+        }
+      }
+      button.ms-choice {
+        height: var(--slick-editor-modal-multiselect-editor-height, v.$slick-editor-modal-multiselect-editor-height);
+        border: var(--slick-editor-modal-select-editor-border, v.$slick-editor-modal-select-editor-border);
+      }
+      .checkbox-editor-container {
+        background-color: var(--slick-text-editor-background, v.$slick-text-editor-background);
+        padding: var(--slick-editor-modal-checkbox-editor-padding, v.$slick-editor-modal-checkbox-editor-padding);
+        border: var(--slick-editor-modal-checkbox-editor-border, v.$slick-editor-modal-checkbox-editor-border);
+        border-radius: var(--slick-editor-modal-checkbox-editor-border-radius, v.$slick-editor-modal-checkbox-editor-border-radius);
+        height: var(--slick-editor-modal-input-editor-height, v.$slick-editor-modal-input-editor-height);
+        input {
+          height: inherit;
+        }
+      }
+
+      input:focus-within,
+      .slick-large-editor-text:focus-within,
+      .ms-parent-open button.ms-choice,
+      button.ms-choice:focus-within {
+        outline: 0;
+        border-color: var(--slick-text-editor-focus-border-color, v.$slick-text-editor-focus-border-color);
+        box-shadow: var(--slick-text-editor-focus-box-shadow, v.$slick-text-editor-focus-box-shadow);
+      }
+
+      .autocomplete-container.input-group,
+      .vanilla-picker.input-group {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        .input-group-btn {
+          height: 100%;
+          min-width: 28px;
+          .btn {
+            min-width: 28px;
+            border-left: var(--slick-editor-modal-close-btn-border-left, v.$slick-editor-modal-close-btn-border-left);
+            height: var(--slick-editor-modal-input-editor-height, v.$slick-editor-modal-input-editor-height);
+            border-radius: var(--slick-editor-modal-close-btn-border-radius, v.$slick-editor-modal-close-btn-border-radius);
+          }
+        }
+      }
+      .vanilla-picker.form-control {
+        cursor: pointer;
+        background-color: var(--slick-date-input-bg-color, v.$slick-date-input-bg-color);
+        &:disabled {
+          cursor: initial;
+        }
+      }
+      .slider-value {
+        height: var(--slick-editor-modal-slider-editor-value-height, v.$slick-editor-modal-slider-editor-value-height);
+        min-width: 28px;
+        .input-group-text {
+          min-height: var(--slick-editor-modal-slider-editor-value-min-height, v.$slick-editor-modal-slider-editor-value-min-height);
+          min-width: 28px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+
+      &.modified {
+        input,
+        .slick-large-editor-text,
+        .ms-choice,
+        .checkbox-editor-container {
+          border: var(--slick-editor-modal-detail-container-border-modified, v.$slick-editor-modal-detail-container-border-modified);
+          border-width: var(
+            --slick-editor-modal-detail-container-border-width-modified,
+            v.$slick-editor-modal-detail-container-border-width-modified
+          );
+        }
+      }
+      &.invalid {
+        input,
+        .slick-large-editor-text {
+          border: var(--slick-editor-modal-detail-container-border-invalid, v.$slick-editor-modal-detail-container-border-invalid);
+        }
+      }
+    }
+
+    .item-details-editor-container,
+    .item-details-editor-container .form-control {
+      &:disabled,
+      &.disabled {
+        background-color: var(--slick-editor-input-disabled-color, v.$slick-editor-input-disabled-color);
+      }
+    }
+
+    .item-details-validation {
+      color: var(--slick-editor-modal-validation-color, v.$slick-editor-modal-validation-color);
+      font-size: var(--slick-editor-modal-validation-font-size, v.$slick-editor-modal-validation-font-size);
+      font-style: var(--slick-editor-modal-validation-font-style, v.$slick-editor-modal-validation-font-style);
+      font-weight: var(--slick-editor-modal-validation-font-weight, v.$slick-editor-modal-validation-font-weight);
+      line-height: var(--slick-editor-modal-validation-line-height, v.$slick-editor-modal-validation-line-height);
+      margin-left: var(--slick-editor-modal-validation-margin-left, v.$slick-editor-modal-validation-margin-left);
+      min-height: var(--slick-editor-modal-validation-min-height, v.$slick-editor-modal-validation-min-height);
+    }
+  }
+}
+
+// Dark Mode
+// -----------
+.slick-dark-mode {
+  --slick-editor-modal-default-btn-disabled-bg-color: #3f3f3f;
+  --slick-editor-modal-default-btn-disabled-color: #5b5b5b;
+  --slick-editor-modal-close-btn-border-left: var(--slick-base-dark-menu-border);
+  --slick-editor-modal-footer-btn-border: var(--slick-base-dark-menu-item-border);
+  --slick-editor-modal-footer-btn-border-hover-color: var(--slick-button-hover-border-color);
+  --slick-editor-modal-container-bg-color: #333333;
+  --slick-editor-modal-header-bg-color: #333333;
+  --slick-editor-modal-footer-bg-color: #333333;
+  --slick-editor-modal-detail-label-color: #abaaaa;
+  --slick-editor-modal-footer-btn-text-color-hover: #eeeeee;
+  --slick-editor-modal-container-border: var(--slick-base-dark-menu-border);
+  --slick-editor-modal-header-border-bottom: var(--slick-base-dark-menu-border);
+  --slick-editor-modal-footer-border-top: var(--slick-base-dark-menu-border);
+  --slick-editor-modal-input-editor-border: var(--slick-base-dark-menu-border);
+  --slick-editor-modal-checkbox-editor-border: var(--slick-base-dark-menu-border);
+  --slick-editor-modal-large-editor-border: var(--slick-base-dark-menu-border);
+  --slick-editor-modal-select-editor-border: var(--slick-base-dark-menu-border);
+  --slick-editor-modal-container-box-shadow: 0 0 2px #606060;
+  --slick-editor-modal-reset-btn-bg-color: #383838;
+  --slick-editor-modal-close-btn-bg-color: transparent;
+  --slick-editor-modal-close-btn-color: #bababa;
+  --slick-editor-modal-reset-btn-color: #bababa;
+  --slick-editor-modal-detail-container-border-invalid: 1px solid var(--slick-base-dark-invalid-color);
+  --slick-editor-modal-detail-label-color-invalid: var(--slick-base-dark-invalid-color);
+  --slick-editor-modal-title-font-color: var(--slick-font-color);
+  --slick-editor-modal-validation-color: var(--slick-base-dark-invalid-color);
+  --slick-editor-modal-validation-summary-color: var(--slick-base-dark-invalid-color);
+  --slick-editor-modal-text-color: var(--slick-base-dark-text-color);
+}

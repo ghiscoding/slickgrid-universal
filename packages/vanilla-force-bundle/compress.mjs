@@ -2,6 +2,7 @@ import { existsSync, globSync, mkdirSync, readFileSync, statSync, writeFileSync 
 import { parseArgs } from 'node:util';
 import { strToU8, zip } from 'fflate';
 import normalizePath from 'normalize-path';
+import { mergePackageStyles } from './merge-package-styles.mjs';
 
 const inputFolder1 = './dist/bundle';
 const inputFolder2 = '../common/dist/styles';
@@ -35,12 +36,28 @@ const files = [
 const styleFiles = globSync('../common/dist/styles/**/*.*');
 styleFiles.forEach((file) => {
   const [styleName] = file.match(/(styles.*)/gi) || [];
-  files.push({ name: normalizePath(styleName), path: normalizePath(file) });
+  files.push({ name: normalizePath(styleName), path: normalizePath(file), content: getThemeCssWithOptionalStyles(file) });
 });
+
+/** the bundle includes optional packages, so their styling must also be part of every theme CSS file */
+function getThemeCssWithOptionalStyles(file) {
+  const [, theme] = normalizePath(file).match(/css\/slickgrid-theme-(\w+)(?:\.lite)?\.css$/) || [];
+  if (theme) {
+    const themeCss = readFileSync(file, 'utf8');
+    const optionalCss = [
+      `../composite-editor-component/dist/styles/css/slick-composite-editor-${theme}.css`,
+      `../custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-${theme}.css`,
+    ]
+      .map((cssFile) => readFileSync(cssFile, 'utf8'))
+      .join('\n');
+
+    return mergePackageStyles(themeCss, optionalCss, file);
+  }
+}
 
 let zipObj = {}; // create an object tree of the zip folders/files structure
 let left = files.length;
-const fileToU8 = (file, cb) => cb(strToU8(readFileSync(file.path)));
+const fileToU8 = (file, cb) => cb(strToU8(file.content ?? readFileSync(file.path)));
 
 // Yet again, this is necessary for parallelization.
 let processFile = (file) => {
