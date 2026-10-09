@@ -1,5 +1,5 @@
 {
-  "name": "@slickgrid-universal/row-detail-view-plugin",
+  "name": "@slickgrid-universal/row-detail-plugin",
   "version": "10.11.3",
   "description": "SlickRowDetail plugin - A plugin to add Row Detail Panel",
   "type": "module",
@@ -31,7 +31,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
-    "directory": "packages/row-detail-view-plugin"
+    "directory": "packages/row-detail-plugin"
   },
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"

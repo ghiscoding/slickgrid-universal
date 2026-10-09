@@ -92,7 +92,7 @@ import {
   Editors,
   ExtensionName,
 } from '@slickgrid-universal/common';
-import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import { SlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
 
 export default class Example21 {
   gridOptions!: GridOption;

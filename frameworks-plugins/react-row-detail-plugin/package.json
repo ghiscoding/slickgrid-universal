@@ -41,7 +41,7 @@
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
-    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/row-detail-plugin": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:",
     "slickgrid-react": "workspace:*",
