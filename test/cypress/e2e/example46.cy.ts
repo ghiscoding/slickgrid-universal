@@ -50,6 +50,39 @@ describe('Example 46 - RTL (Right-to-Left)', () => {
     });
   });
 
+  describe('Column Reordering', () => {
+    it('should reorder center headers in RTL while preserving both pinned bands', () => {
+      let centerIds: Array<string | undefined>;
+      let pinnedIds: Array<string | undefined>;
+      const pinnedSelector = '.slick-header-columns-left .slick-header-column, .slick-header-columns-right .slick-header-column';
+      cy.get(pinnedSelector).then(($headers) => {
+        pinnedIds = [...$headers].map((header) => header.dataset.id);
+      });
+      cy.get('.slick-header-columns-center .slick-header-column').then(($headers) => {
+        centerIds = [...$headers].map((header) => header.dataset.id);
+        expect(centerIds.slice(0, 2)).to.deep.equal(['start', 'finish']);
+      });
+
+      cy.get('.slick-header-columns-center [data-id="start"]').drag('.slick-header-columns-center [data-id="finish"]');
+      cy.get('.slick-header-columns-center .slick-header-column').should(($headers) => {
+        expect([...$headers].map((header) => header.dataset.id)).to.deep.equal(['finish', 'start', ...centerIds.slice(2)]);
+      });
+      // A leading pinned header must stay in its own region when dragged across the boundary.
+      cy.get('.slick-header-columns-left [data-id="title"]').drag('.slick-header-columns-center [data-id="finish"]');
+      cy.get(pinnedSelector).should(($headers) => {
+        expect([...$headers].map((header) => header.dataset.id)).to.deep.equal(pinnedIds);
+      });
+      cy.get('.slick-header-columns-center .slick-header-column').should(($headers) => {
+        expect([...$headers].map((header) => header.dataset.id)).to.deep.equal(['finish', 'start', ...centerIds.slice(2)]);
+      });
+      // Restore the original order for the subsequent tests, which share the page state.
+      cy.get('.slick-header-columns-center [data-id="finish"]').drag('.slick-header-columns-center [data-id="start"]');
+      cy.get('.slick-header-columns-center .slick-header-column').should(($headers) => {
+        expect([...$headers].map((header) => header.dataset.id)).to.deep.equal(centerIds);
+      });
+    });
+  });
+
   describe('Configuration', () => {
     it('should have RTL class applied to grid container', () => {
       cy.get('.grid46')

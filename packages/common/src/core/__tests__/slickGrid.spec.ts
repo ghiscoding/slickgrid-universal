@@ -3576,7 +3576,7 @@ describe('SlickGrid core file', () => {
         dispatchDocumentDrag(20); // pageX < viewportLeft → scroll left
         expect(viewportTopLeft.scrollLeft).toBe(0);
 
-        vi.advanceTimersByTime(100);
+        vi.advanceTimersByTime(30);
         expect(viewportTopLeft.scrollLeft).toBe(-10);
 
         fireDragEnd(findCol(headerL, 'firstName'));
@@ -3598,7 +3598,7 @@ describe('SlickGrid core file', () => {
         dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11); // pageX > containerRight → scroll right
         expect(viewportTopLeft.scrollLeft).toBe(0);
 
-        vi.advanceTimersByTime(100);
+        vi.advanceTimersByTime(30);
         expect(viewportTopLeft.scrollLeft).toBe(10);
 
         fireDragEnd(findCol(headerL, 'firstName'));
@@ -3644,7 +3644,7 @@ describe('SlickGrid core file', () => {
         Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
         Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
         document.dispatchEvent(docDragEvt);
-        vi.advanceTimersByTime(100);
+        vi.advanceTimersByTime(30);
         expect(viewportTopLeft.scrollLeft).toBe(10);
 
         // move cursor back into safe zone → timer stops
@@ -3655,7 +3655,7 @@ describe('SlickGrid core file', () => {
         document.dispatchEvent(docDragSafe);
 
         viewportTopLeft.scrollLeft = 0;
-        vi.advanceTimersByTime(100);
+        vi.advanceTimersByTime(30);
         expect(viewportTopLeft.scrollLeft).toBe(0); // no more auto-scrolling
 
         fireDragEnd(findCol(headerL, 'firstName'));
@@ -3679,7 +3679,7 @@ describe('SlickGrid core file', () => {
         Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
         Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
         document.dispatchEvent(docDragEvt);
-        vi.advanceTimersByTime(100);
+        vi.advanceTimersByTime(30);
         expect(viewportTopLeft.scrollLeft).toBe(0); // frozen left column cannot trigger scroll
 
         fireDragEnd(frozenColEl);

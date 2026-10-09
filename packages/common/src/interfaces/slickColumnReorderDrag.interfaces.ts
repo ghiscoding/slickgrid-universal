@@ -3,18 +3,14 @@ export interface ColumnReorderDragOption {
   dragActiveClass?: string;
   /** CSS selector used to find draggable header items (default: `.slick-header-column`) */
   draggableSelector?: string;
-  /** Left header container (.slick-header-columns-left) */
-  headerLeft: HTMLElement;
-  /** Scrollable center header container when column docking uses three regions */
-  headerCenter?: HTMLElement;
-  /** Right header container (.slick-header-columns-right) */
-  headerRight: HTMLElement;
+  /** Header containers in DOM order; a column only moves within its own container */
+  headers: HTMLElement[];
   /** Grid container – used for the right-edge auto-scroll boundary */
   container: HTMLElement;
   /** Scrollable viewport – used for the left-edge boundary and actual scrolling */
   viewportScrollContainerX: HTMLElement;
-  /** Returns true when the grid has docked columns (determines which region can auto-scroll) */
-  hasFrozenColumns: () => boolean;
+  /** Returns false when this column must not auto-scroll, e.g. a pinned column (default: true) */
+  canAutoScroll?: (draggedEl: HTMLElement) => boolean;
   /** CSS class that marks a column as non-reorderable */
   unorderableColumnCssClass?: string;
   /** Dropzone selector used to detect external drop targets (default: `.slick-dropzone`) */
@@ -33,11 +29,11 @@ export interface ColumnReorderDragOption {
    */
   onDragStart?: (draggedEl: HTMLElement) => void;
   /**
-   * Called when drag ends with the new visible-column ID order read from the DOM.
-   * Docking grids also receive the separate left, center, and right band orders.
+   * Called with the reorderable header IDs after the drag and their order when the drag started.
+   * Pass both lists to `reconcileColumnOrder()` to preserve each column's original slot.
    * Responsible for applying the reorder (setColumns, triggerEvent, etc.).
    */
-  onDragEnd: (reorderedIds: string[], reorderedIdsByBand?: string[][]) => void;
+  onDragEnd: (reorderedIds: string[], originalIds: string[]) => void;
   /**
    * Called when the drag is dropped onto an external dropzone such as draggable grouping.
    */

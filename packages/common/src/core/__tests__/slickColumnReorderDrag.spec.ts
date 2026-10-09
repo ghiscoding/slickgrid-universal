@@ -52,6 +52,118 @@ describe('slickColumnReorderDrag', () => {
     expect(reconcileColumnOrder(columns, ['last'])).toEqual(columns);
   });
 
+  it('should apply a reorder to its original header slots, including a subset of columns', () => {
+    const columns = [
+      { id: 1 },
+      { id: 'center1' },
+      { id: 'fixed', reorderable: false },
+      { id: 2 },
+      { id: 'hidden', hidden: true },
+      { id: 'center2' },
+      { id: 'right' },
+    ];
+    expect(reconcileColumnOrder(columns, ['center2', 'center1'], ['center1', 'center2'])).toEqual([
+      columns[0],
+      columns[5],
+      columns[2],
+      columns[3],
+      columns[4],
+      columns[1],
+      columns[6],
+    ]);
+    expect(reconcileColumnOrder(columns, ['2', '1', 'center2', 'center1', 'right'], ['1', '2', 'center1', 'center2', 'right'])).toEqual([
+      columns[3],
+      columns[5],
+      columns[2],
+      columns[0],
+      columns[4],
+      columns[1],
+      columns[6],
+    ]);
+    expect(reconcileColumnOrder(columns, ['center2', 'center1'], ['center1', 'missing'])).toEqual(columns);
+    expect(reconcileColumnOrder(columns, ['center2', 'center1'], ['center1', 'center1'])).toEqual(columns);
+    expect(reconcileColumnOrder(columns, ['center2', 'right'], ['center1', 'center2'])).toEqual(columns);
+  });
+
+  it.each([false, true])('should avoid reversing an unequal-width swap when the pointer moves back after scrolling (rtl=%s)', (rtl) => {
+    const header = document.createElement('div');
+    header.style.direction = rtl ? 'rtl' : 'ltr';
+    document.body.appendChild(header);
+    const narrow = createHeaderColumn('narrow');
+    const wide = createHeaderColumn('wide');
+    header.append(narrow, wide);
+    // Measure the current order, as a browser does after a DOM swap or horizontal scroll.
+    vi.spyOn(narrow, 'getBoundingClientRect').mockImplementation(
+      () => new DOMRect(header.firstElementChild === narrow ? (rtl ? 200 : 0) : rtl ? 0 : 200, 0, 100, 20)
+    );
+    vi.spyOn(wide, 'getBoundingClientRect').mockImplementation(
+      () => new DOMRect(header.firstElementChild === wide ? (rtl ? 100 : 0) : rtl ? 0 : 100, 0, 200, 20)
+    );
+    const onDragEnd = vi.fn();
+    const instance = setupColumnReorderDrag({ headers: [header], container: header, viewportScrollContainerX: header, onDragEnd });
+    narrow.dispatchEvent(createDragEvent('dragstart', { clientX: rtl ? 250 : 50, clientY: 10 }));
+    wide.dispatchEvent(createDragEvent('dragover', { clientX: rtl ? 110 : 190, clientY: 10 }));
+    expect([...header.children]).toEqual([narrow, wide]);
+    wide.dispatchEvent(createDragEvent('dragover', { clientX: rtl ? 90 : 210, clientY: 10 }));
+    expect([...header.children]).toEqual([wide, narrow]);
+    // The pointer can move back over the wider target without undoing the swap.
+    wide.dispatchEvent(createDragEvent('dragover', { clientX: rtl ? 110 : 190, clientY: 10 }));
+    expect([...header.children]).toEqual([wide, narrow]);
+    narrow.dispatchEvent(createDragEvent('dragend'));
+    expect(onDragEnd).toHaveBeenCalledWith(['wide', 'narrow'], ['narrow', 'wide']);
+    instance.destroy();
+  });
+
+  it.each(['native', 'touch'])('should reverse auto-scroll without reentering the viewport and ignore terminal native coordinates (%s)', (mode) => {
+    vi.useFakeTimers();
+    const header = document.createElement('div');
+    const viewport = document.createElement('div');
+    const column = createHeaderColumn('column');
+    header.append(column);
+    Object.defineProperty(header, 'clientWidth', { configurable: true, value: 300 });
+    const instance = setupColumnReorderDrag({ headers: [header], container: header, viewportScrollContainerX: viewport, onDragEnd: vi.fn() });
+    const descriptor = Object.getOwnPropertyDescriptor(document, 'elementFromPoint');
+    Object.defineProperty(document, 'elementFromPoint', { configurable: true, value: vi.fn(() => column) });
+    const move = (x: number, y = 10) => {
+      document.dispatchEvent(
+        mode === 'native'
+          ? createDragEvent('drag', { pageX: x, clientX: x, clientY: y })
+          : createTouchEvent('touchmove', { touches: [{ pageX: x, clientX: x, clientY: y }] })
+      );
+    };
+    try {
+      column.dispatchEvent(
+        mode === 'native' ? createDragEvent('dragstart') : createTouchEvent('touchstart', { touches: [{ clientX: 10, clientY: 10, pageX: 10 }] })
+      );
+      move(400);
+      vi.advanceTimersByTime(30);
+      expect(viewport.scrollLeft).toBe(10);
+      move(400);
+      vi.advanceTimersByTime(30);
+      expect(viewport.scrollLeft).toBe(20);
+      if (mode === 'native') {
+        move(0, 0);
+        vi.advanceTimersByTime(30);
+        expect(viewport.scrollLeft).toBe(30);
+      }
+      const beforeReverse = viewport.scrollLeft;
+      move(-20);
+      vi.advanceTimersByTime(30);
+      expect(viewport.scrollLeft).toBe(beforeReverse - 10);
+      move(100);
+      vi.advanceTimersByTime(60);
+      expect(viewport.scrollLeft).toBe(beforeReverse - 10);
+    } finally {
+      instance.destroy();
+      if (descriptor) {
+        Object.defineProperty(document, 'elementFromPoint', descriptor);
+      } else {
+        Reflect.deleteProperty(document, 'elementFromPoint');
+      }
+      vi.useRealTimers();
+    }
+  });
+
   it('should reorder noncontiguous bands while preserving hidden, fixed, and numeric column IDs', () => {
     const columns = [
       { id: 1 },
@@ -102,10 +214,8 @@ describe('slickColumnReorderDrag', () => {
     const instance = setupColumnReorderDrag({
       container,
       viewportScrollContainerX: viewport,
-      headerLeft,
-      headerCenter,
-      headerRight,
-      hasFrozenColumns: () => true,
+      headers: [headerLeft, headerCenter, headerRight],
+      canAutoScroll: (column) => headerCenter.contains(column),
       onDragEnd,
     });
     const start = (element: HTMLElement) => {
@@ -135,20 +245,20 @@ describe('slickColumnReorderDrag', () => {
       for (const pinned of [left, right]) {
         start(pinned);
         move(1000, pinned);
-        vi.advanceTimersByTime(100);
+        vi.advanceTimersByTime(30);
         expect(viewport.scrollLeft).toBe(0);
         end(pinned);
       }
       start(first);
       move(1000, last);
-      vi.advanceTimersByTime(100);
+      vi.advanceTimersByTime(30);
       expect(viewport.scrollLeft).toBe(10);
       // A pinned target must never receive a column from the center band.
       headerRight.dispatchEvent(createDragEvent('dragover', { target: right, clientX: 1000 }));
       expect(first.parentElement).toBe(headerCenter);
       headerCenter.insertBefore(last, first);
       end(first);
-      expect(onDragEnd).toHaveBeenLastCalledWith(['left', 'last', 'first', 'right'], [['left'], ['last', 'first'], ['right']]);
+      expect(onDragEnd).toHaveBeenLastCalledWith(['left', 'last', 'first', 'right'], ['left', 'first', 'last', 'right']);
       instance.destroy();
       expect([left, first, last, right].every((column) => !column.draggable)).toBe(true);
     } finally {
@@ -172,11 +282,9 @@ describe('slickColumnReorderDrag', () => {
     headerLeft.append(orderable, unorderable);
 
     const instance = setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       unorderableColumnCssClass: 'unorderable',
       onDragEnd: vi.fn(),
     });
@@ -198,11 +306,9 @@ describe('slickColumnReorderDrag', () => {
     const onDragEnd = vi.fn();
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd,
     });
 
@@ -227,11 +333,9 @@ describe('slickColumnReorderDrag', () => {
 
     const onDragStart = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       dragStartFilter: '.slick-header-menu-button',
       onDragStart,
       onDragEnd: vi.fn(),
@@ -263,11 +367,9 @@ describe('slickColumnReorderDrag', () => {
 
     const onDragStart = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       dragStartFilter: '.no-reorder-handle',
       onDragStart,
       onDragEnd: vi.fn(),
@@ -297,11 +399,9 @@ describe('slickColumnReorderDrag', () => {
     const onDragStart = vi.fn();
     const dragStartFilter = vi.fn(() => true);
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       dragStartFilter,
       onDragStart,
       onDragEnd: vi.fn(),
@@ -330,11 +430,9 @@ describe('slickColumnReorderDrag', () => {
     headerLeft.append(target);
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 
@@ -358,11 +456,9 @@ describe('slickColumnReorderDrag', () => {
 
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd,
     });
 
@@ -392,7 +488,7 @@ describe('slickColumnReorderDrag', () => {
 
     const dragEndEvt = createDragEvent('dragend');
     firstName.dispatchEvent(dragEndEvt);
-    expect(onDragEnd).toHaveBeenCalledWith(['firstName', 'lastName', 'age']);
+    expect(onDragEnd).toHaveBeenCalledWith(['firstName', 'lastName', 'age'], ['firstName', 'lastName', 'age']);
   });
 
   it('should ignore dragover when target is the same dragged header element', () => {
@@ -405,11 +501,9 @@ describe('slickColumnReorderDrag', () => {
     headerLeft.append(firstName, lastName);
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 
@@ -435,13 +529,12 @@ describe('slickColumnReorderDrag', () => {
     const lastName = createHeaderColumn('lastName');
     const age = createHeaderColumn('age');
     headerLeft.append(firstName, lastName, age);
+    vi.spyOn(firstName, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 40, 20));
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 
@@ -483,11 +576,9 @@ describe('slickColumnReorderDrag', () => {
     headerLeft.append(firstName, lastName);
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 
@@ -526,11 +617,9 @@ describe('slickColumnReorderDrag', () => {
     headerLeft.append(firstName);
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 
@@ -574,11 +663,9 @@ describe('slickColumnReorderDrag', () => {
     const onDragEnd = vi.fn();
     const onDrop = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd,
       onDrop,
     });
@@ -616,6 +703,7 @@ describe('slickColumnReorderDrag', () => {
     const firstName = createHeaderColumn('firstName');
     const lastName = createHeaderColumn('lastName');
     headerLeft.append(firstName, lastName);
+    vi.spyOn(firstName, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 40, 20));
 
     vi.spyOn(lastName, 'getBoundingClientRect').mockReturnValue({
       left: 100,
@@ -635,11 +723,9 @@ describe('slickColumnReorderDrag', () => {
 
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd,
     });
 
@@ -648,7 +734,7 @@ describe('slickColumnReorderDrag', () => {
     document.dispatchEvent(createMouseEvent('mouseup', { clientX: 139, clientY: 10 }));
 
     expect(Array.from(headerLeft.children).map((el) => (el as HTMLElement).dataset.id)).toEqual(['lastName', 'firstName']);
-    expect(onDragEnd).toHaveBeenCalledWith(['lastName', 'firstName']);
+    expect(onDragEnd).toHaveBeenCalledWith(['lastName', 'firstName'], ['firstName', 'lastName']);
 
     Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
   });
@@ -678,11 +764,9 @@ describe('slickColumnReorderDrag', () => {
     const onDragEnd = vi.fn();
     const onDrop = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd,
       onDrop,
     });
@@ -705,6 +789,7 @@ describe('slickColumnReorderDrag', () => {
     const firstName = createHeaderColumn('firstName');
     const lastName = createHeaderColumn('lastName');
     headerLeft.append(firstName, lastName);
+    vi.spyOn(firstName, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 40, 20));
 
     vi.spyOn(lastName, 'getBoundingClientRect').mockReturnValue({
       left: 100,
@@ -725,11 +810,9 @@ describe('slickColumnReorderDrag', () => {
 
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd,
     });
 
@@ -754,7 +837,7 @@ describe('slickColumnReorderDrag', () => {
     );
 
     expect(Array.from(headerLeft.children).map((el) => (el as HTMLElement).dataset.id)).toEqual(['lastName', 'firstName']);
-    expect(onDragEnd).toHaveBeenCalledWith(['lastName', 'firstName']);
+    expect(onDragEnd).toHaveBeenCalledWith(['lastName', 'firstName'], ['firstName', 'lastName']);
   });
 
   it('should call onDrop on touch fallback when dropped over a dropzone', () => {
@@ -776,11 +859,9 @@ describe('slickColumnReorderDrag', () => {
     const onDragEnd = vi.fn();
     const onDrop = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd,
       onDrop,
     });
@@ -840,11 +921,10 @@ describe('slickColumnReorderDrag', () => {
 
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => true,
+      canAutoScroll: (column) => headerRight.contains(column),
       onDragEnd,
     });
 
@@ -865,7 +945,7 @@ describe('slickColumnReorderDrag', () => {
     firstName.dispatchEvent(createDragEvent('dragend', { clientX: 240, clientY: 10 }));
     // Same order (no cross-boundary reorder occurred) — onDragEnd receives all column IDs
     // from both headers; setColumns is a no-op at the grid level (same order).
-    expect(onDragEnd).toHaveBeenCalledWith(['firstName', 'start']);
+    expect(onDragEnd).toHaveBeenCalledWith(['firstName', 'start'], ['firstName', 'start']);
   });
 
   it('should not allow dragging a column from headerRight into headerLeft (frozen boundary uncrossable)', () => {
@@ -896,11 +976,10 @@ describe('slickColumnReorderDrag', () => {
 
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => true,
+      canAutoScroll: (column) => headerRight.contains(column),
       onDragEnd,
     });
 
@@ -918,7 +997,7 @@ describe('slickColumnReorderDrag', () => {
     expect(headerRight.children[0]).toBe(start);
 
     start.dispatchEvent(createDragEvent('dragend', { clientX: 50, clientY: 10 }));
-    expect(onDragEnd).toHaveBeenCalledWith(['firstName', 'start']);
+    expect(onDragEnd).toHaveBeenCalledWith(['firstName', 'start'], ['firstName', 'start']);
   });
 
   // ── Deviation 2: finalize on `drop` as well as `dragend` ─────────────────
@@ -950,11 +1029,9 @@ describe('slickColumnReorderDrag', () => {
 
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd,
     });
 
@@ -973,7 +1050,7 @@ describe('slickColumnReorderDrag', () => {
     headerLeft.dispatchEvent(dropEvt);
 
     expect(onDragEnd).toHaveBeenCalledTimes(1);
-    expect(onDragEnd).toHaveBeenCalledWith(expect.arrayContaining(['lastName', 'firstName']));
+    expect(onDragEnd).toHaveBeenCalledWith(expect.arrayContaining(['lastName', 'firstName']), ['firstName', 'lastName']);
   });
 
   it('should not double-finalize when both drop and dragend fire (real browser sequence)', () => {
@@ -1003,11 +1080,9 @@ describe('slickColumnReorderDrag', () => {
 
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd,
     });
 
@@ -1048,11 +1123,9 @@ describe('slickColumnReorderDrag', () => {
     const onDragStart = vi.fn();
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragStart,
       onDragEnd,
     });
@@ -1082,11 +1155,9 @@ describe('slickColumnReorderDrag', () => {
     const onDragStart = vi.fn();
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragStart,
       onDragEnd,
     });
@@ -1130,11 +1201,9 @@ describe('slickColumnReorderDrag', () => {
     const onDragStart = vi.fn();
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragStart,
       onDragEnd,
     });
@@ -1173,11 +1242,9 @@ describe('slickColumnReorderDrag', () => {
 
     const onDragEnd = vi.fn();
     const instance = setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd,
     });
 
@@ -1197,7 +1264,7 @@ describe('slickColumnReorderDrag', () => {
     );
     firstName.dispatchEvent(createDragEvent('dragend', { clientX: 20, clientY: 20 }));
 
-    expect(onDragEnd).toHaveBeenCalledWith(['firstName']);
+    expect(onDragEnd).toHaveBeenCalledWith(['firstName'], ['firstName']);
 
     instance.destroy();
   });
@@ -1216,11 +1283,9 @@ describe('slickColumnReorderDrag', () => {
     document.body.append(dropzone, foreignParent);
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 
@@ -1256,11 +1321,9 @@ describe('slickColumnReorderDrag', () => {
 
     const onDrop = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
       onDrop,
     });
@@ -1313,11 +1376,9 @@ describe('slickColumnReorderDrag', () => {
     const onDrop = vi.fn();
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       dropzoneSelector: '.grid-a .slick-dropzone',
       onDrop,
       onDragEnd,
@@ -1334,7 +1395,7 @@ describe('slickColumnReorderDrag', () => {
     firstName.dispatchEvent(createDragEvent('dragend', { clientX: 25, clientY: 25 }));
 
     expect(onDrop).not.toHaveBeenCalled();
-    expect(onDragEnd).toHaveBeenCalledWith(['firstName']);
+    expect(onDragEnd).toHaveBeenCalledWith(['firstName'], ['firstName']);
   });
 
   it('should keep dropzone active on dragleave when relatedTarget is null but pointer is still over dropzone', () => {
@@ -1359,11 +1420,9 @@ describe('slickColumnReorderDrag', () => {
     const onDrop = vi.fn();
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd,
       onDrop,
     });
@@ -1402,11 +1461,9 @@ describe('slickColumnReorderDrag', () => {
     headerLeft.append(firstName, lastName);
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 
@@ -1449,11 +1506,9 @@ describe('slickColumnReorderDrag', () => {
     });
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 
@@ -1493,11 +1548,9 @@ describe('slickColumnReorderDrag', () => {
     });
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 
@@ -1540,11 +1593,9 @@ describe('slickColumnReorderDrag', () => {
     const onDrop = vi.fn();
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDrop,
       onDragEnd,
     });
@@ -1582,11 +1633,9 @@ describe('slickColumnReorderDrag', () => {
     const onDragStart = vi.fn();
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragStart,
       onDragEnd,
     });
@@ -1637,11 +1686,9 @@ describe('slickColumnReorderDrag', () => {
     const onDrop = vi.fn();
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDrop,
       onDragEnd,
     });
@@ -1689,11 +1736,9 @@ describe('slickColumnReorderDrag', () => {
     const onDrop = vi.fn();
     const onDragEnd = vi.fn();
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDrop,
       onDragEnd,
     });
@@ -1703,7 +1748,7 @@ describe('slickColumnReorderDrag', () => {
     document.dispatchEvent(createMouseEvent('mouseup', { clientX: 20, clientY: 20 }));
 
     expect(onDrop).not.toHaveBeenCalled();
-    expect(onDragEnd).toHaveBeenCalledWith(['firstName']);
+    expect(onDragEnd).toHaveBeenCalledWith(['firstName'], ['firstName']);
     expect(elementFromPointMock).toHaveBeenCalledTimes(2);
 
     Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
@@ -1727,11 +1772,9 @@ describe('slickColumnReorderDrag', () => {
     const removeRightSpy = vi.spyOn(headerRight, 'removeEventListener');
 
     const instance = setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 
@@ -1760,11 +1803,9 @@ describe('slickColumnReorderDrag', () => {
     Object.defineProperty(document, 'elementFromPoint', { configurable: true, value: vi.fn(() => firstName) });
 
     const instance = setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 
@@ -1795,11 +1836,9 @@ describe('slickColumnReorderDrag', () => {
     const onDragEnd = vi.fn();
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragStart,
       onDragEnd,
     });
@@ -2134,18 +2173,16 @@ describe('slickColumnReorderDrag', () => {
     const setIntervalSpy = vi.spyOn(globalThis, 'setInterval').mockReturnValue(99 as any);
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 
     firstName.dispatchEvent(createMouseEvent('mousedown', { clientX: 10, clientY: 10, target: firstName }));
     document.dispatchEvent(createMouseEvent('mousemove', { clientX: 0, clientY: 10, pageX: -5 }));
 
-    expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 100);
+    expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 30);
 
     document.dispatchEvent(createMouseEvent('mouseup', { clientX: 0, clientY: 10 }));
     Object.defineProperty(globalThis, 'navigator', { configurable: true, value: originalNavigator });
@@ -2172,11 +2209,9 @@ describe('slickColumnReorderDrag', () => {
     const clearIntervalSpy = vi.spyOn(globalThis, 'clearInterval');
 
     setupColumnReorderDrag({
-      headerLeft,
-      headerRight,
+      headers: [headerLeft, headerRight],
       container,
       viewportScrollContainerX: viewport,
-      hasFrozenColumns: () => false,
       onDragEnd: vi.fn(),
     });
 

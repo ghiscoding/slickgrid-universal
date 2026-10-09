@@ -550,6 +550,22 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getColumns().map((column) => column.id)).toEqual(['a', 'b', 'c', 'd']);
   });
 
+  it('restores the shared scroller position when a drop precedes its scroll event', () => {
+    const slickGrid = createGrid({ enableColumnReorder: true, pinning: { columns: { left: ['a'], right: ['d'] } } });
+    const item = slickGrid.getHeaderColumn('b');
+    const center = item.parentElement!;
+    const scroller = container.querySelector<HTMLElement>('.slick-horizontal-scroller')!;
+    const scrollToXSpy = vi.spyOn(slickGrid, 'scrollToX').mockImplementation(() => undefined);
+    fireDrag(item, 'dragstart');
+    center.insertBefore(slickGrid.getHeaderColumn('c'), item);
+    scroller.scrollLeft = 125;
+    expect((slickGrid as any).scrollLeft).toBe(0);
+    fireDrag(item, 'dragend');
+
+    expect(slickGrid.getColumns().map((column) => column.id)).toEqual(['a', 'c', 'b', 'd']);
+    expect(scrollToXSpy).toHaveBeenCalledWith(125);
+  });
+
   it('keeps visible columns in definition order without column docking', () => {
     const slickGrid = createGrid();
 

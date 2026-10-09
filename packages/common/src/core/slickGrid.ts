@@ -2391,14 +2391,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     let prevColumnIds: Array<string | number> = [];
     let columnsBeforeDrag: C[] | undefined;
+    const headers = this.usesDockingChromeRegions()
+      ? [
+          this.getDockingChromeRegion('header', 'left'),
+          this.getDockingChromeRegion('header', 'center'),
+          this.getDockingChromeRegion('header', 'right'),
+        ]
+      : [this._headerL];
 
     this._columnReorderDrag = setupColumnReorderDrag({
-      headerLeft: this.getDockingChromeRegion('header', 'left'),
-      headerCenter: this.usesDockingChromeRegions() ? this.getDockingChromeRegion('header', 'center') : undefined,
-      headerRight: this.getDockingChromeRegion('header', 'right'),
+      headers,
       container: this._container,
       viewportScrollContainerX: this._viewportScrollContainerX,
-      hasFrozenColumns: () => this.hasDockedColumns(),
+      canAutoScroll: (draggedEl) => !this.hasDockedColumns() || this.getDockingChromeRegion('header', 'center').contains(draggedEl),
       draggableSelector: '.slick-header-column',
       dragActiveClass: 'slick-header-column-active',
       unorderableColumnCssClass: this._options.unorderableColumnCssClass,
@@ -2406,14 +2411,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         prevColumnIds = this.columns.map((c) => c.id);
         columnsBeforeDrag = [...this.columns];
       },
-      onDragEnd: (reorderedIds, reorderedIdsByBand) => {
+      onDragEnd: (reorderedIds, originalIds) => {
         //  onDragStart never ran (drag started outside a column) or when editing a cell then cancel the reorder operation
         if (!columnsBeforeDrag || !this.getEditorLock()?.commitCurrentEdit()) {
           return;
         }
 
-        const prevScrollLeft = this.scrollLeft;
-        const finalColumns = reconcileColumnOrder(columnsBeforeDrag, reorderedIdsByBand ?? reorderedIds);
+        // The drop can precede a scroll event that updates the cached position.
+        const prevScrollLeft = this._viewportScrollContainerX.scrollLeft;
+        const finalColumns = reconcileColumnOrder(columnsBeforeDrag, reorderedIds, originalIds);
 
         const finalColumnIds = finalColumns.map((col) => col.id);
         if (!this.arrayEquals(prevColumnIds, finalColumnIds)) {

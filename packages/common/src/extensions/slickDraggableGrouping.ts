@@ -316,16 +316,13 @@ export class SlickDraggableGrouping {
       }
     };
 
-    const headerLeft = this.gridContainer.querySelector<HTMLDivElement>(`.${uid} .slick-header-columns.slick-header-columns-left`)!;
+    const headers = Array.from(this.gridContainer.querySelectorAll<HTMLElement>(`.${uid} .slick-header-columns`));
+    const centerHeader = headers.find((header) => header.classList.contains('slick-header-columns-center'));
     this._columnReorderDrag = setupColumnReorderDrag({
-      headerLeft,
-      headerCenter:
-        this.gridContainer.querySelector<HTMLDivElement>(`.${uid} .slick-header-columns.slick-header-columns-center`) ?? undefined,
-      headerRight:
-        this.gridContainer.querySelector<HTMLDivElement>(`.${uid} .slick-header-columns.slick-header-columns-right`) ?? headerLeft,
+      headers,
       container: this.gridContainer,
       viewportScrollContainerX: this.gridContainer.querySelector<HTMLElement>('.slick-horizontal-scroller') ?? this.gridContainer,
-      hasFrozenColumns: () => this.gridContainer.querySelector('.slick-header-columns-center') !== null,
+      canAutoScroll: (draggedEl) => !centerHeader || centerHeader.contains(draggedEl),
       draggableSelector: '.slick-header-column',
       unorderableColumnCssClass: gridOptions?.unorderableColumnCssClass,
       dropzoneSelector: `.${uid} .${DROPZONE_CLASS}`,
@@ -347,15 +344,20 @@ export class SlickDraggableGrouping {
           this.handleGroupByDrop(dropzoneElm, headerColumnElm);
         }
       },
-      onDragEnd: (reorderedIds, reorderedIdsByBand) => {
+      onDragEnd: (reorderedIds, originalIds) => {
         restoreDropzoneState();
 
         if (!grid.getEditorLock().commitCurrentEdit()) {
           return;
         }
 
-        const finalReorderedColumns = reconcileColumnOrder(grid.getColumns(), reorderedIdsByBand ?? reorderedIds);
+        const scroller = this.gridContainer.querySelector<HTMLElement>('.slick-horizontal-scroller');
+        const prevScrollLeft = scroller?.scrollLeft;
+        const finalReorderedColumns = reconcileColumnOrder(grid.getColumns(), reorderedIds, originalIds);
         setColumns.call(grid, finalReorderedColumns);
+        if (prevScrollLeft !== undefined) {
+          grid.scrollToX(prevScrollLeft);
+        }
         trigger.call(grid, grid.onColumnsReordered, { grid, impactedColumns: finalReorderedColumns });
         setupColumnResize.call(grid);
       },

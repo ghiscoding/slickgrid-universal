@@ -56,6 +56,7 @@ const gridStub = {
   getUID: () => GRID_UID,
   invalidate: vi.fn(),
   registerPlugin: vi.fn(),
+  scrollToX: vi.fn(),
   updateColumnHeader: vi.fn(),
   onColumnsReordered: new SlickEvent(),
   onHeaderCellRendered: new SlickEvent(),
@@ -398,6 +399,7 @@ describe('Draggable Grouping Plugin', () => {
       plugin.init(gridStub, { ...addonOptions });
       const center = mockHeaderCenterDiv;
       const scrollbar = createDomElement('div', { className: 'slick-horizontal-scroller' }, gridContainerDiv);
+      scrollbar.scrollLeft = 120;
       createDomElement('div', { className: 'slick-header-column', dataset: { id: 'left1' } }, mockHeaderLeftDiv1);
       createDomElement('div', { className: 'slick-header-column', dataset: { id: 'left2' } }, mockHeaderLeftDiv1);
       createDomElement('div', { className: 'slick-header-column', dataset: { id: 'right' } }, mockHeaderLeftDiv2);
@@ -409,11 +411,12 @@ describe('Draggable Grouping Plugin', () => {
         fireDragStartOnHeader(first);
         const drag = new MouseEvent('drag', { clientX: 1000, clientY: 10 });
         document.dispatchEvent(drag);
-        vi.advanceTimersByTime(100);
-        expect(scrollbar.scrollLeft).toBe(10);
+        vi.advanceTimersByTime(30);
+        expect(scrollbar.scrollLeft).toBe(130);
         center.insertBefore(second, first);
         fireDragEndOnHeader(first);
         expect(setColumnsSpy).toHaveBeenCalledWith([columns[0], columns[4], columns[2], columns[3], columns[1], columns[5]]);
+        expect(gridStub.scrollToX).toHaveBeenLastCalledWith(130);
       } finally {
         vi.useRealTimers();
       }

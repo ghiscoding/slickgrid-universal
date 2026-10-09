@@ -34,31 +34,33 @@ const getPointerPos = (e: DragEvent | MouseEvent | TouchEvent) => {
 
 const isRtl = (el: HTMLElement): boolean => getComputedStyle(el).direction === 'rtl';
 
-/** Apply the reordered visible/movable IDs while keeping hidden and fixed columns at their original indices. */
+/** Apply a header reorder to its original column slots, preserving hidden, fixed, and other-band columns. */
 export function reconcileColumnOrder<T extends { id?: string | number; hidden?: boolean; reorderable?: boolean }>(
   columns: T[],
-  reorderedIds: string[] | string[][]
+  reorderedIds: string[] | string[][],
+  originalIds?: string[]
 ): T[] {
+  const indexById = new Map(columns.map((column, index) => [String(column.id), index]));
+  // Accept band lists from callers of the original Universal helper as well.
   const bands: string[][] = Array.isArray(reorderedIds[0]) ? (reorderedIds as string[][]) : [reorderedIds as string[]];
-  const movableColumns = columns.filter((column) => !column.hidden && column.reorderable !== false);
-  const columnMap = new Map(movableColumns.map((column) => [String(column.id), column]));
-  const reorderedColumns = bands
-    .flat()
-    .map((id) => columnMap.get(id))
-    .filter((column): column is T => !!column);
-  if (reorderedColumns.length !== movableColumns.length || new Set(reorderedColumns).size !== movableColumns.length) {
+  const movableIds = columns.filter((column) => !column.hidden && column.reorderable !== false).map((column) => String(column.id));
+  const sourceIds = originalIds ?? (bands.length > 1 ? bands.flatMap((ids) => movableIds.filter((id) => ids.includes(id))) : movableIds);
+  const slots = sourceIds.map((id) => indexById.get(id));
+  const moved = bands.flat().map((id) => indexById.get(id));
+  const slotSet = new Set(slots);
+  const sameColumns =
+    moved.length === slots.length &&
+    slotSet.size === slots.length &&
+    !slotSet.has(undefined) &&
+    new Set(moved).size === moved.length &&
+    moved.every((index) => slotSet.has(index));
+  if (!sameColumns) {
     return [...columns];
   }
 
-  const bandById = new Map(bands.flatMap((ids, band) => ids.map((id) => [id, band] as const)));
-  const bandIndexes = bands.map(() => 0);
-  return columns.map((column) => {
-    if (column.hidden || column.reorderable === false) {
-      return column;
-    }
-    const band = bandById.get(String(column.id))!;
-    return columnMap.get(bands[band][bandIndexes[band]++])!;
-  });
+  const finalColumns = [...columns];
+  slots.forEach((slot, index) => (finalColumns[slot!] = columns[moved[index]!]));
+  return finalColumns;
 }
 
 /**
@@ -74,23 +76,25 @@ export function reconcileColumnOrder<T extends { id?: string | number; hidden?: 
  * @returns `{ destroy }` – call to remove all listeners and clear draggable attributes.
  */
 export function setupColumnReorderDrag(options: ColumnReorderDragOption): { destroy: () => void } {
-  const { headerLeft, headerCenter, headerRight, container, viewportScrollContainerX, unorderableColumnCssClass } = options;
-  const headers = [...new Set(headerCenter ? [headerLeft, headerCenter, headerRight] : [headerLeft, headerRight])];
-  const canAutoScroll = (target: HTMLElement) => !options.hasFrozenColumns() || (headerCenter ?? headerRight).contains(target);
+  const { container, viewportScrollContainerX, unorderableColumnCssClass } = options;
+  const headers = [...new Set(options.headers)];
   const dragActiveClass = options.dragActiveClass ?? 'slick-header-column-active';
   const draggableSelector = options.draggableSelector ?? '.slick-header-column';
   const dropzoneSelector = options.dropzoneSelector ?? '.slick-dropzone';
   const dropzoneHoverClass = options.dropzoneHoverClass ?? 'slick-dropzone-hover';
   const DRAG_THRESHOLD = 5; // pixels before we consider it a drag, not a click
-  const INTERVAL_TIME = 100; // ms for browser-edge auto-scroll
+  const AUTO_SCROLL_DISTANCE = 10;
+  const AUTO_SCROLL_INTERVAL = 30;
 
   let columnScrollTimer: ReturnType<typeof setInterval> | undefined;
+  let columnScrollDirection = 0;
+  let canAutoScroll = false;
+  let originalIds: string[] = [];
   let draggedEl: HTMLElement | null = null;
   let originalParent: Node | null = null;
   let originalNextSibling: ChildNode | null = null;
   let dropzoneTargetActive = false;
   let draggedColumnId = '';
-  let _lastClientX: number | null = null;
   let dragGhost: HTMLElement | null = null;
   let dragStartX: number | null = null;
   let dragStartY: number | null = null;
@@ -98,11 +102,26 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   let releaseBodyTextSelection: (() => void) | undefined;
 
   const isOverDropzone = (el: HTMLElement | null | undefined): boolean => !!el?.closest?.(dropzoneSelector);
-  const scrollColumnsRight = () => (viewportScrollContainerX.scrollLeft += 10);
-  const scrollColumnsLeft = () => (viewportScrollContainerX.scrollLeft -= 10);
   const stopAutoScroll = () => {
     clearInterval(columnScrollTimer);
     columnScrollTimer = undefined;
+    columnScrollDirection = 0;
+  };
+
+  const updateAutoScroll = (pageX: number) => {
+    const viewportLeft = getOffset(viewportScrollContainerX).left;
+    const containerRight = getOffset(container).left + container.clientWidth;
+    const direction = pageX > containerRight ? 1 : pageX < viewportLeft ? -1 : 0;
+    if (direction !== columnScrollDirection) {
+      stopAutoScroll();
+      columnScrollDirection = direction;
+      if (direction) {
+        columnScrollTimer = setInterval(
+          () => (viewportScrollContainerX.scrollLeft += direction * AUTO_SCROLL_DISTANCE),
+          AUTO_SCROLL_INTERVAL
+        );
+      }
+    }
   };
 
   const restoreDraggedToOriginalParent = () => {
@@ -145,9 +164,12 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     }
 
     const rect = target.getBoundingClientRect();
-    const movingRight = _lastClientX == null ? clientX >= rect.left + rect.width / 2 : clientX > _lastClientX;
-    _lastClientX = clientX;
-    const insertBefore = isRtl(targetParent) ? movingRight : !movingRight;
+    const draggedRect = draggedEl.getBoundingClientRect();
+    const targetOnRight = rect.left + rect.width / 2 > draggedRect.left + draggedRect.width / 2;
+    if (targetOnRight ? clientX <= rect.right - draggedRect.width : clientX >= rect.left + draggedRect.width) {
+      return;
+    }
+    const insertBefore = isRtl(targetParent) ? targetOnRight : !targetOnRight;
     targetParent.insertBefore(draggedEl, insertBefore ? target : target.nextSibling);
   };
 
@@ -174,29 +196,13 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   };
   headers.forEach(refreshDraggable);
 
-  const notifyDragEnd = () => {
-    const reorderedIdsByBand = headers.map(getColumnIds);
-    const reorderedIds = reorderedIdsByBand.flat();
-    if (headerCenter) {
-      options.onDragEnd(reorderedIds, reorderedIdsByBand);
-    } else {
-      options.onDragEnd(reorderedIds);
-    }
-  };
+  const getAllColumnIds = () => headers.flatMap(getColumnIds);
+  const notifyDragEnd = () => options.onDragEnd(getAllColumnIds(), originalIds);
 
   const autoScrollHandler = (e: DragEvent) => {
-    const { clientX, clientY, pageX } = e;
-    if (clientX != null && clientY != null) {
-      const containerOffset = getOffset(container);
-      const viewportLeft = getOffset(viewportScrollContainerX).left;
-      const containerRight = containerOffset.left + container.clientWidth;
-      if (!columnScrollTimer && pageX > containerRight) {
-        columnScrollTimer = setInterval(scrollColumnsRight, INTERVAL_TIME);
-      } else if (!columnScrollTimer && pageX < viewportLeft) {
-        columnScrollTimer = setInterval(scrollColumnsLeft, INTERVAL_TIME);
-      } else if (columnScrollTimer && pageX <= containerRight && pageX >= viewportLeft) {
-        stopAutoScroll();
-      }
+    // Native drag events report 0,0 when the drag ends.
+    if (e.clientX && e.clientY) {
+      updateAutoScroll(e.pageX);
     }
   };
 
@@ -211,10 +217,11 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     originalParent = null;
     originalNextSibling = null;
     draggedColumnId = '';
-    _lastClientX = null;
     dragStartX = null;
     dragStartY = null;
     pointerDragCommitted = false;
+    canAutoScroll = false;
+    originalIds = [];
     clearDropzoneTarget();
     clearDropzoneHoverClasses();
     clearFallbackGhost();
@@ -381,10 +388,11 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     clearDropzoneTarget();
     originalParent = target.parentElement;
     originalNextSibling = target.nextSibling;
+    originalIds = getAllColumnIds();
+    canAutoScroll = options.canAutoScroll?.(target) ?? true;
     if (e.type === 'dragstart') {
       options.onDragStart?.(target);
     }
-    _lastClientX = clientX;
 
     if (e.type === 'dragstart') {
       // Native HTML5 drag: configure dataTransfer and auto-scroll
@@ -407,7 +415,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
         }
       }
       // Only scrolling columns should trigger browser-edge auto-scroll.
-      if (canAutoScroll(target)) {
+      if (canAutoScroll) {
         document.addEventListener('drag', autoScrollHandler as EventListener);
       }
     } else {
@@ -454,15 +462,8 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
       e.preventDefault();
 
       // browser-edge auto-scroll
-      const containerOffset = getOffset(container);
-      const viewportLeft = getOffset(viewportScrollContainerX).left;
-      const containerRight = containerOffset.left + container.clientWidth;
-      if (canAutoScroll(draggedEl) && !columnScrollTimer && pageX > containerRight) {
-        columnScrollTimer = setInterval(scrollColumnsRight, INTERVAL_TIME);
-      } else if (canAutoScroll(draggedEl) && !columnScrollTimer && pageX < viewportLeft) {
-        columnScrollTimer = setInterval(scrollColumnsLeft, INTERVAL_TIME);
-      } else if (columnScrollTimer && pageX <= containerRight && pageX >= viewportLeft) {
-        stopAutoScroll();
+      if (canAutoScroll) {
+        updateAutoScroll(pageX);
       }
 
       const elUnder = (() => {

@@ -1067,13 +1067,13 @@ describe('Example 04 - Pinned Grid', () => {
         win.document.dispatchEvent(createDragLikeEvent('drag', dragX, startY));
       });
 
-      // Step 3: advance mocked time so the 100ms scroll interval ticks several times.
+      // Step 3: advance mocked time so the 30ms scroll interval ticks several times.
       cy.tick(350);
 
       // Auto-scroll should have moved the right viewport to the right
       cy.get('.slick-horizontal-scroller').its('0.scrollLeft').should('be.greaterThan', 0);
 
-      // Step 4: drag over "Finish" on its right half then end drag to reorder as Finish -> Start.
+      // Step 4: cross the wider "Finish" column's swap threshold, then end drag as Finish -> Start.
       cy.window().then((win) => {
         const rightHeader = win.document.querySelector('.slick-header-columns-center') as HTMLElement;
         const cols = Array.from(rightHeader?.querySelectorAll('.slick-header-column') ?? []) as HTMLElement[];
@@ -1084,7 +1084,7 @@ describe('Example 04 - Pinned Grid', () => {
         expect(finishColumnEl).to.exist;
 
         const finishRect = finishColumnEl.getBoundingClientRect();
-        const targetX = finishRect.left + finishRect.width / 2;
+        const targetX = finishRect.right - 1;
         const targetY = finishRect.top + finishRect.height / 2;
 
         finishColumnEl.dispatchEvent(createDragLikeEvent('dragenter', targetX, targetY));
