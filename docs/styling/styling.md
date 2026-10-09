@@ -69,7 +69,7 @@ Pick the file matching your theme (`default`, `bootstrap`, `fluent`, `material` 
 @import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
 @import '@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor-bootstrap.css';
 @import '@slickgrid-universal/custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-bootstrap.css';
-@import '@slickgrid-universal/row-detail-plugin/dist/styles/css/slick-row-detail-view-bootstrap.css';
+@import '@slickgrid-universal/row-detail-plugin/dist/styles/css/slick-row-detail-bootstrap.css';
 ```
 
 or import them directly from your main JS/TS file (in the same order)
@@ -77,7 +77,7 @@ or import them directly from your main JS/TS file (in the same order)
 import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
 import '@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor-bootstrap.css';
 import '@slickgrid-universal/custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-bootstrap.css';
-import '@slickgrid-universal/row-detail-plugin/dist/styles/css/slick-row-detail-view-bootstrap.css';
+import '@slickgrid-universal/row-detail-plugin/dist/styles/css/slick-row-detail-bootstrap.css';
 ```
 
 ##### with SASS
@@ -90,7 +90,7 @@ These package styles reuse the theme SASS variables, so any variables provided t
 );
 @use '@slickgrid-universal/composite-editor-component/dist/styles/sass/slick-composite-editor.scss';
 @use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/sass/slick-custom-tooltip.scss';
-@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail-view.scss';
+@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail.scss';
 ```
 
 > **Note** load the theme and optional SASS styles in the **same SCSS entry file**, with the theme first. Separate compilations cannot share SASS overrides, and SASS throws an error when a module gets configured (`with (...)`) after it was already loaded. Import only the packages you use.

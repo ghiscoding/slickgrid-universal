@@ -20,9 +20,9 @@ Import the Row Detail stylesheet after your SlickGrid theme in your application'
 
 ```scss
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
-@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail-view.scss';
+@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail.scss';
 ```
 
-For plain CSS, import `@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css` first, followed by `@slickgrid-universal/row-detail-plugin/dist/styles/css/slick-row-detail-view-bootstrap.css`. Replace `bootstrap` with your theme name (`default`, `fluent`, `material`, or `salesforce`); lite themes use the same package stylesheet.
+For plain CSS, import `@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css` first, followed by `@slickgrid-universal/row-detail-plugin/dist/styles/css/slick-row-detail-bootstrap.css`. Replace `bootstrap` with your theme name (`default`, `fluent`, `material`, or `salesforce`); lite themes use the same package stylesheet.
 
 These styles also support the Angular, Aurelia, React, and Vue Row Detail plugins. Add this base package as a direct dependency when importing its styles.

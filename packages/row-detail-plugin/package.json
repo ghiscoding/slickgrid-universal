@@ -25,7 +25,7 @@
     "build:incremental": "tsc --incremental --declaration",
     "clean": "remove dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental && pnpm run sass:bundle",
-    "sass:bundle": "node ../../scripts/build-package-styles.mjs src/styles/slick-row-detail-view.scss"
+    "sass:bundle": "node ../../scripts/build-package-styles.mjs src/styles/slick-row-detail.scss"
   },
   "browserslist": [
     "baseline widely available"

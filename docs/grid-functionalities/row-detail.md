@@ -87,7 +87,7 @@ Add `@slickgrid-universal/row-detail-plugin` as a direct dependency and import i
 
 ```scss
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
-@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail-view.scss';
+@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail.scss';
 ```
 
 See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for plain CSS imports and theme configuration details.
