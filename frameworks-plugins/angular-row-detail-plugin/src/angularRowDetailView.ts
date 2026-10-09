@@ -15,7 +15,7 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import type { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
 import { tryCatch } from '@slickgrid-universal/utils';
 import { type AngularUtilService, type GridOption } from 'angular-slickgrid';
 import { Observable, type Subject } from 'rxjs';

@@ -22,7 +22,7 @@ describe('Example 44 - Variable Row Height (provider)', { retries: 1 }, () => {
     const defaultRowHeight = 40;
 
     for (const [row, expectedHeight] of expectedHeights.entries()) {
-      cy.get(`.grid44 .slick-row[data-row=${row}]`)
+      cy.get(`.slick-row[data-row=${row}]`)
         .invoke('attr', 'style')
         .then((style = '') => {
           expect(style).to.contain(`transform: translateY(${topOf(row)}px)`);
@@ -39,12 +39,12 @@ describe('Example 44 - Variable Row Height (provider)', { retries: 1 }, () => {
   it('should keep row 90 aligned at top after clicking scroll button', () => {
     cy.get('[data-test="scroll-row-90-example44"]').click();
 
-    cy.get('.grid44 .slick-viewport-top.slick-viewport-left')
+    cy.get('.slick-vertical-scroller')
       .invoke('scrollTop')
       .then((scrollTop) => {
         expect(Number(scrollTop)).to.be.closeTo(topOf(90), 2);
       });
 
-    cy.get('.grid44 .slick-row[data-row=90]').should('exist');
+    cy.get('.slick-row[data-row=90]').should('exist');
   });
 });

@@ -247,10 +247,11 @@ export class SlickColumnPicker extends MenuBaseClass<ColumnPicker> {
     const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
     if (this._menuElm) {
       // auto-positioned menu left/right by available viewport space
-      const gridPos = this.grid.getGridPosition();
       const menuWidth = this._menuElm.clientWidth || 0;
       let menuOffsetLeft = targetEvent.pageX || 0;
-      if (gridPos?.width && menuOffsetLeft + menuWidth >= gridPos.width) {
+      const viewportRight =
+        (window.pageXOffset || document.documentElement.scrollLeft || 0) + (window.innerWidth || document.documentElement.clientWidth);
+      if (menuOffsetLeft + menuWidth >= viewportRight) {
         menuOffsetLeft = menuOffsetLeft - menuWidth;
       }
 

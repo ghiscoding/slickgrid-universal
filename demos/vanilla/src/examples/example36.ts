@@ -12,7 +12,7 @@ import {
   type GridOption,
   type Grouping,
 } from '@slickgrid-universal/common';
-import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import { SlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import { showToast } from './utilities.js';

@@ -15,6 +15,7 @@ export default class Example38 {
   gridOptions!: GridOption;
   gridContainerElm: HTMLDivElement;
   sgb: SlickVanillaGridBundle;
+  subTitleStyle = 'display: block';
 
   attached() {
     // define the grid options & columns and then create the grid itself
@@ -145,5 +146,10 @@ export default class Example38 {
       document.body.setAttribute('data-theme', 'light');
       document.querySelector('.demo-container')?.classList.remove('dark-mode');
     }
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

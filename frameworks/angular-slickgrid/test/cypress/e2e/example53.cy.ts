@@ -12,6 +12,12 @@ describe('Example 53 - Custom Filter Bar', () => {
       .each(($child, index) => expect($child.text()).to.eq(titles[index]));
   });
 
+  it('should use flex header layout while keeping the configured single title row', () => {
+    cy.get('#grid53 .slick-header-columns').should('have.css', 'display', 'flex');
+    cy.get('#grid53 .slick-header-column').first().should('have.css', 'float', 'none');
+    cy.get('#grid53 .slick-column-name').first().should('have.css', '-webkit-line-clamp', '1');
+  });
+
   it('should have 2 sorted columns as presets & have filled column filter icons', () => {
     cy.get('.slick-header-columns .slick-header-column:nth(3) .slick-header-button .mdi').should('have.class', 'mdi-filter');
     cy.get('.slick-header-left .slick-header-column:nth(3)')

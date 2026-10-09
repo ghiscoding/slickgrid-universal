@@ -21,7 +21,7 @@ const postcss = commonRequire('postcss') as typeof import('postcss');
 const packages = [
   ['composite-editor-component', 'slick-composite-editor', '.slick-editor-modal'],
   ['custom-tooltip-plugin', 'slick-custom-tooltip', '.slick-custom-tooltip'],
-  ['row-detail-view-plugin', 'slick-row-detail-view', '.slick-row-detail-overlay'],
+  ['row-detail-plugin', 'slick-row-detail-view', '.slick-row-detail-overlay'],
 ] as const;
 const themes = ['default', 'bootstrap', 'fluent', 'material', 'salesforce'];
 const variants = themes.flatMap((theme) => (theme === 'fluent' ? [theme] : [theme, `${theme}.lite`]));
@@ -144,14 +144,14 @@ describe('optional package styling', () => {
   it('keeps Salesforce modal values and Fluent row detail icons in precompiled CSS', () => {
     const modal = readFileSync(join(fixture, 'composite-editor-component/dist/styles/css/slick-composite-editor-salesforce.css'), 'utf8');
     expect(modal).toContain('--lwc-fontSize7');
-    const rowDetail = readFileSync(join(fixture, 'row-detail-view-plugin/dist/styles/css/slick-row-detail-view-fluent.css'), 'utf8');
+    const rowDetail = readFileSync(join(fixture, 'row-detail-plugin/dist/styles/css/slick-row-detail-view-fluent.css'), 'utf8');
     expect(/M18(?: |%20)10a8/.test(rowDetail)).toBe(true);
   });
 
   it('rejects configuring a theme after an optional Sass entry has loaded its variables', () => {
     expect(() =>
       compile(`
-      @use '@slickgrid-universal/row-detail-view-plugin/dist/styles/sass/slick-row-detail-view.scss';
+      @use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail-view.scss';
       @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss' with ($slick-primary-color: red);
     `)
     ).toThrow(/already loaded/);

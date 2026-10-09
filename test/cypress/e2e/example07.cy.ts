@@ -87,7 +87,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should expect the row to have moved to another row index', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
 
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
@@ -126,7 +126,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('@moveIconTask5').trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
 
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
@@ -175,7 +175,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('.vc:visible [data-vc-date-btn]:visible').contains(/22$/).first().click();
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(7)`).should('contain', '2009-01-22');
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
     });
 
     it('should dynamically add 2x new "Title" columns', () => {
@@ -261,7 +261,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(6)')
+        .children('.slick-menu-item:nth-of-type(8)')
         .children('.slick-menu-content')
         .should('contain', 'Remove Filter')
         .click();
@@ -437,10 +437,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to toggle Sorting functionality (disable) and expect all header menu Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
       const expectedFullHeaderMenuCommands = [
-        'Resize by Content',
-        '',
         'Sort Ascending',
         'Sort Descending',
+        '',
+        'Column Pinning',
+        '',
+        'Resize by Content',
         '',
         'Remove Filter',
         'Remove Sort',
@@ -493,10 +495,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to toggle Sorting functionality (re-enable) and expect all Sorting header menu commands to be visible and also Sort hints to show up also', () => {
       const expectedFullHeaderMenuCommands = [
-        'Resize by Content',
-        '',
         'Sort Ascending',
         'Sort Descending',
+        '',
+        'Column Pinning',
+        '',
+        'Resize by Content',
         '',
         'Remove Filter',
         'Remove Sort',
@@ -545,10 +549,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to click disable Sorting functionality button and expect all Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
       const expectedFullHeaderMenuCommands = [
-        'Resize by Content',
-        '',
         'Sort Ascending',
         'Sort Descending',
+        '',
+        'Column Pinning',
+        '',
+        'Resize by Content',
         '',
         'Remove Filter',
         'Remove Sort',
@@ -583,10 +589,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to click disable Filter functionality button and expect all Filter commands to be hidden and also not show Sort hint while hovering a column', () => {
       const expectedFullHeaderMenuCommands = [
-        'Resize by Content',
-        '',
         'Sort Ascending',
         'Sort Descending',
+        '',
+        'Column Pinning',
+        '',
+        'Resize by Content',
         '',
         'Remove Filter',
         'Remove Sort',
@@ -934,10 +942,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should re-open Header Menu of last "Titre" column and expect all commands to be translated to French', () => {
       const expectedFullHeaderMenuCommands = [
-        'Redimensionner par contenu',
-        '',
         'Trier par ordre croissant',
         'Trier par ordre décroissant',
+        '',
+        'Épinglage de colonne',
+        '',
+        'Redimensionner par contenu',
         '',
         'Supprimer le filtre',
         'Supprimer le tri',
@@ -1320,7 +1330,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should scroll to "Task 45", open "Title" editor and expect the editor to follow scroll until it goes outside the viewport', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1500);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1500);
       cy.wait(10);
       cy.get('[data-row="35"] > .slick-cell:nth(2)').should('contain', 'Task 35');
 
@@ -1328,22 +1338,22 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1300).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1300).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1150).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1150).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1000).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1000).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1600).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1600).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 2000).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 2000).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('not.be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 0).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('not.be.visible');
     });
 
@@ -1399,11 +1409,9 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       pressKeyTimes('TAB', 7);
       cy.get('.slick-header-columns .slick-header-menu-button:nth(2)').should('have.focus');
       cy.press(Cypress.Keyboard.Keys.ENTER);
-      cy.press(Cypress.Keyboard.Keys.DOWN);
       cy.press(Cypress.Keyboard.Keys.ENTER);
       cy.get('.slick-header-columns .slick-header-column:nth(5) .slick-sort-indicator-asc').should('exist');
       cy.press(Cypress.Keyboard.Keys.ENTER);
-      cy.press(Cypress.Keyboard.Keys.DOWN);
       cy.press(Cypress.Keyboard.Keys.DOWN);
       cy.press(Cypress.Keyboard.Keys.ENTER);
       cy.get('.slick-header-columns .slick-header-column:nth(5) .slick-sort-indicator-desc').should('exist');

@@ -30,12 +30,11 @@ export default defineConfig({
         '@slickgrid-universal/empty-warning-component',
         '@slickgrid-universal/event-pub-sub',
         '@slickgrid-universal/pagination-component',
-        '@slickgrid-universal/row-detail-view-plugin',
+        '@slickgrid-universal/row-detail-plugin',
         '@slickgrid-universal/utils',
         'dequal',
         'i18next',
         'i18next-vue',
-        'sortablejs',
         'vue',
       ],
       output: {

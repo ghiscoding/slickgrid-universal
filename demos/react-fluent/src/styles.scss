@@ -15,7 +15,7 @@ $primary-color: #0e6cfa;
 // optional packages styling, must be loaded after the theme to reuse its SASS variables
 @use '@slickgrid-universal/composite-editor-component/dist/styles/sass/slick-composite-editor.scss';
 @use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/sass/slick-custom-tooltip.scss';
-@use '@slickgrid-universal/row-detail-view-plugin/dist/styles/sass/slick-row-detail-view.scss';
+@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail-view.scss';
 
 // -- 2. load with legacy `@import`
 // $slick-primary-color: red;

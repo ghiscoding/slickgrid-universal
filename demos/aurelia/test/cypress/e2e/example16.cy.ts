@@ -39,7 +39,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should expect the row to have moved to another row index', () => {
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
@@ -76,7 +76,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     cy.get('@moveIconTask5').trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
@@ -180,10 +180,10 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
 
   it('should be able to toggle Sorting functionality (disable) and expect all header menu Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
     const expectedFullHeaderMenuCommands = [
-      'Resize by Content',
-      '',
       'Sort Ascending',
       'Sort Descending',
+      '',
+      'Resize by Content',
       '',
       'Remove Filter',
       'Remove Sort',
@@ -235,10 +235,10 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
 
   it('should be able to toggle Sorting functionality (re-enable) and expect all Sorting header menu commands to be hidden and also not show Sort hint while hovering a column', () => {
     const expectedFullHeaderMenuCommands = [
-      'Resize by Content',
-      '',
       'Sort Ascending',
       'Sort Descending',
+      '',
+      'Resize by Content',
       '',
       'Remove Filter',
       'Remove Sort',
@@ -286,10 +286,10 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
 
   it('should be able to click disable Sorting functionality button and expect all Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
     const expectedFullHeaderMenuCommands = [
-      'Resize by Content',
-      '',
       'Sort Ascending',
       'Sort Descending',
+      '',
+      'Resize by Content',
       '',
       'Remove Filter',
       'Remove Sort',
@@ -323,10 +323,10 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
 
   it('should be able to click disable Filter functionality button and expect all Filter commands to be hidden and also not show Sort hint while hovering a column', () => {
     const expectedFullHeaderMenuCommands = [
-      'Resize by Content',
-      '',
       'Sort Ascending',
       'Sort Descending',
+      '',
+      'Resize by Content',
       '',
       'Remove Filter',
       'Remove Sort',

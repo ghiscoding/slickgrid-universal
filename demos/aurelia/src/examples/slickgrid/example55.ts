@@ -83,7 +83,7 @@ export class Example55 {
     const owners = ['Alex', 'Priya', 'Mia', 'Sam', 'Chris'];
     const fragments = [
       'Refactor keyboard shortcut handling for better readability.',
-      'Adjust frozen rows when view-model updates after grouping.',
+      'Adjust pinned rows when view-model updates after grouping.',
       'Improve screen-reader labels on grid menu actions.',
       'Align batch editor validation with backend constraints.',
       'Capture edge-case around hidden columns and row-span.',

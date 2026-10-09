@@ -5,6 +5,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       // triggerHover: (elements: NodeListOf<HTMLElement>) => void;
+      drag(target: string | HTMLElement | JQuery<HTMLElement>, options?: any): Chainable<any>;
       dragOutside(
         viewport?: string,
         ms?: number,
@@ -17,6 +18,53 @@ declare global {
     }
   }
 }
+
+Cypress.Commands.overwrite('drag', (_originalFn: any, subject: any, target: any, _options: any = {}) => {
+  return cy.wrap(subject as JQuery<HTMLElement>).then(($source) => {
+    const rawSourceElm = $source?.[0] as HTMLElement | undefined;
+    const rawTargetElm =
+      typeof target === 'string'
+        ? (Cypress.$(target).first()?.[0] as HTMLElement | undefined)
+        : ((target as JQuery<HTMLElement>)?.[0] as HTMLElement | undefined);
+    const sourceElm =
+      rawSourceElm?.closest<HTMLElement>('.slick-header-column, .slick-dropped-grouping, [draggable="true"]') ?? rawSourceElm;
+    const targetElm =
+      rawTargetElm?.closest<HTMLElement>('.slick-header-column, .slick-dropped-grouping, [draggable="true"]') ?? rawTargetElm;
+
+    if (!sourceElm || !targetElm) {
+      return $source;
+    }
+
+    const sourceRect = sourceElm.getBoundingClientRect();
+    const targetRect = targetElm.getBoundingClientRect();
+    const sourceX = Number.isFinite(sourceRect.left + sourceRect.width / 2) ? sourceRect.left + sourceRect.width / 2 : 0;
+    const sourceY = Number.isFinite(sourceRect.top + sourceRect.height / 2) ? sourceRect.top + sourceRect.height / 2 : 0;
+    const targetX = Number.isFinite(targetRect.left + targetRect.width / 2) ? targetRect.left + targetRect.width / 2 : 0;
+    const targetY = Number.isFinite(targetRect.top + targetRect.height / 2) ? targetRect.top + targetRect.height / 2 : 0;
+
+    const dataTransfer = new DataTransfer();
+    const createDragLikeEvent = (eventName: string, x: number, y: number): Event => {
+      const evt = new Event(eventName, { bubbles: true, cancelable: true });
+      Object.defineProperty(evt, 'dataTransfer', { value: dataTransfer });
+      Object.defineProperty(evt, 'clientX', { value: x });
+      Object.defineProperty(evt, 'clientY', { value: y });
+      Object.defineProperty(evt, 'pageX', { value: x });
+      Object.defineProperty(evt, 'pageY', { value: y });
+      Object.defineProperty(evt, 'screenX', { value: x });
+      Object.defineProperty(evt, 'screenY', { value: y });
+      return evt;
+    };
+
+    sourceElm.dispatchEvent(createDragLikeEvent('dragstart', sourceX, sourceY));
+    targetElm.dispatchEvent(createDragLikeEvent('dragenter', targetX, targetY));
+    targetElm.dispatchEvent(createDragLikeEvent('dragover', targetX, targetY));
+    targetElm.dispatchEvent(createDragLikeEvent('drop', targetX, targetY));
+    sourceElm.dispatchEvent(createDragLikeEvent('dragend', targetX, targetY));
+
+    return $source;
+  });
+});
+
 // @ts-ignore
 Cypress.Commands.add('dragStart', { prevSubject: true }, (subject: HTMLElement, { cellWidth = 90, cellHeight = 35 } = {}) => {
   return cy
@@ -81,15 +129,22 @@ export function getScrollDistanceWhenDragOutsideGrid(
   return (cy as any).convertPosition(viewport).then((_viewportPosition: { x: number; y: number }) => {
     const viewportSelector = `${selector} .slick-viewport-${_viewportPosition.x}.slick-viewport-${_viewportPosition.y}`;
     (cy as any).getNthCell(fromRow, fromCol, viewport, { parentSelector: selector }).dragStart();
-    return cy.get(viewportSelector).then(($viewport) => {
-      const scrollTopBefore = $viewport.scrollTop();
-      const scrollLeftBefore = $viewport.scrollLeft();
+    return cy.get(selector).then(($grid) => {
+      const viewport = ($grid.find(viewportSelector)[0] || $grid.find('.slick-vertical-scroller')[0]) as HTMLElement;
+      const horizontalScroller = $grid.find('.slick-horizontal-scroller')[0] as HTMLElement | undefined;
+      const horizontalOwner = horizontalScroller || viewport;
+      const scrollTopBefore = viewport.scrollTop;
+      const scrollLeftBefore = horizontalOwner.scrollLeft;
       cy.dragOutside(dragDirection, 300, px, { parentSelector: selector });
-      return cy.get(viewportSelector).then(($viewportAfter) => {
+      return cy.get(selector).then(($gridAfter) => {
+        const viewportAfter = ($gridAfter.find(viewportSelector)[0] || $gridAfter.find('.slick-vertical-scroller')[0]) as HTMLElement;
+        const horizontalScrollerAfter = $gridAfter.find('.slick-horizontal-scroller')[0] as HTMLElement | undefined;
+        const horizontalOwnerAfter = horizontalScrollerAfter || viewportAfter;
         cy.dragEnd(selector);
-        const scrollTopAfter = $viewportAfter.scrollTop();
-        const scrollLeftAfter = $viewportAfter.scrollLeft();
-        cy.get(viewportSelector).scrollTo(0, 0, { ensureScrollable: false });
+        const scrollTopAfter = viewportAfter.scrollTop;
+        const scrollLeftAfter = horizontalOwnerAfter.scrollLeft;
+        horizontalOwnerAfter.scrollLeft = 0;
+        viewportAfter.scrollTop = 0;
         return cy.wrap({
           scrollTopBefore,
           scrollLeftBefore,
