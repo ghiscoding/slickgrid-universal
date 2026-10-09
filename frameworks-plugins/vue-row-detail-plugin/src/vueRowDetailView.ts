@@ -11,7 +11,7 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
 import type { GridOption, ViewModelBindableInputData } from 'slickgrid-vue';
 import { createApp, type App, type ComponentPublicInstance } from 'vue';
 import type { RowDetailView } from './interfaces.js';

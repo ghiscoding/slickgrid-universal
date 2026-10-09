@@ -292,9 +292,9 @@ importers:
       '@slickgrid-universal/pdf-export':
         specifier: workspace:*
         version: link:../../packages/pdf-export
-      '@slickgrid-universal/row-detail-view-plugin':
+      '@slickgrid-universal/row-detail-plugin':
         specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
+        version: link:../../packages/row-detail-plugin
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
@@ -398,9 +398,9 @@ importers:
       '@slickgrid-universal/react-row-detail-plugin':
         specifier: workspace:*
         version: link:../../frameworks-plugins/react-row-detail-plugin
-      '@slickgrid-universal/row-detail-view-plugin':
+      '@slickgrid-universal/row-detail-plugin':
         specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
+        version: link:../../packages/row-detail-plugin
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
@@ -519,9 +519,9 @@ importers:
       '@slickgrid-universal/react-row-detail-plugin':
         specifier: workspace:*
         version: link:../../frameworks-plugins/react-row-detail-plugin
-      '@slickgrid-universal/row-detail-view-plugin':
+      '@slickgrid-universal/row-detail-plugin':
         specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
+        version: link:../../packages/row-detail-plugin
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
@@ -625,9 +625,9 @@ importers:
       '@slickgrid-universal/pdf-export':
         specifier: workspace:*
         version: link:../../packages/pdf-export
-      '@slickgrid-universal/row-detail-view-plugin':
+      '@slickgrid-universal/row-detail-plugin':
         specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
+        version: link:../../packages/row-detail-plugin
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
@@ -716,9 +716,9 @@ importers:
       '@slickgrid-universal/pdf-export':
         specifier: workspace:*
         version: link:../../packages/pdf-export
-      '@slickgrid-universal/row-detail-view-plugin':
+      '@slickgrid-universal/row-detail-plugin':
         specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
+        version: link:../../packages/row-detail-plugin
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
@@ -795,9 +795,9 @@ importers:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
         version: link:../../packages/event-pub-sub
-      '@slickgrid-universal/row-detail-view-plugin':
+      '@slickgrid-universal/row-detail-plugin':
         specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
+        version: link:../../packages/row-detail-plugin
       '@slickgrid-universal/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -838,9 +838,9 @@ importers:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
         version: link:../../packages/event-pub-sub
-      '@slickgrid-universal/row-detail-view-plugin':
+      '@slickgrid-universal/row-detail-plugin':
         specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
+        version: link:../../packages/row-detail-plugin
       aurelia-slickgrid:
         specifier: workspace:*
         version: link:../../frameworks/aurelia-slickgrid
@@ -859,9 +859,9 @@ importers:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
         version: link:../../packages/event-pub-sub
-      '@slickgrid-universal/row-detail-view-plugin':
+      '@slickgrid-universal/row-detail-plugin':
         specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
+        version: link:../../packages/row-detail-plugin
       react:
         specifier: 'catalog:'
         version: 19.3.0
@@ -890,9 +890,9 @@ importers:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
         version: link:../../packages/event-pub-sub
-      '@slickgrid-universal/row-detail-view-plugin':
+      '@slickgrid-universal/row-detail-plugin':
         specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
+        version: link:../../packages/row-detail-plugin
       slickgrid-vue:
         specifier: workspace:*
         version: link:../../frameworks/slickgrid-vue
@@ -1479,7 +1479,7 @@ importers:
         specifier: workspace:*
         version: link:../event-pub-sub
 
-  packages/row-detail-view-plugin:
+  packages/row-detail-plugin:
     dependencies:
       '@slickgrid-universal/common':
         specifier: workspace:*

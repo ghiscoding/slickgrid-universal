@@ -13,7 +13,7 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
 import type { AureliaUtilService, CreatedView, GridOption, ViewModelBindableInputData } from 'aurelia-slickgrid';
 import type { RowDetailView } from './interfaces.js';
 

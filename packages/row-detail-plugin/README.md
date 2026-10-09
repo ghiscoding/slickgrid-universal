@@ -1,11 +1,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 [![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
-[![npm](https://img.shields.io/npm/v/@slickgrid-universal/row-detail-view-plugin.svg)](https://www.npmjs.com/package/@slickgrid-universal/row-detail-view-plugin)
-[![npm](https://img.shields.io/npm/dy/@slickgrid-universal/row-detail-view-plugin)](https://www.npmjs.com/package/@slickgrid-universal/row-detail-view-plugin)
+[![npm](https://img.shields.io/npm/v/@slickgrid-universal/row-detail-plugin.svg)](https://www.npmjs.com/package/@slickgrid-universal/row-detail-plugin)
+[![npm](https://img.shields.io/npm/dy/@slickgrid-universal/row-detail-plugin)](https://www.npmjs.com/package/@slickgrid-universal/row-detail-plugin)
 
 ## Slick Row Detail View (plugin)
-#### @slickgrid-universal/row-detail-view-plugin
+#### @slickgrid-universal/row-detail-plugin
 
 A plugin to add Row Detail View Panel that can be expanded/collapsed, the plugin was created from a proof of concept that came out from this StackOverflow question & article which has full details on it was made possible (thanks to @violet313 for making it happen).
  * [Can SlickGrid's row height be dynamically altered? - on Stack Overflow](https://stackoverflow.com/questions/10535164/can-slickgrids-row-height-be-dynamically-altered#29399927)
