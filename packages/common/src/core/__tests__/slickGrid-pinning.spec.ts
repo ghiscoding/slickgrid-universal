@@ -39,6 +39,10 @@ describe('SlickGrid unified pinning', () => {
     return grid;
   };
 
+  const fireDrag = (element: HTMLElement, type: 'dragstart' | 'dragend') => {
+    element.dispatchEvent(new Event(type, { bubbles: true, cancelable: true }));
+  };
+
   it('applies numeric and explicit column pinning with row docking', () => {
     const slickGrid = createGrid({
       pinning: { columns: { left: 0, right: ['d'] }, rows: { top: [0], bottom: [2] } },
@@ -522,16 +526,11 @@ describe('SlickGrid unified pinning', () => {
     );
     slickGrid.updateColumnById('e', { hidden: true }, true);
 
-    const internals = slickGrid as any;
-    const left = internals.sortableSideLeftInstance;
-    const center = internals.sortableSideCenterInstance;
-    const item = center.el.querySelector('.slick-header-column');
-    left.toArray = vi.fn().mockReturnValue(['a', 'c']);
-    center.toArray = vi.fn().mockReturnValue(['d', 'b', 'f']);
-    internals.sortableSideRightInstance.toArray = vi.fn().mockReturnValue(['g']);
-
-    left.options.onStart({ item });
-    left.options.onEnd({ item, stopPropagation: vi.fn() });
+    const center = container.querySelector<HTMLElement>('.slick-header-columns-center')!;
+    const item = slickGrid.getHeaderColumn('b');
+    fireDrag(item, 'dragstart');
+    center.insertBefore(slickGrid.getHeaderColumn('d'), item);
+    fireDrag(item, 'dragend');
 
     expect(slickGrid.getColumns().map((column) => column.id)).toEqual(['a', 'd', 'c', 'b', 'e', 'f', 'g']);
   });
@@ -541,21 +540,30 @@ describe('SlickGrid unified pinning', () => {
       enableColumnReorder: true,
       pinning: { columns: { left: ['a'], right: ['d'] } },
     });
-    const internals = slickGrid as any;
-    const left = internals.sortableSideLeftInstance;
-    const center = internals.sortableSideCenterInstance;
-    const right = internals.sortableSideRightInstance;
-    const item = center.el.querySelector('.slick-header-column');
-    left.toArray = vi.fn().mockReturnValue(['a', 'b']);
-    center.toArray = vi.fn().mockReturnValue(['b', 'c']);
-    right.toArray = vi.fn().mockReturnValue(['d']);
+    const item = slickGrid.getHeaderColumn('b');
     const setColumnsSpy = vi.spyOn(slickGrid, 'setColumns');
-
-    left.options.onStart({ item });
-    left.options.onEnd({ item, stopPropagation: vi.fn() });
+    fireDrag(item, 'dragstart');
+    container.querySelector('.slick-header-columns-left')!.appendChild(item.cloneNode(true));
+    fireDrag(item, 'dragend');
 
     expect(setColumnsSpy).not.toHaveBeenCalled();
     expect(slickGrid.getColumns().map((column) => column.id)).toEqual(['a', 'b', 'c', 'd']);
+  });
+
+  it('restores the shared scroller position when a drop precedes its scroll event', () => {
+    const slickGrid = createGrid({ enableColumnReorder: true, pinning: { columns: { left: ['a'], right: ['d'] } } });
+    const item = slickGrid.getHeaderColumn('b');
+    const center = item.parentElement!;
+    const scroller = container.querySelector<HTMLElement>('.slick-horizontal-scroller')!;
+    const scrollToXSpy = vi.spyOn(slickGrid, 'scrollToX').mockImplementation(() => undefined);
+    fireDrag(item, 'dragstart');
+    center.insertBefore(slickGrid.getHeaderColumn('c'), item);
+    scroller.scrollLeft = 125;
+    expect((slickGrid as any).scrollLeft).toBe(0);
+    fireDrag(item, 'dragend');
+
+    expect(slickGrid.getColumns().map((column) => column.id)).toEqual(['a', 'c', 'b', 'd']);
+    expect(scrollToXSpy).toHaveBeenCalledWith(125);
   });
 
   it('keeps visible columns in definition order without column docking', () => {
@@ -1076,50 +1084,23 @@ describe('SlickGrid unified pinning', () => {
     expect(applyRowTopOffsetSpy).not.toHaveBeenCalled();
   });
 
-  it('covers legacy sortable callbacks and column auto-scroll guards', () => {
-    vi.useFakeTimers();
-    try {
-      const slickGrid = createGrid({ enableColumnReorder: true });
-      const internals = slickGrid as any;
-      const sortable = internals.sortableSideLeftInstance as any;
-      const item = internals._headerL.children[0] as HTMLElement;
-      const related = document.createElement('div');
-      related.classList.add(internals._options.unorderableColumnCssClass);
+  it('reorders native headers and restores scrolling and active-cell focus', () => {
+    const slickGrid = createGrid({ enableColumnReorder: true });
+    const internals = slickGrid as any;
+    const item = slickGrid.getHeaderColumn('a');
+    fireDrag(item, 'dragstart');
+    item.parentElement!.insertBefore(slickGrid.getHeaderColumn('b'), item);
+    const setColumnsSpy = vi.spyOn(slickGrid, 'setColumns').mockImplementation(() => undefined as any);
+    const scrollToXSpy = vi.spyOn(slickGrid, 'scrollToX').mockImplementation(() => undefined);
+    const setupResizeSpy = vi.spyOn(internals, 'setupColumnResize').mockImplementation(() => undefined);
+    const focusSpy = vi.spyOn(slickGrid, 'setFocus').mockImplementation(() => undefined);
+    internals.activeCellNode = item;
+    fireDrag(item, 'dragend');
 
-      expect(sortable.options.onMove({ related })).toBe(false);
-      related.classList.remove(internals._options.unorderableColumnCssClass);
-      expect(sortable.options.onMove({ related })).toBe(true);
-
-      Object.defineProperty(container, 'clientWidth', { configurable: true, value: 800 });
-      Object.defineProperty(internals._viewportScrollContainerX, 'clientWidth', { configurable: true, value: 200 });
-      Object.defineProperty(internals._viewportScrollContainerX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
-      sortable.options.onStart({ item });
-      const moveEvent = new MouseEvent('mousemove', { bubbles: true, clientX: 700, clientY: 10 });
-      Object.defineProperty(moveEvent, 'pageX', { configurable: true, value: 900 });
-      document.dispatchEvent(moveEvent);
-      vi.advanceTimersByTime(30);
-      expect(internals._viewportScrollContainerX.scrollLeft).toBe(10);
-
-      document.dispatchEvent(moveEvent);
-      internals.initialized = false;
-      vi.advanceTimersByTime(30);
-      document.dispatchEvent(moveEvent);
-      internals.initialized = true;
-      internals.sortableSideLeftInstance.toArray = vi.fn().mockReturnValue(['b', 'a', 'c', 'd']);
-      const setColumnsSpy = vi.spyOn(slickGrid, 'setColumns').mockImplementation(() => undefined as any);
-      const scrollToXSpy = vi.spyOn(slickGrid, 'scrollToX').mockImplementation(() => undefined);
-      const setupResizeSpy = vi.spyOn(internals, 'setupColumnResize').mockImplementation(() => undefined);
-      const focusSpy = vi.spyOn(slickGrid, 'setFocus').mockImplementation(() => undefined);
-      internals.activeCellNode = item;
-      sortable.options.onEnd({ item, stopPropagation: vi.fn() });
-
-      expect(setColumnsSpy).toHaveBeenCalled();
-      expect(scrollToXSpy).toHaveBeenCalled();
-      expect(setupResizeSpy).toHaveBeenCalled();
-      expect(focusSpy).toHaveBeenCalled();
-    } finally {
-      vi.useRealTimers();
-    }
+    expect(setColumnsSpy).toHaveBeenCalled();
+    expect(scrollToXSpy).toHaveBeenCalled();
+    expect(setupResizeSpy).toHaveBeenCalled();
+    expect(focusSpy).toHaveBeenCalled();
   });
 
   it('alerts once when rejecting pinning unless the caller forces an alert', () => {

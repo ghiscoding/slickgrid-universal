@@ -25,7 +25,7 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import '@4tw/cypress-drag-drop';
 import 'cypress-real-events';
-// eslint-disable-next-line n/file-extension-in-import
+import './drag';
 import { convertPosition } from './common';
 
 declare global {
@@ -47,9 +47,25 @@ declare global {
         options?: { parentSelector?: string; rowHeight?: number }
       ): Chainable<JQuery<HTMLElement>>;
       getTransformValue(cssTransformMatrix: string, absoluteValue: boolean, transformType?: 'rotate' | 'scale'): Chainable<number>;
+      saveLocalStorage: () => void;
+      restoreLocalStorage: () => void;
     }
   }
 }
+
+const LOCAL_STORAGE_MEMORY: any = {};
+
+Cypress.Commands.add('saveLocalStorage', () => {
+  Object.keys(localStorage).forEach((key) => {
+    LOCAL_STORAGE_MEMORY[key] = localStorage[key];
+  });
+});
+
+Cypress.Commands.add('restoreLocalStorage', () => {
+  Object.keys(LOCAL_STORAGE_MEMORY).forEach((key) => {
+    localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
+  });
+});
 
 // convert position like 'topLeft' to the object { x: 'left|right', y: 'top|bottom' }
 Cypress.Commands.add('convertPosition', (viewport = 'topLeft') => cy.wrap(convertPosition(viewport)));

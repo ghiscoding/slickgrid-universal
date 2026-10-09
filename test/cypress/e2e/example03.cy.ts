@@ -562,17 +562,12 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
     });
 
     it('should open Cost column Header Menu then click on "Hide Column" and still expect all headers shown', () => {
-      // Finish was temporarily pinned right by the previous test. Once it is
-      // unpinned it remains last in the current column order, but is no longer
-      // part of the right docking region.
-      const headerTitles = ['', 'Title', 'Duration', 'Start', '% Complete', 'Effort-Driven', 'Action', 'Finish'];
+      // The grouping drop preserves the original column slots when Finish is unpinned.
+      const headerTitles = ['', 'Title', 'Duration', 'Start', 'Finish', '% Complete', 'Effort-Driven', 'Action'];
 
-      // Pinning now uses one live header row instead of the legacy right header
-      // pane. Locate Cost by its column content so this test follows the
-      // single-viewport DOM contract.
+      // Find Cost by ID across all header bands.
       cy.get('.grid3')
-        .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
-        .contains('.slick-header-column', 'Cost')
+        .find('.slick-header:not(.slick-preheader-panel) .slick-header-column[data-id="cost"]')
         .should('contain', 'Cost')
         .trigger('mouseover')
         .children('.slick-header-menu-button')
@@ -595,12 +590,12 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
 
       cy.get('.grid3 .slick-header-column[data-id="action"]').then(($header) => {
         const headerRect = $header[0].getBoundingClientRect();
-        cy.get('.grid3 .slick-row.slick-row-docked:not(.slick-group) .slick-cell.l7')
+        cy.get('.grid3 .slick-row.slick-row-docked:not(.slick-group) .slick-cell.l8')
           .first()
           .then(($cell) => {
             const cellRect = $cell[0].getBoundingClientRect();
             expect(cellRect.left).to.be.closeTo(headerRect.left, 1);
-            expect(cellRect.width).to.be.closeTo(headerRect.width, 1);
+            expect(cellRect.width - headerRect.width, 'the last header reserves 2px for the Grid Menu').to.be.closeTo(2, 1);
           });
       });
     });

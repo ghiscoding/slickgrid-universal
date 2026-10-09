@@ -14,8 +14,6 @@ import {
   windowScrollPosition,
   type CSSStyleDeclarationWritable,
 } from '@slickgrid-universal/utils';
-import type { Options as SortableOptions } from 'sortablejs';
-import Sortable from 'sortablejs/modular/sortable.core.esm.js';
 import type { TrustedHTML } from 'trusted-types/lib';
 import type { SelectionModel } from '../enums/index.js';
 import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
@@ -101,6 +99,7 @@ import type {
   SlickPlugin,
 } from '../interfaces/index.js';
 import { DockingController } from './dockingController.js';
+import { reconcileColumnOrder, setupColumnReorderDrag } from './slickColumnReorderDrag.js';
 import {
   preClickClassName,
   RowPositionIndexer,
@@ -578,9 +577,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected slickDraggableInstance: InteractionBase | null = null;
   protected slickMouseWheelInstances: Array<InteractionBase> = [];
   protected slickResizableInstances: Array<InteractionBase> = [];
-  protected sortableSideLeftInstance?: ReturnType<typeof Sortable.create>;
-  protected sortableSideCenterInstance?: ReturnType<typeof Sortable.create>;
-  protected sortableSideRightInstance?: ReturnType<typeof Sortable.create>;
+  protected _columnReorderDrag?: { destroy: () => void };
   protected _pubSubService?: BasePubSub;
   /** Original pin states for columns changed by the unified pinning option, keyed by stable column id. */
   protected pinningColumnsState: Map<number | string, Column['pinned']> = new Map();
@@ -2390,134 +2387,41 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected setupColumnReorder(): void {
-    this.sortableSideLeftInstance?.destroy();
-    this.sortableSideCenterInstance?.destroy();
-    this.sortableSideRightInstance?.destroy();
-    this.sortableSideLeftInstance = undefined;
-    this.sortableSideCenterInstance = undefined;
-    this.sortableSideRightInstance = undefined;
+    this._columnReorderDrag?.destroy();
 
-    let columnScrollTimer: ReturnType<typeof setInterval> | undefined;
-    let columnScrollDirection = 0;
-
-    const stopAutoScroll = () => {
-      clearInterval(columnScrollTimer);
-      columnScrollTimer = undefined;
-      columnScrollDirection = 0;
-    };
     let prevColumnIds: Array<string | number> = [];
+    let columnsBeforeDrag: C[] | undefined;
+    const headers = this.usesDockingChromeRegions()
+      ? [
+          this.getDockingChromeRegion('header', 'left'),
+          this.getDockingChromeRegion('header', 'center'),
+          this.getDockingChromeRegion('header', 'right'),
+        ]
+      : [this._headerL];
 
-    // fires on document during native drag; also bind 'mousemove' for SortableJS forceFallback mode
-    const autoScrollHandler = (e: DragEvent | MouseEvent) => {
-      if (!this.initialized || !this._viewportScrollContainerX) {
-        stopAutoScroll();
-        return;
-      }
-      const { clientX, clientY, pageX } = e;
-      if (clientX && clientY) {
-        const viewportLeft = getOffset(this._viewportScrollContainerX).left;
-        const containerRight = getOffset(this._container).left + this._container.clientWidth;
-        const direction = pageX > containerRight ? 1 : pageX < viewportLeft ? -1 : 0;
-        if (direction !== columnScrollDirection) {
-          stopAutoScroll();
-          columnScrollDirection = direction;
-          if (direction) {
-            columnScrollTimer = setInterval(() => {
-              if (!this.initialized || !this._viewportScrollContainerX) {
-                stopAutoScroll();
-                return;
-              }
-              this._viewportScrollContainerX.scrollLeft += direction * COLUMN_AUTOSCROLL_DISTANCE_PX;
-            }, COLUMN_AUTOSCROLL_INTERVAL_MS);
-          }
-        }
-      }
-    };
-
-    const sortableOptions = {
-      animation: 50,
-      direction: 'horizontal',
-      ghostClass: 'slick-sortable-placeholder',
-      draggable: '.slick-header-column',
-      dragoverBubble: false,
-      // Fixes broken Firefox-Linux dragging
-      forceFallback: /firefox/i.test(navigator.userAgent) && /linux/i.test(navigator.userAgent),
-      // allow column to be resized even when they are not orderable
-      preventOnFilter: false,
-      revertClone: true,
-      // Use built-in SortableJS proximity scroll for unpinned grids; pinned grids use custom scroll.
-      scroll: !this.hasDockedColumns(),
-      // lock unorderable columns by using a combo of filter + onMove
-      filter: `.${this._options.unorderableColumnCssClass}`,
-      onMove: (event) => {
-        return !event.related.classList.contains(this._options.unorderableColumnCssClass as string);
-      },
-      onStart: (e) => {
-        e.item.classList.add('slick-header-column-active');
-        // Only scrolling columns should auto-scroll; use contains() since offset comparisons
-        // are not reliable across the header regions.
-        const leftHeader = this.usesDockingChromeRegions() ? this.getDockingChromeRegion('header', 'left') : this._headerL;
-        if (!this.hasDockedColumns() || !leftHeader.contains(e.item)) {
-          // bind 'drag' for native HTML5 drag and 'mousemove' for SortableJS forceFallback
-          this._bindingEventService.bind(document, 'drag', autoScrollHandler as EventListener, {}, 'colreorder');
-          this._bindingEventService.bind(document, 'mousemove', autoScrollHandler as EventListener, {}, 'colreorder');
-        }
-
+    this._columnReorderDrag = setupColumnReorderDrag({
+      headers,
+      container: this._container,
+      viewportScrollContainerX: this._viewportScrollContainerX,
+      canAutoScroll: (draggedEl) => !this.hasDockedColumns() || this.getDockingChromeRegion('header', 'center').contains(draggedEl),
+      draggableSelector: '.slick-header-column',
+      dragActiveClass: 'slick-header-column-active',
+      unorderableColumnCssClass: this._options.unorderableColumnCssClass,
+      onDragStart: () => {
         prevColumnIds = this.columns.map((c) => c.id);
+        columnsBeforeDrag = [...this.columns];
       },
-      onEnd: (e) => {
-        e.item.classList.remove('slick-header-column-active');
-        stopAutoScroll();
-        this._bindingEventService.unbindAll('colreorder');
-        const prevScrollLeft = this.scrollLeft;
-
-        if (!this.getEditorLock()?.commitCurrentEdit()) {
+      onDragEnd: (reorderedIds, originalIds) => {
+        //  onDragStart never ran (drag started outside a column) or when editing a cell then cancel the reorder operation
+        if (!columnsBeforeDrag || !this.getEditorLock()?.commitCurrentEdit()) {
           return;
         }
 
-        const reorderedIdsByBand = [
-          this.sortableSideLeftInstance?.toArray() || [],
-          this.sortableSideCenterInstance?.toArray() || [],
-          this.sortableSideRightInstance?.toArray() || [],
-        ];
-        const reorderedColumnsByBand = reorderedIdsByBand.map((ids: Array<string | number>) =>
-          ids.map((id) => this.columns[this.getColumnIndex(id)])
-        );
-        const finalColumns = this.columns.slice();
+        // The drop can precede a scroll event that updates the cached position.
+        const prevScrollLeft = this._viewportScrollContainerX.scrollLeft;
+        const finalColumns = reconcileColumnOrder(columnsBeforeDrag, reorderedIds, originalIds);
 
-        // Keep each docking band in its logical slots; flattening moves center columns into pinned slots.
-        if (this.usesDockingChromeRegions()) {
-          // Slots follow the DOM band each header lives in. An active sticky
-          // column is visually docked but its header remains in the center.
-          const transformPath = this.usesStickyColumnTransformPath();
-          const inDomBand = (entry: DockedColumn): boolean => !(transformPath && entry.sticky);
-          const leftSlots = this.dockingLayout.left.filter(inDomBand).map((entry) => entry.index);
-          const rightSlots = this.dockingLayout.right.filter(inDomBand).map((entry) => entry.index);
-          const pinnedSlots = new Set([...leftSlots, ...rightSlots]);
-          const centerSlots = this.columns
-            .map((column, index) => (column && !column.hidden && !pinnedSlots.has(index) ? index : -1))
-            .filter((index) => index >= 0);
-          const slotsByBand = [leftSlots, centerSlots, rightSlots];
-          if (slotsByBand.some((slots, bandIndex) => slots.length !== reorderedColumnsByBand[bandIndex].length)) {
-            return;
-          }
-          slotsByBand.forEach((slots, bandIndex) => {
-            slots.forEach((index, reorderedIndex) => {
-              finalColumns[index] = reorderedColumnsByBand[bandIndex][reorderedIndex];
-            });
-          });
-        } else {
-          let reorderedIndex = 0;
-          const reorderedColumns = reorderedColumnsByBand.flat();
-          this.columns.forEach((column, index) => {
-            if (!column.hidden) {
-              finalColumns[index] = reorderedColumns[reorderedIndex++];
-            }
-          });
-        }
-
-        e.stopPropagation();
-        const finalColumnIds = finalColumns.map(({ id }) => id);
+        const finalColumnIds = finalColumns.map((col) => col.id);
         if (!this.arrayEquals(prevColumnIds, finalColumnIds)) {
           this.setColumns(finalColumns);
           // reapply previous scroll position since it might move back to x=0 after calling `setColumns()`
@@ -2529,16 +2433,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           this.setFocus(); // refocus on active cell
         }
       },
-    } as SortableOptions;
-
-    if (this.usesDockingChromeRegions()) {
-      this.sortableSideLeftInstance = Sortable.create(this.getDockingChromeRegion('header', 'left'), sortableOptions);
-      this.sortableSideCenterInstance = Sortable.create(this.getDockingChromeRegion('header', 'center'), sortableOptions);
-      this.sortableSideRightInstance = Sortable.create(this.getDockingChromeRegion('header', 'right'), sortableOptions);
-    } else {
-      this.sortableSideLeftInstance = Sortable.create(this._headerL, sortableOptions);
-      this.sortableSideRightInstance = undefined;
-    }
+    });
   }
 
   protected getHeaderChildren(): HTMLElement[] {
@@ -3432,15 +3327,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.unregisterPlugin(this.plugins[i]);
     }
 
-    if (this.sortableSideRightInstance?.el && typeof this.sortableSideRightInstance?.destroy === 'function') {
-      this.sortableSideRightInstance.destroy();
-    }
-    if (this.sortableSideCenterInstance?.el && typeof this.sortableSideCenterInstance?.destroy === 'function') {
-      this.sortableSideCenterInstance.destroy();
-    }
-    if (this.sortableSideLeftInstance?.el && typeof this.sortableSideLeftInstance?.destroy === 'function') {
-      this.sortableSideLeftInstance.destroy();
-    }
+    this._columnReorderDrag?.destroy();
 
     this._focusSink?.remove();
     this._focusSink2?.remove();

@@ -6,6 +6,7 @@ The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer va
 
 #### Major Changes - Quick Summary
 
+- [Remove SortableJS](#remove-sortablejs)
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
 - [Removed Deprecated Code](#removed-deprecated-code)
 - [Code Changes](#code-changes)
@@ -15,6 +16,26 @@ The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer va
 > **Important:** v11 intentionally does not provide a compatibility layer for the old full-height frozen panes. The migration is a configuration and DOM contract change, not only a visual update.
 
 Also note that we also have a new Sticky docking that was also introduced in v11, it shares similarities with Pinning, but it is an entirely new feature. See the [Sticky Docking guide](../grid-functionalities/sticky.md) for its configuration and behavior.
+
+### Remove SortableJS
+
+Column header reordering and draggable grouping now use the built-in HTML5 drag and drop engines,
+with mouse support for Firefox on Linux and touch support on all platforms. Remove SortableJS
+and `@types/sortablejs` from your application dependencies when no other application feature uses them.
+Applications using script tags can also remove their SortableJS include.
+
+Column reordering supports RTL and stays within the dragged column's header region. Hidden and
+non-reorderable columns keep their positions, including in grids with draggable grouping.
+
+For custom integrations, `SlickDraggableGrouping.setupColumnReorder()` now returns
+`{ columnReorderDragInstance }`, whose `destroy()` method removes the native drag listeners.
+The SortableJS instance getters and `destroySortableInstances()` are replaced by
+`destroyColumnReorderDrag()`.
+
+The exported `setupColumnReorderDrag()` helper accepts `headers: HTMLElement[]` and an optional
+`canAutoScroll(draggedEl)` callback. Its `onDragEnd(reorderedIds, originalIds)` callback provides
+both DOM orders; pass them to `reconcileColumnOrder(columns, reorderedIds, originalIds)` to keep
+columns in the slots they occupied when the drag started.
 
 ### Replace frozen options with `pinning`
 

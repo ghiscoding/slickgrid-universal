@@ -25,6 +25,7 @@
 // -- This will overwrite an existing command --
 import '@4tw/cypress-drag-drop';
 import 'cypress-real-events';
+import './drag';
 import { convertPosition } from './common';
 
 declare global {
@@ -74,7 +75,7 @@ Cypress.Commands.add('getNthCell', (row, nthCol, viewport = 'topLeft', { parentS
     `${parentSelector} ${canvasSelectorX}${canvasSelectorY} [style="transform: translateY(${row * rowHeight}px);"] > .slick-cell:nth(${nthCol})`
   );
 });
-const LOCAL_STORAGE_MEMORY: any = {};
+const LOCAL_STORAGE_MEMORY: Record<string, string> = {};
 
 Cypress.Commands.add('saveLocalStorage', () => {
   Object.keys(localStorage).forEach((key) => {

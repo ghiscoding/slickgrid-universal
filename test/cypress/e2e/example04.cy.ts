@@ -1028,25 +1028,43 @@ describe('Example 04 - Pinned Grid', () => {
       cy.get('.slick-horizontal-scroller').its('0.scrollLeft').should('equal', 0);
       cy.get('[data-test="set-large-pinned-columns"]').click();
 
-      // Step 1: call SortableJS onStart for the "Start" column (1st center-section column).
-      // This binds the document 'drag' auto-scroll listener for the shared proxy scrollbar.
-      cy.get('.slick-header-columns-center').then(($rightHeader) => {
-        let sortInstance: any;
-        Object.keys($rightHeader[0]).forEach((prop) => {
-          if (prop.startsWith('Sortable')) {
-            sortInstance = ($rightHeader[0] as any)[prop];
-          }
-        });
-        expect(sortInstance).to.exist;
-        const startColumnEl = $rightHeader[0].querySelectorAll('.slick-header-column')[0] as HTMLElement;
-        sortInstance.options.onStart({ item: startColumnEl });
-      });
+      const dataStore = new Map<string, string>();
+      const dragDataTransfer = {
+        dropEffect: 'move',
+        effectAllowed: 'all',
+        getData: (format: string) => dataStore.get(format) ?? '',
+        setData: (format: string, data: string) => {
+          dataStore.set(format, data);
+        },
+        setDragImage: () => {},
+      };
 
-      // Step 2: fire a document drag event well past the right edge (viewport-relative)
-      // to avoid CI flakiness caused by environment-dependent viewport widths.
+      const createDragLikeEvent = (eventName: string, x: number, y: number): Event => {
+        const evt = new Event(eventName, { bubbles: true, cancelable: true });
+        Object.defineProperty(evt, 'dataTransfer', { value: dragDataTransfer });
+        Object.defineProperty(evt, 'clientX', { value: x });
+        Object.defineProperty(evt, 'clientY', { value: y });
+        Object.defineProperty(evt, 'pageX', { value: x });
+        Object.defineProperty(evt, 'pageY', { value: y });
+        Object.defineProperty(evt, 'screenX', { value: x });
+        Object.defineProperty(evt, 'screenY', { value: y });
+        return evt;
+      };
+
+      // Step 1-2: start native drag on "Start" then fire document drag far-right to trigger auto-scroll.
       cy.window().then((win) => {
+        const rightHeader = win.document.querySelector('.slick-header-columns-center') as HTMLElement;
+        const cols = Array.from(rightHeader?.querySelectorAll('.slick-header-column') ?? []) as HTMLElement[];
+        const startColumnEl = cols.find((el) => (el.textContent ?? '').includes('Start')) as HTMLElement;
+        expect(startColumnEl).to.exist;
+
+        const startRect = startColumnEl.getBoundingClientRect();
+        const startX = startRect.left + startRect.width / 2;
+        const startY = startRect.top + startRect.height / 2;
+        startColumnEl.dispatchEvent(createDragLikeEvent('dragstart', startX, startY));
+
         const dragX = win.innerWidth + 1200;
-        cy.document().trigger('drag', { pageX: dragX, clientX: dragX, clientY: 50 });
+        win.document.dispatchEvent(createDragLikeEvent('drag', dragX, startY));
       });
 
       // Step 3: advance mocked time so the 30ms scroll interval ticks several times.
@@ -1055,26 +1073,24 @@ describe('Example 04 - Pinned Grid', () => {
       // Auto-scroll should have moved the right viewport to the right
       cy.get('.slick-horizontal-scroller').its('0.scrollLeft').should('be.greaterThan', 0);
 
-      // Step 4: simulate the drag result — "Start" was moved to the right, past "Finish".
-      // SortableJS reads the DOM order via toArray() inside onEnd, so physically reorder the children first.
-      cy.get('.slick-header-columns-center').then(($rightHeader) => {
-        let sortInstance: any;
-        Object.keys($rightHeader[0]).forEach((prop) => {
-          if (prop.startsWith('Sortable')) {
-            sortInstance = ($rightHeader[0] as any)[prop];
-          }
-        });
-        expect(sortInstance).to.exist;
-        const startColumnEl = $rightHeader[0].querySelector('[data-id="start"]') as HTMLElement;
-        const finishColumnEl = $rightHeader[0].querySelector('[data-id="finish"]') as HTMLElement;
+      // Step 4: cross the wider "Finish" column's swap threshold, then end drag as Finish -> Start.
+      cy.window().then((win) => {
+        const rightHeader = win.document.querySelector('.slick-header-columns-center') as HTMLElement;
+        const cols = Array.from(rightHeader?.querySelectorAll('.slick-header-column') ?? []) as HTMLElement[];
+        const startColumnEl = cols.find((el) => el.textContent?.includes('Start')) as HTMLElement;
+        const finishColumnEl = cols.find((el) => el.textContent?.includes('Finish')) as HTMLElement;
+
         expect(startColumnEl).to.exist;
         expect(finishColumnEl).to.exist;
 
-        // Move "Finish" before "Start" → mirrors dragging Start past Finish
-        $rightHeader[0].insertBefore(finishColumnEl, startColumnEl);
+        const finishRect = finishColumnEl.getBoundingClientRect();
+        const targetX = finishRect.right - 1;
+        const targetY = finishRect.top + finishRect.height / 2;
 
-        // onEnd reads the new DOM order via toArray() and calls setColumns() if the order changed
-        sortInstance.options.onEnd({ item: startColumnEl, stopPropagation: () => {} });
+        finishColumnEl.dispatchEvent(createDragLikeEvent('dragenter', targetX, targetY));
+        finishColumnEl.dispatchEvent(createDragLikeEvent('dragover', targetX, targetY));
+        finishColumnEl.dispatchEvent(createDragLikeEvent('drop', targetX, targetY));
+        startColumnEl.dispatchEvent(createDragLikeEvent('dragend', targetX, targetY));
       });
 
       // The center region should now place Finish before Start. The exact
@@ -1133,14 +1149,11 @@ describe('Example 04 - Pinned Grid', () => {
         const columns = $center.find('.slick-header-column');
         expect([...columns].map((column) => column.dataset.id)).to.deep.equal(['start', 'completed', 'cost', 'cityOfOrigin']);
 
-        const sortInstance = Object.entries($center[0]).find(([key]) => key.startsWith('Sortable'))?.[1] as any;
-        expect(sortInstance).to.exist;
-
         const thirdColumn = columns[2] as HTMLElement;
         const fourthColumn = columns[3] as HTMLElement;
-        sortInstance.options.onStart({ item: thirdColumn });
+        thirdColumn.dispatchEvent(new Event('dragstart', { bubbles: true, cancelable: true }));
         $center[0].insertBefore(fourthColumn, thirdColumn);
-        sortInstance.options.onEnd({ item: thirdColumn, stopPropagation: () => {} });
+        thirdColumn.dispatchEvent(new Event('dragend', { bubbles: true, cancelable: true }));
       });
 
       cy.get('.slick-header-columns-left .slick-header-column').should(($columns) =>

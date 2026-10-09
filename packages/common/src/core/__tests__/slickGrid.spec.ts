@@ -3530,36 +3530,171 @@ describe('SlickGrid core file', () => {
         { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
       ];
-      let sortInstance: any;
+
+      /** Helper: dispatch a dragstart event on a column element (bubbles to parent handler) */
+      const fireDragStart = (el: HTMLElement) => {
+        const evt = new Event('dragstart', { bubbles: true, cancelable: true }) as DragEvent;
+        Object.defineProperty(evt, 'dataTransfer', { value: { effectAllowed: '', setDragImage: vi.fn() } });
+        Object.defineProperty(evt, 'offsetX', { value: 10 });
+        Object.defineProperty(evt, 'offsetY', { value: 5 });
+        el.dispatchEvent(evt);
+        return evt;
+      };
+
+      /** Helper: dispatch a dragend event on a column element */
+      const fireDragEnd = (el: HTMLElement) => {
+        const evt = new Event('dragend', { bubbles: true, cancelable: true }) as DragEvent;
+        el.dispatchEvent(evt);
+        return evt;
+      };
+
+      /** Helper: find a header column by its data-id attribute */
+      const findCol = (parent: HTMLElement, id: string) => parent.querySelector<HTMLElement>(`[data-id="${id}"]`)!;
+
+      const dispatchDocumentDrag = (pageX: number, clientX = pageX, clientY = 10) => {
+        const event = new Event('drag');
+        Object.defineProperties(event, {
+          pageX: { value: pageX },
+          clientX: { value: clientX },
+          clientY: { value: clientY },
+        });
+        document.dispatchEvent(event);
+      };
+
+      it('should reorder column to the left when current column pageX is lower than viewport left position', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        const headerL = document.querySelector<HTMLElement>('.slick-header-columns.slick-header-columns-left')!;
+        const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
+        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as any;
+        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+
+        fireDragStart(findCol(headerL, 'firstName'));
+
+        // simulate reorder: age moved before lastName → [firstName, age, lastName]
+        headerL.insertBefore(findCol(headerL, 'age'), findCol(headerL, 'lastName'));
+
+        dispatchDocumentDrag(20); // pageX < viewportLeft → scroll left
+        expect(viewportTopLeft.scrollLeft).toBe(0);
+
+        vi.advanceTimersByTime(30);
+        expect(viewportTopLeft.scrollLeft).toBe(-10);
+
+        fireDragEnd(findCol(headerL, 'firstName'));
+        expect(onColumnsReorderedSpy).toHaveBeenCalled();
+      });
+
+      it('should reorder column to the right when current column pageX is greater than container width', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        const headerL = document.querySelector<HTMLElement>('.slick-header-columns.slick-header-columns-left')!;
+        const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
+        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as any;
+        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+
+        fireDragStart(findCol(headerL, 'firstName'));
+
+        // simulate reorder: age moved before lastName → [firstName, age, lastName]
+        headerL.insertBefore(findCol(headerL, 'age'), findCol(headerL, 'lastName'));
+
+        dispatchDocumentDrag(DEFAULT_GRID_WIDTH + 11); // pageX > containerRight → scroll right
+        expect(viewportTopLeft.scrollLeft).toBe(0);
+
+        vi.advanceTimersByTime(30);
+        expect(viewportTopLeft.scrollLeft).toBe(10);
+
+        fireDragEnd(findCol(headerL, 'firstName'));
+        expect(onColumnsReorderedSpy).toHaveBeenCalled();
+      });
+
+      it('should not trigger "onColumnsReordered" neither reorder column when column order is the same', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        const headerL = document.querySelector<HTMLElement>('.slick-header-columns.slick-header-columns-left')!;
+        const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
+
+        fireDragStart(findCol(headerL, 'firstName'));
+        // no DOM manipulation → same order as original
+
+        fireDragEnd(findCol(headerL, 'firstName'));
+        expect(onColumnsReorderedSpy).not.toHaveBeenCalled();
+      });
+
+      it('should ignore dragend when dragstart did not initialize reorder state', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        const headerL = document.querySelector<HTMLElement>('.slick-header-columns.slick-header-columns-left')!;
+        const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
+        const initialOrder = grid.getColumns().map((col) => col.id);
+
+        // Trigger dragend directly so onDragEnd runs with undefined columnMap.
+        fireDragEnd(findCol(headerL, 'firstName'));
+
+        expect(onColumnsReorderedSpy).not.toHaveBeenCalled();
+        expect(grid.getColumns().map((col) => col.id)).toEqual(initialOrder);
+      });
+
+      it('should stop auto-scroll when cursor moves back into safe zone during drag', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        const headerL = document.querySelector<HTMLElement>('.slick-header-columns.slick-header-columns-left')!;
+        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+
+        fireDragStart(findCol(headerL, 'firstName'));
+
+        // first drag beyond container right → starts scroll timer
+        const docDragEvt = new Event('drag') as DragEvent;
+        Object.defineProperty(docDragEvt, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
+        Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
+        Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
+        document.dispatchEvent(docDragEvt);
+        vi.advanceTimersByTime(30);
+        expect(viewportTopLeft.scrollLeft).toBe(10);
+
+        // move cursor back into safe zone → timer stops
+        const docDragSafe = new Event('drag') as DragEvent;
+        Object.defineProperty(docDragSafe, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH / 2 });
+        Object.defineProperty(docDragSafe, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH / 2 });
+        Object.defineProperty(docDragSafe, 'clientY', { writable: true, value: 10 });
+        document.dispatchEvent(docDragSafe);
+
+        viewportTopLeft.scrollLeft = 0;
+        vi.advanceTimersByTime(30);
+        expect(viewportTopLeft.scrollLeft).toBe(0); // no more auto-scrolling
+
+        fireDragEnd(findCol(headerL, 'firstName'));
+      });
+
+      it('should try reordering column but stay at same scroll position when grid has frozen columns', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, pinning: { columns: { left: 0 } } });
+        grid.setActiveCell(0, 1);
+        // pinning: { columns: { left: 0 } } → headerL has [firstName], headerR has [lastName, age]
+        const headerL = document.querySelector<HTMLElement>('.slick-header-columns.slick-header-columns-left')!;
+        const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
+        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+
+        // drag the frozen left column (canAutoScroll = false → no scroll)
+        const frozenColEl = headerL.querySelector<HTMLElement>('.slick-header-column')!;
+        fireDragStart(frozenColEl);
+
+        const docDragEvt = new Event('drag') as DragEvent;
+        Object.defineProperty(docDragEvt, 'pageX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
+        Object.defineProperty(docDragEvt, 'clientX', { writable: true, value: DEFAULT_GRID_WIDTH + 11 });
+        Object.defineProperty(docDragEvt, 'clientY', { writable: true, value: 10 });
+        document.dispatchEvent(docDragEvt);
+        vi.advanceTimersByTime(30);
+        expect(viewportTopLeft.scrollLeft).toBe(0); // frozen left column cannot trigger scroll
+
+        fireDragEnd(frozenColEl);
+        expect(onColumnsReorderedSpy).not.toHaveBeenCalled(); // same order
+      });
 
       it('should not allow column reordering when Editor Lock commitCurrentEdit() is failing', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, pinning: { columns: { left: 0 } } });
-        grid.init();
         vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
-        const headerColumnsElm: any = document.querySelector('.slick-header-columns.slick-header-columns-left');
-        Object.keys(headerColumnsElm).forEach((prop) => {
-          if (prop.startsWith('Sortable')) {
-            sortInstance = headerColumnsElm[prop];
-          }
-        });
+        const headerL = document.querySelector<HTMLElement>('.slick-header-columns.slick-header-columns-left')!;
         const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
-        const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
 
-        const dragEvent = new CustomEvent('DragEvent');
-        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-        Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
-        Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-        Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-
-        expect(sortInstance).toBeTruthy();
-        sortInstance.options.onStart(dragEvent);
-        expect(viewportTopLeft.scrollLeft).toBe(0);
-
-        vi.advanceTimersByTime(100);
-
-        expect(viewportTopLeft.scrollLeft).toBe(0);
-        sortInstance.options.onEnd(dragEvent);
+        const frozenColEl = headerL.querySelector<HTMLElement>('.slick-header-column')!;
+        fireDragStart(frozenColEl);
+        fireDragEnd(frozenColEl);
         expect(onColumnsReorderedSpy).not.toHaveBeenCalled();
       });
 
@@ -3571,31 +3706,16 @@ describe('SlickGrid core file', () => {
           { id: 'age', field: 'age', name: 'Age', sortable: true },
         ] as Column[];
         grid = new SlickGrid<any, Column>(container, data, columnsWithHidden, defaultOptions);
-        const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-        Object.keys(headerColumnsElm).forEach((prop) => {
-          if (prop.startsWith('Sortable')) {
-            sortInstance = headerColumnsElm[prop];
-          }
-        });
+        const headerL = document.querySelector<HTMLElement>('.slick-header-columns.slick-header-columns-left')!;
         const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
-        const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
 
-        const dragEvent = new CustomEvent('DragEvent');
-        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-        Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
-        Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-        Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
-        Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-        // SortableJS only returns visible columns (firstName, lastName, age)
-        // Simulate moving lastName before firstName: ['lastName', 'firstName', 'age']
-        vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['lastName', 'firstName', 'age']);
-
-        sortInstance.options.onStart(dragEvent);
-        sortInstance.options.onEnd(dragEvent);
+        fireDragStart(findCol(headerL, 'firstName'));
+        // Simulate: lastName moved before firstName → [lastName, firstName, age]
+        headerL.insertBefore(findCol(headerL, 'lastName'), findCol(headerL, 'firstName'));
+        fireDragEnd(findCol(headerL, 'lastName'));
 
         const finalColumns = grid.getColumns();
-        // Expected order: lastName, firstName, middleName (hidden stays at index 2), age
+        // Expected: lastName, firstName, middleName (hidden stays at index 2), age
         expect(grid.getColumnByIdx(0)!.id).toBe('lastName');
         expect(finalColumns[0].id).toBe('lastName');
         expect(finalColumns[1].id).toBe('firstName');
@@ -3614,26 +3734,12 @@ describe('SlickGrid core file', () => {
           { id: 'age', field: 'age', name: 'Age', sortable: true },
         ] as Column[];
         grid = new SlickGrid<any, Column>(container, data, columnsWithMultipleHidden, defaultOptions);
-        const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-        Object.keys(headerColumnsElm).forEach((prop) => {
-          if (prop.startsWith('Sortable')) {
-            sortInstance = headerColumnsElm[prop];
-          }
-        });
-        const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+        const headerL = document.querySelector<HTMLElement>('.slick-header-columns.slick-header-columns-left')!;
 
-        const dragEvent = new CustomEvent('DragEvent');
-        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-        Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
-        Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-        Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
-        Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-        // Simulate reordering visible columns: ['age', 'firstName', 'lastName']
-        vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['age', 'firstName', 'lastName']);
-
-        sortInstance.options.onStart(dragEvent);
-        sortInstance.options.onEnd(dragEvent);
+        fireDragStart(findCol(headerL, 'firstName'));
+        // Simulate: ['age', 'firstName', 'lastName'] — move age before firstName
+        headerL.insertBefore(findCol(headerL, 'age'), findCol(headerL, 'firstName'));
+        fireDragEnd(findCol(headerL, 'age'));
 
         const finalColumns = grid.getColumns();
         // Expected: age, middleName(hidden at idx 1), firstName, suffix(hidden at idx 3), lastName
@@ -3654,26 +3760,13 @@ describe('SlickGrid core file', () => {
           { id: 'age', field: 'age', name: 'Age', sortable: true },
         ] as Column[];
         grid = new SlickGrid<any, Column>(container, data, columnsWithHiddenFirst, defaultOptions);
-        const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-        Object.keys(headerColumnsElm).forEach((prop) => {
-          if (prop.startsWith('Sortable')) {
-            sortInstance = headerColumnsElm[prop];
-          }
-        });
-        const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+        const headerL = document.querySelector<HTMLElement>('.slick-header-columns.slick-header-columns-left')!;
 
-        const dragEvent = new CustomEvent('DragEvent');
-        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-        Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
-        Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-        Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
-        Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-        // Reorder visible columns: ['lastName', 'age', 'firstName']
-        vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['lastName', 'age', 'firstName']);
-
-        sortInstance.options.onStart(dragEvent);
-        sortInstance.options.onEnd(dragEvent);
+        fireDragStart(findCol(headerL, 'firstName'));
+        // Simulate: ['lastName', 'age', 'firstName']
+        headerL.insertBefore(findCol(headerL, 'lastName'), findCol(headerL, 'firstName'));
+        headerL.insertBefore(findCol(headerL, 'age'), findCol(headerL, 'firstName'));
+        fireDragEnd(findCol(headerL, 'lastName'));
 
         const finalColumns = grid.getColumns();
         // Expected: id(hidden at idx 0), lastName, age, firstName
@@ -3692,26 +3785,12 @@ describe('SlickGrid core file', () => {
           { id: 'metadata', field: 'metadata', name: 'Metadata', sortable: true, hidden: true },
         ] as Column[];
         grid = new SlickGrid<any, Column>(container, data, columnsWithHiddenLast, defaultOptions);
-        const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
-        Object.keys(headerColumnsElm).forEach((prop) => {
-          if (prop.startsWith('Sortable')) {
-            sortInstance = headerColumnsElm[prop];
-          }
-        });
-        const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-        const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+        const headerL = document.querySelector<HTMLElement>('.slick-header-columns.slick-header-columns-left')!;
 
-        const dragEvent = new CustomEvent('DragEvent');
-        vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
-        Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
-        Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
-        Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
-        Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
-        // Reorder visible columns: ['age', 'firstName', 'lastName']
-        vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['age', 'firstName', 'lastName']);
-
-        sortInstance.options.onStart(dragEvent);
-        sortInstance.options.onEnd(dragEvent);
+        fireDragStart(findCol(headerL, 'firstName'));
+        // Simulate: ['age', 'firstName', 'lastName']
+        headerL.insertBefore(findCol(headerL, 'age'), findCol(headerL, 'firstName'));
+        fireDragEnd(findCol(headerL, 'age'));
 
         const finalColumns = grid.getColumns();
         // Expected: age, firstName, lastName, metadata(hidden at idx 3)
@@ -3720,6 +3799,27 @@ describe('SlickGrid core file', () => {
         expect(finalColumns[2].id).toBe('lastName');
         expect(finalColumns[3].id).toBe('metadata');
         expect(finalColumns[3].hidden).toBe(true);
+      });
+
+      it('should preserve non-reorderable visible columns at their original index while reordering others', () => {
+        const columnsWithFixedMiddle = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true, reorderable: false },
+          { id: 'age', field: 'age', name: 'Age', sortable: true },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, data, columnsWithFixedMiddle, defaultOptions);
+        const headerL = document.querySelector<HTMLElement>('.slick-header-columns.slick-header-columns-left')!;
+
+        fireDragStart(findCol(headerL, 'firstName'));
+        // Simulate visible draggable order: [age, firstName] while fixed lastName stays excluded from draggable list
+        headerL.insertBefore(findCol(headerL, 'age'), findCol(headerL, 'firstName'));
+        fireDragEnd(findCol(headerL, 'age'));
+
+        const finalColumns = grid.getColumns();
+        expect(finalColumns[0].id).toBe('age');
+        expect(finalColumns[1].id).toBe('lastName');
+        expect(finalColumns[1].reorderable).toBe(false);
+        expect(finalColumns[2].id).toBe('firstName');
       });
     });
 

@@ -1,3 +1,4 @@
+/* eslint-disable n/file-extension-in-import */
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -24,6 +25,7 @@
 // -- This will overwrite an existing command --
 import '@4tw/cypress-drag-drop';
 import 'cypress-real-events';
+import './drag';
 import { convertPosition } from './common';
 
 declare global {
@@ -51,20 +53,6 @@ declare global {
   }
 }
 
-const LOCAL_STORAGE_MEMORY: any = {};
-
-Cypress.Commands.add('saveLocalStorage', () => {
-  Object.keys(localStorage).forEach((key) => {
-    LOCAL_STORAGE_MEMORY[key] = localStorage[key];
-  });
-});
-
-Cypress.Commands.add('restoreLocalStorage', () => {
-  Object.keys(LOCAL_STORAGE_MEMORY).forEach((key) => {
-    localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
-  });
-});
-
 // convert position like 'topLeft' to the object { x: 'left|right', y: 'top|bottom' }
 Cypress.Commands.add('convertPosition', (viewport = 'topLeft') => cy.wrap(convertPosition(viewport)));
 
@@ -86,6 +74,19 @@ Cypress.Commands.add('getNthCell', (row, nthCol, viewport = 'topLeft', { parentS
   return cy.get(
     `${parentSelector} ${canvasSelectorX}${canvasSelectorY} [style="transform: translateY(${row * rowHeight}px);"] > .slick-cell:nth(${nthCol})`
   );
+});
+const LOCAL_STORAGE_MEMORY: Record<string, string> = {};
+
+Cypress.Commands.add('saveLocalStorage', () => {
+  Object.keys(localStorage).forEach((key) => {
+    LOCAL_STORAGE_MEMORY[key] = localStorage[key];
+  });
+});
+
+Cypress.Commands.add('restoreLocalStorage', () => {
+  Object.keys(LOCAL_STORAGE_MEMORY).forEach((key) => {
+    localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
+  });
 });
 
 Cypress.Commands.add(

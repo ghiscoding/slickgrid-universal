@@ -56,30 +56,42 @@ describe('Example 33 - Column & Row Span', () => {
   });
 
   it('should auto-scroll horizontally when a column is dragged past the viewport', () => {
-    let sortInstance: any;
     let draggedColumn: HTMLElement;
     const horizontalScroller = '.grid33 .slick-horizontal-scroller';
 
     cy.clock();
     cy.get(horizontalScroller).scrollTo(0, 0).its('0.scrollLeft').should('equal', 0);
 
-    cy.get('.slick-header-columns-left').then(($header) => {
-      const sortableProperty = Object.keys($header[0]).find((property) => property.startsWith('Sortable'));
-      sortInstance = ($header[0] as any)[sortableProperty!];
-      draggedColumn = $header[0].querySelector('.slick-header-column') as HTMLElement;
-
-      expect(sortInstance).to.exist;
-      sortInstance.options.onStart({ item: draggedColumn });
-    });
-
     cy.window().then((win) => {
+      const header = win.document.querySelector('.slick-header-columns-left') as HTMLElement;
+      draggedColumn = header.querySelector('.slick-header-column') as HTMLElement;
+      const rect = draggedColumn.getBoundingClientRect();
+      const dataTransfer = {
+        dropEffect: 'move',
+        effectAllowed: 'all',
+        getData: () => '',
+        setData: () => {},
+        setDragImage: () => {},
+      };
+      const createDragEvent = (type: string, x: number, y: number) => {
+        const event = new Event(type, { bubbles: true, cancelable: true });
+        Object.defineProperties(event, {
+          dataTransfer: { value: dataTransfer },
+          pageX: { value: x },
+          clientX: { value: x },
+          clientY: { value: y },
+        });
+        return event;
+      };
+
+      draggedColumn.dispatchEvent(createDragEvent('dragstart', rect.left + rect.width / 2, rect.top + rect.height / 2));
       const dragX = win.innerWidth + 1200;
-      cy.document().trigger('drag', { pageX: dragX, clientX: dragX, clientY: 50 });
+      win.document.dispatchEvent(createDragEvent('drag', dragX, rect.top + rect.height / 2));
     });
     cy.tick(300);
 
     cy.get(horizontalScroller).its('0.scrollLeft').should('be.greaterThan', 0);
-    cy.then(() => sortInstance.options.onEnd({ item: draggedColumn, stopPropagation: () => {} }));
+    cy.then(() => draggedColumn.dispatchEvent(new Event('dragend', { bubbles: true, cancelable: true })));
 
     cy.get('.slick-header-column:nth(0)').should('contain', 'Title');
     cy.get('.slick-header-column:nth(1)').should('contain', 'Revenue Growth');

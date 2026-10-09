@@ -72,8 +72,7 @@ const Example57: React.FC = () => {
       enableFiltering: false,
       // Preserve declared widths and horizontal overflow from the fork example.
       enableAutoSizeColumns: false,
-      // Disabled in RTL because SortableJS lacks RTL support; patch SortableJS or use https://github.com/HamadHadi/Sortable-rtl to enable it.
-      enableColumnReorder: false,
+      enableColumnReorder: true,
       gridHeight: 400,
       gridWidth: 900,
       rowHeight: 28,

@@ -133,6 +133,7 @@ export type * from './searchColumnFilter.interface.js';
 export type * from './selectableOverrideCallback.interface.js';
 export type * from './selectionModelOption.interface.js';
 export type * from './selectOption.interface.js';
+export type * from './slickColumnReorderDrag.interfaces.js';
 export type * from './slickPlugin.interface.js';
 export type * from './slickRemoteModel.interface.js';
 export type * from './slickResizer.interface.js';
