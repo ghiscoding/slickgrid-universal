@@ -176,7 +176,7 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
   const isDraggable = (el: HTMLElement): boolean =>
     el.matches(draggableSelector) && (!unorderableColumnCssClass || !el.classList.contains(unorderableColumnCssClass));
 
-  // Mirror SortableJS's Firefox/Linux fallback detection so the mouse-based path is used only for the broken browser combo.
+  // Firefox on Linux needs the mouse fallback because native drag images are broken in that browser environment.
   const isFfLinux = typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent) && /linux/i.test(navigator.userAgent);
 
   const getColumnIds = (parent: HTMLElement): string[] =>
@@ -348,8 +348,8 @@ export function setupColumnReorderDrag(options: ColumnReorderDragOption): { dest
     finalizeDrag(e);
   };
 
-  // Finalize on `drop` as well as `dragend` (like SortableJS did). Some drag sources
-  // dispatch `drop` without a following `dragend`; finalizing here ensures
+  // Finalize on `drop` as well as `dragend`. Some drag sources dispatch `drop`
+  // without a following `dragend`; finalizing here ensures
   // setColumns()/onColumnsReordered always run. When a real browser fires both events,
   // the `dragend` handler above sees draggedEl === null (reset by finalizeDrag) and
   // returns immediately, so there is no double-finalization.

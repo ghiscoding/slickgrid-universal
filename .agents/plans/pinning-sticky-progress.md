@@ -853,9 +853,8 @@ permanent-pinning controls.
 
 ## User-observed status
 
-- Initial load first failed in `getHeaderChildren()` because column resize assumed `_headers[1]` existed.
-- That was fixed by flattening the connected header collection.
-- SortableJS no longer assumes or creates a connected second header instance.
+- The initial column-resize failure from missing `_headers[1]` was fixed by traversing header
+  elements across the existing regions in the single-viewport layout.
 - The user subsequently reported no more console errors before the Example 04 API conversion.
 - The user confirms that all Vanilla and framework Cypress CI workflows have been run repeatedly
   and pass, including the pinning/sticky, resize, reorder, RTL, variable-row-height, editor,
@@ -1024,7 +1023,7 @@ bands would still be a separate feature and product decision.
 - Example 47's YTD definition now retains the shared sticky-candidate classes when adding its YTD-specific classes, so it keeps the sticky blue background even when it reaches its natural right edge and Q4 takes over the separator.
 - Added a higher-specificity right-edge inset-shadow rule for header, header-row, and footer chrome so the first right-sticky column title/filter receives the same pinned separator cue as the body region without changing its width.
 - Removed the non-user-facing Example 47 auto-scroll control and timer; the fixture now uses only normal manual grid scrolling.
-- Draggable Grouping now tolerates the single-viewport layout: it creates a Sortable instance only for header containers that actually exist, instead of passing a removed right header (`null`) to SortableJS.
+- Draggable Grouping now binds only to header regions present in the single-viewport layout.
 - Pinned left/right edge header-row and footer cells use the measured header outer width without extending into the vertical-scrollbar gutter. This keeps an empty edge filter cell aligned with its data cells without overlapping its neighbor.
 - The single horizontal scrollbar proxy now has an opaque canvas background, themed `scrollbar-color`, pointer events, and an isolated stacking context. Its z-index remains above grid rows but below application overlays such as Bulma navbar menus, and its track is aligned to the pane content edge.
 - The docking scrollbar now uses `overflow-x: auto` and sizes its spacer from the natural docking content width. When all columns fit the viewport, the proxy has zero height and no horizontal track is shown; when overflow exists, its height still comes from the measured native scrollbar dimensions.
@@ -1122,9 +1121,9 @@ bands would still be a separate feature and product decision.
 - Restored the invalid-hide alert contract for pinning. The canonical pinning validation
   now checks the prospective visible set against the docking layout, so hiding the last
   available center column is rejected without mutating the grid.
-- Column reorder now creates Sortable instances for the persistent left, center,
-  and right docking wrappers and combines their order on drop. This keeps drag
-  auto-scroll and reorder functional after the old right pane is removed.
+- Column reordering now reads the persistent left, center, and right docking
+  wrappers, keeping auto-scroll and reordering functional without the old right
+  pane.
 - Sticky transitions now keep LTR proxy-scrolled header titles, header-row filters,
   footer cells, and body cells in stable natural center-band DOM, applying only
   compositor transforms when membership changes. This fixes the intermittent
