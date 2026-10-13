@@ -12,6 +12,7 @@
 
 @forward './variables';
 
+@use './theme-base';
 @use './slick-grid';
 @use './slick-editors';
 @use './slick-plugins';

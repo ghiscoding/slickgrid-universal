@@ -10,6 +10,9 @@
     "**/demos/**",
     "**/*.{cy,spec}.ts"
   ],
+  "ignoreUnresolvedImports": [
+    "@slickgrid-universal/common/dist/styles/sass/**"
+  ],
   "workspaces": {
     "packages": [
       "frameworks/**",

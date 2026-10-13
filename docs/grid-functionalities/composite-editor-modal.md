@@ -27,6 +27,16 @@
 ### Description
 The Composite Editor Modal allows you to (create, clone, edit, mass update & mass selection changes). I believe the SlickGrid author names it as Composite Editor because it loops through each editor of all the column definitions and displays them in one composed form, hence the name Composite Editors. Also note that each editor are pulled directly from the column definition itself (their column title as well), so for example if you use `Editors.longText` then you will have a text area input associated to that field with the appropriate input label.
 
+### Required Styles (v11+)
+Import the Composite Editor stylesheet after the SlickGrid theme in your application's global SCSS entry file:
+
+```scss
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@use '@slickgrid-universal/composite-editor-component/dist/styles/sass/slick-composite-editor.scss';
+```
+
+See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for plain CSS imports and theme configuration details.
+
 The following 5 modal types (6 if we include the `auto-mass`) are available (via `CompositeEditorModalType` interface):
 - `create` - create a new row/item
 - `clone` - clone allows to copy & possibly edit some inputs before cloning

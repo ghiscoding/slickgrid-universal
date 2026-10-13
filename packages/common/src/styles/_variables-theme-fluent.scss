@@ -65,26 +65,6 @@ $slick-icon-group-expanded-svg-path: 'M15.8 7.73c.28.3.27.78-.03 1.06l-5.25 5a.7
   $slick-form-control-focus-box-shadow: none !default,
 );
 
-.slickgrid-container {
-  #filter-checkbox-selectall-container,
-  .checkbox-selector-label.selectall,
-  .slick-cell-checkboxsel {
-    .icon-checkbox-container.checked {
-      border: none;
-      background-color: $primary-color;
-
-      .sgi.sgi-icon-check {
-        color: white;
-      }
-    }
-  }
-
-  .form-control:focus {
-    --slick-input-focus-box-shadow: inset 0 -2px #{$primary-color};
-    --slick-form-control-focus-box-shadow: inset 0 -2px #{$primary-color};
-  }
-}
-
 // Dark Mode
 // -----------
 $slick-dark-primary-color: #96c6fa;
@@ -92,61 +72,84 @@ $slick-dark-base-dark-menu-bg-color: #212121;
 $slick-dark-highlight-color: $slick-dark-primary-color;
 $slick-dark-text-color: #d4d4d4;
 
-.vc[data-vc-theme="dark"],
-.ms-dark-mode,
-.ms-drop.ms-dark-mode,
-.slick-dark-mode .ms-dark-mode,
-.slick-dark-mode .slick-submenu,
-.slick-dark-mode .icon-checkbox-container,
-.slick-dark-mode {
-  .slick-dropped-grouping-title {
-    color: white;
-  }
+// theme CSS output, included by the theme entry files (this module must not emit CSS)
+@mixin slick-theme-styles {
   .slickgrid-container {
+    #filter-checkbox-selectall-container,
+    .checkbox-selector-label.selectall,
     .slick-cell-checkboxsel {
       .icon-checkbox-container.checked {
-        background-color: #62abf5;
+        border: none;
+        background-color: $primary-color;
+
+        .sgi.sgi-icon-check {
+          color: white;
+        }
       }
+    }
+
+    .form-control:focus {
+      --slick-input-focus-box-shadow: inset 0 -2px #{$primary-color};
+      --slick-form-control-focus-box-shadow: inset 0 -2px #{$primary-color};
     }
   }
 
-  --slick-primary-color: #96c6fa;
-  --slick-highlight-color: #62abf5;
-  --slick-base-dark-menu-bg-color: #212121;
-  --slick-button-primary-bg-color: #479ef5;
-  --slick-filled-filter-border: 1px solid #62abf5;
-  --slick-cell-box-shadow: none;
-  --slick-checkbox-opacity-hover: 0.7;
-  --slick-checkbox-unchecked-opacity: 0.4;
-  --slick-detail-view-icon-opacity-hover: 0.75;
-  --slick-column-picker-icon-color: #62abf5;
-  --slick-compound-filter-text-color: #479ef5;
-  --slick-draggable-group-sort-icon-color: white;
-  --slick-draggable-group-sort-icon-hover-color: #e0e0e0;
-  --slick-compound-filter-operator-select-border: 1px solid #96c6fa;
-  --slick-header-filter-row-border-bottom: 1px solid #505050;
-  --slick-container-border-right: 1px solid #505050;
-  --slick-container-border-top: 1px solid #505050;
-  --slick-container-border-left: 1px solid #505050;
-  --slick-container-border-bottom: 1px solid #505050;
-  --slick-form-control-focus-border-color: #96c6fa;
-  --slick-content-border-top: 1px solid #505050;
-  --slick-filled-filter-color: #96c6fa;
-  --slick-pagination-icon-color: #62abf5;
-  --slick-checkbox-icon-color: #96c6fa;
-  --slick-row-mouse-hover-box-shadow: none;
-  --slick-row-mouse-hover-color: #575757;
-  --slick-cell-selected-color: #474a45;
-  --slick-row-selected-color: #474a45;
-  --slick-checkbox-icon-color: #62abf5;
-  --slick-checkbox-icon-height: 22px;
-  --slick-checkbox-icon-bg-color: transparent;
-  --slick-checkbox-icon-border: 1px solid #adadad;
-  --slick-icon-sort-color: #96c6fa;
-  --slick-multiselect-icon-radio-color: #96c6fa;
-  --ms-checkbox-color: #96c6fa;
-  --ms-checkbox-hover-color: #{color.adjust(#62abf5, $lightness: 13%)};
-  --ms-choice-focus-box-shadow: #{0 0 0 2px rgba(#96c6fa, 0.25)};
-  --ms-ok-button-text-color: #96c6fa;
-  --ms-ok-button-text-hover-color: #{color.adjust(#96c6fa, $lightness: 5%)};
+  .vc[data-vc-theme="dark"],
+  .ms-dark-mode,
+  .ms-drop.ms-dark-mode,
+  .slick-dark-mode .ms-dark-mode,
+  .slick-dark-mode .slick-submenu,
+  .slick-dark-mode .icon-checkbox-container,
+  .slick-dark-mode {
+    .slick-dropped-grouping-title {
+      color: white;
+    }
+    .slickgrid-container {
+      .slick-cell-checkboxsel {
+        .icon-checkbox-container.checked {
+          background-color: #62abf5;
+        }
+      }
+    }
+
+    --slick-primary-color: #96c6fa;
+    --slick-highlight-color: #62abf5;
+    --slick-base-dark-menu-bg-color: #212121;
+    --slick-button-primary-bg-color: #479ef5;
+    --slick-filled-filter-border: 1px solid #62abf5;
+    --slick-cell-box-shadow: none;
+    --slick-checkbox-opacity-hover: 0.7;
+    --slick-checkbox-unchecked-opacity: 0.4;
+    --slick-column-picker-icon-color: #62abf5;
+    --slick-compound-filter-text-color: #479ef5;
+    --slick-draggable-group-sort-icon-color: white;
+    --slick-draggable-group-sort-icon-hover-color: #e0e0e0;
+    --slick-compound-filter-operator-select-border: 1px solid #96c6fa;
+    --slick-header-filter-row-border-bottom: 1px solid #505050;
+    --slick-container-border-right: 1px solid #505050;
+    --slick-container-border-top: 1px solid #505050;
+    --slick-container-border-left: 1px solid #505050;
+    --slick-container-border-bottom: 1px solid #505050;
+    --slick-form-control-focus-border-color: #96c6fa;
+    --slick-detail-view-icon-opacity-hover: 0.75;
+    --slick-content-border-top: 1px solid #505050;
+    --slick-filled-filter-color: #96c6fa;
+    --slick-pagination-icon-color: #62abf5;
+    --slick-checkbox-icon-color: #96c6fa;
+    --slick-row-mouse-hover-box-shadow: none;
+    --slick-row-mouse-hover-color: #575757;
+    --slick-cell-selected-color: #474a45;
+    --slick-row-selected-color: #474a45;
+    --slick-checkbox-icon-color: #62abf5;
+    --slick-checkbox-icon-height: 22px;
+    --slick-checkbox-icon-bg-color: transparent;
+    --slick-checkbox-icon-border: 1px solid #adadad;
+    --slick-icon-sort-color: #96c6fa;
+    --slick-multiselect-icon-radio-color: #96c6fa;
+    --ms-checkbox-color: #96c6fa;
+    --ms-checkbox-hover-color: #{color.adjust(#62abf5, $lightness: 13%)};
+    --ms-choice-focus-box-shadow: #{0 0 0 2px rgba(#96c6fa, 0.25)};
+    --ms-ok-button-text-color: #96c6fa;
+    --ms-ok-button-text-hover-color: #{color.adjust(#96c6fa, $lightness: 5%)};
+  }
 }
