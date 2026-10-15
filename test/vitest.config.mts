@@ -36,6 +36,7 @@ export default defineConfig({
     },
     exclude: [...configDefaults.exclude, 'frameworks/*'],
     environment: 'jsdom',
+    injectCjsGlobals: false,
     // Reuse the jsdom VM between files while retaining per-file isolation.
     // This avoids creating a new jsdom environment for every test file.
     pool: 'vmThreads',
