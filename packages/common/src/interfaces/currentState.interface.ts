@@ -50,5 +50,10 @@ export interface CurrentPagination {
   pageSize: number;
 }
 
-/** Current permanent pinning state used by GridState presets and change events. */
+/**
+ * Permanent pinning used by Grid State, presets, and change events.
+ * Serialized state always includes all four side arrays: column IDs are strings, and row
+ * references retain their configured index or ID form. The inherited PinningOption shape
+ * also accepts numeric column boundaries/counts and index arrays when configuring presets.
+ */
 export interface CurrentPinning extends PinningOption {}

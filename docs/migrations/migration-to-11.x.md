@@ -115,6 +115,13 @@ was a row count. Map it to explicit row references under `pinning.rows.top` or `
 depending on `frozenBottom`. For bottom-pinned rows, derive the references from the end of the saved
 dataset or use stable dataset IDs.
 
+The returned `GridState.pinning` always includes all four sides as arrays, with `[]` for empty
+sides. Column arrays contain string `Column.id` values, including numeric IDs converted to strings;
+numeric boundaries/counts and column index arrays are accepted as preset inputs but are not emitted
+in saved state. Row arrays preserve their configured index or dataset ID references so ID-based
+pins keep following their records through sorting and filtering. Use `{ id: number }` for numeric
+dataset IDs to distinguish them from row indexes.
+
 Column layouts in `CurrentColumn[]` contain order, width, visibility, and CSS classes. Pinning is
 saved only in `GridState.pinning`; `Column.pinned` remains available on column definitions and is
 serialized as column IDs under `pinning.columns.left/right`. If you saved an earlier v11 preview

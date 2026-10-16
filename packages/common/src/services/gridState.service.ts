@@ -255,14 +255,17 @@ export class GridStateService {
     return gridState;
   }
 
-  /** Get the current permanent pinning state using stable column references. */
+  /**
+   * Get permanent pinning with all four sides represented as arrays, including empty sides.
+   * Column references are string IDs; row references retain their configured index or ID form.
+   */
   getCurrentPinning(): CurrentPinning {
     const columns = this._grid?.getColumns() ?? [];
     const pinningRows = this._gridOptions.pinning?.rows ?? {};
     return {
       columns: {
-        left: columns.filter((column) => column.pinned === 'left').map((column) => column.id),
-        right: columns.filter((column) => column.pinned === 'right').map((column) => column.id),
+        left: columns.filter((column) => column.pinned === 'left').map((column) => String(column.id)),
+        right: columns.filter((column) => column.pinned === 'right').map((column) => String(column.id)),
       },
       rows: {
         top: [...(pinningRows.top ?? [])],

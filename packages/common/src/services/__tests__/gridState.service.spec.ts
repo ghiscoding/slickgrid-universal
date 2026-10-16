@@ -634,7 +634,7 @@ describe('GridStateService', () => {
         { id: 'field2', field: 'field2' },
         { id: 'field3', field: 'field3', pinned: 'right' },
       ] as Column[];
-      const rows = { top: ['first-row'], bottom: [{ id: 99 }] };
+      const rows = { top: [0, 'first-row'], bottom: [{ id: 99 }, { id: 'last-row' }] };
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ pinning: { rows } } as GridOption);
       vi.spyOn(service, 'getCurrentFilters').mockReturnValue([]);
@@ -648,6 +648,32 @@ describe('GridStateService', () => {
         { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0, hidden: undefined },
       ]);
       expect(state.pinning).toEqual({ columns: { left: ['field1'], right: ['field3'] }, rows });
+    });
+  });
+
+  describe('getCurrentPinning method', () => {
+    it.each([undefined, { columns: { left: 0, right: 1 } }])('should return numeric column IDs as strings with configuration %j', (pinning) => {
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce([
+        { id: 1, field: 'field1', pinned: 'left' },
+        { id: 'center', field: 'field2' },
+        { id: 100, field: 'field3', pinned: 'right' },
+      ] as Column[]);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ pinning } as GridOption);
+
+      expect(service.getCurrentPinning()).toEqual({
+        columns: { left: ['1'], right: ['100'] },
+        rows: { top: [], bottom: [] },
+      });
+    });
+
+    it('should return four empty arrays when there is no pinning', () => {
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce([]);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({});
+
+      expect(service.getCurrentPinning()).toEqual({
+        columns: { left: [], right: [] },
+        rows: { top: [], bottom: [] },
+      });
     });
   });
 

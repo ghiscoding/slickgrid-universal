@@ -130,13 +130,28 @@ export interface GridState {
 rows. `CurrentColumn` entries store the column layout (order, width, visibility, and CSS classes)
 without repeating pinning.
 
-String column references match `Column.id`; arrays can select individual or non-contiguous columns.
-For example:
+#### Pinning values returned by Grid State
+
+The `pinning` value returned by `getCurrentGridState()` (also returned directly by
+`getCurrentPinning()`) always includes all four side arrays: `columns.left`, `columns.right`,
+`rows.top`, and `rows.bottom`. Empty sides return `[]`.
+
+- Column arrays contain string `Column.id` values. Numeric column IDs are converted to strings
+  (for example, `id: 42` is saved as `'42'`), because bare numbers in a column pinning array are
+  interpreted as indexes. Presets can accept numeric column boundaries/counts or arrays of
+  IDs/indexes, but returned state always contains the resolved string ID arrays.
+- Row arrays preserve their configured references: a number identifies a zero-based row index,
+  a string identifies a dataset ID, and `{ id: number | string }` explicitly identifies a dataset
+  ID. Use the object form for numeric dataset IDs. Dataset IDs use `datasetIdPropertyName`
+  (default `id`). ID references follow the same record through sorting and filtering; index
+  references remain positional. Row references are not converted to indexes when saving state.
+
+For example, the returned `pinning` value can be:
 
 ```ts
 const pinning: CurrentPinning = {
-  columns: { left: ['duration'], right: ['complete'] },
-  rows: { top: [0], bottom: [] },
+  columns: { left: ['duration', '42'], right: [] },
+  rows: { top: [0, 'row-7', { id: 99 }], bottom: [] },
 };
 ```
 
