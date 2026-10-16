@@ -7,6 +7,7 @@
 @forward './variables';
 
 /** SlickGrid Bootstrap Theme */
+@use './theme-base';
 @use './slick-without-bootstrap-min-styling';
 @use './slick-grid';
 @use './slick-editors';

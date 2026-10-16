@@ -1,0 +1,4 @@
+@use './theme-base';
+@use './variables-theme-fluent' as vt;
+
+@include vt.slick-theme-styles;

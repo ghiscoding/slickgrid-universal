@@ -83,6 +83,15 @@ changeKeepingComponentAlive() {
 
 > Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/angular-row-detail-plugin`)
 
+Starting from version 11, add `@slickgrid-universal/row-detail-plugin` as a direct dependency and import its styles after your grid theme in your global SCSS entry file:
+
+```scss
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail.scss';
+```
+
+Use the Sass file for your chosen theme. See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for CSS imports and theme configuration details.
+
 ##### View
 ```html
 <angular-slickgrid

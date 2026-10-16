@@ -91,6 +91,7 @@ export default class Example45 {
       // legacy pinned-row option creates a pane that no longer participates in
       // the POC renderer.
       pinning: { rows: { top: [0, 1] } },
+      headerMenu: { showPinningCommands: true },
       gridHeight: 560,
       gridWidth: 1080,
       dataView: {

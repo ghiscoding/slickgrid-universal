@@ -12,7 +12,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [10.11.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.1...v10.11.2) (2026-10-01)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.11.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.0...v10.11.1) (2026-09-30)
 
@@ -47,47 +47,47 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [10.8.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.2...v10.8.3) (2026-07-04)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.8.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.1...v10.8.2) (2026-06-20)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.8.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.8.0...v10.8.1) (2026-06-19)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.7.1...v10.8.0) (2026-06-13)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.7.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.7.0...v10.7.1) (2026-05-16)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.6.0...v10.7.0) (2026-05-09)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.2...v10.6.0) (2026-05-02)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.5.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.1...v10.5.2) (2026-04-25)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.5.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.0...v10.5.1) (2026-04-22)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.4.2...v10.5.0) (2026-04-18)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.3.0...v10.4.0) (2026-04-02)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.2.0...v10.3.0) (2026-03-24)
 
@@ -97,19 +97,19 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [10.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.1...v10.2.0) (2026-03-14)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.0...v10.1.1) (2026-03-09)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.0.0...v10.1.0) (2026-03-07)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.13.0...v10.0.0) (2026-03-03)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
 
@@ -123,15 +123,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [9.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v9.13.0) (2026-01-30)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [9.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.11.0...v9.12.0) (2025-12-29)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [9.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.10.0...v9.11.0) (2025-11-24)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [9.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.9.0...v9.10.0) (2025-11-04)
 
@@ -147,23 +147,23 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [9.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.7.0...v9.8.0) (2025-08-23)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [9.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.6.1...v9.7.0) (2025-08-12)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [9.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.5.0...v9.6.0) (2025-07-27)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [9.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.4.0...v9.5.0) (2025-07-19)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [9.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.3.0...v9.4.0) (2025-07-12)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [9.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.2.0...v9.3.0) (2025-07-05)
 
@@ -173,19 +173,19 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [9.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.1.0...v9.2.0) (2025-06-14)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [9.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.3...v9.1.0) (2025-05-31)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [9.0.3](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.2...v9.0.3) (2025-05-16)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [9.0.2](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.0...v9.0.2) (2025-05-16)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [9.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.14.0...v9.0.0) (2025-05-10)
 
@@ -199,19 +199,19 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.14.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.4...v5.14.0) (2025-04-26)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.13.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.3...v5.13.4) (2025-04-09)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.13.3](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.2...v5.13.3) (2025-04-02)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.13.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.1...v5.13.2) (2025-03-29)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.13.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.0...v5.13.1) (2025-03-19)
 
@@ -228,39 +228,39 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.12.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.1...v5.12.2) (2025-02-08)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.12.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.12.0...v5.12.1) (2025-01-25)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v5.12.0) (2025-01-21)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.2...v5.11.0) (2024-12-14)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.10.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.1...v5.10.2) (2024-11-30)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.10.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.10.0...v5.10.1) (2024-11-09)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.9.0...v5.10.0) (2024-11-02)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.8.0...v5.9.0) (2024-10-19)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.7.0...v5.8.0) (2024-09-29)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.1...v5.7.0) (2024-09-14)
 
@@ -270,11 +270,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.6.0...v5.6.1) (2024-08-31)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.5.2...v5.6.0) (2024-08-24)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.5.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.5.1...v5.5.2) (2024-08-17)
 
@@ -284,47 +284,47 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.5.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.5.0...v5.5.1) (2024-08-17)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.4.0...v5.5.0) (2024-08-07)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.4...v5.4.0) (2024-07-20)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.3.4](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.3...v5.3.4) (2024-07-13)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.3.3](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.2...v5.3.3) (2024-07-06)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.3.2](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.1...v5.3.2) (2024-06-29)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.3.0...v5.3.1) (2024-06-28)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.2.0...v5.3.0) (2024-06-28)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.1.0...v5.2.0) (2024-06-18)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.1...v5.1.0) (2024-06-07)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.0.1](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.0...v5.0.1) (2024-05-11)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.7.0...v5.0.0) (2024-05-10)
 
@@ -338,15 +338,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.0.0-beta.3](https://github.com/ghiscoding/slickgrid-universal/compare/v5.0.0-beta.2...v5.0.0-beta.3) (2024-05-09)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [5.0.0-beta.2](https://github.com/ghiscoding/slickgrid-universal/compare/v4.7.0...v5.0.0-beta.2) (2024-05-07)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 # [4.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.3...v4.7.0) (2024-04-20)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [4.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.0...v4.6.1) (2024-03-31)
 
@@ -422,7 +422,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [4.0.3](https://github.com/ghiscoding/slickgrid-universal/compare/v4.0.2...v4.0.3) (2023-12-16)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [4.0.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.2...v4.0.2) (2023-12-15)
 
@@ -434,7 +434,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [4.0.1-alpha.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.0.1-alpha.0...v4.0.1-alpha.1) (2023-12-12)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [4.0.1-alpha.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.0.0-alpha.0...v4.0.1-alpha.0) (2023-12-10)
 
@@ -446,15 +446,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [3.7.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.1...v3.7.2) (2023-12-12)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [3.7.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.0...v3.7.1) (2023-12-08)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 # [3.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.6.0...v3.7.0) (2023-12-08)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 # 3.6.0 (2023-11-26)
 
@@ -470,23 +470,23 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [3.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.4.2...v3.5.0) (2023-11-10)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [3.4.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.4.1...v3.4.2) (2023-11-02)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [3.4.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.4.0...v3.4.1) (2023-11-02)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 # [3.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.3.2...v3.4.0) (2023-11-02)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [3.3.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.3.1...v3.3.2) (2023-10-06)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [3.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.3.0...v3.3.1) (2023-10-05)
 
@@ -502,23 +502,23 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [3.2.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.2.1...v3.2.2) (2023-09-24)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [3.2.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.2.0...v3.2.1) (2023-09-05)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [3.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.1.0...v3.2.0) (2023-08-21)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [3.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.0.1...v3.1.0) (2023-07-20)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [3.0.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.0.0...v3.0.1) (2023-07-01)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [3.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.4...v3.0.0) (2023-05-29)
 
@@ -532,11 +532,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [3.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.4...v3.0.0-beta.0) (2023-05-20)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [2.6.4](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.3...v2.6.4) (2023-05-20)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [2.6.3](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.2...v2.6.3) (2023-03-23)
 
@@ -546,11 +546,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [2.6.2](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.1...v2.6.2) (2023-03-03)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [2.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.0...v2.6.1) (2023-02-24)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 # [2.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.5.0...v2.6.0) (2023-02-23)
 
@@ -568,31 +568,31 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [2.4.1](https://github.com/ghiscoding/slickgrid-universal/compare/v2.4.0...v2.4.1) (2023-02-04)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 # [2.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.3.0...v2.4.0) (2023-02-04)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 # [2.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.2.2...v2.3.0) (2023-01-21)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [2.2.2](https://github.com/ghiscoding/slickgrid-universal/compare/v2.2.1...v2.2.2) (2022-12-24)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [2.2.1](https://github.com/ghiscoding/slickgrid-universal/compare/v2.2.0...v2.2.1) (2022-12-22)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 # [2.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.3...v2.2.0) (2022-12-21)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [2.1.3](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.2...v2.1.3) (2022-12-08)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [2.1.2](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.1...v2.1.2) (2022-12-02)
 
@@ -604,7 +604,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [2.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.0...v2.1.1) (2022-11-19)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 # [2.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.0.0...v2.1.0) (2022-11-17)
 
@@ -620,15 +620,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [2.0.0-alpha.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.4.0...v2.0.0-alpha.0) (2022-10-15)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 # [1.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.7...v1.4.0) (2022-08-15)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [1.3.7](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.6...v1.3.7) (2022-08-02)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [1.3.5](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.4...v1.3.5) (2022-07-28)
 
@@ -638,19 +638,19 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [1.3.4](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.3...v1.3.4) (2022-07-28)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [1.3.3](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.2...v1.3.3) (2022-07-07)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [1.3.2](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.0...v1.3.2) (2022-07-06)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 # [1.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.6...v1.3.0) (2022-06-18)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [1.2.6](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.5...v1.2.6) (2022-03-19)
 
@@ -660,7 +660,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [1.2.5](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.4...v1.2.5) (2022-03-06)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [1.2.4](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.3...v1.2.4) (2022-02-15)
 
@@ -670,15 +670,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [1.2.3](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.1...v1.2.3) (2022-02-14)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [1.2.1](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.0...v1.2.1) (2022-01-18)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 # [1.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.1.1...v1.2.0) (2022-01-06)
 
-**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+**Note:** Version bump only for package @slickgrid-universal/row-detail-plugin
 
 ## [1.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v1.1.0...v1.1.1) (2021-12-11)
 
