@@ -545,7 +545,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // if user entered some Pinning "presets", we need to apply them in the grid options
     if (this.gridOptions.presets?.pinning) {
-      this.gridOptions = { ...this.gridOptions, ...this.gridOptions.presets.pinning };
+      this.gridOptions = { ...this.gridOptions, pinning: this.gridOptions.presets.pinning };
     }
 
     this.slickGrid = new SlickGrid<TData, Column<TData>, GridOption<Column<TData>>>(

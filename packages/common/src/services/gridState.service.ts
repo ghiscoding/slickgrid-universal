@@ -297,9 +297,6 @@ export class GridStateService {
             headerCssClass: column.headerCssClass || '',
             width: column.width || 0,
           };
-          if (column.pinned !== undefined) {
-            currColumn.pinned = column.pinned;
-          }
           if (includeHiddenProps) {
             currColumn.hidden = column.hidden;
           }
@@ -334,9 +331,6 @@ export class GridStateService {
             // since we don't want to use the default width that SlickGrid uses internally (which is 60px),
             // because that would cancel any column resize done by Slickgrid-Universal (like autoResizeColumnsByCellContent)
             width: currentColumn.width,
-            // Column-level pinning is the granular preset representation. The
-            // unified grid-level option remains available for axis-wide state.
-            pinned: currentColumn.pinned !== undefined ? currentColumn.pinned : gridColumn.pinned,
           });
         }
       });

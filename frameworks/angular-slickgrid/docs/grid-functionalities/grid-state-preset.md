@@ -75,7 +75,17 @@ export interface CurrentColumn {
   cssClass?: string;
   headerCssClass?: string;
   width?: number;
-  pinned?: 'left' | 'right' | null;
+  hidden?: boolean;
+}
+export interface CurrentPinning {
+  columns?: {
+    left?: number | Array<number | string>;
+    right?: number | Array<number | string>;
+  };
+  rows?: {
+    top?: Array<number | string | { id: number | string }>;
+    bottom?: Array<number | string | { id: number | string }>;
+  };
 }
 export interface CurrentFilter {
   columnId: string;
@@ -99,6 +109,29 @@ export interface GridState {
   treeData?: Partial<TreeToggleStateChange> | null;
 }
 ```
+
+`GridState` and `GridOption.presets` use the same structure. All permanent pinning is stored under
+`pinning`: `columns.left/right` identifies pinned columns, and `rows.top/bottom` identifies pinned
+rows. `CurrentColumn` entries store the column layout (order, width, visibility, and CSS classes)
+without repeating pinning.
+
+String column references match `Column.id`; arrays can select individual or non-contiguous columns.
+For example:
+
+```ts
+const pinning: CurrentPinning = {
+  columns: { left: ['duration'], right: ['complete'] },
+  rows: { top: [0], bottom: [] },
+};
+```
+
+The `Column.pinned` option remains available on column definitions; its effective side is saved as
+a column ID under `pinning.columns.left/right`. When restoring state dynamically, apply the column
+layout first, then pass the saved `pinning` value to `gridService.setPinning()` when present. This
+uses the restored column order and visibility. Use empty arrays for all four sides to clear pinning.
+
+Sticky columns and rows are configured through `Column.sticky` and `GridOption.stickyRows`. Their
+active membership depends on scroll position and is not included in saved Grid State or presets.
 
 {% hint style="note" %}
 You can get Grouping column Ids as Grid State but it is limited to Draggable Grouping **only** via Grid Presets and it will not work with regular Grouping.
