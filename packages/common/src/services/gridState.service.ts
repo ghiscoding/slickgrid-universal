@@ -255,14 +255,17 @@ export class GridStateService {
     return gridState;
   }
 
-  /** Get the current permanent pinning state using stable column references. */
+  /**
+   * Get permanent pinning with all four sides represented as arrays, including empty sides.
+   * Column references are string IDs; row references retain their configured index or ID form.
+   */
   getCurrentPinning(): CurrentPinning {
     const columns = this._grid?.getColumns() ?? [];
     const pinningRows = this._gridOptions.pinning?.rows ?? {};
     return {
       columns: {
-        left: columns.filter((column) => column.pinned === 'left').map((column) => column.id),
-        right: columns.filter((column) => column.pinned === 'right').map((column) => column.id),
+        left: columns.filter((column) => column.pinned === 'left').map((column) => String(column.id)),
+        right: columns.filter((column) => column.pinned === 'right').map((column) => String(column.id)),
       },
       rows: {
         top: [...(pinningRows.top ?? [])],
@@ -297,9 +300,6 @@ export class GridStateService {
             headerCssClass: column.headerCssClass || '',
             width: column.width || 0,
           };
-          if (column.pinned !== undefined) {
-            currColumn.pinned = column.pinned;
-          }
           if (includeHiddenProps) {
             currColumn.hidden = column.hidden;
           }
@@ -334,9 +334,6 @@ export class GridStateService {
             // since we don't want to use the default width that SlickGrid uses internally (which is 60px),
             // because that would cancel any column resize done by Slickgrid-Universal (like autoResizeColumnsByCellContent)
             width: currentColumn.width,
-            // Column-level pinning is the granular preset representation. The
-            // unified grid-level option remains available for axis-wide state.
-            pinned: currentColumn.pinned !== undefined ? currentColumn.pinned : gridColumn.pinned,
           });
         }
       });

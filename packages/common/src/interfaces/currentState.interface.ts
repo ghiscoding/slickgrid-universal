@@ -1,6 +1,7 @@
 import type { OperatorType, SearchTerm } from '../enums/index.js';
-import type { DockingSide, PinningOption } from './docking.interface.js';
+import type { PinningOption } from './docking.interface.js';
 
+/** Saved column layout. Permanent pinning is stored separately in GridState.pinning. */
 export interface CurrentColumn {
   /** Column id (in the column definitions) */
   columnId: string;
@@ -13,9 +14,6 @@ export interface CurrentColumn {
 
   /** Column width */
   width?: number;
-
-  /** Permanent pinned side for this column; `null` explicitly restores it to the center. */
-  pinned?: DockingSide | null;
 
   /** when enabled, the "hidden" column property will be included (defaults to false) */
   hidden?: boolean;
@@ -52,5 +50,10 @@ export interface CurrentPagination {
   pageSize: number;
 }
 
-/** Current permanent pinning state used by GridState presets and change events. */
+/**
+ * Permanent pinning used by Grid State, presets, and change events.
+ * Serialized state always includes all four side arrays: column IDs are strings, and row
+ * references retain their configured index or ID form. The inherited PinningOption shape
+ * also accepts numeric column boundaries/counts and index arrays when configuring presets.
+ */
 export interface CurrentPinning extends PinningOption {}

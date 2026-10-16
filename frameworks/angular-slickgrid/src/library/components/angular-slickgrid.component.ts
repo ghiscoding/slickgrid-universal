@@ -720,7 +720,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
 
     // if user entered some Pinning "presets", we need to apply them in the grid options
     if (this.options.presets?.pinning) {
-      this.options = { ...this.options, ...this.options.presets.pinning };
+      this.options = { ...this.options, pinning: this.options.presets.pinning };
     }
 
     // build SlickGrid Grid, also user might optionally pass a custom dataview (e.g. remote model)

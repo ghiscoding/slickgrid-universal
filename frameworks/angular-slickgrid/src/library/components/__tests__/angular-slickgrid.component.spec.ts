@@ -1330,13 +1330,17 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         expect(backendSpy).toHaveBeenCalledWith(mockColumnFilter, false);
       });
 
-      it('should override pinned grid options when "pinning" is defined in the "presets" property', () => {
-        const pinningMock = { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } } as CurrentPinning;
-
+      it.each<CurrentPinning>([
+        { columns: { left: ['field1'], right: ['field3'] }, rows: { top: [0], bottom: [9] } },
+        { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } },
+      ])('should override nested pinning grid options from presets: %j', (pinningMock) => {
+        component.options.pinning = { columns: { left: ['field2'] }, rows: { top: [2] } };
         component.options.presets = { pinning: pinningMock };
         component.initialization(slickEventHandler);
 
-        expect(component.options).toEqual({ ...component.options, ...pinningMock });
+        expect(component.options.pinning).toEqual(pinningMock);
+        expect(component.options).not.toHaveProperty('rows');
+        expect(component.options).not.toHaveProperty('columns');
       });
 
       it('should call the "updateFilters" method when filters are defined in the "presets" property', () => {

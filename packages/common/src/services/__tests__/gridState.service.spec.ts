@@ -615,7 +615,7 @@ describe('GridStateService', () => {
       ] as Column[];
       const associatedColumnsMock = [
         { columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 },
-        { columnId: 'field2', cssClass: '', headerCssClass: 'blue', width: 150, pinned: 'left' },
+        { columnId: 'field2', cssClass: '', headerCssClass: 'blue', width: 150 },
         { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0 },
       ] as CurrentColumn[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
@@ -626,6 +626,54 @@ describe('GridStateService', () => {
 
       expect(associatedColumns).toEqual(associatedColumnsMock);
       expect(currentColumns).toEqual(associatedColumnsMock);
+    });
+
+    it('should serialize pinning on all four sides only in GridState.pinning, including hidden pinned columns', () => {
+      const columns = [
+        { id: 'field1', field: 'field1', pinned: 'left', hidden: true },
+        { id: 'field2', field: 'field2' },
+        { id: 'field3', field: 'field3', pinned: 'right' },
+      ] as Column[];
+      const rows = { top: [0, 'first-row'], bottom: [{ id: 99 }, { id: 'last-row' }] };
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ pinning: { rows } } as GridOption);
+      vi.spyOn(service, 'getCurrentFilters').mockReturnValue([]);
+      vi.spyOn(service, 'getCurrentSorters').mockReturnValue([]);
+
+      const state = service.getCurrentGridState(true);
+
+      expect(state.columns).toEqual([
+        { columnId: 'field1', cssClass: '', headerCssClass: '', width: 0, hidden: true },
+        { columnId: 'field2', cssClass: '', headerCssClass: '', width: 0, hidden: undefined },
+        { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0, hidden: undefined },
+      ]);
+      expect(state.pinning).toEqual({ columns: { left: ['field1'], right: ['field3'] }, rows });
+    });
+  });
+
+  describe('getCurrentPinning method', () => {
+    it.each([undefined, { columns: { left: 0, right: 1 } }])('should return numeric column IDs as strings with configuration %j', (pinning) => {
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce([
+        { id: 1, field: 'field1', pinned: 'left' },
+        { id: 'center', field: 'field2' },
+        { id: 100, field: 'field3', pinned: 'right' },
+      ] as Column[]);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ pinning } as GridOption);
+
+      expect(service.getCurrentPinning()).toEqual({
+        columns: { left: ['1'], right: ['100'] },
+        rows: { top: [], bottom: [] },
+      });
+    });
+
+    it('should return four empty arrays when there is no pinning', () => {
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce([]);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({});
+
+      expect(service.getCurrentPinning()).toEqual({
+        columns: { left: [], right: [] },
+        rows: { top: [], bottom: [] },
+      });
     });
   });
 
@@ -646,7 +694,7 @@ describe('GridStateService', () => {
       ] as Column[];
       const currentColumnsMock = [
         { columnId: 'field1', cssClass: 'purple', headerCssClass: 'custom-hdr', width: 100 },
-        { columnId: 'field2', cssClass: '', width: 150, pinned: 'left' },
+        { columnId: 'field2', cssClass: '', width: 150 },
         { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0 },
       ] as CurrentColumn[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
@@ -657,14 +705,23 @@ describe('GridStateService', () => {
       // cssClass: red will change to purple and headerCssClass will remain blue when defined in either
       expect(associatedGridColumns).toEqual([
         { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', hidden: false, headerCssClass: 'custom-hdr' },
-        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, hidden: false, headerCssClass: 'blue', pinned: 'left' },
+        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, hidden: false, headerCssClass: 'blue' },
         { id: 'field3', field: 'field3', width: 0, cssClass: undefined, hidden: false, headerCssClass: undefined },
       ]);
       expect(columns).toEqual([
         { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', hidden: false, headerCssClass: 'custom-hdr' },
-        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, hidden: false, headerCssClass: 'blue', pinned: 'left' },
+        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, hidden: false, headerCssClass: 'blue' },
         { id: 'field3', field: 'field3', width: 0, cssClass: undefined, hidden: false, headerCssClass: undefined },
       ]);
+    });
+
+    it('should ignore duplicate pinning from older column presets and preserve column definition pinning', () => {
+      vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce([{ id: 'field1', field: 'field1', pinned: 'right' }] as Column[]);
+      const presetColumns = JSON.parse('[{"columnId":"field1","width":150,"pinned":"left"}]') as CurrentColumn[];
+
+      const columns = service.getAssociatedGridColumns(gridStub, presetColumns);
+
+      expect(columns).toEqual([expect.objectContaining({ id: 'field1', width: 150, pinned: 'right' })]);
     });
   });
 

@@ -1197,15 +1197,20 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(backendSpy).toHaveBeenCalledWith(mockColumnFilter as unknown as CurrentFilter[], false);
       });
 
-      it('should override pinned grid options when "pinning" is defined in the "presets" property', () => {
-        const pinningMock = { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } } as CurrentPinning;
+      it.each<CurrentPinning>([
+        { columns: { left: ['field1'], right: ['field3'] }, rows: { top: [0], bottom: [9] } },
+        { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } },
+      ])('should override nested pinning grid options from presets: %j', (pinningMock) => {
         const gridOptionSetterSpy = vi.spyOn(component, 'gridOptions', 'set');
 
+        component.gridOptions.pinning = { columns: { left: ['field2'] }, rows: { top: [2] } };
         component.gridOptions.presets = { pinning: pinningMock };
         component.initialization(divContainer, slickEventHandler);
 
-        expect(gridOptionSetterSpy).toHaveBeenCalledWith({ ...component.gridOptions, ...pinningMock });
-        expect(component.gridOptions).toEqual({ ...component.gridOptions, ...pinningMock });
+        expect(gridOptionSetterSpy).toHaveBeenCalledWith({ ...component.gridOptions, pinning: pinningMock });
+        expect(component.gridOptions.pinning).toEqual(pinningMock);
+        expect(component.gridOptions).not.toHaveProperty('rows');
+        expect(component.gridOptions).not.toHaveProperty('columns');
       });
 
       it('should call the "updateFilters" method when filters are defined in the "presets" property', () => {

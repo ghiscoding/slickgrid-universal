@@ -17,7 +17,7 @@ Look at your developer console before leaving the page
 #### Grid State
 The `Grid State` are what we defined as the currently used `Columns` / `Filters` / `Sorters` / `Pagination` / permanent `Pinning` of the actual grid (pagination is only returned when used in combo with the Backend Service API).
 #### Presets
-Presets can be used to preset a grid with certain `Columns` / `Filters` / `Sorters` / `Pagination` / permanent `Pinning`. When we say `Columns`, we actually mean their size, order position, visibility (shown/hidden), and optional permanent pinning side in the grid.
+Presets can be used to preset a grid with certain `Columns` / `Filters` / `Sorters` / `Pagination` / permanent `Pinning`. When we say `Columns`, we actually mean their size, order position, visibility (shown/hidden) in the grid. Permanent pinning is stored separately under `pinning`.
 #### Combining the two together
 So basically, the idea is to save the `Grid State` in Local Storage (or DB) before the grid gets destroyed and once we come back to that same page we can preset the grid with the exact same state as it was before leaving the page (just like if we were doing a forward/back button with browser history).
 
@@ -71,7 +71,6 @@ export interface CurrentColumn {
   cssClass?: string;
   headerCssClass?: string;
   width?: number;
-  pinned?: 'left' | 'right' | null;
   hidden?: boolean;
 }
 export interface CurrentPinning {
@@ -80,8 +79,8 @@ export interface CurrentPinning {
     right?: number | Array<number | string>;
   };
   rows?: {
-    top?: Array<number | string>;
-    bottom?: Array<number | string>;
+    top?: Array<number | string | { id: number | string }>;
+    bottom?: Array<number | string | { id: number | string }>;
   };
 }
 export interface CurrentFilter {
@@ -108,12 +107,45 @@ export interface GridState {
 }
 ```
 
-`GridState.pinning` stores permanent column and row pinning. A `CurrentColumn.pinned` value
-preserves the side of an individual column in a custom layout, which is useful for non-contiguous
-column presets. If both forms are persisted, keep them consistent. Sticky columns and rows are
-configured through `Column.sticky` and `GridOption.stickyRows`; their active membership is derived from
-the current scroll position and is therefore not part of a saved Grid State or preset. See the
-[v11 migration guide](../migrations/migration-to-11.x.md#grid-state-and-renamed-interfaces) when
+`GridState` and `GridOption.presets` use the same structure. All permanent pinning is stored under
+`pinning`: `columns.left/right` identifies pinned columns, and `rows.top/bottom` identifies pinned
+rows. `CurrentColumn` entries store the column layout (order, width, visibility, and CSS classes)
+without repeating pinning.
+
+#### Pinning values returned by Grid State
+
+The `pinning` value returned by `getCurrentGridState()` (also returned directly by
+`getCurrentPinning()`) always includes all four side arrays: `columns.left`, `columns.right`,
+`rows.top`, and `rows.bottom`. Empty sides return `[]`.
+
+- Column arrays contain string `Column.id` values. Numeric column IDs are converted to strings
+  (for example, `id: 42` is saved as `'42'`), because bare numbers in a column pinning array are
+  interpreted as indexes. Presets can accept numeric column boundaries/counts or arrays of
+  IDs/indexes, but returned state always contains the resolved string ID arrays.
+- Row arrays preserve their configured references: a number identifies a zero-based row index,
+  a string identifies a dataset ID, and `{ id: number | string }` explicitly identifies a dataset
+  ID. Use the object form for numeric dataset IDs. Dataset IDs use `datasetIdPropertyName`
+  (default `id`). ID references follow the same record through sorting and filtering; index
+  references remain positional. Row references are not converted to indexes when saving state.
+
+For example, the returned `pinning` value can be:
+
+```ts
+const pinning: CurrentPinning = {
+  columns: { left: ['duration', '42'], right: [] },
+  rows: { top: [0, 'row-7', { id: 99 }], bottom: [] },
+};
+```
+
+The `Column.pinned` option remains available on column definitions; its effective side is saved as
+a column ID under `pinning.columns.left/right`. When restoring state dynamically, apply the column
+layout first, then pass the saved `pinning` value to `gridService.setPinning()` when present. This
+uses the restored column order and visibility. Use empty arrays for all four sides to clear pinning.
+
+Sticky columns and rows are configured through `Column.sticky` and `GridOption.stickyRows`. Their
+active membership depends on scroll position and is not included in saved Grid State or presets.
+
+See the [v11 migration guide](../migrations/migration-to-11.x.md#grid-state-and-presets) when
 migrating saved state from the old frozen-property shape.
 
 {% hint style="note" %}

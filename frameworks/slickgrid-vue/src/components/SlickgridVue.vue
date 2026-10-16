@@ -454,7 +454,7 @@ function initialization() {
 
   // if user entered some Pinning "presets", we need to apply them in the grid options
   if (_gridOptions.value.presets?.pinning) {
-    _gridOptions.value = { ..._gridOptions.value, ..._gridOptions.value.presets.pinning };
+    _gridOptions.value = { ..._gridOptions.value, pinning: _gridOptions.value.presets.pinning };
   }
 
   // build SlickGrid Grid, also user might optionally pass a custom dataview (e.g. remote model)

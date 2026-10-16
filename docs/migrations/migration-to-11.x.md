@@ -8,6 +8,8 @@ The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer va
 
 - [Remove SortableJS](#remove-sortablejs)
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
+- [Migrate Grid State and Presets](#grid-state-and-presets)
+- [Import optional package styles separately](#import-optional-package-styles-separately)
 - [Removed Deprecated Code](#removed-deprecated-code)
 - [Code Changes](#code-changes)
 
@@ -19,10 +21,10 @@ Also note that we also have a new Sticky docking that was also introduced in v11
 
 ### Remove SortableJS
 
-Column header reordering and draggable grouping now use the built-in HTML5 drag and drop engines,
-with mouse support for Firefox on Linux and touch support on all platforms. Remove SortableJS
-and `@types/sortablejs` from your application dependencies when no other application feature uses them.
-Applications using script tags can also remove their SortableJS include.
+Column header reordering and draggable grouping now use native drag and drop instead of SortableJS.
+Remove SortableJS and `@types/sortablejs` from your application dependencies when no other
+application feature uses them. Applications using script tags can also remove their SortableJS
+include.
 
 Column reordering supports RTL and stays within the dragged column's header region. Hidden and
 non-reorderable columns keep their positions, including in grids with draggable grouping.
@@ -73,9 +75,8 @@ Header Menu commands, and runtime APIs.
 
 Per-column permanent pinning moves from the old frozen-column behavior to `Column.pinned`.
 `Column.pinnable: false` replaces the old per-column lock behavior for the built-in Header Menu.
-In saved Grid State and presets, rename the per-column field from `columns[].pinning` to
-`columns[].pinned`. The top-level `GridState.pinning` field remains unchanged for the full pinning
-configuration.
+Saved Grid State and presets store all permanent pinning under `pinning`, separately from the
+`CurrentColumn` layout entries. Migrate persisted state as described below.
 
 > Note, the `pinnable` flag is currently only used to show/hide the "Column Pinning" command from the Header Menu. It will not block a column from being pinnable using the `pinning` grid option, it is again simply used by the Header Menu.
 
@@ -89,6 +90,47 @@ const columns: Column[] = [
 
 See the [Pinning guide](../grid-functionalities/pinning.md) for the complete column options and
 runtime methods.
+
+### Grid State and Presets
+
+In v10, `GridState.pinning` stored the frozen column boundary and row count/side in
+`frozenColumn`, `frozenRow`, and `frozenBottom`. In v11, both Grid State and Grid Presets use the
+nested `pinning` shape from `GridOption.pinning` for all four sides. Update saved state and presets
+that still use the old fields. The row IDs below are illustrative; use references for your dataset:
+
+```diff
+pinning: {
+- frozenColumn: 2,
+- frozenRow: 3,
+- frozenBottom: true,
++ columns: { left: ['account', 'contact', 'status'], right: [] },
++ rows: { top: [], bottom: ['row-98', 'row-99', 'row-100'] },
+}
+```
+
+The `frozenColumn` value was an inclusive left boundary, so `2` represented columns at indexes 0
+through 2. In the new shape, use `pinning.columns.left: 2` for the equivalent boundary or provide
+column IDs/indexes explicitly; IDs keep saved pinning stable if columns are reordered. `frozenRow`
+was a row count. Map it to explicit row references under `pinning.rows.top` or `pinning.rows.bottom`,
+depending on `frozenBottom`. For bottom-pinned rows, derive the references from the end of the saved
+dataset or use stable dataset IDs.
+
+The returned `GridState.pinning` always includes all four sides as arrays, with `[]` for empty
+sides. Column arrays contain string `Column.id` values, including numeric IDs converted to strings;
+numeric boundaries/counts and column index arrays are accepted as preset inputs but are not emitted
+in saved state. Row arrays preserve their configured index or dataset ID references so ID-based
+pins keep following their records through sorting and filtering. Use `{ id: number }` for numeric
+dataset IDs to distinguish them from row indexes.
+
+Column layouts in `CurrentColumn[]` contain order, width, visibility, and CSS classes. Pinning is
+saved only in `GridState.pinning`; `Column.pinned` remains available on column definitions and is
+serialized as column IDs under `pinning.columns.left/right`. If you saved an earlier v11 preview
+with `columns[].pinned`, ensure their IDs are represented under `pinning.columns.left/right`, then
+remove the per-column `pinned` properties. When restoring state dynamically, apply the column layout
+first, then apply the saved `pinning` through `gridService.setPinning()`.
+Sticky columns and rows are scroll-dependent and are not included in saved Grid State or presets.
+See the [Grid State and Presets guide](../grid-functionalities/grid-state-preset.md) for the current
+shape.
 
 ### Header Menu commands
 
@@ -233,7 +275,46 @@ If custom CSS or tests relied on `.slick-cell + .dynamic-cell-detail`, target
 
 The method now describes its responsibility more accurately: it applies visibility, order, widths, and dynamic extension columns.
 
-### Final Note
+### Import optional package styles separately
+
+In v11, styles for optional packages moved out of the common theme stylesheets so applications do not load CSS for features they do not use. If your application uses Composite Editor, Custom Tooltip, or Row Detail, add the corresponding package as a direct dependency and import its stylesheet after the common theme. Import only the packages used by your application. If you use any of these 3 optional packages, then you now have to import (or `@use`) these CSS or SCSS files.
+
+{% hint style="note" %}
+This change reduces build size by keeping styles for unused features out of your builds. It also establishes a pattern for upcoming features such as Excel Formulas and Column Formulas: their CSS will ship with their feature packages instead of the base `@slickgrid-universal/common` package, so applications include those styles only when they use the features.
+{% endhint %}
+
+With plain CSS, select the stylesheet matching your theme (`default`, `bootstrap`, `fluent`, `material`, or `salesforce`):
+
+```css
+@import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
+@import '@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor-bootstrap.css';
+@import '@slickgrid-universal/custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-bootstrap.css';
+@import '@slickgrid-universal/row-detail-plugin/dist/styles/css/slick-row-detail-bootstrap.css';
+```
+
+With Sass, load the common theme and the package styles in the same Sass compilation, with the theme
+first. This lets package styles use the theme's configured Sass variables:
+
+```scss
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss' with (
+  $slick-primary-color: green,
+  $slick-editor-modal-container-width: 600px,
+  $slick-tooltip-color: #123456
+);
+@use '@slickgrid-universal/composite-editor-component/dist/styles/sass/slick-composite-editor.scss';
+@use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/sass/slick-custom-tooltip.scss';
+@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail.scss';
+```
+
+The base Row Detail package was also renamed from `@slickgrid-universal/row-detail-view-plugin` to
+`@slickgrid-universal/row-detail-plugin`, and its stylesheet entry was shortened from
+`slick-row-detail-view` to `slick-row-detail`. Update the dependency, TypeScript imports, and any
+stylesheet paths that use the old names. The Angular, Aurelia, React, and Vue adapter package names
+(for example, `@slickgrid-universal/angular-row-detail-plugin`) are unchanged. See
+[Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for
+theme-specific paths and additional details.
+
+## Final Note
 
 If the project is useful to you, please give it a star ⭐ on the
 [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) umbrella project.
