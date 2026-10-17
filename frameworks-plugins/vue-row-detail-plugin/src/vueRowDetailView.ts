@@ -1,5 +1,4 @@
 import {
-  createDomElement,
   emptyElement,
   SlickEventData,
   SlickHybridSelectionModel,
@@ -16,8 +15,7 @@ import type { GridOption, ViewModelBindableInputData } from 'slickgrid-vue';
 import { createApp, type App, type ComponentPublicInstance } from 'vue';
 import type { RowDetailView } from './interfaces.js';
 
-const ROW_DETAIL_CONTAINER_PREFIX = 'container_';
-const PRELOAD_CONTAINER_PREFIX = 'container_loading';
+const ROW_DETAIL_CONTAINER_PREFIX = 'row-detail-';
 
 type AppData = Record<string, unknown>;
 export interface CreatedView {
@@ -130,15 +128,14 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
 
     if (this._grid && this.gridOptions?.rowDetailView) {
       // load the Preload & RowDetail Templates (could be straight HTML or Vue Components)
-      // when those are Vue Components, we need to create View Component & provide the html containers to the Plugin (preTemplate/postTemplate methods)
+      // Components mount directly into the detail panel; templates only clear its previous content.
       if (!this.gridOptions.rowDetailView.preTemplate) {
         this._preloadComponent = this.gridOptions.rowDetailView.preloadComponent;
-        this.addonOptions.preTemplate = () => createDomElement('div', { className: `${PRELOAD_CONTAINER_PREFIX}` });
+        this.addonOptions.preTemplate = () => '';
       }
       if (!this.gridOptions.rowDetailView.postTemplate) {
         this._component = this.gridOptions.rowDetailView.viewComponent;
-        this.addonOptions.postTemplate = (itemDetail: any) =>
-          createDomElement('div', { className: `${ROW_DETAIL_CONTAINER_PREFIX}${itemDetail[this.datasetIdPropName]}` });
+        this.addonOptions.postTemplate = () => '';
       }
 
       if (this._grid && this.gridOptions) {
@@ -301,7 +298,11 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
 
   /** (re)Render the Preload Component */
   protected renderPreloadView(item: any): void {
-    const containerElement = this.gridContainerElement.querySelector(`.${PRELOAD_CONTAINER_PREFIX}`);
+    if (item?.[`${this._keyPrefix}detailViewLoaded`]) {
+      return;
+    }
+
+    const containerElement = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`);
 
     if (this._preloadComponent && containerElement) {
       const bindableData = {
@@ -327,6 +328,10 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
 
   /** (re)Render the View Component (Row Detail) */
   protected renderViewModel(item: any): void {
+    if (!item[`${this._keyPrefix}detailViewLoaded`]) {
+      return;
+    }
+
     const itemId = item[this.datasetIdPropName];
     const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${ROW_DETAIL_CONTAINER_PREFIX}${itemId}`);
 

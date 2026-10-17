@@ -11,6 +11,7 @@ The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer va
 - [Migrate Grid State and Presets](#grid-state-and-presets)
 - [Import optional package styles separately](#import-optional-package-styles-separately)
 - [Remove row positioning and Row Detail rendering options](#row-positioning-rowtopoffsetrendertype)
+- [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors)
 - [Removed Deprecated Code](#removed-deprecated-code)
 - [Code Changes](#code-changes)
 
@@ -274,6 +275,24 @@ const gridOptions: GridOption = {
 ```
 
 Grid row positioning now strictly uses `transform: translateY(25px)` (the legacy approach was `top: 25px`) for better precisions and scrolling performance. RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
+
+### Row Detail DOM and CSS selectors
+
+After identifying that Row Detail has way too many containers and redundant CSS classes, v11 removes them to simplify the DOM. Update custom CSS and DOM selectors accordingly.
+
+```diff
+-<div class="slick-row-detail-overlay">
+-  <div class="dynamic-cell-detail cellDetailView_1">
+-    <div class="detail-container detailViewContainer_1">
+-      <div class="innerDetailView_1">
+-        <!-- Row Detail content -->
+-      </div>
+-    </div>
+-  </div>
++<div class="slick-row-detail-container row-detail-1">
++  <!-- Row Detail content -->
+ </div>
+```
 
 ## Code Changes
 ### Rename `changeColumnsArrangement()`

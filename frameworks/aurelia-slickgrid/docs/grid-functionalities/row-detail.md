@@ -1,5 +1,6 @@
 #### index
 - [Usage](#usage)
+- [Rendering and DOM structure](#rendering-and-dom-structure)
 - [Changing Addon Options Dynamically](#changing-addon-options-dynamically)
 - [Calling Addon Methods Dynamically](#calling-addon-methods-dynamically)
 - [Row Detail - Preload Component - Loading Spinner](#row-detail---preload-component-loading-spinner)
@@ -23,9 +24,9 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 > So for that reason, you should avoid using dynamic elements (i.e. form inputs) because whenever a re-render kicks in, it will reset and re-render the Row Detail content as if nothing happened.
 > So you should consider using Row Detail mainly for showing static data (hence the name "Row Detail" to show more detailed info) and to be clear dynamic elements can be rendered but it's very usable if they get reset every time you scroll out of the viewport and so just remember this limitation.
 
-### Overlay rendering
+### Rendering and DOM structure
 
-Row Detail panels are always mounted in a sibling overlay layer of the grid canvas, above the transformed rows. No rendering option is required.
+Row Detail panels are mounted directly in the grid canvas as siblings of the transformed rows. Each panel uses one `.slick-row-detail-container` element for positioning and automatic overflow scrolling. No overlay host or inner wrapper divs are created, and no rendering option is required.
 
 In v11, `rowTopOffsetRenderType` and `rowDetailView.renderMode` have been removed. Remove both options from existing configurations; see the [v11 migration guide](../../../../docs/migrations/migration-to-11.x.md#row-positioning-rowtopoffsetrendertype).
 
@@ -38,7 +39,19 @@ const gridOptions: GridOption = {
 };
 ```
 
-Overlay rendering preserves the existing Row Detail classes and framework component lifecycle. Custom CSS or tests that relied on `.slick-cell + .dynamic-cell-detail` should target `.dynamic-cell-detail` directly.
+The generated panel has only two classes. For an item with ID `1`, its structure is:
+
+```html
+<div class="slick-row-detail-container row-detail-1">
+  <!-- Your Row Detail template or framework component host -->
+</div>
+```
+
+Use `.slick-row-detail-container` for shared panel styling and `.row-detail-{id}` to select a specific item, where `{id}` is the dataset item's identifier. The panel handles positioning, sizing, and automatic overflow scrolling.
+
+The Angular, Aurelia, React, and Vue Row Detail plugins mount their preload and detail components directly into this panel. Angular and Aurelia retain their framework component host elements; any elements in your own template also remain. Component lifecycle handling and `keepComponentAlive` continue to apply.
+
+In v11, `.dynamic-cell-detail` is renamed to `.slick-row-detail-container`, and `.cellDetailView_{id}` becomes `.row-detail-{id}`. The `.slick-row-detail-overlay` host, inner wrapper divs, and redundant panel classes have been removed. Update CSS and DOM queries that use `.detail-container`, `.detailViewContainer_{id}`, `.innerDetailView_{id}`, `.container_{id}`, or `.container_loading`. Select the panel using `.slick-row-detail-container` or `.row-detail-{id}`; select preload content using classes in your preload component's own markup. Panels are siblings of grid rows, so replace `.slick-cell + .dynamic-cell-detail` selectors with `.slick-row-detail-container` as well. See [Row Detail DOM and CSS selector migration](../../../../docs/migrations/migration-to-11.x.md#row-detail-dom-and-css-selectors) for a before/after DOM comparison.
 
 ### Keeping Row Detail Components Alive During Scrolling
 

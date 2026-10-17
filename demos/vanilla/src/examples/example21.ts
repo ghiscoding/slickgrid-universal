@@ -141,7 +141,7 @@ export default class Example21 {
       rowDetailView: {
         loadOnce: false, // you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events
         preTemplate: () => this.loadingTemplate(),
-        postTemplate: (itemDetail) => createDomElement('div', { className: `container_${itemDetail.id}` }),
+        postTemplate: () => '',
         process: (item) => this.simulateServerAsyncCall(item),
         useRowClick: false,
         // how many grid rows do we want to use for the detail panel
@@ -214,11 +214,14 @@ export default class Example21 {
   }
 
   renderView(item: Distributor) {
+    if ('__detailViewLoaded' in item && !item.__detailViewLoaded) {
+      return;
+    }
     if (this._views.some((obj) => obj.id === item.id)) {
       this.disposeView(item.id);
     }
     const gridContainerElm = this.sgb.slickGrid?.getContainerNode();
-    const containerElm = gridContainerElm?.querySelector<HTMLDivElement>(`.container_${item.id}`);
+    const containerElm = gridContainerElm?.querySelector<HTMLDivElement>(`.row-detail-${item.id}`);
     if (containerElm) {
       containerElm.textContent = '';
       const instance = new InnerGridExample(containerElm, item);
