@@ -48,7 +48,7 @@
   "devDependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "autoprefixer": "^10.6.1",
-    "cssnano": "^9.1.1",
+    "cssnano": "^9.8.0",
     "postcss": "catalog:",
     "sass": "catalog:"
   }
