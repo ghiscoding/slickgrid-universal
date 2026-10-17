@@ -275,7 +275,7 @@ const gridOptions: GridOption = {
 };
 ```
 
-Transform positioning now stricly uses `transform: translateY(25px)` instead of `top: 25px` for better scrolling performance. RowSpan host rows retain internal `top` positioning so spanning cells can extend over neighboring rows; no configuration is required.
+Transform positioning now stricly uses `transform: translateY(25px)` instead of `top: 25px` for better scrolling performance. RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
 
 If custom CSS or tests relied on `.slick-cell + .dynamic-cell-detail`, target
 `.dynamic-cell-detail` directly because the overlay is mounted in a sibling layer. See the

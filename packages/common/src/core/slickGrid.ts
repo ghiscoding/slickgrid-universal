@@ -5450,7 +5450,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     );
   }
 
-  /** Keep RowSpan host rows top-positioned so their cells escape transformed sibling stacking contexts. */
+  /** Keep RowSpan hosts and covered rows in the same stacking context. */
   protected applyRowTopOffset(rowNode: HTMLElement, row: number): void {
     const rowDocking = this.dockingByRow.get(row);
     let top = this.getRenderedRowTop(row);
@@ -5479,13 +5479,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (cacheEntry) {
       cacheEntry.rowSpanHost = hasRowSpan;
     }
-    // RowSpan hosts must avoid creating a transform stacking context so their
-    // spanning cells can extend over neighboring rows. All other rows use transforms.
-    const useTransform = !hasRowSpan;
+    // A transformed covered row traps its pinned regions below the spanning cell.
+    // Both the host and every covered row must share the canvas stacking context.
+    const intersectsRowSpan = hasRowSpan || (!!this._options.enableCellRowSpan && this.getRowSpanIntersect(row) !== null);
+    const useTransform = !intersectsRowSpan;
 
-    // Mark every rowspan host row so docked region wrappers let the spanning cell
-    // extend over following rows and stay hit-testable.
-    rowNode.classList.toggle('slick-rowspan', hasRowSpan);
+    // Keep region overflow and hover/active stacking consistent across the whole span.
+    rowNode.classList.toggle('slick-rowspan', intersectsRowSpan);
     if (useTransform) {
       rowNode.style.top = '';
       // Keep the 2D translateY() syntax for row positioning: integrations inspect it.

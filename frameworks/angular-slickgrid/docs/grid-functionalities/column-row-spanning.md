@@ -73,4 +73,4 @@ export class Grid43Component implements OnInit {
 }
 ```
 
-Row positioning is handled internally. RowSpan host rows use `top` positioning so spanning cells can extend over neighboring rows; other rows use transforms. No row-positioning option is required.
+Row positioning is handled internally. RowSpan host rows and the rows they cover use `top` positioning internally so spanning cells and pinned columns share the same stacking context; rows outside a span use transforms. No row-positioning option is required.
