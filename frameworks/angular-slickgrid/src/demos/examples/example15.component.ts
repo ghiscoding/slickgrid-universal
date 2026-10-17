@@ -212,9 +212,6 @@ export class Example15Component implements OnInit, OnDestroy {
         hideForceFitButton: true,
         hideClearPinningCommand: false,
       },
-      headerMenu: {
-        showPinningCommands: true,
-      },
       enablePagination: true,
       pagination: {
         pageSizes: [5, 10, 15, 20, 25, 30, 40, 50, 75, 100],

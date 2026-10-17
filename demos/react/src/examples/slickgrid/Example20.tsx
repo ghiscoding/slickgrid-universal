@@ -183,9 +183,6 @@ const Example20: React.FC = () => {
         // pinning state cannot briefly fall back to the scrolling band.
         onColumnsChanged: () => reapplyPinnedColumns(),
       },
-      headerMenu: {
-        showPinningCommands: true,
-      },
       enableCellMenu: true,
       cellMenu: {
         onCommand: (_e: unknown, args: any) => executeCommand(args),

@@ -14,7 +14,17 @@ Set `Column.pinnable` to `false` when a column must not be pinned or unpinned fr
 
 For scroll-activated docking, see [Sticky Columns and Rows](sticky.md). Sticky columns have no built-in Header Menu commands, so a separate `Column.stickable` flag is not needed.
 
-The built-in Column Pinning Header Menu is enabled automatically when `pinning` is defined. Set `headerMenu.showPinningCommands: true` when the menu should be available before any pin state is configured. Set `headerMenu.showPinningCommands: false` for programmatic-only pinning, and use `headerMenu.hideCommands` for individual command visibility.
+### Header Menu commands
+
+The Pinning Commands root menu is available by default whenever the Header Menu is enabled, including when the grid has no initial `pinning` state. To hide the entire root menu, add `'pinning-commands'` to `headerMenu.hideCommands`:
+
+```ts
+headerMenu: {
+  hideCommands: ['pinning-commands'],
+}
+```
+
+To hide selected actions instead, list their command IDs in `hideCommands` (for example, `'pin-left'` or `'unpin-columns'`). Set `Column.pinnable` to `false` to hide the Pinning Commands root menu for an individual column. These settings control Header Menu visibility; pinning can still be configured through the grid options and APIs.
 
 ## Columns/Rows Pinning basic
 To configure pinning for the entire lifetime of the grid, use the nested `pinning` Grid Option. A numeric left value is an inclusive boundary among visible columns; a numeric right value is a count from the trailing edge of the visible columns. Numeric boundaries are recalculated when columns are hidden. Use explicit arrays to pin specific columns: numeric entries are zero-based indexes, while string entries are column IDs (use a string for a numeric column ID). Explicit IDs keep the same columns pinned when visibility or order changes.

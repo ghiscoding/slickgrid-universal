@@ -182,16 +182,15 @@ for protected columns while leaving programmatic pinning available. Sticky colum
 Header Menu commands, so there is no separate `Column.stickable` option.
 
 Vanilla Example 11 serializes the new nested `CurrentPinning` shape in its
-saved views and intentionally enables the pinning header commands to
-exercise the new behavior. The single-column menu action calls
+saved views and exercises the pinning Header Menu, which is available by
+default even before a pinning state is configured. The single-column menu action calls
 `SlickGrid.setColumnPinning` and updates `Column.pinned`; the bulk “Pin
 Columns” menu action updates
 `pinning.columns.left`, which applies the same left pins through the unified
 pinning resolver. Neither action uses removed legacy options or validation.
-The `headerMenu.showPinningCommands` option controls whether the Header Menu exposes these
-commands, while defining `pinning` automatically enables the same UI for
-declarative pinning configurations. Individual command visibility is handled by
-`headerMenu.hideCommands`.
+The entire submenu can be hidden with
+`headerMenu.hideCommands: ['pinning-commands']`; individual command visibility is
+also handled by `headerMenu.hideCommands`.
 
 Vanilla Example 04 and the Angular, Aurelia, React, and Vue Example 20 fixtures mark
 `City of Origin` as `pinnable: false`; their Cypress suites verify that its Header Menu omits
@@ -220,13 +219,11 @@ boundary, and the unpin commands clear the selected column or all aggregate colu
 Setting `pinnable: false` removes the `Column Pinning` menu for that column and excludes it from
 bulk pin-through operations. None of these commands recreates the old two-pane layout.
 
-Pinning is opt-in in the Header Menu through `headerMenu.showPinningCommands`, which defaults to
-false when no `pinning` state is supplied, or automatically when the `pinning` option is defined.
-Applications set `headerMenu.showPinningCommands: true` when they want the `pin-column` root command before any pin state is
-configured. Explicit `headerMenu.showPinningCommands: false` keeps pinning programmatic-only, and use
-`headerMenu.hideCommands` only for individual command visibility. The former dedicated
-`hidePinningColumnsCommand` and `hidePinColumnCommand` options are removed rather than carried
-forward into v11.
+Pinning is available in the Header Menu by default, with or without an initial `pinning` state.
+Set `headerMenu.hideCommands` to `['pinning-commands']` to hide the entire submenu, or list
+individual command IDs to hide selected actions. `Column.pinnable: false` hides the submenu for
+one column. The former dedicated `hidePinningColumnsCommand` and `hidePinColumnCommand` options
+are removed rather than carried forward into v11.
 
 The pinning Header Menu uses the directional labels
 `pinningColumnsLeftCommand` and `pinningColumnsRightCommand`; the former generic

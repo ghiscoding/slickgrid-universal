@@ -86,7 +86,6 @@ function defineGrid() {
     // Keep the sticky candidate eligible after the leading pinned columns are resized wider.
     docking: { maxColumnViewportWidthPercent: 100 },
     pinning: { columns: { left: 1, right: 1 }, rows: { top: [0], bottom: [] } },
-    headerMenu: { showPinningCommands: true },
   };
 }
 

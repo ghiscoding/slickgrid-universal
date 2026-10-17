@@ -256,9 +256,6 @@ function defineGrid() {
     // filterTypingDebounce: 250,
     enableSorting: true,
     enableColumnReorder: true,
-    headerMenu: {
-      showPinningCommands: true,
-    },
     gridMenu: {
       hideClearPinningCommand: false,
       onCommand: (_e, args) => {

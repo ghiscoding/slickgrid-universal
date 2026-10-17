@@ -77,7 +77,6 @@ function defineGrid() {
       // we can opt-in to also use same column width grid vs PDF export (it's disabled by default)
       includeColumnWidth: true,
     },
-    headerMenu: { showPinningCommands: true },
     pinning: { rows: { top: [0, 1] } },
     gridHeight: 560,
     gridWidth: 1080,

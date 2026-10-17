@@ -82,9 +82,6 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
   /** Minimum width that the drop menu will have */
   minWidth?: number;
 
-  /** Show the Column Pinning commands in this Header Menu. Defaults to false unless `GridOption.pinning` is defined. */
-  showPinningCommands?: boolean;
-
   /** CSS class that can be added on the right side of a sub-item parent (typically a chevron-right icon) */
   subItemChevronClass?: string;
 

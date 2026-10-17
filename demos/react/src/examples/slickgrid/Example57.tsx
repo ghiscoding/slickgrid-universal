@@ -79,7 +79,6 @@ const Example57: React.FC = () => {
       rtl: true, // ← Enable RTL mode
       // Keep the sticky candidate eligible after the leading pinned columns are resized wider.
       docking: { maxColumnViewportWidthPercent: 100 },
-      headerMenu: { showPinningCommands: true },
       pinning: { columns: { left: 1, right: 1 }, rows: { top: [0], bottom: [] } },
     };
     setGridOptions(opts);

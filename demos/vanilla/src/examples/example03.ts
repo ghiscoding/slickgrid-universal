@@ -348,9 +348,6 @@ export default class Example03 {
         container: '.demo-container',
       },
       enableFormattedDataCache: false, // enable it when you have a large dataset (e.g. we'll enable it when loading over 10K)
-      headerMenu: {
-        showPinningCommands: true,
-      },
       gridMenu: {
         hideClearPinningCommand: false,
       },
@@ -391,7 +388,6 @@ export default class Example03 {
       rowHeight: 33,
       headerRowHeight: 35,
       enableDraggableGrouping: true,
-      // headerMenu: { showPinningCommands: true },
       // pinning: { columns: { left: 2  } },
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',

@@ -432,7 +432,6 @@ export default class Example04 {
         onExtensionRegistered: (instance) => (this.checkboxSelectorInstance = instance),
       },
       enableSelection: true,
-      headerMenu: { showPinningCommands: true },
       pinning: {
         columns: {
           left: this.pinnedLeftColumnCount,

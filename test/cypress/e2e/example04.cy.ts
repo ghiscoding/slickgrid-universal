@@ -300,7 +300,7 @@ describe('Example 04 - Pinned Grid', () => {
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(10)')
+      .children('[data-command="hide-column"]')
       .children('.slick-menu-content')
       .should('contain', 'Hide Column')
       .click();

@@ -676,7 +676,7 @@ describe('Example 15 - OData Grid using RxJS', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(6)')
+        .children('[data-command="clear-filter"]')
         .children('.slick-menu-content')
         .should('contain', 'Remove Filter')
         .click();

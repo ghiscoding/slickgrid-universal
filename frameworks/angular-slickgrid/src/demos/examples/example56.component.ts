@@ -83,7 +83,6 @@ export class Example56Component implements OnInit {
         includeColumnWidth: true,
       },
       rowHeight: 40,
-      headerMenu: { showPinningCommands: true },
       pinning: { rows: { top: [0, 1] } },
       gridHeight: 560,
       gridWidth: 1080,

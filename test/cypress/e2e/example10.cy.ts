@@ -187,7 +187,7 @@ describe('Example 10 - GraphQL Grid', () => {
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(6)')
+      .children('[data-command="clear-filter"]')
       .children('.slick-menu-content')
       .should('contain', 'Remove Filter')
       .click();
@@ -220,7 +220,7 @@ describe('Example 10 - GraphQL Grid', () => {
 
     cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(6)')
+      .children('[data-command="clear-filter"]')
       .children('.slick-menu-content')
       .should('contain', 'Remove Filter')
       .click();
@@ -513,17 +513,17 @@ describe('Example 10 - GraphQL Grid', () => {
         .should('contain', 'Sort Descending');
 
       cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(6)')
+        .children('[data-command="clear-filter"]')
         .children('.slick-menu-content')
         .should('contain', 'Remove Filter');
 
       cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(7)')
+        .children('[data-command="clear-sort"]')
         .children('.slick-menu-content')
         .should('contain', 'Remove Sort');
 
       cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(8)')
+        .children('[data-command="hide-column"]')
         .children('.slick-menu-content')
         .should('contain', 'Hide Column');
     });
@@ -606,17 +606,17 @@ describe('Example 10 - GraphQL Grid', () => {
         .should('contain', 'Trier par ordre décroissant');
 
       cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(6)')
+        .children('[data-command="clear-filter"]')
         .children('.slick-menu-content')
         .should('contain', 'Supprimer le filtre');
 
       cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(7)')
+        .children('[data-command="clear-sort"]')
         .children('.slick-menu-content')
         .should('contain', 'Supprimer le tri');
 
       cy.get('.slick-header-menu .slick-menu-command-list')
-        .children('.slick-menu-item:nth-of-type(8)')
+        .children('[data-command="hide-column"]')
         .children('.slick-menu-content')
         .should('contain', 'Cacher la colonne');
     });

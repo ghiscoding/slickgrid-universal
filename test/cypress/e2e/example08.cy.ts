@@ -317,7 +317,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(5)')
+        .children('[data-command="hide-column"]')
         .children('.slick-menu-content')
         .should('contain', 'Hide Column')
         .click();
@@ -375,7 +375,7 @@ describe('Example 08 - Column Span & Header Grouping', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(5)')
+        .children('[data-command="hide-column"]')
         .children('.slick-menu-content')
         .should('contain', 'Hide Column')
         .click();

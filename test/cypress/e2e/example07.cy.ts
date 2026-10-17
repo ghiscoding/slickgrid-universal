@@ -261,7 +261,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(8)')
+        .children('[data-command="clear-filter"]')
         .children('.slick-menu-content')
         .should('contain', 'Remove Filter')
         .click();
