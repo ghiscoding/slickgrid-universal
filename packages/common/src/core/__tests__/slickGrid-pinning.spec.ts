@@ -1102,18 +1102,20 @@ describe('SlickGrid unified pinning', () => {
     const slickGrid = createGrid();
     const internals = slickGrid as any;
     const callback = vi.fn();
+    internals._options.errorCallback = callback;
 
-    expect(internals.rejectPinning(callback, 'invalid pinning', false)).toBe(false);
+    expect(internals.rejectPinning('invalid pinning', false)).toBe(false);
     expect(callback).toHaveBeenCalledTimes(1);
     expect(callback).toHaveBeenCalledWith('invalid pinning');
     expect(internals._invalidPinningAlerted).toBe(true);
 
-    expect(internals.rejectPinning(callback, 'suppressed alert', false)).toBe(false);
+    expect(internals.rejectPinning('suppressed alert', false)).toBe(false);
     expect(callback).toHaveBeenCalledTimes(1);
-    expect(internals.rejectPinning(callback, 'forced alert', true)).toBe(false);
+    expect(internals.rejectPinning('forced alert', true)).toBe(false);
     expect(callback).toHaveBeenCalledTimes(2);
     expect(callback).toHaveBeenLastCalledWith('forced alert');
-    expect(internals.rejectPinning(undefined, 'no callback', true)).toBe(false);
+    internals._options.errorCallback = undefined;
+    expect(internals.rejectPinning('no callback', true)).toBe(false);
   });
 
   it('clamps proxy scrolling and records the browser-committed scroll position', () => {
@@ -1289,7 +1291,7 @@ describe('SlickGrid unified pinning', () => {
     internals._options.pinning = { columns: { left: ['a', 'b', 'c', 'd'], right: [] } };
     internals._invalidPinningAlerted = false;
     slickGrid.setOptions({ pinning: { columns: { left: ['a', 'b', 'c', 'd'], right: [] } } }, true, true, true);
-    expect(invalidPicker).toHaveBeenCalled();
+    expect(errorCallback).toHaveBeenCalled();
 
     const destroyInstancesSpy = vi.spyOn(internals, 'destroyAllInstances');
     internals.slickMouseWheelInstances = [];
