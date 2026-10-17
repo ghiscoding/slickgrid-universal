@@ -134,6 +134,16 @@ shape.
 
 ### Header Menu commands
 
+For simplification, the previous frozen error callbacks were merged into a single grid option `errorCallback` for all error messages. The specific messages remain configurable through the new pinning error messages (`invalidColumnPinningWidthMessage`, `invalidColumnPinningPickerMessage`, and `invalidColumnPinningSequenceMessage`):
+
+```diff
+const gridOptions: GridOption = {
+- invalidColumnFreezePickerCallback: (msg) => alert(msg),
+- invalidColumnFreezeWidthCallback: (msg) => alert(msg),
++ errorCallback: (msg) => alert(msg),
+};
+```
+
 Frozen-column Header Menu commands are now pinning commands. Update custom menu configuration and
 handlers to use the new names:
 

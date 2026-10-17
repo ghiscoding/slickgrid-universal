@@ -962,20 +962,17 @@ export interface GridOption<C extends Column = Column> {
   /** Stable row ids (or row indexes) that dock to an edge only after normal scrolling would clip them. Set to `null` to clear. */
   stickyRows?: StickyRows | null;
 
-  /** Message passed to `invalidColumnPinningPickerCallback` when a pinning request would leave no visible center column. */
+  /** Defaults to `alert()`, called with a validation error message when the grid rejects an operation. */
+  errorCallback?: (error: string) => void;
+
+  /** Message passed to `errorCallback` when a pinning request would leave no visible center column. */
   invalidColumnPinningPickerMessage?: string;
 
-  /** Message passed to `invalidColumnPinningPickerCallback` when a pinning request that is not sequential from an edge would split a colspan. */
+  /** Message passed to `errorCallback` when a pinning request that is not sequential from an edge would split a colspan. */
   invalidColumnPinningSequenceMessage?: string;
 
-  /** Defaults to `alert()`, called with the picker or sequence message when the grid rejects a pinning request. */
-  invalidColumnPinningPickerCallback?: (error: string) => void;
-
-  /** Message passed to `invalidColumnPinningWidthCallback` when the pinned columns together are wider than the grid. */
+  /** Message passed to `errorCallback` when the pinned columns together are wider than the grid. */
   invalidColumnPinningWidthMessage?: string;
-
-  /** Defaults to `alert()`, called with the width message when the grid rejects a pinning request. */
-  invalidColumnPinningWidthCallback?: (error: string) => void;
 
   /** What is the top panel height in pixels (only accepts an integer) */
   topPanelHeight?: number;

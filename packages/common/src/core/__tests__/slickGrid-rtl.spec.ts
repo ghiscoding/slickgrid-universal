@@ -37,8 +37,7 @@ describe('SlickGrid RTL (Right-to-Left)', () => {
       enableCellNavigation: true,
       columnResizingDelay: 1,
       scrollRenderThrottling: 1,
-      invalidColumnPinningPickerCallback: vi.fn(),
-      invalidColumnPinningWidthCallback: vi.fn(),
+      errorCallback: vi.fn(),
       devMode: { ownerNodeIndex: 0 },
     };
     container = document.createElement('div');

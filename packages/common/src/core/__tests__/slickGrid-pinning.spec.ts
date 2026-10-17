@@ -32,8 +32,7 @@ describe('SlickGrid unified pinning', () => {
     grid = new SlickGrid(container, gridData, gridColumns.map((column) => ({ ...column })) as Column[], {
       enableCellNavigation: true,
       devMode: { ownerNodeIndex: 0 },
-      invalidColumnPinningPickerCallback: vi.fn(),
-      invalidColumnPinningWidthCallback: vi.fn(),
+      errorCallback: vi.fn(),
       ...options,
     });
     return grid;
@@ -836,7 +835,7 @@ describe('SlickGrid unified pinning', () => {
     document.body.appendChild(container);
     grid = new SlickGrid(container, spanData as any, columns.map((column) => ({ ...column })) as Column[], {
       devMode: { ownerNodeIndex: 0 },
-      invalidColumnPinningPickerCallback: invalidPinning,
+      errorCallback: invalidPinning,
     });
 
     grid.setColumnPinning('b', 'left');
@@ -899,7 +898,7 @@ describe('SlickGrid unified pinning', () => {
     document.body.appendChild(container);
     grid = new SlickGrid(container, spanData as any, columns.map((column) => ({ ...column })) as Column[], {
       devMode: { ownerNodeIndex: 0 },
-      invalidColumnPinningPickerCallback: invalidPinning,
+      errorCallback: invalidPinning,
     });
 
     grid.setOptions({ pinning: { columns: { right: 3 } } });
@@ -932,18 +931,14 @@ describe('SlickGrid unified pinning', () => {
   });
 
   it('covers pinning validation, row identity resolution, and cleanup timer cancellation', () => {
-    const invalidPicker = vi.fn();
-    const invalidWidth = vi.fn();
-    const slickGrid = createGrid({ invalidColumnPinningPickerCallback: invalidPicker, invalidColumnPinningWidthCallback: invalidWidth });
+    const errorCallback = vi.fn();
+    const slickGrid = createGrid({ errorCallback });
     const internals = slickGrid as any;
     const alertSpy = vi.spyOn(globalThis, 'alert').mockImplementation(() => undefined);
-    internals._defaults.invalidColumnPinningPickerCallback('default picker callback');
-    expect(alertSpy).toHaveBeenCalledWith('default picker callback');
-    internals._defaults.invalidColumnPinningWidthCallback('default width callback');
-    expect(alertSpy).toHaveBeenCalledWith('default width callback');
+    internals._defaults.errorCallback('default error callback');
+    expect(alertSpy).toHaveBeenCalledWith('default error callback');
     alertSpy.mockRestore();
-    internals._options.invalidColumnPinningPickerCallback = invalidPicker;
-    internals._options.invalidColumnPinningWidthCallback = invalidWidth;
+    internals._options.errorCallback = errorCallback;
     internals._options.skipPinningValidation = false;
     internals._invalidPinningAlerted = false;
     Object.defineProperty(internals._viewportNode, 'clientWidth', { configurable: true, value: 100 });
@@ -955,7 +950,7 @@ describe('SlickGrid unified pinning', () => {
       [3, 'right'],
     ]);
     expect(internals.validatePinnedColumnIndexes(invalidPinned, true)).toBe(false);
-    expect(invalidPicker).toHaveBeenCalled();
+    expect(errorCallback).toHaveBeenCalledWith(expect.stringContaining('visible center column'));
     expect(internals.validatePinnedColumnIndexes(new Map([[0, 'left']]), true)).toBe(true);
     slickGrid.getColumns()[1].hidden = true;
     expect(internals.validatePinnedColumnIndexes(new Map([[1, 'left']]), true)).toBe(true);
@@ -971,7 +966,7 @@ describe('SlickGrid unified pinning', () => {
         true
       )
     ).toBe(false);
-    expect(invalidWidth).toHaveBeenCalled();
+    expect(errorCallback).toHaveBeenCalledWith(expect.stringContaining('exceed the available grid width'));
     internals.pinningColumnsState.set('a', 'right');
     slickGrid.getColumns()[0].pinned = 'left';
     internals.applyColumnPinningOptions(slickGrid.getColumns());
@@ -1218,8 +1213,8 @@ describe('SlickGrid unified pinning', () => {
   });
 
   it('covers compatibility getters, scrollTo, option rejection, and wheel setup', () => {
-    const invalidPicker = vi.fn();
-    const slickGrid = createGrid({ invalidColumnPinningPickerCallback: invalidPicker });
+    const errorCallback = vi.fn();
+    const slickGrid = createGrid({ errorCallback });
     const internals = slickGrid as any;
 
     const usesDockingChromeSpy = vi.spyOn(internals, 'usesDockingChromeRegions');
@@ -1533,7 +1528,7 @@ describe('SlickGrid unified pinning', () => {
     const invalidPinning = vi.fn();
     const slickGrid = createGrid({
       pinning: { columns: { left: [] } },
-      invalidColumnPinningPickerCallback: invalidPinning,
+      errorCallback: invalidPinning,
     });
 
     slickGrid.setColumnPinning('b', 'left');

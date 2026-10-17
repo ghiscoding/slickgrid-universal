@@ -67,13 +67,15 @@ export class GridBasicComponent implements OnInit {
 }
 ```
 
-> **Caution**
-> Please be aware that pinned columns cannot consume the entire grid viewport. You can customize the validation with `invalidColumnPinningWidthCallback` or disable it with `skipPinningValidation`.
+> Pinning validation errors use the shared `errorCallback`, for example `errorCallback: (msg) => alert(msg)`. Each validation message remains independently configurable.
 
 > **Caution**
-> The Column Picker and Grid Menu also validate that at least one center column remains available. You can customize this with `invalidColumnPinningPickerCallback` or disable pinning validation with `skipPinningValidation`.
+> Please be aware that pinned columns cannot consume the entire grid viewport. The error is passed to the shared `errorCallback`; customize its text with `invalidColumnPinningWidthMessage` or disable validation with `skipPinningValidation`.
 
-> When a rendered row contains a colspan crossing docking bands, columns must be pinned sequentially from the left or right edge. A non-sequential change is rejected through `invalidColumnPinningPickerCallback` and can be customized with `invalidColumnPinningSequenceMessage`.
+> **Caution**
+> The Column Picker and Grid Menu also validate that at least one center column remains available. The error is passed to the shared `errorCallback`; customize its text with `invalidColumnPinningPickerMessage` or disable pinning validation with `skipPinningValidation`.
+
+> When a rendered row contains a colspan crossing docking bands, columns must be pinned sequentially from the left or right edge. A non-sequential change is rejected through the shared `errorCallback` and can be customized with `invalidColumnPinningSequenceMessage`.
 
 ## Rows Pinning starting from bottom
 To pin rows at the bottom, provide the row indexes in `pinning.rows.bottom` and leave the top list empty.

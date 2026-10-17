@@ -29,7 +29,7 @@ The framework has many options; ensure new options do not contradict or interfer
 - When changing shared behavior, check all four framework wrappers and relevant demos.
 - Never edit generated `dist/` output unless explicitly requested.
 - When drafting a pull request, follow `.github/pull_request_template.md`, including its conventional-commit title requirement and applicable sections and checklist items.
-- Return PR titles and descriptions as raw Markdown inside a fenced markdown code block so they can be copied directly.
+- When asked for a PR title and description, return them in two separate Markdown sections, `Title` and `Description`, each with its own fenced Markdown code block so either can be copied independently. Follow `.github/pull_request_template.md` for the description.
 - Keep interactions and commit messages concise while preserving clarity.
 
 ## Testing and quality

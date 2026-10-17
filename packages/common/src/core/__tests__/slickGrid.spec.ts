@@ -96,8 +96,7 @@ describe('SlickGrid core file', () => {
       asyncEditorLoadDelay: 1,
       asyncPostRenderDelay: 1,
       asyncPostRenderCleanupDelay: 2,
-      invalidColumnPinningPickerCallback: vi.fn(),
-      invalidColumnPinningWidthCallback: vi.fn(),
+      errorCallback: vi.fn(),
       devMode: { ownerNodeIndex: 0 },
     };
     container = document.createElement('div');
