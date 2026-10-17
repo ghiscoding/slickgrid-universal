@@ -61,6 +61,7 @@ function defineGrid() {
       container: '#demo-container',
       rightPadding: 10,
     },
+    enableSorting: true,
     enableFiltering: true,
     enableCheckboxSelector: true,
     checkboxSelector: {

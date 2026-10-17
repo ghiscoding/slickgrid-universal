@@ -83,7 +83,6 @@ export default class Example13 {
       ...this.gridOptions1,
       enableHeaderMenu: true,
       enableFiltering: true,
-      // headerMenu: { showPinningCommands: true },
       // pinning: { columns: { left: 2  }, rows: { top: 2 } },
       headerButton: {
         onCommand: (_e, args) => this.handleOnCommand(_e, args, 2),

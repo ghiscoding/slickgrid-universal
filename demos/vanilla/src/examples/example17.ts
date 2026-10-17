@@ -155,9 +155,6 @@ export default class Example17 {
       gridWidth: 800,
       rowHeight: 35,
       // enableExcelCopyBuffer: true,
-      headerMenu: {
-        showPinningCommands: true,
-      },
     };
 
     // copy the same Grid Options and Column Definitions to 2nd grid

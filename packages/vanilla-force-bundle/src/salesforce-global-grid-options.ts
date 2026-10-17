@@ -78,9 +78,6 @@ export const SalesforceGlobalGridOptions = {
     hideClearPinningCommand: false,
     hideForceFitButton: true,
   },
-  headerMenu: {
-    showPinningCommands: true,
-  },
   preventDocumentFragmentUsage: true,
   sanitizer: (dirtyHtml: string) =>
     typeof dirtyHtml === 'string'

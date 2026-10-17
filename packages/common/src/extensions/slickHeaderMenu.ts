@@ -312,7 +312,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     const gridOptions = this.sharedService.gridOptions;
     const headerMenuOptions = gridOptions.headerMenu || {};
     const hiddenCommands = headerMenuOptions.hideCommands as readonly string[] | undefined;
-    const isPinningEnabled = headerMenuOptions.showPinningCommands ?? gridOptions.pinning !== undefined;
+    const isPinningEnabled = !headerMenuOptions.hideCommands?.includes('pinning-commands');
     const translationPrefix = getTranslationPrefix(gridOptions);
     const commandLabels = this._addonOptions?.commandLabels;
 
@@ -484,6 +484,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             );
             hasSingleColumnPinningCommand = columnHeaderMenuItems.some(commandMatcher(PINNING_COMMANDS.root));
             hasPinningOrResizeCommand ||= hasSingleColumnPinningCommand;
+          } else {
+            this.removeCommandWhenFound(columnHeaderMenuItems, PINNING_COMMANDS.root);
           }
 
           // Column Resize by Content (column autofit)
@@ -519,6 +521,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           // add a divider (separator) between the top pin columns commands and the rest of the commands
           if (hasPinningOrResizeCommand && !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 48)) {
             columnHeaderMenuItems.push({ divider: true, command: 'divider-1', positionOrder: 48 });
+          } else if (!hasPinningOrResizeCommand) {
+            this.removeCommandWhenFound(columnHeaderMenuItems, 'divider-1');
           }
 
           // Filter Shortcuts via sub-menus

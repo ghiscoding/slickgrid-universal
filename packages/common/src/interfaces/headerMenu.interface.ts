@@ -9,6 +9,7 @@ export type BuiltInHeaderMenuCommand =
   | 'divider-1'
   | 'divider-2'
   | 'divider-3'
+  | 'pinning-commands'
   | 'pin-column'
   | 'pin-left'
   | 'pin-columns-left'
@@ -32,7 +33,7 @@ export interface HeaderMenuCommandItemCallbackArgs {
 }
 
 export interface HeaderMenu extends HeaderMenuOption {
-  /** hide any built-in command from the header menu */
+  /** Hide built-in commands; 'pinning-commands' hides the entire Column Pinning submenu. */
   hideCommands?: Array<BuiltInHeaderMenuCommand>;
 
   // --

@@ -152,10 +152,10 @@ describe('Example 40 - Menus with Slots', () => {
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(2)').should('have.class', 'slick-menu-item-divider');
 
     // 4th item
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item')
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(5) .menu-item')
       .find('i.mdi-arrow-expand-horizontal')
       .should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item')
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(5) .menu-item')
       .find('span.menu-item-label')
       .contains('Resize by Content');
 
@@ -163,22 +163,22 @@ describe('Example 40 - Menus with Slots', () => {
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(4)').should('have.class', 'slick-menu-item-divider');
 
     // 6th item
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(5) .menu-item')
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(7) .menu-item')
       .find('i.mdi-filter-remove-outline')
       .should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(5) .menu-item')
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(7) .menu-item')
       .find('span.menu-item-label')
       .contains('Remove Filter');
 
     // 7th item
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(6) .menu-item').find('i.mdi-sort-variant-off').should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(6) .menu-item')
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(8) .menu-item').find('i.mdi-sort-variant-off').should('exist');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(8) .menu-item')
       .find('span.menu-item-label')
       .contains('Remove Sort');
 
     // 8th item
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(7) .menu-item').find('i.mdi-close').should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(7) .menu-item')
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(9) .menu-item').find('i.mdi-close').should('exist');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(9) .menu-item')
       .find('span.menu-item-label')
       .contains('Hide Column');
   });

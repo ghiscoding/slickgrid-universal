@@ -60,9 +60,6 @@ export class Example14Component implements OnInit {
           getRowMetadata: (item: any) => this.renderDifferentColspan(item),
         },
       },
-      headerMenu: {
-        showPinningCommands: true,
-      },
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
       },
@@ -109,7 +106,6 @@ export class Example14Component implements OnInit {
       pinning: { columns: { left: 2 } },
       rowHeight: 33,
       gridMenu: { hideClearPinningCommand: false },
-      headerMenu: { showPinningCommands: true },
       enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {

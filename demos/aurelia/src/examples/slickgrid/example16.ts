@@ -70,6 +70,7 @@ export class Example16 {
         container: '#demo-container',
         rightPadding: 10,
       },
+      enableSorting: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
       checkboxSelector: {

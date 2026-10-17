@@ -163,9 +163,8 @@ const gridOptions: GridOption = {
 };
 ```
 
-The Header Menu now provides a `Column Pinning` sub-menu with directional pin, bulk pin, and
-unpin commands. Use `headerMenu.showPinningCommands` to expose it before a pinning state exists,
-and `headerMenu.hideCommands` for individual command visibility.
+The Header Menu now shows the Pinning Commands root menu by default, even when no `pinning` state is configured. It groups the single-column, bulk pin, and unpin actions. Legacy frozen-column and frozen-row controls were not shown by default. Hide this root menu to keep the previous behavior:
+`headerMenu.hideCommands: ['pinning-commands']`; individual command IDs still hide specific actions. `Column.pinnable: false` continues to hide pinning commands for a particular column.
 
 #### Pinning locale keys and labels
 
@@ -190,7 +189,9 @@ translation keys, and menu behavior.
 
 ### E2E Tests with Cypress Header Menu selectors
 
-Header Menu commands have changed order in the list. The Sort Asc/Desc are now showing at the top followed by the new "Column Pinning" (with sub-menu pinning commands). So if you were using positional selectors to retrieve specific Header Menu commands, you should migrate to a contain text selector instead (e.g. with Cypress shown below):
+Header Menu commands have changed order in the list. Sort Asc/Desc now appear at the top, followed by
+the Pinning Commands root menu (labeled "Column Pinning"). If you use positional selectors to find
+Header Menu commands, switch to a text selector as shown below:
 
 ```diff
 cy.get('.slick-header-menu .slick-menu-command-list')

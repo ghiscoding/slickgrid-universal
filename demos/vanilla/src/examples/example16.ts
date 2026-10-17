@@ -474,6 +474,7 @@ export default class Example16 {
       },
       rowHeight: 38,
       headerRowHeight: 35,
+      enableSorting: true,
       enableFiltering: true,
       selectionOptions: {
         // True (Single Selection), False (Multiple Selections)

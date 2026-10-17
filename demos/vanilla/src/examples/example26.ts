@@ -122,9 +122,6 @@ export default class Example26 {
       enableCheckboxSelector: true,
       enableSelection: true,
       enableGrouping: true,
-      headerMenu: {
-        showPinningCommands: true,
-      },
       presets: {
         // NOTE: pagination preset is NOT supported with infinite scroll
         // filters: [{ columnId: 'gender', searchTerms: ['female'] }]

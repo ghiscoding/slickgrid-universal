@@ -66,9 +66,6 @@ const Example14: React.FC = () => {
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
       },
-      headerMenu: {
-        showPinningCommands: true,
-      },
     };
 
     setColumns1(columns1);
@@ -112,7 +109,6 @@ const Example14: React.FC = () => {
       },
       externalResources: [new ExcelExportService(), new PdfExportService()],
       gridMenu: { hideClearPinningCommand: false },
-      headerMenu: { showPinningCommands: true },
     };
 
     setColumns2(columns2);

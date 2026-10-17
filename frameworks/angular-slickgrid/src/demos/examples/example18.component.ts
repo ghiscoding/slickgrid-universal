@@ -287,9 +287,6 @@ export class Example18Component implements OnInit, OnDestroy {
       textExportOptions: {
         sanitizeDataExport: true,
       },
-      headerMenu: {
-        showPinningCommands: true,
-      },
       gridMenu: {
         hideClearPinningCommand: false,
         onCommand: (e, args) => {

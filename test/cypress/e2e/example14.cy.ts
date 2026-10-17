@@ -92,7 +92,7 @@ describe('Example 14 - Columns Resize by Content', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(1)')
+        .children('.slick-menu-item:nth-of-type(3)')
         .children('.slick-menu-content')
         .should('contain', 'Resize by Content')
         .click();

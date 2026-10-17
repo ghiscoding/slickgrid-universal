@@ -68,9 +68,6 @@ export class Example14 {
           getRowMetadata: (item: any, row: number) => this.renderDifferentColspan(item, row),
         },
       },
-      headerMenu: {
-        showPinningCommands: true,
-      },
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
       },
@@ -116,7 +113,6 @@ export class Example14 {
       },
       externalResources: [new ExcelExportService(), new PdfExportService()],
       gridMenu: { hideClearPinningCommand: false },
-      headerMenu: { showPinningCommands: true },
     };
   }
 

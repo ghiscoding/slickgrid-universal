@@ -58,9 +58,6 @@ function definedGrid1() {
         getRowMetadata: (item: any, row: number) => renderDifferentColspan(item, row),
       },
     },
-    headerMenu: {
-      showPinningCommands: true,
-    },
     gridMenu: {
       iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
     },
@@ -105,9 +102,6 @@ function definedGrid2() {
       exportWithFormatter: false,
     },
     externalResources: [new ExcelExportService(), new PdfExportService()],
-    headerMenu: {
-      showPinningCommands: true,
-    },
     gridMenu: { hideClearPinningCommand: false },
   };
 }
