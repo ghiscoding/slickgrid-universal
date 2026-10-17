@@ -6613,7 +6613,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const children = Array.from(rowNode.children) as HTMLElement[];
     // Row detail formatters can insert a non-cell sibling after the detail-toggle cell.
     // Only actual cells belong in cellNodesByColumnIdx; otherwise cache rebuilding tries
-    // to parse a column index from classes such as `dynamic-cell-detail`.
+    // to parse a column index from classes such as `slick-row-detail-container`.
     const cellChildren = (nodes: HTMLElement[]) =>
       nodes.filter((node) => node.classList.contains('slick-cell') && !node.classList.contains('slick-cell-colspan-part'));
     if (!rowNode.classList.contains('slick-row-docked')) {

@@ -69,7 +69,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected _pendingBackToViewportRows: Map<number | string, any> = new Map();
   protected _renderedCollapsedGroupIds: Set<number | string> = new Set();
   protected _renderedIds: Set<number | string> = new Set();
-  protected _overlayHosts: Map<HTMLElement, HTMLDivElement> = new Map();
   protected _overlayPanels: Map<number | string, HTMLDivElement> = new Map();
   protected _pendingAsyncEndUpdates: Map<number | string, { eventData: SlickEventData; item: any; isDataViewUpdated: boolean }> = new Map();
   protected _isUpdatingAsyncResponse = false;
@@ -372,6 +371,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
       // display pre-loading template
       if (!item[`${this._keyPrefix}detailViewLoaded`] || this._addonOptions.loadOnce !== true) {
+        item[`${this._keyPrefix}detailViewLoaded`] = false;
         item[`${this._keyPrefix}detailContent`] = this._addonOptions?.preTemplate?.(item);
       } else {
         this.onAsyncResponse.notify({
@@ -402,7 +402,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** Saves the current state of the detail view */
   saveDetailView(item: any): void {
     if (this._addonOptions.loadOnce && item) {
-      const view = document.querySelector(`.${this.gridUid} .innerDetailView_${item[this._dataViewIdProperty]}`);
+      const view = document.querySelector(`.${this.gridUid} .row-detail-${item[this._dataViewIdProperty]}`);
       if (view) {
         const html = view.innerHTML;
         if (html !== undefined) {
@@ -509,12 +509,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       return;
     }
 
-    // Grab each of the DOM elements
-    const mainContainer = document.querySelector<HTMLDivElement>(`.${this.gridUid} .detailViewContainer_${item[this._dataViewIdProperty]}`);
-    const cellItem = document.querySelector<HTMLDivElement>(`.${this.gridUid} .cellDetailView_${item[this._dataViewIdProperty]}`);
-    const inner = document.querySelector<HTMLDivElement>(`.${this.gridUid} .innerDetailView_${item[this._dataViewIdProperty]}`);
+    const cellItem = document.querySelector<HTMLDivElement>(`.${this.gridUid} .row-detail-${item[this._dataViewIdProperty]}`);
 
-    if (!mainContainer || !cellItem || !inner) {
+    if (!cellItem) {
       return;
     }
 
@@ -525,11 +522,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     const rowHeight = this.gridOptions.rowHeight as number; // height of a row
     const lineHeight = 13; // we know cuz we wrote the custom css init ;)
 
-    // remove the height so we can calculate the height
-    mainContainer.style.minHeight = '';
+    // Measure the content independently of the panel's current height so it can also shrink.
+    const scrollTop = cellItem.scrollTop;
+    cellItem.style.height = 'auto';
 
-    // Get the scroll height for the main container so we know the actual size of the view
-    const itemHeight = mainContainer.scrollHeight;
+    const itemHeight = cellItem.scrollHeight;
 
     // Now work out how many rows
     const rowCount = Math.ceil(itemHeight / rowHeight);
@@ -549,8 +546,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this.gridOptions.minRowBuffer = item[`${this._keyPrefix}sizePadding`] + 3;
     }
 
-    mainContainer.setAttribute('style', `min-height: ${item[this._keyPrefix + 'height']}px`);
     cellItem.style.height = `${outterHeight}px`;
+    cellItem.scrollTop = scrollTop;
 
     const idxParent = this.dataView.getIdxById(item[this._dataViewIdProperty]) as number;
     for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {
@@ -712,7 +709,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         return;
       }
 
-      const overlayHost = this.getOverlayHost(canvas);
       let panel = this._overlayPanels.get(itemId);
       const wasPanelCreated = !panel;
       if (!panel) {
@@ -720,8 +716,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         this._overlayPanels.set(itemId, panel);
       }
 
-      if (panel.parentElement !== overlayHost) {
-        overlayHost.appendChild(panel);
+      if (panel.parentElement !== canvas) {
+        canvas.appendChild(panel);
       }
       this.updateOverlayPanelPosition(panel, item, row);
 
@@ -733,23 +729,10 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     });
   }
 
-  /** Get or create the overlay layer for the grid's scrolling canvas. */
-  protected getOverlayHost(canvas: HTMLDivElement): HTMLDivElement {
-    let host = this._overlayHosts.get(canvas);
-    if (!host) {
-      host = createDomElement('div', { className: 'slick-row-detail-overlay' });
-      canvas.appendChild(host);
-      this._overlayHosts.set(canvas, host);
-    }
-    return host;
-  }
-
-  /** Remove all overlay hosts and their panels. */
+  /** Remove all mounted and detached detail panels. */
   protected disposeOverlayPanels(): void {
     this._overlayPanels.forEach((panel) => panel.remove());
     this._overlayPanels.clear();
-    this._overlayHosts.forEach((host) => host.remove());
-    this._overlayHosts.clear();
   }
 
   /** Remove one panel without disturbing other expanded Row Details. */
@@ -775,10 +758,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     // Keep the outer panel node stable while a framework adapter transitions from
     // its preload component to the real detail component. Replacing the panel
     // itself can detach a React/Vue/Angular tree in the middle of its commit.
-    const innerDetailView = panel.getElementsByClassName(`innerDetailView_${itemId}`).item(0) as HTMLElement | null;
-    if (innerDetailView) {
-      this.renderDetailContent(innerDetailView, item);
-    }
+    this.renderDetailContent(panel, item);
 
     const row = this.dataView.getRowById(itemId);
     if (row !== undefined) {
@@ -821,23 +801,14 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
 
     const cellDetailContainerElm = createDomElement('div', {
-      className: `dynamic-cell-detail cellDetailView_${dataContext[this._dataViewIdProperty]}`,
+      className: `slick-row-detail-container row-detail-${dataContext[this._dataViewIdProperty]}`,
       style: {
         height: `${outterHeight}px`,
         top: `${this.getDetailPanelTopOffset(row)}px`,
         pointerEvents: 'auto',
       },
     });
-    const innerContainerElm = createDomElement('div', {
-      className: `detail-container detailViewContainer_${dataContext[this._dataViewIdProperty]}`,
-    });
-    const innerDetailViewElm = createDomElement('div', {
-      className: `innerDetailView_${dataContext[this._dataViewIdProperty]}`,
-    });
-    this.renderDetailContent(innerDetailViewElm, dataContext);
-
-    innerContainerElm.appendChild(innerDetailViewElm);
-    cellDetailContainerElm.appendChild(innerContainerElm);
+    this.renderDetailContent(cellDetailContainerElm, dataContext);
     return cellDetailContainerElm;
   }
 
@@ -869,7 +840,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       } else if (action === 'remove') {
         this._renderedViewportRowIds.delete(itemId);
         this._pendingBackToViewportRows.delete(itemId);
-        this.removeOverlayPanel(itemId);
+        if (this._addonOptions.keepComponentAlive) {
+          this._overlayPanels.get(itemId)?.remove();
+        } else {
+          this.removeOverlayPanel(itemId);
+        }
         triggerEvent && this.notifyOutOfViewport(item);
       }
     }
@@ -1157,7 +1132,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this.renderOverlayPanels();
 
     // make sure View Row DOM Element really exist before notifying that it's a row that is visible again
-    if (document.querySelector(`.${this.gridUid} .cellDetailView_${item[this._dataViewIdProperty]}`)) {
+    if (document.querySelector(`.${this.gridUid} .row-detail-${item[this._dataViewIdProperty]}`)) {
       this._pendingBackToViewportRows.delete(rowId);
       this.onRowBackToViewportRange.notify(
         {

@@ -170,7 +170,7 @@ describe('SlickGrid core file', () => {
     const rowNode = document.createElement('div');
     rowNode.className = 'slick-row';
     const cellNode = createDomElement('div', { className: 'slick-cell l0 r0' });
-    const detailNode = createDomElement('div', { className: 'dynamic-cell-detail cellDetailView_32' });
+    const detailNode = createDomElement('div', { className: 'slick-row-detail-container row-detail-32' });
     rowNode.append(cellNode, detailNode);
 
     const cacheEntry = {

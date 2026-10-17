@@ -33,7 +33,7 @@ export class InnerGridExample {
     public container: HTMLElement,
     public itemDetail: Distributor
   ) {
-    this.innerGridClass = `row-detail-${this.itemDetail.id}`;
+    this.innerGridClass = `inner-grid-detail-${this.itemDetail.id}`;
     this.defineGrid();
   }
 
@@ -68,7 +68,7 @@ export class InnerGridExample {
 
     this.innerGridOptions = {
       autoResize: {
-        container: `.row-detail-${this.itemDetail.id} .container`,
+        container: `.${this.innerGridClass}`,
         rightPadding: 30,
         minHeight: 200,
       },
@@ -89,18 +89,9 @@ export class InnerGridExample {
   }
 
   render() {
-    // return `
-    //     <div class="row-detail-${this.itemDetail.id}">
-    //       <h4 class="title is-4">${this.itemDetail.title} - Order Details</h4>
-    //       <div class="container">
-    //         <div class="innergrid innergrid-${this.itemDetail.id}"></div>
-    //       </div>
-    //     </div>
-    //   `;
     const fragment = new DocumentFragment();
-    const rowDetailContainer = createDomElement('div', { className: this.innerGridClass });
     const innerGrid = createDomElement('div', { className: `innergrid innergrid-${this.itemDetail.id}` });
-    const gridContainer = createDomElement('div', { className: 'container' });
+    const gridContainer = createDomElement('div', { className: `container ${this.innerGridClass}` });
     gridContainer.appendChild(
       createDomElement('h4', {
         className: 'title is-4',
@@ -108,8 +99,7 @@ export class InnerGridExample {
       })
     );
     gridContainer.appendChild(innerGrid);
-    rowDetailContainer.appendChild(gridContainer);
-    fragment.appendChild(rowDetailContainer);
+    fragment.appendChild(gridContainer);
 
     return { fragment, innerGrid };
   }

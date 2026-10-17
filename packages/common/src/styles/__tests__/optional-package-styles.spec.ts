@@ -21,7 +21,7 @@ const postcss = commonRequire('postcss') as typeof import('postcss');
 const packages = [
   ['composite-editor-component', 'slick-composite-editor', '.slick-editor-modal'],
   ['custom-tooltip-plugin', 'slick-custom-tooltip', '.slick-custom-tooltip'],
-  ['row-detail-plugin', 'slick-row-detail', '.slick-row-detail-overlay'],
+  ['row-detail-plugin', 'slick-row-detail', '.slick-row-detail-container'],
 ] as const;
 const themes = ['default', 'bootstrap', 'fluent', 'material', 'salesforce'];
 const variants = themes.flatMap((theme) => (theme === 'fluent' ? [theme] : [theme, `${theme}.lite`]));
@@ -86,7 +86,7 @@ describe('optional package styling', () => {
     for (const [, , selector] of packages) {
       expect(ruleCount(css, selector)).toBe(0);
     }
-    expect(css).not.toMatch(/\.detail-view-toggle|\.dynamic-cell-detail|--slick-editor-modal-container-bg-color/);
+    expect(css).not.toMatch(/\.detail-view-toggle|\.slick-row-detail-container|--slick-editor-modal-container-bg-color/);
     expect(css.split('li.hidden{')).toHaveLength(2);
   });
 
@@ -186,7 +186,7 @@ describe('Salesforce ZIP style merging', () => {
       const css = strFromU8(archive[`styles/css/slickgrid-theme-${theme}.css`]);
       expect(ruleCount(css, '.slick-editor-modal')).toBe(1);
       expect(ruleCount(css, '.slick-custom-tooltip')).toBe(1);
-      expect(css).not.toMatch(/\.slick-row-detail-overlay|\.detail-view-toggle|\.dynamic-cell-detail/);
+      expect(css).not.toMatch(/\.slick-row-detail-overlay|\.detail-view-toggle|\.slick-row-detail-container/);
     }
   });
 

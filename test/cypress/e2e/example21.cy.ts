@@ -36,7 +36,11 @@ describe('Example 21 - Row Detail with inner Grid', () => {
       it('should open the Row Detail of the 2nd row and expect to find an inner grid with all inner column titles', () => {
         cy.get('.slick-cell.detail-view-toggle:nth(1)').click().wait(40);
 
-        cy.get('.dynamic-cell-detail').find('h4').should('contain', '- Order Details (id: 1)');
+        cy.get('.slick-row-detail-container').find('h4').should('contain', '- Order Details (id: 1)');
+        cy.get('.slick-row-detail-container.row-detail-1').parent().should('have.class', 'grid-canvas');
+        cy.get('.slick-row-detail-container.row-detail-1').children().should('have.length', 1);
+        cy.get('.slick-row-detail-container.row-detail-1').find('[class^="container_"]').should('not.exist');
+        cy.get('.slick-row-detail-container.row-detail-1').children('.container.inner-grid-detail-1').should('have.length', 1);
 
         cy.get('.innergrid-1')
           .find('.slick-header-columns')
@@ -69,7 +73,7 @@ describe('Example 21 - Row Detail with inner Grid', () => {
           .click()
           .wait(40);
 
-        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${2})`);
+        cy.get('.slick-row-detail-container').find('h4').should('contain', `- Order Details (id: ${2})`);
 
         // 2nd row detail
         cy.get(`.innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
@@ -154,7 +158,7 @@ describe('Example 21 - Row Detail with inner Grid', () => {
           .click()
           .wait(40);
 
-        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${1})`);
+        cy.get('.slick-row-detail-container').find('h4').should('contain', `- Order Details (id: ${1})`);
 
         cy.get('.innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
@@ -205,7 +209,7 @@ describe('Example 21 - Row Detail with inner Grid', () => {
           .click()
           .wait(40);
 
-        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${1})`);
+        cy.get('.slick-row-detail-container').find('h4').should('contain', `- Order Details (id: ${1})`);
 
         cy.get('.innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
@@ -263,7 +267,7 @@ describe('Example 21 - Row Detail with inner Grid', () => {
           .click()
           .wait(40);
 
-        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${1})`);
+        cy.get('.slick-row-detail-container').find('h4').should('contain', `- Order Details (id: ${1})`);
 
         cy.get('.innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
@@ -289,7 +293,7 @@ describe('Example 21 - Row Detail with inner Grid', () => {
           .click()
           .wait(40);
 
-        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${2})`);
+        cy.get('.slick-row-detail-container').find('h4').should('contain', `- Order Details (id: ${2})`);
 
         cy.get('.innergrid-2 .slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
