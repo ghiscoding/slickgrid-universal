@@ -401,7 +401,7 @@ describe('Example 13 - Header Button Plugin', () => {
 
       cy.get('.grid13-2 .slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('[data-command="clear-filter"]')
+        .children('.slick-menu-item:nth-of-type(8)')
         .children('.slick-menu-content')
         .should('contain', 'Remove Filter')
         .click();

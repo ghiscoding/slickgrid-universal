@@ -576,7 +576,7 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('[data-command="hide-column"]')
+        .children('.slick-menu-item:nth-of-type(10)')
         .children('.slick-menu-content')
         .contains('Hide Column')
         .click();

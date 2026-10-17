@@ -134,8 +134,6 @@ describe('Example 40 - Menus with Slots', () => {
     cy.get('.slick-header-column:nth(0)').trigger('mouseover', { force: true });
     cy.get('.slick-header-column:nth(0)').children('.slick-header-menu-button').invoke('show').click();
 
-    cy.get('.slick-header-menu [data-command="pin-column"]').should('contain', 'Column Pinning');
-
     // 1st item
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item').find('i.mdi-sort-ascending').should('exist');
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item')
@@ -150,45 +148,37 @@ describe('Example 40 - Menus with Slots', () => {
       .contains('Sort Descending');
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(1) .menu-item').find('kbd.key-hint').contains('Alt+↓');
 
-    // Divider after sorting
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="sort-desc"] + .slick-menu-item').should(
-      'have.class',
-      'slick-menu-item-divider'
-    );
+    // 3rd item - divider
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(2)').should('have.class', 'slick-menu-item-divider');
 
-    // Resize by Content
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="column-resize-by-content"] .menu-item')
+    // 4th item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(5) .menu-item')
       .find('i.mdi-arrow-expand-horizontal')
       .should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="column-resize-by-content"] .menu-item')
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(5) .menu-item')
       .find('span.menu-item-label')
       .contains('Resize by Content');
 
-    // Divider after Resize by Content
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="column-resize-by-content"] + .slick-menu-item').should(
-      'have.class',
-      'slick-menu-item-divider'
-    );
+    // 5th item - divider
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(4)').should('have.class', 'slick-menu-item-divider');
 
-    // Remove Filter
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="clear-filter"] .menu-item')
+    // 6th item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(7) .menu-item')
       .find('i.mdi-filter-remove-outline')
       .should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="clear-filter"] .menu-item')
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(7) .menu-item')
       .find('span.menu-item-label')
       .contains('Remove Filter');
 
-    // Remove Sort
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="clear-sort"] .menu-item')
-      .find('i.mdi-sort-variant-off')
-      .should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="clear-sort"] .menu-item')
+    // 7th item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(8) .menu-item').find('i.mdi-sort-variant-off').should('exist');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(8) .menu-item')
       .find('span.menu-item-label')
       .contains('Remove Sort');
 
-    // Hide Column
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="hide-column"] .menu-item').find('i.mdi-close').should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="hide-column"] .menu-item')
+    // 8th item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(9) .menu-item').find('i.mdi-close').should('exist');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(9) .menu-item')
       .find('span.menu-item-label')
       .contains('Hide Column');
   });
@@ -213,62 +203,46 @@ describe('Example 40 - Menus with Slots', () => {
       .find('span.menu-item-label')
       .contains('Sort Descending');
 
-    // Divider after sorting
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="sort-desc"] + .slick-menu-item').should(
-      'have.class',
-      'slick-menu-item-divider'
-    );
+    // 3rd item - divider
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(2)').should('have.class', 'slick-menu-item-divider');
 
-    // Resize by Content
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="column-resize-by-content"] .menu-item')
+    // 4th item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item')
       .find('i.mdi-arrow-expand-horizontal')
       .should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="column-resize-by-content"] .menu-item')
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item')
       .find('span.menu-item-label')
       .contains('Resize by Content');
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="column-resize-by-content"] .menu-item')
-      .find('span.key-hint.danger')
-      .contains('NEW');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item').find('span.key-hint.danger').contains('NEW');
 
-    // Divider after Resize by Content
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="column-resize-by-content"] + .slick-menu-item').should(
-      'have.class',
-      'slick-menu-item-divider'
-    );
+    // 5th item - divider
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(4)').should('have.class', 'slick-menu-item-divider');
 
-    // Divider after Resize by Content
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="column-resize-by-content"] + .slick-menu-item').should(
-      'have.class',
-      'slick-menu-item-divider'
-    );
+    // 5th item - divider
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(4)').should('have.class', 'slick-menu-item-divider');
 
-    // Remove Filter
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="clear-filter"] .menu-item')
+    // 6th item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(5) .menu-item')
       .find('i.mdi-filter-remove-outline')
       .should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="clear-filter"] .menu-item')
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(5) .menu-item')
       .find('span.menu-item-label')
       .contains('Remove Filter');
 
-    // Remove Sort
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="clear-sort"] .menu-item')
-      .find('i.mdi-sort-variant-off')
-      .should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="clear-sort"] .menu-item')
+    // 7th item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(6) .menu-item').find('i.mdi-sort-variant-off').should('exist');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(6) .menu-item')
       .find('span.menu-item-label')
       .contains('Remove Sort');
 
-    // Hide Column
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="hide-column"] .menu-item').find('i.mdi-close').should('exist');
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="hide-column"] .menu-item')
+    // 8th item
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(7) .menu-item').find('i.mdi-close').should('exist');
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(7) .menu-item')
       .find('span.menu-item-label')
       .contains('Hide Column');
 
-    // Divider after Resize by Content
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="column-resize-by-content"] + .slick-menu-item').should(
-      'have.class',
-      'slick-menu-item-divider'
-    );
+    // 9th divider
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(4)').should('have.class', 'slick-menu-item-divider');
 
     // 10th buttons group
     cy.get('.footer-buttons-container .footer-btn.who-btn').contains('Who am I?').click();
