@@ -66,9 +66,9 @@
     "vue": ">=3.5.0"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.59.3",
+    "@microsoft/api-extractor": "^7.59.4",
     "@vitejs/plugin-vue": "catalog:",
-    "@vue/language-core": "^3.3.12",
+    "@vue/language-core": "^3.3.13",
     "cross-env": "catalog:",
     "i18next": "catalog:",
     "i18next-vue": "catalog:",
@@ -77,6 +77,6 @@
     "vite": "catalog:",
     "vite-plugin-dts": "^5.1.2",
     "vue": "catalog:",
-    "vue-tsc": "^3.3.12"
+    "vue-tsc": "^3.3.13"
   }
 }
