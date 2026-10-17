@@ -261,9 +261,7 @@ pane scroll synchronization and update old `$slick-frozen-*` Sass variables to t
 ## Removed Deprecated Code
 ### Row Positioning `rowTopOffsetRenderType`
 
-The `rowTopOffsetRenderType` grid option and the Row Detail `renderMode` option have been removed.
-The related `RowDetailViewRenderMode` and `RowDetailViewInlineRenderMode` types have also been removed.
-Rows use transform positioning, and Row Detail panels always render in a sibling overlay layer of the grid canvas. Remove these options regardless of their previous values (`'top'` or `'transform'`, and `'inline'` or `'overlay'`):
+For Row Detail and RowSpan users that previously required `rowTopOffsetRenderType: 'top'`, no longer require this grid option and is actually being dropped completely. The library now works fine with `rowTopOffsetRenderType: 'transform'` with all plugins, making this option redundant which is why it is being removed. Also please note that the Row Detail `renderMode` option is also removed for the same reason (overlay is now its default positioning).
 
 ```diff
 const gridOptions: GridOption = {
@@ -275,11 +273,7 @@ const gridOptions: GridOption = {
 };
 ```
 
-Transform positioning now stricly uses `transform: translateY(25px)` instead of `top: 25px` for better scrolling performance. RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
-
-If custom CSS or tests relied on `.slick-cell + .dynamic-cell-detail`, target
-`.dynamic-cell-detail` directly because the overlay is mounted in a sibling layer. See the
-[Row Detail guide](../grid-functionalities/row-detail.md) for details.
+Grid row positioning now strictly uses `transform: translateY(25px)` (the legacy approach was `top: 25px`) for better precisions and scrolling performance. RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
 
 ## Code Changes
 ### Rename `changeColumnsArrangement()`
