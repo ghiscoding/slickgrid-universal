@@ -131,17 +131,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     return this._gridUid || this._grid?.getUID() || '';
   }
 
-  /**
-   * True when Row Detail panels should be rendered in a sibling overlay layer.
-   * @deprecated v11: remove this compatibility switch when overlay becomes the only renderer.
-   */
-  protected get isOverlayRenderMode(): boolean {
-    return (
-      this._addonOptions?.renderMode === 'overlay' ||
-      (this._addonOptions?.renderMode === undefined && this.gridOptions.rowTopOffsetRenderType === 'transform')
-    );
-  }
-
   set rowIdsOutOfViewport(rowIds: Array<string | number>) {
     this._rowIdsOutOfViewport = new Set(rowIds);
   }
@@ -245,7 +234,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     });
 
     this._eventHandler.subscribe(this._grid.onRendered, () => {
-      this.isOverlayRenderMode && this.renderOverlayPanels();
+      this.renderOverlayPanels();
       this._pendingBackToViewportRows.forEach((item) => this.notifyBackToViewportWhenDomExist(item));
       if (!this._isUpdatingAsyncResponse) {
         this.flushPendingAsyncEndUpdates();
@@ -311,18 +300,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** set or change some of the plugin options */
   setOptions(options: Partial<RowDetailViewOption>): void {
-    const wasOverlayRenderMode = this.isOverlayRenderMode;
     this._addonOptions = extend(true, {}, this._addonOptions, options) as RowDetailView;
     if (this._addonOptions?.singleRowExpand) {
       this.collapseAll();
-    }
-    // @deprecated v11: remove mode switching when inline rendering is removed.
-    if (wasOverlayRenderMode !== this.isOverlayRenderMode) {
-      if (this.isOverlayRenderMode) {
-        this.renderOverlayPanels();
-      } else {
-        this.disposeOverlayPanels();
-      }
     }
   }
 
@@ -412,14 +392,10 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  /** reset all Set rows/ids cache and start empty (but keep expanded rows ref) */
+  /** Reset disposed rows while preserving mounted overlays and their viewport state. */
   resetRenderedRows(): void {
     // Overlay panels live outside row DOM and must remain mounted while framework adapters
     // redraw their nested views; their viewport state is updated by the next recalc/render.
-    // @deprecated v11: remove the inline-mode branch when overlay becomes unconditional.
-    if (!this.isOverlayRenderMode) {
-      this._renderedViewportRowIds.clear();
-    }
     this._disposedRows.clear();
   }
 
@@ -574,9 +550,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
 
     mainContainer.setAttribute('style', `min-height: ${item[this._keyPrefix + 'height']}px`);
-    if (cellItem) {
-      cellItem.setAttribute('style', `height: ${outterHeight}px; top: ${rowHeight}px`);
-    }
+    cellItem.style.height = `${outterHeight}px`;
 
     const idxParent = this.dataView.getIdxById(item[this._dataViewIdProperty]) as number;
     for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {
@@ -672,7 +646,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       calculateFn();
     }
 
-    this.isOverlayRenderMode && this.renderOverlayPanels();
+    this.renderOverlayPanels();
   }
 
   // --
@@ -693,9 +667,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       }
       this._pendingAsyncEndUpdates.delete(itemId);
       this._renderedIds.add(itemId);
-      if (this.isOverlayRenderMode) {
-        this.refreshOverlayPanel(item);
-      }
+      this.refreshOverlayPanel(item);
 
       const renderResult = this.renderDetailView(item);
       const notifyAsyncEndUpdate = () =>
@@ -718,7 +690,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Render all expanded panels in sibling overlay layers of their grid canvases. */
   protected renderOverlayPanels(): void {
-    if (!this.isOverlayRenderMode || !this._grid) {
+    if (!this._grid) {
       return;
     }
 
@@ -789,7 +761,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Replace a framework-owned overlay panel after its preload component is unmounted. */
   protected refreshOverlayPanel(item: any): void {
-    if (!this.isOverlayRenderMode || !item) {
+    if (!item) {
       return;
     }
 
@@ -848,13 +820,12 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       dataContext[`${this._keyPrefix}sizePadding`] = this._addonOptions.maxRows;
     }
 
-    // @deprecated v11: remove the inline positioning branch when overlay becomes unconditional.
     const cellDetailContainerElm = createDomElement('div', {
       className: `dynamic-cell-detail cellDetailView_${dataContext[this._dataViewIdProperty]}`,
       style: {
         height: `${outterHeight}px`,
-        top: this.isOverlayRenderMode ? `${this.getDetailPanelTopOffset(row)}px` : `${rowHeight}px`,
-        pointerEvents: this.isOverlayRenderMode ? 'auto' : undefined,
+        top: `${this.getDetailPanelTopOffset(row)}px`,
+        pointerEvents: 'auto',
       },
     });
     const innerContainerElm = createDomElement('div', {
@@ -973,19 +944,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       expandedClasses += this._addonOptions.expandedClass;
     }
 
-    const result: FormatterResultWithHtml = {
+    return {
       html: createDomElement('div', { className: classNameToList(expandedClasses).join(' '), ariaExpanded: 'true' }),
     };
-
-    // @deprecated v11: always mount the detail panel in the overlay layer.
-    if (!this.isOverlayRenderMode) {
-      const detailPanel = this.createDetailViewElement(dataContext, row);
-      if (detailPanel) {
-        result.insertElementAfterTarget = detailPanel;
-      }
-    }
-
-    return result;
   }
 
   /** When row is getting toggled, we will handle the action of collapsing/expanding */
@@ -1193,9 +1154,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     const rowIndex = item.rowIndex || this.dataView.getRowById(item[this._dataViewIdProperty]);
     const rowId = item[this.dataViewIdProperty];
 
-    if (this.isOverlayRenderMode) {
-      this.renderOverlayPanels();
-    }
+    this.renderOverlayPanels();
 
     // make sure View Row DOM Element really exist before notifying that it's a row that is visible again
     if (document.querySelector(`.${this.gridUid} .cellDetailView_${item[this._dataViewIdProperty]}`)) {

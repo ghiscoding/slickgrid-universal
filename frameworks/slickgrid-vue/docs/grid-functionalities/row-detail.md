@@ -23,23 +23,22 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 > So for that reason, you should avoid using dynamic elements (i.e. form inputs) because whenever a re-render kicks in, it will reset and re-render the Row Detail content as if nothing happened.
 > So you should consider using Row Detail mainly for showing static data (hence the name "Row Detail" to show more detailed info) and to be clear dynamic elements can be rendered but it's very usable if they get reset every time you scroll out of the viewport and so just remember this limitation.
 
-### Transform-compatible rendering
+### Overlay rendering
 
-Row Detail automatically uses the `overlay` render mode when `rowTopOffsetRenderType` is `transform` (the default). The panel is mounted in a sibling layer of the grid canvas instead of inside the transformed row, so it remains above neighbouring rows. No additional Row Detail option is required.
+Row Detail panels are always mounted in a sibling overlay layer of the grid canvas, above the transformed rows. No rendering option is required.
+
+In v11, `rowTopOffsetRenderType` and `rowDetailView.renderMode` have been removed. Remove both options from existing configurations; see the [v11 migration guide](../../../../docs/migrations/migration-to-11.x.md#row-positioning-rowtopoffsetrendertype).
 
 ```ts
 const gridOptions: GridOption = {
   enableRowDetailView: true,
-  rowTopOffsetRenderType: 'transform',
   rowDetailView: {
     // ... other Row Detail options
   }
 };
 ```
 
-`renderMode: 'inline'` remains available temporarily for existing applications and is deprecated. Explicitly selecting it makes SlickGrid use `rowTopOffsetRenderType: 'top'` for compatibility. Overlay rendering preserves the existing Row Detail classes and framework component lifecycle, but custom CSS or tests that rely on `.slick-cell + .dynamic-cell-detail` should be changed to target `.dynamic-cell-detail` directly.
-
-**v11 transition:** Overlay rendering is the permanent rendering approach. In v11, it is planned to become the only Row Detail renderer, so `renderMode` may be removed from the API.
+Overlay rendering preserves the existing Row Detail classes and framework component lifecycle. Custom CSS or tests that relied on `.slick-cell + .dynamic-cell-detail` should target `.dynamic-cell-detail` directly.
 
 ### Keeping Row Detail Components Alive During Scrolling
 
@@ -477,9 +476,6 @@ addNewColumn() {
   }
 }
 ```
-
-> **Note**
-> The code above is no longer necessary with v10.8.0 and above, the lib will now take care of that for you.
 
 ## Row Detail with Inner Grid
 

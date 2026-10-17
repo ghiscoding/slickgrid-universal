@@ -181,7 +181,6 @@ export class Example47 {
       enableFiltering: true,
       enableGrouping: true,
       enableRowDetailView: true,
-      rowTopOffsetRenderType: 'top', // Intentional legacy Row Detail compatibility coverage; overlay mode supports "transform"
       darkMode: this._darkMode,
       externalResources: [AureliaRowDetailView],
       rowDetailView: {

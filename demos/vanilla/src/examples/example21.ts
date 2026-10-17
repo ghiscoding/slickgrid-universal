@@ -137,7 +137,6 @@ export default class Example21 {
         this.rowDetail = new SlickRowDetailView(pubSubService);
         return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
-      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       rowHeight: 33,
       rowDetailView: {
         loadOnce: false, // you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events

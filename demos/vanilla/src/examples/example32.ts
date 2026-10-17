@@ -194,7 +194,6 @@ export default class Example32 {
       gridMenu: {
         hideColumnPickerSection: true,
       },
-      rowTopOffsetRenderType: 'top', // intentional top-positioning coverage; rowspan also supports 'transform'
     };
   }
 

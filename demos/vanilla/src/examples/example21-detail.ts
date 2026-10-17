@@ -78,7 +78,6 @@ export class InnerGridExample {
       enableCellNavigation: true,
       datasetIdPropertyName: 'orderId',
       presets: gridState,
-      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
     };
   }
 

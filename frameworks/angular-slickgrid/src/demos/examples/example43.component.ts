@@ -181,7 +181,6 @@ export class Example43Component implements OnInit {
       gridMenu: {
         hideColumnPickerSection: true,
       },
-      rowTopOffsetRenderType: 'top', // intentional top-positioning coverage; rowspan also supports 'transform'
     };
   }
 

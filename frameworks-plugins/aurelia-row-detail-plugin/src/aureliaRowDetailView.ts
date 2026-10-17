@@ -203,9 +203,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
 
           // Re-evaluate the overlay after SlickGrid has rebuilt its rows.
           this._eventHandler.subscribe(this._grid.onRendered, () => {
-            if (this.isOverlayRenderMode) {
-              this.recalculateOutOfRangeViews(true, 0);
-            }
+            this.recalculateOutOfRangeViews(true, 0);
           });
 
           // on row selection changed, we also need to redraw
@@ -336,14 +334,6 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
       // element's container, so removing it here would leave the recreated
       // panel without a mount target. Removing the panel itself already
       // detaches the active view while preserving its component state.
-      if (this.isOverlayRenderMode) {
-        this._keepAliveSlotIds.add(foundSlot.id);
-        return;
-      }
-
-      // physically remove the controller's host element from the visible DOM without calling deactivate()
-      const host: HTMLElement | undefined = foundSlot.controller.host;
-      host?.remove();
       this._keepAliveSlotIds.add(foundSlot.id);
     }
   }

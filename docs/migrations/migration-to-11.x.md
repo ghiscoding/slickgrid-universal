@@ -10,6 +10,7 @@ The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer va
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
 - [Migrate Grid State and Presets](#grid-state-and-presets)
 - [Import optional package styles separately](#import-optional-package-styles-separately)
+- [Remove row positioning and Row Detail rendering options](#row-positioning-rowtopoffsetrendertype)
 - [Removed Deprecated Code](#removed-deprecated-code)
 - [Code Changes](#code-changes)
 
@@ -260,21 +261,19 @@ pane scroll synchronization and update old `$slick-frozen-*` Sass variables to t
 ## Removed Deprecated Code
 ### Row Positioning `rowTopOffsetRenderType`
 
-We previously had a grid option `rowTopOffsetRenderType: 'top' | 'transform'` and that existed mainly because `'transform'` was not working with certain features like Row Detail and/or ColSpan. However with v11, this limitation is gone which allows us to drop the grid option and just use `'transform'` as the only row offset internally. Remove inline Row Detail compatibility settings:
+For Row Detail and RowSpan users that previously required `rowTopOffsetRenderType: 'top'`, no longer require this grid option and is actually being dropped completely. The library now works fine with `rowTopOffsetRenderType: 'transform'` with all plugins, making this option redundant which is why it is being removed. Also please note that the Row Detail `renderMode` option is also removed for the same reason (overlay is now its default positioning).
 
 ```diff
-rowDetailView: {
-- renderMode: 'inline',
-+ renderMode: 'overlay',
-}
-- rowTopOffsetRenderType: 'top', // for Row Detail or ColSpan
+const gridOptions: GridOption = {
+- rowTopOffsetRenderType: 'transform',
+  rowDetailView: {
+-   renderMode: 'overlay',
+    // ... other Row Detail options
+  },
+};
 ```
 
-> What was that legacy `rowTopOffsetRenderType` grid option anyway? SlickGrid was built with virtual-scroll which is what made SlickGrid extremely performant, and in order to know the position of a row, it was previously using a `top` offset calculation (row Y * `rowHeight`). For example the legacy approach for the second row was to use `<div class="slick-row" style="top: 25px">` (assuming a `rowHeight: 25`), but the new approach is to use `transform` so it now uses `<div class="slick-row" style="transform: translateY(25px)">`, the reason to use transform is simply because it's more precise and has much better performance compared to top.
-
-If custom CSS or tests relied on `.slick-cell + .dynamic-cell-detail`, target
-`.dynamic-cell-detail` directly because the overlay is mounted in a sibling layer. See the
-[Row Detail guide](../grid-functionalities/row-detail.md) for details.
+Grid row positioning now strictly uses `transform: translateY(25px)` (the legacy approach was `top: 25px`) for better precisions and scrolling performance. RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
 
 ## Code Changes
 ### Rename `changeColumnsArrangement()`

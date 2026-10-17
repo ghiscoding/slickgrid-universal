@@ -312,61 +312,18 @@ describe('SlickGrid core file', () => {
     expect(styleElm?.getAttribute('nonce')).toBe('test-nonce');
   });
 
-  it('should preserve transform row positioning when Row Detail uses the automatic overlay render mode', () => {
+  it('should use transform row positioning with Row Detail enabled', () => {
     document.body.style.zoom = '90%';
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-    grid = new SlickGrid<any, Column>(
-      '#myGrid',
-      [],
-      columns,
-      { ...defaultOptions, rowTopOffsetRenderType: 'transform', enableRowDetailView: true },
-      pubSubServiceStub
-    );
+    grid = new SlickGrid<any, Column>('#myGrid', [{ firstName: 'Jane' }], columns, { ...defaultOptions, enableRowDetailView: true }, pubSubServiceStub);
     grid.init();
 
-    expect(grid).toBeTruthy();
-    expect(grid.getOptions().rowTopOffsetRenderType).toBe('transform');
+    const row = container.querySelector<HTMLElement>('.slick-row[data-row="0"]')!;
+    expect(row.style.top).toBe('');
+    expect(row.style.transform).toBe('translateY(0px)');
   });
 
-  it('should preserve transform row positioning when Row Detail uses the overlay render mode', () => {
-    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-    grid = new SlickGrid<any, Column>(
-      '#myGrid',
-      [],
-      columns,
-      {
-        ...defaultOptions,
-        rowTopOffsetRenderType: 'transform',
-        enableRowDetailView: true,
-        rowDetailView: { renderMode: 'overlay' },
-      } as GridOption,
-      pubSubServiceStub
-    );
-    grid.init();
-
-    expect(grid.getOptions().rowTopOffsetRenderType).toBe('transform');
-  });
-
-  it('should auto-fallback to top when Row Detail explicitly uses the inline render mode', () => {
-    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-    grid = new SlickGrid<any, Column>(
-      '#myGrid',
-      [],
-      columns,
-      {
-        ...defaultOptions,
-        rowTopOffsetRenderType: 'transform',
-        enableRowDetailView: true,
-        rowDetailView: { renderMode: 'inline' },
-      } as GridOption,
-      pubSubServiceStub
-    );
-    grid.init();
-
-    expect(grid.getOptions().rowTopOffsetRenderType).toBe('top');
-  });
-
-  it('should keep RowSpan host rows top-positioned while other rows use transforms', () => {
+  it.each([false, true])('should keep RowSpan hosts and covered rows in the same stacking context (pinned=%s)', (pinned) => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name' },
       { id: 'lastName', field: 'lastName', name: 'Last Name' },
@@ -374,31 +331,36 @@ describe('SlickGrid core file', () => {
     const data = [
       { id: 0, firstName: 'Jane', lastName: 'Doe' },
       { id: 1, firstName: 'John', lastName: 'Doe' },
+      { id: 2, firstName: 'Alice', lastName: 'Jones' },
     ];
     const dataView = new SlickDataView({
-      globalItemMetadataProvider: { getRowMetadata: (_item, row) => (row === 0 ? { columns: { 0: { rowspan: 2 } } } : undefined) },
+      globalItemMetadataProvider: { getRowMetadata: (_item, row) => (row === 0 ? { columns: { 1: { rowspan: 2 } } } : undefined) },
     });
     dataView.setItems(data);
     grid = new SlickGrid<any, Column>(
       '#myGrid',
       dataView,
       columns,
-      { ...defaultOptions, rowTopOffsetRenderType: 'transform', enableCellRowSpan: true },
+      { ...defaultOptions, enableCellRowSpan: true, pinning: pinned ? { columns: { left: 0 } } : undefined },
       pubSubServiceStub
     );
     grid.init();
 
     const spanRow = container.querySelector<HTMLElement>('.slick-row[data-row="0"]')!;
-    const regularRow = container.querySelector<HTMLElement>('.slick-row[data-row="1"]')!;
-    expect(grid.getOptions().rowTopOffsetRenderType).toBe('transform');
+    const coveredRow = container.querySelector<HTMLElement>('.slick-row[data-row="1"]')!;
+    const regularRow = container.querySelector<HTMLElement>('.slick-row[data-row="2"]')!;
     expect(spanRow.style.top).toBe('0px');
     expect(spanRow.style.transform).toBe('');
     expect(spanRow.classList).toContain('slick-rowspan');
+    expect(coveredRow.style.top).toBe(`${grid.getOptions().rowHeight}px`);
+    expect(coveredRow.style.transform).toBe('');
+    expect(coveredRow.classList).toContain('slick-rowspan');
     expect(regularRow.style.top).toBe('');
-    expect(regularRow.style.transform).toBe(`translateY(${grid.getOptions().rowHeight}px)`);
+    expect(regularRow.style.transform).toBe(`translateY(${grid.getOptions().rowHeight! * 2}px)`);
+    expect(regularRow.classList).not.toContain('slick-rowspan');
     const spanCell = spanRow.querySelector<HTMLElement>('.slick-cell.rowspan')!;
     expect(spanCell).toBeTruthy();
-    expect(grid.getCellFromEvent({ target: spanCell } as unknown as Event)).toEqual({ row: 0, cell: 0 });
+    expect(grid.getCellFromEvent({ target: spanCell } as unknown as Event)).toEqual({ row: 0, cell: 1 });
   });
 
   it('should be able to instantiate SlickGrid and get columns', () => {
@@ -4082,7 +4044,7 @@ describe('SlickGrid core file', () => {
         expect(onDragEndSpy).toHaveBeenCalled();
 
         grid.scrollRowIntoView(30);
-        expect((document.querySelector('.slick-row.odd') as HTMLDivElement).style.top).toMatch(/^[0-9]*px$/gi);
+        expect((document.querySelector('.slick-row.odd') as HTMLDivElement).style.transform).toMatch(/^translateY\([0-9]*px\)$/gi);
         grid.setActiveRow(30);
         grid.scrollTo(33);
         vi.advanceTimersByTime(10);
@@ -4096,13 +4058,12 @@ describe('SlickGrid core file', () => {
         expect(onViewportChangedSpy).toHaveBeenCalled();
       });
 
-      it('should "rowTopOffsetRenderType" use grid option and scrollTo row and expect transform of translateY to be changed', () => {
+      it('should update row transforms when scrolling', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, {
           ...defaultOptions,
           rowHeight: 2200,
           enableAsyncPostRender: true,
           enableAsyncPostRenderCleanup: true,
-          rowTopOffsetRenderType: 'transform',
         });
         const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
         const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
