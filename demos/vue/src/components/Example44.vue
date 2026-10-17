@@ -277,7 +277,6 @@ function defineGrid() {
     },
     enableExcelExport: true,
     externalResources: [new ExcelExportService()],
-    // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
   };
 }
 

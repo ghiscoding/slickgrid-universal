@@ -295,7 +295,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
     maxItemToInspectSingleColumnWidthByContent: 5000,
     widthToRemoveFromExceededWidthReadjustment: 50,
   },
-  rowTopOffsetRenderType: 'transform',
   treeDataOptions: {
     exportIndentMarginLeft: 5,
     exportIndentationLeadingChar: '͏͏͏͏͏͏͏͏͏·',

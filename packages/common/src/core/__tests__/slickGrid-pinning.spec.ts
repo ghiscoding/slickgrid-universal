@@ -413,9 +413,9 @@ describe('SlickGrid unified pinning', () => {
     const canvas = container.querySelector('.grid-canvas')!;
 
     expect((canvas as HTMLElement).style.height).toBe(`${rowHeight * rows.length}px`);
-    expect(canvas.querySelector<HTMLElement>('[data-row="1"]')?.style.top).toBe(`${rowHeight * 3}px`);
-    expect(canvas.querySelector<HTMLElement>('[data-row="3"]')?.style.top).toBe(`${rowHeight * 4}px`);
-    expect(canvas.querySelector<HTMLElement>('[data-row="5"]')?.style.top).toBe(`${rowHeight * 5}px`);
+    expect(canvas.querySelector<HTMLElement>('[data-row="1"]')?.style.transform).toBe(`translateY(${rowHeight * 3}px)`);
+    expect(canvas.querySelector<HTMLElement>('[data-row="3"]')?.style.transform).toBe(`translateY(${rowHeight * 4}px)`);
+    expect(canvas.querySelector<HTMLElement>('[data-row="5"]')?.style.transform).toBe(`translateY(${rowHeight * 5}px)`);
     expect(canvas.querySelector('[data-row="0"]')).toBeNull();
     expect(canvas.querySelector('[data-row="2"]')).toBeNull();
     expect(canvas.querySelector('[data-row="4"]')).toBeNull();
@@ -439,7 +439,7 @@ describe('SlickGrid unified pinning', () => {
     const topBandHeight = rowHeight * 3;
     const bottomRowNode = container.querySelector<HTMLElement>('.slick-docking-overlay [data-row="5"]')!;
 
-    expect(parseFloat(bottomRowNode.style.top)).toBeGreaterThanOrEqual(topBandHeight);
+    expect(parseFloat(bottomRowNode.style.transform.slice('translateY('.length))).toBeGreaterThanOrEqual(topBandHeight);
   });
 
   it('reserves docking.minCenterRowCount rows of breathing room between the top and bottom pinned bands', () => {
@@ -452,7 +452,7 @@ describe('SlickGrid unified pinning', () => {
     const bottomRowNode = container.querySelector<HTMLElement>('.slick-docking-overlay [data-row="7"]')!;
 
     // top band (1 row) + reserved center budget (4 rows) must precede the bottom band.
-    expect(parseFloat(bottomRowNode.style.top)).toBeGreaterThanOrEqual(rowHeight * 5);
+    expect(parseFloat(bottomRowNode.style.transform.slice('translateY('.length))).toBeGreaterThanOrEqual(rowHeight * 5);
   });
 
   it('converts docking.minCenterRowCount to pixels using the average measured height in variable row height mode', () => {
@@ -475,7 +475,7 @@ describe('SlickGrid unified pinning', () => {
     const topHeight = slickGrid.getRowHeight(0);
 
     expect(averageHeight).toBeGreaterThan(25); // pulled up by the one 100px row
-    expect(parseFloat(bottomRowNode.style.top)).toBeGreaterThanOrEqual(topHeight + averageHeight * 2);
+    expect(parseFloat(bottomRowNode.style.transform.slice('translateY('.length))).toBeGreaterThanOrEqual(topHeight + averageHeight * 2);
   });
 
   it('keeps hidden columns in their rendered docking position', () => {

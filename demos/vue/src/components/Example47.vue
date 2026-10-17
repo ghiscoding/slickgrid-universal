@@ -154,7 +154,6 @@ function defineGrid() {
     enableFiltering: true,
     enableGrouping: true,
     enableRowDetailView: true,
-    rowTopOffsetRenderType: 'top', // Intentional legacy Row Detail compatibility coverage; overlay mode supports "transform"
     darkMode: isDarkMode.value,
     externalResources: [VueRowDetailView],
     rowDetailView: {

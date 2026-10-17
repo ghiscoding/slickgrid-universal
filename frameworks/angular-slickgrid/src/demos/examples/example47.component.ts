@@ -176,7 +176,6 @@ export class Example47Component implements OnDestroy, OnInit {
       enableFiltering: true,
       enableGrouping: true,
       enableRowDetailView: true,
-      rowTopOffsetRenderType: 'top', // Intentional legacy Row Detail compatibility coverage; overlay mode supports "transform"
       darkMode: this._darkMode,
       externalResources: [AngularRowDetailView],
       rowDetailView: {

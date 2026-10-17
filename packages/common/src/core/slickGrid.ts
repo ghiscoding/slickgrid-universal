@@ -353,7 +353,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     editorCellNavOnLRKeys: false,
     enableMouseWheelScrollHandler: true,
     doPaging: true,
-    rowTopOffsetRenderType: 'top',
     rtl: false,
     scrollRenderThrottling: 10,
     suppressCssChangesOnHiddenInit: false,
@@ -4797,17 +4796,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._options.leaveSpaceForNewRows = false;
     }
 
-    // @deprecated v11: remove this Row Detail fallback when inline rendering is removed.
-    // The legacy inline Row Detail renderer relies on absolute top-based row positioning;
-    // an omitted renderMode automatically uses overlay rendering with transform-based row positioning.
-    if (
-      this._options.rowTopOffsetRenderType === 'transform' &&
-      this._options.enableRowDetailView &&
-      this._options.rowDetailView?.renderMode === 'inline'
-    ) {
-      this._options.rowTopOffsetRenderType = 'top';
-    }
-
     if (this._options.pinning?.columns) {
       this.validatePinnedColumnIndexes(this.getPinnedColumnIndexes(), false);
     }
@@ -5486,16 +5474,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       rowDocking?.band === 'bottom' && this.rowDockingLayout.bottom[0]?.index === row
     );
     rowNode.classList.toggle('slick-row-sticky', !!rowDocking?.sticky);
-    const isTransform = this._options.rowTopOffsetRenderType === 'transform';
     const cacheEntry = this.rowsCache[row];
     const hasRowSpan = cacheEntry?.rowSpanHost ?? this.isRowSpanHost(rowNode, row);
     if (cacheEntry) {
       cacheEntry.rowSpanHost = hasRowSpan;
     }
-    // Docked rows live in the non-scrolling overlay, so their vertical
-    // coordinate is constant for the duration of a scroll. The transform
-    // preference remains available for normal rows and row-detail rendering.
-    const useTransform = isTransform && !hasRowSpan;
+    // RowSpan hosts must avoid creating a transform stacking context so their
+    // spanning cells can extend over neighboring rows. All other rows use transforms.
+    const useTransform = !hasRowSpan;
 
     // Mark every rowspan host row so docked region wrappers let the spanning cell
     // extend over following rows and stay hit-testable.

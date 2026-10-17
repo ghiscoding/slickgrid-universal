@@ -174,7 +174,6 @@ export default class Example20 {
         return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
       rowHeight: 33,
-      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       rowDetailView: {
         columnIndexPosition: 1,
         preTemplate: this.loadingTemplate.bind(this),
