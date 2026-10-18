@@ -777,6 +777,13 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Get the panel's offset immediately below its parent row. */
   protected getDetailPanelTopOffset(row: number): number {
+    const columnIdx = this._grid.getColumnIndex(String(this._addonOptions.columnId ?? this._defaults.columnId)) ?? 0;
+    const cellBox = this._grid.getCellNodeBox(row, columnIdx);
+    // Cell coordinates include pinning, sticky docking, and virtual-scroll offsets.
+    // The cell's bottom coordinate is inclusive, so the panel starts one pixel below it.
+    if (cellBox) {
+      return cellBox.bottom + 1;
+    }
     return this._grid.getRowTop(row) + this._grid.getRowHeight(row);
   }
 
