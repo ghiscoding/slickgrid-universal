@@ -11,6 +11,8 @@ import {
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SlickDataView as ActualDataView } from '../../common/src/core/slickDataView.js';
+import { SlickGrid as ActualGrid } from '../../common/src/core/slickGrid.js';
 import { SlickRowDetailView } from './slickRowDetailView.js';
 
 vi.useFakeTimers();
@@ -46,6 +48,7 @@ const getEditorLockMock = {
 const gridStub = {
   getCellFromEvent: vi.fn(),
   getCellNode: vi.fn(),
+  getCellNodeBox: vi.fn(),
   getActiveCell: vi.fn(),
   getColumns: vi.fn(),
   getColumnByIdx: vi.fn(),
@@ -112,6 +115,108 @@ describe('SlickRowDetailView plugin', () => {
   it('should create the plugin', () => {
     plugin.init(gridStub);
     expect(plugin).toBeTruthy();
+  });
+
+  describe('detail panels with a real grid and DataView', () => {
+    let grid: ActualGrid;
+    let dataView: ActualDataView;
+    let container: HTMLDivElement;
+
+    beforeEach(() => {
+      container = createDomElement('div', { style: { width: '800px', height: '400px' } }, divContainer);
+      dataView = new ActualDataView();
+      dataView.setItems(
+        Array.from({ length: 20 }, (_, id) => ({
+          id,
+          firstName: `Task ${id}`,
+          __collapsed: false,
+          __sizePadding: 2,
+          __detailContent: '<input value="Initial">',
+        }))
+      );
+      grid = new ActualGrid(container, dataView, mockColumns, {
+        rowHeight: 25,
+        devMode: { ownerNodeIndex: 0 },
+        rowDetailView: { columnId: 'firstName', panelRows: 2, loadOnce: true },
+      });
+      plugin.init(grid);
+    });
+
+    afterEach(() => {
+      plugin.dispose();
+      grid.destroy(true);
+    });
+
+    const mountPanel = (id: number): HTMLElement => {
+      (plugin as any)._expandedRowIds.add(id);
+      (plugin as any)._renderedViewportRowIds.add(id);
+      (plugin as any).renderOverlayPanels();
+      return container.querySelector<HTMLElement>(`.row-detail-${id}`)!;
+    };
+
+    it.each([
+      { label: 'center row below a non-contiguous top pin', row: 2, top: [0, 4], bottom: [] },
+      { label: 'center row above a non-contiguous bottom pin', row: 2, top: [], bottom: [0, 4] },
+      { label: 'top-pinned parent', row: 4, top: [4], bottom: [] },
+      { label: 'bottom-pinned parent', row: 2, top: [], bottom: [2] },
+    ])('positions the panel below its $label', ({ row, top, bottom }) => {
+      grid.setOptions({ pinning: { rows: { top, bottom } } });
+      const panel = mountPanel(row);
+      const parentRow = container.querySelector<HTMLElement>(`.slick-row[data-row="${row}"]`)!;
+      const renderedTop = Number.parseFloat(parentRow.style.transform.slice('translateY('.length));
+
+      expect(panel.style.top).toBe(`${renderedTop + 25}px`);
+      expect(panel.style.top).not.toBe(`${grid.getRowTop(row) + 25}px`);
+
+      grid.scrollTo(75);
+      grid.render();
+      const scrolledRow = container.querySelector<HTMLElement>(`.slick-row[data-row="${row}"]`)!;
+      const scrolledTop = Number.parseFloat(scrolledRow.style.transform.slice('translateY('.length));
+      const dockedScrollOffset = top.includes(row) || bottom.includes(row) ? grid.getViewportNode()!.scrollTop : 0;
+      expect(panel.style.top).toBe(`${scrolledTop + dockedScrollOffset + 25}px`);
+
+      grid.setOptions({ pinning: null });
+      grid.render();
+      expect(panel.style.top).toBe(`${grid.getRowTop(row) + 25}px`);
+    });
+
+    it('renders an async replacement object instead of the original loading item', () => {
+      const original = dataView.getItemById(2);
+      original.__detailContent = '<span>Loading...</span>';
+      const panel = mountPanel(2);
+      const replacement = { ...original, firstName: 'Loaded task' };
+
+      plugin.onAsyncResponse.notify({ item: replacement, detailView: '<span>Loaded detail</span>' }, new SlickEventData());
+      grid.render();
+
+      expect(dataView.getItemById(2)).toBe(replacement);
+      expect(original.__detailContent).toBe('<span>Loading...</span>');
+      expect(panel.innerHTML).toBe('<span>Loaded detail</span>');
+      expect(container.querySelector('.row-detail-2')).toBe(panel);
+    });
+
+    it('preserves live inputs and listeners when scrolling after saving an HTML snapshot', () => {
+      const item = dataView.getItemById(2);
+      const panel = mountPanel(2);
+      const input = panel.querySelector('input')!;
+      const clickSpy = vi.fn();
+      input.addEventListener('click', clickSpy);
+      input.value = 'Edited value';
+      input.focus();
+      input.setSelectionRange(1, 4);
+      panel.appendChild(createDomElement('span', { textContent: 'Live content' }));
+      plugin.saveDetailView(item);
+
+      grid.onScroll.notify({ scrollLeft: 0, scrollTop: 0, grid });
+      grid.render();
+
+      expect(panel.querySelector('input')).toBe(input);
+      expect(input.value).toBe('Edited value');
+      expect(document.activeElement).toBe(input);
+      expect([input.selectionStart, input.selectionEnd]).toEqual([1, 4]);
+      input.click();
+      expect(clickSpy).toHaveBeenCalledOnce();
+    });
   });
 
   it('hides a later detail when expanding a row above it shifts its position', () => {
