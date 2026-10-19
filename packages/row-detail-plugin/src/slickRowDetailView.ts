@@ -74,6 +74,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected _isUpdatingAsyncResponse = false;
   protected _visibleRenderedCell?: { startRow: number; endRow: number };
   protected _backViewportTimer: any;
+  protected _lastScrollLeft = 0;
   protected _defaults = {
     alwaysRenderColumn: true,
     columnId: '_detail_selector',
@@ -162,7 +163,14 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       .subscribe(this._grid.onClick, this.handleClick.bind(this))
       .subscribe(this._grid.onKeyDown, this.handleKeyDown.bind(this))
       .subscribe(this._grid.onBeforeEditCell, () => this.collapseAll())
-      .subscribe(this._grid.onScroll, () => this.recalculateOutOfRangeViews(true, 0))
+      .subscribe(this._grid.onScroll, (_e, { scrollLeft }) => {
+        this.recalculateOutOfRangeViews(true, 0, false);
+        // Vertical rendering positions panels; horizontal scrolling can happen without a render.
+        if (scrollLeft !== this._lastScrollLeft) {
+          this._lastScrollLeft = scrollLeft;
+          this.renderOverlayPanels();
+        }
+      })
       .subscribe(this._grid.onBeforeRemoveCachedRow, (_e, args) => this.handleRemoveRow(args.row))
 
       // Grouping events should trigger `onRowOutOfViewportRange` or `onRowBackToViewportRange`
@@ -576,8 +584,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
    * (re)calculate/sync row detail views that are out of range of the viewport and trigger events (when enabled)
    * @param {Boolean} [triggerEvent] - should trigger notify event which will re-render the detail view
    * @param {Number} [delay] - optional delay to execute the calculation of out of range views
+   * @param {Boolean} [renderPanels] - skip the extra positioning pass when scrolling relies on the grid render
    */
-  recalculateOutOfRangeViews(triggerEvent = true, delay?: number): void {
+  recalculateOutOfRangeViews(triggerEvent = true, delay?: number, renderPanels = true): void {
     clearTimeout(this._backViewportTimer);
 
     const calculateFn = () =>
@@ -601,7 +610,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         if (!visible) {
           return;
         }
-        const rowDetailCount = this.gridOptions.rowDetailView?.panelRows ?? 0;
+        const rowDetailCount = item[`${this._keyPrefix}sizePadding`] || 0;
         this._visibleRenderedCell = { startRow: visible.top, endRow: visible.bottom };
         let { startRow, endRow } = this._visibleRenderedCell;
         if (rowIdx >= startRow && rowIdx <= endRow) {
@@ -628,8 +637,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           this.notifyViewportChange(item, 'add', triggerEvent);
         } else if (
           (this._disposedRows.has(rowIdx) && !cachedRows.includes(rowIdx)) ||
-          (!cachedRows.includes(rowIdx) &&
-            this._renderedViewportRowIds.has(itemId) &&
+          (this._renderedViewportRowIds.has(itemId) &&
             this._visibleRenderedCell &&
             (rowIdx < this._visibleRenderedCell.startRow || rowIdx > this._visibleRenderedCell.endRow))
         ) {
@@ -643,7 +651,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       calculateFn();
     }
 
-    this.renderOverlayPanels();
+    if (renderPanels) {
+      this.renderOverlayPanels();
+    }
   }
 
   // --
@@ -768,23 +778,25 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Keep an existing overlay aligned after row heights or data-view positions change. */
   protected updateOverlayPanelPosition(panel: HTMLDivElement, item: any, row: number): void {
-    const rowHeight = this.gridOptions.rowHeight || 0;
     const top = this.getDetailPanelTopOffset(row);
-    const outterHeight = (item[`${this._keyPrefix}sizePadding`] || 0) * rowHeight;
+    let outterHeight = 0;
+    for (let offset = 1; offset <= (item[`${this._keyPrefix}sizePadding`] || 0); offset++) {
+      outterHeight += this._grid.getRowHeight(row + offset);
+    }
     panel.style.top = `${top}px`;
     panel.style.height = `${outterHeight}px`;
+    const canvas = panel.parentElement;
+    if (canvas) {
+      const viewport = canvas.parentElement!;
+      panel.style.transform = `translateX(${viewport.getBoundingClientRect().left - canvas.getBoundingClientRect().left}px)`;
+      panel.style.width = `${viewport.clientWidth}px`;
+    }
   }
 
-  /** Get the panel's offset immediately below its parent row. */
+  /** Follow the reserved padding rows even when the parent is docked elsewhere. */
   protected getDetailPanelTopOffset(row: number): number {
     const columnIdx = this._grid.getColumnIndex(String(this._addonOptions.columnId ?? this._defaults.columnId)) ?? 0;
-    const cellBox = this._grid.getCellNodeBox(row, columnIdx);
-    // Cell coordinates include pinning, sticky docking, and virtual-scroll offsets.
-    // The cell's bottom coordinate is inclusive, so the panel starts one pixel below it.
-    if (cellBox) {
-      return cellBox.bottom + 1;
-    }
-    return this._grid.getRowTop(row) + this._grid.getRowHeight(row);
+    return this._grid.getCellNodeBox(row + 1, columnIdx)?.top ?? this._grid.getRowTop(row + 1);
   }
 
   /** Render or replace the detail content inside a panel container. */
@@ -798,20 +810,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** Create the Row Detail panel DOM without deciding where it is mounted. */
-  protected createDetailViewElement(dataContext: any, row: number): HTMLDivElement {
-    const rowHeight = this.gridOptions.rowHeight || 0;
-    let outterHeight = (dataContext[`${this._keyPrefix}sizePadding`] || 0) * rowHeight;
-
-    if (this._addonOptions.maxRows !== null && (dataContext[`${this._keyPrefix}sizePadding`] || 0) > this._addonOptions.maxRows!) {
-      outterHeight = this._addonOptions.maxRows! * rowHeight;
-      dataContext[`${this._keyPrefix}sizePadding`] = this._addonOptions.maxRows;
-    }
-
+  protected createDetailViewElement(dataContext: any, _row: number): HTMLDivElement {
     const cellDetailContainerElm = createDomElement('div', {
       className: `slick-row-detail-container row-detail-${dataContext[this._dataViewIdProperty]}`,
       style: {
-        height: `${outterHeight}px`,
-        top: `${this.getDetailPanelTopOffset(row)}px`,
+        boxSizing: 'border-box',
         pointerEvents: 'auto',
       },
     });
@@ -831,6 +834,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     // ie. worst-case: create an invisible dom node now & find it's height.
     const lineHeight = 13; // we know cuz we wrote the custom css init ;)
     item[`${this._keyPrefix}sizePadding`] = Math.ceil((rowCount * 2 * lineHeight) / this.gridOptions.rowHeight!);
+    if (this._addonOptions.maxRows !== undefined) {
+      item[`${this._keyPrefix}sizePadding`] = Math.min(item[`${this._keyPrefix}sizePadding`], this._addonOptions.maxRows);
+    }
     item[`${this._keyPrefix}height`] = item[`${this._keyPrefix}sizePadding`] * this.gridOptions.rowHeight!;
     const idxParent = this.dataView.getIdxById(item[this._dataViewIdProperty]);
     for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {

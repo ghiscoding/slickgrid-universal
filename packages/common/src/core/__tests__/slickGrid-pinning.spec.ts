@@ -640,6 +640,39 @@ describe('SlickGrid unified pinning', () => {
     expect(groupCell.parentElement).toBe(groupRow);
   });
 
+  it('reuses rowspan intersection results until span metadata is invalidated or remapped', () => {
+    let span = 2;
+    const spanData = {
+      getLength: () => data.length,
+      getItem: (row: number) => data[row],
+      getItemMetadata: (row: number) => (row === 0 ? { columns: { 0: { rowspan: span } } } : undefined),
+    };
+    const slickGrid = createGrid({ enableCellRowSpan: true }, columns, spanData as any);
+    const internals = slickGrid as any;
+    const row = container.querySelector<HTMLElement>('[data-row="1"]')!;
+    const intersectSpy = vi.spyOn(slickGrid, 'getRowSpanIntersect');
+    internals.applyRowTopOffset(row, 1);
+    internals.applyRowTopOffset(row, 1);
+    expect(intersectSpy).not.toHaveBeenCalled();
+    expect(row.style.transform).toBe('');
+
+    span = 1;
+    slickGrid.remapAllColumnsRowSpan();
+    internals.applyRowTopOffset(row, 1);
+    expect(intersectSpy).toHaveBeenCalledTimes(1);
+    expect(row.style.transform).toContain('translateY');
+    internals.applyRowTopOffset(row, 1);
+    expect(intersectSpy).toHaveBeenCalledTimes(1);
+
+    span = 3;
+    slickGrid.invalidateRows([0]);
+    expect(slickGrid.getRowCache()[1].rowSpanIntersect).toBeUndefined();
+    slickGrid.remapAllColumnsRowSpan();
+    internals.applyRowTopOffset(row, 1);
+    expect(row.style.transform).toBe('');
+    expect(slickGrid.getRowCache()[1].rowSpanIntersect).toBe(true);
+  });
+
   it('preserves colspan and rowspan fragments when the row becomes sticky', () => {
     container = document.createElement('div');
     container.style.width = '800px';
