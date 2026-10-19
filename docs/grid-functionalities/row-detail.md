@@ -26,7 +26,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ### Rendering and DOM structure
 
-Row Detail panels are mounted directly in the grid canvas as siblings of the transformed rows. Each panel uses one `.slick-row-detail-container` element for positioning and automatic overflow scrolling. No overlay host or inner wrapper divs are created, and no rendering option is required.
+Row Detail panels are mounted directly in the grid canvas as siblings of the transformed rows. Each panel uses one `.slick-row-detail-container` element for positioning and automatic overflow scrolling. No overlay host or inner wrapper divs are created, and no rendering option is required. Panels occupy their reserved padding rows even when the parent is pinned or sticky, and stay aligned with the visible viewport during horizontal scrolling.
 
 In v11, `rowTopOffsetRenderType` and `rowDetailView.renderMode` have been removed. Remove both options from existing configurations; see the [v11 migration guide](../migrations/migration-to-11.x.md#row-positioning-rowtopoffsetrendertype).
 

@@ -162,22 +162,56 @@ describe('SlickRowDetailView plugin', () => {
     ])('positions the panel below its $label', ({ row, top, bottom }) => {
       grid.setOptions({ pinning: { rows: { top, bottom } } });
       const panel = mountPanel(row);
-      const parentRow = container.querySelector<HTMLElement>(`.slick-row[data-row="${row}"]`)!;
-      const renderedTop = Number.parseFloat(parentRow.style.transform.slice('translateY('.length));
-
-      expect(panel.style.top).toBe(`${renderedTop + 25}px`);
-      expect(panel.style.top).not.toBe(`${grid.getRowTop(row) + 25}px`);
-
+      expect(panel.style.top).toBe(`${grid.getCellNodeBox(row + 1, 0)!.top}px`);
       grid.scrollTo(75);
       grid.render();
-      const scrolledRow = container.querySelector<HTMLElement>(`.slick-row[data-row="${row}"]`)!;
-      const scrolledTop = Number.parseFloat(scrolledRow.style.transform.slice('translateY('.length));
-      const dockedScrollOffset = top.includes(row) || bottom.includes(row) ? grid.getViewportNode()!.scrollTop : 0;
-      expect(panel.style.top).toBe(`${scrolledTop + dockedScrollOffset + 25}px`);
-
+      expect(panel.style.top).toBe(`${grid.getCellNodeBox(row + 1, 0)!.top}px`);
       grid.setOptions({ pinning: null });
       grid.render();
       expect(panel.style.top).toBe(`${grid.getRowTop(row) + 25}px`);
+    });
+
+    it('caps inserted padding so collapse restores the original dataset', () => {
+      const item = dataView.getItemById(2);
+      item.__collapsed = true;
+      plugin.setOptions({ panelRows: 6, maxRows: 2, process: () => undefined });
+      plugin.expandDetailView(2);
+      expect(item.__sizePadding).toBe(2);
+      expect(dataView.getLength()).toBe(22);
+      mountPanel(2);
+      plugin.collapseDetailView(2);
+      expect(dataView.getLength()).toBe(20);
+      expect(dataView.getItemById('2.3')).toBeUndefined();
+    });
+
+    it('sizes panels from padding heights and follows horizontal scroll in either direction', () => {
+      vi.spyOn(grid, 'getRowHeight').mockImplementation((row) => (row === 3 ? 40 : 25));
+      const panel = mountPanel(2);
+      expect(panel.style.height).toBe('65px');
+      const canvas = panel.parentElement!;
+      const viewport = canvas.parentElement!;
+      vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue({ left: 10 } as DOMRect);
+      Object.defineProperty(viewport, 'clientWidth', { configurable: true, value: 420 });
+      for (const left of [-152, 172]) {
+        vi.spyOn(canvas, 'getBoundingClientRect').mockReturnValue({ left } as DOMRect);
+        grid.onScroll.notify({ scrollLeft: 162, scrollTop: 0, grid });
+        expect(panel.style.transform).toBe(`translateX(${10 - left}px)`);
+        expect(panel.style.width).toBe('420px');
+      }
+      panel.remove();
+      (plugin as any).refreshOverlayPanel(dataView.getItemById(2));
+      expect(panel.style.height).toBe('65px');
+    });
+
+    it('unmounts a pinned parent panel when its padding leaves the rendered range', () => {
+      grid.setOptions({ pinning: { rows: { top: [2] } } });
+      mountPanel(2);
+      vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ top: 10, bottom: 15, leftPx: 0, rightPx: 800 });
+      plugin.recalculateOutOfRangeViews();
+      expect(container.querySelector('.row-detail-2')).toBeNull();
+      vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ top: 4, bottom: 15, leftPx: 0, rightPx: 800 });
+      plugin.recalculateOutOfRangeViews();
+      expect(container.querySelector('.row-detail-2')).not.toBeNull();
     });
 
     it('renders an async replacement object instead of the original loading item', () => {
@@ -627,6 +661,12 @@ describe('SlickRowDetailView plugin', () => {
     expect(panel.textContent).toBe('Element');
     (plugin as any).refreshOverlayPanel({ ...itemMock, __detailContent: '<span>String</span>' });
     expect(panel.innerHTML).toBe('<span>String</span>');
+
+    vi.spyOn(gridStub, 'getColumnIndex').mockReturnValueOnce(undefined);
+    plugin.setOptions({ columnId: undefined });
+    (plugin as any).refreshOverlayPanel({ ...itemMock, __sizePadding: 0 });
+    expect(panel.style.height).toBe('0px');
+    expect(panel.style.boxSizing).toBe('border-box');
 
     vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(undefined);
     (plugin as any).refreshOverlayPanel({ ...itemMock, __detailContent: '<span>No row</span>' });
@@ -1825,14 +1865,14 @@ describe('SlickRowDetailView plugin', () => {
       gridStub.onRendered.notify({ startRow: 0, endRow: 0, grid: gridStub });
 
       const panel = canvas.querySelector<HTMLElement>(':scope > .slick-row-detail-container')!;
-      expect(panel.style.top).toBe('125px');
-      expect(panel.style.height).toBe('50px');
+      expect(panel.style.top).toBe('100px');
+      expect(panel.style.height).toBe('125px');
       expect(panel.style.pointerEvents).toBe('auto');
       expect(panel.innerHTML).toBe('<div>Loading...</div>');
       expect(panel.className).toBe('slick-row-detail-container row-detail-123');
       expect(panel.children).toHaveLength(1);
       expect(panel.firstElementChild?.textContent).toBe('Loading...');
-      expect(mockItem.__sizePadding).toBe(2);
+      expect(mockItem.__sizePadding).toBe(5);
     });
 
     it('should render expanded Row Detail directly in the canvas', () => {
@@ -1870,7 +1910,7 @@ describe('SlickRowDetailView plugin', () => {
       expect(panel).toBeTruthy();
       expect(panel.parentElement).toBe(canvas);
       expect(canvas.querySelector('.slick-row-detail-overlay')).toBeNull();
-      expect(panel.style.top).toBe('125px');
+      expect(panel.style.top).toBe('100px');
       expect(
         (plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub) as FormatterResultWithHtml).insertElementAfterTarget
       ).toBeUndefined();
