@@ -194,7 +194,7 @@ describe('SlickRowDetailView plugin', () => {
       Object.defineProperty(viewport, 'clientWidth', { configurable: true, value: 420 });
       for (const left of [-152, 172]) {
         vi.spyOn(canvas, 'getBoundingClientRect').mockReturnValue({ left } as DOMRect);
-        grid.onScroll.notify({ scrollLeft: 162, scrollTop: 0, grid });
+        grid.onScroll.notify({ scrollLeft: 10 - left, scrollTop: 0, grid });
         expect(panel.style.transform).toBe(`translateX(${10 - left}px)`);
         expect(panel.style.width).toBe('420px');
       }
@@ -212,6 +212,26 @@ describe('SlickRowDetailView plugin', () => {
       vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ top: 4, bottom: 15, leftPx: 0, rightPx: 800 });
       plugin.recalculateOutOfRangeViews();
       expect(container.querySelector('.row-detail-2')).not.toBeNull();
+    });
+
+    it('positions newly mounted panels once and skips the extra pass on vertical scroll', () => {
+      const positionSpy = vi.spyOn(plugin as any, 'updateOverlayPanelPosition');
+      const topSpy = vi.spyOn(plugin as any, 'getDetailPanelTopOffset');
+      mountPanel(2);
+      expect(positionSpy).toHaveBeenCalledTimes(1);
+      expect(topSpy).toHaveBeenCalledTimes(1);
+      positionSpy.mockClear();
+      grid.onScroll.notify({ scrollLeft: 0, scrollTop: 10, grid });
+      expect(positionSpy).not.toHaveBeenCalled();
+      vi.runOnlyPendingTimers();
+      expect(positionSpy).not.toHaveBeenCalled();
+      grid.render();
+      expect(positionSpy).toHaveBeenCalledTimes(1);
+      positionSpy.mockClear();
+      grid.onScroll.notify({ scrollLeft: 50, scrollTop: 10, grid });
+      expect(positionSpy).toHaveBeenCalledTimes(1);
+      grid.onScroll.notify({ scrollLeft: 50, scrollTop: 20, grid });
+      expect(positionSpy).toHaveBeenCalledTimes(1);
     });
 
     it('renders an async replacement object instead of the original loading item', () => {

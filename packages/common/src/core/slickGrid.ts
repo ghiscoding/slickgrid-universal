@@ -152,6 +152,8 @@ interface RowCaching {
   dockingSyncSignature?: string;
   /** Whether the row hosts a rowspan (from rendered cells or metadata). */
   rowSpanHost?: boolean;
+  /** Whether the row hosts or is covered by a rowspan. */
+  rowSpanIntersect?: boolean;
   cellColSpans: Array<number | '*'>;
   cellNodesByColumnIdx: HTMLElement[];
   cellRenderQueue: any[];
@@ -5476,12 +5478,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     rowNode.classList.toggle('slick-row-sticky', !!rowDocking?.sticky);
     const cacheEntry = this.rowsCache[row];
     const hasRowSpan = cacheEntry?.rowSpanHost ?? this.isRowSpanHost(rowNode, row);
-    if (cacheEntry) {
-      cacheEntry.rowSpanHost = hasRowSpan;
-    }
     // A transformed covered row traps its pinned regions below the spanning cell.
     // Both the host and every covered row must share the canvas stacking context.
-    const intersectsRowSpan = hasRowSpan || (!!this._options.enableCellRowSpan && this.getRowSpanIntersect(row) !== null);
+    const intersectsRowSpan =
+      cacheEntry?.rowSpanIntersect ?? (hasRowSpan || (!!this._options.enableCellRowSpan && this.getRowSpanIntersect(row) !== null));
+    if (cacheEntry) {
+      cacheEntry.rowSpanHost = hasRowSpan;
+      cacheEntry.rowSpanIntersect = intersectsRowSpan;
+    }
     const useTransform = !intersectsRowSpan;
 
     // Keep region overflow and hover/active stacking consistent across the whole span.
@@ -5748,6 +5752,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    *  2- if 2nd row if the 1st column has a metadata.rowspan of 3 AND a colspan of 2 then the cache will be: `{ 0: '1:4', 1: '1:4' }`
    */
   remapAllColumnsRowSpan(): void {
+    this.clearRowSpanPositionCache();
     const ln = this.getDataLength();
     if (ln > 0) {
       this._colsWithRowSpanCache = {};
@@ -5771,6 +5776,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           this.remapRowSpanMetadata(row, colIdx, colspan, rowspan);
         }
       });
+    }
+  }
+
+  /** Surviving covered rows must be rechecked when span metadata changes. */
+  protected clearRowSpanPositionCache(): void {
+    for (const cacheEntry of Object.values(this.rowsCache)) {
+      cacheEntry.rowSpanHost = undefined;
+      cacheEntry.rowSpanIntersect = undefined;
     }
   }
 
@@ -5828,6 +5841,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   invalidateRows(rows: number[]): void {
     if (!rows || !rows.length) {
       return;
+    }
+    if (this._options.enableCellRowSpan) {
+      this.clearRowSpanPositionCache();
     }
 
     // A count-preserving sort/filter can move rows without calling
@@ -6611,9 +6627,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected getRowCellChildren(rowNode: HTMLElement): HTMLElement[] {
     const children = Array.from(rowNode.children) as HTMLElement[];
-    // Row detail formatters can insert a non-cell sibling after the detail-toggle cell.
+    // Formatter results can insert a non-cell sibling through insertElementAfterTarget.
     // Only actual cells belong in cellNodesByColumnIdx; otherwise cache rebuilding tries
-    // to parse a column index from classes such as `slick-row-detail-container`.
+    // to parse a column index from the sibling's classes.
     const cellChildren = (nodes: HTMLElement[]) =>
       nodes.filter((node) => node.classList.contains('slick-cell') && !node.classList.contains('slick-cell-colspan-part'));
     if (!rowNode.classList.contains('slick-row-docked')) {
