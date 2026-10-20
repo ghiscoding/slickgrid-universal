@@ -190,7 +190,6 @@ export class Example20 {
       },
       enableContextMenu: true,
       contextMenu: this.getContextMenuOptions(),
-      gridMenu: { hideClearPinningCommand: false },
     };
   }
   getContextMenuOptions(): any {

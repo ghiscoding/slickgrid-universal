@@ -179,7 +179,6 @@ function defineGrid() {
     },
     enableContextMenu: true,
     contextMenu: getContextMenuOptions(),
-    gridMenu: { hideClearPinningCommand: false },
   };
 }
 

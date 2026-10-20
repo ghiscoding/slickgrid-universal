@@ -108,7 +108,6 @@ const Example14: React.FC = () => {
         exportWithFormatter: false,
       },
       externalResources: [new ExcelExportService(), new PdfExportService()],
-      gridMenu: { hideClearPinningCommand: false },
     };
 
     setColumns2(columns2);

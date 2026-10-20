@@ -1023,7 +1023,7 @@ describe('Example 11 - Batch Editing', () => {
     it('should clear pinning from Grid Menu & expect to no longer have any columns pinned', () => {
       cy.get('.grid11').find('button.slick-grid-menu-button').click({ force: true });
 
-      cy.contains('Unpin Columns/Rows').click({ force: true });
+      cy.contains('Clear all Pinning').click({ force: true });
 
       cy.get('.grid11 .slick-row[data-row="0"] .slick-cell').should('have.length', 11);
     });

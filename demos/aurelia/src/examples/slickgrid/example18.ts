@@ -268,7 +268,6 @@ export class Example18 {
       enableSorting: true,
       enableColumnReorder: true,
       gridMenu: {
-        hideClearPinningCommand: false,
         onCommand: (_e, args) => {
           if (args.command === 'toggle-preheader') {
             // in addition to the grid menu pre-header toggling (internally), we will also clear grouping

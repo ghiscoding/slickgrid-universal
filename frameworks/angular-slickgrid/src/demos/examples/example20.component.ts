@@ -184,7 +184,6 @@ export class Example20Component implements OnInit {
       },
       enableContextMenu: true,
       contextMenu: this.getContextMenuOptions(),
-      gridMenu: { hideClearPinningCommand: false },
     };
     this.dataset = Array.from({ length: 500 }, (_v, i) => ({
       id: i,

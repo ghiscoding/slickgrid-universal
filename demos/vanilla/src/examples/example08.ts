@@ -148,7 +148,6 @@ export default class Example08 {
       pinning: { columns: { left: 2 } },
       rowHeight: 33,
       showCustomFooter: true,
-      gridMenu: { hideClearPinningCommand: false },
 
       // enable the filtering but hide the user filter row since we use our own single filter
       enableFiltering: true,

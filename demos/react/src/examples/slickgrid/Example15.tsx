@@ -72,7 +72,6 @@ const Example15: React.FC = () => {
       },
       gridMenu: {
         hideForceFitButton: true,
-        hideClearPinningCommand: false,
       },
       enablePagination: true,
       pagination: {

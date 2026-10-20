@@ -193,7 +193,6 @@ export class Example15 {
       },
       gridMenu: {
         hideForceFitButton: true,
-        hideClearPinningCommand: false,
       },
       enablePagination: true,
       pagination: {

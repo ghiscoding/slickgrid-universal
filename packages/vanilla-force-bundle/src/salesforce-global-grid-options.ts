@@ -75,7 +75,6 @@ export const SalesforceGlobalGridOptions = {
     hideToggleDarkModeCommand: true,
     hideTogglePreHeaderCommand: true,
     hideRefreshDatasetCommand: true,
-    hideClearPinningCommand: false,
     hideForceFitButton: true,
   },
   preventDocumentFragmentUsage: true,

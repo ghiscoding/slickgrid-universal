@@ -124,7 +124,7 @@ describe('GridMenuControl', () => {
     commandLabels: {
       clearAllFiltersCommandKey: 'CLEAR_ALL_FILTERS',
       clearAllSortingCommandKey: 'CLEAR_ALL_SORTING',
-      clearPinningCommandKey: 'CLEAR_PINNING',
+      clearPinningCommandKey: 'CLEAR_ALL_PINNING',
       exportCsvCommandKey: 'EXPORT_TO_CSV',
       exportExcelCommandKey: 'EXPORT_TO_EXCEL',
       exportTextDelimitedCommandKey: 'EXPORT_TO_TAB_DELIMITED',
@@ -1716,7 +1716,7 @@ describe('GridMenuControl', () => {
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([]);
         });
 
-        it('should expect menu related to "Unpin Columns/Rows"', () => {
+        it('should expect menu related to "Clear all Pinning"', () => {
           const copyGridOptionsMock = {
             ...gridOptionsMock,
             gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearPinningCommand: false, hideToggleDarkModeCommand: true },
@@ -1728,8 +1728,8 @@ describe('GridMenuControl', () => {
             {
               _orgTitle: '',
               iconCssClass: 'mdi mdi-pin-off-outline',
-              titleKey: 'CLEAR_PINNING',
-              title: 'Désépingler les colonnes/rangées',
+              titleKey: 'CLEAR_ALL_PINNING',
+              title: 'Supprimer toutes les épingles',
               disabled: false,
               command: 'clear-pinning',
               positionOrder: 52,

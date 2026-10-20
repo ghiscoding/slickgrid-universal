@@ -348,9 +348,6 @@ export default class Example03 {
         container: '.demo-container',
       },
       enableFormattedDataCache: false, // enable it when you have a large dataset (e.g. we'll enable it when loading over 10K)
-      gridMenu: {
-        hideClearPinningCommand: false,
-      },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,

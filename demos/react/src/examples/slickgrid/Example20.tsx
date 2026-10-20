@@ -177,7 +177,6 @@ const Example20: React.FC = () => {
 
       // show both single-column and bulk pinning commands in HeaderMenu & GridMenu; these are opt-in commands
       gridMenu: {
-        hideClearPinningCommand: false,
         // Grid Menu visibility updates rebuild the column layout. Reassert the
         // demo's current ID-based pinning after that rebuild so React's right
         // pinning state cannot briefly fall back to the scrolling band.

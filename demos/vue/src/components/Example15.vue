@@ -184,7 +184,6 @@ function defineGrid(gridStatePresets?: GridState) {
     },
     gridMenu: {
       hideForceFitButton: true,
-      hideClearPinningCommand: false,
     },
     enablePagination: true,
     pagination: {

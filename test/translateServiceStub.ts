@@ -38,8 +38,8 @@ export class TranslateServiceStub implements TranslaterService {
       case 'CLEAR_ALL_SORTING':
         output = this._locale === 'en' ? 'Clear all Sorting' : 'Supprimer tous les tris';
         break;
-      case 'CLEAR_PINNING':
-        output = this._locale === 'en' ? 'Unpin Columns/Rows' : 'Désépingler les colonnes/rangées';
+      case 'CLEAR_ALL_PINNING':
+        output = this._locale === 'en' ? 'Clear all Pinning' : 'Supprimer toutes les épingles';
         break;
       case 'CLONE':
         output = this._locale === 'en' ? 'Clone' : 'Cloner';
