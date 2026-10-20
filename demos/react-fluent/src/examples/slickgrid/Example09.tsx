@@ -11,7 +11,6 @@ import {
   type GridOption,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import { baseFluentGridOption } from './base-fluent-grid-options.js';
 import { showToast } from './utilities.js';
 import './example09.scss'; // provide custom CSS/SASS styling
 
@@ -174,7 +173,7 @@ const Example09: React.FC = () => {
           }, serverWaitDelayRef.current);
         },
       },
-      ...baseFluentGridOption,
+      iconSet: 'fluent',
     };
 
     setColumns(columns);

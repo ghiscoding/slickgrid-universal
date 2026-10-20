@@ -26,6 +26,7 @@ import {
   ExtensionUtility,
   FilterFactory,
   FilterService,
+  getIconSetOptions,
   GridEventService,
   GridService,
   GridStateService,
@@ -1333,7 +1334,13 @@ export class AureliaSlickgridCustomElement {
     gridOptions.gridContainerId = `slickGridContainer-${this.gridId}`;
 
     // use extend to deep merge & copy to avoid immutable properties being changed in GlobalGridOptions after a route change
-    const options = extend(true, {}, GlobalGridOptions, gridOptions) as GridOption;
+    const options = extend(
+      true,
+      {},
+      getIconSetOptions(gridOptions.iconSet ?? GlobalGridOptions.iconSet),
+      GlobalGridOptions,
+      gridOptions
+    ) as GridOption;
 
     // if we have a backendServiceApi and the enablePagination is undefined, we'll assume that we do want to see it, else get that defined value
     if (!this.hasBackendInfiniteScroll(gridOptions)) {

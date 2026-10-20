@@ -15,7 +15,6 @@ import {
   type GridOption,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import { baseFluentGridOption } from './base-fluent-grid-options.js';
 import './example07.scss';
 
 const NB_ROWS = 200;
@@ -284,7 +283,7 @@ const Example07: React.FC = () => {
       enableCellNavigation: true,
       enableFiltering: true,
       cellHighlightCssClass: 'changed',
-      ...baseFluentGridOption,
+      iconSet: 'fluent',
     };
 
     columnsRef.current = columns;

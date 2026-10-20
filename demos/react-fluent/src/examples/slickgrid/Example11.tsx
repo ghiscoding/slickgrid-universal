@@ -26,7 +26,6 @@ import {
   type SliderOption,
   type VanillaCalendarOption,
 } from 'slickgrid-react';
-import { baseFluentGridOption } from './base-fluent-grid-options.js';
 import { showToast } from './utilities.js';
 import './example11.scss'; // provide custom CSS/SASS styling
 import COUNTRIES_COLLECTION from './data/countries.json';
@@ -548,7 +547,7 @@ const Example11: React.FC = () => {
           }
         },
       },
-      ...baseFluentGridOption,
+      iconSet: 'fluent',
     };
     setColumns(columns);
     setGridOptions(gridOptions);

@@ -1,7 +1,10 @@
 @use './variables' as v;
 @use './svg-utilities' as svg;
 
-/* SlickGrid Material icons (which all came from Material Design Icons) */
+/*
+ * SlickGrid Fluent icons (which all came from Fluent Icons Catalog)
+ * https://storybooks.fluentui.dev/react/?path=/docs/fluent-system-icons_icons-catalog--docs
+ */
 @include svg.generateSvgClass(
   'fi-arrow-download',
   'M15.5 17a.5.5 0 0 1 .09 1H4.5a.5.5 0 0 1-.09-1H15.5ZM10 2a.5.5 0 0 1 .5.41V14.3l3.64-3.65a.5.5 0 0 1 .64-.06l.07.06c.17.17.2.44.06.63l-.06.07-4.5 4.5a.5.5 0 0 1-.25.14L10 16a.5.5 0 0 1-.4-.2l-4.46-4.45a.5.5 0 0 1 .64-.76l.07.06 3.65 3.64V2.5c0-.27.22-.5.5-.5Z'

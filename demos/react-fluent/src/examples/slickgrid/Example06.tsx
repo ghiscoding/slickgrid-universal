@@ -13,7 +13,6 @@ import {
 import './example06.scss'; // provide custom CSS/SASS styling
 
 import { Button } from '@fluentui/react-components';
-import { baseFluentGridOption } from './base-fluent-grid-options.js';
 
 const NB_ITEMS = 500;
 
@@ -139,7 +138,7 @@ const Example06: React.FC = () => {
       enableExcelExport: true,
       excelExportOptions: { exportWithFormatter: true, sanitizeDataExport: true },
       externalResources: [new ExcelExportService()],
-      ...baseFluentGridOption,
+      iconSet: 'fluent',
     };
 
     setColumns(columns);

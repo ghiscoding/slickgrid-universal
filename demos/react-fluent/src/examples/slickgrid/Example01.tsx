@@ -1,7 +1,6 @@
 import { Button } from '@fluentui/react-components';
 import { useState } from 'react';
 import { Formatters, SlickgridReact, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
-import { baseFluentGridOption } from './base-fluent-grid-options.js';
 
 const NB_ITEMS = 995;
 
@@ -31,7 +30,7 @@ const Example1: React.FC = () => {
     gridWidth: 800,
     enableAutoResize: false,
     enableSorting: true,
-    ...baseFluentGridOption,
+    iconSet: 'fluent',
   };
 
   // copy the same Grid Options and Column Definitions to 2nd grid
@@ -47,7 +46,7 @@ const Example1: React.FC = () => {
       pageSizes: [5, 10, 20, 25, 50],
       pageSize: 5,
     },
-    ...baseFluentGridOption,
+    iconSet: 'fluent',
   };
 
   function isBrowserDarkModeEnabled() {

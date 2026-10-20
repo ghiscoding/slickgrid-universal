@@ -60,6 +60,34 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-fluent.scss';
 ```
 
+### Menu icon sets
+The menu plugins (Grid Menu, Header Menu, Context Menu, Cell Menu and their sub-menu chevrons) use icon CSS classes, and the grid provides 2 built-in icon sets via the `iconSet` grid option:
+
+| `iconSet`              | CSS classes   | Use with                                                                      |
+| ---------------------- | ------------- | ----------------------------------------------------------------------------- |
+| `'material'` (default) | `mdi mdi-*`   | Default, Bootstrap, Material and Salesforce themes (the full themes provide the SVG icons) |
+| `'fluent'`             | `fi fi-*`     | Fluent theme                                                                  |
+
+```ts
+gridOptions = {
+  iconSet: 'fluent',
+};
+```
+
+#### Using your own icons (any icon library)
+The icon set only provides default values. Any icon class that you explicitly define in your menu options always takes precedence over the icon set, so you can override a single icon, or all of them to use any other icon library (e.g. Font Awesome, Bootstrap Icons, ...) as long as the CSS classes are available in your application. In that case, `iconSet` doesn't matter for the icons that you override.
+
+```ts
+gridOptions = {
+  iconSet: 'fluent', // optional, only used for the icons that you don't override
+
+  // override any specific icon
+  gridMenu: { iconCssClass: 'fa fa-bars' },
+  headerMenu: { iconSortAscCommand: 'fa fa-arrow-up' },
+  contextMenu: { subItemChevronClass: 'fa fa-chevron-right' },
+};
+```
+
 ### Required Styles for Extra Packages
 Some features are provided by extra packages that you install separately, like the Composite Editor (`@slickgrid-universal/composite-editor-component`), the Custom Tooltip (`@slickgrid-universal/custom-tooltip-plugin`), and Row Detail (`@slickgrid-universal/row-detail-plugin`). Their styles are **not** included in the SlickGrid themes, so when you use any of these packages you **must** also import their CSS or SASS file yourself (otherwise they will be displayed without any styling), and it must always be loaded **after** the theme.
 
@@ -148,11 +176,11 @@ The project has a few built-in icons (sort, grouping, row detail, row move, row 
 What if you want to use your own font/SVG library?
 This can be answered in 2 parts:
 1. the built-in icons can only be changed via SASS (or CSS with extra work), see above on how to change them.
-2. for all other areas using icons via CSS classes (e.g. all menu plugins), you can use the "lite" Themes and then make sure to update all the menu plugins with the correct CSS classes, for example the global grid options of the Grid Menu is configured with the following CSS classes and you'll want to remap them with the correct CSS classes to fit your needs:
+2. for all other areas using icons via CSS classes (e.g. all menu plugins), you can use the "lite" Themes and then make sure to update all the menu plugins with the correct CSS classes, for example the Grid Menu uses the following Material CSS classes by default (see [Menu icon sets](#menu-icon-sets)) and you'll want to remap them with the correct CSS classes to fit your needs:
 
 ```ts
-// default global grid options
-export const GlobalGridOptions = {
+// default Material icons, any of them can be overridden in your grid options
+const gridOptions = {
   gridMenu: {
     iconCssClass: 'mdi mdi-menu',
     iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',
