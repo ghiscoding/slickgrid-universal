@@ -21,21 +21,21 @@ catalog:
   '@formkit/tempo': ^1.1.0
   '@popperjs/core': ^2.11.8
   '@types/fnando__sparkline': ^0.3.7
-  '@types/node': ^24.19.1
+  '@types/node': ^24.19.2
   '@types/react': ^19.3.0
   '@types/react-dom': ^19.3.0
   '@vitejs/plugin-react': ^6.1.2
-  '@vitejs/plugin-vue': ^6.0.9
-  '@vitest/coverage-v8': ^5.0.3
-  '@vitest/ui': ^5.0.3
+  '@vitejs/plugin-vue': ^6.0.10
+  '@vitest/coverage-v8': ^5.0.5
+  '@vitest/ui': ^5.0.5
   bootstrap: ^5.3.8
   cross-env: ^10.1.0
   cypress: ^15.21.1
   cypress-real-events: ^1.15.1
   dequal: ^2.0.3
-  dompurify: ^3.4.16
+  dompurify: ^3.4.17
   globals: ^17.13.0
-  i18next: ^26.4.0
+  i18next: ^26.4.7
   i18next-vue: ^5.4.0
   jsdom: ^30.1.3
   jsdom-global: ^3.0.2
@@ -43,19 +43,19 @@ catalog:
   multiple-select-vanilla: ^5.2.3
   native-copyfiles: ^2.1.1
   npm-run-all2: ^9.0.3
-  oxlint: ^1.87.0
-  postcss: ^8.5.28
-  react: ^19.3.0
-  react-dom: ^19.3.0
+  oxlint: ^1.88.0
+  postcss: ^8.5.30
+  react: ^19.3.1
+  react-dom: ^19.3.1
   react-router: ^8.4.0
   remove-glob: ^1.2.3
   rxjs: ^7.8.2
-  sass: ^1.105.1
+  sass: ^1.105.2
   tslib: ^2.8.1
   typescript: ^6.0.3
-  vite: ^8.3.2
-  vitest: ^5.0.3
-  vue: ^3.5.43
+  vite: ^8.3.4
+  vitest: ^5.0.5
+  vue: ^3.5.44
 
 # min age of 4 days in minutes (x * 24 * 60)
 minimumReleaseAge: 5760
@@ -68,14 +68,14 @@ minimumReleaseAgeExclude:
 
 overrides:
   '@babel/core': ^7.29.7
-  '@hono/node-server': ^2.1.3
+  '@hono/node-server': ^2.1.5
   esbuild: ^0.28.2
-  fast-uri: ^4.2.1
+  fast-uri: ^4.2.2
   hono: ^4.13.13
-  ip-address: ^10.7.3
+  ip-address: ^10.7.4
   minimatch: ^10.2.6
   picomatch: ^4.0.7
-  qs: ^6.16.0
+  qs: ^6.16.1
   svgo: ^4.1.0
-  undici: ^7.30.0
+  undici: ^7.30.1
   vite: 'catalog:'
