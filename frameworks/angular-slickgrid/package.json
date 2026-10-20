@@ -50,7 +50,7 @@
     "node": "^22.22.3 || >=24.15.0"
   },
   "dependencies": {
-    "@ngx-translate/core": "^17.0.0",
+    "@ngx-translate/core": "^18.0.0",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/custom-footer-component": "workspace:*",
     "@slickgrid-universal/empty-warning-component": "workspace:*",
@@ -84,7 +84,7 @@
     "@formkit/tempo": "catalog:",
     "@gc-utils/fs-extra": "^0.4.1",
     "@ng-select/ng-select": "^24.2.1",
-    "@ngx-translate/http-loader": "^17.0.0",
+    "@ngx-translate/http-loader": "^18.0.0",
     "@popperjs/core": "catalog:",
     "@slickgrid-universal/angular-row-detail-plugin": "link:../../frameworks-plugins/angular-row-detail-plugin",
     "@slickgrid-universal/composite-editor-component": "workspace:*",
