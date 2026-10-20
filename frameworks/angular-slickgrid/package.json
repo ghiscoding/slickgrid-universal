@@ -46,6 +46,9 @@
     "test": "vitest --watch",
     "test:coverage": "vitest --no-watch --coverage"
   },
+  "engines": {
+    "node": "^22.22.3 || >=24.15.0"
+  },
   "dependencies": {
     "@ngx-translate/core": "^17.0.0",
     "@slickgrid-universal/common": "workspace:*",
@@ -60,27 +63,27 @@
     "rxjs": "catalog:"
   },
   "peerDependencies": {
-    "@angular/core": ">=21.0.0"
+    "@angular/core": ">=22.0.0"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
     "@angular-eslint/eslint-plugin": "catalog:",
-    "@angular/build": "^21.2.25",
-    "@angular/cli": "^21.2.25",
-    "@angular/common": "^21.2.25",
-    "@angular/compiler": "^21.2.25",
-    "@angular/compiler-cli": "^21.2.25",
-    "@angular/core": "^21.2.25",
-    "@angular/forms": "^21.2.25",
-    "@angular/language-server": "^21.2.25",
-    "@angular/language-service": "^21.2.25",
-    "@angular/platform-browser": "^21.2.25",
-    "@angular/router": "^21.2.25",
+    "@angular/build": "^22.2.3",
+    "@angular/cli": "^22.2.3",
+    "@angular/common": "^22.2.3",
+    "@angular/compiler": "^22.2.3",
+    "@angular/compiler-cli": "^22.2.3",
+    "@angular/core": "^22.2.3",
+    "@angular/forms": "^22.2.3",
+    "@angular/language-server": "^22.2.3",
+    "@angular/language-service": "^22.2.3",
+    "@angular/platform-browser": "^22.2.3",
+    "@angular/router": "^22.2.3",
     "@faker-js/faker": "catalog:",
     "@fnando/sparkline": "catalog:",
     "@formkit/tempo": "catalog:",
     "@gc-utils/fs-extra": "^0.4.1",
-    "@ng-select/ng-select": "^21.8.2",
+    "@ng-select/ng-select": "^24.2.1",
     "@ngx-translate/http-loader": "^17.0.0",
     "@popperjs/core": "catalog:",
     "@slickgrid-universal/angular-row-detail-plugin": "link:../../frameworks-plugins/angular-row-detail-plugin",
@@ -104,14 +107,14 @@
     "jsdom": "catalog:",
     "jsdom-global": "catalog:",
     "native-copyfiles": "catalog:",
-    "ng-packagr": "^21.2.7",
-    "ngx-bootstrap": "^21.2.2",
+    "ng-packagr": "^22.2.4",
+    "ngx-bootstrap": "^22.0.0",
     "oxlint": "catalog:",
     "remove-glob": "catalog:",
     "rxjs": "catalog:",
     "sass": "catalog:",
     "tslib": "catalog:",
-    "typescript": "~5.9.3",
+    "typescript": "~6.0.3",
     "vite": "catalog:",
     "vitest": "catalog:",
     "yaml": "^2.9.1"

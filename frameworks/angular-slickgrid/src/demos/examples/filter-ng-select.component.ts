@@ -19,7 +19,7 @@ import { Subject } from 'rxjs';
     [multiple]="true"
   >
     <ng-template ng-label-tmp ng-option-tmp let-item="item">
-      <span [title]="item?.name">{{ item?.name }}</span>
+      <span [title]="$safeNavigationMigration(item?.name)">{{ item?.name }}</span>
     </ng-template>
   </ng-select>`,
   imports: [NgSelectComponent, FormsModule, NgLabelTemplateDirective, NgOptionTemplateDirective],
