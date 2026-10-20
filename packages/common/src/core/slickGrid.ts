@@ -5432,8 +5432,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Whether a row hosts a rowspan. A spanning cell may be outside the current
-   * horizontal render range and therefore not be present in the row DOM yet.
+   * Whether a row hosts a rowspan. A spanning cell may be outside the current horizontal render range 
+   * and therefore not be present in the row DOM yet, so the row metadata is inspected as well; 
+   * otherwise the row can keep a translateY stacking context and a later-rendered span cell will paint
+   * underneath hovered or odd rows. Covered rows are detected separately in
+   * applyRowTopOffset so the whole span stays out of any transform stacking context.
    */
   protected isRowSpanHost(rowNode: HTMLElement, row: number): boolean {
     if (!this._options.enableCellRowSpan) {
@@ -5452,7 +5455,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     );
   }
 
-  /** Keep RowSpan hosts and covered rows in the same stacking context. */
+  /** Position a row, keeping RowSpan hosts and covered rows `top`-positioned (no transform stacking context). */
   protected applyRowTopOffset(rowNode: HTMLElement, row: number): void {
     const rowDocking = this.dockingByRow.get(row);
     let top = this.getRenderedRowTop(row);
