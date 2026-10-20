@@ -559,7 +559,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       if (!this._addonOptions.hideClearPinningCommand) {
         this.addMissingCommandOrAction(
           {
-            iconCssClass: this._addonOptions.iconClearPinningCommand || 'mdi mdi-pin-off-outline',
+            iconCssClass: this._addonOptions.iconClearAllPinningCommand || 'mdi mdi-pin-off-outline',
             _orgTitle: commandLabels?.clearPinningCommand || '',
             titleKey: `${translationPrefix}${commandLabels?.clearPinningCommandKey ?? 'CLEAR_ALL_PINNING'}`,
             disabled: false,

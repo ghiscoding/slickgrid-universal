@@ -148,7 +148,13 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should expect "Clear all Filters" command to be hidden in the Grid Menu', () => {
-    const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+    const expectedFullHeaderMenuCommands = [
+      'Clear all Filters',
+      'Clear all Sorting',
+      'Clear all Pinning',
+      'Toggle Filter Row',
+      'Export to Excel',
+    ];
 
     cy.get('#grid16').find('button.slick-grid-menu-button').trigger('click').click({ force: true });
 
@@ -202,7 +208,13 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should expect "Clear Sorting" command to be hidden in the Grid Menu', () => {
-    const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+    const expectedFullHeaderMenuCommands = [
+      'Clear all Filters',
+      'Clear all Sorting',
+      'Clear all Pinning',
+      'Toggle Filter Row',
+      'Export to Excel',
+    ];
 
     cy.get('#grid16').find('button.slick-grid-menu-button').trigger('click').click();
 
@@ -234,7 +246,13 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should expect "Clear Sorting" command to be hidden in the Grid Menu', () => {
-    const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+    const expectedFullHeaderMenuCommands = [
+      'Clear all Filters',
+      'Clear all Sorting',
+      'Clear all Pinning',
+      'Toggle Filter Row',
+      'Export to Excel',
+    ];
 
     cy.get('#grid16').find('button.slick-grid-menu-button').trigger('click').click();
 
@@ -275,7 +293,13 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should expect "Clear all Filters" command to be hidden in the Grid Menu', () => {
-    const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+    const expectedFullHeaderMenuCommands = [
+      'Clear all Filters',
+      'Clear all Sorting',
+      'Clear all Pinning',
+      'Toggle Filter Row',
+      'Export to Excel',
+    ];
 
     cy.get('#grid16').find('button.slick-grid-menu-button').trigger('click').click();
 

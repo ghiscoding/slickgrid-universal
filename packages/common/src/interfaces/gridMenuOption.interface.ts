@@ -69,7 +69,7 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Clear all Sorting" command in the Grid Menu (Grid Option "enableSorting: true" has to be enabled) */
   hideClearAllSortingCommand?: boolean;
 
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true, which will hide the "Clear Pinning" command in the Grid Menu */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true, which will hide the "Clear all Pinning" command in the Grid Menu */
   hideClearPinningCommand?: boolean;
 
   /** Defaults to false, hide the Close button on top right */
@@ -117,8 +117,8 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
   /** icon for the "Clear all Sorting" command */
   iconClearAllSortingCommand?: string;
 
-  /** icon for the "Clear Pinning" command */
-  iconClearPinningCommand?: string;
+  /** icon for the "Clear all Pinning" command */
+  iconClearAllPinningCommand?: string;
 
   /** icon for the "Export to CSV" command */
   iconExportCsvCommand?: string;
