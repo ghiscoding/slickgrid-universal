@@ -364,32 +364,38 @@ describe('Example 40 - Menus with Slots', () => {
 
     // 3rd item
     cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(2) .menu-item')
+      .find('.mdi-pin-off-outline.menu-item-icon')
+      .should('exist');
+    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(2) .menu-item span').contains('Clear all Pinning');
+
+    // 4th item
+    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item')
       .find('.mdi-flip-vertical.menu-item-icon')
       .should('exist');
-    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(2) .menu-item span').contains('Toggle Filter Row');
+    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item span').contains('Toggle Filter Row');
 
-    // 4th item - divider
-    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(3)').should('have.class', 'slick-menu-item-divider');
-
-    // 5th item
-    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(4) .menu-item')
-      .find('.mdi-file-excel-outline.menu-item-icon')
-      .should('exist');
-    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(4) .menu-item span').contains('Export to Excel');
+    // 5th item - divider
+    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(4)').should('have.class', 'slick-menu-item-divider');
 
     // 6th item
     cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(5) .menu-item')
-      .find('.mdi-download.menu-item-icon')
+      .find('.mdi-file-excel-outline.menu-item-icon')
       .should('exist');
-    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(5) .menu-item span').contains('Export to CSV');
-    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(5) .menu-item').find('span.key-hint.warn').contains('CUSTOM');
+    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(5) .menu-item span').contains('Export to Excel');
 
     // 7th item
     cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(6) .menu-item')
+      .find('.mdi-download.menu-item-icon')
+      .should('exist');
+    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(6) .menu-item span').contains('Export to CSV');
+    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(6) .menu-item').find('span.key-hint.warn').contains('CUSTOM');
+
+    // 8th item
+    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(7) .menu-item')
       .find('.mdi-refresh.menu-item-icon')
       .should('exist');
-    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(6) .menu-item span').contains('Refresh Data');
-    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(6) .menu-item').find('kbd.key-hint').contains('F5');
+    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(7) .menu-item span').contains('Refresh Data');
+    cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(7) .menu-item').find('kbd.key-hint').contains('F5');
   });
 
   it('should sort ascending "Duration" even though the header menu item was override without an action callback', () => {

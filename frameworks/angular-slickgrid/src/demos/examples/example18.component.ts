@@ -288,7 +288,6 @@ export class Example18Component implements OnInit, OnDestroy {
         sanitizeDataExport: true,
       },
       gridMenu: {
-        hideClearPinningCommand: false,
         onCommand: (e, args) => {
           if (args.command === 'toggle-preheader') {
             // in addition to the grid menu pre-header toggling (internally), we will also clear grouping

@@ -41,7 +41,7 @@ export const localeFrench = {
   TEXT_UNPIN_COLUMNS: 'Désépingler toutes les colonnes',
   TEXT_X_OF_Y_SELECTED: '# de % sélectionné',
   TEXT_X_OF_Y_MASS_SELECTED: '{{x}} de {{y}} sélectionnés',
-  TEXT_CLEAR_PINNING: 'Désépingler les colonnes/rangées',
+  TEXT_CLEAR_ALL_PINNING: 'Supprimer toutes les épingles',
   TEXT_EQUAL_TO: 'Égal à',
   TEXT_GREATER_THAN: 'Plus grand que',
   TEXT_GREATER_THAN_OR_EQUAL_TO: 'Plus grand ou égal à',

@@ -439,7 +439,6 @@ export default class Example11 {
         subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
       },
       gridMenu: {
-        hideClearPinningCommand: false,
         commandItems: [
           {
             command: 'modal',

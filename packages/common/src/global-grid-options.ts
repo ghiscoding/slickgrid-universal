@@ -192,7 +192,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     commandLabels: {
       clearAllFiltersCommandKey: 'CLEAR_ALL_FILTERS',
       clearAllSortingCommandKey: 'CLEAR_ALL_SORTING',
-      clearPinningCommandKey: 'CLEAR_PINNING',
+      clearPinningCommandKey: 'CLEAR_ALL_PINNING',
       exportCsvCommandKey: 'EXPORT_TO_CSV',
       exportExcelCommandKey: 'EXPORT_TO_EXCEL',
       exportPdfCommandKey: 'EXPORT_TO_PDF',
@@ -204,7 +204,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     },
     hideClearAllFiltersCommand: false,
     hideClearAllSortingCommand: false,
-    hideClearPinningCommand: true, // opt-in command
+    hideClearPinningCommand: false,
     hideExportCsvCommand: false,
     hideExportExcelCommand: false,
     hideExportPdfCommand: false,

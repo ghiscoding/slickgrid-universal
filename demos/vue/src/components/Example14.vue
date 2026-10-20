@@ -102,7 +102,6 @@ function definedGrid2() {
       exportWithFormatter: false,
     },
     externalResources: [new ExcelExportService(), new PdfExportService()],
-    gridMenu: { hideClearPinningCommand: false },
   };
 }
 

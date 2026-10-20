@@ -210,7 +210,6 @@ export class Example15Component implements OnInit, OnDestroy {
       },
       gridMenu: {
         hideForceFitButton: true,
-        hideClearPinningCommand: false,
       },
       enablePagination: true,
       pagination: {

@@ -2,7 +2,7 @@
 import { getScrollDistanceWhenDragOutsideGrid } from '../support/drag';
 
 describe('Example 17 - Auto-Scroll with Range Selector', () => {
-  // NOTE:  everywhere there's a * 2 is because we have a top+bottom (pinned rows) containers even after Unpin Columns/Rows
+  // NOTE:  everywhere there's a * 2 is because we have a top+bottom (pinned rows) containers even after Clear all Pinning
   const CELL_WIDTH = 80;
   const CELL_HEIGHT = 35;
   const SCROLLBAR_DIMENSION = 17;

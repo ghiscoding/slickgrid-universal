@@ -110,7 +110,38 @@ const gridOptions: GridOption = {
 };
 ```
 
-The pinning command menu is now enabled by default. To hide it, add `'pinning-commands'` to `headerMenu.hideCommands`. Replace custom locale keys `FREEZE_COLUMNS` and `UNFREEZE_COLUMNS` with the pinning keys listed in the [Pinning guide](../grid-functionalities/pinning.md#header-menu-commands).
+The pinning command menu is now enabled by default. To hide it, add `'pinning-commands'` to `headerMenu.hideCommands`. See the [Pinning guide](../grid-functionalities/pinning.md#header-menu-commands) for the command details.
+
+#### Translation keys
+
+If you use a Translate Service (e.g. i18n), rename the frozen translation keys in your translation files and add the new pinning keys. If you use custom locales instead (`locales` grid option), apply the same renames with the `TEXT_` prefix (e.g. `TEXT_FREEZE_COLUMNS` becomes `TEXT_PIN_COLUMNS_LEFT`).
+
+| v10 key            | v11 key                                    | Default English text                   |
+| ------------------ | ------------------------------------------ | -------------------------------------- |
+| `CLEAR_PINNING`    | `CLEAR_ALL_PINNING`                        | Clear all Pinning                      |
+| `FREEZE_COLUMNS`   | `PIN_COLUMNS_LEFT` and `PIN_COLUMNS_RIGHT` | Pin Columns Left / Pin Columns Right   |
+| `UNFREEZE_COLUMNS` | `UNPIN_COLUMNS`                            | Unpin All Columns                      |
+| _(new)_            | `PIN_COLUMN`                               | Column Pinning                         |
+| _(new)_            | `PIN_LEFT` and `PIN_RIGHT`                 | Pin Left / Pin Right                   |
+| _(new)_            | `UNPIN_COLUMN`                             | Unpin Column                           |
+
+```diff
+{
+- "CLEAR_PINNING": "Unfreeze Columns/Rows",
+- "FREEZE_COLUMNS": "Freeze Columns",
+- "UNFREEZE_COLUMNS": "Unfreeze Columns",
++ "CLEAR_ALL_PINNING": "Clear all Pinning",
++ "PIN_COLUMN": "Column Pinning",
++ "PIN_COLUMNS_LEFT": "Pin Columns Left",
++ "PIN_COLUMNS_RIGHT": "Pin Columns Right",
++ "PIN_LEFT": "Pin Left",
++ "PIN_RIGHT": "Pin Right",
++ "UNPIN_COLUMN": "Unpin Column",
++ "UNPIN_COLUMNS": "Unpin All Columns",
+}
+```
+
+The related Grid Menu and Header Menu `commandLabels` options were also renamed (e.g. `clearFrozenColumnsCommand` is now `clearPinningCommand` and `freezeColumnsCommand` is now `pinningColumnsLeftCommand`/`pinningColumnsRightCommand`), see [Command labels and translation keys](../grid-functionalities/pinning.md#command-labels-and-translation-keys) for the full list.
 
 ### E2E Tests with Cypress Header Menu selectors
 

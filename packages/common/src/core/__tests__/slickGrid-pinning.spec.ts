@@ -62,6 +62,30 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
   });
 
+  it.each([false, true])('cancels the left-pinned header separator with a negative inline margin (rtl=%s)', (rtl) => {
+    const slickGrid = createGrid({ rtl, pinning: { columns: { left: ['a'] } } });
+    const internals = slickGrid as any;
+    const docking = { band: 'left', offset: 0, naturalOffset: 0, sticky: false, width: 80 };
+    const header = document.createElement('div');
+    const cell = document.createElement('div');
+
+    internals.placeDockedChromeElement(header, true, 0, docking, 'left', false, 2);
+    internals.placeDockedChromeElement(cell, false, 0, docking, 'left', false, 2);
+
+    expect(header.style.marginLeft).toBe(rtl ? '-2px' : '');
+    expect(header.style.marginRight).toBe(rtl ? '' : '-2px');
+    expect(header.style.position).toBe('relative');
+    expect(header.style.transform).toBe('translateX(0px)');
+    expect(cell.style.marginLeft).toBe('');
+    expect(cell.style.marginRight).toBe('');
+    expect(cell.style.position).toBe('absolute');
+
+    const headerWithoutSeparator = document.createElement('div');
+    internals.placeDockedChromeElement(headerWithoutSeparator, true, 0, docking, 'left', false, 0);
+    expect(headerWithoutSeparator.style.marginLeft).toBe('');
+    expect(headerWithoutSeparator.style.marginRight).toBe('');
+  });
+
   it.each([false, true])('uses the calculated inner viewport width for docking with scrollbar overflow changes (rtl=%s)', (rtl) => {
     const slickGrid = createGrid({ rtl, pinning: { columns: { right: ['d'] } } });
     const internals = slickGrid as any;

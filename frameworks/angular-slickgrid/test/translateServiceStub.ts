@@ -32,8 +32,8 @@ export class TranslateServiceStub {
       case 'CLEAR_ALL_SORTING':
         output = this.currentLang === 'en' ? 'Clear all Sorting' : 'Supprimer tous les tris';
         break;
-      case 'CLEAR_PINNING':
-        output = this.currentLang === 'en' ? 'Unpin Columns/Rows' : 'Désépingler les colonnes/rangées';
+      case 'CLEAR_ALL_PINNING':
+        output = this.currentLang === 'en' ? 'Clear all Pinning' : 'Supprimer toutes les épingles';
         break;
       case 'COLUMNS':
         output = this.currentLang === 'en' ? 'Columns' : 'Colonnes';

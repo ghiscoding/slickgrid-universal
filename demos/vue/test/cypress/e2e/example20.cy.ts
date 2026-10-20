@@ -342,10 +342,10 @@ describe('Example 20 - Pinned Grid', () => {
     );
   });
 
-  it('should click on the Grid Menu command "Unpin Columns/Rows" to switch to a regular grid without pinned columns/rows and expect regular row markup', () => {
+  it('should click on the Grid Menu command "Clear all Pinning" to switch to a regular grid without pinned columns/rows and expect regular row markup', () => {
     cy.get('button.slick-grid-menu-button').click({ force: true });
 
-    cy.contains('Unpin Columns/Rows').click({ force: true });
+    cy.contains('Clear all Pinning').click({ force: true });
 
     cy.get('.slick-row[data-row="0"]').should('have.length.at.least', 1);
     cy.get('.slick-row[data-row="0"] .slick-pinned-left-cells').should('not.exist');
@@ -759,7 +759,7 @@ describe('Example 20 - Pinned Grid', () => {
     it('should unpin all columns/rows', () => {
       cy.get('button.slick-grid-menu-button').click({ force: true });
 
-      cy.contains('Unpin Columns/Rows').click({ force: true });
+      cy.contains('Clear all Pinning').click({ force: true });
     });
 
     it('should resize all columns and make them wider', () => {

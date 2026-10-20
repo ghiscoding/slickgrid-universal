@@ -105,7 +105,6 @@ export class Example14Component implements OnInit {
       explicitInitialization: true,
       pinning: { columns: { left: 2 } },
       rowHeight: 33,
-      gridMenu: { hideClearPinningCommand: false },
       enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {

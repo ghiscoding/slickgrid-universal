@@ -112,10 +112,10 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should click on the Grid Menu command "Unpin Columns/Rows" to switch to a regular grid without pinned columns', () => {
+  it('should click on the Grid Menu command "Clear all Pinning" to switch to a regular grid without pinned columns', () => {
     cy.get('.grid2').find('button.slick-grid-menu-button').click({ force: true });
 
-    cy.contains('Unpin Columns/Rows').click({ force: true });
+    cy.contains('Clear all Pinning').click({ force: true });
 
     const firstRow = '.grid2 .slick-row[data-row="0"]';
     cy.get(firstRow).should('have.length', 1);

@@ -36,7 +36,7 @@ export class TranslaterServiceStub implements TranslaterService {
         output = this._locale === 'en' ? 'Clear all Sorting' : 'Supprimer tous les tris';
         break;
       case 'CLEAR_PINNED_COLUMNS':
-        output = this._locale === 'en' ? 'Unpin Columns/Rows' : 'Désépingler les colonnes/rangées';
+        output = this._locale === 'en' ? 'Clear all Pinning' : 'Supprimer toutes les épingles';
         break;
       case 'COLUMNS':
         output = this._locale === 'en' ? 'Columns' : 'Colonnes';
