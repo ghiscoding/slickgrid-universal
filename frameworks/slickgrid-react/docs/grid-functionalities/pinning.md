@@ -2,6 +2,7 @@
 - [Columns/Rows Pinning Basic](#columnsrows-pinning-basic)
 - [Rows Pinning starting from Bottom](#rows-pinning-starting-from-bottom)
 - [Change Pinning Dynamically](#change-pinning-dynamically)
+- [Command labels and translation keys](#command-labels-and-translation-keys)
 - [Sticky Columns and Rows](sticky.md)
 
 ### Demo
@@ -26,6 +27,42 @@ headerMenu: {
 
 To hide selected actions instead, list their command IDs in `hideCommands` (for example, `'pin-left'` or `'unpin-columns'`). Set `Column.pinnable` to `false` to hide the Pinning Commands root menu for an individual column. These settings control Header Menu visibility; pinning can still be configured through the grid options and APIs.
 
+### Command labels and translation keys
+
+The pinning commands of the Header Menu and Grid Menu use the following translation keys (Translate Service) or `TEXT_` prefixed locale keys (custom `locales` grid option):
+
+| Menu        | Command                       | Translation key                            | Default English text                 |
+| ----------- | ----------------------------- | ------------------------------------------ | ------------------------------------ |
+| Header Menu | Pinning Commands root menu    | `PIN_COLUMN`                               | Column Pinning                       |
+| Header Menu | Pin column left/right         | `PIN_LEFT` and `PIN_RIGHT`                 | Pin Left / Pin Right                 |
+| Header Menu | Pin columns left/right (bulk) | `PIN_COLUMNS_LEFT` and `PIN_COLUMNS_RIGHT` | Pin Columns Left / Pin Columns Right |
+| Header Menu | Unpin column                  | `UNPIN_COLUMN`                             | Unpin Column                         |
+| Header Menu | Unpin all columns             | `UNPIN_COLUMNS`                            | Unpin All Columns                    |
+| Grid Menu   | Clear all pinning             | `CLEAR_ALL_PINNING`                        | Clear all Pinning                    |
+
+You can also override these texts directly through the menu `commandLabels` options:
+
+```ts
+gridOptions = {
+  gridMenu: {
+    commandLabels: {
+      clearPinningCommand: 'Clear all Pinning',
+      clearPinningCommandKey: 'CLEAR_ALL_PINNING', // translation key, when using a Translate Service
+    },
+  },
+  headerMenu: {
+    commandLabels: {
+      pinColumnCommand: 'Column Pinning',
+      pinLeftCommand: 'Pin Left',
+      pinRightCommand: 'Pin Right',
+      pinningColumnsLeftCommand: 'Pin Columns Left',
+      pinningColumnsRightCommand: 'Pin Columns Right',
+      unpinColumnCommand: 'Unpin Column',
+      unpinningColumnsCommand: 'Unpin All Columns',
+    },
+  },
+};
+```
 ## Columns/Rows Pinning basic
 To configure pinning for the entire lifetime of the grid, use the nested `pinning` Grid Option. A numeric left value is an inclusive boundary among visible columns; a numeric right value is a count from the trailing edge of the visible columns. Numeric boundaries are recalculated when columns are hidden. Use explicit arrays to pin specific columns: numeric entries are zero-based indexes, while string entries are column IDs (use a string for a numeric column ID). Explicit IDs keep the same columns pinned when visibility or order changes.
 
