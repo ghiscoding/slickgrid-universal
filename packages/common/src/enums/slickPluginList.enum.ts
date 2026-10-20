@@ -1,5 +1,5 @@
 import type { SlickEditorLock } from '../core/index.js';
-import type { ExtensionName, ExtensionNameTypeString } from '../enums/index.js';
+import type { ExtensionName } from '../enums/index.js';
 import type {
   SlickAutoTooltip,
   SlickCellExcelCopyManager,
@@ -40,32 +40,32 @@ export type SlickPluginList =
   | SlickRowDetailView
   | SlickRowMoveManager;
 
-export type InferExtensionByName<T extends ExtensionName | ExtensionNameTypeString> = T extends ExtensionName.autoTooltip
+export type InferExtensionByName<T extends ExtensionName> = T extends 'autoTooltip'
   ? SlickAutoTooltip
-  : T extends ExtensionName.cellExternalCopyManager
+  : T extends 'cellExternalCopyManager'
     ? SlickCellExcelCopyManager
-    : T extends ExtensionName.cellMenu
+    : T extends 'cellMenu'
       ? SlickCellMenu
-      : T extends ExtensionName.columnPicker
+      : T extends 'columnPicker'
         ? SlickColumnPicker
-        : T extends ExtensionName.contextMenu
+        : T extends 'contextMenu'
           ? SlickContextMenu
-          : T extends ExtensionName.draggableGrouping
+          : T extends 'draggableGrouping'
             ? SlickDraggableGrouping
-            : T extends ExtensionName.gridMenu
+            : T extends 'gridMenu'
               ? SlickGridMenu
-              : T extends ExtensionName.groupItemMetaProvider
+              : T extends 'groupItemMetaProvider'
                 ? SlickGroupItemMetadataProvider
-                : T extends ExtensionName.headerButton
+                : T extends 'headerButton'
                   ? SlickHeaderButtons
-                  : T extends ExtensionName.headerMenu
+                  : T extends 'headerMenu'
                     ? SlickHeaderMenu
-                    : T extends ExtensionName.hybridSelection
+                    : T extends 'hybridSelection'
                       ? SlickHybridSelectionModel
-                      : T extends ExtensionName.rowBasedEdit
+                      : T extends 'rowBasedEdit'
                         ? SlickRowBasedEdit
-                        : T extends ExtensionName.rowDetailView
+                        : T extends 'rowDetailView'
                           ? SlickRowDetailView
-                          : T extends ExtensionName.rowMoveManager
+                          : T extends 'rowMoveManager'
                             ? SlickRowMoveManager
                             : any;

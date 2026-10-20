@@ -4,7 +4,7 @@ export type * from './compositeEditorModal.type.js';
 export * from './delimiter.type.js';
 export type * from './emitter.type.js';
 export type * from './extensionList.type.js';
-export * from './extensionName.enum.js';
+export type * from './extensionName.type.js';
 export * from './field.type.js';
 export * from './file.type.js';
 export type * from './filterMultiplePass.type.js';

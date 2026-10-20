@@ -567,7 +567,7 @@ Main Grid Component
 import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
 import { SlickRowDetailView } from 'slickgrid-react'; // for v9 and below
 import React from 'react';
-import { type Column, ExtensionName, type GridOption, SlickgridReact, type SlickgridReactInstance, SlickRowDetailView, } from 'slickgrid-react';
+import { type Column, type GridOption, SlickgridReact, type SlickgridReactInstance, SlickRowDetailView, } from 'slickgrid-react';
 
 import { Preload } from './preload';
 import { type Distributor, InnerGridComponent, type OrderData } from './inner-grid';

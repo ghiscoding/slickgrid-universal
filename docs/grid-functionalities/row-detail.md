@@ -112,7 +112,6 @@ import {
   type GridOption,
   SlickEventHandler,
   Editors,
-  ExtensionName,
 } from '@slickgrid-universal/common';
 import { SlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
 
