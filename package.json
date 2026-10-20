@@ -111,16 +111,16 @@
   },
   "engines": {
     "node": "^22.22.3 || >=24.15.0",
-    "pnpm": "11.28.4"
+    "pnpm": "11.28.6"
   },
-  "packageManager": "pnpm@11.28.4",
+  "packageManager": "pnpm@11.28.6",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
     "@formkit/tempo": "catalog:",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
-    "@lerna-lite/cli": "^5.6.2",
-    "@lerna-lite/publish": "^5.6.2",
-    "@lerna-lite/watch": "^5.6.2",
+    "@lerna-lite/cli": "^5.6.4",
+    "@lerna-lite/publish": "^5.6.4",
+    "@lerna-lite/watch": "^5.6.4",
     "@prettier/plugin-oxc": "^0.2.3",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
@@ -139,7 +139,7 @@
     "madge": "^8.0.0",
     "npm-run-all2": "catalog:",
     "oxlint": "catalog:",
-    "prettier": "^3.9.9",
+    "prettier": "^3.9.10",
     "remove-glob": "catalog:",
     "rxjs": "catalog:",
     "typescript": "catalog:",

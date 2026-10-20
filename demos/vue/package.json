@@ -40,7 +40,7 @@
     "rxjs": "catalog:",
     "slickgrid-vue": "workspace:*",
     "vue": "catalog:",
-    "vue-router": "^5.3.1"
+    "vue-router": "^5.4.0"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
