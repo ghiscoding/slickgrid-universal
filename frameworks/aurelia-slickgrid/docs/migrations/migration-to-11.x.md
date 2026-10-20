@@ -6,6 +6,8 @@ The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer va
 
 #### Major Changes - Quick Summary
 
+- minimum requirements bump
+  - i18next v26+
 - [Remove SortableJS](#remove-sortablejs)
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
 - [Migrate Grid State and Presets](#grid-state-and-presets)
