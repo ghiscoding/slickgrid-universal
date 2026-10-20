@@ -110,7 +110,7 @@
     "postversion": "pnpm angular:replace-workspace"
   },
   "engines": {
-    "node": "^22.22.2 || >=24.15.0",
+    "node": "^22.22.3 || >=24.15.0",
     "pnpm": "11.28.4"
   },
   "packageManager": "pnpm@11.28.4",

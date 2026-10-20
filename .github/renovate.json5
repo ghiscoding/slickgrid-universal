@@ -30,11 +30,6 @@
       packageNames: ['@babel/core', 'undici'],
       allowedVersions: '< 8.0.0',
     },
-    // jsdom v30 seems to cause test regressions in slickgrid.ts because of `getComputedStyle()` changes
-    {
-      packageNames: ['jsdom'],
-      allowedVersions: '< 30.0.0',
-    },
     // postponed few packages to next major
     {
       packageNames: ['i18next'],
@@ -43,10 +38,6 @@
     {
       packageNames: ['react-i18next'],
       allowedVersions: '< 17.0.0',
-    },
-    {
-      packageNames: ['@angular-eslint/eslint-plugin'],
-      allowedVersions: '< 22.0.0',
     },
     {
       // Exclude all the packages that I personally maintain from minimumReleaseAge
