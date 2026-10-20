@@ -269,7 +269,7 @@ theme-specific paths and additional details.
 
 ### New `iconSet` grid option for the Fluent theme
 
-A new `iconSet` grid option (`'material'` by default, or `'fluent'`) now provides all the default menu icons (Grid Menu, Header Menu, Context Menu, Cell Menu). When using the Fluent theme, you can replace your own Fluent icon mapping with a single option, and any icon that you still define explicitly will keep taking precedence. See [Menu icon sets](../styling/styling.md#menu-icon-sets) for more details.
+A new `iconSet` grid option (`'material'` by default, or `'fluent'`) now provides all the default menu icons (Grid Menu, Header Menu, Context Menu, Cell Menu). When using the Fluent theme, you can replace your own Fluent icon mapping with a single option, and any icon that you still define explicitly will keep taking precedence. Sort icons were also changed to up/down arrows rather than sort icons. See [Menu icon sets](../styling/styling.md#menu-icon-sets) for more details.
 
 ```diff
 gridOptions = {
@@ -284,6 +284,7 @@ gridOptions = {
 - },
 };
 ```
+
 ## Final Note
 
 If the project is useful to you, please give it a star ⭐ on the [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) umbrella project.

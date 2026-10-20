@@ -14,6 +14,8 @@ const FluentIconExample: React.FC = () => {
     'fi-arrow-minimize',
     'fi-arrow-reply',
     'fi-arrow-sort',
+    'fi-arrow-sort-down',
+    'fi-arrow-sort-up',
     'fi-arrow-sync',
     'fi-arrow-redo',
     'fi-arrow-undo',
