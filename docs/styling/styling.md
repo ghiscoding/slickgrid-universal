@@ -1,5 +1,6 @@
 #### index
 - [Using built-in Themes](#using-built-in-themes)
+- [Menu icon sets](#menu-icon-sets)
 - [Required Styles for Extra Packages](#required-styles-for-extra-packages)
 - [Using CSS Variables (CSS hooks in LWC)](#using-css-variables-instead-of-sass)
 - [Using SVG with SASS](#using-custom-svgs-with-sass)
@@ -12,7 +13,7 @@
 ### Description
 Slickgrid-Universal was originally using Font-Awesome to display internal icons but we now use SVG only for icons and the font was dropped completely. Our SVG are now also using pure CSS which mean that you can colorize them the same way that you would change text color (which is also helpful in dark mode). Slickgrid-Universal has 3 Styling Themes (Bootstrap, Material and Salesforce) and we also optionally provide extra SVG icons, which are a tiny a subset of [Material Design Icons](https://materialdesignicons.com/) SVGs. These extra SVG icons are optionals and can be imported manually (note however, they are part of the Material and Salesforce themes by default), when imported you'll want to use the `.mdi` CSS classes.
 
-> **Note** some icons are built-ins (sorting, grouping, row selections, ...) while some other icons are defined by CSS classes (grid menu, column picker, header menu, context menu, ...) and you could use `.mdi` icons or any other icons framework (if you do, then you'll want to override global grid options).
+> **Note** some icons are built-ins (sorting, grouping, row selections, ...) while some other icons are defined by CSS classes (grid menu, column picker, header menu, context menu, ...) and you could use `.mdi` icons or any other icons framework (if you do, then you'll want to override the menu icon options, see [Menu icon sets](#menu-icon-sets)).
 
 If you use SASS and you want to change some of the default SVGs, you will find out it super easy to simply replace the SVG path via associated SASS variable, more on further down.
 
@@ -57,6 +58,35 @@ $slick-primary-color: red;
 $slick-cell-odd-background-color: pink;
 $slick-row-mouse-hover-color: lightpink;
 @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-default.scss';
+```
+
+### Menu icon sets
+The menu plugins (Grid Menu, Header Menu, Context Menu, Cell Menu and their sub-menu chevrons) use icon CSS classes, and the grid provides 2 built-in icon sets via the `iconSet` grid option:
+
+| `iconSet`              | CSS classes   | Use with                                                                      |
+| ---------------------- | ------------- | ----------------------------------------------------------------------------- |
+| `'material'` (default) | `mdi mdi-*`   | Default, Bootstrap, Material and Salesforce themes (the full themes provide the SVG icons) |
+| `'fluent'`             | `fi fi-*`     | Fluent theme                                                                  |
+
+```ts
+const gridOptions = {
+  iconSet: 'fluent',
+};
+const sgb = new Slicker.GridBundle(gridContainerElm, columns, gridOptions, dataset);
+```
+
+#### Using your own icons (any icon library)
+The icon set only provides default values. Any icon class that you explicitly define in your menu options always takes precedence over the icon set, so you can override a single icon, or all of them to use any other icon library (e.g. Font Awesome, Bootstrap Icons, ...) as long as the CSS classes are available in your application. In that case, `iconSet` doesn't matter for the icons that you override.
+
+```ts
+const gridOptions = {
+  iconSet: 'fluent', // optional, only used for the icons that you don't override
+
+  // override any specific icon
+  gridMenu: { iconCssClass: 'fa fa-bars' },
+  headerMenu: { iconSortAscCommand: 'fa fa-arrow-up' },
+  contextMenu: { subItemChevronClass: 'fa fa-chevron-right' },
+};
 ```
 
 ### Required Styles for Extra Packages
@@ -145,11 +175,11 @@ The project has a few built-in icons (sort, grouping, row detail, row move, row 
 What if you want to use your own font/SVG library?
 This can be answered in 2 parts:
 1. the built-in icons can only be changed via SASS (or CSS with extra work), see above on how to change them.
-2. for all other areas using icons via CSS classes (e.g. all menu plugins), you can use the "lite" Themes and then make sure to update all the menu plugins with the correct CSS classes, for example the global grid options of the Grid Menu is configured with the following CSS classes and you'll want to remap them with the correct CSS classes to fit your needs:
+2. for all other areas using icons via CSS classes (e.g. all menu plugins), you can use the "lite" Themes and then make sure to update all the menu plugins with the correct CSS classes, for example the Grid Menu uses the following Material CSS classes by default (see [Menu icon sets](#menu-icon-sets)) and you'll want to remap them with the correct CSS classes to fit your needs:
 
 ```ts
-// default global grid options
-export const GlobalGridOptions = {
+// default Material icons, any of them can be overridden in your grid options
+const gridOptions = {
   gridMenu: {
     iconCssClass: 'mdi mdi-menu',
     iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',

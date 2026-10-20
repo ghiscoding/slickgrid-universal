@@ -19,7 +19,7 @@ import type {
   TranslaterService,
   TreeDataService,
 } from '@slickgrid-universal/common';
-import { GlobalGridOptions } from '@slickgrid-universal/common';
+import { getIconSetOptions, GlobalGridOptions } from '@slickgrid-universal/common';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
@@ -75,7 +75,14 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
   mergeGridOptions(gridOptions: GridOption): GridOption {
     const extraOptions =
       gridOptions.useSalesforceDefaultGridOptions || this._gridOptions?.useSalesforceDefaultGridOptions ? SalesforceGlobalGridOptions : {};
-    const options = extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
+    const options = extend(
+      true,
+      {},
+      getIconSetOptions(gridOptions.iconSet ?? GlobalGridOptions.iconSet),
+      GlobalGridOptions,
+      extraOptions,
+      gridOptions
+    );
 
     // also make sure to show the header row if user have enabled filtering
     if (options.enableFiltering && !options.showHeaderRow) {

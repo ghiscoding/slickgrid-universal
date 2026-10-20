@@ -17,6 +17,7 @@ The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer va
 - [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors)
 - [Removed Deprecated Code](#removed-deprecated-code)
 - [Code Changes](#code-changes)
+- [New `iconSet` grid option for the Fluent theme](#new-iconset-grid-option-for-the-fluent-theme)
 
 > **Note:** If you are upgrading from a version earlier than v10, follow the previous migration guides in order before applying these v11 changes.
 
@@ -247,6 +248,24 @@ stylesheet paths that use the old names. The Angular, Aurelia, React, and Vue ad
 (for example, `@slickgrid-universal/angular-row-detail-plugin`) are unchanged. See
 [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for
 theme-specific paths and additional details.
+
+### New `iconSet` grid option for the Fluent theme
+
+A new `iconSet` grid option (`'material'` by default, or `'fluent'`) now provides all the default menu icons (Grid Menu, Header Menu, Context Menu, Cell Menu). When using the Fluent theme, you can replace your own Fluent icon mapping with a single option, and any icon that you still define explicitly will keep taking precedence. Sort icons were also changed to up/down arrows rather than sort icons. See [Menu icon sets](../styling/styling.md#menu-icon-sets) for more details.
+
+```diff
+gridOptions = {
++ iconSet: 'fluent', // defaults to "material"
+- gridMenu: {
+-   iconCssClass: 'fi fi-navigation',
+-   iconClearAllFiltersCommand: 'fi fi-filter-dismiss',
+- },
+- headerMenu: {
+-   iconSortAscCommand: 'fi fi-sort-arrow-up',
+-   iconSortDescCommand: 'fi fi-sort-arrow-down',
+- },
+};
+```
 
 ## Final Note
 

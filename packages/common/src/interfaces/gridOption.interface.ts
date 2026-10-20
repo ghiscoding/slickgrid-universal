@@ -711,6 +711,14 @@ export interface GridOption<C extends Column = Column> {
    */
   ignoreAccentOnStringFilterAndSort?: boolean;
 
+  /**
+   * Defaults to "material", which built-in icon set should be used for the default menu icons (Grid Menu, Header Menu, Context Menu, Cell Menu and their sub-menu chevrons)?
+   * Use "fluent" with the Fluent theme (`fi fi-*` icons) instead of the default Material icons (`mdi mdi-*`).
+   * NOTE: this only provides the default icons, any icon class explicitly defined in the menu options (e.g. `gridMenu.iconCssClass`)
+   * always takes precedence, so any other icon library can be used by overriding those icon classes.
+   */
+  iconSet?: 'material' | 'fluent';
+
   /** Do we leave space for new rows in the DOM visible buffer */
   leaveSpaceForNewRows?: boolean;
 

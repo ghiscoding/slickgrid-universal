@@ -26,6 +26,7 @@ import {
   ExternalResourceConstructor,
   FilterFactory,
   FilterService,
+  getIconSetOptions,
   GridEventService,
   GridService,
   GridStateService,
@@ -1459,7 +1460,14 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     gridOptions.gridContainerId = `slickGridContainer-${this.gridId}`;
 
     // use extend to deep merge & copy to avoid immutable properties being changed in GlobalGridOptions after a route change
-    const options = extend(true, {}, GlobalGridOptions, this.forRootConfig, gridOptions) as GridOption;
+    const options = extend(
+      true,
+      {},
+      getIconSetOptions(gridOptions.iconSet ?? this.forRootConfig?.iconSet ?? GlobalGridOptions.iconSet),
+      GlobalGridOptions,
+      this.forRootConfig,
+      gridOptions
+    ) as GridOption;
 
     // if we have a backendServiceApi and the enablePagination is undefined, we'll assume that we do want to see it, else get that defined value
     if (!this.hasBackendInfiniteScroll(gridOptions)) {

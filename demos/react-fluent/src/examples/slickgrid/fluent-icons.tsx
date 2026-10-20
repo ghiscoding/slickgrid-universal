@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+// Fluent icons subset picked from:
+// https://storybooks.fluentui.dev/react/?path=/docs/fluent-system-icons_icons-catalog--docs
 const FluentIconExample: React.FC = () => {
   const [icons] = useState<any[]>([
     'fi-arrow-download',
@@ -12,6 +14,8 @@ const FluentIconExample: React.FC = () => {
     'fi-arrow-minimize',
     'fi-arrow-reply',
     'fi-arrow-sort',
+    'fi-arrow-sort-down',
+    'fi-arrow-sort-up',
     'fi-arrow-sync',
     'fi-arrow-redo',
     'fi-arrow-undo',

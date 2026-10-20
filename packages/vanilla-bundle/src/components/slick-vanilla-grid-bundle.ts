@@ -8,6 +8,7 @@ import {
   ExtensionUtility,
   FilterFactory,
   FilterService,
+  getIconSetOptions,
   GlobalGridOptions,
   GridEventService,
   GridService,
@@ -717,7 +718,13 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   mergeGridOptions(gridOptions: GridOption): GridOption {
-    const options = extend<GridOption>(true, {}, GlobalGridOptions, gridOptions);
+    const options = extend<GridOption>(
+      true,
+      {},
+      getIconSetOptions(gridOptions.iconSet ?? GlobalGridOptions.iconSet),
+      GlobalGridOptions,
+      gridOptions
+    );
 
     // also make sure to show the header row if user have enabled filtering
     if (options.enableFiltering && !options.showHeaderRow) {

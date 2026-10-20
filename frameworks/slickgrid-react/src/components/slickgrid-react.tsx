@@ -8,6 +8,7 @@ import {
   ExtensionUtility,
   FilterFactory,
   FilterService,
+  getIconSetOptions,
   GridEventService,
   GridService,
   GridStateService,
@@ -1473,7 +1474,13 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
   protected mergeGridOptions(gridOptions: GridOption): GridOption {
     // use extend to deep merge & copy to avoid immutable properties being changed in GlobalGridOptions after a route change
-    const options = extend(true, {}, GlobalGridOptions, gridOptions) as GridOption;
+    const options = extend(
+      true,
+      {},
+      getIconSetOptions(gridOptions.iconSet ?? GlobalGridOptions.iconSet),
+      GlobalGridOptions,
+      gridOptions
+    ) as GridOption;
 
     options.gridId = this.props.gridId;
     options.gridContainerId = `slickGridContainer-${this.props.gridId}`;

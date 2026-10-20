@@ -12,7 +12,6 @@ import {
   type GridOption,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import { baseFluentGridOption } from './base-fluent-grid-options.js';
 import { showToast } from './utilities.js';
 
 const Example05: React.FC = () => {
@@ -254,7 +253,7 @@ const Example05: React.FC = () => {
 
       // show both single-column and bulk pinning commands in HeaderMenu & GridMenu; these are opt-in commands
       gridMenu: { hideClearPinningCommand: false },
-      ...baseFluentGridOption,
+      iconSet: 'fluent',
     };
 
     setColumns(columns);

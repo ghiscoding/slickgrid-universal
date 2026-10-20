@@ -4,6 +4,7 @@ import {
   autoAddEditorFormatterToColumnsWithEditor,
   Editors,
   Filters,
+  GlobalGridOptions,
   SharedService,
   SlickDataView,
   SlickGroupItemMetadataProvider,
@@ -781,6 +782,36 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(component.gridOptions.autoCommitEdit).toEqual(false);
         expect(setOptionSpy).toHaveBeenCalledWith(mockGridOptions, false, true);
         expect(sharedOptionSpy).toHaveBeenCalledWith(mockGridOptions);
+      });
+
+      it('should merge the Fluent icon set menu icons when "iconSet" is "fluent" and let user provided icons take precedence', () => {
+        const options = component.mergeGridOptions({
+          iconSet: 'fluent',
+          gridMenu: { iconCssClass: 'fi fi-custom' },
+        } as GridOption);
+
+        expect(options.gridMenu!.iconCssClass).toBe('fi fi-custom');
+        expect(options.gridMenu!.iconClearAllFiltersCommand).toBe('fi fi-filter-dismiss');
+        expect(options.headerMenu!.subItemChevronClass).toBe('fi fi-chevron-right');
+        expect(options.contextMenu!.iconCopyCellValueCommand).toBe('fi fi-copy');
+      });
+
+      it('should keep the Material menu icons by default', () => {
+        const options = component.mergeGridOptions({} as GridOption);
+
+        expect(options.gridMenu!.iconCssClass).toBe('mdi mdi-menu');
+      });
+
+      it('should use the icon set as base layer so that global grid options icons and "iconSet" are not overwritten', () => {
+        GlobalGridOptions.iconSet = 'fluent';
+        GlobalGridOptions.gridMenu!.iconCssClass = 'mdi mdi-dots-vertical';
+
+        const options = component.mergeGridOptions({} as GridOption);
+
+        delete GlobalGridOptions.iconSet;
+        delete GlobalGridOptions.gridMenu!.iconCssClass;
+        expect(options.gridMenu!.iconCssClass).toBe('mdi mdi-dots-vertical');
+        expect(options.gridMenu!.iconClearAllFiltersCommand).toBe('fi fi-filter-dismiss');
       });
 
       it('should merge paginationOptions when some already exist', () => {
