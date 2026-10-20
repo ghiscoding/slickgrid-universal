@@ -5432,8 +5432,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Whether a row hosts a rowspan. A spanning cell may be outside the current horizontal render range 
-   * and therefore not be present in the row DOM yet, so the row metadata is inspected as well; 
+   * Whether a row hosts a rowspan. A spanning cell may be outside the current horizontal render range
+   * and therefore not be present in the row DOM yet, so the row metadata is inspected as well;
    * otherwise the row can keep a translateY stacking context and a later-rendered span cell will paint
    * underneath hovered or odd rows. Covered rows are detected separately in
    * applyRowTopOffset so the whole span stays out of any transform stacking context.
