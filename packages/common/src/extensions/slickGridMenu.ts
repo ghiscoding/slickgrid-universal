@@ -555,7 +555,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const commandLabels = this._addonOptions?.commandLabels;
 
     if (this._addonOptions && this.gridOptions) {
-      // show grid menu: Clear Pinning
+      // show grid menu: Clear all Pinning
       if (!this._addonOptions.hideClearPinningCommand) {
         this.addMissingCommandOrAction(
           {

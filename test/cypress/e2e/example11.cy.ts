@@ -1020,7 +1020,7 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('[data-row=4] .slick-cell:nth(9)').should('contain', 'Canada');
     });
 
-    it('should clear pinning from Grid Menu & expect to no longer have any columns pinned', () => {
+    it('should "Clear all Pinning" from Grid Menu & expect to no longer have any columns pinned', () => {
       cy.get('.grid11').find('button.slick-grid-menu-button').click({ force: true });
 
       cy.contains('Clear all Pinning').click({ force: true });
