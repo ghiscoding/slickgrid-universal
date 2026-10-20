@@ -71,7 +71,6 @@ All the available options that can be provided as filter `options` to your colum
 ```ts
 filter: {
   model: Filters.autocompleter,
-  // previously known as `filterOptions` for < 9.0
   options: {
     minLength: 3,
   } as AutocompleterOption
@@ -107,7 +106,6 @@ function defineGrid() {
 
         // use your own autocomplete options, instead of $.ajax, use http
         // here we use $.ajax just because I'm not sure how to configure http with JSONP and CORS
-        // previously known as `filterOptions` for < 9.0
         options: {
           minLength: 3, // minimum count of character that the user needs to type before it queries to the remote
           source: (request, response) => {
@@ -163,7 +161,6 @@ columns.value = [{
   editor: {
     model: Editors.autocompleter,
     onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
-    // previously known as `filterOptions` for < 9.0
     options: {
       minLength: 0,
       forceUserInput: true,

@@ -20,7 +20,6 @@ initializeGrid() {
         model: Editors.longText,
         required: true,
         maxLength: 12,
-        // previously known as `editorOptions` for < 9.0
         options: {
           cols: 45,
           rows: 6,

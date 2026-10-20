@@ -217,7 +217,6 @@ this.columns = [{
   id: 'start', name: 'Start Date', field: 'start',
   editor: {
     model: Editors.date,
-    // previously known as `editorOptions` for < 9.0
     options: { displayDateMin: 'today' } as VanillaCalendarOption
   }
 }];

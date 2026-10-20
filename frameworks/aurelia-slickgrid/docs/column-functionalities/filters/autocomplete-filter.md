@@ -72,7 +72,6 @@ All the available options that can be provided as filter `options` to your colum
 ```ts
 filter: {
   model: Filters.autocompleter,
-  // previously known as `filterOptions` for < 9.0
   options: {
     minLength: 3,
   } as AutocompleterOption

@@ -78,7 +78,6 @@ this.columns = [
       placeholder: '&#128269; search city',
 
       // example with a fixed Collection (or collectionAsync)
-      // previously known as `editorOptions` for < 9.0
       options: {
         showOnFocus: true, // display the list on focus of the autocomplete (without the need to type anything)
       } as AutocompleterOption,
@@ -100,7 +99,6 @@ All the available options that can be provided as editor `options` to your colum
 ```ts
 editor: {
   model: Editors.autocompleter,
-  // previously known as `editorOptions` for < 9.0
   options: {
     minLength: 3,
   } as AutocompleterOption
@@ -141,7 +139,6 @@ export class GridBasicComponent {
         editor: {
           model: Editors.autocompleter,
           alwaysSaveOnEnterKey: true,
-          // previously known as `editorOptions` for < 9.0
           options: {
             showOnFocus: true,
             minLength: 1,
@@ -216,7 +213,6 @@ export class GridBasicComponent {
             label: 'itemName',
             value: 'id'
           },
-          // previously known as `editorOptions` for < 9.0
           options: {
             showOnFocus: true,
             minLength: 1,
@@ -279,7 +275,6 @@ export class GridBasicComponent {
             label: 'itemName',
             value: 'id'
           },
-          // previously known as `editorOptions` for < 9.0
           options: {
             showOnFocus: true,
             minLength: 1,

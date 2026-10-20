@@ -75,7 +75,6 @@ All the available options that can be provided as filter `options` to your colum
 ```ts
 filter: {
   model: Filters.autocompleter,
-  // previously known as `filterOptions` for < 9.0
   options: {
     minLength: 3,
   } as AutocompleterOption
@@ -118,7 +117,6 @@ export class GridBasicComponent implements OnInit {
 
           // use your own autocomplete options, instead of $.ajax, use http
           // here we use $.ajax just because I'm not sure how to configure http with JSONP and CORS
-          // previously known as `filterOptions` for < 9.0
           options: {
             minLength: 3, // minimum count of character that the user needs to type before it queries to the remote
             fetch: (searchText, updateCallback) => {
@@ -164,7 +162,6 @@ If you want to add the autocomplete functionality but want the user to be able t
         field: 'area',
         editor: {
           model: Editors.autocompleter,
-          // previously known as `filterOptions` for < 9.0
           options: {
             minLength: 0,
             forceUserInput: true,

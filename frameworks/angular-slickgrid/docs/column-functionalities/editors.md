@@ -128,7 +128,6 @@ All the available options that can be provided as editor `options` to your colum
 ```ts
 editor: {
   model: Editors.SingleSelect,
-  // previously known as `editorOptions` for < 9.0
   options: {
     maxHeight: 400
   } as MultipleSelectOption
@@ -448,14 +447,13 @@ this.columns = [{
   id: 'start', name: 'Start Date', field: 'start',
   editor: {
     model: Editors.date,
-    // previously known as `editorOptions` for < 9.0
     options: { minDate: 'today' }
   }
 }];
 ```
 
 #### Grid Option `defaultEditorOptions
-You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `editorOptions` (also note that each key is already typed with the correct editor option interface), for example
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as Editors `options` (also note that each key is already typed with the correct editor option interface), for example
 
 ```ts
 this.gridOptions = {

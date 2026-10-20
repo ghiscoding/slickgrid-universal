@@ -231,7 +231,6 @@ All the available options that can be provided as editor `options` to your colum
 ```tsx
 editor: {
   model: Editors.SingleSelect,
-  // previously known as `editorOptions` for < 9.0
   options: {
     maxHeight: 400
   } as MultipleSelectOption
@@ -395,7 +394,6 @@ const columns = [{
   id: 'start', name: 'Start Date', field: 'start',
   editor: {
     model: Editors.date,
-    // previously known as `editorOptions` for < 9.0
     options: { displayDateMin: 'today' } as VanillaCalendarOption
   }
 }];

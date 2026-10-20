@@ -28,7 +28,6 @@ prepareGrid() {
       editor: {
         model: Editors.date,
         onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
-        // previously known as `editorOptions` for < 9.0
         options: {
           displayDateMax: 'today',
           disableDates: ['2022-08-15', '2022-08-20'],
