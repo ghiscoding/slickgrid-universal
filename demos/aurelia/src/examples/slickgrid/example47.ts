@@ -3,7 +3,6 @@ import { bindable } from 'aurelia';
 import {
   Aggregators,
   Editors,
-  ExtensionName,
   Filters,
   Formatters,
   GroupTotalFormatters,
@@ -61,7 +60,7 @@ export class Example47 {
     // return this.aureliaGrid?.extensions.rowDetailView.instance || {};
 
     // OR option 2
-    return this.aureliaGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    return this.aureliaGrid?.extensionService.getExtensionInstanceByName('rowDetailView');
   }
 
   attached() {

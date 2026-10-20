@@ -7,7 +7,6 @@ import { basicFetchStub } from '../../../../../test/httpClientStub.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import { Editors } from '../../editors/index.js';
-import { ExtensionName } from '../../enums/index.js';
 import type { SlickColumnPicker } from '../../extensions/slickColumnPicker.js';
 import type { SlickHybridSelectionModel } from '../../extensions/slickHybridSelectionModel.js';
 import type {
@@ -536,7 +535,7 @@ describe('GridStateService', () => {
         const instanceMock = { onColumnsChanged: slickgridEvent };
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
         const associatedColumnsMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
-        const extensionMock = { name: ExtensionName.columnPicker, addon: instanceMock, instance: instanceMock as SlickColumnPicker, class: null };
+        const extensionMock = { name: 'columnPicker', addon: instanceMock, instance: instanceMock as SlickColumnPicker, class: null };
         const gridStateMock = { columns: associatedColumnsMock, filters: [], sorters: [] } as GridState;
         const stateChangeMock = { change: { newValues: associatedColumnsMock, type: 'columns' }, gridState: gridStateMock } as GridStateChange;
 
@@ -550,8 +549,8 @@ describe('GridStateService', () => {
 
         expect(gridStateSpy).toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onGridStateChanged`, stateChangeMock);
-        expect(extensionSpy).toHaveBeenCalledWith(ExtensionName.columnPicker);
-        expect(extensionSpy).toHaveBeenLastCalledWith(ExtensionName.gridMenu);
+        expect(extensionSpy).toHaveBeenCalledWith('columnPicker');
+        expect(extensionSpy).toHaveBeenLastCalledWith('gridMenu');
       });
     });
 
@@ -1366,13 +1365,13 @@ describe('GridStateService', () => {
       service.resetRowSelectionWhenRequired();
 
       expect(gridOptionSpy).toHaveBeenCalled();
-      expect(extensionSpy).toHaveBeenCalledWith(ExtensionName.hybridSelection);
+      expect(extensionSpy).toHaveBeenCalledWith('hybridSelection');
       expect(setSelectionSpy).toHaveBeenCalled();
     });
 
     it('should call the method and call the grid selection reset when the selection extension is used', () => {
       vi.spyOn(gridStub, 'getSelectionModel').mockReturnValueOnce(hybridSelectionModelStub);
-      const extensionMock = { name: ExtensionName.hybridSelection, addon: {}, instance: {} as unknown as SlickHybridSelectionModel, class: null };
+      const extensionMock = { name: 'hybridSelection', addon: {}, instance: {} as unknown as SlickHybridSelectionModel, class: null };
       const gridOptionsMock = { enableSelection: true } as GridOption;
       const gridOptionSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
@@ -1381,7 +1380,7 @@ describe('GridStateService', () => {
       service.resetRowSelectionWhenRequired();
 
       expect(gridOptionSpy).toHaveBeenCalled();
-      expect(extensionSpy).toHaveBeenCalledWith(ExtensionName.hybridSelection);
+      expect(extensionSpy).toHaveBeenCalledWith('hybridSelection');
       expect(setSelectionSpy).toHaveBeenCalled();
     });
   });

@@ -1,9 +1,8 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
-  ExtensionName,
   type ColumnReorderFunction,
   type ExtensionList,
-  type ExtensionNameTypeString,
+  type ExtensionName,
   type InferExtensionByName,
   type SlickControlList,
   type SlickPluginList,
@@ -77,9 +76,7 @@ export class ExtensionService {
       // dispose each extension
       extensionNames.forEach((extensionName) => {
         if (Object.prototype.hasOwnProperty.call(this._extensionList, extensionName)) {
-          const extension = this._extensionList[
-            extensionName as keyof Record<ExtensionName | ExtensionNameTypeString, ExtensionModel<any>>
-          ] as ExtensionModel<any>;
+          const extension = this._extensionList[extensionName as keyof Record<ExtensionName, ExtensionModel<any>>] as ExtensionModel<any>;
           if (typeof extension?.instance?.dispose === 'function') {
             extension.instance.dispose();
           }
@@ -87,7 +84,7 @@ export class ExtensionService {
       });
       // delete the extension from the _extensionList object
       extensionNames.forEach((key) => {
-        delete this._extensionList[key as keyof Record<ExtensionName | ExtensionNameTypeString, ExtensionModel<any>>];
+        delete this._extensionList[key as keyof Record<ExtensionName, ExtensionModel<any>>];
       });
     }
     this._cellMenuPlugin = null as any;
@@ -110,10 +107,7 @@ export class ExtensionService {
    * @param {String} name
    * @param {Object} extension
    */
-  addExtensionToList<T = any>(
-    name: ExtensionName | ExtensionNameTypeString,
-    extension: { name: ExtensionName | ExtensionNameTypeString; instance: T }
-  ): void {
+  addExtensionToList<T = any>(name: ExtensionName, extension: { name: ExtensionName; instance: T }): void {
     this._extensionList[name] = extension;
   }
 
@@ -131,9 +125,7 @@ export class ExtensionService {
    * Get an Extension that was created by calling its "create" method (there are only 3 extensions which uses this method)
    *  @param name
    */
-  getCreatedExtensionByName<P extends SlickControlList | SlickPluginList = any>(
-    name: ExtensionName | ExtensionNameTypeString
-  ): ExtensionModel<P> | undefined {
+  getCreatedExtensionByName<P extends SlickControlList | SlickPluginList = any>(name: ExtensionName): ExtensionModel<P> | undefined {
     if (Object.prototype.hasOwnProperty.call(this._extensionCreatedList, name)) {
       return this._extensionCreatedList[name];
     }
@@ -145,9 +137,7 @@ export class ExtensionService {
    * NOTE: it's preferable to @use `getExtensionInstanceByName` if you just want the instance since it will automatically infer the extension.
    * @param name
    */
-  getExtensionByName<P extends SlickControlList | SlickPluginList = any>(
-    name: ExtensionName | ExtensionNameTypeString
-  ): ExtensionModel<P> | undefined {
+  getExtensionByName<P extends SlickControlList | SlickPluginList = any>(name: ExtensionName): ExtensionModel<P> | undefined {
     return this._extensionList?.[name];
   }
 
@@ -155,7 +145,7 @@ export class ExtensionService {
    * Get Extension Instance by its name.
    * @param name
    */
-  getExtensionInstanceByName<T extends ExtensionName | ExtensionNameTypeString>(name: T): InferExtensionByName<T> {
+  getExtensionInstanceByName<T extends ExtensionName>(name: T): InferExtensionByName<T> {
     return this.getExtensionByName(name)?.instance as InferExtensionByName<T>;
   }
 

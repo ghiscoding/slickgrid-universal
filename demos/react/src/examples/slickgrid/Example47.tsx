@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Aggregators,
   Editors,
-  ExtensionName,
   Filters,
   Formatters,
   GroupTotalFormatters,
@@ -60,7 +59,7 @@ const Example47: React.FC = () => {
   }
 
   function rowDetailInstance() {
-    return reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) as ReactRowDetailView;
+    return reactGridRef.current?.extensionService.getExtensionInstanceByName('rowDetailView') as ReactRowDetailView;
   }
 
   const getColumnsDefinition = (): Column<Item>[] => {

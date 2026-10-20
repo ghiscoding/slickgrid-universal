@@ -6,7 +6,7 @@ import { type SlickDataView } from '../core/slickDataView.js';
 import { type SlickGrid } from '../core/slickGrid.js';
 import type { AutocompleterEditor } from '../editors/autocompleterEditor.js';
 import type { SelectEditor } from '../editors/selectEditor.js';
-import { ExtensionName, type ExtensionNameTypeString } from '../enums/index.js';
+import type { ExtensionName } from '../enums/index.js';
 import type {
   Column,
   CurrentColumn,
@@ -650,7 +650,7 @@ export class GridStateService {
    * @param extension name
    * @param event name
    */
-  protected bindExtensionAddonEventToGridStateChange(extensionName: ExtensionName | ExtensionNameTypeString, eventName: string): void {
+  protected bindExtensionAddonEventToGridStateChange(extensionName: ExtensionName, eventName: string): void {
     const extension = this.extensionService?.getExtensionByName?.(extensionName);
     const slickEvent = extension?.instance?.[eventName];
     const isIncludingHiddenProps = !!this._gridOptions.gridStateIncludeHiddenProps;

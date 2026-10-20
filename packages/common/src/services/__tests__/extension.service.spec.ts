@@ -2,7 +2,6 @@ import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickGrid } from '../../core/index.js';
-import { ExtensionName } from '../../enums/index.js';
 import {
   ExtensionUtility,
   SlickAutoTooltip,
@@ -229,10 +228,10 @@ describe('ExtensionService', () => {
 
     describe('getExtensionInstanceByName | getExtensionInstanceByName method', () => {
       it('should return null when method is called with an invalid and non instantiated addon', () => {
-        const extensionMock = { name: ExtensionName.columnPicker, addon: null, instance: null } as ExtensionModel<any>;
+        const extensionMock = { name: 'columnPicker', addon: null, instance: null } as ExtensionModel<any>;
         const spy = vi.spyOn(service, 'getExtensionByName').mockReturnValue(extensionMock);
 
-        const output = service.getExtensionInstanceByName(ExtensionName.columnPicker);
+        const output = service.getExtensionInstanceByName('columnPicker');
 
         expect(spy).toHaveBeenCalled();
         expect(output).toBeNull();
@@ -256,16 +255,16 @@ describe('ExtensionService', () => {
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const gridMenuInstance = service.getExtensionInstanceByName(ExtensionName.gridMenu);
-        const output = service.getExtensionByName(ExtensionName.gridMenu);
-        const instance1 = service.getExtensionInstanceByName(ExtensionName.gridMenu);
-        const instance2 = service.getExtensionInstanceByName(ExtensionName.gridMenu);
+        const gridMenuInstance = service.getExtensionInstanceByName('gridMenu');
+        const output = service.getExtensionByName('gridMenu');
+        const instance1 = service.getExtensionInstanceByName('gridMenu');
+        const instance2 = service.getExtensionInstanceByName('gridMenu');
 
         expect(gridSpy).toHaveBeenCalled();
         expect(gridMenuInstance).toBeTruthy();
         expect(output!.instance).toEqual(instance1);
         expect(output!.instance).toEqual(instance2);
-        expect(output).toEqual({ name: ExtensionName.gridMenu, instance: gridMenuInstance as unknown } as ExtensionModel<any>);
+        expect(output).toEqual({ name: 'gridMenu', instance: gridMenuInstance as unknown } as ExtensionModel<any>);
       });
     });
 
@@ -698,9 +697,9 @@ describe('ExtensionService', () => {
         const gridOptionsMock = { enableDraggableGrouping: true } as GridOption;
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
-        const instance = service.getCreatedExtensionByName<SlickDraggableGrouping>(ExtensionName.draggableGrouping);
-        service.addExtensionToList(ExtensionName.draggableGrouping, { name: ExtensionName.draggableGrouping, instance });
-        const instance2 = service.getCreatedExtensionByName(ExtensionName.draggableGrouping);
+        const instance = service.getCreatedExtensionByName<SlickDraggableGrouping>('draggableGrouping');
+        service.addExtensionToList('draggableGrouping', { name: 'draggableGrouping', instance });
+        const instance2 = service.getCreatedExtensionByName('draggableGrouping');
 
         expect(instance).toBeTruthy();
         expect(instance).toEqual(instance2);
@@ -749,7 +748,7 @@ describe('ExtensionService', () => {
           checkboxSelector: { columnIndexPosition: 1 },
           preRegisterExternalExtensions: () => {
             const ext = new ExternalExtension();
-            return [{ name: ExtensionName.rowDetailView, instance: ext }];
+            return [{ name: 'rowDetailView', instance: ext }];
           },
         } as GridOption;
         const extCheckSelectSpy = vi.spyOn(mockCheckboxSelectColumn, 'create');
@@ -834,7 +833,7 @@ describe('ExtensionService', () => {
 
       service.bindDifferentExtensions();
 
-      const columnPickerInstance = service.getExtensionByName(ExtensionName.columnPicker)!.instance;
+      const columnPickerInstance = service.getExtensionByName('columnPicker')!.instance;
       const extSpy = vi.spyOn(columnPickerInstance, 'translateColumnPicker');
       service.translateColumnPicker();
       expect(extSpy).toHaveBeenCalled();
@@ -846,7 +845,7 @@ describe('ExtensionService', () => {
       vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue([]);
 
       service.bindDifferentExtensions();
-      const pluginInstance = service.getExtensionInstanceByName(ExtensionName.cellMenu);
+      const pluginInstance = service.getExtensionInstanceByName('cellMenu');
       const translateSpy = vi.spyOn(pluginInstance, 'translateCellMenu');
       service.translateCellMenu();
 
@@ -858,7 +857,7 @@ describe('ExtensionService', () => {
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
       service.bindDifferentExtensions();
-      const pluginInstance = service.getExtensionInstanceByName(ExtensionName.contextMenu);
+      const pluginInstance = service.getExtensionInstanceByName('contextMenu');
       const translateSpy = vi.spyOn(pluginInstance, 'translateContextMenu');
       service.translateContextMenu();
 
@@ -876,7 +875,7 @@ describe('ExtensionService', () => {
 
       service.bindDifferentExtensions();
       service.renderColumnHeaders(columnsMock);
-      const gridMenuInstance = service.getExtensionInstanceByName(ExtensionName.gridMenu);
+      const gridMenuInstance = service.getExtensionInstanceByName('gridMenu');
       const translateSpy = vi.spyOn(gridMenuInstance, 'translateGridMenu');
       service.translateGridMenu();
 
@@ -890,7 +889,7 @@ describe('ExtensionService', () => {
       vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue([]);
 
       service.bindDifferentExtensions();
-      const pluginInstance = service.getExtensionInstanceByName(ExtensionName.headerMenu);
+      const pluginInstance = service.getExtensionInstanceByName('headerMenu');
       const translateSpy = vi.spyOn(pluginInstance, 'translateHeaderMenu');
       service.translateHeaderMenu();
 
@@ -921,7 +920,7 @@ describe('ExtensionService', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const columnPicker = service.getExtensionByName(ExtensionName.columnPicker);
+        const columnPicker = service.getExtensionByName('columnPicker');
         const translatePickerSpy = vi.spyOn(columnPicker?.instance, 'translateColumnPicker');
         service.translateColumnHeaders('en');
 
@@ -940,7 +939,7 @@ describe('ExtensionService', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const gridMenu = service.getExtensionByName(ExtensionName.gridMenu);
+        const gridMenu = service.getExtensionByName('gridMenu');
         const translateGMSpy = vi.spyOn(gridMenu?.instance, 'translateGridMenu');
         service.translateColumnHeaders('en', columnsBeforeTranslateMock);
 
@@ -1011,7 +1010,7 @@ describe('ExtensionService', () => {
         service.renderColumnHeaders(columnsMock);
 
         expect(setColumnsSpy).toHaveBeenCalledWith(columnsMock);
-        expect(service.getExtensionByName(ExtensionName.columnPicker)!.instance.columns).toEqual(columnsMock);
+        expect(service.getExtensionByName('columnPicker')!.instance.columns).toEqual(columnsMock);
       });
 
       it('should replace the Grid Menu columns when plugin is enabled and method is called with new column definition collection provided as argument', () => {
@@ -1030,7 +1029,7 @@ describe('ExtensionService', () => {
         service.renderColumnHeaders(columnsMock);
 
         expect(setColumnsSpy).toHaveBeenCalledWith(columnsMock);
-        expect(service.getExtensionByName(ExtensionName.gridMenu)!.instance.columns).toEqual(columnsMock);
+        expect(service.getExtensionByName('gridMenu')!.instance.columns).toEqual(columnsMock);
       });
     });
   });

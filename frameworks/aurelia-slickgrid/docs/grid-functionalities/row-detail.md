@@ -465,7 +465,7 @@ Main Grid Component
 ```ts
 import { AureliaRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin'; // for v10 and above
 import { bindable } from 'aurelia';
-import { type AureliaGridInstance, type Column, ExtensionName, type GridOption, type SlickRowDetailView, } from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, type GridOption, type SlickRowDetailView, } from 'aurelia-slickgrid';
 
 export class MainGrid implements OnInit {
   columns: Column[] = [];
@@ -539,7 +539,7 @@ Now, let's define our Inner Grid Component
 
 ```ts
 import { bindable } from 'aurelia';
-import { type AureliaGridInstance, type Column, ExtensionName, type GridOption, type SlickRowDetailView, } from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, type GridOption, type SlickRowDetailView, } from 'aurelia-slickgrid';
 
 export interface Distributor { /* ... */ }
 export interface OrderData { /* ... */ }

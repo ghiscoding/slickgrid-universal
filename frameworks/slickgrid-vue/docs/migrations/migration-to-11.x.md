@@ -196,6 +196,28 @@ workaround.
 | Old preheader per-side border variables and `--slick-frozen-overflow-right` | Remove; no replacements. |
 
 ## Removed Deprecated Code
+
+### `ExtensionName` enum replaced by a string literal type
+
+The `ExtensionName` enum, deprecated in v10, is now removed and replaced by its string literal type to decrease the build size. If you already migrated to string literals in v10, no changes are needed for those values.
+
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression search pattern.
+
+| Search (regex)                      | Replace |
+| ----------------------------------- | ------- |
+| `\bExtensionName\.([A-Za-z_]+)\b` | `'$1'`  |
+
+Below is an abbreviated list of enum values to update; make sure to update them all.
+
+| Enum Name       | from `enum`                   | to string `type`  |
+| --------------- | ----------------------------- | ----------------- |
+| `ExtensionName` | `ExtensionName.autoTooltip`   | `'autoTooltip'`   |
+|                 | `ExtensionName.gridMenu`      | `'gridMenu'`      |
+|                 | `ExtensionName.rowDetailView` | `'rowDetailView'` |
+| ...             | ...                           | ...               |
+
+Remove unused `ExtensionName` imports after replacing the enum values. If you use `ExtensionName` as a type annotation, keep it as an `import type` instead. The `ExtensionNameTypeString` type is also removed; replace it with `ExtensionName`.
+
 ### Row Positioning `rowTopOffsetRenderType`
 
 For Row Detail and RowSpan users that previously required `rowTopOffsetRenderType: 'top'`, no longer require this grid option and is actually being dropped completely. The library now works fine with `rowTopOffsetRenderType: 'transform'` with all plugins, making this option redundant which is why it is being removed. Also please note that the Row Detail `renderMode` option is also removed for the same reason (overlay is now its default positioning).
