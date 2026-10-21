@@ -134,11 +134,9 @@ describe('GridMenuControl', () => {
     },
     commandTitleKey: 'COMMANDS',
     commandItems: [],
-    hideClearAllFiltersCommand: false,
-    hideClearPinningCommand: true,
+    hideCommands: ['clear-pinning', 'toggle-dark-mode'],
     hideForceFitButton: false,
     hideSyncResizeButton: true,
-    hideToggleDarkModeCommand: true,
     onExtensionRegistered: vi.fn(),
     onCommand: () => {},
     onColumnsChanged: () => {},
@@ -1710,6 +1708,66 @@ describe('GridMenuControl', () => {
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         });
 
+        it.each([
+          [{}, ['clear-pinning', 'export-csv']],
+          [{ hideCommands: ['export-csv'] }, ['clear-pinning']],
+          [{ hideCommands: [], showCommands: [] }, ['clear-pinning', 'export-csv']],
+          [{ showCommands: ['toggle-dark-mode'] }, ['clear-pinning', 'export-csv', 'toggle-dark-mode']],
+          [{ showCommands: ['export-text-delimited'] }, ['clear-pinning', 'export-csv', 'export-text-delimited']],
+          [{ showCommands: ['toggle-dark-mode'], hideCommands: ['toggle-dark-mode'] }, ['clear-pinning', 'export-csv']],
+        ] as Array<[GridMenu, string[]]>)('should preserve defaults and apply visibility overrides %j', (gridMenu, expectedCommands) => {
+          const options: GridOption = {
+            ...gridOptionsMock,
+            enableFiltering: false,
+            enableSorting: false,
+            enableTextExport: true,
+            enableExcelExport: false,
+            enablePdfExport: false,
+            gridMenu,
+          };
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(options);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(options);
+          control.columns = columnsMock;
+          control.init();
+
+          expect(options.gridMenu!.commandItems!.map((item) => item !== 'divider' && item.command).sort()).toEqual(expectedCommands.sort());
+        });
+
+        it('should keep unavailable export commands out of the builder and preserve built-in actions and customizations', () => {
+          const customAction = vi.fn();
+          const builder = vi.fn<NonNullable<GridMenu['commandListBuilder']>>((commands) => [
+            { command: 'custom', title: 'Custom', action: customAction },
+            ...commands.map((item) => (item !== 'divider' ? { ...item, iconCssClass: `custom-${item.command}` } : item)),
+          ]);
+          const options: GridOption = {
+            ...gridOptionsMock,
+            enableFiltering: false,
+            enableSorting: false,
+            enableTextExport: false,
+            enableExcelExport: false,
+            enablePdfExport: false,
+            gridMenu: {
+              showCommands: ['toggle-dark-mode', 'export-csv', 'export-excel', 'export-text-delimited', 'export-pdf'],
+              hideCommands: ['clear-pinning'],
+              commandListBuilder: builder,
+            },
+          };
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(options);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(options);
+          control.columns = columnsMock;
+          control.init();
+
+          expect(builder).toHaveBeenCalledTimes(1);
+          expect(builder.mock.calls[0][0]).toEqual([expect.objectContaining({ command: 'toggle-dark-mode', action: expect.any(Function) })]);
+          expect(options.gridMenu!.commandItems).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({ command: 'toggle-dark-mode', iconCssClass: 'custom-toggle-dark-mode', action: expect.any(Function) }),
+              expect.objectContaining({ command: 'custom', action: customAction }),
+            ])
+          );
+          expect(options.gridMenu!.commandItems).toHaveLength(2);
+        });
+
         it('should expect an empty "commandItems" array when both Filter & Sort are disabled', () => {
           control.columns = columnsMock;
           control.init();
@@ -1719,7 +1777,7 @@ describe('GridMenuControl', () => {
         it('should expect menu related to "Clear all Pinning"', () => {
           const copyGridOptionsMock = {
             ...gridOptionsMock,
-            gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearPinningCommand: false, hideToggleDarkModeCommand: true },
+            gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideCommands: ['toggle-dark-mode'] },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
@@ -1815,10 +1873,7 @@ describe('GridMenuControl', () => {
             showHeaderRow: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearPinningCommand: true,
-              hideToggleFilterCommand: true,
-              hideRefreshDatasetCommand: true,
-              hideToggleDarkModeCommand: true,
+              hideCommands: ['clear-pinning', 'toggle-filter', 'refresh-dataset', 'toggle-dark-mode'],
             },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -1847,11 +1902,7 @@ describe('GridMenuControl', () => {
             showHeaderRow: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              // @deprecated `hideXYZ`, replace by `hideCommands` in next major
-              hideClearPinningCommand: true,
-              hideClearAllFiltersCommand: true,
-              hideToggleDarkModeCommand: true,
-              hideRefreshDatasetCommand: true,
+              hideCommands: ['clear-pinning', 'clear-filter', 'toggle-dark-mode', 'refresh-dataset'],
             },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -1878,14 +1929,10 @@ describe('GridMenuControl', () => {
             ...gridOptionsMock,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              // @deprecated `hideXYZ`, replace by `hideCommands` in next major
-              hideClearPinningCommand: true,
-              hideClearAllFiltersCommand: true,
-              hideToggleFilterCommand: true,
-              hideToggleDarkModeCommand: false,
-              hideRefreshDatasetCommand: true,
+              hideCommands: ['clear-pinning', 'clear-filter', 'toggle-filter', 'refresh-dataset'],
             },
           } as unknown as GridOption;
+          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showCommands: ['toggle-dark-mode'] };
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
@@ -1912,11 +1959,7 @@ describe('GridMenuControl', () => {
             showHeaderRow: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              // @deprecated `hideXYZ`, replace by `hideCommands` in next major
-              hideClearPinningCommand: true,
-              hideClearAllFiltersCommand: true,
-              hideToggleDarkModeCommand: true,
-              hideToggleFilterCommand: true,
+              hideCommands: ['clear-pinning', 'clear-filter', 'toggle-dark-mode', 'toggle-filter'],
             },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -1959,15 +2002,13 @@ describe('GridMenuControl', () => {
           ]);
         });
 
-        it('should not have the "toggle-preheader" menu command when "showPreHeaderPanel" and "hideTogglePreHeaderCommand" are set', () => {
+        it('should not have the "toggle-preheader" menu command when "showPreHeaderPanel" and "hideCommands" are set', () => {
           const copyGridOptionsMock = {
             ...gridOptionsMock,
             showPreHeaderPanel: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearPinningCommand: true,
-              hideTogglePreHeaderCommand: true,
-              hideToggleDarkModeCommand: true,
+              hideCommands: ['clear-pinning', 'toggle-preheader', 'toggle-dark-mode'],
             },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -1999,15 +2040,13 @@ describe('GridMenuControl', () => {
           ]);
         });
 
-        it('should not have the "clear-sorting" menu command when "enableSorting" and "hideClearAllSortingCommand" are set', () => {
+        it('should not have the "clear-sorting" menu command when "enableSorting" and "hideCommands" are set', () => {
           const copyGridOptionsMock = {
             ...gridOptionsMock,
             enableSorting: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearPinningCommand: true,
-              hideClearAllSortingCommand: true,
-              hideToggleDarkModeCommand: true,
+              hideCommands: ['clear-pinning', 'clear-sorting', 'toggle-dark-mode'],
             },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -2024,10 +2063,7 @@ describe('GridMenuControl', () => {
             enableTextExport: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearPinningCommand: true,
-              hideExportExcelCommand: true,
-              hideExportTextDelimitedCommand: true,
-              hideToggleDarkModeCommand: true,
+              hideCommands: ['clear-pinning', 'export-excel', 'export-text-delimited', 'toggle-dark-mode'],
             },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -2049,17 +2085,13 @@ describe('GridMenuControl', () => {
           ]);
         });
 
-        it('should not have the "export-csv" menu command when "enableTextExport" and "hideExportCsvCommand" are set', () => {
+        it('should not have the "export-csv" menu command when "enableTextExport" and "hideCommands" are set', () => {
           const copyGridOptionsMock = {
             ...gridOptionsMock,
             enableTextExport: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearPinningCommand: true,
-              hideExportExcelCommand: true,
-              hideExportCsvCommand: true,
-              hideExportTextDelimitedCommand: true,
-              hideToggleDarkModeCommand: true,
+              hideCommands: ['clear-pinning', 'export-excel', 'export-csv', 'export-text-delimited', 'toggle-dark-mode'],
             },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -2077,10 +2109,7 @@ describe('GridMenuControl', () => {
             enableTextExport: false,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearPinningCommand: true,
-              hideExportCsvCommand: true,
-              hideExportExcelCommand: false,
-              hideToggleDarkModeCommand: true,
+              hideCommands: ['clear-pinning', 'export-csv', 'toggle-dark-mode'],
             },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -2110,11 +2139,7 @@ describe('GridMenuControl', () => {
             enableTextExport: false,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearPinningCommand: true,
-              hideExportCsvCommand: true,
-              hideExportExcelCommand: true,
-              hideExportPdfCommand: false,
-              hideToggleDarkModeCommand: true,
+              hideCommands: ['clear-pinning', 'export-csv', 'export-excel', 'toggle-dark-mode'],
             },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -2144,11 +2169,7 @@ describe('GridMenuControl', () => {
             enableTextExport: false,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearPinningCommand: true,
-              hideExportCsvCommand: true,
-              hideExportExcelCommand: true,
-              hideExportPdfCommand: false,
-              hideToggleDarkModeCommand: true,
+              hideCommands: ['clear-pinning', 'export-csv', 'export-excel', 'toggle-dark-mode'],
             },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -2176,12 +2197,10 @@ describe('GridMenuControl', () => {
             enableTextExport: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearPinningCommand: true,
-              hideExportCsvCommand: true,
-              hideExportExcelCommand: true,
-              hideToggleDarkModeCommand: true,
+              hideCommands: ['clear-pinning', 'export-csv', 'export-excel', 'toggle-dark-mode'],
             },
           } as unknown as GridOption;
+          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showCommands: ['export-text-delimited'] };
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
@@ -2201,19 +2220,16 @@ describe('GridMenuControl', () => {
           ]);
         });
 
-        it('should not have the "export-text-delimited" menu command when "enableTextExport" and "hideExportCsvCommand" are set', () => {
+        it('should not have the "export-text-delimited" menu command when "enableTextExport" and "hideCommands" are set', () => {
           const copyGridOptionsMock = {
             ...gridOptionsMock,
             enableTextExport: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideClearPinningCommand: true,
-              hideExportExcelCommand: true,
-              hideExportCsvCommand: true,
-              hideExportTextDelimitedCommand: true,
-              hideToggleDarkModeCommand: true,
+              hideCommands: ['clear-pinning', 'export-excel', 'export-csv', 'export-text-delimited', 'toggle-dark-mode'],
             },
           } as unknown as GridOption;
+          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showCommands: ['export-text-delimited'] };
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
@@ -2236,7 +2252,7 @@ describe('GridMenuControl', () => {
           const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
           const copyGridOptionsMock = {
             ...gridOptionsMock,
-            gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearPinningCommand: false },
+            gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideCommands: [] },
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -2333,7 +2349,7 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "exportToFile" with CSV and expect an error thrown when TextExportService is not registered prior to calling the method', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideExportCsvCommand: false } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideCommands: [] } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
@@ -2350,7 +2366,8 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "exportToFile" with Text Delimited and expect an error thrown when TextExportService is not registered prior to calling the method', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideExportTextDelimitedCommand: false } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideCommands: [] } as unknown as GridOption;
+          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showCommands: ['export-text-delimited'] };
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
@@ -2419,7 +2436,8 @@ describe('GridMenuControl', () => {
 
         it('should call "exportToFile" with Text Delimited set when the command triggered is "export-text-delimited"', () => {
           const exportSpy = vi.spyOn(TextExportServiceStub.prototype, 'exportToFile');
-          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideExportTextDelimitedCommand: false } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideCommands: [] } as unknown as GridOption;
+          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showCommands: ['export-text-delimited'] };
           vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new TextExportServiceStub()]);
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -2435,7 +2453,8 @@ describe('GridMenuControl', () => {
         });
 
         it('should toggle the darkMode grid option when the command triggered is "toggle-dark-mode"', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, darkMode: false, gridMenu: { hideToggleDarkModeCommand: false } } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, darkMode: false, gridMenu: { hideCommands: [] } } as unknown as GridOption;
+          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showCommands: ['toggle-dark-mode'] };
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
@@ -2453,7 +2472,7 @@ describe('GridMenuControl', () => {
             ...gridOptionsMock,
             enableFiltering: true,
             showHeaderRow: false,
-            hideToggleFilterCommand: false,
+            hideCommands: [],
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -2477,7 +2496,7 @@ describe('GridMenuControl', () => {
             ...gridOptionsMock,
             enableFiltering: true,
             showHeaderRow: true,
-            hideToggleFilterCommand: false,
+            hideCommands: [],
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -2493,7 +2512,7 @@ describe('GridMenuControl', () => {
         });
 
         it('should call the grid "setPreHeaderPanelVisibility" method when the command triggered is "toggle-preheader" (on to off)', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: true, hideTogglePreHeaderCommand: false } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: true, hideCommands: [] } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
@@ -2512,7 +2531,7 @@ describe('GridMenuControl', () => {
             ...gridOptionsMock,
             enableFiltering: true,
             hideHeaderRowAfterPageLoad: false,
-            hideRefreshDatasetCommand: false,
+            hideCommands: [],
           } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);

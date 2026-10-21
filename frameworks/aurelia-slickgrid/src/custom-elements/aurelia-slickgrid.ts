@@ -1342,6 +1342,16 @@ export class AureliaSlickgridCustomElement {
       gridOptions
     ) as GridOption;
 
+    // Command visibility lists replace defaults instead of merging array entries by index.
+    for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
+      for (const visibility of ['hideCommands', 'showCommands'] as const) {
+        const commands = gridOptions[menu]?.[visibility];
+        if (commands && options[menu]) {
+          Object.assign(options[menu], { [visibility]: [...commands] });
+        }
+      }
+    }
+
     // if we have a backendServiceApi and the enablePagination is undefined, we'll assume that we do want to see it, else get that defined value
     if (!this.hasBackendInfiniteScroll(gridOptions)) {
       gridOptions.enablePagination = !!(gridOptions.backendServiceApi && gridOptions.enablePagination === undefined

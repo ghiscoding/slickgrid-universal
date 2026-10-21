@@ -1482,6 +1482,16 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       gridOptions
     ) as GridOption;
 
+    // Command visibility lists replace defaults instead of merging array entries by index.
+    for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
+      for (const visibility of ['hideCommands', 'showCommands'] as const) {
+        const commands = gridOptions[menu]?.[visibility];
+        if (commands && options[menu]) {
+          Object.assign(options[menu], { [visibility]: [...commands] });
+        }
+      }
+    }
+
     options.gridId = this.props.gridId;
     options.gridContainerId = `slickGridContainer-${this.props.gridId}`;
 

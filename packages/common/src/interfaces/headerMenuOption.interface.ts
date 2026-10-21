@@ -1,6 +1,9 @@
-import type { HeaderMenuCommandItemCallbackArgs, HeaderMenuLabel, MenuOption } from './index.js';
+import type { BuiltInHeaderMenuCommand, HeaderMenuCommandItemCallbackArgs, HeaderMenuLabel, MenuOption } from './index.js';
 
 export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallbackArgs> {
+  /** Show built-in commands hidden by default. Their features must still be enabled. hideCommands takes precedence. */
+  showCommands?: Array<BuiltInHeaderMenuCommand>;
+
   /** Auto-align drop menu to the left when not enough viewport space to show on the right */
   autoAlign?: boolean;
 
@@ -18,24 +21,6 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
 
   /** @deprecated @use `commandListBuilder` to position order index of the "Filter Shortcuts" menu */
   filterShortcutsPositionOrder?: number;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Column Resize by Content" command in the Header Menu (Grid Option "enableColumnResizeOnDoubleClick" has to also be enabled) */
-  hideColumnResizeByContentCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Remove Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
-  hideClearFilterCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Remove Sort" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
-  hideClearSortCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Clear Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
-  hideFilterCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide Sort (Asc/Desc & Clear Sort) commands in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
-  hideSortCommands?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Hide Column" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
-  hideColumnHideCommand?: boolean;
 
   /** A CSS class to be added to the menu item icon. */
   iconCssClass?: string;

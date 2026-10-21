@@ -294,6 +294,7 @@ vi.mock('@slickgrid-universal/common', async (importOriginal) => {
   const actual = (await importOriginal()) as any;
   return {
     ...actual,
+    GlobalGridOptions: (await import('../../../../common/src/global-grid-options.js')).GlobalGridOptions,
     applyHtmlToElement: (elm: HTMLElement, val: any) => {
       elm.innerHTML = `${val || ''}`;
     },
@@ -794,6 +795,54 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(options.gridMenu!.iconClearAllFiltersCommand).toBe('fi fi-filter-dismiss');
         expect(options.headerMenu!.subItemChevronClass).toBe('fi fi-chevron-right');
         expect(options.contextMenu!.iconCopyCellValueCommand).toBe('fi fi-copy');
+      });
+
+      it.each(['gridMenu', 'contextMenu', 'headerMenu'] as const)(
+        'should replace %s hidden commands without retaining defaults or mutating user options',
+        (menu) => {
+          const hideCommands = [menu === 'contextMenu' ? 'copy' : 'clear-filter'];
+          const options = component.mergeGridOptions({ [menu]: { hideCommands } } as GridOption);
+
+          expect(options[menu]!.hideCommands).toEqual(hideCommands);
+          expect(options[menu]!.hideCommands).not.toBe(hideCommands);
+          expect(hideCommands).toEqual([menu === 'contextMenu' ? 'copy' : 'clear-filter']);
+        }
+      );
+
+      it('should inherit global showCommands while accepting per-grid hideCommands', () => {
+        const previous = GlobalGridOptions.gridMenu!.showCommands;
+        try {
+          GlobalGridOptions.gridMenu!.showCommands = ['toggle-dark-mode'];
+          const options = component.mergeGridOptions({ gridMenu: { hideCommands: ['toggle-dark-mode'] } });
+          expect(options.gridMenu!.showCommands).toEqual(['toggle-dark-mode']);
+          expect(options.gridMenu!.hideCommands).toEqual(['toggle-dark-mode']);
+          expect(GlobalGridOptions.gridMenu!.hideCommands).toBeUndefined();
+        } finally {
+          if (previous === undefined) {
+            delete GlobalGridOptions.gridMenu!.showCommands;
+          } else {
+            GlobalGridOptions.gridMenu!.showCommands = previous;
+          }
+        }
+      });
+
+      it.each(['gridMenu', 'contextMenu', 'headerMenu'] as const)('should replace and clear %s showCommands without mutating inputs', (menu) => {
+        const showCommands = ['sort-asc', 'sort-desc'];
+        const options = component.mergeGridOptions({ [menu]: { showCommands } } as GridOption);
+        expect(options[menu]!.showCommands).toEqual(showCommands);
+        expect(options[menu]!.showCommands).not.toBe(showCommands);
+        const empty = component.mergeGridOptions({ [menu]: { showCommands: [] } } as GridOption);
+        expect(empty[menu]!.showCommands).toEqual([]);
+      });
+
+      it('should allow empty visibility overrides without mutating defaults', () => {
+        const options = component.mergeGridOptions({ gridMenu: { hideCommands: [] }, contextMenu: { hideCommands: [] } } as GridOption);
+        const defaults = component.mergeGridOptions({} as GridOption);
+
+        expect(options.gridMenu!.hideCommands).toEqual([]);
+        expect(options.contextMenu!.hideCommands).toEqual([]);
+        expect(defaults.gridMenu!.hideCommands).toBeUndefined();
+        expect(defaults.contextMenu!.hideCommands).toBeUndefined();
       });
 
       it('should keep the Material menu icons by default', () => {

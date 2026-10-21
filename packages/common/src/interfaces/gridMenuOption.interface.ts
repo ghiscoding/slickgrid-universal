@@ -1,4 +1,5 @@
 import type {
+  BuiltInGridMenuCommand,
   Column,
   GridMenuCallbackArgs,
   GridMenuCommandItemCallbackArgs,
@@ -9,6 +10,9 @@ import type {
 } from './index.js';
 
 export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackArgs> {
+  /** Show built-in commands hidden by default. Their features must still be enabled. hideCommands takes precedence. */
+  showCommands?: Array<BuiltInGridMenuCommand>;
+
   /** Defaults to true, Auto-align drop menu to the left or right depending on grid viewport available space */
   autoAlignSide?: boolean;
 
@@ -64,47 +68,14 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
   /** Defaults to false, which will skip the creation of the Column Picker list inside the Grid Menu */
   hideColumnPickerSection?: boolean;
 
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Clear all Filters" command in the Grid Menu (Grid Option "enableFiltering: true" has to be enabled) */
-  hideClearAllFiltersCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Clear all Sorting" command in the Grid Menu (Grid Option "enableSorting: true" has to be enabled) */
-  hideClearAllSortingCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true, which will hide the "Clear all Pinning" command in the Grid Menu */
-  hideClearPinningCommand?: boolean;
-
   /** Defaults to false, hide the Close button on top right */
   hideCloseButton?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to CSV" command in the Grid Menu (Grid Option "enableTextExport: true" has to be enabled) */
-  hideExportCsvCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to Excel" command in the Grid Menu (Grid Option "enableExcelExport: true" has to be enabled) */
-  hideExportExcelCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to Excel" command in the Grid Menu (Grid Option "enableExcelExport: true" has to be enabled) */
-  hideExportPdfCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to Text Delimited" command in the Grid Menu (Grid Option "enableTextExport: true" has to be enabled) */
-  hideExportTextDelimitedCommand?: boolean;
 
   /** Defaults to false, show/hide 1 of the last 2 checkbox at the end of the picker list */
   hideForceFitButton?: boolean;
 
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Refresh Dataset" command in the Grid Menu (only works with a Backend Service API) */
-  hideRefreshDatasetCommand?: boolean;
-
   /** Defaults to false, show/hide 1 of the last 2 checkbox at the end of the picker list */
   hideSyncResizeButton?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true, which will hide the "Toggle Dark Mode" command in the Grid Menu. */
-  hideToggleDarkModeCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Toggle Filter Row" command in the Grid Menu (Grid Option "enableFiltering: true" has to be enabled) */
-  hideToggleFilterCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true, which will hide the "Toggle Pre-Header Row" (used by draggable grouping) command in the Grid Menu (Grid Option "showPreHeaderPanel: true" has to be enabled) */
-  hideTogglePreHeaderCommand?: boolean;
 
   /** Defaults to "header", where should we display the grid menu button? Should it be inside the "preheader" (when exists) or always inside the column "header" (default). */
   iconButtonContainer?: 'preheader' | 'header';

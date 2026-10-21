@@ -588,7 +588,7 @@ export default class Example12 {
         activateCellOnMenuClick: true, // this is important to know which row index to use for Composite Editor
       },
       gridMenu: {
-        hideToggleDarkModeCommand: false, // disabled command by default
+        showCommands: ['toggle-dark-mode'], // hidden by default
         onCommand: (_, args) => {
           if (args.command === 'toggle-dark-mode') {
             this._darkMode = !this._darkMode; // keep local toggle var in sync

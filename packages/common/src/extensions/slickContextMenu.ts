@@ -38,6 +38,8 @@ import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
  *   };
  */
 export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
+  protected override readonly _defaultHiddenCommands: readonly string[] = ['export-text-delimited'];
+
   protected _originalContextMenu!: ContextMenu;
   protected _defaults = {
     autoAdjustDrop: true, // dropup/dropdown
@@ -69,7 +71,11 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   init(contextMenuOptions?: ContextMenu): void {
     // keep original user context menu, useful when switching locale to translate
     this._originalContextMenu = extend(true, {}, this.sharedService.gridOptions.contextMenu);
-    this._addonOptions = { ...this._defaults, ...contextMenuOptions };
+    this._addonOptions = {
+      ...this._defaults,
+      showCommands: this.sharedService.gridOptions.contextMenu?.showCommands,
+      ...contextMenuOptions,
+    };
 
     // merge the original commands with the built-in internal commands
     const originalCommandItems = Array.isArray(this._addonOptions?.commandItems) ? this._addonOptions.commandItems : [];
@@ -173,7 +179,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     const translationPrefix = getTranslationPrefix(gridOptions);
 
     // show context menu: Copy (cell value)
-    if (contextMenu && !contextMenu.hideCopyCellValueCommand) {
+    if (contextMenu) {
       this.addMissingCommandOrAction(
         {
           _orgTitle: commandLabels?.copyCellValueCommand || '',
@@ -192,7 +198,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     }
 
     // show context menu: Export to file
-    if (gridOptions?.enableTextExport && contextMenu && !contextMenu.hideExportCsvCommand) {
+    if (gridOptions?.enableTextExport && contextMenu) {
       this.addMissingCommandOrAction(
         {
           _orgTitle: commandLabels?.exportCsvCommand || '',
@@ -221,7 +227,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     }
 
     // show context menu: Export to Excel
-    if (gridOptions && gridOptions.enableExcelExport && contextMenu && !contextMenu.hideExportExcelCommand) {
+    if (gridOptions && gridOptions.enableExcelExport && contextMenu) {
       this.addMissingCommandOrAction(
         {
           _orgTitle: commandLabels?.exportExcelCommand || '',
@@ -250,7 +256,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     }
 
     // show context menu: Export to PDF
-    if (gridOptions && gridOptions.enablePdfExport && contextMenu && !contextMenu.hideExportPdfCommand) {
+    if (gridOptions && gridOptions.enablePdfExport && contextMenu) {
       this.addMissingCommandOrAction(
         {
           _orgTitle: commandLabels?.exportPdfCommand || '',
@@ -279,7 +285,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     }
 
     // show context menu: export to text file as tab delimited
-    if (gridOptions?.enableTextExport && contextMenu && !contextMenu.hideExportTextDelimitedCommand) {
+    if (gridOptions?.enableTextExport && contextMenu) {
       this.addMissingCommandOrAction(
         {
           _orgTitle: commandLabels?.exportTextDelimitedCommand || '',
@@ -310,12 +316,12 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     // -- Grouping Commands
     if (gridOptions && (gridOptions.enableGrouping || gridOptions.enableDraggableGrouping || gridOptions.enableTreeData)) {
       // add a divider (separator) between the top sort commands and the other clear commands
-      if (contextMenu && !contextMenu.hideCopyCellValueCommand && !contextMenu.hideCommands?.includes('copy')) {
+      if (contextMenu && !contextMenu.hideCommands?.includes('copy')) {
         menuCommandItems.push({ divider: true, command: 'divider-1', positionOrder: 54 });
       }
 
       // show context menu: Clear Grouping (except for Tree Data which shouldn't have this feature)
-      if (gridOptions && !gridOptions.enableTreeData && contextMenu && !contextMenu.hideClearAllGrouping) {
+      if (gridOptions && !gridOptions.enableTreeData && contextMenu) {
         this.addMissingCommandOrAction(
           {
             _orgTitle: commandLabels?.clearGroupingCommand || '',
@@ -341,7 +347,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       }
 
       // show context menu: Collapse all Groups
-      if (gridOptions && contextMenu && !contextMenu.hideCollapseAllGroups) {
+      if (gridOptions && contextMenu) {
         this.addMissingCommandOrAction(
           {
             _orgTitle: commandLabels?.collapseAllGroupsCommand || '',
@@ -374,7 +380,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       }
 
       // show context menu: Expand all Groups
-      if (gridOptions && contextMenu && !contextMenu.hideExpandAllGroups) {
+      if (gridOptions && contextMenu) {
         this.addMissingCommandOrAction(
           {
             _orgTitle: commandLabels?.expandAllGroupsCommand || '',

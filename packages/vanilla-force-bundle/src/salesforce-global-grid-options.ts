@@ -72,9 +72,6 @@ export const SalesforceGlobalGridOptions = {
     commandLabels: {
       clearPinningCommandKey: 'UNPIN_COLUMNS',
     },
-    hideToggleDarkModeCommand: true,
-    hideTogglePreHeaderCommand: true,
-    hideRefreshDatasetCommand: true,
     hideForceFitButton: true,
   },
   preventDocumentFragmentUsage: true,

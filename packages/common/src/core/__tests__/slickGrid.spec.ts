@@ -363,6 +363,34 @@ describe('SlickGrid core file', () => {
     expect(grid.getCellFromEvent({ target: spanCell } as unknown as Event)).toEqual({ row: 0, cell: 1 });
   });
 
+  it.each([
+    ['gridMenu', 'hideCommands', ['export-text-delimited', 'toggle-dark-mode']],
+    ['contextMenu', 'hideCommands', ['copy', 'export-text-delimited']],
+    ['headerMenu', 'hideCommands', ['sort-asc', 'sort-desc']],
+    ['gridMenu', 'showCommands', ['export-text-delimited', 'toggle-dark-mode']],
+    ['contextMenu', 'showCommands', ['export-text-delimited', 'copy']],
+    ['headerMenu', 'showCommands', ['sort-asc', 'sort-desc']],
+  ] as const)('should replace %s %s during runtime updates', (menu, visibility, initialCommands) => {
+    grid = new SlickGrid(container, [], [{ id: 'id', field: 'id' }], {
+      ...defaultOptions,
+      [menu]: { [visibility]: [...initialCommands], subMenuOpenByEvent: 'mouseover' },
+    });
+    const commands = [initialCommands[0]];
+    grid.setOptions({ [menu]: { [visibility]: commands } });
+
+    expect(grid.getOptions()[menu]![visibility]).toEqual([initialCommands[0]]);
+    expect(grid.getOptions()[menu]![visibility]).not.toBe(commands);
+    expect(commands).toEqual([initialCommands[0]]);
+    expect(grid.getOptions()[menu]!.subMenuOpenByEvent).toBe('mouseover');
+
+    grid.setOptions({ [menu]: { subMenuOpenByEvent: 'click' } });
+    expect(grid.getOptions()[menu]![visibility]).toEqual([initialCommands[0]]);
+    expect(grid.getOptions()[menu]!.subMenuOpenByEvent).toBe('click');
+
+    grid.setOptions({ [menu]: { [visibility]: [] } });
+    expect(grid.getOptions()[menu]![visibility]).toEqual([]);
+  });
+
   it('should be able to instantiate SlickGrid and get columns', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class', headerCellAttrs: { 'some-attr': 3 } },

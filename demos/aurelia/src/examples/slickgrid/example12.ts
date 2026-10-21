@@ -194,8 +194,7 @@ export class Example12 {
         hideLastUpdateTimestamp: false,
       },
       gridMenu: {
-        hideExportCsvCommand: false, // false by default, so it's optional
-        hideExportTextDelimitedCommand: false, // true by default, so if you want it, you will need to disable the flag
+        showCommands: ['export-text-delimited'], // hidden by default
       },
       enableExcelExport: true,
       enableTextExport: true,

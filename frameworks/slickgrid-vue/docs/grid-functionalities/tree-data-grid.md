@@ -27,7 +27,7 @@ For Tree Data to work with SlickGrid we need to **mutate** the original dataset,
 
 #### Filtering is required by Tree Data
 
-Tree Data requires and uses Filters to work, you **cannot disable Filtering**. The way it works is that when you collapse a parent group, the grid is actually using Filters to filter out child rows and so expanding/collapsing groups which is why Filtering must be enabled. If you don't want to show Filters to the user, then use `showHeaderRow: false` grid option and/or toggle it from the Grid Menu. Also, if you don't want to see the Grid Menu toggle filter command, you should also hide it from the menu via `gridMenu: { hideToggleFilterCommand: true }`
+Tree Data requires and uses Filters to work, you **cannot disable Filtering**. The way it works is that when you collapse a parent group, the grid is actually using Filters to filter out child rows and so expanding/collapsing groups which is why Filtering must be enabled. If you don't want to show Filters to the user, then use `showHeaderRow: false` grid option and/or toggle it from the Grid Menu. Also, if you don't want to see the Grid Menu toggle filter command, you should also hide it from the menu via `gridMenu: { hideCommands: ['toggle-filter'] }`
 
 ### Demo
 [Demo Parent/Child Relationship](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example27) / [ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example27.vue)

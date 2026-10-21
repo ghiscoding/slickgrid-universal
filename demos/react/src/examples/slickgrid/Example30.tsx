@@ -532,7 +532,7 @@ const Example30: React.FC = () => {
         activateCellOnMenuClick: true, // this is important to know which row index to use for Composite Editor
       },
       gridMenu: {
-        hideToggleDarkModeCommand: false, // hidden by default
+        showCommands: ['toggle-dark-mode'], // hidden by default
         onCommand: (_, args) => {
           if (args.command === 'toggle-dark-mode') {
             const newDarkMode = !darkMode;

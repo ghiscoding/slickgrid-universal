@@ -134,7 +134,6 @@ export class Example09 {
         iconCssClass: 'mdi mdi-dots-vertical', // defaults to "mdi-menu"
         hideForceFitButton: true,
         hideSyncResizeButton: true,
-        hideToggleFilterCommand: false, // show/hide internal custom commands
         menuWidth: 17,
         resizeOnShowHeaderRow: true,
         subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',

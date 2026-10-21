@@ -84,6 +84,16 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
       gridOptions
     );
 
+    // Command visibility lists replace defaults instead of merging array entries by index.
+    for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
+      for (const visibility of ['hideCommands', 'showCommands'] as const) {
+        const commands = gridOptions[menu]?.[visibility];
+        if (commands && options[menu]) {
+          Object.assign(options[menu], { [visibility]: [...commands] });
+        }
+      }
+    }
+
     // also make sure to show the header row if user have enabled filtering
     if (options.enableFiltering && !options.showHeaderRow) {
       options.showHeaderRow = options.enableFiltering;

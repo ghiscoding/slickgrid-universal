@@ -40,7 +40,7 @@ const gridOptionsMock = {
   },
   headerMenu: {
     buttonCssClass: 'mdi mdi-chevron-down',
-    hideColumnResizeByContentCommand: false,
+    hideCommands: [],
     hideForceFitButton: false,
     hideSyncResizeButton: true,
     onExtensionRegistered: vi.fn(),
@@ -172,8 +172,7 @@ describe('HeaderMenu Plugin', () => {
       autoAlignOffset: 0,
       buttonCssClass: null,
       buttonImage: null,
-      hideColumnHideCommand: false,
-      hideSortCommands: false,
+      hideCommands: [],
       minWidth: 100,
       title: '',
       subMenuOpenByEvent: 'mouseover',
@@ -296,7 +295,7 @@ describe('HeaderMenu Plugin', () => {
 
     it('should populate a Header Menu when cell is being rendered and a 2nd button item visibility & usability callbacks returns true', () => {
       plugin.dispose();
-      plugin.init({ hideFilterCommand: false });
+      plugin.init({ hideCommands: [] });
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
 
@@ -694,7 +693,7 @@ describe('HeaderMenu Plugin', () => {
         sharedService.slickGrid = gridStub;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideColumnResizeByContentCommand: true },
+          headerMenu: { hideCommands: ['column-resize-by-content'] },
         });
         vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
         vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
@@ -1394,7 +1393,7 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it.each(['pinning-commands', 'pinnable'])('should remove stale pinning commands and separators when disabling %s', (setting) => {
-        const headerMenu: HeaderMenu = { hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, hideCommands: [] };
+        const headerMenu: HeaderMenu = { hideCommands: ['hide-column', 'column-resize-by-content'] };
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, headerMenu });
         const testColumns = [{ id: 'field1', field: 'field1', pinnable: true }] as Column[];
 
@@ -1402,14 +1401,14 @@ describe('HeaderMenu Plugin', () => {
         expect(getPinningCommand(testColumns[0], 'pin-left')).toBeTruthy();
 
         if (setting === 'pinning-commands') {
-          headerMenu.hideCommands = ['pinning-commands'];
+          headerMenu.hideCommands = ['hide-column', 'column-resize-by-content', 'pinning-commands'];
         } else {
           testColumns[0].pinnable = false;
         }
         (plugin as any).recreateHeaderMenu(testColumns);
         expect(testColumns[0].header?.menu?.commandItems).toEqual([]);
 
-        headerMenu.hideCommands = [];
+        headerMenu.hideCommands = ['hide-column', 'column-resize-by-content'];
         testColumns[0].pinnable = true;
         (plugin as any).recreateHeaderMenu(testColumns);
         expect(getPinningCommand(testColumns[0], 'pin-left')).toBeTruthy();
@@ -1514,7 +1513,7 @@ describe('HeaderMenu Plugin', () => {
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hideCommands: ['hide-column', 'column-resize-by-content'] },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
@@ -1541,7 +1540,7 @@ describe('HeaderMenu Plugin', () => {
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hideCommands: ['hide-column', 'column-resize-by-content'] },
           pinning: { columns: { left: 1 } },
         });
 
@@ -1586,7 +1585,7 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hideCommands: ['hide-column', 'column-resize-by-content'] },
         });
         vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ pinning: { columns: { left: [] } } } as GridOption);
 
@@ -1613,8 +1612,7 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: {
-            hideColumnHideCommand: true,
-            hideColumnResizeByContentCommand: true,
+            hideCommands: ['hide-column', 'column-resize-by-content'],
           },
         });
 
@@ -1634,10 +1632,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableFiltering: true,
           headerMenu: {
-            hideFilterCommand: false,
-            hideCommands: ['pinning-commands'],
-            hideColumnHideCommand: true,
-            hideColumnResizeByContentCommand: true,
+            hideCommands: ['pinning-commands', 'hide-column', 'column-resize-by-content'],
           },
         });
 
@@ -1685,7 +1680,6 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           headerMenu: {
             hideCommands: ['pinning-commands'],
-            hideColumnResizeByContentCommand: false,
           },
         });
 
@@ -1819,14 +1813,14 @@ describe('HeaderMenu Plugin', () => {
         expect(setValueMock).toHaveBeenCalledWith(['A'], '<', true);
       });
 
-      it('should expect only the "hide-column" command in the menu when "enableSorting" and "hideSortCommands" are set and also expect the command to execute necessary callback', () => {
+      it('should expect only the "hide-column" command in the menu when "enableSorting" and "hideCommands" are set and also expect the command to execute necessary callback', () => {
         vi.spyOn(sharedService.slickGrid, 'getColumnIndex').mockReturnValue(1);
         vi.spyOn(sharedService.slickGrid, 'getColumns').mockReturnValue(columnsMock);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableSorting: true,
           enableColumnResizeOnDoubleClick: false,
-          headerMenu: { hideColumnHideCommand: false, hideSortCommands: true, hideCommands: ['pin-column'] },
+          headerMenu: { hideCommands: ['pin-column', 'sort-asc', 'sort-desc', 'clear-sort'] },
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate hide column menu
@@ -1865,10 +1859,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableFiltering: true,
           headerMenu: {
-            hideFilterCommand: false,
-            hideCommands: ['pinning-commands'],
-            hideColumnHideCommand: true,
-            hideColumnResizeByContentCommand: true,
+            hideCommands: ['pinning-commands', 'hide-column', 'column-resize-by-content'],
           },
         });
 
@@ -1908,9 +1899,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableSorting: true,
           headerMenu: {
-            hideCommands: ['pinning-commands'],
-            hideColumnHideCommand: true,
-            hideColumnResizeByContentCommand: true,
+            hideCommands: ['pinning-commands', 'hide-column', 'column-resize-by-content'],
           },
         });
 
@@ -2035,7 +2024,7 @@ describe('HeaderMenu Plugin', () => {
         sharedService.hasColumnsReordered = false;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hideCommands: ['hide-column', 'column-resize-by-content'] },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: originalColumnDefinitions, grid: gridStub }, eventData as any, gridStub);
@@ -2068,7 +2057,7 @@ describe('HeaderMenu Plugin', () => {
         sharedService.hasColumnsReordered = true;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
-          headerMenu: { hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          headerMenu: { hideCommands: ['hide-column', 'column-resize-by-content'] },
         });
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: visibleColumnDefinitions, grid: gridStub }, eventData as any, gridStub);
@@ -2098,9 +2087,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableSorting: true,
           headerMenu: {
-            hideCommands: ['pinning-commands'],
-            hideColumnHideCommand: true,
-            hideColumnResizeByContentCommand: true,
+            hideCommands: ['pinning-commands', 'hide-column', 'column-resize-by-content'],
           },
         });
 
@@ -2164,9 +2151,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableSorting: true,
           headerMenu: {
-            hideCommands: ['pinning-commands'],
-            hideColumnHideCommand: true,
-            hideColumnResizeByContentCommand: true,
+            hideCommands: ['pinning-commands', 'hide-column', 'column-resize-by-content'],
           },
         });
 
@@ -2230,9 +2215,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           enableSorting: true,
           headerMenu: {
-            hideCommands: ['pinning-commands'],
-            hideColumnHideCommand: true,
-            hideColumnResizeByContentCommand: true,
+            hideCommands: ['pinning-commands', 'hide-column', 'column-resize-by-content'],
           },
         });
 
@@ -2272,9 +2255,7 @@ describe('HeaderMenu Plugin', () => {
           enableSorting: true,
           backendServiceApi: undefined,
           headerMenu: {
-            hideCommands: ['pinning-commands'],
-            hideColumnHideCommand: true,
-            hideColumnResizeByContentCommand: true,
+            hideCommands: ['pinning-commands', 'hide-column', 'column-resize-by-content'],
           },
         });
 
@@ -2307,9 +2288,7 @@ describe('HeaderMenu Plugin', () => {
           enableSorting: true,
           backendServiceApi: undefined,
           headerMenu: {
-            hideCommands: ['pinning-commands'],
-            hideColumnHideCommand: true,
-            hideColumnResizeByContentCommand: true,
+            hideCommands: ['pinning-commands', 'hide-column', 'column-resize-by-content'],
           },
         });
 
@@ -2342,9 +2321,7 @@ describe('HeaderMenu Plugin', () => {
           enableSorting: true,
           backendServiceApi: undefined,
           headerMenu: {
-            hideCommands: ['pinning-commands'],
-            hideColumnHideCommand: true,
-            hideColumnResizeByContentCommand: true,
+            hideCommands: ['pinning-commands', 'hide-column', 'column-resize-by-content'],
           },
         });
 

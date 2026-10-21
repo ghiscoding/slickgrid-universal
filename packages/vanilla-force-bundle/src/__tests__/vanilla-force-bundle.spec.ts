@@ -255,6 +255,7 @@ vi.mock('@slickgrid-universal/common', async (importOriginal) => {
   const actual = (await importOriginal()) as any;
   return {
     ...actual,
+    GlobalGridOptions: (await import('../../../common/src/global-grid-options.js')).GlobalGridOptions,
     applyHtmlToElement: (elm: HTMLElement, val: any) => {
       elm.innerHTML = `${val || ''}`;
     },
@@ -447,6 +448,29 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         expect(component.gridOptions.autoCommitEdit).toEqual(false);
         expect(setOptionSpy).toHaveBeenCalledWith(mockGridOptions, false, true);
         expect(sharedOptionSpy).toHaveBeenCalledWith(mockGridOptions);
+      });
+
+      it.each([false, true])('should replace hidden commands with Salesforce defaults enabled: %s', (useSalesforceDefaultGridOptions) => {
+        const hideCommands = ['export-text-delimited'] as const;
+        const input: GridOption = {
+          useSalesforceDefaultGridOptions,
+          gridMenu: { hideCommands: [...hideCommands], showCommands: ['toggle-dark-mode'] },
+          contextMenu: { hideCommands: [] },
+          headerMenu: { hideCommands: ['sort-asc'] },
+        };
+        const options = component.mergeGridOptions(input);
+
+        expect(options.gridMenu!.hideCommands).toEqual(hideCommands);
+        expect(options.gridMenu!.hideCommands).not.toBe(input.gridMenu!.hideCommands);
+        expect(input.gridMenu!.hideCommands).toEqual(hideCommands);
+        expect(options.gridMenu!.showCommands).toEqual(['toggle-dark-mode']);
+        expect(options.gridMenu!.showCommands).not.toBe(input.gridMenu!.showCommands);
+        expect(options.contextMenu!.hideCommands).toEqual([]);
+        expect(options.headerMenu!.hideCommands).toEqual(['sort-asc']);
+
+        const defaults = component.mergeGridOptions({ useSalesforceDefaultGridOptions });
+        expect(defaults.gridMenu!.hideCommands).toBeUndefined();
+        expect(defaults.contextMenu!.hideCommands).toBeUndefined();
       });
 
       it('should merge paginationOptions when some already exist', () => {

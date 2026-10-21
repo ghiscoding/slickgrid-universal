@@ -37,6 +37,8 @@ import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type Men
  * @constructor
  */
 export class SlickGridMenu extends MenuBaseClass<GridMenu> {
+  protected override readonly _defaultHiddenCommands: readonly string[] = ['export-text-delimited', 'toggle-dark-mode'];
+
   // public events
   onAfterMenuShow: SlickEvent<GridMenuEventWithElementCallbackArgs>;
   onBeforeMenuShow: SlickEvent<GridMenuEventWithElementCallbackArgs>;
@@ -556,66 +558,60 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
     if (this._addonOptions && this.gridOptions) {
       // show grid menu: Clear all Pinning
-      if (!this._addonOptions.hideClearPinningCommand) {
+      this.addMissingCommandOrAction(
+        {
+          iconCssClass: this._addonOptions.iconClearAllPinningCommand || 'mdi mdi-pin-off-outline',
+          _orgTitle: commandLabels?.clearPinningCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.clearPinningCommandKey ?? 'CLEAR_ALL_PINNING'}`,
+          disabled: false,
+          command: 'clear-pinning',
+          positionOrder: 52,
+          action: this.clearPinning.bind(this),
+        },
+        this._addonOptions.hideCommands,
+        gridMenuCommandItems,
+        originalCommandItems
+      );
+
+      if (this.gridOptions.enableFiltering && !this.sharedService.hideHeaderRowAfterPageLoad) {
+        // show grid menu: Clear all Filters
         this.addMissingCommandOrAction(
           {
-            iconCssClass: this._addonOptions.iconClearAllPinningCommand || 'mdi mdi-pin-off-outline',
-            _orgTitle: commandLabels?.clearPinningCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.clearPinningCommandKey ?? 'CLEAR_ALL_PINNING'}`,
+            iconCssClass: this._addonOptions.iconClearAllFiltersCommand || 'mdi mdi-filter-remove-outline',
+            _orgTitle: commandLabels?.clearAllFiltersCommand || '',
+            titleKey: `${translationPrefix}${commandLabels?.clearAllFiltersCommandKey ?? 'CLEAR_ALL_FILTERS'}`,
             disabled: false,
-            command: 'clear-pinning',
-            positionOrder: 52,
-            action: this.clearPinning.bind(this),
+            command: 'clear-filter',
+            positionOrder: 50,
+            action: () => {
+              this.filterService.clearFilters();
+              this.sharedService.dataView.refresh();
+              this.pubSubService.publish('onGridMenuClearAllFilters');
+            },
           },
           this._addonOptions.hideCommands,
           gridMenuCommandItems,
           originalCommandItems
         );
-      }
-
-      if (this.gridOptions.enableFiltering && !this.sharedService.hideHeaderRowAfterPageLoad) {
-        // show grid menu: Clear all Filters
-        if (!this._addonOptions.hideClearAllFiltersCommand) {
-          this.addMissingCommandOrAction(
-            {
-              iconCssClass: this._addonOptions.iconClearAllFiltersCommand || 'mdi mdi-filter-remove-outline',
-              _orgTitle: commandLabels?.clearAllFiltersCommand || '',
-              titleKey: `${translationPrefix}${commandLabels?.clearAllFiltersCommandKey ?? 'CLEAR_ALL_FILTERS'}`,
-              disabled: false,
-              command: 'clear-filter',
-              positionOrder: 50,
-              action: () => {
-                this.filterService.clearFilters();
-                this.sharedService.dataView.refresh();
-                this.pubSubService.publish('onGridMenuClearAllFilters');
-              },
-            },
-            this._addonOptions.hideCommands,
-            gridMenuCommandItems,
-            originalCommandItems
-          );
-        }
 
         // show grid menu: toggle filter row
-        if (!this._addonOptions.hideToggleFilterCommand) {
-          this.addMissingCommandOrAction(
-            {
-              iconCssClass: this._addonOptions.iconToggleFilterCommand || 'mdi mdi-flip-vertical',
-              _orgTitle: commandLabels?.toggleFilterCommand || '',
-              titleKey: `${translationPrefix}${commandLabels?.toggleFilterCommandKey ?? 'TOGGLE_FILTER_ROW'}`,
-              disabled: false,
-              command: 'toggle-filter',
-              positionOrder: 53,
-              action: this.toggleFilterBar.bind(this),
-            },
-            this._addonOptions.hideCommands,
-            gridMenuCommandItems,
-            originalCommandItems
-          );
-        }
+        this.addMissingCommandOrAction(
+          {
+            iconCssClass: this._addonOptions.iconToggleFilterCommand || 'mdi mdi-flip-vertical',
+            _orgTitle: commandLabels?.toggleFilterCommand || '',
+            titleKey: `${translationPrefix}${commandLabels?.toggleFilterCommandKey ?? 'TOGGLE_FILTER_ROW'}`,
+            disabled: false,
+            command: 'toggle-filter',
+            positionOrder: 53,
+            action: this.toggleFilterBar.bind(this),
+          },
+          this._addonOptions.hideCommands,
+          gridMenuCommandItems,
+          originalCommandItems
+        );
 
         // show grid menu: refresh dataset
-        if (backendApi && !this._addonOptions.hideRefreshDatasetCommand) {
+        if (backendApi) {
           this.addMissingCommandOrAction(
             {
               iconCssClass: this._addonOptions.iconRefreshDatasetCommand || 'mdi mdi-sync',
@@ -634,19 +630,38 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       }
 
       // show grid menu: toggle dark mode
-      if (!this._addonOptions.hideToggleDarkModeCommand) {
+      this.addMissingCommandOrAction(
+        {
+          iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'mdi mdi-brightness-4',
+          _orgTitle: commandLabels?.toggleDarkModeCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.toggleDarkModeCommandKey ?? 'TOGGLE_DARK_MODE'}`,
+          disabled: false,
+          command: 'toggle-dark-mode',
+          positionOrder: 54,
+          action: () => {
+            const currentDarkMode = this.sharedService.gridOptions.darkMode;
+            this.grid.setOptions({ darkMode: !currentDarkMode });
+            this.sharedService.gridOptions.darkMode = !currentDarkMode;
+          },
+        },
+        this._addonOptions.hideCommands,
+        gridMenuCommandItems,
+        originalCommandItems
+      );
+
+      if (this.gridOptions.showPreHeaderPanel) {
+        // show grid menu: toggle pre-header row
         this.addMissingCommandOrAction(
           {
-            iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'mdi mdi-brightness-4',
-            _orgTitle: commandLabels?.toggleDarkModeCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.toggleDarkModeCommandKey ?? 'TOGGLE_DARK_MODE'}`,
+            iconCssClass: this._addonOptions.iconTogglePreHeaderCommand || 'mdi mdi-flip-vertical',
+            _orgTitle: commandLabels?.togglePreHeaderCommand || '',
+            titleKey: `${translationPrefix}${commandLabels?.togglePreHeaderCommandKey ?? 'TOGGLE_PRE_HEADER_ROW'}`,
             disabled: false,
-            command: 'toggle-dark-mode',
-            positionOrder: 54,
+            command: 'toggle-preheader',
+            positionOrder: 53,
             action: () => {
-              const currentDarkMode = this.sharedService.gridOptions.darkMode;
-              this.grid.setOptions({ darkMode: !currentDarkMode });
-              this.sharedService.gridOptions.darkMode = !currentDarkMode;
+              const showPreHeaderPanel = this.gridOptions?.showPreHeaderPanel ?? false;
+              this.grid.setPreHeaderPanelVisibility(!showPreHeaderPanel);
             },
           },
           this._addonOptions.hideCommands,
@@ -655,55 +670,30 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         );
       }
 
-      if (this.gridOptions.showPreHeaderPanel) {
-        // show grid menu: toggle pre-header row
-        if (!this._addonOptions.hideTogglePreHeaderCommand) {
-          this.addMissingCommandOrAction(
-            {
-              iconCssClass: this._addonOptions.iconTogglePreHeaderCommand || 'mdi mdi-flip-vertical',
-              _orgTitle: commandLabels?.togglePreHeaderCommand || '',
-              titleKey: `${translationPrefix}${commandLabels?.togglePreHeaderCommandKey ?? 'TOGGLE_PRE_HEADER_ROW'}`,
-              disabled: false,
-              command: 'toggle-preheader',
-              positionOrder: 53,
-              action: () => {
-                const showPreHeaderPanel = this.gridOptions?.showPreHeaderPanel ?? false;
-                this.grid.setPreHeaderPanelVisibility(!showPreHeaderPanel);
-              },
-            },
-            this._addonOptions.hideCommands,
-            gridMenuCommandItems,
-            originalCommandItems
-          );
-        }
-      }
-
       if (this.gridOptions.enableSorting) {
         // show grid menu: Clear all Sorting
-        if (!this._addonOptions.hideClearAllSortingCommand) {
-          this.addMissingCommandOrAction(
-            {
-              iconCssClass: this._addonOptions.iconClearAllSortingCommand || 'mdi mdi-sort-variant-off',
-              _orgTitle: commandLabels?.clearAllSortingCommand || '',
-              titleKey: `${translationPrefix}${commandLabels?.clearAllSortingCommandKey ?? 'CLEAR_ALL_SORTING'}`,
-              disabled: false,
-              command: 'clear-sorting',
-              positionOrder: 51,
-              action: () => {
-                this.sortService.clearSorting();
-                this.sharedService.dataView.refresh();
-                this.pubSubService.publish('onGridMenuClearAllSorting');
-              },
+        this.addMissingCommandOrAction(
+          {
+            iconCssClass: this._addonOptions.iconClearAllSortingCommand || 'mdi mdi-sort-variant-off',
+            _orgTitle: commandLabels?.clearAllSortingCommand || '',
+            titleKey: `${translationPrefix}${commandLabels?.clearAllSortingCommandKey ?? 'CLEAR_ALL_SORTING'}`,
+            disabled: false,
+            command: 'clear-sorting',
+            positionOrder: 51,
+            action: () => {
+              this.sortService.clearSorting();
+              this.sharedService.dataView.refresh();
+              this.pubSubService.publish('onGridMenuClearAllSorting');
             },
-            this._addonOptions.hideCommands,
-            gridMenuCommandItems,
-            originalCommandItems
-          );
-        }
+          },
+          this._addonOptions.hideCommands,
+          gridMenuCommandItems,
+          originalCommandItems
+        );
       }
 
       // show grid menu: Export to file
-      if (this.gridOptions.enableTextExport && !this._addonOptions.hideExportCsvCommand) {
+      if (this.gridOptions.enableTextExport) {
         this.addMissingCommandOrAction(
           {
             iconCssClass: this._addonOptions.iconExportCsvCommand || 'mdi mdi-download',
@@ -721,7 +711,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       }
 
       // show grid menu: Export to Excel
-      if (this.gridOptions.enableExcelExport && !this._addonOptions.hideExportExcelCommand) {
+      if (this.gridOptions.enableExcelExport) {
         this.addMissingCommandOrAction(
           {
             iconCssClass: this._addonOptions.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
@@ -739,7 +729,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       }
 
       // show grid menu: Export to PDF
-      if (this.gridOptions.enablePdfExport && !this._addonOptions.hideExportPdfCommand) {
+      if (this.gridOptions.enablePdfExport) {
         this.addMissingCommandOrAction(
           {
             iconCssClass: this._addonOptions.iconExportPdfCommand || 'mdi mdi-file-pdf-outline text-danger',
@@ -757,7 +747,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       }
 
       // show grid menu: export to text file as tab delimited
-      if (this.gridOptions.enableTextExport && !this._addonOptions.hideExportTextDelimitedCommand) {
+      if (this.gridOptions.enableTextExport) {
         this.addMissingCommandOrAction(
           {
             iconCssClass: this._addonOptions.iconExportTextDelimitedCommand || 'mdi mdi-download',
@@ -881,9 +871,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       iconCssClass: 'mdi mdi-menu',
       menuWidth: 16,
       commandItems: [],
-      hideClearAllFiltersCommand: false,
-      hideRefreshDatasetCommand: false,
-      hideToggleFilterCommand: false,
+      hideCommands: [],
     };
   }
 

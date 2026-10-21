@@ -196,6 +196,62 @@ workaround.
 | `$slick-preheader-border-right` / `--slick-preheader-border-right` | `$slick-preheader-border-color` / `--slick-preheader-border-color` |
 | Old preheader per-side border variables and `--slick-frozen-overflow-right` | Remove; no replacements. |
 
+## Menu command visibility
+
+The deprecated command visibility flags (`hide...Command`, grouping flags, `hideFilterCommand`, and `hideSortCommands`) have been removed. Use `hideCommands` to hide built-in commands, or `commandListBuilder` to filter, reorder, and customize the command list.
+
+```diff
+ gridMenu: {
+-  hideToggleDarkModeCommand: false,
+-  hideExportCsvCommand: true,
++  showCommands: ['toggle-dark-mode'],
++  hideCommands: ['export-csv'],
+ }
+```
+
+Commands keep their default visibility. Grid Menu hides `export-text-delimited` and `toggle-dark-mode` by default; Context Menu hides `export-text-delimited`; Header Menu hides no commands. Use `showCommands` to enable commands hidden by default and `hideCommands` to hide additional commands. When an ID appears in both lists, `hideCommands` takes precedence. Empty lists keep the default visibility. These overrides are applied before `commandListBuilder`, which keeps its existing input and execution order. Global `showCommands` defaults can be overridden by a grid's `hideCommands`. Commands still require their corresponding grid features to be enabled.
+
+**Additional breaking change: command visibility arrays replace inherited lists.** For `gridMenu`, `contextMenu`, and `headerMenu`, a supplied `hideCommands` or `showCommands` array replaces the corresponding global/default array when grid options are merged, and replaces the previous array during `grid.setOptions()` updates. Previously, `hideCommands` arrays merged by index, which could leave entries from the previous list. Omitting a property preserves its inherited/current value; supplying `[]` clears that property's explicit overrides. Built-in menu visibility defaults remain separate: clearing `hideCommands` does not reveal default-hidden commands unless they are also enabled through `showCommands`.
+
+```ts
+// Application global configuration:
+GlobalGridOptions.gridMenu = {
+  ...GlobalGridOptions.gridMenu,
+  hideCommands: ['export-csv', 'export-excel'],
+};
+
+// Grid-specific configuration replaces that exclusion list:
+const gridOptions: GridOption = {
+  gridMenu: { hideCommands: ['clear-sorting'] },
+};
+```
+
+A previous `hide...: true` maps to `hideCommands`. For commands hidden by default, a previous `hide...: false` maps to `showCommands`; other `false` flags can simply be omitted. Resource registration and feature enablement stay the same.
+
+| Removed option | Command IDs (`true`: add to `hideCommands`; `false`: add to `showCommands`) |
+| --- | --- |
+| `hideClearAllFiltersCommand` | `clear-filter` |
+| `hideClearAllSortingCommand` | `clear-sorting` |
+| `hideClearPinningCommand` | `clear-pinning` |
+| `hideExportCsvCommand` | `export-csv` |
+| `hideExportExcelCommand` | `export-excel` |
+| `hideExportPdfCommand` | `export-pdf` |
+| `hideExportTextDelimitedCommand` | `export-text-delimited` |
+| `hideRefreshDatasetCommand` | `refresh-dataset` |
+| `hideToggleDarkModeCommand` | `toggle-dark-mode` |
+| `hideToggleFilterCommand` | `toggle-filter` |
+| `hideTogglePreHeaderCommand` | `toggle-preheader` |
+| `hideCopyCellValueCommand` | `copy` |
+| `hideClearAllGrouping` | `clear-grouping` |
+| `hideCollapseAllGroups` | `collapse-all-groups` |
+| `hideExpandAllGroups` | `expand-all-groups` |
+| `hideColumnResizeByContentCommand` | `column-resize-by-content` |
+| `hideClearFilterCommand` | `clear-filter` |
+| `hideClearSortCommand` | `clear-sort` |
+| `hideFilterCommand` | `clear-filter` |
+| `hideSortCommands` | `sort-asc`, `sort-desc`, `clear-sort` |
+| `hideColumnHideCommand` | `hide-column` |
+
 ## Removed Deprecated Code
 
 ### `ExtensionName` enum replaced by a string literal type
