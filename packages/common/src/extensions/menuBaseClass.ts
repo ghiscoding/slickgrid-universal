@@ -304,10 +304,11 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     const isGridMenu = this._camelPluginName === 'gridMenu';
     const menuPrefix = isGridMenu ? 'gridmenu-' : '';
 
-    let processedColumns = this._columns;
+    const excludeKey = isGridMenu ? 'excludeFromGridMenu' : 'excludeFromColumnPicker';
+    let processedColumns = this._columns.filter((column) => !column[excludeKey]);
     if (typeof addonOptions?.columnSort === 'function') {
       // create a sorted copy of the columns array based on the "name" property
-      processedColumns = [...this._columns].sort(addonOptions.columnSort);
+      processedColumns.sort(addonOptions.columnSort);
     }
 
     // execute column list builder to allow user to filter/sort columns
@@ -318,11 +319,6 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     for (const column of processedColumns) {
       const columnId = column.id;
       const columnLiElm = createDomElement('li', { tabIndex: -1 });
-
-      // deprecated, let's filter out the exclude columns before `columnListBuilder` above (let's do that in next major v11)
-      if ((column.excludeFromColumnPicker && !isGridMenu) || (column.excludeFromGridMenu && isGridMenu)) {
-        columnLiElm.className = 'hidden';
-      }
 
       const inputId = `${this._gridUid}-${menuPrefix}colpicker-${columnId}`;
       const isChecked = this.grid.getVisibleColumns().some((col) => col.id === columnId && !col.hidden);

@@ -79,29 +79,19 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
   // });
 
   it('should hide the "Start" column from the Column Picker', () => {
-    const expectedTitles = ['', 'Description', 'Duration', 'Title', '% Complete', 'Start', 'Completed'];
+    const expectedTitles = ['Description', 'Duration', 'Title', '% Complete', 'Start', 'Completed'];
 
     cy.get('#grid15').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
       .children()
+      .should('have.length', expectedTitles.length)
       .each(($child, index) => {
-        if (index === 0) {
-          expect($child[0].className).to.eq('hidden');
-          expect($child[0].offsetHeight).to.eq(0);
-          expect($child[0].offsetWidth).to.eq(0);
-        }
-
         expect($child.text()).to.eq(expectedTitles[index]);
       });
 
-    cy.get('.slick-column-picker')
-      .find('.slick-column-picker-list')
-      .children('li:nth-child(6)')
-      .children('label')
-      .should('contain', 'Start')
-      .click();
+    cy.get('.slick-column-picker').find('.slick-column-picker-list').children('li').children('label').contains('Start').click();
 
     cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
   });
@@ -268,7 +258,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
   });
 
   it('should have French titles in Column Picker after switching to Language', () => {
-    const expectedTitles = ['', 'Description', 'Durée', 'Titre', '% Achevée', 'Début', 'Terminé'];
+    const expectedTitles = ['Description', 'Durée', 'Titre', '% Achevée', 'Début', 'Terminé'];
 
     cy.get('[data-test=language-button]').click();
 
@@ -279,13 +269,8 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
       .children()
+      .should('have.length', expectedTitles.length)
       .each(($child, index) => {
-        if (index === 0) {
-          expect($child[0].className).to.eq('hidden');
-          expect($child[0].offsetHeight).to.eq(0);
-          expect($child[0].offsetWidth).to.eq(0);
-        }
-
         expect($child.text()).to.eq(expectedTitles[index]);
       });
 
@@ -293,20 +278,15 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
   });
 
   it('should have French titles in Grid Menu after switching to Language', () => {
-    const expectedTitles = ['', 'Description', 'Durée', 'Titre', '% Achevée', 'Début', 'Terminé'];
+    const expectedTitles = ['Description', 'Durée', 'Titre', '% Achevée', 'Début', 'Terminé'];
 
     cy.get('#grid15').find('button.slick-grid-menu-button').click({ force: true });
 
     cy.get('.slick-grid-menu')
       .find('.slick-column-picker-list')
       .children()
+      .should('have.length', expectedTitles.length)
       .each(($child, index) => {
-        if (index === 0) {
-          expect($child[0].className).to.eq('hidden');
-          expect($child[0].offsetHeight).to.eq(0);
-          expect($child[0].offsetWidth).to.eq(0);
-        }
-
         expect($child.text()).to.eq(expectedTitles[index]);
       });
 

@@ -456,7 +456,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.slick-column-picker-list')
         .find('input[type="checkbox"]:checked')
-        .should('have.length', 11 - 2);
+        .should('have.length', 10 - 2);
 
       cy.get('.slick-column-picker button.close').click();
     });
@@ -490,7 +490,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.slick-column-picker-list')
         .find('input[type="checkbox"]:checked')
-        .should('have.length', 11 - 2);
+        .should('have.length', 10 - 2);
 
       cy.get('.slick-column-picker-list li .sgi-icon-picker-uncheck').each(($child, index) => {
         if (index < 2) {
@@ -498,7 +498,7 @@ describe('Example 11 - Batch Editing', () => {
         }
       });
 
-      cy.get('.slick-column-picker-list').find('input[type="checkbox"]:checked').should('have.length', 11);
+      cy.get('.slick-column-picker-list').find('input[type="checkbox"]:checked').should('have.length', 10);
 
       cy.get('.grid11')
         .find('.slick-header-columns')
@@ -772,7 +772,7 @@ describe('Example 11 - Batch Editing', () => {
     it('should have all columns shown (checkbox is checked) in the Column Picker', () => {
       cy.get('.grid11').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
-      cy.get('.slick-column-picker-list').find('input[type="checkbox"]:checked').should('have.length', 11);
+      cy.get('.slick-column-picker-list').find('input[type="checkbox"]:checked').should('have.length', 10);
 
       cy.get('.slick-column-picker button.close').click();
     });
@@ -1214,7 +1214,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.slick-column-picker-list')
         .find('input[type="checkbox"]:checked')
-        .should('have.length', 11 - 1);
+        .should('have.length', 10 - 1);
 
       cy.get('.slick-column-picker-list li .sgi-icon-picker-uncheck').each(($child, index) => {
         if (index < 1) {
@@ -1222,7 +1222,7 @@ describe('Example 11 - Batch Editing', () => {
         }
       });
 
-      cy.get('.slick-column-picker-list').find('input[type="checkbox"]:checked').should('have.length', 11);
+      cy.get('.slick-column-picker-list').find('input[type="checkbox"]:checked').should('have.length', 10);
 
       cy.get('.grid11')
         .find('.slick-header-columns')

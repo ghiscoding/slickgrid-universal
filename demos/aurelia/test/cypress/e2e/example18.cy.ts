@@ -389,9 +389,9 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-child(2)')
+        .children('li')
         .children('label')
-        .should('contain', 'Title')
+        .contains('Common Factor - Title')
         .click();
 
       cy.get('.slick-column-picker .close').click();
@@ -404,9 +404,9 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-child(3)')
+        .children('li')
         .children('label')
-        .should('contain', 'Duration')
+        .contains('Common Factor - Duration')
         .click();
 
       cy.get('.slick-column-picker .close').click();
@@ -440,9 +440,9 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-child(2)')
+        .children('li')
         .children('label')
-        .should('contain', 'Title')
+        .contains('Common Factor - Title')
         .click();
 
       // close picker & reopen from a pre-header column name instead
@@ -460,9 +460,9 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-child(3)')
+        .children('li')
         .children('label')
-        .should('contain', 'Duration')
+        .contains('Common Factor - Duration')
         .click();
 
       cy.get('.slick-column-picker .close').click();

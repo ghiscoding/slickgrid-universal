@@ -661,30 +661,24 @@ describe('Example 20 - Pinned Grid', () => {
     });
     cy.get('[data-test=set-3pinned-columns]').click({ force: true });
 
-    const leftColumns = ['', 'Title', '% Complete'];
+    const leftColumns = ['Title', '% Complete'];
     const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin (not pinnable)', 'Action'];
     cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
-      .children()
+      .children('li')
+      .filter(':has(input[data-columnid])')
+      .should('have.length', leftColumns.length + rightColumns.length)
       .each(($child, index) => {
+        expect($child.text()).to.eq([...leftColumns, ...rightColumns][index]);
         if (index >= leftColumns.length) {
-          if ($child.text() === rightColumns[index - leftColumns.length]) {
-            expect($child.text()).to.eq(rightColumns[index - leftColumns.length]);
-            if (index <= rightColumns.length + 1) {
-              cy.wrap($child).children('label').click();
-            } else {
-              cy.wrap($child)
-                .children('label')
-                .click()
-                .then(() => {
-                  cy.get('@alertStub').should(
-                    'have.been.calledWith',
-                    '[SlickGrid] Cannot complete pinning because at least one visible center column is required.'
-                  );
-                });
-            }
+          cy.wrap($child).children('label').click();
+          if (index === leftColumns.length + rightColumns.length - 1) {
+            cy.get('@alertStub').should(
+              'have.been.calledWith',
+              '[SlickGrid] Cannot complete pinning because at least one visible center column is required.'
+            );
           }
         }
       });
@@ -732,21 +726,19 @@ describe('Example 20 - Pinned Grid', () => {
   });
 
   it('should reset hidden column from the Column Picker and expect all columns to be back', () => {
-    const leftColumns = ['', 'Title', '% Complete'];
+    const leftColumns = ['Title', '% Complete'];
     const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin (not pinnable)', 'Action'];
 
     cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
-      .children()
+      .children('li')
+      .filter(':has(input[data-columnid])')
+      .should('have.length', leftColumns.length + rightColumns.length)
       .each(($child, index) => {
-        if (index >= leftColumns.length) {
-          if ($child.text() === rightColumns[index - leftColumns.length]) {
-            expect($child.text()).to.eq(rightColumns[index - leftColumns.length]);
-            if (index <= rightColumns.length + 1) {
-              cy.wrap($child).children('label').click();
-            }
-          }
+        expect($child.text()).to.eq([...leftColumns, ...rightColumns][index]);
+        if (index >= leftColumns.length && index < leftColumns.length + rightColumns.length - 1) {
+          cy.wrap($child).children('label').click();
         }
       });
 

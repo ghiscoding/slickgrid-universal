@@ -1,13 +1,22 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
 import { describe, expect, it, vi } from 'vitest';
+import type { SlickGrid } from '../../core/slickGrid.js';
 import type { GridMenu } from '../../interfaces/gridMenu.interface.js';
+import type { Column, GridMenuOption } from '../../interfaces/index.js';
 import { SharedService } from '../../services/shared.service.js';
 import { ExtensionUtility } from '../extensionUtility.js';
 import { MenuBaseClass } from '../menuBaseClass.js';
 
 // Minimal subclass to expose protected methods for testing
 class TestMenuBase extends MenuBaseClass<GridMenu> {
+  public testPopulateColumnPicker(columns: Column[], isGridMenu: boolean, options: GridMenuOption) {
+    this._columns = columns;
+    this._camelPluginName = isGridMenu ? 'gridMenu' : 'columnPicker';
+    this._listElm = document.createElement('ul');
+    this.populateColumnPicker(options, (column) => column.name ?? '');
+    return { list: this._listElm, checkboxes: this._columnCheckboxes };
+  }
   public testPopulateCommandOrOptionTitle(itemType: 'command' | 'option', menuOptions: GridMenu, commandOrOptionMenuElm: HTMLElement, level: number) {
     return this.populateCommandOrOptionTitle(itemType, menuOptions, commandOrOptionMenuElm, level);
   }
@@ -54,6 +63,45 @@ describe('MenuBaseClass', () => {
     unsubscribeAll: vi.fn(),
   } as unknown as BasePubSubService;
   const sharedService = new SharedService();
+
+  it.each([false, true])('should omit excluded columns before sorting and building the list (isGridMenu: %s)', (isGridMenu) => {
+    const columns: Column[] = [
+      { id: 'included', field: 'included', name: 'Included' },
+      { id: 'picker-only', field: 'picker-only', name: 'Picker only', excludeFromGridMenu: true },
+      { id: 'menu-only', field: 'menu-only', name: 'Menu only', excludeFromColumnPicker: true },
+      { id: 'excluded', field: 'excluded', name: 'Excluded', excludeFromColumnPicker: true, excludeFromGridMenu: true },
+      { id: 'hidden', field: 'hidden', name: 'Hidden', hidden: true },
+    ];
+    const service = new SharedService();
+    service.slickGrid = { getOptions: () => ({}), getVisibleColumns: () => columns.filter((column) => !column.hidden) } as unknown as SlickGrid;
+    const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, service);
+    const eligible = [columns[0], columns[isGridMenu ? 2 : 1], columns[4]];
+    const columnSort = vi.fn((_left: Column, _right: Column) => 0);
+    const columnListBuilder = vi.fn((items: Column[]) => {
+      expect(items).toEqual(eligible);
+      return items.reverse();
+    });
+
+    const { list, checkboxes } = menu.testPopulateColumnPicker(columns, isGridMenu, {
+      columnSort,
+      columnListBuilder,
+      hideForceFitButton: true,
+      hideSyncResizeButton: true,
+    });
+
+    expect(columnListBuilder).toHaveBeenCalledOnce();
+    expect(columnSort).toHaveBeenCalled();
+    for (const [left, right] of columnSort.mock.calls) {
+      expect(eligible).toContain(left);
+      expect(eligible).toContain(right);
+    }
+    expect(checkboxes.map((input) => input.dataset.columnid)).toEqual([...eligible].reverse().map((column) => column.id));
+    expect(checkboxes[0].checked).toBe(false);
+    expect(list.querySelectorAll('input[data-columnid]')).toHaveLength(3);
+    expect(list.querySelector('input[data-columnid="excluded"]')).toBeNull();
+    expect(list.querySelector('.hidden')).toBeNull();
+    expect(columns.map((column) => column.id)).toEqual(['included', 'picker-only', 'menu-only', 'excluded', 'hidden']);
+  });
 
   it('should render a menu title for root menu', () => {
     const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, sharedService);

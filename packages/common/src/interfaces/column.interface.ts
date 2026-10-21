@@ -123,13 +123,13 @@ export interface Column<T = any> {
   /** Excel export custom options for cell formatting & width */
   excelExportOptions?: ColumnExcelExportOption;
 
-  /** Default to false, which leads to exclude the column title from the Column Picker. */
+  /** Defaults to false. When true, omits the column from the Column Picker DOM and its `columnListBuilder` callback. */
   excludeFromColumnPicker?: boolean;
 
   /** Default to false, which leads to exclude the column from the export. */
   excludeFromExport?: boolean;
 
-  /** Default to false, which leads to exclude the column title from the Grid Menu. */
+  /** Defaults to false. When true, omits the column from the Grid Menu DOM and its `columnListBuilder` callback. */
   excludeFromGridMenu?: boolean;
 
   /** Defaults to false, which leads to exclude the `field` property, but still includes the `fields` property, from the query (typically a backend service query) */

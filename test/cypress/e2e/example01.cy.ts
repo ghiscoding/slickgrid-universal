@@ -435,7 +435,7 @@ describe('Example 01 - Basic Grids', () => {
 
     cy.get('.search-filter.filter-title').clear().type('44');
 
-    cy.get('.grid2').find('.slick-viewport-top.slick-viewport-left').scrollTo('bottom').wait(10);
+    cy.get('.grid2').find('.slick-vertical-scroller').scrollTo('0%', '100%').trigger('scroll');
 
     cy.get(`.grid2 [style="transform: translateY(${GRID_ROW_HEIGHT * 14}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 544');
     cy.get(`.grid2 [style="transform: translateY(${GRID_ROW_HEIGHT * 15}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 644');
