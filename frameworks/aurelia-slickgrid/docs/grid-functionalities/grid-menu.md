@@ -36,7 +36,28 @@ this.this.gridOptions: {
 }
 ```
 
-Commands keep their default visibility: Grid Menu hides `export-text-delimited` and `toggle-dark-mode`; Context Menu hides `export-text-delimited`. Use `showCommands` to enable these commands and `hideCommands` to hide additional commands. When an ID appears in both lists, `hideCommands` takes precedence. Empty lists keep the default visibility. These overrides are applied before `commandListBuilder`, which keeps its existing input and execution order. Global `showCommands` defaults can be overridden by a grid's `hideCommands`.
+### Default command visibility
+
+```ts
+// MenuCommandDefaults.gridMenu.hideCommands
+['export-text-delimited', 'toggle-dark-mode']
+```
+
+Hidden by default: `export-text-delimited` and `toggle-dark-mode`. All other built-in commands are visible when their required features/resources are available. Use `showCommands` to reveal default-hidden commands and `hideCommands` to hide commands; hide takes precedence. Visibility is applied before `commandListBuilder`.
+
+To explicitly extend the library's default exclusions, import `MenuCommandDefaults` and spread the list for the relevant menu:
+
+```ts
+import { MenuCommandDefaults, type GridOption } from '@slickgrid-universal/common';
+
+const gridOptions: GridOption = {
+  gridMenu: {
+    hideCommands: [...MenuCommandDefaults.gridMenu.hideCommands, 'export-csv'],
+  },
+};
+```
+
+The same export includes `contextMenu.hideCommands` and `headerMenu.hideCommands`. These lists are read-only; spreading creates a new array. Built-in defaults already apply automatically, so `hideCommands: ['export-csv']` also keeps default-hidden commands hidden. Spreading the defaults makes those commands explicit exclusions: they then remain hidden even if included in `showCommands`. To extend your application's own global list instead, spread that configured list.
 
 ### Custom Commands
 The Grid Menu also comes, by default, with a list of built-in custom commands (all their `positionOrder` are in the reserved range of 40 to 60)

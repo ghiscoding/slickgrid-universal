@@ -18,6 +18,7 @@ export {
 export * from './constants.js';
 export * from './global-grid-options.js';
 export * from './icon-sets.js';
+export * from './menu-command-defaults.js';
 
 export * from './core/index.js';
 export * from './enums/index.js';

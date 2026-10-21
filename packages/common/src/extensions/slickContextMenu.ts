@@ -12,6 +12,7 @@ import type {
   MenuOptionItem,
   OnContextMenuArgs,
 } from '../interfaces/index.js';
+import { MenuCommandDefaults } from '../menu-command-defaults.js';
 import type { ExcelExportService } from '../services/excelExport.service.js';
 import type { PdfExportService } from '../services/pdfExport.service.js';
 import type { SharedService } from '../services/shared.service.js';
@@ -38,7 +39,7 @@ import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
  *   };
  */
 export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
-  protected override readonly _defaultHiddenCommands: readonly string[] = ['export-text-delimited'];
+  protected override readonly _defaultHiddenCommands: readonly string[] = MenuCommandDefaults.contextMenu.hideCommands;
 
   protected _originalContextMenu!: ContextMenu;
   protected _defaults = {

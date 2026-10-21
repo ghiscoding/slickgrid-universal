@@ -5,6 +5,7 @@ import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '
 import * as utils from '../../core/utils.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import type { Column, DOMEvent, ExternalResource, GridMenu, GridOption } from '../../interfaces/index.js';
+import { MenuCommandDefaults } from '../../menu-command-defaults.js';
 import {
   BackendUtilityService,
   SharedService,
@@ -1712,6 +1713,8 @@ describe('GridMenuControl', () => {
           [{}, ['clear-pinning', 'export-csv']],
           [{ hideCommands: ['export-csv'] }, ['clear-pinning']],
           [{ hideCommands: [], showCommands: [] }, ['clear-pinning', 'export-csv']],
+          [{ hideCommands: [...MenuCommandDefaults.gridMenu.hideCommands, 'export-csv'] }, ['clear-pinning']],
+          [{ hideCommands: [...MenuCommandDefaults.gridMenu.hideCommands], showCommands: ['toggle-dark-mode'] }, ['clear-pinning', 'export-csv']],
           [{ showCommands: ['toggle-dark-mode'] }, ['clear-pinning', 'export-csv', 'toggle-dark-mode']],
           [{ showCommands: ['export-text-delimited'] }, ['clear-pinning', 'export-csv', 'export-text-delimited']],
           [{ showCommands: ['toggle-dark-mode'], hideCommands: ['toggle-dark-mode'] }, ['clear-pinning', 'export-csv']],

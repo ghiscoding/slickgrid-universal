@@ -13,6 +13,7 @@ import type {
   GridOption,
   onGridMenuColumnsChangedCallbackArgs,
 } from '../interfaces/index.js';
+import { MenuCommandDefaults } from '../menu-command-defaults.js';
 import type { ExcelExportService } from '../services/excelExport.service.js';
 import type { FilterService } from '../services/filter.service.js';
 import type { PdfExportService } from '../services/pdfExport.service.js';
@@ -37,7 +38,7 @@ import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type Men
  * @constructor
  */
 export class SlickGridMenu extends MenuBaseClass<GridMenu> {
-  protected override readonly _defaultHiddenCommands: readonly string[] = ['export-text-delimited', 'toggle-dark-mode'];
+  protected override readonly _defaultHiddenCommands: readonly string[] = MenuCommandDefaults.gridMenu.hideCommands;
 
   // public events
   onAfterMenuShow: SlickEvent<GridMenuEventWithElementCallbackArgs>;

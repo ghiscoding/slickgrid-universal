@@ -17,6 +17,7 @@ import type {
   OnHeaderCellRenderedEventArgs,
   SingleColumnSort,
 } from '../interfaces/index.js';
+import { MenuCommandDefaults } from '../menu-command-defaults.js';
 import type { FilterService } from '../services/filter.service.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { SortService } from '../services/sort.service.js';
@@ -58,6 +59,8 @@ type PinningCommand = (typeof PINNING_COMMANDS)[keyof typeof PINNING_COMMANDS];
  *   }];
  */
 export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
+  protected override readonly _defaultHiddenCommands: readonly string[] = MenuCommandDefaults.headerMenu.hideCommands;
+
   protected _activeHeaderColumnElm?: HTMLDivElement | null;
   protected _headerButtonDivElm?: HTMLDivElement | null;
   protected _subMenuParentId = '';
