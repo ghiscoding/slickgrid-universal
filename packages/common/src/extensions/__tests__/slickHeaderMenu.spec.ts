@@ -75,7 +75,6 @@ const gridStub = {
   updateColumnHeader: vi.fn(),
   updateColumnById: vi.fn(),
   updateColumns: vi.fn(),
-  validatePinnedColumnWidth: vi.fn(),
   validateColumnPinning: vi.fn(),
   onBeforeSort: new SlickEvent(),
   onBeforeSetColumns: new SlickEvent(),
@@ -1479,7 +1478,7 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should offer Pin Columns and expect grid "setOptions" method to be called with current column position', async () => {
-        vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
@@ -1509,7 +1508,7 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should offer Pin Columns and expect grid "setOptions" method to be called with current column position', async () => {
-        vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
@@ -1536,7 +1535,7 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should offer Unpin All Columns when a column is already pinned to that index and expect grid "setOptions" method to be called with current column position', async () => {
-        vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
@@ -1582,7 +1581,7 @@ describe('HeaderMenu Plugin', () => {
         sharedService.hasColumnsReordered = true;
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
-        vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValue(true);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: { hideCommands: ['hide-column', 'column-resize-by-content'] },
@@ -2024,7 +2023,7 @@ describe('HeaderMenu Plugin', () => {
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ pinning: { columns: { left: 0 } } } as GridOption);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
-        vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValue(true);
         vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(originalColumnDefinitions);
         sharedService.hasColumnsReordered = false;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
@@ -2057,7 +2056,7 @@ describe('HeaderMenu Plugin', () => {
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ pinning: { columns: { left: 0 } } } as GridOption);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
-        vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValue(true);
         vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(visibleColumnDefinitions);
         sharedService.hasColumnsReordered = true;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
