@@ -67,8 +67,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     buttonCssClass: null,
     buttonImage: null,
     minWidth: 100,
-    hideColumnHideCommand: false,
-    hideSortCommands: false,
+    hideCommands: [],
     title: '',
     subMenuOpenByEvent: 'mouseover',
   } as unknown as HeaderMenuOption;
@@ -313,6 +312,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     const headerMenuOptions = gridOptions.headerMenu || {};
     const hiddenCommands = headerMenuOptions.hideCommands as readonly string[] | undefined;
     const isPinningEnabled = !headerMenuOptions.hideCommands?.includes('pinning-commands');
+    const isSortingEnabled = !headerMenuOptions.hideCommands?.includes('sort-commands');
     const translationPrefix = getTranslationPrefix(gridOptions);
     const commandLabels = this._addonOptions?.commandLabels;
 
@@ -337,9 +337,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           if (
             gridOptions.enableSorting &&
             columnDef.sortable &&
+            isSortingEnabled &&
             headerMenuOptions &&
-            !headerMenuOptions.hideSortCommands &&
-            // @deprecated use boolean value of addMissingCommandOrAction() in next major instead
             !(headerMenuOptions.hideCommands?.includes('sort-asc') && headerMenuOptions.hideCommands?.includes('sort-desc'))
           ) {
             // sort ascending command
@@ -375,20 +374,18 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               columnHeaderMenuItems.push({ divider: true, command: 'divider-2', positionOrder: 42 });
             }
 
-            if (!headerMenuOptions.hideClearSortCommand) {
-              this.addMissingCommandOrAction(
-                {
-                  _orgTitle: commandLabels?.clearSortCommand || '',
-                  iconCssClass: headerMenuOptions.iconClearSortCommand || 'mdi mdi-sort-variant-off',
-                  titleKey: `${translationPrefix}REMOVE_SORT`,
-                  command: 'clear-sort',
-                  positionOrder: 58,
-                  action: (e, args) => this.clearColumnSort(e, args),
-                },
-                headerMenuOptions.hideCommands,
-                columnHeaderMenuItems
-              );
-            }
+            this.addMissingCommandOrAction(
+              {
+                _orgTitle: commandLabels?.clearSortCommand || '',
+                iconCssClass: headerMenuOptions.iconClearSortCommand || 'mdi mdi-sort-variant-off',
+                titleKey: `${translationPrefix}REMOVE_SORT`,
+                command: 'clear-sort',
+                positionOrder: 58,
+                action: (e, args) => this.clearColumnSort(e, args),
+              },
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
+            );
           }
 
           // These commands belong to the Column Pinning submenu and should
@@ -490,7 +487,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
           // Column Resize by Content (column autofit)
           if (
-            !headerMenuOptions.hideColumnResizeByContentCommand &&
             !headerMenuOptions.hideCommands?.includes('column-resize-by-content') &&
             this.sharedService.gridOptions.enableColumnResizeOnDoubleClick
           ) {
@@ -568,29 +564,26 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             gridOptions.enableFiltering &&
             columnDef.filterable &&
             headerMenuOptions &&
-            !headerMenuOptions.hideFilterCommand &&
             !headerMenuOptions.hideCommands?.includes('clear-filter')
           ) {
-            if (!headerMenuOptions.hideClearFilterCommand) {
-              this.addMissingCommandOrAction(
-                {
-                  _orgTitle: commandLabels?.clearFilterCommand || '',
-                  iconCssClass: headerMenuOptions.iconClearFilterCommand || 'mdi mdi-filter-remove-outline',
-                  titleKey: `${translationPrefix}REMOVE_FILTER`,
-                  command: 'clear-filter',
-                  positionOrder: 57,
-                  action: (e, args) => {
-                    this.clearColumnFilter(e, args);
-                  },
+            this.addMissingCommandOrAction(
+              {
+                _orgTitle: commandLabels?.clearFilterCommand || '',
+                iconCssClass: headerMenuOptions.iconClearFilterCommand || 'mdi mdi-filter-remove-outline',
+                titleKey: `${translationPrefix}REMOVE_FILTER`,
+                command: 'clear-filter',
+                positionOrder: 57,
+                action: (e, args) => {
+                  this.clearColumnFilter(e, args);
                 },
-                headerMenuOptions.hideCommands,
-                columnHeaderMenuItems
-              );
-            }
+              },
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
+            );
           }
 
           // Hide Column Command
-          if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !headerMenuOptions.hideCommands?.includes('hide-column')) {
+          if (headerMenuOptions && !headerMenuOptions.hideCommands?.includes('hide-column')) {
             this.addMissingCommandOrAction(
               {
                 _orgTitle: commandLabels?.hideColumnCommand || '',

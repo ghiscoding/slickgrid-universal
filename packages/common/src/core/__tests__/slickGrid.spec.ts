@@ -363,6 +363,47 @@ describe('SlickGrid core file', () => {
     expect(grid.getCellFromEvent({ target: spanCell } as unknown as Event)).toEqual({ row: 0, cell: 1 });
   });
 
+  it.each([
+    ['gridMenu', ['export-text-delimited', 'toggle-dark-mode']],
+    ['contextMenu', ['copy', 'export-text-delimited']],
+    ['headerMenu', ['sort-asc', 'sort-desc']],
+  ] as const)('should replace %s hideCommands during runtime updates', (menu, initialCommands) => {
+    grid = new SlickGrid(container, [], [{ id: 'id', field: 'id' }], {
+      ...defaultOptions,
+      [menu]: { hideCommands: [...initialCommands], subMenuOpenByEvent: 'mouseover' },
+    });
+    const commands = [initialCommands[0]];
+    grid.setOptions({ [menu]: { hideCommands: commands } });
+
+    expect(grid.getOptions()[menu]!.hideCommands).toEqual([initialCommands[0]]);
+    expect(grid.getOptions()[menu]!.hideCommands).not.toBe(commands);
+    expect(commands).toEqual([initialCommands[0]]);
+    expect(grid.getOptions()[menu]!.subMenuOpenByEvent).toBe('mouseover');
+
+    grid.setOptions({ [menu]: { subMenuOpenByEvent: 'click' } });
+    expect(grid.getOptions()[menu]!.hideCommands).toEqual([initialCommands[0]]);
+    expect(grid.getOptions()[menu]!.subMenuOpenByEvent).toBe('click');
+
+    grid.setOptions({ [menu]: { hideCommands: [] } });
+    expect(grid.getOptions()[menu]!.hideCommands).toEqual([]);
+  });
+
+  it('should replace textExportOptions menuFormats during runtime updates', () => {
+    grid = new SlickGrid(container, [], [{ id: 'id', field: 'id' }], {
+      ...defaultOptions,
+      textExportOptions: { menuFormats: ['csv', 'txt'], filename: 'export' },
+    });
+    const menuFormats: Array<'csv' | 'txt'> = ['txt'];
+    grid.setOptions({ textExportOptions: { menuFormats } });
+
+    expect(grid.getOptions().textExportOptions!.menuFormats).toEqual(['txt']);
+    expect(grid.getOptions().textExportOptions!.menuFormats).not.toBe(menuFormats);
+    expect(grid.getOptions().textExportOptions!.filename).toBe('export');
+
+    grid.setOptions({ textExportOptions: { menuFormats: [] } });
+    expect(grid.getOptions().textExportOptions!.menuFormats).toEqual([]);
+  });
+
   it('should be able to instantiate SlickGrid and get columns', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class', headerCellAttrs: { 'some-attr': 3 } },

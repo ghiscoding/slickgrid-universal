@@ -17,6 +17,7 @@ export type BuiltInHeaderMenuCommand =
   | 'pin-right'
   | 'hide-column'
   | 'sort-asc'
+  | 'sort-commands'
   | 'sort-desc'
   | 'unpin-column'
   | 'unpin-columns';
@@ -33,7 +34,7 @@ export interface HeaderMenuCommandItemCallbackArgs {
 }
 
 export interface HeaderMenu extends HeaderMenuOption {
-  /** Hide built-in commands; 'pinning-commands' hides the entire Column Pinning submenu. */
+  /** Hide built-in commands. 'pinning-commands' hides the entire pinning submenu and 'sort-commands' hides all sort commands. */
   hideCommands?: Array<BuiltInHeaderMenuCommand>;
 
   // --

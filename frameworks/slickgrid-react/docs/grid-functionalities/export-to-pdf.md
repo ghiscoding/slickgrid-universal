@@ -32,7 +32,7 @@ applyPlugin(jsPDF); // register AutoTable once
 When `jspdf-autotable` is detected at runtime the service automatically uses it; otherwise it falls back to a simple text-based layout.
 
 ### Grid Menu (hamburger menu)
-The Grid Menu can include an "Export to PDF" command. You can show/hide this option with `hideExportPdfCommand` (defaults to false).
+The Grid Menu can include an "Export to PDF" command. You can show/hide this option with `hideCommands: ['export-pdf']` (the command is visible by default).
 
 ### Grid Options
 You can set options for the entire grid, such as enabling PDF export and customizing export behavior.
@@ -58,9 +58,6 @@ const Example: React.FC = () => {
         sanitizeDataExport: true,
       },
       externalResources: [new PdfExportService()],
-      gridMenu: {
-        hideExportPdfCommand: false, // optional
-      }
     });
   }
 }

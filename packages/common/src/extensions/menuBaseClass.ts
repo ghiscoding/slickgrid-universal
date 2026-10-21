@@ -367,10 +367,10 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
   /**
    * add Menu Item Command when not found and also make sure that we have an `action` callback
    * (could be missing when provided by user) if not use built-in `action` callback when missing
-   * @param originalMenuItems
    * @param builtInMenuItem
-   * @param showCommand - is command hidden from menu option (deprecated)
-   * @returns - returns true when added to the commands array
+   * @param hideCommands - built-in commands to exclude
+   * @param targetMenuItems
+   * @param originalMenuItems
    */
   protected addMissingCommandOrAction<T extends MenuCommandItem | GridMenuItem>(
     builtInMenuItem: T | 'divider',
@@ -379,12 +379,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     originalMenuItems?: Array<T | 'divider'>
   ): void {
     // remove any commands that the user doesn't want
-    let skip = false;
-    if (hideCommands.length) {
-      skip = builtInMenuItem !== 'divider' && new Set(hideCommands).has(builtInMenuItem.command);
-    }
-
-    if (builtInMenuItem !== 'divider' && !skip) {
+    if (builtInMenuItem !== 'divider' && !hideCommands.includes(builtInMenuItem.command)) {
       const cmdName = builtInMenuItem.command;
       const cmd = (originalMenuItems ?? targetMenuItems).find(commandMatcher<T>(cmdName));
 

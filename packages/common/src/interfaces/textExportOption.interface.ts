@@ -34,6 +34,12 @@ export interface TextExportOption {
   /** The default text to display in 1st column of the File Export, which will identify that the current row is a Grouping Aggregator */
   groupingAggregatorRowText?: string;
 
+  /**
+   * Defaults to `['csv']`, file formats offered as Grid Menu and Context Menu export commands
+   * (`csv` is "export-csv", `txt` is "export-text-delimited"). `hideCommands` still takes precedence.
+   */
+  menuFormats?: Array<Extract<FileType, 'csv' | 'txt'>>;
+
   /** Defaults to "text/plain", mime type to use when exporting the output file. */
   mimeType?: string;
 

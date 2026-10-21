@@ -726,6 +726,18 @@ export class SlickVanillaGridBundle<TData = any> {
       gridOptions
     );
 
+    // Command visibility and export menu format lists replace defaults instead of merging array entries by index.
+    for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
+      const commands = gridOptions[menu]?.hideCommands;
+      if (commands && options[menu]) {
+        Object.assign(options[menu], { hideCommands: [...commands] });
+      }
+    }
+    const menuFormats = gridOptions.textExportOptions?.menuFormats;
+    if (menuFormats && options.textExportOptions) {
+      options.textExportOptions.menuFormats = [...menuFormats];
+    }
+
     // also make sure to show the header row if user have enabled filtering
     if (options.enableFiltering && !options.showHeaderRow) {
       options.showHeaderRow = options.enableFiltering;

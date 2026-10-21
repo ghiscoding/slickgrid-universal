@@ -98,7 +98,7 @@ const gridOptionsMock = {
     autoAlignSide: true,
     autoAdjustDropOffset: 0,
     autoAlignSideOffset: 0,
-    hideCopyCellValueCommand: true,
+    hideCommands: ['copy'],
     hideMenuOnScroll: true,
     maxHeight: 'none',
     width: 175,
@@ -377,7 +377,7 @@ describe('ContextMenu Plugin', () => {
     describe('with Command Items', () => {
       beforeEach(() => {
         sharedService.gridOptions.contextMenu!.commandTitle = '';
-        gridOptionsMock.contextMenu!.hideCopyCellValueCommand = true;
+        gridOptionsMock.contextMenu!.hideCommands = [...(gridOptionsMock.contextMenu!.hideCommands ?? []), 'copy'];
         gridOptionsMock.contextMenu!.commandItems = deepCopy(commandItemsMock);
       });
 
@@ -849,7 +849,7 @@ describe('ContextMenu Plugin', () => {
         // Clean up any leftover state from previous tests
         delete gridOptionsMock.contextMenu!.defaultMenuItemRenderer;
         gridOptionsMock.contextMenu!.commandItems = [];
-        gridOptionsMock.contextMenu!.hideCopyCellValueCommand = true;
+        gridOptionsMock.contextMenu!.hideCommands = [...(gridOptionsMock.contextMenu!.hideCommands ?? []), 'copy'];
       });
 
       it('should render menu item with slotRenderer returning HTMLElement', () => {
@@ -1013,6 +1013,35 @@ describe('ContextMenu Plugin', () => {
     });
 
     describe('with Custom Commands List', () => {
+      it.each([
+        [{}, undefined, ['copy', 'export-csv']],
+        [{ hideCommands: ['export-csv'] }, undefined, ['copy']],
+        [{}, ['csv', 'txt'], ['copy', 'export-csv', 'export-text-delimited']],
+        [{}, ['txt'], ['copy', 'export-text-delimited']],
+        [{ hideCommands: ['export-text-delimited'] }, ['csv', 'txt'], ['copy', 'export-csv']],
+      ] as Array<[ContextMenu, Array<'csv' | 'txt'> | undefined, string[]]>)(
+        'should apply visibility for contextMenu %j and menuFormats %j',
+        (contextMenu, menuFormats, expectedCommands) => {
+          const options: GridOption = {
+            ...gridOptionsMock,
+            enableTextExport: true,
+            enableExcelExport: false,
+            enablePdfExport: false,
+            enableGrouping: false,
+            enableDraggableGrouping: false,
+            enableTreeData: false,
+            textExportOptions: { menuFormats },
+            contextMenu,
+          };
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(options);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(options);
+          plugin.dispose();
+          plugin.init(contextMenu);
+
+          expect(options.contextMenu!.commandItems!.map((item) => item !== 'divider' && item.command).sort()).toEqual(expectedCommands.sort());
+        }
+      );
+
       beforeEach(() => {
         slickCellElm = document.createElement('div');
         slickCellElm.className = 'slick-cell';
@@ -1057,11 +1086,11 @@ describe('ContextMenu Plugin', () => {
       });
 
       // -- Copy to Clipboard -- //
-      it('should populate menuCommandItems with Copy cell action when "hideCopyCellValueCommand" is disabled', () => {
+      it('should populate menuCommandItems with Copy cell action when "hideCommands" is disabled', () => {
         const writeSpy = navigator.clipboard.writeText;
-        gridOptionsMock.contextMenu!.hideCopyCellValueCommand = false;
+        gridOptionsMock.contextMenu!.hideCommands = gridOptionsMock.contextMenu!.hideCommands?.filter((command) => command !== 'copy');
         plugin.dispose();
-        plugin.init({ commandItems: [], hideCopyCellValueCommand: false });
+        plugin.init({ commandItems: [], hideCommands: [] });
         gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
@@ -1195,7 +1224,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: false },
+          contextMenu: { hideCommands: [] },
         } as GridOption;
         columnsMock[firstNameColIdx] = { id: 'firstName', name: 'First Name', field: 'firstName', queryFieldNameGetterFn: () => 'lastName' } as Column;
         vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: firstNameColIdx, row: 1 });
@@ -1203,7 +1232,7 @@ describe('ContextMenu Plugin', () => {
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         const writeSpy = navigator.clipboard.writeText;
         plugin.dispose();
-        plugin.init({ commandItems: [], hideCopyCellValueCommand: false });
+        plugin.init({ commandItems: [], hideCommands: [] });
         gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
@@ -1225,7 +1254,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: false },
+          contextMenu: { hideCommands: [] },
         } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName', queryFieldNameGetterFn: () => 'lastName' } as Column;
         const dataContextMock = { id: 123, firstName: 'John', lastName: 'Doe', age: 50 };
@@ -1257,7 +1286,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: false },
+          contextMenu: { hideCommands: [] },
         } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName', queryFieldNameGetterFn: () => 'user.lastName' } as Column;
         const dataContextMock = { id: 123, user: { firstName: '\u034f\u034fJohn', lastName: '\u034f\u034f Doe', age: 50 } };
@@ -1289,7 +1318,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: false },
+          contextMenu: { hideCommands: [] },
         } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName' } as Column;
         const dataContextMock = { id: 123, firstName: 'John', lastName: '·\u034f ⮞   Doe', age: 50 };
@@ -1317,7 +1346,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: false },
+          contextMenu: { hideCommands: [] },
         } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'user.firstName', formatter: Formatters.complexObject } as Column;
         const dataContextMock = { id: 123, user: { firstName: 'John', lastName: 'Doe', age: 50 } };
@@ -1345,7 +1374,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: false },
+          contextMenu: { hideCommands: [] },
         } as GridOption;
         const columnMock = {
           id: 'firstName',
@@ -1379,7 +1408,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: false },
+          contextMenu: { hideCommands: [] },
         } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName' } as Column;
         const dataContextMock = { id: 123, firstName: '', lastName: 'Doe', age: 50 };
@@ -1407,7 +1436,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: false },
+          contextMenu: { hideCommands: [] },
         } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName' } as Column;
         const dataContextMock = { id: 123, firstName: null, lastName: 'Doe', age: 50 };
@@ -1435,7 +1464,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: false },
+          contextMenu: { hideCommands: [] },
         } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName' } as Column;
         const dataContextMock = { id: 123, lastName: 'Doe', age: 50 };
@@ -1463,7 +1492,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: false },
+          contextMenu: { hideCommands: [] },
         } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName', queryFieldNameGetterFn: () => 'lastName' } as Column;
         const dataContextMock = { id: 123, firstName: null, lastName: 'Doe', age: 50 };
@@ -1491,7 +1520,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: false },
+          contextMenu: { hideCommands: [] },
         } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'user.firstName', queryFieldNameGetterFn: () => 'user.lastName' } as Column;
         const dataContextMock = { id: 123, user: { firstName: null, lastName: 'Doe', age: 50 } };
@@ -1521,7 +1550,6 @@ describe('ContextMenu Plugin', () => {
           enableExcelExport: true,
           enableTextExport: false,
           contextMenu: { hideCommands: ['copy', 'export-csv'] },
-          // contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false },
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1544,7 +1572,7 @@ describe('ContextMenu Plugin', () => {
           enableExcelExport: false,
           enablePdfExport: true,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportPdfCommand: false },
+          contextMenu: { hideCommands: ['copy', 'export-csv'] },
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1565,7 +1593,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: true,
-          contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: false, hideExportExcelCommand: true },
+          contextMenu: { hideCommands: ['copy', 'export-excel'] },
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1586,8 +1614,9 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: true,
-          contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: false, hideExportExcelCommand: true },
+          contextMenu: { hideCommands: ['copy', 'export-excel'] },
         } as GridOption;
+        copyGridOptionsMock.textExportOptions = { menuFormats: ['csv', 'txt'] };
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         plugin.dispose();
@@ -1607,7 +1636,7 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: true,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false },
+          contextMenu: { hideCommands: ['copy', 'export-csv'] },
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1631,7 +1660,7 @@ describe('ContextMenu Plugin', () => {
           enableExcelExport: false,
           enablePdfExport: true,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: true, hideExportPdfCommand: false },
+          contextMenu: { hideCommands: ['copy', 'export-csv', 'export-excel'] },
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -1654,13 +1683,13 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: true,
-          contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: false, hideExportExcelCommand: true },
+          contextMenu: { hideCommands: ['copy', 'export-excel'] },
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new TextExportServiceStub()]);
         plugin.dispose();
-        plugin.init({ commandItems: [{ command: 'export-csv' }], hideExportCsvCommand: false }); // add fake command to test with .some()
+        plugin.init({ commandItems: [{ command: 'export-csv' }], hideCommands: [] }); // add fake command to test with .some()
         plugin.init(); // calling init the 2nd time will replace the previous line init+command
 
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find(
@@ -1680,8 +1709,9 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: false,
           enableTextExport: true,
-          contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: false, hideExportExcelCommand: true },
+          contextMenu: { hideCommands: ['copy', 'export-excel'] },
         } as GridOption;
+        copyGridOptionsMock.textExportOptions = { menuFormats: ['csv', 'txt'] };
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new TextExportServiceStub()]);
@@ -1700,7 +1730,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should call "setGrouping" from the DataView when Grouping is enabled and the command triggered is "clear-grouping"', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideClearAllGrouping: false } } as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideCommands: [] } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -1718,7 +1748,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should call "collapseAllGroups" from the DataView when Grouping is enabled and the command triggered is "collapse-all-groups"', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideCollapseAllGroups: false } } as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideCommands: [] } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -1739,7 +1769,7 @@ describe('ContextMenu Plugin', () => {
       it('should call "collapseAllGroups" from the DataView when Tree Data is enabled and the command triggered is "collapse-all-groups"', () => {
         vi.spyOn(sharedService.dataView, 'getItems').mockReturnValueOnce(columnsMock);
         const treeDataSpy = vi.spyOn(treeDataServiceStub, 'toggleTreeDataCollapse');
-        const copyGridOptionsMock = { ...gridOptionsMock, enableTreeData: true, contextMenu: { hideCollapseAllGroups: false } } as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableTreeData: true, contextMenu: { hideCommands: [] } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         plugin.dispose();
@@ -1755,7 +1785,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should call "expandAllGroups" from the DataView when Grouping is enabled and the command triggered is "expand-all-groups"', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideExpandAllGroups: false } } as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideCommands: [] } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -1776,7 +1806,7 @@ describe('ContextMenu Plugin', () => {
       it('should call "expandAllGroups" from the DataView when Tree Data is enabled and the command triggered is "expand-all-groups"', () => {
         const treeDataSpy = vi.spyOn(treeDataServiceStub, 'toggleTreeDataCollapse');
         vi.spyOn(sharedService.dataView, 'getItems').mockReturnValueOnce(columnsMock);
-        const copyGridOptionsMock = { ...gridOptionsMock, enableTreeData: true, contextMenu: { hideExpandAllGroups: false } } as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableTreeData: true, contextMenu: { hideCommands: [] } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         plugin.dispose();
@@ -1791,7 +1821,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should expect "itemUsabilityOverride" callback on all the Grouping command to return False when there are NO Groups in the grid', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideClearAllGrouping: false } } as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideCommands: [] } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         const dataviewSpy = vi.spyOn(sharedService.dataView, 'getGrouping').mockReturnValue([]);
@@ -1818,7 +1848,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should expect "itemUsabilityOverride" callback on all the Grouping command to return True when there are Groups defined in the grid', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideClearAllGrouping: false } } as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableGrouping: true, contextMenu: { hideCommands: [] } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         const dataviewSpy = vi.spyOn(sharedService.dataView, 'getGrouping').mockReturnValue([{ collapsed: true }]);
@@ -1845,7 +1875,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should expect "itemUsabilityOverride" callback on all the Tree Data Grouping command to return Tree (collapse, expand) at all time even when there are NO Groups in the grid', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableTreeData: true, contextMenu: { hideClearAllGrouping: false } } as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableTreeData: true, contextMenu: { hideCommands: [] } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         plugin.dispose();
@@ -1865,7 +1895,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should expect "itemUsabilityOverride" callback on all the Tree Data Grouping command to return True (collapse, expand) when there are Groups defined in the grid', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableTreeData: true, contextMenu: { hideClearAllGrouping: false } } as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableTreeData: true, contextMenu: { hideCommands: [] } } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         plugin.dispose();
@@ -1887,7 +1917,7 @@ describe('ContextMenu Plugin', () => {
 
     describe('with Options Items', () => {
       beforeEach(() => {
-        gridOptionsMock.contextMenu!.hideCopyCellValueCommand = true;
+        gridOptionsMock.contextMenu!.hideCommands = [...(gridOptionsMock.contextMenu!.hideCommands ?? []), 'copy'];
         gridOptionsMock.contextMenu!.optionItems = undefined;
       });
 

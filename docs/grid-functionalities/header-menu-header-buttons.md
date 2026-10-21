@@ -13,13 +13,16 @@ The `Header Menu` is now part of `Slickgrid-Universal` and is enabled by default
 #### It's Enabled by default
 Technically, it's enable by default and so you don't have anything to do to enjoy it. However if you want to customize the content of the Header Menu, then continue reading.
 
+### Default command visibility
+
+Built-in commands appear when their required grid features and column settings allow them, including sorting, filtering, resizing, and pinning. Use `hideCommands` to hide commands.
+
 ## Customization
 ### Custom Commands
 The Header Menu also comes, by default, with a list of built-in custom commands (all their `positionOrder` are in the reserved range of 40 to 60)
-- Sort Ascending (you can hide it with `hideSortCommands: true`)
-- Sort Descending (you can hide it with `hideSortCommands: true`)
+- Sort Ascending/Descending and Remove Sort (hide them individually with `'sort-asc'`, `'sort-desc'`, `'clear-sort'` or all at once with `hideCommands: ['sort-commands']`)
 - Pinning Commands root menu (enabled by default; hide it with `hideCommands: ['pinning-commands']`)
-- Hide Column (you can hide it with `hideColumnHideCommand: true`)
+- Hide Column (you can hide it with `hideCommands: ['hide-column']`)
 
 This section is called Custom Commands because you can also customize this section with your own commands. You can do this in two ways: using static command items or using a dynamic command list builder.
 

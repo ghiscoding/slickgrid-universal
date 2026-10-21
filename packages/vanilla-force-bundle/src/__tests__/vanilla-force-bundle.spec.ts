@@ -255,6 +255,7 @@ vi.mock('@slickgrid-universal/common', async (importOriginal) => {
   const actual = (await importOriginal()) as any;
   return {
     ...actual,
+    GlobalGridOptions: (await import('../../../common/src/global-grid-options.js')).GlobalGridOptions,
     applyHtmlToElement: (elm: HTMLElement, val: any) => {
       elm.innerHTML = `${val || ''}`;
     },
@@ -447,6 +448,31 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         expect(component.gridOptions.autoCommitEdit).toEqual(false);
         expect(setOptionSpy).toHaveBeenCalledWith(mockGridOptions, false, true);
         expect(sharedOptionSpy).toHaveBeenCalledWith(mockGridOptions);
+      });
+
+      it.each([false, true])('should replace hidden commands with Salesforce defaults enabled: %s', (useSalesforceDefaultGridOptions) => {
+        const hideCommands = ['export-text-delimited'] as const;
+        const input: GridOption = {
+          useSalesforceDefaultGridOptions,
+          gridMenu: { hideCommands: [...hideCommands] },
+          contextMenu: { hideCommands: [] },
+          headerMenu: { hideCommands: ['sort-asc'] },
+          textExportOptions: { menuFormats: ['txt'] },
+        };
+        const options = component.mergeGridOptions(input);
+
+        expect(options.gridMenu!.hideCommands).toEqual(hideCommands);
+        expect(options.gridMenu!.hideCommands).not.toBe(input.gridMenu!.hideCommands);
+        expect(input.gridMenu!.hideCommands).toEqual(hideCommands);
+        expect(options.textExportOptions!.menuFormats).toEqual(['txt']);
+        expect(options.textExportOptions!.menuFormats).not.toBe(input.textExportOptions!.menuFormats);
+        expect(options.contextMenu!.hideCommands).toEqual([]);
+        expect(options.headerMenu!.hideCommands).toEqual(['sort-asc']);
+
+        const defaults = component.mergeGridOptions({ useSalesforceDefaultGridOptions });
+        expect(defaults.gridMenu!.hideCommands).toBeUndefined();
+        expect(defaults.contextMenu!.hideCommands).toBeUndefined();
+        expect(defaults.textExportOptions!.menuFormats).toEqual(useSalesforceDefaultGridOptions ? ['csv'] : undefined);
       });
 
       it('should merge paginationOptions when some already exist', () => {

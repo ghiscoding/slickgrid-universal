@@ -193,15 +193,12 @@ export class Example12 {
         hideTotalItemCount: false,
         hideLastUpdateTimestamp: false,
       },
-      gridMenu: {
-        hideExportCsvCommand: false, // false by default, so it's optional
-        hideExportTextDelimitedCommand: false, // true by default, so if you want it, you will need to disable the flag
-      },
       enableExcelExport: true,
       enableTextExport: true,
       textExportOptions: {
         // set at the grid option level, meaning all column will evaluate the Formatter (when it has a Formatter defined)
         exportWithFormatter: true,
+        menuFormats: ['csv', 'txt'], // also show "export-text-delimited" in the menus
         sanitizeDataExport: true,
       },
       excelExportOptions: {

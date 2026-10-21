@@ -196,6 +196,57 @@ workaround.
 | `$slick-preheader-border-right` / `--slick-preheader-border-right` | `$slick-preheader-border-color` / `--slick-preheader-border-color` |
 | Old preheader per-side border variables and `--slick-frozen-overflow-right` | Remove; no replacements. |
 
+## Menu command visibility
+
+Replace the removed per-command `hide...` flags in `gridMenu`, `contextMenu`, and `headerMenu`:
+
+- `true` → add the command ID to `hideCommands`.
+- `false` → remove it, built-in commands are shown by default (except for the 2 exceptions below).
+
+**Exceptions (opt-in commands):**
+
+- `hideToggleDarkModeCommand` was inverted and renamed to `gridMenu.showToggleDarkModeCommand` (defaults to `false`), because the Dark Mode toggle is hidden by default.
+- `hideExportTextDelimitedCommand` was replaced by `textExportOptions.menuFormats` (defaults to `['csv']`), adding `'txt'` shows the "export-text-delimited" command in both the Grid Menu and Context Menu.
+
+```diff
+ gridMenu: {
+-  hideToggleDarkModeCommand: false,
+-  hideExportCsvCommand: true,
++  showToggleDarkModeCommand: true,
++  hideCommands: ['export-csv'],
+ },
+```
+
+Since `menuFormats` applies to both menus, use `hideCommands: ['export-text-delimited']` in either menu to keep it hidden there.
+
+**Defaults:** `hideCommands` always takes precedence, even over the 2 exceptions above (e.g. `hideCommands: ['toggle-dark-mode']` wins over `showToggleDarkModeCommand: true`). Feature/resource requirements and `commandListBuilder` behavior are unchanged; visibility is applied before the builder.
+
+**Array replacement:** Supplied `hideCommands` and `textExportOptions.menuFormats` lists now replace inherited/previous lists, including in `grid.setOptions()`, instead of merging by index. Omit a property to preserve its value; use `[]` to clear it.
+
+| Removed option | Command IDs |
+| --- | --- |
+| `hideClearAllFiltersCommand` | `clear-filter` |
+| `hideClearAllSortingCommand` | `clear-sorting` |
+| `hideClearPinningCommand` | `clear-pinning` |
+| `hideExportCsvCommand` | `export-csv` |
+| `hideExportExcelCommand` | `export-excel` |
+| `hideExportPdfCommand` | `export-pdf` |
+| `hideExportTextDelimitedCommand` | `export-text-delimited` |
+| `hideRefreshDatasetCommand` | `refresh-dataset` |
+| `hideToggleDarkModeCommand` | `toggle-dark-mode` |
+| `hideToggleFilterCommand` | `toggle-filter` |
+| `hideTogglePreHeaderCommand` | `toggle-preheader` |
+| `hideCopyCellValueCommand` | `copy` |
+| `hideClearAllGrouping` | `clear-grouping` |
+| `hideCollapseAllGroups` | `collapse-all-groups` |
+| `hideExpandAllGroups` | `expand-all-groups` |
+| `hideColumnResizeByContentCommand` | `column-resize-by-content` |
+| `hideClearFilterCommand` | `clear-filter` |
+| `hideClearSortCommand` | `clear-sort` |
+| `hideFilterCommand` | `clear-filter` |
+| `hideSortCommands` | `sort-commands` (or `sort-asc`, `sort-desc`, `clear-sort` individually) |
+| `hideColumnHideCommand` | `hide-column` |
+
 ## Removed Deprecated Code
 
 ### `ExtensionName` enum replaced by a string literal type

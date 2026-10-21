@@ -17,7 +17,7 @@ export interface ContextMenu extends ContextMenuOption {
   // --
   // Events
 
-  /** hide any built-in command from the context menu */
+  /** Hide built-in commands. */
   hideCommands?: Array<BuiltInContextMenuCommand>;
 
   /** Fired after extension (control) is registered by SlickGrid */

@@ -35,16 +35,36 @@ this.gridOptions: {
 }
 ```
 
+### Default command visibility
+
+Built-in commands appear according to the enabled grid features (for example, `enableFiltering`, `enableSorting`, or `enableExcelExport`). Two commands require explicit opt-in:
+
+- `toggle-dark-mode`: enable it with `gridMenu.showToggleDarkModeCommand: true`.
+- `export-text-delimited`: enable it with `textExportOptions.menuFormats: ['csv', 'txt']` (defaults to `['csv']`, also shared with the Context Menu).
+
+Use `hideCommands` to hide any built-in command; it always takes precedence. Visibility is applied before `commandListBuilder`.
+
+```ts
+this.gridOptions = {
+  enableTextExport: true,
+  textExportOptions: { menuFormats: ['csv', 'txt'] },
+  gridMenu: {
+    showToggleDarkModeCommand: true,
+    hideCommands: ['clear-pinning'],
+  },
+};
+```
+
 ### Custom Commands
 The Grid Menu also comes, by default, with a list of built-in custom commands (all their `positionOrder` are in the reserved range of 40 to 60)
-- Clear all Filters (you can hide it with `hideClearAllFiltersCommand: true`)
-- Clear all Sorting (you can hide it with `hideClearAllSortingCommand: true`)
-- Toggle the Filter Row (you can hide it with `hideToggleFilterCommand: true`)
-- Export to CSV (you can hide it with `hideExportCsvCommand: true`)
-- Export to Text Delimited (you can hide it with `hideExportTextDelimitedCommand: true`)
-- Refresh Dataset, only shown when using Backend Service API (you can hide it with `hideRefreshDatasetCommand: true`)
+- Clear all Filters (you can hide it with `hideCommands: ['clear-filter']`)
+- Clear all Sorting (you can hide it with `hideCommands: ['clear-sorting']`)
+- Toggle the Filter Row (you can hide it with `hideCommands: ['toggle-filter']`)
+- Export to CSV (you can hide it with `hideCommands: ['export-csv']`)
+- Export to Text Delimited (you can hide it with `hideCommands: ['export-text-delimited']`)
+- Refresh Dataset, only shown when using Backend Service API (you can hide it with `hideCommands: ['refresh-dataset']`)
 
-> **Note**: all `hide...` and `positionOrder` properties were deprecated in v10 and will be removed in v11, prefer the use of `hideCommands` or the `commandListBuilder` instead (see below).
+> **Note**: command visibility flags (`hide...Command`) were removed in v11; use `hideCommands` or `commandListBuilder`. The `positionOrder` property was deprecated in v10; use `commandListBuilder` to reorder commands (see below).
 
 This section is called Custom Commands because you can also customize this section with your own commands. To do that, you need to fill in 2 properties (an array of `commandItems` and define `onGridMenuCommand` callback) in your Grid Options. For example, `Slickgrid-Universal` is configured by default with these settings (you can overwrite any one of them):
 

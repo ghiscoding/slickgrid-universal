@@ -98,7 +98,6 @@ const gridStub = {
   updateColumnById: vi.fn(),
   updateColumns: vi.fn(),
   updateRow: vi.fn(),
-  validatePinnedColumnWidth: vi.fn(),
 } as unknown as SlickGrid;
 
 const paginationServiceStub = {
@@ -1632,7 +1631,6 @@ describe('Grid Service', () => {
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-      vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
 
       service.setPinning(mockPinning);
 
@@ -1646,7 +1644,6 @@ describe('Grid Service', () => {
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-      vi.spyOn(gridStub, 'validatePinnedColumnWidth').mockReturnValue(true);
 
       service.setPinning(mockPinning, false);
 

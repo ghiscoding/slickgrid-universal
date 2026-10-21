@@ -118,8 +118,6 @@ const Example8: React.FC = () => {
       enableFiltering: false,
       enableCellNavigation: true,
       headerMenu: {
-        hideSortCommands: false,
-        hideColumnHideCommand: false,
         subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
         onCommand: (_e, args) => {
           const command = args.item?.command;

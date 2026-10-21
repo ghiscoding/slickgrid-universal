@@ -19,7 +19,7 @@ export interface GridMenu extends GridMenuOption {
   // --
   // Events
 
-  /** hide any built-in command from the grid menu */
+  /** Hide built-in commands. */
   hideCommands?: Array<BuiltInGridMenuCommand>;
 
   /** Fired after extension (control) is registered by SlickGrid */
@@ -72,9 +72,6 @@ export interface onGridMenuColumnsChangedCallbackArgs extends GridMenuEventBaseC
 }
 
 export interface GridMenuExportOptions {
-  /** Defaults to false, which will hide the "Export to PDF" command in the Grid Menu (Grid Option "enablePdfExport: true" has to be enabled) */
-  hideExportPdfCommand?: boolean;
-
   /** icon for the "Export to PDF" command */
   iconExportPdfCommand?: string;
 }

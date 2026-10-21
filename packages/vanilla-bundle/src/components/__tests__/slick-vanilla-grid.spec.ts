@@ -294,6 +294,7 @@ vi.mock('@slickgrid-universal/common', async (importOriginal) => {
   const actual = (await importOriginal()) as any;
   return {
     ...actual,
+    GlobalGridOptions: (await import('../../../../common/src/global-grid-options.js')).GlobalGridOptions,
     applyHtmlToElement: (elm: HTMLElement, val: any) => {
       elm.innerHTML = `${val || ''}`;
     },
@@ -794,6 +795,49 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(options.gridMenu!.iconClearAllFiltersCommand).toBe('fi fi-filter-dismiss');
         expect(options.headerMenu!.subItemChevronClass).toBe('fi fi-chevron-right');
         expect(options.contextMenu!.iconCopyCellValueCommand).toBe('fi fi-copy');
+      });
+
+      it.each(['gridMenu', 'contextMenu', 'headerMenu'] as const)(
+        'should replace %s hidden commands without retaining defaults or mutating user options',
+        (menu) => {
+          const hideCommands = [menu === 'contextMenu' ? 'copy' : 'clear-filter'];
+          const options = component.mergeGridOptions({ [menu]: { hideCommands } } as GridOption);
+
+          expect(options[menu]!.hideCommands).toEqual(hideCommands);
+          expect(options[menu]!.hideCommands).not.toBe(hideCommands);
+          expect(hideCommands).toEqual([menu === 'contextMenu' ? 'copy' : 'clear-filter']);
+        }
+      );
+
+      it('should replace inherited textExportOptions menuFormats without mutating global or user options', () => {
+        const previous = GlobalGridOptions.textExportOptions!.menuFormats;
+        try {
+          GlobalGridOptions.textExportOptions!.menuFormats = ['csv', 'txt'];
+          const menuFormats: Array<'csv' | 'txt'> = ['txt'];
+          const options = component.mergeGridOptions({ textExportOptions: { menuFormats } });
+          expect(options.textExportOptions!.menuFormats).toEqual(['txt']);
+          expect(options.textExportOptions!.menuFormats).not.toBe(menuFormats);
+          expect(GlobalGridOptions.textExportOptions!.menuFormats).toEqual(['csv', 'txt']);
+
+          const empty = component.mergeGridOptions({ textExportOptions: { menuFormats: [] } });
+          expect(empty.textExportOptions!.menuFormats).toEqual([]);
+        } finally {
+          if (previous === undefined) {
+            delete GlobalGridOptions.textExportOptions!.menuFormats;
+          } else {
+            GlobalGridOptions.textExportOptions!.menuFormats = previous;
+          }
+        }
+      });
+
+      it('should allow empty visibility overrides without mutating defaults', () => {
+        const options = component.mergeGridOptions({ gridMenu: { hideCommands: [] }, contextMenu: { hideCommands: [] } } as GridOption);
+        const defaults = component.mergeGridOptions({} as GridOption);
+
+        expect(options.gridMenu!.hideCommands).toEqual([]);
+        expect(options.contextMenu!.hideCommands).toEqual([]);
+        expect(defaults.gridMenu!.hideCommands).toBeUndefined();
+        expect(defaults.contextMenu!.hideCommands).toBeUndefined();
       });
 
       it('should keep the Material menu icons by default', () => {

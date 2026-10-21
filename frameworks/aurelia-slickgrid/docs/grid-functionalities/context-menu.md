@@ -282,6 +282,10 @@ cellMenu: {
 }
 ```
 
+### Default command visibility
+
+Built-in commands appear according to the enabled grid features. Grouping commands also depend on the grouping/tree configuration. The `export-text-delimited` command is opt-in via `textExportOptions.menuFormats: ['csv', 'txt']` (defaults to `['csv']`, also shared with the Grid Menu). Use `hideCommands` to hide any built-in command; it always takes precedence.
+
 ### Default Internal Commands
 By defaults, the Context Menu will come with a few different preset Commands (copy, export). The Copy is straightforward, it allows you to copy the cell value, on the other hand, the export command(s) is dependent on the flags you have enabled in your Grid Options. For example, if you have only `enableExport` then you will get the `Export to CSV` and you might get as well `Export Tab-Delimited`, again that depends on which Grid Options you have enabled. Note that all internal commands have a `positionOrder` in the range of 50 to 60 (which is used to sort the Commands list), this allows you to append or prepend Commands to the list.
 
@@ -293,14 +297,7 @@ contextMenu: {
   autoAdjustDrop: true,
   autoAlignSide: true,
   hideCloseButton: true,
-  hideClearAllGrouping: false,
-  hideCollapseAllGroups: false,
   hideCommandSection: false,
-  hideCopyCellValueCommand: false,
-  hideExpandAllGroups: false,
-  hideExportCsvCommand: false,
-  hideExportExcelCommand: false,
-  hideExportTextDelimitedCommand: true,
   hideMenuOnScroll: true,
   hideOptionSection: false,
   iconCopyCellValueCommand: 'mdi mdi-content-copy',

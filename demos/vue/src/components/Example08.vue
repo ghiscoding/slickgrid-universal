@@ -140,8 +140,6 @@ function defineGrid() {
     enableFiltering: false,
     enableCellNavigation: true,
     headerMenu: {
-      hideSortCommands: false,
-      hideColumnHideCommand: false,
       subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
       // you can use the "onCommand" (in Grid Options) and/or the "action" callback (in Column Definition)
       onCommand: (_e, args) => {
