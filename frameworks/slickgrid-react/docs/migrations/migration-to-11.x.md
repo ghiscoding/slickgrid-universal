@@ -246,7 +246,7 @@ Replace the removed per-command `hide...` flags in `gridMenu`, `contextMenu`, an
 | `hideClearFilterCommand` | `clear-filter` |
 | `hideClearSortCommand` | `clear-sort` |
 | `hideFilterCommand` | `clear-filter` |
-| `hideSortCommands` | `sort-asc`, `sort-desc`, `clear-sort` |
+| `hideSortCommands` | `sort-commands` (or `sort-asc`, `sort-desc`, `clear-sort` individually) |
 | `hideColumnHideCommand` | `hide-column` |
 
 ## Removed Deprecated Code

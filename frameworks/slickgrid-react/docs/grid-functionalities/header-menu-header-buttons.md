@@ -20,8 +20,7 @@ Built-in commands appear when their required grid features and column settings a
 ## Customization
 ### Custom Commands
 The Header Menu also comes, by default, with a list of built-in custom commands (all their `positionOrder` are in the reserved range of 40 to 60)
-- Sort Ascending (you can hide it with `hideCommands: ['sort-asc', 'sort-desc', 'clear-sort']`)
-- Sort Descending (you can hide it with `hideCommands: ['sort-asc', 'sort-desc', 'clear-sort']`)
+- Sort Ascending/Descending and Remove Sort (hide them individually with `'sort-asc'`, `'sort-desc'`, `'clear-sort'` or all at once with `hideCommands: ['sort-commands']`)
 - Pinning Commands root menu (enabled by default; hide it with `hideCommands: ['pinning-commands']`)
 - Hide Column (you can hide it with `hideCommands: ['hide-column']`)
 

@@ -312,6 +312,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     const headerMenuOptions = gridOptions.headerMenu || {};
     const hiddenCommands = headerMenuOptions.hideCommands as readonly string[] | undefined;
     const isPinningEnabled = !headerMenuOptions.hideCommands?.includes('pinning-commands');
+    const isSortingEnabled = !headerMenuOptions.hideCommands?.includes('sort-commands');
     const translationPrefix = getTranslationPrefix(gridOptions);
     const commandLabels = this._addonOptions?.commandLabels;
 
@@ -336,6 +337,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           if (
             gridOptions.enableSorting &&
             columnDef.sortable &&
+            isSortingEnabled &&
             headerMenuOptions &&
             !(headerMenuOptions.hideCommands?.includes('sort-asc') && headerMenuOptions.hideCommands?.includes('sort-desc'))
           ) {

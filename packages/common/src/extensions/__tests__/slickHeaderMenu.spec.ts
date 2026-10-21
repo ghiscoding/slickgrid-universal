@@ -1813,46 +1813,51 @@ describe('HeaderMenu Plugin', () => {
         expect(setValueMock).toHaveBeenCalledWith(['A'], '<', true);
       });
 
-      it('should expect only the "hide-column" command in the menu when "enableSorting" and "hideCommands" are set and also expect the command to execute necessary callback', () => {
-        vi.spyOn(sharedService.slickGrid, 'getColumnIndex').mockReturnValue(1);
-        vi.spyOn(sharedService.slickGrid, 'getColumns').mockReturnValue(columnsMock);
-        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
-          ...gridOptionsMock,
-          enableSorting: true,
-          enableColumnResizeOnDoubleClick: false,
-          headerMenu: { hideCommands: ['pin-column', 'sort-asc', 'sort-desc', 'clear-sort'] },
-        });
+      it.each([[['pin-column', 'sort-asc', 'sort-desc', 'clear-sort']], [['pinning-commands', 'sort-commands']]] as Array<
+        [NonNullable<HeaderMenu['hideCommands']>]
+      >)(
+        'should expect only the "hide-column" command in the menu when "enableSorting" and "hideCommands" %j are set and also expect the command to execute necessary callback',
+        (hideCommands) => {
+          vi.spyOn(sharedService.slickGrid, 'getColumnIndex').mockReturnValue(1);
+          vi.spyOn(sharedService.slickGrid, 'getColumns').mockReturnValue(columnsMock);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+            ...gridOptionsMock,
+            enableSorting: true,
+            enableColumnResizeOnDoubleClick: false,
+            headerMenu: { hideCommands },
+          });
 
-        // calling `onBeforeSetColumns` 2x times shouldn't duplicate hide column menu
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
-        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
-        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+          // calling `onBeforeSetColumns` 2x times shouldn't duplicate hide column menu
+          gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+          gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+          gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+          gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+          const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+          headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+          const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
 
-        const headerMenuExpected = [
-          {
-            _orgTitle: '',
-            iconCssClass: 'mdi mdi-close',
-            title: 'Hide Column',
-            titleKey: 'HIDE_COLUMN',
-            command: 'hide-column',
-            positionOrder: 59,
-            action: expect.any(Function),
-          },
-        ];
-        const commandDivElm = gridContainerDiv.querySelector('[data-command="hide-column"]') as HTMLDivElement;
-        const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
-        const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.commandItems!).toEqual(headerMenuExpected);
-        expect(commandIconElm.classList.contains('mdi-close')).toBeTruthy();
-        expect(commandLabelElm.textContent).toBe('Hide Column');
+          const headerMenuExpected = [
+            {
+              _orgTitle: '',
+              iconCssClass: 'mdi mdi-close',
+              title: 'Hide Column',
+              titleKey: 'HIDE_COLUMN',
+              command: 'hide-column',
+              positionOrder: 59,
+              action: expect.any(Function),
+            },
+          ];
+          const commandDivElm = gridContainerDiv.querySelector('[data-command="hide-column"]') as HTMLDivElement;
+          const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
+          const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
+          expect(columnsMock[1].header!.menu!.commandItems!).toEqual(headerMenuExpected);
+          expect(commandIconElm.classList.contains('mdi-close')).toBeTruthy();
+          expect(commandLabelElm.textContent).toBe('Hide Column');
 
-        commandDivElm.dispatchEvent(new Event('click'));
-        expect(autosizeSpy).toHaveBeenCalled();
-      });
+          commandDivElm.dispatchEvent(new Event('click'));
+          expect(autosizeSpy).toHaveBeenCalled();
+        }
+      );
 
       it('should expect all menu related to Filtering when "enableFiltering" is set', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
