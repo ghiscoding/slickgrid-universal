@@ -38,12 +38,12 @@ this.this.gridOptions: {
 
 ### Default command visibility
 
-Built-in commands are shown when their related feature is enabled (for example `enableFiltering`, `enableSorting` or `enableExcelExport`), with 2 opt-in exceptions:
+Built-in commands appear according to the enabled grid features (for example, `enableFiltering`, `enableSorting`, or `enableExcelExport`). Two commands require explicit opt-in:
 
 - `toggle-dark-mode`: enable it with `gridMenu.showToggleDarkModeCommand: true`.
 - `export-text-delimited`: enable it with `textExportOptions.menuFormats: ['csv', 'txt']` (defaults to `['csv']`, also shared with the Context Menu).
 
-Use `hideCommands` to hide any built-in command, it always takes precedence. Visibility is applied before `commandListBuilder`.
+Use `hideCommands` to hide any built-in command; it always takes precedence. Visibility is applied before `commandListBuilder`.
 
 ```ts
 const gridOptions: GridOption = {

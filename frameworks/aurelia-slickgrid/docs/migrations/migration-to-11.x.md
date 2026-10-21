@@ -215,10 +215,9 @@ Replace the removed per-command `hide...` flags in `gridMenu`, `contextMenu`, an
 +  showToggleDarkModeCommand: true,
 +  hideCommands: ['export-csv'],
  },
-+textExportOptions: {
-+  menuFormats: ['csv', 'txt'],
-+},
 ```
+
+Since `menuFormats` applies to both menus, use `hideCommands: ['export-text-delimited']` in either menu to keep it hidden there.
 
 **Defaults:** `hideCommands` always takes precedence, even over the 2 exceptions above (e.g. `hideCommands: ['toggle-dark-mode']` wins over `showToggleDarkModeCommand: true`). Feature/resource requirements and `commandListBuilder` behavior are unchanged; visibility is applied before the builder.
 
