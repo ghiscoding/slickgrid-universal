@@ -451,6 +451,46 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     expect(component.elementRef.nativeElement).toBeTruthy();
   });
 
+  describe('command visibility option merging', () => {
+    beforeEach(() => {
+      component['forRootConfig'] = {
+        gridMenu: { hideCommands: ['export-csv', 'export-excel'], showCommands: ['toggle-dark-mode', 'export-text-delimited'] },
+        contextMenu: { hideCommands: ['copy', 'export-csv'], showCommands: ['export-text-delimited'] },
+        headerMenu: { hideCommands: ['sort-asc', 'sort-desc'], showCommands: ['clear-sort'] },
+      };
+    });
+
+    it('should replace inherited visibility lists with shorter or empty grid lists without mutating inputs', () => {
+      const input: GridOption = {
+        gridMenu: { hideCommands: ['clear-sorting'], showCommands: ['toggle-dark-mode'] },
+        contextMenu: { hideCommands: ['export-excel'], showCommands: [] },
+        headerMenu: { hideCommands: [], showCommands: [] },
+      };
+      const options = component['mergeGridOptions'](input);
+
+      for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
+        for (const visibility of ['hideCommands', 'showCommands'] as const) {
+          expect(options[menu]![visibility]).toEqual(input[menu]![visibility]);
+          expect(options[menu]![visibility]).not.toBe(input[menu]![visibility]);
+        }
+      }
+      expect(component['forRootConfig']!.gridMenu!.hideCommands).toEqual(['export-csv', 'export-excel']);
+      expect(component['forRootConfig']!.contextMenu!.showCommands).toEqual(['export-text-delimited']);
+      expect(component['forRootConfig']!.headerMenu!.hideCommands).toEqual(['sort-asc', 'sort-desc']);
+    });
+
+    it('should retain and copy forRoot visibility lists when the grid omits them', () => {
+      const options = component['mergeGridOptions']({});
+
+      for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
+        for (const visibility of ['hideCommands', 'showCommands'] as const) {
+          expect(options[menu]![visibility]).toEqual(component['forRootConfig']![menu]![visibility]);
+          expect(options[menu]![visibility]).not.toBe(component['forRootConfig']![menu]![visibility]);
+        }
+      }
+    });
+  });
+
   it('should provide the gridService lazily', () => {
     const instance = TestBed.runInInjectionContext(
       () =>
