@@ -218,8 +218,6 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should open Grid Menu and expect new columns to be added to the column picker section', () => {
       const updatedTitles = [
-        '',
-        '',
         'Title',
         'Action',
         'Duration',
@@ -666,10 +664,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should open Column Picker and show the "Finish" column back to visible and expect it to have kept its position after toggling filter/sorting', () => {
-      // first 2 cols are hidden but they do count as li item
       const expectedFullPickerTitles = [
-        '',
-        '',
         'Title',
         'Action',
         '% Complete',
@@ -694,7 +689,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-of-type(7)')
+        .children('li:nth-of-type(5)')
         .children('label')
         .should('contain', 'Finish')
         .click();
@@ -706,7 +701,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
         .children()
         .each(($child, index) => {
           if (index <= 7) {
-            expect($child.text()).to.eq(expectedFullPickerTitles[index]);
+            expect($child.text()).to.eq(['', '', ...expectedFullPickerTitles][index]);
           }
         });
     });
@@ -826,19 +821,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should hide "Finish" column from column picker', () => {
-      const originalColumns = [
-        '',
-        '',
-        'Title',
-        'Action',
-        '% Complete',
-        'Finish',
-        'Duration',
-        'Completed',
-        'Start',
-        'Prerequisites',
-        'Title',
-      ];
+      const originalColumns = ['Title', 'Action', '% Complete', 'Finish', 'Duration', 'Completed', 'Start', 'Prerequisites', 'Title'];
 
       cy.get('.grid7').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
@@ -855,14 +838,14 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-of-type(6)')
+        .children('li:nth-of-type(4)')
         .children('label')
         .should('contain', 'Finish')
         .click();
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-of-type(12)')
+        .children('li:nth-of-type(10)')
         .children('label')
         .should('contain', 'Force fit columns');
 
@@ -957,7 +940,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-of-type(12)')
+        .children('li:nth-of-type(10)')
         .children('label')
         .should('contain', 'Ajustement forcé des colonnes');
 
@@ -1003,7 +986,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should open Grid Menu and expect new columns to be added to the column picker section, also "Finish" to be unchecked while "Duration" to be at new position', () => {
-      const updatedTitles = ['', '', 'Titre', 'Action', '% Achevée', 'Fin', 'Durée', 'Terminé', 'Début', 'Prerequisites', 'Titre'];
+      const updatedTitles = ['Titre', 'Action', '% Achevée', 'Fin', 'Durée', 'Terminé', 'Début', 'Prerequisites', 'Titre'];
 
       cy.get('.grid7').find('button.slick-grid-menu-button').click({ force: true });
 

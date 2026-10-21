@@ -319,8 +319,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should open Column Picker and show the "Duration" column back to visible and expect it to have kept its position after toggling filter/sorting', () => {
-    // first 2 cols are hidden but they do count as li item
-    const expectedFullPickerTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed'];
+    const expectedFullPickerTitles = ['Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed'];
 
     cy.get('#grid16').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
@@ -333,12 +332,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
         }
       });
 
-    cy.get('.slick-column-picker')
-      .find('.slick-column-picker-list')
-      .children('li:nth-child(7)')
-      .children('label')
-      .should('contain', 'Duration')
-      .click();
+    cy.get('.slick-column-picker').find('.slick-column-picker-list').children('li').children('label').contains('Duration').click();
 
     cy.get('#grid16').get('.slick-column-picker:visible').find('.close').trigger('click').click();
 
@@ -347,7 +341,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
       .children()
       .each(($child, index) => {
         if (index <= 5) {
-          expect($child.text()).to.eq(expectedFullPickerTitles[index]);
+          expect($child.text()).to.eq(['', '', ...expectedFullPickerTitles][index]);
         }
       });
   });

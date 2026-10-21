@@ -411,7 +411,7 @@ describe('GridMenuControl', () => {
         expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
-        expect(liElmList[2].textContent).toBe('Billing - Field 3');
+        expect(liElmList[1].textContent).toBe(' - Field 2');
       });
 
       it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called from default option when it is not provided', () => {
@@ -433,7 +433,7 @@ describe('GridMenuControl', () => {
         expect(handlerSpy).toHaveBeenCalledTimes(3);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
-        expect(liElmList[2].textContent).toBe('Field 3');
+        expect(liElmList[1].textContent).toBe('Field 2');
       });
 
       it('should open the Grid Menu and expect its minWidth and height to be overriden when provided as grid menu options', () => {
@@ -788,10 +788,10 @@ describe('GridMenuControl', () => {
         const inputSyncElm = control.menuElement!.querySelector('#slickgrid_124343-gridmenu-colpicker-syncresize') as HTMLInputElement;
         const pickerField1Elm = document.querySelector('input[type="checkbox"][data-columnid="field1"]') as HTMLInputElement;
         const li2Elm = document.querySelector('.slick-column-picker-list li:nth-of-type(2)') as HTMLLIElement;
-        const li3Elm = document.querySelector('.slick-column-picker-list li:nth-of-type(3)') as HTMLLIElement;
+        const excludedInput = control.menuElement!.querySelector('input[data-columnid=field3]');
         expect(pickerField1Elm.checked).toBe(true);
         expect(li2Elm.className).not.toBe('hidden');
-        expect(li3Elm.className).toBe('hidden');
+        expect(excludedInput).toBeNull();
         pickerField1Elm.checked = false;
         pickerField1Elm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 

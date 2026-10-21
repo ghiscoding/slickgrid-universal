@@ -51,19 +51,15 @@ describe('Example 10 - Multiple Grids with Row Selection', () => {
     cy.get('#grid2').find('.slick-row').children().filter('.slick-cell-checkboxsel.selected').should('have.length', 2);
   });
 
-  it('should make sure that first column is hidden from the Grid Menu (1st column definition has "excludeFromGridMenu" set) on 1st grid', () => {
+  it('should make sure that first column is omitted from the Grid Menu (1st column definition has "excludeFromGridMenu" set) on 1st grid', () => {
     cy.get('#grid1').find('button.slick-grid-menu-button').trigger('click').click();
 
     cy.get('.slick-grid-menu')
       .find('.slick-column-picker-list')
       .children()
+      .should('have.length', titles.length - 1)
       .each(($child, index) => {
-        if (index === 0) {
-          expect($child[0].className).to.eq('hidden');
-          expect($child[0].offsetHeight).to.eq(0);
-          expect($child[0].offsetWidth).to.eq(0);
-        }
-        expect($child.text()).to.eq(titles[index]);
+        expect($child.text()).to.eq(titles[index + 1]);
       });
   });
 
@@ -73,7 +69,7 @@ describe('Example 10 - Multiple Grids with Row Selection', () => {
     cy.get('#grid1')
       .get('.slick-grid-menu:visible')
       .find('.slick-column-picker-list')
-      .children('li:nth-child(2)')
+      .children('li:first-child')
       .children('label')
       .should('contain', 'Title')
       .click();
@@ -94,18 +90,14 @@ describe('Example 10 - Multiple Grids with Row Selection', () => {
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
       .children()
+      .should('have.length', titles.length - 1)
       .each(($child, index) => {
-        if (index === 0) {
-          expect($child[0].className).to.eq('hidden');
-          expect($child[0].offsetHeight).to.eq(0);
-          expect($child[0].offsetWidth).to.eq(0);
-        }
-        expect($child.text()).to.eq(titles[index]);
+        expect($child.text()).to.eq(titles[index + 1]);
       });
 
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
-      .children('li:nth-child(2)')
+      .children('li:first-child')
       .children('label')
       .should('contain', 'Title')
       .click();

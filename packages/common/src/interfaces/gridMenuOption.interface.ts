@@ -17,7 +17,8 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
 
   /**
    * All the commands text labels
-   * NOTE: some of the text have other properties outside of this option (like 'clearAllFiltersCommand', 'exportExcelCommand', ...) and that is because they were created prior to this refactoring of labels
+   * NOTE: some of the text have other properties outside of this option (like 'clearAllFiltersCommand', 'exportExcelCommand', ...)
+   * and that is because they were created prior to this refactoring of labels
    */
   commandLabels?: GridMenuLabel;
 
@@ -39,7 +40,7 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
   /** Same as "columnTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   columnTitleKey?: string;
 
-  /** Column list builder is a callback that can be used to filter/sort columns before rendering them in the DOM */
+  /** Callback to filter/sort columns before rendering. Columns with `excludeFromGridMenu: true` are excluded before this callback. */
   columnListBuilder?: (columns: Column[]) => Column[];
 
   /** @deprecated @use `columnListBuilder` Custom sort function for the columns in the grid menu */

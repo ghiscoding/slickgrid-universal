@@ -376,7 +376,7 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-child(2)')
+        .children('li:nth-child(1)')
         .children('label')
         .should('contain', 'Title')
         .click();
@@ -391,7 +391,7 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-child(3)')
+        .children('li:nth-child(2)')
         .children('label')
         .should('contain', 'Duration')
         .click();
@@ -427,7 +427,7 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-child(2)')
+        .children('li:nth-child(1)')
         .children('label')
         .should('contain', 'Title')
         .click();
@@ -447,7 +447,7 @@ describe('Example 03 - Draggable Grouping & Aggregators', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-child(3)')
+        .children('li:nth-child(2)')
         .children('label')
         .should('contain', 'Duration')
         .click();

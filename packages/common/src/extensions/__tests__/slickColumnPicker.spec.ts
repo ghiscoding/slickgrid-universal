@@ -550,7 +550,7 @@ describe('ColumnPickerControl', () => {
         gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
         gridStub.onColumnsReordered.notify({ impactedColumns: columnsUnorderedMock, previousColumnOrder: [], grid: gridStub }, eventData as any, gridStub);
         control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
-        const col4 = control.menuElement!.querySelector<HTMLInputElement>('li.hidden input[data-columnid=field4]');
+        const col4 = control.menuElement!.querySelector<HTMLInputElement>('input[data-columnid=field4]');
 
         const expectedColumnMocks = [
           { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE', hidden: false },
@@ -563,7 +563,7 @@ describe('ColumnPickerControl', () => {
         expect(control.getAllColumns()).toEqual(expectedColumnMocks);
         expect(control.getVisibleColumns()).toEqual(expectedColumnMocks);
         expect(control.columns).toEqual(expectedColumnMocks);
-        expect(col4).toBeTruthy();
+        expect(col4).toBeNull();
       });
 
       it('should trigger click on icon-checkbox-container when Enter key is pressed on focused menu item (onActivate)', () => {

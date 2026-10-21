@@ -13,6 +13,7 @@ The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer va
 - [Remove row positioning and Row Detail rendering options](#row-positioning-rowtopoffsetrendertype)
 - [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors)
 - [Removed Deprecated Code](#removed-deprecated-code)
+- [Excluded columns are no longer rendered in column lists](#excluded-columns-are-no-longer-rendered-in-column-lists)
 - [Code Changes](#code-changes)
 - [New `iconSet` grid option for the Fluent theme](#new-iconset-grid-option-for-the-fluent-theme)
 
@@ -251,6 +252,13 @@ After identifying that Row Detail has way too many containers and redundant CSS 
 ```
 
 ## Code Changes
+
+### Excluded columns are no longer rendered in column lists
+
+Grid Menu and Column Picker options that are defined with `excludeFromColumnPicker: true` or `excludeFromGridMenu: true` are now omitted from the respective menu's DOM instead of rendered with the `.hidden` CSS class. **For most users, this change is transparent and requires no action.**
+
+If you use Cypress or Playwright E2E tests, update any selectors or item counts that relied on those hidden entries. Assert that excluded checkboxes do not exist instead of checking that they are hidden. Custom `columnSort` and `columnListBuilder` callbacks also now receive only eligible columns.
+
 ### Rename `changeColumnsArrangement()`
 
 ```diff
