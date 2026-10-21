@@ -454,28 +454,30 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
   describe('command visibility option merging', () => {
     beforeEach(() => {
       component['forRootConfig'] = {
-        gridMenu: { hideCommands: ['export-csv', 'export-excel'], showCommands: ['toggle-dark-mode', 'export-text-delimited'] },
-        contextMenu: { hideCommands: ['copy', 'export-csv'], showCommands: ['export-text-delimited'] },
-        headerMenu: { hideCommands: ['sort-asc', 'sort-desc'], showCommands: ['clear-sort'] },
+        gridMenu: { hideCommands: ['export-csv', 'export-excel'] },
+        contextMenu: { hideCommands: ['copy', 'export-csv'] },
+        headerMenu: { hideCommands: ['sort-asc', 'sort-desc'] },
+        textExportOptions: { menuFormats: ['csv', 'txt'] },
       };
     });
 
     it('should replace inherited visibility lists with shorter or empty grid lists without mutating inputs', () => {
       const input: GridOption = {
-        gridMenu: { hideCommands: ['clear-sorting'], showCommands: ['toggle-dark-mode'] },
-        contextMenu: { hideCommands: ['export-excel'], showCommands: [] },
-        headerMenu: { hideCommands: [], showCommands: [] },
+        gridMenu: { hideCommands: ['clear-sorting'] },
+        contextMenu: { hideCommands: ['export-excel'] },
+        headerMenu: { hideCommands: [] },
+        textExportOptions: { menuFormats: ['txt'] },
       };
       const options = component['mergeGridOptions'](input);
 
       for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
-        for (const visibility of ['hideCommands', 'showCommands'] as const) {
-          expect(options[menu]![visibility]).toEqual(input[menu]![visibility]);
-          expect(options[menu]![visibility]).not.toBe(input[menu]![visibility]);
-        }
+        expect(options[menu]!.hideCommands).toEqual(input[menu]!.hideCommands);
+        expect(options[menu]!.hideCommands).not.toBe(input[menu]!.hideCommands);
       }
+      expect(options.textExportOptions!.menuFormats).toEqual(['txt']);
+      expect(options.textExportOptions!.menuFormats).not.toBe(input.textExportOptions!.menuFormats);
       expect(component['forRootConfig']!.gridMenu!.hideCommands).toEqual(['export-csv', 'export-excel']);
-      expect(component['forRootConfig']!.contextMenu!.showCommands).toEqual(['export-text-delimited']);
+      expect(component['forRootConfig']!.textExportOptions!.menuFormats).toEqual(['csv', 'txt']);
       expect(component['forRootConfig']!.headerMenu!.hideCommands).toEqual(['sort-asc', 'sort-desc']);
     });
 
@@ -483,11 +485,11 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       const options = component['mergeGridOptions']({});
 
       for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
-        for (const visibility of ['hideCommands', 'showCommands'] as const) {
-          expect(options[menu]![visibility]).toEqual(component['forRootConfig']![menu]![visibility]);
-          expect(options[menu]![visibility]).not.toBe(component['forRootConfig']![menu]![visibility]);
-        }
+        expect(options[menu]!.hideCommands).toEqual(component['forRootConfig']![menu]!.hideCommands);
+        expect(options[menu]!.hideCommands).not.toBe(component['forRootConfig']![menu]!.hideCommands);
       }
+      expect(options.textExportOptions!.menuFormats).toEqual(['csv', 'txt']);
+      expect(options.textExportOptions!.menuFormats).not.toBe(component['forRootConfig']!.textExportOptions!.menuFormats);
     });
   });
 

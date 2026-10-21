@@ -1,5 +1,4 @@
 import type {
-  BuiltInGridMenuCommand,
   Column,
   GridMenuCallbackArgs,
   GridMenuCommandItemCallbackArgs,
@@ -10,9 +9,6 @@ import type {
 } from './index.js';
 
 export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackArgs> {
-  /** Show built-in commands hidden by default. Their features must still be enabled. hideCommands takes precedence. */
-  showCommands?: Array<BuiltInGridMenuCommand>;
-
   /** Defaults to true, Auto-align drop menu to the left or right depending on grid viewport available space */
   autoAlignSide?: boolean;
 
@@ -145,6 +141,9 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
 
   /** Defaults to True, should we show bullets when icons are missing? */
   showBulletWhenIconMissing?: boolean;
+
+  /** Defaults to false, show the "Toggle Dark Mode" command (`hideCommands` still takes precedence). */
+  showToggleDarkModeCommand?: boolean;
 
   /** CSS class that can be added on the right side of a sub-item parent (typically a chevron-right icon) */
   subItemChevronClass?: string;

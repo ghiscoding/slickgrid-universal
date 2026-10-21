@@ -1,10 +1,7 @@
 import type { ContextMenuLabel } from './contextMenuLabel.interface.js';
-import type { BuiltInContextMenuCommand, MenuCommandItem, MenuFromCellCallbackArgs, MenuOption, MenuOptionItem } from './index.js';
+import type { MenuCommandItem, MenuFromCellCallbackArgs, MenuOption, MenuOptionItem } from './index.js';
 
 export interface ContextMenuOption extends MenuOption<MenuFromCellCallbackArgs> {
-  /** Show built-in commands hidden by default. Their features must still be enabled. hideCommands takes precedence. */
-  showCommands?: Array<BuiltInContextMenuCommand>;
-
   /** Defaults to true, Auto-align dropup or dropdown menu to the left or right depending on grid viewport available space */
   autoAdjustDrop?: boolean;
 

@@ -68,7 +68,6 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
   protected _camelPluginName = '';
   protected _columnCheckboxes: HTMLInputElement[] = [];
   protected _columns: Column[] = [];
-  protected readonly _defaultHiddenCommands: readonly string[] = [];
   protected _columnTitleElm!: HTMLDivElement;
   protected _commandTitleElm?: HTMLSpanElement;
   protected _eventHandler: SlickEventHandler;
@@ -369,7 +368,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
    * add Menu Item Command when not found and also make sure that we have an `action` callback
    * (could be missing when provided by user) if not use built-in `action` callback when missing
    * @param builtInMenuItem
-   * @param hideCommands - explicit exclusions take precedence over showCommands and menu defaults
+   * @param hideCommands - built-in commands to exclude
    * @param targetMenuItems
    * @param originalMenuItems
    */
@@ -380,15 +379,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     originalMenuItems?: Array<T | 'divider'>
   ): void {
     // remove any commands that the user doesn't want
-    const showCommands: readonly string[] | undefined = (this._addonOptions as GridMenu | ContextMenu | HeaderMenu).showCommands;
-    let skip = false;
-    if (builtInMenuItem !== 'divider') {
-      skip =
-        hideCommands.includes(builtInMenuItem.command) ||
-        (this._defaultHiddenCommands.includes(builtInMenuItem.command) && !showCommands?.includes(builtInMenuItem.command));
-    }
-
-    if (builtInMenuItem !== 'divider' && !skip) {
+    if (builtInMenuItem !== 'divider' && !hideCommands.includes(builtInMenuItem.command)) {
       const cmdName = builtInMenuItem.command;
       const cmd = (originalMenuItems ?? targetMenuItems).find(commandMatcher<T>(cmdName));
 

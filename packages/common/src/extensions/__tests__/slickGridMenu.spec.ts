@@ -5,7 +5,6 @@ import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '
 import * as utils from '../../core/utils.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import type { Column, DOMEvent, ExternalResource, GridMenu, GridOption } from '../../interfaces/index.js';
-import { MenuCommandDefaults } from '../../menu-command-defaults.js';
 import {
   BackendUtilityService,
   SharedService,
@@ -1710,31 +1709,36 @@ describe('GridMenuControl', () => {
         });
 
         it.each([
-          [{}, ['clear-pinning', 'export-csv']],
-          [{ hideCommands: ['export-csv'] }, ['clear-pinning']],
-          [{ hideCommands: [], showCommands: [] }, ['clear-pinning', 'export-csv']],
-          [{ hideCommands: [...MenuCommandDefaults.gridMenu.hideCommands, 'export-csv'] }, ['clear-pinning']],
-          [{ hideCommands: [...MenuCommandDefaults.gridMenu.hideCommands], showCommands: ['toggle-dark-mode'] }, ['clear-pinning', 'export-csv']],
-          [{ showCommands: ['toggle-dark-mode'] }, ['clear-pinning', 'export-csv', 'toggle-dark-mode']],
-          [{ showCommands: ['export-text-delimited'] }, ['clear-pinning', 'export-csv', 'export-text-delimited']],
-          [{ showCommands: ['toggle-dark-mode'], hideCommands: ['toggle-dark-mode'] }, ['clear-pinning', 'export-csv']],
-        ] as Array<[GridMenu, string[]]>)('should preserve defaults and apply visibility overrides %j', (gridMenu, expectedCommands) => {
-          const options: GridOption = {
-            ...gridOptionsMock,
-            enableFiltering: false,
-            enableSorting: false,
-            enableTextExport: true,
-            enableExcelExport: false,
-            enablePdfExport: false,
-            gridMenu,
-          };
-          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(options);
-          vi.spyOn(gridStub, 'getOptions').mockReturnValue(options);
-          control.columns = columnsMock;
-          control.init();
+          [{}, undefined, ['clear-pinning', 'export-csv']],
+          [{ hideCommands: ['export-csv'] }, undefined, ['clear-pinning']],
+          [{ hideCommands: [] }, undefined, ['clear-pinning', 'export-csv']],
+          [{ showToggleDarkModeCommand: true }, undefined, ['clear-pinning', 'export-csv', 'toggle-dark-mode']],
+          [{ showToggleDarkModeCommand: true, hideCommands: ['toggle-dark-mode'] }, undefined, ['clear-pinning', 'export-csv']],
+          [{}, ['csv', 'txt'], ['clear-pinning', 'export-csv', 'export-text-delimited']],
+          [{}, ['txt'], ['clear-pinning', 'export-text-delimited']],
+          [{}, [], ['clear-pinning']],
+          [{ hideCommands: ['export-text-delimited'] }, ['csv', 'txt'], ['clear-pinning', 'export-csv']],
+        ] as Array<[GridMenu, Array<'csv' | 'txt'> | undefined, string[]]>)(
+          'should apply visibility for gridMenu %j and menuFormats %j',
+          (gridMenu, menuFormats, expectedCommands) => {
+            const options: GridOption = {
+              ...gridOptionsMock,
+              enableFiltering: false,
+              enableSorting: false,
+              enableTextExport: true,
+              enableExcelExport: false,
+              enablePdfExport: false,
+              textExportOptions: { menuFormats },
+              gridMenu,
+            };
+            vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(options);
+            vi.spyOn(gridStub, 'getOptions').mockReturnValue(options);
+            control.columns = columnsMock;
+            control.init();
 
-          expect(options.gridMenu!.commandItems!.map((item) => item !== 'divider' && item.command).sort()).toEqual(expectedCommands.sort());
-        });
+            expect(options.gridMenu!.commandItems!.map((item) => item !== 'divider' && item.command).sort()).toEqual(expectedCommands.sort());
+          }
+        );
 
         it('should keep unavailable export commands out of the builder and preserve built-in actions and customizations', () => {
           const customAction = vi.fn();
@@ -1749,8 +1753,9 @@ describe('GridMenuControl', () => {
             enableTextExport: false,
             enableExcelExport: false,
             enablePdfExport: false,
+            textExportOptions: { menuFormats: ['csv', 'txt'] },
             gridMenu: {
-              showCommands: ['toggle-dark-mode', 'export-csv', 'export-excel', 'export-text-delimited', 'export-pdf'],
+              showToggleDarkModeCommand: true,
               hideCommands: ['clear-pinning'],
               commandListBuilder: builder,
             },
@@ -1935,7 +1940,7 @@ describe('GridMenuControl', () => {
               hideCommands: ['clear-pinning', 'clear-filter', 'toggle-filter', 'refresh-dataset'],
             },
           } as unknown as GridOption;
-          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showCommands: ['toggle-dark-mode'] };
+          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showToggleDarkModeCommand: true };
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
@@ -2203,7 +2208,7 @@ describe('GridMenuControl', () => {
               hideCommands: ['clear-pinning', 'export-csv', 'export-excel', 'toggle-dark-mode'],
             },
           } as unknown as GridOption;
-          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showCommands: ['export-text-delimited'] };
+          copyGridOptionsMock.textExportOptions = { menuFormats: ['csv', 'txt'] };
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
@@ -2232,7 +2237,7 @@ describe('GridMenuControl', () => {
               hideCommands: ['clear-pinning', 'export-excel', 'export-csv', 'export-text-delimited', 'toggle-dark-mode'],
             },
           } as unknown as GridOption;
-          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showCommands: ['export-text-delimited'] };
+          copyGridOptionsMock.textExportOptions = { menuFormats: ['csv', 'txt'] };
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
@@ -2370,7 +2375,7 @@ describe('GridMenuControl', () => {
 
         it('should call "exportToFile" with Text Delimited and expect an error thrown when TextExportService is not registered prior to calling the method', () => {
           const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideCommands: [] } as unknown as GridOption;
-          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showCommands: ['export-text-delimited'] };
+          copyGridOptionsMock.textExportOptions = { menuFormats: ['csv', 'txt'] };
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
@@ -2440,7 +2445,7 @@ describe('GridMenuControl', () => {
         it('should call "exportToFile" with Text Delimited set when the command triggered is "export-text-delimited"', () => {
           const exportSpy = vi.spyOn(TextExportServiceStub.prototype, 'exportToFile');
           const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideCommands: [] } as unknown as GridOption;
-          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showCommands: ['export-text-delimited'] };
+          copyGridOptionsMock.textExportOptions = { menuFormats: ['csv', 'txt'] };
           vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new TextExportServiceStub()]);
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
@@ -2457,7 +2462,7 @@ describe('GridMenuControl', () => {
 
         it('should toggle the darkMode grid option when the command triggered is "toggle-dark-mode"', () => {
           const copyGridOptionsMock = { ...gridOptionsMock, darkMode: false, gridMenu: { hideCommands: [] } } as unknown as GridOption;
-          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showCommands: ['toggle-dark-mode'] };
+          copyGridOptionsMock.gridMenu = { ...copyGridOptionsMock.gridMenu, showToggleDarkModeCommand: true };
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 

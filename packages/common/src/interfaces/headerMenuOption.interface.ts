@@ -1,9 +1,6 @@
-import type { BuiltInHeaderMenuCommand, HeaderMenuCommandItemCallbackArgs, HeaderMenuLabel, MenuOption } from './index.js';
+import type { HeaderMenuCommandItemCallbackArgs, HeaderMenuLabel, MenuOption } from './index.js';
 
 export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallbackArgs> {
-  /** Show built-in commands hidden by default. Their features must still be enabled. hideCommands takes precedence. */
-  showCommands?: Array<BuiltInHeaderMenuCommand>;
-
   /** Auto-align drop menu to the left when not enough viewport space to show on the right */
   autoAlign?: boolean;
 

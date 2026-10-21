@@ -33,11 +33,8 @@ export interface HeaderMenuCommandItemCallbackArgs {
 }
 
 export interface HeaderMenu extends HeaderMenuOption {
-  /** Hide built-in commands. 'pinning-commands' hides the entire pinning submenu. Takes precedence over showCommands. */
+  /** Hide built-in commands. 'pinning-commands' hides the entire pinning submenu. */
   hideCommands?: Array<BuiltInHeaderMenuCommand>;
-
-  /** Show built-in commands hidden by default (none). Does not enable their underlying features. */
-  showCommands?: Array<BuiltInHeaderMenuCommand>;
 
   // --
   // Events

@@ -100,7 +100,7 @@ export default class Example01 {
       enableCellNavigation: true,
       gridMenu: {
         // autoResizeColumns: false, // disable auto-resize columns after closing the Grid Menu
-        showCommands: ['toggle-dark-mode'], // hidden by default
+        showToggleDarkModeCommand: true, // hidden by default
         onCommand: (_, args) => {
           if (args.command === 'toggle-dark-mode') {
             this._darkModeGrid1 = !this._darkModeGrid1; // keep local toggle var in sync

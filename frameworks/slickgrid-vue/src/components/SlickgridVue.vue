@@ -1359,14 +1359,16 @@ function mergeGridOptions(gridOptions: GridOption): GridOption {
     gridOptions
   );
 
-  // Command visibility lists replace defaults instead of merging array entries by index.
+  // Command visibility and export menu format lists replace defaults instead of merging array entries by index.
   for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
-    for (const visibility of ['hideCommands', 'showCommands'] as const) {
-      const commands = gridOptions[menu]?.[visibility];
-      if (commands && options[menu]) {
-        Object.assign(options[menu], { [visibility]: [...commands] });
-      }
+    const commands = gridOptions[menu]?.hideCommands;
+    if (commands && options[menu]) {
+      Object.assign(options[menu], { hideCommands: [...commands] });
     }
+  }
+  const menuFormats = gridOptions.textExportOptions?.menuFormats;
+  if (menuFormats && options.textExportOptions) {
+    options.textExportOptions.menuFormats = [...menuFormats];
   }
 
   // if we have a backendServiceApi and the enablePagination is undefined, we'll assume that we do want to see it, else get that defined value

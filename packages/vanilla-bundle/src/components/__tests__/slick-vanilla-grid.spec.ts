@@ -809,30 +809,25 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         }
       );
 
-      it('should inherit global showCommands while accepting per-grid hideCommands', () => {
-        const previous = GlobalGridOptions.gridMenu!.showCommands;
+      it('should replace inherited textExportOptions menuFormats without mutating global or user options', () => {
+        const previous = GlobalGridOptions.textExportOptions!.menuFormats;
         try {
-          GlobalGridOptions.gridMenu!.showCommands = ['toggle-dark-mode'];
-          const options = component.mergeGridOptions({ gridMenu: { hideCommands: ['toggle-dark-mode'] } });
-          expect(options.gridMenu!.showCommands).toEqual(['toggle-dark-mode']);
-          expect(options.gridMenu!.hideCommands).toEqual(['toggle-dark-mode']);
-          expect(GlobalGridOptions.gridMenu!.hideCommands).toBeUndefined();
+          GlobalGridOptions.textExportOptions!.menuFormats = ['csv', 'txt'];
+          const menuFormats: Array<'csv' | 'txt'> = ['txt'];
+          const options = component.mergeGridOptions({ textExportOptions: { menuFormats } });
+          expect(options.textExportOptions!.menuFormats).toEqual(['txt']);
+          expect(options.textExportOptions!.menuFormats).not.toBe(menuFormats);
+          expect(GlobalGridOptions.textExportOptions!.menuFormats).toEqual(['csv', 'txt']);
+
+          const empty = component.mergeGridOptions({ textExportOptions: { menuFormats: [] } });
+          expect(empty.textExportOptions!.menuFormats).toEqual([]);
         } finally {
           if (previous === undefined) {
-            delete GlobalGridOptions.gridMenu!.showCommands;
+            delete GlobalGridOptions.textExportOptions!.menuFormats;
           } else {
-            GlobalGridOptions.gridMenu!.showCommands = previous;
+            GlobalGridOptions.textExportOptions!.menuFormats = previous;
           }
         }
-      });
-
-      it.each(['gridMenu', 'contextMenu', 'headerMenu'] as const)('should replace and clear %s showCommands without mutating inputs', (menu) => {
-        const showCommands = ['sort-asc', 'sort-desc'];
-        const options = component.mergeGridOptions({ [menu]: { showCommands } } as GridOption);
-        expect(options[menu]!.showCommands).toEqual(showCommands);
-        expect(options[menu]!.showCommands).not.toBe(showCommands);
-        const empty = component.mergeGridOptions({ [menu]: { showCommands: [] } } as GridOption);
-        expect(empty[menu]!.showCommands).toEqual([]);
       });
 
       it('should allow empty visibility overrides without mutating defaults', () => {

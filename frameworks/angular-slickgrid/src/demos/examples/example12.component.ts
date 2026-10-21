@@ -218,14 +218,12 @@ export class Example12Component implements OnInit, OnDestroy {
           sheet.data.push(cols);
         },
       },
-      gridMenu: {
-        showCommands: ['export-text-delimited'], // hidden by default
-      },
       enableExcelExport: true,
       enableTextExport: true,
       textExportOptions: {
         // set at the grid option level, meaning all column will evaluate the Formatter (when it has a Formatter defined)
         exportWithFormatter: true,
+        menuFormats: ['csv', 'txt'], // also show "export-text-delimited" in the menus
         sanitizeDataExport: true,
       },
       externalResources: [this.excelExportService, this.textExportService],

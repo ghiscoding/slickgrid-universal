@@ -49,6 +49,7 @@ export const SalesforceGlobalGridOptions = {
   enableTextExport: true,
   textExportOptions: {
     exportWithFormatter: true,
+    menuFormats: ['csv'],
     sanitizeDataExport: true,
   },
   enableCellNavigation: true,

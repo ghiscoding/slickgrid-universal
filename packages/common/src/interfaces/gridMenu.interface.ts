@@ -19,11 +19,8 @@ export interface GridMenu extends GridMenuOption {
   // --
   // Events
 
-  /** Hide built-in commands. Takes precedence over showCommands. */
+  /** Hide built-in commands. */
   hideCommands?: Array<BuiltInGridMenuCommand>;
-
-  /** Show built-in commands hidden by default (export-text-delimited and toggle-dark-mode). Does not enable their underlying features. */
-  showCommands?: Array<BuiltInGridMenuCommand>;
 
   /** Fired after extension (control) is registered by SlickGrid */
   onExtensionRegistered?: (plugin: SlickGridMenu) => void;

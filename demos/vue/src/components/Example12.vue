@@ -181,14 +181,12 @@ function defineGrid() {
       hideTotalItemCount: false,
       hideLastUpdateTimestamp: false,
     },
-    gridMenu: {
-      showCommands: ['export-text-delimited'], // hidden by default
-    },
     enableExcelExport: true,
     enableTextExport: true,
     textExportOptions: {
       // set at the grid option level, meaning all column will evaluate the Formatter (when it has a Formatter defined)
       exportWithFormatter: true,
+      menuFormats: ['csv', 'txt'], // also show "export-text-delimited" in the menus
       sanitizeDataExport: true,
     },
     excelExportOptions: {

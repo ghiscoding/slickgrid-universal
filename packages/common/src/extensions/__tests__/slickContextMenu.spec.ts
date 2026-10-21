@@ -1014,28 +1014,33 @@ describe('ContextMenu Plugin', () => {
 
     describe('with Custom Commands List', () => {
       it.each([
-        [{}, ['copy', 'export-csv']],
-        [{ hideCommands: ['export-csv'] }, ['copy']],
-        [{ showCommands: ['export-text-delimited'] }, ['copy', 'export-csv', 'export-text-delimited']],
-        [{ showCommands: ['export-text-delimited'], hideCommands: ['export-text-delimited'] }, ['copy', 'export-csv']],
-      ] as Array<[ContextMenu, string[]]>)('should preserve default visibility and let hide override show %j', (contextMenu, expectedCommands) => {
-        const options: GridOption = {
-          ...gridOptionsMock,
-          enableTextExport: true,
-          enableExcelExport: false,
-          enablePdfExport: false,
-          enableGrouping: false,
-          enableDraggableGrouping: false,
-          enableTreeData: false,
-          contextMenu,
-        };
-        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(options);
-        vi.spyOn(gridStub, 'getOptions').mockReturnValue(options);
-        plugin.dispose();
-        plugin.init(contextMenu);
+        [{}, undefined, ['copy', 'export-csv']],
+        [{ hideCommands: ['export-csv'] }, undefined, ['copy']],
+        [{}, ['csv', 'txt'], ['copy', 'export-csv', 'export-text-delimited']],
+        [{}, ['txt'], ['copy', 'export-text-delimited']],
+        [{ hideCommands: ['export-text-delimited'] }, ['csv', 'txt'], ['copy', 'export-csv']],
+      ] as Array<[ContextMenu, Array<'csv' | 'txt'> | undefined, string[]]>)(
+        'should apply visibility for contextMenu %j and menuFormats %j',
+        (contextMenu, menuFormats, expectedCommands) => {
+          const options: GridOption = {
+            ...gridOptionsMock,
+            enableTextExport: true,
+            enableExcelExport: false,
+            enablePdfExport: false,
+            enableGrouping: false,
+            enableDraggableGrouping: false,
+            enableTreeData: false,
+            textExportOptions: { menuFormats },
+            contextMenu,
+          };
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(options);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(options);
+          plugin.dispose();
+          plugin.init(contextMenu);
 
-        expect(options.contextMenu!.commandItems!.map((item) => item !== 'divider' && item.command).sort()).toEqual(expectedCommands.sort());
-      });
+          expect(options.contextMenu!.commandItems!.map((item) => item !== 'divider' && item.command).sort()).toEqual(expectedCommands.sort());
+        }
+      );
 
       beforeEach(() => {
         slickCellElm = document.createElement('div');
@@ -1611,7 +1616,7 @@ describe('ContextMenu Plugin', () => {
           enableTextExport: true,
           contextMenu: { hideCommands: ['copy', 'export-excel'] },
         } as GridOption;
-        copyGridOptionsMock.contextMenu = { ...copyGridOptionsMock.contextMenu, showCommands: ['export-text-delimited'] };
+        copyGridOptionsMock.textExportOptions = { menuFormats: ['csv', 'txt'] };
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         plugin.dispose();
@@ -1706,7 +1711,7 @@ describe('ContextMenu Plugin', () => {
           enableTextExport: true,
           contextMenu: { hideCommands: ['copy', 'export-excel'] },
         } as GridOption;
-        copyGridOptionsMock.contextMenu = { ...copyGridOptionsMock.contextMenu, showCommands: ['export-text-delimited'] };
+        copyGridOptionsMock.textExportOptions = { menuFormats: ['csv', 'txt'] };
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new TextExportServiceStub()]);

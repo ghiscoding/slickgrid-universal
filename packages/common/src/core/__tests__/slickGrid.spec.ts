@@ -364,31 +364,44 @@ describe('SlickGrid core file', () => {
   });
 
   it.each([
-    ['gridMenu', 'hideCommands', ['export-text-delimited', 'toggle-dark-mode']],
-    ['contextMenu', 'hideCommands', ['copy', 'export-text-delimited']],
-    ['headerMenu', 'hideCommands', ['sort-asc', 'sort-desc']],
-    ['gridMenu', 'showCommands', ['export-text-delimited', 'toggle-dark-mode']],
-    ['contextMenu', 'showCommands', ['export-text-delimited', 'copy']],
-    ['headerMenu', 'showCommands', ['sort-asc', 'sort-desc']],
-  ] as const)('should replace %s %s during runtime updates', (menu, visibility, initialCommands) => {
+    ['gridMenu', ['export-text-delimited', 'toggle-dark-mode']],
+    ['contextMenu', ['copy', 'export-text-delimited']],
+    ['headerMenu', ['sort-asc', 'sort-desc']],
+  ] as const)('should replace %s hideCommands during runtime updates', (menu, initialCommands) => {
     grid = new SlickGrid(container, [], [{ id: 'id', field: 'id' }], {
       ...defaultOptions,
-      [menu]: { [visibility]: [...initialCommands], subMenuOpenByEvent: 'mouseover' },
+      [menu]: { hideCommands: [...initialCommands], subMenuOpenByEvent: 'mouseover' },
     });
     const commands = [initialCommands[0]];
-    grid.setOptions({ [menu]: { [visibility]: commands } });
+    grid.setOptions({ [menu]: { hideCommands: commands } });
 
-    expect(grid.getOptions()[menu]![visibility]).toEqual([initialCommands[0]]);
-    expect(grid.getOptions()[menu]![visibility]).not.toBe(commands);
+    expect(grid.getOptions()[menu]!.hideCommands).toEqual([initialCommands[0]]);
+    expect(grid.getOptions()[menu]!.hideCommands).not.toBe(commands);
     expect(commands).toEqual([initialCommands[0]]);
     expect(grid.getOptions()[menu]!.subMenuOpenByEvent).toBe('mouseover');
 
     grid.setOptions({ [menu]: { subMenuOpenByEvent: 'click' } });
-    expect(grid.getOptions()[menu]![visibility]).toEqual([initialCommands[0]]);
+    expect(grid.getOptions()[menu]!.hideCommands).toEqual([initialCommands[0]]);
     expect(grid.getOptions()[menu]!.subMenuOpenByEvent).toBe('click');
 
-    grid.setOptions({ [menu]: { [visibility]: [] } });
-    expect(grid.getOptions()[menu]![visibility]).toEqual([]);
+    grid.setOptions({ [menu]: { hideCommands: [] } });
+    expect(grid.getOptions()[menu]!.hideCommands).toEqual([]);
+  });
+
+  it('should replace textExportOptions menuFormats during runtime updates', () => {
+    grid = new SlickGrid(container, [], [{ id: 'id', field: 'id' }], {
+      ...defaultOptions,
+      textExportOptions: { menuFormats: ['csv', 'txt'], filename: 'export' },
+    });
+    const menuFormats: Array<'csv' | 'txt'> = ['txt'];
+    grid.setOptions({ textExportOptions: { menuFormats } });
+
+    expect(grid.getOptions().textExportOptions!.menuFormats).toEqual(['txt']);
+    expect(grid.getOptions().textExportOptions!.menuFormats).not.toBe(menuFormats);
+    expect(grid.getOptions().textExportOptions!.filename).toBe('export');
+
+    grid.setOptions({ textExportOptions: { menuFormats: [] } });
+    expect(grid.getOptions().textExportOptions!.menuFormats).toEqual([]);
   });
 
   it('should be able to instantiate SlickGrid and get columns', () => {

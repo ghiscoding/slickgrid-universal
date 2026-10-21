@@ -202,32 +202,28 @@ workaround.
 Replace the removed per-command `hide...` flags in `gridMenu`, `contextMenu`, and `headerMenu`:
 
 - `true` → add the command ID to `hideCommands`.
-- `false` for a default-hidden command → add it to `showCommands`; omit other `false` flags.
+- `false` → remove it, built-in commands are shown by default (except for the 2 exceptions below).
+
+**Exceptions (opt-in commands):**
+
+- `hideToggleDarkModeCommand` was inverted and renamed to `gridMenu.showToggleDarkModeCommand` (defaults to `false`), because the Dark Mode toggle is hidden by default.
+- `hideExportTextDelimitedCommand` was replaced by `textExportOptions.menuFormats` (defaults to `['csv']`), adding `'txt'` shows the "export-text-delimited" command in both the Grid Menu and Context Menu.
 
 ```diff
  gridMenu: {
 -  hideToggleDarkModeCommand: false,
 -  hideExportCsvCommand: true,
-+  showCommands: ['toggle-dark-mode'],
++  showToggleDarkModeCommand: true,
 +  hideCommands: ['export-csv'],
- }
+ },
++textExportOptions: {
++  menuFormats: ['csv', 'txt'],
++},
 ```
 
-**Defaults:** Grid Menu hides `export-text-delimited` and `toggle-dark-mode`; Context Menu hides `export-text-delimited`; Header Menu hides none. `hideCommands` wins over `showCommands`, including global show settings. Feature/resource requirements and `commandListBuilder` behavior are unchanged; visibility is applied before the builder.
+**Defaults:** `hideCommands` always takes precedence, even over the 2 exceptions above (e.g. `hideCommands: ['toggle-dark-mode']` wins over `showToggleDarkModeCommand: true`). Feature/resource requirements and `commandListBuilder` behavior are unchanged; visibility is applied before the builder.
 
-**Array replacement:** Supplied lists now replace inherited/previous lists, including in `grid.setOptions()`, instead of merging by index. Omit a property to preserve its value; use `[]` to clear its explicit overrides. Built-in defaults still apply.
-
-To extend library defaults explicitly, spread `MenuCommandDefaults` (also available for `contextMenu` and `headerMenu`):
-
-```ts
-import { MenuCommandDefaults, type GridOption } from '@slickgrid-universal/common';
-
-const gridOptions: GridOption = {
-  gridMenu: { hideCommands: [...MenuCommandDefaults.gridMenu.hideCommands, 'export-csv'] },
-};
-```
-
-Spreading defaults makes them explicit exclusions, so they override `showCommands`. To extend an application's global list, spread that configured list instead.
+**Array replacement:** Supplied `hideCommands` and `textExportOptions.menuFormats` lists now replace inherited/previous lists, including in `grid.setOptions()`, instead of merging by index. Omit a property to preserve its value; use `[]` to clear it.
 
 | Removed option | Command IDs |
 | --- | --- |

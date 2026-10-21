@@ -13,7 +13,6 @@ import type {
   GridOption,
   onGridMenuColumnsChangedCallbackArgs,
 } from '../interfaces/index.js';
-import { MenuCommandDefaults } from '../menu-command-defaults.js';
 import type { ExcelExportService } from '../services/excelExport.service.js';
 import type { FilterService } from '../services/filter.service.js';
 import type { PdfExportService } from '../services/pdfExport.service.js';
@@ -38,8 +37,6 @@ import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type Men
  * @constructor
  */
 export class SlickGridMenu extends MenuBaseClass<GridMenu> {
-  protected override readonly _defaultHiddenCommands: readonly string[] = MenuCommandDefaults.gridMenu.hideCommands;
-
   // public events
   onAfterMenuShow: SlickEvent<GridMenuEventWithElementCallbackArgs>;
   onBeforeMenuShow: SlickEvent<GridMenuEventWithElementCallbackArgs>;
@@ -556,6 +553,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const gridOptions = this.gridOptions;
     const translationPrefix = getTranslationPrefix(gridOptions);
     const commandLabels = this._addonOptions?.commandLabels;
+    const textMenuFormats = gridOptions.textExportOptions?.menuFormats ?? ['csv'];
 
     if (this._addonOptions && this.gridOptions) {
       // show grid menu: Clear all Pinning
@@ -631,24 +629,26 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       }
 
       // show grid menu: toggle dark mode
-      this.addMissingCommandOrAction(
-        {
-          iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'mdi mdi-brightness-4',
-          _orgTitle: commandLabels?.toggleDarkModeCommand || '',
-          titleKey: `${translationPrefix}${commandLabels?.toggleDarkModeCommandKey ?? 'TOGGLE_DARK_MODE'}`,
-          disabled: false,
-          command: 'toggle-dark-mode',
-          positionOrder: 54,
-          action: () => {
-            const currentDarkMode = this.sharedService.gridOptions.darkMode;
-            this.grid.setOptions({ darkMode: !currentDarkMode });
-            this.sharedService.gridOptions.darkMode = !currentDarkMode;
+      if (this._addonOptions.showToggleDarkModeCommand) {
+        this.addMissingCommandOrAction(
+          {
+            iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'mdi mdi-brightness-4',
+            _orgTitle: commandLabels?.toggleDarkModeCommand || '',
+            titleKey: `${translationPrefix}${commandLabels?.toggleDarkModeCommandKey ?? 'TOGGLE_DARK_MODE'}`,
+            disabled: false,
+            command: 'toggle-dark-mode',
+            positionOrder: 54,
+            action: () => {
+              const currentDarkMode = this.sharedService.gridOptions.darkMode;
+              this.grid.setOptions({ darkMode: !currentDarkMode });
+              this.sharedService.gridOptions.darkMode = !currentDarkMode;
+            },
           },
-        },
-        this._addonOptions.hideCommands,
-        gridMenuCommandItems,
-        originalCommandItems
-      );
+          this._addonOptions.hideCommands,
+          gridMenuCommandItems,
+          originalCommandItems
+        );
+      }
 
       if (this.gridOptions.showPreHeaderPanel) {
         // show grid menu: toggle pre-header row
@@ -694,7 +694,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       }
 
       // show grid menu: Export to file
-      if (this.gridOptions.enableTextExport) {
+      if (this.gridOptions.enableTextExport && textMenuFormats.includes('csv')) {
         this.addMissingCommandOrAction(
           {
             iconCssClass: this._addonOptions.iconExportCsvCommand || 'mdi mdi-download',
@@ -748,7 +748,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       }
 
       // show grid menu: export to text file as tab delimited
-      if (this.gridOptions.enableTextExport) {
+      if (this.gridOptions.enableTextExport && textMenuFormats.includes('txt')) {
         this.addMissingCommandOrAction(
           {
             iconCssClass: this._addonOptions.iconExportTextDelimitedCommand || 'mdi mdi-download',

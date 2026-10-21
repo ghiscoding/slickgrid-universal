@@ -15,12 +15,7 @@ Technically, it's enable by default and so you don't have anything to do to enjo
 
 ### Default command visibility
 
-```ts
-// MenuCommandDefaults.headerMenu.hideCommands
-[]
-```
-
-No built-in commands are hidden by default (`MenuCommandDefaults.headerMenu.hideCommands` is `[]`). Commands appear when their required grid features and column settings allow them, including sorting, filtering, resizing, and pinning. Use `hideCommands` to hide commands; it takes precedence over `showCommands`. `MenuCommandDefaults` is exported from `@slickgrid-universal/common`.
+Built-in commands appear when their required grid features and column settings allow them, including sorting, filtering, resizing, and pinning. Use `hideCommands` to hide commands.
 
 ## Customization
 ### Custom Commands

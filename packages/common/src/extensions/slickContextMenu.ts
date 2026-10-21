@@ -12,7 +12,6 @@ import type {
   MenuOptionItem,
   OnContextMenuArgs,
 } from '../interfaces/index.js';
-import { MenuCommandDefaults } from '../menu-command-defaults.js';
 import type { ExcelExportService } from '../services/excelExport.service.js';
 import type { PdfExportService } from '../services/pdfExport.service.js';
 import type { SharedService } from '../services/shared.service.js';
@@ -39,8 +38,6 @@ import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
  *   };
  */
 export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
-  protected override readonly _defaultHiddenCommands: readonly string[] = MenuCommandDefaults.contextMenu.hideCommands;
-
   protected _originalContextMenu!: ContextMenu;
   protected _defaults = {
     autoAdjustDrop: true, // dropup/dropdown
@@ -72,11 +69,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   init(contextMenuOptions?: ContextMenu): void {
     // keep original user context menu, useful when switching locale to translate
     this._originalContextMenu = extend(true, {}, this.sharedService.gridOptions.contextMenu);
-    this._addonOptions = {
-      ...this._defaults,
-      showCommands: this.sharedService.gridOptions.contextMenu?.showCommands,
-      ...contextMenuOptions,
-    };
+    this._addonOptions = { ...this._defaults, ...contextMenuOptions };
 
     // merge the original commands with the built-in internal commands
     const originalCommandItems = Array.isArray(this._addonOptions?.commandItems) ? this._addonOptions.commandItems : [];
@@ -178,6 +171,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     const commandLabels = this._addonOptions?.commandLabels;
     const dataView = this.sharedService?.dataView;
     const translationPrefix = getTranslationPrefix(gridOptions);
+    const textMenuFormats = gridOptions.textExportOptions?.menuFormats ?? ['csv'];
 
     // show context menu: Copy (cell value)
     if (contextMenu) {
@@ -199,7 +193,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     }
 
     // show context menu: Export to file
-    if (gridOptions?.enableTextExport && contextMenu) {
+    if (gridOptions?.enableTextExport && contextMenu && textMenuFormats.includes('csv')) {
       this.addMissingCommandOrAction(
         {
           _orgTitle: commandLabels?.exportCsvCommand || '',
@@ -286,7 +280,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     }
 
     // show context menu: export to text file as tab delimited
-    if (gridOptions?.enableTextExport && contextMenu) {
+    if (gridOptions?.enableTextExport && contextMenu && textMenuFormats.includes('txt')) {
       this.addMissingCommandOrAction(
         {
           _orgTitle: commandLabels?.exportTextDelimitedCommand || '',

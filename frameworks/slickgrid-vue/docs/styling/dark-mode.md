@@ -83,7 +83,7 @@ function defineGrid() {
   gridOptions.value = {
     darkMode: isDarkModeEnabled.value,
     gridMenu: {
-      showCommands: ['toggle-dark-mode'], // hidden by default
+      showToggleDarkModeCommand: true, // hidden by default
 
       // you can optionally add extra command to toggle your own page styling as well
       onCommand: (_, args) => {

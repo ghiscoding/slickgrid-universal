@@ -38,26 +38,23 @@ this.this.gridOptions: {
 
 ### Default command visibility
 
-```ts
-// MenuCommandDefaults.gridMenu.hideCommands
-['export-text-delimited', 'toggle-dark-mode']
-```
+Built-in commands are shown when their related feature is enabled (for example `enableFiltering`, `enableSorting` or `enableExcelExport`), with 2 opt-in exceptions:
 
-Hidden by default: `export-text-delimited` and `toggle-dark-mode`. All other built-in commands are visible when their required features/resources are available. Use `showCommands` to reveal default-hidden commands and `hideCommands` to hide commands; hide takes precedence. Visibility is applied before `commandListBuilder`.
+- `toggle-dark-mode`: enable it with `gridMenu.showToggleDarkModeCommand: true`.
+- `export-text-delimited`: enable it with `textExportOptions.menuFormats: ['csv', 'txt']` (defaults to `['csv']`, also shared with the Context Menu).
 
-To explicitly extend the library's default exclusions, import `MenuCommandDefaults` and spread the list for the relevant menu:
+Use `hideCommands` to hide any built-in command, it always takes precedence. Visibility is applied before `commandListBuilder`.
 
 ```ts
-import { MenuCommandDefaults, type GridOption } from '@slickgrid-universal/common';
-
 const gridOptions: GridOption = {
+  enableTextExport: true,
+  textExportOptions: { menuFormats: ['csv', 'txt'] },
   gridMenu: {
-    hideCommands: [...MenuCommandDefaults.gridMenu.hideCommands, 'export-csv'],
+    showToggleDarkModeCommand: true,
+    hideCommands: ['clear-pinning'],
   },
 };
 ```
-
-The same export includes `contextMenu.hideCommands` and `headerMenu.hideCommands`. These lists are read-only; spreading creates a new array. Built-in defaults already apply automatically, so `hideCommands: ['export-csv']` also keeps default-hidden commands hidden. Spreading the defaults makes those commands explicit exclusions: they then remain hidden even if included in `showCommands`. To extend your application's own global list instead, spread that configured list.
 
 ### Custom Commands
 The Grid Menu also comes, by default, with a list of built-in custom commands (all their `positionOrder` are in the reserved range of 40 to 60)

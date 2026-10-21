@@ -4651,12 +4651,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._options = extend(true, this._options, newOptions);
     // Command visibility lists replace previous values, including when a list shrinks or is cleared.
     for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
-      for (const visibility of ['hideCommands', 'showCommands'] as const) {
-        const commands = newOptions[menu]?.[visibility];
-        if (commands && this._options[menu]) {
-          Object.assign(this._options[menu], { [visibility]: [...commands] });
-        }
+      const commands = newOptions[menu]?.hideCommands;
+      if (commands && this._options[menu]) {
+        Object.assign(this._options[menu], { hideCommands: [...commands] });
       }
+    }
+    const menuFormats = newOptions.textExportOptions?.menuFormats;
+    if (menuFormats && this._options.textExportOptions) {
+      this._options.textExportOptions.menuFormats = [...menuFormats];
     }
     if (removePinning) {
       delete (this._options as Partial<O>).pinning;

@@ -454,23 +454,25 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         const hideCommands = ['export-text-delimited'] as const;
         const input: GridOption = {
           useSalesforceDefaultGridOptions,
-          gridMenu: { hideCommands: [...hideCommands], showCommands: ['toggle-dark-mode'] },
+          gridMenu: { hideCommands: [...hideCommands] },
           contextMenu: { hideCommands: [] },
           headerMenu: { hideCommands: ['sort-asc'] },
+          textExportOptions: { menuFormats: ['txt'] },
         };
         const options = component.mergeGridOptions(input);
 
         expect(options.gridMenu!.hideCommands).toEqual(hideCommands);
         expect(options.gridMenu!.hideCommands).not.toBe(input.gridMenu!.hideCommands);
         expect(input.gridMenu!.hideCommands).toEqual(hideCommands);
-        expect(options.gridMenu!.showCommands).toEqual(['toggle-dark-mode']);
-        expect(options.gridMenu!.showCommands).not.toBe(input.gridMenu!.showCommands);
+        expect(options.textExportOptions!.menuFormats).toEqual(['txt']);
+        expect(options.textExportOptions!.menuFormats).not.toBe(input.textExportOptions!.menuFormats);
         expect(options.contextMenu!.hideCommands).toEqual([]);
         expect(options.headerMenu!.hideCommands).toEqual(['sort-asc']);
 
         const defaults = component.mergeGridOptions({ useSalesforceDefaultGridOptions });
         expect(defaults.gridMenu!.hideCommands).toBeUndefined();
         expect(defaults.contextMenu!.hideCommands).toBeUndefined();
+        expect(defaults.textExportOptions!.menuFormats).toEqual(useSalesforceDefaultGridOptions ? ['csv'] : undefined);
       });
 
       it('should merge paginationOptions when some already exist', () => {
