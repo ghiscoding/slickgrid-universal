@@ -50,34 +50,14 @@ function isLiveDomFormatterResult(
 }
 
 export interface DataViewOption {
-  /**
-   * @deprecated Filters are always CSP-safe and this option is now ignored.
-   * Next major cleanup:
-   * - Remove both `inlineFilters` and `useCSPSafeFilter` from `DataViewOption` and the default options.
-   * - Remove framework and vanilla-bundle code that forwards `inlineFilters`, along with its compatibility tests and documentation.
-   * - Remove the deprecated `FilterCspFn` and `FilterWithCspCachingFn` type aliases.
-   * - Consider renaming the protected `*CSPSafe` methods to neutral names and update their tests and benchmarks.
-   */
-  inlineFilters: boolean;
-
   /** global override for all rows */
   globalItemMetadataProvider: ItemMetadataProvider | null;
 
   /** Optionally provide a GroupItemMetadataProvider in order to use Grouping/DraggableGrouping features */
   groupItemMetadataProvider: SlickGroupItemMetadataProvider | null;
-
-  /**
-   * @deprecated Filters are always CSP-safe and this option is now ignored. Remove it in the next major together with
-   * `inlineFilters` by following that option's cleanup checklist.
-   */
-  useCSPSafeFilter: boolean;
 }
 
 export type FilterFn<T> = (item: T, args: any) => boolean;
-/** @deprecated Filtering is always CSP-safe. Remove this unused alias in the next major. */
-export type FilterCspFn<T> = (item: T[], args: any) => T[];
-/** @deprecated Filtering is always CSP-safe. Remove this unused alias in the next major. */
-export type FilterWithCspCachingFn<T> = (item: T[], args: any, filterCache: any[]) => T[];
 export type DataIdType = number | string;
 export type SlickDataItem = SlickNonDataItem | SlickGroup | SlickGroupTotals | any;
 export type GroupGetterFn = (val: any) => string | number;
@@ -92,8 +72,6 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected defaults: DataViewOption = {
     globalItemMetadataProvider: null,
     groupItemMetadataProvider: null,
-    inlineFilters: false,
-    useCSPSafeFilter: false,
   };
 
   // private
@@ -468,7 +446,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       gi.compiledAccumulators = [];
       let idx = gi.aggregators.length;
       while (idx--) {
-        gi.compiledAccumulators[idx] = this.compileAccumulatorLoopCSPSafe(gi.aggregators[idx]);
+        gi.compiledAccumulators[idx] = this.compileAccumulatorLoop(gi.aggregators[idx]);
       }
 
       this.toggledGroupsByLevel[i] = Object.create(null);
@@ -1127,7 +1105,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return groupedRows;
   }
 
-  protected compileAccumulatorLoopCSPSafe(aggregator: Aggregator): (items: any[]) => void {
+  protected compileAccumulatorLoop(aggregator: Aggregator): (items: any[]) => void {
     if (aggregator.accumulate) {
       return function (items: any[]) {
         if (Array.isArray(items)) {
@@ -1142,7 +1120,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     }
   }
 
-  protected compileFilterCSPSafe(items: TData[], args: any): TData[] {
+  protected filterItems(items: TData[], args: any): TData[] {
     /* v8 ignore if */
     if (typeof this.filter !== 'function') {
       return [];
@@ -1160,7 +1138,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return retval;
   }
 
-  protected compileFilterWithCachingCSPSafe(items: TData[], args: any, filterCache: any[]): TData[] {
+  protected filterItemsWithCaching(items: TData[], args: any, filterCache: any[]): TData[] {
     /* v8 ignore if */
     if (typeof this.filter !== 'function') {
       return [];
@@ -1185,11 +1163,11 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected getFilteredAndPagedItems(items: TData[]): { totalRows: number; rows: TData[] } {
     if (this.filter) {
       if (this.refreshHints.isFilterNarrowing) {
-        this.filteredItems = this.compileFilterCSPSafe(this.filteredItems, this.filterArgs);
+        this.filteredItems = this.filterItems(this.filteredItems, this.filterArgs);
       } else if (this.refreshHints.isFilterExpanding) {
-        this.filteredItems = this.compileFilterWithCachingCSPSafe(items, this.filterArgs, this.filterCache);
+        this.filteredItems = this.filterItemsWithCaching(items, this.filterArgs, this.filterCache);
       } else if (!this.refreshHints.isFilterUnchanged) {
-        this.filteredItems = this.compileFilterCSPSafe(items, this.filterArgs);
+        this.filteredItems = this.filterItems(items, this.filterArgs);
       }
     } else {
       // special case:  if not filtering and not paging, the resulting

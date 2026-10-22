@@ -269,6 +269,20 @@ Since `menuFormats` applies to both menus, use `hideCommands: ['export-text-deli
 
 ## Removed Deprecated Code
 
+### DataView CSP options and types removed
+
+DataView filtering and aggregation are always CSP safe and do not use runtime code generation. Remove `inlineFilters` and `useCSPSafeFilter` from `gridOptions.dataView` or options passed directly to `new SlickDataView()`. Both options were deprecated and ignored in v10; no replacement options are needed.
+
+The unused `FilterCspFn` and `FilterWithCspCachingFn` type aliases are also removed. Use `FilterFn<T>` for the item predicate passed to `setFilter()`.
+
+For subclasses of `SlickDataView`, update protected method references:
+
+| Removed method | Replacement |
+| --- | --- |
+| `compileFilterCSPSafe()` | `filterItems()` |
+| `compileFilterWithCachingCSPSafe()` | `filterItemsWithCaching()` |
+| `compileAccumulatorLoopCSPSafe()` | `compileAccumulatorLoop()` |
+
 ### `ExtensionName` enum replaced by a string literal type
 
 The `ExtensionName` enum, deprecated in v10, is now removed and replaced by its string literal type to decrease the build size. If you already migrated to string literals in v10, no changes are needed for those values.

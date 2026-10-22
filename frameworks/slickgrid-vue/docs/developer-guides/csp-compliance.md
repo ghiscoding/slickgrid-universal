@@ -35,7 +35,7 @@ with this code in place, we can use the following CSP meta tag (which is what we
 ```
 
 #### DataView
-DataView filtering is CSP-safe by default and does not use runtime code generation. No DataView option is required. The deprecated `inlineFilters` and `useCSPSafeFilter` options remain accepted for backward compatibility but are ignored.
+DataView filtering is CSP-safe by default and does not use runtime code generation. No DataView option is required.
 
 ### Custom Formatter using native HTML
 We now also allow passing native HTML Element as a Custom Formatter instead of HTML string in order to avoid the use of `innerHTML` and stay CSP safe. We also have a new grid option named `enableHtmlRendering`, which is enabled by default and is allowing the use of `innerHTML` in the library (by Formatters and others), however when disabled it will totally restrict the use of `innerHTML` which will help to stay CSP safe.

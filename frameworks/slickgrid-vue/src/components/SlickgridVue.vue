@@ -404,11 +404,7 @@ function initialization() {
     createBackendApiInternalPostProcessCallback(_gridOptions.value as GridOption);
   }
 
-  const dataviewInlineFilters = (_gridOptions.value.dataView && _gridOptions.value.dataView.inlineFilters) || false;
-  let dataViewOptions: Partial<DataViewOption> = {
-    ..._gridOptions.value.dataView,
-    inlineFilters: dataviewInlineFilters,
-  } as Partial<DataViewOption>;
+  let dataViewOptions: Partial<DataViewOption> = { ..._gridOptions.value.dataView } as Partial<DataViewOption>;
 
   if (_gridOptions.value.draggableGrouping || _gridOptions.value.enableGrouping) {
     groupItemMetadataProvider = new SlickGroupItemMetadataProvider(

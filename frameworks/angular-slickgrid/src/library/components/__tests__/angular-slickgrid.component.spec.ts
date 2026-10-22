@@ -918,10 +918,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         component.options = { draggableGrouping: {} };
         component.initialization(slickEventHandler);
 
-        expect(SlickDataView).toHaveBeenCalledWith(
-          expect.objectContaining({ inlineFilters: false, groupItemMetadataProvider: expect.anything() }),
-          eventPubSubService
-        );
+        expect(SlickDataView).toHaveBeenCalledWith(expect.objectContaining({ groupItemMetadataProvider: expect.anything() }), eventPubSubService);
         expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
         expect(mockGrid.registerPlugin).toHaveBeenCalled();
 
@@ -936,10 +933,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         component.options = { enableGrouping: true, draggableGrouping: {} };
         component.initialization(slickEventHandler);
 
-        expect(SlickDataView).toHaveBeenCalledWith(
-          expect.objectContaining({ inlineFilters: false, groupItemMetadataProvider: expect.anything() }),
-          eventPubSubService
-        );
+        expect(SlickDataView).toHaveBeenCalledWith(expect.objectContaining({ groupItemMetadataProvider: expect.anything() }), eventPubSubService);
         expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
         expect(mockGrid.registerPlugin).toHaveBeenCalled();
       });

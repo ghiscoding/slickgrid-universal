@@ -891,7 +891,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const extensions = component.extensions as ExtensionList<any>;
 
         expect(Object.keys(extensions).length).toBe(1);
-        expect(SlickDataView).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() }, eventPubSubService);
+        expect(SlickDataView).toHaveBeenCalledWith({ groupItemMetadataProvider: expect.anything() }, eventPubSubService);
         expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
         expect(mockGrid.registerPlugin).toHaveBeenCalled();
 
@@ -902,7 +902,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enableGrouping: true };
         component.initialization(divContainer, slickEventHandler);
 
-        expect(SlickDataView).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() }, eventPubSubService);
+        expect(SlickDataView).toHaveBeenCalledWith({ groupItemMetadataProvider: expect.anything() }, eventPubSubService);
         expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
         expect(mockGrid.registerPlugin).toHaveBeenCalled();
 
