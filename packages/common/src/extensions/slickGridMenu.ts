@@ -1006,7 +1006,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     if (commandItems.length > 0) {
       const commandMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-command-list`, role: 'menu' }, menuElm);
       if (level === 0) {
-        this.populateCommandOrOptionTitle('command', this.addonOptions, commandMenuElm, level);
+        this.populateCommandTitle('command', this.addonOptions, commandMenuElm, level);
         // prettier-ignore
         const commandMenuHeaderElm = menuElm.querySelector<HTMLDivElement>(`.slick-command-header`) ?? createDomElement('div', { className: 'slick-command-header' });
         commandMenuHeaderElm.classList.add('with-close');
@@ -1019,7 +1019,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         this.addSubMenuTitleWhenExists(item as ExtractMenuType<ExtendableItemTypes, MenuType>, commandMenuElm); // add sub-menu title when exists
       }
 
-      this.populateCommandOrOptionItems(
+      this.populateCommandItems(
         'command',
         this._addonOptions!,
         commandMenuElm,

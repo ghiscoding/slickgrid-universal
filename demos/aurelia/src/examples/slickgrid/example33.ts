@@ -457,14 +457,6 @@ export class Example33 {
         // all the Cell Menu callback methods (except the action callback)
         // are available under the grid options as shown below
         onCommand: (e, args) => this.executeCommand(e, args),
-        onOptionSelected: (_e, args) => {
-          // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args?.dataContext;
-          if (dataContext && dataContext.hasOwnProperty('completed')) {
-            dataContext.completed = args.item.option;
-            this.aureliaGrid.gridService.updateItem(dataContext);
-          }
-        },
       },
     };
   }

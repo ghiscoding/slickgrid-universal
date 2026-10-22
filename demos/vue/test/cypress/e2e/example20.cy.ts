@@ -358,34 +358,6 @@ describe('Example 20 - Pinned Grid', () => {
     getCell(0, 4).should('contain', '2009-05-05');
   });
 
-  it('should open the Cell Menu on 2nd and 3rd row and change the Effort-Driven to "True" and expect the cell to be updated and have checkmark icon', () => {
-    getCell(1, 1).should('contain', 'Task 1');
-    getCell(1, 8).find('.checkmark-icon').should('have.length', 0);
-    getCell(2, 1).should('contain', 'Task 2');
-    getCell(2, 8).find('.checkmark-icon').should('have.length', 0);
-
-    getCell(1, 8).contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
-    getCell(2, 8).contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
-
-    getCell(1, 5).find('.checkmark-icon').should('have.length', 1);
-    getCell(2, 5).find('.checkmark-icon').should('have.length', 1);
-  });
-
-  it('should open the Cell Menu on 2nd and 3rd row and change the Effort-Driven to "False" and expect the cell to be updated and no longer have checkmark', () => {
-    getCell(1, 5).find('.checkmark-icon').should('have.length', 1);
-    getCell(2, 5).find('.checkmark-icon').should('have.length', 1);
-
-    getCell(1, 8).contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('False').click();
-    getCell(2, 8).contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('False').click();
-
-    getCell(1, 5).find('.checkmark-icon').should('have.length', 0);
-    getCell(2, 5).find('.checkmark-icon').should('have.length', 0);
-  });
-
   it('should open the Cell Menu and delete Row 3 and 4 from the Cell Menu', () => {
     cy.window().then((win) => {
       const stub = cy.stub(win, 'confirm').returns(true);
@@ -434,44 +406,13 @@ describe('Example 20 - Pinned Grid', () => {
     getCell(0, 7).should('contain', 'Sydney, NS, Australia');
   });
 
-  it('should open Context Menu hover "% Complete" column then select "Not Started (0%)" option and expect Task to be at 0', () => {
-    getCell(0, 2).rightclick();
-
-    cy.get('.slick-context-menu .slick-menu-option-list').should('exist').contains('Not Started (0%)').click();
-
-    getCell(0, 2).should('contain', '0');
-  });
-
-  it('should reopen Context Menu hover "% Complete" column then open options sub-menu & select "Half Completed (50%)" option and expect Task to be at 50', () => {
-    const subOptions = ['Not Started (0%)', 'Half Completed (50%)', 'Completed (100%)'];
-
-    getCell(0, 2).should('contain', '0');
-    getCell(0, 2).rightclick();
-
-    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-option-list')
-      .find('.slick-menu-item .slick-menu-content')
-      .contains('Sub-Options (demo)')
-      .click();
-
-    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-option-list').as('subMenuList');
-    cy.get('@subMenuList').find('.slick-menu-title').contains('Set Percent Complete');
-    cy.get('@subMenuList')
-      .should('exist')
-      .find('.slick-menu-item .slick-menu-content')
-      .each(($command, index) => expect($command.text()).to.eq(subOptions[index]));
-
-    cy.get('@subMenuList').find('.slick-menu-item .slick-menu-content').contains('Half Completed (50%)').click();
-
-    getCell(0, 2).should('contain', '50');
-  });
-
   it('should be able to open Context Menu and click on Export->Text and expect alert triggered with Text Export', () => {
     const subCommands1 = ['Text', 'Excel'];
     cy.window().then((win) => {
       cy.stub(win, 'alert').as('alertStub');
     });
 
-    getCell(0, 2).should('contain', '0');
+    getCell(0, 1).should('contain', 'Task 0');
     getCell(0, 2).rightclick();
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
@@ -495,7 +436,7 @@ describe('Example 20 - Pinned Grid', () => {
       cy.stub(win, 'alert').as('alertStub');
     });
 
-    getCell(0, 2).should('contain', '0');
+    getCell(0, 1).should('contain', 'Task 0');
     getCell(0, 2).rightclick();
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
@@ -529,49 +470,6 @@ describe('Example 20 - Pinned Grid', () => {
     cy.get('@alertStub').should('have.been.calledWith', 'Exporting as Excel (xlsx)');
   });
 
-  it('should open Export->Excel sub-menu & open again Sub-Options on top and expect sub-menu to be recreated with that Sub-Options list instead of the Export->Excel list', () => {
-    const subCommands1 = ['Text', 'Excel'];
-    const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
-    const subOptions = ['Not Started (0%)', 'Half Completed (50%)', 'Completed (100%)'];
-
-    getCell(0, 2).should('contain', '0');
-    getCell(0, 2).rightclick();
-
-    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
-      .find('.slick-menu-item .slick-menu-content')
-      .contains(/^Exports$/)
-      .click();
-
-    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
-      .should('exist')
-      .find('.slick-menu-item .slick-menu-content')
-      .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
-
-    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
-      .find('.slick-menu-item .slick-menu-content')
-      .contains('Excel')
-      .click();
-
-    cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list')
-      .should('exist')
-      .find('.slick-menu-item .slick-menu-content')
-      .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
-
-    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-option-list')
-      .find('.slick-menu-item .slick-menu-content')
-      .contains('Sub-Options')
-      .click();
-
-    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-option-list').as('optionSubList2');
-
-    cy.get('@optionSubList2').find('.slick-menu-title').contains('Set Percent Complete');
-
-    cy.get('@optionSubList2')
-      .should('exist')
-      .find('.slick-menu-item .slick-menu-content')
-      .each(($option, index) => expect($option.text()).to.contain(subOptions[index]));
-  });
-
   it('should open Export->Excel context sub-menu then open Feedback->ContactUs sub-menus and expect previous Export menu to no longer exists', () => {
     const subCommands1 = ['Text', 'Excel'];
     const subCommands2 = ['Request update from supplier', '', 'Contact Us'];
@@ -581,7 +479,7 @@ describe('Example 20 - Pinned Grid', () => {
       cy.stub(win, 'alert').as('alertStub');
     });
 
-    getCell(0, 2).should('contain', '0');
+    getCell(0, 1).should('contain', 'Task 0');
     getCell(0, 2).rightclick({ force: true });
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')

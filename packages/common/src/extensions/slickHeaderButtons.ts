@@ -92,7 +92,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
       let i = column.header.buttons.length;
       while (i--) {
         const buttonItem = column.header.buttons[i];
-        const itemElm = this.populateSingleCommandOrOptionItem(
+        const itemElm = this.populateSingleCommandItem(
           'command',
           this.addonOptions,
           null,

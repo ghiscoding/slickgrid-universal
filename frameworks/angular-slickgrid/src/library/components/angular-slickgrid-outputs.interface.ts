@@ -12,7 +12,6 @@ import type {
   HeaderMenuCommandItemCallbackArgs,
   MenuCommandItemCallbackArgs,
   MenuFromCellCallbackArgs,
-  MenuOptionItemCallbackArgs,
   OnActiveCellChangedEventArgs,
   OnAddNewRowEventArgs,
   OnAutosizeColumnsEventArgs,
@@ -172,7 +171,7 @@ export interface AngularSlickgridOutputs {
   onBeforeMenuClose: (e: MenuFromCellCallbackArgs) => void;
   onBeforeMenuShow: (e: MenuFromCellCallbackArgs) => void;
   onColumnsChanged: (e: OnColumnsChangedArgs) => void;
-  onCommand: (e: MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs) => void;
+  onCommand: (e: MenuCommandItemCallbackArgs) => void;
   onGridMenuColumnsChanged: (e: OnColumnsChangedArgs) => void;
   onMenuClose: (e: GridMenuEventWithElementCallbackArgs) => void;
   onCopyCells: (e: { ranges: SlickRange[] }) => void;
@@ -194,7 +193,6 @@ export interface AngularSlickgridOutputs {
   onContextMenuClearGrouping: () => void;
   onContextMenuCollapseAllGroups: () => void;
   onContextMenuExpandAllGroups: () => void;
-  onOptionSelected: (e: MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs) => void;
   onColumnPickerColumnsChanged: (e: OnColumnsChangedArgs) => void;
   onGridMenuMenuClose: (e: GridMenuEventWithElementCallbackArgs) => void;
   onGridMenuBeforeMenuShow: (e: GridMenuEventWithElementCallbackArgs) => void;

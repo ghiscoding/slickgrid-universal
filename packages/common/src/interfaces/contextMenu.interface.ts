@@ -1,6 +1,6 @@
 import type { SlickEventData } from '../core/slickCore.js';
 import type { SlickContextMenu } from '../extensions/slickContextMenu.js';
-import type { ContextMenuOption, MenuCommandItemCallbackArgs, MenuFromCellCallbackArgs, MenuOptionItemCallbackArgs } from './index.js';
+import type { ContextMenuOption, MenuCommandItemCallbackArgs, MenuFromCellCallbackArgs } from './index.js';
 
 export type BuiltInContextMenuCommand =
   | 'clear-grouping'
@@ -34,7 +34,4 @@ export interface ContextMenu extends ContextMenuOption {
 
   /** SlickGrid Event fired on menu option clicked from the Command items list */
   onCommand?: (e: Event | SlickEventData, args: MenuCommandItemCallbackArgs) => void;
-
-  /** SlickGrid Event fired on menu option selected from the Option items list. */
-  onOptionSelected?: (e: Event | SlickEventData, args: MenuOptionItemCallbackArgs) => void;
 }

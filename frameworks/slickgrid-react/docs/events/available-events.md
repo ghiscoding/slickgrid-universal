@@ -70,7 +70,6 @@ render() {
     - `onBeforeMenuShow`
     - `onBeforeMenuClose`
     - `onCommand`
-    - `onOptionSelected`
 
 #### Column Picker (extension)
   - `onColumnPickerColumnsChanged`

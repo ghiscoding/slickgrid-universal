@@ -9,7 +9,6 @@ import type {
   MenuCallbackArgs,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
-  MenuOptionItem,
   OnContextMenuArgs,
 } from '../interfaces/index.js';
 import type { ExcelExportService } from '../services/excelExport.service.js';
@@ -45,7 +44,6 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     autoAdjustDropOffset: 0,
     autoAlignSideOffset: 0,
     hideMenuOnScroll: false,
-    optionShownOverColumnIds: [],
     commandShownOverColumnIds: [],
     subMenuOpenByEvent: 'mouseover',
   } as unknown as ContextMenuOption;
@@ -90,33 +88,26 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     }
   }
 
-  /** Translate the Context Menu titles, we need to loop through all column definition to re-translate all list titles & all commands/options */
+  /** Translate the Context Menu titles, we need to loop through all column definition to re-translate all list titles & all commands */
   translateContextMenu(): void {
     const gridOptions = this.sharedService?.gridOptions ?? {};
     const contextMenu = this.sharedService.gridOptions.contextMenu;
     if (contextMenu) {
       contextMenu.commandTitle = this._originalContextMenu.commandTitle || '';
-      contextMenu.optionTitle = this._originalContextMenu.optionTitle || '';
     }
 
     if (contextMenu && gridOptions?.enableTranslate) {
-      // get both items list
+      // get command items
       const columnContextMenuCommandItems: Array<MenuCommandItem | 'divider'> = contextMenu.commandItems || [];
-      const columnContextMenuOptionItems: Array<MenuOptionItem | 'divider'> = contextMenu.optionItems || [];
 
       // translate their titles only if they have a titleKey defined
       if (contextMenu.commandTitleKey) {
         // prettier-ignore
         contextMenu.commandTitle ||= this.extensionUtility.translateWhenEnabledAndServiceExist(contextMenu.commandTitleKey, 'TEXT_COMMANDS') || contextMenu.commandTitle;
       }
-      if (contextMenu.optionTitleKey) {
-        // prettier-ignore
-        contextMenu.optionTitle ||= this.extensionUtility.translateWhenEnabledAndServiceExist(contextMenu.optionTitleKey, 'TEXT_OPTIONS') || contextMenu.optionTitle;
-      }
 
-      // translate both command/option items (whichever is provided)
+      // translate command items
       this.extensionUtility.translateMenuItemsFromTitleKey(columnContextMenuCommandItems, 'commandItems');
-      this.extensionUtility.translateMenuItemsFromTitleKey(columnContextMenuOptionItems, 'optionItems');
     }
   }
 
@@ -417,7 +408,6 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     const contextMenu = this.sharedService?.gridOptions?.contextMenu;
     if (contextMenu) {
       this.extensionUtility.sortItems(contextMenu.commandItems || [], 'positionOrder');
-      this.extensionUtility.sortItems(contextMenu.optionItems || [], 'positionOrder');
     }
   }
 }

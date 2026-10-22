@@ -3,6 +3,21 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
   const fullEnglishTitles = ['#', 'Title', '% Complete', 'Start', 'Finish', 'Priority', 'Completed', 'Action'];
   const fullFrenchTitles = ['#', 'Titre', '% Achevée', 'Début', 'Fin', 'Priorité', 'Terminé', 'Action'];
 
+  const getTaskRow = (title: string) => cy.contains('#grid24 .slick-row .slick-cell.l1', new RegExp(`^${title}$`)).closest('.slick-row');
+  const getTaskCell = (title: string, column: number) => getTaskRow(title).find(`.slick-cell.l${column}`);
+  const scrollToRow = (row: number) => {
+    const scrollTop = GRID_ROW_HEIGHT * row;
+    cy.get('#grid24 .slick-vertical-scroller').scrollTo(0, scrollTop).should('have.prop', 'scrollTop', scrollTop);
+  };
+  const openCellMenu = (title: string) => {
+    getTaskRow(title).find('.cell-menu-dropdown-outline').should('not.have.class', 'disabled').click({ scrollBehavior: false });
+    cy.get('.slick-cell-menu.slick-menu-level-0').should('be.visible');
+  };
+  const openContextMenu = (title: string, column = 1) => {
+    getTaskCell(title, column).rightclick({ scrollBehavior: false });
+    cy.get('.slick-context-menu.slick-menu-level-0').should('be.visible');
+  };
+
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example24`);
     cy.get('h2').should('contain', 'Example 24: Cell Menu & Context Menu Plugins');
@@ -18,13 +33,13 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should have first row with "Task 0" and a Priority set to a Yellow Star (low) with the Action cell disabled and not clickable', () => {
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').contains('Task 0');
+      getTaskCell('Task 0', 1).contains('Task 0');
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(5)').find('.mdi-star.yellow');
+      getTaskCell('Task 0', 5).find('.mdi-star.yellow');
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(6)').find('.mdi-check.checkmark-icon');
+      getTaskCell('Task 0', 6).find('.mdi-check.checkmark-icon');
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7) .disabled').contains('Action');
+      getTaskCell('Task 0', 7).find('.disabled').contains('Action');
 
       cy.get('.slick-cell-menu').should('not.exist');
     });
@@ -32,11 +47,11 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     it('should expect the Context Menu to not have the "Help" menu when there is Completed set to True', () => {
       const commands = ['Copy', 'Export to Excel', '', 'Delete Row', '', 'Disabled Command', '', 'Exports', 'Feedback'];
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').contains('Task 0');
+      getTaskCell('Task 0', 1).contains('Task 0');
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
+      openContextMenu('Task 0', 1);
 
-      cy.get('.slick-context-menu.dropright .slick-menu-command-list')
+      cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
         .find('.slick-menu-item')
         .each(($command, index) => {
           expect($command.text()).to.contain(commands[index]);
@@ -45,53 +60,30 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should be able to click on the Context Menu (x) close button, on top right corner, to close the menu', () => {
-      cy.get('.slick-context-menu.dropright').should('exist');
+      cy.get('.slick-context-menu.slick-menu-level-0').should('exist');
 
       cy.get('.slick-context-menu button.close').click();
     });
 
-    it('should change "Task 0" Priority to "High" with Context Menu and expect the Action Menu to become clickable and usable', () => {
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').contains('Task 0');
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(5)').rightclick({ force: true });
-
-      cy.get('.slick-context-menu .slick-menu-option-list').contains('High').click();
-
-      cy.get('.slick-context-menu .slick-menu-command-list').should('not.exist');
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
-
-      cy.get('.slick-cell-menu.dropleft').should('exist');
-    });
-
     it('should expect a "Command 2" to be disabled and not clickable (menu will remain open), in that same Action menu', () => {
+      scrollToRow(12);
+      openCellMenu('Task 12');
+
       cy.get('.slick-cell-menu .slick-menu-item.slick-menu-item-disabled').contains('Command 2').click({ force: true });
 
-      cy.get('.slick-cell-menu.dropleft').should('exist');
-    });
-
-    it('should change the Completed to "False" in that same Action and then expect the "Command 2" to enabled and clickable', () => {
-      const alertStub = cy.stub();
-      cy.on('window:alert', alertStub);
-
-      cy.get('.slick-cell-menu .slick-menu-option-list').find('.slick-menu-item').contains('False').click();
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
-
-      cy.get('.slick-cell-menu .slick-menu-item')
-        .contains('Command 2')
-        .click()
-        .then(() => expect(alertStub.getCall(0)).to.be.calledWith('Command 2'));
+      cy.get('.slick-cell-menu.slick-menu-level-0').should('exist');
     });
 
     it('should expect the Context Menu now have the "Help" menu when Completed is set to False', () => {
+      cy.get('.slick-cell-menu button.close').click();
+      scrollToRow(0);
       const commands = ['Copy', 'Export to Excel', '', 'Delete Row', '', 'Help', 'Disabled Command', '', 'Exports', 'Feedback'];
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').contains('Task 0');
+      getTaskCell('Task 1', 1).contains('Task 1');
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(6)').rightclick({ force: true });
+      openContextMenu('Task 1', 6);
 
-      cy.get('.slick-context-menu.dropleft .slick-menu-command-list')
+      cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
         .find('.slick-menu-item')
         .each(($command, index) => expect($command.text()).to.contain(commands[index]));
 
@@ -99,104 +91,19 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should be able to click on the Action Cell Menu (x) close button, on top right corner, to close the menu', () => {
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
+      openCellMenu('Task 3');
 
-      cy.get('.slick-cell-menu.dropleft').should('exist');
-
-      cy.get('.slick-cell-menu button.close').click();
-
-      cy.get('.slick-cell-menu.dropleft').should('not.exist');
-    });
-
-    it('should click on the "Show Commands & Priority Options" button and see both list when opening Context Menu', () => {
-      cy.get('[data-test=context-menu-commands-and-priority-button]').click();
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(5)').rightclick({ force: true });
-
-      cy.get('.slick-context-menu .slick-menu-option-list').should('exist').contains('High');
-
-      cy.get('.slick-context-menu .slick-menu-command-list')
-        .find('.slick-menu-item.red')
-        .find('.slick-menu-content.bold')
-        .should('exist')
-        .contains('Delete Row');
-
-      cy.get('.slick-context-menu button.close').click();
-    });
-
-    it('should click on the "Show Priority Options Only" button and see both list when opening Context Menu', () => {
-      cy.get('[data-test=context-menu-priority-only-button]').click();
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(5)').rightclick({ force: true });
-
-      cy.get('.slick-context-menu .slick-menu-option-list').should('exist').contains('High');
-
-      cy.get('.slick-context-menu .slick-menu-command-list').should('not.exist');
-
-      cy.get('.slick-context-menu button.close').click();
-    });
-
-    it('should click on the "Show Actions Commands & Completed Options" button and see both list when opening Action Cell Menu', () => {
-      cy.get('[data-test=cell-menu-commands-and-options-true-button]').click();
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
-
-      cy.get('.slick-cell-menu .slick-menu-option-list').should('exist').contains('True');
-
-      cy.get('.slick-cell-menu .slick-menu-command-list').should('exist').contains('Delete Row');
+      cy.get('.slick-cell-menu.slick-menu-level-0').should('exist');
 
       cy.get('.slick-cell-menu button.close').click();
-    });
 
-    it('should open the Action Cell Menu and expect the Completed "null" option when this Effort is set to False', () => {
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
-
-      cy.get('.slick-cell-menu.dropleft').should('exist');
-
-      cy.get('.slick-cell-menu')
-        .find('.slick-menu-option-list')
-        .find('.slick-menu-item.italic')
-        .find('.slick-menu-content')
-        .contains('null');
-    });
-
-    it('should open the Action Cell Menu and not expect the Completed "null" option when this Effort is set to True', () => {
-      cy.get('.slick-cell-menu.dropleft').should('exist');
-
-      cy.get('.slick-cell-menu').find('.slick-menu-option-list').contains('True').click();
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
-
-      cy.get('.slick-cell-menu').each(($row) => {
-        expect($row.text()).not.include('null');
-      });
-    });
-
-    it('should reset Completed to False for the next test to include all commands', () => {
-      cy.get('.slick-cell-menu').find('.slick-menu-option-list').contains('False').click();
-    });
-
-    it('should click on the "Show Action Commands Only" button and see both list when opening Context Menu', () => {
-      const commands = ['Command 1', 'Command 2', '', 'Delete Row', 'Help', 'Disabled Command', '', 'Exports', 'Feedback'];
-
-      cy.get('[data-test=cell-menu-commands-and-options-false-button]').click();
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
-
-      cy.get('.slick-cell-menu .slick-menu-command-list')
-        .should('exist')
-        .find('.slick-menu-item')
-        .each(($command, index) => expect($command.text()).to.contain(commands[index]));
-
-      cy.get('.slick-menu-option-list').should('not.exist');
-
-      cy.get('.slick-cell-menu button.close').click();
+      cy.get('.slick-cell-menu.slick-menu-level-0').should('not.exist');
     });
 
     it('should be able to delete first row by using the "Delete Row" command from the Context Menu', () => {
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').contains('Task 0');
+      getTaskCell('Task 0', 1).contains('Task 0');
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
+      openContextMenu('Task 0', 1);
 
       cy.get('.slick-context-menu .slick-menu-command-list')
         .find('.slick-menu-item.red')
@@ -205,17 +112,13 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
         .contains('Delete Row')
         .click();
 
-      cy.get('#grid24')
-        .find('.slick-row .slick-cell:nth(1)')
-        .each(($row) => {
-          expect($row.text()).not.include('Task 0');
-        });
+      cy.contains('#grid24 .slick-row .slick-cell.l1', /^Task 0$/).should('not.exist');
     });
 
     it('should be able to delete the 3rd row "Task 3" by using the "Delete Row" command from the Action Cell Menu', () => {
-      cy.get('#grid24').find('.slick-row:nth(2) .slick-cell:nth(1)').contains('Task 3');
+      getTaskCell('Task 3', 1).contains('Task 3');
 
-      cy.get('#grid24').find('.slick-row:nth(2) .slick-cell:nth(7)').contains('Action').click({ force: true });
+      openCellMenu('Task 3');
 
       cy.get('.slick-cell-menu .slick-menu-command-list')
         .find('.slick-menu-item.red')
@@ -224,25 +127,22 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
         .contains('Delete Row')
         .click();
 
-      cy.get('#grid24')
-        .find('.slick-row:nth(2) .slick-cell:nth(1)')
-        .each(($row) => {
-          expect($row.text()).not.include('Task 3');
-        });
+      cy.contains('#grid24 .slick-row .slick-cell.l1', /^Task 3$/).should('not.exist');
     });
 
     it('should check Context Menu "menuUsabilityOverride" condition and expect to not be able to open Context Menu from rows than are >= to Task 21', () => {
-      cy.get('.slick-vertical-scroller').scrollTo('bottom').wait(25);
+      scrollToRow(25);
 
-      cy.get('#grid24').find('.slick-row:nth(3) .slick-cell:nth(1)').rightclick({ force: true });
+      // Two rows were deleted above, so Task 27 is now at row index 25.
+      getTaskCell('Task 27', 1).rightclick({ scrollBehavior: false });
 
       cy.get('.slick-context-menu .slick-menu-command-list').should('not.exist');
     });
 
     it('should scroll back to top row and be able to open Context Menu', () => {
-      cy.get('.slick-vertical-scroller').scrollTo('top').wait(25);
+      scrollToRow(0);
 
-      cy.get('#grid24').find('.slick-row:nth(1) .slick-cell:nth(1)').rightclick({ force: true });
+      openContextMenu('Task 1', 1);
 
       cy.get('.slick-context-menu .slick-menu-command-list').should('exist');
 
@@ -257,10 +157,6 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
       cy.get('[data-test=selected-locale]').should('contain', 'fr.json');
     });
 
-    it('should show both Commands & Options on the Action Cell Menu', () => {
-      cy.get('[data-test=cell-menu-commands-and-options-true-button]').click();
-    });
-
     it('should have exact Column Titles in the grid', () => {
       cy.get('#grid24')
         .find('.slick-header-columns')
@@ -269,11 +165,11 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should have first row with "Tâche 1" and a Priority set to a Orange Star (medium) with the Action cell disabled and not clickable', () => {
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').contains('Tâche 1');
+      getTaskCell('Tâche 1', 1).contains('Tâche 1');
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(5)').find('.mdi-star.orange');
+      getTaskCell('Tâche 1', 5).find('.mdi-star.orange');
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7) .disabled').contains('Action');
+      getTaskCell('Tâche 1', 7).find('.disabled').contains('Action');
 
       cy.get('.slick-cell-menu').should('not.exist');
     });
@@ -292,40 +188,26 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
         'Feedback',
       ];
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').contains('Tâche 1');
+      getTaskCell('Tâche 1', 1).contains('Tâche 1');
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
+      openContextMenu('Tâche 1', 1);
 
-      cy.get('.slick-context-menu.dropright .slick-menu-command-list')
+      cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
         .find('.slick-menu-item')
         .each(($command, index) => expect($command.text()).to.contain(commands[index]));
     });
 
     it('should be able to click on the Context Menu (x) close button, on top right corner, to close the menu', () => {
-      cy.get('.slick-context-menu.dropright').should('exist');
+      cy.get('.slick-context-menu.slick-menu-level-0').should('exist');
 
       cy.get('.slick-context-menu button.close').click();
-    });
-
-    it('should change "Tâche 1" Priority to "Haut" with Context Menu and expect the Action Menu to become clickable and usable', () => {
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').contains('Tâche 1');
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(5)').rightclick({ force: true });
-
-      cy.get('.slick-context-menu .slick-menu-option-list').contains('Haut').click();
-
-      cy.get('.slick-context-menu .slick-menu-command-list').should('not.exist');
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
-
-      cy.get('.slick-cell-menu.dropleft').should('exist');
     });
 
     it('should expect a "Command 2" to be enabled and clickable in that same Action menu', () => {
       const stub = cy.stub();
       cy.on('window:alert', stub);
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
+      openCellMenu('Tâche 6');
 
       cy.get('.slick-cell-menu .slick-menu-item')
         .contains('Command 2')
@@ -347,11 +229,11 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
         'Feedback',
       ];
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').contains('Tâche 1');
+      getTaskCell('Tâche 1', 1).contains('Tâche 1');
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(6)').rightclick({ force: true });
+      openContextMenu('Tâche 1', 6);
 
-      cy.get('.slick-context-menu.dropleft .slick-menu-command-list')
+      cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
         .find('.slick-menu-item')
         .each(($command, index) => expect($command.text()).to.contain(commands[index]));
 
@@ -359,104 +241,19 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should be able to click on the Action Cell Menu (x) close button, on top right corner, to close the menu', () => {
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
+      openCellMenu('Tâche 6');
 
-      cy.get('.slick-cell-menu.dropleft').should('exist');
-
-      cy.get('.slick-cell-menu button.close').click();
-
-      cy.get('.slick-cell-menu.dropleft').should('not.exist');
-    });
-
-    it('should click on the "Show Commands & Priority Options" button and see both list when opening Context Menu', () => {
-      cy.get('[data-test=context-menu-commands-and-priority-button]').click();
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(5)').rightclick({ force: true });
-
-      cy.get('.slick-context-menu .slick-menu-option-list').should('exist').contains('Haut');
-
-      cy.get('.slick-context-menu .slick-menu-command-list')
-        .find('.slick-menu-item.red')
-        .find('.slick-menu-content.bold')
-        .should('exist')
-        .contains('Supprimer la ligne');
-
-      cy.get('.slick-context-menu button.close').click();
-    });
-
-    it('should click on the "Show Priority Options Only" button and see both list when opening Context Menu', () => {
-      cy.get('[data-test=context-menu-priority-only-button]').click();
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(5)').rightclick({ force: true });
-
-      cy.get('.slick-context-menu .slick-menu-option-list').should('exist').contains('Haut');
-
-      cy.get('.slick-context-menu .slick-menu-command-list').should('not.exist');
-
-      cy.get('.slick-context-menu button.close').click();
-    });
-
-    it('should click on the "Show Actions Commands & Completed Options" button and see both list when opening Action Cell Menu', () => {
-      cy.get('[data-test=cell-menu-commands-and-options-true-button]').click();
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
-
-      cy.get('.slick-cell-menu .slick-menu-option-list').should('exist').contains('Vrai');
-
-      cy.get('.slick-menu-command-list').should('exist').contains('Supprimer la ligne');
+      cy.get('.slick-cell-menu.slick-menu-level-0').should('exist');
 
       cy.get('.slick-cell-menu button.close').click();
-    });
 
-    it('should open the Action Cell Menu and expect the Completed "null" option when this Effort is set to Faux', () => {
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
-
-      cy.get('.slick-cell-menu.dropleft').should('exist');
-
-      cy.get('.slick-cell-menu')
-        .find('.slick-menu-option-list')
-        .find('.slick-menu-item.italic')
-        .find('.slick-menu-content')
-        .contains('null');
-    });
-
-    it('should open the Action Cell Menu and not expect the Completed "null" option when this Effort is set to True', () => {
-      cy.get('.slick-cell-menu.dropleft').should('exist');
-
-      cy.get('.slick-cell-menu').find('.slick-menu-option-list').contains('Vrai').click();
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
-
-      cy.get('.slick-cell-menu').each(($row) => {
-        expect($row.text()).not.include('null');
-      });
-    });
-
-    it('should reset Completed to Faux for the next test to include all commands', () => {
-      cy.get('.slick-cell-menu').find('.slick-menu-option-list').contains('Faux').click();
-    });
-
-    it('should click on the "Show Action Commands Only" button and see both list when opening Context Menu', () => {
-      const commands = ['Command 1', 'Command 2', '', 'Supprimer la ligne', 'Aide', 'Commande désactivée', '', 'Exports', 'Feedback'];
-
-      cy.get('[data-test=cell-menu-commands-and-options-false-button]').click();
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(7)').contains('Action').click({ force: true });
-
-      cy.get('.slick-cell-menu .slick-menu-command-list')
-        .should('exist')
-        .find('.slick-menu-item')
-        .each(($command, index) => expect($command.text()).to.contain(commands[index]));
-
-      cy.get('.slick-menu-option-list').should('not.exist');
-
-      cy.get('.slick-cell-menu button.close').click();
+      cy.get('.slick-cell-menu.slick-menu-level-0').should('not.exist');
     });
 
     it('should be able to delete first row by using the "Supprimer la ligne" command from the Context Menu', () => {
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').contains('Tâche 1');
+      getTaskCell('Tâche 1', 1).contains('Tâche 1');
 
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
+      openContextMenu('Tâche 1', 1);
 
       cy.get('.slick-context-menu .slick-menu-command-list')
         .find('.slick-menu-item.red')
@@ -465,17 +262,13 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
         .contains('Supprimer la ligne')
         .click();
 
-      cy.get('#grid24')
-        .find('.slick-row .slick-cell:nth(1)')
-        .each(($row) => {
-          expect($row.text()).not.include('Tâche 1');
-        });
+      cy.contains('#grid24 .slick-row .slick-cell.l1', /^Tâche 1$/).should('not.exist');
     });
 
     it('should be able to delete the 4th row "Tâche 6" by using the "Supprimer la ligne" command from the Action Cell Menu', () => {
-      cy.get('#grid24').find('.slick-row:nth(3) .slick-cell:nth(1)').contains('Tâche 6');
+      getTaskCell('Tâche 6', 1).contains('Tâche 6');
 
-      cy.get('#grid24').find('.slick-row:nth(3) .slick-cell:nth(7)').contains('Action').click({ force: true });
+      openCellMenu('Tâche 6');
 
       cy.get('.slick-cell-menu .slick-menu-command-list')
         .find('.slick-menu-item.red')
@@ -484,11 +277,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
         .contains('Supprimer la ligne')
         .click();
 
-      cy.get('#grid24')
-        .find('.slick-row:nth(3) .slick-cell:nth(1)')
-        .each(($row) => {
-          expect($row.text()).not.include('Tâche 6');
-        });
+      cy.contains('#grid24 .slick-row .slick-cell.l1', /^Tâche 6$/).should('not.exist');
     });
 
     it('should switch back locale to English before leaving', () => {
@@ -499,35 +288,13 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
   });
 
   describe('with sub-menus', () => {
-    it('should reopen Context Menu hover "Priority" column then open options sub-menu & select "High" option and expect Task to be set to High in the UI', () => {
-      const subOptions = ['Low', 'Medium', 'High'];
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .slick-cell:nth(5)`).rightclick({ force: true });
-
-      cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-option-list')
-        .find('.slick-menu-item .slick-menu-content')
-        .contains('Sub-Options (demo)')
-        .click();
-
-      cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-option-list').as('subMenuList');
-      cy.get('@subMenuList').find('.slick-menu-title').contains('Change Priority');
-      cy.get('@subMenuList')
-        .should('exist')
-        .find('.slick-menu-item .slick-menu-content')
-        .each(($command, index) => expect($command.text()).to.eq(subOptions[index]));
-
-      cy.get('@subMenuList').find('.slick-menu-item .slick-menu-content').contains('High').click();
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .slick-cell:nth(5)`).find('.mdi-star.red');
-    });
-
     it('should be able to open Context Menu from any other cell and click on Export->Text and expect alert triggered with Text Export', () => {
       const subCommands1 = ['Text', 'Excel'];
       const stub = cy.stub();
       cy.on('window:alert', stub);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .slick-cell:nth(1)`).should('contain', 'Task 2');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .slick-cell:nth(1)`).rightclick({ force: true });
+      getTaskCell('Task 2', 1).should('contain', 'Task 2');
+      openContextMenu('Task 2', 1);
 
       cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
         .find('.slick-menu-item .slick-menu-content')
@@ -552,8 +319,8 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
       const stub = cy.stub();
       cy.on('window:alert', stub);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .slick-cell:nth(1)`).should('contain', 'Task 2');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .slick-cell:nth(1)`).rightclick({ force: true });
+      getTaskCell('Task 2', 1).should('contain', 'Task 2');
+      openContextMenu('Task 2', 1);
 
       cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
         .find('.slick-menu-item .slick-menu-content')
@@ -586,70 +353,6 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
         .then(() => expect(stub.getCall(0)).to.be.calledWith('Exporting as Excel (xlsx)'));
     });
 
-    it('should click on the "Show Commands & Priority Options" button and see both list when opening Context Menu', () => {
-      cy.get('[data-test=context-menu-commands-and-priority-button]').click();
-
-      cy.get('#grid24').find('.slick-row .slick-cell:nth(5)').rightclick({ force: true });
-
-      cy.get('.slick-context-menu .slick-menu-option-list').should('exist').contains('High');
-
-      cy.get('.slick-context-menu .slick-menu-command-list')
-        .find('.slick-menu-item.red')
-        .find('.slick-menu-content.bold')
-        .should('exist')
-        .contains('Delete Row');
-
-      cy.get('.slick-context-menu button.close').click();
-    });
-
-    it('should open Export->Excel sub-menu & open again Sub-Options on top and expect sub-menu to be recreated with that Sub-Options list instead of the Export->Excel list', () => {
-      const subCommands1 = ['Text', 'Excel'];
-      const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
-      const subOptions = ['Low', 'Medium', 'High'];
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(5)`);
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(5)`).rightclick({ force: true });
-
-      cy.get('.slick-context-menu').should('be.visible');
-      cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
-        .find('.slick-menu-item .slick-menu-content')
-        .contains(/^Exports$/)
-        .click();
-
-      cy.get('.slick-context-menu').should('be.visible');
-      cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
-        .should('exist')
-        .find('.slick-menu-item .slick-menu-content')
-        .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
-
-      cy.get('.slick-context-menu').should('be.visible');
-      cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
-        .find('.slick-menu-item .slick-menu-content')
-        .contains('Excel')
-        .click();
-
-      cy.get('.slick-context-menu').should('be.visible');
-      cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list')
-        .should('exist')
-        .find('.slick-menu-item .slick-menu-content')
-        .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
-
-      cy.get('.slick-context-menu').should('be.visible');
-      cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-option-list')
-        .find('.slick-menu-item .slick-menu-content')
-        .contains('Sub-Options')
-        .click();
-
-      cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-option-list').as('optionSubList2');
-
-      cy.get('@optionSubList2').find('.slick-menu-title').contains('Change Priority');
-
-      cy.get('@optionSubList2')
-        .should('exist')
-        .find('.slick-menu-item .slick-menu-content')
-        .each(($option, index) => expect($option.text()).to.contain(subOptions[index]));
-    });
-
     it('should open Export->Excel context sub-menu then open Feedback->ContactUs sub-menus and expect previous Export menu to no longer exists', () => {
       const subCommands1 = ['Text', 'Excel'];
       const subCommands2 = ['Request update from supplier', '', 'Contact Us'];
@@ -658,7 +361,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
       const stub = cy.stub();
       cy.on('window:alert', stub);
 
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(5)`).rightclick({ force: true });
+      openContextMenu('Task 2', 6);
 
       cy.get('.slick-context-menu').should('be.visible');
       cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
@@ -687,7 +390,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
 
       // click on Feedback->ContactUs
       cy.get('.slick-context-menu').should('be.visible');
-      cy.get('.slick-context-menu.slick-menu-level-1.dropleft') // left align
+      cy.get('.slick-context-menu.slick-menu-level-1')
         .find('.slick-menu-item .slick-menu-content')
         .contains('Contact Us')
         .should('exist')
@@ -695,7 +398,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
 
       cy.get('.slick-context-menu').should('be.visible');
       cy.get('.slick-submenu').should('have.length', 2);
-      cy.get('.slick-context-menu.slick-menu-level-2.dropright') // right align
+      cy.get('.slick-context-menu.slick-menu-level-2')
         .should('exist')
         .find('.slick-menu-item .slick-menu-content')
         .each(($command, index) => expect($command.text()).to.eq(subCommands2_1[index]));

@@ -118,21 +118,6 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
     cy.get('#grid18').find('.slick-topheader-panel .slick-dropzone:visible').contains('Drop a column header here to group by the column');
   });
 
-  it('should open the Cell Menu on 2nd and 3rd row and change the Effort-Driven to "True" and expect the cell to be updated and have checkmark to be enabled', () => {
-    cy.get('[data-row=1] > .slick-cell:nth(1)').should('contain', 'Task 1');
-    cy.get('[data-row=1] > .slick-cell:nth(8)').find('.checkmark-icon').should('have.length', 0);
-    cy.get('[data-row=2] > .slick-cell:nth(1)').should('contain', 'Task 2');
-    cy.get('[data-row=2] > .slick-cell:nth(8)').find('.checkmark-icon').should('have.length', 0);
-
-    cy.get('#grid18').find('[data-row=1] > .slick-cell:nth(8)').contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
-    cy.get('#grid18').find('[data-row=2] > .slick-cell:nth(8)').contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
-
-    cy.get('[data-row=1] > .slick-cell:nth(7)').find('.checkmark-icon').should('have.length', 1);
-    cy.get('[data-row=2] > .slick-cell:nth(7)').find('.checkmark-icon').should('have.length', 1);
-  });
-
   it('should be able to change Start date and expect same date when reopening date picker', () => {
     let pickerMonth = '';
     let selectedDate = '';

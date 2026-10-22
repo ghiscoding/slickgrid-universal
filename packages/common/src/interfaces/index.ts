@@ -107,8 +107,6 @@ export type * from './menuCommandItemCallbackArgs.interface.js';
 export type * from './menuFromCellCallbackArgs.interface.js';
 export type * from './menuItem.interface.js';
 export type * from './menuOption.interface.js';
-export type * from './menuOptionItem.interface.js';
-export type * from './menuOptionItemCallbackArgs.interface.js';
 export type * from './metrics.interface.js';
 export type * from './metricTexts.interface.js';
 export type * from './mouseOffsetViewport.interface.js';

@@ -192,7 +192,6 @@ Also note that every time you want to use a translation key, you simply have to 
 | label             | labelKey       |
 | title             | titleKey       |
 | columnGroup       | columnGroupKey |
-| optionTitle       | optionTitleKey |
 
 ### 7. Create a basic grid
 And finally, you are now ready to use it in your project, for example let's create both html/ts files for a `grid-basic.component` example, configure the Column Definitions, Grid Options and pass a Dataset to the grid:

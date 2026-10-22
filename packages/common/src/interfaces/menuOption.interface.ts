@@ -41,7 +41,7 @@ export interface MenuOption<T extends MenuFromCellCallbackArgs | GridMenuCommand
    * This will be used as the default renderer for all items unless overridden by an individual item's `slotRenderer`.
    * The renderer receives both the menu item and args for full context access.
    *
-   * @param item - The menu item object (`MenuCommandItem` or `MenuOptionItem`)
+   * @param item - The menu item object (`MenuCommandItem`)
    * @param args - The callback args providing access to grid, column, dataContext, etc.
    * @returns Either an HTML string or an HTMLElement
    *

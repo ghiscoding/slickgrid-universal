@@ -788,7 +788,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       this.addSubMenuTitleWhenExists(item as MenuCommandItem, commandMenuElm); // add sub-menu title when exists
     }
 
-    this.populateCommandOrOptionItems(
+    this.populateCommandItems(
       'command',
       this.addonOptions,
       commandMenuElm,

@@ -1,4 +1,4 @@
-import type { MenuCommandItem, MenuFromCellCallbackArgs, MenuOption, MenuOptionItem } from './index.js';
+import type { MenuCommandItem, MenuFromCellCallbackArgs, MenuOption } from './index.js';
 
 export interface CellMenuOption extends Omit<MenuOption<MenuFromCellCallbackArgs>, 'commandListBuilder'> {
   /** Defaults to true, Auto-align dropup or dropdown menu to the left or right depending on grid viewport available space */
@@ -37,9 +37,6 @@ export interface CellMenuOption extends Omit<MenuOption<MenuFromCellCallbackArgs
   /** Defaults to true, do we want to hide the Cell Menu when a scrolling event occurs? */
   hideMenuOnScroll?: boolean;
 
-  /** Defaults to false, Hide the Options section even when the optionItems array is filled */
-  hideOptionSection?: boolean;
-
   /** Maximum height that the drop menu can have, it could be a number (250) or text ("none") */
   maxHeight?: number | string;
 
@@ -51,15 +48,6 @@ export interface CellMenuOption extends Omit<MenuOption<MenuFromCellCallbackArgs
    * NOTE: the menu also has a "min-width" defined in CSS/SASS and setting a "width" below that threshold won't work, you change this min-width via SASS `$slick-menu-min-width`
    */
   width?: number | string;
-
-  /** @deprecated @use `commandItems` Array of Option Items (title, option, disabled, ...) */
-  optionItems?: Array<MenuOptionItem | 'divider'>;
-
-  /** @deprecated @use `commandItems` Optional Title of the Option section, it will be hidden when nothing is provided */
-  optionTitle?: string;
-
-  /** @deprecated @use `commandItems` Same as "optionTitle", except that it's a translation key which can be used on page load and/or when switching locale */
-  optionTitleKey?: string;
 
   /**
    * Defaults to False, do we want to change the active cell when clicking the Cell Menu,

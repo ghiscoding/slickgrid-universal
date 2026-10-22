@@ -16,7 +16,6 @@ import type {
   HeaderMenuCommandItemCallbackArgs,
   MenuCommandItemCallbackArgs,
   MenuFromCellCallbackArgs,
-  MenuOptionItemCallbackArgs,
   OnActiveCellChangedEventArgs,
   OnAddNewRowEventArgs,
   OnAutosizeColumnsEventArgs,
@@ -168,7 +167,7 @@ export interface SlickgridReactProps {
   onBeforeMenuClose?: ReactSlickEventHandler<MenuFromCellCallbackArgs>;
   onBeforeMenuShow?: ReactSlickEventHandler<MenuFromCellCallbackArgs>;
   onColumnsChanged?: ReactSlickEventHandler<OnColumnsChangedArgs>;
-  onCommand?: ReactSlickEventHandler<MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs>;
+  onCommand?: ReactSlickEventHandler<MenuCommandItemCallbackArgs>;
   onGridMenuColumnsChanged?: ReactSlickEventHandler<OnColumnsChangedArgs>;
   onMenuClose?: ReactSlickEventHandler<GridMenuEventWithElementCallbackArgs>;
   onCopyCells?: ReactSlickEventHandler<{ ranges: SlickRange[] }>;
@@ -191,7 +190,6 @@ export interface SlickgridReactProps {
   onContextMenuCollapseAllGroups?: ReactRegularEventHandler<void>;
   onContextMenuExpandAllGroups?: ReactRegularEventHandler<void>;
   onBeforeGridDestroy?: ReactRegularEventHandler<MenuFromCellCallbackArgs>;
-  onOptionSelected?: ReactRegularEventHandler<MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs>;
   onColumnPickerColumnsChanged?: ReactRegularEventHandler<OnColumnsChangedArgs>;
   onGridMenuMenuClose?: ReactRegularEventHandler<GridMenuEventWithElementCallbackArgs>;
   onGridMenuBeforeMenuShow?: ReactRegularEventHandler<GridMenuEventWithElementCallbackArgs>;

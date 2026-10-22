@@ -1,5 +1,5 @@
 import type { ContextMenuLabel } from './contextMenuLabel.interface.js';
-import type { MenuCommandItem, MenuFromCellCallbackArgs, MenuOption, MenuOptionItem } from './index.js';
+import type { MenuCommandItem, MenuFromCellCallbackArgs, MenuOption } from './index.js';
 
 export interface ContextMenuOption extends MenuOption<MenuFromCellCallbackArgs> {
   /** Defaults to true, Auto-align dropup or dropdown menu to the left or right depending on grid viewport available space */
@@ -47,9 +47,6 @@ export interface ContextMenuOption extends MenuOption<MenuFromCellCallbackArgs> 
   /** Defaults to true, do we want to hide the Cell Menu when a scrolling event occurs? */
   hideMenuOnScroll?: boolean;
 
-  /** @deprecated @use `commandItems` Defaults to false, Hide the Options section even when the optionItems array is filled */
-  hideOptionSection?: boolean;
-
   /** icon for the "Clear Grouping" command (Grid Option "enableGrouping: true" has to be enabled) */
   iconClearGroupingCommand?: string;
 
@@ -85,18 +82,6 @@ export interface ContextMenuOption extends MenuOption<MenuFromCellCallbackArgs> 
    * NOTE: the menu also has a "min-width" defined in CSS/SASS and setting a "width" below that threshold won't work, you change this min-width via SASS `$slick-menu-min-width`
    */
   width?: number | string;
-
-  /** @deprecated @use `commandItems` Array of Option Items (title, option, disabled, ...) */
-  optionItems?: Array<MenuOptionItem | 'divider'>;
-
-  /** @deprecated @use `commandItems` Defaults to undefined, which column to show the Options list, when not defined the context menu will be shown over all columns */
-  optionShownOverColumnIds?: string[];
-
-  /** @deprecated @use `commandItems` Optional Title of the Option section, it will be hidden when nothing is provided */
-  optionTitle?: string;
-
-  /** @deprecated @use `commandItems` Same as "optionTitle", except that it's a translation key which can be used on page load and/or when switching locale */
-  optionTitleKey?: string;
 
   /** Defaults to True, should we show bullets when icons are missing? */
   showBulletWhenIconMissing?: boolean;

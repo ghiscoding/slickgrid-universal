@@ -386,11 +386,6 @@ export default class Example04 {
             { command: 'help', title: 'Help', iconCssClass: 'mdi mdi-help-circle', positionOrder: 66 },
             { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67 },
           ],
-          optionTitle: 'Change Complete Flag',
-          optionItems: [
-            { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
-            { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
-          ],
         },
       },
     ];
@@ -455,49 +450,12 @@ export default class Example04 {
         // all the Cell Menu callback methods (except the action callback)
         // are available under the grid options as shown below
         onCommand: (e, args) => this.executeCommand(e, args),
-        onOptionSelected: (_e, args) => {
-          // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args?.dataContext;
-          if (dataContext && dataContext.hasOwnProperty('completed')) {
-            dataContext.completed = args.item.option;
-            this.sgb?.gridService.updateItem(dataContext);
-          }
-        },
       },
       enableContextMenu: true,
       contextMenu: {
-        optionShownOverColumnIds: ['percentComplete'],
         subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
         hideCloseButton: true,
         dropSide: 'right',
-        optionTitle: 'Change Percent Complete',
-        onOptionSelected: (_e, args) => {
-          // e.preventDefault(); // you could do if you wish to keep the menu open
-          const dataContext = args?.dataContext;
-
-          // change Priority
-          if (dataContext?.hasOwnProperty('percentComplete')) {
-            dataContext.percentComplete = args.item.option;
-            this.sgb.slickGrid?.updateRow(args.row || 0);
-          }
-        },
-        optionItems: [
-          { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
-          { option: 50, iconCssClass: 'mdi mdi-flip-vertical', title: 'Half Completed (50%)' },
-          { option: 100, iconCssClass: 'mdi mdi-checkbox-marked color-success', title: 'Completed (100%)' },
-          'divider',
-          {
-            // we can also have multiple nested sub-menus
-            option: null,
-            title: 'Sub-Options (demo)',
-            subMenuTitle: 'Set Percent Complete',
-            optionItems: [
-              { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
-              { option: 50, iconCssClass: 'mdi mdi-flip-vertical', title: 'Half Completed (50%)' },
-              { option: 100, iconCssClass: 'mdi mdi-checkbox-marked color-success', title: 'Completed (100%)' },
-            ],
-          },
-        ],
         commandItems: [
           { command: '', divider: true, positionOrder: 98 },
           {
