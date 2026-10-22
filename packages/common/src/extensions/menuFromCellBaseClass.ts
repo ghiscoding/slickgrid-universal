@@ -11,8 +11,6 @@ import type {
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
   MenuFromCellCallbackArgs,
-  MenuOptionItem,
-  MenuOptionItemCallbackArgs,
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { ExtensionUtility } from './extensionUtility.js';
@@ -44,7 +42,6 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       this._currentCell = cell.cell;
       this._currentRow = cell.row;
       const commandItems = this._addonOptions?.commandItems || [];
-      const optionItems = this._addonOptions?.optionItems || [];
 
       // Let the user modify the menu or cancel altogether,
       // or provide alternative menu implementation.
@@ -76,7 +73,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       }
 
       // create 1st parent menu container & reposition it
-      this._menuElm = this.createMenu(triggerElement, commandItems, optionItems);
+      this._menuElm = this.createMenu(triggerElement, commandItems);
       if (this._menuElm) {
         this._menuElm.style.top = `${(event.pageY || 0) + 5}px`;
         this._menuElm.style.left = `${event.pageX}px`;
@@ -105,41 +102,37 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
   /**
    * Create parent menu or sub-menu(s), a parent menu will start at level 0 while sub-menu(s) will be incremented
    * @param commandItems - array of optional commands or dividers
-   * @param optionItems - array of optional options or dividers
    * @param level - menu level
-   * @param item - command, option or divider
+   * @param item - command or divider
    * @returns menu DOM element
    */
   createMenu(
     triggeredByElm: HTMLElement,
     commandItems: Array<MenuCommandItem | 'divider'>,
-    optionItems: Array<MenuOptionItem | 'divider'>,
     level = 0,
     item?: ExtractMenuType<ExtendableItemTypes, MenuType>
   ): HTMLDivElement | undefined {
     const columnDef = this.grid.getColumnByIdx(this._currentCell) ?? ({} as Column);
     const dataContext = this.grid.getDataItem(this._currentRow) ?? {};
 
-    // Always use the triggering item's command/option (whitespace removed) as the sub-menu parent id for every level
-    const subMenuCommandOrOption = (item as MenuCommandItem)?.command || (item as MenuOptionItem)?.option;
-    const subMenuId = subMenuCommandOrOption ? String(subMenuCommandOrOption).replace(/\s/g, '') : '';
+    // Always use the triggering item's command (whitespace removed) as the sub-menu parent id for every level
+    const subMenuCommand = (item as MenuCommandItem)?.command;
+    const subMenuId = subMenuCommand ? String(subMenuCommand).replace(/\s/g, '') : '';
 
-    let isColumnOptionAllowed = true;
     let isColumnCommandAllowed = true;
 
     // make sure there's at least something to show before creating the Menu
     if (this._camelPluginName === 'contextMenu') {
-      isColumnOptionAllowed = this.checkIsColumnAllowed((this._addonOptions as ContextMenu)?.optionShownOverColumnIds ?? [], columnDef.id);
       isColumnCommandAllowed = this.checkIsColumnAllowed(
         (this._addonOptions as ContextMenu)?.commandShownOverColumnIds ?? [],
         columnDef.id
       );
-      if ((!isColumnCommandAllowed || !commandItems.length) && (!isColumnOptionAllowed || !optionItems.length)) {
+      if (!isColumnCommandAllowed || !commandItems.length) {
         this.hideMenu();
         return;
       }
     } else {
-      if (!columnDef.cellMenu || (!commandItems.length && !optionItems.length)) {
+      if (!columnDef.cellMenu || !commandItems.length) {
         return;
       }
     }
@@ -192,48 +185,12 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       dataset: { dismiss: this._menuCssPrefix },
     });
 
-    // -- Option List section
-    if (!(this.addonOptions as CellMenu | ContextMenu).hideOptionSection && isColumnOptionAllowed && optionItems.length > 0) {
-      const optionMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-option-list`, role: 'menu' }, menuElm);
-      this.populateCommandOrOptionTitle('option', this.addonOptions, optionMenuElm, level);
-      if (!this.addonOptions.hideCloseButton && level < 1) {
-        this.populateCommandOrOptionCloseBtn('option', closeButtonElm, optionMenuElm);
-      }
-
-      // when creating sub-menu also add its sub-menu title when exists
-      if (item && level > 0) {
-        this.addSubMenuTitleWhenExists(item, optionMenuElm); // add sub-menu title when exists
-      }
-
-      this.populateCommandOrOptionItems(
-        'option',
-        this.addonOptions,
-        optionMenuElm,
-        optionItems,
-        {
-          cell: this._currentCell,
-          row: this._currentRow,
-          column: columnDef,
-          dataContext,
-          grid: this.grid,
-          level,
-        } as MenuCallbackArgs,
-        triggeredByElm,
-        this.handleMenuItemCommandClick,
-        this.handleMenuItemMouseOver
-      );
-    }
-
     // -- Command List section
     if (!(this.addonOptions as CellMenu | ContextMenu).hideCommandSection && isColumnCommandAllowed && commandItems.length > 0) {
       const commandMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-command-list`, role: 'menu' }, menuElm);
-      this.populateCommandOrOptionTitle('command', this.addonOptions, commandMenuElm, level);
-      if (
-        !this.addonOptions.hideCloseButton &&
-        level < 1 &&
-        (!isColumnOptionAllowed || optionItems.length === 0 || (this.addonOptions as CellMenu | ContextMenu).hideOptionSection)
-      ) {
-        this.populateCommandOrOptionCloseBtn('command', closeButtonElm, commandMenuElm);
+      this.populateCommandTitle('command', this.addonOptions, commandMenuElm, level);
+      if (!this.addonOptions.hideCloseButton && level < 1) {
+        this.populateCommandCloseBtn('command', closeButtonElm, commandMenuElm);
       }
 
       // when creating sub-menu also add its sub-menu title when exists
@@ -241,7 +198,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         this.addSubMenuTitleWhenExists(item, commandMenuElm); // add sub-menu title when exists
       }
 
-      this.populateCommandOrOptionItems(
+      this.populateCommandItems(
         'command',
         this.addonOptions,
         commandMenuElm,
@@ -325,13 +282,8 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     item: ExtractMenuType<ExtendableItemTypes, MenuType>,
     level = 0
   ): void {
-    if (
-      (item as never)?.[type] !== undefined &&
-      item !== 'divider' &&
-      !item.disabled &&
-      !(item as MenuCommandItem | MenuOptionItem).divider
-    ) {
-      if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
+    if ((item as never)?.[type] !== undefined && item !== 'divider' && !item.disabled && !(item as MenuCommandItem).divider) {
+      if ((item as MenuCommandItem).commandItems) {
         this.repositionSubMenu(item, type, level, e);
         this._lastMenuTypeClicked = type;
       } else if (level === 0) {
@@ -350,63 +302,52 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       (item as never)?.[type] !== undefined &&
       item !== 'divider' &&
       !item.disabled &&
-      !(item as MenuCommandItem | MenuOptionItem).divider &&
+      !(item as MenuCommandItem).divider &&
       this._currentCell !== undefined &&
       this._currentRow !== undefined
     ) {
-      if (type === 'option' && !this.grid.getEditorLock().commitCurrentEdit()) {
-        return;
-      }
-
       const cell = this._currentCell;
       const row = this._currentRow;
       const columnDef = this.grid.getColumnByIdx(this._currentCell);
       const dataContext = this.grid.getDataItem(this._currentRow);
-      const optionOrCommand = (item as any)[type] !== undefined ? (item as any)[type] : '';
+      const command = (item as MenuCommandItem).command;
 
-      if (optionOrCommand !== undefined && !(item as any)[`${type}Items`]) {
+      if (!(item as MenuCommandItem).commandItems) {
         // user could execute a callback through 2 ways
-        // via the onOptionSelected event and/or an action callback
+        // via the onCommand event and/or an action callback
         const callbackArgs = {
           cell: this._currentCell,
           row: this._currentRow,
           grid: this.grid,
-          [type]: optionOrCommand,
+          command,
           item,
           column: columnDef,
           dataContext,
-        } as ExtractMenuType<MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs, MenuType>;
+        } as MenuCommandItemCallbackArgs;
 
         // execute Menu callback with command,
-        // we'll also execute optional user defined onOptionSelected callback when provided
-        const eventType = type === 'command' ? 'onCommand' : 'onOptionSelected';
-        const eventName = `${this._camelPluginName}:${eventType}`;
+        // we'll also execute optional user defined onCommand callback when provided
+        const eventName = `${this._camelPluginName}:onCommand`;
         this.pubSubService.publish(eventName, callbackArgs);
-        if (typeof (this._addonOptions as never)?.[eventType] === 'function') {
-          (this._addonOptions as any)[eventType](event, callbackArgs);
-        }
+        this._addonOptions.onCommand?.(event, callbackArgs);
 
         // execute action callback when defined
         if (typeof item.action === 'function') {
-          (item as any).action.call(this, event, callbackArgs);
+          (item as MenuCommandItem).action!.call(this, event, callbackArgs);
         }
 
         // does the user want to leave open the Cell Menu after executing a command?
         if (!event.defaultPrevented) {
           this.closeMenu(event, { cell, row, grid: this.grid });
         }
-      } else if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
-        this.repositionSubMenu(item as MenuCommandItem | MenuOptionItem | 'divider', type, level, event);
+      } else {
+        this.repositionSubMenu(item as MenuCommandItem | 'divider', type, level, event);
       }
       this._lastMenuTypeClicked = type;
     }
   }
 
-  protected populateCommandOrOptionCloseBtn(
-    itemType: MenuType,
-    closeButtonElm: HTMLButtonElement,
-    commandOrOptionMenuElm: HTMLDivElement
-  ): void {
+  protected populateCommandCloseBtn(itemType: MenuType, closeButtonElm: HTMLButtonElement, commandMenuElm: HTMLDivElement): void {
     this._bindEventService.bind(
       closeButtonElm,
       'click',
@@ -415,10 +356,10 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       'parent-menu'
     );
     // prettier-ignore
-    const commandOrOptionMenuHeaderElm = commandOrOptionMenuElm.querySelector<HTMLDivElement>(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
-    commandOrOptionMenuHeaderElm?.appendChild(closeButtonElm);
-    commandOrOptionMenuElm.appendChild(commandOrOptionMenuHeaderElm);
-    commandOrOptionMenuHeaderElm.classList.add('with-close');
+    const commandMenuHeaderElm = commandMenuElm.querySelector<HTMLDivElement>(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
+    commandMenuHeaderElm?.appendChild(closeButtonElm);
+    commandMenuElm.appendChild(commandMenuHeaderElm);
+    commandMenuHeaderElm.classList.add('with-close');
   }
 
   protected repositionSubMenu(
@@ -427,19 +368,13 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     level: number,
     e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData
   ): void {
-    // when we're clicking a grid cell OR our last menu type (command/option) differs then we know that we need to start fresh and close any sub-menus that might still be open
+    // When clicking a grid cell, close any sub-menus that might still be open.
     if (e.target!.classList.contains('slick-cell') || this._lastMenuTypeClicked !== type) {
       this.disposeSubMenus();
     }
 
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
-    const subMenuElm = this.createMenu(
-      e.target as HTMLElement,
-      (item as MenuCommandItem)?.commandItems || [],
-      (item as MenuOptionItem)?.optionItems || [],
-      level + 1,
-      item
-    );
+    const subMenuElm = this.createMenu(e.target as HTMLElement, (item as MenuCommandItem)?.commandItems || [], level + 1, item);
     if (subMenuElm) {
       subMenuElm.style.display = 'block';
       document.body.appendChild(subMenuElm);

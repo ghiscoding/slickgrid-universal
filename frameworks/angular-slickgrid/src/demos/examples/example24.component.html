@@ -39,14 +39,11 @@
         </li>
       </ol>
       <li>It will also "autoAdjustDrop" (bottom/top) and "autoAlignSide" (left/right) by default but could be turned off</li>
-      <li>
-        Both plugins have 2 sections, 1st section can have an array of Options (to change value of a field) and 2nd section an array of
-        Commands (execute a command)
-      </li>
-      <li>There are 2 ways to execute a Command/Option</li>
+      <li>Both plugins display an array of commands, with support for nested sub-menus.</li>
+      <li>There are 2 ways to execute a Command</li>
       <ol>
-        <li>via onCommand/onOptionSelected (use a switch/case to parse command/option and do something with it)</li>
-        <li>via action callback (that can be defined on each command/option)</li>
+        <li>via onCommand (use a switch/case to parse command and do something with it)</li>
+        <li>via action callback (that can be defined on each command)</li>
       </ol>
       <li>
         Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the list
@@ -59,45 +56,6 @@
     </ul>
   </div>
 
-  <div class="row mb-1">
-    <div class="col-12">
-      <span class="context-menu">
-        <strong>Context Menu:</strong>
-        <button
-          class="btn btn-outline-secondary btn-xs btn-icon"
-          (click)="showContextCommandsAndOptions(false)"
-          data-test="context-menu-priority-only-button"
-        >
-          Show Priority Options Only
-        </button>
-        <button
-          class="btn btn-outline-secondary btn-xs btn-icon"
-          (click)="showContextCommandsAndOptions(true)"
-          data-test="context-menu-commands-and-priority-button"
-        >
-          Show Commands & Priority Options
-        </button>
-      </span>
-
-      <span class="cell-menu">
-        <strong>Cell Menu:</strong>
-        <button
-          class="btn btn-outline-secondary btn-xs btn-icon"
-          (click)="showCellMenuCommandsAndOptions(false)"
-          data-test="cell-menu-commands-and-options-false-button"
-        >
-          Show Action Commands Only
-        </button>
-        <button
-          class="btn btn-outline-secondary btn-xs btn-icon"
-          (click)="showCellMenuCommandsAndOptions(true)"
-          data-test="cell-menu-commands-and-options-true-button"
-        >
-          Show Actions Commands & Completed Options
-        </button>
-      </span>
-    </div>
-  </div>
   <div class="row locale">
     <div class="col-12">
       <button class="btn btn-outline-secondary btn-xs btn-icon" (click)="switchLanguage()" data-test="language-button">

@@ -22,7 +22,7 @@ export interface MenuItem<O = MenuCallbackArgs> {
    */
   positionOrder?: number;
 
-  /** Optional sub-menu title that will shows up when sub-menu commmands/options list is opened */
+  /** Optional sub-menu title shown when the sub-menu command list is opened */
   subMenuTitle?: string;
 
   /** Same as "subMenuTitle", except that it's a translation key which can be used on page load and/or when switching locale */

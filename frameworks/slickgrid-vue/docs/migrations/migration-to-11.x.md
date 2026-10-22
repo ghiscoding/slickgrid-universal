@@ -14,6 +14,7 @@ The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer va
 - [Import optional package styles separately](#import-optional-package-styles-separately)
 - [Remove row positioning and Row Detail rendering options](#row-positioning-rowtopoffsetrendertype)
 - [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors)
+- [Context Menu and Cell Menu options removed](#context-menu-and-cell-menu-options-removed)
 - [Removed Deprecated Code](#removed-deprecated-code)
 - [Excluded columns are no longer rendered in column lists](#excluded-columns-are-no-longer-rendered-in-column-lists)
 - [Code Changes](#code-changes)
@@ -381,3 +382,31 @@ gridOptions = {
 ## Final Note
 
 If the project is useful to you, please give it a star ⭐ on the [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) umbrella project.
+
+## Context Menu and Cell Menu options removed
+
+The deprecated `optionItems` list and `onOptionSelected` event have been removed. Use `commandItems` with string command identifiers, and handle selections through `onCommand` or each item's `action` callback. This also applies to nested menus.
+
+Replace `MenuOptionItem` and `MenuOptionItemCallbackArgs` with `MenuCommandItem` and `MenuCommandItemCallbackArgs`. The option section settings (`optionTitle`, `optionTitleKey`, `hideOptionSection`, and Context Menu's `optionShownOverColumnIds`) have been removed; use the corresponding command settings. Merge separate option and command lists into one command list, using nested `commandItems` to group related actions. Framework `onOptionSelected` event bindings have also been removed.
+
+```ts
+const completedCommands: MenuCommandItem[] = [
+  {
+    command: 'mark-completed',
+    title: 'Mark completed',
+    action: (_event, args) => {
+      const item = args.dataContext;
+      if (item) {
+        item.completed = true;
+        args.grid.updateRow(args.row!);
+      }
+    },
+  },
+];
+
+// Grid options: Context Menu
+const contextMenu = { commandItems: completedCommands };
+
+// Column definition: Cell Menu
+const cellMenu = { commandItems: completedCommands };
+```

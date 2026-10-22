@@ -45,7 +45,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
     autoAlignSide: true,
     hideCloseButton: true,
     hideCommandSection: false,
-    hideOptionSection: false,
     showBulletWhenIconMissing: true,
   },
   compositeEditorOptions: {
@@ -67,7 +66,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
     hideCloseButton: true,
     hideCommandSection: false,
     hideMenuOnScroll: true,
-    hideOptionSection: false,
     showBulletWhenIconMissing: true,
   },
   customFooterOptions: {

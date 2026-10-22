@@ -144,11 +144,6 @@ export class Example20 {
             'divider',
             { command: 'help', title: 'Help' },
           ],
-          optionTitle: 'Change Complete Flag',
-          optionItems: [
-            { option: true, title: 'True' },
-            { option: false, title: 'False' },
-          ],
         },
       },
     ];
@@ -181,29 +176,15 @@ export class Example20 {
       enableCellMenu: true,
       cellMenu: {
         onCommand: (_e: any, a: any) => this.executeCommand(a),
-        onOptionSelected: (_e: any, a: any) => {
-          if (a?.dataContext) {
-            a.dataContext.completed = a.item.option;
-            this.aureliaGrid?.gridService?.updateItem(a.dataContext);
-          }
-        },
       },
       enableContextMenu: true,
       contextMenu: this.getContextMenuOptions(),
     };
   }
   getContextMenuOptions(): any {
-    const p = [
-      { option: 0, title: 'Not Started (0%)' },
-      { option: 50, title: 'Half Completed (50%)' },
-      { option: 100, title: 'Completed (100%)' },
-    ];
     return {
-      optionShownOverColumnIds: ['percentComplete'],
       hideCloseButton: true,
       dropSide: 'right',
-      optionTitle: 'Change Percent Complete',
-      optionItems: [...p, 'divider', { option: null, title: 'Sub-Options (demo)', subMenuTitle: 'Set Percent Complete', optionItems: p }],
       commandItems: [
         { command: '', divider: true, positionOrder: 98 },
         {
@@ -243,12 +224,6 @@ export class Example20 {
           ],
         },
       ],
-      onOptionSelected: (_e: any, a: any) => {
-        if (a?.dataContext) {
-          a.dataContext.percentComplete = a.item.option;
-          this.gridObj?.updateRow(a.row || 0);
-        }
-      },
       onCommand: (_e: any, a: any) => this.executeCommand(a),
     };
   }

@@ -1261,18 +1261,18 @@ describe('GridMenuControl', () => {
         });
 
         it('should skip rendering menu header for sub-menu (isSubMenu branch)', () => {
-          // Simulate calling populateCommandOrOptionTitle with level > 0
+          // Simulate calling populateCommandTitle with level > 0
           const menuBase = control as any;
           const fakeMenuElm = document.createElement('div');
           // Should not append a menu header for sub-menu
-          menuBase.populateCommandOrOptionTitle('command', { commandTitle: 'Should Not Render' }, fakeMenuElm, 1);
+          menuBase.populateCommandTitle('command', { commandTitle: 'Should Not Render' }, fakeMenuElm, 1);
           expect(fakeMenuElm.querySelector('.slick-menu-title')).toBeFalsy();
         });
 
         it('should skip rendering menu header if menuOptions is falsy', () => {
           const menuBase = control as any;
           const fakeMenuElm = document.createElement('div');
-          menuBase.populateCommandOrOptionTitle('command', undefined, fakeMenuElm, 0);
+          menuBase.populateCommandTitle('command', undefined, fakeMenuElm, 0);
           expect(fakeMenuElm.querySelector('.slick-menu-title')).toBeFalsy();
         });
       });

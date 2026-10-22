@@ -275,7 +275,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   onContextMenuClearGrouping = output<RegularEventOutput<AngularSlickgridOutputs['onContextMenuClearGrouping']>>();
   onContextMenuCollapseAllGroups = output<RegularEventOutput<AngularSlickgridOutputs['onContextMenuCollapseAllGroups']>>();
   onContextMenuExpandAllGroups = output<RegularEventOutput<AngularSlickgridOutputs['onContextMenuExpandAllGroups']>>();
-  onOptionSelected = output<RegularEventOutput<AngularSlickgridOutputs['onOptionSelected']>>();
   onColumnPickerColumnsChanged = output<RegularEventOutput<AngularSlickgridOutputs['onColumnPickerColumnsChanged']>>();
   onGridMenuMenuClose = output<RegularEventOutput<AngularSlickgridOutputs['onGridMenuMenuClose']>>();
   onGridMenuBeforeMenuShow = output<RegularEventOutput<AngularSlickgridOutputs['onGridMenuBeforeMenuShow']>>();

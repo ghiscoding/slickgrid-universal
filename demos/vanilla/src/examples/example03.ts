@@ -331,11 +331,6 @@ export default class Example03 {
             },
             { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67 },
           ],
-          optionTitle: 'Change Effort-Driven Flag',
-          optionItems: [
-            { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
-            { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
-          ],
         },
       },
     ];
@@ -418,14 +413,6 @@ export default class Example03 {
         // all the Cell Menu callback methods (except the action callback)
         // are available under the grid options as shown below
         onCommand: (e, args) => this.executeCommand(e, args),
-        onOptionSelected: (_e, args) => {
-          // change "Effort-Driven" property with new option selected from the Cell Menu
-          const dataContext = args?.dataContext;
-          if (dataContext && dataContext.hasOwnProperty('effortDriven')) {
-            dataContext.effortDriven = args.item.option;
-            this.sgb.gridService.updateItem(dataContext);
-          }
-        },
       },
     };
   }

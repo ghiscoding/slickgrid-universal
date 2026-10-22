@@ -17,8 +17,11 @@ class TestMenuBase extends MenuBaseClass<GridMenu> {
     this.populateColumnPicker(options, (column) => column.name ?? '');
     return { list: this._listElm, checkboxes: this._columnCheckboxes };
   }
-  public testPopulateCommandOrOptionTitle(itemType: 'command' | 'option', menuOptions: GridMenu, commandOrOptionMenuElm: HTMLElement, level: number) {
-    return this.populateCommandOrOptionTitle(itemType, menuOptions, commandOrOptionMenuElm, level);
+  public testPopulateCommandTitle(itemType: 'command', menuOptions: GridMenu, commandMenuElm: HTMLElement, level: number) {
+    return this.populateCommandTitle(itemType, menuOptions, commandMenuElm, level);
+  }
+  public testHandleColumnPickerItemClick(event: any) {
+    this.handleColumnPickerItemClick(event);
   }
   public testWireMenuKeyboardNavigation(menuElm: HTMLElement, options?: any) {
     return this.wireMenuKeyboardNavigation(menuElm, options);
@@ -26,23 +29,23 @@ class TestMenuBase extends MenuBaseClass<GridMenu> {
   public testRepositionMenu(event: any, menuElm: HTMLElement, addonOptions?: any) {
     return this.repositionMenu(event, menuElm, undefined, addonOptions);
   }
-  // Expose protected populateCommandOrOptionItems for direct testing
-  public testPopulateCommandOrOptionItems(
-    itemType: 'command' | 'option',
+  // Expose protected populateCommandItems for direct testing
+  public testPopulateCommandItems(
+    itemType: 'command',
     menuOptions: GridMenu,
-    commandOrOptionMenuElm: HTMLElement,
-    commandOrOptionItems: any[],
+    commandMenuElm: HTMLElement,
+    commandItems: any[],
     args: any,
     triggeredByElm: HTMLElement,
     itemClickCallback: any,
     itemMouseoverCallback?: any,
     keyboardNavOptions?: any
   ) {
-    return this.populateCommandOrOptionItems(
+    return this.populateCommandItems(
       itemType,
       menuOptions,
-      commandOrOptionMenuElm,
-      commandOrOptionItems,
+      commandMenuElm,
+      commandItems,
       args,
       triggeredByElm,
       itemClickCallback,
@@ -106,7 +109,7 @@ describe('MenuBaseClass', () => {
   it('should render a menu title for root menu', () => {
     const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, sharedService);
     const menuElm = createDomElement('div');
-    menu.testPopulateCommandOrOptionTitle('command', { commandTitle: 'Test Title' }, menuElm, 0);
+    menu.testPopulateCommandTitle('command', { commandTitle: 'Test Title' }, menuElm, 0);
     const titleElm = menuElm.querySelector('.slick-menu-title');
     expect(titleElm).toBeTruthy();
     expect(titleElm?.textContent).toBe('Test Title');
@@ -115,7 +118,7 @@ describe('MenuBaseClass', () => {
   it('should not render a menu title for sub-menu', () => {
     const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, sharedService);
     const menuElm = createDomElement('div');
-    menu.testPopulateCommandOrOptionTitle('command', { commandTitle: 'Should Not Render' }, menuElm, 1);
+    menu.testPopulateCommandTitle('command', { commandTitle: 'Should Not Render' }, menuElm, 1);
     const titleElm = menuElm.querySelector('.slick-menu-title');
     expect(titleElm).toBeFalsy();
   });
@@ -124,9 +127,50 @@ describe('MenuBaseClass', () => {
     const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, sharedService);
     const menuElm = createDomElement('div');
     // @ts-expect-error: purposely passing undefined to test falsy case
-    menu.testPopulateCommandOrOptionTitle('command', undefined, menuElm, 0);
+    menu.testPopulateCommandTitle('command', undefined, menuElm, 0);
     const titleElm = menuElm.querySelector('.slick-menu-title');
     expect(titleElm).toBeFalsy();
+  });
+
+  it('should restore focus to a column picker row after handling its input', () => {
+    vi.useFakeTimers();
+    try {
+      const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, sharedService);
+      const list = createDomElement('ul', {}, document.body);
+      const row = createDomElement('li', { tabIndex: -1 }, list);
+      const input = createDomElement('input', { type: 'button' }, row);
+      menu.testHandleColumnPickerItemClick({ target: input });
+      vi.runAllTimers();
+      expect(document.activeElement).toBe(row);
+      list.remove();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should merge menu options without dropping existing command settings', () => {
+    const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, sharedService);
+    menu.addonOptions = { commandTitle: 'Commands', hideCloseButton: true };
+    menu.setOptions({ commandTitle: 'Actions' });
+    expect(menu.addonOptions).toEqual({ commandTitle: 'Actions', hideCloseButton: true });
+  });
+
+  it('should position a Cell Menu submenu below its trigger with the configured drop offset', () => {
+    const service = new SharedService();
+    const container = createDomElement('div', { className: 'slickgrid-container' });
+    const trigger = createDomElement('div', { className: 'slick-menu-item' }, container);
+    const submenu = createDomElement('div', { className: 'slick-submenu' }, container);
+    service.slickGrid = { getOptions: () => ({ rowHeight: 30 }) } as unknown as SlickGrid;
+    service.gridContainerElement = container;
+    document.body.appendChild(container);
+    const menu = new TestMenuBase(extensionUtility, pubSubServiceStub, service);
+    menu.pluginName = 'CellMenu';
+    const event = new MouseEvent('click');
+    Object.defineProperty(event, 'target', { value: trigger });
+    menu.repositionMenu(event as any, submenu, undefined, { dropDirection: 'bottom', autoAdjustDropOffset: 5 });
+    expect(submenu.classList.contains('dropdown')).toBe(true);
+    expect(submenu.style.top).toBe('10px');
+    container.remove();
   });
 
   it('should align header menus against the browser viewport for root and submenu menus', () => {
@@ -175,7 +219,7 @@ describe('MenuBaseClass', () => {
     // Spy on the protected method directly
     const spy = vi.spyOn(menu, 'wireMenuKeyboardNavigation' as any);
     // Call the method to trigger the code path
-    menu.testPopulateCommandOrOptionItems('command', { commandTitle: 'Test' }, menuElm, [menuItem], { level: 0 }, triggeredByElm, vi.fn(), vi.fn(), {});
+    menu.testPopulateCommandItems('command', { commandTitle: 'Test' }, menuElm, [menuItem], { level: 0 }, triggeredByElm, vi.fn(), vi.fn(), {});
     expect(spy).toHaveBeenCalledWith(subMenuElm, {});
     document.body.removeChild(subMenuElm);
   });

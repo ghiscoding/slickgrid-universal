@@ -176,24 +176,6 @@ export default class Example07 {
               }
             }
           },
-          optionTitleKey: 'CHANGE_COMPLETED_FLAG',
-          optionItems: [
-            { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
-            { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
-            {
-              // we can also have multiple nested sub-menus
-              option: null,
-              title: 'Sub-Options (demo)',
-              subMenuTitleKey: 'CHANGE_COMPLETED_FLAG',
-              optionItems: [
-                { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
-                { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
-              ],
-            },
-          ],
-          onOptionSelected: (_e, args) => {
-            this.changeCompletedOption(args.dataContext, args.item.option as boolean);
-          },
         },
       },
       {
@@ -517,13 +499,6 @@ export default class Example07 {
             </div>`;
         grid?.filterService.drawFilterTemplate(columnFilter, `#${filterElm}`);
       }
-    }
-  }
-
-  changeCompletedOption(dataContext: any, newValue: boolean) {
-    if (dataContext?.hasOwnProperty('completed')) {
-      dataContext.completed = newValue;
-      this.sgb?.gridService.updateItem(dataContext);
     }
   }
 

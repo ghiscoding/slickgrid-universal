@@ -361,38 +361,6 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('[data-test="toggle-filtering-btn"]').click(); // show it back
     });
 
-    it('should open the Cell Menu on row 9-10 row and change the Completed to "True" and expect the cell to be updated and have checkmark icon', () => {
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 9}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 9');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 10}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 10');
-
-      cy.wait(1);
-      cy.get('.grid7')
-        .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 9}px);"] > .slick-cell:nth(3)`)
-        .click({ force: true });
-      cy.get('.slick-cell-menu').should('be.visible');
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-title').contains('Commands');
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Delete Row');
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Help');
-      cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-title').contains('Change Completed Flag');
-      cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
-
-      // wait for previous cell menu to be closed before reopening another one
-      cy.get('.slick-cell-menu').should('not.exist');
-      cy.get('.grid7')
-        .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 10}px);"] > .slick-cell:nth(3)`)
-        .click({ force: true });
-      cy.get('.slick-cell-menu').should('be.visible');
-      cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
-      cy.get('.slick-cell-menu').should('not.exist');
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 9}px);"] > .slick-cell:nth(7)`)
-        .find('.checkmark-icon')
-        .should('have.length', 1);
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 10}px);"] > .slick-cell:nth(7)`)
-        .find('.checkmark-icon')
-        .should('have.length', 1);
-    });
-
     it('should expect "Clear all Filters" command to be hidden in the Grid Menu', () => {
       const expectedFullHeaderMenuCommands = [
         'Clear all Filters',
@@ -1011,31 +979,6 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('.slick-grid-menu').find('.close').click();
     });
 
-    it('should open the Cell Menu on first 2 rows and change the Completed to "True" and expect the cell to be updated and have checkmark icon', () => {
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 4');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 8');
-
-      cy.get('.grid7')
-        .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`)
-        .click({ force: true });
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-title').contains('Commandes');
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Supprimer la ligne');
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Aide');
-      cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-title').contains(`Changer l'indicateur terminé`);
-      cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('Faux').click();
-      cy.get('.grid7')
-        .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`)
-        .click({ force: true });
-      cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('Faux').click();
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`)
-        .find('.checkmark-icon')
-        .should('have.length', 0);
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(7)`)
-        .find('.checkmark-icon')
-        .should('have.length', 0);
-    });
-
     it('should open the Cell Menu on 2nd row and delete it', () => {
       cy.window().then((win) => {
         const stub = cy.stub(win, 'confirm').returns(true);
@@ -1192,76 +1135,6 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
         .contains('Excel (xlsx)')
         .click();
       cy.get('@alertStub').should('have.been.calledWith', 'Exporting as Excel (xlsx)');
-    });
-
-    it('should open Export->Excel sub-menu & open again Sub-Options on top and expect sub-menu to be recreated with that Sub-Options list instead of the Export->Excel list', () => {
-      const subCommands1 = ['Text (tab delimited)', 'Excel'];
-      const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
-      const subOptions = ['True', 'False'];
-
-      cy.get('.grid7')
-        .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`)
-        .click({ force: true });
-      cy.get('.slick-cell-menu.slick-menu-level-0 .slick-menu-command-list')
-        .find('.slick-menu-item .slick-menu-content')
-        .contains('Exports')
-        .click();
-
-      cy.get('.slick-cell-menu.slick-menu-level-1 .slick-menu-command-list')
-        .should('exist')
-        .find('.slick-menu-item .slick-menu-content')
-        .each(($command, index) => expect($command.text()).to.eq(subCommands1[index]));
-
-      cy.get('.slick-cell-menu.slick-menu-level-1 .slick-menu-command-list')
-        .find('.slick-menu-item .slick-menu-content')
-        .contains('Excel')
-        .click();
-
-      cy.get('.slick-cell-menu.slick-menu-level-2 .slick-menu-command-list')
-        .should('exist')
-        .find('.slick-menu-item .slick-menu-content')
-        .each(($command, index) => expect($command.text()).to.eq(subCommands2[index]));
-
-      cy.get('.slick-cell-menu.slick-menu-level-0 .slick-menu-option-list')
-        .find('.slick-menu-item .slick-menu-content')
-        .contains('Sub-Options')
-        .click();
-
-      cy.get('.slick-cell-menu.slick-menu-level-1 .slick-menu-option-list').as('optionSubList2');
-
-      cy.get('@optionSubList2').find('.slick-menu-title').contains('Change Completed Flag');
-
-      cy.get('@optionSubList2')
-        .should('exist')
-        .find('.slick-menu-item .slick-menu-content')
-        .each(($option, index) => expect($option.text()).to.eq(subOptions[index]));
-    });
-
-    it('should be able to choose "True" option from options sub-menu and expect it to add checkmark in "Completed" column', () => {
-      // cell menu is still open from last test, so no need to reopen
-      cy.get('.slick-cell-menu.slick-menu-level-1 .slick-menu-option-list').as('optionSubList2');
-      cy.get('@optionSubList2').find('.slick-menu-title').contains('Change Completed Flag');
-
-      cy.get('@optionSubList2').find('.slick-menu-item .slick-menu-content').contains('True').click();
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(8)`)
-        .find('.checkmark-icon')
-        .should('have.length', 1);
-    });
-
-    it('should be able to choose "False" option from options sub-menu and expect it to remove checkmark in "Completed" column', () => {
-      cy.get('.grid7')
-        .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`)
-        .click({ force: true });
-      cy.get('.slick-cell-menu.slick-menu-level-0 .slick-menu-option-list')
-        .find('.slick-menu-item .slick-menu-content')
-        .contains('Sub-Options')
-        .click();
-
-      cy.get('.slick-cell-menu.slick-menu-level-1 .slick-menu-option-list').as('optionSubList2');
-      cy.get('@optionSubList2').find('.slick-menu-item .slick-menu-content').contains('False').click();
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(8)`)
-        .find('.checkmark-icon')
-        .should('have.length', 0);
     });
 
     it('should open Export->Excel sub-menu then open Feedback->ContactUs sub-menus and expect previous Export menu to no longer exists', () => {

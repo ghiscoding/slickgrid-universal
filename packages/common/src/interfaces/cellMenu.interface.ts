@@ -1,6 +1,6 @@
 import type { SlickEventData } from '../core/slickCore.js';
 import type { SlickCellMenu } from '../extensions/slickCellMenu.js';
-import type { CellMenuOption, MenuCommandItemCallbackArgs, MenuFromCellCallbackArgs, MenuOptionItemCallbackArgs } from './index.js';
+import type { CellMenuOption, MenuCommandItemCallbackArgs, MenuFromCellCallbackArgs } from './index.js';
 
 export interface CellMenu extends CellMenuOption {
   // --
@@ -20,7 +20,4 @@ export interface CellMenu extends CellMenuOption {
 
   /** SlickGrid Event fired on menu option clicked from the Command items list */
   onCommand?: (e: Event | SlickEventData, args: MenuCommandItemCallbackArgs) => void;
-
-  /** @deprecated @use `onCommand` SlickGrid Event fired on menu option selected from the Option items list. */
-  onOptionSelected?: (e: Event | SlickEventData, args: MenuOptionItemCallbackArgs) => void;
 }

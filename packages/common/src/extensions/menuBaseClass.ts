@@ -30,18 +30,15 @@ import type {
   HeaderMenu,
   HeaderMenuOption,
   MenuCommandItem,
-  MenuOptionItem,
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { wireMenuKeyboardNavigation } from './keyboardNavigation.js';
 import { commandMatcher } from './menuUtils.js';
 
-export type ExtractMenuType<A, T> = T extends 'command' ? A : T extends 'option' ? A : A extends 'divider' ? A : never;
-export type MenuType = 'command' | 'option';
-/** @deprecated will be dropped in v11 */
-export type MenuCommandOptionItem = MenuCommandItem | MenuOptionItem;
-export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';
+export type ExtractMenuType<A, T> = T extends 'command' ? A : A extends 'divider' ? A : never;
+export type MenuType = 'command';
+export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | 'divider';
 export type MenuPlugin = CellMenu | ContextMenu | GridMenu | HeaderMenu;
 export type itemEventCallback = (
   e: DOMMouseOrTouchEvent<HTMLDivElement>,
@@ -77,8 +74,6 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
   protected _menuCssPrefix = '';
   protected _menuPluginCssPrefix = '';
 
-  /** @deprecated will be dropped in v11 */
-  protected _optionTitleElm?: HTMLSpanElement;
   protected _menuTriggerElement?: HTMLElement; // Track the element that triggered the menu for focus restoration
   protected _timer?: any;
   pluginName = '';
@@ -136,7 +131,6 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     this._bindEventService.unbindAll();
     this.pubSubService.unsubscribeAll();
     this._commandTitleElm?.remove();
-    this._optionTitleElm?.remove();
     this.disposeAllMenus();
     emptyElement(this._menuElm);
     this.menuElement?.remove();
@@ -481,51 +475,45 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     }
   }
 
-  protected addSubMenuTitleWhenExists(item: ExtractMenuType<ExtendableItemTypes, MenuType>, commandOrOptionMenu: HTMLDivElement): void {
-    if (item !== 'divider' && (item as MenuCommandOptionItem | GridMenuItem)?.subMenuTitle) {
+  protected addSubMenuTitleWhenExists(item: ExtractMenuType<ExtendableItemTypes, MenuType>, commandMenu: HTMLDivElement): void {
+    if (item !== 'divider' && (item as MenuCommandItem | GridMenuItem)?.subMenuTitle) {
       const subMenuTitleElm = document.createElement('div');
       subMenuTitleElm.className = 'slick-menu-title';
-      subMenuTitleElm.textContent = (item as MenuCommandOptionItem | GridMenuItem).subMenuTitle as string;
-      const subMenuTitleClass = (item as MenuCommandOptionItem | GridMenuItem).subMenuTitleCssClass as string;
+      subMenuTitleElm.textContent = (item as MenuCommandItem | GridMenuItem).subMenuTitle as string;
+      const subMenuTitleClass = (item as MenuCommandItem | GridMenuItem).subMenuTitleCssClass as string;
       if (subMenuTitleClass) {
         subMenuTitleElm.classList.add(...classNameToList(subMenuTitleClass));
       }
-      commandOrOptionMenu.appendChild(subMenuTitleElm);
+      commandMenu.appendChild(subMenuTitleElm);
     }
   }
 
-  /**
-   * @deprecated
-   * not entirely deprecated, but I just want to rename the function since we'll be deprecating/removing `optionItems` in v11
-   * Construct the Command/Options Items section.
-   */
-  protected populateCommandOrOptionItems(
+  /** Construct the Command Items section. */
+  protected populateCommandItems(
     itemType: MenuType,
     menuOptions: M,
-    commandOrOptionMenuElm: HTMLElement,
-    commandOrOptionItems: Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
+    commandMenuElm: HTMLElement,
+    commandItems: Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
     args: unknown,
     triggeredByElm: HTMLElement,
     itemClickCallback: itemEventCallback,
     itemMouseoverCallback?: itemEventCallback,
     keyboardNavOptions?: KeyboardNavigationOption
   ): void {
-    if (args && commandOrOptionItems && menuOptions) {
-      for (const item of commandOrOptionItems) {
-        const li = this.populateSingleCommandOrOptionItem(
+    if (args && commandItems && menuOptions) {
+      for (const item of commandItems) {
+        const li = this.populateSingleCommandItem(
           itemType,
           menuOptions,
-          commandOrOptionMenuElm,
+          commandMenuElm,
           item,
           args,
           triggeredByElm,
           itemClickCallback,
           itemMouseoverCallback
         );
-        if (li && ((item as MenuCommandItem)?.commandItems || (item as MenuOptionItem)?.optionItems)) {
-          // Use command for MenuCommandItem, option for MenuOptionItem
-          const isCommand = typeof (item as MenuCommandItem).command === 'string';
-          const key = isCommand ? (item as MenuCommandItem).command : (item as MenuOptionItem).option;
+        if (li && (item as MenuCommandItem)?.commandItems) {
+          const key = (item as MenuCommandItem).command;
           const keyStr = typeof key === 'string' ? key.replace(/\s/g, '') : String(key);
           if (keyStr) {
             const selector = `.slick-submenu[data-sub-menu-parent="${keyStr}"]`;
@@ -539,8 +527,8 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     }
   }
 
-  /** @deprecated (same as above and rename the function in v11) Add the Command/Options Title when necessary. */
-  protected populateCommandOrOptionTitle(itemType: MenuType, menuOptions: M, commandOrOptionMenuElm: HTMLElement, level: number): void {
+  /** Add the Command Title when necessary. */
+  protected populateCommandTitle(itemType: MenuType, menuOptions: M, commandMenuElm: HTMLElement, level: number): void {
     if (menuOptions) {
       const isSubMenu = level > 0;
 
@@ -548,8 +536,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       const menuHeaderElm =
         this._menuElm?.querySelector(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
 
-      // 'optionTitle' is deprecated, user could pass a title on top of the Commands/Options section
-      const titleProp: 'commandTitle' | 'optionTitle' = `${itemType}Title`;
+      const titleProp = 'commandTitle';
 
       if (!isSubMenu) {
         if ((menuOptions as CellMenu | ContextMenu)?.[titleProp]) {
@@ -563,16 +550,16 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
         } else {
           menuHeaderElm.classList.add('no-title');
         }
-        commandOrOptionMenuElm.appendChild(menuHeaderElm);
+        commandMenuElm.appendChild(menuHeaderElm);
       }
     }
   }
 
-  /** @deprecated (same as above and rename the function in v11) Construct the Command/Options Items section. */
-  protected populateSingleCommandOrOptionItem(
+  /** Construct the Command Items section. */
+  protected populateSingleCommandItem(
     itemType: MenuType,
     menuOptions: M,
-    commandOrOptionMenuElm: HTMLElement | null,
+    commandMenuElm: HTMLElement | null,
     item: ExtractMenuType<ExtendableItemTypes, MenuType>,
     args: any,
     triggeredByElm: HTMLElement,
@@ -601,23 +588,23 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       }
 
       // when the override is defined (and previously executed), we need to use its result to update the disabled property
-      // so that "handleMenuItemCommandClick" has the correct flag and won't trigger a command/option clicked event
+      // so that "handleMenuItemCommandClick" has the correct flag and won't trigger a command clicked event
       if (typeof item === 'object' && item.itemUsabilityOverride) {
         item.disabled = isItemUsable ? false : true;
       }
 
       commandLiElm = createDomElement('li', { className: menuCssPrefix, role: 'menuitem' });
-      if (item !== 'divider' && !(item as MenuCommandOptionItem).divider) {
+      if (item !== 'divider' && !(item as MenuCommandItem).divider) {
         commandLiElm.tabIndex = -1;
       }
       if (typeof item === 'object' && isDefined((item as never)[itemType])) {
         commandLiElm.dataset[itemType] = (item as never)?.[itemType];
       }
-      if (commandOrOptionMenuElm) {
-        commandOrOptionMenuElm.appendChild(commandLiElm);
+      if (commandMenuElm) {
+        commandMenuElm.appendChild(commandLiElm);
       }
 
-      if ((typeof item === 'object' && (item as MenuCommandOptionItem).divider) || item === 'divider') {
+      if ((typeof item === 'object' && (item as MenuCommandItem).divider) || item === 'divider') {
         commandLiElm.classList.add(`${menuCssPrefix}-divider`);
         commandLiElm.setAttribute('role', 'separator');
         return commandLiElm;
@@ -628,7 +615,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
         commandLiElm.ariaDisabled = 'true';
       }
 
-      if ((item as MenuCommandOptionItem).hidden || (item as HeaderButtonItem).showOnHover) {
+      if ((item as MenuCommandItem).hidden || (item as HeaderButtonItem).showOnHover) {
         commandLiElm.classList.add(`${menuCssPrefix}-hidden`);
       }
 
@@ -646,18 +633,18 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
 
       if (!isHeaderButton) {
         // Check if we have slot renderer on the menu item or a default item renderer
-        const slotRenderer = (item as MenuCommandOptionItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultMenuItemRenderer;
+        const slotRenderer = (item as MenuCommandItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultMenuItemRenderer;
         if (slotRenderer) {
-          this.renderSlotRenderer(commandLiElm, slotRenderer, item as MenuCommandOptionItem, args);
+          this.renderSlotRenderer(commandLiElm, slotRenderer, item as MenuCommandItem, args);
         }
         // Default rendering: icon + content
         else {
           const iconElm = createDomElement('div', { className: `${this._menuCssPrefix}-icon` });
           commandLiElm.appendChild(iconElm);
 
-          if ((item as MenuCommandOptionItem).iconCssClass) {
-            iconElm.classList.add(...classNameToList((item as MenuCommandOptionItem).iconCssClass));
-          } else if (!(item as MenuCommandItem).commandItems && !(item as MenuOptionItem).optionItems) {
+          if ((item as MenuCommandItem).iconCssClass) {
+            iconElm.classList.add(...classNameToList((item as MenuCommandItem).iconCssClass));
+          } else if (!(item as MenuCommandItem).commandItems) {
             iconElm.textContent = '◦';
           }
 
@@ -665,13 +652,13 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
             'span',
             {
               className: `${this._menuCssPrefix}-content`,
-              textContent: (typeof item === 'object' && (item as MenuCommandOptionItem).title) || '',
+              textContent: (typeof item === 'object' && (item as MenuCommandItem).title) || '',
             },
             commandLiElm
           );
 
-          if ((item as MenuCommandOptionItem).textCssClass) {
-            textElm.classList.add(...classNameToList((item as MenuCommandOptionItem).textCssClass));
+          if ((item as MenuCommandItem).textCssClass) {
+            textElm.classList.add(...classNameToList((item as MenuCommandItem).textCssClass));
           }
         }
       }
@@ -684,9 +671,9 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
           'click',
           ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => {
             // if there's a slot renderer, call it with the event
-            const slotRenderer = (item as MenuCommandOptionItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultMenuItemRenderer;
+            const slotRenderer = (item as MenuCommandItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultMenuItemRenderer;
             if (slotRenderer) {
-              slotRenderer(item as MenuCommandOptionItem, args, e);
+              slotRenderer(item as MenuCommandItem, args, e);
             }
 
             // if the click was stopped by an interactive element handler, don't trigger the menu action
@@ -727,8 +714,8 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
         );
       }
 
-      // the option/command item could be a sub-menu if it has another list of commands/options
-      if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
+      // the command item could be a sub-menu if it has another list of commands
+      if ((item as MenuCommandItem).commandItems) {
         const chevronElm = document.createElement('span');
         chevronElm.className = 'sub-item-chevron';
         if ((this._addonOptions as any).subItemChevronClass) {
@@ -811,7 +798,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
           let triggerSelector = '';
           const subMenuParentId = currentSubMenu.dataset.subMenuParent;
           if (subMenuParentId) {
-            triggerSelector = `.slick-submenu-item[data-command="${subMenuParentId}"], .slick-submenu-item[data-option="${subMenuParentId}"]`;
+            triggerSelector = `.slick-submenu-item[data-command="${subMenuParentId}"]`;
           }
           let triggerItem = parentMenu && triggerSelector ? (parentMenu.querySelector(triggerSelector) as HTMLElement) : null;
           // Fallback: focus first menu item if trigger not found

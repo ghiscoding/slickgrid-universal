@@ -235,11 +235,6 @@ export class Example18Component implements OnInit, OnDestroy {
         cellMenu: {
           commandTitle: 'Commands',
           commandItems: [{ command: 'help', title: 'Help' }],
-          optionTitle: 'Change Effort-Driven Flag',
-          optionItems: [
-            { option: true, title: 'True' },
-            { option: false, title: 'False' },
-          ],
         },
       },
     ];
@@ -255,14 +250,6 @@ export class Example18Component implements OnInit, OnDestroy {
       selectionOptions: { selectActiveRow: false },
       checkboxSelector: { hideInColumnTitleRow: true, hideInFilterHeaderRow: false },
       enableCellMenu: true,
-      cellMenu: {
-        onOptionSelected: (_e: any, args: any) => {
-          if (args?.dataContext) {
-            args.dataContext.effortDriven = args.item.option;
-            this.angularGrid?.gridService?.updateItem(args.dataContext);
-          }
-        },
-      },
       autoEdit: true, // true single click (false for double-click)
       autoCommitEdit: true,
       editable: true,

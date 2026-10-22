@@ -1,5 +1,5 @@
 import { Constants } from '../constants.js';
-import type { GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem } from '../interfaces/index.js';
+import type { GridMenuItem, GridOption, Locale, MenuCommandItem } from '../interfaces/index.js';
 import type { BackendUtilityService } from '../services/backendUtility.service.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { TranslaterService } from '../services/translater.service.js';
@@ -107,10 +107,7 @@ export class ExtensionUtility {
    * @param {Array<MenuCommandItem | String>} items - Menu Command Items array
    * @param {Object} gridOptions - Grid Options
    */
-  translateMenuItemsFromTitleKey(
-    items: Array<MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider'>,
-    subMenuItemsKey = 'commandItems'
-  ): void {
+  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | GridMenuItem | 'divider'>, subMenuItemsKey = 'commandItems'): void {
     for (const item of items) {
       // translate `titleKey` and also `subMenuTitleKey` if exists
       if (typeof item === 'object') {

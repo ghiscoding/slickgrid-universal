@@ -68,7 +68,6 @@ handleOnHeaderMenuCommand(e) {
     - `onBeforeMenuShow`
     - `onBeforeMenuClose`
     - `onCommand`
-    - `onOptionSelected`
 
 #### Column Picker (extension)
   - `onColumnPickerColumnsChanged`

@@ -206,11 +206,6 @@ function defineGrid() {
       cellMenu: {
         commandTitle: 'Commands',
         commandItems: [{ command: 'help', title: 'Help' }],
-        optionTitle: 'Change Effort-Driven Flag',
-        optionItems: [
-          { option: true, title: 'True' },
-          { option: false, title: 'False' },
-        ],
       },
     },
   ];
@@ -230,14 +225,6 @@ function defineGrid() {
     selectionOptions: { selectActiveRow: false },
     checkboxSelector: { hideInColumnTitleRow: true, hideInFilterHeaderRow: false },
     enableCellMenu: true,
-    cellMenu: {
-      onOptionSelected: (_e: unknown, args: any) => {
-        if (args?.dataContext) {
-          args.dataContext.effortDriven = args.item.option;
-          vueGrid?.gridService?.updateItem(args.dataContext);
-        }
-      },
-    },
 
     // pre-header will include our Header Grouping (i.e. "Common Factor")
     // Draggable Grouping could be located in either the Pre-Header OR the new Top-Header

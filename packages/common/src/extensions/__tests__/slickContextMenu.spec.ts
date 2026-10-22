@@ -5,7 +5,7 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub.j
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import { Formatters } from '../../formatters/formatters.index.js';
-import type { Column, ContextMenu, ElementPosition, ExternalResource, Formatter, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index.js';
+import type { Column, ContextMenu, ElementPosition, ExternalResource, Formatter, GridOption, MenuCommandItem } from '../../interfaces/index.js';
 import {
   BackendUtilityService,
   SharedService,
@@ -48,30 +48,6 @@ const commandItemsMock = [
     ],
   },
 ] as MenuCommandItem[];
-const optionItemsMock = [
-  { option: 'option2', title: 'Option 2', positionOrder: 62 },
-  { option: 'option1', title: 'Option 1', cssClass: 'purple', positionOrder: 61 },
-  { divider: true, option: '', positionOrder: 63 },
-  {
-    option: 'delete-row',
-    title: 'Delete Row',
-    positionOrder: 64,
-    iconCssClass: 'mdi mdi-checked',
-    cssClass: 'sky',
-    textCssClass: 'underline',
-  },
-  'divider',
-  {
-    option: 'sub-options',
-    title: 'Sub Options',
-    subMenuTitle: 'Sub Option Title',
-    subMenuTitleCssClass: 'bold italic',
-    optionItems: [
-      { option: 'option3', title: 'Option 3', positionOrder: 70 },
-      { option: 'option4', title: 'Option 4', positionOrder: 71 },
-    ],
-  },
-] as MenuOptionItem[];
 
 const columnsMock: Column[] = [
   { id: 'firstName', field: 'firstName', name: 'First Name', width: 100 },
@@ -103,13 +79,11 @@ const gridOptionsMock = {
     maxHeight: 'none',
     width: 175,
     commandItems: [],
-    optionItems: [],
     onExtensionRegistered: vi.fn(),
     onCommand: () => {},
     onAfterMenuShow: () => {},
     onBeforeMenuShow: () => {},
     onBeforeMenuClose: () => {},
-    onOptionSelected: () => {},
   },
 } as unknown as GridOption;
 
@@ -226,22 +200,6 @@ describe('ContextMenu Plugin', () => {
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
     expect(plugin.eventHandler).toBeTruthy();
-  });
-
-  it('should use default options when instantiating the plugin without passing any arguments', () => {
-    plugin.init();
-
-    expect(plugin.addonOptions).toEqual({
-      autoAdjustDrop: true, // dropup/dropdown
-      autoAlignSide: true, // left/right
-      autoAdjustDropOffset: 0,
-      autoAlignSideOffset: 0,
-      commandItems: [],
-      hideMenuOnScroll: false,
-      optionShownOverColumnIds: [],
-      commandShownOverColumnIds: [],
-      subMenuOpenByEvent: 'mouseover',
-    });
   });
 
   it('should be able to change Context Menu options', () => {
@@ -741,6 +699,17 @@ describe('ContextMenu Plugin', () => {
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(onBeforeSpy).toHaveBeenCalled();
         expect(onAfterSpy).toHaveBeenCalled();
+      });
+
+      it('should preserve dark mode and the command identifier on nested menus', () => {
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, darkMode: true });
+        plugin.dispose();
+        plugin.init({ commandItems: deepCopy(commandItemsMock) });
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
+        document.querySelector<HTMLElement>('.slick-context-menu [data-command="sub-commands"]')!.click();
+        const submenu = document.querySelector<HTMLElement>('.slick-context-menu.slick-submenu');
+        expect(submenu?.classList.contains('slick-dark-mode')).toBe(true);
+        expect(submenu?.dataset.subMenuParent).toBe('sub-commands');
       });
 
       it('should create a Context Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element when sub-menu is clicked', () => {
@@ -1912,380 +1881,6 @@ describe('ContextMenu Plugin', () => {
 
         expect(isCollapseCommandUsable).toBe(true);
         expect(isExpandCommandUsable).toBe(true);
-      });
-    });
-
-    describe('with Options Items', () => {
-      beforeEach(() => {
-        gridOptionsMock.contextMenu!.hideCommands = [...(gridOptionsMock.contextMenu!.hideCommands ?? []), 'copy'];
-        gridOptionsMock.contextMenu!.optionItems = undefined;
-      });
-
-      it('should not populate and automatically return when the Context Menu item "optionItems" array of the context menu is undefined', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock), onAfterMenuShow: undefined });
-        gridOptionsMock.contextMenu!.optionItems = undefined;
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-
-        expect(contextMenuElm).toBeNull();
-      });
-
-      it('should create a Context Menu to be create and show up when item visibility & usability callbacks returns true', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => true;
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => true;
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
-        expect(removeExtraSpaces(document.body.innerHTML)).toBe(
-          removeExtraSpaces(
-            `<div class="slick-context-menu slick-menu-level-0 slickgrid12345 dropdown dropright" style="top: 0px; display: block; left: 0px;" data-keyboard-nav-bound="true">
-            <div class="slick-menu-option-list" role="menu">
-              <div class="slick-option-header no-title with-close">
-                <button aria-label="Close" class="close" type="button" data-dismiss="slick-menu">×</button>
-              </div>
-              <li class="slick-menu-item purple" role="menuitem" tabindex="-1" data-option="option1">
-                <div class="slick-menu-icon">◦</div>
-                <span class="slick-menu-content">Option 1</span>
-              </li>
-              <li class="slick-menu-item" role="menuitem" tabindex="-1" data-option="option2">
-                <div class="slick-menu-icon">◦</div>
-                <span class="slick-menu-content">Option 2</span>
-              </li>
-              <li class="slick-menu-item slick-menu-item-divider" role="separator"></li>
-              <li class="slick-menu-item sky" role="menuitem" tabindex="-1" data-option="delete-row">
-                <div class="slick-menu-icon mdi mdi-checked"></div>
-                <span class="slick-menu-content underline">Delete Row</span>
-              </li>
-              <li class="slick-menu-item slick-menu-item-divider" role="separator"></li>
-              <li class="slick-menu-item slick-submenu-item" role="menuitem" tabindex="-1" data-option="sub-options" aria-haspopup="true" aria-expanded="false">
-                <div class="slick-menu-icon"></div>
-                <span class="slick-menu-content">Sub Options</span>
-                <span class="sub-item-chevron">⮞</span>
-              </li>
-          </div>
-        </div>`
-          )
-        );
-      });
-
-      it('should expect a Context Menu to be created when cell is clicked with a list of commands defined but without "Option 1" when "itemVisibilityOverride" and "itemUsabilityOverride" return undefined', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => undefined as any;
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => undefined as any;
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        const optionItemElm1 = optionListElm.querySelectorAll('.slick-menu-item')[0] as HTMLDivElement;
-        const optionItemElm2 = optionListElm.querySelectorAll('.slick-menu-item')[1] as HTMLDivElement;
-        const optionItemElm3 = optionListElm.querySelectorAll('.slick-menu-item')[2] as HTMLDivElement;
-        const optionLabelElm1 = optionItemElm1.querySelector('.slick-menu-content') as HTMLSpanElement;
-        const optionIconElm1 = optionItemElm1.querySelector('.slick-menu-icon') as HTMLDivElement;
-        const optionLabelElm3 = optionItemElm3.querySelector('.slick-menu-content') as HTMLSpanElement;
-        const optionIconElm3 = optionItemElm3.querySelector('.slick-menu-icon') as HTMLDivElement;
-
-        expect(plugin.menuElement).toBeTruthy();
-        expect(closeBtnElm).toBeTruthy();
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
-        expect(optionItemElm1.classList.contains('purple')).toBeTruthy();
-        expect(optionIconElm1.className).toBe('slick-menu-icon');
-        expect(optionLabelElm1.textContent).toBe('Option 1');
-        expect(optionItemElm2.classList.contains('slick-menu-item-divider')).toBeTruthy();
-        expect(optionItemElm2.innerHTML).toBe('');
-        expect(optionIconElm3.classList.contains('mdi-checked')).toBeTruthy();
-        expect(optionLabelElm3.textContent).toBe('Delete Row');
-      });
-
-      it('should NOT expect a Context Menu to be created the column is not found in "commandShownOverColumnIds"', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock), optionShownOverColumnIds: ['Age'] });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => true;
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => true;
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-
-        expect(contextMenuElm).toBeNull();
-      });
-
-      it('should expect a Context Menu to be created when cell is clicked with a list of options defined but without "Option 1" when "itemVisibilityOverride" and "itemUsabilityOverride" return false', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => false;
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => false;
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        const optionItemElm1 = optionListElm.querySelectorAll('.slick-menu-item')[0] as HTMLDivElement;
-        const optionLabelElm1 = optionItemElm1.querySelector('.slick-menu-content') as HTMLSpanElement;
-        const optionIconElm1 = optionItemElm1.querySelector('.slick-menu-icon') as HTMLDivElement;
-
-        expect(closeBtnElm).toBeTruthy();
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
-        expect(optionItemElm1.classList.contains('purple')).toBeTruthy();
-        expect(optionIconElm1.className).toBe('slick-menu-icon');
-        expect(optionLabelElm1.textContent).toBe('Option 1');
-        expect(document.body.innerHTML.includes('Option 2')).not.toBeTruthy();
-      });
-
-      it('should create a Context Menu and a 2nd button item usability callback returns false and expect button to be disabled', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => true;
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => false;
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        const optionItemElm1 = optionListElm.querySelectorAll('.slick-menu-item')[0] as HTMLDivElement;
-        const optionLabelElm1 = optionItemElm1.querySelector('.slick-menu-content') as HTMLSpanElement;
-        const optionIconElm1 = optionItemElm1.querySelector('.slick-menu-icon') as HTMLDivElement;
-
-        expect(closeBtnElm).toBeTruthy();
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(optionItemElm1.classList.contains('purple')).toBeTruthy();
-        expect(optionIconElm1.className).toBe('slick-menu-icon');
-        expect(optionLabelElm1.textContent).toBe('Option 1');
-        expect(document.body.innerHTML.includes('Option 2')).toBeTruthy();
-      });
-
-      it('should create a Context Menu and a 2nd item is "disabled" and expect button to be disabled', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).disabled = true;
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
-        const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
-
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(optionContentElm2.textContent).toBe('Option 2');
-        expect(optionItemElm2.classList.contains('slick-menu-item-disabled')).toBeTruthy();
-      });
-
-      it('should create a Context Menu and expect button to be disabled when option property is hidden', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).hidden = true;
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
-        const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
-
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(optionContentElm2.textContent).toBe('Option 2');
-        expect(optionItemElm2.classList.contains('slick-menu-item-hidden')).toBeTruthy();
-      });
-
-      it('should create a Context Menu item with "iconCssClass" and expect extra css classes added to the icon element', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).iconCssClass = 'underline sky';
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
-        const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
-        const optionIconElm2 = optionItemElm2.querySelector('.slick-menu-icon') as HTMLDivElement;
-
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(optionContentElm2.textContent).toBe('Option 2');
-        expect(optionIconElm2.classList.contains('underline')).toBeTruthy();
-        expect(optionIconElm2.classList.contains('sky')).toBeTruthy();
-      });
-
-      it('should create a Context Menu item with "textCssClass" and expect extra css classes added to the item text DOM element', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).title = 'Help';
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).textCssClass = 'italic blue';
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
-        const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
-
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(optionContentElm2.textContent).toBe('Help');
-        expect(optionContentElm2.classList.contains('italic')).toBeTruthy();
-        expect(optionContentElm2.classList.contains('blue')).toBeTruthy();
-      });
-
-      it('should create a Context Menu item with "tooltip" and expect a title attribute to be added the item text DOM element', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).tooltip = 'some tooltip';
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
-        const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
-        const optionChevronElm = optionListElm.querySelector('.sub-item-chevron') as HTMLSpanElement;
-
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(optionContentElm2.textContent).toBe('Option 2');
-        expect(optionItemElm2.title).toBe('some tooltip');
-        expect(optionChevronElm.textContent).toBe('⮞');
-      });
-
-      it('should create a Context Menu item with a title for the option list when "optionTitle" is provided', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        plugin.setOptions({ optionTitle: 'The Options!' });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).title = 'Help';
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).textCssClass = 'italic blue';
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        const optionListTitleElm = optionListElm.querySelector('.slick-menu-title') as HTMLDivElement;
-
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(optionListTitleElm.textContent).toBe('The Options!');
-      });
-
-      it('should expect all menu related to Sorting when "enableSorting" is set', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu as ContextMenu).optionTitleKey = 'OPTIONS_LIST';
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).option = 'none';
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).titleKey = 'NONE';
-        translateService.use('fr');
-        plugin.translateContextMenu();
-
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        const optionItemElm = optionListElm.querySelector('[data-option="none"]') as HTMLDivElement;
-        const optionContentElm = optionItemElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        const optionListTitleElm = optionListElm.querySelector('.slick-menu-title') as HTMLDivElement;
-
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(optionListTitleElm.textContent).toBe(`Liste d'options`);
-        expect(optionContentElm.textContent).toBe(`Aucun`);
-      });
-
-      it('should create a Context Menu element and expect menu to hide when Close button is clicked', () => {
-        const closeSpy = vi.spyOn(plugin, 'closeMenu');
-
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        let contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
-        closeBtnElm.dispatchEvent(new Event('click'));
-        contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-
-        expect(contextMenuElm).toBeNull();
-        expect(closeBtnElm).toBeTruthy();
-        expect(closeSpy).toHaveBeenCalled();
-      });
-
-      it('should create a Context Menu item with sub-menu items and expect sub-menu list to show in the DOM element when sub-menu is clicked', () => {
-        const actionMock = vi.fn();
-        vi.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
-
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).action = actionMock;
-        plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenu1Elm = document.body.querySelector('.slick-context-menu.slickgrid12345.slick-menu-level-0') as HTMLDivElement;
-        const optionList1Elm = contextMenu1Elm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        const subOptionsElm = optionList1Elm.querySelector('[data-option="sub-options"]') as HTMLDivElement;
-        const optionContentElm2 = subOptionsElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        const optionChevronElm = optionList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
-
-        subOptionsElm!.dispatchEvent(new Event('click'));
-        subOptionsElm.dispatchEvent(new Event('mousedown'));
-        const contextMenu2Elm = document.body.querySelector('.slick-context-menu.slickgrid12345.slick-menu-level-1') as HTMLDivElement;
-        const optionList2Elm = contextMenu2Elm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        const subMenuTitleElm = optionList2Elm.querySelector('.slick-menu-title') as HTMLDivElement;
-        const subOption3Elm = optionList2Elm.querySelector('[data-option="option3"]') as HTMLDivElement;
-
-        expect(optionList1Elm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(optionList2Elm.querySelectorAll('.slick-menu-item').length).toBe(2);
-        expect(optionContentElm2.textContent).toBe('Sub Options');
-        expect(subMenuTitleElm.textContent).toBe('Sub Option Title');
-        expect(subMenuTitleElm.className).toBe('slick-menu-title bold italic');
-        expect(optionChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
-        expect(subOption3Elm.textContent).toContain('Option 3');
-
-        document.body.dispatchEvent(new Event('mousedown'));
-      });
-
-      it('should create a Context Menu and expect the button click handler & "action" callback to be executed when defined', () => {
-        const actionMock = vi.fn();
-        vi.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
-
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).action = actionMock;
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        optionListElm.querySelector('[data-option="option2"]')!.dispatchEvent(new Event('click'));
-
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(actionMock).toHaveBeenCalled();
-      });
-
-      it('should create a Context Menu and expect the "onOptionSelected" handler to be executed when defined', () => {
-        const onOptionSelectedMock = vi.fn();
-        vi.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
-
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock), onOptionSelected: onOptionSelectedMock });
-        // plugin.setOptions({ onOptionSelected: onOptionSelectedMock });
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        optionListElm.querySelector('[data-option="option2"]')!.dispatchEvent(new Event('click'));
-
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(onOptionSelectedMock).toHaveBeenCalled();
-      });
-
-      it('should create a Context Menu and NOT expect the "onOptionSelected" handler to be executed when "commitCurrentEdit" returns false', () => {
-        const onOptionSelectedMock = vi.fn();
-        vi.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(false);
-
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        plugin.setOptions({ onOptionSelected: onOptionSelectedMock });
-        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        optionListElm.querySelector('[data-option="option2"]')!.dispatchEvent(new Event('click'));
-
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
-        expect(onOptionSelectedMock).not.toHaveBeenCalled();
       });
     });
   });

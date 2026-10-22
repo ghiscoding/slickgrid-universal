@@ -137,11 +137,6 @@ const Example20: React.FC = () => {
             'divider',
             { command: 'help', title: 'Help' },
           ],
-          optionTitle: 'Change Complete Flag',
-          optionItems: [
-            { option: true, title: 'True' },
-            { option: false, title: 'False' },
-          ],
         },
       },
     ];
@@ -185,12 +180,6 @@ const Example20: React.FC = () => {
       enableCellMenu: true,
       cellMenu: {
         onCommand: (_e: unknown, args: any) => executeCommand(args),
-        onOptionSelected: (_e: unknown, args: any) => {
-          if (args?.dataContext) {
-            args.dataContext.completed = args.item.option;
-            reactGridRef.current?.gridService?.updateItem(args.dataContext);
-          }
-        },
       },
       enableContextMenu: true,
       contextMenu: getContextMenuOptions(),
@@ -242,21 +231,9 @@ const Example20: React.FC = () => {
   }
 
   function getContextMenuOptions(): any {
-    const percentItems = [
-      { option: 0, title: 'Not Started (0%)' },
-      { option: 50, title: 'Half Completed (50%)' },
-      { option: 100, title: 'Completed (100%)' },
-    ];
     return {
-      optionShownOverColumnIds: ['percentComplete'],
       hideCloseButton: true,
       dropSide: 'right',
-      optionTitle: 'Change Percent Complete',
-      optionItems: [
-        ...percentItems,
-        'divider',
-        { option: null, title: 'Sub-Options (demo)', subMenuTitle: 'Set Percent Complete', optionItems: percentItems },
-      ],
       commandItems: [
         { command: '', divider: true, positionOrder: 98 },
         {
@@ -296,12 +273,6 @@ const Example20: React.FC = () => {
           ],
         },
       ],
-      onOptionSelected: (_e: unknown, args: any) => {
-        if (args?.dataContext) {
-          args.dataContext.percentComplete = args.item.option;
-          reactGridRef.current?.slickGrid?.updateRow(args.row || 0);
-        }
-      },
       onCommand: (_e: unknown, args: any) => executeCommand(args),
     };
   }
