@@ -649,7 +649,7 @@ export interface GridOption<C extends Column = Column> {
 
   /**
    * Defaults to false, force synchronous scrolling without throttling the UI render when scrolling.
-   * Note: it might be risky to disable this option on large dataset, use at your own risk
+   * Note: only relevant when `scrollRenderThrottling` is greater than 0, since renders are otherwise always synchronous
    */
   forceSyncScrolling?: boolean;
 
@@ -882,7 +882,11 @@ export interface GridOption<C extends Column = Column> {
    */
   sanitizer?: Sanitizer;
 
-  /** Defaults to 10(ms), render throttling when using virtual scroll on large dataset */
+  /**
+   * Defaults to 0 (disabled), minimum delay (ms) between renders of large vertical scroll jumps (more than a viewport height).
+   * When disabled, every scroll event renders synchronously, which avoids blank frames while dragging the scrollbar.
+   * A value greater than 0 restores the previous throttled behavior (which was 10ms).
+   */
   scrollRenderThrottling?: number;
 
   /** CSS class name used when cell is selected */

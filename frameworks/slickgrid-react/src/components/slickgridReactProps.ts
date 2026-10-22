@@ -19,7 +19,6 @@ import type {
   OnActiveCellChangedEventArgs,
   OnAddNewRowEventArgs,
   OnAutosizeColumnsEventArgs,
-  OnBeforeAppendCellEventArgs,
   OnBeforeCellEditorDestroyEventArgs,
   OnBeforeColumnsResizeEventArgs,
   OnBeforeEditCellEventArgs,
@@ -102,7 +101,6 @@ export interface SlickgridReactProps {
   onActiveCellPositionChanged?: ReactSlickEventHandler<{ grid: SlickGrid }>;
   onAddNewRow?: ReactSlickEventHandler<OnAddNewRowEventArgs>;
   onAutosizeColumns?: ReactSlickEventHandler<OnAutosizeColumnsEventArgs>;
-  onBeforeAppendCell?: ReactSlickEventHandler<OnBeforeAppendCellEventArgs>;
   onBeforeCellEditorDestroy?: ReactSlickEventHandler<OnBeforeCellEditorDestroyEventArgs>;
   onBeforeColumnsResize?: ReactSlickEventHandler<OnBeforeColumnsResizeEventArgs>;
   onBeforeDestroy?: ReactSlickEventHandler<{ grid: SlickGrid }>;

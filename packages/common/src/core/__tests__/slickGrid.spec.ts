@@ -240,6 +240,37 @@ describe('SlickGrid core file', () => {
     expect(action).toHaveBeenCalledTimes(3);
   });
 
+  describe('large vertical scroll jumps', () => {
+    const jumpScroll = (scrollRenderThrottling?: number) => {
+      const items = Array.from({ length: 50000 }, (_, id) => ({ id, firstName: `Name ${id}` }));
+      const options = { ...defaultOptions, scrollRenderThrottling };
+      grid = new SlickGrid<any, Column>(container, items, [{ id: 'firstName', field: 'firstName', name: 'First Name' }], options);
+      const viewport = container.querySelector('.slick-viewport') as HTMLDivElement;
+      Object.defineProperty(viewport, 'scrollHeight', { configurable: true, value: 50000 * DEFAULT_COLUMN_HEIGHT });
+      Object.defineProperty(viewport, 'clientHeight', { configurable: true, value: 500 });
+      (grid as any).viewportH = 500;
+      const renderSpy = vi.spyOn(grid, 'render');
+      const enqueueSpy = vi.spyOn((grid as any).scrollThrottle, 'enqueue');
+      [100000, 300000].forEach((scrollTop) => {
+        viewport.scrollTop = scrollTop;
+        viewport.dispatchEvent(new Event('scroll'));
+      });
+      return { renderSpy, enqueueSpy };
+    };
+
+    it('should render every large jump synchronously by default', () => {
+      const { renderSpy, enqueueSpy } = jumpScroll();
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(enqueueSpy).not.toHaveBeenCalled();
+    });
+
+    it('should throttle large jumps when "scrollRenderThrottling" is greater than 0', () => {
+      const { renderSpy, enqueueSpy } = jumpScroll(10);
+      expect(renderSpy).not.toHaveBeenCalled();
+      expect(enqueueSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
   it('should be able to instantiate SlickGrid with an external PubSub Service', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions, pubSubServiceStub);
@@ -368,7 +399,7 @@ describe('SlickGrid core file', () => {
     ['contextMenu', ['copy', 'export-text-delimited']],
     ['headerMenu', ['sort-asc', 'sort-desc']],
   ] as const)('should replace %s hideCommands during runtime updates', (menu, initialCommands) => {
-    grid = new SlickGrid(container, [], [{ id: 'id', field: 'id' }], {
+    grid = new SlickGrid<any, Column>(container, [], [{ id: 'id', field: 'id' }], {
       ...defaultOptions,
       [menu]: { hideCommands: [...initialCommands], subMenuOpenByEvent: 'mouseover' },
     });
@@ -389,7 +420,7 @@ describe('SlickGrid core file', () => {
   });
 
   it('should replace textExportOptions menuFormats during runtime updates', () => {
-    grid = new SlickGrid(container, [], [{ id: 'id', field: 'id' }], {
+    grid = new SlickGrid<any, Column>(container, [], [{ id: 'id', field: 'id' }], {
       ...defaultOptions,
       textExportOptions: { menuFormats: ['csv', 'txt'], filename: 'export' },
     });

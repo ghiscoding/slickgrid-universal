@@ -30,8 +30,8 @@ import {
   GridEventService,
   GridService,
   GridStateService,
+  hasStringDateColumns,
   HeaderGroupingService,
-  isColumnDateType,
   PaginationService,
   PluginFlagMappings,
   ResizerService,
@@ -1604,7 +1604,7 @@ export class AureliaSlickgridCustomElement {
       this.dataview?.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE &&
       !this.options.silenceWarnings &&
       !this.options.preParseDateColumns &&
-      this.grid.getColumns().some((c) => isColumnDateType(c.type))
+      hasStringDateColumns(this.grid.getColumns(), this.dataview.getItems())
     ) {
       console.warn(
         '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +

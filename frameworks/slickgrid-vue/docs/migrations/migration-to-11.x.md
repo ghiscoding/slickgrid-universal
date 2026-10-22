@@ -18,6 +18,7 @@ The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer va
 - [Removed Deprecated Code](#removed-deprecated-code)
 - [Excluded columns are no longer rendered in column lists](#excluded-columns-are-no-longer-rendered-in-column-lists)
 - [Code Changes](#code-changes)
+- [`onBeforeAppendCell` event removed](#onbeforeappendcell-event-removed)
 - [New `iconSet` grid option for the Fluent theme](#new-iconset-grid-option-for-the-fluent-theme)
 
 > **Note:** If you are upgrading from a version earlier than v10, follow the previous migration guides in order before applying these v11 changes.
@@ -320,6 +321,15 @@ After identifying that Row Detail has way too many containers and redundant CSS 
 ```
 
 ## Code Changes
+
+### `onBeforeAppendCell` event removed
+
+The `onBeforeAppendCell` event and its `@onBeforeAppendCell` event prop were removed. The event fired for every rendered cell, which slowed down scrolling, and it was already superseded by Formatters. Return the CSS classes from your Formatter with `addClasses` instead:
+
+```diff
+- <slickgrid-vue @onBeforeAppendCell="handleBeforeAppendCell($event.detail)" />
++ const highValueFormatter: Formatter = (_row, _cell, value) => ({ text: String(value), addClasses: value > 50 ? 'high-value' : '' });
+```
 
 ### Excluded columns are no longer rendered in column lists
 

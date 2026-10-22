@@ -162,7 +162,6 @@ render() {
   - `onAddNewRow`
   - `onAfterSetColumns`
   - `onAutosizeColumns`
-  - `onBeforeAppendCell`
   - `onBeforeCellEditorDestroy`
   - `onBeforeColumnsResize`
   - `onBeforeDestroy`

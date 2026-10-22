@@ -141,7 +141,6 @@ handleOnHeaderMenuCommand(e) {
   - `onAddNewRow`
   - `onAfterSetColumns`
   - `onAutosizeColumns`
-  - `onBeforeAppendCell`
   - `onBeforeCellEditorDestroy`
   - `onBeforeColumnsResize`
   - `onBeforeDestroy`

@@ -517,6 +517,21 @@ export function isColumnDateType(fieldType?: FieldType): boolean {
   return false;
 }
 
+/** Whether any date column holds strings (judged by its first non-empty value), which `preParseDateColumns` would convert once to `Date` objects. */
+export function hasStringDateColumns(columns: Column[], items?: any[]): boolean {
+  if (!Array.isArray(items)) {
+    return false;
+  }
+  return columns.some((column) => {
+    const field = column.field;
+    if (!field || !isColumnDateType(column.type)) {
+      return false;
+    }
+    const item = items.find((dataItem) => dataItem?.[field] !== undefined && dataItem[field] !== null && dataItem[field] !== '');
+    return typeof item?.[field] === 'string';
+  });
+}
+
 /**
  * Mapper for query operators (ex.: `<=` → `LE`, `>` → `GT`, ...)
  * @param string operator

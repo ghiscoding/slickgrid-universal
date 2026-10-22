@@ -13,8 +13,8 @@ import {
   GridEventService,
   GridService,
   GridStateService,
+  hasStringDateColumns,
   HeaderGroupingService,
-  isColumnDateType,
   PaginationService,
   PluginFlagMappings,
   ResizerService,
@@ -1602,7 +1602,7 @@ function suggestDateParsingWhenHelpful() {
     dataview!.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE &&
     !_gridOptions.value.silenceWarnings &&
     !_gridOptions.value.preParseDateColumns &&
-    grid?.getColumns().some((c) => isColumnDateType(c.type))
+    hasStringDateColumns(grid?.getColumns() ?? [], dataview!.getItems())
   ) {
     console.warn(
       '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +

@@ -1,5 +1,21 @@
+import { format } from '@formkit/tempo';
 import { describe, expect, it } from 'vitest';
-import { mapTempoDateFormatWithFieldType, parseUtcDate } from '../dateUtils.js';
+import { formatDate, mapTempoDateFormatWithFieldType, parseUtcDate } from '../dateUtils.js';
+
+describe('formatDate() method', () => {
+  const dates = [new Date(2001, 10, 23, 11, 2, 5), new Date(2024, 0, 5, 0, 9, 0), new Date(1999, 11, 31, 23, 59, 59)];
+
+  it.each(['YYYY-MM-DD', 'YYYY-MM-DD HH:mm:ss', 'YYYY-MM-DD hh:mm:ss a', 'DD/MM/YYYY hh:mm:ss A', 'D/M/YY H:m:s', 'M/D/YYYY h:m a', 'MM/DD/YY'])(
+    'should match Tempo output for the numeric "%s" format',
+    (dateFormat) => {
+      dates.forEach((date) => expect(formatDate(date, dateFormat)).toBe(format(date, dateFormat, 'en-US')));
+    }
+  );
+
+  it.each(['MMM D, YYYY', 'dddd'])('should fall back to Tempo for the non-numeric "%s" format', (dateFormat) => {
+    expect(formatDate(dates[0], dateFormat)).toBe(format(dates[0], dateFormat, 'en-US'));
+  });
+});
 
 describe('Service/Utilies', () => {
   describe('mapTempoDateFormatWithFieldType method', () => {

@@ -23,6 +23,7 @@ import {
   getDescendantProperty,
   getTranslationPrefix,
   getTreeDataOptionPropName,
+  hasStringDateColumns,
   isColumnDateType,
   mapOperatorByFieldType,
   mapOperatorToShorthandDesignation,
@@ -128,6 +129,47 @@ describe('applyHtmlToElement() method', () => {
     applyHtmlToElement(divElm, htmlStr, { ...defaultOptions, enableHtmlRendering: false });
 
     expect(divElm.outerHTML).toBe('<div>&lt;span aria-label="some aria label"&gt;only text kept&lt;/span&gt;</div>');
+  });
+
+  it('should apply plain text without calling the sanitizer when it has no markup or entities', () => {
+    const sanitizer = vi.fn((dirtyHtml: string) => dirtyHtml);
+    const divElm = document.createElement('div');
+
+    applyHtmlToElement(divElm, '2024-08-02', { sanitizer, enableHtmlRendering: true });
+
+    expect(divElm.outerHTML).toBe('<div>2024-08-02</div>');
+    expect(sanitizer).not.toHaveBeenCalled();
+  });
+
+  it('should still decode HTML entities through the sanitizer and innerHTML when text contains an ampersand', () => {
+    const sanitizer = vi.fn((dirtyHtml: string) => dirtyHtml);
+    const divElm = document.createElement('div');
+
+    applyHtmlToElement(divElm, 'A &amp; B', { sanitizer, enableHtmlRendering: true });
+
+    expect(divElm.textContent).toBe('A & B');
+    expect(sanitizer).toHaveBeenCalledWith('A &amp; B');
+  });
+});
+
+describe('hasStringDateColumns() method', () => {
+  const columns = [
+    { id: 'name', field: 'name', type: 'string' },
+    { id: 'start', field: 'start', type: 'dateIso' },
+  ] as Column[];
+
+  it('should return true when the first non-empty value of a date column is a string', () => {
+    expect(hasStringDateColumns(columns, [{ start: '' }, { start: null }, { start: '2024-01-02' }])).toBe(true);
+  });
+
+  it('should return false when date columns hold Date objects, have no values or when items are not an array', () => {
+    expect(hasStringDateColumns(columns, [{ start: new Date() }])).toBe(false);
+    expect(hasStringDateColumns(columns, [{ name: 'John' }])).toBe(false);
+    expect(hasStringDateColumns(columns, undefined)).toBe(false);
+  });
+
+  it('should return false when the date column has no field', () => {
+    expect(hasStringDateColumns([{ id: 'start', type: 'dateIso' } as Column], [{ start: '2024-01-02' }])).toBe(false);
   });
 });
 

@@ -54,7 +54,6 @@ import type {
   OnAddNewRowEventArgs,
   OnAfterSetColumnsEventArgs,
   OnAutosizeColumnsEventArgs,
-  OnBeforeAppendCellEventArgs,
   OnBeforeCellEditorDestroyEventArgs,
   OnBeforeColumnsResizeEventArgs,
   OnBeforeEditCellEventArgs,
@@ -193,7 +192,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onAddNewRow: SlickEvent<OnAddNewRowEventArgs>;
   onAfterSetColumns: SlickEvent<OnAfterSetColumnsEventArgs>;
   onAutosizeColumns: SlickEvent<OnAutosizeColumnsEventArgs>;
-  onBeforeAppendCell: SlickEvent<OnBeforeAppendCellEventArgs>;
   onBeforeCellEditorDestroy: SlickEvent<OnBeforeCellEditorDestroyEventArgs>;
   onBeforeColumnsResize: SlickEvent<OnBeforeColumnsResizeEventArgs>;
   onBeforeDestroy: SlickEvent<{ grid: SlickGrid }>;
@@ -356,7 +354,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     enableMouseWheelScrollHandler: true,
     doPaging: true,
     rtl: false,
-    scrollRenderThrottling: 10,
+    scrollRenderThrottling: 0,
     suppressCssChangesOnHiddenInit: false,
     ffMaxSupportedCssHeight: 6000000,
     maxSupportedCssHeight: 1000000000,
@@ -611,7 +609,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onAddNewRow = new SlickEvent<OnAddNewRowEventArgs>('onAddNewRow', externalPubSub);
     this.onAfterSetColumns = new SlickEvent<OnAfterSetColumnsEventArgs>('onAfterSetColumns', externalPubSub);
     this.onAutosizeColumns = new SlickEvent<OnAutosizeColumnsEventArgs>('onAutosizeColumns', externalPubSub);
-    this.onBeforeAppendCell = new SlickEvent<OnBeforeAppendCellEventArgs>('onBeforeAppendCell', externalPubSub);
     this.onBeforeCellEditorDestroy = new SlickEvent<OnBeforeCellEditorDestroyEventArgs>('onBeforeCellEditorDestroy', externalPubSub);
     this.onBeforeColumnsResize = new SlickEvent<OnBeforeColumnsResizeEventArgs>('onBeforeColumnsResize', externalPubSub);
     this.onBeforeDestroy = new SlickEvent<{ grid: SlickGrid }>('onBeforeDestroy', externalPubSub);
@@ -5565,28 +5562,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       cellCss += ` ${this._options.selectedCellCssClass}`;
     }
 
-    let value: any = null;
     let formatterResult: FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string = '';
     if (item) {
-      value = this.getDataItemValueForColumn(item, m);
-      formatterResult = this.getFormatter(row, m)(row, cell, value, m, item, this as unknown as SlickGrid);
-      if (formatterResult === null || formatterResult === undefined) {
-        formatterResult = '';
-      }
+      const value = this.getDataItemValueForColumn(item, m);
+      formatterResult = this.getFormatter(row, m)(row, cell, value, m, item, this as unknown as SlickGrid) ?? '';
     }
 
-    // get addl css class names from object type formatter return and from string type return of onBeforeAppendCell
-    // we will only use the event result as CSS classes when it is a string type (undefined event always return a true boolean which is not a valid css class)
-    const evt = this.triggerEvent(this.onBeforeAppendCell, { row, cell, value, dataContext: item });
-    const appendCellResult = evt.getReturnValue();
-    let addlCssClasses = typeof appendCellResult === 'string' ? appendCellResult : '';
-    if ((formatterResult as FormatterResultObject)?.addClasses) {
-      addlCssClasses += classNameToList((addlCssClasses ? ' ' : '') + (formatterResult as FormatterResultObject).addClasses).join(' ');
-    }
-
+    const addClasses = (formatterResult as FormatterResultObject)?.addClasses;
     const toolTipText = (formatterResult as FormatterResultObject)?.toolTip ? `${(formatterResult as FormatterResultObject).toolTip}` : '';
     const cellDiv = createDomElement('div', {
-      className: classNameToList(`${cellCss} ${addlCssClasses || ''}`).join(' '),
+      className: classNameToList(addClasses ? `${cellCss} ${addClasses}` : cellCss).join(' '),
       role: 'gridcell',
       tabIndex: -1,
       ariaColIndex: `${cell + 1}`,
@@ -5744,10 +5729,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Boolean} [excludeParentRow] - should we exclude the parent who initiated the rowspan in the search (defaults to true)?
    */
   getParentRowSpanByCell(row: number, cell: number, excludeParentRow = true): { start: number; end: number; range: string } | null {
-    let spanDetail = null;
-    const rowspanRange = this._colsWithRowSpanCache[cell] || new Set<string>();
+    const rowspanRange = this._colsWithRowSpanCache[cell];
+    if (!rowspanRange?.size) {
+      return null;
+    }
 
-    for (const range of Array.from(rowspanRange)) {
+    let spanDetail = null;
+    for (const range of rowspanRange) {
       const [start, end] = range.split(':').map(Number);
       const startCondition = excludeParentRow ? row > start : row >= start;
       if (startCondition && row <= end) {
@@ -7421,10 +7409,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // advanced, making headers visibly trail the cells during fast scrolls.
         if (hScrollDist) {
           this.enqueueSingleViewportRender();
-        } else if (this._options.forceSyncScrolling || (dy < this.viewportH && dx < this.viewportW)) {
+        } else if (
+          this._options.forceSyncScrolling ||
+          !this._options.scrollRenderThrottling ||
+          (dy < this.viewportH && dx < this.viewportW)
+        ) {
+          // Scroll events already fire at most once per frame; deferring a jump to a timer paints a blank frame.
           this.render();
         } else {
-          // otherwise, perform "difficult" renders at a capped frequency
+          // opt-in: perform "difficult" renders at a capped frequency
           this.scrollThrottle.enqueue();
         }
 

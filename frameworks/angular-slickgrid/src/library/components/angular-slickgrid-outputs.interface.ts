@@ -15,7 +15,6 @@ import type {
   OnActiveCellChangedEventArgs,
   OnAddNewRowEventArgs,
   OnAutosizeColumnsEventArgs,
-  OnBeforeAppendCellEventArgs,
   OnBeforeCellEditorDestroyEventArgs,
   OnBeforeColumnsResizeEventArgs,
   OnBeforeEditCellEventArgs,
@@ -107,7 +106,6 @@ export interface AngularSlickgridOutputs {
   onActiveCellPositionChanged: (e: { grid: SlickGrid }) => void;
   onAddNewRow: (e: OnAddNewRowEventArgs) => void;
   onAutosizeColumns: (e: OnAutosizeColumnsEventArgs) => void;
-  onBeforeAppendCell: (e: OnBeforeAppendCellEventArgs) => void;
   onBeforeCellEditorDestroy: (e: OnBeforeCellEditorDestroyEventArgs) => void;
   onBeforeColumnsResize: (e: OnBeforeColumnsResizeEventArgs) => void;
   onBeforeDestroy: (e: { grid: SlickGrid }) => void;
