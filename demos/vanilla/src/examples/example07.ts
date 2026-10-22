@@ -108,13 +108,12 @@ export default class Example07 {
               iconCssClass: 'mdi mdi-help-circle',
               action: () => alert('Please help!'),
             },
-            { command: '', divider: true, positionOrder: 98 },
+            { command: '', divider: true },
             {
               // we can also have multiple nested sub-menus
               command: 'export',
               title: 'Exports',
               iconCssClass: 'mdi mdi-download',
-              positionOrder: 99,
               commandItems: [
                 { command: 'exports-txt', title: 'Text (tab delimited)' },
                 {
@@ -133,7 +132,6 @@ export default class Example07 {
             {
               command: 'feedback',
               title: 'Feedback',
-              positionOrder: 100,
               commandItems: [
                 {
                   command: 'request-update',

@@ -31,19 +31,19 @@ this.gridOptions = {
     commandTitle: 'Commands', // optional, add title
     commandItems: [
       'divider',
-      { divider: true, command: '', positionOrder: 60 },
+      { divider: true, command: '' },
       {
-        command: 'command1', title: 'Command 1', positionOrder: 61,
+        command: 'command1', title: 'Command 1',
         // you can use the "action" callback and/or use "onCommand" callback from the grid options, they both have the same arguments
         action: (e, args) => {
           console.log(args.dataContext, args.column); // action callback.. do something
         }
       },
-      { command: 'help', title: 'HELP', iconCssClass: 'mdi mdi-help-circle', positionOrder: 62 },
+      { command: 'help', title: 'HELP', iconCssClass: 'mdi mdi-help-circle' },
       // you can add sub-menus by adding nested `commandItems`
       {
          // we can also have multiple nested sub-menus
-         command: 'export', title: 'Exports', positionOrder: 99,
+         command: 'export', title: 'Exports',
          commandItems: [
            { command: 'exports-txt', title: 'Text (tab delimited)' },
            {
@@ -125,15 +125,14 @@ contextMenu: {
         command: 'edit',
         title: 'Edit Row',
         iconCssClass: 'mdi mdi-pencil',
-        positionOrder: 0
       }
     ];
     
-    // Sort built-in commands by positionOrder
-    const sorted = [...builtInItems].sort((a, b) => {
-      if (a === 'divider' || b === 'divider') return 0;
-      return (a.positionOrder || 50) - (b.positionOrder || 50);
-    });
+    // Move Copy before the other built-in commands, preserving their actions.
+    const sorted = [
+      ...builtInItems.filter(item => item !== 'divider' && item.command === 'copy'),
+      ...builtInItems.filter(item => item === 'divider' || item.command !== 'copy'),
+    ];
     
     return [...customFirst, 'divider', ...sorted];
   }
@@ -255,7 +254,7 @@ cellMenu: {
 Built-in commands appear according to the enabled grid features. Grouping commands also depend on the grouping/tree configuration. The `export-text-delimited` command is opt-in via `textExportOptions.menuFormats: ['csv', 'txt']` (defaults to `['csv']`, also shared with the Grid Menu). Use `hideCommands` to hide any built-in command; it always takes precedence.
 
 ### Default Internal Commands
-By defaults, the Context Menu will come with a few different preset Commands (copy, export). The Copy is straightforward, it allows you to copy the cell value, on the other hand, the export command(s) is dependent on the flags you have enabled in your Grid Options. For example, if you have only `enableExport` then you will get the `Export to CSV` and you might get as well `Export Tab-Delimited`, again that depends on which Grid Options you have enabled. Note that all internal commands have a `positionOrder` in the range of 50 to 60 (which is used to sort the Commands list), this allows you to append or prepend Commands to the list.
+By defaults, the Context Menu will come with a few different preset Commands (copy, export). The Copy is straightforward, it allows you to copy the cell value, on the other hand, the export command(s) is dependent on the flags you have enabled in your Grid Options. For example, if you have only `enableExport` then you will get the `Export to CSV` and you might get as well `Export Tab-Delimited`, again that depends on which Grid Options you have enabled. Use `commandListBuilder` to append, prepend, or reorder commands in the final list.
 
 Another set of possible Commands would be related to Grouping, so if you are using Grouping in your grid then you will get 3 extra Commands (clear grouping, collapse groups, expand groups).
 

@@ -13,6 +13,7 @@ The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer va
 - [Remove row positioning and Row Detail rendering options](#row-positioning-rowtopoffsetrendertype)
 - [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors)
 - [Context Menu and Cell Menu options removed](#context-menu-and-cell-menu-options-removed)
+- [Menu command ordering](#menu-command-ordering)
 - [Removed Deprecated Code](#removed-deprecated-code)
 - [Excluded columns are no longer rendered in column lists](#excluded-columns-are-no-longer-rendered-in-column-lists)
 - [Code Changes](#code-changes)
@@ -424,3 +425,23 @@ const contextMenu = { commandItems: completedCommands };
 // Column definition: Cell Menu
 const cellMenu = { commandItems: completedCommands };
 ```
+
+
+## Menu command ordering
+
+The deprecated `positionOrder` property has been removed from all menu items in v11. Header Menu's `filterShortcutsPositionOrder` has also been removed. Use `commandListBuilder` to reorder the final command list, including built-in commands. Cell Menu and nested `commandItems` lists can be ordered directly in their arrays.
+
+For example, move the Grid Menu's CSV export command to the top while retaining its built-in action:
+
+```ts
+gridOptions = {
+  gridMenu: {
+    commandListBuilder: (items) => [
+      ...items.filter(item => item !== 'divider' && item.command === 'export-csv'),
+      ...items.filter(item => item === 'divider' || item.command !== 'export-csv'),
+    ],
+  },
+};
+```
+
+Return items in the desired display order; no automatic numeric sorting is applied afterward. See the [v10 migration guide](migration-to-10.x.md#menu-with-commands-slot-renderer) for the original deprecation.

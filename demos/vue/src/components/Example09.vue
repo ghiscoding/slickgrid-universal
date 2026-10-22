@@ -128,27 +128,21 @@ function defineGrid() {
       resizeOnShowHeaderRow: true,
       subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
       commandItems: [
+        { divider: true, command: '' },
         // add Custom Items Commands which will be appended to the existing internal custom items
         // you cannot override an internal items but you can hide them and create your own
-        // also note that the internal custom commands are in the positionOrder range of 50-60,
-        // if you want yours at the bottom then start with 61, below 50 will make your command(s) show on top
         {
           iconCssClass: 'mdi mdi-help-circle',
           titleKey: 'HELP',
           disabled: false,
           command: 'help',
-          positionOrder: 90,
           cssClass: 'bold', // container css class
           textCssClass: 'blue', // just the text css class
         },
-        // you can pass divider as a string or an object with a boolean (if sorting by position, then use the object)
-        // note you should use the "divider" string only when items array is already sorted and positionOrder are not specified
-        { divider: true, command: '', positionOrder: 89 },
         // 'divider',
         {
           title: 'Command 1',
           command: 'command1',
-          positionOrder: 91,
           cssClass: 'orange',
           iconCssClass: 'mdi mdi-alert',
           // you can use the "action" callback and/or use "onCallback" callback from the grid options, they both have the same arguments
@@ -164,7 +158,6 @@ function defineGrid() {
         {
           title: 'Command 2',
           command: 'command2',
-          positionOrder: 92,
           cssClass: 'red', // container css class
           textCssClass: 'italic', // just the text css class
           action: (_e, args) => alert(args.command),
@@ -180,14 +173,12 @@ function defineGrid() {
           title: 'Disabled command',
           disabled: true,
           command: 'disabled-command',
-          positionOrder: 98,
         },
-        { command: '', divider: true, positionOrder: 98 },
+        { command: '', divider: true },
         {
           // we can also have multiple nested sub-menus
           command: 'export',
           title: 'Exports',
-          positionOrder: 99,
           commandItems: [
             { command: 'exports-txt', title: 'Text (tab delimited)' },
             {
@@ -206,7 +197,6 @@ function defineGrid() {
         {
           command: 'feedback',
           title: 'Feedback',
-          positionOrder: 100,
           commandItems: [
             {
               command: 'request-update',

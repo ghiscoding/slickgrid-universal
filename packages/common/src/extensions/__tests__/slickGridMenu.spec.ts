@@ -1290,21 +1290,21 @@ describe('GridMenuControl', () => {
               subMenuTitle: 'Sub Command Title',
               action: actionMock,
               commandItems: [
-                { command: 'command3', title: 'Command 3', positionOrder: 70 },
-                { command: 'command4', title: 'Command 4', positionOrder: 71 },
+                { command: 'command3', title: 'Command 3' },
+                { command: 'command4', title: 'Command 4' },
                 {
                   command: 'more-sub-commands',
                   title: 'More Sub Commands',
                   subMenuTitle: 'Sub Command Title 2',
                   subMenuTitleCssClass: 'color-warning',
-                  commandItems: [{ command: 'command5', title: 'Command 5', positionOrder: 72 }],
+                  commandItems: [{ command: 'command5', title: 'Command 5' }],
                 },
               ],
             },
             {
               command: 'sub-commands2',
               title: 'Sub Commands 2',
-              commandItems: [{ command: 'command33', title: 'Command 33', positionOrder: 70 }],
+              commandItems: [{ command: 'command33', title: 'Command 33' }],
             },
           ];
         });
@@ -1572,7 +1572,7 @@ describe('GridMenuControl', () => {
           buttonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
           const commandListElm = control.menuElement?.querySelector('.slick-menu-command-list') as HTMLDivElement | null;
-          const defaultRendererElm = commandListElm?.querySelector('.default-renderer-content') as HTMLDivElement | null;
+          const defaultRendererElm = commandListElm?.querySelector('[data-command="test-cmd"] .default-renderer-content') as HTMLDivElement | null;
 
           expect(mockDefaultRenderer).toHaveBeenCalled();
           expect(defaultRendererElm).toBeTruthy();
@@ -1649,7 +1649,7 @@ describe('GridMenuControl', () => {
           buttonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
           const commandListElm = control.menuElement?.querySelector('.slick-menu-command-list') as HTMLDivElement | null;
-          const menuItemElm = commandListElm?.querySelector('.slick-menu-item') as HTMLDivElement | null;
+          const menuItemElm = commandListElm?.querySelector('.slick-menu-item[data-command="test-cmd"]') as HTMLDivElement | null;
 
           // Click the menu item
           menuItemElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
@@ -1687,7 +1687,7 @@ describe('GridMenuControl', () => {
           buttonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
           const commandListElm = control.menuElement?.querySelector('.slick-menu-command-list') as HTMLDivElement | null;
-          const menuItemElm = commandListElm?.querySelector('.slick-menu-item') as HTMLDivElement | null;
+          const menuItemElm = commandListElm?.querySelector('.slick-menu-item[data-command="test-cmd"]') as HTMLDivElement | null;
           const buttonInMenuElm = menuItemElm?.querySelector('button') as HTMLButtonElement | null;
 
           // Click the button inside the slotRenderer, which calls preventDefault
@@ -1739,6 +1739,33 @@ describe('GridMenuControl', () => {
             expect(options.gridMenu!.commandItems!.map((item) => item !== 'divider' && item.command).sort()).toEqual(expectedCommands.sort());
           }
         );
+
+        it('should preserve builder ordering when creating and translating the Grid Menu', () => {
+          const builder = vi.fn<NonNullable<GridMenu['commandListBuilder']>>((items) => [...items].reverse());
+          const options: GridOption = {
+            ...gridOptionsMock,
+            enableFiltering: true,
+            enableSorting: true,
+            gridMenu: { commandListBuilder: builder },
+          };
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(options);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(options);
+          control.columns = columnsMock;
+          control.init();
+          const commands = builder.mock.calls[0][0];
+          expect(options.gridMenu!.commandItems).toEqual([...commands].reverse());
+          expect(commands.slice(0, 4).map((item) => item !== 'divider' && item.command)).toEqual([
+            'clear-filter',
+            'clear-sorting',
+            'clear-pinning',
+            'toggle-filter',
+          ]);
+
+          control.translateGridMenu();
+          expect(builder).toHaveBeenCalledTimes(2);
+          expect(options.gridMenu!.commandItems).toEqual([...builder.mock.calls[1][0]].reverse());
+          expect(options.gridMenu!.commandItems).toHaveLength(commands.length);
+        });
 
         it('should keep unavailable export commands out of the builder and preserve built-in actions and customizations', () => {
           const customAction = vi.fn();
@@ -1798,7 +1825,6 @@ describe('GridMenuControl', () => {
               title: 'Supprimer toutes les épingles',
               disabled: false,
               command: 'clear-pinning',
-              positionOrder: 52,
               action: expect.any(Function),
             },
           ]);
@@ -1819,7 +1845,6 @@ describe('GridMenuControl', () => {
               title: 'Supprimer tous les filtres',
               disabled: false,
               command: 'clear-filter',
-              positionOrder: 50,
               action: expect.any(Function),
             },
             {
@@ -1829,7 +1854,6 @@ describe('GridMenuControl', () => {
               title: 'Basculer la ligne des filtres',
               disabled: false,
               command: 'toggle-filter',
-              positionOrder: 53,
               action: expect.any(Function),
             },
             {
@@ -1839,7 +1863,6 @@ describe('GridMenuControl', () => {
               title: 'Rafraîchir les données',
               disabled: false,
               command: 'refresh-dataset',
-              positionOrder: 58,
               action: expect.any(Function),
             },
           ]);
@@ -1868,7 +1891,6 @@ describe('GridMenuControl', () => {
               title: 'Supprimer tous les filtres',
               disabled: false,
               command: 'clear-filter',
-              positionOrder: 50,
               action: expect.any(Function),
             },
           ]);
@@ -1897,7 +1919,6 @@ describe('GridMenuControl', () => {
               title: 'Supprimer tous les filtres',
               disabled: false,
               command: 'clear-filter',
-              positionOrder: 50,
               action: expect.any(Function),
             },
           ]);
@@ -1926,7 +1947,6 @@ describe('GridMenuControl', () => {
               title: 'Basculer la ligne des filtres',
               disabled: false,
               command: 'toggle-filter',
-              positionOrder: 53,
               action: expect.any(Function),
             },
           ]);
@@ -1954,7 +1974,6 @@ describe('GridMenuControl', () => {
               title: 'Basculer le mode clair/sombre',
               disabled: false,
               command: 'toggle-dark-mode',
-              positionOrder: 54,
               action: expect.any(Function),
             },
           ]);
@@ -1983,7 +2002,6 @@ describe('GridMenuControl', () => {
               title: 'Rafraîchir les données',
               disabled: false,
               command: 'refresh-dataset',
-              positionOrder: 58,
               action: expect.any(Function),
             },
           ]);
@@ -2004,7 +2022,6 @@ describe('GridMenuControl', () => {
               title: 'Basculer la ligne de pré-en-tête',
               disabled: false,
               command: 'toggle-preheader',
-              positionOrder: 53,
               action: expect.any(Function),
             },
           ]);
@@ -2042,7 +2059,6 @@ describe('GridMenuControl', () => {
               title: 'Supprimer tous les tris',
               disabled: false,
               command: 'clear-sorting',
-              positionOrder: 51,
               action: expect.any(Function),
             },
           ]);
@@ -2087,7 +2103,6 @@ describe('GridMenuControl', () => {
               title: 'Exporter en format CSV',
               disabled: false,
               command: 'export-csv',
-              positionOrder: 55,
               action: expect.any(Function),
             },
           ]);
@@ -2133,37 +2148,6 @@ describe('GridMenuControl', () => {
               title: 'Exporter vers Excel',
               disabled: false,
               command: 'export-excel',
-              positionOrder: 56,
-              action: expect.any(Function),
-            },
-          ]);
-        });
-
-        it('should have the "export-pdf" menu command when "enablePdfExport" is set', () => {
-          const copyGridOptionsMock = {
-            ...gridOptionsMock,
-            enablePdfExport: true,
-            enableExcelExport: false,
-            enableTextExport: false,
-            gridMenu: {
-              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
-              hideCommands: ['clear-pinning', 'export-csv', 'export-excel', 'toggle-dark-mode'],
-            },
-          } as unknown as GridOption;
-          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
-          control.columns = columnsMock;
-          control.init();
-          control.init(); // calling 2x register to make sure it doesn't duplicate commands
-          expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            {
-              _orgTitle: '',
-              iconCssClass: 'mdi mdi-file-pdf-outline text-danger',
-              titleKey: 'EXPORT_TO_PDF',
-              title: 'Exporter vers PDF',
-              disabled: false,
-              command: 'export-pdf',
-              positionOrder: 57,
               action: expect.any(Function),
             },
           ]);
@@ -2194,7 +2178,35 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'export-pdf',
               action: expect.any(Function),
-              positionOrder: 57,
+            },
+          ]);
+        });
+
+        it('should have the "export-pdf" menu command when "enablePdfExport" is set', () => {
+          const copyGridOptionsMock = {
+            ...gridOptionsMock,
+            enablePdfExport: true,
+            enableExcelExport: false,
+            enableTextExport: false,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideCommands: ['clear-pinning', 'export-csv', 'export-excel', 'toggle-dark-mode'],
+            },
+          } as unknown as GridOption;
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          control.columns = columnsMock;
+          control.init();
+          control.init(); // calling 2x register to make sure it doesn't duplicate commands
+          expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
+            {
+              _orgTitle: '',
+              iconCssClass: 'mdi mdi-file-pdf-outline text-danger',
+              titleKey: 'EXPORT_TO_PDF',
+              title: 'Exporter vers PDF',
+              disabled: false,
+              command: 'export-pdf',
+              action: expect.any(Function),
             },
           ]);
         });
@@ -2222,7 +2234,6 @@ describe('GridMenuControl', () => {
               title: 'Exporter en format texte (délimité par tabulation)',
               disabled: false,
               command: 'export-text-delimited',
-              positionOrder: 58,
               action: expect.any(Function),
             },
           ]);

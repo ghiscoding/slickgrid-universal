@@ -444,7 +444,6 @@ export default class Example11 {
             command: 'modal',
             title: 'Mass Update',
             iconCssClass: 'mdi mdi-table-edit',
-            positionOrder: 66,
           },
         ],
         onCommand: (e, args) => this.executeCommand(e, args),

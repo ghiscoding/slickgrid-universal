@@ -191,11 +191,10 @@ export class Example20Component implements OnInit {
       hideCloseButton: true,
       dropSide: 'right',
       commandItems: [
-        { command: '', divider: true, positionOrder: 98 },
+        { command: '', divider: true },
         {
           command: 'export',
           title: 'Exports',
-          positionOrder: 99,
           commandItems: [
             { command: 'exports-txt', title: 'Text (tab delimited)' },
             {
@@ -212,7 +211,6 @@ export class Example20Component implements OnInit {
         {
           command: 'feedback',
           title: 'Feedback',
-          positionOrder: 100,
           commandItems: [
             { command: 'request-update', title: 'Request update from supplier' },
             'divider',

@@ -19,13 +19,12 @@ import { SlickContextMenu } from '../slickContextMenu.js';
 const removeExtraSpaces = (text: string) => `${text}`.replace(/[\n\r]\s+/g, '');
 
 const commandItemsMock = [
-  { command: 'command2', title: 'Command 2', positionOrder: 62 },
-  { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
-  { divider: true, command: '', positionOrder: 63 },
+  { command: 'command1', title: 'Command 1', cssClass: 'orange' },
+  { command: 'command2', title: 'Command 2' },
+  { divider: true, command: '' },
   {
     command: 'delete-row',
     title: 'Delete Row',
-    positionOrder: 64,
     iconCssClass: 'mdi mdi-close',
     cssClass: 'red',
     textCssClass: 'bold',
@@ -36,14 +35,14 @@ const commandItemsMock = [
     title: 'Sub Commands',
     subMenuTitle: 'Sub Command Title',
     commandItems: [
-      { command: 'command3', title: 'Command 3', positionOrder: 70 },
-      { command: 'command4', title: 'Command 4', positionOrder: 71 },
+      { command: 'command3', title: 'Command 3' },
+      { command: 'command4', title: 'Command 4' },
       {
         command: 'more-sub-commands',
         title: 'More Sub Commands',
         subMenuTitle: 'Sub Command Title 2',
         subMenuTitleCssClass: 'color-warning',
-        commandItems: [{ command: 'command5', title: 'Command 5', positionOrder: 72 }],
+        commandItems: [{ command: 'command5', title: 'Command 5' }],
       },
     ],
   },
@@ -195,6 +194,22 @@ describe('ContextMenu Plugin', () => {
 
   afterEach(() => {
     plugin?.dispose();
+  });
+
+  it('should preserve the Context Menu builder order and built-in actions', () => {
+    const builder = vi.fn<NonNullable<ContextMenu['commandListBuilder']>>((items) => [...items].reverse());
+    const contextMenu = { commandListBuilder: builder };
+    vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+      ...gridOptionsMock,
+      enableTextExport: true,
+      contextMenu,
+    });
+    plugin.dispose();
+    plugin.init(contextMenu);
+
+    expect(builder).toHaveBeenCalledTimes(1);
+    expect(plugin.addonOptions.commandItems).toEqual([...builder.mock.calls[0][0]].reverse());
+    expect(plugin.addonOptions.commandItems).toEqual(expect.arrayContaining([expect.objectContaining({ command: 'copy', action: expect.any(Function) })]));
   });
 
   it('should create the plugin', () => {

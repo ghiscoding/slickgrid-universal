@@ -602,6 +602,37 @@ describe('HeaderMenu Plugin', () => {
       expect(hideMenuSpy).toHaveBeenCalled();
     });
 
+    it.each(['global', 'column'] as const)('should render Header Menu commands in %s builder order without mutating the original list', (scope) => {
+      const commands: MenuCommandItem[] = [
+        { command: 'first', title: 'First' },
+        { command: 'second', title: 'Second' },
+      ];
+      const builder = vi.fn<NonNullable<HeaderMenu['commandListBuilder']>>((items) => [...items].reverse());
+      plugin.dispose();
+      plugin.init(scope === 'global' ? { commandListBuilder: builder } : {});
+      const originalItems = columnsMock[0].header!.menu!.commandItems;
+      columnsMock[0].header!.menu!.commandItems = commands;
+      if (scope === 'column') {
+        columnsMock[0].header!.menu!.commandListBuilder = builder;
+      }
+      const eventData = new SlickEventData();
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const button = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+
+      for (let i = 0; i < 2; i++) {
+        button.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+        expect(Array.from(document.body.querySelectorAll('.slick-header-menu [data-command]'), (elm) => elm.getAttribute('data-command'))).toEqual([
+          'second',
+          'first',
+        ]);
+        plugin.hideMenu();
+      }
+      expect(builder).toHaveBeenCalledTimes(2);
+      expect(commands.map((item) => item.command)).toEqual(['first', 'second']);
+      columnsMock[0].header!.menu!.commandItems = originalItems;
+      delete columnsMock[0].header!.menu!.commandListBuilder;
+    });
+
     it('should open the Header Menu when pressing Enter key on the header menu button (a11y)', () => {
       plugin.dispose();
       plugin.init();
@@ -729,21 +760,21 @@ describe('HeaderMenu Plugin', () => {
                     title: 'Sub Commands',
                     subMenuTitle: 'Sub Command Title',
                     commandItems: [
-                      { command: 'command3', title: 'Command 3', positionOrder: 70 },
-                      { command: 'command4', title: 'Command 4', positionOrder: 71 },
+                      { command: 'command3', title: 'Command 3' },
+                      { command: 'command4', title: 'Command 4' },
                       {
                         command: 'more-sub-commands',
                         title: 'More Sub Commands',
                         subMenuTitle: 'Sub Command Title 2',
                         subMenuTitleCssClass: 'color-warning',
-                        commandItems: [{ command: 'command5', title: 'Command 5', positionOrder: 72 }],
+                        commandItems: [{ command: 'command5', title: 'Command 5' }],
                       },
                     ],
                   },
                   {
                     command: 'sub-commands3',
                     title: 'Sub Commands 3',
-                    commandItems: [{ command: 'command33', title: 'Command 33', positionOrder: 70 }],
+                    commandItems: [{ command: 'command33', title: 'Command 33' }],
                   },
                 ],
               },
@@ -1143,7 +1174,7 @@ describe('HeaderMenu Plugin', () => {
 
         const headerMenuElm = gridContainerDiv.querySelector('.slick-header-menu') as any;
         const commandListElm = headerMenuElm?.querySelector('.slick-menu-command-list') as any;
-        const defaultRendererElm = commandListElm?.querySelector('.default-renderer-content') as any;
+        const defaultRendererElm = commandListElm?.querySelector('[data-command="test-cmd"] .default-renderer-content') as any;
 
         expect(mockDefaultRenderer).toHaveBeenCalled();
         expect(defaultRendererElm).toBeTruthy();
@@ -1214,7 +1245,7 @@ describe('HeaderMenu Plugin', () => {
 
         const headerMenuElm = gridContainerDiv.querySelector('.slick-header-menu') as any;
         const commandListElm = headerMenuElm?.querySelector('.slick-menu-command-list') as any;
-        const menuItemElm = commandListElm?.querySelector('.slick-menu-item') as any;
+        const menuItemElm = commandListElm?.querySelector('.slick-menu-item[data-command="test-cmd"]') as any;
 
         // Click the menu item
         menuItemElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
@@ -1251,7 +1282,7 @@ describe('HeaderMenu Plugin', () => {
 
         const headerMenuElm = gridContainerDiv.querySelector('.slick-header-menu') as any;
         const commandListElm = headerMenuElm?.querySelector('.slick-menu-command-list') as any;
-        const menuItemElm = commandListElm?.querySelector('.slick-menu-item') as any;
+        const menuItemElm = commandListElm?.querySelector('.slick-menu-item[data-command="test-cmd"]') as any;
         const buttonElm = menuItemElm?.querySelector('button') as HTMLButtonElement;
 
         // Click the button inside the slotRenderer, which calls preventDefault
@@ -1651,7 +1682,6 @@ describe('HeaderMenu Plugin', () => {
             title: 'Remove Filter',
             titleKey: 'REMOVE_FILTER',
             command: 'clear-filter',
-            positionOrder: 57,
             action: expect.any(Function),
           },
         ];
@@ -1698,17 +1728,15 @@ describe('HeaderMenu Plugin', () => {
             title: 'Resize by Content',
             titleKey: 'COLUMN_RESIZE_BY_CONTENT',
             command: 'column-resize-by-content',
-            positionOrder: 47,
             action: expect.any(Function),
           },
-          { divider: true, command: 'divider-1', positionOrder: 48 },
+          { divider: true, command: 'divider-1' },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-close',
             title: 'Hide Column',
             titleKey: 'HIDE_COLUMN',
             command: 'hide-column',
-            positionOrder: 59,
             action: expect.any(Function),
           },
         ];
@@ -1755,7 +1783,6 @@ describe('HeaderMenu Plugin', () => {
             _orgTitle: '',
             command: 'column-resize-by-content',
             iconCssClass: 'mdi mdi-arrow-expand-horizontal',
-            positionOrder: 47,
             title: 'Resize by Content',
             titleKey: 'COLUMN_RESIZE_BY_CONTENT',
             action: expect.any(Function),
@@ -1782,16 +1809,14 @@ describe('HeaderMenu Plugin', () => {
               },
             ],
             iconCssClass: 'mdi mdi-filter-outline',
-            positionOrder: 55,
             title: 'Filter Shortcuts',
             titleKey: 'FILTER_SHORTCUTS',
           },
-          { divider: true, command: 'divider-3', positionOrder: 56 },
+          { divider: true, command: 'divider-3' },
           {
             _orgTitle: '',
             command: 'hide-column',
             iconCssClass: 'mdi mdi-close',
-            positionOrder: 59,
             title: 'Hide Column',
             titleKey: 'HIDE_COLUMN',
             action: expect.any(Function),
@@ -1842,7 +1867,6 @@ describe('HeaderMenu Plugin', () => {
               title: 'Hide Column',
               titleKey: 'HIDE_COLUMN',
               command: 'hide-column',
-              positionOrder: 59,
               action: expect.any(Function),
             },
           ];
@@ -1882,7 +1906,6 @@ describe('HeaderMenu Plugin', () => {
             title: 'Remove Filter',
             titleKey: 'REMOVE_FILTER',
             command: 'clear-filter',
-            positionOrder: 57,
             action: expect.any(Function),
           },
         ];
@@ -1925,7 +1948,6 @@ describe('HeaderMenu Plugin', () => {
             title: 'Sort Ascending',
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
-            positionOrder: 40,
             action: expect.any(Function),
           },
           {
@@ -1934,17 +1956,15 @@ describe('HeaderMenu Plugin', () => {
             title: 'Sort Descending',
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
-            positionOrder: 41,
             action: expect.any(Function),
           },
-          { divider: true, command: 'divider-2', positionOrder: 42 },
+          { divider: true, command: 'divider-2' },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',
             title: 'Remove Sort',
             titleKey: 'REMOVE_SORT',
             command: 'clear-sort',
-            positionOrder: 58,
             action: expect.any(Function),
           },
         ]);
@@ -1960,7 +1980,6 @@ describe('HeaderMenu Plugin', () => {
             title: 'Trier par ordre croissant',
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
-            positionOrder: 40,
             action: expect.any(Function),
           },
           {
@@ -1969,17 +1988,15 @@ describe('HeaderMenu Plugin', () => {
             title: 'Trier par ordre décroissant',
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
-            positionOrder: 41,
             action: expect.any(Function),
           },
-          { divider: true, command: 'divider-2', positionOrder: 42 },
+          { divider: true, command: 'divider-2' },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',
             title: 'Supprimer le tri',
             titleKey: 'REMOVE_SORT',
             command: 'clear-sort',
-            positionOrder: 58,
             action: expect.any(Function),
           },
         ]);
@@ -2108,7 +2125,6 @@ describe('HeaderMenu Plugin', () => {
             title: 'Sort Ascending',
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
-            positionOrder: 40,
             action: expect.any(Function),
           },
           {
@@ -2117,17 +2133,15 @@ describe('HeaderMenu Plugin', () => {
             title: 'Sort Descending',
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
-            positionOrder: 41,
             action: expect.any(Function),
           },
-          { divider: true, command: 'divider-2', positionOrder: 42 },
+          { divider: true, command: 'divider-2' },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',
             title: 'Remove Sort',
             titleKey: 'REMOVE_SORT',
             command: 'clear-sort',
-            positionOrder: 58,
             action: expect.any(Function),
           },
         ]);
@@ -2172,7 +2186,6 @@ describe('HeaderMenu Plugin', () => {
             title: 'Sort Ascending',
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
-            positionOrder: 40,
             action: expect.any(Function),
           },
           {
@@ -2181,17 +2194,15 @@ describe('HeaderMenu Plugin', () => {
             title: 'Sort Descending',
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
-            positionOrder: 41,
             action: expect.any(Function),
           },
-          { divider: true, command: 'divider-2', positionOrder: 42 },
+          { divider: true, command: 'divider-2' },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',
             title: 'Remove Sort',
             titleKey: 'REMOVE_SORT',
             command: 'clear-sort',
-            positionOrder: 58,
             action: expect.any(Function),
           },
         ]);

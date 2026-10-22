@@ -236,12 +236,6 @@ describe('Example 51 - Menus with Slots', () => {
       'slick-menu-item-divider'
     );
 
-    // Divider after Resize by Content
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="column-resize-by-content"] + .slick-menu-item').should(
-      'have.class',
-      'slick-menu-item-divider'
-    );
-
     // Remove Filter
     cy.get('.slick-header-menu .slick-menu-command-list [data-command="clear-filter"] .menu-item')
       .find('i.mdi-filter-remove-outline')
@@ -263,12 +257,6 @@ describe('Example 51 - Menus with Slots', () => {
     cy.get('.slick-header-menu .slick-menu-command-list [data-command="hide-column"] .menu-item')
       .find('span.menu-item-label')
       .contains('Hide Column');
-
-    // Divider after Resize by Content
-    cy.get('.slick-header-menu .slick-menu-command-list [data-command="column-resize-by-content"] + .slick-menu-item').should(
-      'have.class',
-      'slick-menu-item-divider'
-    );
 
     // 10th buttons group
     cy.get('.footer-buttons-container .footer-btn.who-btn').contains('Who am I?').click();
