@@ -74,23 +74,6 @@ export class ExtensionUtility {
     return true;
   }
 
-  /**
-   * @deprecated Sort items (by pointers) in an array by a property name
-   * @param {Array<Object>} items array
-   * @param {String} property name to sort with
-   */
-  sortItems(items: any[], propertyName: string): void {
-    // sort the command items by their position in the list
-    if (Array.isArray(items)) {
-      items.sort((itemA: any, itemB: any) => {
-        if (itemA && itemB && itemA.hasOwnProperty(propertyName) && itemB.hasOwnProperty(propertyName)) {
-          return itemA[propertyName] - itemB[propertyName];
-        }
-        return 0;
-      });
-    }
-  }
-
   /** Translate the array of items from an input key and assign them to their output key */
   translateItems<T = any>(items: T[], inputKey: string, outputKey: string): void {
     if (Array.isArray(items)) {
