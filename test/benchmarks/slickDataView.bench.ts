@@ -18,11 +18,11 @@ type BenchmarkAccumulatorRunner = (items: BenchmarkItem[]) => void;
 
 class BenchmarkDataView extends SlickDataView<BenchmarkItem> {
   runFilter(items: BenchmarkItem[], args: BenchmarkFilterArgs): BenchmarkItem[] {
-    return this.compileFilterCSPSafe(items, args);
+    return this.filterItems(items, args);
   }
 
   createAccumulatorRunner(aggregator: Aggregator): BenchmarkAccumulatorRunner {
-    return this.compileAccumulatorLoopCSPSafe(aggregator);
+    return this.compileAccumulatorLoop(aggregator);
   }
 }
 

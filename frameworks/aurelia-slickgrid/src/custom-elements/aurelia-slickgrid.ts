@@ -328,8 +328,7 @@ export class AureliaSlickgridCustomElement {
     }
 
     if (!this.customDataView) {
-      const dataviewInlineFilters = (this.options.dataView && this.options.dataView.inlineFilters) || false;
-      let dataViewOptions: Partial<DataViewOption> = { ...this.options.dataView, inlineFilters: dataviewInlineFilters };
+      let dataViewOptions: Partial<DataViewOption> = { ...this.options.dataView };
 
       if (this.options.draggableGrouping || this.options.enableGrouping) {
         this.groupItemMetadataProvider = new SlickGroupItemMetadataProvider(this.options.groupItemMetadataOption);
