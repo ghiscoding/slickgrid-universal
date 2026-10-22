@@ -4,7 +4,7 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub.j
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
-import type { Column, DOMEvent, ExternalResource, GridMenu, GridOption } from '../../interfaces/index.js';
+import type { Column, DOMEvent, ExternalResource, GridMenu, GridMenuItem, GridOption } from '../../interfaces/index.js';
 import {
   BackendUtilityService,
   SharedService,
@@ -1739,6 +1739,29 @@ describe('GridMenuControl', () => {
             expect(options.gridMenu!.commandItems!.map((item) => item !== 'divider' && item.command).sort()).toEqual(expectedCommands.sort());
           }
         );
+
+        it('should retain supplied command order before appended built-ins, including after translation', () => {
+          const commandItems: GridMenuItem[] = [
+            { command: 'second', title: 'Second' },
+            { command: 'first', title: 'First' },
+          ];
+          const options: GridOption = {
+            ...gridOptionsMock,
+            enableFiltering: false,
+            enableSorting: false,
+            enableTextExport: false,
+            enableExcelExport: false,
+            enablePdfExport: false,
+            gridMenu: { commandItems },
+          };
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(options);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(options);
+          control.columns = columnsMock;
+          control.init();
+          expect(options.gridMenu!.commandItems!.map((item) => item !== 'divider' && item.command)).toEqual(['second', 'first', 'clear-pinning']);
+          control.translateGridMenu();
+          expect(options.gridMenu!.commandItems!.map((item) => item !== 'divider' && item.command)).toEqual(['second', 'first', 'clear-pinning']);
+        });
 
         it('should preserve builder ordering when creating and translating the Grid Menu', () => {
           const builder = vi.fn<NonNullable<GridMenu['commandListBuilder']>>((items) => [...items].reverse());

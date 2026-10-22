@@ -2006,6 +2006,21 @@ describe('HeaderMenu Plugin', () => {
         expect(clearSortSpy).toHaveBeenCalledWith(clickEvent, 'field2');
       });
 
+      it('should retain supplied command order when appending header commands without a builder', () => {
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
+          enableSorting: true,
+        });
+        const commandItems: MenuCommandItem[] = [
+          { command: 'sort-desc', title: 'Descending first' },
+          { command: 'custom', title: 'Custom' },
+          { command: 'sort-asc', title: 'Ascending last' },
+        ];
+        const column: Column = { id: 'ordered', field: 'ordered', sortable: true, header: { menu: { commandItems } } };
+        (plugin as any).recreateHeaderMenu([column]);
+        expect(column.header!.menu!.commandItems!.slice(0, 3).map((item) => item !== 'divider' && item.command)).toEqual(['sort-desc', 'custom', 'sort-asc']);
+      });
+
       it('should preserve built-in order when creating and recreating the header menu', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,

@@ -196,6 +196,22 @@ describe('ContextMenu Plugin', () => {
     plugin?.dispose();
   });
 
+  it('should retain supplied command order before appended built-ins without a builder', () => {
+    const contextMenu: ContextMenu = {
+      commandItems: [
+        { command: 'second', title: 'Second' },
+        { command: 'first', title: 'First' },
+      ],
+    };
+    vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+      ...gridOptionsMock,
+      contextMenu,
+    });
+    plugin.dispose();
+    plugin.init(contextMenu);
+    expect(plugin.addonOptions.commandItems!.map((item) => item !== 'divider' && item.command)).toEqual(['second', 'first', 'copy']);
+  });
+
   it('should preserve the Context Menu builder order and built-in actions', () => {
     const builder = vi.fn<NonNullable<ContextMenu['commandListBuilder']>>((items) => [...items].reverse());
     const contextMenu = { commandListBuilder: builder };
