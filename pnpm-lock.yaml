@@ -143,6 +143,7 @@ overrides:
   postcss-selector-parser: ^7.1.6
   qs: ^6.16.1
   shell-quote: ^1.12.0
+  source-map-js: ^1.2.2
   sprintf-js: ^1.1.3
   svgo: ^4.1.0
   undici: ^7.30.1
@@ -7789,10 +7790,6 @@ packages:
     resolution: {integrity: sha512-w7xWRu8U9MneKNna8ptG194jp9PLtbd/Rl6gwrmbK4yUeKbE66a64rHgl0iKTBBDr/hpanx7zMGP1Qo8MRkc/w==}
     engines: {node: '>=20'}
 
-  source-map-js@1.2.1:
-    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
-    engines: {node: '>=0.10.0'}
-
   source-map-js@1.2.2:
     resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
     engines: {node: '>=0.10.0'}
@@ -11978,7 +11975,7 @@ snapshots:
       '@vue/shared': 3.5.41
       entities: 7.0.1
       estree-walker: 2.0.2
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   '@vue/compiler-core@3.5.43':
     dependencies:
@@ -11986,7 +11983,7 @@ snapshots:
       '@vue/shared': 3.5.43
       entities: 7.0.1
       estree-walker: 2.0.2
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   '@vue/compiler-core@3.5.44':
     dependencies:
@@ -12021,7 +12018,7 @@ snapshots:
       estree-walker: 2.0.2
       magic-string: 0.30.21
       postcss: 8.5.29
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   '@vue/compiler-sfc@3.5.44':
     dependencies:
@@ -12627,7 +12624,7 @@ snapshots:
   css-tree@3.2.1:
     dependencies:
       mdn-data: 2.27.1
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   css-what@8.0.0: {}
 
@@ -15068,8 +15065,6 @@ snapshots:
   sort-keys@6.0.1:
     dependencies:
       is-plain-obj: 4.1.0
-
-  source-map-js@1.2.1: {}
 
   source-map-js@1.2.2: {}
 
