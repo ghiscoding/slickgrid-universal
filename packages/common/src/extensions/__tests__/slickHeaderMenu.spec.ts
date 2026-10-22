@@ -2006,7 +2006,7 @@ describe('HeaderMenu Plugin', () => {
         expect(clearSortSpy).toHaveBeenCalledWith(clickEvent, 'field2');
       });
 
-      it('should place sorting commands before the pinning and resize commands', () => {
+      it('should preserve built-in order when creating and recreating the header menu', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableSorting: true,
@@ -2018,7 +2018,7 @@ describe('HeaderMenu Plugin', () => {
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: [column], grid: gridStub }, eventData as any, gridStub);
         gridStub.onHeaderCellRendered.notify({ column, node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
-        expect(column.header?.menu?.commandItems?.map((item) => (item === 'divider' ? item : item.command))).toEqual([
+        const expectedCommands = [
           'sort-asc',
           'sort-desc',
           'divider-2',
@@ -2028,7 +2028,11 @@ describe('HeaderMenu Plugin', () => {
           'divider-1',
           'clear-sort',
           'hide-column',
-        ]);
+        ];
+        expect(column.header?.menu?.commandItems?.map((item) => (item === 'divider' ? item : item.command))).toEqual(expectedCommands);
+
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [column], newColumns: [column], grid: gridStub }, eventData as any, gridStub);
+        expect(column.header?.menu?.commandItems?.map((item) => (item === 'divider' ? item : item.command))).toEqual(expectedCommands);
       });
 
       it('should offer Pin Columns and expect "updateColumns" to be called', () => {
