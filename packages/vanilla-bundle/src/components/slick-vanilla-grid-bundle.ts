@@ -132,7 +132,7 @@ export class SlickVanillaGridBundle<TData = any> {
     return this._columns || [];
   }
   set columns(columns: Column<TData>[]) {
-    this.columnDefinitionsChanged(columns);
+    this.columnsChanged(columns);
   }
 
   get dataset(): TData[] {
@@ -1302,7 +1302,7 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   /** handler for when column definitions changes */
-  protected columnDefinitionsChanged(columns?: Column[]): void {
+  protected columnsChanged(columns?: Column[]): void {
     if (columns) {
       this._columns = columns;
     }
@@ -1319,7 +1319,7 @@ export class SlickVanillaGridBundle<TData = any> {
    * we can use our internal array observer for any changes done via (push, pop, shift, ...)
    */
   protected observeColumnDefinitions(): void {
-    this._collectionObservers.push(collectionObserver(this.columns, this.columnDefinitionsChanged.bind(this)));
+    this._collectionObservers.push(collectionObserver(this.columns, this.columnsChanged.bind(this)));
   }
 
   /**
