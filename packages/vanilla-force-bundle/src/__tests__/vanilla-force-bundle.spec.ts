@@ -27,6 +27,7 @@ import {
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -238,9 +239,19 @@ vi.mock('@slickgrid-universal/custom-tooltip-plugin', () => ({
   }),
 }));
 
+const mockExcelExportService = {
+  init: vi.fn(),
+} as unknown as TextExportService;
+
 const mockTextExportService = {
   init: vi.fn(),
 } as unknown as TextExportService;
+
+vi.mock('@slickgrid-universal/excel-export', () => ({
+  ExcelExportService: vi.fn().mockImplementation(function () {
+    return mockExcelExportService;
+  }),
+}));
 
 vi.mock('@slickgrid-universal/text-export', () => ({
   TextExportService: vi.fn().mockImplementation(function () {
@@ -531,13 +542,23 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should initialize ExportService when "enableTextExport" is set when using Salesforce', () => {
+        component.options = { enableExcelExport: true, enableTextExport: false, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
+        component.resetExternalResources();
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(ExcelExportService).toHaveBeenCalled();
+        expect(SlickCustomTooltip).toHaveBeenCalled();
+        expect(component.registeredResources.length).toBe(5); // ExcelExportService, TextExportService, SlickCustomTooltip, GridService, GridStateService, SlickEmptyCompositeEditorComponent
+      });
+
+      it('should initialize ExportService when "enableTextExport" is set when using Salesforce', () => {
         component.options = { enableTextExport: true, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
         component.resetExternalResources();
         component.initialization(divContainer, slickEventHandler);
 
         expect(TextExportService).toHaveBeenCalled();
         expect(SlickCustomTooltip).toHaveBeenCalled();
-        expect(component.registeredResources.length).toBe(6); // ExcelExportService, TextExportService, SlickCustomTooltip, GridService, GridStateService, SlickEmptyCompositeEditorComponent
+        expect(component.registeredResources.length).toBe(5); // ExcelExportService, TextExportService, SlickCustomTooltip, GridService, GridStateService, SlickEmptyCompositeEditorComponent
       });
 
       it('should add RxJS resource to all necessary Services when RxJS external resource is registered', () => {
