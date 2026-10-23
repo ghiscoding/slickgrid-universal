@@ -1093,7 +1093,6 @@ export default class Example12 {
 
     setTimeout(() => {
       this.compositeEditorInstance?.openDetails({
-        // domElementType: 'div', // use as fallback when default <dialog> doesn't work (like in Salesforce LWC), accepts 'div' or 'dialog'
         headerTitle: modalTitle,
         modalType,
         insertOptions: { highlightRow: false }, // disable highlight to avoid flaky tests in Cypress
