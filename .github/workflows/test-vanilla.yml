@@ -66,9 +66,6 @@ jobs:
         with:
           install: false
           package-manager-cache: false
-          # working-directory: packages/dnd
-          # start: pnpm vanilla:serve:demo
-          # start: pnpm serve:vite
           wait-on: 'http://localhost:8888'
           config-file: test/cypress.config.ts
           browser: chrome
