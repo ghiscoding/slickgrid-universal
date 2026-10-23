@@ -130,10 +130,10 @@ If you use a Translate Service (e.g. i18n), rename the frozen translation keys i
 | v10 key            | v11 key                                    | Default English text                   |
 | ------------------ | ------------------------------------------ | -------------------------------------- |
 | `CLEAR_PINNING`    | `CLEAR_ALL_PINNING`                        | Clear all Pinning                      |
-| `FREEZE_COLUMNS`   | `PIN_COLUMNS_LEFT` and `PIN_COLUMNS_RIGHT` | Pin Columns Left / Pin Columns Right   |
+| `FREEZE_COLUMNS`   | `PIN_COLUMNS_LEFT` and `PIN_COLUMNS_RIGHT` | Pin Left Through Here / Pin From Here To Right   |
 | `UNFREEZE_COLUMNS` | `UNPIN_COLUMNS`                            | Unpin All Columns                      |
 | _(new)_            | `PIN_COLUMN`                               | Column Pinning                         |
-| _(new)_            | `PIN_LEFT` and `PIN_RIGHT`                 | Pin Left / Pin Right                   |
+| _(new)_            | `PIN_LEFT` and `PIN_RIGHT`                 | Pin to Left / Pin to Right                   |
 | _(new)_            | `UNPIN_COLUMN`                             | Unpin Column                           |
 
 ```diff
@@ -143,10 +143,10 @@ If you use a Translate Service (e.g. i18n), rename the frozen translation keys i
 - "UNFREEZE_COLUMNS": "Unfreeze Columns",
 + "CLEAR_ALL_PINNING": "Clear all Pinning",
 + "PIN_COLUMN": "Column Pinning",
-+ "PIN_COLUMNS_LEFT": "Pin Columns Left",
-+ "PIN_COLUMNS_RIGHT": "Pin Columns Right",
-+ "PIN_LEFT": "Pin Left",
-+ "PIN_RIGHT": "Pin Right",
++ "PIN_COLUMNS_LEFT": "Pin Left Through Here",
++ "PIN_COLUMNS_RIGHT": "Pin From Here To Right",
++ "PIN_LEFT": "Pin to Left",
++ "PIN_RIGHT": "Pin to Right",
 + "UNPIN_COLUMN": "Unpin Column",
 + "UNPIN_COLUMNS": "Unpin All Columns",
 }

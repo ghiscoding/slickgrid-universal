@@ -424,7 +424,7 @@ compatibility aliases is recorded below as a maintainability follow-up.
 
 ## leftover TODOs identified by user
 - [x] Unified grid options support pinning (left, right, top, bottom)
-- [x] Header Menu exposes a `Column Pinning` sub-menu with `Pin Left`, `Pin Right`, directional `Pin Columns` commands, and `Unpin Column`/`Unpin All Columns`; separators are added only between visible command groups
+- [x] Header Menu exposes a `Column Pinning` sub-menu with `Pin to Left`, `Pin to Right`, directional `Pin Columns` commands, and `Unpin Column`/`Unpin All Columns`; separators are added only between visible command groups
 - [x] `CurrentColumn.pinning` provides a per-column Grid State/Preset representation alongside aggregate `GridState.pinning`
 - [x] Row/body/header/footer docking regions have a predictable left/center/right DOM shape. Row
   regions use the compatibility-oriented names `.slick-pinned-left-cells`,
@@ -1168,7 +1168,7 @@ bands would still be a separate feature and product decision.
    compatibility branches.
 2. **Old options intentionally no longer work.** The former flat options are not valid ways to
    configure this implementation. The old names and command ids are migration-guide
-   references only; active menus use `Pin Columns Left`/`Pin Columns Right` and `Unpin All Columns` and write the canonical
+   references only; active menus use `Pin Left Through Here`/`Pin From Here To Right` and `Unpin All Columns` and write the canonical
    `pinning` option. `GridService.setPinning()` accepts the unified nested shape.
 3. **Visual/browser validation is green.** The user confirms that all Vanilla and framework
    Cypress CI workflows pass repeatedly, including left/right pinning, bottom rows, sticky
@@ -1199,8 +1199,8 @@ bands would still be a separate feature and product decision.
     `pinned` state. Pin/unpin remains an explicit Header Menu or API action. This preserves the
     existing pinned-section and center-section behavior covered by reorder tests.
 11. **Header Menu terminology is now pinning-based.** The `Column Pinning` root opens a
-    sub-menu containing `Pin Left`, `Pin Right`, `Pin Columns Left`,
-    `Pin Columns Right`, `Unpin Column`, and `Unpin All Columns` for pinnable columns.
+    sub-menu containing `Pin to Left`, `Pin to Right`, `Pin Left Through Here`,
+    `Pin From Here To Right`, `Unpin Column`, and `Unpin All Columns` for pinnable columns.
     Separators appear only between non-empty command groups. The directional commands write
     `Column.pinned`, the bulk directional commands write the corresponding `pinning.columns` edge,
     and the unpin commands clear the selected column or all aggregate column edges. The removed

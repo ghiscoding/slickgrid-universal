@@ -104,19 +104,19 @@ export interface Locale {
   /** Text "Force fit Columns" displayed in the Column Picker & Grid Menu (when enabled) */
   TEXT_FORCE_FIT_COLUMNS: string;
 
-  /** Text "Pin Columns Left" shown in Header Menu (when enabled) */
+  /** Text "Pin Left Through Here" shown in Header Menu (when enabled) */
   TEXT_PIN_COLUMNS_LEFT?: string;
 
-  /** Text "Pin Columns Right" shown in Header Menu (when enabled) */
+  /** Text "Pin From Here To Right" shown in Header Menu (when enabled) */
   TEXT_PIN_COLUMNS_RIGHT?: string;
 
   /** Text "Column Pinning" shown in Header Menu (when enabled) */
   TEXT_PIN_COLUMN?: string;
 
-  /** Text "Pin Left" shown in the Header Menu pin-column sub-menu (when enabled) */
+  /** Text "Pin to Left" shown in the Header Menu pin-column sub-menu (when enabled) */
   TEXT_PIN_LEFT?: string;
 
-  /** Text "Pin Right" shown in the Header Menu pin-column sub-menu (when enabled) */
+  /** Text "Pin to Right" shown in the Header Menu pin-column sub-menu (when enabled) */
   TEXT_PIN_RIGHT?: string;
 
   /** Text "Greater than" shown in Compound Editors/Filters as an Operator */
