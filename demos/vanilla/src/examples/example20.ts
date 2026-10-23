@@ -232,8 +232,8 @@ export default class Example20 {
       });
     } else {
       this.rowDetail.addonOptions.useRowClick = true;
-      this.sgb.gridOptions = { ...this.sgb.gridOptions, editable: this.isGridEditable };
-      this.gridOptions = this.sgb.gridOptions;
+      this.sgb.options = { ...this.sgb.options, editable: this.isGridEditable };
+      this.gridOptions = this.sgb.options;
     }
   }
 

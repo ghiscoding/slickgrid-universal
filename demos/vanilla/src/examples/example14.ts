@@ -791,8 +791,8 @@ export default class Example14 {
 
     // then change a single grid options to make the grid non-editable (readonly)
     this.isGridEditable = !this.isGridEditable;
-    this.sgb.gridOptions = { editable: this.isGridEditable };
-    this.gridOptions = this.sgb.gridOptions;
+    this.sgb.options = { editable: this.isGridEditable };
+    this.gridOptions = this.sgb.options;
 
     // we can request a resize of the columns widths by their cell content (we need to pass `true` to request a recalc)
     // also another reason to do it here is because we use an extra editable formatter that has its own padding

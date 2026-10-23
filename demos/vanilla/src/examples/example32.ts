@@ -223,8 +223,8 @@ export default class Example32 {
 
   toggleEditing() {
     this.isEditable = !this.isEditable;
-    this.sgb.gridOptions = { ...this.sgb.gridOptions, editable: this.isEditable };
-    this.gridOptions = this.sgb.gridOptions;
+    this.sgb.options = { ...this.sgb.options, editable: this.isEditable };
+    this.gridOptions = this.sgb.options;
   }
 
   loadData() {

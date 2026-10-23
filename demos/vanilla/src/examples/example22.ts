@@ -243,17 +243,17 @@ export default class Example22 {
   }
 
   toggleSingleMultiRowEdit() {
-    this.sgb.gridOptions = {
-      ...this.sgb.gridOptions,
+    this.sgb.options = {
+      ...this.sgb.options,
       ...{
         rowBasedEditOptions: {
-          ...this.sgb.gridOptions.rowBasedEditOptions,
-          ...{ allowMultipleRows: !this.sgb.gridOptions.rowBasedEditOptions?.allowMultipleRows },
+          ...this.sgb.options.rowBasedEditOptions,
+          ...{ allowMultipleRows: !this.sgb.options.rowBasedEditOptions?.allowMultipleRows },
         },
       },
     };
 
-    this.gridOptions = this.sgb.gridOptions;
+    this.gridOptions = this.sgb.options;
   }
 
   async switchLanguage() {
