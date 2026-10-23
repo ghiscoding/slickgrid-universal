@@ -283,15 +283,6 @@ export function parseBoolean(input: any): boolean {
   return /(true|1)/i.test(input + '');
 }
 
-/** Use `queueMicrotask()` when available, otherwise fallback to `Promise.resolve().then(callback)` for Salesforce LWC locker service */
-export function queueMicrotaskPolyfill(callback: () => void): void {
-  if (typeof queueMicrotask === 'function') {
-    queueMicrotask(callback);
-  } else {
-    Promise.resolve().then(callback);
-  }
-}
-
 /**
  * Remove any accents from a string by normalizing it
  * @param {String} text - input text

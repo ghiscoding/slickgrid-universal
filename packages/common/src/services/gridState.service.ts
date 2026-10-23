@@ -1,5 +1,4 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
-import { queueMicrotaskPolyfill } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { SlickEventHandler } from '../core/slickCore.js';
 import { type SlickDataView } from '../core/slickDataView.js';
@@ -709,7 +708,7 @@ export class GridStateService {
       });
     };
 
-    this._eventHandler.subscribe(grid.onSetOptions, () => queueMicrotaskPolyfill(publishPinningChange));
+    this._eventHandler.subscribe(grid.onSetOptions, () => queueMicrotask(publishPinningChange));
     this._eventHandler.subscribe(grid.onAfterUpdateColumns, publishPinningChange);
   }
 
