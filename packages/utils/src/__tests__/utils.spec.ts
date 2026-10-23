@@ -16,7 +16,6 @@ import {
   isPrimitiveOrHTML,
   isPrimitiveValue,
   parseBoolean,
-  queueMicrotaskPolyfill,
   removeAccentFromText,
   setDeepValue,
   titleCase,
@@ -687,41 +686,6 @@ describe('Service/Utilies', () => {
       expect(output2).toBe(false);
       expect(output3).toBe(false);
     });
-  });
-
-  describe('queueMicrotaskPolyfill() method', () => {
-    it('uses queueMicrotask() when available', () =>
-      new Promise((done: any) => {
-        const callback = vi.fn();
-        const queueMicrotaskSpy = vi.spyOn(globalThis, 'queueMicrotask');
-        queueMicrotaskPolyfill(callback);
-        setTimeout(() => {
-          expect(queueMicrotaskSpy).toHaveBeenCalledWith(callback);
-          expect(callback).toHaveBeenCalledTimes(1);
-          queueMicrotaskSpy.mockRestore();
-          done();
-        }, 10);
-      }));
-
-    it('uses Promise.resolve().then() fallback when queueMicrotask is not available', () =>
-      new Promise((done: any) => {
-        const callback = vi.fn();
-        // Remove queueMicrotask
-        const originalQueueMicrotask = globalThis.queueMicrotask;
-        // @ts-ignore
-        delete global.queueMicrotask;
-        // Spy on Promise.resolve().then
-        const promiseThenSpy = vi.spyOn(Promise, 'resolve');
-        queueMicrotaskPolyfill(callback);
-        setTimeout(() => {
-          expect(promiseThenSpy).toHaveBeenCalled();
-          expect(callback).toHaveBeenCalledTimes(1);
-          promiseThenSpy.mockRestore();
-          // Restore queueMicrotask
-          globalThis.queueMicrotask = originalQueueMicrotask;
-          done();
-        }, 10);
-      }));
   });
 
   describe('removeAccentFromText() method', () => {

@@ -10,7 +10,6 @@ import {
   isDefined,
   isDefinedNumber,
   isPrimitiveOrHTML,
-  queueMicrotaskPolyfill,
   windowScrollPosition,
   type CSSStyleDeclarationWritable,
 } from '@slickgrid-universal/utils';
@@ -4482,7 +4481,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.updateColumns();
       this.triggerEvent(this.onAfterSetColumns, { newColumns, grid: this });
     };
-    waitNextCycle ? queueMicrotaskPolyfill(() => updateCols()) : updateCols();
+    waitNextCycle ? queueMicrotask(() => updateCols()) : updateCols();
     return true;
   }
 

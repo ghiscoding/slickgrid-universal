@@ -1,5 +1,4 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
-import { queueMicrotaskPolyfill } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { SlickEventHandler } from '../core/slickCore.js';
 import { type SlickDataView } from '../core/slickDataView.js';
@@ -147,7 +146,7 @@ export class PaginationService {
           };
         }
       });
-      queueMicrotaskPolyfill(() => {
+      queueMicrotask(() => {
         if (this.dataView) {
           this.dataView.setRefreshHints({ isFilterUnchanged: true });
           this.dataView.setPagingOptions({ pageSize: this.paginationOptions.pageSize, pageNum: this._pageNumber - 1 }); // dataView page starts at 0 instead of 1
