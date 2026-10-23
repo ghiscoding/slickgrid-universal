@@ -209,7 +209,7 @@ describe('ContextMenu Plugin', () => {
     });
     plugin.dispose();
     plugin.init(contextMenu);
-    expect(plugin.addonOptions.commandItems!.map((item) => item !== 'divider' && item.command)).toEqual(['second', 'first', 'copy']);
+    expect(plugin.addonOptions.commandItems!.map((item) => item !== 'divider' && item.command)).toEqual(['copy', 'second', 'first']);
   });
 
   it('should preserve the Context Menu builder order and built-in actions', () => {

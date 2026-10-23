@@ -71,7 +71,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
 
     // merge the original commands with the built-in internal commands
     const originalCommandItems = Array.isArray(this._addonOptions?.commandItems) ? this._addonOptions.commandItems : [];
-    const initialCommandItems = [...originalCommandItems, ...this.addMenuCustomCommands(originalCommandItems)];
+    const initialCommandItems = [...this.addMenuCustomCommands(originalCommandItems), ...originalCommandItems];
     this._addonOptions.commandItems =
       (this._addonOptions.commandListBuilder?.(initialCommandItems) as Array<MenuCommandItem | 'divider'>) ?? initialCommandItems;
     this._addonOptions = { ...this._addonOptions };

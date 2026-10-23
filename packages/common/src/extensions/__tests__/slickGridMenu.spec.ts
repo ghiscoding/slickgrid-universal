@@ -1740,7 +1740,7 @@ describe('GridMenuControl', () => {
           }
         );
 
-        it('should retain supplied command order before appended built-ins, including after translation', () => {
+        it('should place built-in commands before supplied command order, including after translation', () => {
           const commandItems: GridMenuItem[] = [
             { command: 'second', title: 'Second' },
             { command: 'first', title: 'First' },
@@ -1758,9 +1758,9 @@ describe('GridMenuControl', () => {
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(options);
           control.columns = columnsMock;
           control.init();
-          expect(options.gridMenu!.commandItems!.map((item) => item !== 'divider' && item.command)).toEqual(['second', 'first', 'clear-pinning']);
+          expect(options.gridMenu!.commandItems!.map((item) => item !== 'divider' && item.command)).toEqual(['clear-pinning', 'second', 'first']);
           control.translateGridMenu();
-          expect(options.gridMenu!.commandItems!.map((item) => item !== 'divider' && item.command)).toEqual(['second', 'first', 'clear-pinning']);
+          expect(options.gridMenu!.commandItems!.map((item) => item !== 'divider' && item.command)).toEqual(['clear-pinning', 'second', 'first']);
         });
 
         it('should preserve builder ordering when creating and translating the Grid Menu', () => {

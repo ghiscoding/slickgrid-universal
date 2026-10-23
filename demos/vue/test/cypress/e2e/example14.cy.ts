@@ -153,7 +153,7 @@ describe('Example 14 - Column Span & Header Grouping', () => {
       .should('contain', 'Column Pinning')
       .click();
 
-    cy.get('.slick-submenu [data-command="pin-columns-left"]').should('contain', 'Pin Columns Left').click();
+    cy.get('.slick-submenu [data-command="pin-columns-left"]').should('contain', 'Pin Left Through Here').click();
 
     cy.get('#grid2 .slick-header.slick-header-left .slick-header-columns .slick-column-pinned-left').should('have.length', 3);
     cy.get('#grid2 .slick-header.slick-header-left .slick-header-columns .slick-header-column:not(.slick-column-pinned-left)').should(

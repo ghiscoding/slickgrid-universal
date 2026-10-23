@@ -148,7 +148,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const originalCommandItems = this._userOriginalGridMenu && Array.isArray(gridMenuCommandItems) ? gridMenuCommandItems : [];
 
     // merge the original commands with the built-in internal commands
-    const initialCommandItems = [...originalCommandItems, ...this.addGridMenuCustomCommands(originalCommandItems)];
+    const initialCommandItems = [...this.addGridMenuCustomCommands(originalCommandItems), ...originalCommandItems];
     this._addonOptions.commandItems =
       (this._addonOptions.commandListBuilder?.(initialCommandItems) as Array<GridMenuItem | 'divider'>) ?? initialCommandItems;
     this.extensionUtility.translateMenuItemsFromTitleKey(this._addonOptions.commandItems || [], 'commandItems');
@@ -516,7 +516,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // merge original user grid menu items with internal items
       // prettier-ignore
       const originalCommandItems = this._userOriginalGridMenu && Array.isArray(this._userOriginalGridMenu.commandItems) ? this._userOriginalGridMenu.commandItems : [];
-      const initialCommandItems = [...originalCommandItems, ...this.addGridMenuCustomCommands(originalCommandItems)];
+      const initialCommandItems = [...this.addGridMenuCustomCommands(originalCommandItems), ...originalCommandItems];
       this.sharedService.gridOptions.gridMenu.commandItems =
         (this._addonOptions.commandListBuilder?.(initialCommandItems) as Array<GridMenuItem | 'divider'>) ?? initialCommandItems;
       this.extensionUtility.translateMenuItemsFromTitleKey(this._addonOptions?.commandItems || [], 'commandItems');
