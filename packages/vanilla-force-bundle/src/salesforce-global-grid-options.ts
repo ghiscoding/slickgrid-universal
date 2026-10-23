@@ -36,7 +36,6 @@ export const SalesforceGlobalGridOptions = {
   },
   eventNamingStyle: 'lowerCaseWithoutOnPrefix',
   compositeEditorOptions: {
-    domElementType: 'div', // Salesforce LWC doesn't support <dialog> element
     resetEditorButtonCssClass: 'mdi mdi-refresh font-15px',
     resetFormButtonIconCssClass: 'mdi mdi-refresh font-16px mdi-flip-h',
     shouldPreviewMassChangeDataset: true,
