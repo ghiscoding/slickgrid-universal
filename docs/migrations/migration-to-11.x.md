@@ -1,4 +1,4 @@
-## Single-viewport pinning rewrite
+## Single-viewport Pinning rewrite
 
 SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer and a single scrollbar. Frozen columns/rows are replaced by the new Pinning feature, and v11 also adds new Sticky columns/rows.
 
@@ -50,7 +50,7 @@ const gridOptions: GridOption = {
 
 For `frozenBottom: true`, map the frozen rows to `pinning.rows.bottom` instead. See the [Pinning guide](../grid-functionalities/pinning.md) for the new option shape and accepted references.
 
-### Column pinning
+### Column Pinning
 
 Use `Column.pinned` for configured column pins and `Column.pinnable: false` to hide pinning commands for that column. See the [Pinning guide](../grid-functionalities/pinning.md) for the column options.
 
@@ -118,7 +118,7 @@ const gridOptions: GridOption = {
 };
 ```
 
-The pinning command menu is now enabled by default. To hide it, add `'pinning-commands'` to `headerMenu.hideCommands`. See the [Pinning guide](../grid-functionalities/pinning.md#header-menu-commands) for the command details.
+The Pinning command menu is now enabled by default. To hide it, add `'pinning-commands'` to `headerMenu.hideCommands`. See the [Pinning guide](../grid-functionalities/pinning.md#header-menu-commands) for the command details.
 
 #### Translation keys
 
