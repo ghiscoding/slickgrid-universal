@@ -111,6 +111,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     totalFormattedCells: 0,
   };
   protected _populateCacheRafId: number | undefined = undefined;
+  protected _populateCachePort: MessagePort | undefined = undefined;
   protected _cachePopulationGeneration = 0; // incremented on each new population run; stale closures bail out early
 
   // grouping
@@ -1718,10 +1719,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    */
   clearFormattedDataCache(): void {
     // Cancel any in-progress background population before wiping the cache
-    if (this._populateCacheRafId !== undefined) {
-      cancelAnimationFrame(this._populateCacheRafId);
-      this._populateCacheRafId = undefined;
-    }
+    this.cancelFormattedDataCachePopulation();
     this.formattedDataCache = Object.create(null);
     this.formattedCellCache = Object.create(null);
     this.formattedCacheMetadata = {
@@ -1729,6 +1727,23 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       lastProcessedRow: -1,
       totalFormattedCells: 0,
     };
+  }
+
+  /**
+   * Cancels any pending background population batch (RAF or MessageChannel).
+   * The MessagePort must be closed, otherwise its `onmessage` handler keeps the port alive
+   * (as a pending activity) and its closure retains the DataView & dataset, causing a memory leak.
+   */
+  protected cancelFormattedDataCachePopulation(): void {
+    if (this._populateCacheRafId !== undefined) {
+      cancelAnimationFrame(this._populateCacheRafId);
+      this._populateCacheRafId = undefined;
+    }
+    if (this._populateCachePort) {
+      this._populateCachePort.onmessage = null;
+      this._populateCachePort.close();
+      this._populateCachePort = undefined;
+    }
   }
 
   /**
@@ -1786,13 +1801,10 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     }
 
     // Cancel any still-running population before starting a new one.
-    // cancelAnimationFrame() stops the pending RAF (JS is single-threaded so a batch is never
+    // Cancelling the pending RAF/MessagePort stops the next batch (JS is single-threaded so a batch is never
     // mid-execution here), while the generation counter acts as an explicit abort signal so that
     // any closure that somehow fires after the reset detects it is stale and exits early.
-    if (this._populateCacheRafId !== undefined) {
-      cancelAnimationFrame(this._populateCacheRafId);
-      this._populateCacheRafId = undefined;
-    }
+    this.cancelFormattedDataCachePopulation();
     const generation = ++this._cachePopulationGeneration;
 
     this.formattedCacheMetadata.isPopulating = true;
@@ -1861,7 +1873,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       if (!isDone) {
         scheduleNextBatch();
       } else {
-        this._populateCacheRafId = undefined;
+        this.cancelFormattedDataCachePopulation(); // release the MessagePort/RAF so its closure can be garbage collected
         this.formattedCacheMetadata.isPopulating = false;
         const duration = Date.now() - (this.formattedCacheMetadata.cacheStartTime || 0);
         this.onFormattedDataCacheCompleted.notify({
@@ -1878,6 +1890,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     if (typeof MessageChannel !== 'undefined') {
       const { port1, port2 } = new MessageChannel();
       port1.onmessage = processBatch;
+      this._populateCachePort = port1;
       scheduleNextBatch = () => port2.postMessage(null);
     } else {
       scheduleNextBatch = () => {
