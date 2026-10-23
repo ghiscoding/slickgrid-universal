@@ -81,15 +81,11 @@ export function getCopyCellValue(args: MenuCallbackArgs): string {
 export async function copyCellToClipboard(args: MenuCallbackArgs): Promise<string | number> {
   let textToCopy = '';
   try {
-    const grid = args?.grid || ({} as SlickGrid);
-    const gridOptions = grid.getOptions() as GridOption;
-
     // get cell to copy
     textToCopy = getCopyCellValue(args);
 
-    // copy to clipboard using override or default browser Clipboard API
-    const clipboardOverrideFn = gridOptions.clipboardWriteOverride;
-    clipboardOverrideFn ? clipboardOverrideFn(textToCopy) : await navigator.clipboard.writeText(textToCopy);
+    // copy to clipboard using native Clipboard API
+    await navigator.clipboard.writeText(textToCopy);
   } catch (err) {
     console.error(`Unable to read/write to clipboard. Please check your browser settings or permissions. Error: ${err}`);
   }
