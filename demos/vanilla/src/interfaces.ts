@@ -9,7 +9,8 @@ export interface Route {
   name?: string;
   title?: string;
   view?: string;
-  viewModel?: any;
+  /** lazy loader of the ViewModel module, the module must have a default export of the ViewModel class */
+  viewModel?: () => Promise<{ default: any }>;
   redirect?: string;
 }
 

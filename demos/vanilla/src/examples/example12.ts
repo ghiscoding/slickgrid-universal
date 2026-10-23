@@ -857,8 +857,8 @@ export default class Example12 {
 
     // then change a single grid options to make the grid non-editable (readonly)
     this.isGridEditable = !this.isGridEditable;
-    this.sgb.gridOptions = { ...this.sgb.gridOptions, editable: this.isGridEditable };
-    this.gridOptions = this.sgb.gridOptions;
+    this.sgb.options = { ...this.sgb.options, editable: this.isGridEditable };
+    this.gridOptions = this.sgb.options;
     this.isCompositeDisabled = !this.isGridEditable;
     if (!this.isGridEditable) {
       this.isMassSelectionDisabled = true;
@@ -868,7 +868,7 @@ export default class Example12 {
   toggleDarkMode() {
     this._darkMode = !this._darkMode;
     this.toggleBodyBackground();
-    this.sgb.gridOptions = { ...this.sgb.gridOptions, darkMode: this._darkMode };
+    this.sgb.options = { ...this.sgb.options, darkMode: this._darkMode };
     this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
   }
 
@@ -1090,7 +1090,6 @@ export default class Example12 {
 
     setTimeout(() => {
       this.compositeEditorInstance?.openDetails({
-        // domElementType: 'div', // use as fallback when default <dialog> doesn't work (like in Salesforce LWC), accepts 'div' or 'dialog'
         headerTitle: modalTitle,
         modalType,
         insertOptions: { highlightRow: false }, // disable highlight to avoid flaky tests in Cypress

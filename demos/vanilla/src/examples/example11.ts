@@ -623,8 +623,8 @@ export default class Example11 {
 
     // then change a single grid options to make the grid non-editable (readonly)
     this.isGridEditable = !this.isGridEditable;
-    this.sgb.gridOptions = { editable: this.isGridEditable };
-    this.gridOptions = this.sgb.gridOptions;
+    this.sgb.options = { editable: this.isGridEditable };
+    this.gridOptions = this.sgb.options;
   }
 
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {

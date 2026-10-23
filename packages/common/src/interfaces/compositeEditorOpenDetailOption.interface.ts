@@ -19,9 +19,6 @@ export interface CompositeEditorSelection {
 }
 
 export interface CompositeEditorOpenDetailOption {
-  /** Defaults to 'dialog', the HTML element type to use for the Composite Editor modal dialog */
-  domElementType?: 'dialog' | 'div';
-
   /**
    * Composite Editor modal header title with support to optional parsing and HTML rendering of any item property pulled from the dataContext, via template {{ }}
    * for example:

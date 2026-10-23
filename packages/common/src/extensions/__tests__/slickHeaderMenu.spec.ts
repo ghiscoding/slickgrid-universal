@@ -1343,8 +1343,8 @@ describe('HeaderMenu Plugin', () => {
         ]);
         const pinLeftCommand = pinColumnCommandItems?.find((item) => item !== 'divider' && item?.command === 'pin-left') as MenuCommandItem;
         const pinRightCommand = pinColumnCommandItems?.find((item) => item !== 'divider' && item?.command === 'pin-right') as MenuCommandItem;
-        expect(pinLeftCommand.title).toBe('Pin Left');
-        expect(pinRightCommand.title).toBe('Pin Right');
+        expect(pinLeftCommand.title).toBe('Pin to Left');
+        expect(pinRightCommand.title).toBe('Pin to Right');
         pinLeftCommand.action?.(new SlickEventData(), { column: testColumns[0] } as any);
         expect(setColumnPinningSpy).toHaveBeenCalledWith('field2', 'left');
         pinRightCommand.action?.(new SlickEventData(), { column: testColumns[0] } as any);
@@ -1527,12 +1527,12 @@ describe('HeaderMenu Plugin', () => {
 
         const commandItem = getPinningCommand(columnsMock[1], 'pin-columns-left')!;
         expect(commandItem.iconCssClass).toBe('mdi mdi-pin-outline');
-        expect(commandItem.title).toBe('Pin Columns Left');
+        expect(commandItem.title).toBe('Pin Left Through Here');
         expect((plugin as any).getPinnableColumnReferences(columnsMock[1], 'right')).toBe(2);
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
-        expect(commandItem.title).toBe('Épingler les colonnes à gauche');
+        expect(commandItem.title).toBe('Épingler à gauche jusqu’ici');
         commandItem.action?.(new SlickEventData(), { column: columnsMock[1] } as any);
         expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 1 } } }, false, true);
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
@@ -1555,11 +1555,11 @@ describe('HeaderMenu Plugin', () => {
 
         const commandItem = getPinningCommand(columnsMock[1], 'pin-columns-left')!;
         expect(commandItem.iconCssClass).toBe('mdi mdi-pin-outline');
-        expect(commandItem.title).toBe('Pin Columns Left');
+        expect(commandItem.title).toBe('Pin Left Through Here');
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
-        expect(commandItem.title).toBe('Épingler les colonnes à gauche');
+        expect(commandItem.title).toBe('Épingler à gauche jusqu’ici');
         commandItem.action?.(new SlickEventData(), { column: columnsMock[1] } as any);
         expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 1 } } }, false, true);
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
@@ -1625,7 +1625,7 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         const commandItem = getPinningCommand(columnsMock[2], 'pin-columns-left')!;
-        expect(commandItem.title).toBe('Pin Columns Left');
+        expect(commandItem.title).toBe('Pin Left Through Here');
         commandItem.action?.(new SlickEventData(), { column: columnsMock[2] } as any);
         expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 2 } } }, false, true);
         expect(updateColumnSpy).toHaveBeenCalled();
@@ -2073,7 +2073,7 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         const commandItem = getPinningCommand(originalColumnDefinitions[0], 'pin-columns-left')!;
-        expect(commandItem.title).toBe('Pin Columns Left');
+        expect(commandItem.title).toBe('Pin Left Through Here');
         commandItem.action?.(new SlickEventData(), { column: originalColumnDefinitions[0] } as any);
         expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 0 } } }, false, true);
         expect(updateColumnSpy).toHaveBeenCalled();
@@ -2106,7 +2106,7 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         const commandItem = getPinningCommand(visibleColumnDefinitions[0], 'pin-columns-left')!;
-        expect(commandItem.title).toBe('Pin Columns Left');
+        expect(commandItem.title).toBe('Pin Left Through Here');
         commandItem.action?.(new SlickEventData(), { column: visibleColumnDefinitions[0] } as any);
         expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 1 } } }, false, true);
         expect(updateColumnSpy).toHaveBeenCalled();

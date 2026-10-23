@@ -45,7 +45,6 @@
     "preview:version": "lerna version --dry-run --yes",
     "preview:new-release": "pnpm build && pnpm preview:version && pnpm preview:publish",
     "build:dev": "pnpm -r --filter=vanilla-demo build:dev",
-    "serve:vite": "pnpm -r --filter=vanilla-demo dev",
     "fallow": "pnpx fallow",
     "fallow:dead-code": "pnpx fallow dead-code --production",
     "fallow:dupes": "pnpx fallow dupes",
@@ -111,7 +110,7 @@
   },
   "engines": {
     "node": "^22.22.3 || >=24.15.0",
-    "pnpm": "11.28.6"
+    "pnpm": "11"
   },
   "packageManager": "pnpm@11.28.6",
   "devDependencies": {

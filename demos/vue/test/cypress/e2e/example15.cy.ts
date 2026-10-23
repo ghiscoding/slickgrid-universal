@@ -327,7 +327,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .should('contain', 'Épinglage de colonne')
       .trigger('mouseover');
 
-    cy.get('.slick-submenu:visible [data-command="pin-columns-left"]').should('contain', 'Épingler les colonnes à gauche').click();
+    cy.get('.slick-submenu:visible [data-command="pin-columns-left"]').should('contain', 'Épingler à gauche jusqu’ici').click();
   });
 
   it('should reload the page', () => {

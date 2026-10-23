@@ -40,7 +40,7 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
   /** Icon for the "Column Pinning" submenu. */
   iconPinColumn?: string;
 
-  /** Icon for the "Pin Left/Right" commands in the pin-column sub-menu. */
+  /** Icon for the "Pin to Left/Right" commands in the pin-column sub-menu. */
   iconPinCommand?: string;
 
   /** icon for the bulk unpin-columns command */

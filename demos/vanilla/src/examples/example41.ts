@@ -298,8 +298,8 @@ export default class Example41 {
 
   toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
-    this.sgb?.gridOptions && (this.sgb.gridOptions.darkMode = !this.sgb.gridOptions.darkMode);
-    this.sgb?.slickGrid?.setOptions({ darkMode: this.sgb?.gridOptions.darkMode });
+    this.sgb?.options && (this.sgb.options.darkMode = !this.sgb.options.darkMode);
+    this.sgb?.slickGrid?.setOptions({ darkMode: this.sgb?.options.darkMode });
   }
 
   toggleSubTitle() {
