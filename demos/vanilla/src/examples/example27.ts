@@ -365,7 +365,7 @@ export default class Example27 {
   toggleDarkMode() {
     this._darkMode = !this._darkMode;
     this.toggleBodyBackground();
-    this.sgb.gridOptions = { ...this.sgb.gridOptions, darkMode: this._darkMode };
+    this.sgb.options = { ...this.sgb.options, darkMode: this._darkMode };
     this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
   }
 

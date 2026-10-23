@@ -487,7 +487,7 @@ export default class Example07 {
       grid?.filterService.clearFilters();
     });
 
-    for (const columnFilter of grid?.columnDefinitions ?? []) {
+    for (const columnFilter of grid?.columns ?? []) {
       if (columnFilter.filterable) {
         const filterElm = `modal-allfilter-${columnFilter.id}`;
         const innerHtml = document.querySelector('#modal-allFilter-table')!.innerHTML;
@@ -586,11 +586,11 @@ export default class Example07 {
 
     // you can dynamically add your column to your column definitions
     // and then use the spread operator [...cols] OR slice to force the framework to review the changes
-    this.sgb.columnDefinitions.push(newCol);
+    this.sgb.columns.push(newCol);
   }
 
   dynamicallyRemoveLastColumn() {
-    this.sgb.columnDefinitions.pop();
+    this.sgb.columns.pop();
   }
 
   hideFinishColumnDynamically() {

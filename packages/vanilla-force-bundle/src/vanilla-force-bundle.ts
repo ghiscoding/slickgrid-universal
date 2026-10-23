@@ -133,10 +133,10 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
 
   protected registerResources(): void {
     // when using Salesforce, we want the Export to CSV always enabled without registering it
-    if (this.gridOptions.enableTextExport) {
+    if (this.options.enableTextExport) {
       this._registeredResources.push(new TextExportService());
     }
-    if (this.gridOptions.enableTextExport) {
+    if (this.options.enableExcelExport) {
       this._registeredResources.push(new ExcelExportService());
     }
     this._registeredResources.push(new SlickCustomTooltip());
@@ -151,19 +151,19 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
     if (
-      (this.gridOptions.createPreHeaderPanel && this.gridOptions.createTopHeaderPanel) ||
-      (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping)
+      (this.options.createPreHeaderPanel && this.options.createTopHeaderPanel) ||
+      (this.options.createPreHeaderPanel && !this.options.enableDraggableGrouping)
     ) {
       this._registeredResources.push(this.headerGroupingService);
     }
 
     // when using Tree Data View, register its Service
-    if (this.gridOptions.enableTreeData) {
+    if (this.options.enableTreeData) {
       this._registeredResources.push(this.treeDataService);
     }
 
     // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
-    if (this.gridOptions.enableTranslate) {
+    if (this.options.enableTranslate) {
       this.extensionService.translateColumnHeaders();
     }
 
@@ -173,7 +173,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
 
     // also initialize (render) the pagination component when using the salesforce default options
     // however before adding a new instance, just make sure there isn't one that might have been loaded by calling "registerExternalResources"
-    if (this.gridOptions.enableCompositeEditor) {
+    if (this.options.enableCompositeEditor) {
       if (!this._registeredResources.some((resource) => resource instanceof SlickCompositeEditorComponent)) {
         this.slickCompositeEditor = new SlickCompositeEditorComponent();
         this._registeredResources.push(this.slickCompositeEditor);
