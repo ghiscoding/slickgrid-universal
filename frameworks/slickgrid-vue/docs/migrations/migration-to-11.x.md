@@ -17,6 +17,7 @@ The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer va
 - [Context Menu and Cell Menu options removed](#context-menu-and-cell-menu-options-removed)
 - [Removed Deprecated Code](#removed-deprecated-code)
 - [Excluded columns are no longer rendered in column lists](#excluded-columns-are-no-longer-rendered-in-column-lists)
+- [Remove Native API Fallbacks](#remove-native-api-fallbacks)
 - [Code Changes](#code-changes)
 - [New `iconSet` grid option for the Fluent theme](#new-iconset-grid-option-for-the-fluent-theme)
 
@@ -319,6 +320,12 @@ After identifying that Row Detail has way too many containers and redundant CSS 
  </div>
 ```
 
+### Remove Native API Fallbacks
+The previous releases included fallbacks for native APIs that caused problems in Salesforce because of Locker Service, these fallbacks are no longer required since Salesforce LWS is becoming the new default. Here's the list of fallbacks being dropped:
+- Clipboard API: drop `clipboardWriteOverride` callback and use native Clipboard API
+- queueMicrotask: drop `queueMicrotaskPolyfill` util and use native `queueMicrotask`
+- Composite Editor: strictly use `<dialog>` and drop `CompositeEditorOption.domElementType: 'div' | 'dialog'`
+
 ## Code Changes
 
 ### Excluded columns are no longer rendered in column lists
@@ -393,10 +400,6 @@ gridOptions = {
 };
 ```
 
-## Final Note
-
-If the project is useful to you, please give it a star ⭐ on the [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) umbrella project.
-
 ## Context Menu and Cell Menu options removed
 
 The deprecated `optionItems` list and `onOptionSelected` event have been removed. Use `commandItems` with string command identifiers, and handle selections through `onCommand` or each item's `action` callback. This also applies to nested menus.
@@ -424,3 +427,7 @@ const contextMenu = { commandItems: completedCommands };
 // Column definition: Cell Menu
 const cellMenu = { commandItems: completedCommands };
 ```
+
+## Final Note
+
+If the project is useful to you, please give it a star ⭐ on the [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) umbrella project.
