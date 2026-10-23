@@ -26,9 +26,11 @@
 - AI / LLM assistance used:
   - [ ] No
   - [ ] Yes
-- If **Yes**:
+<!-- if "Yes" uncomment the next section and fill it in -->
+<!-- 
   - **which tool/model**:
   - **how was it used**:
+-->
 
 ## Checklist
 
