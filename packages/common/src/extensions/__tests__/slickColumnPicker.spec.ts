@@ -714,9 +714,8 @@ describe('ColumnPickerControl', () => {
     });
   });
 
-  // @deprecated
-  describe('columnSort functionality', () => {
-    it('should sort columns alphabetically by name when "columnSort" function is provided', () => {
+  describe('columnListBuilder functionality', () => {
+    it('should sort columns alphabetically by name when "columnListBuilder" function is provided', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
@@ -735,12 +734,13 @@ describe('ColumnPickerControl', () => {
       vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(unsortedColumnsMock);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(unsortedColumnsMock);
 
-      // Define the columnSort function to sort alphabetically by name
-      gridOptionsMock.columnPicker!.columnSort = (col1: Column, col2: Column) => {
-        const nameA = String(col1.name || '').toLowerCase();
-        const nameB = String(col2.name || '').toLowerCase();
-        return nameA.localeCompare(nameB);
-      };
+      // Define the columnListBuilder function to sort alphabetically by name
+      gridOptionsMock.columnPicker!.columnListBuilder = (columns) =>
+        columns.sort((col1, col2) => {
+          const nameA = String(col1.name || '').toLowerCase();
+          const nameB = String(col2.name || '').toLowerCase();
+          return nameA.localeCompare(nameB);
+        });
 
       control.columns = unsortedColumnsMock;
       control.init();
@@ -767,7 +767,7 @@ describe('ColumnPickerControl', () => {
       expect(columnLabels).toEqual(['Alpha Field', 'Beta Field', 'Zebra Field']);
     });
 
-    it('should maintain the original column order when no "columnSort" function is provided', () => {
+    it('should maintain the original column order when no "columnListBuilder" function is provided', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
@@ -786,8 +786,8 @@ describe('ColumnPickerControl', () => {
       vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(originalColumnsMock);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnsMock);
 
-      // Don't set columnSort, so it should remain undefined
-      gridOptionsMock.columnPicker!.columnSort = undefined;
+      // Don't set columnListBuilder, so it should remain undefined
+      gridOptionsMock.columnPicker!.columnListBuilder = undefined;
 
       control.columns = originalColumnsMock;
       control.init();

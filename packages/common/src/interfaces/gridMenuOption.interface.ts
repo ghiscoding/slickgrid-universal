@@ -43,9 +43,6 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
   /** Callback to filter/sort columns before rendering. Columns with `excludeFromGridMenu: true` are excluded before this callback. */
   columnListBuilder?: (columns: Column[]) => Column[];
 
-  /** @deprecated @use `columnListBuilder` Custom sort function for the columns in the grid menu */
-  columnSort?: (item1: Column, item2: Column) => number;
-
   /** Defaults to "left", which side to align the grid menu dropdown? */
   dropSide?: 'left' | 'right';
 
