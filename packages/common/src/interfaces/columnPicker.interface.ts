@@ -23,9 +23,6 @@ export interface ColumnPickerOption {
   /** Callback to filter/sort columns before rendering. Columns with `excludeFromColumnPicker: true` are excluded before this callback. */
   columnListBuilder?: (columns: Column[]) => Column[];
 
-  /** @deprecated @use `columnListBuilder` Custom sort function for the columns in the column picker */
-  columnSort?: (item1: Column, item2: Column) => number;
-
   /** Defaults to "Force fit columns" which is 1 of the last 2 checkbox title shown at the end of the picker list */
   forceFitTitle?: string;
 

@@ -355,7 +355,7 @@ The `onBeforeAppendCell` event and its `@onBeforeAppendCell` event prop were rem
 
 Columns defined with `excludeFromColumnPicker: true` or `excludeFromGridMenu: true` are now omitted from the respective menu's DOM instead of being rendered with the `.hidden` CSS class. **For most users, this change is transparent and requires no action.**
 
-If you use Cypress or Playwright E2E tests, update any selectors or item counts that relied on those hidden entries. Assert that excluded checkboxes do not exist instead of checking that they are hidden. Custom `columnSort` and `columnListBuilder` callbacks also now receive only eligible columns.
+If you use Cypress or Playwright E2E tests, update any selectors or item counts that relied on those hidden entries. Assert that excluded checkboxes do not exist instead of checking that they are hidden. Custom `columnListBuilder` callbacks now receive only eligible columns.
 
 ### Rename `changeColumnsArrangement()`
 
@@ -476,6 +476,20 @@ gridOptions = {
 ```
 
 Return items in the desired display order; no automatic numeric sorting is applied afterward. See the [v10 migration guide](migration-to-10.x.md#menu-with-commands-slot-renderer) for the original deprecation.
+
+### Column sorting callback removed
+
+The deprecated `columnSort` option has been removed from ColumnPicker and Grid Menu. Use `columnListBuilder` to sort, filter, or reorder their column lists before rendering. Replace a comparator with a builder that returns the sorted array:
+
+```ts
+columnPicker: {
+  columnListBuilder: (columns) => columns.sort((a, b) =>
+    String(a.name ?? '').toLowerCase().localeCompare(String(b.name ?? '').toLowerCase())
+  ),
+}
+```
+
+The same callback is available under `gridMenu.columnListBuilder`. The builder receives a separate array of eligible columns, so sorting or filtering it does not change the grid column order.
 
 ## Final Note
 

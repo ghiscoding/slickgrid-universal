@@ -300,10 +300,6 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
 
     const excludeKey = isGridMenu ? 'excludeFromGridMenu' : 'excludeFromColumnPicker';
     let processedColumns = this._columns.filter((column) => !column[excludeKey]);
-    if (typeof addonOptions?.columnSort === 'function') {
-      // create a sorted copy of the columns array based on the "name" property
-      processedColumns.sort(addonOptions.columnSort);
-    }
 
     // execute column list builder to allow user to filter/sort columns
     if (typeof addonOptions.columnListBuilder === 'function') {
