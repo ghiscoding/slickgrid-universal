@@ -368,14 +368,12 @@ export class Example32 {
               command: 'help',
               title: 'Help!',
               iconCssClass: 'mdi mdi-help-circle',
-              positionOrder: 66,
               action: () => alert('Please Help!'),
             },
             'divider',
             {
               command: 'delete-row',
               title: 'Delete Row',
-              positionOrder: 64,
               iconCssClass: 'mdi mdi-close color-danger',
               cssClass: 'red',
               textCssClass: 'text-italic color-danger-light',
@@ -401,12 +399,11 @@ export class Example32 {
       col.header = {
         menu: {
           commandItems: [
-            { command: '', divider: true, positionOrder: 98 },
+            { command: '', divider: true },
             {
               // we can also have multiple nested sub-menus
               command: 'custom-actions',
               title: 'Hello',
-              positionOrder: 99,
               commandItems: [
                 { command: 'hello-world', title: 'Hello World' },
                 { command: 'hello-slickgrid', title: 'Hello SlickGrid' },
@@ -428,7 +425,6 @@ export class Example32 {
             {
               command: 'feedback',
               title: 'Feedback',
-              positionOrder: 100,
               commandItems: [
                 {
                   command: 'request-update',

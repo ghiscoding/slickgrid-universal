@@ -52,7 +52,6 @@ const gridOptionMock = {
         command: 'clear-filter',
         disabled: false,
         iconCssClass: 'mdi mdi-filter-remove-outline',
-        positionOrder: 50,
         title: 'Clear all Filters',
       },
       {
@@ -60,7 +59,6 @@ const gridOptionMock = {
         disabled: false,
         hidden: true,
         iconCssClass: 'mdi mdi-flip-vertical',
-        positionOrder: 52,
         title: 'Toggle Filter Row',
       },
     ],

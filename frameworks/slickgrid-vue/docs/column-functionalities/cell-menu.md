@@ -30,19 +30,19 @@ columns.value = [
     cellMenu: {
       commandTitle: 'Commands', // optional title
       commandItems: [
-        // array of command item objects, you can also use the "positionOrder" that will be used to sort the items in the list
+        // Commands are displayed in array order; use commandListBuilder to reorder the final list.
         {
-          command: 'command1', title: 'Command 1', positionOrder: 61,
+          command: 'command1', title: 'Command 1',
           // you can use the "action" callback and/or use "onCommand" callback from the grid options, they both have the same arguments
           action: (e, args) => {
             console.log(args.dataContext, args.column); // action callback.. do something
           }
         },
-        { command: 'help', title: 'HELP', iconCssClass: 'mdi mdi-help-circle', positionOrder: 62 },
+        { command: 'help', title: 'HELP', iconCssClass: 'mdi mdi-help-circle' },
         // you can add sub-menus by adding nested `commandItems`
         {
          // we can also have multiple nested sub-menus
-         command: 'export', title: 'Exports', positionOrder: 99,
+         command: 'export', title: 'Exports',
          commandItems: [
            { command: 'exports-txt', title: 'Text (tab delimited)' },
            {

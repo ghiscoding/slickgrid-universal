@@ -16,9 +16,6 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
    */
   commandLabels?: HeaderMenuLabel;
 
-  /** @deprecated @use `commandListBuilder` to position order index of the "Filter Shortcuts" menu */
-  filterShortcutsPositionOrder?: number;
-
   /** A CSS class to be added to the menu item icon. */
   iconCssClass?: string;
 

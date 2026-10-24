@@ -39,7 +39,6 @@ const gridOptionMock = {
         disabled: false,
         hidden: true,
         iconCssClass: 'mdi mdi-sort-variant-off',
-        positionOrder: 51,
         title: 'Clear all Sorting',
       },
     ],

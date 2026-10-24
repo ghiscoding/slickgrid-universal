@@ -60,9 +60,6 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   init(cellMenuOptions?: CellMenu): void {
     this._addonOptions = { ...this._defaults, ...cellMenuOptions };
 
-    // sort all menu items by their position order when defined
-    this.sortMenuItems(this.grid.getColumns());
-
     this._eventHandler.subscribe(this.grid.onClick, this.handleCellClick.bind(this));
     this._eventHandler.subscribe(this.grid.onKeyDown, this.handleCellKeyDown.bind(this));
 
@@ -111,7 +108,12 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
       }
 
       // merge the cellMenu of the column definition with the default properties
-      this._addonOptions = { ...this._addonOptions, ...columnDef.cellMenu };
+      const { commandListBuilder, ...cellMenuOptions } = columnDef.cellMenu ?? {};
+      this._addonOptions = { ...this._addonOptions, ...cellMenuOptions };
+
+      const commandItems = columnDef.cellMenu?.commandItems ?? [];
+      const builder = commandListBuilder ?? this._addonOptions.commandListBuilder;
+      this._addonOptions.commandItems = (builder?.(commandItems) as Array<MenuCommandItem | 'divider'>) ?? commandItems;
 
       // run the override function (when defined), if the result is false it won't go further
       const menuArgs = (args || {}) as MenuCommandItemCallbackArgs;
@@ -160,19 +162,5 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
         );
       }
     }
-  }
-
-  // --
-  // protected functions
-  // ------------------
-
-  /** @deprecated Sort items (by pointers) in an array by a property name */
-  protected sortMenuItems(columns: Column[]): void {
-    // sort command items
-    columns.forEach((columnDef: Column) => {
-      if (columnDef?.cellMenu?.commandItems) {
-        this.extensionUtility.sortItems(columnDef.cellMenu.commandItems || [], 'positionOrder');
-      }
-    });
   }
 }
