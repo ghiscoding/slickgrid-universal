@@ -6,6 +6,7 @@ import type {
   MenuFromCellCallbackArgs,
   MenuItem,
 } from './index.js';
+import type { MenuDivider } from './menuCommandItem.interface.js';
 
 export interface MenuOption<T extends MenuFromCellCallbackArgs | GridMenuCommandItemCallbackArgs | HeaderMenuCommandItemCallbackArgs> {
   // --
@@ -34,7 +35,7 @@ export interface MenuOption<T extends MenuFromCellCallbackArgs | GridMenuCommand
    */
   commandListBuilder?: (
     builtInItems: Array<MenuCommandItem | GridMenuItem | 'divider'>
-  ) => Array<MenuCommandItem | GridMenuItem | 'divider'>;
+  ) => Array<MenuCommandItem | GridMenuItem | MenuDivider>;
 
   /**
    * Default slot renderer for all menu items.

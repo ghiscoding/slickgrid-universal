@@ -7,6 +7,7 @@ import type {
   MenuCommandItem,
   MenuOption,
 } from './index.js';
+import type { MenuDivider } from './menuCommandItem.interface.js';
 
 export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackArgs> {
   /** Defaults to true, Auto-align drop menu to the left or right depending on grid viewport available space */
@@ -29,7 +30,7 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
   commandTitleKey?: string;
 
   /** Array of command items (title, command, disabled, ...) */
-  commandItems?: Array<MenuCommandItem<GridMenuCommandItemCallbackArgs, GridMenuCallbackArgs> | 'divider'>;
+  commandItems?: Array<MenuCommandItem<GridMenuCommandItemCallbackArgs, GridMenuCallbackArgs> | MenuDivider<GridMenuCallbackArgs>>;
 
   /** Defaults to 0 (auto), minimum width of grid menu content (command, column list) */
   contentMinWidth?: number;

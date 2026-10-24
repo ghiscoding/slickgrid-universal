@@ -21,7 +21,7 @@ const removeExtraSpaces = (text: string) => `${text}`.replace(/[\n\r]\s+/g, '');
 const commandItemsMock = [
   { command: 'command1', title: 'Command 1', cssClass: 'orange' },
   { command: 'command2', title: 'Command 2' },
-  { divider: true, command: '' },
+  { divider: true as const },
   {
     command: 'delete-row',
     title: 'Delete Row',

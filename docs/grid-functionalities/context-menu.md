@@ -22,6 +22,9 @@ This extensions is wrapped around the new SlickGrid Plugin **SlickContextMenu**
 Technically, the Context Menu is enabled by default (copy, export) and so you don't have anything to do to enjoy it (you could disable it at any time). However, if you want to customize the content of the Context Menu, then continue reading. You can customize the menu with a list of commands and nested sub-menus.
 
 #### with Commands (Static)
+
+Command items require `command`. Dividers can use `{ divider: true }` without a command. For explicitly typed lists, use `Array<MenuCommandItem | MenuDivider>`.
+
 ```ts
 this.gridOptions = {
   enableFiltering: true,
@@ -31,7 +34,7 @@ this.gridOptions = {
     commandTitle: 'Commands', // optional, add title
     commandItems: [
       'divider',
-      { divider: true, command: '' },
+      { divider: true },
       {
         command: 'command1', title: 'Command 1',
         // you can use the "action" callback and/or use "onCommand" callback from the grid options, they both have the same arguments

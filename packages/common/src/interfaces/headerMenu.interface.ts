@@ -1,6 +1,7 @@
 import type { SlickEventData, SlickGrid } from '../core/index.js';
 import type { SlickHeaderMenu } from '../extensions/slickHeaderMenu.js';
 import type { Column, HeaderMenuOption, MenuCommandItem, MenuCommandItemCallbackArgs } from './index.js';
+import type { MenuDivider } from './menuCommandItem.interface.js';
 
 export type BuiltInHeaderMenuCommand =
   | 'clear-filter'
@@ -30,7 +31,7 @@ export interface HeaderMenuCommandItemCallbackArgs {
   grid: SlickGrid;
 
   /** html DOM element of the menu */
-  menu: Array<MenuCommandItem | 'divider'>;
+  menu: Array<MenuCommandItem | MenuDivider>;
 }
 
 export interface HeaderMenu extends HeaderMenuOption {

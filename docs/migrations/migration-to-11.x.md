@@ -16,6 +16,7 @@ The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor
 - [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors)
 - [Context Menu and Cell Menu options removed](#context-menu-and-cell-menu-options-removed)
 - [Menu command ordering](#menu-command-ordering)
+- [Menu divider typing](#menu-divider-typing)
 - [Remove Native API Fallbacks](#remove-native-api-fallbacks)
 - [Code Changes](#code-changes)
 - [`onBeforeAppendCell` event removed](#onbeforeappendcell-event-removed)
@@ -476,6 +477,10 @@ gridOptions = {
 ```
 
 Return items in the desired display order; no automatic numeric sorting is applied afterward. See the [v10 migration guide](migration-to-10.x.md#menu-with-commands-slot-renderer) for the original deprecation.
+
+## Menu divider typing
+
+Menu divider typing has been improved so that divider objects (`{ divider: true }`) no longer require a `command` property, while existing divider syntax remains fully supported.
 
 ## Final Note
 

@@ -12,6 +12,7 @@ import type {
   MenuCommandItemCallbackArgs,
   MenuFromCellCallbackArgs,
 } from '../interfaces/index.js';
+import type { MenuDivider } from '../interfaces/menuCommandItem.interface.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
@@ -108,7 +109,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
    */
   createMenu(
     triggeredByElm: HTMLElement,
-    commandItems: Array<MenuCommandItem | 'divider'>,
+    commandItems: Array<MenuCommandItem | MenuDivider>,
     level = 0,
     item?: ExtractMenuType<ExtendableItemTypes, MenuType>
   ): HTMLDivElement | undefined {
@@ -341,7 +342,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
           this.closeMenu(event, { cell, row, grid: this.grid });
         }
       } else {
-        this.repositionSubMenu(item as MenuCommandItem | 'divider', type, level, event);
+        this.repositionSubMenu(item as MenuCommandItem | MenuDivider, type, level, event);
       }
       this._lastMenuTypeClicked = type;
     }

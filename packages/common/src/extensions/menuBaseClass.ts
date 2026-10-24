@@ -31,6 +31,7 @@ import type {
   HeaderMenuOption,
   MenuCommandItem,
 } from '../interfaces/index.js';
+import type { MenuDivider } from '../interfaces/menuCommandItem.interface.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { wireMenuKeyboardNavigation } from './keyboardNavigation.js';
@@ -365,8 +366,8 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
   protected addMissingCommandOrAction<T extends MenuCommandItem | GridMenuItem>(
     builtInMenuItem: T | 'divider',
     hideCommands: string[] = [],
-    targetMenuItems: Array<T | 'divider'>,
-    originalMenuItems?: Array<T | 'divider'>
+    targetMenuItems: Array<T | MenuDivider<any>>,
+    originalMenuItems?: Array<T | MenuDivider<any>>
   ): void {
     // remove any commands that the user doesn't want
     if (builtInMenuItem !== 'divider' && !hideCommands.includes(builtInMenuItem.command)) {

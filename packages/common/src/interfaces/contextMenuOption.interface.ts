@@ -1,5 +1,6 @@
 import type { ContextMenuLabel } from './contextMenuLabel.interface.js';
 import type { MenuCommandItem, MenuFromCellCallbackArgs, MenuOption } from './index.js';
+import type { MenuDivider } from './menuCommandItem.interface.js';
 
 export interface ContextMenuOption extends MenuOption<MenuFromCellCallbackArgs> {
   /** Defaults to true, Auto-align dropup or dropdown menu to the left or right depending on grid viewport available space */
@@ -15,7 +16,7 @@ export interface ContextMenuOption extends MenuOption<MenuFromCellCallbackArgs> 
   autoAlignSideOffset?: number;
 
   /** Array of Command Items (title, command, disabled, ...) */
-  commandItems?: Array<MenuCommandItem | 'divider'>;
+  commandItems?: Array<MenuCommandItem | MenuDivider>;
 
   /**
    * All the commands text labels
