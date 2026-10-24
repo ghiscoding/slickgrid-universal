@@ -71,14 +71,11 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
 
     // merge the original commands with the built-in internal commands
     const originalCommandItems = Array.isArray(this._addonOptions?.commandItems) ? this._addonOptions.commandItems : [];
-    const initialCommandItems = [...originalCommandItems, ...this.addMenuCustomCommands(originalCommandItems)];
+    const initialCommandItems = [...this.addMenuCustomCommands(originalCommandItems), ...originalCommandItems];
     this._addonOptions.commandItems =
       (this._addonOptions.commandListBuilder?.(initialCommandItems) as Array<MenuCommandItem | 'divider'>) ?? initialCommandItems;
     this._addonOptions = { ...this._addonOptions };
     this.sharedService.gridOptions.contextMenu = this._addonOptions;
-
-    // sort all menu items by their position order when defined
-    this.sortMenuItems();
 
     this._eventHandler.subscribe(this.grid.onContextMenu, this.handleOnContextMenu.bind(this));
     this._eventHandler.subscribe(this.grid.onClick, this.hideMenu.bind(this));
@@ -173,7 +170,6 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           titleKey: `${translationPrefix}COPY`,
           disabled: false,
           command: 'copy',
-          positionOrder: 50,
           action: (_e, args) => copyCellToClipboard(args as MenuCommandItemCallbackArgs),
           itemUsabilityOverride: (args: MenuCallbackArgs) => isDefined(getCopyCellValue(args)),
         },
@@ -192,7 +188,6 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           titleKey: `${translationPrefix}EXPORT_TO_CSV`,
           disabled: false,
           command: 'export-csv',
-          positionOrder: 51,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
             // prettier-ignore
@@ -221,7 +216,6 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           titleKey: `${translationPrefix}EXPORT_TO_EXCEL`,
           disabled: false,
           command: 'export-excel',
-          positionOrder: 52,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
             // prettier-ignore
@@ -250,7 +244,6 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           titleKey: `${translationPrefix}EXPORT_TO_PDF`,
           disabled: false,
           command: 'export-pdf',
-          positionOrder: 53,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
             // prettier-ignore
@@ -279,7 +272,6 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           titleKey: `${translationPrefix}EXPORT_TO_TAB_DELIMITED`,
           disabled: false,
           command: 'export-text-delimited',
-          positionOrder: 54,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
             // prettier-ignore
@@ -303,7 +295,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     if (gridOptions && (gridOptions.enableGrouping || gridOptions.enableDraggableGrouping || gridOptions.enableTreeData)) {
       // add a divider (separator) between the top sort commands and the other clear commands
       if (contextMenu && !contextMenu.hideCommands?.includes('copy')) {
-        menuCommandItems.push({ divider: true, command: 'divider-1', positionOrder: 54 });
+        menuCommandItems.push({ divider: true, command: 'divider-1' });
       }
 
       // show context menu: Clear Grouping (except for Tree Data which shouldn't have this feature)
@@ -315,7 +307,6 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             titleKey: `${translationPrefix}CLEAR_ALL_GROUPING`,
             disabled: false,
             command: 'clear-grouping',
-            positionOrder: 56,
             action: () => {
               dataView.setGrouping([]);
               this.pubSubService.publish('onContextMenuClearGrouping');
@@ -341,7 +332,6 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             titleKey: `${translationPrefix}COLLAPSE_ALL_GROUPS`,
             disabled: false,
             command: 'collapse-all-groups',
-            positionOrder: 57,
             action: () => {
               if (gridOptions.enableTreeData) {
                 this.treeDataService.toggleTreeDataCollapse(true);
@@ -374,7 +364,6 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             titleKey: `${translationPrefix}EXPAND_ALL_GROUPS`,
             disabled: false,
             command: 'expand-all-groups',
-            positionOrder: 58,
             action: () => {
               if (gridOptions.enableTreeData) {
                 this.treeDataService.toggleTreeDataCollapse(false);
@@ -401,13 +390,5 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
 
     this.extensionUtility.translateMenuItemsFromTitleKey(menuCommandItems);
     return menuCommandItems;
-  }
-
-  /** @deprecated sort all menu items by their position order when defined */
-  protected sortMenuItems(): void {
-    const contextMenu = this.sharedService?.gridOptions?.contextMenu;
-    if (contextMenu) {
-      this.extensionUtility.sortItems(contextMenu.commandItems || [], 'positionOrder');
-    }
   }
 }

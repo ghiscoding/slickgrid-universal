@@ -1,6 +1,6 @@
 import type { MenuCommandItem, MenuFromCellCallbackArgs, MenuOption } from './index.js';
 
-export interface CellMenuOption extends Omit<MenuOption<MenuFromCellCallbackArgs>, 'commandListBuilder'> {
+export interface CellMenuOption extends MenuOption<MenuFromCellCallbackArgs> {
   /** Defaults to true, Auto-align dropup or dropdown menu to the left or right depending on grid viewport available space */
   autoAdjustDrop?: boolean;
 

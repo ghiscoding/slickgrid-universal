@@ -216,12 +216,12 @@ const treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid
   if (data[idx + 1] && data[idx + 1][treeLevelPropName] > data[idx][treeLevelPropName]) {
     const folderPrefix = `<i class="mdi icon ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
     if (dataContext.__collapsed) {
-      return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
+      return `${spacer} <span class="slick-tree-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
     } else {
-      return `${spacer} <span class="slick-group-toggle expanded" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
+      return `${spacer} <span class="slick-tree-toggle expanded" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
     }
   } else {
-    return `${spacer} <span class="slick-group-toggle" level="${dataContext[treeLevelPropName]}"></span>${prefix}&nbsp;${value}`;
+    return `${spacer} <span class="slick-tree-toggle" level="${dataContext[treeLevelPropName]}"></span>${prefix}&nbsp;${value}`;
   }
 }
 ```

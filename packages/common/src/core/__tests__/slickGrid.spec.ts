@@ -2276,6 +2276,39 @@ describe('SlickGrid core file', () => {
       expect(firstCellElm?.classList.contains('l0')).toBeTruthy();
       expect(firstCellElm?.classList.contains(`r${columns.length - 1}`)).toBeTruthy();
     });
+
+    it('should not render hidden column cells in group totals rows but still render group title cell defined by column metadata', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+        { id: 'age', field: 'age', name: 'Age' },
+      ] as Column[];
+      const items = [
+        { id: 0, firstName: 'Group', lastName: '', age: 0 },
+        { id: 1, firstName: 'Totals', lastName: '', age: 58 },
+      ];
+      const metadata = [
+        { cssClasses: 'slick-group', isGroup: true, columns: { 0: { colspan: '*', formatter: () => 'Group A' } } },
+        { cssClasses: 'slick-group-totals', isGroup: true },
+      ];
+      const customDV = { getItemMetadata: (row: number) => metadata[row], getLength: () => items.length, getItem: (row: number) => items[row] };
+
+      grid = new SlickGrid<any, Column>(container, customDV as any, columns, defaultOptions);
+      grid.init();
+      const assertCells = () => {
+        const groupRowElm = container.querySelector('[data-row="0"]')!;
+        const totalsRowElm = container.querySelector('[data-row="1"]')!;
+        expect(groupRowElm.querySelector('.l0')?.textContent).toBe('Group A');
+        expect(groupRowElm.querySelector('.l1')).toBeNull();
+        expect(totalsRowElm.querySelector('.l0')).toBeNull();
+        expect(totalsRowElm.querySelector('.l1')).toBeNull();
+        expect(totalsRowElm.querySelector('.l2')).toBeTruthy();
+      };
+
+      assertCells();
+      (grid as any).cleanUpAndRenderCells(grid.getRenderedRange());
+      assertCells();
+    });
   });
 
   describe('getFormatter()', () => {

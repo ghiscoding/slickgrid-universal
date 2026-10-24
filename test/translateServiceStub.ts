@@ -117,16 +117,16 @@ export class TranslateServiceStub implements TranslaterService {
         output = this._locale === 'en' ? 'Column Pinning' : 'Épinglage de colonne';
         break;
       case 'PIN_COLUMNS_LEFT':
-        output = this._locale === 'en' ? 'Pin Columns Left' : 'Épingler les colonnes à gauche';
+        output = this._locale === 'en' ? 'Pin Left Through Here' : 'Épingler à gauche jusqu’ici';
         break;
       case 'PIN_COLUMNS_RIGHT':
-        output = this._locale === 'en' ? 'Pin Columns Right' : 'Épingler les colonnes à droite';
+        output = this._locale === 'en' ? 'Pin From Here To Right' : 'Épingler à droite à partir d’ici';
         break;
       case 'PIN_LEFT':
-        output = this._locale === 'en' ? 'Pin Left' : 'Épingler à gauche';
+        output = this._locale === 'en' ? 'Pin to Left' : 'Épingler à gauche';
         break;
       case 'PIN_RIGHT':
-        output = this._locale === 'en' ? 'Pin Right' : 'Épingler à droite';
+        output = this._locale === 'en' ? 'Pin to Right' : 'Épingler à droite';
         break;
       case 'UNPIN_COLUMN':
         output = this._locale === 'en' ? 'Unpin Column' : 'Désépingler la colonne';

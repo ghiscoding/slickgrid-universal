@@ -1,31 +1,37 @@
-## Single-viewport pinning rewrite
+## Single-viewport Pinning rewrite
 
-SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer and single-scrollbar. Frozen columns/rows is being replaced by a new Pinnning feature and as a bonus we also have a new Sticky columns/rows.
+SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer and a single scrollbar. Frozen columns/rows are replaced by the new Pinning feature, and v11 also adds new Sticky columns/rows.
 
-The old `frozenColumn`, `frozenRow`, and `frozenBottom` options are no longer valid and users have to migrate to the new `pinning` grid option. The new Pinning feature allows you to pin any single column, the column index no longer matters and it's no longer a frozen range but is rather individual pinning (hence the new name). Update your grid options, persisted grid state.
+The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor of the new `pinning` grid option. Pinning applies to individual columns, regardless of their index, instead of a contiguous frozen range. Update your grid options and persisted grid state accordingly.
 
-#### Major Changes - Quick Summary
+### Major Changes - Quick Summary
 
 - Angular v22+ is now required
 - [ngx-translate@v18](#ngx-translate-v18.x-is-now-required)
 - [Remove SortableJS](#remove-sortablejs)
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
 - [Migrate Grid State and Presets](#grid-state-and-presets)
-- [Import optional package styles separately](#import-optional-package-styles-separately)
+- [Update single-viewport DOM and CSS selectors](#single-viewport-dom-and-css)
+- [Replace menu `hide...` flags with `hideCommands`](#menu-command-visibility)
+- [Removed Code](#removed-code)
 - [Remove row positioning and Row Detail rendering options](#row-positioning-rowtopoffsetrendertype)
 - [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors)
 - [Context Menu and Cell Menu options removed](#context-menu-and-cell-menu-options-removed)
-- [Removed Deprecated Code](#removed-deprecated-code)
-- [Excluded columns are no longer rendered in column lists](#excluded-columns-are-no-longer-rendered-in-column-lists)
+- [Menu command ordering](#menu-command-ordering)
+- [Remove Native API Fallbacks](#remove-native-api-fallbacks)
 - [Code Changes](#code-changes)
 - [`onBeforeAppendCell` event removed](#onbeforeappendcell-event-removed)
+- [Excluded columns are no longer rendered in column lists](#excluded-columns-are-no-longer-rendered-in-column-lists)
+- [Import optional package styles separately](#import-optional-package-styles-separately)
+- [Row Detail package renamed](#row-detail-package-renamed)
 - [New `iconSet` grid option for the Fluent theme](#new-iconset-grid-option-for-the-fluent-theme)
+- [Context Menu and Cell Menu options removed](#context-menu-and-cell-menu-options-removed)
 
 > **Note:** If you are upgrading from a version earlier than v10, follow the previous migration guides in order before applying these v11 changes.
 
 > **Important:** v11 does not support the old frozen-pane options or renderer.
 
-Also note that we also have a new Sticky docking that was also introduced in v11, it shares similarities with Pinning, but it is an entirely new feature. See the [Sticky Docking guide](../grid-functionalities/sticky.md) for its configuration and behavior.
+v11 also introduces Sticky docking, a separate feature that shares similarities with Pinning. See the [Sticky Docking guide](../grid-functionalities/sticky.md) for its configuration and behavior.
 
 ## Angular Related Changes
 
@@ -68,7 +74,7 @@ const gridOptions: GridOption = {
 
 For `frozenBottom: true`, map the frozen rows to `pinning.rows.bottom` instead. See the [Pinning guide](../grid-functionalities/pinning.md) for the new option shape and accepted references.
 
-### Column pinning
+### Column Pinning
 
 Use `Column.pinned` for configured column pins and `Column.pinnable: false` to hide pinning commands for that column. See the [Pinning guide](../grid-functionalities/pinning.md) for the column options.
 
@@ -97,6 +103,8 @@ pinning: {
 Map the old inclusive column boundary to `columns.left`. Convert each frozen row count to explicit row indexes or dataset IDs under `rows.top` or `rows.bottom`, according to `frozenBottom`. See [Grid State and Presets](../grid-functionalities/grid-state-preset.md) for the v11 state shape.
 
 ### Header Menu commands
+
+The two frozen-column validation callbacks are merged into a single `errorCallback` grid option:
 
 ```diff
 const gridOptions: GridOption = {
@@ -134,7 +142,7 @@ const gridOptions: GridOption = {
 };
 ```
 
-The pinning command menu is now enabled by default. To hide it, add `'pinning-commands'` to `headerMenu.hideCommands`. See the [Pinning guide](../grid-functionalities/pinning.md#header-menu-commands) for the command details.
+The Pinning command menu is now enabled by default. To hide it, add `'pinning-commands'` to `headerMenu.hideCommands`. See the [Pinning guide](../grid-functionalities/pinning.md#header-menu-commands) for the command details.
 
 #### Translation keys
 
@@ -143,10 +151,10 @@ If you use a Translate Service (e.g. i18n), rename the frozen translation keys i
 | v10 key            | v11 key                                    | Default English text                   |
 | ------------------ | ------------------------------------------ | -------------------------------------- |
 | `CLEAR_PINNING`    | `CLEAR_ALL_PINNING`                        | Clear all Pinning                      |
-| `FREEZE_COLUMNS`   | `PIN_COLUMNS_LEFT` and `PIN_COLUMNS_RIGHT` | Pin Columns Left / Pin Columns Right   |
+| `FREEZE_COLUMNS`   | `PIN_COLUMNS_LEFT` and `PIN_COLUMNS_RIGHT` | Pin Left Through Here / Pin From Here To Right   |
 | `UNFREEZE_COLUMNS` | `UNPIN_COLUMNS`                            | Unpin All Columns                      |
 | _(new)_            | `PIN_COLUMN`                               | Column Pinning                         |
-| _(new)_            | `PIN_LEFT` and `PIN_RIGHT`                 | Pin Left / Pin Right                   |
+| _(new)_            | `PIN_LEFT` and `PIN_RIGHT`                 | Pin to Left / Pin to Right                   |
 | _(new)_            | `UNPIN_COLUMN`                             | Unpin Column                           |
 
 ```diff
@@ -156,10 +164,10 @@ If you use a Translate Service (e.g. i18n), rename the frozen translation keys i
 - "UNFREEZE_COLUMNS": "Unfreeze Columns",
 + "CLEAR_ALL_PINNING": "Clear all Pinning",
 + "PIN_COLUMN": "Column Pinning",
-+ "PIN_COLUMNS_LEFT": "Pin Columns Left",
-+ "PIN_COLUMNS_RIGHT": "Pin Columns Right",
-+ "PIN_LEFT": "Pin Left",
-+ "PIN_RIGHT": "Pin Right",
++ "PIN_COLUMNS_LEFT": "Pin Left Through Here",
++ "PIN_COLUMNS_RIGHT": "Pin From Here To Right",
++ "PIN_LEFT": "Pin to Left",
++ "PIN_RIGHT": "Pin to Right",
 + "UNPIN_COLUMN": "Unpin Column",
 + "UNPIN_COLUMNS": "Unpin All Columns",
 }
@@ -240,11 +248,11 @@ Replace the removed per-command `hide...` flags in `gridMenu`, `contextMenu`, an
 
 Since `menuFormats` applies to both menus, use `hideCommands: ['export-text-delimited']` in either menu to keep it hidden there.
 
-**Defaults:** `hideCommands` always takes precedence, even over the 2 exceptions above (e.g. `hideCommands: ['toggle-dark-mode']` wins over `showToggleDarkModeCommand: true`). Feature/resource requirements and `commandListBuilder` behavior are unchanged; visibility is applied before the builder.
+**Precedence:** `hideCommands` always takes precedence, even over the 2 exceptions above (e.g. `hideCommands: ['toggle-dark-mode']` wins over `showToggleDarkModeCommand: true`). Feature/resource requirements and `commandListBuilder` behavior are unchanged; visibility is applied before the builder.
 
 **Array replacement:** Supplied `hideCommands` and `textExportOptions.menuFormats` lists now replace inherited/previous lists, including in `grid.setOptions()`, instead of merging by index. Omit a property to preserve its value; use `[]` to clear it.
 
-| Removed option | Command IDs |
+| Removed option | Command ID to add to `hideCommands` |
 | --- | --- |
 | `hideClearAllFiltersCommand` | `clear-filter` |
 | `hideClearAllSortingCommand` | `clear-sorting` |
@@ -268,7 +276,7 @@ Since `menuFormats` applies to both menus, use `hideCommands: ['export-text-deli
 | `hideSortCommands` | `sort-commands` (or `sort-asc`, `sort-desc`, `clear-sort` individually) |
 | `hideColumnHideCommand` | `hide-column` |
 
-## Removed Deprecated Code
+## Removed Code
 
 ### DataView CSP options and types removed
 
@@ -307,7 +315,7 @@ Remove unused `ExtensionName` imports after replacing the enum values. If you us
 
 ### Row Positioning `rowTopOffsetRenderType`
 
-For Row Detail and RowSpan users that previously required `rowTopOffsetRenderType: 'top'`, no longer require this grid option and is actually being dropped completely. The library now works fine with `rowTopOffsetRenderType: 'transform'` with all plugins, making this option redundant which is why it is being removed. Also please note that the Row Detail `renderMode` option is also removed for the same reason (overlay is now its default positioning).
+The `rowTopOffsetRenderType` grid option has been removed. Row Detail and RowSpan previously required `rowTopOffsetRenderType: 'top'`, but all plugins now work with transform-based positioning, which makes this option redundant. For the same reason, the Row Detail `renderMode` option was also removed, and overlay is now the only rendering mode.
 
 ```diff
 const gridOptions: GridOption = {
@@ -319,11 +327,11 @@ const gridOptions: GridOption = {
 };
 ```
 
-Grid row positioning now strictly uses `transform: translateY(25px)` (the legacy approach was `top: 25px`) for better precisions and scrolling performance. RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
+Grid row positioning now strictly uses `transform: translateY(25px)` (the legacy approach was `top: 25px`) for better precision and scrolling performance. RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
 
 ### Row Detail DOM and CSS selectors
 
-After identifying that Row Detail has way too many containers and redundant CSS classes, v11 removes them to simplify the DOM. Update custom CSS and DOM selectors accordingly.
+v11 simplifies the Row Detail DOM by removing redundant containers and CSS classes. Update your custom CSS and DOM selectors accordingly.
 
 ```diff
 -<div class="slick-row-detail-overlay">
@@ -339,6 +347,18 @@ After identifying that Row Detail has way too many containers and redundant CSS 
  </div>
 ```
 
+### Remove Native API Fallbacks
+
+Previous releases included fallbacks for native APIs blocked by some restricted environments (e.g. Salesforce Locker Service). These fallbacks are no longer needed (e.g. Salesforce LWS is now the default), so the following are removed:
+
+- Clipboard API: drop `clipboardWriteOverride` callback and use native Clipboard API
+- queueMicrotask: drop `queueMicrotaskPolyfill` util and use native `queueMicrotask`
+- Composite Editor: strictly use `<dialog>` and drop `CompositeEditorOption.domElementType: 'div' | 'dialog'`
+
+### Tree Formatter - remove unrelated CSS class
+
+The Tree Formatter originally used the `.slick-group-toggle` class, which is unrelated to grouping. In version 10 the dedicated `.slick-tree-toggle` class was introduced in order to transition to only the new class name. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling and tests if necessary.
+
 ## Code Changes
 
 ### `onBeforeAppendCell` event removed
@@ -352,7 +372,7 @@ The `onBeforeAppendCell` event and its `(onBeforeAppendCell)` output were remove
 
 ### Excluded columns are no longer rendered in column lists
 
-Grid Menu and Column Picker options that are defined with `excludeFromColumnPicker: true` or `excludeFromGridMenu: true` are now omitted from the respective menu's DOM instead of rendered with the `.hidden` CSS class. **For most users, this change is transparent and requires no action.**
+Columns defined with `excludeFromColumnPicker: true` or `excludeFromGridMenu: true` are now omitted from the respective menu's DOM instead of being rendered with the `.hidden` CSS class. **For most users, this change is transparent and requires no action.**
 
 If you use Cypress or Playwright E2E tests, update any selectors or item counts that relied on those hidden entries. Assert that excluded checkboxes do not exist instead of checking that they are hidden. Custom `columnSort` and `columnListBuilder` callbacks also now receive only eligible columns.
 
@@ -367,7 +387,11 @@ The method now describes its responsibility more accurately: it applies visibili
 
 ### Import optional package styles separately
 
-In v11, styles for optional packages moved out of the common theme stylesheets so applications do not load CSS for features they do not use. If your application uses Composite Editor, Custom Tooltip, or Row Detail, add the corresponding package as a direct dependency and import its stylesheet after the common theme. Import only the packages used by your application. If you use any of these 3 optional packages, then you now have to import (or `@use`) these CSS or SCSS files.
+In v11, styles for optional packages moved out of the common theme stylesheets so applications don't load CSS for unused features. If you use Composite Editor, Custom Tooltip, or Row Detail, add the package as a direct dependency and import (or `@use`) its stylesheet after the common theme.
+
+{% hint style="warning" %}
+**Important:** if you use Composite Editor, Custom Tooltip, or Row Detail, make sure to import its stylesheet, otherwise its styling will be broken.
+{% endhint %}
 
 {% hint style="note" %}
 This change reduces build size by keeping styles for unused features out of your builds. It also establishes a pattern for upcoming features such as Excel Formulas and Column Formulas: their CSS will ship with their feature packages instead of the base `@slickgrid-universal/common` package, so applications include those styles only when they use the features.
@@ -396,7 +420,9 @@ first. This lets package styles use the theme's configured Sass variables:
 @use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail.scss';
 ```
 
-The base Row Detail package was also renamed from `@slickgrid-universal/row-detail-view-plugin` to
+### Row Detail package renamed
+
+The base Row Detail package was renamed from `@slickgrid-universal/row-detail-view-plugin` to
 `@slickgrid-universal/row-detail-plugin`, and its stylesheet entry was shortened from
 `slick-row-detail-view` to `slick-row-detail`. Update the dependency, TypeScript imports, and any
 stylesheet paths that use the old names. The Angular, Aurelia, React, and Vue adapter package names
@@ -421,10 +447,6 @@ gridOptions = {
 - },
 };
 ```
-
-## Final Note
-
-If the project is useful to you, please give it a star ⭐ on the [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) umbrella project.
 
 ## Context Menu and Cell Menu options removed
 
@@ -453,3 +475,27 @@ const contextMenu = { commandItems: completedCommands };
 // Column definition: Cell Menu
 const cellMenu = { commandItems: completedCommands };
 ```
+
+
+## Menu command ordering
+
+The deprecated `positionOrder` property has been removed from all menu items in v11. Header Menu's `filterShortcutsPositionOrder` has also been removed. Use `commandListBuilder` to reorder the final command list, including built-in commands. Cell Menu and nested `commandItems` lists can be ordered directly in their arrays.
+
+For example, move the Grid Menu's CSV export command to the top while retaining its built-in action:
+
+```ts
+gridOptions = {
+  gridMenu: {
+    commandListBuilder: (items) => [
+      ...items.filter(item => item !== 'divider' && item.command === 'export-csv'),
+      ...items.filter(item => item === 'divider' || item.command !== 'export-csv'),
+    ],
+  },
+};
+```
+
+Return items in the desired display order; no automatic numeric sorting is applied afterward. See the [v10 migration guide](migration-to-10.x.md#menu-with-commands-slot-renderer) for the original deprecation.
+
+## Final Note
+
+If the project is useful to you, please give it a star ⭐ on the [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) umbrella project.

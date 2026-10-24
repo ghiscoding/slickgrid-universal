@@ -83,19 +83,9 @@ describe('Example 14 - Columns Resize by Content', () => {
     it('should open the "Product" header menu and click on "Resize by Content" and expect the column to become wider and show all text', () => {
       cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.lt', 120);
 
-      cy.get('.grid14')
-        .find('.slick-header-column:nth-of-type(10)')
-        .trigger('mouseover')
-        .children('.slick-header-menu-button')
-        .invoke('show')
-        .click();
+      cy.get('.slick-header-column:nth-of-type(10)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
-      cy.get('.slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
-        .children('.slick-menu-content')
-        .should('contain', 'Resize by Content')
-        .click();
+      cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Resize by Content').click();
 
       cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 120);
     });

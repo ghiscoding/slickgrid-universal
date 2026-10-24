@@ -864,7 +864,7 @@ describe('Example 11 - Batch Editing', () => {
         .should('contain', 'Column Pinning')
         .click();
 
-      cy.get('.slick-submenu [data-command="pin-columns-left"]').should('be.visible').and('contain', 'Pin Columns Left').click();
+      cy.get('.slick-submenu [data-command="pin-columns-left"]').should('be.visible').and('contain', 'Pin Left Through Here').click();
     });
 
     it('should have one docked row with 3 pinned columns and 8 scrolling columns', () => {
@@ -1110,7 +1110,7 @@ describe('Example 11 - Batch Editing', () => {
         .should('contain', 'Column Pinning')
         .click();
 
-      cy.get('.slick-submenu [data-command="pin-columns-left"]').should('be.visible').and('contain', 'Pin Columns Left').click();
+      cy.get('.slick-submenu [data-command="pin-columns-left"]').should('be.visible').and('contain', 'Pin Left Through Here').click();
     });
 
     it('should hide "Duration" and "Country of Origin" columns and Save as a New View', () => {

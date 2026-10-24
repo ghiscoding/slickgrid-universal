@@ -235,11 +235,10 @@ const Example20: React.FC = () => {
       hideCloseButton: true,
       dropSide: 'right',
       commandItems: [
-        { command: '', divider: true, positionOrder: 98 },
+        { command: '', divider: true },
         {
           command: 'export',
           title: 'Exports',
-          positionOrder: 99,
           commandItems: [
             { command: 'exports-txt', title: 'Text (tab delimited)' },
             {
@@ -256,7 +255,6 @@ const Example20: React.FC = () => {
         {
           command: 'feedback',
           title: 'Feedback',
-          positionOrder: 100,
           commandItems: [
             { command: 'request-update', title: 'Request update from supplier' },
             'divider',

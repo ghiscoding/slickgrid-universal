@@ -1,5 +1,4 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
-import { queueMicrotaskPolyfill } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { SlickEventHandler } from '../core/slickCore.js';
 import { type SlickDataView } from '../core/slickDataView.js';
@@ -110,12 +109,6 @@ export class GridStateService {
 
       this.updateColumnDefinitionsList(newArrangedColumns, triggerAutoSizeColumns, triggerColumnsFullResizeByContent);
     }
-  }
-
-  /** @deprecated @use `applyColumnLayout()` instead. This alias will be removed in v11. */
-  // prettier-ignore
-  changeColumnsArrangement(definedColumns: CurrentColumn[], triggerAutoSizeColumns = true, triggerColumnsFullResizeByContent = false): void {
-    this.applyColumnLayout(definedColumns, triggerAutoSizeColumns, triggerColumnsFullResizeByContent);
   }
 
   /** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
@@ -709,7 +702,7 @@ export class GridStateService {
       });
     };
 
-    this._eventHandler.subscribe(grid.onSetOptions, () => queueMicrotaskPolyfill(publishPinningChange));
+    this._eventHandler.subscribe(grid.onSetOptions, () => queueMicrotask(publishPinningChange));
     this._eventHandler.subscribe(grid.onAfterUpdateColumns, publishPinningChange);
   }
 

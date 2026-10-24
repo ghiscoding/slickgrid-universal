@@ -52,7 +52,6 @@ const gridOptionMock = {
         command: 'clear-filter',
         disabled: false,
         iconCssClass: 'mdi mdi-filter-remove-outline',
-        positionOrder: 50,
         title: 'Clear all Filters',
       },
       {
@@ -60,7 +59,6 @@ const gridOptionMock = {
         disabled: false,
         hidden: true,
         iconCssClass: 'mdi mdi-flip-vertical',
-        positionOrder: 52,
         title: 'Toggle Filter Row',
       },
     ],
@@ -644,7 +642,7 @@ describe('FilterService', () => {
           { id: 'field2', field: 'field2', width: 100 },
         ];
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-        vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+        vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(mockColumns);
       });
 
       it('should clear all the Filters when the query response is a string', async () => {
@@ -663,7 +661,7 @@ describe('FilterService', () => {
         expect(service.getColumnFilters()).toEqual({});
         expect(spyFilterChange).not.toHaveBeenCalled();
         expect(spyEmitter).not.toHaveBeenCalled();
-        expect(sharedService.columnDefinitions[0].filter!.searchTerms).toBeUndefined();
+        expect(sharedService.columns[0].filter!.searchTerms).toBeUndefined();
       });
 
       it('should execute the "onError" method when the Promise throws an error', async () => {
@@ -1943,7 +1941,7 @@ describe('FilterService', () => {
       const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
       const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.disableFilterFunctionality();
@@ -1973,7 +1971,7 @@ describe('FilterService', () => {
       const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
       const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.disableFilterFunctionality(false);
@@ -2002,7 +2000,7 @@ describe('FilterService', () => {
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
       const setColsSpy = vi.spyOn(gridStub, 'setColumns');
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.disableFilterFunctionality(false);
@@ -2027,7 +2025,7 @@ describe('FilterService', () => {
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
       const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.toggleFilterFunctionality();

@@ -194,11 +194,10 @@ const Example24: React.FC = () => {
           // else use title without the suffix, for example "commandTitle" (no translations) or "commandTitleKey" (with translations)
           commandTitleKey: 'COMMANDS', // optional title, use "commandTitle" when not using I18N
           commandItems: [
-            // array of command item objects, you can also use the "positionOrder" that will be used to sort the items in the list
+            { command: 'command1', title: 'Command 1', cssClass: 'orange' },
             {
               command: 'command2',
               title: 'Command 2',
-              positionOrder: 62,
               // you can use the "action" callback and/or use "onCallback" callback from the grid options, they both have the same arguments
               action: (_e, args) => {
                 console.log(args.dataContext, args.column);
@@ -209,11 +208,10 @@ const Example24: React.FC = () => {
                 return !args.dataContext.completed;
               },
             },
-            { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
+            { divider: true, command: '' },
             {
               command: 'delete-row',
               titleKey: 'DELETE_ROW',
-              positionOrder: 64,
               iconCssClass: 'mdi mdi-close',
               cssClass: 'red',
               textCssClass: 'bold',
@@ -222,24 +220,19 @@ const Example24: React.FC = () => {
                 return !args.dataContext.completed;
               },
             },
-            // you can pass divider as a string or an object with a boolean (if sorting by position, then use the object)
-            // note you should use the "divider" string only when items array is already sorted and positionOrder are not specified
-            { divider: true, command: '', positionOrder: 63 },
             // 'divider',
 
             {
               command: 'help',
               titleKey: 'HELP', // use "title" without translation and "titleKey" with TranslateService
               iconCssClass: 'mdi mdi-help-circle',
-              positionOrder: 66,
             },
-            { command: 'something', titleKey: 'DISABLED_COMMAND', disabled: true, positionOrder: 67 },
-            { command: '', divider: true, positionOrder: 98 },
+            { command: 'something', titleKey: 'DISABLED_COMMAND', disabled: true },
+            { command: '', divider: true },
             {
               // we can also have multiple nested sub-menus
               command: 'export',
               title: 'Exports',
-              positionOrder: 99,
               commandItems: [
                 { command: 'exports-txt', title: 'Text (tab delimited)' },
                 {
@@ -258,7 +251,6 @@ const Example24: React.FC = () => {
             {
               command: 'feedback',
               title: 'Feedback',
-              positionOrder: 100,
               commandItems: [
                 {
                   command: 'request-update',
@@ -397,24 +389,20 @@ const Example24: React.FC = () => {
       commandShownOverColumnIds: ['id', 'title', 'percentComplete', 'start', 'finish', 'completed' /* , 'priority', 'action' */],
       commandTitleKey: 'COMMANDS', // this title is optional, you could also use "commandTitle" when not using I18N
       commandItems: [
-        { divider: true, command: '', positionOrder: 61 },
+        { divider: true, command: '' },
         {
           command: 'delete-row',
           titleKey: 'DELETE_ROW',
           iconCssClass: 'mdi mdi-close',
           cssClass: 'red',
           textCssClass: 'bold',
-          positionOrder: 62,
         },
-        // you can pass divider as a string or an object with a boolean (if sorting by position, then use the object)
-        // note you should use the "divider" string only when items array is already sorted and positionOrder are not specified
         // 'divider',
-        { divider: true, command: '', positionOrder: 63 },
+        { divider: true, command: '' },
         {
           command: 'help',
           titleKey: 'HELP',
           iconCssClass: 'mdi mdi-help-circle',
-          positionOrder: 64,
           // you can use the 'action' callback and/or subscribe to the 'onCallback' event, they both have the same arguments
           action: () => {
             // action callback.. do something
@@ -425,13 +413,12 @@ const Example24: React.FC = () => {
             return !dataContext.completed;
           },
         },
-        { command: 'something', titleKey: 'DISABLED_COMMAND', disabled: true, positionOrder: 65 },
-        { command: '', divider: true, positionOrder: 98 },
+        { command: 'something', titleKey: 'DISABLED_COMMAND', disabled: true },
+        { command: '', divider: true },
         {
           // we can also have multiple nested sub-menus
           command: 'export',
           title: 'Exports',
-          positionOrder: 99,
           commandItems: [
             { command: 'exports-txt', title: 'Text (tab delimited)' },
             {
@@ -450,7 +437,6 @@ const Example24: React.FC = () => {
         {
           command: 'feedback',
           title: 'Feedback',
-          positionOrder: 100,
           commandItems: [
             {
               command: 'request-update',

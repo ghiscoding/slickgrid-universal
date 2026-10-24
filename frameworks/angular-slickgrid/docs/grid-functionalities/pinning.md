@@ -35,10 +35,10 @@ The pinning commands of the Header Menu and Grid Menu use the following translat
 | Menu        | Command                       | Translation key                            | Default English text                 |
 | ----------- | ----------------------------- | ------------------------------------------ | ------------------------------------ |
 | Header Menu | Pinning Commands root menu    | `PIN_COLUMN`                               | Column Pinning                       |
-| Header Menu | Pin column left/right         | `PIN_LEFT` and `PIN_RIGHT`                 | Pin Left / Pin Right                 |
-| Header Menu | Pin columns left/right (bulk) | `PIN_COLUMNS_LEFT` and `PIN_COLUMNS_RIGHT` | Pin Columns Left / Pin Columns Right |
-| Header Menu | Unpin column                  | `UNPIN_COLUMN`                             | Unpin Column                         |
-| Header Menu | Unpin all columns             | `UNPIN_COLUMNS`                            | Unpin All Columns                    |
+| Header Menu | Pin column left/right         | `PIN_LEFT` and `PIN_RIGHT`                 | Pin to Left / Pin to Right                 |
+| Header Menu | Pin columns left/right (bulk) | `PIN_COLUMNS_LEFT` and `PIN_COLUMNS_RIGHT` | Pin Left Through Here / Pin From Here To Right |
+| Header Menu | Unpin Column                  | `UNPIN_COLUMN`                             | Unpin Column                         |
+| Header Menu | Unpin All Columns             | `UNPIN_COLUMNS`                            | Unpin All Columns                    |
 | Grid Menu   | Clear all pinning             | `CLEAR_ALL_PINNING`                        | Clear all Pinning                    |
 
 You can also override these texts directly through the menu `commandLabels` options:
@@ -54,10 +54,10 @@ gridOptions = {
   headerMenu: {
     commandLabels: {
       pinColumnCommand: 'Column Pinning',
-      pinLeftCommand: 'Pin Left',
-      pinRightCommand: 'Pin Right',
-      pinningColumnsLeftCommand: 'Pin Columns Left',
-      pinningColumnsRightCommand: 'Pin Columns Right',
+      pinLeftCommand: 'Pin to Left',
+      pinRightCommand: 'Pin to Right',
+      pinningColumnsLeftCommand: 'Pin Left Through Here',
+      pinningColumnsRightCommand: 'Pin From Here To Right',
       unpinColumnCommand: 'Unpin Column',
       unpinningColumnsCommand: 'Unpin All Columns',
     },

@@ -19,7 +19,7 @@ Built-in commands appear when their required grid features and column settings a
 
 ## Customization
 ### Custom Commands
-The Header Menu also comes, by default, with a list of built-in custom commands (all their `positionOrder` are in the reserved range of 40 to 60)
+The Header Menu also comes, by default, with a list of built-in custom commands (use `commandListBuilder` to reorder these commands)
 - Sort Ascending/Descending and Remove Sort (hide them individually with `'sort-asc'`, `'sort-desc'`, `'clear-sort'` or all at once with `hideCommands: ['sort-commands']`)
 - Pinning Commands root menu (enabled by default; hide it with `hideCommands: ['pinning-commands']`)
 - Hide Column (you can hide it with `hideCommands: ['hide-column']`)
@@ -208,7 +208,7 @@ columns.value.forEach(col => {
         'divider',
         {
           // we can also have multiple nested sub-menus
-          command: 'custom-actions', title: 'Hello', positionOrder: 99,
+          command: 'custom-actions', title: 'Hello',
           commandItems: [
             { command: 'hello-world', title: 'Hello World' },
             { command: 'hello-slickgrid', title: 'Hello SlickGrid' },

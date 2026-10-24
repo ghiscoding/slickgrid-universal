@@ -306,14 +306,6 @@ describe('GridStateService', () => {
         expect(pubSubSpy).not.toHaveBeenCalledWith('onFullResizeByContentRequested');
       });
 
-      it('should delegate the deprecated "changeColumnsArrangement" method to "applyColumnLayout"', () => {
-        const applyColumnLayoutSpy = vi.spyOn(service, 'applyColumnLayout');
-
-        service.changeColumnsArrangement(presetColumnsMock, false, true);
-
-        expect(applyColumnLayoutSpy).toHaveBeenCalledWith(presetColumnsMock, false, true);
-      });
-
       it('should call the method and expect slickgrid "setColumns" and a pubsub event "onFullResizeByContentRequested" to be called with newest columns when "triggerAutoSizeColumns" is false and "enableAutoResizeColumnsByCellContent" is true', () => {
         gridOptionMock.enableAutoResizeColumnsByCellContent = true;
         vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(allColumnsMock);

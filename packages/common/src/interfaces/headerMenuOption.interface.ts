@@ -16,9 +16,6 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
    */
   commandLabels?: HeaderMenuLabel;
 
-  /** @deprecated @use `commandListBuilder` to position order index of the "Filter Shortcuts" menu */
-  filterShortcutsPositionOrder?: number;
-
   /** A CSS class to be added to the menu item icon. */
   iconCssClass?: string;
 
@@ -43,7 +40,7 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
   /** Icon for the "Column Pinning" submenu. */
   iconPinColumn?: string;
 
-  /** Icon for the "Pin Left/Right" commands in the pin-column sub-menu. */
+  /** Icon for the "Pin to Left/Right" commands in the pin-column sub-menu. */
   iconPinCommand?: string;
 
   /** icon for the bulk unpin-columns command */

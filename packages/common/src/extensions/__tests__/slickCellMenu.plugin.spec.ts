@@ -87,13 +87,12 @@ const pubSubServiceStub = {
 } as BasePubSubService;
 
 const commandItemsMock = [
-  { command: 'command2', title: 'Command 2', positionOrder: 62 },
-  { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
-  { divider: true, command: '', positionOrder: 63 },
+  { command: 'command1', title: 'Command 1', cssClass: 'orange' },
+  { command: 'command2', title: 'Command 2' },
+  { divider: true, command: '' },
   {
     command: 'delete-row',
     title: 'Delete Row',
-    positionOrder: 64,
     iconCssClass: 'mdi mdi-close',
     cssClass: 'red',
     textCssClass: 'bold',
@@ -104,21 +103,21 @@ const commandItemsMock = [
     title: 'Sub Commands',
     subMenuTitle: 'Sub Command Title',
     commandItems: [
-      { command: 'command3', title: 'Command 3', positionOrder: 70 },
-      { command: 'command4', title: 'Command 4', positionOrder: 71 },
+      { command: 'command3', title: 'Command 3' },
+      { command: 'command4', title: 'Command 4' },
       {
         command: 'more-sub-commands',
         title: 'More Sub Commands',
         subMenuTitle: 'Sub Command Title 2',
         subMenuTitleCssClass: 'color-warning',
-        commandItems: [{ command: 'command5', title: 'Command 5', positionOrder: 72 }],
+        commandItems: [{ command: 'command5', title: 'Command 5' }],
       },
     ],
   },
   {
     command: 'sub-commands2',
     title: 'Sub Commands 2',
-    commandItems: [{ command: 'command33', title: 'Command 33', positionOrder: 70 }],
+    commandItems: [{ command: 'command33', title: 'Command 33' }],
   },
 ] as MenuCommandItem[];
 const cellMenuMockWithCommands = { commandItems: deepCopy(commandItemsMock) } as CellMenu;
@@ -149,7 +148,7 @@ describe('CellMenu Plugin', () => {
     sharedService.gridContainerElement = parentContainer;
     vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-    vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
+    vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(columnsMock);
     vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
     vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock.slice(0, 2));
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
@@ -323,6 +322,38 @@ describe('CellMenu Plugin', () => {
       gridStub.onKeyDown.notify({ cell: 3, row: 1, grid: gridStub } as any, keyEvent, gridStub);
 
       expect(createParentMenuSpy).not.toHaveBeenCalled();
+    });
+
+    it.each(['global', 'column'] as const)('should render the Cell Menu in %s builder order without changing column commands on repeated opens', (scope) => {
+      const originalItems: MenuCommandItem[] = [
+        { command: 'first', title: 'First' },
+        { command: 'second', title: 'Second' },
+      ];
+      const builder = vi.fn<NonNullable<CellMenu['commandListBuilder']>>((items) => [...items].reverse());
+      const originalMenu = columnsMock[3].cellMenu;
+      columnsMock[3].cellMenu = { commandItems: originalItems, commandListBuilder: scope === 'column' ? builder : undefined };
+      plugin.dispose();
+      plugin.init(scope === 'global' ? { commandListBuilder: builder } : {});
+
+      for (let i = 0; i < 2; i++) {
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+        expect(Array.from(document.body.querySelectorAll('.slick-cell-menu [data-command]'), (elm) => elm.getAttribute('data-command'))).toEqual([
+          'second',
+          'first',
+        ]);
+      }
+      expect(builder).toHaveBeenCalledTimes(2);
+      expect(originalItems.map((item) => item.command)).toEqual(['first', 'second']);
+      if (scope === 'column') {
+        delete columnsMock[3].cellMenu!.commandListBuilder;
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+        expect(Array.from(document.body.querySelectorAll('.slick-cell-menu [data-command]'), (elm) => elm.getAttribute('data-command'))).toEqual([
+          'first',
+          'second',
+        ]);
+        expect(builder).toHaveBeenCalledTimes(2);
+      }
+      columnsMock[3].cellMenu = originalMenu;
     });
 
     describe('with Command Items', () => {

@@ -2558,6 +2558,68 @@ describe('SlickDatView core file', () => {
         dvBatch.destroy();
       });
 
+      it('should close the MessagePort once population is completed to avoid retaining the dataset in memory', async () => {
+        dv.clearFormattedDataCache();
+        dv.populateFormattedDataCacheAsync();
+        const port = (dv as any)._populateCachePort as MessagePort;
+        expect(port).toBeDefined();
+        const closeSpy = vi.spyOn(port, 'close');
+
+        await waitForCache();
+
+        expect(closeSpy).toHaveBeenCalled();
+        expect(port.onmessage).toBeNull();
+        expect((dv as any)._populateCachePort).toBeUndefined();
+      });
+
+      it('should close the previous MessagePort when population is re-triggered', () => {
+        dv.populateFormattedDataCacheAsync();
+        const firstPort = (dv as any)._populateCachePort as MessagePort;
+        const closeSpy = vi.spyOn(firstPort, 'close');
+
+        dv.populateFormattedDataCacheAsync();
+
+        expect(closeSpy).toHaveBeenCalled();
+        expect(firstPort.onmessage).toBeNull();
+        expect((dv as any)._populateCachePort).not.toBe(firstPort);
+      });
+
+      it('should close the pending MessagePort when the DataView is destroyed', () => {
+        dv.populateFormattedDataCacheAsync();
+        const port = (dv as any)._populateCachePort as MessagePort;
+        const closeSpy = vi.spyOn(port, 'close');
+
+        dv.destroy();
+
+        expect(closeSpy).toHaveBeenCalled();
+        expect((dv as any)._populateCachePort).toBeUndefined();
+      });
+
+      it('should bail out of a stale batch callback when a newer population has started', () => {
+        const queuedRafCallbacks: Array<FrameRequestCallback> = [];
+        const rafSpy = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+          queuedRafCallbacks.push(cb);
+          return queuedRafCallbacks.length as any;
+        });
+        vi.stubGlobal('MessageChannel', undefined as any);
+
+        try {
+          dv.clearFormattedDataCache();
+          queuedRafCallbacks.length = 0;
+          dv.populateFormattedDataCacheAsync();
+          const staleCallback = queuedRafCallbacks[0];
+          dv.populateFormattedDataCacheAsync();
+          const lastProcessedRow = (dv as any).formattedCacheMetadata.lastProcessedRow;
+
+          staleCallback(performance.now());
+
+          expect((dv as any).formattedCacheMetadata.lastProcessedRow).toBe(lastProcessedRow);
+        } finally {
+          vi.unstubAllGlobals();
+          rafSpy.mockRestore();
+        }
+      });
+
       it('should fallback to requestAnimationFrame and cancel a pending RAF when re-triggered', () => {
         const rafSpy = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(() => 123 as any);
         const cancelRafSpy = vi.spyOn(globalThis, 'cancelAnimationFrame').mockImplementation(() => undefined as any);

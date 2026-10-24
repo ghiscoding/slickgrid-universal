@@ -40,8 +40,30 @@ The framework has many options; ensure new options do not contradict or interfer
 - Cypress tests use `testIsolation: false`; preserve their execution order and inherited state.
 - Cypress tests are serial: new tests inherit the grid/page state left by previous tests, so do not assume a fresh page or selection and do not reorder tests without checking dependencies.
 - Tests commonly live in `__tests__/` subdirectories. Native/vanilla tests are under `packages/`; Angular-specific tests are under `frameworks/angular-slickgrid/`.
-- For the Vanilla demo suite, start the watch server with `pnpm serve:vite`, then run the root Cypress CI suite with `pnpm cypress:ci`. To run one spec while iterating, pass its path directly (for example, `pnpm cypress:ci --spec test/cypress/e2e/example33.cy.ts`).
-- Framework demos provide headless Cypress CI scripts. Start the matching demo server first (`pnpm angular:serve`, `pnpm aurelia:serve`, `pnpm react:serve`, or `pnpm vue:serve`).
+- Before starting any dev, watch, or preview server (`pnpm dev`, `pnpm dev:<framework>`, `pnpm vite:watch`, or `pnpm *:serve`), first check whether the demo port is already in use. The user often runs the watch server locally, and starting a duplicate is slow and conflicts on the same port.
+  - Demo ports: Vanilla `8888`, Angular `4300`, React `8000`, Vue `7000`, and Aurelia `7900`.
+  - Identify the listener and whether packages are being watched (`lerna watch`). In PowerShell:
+
+    ```powershell
+    $conn = Get-NetTCPConnection -LocalPort 8888 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($conn) {
+      (Get-CimInstance Win32_Process -Filter "ProcessId=$($conn.OwningProcess)").CommandLine
+      'package watcher: ' + [bool](Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'lerna(\.js)?"?\s+watch' })
+    }
+    ```
+
+    On macOS/Linux, use `lsof -nP -iTCP:8888 -sTCP:LISTEN` and `ps -o args= -p <pid>`, and look for a `lerna watch` process with `pgrep -fl "lerna.*watch"`.
+  - If the port is in use, reuse the server without asking:
+    - A Vite dev server or `ng serve` with a package watcher (`pnpm dev`) rebuilds changed packages automatically.
+    - Without a watcher (for example, `pnpm vite:watch`), rebuild changed packages yourself (for example, `pnpm build:universal`).
+    - A `vite preview` server serves a prebuilt demo, so rebuild the demo before validating changes.
+  - Ask the user only when the listener can't be identified or doesn't look like the expected demo server, or when the port is free. Starting a server is slow, and the user may prefer to start it in their own terminal.
+  - Never stop a server you didn't start. Stop servers you started once validation is finished.
+- For the Vanilla demo suite, serve the demo on port 8888, then run the root Cypress CI suite with `pnpm cypress:ci`. To run one spec while iterating, pass its path directly (for example, `pnpm cypress:ci --spec test/cypress/e2e/example33.cy.ts`).
+  - While iterating, use `pnpm dev`, which builds the packages and watches both the packages and the demo. If the packages are already built and won't change, `pnpm vite:watch` starts only the demo dev server, which is faster.
+  - For a CI-like run, build first, then serve the built demo: `pnpm build:universal`, `pnpm build:dev`, then `pnpm vanilla:serve:demo`.
+- Demos consume the packages' built `dist/` output, not their `src/`. Without `pnpm dev` running, rebuild changed packages (for example, `pnpm build:universal`) before validating them in a demo.
+- Framework demos provide headless Cypress CI scripts. The `*:serve` scripts preview a prebuilt demo, so build it first as CI does (`pnpm build:universal`, then `pnpm <framework>:build:framework`, `pnpm <framework>:build:framework-plugins`, and `pnpm <framework>:build:demo`), then start the matching demo server (`pnpm angular:serve`, `pnpm aurelia:serve`, `pnpm react:serve`, or `pnpm vue:serve`).
 - Run the corresponding root CI command: `pnpm angular:cypress:ci`, `pnpm aurelia:cypress:ci`, `pnpm react:cypress:ci`, or `pnpm vue:cypress:ci` (for example, `pnpm aurelia:cypress:ci`). These commands use each framework's Cypress config and are preferred for validating framework-specific E2E suites.
 - Add or update tests for behavior changes, especially in core packages.
 - Maintain 100% statement, branch, function, and line coverage for changed production code. Scope coverage collection to the changed source files while including all tests needed to exercise them; passing tests alone is not sufficient.

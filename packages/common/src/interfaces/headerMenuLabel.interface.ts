@@ -23,19 +23,19 @@ export interface HeaderMenuLabel {
   /** Defaults to "FILTER_SHORTCUTS" translation key */
   filterShortcutsCommandKey?: string;
 
-  /** Defaults to "Pin Columns Left" */
+  /** Defaults to "Pin Left Through Here" */
   pinningColumnsLeftCommand?: string;
 
-  /** Defaults to "Pin Columns Right" */
+  /** Defaults to "Pin From Here To Right" */
   pinningColumnsRightCommand?: string;
 
   /** Defaults to "Column Pinning" for the pinning submenu. */
   pinColumnCommand?: string;
 
-  /** Defaults to "Pin Left" */
+  /** Defaults to "Pin to Left" */
   pinLeftCommand?: string;
 
-  /** Defaults to "Pin Right" */
+  /** Defaults to "Pin to Right" */
   pinRightCommand?: string;
 
   /** Defaults to "Hide Column" */

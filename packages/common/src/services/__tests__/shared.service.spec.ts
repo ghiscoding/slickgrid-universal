@@ -67,16 +67,16 @@ describe('Shared Service', () => {
     expect(columns).toEqual(mockColumns);
   });
 
-  it('should call "columnDefinitions" GETTER and expect column definitions array to be empty when Grid object does not exist', () => {
-    const columns = service.columnDefinitions;
+  it('should call "columns" GETTER and expect column definitions array to be empty when Grid object does not exist', () => {
+    const columns = service.columns;
     expect(columns).toEqual([]);
   });
 
-  it('should call "columnDefinitions" GETTER and expect columns array returned', () => {
+  it('should call "columns" GETTER and expect columns array returned', () => {
     const columnSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
 
     service.slickGrid = gridStub;
-    const columns = service.columnDefinitions;
+    const columns = service.columns;
 
     expect(columnSpy).toHaveBeenCalled();
     expect(columns).toEqual(mockColumns);

@@ -284,7 +284,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -302,7 +302,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -330,7 +330,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -359,7 +359,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -393,7 +393,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -434,7 +434,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -473,7 +473,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -532,7 +532,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -604,7 +604,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -650,7 +650,7 @@ describe('TreeData Service', () => {
         const cellElm = document.createElement('div');
         cellElm.className = 'slick-cell';
         const toggleIcon = document.createElement('span');
-        toggleIcon.className = 'slick-group-toggle';
+        toggleIcon.className = 'slick-tree-toggle';
         cellElm.appendChild(toggleIcon);
         const titleElm = document.createElement('span');
         titleElm.className = 'slick-tree-title';
@@ -676,7 +676,7 @@ describe('TreeData Service', () => {
 
         service.init(gridStub);
         const eventData = new SlickEventData();
-        div.className = 'slick-group-toggle';
+        div.className = 'slick-tree-toggle';
         Object.defineProperty(eventData, 'target', { writable: true, value: div });
         gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -699,7 +699,7 @@ describe('TreeData Service', () => {
         const cellElm = document.createElement('div');
         cellElm.className = 'slick-cell';
         const toggleIcon = document.createElement('span');
-        toggleIcon.className = 'slick-group-toggle';
+        toggleIcon.className = 'slick-tree-toggle';
         cellElm.appendChild(toggleIcon);
         const textElm = document.createElement('span');
         textElm.textContent = 'Item Text';
@@ -724,7 +724,7 @@ describe('TreeData Service', () => {
 
         service.init(gridStub);
         const eventData = new SlickEventData();
-        div.className = 'slick-group-toggle';
+        div.className = 'slick-tree-toggle';
         Object.defineProperty(eventData, 'target', { writable: true, value: div });
         gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -748,7 +748,7 @@ describe('TreeData Service', () => {
 
       const cellNode = document.createElement('div');
       const toggleElm = document.createElement('span');
-      toggleElm.className = 'slick-group-toggle';
+      toggleElm.className = 'slick-tree-toggle';
       cellNode.appendChild(toggleElm);
       vi.spyOn(gridStub, 'getActiveCellNode').mockReturnValue(cellNode);
 

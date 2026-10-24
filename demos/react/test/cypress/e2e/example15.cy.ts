@@ -327,7 +327,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .should('contain', 'Épinglage de colonne')
       .trigger('mouseover');
 
-    cy.get('.slick-submenu:visible [data-command="pin-columns-left"]').should('contain', 'Épingler les colonnes à gauche').click();
+    cy.get('.slick-submenu:visible [data-command="pin-columns-left"]').should('contain', 'Épingler à gauche jusqu’ici').click();
   });
 
   it('should reload the page', () => {
@@ -434,7 +434,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .should('contain', 'Column Pinning')
       .trigger('mouseover');
 
-    cy.get('.slick-submenu:visible [data-command="pin-columns-left"]').should('contain', 'Pin Columns Left').click();
+    cy.get('.slick-submenu:visible [data-command="pin-columns-left"]').should('contain', 'Pin Left Through Here').click();
   });
 
   it('should swap "Duration" and "% Complete" columns', () => {
@@ -463,7 +463,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .should('contain', 'Column Pinning')
       .trigger('mouseover');
 
-    cy.get('.slick-submenu:visible [data-command="pin-columns-left"]').should('contain', 'Pin Columns Left').click();
+    cy.get('.slick-submenu:visible [data-command="pin-columns-left"]').should('contain', 'Pin Left Through Here').click();
   });
 
   it('should have a persisted pinned column after "Description" with 4 pinned and 3 scrolling columns', () => {
