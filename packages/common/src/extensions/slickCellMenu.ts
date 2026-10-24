@@ -9,9 +9,11 @@ import type {
   OnClickEventArgs,
   OnKeyDownEventArgs,
 } from '../interfaces/index.js';
+import type { MenuDivider } from '../interfaces/menuCommandItem.interface.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
+import { normalizeMenuCommandItems } from './menuUtils.js';
 
 /**
  * A plugin to add Menu on a Cell click (click on the cell that has the cellMenu object defined)
@@ -77,7 +79,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
       columns.forEach((columnDef: Column) => {
         if (columnDef?.cellMenu && Array.isArray(columnDef.cellMenu.commandItems)) {
           // get command items
-          const columnCellMenuCommandItems: Array<MenuCommandItem | 'divider'> = columnDef.cellMenu.commandItems || [];
+          const columnCellMenuCommandItems: Array<MenuCommandItem | MenuDivider> = columnDef.cellMenu.commandItems || [];
 
           // translate their titles only if they have a titleKey defined
           if (columnDef.cellMenu.commandTitleKey) {
@@ -113,7 +115,8 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
 
       const commandItems = columnDef.cellMenu?.commandItems ?? [];
       const builder = commandListBuilder ?? this._addonOptions.commandListBuilder;
-      this._addonOptions.commandItems = (builder?.(commandItems) as Array<MenuCommandItem | 'divider'>) ?? commandItems;
+      this._addonOptions.commandItems =
+        (builder?.(normalizeMenuCommandItems(commandItems)) as Array<MenuCommandItem | MenuDivider>) ?? commandItems;
 
       // run the override function (when defined), if the result is false it won't go further
       const menuArgs = (args || {}) as MenuCommandItemCallbackArgs;

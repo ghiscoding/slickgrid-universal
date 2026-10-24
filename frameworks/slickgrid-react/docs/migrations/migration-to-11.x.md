@@ -19,6 +19,7 @@ The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor
 - [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors)
 - [Context Menu and Cell Menu options removed](#context-menu-and-cell-menu-options-removed)
 - [Menu command ordering](#menu-command-ordering)
+- [Menu divider typing](#menu-divider-typing)
 - [Remove Native API Fallbacks](#remove-native-api-fallbacks)
 - [Code Changes](#code-changes)
 - [`onBeforeAppendCell` event removed](#onbeforeappendcell-event-removed)
@@ -491,6 +492,10 @@ columnPicker: {
 ```
 
 The same callback is available under `gridMenu.columnListBuilder`. The builder receives a separate array of eligible columns, so sorting or filtering it does not change the grid column order.
+
+## Menu divider typing
+
+Menu divider typing has been improved so that divider objects (`{ divider: true }`) no longer require a `command` property, while existing divider syntax remains fully supported.
 
 ## Final Note
 
