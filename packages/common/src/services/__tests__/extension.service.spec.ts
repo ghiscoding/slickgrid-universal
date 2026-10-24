@@ -900,7 +900,7 @@ describe('ExtensionService', () => {
       it('should translate items with default locale when no arguments is passed to the method', () => {
         const columnsBeforeTranslateMock = [{ id: 'field1', field: 'field1', name: 'Hello', nameKey: 'HELLO' }] as Column[];
         const columnsAfterTranslateMock = [{ id: 'field1', field: 'field1', name: 'Bonjour', nameKey: 'HELLO' }] as Column[];
-        vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsBeforeTranslateMock);
+        vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(columnsBeforeTranslateMock);
         sharedService.allColumns = columnsBeforeTranslateMock;
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
@@ -913,7 +913,7 @@ describe('ExtensionService', () => {
       it('should translate items with locale provided as argument to the method', () => {
         const columnsBeforeTranslateMock = [{ id: 'field1', field: 'field1', nameKey: 'HELLO' }] as Column[];
         const columnsAfterTranslateMock = [{ id: 'field1', field: 'field1', name: 'Hello', nameKey: 'HELLO' }] as Column[];
-        vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsBeforeTranslateMock);
+        vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(columnsBeforeTranslateMock);
         sharedService.allColumns = columnsBeforeTranslateMock;
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
         const gridOptionsMock = { enableColumnPicker: true } as GridOption;
@@ -932,7 +932,7 @@ describe('ExtensionService', () => {
       it('should translate items with locale & column definitions provided as arguments to the method', () => {
         const columnsBeforeTranslateMock = [{ id: 'field1', field: 'field1', nameKey: 'HELLO' }] as Column[];
         const columnsAfterTranslateMock = [{ id: 'field1', field: 'field1', name: 'Hello', nameKey: 'HELLO' }] as Column[];
-        const colDefSpy = vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get');
+        const colDefSpy = vi.spyOn(SharedService.prototype, 'columns', 'get');
         sharedService.allColumns = columnsBeforeTranslateMock;
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
         const gridOptionsMock = { enableGridMenu: true } as GridOption;
@@ -959,7 +959,7 @@ describe('ExtensionService', () => {
       it('should call "setColumns" on the Shared Service with the Shared "columnDefinitions" when no arguments is provided', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', nameKey: 'HELLO' }] as Column[];
         sharedService.slickGrid = gridStub;
-        const colSpy = vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
+        const colSpy = vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(columnsMock);
         const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
 
         service.renderColumnHeaders();

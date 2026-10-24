@@ -148,7 +148,7 @@ describe('CellMenu Plugin', () => {
     sharedService.gridContainerElement = parentContainer;
     vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-    vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
+    vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(columnsMock);
     vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
     vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock.slice(0, 2));
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);

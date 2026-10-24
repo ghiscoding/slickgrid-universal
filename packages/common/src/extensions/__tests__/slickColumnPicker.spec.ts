@@ -87,7 +87,7 @@ describe('ColumnPickerControl', () => {
     });
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
-    vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
+    vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(columnsMock);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
@@ -732,7 +732,7 @@ describe('ColumnPickerControl', () => {
       // Mock the shared service to return our custom columns
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(unsortedColumnsMock);
       vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(unsortedColumnsMock);
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(unsortedColumnsMock);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(unsortedColumnsMock);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(unsortedColumnsMock);
 
       // Define the columnSort function to sort alphabetically by name
@@ -783,7 +783,7 @@ describe('ColumnPickerControl', () => {
       // Mock the shared service to return our custom columns
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnsMock);
       vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(originalColumnsMock);
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(originalColumnsMock);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(originalColumnsMock);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnsMock);
 
       // Don't set columnSort, so it should remain undefined
@@ -832,7 +832,7 @@ describe('ColumnPickerControl', () => {
       // Mock the shared service to return our custom columns
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(originalColumnsMock);
       vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValueOnce(originalColumnsMock);
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValueOnce(originalColumnsMock);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValueOnce(originalColumnsMock);
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(originalColumnsMock);
 
       // Define the columnListBuilder function to sort alphabetically by name
@@ -885,7 +885,7 @@ describe('ColumnPickerControl', () => {
       // Mock the shared service to return our custom columns
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(unsortedColumnsMock);
       vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValueOnce(unsortedColumnsMock);
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValueOnce(unsortedColumnsMock);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValueOnce(unsortedColumnsMock);
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(unsortedColumnsMock);
 
       // Define the columnListBuilder function to sort alphabetically by name
@@ -936,7 +936,7 @@ describe('ColumnPickerControl', () => {
       // Mock the shared service to return our custom columns
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(originalColumnsMock);
       vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValueOnce(originalColumnsMock);
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValueOnce(originalColumnsMock);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValueOnce(originalColumnsMock);
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(originalColumnsMock);
 
       // Don't set columnListBuilder, so it should remain undefined

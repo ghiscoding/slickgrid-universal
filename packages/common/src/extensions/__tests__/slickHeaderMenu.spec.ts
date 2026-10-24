@@ -149,7 +149,7 @@ describe('HeaderMenu Plugin', () => {
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-    vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
+    vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(columnsMock);
     vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock.slice(0, 2));
     plugin = new SlickHeaderMenu(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
   });
@@ -714,7 +714,7 @@ describe('HeaderMenu Plugin', () => {
         columnsMock[1].header!.menu = undefined;
         columnsMock[2].header!.menu = undefined;
         const mockColumn = { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE', sortable: true, filterable: true } as any;
-        vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue([mockColumn]);
+        vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue([mockColumn]);
         vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
       });
 

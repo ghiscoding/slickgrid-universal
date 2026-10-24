@@ -49,7 +49,7 @@ export class SharedService {
   }
 
   /** Getter for the Column Definitions pulled through the Grid Object */
-  get columnDefinitions(): Column[] {
+  get columns(): Column[] {
     return this.slickGrid?.getColumns() ?? [];
   }
 
