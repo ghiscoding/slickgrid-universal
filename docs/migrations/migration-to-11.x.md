@@ -337,7 +337,7 @@ Previous releases included fallbacks for native APIs blocked by some restricted 
 
 ### Tree Formatter - remove unrelated CSS class
 
-The Tree Formatter originally used the `.slick-group-toggle` class, which is unrelated to grouping. In version 10 the dedicated `.slick-tree-toggle` class was introduced in order to transition to only the new class name. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling if necessary.
+The Tree Formatter originally used the `.slick-group-toggle` class, which is unrelated to grouping. In version 10 the dedicated `.slick-tree-toggle` class was introduced in order to transition to only the new class name. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling and tests if necessary.
 
 ## Code Changes
 
