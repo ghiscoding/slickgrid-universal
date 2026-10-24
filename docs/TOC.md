@@ -111,3 +111,4 @@
 * [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)
 * [Migration Guide to 10.x (2026-03-02)](migrations/migration-to-10.x.md)
 * [Migration Guide to 11.x (2026-10-26)](migrations/migration-to-11.x.md)
+  * [v11 AI Migration Skill](migrations/migration-to-11.x/SKILL.md)

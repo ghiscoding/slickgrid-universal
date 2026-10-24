@@ -30,6 +30,8 @@ The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor
 
 > **Note:** If you are upgrading from a version earlier than v10, follow the previous migration guides in order before applying these v11 changes.
 
+> **Tip:** An [AI migration skill](migration-to-11.x/SKILL.md) is available with migration instructions, framework requirements, and a validation checklist. Ask your AI coding agent to read the skill and this guide together.
+
 > **Important:** v11 does not support the old frozen-pane options or renderer.
 
 v11 also introduces Sticky docking, a separate feature that shares similarities with Pinning. See the [Sticky Docking guide](../grid-functionalities/sticky.md) for its configuration and behavior.
