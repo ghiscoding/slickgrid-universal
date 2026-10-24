@@ -952,8 +952,8 @@
         padding: 0;
       }
       .slick-group-title {
-        display: (var(--slick-draggable-group-title-display, v.$slick-draggable-group-title-display));
-        align-items: (var(--slick-draggable-group-title-align-items, v.$slick-draggable-group-title-align-items));
+        display: inline-flex;
+        align-items: center;
         gap: (var(--slick-draggable-group-title-gap, v.$slick-draggable-group-title-gap));
         height: var(--slick-draggable-group-title-height, v.$slick-draggable-group-title-height);
         line-height: var(--slick-draggable-group-title-line-height, v.$slick-draggable-group-title-line-height);
@@ -1009,7 +1009,7 @@
       .slick-tree-toggle,
       .mdi,
       .sgi {
-        vertical-align: var(--slick-icon-with-text-valign, v.$slick-icon-with-text-valign);
+        vertical-align: middle;
       }
     }
   }
@@ -1057,8 +1057,8 @@
     background-color: var(--slick-grid-footer-bg-color, v.$slick-grid-footer-bg-color);
     .slick-footerrow-columns {
       .slick-footerrow-column {
-        display: var(--slick-grid-footer-display, v.$slick-grid-footer-display);
-        align-items: var(--slick-grid-footer-align-items, v.$slick-grid-footer-align-items);
+        display: flex;
+        align-items: center;
         justify-content: var(--slick-grid-footer-justify-content, v.$slick-grid-footer-justify-content);
         font-size: var(--slick-grid-footer-font-size, v.$slick-grid-footer-font-size);
         font-style: var(--slick-grid-footer-font-style, v.$slick-grid-footer-font-style);
@@ -1190,7 +1190,7 @@
         z-index: 4;
 
         &:hover {
-          cursor: var(--slick-header-resizable-cursor, v.$slick-header-resizable-cursor);
+          cursor: ew-resize;
           border-bottom: var(--slick-header-resizable-hover-border-bottom, v.$slick-header-resizable-hover-border-bottom);
           border-left: var(--slick-header-resizable-hover-border-left, v.$slick-header-resizable-hover-border-left);
           border-right: var(--slick-header-resizable-hover-border-right, v.$slick-header-resizable-hover-border-right);
@@ -1223,7 +1223,7 @@
         box-shadow: inset -1px 0 0 var(--slick-preheader-border-color, v.$slick-preheader-border-color);
         font-size: var(--slick-preheader-font-size, v.$slick-preheader-font-size);
         justify-content: var(--slick-preheader-grouped-title-justify, v.$slick-preheader-grouped-title-justify);
-        display: var(--slick-preheader-grouped-title-display, v.$slick-preheader-grouped-title-display);
+        display: inline-grid;
         border-bottom: 0 !important;
       }
     }

@@ -24,6 +24,7 @@ The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor
 - [`onBeforeAppendCell` event removed](#onbeforeappendcell-event-removed)
 - [Excluded columns are no longer rendered in column lists](#excluded-columns-are-no-longer-rendered-in-column-lists)
 - [Import optional package styles separately](#import-optional-package-styles-separately)
+- [Removed unused and structural styling variables](#removed-unused-and-structural-styling-variables)
 - [Row Detail package renamed](#row-detail-package-renamed)
 - [New `iconSet` grid option for the Fluent theme](#new-iconset-grid-option-for-the-fluent-theme)
 - [Context Menu and Cell Menu options removed](#context-menu-and-cell-menu-options-removed)
@@ -495,6 +496,54 @@ The same callback is available under `gridMenu.columnListBuilder`. The builder r
 ## Menu divider typing
 
 Menu divider typing has been improved so that divider objects (`{ divider: true }`) no longer require a `command` property, while existing divider syntax remains fully supported.
+
+### Removed unused and structural styling variables
+
+The following Sass variables were removed because they had no stylesheet consumers. Remove them from Sass `with (...)` configuration:
+
+- `$slick-navbar-default-link-hover-color`
+- `$slick-table-background`
+- `$slick-row-checkbox-selector-background`
+- `$slick-header-resizable-width`
+- `$slick-menu-item-width-when-button`
+- `$slick-checkbox-label-text-padding-left`
+- `$slick-date-editor-input-padding`
+- `$slick-date-editor-focus-box-shadow`
+- `$slick-editor-modal-body-margin-bottom`
+- `$slick-draggable-group-droppable-active-bgcolor`
+- `$slick-slider-filter-bgcolor`
+- `$slick-slider-filter-fill-lower-color`
+- `$slick-slider-filter-fill-focus-lower-color`
+
+The following Sass variables and their CSS custom property hooks were replaced with fixed defaults. Remove them from Sass configuration; existing CSS custom property overrides no longer affect these styles. If customization is needed, override the corresponding CSS property on the element instead.
+
+| Removed Sass variable | Fixed value |
+| --- | --- |
+| `$slick-preheader-grouped-title-display` | `inline-grid` |
+| `$slick-menu-title-container-display` | `flex` |
+| `$slick-menu-title-container-align-items` | `flex-start` |
+| `$slick-menu-title-container-justify-content` | `flex-end` |
+| `$slick-draggable-group-toggle-all-position` | `relative` |
+| `$slick-draggable-group-title-display` | `inline-flex` |
+| `$slick-draggable-group-title-align-items` | `center` |
+| `$slick-grid-footer-display` | `flex` |
+| `$slick-grid-footer-align-items` | `center` |
+| `$slick-header-resizable-cursor` | `ew-resize` |
+| `$slick-column-picker-close-btn-cursor` | `pointer` |
+| `$slick-slider-filter-runnable-track-cursor` | `pointer` |
+| `$slick-slider-filter-thumb-cursor` | `grab` |
+| `$slick-icon-with-text-valign` | `middle` |
+| `$slick-autocomplete-loading-icon-vertical-align` | `sub` |
+| `$slick-header-button-vertical-align` | `top` |
+| `$slick-draggable-group-sort-icon-vertical-align` | `baseline` |
+| `$slick-multiselect-ok-button-text-align` | `center` |
+| `$slick-large-editor-button-text-align` | `right` |
+| `$slick-column-picker-close-btn-position-right` | `5px` |
+| `$slick-column-picker-close-btn-position-top` | `0px` |
+| `$slick-footer-left-float` | `left` |
+| `$slick-footer-right-float` | `right` |
+
+CSS hook names used the `--slick-` prefix, except `$slick-draggable-group-toggle-all-position`, whose CSS hook was `--draggable-group-toggle-all-position`.
 
 ## Final Note
 

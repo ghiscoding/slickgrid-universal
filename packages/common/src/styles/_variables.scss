@@ -70,9 +70,7 @@ $slick-grid-cell-color:                                     rgb(255, 255, 255) !
 $slick-gray-dark:              			                        #333 !default;
 $slick-link-color:        				                          #08c !default;
 $slick-link-color-hover:                                    darker($slick-link-color, 15%) !default;
-$slick-navbar-default-link-hover-color:	                    $slick-gray-dark !default;
 $slick-text-color:             			                        $slick-gray-dark !default;
-$slick-table-background:                                    transparent !default;
 $slick-scrollbar-color:                                     #c1c1c1 #f1f1f1 !default;
 $slick-hover-header-color:                                  $slick-text-color !default;
 $slick-sorting-header-color:                                #333 !default;
@@ -99,7 +97,6 @@ $slick-cell-padding-left-right:                             6px !default;
 $slick-cell-padding:                                        $slick-cell-padding-top-bottom $slick-cell-padding-left-right !default;
 $slick-cell-selected-editable-color:                        #ffffff !default;
 $slick-cell-selected-color:                                 #dae8f1 !default;
-$slick-icon-with-text-valign:                               middle !default;
 $slick-drag-selection-handle-color:                         gray !default;
 $slick-drag-selection-handle-size:                          7px !default;
 
@@ -113,7 +110,6 @@ $slick-row-mouse-hover-z-index:                             5 !default;
 $slick-row-selected-color:                                  $slick-cell-selected-color !default;
 $slick-row-highlight-background-color:                      color.adjust($slick-row-selected-color, $lightness: -5%) !default;
 $slick-row-highlight-fade-animation:                        1s linear !default;
-$slick-row-checkbox-selector-background:                    inherit !default;
 $slick-row-checkbox-selector-border:                        none !default;
 
 /* Pre-Header - Header Grouping colspan */
@@ -126,7 +122,6 @@ $slick-preheader-border-bottom:                             none !default;
 $slick-preheader-border-top:                                none !default;
 $slick-preheader-font-size:                                 calc(#{$slick-font-size-base} + 3px) !default;
 $slick-preheader-height:                                    25px !default; /* full height is calculated with cell padding + borders (25px + 5px + 0px + 0px) = 30px must be set as preHeaderPanelHeight */
-$slick-preheader-grouped-title-display:                     inline-grid !default;
 $slick-preheader-grouped-title-justify:                     left !default;
 
 /* header */
@@ -162,8 +157,6 @@ $slick-header-padding:                                      $slick-header-paddin
 $slick-header-row-background-color:                         #ffffff !default;
 $slick-header-row-filter-padding:                           4px !default;
 $slick-header-text-color:                                   #333 !default;
-$slick-header-resizable-cursor:                             ew-resize !default;
-$slick-header-resizable-width:                              4px !default;
 $slick-header-resizable-hover:                              2px solid #7c7c7c !default;
 $slick-header-resizable-hover-border-bottom:                $slick-header-resizable-hover !default;
 $slick-header-resizable-hover-border-left:                  $slick-header-resizable-hover !default;
@@ -202,7 +195,6 @@ $slick-autocomplete-loading-icon:                           url('data:image/svg+
 $slick-autocomplete-loading-icon-width:                     22px !default;
 $slick-autocomplete-loading-icon-margin:                    0 0 0 -26px !default;
 $slick-autocomplete-loading-icon-line-height:               0px !default;
-$slick-autocomplete-loading-icon-vertical-align:            sub !default;
 $slick-autocomplete-max-height:	                            25vh !default;
 $slick-autocomplete-min-height:	                            75px !default;
 $slick-autocomplete-min-width:	                            110px !default;
@@ -324,7 +316,6 @@ $slick-column-picker-box-shadow:                            none !default;
 $slick-column-picker-close-btn-bg-color:                    #ffffff !default;
 $slick-column-picker-close-btn-color:                       #909090 !default;
 $slick-column-picker-close-btn-color-hover:                 color.adjust($slick-column-picker-close-btn-color, $lightness: -25%) !default;
-$slick-column-picker-close-btn-cursor:                      pointer !default;
 $slick-column-picker-close-btn-font-family:                 "Calibri Light", "Helvetica Neue", Arial, sans-serif !default;
 $slick-column-picker-close-btn-font-size:                   21px !default;
 $slick-column-picker-close-btn-border:                      0px solid #9c9c9c !default;
@@ -334,8 +325,6 @@ $slick-column-picker-close-btn-margin:                      1px !default;
 $slick-column-picker-close-btn-padding:                     0px !default;
 $slick-column-picker-close-btn-opacity:                     0.5 !default;
 $slick-column-picker-close-btn-opacity-hover:               1 !default;
-$slick-column-picker-close-btn-position-right:              5px !default;
-$slick-column-picker-close-btn-position-top:                0px !default;
 $slick-column-picker-icon-color:                            $slick-primary-color !default;
 $slick-column-picker-icon-border:                           none !default;
 $slick-column-picker-icon-border-radius:                    none !default;
@@ -420,16 +409,12 @@ $slick-menu-item-width:                                     100% !default;
 $slick-menu-item-white-space:                               nowrap !default;
 $slick-menu-icon-font-size:                                 $slick-icon-font-size !default;
 $slick-menu-icon-line-height:                               calc(#{$slick-menu-icon-font-size} + 2px) !default;
-$slick-menu-item-width-when-button:                         calc(100% - #{$slick-menu-close-btn-width}) !default;
 $slick-menu-icon-min-width:                                 16px !default;
 $slick-menu-line-height:                                    24px !default;
 $slick-menu-min-width:                                      140px !default;
 $slick-menu-padding:                                        6px !default;
 $slick-menu-padding-firefox:                                6px 15px 6px 6px !default;
 $slick-menu-title-color:                                    #000 !default;
-$slick-menu-title-container-display:                        flex !default;
-$slick-menu-title-container-align-items:                    flex-start !default;
-$slick-menu-title-container-justify-content:                flex-end !default;
 $slick-menu-title-border-bottom:                            1px solid #d6d6d6 !default;
 $slick-menu-title-font-size:                                calc(#{$slick-font-size-base} + 2px) !default;
 $slick-menu-title-font-weight:                              normal !default;
@@ -447,7 +432,6 @@ $slick-header-button-height:                                15px !default;
 $slick-header-button-width:                                 15px !default;
 $slick-header-button-hidden-margin-right:                   -5px !default;
 $slick-header-button-hidden-transition:                     0.2s visibility !default;
-$slick-header-button-vertical-align:                        top !default;
 
 /* Header Menu Plugin */
 $slick-header-menu-border:                                  1px solid #BFBDBD !default;
@@ -474,7 +458,6 @@ $slick-checkbox-icon-checked-svg-path:                      "M9,20.42L2.79,14.21
 $slick-checkbox-icon-partial-checked-svg-path:              "M20 14H4V10H20" !default;
 $slick-checkbox-icon-unchecked-svg-path:                    $slick-checkbox-icon-checked-svg-path !default;
 $slick-checkbox-icon-unchecked-color-visibility:            visible !default; // make this "hidden" when uncheck icon is not provided (e.g. Salesforce Theme)
-$slick-checkbox-label-text-padding-left:                    8px !default;
 $slick-checkbox-opacity-hover:                              0.45 !default;
 $slick-checkbox-unchecked-opacity:                          0.25 !default;
 
@@ -487,9 +470,7 @@ $slick-editor-focus-border-color:                           $slick-input-focus-b
 $slick-editor-focus-box-shadow:                             $slick-input-focus-box-shadow !default;
 $slick-editor-input-group-clear-btn-icon-svg-path:          "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" !default;
 $slick-editor-input-group-clear-btn-icon-padding:           6px !default;
-$slick-date-editor-input-padding:                           0 0 0 2px !default;
 $slick-date-editor-focus-border-color:                      $slick-input-focus-border-color !default;
-$slick-date-editor-focus-box-shadow:                        $slick-input-focus-box-shadow !default;
 $slick-date-editor-height:                                  $slick-editor-input-height !default;
 $slick-text-editor-border:                                  1px solid #e2e2e2 !default;
 $slick-text-editor-border-radius:                           $slick-editor-input-border-radius !default;
@@ -513,7 +494,6 @@ $slick-large-editor-disabled:                               $slick-editor-input-
 $slick-large-editor-text-padding:                           5px !default;
 $slick-large-editor-border-radius:                          6px !default;
 $slick-large-editor-button-border-radius:                   4px !default;
-$slick-large-editor-button-text-align:                      right !default;
 $slick-large-editor-footer-spacing:                         2px !default;
 $slick-large-editor-count-font-size:                        11px !default;
 $slick-large-editor-count-margin-top:                       8px !default;
@@ -595,7 +575,6 @@ $slick-editor-modal-footer-btn-saving-icon-content:         url('data:image/svg+
 $slick-editor-modal-footer-line-height:                     30px !default;
 $slick-editor-modal-status-text-color:                      #333333 !default;
 $slick-editor-modal-status-text-font-size:                  12px !default;
-$slick-editor-modal-body-margin-bottom:                     5px !default;
 $slick-editor-modal-body-min-height:                        250px !default;
 $slick-editor-modal-body-max-height:                        calc(100vh - #{$slick-editor-modal-header-height} - #{$slick-editor-modal-footer-height} - #{$slick-editor-modal-container-top} - 15px) !default;
 $slick-editor-modal-body-padding:                           6px 8px 22px 8px !default;
@@ -693,7 +672,6 @@ $slick-draggable-group-drop-height:                         35px !default;
 $slick-draggable-group-drop-padding:                        5px 10px !default;
 $slick-draggable-group-drop-radius:                         4px !default;
 $slick-draggable-group-drop-width:                          100% !default;
-$slick-draggable-group-droppable-active-bgcolor:            #fafafa !default;
 $slick-draggable-group-droppable-hover-bgcolor:             #ffffff !default;
 $slick-draggable-group-placeholder-font-style:              italic !default;
 $slick-draggable-group-placeholder-color:                   #616161 !default;
@@ -703,7 +681,6 @@ $slick-draggable-group-sort-icon-margin-left:               2px !default;
 $slick-draggable-group-sort-icon-padding-left:              5px !default;
 $slick-draggable-group-sort-icon-padding-right:             0px !default;
 $slick-draggable-group-sort-icon-font-size:                 16px !default;
-$slick-draggable-group-sort-icon-vertical-align:            baseline !default;
 $slick-draggable-group-delete-color:                        #ff3c5c !default;
 $slick-draggable-group-delete-hover-color:                  red !default;
 $slick-draggable-group-delete-margin-left:                  2px !default;
@@ -716,7 +693,6 @@ $slick-draggable-group-toggle-all-border-radius:            3px !default;
 $slick-draggable-group-toggle-all-icon-color:               $slick-icon-group-color !default;
 $slick-draggable-group-toggle-all-margin-right:             15px !default;
 $slick-draggable-group-toggle-all-padding:                  0 8px !default;
-$slick-draggable-group-toggle-all-position:                 relative !default;
 $slick-draggable-group-toggle-all-top:                      0px !default;
 $slick-draggable-group-toggle-all-right:                    unset !default;
 $slick-draggable-group-toggle-all-text-font-size:           15px !default;
@@ -724,8 +700,6 @@ $slick-draggable-group-toggle-all-text-margin:              0 0 0 2px !default;
 $slick-draggable-group-toggle-all-icon-font-size:           24px !default;
 $slick-draggable-group-toggle-collapsed-icon-svg-path:      $slick-icon-group-collapsed-svg-path !default;
 $slick-draggable-group-toggle-expanded-icon-svg-path:       $slick-icon-group-expanded-svg-path !default;
-$slick-draggable-group-title-display:                       inline-flex !default;
-$slick-draggable-group-title-align-items:                   center !default;
 $slick-draggable-group-title-gap:                           4px !default;
 $slick-draggable-group-title-height:                        20px !default;
 $slick-draggable-group-title-line-height:                   20px !default;
@@ -739,19 +713,14 @@ $slick-draggable-group-column-icon-margin-left:             4px !default;
 /* Input Slider Filter (vanilla html) */
 $slick-slider-filter-border:                                $slick-form-control-border !default;
 $slick-slider-filter-border-radius:                         4px !default;
-$slick-slider-filter-bgcolor:                               #eee !default;
 $slick-slider-filter-input-bgcolor:                         #fff !default;
 $slick-slider-filter-runnable-track-bgcolor:                #ddd !default;
-$slick-slider-filter-runnable-track-cursor:                 pointer !default;
 $slick-slider-filter-runnable-track-height:                 5px !default;
 $slick-slider-filter-runnable-track-padding:                0 6px !default;
-$slick-slider-filter-fill-lower-color:                      #ddd !default; /* ms only */
-$slick-slider-filter-fill-focus-lower-color:                #aaa !default; /* ms only */
 $slick-slider-filter-focus-border-color:                    $slick-input-focus-border-color !default;
 $slick-slider-filter-focus-box-shadow:                      $slick-input-focus-box-shadow !default;
 $slick-slider-filter-height:                                $slick-header-input-height !default;
 $slick-slider-filter-thumb-border-radius:                   50% !default;
-$slick-slider-filter-thumb-cursor:                          grab !default;
 $slick-slider-filter-thumb-border:                          2px solid rgba($slick-primary-color, .68) !default;
 $slick-slider-filter-thumb-color:                           color.adjust($slick-primary-color, $lightness: 75%) !default; // #c9dbcb
 $slick-slider-filter-thumb-active-color:                    rgba($slick-primary-color, .88) !default; // #c9dbcb
@@ -800,7 +769,6 @@ $slick-multiselect-ok-button-text-color:                    $slick-primary-color
 $slick-multiselect-ok-button-text-hover-color:              color.adjust($slick-primary-color, $lightness: -5%) !default;
 $slick-multiselect-ok-button-height:                        26px !default;
 $slick-multiselect-ok-button-width:                         100% !default;
-$slick-multiselect-ok-button-text-align:                    center !default;
 $slick-multiselect-option-highlight-bg-color:               $slick-highlight-color !default;
 $slick-multiselect-option-highlight-border:                 1px solid #c9c9c9 !default;
 $slick-multiselect-select-all-border-bottom:                1px solid #ddd !default;
@@ -874,8 +842,6 @@ $slick-viewport-border-bottom:                              0 none !default;
 $slick-viewport-border-left:                                0 none !default;
 
 /* SlickGrid built-in Footer */
-$slick-grid-footer-display:                                 flex !default;
-$slick-grid-footer-align-items:                             center !default;
 $slick-grid-footer-border-top:                              1px solid #d0d0d0 !default;
 $slick-grid-footer-bg-color:                                #fafaf9 !default;
 $slick-grid-footer-cell-padding:                            $slick-cell-padding !default;
@@ -893,7 +859,6 @@ $slick-footer-font-weight:                                  normal !default;
 $slick-footer-height:                                       30px !default; // if you modify this height, you also have to modify the footerHeight in the customFooterOptions
 $slick-footer-padding:                                      5px 0 !default;
 $slick-footer-text-color:                                   #808080 !default;
-$slick-footer-left-float:                                   left !default;
 $slick-footer-left-font-style:                              italic !default;
 $slick-footer-left-font-weight:                             normal !default;
 $slick-footer-left-padding:                                 0px !default;
@@ -904,7 +869,6 @@ $slick-footer-right-font-style:                             italic !default;
 $slick-footer-right-font-weight:                            normal !default;
 $slick-footer-right-padding:                                0px !default;
 $slick-footer-right-separator-margin:                       2px !default;
-$slick-footer-right-float:                                  right !default;
 $slick-footer-right-text-align:                             right !default;
 $slick-footer-right-text-color:                             $slick-footer-text-color !default;
 $slick-footer-right-width:                                  50% !default;

@@ -125,7 +125,7 @@
   border-radius: var(--slick-large-editor-border-radius, v.$slick-large-editor-border-radius);
 
   .editor-footer {
-    text-align: var(--slick-large-editor-button-text-align, v.$slick-large-editor-button-text-align);
+    text-align: right;
     button {
       margin-left: var(--slick-large-editor-footer-spacing, v.$slick-large-editor-footer-spacing);
       border-radius: var(--slick-large-editor-button-border-radius, v.$slick-large-editor-button-border-radius);

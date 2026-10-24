@@ -22,7 +22,7 @@
     text-align: var(--slick-footer-left-text-align, v.$slick-footer-left-text-align);
     padding: var(--slick-footer-left-padding, v.$slick-footer-left-padding);
     width: var(--slick-footer-left-width, v.$slick-footer-left-width);
-    float: var(--slick-footer-left-float, v.$slick-footer-left-float);
+    float: left;
   }
 
   .right-footer {
@@ -32,7 +32,7 @@
     text-align: var(--slick-footer-right-text-align, v.$slick-footer-right-text-align);
     padding: var(--slick-footer-right-padding, v.$slick-footer-right-padding);
     width: var(--slick-footer-right-width, v.$slick-footer-right-width);
-    float: var(--slick-footer-right-float, v.$slick-footer-right-float);
+    float: right;
     &.metrics .separator {
       margin: var(--slick-footer-right-separator-margin, v.$slick-footer-right-separator-margin);
     }

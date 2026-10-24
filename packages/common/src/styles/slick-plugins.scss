@@ -59,7 +59,7 @@ li.hidden {
   .close {
     position: absolute;
     color: var(--slick-column-picker-close-btn-color, v.$slick-column-picker-close-btn-color);
-    cursor: var(--slick-column-picker-close-btn-cursor, v.$slick-column-picker-close-btn-cursor);
+    cursor: pointer;
     width: var(--slick-column-picker-close-btn-width, v.$slick-column-picker-close-btn-width);
     height: var(--slick-column-picker-close-btn-height, v.$slick-column-picker-close-btn-height);
     margin: var(--slick-column-picker-close-btn-margin, v.$slick-column-picker-close-btn-margin);
@@ -69,8 +69,8 @@ li.hidden {
     font-size: var(--slick-column-picker-close-btn-font-size, v.$slick-column-picker-close-btn-font-size);
     background-color: var(--slick-column-picker-close-btn-bg-color, v.$slick-column-picker-close-btn-bg-color);
     border: var(--slick-column-picker-close-btn-border, v.$slick-column-picker-close-btn-border);
-    inset-inline-end: var(--slick-column-picker-close-btn-position-right, v.$slick-column-picker-close-btn-position-right);
-    top: var(--slick-column-picker-close-btn-position-top, v.$slick-column-picker-close-btn-position-top);
+    inset-inline-end: 5px;
+    top: 0px;
 
     &:hover {
       opacity: var(--slick-column-picker-close-btn-opacity-hover, v.$slick-column-picker-close-btn-opacity-hover);
@@ -298,9 +298,9 @@ li.hidden {
 
   .slick-menu-command-list {
     .slick-command-header {
-      display: var(--slick-menu-title-container-display, v.$slick-menu-title-container-display);
-      align-items: var(--slick-menu-title-container-align-items, v.$slick-menu-title-container-align-items);
-      justify-content: var(--slick-menu-title-container-justify-content, v.$slick-menu-title-container-justify-content);
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
     }
 
     .slick-command-header.with-title {
@@ -480,7 +480,7 @@ li.hidden {
   */
   display: inline;
   float: var(--slick-header-button-float, v.$slick-header-button-float);
-  vertical-align: var(--slick-header-button-vertical-align, v.$slick-header-button-vertical-align);
+  vertical-align: top;
   margin: var(--slick-header-button-margin, v.$slick-header-button-margin);
   height: var(--slick-header-button-height, v.$slick-header-button-height);
   width: var(--slick-header-button-width, v.$slick-header-button-width);
@@ -748,7 +748,7 @@ li.hidden {
     border-color: var(--slick-multiselect-ok-button-border-color, v.$slick-multiselect-ok-button-border-color);
     border-radius: var(--slick-multiselect-ok-button-border-radius, v.$slick-multiselect-ok-button-border-radius);
     border-width: var(--slick-multiselect-ok-button-border-width, v.$slick-multiselect-ok-button-border-width);
-    text-align: var(--slick-multiselect-ok-button-text-align, v.$slick-multiselect-ok-button-text-align);
+    text-align: center;
     color: var(--slick-multiselect-ok-button-text-color, v.$slick-multiselect-ok-button-text-color);
     font-weight: var(--slick-multiselect-ok-button-font-weight, v.$slick-multiselect-ok-button-font-weight);
     background-color: var(--slick-multiselect-ok-button-bg-color, v.$slick-multiselect-ok-button-bg-color);
@@ -935,7 +935,7 @@ li.hidden {
       border-radius: var(--slick-draggable-group-toggle-all-border-radius, v.$slick-draggable-group-toggle-all-border-radius);
       margin-right: var(--slick-draggable-group-toggle-all-margin-right, v.$slick-draggable-group-toggle-all-margin-right);
       padding: var(--slick-draggable-group-toggle-all-padding, v.$slick-draggable-group-toggle-all-padding);
-      position: var(--draggable-group-toggle-all-position, v.$slick-draggable-group-toggle-all-position);
+      position: relative;
       top: var(--slick-draggable-group-toggle-all-top, v.$slick-draggable-group-toggle-all-top);
       inset-inline-end: var(--slick-draggable-group-toggle-all-right, v.$slick-draggable-group-toggle-all-right);
 
@@ -983,7 +983,7 @@ li.hidden {
       font-size: var(--slick-draggable-group-sort-icon-font-size, v.$slick-draggable-group-sort-icon-font-size);
       padding-left: var(--slick-draggable-group-sort-icon-padding-left, v.$slick-draggable-group-sort-icon-padding-left);
       padding-right: var(--slick-draggable-group-sort-icon-padding-right, v.$slick-draggable-group-sort-icon-padding-right);
-      vertical-align: var(--slick-draggable-group-sort-icon-vertical-align, v.$slick-draggable-group-sort-icon-vertical-align);
+      vertical-align: baseline;
       &:hover {
         color: var(--slick-draggable-group-sort-icon-hover-color, v.$slick-draggable-group-sort-icon-hover-color);
       }
@@ -1065,7 +1065,7 @@ li.hidden {
       -webkit-appearance: none;
     }
     &::-webkit-slider-thumb {
-      cursor: var(--slick-slider-filter-thumb-cursor, v.$slick-slider-filter-thumb-cursor);
+      cursor: grab;
       height: var(--slick-slider-filter-thumb-size, v.$slick-slider-filter-thumb-size);
       width: var(--slick-slider-filter-thumb-size, v.$slick-slider-filter-thumb-size);
       border-radius: var(--slick-slider-filter-thumb-border-radius, v.$slick-slider-filter-thumb-border-radius);
@@ -1084,7 +1084,7 @@ li.hidden {
       -moz-appearance: none;
     }
     &::-moz-range-thumb {
-      cursor: var(--slick-slider-filter-thumb-cursor, v.$slick-slider-filter-thumb-cursor);
+      cursor: grab;
       height: var(--slick-slider-filter-thumb-height, v.$slick-slider-filter-thumb-height);
       width: var(--slick-slider-filter-thumb-width, v.$slick-slider-filter-thumb-width);
       border-radius: var(--slick-slider-filter-thumb-border-radius, v.$slick-slider-filter-thumb-border-radius);
@@ -1207,7 +1207,7 @@ li.hidden {
     top: 0;
     bottom: 0;
     border-radius: 3px;
-    cursor: var(--slick-slider-filter-runnable-track-cursor, v.$slick-slider-filter-runnable-track-cursor);
+    cursor: pointer;
     background: var(--slick-slider-filter-runnable-track-bgcolor, v.$slick-slider-filter-runnable-track-bgcolor);
     height: var(--slick-slider-filter-runnable-track-height, v.$slick-slider-filter-runnable-track-height);
     width: calc(100% - 16px);
