@@ -193,7 +193,7 @@ describe('GridMenuControl', () => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(columnsMock);
 
       control = new SlickGridMenu(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
       translateService.use('en');

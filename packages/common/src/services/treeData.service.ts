@@ -334,7 +334,7 @@ export class TreeDataService {
 
   /** Clear the sorting and set it back to initial sort */
   clearSorting(): void {
-    const initialSort = this.getInitialSort(this.sharedService.columnDefinitions, this.sharedService.gridOptions);
+    const initialSort = this.getInitialSort(this.sharedService.columns, this.sharedService.gridOptions);
     this.sortService.loadGridSorters([{ columnId: initialSort.columnId, direction: initialSort.sortAsc ? 'ASC' : 'DESC' }]);
   }
 

@@ -511,7 +511,7 @@ export class ExtensionService {
 
     let columns = newColumns;
     if (!columns) {
-      columns = this.sharedService.columnDefinitions;
+      columns = this.sharedService.columns;
     }
 
     // translate all column headers & header column group when defined
@@ -541,7 +541,7 @@ export class ExtensionService {
   renderColumnHeaders(newColumns?: Column[], forceColumnDefinitionsOverwrite = false): void {
     let collection = newColumns;
     if (!collection) {
-      collection = this.sharedService.columnDefinitions;
+      collection = this.sharedService.columns;
     }
     if (Array.isArray(collection) && this.sharedService.slickGrid?.setColumns) {
       if (collection.length > this.sharedService.allColumns.length || forceColumnDefinitionsOverwrite) {
