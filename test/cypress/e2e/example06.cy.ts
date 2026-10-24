@@ -64,7 +64,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
 
     it('should expect the "pdf" folder to be closed by the collapsed items grid preset with aggregators of Sum(8.8MB) / Avg(2.2MB)', () => {
       cy.get('[data-row="4"] > .slick-cell:nth(0)').should('contain', 'pdf');
-      cy.get(`.slick-group-toggle.collapsed`).should('have.length', 1);
+      cy.get(`.slick-tree-toggle.collapsed`).should('have.length', 1);
       cy.get('[data-row="4"] > .slick-cell:nth(3)').should('contain', 'sum: 8.8 MB / avg: 2.2 MB');
 
       defaultGridPresetWithoutPdfDocs.forEach((_colName, rowIdx) => {
@@ -82,7 +82,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     });
 
     it('should expand "pdf" folder and expect all folders to be expanded', () => {
-      cy.get('[data-row="4"] > .slick-cell:nth(0) .slick-group-toggle.collapsed').click();
+      cy.get('[data-row="4"] > .slick-cell:nth(0) .slick-tree-toggle.collapsed').click();
 
       cy.get('.slick-vertical-scroller').scrollTo('top', { force: true } as any);
     });
@@ -110,8 +110,8 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     it('should be able to add 2 new pop songs into the Music folder', () => {
       cy.get('[data-test=add-item-btn]').contains('Add New Pop Song').click().click();
 
-      cy.get('.slick-group-toggle[level=3]').get('.slick-cell').contains('pop-79.mp3');
-      cy.get('.slick-group-toggle[level=3]').get('.slick-cell').contains('pop-80.mp3');
+      cy.get('.slick-tree-toggle[level=3]').get('.slick-cell').contains('pop-79.mp3');
+      cy.get('.slick-tree-toggle[level=3]').get('.slick-cell').contains('pop-80.mp3');
 
       cy.get('[data-row="20"] > .slick-cell:nth(3)').should('contain', '82 MB');
       cy.get('[data-row="21"] > .slick-cell:nth(3)').should('contain', '83 MB');
@@ -219,9 +219,9 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     it('should be able to add a 3rd new pop song into the Music folder and see it show up in the UI', () => {
       cy.get('[data-test=add-item-btn]').contains('Add New Pop Song').click();
 
-      cy.get('.slick-group-toggle[level=3]').get('.slick-cell').contains('pop-81.mp3');
+      cy.get('.slick-tree-toggle[level=3]').get('.slick-cell').contains('pop-81.mp3');
 
-      cy.get('.slick-group-toggle[level=3]').get('.slick-cell').contains('pop-81.mp3');
+      cy.get('.slick-tree-toggle[level=3]').get('.slick-cell').contains('pop-81.mp3');
     });
 
     it('should have pop songs folder with updated aggregations including 4 pop songs of Sum(400.3MB) / Avg(66.72MB)', () => {
@@ -411,7 +411,7 @@ describe('Example 06 - Tree Data with Aggregators (from a Hierarchical Dataset)'
     });
 
     it('should collapse "pdf" folder and filter with "b" again and expect same updated tree totals as earlier collapsed or expanded should still be Sum(2.8MB) / Avg(1.4MB)', () => {
-      cy.get('[data-row="4"] > .slick-cell:nth(0) .slick-group-toggle.expanded').click();
+      cy.get('[data-row="4"] > .slick-cell:nth(0) .slick-tree-toggle.expanded').click();
       cy.get('.search-filter.filter-file').type('b');
 
       cy.get('[data-row="0"] > .slick-cell:nth(0)').should('contain', 'bucket-list.txt');

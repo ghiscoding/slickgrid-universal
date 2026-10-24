@@ -18,10 +18,10 @@ describe('Example 27 - Tree Data (from a flat dataset with parentId references)'
   });
 
   it('should expect all rows to be collapsed on first page load', () => {
-    cy.get('#grid27').find('.slick-group-toggle.expanded').should('have.length', 0);
+    cy.get('#grid27').find('.slick-tree-toggle.expanded').should('have.length', 0);
 
     cy.get('#grid27')
-      .find('.slick-group-toggle.collapsed')
+      .find('.slick-tree-toggle.collapsed')
       .should(($rows) => expect($rows).to.have.length.greaterThan(0));
   });
 
@@ -34,20 +34,20 @@ describe('Example 27 - Tree Data (from a flat dataset with parentId references)'
   it('should expand all rows from "Expand All" button', () => {
     cy.get('[data-test=expand-all-btn]').contains('Expand All').click();
 
-    cy.get('#grid27').find('.slick-group-toggle.collapsed').should('have.length', 0);
+    cy.get('#grid27').find('.slick-tree-toggle.collapsed').should('have.length', 0);
 
     cy.get('#grid27')
-      .find('.slick-group-toggle.expanded')
+      .find('.slick-tree-toggle.expanded')
       .should(($rows) => expect($rows).to.have.length.greaterThan(0));
   });
 
   it('should collapsed all rows from "Collapse All" button', () => {
     cy.get('[data-test=collapse-all-btn]').contains('Collapse All').click();
 
-    cy.get('#grid27').find('.slick-group-toggle.expanded').should('have.length', 0);
+    cy.get('#grid27').find('.slick-tree-toggle.expanded').should('have.length', 0);
 
     cy.get('#grid27')
-      .find('.slick-group-toggle.collapsed')
+      .find('.slick-tree-toggle.collapsed')
       .should(($rows) => expect($rows).to.have.length.greaterThan(0));
   });
 
@@ -62,10 +62,10 @@ describe('Example 27 - Tree Data (from a flat dataset with parentId references)'
       .contains('Collapse all Groups')
       .click();
 
-    cy.get('#grid27').find('.slick-group-toggle.expanded').should('have.length', 0);
+    cy.get('#grid27').find('.slick-tree-toggle.expanded').should('have.length', 0);
 
     cy.get('#grid27')
-      .find('.slick-group-toggle.collapsed')
+      .find('.slick-tree-toggle.collapsed')
       .should(($rows) => expect($rows).to.have.length.greaterThan(0));
   });
 
@@ -80,10 +80,10 @@ describe('Example 27 - Tree Data (from a flat dataset with parentId references)'
       .contains('Expand all Groups')
       .click();
 
-    cy.get('#grid27').find('.slick-group-toggle.collapsed').should('have.length', 0);
+    cy.get('#grid27').find('.slick-tree-toggle.collapsed').should('have.length', 0);
 
     cy.get('#grid27')
-      .find('.slick-group-toggle.expanded')
+      .find('.slick-tree-toggle.expanded')
       .should(($rows) => expect($rows).to.have.length.greaterThan(0));
   });
 
@@ -131,7 +131,7 @@ describe('Example 27 - Tree Data (from a flat dataset with parentId references)'
     for (let row = 0; row < readLineCount; row++) {
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * row}px);"]`).should(($elm) => {
         // only read the percent complete value if it's not a parent
-        const $slickGroupToggleNotExpanded = $elm.children('.slick-cell:nth(0)').children('.slick-group-toggle:not(.expanded)');
+        const $slickGroupToggleNotExpanded = $elm.children('.slick-cell:nth(0)').children('.slick-tree-toggle:not(.expanded)');
         if ($slickGroupToggleNotExpanded.length > 1) {
           const percentComplete = $elm.children('.slick-cell:nth(2)').first().text();
           expect(+percentComplete).to.be.lt(40);
@@ -210,21 +210,21 @@ describe('Example 27 - Tree Data (from a flat dataset with parentId references)'
         ...
     */
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 1');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should(
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-tree-toggle.collapsed`).should(
       'have.length',
       1
     );
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).click({
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-tree-toggle.collapsed`).click({
       force: true,
     });
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 2');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 3');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should(
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0) .slick-tree-toggle.collapsed`).should(
       'have.length',
       1
     );
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).click({
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0) .slick-tree-toggle.collapsed`).click({
       force: true,
     });
   });
@@ -239,7 +239,7 @@ describe('Example 27 - Tree Data (from a flat dataset with parentId references)'
       .then((len) => {
         if (len === 0) {
           cy.get(
-            `.grid5 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`
+            `.grid5 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-tree-toggle.collapsed`
           ).click({ force: true });
           cy.get('.grid5').find('.slick-tree-title[level=2]').its('length').should('be.greaterThan', 0);
         } else {
@@ -279,31 +279,31 @@ describe('Example 27 - Tree Data (from a flat dataset with parentId references)'
     cy.get('[data-test=reapply-toggled-items-btn]').contains('Reapply Previous Toggled Items').click({ force: true });
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 1');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0) .slick-tree-toggle.expanded`).should(
       'have.length',
       1
     );
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 2');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 3');
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0) .slick-tree-toggle.expanded`).should(
       'have.length',
       1
     );
 
-    cy.get(`#grid27 .slick-group-toggle.expanded`).should('have.length', 2);
+    cy.get(`#grid27 .slick-tree-toggle.expanded`).should('have.length', 2);
   });
 
   it('should be able to click on "Dynamically Toggle First Parent" expect only the first parent item to get collapsed', () => {
     cy.get('[data-test=dynamically-toggle-first-parent-btn]').contains('Dynamically Toggle First Parent').click();
-    cy.get(`#grid27 .slick-group-toggle.expanded`).should('have.length', 0);
+    cy.get(`#grid27 .slick-tree-toggle.expanded`).should('have.length', 0);
   });
 
   it('should toggle group by clicking anywhere on the group row and expect it to collapse/expand', () => {
     cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-tree-title').should('contain', 'Task 1');
-    cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-toggle').should('have.class', 'collapsed');
+    cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-tree-toggle').should('have.class', 'collapsed');
 
     cy.get('[data-row="1"] > .slick-cell.l0 .slick-tree-title').click();
-    cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-toggle').should('have.class', 'expanded');
+    cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-tree-toggle').should('have.class', 'expanded');
   });
 });
