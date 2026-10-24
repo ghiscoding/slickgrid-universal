@@ -241,6 +241,39 @@ describe('SlickGrid core file', () => {
   });
 
   describe('large vertical scroll jumps', () => {
+    it.each([
+      [0, 10],
+      [10, 0],
+      [10, 25],
+    ])('should replace a pending %i ms throttle with a %i ms throttle', (initialPeriod, newPeriod) => {
+      grid = new SlickGrid(container, [], [], { ...defaultOptions, scrollRenderThrottling: initialPeriod });
+      const renderSpy = vi.spyOn(grid, 'render');
+      const oldThrottle = (grid as any).scrollThrottle;
+      oldThrottle.enqueue();
+      oldThrottle.enqueue();
+      grid.setOptions({ scrollRenderThrottling: newPeriod });
+      renderSpy.mockClear();
+
+      const throttle = (grid as any).scrollThrottle;
+      expect(throttle).not.toBe(oldThrottle);
+      throttle.enqueue();
+      throttle.enqueue();
+      expect(renderSpy).toHaveBeenCalledTimes(1);
+      if (newPeriod > 0) {
+        vi.advanceTimersByTime(newPeriod - 1);
+        expect(renderSpy).toHaveBeenCalledTimes(1);
+        vi.advanceTimersByTime(1);
+      } else {
+        vi.advanceTimersByTime(0);
+      }
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      vi.advanceTimersByTime(50);
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+
+      grid.setOptions({ scrollRenderThrottling: newPeriod });
+      expect((grid as any).scrollThrottle).toBe(throttle);
+    });
+
     const jumpScroll = (scrollRenderThrottling?: number) => {
       const items = Array.from({ length: 50000 }, (_, id) => ({ id, firstName: `Name ${id}` }));
       const options = { ...defaultOptions, scrollRenderThrottling };

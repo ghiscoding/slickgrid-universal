@@ -4714,6 +4714,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.rowHeightsDirty = true;
     }
 
+    // The scroll throttle captured its period when it was built, so rebuild it when the period
+    // changes; otherwise a later opt-in would route large jumps through a timer with the old delay.
+    if (newOptions.scrollRenderThrottling !== undefined && newOptions.scrollRenderThrottling !== originalOptions.scrollRenderThrottling) {
+      this.scrollThrottle.dequeue();
+      clearTimeout(this._executionBlockTimer);
+      this.scrollThrottle = this.actionThrottle(this.render.bind(this), this._options.scrollRenderThrottling as number);
+    }
+
     this.internal_setOptions(suppressRender, suppressColumnSet, suppressSetOverflow);
   }
 
