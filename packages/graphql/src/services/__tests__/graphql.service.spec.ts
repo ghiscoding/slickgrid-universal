@@ -102,6 +102,7 @@ describe('GraphqlService', () => {
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
 
       expect(spy).toHaveBeenCalled();
+      expect(service.columns).toEqual(columns);
       expect(service.columnDefinitions).toEqual(columns);
     });
   });

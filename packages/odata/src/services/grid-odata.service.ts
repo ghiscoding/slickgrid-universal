@@ -43,6 +43,11 @@ export class GridOdataService implements BackendService {
   };
 
   /** Getter for the Column Definitions */
+  get columns(): Column[] {
+    return this._columns;
+  }
+
+  /** @deprecated @use `columns` Getter for the Column Definitions */
   get columnDefinitions(): Column[] {
     return this._columns;
   }
