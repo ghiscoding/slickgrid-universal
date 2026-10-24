@@ -18,7 +18,6 @@ The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor
 - [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors)
 - [Context Menu and Cell Menu options removed](#context-menu-and-cell-menu-options-removed)
 - [Menu command ordering](#menu-command-ordering)
-- [Removed Deprecated Code](#removed-deprecated-code)
 - [Remove Native API Fallbacks](#remove-native-api-fallbacks)
 - [Code Changes](#code-changes)
 - [Excluded columns are no longer rendered in column lists](#excluded-columns-are-no-longer-rendered-in-column-lists)
@@ -335,6 +334,10 @@ Previous releases included fallbacks for native APIs blocked by some restricted 
 - Clipboard API: drop `clipboardWriteOverride` callback and use native Clipboard API
 - queueMicrotask: drop `queueMicrotaskPolyfill` util and use native `queueMicrotask`
 - Composite Editor: strictly use `<dialog>` and drop `CompositeEditorOption.domElementType: 'div' | 'dialog'`
+
+### Tree Formatter - remove unrelated CSS class
+
+The Tree Formatter originally used the `.slick-group-toggle` class, which is unrelated to grouping. In version 10 the dedicated `.slick-tree-toggle` class was introduced in order to transition to only the new class name. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling and tests if necessary.
 
 ## Code Changes
 

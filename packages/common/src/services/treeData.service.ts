@@ -491,7 +491,7 @@ export class TreeDataService {
       const targetElm = event.target as HTMLElement | null;
 
       if (typeof targetElm?.className === 'string') {
-        const isIconClicked = ['slick-group-toggle', 'slick-tree-toggle'].some((cls) => targetElm.classList.contains(cls));
+        const isIconClicked = targetElm.classList.contains('slick-tree-toggle');
         const isElmToggled = this.treeDataOptions?.toggleOnNodeTitle
           ? isIconClicked || targetElm?.closest('.slick-tree-title')
           : isIconClicked;
@@ -630,8 +630,7 @@ export class TreeDataService {
           (e.key === ' ' || (e.key === 'ArrowRight' && isCollapsed) || (e.key === 'ArrowLeft' && !isCollapsed));
 
         if (shouldToggle) {
-          const cellGroupClassName = '.slick-group-toggle,.slick-tree-toggle';
-          const cellGroupToggleElm = this._grid.getActiveCellNode()?.querySelector<HTMLDivElement>(cellGroupClassName);
+          const cellGroupToggleElm = this._grid.getActiveCellNode()?.querySelector<HTMLDivElement>('.slick-tree-toggle');
           if (cellGroupToggleElm) {
             e.preventDefault();
             e.stopImmediatePropagation();
