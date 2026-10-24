@@ -11,6 +11,7 @@ import type {
   MenuCommandItemCallbackArgs,
   OnContextMenuArgs,
 } from '../interfaces/index.js';
+import type { MenuDivider } from '../interfaces/menuCommandItem.interface.js';
 import type { ExcelExportService } from '../services/excelExport.service.js';
 import type { PdfExportService } from '../services/pdfExport.service.js';
 import type { SharedService } from '../services/shared.service.js';
@@ -19,6 +20,7 @@ import type { TreeDataService } from '../services/treeData.service.js';
 import { getTranslationPrefix } from '../services/utilities.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
+import { normalizeMenuCommandItems } from './menuUtils.js';
 
 /**
  * A plugin to add Context Menu (mouse right+click), it subscribes to the cell "onContextMenu" event.
@@ -73,7 +75,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     const originalCommandItems = Array.isArray(this._addonOptions?.commandItems) ? this._addonOptions.commandItems : [];
     const initialCommandItems = [...this.addMenuCustomCommands(originalCommandItems), ...originalCommandItems];
     this._addonOptions.commandItems =
-      (this._addonOptions.commandListBuilder?.(initialCommandItems) as Array<MenuCommandItem | 'divider'>) ?? initialCommandItems;
+      (this._addonOptions.commandListBuilder?.(normalizeMenuCommandItems(initialCommandItems)) as Array<MenuCommandItem | MenuDivider>) ??
+      initialCommandItems;
     this._addonOptions = { ...this._addonOptions };
     this.sharedService.gridOptions.contextMenu = this._addonOptions;
 
@@ -95,7 +98,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
 
     if (contextMenu && gridOptions?.enableTranslate) {
       // get command items
-      const columnContextMenuCommandItems: Array<MenuCommandItem | 'divider'> = contextMenu.commandItems || [];
+      const columnContextMenuCommandItems: Array<MenuCommandItem | MenuDivider> = contextMenu.commandItems || [];
 
       // translate their titles only if they have a titleKey defined
       if (contextMenu.commandTitleKey) {
@@ -151,9 +154,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
 
   /** Create Context Menu with Custom Commands (copy cell value, export) */
   protected addMenuCustomCommands(
-    originalCommandItems: Array<MenuCommandItem | 'divider'>
-  ): Array<MenuCommandItem<MenuCommandItemCallbackArgs, MenuCallbackArgs<any>> | 'divider'> {
-    const menuCommandItems: Array<MenuCommandItem | 'divider'> = [];
+    originalCommandItems: Array<MenuCommandItem | MenuDivider>
+  ): Array<MenuCommandItem<MenuCommandItemCallbackArgs, MenuCallbackArgs<any>> | MenuDivider> {
+    const menuCommandItems: Array<MenuCommandItem | MenuDivider> = [];
     const gridOptions = (this.sharedService && this.sharedService.gridOptions) || {};
     const contextMenu = gridOptions?.contextMenu;
     const commandLabels = this._addonOptions?.commandLabels;

@@ -25,6 +25,8 @@ Technically, the Context Menu is enabled by default (copy, export) and so you do
 
 #### with Commands (Static)
 
+Command items require `command`. Dividers can use `{ divider: true }` without a command. For explicitly typed lists, use `Array<MenuCommandItem | MenuDivider>`.
+
 ```ts
 gridOptions.value = {
   enableFiltering: true,
@@ -34,7 +36,7 @@ gridOptions.value = {
     commandTitle: 'Commands', // optional, add title
     commandItems: [
       'divider',
-      { divider: true, command: '' },
+      { divider: true },
       {
         command: 'command1', title: 'Command 1',
         // you can use the "action" callback and/or use "onCommand" callback from the grid options, they both have the same arguments

@@ -1,6 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement, extend, findWidthOrDefault, getHtmlStringOutput } from '@slickgrid-universal/utils';
 import { SlickEvent, Utils as SlickUtils } from '../core/slickCore.js';
+import type { GridMenuCallbackArgs } from '../interfaces/gridMenuCommandItemCallbackArgs.interface.js';
 import type {
   Column,
   DOMEvent,
@@ -13,6 +14,7 @@ import type {
   GridOption,
   onGridMenuColumnsChangedCallbackArgs,
 } from '../interfaces/index.js';
+import type { MenuDivider } from '../interfaces/menuCommandItem.interface.js';
 import type { ExcelExportService } from '../services/excelExport.service.js';
 import type { FilterService } from '../services/filter.service.js';
 import type { PdfExportService } from '../services/pdfExport.service.js';
@@ -22,6 +24,7 @@ import type { TextExportService } from '../services/textExport.service.js';
 import { getTranslationPrefix } from '../services/utilities.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
+import { normalizeMenuCommandItems } from './menuUtils.js';
 
 /**
  * A control to add a Grid Menu with Extra Commands & Column Picker (hambuger menu on top-right of the grid)
@@ -150,7 +153,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     // merge the original commands with the built-in internal commands
     const initialCommandItems = [...this.addGridMenuCustomCommands(originalCommandItems), ...originalCommandItems];
     this._addonOptions.commandItems =
-      (this._addonOptions.commandListBuilder?.(initialCommandItems) as Array<GridMenuItem | 'divider'>) ?? initialCommandItems;
+      (this._addonOptions.commandListBuilder?.(normalizeMenuCommandItems(initialCommandItems)) as Array<
+        GridMenuItem | MenuDivider<GridMenuCallbackArgs>
+      >) ?? initialCommandItems;
     this.extensionUtility.translateMenuItemsFromTitleKey(this._addonOptions.commandItems || [], 'commandItems');
 
     // create the Grid Menu DOM element
@@ -241,7 +246,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** Create the menu or sub-menu(s) but without the column picker which is a separate single process */
   createCommandMenu(
     triggeredByElm: HTMLElement,
-    commandItems: Array<GridMenuItem | 'divider'>,
+    commandItems: Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>>,
     level = 0,
     item?: ExtractMenuType<ExtendableItemTypes, MenuType>
   ): HTMLDivElement {
@@ -518,7 +523,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       const originalCommandItems = this._userOriginalGridMenu && Array.isArray(this._userOriginalGridMenu.commandItems) ? this._userOriginalGridMenu.commandItems : [];
       const initialCommandItems = [...this.addGridMenuCustomCommands(originalCommandItems), ...originalCommandItems];
       this.sharedService.gridOptions.gridMenu.commandItems =
-        (this._addonOptions.commandListBuilder?.(initialCommandItems) as Array<GridMenuItem | 'divider'>) ?? initialCommandItems;
+        (this._addonOptions.commandListBuilder?.(normalizeMenuCommandItems(initialCommandItems)) as Array<
+          GridMenuItem | MenuDivider<GridMenuCallbackArgs>
+        >) ?? initialCommandItems;
       this.extensionUtility.translateMenuItemsFromTitleKey(this._addonOptions?.commandItems || [], 'commandItems');
       this.translateTitleLabels(this.sharedService.gridOptions.gridMenu);
       this.translateTitleLabels(this._addonOptions);
@@ -542,9 +549,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   // ------------------
 
   /** Create Grid Menu with Custom Commands if user has enabled Filters and/or uses a Backend Service (OData, GraphQL) */
-  protected addGridMenuCustomCommands(originalCommandItems: Array<GridMenuItem | 'divider'>): Array<GridMenuItem | 'divider'> {
+  protected addGridMenuCustomCommands(
+    originalCommandItems: Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>>
+  ): Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>> {
     const backendApi = this.gridOptions.backendServiceApi || null;
-    const gridMenuCommandItems: Array<GridMenuItem | 'divider'> = [];
+    const gridMenuCommandItems: Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>> = [];
     const gridOptions = this.gridOptions;
     const translationPrefix = getTranslationPrefix(gridOptions);
     const commandLabels = this._addonOptions?.commandLabels;
@@ -984,7 +993,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** Re/Create Command List by adding title, close & list of commands */
   recreateCommandList(
     triggeredByElm: HTMLElement,
-    commandItems: Array<GridMenuItem | 'divider'>,
+    commandItems: Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>>,
     menuElm: HTMLElement,
     callbackArgs: GridMenuEventWithElementCallbackArgs,
     item?: ExtractMenuType<ExtendableItemTypes, MenuType>
@@ -1029,7 +1038,12 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   ): void {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const commandItems = (item as GridMenuItem)?.commandItems || [];
-    const subMenuElm = this.createCommandMenu(e.target as HTMLElement, commandItems as Array<GridMenuItem | 'divider'>, level + 1, item);
+    const subMenuElm = this.createCommandMenu(
+      e.target as HTMLElement,
+      commandItems as Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>>,
+      level + 1,
+      item
+    );
     subMenuElm.style.display = 'block';
     document.body.appendChild(subMenuElm);
     this._gridMenuButtonElm && this.repositionMenu(e, subMenuElm, this._gridMenuButtonElm, this._addonOptions);

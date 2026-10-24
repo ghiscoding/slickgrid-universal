@@ -17,13 +17,14 @@ import type {
   OnHeaderCellRenderedEventArgs,
   SingleColumnSort,
 } from '../interfaces/index.js';
+import type { MenuDivider } from '../interfaces/menuCommandItem.interface.js';
 import type { FilterService } from '../services/filter.service.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { SortService } from '../services/sort.service.js';
 import { getTranslationPrefix } from '../services/utilities.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
-import { commandMatcher } from './menuUtils.js';
+import { commandMatcher, normalizeMenuCommandItems } from './menuUtils.js';
 
 const PINNING_COMMANDS = {
   root: 'pin-column',
@@ -331,7 +332,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             columnDef.header.menu = { commandItems: [] };
           }
 
-          const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef?.header?.menu?.commandItems ?? [];
+          const columnHeaderMenuItems: Array<MenuCommandItem | MenuDivider> = columnDef?.header?.menu?.commandItems ?? [];
 
           const hasSortingCommands =
             gridOptions.enableSorting &&
@@ -386,7 +387,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           // Single-column pinning writes only the selected column definition.
           if (isPinningEnabled && columnDef.pinnable !== false) {
             const existingPinColumnCommand = columnHeaderMenuItems.find(commandMatcher(PINNING_COMMANDS.root));
-            const pinColumnCommandItems: Array<MenuCommandItem | 'divider'> = existingPinColumnCommand?.commandItems ?? [];
+            const pinColumnCommandItems: Array<MenuCommandItem | MenuDivider> = existingPinColumnCommand?.commandItems ?? [];
 
             // Remove stale commands/separators while retaining custom versions of visible commands.
             for (const command of PINNING_MENU_COMMANDS) {
@@ -608,7 +609,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
   }
 
-  protected removeCommandWhenFound(columnHeaderMenuItems: Array<MenuCommandItem | 'divider'>, command: string): void {
+  protected removeCommandWhenFound(columnHeaderMenuItems: Array<MenuCommandItem | MenuDivider>, command: string): void {
     for (
       let commandIdx = columnHeaderMenuItems.findIndex(commandMatcher(command));
       commandIdx >= 0;
@@ -626,7 +627,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     );
 
     // remove the last pin/unpin command called from Header Menu since it will be replaced by the other one when reopening the menu
-    const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = column?.header?.menu?.commandItems ?? [];
+    const columnHeaderMenuItems: Array<MenuCommandItem | MenuDivider> = column?.header?.menu?.commandItems ?? [];
     this.removeCommandWhenFound(columnHeaderMenuItems, command);
     this.recreateHeaderMenu(this.grid.getColumns());
   }
@@ -647,7 +648,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       true
     );
 
-    const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = column?.header?.menu?.commandItems ?? [];
+    const columnHeaderMenuItems: Array<MenuCommandItem | MenuDivider> = column?.header?.menu?.commandItems ?? [];
     this.removeCommandWhenFound(columnHeaderMenuItems, command);
     this.sharedService.gridOptions = this.grid.getOptions();
     this.grid.updateColumns();
@@ -693,7 +694,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this.setMenuTriggerElement(triggerElement);
 
     // create 1st parent menu container & reposition it
-    this._menuElm = this.createCommandMenu(triggerElement, menu.commandItems as Array<MenuCommandItem | 'divider'>, columnDef);
+    this._menuElm = this.createCommandMenu(triggerElement, menu.commandItems as Array<MenuCommandItem | MenuDivider>, columnDef);
     this.grid.getContainerNode()?.appendChild(this._menuElm);
     this.repositionMenu(e, this._menuElm, undefined, this.addonOptions);
 
@@ -716,14 +717,14 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   /** Create the menu or sub-menu(s) but without the column picker which is a separate single process */
   protected createCommandMenu(
     triggeredByElm: HTMLElement,
-    commandItems: Array<MenuCommandItem | 'divider'>,
+    commandItems: Array<MenuCommandItem | MenuDivider>,
     columnDef: Column,
     level = 0,
-    item?: MenuCommandItem | 'divider'
+    item?: MenuCommandItem | MenuDivider
   ): HTMLDivElement {
     if (level === 0) {
       const builder = columnDef.header?.menu?.commandListBuilder ?? this.addonOptions.commandListBuilder;
-      commandItems = (builder?.(commandItems) as Array<MenuCommandItem | 'divider'>) ?? commandItems;
+      commandItems = (builder?.(normalizeMenuCommandItems(commandItems)) as Array<MenuCommandItem | MenuDivider>) ?? commandItems;
     }
 
     // Always use the triggering item's command (whitespace removed) as the sub-menu parent id for every level
@@ -799,7 +800,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   protected resetHeaderMenuTranslations(columns: Column[]): void {
     columns.forEach((columnDef: Column) => {
       if (columnDef?.header?.menu?.commandItems && !columnDef.excludeFromHeaderMenu) {
-        const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef.header.menu.commandItems || [];
+        const columnHeaderMenuItems: Array<MenuCommandItem | MenuDivider> = columnDef.header.menu.commandItems || [];
         this.extensionUtility.translateMenuItemsFromTitleKey(columnHeaderMenuItems);
       }
     });
