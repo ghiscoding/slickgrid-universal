@@ -1,4 +1,3 @@
-import { format } from '@formkit/tempo';
 import { getHtmlStringOutput, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 import { Constants } from '../constants.js';
 import { type SlickGrid } from '../core/slickGrid.js';
@@ -13,7 +12,7 @@ import type {
   MenuCallbackArgs,
   TextExportOption,
 } from '../interfaces/index.js';
-import { mapTempoDateFormatWithFieldType, toUtcDate, tryParseDate } from '../services/dateUtils.js';
+import { formatDate, mapTempoDateFormatWithFieldType, toUtcDate, tryParseDate } from '../services/dateUtils.js';
 import { getCellValueFromQueryFieldGetter } from '../services/utilities.js';
 import { multipleFormatter } from './multipleFormatter.js';
 
@@ -346,7 +345,7 @@ function parseDateByIOFormats(columnDef: Column, value: any, inputDateFormat: st
   let outputDate = value;
   if (d1) {
     const d2 = isParsingAsUtc ? toUtcDate(d1) : d1;
-    outputDate = format(d2, outputDateFormat, 'en-US');
+    outputDate = formatDate(d2, outputDateFormat);
   }
   return outputDate;
 }

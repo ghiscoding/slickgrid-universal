@@ -42,6 +42,9 @@ export function applyHtmlToElement(
 
       if (typeof val === 'number' || typeof val === 'boolean') {
         target.textContent = String(val);
+      } else if (typeof val === 'string' && val.indexOf('<') === -1 && val.indexOf('&') === -1) {
+        // without markup or entities, innerHTML would render the same text, so skip the sanitizer and HTML parser
+        target.textContent = val;
       } else {
         const sanitizeHtmlString = <T extends string | TrustedHTML>(dirtyHtml: unknown): T => {
           if (typeof options?.sanitizer !== 'function' || !dirtyHtml || typeof dirtyHtml !== 'string') {

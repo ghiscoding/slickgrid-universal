@@ -21,6 +21,7 @@ The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor
 - [Menu command ordering](#menu-command-ordering)
 - [Remove Native API Fallbacks](#remove-native-api-fallbacks)
 - [Code Changes](#code-changes)
+- [`onBeforeAppendCell` event removed](#onbeforeappendcell-event-removed)
 - [Excluded columns are no longer rendered in column lists](#excluded-columns-are-no-longer-rendered-in-column-lists)
 - [Import optional package styles separately](#import-optional-package-styles-separately)
 - [Row Detail package renamed](#row-detail-package-renamed)
@@ -341,6 +342,15 @@ Previous releases included fallbacks for native APIs blocked by some restricted 
 The Tree Formatter originally used the `.slick-group-toggle` class, which is unrelated to grouping. In version 10 the dedicated `.slick-tree-toggle` class was introduced in order to transition to only the new class name. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling and tests if necessary.
 
 ## Code Changes
+
+### `onBeforeAppendCell` event removed
+
+The `onBeforeAppendCell` event and its prop were removed. The event fired for every rendered cell, which slowed down scrolling, and it was already superseded by Formatters. Return the CSS classes from your Formatter with `addClasses` instead:
+
+```diff
+- <SlickgridReact onBeforeAppendCell={(e) => handleBeforeAppendCell(e.detail)} />
++ const highValueFormatter: Formatter = (_row, _cell, value) => ({ text: String(value), addClasses: value > 50 ? 'high-value' : '' });
+```
 
 ### Excluded columns are no longer rendered in column lists
 

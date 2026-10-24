@@ -523,6 +523,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' },
       ];
       vi.spyOn(mockGrid, 'getColumns').mockReturnValueOnce(mockColumns);
+      const getItemsSpy = vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ firstName: 'John', updatedDate: '2020-02-01' }]);
 
       component.options = { enableAutoResize: true };
       component.initialization(divContainer, slickEventHandler);
@@ -530,6 +531,21 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         expect.stringContaining('[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option')
       );
+      getItemsSpy.mockReset();
+    });
+
+    it('should not expect a console warning when date columns already hold Date objects', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
+      vi.spyOn(mockDataView, 'getItemCount').mockReturnValueOnce(10001);
+      const mockColumns: Column[] = [{ id: 'updatedDate', field: 'updatedDate', type: 'dateIso' }];
+      vi.spyOn(mockGrid, 'getColumns').mockReturnValueOnce(mockColumns);
+      const getItemsSpy = vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ updatedDate: null }, { updatedDate: new Date() }]);
+
+      component.gridOptions = { enableAutoResize: true };
+      component.initialization(divContainer, slickEventHandler);
+
+      expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.stringContaining('preParseDateColumns'));
+      getItemsSpy.mockReset();
     });
 
     it('should expect a console warning when assigned dataset is larger than 5K items without pre-parsing enabled', () => {
@@ -546,11 +562,13 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
       // we'll do a fake dataset assignment of 10001 items
       vi.spyOn(mockDataView, 'getItemCount').mockReturnValueOnce(10001);
+      const getItemsSpy = vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ firstName: 'John', updatedDate: '2020-02-01' }]);
       component.dataset = [{ firstName: 'John', updatedDate: '2020-02-01' }];
 
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         expect.stringContaining('[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option')
       );
+      getItemsSpy.mockReset();
     });
 
     describe('autoAddCustomEditorFormatter grid option', () => {

@@ -16,7 +16,6 @@ import type {
   OnActiveCellChangedEventArgs,
   OnAddNewRowEventArgs,
   OnAutosizeColumnsEventArgs,
-  OnBeforeAppendCellEventArgs,
   OnBeforeCellEditorDestroyEventArgs,
   OnBeforeColumnsResizeEventArgs,
   OnBeforeEditCellEventArgs,
@@ -92,7 +91,6 @@ export interface SlickgridVueProps {
   onOnActiveCellPositionChanged?: VueSlickEventHandler<{ grid: SlickGrid }>;
   onOnAddNewRow?: VueSlickEventHandler<OnAddNewRowEventArgs>;
   onOnAutosizeColumns?: VueSlickEventHandler<OnAutosizeColumnsEventArgs>;
-  onOnBeforeAppendCell?: VueSlickEventHandler<OnBeforeAppendCellEventArgs>;
   onOnBeforeCellEditorDestroy?: VueSlickEventHandler<OnBeforeCellEditorDestroyEventArgs>;
   onOnBeforeColumnsResize?: VueSlickEventHandler<OnBeforeColumnsResizeEventArgs>;
   onOnBeforeDestroy?: VueSlickEventHandler<{ grid: SlickGrid }>;

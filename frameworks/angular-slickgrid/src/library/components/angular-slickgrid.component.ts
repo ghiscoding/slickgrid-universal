@@ -30,8 +30,8 @@ import {
   GridEventService,
   GridService,
   GridStateService,
+  hasStringDateColumns,
   HeaderGroupingService,
-  isColumnDateType,
   PaginationService,
   PluginFlagMappings,
   ResizerService,
@@ -194,7 +194,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   onActiveCellPositionChanged = output<SlickEventOutput<AngularSlickgridOutputs['onActiveCellPositionChanged']>>();
   onAddNewRow = output<SlickEventOutput<AngularSlickgridOutputs['onAddNewRow']>>();
   onAutosizeColumns = output<SlickEventOutput<AngularSlickgridOutputs['onAutosizeColumns']>>();
-  onBeforeAppendCell = output<SlickEventOutput<AngularSlickgridOutputs['onBeforeAppendCell']>>();
   onBeforeCellEditorDestroy = output<SlickEventOutput<AngularSlickgridOutputs['onBeforeCellEditorDestroy']>>();
   onBeforeColumnsResize = output<SlickEventOutput<AngularSlickgridOutputs['onBeforeColumnsResize']>>();
   onBeforeDestroy = output<SlickEventOutput<AngularSlickgridOutputs['onBeforeDestroy']>>();
@@ -1709,7 +1708,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       this.dataView?.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE &&
       !this.options.silenceWarnings &&
       !this.options.preParseDateColumns &&
-      this.slickGrid.getColumns().some((c) => isColumnDateType(c.type))
+      hasStringDateColumns(this.slickGrid.getColumns(), this.dataView.getItems())
     ) {
       console.warn(
         '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +

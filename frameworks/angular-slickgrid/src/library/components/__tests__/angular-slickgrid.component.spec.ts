@@ -667,6 +667,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' },
       ];
       vi.spyOn(mockGrid, 'getColumns').mockReturnValueOnce(mockColumns);
+      const getItemsSpy = vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ firstName: 'John', updatedDate: '2020-02-01' }]);
 
       component.options = { enableAutoResize: true };
       component.ngAfterViewInit();
@@ -674,6 +675,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         expect.stringContaining('[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option')
       );
+      getItemsSpy.mockReset();
     });
 
     it('should expect a console warning when assigned dataset is larger than 5K items without pre-parsing enabled', () => {
@@ -690,11 +692,13 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
 
       // we'll do a fake dataset assignment of 10001 items
       vi.spyOn(mockDataView, 'getItemCount').mockReturnValueOnce(10001);
+      const getItemsSpy = vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ firstName: 'John', updatedDate: '2020-02-01' }]);
       component.dataset = [{ firstName: 'John', updatedDate: '2020-02-01' }];
 
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         expect.stringContaining('[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option')
       );
+      getItemsSpy.mockReset();
     });
 
     describe('autoAddCustomEditorFormatter grid option', () => {

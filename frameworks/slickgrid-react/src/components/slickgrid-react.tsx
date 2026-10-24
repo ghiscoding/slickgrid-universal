@@ -12,8 +12,8 @@ import {
   GridEventService,
   GridService,
   GridStateService,
+  hasStringDateColumns,
   HeaderGroupingService,
-  isColumnDateType,
   PaginationService,
   PluginFlagMappings,
   ResizerService,
@@ -1663,7 +1663,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       ((this.dataView as SlickDataView)?.getItemCount?.() ?? 0) > WARN_NO_PREPARSE_DATE_SIZE &&
       !this.options.silenceWarnings &&
       !this.options.preParseDateColumns &&
-      this.grid.getColumns().some((c) => isColumnDateType(c.type))
+      hasStringDateColumns(this.grid.getColumns(), (this.dataView as SlickDataView).getItems())
     ) {
       console.warn(
         '[Slickgrid-React] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +
