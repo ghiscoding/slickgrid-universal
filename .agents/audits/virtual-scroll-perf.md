@@ -55,10 +55,45 @@ Before the fixes, the grid's own row/cell code was cheap; formatter work dominat
 ## Not Done / Future
 
 - DOMPurify: ~77 ms of the remaining ~109 ms per 40 jumps is DOMPurify re-parsing its config on every `sanitize(html, config)` call (`DOMPurify.setConfig()` once would avoid it, but it is app-global). Deferred: DOMPurify will be replaced by the native Sanitizer API in v12 (waiting on Safari support).
-- Render visible rows first and buffer rows on the next animation frame for jumps > viewport height (would roughly halve per-jump DOM work).
-- CSS containment on `.slick-row` (`contain: layout style`), needs visual checks (hover shadow, rowspan overflow).
+- Render visible rows first and buffer rows on the next animation frame for jumps > viewport height. Next suggested experiment; potential reduction in synchronous DOM work remains unmeasured. Check rapid consecutive jumps, direction changes, rowspan, and docking before keeping it.
+- CSS containment on `.slick-row` (`contain: layout style`): tried in the Kubuntu follow-up below without a consistent improvement; not retained.
 - Row DOM recycling: biggest potential gain, highest risk (formatters, plugins, rowspan, docking).
 - Memory: an 11 GB Chrome tab seen in the Vanilla demo was not reproduced in Angular (677 MB); likely repeated 500K loads / HMR in a long-lived tab. Vanilla router `disposeAll()` does dispose previous view models.
+
+## Kubuntu Laptop Follow-up (2026-10-24)
+
+Decision: retain the current PR implementation and defer further performance changes. All temporary demo toggles and option experiments were reverted.
+
+### Scenario and limitations
+
+- Vanilla Example 03 on the running development/watch server, then click **500K rows**. Default duration grouping remains enabled (500,202 DataView rows including group/totals rows).
+- User compared scrolling in their existing browser tab. Automated measurements used a separate, headed Brave profile on the same laptop through CDP; they do not establish what the compositor displayed in the user's tab.
+- Wheel runs dispatched 60 events with `deltaY: 900`, with a requested 16 ms pause between dispatches. CDP delivery and main-thread work affect actual timing. Native and custom wheel paths also produced different scroll distances, so their render counts are diagnostic, not equivalent-work benchmarks.
+- Jump runs used 40 deterministic positions, `max * ((i * 0.37) % 1)`, waiting two animation frames per jump. Timed `render()`/`_handleScroll()` and recorded CPU/timeline traces. Plain mode replaced visible-column formatters with string conversion, using timestamps for dates.
+- Background formatting-cache work overlapped initial recordings. Later comparisons disabled and cleared that cache. CSS selector-statistics recordings add substantial overhead and were used only to investigate selectors, not to compare normal scrolling timings.
+
+### Findings
+
+| Experiment | Observation |
+| --- | --- |
+| Disable `enableMouseWheelScrollHandler` | User saw little or no improvement. Automated runs confirmed fewer render calls, but no consistent improvement in frame timing. |
+| Increase `minRowBuffer` from 3 to 10 | User saw little or no improvement. During directional scrolling, this primarily expands the trailing buffer; the forward buffer is already approximately one viewport. |
+| Plain text cells | User saw little visual difference. With background caching disabled, median render time for large jumps fell from 7.2 ms to 1.8–1.9 ms. Total time for 40 jumps, including frame waits, only fell from 1.71–1.78 s to 1.57–1.66 s across two runs per mode. |
+| Browser style recalculation | Approximately 1 second of `UpdateLayoutTree` work per 60-event wheel run in the cache-disabled comparison, including plain mode. This identifies a substantial cost, not its root cause. |
+| Disable background formatting cache | Loading 500K rows normally populated 4 million formatted cells; cache work appeared in initial CPU profiles. Verified the disabled experiment processed zero cached cells. No isolated improvement in perceived scrolling was established. |
+| Row `contain: layout style` | No consistent scrolling improvement; not retained. |
+| Narrow scrollbar pseudo-element selectors to the viewport itself | No consistent overall scrolling improvement in alternating before/after runs; not retained. |
+
+No missing visible-row DOM nodes were detected when sampled after the two-frame waits in jump runs. This does not rule out transient blank frames or compositor delays between samples.
+
+### Deferred investigation
+
+1. Render visible rows before off-screen buffer rows on large vertical jumps; measure time to the first populated viewport, not just total render time.
+2. Investigate browser style recalculation beyond selector matching, including style invalidation and computed-style work. Selector statistics alone did not isolate a dominant rule that explained the delay.
+3. Investigate background cache scheduling/necessity for large datasets, separating load-time contention from steady-state scrolling and preserving export behavior.
+4. Consider row/cell DOM reuse if profiling supports it, with compatibility checks for formatter output, plugins, grouping, rowspan, and docking.
+
+Local diagnostic scripts, traces, and results were saved under `/tmp/universal-*` during this session; they are temporary artifacts, not committed fixtures. Reproduce measurements before drawing conclusions on another browser, machine, or production build.
 
 ## Progress / Open Items
 
