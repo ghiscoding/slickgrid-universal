@@ -111,12 +111,6 @@ export class GridStateService {
     }
   }
 
-  /** @deprecated @use `applyColumnLayout()` instead. This alias will be removed in v11. */
-  // prettier-ignore
-  changeColumnsArrangement(definedColumns: CurrentColumn[], triggerAutoSizeColumns = true, triggerColumnsFullResizeByContent = false): void {
-    this.applyColumnLayout(definedColumns, triggerAutoSizeColumns, triggerColumnsFullResizeByContent);
-  }
-
   /** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
   loadSlickGridEditors(columns: Column[]): Column[] {
     if (columns.some((col) => `${col.id}`.includes('.'))) {

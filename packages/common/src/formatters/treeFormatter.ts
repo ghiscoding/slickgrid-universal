@@ -37,8 +37,7 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   }
 
   const indentSpacerElm = createDomElement('span', { style: { display: 'inline-block', width: `${indentMarginLeft * treeLevel}px` } });
-  // @deprecated `.slick-group-toggle` class, to remove in next major version
-  const spanToggleClass = `slick-group-toggle slick-tree-toggle ${toggleClass}`.trim();
+  const spanToggleClass = `slick-tree-toggle ${toggleClass}`.trim();
   const spanIconElm = createDomElement('div', { className: spanToggleClass, ariaExpanded: String(toggleClass === 'expanded') });
 
   const containerElm = createDocumentFragmentOrElement(gridOptions);
