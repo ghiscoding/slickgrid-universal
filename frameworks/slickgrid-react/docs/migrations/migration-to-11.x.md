@@ -11,8 +11,8 @@ The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor
   - react-i18next v17+
 - [Remove SortableJS](#remove-sortablejs)
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
-- [Migrate Grid State and Presets](#grid-state-and-presets)
-- [Update single-viewport DOM and CSS selectors](#single-viewport-dom-and-css)
+  - [Migrate Grid State and Presets](#grid-state-and-presets)
+  - [Update single-viewport DOM and CSS selectors](#single-viewport-dom-and-css)
 - [Replace menu `hide...` flags with `hideCommands`](#menu-command-visibility)
 - [Removed Code](#removed-code)
 - [Remove row positioning and Row Detail rendering options](#row-positioning-rowtopoffsetrendertype)
