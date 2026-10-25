@@ -30,14 +30,14 @@ export default defineConfig({
     },
   ],
   preview: {
-    port: 7900,
+    port: 7070,
   },
   server: {
-    port: 7900,
+    port: 7070,
     cors: true,
     host: 'localhost',
     hmr: {
-      clientPort: 7900,
+      clientPort: 7070,
       // Keep Vite's update channel enabled, but promote module updates to full reloads above.
     },
   },

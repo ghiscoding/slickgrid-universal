@@ -74,7 +74,7 @@ jobs:
           package-manager-cache: false
           working-directory: demos/aurelia
           # start: pnpm aurelia:serve
-          wait-on: 'http://localhost:7900'
+          wait-on: 'http://localhost:7070'
           config-file: test/cypress.config.ts
           browser: chrome
           record: false

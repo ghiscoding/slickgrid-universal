@@ -41,7 +41,7 @@ The framework has many options; ensure new options do not contradict or interfer
 - Cypress tests are serial: new tests inherit the grid/page state left by previous tests, so do not assume a fresh page or selection and do not reorder tests without checking dependencies.
 - Tests commonly live in `__tests__/` subdirectories. Native/vanilla tests are under `packages/`; Angular-specific tests are under `frameworks/angular-slickgrid/`.
 - Before starting any dev, watch, or preview server (`pnpm dev`, `pnpm dev:<framework>`, `pnpm vite:watch`, or `pnpm *:serve`), first check whether the demo port is already in use. The user often runs the watch server locally, and starting a duplicate is slow and conflicts on the same port.
-  - Demo ports: Vanilla `8888`, Angular `4300`, React `8000`, Vue `7000`, and Aurelia `7900`.
+  - Demo ports: Vanilla `8888`, Angular `4300`, React `8000`, Vue `7000`, and Aurelia `7070`.
   - Identify the listener and whether packages are being watched (`lerna watch`). In PowerShell:
 
     ```powershell
