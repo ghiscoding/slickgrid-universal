@@ -2387,6 +2387,21 @@ describe('SlickDatView core file', () => {
     });
 
     describe('getFormattedCellValue()', () => {
+      it('should use an already-resolved item without reading the row again', () => {
+        (dv as any).formattedDataCache[1] = { name: 'Cached Alice', empty: '', zero: 0 };
+        const getItemSpy = vi.spyOn(dv, 'getItem');
+        try {
+          expect(dv.getFormattedCellValue(999, 'name', 'MISS', cacheItems[0])).toBe('Cached Alice');
+          expect(dv.getFormattedCellValue(999, 'empty', 'MISS', cacheItems[0])).toBe('');
+          expect(dv.getFormattedCellValue(999, 'zero', 'MISS', cacheItems[0])).toBe(0);
+          expect(dv.getFormattedCellValue(999, 'missing', 'MISS', cacheItems[0])).toBe('MISS');
+          expect(dv.getFormattedCellValue(999, 'name', 'MISS', {} as any)).toBe('MISS');
+          expect(getItemSpy).not.toHaveBeenCalled();
+        } finally {
+          getItemSpy.mockRestore();
+        }
+      });
+
       it('should return fallback when cache is disabled', () => {
         const dvNoCache = new SlickDataView({});
         const gridNoCache = new SlickGrid('#myGrid', dvNoCache, columns, { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as any);

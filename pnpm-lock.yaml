@@ -195,6 +195,9 @@ importers:
       cypress-real-events:
         specifier: 'catalog:'
         version: 1.15.1(cypress@15.21.1)
+      esbuild:
+        specifier: ^0.28.2
+        version: 0.28.2
       eslint-plugin-cypress:
         specifier: ^7.0.2
         version: 7.0.2(eslint@10.8.0(supports-color@8.1.1))

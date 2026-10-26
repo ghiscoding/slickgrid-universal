@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "isolatedDeclarations": false,
+    "noEmit": true,
+    "types": ["node", "cypress"],
+    "paths": {
+      "excel-builder-vanilla": ["../../packages/excel-export/node_modules/excel-builder-vanilla/dist/index.d.ts"]
+    }
+  },
+  "references": [{ "path": "../../packages/common" }, { "path": "../../packages/utils" }, { "path": "../../packages/excel-export" }],
+  "include": ["excel-export.ts", "excel-export.cy.ts", "cypress.config.ts"]
+}

@@ -518,10 +518,10 @@ describe('ExportService', () => {
         expect(noCacheOutput).toBe('="1E06","&amp;Z"');
         expect(cacheMissOutput).toBe(noCacheOutput);
         expect(cacheHitOutput).toBe(noCacheOutput);
-        expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined);
-        expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
-        expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined);
-        expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
+        expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined, itemObj);
+        expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, itemObj);
+        expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined, itemObj);
+        expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, itemObj);
       });
     });
 

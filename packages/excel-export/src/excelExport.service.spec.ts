@@ -219,6 +219,7 @@ describe('ExcelExportService', () => {
           const createObjArgs = (createObjectMock as any).mock.calls[0];
           const blob = createObjArgs[0];
           expect(streamArgs[0]).toBeInstanceOf(Workbook);
+          expect(streamArgs[1]).toBeUndefined(); // use the library's default chunk size
           expect(createObjectMock).toHaveBeenCalled();
           expect(blob.size).toBeGreaterThan(0);
           expect(blob.type).toBe('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -2322,7 +2323,7 @@ describe('ExcelExportService', () => {
 
       const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'raw-name' }, 0);
 
-      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
+      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, { id: 1, name: 'raw-name' });
       expect(out[0]).toBe('cached-name');
       expect(formatterSpy).not.toHaveBeenCalled();
     });
@@ -2436,7 +2437,7 @@ describe('ExcelExportService', () => {
 
       const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'ignored' }, 0);
 
-      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
+      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, { id: 1, name: 'ignored' });
       expect(out[0]).toBe('&Z');
     });
 
