@@ -1,30 +1,36 @@
-## Single-viewport Pinning rewrite
+## Single-viewport Pinning rewrite and performance improvements
 
-SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer and a single scrollbar. Frozen columns/rows are replaced by the new Pinning feature, and v11 also adds new Sticky columns/rows.
+SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer and a single scrollbar. Frozen columns/rows are replaced by the new Pinning feature, and v11 also adds new Sticky columns/rows. v11 also improves virtual scrolling on large datasets and reduces HTML-decoding overhead across all export services, with additional optimizations for Excel.
 
 The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor of the new `pinning` grid option. Pinning applies to individual columns, regardless of their index, instead of a contiguous frozen range. Update your grid options and persisted grid state accordingly.
 
 ### Major Changes - Quick Summary
 
-- [Remove SortableJS](#remove-sortablejs)
+- [Replace the SortableJS dependency with native drag and drop](#replace-the-sortablejs-dependency-with-native-drag-and-drop)
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
+  - [Column Pinning](#column-pinning)
   - [Migrate Grid State and Presets](#grid-state-and-presets)
+  - [Header Menu commands](#header-menu-commands)
+  - [E2E Tests with Cypress Header Menu selectors](#e2e-tests-with-cypress-header-menu-selectors)
   - [Update single-viewport DOM and CSS selectors](#single-viewport-dom-and-css)
 - [Replace menu `hide...` flags with `hideCommands`](#menu-command-visibility)
 - [Removed Code](#removed-code)
-- [Remove row positioning and Row Detail rendering options](#row-positioning-rowtopoffsetrendertype)
-- [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors)
+  - [DataView CSP options and types removed](#dataview-csp-options-and-types-removed)
+  - [`ExtensionName` enum replaced by a string literal type](#extensionname-enum-replaced-by-a-string-literal-type)
+  - [Remove row positioning and Row Detail rendering options](#row-positioning-rowtopoffsetrendertype)
+  - [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors)
+  - [Remove Native API Fallbacks](#remove-native-api-fallbacks)
+  - [Tree Formatter - remove unrelated CSS class](#tree-formatter---remove-unrelated-css-class)
+- [Code Changes](#code-changes)
+  - [`onBeforeAppendCell` event removed](#onbeforeappendcell-event-removed)
+  - [Excluded columns are no longer rendered in column lists](#excluded-columns-are-no-longer-rendered-in-column-lists)
+  - [Rename `changeColumnsArrangement()`](#rename-changecolumnsarrangement)
+  - [Import optional package styles separately](#import-optional-package-styles-separately)
+  - [Row Detail package renamed](#row-detail-package-renamed)
+  - [New `iconSet` grid option for the Fluent theme](#new-iconset-grid-option-for-the-fluent-theme)
 - [Context Menu and Cell Menu options removed](#context-menu-and-cell-menu-options-removed)
 - [Menu command ordering](#menu-command-ordering)
 - [Menu divider typing](#menu-divider-typing)
-- [Remove Native API Fallbacks](#remove-native-api-fallbacks)
-- [Code Changes](#code-changes)
-- [`onBeforeAppendCell` event removed](#onbeforeappendcell-event-removed)
-- [Excluded columns are no longer rendered in column lists](#excluded-columns-are-no-longer-rendered-in-column-lists)
-- [Import optional package styles separately](#import-optional-package-styles-separately)
-- [Row Detail package renamed](#row-detail-package-renamed)
-- [New `iconSet` grid option for the Fluent theme](#new-iconset-grid-option-for-the-fluent-theme)
-- [Context Menu and Cell Menu options removed](#context-menu-and-cell-menu-options-removed)
 
 > **Note:** If you are upgrading from a version earlier than v10, follow the previous migration guides in order before applying these v11 changes.
 
@@ -34,9 +40,11 @@ The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor
 
 v11 also introduces Sticky docking, a separate feature that shares similarities with Pinning. See the [Sticky Docking guide](../grid-functionalities/sticky.md) for its configuration and behavior.
 
-### Remove SortableJS
+### Replace the SortableJS dependency with native drag and drop
 
-Column header reordering and draggable grouping now use native drag and drop instead of SortableJS. Remove SortableJS and `@types/sortablejs` from your application dependencies when no other application feature uses them.
+SlickGrid v11 drops the external `sortablejs` dependency and replaces it with built-in code using the browser's native drag-and-drop API for column header reordering and draggable grouping.
+
+Remove `sortablejs` and `@types/sortablejs` from your application dependencies when no other application feature uses them.
 
 ### Replace frozen options with `pinning`
 
@@ -58,7 +66,7 @@ For `frozenBottom: true`, map the frozen rows to `pinning.rows.bottom` instead. 
 
 ### Column Pinning
 
-Use `Column.pinned` for configured column pins and `Column.pinnable: false` to hide pinning commands for that column. See the [Pinning guide](../grid-functionalities/pinning.md) for the column options.
+Use `Column.pinned` for configured column pins and `Column.pinnable: false` to hide pinning commands from the Header Menu of that column. See the [Pinning guide](../grid-functionalities/pinning.md) for the column options.
 
 ```ts
 const columns: Column[] = [
@@ -311,7 +319,7 @@ const gridOptions: GridOption = {
 };
 ```
 
-Grid row positioning now strictly uses `transform: translateY(25px)` (the legacy approach was `top: 25px`) for better precision and scrolling performance. RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
+Grid row positioning now strictly uses `transform: translateY(...)` (the legacy approach was `top: ...`) for better precision and scrolling performance. RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
 
 ### Row Detail DOM and CSS selectors
 
@@ -319,14 +327,14 @@ v11 simplifies the Row Detail DOM by removing redundant containers and CSS class
 
 ```diff
 -<div class="slick-row-detail-overlay">
--  <div class="dynamic-cell-detail cellDetailView_1">
--    <div class="detail-container detailViewContainer_1">
--      <div class="innerDetailView_1">
+-  <div class="dynamic-cell-detail cellDetailView_123">
+-    <div class="detail-container detailViewContainer_123">
+-      <div class="innerDetailView_123">
 -        <!-- Row Detail content -->
 -      </div>
 -    </div>
 -  </div>
-+<div class="slick-row-detail-container row-detail-1">
++<div class="slick-row-detail-container row-detail-123">
 +  <!-- Row Detail content -->
  </div>
 ```

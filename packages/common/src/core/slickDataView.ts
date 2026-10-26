@@ -1666,15 +1666,16 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param {number} rowIdx - The row index in the current view
    * @param {string} columnId - The column ID
    * @param {any} fallbackValue - Value to return when the cache has no entry for this cell
+   * @param {TData} item - Optional already-resolved item to avoid another row lookup
    * @returns {any} The cached formatted value or the fallback value
    */
-  getFormattedCellValue(rowIdx: number, columnId: string, fallbackValue: any): any {
+  getFormattedCellValue(rowIdx: number, columnId: string, fallbackValue: any, item?: TData): any {
     if (!this._gridOptions?.enableFormattedDataCache) {
       return fallbackValue;
     }
 
-    const item = this.getItem(rowIdx);
-    const itemId = item?.[this.idProperty as keyof TData] as DataIdType | undefined;
+    const dataContext = item ?? this.getItem(rowIdx);
+    const itemId = dataContext?.[this.idProperty as keyof TData] as DataIdType | undefined;
     if (itemId !== undefined) {
       const rowCache = this.formattedDataCache[itemId];
       if (rowCache?.[columnId] !== undefined) {

@@ -2142,7 +2142,7 @@ describe('PdfExportService', () => {
     Object.defineProperty(service, '_exportOptions', { value: { htmlDecode: true, sanitizeDataExport: true } });
     (service as any)._hasGroupedItems = false;
     const result = service['readRegularRowData'](columns as any, 0, itemObj);
-    expect(result).toEqual([undefined, '', '', '']); // col1: 'A', col2: '' (colspan=2 skipped), col3 & col4: '' (colspan='*' spans rest)
+    expect(result).toEqual(['A', '', '', '']); // col1: 'A', col2: '' (colspan=2 skipped), col3 & col4: '' (colspan='*' spans rest)
   });
 
   it('should cover drawHeaders with grouped pre-header, grouped column, and no group title', async () => {

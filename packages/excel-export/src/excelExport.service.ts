@@ -45,6 +45,7 @@ import { getExcelFormatFromGridFormatter, getGroupTotalValue, useCellFormatByFie
 
 interface ExcelColumnExportCache {
   autoDetectCellFormat?: boolean;
+  cellStyleFormat?: ReturnType<typeof useCellFormatByFieldType>;
   exportOptions: ExcelExportOption;
   fieldProperty: string;
   hasComplexSpanning: boolean;
@@ -229,7 +230,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
       if (this._fileFormat === 'xlsx' && useStreamingExport) {
         try {
-          const stream = createExcelFileStream(this._workbook, { chunkSize: 1000 });
+          const stream = createExcelFileStream(this._workbook);
           const chunks: Uint8Array[] = [];
           for await (const chunk of stream as AsyncIterable<Uint8Array>) {
             chunks.push(chunk);
@@ -540,6 +541,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     const dataView = this._dataView;
     const lineCount = dataView.getLength();
     const cachedColumnMetadata = columnMetadataCache ?? this.preCalculateColumnMetadata(columns);
+    const datasetIdPropName = this._datasetIdPropName;
 
     // Yield periodically based on dataset size
     const YIELD_FREQUENCY = lineCount < 1000 ? 0 : lineCount < 10000 ? 1000 : 500;
@@ -557,7 +559,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       // this happen could happen with an opened Row Detail as it seems to include an empty Slick DataView (we'll just skip those lines)
       if (itemObj && !itemObj.hasOwnProperty('getItem')) {
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
-        if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
+        if (itemObj[datasetIdPropName] !== null && itemObj[datasetIdPropName] !== undefined) {
           // Read a regular row
           originalDaraArray.push(this.readRegularRowData(columns, rowNumber, itemObj, rowNumber, cachedColumnMetadata));
           rowWasExported = true;
@@ -661,6 +663,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       }
 
       this._regularCellExcelFormats[columnId] = cellStyleFormat;
+      const columnMetadata = columnMetadataCache.get(columnId);
+      if (columnMetadata) {
+        columnMetadata.cellStyleFormat = cellStyleFormat;
+      }
     }
   }
 
@@ -718,6 +724,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     columnMetadataCache?: Map<string, ExcelColumnExportCache>
   ): string[] {
     const cachedColumnMetadata = columnMetadataCache ?? this.preCalculateColumnMetadata(columns);
+    const gridOptions = this._gridOptions;
     let idx = 0;
     const rowOutputStrings = [];
     const columnsLn = columns.length;
@@ -740,7 +747,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
       // when using rowspan
       let rowspan = 1;
-      if (this._gridOptions.enableCellRowSpan) {
+      if (gridOptions.enableCellRowSpan) {
         const prs = this._grid.getParentRowSpanByCell(row, col, false);
         if (prs) {
           if (prs.start === row) {
@@ -816,8 +823,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         // user might want to export with Formatter, and/or auto-detect Excel format, and/or export as regular cell data
 
         // Try cache first if enabled; on miss (or when cache is disabled), use the existing formatter/raw path.
-        if (this._gridOptions.enableFormattedDataCache) {
-          itemData = this._dataView.getFormattedCellValue(dataRowIdx, columnId, undefined);
+        if (gridOptions.enableFormattedDataCache) {
+          itemData = this._dataView.getFormattedCellValue(dataRowIdx, columnId, undefined, itemObj);
         }
 
         if (itemData === undefined) {
@@ -839,9 +846,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
         // auto-detect best possible Excel format, unless the user provide his own formatting,
         // we only do this check once per column (everything after that will be pull from temp ref)
-        if (!this._regularCellExcelFormats[columnId]) {
+        let cellStyleFormat = columnCachedData?.cellStyleFormat ?? this._regularCellExcelFormats[columnId];
+        if (!cellStyleFormat) {
           const autoDetectCellFormat = columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
-          const cellStyleFormat = useCellFormatByFieldType(
+          cellStyleFormat = useCellFormatByFieldType(
             this._stylesheet,
             this._stylesheetFormats,
             columnDef,
@@ -868,12 +876,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           }
         }
 
-        const { excelFormatId, getDataValueParser } = this._regularCellExcelFormats[columnId];
+        const { excelFormatId, getDataValueParser } = cellStyleFormat;
         const parsedItemData = getDataValueParser(itemData, {
           columnDef,
           excelFormatId,
           stylesheet: this._stylesheet,
-          gridOptions: this._gridOptions,
+          gridOptions,
           dataRowIdx,
           dataContext: itemObj,
         }) as Date | number | string | ExcelColumnMetadata;

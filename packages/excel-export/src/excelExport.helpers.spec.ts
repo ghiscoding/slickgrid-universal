@@ -1,4 +1,5 @@
 import type { Column, GridOption } from '@slickgrid-universal/common';
+import { Workbook } from 'excel-builder-vanilla';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 import { ExcelExportService } from './excelExport.service.js';
@@ -44,6 +45,44 @@ describe('ExcelExportService Helpers', () => {
     const spy = vi.spyOn(globalThis, 'setTimeout');
     await (service as any).efficientYield();
     expect(spy).toHaveBeenCalled();
+  });
+
+  it('reuses prepared column parsers while giving custom callbacks independent row arguments', () => {
+    const workbook = new Workbook();
+    const internals = service as any;
+    internals._stylesheet = workbook.getStyleSheet();
+    internals._excelExportOptions = { htmlDecode: true, sanitizeDataExport: true };
+    const args: any[] = [];
+    const parser = vi.fn((value, context) => {
+      args.push(context);
+      return value;
+    });
+    const columns: Column[] = [
+      { id: 'title', field: 'title', excelExportOptions: { valueParserCallback: parser, style: { font: { bold: true } } } },
+      { id: 'code', field: 'code', excelExportOptions: { valueParserCallback: parser } },
+    ];
+    const metadata = internals.preCalculateColumnMetadata(columns);
+    internals.cacheRegularCellExcelFormats(columns, metadata);
+    const createFormatSpy = vi.spyOn(internals._stylesheet, 'createFormat');
+    const optionsSpy = vi.spyOn(gridStub, 'getOptions');
+    optionsSpy.mockClear();
+    const firstItem = { id: 1, title: '<b>A&amp;B</b>', code: 'C' };
+    const secondItem = { id: 2, title: 'Next', code: 'D' };
+    expect(internals.readRegularRowData(columns, 0, firstItem, 0, metadata)).toEqual(['A&B', 'C']);
+    expect(internals.readRegularRowData(columns, 1, secondItem, 1, metadata)).toEqual(['Next', 'D']);
+    expect(createFormatSpy).not.toHaveBeenCalled();
+    expect(optionsSpy).toHaveBeenCalledTimes(2);
+    expect(args[0]).toMatchObject({ columnDef: columns[0], dataContext: firstItem, dataRowIdx: 0 });
+    expect(args[2]).toMatchObject({ columnDef: columns[0], dataContext: secondItem, dataRowIdx: 1 });
+    expect(args[0]).not.toBe(args[2]);
+  });
+
+  it('can prepare parsers when a caller supplies an incomplete metadata cache', () => {
+    const internals = service as any;
+    internals._stylesheet = new Workbook().getStyleSheet();
+    internals._excelExportOptions = {};
+    internals.cacheRegularCellExcelFormats(mockColumns, new Map());
+    expect(internals.readRegularRowData(mockColumns, 0, { id: 1, title: 'A' }, 0)).toEqual([1, 'A']);
   });
 
   it('getColumnHeaderData prepends Group By title when grouping exists', () => {

@@ -236,7 +236,7 @@ onFormattedDataCacheCompleted: SlickEvent<FormattedDataCacheCompletedEventArgs>
 
 ```typescript
 // Used by export services - returns cached export string, or fallbackValue on miss
-getFormattedCellValue(rowIdx: number, columnId: string, fallbackValue: any): any
+getFormattedCellValue(rowIdx: number, columnId: string, fallbackValue: any, item?: TData): any
 
 // Used by SlickGrid.getFormatter() wrapper - returns raw formatter result, or undefined on miss
 // Pass item (dataContext) to skip internal getItem() call
@@ -270,7 +270,9 @@ For the real-world scenario in discussion #1922 (168 cols x 11K rows, `exportWit
 on every column, complex-object formatters):
 
 - **Scroll jitter**: eliminated after warmup - each visible cell render is two hash lookups
-- **Export**: near-instant once cache is warm
+- **Export**: skips formatter execution on cache hits; decoding, sanitization, value parsing,
+  worksheet preparation, serialization and compression still run. See the
+  [Excel export performance audit](../audits/excel-export-performance.md) for measured costs.
 - **Warmup**: background, non-blocking; top of the grid becomes smooth first
 
 ---

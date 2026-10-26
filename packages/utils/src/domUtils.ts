@@ -225,6 +225,12 @@ export function htmlDecode(input?: string | boolean | number): string {
   if (isDefined(input)) {
     let str = input.toString();
 
+    // Plain text needs neither entity decoding nor textarea parser normalization.
+    // Keep markup, line endings and NUL on the existing HTML parsing path.
+    if (!/[&<\r\n\0]/.test(str)) {
+      return str;
+    }
+
     // Decode numeric surrogate pairs (for emoji and some Unicode)
     str = str.replace(/&#(\d+);&#(\d+);/g, (_, high, low) => {
       high = parseInt(high, 10);
@@ -242,9 +248,9 @@ export function htmlDecode(input?: string | boolean | number): string {
 
     // Decode named entities and tags (e.g. &lt;div&gt; → <div>), repeat for double-encoded cases
     let prev: string;
+    const txt = document.createElement('textarea');
     do {
       prev = str;
-      const txt = document.createElement('textarea');
       txt.innerHTML = str;
       str = txt.value;
     } while (str !== prev);

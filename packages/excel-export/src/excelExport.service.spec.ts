@@ -2322,7 +2322,7 @@ describe('ExcelExportService', () => {
 
       const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'raw-name' }, 0);
 
-      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
+      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, { id: 1, name: 'raw-name' });
       expect(out[0]).toBe('cached-name');
       expect(formatterSpy).not.toHaveBeenCalled();
     });
@@ -2436,7 +2436,7 @@ describe('ExcelExportService', () => {
 
       const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'ignored' }, 0);
 
-      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
+      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, { id: 1, name: 'ignored' });
       expect(out[0]).toBe('&Z');
     });
 
