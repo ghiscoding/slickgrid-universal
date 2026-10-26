@@ -279,7 +279,8 @@ excelExportOptions: {
 ```
 
 ### Large Dataset Performance
-For large datasets and formatter-heavy exports, you can improve responsiveness by enabling the DataView formatted cache.
+
+The formatted cache is disabled by default. Consider enabling it for expensive formatters whose results will be reused across rendering or repeated exports; large row counts alone do not justify its warmup and memory costs.
 
 For a combined sorting + export strategy, see [Large Dataset Performance Guide](../developer-guides/large-dataset-performance.md).
 
@@ -298,7 +299,7 @@ gridOptions = {
 
 Notes:
 - Keep sanitization and html decoding in the export service pipeline.
-- Cache population can run in the background and does not block the UI.
+- Cache population yields between batches but still consumes main-thread time and memory; measure both warmup and export time.
 - onAfterExportToExcel now includes durationMs in the event payload, useful for telemetry/spinners.
 
 ```ts

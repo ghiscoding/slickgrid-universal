@@ -4,13 +4,19 @@ This guide summarizes the main options to keep large dataset grids responsive wh
 
 ## When To Use What
 
-- Use `enableFormattedDataCache` when the dataset is large (over 25K rows) and you have formatter-heavy columns (`exportWithFormatter: true`). This improves both **export performance** (cache-first reads in export services) and **UI rendering performance** (once the cache is warm, grid re-renders skip formatter execution).
+- Consider `enableFormattedDataCache` for expensive formatters reused during rendering or export.
 - Use `preParseDateColumns` when date sorting is slow because date strings are repeatedly parsed.
-- Use both when you have large data with formatter-heavy exports and frequent date sorting.
+- Use both only when profiling identifies expensive repeated formatting and date-string parsing during sorting.
 
 ## Export & Rendering Performance (Formatted Cache)
 
-Enable the DataView formatted cache to pre-compute formatter output in background batches. Once warm, it benefits both export services (cache-first reads avoid re-running formatters) and UI rendering (grid cell re-renders read from cache instead of calling formatters again).
+The formatted cache is **disabled by default**. It pre-computes formatter output for reuse during rendering and export.
+
+- **Consider it** for expensive formatters, such as locale-aware dates or complex calculations, reused on mostly static data.
+- **Leave it disabled** for cheap formatters, frequent data changes, or when memory is limited. Large row counts alone do not justify caching.
+- **Measure the tradeoff:** warmup takes time and memory. Compare scrolling and export performance with caching disabled and fully warmed.
+
+Common numeric date formats such as `YYYY-MM-DD` already use a fast path in v11, so they may benefit less from caching.
 
 ```tsx
 gridOptions = {
@@ -28,8 +34,8 @@ gridOptions = {
 
 Notes:
 
-- Cache population runs in the background and keeps the UI responsive.
-- Once warm, both export services and UI rendering use cached values instead of re-running formatters.
+- Cache population yields between batches but still consumes main-thread time and memory.
+- Cache hits avoid formatter calls; misses and non-cacheable display results use the live formatter.
 - Export services sanitize/decode in their own pipeline, once, at export time.
 - Completion events include durationMs and can be used for telemetry/spinners.
 
@@ -76,18 +82,13 @@ export function MyComponent() {
 }
 ```
 
-#### Live Demo Test ([Example 03](https://ghiscoding.github.io/slickgrid-universal/#/example03) with 500K rows)
+### Historical 500K-row demo measurement
 
-**Performance Summary (500K rows, 8 columns):**
-- **Cache Population**: ~13 minutes (779,927 ms) for 4M cells
-  - Runs in background with MessageChannel + requestAnimationFrame batching
-  - UI stays responsive during population
-- **Export Time**: 30-35 seconds (consistent regardless of grouping/sorting)
-  - Fast because cache hits eliminate formatter overhead
-  - DataView's built-in filtering handles visible rows automatically
-- **Previous Behavior**: Browser hang (unusable)
+An earlier [Example 03](https://ghiscoding.github.io/slickgrid-universal/#/example03) run with 500K rows and eight columns recorded approximately 13 minutes (779,927 ms) to populate four million cells, followed by exports taking 30–35 seconds.
 
-_You can try Slickgrid-Universal live demos: [Example 02](https://ghiscoding.github.io/slickgrid-universal/#/example03) and [Example 03](https://ghiscoding.github.io/slickgrid-universal/#/example03) are both enabling the cache when loading more than 10K rows._
+These historical timings do not compare against the optimized uncached path. Include warmup time when evaluating the benefit.
+
+The [Example 02](https://ghiscoding.github.io/slickgrid-universal/#/example02) and [Example 03](https://ghiscoding.github.io/slickgrid-universal/#/example03) demos enable caching above 10K rows to demonstrate the feature. That demo threshold is not an application recommendation.
 
 ## Sorting Performance (preParseDateColumns)
 

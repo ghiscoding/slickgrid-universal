@@ -30,6 +30,19 @@ operations.
 
 ---
 
+## When to enable the cache
+
+Keep caching disabled by default. Consider it for expensive formatters reused during
+rendering or repeated exports of mostly static data; row count alone is not a reason to
+enable it. Measure warmup, memory, scrolling and export time on representative data.
+
+The [Excel export audit](../audits/excel-export-performance.md) found no meaningful cache
+benefit for cheap string conversion (652 ms uncached vs 661 ms warmed, Node + jsdom).
+See the [Large Dataset Performance Guide](../../docs/developer-guides/large-dataset-performance.md)
+for the tradeoffs and date-formatting guidance.
+
+---
+
 ## Key files
 
 | File | Role |
@@ -262,18 +275,19 @@ invalidateFormattedDataCacheForRow(rowIdx: number): void
 
 ## Performance profile
 
-Measured: ~22 s to warm **50,202 rows / 50,000 formatted cells** (mixed formatters).
-The bottleneck is raw formatter execution time - the scheduling and cache infrastructure
-overhead is minimal.
+An earlier measurement recorded ~22 s to warm **50,202 rows / 50,000 formatted cells**
+(mixed formatters). This is a historical warmup measurement, not a controlled comparison
+against the current uncached path; formatter costs and the surrounding workload determine
+whether the warmup and memory costs are worthwhile.
 
 For the real-world scenario in discussion #1922 (168 cols x 11K rows, `exportWithFormatter: true`
 on every column, complex-object formatters):
 
-- **Scroll jitter**: eliminated after warmup - each visible cell render is two hash lookups
+- **Rendering**: cache hits avoid repeated formatter calls; DOM updates, layout and painting still run
 - **Export**: skips formatter execution on cache hits; decoding, sanitization, value parsing,
   worksheet preparation, serialization and compression still run. See the
   [Excel export performance audit](../audits/excel-export-performance.md) for measured costs.
-- **Warmup**: background, non-blocking; top of the grid becomes smooth first
+- **Warmup**: background batches yield between tasks but still consume main-thread time and memory
 
 ---
 
@@ -290,11 +304,11 @@ Applies to **all** formatter call sites, not only the cache. Key changes:
 
 ## Backward compatibility
 
-- Feature is **opt-in** - disabled by default, zero overhead when off
+- Feature is **opt-in** - disabled by default; cache population does not run when off
 - No breaking changes to any existing API
 - `getCellDisplayValue` third parameter (`item`) is optional - existing callers unaffected
-- Cache uses extra memory to store precomputed formatter output; enable it selectively for
-  large/formatter-heavy grids instead of enabling it globally on every grid.
+- Cache uses extra memory to store precomputed formatter output; enable it selectively
+  when repeated expensive formatting justifies its warmup and memory costs.
 
 ---
 

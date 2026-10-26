@@ -504,15 +504,14 @@ export interface GridOption<C extends Column = Column> {
   enableFilterTrimWhiteSpace?: boolean;
 
   /**
-   * Defaults to false, when enabled the DataView will pre-format and cache all formatter results
-   * (both export strings and raw cell display output) for every column that has a formatter.
-   * This dramatically improves export performance for large datasets (50K+ rows) by avoiding
-   * repeated formatter calls during export, and also accelerates UI rendering since SlickGrid reads
-   * the cached output instead of re-invoking formatters on every scroll/render cycle.
-   * Cache is populated asynchronously in background batches to keep the UI responsive.
+   * Defaults to false. Pre-format and cache eligible export values and cell display output.
+   * Consider enabling when expensive formatters are repeatedly used for rendering or export,
+   * especially on mostly static data. Dataset size alone is not a reason to enable caching.
+   * Cheap formatters, occasional exports, or frequent data/column changes may not benefit.
+   * Population yields between background batches but still uses main-thread time and memory.
+   * Measure warmup time, memory usage, scrolling and export performance on representative data.
    * Cache is automatically invalidated on data/column changes.
-   * IMPORTANT: this cache increases memory usage (it stores precomputed values for many cells),
-   * so it should be enabled selectively for large/formatter-heavy grids and disabled when not needed.
+   * Cache hits skip formatter execution; export sanitization, decoding and file generation still run.
    * NOTE: columns with row-metadata formatter overrides are excluded from the cell display cache
    * and will always call the live formatter.
    */
