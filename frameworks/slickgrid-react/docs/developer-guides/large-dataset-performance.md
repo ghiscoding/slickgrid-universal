@@ -82,13 +82,20 @@ export function MyComponent() {
 }
 ```
 
-### Historical 500K-row demo measurement
+### 500K-row demo measurements
 
 An earlier [Example 03](https://ghiscoding.github.io/slickgrid-universal/#/example03) run with 500K rows and eight columns recorded approximately 13 minutes (779,927 ms) to populate four million cells, followed by exports taking 30–35 seconds.
 
-These historical timings do not compare against the optimized uncached path. Include warmup time when evaluating the benefit.
+v11 reduced export decoding overhead. A manual Excel export of Example 03 with 500K rows of random data in Microsoft Edge 155 (32 GB RAM laptop) measured:
 
-The [Example 02](https://ghiscoding.github.io/slickgrid-universal/#/example02) and [Example 03](https://ghiscoding.github.io/slickgrid-universal/#/example03) demos enable caching above 10K rows to demonstrate the feature. That demo threshold is not an application recommendation.
+| Example 03, 500K rows | Before optimization | v11 |
+| --- | ---: | ---: |
+| Formatted cache enabled | ~21 s | ~11 s |
+| Formatted cache disabled | ~23 s | ~10.6 s |
+
+With cheap formatters, such as in this demo, the cache no longer speeds up export. Times are single manual runs and vary by hardware and browser. Include cache warmup time when evaluating its benefit.
+
+The [Example 03](https://ghiscoding.github.io/slickgrid-universal/#/example03) demo enables caching above 10K rows to demonstrate the feature. That demo threshold is not an application recommendation.
 
 ## Sorting Performance (preParseDateColumns)
 
