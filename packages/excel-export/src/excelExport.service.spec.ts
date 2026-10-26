@@ -219,6 +219,7 @@ describe('ExcelExportService', () => {
           const createObjArgs = (createObjectMock as any).mock.calls[0];
           const blob = createObjArgs[0];
           expect(streamArgs[0]).toBeInstanceOf(Workbook);
+          expect(streamArgs[1]).toBeUndefined(); // use the library's default chunk size
           expect(createObjectMock).toHaveBeenCalled();
           expect(blob.size).toBeGreaterThan(0);
           expect(blob.type).toBe('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

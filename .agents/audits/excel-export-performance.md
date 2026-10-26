@@ -48,7 +48,8 @@ The exporter reuses prepared column parser/style references and reads grid optio
 per row. Custom value parsers still receive a fresh argument object for each cell.
 The cache API's optional fourth argument reuses the item already read by the export loop;
 existing three-argument callers remain supported. No framework adapter changes are needed.
-The shared decoder optimization also benefits PDF/text exports and other callers.
+The shared decoder optimization also benefits PDF/text exports and other callers, and
+PDF/text cache reads also pass the already-resolved item.
 
 ## Before/after measurement
 
@@ -87,12 +88,13 @@ ZIP byte counts can vary slightly because the archive includes timestamps.
 From the repository root, with dependencies installed:
 
 ```powershell
-node test/benchmarks/excel-export.mjs before 5b675a68f25e92d6102249dc4a5d982469d82041
-node test/benchmarks/excel-export.mjs after
+pnpm bench:excel-export before 5b675a68f25e92d6102249dc4a5d982469d82041
+pnpm bench:excel-export after
 ```
 
 The runner bundles production source directly, so measurements do not depend on stale
-package builds. The baseline overrides only the three changed production files with
+package builds. The baseline overrides only the three benchmarked production files
+(`domUtils`, `slickDataView`, `excelExport.service`) with
 their contents at the given revision; dependencies and the benchmark remain identical.
 Generated bundles, JSON samples and V8 CPU profiles are under `test/benchmarks/dist/`
 (ignored by Git). Load `excel-export-before.cpuprofile` and `excel-export-after.cpuprofile`
@@ -101,7 +103,7 @@ in Chrome/Edge DevTools' JavaScript profiler or VS Code's profile viewer.
 For isolated browser measurements and browser CPU profiles after generating both bundles:
 
 ```powershell
-node node_modules/cypress/bin/cypress run --config-file test/benchmarks/cypress.config.ts --browser electron --spec test/benchmarks/excel-export.cy.ts
+pnpm exec cypress run --config-file test/benchmarks/cypress.config.ts --browser electron --spec test/benchmarks/excel-export.cy.ts
 ```
 
 Cypress serves the small static benchmark page itself; this needs no demo/watch server.
@@ -135,12 +137,14 @@ it provides little immediate benefit in a fork without those consumers. The shar
   cache misses, custom parsers/styles and independent callback argument objects.
 - All 532 tests in the eight focused Export/DataView/utility specs pass, including
   PDF/text parity checks for the shared change.
-  One stale PDF span assertion expected `undefined` although its own comment specified
-  `A`. It failed identically with the original decoder restored; the assertion now
-  expects the existing `A` output. PDF production code is unchanged.
-- The three changed production files have 100% statement, function and line coverage.
+  One PDF span assertion expected `undefined` although its own comment specified `A`.
+  An earlier test leaked a `document.createElement` spy returning an `<a>` element, whose
+  `value` is `undefined`, so the original decoder returned `undefined`. The spy is now
+  restored and the assertion expects `A`.
+- The five changed production files (DOM utilities, DataView, Excel, PDF and text export
+  services) have 100% statement, function and line coverage.
   Whole-file branch coverage retains existing gaps (DataView 90.94%, Excel 93.58%,
-  DOM utilities 92.2%); every newly introduced branch is exercised.
+  PDF 93.72%, text 91.58%, DOM utilities 92.2%); every newly introduced branch is exercised.
 - Production package builds, strict benchmark TypeScript checks, targeted lint and
   formatting pass. Madge reports no cycles for the Excel source graph with declaration
   files excluded. Following package declaration barrels reports existing type cycles;

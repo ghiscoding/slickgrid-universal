@@ -1752,7 +1752,7 @@ describe('PdfExportService', () => {
       // Mock link element
       const link = document.createElement('a');
       link.click = clickSpy;
-      vi.spyOn(document, 'createElement').mockReturnValue(link);
+      const createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(link);
       service['downloadPdf'](new Uint8Array([1, 2, 3]), 'test.pdf');
       expect(appendSpy).toHaveBeenCalledWith(link);
       expect(clickSpy).toHaveBeenCalled();
@@ -1761,6 +1761,7 @@ describe('PdfExportService', () => {
       appendSpy.mockRestore();
       removeSpy.mockRestore();
       revokeSpy.mockRestore();
+      createElementSpy.mockRestore();
     });
 
     it('should handle errors thrown during PDF export', async () => {
@@ -1926,8 +1927,8 @@ describe('PdfExportService', () => {
       expect(noCacheOutput).toEqual(['<b>Z</b>']);
       expect(cacheMissOutput).toEqual(noCacheOutput);
       expect(cacheHitOutput).toEqual(noCacheOutput);
-      expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined);
-      expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined);
+      expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined, itemObj);
+      expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined, itemObj);
     });
 
     it('should sanitize cache-hit values in readRegularRowData', () => {
@@ -1957,7 +1958,7 @@ describe('PdfExportService', () => {
 
       const output = pdfService['readRegularRowData'](columns as any, 0, itemObj);
       expect(output).toEqual(['&amp;Z']);
-      expect(localDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined);
+      expect(localDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined, itemObj);
     });
   });
 

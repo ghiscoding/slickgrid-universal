@@ -412,7 +412,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         // Try cache first when enabled, otherwise keep the existing formatter path.
         let itemData =
           this._gridOptions.enableFormattedDataCache && columnDef.id != null
-            ? this._dataView.getFormattedCellValue(row, columnId, undefined)
+            ? this._dataView.getFormattedCellValue(row, columnId, undefined, itemObj)
             : undefined;
 
         if (itemData === undefined) {

@@ -1,19 +1,17 @@
 // Compare a baseline revision with the working tree. Bundles/results are ignored in dist/.
-// node test/benchmarks/excel-export.mjs before <baseline-commit>
-// node test/benchmarks/excel-export.mjs after
+// pnpm bench:excel-export before <baseline-commit>
+// pnpm bench:excel-export after
 // The bundle also exposes ExcelExportBenchmark.runBenchmark() in a browser.
 import { execFileSync } from 'node:child_process';
-import { mkdir, readdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import inspector from 'node:inspector';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { build } from 'esbuild';
 import { JSDOM } from 'jsdom';
 
 const root = path.resolve(fileURLToPath(new URL('../../', import.meta.url)));
-const require = createRequire(import.meta.url);
-const esbuildPackage = (await readdir(path.join(root, 'node_modules/.pnpm'))).find((name) => name.startsWith('esbuild@'));
-const { build } = require(path.join(root, 'node_modules/.pnpm', esbuildPackage, 'node_modules/esbuild'));
 const excelRequire = createRequire(path.join(root, 'packages/excel-export/package.json'));
 const label = process.argv[2] ?? 'current';
 if (!/^[a-z-]+$/.test(label)) {
