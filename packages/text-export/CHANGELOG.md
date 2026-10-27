@@ -4,6 +4,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
+
+### ⚠ BREAKING CHANGES
+
+* **grid:** replace frozen panes with pinning and sticky docking ([#2782](https://github.com/ghiscoding/slickgrid-universal/issues/2782))
+
+### Features
+
+* **grid:** replace frozen panes with pinning and sticky docking ([#2782](https://github.com/ghiscoding/slickgrid-universal/issues/2782)) ([be036fb](https://github.com/ghiscoding/slickgrid-universal/commit/be036fbc31b0677d4a4d0d87b2499e531baf285e)) - by @ghiscoding
+
+### Performance Improvements
+
+* **export:** reduce HTML decoding and Excel processing overhead ([#2868](https://github.com/ghiscoding/slickgrid-universal/issues/2868)) ([ac0d2a0](https://github.com/ghiscoding/slickgrid-universal/commit/ac0d2a093b413a771c4fa4533803e598fc447206)) - by @ghiscoding
+
 ## [10.11.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.2...v10.11.3) (2026-10-07)
 
 **Note:** Version bump only for package @slickgrid-universal/text-export

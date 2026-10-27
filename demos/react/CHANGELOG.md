@@ -4,6 +4,45 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
+
+### ⚠ BREAKING CHANGES
+
+* drop `rowTopOffsetRenderType` & Row Detail `renderMode` overlay ([#2834](https://github.com/ghiscoding/slickgrid-universal/issues/2834))
+* **core:** drop SortableJS dependency ([#2634](https://github.com/ghiscoding/slickgrid-universal/issues/2634))
+* **styles:** move optional package styles into their own packages ([#2817](https://github.com/ghiscoding/slickgrid-universal/issues/2817))
+* omit excluded columns from Column Picker and Grid Menu DOM ([#2846](https://github.com/ghiscoding/slickgrid-universal/issues/2846))
+* remove deprecated `positionOrder` option on all Menu plugins ([#2850](https://github.com/ghiscoding/slickgrid-universal/issues/2850))
+* remove deprecated Cell and Context Menu option items ([#2848](https://github.com/ghiscoding/slickgrid-universal/issues/2848))
+* replace deprecated ExtensionName enum with type ([#2845](https://github.com/ghiscoding/slickgrid-universal/issues/2845))
+* **common:** replace deprecated menu `hide...` flags with `hideCommands` ([#2847](https://github.com/ghiscoding/slickgrid-universal/issues/2847))
+* **grid:** replace frozen panes with pinning and sticky docking ([#2782](https://github.com/ghiscoding/slickgrid-universal/issues/2782))
+* **row-detail:** simplify DOM containers and CSS classes ([#2835](https://github.com/ghiscoding/slickgrid-universal/issues/2835))
+* **deps:** upgrade i18next to v26 and react-i18next to v17 ([#2842](https://github.com/ghiscoding/slickgrid-universal/issues/2842))
+
+### Features
+
+* **common:** replace deprecated menu `hide...` flags with `hideCommands` ([#2847](https://github.com/ghiscoding/slickgrid-universal/issues/2847)) ([3d6a4c5](https://github.com/ghiscoding/slickgrid-universal/commit/3d6a4c5d187798e4bf9ab4359c257831cf6d0cac)) - by @ghiscoding
+* **grid:** replace frozen panes with pinning and sticky docking ([#2782](https://github.com/ghiscoding/slickgrid-universal/issues/2782)) ([be036fb](https://github.com/ghiscoding/slickgrid-universal/commit/be036fbc31b0677d4a4d0d87b2499e531baf285e)) - by @ghiscoding
+* **pinning:** show pinning commands by default ([#2832](https://github.com/ghiscoding/slickgrid-universal/issues/2832)) ([3ca6efc](https://github.com/ghiscoding/slickgrid-universal/commit/3ca6efc7adde4c35f188e520f026985e082b1f55)) - by @ghiscoding
+* remove deprecated Cell and Context Menu option items ([#2848](https://github.com/ghiscoding/slickgrid-universal/issues/2848)) ([b5905ff](https://github.com/ghiscoding/slickgrid-universal/commit/b5905ff4e006e83c276c8f011830a06bf2775424)) - by @ghiscoding
+* **styles:** move optional package styles into their own packages ([#2817](https://github.com/ghiscoding/slickgrid-universal/issues/2817)) ([50a52a0](https://github.com/ghiscoding/slickgrid-universal/commit/50a52a03ccfd1e04a8ba1b20c7a1812a8df67a94)) - by @ghiscoding
+
+### Bug Fixes
+
+* always show Grid Menu "Clear all Pinning" command ([#2844](https://github.com/ghiscoding/slickgrid-universal/issues/2844)) ([2b96f77](https://github.com/ghiscoding/slickgrid-universal/commit/2b96f77ad5fee38a3581d20e4cb7eef5c1a6b3f8)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2823](https://github.com/ghiscoding/slickgrid-universal/issues/2823)) ([19333e8](https://github.com/ghiscoding/slickgrid-universal/commit/19333e8c79bb8c0455afc6691a09bd8f4f72501b)) - by @renovate-bot
+* **deps:** upgrade i18next to v26 and react-i18next to v17 ([#2842](https://github.com/ghiscoding/slickgrid-universal/issues/2842)) ([421dbd6](https://github.com/ghiscoding/slickgrid-universal/commit/421dbd6295e043e96472ec55ac254b3109f55b1a)) - by @ghiscoding
+* omit excluded columns from Column Picker and Grid Menu DOM ([#2846](https://github.com/ghiscoding/slickgrid-universal/issues/2846)) ([3000e55](https://github.com/ghiscoding/slickgrid-universal/commit/3000e55884df21d7088a944ffb01aa0530e2c6d3)) - by @ghiscoding
+
+### Code Refactoring
+
+* **core:** drop SortableJS dependency ([#2634](https://github.com/ghiscoding/slickgrid-universal/issues/2634)) ([ba5ab74](https://github.com/ghiscoding/slickgrid-universal/commit/ba5ab743fb6518d8c528c7f40ace05062f1fd814)) - by @ghiscoding
+* drop `rowTopOffsetRenderType` & Row Detail `renderMode` overlay ([#2834](https://github.com/ghiscoding/slickgrid-universal/issues/2834)) ([a98acb1](https://github.com/ghiscoding/slickgrid-universal/commit/a98acb101ac9d631a929489310ec1b0b63c908cb)) - by @ghiscoding
+* remove deprecated `positionOrder` option on all Menu plugins ([#2850](https://github.com/ghiscoding/slickgrid-universal/issues/2850)) ([1bd9c6d](https://github.com/ghiscoding/slickgrid-universal/commit/1bd9c6dfb9afd9f36696e33901914138042e5bf1)) - by @ghiscoding
+* replace deprecated ExtensionName enum with type ([#2845](https://github.com/ghiscoding/slickgrid-universal/issues/2845)) ([1c95066](https://github.com/ghiscoding/slickgrid-universal/commit/1c950666ba0f817ff099c7d1bc9eaa4d121e6b8f)) - by @ghiscoding
+* **row-detail:** simplify DOM containers and CSS classes ([#2835](https://github.com/ghiscoding/slickgrid-universal/issues/2835)) ([fc98a1f](https://github.com/ghiscoding/slickgrid-universal/commit/fc98a1f672264bb7a9280f3f8204f05cd89b4734)) - by @ghiscoding
+
 ## [10.11.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.2...v10.11.3) (2026-10-07)
 
 ### Bug Fixes
