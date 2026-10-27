@@ -1,0 +1,84 @@
+var e=`<h3 class="title is-size-3">
+  Example 07 - Row Move &amp; Row Selections
+  <span class="d-inline-flex">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span> Toggle Light/Dark</span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example07.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<div class="row mb-3">
+  <button class="button is-small" data-test="add-title-column-btn" onclick.trigger="dynamicallyAddTitleHeader()">
+    <span class="mdi mdi-plus"></span>
+    <span>Dynamically Duplicate Title Column</span>
+  </button>
+  <button class="button is-small" data-test="remove-title-column-btn" onclick.trigger="dynamicallyRemoveLastColumn()">
+    <span class="mdi mdi-minus"></span>
+    <span>Dynamically Remove Last Column</span>
+  </button>
+  <button class="button is-small" data-test="hide-finish-btn" onclick.trigger="hideFinishColumnDynamically()">
+    <span class="mdi mdi-eye-off-outline"></span>
+    <span>Dynamically Hide "Finish"</span>
+  </button>
+  <button class="button is-small" data-test="show-column-subset-btn" onclick.trigger="showColumnSubset()">
+    <span class="mdi mdi-eye-outline"></span>
+    <span>Show Certain Columns</span>
+  </button>
+  <button class="button is-small" data-test="add-item-btn" onclick.trigger="addItem()" title="Clear Filters &amp; Sorting to see it better">
+    <span class="mdi mdi-plus"></span>
+    <span>Add item</span>
+  </button>
+  <button class="button is-small" data-test="delete-item-btn" onclick.trigger="deleteItem()">
+    <span class="mdi mdi-minus"></span>
+    <span>Delete item</span>
+  </button>
+
+  <div class="mx-2 my-1"></div>
+
+  <button class="button is-small" data-test="disable-filters-btn" onclick.trigger="disableFilters()">
+    <span class="mdi mdi-filter-off-outline"></span>
+    <span>Disable Filters</span>
+  </button>
+  <button class="button is-small" data-test="disable-sorting-btn" onclick.trigger="disableSorting()">
+    <span class="mdi mdi-sort-variant-remove"></span>
+    <span>Disable Sorting</span>
+  </button>
+  <button class="button is-small" data-test="toggle-filtering-btn" onclick.trigger="toggleFilter()">
+    <span class.bind="filteringEnabledClass"></span>
+    <span>Toggle Filtering</span>
+  </button>
+  <button class="button is-small" data-test="toggle-sorting-btn" onclick.trigger="toggleSorting()">
+    <span class.bind="sortingEnabledClass"></span>
+    <span>Toggle Sorting</span>
+  </button>
+  <button class="button is-small" data-test="clear-filters-btn" onclick.trigger="clearFilters()">
+    <span class="mdi mdi-close"></span>
+    <span>Clear Filters</span>
+  </button>
+  <button class="button is-small" data-test="modal-filters-btn" onclick.trigger="allFilters()">
+    <span class="mdi mdi-text-box-search-outline"></span>
+    <span>Modal Filters</span>
+  </button>
+  <span class="ml-4">
+    <button class="button is-small" onclick.trigger="switchLanguage()" data-test="language-button">
+      <span class="mdi mdi-translate"></span>
+      <span>Switch Language</span>
+    </button>
+    <b>Locale:</b>
+    <span class="text-italic" data-test="selected-locale" textcontent.bind="selectedLanguageFile"> </span>
+  </span>
+</div>
+
+<div class="grid7"></div>
+`;export{e as default};

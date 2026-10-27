@@ -1,0 +1,58 @@
+var e=`<h3 class="title is-3">
+  Example 20 - Row Detail View
+  <span class="subtitle">(with Salesforce Theme)</span>
+  <span class="d-inline-flex">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span> Toggle Light/Dark</span>
+    </button>
+  </span>
+
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example20.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<div class="columns">
+  <div class="column is-12">
+    <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+      Toggle Edit/Readonly Grid
+    </button>
+    <button class="button is-small" onclick.trigger="closeAllRowDetail()" data-test="collapse-all-btn">Close All Row Details</button>
+    &nbsp;&nbsp;
+    <label for="">Detail View Rows Shown: </label>
+    <input
+      type="number"
+      class="is-narrow input is-small"
+      value.bind="detailViewRowCount"
+      title="Please note that the change will be applied the next time the row is expanded"
+    />
+    <button class="button is-small" onclick.trigger="changeDetailViewRowCount()" data-test="set-count-btn">Set</button>
+
+    <span class="ml-2">
+      <label for="server-delay">Simulated Server Delay (ms): </label>
+      <input type="number" id="server-delay" class="is-narrow input is-small" data-test="server-delay" value.bind="serverApiDelay" />
+    </span>
+
+    <span class="ml-2">
+      <label>Selected Rows:</label>
+      <span textcontent.bind="selectedRowString" data-test="row-selections"></span>
+    </span>
+  </div>
+
+  <div class="column is-narrow">
+    <div class.bind="statusClass" data-test="status">
+      <span textcontent.bind="status"></span>
+    </div>
+  </div>
+</div>
+
+<div class="grid20"></div>
+`;export{e as default};

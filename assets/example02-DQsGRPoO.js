@@ -1,0 +1,66 @@
+var e=`<h3 class="title is-3">
+  Example 02 - Grouping &amp; Aggregators
+  <span class="subtitle">(with Material Theme)</span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example02.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<section class="mb-2">
+  <div class="row mb-1">
+    <button class="button is-small" data-test="add-5k-rows-btn" onclick.trigger="loadData(5000)">5K rows</button>
+    <button class="button is-small" data-test="add-50k-rows-btn" onclick.trigger="loadData(50000)">50K rows</button>
+    <button class="button is-small" data-test="clear-grouping-btn" onclick.trigger="clearGrouping()">
+      <span class="mdi mdi-playlist-remove"></span>
+      <span>Clear grouping</span>
+    </button>
+    <button class="button is-small" data-test="collapse-all-btn" onclick.trigger="collapseAllGroups()">
+      <span class="mdi mdi-arrow-collapse"></span>
+      <span>Collapse all groups</span>
+    </button>
+    <button class="button is-small" data-test="expand-all-btn" onclick.trigger="expandAllGroups()">
+      <span class="mdi mdi-arrow-expand"></span>
+      <span>Expand all groups</span>
+    </button>
+    <button class="button is-small" data-test="export-excel-btn" onclick.trigger="exportToExcel()">
+      <span class="mdi mdi-file-excel-outline"></span>
+      <span>Export to Excel</span>
+    </button>
+    <button class="button is-small" data-test="export-pdf-btn" onclick.trigger="exportToPdf()">
+      <span class="mdi mdi-file-pdf-outline"></span>
+      <span>Export to PDF</span>
+    </button>
+    <button class="button is-small" data-test="export-excel-btn" onclick.trigger="logItems()">
+      <span>Log Items</span>
+    </button>
+    <span class.bind="loadingClass"></span>
+  </div>
+
+  <div class="row">
+    <button class="button is-small" data-test="group-duration-sort-value-btn" onclick.trigger="groupByDuration()">
+      Group by Duration &amp; sort groups by value
+    </button>
+    <button class="button is-small" data-test="group-duration-sort-count-btn" onclick.trigger="groupByDurationOrderByCount(false)">
+      Group by Duration &amp; sort groups by count
+    </button>
+    <button class="button is-small" data-test="group-duration-sort-count-collapse-btn" onclick.trigger="groupByDurationOrderByCount(true)">
+      Group by Duration &amp; sort groups by count, aggregate collapsed
+    </button>
+    <button class="button is-small" data-test="group-duration-effort-btn" onclick.trigger="groupByDurationEffortDriven()">
+      Group by Duration then Effort-Driven
+    </button>
+    <button class="button is-small" data-test="group-duration-effort-percent-btn" onclick.trigger="groupByDurationEffortDrivenPercent()">
+      Group by Duration then Effort-Driven then Percent.
+    </button>
+  </div>
+</section>
+
+<div class="grid2"></div>
+`;export{e as default};

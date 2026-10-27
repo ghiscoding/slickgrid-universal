@@ -1,0 +1,39 @@
+var e=`<h3 class="title is-3">
+  Example 25 - Range Filters
+
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example25.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<span>
+  <b>Metrics:</b>
+  <span textcontent.bind="metricsEndTime"></span> — <span textcontent.bind="metricsItemCount"></span> of
+  <span textcontent.bind="metricsTotalItemCount"></span> items
+</span>
+
+<div class="row mb-3">
+  <button class="button is-small" data-test="clear-filters" onclick.trigger="clearFilters()">Clear Filters</button>
+  <button class="button is-small" data-test="clear-sorting" onclick.trigger="clearSorting()">Clear Sorting</button>
+  <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">Set Filters Dynamically</button>
+  <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">Set Sorting Dynamically</button>
+
+  <span class="ml-4">
+    <button class="button is-small" onclick.trigger="switchLanguage()" data-test="language-button">
+      <span class="mdi mdi-translate"></span>
+      <span>Switch Language</span>
+    </button>
+    <b>Locale:</b>
+    <span class="text-italic" data-test="selected-locale" textcontent.bind="selectedLanguageFile"> </span>
+  </span>
+</div>
+
+<div class="grid25"></div>
+`;export{e as default};

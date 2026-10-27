@@ -1,0 +1,76 @@
+var e=`<h3 class="title is-3">
+  Example 17 - Auto-Scroll with Range Selector
+  <span class="subtitle">(with Salesforce Theme)</span>
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example17.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h6 class="italic content example-details" style.bind="subTitleStyle">
+  Dragging from 2nd column to make a selection, and the viewport will auto scroll.
+</h6>
+
+<div>
+  <div class="row scroll-configs">
+    <span>
+      <label for="min-internal">MIN interval to show next cell (ms): </label>
+      <input id="min-internal" class="is-narrow input is-small" type="number" data-test="min-interval-input" value.bind="minInterval" />
+      <label for="max-internal" class="ml-2">MAX delay to show next cell (ms): </label>
+      <input id="max-internal" class="is-narrow input is-small" type="number" data-test="max-interval-input" value.bind="maxInterval" />
+      <label for="delay-cursor" class="ml-2">Delay when cursor outside 1px (ms): </label>
+      <input id="delay-cursor" class="is-narrow input is-small" type="number" data-test="delay-cursor-input" value.bind="delayCursor" />
+    </span>
+  </div>
+  <div class="row my-3">
+    <span class="ml-1 mb-2">
+      <label for="">Grid 1 - Pinned Columns: </label>
+      <input
+        type="number"
+        data-test="pinned-column-count"
+        class="pinned-column-count is-narrow input is-small"
+        value.bind="pinnedColumnCount"
+      />
+      <button class="button is-small" data-test="set-pinned-columns-btn" onclick.trigger="changePinnedColumnCount()">Set</button>
+    </span>
+    <label for="is-autoscroll">Auto Scroll: </label>
+    <input id="is-autoscroll" type="checkbox" data-test="is-autoscroll-chk" checked.bind="isAutoScroll" />
+
+    <span class="ml-2">
+      <button class="button is-small" data-test="set-options-btn" onclick.trigger="setOptions()">Set Options</button>
+      <button class="button is-small" data-test="default-options-btn" onclick.trigger="setDefaultOptions()">Set Default Options</button>
+      <button class="button is-small" data-test="set-clear-pinned-btn" onclick.trigger="togglePinned()">Set/Clear Pinned</button>
+      <button class="button is-small" data-test="set-clear-grouping-btn" onclick.trigger="toggleGroup()">
+        Set/Clear Grouping by Duration
+      </button>
+    </span>
+  </div>
+
+  <div class="margin-grid">
+    <h5 class="title is-5">
+      Grid 1 - Using <code>SlickCellRangeSelector</code> with <code>SlickHybridRangeSelector({ selectionType: 'cell' })</code>
+    </h5>
+    <div class="grid17-1"></div>
+
+    <div class="column is-half">
+      <hr class="my-4" />
+    </div>
+
+    <h5 class="title is-5">
+      Grid 2 - Using <code>SlickCellRangeSelector</code> and <code>SlickHybridRangeSelector({ selectionType: 'row' })</code>
+    </h5>
+    <div class="grid17-2"></div>
+  </div>
+</div>
+`;export{e as default};

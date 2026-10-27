@@ -1,0 +1,43 @@
+var e=`<h3 class="title is-3">
+  Example 44 - Variable Row Height (provider)
+
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example44.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h6 class="title is-6 italic" style.bind="subTitleStyle">
+  Variable row heights driven by <code>rowHeightProvider</code>. Short summaries stay compact while longer summaries grow.
+</h6>
+
+<section class="mb-2">
+  <div class="row mb-1">
+    <button class="button is-small" data-test="export-excel-btn" onclick.trigger="exportToExcel()">
+      <span class="mdi mdi-file-excel-outline"></span>
+      <span>Export to Excel</span>
+    </button>
+    <button class="button is-small" data-test="export-pdf-btn" onclick.trigger="exportToPdf()">
+      <span class="mdi mdi-file-pdf-outline"></span>
+      <span>Export to PDF</span>
+    </button>
+    <button class="button is-small" onclick.trigger="scrollToRow90()" data-test="scroll-row-90-example44">
+      <span class="mdi mdi-arrow-down"></span>
+      <span> Scroll To row 90</span>
+    </button>
+  </div>
+</section>
+
+<div class="grid44"></div>
+`;export{e as default};

@@ -1,0 +1,38 @@
+var e=`<style>
+  .blocked-cell {
+    background: darkred !important;
+    color: #999;
+  }
+</style>
+<h3 class="title is-3">
+  Example 38 - Spreadsheet Drag-Fill
+  <span class="d-inline-flex">
+    <button class="button is-small mr-1" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span> Toggle Light/Dark</span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example38.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h5 class="mb-3 italic example-details" style.bind="subTitleStyle">
+  Spreadsheet with drag-fill, hybrid selection model. Type a few values in the grid and then select those cells and use the bottom right
+  drag handle spread the selection and auto-fill the values to other cells. Use <code>onDragReplaceCells</code> event to customize the
+  drag-fill behavior. Use <code>&#123; enableSelection: true, selectionOptions: &#123; selectionType: 'mixed' &#125;&#125;</code>
+  grid option to enable the new Hybrid Selection Model.
+</h5>
+
+<div class="grid38"></div>
+`;export{e as default};

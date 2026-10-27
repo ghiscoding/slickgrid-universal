@@ -1,0 +1,125 @@
+var e=`<h3 class="title is-3">
+  Example 09 - Grid with OData Backend Service
+
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example09.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h6 class="italic content example-details" style.bind="subTitleStyle">
+  <span class="has-text-danger">NOTE:</span> For demo purposes, the last column (filter & sort) will always throw an error and its only
+  purpose is to demo what would happen when you encounter a backend server error (the UI should rollback to previous state before you did
+  the action). Also changing Page Size to 50,000 will also throw which again is for demo purposes. Moreover, the example will persist
+  changes in the local storage, so if you refresh the page, it will remember your last settings. Last but not least, the column Name has a
+  filter with a custom %% operator that behaves like a SQL LIKE operator supporting % wildcards.
+</h6>
+
+<div class="row mb-2">
+  <button
+    class="button is-small"
+    data-test="clear-filters-sorting"
+    onclick.trigger="clearAllFiltersAndSorts()"
+    title="Clear all Filters & Sorts"
+  >
+    <span class="mdi mdi-close"></span>
+    <span>Clear all Filter & Sorts</span>
+  </button>
+  <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">Set Filters Dynamically</button>
+  <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">Set Sorting Dynamically</button>
+  <button class="button is-small" data-test="clear-local-storage" onclick.trigger="clearLocalStorage()">Clear Local Storage</button>
+  <button class="button is-small is-danger is-outlined ml-6" data-test="throw-page-error-btn" onclick.trigger="throwPageChangeError()">
+    <span>Throw Error Going to Last Page... </span>
+    <i class="mdi mdi-page-last"></i>
+  </button>
+</div>
+
+<div class="columns">
+  <div class="column">
+    <span>
+      <label>Programmatically go to first/last page:</label>
+      <button class="button is-small" data-test="goto-first-page" onclick.trigger="goToFirstPage()">
+        <i class="mdi mdi-page-first"></i>
+      </button>
+      <button class="button is-small" data-test="goto-last-page" onclick.trigger="goToLastPage()">
+        <i class="mdi mdi-page-last"></i>
+      </button>
+    </span>
+
+    <span class="ml-1">
+      <label>OData Version: </label>
+      <span data-test="radioVersion">
+        <label class="radio-inline control-label" for="radio2">
+          <input type="radio" name="inlineRadioOptions" data-test="version2" id="radio2" checked onclick.trigger="setOdataVersion(2)" />
+          2
+        </label>
+        <label class="radio-inline control-label" for="radio4">
+          <input type="radio" name="inlineRadioOptions" data-test="version4" id="radio4" onclick.trigger="setOdataVersion(4)" />
+          4
+        </label>
+      </span>
+    </span>
+    <label class="checkbox-inline control-label ml-2" for="enableCount">
+      <input
+        type="checkbox"
+        id="enableCount"
+        data-test="enable-count"
+        checked.bind="isCountEnabled"
+        onclick.trigger="changeCountEnableFlag(event.target.checked)"
+      />
+      <span class="text-bold">Enable Count</span> (add to OData query)
+    </label>
+    <label class="checkbox-inline control-label ml-2" for="enableSelect">
+      <input
+        type="checkbox"
+        id="enableSelect"
+        data-test="enable-select"
+        checked.bind="isSelectEnabled"
+        onclick.trigger="changeEnableSelectFlag(event.target.checked)"
+      />
+      <span class="text-bold">Enable Select</span> (add to OData query)
+    </label>
+    <label class="checkbox-inline control-label ml-2" for="enableExpand">
+      <input
+        type="checkbox"
+        id="enableExpand"
+        data-test="enable-expand"
+        checked.bind="isExpandEnabled"
+        onclick.trigger="changeEnableExpandFlag(event.target.checked)"
+      />
+      <span class="text-bold">Enable Expand</span> (add to OData query)
+    </label>
+  </div>
+
+  <div class="column is-narrow px-0">
+    <div class.bind="errorStatusClass" data-test="error-status">
+      <em><strong>Backend Error:</strong> <span textcontent.bind="errorStatus"></span></em>
+    </div>
+  </div>
+</div>
+
+<div class="columns mt-1">
+  <div class="column">
+    <div class="notification is-info is-light" data-test="alert-odata-query">
+      <strong>OData Query:</strong>
+      <span data-test="odata-query-result" textcontent.bind="odataQuery"></span>
+    </div>
+  </div>
+  <div class="column is-narrow">
+    <div class.bind="statusClass" data-test="status"><strong>Status:</strong> <span textcontent.bind="status"></span></div>
+  </div>
+</div>
+
+<div class="grid9"></div>
+`;export{e as default};

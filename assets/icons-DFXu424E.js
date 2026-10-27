@@ -1,0 +1,347 @@
+var e=`<h3 class="title is-3">
+  SlickGrid Material Icons
+  <span class="subtitle">(icons &amp; utilities that are available in Slickgrid-Universal)</span>
+  <span class="d-inline-flex">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span> Toggle Light/Dark</span>
+    </button>
+  </span>
+</h3>
+
+<span>
+  <a href="https://materialdesignicons.com/" target="_blank">
+    <span class="is-link mdi mdi-link"></span>
+    <span> All icon SVGs were copied from Material Design Icons - Official Website (+5000 icons)</span>
+  </a>
+  <p class="text-italic">
+    We only keep a small subset of the Material Design Icons, scroll to the bottom to see which ones are included in the lib.
+  </p>
+</span>
+
+<h4 class="title is-4 section-title">
+  Icon Utilities
+  <span class="subtitle has-text-weight-normal"></span>
+</h4>
+<p class="note-negative">
+  Spin any icon with <code>mdi-spin</code> or <code>mdi-spin-2s</code> (default is "2s") or change its speed via <code>mdi-spin-1s</code>,
+  <code>mdi-spin-3s</code>, etc. You can also rotate icons with <code>mdi-rotate-xyz</code> where "xyz" is the rotate angle (multiple of
+  45°),
+</p>
+<div class="icons-utils section-container">
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-vanish font-22px mdi-spin mr-5px"></span> mdi-vanish / mdi-spin (2s)</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-cog font-22px mdi-spin mr-5px"></span> mdi-cog / mdi-spin (2s)</div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-cog-outline font-22px mdi-spin mr-5px"></span> mdi-cog-outline / mdi-spin (2s)
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-sync mdi-flip-h font-22px mdi-spin mr-5px"></span>
+    <span title="we're also add 'mdi-flip-h' because the 'mdi-sync' icon is inversed and can cause PTSD to some users">
+      mdi-sync / mdi-spin (2s)
+    </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-sync-circle mdi-flip-h font-22px mdi-spin mr-5px"></span>
+    <span title="we're also add 'mdi-flip-h' because the 'mdi-sync' icon is inversed and can cause PTSD to some users">
+      mdi-sync-circle / mdi-spin (2s)
+    </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box"></div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-load font-22px mdi-spin-1s mr-5px"></span> mdi-spin-1s</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-load font-22px mdi-spin-2s mr-5px"></span> mdi-spin-2s</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-load font-22px mdi-spin-3s mr-5px"></span> mdi-spin-3s</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-load font-22px mdi-spin-4s mr-5px"></span> mdi-spin-4s</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-load font-22px mdi-spin-5s mr-5px"></span> mdi-spin-5s</div>
+  <div class="slick-col-medium-2 icon-box"></div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-coffee font-22px mdi-rotate-45 mr-5px"></span> mdi-rotate-45</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-coffee font-22px mdi-rotate-90 mr-5px"></span> mdi-rotate-90</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-coffee font-22px mdi-rotate-135 mr-5px"></span> mdi-rotate-135</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-coffee font-22px mdi-rotate-180 mr-5px"></span> mdi-rotate-180</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-coffee font-22px mdi-rotate-225 mr-5px"></span> mdi-rotate-225</div>
+  <div class="slick-col-medium-2 icon-box"></div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-coffee font-22px mdi-rotate-270 mr-5px"></span> mdi-rotate-270</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-coffee font-22px mdi-rotate-315 mr-5px"></span> mdi-rotate-315</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-coffee font-22px mdi-flip-h mr-5px"></span> mdi-flip-h</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-coffee font-22px mdi-flip-v mr-5px"></span> mdi-flip-v</div>
+</div>
+
+<h4 class="title is-4 section-title">
+  Icon Sizes
+  <span class="subtitle has-text-weight-normal">(from 10px up to 50px)</span>
+</h4>
+<p class="note-negative">
+  <i
+    >Note, since icons are now pure CSS you could also use any font size CSS classes (when available) like <code>"font-20px"</code> or you
+    could also change <code>font-size</code> yourself or even simply <code>inherit</code> text font size.
+  </i>
+</p>
+<div class="icons-sizes section-container">
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-cancel font-10px mr-5px"></span>font-10px</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-cancel font-15px mr-5px"></span>font-15px</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-cancel font-22px mr-5px"></span>font-22px</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-cancel font-25px mr-5px"></span>font-25px</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-cancel font-38px mr-5px"></span>font-38px</div>
+  <div class="slick-col-medium-2 icon-box"><span class="mdi mdi-cancel font-50px mr-5px"></span>font-50px</div>
+</div>
+
+<h5 class="title is-5 section-title">Text Utilities</h5>
+<div class="text-utilities section-container">
+  <div class="slick-col-medium-2 text-bold padding-2px">text-bold</div>
+  <div class="slick-col-medium-2 text-center padding-2px">text-center</div>
+  <div class="slick-col-medium-2 text-left padding-2px">text-left</div>
+  <div class="slick-col-medium-2 text-right padding-2px">text-right</div>
+  <div class="slick-col-medium-2 text-lowercase padding-2px">text-lowercase</div>
+  <div class="slick-col-medium-2 text-uppercase padding-2px">text-uppercase</div>
+  <div class="slick-col-medium-2 text-underline padding-2px">text-underline</div>
+  <div class="slick-col-medium-2 text-italic padding-2px">text-italic</div>
+  <div class="slick-col-medium-2 text-bold padding-2px">text-bold</div>
+</div>
+
+<h5 class="title is-5 section-title">
+  Padding &amp; Icons Styled as a Button
+  <span class="subtitle has-text-weight-normal">(padding from 0px up to 30px)</span>
+</h5>
+<p class="note-negative">
+  <i>Note, you can use the same pattern with <code>"margin-0px"</code>, <code>"padding-0x"</code> and <code>"font-5px"</code></i>
+</p>
+
+<div class="icons-padding section-container">
+  <div class="slick-col-medium-2">
+    <span class="button-style margin-auto padding-0px"><span class="mdi mdi-chevron-down font-22px"></span></span>
+    button-style padding-0px
+  </div>
+  <div class="slick-col-medium-2">
+    <span class="button-style margin-auto padding-1px"><span class="mdi mdi-chevron-down font-22px"></span></span>
+    button-style padding-1px
+  </div>
+  <div class="slick-col-medium-2">
+    <span class="button-style margin-auto padding-2px"><span class="mdi mdi-chevron-down font-22px"></span></span>
+    button-style padding-2px
+  </div>
+  <div class="slick-col-medium-2">
+    <span class="button-style margin-auto padding-5px"><span class="mdi mdi-chevron-down font-22px"></span></span>
+    button-style padding-5px
+  </div>
+  <div class="slick-col-medium-2">
+    <span class="button-style margin-auto padding-15px"><span class="mdi mdi-chevron-down font-22px"></span></span>
+    button-style padding-15px
+  </div>
+  <div class="slick-col-medium-2">
+    <span class="button-style margin-auto padding-18px"><span class="mdi mdi-chevron-down font-22px"></span></span>
+    button-style padding-18px
+  </div>
+</div>
+
+<hr />
+
+<h4 class="title is-4 section-title">Icon & Text Colors</h4>
+<div class="icons-list section-container">
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-primary mr-5px"></span>
+    <span class="color-primary">color-primary</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-primary-light mr-5px"></span>
+    <span class="color-primary-light">color-primary-light</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-primary-dark mr-5px"></span>
+    <span class="color-primary-dark">color-primary-dark</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-secondary mr-5px"></span>
+    <span class="color-secondary">color-secondary</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-secondary-light mr-5px"></span>
+    <span class="color-secondary-light">color-secondary-light</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-secondary-dark mr-5px"></span>
+    <span class="color-secondary-dark">color-secondary-dark</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-success mr-5px"></span>
+    <span class="color-success">color-success</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-success-light mr-5px"></span>
+    <span class="color-success-light">color-success-light</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-success-dark mr-5px"></span>
+    <span class="color-success-dark">color-success-dark</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-danger mr-5px"></span>
+    <span class="color-danger">color-danger</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-danger-light mr-5px"></span>
+    <span class="color-danger-light">color-danger-light</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-danger-dark mr-5px"></span>
+    <span class="color-danger-dark">color-danger-dark</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-warning mr-5px"></span>
+    <span class="color-warning">color-warning</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-warning-light mr-5px"></span>
+    <span class="color-warning-light">color-warning-light</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-warning-dark mr-5px"></span>
+    <span class="color-warning-dark">color-warning-dark</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-info mr-5px"></span>
+    <span class="color-info">color-info</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-info-light mr-5px"></span>
+    <span class="color-info-light">color-info-light</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-info-dark mr-5px"></span>
+    <span class="color-info-dark">color-info-dark</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-muted mr-5px"></span>
+    <span class="color-muted">color-muted</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-muted-light mr-5px"></span>
+    <span class="color-muted-light">color-muted-light</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-muted-dark mr-5px"></span>
+    <span class="color-muted-dark">color-muted-dark</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-alt-default mr-5px"></span>
+    <span class="color-alt-default">color-alt-default </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-alt-default-light mr-5px"></span>
+    <span class="color-alt-default-light">color-alt-default-light </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-alt-default-dark mr-5px"></span>
+    <span class="color-alt-default-dark">color-alt-default-dark </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-alt-warning mr-5px"></span>
+    <span class="color-alt-warning">color-alt-warning </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-alt-warning-light mr-5px"></span>
+    <span class="color-alt-warning-light">color-alt-warning-light </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-alt-warning-dark mr-5px"></span>
+    <span class="color-alt-warning-dark">color-alt-warning-dark </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-alt-danger mr-5px"></span>
+    <span class="color-alt-danger">color-alt-danger </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-alt-danger-light mr-5px"></span>
+    <span class="color-alt-danger-light">color-alt-danger-light </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-alt-danger-dark mr-5px"></span>
+    <span class="color-alt-danger-dark">color-alt-danger-dark </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-alt-success mr-5px"></span>
+    <span class="color-alt-success">color-alt-success </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-alt-success-light mr-5px"></span>
+    <span class="color-alt-success-light">color-alt-success-light </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-alt-success-dark mr-5px"></span>
+    <span class="color-alt-success-dark">color-alt-success-dark </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-se-primary mr-5px"></span>
+    <span class="color-se-primary">color-se-primary </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-se-link mr-5px"></span>
+    <span class="color-se-link">color-se-link</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-se-link-dark mr-5px"></span>
+    <span class="color-se-link-dark">color-se-link-dark</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-se-danger mr-5px"></span>
+    <span class="color-se-danger">color-se-danger</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-se-secondary-light mr-5px"></span>
+    <span class="color-se-secondary-light">color-se-secondary-light</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-se-secondary mr-5px"></span>
+    <span class="color-se-secondary">color-se-secondary</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-se-warning mr-5px"></span>
+    <span class="color-se-warning">color-se-warning </span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-se-warning-light mr-5px"></span>
+    <span class="color-se-warning-light">color-se-warning-light</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-sf-highlight mr-5px"></span>
+    <span class="color-sf-highlight">color-sf-highlight</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-sf-primary mr-5px"></span>
+    <span class="color-sf-primary">color-sf-primary</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-sf-primary-dark mr-5px"></span>
+    <span class="color-sf-primary-dark">color-sf-primary-dark</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box bg-light">
+    <span class="mdi mdi-help-circle font-22px color-dark mr-5px"></span>
+    <span class="color-dark">color-dark</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box bg-light">
+    <span class="mdi mdi-help-circle font-22px color-body mr-5px"></span>
+    <span class="color-body">color-body</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-disabled mr-5px"></span>
+    <span class="color-disabled">color-disabled</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box">
+    <span class="mdi mdi-help-circle font-22px color-disabled-dark mr-5px"></span>
+    <span class="color-disabled-dark">color-disabled-dark</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box bg-dark">
+    <span class="mdi mdi-help-circle font-22px color-light mr-5px"></span>
+    <span class="color-light">color-light</span>
+  </div>
+  <div class="slick-col-medium-2 icon-box bg-dark">
+    <span class="mdi mdi-help-circle font-22px color-white mr-5px"></span>
+    <span class="color-white">color-white</span>
+  </div>
+</div>
+
+<hr />
+<h4 class="title is-4 section-title">
+  Icons currently available in the lib
+  <span class="icon-counter subtitle has-text-weight-normal"></span>
+</h4>
+<div class="icons-container section-container"></div>
+`;export{e as default};

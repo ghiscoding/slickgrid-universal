@@ -1,0 +1,72 @@
+var e=`<h3 class="title is-3">
+  Example 21 - Row Detail with inner Grid
+  <span class="subtitle">(with Salesforce Theme)</span>
+  <span class="d-inline-flex">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span> Toggle Light/Dark</span>
+    </button>
+  </span>
+
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example21.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<div class="columns">
+  <div class="column is-12">
+    <button class="button is-small" onclick.trigger="closeAllRowDetail()" data-test="collapse-all-btn">Close All Row Details</button>
+    <button class="button is-small" onclick.trigger="redrawAllRowDetails()" data-test="redraw-all-btn">Redraw All Row Details</button>
+    &nbsp;&nbsp;
+    <label for="">Detail View Rows Shown: </label>
+    <input
+      type="number"
+      class="is-narrow input is-small"
+      data-test="detail-view-row-count"
+      value.bind="detailViewRowCount"
+      title="Please note that the change will be applied the next time the row is expanded"
+    />
+    <button class="button is-small" onclick.trigger="changeDetailViewRowCount()" data-test="set-count-btn">Set</button>
+
+    <span class="ml-2">
+      <label for="server-delay">Simulated Server Delay (ms): </label>
+      <input type="number" id="server-delay" class="is-narrow input is-small" data-test="server-delay" value.bind="serverApiDelay" />
+    </span>
+
+    <label class="checkbox-inline control-label ml-3" for="useInnerGridStatePresets">
+      <input
+        type="checkbox"
+        id="useInnerGridStatePresets"
+        data-test="use-inner-grid-state-presets"
+        checked.bind="isUsingInnerGridStatePresets"
+        onclick.trigger="changeUsingInnerGridStatePresets(event.target.checked)"
+      />
+      <span
+        title="should we use Grid State/Presets to keep the inner grid state whenever Row Details are out and back to viewport and re-rendered"
+      >
+        Use Inner Grid State/Presets
+      </span>
+    </label>
+
+    <label class="checkbox-inline control-label ml-3" for="useResizeAutoHeight">
+      <input
+        type="checkbox"
+        id="useResizeAutoHeight"
+        data-test="use-auto-height"
+        checked.bind="isUsingAutoHeight"
+        onclick.trigger="changeUsingResizerAutoHeight(event.target.checked)"
+      />
+      Use <code>autoResize.autoHeight</code>
+    </label>
+  </div>
+</div>
+
+<div class="grid21"></div>
+`;export{e as default};

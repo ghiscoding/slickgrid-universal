@@ -1,0 +1,86 @@
+var e=`<style>
+  .blocked-cell {
+    background: darkred !important;
+    color: #999;
+  }
+</style>
+<h3 class="title is-3">
+  Example 37 - Hybrid Selection Model
+
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example37.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h5 class="mb-3 italic example-details" style.bind="subTitleStyle">
+  <ul>
+    <li>
+      <code>SlickHybridSelectionModel</code> This Selection Model is an hybrid approach that uses a combination of the row or cell
+      selections depending on certain conditions. <br />
+      Use <code>&#123; enableSelection: true, selectionOptions: &#123; selectionType: 'mixed' &#125;&#125;</code> grid option to enable the
+      new Hybrid Selection Model.
+    </li>
+    <li>
+      1. clicking on the first column (<code>id</code>) will use <code>RowSelectionModel</code> because of our configuration of
+      <code>rowSelectColumnIds: ['id']</code> as the columns that will trigger row selection.
+    </li>
+    <li>2. clicking on the any other columns will use <code>CellSelectionModel</code> by default</li>
+    <li>3. with cell selection, hold Shift and click another cell to select the rectangular range between the two cells</li>
+  </ul>
+</h5>
+
+<div class="columns">
+  <div class="column field is-narrow">
+    <h5 class="title is-5">
+      Grid 1
+      <span class="subtitle is-6 is-small ml-5 text-italic">
+        <label>Range Selection</label>
+        <span id="selectionRange1"></span>
+      </span>
+    </h5>
+    <button class="button is-small mb-3" onclick.trigger="gridFocus()">Grid Focus</button>
+    <button class="button is-small" data-test="export-excel-btn" onclick.trigger="exportGrid1ToExcel()">
+      <span class="mdi mdi-file-excel-outline"></span>
+      <span>Export to Excel</span>
+    </button>
+  </div>
+</div>
+<div class="grid37-1"></div>
+
+<div class="column is-half my-3">
+  <label class="checkbox-inline control-label">
+    <input
+      type="checkbox"
+      data-test="enable-multi-selection"
+      checked.bind="enableMultiSelection"
+      onclick.trigger="toggleMultiSelection(event.target.checked)"
+    />
+    <b>Enable multi-selection</b> (Ctrl/Cmd-click or drag) on both grids
+  </label>
+</div>
+
+<div class="columns">
+  <div class="column field is-narrow">
+    <h5 class="title is-5">
+      Grid 2
+      <span class="subtitle is-6 ml-5 text-italic">
+        <label>Range Selection</label>
+        <span id="selectionRange2"></span>
+      </span>
+    </h5>
+  </div>
+</div>
+<div class="grid37-2"></div>
+`;export{e as default};

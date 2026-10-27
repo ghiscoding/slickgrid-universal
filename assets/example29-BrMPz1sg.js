@@ -1,0 +1,41 @@
+var e=`<h3 class="title is-3">
+  Example 29 - Drag & Drop
+
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example29.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h6 class="italic content example-details" style.bind="subTitleStyle">
+  <ul>
+    <li>Click to select, Ctrl-click to toggle selection(s).</li>
+    <li>Drag one or more rows by the handle icon (1st column) to reorder.</li>
+    <li>Drag one or more rows by selection (2nd or 3rd column) and drag to the recycle bin to delete.</li>
+  </ul>
+</h6>
+
+<div class="columns is-desktop">
+  <div class="column">
+    <div class="grid29-1">
+      <div class="grid-header">
+        <label>Santa's TODO list:</label>
+      </div>
+    </div>
+  </div>
+  <div class="column">
+    <div id="dropzone" class="recycle-bin">Recycle Bin</div>
+  </div>
+</div>
+`;export{e as default};

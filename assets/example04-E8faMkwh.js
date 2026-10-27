@@ -1,0 +1,116 @@
+var e=`<h3 class="title is-3">
+  Example 04 - Pinned Columns/Rows
+
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example04.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+  <h6 class="italic content example-details" style.bind="subTitleStyle">
+    The Autocomplete Editor (City of Origin) might throw some console errors because it uses "http://gd.geobytes.com/" request (which is not
+    using https). You can allow "Insecure content" in your browser for this website only to test the Autocomplete. City of Origin is
+    intentionally non-pinnable and is highlighted with a subtle gray background. Columns and rows can also be pinned selectively, without
+    requiring them to be sequential (for example, rows 0, 2, and 4).
+  </h6>
+</h3>
+
+<div class="row mb-3">
+  <span>
+    <label for="">Pinned Rows (top/bottom): </label>
+    <div class="select is-small">
+      <select
+        class="pinned-top-row-count"
+        value.bind="pinnedTopRowCount"
+        onchange.trigger="changePinnedRowCount(event.target.value, 'top')"
+      >
+        <option value="0">None</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+    <div class="select is-small">
+      <select
+        class="pinned-bottom-row-count"
+        value.bind="pinnedBottomRowCount"
+        onchange.trigger="changePinnedRowCount(event.target.value, 'bottom')"
+      >
+        <option value="0">None</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+  </span>
+  <span class="ml-1">
+    <label for="">Pinned Columns (left/right): </label>
+    <div class="select is-small">
+      <select
+        class="pinned-left-column-count"
+        value.bind="pinnedLeftColumnCount"
+        onchange.trigger="changePinnedColumnCount(event.target.value, 'left')"
+      >
+        <option value="-1">None</option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+    <div class="select is-small">
+      <select
+        class="pinned-right-column-count"
+        value.bind="pinnedRightColumnCount"
+        onchange.trigger="changePinnedColumnCount(event.target.value, 'right')"
+      >
+        <option value="-1">None</option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+  </span>
+  <span class="ml-3">
+    <button class="button is-small" onclick.trigger="setPinnedColumns(-1, 0)" data-test="remove-pinned-column-button">
+      <span class="mdi mdi-close"></span>
+      <span>Remove Pinned Columns</span>
+    </button>
+    <button class="button is-small" data-test="set-3pinned-columns" onclick.trigger="setPinnedColumns(2)">
+      <span class="mdi mdi-pin-outline"></span>
+      <span>Pin 3 Columns</span>
+    </button>
+    <button class="button is-small" data-test="toggle-pinned-right" onclick.trigger="toggleRightPinning()">
+      <span class="mdi mdi-pin-outline"></span>
+      <span>Toggle Right Pinning</span>
+    </button>
+    <button class="button is-small ml-3" data-test="toggle-select-all-row" onclick.trigger="toggleWhichRowToShowSelectAll()">
+      <span class="mdi mdi-swap-horizontal mdi-rotate-90"></span>
+      <span>Toggle which row to show "Select All" checkbox</span>
+    </button>
+    <button class="button is-small ml-3" data-test="set-large-pinned-columns" onclick.trigger="setLargePinnedColumns()">
+      <span>Set Large Pinned Columns</span>
+    </button>
+  </span>
+</div>
+
+<div class="grid4"></div>
+`;export{e as default};

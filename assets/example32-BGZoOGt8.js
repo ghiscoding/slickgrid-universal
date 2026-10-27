@@ -1,0 +1,90 @@
+var e=`<h3 class="title is-3">
+  Example 32 - colspan/rowspan - Employees Timesheets
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example32.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<div class="columns" style.bind="subTitleStyle">
+  <div class="column">
+    <p class="italic example-details">
+      <b>NOTES</b>: <code>rowspan</code> is an opt-in feature, because of its small perf hit (it needs to loop through all row metadatas to
+      map all rowspan), and requires the <code>enableCellRowSpan</code> grid option to be enabled to work properly. The
+      <code>colspan</code>/<code>rowspan</code> are both using DataView item metadata and are both based on row indexes and will
+      <b>not</b> keep the row in sync with the data. It is really up to you the user to update the metadata logic of how and where the cells
+      should span when a side effect kicks in. (i.e: Filtering/Sorting/Paging/Column Reorder... will <b>not</b> change/update the spanning
+      in the grid by itself and that is why they these features are all disabled in this example). Also, column/row freezing (pinning) are
+      also not supported, or at least not recommended unless you know exactly what you're doing (like in this demo here because we know our
+      pinning doesn't intersect)! Any freezing column/row that could intersect with a <code>colspan</code>/<code>rowspan</code>
+      <b>&nbsp;will cause problems</b>.
+    </p>
+  </div>
+</div>
+
+<section class="mb-2">
+  <div class="row mb-1">
+    <button class="button is-small" data-test="goto-up" onclick.trigger="navigateUp()" title="from an active cell, navigate to cell above">
+      <span class="mdi mdi-chevron-down mdi-rotate-180"></span>
+      Navigate Up Cell
+    </button>
+    <button
+      class="button is-small"
+      data-test="goto-down"
+      onclick.trigger="navigateDown()"
+      title="from an active cell, navigate to cell below"
+    >
+      <span class="mdi mdi-chevron-down"></span>
+      Navigate Down Cell
+    </button>
+    <button
+      class="button is-small"
+      data-test="goto-prev"
+      onclick.trigger="navigatePrev()"
+      title="from an active cell, navigate to previous left cell"
+    >
+      <span class="mdi mdi-chevron-down mdi-rotate-90"></span>
+      Navigate to Left Cell
+    </button>
+    <button
+      class="button is-small"
+      data-test="goto-next"
+      onclick.trigger="navigateNext()"
+      title="from an active cell, navigate to next right cell"
+    >
+      <span class="mdi mdi-chevron-down mdi-rotate-270"></span>
+      Navigate to Right Cell
+    </button>
+    <button class="button is-small" data-test="toggle-employee-id" onclick.trigger="toggleEmployeeIdVisibility()">
+      Show/Hide EmployeeID
+    </button>
+    <button class="button is-small mx-1" onclick.trigger="toggleEditing()" data-test="toggle-editing">
+      <span class="mdi mdi-pencil-outline"></span>
+      <span>Toggle Editing: <span id="isEditable" class="text-italic" textcontent.bind="isEditable">false</span></span>
+    </button>
+    <button class="button is-small" data-test="export-excel-btn" onclick.trigger="exportToExcel()">
+      <span class="mdi mdi-file-excel-outline text-success"></span>
+      <span>Export to Excel</span>
+    </button>
+    <button class="button is-small" data-test="export-pdf-btn" onclick.trigger="exportToPdf()">
+      <span class="mdi mdi-file-pdf-outline text-danger"></span>
+      <span>Export to PDF</span>
+    </button>
+  </div>
+</section>
+
+<div class="grid-container grid32-container">
+  <div class="grid32"></div>
+</div>
+`;export{e as default};

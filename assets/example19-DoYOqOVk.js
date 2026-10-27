@@ -1,0 +1,75 @@
+var e=`<style>
+  .blocked-cell {
+    background: darkred !important;
+    color: #999;
+  }
+</style>
+<h3 class="title is-3">
+  Example 19 - ExcelCopyBuffer with Cell Selection
+  <span class="subtitle">(with Salesforce Theme)</span>
+  <span class="d-inline-flex">
+    <button class="button is-small mr-1" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example19.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h5 class="mb-3 italic example-details" style.bind="subTitleStyle">
+  <p>Grid - using <code>enableExcelCopyBuffer</code> which uses <code>SlickHybridSelectionModel</code></p>
+  <p>The complete first row and the cells C - E of the second row are not allowing to paste values.</p>
+  <p>
+    Additionally the columns are configured to <code>exportWithFormatter</code> and a custom formatter that renders the cells coordinates or
+    value if available. When selecting one or more cells and pressing CTRL + C, the ExcelCopyBuffer will be filled with the formatter
+    outputs of the selected cells. This also applies if the cells editor is already open due to use of
+    <code>copyActiveEditorCell</code>
+  </p>
+  <p>Click a cell, then hold Shift and click another cell to select the rectangular range between them.</p>
+</h5>
+<h6 class="title is-6">
+  <button class="button is-small" onclick.trigger="undoLastEdit()" data-test="undo-last-edit-btn">
+    <span class="mdi mdi-undo"></span>
+    <span>Undo Last Edit</span>
+  </button>
+  <button class="button is-small" onclick.trigger="undoLastEdit(true)" data-test="undo-open-editor-btn">
+    <span class="mdi mdi-undo"></span>
+    <span>Undo Last Edit &amp; Open Editor</span>
+  </button>
+  <button class="button is-small" onclick.trigger="undoAllEdits()" data-test="undo-all-edits-btn">
+    <span class="mdi mdi-history"></span>
+    <span>Undo All Edits</span>
+  </button>
+  <button class="button is-small is-primary" onclick.trigger="togglePagination()" data-text="toggle-pagination-btn">
+    <span class="mdi mdi-swap-vertical"></span>
+    <span>Toggle Pagination</span>
+  </button>
+  <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+    <span class="mdi mdi-table-edit"></span>
+    <span>Toggle Edit/Readonly Grid</span>
+  </button>
+  <label class="checkbox-inline ml-3">
+    <input
+      type="checkbox"
+      data-test="enable-multi-selection"
+      checked.bind="enableMultiSelection"
+      onclick.trigger="toggleMultiSelection(event.target.checked)"
+    />
+    Enable multi-selection (Ctrl/Cmd-click or drag)
+  </label>
+  <div class="my-2">
+    <label class="ml-3">Range Selection</label>
+    <span id="selectionRange"></span>
+  </div>
+</h6>
+
+<div class="grid19"></div>
+`;export{e as default};

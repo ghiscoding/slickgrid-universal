@@ -1,0 +1,106 @@
+var e=`<h3 class="title is-3">
+  Example 05 - Tree Data
+  <span class="mdi mdi-file-tree font-25px"></span>
+  <span class="subtitle">(from a flat dataset with <code>parentId</code> references)</span>
+
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example05.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h6 class="italic content example-details" style.bind="subTitleStyle">
+  NOTE: The grid will automatically sort Ascending with the column that has the Tree Data, you could add a "sortByFieldId" in your column
+  "treeData" option if you wish to sort on a different column
+</h6>
+<div class="columns">
+  <div class="column is-narrow">
+    <div class="row mb-1">
+      <button class="button is-small" data-test="add-500-rows-btn" onclick.trigger="loadData(500)">500 rows</button>
+      <button class="button is-small" data-test="add-75k-rows-btn" onclick.trigger="loadData(75000)">75k rows</button>
+      <button class="button is-small" data-test="add-250k-rows-btn" onclick.trigger="loadData(250000)">250k rows</button>
+      <button onclick.trigger="dynamicallyChangeFilter()" class="button is-small" data-test="change-filter-dynamically">
+        <span class="mdi mdi-filter-outline"></span>
+        <span>Dynamically Change Filter (% complete &lt; 40)</span>
+      </button>
+      <button onclick.trigger="collapseAllWithoutEvent()" data-test="collapse-all-noevent-btn" class="button is-small">
+        <span class="mdi mdi-arrow-collapse"></span>
+        <span>Collapse All (without triggering event)</span>
+      </button>
+      <button onclick.trigger="dynamicallyToggledFirstParent()" data-test="dynamically-toggle-first-parent-btn" class="button is-small">
+        <span>Dynamically Toggle First Parent</span>
+      </button>
+      <button
+        onclick.trigger="reapplyToggledItems()"
+        data-test="reapply-toggled-items-btn"
+        class="button is-small"
+        disabled.bind="hasNoExpandCollapseChanged"
+      >
+        <span class="mdi mdi-history"></span>
+        <span>Reapply Previous Toggled Items</span>
+      </button>
+      <span class.bind="loadingClass"></span>
+    </div>
+
+    <div class="row mb-1">
+      <button onclick.trigger="addNewRow()" data-test="add-item-btn" class="button is-small is-info">
+        <span class="mdi mdi-plus"></span>
+        <span>Add New Item to "Task 1" group</span>
+      </button>
+      <button onclick.trigger="updateFirstRow()" data-test="update-item-btn" class="button is-small">
+        <span class="mdi mdi-pencil"></span>
+        <span>Update 1st Row Item</span>
+      </button>
+      <button onclick.trigger="collapseAll()" data-test="collapse-all-btn" class="button is-small">
+        <span class="mdi mdi-arrow-collapse"></span>
+        <span>Collapse All</span>
+      </button>
+      <button onclick.trigger="expandAll()" data-test="expand-all-btn" class="button is-small">
+        <span class="mdi mdi-arrow-expand"></span>
+        <span>Expand All</span>
+      </button>
+      <button onclick.trigger="logTreeDataToggledItems()" class="button is-small">
+        <span>Log Tree Toggled Items</span>
+      </button>
+      <button onclick.trigger="logFlatStructure()" class="button is-small">
+        <span>Log Flat Structure</span>
+      </button>
+      <button onclick.trigger="logHierarchicalStructure()" class="button is-small">
+        <span>Log Hierarchical Structure</span>
+      </button>
+    </div>
+    <div class="row mb-1">
+      <div class="field has-addons">
+        <p class="control">
+          <input id="maxVisibleDepthInput" class="input is-small" type="number" placeholder="Max Visible Depth (e.g. 1)" />
+        </p>
+        <p class="control">
+          <button onclick.trigger="setMaxVisibleDepthFromInput()" class="button is-small is-primary" data-test="set-max-visible-depth-btn">
+            <span class="mdi mdi-check" aria-hidden="true"></span>
+            <span style="margin-left: 6px">Set Depth</span>
+          </button>
+        </p>
+        <p class="control">
+          <button onclick.trigger="clearMaxVisibleDepth()" class="button is-small" data-test="clear-max-visible-depth-btn">
+            <span class="mdi mdi-close" aria-hidden="true"></span>
+            <span style="margin-left: 6px">Clear</span>
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grid5"></div>
+`;export{e as default};

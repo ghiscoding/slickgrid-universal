@@ -1,0 +1,36 @@
+var e=`<div class="demo-container grid46-rtl">
+  <h3 class="title is-3">
+    Example 46 - RTL (Right-to-Left)
+    <span class="subtitle">with column resizing</span>
+    <div class="subtitle code-link">
+      <span class="is-size-6">see</span>
+      <a
+        class="is-size-5"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example46.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </div>
+  </h3>
+
+  <h6 class="title is-6 italic">
+    RTL with dynamic two-sided column pinning, sticky columns, pinned rows, and a colspan crossing the leading pinned boundary
+  </h6>
+
+  <div class="rtl-controls" dir="ltr">
+    <label
+      >Pinned at the start (right) edge:
+      <input type="number" id="pinnedStartColumns" min="0" max="16" value="2" />
+    </label>
+    <label
+      >Pinned at the end (left) edge:
+      <input type="number" id="pinnedEndColumns" min="0" max="16" value="1" />
+    </label>
+    <button id="setPinning" type="button" onclick.trigger="applyPinning()">Apply</button>
+    <button id="clearPinning" type="button" onclick.trigger="clearPinning()">Remove pinning</button>
+  </div>
+
+  <div class="grid46"></div>
+</div>
+`;export{e as default};
