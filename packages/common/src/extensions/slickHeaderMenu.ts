@@ -655,9 +655,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this.recreateHeaderMenu(this.grid.getColumns());
   }
 
-  /** Return the numeric range when all columns are pinnable, otherwise use pinnable column ids. */
+  /** Return a visible-column boundary/count, or IDs when the range includes non-pinnable columns. */
   protected getPinnableColumnReferences(column: Column, side: 'left' | 'right'): number | (string | number)[] {
-    const columns = this.grid.getColumns();
+    const columns = this.grid.getVisibleColumns();
     const columnPosition = columns.findIndex((col) => col.id === column.id);
     if (columnPosition < 0) {
       return -1;
@@ -665,7 +665,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     const columnRange = side === 'left' ? columns.slice(0, columnPosition + 1) : columns.slice(columnPosition);
     return columnRange.some((col) => col.pinnable === false)
-      ? columnRange.filter((col) => col.pinnable !== false).map((col) => col.id)
+      ? columnRange.filter((col) => col.pinnable !== false).map((col) => String(col.id))
       : side === 'left'
         ? columnPosition
         : columns.length - columnPosition;
