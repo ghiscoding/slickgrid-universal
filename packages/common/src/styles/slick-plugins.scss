@@ -745,6 +745,7 @@ li.hidden {
     padding: 0;
     width: var(--slick-multiselect-ok-button-width, v.$slick-multiselect-ok-button-width);
     height: var(--slick-multiselect-ok-button-height, v.$slick-multiselect-ok-button-height);
+    border: var(--slick-multiselect-ok-button-border, v.$slick-multiselect-ok-button-border);
     border-color: var(--slick-multiselect-ok-button-border-color, v.$slick-multiselect-ok-button-border-color);
     border-radius: var(--slick-multiselect-ok-button-border-radius, v.$slick-multiselect-ok-button-border-radius);
     border-width: var(--slick-multiselect-ok-button-border-width, v.$slick-multiselect-ok-button-border-width);

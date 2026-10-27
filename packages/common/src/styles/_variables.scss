@@ -792,7 +792,8 @@ $slick-multiselect-placeholder-color:                       $slick-placeholder-c
 $slick-multiselect-placeholder-font-family:                 $slick-filter-placeholder-font-family !default;
 $slick-multiselect-ok-button-bg-color:                      #fff !default;
 $slick-multiselect-ok-button-bg-hover-color:                #f9f9f9 !default;
-$slick-multiselect-ok-button-border-color:                  #ccc !default;
+$slick-multiselect-ok-button-border-color:                  #ddd !default;
+$slick-multiselect-ok-button-border:                        1px solid #{$slick-multiselect-ok-button-border-color} !default;
 $slick-multiselect-ok-button-border-radius:                 0 0 4px 4px !default;
 $slick-multiselect-ok-button-border-width:                  1px 0 0 0 !default;
 $slick-multiselect-ok-button-font-weight:                   600 !default;
@@ -1120,7 +1121,7 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
     --slick-multiselect-dropdown-border:                    1px solid #5d5d5d;
     --slick-multiselect-ok-button-bg-color:                 #262626;
     --slick-multiselect-ok-button-bg-hover-color:           #373c42;
-    --slick-multiselect-ok-button-border-color:             #626262;
+    --slick-multiselect-ok-button-border-color:             #5d5d5d;
     --slick-multiselect-ok-button-text-color:               var(--slick-primary-color);
     --slick-multiselect-ok-button-text-hover-color:         var(--slick-primary-color);
     --slick-multiselect-placeholder-color:                  #999;
