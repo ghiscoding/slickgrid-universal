@@ -31,7 +31,7 @@
     "cypress:install": "pnpm exec cypress install",
     "sass:bundle": "pnpm -r --stream --filter=./packages/** run sass:bundle",
     "build:universal": "tsc --build ./tsconfig.packages.json && pnpm sass:bundle",
-    "build:frameworks": "pnpm -r --stream --filter=\"./{demos,frameworks,frameworks-plugins}/**\" run build",
+    "build:frameworks": "pnpm -r --stream --filter=\"./frameworks/**\" run build && pnpm -r --stream --filter=\"./{demos,frameworks-plugins}/**\" run build",
     "build:watch": "tsc --build ./tsconfig.packages.json --watch",
     "bench:data-view": "vitest bench --config ./test/vitest.benchmark.config.mts --run ./test/benchmarks/slickDataView.bench.ts",
     "bench:excel-export": "node ./test/benchmarks/excel-export.mjs",
