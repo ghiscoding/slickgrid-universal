@@ -1095,7 +1095,7 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('[data-test="clear-storage-btn"]').click({ force: true });
     });
 
-    it('should be able to pin/pin "Cost" column', () => {
+    it('should be able to pin "Cost" column', () => {
       cy.get('.grid11')
         .find('.slick-header-columns')
         .find('.slick-header-column:nth(3)')
@@ -1230,6 +1230,55 @@ describe('Example 11 - Batch Editing', () => {
         .each(($child, index) => expect($child.text()).to.eq(allTitles[index]));
 
       cy.get('.slick-column-picker button.close').click();
+    });
+  });
+
+  describe('pinning through hidden columns', () => {
+    it('should pin left through Cost without counting hidden Duration', () => {
+      cy.get('.selected-view').select('previousYears');
+      cy.get('.grid11 .slick-header-column').should('have.length', 9);
+
+      cy.get('.grid11 .slick-header-column').first().trigger('contextmenu');
+      cy.get('.slick-column-picker-list input[data-columnid="duration"]').closest('label').click();
+      cy.get('.slick-column-picker button.close').click();
+      cy.get('.grid11 .slick-header-column').should('have.length', 8);
+
+      cy.contains('.grid11 .slick-header-column', /^Cost$/)
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+      cy.get('.slick-header-menu [data-command="pin-column"]').click();
+      cy.get('.slick-submenu [data-command="pin-columns-left"]').should('contain', 'Pin Left Through Here').click();
+
+      cy.get('.grid11 .slick-column-pinned-left .slick-column-name').should(($headers) => {
+        expect($headers.toArray().map((header) => header.textContent)).to.deep.equal(['', 'Title', 'Cost']);
+      });
+      cy.get('.grid11 [data-row="0"] .slick-pinned-left-cells .slick-cell').should('have.length', 3);
+      cy.get('.grid11 [data-row="0"] .slick-scrolling-cells .slick-cell').should('have.length', 5);
+    });
+
+    it('should pin right from Finish without counting hidden Product and Country of Origin', () => {
+      cy.contains('.grid11 .slick-header-column', /^Finish$/)
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+      cy.get('.slick-header-menu [data-command="pin-column"]').click();
+      cy.get('.slick-submenu [data-command="pin-columns-right"]').should('contain', 'Pin From Here To Right').click();
+
+      cy.get('.grid11 .slick-column-pinned-right .slick-column-name').should(($headers) => {
+        expect($headers.toArray().map((header) => header.textContent)).to.deep.equal(['Finish', 'Completed', 'Action']);
+      });
+      cy.get('.grid11 [data-row="0"] .slick-pinned-left-cells .slick-cell').should('have.length', 3);
+      cy.get('.grid11 [data-row="0"] .slick-pinned-right-cells .slick-cell').should('have.length', 3);
+      cy.get('.grid11 [data-row="0"] .slick-scrolling-cells .slick-cell').should('have.length', 2);
+    });
+
+    it('should clear pinning and restore the original view', () => {
+      cy.get('[data-test="clear-storage-btn"]').click({ force: true });
+      cy.get('.grid11 .slick-header-column').should('have.length', 11);
+      cy.get('.grid11 .slick-column-pinned-left, .grid11 .slick-column-pinned-right').should('not.exist');
     });
   });
 });

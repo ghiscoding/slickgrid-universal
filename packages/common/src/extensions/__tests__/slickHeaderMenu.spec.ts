@@ -1,7 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
-import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
+import { SlickEvent, SlickEventData, SlickGrid, type SlickDataView } from '../../core/index.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import type {
   Column,
@@ -1297,6 +1297,9 @@ describe('HeaderMenu Plugin', () => {
       let eventData: SlickEventData;
 
       beforeEach(() => {
+        columnsMock.forEach((column) => delete column.hidden);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockImplementation(() => gridStub.getColumns().filter((column) => !column.hidden));
         columnsMock[1].header!.menu = undefined;
         columnsMock[2].header!.menu = undefined;
         headerDiv = document.createElement('div');
@@ -1472,6 +1475,57 @@ describe('HeaderMenu Plugin', () => {
 
         getColumnsSpy.mockRestore();
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      });
+
+      it.each(['left', 'right'] as const)('should pin visible columns to the %s across hidden columns and after reordering', (side) => {
+        const testColumns: Column[] = [
+          { id: 'hidden-first', field: 'hidden-first', hidden: true },
+          { id: 'first', field: 'first' },
+          { id: 'hidden-middle', field: 'hidden-middle', hidden: true },
+          { id: 'selected', field: 'selected' },
+          { id: 'last', field: 'last' },
+          { id: 'hidden-last', field: 'hidden-last', hidden: true },
+        ];
+        const grid = new SlickGrid<any, Column, GridOption>(gridContainerDiv, [], testColumns, {
+          devMode: { ownerNodeIndex: 0 },
+          skipPinningValidation: true,
+        });
+        sharedService.slickGrid = grid;
+        try {
+          (plugin as any).pinOrUnpinColumns(testColumns[3], `pin-columns-${side}`);
+          expect(grid.getPinnedColumns(side).map((column) => column.id)).toEqual(side === 'left' ? ['first', 'selected'] : ['selected', 'last']);
+          expect(grid.getOptions().pinning?.columns?.[side]).toBe(side === 'left' ? 1 : 2);
+          expect(testColumns.filter((column) => column.hidden).every((column) => !column.pinned)).toBe(true);
+
+          grid.setColumns([...testColumns].reverse());
+          (plugin as any).pinOrUnpinColumns(testColumns[3], `pin-columns-${side}`);
+          expect(grid.getPinnedColumns(side).map((column) => column.id)).toEqual(side === 'left' ? ['last', 'selected'] : ['selected', 'first']);
+        } finally {
+          grid.destroy(true);
+          sharedService.slickGrid = gridStub;
+        }
+      });
+
+      it.each(['left', 'right'] as const)('should use IDs for %s pinning when skipping non-pinnable columns', (side) => {
+        const testColumns: Column[] = [
+          { id: 10, field: 'first' },
+          { id: 20, field: 'hidden', hidden: true },
+          { id: 30, field: 'non-pinnable', pinnable: false },
+          { id: 40, field: 'last' },
+        ];
+        const grid = new SlickGrid<any, Column, GridOption>(gridContainerDiv, [], testColumns, {
+          devMode: { ownerNodeIndex: 0 },
+          skipPinningValidation: true,
+        });
+        sharedService.slickGrid = grid;
+        try {
+          (plugin as any).pinOrUnpinColumns(side === 'left' ? testColumns[3] : testColumns[0], `pin-columns-${side}`);
+          expect(grid.getOptions().pinning?.columns?.[side]).toEqual(['10', '40']);
+          expect(grid.getPinnedColumns(side).map((column) => column.id)).toEqual([10, 40]);
+        } finally {
+          grid.destroy(true);
+          sharedService.slickGrid = gridStub;
+        }
       });
 
       it('should place only one separator between each visible pinning command group', () => {
@@ -2080,10 +2134,6 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should offer Pin Columns and expect "updateColumns" to be called when hasColumnsReordered returns true', () => {
-        const originalColumnDefinitions = [
-          { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
-          { id: 'field2', field: 'field2', width: 75 },
-        ];
         const visibleColumnDefinitions = [
           { id: 'field2', field: 'field2', width: 75 },
           { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
@@ -2091,7 +2141,7 @@ describe('HeaderMenu Plugin', () => {
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ pinning: { columns: { left: 0 } } } as GridOption);
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(visibleColumnDefinitions);
         vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValue(true);
         vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(visibleColumnDefinitions);
         sharedService.hasColumnsReordered = true;
@@ -2108,7 +2158,7 @@ describe('HeaderMenu Plugin', () => {
         const commandItem = getPinningCommand(visibleColumnDefinitions[0], 'pin-columns-left')!;
         expect(commandItem.title).toBe('Pin Left Through Here');
         commandItem.action?.(new SlickEventData(), { column: visibleColumnDefinitions[0] } as any);
-        expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 1 } } }, false, true);
+        expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 0 } } }, false, true);
         expect(updateColumnSpy).toHaveBeenCalled();
       });
 
