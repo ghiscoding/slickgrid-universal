@@ -1181,16 +1181,17 @@
 
       .slick-resizable-handle {
         position: absolute;
-        font-size: 0.1px;
-        display: block;
         top: 0;
         height: 100%;
         width: 6px;
         inset-inline-end: 0;
         z-index: 4;
+        cursor: var(--slick-header-resizable-cursor, v.$slick-header-resizable-cursor);
 
-        &:hover {
-          cursor: var(--slick-header-resizable-cursor, v.$slick-header-resizable-cursor);
+        // draw the hover pill on a pseudo-element so the handle hit box never shrinks while hovered
+        &:hover::after {
+          content: '';
+          position: absolute;
           border-bottom: var(--slick-header-resizable-hover-border-bottom, v.$slick-header-resizable-hover-border-bottom);
           border-left: var(--slick-header-resizable-hover-border-left, v.$slick-header-resizable-hover-border-left);
           border-right: var(--slick-header-resizable-hover-border-right, v.$slick-header-resizable-hover-border-right);
