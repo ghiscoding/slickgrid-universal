@@ -15,6 +15,7 @@ export const localeFrench = {
   TEXT_EXPAND_ALL_GROUPS: 'Étendre tous les groupes',
   TEXT_EXPORT_TO_CSV: 'Exporter en format CSV',
   TEXT_EXPORT_TO_EXCEL: 'Exporter vers Excel',
+  TEXT_EXPORT_TO_PDF: 'Exporter vers PDF',
   TEXT_EXPORT_TO_TAB_DELIMITED: 'Exporter en format texte (délimité par tabulation)',
   TEXT_EXPORT_TO_TEXT_FORMAT: 'Exporter en format texte',
   TEXT_FILTER_SHORTCUTS: 'Raccourcis de filtre',
