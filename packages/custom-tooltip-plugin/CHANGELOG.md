@@ -4,6 +4,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
+
+### ⚠ BREAKING CHANGES
+
+* **styles:** move optional package styles into their own packages ([#2817](https://github.com/ghiscoding/slickgrid-universal/issues/2817))
+
+### Features
+
+* **styles:** move optional package styles into their own packages ([#2817](https://github.com/ghiscoding/slickgrid-universal/issues/2817)) ([50a52a0](https://github.com/ghiscoding/slickgrid-universal/commit/50a52a03ccfd1e04a8ba1b20c7a1812a8df67a94)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2823](https://github.com/ghiscoding/slickgrid-universal/issues/2823)) ([19333e8](https://github.com/ghiscoding/slickgrid-universal/commit/19333e8c79bb8c0455afc6691a09bd8f4f72501b)) - by @renovate-bot
+
 ## [10.11.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.2...v10.11.3) (2026-10-07)
 
 **Note:** Version bump only for package @slickgrid-universal/custom-tooltip-plugin

@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/web-mcp",
-  "version": "10.11.3",
+  "version": "11.0.0-beta.0",
   "description": "Slick Web MCP Service - Vanilla Implementation exposing SlickGrid data and filtering as WebMCP (Model Context Protocol) tools",
   "type": "module",
   "main": "./dist/index.js",

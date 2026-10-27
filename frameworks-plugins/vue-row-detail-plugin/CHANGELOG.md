@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
+
+### ⚠ BREAKING CHANGES
+
+* drop `rowTopOffsetRenderType` & Row Detail `renderMode` overlay ([#2834](https://github.com/ghiscoding/slickgrid-universal/issues/2834))
+* **row-detail:** simplify DOM containers and CSS classes ([#2835](https://github.com/ghiscoding/slickgrid-universal/issues/2835))
+
+### Code Refactoring
+
+* drop `rowTopOffsetRenderType` & Row Detail `renderMode` overlay ([#2834](https://github.com/ghiscoding/slickgrid-universal/issues/2834)) ([a98acb1](https://github.com/ghiscoding/slickgrid-universal/commit/a98acb101ac9d631a929489310ec1b0b63c908cb)) - by @ghiscoding
+* **row-detail:** simplify DOM containers and CSS classes ([#2835](https://github.com/ghiscoding/slickgrid-universal/issues/2835)) ([fc98a1f](https://github.com/ghiscoding/slickgrid-universal/commit/fc98a1f672264bb7a9280f3f8204f05cd89b4734)) - by @ghiscoding
+
 ## [10.11.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.2...v10.11.3) (2026-10-07)
 
 ### Bug Fixes

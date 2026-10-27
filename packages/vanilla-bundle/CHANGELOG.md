@@ -4,6 +4,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
+
+### ⚠ BREAKING CHANGES
+
+* **state:** deduplicate pinning in Grid State and presets ([#2831](https://github.com/ghiscoding/slickgrid-universal/issues/2831))
+* drop queueMicrotaskPolyfill that is no longer required by ([#2853](https://github.com/ghiscoding/slickgrid-universal/issues/2853))
+* **core:** drop SortableJS dependency ([#2634](https://github.com/ghiscoding/slickgrid-universal/issues/2634))
+* **common:** remove deprecated DataView CSP APIs ([#2849](https://github.com/ghiscoding/slickgrid-universal/issues/2849))
+* **common:** replace deprecated menu `hide...` flags with `hideCommands` ([#2847](https://github.com/ghiscoding/slickgrid-universal/issues/2847))
+* **grid:** replace frozen panes with pinning and sticky docking ([#2782](https://github.com/ghiscoding/slickgrid-universal/issues/2782))
+* **common:** speed up virtual scroll render, drop onBeforeAppendCell ([#2852](https://github.com/ghiscoding/slickgrid-universal/issues/2852))
+* **vanilla:** use simpler input attribute names ([#2856](https://github.com/ghiscoding/slickgrid-universal/issues/2856))
+
+### Features
+
+* **common:** add `iconSet` grid option to support Fluent menu icons ([#2843](https://github.com/ghiscoding/slickgrid-universal/issues/2843)) ([d845226](https://github.com/ghiscoding/slickgrid-universal/commit/d8452263b45ba92130ca48d4b17478a5984aa00e)) - by @ghiscoding
+* **common:** replace deprecated menu `hide...` flags with `hideCommands` ([#2847](https://github.com/ghiscoding/slickgrid-universal/issues/2847)) ([3d6a4c5](https://github.com/ghiscoding/slickgrid-universal/commit/3d6a4c5d187798e4bf9ab4359c257831cf6d0cac)) - by @ghiscoding
+* **grid:** replace frozen panes with pinning and sticky docking ([#2782](https://github.com/ghiscoding/slickgrid-universal/issues/2782)) ([be036fb](https://github.com/ghiscoding/slickgrid-universal/commit/be036fbc31b0677d4a4d0d87b2499e531baf285e)) - by @ghiscoding
+* **vanilla:** use simpler input attribute names ([#2856](https://github.com/ghiscoding/slickgrid-universal/issues/2856)) ([9c6e33e](https://github.com/ghiscoding/slickgrid-universal/commit/9c6e33e0aab21f0a9c5fc2cc6c6ae9362e8ee8de)) - by @ghiscoding
+
+### Bug Fixes
+
+* **state:** deduplicate pinning in Grid State and presets ([#2831](https://github.com/ghiscoding/slickgrid-universal/issues/2831)) ([844dc75](https://github.com/ghiscoding/slickgrid-universal/commit/844dc754bc42eeb145ebe50663d17d782aa72d49)) - by @ghiscoding
+
+### Performance Improvements
+
+* **common:** speed up virtual scroll render, drop onBeforeAppendCell ([#2852](https://github.com/ghiscoding/slickgrid-universal/issues/2852)) ([a5c2e19](https://github.com/ghiscoding/slickgrid-universal/commit/a5c2e195668ae66dc31281dea31848fb590a0de0)) - by @ghiscoding
+
+### Code Refactoring
+
+* **common:** remove deprecated DataView CSP APIs ([#2849](https://github.com/ghiscoding/slickgrid-universal/issues/2849)) ([3d5a388](https://github.com/ghiscoding/slickgrid-universal/commit/3d5a388f714536309896ea18c123b14021574857)) - by @ghiscoding
+* **core:** drop SortableJS dependency ([#2634](https://github.com/ghiscoding/slickgrid-universal/issues/2634)) ([ba5ab74](https://github.com/ghiscoding/slickgrid-universal/commit/ba5ab743fb6518d8c528c7f40ace05062f1fd814)) - by @ghiscoding
+* drop queueMicrotaskPolyfill that is no longer required by ([#2853](https://github.com/ghiscoding/slickgrid-universal/issues/2853)) ([0a36bb4](https://github.com/ghiscoding/slickgrid-universal/commit/0a36bb4483a569508aa638892f809fc43a3837e6)) - by @ghiscoding
+
 ## [10.11.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.2...v10.11.3) (2026-10-07)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-bundle

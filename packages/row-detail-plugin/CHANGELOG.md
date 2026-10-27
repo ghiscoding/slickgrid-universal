@@ -4,6 +4,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
+
+### ⚠ BREAKING CHANGES
+
+* drop `rowTopOffsetRenderType` & Row Detail `renderMode` overlay ([#2834](https://github.com/ghiscoding/slickgrid-universal/issues/2834))
+* **styles:** move optional package styles into their own packages ([#2817](https://github.com/ghiscoding/slickgrid-universal/issues/2817))
+* **row-detail:** simplify DOM containers and CSS classes ([#2835](https://github.com/ghiscoding/slickgrid-universal/issues/2835))
+
+### Features
+
+* **styles:** move optional package styles into their own packages ([#2817](https://github.com/ghiscoding/slickgrid-universal/issues/2817)) ([50a52a0](https://github.com/ghiscoding/slickgrid-universal/commit/50a52a03ccfd1e04a8ba1b20c7a1812a8df67a94)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2823](https://github.com/ghiscoding/slickgrid-universal/issues/2823)) ([19333e8](https://github.com/ghiscoding/slickgrid-universal/commit/19333e8c79bb8c0455afc6691a09bd8f4f72501b)) - by @renovate-bot
+* **row-detail:** align detail panels with pinned row positions ([#2836](https://github.com/ghiscoding/slickgrid-universal/issues/2836)) ([984bfa0](https://github.com/ghiscoding/slickgrid-universal/commit/984bfa0f99c54d4c2210caf118ee370cb3f68bd7)) - by @ghiscoding
+* **row-detail:** align panels with padding rows and prevent orphan rows ([#2837](https://github.com/ghiscoding/slickgrid-universal/issues/2837)) ([7ced46e](https://github.com/ghiscoding/slickgrid-universal/commit/7ced46e6c5731eb629f6a10fac5308f5b43b565a)) - by @ghiscoding
+
+### Code Refactoring
+
+* drop `rowTopOffsetRenderType` & Row Detail `renderMode` overlay ([#2834](https://github.com/ghiscoding/slickgrid-universal/issues/2834)) ([a98acb1](https://github.com/ghiscoding/slickgrid-universal/commit/a98acb101ac9d631a929489310ec1b0b63c908cb)) - by @ghiscoding
+* **row-detail:** simplify DOM containers and CSS classes ([#2835](https://github.com/ghiscoding/slickgrid-universal/issues/2835)) ([fc98a1f](https://github.com/ghiscoding/slickgrid-universal/commit/fc98a1f672264bb7a9280f3f8204f05cd89b4734)) - by @ghiscoding
+
 ## [10.11.3](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.2...v10.11.3) (2026-10-07)
 
 ### Bug Fixes
