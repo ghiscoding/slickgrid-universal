@@ -78,11 +78,13 @@ As you can see, you mainly need to define which service to use (GridODataService
 
 ##### Code
 ```ts
-import { Component, Injectable, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Column, GridOption } from 'angular-slickgrid';
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
 
-@Injectable()
+@Component({
+  templateUrl: './my-component.html'
+})
 export class MyComponent implements OnInit {
   columns: Column[];
   gridOptions: GridOption;
