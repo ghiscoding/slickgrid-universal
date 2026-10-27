@@ -295,6 +295,8 @@ Also note that the limitation that a Custom Formatters only accepts String comes
 
 To avoid performance issues and memory leaks, it'd be preferable to use `asyncPostRenderCleanup`. When scrolling through your data, it allows Slickgrid to remove hidden lines' Angular Components. In your grid options, add `enableAsyncPostRenderCleanup: true` to activate it. Please note that it **doesn't** call `ngOnDestroy()`. If you want to, you can keep all Angular Component instances created in `asyncPostRender` and call the right instance's `destroy()` method in `asyncPostRenderCleanup`. The following implementation might add a heavy load on your RAM depending on the number of Angular component instances your grid needs.
 
+> **Note:** Since Angular v22, a `@Service()` class cannot use constructor dependency injection; use `inject()` instead, as shown below. Remember to also add `AngularUtilService` to your component `providers`.
+
 ```ts
 import { ComponentRef, inject, Service } from '@angular/core';
 import { AngularComponentOutput, AngularUtilService, Column } from 'angular-slickgrid';

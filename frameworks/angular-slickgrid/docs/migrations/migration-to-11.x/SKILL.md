@@ -9,6 +9,8 @@ description: Migrate Angular-Slickgrid applications from v10 to v11 using the fr
 
 Upgrade to Angular v22 or later. Upgrade `@ngx-translate/core` and, when used, `@ngx-translate/http-loader` to v18, following the Angular section of the migration guide. Do not apply the other wrappers' i18next requirements to Angular.
 
+Angular-Slickgrid services use `@Service()`, which blocks constructor dependency injection. Replace `new AngularUtilService(vcr)` and subclass `super(vcr)` calls with `inject()` or `TestBed.inject()`; injecting the services into components is unchanged.
+
 Remove `(onBeforeAppendCell)` template outputs and migrate their logic to formatters. Remove Context Menu and Cell Menu `onOptionSelected` bindings as part of the command migration. Keep the `@slickgrid-universal/angular-row-detail-plugin` adapter name; only the base Row Detail package and style names change.
 
 Replace removed `columnSort` callbacks in Column Picker and Grid Menu with `columnListBuilder`. Return the sorted or filtered eligible-column array; this does not change the grid column order.

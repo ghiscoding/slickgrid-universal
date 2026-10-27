@@ -8,6 +8,7 @@ The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor
 
 - [Angular Related Changes](#angular-related-changes)
   - [Angular v22.x and `ngx-translate` v18.x is now required](#angular-v22x-and-ngx-translate-v18x-is-now-required)
+  - [Services use `@Service()` and `inject()`](#services-use-service-and-inject)
 - [Replace the SortableJS dependency with native drag and drop](#replace-the-sortablejs-dependency-with-native-drag-and-drop)
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
   - [Column Pinning](#column-pinning)
@@ -61,6 +62,28 @@ Angular v22 is now required which also bumps [`ngx-translate`](https://ngx-trans
 
 For the complete list of changes, please follow `ngx-translate` migration from their website:
 - [ngx-translate - migration guide](https://ngx-translate.org/getting-started/migration-guide/)
+
+### Services use `@Service()` and `inject()`
+
+Angular-Slickgrid services, such as `AngularUtilService`, now use Angular's `@Service()` decorator instead of `@Injectable()`. A `@Service()` class cannot use constructor dependency injection, so its dependencies are resolved with `inject()`.
+
+**For most users, this change is transparent.** Injecting these services into your own components (via the constructor or `inject()`) is unchanged. It only affects code that extends a service or creates one manually with `new`:
+
+```diff
+- const angularUtilService = new AngularUtilService(viewContainerRef);
++ const angularUtilService = TestBed.inject(AngularUtilService); // or inject(AngularUtilService) within an injection context
+```
+
+If you also migrate your own services to `@Service()`, replace constructor injection with `inject()`:
+
+```diff
+- @Injectable()
++ @Service()
+ export class MyGridService {
+-   constructor(private angularUtilService: AngularUtilService) {}
++   private angularUtilService = inject(AngularUtilService);
+ }
+```
 
 ### Replace the SortableJS dependency with native drag and drop
 
