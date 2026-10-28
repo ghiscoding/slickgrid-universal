@@ -53,13 +53,15 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     const defaultMessage = 'No data to display.';
     const mergedOptions: EmptyWarning = { message: defaultMessage, ...this.gridOptions.emptyDataWarning, ...options };
     const emptyDataClassName = mergedOptions?.className ?? 'slick-empty-data-warning';
-    this._warningLeftElement = document.querySelector<HTMLDivElement>(`.${gridUid} .${emptyDataClassName}`);
-    const gridCanvasLeftElm = document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas.grid-canvas-left`);
-    const gridCanvasRightElm = document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas.grid-canvas-right`);
+    // query from the grid container, a document query misses grids detached from the DOM (e.g. inactive SPA tabs)
+    const rootElm: ParentNode = this._grid.getContainerNode?.() ?? document;
+    this._warningLeftElement = rootElm.querySelector<HTMLDivElement>(`.${gridUid} .${emptyDataClassName}`);
+    const gridCanvasLeftElm = rootElm.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas.grid-canvas-left`);
+    const gridCanvasRightElm = rootElm.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas.grid-canvas-right`);
     // The pinning renderer uses one live canvas. Keep the legacy left/right
     // lookup for split-pane grids, but fall back to that single canvas when no
     // right pane exists.
-    const gridCanvasElm = gridCanvasLeftElm || document.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas`);
+    const gridCanvasElm = gridCanvasLeftElm || rootElm.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas`);
     const leftElementMarginLeft = mergedOptions.leftViewportMarginLeft ?? 0;
     const rightElementMarginLeft = mergedOptions.rightViewportMarginLeft ?? 0;
     const leftElementPinnedMarginLeft = mergedOptions.pinnedLeftViewportMarginLeft ?? 0;
@@ -71,7 +73,7 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     // when dealing with a grid that has "autoHeight" option, we need to override 2 height that get miscalculated
     // that is because it is not aware that we are adding this slick empty element in this grid DOM
     if (this.gridOptions.autoHeight) {
-      const contentRootElm = document.querySelector<HTMLDivElement>(`.${gridUid} .slick-content-root`);
+      const contentRootElm = rootElm.querySelector<HTMLDivElement>(`.${gridUid} .slick-content-root`);
       if (contentRootElm && contentRootElm.style && gridCanvasElm && gridCanvasElm.style) {
         const contentRootHeight = parseInt(contentRootElm.style.height, 10) || 0; // this field auto calc by row height
 
