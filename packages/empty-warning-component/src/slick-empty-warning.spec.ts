@@ -406,6 +406,19 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentElm.innerHTML).toBe('<div class="container"><span class="mdi mdi-alert color-warning"></span> No Record found.</div>');
     });
 
+    it('should hide the Slick-Empty-Warning even when the grid container is detached from the document (e.g. inactive SPA tab)', () => {
+      const detachedGridStub = { ...gridStub, getContainerNode: () => div } as unknown as SlickGrid;
+      component = new SlickEmptyWarningComponent();
+      component.init(detachedGridStub, container);
+      component.showEmptyDataMessage(true);
+      const componentElm = div.querySelector<HTMLDivElement>('.grid-canvas-left .slick-empty-data-warning')!;
+      expect(componentElm.style.display).toBe('flex');
+
+      div.remove();
+      component.showEmptyDataMessage(false);
+      expect(componentElm.style.display).toBe('none');
+    });
+
     it('should expect the Slick-Empty-Warning message to be translated to French when providing a Translater Service and "messageKey" property', () => {
       container.registerInstance('TranslaterService', translateService);
       mockGridOptions.enableTranslate = true;
