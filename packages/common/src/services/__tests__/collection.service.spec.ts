@@ -195,6 +195,26 @@ describe('CollectionService', () => {
           ]);
         });
 
+        it('returns an empty result when sort options are absent', () => {
+          expect(service.sortCollection({ id: 'x', field: 'x' }, [], undefined as any)).toEqual([]);
+        });
+
+        it('preserves the input array and ignores empty entries in multi-sort definitions', () => {
+          const column = { id: 'users', field: 'users' } as Column;
+          const rows = [
+            { a: 1, b: 2 },
+            { a: 1, b: 1 },
+            { a: 0, b: 9 },
+          ];
+          const sorted = service.sortCollection(column, rows, [
+            {},
+            { property: 'a', fieldType: 'number' },
+            { property: 'b', fieldType: 'number' },
+          ] as CollectionSortBy[]);
+          expect(sorted).toBe(rows);
+          expect(rows.map((row) => row.b)).toEqual([9, 1, 2]);
+        });
+
         it('should return a collection sorted by multiple sortBy entities and their translated value', () => {
           translateService.use('fr');
           const columnDef = { id: 'users', field: 'users', dataKey: 'lastName' } as Column;
@@ -352,6 +372,29 @@ describe('CollectionService', () => {
         { firstName: 'Jane', lastName: 'Doe', start: '2024-05-02', finish: '2024-06-02' },
       ];
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columns);
+    });
+
+    it.each([true, '_'] as const)('prepares nested and aliased sort fields with %s', (option) => {
+      vi.mocked(gridStub.getColumns)
+        .mockReset()
+        .mockReturnValue([
+          { id: 'alias', field: 'details.start', type: 'dateIso' },
+          { id: 'other', field: 'ignored', queryFieldSorter: 'actual', type: 'dateIso' },
+        ]);
+      const rows = [{ details: { start: '2024-02-05' }, actual: '2024-04-01' }];
+      service.preParseByMutationDateItems(rows, gridStub, option);
+      const target = option === true ? '' : option;
+      expect((rows[0] as any)[`${target}alias`]).toEqual(parse('2024-02-05', 'YYYY-MM-DD'));
+      expect((rows[0] as any)[`${target}other`]).toEqual(parse('2024-04-01', 'YYYY-MM-DD'));
+    });
+
+    it('prepares a dynamic query field for each updated row', () => {
+      vi.mocked(gridStub.getColumns)
+        .mockReset()
+        .mockReturnValue([{ id: 'alias', field: 'start', type: 'dateIso', queryFieldNameGetterFn: () => 'details.start' }]);
+      const row = { details: { start: '2024-02-05' } };
+      service.parseSingleDateItem(row, gridStub, '_');
+      expect((row as any)._alias).toEqual(parse('2024-02-05', 'YYYY-MM-DD'));
     });
 
     it('should read all rows and parse date string columns and reassign as Date object when calling preParseDateItems() with preParseDateColumns set as true', () => {

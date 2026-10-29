@@ -7,6 +7,8 @@ import { numericSortComparer } from './numericSortComparer.js';
 import { objectStringSortComparer } from './objectStringSortComparer.js';
 import { stringSortComparer } from './stringSortComparer.js';
 
+const dateComparers = new Map<FieldType, ReturnType<typeof getAssociatedDateSortComparer>>();
+
 export function sortByFieldType(
   fieldType: FieldType,
   value1: any,
@@ -18,7 +20,11 @@ export function sortByFieldType(
   let sortResult = 0;
 
   if (isColumnDateType(fieldType)) {
-    const dateSortComparer = getAssociatedDateSortComparer(fieldType);
+    let dateSortComparer = dateComparers.get(fieldType);
+    if (!dateSortComparer) {
+      dateSortComparer = getAssociatedDateSortComparer(fieldType);
+      dateComparers.set(fieldType, dateSortComparer);
+    }
     sortResult = dateSortComparer(value1, value2, sortDirection, sortColumn, gridOptions);
   } else {
     switch (fieldType) {

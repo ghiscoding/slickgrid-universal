@@ -19,6 +19,7 @@ import {
   findOrDefault,
   flattenToParentChildArray,
   formatNumber,
+  getAllDateFieldTypes,
   getColumnFieldType,
   getDescendantProperty,
   getTranslationPrefix,
@@ -1050,6 +1051,14 @@ describe('Service/Utilies', () => {
   describe('isColumnDateType() method', () => {
     afterEach(() => {
       vi.clearAllMocks();
+    });
+
+    it('does not allow callers to mutate date-type detection via the returned list', () => {
+      const types = getAllDateFieldTypes();
+      types.length = 0;
+      expect(isColumnDateType('dateIso')).toBe(true);
+      expect(getAllDateFieldTypes()).toContain('dateIso');
+      expect(isColumnDateType('number')).toBe(false);
     });
 
     it('should return True when "date" is provided', () => {

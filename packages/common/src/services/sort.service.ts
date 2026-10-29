@@ -1,4 +1,4 @@
-import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { SlickEventData, SlickEventHandler } from '../core/slickCore.js';
 import { type SlickDataView } from '../core/slickDataView.js';
 import { type SlickGrid } from '../core/slickGrid.js';
@@ -28,6 +28,8 @@ export class SortService {
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _isBackendGrid = false;
+  protected _sortWasDisabled = false;
+  protected _subscriptions: EventSubscription[] = [];
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
   constructor(
@@ -61,6 +63,7 @@ export class SortService {
   dispose(): void {
     // unsubscribe all SlickGrid events
     this._eventHandler?.unsubscribeAll();
+    this.pubSubService.unsubscribeAll(this._subscriptions);
     if (this.httpCancelRequests$ && this.rxjs?.isObservable(this.httpCancelRequests$)) {
       this.httpCancelRequests$.next(); // this cancels any pending http requests
       this.httpCancelRequests$.complete();
@@ -77,7 +80,10 @@ export class SortService {
    * @param dataView SlickGrid DataView object
    */
   bindBackendOnSort(grid: SlickGrid): void {
+    this._eventHandler.unsubscribeAll();
+    this.pubSubService.unsubscribeAll(this._subscriptions);
     this._isBackendGrid = true;
+    this._sortWasDisabled = false;
     this._grid = grid;
     this._dataView = grid?.getData<SlickDataView>();
 
@@ -92,7 +98,10 @@ export class SortService {
    * @param dataView
    */
   bindLocalOnSort(grid: SlickGrid): void {
+    this._eventHandler.unsubscribeAll();
+    this.pubSubService.unsubscribeAll(this._subscriptions);
     this._isBackendGrid = false;
+    this._sortWasDisabled = false;
     this._grid = grid;
     this._dataView = grid?.getData<SlickDataView>();
 
@@ -103,7 +112,9 @@ export class SortService {
     // we'll automatically run Date parsing for these items to keep sort in sync
     if (this._gridOptions.preParseDateColumns) {
       this._eventHandler.subscribe(grid.onCellChange, (_e, args) => this.preParseSingleDateItem(args.item));
-      this.pubSubService.subscribe(['onItemsAdded', 'onItemsUpdated'], (item) => this.preParseSingleDateItem(item));
+      this._subscriptions.push(
+        this.pubSubService.subscribe(['onItemsAdded', 'onItemsUpdated'], (item) => this.preParseSingleDateItem(item))
+      );
     }
   }
 
@@ -241,19 +252,29 @@ export class SortService {
    * @param {boolean} clearSortingWhenDisabled - when disabling the sorting, do we also want to clear the sorting as well? Defaults to True
    */
   disableSortFunctionality(isSortingDisabled = true, clearSortingWhenDisabled = true): void {
-    const prevSorting = this._gridOptions.enableSorting;
-    const newSorting = !prevSorting;
-
-    this._gridOptions.enableSorting = newSorting;
+    this._gridOptions.enableSorting = !isSortingDisabled;
     if (isSortingDisabled) {
       if (clearSortingWhenDisabled) {
         this.clearSorting();
       }
       this._eventHandler.unsubscribeAll();
+      this._sortWasDisabled = true;
       this.disableAllSortingCommands(true);
     } else {
       this.disableAllSortingCommands(false);
-      this._eventHandler.subscribe(this._grid.onSort, (e, args) => this.handleLocalOnSort(e, args as SingleColumnSort | MultiColumnSort));
+      if (this._sortWasDisabled) {
+        if (this._isBackendGrid) {
+          this._eventHandler.subscribe(this._grid.onSort, this.onBackendSortChanged.bind(this));
+        } else {
+          this._eventHandler.subscribe(this._grid.onSort, (e, args) =>
+            this.handleLocalOnSort(e, args as SingleColumnSort | MultiColumnSort)
+          );
+          if (this._gridOptions.preParseDateColumns) {
+            this._eventHandler.subscribe(this._grid.onCellChange, (_e, args) => this.preParseSingleDateItem(args.item));
+          }
+        }
+      }
+      this._sortWasDisabled = false;
     }
     this._grid.setOptions({ enableSorting: this._gridOptions.enableSorting }, false, true);
     this.sharedService.gridOptions = this._gridOptions;
@@ -604,11 +625,28 @@ export class SortService {
   }
 
   sortTreeData(treeArray: any[], sortColumns: Array<ColumnSort>): void {
-    if (Array.isArray(sortColumns)) {
-      sortColumns.forEach((sortColumn) => {
-        this.sortTreeChildren(treeArray, sortColumn, 0);
-      });
+    if (Array.isArray(sortColumns) && sortColumns.length === 1) {
+      this.sortTreeChildren(treeArray, sortColumns[0], 0);
+    } else if (Array.isArray(sortColumns) && sortColumns.length > 1) {
+      if (this.sortTreeChildren !== SortService.prototype.sortTreeChildren) {
+        // Preserve subclass hooks. Stable passes run least-significant column first.
+        for (let i = sortColumns.length - 1; i >= 0; i--) {
+          this.sortTreeChildren(treeArray, sortColumns[i], 0);
+        }
+      } else {
+        this.sortTreeChildrenByColumns(treeArray, sortColumns);
+      }
     }
+  }
+
+  protected sortTreeChildrenByColumns(treeArray: any[], sortColumns: ColumnSort[]): void {
+    const childrenPropName = this._gridOptions.treeDataOptions?.childrenPropName ?? 'children';
+    treeArray.sort((a, b) => this.sortComparers(sortColumns, a, b));
+    treeArray.forEach((item) => {
+      if (item && Object.prototype.hasOwnProperty.call(item, childrenPropName) && Array.isArray(item[childrenPropName])) {
+        this.sortTreeChildrenByColumns(item[childrenPropName], sortColumns);
+      }
+    });
   }
 
   /** Sort the Tree Children of a hierarchical dataset by recursion */
