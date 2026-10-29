@@ -528,7 +528,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
 
     const rowHeight = this.gridOptions.rowHeight as number; // height of a row
-    const lineHeight = 13; // we know cuz we wrote the custom css init ;)
+    const lineHeight = 13; // Legacy constant used to calculate padding rows.
 
     // Measure the content independently of the panel's current height so it can also shrink.
     const scrollTop = cellItem.scrollTop;
@@ -815,7 +815,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       className: `slick-row-detail-container row-detail-${dataContext[this._dataViewIdProperty]}`,
       style: {
         boxSizing: 'border-box',
-        pointerEvents: 'auto',
       },
     });
     this.renderDetailContent(cellDetailContainerElm, dataContext);
@@ -832,7 +831,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     // calculate padding requirements based on detail-content..
     // ie. worst-case: create an invisible dom node now & find it's height.
-    const lineHeight = 13; // we know cuz we wrote the custom css init ;)
+    const lineHeight = 13; // Legacy constant used to calculate padding rows.
     item[`${this._keyPrefix}sizePadding`] = Math.ceil((rowCount * 2 * lineHeight) / this.gridOptions.rowHeight!);
     if (this._addonOptions.maxRows !== undefined) {
       item[`${this._keyPrefix}sizePadding`] = Math.min(item[`${this._keyPrefix}sizePadding`], this._addonOptions.maxRows);
