@@ -85,8 +85,8 @@ catalogs:
       specifier: ^4.2.1
       version: 4.2.1
     multiple-select-vanilla:
-      specifier: ^5.2.4
-      version: 5.2.4
+      specifier: ^5.2.5
+      version: 5.2.5
     native-copyfiles:
       specifier: ^2.1.1
       version: 2.1.1
@@ -662,7 +662,7 @@ importers:
         version: 3.4.17
       multiple-select-vanilla:
         specifier: 'catalog:'
-        version: 5.2.4
+        version: 5.2.5
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -1345,7 +1345,7 @@ importers:
         version: 2.0.3
       multiple-select-vanilla:
         specifier: 'catalog:'
-        version: 5.2.4
+        version: 5.2.5
       vanilla-calendar-pro:
         specifier: ^3.4.0
         version: 3.4.0
@@ -6979,8 +6979,8 @@ packages:
   muggle-string@0.4.1:
     resolution: {integrity: sha512-VNTrAak/KhO2i8dqqnqnAHOa3cYBwXEZe9h+D5h/1ZqFSTEFHdM65lR7RoIqq3tBBYavsOXV84NoHXZ0AkPyqQ==}
 
-  multiple-select-vanilla@5.2.4:
-    resolution: {integrity: sha512-PIaLv+7gDTF67WeLkcpBOPuFw6DJOWWDU9CadEQiA+2lekF3qXg/dkA+65dMuUu3GuezB29OzEqsDfl23lzrLA==}
+  multiple-select-vanilla@5.2.5:
+    resolution: {integrity: sha512-sC0Lek3lDBroTag1JXvZVzpuyckRj1K/ws3MbVoFL2nNVE8ccJ1FDJ2SBq/osgd475PFrvanKh36/4/UgsCl4Q==}
 
   mute-stream@3.0.0:
     resolution: {integrity: sha512-dkEJPVvun4FryqBmZ5KhDo0K9iDXAwn08tMLDinNdRBNPcYEDiWYysLcc6k3mjTMlbP9KyylvRpd4wFtwrT9rw==}
@@ -12659,7 +12659,7 @@ snapshots:
 
   ajv-formats@3.0.1:
     dependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
 
   ajv@6.15.0:
     dependencies:
@@ -14455,7 +14455,7 @@ snapshots:
 
   muggle-string@0.4.1: {}
 
-  multiple-select-vanilla@5.2.4:
+  multiple-select-vanilla@5.2.5:
     dependencies:
       '@types/trusted-types': 2.0.7
 

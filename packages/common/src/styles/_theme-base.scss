@@ -13,6 +13,7 @@
   $ms-choice-border: v.$slick-multiselect-input-filter-border,
   $ms-choice-focus-box-shadow: v.$slick-form-control-focus-box-shadow,
   $ms-choice-height: v.$slick-multiselect-input-filter-height,
+  $ms-drop-zindex: var(--slick-multiselect-dropdown-z-index, #{v.$slick-multiselect-dropdown-z-index}),
   $ms-drop-background: v.$slick-multiselect-dropdown-bg-color,
   $ms-drop-list-padding: v.$slick-multiselect-dropdown-list-padding,
   $ms-drop-list-item-align-items: center,
@@ -34,8 +35,10 @@
   $ms-option-highlight-bg-color: v.$slick-multiselect-option-highlight-bg-color,
   $ms-search-icon-close-margin: v.$slick-multiselect-search-icon-close-margin,
   $ms-select-all-label-hover-border: v.$slick-multiselect-select-all-label-hover-border,
-  $ms-select-all-label-padding: v.$slick-multiselect-select-all-padding,
-  $ms-select-all-line-height: v.$slick-multiselect-select-all-line-height,
+  $ms-select-all-label-padding: var(--slick-multiselect-select-all-label-padding, #{v.$slick-multiselect-select-all-label-padding}),
+  $ms-select-all-line-height: var(--slick-multiselect-select-all-line-height, #{v.$slick-multiselect-select-all-line-height}),
+  $ms-select-all-label-border: var(--slick-multiselect-select-all-label-border, #{v.$slick-multiselect-select-all-label-border}),
+  $ms-select-all-text-hover-color: var(--slick-multiselect-select-all-text-hover-color, #{v.$slick-multiselect-select-all-text-hover-color}),
   $ms-select-all-text-color: v.$slick-multiselect-select-all-text-color
 );
 
