@@ -34,6 +34,7 @@
     "build:frameworks": "pnpm -r --stream --filter=\"./frameworks/**\" run build && pnpm -r --stream --filter=\"./{demos,frameworks-plugins}/**\" run build",
     "build:watch": "tsc --build ./tsconfig.packages.json --watch",
     "bench:data-view": "vitest bench --config ./test/vitest.benchmark.config.mts --run ./test/benchmarks/slickDataView.bench.ts",
+    "bench:filter-service": "vitest bench --config ./test/vitest.benchmark.config.mts --run ./test/benchmarks/filterService.bench.ts",
     "bench:excel-export": "node ./test/benchmarks/excel-export.mjs",
     "angular:watch": "pnpm -r --parallel run angular:dev",
     "aurelia:watch": "pnpm -r --parallel run aurelia:dev",

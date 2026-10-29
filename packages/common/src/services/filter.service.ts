@@ -503,16 +503,6 @@ export class FilterService {
    */
   preProcessFilterConditionOnDataContext(item: any, columnFilter: SearchColumnFilter, grid: SlickGrid): FilterConditionOption | true {
     const columnDef = columnFilter.columnDef;
-    const columnId = columnFilter.columnId;
-    let columnIndex = grid.getColumnIndex(columnId) as number;
-
-    // it might be a hidden column, if so it won't be part of the getColumns (because it could be hidden via setColumns())
-    // when that happens we can try to get the column definition from all defined columns
-    const columns = this._grid.getColumns();
-    if (!columnDef && Array.isArray(columns)) {
-      columnIndex = columns.findIndex((col) => col.field === columnId);
-    }
-
     // if we still don't have a column definition then we should return then row anyway (true)
     if (!columnDef) {
       return true;
@@ -560,6 +550,7 @@ export class FilterService {
 
     // when using localization (i18n), the user might want to use the formatted output to do its filtering
     if (columnDef?.params?.useFormatterOuputToFilter === true) {
+      const columnIndex = grid.getColumnIndex(columnFilter.columnId) as number;
       const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
       const rowIndex = this._dataView && typeof this._dataView.getIdxById === 'function' ? this._dataView.getIdxById(item[idPropName]) : 0;
       // prettier-ignore
@@ -1111,29 +1102,9 @@ export class FilterService {
     const columnId = columnDef?.id ?? '';
 
     if (columnId !== 'selector' && columnDef?.filterable) {
-      let searchTerms: SearchTerm[] | undefined;
-      let operator: OperatorType | undefined;
-      const newFilter: Filter | undefined = this.filterFactory.createFilter(columnDef.filter);
-      operator = (columnDef && columnDef.filter && columnDef.filter.operator) || (newFilter && newFilter.operator);
-
-      if (this._columnFilters[columnDef.id]) {
-        searchTerms = this._columnFilters[columnDef.id].searchTerms || undefined;
-        operator = this._columnFilters[columnDef.id].operator || undefined;
-      } else if (columnDef.filter) {
-        // when hiding/showing (with Column Picker or Grid Menu), it will try to re-create yet again the filters (since SlickGrid does a re-render)
-        // because of that we need to first get searchTerm(s) from the columnFilters (that is what the user last typed in a filter search input)
-        searchTerms = columnDef.filter.searchTerms || undefined;
-        this.updateColumnFilters(searchTerms, columnDef, operator);
-      }
-
-      const filterArguments: FilterArguments = {
-        grid: this._grid,
-        operator,
-        searchTerms,
-        columnDef,
-        filterContainerElm,
-        callback: this.callbackSearchEvent.bind(this),
-      };
+      const newFilter = this.filterFactory.createFilter(columnDef.filter);
+      const filterArguments = this.getFilterArguments(columnDef, filterContainerElm, newFilter);
+      const { searchTerms, operator } = filterArguments;
 
       if (newFilter) {
         newFilter.init(filterArguments);
@@ -1153,35 +1124,41 @@ export class FilterService {
   // protected functions
   // -------------------
 
+  /** Restore saved filter state and build arguments shared by header and external filters. */
+  protected getFilterArguments(columnDef: Column, filterContainerElm: HTMLElement, newFilter?: Filter): FilterArguments {
+    let searchTerms: SearchTerm[] | undefined;
+    let operator: OperatorType | undefined;
+    operator = (columnDef && columnDef.filter && columnDef.filter.operator) || (newFilter && newFilter.operator);
+
+    if (this._columnFilters[columnDef.id]) {
+      searchTerms = this._columnFilters[columnDef.id].searchTerms || undefined;
+      operator = this._columnFilters[columnDef.id].operator || undefined;
+    } else if (columnDef.filter) {
+      // when hiding/showing (with Column Picker or Grid Menu), it will try to re-create yet again the filters (since SlickGrid does a re-render)
+      // because of that we need to first get searchTerm(s) from the columnFilters (that is what the user last typed in a filter search input)
+      searchTerms = columnDef.filter.searchTerms || undefined;
+      this.updateColumnFilters(searchTerms, columnDef, operator);
+    }
+
+    return {
+      grid: this._grid,
+      operator,
+      searchTerms,
+      columnDef,
+      filterContainerElm,
+      callback: this.callbackSearchEvent.bind(this),
+    };
+  }
+
   /** Add all created filters (from their template) to the header row section area */
   protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement }, isFilterFirstRender = true): void {
     const columnDef = args.column;
     const columnId = columnDef?.id ?? '';
 
     if (columnId !== 'selector' && columnDef?.filterable && !columnDef?.hidden) {
-      let searchTerms: SearchTerm[] | undefined;
-      let operator: OperatorType | undefined;
-      const newFilter: Filter | undefined = this.filterFactory.createFilter(columnDef.filter);
-      operator = (columnDef && columnDef.filter && columnDef.filter.operator) || (newFilter && newFilter.operator);
-
-      if (this._columnFilters[columnDef.id]) {
-        searchTerms = this._columnFilters[columnDef.id].searchTerms || undefined;
-        operator = this._columnFilters[columnDef.id].operator || undefined;
-      } else if (columnDef.filter) {
-        // when hiding/showing (with Column Picker or Grid Menu), it will try to re-create yet again the filters (since SlickGrid does a re-render)
-        // because of that we need to first get searchTerm(s) from the columnFilters (that is what the user last typed in a filter search input)
-        searchTerms = columnDef.filter.searchTerms || undefined;
-        this.updateColumnFilters(searchTerms, columnDef, operator);
-      }
-
-      const filterArguments: FilterArguments = {
-        grid: this._grid,
-        operator,
-        searchTerms,
-        columnDef,
-        filterContainerElm: args.node,
-        callback: this.callbackSearchEvent.bind(this),
-      };
+      const newFilter = this.filterFactory.createFilter(columnDef.filter);
+      const filterArguments = this.getFilterArguments(columnDef, args.node, newFilter);
+      const { searchTerms, operator } = filterArguments;
 
       if (newFilter && filterArguments.filterContainerElm) {
         newFilter.init(filterArguments, isFilterFirstRender);
