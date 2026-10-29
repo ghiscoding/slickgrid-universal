@@ -1,6 +1,6 @@
 # Filter audit comparison
 
-Baseline: `8d3357d18` (pre-audit). After: uncommitted changes on `perf/filter-service-audit`.
+Baseline: `8d3357d18` (pre-audit). After: `ead0ea05c` (`perf/filter-service-audit`, PR #2879).
 
 Node v24.16.0, same installed dependencies and deterministic benchmark harness. The retained baseline and after runs were sequential, without concurrent test/build work. Each case uses 3 warm-ups and 15 samples. These are local Node measurements, without browser rendering. A single pair of runs cannot establish small speedups or regressions.
 
