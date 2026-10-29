@@ -30,7 +30,7 @@ catalog:
   '@vitest/ui': ^5.0.5
   bootstrap: ^5.3.8
   cross-env: ^10.1.0
-  cypress: ^15.21.1
+  cypress: ^16.2.1
   cypress-real-events: ^1.15.1
   dequal: ^2.0.3
   dompurify: ^3.4.17
@@ -65,6 +65,7 @@ minimumReleaseAgeExclude:
   - '@excel-builder-vanilla/types'
   - 'excel-builder-vanilla'
   - 'multiple-select-vanilla'
+  - cypress@16.2.1
 
 overrides:
   fast-uri: ^4.2.3

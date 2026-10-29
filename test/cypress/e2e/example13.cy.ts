@@ -1,4 +1,11 @@
 describe('Example 13 - Header Button Plugin', () => {
+  const expectClippedBelowHeader = ($button: JQuery<HTMLElement>) => {
+    const button = $button[0];
+    const header = button.closest('.slick-header-column') as HTMLElement;
+    expect(getComputedStyle(header).overflow).to.eq('hidden');
+    expect(button.getBoundingClientRect().top).to.be.at.least(header.getBoundingClientRect().bottom);
+  };
+
   const titles = [
     'Resize me!',
     'Hover me!',
@@ -116,7 +123,7 @@ describe('Example 13 - Header Button Plugin', () => {
       cy.get('.grid13-1 .slick-header-columns')
         .children('.slick-header-column:nth(0)')
         .find('.slick-header-button:nth(3)')
-        .should('be.hidden');
+        .should(expectClippedBelowHeader);
 
       // Cypress does not yet support the .hover() method and because of that we need to manually resize the element
       // this is not ideal since it only resizes the cell not the entire column but it's enough to test the functionality
@@ -140,10 +147,7 @@ describe('Example 13 - Header Button Plugin', () => {
     });
 
     it('should click on first "Tag" header button and expect an alert with that text when clicked', () => {
-      cy.window().then((win) => {
-        const stub = cy.stub(win, 'alert').returns(true);
-        cy.wrap(stub).as('alertStub');
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').returns(true).as('alertStub'));
 
       // header buttons are displayed in inverse mode by default,
       // so we need to start at the end
@@ -153,10 +157,7 @@ describe('Example 13 - Header Button Plugin', () => {
     });
 
     it('should click on second "Comment" header button and expect an alert with that text when clicked', () => {
-      cy.window().then((win) => {
-        const stub = cy.stub(win, 'alert').returns(true);
-        cy.wrap(stub).as('alertStub');
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').returns(true).as('alertStub'));
 
       // header buttons are displayed in inverse mode by default
       cy.get('.grid13-1 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(2)').click();
@@ -175,12 +176,12 @@ describe('Example 13 - Header Button Plugin', () => {
       cy.get('.grid13-1 .slick-header-columns')
         .children('.slick-header-column:nth(0)')
         .find('.slick-header-button:nth(3)')
-        .should('be.hidden');
+        .should(expectClippedBelowHeader);
 
       cy.get('.grid13-1 .slick-header-columns')
         .children('.slick-header-column:nth(0)')
         .find('.slick-header-button:nth(1)')
-        .should('be.hidden');
+        .should(expectClippedBelowHeader);
     });
 
     it('should go on the 2nd column "Hover me!" and expect the header button to appear only when doing hover over it', () => {
@@ -292,7 +293,7 @@ describe('Example 13 - Header Button Plugin', () => {
       cy.get('.grid13-2 .slick-header-columns')
         .children('.slick-header-column:nth(0)')
         .find('.slick-header-button:nth(3)')
-        .should('be.hidden');
+        .should(expectClippedBelowHeader);
 
       // Cypress does not yet support the .hover() method and because of that we need to manually resize the element
       // this is not ideal since it only resizes the cell not the entire column but it's enough to test the functionality
@@ -316,10 +317,7 @@ describe('Example 13 - Header Button Plugin', () => {
     });
 
     it('should click on first "Tag" header button and expect an alert with that text when clicked', () => {
-      cy.window().then((win) => {
-        const stub = cy.stub(win, 'alert').returns(true);
-        cy.wrap(stub).as('alertStub');
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').returns(true).as('alertStub'));
 
       // header buttons are displayed in same order as provided
       cy.get('.grid13-2 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(0)').click();
@@ -328,10 +326,7 @@ describe('Example 13 - Header Button Plugin', () => {
     });
 
     it('should click on second "Comment" header button and expect an alert with that text when clicked', () => {
-      cy.window().then((win) => {
-        const stub = cy.stub(win, 'alert').returns(true);
-        cy.wrap(stub).as('alertStub');
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').returns(true).as('alertStub'));
 
       // header buttons are displayed in same order as provided
       cy.get('.grid13-2 .slick-header-columns').children('.slick-header-column:nth(0)').find('.slick-header-button:nth(1)').click();
@@ -350,12 +345,12 @@ describe('Example 13 - Header Button Plugin', () => {
       cy.get('.grid13-2 .slick-header-columns')
         .children('.slick-header-column:nth(0)')
         .find('.slick-header-button:nth(3)')
-        .should('be.hidden');
+        .should(expectClippedBelowHeader);
 
       cy.get('.grid13-2 .slick-header-columns')
         .children('.slick-header-column:nth(0)')
         .find('.slick-header-button:nth(1)')
-        .should('be.hidden');
+        .should(expectClippedBelowHeader);
     });
 
     it('should go on the 2nd column "Hover me!" and expect the header button to appear only when doing hover over it', () => {

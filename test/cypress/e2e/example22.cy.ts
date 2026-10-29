@@ -70,10 +70,7 @@ describe('Example 22 - Row Based Editing', () => {
     cy.get('.slick-cell.l1.r1').first().click().type('120{enter}');
     cy.get('.slick-cell.l1.r1').first().click().realPress(['Control', 'C']);
 
-    cy.window().then((win) => {
-      const stub = cy.stub(win, 'alert').returns(true);
-      cy.wrap(stub).as('alertStub');
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
     cy.get('.slick-cell.l2.r2').first().click().realPress(['Control', 'V']);
     cy.get('.slick-cell.active').type('{enter}');

@@ -46,7 +46,7 @@ describe('Example 19 - Row Detail View', () => {
   it('should click on the "Click Me" button and expect the assignee name to showing in uppercase in an Alert', () => {
     let assignee = '';
     const alertStub = cy.stub();
-    cy.on('window:alert', alertStub);
+    cy.window().then((win) => cy.stub(win, 'alert').callsFake(alertStub));
 
     cy.get('#grid19').find('.slick-row-detail-container.row-detail-2').as('detailContainer');
 
@@ -81,6 +81,8 @@ describe('Example 19 - Row Detail View', () => {
     const expectedTasks = ['Task 0', 'Task 1', 'Task 3', 'Task 4', 'Task 5'];
 
     cy.get('#grid19').find('.slick-row-detail-container.row-detail-2').as('detailContainer');
+
+    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
 
     cy.get('@detailContainer').find('[data-test=delete-btn]').click();
 

@@ -799,9 +799,7 @@ describe('Example 11 - Batch Editing', () => {
     });
 
     it('should be able to click on the checked 2nd button from the "Action" column of the 2nd row and expect "Task 2" to be completed', () => {
-      cy.window().then((win) => {
-        cy.stub(win, 'alert').as('alertStub');
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
       cy.get('[data-row=0] .slick-cell:nth(1)').contains('TASK 0', { matchCase: false });
       cy.get('[data-row=1] .slick-cell:nth(1)').contains('TASK 2', { matchCase: false });
 

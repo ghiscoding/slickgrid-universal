@@ -74,7 +74,8 @@ describe('Example 20 - Row Detail View', () => {
 
   it('should click on "click me" and expect an Alert to show the Help text', () => {
     cy.window().then((win) => {
-      const stub = cy.stub(win, 'alert').returns(true);
+      const stub = cy.stub();
+      cy.stub(win, 'alert').callsFake(stub);
       cy.wrap(stub).as('alertStub');
     });
 

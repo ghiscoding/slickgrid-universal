@@ -105,6 +105,7 @@ describe('Example 47 - Row Detail View + Grouping', () => {
     cy.get('.detail-label input').should('exist');
 
     cy.get('.slick-vertical-scroller').scrollTo('top');
+    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
     cy.get('.slick-row-detail-container').find('[data-test=delete-btn]').click();
     cy.get('.toast.text-bg-danger').contains(/Deleted row with Task [0-9]*/);
     cy.get('.slick-row-detail-container').should('have.length', 0);
@@ -112,7 +113,7 @@ describe('Example 47 - Row Detail View + Grouping', () => {
 
   it('should re-open first Row Details and be able to click on the "Click Me" button and expect an alert message', () => {
     const stub = cy.stub();
-    cy.on('window:alert', stub);
+    cy.window().then((win) => cy.stub(win, 'alert').callsFake(stub));
     let assigneeName = '';
 
     cy.get('.slick-vertical-scroller').scrollTo('top');
@@ -139,7 +140,7 @@ describe('Example 47 - Row Detail View + Grouping', () => {
 
   it('should collapse first Group, then re-expand first Group and still expect an alert when clicking on the "Click Me" button inside Row Detail', () => {
     const stub = cy.stub();
-    cy.on('window:alert', stub);
+    cy.window().then((win) => cy.stub(win, 'alert').callsFake(stub));
 
     cy.get('.slick-group-toggle.expanded').first().click();
     cy.wait(50);
@@ -167,7 +168,7 @@ describe('Example 47 - Row Detail View + Grouping', () => {
 
   it('should click on "Collapsed all groups" button, then click on "Expand all groups" button and still expect an alert when clicking on the "Click Me" button inside Row Detail', () => {
     const stub = cy.stub();
-    cy.on('window:alert', stub);
+    cy.window().then((win) => cy.stub(win, 'alert').callsFake(stub));
 
     cy.get('[data-test=collapse-all-groups-btn]').click();
     cy.get('.slick-row-detail-container').should('not.exist');

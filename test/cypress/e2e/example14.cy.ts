@@ -303,9 +303,7 @@ describe('Example 14 - Columns Resize by Content', () => {
   describe('Custom Header Menu & sub-menus tests', () => {
     it('should open Hello sub-menu with 2 options expect it to be aligned to right then trigger alert when command is clicked', () => {
       const subCommands = ['Hello World', 'Hello SlickGrid', `Let's play`];
-      cy.window().then((win) => {
-        cy.stub(win, 'alert').as('alertStub');
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
       cy.get('.grid14')
         .find('.slick-header-column:nth-of-type(2).slick-header-sortable')
@@ -330,9 +328,7 @@ describe('Example 14 - Columns Resize by Content', () => {
       const subCommands2 = ['Request update from supplier', '', 'Contact Us'];
       const subCommands2_1 = ['Email us', 'Chat with us', 'Book an appointment'];
 
-      cy.window().then((win) => {
-        cy.stub(win, 'alert').as('alertStub');
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
       cy.get('.grid14')
         .find('.slick-header-column:nth-of-type(7).slick-header-sortable')

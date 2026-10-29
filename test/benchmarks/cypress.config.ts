@@ -1,7 +1,7 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
-  allowCypressEnv: false,
+  defaultBrowser: 'chrome',
   video: false,
   numTestsKeptInMemory: 0,
   e2e: {

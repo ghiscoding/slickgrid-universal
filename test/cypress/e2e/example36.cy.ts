@@ -129,9 +129,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
   });
 
   it('should re-open first Row Details and be able to click on the "Click Me" button and expect an alert message', () => {
-    cy.window().then((win) => {
-      cy.stub(win, 'alert').as('alertStub');
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
     cy.get('.slick-vertical-scroller').scrollTo('top');
     cy.get('[data-row="1"] > .slick-cell.l2').contains(/Task [0-9]*/);
@@ -155,10 +153,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
   });
 
   it('should collapse first Group, then re-expand first Group and still expect an alert when clicking on the "Click Me" button inside Row Detail', () => {
-    cy.window().then((win) => {
-      const stub = cy.stub(win, 'alert').returns(true);
-      cy.wrap(stub).as('alertStub');
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
     cy.get('.slick-group-toggle.expanded').first().click();
     cy.wait(50);
@@ -183,9 +178,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
   });
 
   it('should click on "Collapsed all groups" button, then click on "Expand all groups" button and still expect an alert when clicking on the "Click Me" button inside Row Detail', () => {
-    cy.window().then((win) => {
-      cy.stub(win, 'alert').as('alertStub');
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
     cy.get('[data-test=collapse-all-groups-btn]').click();
     cy.wait(50);

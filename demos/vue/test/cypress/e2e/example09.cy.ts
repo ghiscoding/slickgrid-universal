@@ -54,7 +54,7 @@ describe('Example 9 - Grid Menu', () => {
 
     it('should hide a column from the picker and then open the Grid Menu and expect the "Command 1" to NOT be usable', () => {
       const alertStub = cy.stub();
-      cy.on('window:alert', alertStub);
+      cy.window().then((win) => cy.on('window:alert', alertStub));
 
       cy.get('#grid9').find('button.slick-grid-menu-button').click({ force: true });
 
@@ -69,7 +69,7 @@ describe('Example 9 - Grid Menu', () => {
 
     it('should type a filter and then open the Grid Menu and expect the "Command 2" to NOT be visible', () => {
       const alertStub = cy.stub();
-      cy.on('window:alert', alertStub);
+      cy.window().then((win) => cy.on('window:alert', alertStub));
 
       cy.get('input.search-filter.filter-duration').type('10');
 
@@ -88,7 +88,7 @@ describe('Example 9 - Grid Menu', () => {
 
     it('should clear the filters and then open the Grid Menu and expect the "Command 2" to now be visible', () => {
       const alertStub = cy.stub();
-      cy.on('window:alert', alertStub);
+      cy.window().then((win) => cy.on('window:alert', alertStub));
 
       cy.get('#grid9').find('button.slick-grid-menu-button').trigger('click').click({ force: true });
 
@@ -116,7 +116,7 @@ describe('Example 9 - Grid Menu', () => {
 
     it('should now expect the "Command 1" to be usable since all columns are visible', () => {
       const alertStub = cy.stub();
-      cy.on('window:alert', alertStub);
+      cy.window().then((win) => cy.on('window:alert', alertStub));
 
       cy.get('#grid9').find('button.slick-grid-menu-button').trigger('click').click({ force: true });
 
@@ -271,7 +271,7 @@ describe('Example 9 - Grid Menu', () => {
     it('should be able to open Grid Menu and click on Export->Text and expect alert triggered with Text Export', () => {
       const subCommands1 = ['Text', 'Excel'];
       const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => cy.on('window:alert', stub));
 
       cy.get('#grid9').find('button.slick-grid-menu-button').click({ force: true });
 
@@ -293,7 +293,7 @@ describe('Example 9 - Grid Menu', () => {
       const subCommands1 = ['Text', 'Excel'];
       const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
       const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => cy.on('window:alert', stub));
 
       cy.get('#grid9').find('button.slick-grid-menu-button').click({ force: true });
 
@@ -331,7 +331,7 @@ describe('Example 9 - Grid Menu', () => {
       const subCommands2_1 = ['Email us', 'Chat with us', 'Book an appointment'];
 
       const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => cy.on('window:alert', stub));
 
       cy.get('[data-test=external-gridmenu]').click();
 

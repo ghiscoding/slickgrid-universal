@@ -32,7 +32,7 @@ describe('Example 8 - Header Menu Plugin', () => {
 
   it(`should be still be able to click on the Help command of 2nd column "Duration" and expect an alert`, () => {
     const alertStub = cy.stub();
-    cy.on('window:alert', alertStub);
+    cy.window().then((win) => cy.on('window:alert', alertStub));
 
     cy.get('#grid8').find('.slick-header-column:nth(1)').children('.slick-header-menu-button').click({ force: true });
 
@@ -113,7 +113,7 @@ describe('Example 8 - Header Menu Plugin', () => {
       const subCommands2_1 = ['Email us', 'Chat with us', 'Book an appointment'];
 
       const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => cy.on('window:alert', stub));
 
       cy.get('#grid8').find('.slick-header-column:nth(0)').children('.slick-header-menu-button').click({ force: true });
 
