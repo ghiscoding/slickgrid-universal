@@ -104,7 +104,7 @@ export class TreeDataService {
     this._lazyLoadingPropName = getTreeDataOptionPropName(this.treeDataOptions, 'lazyLoadingPropName');
     this._levelPropName = getTreeDataOptionPropName(this.treeDataOptions, 'levelPropName');
     this._isLastFullToggleCollapsed = this.treeDataOptions?.initiallyCollapsed ?? false;
-    this._currentToggledItems = this.gridOptions.presets?.treeData?.toggledItems ?? [];
+    this.currentToggledItems = this.gridOptions.presets?.treeData?.toggledItems ?? [];
     this._lastToggleStateChange = {
       type: this._isLastFullToggleCollapsed ? 'full-collapse' : 'full-expand',
       previousFullToggleType: this._isLastFullToggleCollapsed ? 'full-collapse' : 'full-expand',

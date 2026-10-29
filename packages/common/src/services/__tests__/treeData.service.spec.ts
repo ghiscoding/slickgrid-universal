@@ -1087,6 +1087,17 @@ describe('TreeData Service', () => {
         });
         expect(endUpdateSpy).toHaveBeenCalled();
       });
+
+      it('should update a preset toggled item instead of adding a duplicate when it gets toggled again', () => {
+        gridOptionsMock.presets = { treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] } };
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockFlatDataset[3]);
+
+        service.init(gridStub);
+        service.dynamicallyToggleItemState([{ itemId: 4, isCollapsed: false }], true);
+
+        expect(service.getToggledItems()).toEqual([{ itemId: 4, isCollapsed: false }]);
+        gridOptionsMock.presets = undefined;
+      });
     });
   });
 
