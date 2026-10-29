@@ -191,8 +191,10 @@ export class DateEditor extends BaseEditorClass implements Editor {
   destroy(): void {
     clearTimeout(this._timer);
     queueMicrotask(() => {
-      this.hide();
-      this.calendarInstance?.destroy();
+      if (this.calendarInstance && !this.calendarInstance.context.isDestroyed) {
+        this.hide();
+        this.calendarInstance.destroy();
+      }
       emptyElement(this._editorInputGroupElm);
       emptyElement(this._inputElm);
       this._editorInputGroupElm?.remove();

@@ -67,6 +67,34 @@ describe('DateRangeFilter', () => {
     expect(filterCount).toBe(1);
   });
 
+  it('should safely destroy the calendar when the filter is destroyed more than once', () => {
+    filter.init(filterArguments);
+    const calendar = filter.calendarInstance!;
+    const destroySpy = vi.spyOn(calendar, 'destroy');
+
+    filter.destroy();
+    filter.destroy();
+
+    expect(destroySpy).toHaveBeenCalledOnce();
+    expect(calendar.context.isDestroyed).toBe(true);
+  });
+
+  it('should safely destroy a filter without an initialized calendar', () => {
+    expect(() => filter.destroy()).not.toThrow();
+  });
+
+  it('should not destroy a calendar that was already destroyed', () => {
+    filter.init(filterArguments);
+    const calendar = filter.calendarInstance!;
+    const destroySpy = vi.spyOn(calendar, 'destroy');
+    calendar.destroy();
+
+    filter.destroy();
+
+    expect(destroySpy).toHaveBeenCalledOnce();
+    expect(calendar.context.isDestroyed).toBe(true);
+  });
+
   it('should have a placeholder when defined in its column definition', () => {
     const testValue = 'test placeholder';
     mockColumn.filter!.placeholder = testValue;

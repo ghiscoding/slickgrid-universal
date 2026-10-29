@@ -160,7 +160,9 @@ export class DateFilter implements Filter {
   /** Destroy the filter */
   destroy(): void {
     this._bindEventService.unbindAll();
-    this.calendarInstance?.destroy();
+    if (this.calendarInstance && !this.calendarInstance.context.isDestroyed) {
+      this.calendarInstance.destroy();
+    }
 
     emptyElement(this.filterContainerElm);
     this.filterContainerElm?.remove();

@@ -113,6 +113,38 @@ describe('DateEditor', () => {
       expect(editorCount).toBe(1);
     });
 
+    it('should safely destroy the editor more than once', () => {
+      editor = new DateEditor(editorArguments);
+      vi.runAllTicks();
+      const calendar = editor.calendarInstance!;
+      const destroySpy = vi.spyOn(calendar, 'destroy');
+      const hideSpy = vi.spyOn(calendar, 'hide');
+
+      editor.destroy();
+      editor.destroy();
+      vi.runAllTicks();
+
+      expect(destroySpy).toHaveBeenCalledOnce();
+      expect(hideSpy).toHaveBeenCalledOnce();
+      expect(editor.editorDomElement.isConnected).toBe(false);
+    });
+
+    it('should skip calendar teardown if it was already destroyed', () => {
+      editor = new DateEditor(editorArguments);
+      vi.runAllTicks();
+      const calendar = editor.calendarInstance!;
+      const destroySpy = vi.spyOn(calendar, 'destroy');
+      const hideSpy = vi.spyOn(calendar, 'hide');
+      calendar.destroy();
+
+      editor.destroy();
+      vi.runAllTicks();
+
+      expect(destroySpy).toHaveBeenCalledOnce();
+      expect(hideSpy).not.toHaveBeenCalled();
+      expect(editor.editorDomElement.isConnected).toBe(false);
+    });
+
     it('should initialize the editor and expect to focus on the element after a small delay', () => {
       editor = new DateEditor(editorArguments);
       const focusSpy = vi.spyOn(editor, 'focus');
