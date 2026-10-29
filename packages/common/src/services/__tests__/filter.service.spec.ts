@@ -1133,6 +1133,17 @@ describe('FilterService', () => {
       expect(output).toBe(true);
     });
 
+    it('does not look up column indexes when filtering without a formatter', () => {
+      service.init(gridStub);
+      const indexSpy = vi.spyOn(gridStub, 'getColumnIndex');
+      indexSpy.mockClear();
+      const columnFilters = {
+        firstName: { columnDef: { id: 'firstName', field: 'firstName' }, columnId: 'firstName', searchTerms: ['John'], type: 'string' },
+      } as ColumnFilters;
+      expect(service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters })).toBe(true);
+      expect(indexSpy).not.toHaveBeenCalled();
+    });
+
     it('should return True when input value from datacontext is IN searchTerms', () => {
       const customFirstNameFormatter = (_row: number, _cell: number, _value: any, _columnDef: any, dataContext: any) => dataContext.fullName.split(' ')[0];
       const mockColumn1 = {

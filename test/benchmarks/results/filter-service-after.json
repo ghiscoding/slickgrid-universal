@@ -1,0 +1,150 @@
+{
+  "node": "v24.16.0",
+  "sizes": [
+    10000,
+    100000
+  ],
+  "samples": 15,
+  "results": [
+    {
+      "name": "10000 / numeric / broad / predicate scan",
+      "medianMs": 5.763716000000386,
+      "p95Ms": 6.24837800000023
+    },
+    {
+      "name": "10000 / numeric / broad / DataView refresh",
+      "medianMs": 5.832562999999936,
+      "p95Ms": 6.214441000000079
+    },
+    {
+      "name": "10000 / text / selective / predicate scan",
+      "medianMs": 5.0034859999996115,
+      "p95Ms": 5.666683999999805
+    },
+    {
+      "name": "10000 / text / selective / DataView refresh",
+      "medianMs": 4.865257000000383,
+      "p95Ms": 5.4061179999998785
+    },
+    {
+      "name": "10000 / text / no matches / predicate scan",
+      "medianMs": 4.940034000000196,
+      "p95Ms": 5.406613000000107
+    },
+    {
+      "name": "10000 / text / no matches / DataView refresh",
+      "medianMs": 5.45930799999951,
+      "p95Ms": 5.81058800000028
+    },
+    {
+      "name": "10000 / nested field / predicate scan",
+      "medianMs": 7.0490099999997256,
+      "p95Ms": 7.299996000000647
+    },
+    {
+      "name": "10000 / nested field / DataView refresh",
+      "medianMs": 6.886085000000094,
+      "p95Ms": 7.627924999999777
+    },
+    {
+      "name": "10000 / date range / predicate scan",
+      "medianMs": 158.74358699999902,
+      "p95Ms": 165.21482100000048
+    },
+    {
+      "name": "10000 / date range / DataView refresh",
+      "medianMs": 159.7055450000007,
+      "p95Ms": 164.87185900000077
+    },
+    {
+      "name": "10000 / two filters / early rejection / predicate scan",
+      "medianMs": 6.172743999999511,
+      "p95Ms": 6.565661000000546
+    },
+    {
+      "name": "10000 / two filters / early rejection / DataView refresh",
+      "medianMs": 5.924396999998862,
+      "p95Ms": 6.31416100000024
+    },
+    {
+      "name": "10000 / cleared / predicate scan",
+      "medianMs": 0.36501700000007986,
+      "p95Ms": 0.5035860000007233
+    },
+    {
+      "name": "10000 / cleared / DataView refresh",
+      "medianMs": 0.36489199999959965,
+      "p95Ms": 0.6021400000008725
+    },
+    {
+      "name": "100000 / numeric / broad / predicate scan",
+      "medianMs": 57.372928000000684,
+      "p95Ms": 58.74937900000077
+    },
+    {
+      "name": "100000 / numeric / broad / DataView refresh",
+      "medianMs": 57.477562999998554,
+      "p95Ms": 59.15249899999981
+    },
+    {
+      "name": "100000 / text / selective / predicate scan",
+      "medianMs": 53.73361599999953,
+      "p95Ms": 54.43912300000011
+    },
+    {
+      "name": "100000 / text / selective / DataView refresh",
+      "medianMs": 53.22301900000093,
+      "p95Ms": 54.01553299999978
+    },
+    {
+      "name": "100000 / text / no matches / predicate scan",
+      "medianMs": 53.9121129999985,
+      "p95Ms": 54.66081900000063
+    },
+    {
+      "name": "100000 / text / no matches / DataView refresh",
+      "medianMs": 53.21984800000064,
+      "p95Ms": 59.83121499999834
+    },
+    {
+      "name": "100000 / nested field / predicate scan",
+      "medianMs": 74.81751900000017,
+      "p95Ms": 77.24048699999912
+    },
+    {
+      "name": "100000 / nested field / DataView refresh",
+      "medianMs": 74.10090099999798,
+      "p95Ms": 75.20161300000109
+    },
+    {
+      "name": "100000 / date range / predicate scan",
+      "medianMs": 1544.2695779999995,
+      "p95Ms": 1660.5211309999977
+    },
+    {
+      "name": "100000 / date range / DataView refresh",
+      "medianMs": 1560.402894999992,
+      "p95Ms": 1610.9510050000026
+    },
+    {
+      "name": "100000 / two filters / early rejection / predicate scan",
+      "medianMs": 61.906004999997094,
+      "p95Ms": 63.65120300000126
+    },
+    {
+      "name": "100000 / two filters / early rejection / DataView refresh",
+      "medianMs": 60.73391999999876,
+      "p95Ms": 65.3750890000083
+    },
+    {
+      "name": "100000 / cleared / predicate scan",
+      "medianMs": 4.636183999988134,
+      "p95Ms": 6.34975699998904
+    },
+    {
+      "name": "100000 / cleared / DataView refresh",
+      "medianMs": 4.756315000005998,
+      "p95Ms": 6.845255000007455
+    }
+  ]
+}

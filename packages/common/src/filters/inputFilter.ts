@@ -119,6 +119,7 @@ export class InputFilter implements Filter {
    * Clear the filter value
    */
   clear(shouldTriggerQuery = true): void {
+    clearTimeout(this._timer);
     if (this._filterInputElm) {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
@@ -136,6 +137,7 @@ export class InputFilter implements Filter {
    * destroy the filter
    */
   destroy(): void {
+    clearTimeout(this._timer);
     this._bindEventService.unbindAll();
     this._selectOperatorElm?.remove?.();
     this._filterInputElm?.remove?.();
@@ -355,6 +357,7 @@ export class InputFilter implements Filter {
    * We will trigger the Filter Service callback from this handler
    */
   protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false): void {
+    clearTimeout(this._timer);
     if (isClearFilterEvent) {
       this.callback(event, {
         columnDef: this.columnDef,
@@ -389,7 +392,6 @@ export class InputFilter implements Filter {
 
       if (!this.isCompoundFilter || !skipNullInput || hasSkipNullValChanged) {
         if (typingDelay > 0) {
-          clearTimeout(this._timer);
           this._timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
         } else {
           this.callback(event, callbackArgs);
