@@ -1,7 +1,6 @@
 import { createDomElement } from '@slickgrid-universal/utils';
-import { Constants } from '../constants.js';
 import { applyHtmlToElement } from '../core/utils.js';
-import { createDocumentFragmentOrElement, getCellValueFromQueryFieldGetter } from '../services/utilities.js';
+import { createDocumentFragmentOrElement, getCellValueFromQueryFieldGetter, getTreeDataPropNames } from '../services/utilities.js';
 import { type Formatter, type LAZY_TYPES, type TreeDataOption } from './../interfaces/index.js';
 import { parseFormatterWhenExist } from './formatterUtilities.js';
 
@@ -10,10 +9,7 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   const gridOptions = grid.getOptions();
   const treeDataOptions = (gridOptions.treeDataOptions ?? {}) as TreeDataOption;
   const indentMarginLeft = treeDataOptions.indentMarginLeft ?? 15;
-  const collapsedPropName = treeDataOptions.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
-  const hasChildrenPropName = treeDataOptions.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
-  const treeLevelPropName = treeDataOptions.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
-  const lazyLoadingPropName = treeDataOptions.lazyLoadingPropName ?? Constants.treeDataProperties.LAZY_LOADING_PROP;
+  const { collapsedPropName, hasChildrenPropName, levelPropName, lazyLoadingPropName } = getTreeDataPropNames(treeDataOptions);
 
   // when a queryFieldNameGetterFn is defined, then get the value from that getter callback function
   let outputValue = getCellValueFromQueryFieldGetter(columnDef, dataContext, value);
@@ -21,14 +17,14 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
     return '';
   }
 
-  if (!dataContext.hasOwnProperty(treeLevelPropName)) {
+  if (!dataContext.hasOwnProperty(levelPropName)) {
     throw new Error(
       '[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.'
     );
   }
 
   const lazyLoading = dataContext[lazyLoadingPropName] as LAZY_TYPES;
-  const treeLevel = dataContext[treeLevelPropName] ?? 0;
+  const treeLevel = dataContext[levelPropName] ?? 0;
   const slickTreeLevelClass = `slick-tree-level-${treeLevel}`;
 
   let toggleClass = '';

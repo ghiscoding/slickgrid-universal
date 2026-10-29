@@ -34,6 +34,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent.js';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../test/translateServiceStub.js';
+import { TreeDataService as TreeDataServiceSource } from '../../../common/src/services/treeData.service.js';
 import { VanillaForceGridBundle } from '../vanilla-force-bundle.js';
 
 vi.useFakeTimers();
@@ -155,6 +156,10 @@ const treeDataServiceStub = {
   handleOnCellClick: vi.fn(),
   sortHierarchicalDataset: vi.fn(),
   toggleTreeDataCollapse: vi.fn(),
+  // run the real shared sorting logic against the stubbed collaborators
+  filterService: filterServiceStub,
+  sharedService: new SharedService(),
+  sortTreeDataset: TreeDataServiceSource.prototype.sortTreeDataset,
 } as unknown as TreeDataService;
 
 const mockDataView = {

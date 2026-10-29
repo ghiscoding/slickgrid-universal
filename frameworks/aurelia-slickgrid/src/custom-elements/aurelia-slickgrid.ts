@@ -1575,28 +1575,11 @@ export class AureliaSlickgridCustomElement {
    * @returns {Array<Object>} sort flat parent/child dataset
    */
   protected sortTreeDataset<T>(flatDatasetInput: T[], forceGridRefresh = false): T[] {
-    const prevDatasetLn = this._currentDatasetLength;
-    let sortedDatasetResult;
-    let flatDatasetOutput: any[] = [];
-
-    // if the hierarchical dataset was already initialized then no need to re-convert it, we can use it directly from the shared service ref
-    if (this._isDatasetHierarchicalInitialized && this.datasetHierarchical) {
-      sortedDatasetResult = this.treeDataService.sortHierarchicalDataset(this.datasetHierarchical);
-      flatDatasetOutput = sortedDatasetResult.flat;
-    } else if (Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
-      // we need to first convert the flat dataset to a hierarchical dataset and then sort it
-      // we'll also add props, by mutation, required by the TreeDataService on the flat array like `__hasChildren`, `parentId` and anything else to work properly
-      sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(flatDatasetInput, this._columns, this.options);
-      this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
-      flatDatasetOutput = sortedDatasetResult.flat;
-    }
-
-    // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
-    if (flatDatasetInput.length > 0 && (forceGridRefresh || flatDatasetInput.length !== prevDatasetLn)) {
-      this.filterService.refreshTreeDataFilters(flatDatasetOutput);
-    }
-
-    return flatDatasetOutput;
+    return this.treeDataService.sortTreeDataset(flatDatasetInput, this._columns, this.options, {
+      hierarchicalDataset: this._isDatasetHierarchicalInitialized ? this.datasetHierarchical : undefined,
+      previousDatasetLength: this._currentDatasetLength,
+      forceGridRefresh,
+    });
   }
 
   protected suggestDateParsingWhenHelpful() {

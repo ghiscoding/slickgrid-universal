@@ -24,6 +24,7 @@ import {
   getDescendantProperty,
   getTranslationPrefix,
   getTreeDataOptionPropName,
+  getTreeDataPropNames,
   hasStringDateColumns,
   isColumnDateType,
   mapOperatorByFieldType,
@@ -637,6 +638,34 @@ describe('Service/Utilies', () => {
     it('should return "id" as default identifier prop name', () => {
       const output = getTreeDataOptionPropName(treeDataOptions, 'identifierPropName');
       expect(output).toBe('id');
+    });
+
+    it('should return an empty string when the option name is unknown', () => {
+      const output = getTreeDataOptionPropName(treeDataOptions, 'unknownPropName' as any);
+      expect(output).toBe('');
+    });
+  });
+
+  describe('getTreeDataPropNames method', () => {
+    it('should return all default prop names when no Tree Data options are provided', () => {
+      expect(getTreeDataPropNames(undefined)).toEqual({
+        childrenPropName: Constants.treeDataProperties.CHILDREN_PROP,
+        collapsedPropName: Constants.treeDataProperties.COLLAPSED_PROP,
+        hasChildrenPropName: Constants.treeDataProperties.HAS_CHILDREN_PROP,
+        identifierPropName: 'id',
+        lazyLoadingPropName: Constants.treeDataProperties.LAZY_LOADING_PROP,
+        levelPropName: Constants.treeDataProperties.TREE_LEVEL_PROP,
+        parentPropName: Constants.treeDataProperties.PARENT_PROP,
+      });
+    });
+
+    it('should use provided prop names and fall back to defaults for the missing or undefined ones', () => {
+      const output = getTreeDataPropNames({ childrenPropName: 'files', levelPropName: undefined, identifierPropName: 'uid' }, 'key');
+
+      expect(output.childrenPropName).toBe('files');
+      expect(output.identifierPropName).toBe('uid');
+      expect(output.levelPropName).toBe(Constants.treeDataProperties.TREE_LEVEL_PROP);
+      expect(getTreeDataPropNames({}, 'key').identifierPropName).toBe('key');
     });
   });
 

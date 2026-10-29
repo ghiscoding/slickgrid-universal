@@ -139,6 +139,51 @@ describe('Shared Service', () => {
     expect(columns).toEqual(mockHierarchicalDataset);
   });
 
+  describe('getHierarchicalItemById method', () => {
+    it('should return undefined when there is no hierarchical dataset', () => {
+      expect(service.getHierarchicalItemById(11)).toBeUndefined();
+    });
+
+    it('should find nested items by id using custom id & children prop names', () => {
+      service.gridOptions = { datasetIdPropertyName: 'id', treeDataOptions: { columnId: 'file', childrenPropName: 'files' } };
+      service.hierarchicalDataset = mockHierarchicalDataset;
+
+      expect(service.getHierarchicalItemById(11)).toBe(mockHierarchicalDataset[0]);
+      expect(service.getHierarchicalItemById(17)).toBe(mockHierarchicalDataset[0].files[0].files[0].files[0]);
+    });
+
+    it('should reuse the index and only rebuild it when an id is missing (e.g. lazily loaded children)', () => {
+      service.gridOptions = { treeDataOptions: { columnId: 'file', childrenPropName: 'files' } };
+      service.hierarchicalDataset = mockHierarchicalDataset;
+      const indexSpy = vi.spyOn(service as any, 'indexHierarchicalItems');
+
+      service.getHierarchicalItemById(11);
+      service.getHierarchicalItemById(17);
+      expect(indexSpy).toHaveBeenCalledTimes(1);
+
+      const lazyChild = { id: 99, file: 'lazy.txt' };
+      mockHierarchicalDataset[0].files.push(lazyChild);
+      expect(service.getHierarchicalItemById(99)).toBe(lazyChild);
+      expect(indexSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should rebuild the index when the hierarchical dataset is replaced', () => {
+      service.hierarchicalDataset = [{ id: 1, file: 'old' }];
+      expect(service.getHierarchicalItemById(1).file).toBe('old');
+
+      const newItem = { id: 1, file: 'new' };
+      service.hierarchicalDataset = [newItem];
+      expect(service.getHierarchicalItemById(1)).toBe(newItem);
+    });
+
+    it('should keep the first item found when ids are duplicated and skip empty items', () => {
+      const firstItem = { id: 1, children: [{ id: 1, file: 'duplicate' }] };
+      service.hierarchicalDataset = [null, firstItem];
+
+      expect(service.getHierarchicalItemById(1)).toBe(firstItem);
+    });
+  });
+
   it('should call "externalRegisteredResources" GETTER and return all columns', () => {
     // @ts-ignore:2511
     const mockRegisteredResources = [new ExcelExportService()];

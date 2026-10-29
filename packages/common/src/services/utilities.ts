@@ -87,9 +87,7 @@ export function addTreeLevelByMutation<T>(
       if (item) {
         const children = item[childrenPropName] as T[] | undefined;
         if (Array.isArray(children) && children.length > 0) {
-          treeLevel++;
-          addTreeLevelByMutation(children, options, treeLevel);
-          treeLevel--;
+          addTreeLevelByMutation(children, options, treeLevel + 1);
         }
         (item as any)[options.levelPropName] = treeLevel;
       }
@@ -116,9 +114,7 @@ export function addTreeLevelAndAggregatorsByMutation<T = any>(
 
         if (isParent && children!.length > 0) {
           aggregator.init(item, true);
-          treeLevel++;
-          addTreeLevelAndAggregatorsByMutation(children!, options, treeLevel, item);
-          treeLevel--;
+          addTreeLevelAndAggregatorsByMutation(children!, options, treeLevel + 1, item);
         }
 
         if (parent && aggregator.isInitialized && typeof aggregator.accumulate === 'function' && !(item as any)?.__filteredOut) {
@@ -144,11 +140,7 @@ export function flattenToParentChildArray<T>(
   treeArray: T[],
   options?: { aggregators?: Aggregator[]; shouldAddTreeLevelNumber?: boolean } & Omit<TreeDataPropNames, 'collapsedPropName'>
 ): any[] {
-  const identifierPropName = getTreeDataOptionPropName(options, 'identifierPropName') as keyof T & string;
-  const childrenPropName = getTreeDataOptionPropName(options, 'childrenPropName') as keyof T & string;
-  const hasChildrenPropName = getTreeDataOptionPropName(options, 'hasChildrenPropName') as keyof T & string;
-  const parentPropName = getTreeDataOptionPropName(options, 'parentPropName') as keyof T & string;
-  const levelPropName = getTreeDataOptionPropName(options, 'levelPropName');
+  const { identifierPropName, childrenPropName, hasChildrenPropName, parentPropName, levelPropName } = getTreeDataPropNames(options);
 
   if (options?.shouldAddTreeLevelNumber) {
     if (Array.isArray(options?.aggregators)) {
@@ -181,7 +173,7 @@ export function flattenToParentChildArray<T>(
     // the hierarchical source intact and produces a clean flat item.
     const flatNode: any = { ...(node as any) };
     delete flatNode[childrenPropName];
-    flatNode[parentPropName] = parentNode != null ? parentNode[identifierPropName] : null;
+    flatNode[parentPropName] = parentNode != null ? (parentNode as any)[identifierPropName] : null;
     flatNode[hasChildrenPropName] = Array.isArray(children);
     flat.push(flatNode as T);
 
@@ -195,37 +187,35 @@ export function flattenToParentChildArray<T>(
   return flat;
 }
 
+const defaultTreeDataPropNames: Record<Exclude<keyof TreeDataPropNames, 'identifierPropName'>, string> = {
+  childrenPropName: Constants.treeDataProperties.CHILDREN_PROP,
+  collapsedPropName: Constants.treeDataProperties.COLLAPSED_PROP,
+  hasChildrenPropName: Constants.treeDataProperties.HAS_CHILDREN_PROP,
+  lazyLoadingPropName: Constants.treeDataProperties.LAZY_LOADING_PROP,
+  levelPropName: Constants.treeDataProperties.TREE_LEVEL_PROP,
+  parentPropName: Constants.treeDataProperties.PARENT_PROP,
+};
+
 /** Find the associated property name from the Tree Data option when found or return a default property name that we defined internally */
 export function getTreeDataOptionPropName(
   treeDataOptions: Partial<TreeDataPropNames> | undefined,
   optionName: keyof TreeDataPropNames,
   defaultDataIdPropName = 'id'
 ): string {
-  let propName = '';
-  switch (optionName) {
-    case 'childrenPropName':
-      propName = treeDataOptions?.[optionName] ?? Constants.treeDataProperties.CHILDREN_PROP;
-      break;
-    case 'collapsedPropName':
-      propName = treeDataOptions?.[optionName] ?? Constants.treeDataProperties.COLLAPSED_PROP;
-      break;
-    case 'hasChildrenPropName':
-      propName = treeDataOptions?.[optionName] ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
-      break;
-    case 'identifierPropName':
-      propName = treeDataOptions?.[optionName] ?? defaultDataIdPropName;
-      break;
-    case 'lazyLoadingPropName':
-      propName = treeDataOptions?.[optionName] ?? Constants.treeDataProperties.LAZY_LOADING_PROP;
-      break;
-    case 'levelPropName':
-      propName = treeDataOptions?.[optionName] ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
-      break;
-    case 'parentPropName':
-      propName = treeDataOptions?.[optionName] ?? Constants.treeDataProperties.PARENT_PROP;
-      break;
+  const defaultPropName = optionName === 'identifierPropName' ? defaultDataIdPropName : defaultTreeDataPropNames[optionName];
+  return treeDataOptions?.[optionName] ?? defaultPropName ?? '';
+}
+
+/** Get all Tree Data property names from the Tree Data options, any missing property name will use its internal default */
+export function getTreeDataPropNames(
+  treeDataOptions: Partial<TreeDataPropNames> | undefined,
+  defaultDataIdPropName = 'id'
+): Required<TreeDataPropNames> {
+  const propNames = { ...defaultTreeDataPropNames, identifierPropName: defaultDataIdPropName };
+  for (const propName of Object.keys(propNames) as Array<keyof TreeDataPropNames>) {
+    propNames[propName] = treeDataOptions?.[propName] ?? propNames[propName];
   }
-  return propName;
+  return propNames;
 }
 
 /**
@@ -239,11 +229,7 @@ export function unflattenParentChildArrayToTree<P, T extends P & { [childrenProp
   flatArray: P[],
   options?: { aggregators?: Aggregator[]; initiallyCollapsed?: boolean } & Omit<TreeDataPropNames, 'hasChildrenPropName'>
 ): T[] {
-  const identifierPropName = getTreeDataOptionPropName(options, 'identifierPropName');
-  const childrenPropName = getTreeDataOptionPropName(options, 'childrenPropName');
-  const parentPropName = getTreeDataOptionPropName(options, 'parentPropName');
-  const levelPropName = getTreeDataOptionPropName(options, 'levelPropName');
-  const collapsedPropName = getTreeDataOptionPropName(options, 'collapsedPropName');
+  const { identifierPropName, childrenPropName, parentPropName, levelPropName, collapsedPropName } = getTreeDataPropNames(options);
   const initiallyCollapsed = options?.initiallyCollapsed ?? false;
   const inputArray: P[] = flatArray || [];
   const roots: T[] = []; // items without parent which are at the root

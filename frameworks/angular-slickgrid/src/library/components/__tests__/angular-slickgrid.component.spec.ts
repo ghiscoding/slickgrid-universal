@@ -8,6 +8,7 @@ import {
   SharedService,
   SlickDataView,
   SlickGroupItemMetadataProvider,
+  TreeDataService,
   type BackendService,
   type BackendServiceApi,
   type BackendUtilityService,
@@ -39,7 +40,6 @@ import {
   type SlickEventHandler,
   type SlickGrid,
   type SortService,
-  type TreeDataService,
 } from '@slickgrid-universal/common';
 import { type SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
@@ -239,6 +239,10 @@ const treeDataServiceStub = {
   initHierarchicalTree: vi.fn(),
   sortHierarchicalDataset: vi.fn(),
   toggleTreeDataCollapse: vi.fn(),
+  // run the real shared sorting logic against the stubbed collaborators
+  filterService: filterServiceStub,
+  sharedService: new SharedService(),
+  sortTreeDataset: TreeDataService.prototype.sortTreeDataset,
 } as unknown as TreeDataService;
 
 const mockDataView = {
