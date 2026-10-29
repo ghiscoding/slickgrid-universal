@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SlickGrid } from '../../core/slickGrid.js';
 import type { Column, GridOption } from '../../interfaces/index.js';
-import { treeExportFormatter } from '../treeExportFormatter.js';
+import { treeExportFormatter } from '../treeFormatter.js';
 
 const gridStub = {
   getData: vi.fn(),
@@ -126,6 +126,12 @@ describe('Tree Export Formatter', () => {
   it('should return a span without any toggle icon which include leading char and 4 spaces to cover width of collapsing icons', () => {
     const output = treeExportFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub);
     expect(output).toBe(`.    Barbara`); // 3x spaces for exportIndentationLeadingSpaceCount + 1x space for space after collapsing icon in final string output
+  });
+
+  it('should use default tree data prop names when "treeDataOptions" is not provided', () => {
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({} as GridOption);
+    const output = treeExportFormatter(1, 1, 'Bob', {} as Column, { id: 99, firstName: 'Bob', __treeLevel: 0 }, gridStub);
+    expect(output).toBe(`.    Bob`);
   });
 
   it('should consider a tree level of 0 when the tree level prop exists but is undefined', () => {

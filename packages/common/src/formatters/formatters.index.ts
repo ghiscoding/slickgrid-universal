@@ -26,8 +26,7 @@ import { percentSymbolFormatter } from './percentSymbolFormatter.js';
 import { progressBarFormatter } from './progressBarFormatter.js';
 import { translateBooleanFormatter } from './translateBooleanFormatter.js';
 import { translateFormatter } from './translateFormatter.js';
-import { treeExportFormatter } from './treeExportFormatter.js';
-import { treeFormatter } from './treeFormatter.js';
+import { treeExportFormatter, treeFormatter } from './treeFormatter.js';
 import { treeParseTotalsFormatter } from './treeParseTotalsFormatter.js';
 
 /** Provides a list of different Formatters that will change the cell value displayed in the UI */
