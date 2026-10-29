@@ -64,7 +64,6 @@ export class SortService {
     // unsubscribe all SlickGrid events
     this._eventHandler?.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
-    this._subscriptions = [];
     if (this.httpCancelRequests$ && this.rxjs?.isObservable(this.httpCancelRequests$)) {
       this.httpCancelRequests$.next(); // this cancels any pending http requests
       this.httpCancelRequests$.complete();
@@ -101,7 +100,6 @@ export class SortService {
   bindLocalOnSort(grid: SlickGrid): void {
     this._eventHandler.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
-    this._subscriptions = [];
     this._isBackendGrid = false;
     this._sortWasDisabled = false;
     this._grid = grid;
