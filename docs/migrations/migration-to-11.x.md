@@ -213,6 +213,7 @@ workaround.
 | `$slick-frozen-border-bottom` / `--slick-frozen-border-bottom` | `$slick-pinned-border-bottom` / `--slick-pinned-border-bottom` |
 | `$slick-frozen-border-right` / `--slick-frozen-border-right` | `$slick-pinned-border-color` / `--slick-pinned-border-color` |
 | `$slick-preheader-border-right` / `--slick-preheader-border-right` | `$slick-preheader-border-color` / `--slick-preheader-border-color` |
+| `$slick-grid-footer-border-top` / `--slick-grid-footer-border-top` | `$slick-grid-footer-border` / `--slick-grid-footer-border` |
 | Old preheader per-side border variables and `--slick-frozen-overflow-right` | Remove; no replacements. |
 
 ## Menu command visibility
