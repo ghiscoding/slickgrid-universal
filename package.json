@@ -33,6 +33,7 @@
     "build:universal": "tsc --build ./tsconfig.packages.json && pnpm sass:bundle",
     "build:frameworks": "pnpm -r --stream --filter=\"./frameworks/**\" run build && pnpm -r --stream --filter=\"./{demos,frameworks-plugins}/**\" run build",
     "build:watch": "tsc --build ./tsconfig.packages.json --watch",
+    "bench:sort-service": "vitest bench --config ./test/vitest.benchmark.config.mts --run ./test/benchmarks/sortService.bench.ts",
     "bench:data-view": "vitest bench --config ./test/vitest.benchmark.config.mts --run ./test/benchmarks/slickDataView.bench.ts",
     "bench:excel-export": "node ./test/benchmarks/excel-export.mjs",
     "angular:watch": "pnpm -r --parallel run angular:dev",

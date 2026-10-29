@@ -5,12 +5,14 @@ import { SortDirectionNumber, type FilterMultiplePassType } from './../enums/ind
 import type { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index.js';
 import { mapTempoDateFormatWithFieldType, tryParseDate } from './dateUtils.js';
 import type { TranslaterService } from './translater.service.js';
-import { isColumnDateType } from './utilities.js';
+import { getDescendantProperty, isColumnDateType } from './utilities.js';
 
 interface ParsingDateDetails {
   columnId: number | string;
   dateFormat: string;
   queryFieldName: string;
+  sourceField?: string;
+  sourceFieldGetter?: Column['queryFieldNameGetterFn'];
 }
 
 export class CollectionService<T = any> {
@@ -60,8 +62,8 @@ export class CollectionService<T = any> {
     });
 
     items.forEach((item) => {
-      parsingProps.forEach(({ columnId, dateFormat, queryFieldName }) => {
-        this.reassignDateWhenValid(item, columnId, dateFormat, queryFieldName);
+      parsingProps.forEach(({ columnId, dateFormat, queryFieldName, sourceField, sourceFieldGetter }) => {
+        this.reassignDateWhenValid(item, columnId, dateFormat, queryFieldName, sourceFieldGetter?.(item) ?? sourceField);
       });
     });
   }
@@ -72,7 +74,13 @@ export class CollectionService<T = any> {
         // loop through all date columns only once and keep parsing info
         const parseInfo = this.getParseDateInfo(col, preParseDateColumns);
         if (parseInfo) {
-          this.reassignDateWhenValid(item, col.id, parseInfo.dateFormat, parseInfo.queryFieldName);
+          this.reassignDateWhenValid(
+            item,
+            col.id,
+            parseInfo.dateFormat,
+            parseInfo.queryFieldName,
+            parseInfo.sourceFieldGetter?.(item) ?? parseInfo.sourceField
+          );
         }
       });
     }
@@ -151,75 +159,37 @@ export class CollectionService<T = any> {
       );
     }
 
-    let sortedCollection: T[] = [];
-
-    if (sortByOptions) {
-      if (Array.isArray(sortByOptions)) {
-        // multi-sort
-        sortedCollection = collection.sort((dataRow1: T, dataRow2: T) => {
-          for (let i = 0, l = sortByOptions.length; i < l; i++) {
-            const sortBy = sortByOptions[i];
-
-            if (sortBy?.property) {
-              // collection of objects with a property name provided
-              const sortDirection = sortBy.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
-              const objectProperty = sortBy.property;
-              const fieldType = sortBy?.fieldType ?? columnDef?.type ?? 'string';
-              const value1 = enableTranslateLabel
-                ? this.translaterService?.translate?.((dataRow1[objectProperty as keyof T] || ' ') as string)
-                : dataRow1[objectProperty as keyof T];
-              const value2 = enableTranslateLabel
-                ? this.translaterService?.translate?.((dataRow2[objectProperty as keyof T] || ' ') as string)
-                : dataRow2[objectProperty as keyof T];
-
-              const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
-              if (sortResult !== SortDirectionNumber.neutral) {
-                return sortResult;
-              }
-            }
-          }
-          return SortDirectionNumber.neutral;
-        });
-      } else if (sortByOptions?.property) {
-        // single sort
-        // collection of objects with a property name provided
-        const objectProperty = sortByOptions.property;
-        const sortDirection = sortByOptions.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
-        const fieldType = sortByOptions?.fieldType ?? columnDef?.type ?? 'string';
-
-        sortedCollection = collection.sort((dataRow1: T, dataRow2: T) => {
-          const value1 = enableTranslateLabel
-            ? this.translaterService?.translate && this.translaterService.translate((dataRow1[objectProperty as keyof T] || ' ') as string)
-            : dataRow1[objectProperty as keyof T];
-          const value2 = enableTranslateLabel
-            ? this.translaterService?.translate && this.translaterService.translate((dataRow2[objectProperty as keyof T] || ' ') as string)
-            : dataRow2[objectProperty as keyof T];
-          const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
-          if (sortResult !== SortDirectionNumber.neutral) {
-            return sortResult;
-          }
-          return SortDirectionNumber.neutral;
-        });
-      } else if (sortByOptions && !sortByOptions.property) {
-        const sortDirection = sortByOptions.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
-        const fieldType = sortByOptions?.fieldType ?? columnDef?.type ?? 'string';
-
-        sortedCollection = collection.sort((dataRow1: any, dataRow2: any) => {
-          const value1 = enableTranslateLabel
-            ? this.translaterService?.translate && this.translaterService.translate(dataRow1 || ' ')
-            : dataRow1;
-          const value2 = enableTranslateLabel
-            ? this.translaterService?.translate && this.translaterService.translate(dataRow2 || ' ')
-            : dataRow2;
-          const sortResult = sortByFieldType(fieldType, value1, value2, sortDirection, columnDef);
-          if (sortResult !== SortDirectionNumber.neutral) {
-            return sortResult;
-          }
-          return SortDirectionNumber.neutral;
-        });
-      }
+    if (!sortByOptions) {
+      return [];
     }
-    return sortedCollection;
+    const isMultiSort = Array.isArray(sortByOptions);
+    const sorters = isMultiSort ? sortByOptions : [sortByOptions];
+    const comparers = sorters
+      .filter((sortBy) => sortBy && (!isMultiSort || sortBy.property))
+      .map((sortBy) => {
+        const property = sortBy.property as keyof T | undefined;
+        const direction = sortBy.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
+        const fieldType = sortBy.fieldType ?? columnDef?.type ?? 'string';
+        return (row1: T, row2: T): number => {
+          const value1 = property ? row1[property] : row1;
+          const value2 = property ? row2[property] : row2;
+          const sortValue1 = enableTranslateLabel ? this.translaterService?.translate?.((value1 || ' ') as string) : value1;
+          const sortValue2 = enableTranslateLabel ? this.translaterService?.translate?.((value2 || ' ') as string) : value2;
+          return sortByFieldType(fieldType, sortValue1, sortValue2, direction, columnDef);
+        };
+      });
+    if (comparers.length === 1) {
+      return collection.sort(comparers[0]);
+    }
+    return collection.sort((row1: T, row2: T) => {
+      for (const compare of comparers) {
+        const result = compare(row1, row2);
+        if (result !== SortDirectionNumber.neutral) {
+          return result;
+        }
+      }
+      return SortDirectionNumber.neutral;
+    });
   }
 
   // --
@@ -235,12 +205,20 @@ export class CollectionService<T = any> {
       // OR a prefix string to assign it into a new item property
       const queryFieldName = typeof preParseDateColumns === 'string' ? `${preParseDateColumns}${col.id}` : `${col.id}`;
 
-      return { columnId: col.id, dateFormat, queryFieldName };
+      const sourceField = col.queryFieldSorter || col.queryField || col.field || `${col.id}`;
+      return { columnId: col.id, dateFormat, queryFieldName, sourceField, sourceFieldGetter: col.queryFieldNameGetterFn };
     }
   }
 
-  protected reassignDateWhenValid(item: any, columnId: number | string, dateFormat: string, queryFieldName: string): void {
-    const date = tryParseDate(item[columnId], dateFormat, false);
+  protected reassignDateWhenValid(
+    item: any,
+    columnId: number | string,
+    dateFormat: string,
+    queryFieldName: string,
+    sourceField = `${columnId}`
+  ): void {
+    const value = sourceField.includes('.') ? getDescendantProperty(item, sourceField) : item[sourceField];
+    const date = tryParseDate(value, dateFormat, false);
     if (date) {
       item[queryFieldName] = date;
     }

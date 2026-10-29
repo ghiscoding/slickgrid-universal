@@ -72,7 +72,7 @@ If the builtin sort comparer methods are not sufficient for your use case, you c
 ```ts
 columns.value = [{
   id: 'myField', name: 'My Field',
-  sorter: (a, b) => a > b ? 1 : -1,
+  sortComparer: (a, b, direction) => (a === b ? 0 : a > b ? 1 : -1) * (direction ?? 0),
 }];
 ```
 
@@ -83,7 +83,7 @@ similarly with a complex object
 
 columns.value = [{
   id: 'firstName', name: 'First Name', field: 'user.firstName',
-  sorter: (a, b) => a.fullName > b.fullName ? 1 : -1,
+  sortComparer: (a, b, direction) => (a === b ? 0 : a > b ? 1 : -1) * (direction ?? 0),
 }];
 ```
 

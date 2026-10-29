@@ -23,6 +23,9 @@ export const stringSortComparer: SortComparer = (
       value1 = removeAccentFromText(value1, false);
       value2 = removeAccentFromText(value2, false);
     }
+    if (value1 === value2) {
+      return 0;
+    }
     if (sortDirection) {
       position = value1 < value2 ? -1 : 1;
     } else {

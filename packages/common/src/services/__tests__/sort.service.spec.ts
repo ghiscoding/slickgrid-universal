@@ -121,6 +121,121 @@ describe('SortService', () => {
     service.dispose();
   });
 
+  it('preserves subclass tree hooks while honoring primary-column priority', () => {
+    class CustomSortService extends SortService {
+      calls: Array<{ columnId: string | number; level: number }> = [];
+      override sortTreeChildren(rows: any[], column: ColumnSort, level: number): void {
+        this.calls.push({ columnId: column.columnId, level });
+        super.sortTreeChildren(rows, column, level);
+      }
+    }
+    const custom = new CustomSortService(collectionServiceStub, sharedService, eventPubSubService);
+    custom.bindLocalOnSort(gridStub);
+    const columns = ['a', 'b'].map((field) => ({ columnId: field, sortAsc: true, sortCol: { id: field, field, type: 'number' as const } }));
+    const rows = [
+      { a: 2, b: 0 },
+      {
+        a: 1,
+        b: 9,
+        children: [
+          { a: 2, b: 0 },
+          { a: 1, b: 9 },
+        ],
+      },
+      { a: 1, b: 1 },
+    ];
+    custom.sortTreeData(rows, columns);
+    expect(rows.map((row) => row.b)).toEqual([1, 9, 0]);
+    expect(rows[1].children!.map((row) => row.a)).toEqual([1, 2]);
+    expect(custom.calls.filter((call) => call.level === 0).map((call) => call.columnId)).toEqual(['b', 'a']);
+    expect(custom.calls.filter((call) => call.level === 1)).toHaveLength(2);
+    custom.dispose();
+  });
+
+  it('sorts tree siblings by first-column priority at every level', () => {
+    service.bindLocalOnSort(gridStub);
+    const columns = ['a', 'b'].map((field) => ({ columnId: field, sortAsc: true, sortCol: { id: field, field, type: 'number' as const } }));
+    const rows = [
+      { a: 2, b: 1 },
+      {
+        a: 1,
+        b: 9,
+        children: [
+          { a: 2, b: 1 },
+          { a: 1, b: 9 },
+        ],
+      },
+    ];
+    service.sortTreeData(rows, columns);
+    expect(rows.map((row) => row.a)).toEqual([1, 2]);
+    expect(rows[0].children!.map((row) => row.a)).toEqual([1, 2]);
+  });
+
+  it('restores the backend sort handler when sorting is re-enabled', () => {
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+    const backendSpy = vi.spyOn(service, 'onBackendSortChanged').mockImplementation(() => {});
+    service.bindBackendOnSort(gridStub);
+    service.disableSortFunctionality(true, false);
+    service.disableSortFunctionality(false);
+    gridStub.onSort.notify({ multiColumnSort: true, sortCols: [], grid: gridStub }, new SlickEventData(), gridStub);
+    expect(backendSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not duplicate the sort handler when enabled repeatedly', () => {
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+    const handler = vi.spyOn(service, 'handleLocalOnSort').mockImplementation(() => {});
+    service.bindLocalOnSort(gridStub);
+    service.disableSortFunctionality(false);
+    service.disableSortFunctionality(false);
+    gridStub.onSort.notify({ multiColumnSort: true, sortCols: [], grid: gridStub }, new SlickEventData(), gridStub);
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps disabling sorting idempotent', () => {
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+    service.bindLocalOnSort(gridStub);
+    service.disableSortFunctionality(true, false);
+    service.disableSortFunctionality(true, false);
+    expect(gridOptionMock.enableSorting).toBe(false);
+  });
+
+  it('restores date-update handling after sorting is disabled and re-enabled', () => {
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+    gridOptionMock.preParseDateColumns = true;
+    service.bindLocalOnSort(gridStub);
+    const parseSpy = vi.spyOn(service, 'preParseSingleDateItem');
+    service.disableSortFunctionality(true, false);
+    service.disableSortFunctionality(false);
+    gridStub.onCellChange.notify({ grid: gridStub, item: { id: 1 }, row: 0, cell: 0, column: { id: 'id', field: 'id' } }, new SlickEventData(), gridStub);
+    expect(parseSpy).toHaveBeenCalledTimes(1);
+    const sortSpy = vi.spyOn(service, 'handleLocalOnSort').mockImplementation(() => {});
+    gridStub.onSort.notify({ multiColumnSort: true, sortCols: [], grid: gridStub }, new SlickEventData(), gridStub);
+    expect(sortSpy).toHaveBeenCalledTimes(1);
+    gridOptionMock.preParseDateColumns = false;
+  });
+
+  it('removes local subscriptions when rebinding to a backend grid', () => {
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+    gridOptionMock.preParseDateColumns = true;
+    service.bindLocalOnSort(gridStub);
+    const parseSpy = vi.spyOn(service, 'preParseSingleDateItem');
+    service.bindBackendOnSort(gridStub);
+    eventPubSubService.publish('onItemsAdded', { id: 1 });
+    expect(parseSpy).not.toHaveBeenCalled();
+    gridOptionMock.preParseDateColumns = false;
+  });
+
+  it('unsubscribes date update listeners on dispose', () => {
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+    gridOptionMock.preParseDateColumns = true;
+    service.bindLocalOnSort(gridStub);
+    const parseSpy = vi.spyOn(service, 'preParseSingleDateItem');
+    service.dispose();
+    eventPubSubService.publish('onItemsAdded', { id: 1 });
+    expect(parseSpy).not.toHaveBeenCalled();
+    gridOptionMock.preParseDateColumns = false;
+  });
+
   it('should create the service', () => {
     expect(service).toBeTruthy();
   });

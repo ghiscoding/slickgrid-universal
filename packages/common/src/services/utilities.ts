@@ -509,12 +509,11 @@ export function getAllDateFieldTypes(): FieldType[] {
   ];
 }
 
+const dateFieldTypes = new Set(getAllDateFieldTypes());
+
 /** Verify if the identified column is of type Date */
 export function isColumnDateType(fieldType?: FieldType): boolean {
-  if (getAllDateFieldTypes().includes(fieldType as FieldType)) {
-    return true;
-  }
-  return false;
+  return dateFieldTypes.has(fieldType as FieldType);
 }
 
 /** Whether any date column holds strings (judged by its first non-empty value), which `preParseDateColumns` would convert once to `Date` objects. */
