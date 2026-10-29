@@ -1053,7 +1053,10 @@
   }
 
   .slick-footerrow {
-    border-top: var(--slick-grid-footer-border-top, v.$slick-grid-footer-border-top);
+    border-top: var(--slick-grid-footer-border, v.$slick-grid-footer-border);
+    // a left/right border would shift the footer cells and misalign them with the body cells
+    border-right: 0 none;
+    border-left: 0 none;
     background-color: var(--slick-grid-footer-bg-color, v.$slick-grid-footer-bg-color);
     .slick-footerrow-columns {
       .slick-footerrow-column {
