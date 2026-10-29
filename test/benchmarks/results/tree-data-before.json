@@ -1,0 +1,58 @@
+{
+  "node": "v24.15.0",
+  "sizes": [5000, 20000],
+  "warmups": 2,
+  "samples": 7,
+  "results": [
+    {
+      "name": "5000 / customLocalFilter scan / auto-recalc totals",
+      "medianMs": 106.4077000000002,
+      "p95Ms": 133.01890000000003
+    },
+    {
+      "name": "5000 / preFilterTreeData / 500 preset toggled parents",
+      "medianMs": 6.694700000000012,
+      "p95Ms": 6.997199999999793
+    },
+    {
+      "name": "5000 / dynamicallyToggleItemState / 500 parents",
+      "medianMs": 16.698699999999917,
+      "p95Ms": 17.289099999999962
+    },
+    {
+      "name": "5000 / unflattenParentChildArrayToTree",
+      "medianMs": 0.5587000000004991,
+      "p95Ms": 0.738800000000083
+    },
+    {
+      "name": "5000 / flattenToParentChildArray",
+      "medianMs": 0.49459999999999127,
+      "p95Ms": 1.6307999999999083
+    },
+    {
+      "name": "20000 / customLocalFilter scan / auto-recalc totals",
+      "medianMs": 1917.563,
+      "p95Ms": 5813.979299999999
+    },
+    {
+      "name": "20000 / preFilterTreeData / 2000 preset toggled parents",
+      "medianMs": 335.33200000000215,
+      "p95Ms": 374.91330000000016
+    },
+    {
+      "name": "20000 / dynamicallyToggleItemState / 2000 parents",
+      "medianMs": 198.77560000000085,
+      "p95Ms": 205.11809999999969
+    },
+    {
+      "name": "20000 / unflattenParentChildArrayToTree",
+      "medianMs": 2.303299999999581,
+      "p95Ms": 2.7805000000007567
+    },
+    {
+      "name": "20000 / flattenToParentChildArray",
+      "medianMs": 1.8081999999994878,
+      "p95Ms": 2.043499999999767
+    }
+  ]
+}

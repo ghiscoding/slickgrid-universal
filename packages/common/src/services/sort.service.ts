@@ -20,7 +20,7 @@ import type { BackendUtilityService } from './backendUtility.service.js';
 import type { CollectionService } from './collection.service.js';
 import type { RxJsFacade, Subject } from './rxjsFacade.js';
 import type { SharedService } from './shared.service.js';
-import { flattenToParentChildArray, getDescendantProperty, isColumnDateType } from './utilities.js';
+import { flattenToParentChildArray, getDescendantProperty, getTreeDataOptionPropName, isColumnDateType } from './utilities.js';
 
 export class SortService {
   protected _currentLocalSorters: CurrentSorter[] = [];
@@ -640,7 +640,7 @@ export class SortService {
   }
 
   protected sortTreeChildrenByColumns(treeArray: any[], sortColumns: ColumnSort[]): void {
-    const childrenPropName = this._gridOptions.treeDataOptions?.childrenPropName ?? 'children';
+    const childrenPropName = getTreeDataOptionPropName(this._gridOptions.treeDataOptions, 'childrenPropName');
     treeArray.sort((a, b) => this.sortComparers(sortColumns, a, b));
     treeArray.forEach((item) => {
       if (item && Object.prototype.hasOwnProperty.call(item, childrenPropName) && Array.isArray(item[childrenPropName])) {
@@ -651,7 +651,7 @@ export class SortService {
 
   /** Sort the Tree Children of a hierarchical dataset by recursion */
   sortTreeChildren(treeArray: any[], sortColumn: ColumnSort, treeLevel: number): void {
-    const childrenPropName = this._gridOptions.treeDataOptions?.childrenPropName ?? 'children';
+    const childrenPropName = getTreeDataOptionPropName(this._gridOptions.treeDataOptions, 'childrenPropName');
     treeArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
 
     // when item has a child, we'll sort recursively

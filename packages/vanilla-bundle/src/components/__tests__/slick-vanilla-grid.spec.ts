@@ -49,6 +49,7 @@ import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vite
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { TreeDataService as TreeDataServiceSource } from '../../../../common/src/services/treeData.service.js';
 import { UniversalContainerService } from '../../services/universalContainer.service.js';
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle.js';
 
@@ -208,6 +209,10 @@ const treeDataServiceStub = {
   initHierarchicalTree: vi.fn(),
   sortHierarchicalDataset: vi.fn(),
   toggleTreeDataCollapse: vi.fn(),
+  // run the real shared sorting logic against the stubbed collaborators
+  filterService: filterServiceStub,
+  sharedService: new SharedService(),
+  sortTreeDataset: TreeDataServiceSource.prototype.sortTreeDataset,
 } as unknown as TreeDataService;
 
 const mockDataView = {

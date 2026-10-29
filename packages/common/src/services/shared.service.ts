@@ -2,11 +2,13 @@ import type { SlickDataView } from '../core/slickDataView.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import type { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider.js';
 import type { Column, CurrentPagination, ExternalResource, ExternalResourceConstructor, GridOption } from '../interfaces/index.js';
+import { getTreeDataOptionPropName } from './utilities.js';
 
 export class SharedService {
   protected _allColumns!: Column[];
   protected _gridOptions!: GridOption;
   protected _hierarchicalDataset: any[] | undefined;
+  protected _hierarchicalItemsIndex?: { dataset: any[]; itemsById: Map<number | string, any> };
   protected _externalRegisteredResources!: any[];
 
   // --
@@ -80,5 +82,39 @@ export class SharedService {
   /** Getter for the Hierarchical Tree Data dataset when the feature is enabled */
   set hierarchicalDataset(hierarchicalDataset: any[] | undefined) {
     this._hierarchicalDataset = hierarchicalDataset;
+  }
+
+  /**
+   * Find an item of the hierarchical (tree) dataset by its id.
+   * The lookup index is built on first use and rebuilt when the dataset is replaced or when an id is missing (e.g. lazily loaded children).
+   */
+  getHierarchicalItemById(itemId: number | string): any {
+    const hierarchicalDataset = this.hierarchicalDataset ?? [];
+    if (this._hierarchicalItemsIndex?.dataset !== hierarchicalDataset || !this._hierarchicalItemsIndex.itemsById.has(itemId)) {
+      this._hierarchicalItemsIndex = { dataset: hierarchicalDataset, itemsById: this.indexHierarchicalItems(hierarchicalDataset) };
+    }
+    return this._hierarchicalItemsIndex.itemsById.get(itemId);
+  }
+
+  /** Index all hierarchical items by id, the first item found (depth-first) wins when ids are duplicated */
+  protected indexHierarchicalItems(hierarchicalDataset: any[]): Map<number | string, any> {
+    const idPropName = this.gridOptions.datasetIdPropertyName || 'id';
+    const childrenPropName = getTreeDataOptionPropName(this.gridOptions.treeDataOptions, 'childrenPropName');
+    const itemsById = new Map<number | string, any>();
+    const stack = hierarchicalDataset.slice().reverse();
+
+    while (stack.length > 0) {
+      const item = stack.pop();
+      if (item && !itemsById.has(item[idPropName])) {
+        itemsById.set(item[idPropName], item);
+      }
+      const children = item?.[childrenPropName];
+      if (Array.isArray(children)) {
+        for (let i = children.length - 1; i >= 0; i--) {
+          stack.push(children[i]);
+        }
+      }
+    }
+    return itemsById;
   }
 }

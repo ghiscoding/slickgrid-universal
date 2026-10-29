@@ -979,6 +979,21 @@ describe('TreeData Service', () => {
       expect(endUpdateSpy).toHaveBeenCalled();
     });
 
+    it('should only expand lazy loaded parents that were already loaded when calling the method with collapsing False', async () => {
+      gridOptionsMock.treeDataOptions!.lazy = true;
+      mockFlatDataset[0].__lazyLoading = 'done';
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      const updateItemSpy = vi.spyOn(dataViewStub, 'updateItem');
+
+      service.init(gridStub);
+      sharedService.hierarchicalDataset = service.convertFlatParentChildToTreeDataset(mockFlatDataset, gridOptionsMock);
+      await service.toggleTreeDataCollapse(false);
+
+      expect(updateItemSpy).toHaveBeenCalledTimes(1);
+      expect(updateItemSpy).toHaveBeenCalledWith(0, expect.objectContaining({ id: 0, __collapsed: false, __lazyLoading: 'done' }));
+      gridOptionsMock.treeDataOptions!.lazy = false;
+    });
+
     describe('applyToggledItemStateChanges method', () => {
       it('should execute the method and expect a full toggle or items', () => {
         const dataGetItemsSpy = vi.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
@@ -1294,6 +1309,63 @@ describe('TreeData Service', () => {
 
       expect(getInitialSpy).toHaveBeenCalledWith(mockColumns, gridOptionsMock);
       expect(sortHierarchySpy).toHaveBeenCalledWith(mockHierarchical, [mockColumnSort]);
+    });
+  });
+
+  describe('sortTreeDataset method', () => {
+    const mockFlat = [
+      { id: 0, file: 'documents' },
+      { id: 1, file: 'vacation.txt', parentId: 0 },
+    ];
+    const mockSortedFlat = [mockFlat[0], mockFlat[1]];
+    const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      service.init(gridStub);
+    });
+
+    it('should re-sort the provided hierarchical dataset and refresh tree filters when the dataset length changed', () => {
+      const sortSpy = vi.spyOn(service, 'sortHierarchicalDataset').mockReturnValue({ hierarchical: mockHierarchical, flat: mockSortedFlat });
+      const convertSpy = vi.spyOn(service, 'convertFlatParentChildToTreeDatasetAndSort');
+
+      const output = service.sortTreeDataset(mockFlat, [], gridOptionsMock, { hierarchicalDataset: mockHierarchical, previousDatasetLength: 0 });
+
+      expect(output).toBe(mockSortedFlat);
+      expect(sortSpy).toHaveBeenCalledWith(mockHierarchical);
+      expect(convertSpy).not.toHaveBeenCalled();
+      expect(filterServiceStub.refreshTreeDataFilters).toHaveBeenCalledWith(mockSortedFlat);
+    });
+
+    it('should convert the flat dataset, keep its hierarchical result and skip the filter refresh when the length did not change', () => {
+      const mockColumns = [{ id: 'file', field: 'file' }] as Column[];
+      const convertSpy = vi
+        .spyOn(service, 'convertFlatParentChildToTreeDatasetAndSort')
+        .mockReturnValue({ hierarchical: mockHierarchical, flat: mockSortedFlat });
+
+      const output = service.sortTreeDataset(mockFlat, mockColumns, gridOptionsMock, { previousDatasetLength: mockFlat.length });
+
+      expect(output).toBe(mockSortedFlat);
+      expect(convertSpy).toHaveBeenCalledWith(mockFlat, mockColumns, gridOptionsMock);
+      expect(sharedService.hierarchicalDataset).toBe(mockHierarchical);
+      expect(filterServiceStub.refreshTreeDataFilters).not.toHaveBeenCalled();
+    });
+
+    it('should refresh tree filters when forced even when the dataset length did not change', () => {
+      vi.spyOn(service, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ hierarchical: mockHierarchical, flat: mockSortedFlat });
+
+      service.sortTreeDataset(mockFlat, undefined as any, gridOptionsMock, { previousDatasetLength: mockFlat.length, forceGridRefresh: true });
+
+      expect(filterServiceStub.refreshTreeDataFilters).toHaveBeenCalledWith(mockSortedFlat);
+    });
+
+    it('should return an empty array without converting when there are no grid options or no flat data', () => {
+      const convertSpy = vi.spyOn(service, 'convertFlatParentChildToTreeDatasetAndSort');
+
+      expect(service.sortTreeDataset(mockFlat, [], undefined, { previousDatasetLength: 0 })).toEqual([]);
+      expect(service.sortTreeDataset([], [], gridOptionsMock, { previousDatasetLength: 2 })).toEqual([]);
+      expect(convertSpy).not.toHaveBeenCalled();
+      expect(filterServiceStub.refreshTreeDataFilters).toHaveBeenCalledTimes(1);
     });
   });
 

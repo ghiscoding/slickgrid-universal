@@ -167,6 +167,15 @@ describe('Tree Formatter', () => {
     );
   });
 
+  it('should consider a tree level of 0 when the tree level prop exists but is undefined', () => {
+    const output = treeFormatter(1, 1, 'Bob', {} as Column, { id: 99, firstName: 'Bob', indent: undefined }, gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-0');
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Bob</span>`
+    );
+  });
+
   it('should return a span without any toggle icon and have a 15px indentation with tree level 3', () => {
     const output = treeFormatter(1, 1, dataset[6]['firstName'], {} as Column, dataset[6], gridStub) as FormatterResultWithHtml;
 

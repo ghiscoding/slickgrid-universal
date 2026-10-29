@@ -1,9 +1,9 @@
-import { Constants } from '../constants.js';
 import type { Formatter, GridOption, GroupTotalsFormatter } from '../interfaces/index.js';
+import { getTreeDataOptionPropName } from '../services/utilities.js';
 
 export const treeParseTotalsFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
   const gridOptions = grid.getOptions() as GridOption;
-  const hasChildrenPropName = gridOptions.treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
+  const hasChildrenPropName = getTreeDataOptionPropName(gridOptions.treeDataOptions, 'hasChildrenPropName');
   const { groupTotalsFormatter, treeTotalsFormatter, params } = columnDef;
 
   // make sure that the user provided a total formatter or else it won't work

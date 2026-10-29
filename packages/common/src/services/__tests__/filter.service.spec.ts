@@ -2382,6 +2382,26 @@ describe('FilterService', () => {
         expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([21, 4, 5]));
       });
 
+      it('should apply preset toggled items only once and match their parent by the custom dataset id property', () => {
+        gridOptionMock.datasetIdPropertyName = 'uid';
+        gridOptionMock.presets = { treeData: { toggledItems: [{ itemId: 'p1', isCollapsed: true }] } };
+        const items: any[] = [
+          { uid: 'p1', file: 'parent', __hasChildren: true, __parentId: null },
+          { uid: 'c1', file: 'child', __parentId: 'p1' },
+        ];
+
+        service.init(gridStub);
+        const output = service.preFilterTreeData(items, {});
+        expect(output).toEqual(initSetWithValues(['c1', 'p1']));
+        expect(items[0].__collapsed).toBe(true);
+
+        // presets are only applied on the first pre-filtering
+        items[0].__collapsed = false;
+        service.preFilterTreeData(items, {});
+        expect(items[0].__collapsed).toBe(false);
+        gridOptionMock.datasetIdPropertyName = undefined;
+      });
+
       it('should return False when item is found BUT its parent is collapsed', async () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         const preFilterSpy = vi.spyOn(service, 'preFilterTreeData');

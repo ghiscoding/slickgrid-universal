@@ -128,6 +128,11 @@ describe('Tree Export Formatter', () => {
     expect(output).toBe(`.    Barbara`); // 3x spaces for exportIndentationLeadingSpaceCount + 1x space for space after collapsing icon in final string output
   });
 
+  it('should consider a tree level of 0 when the tree level prop exists but is undefined', () => {
+    const output = treeExportFormatter(1, 1, 'Bob', {} as Column, { id: 99, firstName: 'Bob', indent: undefined }, gridStub);
+    expect(output).toBe(`.    Bob`);
+  });
+
   it('should return a span without any toggle icon and 15px indentation of a tree level 1', () => {
     const output = treeExportFormatter(1, 1, dataset[6]['firstName'], {} as Column, dataset[6], gridStub);
     expect(output).toBe(`.           Bobby`);

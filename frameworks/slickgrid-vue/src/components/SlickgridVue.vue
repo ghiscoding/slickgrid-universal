@@ -1569,32 +1569,11 @@ async function renderPagination(showPagination = true) {
  * @returns {Array<Object>} sort flat parent/child dataset
  */
 function sortTreeDataset<T>(flatDatasetInput: T[], forceGridRefresh = false): T[] {
-  const prevDatasetLn = currentDatasetLength;
-  let sortedDatasetResult;
-  let flatDatasetOutput: any[] = [];
-
-  // if the hierarchical dataset was already initialized then no need to re-convert it, we can use it directly from the shared service ref
-  if (isDatasetHierarchicalInitialized && dataHierarchicalModel.value) {
-    sortedDatasetResult = treeDataService.sortHierarchicalDataset(dataHierarchicalModel.value);
-    flatDatasetOutput = sortedDatasetResult.flat;
-  } else if (Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
-    // we need to first convert the flat dataset to a hierarchical dataset and then sort it
-    // we'll also add props, by mutation, required by the TreeDataService on the flat array like `__hasChildren`, `parentId` and anything else to work properly
-    sortedDatasetResult = treeDataService.convertFlatParentChildToTreeDatasetAndSort(
-      flatDatasetInput,
-      (_columns.value || []) as Column[],
-      _gridOptions.value as GridOption
-    );
-    sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
-    flatDatasetOutput = sortedDatasetResult.flat;
-  }
-
-  // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
-  if (flatDatasetInput.length > 0 && (forceGridRefresh || flatDatasetInput.length !== prevDatasetLn)) {
-    filterService.refreshTreeDataFilters(flatDatasetOutput);
-  }
-
-  return flatDatasetOutput;
+  return treeDataService.sortTreeDataset(flatDatasetInput, (_columns.value || []) as Column[], _gridOptions.value as GridOption, {
+    hierarchicalDataset: isDatasetHierarchicalInitialized ? dataHierarchicalModel.value : undefined,
+    previousDatasetLength: currentDatasetLength,
+    forceGridRefresh,
+  });
 }
 
 function suggestDateParsingWhenHelpful() {
