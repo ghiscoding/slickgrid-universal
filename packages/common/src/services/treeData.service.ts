@@ -23,7 +23,7 @@ export class TreeDataService {
   readonly pluginName = 'TreeDataService';
   protected _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;
   protected _currentToggledItems: TreeToggledItem[] = [];
-  protected _currentToggledItemsById = new Map<number | string, TreeToggledItem>();
+  protected _currentToggledItemsById: Map<number | string, TreeToggledItem> = new Map();
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
   protected _isLastFullToggleCollapsed = false;
