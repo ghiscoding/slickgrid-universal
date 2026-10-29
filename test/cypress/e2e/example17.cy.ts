@@ -104,7 +104,16 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
         const start = performance.now();
         cy.get(`${selector} .slick-row:not(.slick-group) >.cell-unselectable`)
           .contains(`${rowNumber}`, { timeout: 10000 }) // actually #8 will be selected
-          .should('not.be.hidden');
+          .should(($cell) => {
+            const viewport = Cypress.$(viewportSelector)[0] as HTMLElement;
+            const cellRect = $cell[0].getBoundingClientRect();
+            const viewportRect = viewport.getBoundingClientRect();
+
+            // Cypress 16 no longer treats content clipped by the grid's overflow viewport as hidden.
+            // Wait until the target cell actually enters the grid viewport before measuring the scroll interval.
+            expect(cellRect.bottom).to.be.greaterThan(viewportRect.top);
+            expect(cellRect.top).to.be.lessThan(viewportRect.bottom);
+          });
 
         return cy
           .get(viewportSelector)
@@ -363,9 +372,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     });
 
     it('should try to set pinned columns wider than possible and expect an error and abort of the execution', () => {
-      cy.window().then((win) => {
-        cy.stub(win, 'alert').as('alertStub');
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
       cy.get('[data-test="pinned-column-count"]').clear().type('12');
       cy.get('[data-test="set-pinned-columns-btn"]')
         .click()

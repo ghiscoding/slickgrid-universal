@@ -182,6 +182,7 @@ describe('Example 20 - Pinned Grid', () => {
   });
 
   it('should retain explicit right-pinned column IDs when hiding a right-pinned column', () => {
+    cy.window().then((win) => cy.stub(win, 'alert'));
     setRightPinning(2);
     cy.get('[data-id="cityOfOrigin"] .slick-header-menu-button').click({ force: true });
     cy.get('.slick-header-menu:visible .slick-menu-command-list .slick-menu-item').contains('Hide Column').click();

@@ -84,9 +84,7 @@ describe('Example 35 - Row Based Editing', () => {
 
     cy.get('.action-btns--update').first().click();
     cy.on('window:confirm', () => true);
-    cy.on('window:alert', (str) => {
-      expect(str).to.equal('Sorry, 40 is the maximum allowed duration.');
-    });
+    cy.get('@alertStub').should('have.been.calledWith', 'Sorry, 40 is the maximum allowed duration.');
 
     cy.get('.slick-row.slick-rbe-editmode').should('have.length', 1);
   });
@@ -115,6 +113,8 @@ describe('Example 35 - Row Based Editing', () => {
   });
 
   it('should cleanup status when starting a new edit mode', () => {
+    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
+
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
 
     cy.get('[data-test="fetch-result"]').should('be.empty');
@@ -123,6 +123,8 @@ describe('Example 35 - Row Based Editing', () => {
   });
 
   it('should revert changes on cancel click', () => {
+    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
+
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell.l1.r1`)
@@ -137,14 +139,14 @@ describe('Example 35 - Row Based Editing', () => {
   });
 
   it('should delete a row when clicking it', () => {
+    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
     cy.get('.action-btns--delete').first().click({ force: true });
-
-    cy.on('window:confirm', () => true);
 
     cy.get('.slick-row').first().find('.slick-cell.l0.r0').should('contain', 'Task 1');
   });
 
   it('should support translation keys on buttons', () => {
+    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
 
     cy.get('.action-btns--update')

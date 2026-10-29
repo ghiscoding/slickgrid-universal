@@ -26,7 +26,7 @@ describe('Example 26 - Use of Angular Components', () => {
   it('should have a 2nd column title with an interactive angular component rendering a button and showing an alert on click', () => {
     const stub = cy.stub();
 
-    cy.on('window:alert', stub);
+    cy.window().then((win) => cy.stub(win, 'alert').callsFake(stub));
 
     cy.get('#grid26')
       .find('.slick-row')

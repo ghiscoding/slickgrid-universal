@@ -101,6 +101,8 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should be able to delete first row by using the "Delete Row" command from the Context Menu', () => {
+      cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
+
       getTaskCell('Task 0', 1).contains('Task 0');
 
       openContextMenu('Task 0', 1);
@@ -116,6 +118,8 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should be able to delete the 3rd row "Task 3" by using the "Delete Row" command from the Action Cell Menu', () => {
+      cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
+
       getTaskCell('Task 3', 1).contains('Task 3');
 
       openCellMenu('Task 3');
@@ -205,7 +209,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
 
     it('should expect a "Command 2" to be enabled and clickable in that same Action menu', () => {
       const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => cy.stub(win, 'alert').callsFake(stub));
 
       openCellMenu('Tâche 6');
 
@@ -251,6 +255,8 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should be able to delete first row by using the "Supprimer la ligne" command from the Context Menu', () => {
+      cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
+
       getTaskCell('Tâche 1', 1).contains('Tâche 1');
 
       openContextMenu('Tâche 1', 1);
@@ -266,6 +272,8 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should be able to delete the 4th row "Tâche 6" by using the "Supprimer la ligne" command from the Action Cell Menu', () => {
+      cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
+
       getTaskCell('Tâche 6', 1).contains('Tâche 6');
 
       openCellMenu('Tâche 6');
@@ -291,7 +299,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     it('should be able to open Context Menu from any other cell and click on Export->Text and expect alert triggered with Text Export', () => {
       const subCommands1 = ['Text', 'Excel'];
       const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => cy.stub(win, 'alert').callsFake(stub));
 
       getTaskCell('Task 2', 1).should('contain', 'Task 2');
       openContextMenu('Task 2', 1);
@@ -317,7 +325,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
       const subCommands1 = ['Text', 'Excel'];
       const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
       const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => cy.stub(win, 'alert').callsFake(stub));
 
       getTaskCell('Task 2', 1).should('contain', 'Task 2');
       openContextMenu('Task 2', 1);
@@ -359,7 +367,7 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
       const subCommands2_1 = ['Email us', 'Chat with us', 'Book an appointment'];
 
       const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => cy.stub(win, 'alert').callsFake(stub));
 
       openContextMenu('Task 2', 6);
 

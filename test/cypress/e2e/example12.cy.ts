@@ -607,9 +607,7 @@ describe('Example 12 - Composite Editor Modal', () => {
   });
 
   it('should be able to click on the "Reset Form" button from the (Mass Update) and expect the form to be empty and not be able to Save', () => {
-    cy.window().then((win) => {
-      cy.stub(win, 'alert').as('alertStub');
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
     cy.get('.item-details-container .modified').should('have.length', 4);
     cy.get('.reset-form').contains('Reset Form').click();
