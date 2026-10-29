@@ -78,7 +78,7 @@ export const SalesforceGlobalGridOptions = {
   resizeByContentOnlyOnFirstLoad: false,
   resizeByContentOptions: {
     formatterPaddingWidthInPx: 8,
-    maxItemToInspectCellContentWidth: 500,
+    sampleSize: 500,
   },
   rowMoveManager: {
     hideRowMoveShadow: false,

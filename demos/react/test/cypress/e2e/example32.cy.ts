@@ -17,32 +17,32 @@ describe('Example 32 - Columns Resize by Content', () => {
     });
 
     it('should have cell that fit the text content', () => {
-      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.gt', 75);
-      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.gt', 67);
-      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.gt', 59);
-      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.gt', 102);
-      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 89);
-      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.gt', 72);
-      cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.gt', 67);
-      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.gt', 72);
-      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 179);
-      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.gt', 94);
+      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.gt', 62);
+      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.gt', 60);
+      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.gt', 50);
+      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.gt', 85);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 100);
+      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.gt', 77);
+      cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.gt', 60);
+      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.gt', 77);
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 165);
+      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.gt', 87);
       cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('be.approximately', 58, 1);
     });
 
     it('should make the grid readonly and expect to fit the text by content and expect column width to be the same as earlier', () => {
       cy.get('[data-test="toggle-readonly-btn"]').click();
 
-      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.gt', 75);
-      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.gt', 67);
-      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.gt', 59);
-      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.gt', 102);
-      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 89);
-      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.gt', 72);
-      cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.gt', 67);
-      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.gt', 72);
-      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 179);
-      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.gt', 94);
+      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.gt', 62);
+      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.gt', 60);
+      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.gt', 50);
+      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.gt', 85);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 100);
+      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.gt', 77);
+      cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.gt', 60);
+      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.gt', 77);
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 165);
+      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.gt', 87);
       cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('be.approximately', 58, 1);
     });
 

@@ -11,14 +11,13 @@ The default of Slickgrid-Universal is to fit all columns in the container viewpo
 
 The Auto-Resize by Cell Content will fix the problem described in previous paragraph, however it will come with a cost. It will read through all the cell content of all your items (because this could slow down the grid a lot, there's a default to not go over a 1000 rows but that could be overridden if you wish). For that reason the **resize by cell content** is an **opt-in** feature.
 
-How does it work? It loop through the dataset and try to calculate the best possible width, it does so by assuming a few things. For example we assume the a character is by default 7 pixels wide (via `resizeCellCharWidthInPx`), we also assume that not every data will be the same width for example string type might be a little less wide (with chars like "i", "l", "j" are thinner) compare to numbers which are always the same width and so have some ratio option for that (via `resizeDefaultRatioForStringType` and `resizeCalcWidthRatio`).
+How does it work? It loops through the dataset (spread evenly when there are more items than the max count to inspect) and keeps the few longest formatted texts of each column, it then measures these texts with a canvas (using the font of a grid cell) to find the widest one and finally adds the cell padding (read from the `.slick-cell` CSS). You can optionally include the column header title width (via `resizeByContentOptions.includeHeaderWidth`) so that a column is never narrower than its title.
 
 There are a few configuration options you can use
-- ratio (`resizeDefaultRatioForStringType` and `resizeCalcWidthRatio`)
 - extra padding (`resizeExtraWidthPadding`)
-- char width
-- padding (`resizeCellPaddingWidthInPx`, `resizeFormatterPaddingWidthInPx`, `resizeExtraWidthPadding`)
+- padding (`resizeByContentOptions.cellPaddingWidthInPx`, `resizeByContentOptions.formatterPaddingWidthInPx`)
 - max width threshold (`resizeMaxWidthThreshold`)
+- include header width (`resizeByContentOptions.includeHeaderWidth`)
 ... and more
 
 ### Usage
@@ -75,35 +74,31 @@ export interface ResizeByContentOption {
   alwaysRecalculateColumnWidth?: boolean;
 
   /**
-   * Defaults to 7, width in pixels of a string character which is used by the resize columns by its content, this can vary depending on which font family/size is used & cell padding.
-   * This is only used when resizing the columns width by their content, we need to know the width of a character in pixel to do all calculations.
-   * Requires `enableAutoResizeColumnsByCellContent` to be set.
+   * Cell padding width (including borders) to add to the calculation when resizing columns by their cell text content.
+   * When not provided, it will be read from the `.slick-cell` CSS (padding-left/right & border-left/right widths).
    */
-  cellCharWidthInPx?: number;
-
-  /** Defaults to 6, cell padding width to add to the calculation when resizing columns by their cell text content (requires `enableAutoResizeColumnsByCellContent` to be set) */
   cellPaddingWidthInPx?: number;
 
-  /** Defaults to around ~0.9, what is the ratio to use (on field `type` "string" only) in the calculation when resizing columns by their cell text content (requires `enableAutoResizeColumnsByCellContent` to be set). */
-  defaultRatioForStringType?: number;
-
-  /** Defaults to 6, padding width to add to the calculation when using a Formatter and resizing columns by their cell text content (requires `enableAutoResizeColumnsByCellContent` to be set). */
+  /** Defaults to 0, extra padding width to add to the calculation of a column that has an Editor when the grid is editable. */
   formatterPaddingWidthInPx?: number;
 
   /**
-   * Defaults to 1000, how many rows are we going to inspect cell content width?
-   * This is use when calculating all column width by their cell content, it requires `enableAutoResizeColumnsByCellContent` to be set.
+   * Defaults to false, should we also include the column header title width (incl. sort & header menu icons) when resizing columns by their cell content?
+   * When enabled, a column will never become narrower than its header title.
    */
-  maxItemToInspectCellContentWidth?: number;
+  includeHeaderWidth?: boolean;
 
   /**
-   * Defaults to 5000, how many rows (of a single column) are we going to inspect cell content width?
-   * This is use when calculating column width by their cell content when calling "Resize by Content" (from header menu and/or double-click to resize single column)
+   * Defaults to 1000, maximum count of rows to inspect when calculating all column widths by their cell content.
+   * When the dataset is larger, the rows are sampled evenly across the whole dataset (instead of only reading the first rows).
    */
-  maxItemToInspectSingleColumnWidthByContent?: number;
+  sampleSize?: number;
 
-  /** Defaults to 50, what width to remove from new column width when the grid is a pinned grid and its column width exceeds the viewport full width. */
-  widthToRemoveFromExceededWidthReadjustment?: number;
+  /**
+   * Defaults to 5000, maximum count of rows to inspect when resizing a single column by its content
+   * (via the header menu "Resize by Content" command and/or double-click on the column resize handle).
+   */
+  singleColumnSampleSize?: number;
 }
 ```
 
@@ -114,21 +109,6 @@ We listed the column definition options below for the resize and they should all
 export interface Column {
   /** defaults to false, if a column `width` is provided (or was previously calculated) should we recalculate it or not when resizing by cell content? */
   resizeAlwaysRecalculateWidth?: boolean;
-
-  /**
-   * Defaults to 1, a column width ratio to use in the calculation when resizing columns by their cell content.
-   * We have this ratio number so that if we know that the cell content has lots of thin character (like 1, i, t, ...) we can lower the ratio to take up less space.
-   * In other words and depending on which font family you use, each character will have different width, characters like (i, t, 1) takes a lot less space compare to (W, H, Q),
-   * unless of course we use a monospace font family which will have the exact same size for each characters and in that case we leave it to 1 but that rarely happens.
-   * NOTE: the default ratio is 1, except for string where we use a ratio of around ~0.9 since we have more various thinner characters like (i, l, t, ...).
-   */
-  resizeCalcWidthRatio?: number;
-
-  /**
-   * no defaults, a character width to use when resizing columns by their cell content.
-   * If nothing is provided it will use `resizeCellCharWidthInPx` defined in the grid options.
-   */
-  resizeCharWidthInPx?: number;
 
   /** no defaults, what is the column max width threshold to not go over when resizing columns by their cell content */
   resizeMaxWidthThreshold?: number;

@@ -231,12 +231,10 @@ export const GlobalGridOptions: Partial<GridOption> = {
   resizeByContentOnlyOnFirstLoad: true,
   resizeByContentOptions: {
     alwaysRecalculateColumnWidth: false,
-    cellPaddingWidthInPx: 14,
-    defaultRatioForStringType: 0.88,
     formatterPaddingWidthInPx: 0,
-    maxItemToInspectCellContentWidth: 1000,
-    maxItemToInspectSingleColumnWidthByContent: 5000,
-    widthToRemoveFromExceededWidthReadjustment: 50,
+    includeHeaderWidth: false,
+    sampleSize: 1000,
+    singleColumnSampleSize: 5000,
   },
   treeDataOptions: {
     exportIndentMarginLeft: 5,

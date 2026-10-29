@@ -154,8 +154,6 @@ export default class Example14 {
         cssClass: 'text-bold text-uppercase',
         // you can adjust the resize calculation via multiple options
         resizeExtraWidthPadding: 4,
-        resizeCharWidthInPx: 7.6,
-        resizeCalcWidthRatio: 1, // default ratio is ~0.9 for string but since our text is all uppercase then a higher ratio is needed
         resizeMaxWidthThreshold: 200,
         filterable: true,
         columnGroup: 'Common Factor',
@@ -283,7 +281,6 @@ export default class Example14 {
         id: 'complexity',
         name: 'Complexity',
         field: 'complexity',
-        resizeCalcWidthRatio: 0.82, // default calc ratio is 1 or 0.95 for field type of string
         sortable: true,
         filterable: true,
         columnGroup: 'Analysis',
@@ -369,7 +366,6 @@ export default class Example14 {
         filterable: true,
         columnGroup: 'Item',
         minWidth: 100,
-        // resizeCalcWidthRatio: 1.01,
         resizeMaxWidthThreshold: 185,
         // resizeExtraWidthPadding: 1,
         exportWithFormatter: true,

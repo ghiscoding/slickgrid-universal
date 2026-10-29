@@ -27,32 +27,32 @@ describe('Example 14 - Columns Resize by Content', () => {
     });
 
     it('should have cell that fit the text content', () => {
-      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.approximately', 79, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.approximately', 65, 1);
       cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.approximately', 98, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.approximately', 67, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.approximately', 160, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.approximately', 98, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.approximately', 82, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.approximately', 53, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.approximately', 138, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.approximately', 97, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.approximately', 74, 1);
       cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.approximately', 68, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.approximately', 82, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.approximately', 162, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.approximately', 98, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.approximately', 74, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.approximately', 160, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.approximately', 88, 1);
       cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('be.approximately', 58, 1);
     });
 
     it('should make the grid readonly and expect to fit the text by content and expect column width to be the same as earlier', () => {
       cy.get('[data-test="toggle-readonly-btn"]').click();
 
-      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.approximately', 71, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.approximately', 57, 1);
       cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.approximately', 98, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.approximately', 67, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.approximately', 152, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.approximately', 91, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.approximately', 74, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.approximately', 53, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.approximately', 138, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.approximately', 89, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.approximately', 66, 1);
       cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.approximately', 68, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.approximately', 74, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.approximately', 154, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.approximately', 90, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.approximately', 66, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.approximately', 152, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.approximately', 88, 1);
       cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('be.approximately', 58, 1);
     });
 
@@ -77,7 +77,7 @@ describe('Example 14 - Columns Resize by Content', () => {
 
       cy.get('.slick-header-column:nth-of-type(6) .slick-resizable-handle').dblclick();
 
-      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 90);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 85);
     });
 
     it('should open the "Product" header menu and click on "Resize by Content" and expect the column to become wider and show all text', () => {
@@ -355,14 +355,14 @@ describe('Example 14 - Columns Resize by Content', () => {
         .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
 
       // click on Feedback->ContactUs
-      cy.get('.slick-header-menu.slick-menu-level-1.dropleft') // left align
+      cy.get('.slick-header-menu.slick-menu-level-1.dropright') // right align
         .find('.slick-menu-item.slick-menu-item')
         .contains('Contact Us')
         .should('exist')
         .trigger('mouseover'); // mouseover or click should work
 
       cy.get('.slick-submenu').should('have.length', 2);
-      cy.get('.slick-header-menu.slick-menu-level-2.dropright') // right align
+      cy.get('.slick-header-menu.slick-menu-level-2.dropleft') // left align
         .should('exist')
         .find('.slick-menu-item')
         .each(($command, index) => expect($command.text()).to.contain(subCommands2_1[index]));
