@@ -11,7 +11,7 @@ The default of Slickgrid-Universal is to fit all columns in the container viewpo
 
 The Auto-Resize by Cell Content will fix the problem described in previous paragraph, however it will come with a cost. It will read through all the cell content of all your items (because this could slow down the grid a lot, there's a default to not go over a 1000 rows but that could be overridden if you wish). For that reason the **resize by cell content** is an **opt-in** feature.
 
-How does it work? It loops through the dataset (spread evenly when there are more items than the max count to inspect) and keeps the few longest formatted texts of each column, it then measures these texts with a canvas (using the font of a grid cell) to find the widest one and finally adds the cell padding (read from the `.slick-cell` CSS). You can optionally include the column header title width (via `resizeByContentOptions.includeHeaderWidth`) so that a column is never narrower than its title.
+How does it work? It loops through the dataset (spread evenly when there are more items than the max count to inspect) and keeps all distinct formatted texts in the sample for each column, it then measures these texts with a canvas (using the font of a cell in that column) to find the widest one and finally adds the cell padding (read from the `.slick-cell` CSS). You can optionally include the column header title width (via `resizeByContentOptions.includeHeaderWidth`) so that a column is never narrower than its title.
 
 There are a few configuration options you can use
 - extra padding (`resizeExtraWidthPadding`)

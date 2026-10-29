@@ -288,7 +288,7 @@ For subclasses of `SlickDataView`, update protected method references:
 
 ### Resize by Cell Content options removed
 
-Resize by cell content now measures the longest formatted texts with a canvas (using the grid cell font) instead of estimating `text length ? char width ? ratio`, and the cell padding is now read from the `.slick-cell` CSS. The following ratio/char width options are no longer needed and were removed, you can use `resizeExtraWidthPadding` (column) or `resizeByContentOptions.cellPaddingWidthInPx` (grid) if you need to tweak the calculated widths.
+Resize by cell content now measures all distinct sampled formatted texts with a canvas (using each column’s cell font) instead of estimating `text length ? char width ? ratio`, and the cell padding is now read from the `.slick-cell` CSS. The following ratio/char width options are no longer needed and were removed, you can use `resizeExtraWidthPadding` (column) or `resizeByContentOptions.cellPaddingWidthInPx` (grid) if you need to tweak the calculated widths.
 
 | Removed option | Location |
 | --- | --- |

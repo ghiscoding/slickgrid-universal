@@ -70,3 +70,5 @@ Use the guide's [DOM and CSS mapping](../migration-to-11.x.md#single-viewport-do
 Search again for removed options, imports, callbacks, selectors, and dependencies in application code, persisted state handling, and tests. Run the application's relevant type checks and focused tests when available. Exercise pinning and restored state, menu visibility and actions, Row Detail, and optional package styling for features in use.
 
 Report the changes made, checks performed, and any unresolved state/data mappings or dependency requirements. Distinguish migration requirements from optional adoption of new features.
+
+Resize by content measures every distinct sampled text with its column cell font and padding; it does not shortlist candidates by character count.

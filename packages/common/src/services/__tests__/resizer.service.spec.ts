@@ -42,6 +42,7 @@ const mockDataView = {
 const gridStub = {
   autosizeColumns: vi.fn(),
   getContainerNode: vi.fn(),
+  getCanvasNode: vi.fn(),
   getHeaderColumn: vi.fn(),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
@@ -107,6 +108,7 @@ describe('Resizer Service', () => {
       preHeaderPanelHeight: 20,
       resizeByContentOptions: {},
     } as GridOption;
+    vi.spyOn(gridStub, 'getCanvasNode').mockImplementation(() => divContainer.querySelector('.grid-canvas') as HTMLDivElement);
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(divContainer.querySelector(`.${GRID_UID}`) as HTMLDivElement);
   });
@@ -812,7 +814,7 @@ describe('Resizer Service', () => {
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterResizeByContent', expect.objectContaining({ readItemCount: 3 }));
       });
 
-      it('should only keep the 10 longest distinct texts as measure candidates', () => {
+      it('should measure every distinct sampled text once', () => {
         mockGridOptions.resizeByContentOptions!.sampleSize = 100;
         const measureTextMock = vi.fn().mockImplementation((text: string) => ({ width: text.length * 7 }));
         vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({ measureText: measureTextMock } as unknown as CanvasRenderingContext2D);
@@ -824,8 +826,76 @@ describe('Resizer Service', () => {
         service.init(gridStub, divContainer);
         service.resizeColumnsByCellContent(true);
 
-        expect(measureTextMock.mock.calls.map(([text]) => text.length)).toEqual([12, 11, 10, 9, 8, 7, 6, 5, 4, 3]);
+        expect(measureTextMock.mock.calls.map(([text]) => text.length)).toEqual([5, 1, 12, 7, 3, 9, 2, 11, 4, 8, 10, 6]);
         expect(mockColDefs[1].width).toBe(90); // longest text (12 * 7) + cellPadding(6) = 90
+      });
+
+      it.each([false, true])('should find wider shorter and equal-length strings regardless of row order (%s)', (reverse) => {
+        mockGridOptions.resizeByContentOptions!.sampleSize = 100;
+        const texts = Array.from({ length: 10 }, (_, i) => 'i'.repeat(i) + 'l'.repeat(12 - i));
+        texts.push('W'.repeat(12), 'M'.repeat(8));
+        if (reverse) {
+          texts.reverse();
+        }
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColDefs[1]]);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue(texts.map((firstName) => ({ firstName })));
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({
+          measureText: (text: string) => ({ width: text.startsWith('M') ? 160 : text.startsWith('W') ? 120 : 24 }),
+        } as CanvasRenderingContext2D);
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+        expect(mockColDefs[1].width).toBe(166);
+      });
+
+      it('should use each column font and padding, including an unrendered column cssClass', () => {
+        mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = undefined;
+        const style = document.createElement('style');
+        style.textContent = '.wide-cell { padding: 0 12px; font: 20px serif; }';
+        document.head.appendChild(style);
+        const canvas = divContainer.querySelector('.grid-canvas')!;
+        canvas.innerHTML = '<div class="slick-row"><div class="slick-cell l0" style="padding: 0 2px; font: 10px serif"></div></div>';
+        const columns = [
+          { id: 'a', field: 'value' },
+          { id: 'b', field: 'value', cssClass: 'wide-cell' },
+        ];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ value: 'WWW' }]);
+        const ctx = {
+          font: '',
+          measureText() {
+            return { width: this.font.includes('20px') ? 60 : 30 };
+          },
+        };
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue(ctx as CanvasRenderingContext2D);
+        try {
+          service.init(gridStub, divContainer);
+          service.resizeColumnsByCellContent(true);
+          expect(columns).toEqual([expect.objectContaining({ width: 34 }), expect.objectContaining({ width: 84 })]);
+          expect(canvas.querySelectorAll('.slick-row')).toHaveLength(1);
+          eventPubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: 'b' });
+          expect(columns[1]).toEqual(expect.objectContaining({ width: 84 }));
+        } finally {
+          style.remove();
+        }
+      });
+
+      it.each([false, true])('should ignore inner grid cells when measuring an outer column (rendered: %s)', (rendered) => {
+        mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = undefined;
+        const canvas = divContainer.querySelector('.grid-canvas')!;
+        canvas.innerHTML =
+          '<div class="slick-row-detail-container"><div class="grid-canvas"><div class="slick-row"><div class="slick-cell l0" style="padding: 0 40px"></div></div></div></div>';
+        if (rendered) {
+          canvas.insertAdjacentHTML('beforeend', '<div class="slick-row"><div class="slick-cell l0" style="padding: 0 4px"></div></div>');
+        }
+        const columns = [{ id: 'a', field: 'value' }];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ value: 'WWW' }]);
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(columns[0]).toEqual(expect.objectContaining({ width: rendered ? 29 : 21 }));
+        expect(canvas.querySelectorAll(':scope > .slick-row')).toHaveLength(rendered ? 1 : 0);
       });
 
       it('should read the cell padding & borders from the CSS of an existing grid cell when "cellPaddingWidthInPx" is not provided', () => {
@@ -833,7 +903,7 @@ describe('Resizer Service', () => {
         mockGridOptions.resizeByContentOptions!.formatterPaddingWidthInPx = undefined;
         mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = undefined;
         const gridCanvas = divContainer.querySelector('.grid-canvas') as HTMLDivElement;
-        gridCanvas.innerHTML = '<div class="slick-row"><div class="slick-cell" style="padding: 0 4px; border-right: 1px solid;"></div></div>';
+        gridCanvas.innerHTML = '<div class="slick-row"><div class="slick-cell l1" style="padding: 0 4px; border-right: 1px solid;"></div></div>';
 
         service.init(gridStub, divContainer);
         service.resizeColumnsByCellContent(true);

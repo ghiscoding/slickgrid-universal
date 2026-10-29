@@ -14,7 +14,6 @@ const DATAGRID_PAGINATION_HEIGHT = 35;
 const DATAGRID_MIN_HEIGHT = 180;
 const DATAGRID_MIN_WIDTH = 300;
 const DEFAULT_INTERVAL_RETRY_DELAY = 200;
-const MAX_MEASURE_CANDIDATES = 10;
 
 export class ResizerService {
   protected _autoResizeOptions!: AutoResizeOption;
@@ -438,7 +437,7 @@ export class ResizerService {
    * Resize each column width by their cell text/value content (this could potentially go wider than the viewport and end up showing an horizontal scroll).
    * This operation requires to loop through each dataset item to inspect each cell content width and has a performance cost associated to this process.
    *
-   * NOTE: please that for performance reasons we will only inspect the first 1000 rows,
+   * NOTE: please that for performance reasons we will inspect up to 1000 evenly spaced rows,
    * however user could override it by using the grid option `resizeByContentOptions.sampleSize` to increase/decrease how many items to inspect.
    * @param {Boolean} recalculateColumnsTotalWidth - defaults to false, do we want to recalculate the necessary total columns width even if it was already calculated?
    */
@@ -470,11 +469,7 @@ export class ResizerService {
     // we won't re-evaluate if we already had calculated the total
     if (this._totalColumnsWidthByContent === 0 || recalculateColumnsTotalWidth) {
       // calculate cell width by reading all data from dataset and also parse through any Formatter(s) when exist
-      readItemCount = this.calculateCellWidthByReadingDataset(
-        columns,
-        columnWidths,
-        this.resizeByContentOptions.sampleSize
-      );
+      readItemCount = this.calculateCellWidthByReadingDataset(columns, columnWidths, this.resizeByContentOptions.sampleSize);
 
       // finally loop through all column definitions one last time to apply new calculated `width` on each elligible column
       let totalColsWidth = 0;
@@ -519,8 +514,8 @@ export class ResizerService {
   // ------------------
 
   /**
-   * Step 1 - Read the dataset (spread evenly when it has more items than the max item count) and keep the longest formatted (sanitized) texts of each column,
-   * then measure these few candidates with a canvas to find the widest text, add the cell padding and optionally the header width.
+   * Step 1 - Read the dataset (spread evenly when it has more items than the max item count) and keep the distinct formatted (sanitized) texts of each column,
+   * then measure these candidates with a canvas to find the widest text, add the cell padding and optionally the header width.
    * @param columnOrColumns - single or array of column definition(s)
    * @param columnWidths - column width object that will be updated by reference pointers
    * @param maxItemToInspect - maximum count of items to read
@@ -537,10 +532,10 @@ export class ResizerService {
     const dataset = this.dataView.getItems() as any[];
     const step = Math.max(1, Math.ceil(dataset.length / maxItemToInspect));
 
-    // keep the few longest distinct texts (by char count) of each column, only these will be measured
+    // Deduplicate sampled texts without discarding shorter strings that may be wider in pixels.
     let readItemCount = 0;
-    const candidatesMap: { [columnId: string]: string[] } = Object.create(null);
-    columns.forEach((columnDef) => (candidatesMap[columnDef.id] = []));
+    const candidatesMap: { [columnId: string]: Set<string> } = Object.create(null);
+    columns.forEach((columnDef) => (candidatesMap[columnDef.id] = new Set()));
     for (let rowIdx = 0; rowIdx < dataset.length; rowIdx += step) {
       columns.forEach((columnDef, colIdx) => {
         const formattedData = parseFormatterWhenExist(
@@ -552,29 +547,23 @@ export class ResizerService {
           this._grid
         );
         const text = isPrimitiveOrHTML(formattedData) ? stripTags(formattedData) : '';
-        const candidates = candidatesMap[columnDef.id];
-        if (
-          text &&
-          (candidates.length < MAX_MEASURE_CANDIDATES || text.length > candidates[candidates.length - 1].length) &&
-          !candidates.includes(text)
-        ) {
-          const insertIdx = candidates.findIndex((c) => text.length > c.length);
-          candidates.splice(insertIdx < 0 ? candidates.length : insertIdx, 0, text);
-          if (candidates.length > MAX_MEASURE_CANDIDATES) {
-            candidates.pop();
-          }
+        if (text) {
+          candidatesMap[columnDef.id].add(text);
         }
       });
       readItemCount++;
     }
 
     // measure the candidates with the cell font and add the cell padding (from CSS unless overridden)
-    const cellStyle = this.readCellStyle();
-    const cellPadding = this.resizeByContentOptions.cellPaddingWidthInPx ?? cellStyle.padding;
     const ctx = this.getCanvasContext();
-    columns.forEach((columnDef) => {
+    columns.forEach((columnDef, colIdx) => {
+      const cellStyle = this.readCellStyle(columnDef, columnIndexOverride ?? colIdx);
+      const cellPadding = this.resizeByContentOptions.cellPaddingWidthInPx ?? cellStyle.padding;
       ctx.font = cellStyle.font;
-      const textWidth = Math.max(0, ...candidatesMap[columnDef.id].map((text) => ctx.measureText(text).width));
+      let textWidth = 0;
+      candidatesMap[columnDef.id].forEach((text) => {
+        textWidth = Math.max(textWidth, ctx.measureText(text).width);
+      });
       columnWidths[columnDef.id] = Math.max(textWidth + cellPadding, this.calculateHeaderWidth(columnDef));
     });
 
@@ -598,13 +587,13 @@ export class ResizerService {
   }
 
   /** Read the font and horizontal padding (incl. borders) of a grid cell, a temp cell is created when the grid has no rows yet. */
-  protected readCellStyle(): { font: string; padding: number } {
-    const gCanvas = this._gridContainerElm.querySelector('.grid-canvas');
-    let cellElm = gCanvas?.querySelector('.slick-cell');
+  protected readCellStyle(column: Column, columnIndex: number): { font: string; padding: number } {
+    const gCanvas = this._grid.getCanvasNode();
+    let cellElm = gCanvas?.querySelector(`:scope > .slick-row > .slick-cell.l${columnIndex}`);
     let tmpRowElm: HTMLDivElement | undefined;
     if (gCanvas && !cellElm) {
       tmpRowElm = createDomElement('div', { className: 'slick-row' }, gCanvas);
-      cellElm = createDomElement('div', { className: 'slick-cell' }, tmpRowElm);
+      cellElm = createDomElement('div', { className: `slick-cell l${columnIndex} r${columnIndex} ${column.cssClass || ''}` }, tmpRowElm);
     }
     const style = this.getElementStyle(cellElm);
     tmpRowElm?.remove();
@@ -673,12 +662,7 @@ export class ResizerService {
       const columnDef = columns[columnDefIdx];
       const columnWidths: { [columnId: string]: number } = {};
       columnDef.originalWidth = undefined; // reset original width since we want to recalculate it
-      this.calculateCellWidthByReadingDataset(
-        columnDef,
-        columnWidths,
-        this.resizeByContentOptions.singleColumnSampleSize,
-        columnDefIdx
-      );
+      this.calculateCellWidthByReadingDataset(columnDef, columnWidths, this.resizeByContentOptions.singleColumnSampleSize, columnDefIdx);
       this.applyNewCalculatedColumnWidthByReference(columnDef, columnWidths[columnId]);
 
       // finally call the re-render for the UI to render the new column width
