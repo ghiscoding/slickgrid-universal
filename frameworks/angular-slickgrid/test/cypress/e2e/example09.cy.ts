@@ -53,10 +53,7 @@ describe('Example 9 - Grid Menu', () => {
     });
 
     it('should hide a column from the picker and then open the Grid Menu and expect the "Command 1" to NOT be usable', () => {
-      cy.window().then(() => {
-        const alertStub = cy.stub().as('alertStub');
-        cy.on('window:alert', alertStub);
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
       cy.get('#grid9').find('button.slick-grid-menu-button').click({ force: true });
 
@@ -109,10 +106,7 @@ describe('Example 9 - Grid Menu', () => {
     });
 
     it('should now expect the "Command 1" to be usable since all columns are visible', () => {
-      cy.window().then(() => {
-        const alertStub = cy.stub().as('alertStub');
-        cy.on('window:alert', alertStub);
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
       cy.get('#grid9').find('button.slick-grid-menu-button').click({ force: true });
 
@@ -264,10 +258,7 @@ describe('Example 9 - Grid Menu', () => {
 
     it('should be able to open Grid Menu and click on Export->Text and expect alert triggered with Text Export', () => {
       const subCommands1 = ['Text', 'Excel'];
-      cy.window().then(() => {
-        const alertStub = cy.stub().as('alertStub');
-        cy.on('window:alert', alertStub);
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
       cy.get('#grid9').find('button.slick-grid-menu-button').click({ force: true });
 
@@ -289,10 +280,7 @@ describe('Example 9 - Grid Menu', () => {
     it('should be able to open Grid Menu and click on Export->Excel->xlsx and expect alert triggered with Excel (xlsx) Export', () => {
       const subCommands1 = ['Text', 'Excel'];
       const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
-      cy.window().then(() => {
-        const alertStub = cy.stub().as('alertStub');
-        cy.on('window:alert', alertStub);
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
       cy.get('#grid9').find('button.slick-grid-menu-button').click({ force: true });
 
@@ -327,10 +315,7 @@ describe('Example 9 - Grid Menu', () => {
       const subCommands2 = ['Request update from supplier', '', 'Contact Us'];
       const subCommands2_1 = ['Email us', 'Chat with us', 'Book an appointment'];
 
-      cy.window().then(() => {
-        const alertStub = cy.stub().as('alertStub');
-        cy.on('window:alert', alertStub);
-      });
+      cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
       cy.get('[data-test=external-gridmenu]').click();
 

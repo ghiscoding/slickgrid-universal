@@ -16,10 +16,7 @@ describe('Example 51 - Menus with Slots', () => {
   });
 
   it('should open Context Menu hover "Duration" column and expect built-in and custom items listed in specific order', () => {
-    cy.window().then((win) => {
-      const alertStub = cy.stub().as('alertStub');
-      cy.on('window:alert', alertStub);
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
     cy.get('[data-row="2"] > .slick-cell:nth(2)').rightclick({ force: true });
 
@@ -103,10 +100,7 @@ describe('Example 51 - Menus with Slots', () => {
   it('should open Export->Excel context sub-menu', () => {
     const subCommands1 = ['Export as Excel', 'Export as CSV', 'Export as PDF'];
 
-    cy.window().then((win) => {
-      const alertStub = cy.stub().as('alertStub');
-      cy.on('window:alert', alertStub);
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
     cy.get('[data-row="0"] > .slick-cell:nth(2)').should('contain', '0');
     cy.get('[data-row="0"] > .slick-cell:nth(2)').rightclick({ force: true });
@@ -196,10 +190,7 @@ describe('Example 51 - Menus with Slots', () => {
   });
 
   it('should open Header Menu from the "Duration" column and expect some commands to have tags on the right side', () => {
-    cy.window().then((win) => {
-      const alertStub = cy.stub().as('alertStub');
-      cy.on('window:alert', alertStub);
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
     cy.get('.slick-header-column:nth(1)').trigger('mouseover', { force: true });
     cy.get('.slick-header-column:nth(1)').children('.slick-header-menu-button').invoke('show').click();
@@ -340,10 +331,7 @@ describe('Example 51 - Menus with Slots', () => {
   it('should open Export->Excel cell sub-menu', () => {
     const subCommands1 = ['Export as Excel', 'Export as CSV', 'Export as PDF'];
 
-    cy.window().then((win) => {
-      const alertStub = cy.stub().as('alertStub');
-      cy.on('window:alert', alertStub);
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
     cy.get('.slick-cell-menu.slick-menu-level-0 .slick-menu-command-list')
       .find('.slick-menu-item .menu-item')
