@@ -82,6 +82,7 @@ export class SharedService {
   /** Getter for the Hierarchical Tree Data dataset when the feature is enabled */
   set hierarchicalDataset(hierarchicalDataset: any[] | undefined) {
     this._hierarchicalDataset = hierarchicalDataset;
+    this._hierarchicalItemsIndex = undefined;
   }
 
   /**

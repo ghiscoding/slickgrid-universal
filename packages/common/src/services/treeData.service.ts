@@ -23,6 +23,7 @@ export class TreeDataService {
   readonly pluginName = 'TreeDataService';
   protected _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;
   protected _currentToggledItems: TreeToggledItem[] = [];
+  protected _currentToggledItemsById = new Map<number | string, TreeToggledItem>();
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
   protected _isLastFullToggleCollapsed = false;
@@ -52,6 +53,7 @@ export class TreeDataService {
 
   set currentToggledItems(newToggledItems: TreeToggledItem[]) {
     this._currentToggledItems = newToggledItems;
+    this._currentToggledItemsById = new Map(newToggledItems.map((item) => [item.itemId, item]));
   }
   get dataset(): any[] {
     return this.dataView?.getItems();
@@ -663,11 +665,13 @@ export class TreeDataService {
 
   /** Add or update the collapsed state of an item in the list of toggled items */
   protected upsertToggledItem(itemId: number | string, isCollapsed: boolean): void {
-    const toggledItem = this._currentToggledItems.find((treeChange) => treeChange.itemId === itemId);
+    const toggledItem = this._currentToggledItemsById.get(itemId);
     if (toggledItem) {
       toggledItem.isCollapsed = isCollapsed;
     } else {
-      this._currentToggledItems.push({ itemId, isCollapsed });
+      const newToggledItem = { itemId, isCollapsed };
+      this._currentToggledItems.push(newToggledItem);
+      this._currentToggledItemsById.set(itemId, newToggledItem);
     }
   }
 
