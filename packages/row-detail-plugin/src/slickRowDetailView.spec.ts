@@ -1887,7 +1887,7 @@ describe('SlickRowDetailView plugin', () => {
       const panel = canvas.querySelector<HTMLElement>(':scope > .slick-row-detail-container')!;
       expect(panel.style.top).toBe('100px');
       expect(panel.style.height).toBe('125px');
-      expect(panel.style.pointerEvents).toBe('auto');
+      expect(panel.style.pointerEvents).toBe('');
       expect(panel.innerHTML).toBe('<div>Loading...</div>');
       expect(panel.className).toBe('slick-row-detail-container row-detail-123');
       expect(panel.children).toHaveLength(1);
