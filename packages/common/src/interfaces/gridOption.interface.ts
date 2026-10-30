@@ -170,18 +170,6 @@ export interface GridOption<C extends Column = Column> {
    */
   autoHeaderHeight?: boolean;
 
-  /**
-   * Defaults to 60, when "autoFixResizeWhenBrokenStyleDetected" is enabled then what will be the delay timeout before quitting?
-   * Note that that the resize gets called every 200ms
-   */
-  autoFixResizeTimeout?: number;
-
-  /** Defaults to 2 (or 5x in Salesforce), how many good resize count do we require before we assume that it's all good and we can stop calling a resize of the grid? (only works when `autoFixResizeWhenBrokenStyleDetected` is enabled) */
-  autoFixResizeRequiredGoodCount?: number;
-
-  /** Defaults to false, this is a patch for Salesforce since we don't always have access to tab change events. */
-  autoFixResizeWhenBrokenStyleDetected?: boolean;
-
   /** Auto-resize options (bottom padding, minHeight, ...)  */
   autoResize?: AutoResizeOption;
 

@@ -1,4 +1,5 @@
-import { createDomElement, type GridOption } from '@slickgrid-universal/common';
+import { createDomElement } from '@slickgrid-universal/common';
+import type { SalesforceGridOption } from './salesforce-grid-option.interface.js';
 
 // create empty warning message as Document Fragment to be CSP safe
 const emptyWarningElm = document.createElement('div');
@@ -84,4 +85,4 @@ export const SalesforceGlobalGridOptions = {
     hideRowMoveShadow: false,
   },
   useSalesforceDefaultGridOptions: true,
-} as GridOption;
+} as SalesforceGridOption;

@@ -11,7 +11,6 @@ import {
   type CompositeEditorModalType,
   type EditCommand,
   type Formatter,
-  type GridOption,
   type LongTextEditorOption,
   type OnCompositeEditorChangeEventArgs,
   type SliderOption,
@@ -20,7 +19,7 @@ import {
 import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
-import { Slicker, type VanillaForceGridBundle } from '@slickgrid-universal/vanilla-force-bundle';
+import { Slicker, type SalesforceGridOption, type VanillaForceGridBundle } from '@slickgrid-universal/vanilla-force-bundle';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
 import countriesJson from './data/countries.json?raw';
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -92,7 +91,7 @@ export default class Example12 {
   private _darkMode = false;
   compositeEditorInstance: SlickCompositeEditorComponent;
   columns: Column[];
-  gridOptions: GridOption;
+  gridOptions: SalesforceGridOption;
   dataset: any[] = [];
   isGridEditable = true;
   editQueue: Array<{ item; columns: Column[]; editCommand }> = [];

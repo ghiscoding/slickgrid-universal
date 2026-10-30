@@ -35,6 +35,7 @@ import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlic
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../test/translateServiceStub.js';
 import { TreeDataService as TreeDataServiceSource } from '../../../common/src/services/treeData.service.js';
+import { SalesforceResizerService } from '../salesforce-resizer.service.js';
 import { VanillaForceGridBundle } from '../vanilla-force-bundle.js';
 
 vi.useFakeTimers();
@@ -354,6 +355,15 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
   it('should make sure SlickVanillaGridBundle is defined', () => {
     expect(component).toBeTruthy();
     expect(component.isGridInitialized).toBeTruthy();
+  });
+
+  it('should use the Salesforce resizer by default and preserve an injected resizer', () => {
+    expect(component.resizerService).toBe(resizerServiceStub);
+    const initSpy = vi.spyOn(VanillaForceGridBundle.prototype, 'initialization').mockImplementation(() => {});
+    const defaultComponent = new VanillaForceGridBundle(document.createElement('div'));
+    initSpy.mockRestore();
+    expect(defaultComponent.resizerService).toBeInstanceOf(SalesforceResizerService);
+    defaultComponent.dispose();
   });
 
   it('should create a grid and expect multiple event published', () => {

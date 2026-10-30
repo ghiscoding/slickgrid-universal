@@ -39,3 +39,6 @@ export { BindingService };
 export { Aggregators, Editors, Enums, EventPubSubService, Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities };
 export { SlickCompositeEditorComponent, SlickEmptyWarningComponent, SlickPaginationComponent, VanillaForceGridBundle }; // export the custom components & interfaces
 export { Slicker };
+
+export type { SalesforceGridOption } from './salesforce-grid-option.interface.js';
+export { SalesforceResizerService } from './salesforce-resizer.service.js';
