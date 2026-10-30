@@ -3,9 +3,9 @@ import { deepCopy } from '@slickgrid-universal/utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
-import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import type { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem } from '../../interfaces/index.js';
 import { BackendUtilityService, SharedService } from '../../services/index.js';
+import { ExtensionUtility } from '../extensionUtility.js';
 import { SlickCellMenu } from '../slickCellMenu.js';
 
 const removeExtraSpaces = (text: string) => `${text}`.replace(/[\n\r]\s+/g, '');

@@ -527,14 +527,14 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <li>This example demonstrates 2 SlickGrid plugins</li>
       <ol>
         <li>
-          Using the <b>Slick.Plugins.CellMenu</b> plugin, often used for an Action Menu(s), 1 or more per grid (<a
+          Using the <b>SlickCellMenu</b> plugin, often used for an Action Menu(s), 1 or more per grid (<a
             href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/cell-menu"
             target="_blank"
             >Wiki docs</a
           >).
         </li>
         <li>
-          Using the <b>Slick.Plugins.ContextMenu</b> plugin, shown after a mouse right+click, only 1 per grid. (<a
+          Using the <b>SlickContextMenu</b> plugin, shown after a mouse right+click, only 1 per grid. (<a
             href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/context-menu"
             target="_blank"
             >Wiki docs</a

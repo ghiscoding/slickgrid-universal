@@ -243,7 +243,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   </h2>
 
   <div class="subtitle">
-    This example demonstrates using the <b>Slick.Plugins.RowMoveManager</b> plugin to easily move a row in the grid.<br />
+    This example demonstrates using the <b>SlickRowMoveManager</b> plugin to easily move a row in the grid.<br />
     <ul>
       <li>Click to select, Ctrl+Click to toggle selection, Shift+Click to select a range.</li>
       <li>Drag one or more rows by the handle (icon) to reorder</li>
