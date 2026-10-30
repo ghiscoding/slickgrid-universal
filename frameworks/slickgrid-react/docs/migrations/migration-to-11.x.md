@@ -1,8 +1,14 @@
 ## Single-viewport Pinning rewrite and performance improvements
 
-SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer and a single scrollbar. Frozen columns/rows are replaced by the new Pinning feature, and v11 also adds new Sticky columns/rows. v11 also improves virtual scrolling on large datasets and reduces HTML-decoding overhead across all export services, with additional optimizations for Excel.
+SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer and a single scrollbar. Frozen columns/rows are replaced by the new Pinning feature, and v11 also adds new Sticky columns/rows.
+
+v11 brings performance improvements across several areas: virtual scrolling on large datasets, tree-data lookups and dataset sorting, sort comparisons, filtering, and exports. These changes reduce repeated work during sorting and filtering, cancel stale filter callbacks, and reduce HTML-decoding overhead across export services, with additional optimizations for Excel.
 
 The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor of the new `pinning` grid option. Pinning applies to individual columns, regardless of their index, instead of a contiguous frozen range. Update your grid options and persisted grid state accordingly.
+
+### AI-assisted migration
+
+Open the [v11 migration skill](migration-to-11.x/SKILL.md), click GitBook’s **Copy** button at the top-right, and paste it into your AI coding agent.
 
 ### Major Changes - Quick Summary
 
@@ -38,8 +44,6 @@ The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor
 - [Container service lookups](#container-service-lookups)
 
 > **Note:** If you are upgrading from a version earlier than v10, follow the previous migration guides in order before applying these v11 changes.
-
-> **Tip:** An [AI migration skill](migration-to-11.x/SKILL.md) is available with migration instructions, framework requirements, and a validation checklist. Ask your AI coding agent to read the skill and this guide together.
 
 > **Important:** v11 does not support the old frozen-pane options or renderer.
 

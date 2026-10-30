@@ -11,6 +11,10 @@ Upgrade i18next to v26+ where used. Remove `on-before-append-cell.trigger` bindi
 
 Replace removed `columnSort` callbacks in Column Picker and Grid Menu with `columnListBuilder`. Return the sorted or filtered eligible-column array; this does not change the grid column order.
 
+## Performance improvements
+
+v11 improves virtual scrolling, tree-data lookups and dataset sorting, sort comparisons, filtering, and exports. These optimizations do not by themselves require application migration changes; use the guide for API and behavior changes.
+
 ## Migration workflow
 
 Read the [v11 migration guide](../migration-to-11.x.md) before editing. It is the source of truth for option mappings and examples. If the application is older than v10, apply the earlier migration guides in order first.

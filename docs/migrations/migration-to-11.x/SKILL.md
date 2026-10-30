@@ -9,6 +9,10 @@ description: Migrate SlickGrid Universal (Vanilla/Core) applications from v10 to
 
 Follow the core guide for direct grid event subscriptions. For Salesforce applications, preserve the former hidden defaults by adding `'toggle-preheader'` and `'refresh-dataset'` to `gridMenu.hideCommands` if required.
 
+## Performance improvements
+
+v11 improves virtual scrolling, tree-data lookups and dataset sorting, sort comparisons, filtering, and exports. These optimizations do not by themselves require application migration changes; use the guide for API and behavior changes.
+
 ## Migration workflow
 
 Read the [v11 migration guide](../migration-to-11.x.md) before editing. It is the source of truth for option mappings and examples. If the application is older than v10, apply the earlier migration guides in order first.
