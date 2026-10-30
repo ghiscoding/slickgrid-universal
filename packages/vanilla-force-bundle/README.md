@@ -21,3 +21,22 @@ Go to the root of the repo and follow the instructions provided in the main [REA
 
 ### Salesforce Installation
 Consult the [Installation, Salesforce - Wiki](https://ghiscoding.gitbook.io/slickgrid-universal/getting-started/installation-salesforce) for more info.
+
+### Salesforce tab resize recovery
+
+`VanillaForceGridBundle` uses `SalesforceResizerService` to recover a grid initially rendered in a hidden Salesforce tab. Enable the Salesforce defaults to enable this polling workaround:
+
+```ts
+import { VanillaForceGridBundle, type SalesforceGridOption } from '@slickgrid-universal/vanilla-force-bundle';
+
+const options: SalesforceGridOption = {
+  useSalesforceDefaultGridOptions: true,
+  enableAutoResize: true,
+  autoResize: { container: '#grid-container' },
+  autoFixResizeRequiredGoodCount: 1,
+};
+```
+
+The `autoFixResizeWhenBrokenStyleDetected`, `autoFixResizeTimeout`, and `autoFixResizeRequiredGoodCount` options now belong to `SalesforceGridOption`, rather than the shared `GridOption`. Existing option names and Salesforce defaults are unchanged. Vanilla example 12 uses this bundle and retains its override.
+
+The polling controls `intervalRetryDelay` and `requestStopOfAutoFixResizeGrid()` now belong to `SalesforceResizerService`. Applications using these controls should use that service type. The shared resizer and framework wrappers no longer run Salesforce recovery. An explicitly injected resizer is still honored; inject a `SalesforceResizerService` when recovery is required with custom services.

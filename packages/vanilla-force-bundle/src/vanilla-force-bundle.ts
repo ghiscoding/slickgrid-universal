@@ -7,7 +7,6 @@ import type {
   ExtensionUtility,
   FilterService,
   GridEventService,
-  GridOption,
   GridService,
   GridStateService,
   HeaderGroupingService,
@@ -23,12 +22,14 @@ import { getIconSetOptions, GlobalGridOptions } from '@slickgrid-universal/commo
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
-import type { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { extend } from '@slickgrid-universal/utils';
 import { SlickVanillaGridBundle, type UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options.js';
+import type { SalesforceGridOption } from './salesforce-grid-option.interface.js';
+import { SalesforceResizerService } from './salesforce-resizer.service.js';
 
 export class VanillaForceGridBundle extends SlickVanillaGridBundle {
   slickCompositeEditor: SlickCompositeEditorComponent | undefined;
@@ -45,7 +46,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
   constructor(
     gridParentContainerElm: HTMLElement,
     columnDefs?: Column[],
-    options?: GridOption,
+    options?: SalesforceGridOption,
     dataset?: any[],
     hierarchicalDataset?: any[],
     services?: {
@@ -69,10 +70,15 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
       universalContainerService?: UniversalContainerService;
     }
   ) {
-    super(gridParentContainerElm, columnDefs, options, dataset, hierarchicalDataset, services);
+    const eventPubSubService = services?.eventPubSubService ?? new EventPubSubService(gridParentContainerElm);
+    super(gridParentContainerElm, columnDefs, options, dataset, hierarchicalDataset, {
+      ...services,
+      eventPubSubService,
+      resizerService: services?.resizerService ?? new SalesforceResizerService(eventPubSubService),
+    });
   }
 
-  mergeGridOptions(gridOptions: GridOption): GridOption {
+  mergeGridOptions(gridOptions: SalesforceGridOption): SalesforceGridOption {
     const extraOptions =
       gridOptions.useSalesforceDefaultGridOptions || this._gridOptions?.useSalesforceDefaultGridOptions ? SalesforceGlobalGridOptions : {};
     const options = extend(
@@ -80,6 +86,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
       {},
       getIconSetOptions(gridOptions.iconSet ?? GlobalGridOptions.iconSet),
       GlobalGridOptions,
+      { autoFixResizeTimeout: 5 * 60 * 5, autoFixResizeRequiredGoodCount: 2, autoFixResizeWhenBrokenStyleDetected: false },
       extraOptions,
       gridOptions
     );

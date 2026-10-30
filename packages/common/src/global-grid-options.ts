@@ -15,9 +15,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
   autoEdit: false,
   asyncEditorLoading: false,
   autoFitColumnsOnFirstLoad: true,
-  autoFixResizeTimeout: 5 * 60 * 5, // retry interval is 200ms, so (5 * 60 * 5 => 5min)
-  autoFixResizeRequiredGoodCount: 2,
-  autoFixResizeWhenBrokenStyleDetected: false,
   autoParseInputFilterOperator: true,
   autoResize: {
     applyResizeToContainer: true,
