@@ -11,6 +11,10 @@ Upgrade i18next to v26+ where used. Remove the `@onBeforeAppendCell` event bindi
 
 Replace removed `columnSort` callbacks in Column Picker and Grid Menu with `columnListBuilder`. Return the sorted or filtered eligible-column array; this does not change the grid column order.
 
+## Performance improvements
+
+v11 improves virtual scrolling, tree-data lookups and dataset sorting, sort comparisons, filtering, and exports. These optimizations do not by themselves require application migration changes; use the guide for API and behavior changes.
+
 ## Migration workflow
 
 Read the [v11 migration guide](../migration-to-11.x.md) before editing. It is the source of truth for option mappings and examples. If the application is older than v10, apply the earlier migration guides in order first.
@@ -60,6 +64,10 @@ Use the guide's [DOM and CSS mapping](../migration-to-11.x.md#single-viewport-do
 - Rename the base package `@slickgrid-universal/row-detail-view-plugin` to `@slickgrid-universal/row-detail-plugin`, including imports and stylesheet paths (`slick-row-detail-view` becomes `slick-row-detail`). Framework Row Detail adapter package names stay unchanged.
 - Add used Composite Editor, Custom Tooltip, and Row Detail style packages as direct dependencies and import their styles after the common theme. Match CSS to the application's theme; for Sass, load the common theme first in the same compilation so configured variables apply. Read [Required Styles for Extra Packages](../../styling/styling.md#required-styles-for-extra-packages) for exact paths.
 - For Fluent styling, `iconSet: 'fluent'` can replace default icon mappings. Retain intentional explicit overrides, which take precedence.
+
+## Container service lookups
+
+Retrieving a registered service works exactly as before; no change is needed. Only code that explicitly checks whether a service is missing needs attention: replace `container.get('MyService') === undefined` with `container.get('MyService') == null`. Existing checks such as `if (service)` and optional chaining (`service?.method()`) continue to work.
 
 ## Validation and handoff
 
