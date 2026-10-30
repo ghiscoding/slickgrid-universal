@@ -1,13 +1,1 @@
-import type { ContainerService as UniversalContainerService } from '@slickgrid-universal/common';
-
-export class ContainerService implements UniversalContainerService {
-  private readonly container: { [key: string]: any } = Object.create(null);
-
-  get<T = any>(key: string): T | null {
-    return this.container[key];
-  }
-
-  registerInstance(key: string, instance: any) {
-    this.container[key] = instance;
-  }
-}
+export { MapContainerService as ContainerService } from '@slickgrid-universal/common';

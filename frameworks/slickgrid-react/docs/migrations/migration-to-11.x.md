@@ -35,6 +35,7 @@ The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor
 - [Menu command ordering](#menu-command-ordering)
   - [Column sorting callback removed](#column-sorting-callback-removed)
 - [Menu divider typing](#menu-divider-typing)
+- [Container service lookups](#container-service-lookups)
 
 > **Note:** If you are upgrading from a version earlier than v10, follow the previous migration guides in order before applying these v11 changes.
 
@@ -533,6 +534,10 @@ The same callback is available under `gridMenu.columnListBuilder`. The builder r
 ## Menu divider typing
 
 Menu divider typing has been improved so that divider objects (`{ divider: true }`) no longer require a `command` property, while existing divider syntax remains fully supported.
+
+## Container service lookups
+
+Retrieving a registered service works exactly as before; no change is needed. Only code that explicitly checks whether a service is missing needs attention: replace `container.get('MyService') === undefined` with `container.get('MyService') == null`. Existing checks such as `if (service)` and optional chaining (`service?.method()`) continue to work.
 
 ## Final Note
 

@@ -61,6 +61,10 @@ Use the guide's [DOM and CSS mapping](../migration-to-11.x.md#single-viewport-do
 - Add used Composite Editor, Custom Tooltip, and Row Detail style packages as direct dependencies and import their styles after the common theme. Match CSS to the application's theme; for Sass, load the common theme first in the same compilation so configured variables apply. Read [Required Styles for Extra Packages](../../styling/styling.md#required-styles-for-extra-packages) for exact paths.
 - For Fluent styling, `iconSet: 'fluent'` can replace default icon mappings. Retain intentional explicit overrides, which take precedence.
 
+## Container service lookups
+
+Retrieving a registered service works exactly as before; no change is needed. Only code that explicitly checks whether a service is missing needs attention: replace `container.get('MyService') === undefined` with `container.get('MyService') == null`. Existing checks such as `if (service)` and optional chaining (`service?.method()`) continue to work.
+
 ## Validation and handoff
 
 Search again for removed options, imports, callbacks, selectors, and dependencies in application code, persisted state handling, and tests. Run the application's relevant type checks and focused tests when available. Exercise pinning and restored state, menu visibility and actions, Row Detail, and optional package styling for features in use.
