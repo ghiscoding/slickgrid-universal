@@ -3,33 +3,29 @@ export interface ResizeByContentOption {
   alwaysRecalculateColumnWidth?: boolean;
 
   /**
-   * Defaults to 7, width in pixels of a string character which is used by the resize columns by its content, this can vary depending on which font family/size is used & cell padding.
-   * This is only used when resizing the columns width by their content, we need to know the width of a character in pixel to do all calculations.
-   * Requires `enableAutoResizeColumnsByCellContent` to be set.
+   * Cell padding width (including borders) to add to the calculation when resizing columns by their cell text content.
+   * When not provided, it will be read from the `.slick-cell` CSS (padding-left/right & border-left/right widths).
    */
-  cellCharWidthInPx?: number;
-
-  /** Defaults to 6, cell padding width to add to the calculation when resizing columns by their cell text content (requires `enableAutoResizeColumnsByCellContent` to be set) */
   cellPaddingWidthInPx?: number;
 
-  /** Defaults to around ~0.9, what is the ratio to use (on field `type` "string" only) in the calculation when resizing columns by their cell text content (requires `enableAutoResizeColumnsByCellContent` to be set). */
-  defaultRatioForStringType?: number;
-
-  /** Defaults to 6, padding width to add to the calculation when using a Formatter and resizing columns by their cell text content (requires `enableAutoResizeColumnsByCellContent` to be set). */
+  /** Defaults to 0, extra padding width to add to the calculation of a column that has an Editor when the grid is editable. */
   formatterPaddingWidthInPx?: number;
 
   /**
-   * Defaults to 1000, how many rows are we going to inspect cell content width?
-   * This is use when calculating all column width by their cell content, it requires `enableAutoResizeColumnsByCellContent` to be set.
+   * Defaults to false, should we also include the column header title width (incl. sort & header menu icons) when resizing columns by their cell content?
+   * When enabled, a column will never become narrower than its header title.
    */
-  maxItemToInspectCellContentWidth?: number;
+  includeHeaderWidth?: boolean;
 
   /**
-   * Defaults to 5000, how many rows (of a single column) are we going to inspect cell content width?
-   * This is use when calculating column width by their cell content when calling "Resize by Content" (from header menu and/or double-click to resize single column)
+   * Defaults to 1000, maximum count of rows to inspect when calculating all column widths by their cell content.
+   * When the dataset is larger, the rows are sampled evenly across the whole dataset (instead of only reading the first rows).
    */
-  maxItemToInspectSingleColumnWidthByContent?: number;
+  sampleSize?: number;
 
-  /** Defaults to 50, what width to remove from new column width when pinned columns exceed the viewport width. */
-  widthToRemoveFromExceededWidthReadjustment?: number;
+  /**
+   * Defaults to 5000, maximum count of rows to inspect when resizing a single column by its content
+   * (via the header menu "Resize by Content" command and/or double-click on the column resize handle).
+   */
+  singleColumnSampleSize?: number;
 }

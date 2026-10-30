@@ -26,7 +26,7 @@ The framework has many options; ensure new options do not contradict or interfer
 - Avoid circular dependencies. Use `madge --circular` when dependency impact needs verification.
 - For plugin changes, preserve existing `init()`, `dispose()`, `getOptions()`, and `setOptions()` lifecycle methods where applicable. Use `BindingEventService` for DOM event binding and cleanup.
 - Plugins extend SlickGrid and use `SlickEventHandler` where applicable. Support both grid options and column definition options.
-- When changing shared behavior, check all four framework wrappers and relevant demos.
+- When changing shared behavior, check all four framework wrappers and relevant demos. Vanilla and framework demos are numbered differently; see `.agents/skills/read-docs-and-interfaces/demo-equivalents.md` for the matching demos and Cypress specs.
 - Never edit generated `dist/` output unless explicitly requested.
 - When drafting a pull request, follow `.github/pull_request_template.md`, including its conventional-commit title requirement and applicable sections and checklist items.
 - When asked for a PR title and description, return them in two separate Markdown sections, `Title` and `Description`, each with its own fenced Markdown code block so either can be copied independently. Follow `.github/pull_request_template.md` for the description.
@@ -84,6 +84,7 @@ pnpm build
 ## Documentation
 
  Update corresponding framework documentation under `frameworks/*/docs/` when applicable.
+ When adding a migration guide entry (`docs/migrations/migration-to-XX.x.md` and its `frameworks/*/docs/migrations/` copies), also update the matching AI skill in `docs/migrations/migration-to-XX.x/SKILL.md` and its `frameworks/*/docs/migrations/` copies.
  Include code examples that work across all supported frameworks.
 
 ## Common commands

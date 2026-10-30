@@ -15,7 +15,7 @@ Search order (recommended)
 1. Root docs: `docs/` — vanilla JS/TS documentation, how-tos, features, and API overviews.
 2. Package READMEs: `packages/*/README.md` — package-specific usage and examples (including `packages/web-mcp/README.md`).
 3. Framework docs: `frameworks/*/docs/` — framework-specific implementations and integration notes (Angular, React, Vue, Aurelia).
-4. Demos and demo READMEs: `demos/*/` — runnable examples and demo-specific notes (often show how services are registered).
+4. Demos and demo READMEs: `demos/*/` — runnable examples and demo-specific notes (often show how services are registered). Vanilla and framework demos use different numbers; use [demo-equivalents.md](./demo-equivalents.md) to find the matching demo and Cypress spec in every framework (e.g. Vanilla `example14` = framework `example32`).
 5. Tests and coverage notes: `test/` and `test/vitest-coverage/` — can provide practical usage and uncovered code paths.
 6. Code (interfaces and types): `packages/**/src/**/*.ts`, `frameworks/**/src/**/*.ts` — read exported `interface`, `type`, class public methods and JSDoc comments.
 

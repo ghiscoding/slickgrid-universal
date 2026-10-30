@@ -17,32 +17,32 @@ describe('Example 32 - Columns Resize by Content', () => {
     });
 
     it('should have cell that fit the text content', () => {
-      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.gt', 75);
-      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.gt', 67);
-      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.gt', 59);
-      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.gt', 102);
-      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 89);
-      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.gt', 72);
-      cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.gt', 67);
-      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.gt', 72);
-      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 179);
-      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.gt', 94);
+      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.gt', 62);
+      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.gt', 60);
+      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.gt', 50);
+      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.gt', 85);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 100);
+      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.gt', 77);
+      cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.gt', 60);
+      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.gt', 77);
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 165);
+      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.gt', 87);
       cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('be.approximately', 58, 1);
     });
 
     it('should make the grid readonly and expect to fit the text by content and expect column width to be the same as earlier', () => {
       cy.get('[data-test="toggle-readonly-btn"]').click();
 
-      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.gt', 75);
-      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.gt', 67);
-      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.gt', 59);
-      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.gt', 102);
-      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 89);
-      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.gt', 72);
-      cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.gt', 67);
-      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.gt', 72);
-      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 179);
-      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.gt', 94);
+      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.gt', 62);
+      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.gt', 60);
+      cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.gt', 50);
+      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.gt', 85);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 100);
+      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.gt', 77);
+      cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.gt', 60);
+      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.gt', 77);
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 165);
+      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.gt', 87);
       cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('be.approximately', 58, 1);
     });
 
@@ -177,7 +177,7 @@ describe('Example 32 - Columns Resize by Content', () => {
       const yesterdayDate = format(addDay(new Date(), -1), 'YYYY-MM-DD');
       const todayDate = format(new Date(), 'YYYY-MM-DD');
 
-      // Check if yesterday's date element exists (may not be visible when 1st day of the month is a Sunday, e.g. 2026-02-01)
+      // Check if yesterday's date element exists (may not be visible when we run the test on the 1st day of the month and it is a Sunday, e.g. 2026-02-01)
       cy.get(`[data-vc-date=${yesterdayDate}]`).then(($el) => {
         if ($el.length > 0) {
           expect($el).to.have.attr('data-vc-date-disabled');
@@ -380,16 +380,16 @@ describe('Example 32 - Columns Resize by Content', () => {
     });
 
     it('should be able to edit "Duration" when "autoEditByKeypress" is enabled and by clicking once on second row and expect next row to become editable', () => {
-      // Check if yesterday's date element exists (may not be visible when we run the test on the 1st day of the month and it is a Sunday, e.g. 2026-02-01)
+      // Check whether the second row exists before attempting to edit it.
       cy.get('[data-row="2"] .slick-cell.l2.r2').then(($el) => {
         if ($el.length > 0) {
           cy.wrap($el).contains(/[0-9]* days/);
           cy.wrap($el).click();
           cy.get('[data-row="2"] .slick-cell.l2.r2.active.editable').should('have.length', 0);
 
-          cy.get('[data-row="2"] .slick-cell.l2.r2').type('123');
+          cy.get('[data-row="2"] .slick-cell.l2.r2').type('1');
           cy.get('[data-row="2"] .slick-cell.l2.r2.active.editable').should('have.length', 1);
-          cy.get('[data-row="2"] .slick-cell.l2.r2').type('{enter}');
+          cy.get('[data-row="2"] .slick-cell.l2.r2 input').clear().type('123{enter}');
           cy.get('[data-row="2"] .slick-cell.l2.r2.active.editable').should('have.length', 0);
 
           cy.get('[data-row="2"] .slick-cell.l2.r2').should('contain', '123 days');

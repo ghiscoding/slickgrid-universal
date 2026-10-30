@@ -286,6 +286,31 @@ For subclasses of `SlickDataView`, update protected method references:
 | `compileFilterWithCachingCSPSafe()` | `filterItemsWithCaching()` |
 | `compileAccumulatorLoopCSPSafe()` | `compileAccumulatorLoop()` |
 
+### Resize by Cell Content options removed
+
+Resize by cell content now measures all distinct sampled formatted texts with a canvas (using each column’s cell font) instead of estimating `text length ? char width ? ratio`, and the cell padding is now read from the `.slick-cell` CSS. The following ratio/char width options are no longer needed and were removed, you can use `resizeExtraWidthPadding` (column) or `resizeByContentOptions.cellPaddingWidthInPx` (grid) if you need to tweak the calculated widths.
+
+**Width changes:** Content-sized columns may be wider or narrower than in v10 because widths are now measured using the cell font, text transformation, and padding. Review the layout and update E2E tests that assert specific column widths; consider using a tolerance where appropriate.
+
+| Removed option | Location |
+| --- | --- |
+| `cellCharWidthInPx` | `gridOptions.resizeByContentOptions` |
+| `defaultRatioForStringType` | `gridOptions.resizeByContentOptions` |
+| `widthToRemoveFromExceededWidthReadjustment` | `gridOptions.resizeByContentOptions` |
+| `resizeCalcWidthRatio` | column definition |
+| `resizeCharWidthInPx` | column definition |
+
+The following `resizeByContentOptions` options were also renamed to shorter names:
+
+| Previous name | New name |
+| --- | --- |
+| `maxItemToInspectCellContentWidth` | `sampleSize` |
+| `maxItemToInspectSingleColumnWidthByContent` | `singleColumnSampleSize` |
+
+There is also a new opt-in `resizeByContentOptions.includeHeaderWidth` flag to make sure a column is never narrower than its header title.
+
+> **Note:** for performance reasons, resize by content only inspects up to 1000 rows (`resizeByContentOptions.sampleSize`, or 5000 for a single column via `singleColumnSampleSize`). When the dataset is larger, these rows are now sampled evenly across the whole dataset instead of only reading the first 1000 rows. Increase these options if some wider values are still missed.
+
 ### `ExtensionName` enum replaced by a string literal type
 
 The `ExtensionName` enum, deprecated in v10, is now removed and replaced by its string literal type to decrease the build size. If you already migrated to string literals in v10, no changes are needed for those values.

@@ -42,6 +42,8 @@ const mockDataView = {
 const gridStub = {
   autosizeColumns: vi.fn(),
   getContainerNode: vi.fn(),
+  getCanvasNode: vi.fn(),
+  getHeaderColumn: vi.fn(),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
   getOptions: vi.fn(),
@@ -106,6 +108,7 @@ describe('Resizer Service', () => {
       preHeaderPanelHeight: 20,
       resizeByContentOptions: {},
     } as GridOption;
+    vi.spyOn(gridStub, 'getCanvasNode').mockImplementation(() => divContainer.querySelector('.grid-canvas') as HTMLDivElement);
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(divContainer.querySelector(`.${GRID_UID}`) as HTMLDivElement);
   });
@@ -602,18 +605,17 @@ describe('Resizer Service', () => {
       });
 
       beforeEach(() => {
-        mockGridOptions.resizeByContentOptions!.cellCharWidthInPx = 7;
         mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = 6;
         mockGridOptions.resizeByContentOptions!.formatterPaddingWidthInPx = 5;
-        mockGridOptions.resizeByContentOptions!.defaultRatioForStringType = 0.88;
         mockGridOptions.resizeByContentOptions!.alwaysRecalculateColumnWidth = false;
-        mockGridOptions.resizeByContentOptions!.maxItemToInspectCellContentWidth = 4;
+        mockGridOptions.resizeByContentOptions!.sampleSize = 10;
+        mockGridOptions.resizeByContentOptions!.includeHeaderWidth = false;
         mockColDefs = [
           // typically the `originalWidth` is set by the columnDefinitiosn setter in vanilla grid bundle but we can mock it for our test
           { id: 'userId', field: 'userId', width: 30, originalWidth: 30 },
           { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, minWidth: 50 },
           { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, minWidth: 50 },
-          { id: 'gender', field: 'gender', resizeCalcWidthRatio: 1.2 },
+          { id: 'gender', field: 'gender' },
           { id: 'age', field: 'age', type: 'number', resizeExtraWidthPadding: 2 },
           { id: 'street', field: 'street', maxWidth: 15 },
           { id: 'country', field: 'country', maxWidth: 15, resizeMaxWidthThreshold: 14, rerenderOnResize: true },
@@ -667,7 +669,7 @@ describe('Resizer Service', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColDefs);
         vi.spyOn(mockDataView, 'getItems').mockReturnValue(mockData);
         vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({
-          measureText: vi.fn().mockReturnValue({ width: 613 }), // mock canvas measureText for `getAverageCharWidthByFont()`
+          measureText: vi.fn().mockImplementation((text: string) => ({ width: text.length * 7 })), // mock canvas measureText with 7px per char
         } as unknown as CanvasRenderingContext2D);
       });
 
@@ -679,7 +681,7 @@ describe('Resizer Service', () => {
         eventPubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: 'firstName' });
 
         expect(reRenderSpy).toHaveBeenCalledWith(false);
-        expect(mockColDefs[1].width).toBe(56); // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 55.28 ceil to => 56
+        expect(mockColDefs[1].width).toBe(62); // longest word "Destinee" (length 8 * charWidth(7)) + cellPadding(6) = 62
       });
 
       it('should leave the column unchanged when the DataView has no accessible items', () => {
@@ -709,7 +711,6 @@ describe('Resizer Service', () => {
         const reRenderSpy = vi.spyOn(gridStub, 'reRenderColumns');
 
         mockGridOptions.enableColumnResizeOnDoubleClick = true;
-        mockGridOptions.resizeByContentOptions!.widthToRemoveFromExceededWidthReadjustment = 20;
         service.init(gridStub, divContainer);
         gridStub.onColumnsResizeDblClick.notify({ triggeredByColumn: 'zip', grid: gridStub });
 
@@ -748,13 +749,13 @@ describe('Resizer Service', () => {
         expect(updateColumnsSpy).toHaveBeenCalled();
         expect(gridStub.getColumns()).toEqual([
           expect.objectContaining({ id: 'userId', width: 30 }),
-          expect.objectContaining({ id: 'firstName', width: 56 }), // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 55.28 ceil to => 56
-          expect.objectContaining({ id: 'lastName', width: 68 }), // longest word "Altenwerth" (length 10 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 67.6 ceil to => 68
-          expect.objectContaining({ id: 'gender', width: 57 }), // longest word "female" (length 6 * charWidth(7) * customRatio(1.2)) + cellPadding(6) = 56.4 ceil to 57
-          expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
+          expect.objectContaining({ id: 'firstName', width: 62 }), // longest word "Destinee" (length 8 * charWidth(7)) + cellPadding(6) = 62
+          expect.objectContaining({ id: 'lastName', width: 76 }), // longest word "Altenwerth" (length 10 * charWidth(7)) + cellPadding(6) = 76
+          expect.objectContaining({ id: 'gender', width: 48 }), // longest word "female" (length 6 * charWidth(7)) + cellPadding(6) = 48
+          expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7)) + cellPadding(6) + extraPadding(2) = 29
           expect.objectContaining({ id: 'street', width: 15 }), // longest text "20229 Tia Turnpike" goes over maxWidth so we fallback to it
           expect.objectContaining({ id: 'country', width: 14 }), // longest text "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
-          expect.objectContaining({ id: 'zip', minWidth: 44, width: 50 }), // longest number "777555"
+          expect.objectContaining({ id: 'zip', minWidth: 44, width: 48 }), // longest number "777555" (length 6 * charWidth(7)) + cellPadding(6) = 48
         ]);
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
       });
@@ -790,15 +791,200 @@ describe('Resizer Service', () => {
         expect(updateColumnsSpy).toHaveBeenCalledWith();
         expect(gridStub.getColumns()).toEqual([
           expect.objectContaining({ id: 'userId', width: 30 }),
-          expect.objectContaining({ id: 'firstName', width: 61 }), // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) + editorPadding(5) = 60.28 ceil to => 61
-          expect.objectContaining({ id: 'lastName', width: 73 }), // longest word "Altenwerth" (length 10 * charWidth(7) * ratio(0.88)) + cellPadding(6) + editorPadding(5) = 72.6 ceil to => 73
-          expect.objectContaining({ id: 'gender', width: 57 }), // longest word "female" (length 6 * charWidth(7) * customRatio(1.2)) + cellPadding(6) = 56.4 ceil to 57
-          expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
+          expect.objectContaining({ id: 'firstName', width: 67 }), // longest word "Destinee" (length 8 * charWidth(7)) + cellPadding(6) + editorPadding(5) = 67
+          expect.objectContaining({ id: 'lastName', width: 81 }), // longest word "Altenwerth" (length 10 * charWidth(7)) + cellPadding(6) + editorPadding(5) = 81
+          expect.objectContaining({ id: 'gender', width: 48 }), // longest word "female" (length 6 * charWidth(7)) + cellPadding(6) = 48
+          expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7)) + cellPadding(6) + extraPadding(2) = 29
           expect.objectContaining({ id: 'street', width: 15 }), // longest text "20229 Tia Turnpike" goes over maxWidth so we fallback to it
           expect.objectContaining({ id: 'country', width: 14 }), // longest text "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
-          expect.objectContaining({ id: 'zip', minWidth: 44, width: 50 }), // longest number "777555"
+          expect.objectContaining({ id: 'zip', minWidth: 44, width: 48 }), // longest number "777555" (length 6 * charWidth(7)) + cellPadding(6) = 48
         ]);
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
+      });
+
+      it('should read items spread evenly across the dataset when it has more items than the max item count', () => {
+        const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
+        mockGridOptions.resizeByContentOptions!.sampleSize = 4;
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        // step of 2 => reads rows 0, 2, 4 ("John", "Sarai", "Alvina") and "Destinee" (row 1) is never read
+        expect(mockColDefs[1].width).toBe(50); // longest word "Alvina" (6 * 7) + cellPadding(6) = 48 but minWidth is 50
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterResizeByContent', expect.objectContaining({ readItemCount: 3 }));
+      });
+
+      it('should measure every distinct sampled text once', () => {
+        mockGridOptions.resizeByContentOptions!.sampleSize = 100;
+        const measureTextMock = vi.fn().mockImplementation((text: string) => ({ width: text.length * 7 }));
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({ measureText: measureTextMock } as unknown as CanvasRenderingContext2D);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColDefs[1]]);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue(
+          [5, 1, 12, 7, 12, 3, 9, 2, 11, 4, 8, 10, 6, 0].map((len) => ({ firstName: 'x'.repeat(len) })).concat({ firstName: { obj: 'value' } } as any)
+        );
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(measureTextMock.mock.calls.map(([text]) => text.length)).toEqual([5, 1, 12, 7, 3, 9, 2, 11, 4, 8, 10, 6]);
+        expect(mockColDefs[1].width).toBe(90); // longest text (12 * 7) + cellPadding(6) = 90
+      });
+
+      it.each([false, true])('should find wider shorter and equal-length strings regardless of row order (%s)', (reverse) => {
+        mockGridOptions.resizeByContentOptions!.sampleSize = 100;
+        const texts = Array.from({ length: 10 }, (_, i) => 'i'.repeat(i) + 'l'.repeat(12 - i));
+        texts.push('W'.repeat(12), 'M'.repeat(8));
+        if (reverse) {
+          texts.reverse();
+        }
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColDefs[1]]);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue(texts.map((firstName) => ({ firstName })));
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({
+          measureText: (text: string) => ({ width: text.startsWith('M') ? 160 : text.startsWith('W') ? 120 : 24 }),
+        } as CanvasRenderingContext2D);
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+        expect(mockColDefs[1].width).toBe(166);
+      });
+
+      it.each([
+        ['uppercase', 'Task 102', 'TASK 102'],
+        ['lowercase', 'TASK 102', 'task 102'],
+        ['capitalize', 'task 102 example', 'Task 102 Example'],
+        ['none', 'Task 102', 'Task 102'],
+      ])('should measure text with CSS text-transform %s', (transform, input, expected) => {
+        const canvas = divContainer.querySelector('.grid-canvas')!;
+        canvas.innerHTML = `<div class="slick-row"><div class="slick-cell l0" style="text-transform: ${transform}"></div></div>`;
+        const columns = [{ id: 'title', field: 'title' }];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ title: input }]);
+        const measureText = vi.fn().mockImplementation((text: string) => ({ width: text === expected ? 100 : 10 }));
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({ measureText } as unknown as CanvasRenderingContext2D);
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(measureText).toHaveBeenCalledWith(expected);
+        expect(columns[0]).toEqual(expect.objectContaining({ width: 106 }));
+      });
+
+      it('should apply header text-transform before measuring the header', () => {
+        mockGridOptions.resizeByContentOptions!.includeHeaderWidth = true;
+        const header = document.createElement('div');
+        header.innerHTML = '<span class="slick-column-name" style="text-transform: uppercase">Title</span>';
+        vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(header);
+        const measureText = vi.fn().mockReturnValue({ width: 50 });
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({ measureText } as unknown as CanvasRenderingContext2D);
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(measureText).toHaveBeenCalledWith('TITLE');
+      });
+
+      it('should use each column font and padding, including an unrendered column cssClass', () => {
+        mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = undefined;
+        const style = document.createElement('style');
+        style.textContent = '.wide-cell { padding: 0 12px; font: 20px serif; }';
+        document.head.appendChild(style);
+        const canvas = divContainer.querySelector('.grid-canvas')!;
+        canvas.innerHTML = '<div class="slick-row"><div class="slick-cell l0" style="padding: 0 2px; font: 10px serif"></div></div>';
+        const columns = [
+          { id: 'a', field: 'value' },
+          { id: 'b', field: 'value', cssClass: 'wide-cell' },
+        ];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ value: 'WWW' }]);
+        const ctx = {
+          font: '',
+          measureText() {
+            return { width: this.font.includes('20px') ? 60 : 30 };
+          },
+        };
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue(ctx as CanvasRenderingContext2D);
+        try {
+          service.init(gridStub, divContainer);
+          service.resizeColumnsByCellContent(true);
+          expect(columns).toEqual([expect.objectContaining({ width: 34 }), expect.objectContaining({ width: 84 })]);
+          expect(canvas.querySelectorAll('.slick-row')).toHaveLength(1);
+          eventPubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: 'b' });
+          expect(columns[1]).toEqual(expect.objectContaining({ width: 84 }));
+        } finally {
+          style.remove();
+        }
+      });
+
+      it.each([false, true])('should ignore inner grid cells when measuring an outer column (rendered: %s)', (rendered) => {
+        mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = undefined;
+        const canvas = divContainer.querySelector('.grid-canvas')!;
+        canvas.innerHTML =
+          '<div class="slick-row-detail-container"><div class="grid-canvas"><div class="slick-row"><div class="slick-cell l0" style="padding: 0 40px"></div></div></div></div>';
+        if (rendered) {
+          canvas.insertAdjacentHTML('beforeend', '<div class="slick-row"><div class="slick-cell l0" style="padding: 0 4px"></div></div>');
+        }
+        const columns = [{ id: 'a', field: 'value' }];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ value: 'WWW' }]);
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(columns[0]).toEqual(expect.objectContaining({ width: rendered ? 29 : 21 }));
+        expect(canvas.querySelectorAll(':scope > .slick-row')).toHaveLength(rendered ? 1 : 0);
+      });
+
+      it('should read the cell padding & borders from the CSS of an existing grid cell when "cellPaddingWidthInPx" is not provided', () => {
+        mockGridOptions.editable = true;
+        mockGridOptions.resizeByContentOptions!.formatterPaddingWidthInPx = undefined;
+        mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = undefined;
+        const gridCanvas = divContainer.querySelector('.grid-canvas') as HTMLDivElement;
+        gridCanvas.innerHTML = '<div class="slick-row"><div class="slick-cell l1" style="padding: 0 4px; border-right: 1px solid;"></div></div>';
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(mockColDefs[1].width).toBe(65); // longest word "Destinee" (8 * 7) + paddings(4 + 4) + border(1) = 65
+        expect(gridCanvas.querySelectorAll('.slick-row').length).toBe(1);
+      });
+
+      it('should create a temp cell to read its CSS when the grid has no rows yet and remove it afterward', () => {
+        mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = undefined;
+        const gridCanvas = divContainer.querySelector('.grid-canvas') as HTMLDivElement;
+        const appendSpy = vi.spyOn(gridCanvas, 'appendChild');
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(appendSpy).toHaveBeenCalled();
+        expect(gridCanvas.querySelector('.slick-row')).toBeNull();
+        expect(mockColDefs[1].width).toBe(56); // longest word "Destinee" (8 * 7) + no padding in JSDOM = 56
+      });
+
+      it('should still measure with the default canvas font when the grid has no canvas element', () => {
+        divContainer.querySelector('.grid-canvas')!.remove();
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(mockColDefs[1].width).toBe(62); // canvas mock still measures with default font, "Destinee" (8 * 7) + cellPadding(6) = 62
+      });
+
+      it('should include the header title width (and its sort & menu icons) when "includeHeaderWidth" is enabled', () => {
+        mockGridOptions.resizeByContentOptions!.includeHeaderWidth = true;
+        const headerElm = document.createElement('div');
+        headerElm.style.padding = '0 5px';
+        headerElm.innerHTML =
+          '<span class="slick-column-name">Very Long Gender Title</span><span class="slick-sort-indicator" style="width: 12px"></span><span class="slick-header-menu-button" style="width: 14px"></span>';
+        const headerNoNameElm = document.createElement('div');
+        headerNoNameElm.innerHTML = '<span class="slick-sort-indicator"></span>';
+        vi.spyOn(gridStub, 'getHeaderColumn').mockImplementation((id) => (id === 'gender' ? headerElm : id === 'age' ? headerNoNameElm : (undefined as any)));
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(mockColDefs[1].width).toBe(62); // no header element, content width is kept
+        expect(mockColDefs[3].width).toBe(190); // header "Very Long Gender Title" (22 * 7) + padding(5 + 5) + icons(12 + 14) = 190
+        expect(mockColDefs[4].width).toBe(29); // header without name is narrower than content (3 * 7) + cellPadding(6) + extraPadding(2) = 29
       });
 
       it('should call "resizeColumnsByCellContent" when "onFullResizeByContentRequested" pubsub event is triggered', () => {
@@ -824,7 +1010,7 @@ describe('Resizer Service', () => {
           { id: 'userId', field: 'userId', width: 30, originalWidth: 30 },
           { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, minWidth: 50 },
           { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, minWidth: 50 },
-          { id: 'gender', field: 'gender', resizeCalcWidthRatio: 1.2 },
+          { id: 'gender', field: 'gender' },
           { id: 'age', field: 'age', type: 'number', resizeExtraWidthPadding: 2 },
           { id: 'street', field: 'street', maxWidth: 15 },
           { id: 'country', field: 'country', maxWidth: 15, resizeMaxWidthThreshold: 14, rerenderOnResize: true },
