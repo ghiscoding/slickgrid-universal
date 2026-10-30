@@ -1,6 +1,8 @@
 import { BindingService } from './binding.service.js';
+import { BindingEventService } from './bindingEvent.service.js';
 
 export class BindingHelper {
+  private _events = new BindingEventService();
   private _observers: BindingService[] = [];
   private _querySelectorPrefix = '';
 
@@ -16,6 +18,7 @@ export class BindingHelper {
   }
 
   dispose(): void {
+    this._events.dispose();
     let observer = this._observers.pop();
     while (observer) {
       observer.dispose();
@@ -35,17 +38,19 @@ export class BindingHelper {
 
     // before creating a new observer, first check if the variable already has an associated observer
     // if we can't find an observer then we'll create a new one for it
-    const observer = this._observers.find((bind) => bind.property === variable) || new BindingService({ variable, property });
+    let observer = this._observers.find((bind) => bind.variable === variable && bind.property === property);
+    if (!observer) {
+      observer = new BindingService({ variable, property });
+      this._observers.push(observer);
+    }
 
     // add event(s) binding
     // when having multiple events, we'll loop through through them and add a binding for each
     if (Array.isArray(events)) {
-      events.forEach((eventName) => observer?.bind<T>(elements, attribute, eventName, callback));
+      events.forEach((eventName) => observer.bind<T>(elements, attribute, eventName, callback));
     } else {
-      observer?.bind<T>(elements, attribute, events, callback);
+      observer.bind<T>(elements, attribute, events, callback);
     }
-
-    this._observers.push(observer);
   }
 
   /** From a DOM element selector, which could be zero or multiple elements, add an event listener   */
@@ -55,9 +60,7 @@ export class BindingHelper {
     callback: EventListenerOrEventListenerObject,
     options?: boolean | AddEventListenerOptions
   ): void {
-    document.querySelectorAll<T>(`${this.querySelectorPrefix}${selector}`).forEach((elm) => {
-      elm?.addEventListener(eventName, callback, options);
-    });
+    this._events.bind(document.querySelectorAll<T>(`${this.querySelectorPrefix}${selector}`), eventName, callback, options);
   }
 
   /**
