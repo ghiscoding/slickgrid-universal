@@ -6,6 +6,7 @@ import type { ElementEventListener } from './interfaces.js';
  * The advantage of using this service is too easily unbind all listeners without having to pass the actual listener reference
  */
 export class BindingEventService {
+  protected _unbindingAll = false;
   protected _boundedEvents: ElementEventListener[] = [];
 
   get boundedEvents(): ElementEventListener[] {
@@ -25,7 +26,6 @@ export class BindingEventService {
     listenerOptions?: boolean | AddEventListenerOptions,
     groupName = ''
   ): void {
-    // convert to array for looping in next task
     const eventNames = Array.isArray(eventNameOrNames) ? eventNameOrNames : [eventNameOrNames];
 
     if (
@@ -49,8 +49,8 @@ export class BindingEventService {
     listener: EventListenerOrEventListenerObject,
     listenerOptions?: boolean | EventListenerOptions
   ): void {
-    // convert to array for looping in next task
-    const elements = Array.isArray(elementOrElements) ? elementOrElements : [elementOrElements];
+    const elements = elementOrElements instanceof NodeList ? Array.from(elementOrElements) : [elementOrElements];
+    const capture = typeof listenerOptions === 'boolean' ? listenerOptions : !!listenerOptions?.capture;
     const eventNames = Array.isArray(eventNameOrNames) ? eventNameOrNames : [eventNameOrNames];
 
     for (const eventName of eventNames) {
@@ -59,6 +59,15 @@ export class BindingEventService {
           element.removeEventListener(eventName, listener, listenerOptions);
         }
       }
+    }
+    if (!this._unbindingAll) {
+      this.removeRecords(
+        (event) =>
+          elements.includes(event.element) &&
+          eventNames.includes(event.eventName) &&
+          event.listener === listener &&
+          !!event.options?.capture === capture
+      );
     }
   }
 
@@ -73,44 +82,47 @@ export class BindingEventService {
    * Unbind all event listeners that were bounded, optionally provide a group name to unbind all listeners assigned to that specific group only.
    */
   unbindAll(groupName?: string | string[]): void {
-    if (groupName) {
-      const groupNames = Array.isArray(groupName) ? groupName : [groupName];
-
-      // unbind only the bounded event with a specific group
-      // Note: we need to loop in reverse order to avoid array reindexing (causing index offset) after a splice is called
-      for (let i = this._boundedEvents.length - 1; i >= 0; --i) {
-        const boundedEvent = this._boundedEvents[i];
-        if (groupNames.some((g) => g === boundedEvent.groupName)) {
-          const { element, eventName, listener, options } = boundedEvent;
-          this.unbind(element, eventName, listener, options);
-          this._boundedEvents.splice(i, 1);
-        }
-      }
-    } else {
-      // unbind everything
-      while (this._boundedEvents.length > 0) {
-        const boundedEvent = this._boundedEvents.pop() as ElementEventListener;
-        const { element, eventName, listener, options } = boundedEvent;
+    const groups = groupName ? new Set(Array.isArray(groupName) ? groupName : [groupName]) : null;
+    const removed = this.removeRecords((event) => !groups || groups.has(event.groupName as string));
+    const wasUnbindingAll = this._unbindingAll;
+    this._unbindingAll = true;
+    try {
+      for (let i = removed.length - 1; i >= 0; i--) {
+        const { element, eventName, listener, options } = removed[i];
         this.unbind(element, eventName, listener, options);
       }
+    } finally {
+      this._unbindingAll = wasUnbindingAll;
     }
   }
 
-  // --
-  // private functions
+  /** Compact in place to preserve the public array and retained registration order. */
+  protected removeRecords(matches: (event: ElementEventListener) => boolean): ElementEventListener[] {
+    const removed: ElementEventListener[] = [];
+    let kept = 0;
+    for (const event of this._boundedEvents) {
+      if (matches(event)) {
+        removed.push(event);
+      } else {
+        this._boundedEvents[kept++] = event;
+      }
+    }
+    this._boundedEvents.length = kept;
+    return removed;
+  }
 
   /** bind all event(s) to the element */
-  private bindElementEvents(
+  protected bindElementEvents(
     element: HTMLElement,
-    eventNames: string | string[],
+    eventNames: string[],
     listener: EventListenerOrEventListenerObject,
     listenerOptions?: boolean | AddEventListenerOptions,
     groupName = ''
-  ) {
+  ): void {
+    const eventOptions = typeof listenerOptions === 'boolean' ? { capture: listenerOptions } : listenerOptions && { ...listenerOptions };
     for (const eventName of eventNames) {
-      const eventOptions = typeof listenerOptions === 'boolean' ? { capture: listenerOptions } : listenerOptions;
-      element.addEventListener(eventName, listener as EventListener, eventOptions);
-      this._boundedEvents.push({ element, eventName, listener: listener as EventListener, options: eventOptions, groupName });
+      element.addEventListener(eventName, listener, eventOptions);
+      this._boundedEvents.push({ element, eventName, listener, options: eventOptions, groupName });
     }
   }
 }
