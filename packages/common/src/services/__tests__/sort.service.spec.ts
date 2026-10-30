@@ -121,6 +121,15 @@ describe('SortService', () => {
     service.dispose();
   });
 
+  it('leaves trees unchanged when sort columns are missing or empty', () => {
+    const rows = [{ id: 2 }, { id: 1 }];
+    const sort = vi.spyOn(service, 'sortTreeChildren');
+    service.sortTreeData(rows, undefined as any);
+    service.sortTreeData(rows, []);
+    expect(rows.map((row) => row.id)).toEqual([2, 1]);
+    expect(sort).not.toHaveBeenCalled();
+  });
+
   it('preserves subclass tree hooks while honoring primary-column priority', () => {
     class CustomSortService extends SortService {
       calls: Array<{ columnId: string | number; level: number }> = [];
