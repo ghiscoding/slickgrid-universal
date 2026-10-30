@@ -57,7 +57,7 @@ describe('BindingEvent Service', () => {
     service.bind(mockElm, 'click', mockCallback);
     service.unbindByEventName(mockElm, 'click');
 
-    expect(service.boundedEvents.length).toBe(1);
+    expect(service.boundedEvents.length).toBe(0);
     expect(addEventSpy).toHaveBeenCalledWith('click', mockCallback, undefined);
     expect(unbindSpy).toHaveBeenCalledWith(mockElm, 'click', expect.anything(), undefined);
   });
@@ -188,5 +188,65 @@ describe('BindingEvent Service', () => {
     expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith('click', mockCallback3);
     expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseover', mockCallback4, { capture: false, passive: true }); // mouse-group
     expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseout', mockCallback4, { capture: false, passive: true }); // mouse-group
+  });
+  it('unbinds NodeLists across multiple events without retaining records', () => {
+    div.innerHTML = '<button></button><button></button>';
+    const elements = div.querySelectorAll('button');
+    const callback = vi.fn();
+    service.bind(elements, ['click', 'blur'], callback);
+    service.unbind(elements, ['click', 'blur'], callback);
+    elements.forEach((element) => element.dispatchEvent(new Event('click')));
+    expect(callback).not.toHaveBeenCalled();
+    expect(service.boundedEvents).toHaveLength(0);
+  });
+
+  it('advances repeated event-name removal and preserves other callbacks and capture modes', () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    service.bind(div, 'click', first);
+    service.bind(div, 'click', second, true);
+    service.bind(div, 'blur', second);
+    service.unbind(div, 'click', second, false);
+    expect(service.boundedEvents).toHaveLength(3);
+    service.unbindByEventName(div, 'click');
+    div.dispatchEvent(new Event('click'));
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledOnce();
+    service.unbindByEventName(div, 'click');
+    service.unbindByEventName(div, 'missing');
+    expect(service.boundedEvents).toHaveLength(1);
+  });
+
+  it('snapshots capture options for disposal', () => {
+    const callback = vi.fn();
+    const options = { capture: true };
+    service.bind(div, 'click', callback, options);
+    options.capture = false;
+    service.dispose();
+    div.dispatchEvent(new Event('click'));
+    expect(callback).not.toHaveBeenCalled();
+  });
+
+  it('compacts alternating groups in place and removes their listeners', () => {
+    const callback = vi.fn();
+    const remove = vi.spyOn(div, 'removeEventListener');
+    for (let i = 0; i < 6; i++) {
+      service.bind(div, String(i), callback, undefined, i % 2 ? 'keep' : 'remove');
+    }
+    const records = service.boundedEvents;
+    const splice = vi.spyOn(records, 'splice');
+    service.unbindAll(['remove']);
+    expect(service.boundedEvents).toBe(records);
+    expect(records.map((event) => event.eventName)).toEqual(['1', '3', '5']);
+    expect(remove.mock.calls.map((args) => args[0])).toEqual(['0', '2', '4']);
+    expect(splice).not.toHaveBeenCalled();
+    service.unbindAll([]);
+    expect(records).toHaveLength(3);
+  });
+
+  it('handles missing elements', () => {
+    service.bind(null as any, 'click', vi.fn<EventListener>());
+    service.unbind(null as any, 'click', vi.fn<EventListener>());
+    expect(service.boundedEvents).toHaveLength(0);
   });
 });

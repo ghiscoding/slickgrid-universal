@@ -35,7 +35,7 @@ describe('Binding Helper', () => {
     expect(mockCallback).toHaveBeenCalled();
   });
 
-  it('should add 2 equal bindings for an input when calling "addElementBinding" twice with same arguments', () => {
+  it('should reuse the observer for an input when calling "addElementBinding" twice with same arguments', () => {
     const mockCallback = vi.fn();
     const mockObj = { name: 'John', age: 20 };
     const elm = document.createElement('input');
@@ -48,12 +48,7 @@ describe('Binding Helper', () => {
     const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: 'Jane' } } });
     elm.dispatchEvent(mockEvent);
 
-    // remove the UID before comparing or else it will always fail
-    helper.observers[0].boundedEventWithListeners[0].uid = '';
-    helper.observers[1].boundedEventWithListeners[0].uid = '';
-
-    expect(helper.observers.length).toBe(2);
-    expect(JSON.stringify(helper.observers[0])).toEqual(JSON.stringify(helper.observers[1]));
+    expect(helper.observers.length).toBe(1);
     expect(helper.querySelectorPrefix).toBe('');
     expect(mockObj.name).toBe('Jane');
     expect(mockCallback).toHaveBeenCalled();
@@ -149,5 +144,31 @@ describe('Binding Helper', () => {
     helper.setElementAttributeValue('.something', 'textContent', 'Hello World');
 
     expect(elm.textContent).toBe('Hello World');
+  });
+  it('shares model updates across selectors and keeps different models separate', () => {
+    div.innerHTML = '<input class="first"><input class="second"><input class="third">';
+    const model = { value: 'a' };
+    helper.addElementBinding(model, 'value', '.first', 'value');
+    helper.addElementBinding(model, 'value', '.second', 'value');
+    helper.addElementBinding({ value: 'b' }, 'value', '.third', 'value');
+    model.value = 'updated';
+    expect(Array.from(div.querySelectorAll('input'), (elm) => elm.value)).toEqual(['updated', 'updated', 'b']);
+    expect(helper.observers).toHaveLength(2);
+  });
+
+  it('removes helper event handlers on disposal including capture listeners', () => {
+    div.className = 'target';
+    const callback = vi.fn();
+    helper.bindEventHandler('.target', 'click', callback, true);
+    helper.dispose();
+    div.dispatchEvent(new Event('click'));
+    expect(callback).not.toHaveBeenCalled();
+    helper.dispose();
+  });
+
+  it('ignores unknown element attributes', () => {
+    div.className = 'target';
+    helper.setElementAttributeValue('.target', 'unknown', 'value');
+    expect(div).not.toHaveProperty('unknown');
   });
 });
