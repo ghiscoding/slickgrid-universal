@@ -847,6 +847,41 @@ describe('Resizer Service', () => {
         expect(mockColDefs[1].width).toBe(166);
       });
 
+      it.each([
+        ['uppercase', 'Task 102', 'TASK 102'],
+        ['lowercase', 'TASK 102', 'task 102'],
+        ['capitalize', 'task 102 example', 'Task 102 Example'],
+        ['none', 'Task 102', 'Task 102'],
+      ])('should measure text with CSS text-transform %s', (transform, input, expected) => {
+        const canvas = divContainer.querySelector('.grid-canvas')!;
+        canvas.innerHTML = `<div class="slick-row"><div class="slick-cell l0" style="text-transform: ${transform}"></div></div>`;
+        const columns = [{ id: 'title', field: 'title' }];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ title: input }]);
+        const measureText = vi.fn().mockImplementation((text: string) => ({ width: text === expected ? 100 : 10 }));
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({ measureText } as unknown as CanvasRenderingContext2D);
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(measureText).toHaveBeenCalledWith(expected);
+        expect(columns[0]).toEqual(expect.objectContaining({ width: 106 }));
+      });
+
+      it('should apply header text-transform before measuring the header', () => {
+        mockGridOptions.resizeByContentOptions!.includeHeaderWidth = true;
+        const header = document.createElement('div');
+        header.innerHTML = '<span class="slick-column-name" style="text-transform: uppercase">Title</span>';
+        vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(header);
+        const measureText = vi.fn().mockReturnValue({ width: 50 });
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({ measureText } as unknown as CanvasRenderingContext2D);
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(measureText).toHaveBeenCalledWith('TITLE');
+      });
+
       it('should use each column font and padding, including an unrendered column cssClass', () => {
         mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = undefined;
         const style = document.createElement('style');

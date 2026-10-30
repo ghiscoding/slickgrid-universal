@@ -562,7 +562,7 @@ export class ResizerService {
       ctx.font = cellStyle.font;
       let textWidth = 0;
       candidatesMap[columnDef.id].forEach((text) => {
-        textWidth = Math.max(textWidth, ctx.measureText(text).width);
+        textWidth = Math.max(textWidth, ctx.measureText(this.applyTextTransform(text, cellStyle.textTransform)).width);
       });
       columnWidths[columnDef.id] = Math.max(textWidth + cellPadding, this.calculateHeaderWidth(columnDef));
     });
@@ -578,8 +578,10 @@ export class ResizerService {
     }
     const nameElm = headerElm.querySelector('.slick-column-name');
     const ctx = this.getCanvasContext();
-    ctx.font = this.getElementStyle(nameElm || headerElm).font;
-    let headerWidth = this.getElementStyle(headerElm).padding + ctx.measureText(nameElm?.textContent || '').width;
+    const nameStyle = this.getElementStyle(nameElm || headerElm);
+    ctx.font = nameStyle.font;
+    const headerText = this.applyTextTransform(nameElm?.textContent || '', nameStyle.textTransform);
+    let headerWidth = this.getElementStyle(headerElm).padding + ctx.measureText(headerText).width;
     headerElm.querySelectorAll('.slick-sort-indicator,.slick-header-menu-button').forEach((iconElm) => {
       headerWidth += parseFloat(getComputedStyle(iconElm).width) || 0;
     });
@@ -587,7 +589,7 @@ export class ResizerService {
   }
 
   /** Read the font and horizontal padding (incl. borders) of a grid cell, a temp cell is created when the grid has no rows yet. */
-  protected readCellStyle(column: Column, columnIndex: number): { font: string; padding: number } {
+  protected readCellStyle(column: Column, columnIndex: number): { font: string; padding: number; textTransform: string } {
     const gCanvas = this._grid.getCanvasNode();
     let cellElm = gCanvas?.querySelector(`:scope > .slick-row > .slick-cell.l${columnIndex}`);
     let tmpRowElm: HTMLDivElement | undefined;
@@ -601,16 +603,31 @@ export class ResizerService {
   }
 
   /** Get an element font (built from longhands since the `font` shorthand might be empty in some browsers) and its horizontal padding + borders */
-  protected getElementStyle(elm?: Element | null): { font: string; padding: number } {
+  protected getElementStyle(elm?: Element | null): { font: string; padding: number; textTransform: string } {
     if (!elm) {
-      return { font: '', padding: 0 };
+      return { font: '', padding: 0, textTransform: '' };
     }
-    const { fontStyle, fontWeight, fontSize, fontFamily, paddingLeft, paddingRight, borderLeftWidth, borderRightWidth } =
+    const { fontStyle, fontWeight, fontSize, fontFamily, paddingLeft, paddingRight, borderLeftWidth, borderRightWidth, textTransform } =
       getComputedStyle(elm);
     return {
       font: `${fontStyle} ${fontWeight} ${fontSize} ${fontFamily}`.trim(),
+      textTransform,
       padding: [paddingLeft, paddingRight, borderLeftWidth, borderRightWidth].reduce((sum, val) => sum + (parseFloat(val) || 0), 0),
     };
+  }
+
+  /** Apply common CSS text transformations before measuring rendered text. */
+  protected applyTextTransform(text: string, transform: string): string {
+    if (transform === 'uppercase') {
+      return text.toUpperCase();
+    }
+    if (transform === 'lowercase') {
+      return text.toLowerCase();
+    }
+    if (transform === 'capitalize') {
+      return text.replace(/(^|[^\p{L}\p{N}])(\p{L})/gu, (_match, prefix: string, letter: string) => prefix + letter.toUpperCase());
+    }
+    return text;
   }
 
   getBrowserCanvas(): CanvasRenderingContext2D {

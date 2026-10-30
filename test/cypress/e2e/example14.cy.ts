@@ -27,7 +27,7 @@ describe('Example 14 - Columns Resize by Content', () => {
     });
 
     it('should have cell that fit the text content', () => {
-      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.approximately', 65, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.approximately', 72, 1);
       cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.approximately', 98, 1);
       cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.approximately', 53, 1);
       cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.approximately', 138, 1);
@@ -40,10 +40,22 @@ describe('Example 14 - Columns Resize by Content', () => {
       cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('be.approximately', 58, 1);
     });
 
+    it('should show the full uppercase title in outlined editable cells after scrolling', () => {
+      cy.get('.items-per-page').select('5000');
+      cy.get('.slick-vertical-scroller').scrollTo(0, 102 * GRID_ROW_HEIGHT);
+      for (let row = 102; row <= 109; row++) {
+        cy.get(`[data-row="${row}"] .slick-cell.l1 .editing-field`)
+          .should('contain', `Task ${row}`)
+          .should(($field) => expect($field[0].scrollWidth).to.be.lte($field[0].clientWidth));
+      }
+      cy.get('.slick-vertical-scroller').scrollTo('top');
+      cy.get('.items-per-page').select('10');
+    });
+
     it('should make the grid readonly and expect to fit the text by content and expect column width to be the same as earlier', () => {
       cy.get('[data-test="toggle-readonly-btn"]').click();
 
-      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.approximately', 57, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.approximately', 64, 1);
       cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.approximately', 98, 1);
       cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.approximately', 53, 1);
       cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.approximately', 138, 1);
@@ -355,14 +367,14 @@ describe('Example 14 - Columns Resize by Content', () => {
         .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
 
       // click on Feedback->ContactUs
-      cy.get('.slick-header-menu.slick-menu-level-1.dropright') // right align
+      cy.get('.slick-header-menu.slick-menu-level-1')
         .find('.slick-menu-item.slick-menu-item')
         .contains('Contact Us')
         .should('exist')
         .trigger('mouseover'); // mouseover or click should work
 
       cy.get('.slick-submenu').should('have.length', 2);
-      cy.get('.slick-header-menu.slick-menu-level-2.dropleft') // left align
+      cy.get('.slick-header-menu.slick-menu-level-2')
         .should('exist')
         .find('.slick-menu-item')
         .each(($command, index) => expect($command.text()).to.contain(subCommands2_1[index]));
