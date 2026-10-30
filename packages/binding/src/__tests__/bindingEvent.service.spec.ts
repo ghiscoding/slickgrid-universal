@@ -227,9 +227,9 @@ describe('BindingEvent Service', () => {
     expect(callback).not.toHaveBeenCalled();
   });
 
-  it('compacts alternating groups in place and removes listeners in reverse order', () => {
+  it('compacts alternating groups in place and removes their listeners', () => {
     const callback = vi.fn();
-    const unbind = vi.spyOn(service, 'unbind');
+    const remove = vi.spyOn(div, 'removeEventListener');
     for (let i = 0; i < 6; i++) {
       service.bind(div, String(i), callback, undefined, i % 2 ? 'keep' : 'remove');
     }
@@ -238,25 +238,15 @@ describe('BindingEvent Service', () => {
     service.unbindAll(['remove']);
     expect(service.boundedEvents).toBe(records);
     expect(records.map((event) => event.eventName)).toEqual(['1', '3', '5']);
-    expect(unbind.mock.calls.map((args) => args[1])).toEqual(['4', '2', '0']);
+    expect(remove.mock.calls.map((args) => args[0])).toEqual(['0', '2', '4']);
     expect(splice).not.toHaveBeenCalled();
     service.unbindAll([]);
     expect(records).toHaveLength(3);
   });
 
-  it('handles missing elements and keeps bookkeeping enabled after an overridden unbind throws', () => {
-    service.bind(null as any, 'click', vi.fn());
-    service.unbind(null as any, 'click', vi.fn());
-    const callback = vi.fn();
-    service.bind(div, 'click', callback, undefined, 'remove');
-    service.bind(div, 'blur', callback, undefined, 'keep');
-    const unbind = vi.spyOn(service, 'unbind').mockImplementationOnce(() => {
-      throw new Error('failure');
-    });
-    expect(() => service.unbindAll('remove')).toThrow('failure');
-    unbind.mockRestore();
-    service.unbind(div, 'blur', callback);
+  it('handles missing elements', () => {
+    service.bind(null as any, 'click', vi.fn<EventListener>());
+    service.unbind(null as any, 'click', vi.fn<EventListener>());
     expect(service.boundedEvents).toHaveLength(0);
-    div.removeEventListener('click', callback);
   });
 });

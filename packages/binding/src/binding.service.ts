@@ -105,11 +105,10 @@ export class BindingService {
   ): void {
     if (element) {
       element.removeEventListener(eventName, listener, options);
-      const lastIdx = this._boundedEventWithListeners.length - 1;
-      const eventIdx =
-        lastIdx >= 0 && this._boundedEventWithListeners[lastIdx].uid === eventUid
-          ? lastIdx
-          : this._boundedEventWithListeners.findIndex((be) => be.uid === eventUid);
+      let eventIdx = this._boundedEventWithListeners.length - 1;
+      while (eventIdx >= 0 && this._boundedEventWithListeners[eventIdx].uid !== eventUid) {
+        eventIdx--;
+      }
       if (eventIdx >= 0) {
         this._boundedEventWithListeners.splice(eventIdx, 1);
       }

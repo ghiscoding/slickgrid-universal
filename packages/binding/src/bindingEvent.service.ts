@@ -6,7 +6,6 @@ import type { ElementEventListener } from './interfaces.js';
  * The advantage of using this service is too easily unbind all listeners without having to pass the actual listener reference
  */
 export class BindingEventService {
-  protected _unbindingAll = false;
   protected _boundedEvents: ElementEventListener[] = [];
 
   get boundedEvents(): ElementEventListener[] {
@@ -60,15 +59,13 @@ export class BindingEventService {
         }
       }
     }
-    if (!this._unbindingAll) {
-      this.removeRecords(
-        (event) =>
-          elements.includes(event.element) &&
-          eventNames.includes(event.eventName) &&
-          event.listener === listener &&
-          !!event.options?.capture === capture
-      );
-    }
+    this.removeRecords(
+      (event) =>
+        elements.includes(event.element) &&
+        eventNames.includes(event.eventName) &&
+        event.listener === listener &&
+        !!event.options?.capture === capture
+    );
   }
 
   unbindByEventName(element: Element | Window, eventName: string): void {
@@ -83,32 +80,27 @@ export class BindingEventService {
    */
   unbindAll(groupName?: string | string[]): void {
     const groups = groupName ? new Set(Array.isArray(groupName) ? groupName : [groupName]) : null;
-    const removed = this.removeRecords((event) => !groups || groups.has(event.groupName as string));
-    const wasUnbindingAll = this._unbindingAll;
-    this._unbindingAll = true;
-    try {
-      for (let i = removed.length - 1; i >= 0; i--) {
-        const { element, eventName, listener, options } = removed[i];
-        this.unbind(element, eventName, listener, options);
+    this.removeRecords((event) => {
+      if (groups && !groups.has(event.groupName as string)) {
+        return false;
       }
-    } finally {
-      this._unbindingAll = wasUnbindingAll;
-    }
+      const { element, eventName, listener, options } = event;
+      if (typeof element?.removeEventListener === 'function') {
+        element.removeEventListener(eventName, listener, options);
+      }
+      return true;
+    });
   }
 
   /** Compact in place to preserve the public array and retained registration order. */
-  protected removeRecords(matches: (event: ElementEventListener) => boolean): ElementEventListener[] {
-    const removed: ElementEventListener[] = [];
+  protected removeRecords(matches: (event: ElementEventListener) => boolean): void {
     let kept = 0;
     for (const event of this._boundedEvents) {
-      if (matches(event)) {
-        removed.push(event);
-      } else {
+      if (!matches(event)) {
         this._boundedEvents[kept++] = event;
       }
     }
     this._boundedEvents.length = kept;
-    return removed;
   }
 
   /** bind all event(s) to the element */

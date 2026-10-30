@@ -165,15 +165,15 @@ describe('Binding Service', () => {
   it('handles absent elements, missing listener IDs and non-tail removal', () => {
     service = new BindingService({ variable: { value: 1 }, property: 'value' });
     expect(service.bind(null, 'value')).toBe(service);
-    service.unbind(null, 'change', vi.fn());
+    service.unbind(null, 'change', vi.fn<EventListener>());
     const input = document.createElement('input');
     service.bind(input, 'value', 'change').bind(input, 'value', 'blur');
     const first = service.boundedEventWithListeners[0];
     service.unbind(input, first.eventName, first.listener, undefined, first.uid);
     expect(service.boundedEventWithListeners).toHaveLength(1);
-    service.unbind(input, 'unknown', vi.fn(), undefined, 'missing');
+    service.unbind(input, 'unknown', vi.fn<EventListener>(), undefined, 'missing');
     service.dispose();
-    service.unbind(input, 'unknown', vi.fn());
+    service.unbind(input, 'unknown', vi.fn<EventListener>());
   });
 
   it('allows subclass unbind overrides without leaving teardown stuck', () => {
