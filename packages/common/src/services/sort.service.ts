@@ -625,16 +625,14 @@ export class SortService {
   }
 
   sortTreeData(treeArray: any[], sortColumns: Array<ColumnSort>): void {
-    if (Array.isArray(sortColumns) && sortColumns.length === 1) {
-      this.sortTreeChildren(treeArray, sortColumns[0], 0);
-    } else if (Array.isArray(sortColumns) && sortColumns.length > 1) {
-      if (this.sortTreeChildren !== SortService.prototype.sortTreeChildren) {
+    if (Array.isArray(sortColumns)) {
+      if (sortColumns.length > 1 && this.sortTreeChildren === SortService.prototype.sortTreeChildren) {
+        this.sortTreeChildrenByColumns(treeArray, sortColumns);
+      } else {
         // Preserve subclass hooks. Stable passes run least-significant column first.
         for (let i = sortColumns.length - 1; i >= 0; i--) {
           this.sortTreeChildren(treeArray, sortColumns[i], 0);
         }
-      } else {
-        this.sortTreeChildrenByColumns(treeArray, sortColumns);
       }
     }
   }
@@ -660,9 +658,7 @@ export class SortService {
         const hasChildren = item.hasOwnProperty(childrenPropName) && Array.isArray(item[childrenPropName]);
         // when item has a child, we'll sort recursively
         if (hasChildren) {
-          treeLevel++;
-          this.sortTreeChildren(item[childrenPropName], sortColumn, treeLevel);
-          treeLevel--;
+          this.sortTreeChildren(item[childrenPropName], sortColumn, treeLevel + 1);
         }
       }
     });
