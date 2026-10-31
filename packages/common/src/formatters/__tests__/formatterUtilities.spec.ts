@@ -461,6 +461,19 @@ describe('formatterUtilities', () => {
         expect(output).toEqual('');
       });
 
+      it('treats an object with only inherited properties as empty', () => {
+        const inheritedOnly = Object.create({ inherited: 'value' });
+        const inheritedOutput = exportWithFormatterWhenDefined(
+          1,
+          1,
+          { ...mockColumn, field: 'inheritedOnly' },
+          { ...mockItem, inheritedOnly },
+          gridStub as SlickGrid,
+          {}
+        );
+        expect(inheritedOutput).toBe('');
+      });
+
       it('should provide a exportCustomFormatter in the column definition and expect the output to be formatted', () => {
         const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, exportCustomFormatter: myBoldHtmlFormatter }, mockItem, gridStub as SlickGrid, {
           exportWithFormatter: true,

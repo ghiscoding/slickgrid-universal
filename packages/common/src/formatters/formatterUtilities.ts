@@ -1,4 +1,4 @@
-import { getHtmlStringOutput, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
+import { getHtmlStringOutput, isEmptyObject, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 import { Constants } from '../constants.js';
 import { type SlickGrid } from '../core/slickGrid.js';
 import { type FieldType } from '../enums/field.type.js';
@@ -324,7 +324,7 @@ export function parseFormatterWhenExist<T = any>(
   }
 
   // Empty objects become an empty string; Date values must remain intact.
-  if (typeof output === 'object' && !(output instanceof Date) && Object.keys(output).length === 0) {
+  if (typeof output === 'object' && !(output instanceof Date) && isEmptyObject(output)) {
     return '';
   }
 

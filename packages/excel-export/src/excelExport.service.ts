@@ -29,6 +29,7 @@ import {
   extend,
   getHtmlStringOutput,
   htmlDecode,
+  isEmptyObject,
   stripTags,
   titleCase,
 } from '@slickgrid-universal/utils';
@@ -674,7 +675,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected getRawCellValue(itemObj: any, fieldProperty: string): string | number | Date {
     let output = itemObj?.hasOwnProperty(fieldProperty) ? itemObj[fieldProperty] : '';
 
-    if (output == null || (typeof output === 'object' && !(output instanceof Date) && Object.keys(output).length === 0)) {
+    if (output == null || (typeof output === 'object' && !(output instanceof Date) && isEmptyObject(output))) {
       output = '';
     }
 
