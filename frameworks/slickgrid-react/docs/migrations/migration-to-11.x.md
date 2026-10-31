@@ -139,7 +139,7 @@ const gridOptions: GridOption = {
 };
 ```
 
-The Pinning command menu is now enabled by default. To hide it, add `'pinning-commands'` to `headerMenu.hideCommands`. See the [Pinning guide](../grid-functionalities/pinning.md#header-menu-commands) for the command details.
+The Pinning command menu is now enabled and shown by default (which wasn't the case before). To hide it, add `'pinning-commands'` to `headerMenu.hideCommands`. See the [Pinning guide](../grid-functionalities/pinning.md#header-menu-commands) for the command details.
 
 #### Translation keys
 
@@ -350,11 +350,13 @@ const gridOptions: GridOption = {
 };
 ```
 
-Grid row positioning now strictly uses `transform: translateY(...)` (the legacy approach was `top: ...`) for better precision and scrolling performance. RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
+Grid row positioning now strictly uses `transform: translateY(...)` for better precision and scrolling performance (the legacy approach was `top: ...`). RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
 
 ### Row Detail DOM and CSS selectors
 
 v11 simplifies the Row Detail DOM by removing redundant containers and CSS classes. Update your custom CSS and DOM selectors accordingly.
+
+> **Note** Row Detail CSS is no longer part of the main CSS stylesheet, see [Import optional package styles separately](#import-optional-package-styles-separately) for more details.
 
 ```diff
 -<div class="slick-row-detail-overlay">
@@ -380,7 +382,7 @@ Previous releases included fallbacks for native APIs blocked by some restricted 
 
 ### Tree Formatter - remove unrelated CSS class
 
-The Tree Formatter originally used the `.slick-group-toggle` class, which is unrelated to grouping. In version 10 the dedicated `.slick-tree-toggle` class was introduced in order to transition to only the new class name. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling and tests if necessary.
+The Tree Formatter originally used the `.slick-group-toggle` class, which is unrelated to tree data. In version 10 the dedicated `.slick-tree-toggle` class was introduced in order to transition and eventually use new tree class name only. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling and tests if necessary.
 
 ## Code Changes
 
@@ -442,16 +444,6 @@ first. This lets package styles use the theme's configured Sass variables:
 @use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/sass/slick-custom-tooltip.scss';
 @use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail.scss';
 ```
-
-### Row Detail package renamed
-
-The base Row Detail package was renamed from `@slickgrid-universal/row-detail-view-plugin` to
-`@slickgrid-universal/row-detail-plugin`, and its stylesheet entry was shortened from
-`slick-row-detail-view` to `slick-row-detail`. Update the dependency, TypeScript imports, and any
-stylesheet paths that use the old names. The Angular, Aurelia, React, and Vue adapter package names
-(for example, `@slickgrid-universal/angular-row-detail-plugin`) are unchanged. See
-[Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for
-theme-specific paths and additional details.
 
 ### New `iconSet` grid option for the Fluent theme
 
@@ -535,7 +527,7 @@ The same callback is available under `gridMenu.columnListBuilder`. The builder r
 
 ## Menu divider typing
 
-Menu divider typing has been improved so that divider objects (`{ divider: true }`) no longer require a `command` property, while existing divider syntax remains fully supported.
+Menu divider typing has been improved so that divider objects `{ divider: true }` no longer require a `command` property, while existing divider syntax remains fully supported.
 
 ## Container service lookups
 

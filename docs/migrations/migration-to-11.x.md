@@ -134,7 +134,7 @@ const gridOptions: GridOption = {
 };
 ```
 
-The Pinning command menu is now enabled by default. To hide it, add `'pinning-commands'` to `headerMenu.hideCommands`. See the [Pinning guide](../grid-functionalities/pinning.md#header-menu-commands) for the command details.
+The Pinning command menu is now enabled and shown by default (which wasn't the case before). To hide it, add `'pinning-commands'` to `headerMenu.hideCommands`. See the [Pinning guide](../grid-functionalities/pinning.md#header-menu-commands) for the command details.
 
 #### Translation keys
 
@@ -347,11 +347,13 @@ const gridOptions: GridOption = {
 };
 ```
 
-Grid row positioning now strictly uses `transform: translateY(...)` (the legacy approach was `top: ...`) for better precision and scrolling performance. RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
+Grid row positioning now strictly uses `transform: translateY(...)` for better precision and scrolling performance (the legacy approach was `top: ...`). RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
 
 ### Row Detail DOM and CSS selectors
 
 v11 simplifies the Row Detail DOM by removing redundant containers and CSS classes. Update your custom CSS and DOM selectors accordingly.
+
+> **Note** Row Detail CSS is no longer part of the main CSS stylesheet, see [Import optional package styles separately](#import-optional-package-styles-separately) for more details.
 
 ```diff
 -<div class="slick-row-detail-overlay">
@@ -377,7 +379,7 @@ Previous releases included fallbacks for native APIs blocked by some restricted 
 
 ### Tree Formatter - remove unrelated CSS class
 
-The Tree Formatter originally used the `.slick-group-toggle` class, which is unrelated to grouping. In version 10 the dedicated `.slick-tree-toggle` class was introduced in order to transition to only the new class name. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling and tests if necessary.
+The Tree Formatter originally used the `.slick-group-toggle` class, which is unrelated to tree data. In version 10 the dedicated `.slick-tree-toggle` class was introduced in order to transition and eventually use new tree class name only. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling and tests if necessary.
 
 ## Code Changes
 
@@ -518,7 +520,7 @@ Return items in the desired display order; no automatic numeric sorting is appli
 
 ## Menu divider typing
 
-Menu divider typing has been improved so that divider objects (`{ divider: true }`) no longer require a `command` property, while existing divider syntax remains fully supported.
+Menu divider typing has been improved so that divider objects `{ divider: true }` no longer require a `command` property, while existing divider syntax remains fully supported.
 
 ## Final Note
 
