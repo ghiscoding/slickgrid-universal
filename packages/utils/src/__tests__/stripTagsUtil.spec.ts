@@ -168,3 +168,23 @@ describe('stripTags()', () => {
     });
   });
 });
+
+describe('stripTags() security-related parser regressions', () => {
+  it.each([
+    ['before<img src=x onerror=alert(1)>after', 'beforeafter'],
+    ['<script>alert(1)</script>', 'alert(1)'],
+    ['<a href="javascript:alert(1)">click</a>', 'click'],
+    ['<svg onload=alert(1)><script>alert(1)</script></svg>', 'alert(1)'],
+    ['safe<!-- <img src=x onerror=alert(1)> -->tail', 'safetail'],
+    ['safe<img title="> <script>" src=x onerror=alert(1)>tail', 'safetail'],
+    ['safe<img title="unterminated', 'safe'],
+    ['&lt;img src=x onerror=alert(1)&gt;', '&lt;img src=x onerror=alert(1)&gt;'],
+  ])('preserves stripping behavior for %j', (input, expected) => {
+    expect(stripTags(input)).toBe(expected);
+  });
+
+  it('preserves attributes on allowed tags rather than sanitizing them', () => {
+    const input = '<a href="javascript:alert(1)" onclick="alert(2)">click</a>';
+    expect(stripTags(input, ['a'])).toBe(input);
+  });
+});

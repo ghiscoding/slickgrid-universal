@@ -810,3 +810,28 @@ describe('extend() merge edge cases', () => {
     expect(reads).toBe(0);
   });
 });
+
+describe('extend() prototype pollution regressions', () => {
+  it.each([
+    '{"__proto__":{"pollutedByExtend":true}}',
+    '{"constructor":{"prototype":{"pollutedByExtend":true}}}',
+    '{"nested":{"__proto__":{"pollutedByExtend":true}}}',
+    '{"items":[{"__proto__":{"pollutedByExtend":true}}]}',
+  ])('does not pollute prototypes when merging %s', (json) => {
+    for (const deep of [false, true]) {
+      const source = JSON.parse(json);
+      const target = extend(deep, {}, source);
+      expect(Object.getPrototypeOf(target)).toBe(Object.prototype);
+      expect(Object.prototype.hasOwnProperty.call(Object.prototype, 'pollutedByExtend')).toBe(false);
+      expect(({} as any).pollutedByExtend).toBeUndefined();
+      if (target.nested) {
+        expect(Object.getPrototypeOf(target.nested)).toBe(Object.prototype);
+        expect(target.nested.pollutedByExtend).toBeUndefined();
+      }
+      if (target.items) {
+        expect(Object.getPrototypeOf(target.items[0])).toBe(Object.prototype);
+        expect(target.items[0].pollutedByExtend).toBeUndefined();
+      }
+    }
+  });
+});
