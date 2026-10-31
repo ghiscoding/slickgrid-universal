@@ -308,6 +308,24 @@ describe('Service/Utilies', () => {
       expect(result).toBe(false);
     });
 
+    it('ignores inherited enumerable properties', () => {
+      expect(isEmptyObject(Object.create({ inherited: true }))).toBe(true);
+    });
+
+    it('returns false on the first own enumerable property', () => {
+      expect(isEmptyObject(Object.assign(Object.create({ inherited: true }), { own: true }))).toBe(false);
+    });
+
+    it('does not evaluate property getters', () => {
+      const value = Object.defineProperty({}, 'property', {
+        enumerable: true,
+        get: () => {
+          throw new Error('getter ran');
+        },
+      });
+      expect(isEmptyObject(value)).toBe(false);
+    });
+
     it('should return False when comparing against an object is either empty, null or undefined', () => {
       const result1 = isEmptyObject({});
       const result2 = isEmptyObject(null);

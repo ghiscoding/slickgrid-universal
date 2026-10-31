@@ -38,6 +38,7 @@ import {
   emptyElement,
   emptyObject,
   getHtmlStringOutput,
+  isEmptyObject,
   setDeepValue,
 } from '@slickgrid-universal/utils';
 import { SlickCompositeEditor } from './compositeEditor.factory.js';
@@ -608,7 +609,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   /** Cancel the Editing which will also close the modal window */
   async cancelEditing(): Promise<void> {
     let confirmed = true;
-    if (this.formValues && Object.keys(this.formValues).length > 0 && typeof this._options.onClose === 'function') {
+    if (this.formValues && !isEmptyObject(this.formValues) && typeof this._options.onClose === 'function') {
       confirmed = await this._options.onClose();
     }
 
@@ -999,7 +1000,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   /** Callback which processes a Mass Update or Mass Selection Changes */
   protected async handleMassSaving(modalType: 'mass-update' | 'mass-selection', executePostCallback: PlainFunc): Promise<void> {
-    if (!this.formValues || Object.keys(this.formValues).length === 0) {
+    if (!this.formValues || isEmptyObject(this.formValues)) {
       this.executeOnError({ type: 'warning', code: 'NO_CHANGES_DETECTED', message: 'Sorry we could not detect any changes.' });
     } else {
       const applyCallbackFnName = modalType === 'mass-update' ? 'applySaveMassUpdateChanges' : 'applySaveMassSelectionChanges';

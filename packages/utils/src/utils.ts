@@ -220,7 +220,12 @@ export function isEmptyObject(obj: any): boolean {
   if (obj === null || obj === undefined) {
     return true;
   }
-  return Object.entries(obj).length === 0;
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 export function isDefined<T>(value: T | undefined | null): value is T {
@@ -275,7 +280,7 @@ export function isNumber(value: any, strict = false): value is number {
 
 /** Check if an object is empty, it will also be considered empty when the input is null, undefined or isn't an object */
 export function isObjectEmpty(obj: unknown): boolean {
-  return !obj || (obj && typeof obj === 'object' && Object.keys(obj).length === 0);
+  return !obj || (typeof obj === 'object' && isEmptyObject(obj));
 }
 
 /** Parse any input (bool, number, string) and return a boolean or False when not possible */

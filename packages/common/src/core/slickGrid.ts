@@ -9,6 +9,7 @@ import {
   insertAfterElement,
   isDefined,
   isDefinedNumber,
+  isEmptyObject,
   isPrimitiveOrHTML,
   windowScrollPosition,
   type CSSStyleDeclarationWritable,
@@ -6829,7 +6830,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Refreshes geometry for all rendered colspans after column widths change. */
   protected updateRenderedColspanFragmentGeometry(): void {
     Object.entries(this.rowsCache).forEach(([rowId, cacheEntry]) => {
-      if (!Object.keys(cacheEntry.cellSpanFragments).length) {
+      if (isEmptyObject(cacheEntry.cellSpanFragments)) {
         return;
       }
       // Drain the row's render queue first, so the cell map is populated and the host can be
