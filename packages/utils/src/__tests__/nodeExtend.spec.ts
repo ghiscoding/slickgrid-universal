@@ -740,3 +740,73 @@ describe('extend() - extra tests', () => {
     expect(obj3).toEqual({ hello: 'world', deeper: { children: ['abc', 'cde'] }, method });
   });
 });
+
+describe('extend() merge edge cases', () => {
+  it('skips null and undefined source arguments', () => {
+    expect(extend({}, null, undefined, { value: 1 })).toEqual({ value: 1 });
+  });
+
+  it('reads target properties before source properties, including undefined values', () => {
+    const reads: string[] = [];
+    const target = {
+      get value() {
+        reads.push('target');
+        return 1;
+      },
+    };
+    const source = {
+      get value() {
+        reads.push('source');
+        return undefined;
+      },
+    };
+
+    expect(extend(true, target, source)).toBe(target);
+    expect(reads).toEqual(['target', 'source']);
+  });
+
+  it('copies inherited enumerable values and ignores undefined properties', () => {
+    const source = Object.assign(Object.create({ inherited: 2 }), { own: undefined });
+    const target = { own: 1 };
+    expect(extend(target, source)).toEqual({ own: 1, inherited: 2 });
+  });
+
+  it('preserves a sparse array merge and replaces it with an empty array', () => {
+    const source = Array(3);
+    source[1] = 'new';
+    const target = { items: ['first', 'second', 'third'] };
+    const items = target.items;
+
+    expect(extend(true, target, { items: source })).toEqual({ items: ['first', 'new', 'third'] });
+    expect(target.items).toBe(items);
+    expect(extend(true, target, { items: [] })).toEqual({ items: [] });
+    expect(target.items).not.toBe(items);
+  });
+
+  it('does not assign a source property that references the target', () => {
+    const target = { self: 'unchanged' };
+    expect(extend(true, target, { self: target })).toBe(target);
+    expect(target.self).toBe('unchanged');
+  });
+
+  it('preserves own __proto__ as data without changing the target prototype', () => {
+    const source = JSON.parse('{"__proto__":{"nested":1}}');
+    const target = extend(true, {}, source);
+    expect(Object.getPrototypeOf(target)).toBe(Object.prototype);
+    expect(Object.getOwnPropertyDescriptor(target, '__proto__')?.value).toEqual({ nested: 1 });
+    expect(({} as any).nested).toBeUndefined();
+  });
+
+  it('uses the descriptor value for an own __proto__ accessor without invoking it', () => {
+    let reads = 0;
+    const source = Object.defineProperty({}, '__proto__', {
+      enumerable: true,
+      get() {
+        reads++;
+        return { nested: 1 };
+      },
+    });
+    expect(extend(true, {}, source)).toEqual({});
+    expect(reads).toBe(0);
+  });
+});
