@@ -141,6 +141,17 @@ describe('stripTags()', () => {
     expect(stripTags(input as any, allowedTags as any, replacement)).toBe(expected);
   });
 
+  it.each([
+    ['prefix<b>middle</b>suffix', 'prefixmiddlesuffix'],
+    ['<b>x</b><i>y</i><br><em>z</em>', 'xyz'],
+    ['<b></b><i></i>', ''],
+    ['😀 before <b>中文 😀</b> after', '😀 before 中文 😀 after'],
+    ['prefix<b>middle</b>tail<unfinished', 'prefixmiddletail'],
+    ['a<!-- comment -->long tail', 'along tail'],
+  ])('copies text spans in %j without changing parser boundaries', (input, expected) => {
+    expect(stripTags(input)).toBe(expected);
+  });
+
   it('parses string allowlists independently on repeated calls', () => {
     for (let i = 0; i < 3; i++) {
       expect(stripTags('<b>x</b><i>y</i>', '<b><i>')).toBe('<b>x</b><i>y</i>');

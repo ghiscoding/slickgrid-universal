@@ -55,8 +55,15 @@ export function stripTags(
       if (char === '<') {
         state = STATE_HTML;
         tag_buffer = '<';
-      } else {
+      } else if (html[idx + 1] === '<') {
         output += char;
+      } else {
+        const nextTag = html.indexOf('<', idx + 1);
+        if (nextTag === -1) {
+          return output + html.slice(idx);
+        }
+        output += html.slice(idx, nextTag);
+        idx = nextTag - 1;
       }
     } else if (state === STATE_HTML) {
       switch (char) {
