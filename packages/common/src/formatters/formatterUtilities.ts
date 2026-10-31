@@ -26,22 +26,23 @@ export type NumberType = 'decimal' | 'currency' | 'percent' | 'regular';
  * also note that if there's already a Formatter on the column definition it will automatically use the Formatters.multiple and add the custom formatter into the `params: formatters: {}}`
  */
 export function autoAddEditorFormatterToColumnsWithEditor(columns: Column[], customEditableFormatter: Formatter): void {
-  if (Array.isArray(columns)) {
-    for (const columnDef of columns) {
-      if (columnDef.editor) {
-        if (columnDef.formatter && columnDef.formatter !== multipleFormatter && columnDef.formatter !== customEditableFormatter) {
-          const prevFormatter = columnDef.formatter;
-          columnDef.formatter = multipleFormatter;
-          columnDef.params = { ...columnDef.params, formatters: [prevFormatter, customEditableFormatter] };
-        } else if (columnDef.formatter && columnDef.formatter === multipleFormatter && columnDef.params) {
-          // before adding the formatter, make sure it's not yet in the params.formatters list, we wouldn't want to add it multiple times
-          if (columnDef.params.formatters.findIndex((formatter: Formatter) => formatter === customEditableFormatter) === -1) {
-            columnDef.params.formatters = [...columnDef.params.formatters, customEditableFormatter];
-          }
-        } else {
-          columnDef.formatter = customEditableFormatter;
-        }
+  if (!Array.isArray(columns)) {
+    return;
+  }
+  for (const columnDef of columns) {
+    if (!columnDef.editor) {
+      continue;
+    }
+    if (columnDef.formatter && columnDef.formatter !== multipleFormatter && columnDef.formatter !== customEditableFormatter) {
+      const prevFormatter = columnDef.formatter;
+      columnDef.formatter = multipleFormatter;
+      columnDef.params = { ...columnDef.params, formatters: [prevFormatter, customEditableFormatter] };
+    } else if (columnDef.formatter === multipleFormatter && columnDef.params) {
+      if (!columnDef.params.formatters.includes(customEditableFormatter)) {
+        columnDef.params.formatters = [...columnDef.params.formatters, customEditableFormatter];
       }
+    } else {
+      columnDef.formatter = customEditableFormatter;
     }
   }
 }
@@ -194,6 +195,7 @@ export function getValueFromParamsOrFormatterOptions(
 /** From a FieldType, return the associated date Formatter */
 export function getAssociatedDateFormatter(fieldType: FieldType, defaultSeparator: string): Formatter {
   const defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, { withZeroPadding: true });
+  let separatorRegex: RegExp | undefined;
 
   return (_row, _cell, value, columnDef, _dataContext, grid) => {
     const gridOptions = (grid.getOptions?.() ?? {}) as GridOption;
@@ -205,8 +207,8 @@ export function getAssociatedDateFormatter(fieldType: FieldType, defaultSeparato
     // user can customize the separator through the "formatterOptions"
     // if that is the case we need to replace the default "/" to the new separator
     if (outputDate && customSeparator !== defaultSeparator) {
-      const regex = new RegExp(defaultSeparator, 'ig'); // find separator globally
-      outputDate = outputDate.replace(regex, customSeparator);
+      separatorRegex ??= new RegExp(defaultSeparator, 'ig');
+      outputDate = outputDate.replace(separatorRegex, customSeparator);
     }
 
     return outputDate;
@@ -274,10 +276,7 @@ export function exportWithFormatterWhenDefined<T = any>(
   }
 
   const output = parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
-  if (skipSanitization) {
-    return output;
-  }
-  return exportOptions?.sanitizeDataExport && typeof output === 'string' ? stripTags(output) : output;
+  return !skipSanitization && exportOptions?.sanitizeDataExport && typeof output === 'string' ? stripTags(output) : output;
 }
 
 /**
@@ -298,13 +297,11 @@ export function parseFormatterWhenExist<T = any>(
   dataContext: T,
   grid: SlickGrid
 ): string {
-  // Resolve the top-level property name for dot-notation fields (e.g. "address.city" → "address").
-  // Only call split() when a dot is actually present — avoids an array allocation per call in the common case.
+  // Formatters receive the top-level value for dotted fields (e.g. "address.city" → "address").
   const fieldId = columnDef.field || columnDef.id || '';
   const fieldProperty = typeof fieldId === 'string' && fieldId.indexOf('.') > 0 ? fieldId.split('.')[0] : fieldId;
 
-  // Read the cell value once — reused for both the formatter call and the no-formatter fallback,
-  // avoiding the second hasOwnProperty lookup that the original performed in the else branch.
+  // Resolve the cell value once for both the formatter and raw-value fallback.
   const hasOwnProp = !!dataContext && Object.prototype.hasOwnProperty.call(dataContext, fieldProperty as PropertyKey);
   const cellValue = hasOwnProp ? (dataContext as any)[fieldProperty] : null;
 
@@ -317,17 +314,16 @@ export function parseFormatterWhenExist<T = any>(
       : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text;
     output = getHtmlStringOutput(cellResult as string | HTMLElement | DocumentFragment);
   } else {
-    // No formatter: return the raw field value (null/undefined normalised below)
+    // Without a formatter, return the original value.
     output = cellValue;
   }
 
-  // Normalise null/undefined to empty string (loose equality catches both)
+  // Normalize null and undefined without changing other falsy values.
   if (output == null) {
     return '';
   }
 
-  // Replace Object.entries(output).length === 0 (allocates a [key,value][] array) with
-  // Object.keys which allocates only strings, and short-circuits on the first key found.
+  // Empty objects become an empty string; Date values must remain intact.
   if (typeof output === 'object' && !(output instanceof Date) && Object.keys(output).length === 0) {
     return '';
   }

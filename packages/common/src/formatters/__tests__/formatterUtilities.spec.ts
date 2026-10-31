@@ -9,6 +9,7 @@ import {
   exportWithFormatterWhenDefined,
   getAssociatedDateFormatter,
   getBaseDateFormatter,
+  getCopyCellValue,
   getValueFromParamsOrFormatterOptions,
 } from '../formatterUtilities.js';
 import { multipleFormatter } from '../multipleFormatter.js';
@@ -61,6 +62,10 @@ describe('formatterUtilities', () => {
           formatter: complexObjectFormatter,
         },
       ];
+    });
+
+    it('ignores a non-array columns value', () => {
+      expect(() => autoAddEditorFormatterToColumnsWithEditor(null as any, customEditableInputFormatter)).not.toThrow();
     });
 
     it('should have custom editor formatter with correct structure', () => {
@@ -301,6 +306,12 @@ describe('formatterUtilities', () => {
     });
   });
 
+  it('uses the query-field getter when copying a cell', () => {
+    const grid = { getOptions: () => ({}) } as SlickGrid;
+    const column = { field: 'name', queryFieldNameGetterFn: () => 'details.name' } as Column;
+    expect(getCopyCellValue({ grid, column, dataContext: { name: 'raw', details: { name: '⮟  Nested' } } })).toBe('Nested');
+  });
+
   describe('getValueFromParamsOrGridOptions function', () => {
     it('should return options found in the Grid Option when not found in Column Definition "params" property', () => {
       const gridOptions = { formatterOptions: { minDecimal: 2 } } as GridOption;
@@ -323,6 +334,18 @@ describe('formatterUtilities', () => {
       const output = getValueFromParamsOrFormatterOptions('minDecimal', { field: 'column1' } as Column, {} as unknown as GridOption, defaultValue);
       expect(output).toBe(defaultValue);
     });
+  });
+
+  it('respects changes to the date separator after creating a formatter', () => {
+    const options = { formatterOptions: { dateSeparator: '.' } } as GridOption;
+    const grid = { getOptions: () => options } as SlickGrid;
+    const formatter = getAssociatedDateFormatter('dateIso', '-');
+    const column = { type: 'dateIso' } as Column;
+    expect(formatter(0, 0, '2002-01-01', column, {}, grid)).toBe('2002.01.01');
+    options.formatterOptions!.dateSeparator = '/';
+    expect(formatter(0, 0, '2002-01-01', column, {}, grid)).toBe('2002/01/01');
+    options.formatterOptions!.dateSeparator = '-';
+    expect(formatter(0, 0, '2002-01-01', column, {}, grid)).toBe('2002-01-01');
   });
 
   describe('getAssociatedDateFormatter function', () => {
