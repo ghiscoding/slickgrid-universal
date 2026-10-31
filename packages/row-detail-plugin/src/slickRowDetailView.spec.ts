@@ -134,12 +134,12 @@ describe('SlickRowDetailView plugin', () => {
           __detailContent: '<input value="Initial">',
         }))
       );
-      grid = new ActualGrid(container, dataView, mockColumns, {
+      grid = new ActualGrid(container, dataView, mockColumns as any, {
         rowHeight: 25,
         devMode: { ownerNodeIndex: 0 },
-        rowDetailView: { columnId: 'firstName', panelRows: 2, loadOnce: true },
+        rowDetailView: { columnId: 'firstName', panelRows: 2, loadOnce: true } as any,
       });
-      plugin.init(grid);
+      plugin.init(grid as unknown as SlickGrid);
     });
 
     afterEach(() => {
@@ -174,7 +174,7 @@ describe('SlickRowDetailView plugin', () => {
     it('caps inserted padding so collapse restores the original dataset', () => {
       const item = dataView.getItemById(2);
       item.__collapsed = true;
-      plugin.setOptions({ panelRows: 6, maxRows: 2, process: () => undefined });
+      plugin.setOptions({ panelRows: 6, maxRows: 2, process: () => undefined as any });
       plugin.expandDetailView(2);
       expect(item.__sizePadding).toBe(2);
       expect(dataView.getLength()).toBe(22);
@@ -194,7 +194,7 @@ describe('SlickRowDetailView plugin', () => {
       Object.defineProperty(viewport, 'clientWidth', { configurable: true, value: 420 });
       for (const left of [-152, 172]) {
         vi.spyOn(canvas, 'getBoundingClientRect').mockReturnValue({ left } as DOMRect);
-        grid.onScroll.notify({ scrollLeft: 10 - left, scrollTop: 0, grid });
+        grid.onScroll.notify({ scrollLeft: 10 - left, scrollTop: 0, scrollHeight: 0, grid } as any);
         expect(panel.style.transform).toBe(`translateX(${10 - left}px)`);
         expect(panel.style.width).toBe('420px');
       }
@@ -221,16 +221,16 @@ describe('SlickRowDetailView plugin', () => {
       expect(positionSpy).toHaveBeenCalledTimes(1);
       expect(topSpy).toHaveBeenCalledTimes(1);
       positionSpy.mockClear();
-      grid.onScroll.notify({ scrollLeft: 0, scrollTop: 10, grid });
+      grid.onScroll.notify({ scrollLeft: 0, scrollTop: 10, scrollHeight: 0, grid } as any);
       expect(positionSpy).not.toHaveBeenCalled();
       vi.runOnlyPendingTimers();
       expect(positionSpy).not.toHaveBeenCalled();
       grid.render();
       expect(positionSpy).toHaveBeenCalledTimes(1);
       positionSpy.mockClear();
-      grid.onScroll.notify({ scrollLeft: 50, scrollTop: 10, grid });
+      grid.onScroll.notify({ scrollLeft: 50, scrollTop: 10, scrollHeight: 0, grid } as any);
       expect(positionSpy).toHaveBeenCalledTimes(1);
-      grid.onScroll.notify({ scrollLeft: 50, scrollTop: 20, grid });
+      grid.onScroll.notify({ scrollLeft: 50, scrollTop: 20, scrollHeight: 0, grid } as any);
       expect(positionSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -261,7 +261,7 @@ describe('SlickRowDetailView plugin', () => {
       panel.appendChild(createDomElement('span', { textContent: 'Live content' }));
       plugin.saveDetailView(item);
 
-      grid.onScroll.notify({ scrollLeft: 0, scrollTop: 0, grid });
+      grid.onScroll.notify({ scrollLeft: 0, scrollTop: 0, scrollHeight: 0, grid } as any);
       grid.render();
 
       expect(panel.querySelector('input')).toBe(input);
@@ -415,10 +415,38 @@ describe('SlickRowDetailView plugin', () => {
     const mockItem = { id: 1, firstName: 'John', lastName: 'Doe' };
     const mockProcess = vi.fn();
     vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
-      0: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-      1: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-      2: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-      3: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      0: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
+      1: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
+      2: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
+      3: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
     });
     const invalidateRowsSpy = vi.spyOn(gridStub, 'invalidateRows');
     const renderSpy = vi.spyOn(gridStub, 'render');
@@ -450,10 +478,38 @@ describe('SlickRowDetailView plugin', () => {
     const mockItem = { __detailViewLoaded: true, __detailContent: 'loading...', id: 1, firstName: 'John', lastName: 'Doe' };
     const mockProcess = vi.fn();
     vi.spyOn(gridStub, 'getRowCache').mockReturnValueOnce({
-      0: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-      1: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-      2: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-      3: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      0: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
+      1: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
+      2: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
+      3: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
     });
     const invalidateRowsSpy = vi.spyOn(gridStub, 'invalidateRows');
     const renderSpy = vi.spyOn(gridStub, 'render');
@@ -633,11 +689,46 @@ describe('SlickRowDetailView plugin', () => {
     // triggering onRenderRows should end up invalidating an empty set of rows
     const invalidateSpy = vi.spyOn(gridStub, 'invalidateRows');
     vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
-      121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-      122: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-      123: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-      124: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-      125: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+      121: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
+      122: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
+      123: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
+      124: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
+      125: {
+        rowNode: [document.createElement('div')],
+        cellColSpans: [],
+        cellNodesByColumnIdx: [],
+        cellRenderQueue: [],
+        cellSpanFragments: {},
+        cellSpanSegments: {},
+      },
     });
     vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(1);
     dataviewStub.onRowsChanged.notify(
@@ -682,7 +773,7 @@ describe('SlickRowDetailView plugin', () => {
     (plugin as any).refreshOverlayPanel({ ...itemMock, __detailContent: '<span>String</span>' });
     expect(panel.innerHTML).toBe('<span>String</span>');
 
-    vi.spyOn(gridStub, 'getColumnIndex').mockReturnValueOnce(undefined);
+    vi.spyOn(gridStub, 'getColumnIndex').mockReturnValueOnce(undefined as any);
     plugin.setOptions({ columnId: undefined });
     (plugin as any).refreshOverlayPanel({ ...itemMock, __sizePadding: 0 });
     expect(panel.style.height).toBe('0px');
@@ -1401,14 +1492,56 @@ describe('SlickRowDetailView plugin', () => {
         .mockReturnValueOnce(123);
       vi.spyOn(gridStub, 'getRowCache')
         .mockReturnValue({
-          121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-          122: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-          123: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-          124: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-          125: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+          121: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
+          122: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
+          123: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
+          124: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
+          125: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
         })
         .mockReturnValueOnce({
-          121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+          121: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
         });
       vi.spyOn(gridStub, 'getRenderedRange')
         .mockReturnValue({ top: 120, bottom: 150, left: 33, right: 18 } as any)
@@ -1463,13 +1596,48 @@ describe('SlickRowDetailView plugin', () => {
 
       vi.spyOn(gridStub, 'getRowCache')
         .mockReturnValue({
-          121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-          122: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-          124: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-          125: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+          121: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
+          122: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
+          124: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
+          125: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
         })
         .mockReturnValueOnce({
-          121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+          121: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
         });
       vi.spyOn(gridStub, 'getRenderedRange')
         .mockReturnValue({ top: 120, bottom: 150, left: 33, right: 18 } as any)
@@ -1525,7 +1693,14 @@ describe('SlickRowDetailView plugin', () => {
       vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(2);
       vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
-        2: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        2: {
+          rowNode: [document.createElement('div')],
+          cellColSpans: [],
+          cellNodesByColumnIdx: [],
+          cellRenderQueue: [],
+          cellSpanFragments: {},
+          cellSpanSegments: {},
+        },
       });
       vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 0, bottom: 10, left: 33, right: 18 } as any);
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({
@@ -1562,7 +1737,14 @@ describe('SlickRowDetailView plugin', () => {
       vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(2);
       vi.spyOn(gridStub, 'getRowCache').mockReturnValue({
-        2: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        2: {
+          rowNode: [document.createElement('div')],
+          cellColSpans: [],
+          cellNodesByColumnIdx: [],
+          cellRenderQueue: [],
+          cellSpanFragments: {},
+          cellSpanSegments: {},
+        },
       });
       vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 0, bottom: 10, left: 33, right: 18 } as any);
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({
@@ -1600,14 +1782,56 @@ describe('SlickRowDetailView plugin', () => {
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(122);
       vi.spyOn(gridStub, 'getRowCache')
         .mockReturnValue({
-          121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-          122: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-          123: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-          124: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-          125: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+          121: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
+          122: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
+          123: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
+          124: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
+          125: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
         })
         .mockReturnValueOnce({
-          121: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+          121: {
+            rowNode: [document.createElement('div')],
+            cellColSpans: [],
+            cellNodesByColumnIdx: [],
+            cellRenderQueue: [],
+            cellSpanFragments: {},
+            cellSpanSegments: {},
+          },
         });
       vi.spyOn(gridStub, 'getRenderedRange')
         .mockReturnValue({ top: 120, bottom: 126, left: 33, right: 18 } as any)
@@ -1705,10 +1929,38 @@ describe('SlickRowDetailView plugin', () => {
       vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(3);
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(2);
       vi.spyOn(gridStub, 'getRowCache').mockReturnValueOnce({
-        0: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-        1: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-        2: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
-        3: { rowNode: [document.createElement('div')], cellColSpans: [], cellNodesByColumnIdx: [], cellRenderQueue: [] },
+        0: {
+          rowNode: [document.createElement('div')],
+          cellColSpans: [],
+          cellNodesByColumnIdx: [],
+          cellRenderQueue: [],
+          cellSpanFragments: {},
+          cellSpanSegments: {},
+        },
+        1: {
+          rowNode: [document.createElement('div')],
+          cellColSpans: [],
+          cellNodesByColumnIdx: [],
+          cellRenderQueue: [],
+          cellSpanFragments: {},
+          cellSpanSegments: {},
+        },
+        2: {
+          rowNode: [document.createElement('div')],
+          cellColSpans: [],
+          cellNodesByColumnIdx: [],
+          cellRenderQueue: [],
+          cellSpanFragments: {},
+          cellSpanSegments: {},
+        },
+        3: {
+          rowNode: [document.createElement('div')],
+          cellColSpans: [],
+          cellNodesByColumnIdx: [],
+          cellRenderQueue: [],
+          cellSpanFragments: {},
+          cellSpanSegments: {},
+        },
       });
       vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 20, bottom: 50, left: 33, right: 18 } as any);
       divContainer.appendChild(cellDetailViewElm);

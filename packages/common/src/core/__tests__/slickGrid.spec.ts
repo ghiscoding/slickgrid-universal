@@ -246,7 +246,7 @@ describe('SlickGrid core file', () => {
       [10, 0],
       [10, 25],
     ])('should replace a pending %i ms throttle with a %i ms throttle', (initialPeriod, newPeriod) => {
-      grid = new SlickGrid(container, [], [], { ...defaultOptions, scrollRenderThrottling: initialPeriod });
+      grid = new SlickGrid<any, Column>(container, [], [], { ...defaultOptions, scrollRenderThrottling: initialPeriod });
       const renderSpy = vi.spyOn(grid, 'render');
       const oldThrottle = (grid as any).scrollThrottle;
       oldThrottle.enqueue();

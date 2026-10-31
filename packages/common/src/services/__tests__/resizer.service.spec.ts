@@ -917,7 +917,7 @@ describe('Resizer Service', () => {
             return { width: this.font.includes('20px') ? 60 : 30 };
           },
         };
-        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue(ctx as CanvasRenderingContext2D);
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue(ctx as unknown as CanvasRenderingContext2D);
         try {
           service.init(gridStub, divContainer);
           service.resizeColumnsByCellContent(true);
