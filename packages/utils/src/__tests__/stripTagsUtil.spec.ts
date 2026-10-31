@@ -118,7 +118,51 @@ describe('stripTags()', () => {
     });
   });
 
+  it.each([
+    ['plain text', undefined, undefined, 'plain text'],
+    ['', undefined, undefined, ''],
+    [null, undefined, undefined, ''],
+    [undefined, undefined, undefined, ''],
+    [42, undefined, undefined, '42'],
+    [true, undefined, undefined, 'true'],
+    [Infinity, undefined, undefined, 'Infinity'],
+    [[42], undefined, undefined, '42'],
+    ['before<unfinished', undefined, undefined, 'before'],
+    ['before<!-- unfinished', undefined, '!', 'before'],
+    ['a<\nb', undefined, undefined, 'a< b'],
+    ['<STRONG>x</STRONG>', '<strong>', undefined, '<STRONG>x</STRONG>'],
+    ['<strong>x</strong>', ['STRONG'], undefined, 'x'],
+    ['<>x</>', ['strong'], '!', '!x!'],
+    ['<b>x</b>', 42, undefined, 'x'],
+    ['<!-- comment -->x<b>y</b>', [], '!', 'x!y!'],
+    ['<a title="x > y < z">ok</a>', ['a'], undefined, '<a title="x  y  z">ok</a>'],
+    ["<a title='x > y < z'>ok</a>", ['a'], undefined, "<a title='x  y  z'>ok</a>"],
+  ])('preserves edge-case behavior for %j with allowlist %j', (input, allowedTags, replacement, expected) => {
+    expect(stripTags(input as any, allowedTags as any, replacement)).toBe(expected);
+  });
+
+  it.each([
+    ['prefix<b>middle</b>suffix', 'prefixmiddlesuffix'],
+    ['<b>x</b><i>y</i><br><em>z</em>', 'xyz'],
+    ['<b></b><i></i>', ''],
+    ['😀 before <b>中文 😀</b> after', '😀 before 中文 😀 after'],
+    ['prefix<b>middle</b>tail<unfinished', 'prefixmiddletail'],
+    ['a<!-- comment -->long tail', 'along tail'],
+  ])('copies text spans in %j without changing parser boundaries', (input, expected) => {
+    expect(stripTags(input)).toBe(expected);
+  });
+
+  it('parses string allowlists independently on repeated calls', () => {
+    for (let i = 0; i < 3; i++) {
+      expect(stripTags('<b>x</b><i>y</i>', '<b><i>')).toBe('<b>x</b><i>y</i>');
+    }
+  });
+
   describe('with errors', () => {
+    it('rejects NaN instead of converting it to text', () => {
+      expect(() => stripTags(NaN)).toThrow(TypeError);
+    });
+
     it('should throw when input is not a string neither a number', () => {
       expect(() => stripTags(['type-confusion'] as any)).toThrow(`'html' parameter must be a string`);
     });
