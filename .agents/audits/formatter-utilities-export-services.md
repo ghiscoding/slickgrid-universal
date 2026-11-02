@@ -155,9 +155,10 @@ Confirmed the 2 "unverified observations" with failing tests first (7 tests), th
 - `excel-builder-vanilla` (5.3.1) already accepts `zipOptions` (fflate `level` 0–9, default 6) in
   `createExcelFileStream()`, `createExcelFile()` & `downloadExcelFile()`, but SlickGrid doesn't pass it through
   (`excelExport.service.ts` calls them without `zipOptions`, and `ExcelExportOption` has no such option).
-- Planned first in `excel-builder-vanilla`: benchmark & document the time vs file size trade-off of each `level` for
-  large worksheets.
-- Possible SlickGrid task once those numbers exist: add an optional `excelExportOptions.zipOptions` passed to both
+- Only SlickGrid needs code changes, `excel-builder-vanilla` already supports it. Optional in `excel-builder-vanilla`:
+  benchmark & document the time vs file size trade-off of each `level` for large worksheets (could also be measured
+  directly in SlickGrid with Example 03).
+- Possible SlickGrid task: add an optional `excelExportOptions.zipOptions` passed to both
   `createExcelFileStream()` & `downloadExcelFile()` (additive, default unchanged), document it in `export-to-excel.md`
   with the measured trade-off (e.g. `zipOptions: { level: 1 }` for faster large exports with a bigger file), and
   measure Example 03 (500K rows) before/after.
