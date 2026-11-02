@@ -44,7 +44,7 @@ $env:PDF_BENCH_REPORT="$env:TEMP/pdf-before.json"; pnpm bench:pdf-export
 $env:PDF_BENCH_BASELINE="$env:TEMP/pdf-before.json"; $env:PDF_BENCH_REPORT="$env:TEMP/pdf-after.json"; pnpm bench:pdf-export
 ```
 
-Use `PDF_BENCH_ROWS` to change the row count.
+Use `PDF_BENCH_ROWS` to change the row count. AutoTable checksums include the full headers, body, and column styles, plus header alignment applied by the hook. When `PDF_BENCH_BASELINE` is set, a missing baseline file or scenario, a different row count, or a checksum mismatch fails the benchmark. Regenerate older baseline reports with this benchmark version before comparing revisions, since the AutoTable checksum calculation has changed.
 
 ## Excel export
 

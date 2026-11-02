@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, describe, expect, test, vi } from 'vitest';
@@ -27,7 +27,7 @@ vi.mock('../../packages/pdf-export/node_modules/jspdf', () => {
     pdfStub.checksum = hash;
   }
   function autoTableStub(opts: any): void {
-    hashText(`${JSON.stringify(opts.body).length}${JSON.stringify(opts.columnStyles)}`, 0, 0);
+    hashText(JSON.stringify({ head: opts.head, body: opts.body, columnStyles: opts.columnStyles }), 0, 0);
     // header cells alignment is applied by the didParseCell hook
     for (let index = 0; index < opts.body[0].length; index++) {
       const cell = { styles: {} as any };
@@ -137,8 +137,12 @@ describe(`PdfExportService (${ROW_COUNT} rows x ${COLUMN_COUNT} columns)`, () =>
 afterAll(() => {
   // make sure the jsPDF stub was used (a real jsPDF would not compute any checksum)
   expect(results.every((result) => result.checksum !== 0)).toBe(true);
+  const baselineReport = baselinePath ? JSON.parse(readFileSync(baselinePath, 'utf8')) : undefined;
+  const baseline: Result[] = baselineReport?.results ?? [];
+  if (baselineReport) {
+    expect(baselineReport.rows, 'Baseline and current benchmark must use the same row count').toBe(ROW_COUNT);
+  }
   writeFileSync(reportPath, JSON.stringify({ node: process.version, rows: ROW_COUNT, results }, null, 2));
-  const baseline: Result[] = baselinePath && existsSync(baselinePath) ? JSON.parse(readFileSync(baselinePath, 'utf8')).results : [];
   const lines = results.map(({ name, medianMs, p95Ms, checksum }) => {
     const before = baseline.find((b) => b.name === name);
     const delta = before
@@ -149,4 +153,11 @@ afterAll(() => {
   });
   // Vitest swallows console output in afterAll hooks of bench runs, so write the summary directly
   process.stdout.write(`\n${lines.join('\n')}\n\nPDF export benchmark report written to ${reportPath}\n`);
+  if (baselineReport) {
+    for (const { name, checksum } of results) {
+      const before = baseline.find((result) => result.name === name);
+      expect(before, `Missing baseline scenario: ${name}`).toBeDefined();
+      expect(checksum, `Output differs from baseline: ${name}`).toBe(before!.checksum);
+    }
+  }
 });
