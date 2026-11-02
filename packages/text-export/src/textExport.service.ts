@@ -483,8 +483,6 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * @param itemObj
    */
   protected readGroupedTotalRow(columns: Column[], itemObj: any): string {
-    const delimiter = this._exportOptions.delimiter;
-    const format = this._exportOptions.format;
     const groupingAggregatorRowText = this._exportOptions.groupingAggregatorRowText || '';
     const exportQuoteWrapper = this._exportQuoteWrapper;
     const outputStrings = [`${exportQuoteWrapper}${groupingAggregatorRowText}${exportQuoteWrapper}`];
@@ -499,11 +497,14 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
       }
 
-      // sanitization is already handled by formatter utility
+      // does the user want to sanitize the output data (remove HTML tags)?
+      if ((columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) && typeof itemData === 'string') {
+        itemData = stripTags(itemData);
+      }
 
-      if (format === 'csv') {
+      if (this._fileFormat === 'csv') {
         // when CSV we also need to escape double quotes twice, so a double quote " becomes 2x double quotes ""
-        itemData = itemData.toString().replace(/"/gi, `""`);
+        itemData = itemData.toString().replace(/"/g, `""`);
       }
       // add the column (unless user wants to skip it)
       if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
@@ -511,6 +512,6 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
       }
     });
 
-    return outputStrings.join(delimiter);
+    return outputStrings.join(this._delimiter);
   }
 }
