@@ -4,6 +4,7 @@ import type {
   ContainerService,
   ExcelExportOption,
   ExcelGroupValueParserArgs,
+  ExportCellReader,
   ExternalResource,
   FileType,
   GetDataValueCallback,
@@ -16,13 +17,7 @@ import type {
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import {
-  Constants,
-  exportWithFormatterWhenDefined,
-  getColumnFieldType,
-  getTranslationPrefix,
-  isColumnDateType,
-} from '@slickgrid-universal/common';
+import { Constants, createExportCellReader, getColumnFieldType, getTranslationPrefix, isColumnDateType } from '@slickgrid-universal/common';
 import {
   addWhiteSpaces,
   createDomElement,
@@ -50,6 +45,8 @@ interface ExcelColumnExportCache {
   exportOptions: ExcelExportOption;
   fieldProperty: string;
   hasComplexSpanning: boolean;
+  /** formatted cell reader, only defined when the column requires a formatter for the export */
+  readCell?: ExportCellReader;
   requiresFormatter: boolean;
   sanitizeDataExport: boolean;
 }
@@ -620,12 +617,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           fieldProperty = props.length > 0 ? props[0] : columnDef.field;
         }
 
+        const requiresFormatter = !!(columnDef.exportCustomFormatter || (isEvaluatingFormatter && columnDef.formatter));
         cache.set(String(columnDef.id), {
           autoDetectCellFormat: columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat,
           exportOptions,
           fieldProperty,
           hasComplexSpanning,
-          requiresFormatter: !!(columnDef.exportCustomFormatter || (isEvaluatingFormatter && columnDef.formatter)),
+          // sanitization is skipped here since it's done later in the excel export flow
+          readCell: requiresFormatter ? createExportCellReader(columnDef, this._grid, exportOptions, true) : undefined,
+          requiresFormatter,
           sanitizeDataExport: !!(columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport),
         });
       }
@@ -829,16 +829,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
 
         if (itemData === undefined) {
-          if (columnCachedData?.requiresFormatter) {
-            itemData = exportWithFormatterWhenDefined(
-              row,
-              col,
-              columnDef,
-              itemObj,
-              this._grid,
-              columnCachedData.exportOptions ?? columnDef.excelExportOptions ?? this._excelExportOptions,
-              true
-            );
+          if (columnCachedData?.readCell) {
+            itemData = columnCachedData.readCell(row, col, itemObj);
           } else {
             const fieldProperty = columnCachedData?.fieldProperty ?? String(columnDef.field || columnDef.id);
             itemData = this.getRawCellValue(itemObj, fieldProperty);

@@ -6,6 +6,7 @@ import { complexObjectFormatter } from '../complexObjectFormatter.js';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
   copyCellToClipboard,
+  createExportCellReader,
   exportWithFormatterWhenDefined,
   getAssociatedDateFormatter,
   getBaseDateFormatter,
@@ -308,8 +309,20 @@ describe('formatterUtilities', () => {
 
   it('uses the query-field getter when copying a cell', () => {
     const grid = { getOptions: () => ({}) } as SlickGrid;
-    const column = { field: 'name', queryFieldNameGetterFn: () => 'details.name' } as Column;
+    const column = { id: 'name', field: 'name', queryFieldNameGetterFn: () => 'details.name' } as Column;
     expect(getCopyCellValue({ grid, column, dataContext: { name: 'raw', details: { name: '⮟  Nested' } } })).toBe('Nested');
+  });
+
+  it('removes the unwanted U+034F character but keeps its surrounding spaces when copying a cell', () => {
+    const grid = { getOptions: () => ({}) } as SlickGrid;
+    const column = { field: 'name' } as Column;
+    expect(getCopyCellValue({ grid, column, dataContext: { name: 'Task\u034f 1' } })).toBe('Task 1');
+  });
+
+  it('returns a non-string cell value as is when copying a cell', () => {
+    const grid = { getOptions: () => undefined } as unknown as SlickGrid;
+    const column = { field: 'age' } as Column;
+    expect(getCopyCellValue({ grid, column, dataContext: { age: 45 } })).toBe(45);
   });
 
   describe('getValueFromParamsOrGridOptions function', () => {
@@ -631,6 +644,54 @@ describe('formatterUtilities', () => {
           // Column definition should take precedence
           expect(output).toBe('Bold Text');
         });
+      });
+
+      it('should convert a non-string formatter result (e.g. number) into a string', () => {
+        const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, formatter: () => 45 as any }, mockItem, gridStub as SlickGrid, {
+          exportWithFormatter: true,
+        });
+        expect(output).toBe('45');
+      });
+    });
+
+    describe('createExportCellReader method', () => {
+      it('should return a reader producing the same output as exportWithFormatterWhenDefined for every row', () => {
+        const items = [mockItem, { ...mockItem, firstName: null }, { ...mockItem, firstName: 'jane' }];
+        const exportOptions = { exportWithFormatter: true };
+        const readCell = createExportCellReader(mockColumn, gridStub as SlickGrid, exportOptions);
+
+        items.forEach((item, row) => {
+          expect(readCell(row, 1, item)).toBe(exportWithFormatterWhenDefined(row, 1, mockColumn, item, gridStub as SlickGrid, exportOptions));
+        });
+        expect(readCell(0, 1, mockItem)).toBe('JOHN');
+        expect(readCell(1, 1, items[1])).toBe('');
+      });
+
+      it('should return the raw value when exportWithFormatter is not enabled, including a dotted field complex object', () => {
+        expect(createExportCellReader(mockColumn, gridStub as SlickGrid, {})(0, 1, mockItem)).toBe('John');
+        expect(createExportCellReader({ ...mockColumn, field: 'address.zip' }, gridStub as SlickGrid)(0, 1, mockItem)).toEqual({ zip: 12345 });
+      });
+
+      it('should read the value from a numeric column id when the column has no field', () => {
+        const column = { id: 5, name: 'Index' } as unknown as Column;
+        expect(createExportCellReader(column, gridStub as SlickGrid)(0, 1, { 5: 'first' })).toBe('first');
+      });
+
+      it('should use the exportCustomFormatter when the item is defined, otherwise fallback to the column formatter', () => {
+        const column = { ...mockColumn, exportWithFormatter: true, exportCustomFormatter: myBoldHtmlFormatter };
+        const readCell = createExportCellReader(column, gridStub as SlickGrid);
+
+        expect(readCell(0, 1, mockItem)).toBe('<b>John</b>');
+        expect(readCell(0, 1, null)).toBe('');
+      });
+
+      it('should sanitize the output only when "sanitizeDataExport" is enabled and sanitization is not skipped', () => {
+        const column = { ...mockColumn, exportWithFormatter: true, formatter: () => '<span>Bold</span>' };
+
+        expect(createExportCellReader(column, gridStub as SlickGrid, { sanitizeDataExport: true })(0, 1, mockItem)).toBe('Bold');
+        expect(createExportCellReader(column, gridStub as SlickGrid, { sanitizeDataExport: true }, true)(0, 1, mockItem)).toBe('<span>Bold</span>');
+        expect(createExportCellReader(mockColumn, gridStub as SlickGrid, { sanitizeDataExport: true })(0, 1, mockItem)).toBe('John');
+        expect(createExportCellReader({ ...mockColumn, field: 'age' }, gridStub as SlickGrid, { sanitizeDataExport: true })(0, 1, mockItem)).toBe(45);
       });
     });
   });

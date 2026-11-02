@@ -22,6 +22,19 @@ pnpm bench:data-view --compare /tmp/slick-dataview-before.json
 
 Use the relative results rather than absolute operations per second. Repeat the benchmark at least three times and treat differences smaller than the reported relative margin of error as inconclusive.
 
+## Formatter utilities
+
+The formatter utilities benchmark measures the per-cell export path (`exportWithFormatterWhenDefined()` and the per-column `createExportCellReader()`) used by the Excel, PDF and Text export services, with raw values, custom formatters and built-in number & date formatters (20,000 rows in jsdom). It also covers `retrieveFormatterOptions()` and `getCopyCellValue()`.
+
+Save a baseline report from the baseline revision, then compare the working tree against it (PowerShell syntax shown, use `VAR=value` prefixes in bash):
+
+```sh
+$env:FORMATTER_BENCH_REPORT="$env:TEMP/formatter-before.json"; pnpm bench:formatter-utils
+$env:FORMATTER_BENCH_BASELINE="$env:TEMP/formatter-before.json"; $env:FORMATTER_BENCH_REPORT="$env:TEMP/formatter-after.json"; pnpm bench:formatter-utils
+```
+
+The summary prints the median and p95 of 25 samples per scenario and the delta against the baseline median. Use `FORMATTER_BENCH_ROWS` to change the row count. The `createExportCellReader` scenarios are skipped on revisions where that function doesn't exist.
+
 ## Excel export
 
 The Excel export benchmark bundles the production sources and measures export preparation and XLSX serialization in Node + jsdom (5,000 rows × 20 columns) for raw values, formatters, and a warm formatted-data cache. It also verifies that all modes produce identical worksheet data.

@@ -18,6 +18,8 @@ import { multipleFormatter } from './multipleFormatter.js';
 
 export type FormatterType = 'group' | 'cell';
 export type NumberType = 'decimal' | 'currency' | 'percent' | 'regular';
+/** reads and returns the formatted export output of a cell */
+export type ExportCellReader<T = any> = (row: number, col: number, dataContext: T) => string;
 
 /**
  * Automatically add a Custom Formatter on all column definitions that have an Editor.
@@ -49,29 +51,19 @@ export function autoAddEditorFormatterToColumnsWithEditor(columns: Column[], cus
 
 /** Get the parsed cell value, which will use the formatter if "exportWithFormatter" is set */
 export function getCopyCellValue(args: MenuCallbackArgs): string {
-  // get the value, if "exportWithFormatter" is set then we'll use the formatter output
-  const grid = args?.grid || ({} as SlickGrid);
-  const gridOptions = grid.getOptions() as GridOption;
-  const cell = args?.cell ?? 0;
-  const row = args?.row ?? 0;
-  const columnDef = args?.column;
-  const dataContext = args?.dataContext;
-  const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.textExportOptions);
-  let textToCopy = exportWithFormatterWhenDefined(row, cell, columnDef, dataContext, grid, exportOptions);
+  const { grid, column: columnDef, dataContext } = args;
+  let textToCopy: string;
   if (typeof columnDef.queryFieldNameGetterFn === 'function') {
     textToCopy = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
+  } else {
+    // if "exportWithFormatter" is set then we'll use the formatter output
+    const gridOptions = grid.getOptions();
+    const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.textExportOptions);
+    textToCopy = exportWithFormatterWhenDefined(args.row ?? 0, args.cell ?? 0, columnDef, dataContext, grid, exportOptions);
   }
 
-  // when it's a string, we'll remove any unwanted Tree Data/Grouping symbols from the beginning (if exist) from the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
-  if (typeof textToCopy === 'string') {
-    textToCopy = textToCopy
-      .replace(/^([·⮞⮟]\s*)|([·⮞⮟])\s*/gi, '')
-      /* oxlint-disable-next-line no-misleading-character-class */
-      .replace(/[\u00b7\u034f]/gi, '') // remove unwanted Unicode characters (if entered directly)
-      .trim();
-  }
-
-  return textToCopy;
+  // when it's a string, remove any Tree Data/Grouping symbols (e.g.: "⮟  Task 21" or "·   Task 2") and the unwanted U+034F character
+  return typeof textToCopy === 'string' ? textToCopy.replace(/[·⮞⮟]\s*|\u034f/g, '').trim() : textToCopy;
 }
 
 /**
@@ -92,6 +84,12 @@ export async function copyCellToClipboard(args: MenuCallbackArgs): Promise<strin
   return textToCopy;
 }
 
+const DEFAULT_DECIMALS: Partial<Record<NumberType, [min?: number, max?: number]>> = {
+  currency: [Constants.DEFAULT_FORMATTER_CURRENCY_MIN_DECIMAL, Constants.DEFAULT_FORMATTER_CURRENCY_MAX_DECIMAL],
+  decimal: [Constants.DEFAULT_FORMATTER_NUMBER_MIN_DECIMAL, Constants.DEFAULT_FORMATTER_NUMBER_MAX_DECIMAL],
+  percent: [Constants.DEFAULT_FORMATTER_PERCENT_MIN_DECIMAL, Constants.DEFAULT_FORMATTER_PERCENT_MAX_DECIMAL],
+};
+
 export function retrieveFormatterOptions(
   columnDef: Column,
   grid: SlickGrid,
@@ -108,66 +106,27 @@ export function retrieveFormatterOptions(
   numberPrefix: string;
   numberSuffix: string;
 } {
-  let defaultMinDecimal: number | undefined;
-  let defaultMaxDecimal: number | undefined;
-  let numberPrefix = '';
-  let numberSuffix = '';
-
-  switch (numberType) {
-    case 'currency':
-      defaultMinDecimal = Constants.DEFAULT_FORMATTER_CURRENCY_MIN_DECIMAL;
-      defaultMaxDecimal = Constants.DEFAULT_FORMATTER_CURRENCY_MAX_DECIMAL;
-      break;
-    case 'decimal':
-      defaultMinDecimal = Constants.DEFAULT_FORMATTER_NUMBER_MIN_DECIMAL;
-      defaultMaxDecimal = Constants.DEFAULT_FORMATTER_NUMBER_MAX_DECIMAL;
-      break;
-    case 'percent':
-      defaultMinDecimal = Constants.DEFAULT_FORMATTER_PERCENT_MIN_DECIMAL;
-      defaultMaxDecimal = Constants.DEFAULT_FORMATTER_PERCENT_MAX_DECIMAL;
-      break;
-    default:
-      break;
-  }
-  const gridOptions = (grid.getOptions?.() ?? {}) as GridOption;
-  const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, gridOptions, defaultMinDecimal);
-  const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, gridOptions, defaultMaxDecimal);
-  const decimalSeparator = getValueFromParamsOrFormatterOptions(
-    'decimalSeparator',
-    columnDef,
-    gridOptions,
-    Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR
-  );
-  const thousandSeparator = getValueFromParamsOrFormatterOptions(
-    'thousandSeparator',
-    columnDef,
-    gridOptions,
-    Constants.DEFAULT_NUMBER_THOUSAND_SEPARATOR
-  );
-  const wrapNegativeNumber = getValueFromParamsOrFormatterOptions(
-    'displayNegativeNumberWithParentheses',
-    columnDef,
-    gridOptions,
-    Constants.DEFAULT_NEGATIVE_NUMBER_WRAPPED_IN_BRAQUET
-  );
-  const currencyPrefix = getValueFromParamsOrFormatterOptions('currencyPrefix', columnDef, gridOptions, '');
-  const currencySuffix = getValueFromParamsOrFormatterOptions('currencySuffix', columnDef, gridOptions, '');
-
-  if (formatterType === 'cell') {
-    numberPrefix = getValueFromParamsOrFormatterOptions('numberPrefix', columnDef, gridOptions, '');
-    numberSuffix = getValueFromParamsOrFormatterOptions('numberSuffix', columnDef, gridOptions, '');
-  }
+  // this runs for every formatted number cell, so resolve the option sources once and look them up directly
+  const [defaultMinDecimal, defaultMaxDecimal] = DEFAULT_DECIMALS[numberType] ?? [];
+  const params = columnDef.params;
+  const formatterOptions = grid.getOptions?.()?.formatterOptions;
+  const isCell = formatterType === 'cell';
 
   return {
-    minDecimal,
-    maxDecimal,
-    decimalSeparator,
-    thousandSeparator,
-    wrapNegativeNumber,
-    currencyPrefix,
-    currencySuffix,
-    numberPrefix,
-    numberSuffix,
+    minDecimal: findOptionValue('minDecimal', params, formatterOptions, defaultMinDecimal),
+    maxDecimal: findOptionValue('maxDecimal', params, formatterOptions, defaultMaxDecimal),
+    decimalSeparator: findOptionValue('decimalSeparator', params, formatterOptions, Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR),
+    thousandSeparator: findOptionValue('thousandSeparator', params, formatterOptions, Constants.DEFAULT_NUMBER_THOUSAND_SEPARATOR),
+    wrapNegativeNumber: findOptionValue(
+      'displayNegativeNumberWithParentheses',
+      params,
+      formatterOptions,
+      Constants.DEFAULT_NEGATIVE_NUMBER_WRAPPED_IN_BRAQUET
+    ),
+    currencyPrefix: findOptionValue('currencyPrefix', params, formatterOptions, ''),
+    currencySuffix: findOptionValue('currencySuffix', params, formatterOptions, ''),
+    numberPrefix: isCell ? findOptionValue('numberPrefix', params, formatterOptions, '') : '',
+    numberSuffix: isCell ? findOptionValue('numberSuffix', params, formatterOptions, '') : '',
   };
 }
 
@@ -183,13 +142,7 @@ export function getValueFromParamsOrFormatterOptions(
   gridOptions: GridOption,
   defaultValue?: any
 ): any {
-  const params = columnDef.params;
-  if (params?.hasOwnProperty(optionName)) {
-    return params[optionName];
-  } else if (gridOptions?.formatterOptions?.hasOwnProperty(optionName)) {
-    return (gridOptions.formatterOptions as any)[optionName];
-  }
-  return defaultValue;
+  return findOptionValue(optionName, columnDef.params, gridOptions?.formatterOptions, defaultValue);
 }
 
 /** From a FieldType, return the associated date Formatter */
@@ -198,11 +151,8 @@ export function getAssociatedDateFormatter(fieldType: FieldType, defaultSeparato
   let separatorRegex: RegExp | undefined;
 
   return (_row, _cell, value, columnDef, _dataContext, grid) => {
-    const gridOptions = (grid.getOptions?.() ?? {}) as GridOption;
-    const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
-    const inputType = columnDef?.type ?? 'date';
-    const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
-    let outputDate = parseDateByIOFormats(columnDef, value, inputDateFormat, defaultDateFormat);
+    const customSeparator = grid.getOptions?.()?.formatterOptions?.dateSeparator ?? defaultSeparator;
+    let outputDate = parseDateByIOFormats(columnDef, value, getInputDateFormat(columnDef), defaultDateFormat);
 
     // user can customize the separator through the "formatterOptions"
     // if that is the case we need to replace the default "/" to the new separator
@@ -222,15 +172,13 @@ export function getAssociatedDateFormatter(fieldType: FieldType, defaultSeparato
  */
 export function getBaseDateFormatter(): Formatter {
   return (_row, _cell, value, columnDef) => {
-    const inputType = columnDef?.type ?? 'date';
-    const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
     const outpuDateFormat: string = columnDef.params?.dateFormat;
     if (!outpuDateFormat) {
       throw new Error(
         `[Slickgrid-Universal] Using the base "Formatter.date" requires "params.outputFormat" defined and was not found in your column "${columnDef.id}".`
       );
     }
-    return parseDateByIOFormats(columnDef, value, inputDateFormat, outpuDateFormat);
+    return parseDateByIOFormats(columnDef, value, getInputDateFormat(columnDef), outpuDateFormat);
   };
 }
 
@@ -256,27 +204,38 @@ export function exportWithFormatterWhenDefined<T = any>(
   exportOptions?: TextExportOption | ExcelExportOption,
   skipSanitization = false
 ): string {
-  let isEvaluatingFormatter = false;
-
-  // check if "exportWithFormatter" is provided in the column definition, if so it will have precendence over the Grid Options exportOptions
-  if (columnDef?.hasOwnProperty('exportWithFormatter')) {
-    isEvaluatingFormatter = !!columnDef.exportWithFormatter;
-  } else if (exportOptions?.hasOwnProperty('exportWithFormatter')) {
-    // last check in Grid Options export options
-    isEvaluatingFormatter = !!exportOptions.exportWithFormatter;
-  }
-
-  let formatter: Formatter | undefined;
-  if (dataContext && columnDef.exportCustomFormatter) {
-    // did the user provide a Custom Formatter for the export
-    formatter = columnDef.exportCustomFormatter;
-  } else if (isEvaluatingFormatter && columnDef.formatter) {
-    // or else do we have a column Formatter AND are we evaluating it?
-    formatter = columnDef.formatter;
-  }
-
-  const output = parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
+  // an `exportCustomFormatter` always wins, otherwise use the column `formatter` only when "exportWithFormatter" is enabled
+  const formatter =
+    (dataContext && columnDef.exportCustomFormatter) ||
+    (isExportingWithFormatter(columnDef, exportOptions) ? columnDef.formatter : undefined);
+  const output = formatCellOutput(formatter || undefined, getFieldProperty(columnDef), row, col, columnDef, dataContext, grid);
   return !skipSanitization && exportOptions?.sanitizeDataExport && typeof output === 'string' ? stripTags(output) : output;
+}
+
+/**
+ * Same as `exportWithFormatterWhenDefined()` but it resolves the column formatter & field once and returns a cell reader
+ * that can be reused for every row of the same column, which avoids repeating that work for every exported cell.
+ * @param {Object} columnDef - column definition
+ * @param {Object} grid - Slick Grid object
+ * @param {Object} exportOptions - Excel or Text Export Options
+ * @param {boolean} [skipSanitization=false] - Skip sanitization (useful when export service will handle it)
+ * @returns a function returning the formatted string output (or empty string) of a cell
+ */
+export function createExportCellReader<T = any>(
+  columnDef: Column<T>,
+  grid: SlickGrid,
+  exportOptions?: TextExportOption | ExcelExportOption,
+  skipSanitization = false
+): ExportCellReader<T> {
+  const customFormatter = columnDef.exportCustomFormatter;
+  const formatter = isExportingWithFormatter(columnDef, exportOptions) ? columnDef.formatter : undefined;
+  const fieldProperty = getFieldProperty(columnDef);
+  const sanitize = !skipSanitization && !!exportOptions?.sanitizeDataExport;
+
+  return (row, col, dataContext) => {
+    const output = formatCellOutput((dataContext && customFormatter) || formatter, fieldProperty, row, col, columnDef, dataContext, grid);
+    return sanitize && typeof output === 'string' ? stripTags(output) : output;
+  };
 }
 
 /**
@@ -297,25 +256,59 @@ export function parseFormatterWhenExist<T = any>(
   dataContext: T,
   grid: SlickGrid
 ): string {
-  // Formatters receive the top-level value for dotted fields (e.g. "address.city" → "address").
+  return formatCellOutput(formatter, getFieldProperty(columnDef), row, col, columnDef, dataContext, grid);
+}
+
+// --
+// private functions
+
+/** find an option from the column definition "params" first, then from the grid "formatterOptions", or else return the default value */
+function findOptionValue(optionName: string, params: any, formatterOptions: any, defaultValue?: any): any {
+  if (params?.hasOwnProperty(optionName)) {
+    return params[optionName];
+  }
+  return formatterOptions?.hasOwnProperty(optionName) ? formatterOptions[optionName] : defaultValue;
+}
+
+/** "exportWithFormatter" from the column definition has precedence over the one from the export options */
+function isExportingWithFormatter(columnDef: Column, exportOptions?: TextExportOption | ExcelExportOption): boolean {
+  return columnDef.hasOwnProperty('exportWithFormatter')
+    ? !!columnDef.exportWithFormatter
+    : !!(exportOptions?.hasOwnProperty('exportWithFormatter') && exportOptions.exportWithFormatter);
+}
+
+/** Formatters receive the top-level value for dotted fields (e.g. "address.city" → "address") */
+function getFieldProperty(columnDef: Column): string | number {
   const fieldId = columnDef.field || columnDef.id || '';
-  const fieldProperty = typeof fieldId === 'string' && fieldId.indexOf('.') > 0 ? fieldId.split('.')[0] : fieldId;
+  const dotIdx = typeof fieldId === 'string' ? fieldId.indexOf('.') : -1;
+  return dotIdx > 0 ? (fieldId as string).slice(0, dotIdx) : fieldId;
+}
 
-  // Resolve the cell value once for both the formatter and raw-value fallback.
-  const hasOwnProp = !!dataContext && Object.prototype.hasOwnProperty.call(dataContext, fieldProperty as PropertyKey);
-  const cellValue = hasOwnProp ? (dataContext as any)[fieldProperty] : null;
-
-  let output: any;
+/** execute the formatter (when defined) and return its output as a string, or else return the raw cell value */
+function formatCellOutput<T>(
+  formatter: Formatter<T> | undefined,
+  fieldProperty: string | number,
+  row: number,
+  col: number,
+  columnDef: Column<T>,
+  dataContext: T,
+  grid: SlickGrid
+): string {
+  const cellValue =
+    dataContext && Object.prototype.hasOwnProperty.call(dataContext, fieldProperty) ? (dataContext as any)[fieldProperty] : null;
+  let output: any = cellValue;
 
   if (typeof formatter === 'function') {
-    const formattedData = formatter(row, col, cellValue, columnDef, dataContext, grid);
-    const cellResult = isPrimitiveOrHTML(formattedData)
-      ? formattedData
-      : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text;
-    output = getHtmlStringOutput(cellResult as string | HTMLElement | DocumentFragment);
-  } else {
-    // Without a formatter, return the original value.
-    output = cellValue;
+    output = formatter(row, col, cellValue, columnDef, dataContext, grid);
+    // string is the most common formatter result and needs no conversion
+    if (typeof output !== 'string') {
+      if (!isPrimitiveOrHTML(output)) {
+        output = (output as FormatterResultWithHtml).html || (output as FormatterResultWithText).text;
+      }
+      if (typeof output !== 'string') {
+        output = getHtmlStringOutput(output);
+      }
+    }
   }
 
   // Normalize null and undefined without changing other falsy values.
@@ -331,8 +324,18 @@ export function parseFormatterWhenExist<T = any>(
   return output as string;
 }
 
-// --
-// private functions
+const inputDateFormats = new Map<string, string>();
+
+/** get the input date format of a column, cached by its field type since it's the same for every cell */
+function getInputDateFormat(columnDef: Column): string {
+  const inputType = columnDef?.type ?? 'date';
+  let inputDateFormat = inputDateFormats.get(inputType);
+  if (inputDateFormat === undefined) {
+    inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
+    inputDateFormats.set(inputType, inputDateFormat);
+  }
+  return inputDateFormat;
+}
 
 /** private function to parse a date */
 function parseDateByIOFormats(columnDef: Column, value: any, inputDateFormat: string, outputDateFormat: string): string {

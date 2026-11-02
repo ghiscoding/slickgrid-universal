@@ -255,7 +255,8 @@ export function isPrimitiveValue(val: any): boolean {
 }
 
 export function isPrimitiveOrHTML(val: any): boolean {
-  return isHtml(val) || isPrimitiveValue(val);
+  // primitives are a lot more common than HTML elements, so check them first
+  return isPrimitiveValue(val) || isHtml(val);
 }
 
 export function isHtml(val: any): boolean {
