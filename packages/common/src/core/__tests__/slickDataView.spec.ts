@@ -2426,6 +2426,30 @@ describe('SlickDatView core file', () => {
       });
     });
 
+    describe('getFormattedRowValues()', () => {
+      it('should return the cached formatted values of the item', () => {
+        const rowCache = { name: 'Cached Alice', empty: '', zero: 0 };
+        (dv as any).formattedDataCache[1] = rowCache;
+        expect(dv.getFormattedRowValues(cacheItems[0])).toBe(rowCache);
+      });
+
+      it('should return undefined when the item has no id or has nothing cached', () => {
+        dv.clearFormattedDataCache();
+        expect(dv.getFormattedRowValues({} as any)).toBeUndefined();
+        expect(dv.getFormattedRowValues(cacheItems[0])).toBeUndefined();
+      });
+
+      it('should return undefined when cache is disabled', () => {
+        const dvNoCache = new SlickDataView({});
+        const gridNoCache = new SlickGrid('#myGrid', dvNoCache, columns, { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as any);
+        dvNoCache.setItems(cacheItems);
+        (dvNoCache as any).formattedDataCache[1] = { name: 'Cached Alice' };
+        expect(dvNoCache.getFormattedRowValues(cacheItems[0])).toBeUndefined();
+        gridNoCache.destroy();
+        dvNoCache.destroy();
+      });
+    });
+
     describe('getCellDisplayValue()', () => {
       it('should return undefined for an uncached cell (no item arg)', () => {
         dv.clearFormattedDataCache();

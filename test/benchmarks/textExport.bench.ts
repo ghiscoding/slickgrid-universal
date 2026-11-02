@@ -53,9 +53,20 @@ const groupedItems = items.flatMap((item, idx) => {
   return rows;
 });
 
+// formatted data cache of the formatter columns, same as the one populated by the DataView when `enableFormattedDataCache` is enabled
+const formattedDataCache: Record<number, Record<string, any>> = Object.fromEntries(
+  items.map((item) => [
+    item.id,
+    Object.fromEntries(columns.filter((c) => c.exportWithFormatter).map((c) => [c.id, `<b>${item[c.field]}</b>`])),
+  ])
+);
+
 /** create a service whose download is replaced by a stub that keeps the output and the time it was produced */
 function createService(rows: any[], isGrouped: boolean, gridOptions: GridOption) {
   const dataView = {
+    getFormattedCellValue: (_row: number, columnId: string, fallbackValue: any, item: any) =>
+      formattedDataCache[item?.id]?.[columnId] ?? fallbackValue,
+    getFormattedRowValues: (item: any) => formattedDataCache[item?.id],
     getGrouping: () => (isGrouped ? [{ getter: 'col0' }] : []),
     getItem: (idx: number) => rows[idx],
     getItemMetadata: () => null,
@@ -108,6 +119,8 @@ async function measure(name: string, rows: any[], isGrouped: boolean, gridOption
 describe(`TextExportService (${ROW_COUNT} rows x ${COLUMN_COUNT} columns)`, () => {
   test('CSV', () => measure('CSV', items, false, {}, { format: 'csv', delimiter: ',' }));
   test('CSV with grouping', () => measure('CSV with grouping', groupedItems, true, {}, { format: 'csv', delimiter: ',' }));
+  test('CSV with formatted data cache', () =>
+    measure('CSV with formatted data cache', items, false, { enableFormattedDataCache: true }, { format: 'csv', delimiter: ',' }));
   test('TXT with sanitized data', () =>
     measure(
       'TXT with sanitized data',
@@ -127,7 +140,7 @@ afterAll(() => {
       ? `${medianMs <= before.medianMs ? '' : '+'}${(((medianMs - before.medianMs) / before.medianMs) * 100).toFixed(1)}%`
       : '';
     const sameOutput = before ? (before.checksum === checksum ? 'same output' : 'OUTPUT DIFFERS') : '';
-    return `${name.padEnd(26)} median ${String(medianMs).padStart(8)}ms  p95 ${String(p95Ms).padStart(8)}ms  ${before ? `baseline ${String(before.medianMs).padStart(8)}ms  ${delta}  ${sameOutput}` : ''}`;
+    return `${name.padEnd(32)} median ${String(medianMs).padStart(8)}ms  p95 ${String(p95Ms).padStart(8)}ms  ${before ? `baseline ${String(before.medianMs).padStart(8)}ms  ${delta}  ${sameOutput}` : ''}`;
   });
   // Vitest swallows console output in afterAll hooks of bench runs, so write the summary directly
   process.stdout.write(`\n${lines.join('\n')}\n\nText export benchmark report written to ${reportPath}\n`);

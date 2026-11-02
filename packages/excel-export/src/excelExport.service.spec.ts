@@ -2306,7 +2306,7 @@ describe('ExcelExportService', () => {
         getLength: vi.fn().mockReturnValue(1),
         getItem: vi.fn().mockReturnValue({ id: 1, name: 'raw-name' }),
         getItemMetadata: vi.fn().mockReturnValue({}),
-        getFormattedCellValue: vi.fn().mockReturnValue('cached-name'),
+        getFormattedRowValues: vi.fn().mockReturnValue({ name: 'cached-name' }),
       };
       const grid: any = {
         getData: vi.fn().mockReturnValue(dv),
@@ -2323,7 +2323,7 @@ describe('ExcelExportService', () => {
 
       const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'raw-name' }, 0);
 
-      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, { id: 1, name: 'raw-name' });
+      expect(dv.getFormattedRowValues).toHaveBeenCalledWith({ id: 1, name: 'raw-name' });
       expect(out[0]).toBe('cached-name');
       expect(formatterSpy).not.toHaveBeenCalled();
     });
@@ -2339,7 +2339,7 @@ describe('ExcelExportService', () => {
         getLength: vi.fn().mockReturnValue(1),
         getItem: vi.fn().mockReturnValue({ id: 1, name: 'raw-name', code: 'A1' }),
         getItemMetadata: vi.fn().mockReturnValue({}),
-        getFormattedCellValue: vi.fn().mockReturnValue(undefined),
+        getFormattedRowValues: vi.fn().mockReturnValue({ code: undefined }),
       };
       const grid: any = {
         getData: vi.fn().mockReturnValue(dv),
@@ -2359,7 +2359,7 @@ describe('ExcelExportService', () => {
 
       const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'raw-name', code: 'A1' }, 0);
 
-      expect(dv.getFormattedCellValue).toHaveBeenCalledTimes(2);
+      expect(dv.getFormattedRowValues).toHaveBeenCalledTimes(1);
       expect(formatterSpy).toHaveBeenCalled();
       expect(out[0]).toBe('formatted-name');
       expect(out[1]).toBe('A1');
@@ -2382,7 +2382,7 @@ describe('ExcelExportService', () => {
           getLength: vi.fn().mockReturnValue(1),
           getItem: vi.fn().mockReturnValue(rowItem),
           getItemMetadata: vi.fn().mockReturnValue({}),
-          getFormattedCellValue: vi.fn().mockReturnValue(cachedValue),
+          getFormattedRowValues: vi.fn().mockReturnValue(cachedValue === undefined ? undefined : { name: cachedValue }),
         };
         const grid: any = {
           getData: vi.fn().mockReturnValue(dv),
@@ -2406,8 +2406,8 @@ describe('ExcelExportService', () => {
       const outputCacheMiss = (onMiss.svc as any).readRegularRowData(onMiss.grid.getColumns(), 0, rowItem, 0);
 
       expect(outputCacheMiss).toEqual(outputNoCache);
-      expect(onMiss.dv.getFormattedCellValue).toHaveBeenCalledTimes(2);
-      expect(off.dv.getFormattedCellValue).not.toHaveBeenCalled();
+      expect(onMiss.dv.getFormattedRowValues).toHaveBeenCalledTimes(1);
+      expect(off.dv.getFormattedRowValues).not.toHaveBeenCalled();
     });
 
     it('readRegularRowData should sanitize and htmlDecode cache-hit values before parsing', () => {
@@ -2420,7 +2420,7 @@ describe('ExcelExportService', () => {
         getLength: vi.fn().mockReturnValue(1),
         getItem: vi.fn().mockReturnValue({ id: 1, name: 'ignored' }),
         getItemMetadata: vi.fn().mockReturnValue({}),
-        getFormattedCellValue: vi.fn().mockReturnValue('<b>&amp;Z</b>'),
+        getFormattedRowValues: vi.fn().mockReturnValue({ name: '<b>&amp;Z</b>' }),
       };
       const grid: any = {
         getData: vi.fn().mockReturnValue(dv),
@@ -2437,7 +2437,7 @@ describe('ExcelExportService', () => {
 
       const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'ignored' }, 0);
 
-      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, { id: 1, name: 'ignored' });
+      expect(dv.getFormattedRowValues).toHaveBeenCalledWith({ id: 1, name: 'ignored' });
       expect(out[0]).toBe('&Z');
     });
 

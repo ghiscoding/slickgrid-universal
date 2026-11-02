@@ -539,6 +539,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     const dataView = this._dataView;
     const lineCount = dataView.getLength();
     const cachedColumnMetadata = columnMetadataCache ?? this.preCalculateColumnMetadata(columns);
+    const columnMetadataList = this.getColumnMetadataList(columns, cachedColumnMetadata);
     const datasetIdPropName = this._datasetIdPropName;
 
     // Yield periodically based on dataset size
@@ -559,7 +560,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
         if (itemObj[datasetIdPropName] !== null && itemObj[datasetIdPropName] !== undefined) {
           // Read a regular row
-          originalDaraArray.push(this.readRegularRowData(columns, rowNumber, itemObj, rowNumber, cachedColumnMetadata));
+          originalDaraArray.push(this.readRegularRowData(columns, rowNumber, itemObj, rowNumber, cachedColumnMetadata, columnMetadataList));
           rowWasExported = true;
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {
           // get the group row
@@ -632,6 +633,14 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     }
 
     return cache;
+  }
+
+  /** Get the cached metadata of every column by column index, to avoid a Map lookup for every cell */
+  protected getColumnMetadataList(
+    columns: Column[],
+    columnMetadataCache: Map<string, ExcelColumnExportCache>
+  ): Array<ExcelColumnExportCache | undefined> {
+    return columns.map((columnDef) => columnMetadataCache.get(String(columnDef.id)));
   }
 
   /** OPTIMIZATION: Cache regular cell formatters once per column before processing all rows */
@@ -716,15 +725,20 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param {Array<Object>} columns - column definitions
    * @param {Number} row - row index
    * @param {Object} itemObj - item datacontext object
+   * @param {Number} dataRowIdx - data row index
+   * @param {Map} [columnMetadataCache] - pre-calculated metadata of every column (by column id)
+   * @param {Array<Object>} [columnMetadataList] - same metadata by column index, create it once to reuse it for every row
    */
   protected readRegularRowData(
     columns: Column[],
     row: number,
     itemObj: any,
     dataRowIdx: number,
-    columnMetadataCache?: Map<string, ExcelColumnExportCache>
+    columnMetadataCache?: Map<string, ExcelColumnExportCache>,
+    columnMetadataList?: Array<ExcelColumnExportCache | undefined>
   ): string[] {
     const cachedColumnMetadata = columnMetadataCache ?? this.preCalculateColumnMetadata(columns);
+    const columnMetadataByIndex = columnMetadataList ?? this.getColumnMetadataList(columns, cachedColumnMetadata);
     const gridOptions = this._gridOptions;
     let idx = 0;
     const rowOutputStrings = [];
@@ -732,6 +746,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     let prevColspan: number | string = 1;
     let colspanStartIndex = 0;
     const itemMetadata = this._dataView.getItemMetadata(row);
+    // get the formatted data cache of the row once instead of once per cell
+    const rowCache = gridOptions.enableFormattedDataCache ? this._dataView.getFormattedRowValues(itemObj) : undefined;
 
     for (let col = 0; col < columnsLn; col++) {
       const columnDef = columns[col];
@@ -816,17 +832,14 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           colspan = prevColspan--;
         }
       } else {
-        let itemData: Date | number | string | undefined;
         const columnId = String(columnDef.id);
-        const columnCachedData = cachedColumnMetadata.get(columnId);
+        const columnCachedData = columnMetadataByIndex[col];
 
         // -- Read Data & Push to Data Array
         // user might want to export with Formatter, and/or auto-detect Excel format, and/or export as regular cell data
 
-        // Try cache first if enabled; on miss (or when cache is disabled), use the existing formatter/raw path.
-        if (gridOptions.enableFormattedDataCache) {
-          itemData = this._dataView.getFormattedCellValue(dataRowIdx, columnId, undefined, itemObj);
-        }
+        // use the formatted data cache when available, otherwise use the formatter or raw value
+        let itemData: Date | number | string | undefined = rowCache?.[columnId];
 
         if (itemData === undefined) {
           if (columnCachedData?.readCell) {

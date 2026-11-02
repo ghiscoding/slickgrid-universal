@@ -12,7 +12,7 @@ Related earlier audit: [excel-export-performance.md](./excel-export-performance.
 | `formatterUtilities.ts` perf & LOC audit | ✅ Done (#2892, #2893) |
 | Export services bugs | ✅ Done (#2895, #2897) |
 | Export services perf (PDF fallback renderer) | ✅ Done (#2896) |
-| Export services perf (shared cell loops) | ❌ Remaining, can start now that #2897 is merged |
+| Export services perf (shared cell loops) | ✅ Done (#2899) |
 | Export services LOC (shared helpers) | ❌ Remaining |
 | Benchmark tooling (Vitest 5) | ✅ Done (#2898, branch `chore/benchmarks-vitest5`) |
 
@@ -78,20 +78,28 @@ Excel export (5,000 × 20) formatter-mode preparation ~31–34 ms → ~18–26 m
 4. PDF variable row heights: read from the grid row of each exported row (`_gridRowIndexByExportedRow` WeakMap), via
    `data.row.raw` in AutoTable `didParseCell` and the row array in the fallback (was drifting after Row Detail rows).
 
+### `perf(export): read formatted data cache once per row in export services` (#2899)
+
+- New additive `SlickDataView.getFormattedRowValues(item)`: returns the cached formatted export values of a row (or
+  `undefined`), so the 3 exporters look up the row cache once per row instead of calling `getFormattedCellValue()`
+  (item id + row cache lookup) for every cell. Columns that aren't cached are a plain property miss.
+- Excel: per-cell `cachedColumnMetadata.get(String(columnDef.id))` replaced by an array indexed by column position
+  (new protected `getColumnMetadataList()`, new optional `columnMetadataList` argument on `readRegularRowData()`).
+- Text: CSV/sanitize flags hoisted out of the cell loop, `/"/gi` → `/"/g` in regular & group title rows.
+  PDF: column export options only resolved for cells that are actually read.
+- ❌ Not done (#4, rejected): skipping `getItemMetadata(row)` without a provider would break users who override
+  `dataView.getItemMetadata` directly (Example 11/46/57 do it for colspan), and the exporters can't see DataView options.
+- Benchmarks: new "CSV with formatted data cache" (text) and "AutoTable with formatted data cache" (PDF) scenarios, the
+  stub DataViews implement both `getFormattedCellValue()` & `getFormattedRowValues()` so baselines still run.
+- Results: identical output checksums (text, PDF, Excel worksheet). Gains are small and mostly within the noise of this
+  shared machine: isolated best-of-4 text runs, cache 63.2 → 62.5 ms, sanitized TXT 79.3 → 69.0 ms; Excel cache-mode
+  preparation (5,000 × 20) ~22 → ~18 ms.
+- Benchmark gotcha: scenarios in the same file affect each other (heap growth), e.g. the cache scenario measured
+  ~188 ms after the grouping scenario vs ~63 ms alone. Compare scenarios in isolation with `-t "<name>"`.
+
 ## Remaining work
 
-### Perf: shared cell loops (one `perf:`/`refactor:` PR, #2897 is merged so this can start from `master`)
-
-All of these touch `readRegularRowData()` / `getAllGridRowData()` in the 3 exporters.
-
-| # | Where | Issue | Suggested fix |
-| --- | --- | --- | --- |
-| 2 | All 3, with `enableFormattedDataCache` | `getFormattedCellValue()` per cell re-resolves the item id & row cache, even for columns never cached (raw values) | Get the row cache once per row; skip columns that aren't cached |
-| 3 | Excel cell loop | `cachedColumnMetadata.get(String(columnDef.id))` per cell | Array indexed by column position |
-| 4 | All 3 cell loops | `getItemMetadata(row)` every row even without a metadata provider (`slickDataView` already skips it) | Skip when no provider |
-| 5 | Text & PDF cell loops | `sanitizeDataExport` & `htmlDecode` flags re-read per cell | Resolve per column, like Excel |
-
-### LOC: shared helpers (same PR or a follow-up `refactor:` PR)
+### LOC: shared helpers (follow-up `refactor:` PR)
 
 Most duplicated code lives in `protected` methods that subclasses can override, so call shared helpers from inside those
 methods and keep the methods for backward compatibility.
@@ -107,10 +115,8 @@ methods and keep the methods for backward compatibility.
 - Excel: `preCalculateColumnMetadata()` re-implements the `exportWithFormatter` check & dotted field split; with
   `createExportCellReader()` only `readCell` is needed.
 - Group totals text: `totalResult instanceof HTMLElement ? textContent : totalResult` appears in every exporter.
-- Text export: the CSV quote regex `/"/gi` doesn't need the `i` flag in the regular row & group title row (already fixed
-  in the group totals row).
 
-### #2898 — Benchmark tooling (`chore:` PR, branch `chore/benchmarks-vitest5`)
+### #2898 — Benchmark tooling (`chore:` PR, merged)
 
 The branch was fast-forwarded to `master` at #2897 (`120bcabd7`), so it includes every merged PR listed above. Its
 uncommitted changes only touch `test/benchmarks/*`, `package.json` and this audit file (no overlap with the export
@@ -139,7 +145,8 @@ services).
   inconclusive (machine too noisy, same code varied 285–807 ms). Before the shared cell loop perf PR, compare on an
   idle machine with `git restore --source=7b5fc40f7 -- packages/pdf-export/src/pdfExport.service.ts`, run the
   benchmark, then `git restore -- packages/pdf-export/src/pdfExport.service.ts` (don't pipe `git show` into
-  PowerShell's `Set-Content -NoNewline`, it drops the newlines and breaks the file).
+  PowerShell's `Set-Content -NoNewline`, it drops the newlines and breaks the file). Still unconfirmed after the shared
+  cell loop PR: the machine was even noisier then (fallback ~850–930 ms for the same code).
 
 ### Unverified observations (check before acting)
 

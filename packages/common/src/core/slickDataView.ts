@@ -1687,6 +1687,20 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /**
+   * Returns all cached formatted export values of an item (keyed by column id), or `undefined` when nothing is cached.
+   * Export services use it to get the row cache once per row instead of once per cell, the returned object must not be modified.
+   * @param {TData} item - the item (data context) of the row
+   * @returns {Readonly<Record<string, any>> | undefined} The cached formatted values of the row
+   */
+  getFormattedRowValues(item: TData): Readonly<Record<string, any>> | undefined {
+    if (!this._gridOptions?.enableFormattedDataCache) {
+      return undefined;
+    }
+    const itemId = item?.[this.idProperty as keyof TData] as DataIdType | undefined;
+    return itemId !== undefined ? this.formattedDataCache[itemId] : undefined;
+  }
+
+  /**
    * Returns the cached UI display formatter result for a cell, or `undefined` when not cached.
    * Used by SlickGrid's `getFormatter` to skip re-executing the formatter during rendering.
    * @param {number} rowIdx - The row index in the current view

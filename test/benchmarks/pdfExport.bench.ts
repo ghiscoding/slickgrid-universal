@@ -84,9 +84,20 @@ const groupedItems = items.flatMap((item, idx) =>
   idx % 50 === 0 ? [{ __group: true, title: `Group <b>${idx / 50}</b>`, level: 0, collapsed: false }, item] : [item]
 );
 
-function createService(rows: any[], isGrouped: boolean): PdfExportService {
-  const gridOptions: GridOption = { pdfExportOptions: { sanitizeDataExport: true } };
+// formatted data cache of the formatter columns, same as the one populated by the DataView when `enableFormattedDataCache` is enabled
+const formattedDataCache: Record<number, Record<string, any>> = Object.fromEntries(
+  items.map((item) => [
+    item.id,
+    Object.fromEntries(columns.filter((c) => c.exportWithFormatter).map((c) => [c.id, `<b>${item[c.field]}</b>`])),
+  ])
+);
+
+function createService(rows: any[], isGrouped: boolean, enableFormattedDataCache = false): PdfExportService {
+  const gridOptions: GridOption = { enableFormattedDataCache, pdfExportOptions: { sanitizeDataExport: true } };
   const dataView = {
+    getFormattedCellValue: (_row: number, columnId: string, fallbackValue: any, item: any) =>
+      formattedDataCache[item?.id]?.[columnId] ?? fallbackValue,
+    getFormattedRowValues: (item: any) => formattedDataCache[item?.id],
     getGrouping: () => (isGrouped ? [{ getter: 'col0' }] : []),
     getItem: (idx: number) => rows[idx],
     getItemMetadata: () => null,
@@ -105,8 +116,14 @@ function createService(rows: any[], isGrouped: boolean): PdfExportService {
 }
 
 /** run a few warmup iterations, then keep the median & p95 of the measured samples */
-async function measure(name: string, rows: any[], isGrouped: boolean, useAutoTable: boolean): Promise<void> {
-  const service = createService(rows, isGrouped);
+async function measure(
+  name: string,
+  rows: any[],
+  isGrouped: boolean,
+  useAutoTable: boolean,
+  enableFormattedDataCache = false
+): Promise<void> {
+  const service = createService(rows, isGrouped, enableFormattedDataCache);
   pdfStub.useAutoTable = useAutoTable;
   const samples: number[] = [];
   let checksum = 0;
@@ -132,6 +149,7 @@ describe(`PdfExportService (${ROW_COUNT} rows x ${COLUMN_COUNT} columns)`, () =>
   test('AutoTable', () => measure('AutoTable', items, false, true));
   test('fallback renderer', () => measure('fallback renderer', items, false, false));
   test('fallback renderer with grouping', () => measure('fallback renderer with grouping', groupedItems, true, false));
+  test('AutoTable with formatted data cache', () => measure('AutoTable with formatted data cache', items, false, true, true));
 });
 
 afterAll(() => {
@@ -149,7 +167,7 @@ afterAll(() => {
       ? `${medianMs <= before.medianMs ? '' : '+'}${(((medianMs - before.medianMs) / before.medianMs) * 100).toFixed(1)}%`
       : '';
     const output = before ? (before.checksum === checksum ? 'same output' : 'OUTPUT DIFFERS') : '';
-    return `${name.padEnd(34)} median ${String(medianMs).padStart(8)}ms  p95 ${String(p95Ms).padStart(8)}ms  ${before ? `baseline ${String(before.medianMs).padStart(8)}ms  ${delta}  ${output}` : ''}`;
+    return `${name.padEnd(36)} median ${String(medianMs).padStart(8)}ms  p95 ${String(p95Ms).padStart(8)}ms  ${before ? `baseline ${String(before.medianMs).padStart(8)}ms  ${delta}  ${output}` : ''}`;
   });
   // Vitest swallows console output in afterAll hooks of bench runs, so write the summary directly
   process.stdout.write(`\n${lines.join('\n')}\n\nPDF export benchmark report written to ${reportPath}\n`);

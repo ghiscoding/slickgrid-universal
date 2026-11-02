@@ -1936,7 +1936,7 @@ describe('PdfExportService', () => {
           getLength: vi.fn().mockReturnValue(1),
           getItem: vi.fn().mockReturnValue(itemObj),
           getItemMetadata: vi.fn().mockReturnValue({}),
-          getFormattedCellValue: vi.fn().mockReturnValue(cachedValue),
+          getFormattedRowValues: vi.fn().mockReturnValue(cachedValue === undefined ? undefined : { col1: cachedValue }),
         };
         const localGrid: any = {
           getData: vi.fn().mockReturnValue(localDataView),
@@ -1961,8 +1961,8 @@ describe('PdfExportService', () => {
       expect(noCacheOutput).toEqual(['<b>Z</b>']);
       expect(cacheMissOutput).toEqual(noCacheOutput);
       expect(cacheHitOutput).toEqual(noCacheOutput);
-      expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined, itemObj);
-      expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined, itemObj);
+      expect(missDataView.getFormattedRowValues).toHaveBeenCalledWith(itemObj);
+      expect(hitDataView.getFormattedRowValues).toHaveBeenCalledWith(itemObj);
     });
 
     it('should sanitize cache-hit values in readRegularRowData', () => {
@@ -1978,7 +1978,7 @@ describe('PdfExportService', () => {
         getLength: vi.fn().mockReturnValue(1),
         getItem: vi.fn().mockReturnValue(itemObj),
         getItemMetadata: vi.fn().mockReturnValue({}),
-        getFormattedCellValue: vi.fn().mockReturnValue('<b>&amp;Z</b>'),
+        getFormattedRowValues: vi.fn().mockReturnValue({ col1: '<b>&amp;Z</b>' }),
       };
       const localGrid: any = {
         getData: vi.fn().mockReturnValue(localDataView),
@@ -1992,7 +1992,7 @@ describe('PdfExportService', () => {
 
       const output = pdfService['readRegularRowData'](columns as any, 0, itemObj);
       expect(output).toEqual(['&amp;Z']);
-      expect(localDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined, itemObj);
+      expect(localDataView.getFormattedRowValues).toHaveBeenCalledWith(itemObj);
     });
   });
 

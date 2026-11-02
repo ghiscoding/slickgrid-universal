@@ -376,8 +376,12 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     let idx = 0;
     const rowOutputStrings = [];
     const exportQuoteWrapper = this._exportQuoteWrapper;
+    const isCsv = this._fileFormat === 'csv';
+    const sanitizeAllColumns = this._exportOptions.sanitizeDataExport;
     let prevColspan: number | string = 1;
     const itemMetadata = this._dataView.getItemMetadata(row);
+    // get the formatted data cache of the row once instead of once per cell
+    const rowCache = this._gridOptions.enableFormattedDataCache ? this._dataView.getFormattedRowValues(itemObj) : undefined;
 
     for (let col = 0, ln = columns.length; col < ln; col++) {
       const columnDef = columns[col];
@@ -389,8 +393,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
       // if we are grouping and are on 1st column index, we need to skip this column since it will be used later by the grouping text:: Group by [columnX]
       if (this._hasGroupedItems && idx === 0) {
-        const emptyValue = this._fileFormat === 'csv' ? `""` : '';
-        rowOutputStrings.push(emptyValue);
+        rowOutputStrings.push(isCsv ? `""` : '');
       }
 
       // when using rowspan
@@ -424,26 +427,20 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
           (prevColspan as number)--;
         }
       } else {
-        const columnId = String(columnDef.id);
-
-        // Try cache first when enabled, otherwise keep the existing formatter path.
-        let itemData =
-          this._gridOptions.enableFormattedDataCache && columnDef.id != null
-            ? this._dataView.getFormattedCellValue(row, columnId, undefined, itemObj)
-            : undefined;
-
+        // use the formatted data cache when available, otherwise read (and format) the cell value
+        let itemData = rowCache?.[columnDef.id];
         if (itemData === undefined) {
           itemData = cellReaders[col](row, col, itemObj);
         }
 
         // does the user want to sanitize the output data (remove HTML tags)?
-        if ((columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) && typeof itemData === 'string') {
+        if ((columnDef.sanitizeDataExport || sanitizeAllColumns) && typeof itemData === 'string') {
           itemData = stripTags(itemData);
         }
 
         // when CSV we also need to escape double quotes twice, so " becomes ""
-        if (this._fileFormat === 'csv' && itemData) {
-          itemData = itemData.toString().replace(/"/gi, `""`);
+        if (isCsv && itemData) {
+          itemData = itemData.toString().replace(/"/g, `""`);
         }
 
         // do we have a wrapper to keep as a string? in certain cases like "1E06", we don't want excel to transform it into exponential (1.0E06)
@@ -471,7 +468,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
     if (this._fileFormat === 'csv') {
       // when CSV we also need to escape double quotes twice, so " becomes ""
-      groupName = groupName.toString().replace(/"/gi, `""`);
+      groupName = groupName.toString().replace(/"/g, `""`);
     }
 
     return exportQuoteWrapper + groupName + exportQuoteWrapper;

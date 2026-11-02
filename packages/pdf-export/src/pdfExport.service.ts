@@ -631,6 +631,8 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   ): any[] {
     const rowData: any[] = [];
     const itemMetadata = this._dataView.getItemMetadata(row);
+    // get the formatted data cache of the row once instead of once per cell
+    const rowCache = this._gridOptions.enableFormattedDataCache ? this._dataView.getFormattedRowValues(itemObj) : undefined;
     let prevColspan: number | string = 1;
 
     // if we are grouping and are on 1st column index, we need to skip this column since it will be used later by the grouping text
@@ -640,7 +642,6 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
     for (let col = 0, ln = columns.length; col < ln; col++) {
       const columnDef = columns[col];
-      const colOpt = columnExportOptionsCache && columnDef.id ? columnExportOptionsCache[columnDef.id] : this._exportOptions;
 
       // skip excluded column, a column with a width of 0 is also considered hidden and isn't exported (same as its header)
       if (columnDef.excludeFromExport || !(columnDef.width === undefined || columnDef.width > 0)) {
@@ -678,14 +679,10 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
           (prevColspan as number)--;
         }
       } else {
-        const columnId = String(columnDef.id);
+        const colOpt = columnExportOptionsCache && columnDef.id ? columnExportOptionsCache[columnDef.id] : this._exportOptions;
 
-        // Try cache first when enabled, otherwise keep the existing formatter path.
-        let itemData =
-          this._gridOptions.enableFormattedDataCache && columnDef.id != null
-            ? this._dataView.getFormattedCellValue(row, columnId, undefined, itemObj)
-            : undefined;
-
+        // use the formatted data cache when available, otherwise read (and format) the cell value
+        let itemData = rowCache?.[columnDef.id];
         if (itemData === undefined) {
           itemData = cellReaders[col](row, col, itemObj);
         }

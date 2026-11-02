@@ -507,7 +507,7 @@ describe('ExportService', () => {
             getLength: vi.fn().mockReturnValue(1),
             getItem: vi.fn().mockReturnValue(itemObj),
             getItemMetadata: vi.fn().mockReturnValue({}),
-            getFormattedCellValue: vi.fn().mockImplementation((_row: number, columnId: string) => (columnId === 'name' ? cachedValue : undefined)),
+            getFormattedRowValues: vi.fn().mockReturnValue({ name: cachedValue }),
           };
           const localGrid: any = {
             getData: vi.fn().mockReturnValue(localDataView),
@@ -537,10 +537,10 @@ describe('ExportService', () => {
         expect(noCacheOutput).toBe('="1E06","&amp;Z"');
         expect(cacheMissOutput).toBe(noCacheOutput);
         expect(cacheHitOutput).toBe(noCacheOutput);
-        expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined, itemObj);
-        expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, itemObj);
-        expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined, itemObj);
-        expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, itemObj);
+        expect(missDataView.getFormattedRowValues).toHaveBeenCalledTimes(1);
+        expect(missDataView.getFormattedRowValues).toHaveBeenCalledWith(itemObj);
+        expect(hitDataView.getFormattedRowValues).toHaveBeenCalledTimes(1);
+        expect(hitDataView.getFormattedRowValues).toHaveBeenCalledWith(itemObj);
       });
     });
 
