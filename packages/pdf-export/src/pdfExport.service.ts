@@ -60,6 +60,19 @@ function resolveColumnExportOptions(columnDef: Column, globalOptions: PdfExportO
   return config;
 }
 
+/** a group title row only has a value in its 1st cell, every other cell is empty */
+function isGroupTitleRow(row: any[]): boolean {
+  if (row.length < 2 || !row[0]) {
+    return false;
+  }
+  for (let i = 1; i < row.length; i++) {
+    if (row[i] !== '') {
+      return false;
+    }
+  }
+  return true;
+}
+
 export class PdfExportService implements ExternalResource, BasePdfExportService {
   protected _exportOptions!: PdfExportOption;
   protected _grid!: SlickGrid;
@@ -231,12 +244,14 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
           const includeColumnWidth = this._exportOptions.includeColumnWidth === true;
           const visibleColumns = columns.filter((col: Column) => !col.excludeFromExport && (col.width === undefined || col.width > 0));
           if ((doc as any).autoTable) {
-            // Build per-column styles for AutoTable from each column's pdfExportOptions
+            // Build per-column styles & header alignment for AutoTable from each column's pdfExportOptions
             const columnStyles: Record<number, { halign?: string; cellWidth?: number }> = {};
+            const headerAlignMap: Record<number, string> = {};
+            const defaultTextAlign = this._exportOptions.textAlign || 'left';
             const groupOffset = this._hasGroupedItems ? 1 : 0;
             for (const [idx, col] of visibleColumns.entries()) {
-              const colExportOpts = resolveColumnExportOptions(col, this._exportOptions);
-              const alignOverride = colExportOpts.textAlign && colExportOpts.textAlign !== (this._exportOptions.textAlign || 'left');
+              const colExportOpts = (col.id && columnExportOptionsCache[col.id]) || resolveColumnExportOptions(col, this._exportOptions);
+              const alignOverride = colExportOpts.textAlign && colExportOpts.textAlign !== defaultTextAlign;
               const resolvedWidth =
                 typeof colExportOpts.width === 'number' && colExportOpts.width > 0
                   ? colExportOpts.width
@@ -249,20 +264,12 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                 const styleDef = columnStyles[styleIdx] ?? {};
                 if (alignOverride) {
                   styleDef.halign = colExportOpts.textAlign;
+                  headerAlignMap[styleIdx] = colExportOpts.textAlign!;
                 }
                 if (resolvedWidth !== undefined) {
                   styleDef.cellWidth = resolvedWidth;
                 }
                 columnStyles[styleIdx] = styleDef;
-              }
-            }
-
-            // Build per-column header alignment map for didParseCell hook
-            const headerAlignMap: Record<number, string> = {};
-            for (const [idx, col] of visibleColumns.entries()) {
-              const colExportOpts = resolveColumnExportOptions(col, this._exportOptions);
-              if (colExportOpts.textAlign && colExportOpts.textAlign !== (this._exportOptions.textAlign || 'left')) {
-                headerAlignMap[idx + groupOffset] = colExportOpts.textAlign;
               }
             }
 
@@ -387,19 +394,27 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
               y = this._drawPreHeaderRow(doc, y, colWidths, margin, headerTextOffset, headerBackgroundOffset, groupByColumnHeader);
             }
 
-            // Build per-column header alignment array for manual header drawing
-            const headerAligns: Array<'left' | 'center' | 'right'> = headers.map((_, idx) => {
-              if (this._hasGroupedItems && idx === 0) {
-                return this._exportOptions.textAlign || 'left';
-              }
-              const dataColIdx = this._hasGroupedItems ? idx - 1 : idx;
-              const colDef = columns.filter((col: Column) => !col.excludeFromExport)[dataColIdx];
-              if (colDef?.id) {
-                const colOpt = columnExportOptionsCache[colDef.id];
-                return colOpt?.textAlign || this._exportOptions.textAlign || 'left';
-              }
-              return this._exportOptions.textAlign || 'left';
+            // resolve the export options of every header cell once, the "Group by" cell (when grouping) uses the global options
+            // NOTE: regular rows include width-0 columns, so their cells are mapped to every column that isn't excluded from the export
+            const exportedColumns = columns.filter((col: Column) => !col.excludeFromExport);
+            const groupColumnOffset = this._hasGroupedItems ? 1 : 0;
+            const headerCellOptions: PdfExportOption[] = headers.map((_, idx) => {
+              const colId = idx < groupColumnOffset ? undefined : exportedColumns[idx - groupColumnOffset]?.id;
+              return (colId && columnExportOptionsCache[colId]) || this._exportOptions;
             });
+            const defaultTextAlign = this._exportOptions.textAlign || 'left';
+            const headerAligns: Array<'left' | 'center' | 'right'> = headerCellOptions.map(
+              (colOpt) => colOpt.textAlign || defaultTextAlign
+            );
+            const getOffset = (offset?: number) => (typeof offset === 'number' ? offset : 0);
+            const textOffsets = headerCellOptions.map((colOpt) => getOffset(colOpt.dataRowTextOffset));
+            const groupTitleTextOffset = getOffset(this._exportOptions.dataRowTextOffset);
+            // the alternate row background offset is read from the exported column at the group column offset (unchanged behavior)
+            const rowBackgroundColId = exportedColumns[groupColumnOffset]?.id;
+            const rowBackgroundOffset = getOffset(
+              (rowBackgroundColId ? columnExportOptionsCache[rowBackgroundColId] : this._exportOptions).dataRowBackgroundOffset
+            );
+            const altColor = this._exportOptions.alternateRowColor!;
 
             // Draw header row
             y = this._drawHeaderRow(doc, y, headers, colWidths, margin, headerTextOffset, headerBackgroundOffset, headerAligns);
@@ -423,31 +438,13 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
               }
               // Alternate row background
               if (rowIdx % 2 === 1) {
-                const altColor = this._exportOptions.alternateRowColor!;
                 doc.setFillColor(altColor[0], altColor[1], altColor[2]);
-                // Use first column's dataRowBackgroundOffset for the row
-                // Always use the correct column for background offset (first visible data column)
-                let firstDataColIdx = 0;
-                if (this._hasGroupedItems) {
-                  firstDataColIdx = 1;
-                }
-                const firstColId = columns.filter((col: Column) => !col.excludeFromExport)[firstDataColIdx]?.id;
-                const colOpt = firstColId ? columnExportOptionsCache[firstColId] : this._exportOptions;
-                doc.rect(
-                  margin,
-                  y - 12 + (typeof colOpt.dataRowBackgroundOffset === 'number' ? colOpt.dataRowBackgroundOffset : 0),
-                  tableWidth,
-                  rowHeight,
-                  'F'
-                );
+                doc.rect(margin, y - 12 + rowBackgroundOffset, tableWidth, rowHeight, 'F');
               }
-              // Detect group title row: only first cell has value, rest are empty
-              const isGroupTitleRow = row.length > 1 && row[0] && row.slice(1).every((cell) => cell === '');
-              if (isGroupTitleRow) {
+              if (isGroupTitleRow(row)) {
                 // Draw a single cell spanning all columns (no border)
-                const textY = y + (typeof this._exportOptions.dataRowTextOffset === 'number' ? this._exportOptions.dataRowTextOffset : 0);
                 doc.setTextColor(0, 0, 0);
-                doc.text(String(row[0]), margin, textY, {
+                doc.text(String(row[0]), margin, y + groupTitleTextOffset, {
                   align: 'left',
                   baseline: 'middle',
                 });
@@ -455,39 +452,19 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                 // Render regular row by iterating header columns and row cells in parallel
                 let cellX = margin;
                 for (let colIdx = 0; colIdx < headers.length; colIdx++) {
-                  let colDef: Column | undefined;
-                  let colOpt: PdfExportOption = this._exportOptions;
-                  let colWidth = colWidths[colIdx];
-                  if (this._hasGroupedItems && colIdx === 0) {
-                    // Group column: no colDef, use default options
-                  } else {
-                    const dataColIdx = this._hasGroupedItems ? colIdx - 1 : colIdx;
-                    colDef = columns.filter((col: Column) => !col.excludeFromExport)[dataColIdx];
-                    if (colDef && colDef.id) {
-                      colOpt = columnExportOptionsCache[colDef.id] || this._exportOptions;
-                    }
-                  }
-                  const cell = row[colIdx];
-                  doc.setTextColor(0, 0, 0);
+                  const colWidth = colWidths[colIdx];
+                  const textAlign = colIdx < groupColumnOffset ? 'left' : headerCellOptions[colIdx].textAlign;
                   let textX = cellX;
-                  const textY = y + (typeof colOpt.dataRowTextOffset === 'number' ? colOpt.dataRowTextOffset : 0);
-                  if (colIdx === 0 && this._hasGroupedItems) {
-                    // Group column (blank for data rows)
-                    doc.text(String(cell ?? ''), textX, textY, {
-                      align: 'left',
-                      baseline: 'middle',
-                    });
-                  } else {
-                    if (colOpt.textAlign === 'center') {
-                      textX = cellX + colWidth / 2;
-                    } else if (colOpt.textAlign === 'right') {
-                      textX = cellX + colWidth;
-                    }
-                    doc.text(String(cell ?? ''), textX, textY, {
-                      align: colOpt.textAlign || 'left',
-                      baseline: 'middle',
-                    });
+                  if (textAlign === 'center') {
+                    textX = cellX + colWidth / 2;
+                  } else if (textAlign === 'right') {
+                    textX = cellX + colWidth;
                   }
+                  doc.setTextColor(0, 0, 0);
+                  doc.text(String(row[colIdx] ?? ''), textX, y + textOffsets[colIdx], {
+                    align: textAlign || 'left',
+                    baseline: 'middle',
+                  });
                   cellX += colWidth;
                 }
               }

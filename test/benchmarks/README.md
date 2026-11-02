@@ -35,6 +35,17 @@ $env:FORMATTER_BENCH_BASELINE="$env:TEMP/formatter-before.json"; $env:FORMATTER_
 
 The summary prints the median and p95 of 25 samples per scenario and the delta against the baseline median. Use `FORMATTER_BENCH_ROWS` to change the row count. The `createExportCellReader` scenarios are skipped on revisions where that function doesn't exist.
 
+## PDF export
+
+The PDF export benchmark runs `exportToPdf()` end to end (20,000 rows × 20 columns in jsdom) with a stubbed jsPDF whose drawing methods do nothing, so it measures the export service itself rather than jsPDF. It covers the jsPDF-AutoTable mode and the manual fallback renderer (with and without grouping), and records a checksum of every drawn text, so the summary can confirm that the output is unchanged against a baseline.
+
+```sh
+$env:PDF_BENCH_REPORT="$env:TEMP/pdf-before.json"; pnpm bench:pdf-export
+$env:PDF_BENCH_BASELINE="$env:TEMP/pdf-before.json"; $env:PDF_BENCH_REPORT="$env:TEMP/pdf-after.json"; pnpm bench:pdf-export
+```
+
+Use `PDF_BENCH_ROWS` to change the row count.
+
 ## Excel export
 
 The Excel export benchmark bundles the production sources and measures export preparation and XLSX serialization in Node + jsdom (5,000 rows × 20 columns) for raw values, formatters, and a warm formatted-data cache. It also verifies that all modes produce identical worksheet data.
