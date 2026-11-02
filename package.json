@@ -38,6 +38,7 @@
     "bench:filter-service": "vitest bench --config ./test/vitest.benchmark.config.mts --run ./test/benchmarks/filterService.bench.ts",
     "bench:tree-data": "vitest bench --config ./test/vitest.benchmark.config.mts --run ./test/benchmarks/treeData.bench.ts",
     "bench:formatter-utils": "vitest bench --config ./test/vitest.benchmark.config.mts --run ./test/benchmarks/formatterUtilities.bench.ts",
+    "bench:pdf-export": "vitest bench --config ./test/vitest.benchmark.config.mts --run ./test/benchmarks/pdfExport.bench.ts",
     "bench:excel-export": "node ./test/benchmarks/excel-export.mjs",
     "angular:watch": "pnpm -r --parallel run angular:dev",
     "aurelia:watch": "pnpm -r --parallel run aurelia:dev",
