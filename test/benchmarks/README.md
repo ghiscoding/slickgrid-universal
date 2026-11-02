@@ -8,19 +8,21 @@ Run the benchmark on an otherwise idle machine:
 pnpm bench:data-view
 ```
 
-To compare results across revisions, first save a baseline:
+To compare results across revisions, first save a baseline from the baseline revision (the results are written to the git-ignored `test/benchmarks/dist/` folder):
 
 ```sh
-pnpm bench:data-view --outputJson /tmp/slick-dataview-before.json
+BENCH_WRITE=1 pnpm bench:data-view
 ```
 
-Then run the comparison from the changed revision:
+Then run the benchmark from the changed revision, every benchmark is compared against its saved `(baseline)` result in the same table:
 
 ```sh
-pnpm bench:data-view --compare /tmp/slick-dataview-before.json
+pnpm bench:data-view
 ```
 
-Use the relative results rather than absolute operations per second. Repeat the benchmark at least three times and treat differences smaller than the reported relative margin of error as inconclusive.
+In PowerShell, set the variable with `$env:BENCH_WRITE="1"` before the first command and clear it with `$env:BENCH_WRITE=""` before the second one. Delete the `test/benchmarks/dist/slick-dataview-*.json` files to stop comparing.
+
+Use the relative results rather than absolute operations per second. Repeat the benchmark at least three times and treat differences smaller than the reported relative margin of error (`rme`) as inconclusive.
 
 ## Formatter utilities
 
@@ -44,7 +46,18 @@ $env:PDF_BENCH_REPORT="$env:TEMP/pdf-before.json"; pnpm bench:pdf-export
 $env:PDF_BENCH_BASELINE="$env:TEMP/pdf-before.json"; $env:PDF_BENCH_REPORT="$env:TEMP/pdf-after.json"; pnpm bench:pdf-export
 ```
 
-Use `PDF_BENCH_ROWS` to change the row count. AutoTable checksums include the full headers, body, and column styles, plus header alignment applied by the hook. When `PDF_BENCH_BASELINE` is set, a missing baseline file or scenario, a different row count, or a checksum mismatch fails the benchmark. Regenerate older baseline reports with this benchmark version before comparing revisions, since the AutoTable checksum calculation has changed.
+Use `PDF_BENCH_ROWS` to change the row count.
+
+## Text export
+
+The text export benchmark runs `exportToFile()` end to end (20,000 rows × 20 columns in jsdom) for CSV, CSV with grouping (group title and group totals rows) and TXT with sanitized data. The file download is replaced by a stub, so the timing stops once the output content is produced, and a checksum of the content (computed outside the timing) confirms that the output is unchanged against a baseline.
+
+```sh
+$env:TEXT_BENCH_REPORT="$env:TEMP/text-before.json"; pnpm bench:text-export
+$env:TEXT_BENCH_BASELINE="$env:TEMP/text-before.json"; $env:TEXT_BENCH_REPORT="$env:TEMP/text-after.json"; pnpm bench:text-export
+```
+
+Use `TEXT_BENCH_ROWS` to change the row count. AutoTable checksums include the full headers, body, and column styles, plus header alignment applied by the hook. When `PDF_BENCH_BASELINE` is set, a missing baseline file or scenario, a different row count, or a checksum mismatch fails the benchmark. Regenerate older baseline reports with this benchmark version before comparing revisions, since the AutoTable checksum calculation has changed.
 
 ## Excel export
 
