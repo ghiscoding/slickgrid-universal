@@ -977,7 +977,7 @@ describe('PdfExportService', () => {
       Object.defineProperty(service, '_exportOptions', { value: { htmlDecode: true, sanitizeDataExport: true } });
       (service as any)._hasGroupedItems = false;
       const result = service['readRegularRowData'](columns as any, 0, itemObj);
-      expect(result).toEqual(['B', 'C']); // col2 and col3 included
+      expect(result).toEqual(['C']); // col1 is excluded and col2 has a width of 0 (same as their headers)
     });
   });
 
@@ -1101,6 +1101,25 @@ describe('PdfExportService', () => {
       expect(secondCell.styles.minCellHeight).toBe(30);
       expect(getRowHeightSpy).toHaveBeenCalledTimes(1);
       expect(getRowHeightSpy).toHaveBeenCalledWith(0);
+    });
+
+    it('should read the row height from the grid row of the exported row when a grid row (e.g. Row Detail) is not exported', async () => {
+      const heights = [40, 200, 60];
+      const { Svc, gridStub, container, autoTableSpy, getDidParseCell } = await createVarHeightService((row) => heights[row]);
+      // the 2nd grid row is a Row Detail row, it isn't exported
+      const items = [{ id: 0, title: 'Task 0' }, { getItem: () => null }, { id: 2, title: 'Task 2' }];
+      const dataView = gridStub.getData();
+      dataView.getLength = () => items.length;
+      dataView.getItem = (idx: number) => items[idx] as any;
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      await service.exportToPdf({ filename: 'var-height-row-detail' });
+
+      const body = autoTableSpy.mock.calls[0][0].body;
+      const cell: any = { styles: {} };
+      getDidParseCell()!({ section: 'body', row: { index: 1, raw: body[1] }, column: { index: 0 }, cell });
+      // exported row 1 is grid row 2: 60px * 0.75 = 45pt
+      expect(cell.styles.minCellHeight).toBe(45);
     });
   });
 
@@ -2956,6 +2975,93 @@ describe('PdfExportService', () => {
 
       const bCall = textSpy.mock.calls.find(([text]) => text === 'B')!;
       expect(textSpy).toHaveBeenCalledWith('', 40, bCall[2], { align: 'left', baseline: 'middle' });
+    });
+
+    it('should draw every cell of a data row with empty trailing cells, and map the cells to the visible columns when a column has a width of 0', async () => {
+      const { PdfExportService: Svc, textSpy } = await createManualService();
+
+      const columns = [
+        { id: 'col1', field: 'col1', name: 'Col1', width: 100 },
+        { id: 'hidden', field: 'hidden', name: 'Hidden', width: 0 },
+        { id: 'col2', field: 'col2', name: 'Col2', width: 100, pdfExportOptions: { textAlign: 'right' } },
+      ];
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 1,
+        getItem: () => ({ id: 0, col1: 'A0', hidden: 'H', col2: '' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const gridStub = { getVisibleColumns: () => columns, getOptions: () => ({}), getData: () => dataViewStub };
+      const service = new Svc();
+      service.init(gridStub as any, { get: () => ({ publish: vi.fn() }) } as any);
+
+      await service.exportToPdf({ filename: 'manual-empty-trailing-cells' });
+
+      const a0Call = textSpy.mock.calls.find(([text]) => text === 'A0')!;
+      expect(a0Call).toEqual(['A0', 40, expect.any(Number), { align: 'left', baseline: 'middle' }]);
+      // the empty cell is drawn in the 2nd visible column (right aligned) and the hidden width-0 column value is not exported
+      expect(textSpy).toHaveBeenCalledWith('', 40 + 515.28, a0Call[2], { align: 'right', baseline: 'middle' });
+      expect(textSpy).not.toHaveBeenCalledWith('H', expect.anything(), expect.anything(), expect.anything());
+    });
+
+    it('should draw group title rows across all columns and read the alternate row background offset from the 1st data column when grouping', async () => {
+      const { PdfExportService: Svc, textSpy, rectSpy } = await createManualService();
+
+      const columns = [
+        { id: 'col1', field: 'col1', name: 'Col1', width: 100, pdfExportOptions: { dataRowBackgroundOffset: 5 } },
+        { id: 'col2', field: 'col2', name: 'Col2', width: 100, pdfExportOptions: { dataRowBackgroundOffset: 9 } },
+      ];
+      const items = [
+        { __group: true, title: 'Group A', level: 0 },
+        { id: 0, col1: 'A0', col2: 'B0' },
+      ];
+      const dataViewStub = {
+        getGrouping: () => [{ getter: 'col1' }],
+        getLength: () => items.length,
+        getItem: (idx: number) => items[idx],
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const gridStub = { getVisibleColumns: () => columns, getOptions: () => ({}), getData: () => dataViewStub };
+      const service = new Svc();
+      service.init(gridStub as any, { get: () => ({ publish: vi.fn() }) } as any);
+
+      await service.exportToPdf({ filename: 'manual-group-title', groupCollapsedSymbol: '+', groupExpandedSymbol: '-' });
+
+      // the group title is a single text drawn from the left margin
+      expect(textSpy).toHaveBeenCalledWith('- Group A', 40, expect.any(Number), { align: 'left', baseline: 'middle' });
+      // the 2nd exported row (data row) is an alternate row, its background uses the 1st data column offset (5)
+      // (the row text is drawn with the default "dataRowTextOffset" of -4)
+      const rowY = textSpy.mock.calls.find(([text]) => text === 'A0')![2] + 4;
+      expect(rectSpy).toHaveBeenCalledWith(40, rowY - 12 + 5, 515.28, 18, 'F');
+    });
+
+    it('should read each row height from its grid row when a grid row (e.g. Row Detail) is not exported', async () => {
+      const { PdfExportService: Svc, rectSpy, textSpy } = await createManualService();
+
+      const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+      // the 2nd grid row is a Row Detail row and the 3rd item has no id, neither of them are exported
+      const items = [{ id: 0, col1: 'A0' }, { getItem: () => null }, { col1: 'no-id' }, { id: 3, col1: 'A3' }];
+      const heights = [40, 200, 100, 60];
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => items.length,
+        getItem: (idx: number) => items[idx],
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const gridStub = {
+        getVisibleColumns: () => columns,
+        getOptions: () => ({ enableVariableRowHeight: true }),
+        getData: () => dataViewStub,
+        getRowHeight: (row: number) => heights[row],
+      };
+      const service = new Svc();
+      service.init(gridStub as any, { get: () => ({ publish: vi.fn() }) } as any);
+
+      await service.exportToPdf({ filename: 'manual-row-detail-height' });
+
+      // the 2nd exported row is an alternate row, its background height is the height of grid row 3 (60px * 0.75 = 45pt)
+      expect(rectSpy).toHaveBeenCalledWith(40, expect.any(Number), 515.28, 45, 'F');
+      expect(textSpy).not.toHaveBeenCalledWith('no-id', expect.anything(), expect.anything(), expect.anything());
     });
 
     it('should use custom headerBackgroundColor and headerTextColor in manual header rendering', async () => {

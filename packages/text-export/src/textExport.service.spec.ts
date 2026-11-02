@@ -286,6 +286,25 @@ describe('ExportService', () => {
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
 
+      it(`should skip a column with a width of 0 in the data rows, the same way as its header`, async () => {
+        const columnsWithHiddenPosition = mockColumns.map((col) => (col.id === 'position' ? { ...col, width: 0 } : col));
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsWithHiddenPosition);
+        mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const spyDownload = vi.spyOn(service, 'startDownloadFile');
+
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
+        const contentExpectation = `"User Id","FirstName","LastName","Order"
+          ="1E06","John","Z","<b>10</b>"`;
+
+        service.init(gridStub, container);
+        await service.exportToFile(mockExportCsvOptions);
+
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
+      });
+
       it(`should have the Order exported correctly with multiple formatters and use a different delimiter when "delimiterOverride" is provided`, async () => {
         mockGridOptions.textExportOptions = { delimiterOverride: ';;' };
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];

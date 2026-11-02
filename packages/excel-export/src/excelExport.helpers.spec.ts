@@ -85,6 +85,19 @@ describe('ExcelExportService Helpers', () => {
     expect(internals.readRegularRowData(mockColumns, 0, { id: 1, title: 'A' }, 0)).toEqual([1, 'A']);
   });
 
+  it('skips a column with a width of 0 in regular rows, the same way as its header and column style', () => {
+    const internals = service as any;
+    internals._stylesheet = new Workbook().getStyleSheet();
+    internals._excelExportOptions = {};
+    vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([]);
+    const columns: Column[] = [...mockColumns, { id: 'hidden', name: 'Hidden', field: 'hidden', width: 0 }];
+    internals.cacheRegularCellExcelFormats(columns, new Map());
+
+    expect(internals.readRegularRowData(columns, 0, { id: 1, title: 'A', hidden: 'H' }, 0)).toEqual([1, 'A']);
+    expect(internals.getColumnHeaders(columns).map((header: any) => header.key)).toEqual(['id', 'title']);
+    expect(internals.getColumnStyles(columns)).toHaveLength(2);
+  });
+
   it('getColumnHeaderData prepends Group By title when grouping exists', () => {
     vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([{ getter: 'id' }] as any);
     (service as any)._excelExportOptions = {};

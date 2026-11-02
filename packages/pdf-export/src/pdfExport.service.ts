@@ -60,19 +60,6 @@ function resolveColumnExportOptions(columnDef: Column, globalOptions: PdfExportO
   return config;
 }
 
-/** a group title row only has a value in its 1st cell, every other cell is empty */
-function isGroupTitleRow(row: any[]): boolean {
-  if (row.length < 2 || !row[0]) {
-    return false;
-  }
-  for (let i = 1; i < row.length; i++) {
-    if (row[i] !== '') {
-      return false;
-    }
-  }
-  return true;
-}
-
 export class PdfExportService implements ExternalResource, BasePdfExportService {
   protected _exportOptions!: PdfExportOption;
   protected _grid!: SlickGrid;
@@ -80,6 +67,10 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   protected _groupedColumnHeaders?: Array<GroupedHeaderSpan>;
   protected _columnHeaders: Array<KeyTitlePair> = [];
   protected _hasGroupedItems = false;
+  /** grid row index of every exported row, some grid rows (e.g. Row Detail) aren't exported so it can differ from the exported row index */
+  protected _gridRowIndexByExportedRow: WeakMap<any[], number> = new WeakMap();
+  /** exported rows that are group title rows */
+  protected _groupTitleRows: WeakSet<any[]> = new WeakSet();
   protected _locales!: Locale;
   protected _pubSubService!: PubSubService | null;
   protected _translaterService: TranslaterService | undefined;
@@ -226,11 +217,13 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
           const defaultRowHeight = 18;
           const useVariableRowHeight = this._gridOptions.enableVariableRowHeight && this._exportOptions.includeVariableRowHeight !== false;
           const rowHeightByRowIndex = new Map<number, number>();
-          const getPdfRowHeight = (rowIdx: number): number => {
+          // the row height must be read from the grid row of the exported row (some grid rows like Row Detail aren't exported)
+          const getPdfRowHeight = (row: any[] | undefined, exportedRowIdx: number): number => {
             if (!useVariableRowHeight) {
               return defaultRowHeight;
             }
 
+            const rowIdx = (row && this._gridRowIndexByExportedRow.get(row)) ?? exportedRowIdx;
             let cachedRowHeight = rowHeightByRowIndex.get(rowIdx);
             if (cachedRowHeight === undefined) {
               cachedRowHeight = this.convertPixelToPdfPoint(this._grid.getRowHeight(rowIdx));
@@ -306,7 +299,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                 }
                 // Apply variable row height as minCellHeight (px → pt: pixels * 0.75)
                 if (data.section === 'body' && useVariableRowHeight) {
-                  data.cell.styles.minCellHeight = getPdfRowHeight(data.row.index);
+                  data.cell.styles.minCellHeight = getPdfRowHeight(data.row.raw, data.row.index);
                 }
               },
               alternateRowStyles: {
@@ -395,11 +388,9 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             }
 
             // resolve the export options of every header cell once, the "Group by" cell (when grouping) uses the global options
-            // NOTE: regular rows include width-0 columns, so their cells are mapped to every column that isn't excluded from the export
-            const exportedColumns = columns.filter((col: Column) => !col.excludeFromExport);
             const groupColumnOffset = this._hasGroupedItems ? 1 : 0;
             const headerCellOptions: PdfExportOption[] = headers.map((_, idx) => {
-              const colId = idx < groupColumnOffset ? undefined : exportedColumns[idx - groupColumnOffset]?.id;
+              const colId = idx < groupColumnOffset ? undefined : visibleColumns[idx - groupColumnOffset]?.id;
               return (colId && columnExportOptionsCache[colId]) || this._exportOptions;
             });
             const defaultTextAlign = this._exportOptions.textAlign || 'left';
@@ -409,8 +400,8 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             const getOffset = (offset?: number) => (typeof offset === 'number' ? offset : 0);
             const textOffsets = headerCellOptions.map((colOpt) => getOffset(colOpt.dataRowTextOffset));
             const groupTitleTextOffset = getOffset(this._exportOptions.dataRowTextOffset);
-            // the alternate row background offset is read from the exported column at the group column offset (unchanged behavior)
-            const rowBackgroundColId = exportedColumns[groupColumnOffset]?.id;
+            // the alternate row background offset is read from the 1st data column
+            const rowBackgroundColId = visibleColumns[0]?.id;
             const rowBackgroundOffset = getOffset(
               (rowBackgroundColId ? columnExportOptionsCache[rowBackgroundColId] : this._exportOptions).dataRowBackgroundOffset
             );
@@ -420,7 +411,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             y = this._drawHeaderRow(doc, y, headers, colWidths, margin, headerTextOffset, headerBackgroundOffset, headerAligns);
             doc.setFontSize(this._exportOptions.fontSize || 10);
             data.forEach((row, rowIdx) => {
-              const rowHeight = getPdfRowHeight(rowIdx);
+              const rowHeight = getPdfRowHeight(row, rowIdx);
               // Check for page break before drawing row
               if (y + rowHeight + bottomMargin > pageHeight) {
                 doc.addPage();
@@ -441,7 +432,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                 doc.setFillColor(altColor[0], altColor[1], altColor[2]);
                 doc.rect(margin, y - 12 + rowBackgroundOffset, tableWidth, rowHeight, 'F');
               }
-              if (isGroupTitleRow(row)) {
+              if (this._groupTitleRows.has(row)) {
                 // Draw a single cell spanning all columns (no border)
                 doc.setTextColor(0, 0, 0);
                 doc.text(String(row[0]), margin, y + groupTitleTextOffset, {
@@ -518,16 +509,23 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
       // make sure we have a filled object AND that the item doesn't include the "getItem" method
       // this could happen with an opened Row Detail as it seems to include an empty Slick DataView (we'll just skip those lines)
       if (itemObj && !itemObj.hasOwnProperty('getItem')) {
+        let row: any[] | undefined;
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
         if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
           // get regular row item data
-          outputData.push(this.readRegularRowData(columns, rowNumber, itemObj, columnExportOptionsCache, cellReaders));
+          row = this.readRegularRowData(columns, rowNumber, itemObj, columnExportOptionsCache, cellReaders);
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {
           // get the group row
-          outputData.push(this.readGroupedTitleRow(itemObj));
+          row = this.readGroupedTitleRow(itemObj);
+          this._groupTitleRows.add(row);
         } else if (itemObj.__groupTotals) {
           // else if the row is a Group By and we have aggregators, then a property of '__groupTotals' would exist under that object
-          outputData.push(this.readGroupedTotalRow(columns, itemObj));
+          row = this.readGroupedTotalRow(columns, itemObj);
+        }
+
+        if (row) {
+          this._gridRowIndexByExportedRow.set(row, rowNumber);
+          outputData.push(row);
         }
       }
     }
@@ -644,8 +642,8 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
       const columnDef = columns[col];
       const colOpt = columnExportOptionsCache && columnDef.id ? columnExportOptionsCache[columnDef.id] : this._exportOptions;
 
-      // skip excluded column
-      if (columnDef.excludeFromExport) {
+      // skip excluded column, a column with a width of 0 is also considered hidden and isn't exported (same as its header)
+      if (columnDef.excludeFromExport || !(columnDef.width === undefined || columnDef.width > 0)) {
         continue;
       }
 
