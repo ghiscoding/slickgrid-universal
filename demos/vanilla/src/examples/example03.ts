@@ -79,19 +79,6 @@ export default class Example03 {
     );
     this._bindingEventService.bind(gridContainerElm, ['onafterexporttoexcel', 'onafterexporttopdf'], () => (this.loadingClass = ''));
 
-    // TODO: temporary export timing logs, remove after export perf testing
-    let exportStartTime = 0;
-    this._bindingEventService.bind(gridContainerElm, ['onbeforeexporttoexcel', 'onbeforeexporttopdf', 'onbeforeexporttotextfile'], () => {
-      exportStartTime = performance.now();
-    });
-    this._bindingEventService.bind(gridContainerElm, ['onafterexporttoexcel', 'onafterexporttopdf', 'onafterexporttotextfile'], (e) => {
-      const duration = (performance.now() - exportStartTime).toFixed(1);
-      const cacheEnabled = !!this.sgb?.slickGrid?.getOptions().enableFormattedDataCache;
-      console.log(
-        `[export timing] ${e.type.replace('onafterexportto', '')}: ${duration}ms (${this.sgb?.dataView?.getLength()} rows, formatted data cache: ${cacheEnabled ? 'on' : 'off'})`
-      );
-    });
-
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
