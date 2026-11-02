@@ -66,12 +66,14 @@ minimumReleaseAgeExclude:
   - 'excel-builder-vanilla'
   - 'multiple-select-vanilla'
   - cypress@16.2.1
+  # Renovate security update: minimatch@11.0.4
+  - minimatch@11.0.4
 
 overrides:
   fast-uri: ^4.2.3
   http-cache-semantics: ^4.3.0
   ip-address: ^10.7.4
-  minimatch: ^10.2.6
+  minimatch: ^11.0.4
   picomatch: ^4.0.7
   postcss-selector-parser: ^7.1.7
   shell-quote: ^1.12.0
