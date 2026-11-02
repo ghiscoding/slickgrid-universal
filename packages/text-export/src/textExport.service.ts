@@ -325,10 +325,14 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     itemObj: any,
     cellReaders: ExportCellReader[] = this.createCellReaders(columns)
   ): string {
-    let idx = 0;
     const rowOutputStrings = [];
     const exportQuoteWrapper = this._exportQuoteWrapper;
     const isColspanHiddenCell = createColspanHiddenCellChecker(this._dataView.getItemMetadata(row));
+
+    // if we are grouping, the 1st column is used by the grouping text:: Group by [columnX]
+    if (this._hasGroupedItems) {
+      rowOutputStrings.push(this._fileFormat === 'csv' ? `""` : '');
+    }
 
     for (let col = 0, ln = columns.length; col < ln; col++) {
       const columnDef = columns[col];
@@ -336,12 +340,6 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
       // skip excluded column, a column with a width of 0 is also considered hidden and isn't exported (same as its header)
       if (!isColumnExported(columnDef)) {
         continue;
-      }
-
-      // if we are grouping and are on 1st column index, we need to skip this column since it will be used later by the grouping text:: Group by [columnX]
-      if (this._hasGroupedItems && idx === 0) {
-        const emptyValue = this._fileFormat === 'csv' ? `""` : '';
-        rowOutputStrings.push(emptyValue);
       }
 
       // when using rowspan
@@ -386,8 +384,6 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
         rowOutputStrings.push(keepAsStringWrapper + exportQuoteWrapper + itemData + exportQuoteWrapper);
       }
-
-      idx++;
     }
 
     return rowOutputStrings.join(this._delimiter);

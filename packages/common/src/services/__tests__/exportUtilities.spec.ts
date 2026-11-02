@@ -159,6 +159,10 @@ describe('exportUtilities', () => {
       expect(getHiddenCells({ columns: { 0: { colspan: '*' } } })).toEqual([false, true, true, true]);
     });
 
+    it('should keep the cell where a "*" colspan starts when it is not on the 1st column', () => {
+      expect(getHiddenCells({ columns: { b: { colspan: '*' } } })).toEqual([false, false, true, true]);
+    });
+
     it('should read a spanned cell that has its own metadata without ending the current colspan', () => {
       expect(getHiddenCells({ columns: { a: { colspan: 3 }, b: { colspan: 1 } } })).toEqual([false, false, true, true]);
     });

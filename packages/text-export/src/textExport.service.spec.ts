@@ -542,6 +542,26 @@ describe('ExportService', () => {
         expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined, itemObj);
         expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, itemObj);
       });
+
+      it('should only add the "Group by" empty cell once when the first cells of a grouped row are rowspan children', () => {
+        const columns: Column[] = [
+          { id: 'name', field: 'name' },
+          { id: 'code', field: 'code' },
+        ];
+        const textService = new TextExportService();
+        const localContainer = new ContainerServiceStub();
+        localContainer.registerInstance('PubSubService', { publish: vi.fn(), unsubscribeAll: vi.fn() });
+        const localGrid: any = {
+          getData: vi.fn().mockReturnValue({ getItemMetadata: vi.fn().mockReturnValue(null) }),
+          getOptions: vi.fn().mockReturnValue({ enableCellRowSpan: true }),
+          getParentRowSpanByCell: vi.fn().mockReturnValueOnce({ start: 0, end: 1 }).mockReturnValue(null),
+        };
+        textService.init(localGrid, localContainer);
+        Object.assign(textService as any, { _exportOptions: {}, _fileFormat: 'csv', _exportQuoteWrapper: '"', _delimiter: ',' });
+        (textService as any)._hasGroupedItems = true;
+
+        expect(textService['readRegularRowData'](columns, 1, { id: 1, name: 'N', code: 'C' })).toBe('"",,"C"');
+      });
     });
 
     describe('startDownloadFile with some columns having complex object and hidden columns', () => {
