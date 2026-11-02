@@ -78,6 +78,7 @@ export default class Example03 {
       () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s font-22px')
     );
     this._bindingEventService.bind(gridContainerElm, ['onafterexporttoexcel', 'onafterexporttopdf'], () => (this.loadingClass = ''));
+
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 

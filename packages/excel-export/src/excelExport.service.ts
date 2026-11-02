@@ -504,8 +504,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       if (itemObj && !itemObj.hasOwnProperty('getItem')) {
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
         if (itemObj[datasetIdPropName] !== null && itemObj[datasetIdPropName] !== undefined) {
-          // Read a regular row
-          originalDaraArray.push(this.readRegularRowData(columns, rowNumber, itemObj, rowNumber, cachedColumnMetadata));
+          // Read a regular row, its Excel row number comes after all the rows already exported (including header rows)
+          originalDaraArray.push(
+            this.readRegularRowData(columns, rowNumber, itemObj, rowNumber, cachedColumnMetadata, originalDaraArray.length + 1)
+          );
           rowWasExported = true;
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {
           // get the group row
@@ -641,22 +643,33 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param {Array<Object>} columns - column definitions
    * @param {Number} row - row index
    * @param {Object} itemObj - item datacontext object
+   * @param {Number} dataRowIdx - data row index
+   * @param {Map} [columnMetadataCache] - pre-calculated metadata of every column
+   * @param {Number} [excelRowNumber] - Excel row number of this row (used by cell merges), defaults to the grid row + header row(s)
    */
   protected readRegularRowData(
     columns: Column[],
     row: number,
     itemObj: any,
     dataRowIdx: number,
-    columnMetadataCache?: Map<string, ExcelColumnExportCache>
+    columnMetadataCache?: Map<string, ExcelColumnExportCache>,
+    excelRowNumber?: number
   ): string[] {
     const cachedColumnMetadata = columnMetadataCache ?? this.preCalculateColumnMetadata(columns);
     const gridOptions = this._gridOptions;
-    let idx = 0;
     const rowOutputStrings = [];
     const columnsLn = columns.length;
     let prevColspan: number | string = 1;
-    let colspanStartIndex = 0;
+    let colspanStartExcelCol = 1;
+    // cell merges use the Excel row & column positions, Excel rows start at 2 (or at 3 when there's a pre-header row)
+    // and the 1st Excel column is used by the grouping text when grouping:: Group by [columnX]
+    const excelRow = excelRowNumber ?? row + (this._hasColumnTitlePreHeader ? 3 : 2);
+    let excelCol = this._hasGroupedItems ? 1 : 0;
     const itemMetadata = this._dataView.getItemMetadata(row);
+
+    if (this._hasGroupedItems) {
+      rowOutputStrings.push('');
+    }
 
     for (let col = 0; col < columnsLn; col++) {
       const columnDef = columns[col];
@@ -665,11 +678,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       if (!isColumnExported(columnDef)) {
         continue;
       }
-
-      // if we are grouping and are on 1st column index, we need to skip this column since it will be used later by the grouping text:: Group by [columnX]
-      if (this._hasGroupedItems && idx === 0) {
-        rowOutputStrings.push('');
-      }
+      excelCol++;
 
       // when using rowspan
       let rowspan = 1;
@@ -692,16 +701,18 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       if (itemMetadata?.columns) {
         const metadata = itemMetadata.columns;
         const columnData = metadata[columnDef.id] || metadata[col];
-        if (!((!isNaN(prevColspan as number) && +prevColspan > 1) || (prevColspan === '*' && col > 0))) {
+        if (!((!isNaN(prevColspan as number) && +prevColspan > 1) || prevColspan === '*')) {
           prevColspan = columnData?.colspan ?? 1;
+          colspanStartExcelCol = excelCol;
         }
         if (prevColspan === '*') {
-          colspan = columns.length - col;
+          // number of exported columns left to span, including the current one
+          colspan = columns.slice(col).filter(isColumnExported).length;
         } else {
           colspan = prevColspan as number;
           if (columnDef.id in metadata || col in metadata) {
             colspanColumnId = columnDef.id;
-            colspanStartIndex = col;
+            colspanStartExcelCol = excelCol;
           }
         }
       }
@@ -709,30 +720,23 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       // when using grid with rowspan without any colspan, we will merge some cells on single column
       if (rowspan > 1 && !isNaN(prevColspan as number) && +prevColspan === 1 && columnDef.id === colspanColumnId) {
         // -- Merge Data RowSpan only
-        // Excel row starts at 2 or at 3 when dealing with pre-header grouping
-        const excelRowNumber = row + (this._hasColumnTitlePreHeader ? 3 : 2);
-        const leftExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
-        const rightExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
-        this._sheet.mergeCells(`${leftExcelColumnChar}${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber + rowspan - 1}`);
+        const excelColumnChar = this.getExcelColumnNameByIndex(excelCol);
+        this._sheet.mergeCells(`${excelColumnChar}${excelRow}`, `${excelColumnChar}${excelRow + rowspan - 1}`);
       }
 
       // when using grid with colspan, we will merge some cells together
-      if ((prevColspan === '*' && col > 0) || (!isNaN(prevColspan as number) && +prevColspan > 1 && columnDef.id !== colspanColumnId)) {
+      if (
+        (prevColspan === '*' && excelCol > colspanStartExcelCol) ||
+        (!isNaN(prevColspan as number) && +prevColspan > 1 && columnDef.id !== colspanColumnId)
+      ) {
         // -- Merge Data, ColSpan and maybe RowSpan
-        // Excel row starts at 2 or at 3 when dealing with pre-header grouping
-        const excelRowNumber = row + (this._hasColumnTitlePreHeader ? 3 : 2);
-
-        if (typeof prevColspan === 'number' && colspan - 1 === 1) {
-          // partial column span
-          const leftExcelColumnChar = this.getExcelColumnNameByIndex(colspanStartIndex + 1);
-          const rightExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
-          this._sheet.mergeCells(`${leftExcelColumnChar}${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber + rowspan - 1}`);
-          rowOutputStrings.push(''); // clear cell that won't be shown by a cell merge
-        } else if (prevColspan === '*' && colspan === 1) {
-          // full column span (from A1 until the last column)
-          const rightExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
-          this._sheet.mergeCells(`A${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber + rowspan - 1}`);
-        } else {
+        if (colspan === 1 || (typeof prevColspan === 'number' && colspan - 1 === 1)) {
+          // merge the cells from the colspan start until the current (last spanned) column, partial span or full span (*)
+          const leftExcelColumnChar = this.getExcelColumnNameByIndex(colspanStartExcelCol);
+          const rightExcelColumnChar = this.getExcelColumnNameByIndex(excelCol);
+          this._sheet.mergeCells(`${leftExcelColumnChar}${excelRow}`, `${rightExcelColumnChar}${excelRow + rowspan - 1}`);
+        }
+        if (prevColspan !== '*' || colspan > 1) {
           rowOutputStrings.push(''); // clear cell that won't be shown by a cell merge
         }
 
@@ -784,7 +788,6 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }) as Date | number | string | ExcelColumnMetadata;
 
         rowOutputStrings.push(parsedItemData);
-        idx++;
       }
     }
 

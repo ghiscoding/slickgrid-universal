@@ -96,14 +96,16 @@ export function createColspanHiddenCellChecker(itemMetadata?: ItemMetadata | nul
   }
 
   let prevColspan: number | string = 1;
+  let colspanStartCol = 0;
   return (columnDef, col) => {
-    const isSpanning = (!isNaN(prevColspan as number) && +prevColspan > 1) || (prevColspan === '*' && col > 0);
-    if (!isSpanning) {
+    if (!((!isNaN(prevColspan as number) && +prevColspan > 1) || prevColspan === '*')) {
       prevColspan = (metadata[columnDef.id] || metadata[col])?.colspan ?? 1;
+      colspanStartCol = col;
     }
     const isColspanColumn = prevColspan !== '*' && (columnDef.id in metadata || col in metadata);
 
-    if ((prevColspan === '*' && col > 0) || (!isNaN(prevColspan as number) && +prevColspan > 1 && !isColspanColumn)) {
+    // a "*" colspan hides every following cell of the row, but not the cell where it starts
+    if ((prevColspan === '*' && col > colspanStartCol) || (!isNaN(prevColspan as number) && +prevColspan > 1 && !isColspanColumn)) {
       if (!isNaN(prevColspan as number) && +prevColspan > 1) {
         (prevColspan as number)--;
       }

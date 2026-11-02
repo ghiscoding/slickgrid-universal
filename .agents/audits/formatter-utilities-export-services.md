@@ -13,7 +13,8 @@ Related earlier audit: [excel-export-performance.md](./excel-export-performance.
 | Export services bugs | ✅ Done (#2895, #2897) |
 | Export services perf (PDF fallback renderer) | ✅ Done (#2896) |
 | Export services perf (shared cell loops) | ❌ Cancelled, #2899 closed (no measurable gain, more LOC) |
-| Export services LOC (shared helpers) | ✅ Done (uncommitted on `master`, PR pending) |
+| Export services LOC (shared helpers) | ✅ Done (#2900) |
+| Excel merges (column/row positions, `*` colspan) | ✅ Done (#2901) |
 | Benchmark tooling (Vitest 5) | ✅ Done (#2898, branch `chore/benchmarks-vitest5`) |
 
 ## Completed work
@@ -94,7 +95,7 @@ Tried the "shared cell loops" items, then closed the PR without merging:
 - Lesson: the per-cell lookups are negligible next to formatting, regex & string building, don't retry these micro
   optimizations without a profile showing them as a hotspot.
 
-### `refactor(export): share duplicated export helpers across export services` (PR pending)
+### #2900 — `refactor(export): share duplicated export helpers across export services`
 
 New [exportUtilities.ts](../../packages/common/src/services/exportUtilities.ts) in `common` (exported publicly, all
 additive), used by the Excel, PDF & Text exporters. The `protected` methods are kept and now call the helpers.
@@ -120,9 +121,29 @@ additive), used by the Excel, PDF & Text exporters. The `protected` methods are 
   grid row indexes, so a shared loop would need callbacks for little gain), and the Excel colspan/rowspan logic (it also
   computes merge ranges, the 2 "unverified observations" below should be checked before touching it).
 
+### #2901 — `fix(export): use exported column & row positions for Excel cell merges`
+
+Confirmed the 2 "unverified observations" with failing tests first (7 tests), then fixed:
+
+- Excel merges now use the Excel column of each exported cell (counts only exported columns, +1 for the "Group by"
+  column when grouping) instead of the grid column index (`col + 1`).
+- Excel merges now use the Excel row of the exported row: `pushAllGridRowDataToArrayAsync()` passes
+  `originalDaraArray.length + 1` to `readRegularRowData()` through a new optional `excelRowNumber` argument (defaults to
+  the previous `row + 2/3` formula), so skipped Row Detail rows don't shift merges anymore.
+- `'*'` colspan: counts the remaining exported columns (was `columns.length - col`, so no merge at all when the last grid
+  column was hidden/excluded) and merges from the column where it starts (was always from column `A`, which included the
+  empty "Group by" cell when grouping and lost the value).
+- `'*'` colspan not starting on the 1st column: the starting cell was hidden too (`col > 0` check), in Excel and in the
+  shared `createColspanHiddenCellChecker()` (Text & PDF). It now only hides the cells after the start. An existing PDF
+  test expected the old (wrong) output and was updated.
+- Excel & Text: the "Group by" empty cell is added once before the cell loop (like PDF). It used to be added again for
+  every leading rowspan child cell (the `idx === 0` check never advanced on `continue`), shifting the row's cells.
+- Not fixed: `customExcelHeader` rows are added after the data (and merges) are computed, so merge rows are still
+  offset by the number of custom header rows (same as before).
+- Identical output checksums on the benchmarks (no spans there), changed lines 100% covered.
+
 ## Remaining work
 
-- The 2 "Unverified observations" below (Excel merge column index & colspan `'*'` counting excluded columns).
 - The PDF benchmark drift open check in the #2898 section.
 
 ### #2898 — Benchmark tooling (`chore:` PR, branch `chore/benchmarks-vitest5`)
@@ -156,7 +177,7 @@ services).
   benchmark, then `git restore -- packages/pdf-export/src/pdfExport.service.ts` (don't pipe `git show` into
   PowerShell's `Set-Content -NoNewline`, it drops the newlines and breaks the file).
 
-### Unverified observations (check before acting)
+### Unverified observations (✅ confirmed & fixed, see the Excel merges fix above)
 
 - Excel cell merges use `getExcelColumnNameByIndex(col + 1)` with the grid column index, which may not match the Excel
   column when columns are excluded or have a width of 0 (and when the "Group by" column is prepended).
