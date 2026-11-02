@@ -31,8 +31,13 @@ The Composite Editor Modal allows you to (create, clone, edit, mass update & mas
 Import the Composite Editor stylesheet after the SlickGrid theme in your application's global SCSS entry file:
 
 ```scss
+// SASS
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
 @use '@slickgrid-universal/composite-editor-component/dist/styles/sass/slick-composite-editor.scss';
+
+// CSS
+@import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
+@import '@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor.css';
 ```
 
 See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for plain CSS imports and theme configuration details.

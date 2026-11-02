@@ -94,11 +94,16 @@ changeKeepingComponentAlive() {
 ##### Component
 
 ### Required Styles (v11+)
-Add `@slickgrid-universal/row-detail-plugin` as a direct dependency and import its styles after the SlickGrid theme in your application's global SCSS entry file:
+Stylesheets are now contained in each optional package, add `@slickgrid-universal/row-detail-plugin` styles after your grid theme in your global SCSS/CSS entry file:
 
 ```scss
+// SASS
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
 @use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail.scss';
+
+// CSS
+@import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
+@import '@slickgrid-universal/row-detail-plugin/dist/styles/css/slick-row-detail.css';
 ```
 
 See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for plain CSS imports and theme configuration details.
