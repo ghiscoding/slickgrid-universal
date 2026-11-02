@@ -400,6 +400,40 @@ describe('formatterUtilities', () => {
       expect(gridSpy).toHaveBeenCalled();
       expect(output).toBe('2002.01.01');
     });
+
+    it('should find the default separator from the field type output format when it is not provided', () => {
+      const column = { type: 'dateIso' } as Column;
+      const grid = { getOptions: () => ({ formatterOptions: { dateSeparator: '.' } }) } as unknown as SlickGrid;
+
+      const dateIsoFormatter = getAssociatedDateFormatter('dateIso');
+      expect(dateIsoFormatter(1, 1, '2002-01-31', column, {}, grid)).toBe('2002.01.31');
+      expect(dateIsoFormatter(1, 1, '2003-02-28', column, {}, grid)).toBe('2003.02.28'); // 2nd call reuses the cached output format
+      expect(getAssociatedDateFormatter('dateUs')(1, 1, '2002-01-31', column, {}, grid)).toBe('01.31.2002');
+      expect(getAssociatedDateFormatter('dateTimeIso')(1, 1, '2002-01-31T13:04:05', column, {}, grid)).toBe('2002.01.31 13:04:05');
+      expect(getAssociatedDateFormatter('dateTimeUsAmPm')(1, 1, '2002-01-31T13:04:05', column, {}, grid)).toBe('01.31.2002 01:04:05 pm');
+    });
+
+    it('should support an empty "dateSeparator" and keep the time separators untouched', () => {
+      const column = { type: 'dateIso' } as Column;
+      const grid = { getOptions: () => ({ formatterOptions: { dateSeparator: '' } }) } as unknown as SlickGrid;
+
+      expect(getAssociatedDateFormatter('dateEuroShort')(1, 1, '2002-01-31', column, {}, grid)).toBe('310102');
+      expect(getAssociatedDateFormatter('dateTimeEuro')(1, 1, '2002-01-31T13:04:05', column, {}, grid)).toBe('31012002 13:04:05');
+    });
+
+    it('should not change a format without any separator, like "dateUtc"', () => {
+      const column = { type: 'dateIso' } as Column;
+      const grid = { getOptions: () => ({ formatterOptions: { dateSeparator: '.' } }) } as unknown as SlickGrid;
+      const defaultGrid = { getOptions: () => ({}) } as unknown as SlickGrid;
+      const formatterFn = getAssociatedDateFormatter('dateUtc');
+
+      expect(formatterFn(1, 1, '2002-01-31T13:04:05Z', column, {}, grid)).toBe(formatterFn(1, 1, '2002-01-31T13:04:05Z', column, {}, defaultGrid));
+    });
+
+    it('should not replace any separator when the date value cannot be parsed', () => {
+      const grid = { getOptions: () => ({ formatterOptions: { dateSeparator: '.' } }) } as unknown as SlickGrid;
+      expect(getAssociatedDateFormatter('dateIso')(1, 1, 'TBD-2002', { type: 'dateIso' } as Column, {}, grid)).toBe('TBD-2002');
+    });
   });
 
   describe('getBaseDateFormatter function', () => {

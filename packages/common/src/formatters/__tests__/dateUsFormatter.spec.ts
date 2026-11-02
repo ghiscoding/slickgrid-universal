@@ -32,4 +32,16 @@ describe('the DateUs Formatter', () => {
     const result = Formatters.dateUs(0, 0, value, {} as Column, {}, {} as any);
     expect(result).toBe('05/01/2019');
   });
+
+  it('should use the "dateSeparator" provided in the grid "formatterOptions"', () => {
+    const grid = { getOptions: () => ({ formatterOptions: { dateSeparator: '-' } }) } as any;
+    const result = Formatters.dateUs(0, 0, '2019-05-03', { type: 'dateIso' } as unknown as Column, {}, grid);
+    expect(result).toBe('05-03-2019');
+  });
+
+  it('should keep an invalid date value untouched even when a "dateSeparator" is provided', () => {
+    const grid = { getOptions: () => ({ formatterOptions: { dateSeparator: '-' } }) } as any;
+    const result = Formatters.dateUs(0, 0, 'N/A', {} as Column, {}, grid);
+    expect(result).toBe('N/A');
+  });
 });
