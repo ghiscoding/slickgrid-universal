@@ -4,6 +4,7 @@ import type {
   ContainerService,
   ExportCellReader,
   ExportTextDownloadOption,
+  ExportTranslateFn,
   ExternalResource,
   FileType,
   GridOption,
@@ -15,8 +16,19 @@ import type {
   TextExportOption,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, createExportCellReader, getTranslationPrefix } from '@slickgrid-universal/common';
-import { addWhiteSpaces, extend, getHtmlStringOutput, htmlDecode, stripTags, titleCase } from '@slickgrid-universal/utils';
+import {
+  Constants,
+  createColspanHiddenCellChecker,
+  createExportCellReader,
+  getExportColumnGroupedHeaderTitles,
+  getExportColumnHeaders,
+  getExportGroupByTitle,
+  getExportTranslateFn,
+  getGroupTotalsOutput,
+  hasExportPreHeader,
+  isColumnExported,
+} from '@slickgrid-universal/common';
+import { addWhiteSpaces, extend, htmlDecode, stripTags } from '@slickgrid-universal/utils';
 
 const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
   delimiter: ',',
@@ -51,6 +63,11 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
     return this._grid?.getOptions() ?? ({} as GridOption);
+  }
+
+  /** translate function, only defined when translation is enabled with a current language */
+  protected get _translate(): ExportTranslateFn {
+    return getExportTranslateFn(this._gridOptions, this._translaterService, true);
   }
 
   dispose(): void {
@@ -186,19 +203,12 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
   protected getDataOutput(): string {
     const columns = this.getColumns();
-
-    // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
-    let groupByColumnHeader = this._exportOptions.groupingColumnHeaderTitle;
-    if (
-      !groupByColumnHeader &&
-      this._gridOptions.enableTranslate &&
-      this._translaterService?.translate &&
-      this._translaterService?.getCurrentLanguage?.()
-    ) {
-      groupByColumnHeader = this._translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
-    } else if (!groupByColumnHeader) {
-      groupByColumnHeader = this._locales && this._locales.TEXT_GROUP_BY;
-    }
+    const groupByColumnHeader = getExportGroupByTitle(
+      this._exportOptions.groupingColumnHeaderTitle,
+      this._gridOptions,
+      this._translate,
+      this._locales
+    );
 
     // a CSV needs double quotes wrapper, the other types do not need any wrapper
     this._exportQuoteWrapper = this._fileFormat === 'csv' ? '"' : '';
@@ -218,11 +228,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     }
 
     // get all Grouped Column Header Titles when defined (from pre-header row)
-    if (
-      this._gridOptions.createPreHeaderPanel &&
-      this._gridOptions.showPreHeaderPanel &&
-      (!this._gridOptions.enableDraggableGrouping || (this._gridOptions.enableDraggableGrouping && this._gridOptions.createTopHeaderPanel))
-    ) {
+    if (hasExportPreHeader(this._gridOptions)) {
       this._groupedColumnHeaders = this.getColumnGroupedHeaderTitles(columns) || [];
       if (Array.isArray(this._groupedColumnHeaders) && this._groupedColumnHeaders.length > 0) {
         // add the header row + add a new line at the end of the row
@@ -286,34 +292,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * @param {Array<object>} columns of the grid
    */
   protected getColumnGroupedHeaderTitles(columns: Column[]): Array<KeyTitlePair> {
-    const groupedColumnHeaders: KeyTitlePair[] = [];
-
-    if (Array.isArray(columns)) {
-      // Populate the Grouped Column Header, pull the columnGroup(Key) defined
-      columns.forEach((columnDef) => {
-        let groupedHeaderTitle = '';
-        if (
-          columnDef.columnGroupKey &&
-          this._gridOptions.enableTranslate &&
-          this._translaterService?.translate &&
-          this._translaterService?.getCurrentLanguage?.()
-        ) {
-          groupedHeaderTitle = this._translaterService.translate(columnDef.columnGroupKey);
-        } else {
-          groupedHeaderTitle = columnDef.columnGroup || '';
-        }
-        const skippedField = columnDef.excludeFromExport || false;
-
-        // if column width is 0px, then we consider that field as a hidden field and should not be part of the export
-        if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
-          groupedColumnHeaders.push({
-            key: (columnDef.field || columnDef.id) as string,
-            title: groupedHeaderTitle || '',
-          });
-        }
-      });
-    }
-    return groupedColumnHeaders;
+    return getExportColumnGroupedHeaderTitles(columns, this._translate);
   }
 
   /**
@@ -321,34 +300,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * @param {Array<object>} columns of the grid
    */
   protected getColumnHeaders(columns: Column[]): Array<KeyTitlePair> {
-    const columnHeaders: Array<KeyTitlePair> = [];
-
-    if (columns && Array.isArray(columns)) {
-      // Populate the Column Header, pull the name defined
-      columns.forEach((columnDef) => {
-        let headerTitle = '';
-        if (
-          columnDef.nameKey &&
-          this._gridOptions.enableTranslate &&
-          this._translaterService?.translate &&
-          this._translaterService?.getCurrentLanguage?.()
-        ) {
-          headerTitle = this._translaterService.translate(columnDef.nameKey);
-        } else {
-          headerTitle = getHtmlStringOutput(columnDef.name || '', 'innerHTML') || titleCase(columnDef.field);
-        }
-        const skippedField = columnDef.excludeFromExport || false;
-
-        // if column width is 0px, then we consider that field as a hidden field and should not be part of the export
-        if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
-          columnHeaders.push({
-            key: (columnDef.field || columnDef.id) as string,
-            title: headerTitle || '',
-          });
-        }
-      });
-    }
-    return columnHeaders;
+    return getExportColumnHeaders(columns, this._translate);
   }
 
   /**
@@ -376,14 +328,13 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     let idx = 0;
     const rowOutputStrings = [];
     const exportQuoteWrapper = this._exportQuoteWrapper;
-    let prevColspan: number | string = 1;
-    const itemMetadata = this._dataView.getItemMetadata(row);
+    const isColspanHiddenCell = createColspanHiddenCellChecker(this._dataView.getItemMetadata(row));
 
     for (let col = 0, ln = columns.length; col < ln; col++) {
       const columnDef = columns[col];
 
       // skip excluded column, a column with a width of 0 is also considered hidden and isn't exported (same as its header)
-      if (columnDef.excludeFromExport || !(columnDef.width === undefined || columnDef.width > 0)) {
+      if (!isColumnExported(columnDef)) {
         continue;
       }
 
@@ -403,26 +354,9 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         }
       }
 
-      // when using colspan (it could be a number or a "*" when spreading the entire row)
-      let colspanColumnId;
-      if (itemMetadata?.columns) {
-        const metadata = itemMetadata?.columns;
-        const columnData = metadata[columnDef.id] || metadata[col];
-        if (!((!isNaN(prevColspan as number) && +prevColspan > 1) || (prevColspan === '*' && col > 0))) {
-          prevColspan = columnData?.colspan ?? 1;
-        }
-        if (prevColspan !== '*') {
-          if (columnDef.id in metadata || col in metadata) {
-            colspanColumnId = columnDef.id;
-          }
-        }
-      }
-
-      if ((prevColspan === '*' && col > 0) || (!isNaN(prevColspan as number) && +prevColspan > 1 && columnDef.id !== colspanColumnId)) {
+      // when using colspan (it could be a number or a "*" when spreading the entire row), skip cells hidden by a previous colspan
+      if (isColspanHiddenCell(columnDef, col)) {
         rowOutputStrings.push('');
-        if (!isNaN(prevColspan as number) && +prevColspan > 1) {
-          (prevColspan as number)--;
-        }
       } else {
         const columnId = String(columnDef.id);
 
@@ -443,7 +377,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
         // when CSV we also need to escape double quotes twice, so " becomes ""
         if (this._fileFormat === 'csv' && itemData) {
-          itemData = itemData.toString().replace(/"/gi, `""`);
+          itemData = itemData.toString().replace(/"/g, `""`);
         }
 
         // do we have a wrapper to keep as a string? in certain cases like "1E06", we don't want excel to transform it into exponential (1.0E06)
@@ -471,7 +405,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
     if (this._fileFormat === 'csv') {
       // when CSV we also need to escape double quotes twice, so " becomes ""
-      groupName = groupName.toString().replace(/"/gi, `""`);
+      groupName = groupName.toString().replace(/"/g, `""`);
     }
 
     return exportQuoteWrapper + groupName + exportQuoteWrapper;
@@ -487,15 +421,12 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     const exportQuoteWrapper = this._exportQuoteWrapper;
     const outputStrings = [`${exportQuoteWrapper}${groupingAggregatorRowText}${exportQuoteWrapper}`];
 
-    columns.forEach((columnDef) => {
-      let itemData = '';
-      const skippedField = columnDef.excludeFromExport || false;
-
+    // add every exported column (unless user wants to skip it)
+    columns.filter(isColumnExported).forEach((columnDef) => {
       // if there's a groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI
-      if (columnDef.groupTotalsFormatter) {
-        const totalResult = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
-        itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
-      }
+      let itemData = columnDef.groupTotalsFormatter
+        ? getGroupTotalsOutput(columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid))
+        : '';
 
       // does the user want to sanitize the output data (remove HTML tags)?
       if ((columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) && typeof itemData === 'string') {
@@ -506,10 +437,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         // when CSV we also need to escape double quotes twice, so a double quote " becomes 2x double quotes ""
         itemData = itemData.toString().replace(/"/g, `""`);
       }
-      // add the column (unless user wants to skip it)
-      if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
-        outputStrings.push(exportQuoteWrapper + itemData + exportQuoteWrapper);
-      }
+      outputStrings.push(exportQuoteWrapper + itemData + exportQuoteWrapper);
     });
 
     return outputStrings.join(this._delimiter);

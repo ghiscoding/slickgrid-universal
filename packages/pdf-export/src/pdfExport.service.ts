@@ -3,6 +3,7 @@ import type {
   Column,
   ContainerService,
   ExportCellReader,
+  ExportTranslateFn,
   ExternalResource,
   GridOption,
   KeyTitlePair,
@@ -13,8 +14,19 @@ import type {
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, createExportCellReader, getTranslationPrefix } from '@slickgrid-universal/common';
-import { addWhiteSpaces, extend, getHtmlStringOutput, htmlDecode, stripTags, titleCase } from '@slickgrid-universal/utils';
+import {
+  Constants,
+  createColspanHiddenCellChecker,
+  createExportCellReader,
+  getExportColumnGroupedHeaderTitles,
+  getExportColumnHeaders,
+  getExportGroupByTitle,
+  getExportTranslateFn,
+  getGroupTotalsOutput,
+  hasExportPreHeader,
+  isColumnExported,
+} from '@slickgrid-universal/common';
+import { addWhiteSpaces, extend, htmlDecode, stripTags } from '@slickgrid-universal/utils';
 import jsPDF from 'jspdf';
 
 const DEFAULT_EXPORT_OPTIONS: PdfExportOption = {
@@ -92,6 +104,11 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
     return this._grid?.getOptions() ?? ({} as GridOption);
   }
 
+  /** translate function, only defined when translation is enabled */
+  protected get _translate(): ExportTranslateFn {
+    return getExportTranslateFn(this._gridOptions, this._translaterService);
+  }
+
   dispose(): void {
     clearTimeout(this._timer);
     this._pubSubService?.unsubscribeAll();
@@ -147,14 +164,12 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
       this._timer = setTimeout(() => {
         try {
           const columns = this.getColumns();
-
-          // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
-          let groupByColumnHeader = this._exportOptions.groupingColumnHeaderTitle;
-          if (!groupByColumnHeader && this._gridOptions.enableTranslate && this._translaterService?.translate) {
-            groupByColumnHeader = this._translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
-          } else if (!groupByColumnHeader) {
-            groupByColumnHeader = this._locales?.TEXT_GROUP_BY;
-          }
+          const groupByColumnHeader = getExportGroupByTitle(
+            this._exportOptions.groupingColumnHeaderTitle,
+            this._gridOptions,
+            this._translate,
+            this._locales
+          );
 
           // check if we have grouping
           const grouping = this._dataView.getGrouping();
@@ -162,12 +177,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
           // get all Grouped Column Header Titles when defined (from pre-header row)
           let hasColumnTitlePreHeader = false;
-          // prettier-ignore
-          if (
-            this._gridOptions.createPreHeaderPanel &&
-            this._gridOptions.showPreHeaderPanel &&
-            (!this._gridOptions.enableDraggableGrouping || (this._gridOptions.enableDraggableGrouping && this._gridOptions.createTopHeaderPanel))
-          ) {
+          if (hasExportPreHeader(this._gridOptions)) {
             this._groupedColumnHeaders = this.getColumnGroupedHeaderTitles(columns) || [];
             hasColumnTitlePreHeader = Array.isArray(this._groupedColumnHeaders) && this._groupedColumnHeaders.length > 0;
           }
@@ -235,7 +245,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
           // Add table (using jsPDF-AutoTable if available, else fallback to manual)
           const includeColumnWidth = this._exportOptions.includeColumnWidth === true;
-          const visibleColumns = columns.filter((col: Column) => !col.excludeFromExport && (col.width === undefined || col.width > 0));
+          const visibleColumns = columns.filter(isColumnExported);
           if ((doc as any).autoTable) {
             // Build per-column styles & header alignment for AutoTable from each column's pdfExportOptions
             const columnStyles: Record<number, { halign?: string; cellWidth?: number }> = {};
@@ -567,34 +577,8 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
    * @param {Array<object>} columns of the grid
    */
   protected getColumnHeaders(columns: Column[]): Array<KeyTitlePair> {
-    const columnHeaders: Array<KeyTitlePair> = [];
-
-    if (columns && Array.isArray(columns)) {
-      // Populate the Column Header, pull the name defined
-      columns.forEach((columnDef) => {
-        let headerTitle = '';
-        if (
-          columnDef.nameKey &&
-          this._gridOptions.enableTranslate &&
-          this._translaterService?.translate &&
-          this._translaterService?.getCurrentLanguage?.()
-        ) {
-          headerTitle = this._translaterService.translate(columnDef.nameKey);
-        } else {
-          headerTitle = getHtmlStringOutput(columnDef.name || '', 'innerHTML') || titleCase(columnDef.field);
-        }
-        const skippedField = columnDef.excludeFromExport || false;
-
-        // if column width is 0px, then we consider that field as a hidden field and should not be part of the export
-        if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
-          columnHeaders.push({
-            key: (columnDef.field || columnDef.id) as string,
-            title: headerTitle || '',
-          });
-        }
-      });
-    }
-    return columnHeaders;
+    // column headers are only translated when the translater also has a current language
+    return getExportColumnHeaders(columns, getExportTranslateFn(this._gridOptions, this._translaterService, true));
   }
 
   /**
@@ -630,8 +614,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
     cellReaders: ExportCellReader[] = this.createCellReaders(columns, columnExportOptionsCache)
   ): any[] {
     const rowData: any[] = [];
-    const itemMetadata = this._dataView.getItemMetadata(row);
-    let prevColspan: number | string = 1;
+    const isColspanHiddenCell = createColspanHiddenCellChecker(this._dataView.getItemMetadata(row));
 
     // if we are grouping and are on 1st column index, we need to skip this column since it will be used later by the grouping text
     if (this._hasGroupedItems) {
@@ -643,7 +626,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
       const colOpt = columnExportOptionsCache && columnDef.id ? columnExportOptionsCache[columnDef.id] : this._exportOptions;
 
       // skip excluded column, a column with a width of 0 is also considered hidden and isn't exported (same as its header)
-      if (columnDef.excludeFromExport || !(columnDef.width === undefined || columnDef.width > 0)) {
+      if (!isColumnExported(columnDef)) {
         continue;
       }
 
@@ -657,26 +640,9 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
         }
       }
 
-      // when using colspan (it could be a number or a "*" when spreading the entire row)
-      let colspanColumnId;
-      if (itemMetadata?.columns) {
-        const metadata = itemMetadata?.columns;
-        const columnData = metadata[columnDef.id] || metadata[col];
-        if (!((!isNaN(prevColspan as number) && +prevColspan > 1) || (prevColspan === '*' && col > 0))) {
-          prevColspan = columnData?.colspan ?? 1;
-        }
-        if (prevColspan !== '*') {
-          if (columnDef.id in metadata || col in metadata) {
-            colspanColumnId = columnDef.id;
-          }
-        }
-      }
-
-      if ((prevColspan === '*' && col > 0) || (!isNaN(prevColspan as number) && +prevColspan > 1 && columnDef.id !== colspanColumnId)) {
+      // when using colspan (it could be a number or a "*" when spreading the entire row), skip cells hidden by a previous colspan
+      if (isColspanHiddenCell(columnDef, col)) {
         rowData.push('');
-        if (!isNaN(prevColspan as number) && +prevColspan > 1) {
-          (prevColspan as number)--;
-        }
       } else {
         const columnId = String(columnDef.id);
 
@@ -750,15 +716,12 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
     const groupingAggregatorRowText = this._exportOptions.groupingAggregatorRowText || '';
     const outputRow: any[] = [groupingAggregatorRowText];
 
-    columns.forEach((columnDef) => {
-      let itemData = '';
-      const skippedField = columnDef.excludeFromExport || false;
-
+    // add every exported column (unless user wants to skip it)
+    columns.filter(isColumnExported).forEach((columnDef) => {
       // if there's a groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI
-      if (columnDef.groupTotalsFormatter) {
-        const totalResult = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
-        itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
-      }
+      let itemData = columnDef.groupTotalsFormatter
+        ? getGroupTotalsOutput(columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid))
+        : '';
 
       // does the user want to sanitize the output data (remove HTML tags)?
       if ((columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) && typeof itemData === 'string') {
@@ -769,11 +732,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
       if (this._exportOptions.htmlDecode) {
         itemData = htmlDecode(itemData);
       }
-
-      // add the column (unless user wants to skip it)
-      if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
-        outputRow.push(itemData);
-      }
+      outputRow.push(itemData);
     });
 
     return outputRow;
@@ -820,33 +779,15 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
    * @param {Array<object>} columns of the grid
    */
   protected getColumnGroupedHeaderTitles(columns: Column[]): Array<{ title: string; span: number }> {
+    // consecutive columns with the same grouped header title are merged into a single group spanning these columns
     const groupSpans: { title: string; span: number }[] = [];
-    if (Array.isArray(columns)) {
-      let lastTitle: null | string = null;
-      let span = 0;
-      columns.forEach((columnDef, idx) => {
-        const skippedField = columnDef.excludeFromExport || false;
-        if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
-          let groupedHeaderTitle =
-            columnDef.columnGroupKey && this._gridOptions.enableTranslate && this._translaterService?.translate
-              ? this._translaterService.translate(columnDef.columnGroupKey)
-              : columnDef.columnGroup || '';
-          if (groupedHeaderTitle !== lastTitle) {
-            if (lastTitle !== null) {
-              groupSpans[groupSpans.length - 1].span = span;
-            }
-            groupSpans.push({ title: groupedHeaderTitle || '', span: 1 });
-            lastTitle = groupedHeaderTitle;
-            span = 1;
-          } else {
-            span++;
-          }
-        }
-        // If last column, finalize last group span
-        if (idx === columns.length - 1 && groupSpans.length > 0) {
-          groupSpans[groupSpans.length - 1].span = span;
-        }
-      });
+    for (const { title } of getExportColumnGroupedHeaderTitles(columns, this._translate)) {
+      const lastGroup = groupSpans[groupSpans.length - 1];
+      if (lastGroup?.title === title) {
+        lastGroup.span++;
+      } else {
+        groupSpans.push({ title, span: 1 });
+      }
     }
     return groupSpans;
   }
