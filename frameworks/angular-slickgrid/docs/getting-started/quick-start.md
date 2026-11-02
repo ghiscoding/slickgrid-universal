@@ -18,11 +18,12 @@ npm install angular-slickgrid
 
 Below is their `ngx-translate` version compatibility:
 
-| Angular Version         | @ngx-translate/core |
-|-------------------------|---------------------|
-|  21+                    |        17.x         |
-|  16 - 19+               |        16.x         |
-|  16 - 17+               |        16.x (15.x)  |
+| Angular Version | @ngx-translate/core |
+|-----------------|---------------------|
+|  22+            |        18.x         |
+|  21+            |        17.x         |
+|  16 - 19+       |        16.x         |
+|  16 - 17+       |        16.x (15.x)  |
 
 ### 2. Add Bootstrap script/css (or any other UI framework)
 ##### Modify the `angular.json` and `tsconfig.app.json` files
@@ -176,7 +177,7 @@ The new updated version of `ng-packagr` use strict metadata and you might get er
 ```
 
 ### 6. Install/Setup `ngx-translate` for Localization (optional)
-#### If you don't want to use any Translate Service and use only one Locale, then take a look at the (Single Locale) demo on the [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repo.
+#### If you are only using 1 locale, then you don't need to install Translate Service. Take a look at the (Single Locale) demo on the [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repo.
 
 To provide locales, other than, English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1 below)
 1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use a **single locale** (other than English)...
@@ -184,7 +185,7 @@ To provide locales, other than, English (default locale), you have 2 options tha
 3. **NOTE** `@ngx-translate` will be installed in any case (since it's an internal `@Optional` dependency), but it should be removed after doing a production build with tree shaking.
 
 ##### Translation Keys
-Also note that every time you want to use a translation key, you simply have to use a property with the `Key` suffix. For example, if you wish to have a column definition `name` with a translation, just use the `nameKey: 'TRANSLATE_KEY'` instead of `name`. Below is a list of keys that can be used in the lib
+Also note that every time that you want to use a translation key, you simply have to use a property with the `Key` suffix. For example, if you wish to have a column definition `name` with a translation, just use the `nameKey: 'TRANSLATE_KEY'` instead of `name`. Below is a sample list of keys that can be used in the lib
 
 | without Translate | with Translate |
 | ----------------- | -------------- |
@@ -194,7 +195,7 @@ Also note that every time you want to use a translation key, you simply have to 
 | columnGroup       | columnGroupKey |
 
 ### 7. Create a basic grid
-And finally, you are now ready to use it in your project, for example let's create both html/ts files for a `grid-basic.component` example, configure the Column Definitions, Grid Options and pass a Dataset to the grid:
+And finally, you are now ready to use it in your project, for example let's create both the `.html`/`.ts` files for a `grid-basic.component` example, configure the Column Definitions, Grid Options and pass a Dataset to the grid:
 ```ts
 import { Column, GridOption } from 'angular-slickgrid';
 
@@ -236,13 +237,11 @@ export class GridBasicComponent {
 
 define Angular-Slickgrid in your Component View
 ```html
-<div class="container">
-  <angular-slickgrid gridId="grid1"
-            [columns]="columns"
-            [options]="gridOptions"
-            [dataset]="dataset">
-  </angular-slickgrid>
-</div>
+<angular-slickgrid gridId="grid1"
+          [columns]="columns"
+          [options]="gridOptions"
+          [dataset]="dataset">
+</angular-slickgrid>
 ```
 
 ### 8. Explore the Documentation
@@ -253,16 +252,16 @@ The last step is really to explore all the pages that are available in the docum
 - [Editors](../column-functionalities/editors.md)
 - [Filters](../column-functionalities/filters/select-filter.md)
 - [Grid Menu](../grid-functionalities/grid-menu.md)
-... and much more, just explore the Documentation through all the available pages.
+... and much more, just explore the Documentation and Live Demo examples.
 
 ### 9. How to load data with `HttpClient`?
-You might notice that all demos are made with mocked dataset that are embedded in each examples, that is mainly for demo purposes, but you might be wondering how to connect this with an `HttpClient`? Easy... just replace the mocked data assignment to the `dataset` property with your `HttpClient` call and that's it. Basically, the `dataset` property can be changed at any time, which is why you can use local data and/or connect it to a `Promise` or an `Observable` with `HttpClient` (internally it's just a SETTER that refreshes the grid). See [Example 22](https://ghiscoding.github.io/angular-slickgrid-demos/#/example22) for a demo showing how to load a JSON file with `HttpClient`. If you're using Signal, then just use `[dataset]="dataset()"` and that's it, any changes to the dataset will automatically flow to the grid.
+You might notice that all demos are made with mocked dataset that are embedded in each examples, that is mainly for demo purposes, but you might be wondering how to connect this with an `HttpClient`? Easy... just replace the mocked data assignment to the `dataset` property with your `HttpClient` call and that's it. Basically, the `dataset` property will always stay in synch, which is why you can use local data and/or connect it to a `Promise` or an `Observable` with `HttpClient` (internally it's just a SETTER that refreshes the grid). See [Example 22](https://ghiscoding.github.io/angular-slickgrid-demos/#/example22) for a demo showing how to load a JSON file with `HttpClient`. If you're using Signal, then just use `[dataset]="dataset()"` and that's it, any changes to the dataset will automatically flow to the grid.
 
 ### 10. Live Demo - Clone the Examples
 The best way to get started is to clone the [Angular-Slickgrid-demos](https://github.com/ghiscoding/angular-slickgrid-demos), it has multiple examples and it is also updated frequently since it is used for the GitHub live demo page.
 
 ##### All Live Demo Examples have links to the actual code
-If you would like to inspect the code from a particular Example, just click on the "see code" (top right) which is available in all live demo examples.
+If you would like to inspect the code from a particular Example, just click on the "code" link (top right) which is available in all live demo examples.
 
 ### 11. CSP Compliance
 The project supports Content Security Policy (CSP) as long as you provide an optional `sanitizer` in your grid options (we recommend DOMPurify). Review the [CSP Compliance](../developer-guides/csp-compliance.md) documentation for more info.
@@ -280,4 +279,4 @@ Please start by searching any related [issues](https://github.com/ghiscoding/sli
 
 ### Final word
 
-This project is Open Source and is, for the most part, mainly done in spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/ghiscoding) ☕️, some part of the code happens when I'm at StarBucks... That is it, and please don't forget to upvote the project if you like and if it's useful to you ⭐ thank you 😉
+This project is Open Source and is, for the most part, mainly done in spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/ghiscoding) ☕️, some part of the code happens when I'm at StarBucks... That is it, and please don't forget to upvote the project if you like and if it's useful to you. ⭐ Thank you 😉

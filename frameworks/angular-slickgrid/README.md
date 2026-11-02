@@ -127,9 +127,10 @@ Angular-Slickgrid uses [`ngx-translate`](https://github.com/ngx-translate/core) 
 
 | Angular Version | @ngx-translate/core |
 |-----------------|---------------------|
+|  22+            |        18.x         |
 |  21+            |        17.x         |
-|  19+            |        16.x         |
-|  16+            |        15.x         |
+|  16 - 19+       |        16.x         |
+|  16 - 17+       |        16.x (15.x)  |
 
 ### Tested with [Vitest](https://vitest.dev/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
 Slickgrid-Universal & Angular-Slickgrid both have **100%** Unit Test Coverage and also every Angular-Slickgrid Examples are fully tested with [Cypress](https://www.cypress.io/) as E2E tests.

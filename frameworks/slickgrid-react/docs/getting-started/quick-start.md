@@ -128,7 +128,7 @@ The best way to get started is to clone the [Slickgrid-React-Demos](https://gith
 - [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-react-demos) / [examples repo](https://github.com/ghiscoding/slickgrid-react-demos) (with `I18N` Service)
 
 ##### All Live Demo Examples have links to the actual code
-Like to see the code to a particular Example? Just click on the "see code" that is available in every live examples.
+Like to see the code to a particular Example? Just click on the "code" link that is available in every live examples.
 
 ### 8. CSP Compliance
 The project supports Content Security Policy (CSP) as long as you provide an optional `sanitizer` in your grid options (we recommend DOMPurify). Review the [CSP Compliance](../developer-guides/csp-compliance.md) documentation for more info.
@@ -152,4 +152,4 @@ Please start by searching any related [issues](https://github.com/ghiscoding/sli
 
 ### Final word
 
-This project is Open Source and is, for the most part, mainly done in spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/ghiscoding) ☕️, some part of the code happens when I'm at StarBucks... That is it, and please don't forget to upvote the project if you like and if it's useful to you ⭐ thank you 😉
+This project is Open Source and is, for the most part, mainly done in spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/ghiscoding) ☕️, some part of the code happens when I'm at StarBucks... That is it, and please don't forget to upvote the project if you like and if it's useful to you. ⭐ Thank you 😉
