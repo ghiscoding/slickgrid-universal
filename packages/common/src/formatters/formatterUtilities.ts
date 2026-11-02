@@ -192,26 +192,32 @@ export function getValueFromParamsOrFormatterOptions(
   return defaultValue;
 }
 
-/** From a FieldType, return the associated date Formatter */
-export function getAssociatedDateFormatter(fieldType: FieldType, defaultSeparator: string): Formatter {
+/**
+ * From a FieldType, return the associated date Formatter
+ * @param {FieldType} fieldType - date field type
+ * @param {String} [defaultSeparator] - date separator used by the field type output format, defaults to the 1st non-alphanumeric character of the format (e.g. "-" in "YYYY-MM-DD")
+ */
+export function getAssociatedDateFormatter(fieldType: FieldType, defaultSeparator?: string): Formatter {
   const defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, { withZeroPadding: true });
-  let separatorRegex: RegExp | undefined;
+  const separator = defaultSeparator ?? defaultDateFormat.match(/[^a-z0-9]/i)?.[0];
+  const dateFormatBySeparator = new Map<string, string>();
 
   return (_row, _cell, value, columnDef, _dataContext, grid) => {
-    const gridOptions = (grid.getOptions?.() ?? {}) as GridOption;
-    const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
     const inputType = columnDef?.type ?? 'date';
     const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
-    let outputDate = parseDateByIOFormats(columnDef, value, inputDateFormat, defaultDateFormat);
 
-    // user can customize the separator through the "formatterOptions"
-    // if that is the case we need to replace the default "/" to the new separator
-    if (outputDate && customSeparator !== defaultSeparator) {
-      separatorRegex ??= new RegExp(defaultSeparator, 'ig');
-      outputDate = outputDate.replace(separatorRegex, customSeparator);
+    // user can customize the separator through the "formatterOptions", if so we replace the default separator in the output format
+    const customSeparator = grid.getOptions?.()?.formatterOptions?.dateSeparator;
+    let outputDateFormat = defaultDateFormat;
+    if (separator && customSeparator !== undefined && customSeparator !== separator) {
+      outputDateFormat = dateFormatBySeparator.get(customSeparator) ?? '';
+      if (!outputDateFormat) {
+        outputDateFormat = defaultDateFormat.split(separator).join(customSeparator);
+        dateFormatBySeparator.set(customSeparator, outputDateFormat);
+      }
     }
 
-    return outputDate;
+    return parseDateByIOFormats(columnDef, value, inputDateFormat, outputDateFormat);
   };
 }
 

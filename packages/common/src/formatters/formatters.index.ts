@@ -72,7 +72,7 @@ const allFormatters: Record<string, Formatter> = {
 // and it has a different implementation
 getAllDateFieldTypes().forEach((dateType) => {
   if (dateType !== 'date') {
-    allFormatters[dateType] = getAssociatedDateFormatter(dateType, dateType);
+    allFormatters[dateType] = getAssociatedDateFormatter(dateType);
   }
 });
 
