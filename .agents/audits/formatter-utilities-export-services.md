@@ -144,7 +144,23 @@ Confirmed the 2 "unverified observations" with failing tests first (7 tests), th
 
 ## Remaining work
 
-- The PDF benchmark drift open check in the #2898 section.
+- The PDF benchmark drift open check in the #2898 section (deferred, low priority).
+
+### Future: Excel ZIP compression level (revisit later)
+
+- For large Excel exports, ZIP compression is the main cost once the worksheet data is prepared (see
+  [excel-export-performance.md](./excel-export-performance.md)). Vanilla Example 03 with 500K rows takes ~8 s
+  (compression included, the browser file save adds ~1.5 s after that), while reading rows & formatting is only ~5% of
+  the time (5K × 20 benchmark), so today's export work can't reduce it much further.
+- `excel-builder-vanilla` (5.3.1) already accepts `zipOptions` (fflate `level` 0–9, default 6) in
+  `createExcelFileStream()`, `createExcelFile()` & `downloadExcelFile()`, but SlickGrid doesn't pass it through
+  (`excelExport.service.ts` calls them without `zipOptions`, and `ExcelExportOption` has no such option).
+- Planned first in `excel-builder-vanilla`: benchmark & document the time vs file size trade-off of each `level` for
+  large worksheets.
+- Possible SlickGrid task once those numbers exist: add an optional `excelExportOptions.zipOptions` passed to both
+  `createExcelFileStream()` & `downloadExcelFile()` (additive, default unchanged), document it in `export-to-excel.md`
+  with the measured trade-off (e.g. `zipOptions: { level: 1 }` for faster large exports with a bigger file), and
+  measure Example 03 (500K rows) before/after.
 
 ### #2898 — Benchmark tooling (`chore:` PR, branch `chore/benchmarks-vitest5`)
 
