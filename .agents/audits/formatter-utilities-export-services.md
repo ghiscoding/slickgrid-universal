@@ -12,8 +12,8 @@ Related earlier audit: [excel-export-performance.md](./excel-export-performance.
 | `formatterUtilities.ts` perf & LOC audit | ✅ Done (#2892, #2893) |
 | Export services bugs | ✅ Done (#2895, #2897) |
 | Export services perf (PDF fallback renderer) | ✅ Done (#2896) |
-| Export services perf (shared cell loops) | ❌ Remaining, can start now that #2897 is merged |
-| Export services LOC (shared helpers) | ❌ Remaining |
+| Export services perf (shared cell loops) | ❌ Cancelled, #2899 closed (no measurable gain, more LOC) |
+| Export services LOC (shared helpers) | ✅ Done (uncommitted on `master`, PR pending) |
 | Benchmark tooling (Vitest 5) | ✅ Done (#2898, branch `chore/benchmarks-vitest5`) |
 
 ## Completed work
@@ -78,37 +78,52 @@ Excel export (5,000 × 20) formatter-mode preparation ~31–34 ms → ~18–26 m
 4. PDF variable row heights: read from the grid row of each exported row (`_gridRowIndexByExportedRow` WeakMap), via
    `data.row.raw` in AutoTable `didParseCell` and the row array in the fallback (was drifting after Row Detail rows).
 
+### #2899 — `perf(export): read formatted data cache once per row in export services` (❌ cancelled & closed)
+
+Tried the "shared cell loops" items, then closed the PR without merging:
+
+- Row cache read once per row through a new `SlickDataView.getFormattedRowValues(item)` (instead of
+  `getFormattedCellValue()` per cell, only applies with `enableFormattedDataCache`), Excel column metadata array indexed
+  by column position instead of a `Map` lookup per cell, Text/PDF per-cell flags hoisted out of the cell loop.
+- Skipping `getItemMetadata(row)` without a provider was rejected: users override `dataView.getItemMetadata` directly
+  (Examples 11/46/57 do it for colspan) and the exporters can't see the DataView options.
+- Why it was closed: no measurable gain. Output checksums were identical, but every benchmark difference was within the
+  machine noise (e.g. text CSV with cache 188.1 → 190.0 ms, isolated best-of-4 63.2 → 62.5 ms; Excel cache mode
+  ~22 → ~18 ms with 15–45 ms spread), and a manual test of vanilla Example 03 with 500K rows exported in about the same
+  time (Excel ~8.2 s with the cache on). It also increased LOC and added a public DataView method.
+- Lesson: the per-cell lookups are negligible next to formatting, regex & string building, don't retry these micro
+  optimizations without a profile showing them as a hotspot.
+
+### `refactor(export): share duplicated export helpers across export services` (PR pending)
+
+New [exportUtilities.ts](../../packages/common/src/services/exportUtilities.ts) in `common` (exported publicly, all
+additive), used by the Excel, PDF & Text exporters. The `protected` methods are kept and now call the helpers.
+
+- `isColumnExported()` replaces the `(width === undefined || width > 0) && !excludeFromExport` rule (~13 places).
+- `hasExportPreHeader()`, `getExportColumnHeaders()`, `getExportColumnGroupedHeaderTitles()` & `getExportGroupByTitle()`
+  replace the duplicated header code; PDF builds its grouped header spans from `getExportColumnGroupedHeaderTitles()`.
+- `getExportTranslateFn(gridOptions, translater, requireCurrentLanguage?)`: Text (everywhere) and PDF (column headers
+  only) keep requiring `getCurrentLanguage()`, Excel and the other PDF titles don't. The existing inconsistency is kept on
+  purpose (a PDF test expects grouped headers to be translated without a current language).
+- `getGroupTotalsOutput()` for the group totals `HTMLElement` text, `createColspanHiddenCellChecker()` replaces the
+  `prevColspan` logic in Text & PDF (returns a no-op checker when the row has no column metadata).
+- Excel: `preCalculateColumnMetadata()` now only builds `readCell` with `createExportCellReader()` for every column (the
+  unused `hasComplexSpanning`, `requiresFormatter`, `fieldProperty` & `autoDetectCellFormat` cache fields are removed,
+  the cache interface isn't exported); new `protected getRegularCellExcelFormat()` shared by
+  `cacheRegularCellExcelFormats()` & the row loop. `getRawCellValue()` kept (released, still used as fallback).
+- Group totals rows skip non-exported columns before running their formatters (output unchanged).
+- Text: `/"/gi` → `/"/g` in the regular & group title rows.
+- `getExportGroupByTitle()` returns `''` instead of `undefined` when there's no title at all (no locale text).
+- Result: exporters −405/+169 lines, plus the 114-line helper file, net −122 production lines. Identical output checksums
+  before/after (text, PDF & Excel benchmarks), changed lines 100% covered.
+- Not shared: the row reading loop (Excel is async with yielding & variable row heights, PDF tracks group title rows &
+  grid row indexes, so a shared loop would need callbacks for little gain), and the Excel colspan/rowspan logic (it also
+  computes merge ranges, the 2 "unverified observations" below should be checked before touching it).
+
 ## Remaining work
 
-### Perf: shared cell loops (one `perf:`/`refactor:` PR, #2897 is merged so this can start from `master`)
-
-All of these touch `readRegularRowData()` / `getAllGridRowData()` in the 3 exporters.
-
-| # | Where | Issue | Suggested fix |
-| --- | --- | --- | --- |
-| 2 | All 3, with `enableFormattedDataCache` | `getFormattedCellValue()` per cell re-resolves the item id & row cache, even for columns never cached (raw values) | Get the row cache once per row; skip columns that aren't cached |
-| 3 | Excel cell loop | `cachedColumnMetadata.get(String(columnDef.id))` per cell | Array indexed by column position |
-| 4 | All 3 cell loops | `getItemMetadata(row)` every row even without a metadata provider (`slickDataView` already skips it) | Skip when no provider |
-| 5 | Text & PDF cell loops | `sanitizeDataExport` & `htmlDecode` flags re-read per cell | Resolve per column, like Excel |
-
-### LOC: shared helpers (same PR or a follow-up `refactor:` PR)
-
-Most duplicated code lives in `protected` methods that subclasses can override, so call shared helpers from inside those
-methods and keep the methods for backward compatibility.
-
-- Row reading loop (skip Row Detail rows, then regular / group title / group totals) is copied in all 3 services.
-- Colspan/rowspan `prevColspan` logic is copied 3× and is the hardest code to read; one helper returning skip / merge /
-  read per cell.
-- `getColumnHeaders`, `getColumnGroupedHeaderTitles`, the translated "Group by" title and the pre-header condition are
-  duplicated across exporters.
-- The width rule `(width === undefined || width > 0) && !excludeFromExport` is now repeated in ~10 places; a shared
-  `isColumnExported()`-style helper would remove the duplication.
-- Excel: the cell format fallback inside the row loop (~20 lines) repeats `cacheRegularCellExcelFormats()`.
-- Excel: `preCalculateColumnMetadata()` re-implements the `exportWithFormatter` check & dotted field split; with
-  `createExportCellReader()` only `readCell` is needed.
-- Group totals text: `totalResult instanceof HTMLElement ? textContent : totalResult` appears in every exporter.
-- Text export: the CSV quote regex `/"/gi` doesn't need the `i` flag in the regular row & group title row (already fixed
-  in the group totals row).
+- The 2 "Unverified observations" below (Excel merge column index & colspan `'*'` counting excluded columns).
+- The PDF benchmark drift open check in the #2898 section.
 
 ### #2898 — Benchmark tooling (`chore:` PR, branch `chore/benchmarks-vitest5`)
 
@@ -167,7 +182,8 @@ services).
 ## Gotchas learned
 
 - Don't run `tsc --build` at the same time as exporter tests: they import `common` from `dist/`, which `tsc` rewrites
-  mid-run and causes random failures.
+  mid-run and causes random failures. Same with the dev watch server (`pnpm dev`): it rebuilds `dist/` when files change
+  (including `git restore`/branch switches for before/after benchmarks), so wait a few seconds before running tests.
 - The text export spec has tests that rely on state left by earlier tests (e.g. `mockColumns` in the
   "startDownloadFile call after all private methods ran" block): run the whole file, not `-t` filters, and never mutate
   shared mocks (clone, then restore the stub).

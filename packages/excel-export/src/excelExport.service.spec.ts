@@ -2509,26 +2509,16 @@ describe('ExcelExportService', () => {
       vi.clearAllMocks();
     });
 
-    it('preCalculateColumnMetadata should cache per-column options and detect complex spanning when enableCellRowSpan grid option is enabled', () => {
+    it('preCalculateColumnMetadata should cache per-column options and a cell reader for every exported column', () => {
       service.init(gridStub, container);
-      (service as any)._excelExportOptions = { autoDetectCellFormat: true };
-      mockGridOptions.enableCellRowSpan = true;
+      (service as any)._excelExportOptions = { autoDetectCellFormat: true, sanitizeDataExport: true };
 
-      const cache = (service as any).preCalculateColumnMetadata(mockColumns);
-      expect(cache.get('id')).toBeDefined();
+      const cache = (service as any).preCalculateColumnMetadata([...mockColumns, { id: 'skip', field: 'skip', excludeFromExport: true }]);
+      expect(cache.has('skip')).toBe(false);
       expect(cache.get('dt').exportOptions.exportWithFormatter).toBe(true);
-      expect(cache.get('id').hasComplexSpanning).toBe(true);
-    });
-
-    it('preCalculateColumnMetadata should cache per-column options and detect complex spanning when enableCellRowSpan grid option is disabled but column has a colspan defined', () => {
-      service.init(gridStub, container);
-      (service as any)._excelExportOptions = { autoDetectCellFormat: true };
-      mockGridOptions.enableCellRowSpan = false;
-
-      const cache = (service as any).preCalculateColumnMetadata(mockColumns);
-      expect(cache.get('id')).toBeDefined();
-      expect(cache.get('dt').exportOptions.exportWithFormatter).toBe(true);
-      expect(cache.get('id').hasComplexSpanning).toBe(true);
+      expect(cache.get('id').exportOptions.sanitizeDataExport).toBe(false);
+      expect(cache.get('id').sanitizeDataExport).toBe(true);
+      expect(cache.get('title').readCell(0, 2, { id: 1, title: 'Hello' })).toBe('Hello');
     });
 
     it('cacheRegularCellExcelFormats should skip a column already cached', () => {
@@ -2586,6 +2576,25 @@ describe('ExcelExportService', () => {
       service.init(gridStub, container);
       const output = (service as any).getRawCellValue({ title: {} }, 'title');
       expect(output).toBe('');
+    });
+
+    it('readRegularRowData should read the raw cell value when the column has no pre-calculated metadata', () => {
+      service.init(gridStub, container);
+      const localColumns = [
+        { id: 'title', field: 'title', width: 100 },
+        { id: 'code', width: 100 },
+      ] as Column[];
+      (service as any)._excelExportOptions = { autoDetectCellFormat: true };
+      (service as any)._workbook = new Workbook();
+      (service as any)._stylesheet = (service as any)._workbook.getStyleSheet();
+      (service as any)._stylesheetFormats = { boldFormat: (service as any)._stylesheet.createFormat({ font: { bold: true } }) };
+      const rawCellSpy = vi.spyOn(service as any, 'getRawCellValue');
+
+      const output = (service as any).readRegularRowData(localColumns, 0, { title: 'A', code: 'B' }, 0, new Map());
+
+      expect(rawCellSpy).toHaveBeenCalledWith({ title: 'A', code: 'B' }, 'title');
+      expect(rawCellSpy).toHaveBeenCalledWith({ title: 'A', code: 'B' }, 'code');
+      expect(output).toEqual(['A', 'B']);
     });
 
     it('readRegularRowData should apply excelExportOptions style and valueParserCallback when cache entry is created', () => {
