@@ -762,6 +762,44 @@ describe('ExportService', () => {
         expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
       });
+
+      it(`should use the "delimiterOverride" and sanitize & escape the group totals row the same way as regular rows`, async () => {
+        mockGridOptions.textExportOptions = { sanitizeDataExport: true, delimiterOverride: '|' };
+        mockColumns[5].groupTotalsFormatter = (totals: any) => `<b>Total: "${totals.sum.order}"</b>`;
+        const spyDownload = vi.spyOn(service, 'startDownloadFile');
+
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
+        const contentExpectation = `"Group By"|"User Id"|"FirstName"|"LastName"|"Position"|"Order"
+          "Order: 20 (2 items)"
+             ""|="1E06"|"John"|"Z"|"SALES_REP"|"10"
+             ""|="2B02"|"Jane"|"DOE"|"FINANCE_MANAGER"|"10"
+             ""|""|""|""|""|"Total: ""20"""`;
+
+        service.init(gridStub, container);
+        await service.exportToFile(mockExportCsvOptions);
+
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
+      });
+
+      it(`should keep the group totals HTML when sanitization is disabled and strip it when only the column enables "sanitizeDataExport"`, async () => {
+        mockGridOptions.textExportOptions = { sanitizeDataExport: false };
+        mockColumns[5].groupTotalsFormatter = (totals: any) => `<b>Total: "${totals.sum.order}"</b>`;
+        const spyDownload = vi.spyOn(service, 'startDownloadFile');
+
+        service.init(gridStub, container);
+        await service.exportToFile(mockExportTxtOptions);
+        expect(spyDownload.mock.lastCall![0].content.split('\n').pop()).toBe(';;;;;<b>Total: "20"</b>');
+
+        mockColumns[5].sanitizeDataExport = true;
+        vi.spyOn(dataViewStub, 'getItem')
+          .mockReturnValue(null)
+          .mockReturnValueOnce(mockCollection[0])
+          .mockReturnValueOnce(mockCollection[1])
+          .mockReturnValueOnce(mockCollection[2])
+          .mockReturnValueOnce(mockCollection[3]);
+        await service.exportToFile(mockExportTxtOptions);
+        expect(spyDownload.mock.lastCall![0].content.split('\n').pop()).toBe(';;;;;Total: "20"');
+      });
     });
 
     describe('with Grouping and Translation', () => {
