@@ -133,9 +133,13 @@ services).
 - ✅ On this branch: new `pnpm bench:text-export` ([textExport.bench.ts](../../test/benchmarks/textExport.bench.ts)), CSV /
   CSV with grouping / sanitized TXT, 20,000 × 20, with output checksum. Medians on `master` with #2897: CSV ~93 ms,
   CSV with grouping ~88 ms, TXT ~72 ms (same as before #2897, within noise).
-- ⚠️ Open check: after #2897, one `pnpm bench:pdf-export` run gave AutoTable ~146 ms (median) vs 111–118 ms measured
-  before #2897 (fallback ~285–293 ms, similar to before). Likely machine noise (#2897 only adds 1 `WeakMap.set` per row),
-  but re-run a few times (or stash-compare #2896 vs #2897) to confirm before starting the shared cell loop perf PR.
+- ⚠️ Open check: after #2897, `pnpm bench:pdf-export` gave AutoTable ~147–150 ms (median, 3 runs) vs 111–118 ms measured
+  before #2897; fallback ~283–295 ms vs ~272–278 ms. #2897 only adds a width check per cell and 1 `WeakMap.set` per
+  row, so this is probably machine drift, but it's unconfirmed: the interleaved #2896 vs #2897 comparison was
+  inconclusive (machine too noisy, same code varied 285–807 ms). Before the shared cell loop perf PR, compare on an
+  idle machine with `git restore --source=7b5fc40f7 -- packages/pdf-export/src/pdfExport.service.ts`, run the
+  benchmark, then `git restore -- packages/pdf-export/src/pdfExport.service.ts` (don't pipe `git show` into
+  PowerShell's `Set-Content -NoNewline`, it drops the newlines and breaks the file).
 
 ### Unverified observations (check before acting)
 
