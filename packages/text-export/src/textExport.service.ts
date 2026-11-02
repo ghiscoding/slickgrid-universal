@@ -382,8 +382,8 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     for (let col = 0, ln = columns.length; col < ln; col++) {
       const columnDef = columns[col];
 
-      // skip excluded column
-      if (columnDef.excludeFromExport) {
+      // skip excluded column, a column with a width of 0 is also considered hidden and isn't exported (same as its header)
+      if (columnDef.excludeFromExport || !(columnDef.width === undefined || columnDef.width > 0)) {
         continue;
       }
 

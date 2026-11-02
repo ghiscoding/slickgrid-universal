@@ -736,8 +736,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     for (let col = 0; col < columnsLn; col++) {
       const columnDef = columns[col];
 
-      // skip excluded column
-      if (columnDef.excludeFromExport) {
+      // skip excluded column, a column with a width of 0 is also considered hidden and isn't exported (same as its header)
+      if (columnDef.excludeFromExport || !(columnDef.width === undefined || columnDef.width > 0)) {
         continue;
       }
 
