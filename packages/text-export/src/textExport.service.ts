@@ -2,6 +2,7 @@ import type {
   TextExportService as BaseTextExportService,
   Column,
   ContainerService,
+  ExportCellReader,
   ExportTextDownloadOption,
   ExternalResource,
   FileType,
@@ -14,7 +15,7 @@ import type {
   TextExportOption,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, exportWithFormatterWhenDefined, getTranslationPrefix } from '@slickgrid-universal/common';
+import { Constants, createExportCellReader, getTranslationPrefix } from '@slickgrid-universal/common';
 import { addWhiteSpaces, extend, getHtmlStringOutput, htmlDecode, stripTags, titleCase } from '@slickgrid-universal/utils';
 
 const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
@@ -254,6 +255,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   protected getAllGridRowData(columns: Column[], lineCarriageReturn: string): string {
     const outputDataStrings = [];
     const lineCount = this._dataView.getLength();
+    const cellReaders = this.createCellReaders(columns);
 
     // loop through all the grid rows of data
     for (let rowNumber = 0; rowNumber < lineCount; rowNumber++) {
@@ -265,7 +267,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
         if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
           // get regular row item data
-          outputDataStrings.push(this.readRegularRowData(columns, rowNumber, itemObj));
+          outputDataStrings.push(this.readRegularRowData(columns, rowNumber, itemObj, cellReaders));
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {
           // get the group row
           outputDataStrings.push(this.readGroupedTitleRow(itemObj));
@@ -350,12 +352,27 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   }
 
   /**
+   * Create the formatted cell reader of every column, the column formatter & field are resolved once instead of for every cell
+   * @param {Array<Object>} columns - column definitions
+   */
+  protected createCellReaders(columns: Column[]): ExportCellReader[] {
+    // sanitization is skipped here since it's done later in the export flow
+    return columns.map((columnDef) => createExportCellReader(columnDef, this._grid, this._exportOptions, true));
+  }
+
+  /**
    * Get the data of a regular row (a row without grouping)
    * @param {Array<Object>} columns - column definitions
    * @param {Number} row - row index
    * @param {Object} itemObj - item datacontext object
+   * @param {Array<Function>} [cellReaders] - formatted cell readers of every column, create them once to reuse them for every row
    */
-  protected readRegularRowData(columns: Column[], row: number, itemObj: any): string {
+  protected readRegularRowData(
+    columns: Column[],
+    row: number,
+    itemObj: any,
+    cellReaders: ExportCellReader[] = this.createCellReaders(columns)
+  ): string {
     let idx = 0;
     const rowOutputStrings = [];
     const exportQuoteWrapper = this._exportQuoteWrapper;
@@ -416,7 +433,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
             : undefined;
 
         if (itemData === undefined) {
-          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._exportOptions, true);
+          itemData = cellReaders[col](row, col, itemObj);
         }
 
         // does the user want to sanitize the output data (remove HTML tags)?

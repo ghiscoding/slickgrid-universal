@@ -32,15 +32,18 @@ const bundle = await build({
           {
             name: 'baseline-production-sources',
             setup(builder) {
-              builder.onLoad({ filter: /(?:domUtils|slickDataView|excelExport\.service)\.ts$/ }, (args) => {
-                const relative = path.relative(root, args.path).replaceAll('\\', '/');
-                const contents = execFileSync(
-                  'git',
-                  ['-c', `safe.directory=${root.replaceAll('\\', '/')}`, 'show', `${process.argv[3] ?? 'HEAD'}:${relative}`],
-                  { cwd: root, encoding: 'utf8' }
-                );
-                return { contents, loader: 'ts' };
-              });
+              builder.onLoad(
+                { filter: /(?:domUtils|slickDataView|excelExport\.service|formatterUtilities)\.ts$|[\\/]utils[\\/]src[\\/]utils\.ts$/ },
+                (args) => {
+                  const relative = path.relative(root, args.path).replaceAll('\\', '/');
+                  const contents = execFileSync(
+                    'git',
+                    ['-c', `safe.directory=${root.replaceAll('\\', '/')}`, 'show', `${process.argv[3] ?? 'HEAD'}:${relative}`],
+                    { cwd: root, encoding: 'utf8' }
+                  );
+                  return { contents, loader: 'ts' };
+                }
+              );
             },
           },
         ]

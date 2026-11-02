@@ -2,6 +2,7 @@ import type {
   PdfExportService as BasePdfExportService,
   Column,
   ContainerService,
+  ExportCellReader,
   ExternalResource,
   GridOption,
   KeyTitlePair,
@@ -12,7 +13,7 @@ import type {
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, exportWithFormatterWhenDefined, getTranslationPrefix } from '@slickgrid-universal/common';
+import { Constants, createExportCellReader, getTranslationPrefix } from '@slickgrid-universal/common';
 import { addWhiteSpaces, extend, getHtmlStringOutput, htmlDecode, stripTags, titleCase } from '@slickgrid-universal/utils';
 import jsPDF from 'jspdf';
 
@@ -531,6 +532,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   protected getAllGridRowData(columns: Column[], columnExportOptionsCache?: Record<string, PdfExportOption>): any[][] {
     const outputData: any[][] = [];
     const lineCount = this._dataView.getLength();
+    const cellReaders = this.createCellReaders(columns, columnExportOptionsCache);
 
     // loop through all the grid rows of data
     for (let rowNumber = 0; rowNumber < lineCount; rowNumber++) {
@@ -542,7 +544,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
         if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
           // get regular row item data
-          outputData.push(this.readRegularRowData(columns, rowNumber, itemObj, columnExportOptionsCache));
+          outputData.push(this.readRegularRowData(columns, rowNumber, itemObj, columnExportOptionsCache, cellReaders));
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {
           // get the group row
           outputData.push(this.readGroupedTitleRow(itemObj));
@@ -621,16 +623,36 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   }
 
   /**
+   * Create the formatted cell reader of every column, the column formatter & field are resolved once instead of for every cell
+   * @param {Array<Object>} columns - column definitions
+   * @param {Object} [columnExportOptionsCache] - export options of every column
+   */
+  protected createCellReaders(columns: Column[], columnExportOptionsCache?: Record<string, PdfExportOption>): ExportCellReader[] {
+    // sanitization is skipped here since it's done later in the export flow
+    return columns.map((columnDef) =>
+      createExportCellReader(
+        columnDef,
+        this._grid,
+        columnExportOptionsCache && columnDef.id ? columnExportOptionsCache[columnDef.id] : this._exportOptions,
+        true
+      )
+    );
+  }
+
+  /**
    * Get the data of a regular row (a row without grouping)
    * @param {Array<Object>} columns - column definitions
    * @param {Number} row - row index
    * @param {Object} itemObj - item datacontext object
+   * @param {Object} [columnExportOptionsCache] - export options of every column
+   * @param {Array<Function>} [cellReaders] - formatted cell readers of every column, create them once to reuse them for every row
    */
   protected readRegularRowData(
     columns: Column[],
     row: number,
     itemObj: any,
-    columnExportOptionsCache?: Record<string, PdfExportOption>
+    columnExportOptionsCache?: Record<string, PdfExportOption>,
+    cellReaders: ExportCellReader[] = this.createCellReaders(columns, columnExportOptionsCache)
   ): any[] {
     const rowData: any[] = [];
     const itemMetadata = this._dataView.getItemMetadata(row);
@@ -690,7 +712,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             : undefined;
 
         if (itemData === undefined) {
-          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, colOpt, true);
+          itemData = cellReaders[col](row, col, itemObj);
         }
 
         // does the user want to sanitize the output data (remove HTML tags)?
