@@ -45,7 +45,7 @@ SlickGrid v11 drops the external `sortablejs` dependency and replaces it with bu
 
 Remove `sortablejs` and `@types/sortablejs` from your application dependencies when no other application feature uses them.
 
-### Replace frozen options with `pinning`
+## Replace frozen options with `pinning`
 
 Replace `frozenColumn`, `frozenRow`, and `frozenBottom` with the nested `pinning` option. A numeric `frozenColumn` value is an inclusive column boundary; convert frozen rows to explicit indexes or dataset IDs on the matching side.
 
