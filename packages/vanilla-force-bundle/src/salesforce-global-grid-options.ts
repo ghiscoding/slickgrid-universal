@@ -53,7 +53,7 @@ export const SalesforceGlobalGridOptions = {
   },
   gridMenu: {
     commandLabels: {
-      clearPinningCommandKey: 'UNPIN_COLUMNS',
+      clearPinningCommandKey: 'UNPIN_ALL_COLUMNS',
     },
     hideForceFitButton: true,
   },

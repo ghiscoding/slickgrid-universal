@@ -416,7 +416,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               [PINNING_COMMANDS.unpin, 'UNPIN_COLUMN', commandLabels?.unpinColumnCommand, headerMenuOptions.iconUnpinColumn, false],
               [
                 PINNING_COMMANDS.unpinAll,
-                'UNPIN_COLUMNS',
+                'UNPIN_ALL_COLUMNS',
                 commandLabels?.unpinningColumnsCommand,
                 headerMenuOptions.iconUnpinningColumns,
                 true,

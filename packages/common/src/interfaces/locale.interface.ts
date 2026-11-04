@@ -225,7 +225,7 @@ export interface Locale {
   TEXT_TOGGLE_PRE_HEADER_ROW?: string;
 
   /** Text "Unpin All Columns" shown in Header Menu */
-  TEXT_UNPIN_COLUMNS?: string;
+  TEXT_UNPIN_ALL_COLUMNS?: string;
 
   /** Text "Unpin Column" shown in Header Menu (when enabled) */
   TEXT_UNPIN_COLUMN?: string;

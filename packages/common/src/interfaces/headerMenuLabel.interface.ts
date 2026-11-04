@@ -62,6 +62,6 @@ export interface HeaderMenuLabel {
   /** Label for the unpin-column command. */
   unpinColumnCommand?: string;
 
-  /** Defaults to "UNPIN_COLUMNS" translation key */
+  /** Defaults to "UNPIN_ALL_COLUMNS" translation key */
   unpinningColumnsCommandKey?: string;
 }
