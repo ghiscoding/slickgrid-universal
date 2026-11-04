@@ -38,7 +38,7 @@ The pinning commands of the Header Menu and Grid Menu use the following translat
 | Header Menu | Pin column left/right         | `PIN_LEFT` and `PIN_RIGHT`                 | Pin to Left / Pin to Right                 |
 | Header Menu | Pin columns left/right (bulk) | `PIN_COLUMNS_LEFT` and `PIN_COLUMNS_RIGHT` | Pin Left Through Here / Pin From Here To Right |
 | Header Menu | Unpin Column                  | `UNPIN_COLUMN`                             | Unpin Column                         |
-| Header Menu | Unpin All Columns             | `UNPIN_COLUMNS`                            | Unpin All Columns                    |
+| Header Menu | Unpin All Columns             | `UNPIN_ALL_COLUMNS`                            | Unpin All Columns                    |
 | Grid Menu   | Clear all pinning             | `CLEAR_ALL_PINNING`                        | Clear all Pinning                    |
 
 You can also override these texts directly through the menu `commandLabels` options:
@@ -248,4 +248,4 @@ Pinning and sticky docking work in `rtl: true` grids. Band names follow reading 
 | `sticky: true` | leading (left) edge | leading (right) edge |
 | `sticky: 'left'` / `'right'` | named edge | same logical band, mirrored |
 
-`getCellFromPoint(x, y)` still measures `x` from the grid’s physical left edge. In an RTL grid it counts back from the last column and resolves points over pinned or sticky bands to the column rendered there.
+`getCellFromPoint(x, y)` still measures `x` from the grid's physical left edge. In an RTL grid it counts back from the last column and resolves points over pinned or sticky bands to the column rendered there.

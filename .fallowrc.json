@@ -8,7 +8,10 @@
     "**/package.json",
     "**/__tests__/**",
     "**/demos/**",
-    "**/*.{cy,spec}.ts"
+    "**/*.{cy,spec}.ts",
+    "**/*/styles/slick-composite-editor.scss",
+    "**/*/styles/slick-custom-tooltip.scss",
+    "**/*/styles/slick-row-detail.scss"
   ],
   "ignoreUnresolvedImports": [
     "@slickgrid-universal/common/dist/styles/sass/**"

@@ -6,7 +6,7 @@ This release was also audited with AI (ChatGPT 6 Astra/Claude Opus 5.5) and brin
 
 ### AI-assisted migration
 
-Open the [v11 migration skill](migration-to-11.x/SKILL.md), click GitBook’s **Copy** button at the top-right, and paste it into your AI coding agent.
+Open the [v11 migration skill](migration-to-11.x/SKILL.md), click GitBook's **Copy** button at the top-right, and paste it into your AI coding agent.
 
 ### Major Changes - Quick Summary
 
@@ -180,9 +180,9 @@ If you use a Translate Service (e.g. i18n), rename the frozen translation keys i
 | ------------------ | ------------------------------------------ | -------------------------------------- |
 | `CLEAR_PINNING`    | `CLEAR_ALL_PINNING`                        | Clear all Pinning                      |
 | `FREEZE_COLUMNS`   | `PIN_COLUMNS_LEFT` and `PIN_COLUMNS_RIGHT` | Pin Left Through Here / Pin From Here To Right   |
-| `UNFREEZE_COLUMNS` | `UNPIN_COLUMNS`                            | Unpin All Columns                      |
+| `UNFREEZE_COLUMNS` | `UNPIN_ALL_COLUMNS`                        | Unpin All Columns                      |
 | _(new)_            | `PIN_COLUMN`                               | Column Pinning                         |
-| _(new)_            | `PIN_LEFT` and `PIN_RIGHT`                 | Pin to Left / Pin to Right                   |
+| _(new)_            | `PIN_LEFT` and `PIN_RIGHT`                 | Pin to Left / Pin to Right             |
 | _(new)_            | `UNPIN_COLUMN`                             | Unpin Column                           |
 
 ```diff
@@ -197,7 +197,7 @@ If you use a Translate Service (e.g. i18n), rename the frozen translation keys i
 + "PIN_LEFT": "Pin to Left",
 + "PIN_RIGHT": "Pin to Right",
 + "UNPIN_COLUMN": "Unpin Column",
-+ "UNPIN_COLUMNS": "Unpin All Columns",
++ "UNPIN_ALL_COLUMNS": "Unpin All Columns",
 }
 ```
 
@@ -323,7 +323,7 @@ For subclasses of `SlickDataView`, update protected method references:
 
 ### Resize by Cell Content options removed
 
-Resize by cell content now measures all distinct sampled formatted texts with a canvas (using each column’s cell font) instead of estimating `text length ? char width ? ratio`, and the cell padding is now read from the `.slick-cell` CSS. The following ratio/char width options are no longer needed and were removed, you can use `resizeExtraWidthPadding` (column) or `resizeByContentOptions.cellPaddingWidthInPx` (grid) if you need to tweak the calculated widths.
+Resize by cell content now measures all distinct sampled formatted texts with a canvas (using each column's cell font) instead of estimating `text length ? char width ? ratio`, and the cell padding is now read from the `.slick-cell` CSS. The following ratio/char width options are no longer needed and were removed, you can use `resizeExtraWidthPadding` (column) or `resizeByContentOptions.cellPaddingWidthInPx` (grid) if you need to tweak the calculated widths.
 
 **Width changes:** Content-sized columns may be wider or narrower than in v10 because widths are now measured using the cell font, text transformation, and padding. Review the layout and update E2E tests that assert specific column widths; consider using a tolerance where appropriate.
 

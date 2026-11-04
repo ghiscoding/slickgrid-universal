@@ -1586,7 +1586,7 @@ describe('HeaderMenu Plugin', () => {
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
-        expect(commandItem.title).toBe('Épingler à gauche jusqu’ici');
+        expect(commandItem.title).toBe("Épingler à gauche jusqu'ici");
         commandItem.action?.(new SlickEventData(), { column: columnsMock[1] } as any);
         expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 1 } } }, false, true);
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
@@ -1613,7 +1613,7 @@ describe('HeaderMenu Plugin', () => {
 
         await translateService.use('fr');
         plugin.translateHeaderMenu();
-        expect(commandItem.title).toBe('Épingler à gauche jusqu’ici');
+        expect(commandItem.title).toBe("Épingler à gauche jusqu'ici");
         commandItem.action?.(new SlickEventData(), { column: columnsMock[1] } as any);
         expect(setOptionsSpy).toHaveBeenCalledWith({ pinning: { columns: { left: 1 } } }, false, true);
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
