@@ -2,7 +2,7 @@
 
 SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer and a single scrollbar. Frozen columns/rows are replaced by the new Pinning feature, and we're also adding a new Sticky columns/rows feature. The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor of the new `pinning` grid option. Pinning applies to individual columns, regardless of their index, instead of a contiguous frozen range. Update your grid options and persisted grid state accordingly.
 
-This release was also audited with AI (ChatGPT 6 Astra/Claude Opus 5.5) and brings performance improvements across several areas: virtual scrolling on large datasets, tree-data lookups and dataset sorting, sort comparisons, filtering, formatters, and exports. The Draggable Grouping example with half a million rows now exports to Excel in 10–13 seconds (depending on your hardware), 3–4x faster than v10, while v9 would hang and leave the browser unresponsive.
+This release was also audited with AI (ChatGPT 6 Astra/Claude Opus 5.5) and brings performance improvements across several areas: virtual scrolling on large datasets, tree-data lookups and dataset sorting, sort comparisons, filtering, formatters, and exports. The Draggable Grouping example with half a million rows now exports to Excel in 10–13 seconds (may vary), 3–4x faster than v10, while v9 would hang and leave the browser unresponsive.
 
 ### AI-assisted migration
 
@@ -11,15 +11,8 @@ Open the [v11 migration skill](migration-to-11.x/SKILL.md), click GitBook’s **
 ### Major Changes - Quick Summary
 
 - [Angular Related Changes](#angular-related-changes)
-  - [Angular v22.x and `ngx-translate` v18.x are now required](#angular-v22x-and-ngx-translate-v18x-are-now-required)
-  - [Services use `@Service()` and `inject()`](#services-use-service-and-inject)
 - [Replace the SortableJS dependency with native drag and drop](#replace-the-sortablejs-dependency-with-native-drag-and-drop)
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
-  - [Column Pinning](#column-pinning)
-  - [Migrate Grid State and Presets](#grid-state-and-presets)
-  - [Header Menu commands](#header-menu-commands)
-  - [E2E Tests with Cypress Header Menu selectors](#e2e-tests-with-cypress-header-menu-selectors)
-  - [Update single-viewport DOM and CSS selectors](#single-viewport-dom-and-css)
 - [Replace menu `hide...` flags with `hideCommands`](#menu-command-visibility)
 - [Removed Code](#removed-code)
   - [DataView CSP options and types removed](#dataview-csp-options-and-types-removed)
