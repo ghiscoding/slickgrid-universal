@@ -44,6 +44,7 @@ Use the [menu visibility mapping](../migration-to-11.x.md#menu-command-visibilit
 
 ## Removed APIs and rendering changes
 
+- Remove imports and calls to the unused utility functions `destroyAllElementProps()`, `getFunctionDetails()`, `toSnakeCase()`, and `uniqueObjectArray()`.
 - Remove unused SortableJS and `@types/sortablejs` dependencies only if no other application feature uses them.
 - Remove DataView `inlineFilters` and `useCSPSafeFilter`; filtering is always CSP safe. Replace removed CSP filter types with `FilterFn<T>` and update subclass method references using the guide's mapping.
 - Replace `ExtensionName.member` values with string literals. Keep `ExtensionName` as a type-only import where needed, and replace `ExtensionNameTypeString` with `ExtensionName`.

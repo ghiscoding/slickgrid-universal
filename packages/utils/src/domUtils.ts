@@ -82,25 +82,6 @@ export function classNameToList(className = ''): string[] {
 }
 
 /**
- * Loop through all properties of an object and nullify any properties that are instanceof HTMLElement,
- * if we detect an array then use recursion to go inside it and apply same logic
- * @param obj - object containing 1 or more properties with DOM Elements
- */
-export function destroyAllElementProps(obj: Record<string, any> | null): void {
-  if (!obj || typeof obj !== 'object') {
-    return; // Guard clause for null/undefined
-  }
-
-  Object.keys(obj).forEach((key) => {
-    if (Array.isArray(obj[key])) {
-      destroyAllElementProps(obj[key]);
-    } else if (obj[key] instanceof HTMLElement) {
-      obj[key] = null; // Nullify HTML elements
-    }
-  });
-}
-
-/**
  * Empty a DOM element by removing all of its DOM element children leaving with an empty element (basically an empty shell)
  * @return {object} element - updated element
  */

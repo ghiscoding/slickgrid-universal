@@ -3,7 +3,6 @@ import {
   calculateAvailableSpace,
   classNameToList,
   createDomElement,
-  destroyAllElementProps,
   emptyElement,
   findFirstAttribute,
   findWidthOrDefault,
@@ -95,25 +94,6 @@ describe('Service/domUtilies', () => {
           `[Slickgrid-Universal] For better CSP (Content Security Policy) support, do not use "innerHTML" directly in "createDomElement('div', { innerHTML: 'some html'})"`
         )
       );
-    });
-  });
-
-  describe('destroyAllElementProps() method', () => {
-    it('should clear all DOM element props from the object', () => {
-      const obj = {
-        age: 20,
-        elm: document.createElement('div'),
-        elms: [document.createElement('div')],
-      };
-      destroyAllElementProps(obj);
-
-      expect(obj).toEqual({ age: 20, elm: null, elms: [null] });
-    });
-
-    it('should return when input is not an object', () => {
-      const result = destroyAllElementProps(null);
-
-      expect(result).toBeUndefined();
     });
   });
 
