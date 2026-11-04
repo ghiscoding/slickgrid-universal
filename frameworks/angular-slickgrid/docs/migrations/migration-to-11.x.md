@@ -31,11 +31,9 @@ Open the [v11 migration skill](migration-to-11.x/SKILL.md), click GitBook’s **
 - [Context Menu and Cell Menu options removed](#context-menu-and-cell-menu-options-removed)
 - [Menu command ordering](#menu-command-ordering)
   - [Column sorting callback removed](#column-sorting-callback-removed)
-- [Menu divider typing](#menu-divider-typing)
+- [Menu divider types](#menu-divider-types)
 
 > **Note:** If you are upgrading from a version earlier than v10, follow the previous migration guides in order before applying these v11 changes.
-
-> **Important:** v11 does not support the old frozen-pane options or renderer.
 
 v11 also introduces Sticky docking, a separate feature that shares similarities with Pinning. See the [Sticky Docking guide](../grid-functionalities/sticky.md) for its configuration and behavior.
 
@@ -558,9 +556,9 @@ columnPicker: {
 
 The same callback is available under `gridMenu.columnListBuilder`. The builder receives a separate array of eligible columns, so sorting or filtering it does not change the grid column order.
 
-## Menu divider typing
+## Menu divider types
 
-Menu divider typing has been improved so that divider objects `{ divider: true }` no longer require a `command` property, while existing divider syntax remains fully supported.
+Menu divider types has been improved so that divider objects `{ divider: true }` no longer require a `command` property, while existing divider syntax remains fully supported.
 
 ## Final Note
 
