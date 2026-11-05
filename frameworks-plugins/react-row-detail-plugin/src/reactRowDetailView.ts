@@ -148,32 +148,24 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
           }
 
           this._eventHandler.subscribe(this.onAsyncResponse, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onAsyncResponse === 'function') {
-              this.rowDetailViewOptions.onAsyncResponse(event, args);
-            }
+            this.rowDetailViewOptions?.onAsyncResponse?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onAsyncEndUpdate, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
-              this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
-            }
+            this.rowDetailViewOptions?.onAsyncEndUpdate?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {
             // display preload template & re-render all the other Detail Views after toggling
             // the preload View will eventually go away once the data gets loaded after the "onAsyncEndUpdate" event
             this.renderPreloadView(args.item);
-
-            if (typeof this.rowDetailViewOptions?.onAfterRowDetailToggle === 'function') {
-              this.rowDetailViewOptions.onAfterRowDetailToggle(event, args);
-            }
+            this.rowDetailViewOptions?.onAfterRowDetailToggle?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onBeforeRowDetailToggle, (event, args) => {
             // before toggling row detail, we need to create View Component if it doesn't exist
             this.handleOnBeforeRowDetailToggle(event, args);
-
-            if (typeof this.rowDetailViewOptions?.onBeforeRowDetailToggle === 'function') {
+            if (this.rowDetailViewOptions?.onBeforeRowDetailToggle) {
               return this.rowDetailViewOptions.onBeforeRowDetailToggle(event, args);
             }
             return true;
@@ -182,16 +174,11 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
           this._eventHandler.subscribe(this.onRowBackToViewportRange, async (event, args) => {
             // when row is back to viewport range, we will re-render the View Component(s)
             this.handleOnRowBackToViewportRange(event, args);
-
-            if (typeof this.rowDetailViewOptions?.onRowBackToViewportRange === 'function') {
-              this.rowDetailViewOptions.onRowBackToViewportRange(event, args);
-            }
+            this.rowDetailViewOptions?.onRowBackToViewportRange?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onBeforeRowOutOfViewportRange, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
-              this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
-            }
+            this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange?.(event, args);
             if (this.rowDetailViewOptions?.keepComponentAlive) {
               // The core plugin detaches the panel while preserving its React root.
               const view = this._views.find((v) => v.id === args.item[this.datasetIdPropName]);
@@ -204,9 +191,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
           });
 
           this._eventHandler.subscribe(this.onRowOutOfViewportRange, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onRowOutOfViewportRange === 'function') {
-              this.rowDetailViewOptions.onRowOutOfViewportRange(event, args);
-            }
+            this.rowDetailViewOptions?.onRowOutOfViewportRange?.(event, args);
           });
 
           // --
