@@ -352,6 +352,39 @@ describe('SlickCustomTooltip plugin', () => {
     expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
   });
 
+  it.each([0, 1])('preserves the other tooltip description when instance %i is hidden first', (firstToHide) => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.setAttribute('title', 'accessible tooltip text');
+    cellNode.setAttribute('aria-describedby', 'existing-description');
+    const columns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(columns[0]);
+    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John' });
+
+    const secondPlugin = new SlickCustomTooltip();
+    try {
+      plugin.init(gridStub, container);
+      secondPlugin.init(gridStub, container);
+      plugin.setOptions({ useRegularTooltip: true });
+      secondPlugin.setOptions({ useRegularTooltip: true });
+      gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+      const ids = cellNode.getAttribute('aria-describedby')!.split(' ');
+      expect(ids).toHaveLength(3);
+      expect(new Set(ids).size).toBe(3);
+      const instances = [plugin, secondPlugin];
+      instances[firstToHide].hideTooltip();
+      expect(cellNode.getAttribute('aria-describedby')).toBe(`existing-description ${ids[2 - firstToHide]}`);
+      instances[1 - firstToHide].hideTooltip();
+      expect(cellNode.getAttribute('aria-describedby')).toBe('existing-description');
+    } finally {
+      secondPlugin.dispose();
+    }
+  });
+
   it('should create a tooltip from the editor [title] attribute and a formatter instead of the cell [title] when currently editing (editor lock) and a formatter is provided', () => {
     vi.spyOn(getEditorLockMock, 'isActive').mockReturnValue(true);
     const cellNode = document.createElement('div');
