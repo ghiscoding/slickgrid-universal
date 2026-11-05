@@ -22,7 +22,6 @@ import {
   toKebabCase,
   toSentenceCase,
   tryCatch,
-  uniqueArray,
 } from '../utils.js';
 
 describe('Service/Utilies', () => {
@@ -864,31 +863,6 @@ describe('Service/Utilies', () => {
         expect(() => tryCatch(operation)).not.toThrow();
         expect(operation).toHaveBeenCalledOnce();
       });
-    });
-  });
-
-  describe('uniqueArray() method', () => {
-    it('should return original value when input is not an array', () => {
-      const output1 = uniqueArray(null as any);
-      const output2 = uniqueArray(undefined as any);
-
-      expect(output1).toBeNull();
-      expect(output2).toBe(undefined as any);
-    });
-
-    it('should return original array when array is empty', () => {
-      const output = uniqueArray([]);
-      expect(output).toEqual([]);
-    });
-
-    it('should return unique values when input array has duplicate string values', () => {
-      const output = uniqueArray(['a', 'b', 'a']);
-      expect(output).toEqual(['a', 'b']);
-    });
-
-    it('should return unique values when input array has duplicate number values', () => {
-      const output = uniqueArray([1, 5, 2, 1, 5]);
-      expect(output).toEqual([1, 5, 2]);
     });
   });
 });

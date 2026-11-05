@@ -360,17 +360,3 @@ export function tryCatch(operation: () => void, onError?: (error: unknown) => vo
     onError?.(error);
   }
 }
-
-/**
- * Takes an input array and makes sure the array has unique values by removing duplicates
- * @param array input with possible duplicates
- * @return array output without duplicates
- */
-export function uniqueArray<T = any>(arr: T[]): T[] {
-  if (Array.isArray(arr) && arr.length > 0) {
-    return arr.filter((item: T, index: number) => {
-      return arr.indexOf(item) >= index;
-    });
-  }
-  return arr;
-}

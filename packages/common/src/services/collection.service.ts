@@ -1,4 +1,3 @@
-import { uniqueArray } from '@slickgrid-universal/utils';
 import type { SlickGrid } from '../core/slickGrid.js';
 import { sortByFieldType } from '../sortComparers/sortUtilities.js';
 import { SortDirectionNumber, type FilterMultiplePassType } from './../enums/index.js';
@@ -13,6 +12,20 @@ interface ParsingDateDetails {
   queryFieldName: string;
   sourceField?: string;
   sourceFieldGetter?: Column['queryFieldNameGetterFn'];
+}
+
+/**
+ * Takes an input array and makes sure the array has unique values by removing duplicates
+ * @param array input with possible duplicates
+ * @return array output without duplicates
+ */
+function uniqueArray<T = any>(arr: T[]): T[] {
+  if (Array.isArray(arr) && arr.length > 0) {
+    return arr.filter((item: T, index: number) => {
+      return arr.indexOf(item) >= index;
+    });
+  }
+  return arr;
 }
 
 export class CollectionService<T = any> {
