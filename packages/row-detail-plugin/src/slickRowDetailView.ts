@@ -950,6 +950,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Handle keyboard a11y for row detail toggle: Space, ArrowRight (expand), ArrowLeft (collapse). */
   protected handleKeyDown(e: SlickEventData): void {
+    if (e.target?.closest?.('.slick-row-detail-container')) {
+      return;
+    }
     const key = e.key;
     const activeCell = this._grid.getActiveCell();
     const isSupportedKey = key === ' ' || key === 'ArrowRight' || key === 'ArrowLeft';

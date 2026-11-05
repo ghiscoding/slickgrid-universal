@@ -5175,6 +5175,19 @@ describe('SlickGrid core file', () => {
         { id: 'age', field: 'age', name: 'Age', sortable: true },
       ] as Column[];
 
+      it('announces the first visible sorted column and clears the previous sort state', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
+        const first = container.querySelector('.slick-header-column[data-id=firstName]')!;
+        const last = container.querySelector('.slick-header-column[data-id=lastName]')!;
+        grid.setSortColumn('firstName', true);
+        expect(first.getAttribute('aria-sort')).toBe('ascending');
+        grid.setSortColumns([{ columnId: 'missing', sortAsc: true }, { columnId: 'lastName', sortAsc: false }, { columnId: 'firstName' }]);
+        expect(first.hasAttribute('aria-sort')).toBe(false);
+        expect(last.getAttribute('aria-sort')).toBe('descending');
+        grid.setSortColumns([]);
+        expect(container.querySelector('[aria-sort]')).toBeNull();
+      });
+
       it('should find a single sort icons to sorted column when calling setSortColumn() with a single column to sort ascending', () => {
         grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
         grid.setSortColumn('firstName', true);
@@ -6884,6 +6897,10 @@ describe('SlickGrid core file', () => {
         header?.dispatchEvent(eventSpace);
         expect(onHeaderKeyDownSpy).toHaveBeenCalled();
         expect(onSortSpy).toHaveBeenCalled();
+        const child = document.createElement('button');
+        header?.appendChild(child);
+        child.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        expect(onHeaderKeyDownSpy.mock.calls.at(-1)?.[0].column).toEqual(columns[0]);
         // Restore original
         if (origStorage) {
           (globalThis as any).Utils.storage.get = origStorage;

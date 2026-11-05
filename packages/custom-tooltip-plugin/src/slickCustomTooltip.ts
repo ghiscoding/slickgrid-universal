@@ -75,7 +75,6 @@ export class SlickCustomTooltip {
   protected _tooltipElm?: HTMLDivElement;
   protected _tooltipTriggerElm?: HTMLElement | null;
   protected _tooltipId?: string;
-  protected _previousAriaDescribedBy?: string | null;
   protected _mouseTarget?: HTMLElement | null;
   protected _hasMultipleTooltips = false;
   protected _defaultOptions = {
@@ -258,13 +257,15 @@ export class SlickCustomTooltip {
     this._observable$?.unsubscribe();
 
     if (this._tooltipTriggerElm) {
-      if (this._previousAriaDescribedBy) {
-        this._tooltipTriggerElm.setAttribute('aria-describedby', this._previousAriaDescribedBy);
+      const ids = (this._tooltipTriggerElm.getAttribute('aria-describedby') || '')
+        .split(/\s+/)
+        .filter((id) => id && id !== this._tooltipId);
+      if (ids.length) {
+        this._tooltipTriggerElm.setAttribute('aria-describedby', ids.join(' '));
       } else {
         this._tooltipTriggerElm.removeAttribute('aria-describedby');
       }
       this._tooltipTriggerElm = null;
-      this._previousAriaDescribedBy = undefined;
       this._tooltipId = undefined;
     }
 
@@ -624,8 +625,8 @@ export class SlickCustomTooltip {
     const tooltipTriggerElm = (this._mouseTarget || this._cellNodeElm) as HTMLElement | null;
     if (tooltipTriggerElm) {
       this._tooltipTriggerElm = tooltipTriggerElm;
-      this._previousAriaDescribedBy = tooltipTriggerElm.getAttribute('aria-describedby');
-      tooltipTriggerElm.setAttribute('aria-describedby', tooltipId);
+      const describedBy = tooltipTriggerElm.getAttribute('aria-describedby');
+      tooltipTriggerElm.setAttribute('aria-describedby', describedBy ? `${describedBy} ${tooltipId}` : tooltipId);
     }
 
     // when cell is currently lock for editing, we'll force a tooltip title search

@@ -2365,7 +2365,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         header,
         'keydown',
         ((e: KeyboardEvent & { target: HTMLElement }) => {
-          this.triggerEvent(this.onHeaderKeyDown, { event: e, column: Utils.storage.get(e.target, 'column'), grid: this });
+          this.triggerEvent(this.onHeaderKeyDown, {
+            event: e,
+            column: Utils.storage.get(e.target.closest('.slick-header-column'), 'column'),
+            grid: this,
+          });
           if (e.key === 'Enter' || e.key === ' ') {
             sortCallback(e);
           }
@@ -3731,6 +3735,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // v8 ignore next
       indicators.forEach((indicator) => indicator.classList.remove('slick-header-column-sorted'));
 
+      header.querySelectorAll('[aria-sort]').forEach((column) => column.removeAttribute('aria-sort'));
+
       indicators = header.querySelectorAll('.slick-sort-indicator');
       indicators.forEach((indicator) => indicator.classList.remove('slick-sort-indicator-asc', 'slick-sort-indicator-desc'));
 
@@ -3739,6 +3745,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     });
 
     let i = 1;
+    let hasAriaSort = false;
     this.sortColumns.forEach((col) => {
       if (!isDefined(col.sortAsc)) {
         col.sortAsc = true;
@@ -3749,6 +3756,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         const column = this.getColumnHeaderByIndex(columnIndex);
         if (column) {
           column.classList.add('slick-header-column-sorted');
+          if (!hasAriaSort) {
+            column.setAttribute('aria-sort', col.sortAsc ? 'ascending' : 'descending');
+            hasAriaSort = true;
+          }
           let indicator = column.querySelector('.slick-sort-indicator');
           indicator?.classList.add(col.sortAsc ? 'slick-sort-indicator-asc' : 'slick-sort-indicator-desc');
 
