@@ -37,6 +37,7 @@ describe('Binding Service', () => {
     const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: 'Jane' } } });
     elm.dispatchEvent(mockEvent);
 
+    expect(service.property).toBe('name');
     expect(mockObj.name).toBe('Jane');
     expect(mockCallback).toHaveBeenCalled();
   });
