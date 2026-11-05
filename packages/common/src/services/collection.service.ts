@@ -14,20 +14,6 @@ interface ParsingDateDetails {
   sourceFieldGetter?: Column['queryFieldNameGetterFn'];
 }
 
-/**
- * Takes an input array and makes sure the array has unique values by removing duplicates
- * @param array input with possible duplicates
- * @return array output without duplicates
- */
-function uniqueArray<T = any>(arr: T[]): T[] {
-  if (Array.isArray(arr) && arr.length > 0) {
-    return arr.filter((item: T, index: number) => {
-      return arr.indexOf(item) >= index;
-    });
-  }
-  return arr;
-}
-
 export class CollectionService<T = any> {
   constructor(protected readonly translaterService?: TranslaterService | undefined) {}
 
@@ -47,11 +33,18 @@ export class CollectionService<T = any> {
     // basically if input collection has 10 items on 1st pass and 1 item is filtered out, then on 2nd pass the input collection will be 9 items
     if (Array.isArray(filterByOptions)) {
       filteredCollection = filterResultBy === 'merge' ? [] : [...collection];
+      const mergedItems = filterResultBy === 'merge' ? new Set<T>() : undefined;
 
       filterByOptions.forEach((filter) => {
-        if (filterResultBy === 'merge') {
+        if (mergedItems) {
           const filteredPass = this.singleFilterCollection(collection, filter);
-          filteredCollection = uniqueArray([...filteredCollection, ...filteredPass]);
+          for (const item of filteredPass) {
+            // Preserve indexOf-based deduplication: exclude NaN and keep the original first value.
+            if (!Number.isNaN(item) && !mergedItems.has(item)) {
+              mergedItems.add(item);
+              filteredCollection.push(item);
+            }
+          }
         } else {
           filteredCollection = this.singleFilterCollection(filteredCollection, filter);
         }
