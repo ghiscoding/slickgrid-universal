@@ -10,11 +10,13 @@ export class BindingService {
   protected _setter: (val: any) => void = this.valueSetter.bind(this);
   protected _value: any = null;
   protected _binding: Binding;
+  protected _property: string;
   protected _boundedEventWithListeners: BoundedEventWithListener[] = [];
   protected _elementBindings: Array<ElementBinding | ElementBindingWithListener> = [];
 
   constructor(binding: Binding) {
     this._binding = binding;
+    this._property = binding.property || '';
     if (
       binding.property &&
       binding.variable &&
@@ -31,6 +33,10 @@ export class BindingService {
         set: this._setter,
       });
     }
+  }
+
+  get property(): string {
+    return this._property;
   }
 
   dispose(): void {
