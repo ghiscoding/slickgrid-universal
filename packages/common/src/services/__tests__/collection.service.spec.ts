@@ -293,6 +293,24 @@ describe('CollectionService', () => {
 
           expect(result).toEqual(['John', 'Bob']);
         });
+
+        it('preserves first occurrences and excludes NaN when merging overlapping passes', () => {
+          const first = { value: 1 };
+          const second = { value: 1 };
+          const input = [NaN, -0, 0, first, first, second, 'later'];
+          const filters = [
+            { operator: 'NE', value: 'later' },
+            { operator: 'NE', value: 'missing' },
+          ] as CollectionFilterBy[];
+
+          const result = service.filterCollection(input, filters, 'merge');
+
+          expect(result).toHaveLength(4);
+          expect(Object.is(result[0], -0)).toBe(true);
+          expect(result[1]).toBe(first);
+          expect(result[2]).toBe(second);
+          expect(result[3]).toBe('later');
+        });
       });
 
       describe('singleFilterCollection method', () => {
