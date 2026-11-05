@@ -230,7 +230,7 @@ describe('ContextMenu Plugin', () => {
 
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
-    expect(plugin.eventHandler).toBeTruthy();
+    expect(plugin['_eventHandler']).toBeTruthy();
   });
 
   it('should be able to change Context Menu options', () => {

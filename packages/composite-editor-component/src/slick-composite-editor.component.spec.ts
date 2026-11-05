@@ -740,7 +740,7 @@ describe('CompositeEditorService', () => {
       vi.runAllTimers();
 
       expect(component).toBeTruthy();
-      expect(component.eventHandler).toBeTruthy();
+      expect(component['_eventHandler']).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(compositeContainerElm).toBeTruthy();
       expect(compositeHeaderElm).toBeTruthy();
@@ -772,7 +772,7 @@ describe('CompositeEditorService', () => {
       vi.runAllTimers();
 
       expect(component).toBeTruthy();
-      expect(component.eventHandler).toBeTruthy();
+      expect(component['_eventHandler']).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(spyOnDispose).toHaveBeenCalled();
     });

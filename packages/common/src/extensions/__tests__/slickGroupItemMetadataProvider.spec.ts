@@ -77,7 +77,7 @@ describe('GroupItemMetadataProvider Service', () => {
   });
 
   it('should expect event handler to unsubscribeAll when disposing the service', () => {
-    const eventSpy = vi.spyOn(service.eventHandler, 'unsubscribeAll');
+    const eventSpy = vi.spyOn(service['_eventHandler'], 'unsubscribeAll');
     service.dispose();
     expect(eventSpy).toHaveBeenCalled();
   });

@@ -24,10 +24,6 @@ export class SlickFooterComponent {
   protected _selectedRowCount = 0;
   protected _subscriptions: Subscription[] = [];
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   /** Getter for the grid uid */
   get gridUid(): string {
     return this.grid?.getUID() ?? '';

@@ -69,17 +69,6 @@ export class FilterService {
     }
   }
 
-  /** Getter of the SlickGrid Event Handler */
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
-  /** Getter to know if the filter was already rendered or if it was its first time render */
-  get isFilterFirstRender(): boolean {
-    return this._isFilterFirstRender;
-  }
-
-  /** Getter of the SlickGrid Event Handler */
   get onSearchChange(): SlickEvent | null {
     return this._onSearchChange;
   }

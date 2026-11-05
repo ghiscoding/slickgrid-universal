@@ -80,10 +80,6 @@ export class SlickCheckboxSelectColumn<T = any> {
     return this._grid?.getOptions() ?? {};
   }
 
-  get selectAllUid(): number {
-    return this._selectAll_UID;
-  }
-
   set selectedRowsLookup(selectedRows: RowLookup) {
     this._selectedRowsLookup = selectedRows;
   }

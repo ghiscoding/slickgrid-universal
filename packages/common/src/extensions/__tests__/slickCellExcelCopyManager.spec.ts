@@ -90,7 +90,7 @@ describe('CellExcelCopyManager', () => {
 
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
-    expect(plugin.eventHandler).toBeTruthy();
+    expect(plugin['_eventHandler']).toBeTruthy();
   });
 
   describe('registered addon', () => {
@@ -136,7 +136,7 @@ describe('CellExcelCopyManager', () => {
     });
 
     it('should call internal event handler subscribe and expect the "onCopyCells" option to be called when addon notify is called', () => {
-      const handlerSpy = vi.spyOn(plugin.eventHandler, 'subscribe');
+      const handlerSpy = vi.spyOn(plugin['_eventHandler'], 'subscribe');
       const mockOnCopy = vi.fn();
       const mockOnCopyCancel = vi.fn();
       const mockOnPasteCell = vi.fn();
@@ -152,7 +152,7 @@ describe('CellExcelCopyManager', () => {
     });
 
     it('should call internal event handler subscribe and expect the "onCopyCancelled" option to be called when addon notify is called', () => {
-      const handlerSpy = vi.spyOn(plugin.eventHandler, 'subscribe');
+      const handlerSpy = vi.spyOn(plugin['_eventHandler'], 'subscribe');
       const mockOnCopy = vi.fn();
       const mockOnCopyCancel = vi.fn();
       const mockOnPasteCell = vi.fn();
@@ -168,7 +168,7 @@ describe('CellExcelCopyManager', () => {
     });
 
     it('should call internal event handler subscribe and expect the "onPasteCells" option to be called when addon notify is called', () => {
-      const handlerSpy = vi.spyOn(plugin.eventHandler, 'subscribe');
+      const handlerSpy = vi.spyOn(plugin['_eventHandler'], 'subscribe');
       const mockOnCopy = vi.fn();
       const mockOnCopyCancel = vi.fn();
       const mockOnPasteCell = vi.fn();
@@ -188,7 +188,7 @@ describe('CellExcelCopyManager', () => {
     it('should create the UndoRedoBuffer', () => {
       plugin.init(gridStub);
 
-      expect(plugin.undoRedoBuffer).toEqual({
+      expect(plugin['_undoRedoBuffer']).toEqual({
         queueAndExecuteCommand: expect.anything(),
         undo: expect.anything(),
         redo: expect.anything(),
@@ -197,7 +197,7 @@ describe('CellExcelCopyManager', () => {
 
     it('should have called Edit Command "execute" method after creating the UndoRedoBuffer', () => {
       plugin.init(gridStub);
-      const undoRedoBuffer = plugin.undoRedoBuffer;
+      const undoRedoBuffer = plugin['_undoRedoBuffer'];
 
       const spy = vi.spyOn(queueCallback, 'execute');
       undoRedoBuffer.queueAndExecuteCommand(queueCallback);
@@ -207,7 +207,7 @@ describe('CellExcelCopyManager', () => {
 
     it('should not have called Edit Command "undo" method when there is nothing to undo', () => {
       plugin.init(gridStub);
-      const undoRedoBuffer = plugin.undoRedoBuffer;
+      const undoRedoBuffer = plugin['_undoRedoBuffer'];
 
       const spy = vi.spyOn(queueCallback, 'undo');
       undoRedoBuffer.undo();
@@ -217,7 +217,7 @@ describe('CellExcelCopyManager', () => {
 
     it('should have called Edit Command "undo" method after calling it from UndoRedoBuffer', () => {
       plugin.init(gridStub);
-      const undoRedoBuffer = plugin.undoRedoBuffer;
+      const undoRedoBuffer = plugin['_undoRedoBuffer'];
 
       const spy = vi.spyOn(queueCallback, 'undo');
       undoRedoBuffer.queueAndExecuteCommand(queueCallback);
@@ -228,7 +228,7 @@ describe('CellExcelCopyManager', () => {
 
     it('should have called Edit Command "execute" method only at first queueing, the "redo" should not call the "execute" method by itself', () => {
       plugin.init(gridStub);
-      const undoRedoBuffer = plugin.undoRedoBuffer;
+      const undoRedoBuffer = plugin['_undoRedoBuffer'];
 
       const spy = vi.spyOn(queueCallback, 'execute');
       undoRedoBuffer.queueAndExecuteCommand(queueCallback);
@@ -239,7 +239,7 @@ describe('CellExcelCopyManager', () => {
 
     it('should have called Edit Command "execute" method at first queueing & then inside the "redo" since we did an "undo" just before', () => {
       plugin.init(gridStub);
-      const undoRedoBuffer = plugin.undoRedoBuffer;
+      const undoRedoBuffer = plugin['_undoRedoBuffer'];
 
       const spy = vi.spyOn(queueCallback, 'execute');
       undoRedoBuffer.queueAndExecuteCommand(queueCallback);
@@ -251,15 +251,15 @@ describe('CellExcelCopyManager', () => {
 
     it('should have a single entry in the queue buffer after calling "queueAndExecuteCommand" once', () => {
       plugin.init(gridStub);
-      plugin.undoRedoBuffer.queueAndExecuteCommand(queueCallback);
-      expect(plugin.commandQueue).toHaveLength(1);
+      plugin['_undoRedoBuffer'].queueAndExecuteCommand(queueCallback);
+      expect(plugin['_commandQueue']).toHaveLength(1);
     });
 
     it('should call a redo when Ctrl+Shift+Z keyboard event occurs', () => {
       plugin.init(gridStub);
       const spy = vi.spyOn(queueCallback, 'execute');
 
-      plugin.undoRedoBuffer.queueAndExecuteCommand(queueCallback);
+      plugin['_undoRedoBuffer'].queueAndExecuteCommand(queueCallback);
       const body = window.document.body;
       body.dispatchEvent(
         new (window.window as any).KeyboardEvent('keydown', {
@@ -278,7 +278,7 @@ describe('CellExcelCopyManager', () => {
       plugin.init(gridStub);
       const spy = vi.spyOn(queueCallback, 'undo');
 
-      plugin.undoRedoBuffer.queueAndExecuteCommand(queueCallback);
+      plugin['_undoRedoBuffer'].queueAndExecuteCommand(queueCallback);
       const body = window.document.body;
       body.dispatchEvent(
         new (window.window as any).KeyboardEvent('keydown', {
@@ -296,7 +296,7 @@ describe('CellExcelCopyManager', () => {
   describe('addonOptions callbacks', () => {
     it('should expect "queueAndExecuteCommand" to be called after calling "clipboardCommandHandler" callback', () => {
       plugin.init(gridStub);
-      const spy = vi.spyOn(plugin.undoRedoBuffer, 'queueAndExecuteCommand');
+      const spy = vi.spyOn(plugin['_undoRedoBuffer'], 'queueAndExecuteCommand');
 
       plugin.addonOptions!.clipboardCommandHandler!(queueCallback);
 

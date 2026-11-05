@@ -389,10 +389,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     return this.options?.backendServiceApi?.service;
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   get gridContainerElement(): HTMLElement | null {
     return document.querySelector(`#${this.options.gridContainerId || ''}`);
   }

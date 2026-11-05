@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { type SlickEventData, type SlickEventHandler } from '../core/slickCore.js';
+import { type SlickEventData } from '../core/slickCore.js';
 import { type SlickGrid } from '../core/slickGrid.js';
 import type {
   Column,
@@ -49,10 +49,6 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
   }
   set addonOptions(newOptions: HeaderButton) {
     this._addonOptions = newOptions;
-  }
-
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
   }
 
   get grid(): SlickGrid {

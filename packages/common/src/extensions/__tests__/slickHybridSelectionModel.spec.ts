@@ -132,7 +132,7 @@ describe('Row Selection Model Plugin', () => {
 
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
-    expect(plugin.eventHandler).toBeTruthy();
+    expect((plugin as any)._eventHandler).toBeTruthy();
   });
 
   it('should dispose the plugin when calling destroy', () => {
@@ -847,7 +847,7 @@ describe('Cell Selection Model Plugin', () => {
 
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
-    expect(plugin.eventHandler).toBeTruthy();
+    expect((plugin as any)._eventHandler).toBeTruthy();
     expect(plugin.getCellRangeSelector()).toBeUndefined();
   });
 

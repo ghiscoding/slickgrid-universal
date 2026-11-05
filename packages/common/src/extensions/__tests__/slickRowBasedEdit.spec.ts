@@ -131,7 +131,7 @@ describe('Row Based Edit Plugin', () => {
 
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
-    expect(plugin.eventHandler).toBeTruthy();
+    expect(plugin['_eventHandler']).toBeTruthy();
   });
 
   const optionsMock = {
@@ -148,7 +148,7 @@ describe('Row Based Edit Plugin', () => {
 
     plugin.init(gridStub, gridService);
 
-    const onBeforeEditCellHandler = (plugin.eventHandler.subscribe as Mock<any>).mock.calls[0][1] as (e: Event, args: OnBeforeEditCellEventArgs) => boolean;
+    const onBeforeEditCellHandler = (plugin['_eventHandler'].subscribe as Mock<any>).mock.calls[0][1] as (e: Event, args: OnBeforeEditCellEventArgs) => boolean;
     expect(onBeforeEditCellHandler({} as Event, { item: fakeItem } as OnBeforeEditCellEventArgs)).toBe(false);
 
     plugin.rowBasedEditCommandHandler(fakeItem, {} as Column, {} as EditCommand);
@@ -172,7 +172,7 @@ describe('Row Based Edit Plugin', () => {
     };
     plugin.init(gridStub, gridService);
 
-    const onBeforeEditCellHandler = (plugin.eventHandler.subscribe as Mock<any>).mock.calls[0][1] as (e: Event, args: OnBeforeEditCellEventArgs) => boolean;
+    const onBeforeEditCellHandler = (plugin['_eventHandler'].subscribe as Mock<any>).mock.calls[0][1] as (e: Event, args: OnBeforeEditCellEventArgs) => boolean;
     expect(onBeforeEditCellHandler({} as Event, { item: fakeItem } as OnBeforeEditCellEventArgs)).toBe(false);
 
     // set row to edit mode
@@ -418,7 +418,7 @@ describe('Row Based Edit Plugin', () => {
     gridStub.onSetOptions = 'onSetOptions' as any;
     plugin.init(gridStub, gridService);
 
-    const call = (plugin.eventHandler.subscribe as Mock<any>).mock.calls.find((c) => c[0] === 'onSetOptions')![1] as (
+    const call = (plugin['_eventHandler'].subscribe as Mock<any>).mock.calls.find((c) => c[0] === 'onSetOptions')![1] as (
       _e: Event,
       args: OnSetOptionsEventArgs
     ) => void;
@@ -455,7 +455,7 @@ describe('Row Based Edit Plugin', () => {
       } as EditCommand
     );
 
-    const call = (plugin.eventHandler.subscribe as Mock<any>).mock.calls.find((c) => c[0] === 'onRowsOrCountChanged')![1] as () => void;
+    const call = (plugin['_eventHandler'].subscribe as Mock<any>).mock.calls.find((c) => c[0] === 'onRowsOrCountChanged')![1] as () => void;
 
     call();
 
@@ -467,7 +467,7 @@ describe('Row Based Edit Plugin', () => {
     plugin.init(gridStub, gridService);
     plugin.destroy();
 
-    expect(plugin.eventHandler.unsubscribeAll).toHaveBeenCalled();
+    expect(plugin['_eventHandler'].unsubscribeAll).toHaveBeenCalled();
     expect(pubSubServiceStub.unsubscribeAll).toHaveBeenCalled();
   });
 

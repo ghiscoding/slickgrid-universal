@@ -80,10 +80,6 @@ export class SlickRowBasedEdit {
     return this._grid.getOptions() || ({} as GridOption);
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   /** Initialize plugin. */
   init(grid: SlickGrid, gridService: GridService): void {
     this._grid = grid;

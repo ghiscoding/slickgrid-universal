@@ -200,7 +200,7 @@ describe('GridMenuControl', () => {
     });
 
     afterEach(() => {
-      control?.eventHandler.unsubscribeAll();
+      control?.['_eventHandler'].unsubscribeAll();
       control?.dispose();
       vi.clearAllMocks();
     });
@@ -216,7 +216,7 @@ describe('GridMenuControl', () => {
 
       afterEach(() => {
         gridMenuOptionsMock.onBeforeMenuShow = undefined as any;
-        control?.eventHandler.unsubscribeAll();
+        control?.['_eventHandler'].unsubscribeAll();
         gridOptionsMock.gridMenu = gridMenuOptionsMock;
         vi.clearAllMocks();
         control.dispose();
@@ -229,7 +229,7 @@ describe('GridMenuControl', () => {
       it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnPinning()" returns false', () => {
         const mockRowSelection = [0, 3, 5];
         vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(false);
-        vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
@@ -254,7 +254,7 @@ describe('GridMenuControl', () => {
       it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnPinning()" returns false and Hybrid Selection is enabled', () => {
         const mockRowSelection = [0, 3, 5];
         vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(false);
-        vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
@@ -278,7 +278,7 @@ describe('GridMenuControl', () => {
 
       it('should query an input checkbox change event and expect "setSelectedRows" method to be called using Row Selection when enabled', () => {
         const mockRowSelection = [0, 3, 5];
-        vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
@@ -303,7 +303,7 @@ describe('GridMenuControl', () => {
 
       it('should open the Grid Menu and then expect it to hide when clicking anywhere in the DOM body', () => {
         const mockRowSelection = [0, 3, 5];
-        vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
@@ -335,7 +335,7 @@ describe('GridMenuControl', () => {
 
       it('should open the Grid Menu and then expect it to hide when clicking anywhere in the DOM body with Hybrid Selection enabled', () => {
         const mockRowSelection = [0, 3, 5];
-        vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
@@ -367,7 +367,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should execute "hideMenu()" when onClick event is triggered', () => {
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
@@ -391,7 +391,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called when defined', () => {
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
@@ -413,7 +413,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called from default option when it is not provided', () => {
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
@@ -511,7 +511,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the Grid Menu and expect "Forcefit" to be checked when "hideForceFitButton" is false', () => {
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
@@ -536,7 +536,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the Grid Menu and expect "Sync Resize" to be checked when "hideSyncResizeButton" is false', () => {
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
@@ -561,7 +561,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the Grid Menu and expect "onColumnsChanged" to be called when defined', () => {
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'validateColumnPinning').mockReturnValueOnce(true);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         const onColChangedMock = vi.fn();
@@ -593,7 +593,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the grid menu via its hamburger menu and click on "Force Fit Columns" checkbox and expect "setOptions" and "updateColumns" to be called with previous visible columns', () => {
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any as any)
           .mockReturnValue(1);
@@ -622,7 +622,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should open the grid menu via its hamburger menu and click on "syncresize" checkbox and expect "setOptions" to be called with "syncColumnCellResize" property', () => {
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
@@ -2605,7 +2605,7 @@ describe('GridMenuControl', () => {
           .mockReturnValue(undefined as any)
           .mockReturnValueOnce(0)
           .mockReturnValueOnce(1);
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
 
         control.columns = columnsUnorderedMock;
         control.initEventHandlers();
@@ -2637,7 +2637,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should filter columns using "columnListBuilder" callback when provided', () => {
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
 
         // Create columns with names that are not in alphabetical order
         const originalColumnsMock: Column[] = [
@@ -2678,7 +2678,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should sort columns alphabetically by name when "columnListBuilder" function is provided', () => {
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+        const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
 
         // Create columns with names that are not in alphabetical order
         const unsortedColumnsMock: Column[] = [
@@ -2740,7 +2740,7 @@ describe('GridMenuControl', () => {
     });
 
     it('should translate the column picker header titles', () => {
-      const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+      const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
       const utilitySpy = vi.spyOn(extensionUtility, 'getPickerTitleOutputString');
       const translateSpy = vi.spyOn(extensionUtility, 'translateItems');
       vi.spyOn(gridStub, 'getColumnIndex')
@@ -2787,7 +2787,7 @@ describe('GridMenuControl', () => {
     });
 
     it('should not translate when providing custom titles', () => {
-      const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+      const handlerSpy = vi.spyOn(control['_eventHandler'], 'subscribe');
       const utilitySpy = vi.spyOn(extensionUtility, 'getPickerTitleOutputString');
       const translateSpy = vi.spyOn(extensionUtility, 'translateItems');
       vi.spyOn(gridStub, 'getColumnIndex')

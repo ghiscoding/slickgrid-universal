@@ -110,7 +110,7 @@ describe('TreeData Service', () => {
       columnId: 'file',
     };
     service = new TreeDataService(mockPubSub, filterServiceStub, sharedService, sortServiceStub);
-    slickgridEventHandler = service.eventHandler;
+    slickgridEventHandler = service['_eventHandler'];
     vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
     vi.spyOn(filterServiceStub, 'getPreviousFilters').mockReturnValue([]);
     (unflattenParentChildArrayToTree as Mock).mockImplementationOnce(unflattenActual);

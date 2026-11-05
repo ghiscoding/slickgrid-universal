@@ -111,7 +111,7 @@ describe('SortService', () => {
     sharedService.dataView = dataViewStub;
 
     service = new SortService(collectionServiceStub, sharedService, eventPubSubService, backendUtilityService, rxjsResourceStub);
-    slickgridEventHandler = service.eventHandler;
+    slickgridEventHandler = service['_eventHandler'];
     vi.spyOn(dataViewStub, 'getLength').mockReturnValue(100);
   });
 
@@ -929,7 +929,7 @@ describe('SortService', () => {
 
     it('should disable Sort functionality when passing True as 1st argument and trigger an event by default', () => {
       const clearSpy = vi.spyOn(service, 'clearSorting');
-      const unsubscribeSpy = vi.spyOn(service.eventHandler, 'unsubscribeAll');
+      const unsubscribeSpy = vi.spyOn(service['_eventHandler'], 'unsubscribeAll');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
 
       service.bindLocalOnSort(gridStub);
@@ -952,7 +952,7 @@ describe('SortService', () => {
 
     it('should disable Sort functionality when passing True as 1st argument and False as 2nd argument SHOULD NOT trigger an event', () => {
       const clearSpy = vi.spyOn(service, 'clearSorting');
-      const unsubscribeSpy = vi.spyOn(service.eventHandler, 'unsubscribeAll');
+      const unsubscribeSpy = vi.spyOn(service['_eventHandler'], 'unsubscribeAll');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
 
       service.bindLocalOnSort(gridStub);

@@ -557,7 +557,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     component.initialization(slickEventHandler);
     mockGrid.onColumnsReordered.notify({ impactedColumns: newVisibleColumns, grid: mockGrid, previousColumnOrder: ['firstName', 'lastName'] });
 
-    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(component['_eventHandler']).toEqual(slickEventHandler);
     expect(sharedService.hasColumnsReordered).toBe(true);
   });
 
@@ -566,7 +566,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     component.initialization(slickEventHandler);
     mockGrid.onSetOptions.notify({ optionsBefore: { darkMode: false }, optionsAfter: { darkMode: true }, grid: mockGrid });
 
-    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(component['_eventHandler']).toEqual(slickEventHandler);
     expect(divContainer.classList.contains('slick-dark-mode')).toBeTruthy();
   });
 
@@ -575,7 +575,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     component.initialization(slickEventHandler);
     mockGrid.onSetOptions.notify({ optionsBefore: { darkMode: true }, optionsAfter: { darkMode: false }, grid: mockGrid });
 
-    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(component['_eventHandler']).toEqual(slickEventHandler);
     expect(divContainer.classList.contains('slick-dark-mode')).toBeFalsy();
   });
 
@@ -1965,7 +1965,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         component.initialization(slickEventHandler);
         mockDataView.onRowsChanged.notify({ rows: [1, 2, 3] } as any);
 
-        expect(component.eventHandler).toEqual(slickEventHandler);
+        expect(component['_eventHandler']).toEqual(slickEventHandler);
         expect(renderSpy).toHaveBeenCalled();
         expect(updateRowSpy).toHaveBeenCalledTimes(3);
       });
@@ -1987,7 +1987,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           callingOnRowsChanged: false,
         });
 
-        expect(component.eventHandler).toEqual(slickEventHandler);
+        expect(component['_eventHandler']).toEqual(slickEventHandler);
         expect(invalidateRowSpy).toHaveBeenCalled();
         expect(renderSpy).toHaveBeenCalled();
       });

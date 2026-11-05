@@ -137,7 +137,7 @@ describe('FilterService', () => {
     backendUtilityService = new BackendUtilityService();
     const filterFactory = new FilterFactory(slickgridConfig, translateService, collectionService);
     service = new FilterService(filterFactory, pubSubServiceStub, sharedService, backendUtilityService, rxjsResourceStub);
-    slickgridEventHandler = service.eventHandler;
+    slickgridEventHandler = service['_eventHandler'];
     vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(div);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionMock);
   });
@@ -222,7 +222,7 @@ describe('FilterService', () => {
       const filterMetadataArray = service.getFiltersMetadata();
       const destroySpy = vi.spyOn(filterMetadataArray[0], 'destroy');
 
-      expect(service.isFilterFirstRender).toBe(false);
+      expect(service['_isFilterFirstRender']).toBe(false);
       expect(columnFilters).toEqual({
         isActive: { columnDef: mockColumn, columnId: 'isActive', operator: 'EQ', searchTerms: [true], parsedSearchTerms: true, type: 'boolean' },
       });

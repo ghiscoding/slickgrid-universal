@@ -48,10 +48,6 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
     this._options = { ...this._defaults, ...options };
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   get gridOptions(): GridOption {
     return this._grid?.getOptions();
   }

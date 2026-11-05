@@ -62,10 +62,6 @@ export class SlickRowMoveManager {
     return this._addonOptions;
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
     return this._grid?.getOptions() ?? {};

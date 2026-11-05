@@ -28,10 +28,6 @@ export class HeaderGroupingService {
   }
 
   /** Getter of the SlickGrid Event Handler */
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
     return this._grid?.getOptions() ?? ({} as GridOption);

@@ -6,10 +6,6 @@ import type { OnEventArgs } from './../interfaces/index.js';
 export class GridEventService {
   protected _eventHandler: SlickEventHandler;
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   constructor() {
     this._eventHandler = new SlickEventHandler();
   }

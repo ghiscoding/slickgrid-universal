@@ -200,7 +200,7 @@ describe('GridEventService', () => {
 
   describe('dispose method', () => {
     it('should unsubscribe all event from the event handler', () => {
-      const eventHandler = service.eventHandler;
+      const eventHandler = service['_eventHandler'];
       const spy = vi.spyOn(eventHandler, 'unsubscribeAll');
 
       service.dispose();

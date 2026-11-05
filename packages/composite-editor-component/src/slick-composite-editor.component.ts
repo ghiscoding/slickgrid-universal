@@ -78,10 +78,6 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   protected gridService: GridService | null = null;
   protected translaterService?: TranslaterService | null;
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   get dataView(): SlickDataView {
     return this.grid?.getData<SlickDataView>();
   }

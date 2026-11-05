@@ -69,10 +69,6 @@ export class TreeDataService {
   }
 
   /** Getter of the SlickGrid Event Handler */
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   get gridOptions(): GridOption {
     return this._grid?.getOptions() ?? {};
   }

@@ -94,7 +94,7 @@ describe('CellRangeSelector Plugin', () => {
 
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
-    expect(plugin.eventHandler).toBeTruthy();
+    expect(plugin['_eventHandler']).toBeTruthy();
     expect(plugin.addonOptions).toEqual({
       autoScroll: true,
       minIntervalToShowNextCell: 30,
