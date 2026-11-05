@@ -16,7 +16,7 @@ The `Grid Menu` (also known as the "Hamburger Menu") is enabled by default in th
 Technically, it's automatically enabled so just enjoy it, you could optionally disable it though. You could also customize the content of the Grid Menu, see below for more details.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/example09) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example09.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example01) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example01.ts)
 
 ## Customization
 ### Column Picker
@@ -37,6 +37,22 @@ this.gridOptions: {
 
 ### Default command visibility
 
+The following built-in command IDs are supported by `gridMenu.hideCommands` (commands still depend on enabled features and options):
+
+| Command ID |
+| --- |
+| `clear-filter` |
+| `clear-pinning` |
+| `clear-sorting` |
+| `export-csv` |
+| `export-excel` |
+| `export-pdf` |
+| `export-text-delimited` |
+| `refresh-dataset` |
+| `toggle-dark-mode` |
+| `toggle-filter` |
+| `toggle-preheader` |
+
 Built-in commands appear according to the enabled grid features (for example, `enableFiltering`, `enableSorting`, or `enableExcelExport`). Two commands require explicit opt-in:
 
 - `toggle-dark-mode`: enable it with `gridMenu.showToggleDarkModeCommand: true`.
@@ -45,7 +61,7 @@ Built-in commands appear according to the enabled grid features (for example, `e
 Use `hideCommands` to hide any built-in command; it always takes precedence. Visibility is applied before `commandListBuilder`.
 
 ```ts
-const gridOptions: GridOption = {
+this.gridOptions = {
   enableTextExport: true,
   textExportOptions: { menuFormats: ['csv', 'txt'] },
   gridMenu: {
@@ -69,56 +85,57 @@ The Grid Menu also comes, by default, with a list of built-in custom commands (u
 This section is called Custom Commands because you can also customize this section with your own commands. To do that, you need to fill in 2 properties (an array of `commandItems` and define `onGridMenuCommand` callback) in your Grid Options. For example, `Slickgrid-Universal` is configured by default with these settings (you can overwrite any one of them):
 
 #### Using Static Command Items
-```tsx
-setOptions({
-   enableAutoResize: true,
-   enableGridMenu: true,
-   enableFiltering: true,
-   gridMenu: {
-     commandTitle: 'Custom Commands',
-     columnTitle: 'Columns',
-     iconCssClass: 'mdi mdi-dots-vertical',
-     menuWidth: 17,
-     resizeOnShowHeaderRow: true,
-     commandItems: [
-       {
-         iconCssClass: 'mdi mdi-filter-remove-outline',
-         title: 'Clear All Filters',
-         disabled: false,
-         command: 'clear-filter'
-       },
-       {
-         iconCssClass: 'mdi-flip-vertical',
-         title: 'Toggle Filter Row',
-         disabled: false,
-         command: 'toggle-filter'
-       },
-       // you can add sub-menus by adding nested `commandItems`
-       {
-         // we can also have multiple nested sub-menus
-         command: 'export', title: 'Exports',
-         commandItems: [
-           { command: 'exports-txt', title: 'Text (tab delimited)' },
-           {
-              command: 'sub-menu', title: 'Excel', cssClass: 'green', subMenuTitle: 'available formats', subMenuTitleCssClass: 'text-italic orange',
-              commandItems: [
-                { command: 'exports-csv', title: 'Excel (csv)' },
-                { command: 'exports-xlsx', title: 'Excel (xlsx)' },
-             ]
-           }
-         ]
-       },
-     ],
-     onCommand: (e, args) => {
-       if (args.command === 'toggle-filter') {
-         this.gridObj.setHeaderRowVisibility(!this.gridObj.getOptions().showHeaderRow);
-       } else if (args.command === 'clear-filter') {
-         this.filterService.clearFilters();
-         this.dataviewObj.refresh();
-       }
-     }
-   }
-});
+
+```ts
+this.gridOptions = {
+  enableAutoResize: true,
+  enableGridMenu: true,
+  enableFiltering: true,
+  gridMenu: {
+    commandTitle: 'Custom Commands',
+    columnTitle: 'Columns',
+    iconCssClass: 'mdi mdi-dots-vertical',
+    menuWidth: 17,
+    resizeOnShowHeaderRow: true,
+    commandItems: [
+      {
+        iconCssClass: 'mdi mdi-filter-remove-outline',
+        title: 'Clear All Filters',
+        disabled: false,
+        command: 'clear-filter'
+      },
+      {
+        iconCssClass: 'mdi-flip-vertical',
+        title: 'Toggle Filter Row',
+        disabled: false,
+        command: 'toggle-filter'
+      },
+      // you can add sub-menus by adding nested `commandItems`
+      {
+        // we can also have multiple nested sub-menus
+        command: 'export', title: 'Exports',
+        commandItems: [
+          { command: 'exports-txt', title: 'Text (tab delimited)' },
+          {
+            command: 'sub-menu', title: 'Excel', cssClass: 'green', subMenuTitle: 'available formats', subMenuTitleCssClass: 'text-italic orange',
+            commandItems: [
+              { command: 'exports-csv', title: 'Excel (csv)' },
+              { command: 'exports-xlsx', title: 'Excel (xlsx)' },
+            ]
+          }
+        ]
+      },
+    ],
+    onCommand: (e, args) => {
+      if (args.command === 'toggle-filter') {
+        this.gridObj.setHeaderRowVisibility(!this.gridObj.getOptions().showHeaderRow);
+      } else if (args.command === 'clear-filter') {
+        this.filterService.clearFilters();
+        this.dataviewObj.refresh();
+      }
+    }
+  }
+};
 ```
 
 #### Advanced: Dynamic Command List Builder
@@ -132,8 +149,8 @@ For more advanced use cases where you need to dynamically build the command list
 
 **Note:** You would typically use `commandListBuilder` **instead of** `commandItems` (not both), since the builder gives you full control over the final command list.
 
-```tsx
-setOptions({
+```ts
+gridOptions: {
   gridMenu: {
     // Build the command list dynamically
     commandListBuilder: (builtInItems) => {
@@ -155,12 +172,12 @@ setOptions({
       }
     }
   }
-});
+}
 ```
 
 **Example: Filter commands based on user permissions**
 ```ts
-setOptions({
+gridOptions: {
   gridMenu: {
     commandListBuilder: (builtInItems) => {
       // Remove export commands if user doesn't have export permission
@@ -173,12 +190,12 @@ setOptions({
       return builtInItems;
     }
   }
-});
+}
 ```
 
 **Example: Reorder and customize the command list**
 ```ts
-setOptions({
+gridOptions: {
   gridMenu: {
     commandListBuilder: (builtInItems) => {
       // Add custom commands at the beginning
@@ -200,7 +217,7 @@ setOptions({
       return [...customCommands, ...sortedBuiltIn];
     }
   }
-});
+}
 ```
 
 #### Events
@@ -212,43 +229,39 @@ There are multiple events/callback hooks which are accessible from the Grid Opti
 - `onCommand`
 
 ```ts
-setOptions({
-  gridMenu: {
-    // commandItems: [
-    //   { command: 'help', title: 'Help', action: (e, args) => console.log(args) },
-    //   { command: '', divider: true },
-    //   { command: 'hello', title: 'Hello', action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'mdi mdi-close' },
-    // ],
-    // menuUsabilityOverride: () => false,
-    onBeforeMenuShow: () => {
-      console.log('onGridMenuBeforeMenuShow');
-      // return false; // returning false would prevent the grid menu from opening
-    },
-    onAfterMenuShow: () => console.log('onGridMenuAfterMenuShow'),
-    onColumnsChanged: (_e, args) => console.log('onGridMenuColumnsChanged', args),
-    onCommand: (e, args) => {
-      // e.preventDefault(); // preventing default event would keep the menu open after the execution
-      console.log('onGridMenuCommand', args.command);
-    },
-    onMenuClose: (e, args) => console.log('onGridMenuMenuClose - visible columns count', args.visibleColumns.length),
+gridMenu: {
+  // commandItems: [
+  //   { command: 'help', title: 'Help', action: (e, args) => console.log(args) },
+  //   { command: '', divider: true },
+  //   { command: 'hello', title: 'Hello', action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'mdi mdi-close' },
+  // ],
+  // menuUsabilityOverride: () => false,
+  onBeforeMenuShow: () => {
+    console.log('onGridMenuBeforeMenuShow');
+    // return false; // returning false would prevent the grid menu from opening
   },
-});
+  onAfterMenuShow: () => console.log('onGridMenuAfterMenuShow'),
+  onColumnsChanged: (_e, args) => console.log('onGridMenuColumnsChanged', args),
+  onCommand: (e, args) => {
+    // e.preventDefault(); // preventing default event would keep the menu open after the execution
+    console.log('onGridMenuCommand', args.command);
+  },
+  onMenuClose: (e, args) => console.log('onGridMenuMenuClose - visible columns count', args.visibleColumns.length),
+},
 ```
 
 For more info on all the available properties of the custom commands, you can read refer to the doc written in the Grid Menu [implementation](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/extensions/slickGridMenu.ts) itself.
 
 ### Custom Menu Item Rendering
-
 To customize the appearance of menu items with custom HTML, badges, icons, or interactive elements, you can use the `slotRenderer` or `defaultMenuItemRenderer` callbacks.
 
 See [Custom Menu Slots](menu-slots.md) for detailed examples and best practices on rendering custom menu item content.
 
 ### How to change an icon of all default commands?
-
 You can change any of the default command icon(s) by changing the `icon[X-command]`, for example, see below for the defaults.
 
 ```ts
-setOptions({
+this.gridOptions = {
   enableGridMenu: true,
   gridMenu: {
     iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline'
@@ -258,7 +271,7 @@ setOptions({
     iconRefreshDatasetCommand: 'mdi mdi-sync',
     iconToggleFilterCommand: 'mdi-flip-vertical',
   },
-});
+};
 ```
 
 ### When using Pre-Header
@@ -266,14 +279,14 @@ setOptions({
 By default the Grid Menu icon will be showing on the right after the column headers, if however you wish to move the button icon to show in the pre-header instead, you could simply use the `iconButtonContainer` grid option
 
 ```ts
-setOptions({
+this.gridOptions = {
   createPreHeaderPanel: true,
   showPreHeaderPanel: true,
   preHeaderPanelHeight: 26,
   gridMenu: {
     iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
   },
-});
+};
 ```
 
 ### How to Disable the Grid Menu?
@@ -281,9 +294,27 @@ setOptions({
 You can disable the Grid Menu, by calling `enableGridMenu: false` from the Grid Options.
 
 ```ts
-setOptions({
+this.gridOptions = {
    enableGridMenu: false,
-});
+};
+```
+
+### Use the `columnSort` option to sort columns (deprecated)
+##### now `@deprecated`, use `columnListBuilder` in >= 10.x
+
+The example below demonstrates how to use the new alphabetical sorting feature:
+
+```ts
+this.gridOptions = {
+  gridMenu: {
+    // enable the "columnSort" option to sort columns by name
+    columnSort: (item1: Column, item2: Column) => {
+      const nameA = item1.name?.toString().toLowerCase() || '';
+      const nameB = item2.name?.toString().toLowerCase() || '';
+      return nameA.localeCompare(nameB);
+    },
+  }
+};
 ```
 
 ### Use the `columnListBuilder` option to filter/sort columns
@@ -293,14 +324,14 @@ The `columnListBuilder` is a callback that is executed after reading the built-i
 For example:
 
 ```ts
-setOptions({
+this.gridOptions = {
   gridMenu: {
-    // Build the column list to sort by name and filter columns
+    // enable the "columnSort" option to sort columns by name
     columnListBuilder: (columns: Column[]) => {
       // optionally sort columns
       columns.sort((a, b) => {
-        const nameA = a.name?.toString().toLowerCase() || '';
-        const nameB = b.name?.toString().toLowerCase() || '';
+        const nameA = item1.name?.toString().toLowerCase() || '';
+        const nameB = item2.name?.toString().toLowerCase() || '';
         return nameA.localeCompare(nameB);
       });
 
@@ -308,5 +339,5 @@ setOptions({
       return columns.filter(c => c.field !== 'gender');
     },
   }
-});
+};
 ```

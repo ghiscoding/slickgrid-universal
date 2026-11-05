@@ -1,10 +1,10 @@
 ### Demo
 
 #### Header Button Plugin
-[Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example7) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example7.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example07) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example7.ts)
 
 #### Header Menu Plugin
-[Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example8) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example8.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example08) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example8.ts)
 
 ## Header Menu
 The `Header Menu` is now part of `Slickgrid-Universal` and is enabled by default via the grid option "enableHeaderMenu" flag.
@@ -16,6 +16,27 @@ Technically, it's enable by default and so you don't have anything to do to enjo
 ### Default command visibility
 
 Built-in commands appear when their required grid features and column settings allow them, including sorting, filtering, resizing, and pinning. Use `hideCommands` to hide commands.
+
+The built-in command IDs supported by `headerMenu.hideCommands` are:
+
+| Command ID |
+| --- |
+| `clear-filter` |
+| `clear-sort` |
+| `column-resize-by-content` |
+| `divider-1`, `divider-2`, `divider-3` |
+| `hide-column` |
+| `pin-column` |
+| `pin-columns-left` |
+| `pin-columns-right` |
+| `pin-left` |
+| `pin-right` |
+| `pinning-commands` |
+| `sort-asc` |
+| `sort-commands` |
+| `sort-desc` |
+| `unpin-column` |
+| `unpin-columns` |
 
 ## Customization
 ### Custom Commands
@@ -29,28 +50,28 @@ This section is called Custom Commands because you can also customize this secti
 #### Static Command Items
 To add static commands, fill in an array of items in your column definition's `header.menu.commandItems`. For example, `Slickgrid-Universal` is configured by default with these settings (you can overwrite any one of them):
 ```ts
-const gridOptions = {
+this.gridOptions = {
    enableAutoResize: true,
    enableHeaderMenu: true,   // <<-- this will automatically add extra custom commands
    enableFiltering: true,
    headerMenu: {
      onCommand: (e, args) => {
        if (args.command === 'hide') {
-         controlService.hideColumn(args.column);
-         controlService.autoResizeColumns();
+         this.controlService.hideColumn(args.column);
+         this.controlService.autoResizeColumns();
        } else if (args.command === 'sort-asc' || args.command === 'sort-desc') {
          // get previously sorted columns
-         const cols: ColumnSort[] = sortService.getPreviousColumnSorts(args.column.id + '');
+         const cols: ColumnSort[] = this.sortService.getPreviousColumnSorts(args.column.id + '');
 
          // add to the column array, the column sorted by the header menu
          cols.push({ sortCol: args.column, sortAsc: (args.command === 'sort-asc') });
-         sortService.onLocalSortChanged(gridObj, gridOptions, dataviewObj, cols);
+         this.sortService.onLocalSortChanged(this.gridObj, this.gridOptions, this.dataviewObj, cols);
 
-         // update the gridObj sortColumns array which will at the same add the visual sort icon(s) on the UI
+         // update the this.gridObj sortColumns array which will at the same add the visual sort icon(s) on the UI
          const newSortColumns: ColumnSort[] = cols.map((col) => {
            return { columnId: col.sortCol.id, sortAsc: col.sortAsc };
          });
-         gridObj.setSortColumns(newSortColumns); // add sort icon in UI
+         this.gridObj.setSortColumns(newSortColumns); // add sort icon in UI
        } else {
          alert('Command: ' + args.command);
        }
@@ -63,7 +84,7 @@ const gridOptions = {
 For advanced use cases where you need to dynamically build the command list, use `commandListBuilder`. This callback receives the built-in commands and allows you to filter, sort, or modify the list before it's rendered in the UI, giving you full control over the final command list. This is executed **after** `commandItems` and is the **last call before rendering**.
 
 ```ts
-const columns = [
+this.columns = [
   {
     id: 'title',
     name: 'Title',
@@ -98,7 +119,7 @@ header: {
   menu: {
     commandListBuilder: (builtInItems) => {
       const column = this; // column context
-      
+
       // Add filtering option only for filterable columns
       const extraCommands = [];
       if (column.filterable !== false) {
@@ -107,11 +128,11 @@ header: {
           title: 'Clear Filter',
           iconCssClass: 'mdi mdi-filter-remove',
           action: (e, args) => {
-            filterService.clearFilterByColumnId(args.column.id);
+            this.filterService.clearFilterByColumnId(args.column.id);
           }
         });
       }
-      
+
       return [...builtInItems, ...extraCommands];
     }
   }
@@ -124,11 +145,11 @@ header: {
   menu: {
     commandListBuilder: (builtInItems) => {
       // Filter out sort commands
-      const filtered = builtInItems.filter(item => 
-        item !== 'divider' && 
+      const filtered = builtInItems.filter(item =>
+        item !== 'divider' &&
         !item.command?.includes('sort')
       );
-      
+
       // Add custom commands
       return [
         ...filtered,
@@ -167,7 +188,7 @@ See [Custom Menu Slots](../menu-slots.md) for detailed examples and best practic
 ### How to change icon(s) of the default commands?
 You can change any of the default command icon(s) by changing the `icon[X-command]`, for example, see below for the defaults.
 ```ts
-const gridOptions = {
+this.gridOptions = {
   enableHeaderMenu: true,
   headerMenu: {
     iconColumnHideCommand: 'mdi mdi-close'
@@ -176,11 +197,10 @@ const gridOptions = {
   },
 };
 ```
-
 ### How to Disable the Header Menu?
 You can disable the Header Menu, by calling `enableHeaderMenu: false` from the Grid Options.
 ```ts
-const gridOptions = {
+this.gridOptions = {
    enableHeaderMenu: false
 };
 ```
@@ -189,7 +209,7 @@ const gridOptions = {
 You can exclude a column from getting a Header Menu by calling `excludeFromHeaderMenu` in your Column Definition. For example, we don't need it on a column that has an edit icon:
 
 ```ts
-const columns = [
+this.columns = [
   { id: 'edit', formatter: Formatters.editIcon, excludeFromHeaderMenu: true, excludeFromExport: true },
   { id: 'title', name: 'Title', field: 'title', sortable: true },
   { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true },
@@ -201,7 +221,7 @@ You can add Header Menu to 1 column or all columns like shown below. You can als
 
 ```ts
 // add custom Header Menu to all columns except "Action"
-columns.forEach(col => {
+this.columns.forEach(col => {
   col.header = {
     menu: {
       commandItems: [

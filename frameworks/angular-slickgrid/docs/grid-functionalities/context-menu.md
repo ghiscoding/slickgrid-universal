@@ -11,9 +11,7 @@
 ### Demo
 
 #### Context Menu with Grouping
-[Context Menu Demo](https://ghiscoding.github.io/angular-slickgrid-demos/#/example24) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example24.component.ts)
-
-[Grouping Demo](https://ghiscoding.github.io/angular-slickgrid-demos/#/example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example13.component.ts)
+[Context Menu Demo](https://ghiscoding.github.io/slickgrid-universal/#/example06) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example12.ts)
 
 ### Description
 A Context Menu is triggered by a mouse right+click and can show a list of Commands (to execute an action). The lib comes with a default list of custom commands (copy cell, export & grouping commands). Also note that the Commands list is following the same structure used in the [Cell Menu](../column-functionalities/cell-menu.md), [Header Menu](header-menu-header-buttons.md) & [Grid Menu](grid-menu.md). Very similar to the [Cell Menu](../column-functionalities/cell-menu.md), they were both created as SlickGrid plugins during the same period, their main difference is that they get triggered differently (mouse right+click vs cell click) and they serve different purposes. The Cell Menu is more oriented on a row action (e.g. delete current row) while the Context Menu is all about actions for the entire grid (e.g. export to Excel).
@@ -22,6 +20,22 @@ This extensions is wrapped around the new SlickGrid Plugin **SlickContextMenu**
 
 ### Default Usage
 Technically, the Context Menu is enabled by default (copy, export) and so you don't have anything to do to enjoy it (you could disable it at any time). However, if you want to customize the content of the Context Menu, then continue reading. You can customize the menu with a list of commands and nested sub-menus.
+
+### Built-in command IDs
+
+Use these IDs with `contextMenu.hideCommands` to hide the corresponding built-in commands:
+
+| Command ID |
+| --- |
+| `clear-grouping` |
+| `collapse-all-groups` |
+| `copy` |
+| `divider-1` |
+| `expand-all-groups` |
+| `export-csv` |
+| `export-excel` |
+| `export-pdf` |
+| `export-text-delimited` |
 
 #### with Commands (Static)
 
@@ -161,7 +175,6 @@ There are 2 ways to execute an action after a Command is clicked, you could do i
 
 So if you decide to use the `action` callback, then your code would look like this
 ##### with `action` callback
-
 ```ts
 contextMenu: {
   commandItems: [
@@ -194,6 +207,11 @@ contextMenu: {
 }
 ```
 
+### Custom Menu Item Rendering
+For advanced customization of menu item appearance, you can use the `slotRenderer` or `defaultMenuItemRenderer` callbacks to create custom HTML or HTMLElement content for your menu items. This allows you to add badges, keyboard shortcuts, status indicators, and more.
+
+See [Custom Menu Slots](../menu-slots.md) for detailed examples and best practices on rendering custom menu item content across all menu types.
+
 ### Override Callback Methods
 What if you want to dynamically disable or hide a Command or even disable the entire menu in certain circumstances? For these cases, you would use the override callback methods, the method must return a `boolean`. The list of override available are the following
 - `menuUsabilityOverride` returning false would make the Context Menu unavailable to the user
@@ -202,14 +220,12 @@ What if you want to dynamically disable or hide a Command or even disable the en
   - **note** there is also a `disabled` property that you could use, however it is defined at the beginning while the override is meant to be used with certain logic dynamically.
 
 For example, say we want the Context Menu to only be available on the first 20 rows of the grid, we could use the override this way
-
 ```ts
 contextMenu: {
   menuUsabilityOverride: (args) => {
     const dataContext = args?.dataContext;
     return (dataContext.id < 21); // say we want to display the menu only from Task 0 to 20
   },
-},
 ```
 
 For another example, enable the `n/a` command only when the task is not completed. So we could do it this way
@@ -243,11 +259,6 @@ contextMenu: {
   ]
 }
 ```
-
-### Custom Menu Item Rendering
-For advanced customization of menu item appearance, you can use the `slotRenderer` or `defaultMenuItemRenderer` callbacks to create custom HTML or HTMLElement content for your menu items. This allows you to add badges, keyboard shortcuts, status indicators, and more.
-
-See [Custom Menu Slots](../menu-slots.md) for detailed examples and best practices on rendering custom menu item content across all menu types.
 
 ### Show Menu only over Certain Columns
 Say you want to show the Context Menu only when the user is over certain columns of the grid. For that, you could use the `commandShownOverColumnIds` array, by default this array is empty and when that is the case then the menu will be accessible from any columns. So if we want to have the Context Menu available only over the first 2 columns, we would have an array of those 2 column ids. For example, the following would show the Context Menu everywhere except the last 2 columns (priority, action) since they are not part of the array.

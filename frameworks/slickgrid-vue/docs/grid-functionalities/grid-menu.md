@@ -16,7 +16,7 @@ The `Grid Menu` (also known as the "Hamburger Menu") is enabled by default in th
 Technically, it's automatically enabled so just enjoy it, you could optionally disable it though. You could also customize the content of the Grid Menu, see below for more details.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/example09) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example09.vue)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example01) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example01.ts)
 
 ## Customization
 ### Column Picker
@@ -28,7 +28,7 @@ The Grid Menu includes, by default, the "Column Picker" list. This brings an eas
 For very large data grid with lots of columns to scroll, you could optionally skip the creation of the Column Picker and only keep the "Commands" section.
 
 ```ts
-gridOptions.value = {
+this.gridOptions: {
   gridMenu: {
     hideColumnPickerSection: true,
   }
@@ -36,6 +36,22 @@ gridOptions.value = {
 ```
 
 ### Default command visibility
+
+The following built-in command IDs are supported by `gridMenu.hideCommands` (commands still depend on enabled features and options):
+
+| Command ID |
+| --- |
+| `clear-filter` |
+| `clear-pinning` |
+| `clear-sorting` |
+| `export-csv` |
+| `export-excel` |
+| `export-pdf` |
+| `export-text-delimited` |
+| `refresh-dataset` |
+| `toggle-dark-mode` |
+| `toggle-filter` |
+| `toggle-preheader` |
 
 Built-in commands appear according to the enabled grid features (for example, `enableFiltering`, `enableSorting`, or `enableExcelExport`). Two commands require explicit opt-in:
 
@@ -45,7 +61,7 @@ Built-in commands appear according to the enabled grid features (for example, `e
 Use `hideCommands` to hide any built-in command; it always takes precedence. Visibility is applied before `commandListBuilder`.
 
 ```ts
-const gridOptions: GridOption = {
+this.gridOptions = {
   enableTextExport: true,
   textExportOptions: { menuFormats: ['csv', 'txt'] },
   gridMenu: {
@@ -66,12 +82,12 @@ The Grid Menu also comes, by default, with a list of built-in custom commands (u
 
 > **Note**: command visibility flags (`hide...Command`) were removed in v11; use `hideCommands` or `commandListBuilder`. The `positionOrder` property was removed in v11; use `commandListBuilder` to reorder commands (see below).
 
-This section is called Custom Commands because you can also customize this section with your own commands. To do that, you need to fill in 2 properties (an array of `commandItems` and define `onGridMenuCommand` callback) in your Grid Options. For example, `Slickgrid-Vue` is configured by default with these settings (you can overwrite any one of them):
+This section is called Custom Commands because you can also customize this section with your own commands. To do that, you need to fill in 2 properties (an array of `commandItems` and define `onGridMenuCommand` callback) in your Grid Options. For example, `Slickgrid-Universal` is configured by default with these settings (you can overwrite any one of them):
 
 #### Using Static Command Items
 
 ```ts
-gridOptions.value = {
+this.gridOptions = {
   enableAutoResize: true,
   enableGridMenu: true,
   enableFiltering: true,
@@ -243,8 +259,9 @@ See [Custom Menu Slots](menu-slots.md) for detailed examples and best practices 
 
 ### How to change an icon of all default commands?
 You can change any of the default command icon(s) by changing the `icon[X-command]`, for example, see below for the defaults.
+
 ```ts
-gridOptions.value = {
+this.gridOptions = {
   enableGridMenu: true,
   gridMenu: {
     iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline'
@@ -262,7 +279,7 @@ gridOptions.value = {
 By default the Grid Menu icon will be showing on the right after the column headers, if however you wish to move the button icon to show in the pre-header instead, you could simply use the `iconButtonContainer` grid option
 
 ```ts
-gridOptions.value = {
+this.gridOptions = {
   createPreHeaderPanel: true,
   showPreHeaderPanel: true,
   preHeaderPanelHeight: 26,
@@ -273,10 +290,30 @@ gridOptions.value = {
 ```
 
 ### How to Disable the Grid Menu?
+
 You can disable the Grid Menu, by calling `enableGridMenu: false` from the Grid Options.
+
 ```ts
-gridOptions.value = {
+this.gridOptions = {
    enableGridMenu: false,
+};
+```
+
+### Use the `columnSort` option to sort columns (deprecated)
+##### now `@deprecated`, use `columnListBuilder` in >= 10.x
+
+The example below demonstrates how to use the new alphabetical sorting feature:
+
+```ts
+this.gridOptions = {
+  gridMenu: {
+    // enable the "columnSort" option to sort columns by name
+    columnSort: (item1: Column, item2: Column) => {
+      const nameA = item1.name?.toString().toLowerCase() || '';
+      const nameB = item2.name?.toString().toLowerCase() || '';
+      return nameA.localeCompare(nameB);
+    },
+  }
 };
 ```
 
@@ -287,14 +324,14 @@ The `columnListBuilder` is a callback that is executed after reading the built-i
 For example:
 
 ```ts
-gridOptions.value = {
+this.gridOptions = {
   gridMenu: {
-    // Build the column list to sort by name and filter columns
+    // enable the "columnSort" option to sort columns by name
     columnListBuilder: (columns: Column[]) => {
       // optionally sort columns
       columns.sort((a, b) => {
-        const nameA = a.name?.toString().toLowerCase() || '';
-        const nameB = b.name?.toString().toLowerCase() || '';
+        const nameA = item1.name?.toString().toLowerCase() || '';
+        const nameB = item2.name?.toString().toLowerCase() || '';
         return nameA.localeCompare(nameB);
       });
 

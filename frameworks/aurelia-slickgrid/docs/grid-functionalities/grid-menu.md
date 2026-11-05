@@ -13,11 +13,10 @@ The `Grid Menu` (also known as the "Hamburger Menu") is enabled by default in th
 
 ## How to use it?
 #### It's Enabled by default
-
 Technically, it's automatically enabled so just enjoy it, you could optionally disable it though. You could also customize the content of the Grid Menu, see below for more details.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/example09) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example09.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example01) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example01.ts)
 
 ## Customization
 ### Column Picker
@@ -29,7 +28,7 @@ The Grid Menu includes, by default, the "Column Picker" list. This brings an eas
 For very large data grid with lots of columns to scroll, you could optionally skip the creation of the Column Picker and only keep the "Commands" section.
 
 ```ts
-this.this.gridOptions: {
+this.gridOptions: {
   gridMenu: {
     hideColumnPickerSection: true,
   }
@@ -37,6 +36,22 @@ this.this.gridOptions: {
 ```
 
 ### Default command visibility
+
+The following built-in command IDs are supported by `gridMenu.hideCommands` (commands still depend on enabled features and options):
+
+| Command ID |
+| --- |
+| `clear-filter` |
+| `clear-pinning` |
+| `clear-sorting` |
+| `export-csv` |
+| `export-excel` |
+| `export-pdf` |
+| `export-text-delimited` |
+| `refresh-dataset` |
+| `toggle-dark-mode` |
+| `toggle-filter` |
+| `toggle-preheader` |
 
 Built-in commands appear according to the enabled grid features (for example, `enableFiltering`, `enableSorting`, or `enableExcelExport`). Two commands require explicit opt-in:
 
@@ -46,7 +61,7 @@ Built-in commands appear according to the enabled grid features (for example, `e
 Use `hideCommands` to hide any built-in command; it always takes precedence. Visibility is applied before `commandListBuilder`.
 
 ```ts
-const gridOptions: GridOption = {
+this.gridOptions = {
   enableTextExport: true,
   textExportOptions: { menuFormats: ['csv', 'txt'] },
   gridMenu: {
@@ -124,7 +139,6 @@ this.gridOptions = {
 ```
 
 #### Advanced: Dynamic Command List Builder
-
 For more advanced use cases where you need to dynamically build the command list, use `commandListBuilder`. This callback receives the built-in commands and allows you to filter, sort, or modify the list before it's rendered in the UI, giving you full control over the final command list. This function is executed **after** `commandItems` is processed and is the **last call before rendering** the menu in the DOM.
 
 **When to use `commandListBuilder`:**
@@ -136,7 +150,7 @@ For more advanced use cases where you need to dynamically build the command list
 **Note:** You would typically use `commandListBuilder` **instead of** `commandItems` (not both), since the builder gives you full control over the final command list.
 
 ```ts
-this.gridOptions: {
+gridOptions: {
   gridMenu: {
     // Build the command list dynamically
     commandListBuilder: (builtInItems) => {
@@ -163,7 +177,7 @@ this.gridOptions: {
 
 **Example: Filter commands based on user permissions**
 ```ts
-this.gridOptions: {
+gridOptions: {
   gridMenu: {
     commandListBuilder: (builtInItems) => {
       // Remove export commands if user doesn't have export permission
@@ -181,7 +195,7 @@ this.gridOptions: {
 
 **Example: Reorder and customize the command list**
 ```ts
-this.gridOptions: {
+gridOptions: {
   gridMenu: {
     commandListBuilder: (builtInItems) => {
       // Add custom commands at the beginning
@@ -207,7 +221,6 @@ this.gridOptions: {
 ```
 
 #### Events
-
 There are multiple events/callback hooks which are accessible from the Grid Options
 - `onBeforeMenuShow`
 - `onAfterMenuShow`
@@ -246,6 +259,7 @@ See [Custom Menu Slots](menu-slots.md) for detailed examples and best practices 
 
 ### How to change an icon of all default commands?
 You can change any of the default command icon(s) by changing the `icon[X-command]`, for example, see below for the defaults.
+
 ```ts
 this.gridOptions = {
   enableGridMenu: true,
@@ -285,6 +299,24 @@ this.gridOptions = {
 };
 ```
 
+### Use the `columnSort` option to sort columns (deprecated)
+##### now `@deprecated`, use `columnListBuilder` in >= 10.x
+
+The example below demonstrates how to use the new alphabetical sorting feature:
+
+```ts
+this.gridOptions = {
+  gridMenu: {
+    // enable the "columnSort" option to sort columns by name
+    columnSort: (item1: Column, item2: Column) => {
+      const nameA = item1.name?.toString().toLowerCase() || '';
+      const nameB = item2.name?.toString().toLowerCase() || '';
+      return nameA.localeCompare(nameB);
+    },
+  }
+};
+```
+
 ### Use the `columnListBuilder` option to filter/sort columns
 
 The `columnListBuilder` is a callback that is executed after reading the built-in columns but before rendering them in the DOM (this is useful to filter and/or sort columns).
@@ -294,12 +326,12 @@ For example:
 ```ts
 this.gridOptions = {
   gridMenu: {
-    // Build the column list to sort by name and filter columns
+    // enable the "columnSort" option to sort columns by name
     columnListBuilder: (columns: Column[]) => {
       // optionally sort columns
       columns.sort((a, b) => {
-        const nameA = a.name?.toString().toLowerCase() || '';
-        const nameB = b.name?.toString().toLowerCase() || '';
+        const nameA = item1.name?.toString().toLowerCase() || '';
+        const nameB = item2.name?.toString().toLowerCase() || '';
         return nameA.localeCompare(nameB);
       });
 

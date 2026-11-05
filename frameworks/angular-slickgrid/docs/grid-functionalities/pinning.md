@@ -6,7 +6,7 @@
 - [Sticky Columns and Rows](sticky.md)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/angular-slickgrid-bs4-demo/#/example20) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example20.component.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example04) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example04.ts)
 
 ### Introduction
 Pinning keeps selected columns or rows attached to a grid edge while the remaining content scrolls. Columns can be pinned on the left or right, and rows can be pinned at the top or bottom. You can also change pinning dynamically with `setOptions()`.
@@ -17,8 +17,7 @@ For scroll-activated docking, see [Sticky Columns and Rows](sticky.md). Sticky c
 
 ### Header Menu commands
 
-The Pinning Commands root menu is available by default whenever the Header Menu is enabled, including when the grid has no initial `pinning` state. To hide the entire root menu, add
-`'pinning-commands'` to `headerMenu.hideCommands`:
+The Pinning Commands root menu is available by default whenever the Header Menu is enabled, including when the grid has no initial `pinning` state. To hide the entire root menu, add `'pinning-commands'` to `headerMenu.hideCommands`:
 
 ```ts
 headerMenu: {
@@ -27,6 +26,19 @@ headerMenu: {
 ```
 
 To hide selected actions instead, list their command IDs in `hideCommands` (for example, `'pin-left'` or `'unpin-columns'`). Set `Column.pinnable` to `false` to hide the Pinning Commands root menu for an individual column. These settings control Header Menu visibility; pinning can still be configured through the grid options and APIs.
+
+Pinning command IDs supported by `headerMenu.hideCommands`:
+
+| Command ID |
+| --- |
+| `pinning-commands` |
+| `pin-column` |
+| `pin-left` |
+| `pin-columns-left` |
+| `pin-columns-right` |
+| `pin-right` |
+| `unpin-column` |
+| `unpin-columns` |
 
 ### Command labels and translation keys
 
@@ -71,24 +83,14 @@ Explicit column and row references do not need to be contiguous. For example, `c
 
 ID references follow their row through sorting and filtering. Index references remain positional, so recompute an index used for a changing last row. `setOptions({ pinning: null })` and `setOptions({ pinning: undefined })` both clear pinning.
 
-```html
-<angular-slickgrid gridId="grid2"
-     [columns]="columns"
-     [options]="gridOptions"
-     [dataset]="dataset">
-</angular-slickgrid>
-```
-
 ##### Component
-```typescript
-import { Component, OnInit} from '@angular/core';
-
-export class GridBasicComponent implements OnInit {
+```ts
+export class GridBasicComponent {
   columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
-  ngOnInit(): void {
+  attached(): void {
     // your columns definition
     this.columns = [];
 
@@ -118,14 +120,12 @@ export class GridBasicComponent implements OnInit {
 To pin rows at the bottom, provide the row indexes in `pinning.rows.bottom` and leave the top list empty.
 ##### Component
 ```ts
-import { Component, OnInit} from '@angular/core';
-
-export class GridBasicComponent implements OnInit {
+export class GridBasicComponent {
   columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
-  ngOnInit(): void {
+  attached(): void {
       // your columns definition
     this.columns = [];
 
@@ -147,49 +147,45 @@ You can change the number of pinned columns/rows and even the pinning of columns
 ```html
 <div class="row col-sm-12">
     <span>
-        <label for="">Pinned Rows: </label>
-        <input type="number" min="-1" [(ngModel)]="pinnedRowCount">
-        <button class="btn btn-default btn-xs" (click)="changePinnedRowCount()">
-            Set
-        </button>
+      <label for="">Pinned Rows: </label>
+      <input type="number" min="-1"
+             value.bind="pinnedRowCount">
+      <button class="btn btn-default btn-xs"
+              click.trigger="changePinnedRowCount()">
+        Set
+      </button>
     </span>
     <span style="margin-left: 10px">
-        <label for="">Pinned Columns: </label>
-        <input type="number" min="-1" [(ngModel)]="pinnedColumnCount">
-        <button class="btn btn-default btn-xs" (click)="changePinnedColumnCount()">
-            Set
-        </button>
+      <label for="">Pinned Columns: </label>
+      <input type="number" min="-1"
+             value.bind="pinnedColumnCount">
+      <button class="btn btn-default btn-xs"
+              click.trigger="changePinnedColumnCount()">
+        Set
+      </button>
     </span>
     <span style="margin-left: 15px">
-        <button class="btn btn-default btn-sm" (click)="togglePinnedBottomRows()">
-            <i class="mdi mdi-flip-vertical"></i> Toggle Pinned Rows
-        </button>
-        <span style="font-weight: bold;">: {{ isPinnedBottom ? 'Bottom' : 'Top' }}</span>
+      <button class="btn btn-default btn-sm" click.trigger="togglePinnedBottomRows()">
+         <i class="mdi-flip-vertical"></i> Toggle Pinned Rows
+      </button>
+      <span style="font-weight: bold;">: ${ isPinnedBottom ? 'Bottom' : 'Top' }</span>
     </span>
 </div>
 
-<angular-slickgrid gridId="grid2"
-     [columns]="columns"
-     [options]="gridOptions"
-     [dataset]="dataset"
-     (onAngularGridCreated)="angularGridReady($event.detail)">
-</angular-slickgrid>
+<div class="gridId">
+</div>
 ```
 
 ##### Component
 ```ts
-import { Component, OnInit} from '@angular/core';
-import { AngularGridInstance } from 'angular-slickgrid';
-
-export class GridBasicComponent implements OnInit {
+export class GridBasicComponent {
   columns: Column[];
-  dataset: any[];
   gridOptions: GridOption;
-  gridObj: any;
+  dataset: any[];
   isPinnedBottom = false;
 
-  ngOnInit(): void {
-      // your columns definition
+  attached(): void {
+    // your columns definition
     this.columns = [];
 
     this.gridOptions = {
@@ -201,14 +197,10 @@ export class GridBasicComponent implements OnInit {
     }
   }
 
-  angularGridReady(angularGrid: AngularGridInstance) {
-    this.gridObj = angularGrid.slickGrid;
-  }
-
   /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
   changePinnedColumnCount() {
-    if (this.gridObj && this.gridObj.setOptions) {
-      this.gridObj.setOptions({
+    if (this.sgb.slickGrid.setOptions) {
+      this.sgb.slickGrid.setOptions({
         pinning: { columns: { left: this.pinnedColumnCount } }
       });
     }
@@ -216,8 +208,8 @@ export class GridBasicComponent implements OnInit {
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
   changePinnedRowCount() {
-    if (this.gridObj && this.gridObj.setOptions) {
-      this.gridObj.setOptions({
+    if (this.sgb.slickGrid.setOptions) {
+      this.sgb.slickGrid.setOptions({
         pinning: { rows: { top: [0, 1, 2] } }
       });
     }
@@ -225,8 +217,8 @@ export class GridBasicComponent implements OnInit {
 
   /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
   togglePinnedBottomRows() {
-    if (this.gridObj && this.gridObj.setOptions) {
-      this.gridObj.setOptions({
+    if (this.sgb.slickGrid.setOptions) {
+      this.sgb.slickGrid.setOptions({
         pinning: {
           rows: this.isPinnedBottom ? { top: [0, 1, 2], bottom: [] } : { top: [], bottom: [0, 1, 2] },
         }

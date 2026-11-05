@@ -21,6 +21,22 @@ This extensions is wrapped around the new SlickGrid Plugin **SlickContextMenu**
 ### Default Usage
 Technically, the Context Menu is enabled by default (copy, export) and so you don't have anything to do to enjoy it (you could disable it at any time). However, if you want to customize the content of the Context Menu, then continue reading. You can customize the menu with a list of commands and nested sub-menus.
 
+### Built-in command IDs
+
+Use these IDs with `contextMenu.hideCommands` to hide the corresponding built-in commands:
+
+| Command ID |
+| --- |
+| `clear-grouping` |
+| `collapse-all-groups` |
+| `copy` |
+| `divider-1` |
+| `expand-all-groups` |
+| `export-csv` |
+| `export-excel` |
+| `export-pdf` |
+| `export-text-delimited` |
+
 #### with Commands (Static)
 
 Command items require `command`. Dividers can use `{ divider: true }` without a command. For explicitly typed lists, use `Array<MenuCommandItem | MenuDivider>`.

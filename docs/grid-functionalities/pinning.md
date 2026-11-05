@@ -27,6 +27,19 @@ headerMenu: {
 
 To hide selected actions instead, list their command IDs in `hideCommands` (for example, `'pin-left'` or `'unpin-columns'`). Set `Column.pinnable` to `false` to hide the Pinning Commands root menu for an individual column. These settings control Header Menu visibility; pinning can still be configured through the grid options and APIs.
 
+Pinning command IDs supported by `headerMenu.hideCommands`:
+
+| Command ID |
+| --- |
+| `pinning-commands` |
+| `pin-column` |
+| `pin-left` |
+| `pin-columns-left` |
+| `pin-columns-right` |
+| `pin-right` |
+| `unpin-column` |
+| `unpin-columns` |
+
 ### Command labels and translation keys
 
 The pinning commands of the Header Menu and Grid Menu use the following translation keys (Translate Service) or `TEXT_` prefixed locale keys (custom `locales` grid option):

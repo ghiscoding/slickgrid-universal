@@ -17,6 +17,27 @@ Technically, it's enable by default and so you don't have anything to do to enjo
 
 Built-in commands appear when their required grid features and column settings allow them, including sorting, filtering, resizing, and pinning. Use `hideCommands` to hide commands.
 
+The built-in command IDs supported by `headerMenu.hideCommands` are:
+
+| Command ID |
+| --- |
+| `clear-filter` |
+| `clear-sort` |
+| `column-resize-by-content` |
+| `divider-1`, `divider-2`, `divider-3` |
+| `hide-column` |
+| `pin-column` |
+| `pin-columns-left` |
+| `pin-columns-right` |
+| `pin-left` |
+| `pin-right` |
+| `pinning-commands` |
+| `sort-asc` |
+| `sort-commands` |
+| `sort-desc` |
+| `unpin-column` |
+| `unpin-columns` |
+
 ## Customization
 ### Custom Commands
 The Header Menu also comes, by default, with a list of built-in custom commands (use `commandListBuilder` to reorder these commands)

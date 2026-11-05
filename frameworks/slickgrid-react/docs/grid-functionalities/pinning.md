@@ -6,7 +6,7 @@
 - [Sticky Columns and Rows](sticky.md)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example20) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example20.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example04) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example04.ts)
 
 ### Introduction
 Pinning keeps selected columns or rows attached to a grid edge while the remaining content scrolls. Columns can be pinned on the left or right, and rows can be pinned at the top or bottom. You can also change pinning dynamically with `setOptions()`.
@@ -26,6 +26,19 @@ headerMenu: {
 ```
 
 To hide selected actions instead, list their command IDs in `hideCommands` (for example, `'pin-left'` or `'unpin-columns'`). Set `Column.pinnable` to `false` to hide the Pinning Commands root menu for an individual column. These settings control Header Menu visibility; pinning can still be configured through the grid options and APIs.
+
+Pinning command IDs supported by `headerMenu.hideCommands`:
+
+| Command ID |
+| --- |
+| `pinning-commands` |
+| `pin-column` |
+| `pin-left` |
+| `pin-columns-left` |
+| `pin-columns-right` |
+| `pin-right` |
+| `unpin-column` |
+| `unpin-columns` |
 
 ### Command labels and translation keys
 
@@ -71,35 +84,25 @@ Explicit column and row references do not need to be contiguous. For example, `c
 ID references follow their row through sorting and filtering. Index references remain positional, so recompute an index used for a changing last row. `setOptions({ pinning: null })` and `setOptions({ pinning: undefined })` both clear pinning.
 
 ##### Component
-```tsx
-const Example: React.FC = () => {
-  const [dataset, setDataset] = useState<any[]>([]);
-  const [columns, setColumns] = useState<Column[]>([]);
-  const [options, setOptions] = useState<GridOption | undefined>(undefined);
+```ts
+export class GridBasicComponent {
+  columns: Column[];
+  gridOptions: GridOption;
+  dataset: any[];
 
-  useEffect(() => defineGrid(), []);
+  attached(): void {
+    // your columns definition
+    this.columns = [];
 
-  function defineGrid() {
-    setColumns([]);
-    setOptions({
+    this.gridOptions = {
       alwaysShowVerticalScroll: false,
       pinning: {
         columns: { left: 2 },
         rows: { top: [0, 1, 2] },
       },
       // v11 and lower: frozenColumn: 2, frozenRow: 3
-    });
+    }
   }
-
-  return !options ? null : (
-    <SlickgridReact gridId="grid1"
-      columns={columns}
-      options={options}
-      dataset={dataset}
-      onReactGridCreated={$event => reactGridReady($event.detail)}
-      onGridStateChanged={$event => gridStateChanged($event.detail)}
-    />
-  );
 }
 ```
 
@@ -116,25 +119,24 @@ const Example: React.FC = () => {
 ## Rows Pinning starting from bottom
 To pin rows at the bottom, provide the row indexes in `pinning.rows.bottom` and leave the top list empty.
 ##### Component
-```tsx
-const Example: React.FC = () => {
-  const [dataset, setDataset] = useState<any[]>([]);
-  const [columns, setColumns] = useState<Column[]>([]);
-  const [options, setOptions] = useState<GridOption | undefined>(undefined);
+```ts
+export class GridBasicComponent {
+  columns: Column[];
+  gridOptions: GridOption;
+  dataset: any[];
 
-  useEffect(() => defineGrid(), []);
+  attached(): void {
+      // your columns definition
+    this.columns = [];
 
-  function defineGrid() {
-    // your columns definition
-    setColumns([]);
-    setOptions({
+    this.gridOptions = {
       alwaysShowVerticalScroll: false,
       pinning: {
         columns: { left: 2 },
         rows: { bottom: [97, 98, 99] },
       },
       // v11 and lower: frozenColumn: 2, frozenRow: 3, frozenBottom: true
-    });
+    }
   }
 }
 ```
@@ -142,85 +144,88 @@ const Example: React.FC = () => {
 ## Change Pinning Dynamically
 You can change the number of pinned columns/rows and even the pinning of columns from top to bottom.
 
+```html
+<div class="row col-sm-12">
+    <span>
+      <label for="">Pinned Rows: </label>
+      <input type="number" min="-1"
+             value.bind="pinnedRowCount">
+      <button class="btn btn-default btn-xs"
+              click.trigger="changePinnedRowCount()">
+        Set
+      </button>
+    </span>
+    <span style="margin-left: 10px">
+      <label for="">Pinned Columns: </label>
+      <input type="number" min="-1"
+             value.bind="pinnedColumnCount">
+      <button class="btn btn-default btn-xs"
+              click.trigger="changePinnedColumnCount()">
+        Set
+      </button>
+    </span>
+    <span style="margin-left: 15px">
+      <button class="btn btn-default btn-sm" click.trigger="togglePinnedBottomRows()">
+         <i class="mdi-flip-vertical"></i> Toggle Pinned Rows
+      </button>
+      <span style="font-weight: bold;">: ${ isPinnedBottom ? 'Bottom' : 'Top' }</span>
+    </span>
+</div>
+
+<div class="gridId">
+</div>
+```
+
 ##### Component
-```tsx
-import { SlickgridReactInstance } from 'slickgrid-react';
+```ts
+export class GridBasicComponent {
+  columns: Column[];
+  gridOptions: GridOption;
+  dataset: any[];
+  isPinnedBottom = false;
 
-const Example: React.FC = () => {
-  const [dataset, setDataset] = useState<any[]>([]);
-  const [columns, setColumns] = useState<Column[]>([]);
-  const [options, setOptions] = useState<GridOption | undefined>(undefined);
-  const [isPinnedBottom, setIsPinnedBottom] = useState(false);
-  const reactGridRef = useRef<SlickgridReactInstance>();
+  attached(): void {
+    // your columns definition
+    this.columns = [];
 
-  useEffect(() => defineGrid(), []);
-
-  function reactGridReady(reactGrid: SlickgridReactInstance) {
-    reactGridRef.current = reactGrid;
-  }
-
-  function defineGrid() {
-    setColumns([ /*...*/ ]);
-    setOptions({
+    this.gridOptions = {
       alwaysShowVerticalScroll: false,
       pinning: {
         columns: { left: 2 },
         rows: { top: [0, 1, 2] },
       },
-    });
+    }
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
-  function changePinnedColumnCount() {
-    if (reactGridRef.current?.slickGrid.setOptions) {
-      reactGridRef.current?.slickGrid.setOptions({
-        pinning: { columns: { left: pinnedColumnCount } }
+  changePinnedColumnCount() {
+    if (this.sgb.slickGrid.setOptions) {
+      this.sgb.slickGrid.setOptions({
+        pinning: { columns: { left: this.pinnedColumnCount } }
       });
     }
   }
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
-  function changePinnedRowCount() {
-    if (reactGridRef.current?.slickGrid.setOptions) {
-      reactGridRef.current?.slickGrid.setOptions({
+  changePinnedRowCount() {
+    if (this.sgb.slickGrid.setOptions) {
+      this.sgb.slickGrid.setOptions({
         pinning: { rows: { top: [0, 1, 2] } }
       });
     }
   }
 
   /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
-  function togglePinnedBottomRows() {
-    const newIsPinnedBottom = !isPinnedBottom;
-    if (reactGridRef.current?.slickGrid.setOptions) {
-      reactGridRef.current?.slickGrid.setOptions({
+  togglePinnedBottomRows() {
+    if (this.sgb.slickGrid.setOptions) {
+      this.sgb.slickGrid.setOptions({
         pinning: {
-          rows: newIsPinnedBottom ? { top: [], bottom: [0, 1, 2] } : { top: [0, 1, 2], bottom: [] },
+          rows: this.isPinnedBottom ? { top: [0, 1, 2], bottom: [] } : { top: [], bottom: [0, 1, 2] },
         }
       });
-      setIsPinnedBottom(newIsPinnedBottom); // toggle the variable
+      this.isPinnedBottom = !this.isPinnedBottom; // toggle the variable
     }
   }
-
-  return !options ? null : (
-    <div className="row">
-      <div className="col-sm-12">
-        <span>
-          <label htmlFor="">Pinned Rows: </label>
-          <input type="number" min="-1" defaultValue={pinnedRowCount} onInput={($event) => changePinnedRowCount($event)} />
-          <button className="btn btn-outline-secondary btn-xs btn-icon" onClick={() => changePinnedRowCount()}>
-            Set
-          </button>
-        </span>
-        <span style={{ marginLeft: '10px' }}>
-          <label htmlFor="">Pinned Columns: </label>
-          <input type="number" min="-1" defaultValue={pinnedColumnCount} onInput={($event) => changePinnedColumnCount($event)} />
-          <button className="btn btn-outline-secondary btn-xs btn-icon" onClick={() => changePinnedColumnCount()}>
-            Set
-          </button>
-        </span>
-      </div>
-    </div>
-  );
 }
 ```
 

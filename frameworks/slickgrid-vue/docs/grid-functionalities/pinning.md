@@ -6,7 +6,7 @@
 - [Sticky Columns and Rows](sticky.md)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example20) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example20.vue)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example04) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example04.ts)
 
 ### Introduction
 Pinning keeps selected columns or rows attached to a grid edge while the remaining content scrolls. Columns can be pinned on the left or right, and rows can be pinned at the top or bottom. You can also change pinning dynamically with `setOptions()`.
@@ -26,6 +26,19 @@ headerMenu: {
 ```
 
 To hide selected actions instead, list their command IDs in `hideCommands` (for example, `'pin-left'` or `'unpin-columns'`). Set `Column.pinnable` to `false` to hide the Pinning Commands root menu for an individual column. These settings control Header Menu visibility; pinning can still be configured through the grid options and APIs.
+
+Pinning command IDs supported by `headerMenu.hideCommands`:
+
+| Command ID |
+| --- |
+| `pinning-commands` |
+| `pin-column` |
+| `pin-left` |
+| `pin-columns-left` |
+| `pin-columns-right` |
+| `pin-right` |
+| `unpin-column` |
+| `unpin-columns` |
 
 ### Command labels and translation keys
 
@@ -71,42 +84,26 @@ Explicit column and row references do not need to be contiguous. For example, `c
 ID references follow their row through sorting and filtering. Index references remain positional, so recompute an index used for a changing last row. `setOptions({ pinning: null })` and `setOptions({ pinning: undefined })` both clear pinning.
 
 ##### Component
-```vue
-<script setup lang="ts">
-import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount, type Ref } from 'vue';
+```ts
+export class GridBasicComponent {
+  columns: Column[];
+  gridOptions: GridOption;
+  dataset: any[];
 
-const gridOptions = ref<GridOption>();
-const columns: Ref<Column[]> = ref([]);
-const dataset = ref<any[]>([]);
+  attached(): void {
+    // your columns definition
+    this.columns = [];
 
-onBeforeMount(() => {
-  defineGrid();
-});
-
-function defineGrid() {
-  columns.value = [];
-
-  gridOptions.value = {
-    alwaysShowVerticalScroll: false,
-    pinning: {
-      columns: { left: 2 },
-      rows: { top: [0, 1, 2] },
-    },
-    // v11 and lower: frozenColumn: 2, frozenRow: 3
+    this.gridOptions = {
+      alwaysShowVerticalScroll: false,
+      pinning: {
+        columns: { left: 2 },
+        rows: { top: [0, 1, 2] },
+      },
+      // v11 and lower: frozenColumn: 2, frozenRow: 3
+    }
   }
 }
-</script>
-
-<template>
-  <SlickgridVue gridId="grid1"
-    v-model:columns="columns"
-    v-model:options="gridOptions"
-    v-model:dataset="dataset"
-    @onGridStateChanged="gridStateChanged($event.detail)"
-    @onVueGridCreated="vueGridReady($event.detail)"
-  />
-</template>
 ```
 
 > Pinning validation errors use the shared `errorCallback`, for example `errorCallback: (msg) => alert(msg)`. Each validation message remains independently configurable.
@@ -122,120 +119,114 @@ function defineGrid() {
 ## Rows Pinning starting from bottom
 To pin rows at the bottom, provide the row indexes in `pinning.rows.bottom` and leave the top list empty.
 ##### Component
+```ts
+export class GridBasicComponent {
+  columns: Column[];
+  gridOptions: GridOption;
+  dataset: any[];
 
-```vue
-<script setup lang="ts">
-import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount, type Ref } from 'vue';
+  attached(): void {
+      // your columns definition
+    this.columns = [];
 
-const gridOptions = ref<GridOption>();
-const columns: Ref<Column[]> = ref([]);
-const dataset = ref<any[]>([]);
-
-onBeforeMount(() => {
-  defineGrid();
-});
-
-function defineGrid() {
-  // your columns definition
-  columns.value = [];
-
-  gridOptions.value = {
-    alwaysShowVerticalScroll: false,
-    pinning: {
-      columns: { left: 2 },
-      rows: { bottom: [97, 98, 99] },
-    },
-    // v11 and lower: frozenColumn: 2, frozenRow: 3, frozenBottom: true
+    this.gridOptions = {
+      alwaysShowVerticalScroll: false,
+      pinning: {
+        columns: { left: 2 },
+        rows: { bottom: [97, 98, 99] },
+      },
+      // v11 and lower: frozenColumn: 2, frozenRow: 3, frozenBottom: true
+    }
   }
 }
-</script>
 ```
 
 ## Change Pinning Dynamically
 You can change the number of pinned columns/rows and even the pinning of columns from top to bottom.
 
+```html
+<div class="row col-sm-12">
+    <span>
+      <label for="">Pinned Rows: </label>
+      <input type="number" min="-1"
+             value.bind="pinnedRowCount">
+      <button class="btn btn-default btn-xs"
+              click.trigger="changePinnedRowCount()">
+        Set
+      </button>
+    </span>
+    <span style="margin-left: 10px">
+      <label for="">Pinned Columns: </label>
+      <input type="number" min="-1"
+             value.bind="pinnedColumnCount">
+      <button class="btn btn-default btn-xs"
+              click.trigger="changePinnedColumnCount()">
+        Set
+      </button>
+    </span>
+    <span style="margin-left: 15px">
+      <button class="btn btn-default btn-sm" click.trigger="togglePinnedBottomRows()">
+         <i class="mdi-flip-vertical"></i> Toggle Pinned Rows
+      </button>
+      <span style="font-weight: bold;">: ${ isPinnedBottom ? 'Bottom' : 'Top' }</span>
+    </span>
+</div>
+
+<div class="gridId">
+</div>
+```
+
 ##### Component
-```vue
-<script setup lang="ts">
-import { SlickgridVueInstance } from 'slickgrid-vue';
-import { type Column, Filters, Formatters, SlickgridVue, SlickGrid, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount, type Ref } from 'vue';
+```ts
+export class GridBasicComponent {
+  columns: Column[];
+  gridOptions: GridOption;
+  dataset: any[];
+  isPinnedBottom = false;
 
-const gridOptions = ref<GridOption>();
-const columns: Ref<Column[]> = ref([]);
-const dataset = ref<any[]>([]);
-let gridObj: SlickGrid;
+  attached(): void {
+    // your columns definition
+    this.columns = [];
 
-onBeforeMount(() => {
-  defineGrid();
-});
+    this.gridOptions = {
+      alwaysShowVerticalScroll: false,
+      pinning: {
+        columns: { left: 2 },
+        rows: { top: [0, 1, 2] },
+      },
+    }
+  }
 
-function defineGrid() {
-  columns.value = [];
+  /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
+  changePinnedColumnCount() {
+    if (this.sgb.slickGrid.setOptions) {
+      this.sgb.slickGrid.setOptions({
+        pinning: { columns: { left: this.pinnedColumnCount } }
+      });
+    }
+  }
 
-  gridOptions.value = {
-    alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
-    pinning: {
-      columns: { left: 2 },
-      rows: { top: [0, 1, 2] },
-    },
+  /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
+  changePinnedRowCount() {
+    if (this.sgb.slickGrid.setOptions) {
+      this.sgb.slickGrid.setOptions({
+        pinning: { rows: { top: [0, 1, 2] } }
+      });
+    }
+  }
+
+  /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
+  togglePinnedBottomRows() {
+    if (this.sgb.slickGrid.setOptions) {
+      this.sgb.slickGrid.setOptions({
+        pinning: {
+          rows: this.isPinnedBottom ? { top: [0, 1, 2], bottom: [] } : { top: [], bottom: [0, 1, 2] },
+        }
+      });
+      this.isPinnedBottom = !this.isPinnedBottom; // toggle the variable
+    }
   }
 }
-
-function vueGridReady(vGrid: SlickgridVueInstance) {
-  gridObj = vGrid.slickGrid;
-}
-
-/** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
-function changePinnedColumnCount() {
-  if (gridObj?.setOptions) {
-    gridObj.setOptions({
-      pinning: { columns: { left: pinnedColumnCount } }
-    });
-  }
-}
-
-/** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
-function changePinnedRowCount() {
-  if (gridObj?.setOptions) {
-    gridObj.setOptions({
-      pinning: { rows: { top: [0, 1, 2] } }
-    });
-  }
-}
-
-/** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
-function togglePinnedBottomRows() {
-  if (gridObj?.setOptions) {
-    gridObj.setOptions({
-      pinning: { rows: { top: [], bottom: [0, 1, 2] } }
-    });
-    isPinnedBottom = !isPinnedBottom; // toggle the variable
-  }
-}
-</script>
-
-<template>
-  <div class="row">
-    <div class="col-sm-12">
-      <span>
-        <label htmlFor="">Pinned Rows: </label>
-        <input type="number" min="-1" :value="pinnedRowCount" @input="changePinnedRowCount($event)" />
-        <button class="btn btn-outline-secondary btn-xs btn-icon" @click="changePinnedRowCount()">
-          Set
-        </button>
-      </span>
-      <span style={{ marginLeft: '10px' }}>
-        <label htmlFor="">Pinned Columns: </label>
-        <input type="number" min="-1" :value="pinnedColumnCount" @input="changePinnedColumnCount($event)" />
-        <button class="btn btn-outline-secondary btn-xs btn-icon" @click="changePinnedColumnCount()">
-          Set
-        </button>
-      </span>
-    </div>
-  </div>
-</template>
 ```
 
 ## Right-to-left grids

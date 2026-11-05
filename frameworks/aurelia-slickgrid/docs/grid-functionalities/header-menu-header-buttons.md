@@ -1,10 +1,10 @@
 ### Demo
 
 #### Header Button Plugin
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example7) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example7.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example07) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example7.ts)
 
 #### Header Menu Plugin
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example8) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example8.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example08) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example8.ts)
 
 ## Header Menu
 The `Header Menu` is now part of `Slickgrid-Universal` and is enabled by default via the grid option "enableHeaderMenu" flag.
@@ -16,6 +16,27 @@ Technically, it's enable by default and so you don't have anything to do to enjo
 ### Default command visibility
 
 Built-in commands appear when their required grid features and column settings allow them, including sorting, filtering, resizing, and pinning. Use `hideCommands` to hide commands.
+
+The built-in command IDs supported by `headerMenu.hideCommands` are:
+
+| Command ID |
+| --- |
+| `clear-filter` |
+| `clear-sort` |
+| `column-resize-by-content` |
+| `divider-1`, `divider-2`, `divider-3` |
+| `hide-column` |
+| `pin-column` |
+| `pin-columns-left` |
+| `pin-columns-right` |
+| `pin-left` |
+| `pin-right` |
+| `pinning-commands` |
+| `sort-asc` |
+| `sort-commands` |
+| `sort-desc` |
+| `unpin-column` |
+| `unpin-columns` |
 
 ## Customization
 ### Custom Commands
@@ -98,7 +119,7 @@ header: {
   menu: {
     commandListBuilder: (builtInItems) => {
       const column = this; // column context
-      
+
       // Add filtering option only for filterable columns
       const extraCommands = [];
       if (column.filterable !== false) {
@@ -111,7 +132,7 @@ header: {
           }
         });
       }
-      
+
       return [...builtInItems, ...extraCommands];
     }
   }
@@ -124,11 +145,11 @@ header: {
   menu: {
     commandListBuilder: (builtInItems) => {
       // Filter out sort commands
-      const filtered = builtInItems.filter(item => 
-        item !== 'divider' && 
+      const filtered = builtInItems.filter(item =>
+        item !== 'divider' &&
         !item.command?.includes('sort')
       );
-      
+
       // Add custom commands
       return [
         ...filtered,
