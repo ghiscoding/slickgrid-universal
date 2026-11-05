@@ -2,8 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BindingService } from '../binding.service.js';
 
 class InspectableBinding extends BindingService {
-  get trackedEvents() { return this._boundedEventWithListeners; }
-  get trackedElements() { return this._elementBindings; }
+  get trackedEvents() {
+    return this._boundedEventWithListeners;
+  }
+  get trackedElements() {
+    return this._elementBindings;
+  }
 }
 
 describe('Binding Service', () => {
