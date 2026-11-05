@@ -3869,6 +3869,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     this.setCellCssStyles(selectedCellCssClass, hash);
+    this.updateAriaSelectedCells(hash, selectedCellCssClass);
 
     if (this.selectionBottomRow >= 0 && this.selectionRightCell >= 0 && addDragHandle && showDragHandle !== false) {
       const lowerRightCell = this.getCellNode(this.selectionBottomRow, this.selectionRightCell);
@@ -5582,8 +5583,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (cellCssClasses) {
       cellCss += ` ${cellCssClasses}`;
     }
-    if (this.isCellSelected(row, cell) && !cellCssClasses?.includes(this._options.selectedCellCssClass || '')) {
-      cellCss += ` ${this._options.selectedCellCssClass}`;
+    const isSelected = this.isCellSelected(row, cell);
+    const selectedCellCssClass = this._options.selectedCellCssClass;
+    if (isSelected && selectedCellCssClass && !cellCssClasses?.includes(selectedCellCssClass)) {
+      cellCss += ` ${selectedCellCssClass}`;
     }
 
     let formatterResult: FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string = '';
@@ -5600,6 +5603,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       tabIndex: -1,
       ariaColIndex: `${cell + 1}`,
     });
+    if (isSelected) {
+      cellDiv.setAttribute('aria-selected', 'true');
+    }
     if (usesStickyTransform) {
       this.applyStickyColumnTransform(cellDiv, cell, 'cell');
     }
@@ -7812,11 +7818,32 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected isCellSelected(row: number, cell: number): boolean {
-    return (
-      !!this._options.selectedCellCssClass &&
-      this.selectedRanges.some((range) => range.contains(row, cell)) &&
-      this.canCellBeSelected(row, cell)
-    );
+    return this.selectedRanges.some((range) => range.contains(row, cell)) && this.canCellBeSelected(row, cell);
+  }
+
+  protected updateAriaSelectedCells(selectedCells: CssStyleHash, selectedCellCssClass: string): void {
+    const selectedClasses = classNameToList(selectedCellCssClass);
+    Object.keys(this.rowsCache).forEach((rowKey) => {
+      const row = Number(rowKey);
+      this.ensureCellNodesInRowsCache(row);
+      const cacheEntry = this.rowsCache[row];
+      const selectedColumns = selectedCells[row];
+      Object.keys(cacheEntry.cellNodesByColumnIdx).forEach((cellKey) => {
+        const cell = Number(cellKey);
+        const node = cacheEntry.cellNodesByColumnIdx[cell];
+        const columnId = this.columns[cell]?.id;
+        const isSelected = !!selectedColumns && columnId !== undefined && columnId in selectedColumns;
+        if (isSelected !== node.hasAttribute('aria-selected')) {
+          if (isSelected) {
+            node.setAttribute('aria-selected', 'true');
+          } else {
+            node.removeAttribute('aria-selected');
+            node.classList.remove(...selectedClasses);
+            cacheEntry.cellSpanFragments?.[cell]?.forEach((fragment) => fragment.classList.remove(...selectedClasses));
+          }
+        }
+      });
+    });
   }
 
   /**

@@ -1036,6 +1036,23 @@ describe('SlickGrid core file', () => {
       { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
     ];
 
+    it.each(['selected extra', ''])('keeps selection ARIA in sync after rendering and deselection with class %s', (selectedCellCssClass) => {
+      const selectionModel = new SlickHybridSelectionModel({ selectionType: 'cell' });
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, selectedCellCssClass });
+      grid.setSelectionModel(selectionModel);
+      grid.render();
+      selectionModel.setSelectedRanges([new SlickRange(0, 0, 1, 0)]);
+      expect(grid.getCellNode(0, 0)?.getAttribute('aria-selected')).toBe('true');
+      grid.invalidateRow(1);
+      grid.render();
+      const rerendered = grid.getCellNode(1, 0)!;
+      expect(rerendered.getAttribute('aria-selected')).toBe('true');
+      selectionModel.setSelectedRanges([]);
+      expect(rerendered.hasAttribute('aria-selected')).toBe(false);
+      expect(rerendered.classList.contains('selected')).toBe(false);
+      expect(rerendered.classList.contains('extra')).toBe(false);
+    });
+
     describe('Cell selection drag handle', () => {
       it.each([
         { showDragHandle: undefined, expectedClass: false, expectedHandle: true, label: 'default' },
