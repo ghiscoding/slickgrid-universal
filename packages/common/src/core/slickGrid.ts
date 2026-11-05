@@ -2365,7 +2365,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         header,
         'keydown',
         ((e: KeyboardEvent & { target: HTMLElement }) => {
-          this.triggerEvent(this.onHeaderKeyDown, { event: e, column: Utils.storage.get(e.target, 'column'), grid: this });
+          this.triggerEvent(this.onHeaderKeyDown, {
+            event: e,
+            column: Utils.storage.get(e.target.closest('.slick-header-column'), 'column'),
+            grid: this,
+          });
           if (e.key === 'Enter' || e.key === ' ') {
             sortCallback(e);
           }
@@ -3731,6 +3735,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // v8 ignore next
       indicators.forEach((indicator) => indicator.classList.remove('slick-header-column-sorted'));
 
+      header.querySelectorAll('[aria-sort]').forEach((column) => column.removeAttribute('aria-sort'));
+
       indicators = header.querySelectorAll('.slick-sort-indicator');
       indicators.forEach((indicator) => indicator.classList.remove('slick-sort-indicator-asc', 'slick-sort-indicator-desc'));
 
@@ -3739,6 +3745,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     });
 
     let i = 1;
+    let hasAriaSort = false;
     this.sortColumns.forEach((col) => {
       if (!isDefined(col.sortAsc)) {
         col.sortAsc = true;
@@ -3749,6 +3756,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         const column = this.getColumnHeaderByIndex(columnIndex);
         if (column) {
           column.classList.add('slick-header-column-sorted');
+          if (!hasAriaSort) {
+            column.setAttribute('aria-sort', col.sortAsc ? 'ascending' : 'descending');
+            hasAriaSort = true;
+          }
           let indicator = column.querySelector('.slick-sort-indicator');
           indicator?.classList.add(col.sortAsc ? 'slick-sort-indicator-asc' : 'slick-sort-indicator-desc');
 
@@ -3858,6 +3869,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     this.setCellCssStyles(selectedCellCssClass, hash);
+    this.updateAriaSelectedCells(hash, selectedCellCssClass);
 
     if (this.selectionBottomRow >= 0 && this.selectionRightCell >= 0 && addDragHandle && showDragHandle !== false) {
       const lowerRightCell = this.getCellNode(this.selectionBottomRow, this.selectionRightCell);
@@ -5571,8 +5583,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (cellCssClasses) {
       cellCss += ` ${cellCssClasses}`;
     }
-    if (this.isCellSelected(row, cell) && !cellCssClasses?.includes(this._options.selectedCellCssClass || '')) {
-      cellCss += ` ${this._options.selectedCellCssClass}`;
+    const isSelected = this.isCellSelected(row, cell);
+    const selectedCellCssClass = this._options.selectedCellCssClass;
+    if (isSelected && selectedCellCssClass && !cellCssClasses?.includes(selectedCellCssClass)) {
+      cellCss += ` ${selectedCellCssClass}`;
     }
 
     let formatterResult: FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string = '';
@@ -5589,6 +5603,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       tabIndex: -1,
       ariaColIndex: `${cell + 1}`,
     });
+    if (isSelected) {
+      cellDiv.setAttribute('aria-selected', 'true');
+    }
     if (usesStickyTransform) {
       this.applyStickyColumnTransform(cellDiv, cell, 'cell');
     }
@@ -7801,11 +7818,32 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected isCellSelected(row: number, cell: number): boolean {
-    return (
-      !!this._options.selectedCellCssClass &&
-      this.selectedRanges.some((range) => range.contains(row, cell)) &&
-      this.canCellBeSelected(row, cell)
-    );
+    return this.selectedRanges.some((range) => range.contains(row, cell)) && this.canCellBeSelected(row, cell);
+  }
+
+  protected updateAriaSelectedCells(selectedCells: CssStyleHash, selectedCellCssClass: string): void {
+    const selectedClasses = classNameToList(selectedCellCssClass);
+    Object.keys(this.rowsCache).forEach((rowKey) => {
+      const row = Number(rowKey);
+      this.ensureCellNodesInRowsCache(row);
+      const cacheEntry = this.rowsCache[row];
+      const selectedColumns = selectedCells[row];
+      Object.keys(cacheEntry.cellNodesByColumnIdx).forEach((cellKey) => {
+        const cell = Number(cellKey);
+        const node = cacheEntry.cellNodesByColumnIdx[cell];
+        const columnId = this.columns[cell]?.id;
+        const isSelected = !!selectedColumns && columnId !== undefined && columnId in selectedColumns;
+        if (isSelected !== node.hasAttribute('aria-selected')) {
+          if (isSelected) {
+            node.setAttribute('aria-selected', 'true');
+          } else {
+            node.removeAttribute('aria-selected');
+            node.classList.remove(...selectedClasses);
+            cacheEntry.cellSpanFragments?.[cell]?.forEach((fragment) => fragment.classList.remove(...selectedClasses));
+          }
+        }
+      });
+    });
   }
 
   /**

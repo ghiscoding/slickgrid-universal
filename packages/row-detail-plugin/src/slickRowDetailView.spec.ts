@@ -2368,6 +2368,19 @@ describe('SlickRowDetailView plugin', () => {
       expect(stopPropagationSpy).toHaveBeenCalled();
     });
 
+    it('should ignore keys originating inside a detail panel', () => {
+      const panel = document.createElement('div');
+      panel.className = 'slick-row-detail-container';
+      const input = document.createElement('input');
+      panel.appendChild(input);
+      Object.defineProperty(keyDownEvent, 'target', { value: input });
+      toggleRowSelectionSpy = vi.spyOn(plugin as any, 'toggleRowSelection');
+      plugin.init(gridStub);
+      gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent);
+      expect(toggleRowSelectionSpy).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+    });
+
     it('should expand a collapsed row with ArrowRight key', () => {
       const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', __collapsed: true };
       vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
