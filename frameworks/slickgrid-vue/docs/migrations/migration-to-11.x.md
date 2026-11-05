@@ -2,7 +2,7 @@
 
 SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer and a single scrollbar. Frozen columns/rows are replaced by the new Pinning feature, and we're also adding a new Sticky columns/rows feature. The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor of the new `pinning` grid option. Pinning applies to individual columns, regardless of their index, instead of a contiguous frozen range. Update your grid options and persisted grid state accordingly.
 
-This release was also audited with AI (ChatGPT 6 Astra/Claude Opus 5.5) and brings performance improvements across several areas: virtual scrolling on large datasets, tree-data lookups and dataset sorting, sort comparisons, filtering, formatters, and exports. The Draggable Grouping example with half a million rows now exports to Excel in 10–13 seconds (may vary), 3–4x faster than v10, while v9 would hang and leave the browser unresponsive.
+This release was also audited & benchmarked with AI (ChatGPT 6 Astra/Claude Opus 5.5) and brings performance improvements across several areas: virtual scrolling on large datasets, tree-data lookups and dataset sorting, sort comparisons, filtering, formatters, and exports. The Draggable Grouping example with half a million rows now exports to Excel in 10–13 seconds (may vary), 3–4x faster than v10, while v9 would hang and leave the browser unresponsive.
 
 ### AI-assisted migration
 
@@ -19,7 +19,7 @@ Open the [v11 migration skill](migration-to-11.x/SKILL.md), click GitBook's **Co
   - [DataView CSP options and types removed](#dataview-csp-options-and-types-removed)
   - [`ExtensionName` enum replaced by a string literal type](#extensionname-enum-replaced-by-a-string-literal-type)
   - [Remove row positioning and Row Detail rendering options](#row-positioning-rowtopoffsetrendertype)
-  - [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors)
+  - [Update Row Detail DOM and CSS selectors](#row-detail-dom-and-css-selectors-cleanup)
   - [Remove Native API Fallbacks](#remove-native-api-fallbacks)
   - [Tree Formatter - remove unrelated CSS class](#tree-formatter---remove-unrelated-css-class)
 - [Code Changes](#code-changes)
@@ -290,7 +290,7 @@ Cleaning unused util functions
 - `toSnakeCase()`
 - `uniqueObjectArray()`
 
-### Resize by Cell Content options removed
+### Resize by Cell Content options cleanup
 
 Resize by cell content now measures all distinct sampled formatted texts with a canvas (using each column's cell font) instead of estimating `text length ? char width ? ratio`, and the cell padding is now read from the `.slick-cell` CSS. The following ratio/char width options are no longer needed and were removed, you can use `resizeExtraWidthPadding` (column) or `resizeByContentOptions.cellPaddingWidthInPx` (grid) if you need to tweak the calculated widths.
 
@@ -352,7 +352,7 @@ const gridOptions: GridOption = {
 
 Grid row positioning now strictly uses `transform: translateY(...)` for better precision and scrolling performance (the legacy approach was `top: ...`). RowSpan host rows and the rows they cover retain internal `top` positioning so pinned columns remain above overlapping spanning cells; no configuration is required.
 
-### Row Detail DOM and CSS selectors
+### Row Detail DOM and CSS selectors cleanup
 
 v11 simplifies the Row Detail DOM by removing redundant containers and CSS classes. Update your custom CSS and DOM selectors accordingly.
 
