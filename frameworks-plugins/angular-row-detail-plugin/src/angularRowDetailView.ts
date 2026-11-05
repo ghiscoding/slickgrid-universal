@@ -151,15 +151,11 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
         }
 
         this.eventHandler.subscribe(this.onAsyncResponse, (event, args) => {
-          if (this.rowDetailViewOptions && typeof this.rowDetailViewOptions.onAsyncResponse === 'function') {
-            this.rowDetailViewOptions.onAsyncResponse(event, args);
-          }
+          this.rowDetailViewOptions?.onAsyncResponse?.(event, args);
         });
 
         this.eventHandler.subscribe(this.onAsyncEndUpdate, (e, args) => {
-          if (this.rowDetailViewOptions && typeof this.rowDetailViewOptions.onAsyncEndUpdate === 'function') {
-            this.rowDetailViewOptions.onAsyncEndUpdate(e, args);
-          }
+          this.rowDetailViewOptions?.onAsyncEndUpdate?.(e, args);
         });
 
         this.eventHandler.subscribe(
@@ -168,18 +164,14 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
             // display preload template & re-render all the other Detail Views after toggling
             // the preload View will eventually go away once the data gets loaded after the "onAsyncEndUpdate" event
             this.renderPreloadView(args.item);
-
-            if (this.rowDetailViewOptions && typeof this.rowDetailViewOptions.onAfterRowDetailToggle === 'function') {
-              this.rowDetailViewOptions.onAfterRowDetailToggle(e, args);
-            }
+            this.rowDetailViewOptions?.onAfterRowDetailToggle?.(e, args);
           }
         );
 
         this.eventHandler.subscribe(this.onBeforeRowDetailToggle, (e, args) => {
           // before toggling row detail, we need to create View Component if it doesn't exist
           this.handleOnBeforeRowDetailToggle(e, args);
-
-          if (this.rowDetailViewOptions && typeof this.rowDetailViewOptions.onBeforeRowDetailToggle === 'function') {
+          if (this.rowDetailViewOptions?.onBeforeRowDetailToggle) {
             return this.rowDetailViewOptions.onBeforeRowDetailToggle(e, args);
           }
           return true;
@@ -188,16 +180,11 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
         this.eventHandler.subscribe(this.onRowBackToViewportRange, (e, args) => {
           // when row is back to viewport range, we will re-render the View Component(s)
           this.handleOnRowBackToViewportRange(e, args);
-
-          if (this.rowDetailViewOptions && typeof this.rowDetailViewOptions.onRowBackToViewportRange === 'function') {
-            this.rowDetailViewOptions.onRowBackToViewportRange(e, args);
-          }
+          this.rowDetailViewOptions?.onRowBackToViewportRange?.(e, args);
         });
 
         this._eventHandler.subscribe(this.onBeforeRowOutOfViewportRange, (event, args) => {
-          if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
-            this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
-          }
+          this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange?.(event, args);
           if (this.rowDetailViewOptions?.keepComponentAlive) {
             this.detachViewFromDom(args.item);
           } else {
@@ -206,9 +193,7 @@ export class AngularRowDetailView extends UniversalSlickRowDetailView {
         });
 
         this.eventHandler.subscribe(this.onRowOutOfViewportRange, (e, args) => {
-          if (this.rowDetailViewOptions && typeof this.rowDetailViewOptions.onRowOutOfViewportRange === 'function') {
-            this.rowDetailViewOptions.onRowOutOfViewportRange(e, args);
-          }
+          this.rowDetailViewOptions?.onRowOutOfViewportRange?.(e, args);
         });
 
         // --
