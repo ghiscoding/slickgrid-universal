@@ -160,7 +160,7 @@ describe('HeaderMenu Plugin', () => {
 
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
-    expect(plugin.eventHandler).toBeTruthy();
+    expect(plugin['_eventHandler']).toBeTruthy();
   });
 
   it('should use default options when instantiating the plugin without passing any arguments', () => {

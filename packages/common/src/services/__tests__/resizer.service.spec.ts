@@ -274,7 +274,7 @@ describe('Resizer Service', () => {
       const output = service.bindAutoResizeDataGrid();
 
       expect(output).toBeFalsy();
-      expect(service.eventHandler).toBeTruthy();
+      expect(service['_eventHandler']).toBeTruthy();
     });
 
     it('should return null when calling "calculateGridNewDimensions" method with a gridId that is not found in the DOM', () => {

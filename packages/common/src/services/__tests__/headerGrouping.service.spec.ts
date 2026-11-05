@@ -89,7 +89,7 @@ describe('HeaderGroupingService', () => {
     document.body.appendChild(div);
 
     service = new HeaderGroupingService(mockExtensionUtility);
-    slickgridEventHandler = service.eventHandler;
+    slickgridEventHandler = service['_eventHandler'];
   });
 
   afterEach(() => {

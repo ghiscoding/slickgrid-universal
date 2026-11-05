@@ -85,10 +85,6 @@ export class SlickCellRangeSelector {
     return this._options;
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   /** Getter for the grid uid */
   get gridUid(): string {
     return this._gridUid || (this._grid?.getUID() ?? '');

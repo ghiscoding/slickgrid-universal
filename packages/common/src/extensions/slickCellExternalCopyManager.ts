@@ -59,10 +59,6 @@ export class SlickCellExternalCopyManager {
     return this._addonOptions;
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   init(grid: SlickGrid, options?: ExcelCopyBufferOption): void {
     this._grid = grid;
     this._dataWrapper.init(grid);

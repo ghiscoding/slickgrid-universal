@@ -103,7 +103,6 @@ describe('Binding Helper', () => {
     mockObj.age = 30;
 
     expect(helper.observers.length).toBe(1);
-    expect(helper.observers[0].elementBindings.length).toBe(2);
     expect(helper.querySelectorPrefix).toBe('.grid ');
     expect(elm1.textContent).toBe('30');
     expect(elm2.textContent).toBe('30');

@@ -35,18 +35,6 @@ export class BindingService {
     }
   }
 
-  get boundedEventWithListeners(): BoundedEventWithListener[] {
-    return this._boundedEventWithListeners;
-  }
-
-  get elementBindings(): Array<ElementBinding | ElementBindingWithListener> {
-    return this._elementBindings;
-  }
-
-  get variable(): any {
-    return this._binding.variable;
-  }
-
   get property(): string {
     return this._property;
   }

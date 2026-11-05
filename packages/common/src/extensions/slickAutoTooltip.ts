@@ -33,10 +33,6 @@ export class SlickAutoTooltip {
     return this._addonOptions as AutoTooltipOption;
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   /** Initialize plugin. */
   init(grid: SlickGrid): void {
     this._addonOptions = { ...this._defaults, ...this.addonOptions };

@@ -144,7 +144,7 @@ describe('Draggable Grouping Plugin', () => {
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
     expect(plugin.gridUid).toBe('slickgrid12345');
-    expect(plugin.eventHandler).toBeTruthy();
+    expect(plugin['_eventHandler']).toBeTruthy();
   });
 
   it('should create and dispose of the plugin', () => {
@@ -153,7 +153,7 @@ describe('Draggable Grouping Plugin', () => {
 
     plugin.dispose();
 
-    expect(plugin.eventHandler).toBeTruthy();
+    expect(plugin['_eventHandler']).toBeTruthy();
     expect(disposeSpy).toHaveBeenCalled();
   });
 
@@ -770,7 +770,7 @@ describe('Draggable Grouping Plugin', () => {
         });
 
         it('should call sortable "update" from setupColumnDropbox and expect "updateGroupBy" to be called with a sort-group', () => {
-          expect(plugin.dropboxElement).toEqual(dropzoneElm);
+          expect(plugin['_dropzoneElm']).toEqual(dropzoneElm);
           expect(plugin.columnsGroupBy.length).toBeGreaterThan(0);
           expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(
             expect.anything(),

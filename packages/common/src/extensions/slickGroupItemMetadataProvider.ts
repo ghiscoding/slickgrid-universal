@@ -50,10 +50,6 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
   }
 
   /** Getter of the SlickGrid Event Handler */
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   /** Getter of SlickGrid DataView object */
   protected get dataView(): SlickDataView {
     return this._grid?.getData<SlickDataView>() ?? {};

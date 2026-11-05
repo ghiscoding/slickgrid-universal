@@ -203,7 +203,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(updateColHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`),
+      plugin.createCheckboxElement(`header-selector${plugin['_selectAll_UID']}`),
       'Select/Deselect All'
     );
     expect(preventDefaultSpy).toHaveBeenCalled();
@@ -227,7 +227,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(updateColHeaderSpy).toHaveBeenCalledTimes(2); // 1x for plugin creation, 1x for onAfterSetColumns trigger
     expect(updateColHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`),
+      plugin.createCheckboxElement(`header-selector${plugin['_selectAll_UID']}`),
       'Select/Deselect All'
     );
   });
@@ -248,7 +248,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(updateColHeaderSpy).toHaveBeenCalledTimes(2); // 1x for plugin creation, 1x for onAfterUpdateColumns trigger
     expect(updateColHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`),
+      plugin.createCheckboxElement(`header-selector${plugin['_selectAll_UID']}`),
       'Select/Deselect All'
     );
   });
@@ -521,7 +521,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       formatter: expect.any(Function),
     });
     expect(nameHtmlOutput).toBe(
-      `<label class="checkbox-selector-label selectall" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false" tabindex="-1"><div class="sgi sgi-icon-uncheck"></div></div></label>`
+      `<label class="checkbox-selector-label selectall" for="header-selector${plugin['_selectAll_UID']}"><div class="icon-checkbox-container"><input id="header-selector${plugin['_selectAll_UID']}" type="checkbox" aria-checked="false" tabindex="-1"><div class="sgi sgi-icon-uncheck"></div></div></label>`
     );
   });
 
@@ -589,7 +589,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(mockColumns[0]).toEqual(expect.objectContaining({ ...checkboxColumnMock, formatter: expect.any(Function) }));
     expect(nameHtmlOutput).toBe(
-      `<label class="checkbox-selector-label selectall" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false" tabindex="-1"><div class="sgi sgi-icon-uncheck"></div></div></label>`
+      `<label class="checkbox-selector-label selectall" for="header-selector${plugin['_selectAll_UID']}"><div class="icon-checkbox-container"><input id="header-selector${plugin['_selectAll_UID']}" type="checkbox" aria-checked="false" tabindex="-1"><div class="sgi sgi-icon-uncheck"></div></div></label>`
     );
   });
 
@@ -618,7 +618,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       maxWidth: 30,
     });
     expect(nameHtmlOutput).toBe(
-      `<label class="checkbox-selector-label selectall" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false" tabindex="-1"><div class="sgi sgi-icon-uncheck"></div></div></label>`
+      `<label class="checkbox-selector-label selectall" for="header-selector${plugin['_selectAll_UID']}"><div class="icon-checkbox-container"><input id="header-selector${plugin['_selectAll_UID']}" type="checkbox" aria-checked="false" tabindex="-1"><div class="sgi sgi-icon-uncheck"></div></div></label>`
     );
   });
 
@@ -827,7 +827,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(setSelectedRowSpy).not.toHaveBeenCalled();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`, false, true), // partial select all
+      plugin.createCheckboxElement(`header-selector${plugin['_selectAll_UID']}`, false, true), // partial select all
       'Select/Deselect All'
     );
   });
@@ -853,7 +853,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(setSelectedRowSpy).not.toHaveBeenCalled();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`, false, true), // partial select all
+      plugin.createCheckboxElement(`header-selector${plugin['_selectAll_UID']}`, false, true), // partial select all
       'Select/Deselect All'
     );
   });
@@ -878,7 +878,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(setSelectedRowSpy).not.toHaveBeenCalled();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`, false, false), // unchecked select all
+      plugin.createCheckboxElement(`header-selector${plugin['_selectAll_UID']}`, false, false), // unchecked select all
       'Select/Deselect All'
     );
   });
@@ -913,7 +913,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     // expect(setSelectedRowSpy).toHaveBeenCalled();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`, true),
+      plugin.createCheckboxElement(`header-selector${plugin['_selectAll_UID']}`, true),
       'Select/Deselect All'
     );
   });
@@ -945,7 +945,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`, true),
+      plugin.createCheckboxElement(`header-selector${plugin['_selectAll_UID']}`, true),
       'Select/Deselect All'
     );
   });
@@ -981,7 +981,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`, false, true), // partial select all
+      plugin.createCheckboxElement(`header-selector${plugin['_selectAll_UID']}`, false, true), // partial select all
       'Select/Deselect All'
     );
   });
@@ -1021,7 +1021,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`, false, true), // partial select all
+      plugin.createCheckboxElement(`header-selector${plugin['_selectAll_UID']}`, false, true), // partial select all
       'Select/Deselect All'
     );
   });

@@ -96,10 +96,6 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     this._addonOptions = newOptions;
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   get grid(): SlickGrid {
     return this.sharedService.slickGrid;
   }

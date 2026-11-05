@@ -124,10 +124,6 @@ export class SlickVanillaGridBundle<TData = any> {
     return this.options.backendServiceApi?.service;
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   get columns(): Column<TData>[] {
     return this._columns || [];
   }

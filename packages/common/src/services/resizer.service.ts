@@ -44,10 +44,6 @@ export class ResizerService {
     return !!(this.gridOptions.enableAutoResize && this.gridOptions.autoResize?.autoHeight);
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
     return this._grid?.getOptions() ?? {};

@@ -4,6 +4,7 @@ import { BindingEventService } from './bindingEvent.service.js';
 export class BindingHelper {
   private _events = new BindingEventService();
   private _observers: BindingService[] = [];
+  private _observerBindings: Array<{ variable: any; property: string }> = [];
   private _querySelectorPrefix = '';
 
   get querySelectorPrefix(): string {
@@ -19,6 +20,7 @@ export class BindingHelper {
 
   dispose(): void {
     this._events.dispose();
+    this._observerBindings = [];
     for (let observer = this._observers.pop(); observer; observer = this._observers.pop()) {
       observer.dispose();
     }
@@ -35,10 +37,12 @@ export class BindingHelper {
     const elements = document.querySelectorAll<T>(`${this.querySelectorPrefix}${selector}`);
 
     // Reuse the observer for this object and property.
-    let observer = this._observers.find((bind) => bind.variable === variable && bind.property === property);
+    const observerIndex = this._observerBindings.findIndex((binding) => binding.variable === variable && binding.property === property);
+    let observer = observerIndex >= 0 ? this._observers[observerIndex] : undefined;
     if (!observer) {
       observer = new BindingService({ variable, property });
       this._observers.push(observer);
+      this._observerBindings.push({ variable, property });
     }
 
     for (const eventName of Array.isArray(events) ? events : [events]) {

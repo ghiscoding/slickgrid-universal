@@ -432,7 +432,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     component.initialization(divContainer, slickEventHandler);
     mockGrid.onColumnsReordered.notify({ impactedColumns: newVisibleColumns, grid: mockGrid, previousColumnOrder: ['firstName', 'lastName'] });
 
-    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(component['_eventHandler']).toEqual(slickEventHandler);
     expect(sharedService.hasColumnsReordered).toBe(true);
   });
 
@@ -441,7 +441,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     component.initialization(divContainer, slickEventHandler);
     mockGrid.onSetOptions.notify({ optionsBefore: { darkMode: false }, optionsAfter: { darkMode: true }, grid: mockGrid });
 
-    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(component['_eventHandler']).toEqual(slickEventHandler);
     expect(divContainer.classList.contains('slick-dark-mode')).toBeTruthy();
   });
 
@@ -450,7 +450,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     component.initialization(divContainer, slickEventHandler);
     mockGrid.onSetOptions.notify({ optionsBefore: { darkMode: true }, optionsAfter: { darkMode: false }, grid: mockGrid });
 
-    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(component['_eventHandler']).toEqual(slickEventHandler);
     expect(divContainer.classList.contains('slick-dark-mode')).toBeFalsy();
   });
 
@@ -1878,7 +1878,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
         mockDataView.onRowsChanged.notify({ itemCount: 0, dataView: mockDataView, rows: [1, 2, 3], calledOnRowCountChanged: false });
 
-        expect(component.eventHandler).toEqual(slickEventHandler);
+        expect(component['_eventHandler']).toEqual(slickEventHandler);
         expect(renderSpy).toHaveBeenCalled();
         expect(updateRowSpy).toHaveBeenCalledTimes(3);
       });
@@ -1899,7 +1899,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           callingOnRowsChanged: false,
         });
 
-        expect(component.eventHandler).toEqual(slickEventHandler);
+        expect(component['_eventHandler']).toEqual(slickEventHandler);
         expect(invalidateRowSpy).toHaveBeenCalled();
         expect(renderSpy).toHaveBeenCalled();
       });

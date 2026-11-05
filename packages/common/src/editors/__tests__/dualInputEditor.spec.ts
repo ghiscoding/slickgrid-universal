@@ -597,10 +597,10 @@ describe('DualInputEditor', () => {
     describe('validate method', () => {
       it('should set isValueSaveCalled to true when grid object triggered an "onValidationError"', () => {
         editor = new DualInputEditor(editorArguments);
-        vi.spyOn(editor.eventHandler, 'subscribe');
+        vi.spyOn(editor['_eventHandler'], 'subscribe');
 
-        expect(editor.eventHandler).toBeTruthy();
-        expect(editor.isValueSaveCalled).toBe(false);
+        expect(editor['_eventHandler']).toBeTruthy();
+        expect(editor['_isValueSaveCalled']).toBe(false);
         gridStub.onValidationError.notify({
           row: 0,
           cell: 0,
@@ -610,7 +610,7 @@ describe('DualInputEditor', () => {
           editor,
           cellNode: document.createElement('div'),
         } as any);
-        expect(editor.isValueSaveCalled).toBe(true);
+        expect(editor['_isValueSaveCalled']).toBe(true);
       });
 
       it('should return False when field is required and field is empty', () => {

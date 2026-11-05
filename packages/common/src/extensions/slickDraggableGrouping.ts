@@ -94,14 +94,6 @@ export class SlickDraggableGrouping {
     return this.grid?.getData<SlickDataView>() ?? {};
   }
 
-  get dropboxElement(): HTMLDivElement {
-    return this._dropzoneElm;
-  }
-
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   get grid(): SlickGrid {
     return this._grid ?? this.sharedService.slickGrid ?? {};
   }

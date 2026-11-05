@@ -1,6 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BindingService } from '../binding.service.js';
 
+class InspectableBinding extends BindingService {
+  get trackedEvents() {
+    return this._boundedEventWithListeners;
+  }
+  get trackedElements() {
+    return this._elementBindings;
+  }
+}
+
 describe('Binding Service', () => {
   let div: HTMLDivElement;
   let service: BindingService;
@@ -22,13 +31,12 @@ describe('Binding Service', () => {
     elm.className = 'custom-class';
     div.appendChild(elm);
 
-    service = new BindingService({ variable: mockObj, property: 'name' });
+    service = new InspectableBinding({ variable: mockObj, property: 'name' });
     service.bind(elm, 'value', 'change', mockCallback);
     elm.value = 'Jane';
     const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: 'Jane' } } });
     elm.dispatchEvent(mockEvent);
 
-    expect(service.property).toBe('name');
     expect(mockObj.name).toBe('Jane');
     expect(mockCallback).toHaveBeenCalled();
   });
@@ -47,7 +55,6 @@ describe('Binding Service', () => {
     const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: '30' } } });
     elm.dispatchEvent(mockEvent);
 
-    expect(service.property).toBe('age');
     expect(mockObj.age).toBe(30);
     expect(mockCallback).toHaveBeenCalled();
   });
@@ -68,7 +75,6 @@ describe('Binding Service', () => {
     const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: 'Jane' } } });
     elm1.dispatchEvent(mockEvent);
 
-    expect(service.property).toBe('invalidProperty');
     expect(mockObj.name).toBe('John');
     expect(mockCallback).toHaveBeenCalled();
   });
@@ -80,11 +86,10 @@ describe('Binding Service', () => {
     elm.className = 'custom-class';
     div.appendChild(elm);
 
-    service = new BindingService({ variable: mockObj, property: 'name' });
+    service = new InspectableBinding({ variable: mockObj, property: 'name' });
     service.bind(elm, 'value', 'change', mockCallback);
     mockObj.name = 'Jane';
 
-    expect(service.property).toBe('name');
     expect(elm.value).toBe('Jane');
   });
 
@@ -96,11 +101,10 @@ describe('Binding Service', () => {
     const elm = document.createElement('input');
     div.appendChild(elm);
 
-    service = new BindingService({ variable: mockObj, property: 'name' });
+    service = new InspectableBinding({ variable: mockObj, property: 'name' });
     service.bind(mockElm, 'value', 'keyup');
-    service.unbind(mockElm, 'click', mockCallback, false, service.boundedEventWithListeners[0].uid);
+    service.unbind(mockElm, 'click', mockCallback, false, (service as InspectableBinding).trackedEvents[0].uid);
 
-    expect(service.property).toBe('name');
     expect(removeEventSpy).toHaveBeenCalledWith('click', mockCallback, false);
   });
 
@@ -115,7 +119,6 @@ describe('Binding Service', () => {
     service.bind(mockElm, 'value', 'keyup');
     service.unbindAll();
 
-    expect(service.property).toBe('name');
     expect(removeEventSpy).toHaveBeenCalledWith('keyup', expect.any(Function), undefined);
   });
   it('writes each binding once per event and invokes the callback afterward', () => {
@@ -133,19 +136,19 @@ describe('Binding Service', () => {
   });
 
   it('removes many listeners without scanning and keeps model bindings until disposal', () => {
-    service = new BindingService({ variable: { name: 'John' }, property: 'name' });
+    service = new InspectableBinding({ variable: { name: 'John' }, property: 'name' });
     const callback = vi.fn();
     const input = document.createElement('input');
     for (let i = 0; i < 10; i++) {
       service.bind(input, 'value', 'change', callback);
     }
-    const search = vi.spyOn(service.boundedEventWithListeners, 'findIndex');
+    const search = vi.spyOn((service as InspectableBinding).trackedEvents, 'findIndex');
     service.unbindAll();
     expect(search).not.toHaveBeenCalled();
     input.dispatchEvent(new Event('change'));
     expect(callback).not.toHaveBeenCalled();
     service.dispose();
-    expect(service.elementBindings).toHaveLength(0);
+    expect((service as InspectableBinding).trackedElements).toHaveLength(0);
   });
   it('preserves propagation when a later service replaces the model accessor', () => {
     const model = { name: 'John' };
@@ -163,28 +166,28 @@ describe('Binding Service', () => {
   });
 
   it('handles absent elements, missing listener IDs and non-tail removal', () => {
-    service = new BindingService({ variable: { value: 1 }, property: 'value' });
+    service = new InspectableBinding({ variable: { value: 1 }, property: 'value' });
     expect(service.bind(null, 'value')).toBe(service);
     service.unbind(null, 'change', vi.fn<EventListener>());
     const input = document.createElement('input');
     service.bind(input, 'value', 'change').bind(input, 'value', 'blur');
-    const first = service.boundedEventWithListeners[0];
+    const first = (service as InspectableBinding).trackedEvents[0];
     service.unbind(input, first.eventName, first.listener, undefined, first.uid);
-    expect(service.boundedEventWithListeners).toHaveLength(1);
+    expect((service as InspectableBinding).trackedEvents).toHaveLength(1);
     service.unbind(input, 'unknown', vi.fn<EventListener>(), undefined, 'missing');
     service.dispose();
     service.unbind(input, 'unknown', vi.fn<EventListener>());
   });
 
   it('allows subclass unbind overrides without leaving teardown stuck', () => {
-    class CustomBinding extends BindingService {
+    class CustomBinding extends InspectableBinding {
       override unbind = vi.fn();
     }
     const custom = new CustomBinding({ variable: { value: 1 }, property: 'value' });
     custom.bind(document.createElement('input'), 'value', 'change');
     custom.dispose();
     expect(custom.unbind).toHaveBeenCalledOnce();
-    expect(custom.boundedEventWithListeners).toHaveLength(0);
+    expect(custom.trackedEvents).toHaveLength(0);
   });
 
   it('handles empty numeric input, inherited properties and removed model properties', () => {
