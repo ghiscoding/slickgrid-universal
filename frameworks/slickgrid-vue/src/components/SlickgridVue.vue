@@ -999,7 +999,7 @@ function bindResizeHook(grid: SlickGrid, options: GridOption) {
     (options.enableAutoSizeColumns && options.enableAutoResizeColumnsByCellContent)
   ) {
     throw new Error(
-      `[Slickgrid-Vue] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use. You can enable these 2 options ("autoFitColumnsOnFirstLoad" and "enableAutoSizeColumns") OR these other 2 options ("autosizeColumnsByCellContentOnFirstLoad" and "enableAutoResizeColumnsByCellContent").`
+      `[Slickgrid-Vue] Choose either viewport sizing (autoFitColumnsOnFirstLoad, enableAutoSizeColumns) or content sizing (autosizeColumnsByCellContentOnFirstLoad, enableAutoResizeColumnsByCellContent).`
     );
   }
 

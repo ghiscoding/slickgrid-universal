@@ -305,9 +305,7 @@ export class SelectEditor extends BaseEditorClass implements Editor {
     this.valueName = this.customStructure?.value ?? 'value';
 
     if (this.enableTranslateLabel && (!this._translaterService || typeof this._translaterService.translate !== 'function')) {
-      throw new Error(
-        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
-      );
+      throw new Error(Constants.translaterMissingError);
     }
 
     // always render the Select (dropdown) DOM element, even if user passed a "collectionAsync",

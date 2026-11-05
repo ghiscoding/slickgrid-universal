@@ -75,9 +75,7 @@ export class SlickFooterComponent {
     this.registerOnSelectedRowsChangedWhenEnabled(customFooterOptions);
 
     if (this._enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error(
-        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
-      );
+      throw new Error(Constants.translaterMissingError);
     }
     this.translateCustomFooterTexts();
 

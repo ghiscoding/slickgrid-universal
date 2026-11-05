@@ -956,7 +956,7 @@ export class AureliaSlickgridCustomElement {
       (options.enableAutoSizeColumns && options.enableAutoResizeColumnsByCellContent)
     ) {
       throw new Error(
-        `[Aurelia-Slickgrid] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use. You can enable these 2 options ("autoFitColumnsOnFirstLoad" and "enableAutoSizeColumns") OR these other 2 options ("autosizeColumnsByCellContentOnFirstLoad" and "enableAutoResizeColumnsByCellContent").`
+        `[Aurelia-Slickgrid] Choose either viewport sizing (autoFitColumnsOnFirstLoad, enableAutoSizeColumns) or content sizing (autosizeColumnsByCellContentOnFirstLoad, enableAutoResizeColumnsByCellContent).`
       );
     }
 

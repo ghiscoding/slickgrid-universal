@@ -212,9 +212,7 @@ describe('CompositeEditorService', () => {
           component = new SlickCompositeEditorComponent();
           component.init(gridStub, container);
         } catch (e: any) {
-          expect(e.toString()).toContain(
-            '[Slickgrid-Universal] it seems that the GridService is not being loaded properly, make sure the Container Service is properly implemented.'
-          );
+          expect(e.toString()).toContain('[Slickgrid-Universal] GridService is unavailable.');
           done();
         }
       }));

@@ -1,3 +1,4 @@
+import { Constants } from '../constants.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import { sortByFieldType } from '../sortComparers/sortUtilities.js';
 import { SortDirectionNumber, type FilterMultiplePassType } from './../enums/index.js';
@@ -160,9 +161,7 @@ export class CollectionService<T = any> {
     enableTranslateLabel?: boolean
   ): T[] {
     if (enableTranslateLabel && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error(
-        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
-      );
+      throw new Error(Constants.translaterMissingError);
     }
 
     if (!sortByOptions) {

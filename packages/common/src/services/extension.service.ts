@@ -1,4 +1,5 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { Constants } from '../constants.js';
 import {
   type ColumnReorderFunction,
   type ExtensionList,
@@ -500,9 +501,7 @@ export class ExtensionService {
       this.gridOptions.enableTranslate &&
       (!this.translaterService || !this.translaterService.translate)
     ) {
-      throw new Error(
-        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
-      );
+      throw new Error(Constants.translaterMissingError);
     }
 
     if (locale && this.translaterService?.use && this.translaterService.getCurrentLanguage() !== locale) {
@@ -596,9 +595,7 @@ export class ExtensionService {
   /** Translate an array of items from an input key and assign translated value to the output key */
   protected translateItems(items: any[], inputKey: string, outputKey: string): void {
     if (this.gridOptions?.enableTranslate && !this.translaterService?.translate) {
-      throw new Error(
-        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
-      );
+      throw new Error(Constants.translaterMissingError);
     }
 
     this.extensionUtility.translateItems(items, inputKey, outputKey);
