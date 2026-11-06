@@ -149,7 +149,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
   }
 
   /** dispose of the DOM element & bindings only (regular PubSub subscription will be preserved) */
-  disposeDom(): void {
+  protected disposeDom(): void {
     this._bindingEventService.unbindAll();
     this._bindingHelper.dispose();
     emptyElement(this._paginationElement);
@@ -326,33 +326,18 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     const divElm = createDomElement('div', { className: 'slick-page-number' });
     createDomElement('span', { className: 'text-page', textContent: 'Page' }, divElm);
     divElm.appendChild(document.createTextNode(' '));
-    if (this._paginationService.isCursorBased) {
-      // cursor based navigation cannot jump to an arbitrary page. Simply display current page number.
-      createDomElement(
-        'span',
-        {
-          className: 'page-number',
-          ariaLabel: 'Page Number',
-          dataset: { test: 'page-number-label' },
-          textContent: '1',
-        },
-        divElm
-      );
-    } else {
-      // offset based navigation can jump to any page. Allow editing of current page number.
-      createDomElement(
-        'input',
-        {
-          type: 'text',
-          className: 'form-control page-number',
-          ariaLabel: 'Page Number',
-          value: '1',
-          size: 1,
-          dataset: { test: 'page-number-input' },
-        },
-        divElm
-      );
-    }
+    // Cursor navigation displays the current page; offset navigation allows editing it.
+    const isCursorBased = this._paginationService.isCursorBased;
+    const pageNumberElm = createDomElement(
+      isCursorBased ? 'span' : 'input',
+      {
+        className: isCursorBased ? 'page-number' : 'form-control page-number',
+        ariaLabel: 'Page Number',
+        dataset: { test: isCursorBased ? 'page-number-label' : 'page-number-input' },
+      },
+      divElm
+    );
+    Object.assign(pageNumberElm, isCursorBased ? { textContent: '1' } : { type: 'text', value: '1', size: 1 });
 
     divElm.appendChild(document.createTextNode(' '));
     createDomElement('span', { className: 'text-of', textContent: 'of' }, divElm);

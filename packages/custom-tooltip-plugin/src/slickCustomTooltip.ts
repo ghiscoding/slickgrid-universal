@@ -235,9 +235,7 @@ export class SlickCustomTooltip {
   protected handleOnMouseLeave(): void {
     this._isGridTooltip = false; // reset tooltip type flag
     if (this.addonOptions?.persistOnHover === false) {
-      if (this._hideTooltipTimeout) {
-        clearTimeout(this._hideTooltipTimeout);
-      }
+      this._hideTooltipTimeout && clearTimeout(this._hideTooltipTimeout);
       this._hideTooltipTimeout = setTimeout(() => {
         if (!this._isMouseOverTooltip) {
           this.hideTooltip();
@@ -270,7 +268,8 @@ export class SlickCustomTooltip {
     }
 
     if (this.addonOptions?.persistOnHover === false) {
-      this.clearTimeouts();
+      this.clearHideTooltipTimeout();
+      this.clearAutoHideTimeout();
       this._isMouseOverTooltip = false;
       this._bindEventService.unbindAll();
     }
@@ -292,12 +291,14 @@ export class SlickCustomTooltip {
   // protected functions
   // ---------------------
 
-  /** Clear all timeouts (hide and auto-hide) */
-  protected clearTimeouts(): void {
+  protected clearHideTooltipTimeout(): void {
     if (this._hideTooltipTimeout) {
       clearTimeout(this._hideTooltipTimeout);
       this._hideTooltipTimeout = undefined;
     }
+  }
+
+  protected clearAutoHideTimeout(): void {
     if (this._autoHideTimeout) {
       clearTimeout(this._autoHideTimeout);
       this._autoHideTimeout = undefined;
@@ -613,13 +614,12 @@ export class SlickCustomTooltip {
     this._tooltipId = tooltipId;
     this._tooltipElm = createDomElement('div', {
       id: tooltipId,
-      className: this.className,
+      className: `${this.className} ${this.gridUid} l${cell.cell} r${cell.cell}`,
       role: 'tooltip',
       ariaLive: 'polite',
       ariaAtomic: 'true',
     });
     this._tooltipBodyElm = createDomElement('div', { className: this.bodyClassName });
-    this._tooltipElm.classList.add(this.gridUid, `l${cell.cell}`, `r${cell.cell}`);
     this.tooltipElm?.appendChild(this._tooltipBodyElm);
 
     const tooltipTriggerElm = (this._mouseTarget || this._cellNodeElm) as HTMLElement | null;
@@ -674,10 +674,7 @@ export class SlickCustomTooltip {
     if (this.addonOptions?.persistOnHover === false && this._tooltipElm) {
       this._bindEventService.bind(this._tooltipElm, 'mouseenter', () => {
         this._isMouseOverTooltip = true;
-        if (this._hideTooltipTimeout) {
-          clearTimeout(this._hideTooltipTimeout);
-          this._hideTooltipTimeout = undefined;
-        }
+        this.clearHideTooltipTimeout();
       });
 
       this._bindEventService.bind(this._tooltipElm, 'mouseleave', () => {
@@ -685,10 +682,8 @@ export class SlickCustomTooltip {
         this.hideTooltip();
       });
 
-      if (this._autoHideTimeout) {
-        clearTimeout(this._autoHideTimeout);
-      }
       // Auto-hide tooltip after 3 seconds regardless of mouse position
+      this._autoHideTimeout && clearTimeout(this._autoHideTimeout);
       this._autoHideTimeout = setTimeout(() => this.hideTooltip(), this.addonOptions?.autoHideDelay);
     }
   }
