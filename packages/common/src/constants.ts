@@ -1,6 +1,9 @@
 import type { Locale } from './interfaces/locale.interface.js';
 
 export class Constants {
+  static readonly translaterMissingError =
+    '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.';
+
   static readonly locales: Locale = {
     TEXT_ALL_SELECTED: 'All Selected',
     TEXT_ALL_X_RECORDS_SELECTED: 'All {{x}} records selected',

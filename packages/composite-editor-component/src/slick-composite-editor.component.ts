@@ -118,15 +118,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     this.translaterService = containerService.get<TranslaterService>('TranslaterService');
 
     if (!this.gridService) {
-      throw new Error(
-        '[Slickgrid-Universal] it seems that the GridService is not being loaded properly, make sure the Container Service is properly implemented.'
-      );
+      throw new Error('[Slickgrid-Universal] GridService is unavailable.');
     }
 
     if (this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error(
-        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
-      );
+      throw new Error(Constants.translaterMissingError);
     }
 
     // get locales provided by user in forRoot or else use default English locales via the Constants

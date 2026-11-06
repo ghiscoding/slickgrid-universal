@@ -852,7 +852,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
             component.dataset = mockData;
           } catch (e: any) {
             expect(e.toString()).toContain(
-              '[Angular-Slickgrid] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use.'
+              '[Angular-Slickgrid] Choose either viewport sizing (autoFitColumnsOnFirstLoad, enableAutoSizeColumns) or content sizing (autosizeColumnsByCellContentOnFirstLoad, enableAutoResizeColumnsByCellContent).'
             );
             component.destroy();
             done();
@@ -874,7 +874,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
             component.dataset = mockData;
           } catch (e: any) {
             expect(e.toString()).toContain(
-              '[Angular-Slickgrid] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use.'
+              '[Angular-Slickgrid] Choose either viewport sizing (autoFitColumnsOnFirstLoad, enableAutoSizeColumns) or content sizing (autosizeColumnsByCellContentOnFirstLoad, enableAutoResizeColumnsByCellContent).'
             );
             component.destroy();
             done();

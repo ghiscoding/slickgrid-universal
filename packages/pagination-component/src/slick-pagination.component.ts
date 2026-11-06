@@ -114,9 +114,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     this._enableTranslate = this.gridOptions?.enableTranslate ?? false;
 
     if (this._enableTranslate && (!this._translaterService || !this._translaterService.translate)) {
-      throw new Error(
-        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
-      );
+      throw new Error(Constants.translaterMissingError);
     }
     this.translatePaginationTexts();
 

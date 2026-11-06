@@ -185,6 +185,68 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     }
   }
 
+  @Input()
+  get dataset(): any[] {
+    return (this.customDataView ? this.slickGrid?.getData?.() : this.dataView?.getItems()) || [];
+  }
+  set dataset(newDataset: any[]) {
+    const prevDatasetLn = this._currentDatasetLength;
+    const isDatasetEqual = dequal(newDataset, this._dataset || []);
+    let data = newDataset;
+
+    // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
+    if (
+      this.slickGrid &&
+      this.options?.enableTreeData &&
+      Array.isArray(newDataset) &&
+      (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)
+    ) {
+      this._isDatasetHierarchicalInitialized = false;
+      data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+    }
+    this._dataset = data;
+    this.refreshGridData(data || []);
+    this._currentDatasetLength = (newDataset || []).length;
+
+    // expand/autofit columns on first page load
+    // we can assume that if the prevDataset was empty then we are on first load
+    if (this.slickGrid && this.options?.autoFitColumnsOnFirstLoad && prevDatasetLn === 0 && !this._isAutosizeColsCalled) {
+      this.slickGrid.autosizeColumns();
+      this._isAutosizeColsCalled = true;
+    }
+    this.suggestDateParsingWhenHelpful();
+  }
+
+  @Input()
+  get datasetHierarchical(): any[] | undefined {
+    return this.sharedService.hierarchicalDataset;
+  }
+  set datasetHierarchical(newHierarchicalDataset: any[] | undefined) {
+    const isDatasetEqual = dequal(newHierarchicalDataset, this.sharedService?.hierarchicalDataset ?? []);
+    const prevFlatDatasetLn = this._currentDatasetLength;
+    this.sharedService.hierarchicalDataset = newHierarchicalDataset;
+
+    if (newHierarchicalDataset && this.columns && this.filterService?.clearFilters) {
+      this.filterService.clearFilters();
+    }
+
+    // when a hierarchical dataset is set afterward, we can reset the flat dataset and call a tree data sort that will overwrite the flat dataset
+    if (newHierarchicalDataset && this.slickGrid && this.sortService?.processTreeDataInitialSort) {
+      this.sortService.processTreeDataInitialSort();
+      this.treeDataService.initHierarchicalTree();
+
+      // we also need to reset/refresh the Tree Data filters because if we inserted new item(s) then it might not show up without doing this refresh
+      // however we need to queue our process until the flat dataset is ready, so we can queue a microtask to execute the DataView refresh only after everything is ready
+      queueMicrotask(() => {
+        const flatDatasetLn = this.dataView.getItemCount();
+        if (flatDatasetLn > 0 && (flatDatasetLn !== prevFlatDatasetLn || !isDatasetEqual)) {
+          this.filterService.refreshTreeDataFilters();
+        }
+      });
+      this._isDatasetHierarchicalInitialized = true;
+    }
+  }
+
   // make the columnDefinitions a 2-way binding so that plugin adding cols
   // are synched on user's side as well (RowMove, RowDetail, RowSelections)
   @Output() columnsChange = new EventEmitter(true);
@@ -318,68 +380,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   onAngularGridCreated = output<RegularEventOutput<AngularSlickgridOutputs['onAngularGridCreated']>>();
   onBeforeGridDestroy = output<RegularEventOutput<AngularSlickgridOutputs['onBeforeGridDestroy']>>();
   onLanguageChange = output<RegularEventOutput<AngularSlickgridOutputs['onLanguageChange']>>();
-
-  @Input()
-  get dataset(): any[] {
-    return (this.customDataView ? this.slickGrid?.getData?.() : this.dataView?.getItems()) || [];
-  }
-  set dataset(newDataset: any[]) {
-    const prevDatasetLn = this._currentDatasetLength;
-    const isDatasetEqual = dequal(newDataset, this._dataset || []);
-    let data = newDataset;
-
-    // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
-    if (
-      this.slickGrid &&
-      this.options?.enableTreeData &&
-      Array.isArray(newDataset) &&
-      (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)
-    ) {
-      this._isDatasetHierarchicalInitialized = false;
-      data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
-    }
-    this._dataset = data;
-    this.refreshGridData(data || []);
-    this._currentDatasetLength = (newDataset || []).length;
-
-    // expand/autofit columns on first page load
-    // we can assume that if the prevDataset was empty then we are on first load
-    if (this.slickGrid && this.options?.autoFitColumnsOnFirstLoad && prevDatasetLn === 0 && !this._isAutosizeColsCalled) {
-      this.slickGrid.autosizeColumns();
-      this._isAutosizeColsCalled = true;
-    }
-    this.suggestDateParsingWhenHelpful();
-  }
-
-  @Input()
-  get datasetHierarchical(): any[] | undefined {
-    return this.sharedService.hierarchicalDataset;
-  }
-  set datasetHierarchical(newHierarchicalDataset: any[] | undefined) {
-    const isDatasetEqual = dequal(newHierarchicalDataset, this.sharedService?.hierarchicalDataset ?? []);
-    const prevFlatDatasetLn = this._currentDatasetLength;
-    this.sharedService.hierarchicalDataset = newHierarchicalDataset;
-
-    if (newHierarchicalDataset && this.columns && this.filterService?.clearFilters) {
-      this.filterService.clearFilters();
-    }
-
-    // when a hierarchical dataset is set afterward, we can reset the flat dataset and call a tree data sort that will overwrite the flat dataset
-    if (newHierarchicalDataset && this.slickGrid && this.sortService?.processTreeDataInitialSort) {
-      this.sortService.processTreeDataInitialSort();
-      this.treeDataService.initHierarchicalTree();
-
-      // we also need to reset/refresh the Tree Data filters because if we inserted new item(s) then it might not show up without doing this refresh
-      // however we need to queue our process until the flat dataset is ready, so we can queue a microtask to execute the DataView refresh only after everything is ready
-      queueMicrotask(() => {
-        const flatDatasetLn = this.dataView.getItemCount();
-        if (flatDatasetLn > 0 && (flatDatasetLn !== prevFlatDatasetLn || !isDatasetEqual)) {
-          this.filterService.refreshTreeDataFilters();
-        }
-      });
-      this._isDatasetHierarchicalInitialized = true;
-    }
-  }
 
   get elementRef(): ElementRef {
     return this.elm;
@@ -1285,7 +1285,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       (options.enableAutoSizeColumns && options.enableAutoResizeColumnsByCellContent)
     ) {
       throw new Error(
-        `[Angular-Slickgrid] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use. You can enable these 2 options ("autoFitColumnsOnFirstLoad" and "enableAutoSizeColumns") OR these other 2 options ("autosizeColumnsByCellContentOnFirstLoad" and "enableAutoResizeColumnsByCellContent").`
+        `[Angular-Slickgrid] Choose either viewport sizing (autoFitColumnsOnFirstLoad, enableAutoSizeColumns) or content sizing (autosizeColumnsByCellContentOnFirstLoad, enableAutoResizeColumnsByCellContent).`
       );
     }
 

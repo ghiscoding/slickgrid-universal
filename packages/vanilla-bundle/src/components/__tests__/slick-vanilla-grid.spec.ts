@@ -727,7 +727,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
             component.dataset = mockData;
           } catch (e: any) {
             expect(e.toString()).toContain(
-              '[Slickgrid-Universal] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use.'
+              '[Slickgrid-Universal] Choose either viewport sizing (autoFitColumnsOnFirstLoad, enableAutoSizeColumns) or content sizing (autosizeColumnsByCellContentOnFirstLoad, enableAutoResizeColumnsByCellContent).'
             );
             component.dispose();
             done();
@@ -749,7 +749,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
             component.dataset = mockData;
           } catch (e: any) {
             expect(e.toString()).toContain(
-              '[Slickgrid-Universal] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use.'
+              '[Slickgrid-Universal] Choose either viewport sizing (autoFitColumnsOnFirstLoad, enableAutoSizeColumns) or content sizing (autosizeColumnsByCellContentOnFirstLoad, enableAutoResizeColumnsByCellContent).'
             );
             component.dispose();
             done();
