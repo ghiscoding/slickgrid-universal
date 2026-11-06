@@ -1561,7 +1561,26 @@ describe('ContextMenu Plugin', () => {
           (item: MenuCommandItem) => item.command === 'export-excel'
         ) as MenuCommandItem;
         expect(() => menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any)).toThrow(
-          '[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu.'
+          '[Slickgrid-Universal] Register ExcelExportService to export from the Context Menu.'
+        );
+      });
+
+      it('reports the full Context Menu error when a registered export resource has no export method', () => {
+        const options = {
+          ...gridOptionsMock,
+          enableExcelExport: true,
+          enableTextExport: false,
+          contextMenu: { hideCommands: ['copy', 'export-csv'] },
+        } as GridOption;
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(options);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(options);
+        vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([{ pluginName: 'ExcelExportService' } as ExternalResource]);
+        plugin.dispose();
+        plugin.init({ commandItems: [] });
+
+        const command = (options.contextMenu!.commandItems as MenuCommandItem[]).find((item) => item.command === 'export-excel')!;
+        expect(() => command.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any)).toThrow(
+          '[Slickgrid-Universal] Register ExcelExportService to export from the Context Menu.'
         );
       });
 
@@ -1584,7 +1603,7 @@ describe('ContextMenu Plugin', () => {
           (item: MenuCommandItem) => item.command === 'export-pdf'
         ) as MenuCommandItem;
         expect(() => menuItemCommand.action!(new CustomEvent('change'), { command: 'export-pdf', cell: 0, row: 0 } as any)).toThrow(
-          '[Slickgrid-Universal] You must register the PdfExportService to properly use Export to PDF in the Context Menu.'
+          '[Slickgrid-Universal] Register PdfExportService to export from the Context Menu.'
         );
       });
 
@@ -1605,7 +1624,7 @@ describe('ContextMenu Plugin', () => {
           (item: MenuCommandItem) => item.command === 'export-csv'
         ) as MenuCommandItem;
         expect(() => menuItemCommand.action!(new CustomEvent('change'), { command: 'export-csv', cell: 0, row: 0 } as any)).toThrow(
-          '[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu.'
+          '[Slickgrid-Universal] Register TextExportService to export from the Context Menu.'
         );
       });
 
@@ -1626,7 +1645,7 @@ describe('ContextMenu Plugin', () => {
           (item: MenuCommandItem) => item.command === 'export-text-delimited'
         ) as MenuCommandItem;
         expect(() => menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any)).toThrow(
-          '[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu.'
+          '[Slickgrid-Universal] Register TextExportService to export from the Context Menu.'
         );
       });
 

@@ -2369,7 +2369,7 @@ describe('GridMenuControl', () => {
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-excel]')!.dispatchEvent(clickEvent);
 
           expect(consoleErrorSpy).toHaveBeenCalledWith(
-            expect.stringContaining('[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu.')
+            expect.stringContaining('[Slickgrid-Universal] Register ExcelExportService to export from the Grid Menu.')
           );
         });
 
@@ -2386,7 +2386,7 @@ describe('GridMenuControl', () => {
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-pdf]')!.dispatchEvent(clickEvent);
 
           expect(consoleErrorSpy).toHaveBeenCalledWith(
-            expect.stringContaining('[Slickgrid-Universal] You must register the PdfExportService to properly use Export to PDF in the Grid Menu.')
+            expect.stringContaining('[Slickgrid-Universal] Register PdfExportService to export from the Grid Menu.')
           );
         });
 
@@ -2403,7 +2403,7 @@ describe('GridMenuControl', () => {
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-csv]')!.dispatchEvent(clickEvent);
 
           expect(consoleErrorSpy).toHaveBeenCalledWith(
-            expect.stringContaining('[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu.')
+            expect.stringContaining('[Slickgrid-Universal] Register TextExportService to export from the Grid Menu.')
           );
         });
 
@@ -2421,7 +2421,7 @@ describe('GridMenuControl', () => {
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-text-delimited]')!.dispatchEvent(clickEvent);
 
           expect(consoleErrorSpy).toHaveBeenCalledWith(
-            expect.stringContaining('[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu.')
+            expect.stringContaining('[Slickgrid-Universal] Register TextExportService to export from the Grid Menu.')
           );
         });
 

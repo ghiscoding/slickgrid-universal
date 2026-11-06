@@ -12,15 +12,12 @@ import type {
   OnContextMenuArgs,
 } from '../interfaces/index.js';
 import type { MenuDivider } from '../interfaces/menuCommandItem.interface.js';
-import type { ExcelExportService } from '../services/excelExport.service.js';
-import type { PdfExportService } from '../services/pdfExport.service.js';
 import type { SharedService } from '../services/shared.service.js';
-import type { TextExportService } from '../services/textExport.service.js';
 import type { TreeDataService } from '../services/treeData.service.js';
 import { getTranslationPrefix } from '../services/utilities.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
-import { normalizeMenuCommandItems } from './menuUtils.js';
+import { exportMenuResource, normalizeMenuCommandItems } from './menuUtils.js';
 
 /**
  * A plugin to add Context Menu (mouse right+click), it subscribes to the cell "onContextMenu" event.
@@ -163,135 +160,68 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     const dataView = this.sharedService?.dataView;
     const translationPrefix = getTranslationPrefix(gridOptions);
     const textMenuFormats = gridOptions.textExportOptions?.menuFormats ?? ['csv'];
+    const addCommand = (item: MenuCommandItem) =>
+      this.addMissingCommandOrAction(item, contextMenu?.hideCommands, menuCommandItems, originalCommandItems);
 
     // show context menu: Copy (cell value)
     if (contextMenu) {
-      this.addMissingCommandOrAction(
-        {
-          _orgTitle: commandLabels?.copyCellValueCommand || '',
-          iconCssClass: contextMenu.iconCopyCellValueCommand || 'mdi mdi-content-copy',
-          titleKey: `${translationPrefix}COPY`,
-          disabled: false,
-          command: 'copy',
-          action: (_e, args) => copyCellToClipboard(args as MenuCommandItemCallbackArgs),
-          itemUsabilityOverride: (args: MenuCallbackArgs) => isDefined(getCopyCellValue(args)),
-        },
-        contextMenu.hideCommands,
-        menuCommandItems,
-        originalCommandItems
-      );
+      addCommand({
+        _orgTitle: commandLabels?.copyCellValueCommand || '',
+        iconCssClass: contextMenu.iconCopyCellValueCommand || 'mdi mdi-content-copy',
+        titleKey: `${translationPrefix}COPY`,
+        disabled: false,
+        command: 'copy',
+        action: (_e, args) => copyCellToClipboard(args as MenuCommandItemCallbackArgs),
+        itemUsabilityOverride: (args: MenuCallbackArgs) => isDefined(getCopyCellValue(args)),
+      });
     }
 
     // show context menu: Export to file
     if (gridOptions?.enableTextExport && contextMenu && textMenuFormats.includes('csv')) {
-      this.addMissingCommandOrAction(
-        {
-          _orgTitle: commandLabels?.exportCsvCommand || '',
-          iconCssClass: contextMenu.iconExportCsvCommand || 'mdi mdi-file-document-outline',
-          titleKey: `${translationPrefix}EXPORT_TO_CSV`,
-          disabled: false,
-          command: 'export-csv',
-          action: () => {
-            const registedServices = this.sharedService?.externalRegisteredResources || [];
-            // prettier-ignore
-            const excelService = registedServices.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
-            if (excelService?.exportToFile) {
-              excelService.exportToFile({ delimiter: ',', format: 'csv' });
-            } else {
-              throw new Error(
-                `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
-              );
-            }
-          },
-        },
-        contextMenu.hideCommands,
-        menuCommandItems,
-        originalCommandItems
-      );
+      addCommand({
+        _orgTitle: commandLabels?.exportCsvCommand || '',
+        iconCssClass: contextMenu.iconExportCsvCommand || 'mdi mdi-file-document-outline',
+        titleKey: `${translationPrefix}EXPORT_TO_CSV`,
+        disabled: false,
+        command: 'export-csv',
+        action: () => exportMenuResource(this.sharedService, 'csv', true),
+      });
     }
 
     // show context menu: Export to Excel
     if (gridOptions && gridOptions.enableExcelExport && contextMenu) {
-      this.addMissingCommandOrAction(
-        {
-          _orgTitle: commandLabels?.exportExcelCommand || '',
-          iconCssClass: contextMenu.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
-          titleKey: `${translationPrefix}EXPORT_TO_EXCEL`,
-          disabled: false,
-          command: 'export-excel',
-          action: () => {
-            const registedServices = this.sharedService?.externalRegisteredResources || [];
-            // prettier-ignore
-            const excelService = registedServices.find((service) => service.pluginName === 'ExcelExportService') as ExcelExportService | undefined;
-            if (excelService?.exportToExcel) {
-              excelService.exportToExcel();
-            } else {
-              throw new Error(
-                `[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu. Example:: this.gridOptions = { enableExcelExport: true, externalResources: [new ExcelExportService()] };`
-              );
-            }
-          },
-        },
-        contextMenu.hideCommands,
-        menuCommandItems,
-        originalCommandItems
-      );
+      addCommand({
+        _orgTitle: commandLabels?.exportExcelCommand || '',
+        iconCssClass: contextMenu.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
+        titleKey: `${translationPrefix}EXPORT_TO_EXCEL`,
+        disabled: false,
+        command: 'export-excel',
+        action: () => exportMenuResource(this.sharedService, 'excel', true),
+      });
     }
 
     // show context menu: Export to PDF
     if (gridOptions && gridOptions.enablePdfExport && contextMenu) {
-      this.addMissingCommandOrAction(
-        {
-          _orgTitle: commandLabels?.exportPdfCommand || '',
-          iconCssClass: contextMenu.iconExportPdfCommand || 'mdi mdi-file-pdf-outline text-danger',
-          titleKey: `${translationPrefix}EXPORT_TO_PDF`,
-          disabled: false,
-          command: 'export-pdf',
-          action: () => {
-            const registedServices = this.sharedService?.externalRegisteredResources || [];
-            // prettier-ignore
-            const pdfService = registedServices.find((service) => service.pluginName === 'PdfExportService') as PdfExportService | undefined;
-            if (pdfService?.exportToPdf) {
-              pdfService.exportToPdf();
-            } else {
-              throw new Error(
-                `[Slickgrid-Universal] You must register the PdfExportService to properly use Export to PDF in the Context Menu. Example:: this.gridOptions = { enablePdfExport: true, externalResources: [new PdfExportService()] };`
-              );
-            }
-          },
-        },
-        contextMenu.hideCommands,
-        menuCommandItems,
-        originalCommandItems
-      );
+      addCommand({
+        _orgTitle: commandLabels?.exportPdfCommand || '',
+        iconCssClass: contextMenu.iconExportPdfCommand || 'mdi mdi-file-pdf-outline text-danger',
+        titleKey: `${translationPrefix}EXPORT_TO_PDF`,
+        disabled: false,
+        command: 'export-pdf',
+        action: () => exportMenuResource(this.sharedService, 'pdf', true),
+      });
     }
 
     // show context menu: export to text file as tab delimited
     if (gridOptions?.enableTextExport && contextMenu && textMenuFormats.includes('txt')) {
-      this.addMissingCommandOrAction(
-        {
-          _orgTitle: commandLabels?.exportTextDelimitedCommand || '',
-          iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'mdi mdi-file-document-outline',
-          titleKey: `${translationPrefix}EXPORT_TO_TAB_DELIMITED`,
-          disabled: false,
-          command: 'export-text-delimited',
-          action: () => {
-            const registedServices = this.sharedService?.externalRegisteredResources || [];
-            // prettier-ignore
-            const excelService = registedServices.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
-            if (excelService?.exportToFile) {
-              excelService.exportToFile({ delimiter: '\t', format: 'txt' });
-            } else {
-              throw new Error(
-                `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
-              );
-            }
-          },
-        },
-        contextMenu.hideCommands,
-        menuCommandItems,
-        originalCommandItems
-      );
+      addCommand({
+        _orgTitle: commandLabels?.exportTextDelimitedCommand || '',
+        iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'mdi mdi-file-document-outline',
+        titleKey: `${translationPrefix}EXPORT_TO_TAB_DELIMITED`,
+        disabled: false,
+        command: 'export-text-delimited',
+        action: () => exportMenuResource(this.sharedService, 'txt', true),
+      });
     }
 
     // -- Grouping Commands
@@ -303,91 +233,76 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
 
       // show context menu: Clear Grouping (except for Tree Data which shouldn't have this feature)
       if (gridOptions && !gridOptions.enableTreeData && contextMenu) {
-        this.addMissingCommandOrAction(
-          {
-            _orgTitle: commandLabels?.clearGroupingCommand || '',
-            iconCssClass: contextMenu.iconClearGroupingCommand || 'mdi mdi-close',
-            titleKey: `${translationPrefix}CLEAR_ALL_GROUPING`,
-            disabled: false,
-            command: 'clear-grouping',
-            action: () => {
-              dataView.setGrouping([]);
-              this.pubSubService.publish('onContextMenuClearGrouping');
-            },
-            itemUsabilityOverride: () => {
-              // only enable the command when there's an actually grouping in play
-              const groupingArray = dataView && dataView.getGrouping && dataView.getGrouping();
-              return Array.isArray(groupingArray) && groupingArray.length > 0;
-            },
+        addCommand({
+          _orgTitle: commandLabels?.clearGroupingCommand || '',
+          iconCssClass: contextMenu.iconClearGroupingCommand || 'mdi mdi-close',
+          titleKey: `${translationPrefix}CLEAR_ALL_GROUPING`,
+          disabled: false,
+          command: 'clear-grouping',
+          action: () => {
+            dataView.setGrouping([]);
+            this.pubSubService.publish('onContextMenuClearGrouping');
           },
-          contextMenu.hideCommands,
-          menuCommandItems,
-          originalCommandItems
-        );
+          itemUsabilityOverride: () => {
+            // only enable the command when there's an actually grouping in play
+            const groupingArray = dataView && dataView.getGrouping && dataView.getGrouping();
+            return Array.isArray(groupingArray) && groupingArray.length > 0;
+          },
+        });
       }
 
       // show context menu: Collapse all Groups
       if (gridOptions && contextMenu) {
-        this.addMissingCommandOrAction(
-          {
-            _orgTitle: commandLabels?.collapseAllGroupsCommand || '',
-            iconCssClass: contextMenu.iconCollapseAllGroupsCommand || 'mdi mdi-arrow-collapse',
-            titleKey: `${translationPrefix}COLLAPSE_ALL_GROUPS`,
-            disabled: false,
-            command: 'collapse-all-groups',
-            action: () => {
-              if (gridOptions.enableTreeData) {
-                this.treeDataService.toggleTreeDataCollapse(true);
-              } else {
-                dataView.collapseAllGroups();
-              }
-              this.pubSubService.publish('onContextMenuCollapseAllGroups');
-            },
-            itemUsabilityOverride: () => {
-              if (gridOptions.enableTreeData) {
-                return true;
-              }
-              // only enable the command when there's an actually grouping in play
-              const groupingArray = dataView && dataView.getGrouping && dataView.getGrouping();
-              return Array.isArray(groupingArray) && groupingArray.length > 0;
-            },
+        addCommand({
+          _orgTitle: commandLabels?.collapseAllGroupsCommand || '',
+          iconCssClass: contextMenu.iconCollapseAllGroupsCommand || 'mdi mdi-arrow-collapse',
+          titleKey: `${translationPrefix}COLLAPSE_ALL_GROUPS`,
+          disabled: false,
+          command: 'collapse-all-groups',
+          action: () => {
+            if (gridOptions.enableTreeData) {
+              this.treeDataService.toggleTreeDataCollapse(true);
+            } else {
+              dataView.collapseAllGroups();
+            }
+            this.pubSubService.publish('onContextMenuCollapseAllGroups');
           },
-          contextMenu.hideCommands,
-          menuCommandItems,
-          originalCommandItems
-        );
+          itemUsabilityOverride: () => {
+            if (gridOptions.enableTreeData) {
+              return true;
+            }
+            // only enable the command when there's an actually grouping in play
+            const groupingArray = dataView && dataView.getGrouping && dataView.getGrouping();
+            return Array.isArray(groupingArray) && groupingArray.length > 0;
+          },
+        });
       }
 
       // show context menu: Expand all Groups
       if (gridOptions && contextMenu) {
-        this.addMissingCommandOrAction(
-          {
-            _orgTitle: commandLabels?.expandAllGroupsCommand || '',
-            iconCssClass: contextMenu.iconExpandAllGroupsCommand || 'mdi mdi-arrow-expand',
-            titleKey: `${translationPrefix}EXPAND_ALL_GROUPS`,
-            disabled: false,
-            command: 'expand-all-groups',
-            action: () => {
-              if (gridOptions.enableTreeData) {
-                this.treeDataService.toggleTreeDataCollapse(false);
-              } else {
-                dataView.expandAllGroups();
-              }
-              this.pubSubService.publish('onContextMenuExpandAllGroups');
-            },
-            itemUsabilityOverride: () => {
-              if (gridOptions.enableTreeData) {
-                return true;
-              }
-              // only enable the command when there's an actually grouping in play
-              const groupingArray = dataView && dataView.getGrouping && dataView.getGrouping();
-              return Array.isArray(groupingArray) && groupingArray.length > 0;
-            },
+        addCommand({
+          _orgTitle: commandLabels?.expandAllGroupsCommand || '',
+          iconCssClass: contextMenu.iconExpandAllGroupsCommand || 'mdi mdi-arrow-expand',
+          titleKey: `${translationPrefix}EXPAND_ALL_GROUPS`,
+          disabled: false,
+          command: 'expand-all-groups',
+          action: () => {
+            if (gridOptions.enableTreeData) {
+              this.treeDataService.toggleTreeDataCollapse(false);
+            } else {
+              dataView.expandAllGroups();
+            }
+            this.pubSubService.publish('onContextMenuExpandAllGroups');
           },
-          contextMenu.hideCommands,
-          menuCommandItems,
-          originalCommandItems
-        );
+          itemUsabilityOverride: () => {
+            if (gridOptions.enableTreeData) {
+              return true;
+            }
+            // only enable the command when there's an actually grouping in play
+            const groupingArray = dataView && dataView.getGrouping && dataView.getGrouping();
+            return Array.isArray(groupingArray) && groupingArray.length > 0;
+          },
+        });
       }
     }
 

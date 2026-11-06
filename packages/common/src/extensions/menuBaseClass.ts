@@ -529,16 +529,14 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       const menuHeaderElm =
         this._menuElm?.querySelector(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
 
-      const titleProp = 'commandTitle';
-
       if (!isSubMenu) {
-        if ((menuOptions as CellMenu | ContextMenu)?.[titleProp]) {
+        if ((menuOptions as CellMenu | ContextMenu)?.commandTitle) {
           emptyElement(menuHeaderElm); // make sure title container is empty before adding anything inside it
-          this[`_${itemType}TitleElm`] = createDomElement('span', {
+          this._commandTitleElm = createDomElement('span', {
             className: 'slick-menu-title',
-            textContent: (menuOptions as never)[titleProp],
+            textContent: (menuOptions as CellMenu | ContextMenu).commandTitle!,
           });
-          menuHeaderElm.appendChild(this[`_${itemType}TitleElm`]!);
+          menuHeaderElm.appendChild(this._commandTitleElm!);
           menuHeaderElm.classList.add('with-title');
         } else {
           menuHeaderElm.classList.add('no-title');
@@ -583,7 +581,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       // when the override is defined (and previously executed), we need to use its result to update the disabled property
       // so that "handleMenuItemCommandClick" has the correct flag and won't trigger a command clicked event
       if (typeof item === 'object' && item.itemUsabilityOverride) {
-        item.disabled = isItemUsable ? false : true;
+        item.disabled = !isItemUsable;
       }
 
       commandLiElm = createDomElement('li', { className: menuCssPrefix, role: 'menuitem' });
@@ -645,7 +643,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
             'span',
             {
               className: `${this._menuCssPrefix}-content`,
-              textContent: (typeof item === 'object' && (item as MenuCommandItem).title) || '',
+              textContent: (item as MenuCommandItem).title || '',
             },
             commandLiElm
           );
@@ -658,35 +656,33 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
 
       // execute command callback on menu item clicked
       const eventGroupName = level > 0 ? 'sub-menu' : 'parent-menu';
-      if (commandLiElm) {
-        this._bindEventService.bind(
-          commandLiElm,
-          'click',
-          ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => {
-            // if there's a slot renderer, call it with the event
-            const slotRenderer = (item as MenuCommandItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultMenuItemRenderer;
-            if (slotRenderer) {
-              slotRenderer(item as MenuCommandItem, args, e);
-            }
+      this._bindEventService.bind(
+        commandLiElm,
+        'click',
+        ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => {
+          // if there's a slot renderer, call it with the event
+          const slotRenderer = (item as MenuCommandItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultMenuItemRenderer;
+          if (slotRenderer) {
+            slotRenderer(item as MenuCommandItem, args, e);
+          }
 
-            // if the click was stopped by an interactive element handler, don't trigger the menu action
-            if (e.defaultPrevented) {
-              return;
-            }
+          // if the click was stopped by an interactive element handler, don't trigger the menu action
+          if (e.defaultPrevented) {
+            return;
+          }
 
-            itemClickCallback.call(this, e, itemType, item, level, args?.column);
-            triggeredByElm?.focus(); // Restore focus to the triggering element after click
+          itemClickCallback.call(this, e, itemType, item, level, args?.column);
+          triggeredByElm?.focus(); // Restore focus to the triggering element after click
 
-            // CellMenu commands can re-render the row/cell and detach the original trigger node.
-            // If focus is no longer on a grid cell after command execution, restore cell navigation focus.
-            if (this.pluginName === 'CellMenu' && !(document.activeElement as HTMLElement | null)?.closest('.slick-cell')) {
-              this.grid.focus('cell');
-            }
-          }) as EventListener,
-          undefined,
-          eventGroupName
-        );
-      }
+          // CellMenu commands can re-render the row/cell and detach the original trigger node.
+          // If focus is no longer on a grid cell after command execution, restore cell navigation focus.
+          if (this.pluginName === 'CellMenu' && !(document.activeElement as HTMLElement | null)?.closest('.slick-cell')) {
+            this.grid.focus('cell');
+          }
+        }) as EventListener,
+        undefined,
+        eventGroupName
+      );
 
       // optionally open sub-menu(s) by mouseover
       if ((this._addonOptions as MenuPlugin)?.subMenuOpenByEvent === 'mouseover' && typeof itemMouseoverCallback === 'function') {
