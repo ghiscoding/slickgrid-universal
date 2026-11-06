@@ -266,24 +266,10 @@ by default (unless this feature is disabled) all child nodes of the tree will be
 1- it has any children that passes the filter or
 2- current parent item passes the filter or
 3- current parent item filter is the Tree column and it passes that filter criteria regardless of other criteria (this is optional via the flag `autoApproveParentItemWhenTreeColumnIsValid: true`)
-   *    - even when the other columns don't pass the filter criteria, as use case described below
-   *    - for example if we take the Example with File Explorer (live demo) and we filter (Files = "music" and Size > 7),
-   *    - then the File "Music" will always show even if it doesn't have a Size because its tree column passes the filter (which was Files = "music")
-   *    - and the reason we do this is that we'll be able to show music files with "Size > 7" even though these files might not include the word "music"
-
-#### `autoApproveParentItemWhenTreeColumnIsValid` boolean option
-##### (see animated gif below for a demo)
-When using Tree Data, in most cases we will want to see the content (children) of a parent item when filtering but in some cases we might actually want to exclude them and that is what this flag is for.
-
-The full explanation of how filter works is the following
-by default (unless this feature is disabled) all child nodes of the tree will be included when a parent passes a filter and a group will be included if
-1- it has any children that passes the filter or
-2- current parent item passes the filter or
-3- current parent item filter is the Tree column and it passes that filter criteria regardless of other criteria (this is optional via the flag `autoApproveParentItemWhenTreeColumnIsValid: true`)
-   *    - even when the other columns don't pass the filter criteria, as use case described below
-   *    - for example if we take the Example with File Explorer (live demo) and we filter (Files = "music" and Size > 7),
-   *    - then the File "Music" will always show even if it doesn't have a Size because its tree column passes the filter (which was Files = "music")
-   *    - and the reason we do this is that we'll be able to show music files with "Size > 7" even though these files might not include the word "music"
+  - even when the other columns don't pass the filter criteria, as use case described below
+  - for example if we take the Example with File Explorer (live demo) and we filter (Files = "music" and Size > 7),
+  - then the File "Music" will always show even if it doesn't have a Size because its tree column passes the filter (which was Files = "music")
+  - and the reason we do this is that we'll be able to show music files with "Size > 7" even though these files might not include the word "music"
 
 #### `autoApproveParentItemWhenTreeColumnIsValid` boolean option
 ##### (see animated gif below for a demo)
@@ -326,19 +312,20 @@ function getTreeDataState() {
   console.log(vueGrid.getCurrentToggleState());
 }
 </script>
+```
 
 ### Max Visible Depth
 
 You can limit how deep tree nodes are visible in the grid without removing them from the dataset by using the `treeDataOptions.maxVisibleDepth` option. When defined, any row whose tree level property is greater than the provided value will be hidden by the tree filter logic.
 
 Example grid option (static):
-```vue
+```ts
 gridOptions.value = {
   treeDataOptions: {
     columnId: 'title',
     levelPropName: 'treeLevel',
     // when `maxVisibleDepth` is defined, any tree node with a level greater than this number will be hidden
-    // maxVisibleDepth: 2,
+    maxVisibleDepth: 2,
   }
 };
 ```
@@ -357,7 +344,6 @@ vueGrid.treeDataService.clearMaxVisibleDepth();
 Notes:
 - The option only hides rows from the visual grid (filtering), it does not remove them from the underlying dataset.
 - When reading or updating runtime options in code, prefer the `TreeDataService` methods rather than mutating nested option objects directly.
-```
 
 ### Tree Totals with Aggregators
 
