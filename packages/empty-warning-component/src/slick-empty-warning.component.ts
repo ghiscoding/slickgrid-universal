@@ -67,8 +67,6 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     const leftElementPinnedMarginLeft = mergedOptions.pinnedLeftViewportMarginLeft ?? 0;
     const rightElementPinnedMarginLeft = mergedOptions.pinnedRightViewportMarginLeft ?? 0;
     const isPinnedGrid = this.gridOptions?.pinning?.columns !== undefined;
-    const leftViewportMarginLeft = typeof leftElementMarginLeft === 'string' ? leftElementMarginLeft : `${leftElementMarginLeft}px`;
-    const rightViewportMarginLeft = typeof rightElementMarginLeft === 'string' ? rightElementMarginLeft : `${rightElementMarginLeft}px`;
 
     // when dealing with a grid that has "autoHeight" option, we need to override 2 height that get miscalculated
     // that is because it is not aware that we are adding this slick empty element in this grid DOM
@@ -116,22 +114,16 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     }
 
     // if we did find the Slick-Empty-Warning element then display it with the configured margin offsets
-    if (this._warningLeftElement) {
-      this._warningLeftElement.style.display = isShowing ? 'flex' : 'none';
-
-      const leftPinnedMarginLeft =
-        typeof leftElementPinnedMarginLeft === 'string' ? leftElementPinnedMarginLeft : `${leftElementPinnedMarginLeft}px`;
-      this._warningLeftElement.style.marginLeft = isPinnedGrid ? leftPinnedMarginLeft : leftViewportMarginLeft;
-    }
-
-    if (this._warningRightElement) {
-      this._warningRightElement.style.display = isShowing ? 'flex' : 'none';
-
-      const rightPinnedMarginLeft =
-        typeof rightElementPinnedMarginLeft === 'string' ? rightElementPinnedMarginLeft : `${rightElementPinnedMarginLeft}px`;
-      this._warningRightElement.style.marginLeft = isPinnedGrid ? rightPinnedMarginLeft : rightViewportMarginLeft;
-    }
+    this.updateWarningElement(this._warningLeftElement, isShowing, isPinnedGrid ? leftElementPinnedMarginLeft : leftElementMarginLeft);
+    this.updateWarningElement(this._warningRightElement, isShowing, isPinnedGrid ? rightElementPinnedMarginLeft : rightElementMarginLeft);
 
     return isShowing;
+  }
+
+  protected updateWarningElement(element: HTMLDivElement | null, isShowing: boolean, marginLeft: string | number): void {
+    if (element) {
+      element.style.display = isShowing ? 'flex' : 'none';
+      element.style.marginLeft = typeof marginLeft === 'string' ? marginLeft : `${marginLeft}px`;
+    }
   }
 }
