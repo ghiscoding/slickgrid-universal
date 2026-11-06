@@ -15,16 +15,13 @@ import type {
   onGridMenuColumnsChangedCallbackArgs,
 } from '../interfaces/index.js';
 import type { MenuDivider } from '../interfaces/menuCommandItem.interface.js';
-import type { ExcelExportService } from '../services/excelExport.service.js';
 import type { FilterService } from '../services/filter.service.js';
-import type { PdfExportService } from '../services/pdfExport.service.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { SortService } from '../services/sort.service.js';
-import type { TextExportService } from '../services/textExport.service.js';
 import { getTranslationPrefix } from '../services/utilities.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
-import { normalizeMenuCommandItems } from './menuUtils.js';
+import { exportMenuResource, normalizeMenuCommandItems } from './menuUtils.js';
 
 /**
  * A control to add a Grid Menu with Extra Commands & Column Picker (hambuger menu on top-right of the grid)
@@ -146,16 +143,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
     this.sharedService.gridOptions.gridMenu = this._addonOptions;
 
-    // merge original user grid menu items with internal items
-    const gridMenuCommandItems = this._userOriginalGridMenu.commandItems;
-    const originalCommandItems = this._userOriginalGridMenu && Array.isArray(gridMenuCommandItems) ? gridMenuCommandItems : [];
-
-    // merge the original commands with the built-in internal commands
-    const initialCommandItems = [...this.addGridMenuCustomCommands(originalCommandItems), ...originalCommandItems];
-    this._addonOptions.commandItems =
-      (this._addonOptions.commandListBuilder?.(normalizeMenuCommandItems(initialCommandItems)) as Array<
-        GridMenuItem | MenuDivider<GridMenuCallbackArgs>
-      >) ?? initialCommandItems;
+    this._addonOptions.commandItems = this.buildCommandItems();
     this.extensionUtility.translateMenuItemsFromTitleKey(this._addonOptions.commandItems || [], 'commandItems');
 
     // create the Grid Menu DOM element
@@ -518,14 +506,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       this.sharedService.gridOptions.gridMenu.forceFitTitle = this._originalGridMenu.forceFitTitle || '';
       this.sharedService.gridOptions.gridMenu.syncResizeTitle = this._originalGridMenu.syncResizeTitle || '';
 
-      // merge original user grid menu items with internal items
-      // prettier-ignore
-      const originalCommandItems = this._userOriginalGridMenu && Array.isArray(this._userOriginalGridMenu.commandItems) ? this._userOriginalGridMenu.commandItems : [];
-      const initialCommandItems = [...this.addGridMenuCustomCommands(originalCommandItems), ...originalCommandItems];
-      this.sharedService.gridOptions.gridMenu.commandItems =
-        (this._addonOptions.commandListBuilder?.(normalizeMenuCommandItems(initialCommandItems)) as Array<
-          GridMenuItem | MenuDivider<GridMenuCallbackArgs>
-        >) ?? initialCommandItems;
+      this.sharedService.gridOptions.gridMenu.commandItems = this.buildCommandItems();
       this.extensionUtility.translateMenuItemsFromTitleKey(this._addonOptions?.commandItems || [], 'commandItems');
       this.translateTitleLabels(this.sharedService.gridOptions.gridMenu);
       this.translateTitleLabels(this._addonOptions);
@@ -533,6 +514,17 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // translate all columns (including non-visible)
       this.extensionUtility.translateItems(this._columns, 'nameKey', 'name');
     }
+  }
+
+  protected buildCommandItems(): Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>> {
+    const userItems = this._userOriginalGridMenu?.commandItems;
+    const originalItems = Array.isArray(userItems) ? userItems : [];
+    const items = [...this.addGridMenuCustomCommands(originalItems), ...originalItems];
+    return (
+      (this._addonOptions.commandListBuilder?.(normalizeMenuCommandItems(items)) as Array<
+        GridMenuItem | MenuDivider<GridMenuCallbackArgs>
+      >) ?? items
+    );
   }
 
   translateTitleLabels(gridMenuOptions: GridMenu | null): void {
@@ -558,208 +550,155 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const translationPrefix = getTranslationPrefix(gridOptions);
     const commandLabels = this._addonOptions?.commandLabels;
     const textMenuFormats = gridOptions.textExportOptions?.menuFormats ?? ['csv'];
+    const addCommand = (item: GridMenuItem) =>
+      this.addMissingCommandOrAction(item, this._addonOptions.hideCommands, gridMenuCommandItems, originalCommandItems);
 
     if (this._addonOptions && this.gridOptions) {
       if (this.gridOptions.enableFiltering && !this.sharedService.hideHeaderRowAfterPageLoad) {
         // show grid menu: Clear all Filters
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconClearAllFiltersCommand || 'mdi mdi-filter-remove-outline',
-            _orgTitle: commandLabels?.clearAllFiltersCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.clearAllFiltersCommandKey ?? 'CLEAR_ALL_FILTERS'}`,
-            disabled: false,
-            command: 'clear-filter',
-            action: () => {
-              this.filterService.clearFilters();
-              this.sharedService.dataView.refresh();
-              this.pubSubService.publish('onGridMenuClearAllFilters');
-            },
+        addCommand({
+          iconCssClass: this._addonOptions.iconClearAllFiltersCommand || 'mdi mdi-filter-remove-outline',
+          _orgTitle: commandLabels?.clearAllFiltersCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.clearAllFiltersCommandKey ?? 'CLEAR_ALL_FILTERS'}`,
+          disabled: false,
+          command: 'clear-filter',
+          action: () => {
+            this.filterService.clearFilters();
+            this.sharedService.dataView.refresh();
+            this.pubSubService.publish('onGridMenuClearAllFilters');
           },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+        });
       }
 
       if (this.gridOptions.enableSorting) {
         // show grid menu: Clear all Sorting
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconClearAllSortingCommand || 'mdi mdi-sort-variant-off',
-            _orgTitle: commandLabels?.clearAllSortingCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.clearAllSortingCommandKey ?? 'CLEAR_ALL_SORTING'}`,
-            disabled: false,
-            command: 'clear-sorting',
-            action: () => {
-              this.sortService.clearSorting();
-              this.sharedService.dataView.refresh();
-              this.pubSubService.publish('onGridMenuClearAllSorting');
-            },
+        addCommand({
+          iconCssClass: this._addonOptions.iconClearAllSortingCommand || 'mdi mdi-sort-variant-off',
+          _orgTitle: commandLabels?.clearAllSortingCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.clearAllSortingCommandKey ?? 'CLEAR_ALL_SORTING'}`,
+          disabled: false,
+          command: 'clear-sorting',
+          action: () => {
+            this.sortService.clearSorting();
+            this.sharedService.dataView.refresh();
+            this.pubSubService.publish('onGridMenuClearAllSorting');
           },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+        });
       }
 
       // show grid menu: Clear all Pinning
-      this.addMissingCommandOrAction(
-        {
-          iconCssClass: this._addonOptions.iconClearAllPinningCommand || 'mdi mdi-pin-off-outline',
-          _orgTitle: commandLabels?.clearPinningCommand || '',
-          titleKey: `${translationPrefix}${commandLabels?.clearPinningCommandKey ?? 'CLEAR_ALL_PINNING'}`,
-          disabled: false,
-          command: 'clear-pinning',
-          action: this.clearPinning.bind(this),
-        },
-        this._addonOptions.hideCommands,
-        gridMenuCommandItems,
-        originalCommandItems
-      );
+      addCommand({
+        iconCssClass: this._addonOptions.iconClearAllPinningCommand || 'mdi mdi-pin-off-outline',
+        _orgTitle: commandLabels?.clearPinningCommand || '',
+        titleKey: `${translationPrefix}${commandLabels?.clearPinningCommandKey ?? 'CLEAR_ALL_PINNING'}`,
+        disabled: false,
+        command: 'clear-pinning',
+        action: this.clearPinning.bind(this),
+      });
 
       if (this.gridOptions.enableFiltering && !this.sharedService.hideHeaderRowAfterPageLoad) {
         // show grid menu: toggle filter row
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconToggleFilterCommand || 'mdi mdi-flip-vertical',
-            _orgTitle: commandLabels?.toggleFilterCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.toggleFilterCommandKey ?? 'TOGGLE_FILTER_ROW'}`,
-            disabled: false,
-            command: 'toggle-filter',
-            action: this.toggleFilterBar.bind(this),
-          },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+        addCommand({
+          iconCssClass: this._addonOptions.iconToggleFilterCommand || 'mdi mdi-flip-vertical',
+          _orgTitle: commandLabels?.toggleFilterCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.toggleFilterCommandKey ?? 'TOGGLE_FILTER_ROW'}`,
+          disabled: false,
+          command: 'toggle-filter',
+          action: this.toggleFilterBar.bind(this),
+        });
       }
 
       if (this.gridOptions.showPreHeaderPanel) {
         // show grid menu: toggle pre-header row
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconTogglePreHeaderCommand || 'mdi mdi-flip-vertical',
-            _orgTitle: commandLabels?.togglePreHeaderCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.togglePreHeaderCommandKey ?? 'TOGGLE_PRE_HEADER_ROW'}`,
-            disabled: false,
-            command: 'toggle-preheader',
-            action: () => {
-              const showPreHeaderPanel = this.gridOptions?.showPreHeaderPanel ?? false;
-              this.grid.setPreHeaderPanelVisibility(!showPreHeaderPanel);
-            },
+        addCommand({
+          iconCssClass: this._addonOptions.iconTogglePreHeaderCommand || 'mdi mdi-flip-vertical',
+          _orgTitle: commandLabels?.togglePreHeaderCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.togglePreHeaderCommandKey ?? 'TOGGLE_PRE_HEADER_ROW'}`,
+          disabled: false,
+          command: 'toggle-preheader',
+          action: () => {
+            const showPreHeaderPanel = this.gridOptions?.showPreHeaderPanel ?? false;
+            this.grid.setPreHeaderPanelVisibility(!showPreHeaderPanel);
           },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+        });
       }
 
       // show grid menu: toggle dark mode
       if (this._addonOptions.showToggleDarkModeCommand) {
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'mdi mdi-brightness-4',
-            _orgTitle: commandLabels?.toggleDarkModeCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.toggleDarkModeCommandKey ?? 'TOGGLE_DARK_MODE'}`,
-            disabled: false,
-            command: 'toggle-dark-mode',
-            action: () => {
-              const currentDarkMode = this.sharedService.gridOptions.darkMode;
-              this.grid.setOptions({ darkMode: !currentDarkMode });
-              this.sharedService.gridOptions.darkMode = !currentDarkMode;
-            },
+        addCommand({
+          iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'mdi mdi-brightness-4',
+          _orgTitle: commandLabels?.toggleDarkModeCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.toggleDarkModeCommandKey ?? 'TOGGLE_DARK_MODE'}`,
+          disabled: false,
+          command: 'toggle-dark-mode',
+          action: () => {
+            const currentDarkMode = this.sharedService.gridOptions.darkMode;
+            this.grid.setOptions({ darkMode: !currentDarkMode });
+            this.sharedService.gridOptions.darkMode = !currentDarkMode;
           },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+        });
       }
 
       // show grid menu: Export to file
       if (this.gridOptions.enableTextExport && textMenuFormats.includes('csv')) {
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconExportCsvCommand || 'mdi mdi-download',
-            _orgTitle: commandLabels?.exportCsvCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.exportCsvCommandKey ?? 'EXPORT_TO_CSV'}`,
-            disabled: false,
-            command: 'export-csv',
-            action: this.exportCsv.bind(this),
-          },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+        addCommand({
+          iconCssClass: this._addonOptions.iconExportCsvCommand || 'mdi mdi-download',
+          _orgTitle: commandLabels?.exportCsvCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.exportCsvCommandKey ?? 'EXPORT_TO_CSV'}`,
+          disabled: false,
+          command: 'export-csv',
+          action: this.exportCsv.bind(this),
+        });
       }
 
       // show grid menu: Export to Excel
       if (this.gridOptions.enableExcelExport) {
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
-            _orgTitle: commandLabels?.exportExcelCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.exportExcelCommandKey ?? 'EXPORT_TO_EXCEL'}`,
-            disabled: false,
-            command: 'export-excel',
-            action: this.exportExcel.bind(this),
-          },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+        addCommand({
+          iconCssClass: this._addonOptions.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
+          _orgTitle: commandLabels?.exportExcelCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.exportExcelCommandKey ?? 'EXPORT_TO_EXCEL'}`,
+          disabled: false,
+          command: 'export-excel',
+          action: this.exportExcel.bind(this),
+        });
       }
 
       // show grid menu: Export to PDF
       if (this.gridOptions.enablePdfExport) {
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconExportPdfCommand || 'mdi mdi-file-pdf-outline text-danger',
-            _orgTitle: commandLabels?.exportPdfCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.exportPdfCommandKey ?? 'EXPORT_TO_PDF'}`,
-            disabled: false,
-            command: 'export-pdf',
-            action: this.exportPdf.bind(this),
-          },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+        addCommand({
+          iconCssClass: this._addonOptions.iconExportPdfCommand || 'mdi mdi-file-pdf-outline text-danger',
+          _orgTitle: commandLabels?.exportPdfCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.exportPdfCommandKey ?? 'EXPORT_TO_PDF'}`,
+          disabled: false,
+          command: 'export-pdf',
+          action: this.exportPdf.bind(this),
+        });
       }
 
       if (this.gridOptions.enableFiltering && !this.sharedService.hideHeaderRowAfterPageLoad) {
         // show grid menu: refresh dataset
         if (backendApi) {
-          this.addMissingCommandOrAction(
-            {
-              iconCssClass: this._addonOptions.iconRefreshDatasetCommand || 'mdi mdi-sync',
-              _orgTitle: commandLabels?.refreshDatasetCommand || '',
-              titleKey: `${translationPrefix}${commandLabels?.refreshDatasetCommandKey ?? 'REFRESH_DATASET'}`,
-              disabled: false,
-              command: 'refresh-dataset',
-              action: () => this.extensionUtility.refreshBackendDataset(),
-            },
-            this._addonOptions.hideCommands,
-            gridMenuCommandItems,
-            originalCommandItems
-          );
+          addCommand({
+            iconCssClass: this._addonOptions.iconRefreshDatasetCommand || 'mdi mdi-sync',
+            _orgTitle: commandLabels?.refreshDatasetCommand || '',
+            titleKey: `${translationPrefix}${commandLabels?.refreshDatasetCommandKey ?? 'REFRESH_DATASET'}`,
+            disabled: false,
+            command: 'refresh-dataset',
+            action: () => this.extensionUtility.refreshBackendDataset(),
+          });
         }
       }
 
       // show grid menu: export to text file as tab delimited
       if (this.gridOptions.enableTextExport && textMenuFormats.includes('txt')) {
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconExportTextDelimitedCommand || 'mdi mdi-download',
-            _orgTitle: commandLabels?.exportTextDelimitedCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.exportTextDelimitedCommandKey ?? 'EXPORT_TO_TAB_DELIMITED'}`,
-            disabled: false,
-            command: 'export-text-delimited',
-            action: this.exportTextDelimited.bind(this),
-          },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+        addCommand({
+          iconCssClass: this._addonOptions.iconExportTextDelimitedCommand || 'mdi mdi-download',
+          _orgTitle: commandLabels?.exportTextDelimitedCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.exportTextDelimitedCommandKey ?? 'EXPORT_TO_TAB_DELIMITED'}`,
+          disabled: false,
+          command: 'export-text-delimited',
+          action: this.exportTextDelimited.bind(this),
+        });
       }
 
       // add the custom "Commands" title if there are any commands
@@ -797,54 +736,19 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   }
 
   protected exportCsv(): void {
-    const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    // prettier-ignore
-    const exportCsvService = registeredResources.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
-    if (exportCsvService?.exportToFile) {
-      exportCsvService.exportToFile({ delimiter: ',', format: 'csv' });
-    } else {
-      console.error(
-        `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
-      );
-    }
+    exportMenuResource(this.sharedService, 'csv');
   }
 
   protected exportExcel(): void {
-    const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    // prettier-ignore
-    const excelService = registeredResources.find((service) => service.pluginName === 'ExcelExportService') as ExcelExportService | undefined;
-    if (excelService?.exportToExcel) {
-      excelService.exportToExcel();
-    } else {
-      console.error(
-        `[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu. Example:: this.gridOptions = { enableExcelExport: true, externalResources: [new ExcelExportService()] };`
-      );
-    }
+    exportMenuResource(this.sharedService, 'excel');
   }
 
   protected exportPdf(): void {
-    const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    const pdfService = registeredResources.find((service) => service.pluginName === 'PdfExportService') as PdfExportService | undefined;
-    if (pdfService?.exportToPdf) {
-      pdfService.exportToPdf();
-    } else {
-      console.error(
-        `[Slickgrid-Universal] You must register the PdfExportService to properly use Export to PDF in the Grid Menu. Example:: this.gridOptions = { enablePdfExport: true, externalResources: [new PdfExportService()] };`
-      );
-    }
+    exportMenuResource(this.sharedService, 'pdf');
   }
 
   protected exportTextDelimited(): void {
-    const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    // prettier-ignore
-    const exportTxtService = registeredResources.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
-    if (exportTxtService?.exportToFile) {
-      exportTxtService.exportToFile({ delimiter: '\t', format: 'txt' });
-    } else {
-      console.error(
-        `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
-      );
-    }
+    exportMenuResource(this.sharedService, 'txt');
   }
 
   protected toggleFilterBar(): void {
