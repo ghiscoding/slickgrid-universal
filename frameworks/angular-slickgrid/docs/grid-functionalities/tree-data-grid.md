@@ -13,7 +13,7 @@
 - [Max Visible Depth](#max-visible-depth)
 - [Tree Totals with Aggregators](#tree-totals-with-aggregators)
 - [Tree Totals Formatter](#tree-totals-formatter)
-- [Lazy Loading Tree Data](#lazy-loading-tree-data)
+- [Lazy Loading Tree Data (hierarchical only)](#lazy-loading-tree-data-hierarchical-only)
 
 ## Description
 Tree Data allows you to display a hierarchical (tree) dataset into the grid, it is visually very similar to Grouping but also very different in its implementation. A hierarchical dataset is commonly used for a parent/child relation and a great example is a Bill of Material (BOM), which you can't do with Grouping because parent/child relationship could be infinite tree level while Grouping is a defined and known level of Grouping.
@@ -22,7 +22,7 @@ Tree Data allows you to display a hierarchical (tree) dataset into the grid, it 
 
 #### data mutation
 
-For Tree Data to work with SlickGrid we need to **mutate** the original dataset, it will add a couple of new properties to your data, these properties are: `__treeLevel`, `__parentId` and `children` (these key names could be changed via the `treeDataOptions`). Also note that these properties become available in every Formatter (built-in and custom) which can be quite useful (especially in the tree level) in some cases... You might be thinking, could we do it without mutating the data? Probably but that would require to do a deep copy of the original data and that can be expensive on the performance side (no one it stopping you from doing a deep copy on your side though). The last thing to note is that internally for Tree Data to work, the lib always has 2 dataset (1x flat dataset and 1x hierarchical dataset which is basically a tree structure) and the lib keeps them in sync internally. So why do we do all of this? Well simply put, SlickGrid itself does not support a Tree Data structure and that is the reason we always have to keep 2 dataset structures internally because SlickGrid only works a flat dataset and nothing else.
+For Tree Data to work with SlickGrid we need to **mutate** the original dataset, it will add a couple of new properties to your data, these properties are: `__treeLevel`, `__parentId` and `children` (these key names could be changed via the `treeDataOptions`). Also note that these properties become available in every Formatter (built-in and custom) which can be quite useful (especially in the tree level) in some cases... You might be thinking, could we do it without mutating the data? Probably but that would require to do a deep copy of the original data and that can be expensive on the performance side (you could do a deep copy beforehand yourself, but just remember ther performance cost associated). The last thing to note is that internally for this Tree Data to work, the lib always keeps 2 dataset references internally (1x flat dataset and 1x hierarchical dataset which is the tree structure) and the lib always keeps them in sync internally. So why do we do all of this? Well simply put, SlickGrid itself does not support a Tree Data structure and that is the reason we always have to keep 2 dataset structures internally because SlickGrid only works a flat dataset and nothing else.
 
 
 #### Filtering is required by Tree Data
@@ -355,7 +355,7 @@ this.gridOptions = {
 
     // aggregators: [new Aggregators.Avg('size'), new Aggregators.Sum('size')],
 
-    // OR EVEN BETTER, for better perf, you can simply use Avg to get both totals
+    // OR EVEN BETTER, Avg already does a Sum internally, so you can get it for free (you don't need to declare it)
     aggregators: [new Aggregators.Avg('size')], // produce the same as [new Aggregators.Avg('size'), new Aggregators.Sum('size')]
 
     // do we want to auto-recalc Tree Totals when using filters, that is anytime a filter changes
@@ -427,17 +427,17 @@ this.columns = [
 ];
 ```
 
-### Lazy Loading Tree Data
+### Lazy Loading Tree Data (hierarchical only)
 
 You can lazy load children on parent nodes, it does have certain requirements that must be followed:
-- parent nodes must provide define and provide children as empty array (e.g.: `children: []` or `files: []` depending on your `childrenPropName`)
+- parent nodes must define and assign an empty array to children property (e.g.: `children: []` or `files: []` depending on your `childrenPropName`)
   - this is required to identify which are the parent nodes that are lazily available
-- it only works with hierarchical data
+- it only works with hierarchical data (in other words, flat dataset aren't supported)
 - you must enable the `lazy` flag and provide `onLazyLoading` callback
 
 There are also some important notes about using Lazy Loading of Tree Data children:
 - calling "Expand All" of the Tree Data will **only** expand the nodes that were already lazily loaded
-  - the other ones will remain as collapsed
+  - the other ones will remain collapsed
 - Aggregators will be lazily calculated and aggregate only the data that it currently has loaded (only what got lazily loaded).
 
 For example, let say our hierarchical dataset is a list of files and `files` being the children props.
