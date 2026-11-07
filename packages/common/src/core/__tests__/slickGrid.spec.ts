@@ -1053,6 +1053,22 @@ describe('SlickGrid core file', () => {
       expect(rerendered.classList.contains('extra')).toBe(false);
     });
 
+    it('removes selection classes from rowspan fragments when a cell is deselected', () => {
+      const selectionModel = new SlickHybridSelectionModel({ selectionType: 'cell' });
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, selectedCellCssClass: 'selected extra' });
+      grid.setSelectionModel(selectionModel);
+      grid.render();
+
+      const fragment = document.createElement('div');
+      fragment.classList.add('selected', 'extra');
+      (grid as any).rowsCache[0].cellSpanFragments = { 0: [fragment] };
+      selectionModel.setSelectedRanges([new SlickRange(0, 0)]);
+      selectionModel.setSelectedRanges([]);
+
+      expect(fragment.classList.contains('selected')).toBe(false);
+      expect(fragment.classList.contains('extra')).toBe(false);
+    });
+
     describe('Cell selection drag handle', () => {
       it.each([
         { showDragHandle: undefined, expectedClass: false, expectedHandle: true, label: 'default' },
