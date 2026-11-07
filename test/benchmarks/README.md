@@ -79,3 +79,27 @@ pnpm exec cypress run --config-file test/benchmarks/cypress.config.ts --browser 
 ```
 
 These are synthetic measurements; compare relative results between revisions on the same machine.
+
+### Experimental incremental-row benchmark
+
+`excel-row-stream` compares the existing row materialization with a research prototype
+that feeds rows to the XLSX serializer on demand. It uses a flat, deterministic,
+example03-like dataset with date and currency formatters. The prototype accesses private
+builder internals and only supports this workload; it is not a production exporter.
+Both modes use compression level 6. See `.agents/audits/excel-export-performance.md` for
+results, limitations, and production-design concerns.
+
+Run each mode in a separate process, with the same row count, and compare the resulting
+uncompressed XLSX entries. Outputs are written under `test/benchmarks/dist/` and overwritten
+on subsequent runs. Repeat the two commands, alternating modes, for useful comparisons.
+
+```sh
+BENCH_ROWS=500000 BENCH_MODE=baseline node --expose-gc test/benchmarks/excel-row-stream.mjs
+BENCH_ROWS=500000 BENCH_MODE=incremental node --expose-gc test/benchmarks/excel-row-stream.mjs
+python3 test/benchmarks/excel-row-stream-compare.py
+```
+
+Each mode warms up with 1,000 rows. The runner reports export time, timer delay and Node
+process memory; dataset creation, cache setup and writing the XLSX file are outside the
+export timer. The incremental serialization phase includes row preparation, so its phase
+timings cannot be compared directly with the baseline's. Use the total time for comparison.

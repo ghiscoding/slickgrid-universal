@@ -10,5 +10,5 @@
     }
   },
   "references": [{ "path": "../../packages/common" }, { "path": "../../packages/utils" }, { "path": "../../packages/excel-export" }],
-  "include": ["excel-export.ts", "excel-export.cy.ts", "cypress.config.ts"]
+  "include": ["excel-export.ts", "excel-row-stream.ts", "excel-export.cy.ts", "cypress.config.ts"]
 }

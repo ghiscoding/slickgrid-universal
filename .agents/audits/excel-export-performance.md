@@ -153,3 +153,51 @@ it provides little immediate benefit in a fork without those consumers. The shar
   and entity-heavy strings still have their original costs. A worker or a row-producer
   streaming API would require a separate design to preserve custom formatters, callbacks,
   headers, group totals and row/column spans.
+
+## Incremental row consumption investigation
+
+A separate November 2026 investigation asked whether consuming rows in chunks could help
+500K-row exports without changing compression or materially changing file size. The
+current exporter already uses the builder's XLSX output stream and yields every 500 rows
+on large inputs, but it materializes all exported worksheet rows before serialization.
+The builder retains worksheet rows and shared strings; the exporter also collects output
+chunks into a Blob. Smaller **output byte chunks** do not provide incremental row input.
+
+A research prototype in `test/benchmarks/excel-row-stream.ts` reads each row through the
+existing exporter's regular row logic as the builder serializes the sheet. It overrides
+private builder methods, keeps a placeholder array for worksheet dimensions, and supports
+only flat data. It is an experiment, not a proposed implementation or public API.
+
+The benchmark used Node 24.16.0 + jsdom, `excel-builder-vanilla` 5.3.1, level 6 compression,
+500,000 deterministic rows and six columns modeled after example03, including date and
+currency formatters. Formatted-data caching was disabled; there was no grouping, grid
+rendering, custom header, pre-header, variable row height, or merged cell. Dataset setup and
+saving the file were outside the export timer. Three runs of each mode were made in separate
+processes, after a 1,000-row warmup; process peak RSS includes dataset/setup and file save.
+
+| Measure | Existing | Incremental prototype |
+| --- | ---: | ---: |
+| Median export time | 11,339 ms | 10,202 ms |
+| Range | 11,229–11,504 ms | 10,134–10,476 ms |
+| Median peak RSS | 731,064 KiB | 490,864 KiB |
+| XLSX size | 14,774,523 bytes | 14,774,523 bytes |
+
+All eight uncompressed XLSX entries matched byte for byte by SHA-256. Peak RSS dropped
+about 33% and median time about 10% in this workload. Timing also reflects different yield
+schedules: the baseline yields during row preparation; the prototype relies on the builder's
+periodic serialization yields. The experiment does not establish browser responsiveness or
+show that lower memory alone caused the timing difference. The original DataView, shared
+strings, placeholder references, compressed output and Blob still occupy memory.
+
+No implementation change was pursued: a production implementation would require a supported
+row-source API in the separate builder, plus SlickGrid integration and parity coverage. In
+particular, the current builder constructs sheet metadata before writing rows, whereas
+SlickGrid may discover cell merges and row heights while reading them. Custom headers,
+grouping/totals, formatter and parser behavior, row numbering, cancellation and retry/fallback
+also need review. The existing prototype does not establish parity for those features.
+
+Reproduction commands and archive comparison are in `test/benchmarks/README.md`. Before
+reconsidering the change, benchmark the actual example03 browser workflow, including its
+initial grouping and formatted-data cache, using the same compression level and verify
+content and file size. Date and other complex formatters may materially change preparation
+cost; a warm cache can alter that balance.
