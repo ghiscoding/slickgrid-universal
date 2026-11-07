@@ -17,7 +17,7 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { FormulaService } from '@slickgrid-universal/formula-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
-import './example47.scss';
+import './example48.scss';
 
 interface GroceryItem {
   id: number;
@@ -97,7 +97,7 @@ export class CustomSumAggregator implements Aggregator {
   }
 }
 
-export default class Example47 {
+export default class Example48 {
   private _bindingEventService: BindingEventService;
   private _darkMode = false;
   private _headerPrefixResetTimer?: ReturnType<typeof setTimeout>;
@@ -135,7 +135,7 @@ export default class Example47 {
   attached() {
     this.defineGrid();
     this.dataset = this.getData();
-    this.gridContainerElm = document.querySelector<HTMLDivElement>('.grid47') as HTMLDivElement;
+    this.gridContainerElm = document.querySelector<HTMLDivElement>('.grid48') as HTMLDivElement;
 
     this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 

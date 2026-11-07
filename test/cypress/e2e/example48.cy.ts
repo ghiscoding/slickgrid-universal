@@ -1,17 +1,17 @@
-describe('Example 47 - Formula Service (MVP)', () => {
+describe('Example 48 - Formula Service (MVP)', () => {
   const GRID_ROW_HEIGHT = 38;
   const fullTitles = ['#', 'Name', 'Price', 'Quantity', 'Sub-Total', 'Taxable', 'Taxes', 'Total', 'Custom Sum'];
 
-  const rowSelector = (rowIdx: number) => `.grid47 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"]`;
+  const rowSelector = (rowIdx: number) => `.grid48 [style="transform: translateY(${GRID_ROW_HEIGHT * rowIdx}px);"]`;
   const cell = (rowIdx: number, cellIdx: number) => `${rowSelector(rowIdx)} > .slick-cell:nth(${cellIdx})`;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/example47`);
-    cy.get('h3').should('contain', 'Example 47 - Formula Service (MVP)');
+    cy.visit(`${Cypress.config('baseUrl')}/example48`);
+    cy.get('h3').should('contain', 'Example 48 - Formula Service (MVP)');
   });
 
   it('should have exact column titles on grid', () => {
-    cy.get('.grid47')
+    cy.get('.grid48')
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
@@ -309,9 +309,9 @@ describe('Example 47 - Formula Service (MVP)', () => {
   it('should group by Taxable and allow returning back to ungrouped view', () => {
     cy.get('[data-test="group-by-btn"]').click();
 
-    cy.get('.grid47 .slick-group').should('have.length.at.least', 2);
-    cy.get('.grid47 .slick-group').first().should('contain', 'Taxable:');
-    cy.get('.grid47 .slick-group-totals').should('have.length.at.least', 1);
+    cy.get('.grid48 .slick-group').should('have.length.at.least', 2);
+    cy.get('.grid48 .slick-group').first().should('contain', 'Taxable:');
+    cy.get('.grid48 .slick-group-totals').should('have.length.at.least', 1);
 
     cy.get('[data-test="clear-grouping-btn"]').click();
 
@@ -332,7 +332,7 @@ describe('Example 47 - Formula Service (MVP)', () => {
     cy.get(cell(0, 4)).click({ force: true });
     cy.get(cell(0, 4)).trigger('mousedown', { which: 1, force: true });
     cy.get(cell(1, 4)).trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
-    cy.get('.grid47 .slick-cell.selected').should('have.length', 2);
+    cy.get('.grid48 .slick-cell.selected').should('have.length', 2);
     cy.get(cell(1, 4)).find('.slick-drag-replace-handle').trigger('mousedown', { which: 1, force: true });
     cy.get(cell(3, 4)).trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
@@ -344,10 +344,10 @@ describe('Example 47 - Formula Service (MVP)', () => {
     cy.reload();
 
     const reorderedTitles = ['#', 'Name', 'Quantity', 'Sub-Total', 'Price', 'Taxable', 'Taxes', 'Total', 'Custom Sum'];
-    cy.get('.grid47 .slick-header-columns .slick-header-column:nth(2)')
+    cy.get('.grid48 .slick-header-columns .slick-header-column:nth(2)')
       .contains('Price')
-      .drag('.grid47 .slick-header-columns .slick-header-column:nth(4)');
-    cy.get('.grid47 .slick-header-columns')
+      .drag('.grid48 .slick-header-columns .slick-header-column:nth(4)');
+    cy.get('.grid48 .slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(reorderedTitles[index]));
 
@@ -357,11 +357,11 @@ describe('Example 47 - Formula Service (MVP)', () => {
     cy.get(cell(0, 4)).should('contain', '$2.22');
 
     // Hide Price through the column picker and verify formulas can still evaluate at runtime.
-    cy.get('.grid47 .slick-header-column').contains('Price').trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.grid48 .slick-header-column').contains('Price').trigger('mouseover').trigger('contextmenu').invoke('show');
     cy.get('.slick-column-picker:visible input[data-columnid="price"]').parent('.icon-checkbox-container').click({ force: true });
     cy.get('.slick-column-picker:visible .close').click({ force: true });
 
-    cy.get('.grid47 .slick-header-columns .slick-header-column').should('have.length', 8);
+    cy.get('.grid48 .slick-header-columns .slick-header-column').should('have.length', 8);
     cy.get(cell(0, 3)).should('contain', '$8.88');
     cy.get(cell(0, 6)).should('contain', '$8.88');
   });
@@ -370,9 +370,9 @@ describe('Example 47 - Formula Service (MVP)', () => {
     cy.reload();
     const downloadsFolder = Cypress.config('downloadsFolder');
 
-    cy.get('.grid47 .slick-header-columns .slick-header-column:nth(2)')
+    cy.get('.grid48 .slick-header-columns .slick-header-column:nth(2)')
       .contains('Price')
-      .drag('.grid47 .slick-header-columns .slick-header-column:nth(4)');
+      .drag('.grid48 .slick-header-columns .slick-header-column:nth(4)');
     cy.task('clearXlsxDownloads', { downloadsFolder });
     cy.get('[data-test="export-excel-btn"]').click();
 
