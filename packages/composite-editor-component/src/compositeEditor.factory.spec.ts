@@ -202,6 +202,7 @@ describe('Composite Editor Factory', () => {
 
     factory = new (SlickCompositeEditor as any)(columnsMock, containers, compositeOptions);
     const output = new factory(textEditorArgs);
+    const editorRefs = output.getEditors();
     const ctxDestroySpy = vi.spyOn(output, 'destroy');
 
     expect(factory).toBeTruthy();
@@ -211,6 +212,8 @@ describe('Composite Editor Factory', () => {
 
     expect(compOptDestroySpy).toHaveBeenCalled();
     expect(ctxDestroySpy).toHaveBeenCalled();
+    expect(editorRefs).toHaveLength(0);
+    expect(containers).toHaveLength(0);
   });
 
   it('should instantiate the factory and expect "focus" to be called when asked for', () => {

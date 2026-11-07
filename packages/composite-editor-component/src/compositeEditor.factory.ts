@@ -118,53 +118,51 @@ export function SlickCompositeEditor(
     let editors: Array<Editor & { args: EditorArguments }> = [];
 
     function init() {
-      let idx = 0;
-      while (idx < columns.length) {
-        if (columns[idx].editorClass) {
-          const column = columns[idx];
-          const currentEditor = new (column.editorClass as EditorConstructor)({
-            ...args,
-            container: containers[idx],
-            column,
-            position: getContainerBox(idx),
-            commitChanges: noop,
-            cancelChanges: noop,
-            compositeEditorOptions: options,
-            isCompositeEditor: true,
-            formValues: createSafeDynamicMap(),
-          } as CompositeEditorArguments);
-          options.editors[column.id] = currentEditor; // add every Editor instance refs
-          editors.push(currentEditor as Editor & { args: EditorArguments });
+      for (let idx = 0; idx < columns.length; idx++) {
+        const column = columns[idx];
+        if (!column.editorClass) {
+          continue;
         }
-        idx++;
+
+        const currentEditor = new (column.editorClass as EditorConstructor)({
+          ...args,
+          container: containers[idx],
+          column,
+          position: getContainerBox(idx),
+          commitChanges: noop,
+          cancelChanges: noop,
+          compositeEditorOptions: options,
+          isCompositeEditor: true,
+          formValues: createSafeDynamicMap(),
+        } as CompositeEditorArguments);
+        options.editors[column.id] = currentEditor; // add every Editor instance refs
+        editors.push(currentEditor as Editor & { args: EditorArguments });
       }
 
       // focus on first input
       clearTimeout(_timer);
       _timer = setTimeout(() => {
-        if (Array.isArray(editors) && editors.length > 0 && typeof editors[0].focus === 'function') {
+        if (editors.length > 0 && typeof editors[0].focus === 'function') {
           editors[0].focus();
         }
       }, 0);
     }
 
-    context.getEditors = () => {
-      return editors;
-    };
+    context.getEditors = () => editors;
 
     context.destroy = () => {
       clearTimeout(_timer);
-      let tmpEditor = editors.pop();
-      while (tmpEditor) {
-        tmpEditor?.destroy();
-        tmpEditor = editors.pop();
+      let editorToDestroy = editors.pop();
+      while (editorToDestroy) {
+        editorToDestroy.destroy();
+        editorToDestroy = editors.pop();
       }
 
-      let tmpContainer = containers.pop();
-      while (tmpContainer) {
-        emptyElement(tmpContainer);
-        tmpContainer?.remove();
-        tmpContainer = containers.pop();
+      let containerToRemove = containers.pop();
+      while (containerToRemove) {
+        emptyElement(containerToRemove);
+        containerToRemove.remove();
+        containerToRemove = containers.pop();
       }
 
       options?.destroy?.();
@@ -178,41 +176,19 @@ export function SlickCompositeEditor(
     };
 
     context.isValueChanged = () => {
-      let idx = 0;
-      while (idx < editors.length) {
-        if (editors[idx].isValueChanged()) {
-          return true;
-        }
-        idx++;
-      }
-      return false;
+      return editors.some((editor) => editor.isValueChanged());
     };
 
     context.serializeValue = () => {
-      const serializedValue = [];
-      let idx = 0;
-      while (idx < editors.length) {
-        serializedValue[idx] = editors[idx].serializeValue();
-        idx++;
-      }
-      return serializedValue;
+      return editors.map((editor) => editor.serializeValue());
     };
 
     context.applyValue = (item: any, state: any) => {
-      let idx = 0;
-      while (idx < editors.length) {
-        editors[idx].applyValue(item, state?.[idx]);
-        idx++;
-      }
+      editors.forEach((editor, idx) => editor.applyValue(item, state?.[idx]));
     };
 
     context.loadValue = (item: any) => {
-      let idx = 0;
-
-      while (idx < editors.length) {
-        editors[idx].loadValue(item);
-        idx++;
-      }
+      editors.forEach((editor) => editor.loadValue(item));
     };
 
     context.validate = (targetElm?: HTMLElement | null): EditorValidationResult => {
@@ -275,20 +251,12 @@ export function SlickCompositeEditor(
     };
 
     context.hide = () => {
-      let idx = 0;
-      while (idx < editors.length) {
-        editors[idx]?.hide?.();
-        idx++;
-      }
+      editors.forEach((editor) => editor.hide?.());
       options?.hide?.();
     };
 
     context.show = () => {
-      let idx = 0;
-      while (idx < editors.length) {
-        editors[idx]?.show?.();
-        idx++;
-      }
+      editors.forEach((editor) => editor.show?.());
       options?.show?.();
     };
 

@@ -2021,6 +2021,25 @@ describe('CompositeEditorService', () => {
       component?.dispose();
     });
 
+    it('should skip a form value removed by the mass update validator', () => {
+      const formValues: Record<string, any> = { first: 'updated', second: 'also updated' };
+      const item = { first: 'original', second: 'keep original' };
+      component = new SlickCompositeEditorComponent();
+      component.init(gridStub, container);
+      (component as any)._options = {
+        validateMassUpdateChange: (itemProp: string) => {
+          if (itemProp === 'first') {
+            delete formValues.second;
+          }
+          return true;
+        },
+      };
+
+      (component as any).applyFormValuesToItems(formValues, [item]);
+
+      expect(item).toEqual({ first: 'updated', second: 'keep original' });
+    });
+
     it('should handle saving and grid changes when "Mass Update" save button is clicked', () => {
       const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
