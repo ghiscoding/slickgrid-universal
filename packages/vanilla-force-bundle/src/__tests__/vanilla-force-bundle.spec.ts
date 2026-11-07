@@ -440,6 +440,15 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         vi.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
       });
 
+      it('accepts and exposes Salesforce options through the options accessor', () => {
+        component.options = { enableDeepCopyDatasetOnPageLoad: true };
+
+        expect(component.options.enableDeepCopyDatasetOnPageLoad).toBe(true);
+        expect(mockGrid.setOptions).toHaveBeenCalledWith(expect.objectContaining({ enableDeepCopyDatasetOnPageLoad: true }), false, true);
+        component.options.enableDeepCopyDatasetOnPageLoad = false;
+        expect(component.options.enableDeepCopyDatasetOnPageLoad).toBe(false);
+      });
+
       it('should merge grid options with global options when slickgrid "getOptions" does not exist yet', () => {
         mockGrid.getOptions = () => null as any;
         const setOptionSpy = vi.spyOn(mockGrid, 'setOptions');

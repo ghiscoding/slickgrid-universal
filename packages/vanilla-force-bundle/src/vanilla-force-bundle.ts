@@ -78,6 +78,14 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
     });
   }
 
+  override get options(): SalesforceGridOption {
+    return super.options;
+  }
+
+  override set options(options: SalesforceGridOption) {
+    super.options = options;
+  }
+
   mergeGridOptions(gridOptions: SalesforceGridOption): SalesforceGridOption {
     const extraOptions =
       gridOptions.useSalesforceDefaultGridOptions || this._gridOptions?.useSalesforceDefaultGridOptions ? SalesforceGlobalGridOptions : {};
