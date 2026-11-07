@@ -249,35 +249,34 @@ export function removeAccentFromText(text: string, shouldLowerCase = false): str
 
 /** Set the object value of deeper node from a given dot (.) notation path (e.g.: "user.firstName") */
 export function setDeepValue<T = unknown>(obj: T, path: string | string[], value: any): void {
-  if (typeof path === 'string') {
-    path = path.split('.');
-  }
+  const keys = typeof path === 'string' ? path.split('.') : path;
+  let target: any = obj;
 
-  if (path.length > 1) {
-    const e = path.shift() as keyof T;
-    if (obj && e !== undefined) {
-      const key = String(e);
-      const hasOwnProperty = Object.prototype.hasOwnProperty.call(obj, e);
-      const currentValue = hasOwnProperty ? obj[e] : undefined;
-      const nextValue =
-        isDefined(currentValue) && (Array.isArray(currentValue) || Object.prototype.toString.call(currentValue) === '[object Object]')
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (!target || key === undefined || target === Object.prototype || target === Array.prototype || (i === keys.length - 1 && !key)) {
+      return;
+    }
+
+    let nextValue = value;
+    if (i < keys.length - 1) {
+      const currentValue = Object.prototype.hasOwnProperty.call(target, key) ? target[key] : undefined;
+      nextValue =
+        currentValue &&
+        typeof currentValue === 'object' &&
+        currentValue !== Object.prototype &&
+        currentValue !== Array.prototype &&
+        (Array.isArray(currentValue) || Object.prototype.toString.call(currentValue) === '[object Object]')
           ? currentValue
-          : ({} as any);
+          : {};
+    }
 
-      if (key === '__proto__') {
-        Object.defineProperty(obj, e, { configurable: true, enumerable: true, writable: true, value: nextValue });
-      } else {
-        obj[e] = nextValue;
-      }
-      setDeepValue(nextValue, path, value);
-    }
-  } else if (obj && path[0]) {
-    const key = String(path[0]);
     if (key === '__proto__') {
-      Object.defineProperty(obj, path[0] as keyof T, { configurable: true, enumerable: true, writable: true, value });
+      Object.defineProperty(target, key, { configurable: true, enumerable: true, writable: true, value: nextValue });
     } else {
-      obj[path[0] as keyof T] = value;
+      target[key] = nextValue;
     }
+    target = nextValue;
   }
 }
 
