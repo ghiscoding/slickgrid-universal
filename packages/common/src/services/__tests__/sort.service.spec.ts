@@ -1593,8 +1593,9 @@ describe('SortService', () => {
         expect(emitSortChangedSpy).toHaveBeenCalled();
       });
 
-      it('applies multiple sort columns to the flattened tree on a local sort', async () => {
+      it('applies a multi-column grid sort to the flattened tree and records the sorters', async () => {
         gridOptionMock.enableTreeData = true;
+        gridOptionMock.multiColumnSort = true;
         gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
         const tree = [
           {
@@ -1613,12 +1614,18 @@ describe('SortService', () => {
         await new Promise(process.nextTick);
         const setItemsSpy = vi.spyOn(dataViewStub, 'setItems').mockClear();
 
-        await service.onLocalSortChanged(gridStub, [
+        const sortCols: ColumnSort[] = [
           { columnId: 'file', sortCol: { id: 'file', field: 'file' }, sortAsc: true },
           { columnId: 'size', sortCol: { id: 'size', field: 'size', type: 'number' }, sortAsc: false },
-        ]);
+        ];
+        gridStub.onSort.notify({ multiColumnSort: true, sortCols, grid: gridStub }, new SlickEventData(), gridStub);
+        await new Promise(process.nextTick);
 
         expect(setItemsSpy.mock.calls[0][0].map((item: any) => item.id)).toEqual([2, 1, 4, 3]);
+        expect(service.getCurrentLocalSorters()).toEqual([
+          { columnId: 'file', direction: 'ASC' },
+          { columnId: 'size', direction: 'DESC' },
+        ]);
       });
 
       it('should call onLocalSortChanged with a hierarchical dataset and expect DataView "setItems" method be called once with sorted ASC dataset', async () => {

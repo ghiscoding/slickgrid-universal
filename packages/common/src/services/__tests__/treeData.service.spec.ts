@@ -512,8 +512,16 @@ describe('TreeData Service', () => {
       const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
       const spyInvalidate = vi.spyOn(gridStub, 'invalidate');
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
-      vi.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValueOnce({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      const sortColumns = [
+        { columnId: 'file', sortCol: { id: 'file', field: 'file' }, sortAsc: true },
+        { columnId: 'size', sortCol: { id: 'size', field: 'size' }, sortAsc: false },
+      ];
+      vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce(sortColumns);
+      const sortSpy = vi
+        .spyOn(sortServiceStub, 'sortHierarchicalDataset')
+        .mockReturnValueOnce({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
 
+      gridOptionsMock.multiColumnSort = true;
       gridOptionsMock.treeDataOptions!.lazy = true;
       gridOptionsMock.treeDataOptions!.childrenPropName = 'files';
       gridOptionsMock.treeDataOptions!.onLazyLoad = (node, resolve) => {
@@ -532,6 +540,8 @@ describe('TreeData Service', () => {
 
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
+      expect(sortSpy).toHaveBeenCalledWith(expect.any(Array), sortColumns);
+      expect(dataViewStub.setItems).toHaveBeenCalledWith(mockFlatDataset, 'id');
       expect(service.getToggledItems().length).toBe(1);
       expect(spyGetItem).toHaveBeenCalled();
       expect(spyInvalidate).toHaveBeenCalled();
