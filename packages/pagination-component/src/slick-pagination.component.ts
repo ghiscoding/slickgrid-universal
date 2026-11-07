@@ -127,9 +127,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     // we'll copy the data into a local object so that we can add binding to this local object
     this._subscriptions.push(
       this._pubSubService.subscribe<PaginationMetadata>('onPaginationRefreshed', (paginationChanges) => {
-        Object.keys(paginationChanges).forEach(
-          (key) => ((this.currentPagination as any)[key] = paginationChanges[key as keyof PaginationMetadata])
-        );
+        Object.assign(this.currentPagination, paginationChanges);
         this.updatePageButtonsUsability();
         if (this._spanInfoFromToElm?.style) {
           this._spanInfoFromToElm.style.display = this.currentPagination.totalItems === 0 ? 'none' : '';
@@ -165,28 +163,16 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     // left nav
     const leftNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
     const leftUlElm = createDomElement('ul', { className: 'pagination' }, leftNavElm);
-    this._seekFirstElm = createDomElement('li', { className: 'page-item seek-first' }, leftUlElm);
-    this._seekFirstElm.appendChild(
-      createDomElement('a', { className: 'page-link sgi icon-seek-first', ariaLabel: 'First Page', role: 'button' })
-    );
-    this._seekPrevElm = createDomElement('li', { className: 'page-item seek-prev' }, leftUlElm);
-    this._seekPrevElm.appendChild(
-      createDomElement('a', { className: 'page-link sgi icon-seek-prev', ariaLabel: 'Previous Page', role: 'button' })
-    );
+    this._seekFirstElm = this.createNavigationButton(leftUlElm, 'first', 'First Page');
+    this._seekPrevElm = this.createNavigationButton(leftUlElm, 'prev', 'Previous Page');
 
     const pageNumberSectionElm = this.createPageNumberSection();
 
     // right nav
     const rightNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
     const rightUlElm = createDomElement('ul', { className: 'pagination' }, rightNavElm);
-    this._seekNextElm = createDomElement('li', { className: 'page-item seek-next' }, rightUlElm);
-    this._seekNextElm.appendChild(
-      createDomElement('a', { className: 'page-link sgi icon-seek-next', ariaLabel: 'Next Page', role: 'button' })
-    );
-    this._seekEndElm = createDomElement('li', { className: 'page-item seek-end' }, rightUlElm);
-    this._seekEndElm.appendChild(
-      createDomElement('a', { className: 'page-link sgi icon-seek-end', ariaLabel: 'Last Page', role: 'button' })
-    );
+    this._seekNextElm = this.createNavigationButton(rightUlElm, 'next', 'Next Page');
+    this._seekEndElm = this.createNavigationButton(rightUlElm, 'end', 'Last Page');
 
     // append both navs to container
     paginationElm.appendChild(divNavContainerElm);
@@ -195,7 +181,6 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     divNavContainerElm.appendChild(rightNavElm);
 
     const paginationSettingsElm = this.createPaginationSettingsSection();
-    paginationElm.appendChild(divNavContainerElm);
     paginationElm.appendChild(paginationSettingsElm);
     this._paginationElement.appendChild(paginationElm);
     if (containerElm?.appendChild && this._paginationElement) {
@@ -307,6 +292,12 @@ export class SlickPaginationComponent implements BasePaginationComponent {
   // --
   // protected functions
   // --------------------
+
+  protected createNavigationButton(parent: HTMLElement, direction: string, label: string): HTMLLIElement {
+    const button = createDomElement('li', { className: `page-item seek-${direction}` }, parent);
+    createDomElement('a', { className: `page-link sgi icon-seek-${direction}`, ariaLabel: label, role: 'button' }, button);
+    return button;
+  }
 
   /** Create the Pagination Container */
   protected createPaginationContainer(): HTMLDivElement {
