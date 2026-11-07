@@ -72,10 +72,6 @@ const Example15: React.FC = () => {
       },
       gridMenu: {
         hideForceFitButton: true,
-        hideClearFrozenColumnsCommand: false,
-      },
-      headerMenu: {
-        hideFreezeColumnsCommand: false,
       },
       enablePagination: true,
       pagination: {

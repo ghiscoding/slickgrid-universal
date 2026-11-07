@@ -237,20 +237,18 @@ export class Example26Component implements OnInit {
           commandTitle: 'Commands',
           commandItems: [
             {
-              command: 'help',
-              title: 'Help',
-              iconCssClass: 'mdi mdi-help-circle text-info',
-              positionOrder: 66,
-              action: () => alert('Please Help!'),
-            },
-            {
               command: 'delete-row',
               title: 'Delete Row',
-              positionOrder: 64,
               iconCssClass: 'mdi mdi-close color-danger',
               cssClass: 'red',
               textCssClass: 'text-italic color-danger-light',
               action: (_event, args) => this.angularGrid.gridService.deleteItemById(args.dataContext.id),
+            },
+            {
+              command: 'help',
+              title: 'Help',
+              iconCssClass: 'mdi mdi-help-circle text-info',
+              action: () => alert('Please Help!'),
             },
           ],
         },

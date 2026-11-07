@@ -100,7 +100,7 @@ export default class Example01 {
       enableCellNavigation: true,
       gridMenu: {
         // autoResizeColumns: false, // disable auto-resize columns after closing the Grid Menu
-        hideToggleDarkModeCommand: false, // disabled command by default
+        showToggleDarkModeCommand: true, // hidden by default
         onCommand: (_, args) => {
           if (args.command === 'toggle-dark-mode') {
             this._darkModeGrid1 = !this._darkModeGrid1; // keep local toggle var in sync
@@ -124,13 +124,12 @@ export default class Example01 {
         gridMenu: {
           subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
           commandItems: [
-            { command: '', divider: true, positionOrder: 98 },
+            { command: '', divider: true },
             {
               // we can also have multiple nested sub-menus
               command: 'export',
               title: 'Exports',
               iconCssClass: 'mdi mdi-download',
-              positionOrder: 99,
               commandItems: [
                 { command: 'exports-txt', title: 'Text (tab delimited)' },
                 {
@@ -150,7 +149,6 @@ export default class Example01 {
               command: 'feedback',
               title: 'Feedback',
               iconCssClass: 'mdi mdi-information-outline',
-              positionOrder: 100,
               commandItems: [
                 {
                   command: 'request-update',

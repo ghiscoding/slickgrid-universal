@@ -1,10 +1,10 @@
 ### Demo
 
 #### Header Button Plugin
-[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/example07) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example07.component.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example07) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example7.ts)
 
 #### Header Menu Plugin
-[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/example08) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example08.component.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example08) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example8.ts)
 
 ## Header Menu
 The `Header Menu` is now part of `Slickgrid-Universal` and is enabled by default via the grid option "enableHeaderMenu" flag.
@@ -13,12 +13,37 @@ The `Header Menu` is now part of `Slickgrid-Universal` and is enabled by default
 #### It's Enabled by default
 Technically, it's enable by default and so you don't have anything to do to enjoy it. However if you want to customize the content of the Header Menu, then continue reading.
 
+### Default command visibility
+
+Built-in commands appear when their required grid features and column settings allow them, including sorting, filtering, resizing, and pinning. Use `hideCommands` to hide commands.
+
+The built-in command IDs supported by `headerMenu.hideCommands` are:
+
+| Command ID |
+| --- |
+| `clear-filter` |
+| `clear-sort` |
+| `column-resize-by-content` |
+| `divider-1`, `divider-2`, `divider-3` |
+| `hide-column` |
+| `pin-column` |
+| `pin-columns-left` |
+| `pin-columns-right` |
+| `pin-left` |
+| `pin-right` |
+| `pinning-commands` |
+| `sort-asc` |
+| `sort-commands` |
+| `sort-desc` |
+| `unpin-column` |
+| `unpin-columns` |
+
 ## Customization
 ### Custom Commands
-The Header Menu also comes, by default, with a list of built-in custom commands (all their `positionOrder` are in the reserved range of 40 to 60)
-- Sort Ascending (you can hide it with `hideSortCommands: true`)
-- Sort Descending (you can hide it with `hideSortCommands: true`)
-- Hide Column (you can hide it with `hideColumnHideCommand: true`)
+The Header Menu also comes, by default, with a list of built-in custom commands (use `commandListBuilder` to reorder these commands)
+- Sort Ascending/Descending and Remove Sort (hide them individually with `'sort-asc'`, `'sort-desc'`, `'clear-sort'` or all at once with `hideCommands: ['sort-commands']`)
+- Pinning Commands root menu (enabled by default; hide it with `hideCommands: ['pinning-commands']`)
+- Hide Column (you can hide it with `hideCommands: ['hide-column']`)
 
 This section is called Custom Commands because you can also customize this section with your own commands. You can do this in two ways: using static command items or using a dynamic command list builder.
 
@@ -72,12 +97,12 @@ this.columns = [
             ...builtInItems,
             'divider',
             {
-              command: 'freeze-column',
-              title: 'Freeze Column',
+              command: 'custom-pin-column',
+              title: 'Pin Column',
               iconCssClass: 'mdi mdi-pin',
               action: (e, args) => {
-                // Implement column freezing
-                console.log('Freeze column:', args.column.name);
+                // Implement column pinning
+                console.log('Pin column:', args.column.name);
               }
             }
           ];
@@ -94,7 +119,7 @@ header: {
   menu: {
     commandListBuilder: (builtInItems) => {
       const column = this; // column context
-      
+
       // Add filtering option only for filterable columns
       const extraCommands = [];
       if (column.filterable !== false) {
@@ -107,7 +132,7 @@ header: {
           }
         });
       }
-      
+
       return [...builtInItems, ...extraCommands];
     }
   }
@@ -120,11 +145,11 @@ header: {
   menu: {
     commandListBuilder: (builtInItems) => {
       // Filter out sort commands
-      const filtered = builtInItems.filter(item => 
-        item !== 'divider' && 
+      const filtered = builtInItems.filter(item =>
+        item !== 'divider' &&
         !item.command?.includes('sort')
       );
-      
+
       // Add custom commands
       return [
         ...filtered,
@@ -164,12 +189,12 @@ See [Custom Menu Slots](../menu-slots.md) for detailed examples and best practic
 You can change any of the default command icon(s) by changing the `icon[X-command]`, for example, see below for the defaults.
 ```ts
 this.gridOptions = {
-   enableHeaderMenu: true,
-   headerMenu: {
-     iconColumnHideCommand: 'mdi mdi-close'
-     iconSortAscCommand: 'mdi mdi-sort-ascending'
-     iconSortDescCommand: 'mdi mdi-sort-descending',
-   },
+  enableHeaderMenu: true,
+  headerMenu: {
+    iconColumnHideCommand: 'mdi mdi-close'
+    iconSortAscCommand: 'mdi mdi-arrow-up',
+    iconSortDescCommand: 'mdi mdi-arrow-down',
+  },
 };
 ```
 ### How to Disable the Header Menu?
@@ -205,7 +230,7 @@ this.columns.forEach(col => {
         'divider',
         {
           // we can also have multiple nested sub-menus
-          command: 'custom-actions', title: 'Hello', positionOrder: 99,
+          command: 'custom-actions', title: 'Hello',
           commandItems: [
             { command: 'hello-world', title: 'Hello World' },
             { command: 'hello-slickgrid', title: 'Hello SlickGrid' },

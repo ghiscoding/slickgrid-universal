@@ -64,7 +64,7 @@ export class Example47Component implements OnDestroy, OnInit {
     return this.angularGrid.extensions.rowDetailView?.instance || {};
 
     // OR option 2
-    // return this.angularGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) || {};
+    // return this.angularGrid?.extensionService.getExtensionInstanceByName('rowDetailView') || {};
   }
 
   ngOnInit(): void {
@@ -176,7 +176,6 @@ export class Example47Component implements OnDestroy, OnInit {
       enableFiltering: true,
       enableGrouping: true,
       enableRowDetailView: true,
-      rowTopOffsetRenderType: 'top', // Intentional legacy Row Detail compatibility coverage; overlay mode supports "transform"
       darkMode: this._darkMode,
       externalResources: [AngularRowDetailView],
       rowDetailView: {

@@ -72,6 +72,7 @@ const Example16: React.FC = () => {
         container: '#demo-container',
         rightPadding: 10,
       },
+      enableSorting: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
       checkboxSelector: {

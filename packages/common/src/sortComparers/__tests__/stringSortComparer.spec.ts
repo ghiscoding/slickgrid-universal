@@ -4,6 +4,12 @@ import type { Column, GridOption } from '../../interfaces/index.js';
 import { stringSortComparer } from '../stringSortComparer.js';
 
 describe('the String SortComparer', () => {
+  it('treats accent-equivalent values as equal in both directions', () => {
+    const options = { ignoreAccentOnStringFilterAndSort: true };
+    expect(stringSortComparer('é', 'e', 1, undefined, options)).toBe(0);
+    expect(stringSortComparer('e', 'é', 1, undefined, options)).toBe(0);
+  });
+
   it('should return original unsorted array when no direction is provided', () => {
     const direction = null as any;
     const inputArray = ['amazon', 'zebra', 'amazon', 'John', 'Abe', 'abc'];

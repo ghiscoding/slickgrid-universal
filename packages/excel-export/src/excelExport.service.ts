@@ -4,6 +4,8 @@ import type {
   ContainerService,
   ExcelExportOption,
   ExcelGroupValueParserArgs,
+  ExportCellReader,
+  ExportTranslateFn,
   ExternalResource,
   FileType,
   FormulaProvider,
@@ -20,20 +22,18 @@ import type {
 } from '@slickgrid-universal/common';
 import {
   Constants,
-  exportWithFormatterWhenDefined,
+  createExportCellReader,
   getColumnFieldType,
-  getTranslationPrefix,
+  getExportColumnGroupedHeaderTitles,
+  getExportColumnHeaders,
+  getExportGroupByTitle,
+  getExportTranslateFn,
+  getGroupTotalsOutput,
+  hasExportPreHeader,
   isColumnDateType,
+  isColumnExported,
 } from '@slickgrid-universal/common';
-import {
-  addWhiteSpaces,
-  createDomElement,
-  extend,
-  getHtmlStringOutput,
-  htmlDecode,
-  stripTags,
-  titleCase,
-} from '@slickgrid-universal/utils';
+import { addWhiteSpaces, createDomElement, extend, htmlDecode, isEmptyObject, stripTags } from '@slickgrid-universal/utils';
 import {
   createExcelFileStream,
   createWorkbook,
@@ -51,12 +51,16 @@ interface WorkbookWithFormulas {
   addDefinedName?: (name: string, refersTo: string, scope?: number | string) => void;
 }
 
+interface RegularCellExcelFormat {
+  excelFormatId?: number;
+  getDataValueParser: GetDataValueCallback;
+}
+
 interface ExcelColumnExportCache {
-  autoDetectCellFormat?: boolean;
+  cellStyleFormat?: RegularCellExcelFormat;
   exportOptions: ExcelExportOption;
-  fieldProperty: string;
-  hasComplexSpanning: boolean;
-  requiresFormatter: boolean;
+  /** formatted cell reader (formatter output or raw value) */
+  readCell: ExportCellReader;
   sanitizeDataExport: boolean;
 }
 
@@ -91,9 +95,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected _formulaRowIds: Array<number | string> = [];
 
   // references of each detected cell and/or group total formats
-  protected _regularCellExcelFormats: {
-    [fieldId: string]: { excelFormatId?: number; getDataValueParser: GetDataValueCallback };
-  } = Object.create(null);
+  protected _regularCellExcelFormats: { [fieldId: string]: RegularCellExcelFormat } = Object.create(null);
   protected _groupTotalExcelFormats: {
     [fieldId: string]: { groupType: string; excelFormat?: ExcelFormatter; getGroupTotalParser?: GetGroupTotalValueCallback };
   } = Object.create(null);
@@ -112,6 +114,11 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   protected get _shouldExportVariableRowHeights(): boolean {
     return !!(this._gridOptions.enableVariableRowHeight && this._excelExportOptions.includeVariableRowHeight !== false);
+  }
+
+  /** translate function, only defined when translation is enabled */
+  protected get _translate(): ExportTranslateFn {
+    return getExportTranslateFn(this._gridOptions, this._translaterService);
   }
 
   get stylesheet(): StyleSheet {
@@ -246,7 +253,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
       if (this._fileFormat === 'xlsx' && useStreamingExport) {
         try {
-          const stream = createExcelFileStream(this._workbook, { chunkSize: 1000 });
+          const stream = createExcelFileStream(this._workbook);
           const chunks: Uint8Array[] = [];
           for await (const chunk of stream as AsyncIterable<Uint8Array>) {
             chunks.push(chunk);
@@ -307,7 +314,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /** get columns might include hidden columns when `includeHidden` is enabled */
   protected getColumns(): Column[] {
-    return (this._excelExportOptions?.includeHidden ? this._grid?.getColumns() : this._grid.getVisibleColumns()) || [];
+    const includeHidden = !!this._excelExportOptions?.includeHidden;
+    return this._grid?.getColumnsInRenderedOrder(includeHidden) ?? [];
   }
 
   /**
@@ -334,11 +342,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     }
 
     // get all Grouped Column Header Titles when defined (from pre-header row)
-    if (
-      this._gridOptions.createPreHeaderPanel &&
-      this._gridOptions.showPreHeaderPanel &&
-      (!this._gridOptions.enableDraggableGrouping || (this._gridOptions.enableDraggableGrouping && this._gridOptions.createTopHeaderPanel))
-    ) {
+    if (hasExportPreHeader(this._gridOptions)) {
       // when having Grouped Header Titles (in the pre-header), then make the cell Bold & Aligned Center
       const boldCenterAlign = this._stylesheet.createFormat({ alignment: { horizontal: 'center' }, font: { bold: true } });
       outputData.push(this.getColumnGroupedHeaderTitlesData(columns, { style: boldCenterAlign?.id }));
@@ -368,19 +372,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       });
     }
 
-    columns.forEach((columnDef: Column) => {
-      const skippedField = columnDef.excludeFromExport ?? false;
-      // if column width is 0, then we consider that field as a hidden field and should not be part of the export
-      if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
-        const width =
-          columnDef.excelExportOptions?.width ??
-          (includeColumnWidth && typeof columnDef.width === 'number' ? this.convertPixelToExcelWidth(columnDef.width) : undefined);
+    columns.filter(isColumnExported).forEach((columnDef: Column) => {
+      const width =
+        columnDef.excelExportOptions?.width ??
+        (includeColumnWidth && typeof columnDef.width === 'number' ? this.convertPixelToExcelWidth(columnDef.width) : undefined);
 
-        columnStyles.push({
-          bestFit: true,
-          width: width ?? defaultColumnWidth,
-        });
-      }
+      columnStyles.push({
+        bestFit: true,
+        width: width ?? defaultColumnWidth,
+      });
     });
     return columnStyles;
   }
@@ -470,23 +470,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   protected getGroupColumnTitle(): string | null {
-    // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
-    let groupByColumnHeader = this._excelExportOptions?.groupingColumnHeaderTitle ?? '';
-    if (!groupByColumnHeader && this._gridOptions.enableTranslate && this._translaterService?.translate) {
-      groupByColumnHeader = this._translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
-    } else if (!groupByColumnHeader) {
-      groupByColumnHeader = this._locales?.TEXT_GROUP_BY;
-    }
-
     // get grouped column titles and if found, we will add a "Group by" column at the first column index
-    // if it's a CSV format, we'll escape the text in double quotes
     const grouping = this._dataView.getGrouping();
-    if (Array.isArray(grouping) && grouping.length > 0) {
-      this._hasGroupedItems = true;
-      return groupByColumnHeader;
-    }
-    this._hasGroupedItems = false;
-    return null;
+    this._hasGroupedItems = Array.isArray(grouping) && grouping.length > 0;
+    return this._hasGroupedItems
+      ? getExportGroupByTitle(this._excelExportOptions?.groupingColumnHeaderTitle, this._gridOptions, this._translate, this._locales)
+      : null;
   }
 
   /**
@@ -494,28 +483,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param {Array<object>} columns of the grid
    */
   protected getColumnGroupedHeaderTitles(columns: Column[]): Array<KeyTitlePair> {
-    const groupedColumnHeaders: Array<KeyTitlePair> = [];
-
-    if (Array.isArray(columns)) {
-      // Populate the Grouped Column Header, pull the columnGroup(Key) defined
-      columns.forEach((columnDef) => {
-        const groupedHeaderTitle =
-          columnDef.columnGroupKey && this._gridOptions.enableTranslate && this._translaterService?.translate
-            ? this._translaterService.translate(columnDef.columnGroupKey)
-            : columnDef.columnGroup || '';
-
-        const skippedField = columnDef.excludeFromExport || false;
-
-        // if column width is 0px, then we consider that field as a hidden field and should not be part of the export
-        if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
-          groupedColumnHeaders.push({
-            key: String(columnDef.field || columnDef.id),
-            title: groupedHeaderTitle || '',
-          });
-        }
-      });
-    }
-    return groupedColumnHeaders;
+    return getExportColumnGroupedHeaderTitles(columns, this._translate);
   }
 
   /**
@@ -523,29 +491,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param {Array<object>} columns of the grid
    */
   protected getColumnHeaders(columns: Column[]): Array<KeyTitlePair> | null {
-    const columnHeaders: Array<KeyTitlePair> = [];
-
-    if (Array.isArray(columns)) {
-      // Populate the Column Header, pull the name defined
-      columns.forEach((columnDef) => {
-        let headerTitle = '';
-        if (columnDef.nameKey && this._gridOptions.enableTranslate && this._translaterService?.translate) {
-          headerTitle = this._translaterService.translate(columnDef.nameKey);
-        } else {
-          headerTitle = getHtmlStringOutput(columnDef.name || '', 'innerHTML') || titleCase(columnDef.field);
-        }
-        const skippedField = columnDef.excludeFromExport || false;
-
-        // if column width is 0, then we consider that field as a hidden field and should not be part of the export
-        if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
-          columnHeaders.push({
-            key: String(columnDef.field || columnDef.id),
-            title: headerTitle,
-          });
-        }
-      });
-    }
-    return columnHeaders;
+    return getExportColumnHeaders(columns, this._translate);
   }
 
   /**
@@ -561,6 +507,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     const dataView = this._dataView;
     const lineCount = dataView.getLength();
     const cachedColumnMetadata = columnMetadataCache ?? this.preCalculateColumnMetadata(columns);
+    const datasetIdPropName = this._datasetIdPropName;
 
     // Yield periodically based on dataset size
     const YIELD_FREQUENCY = lineCount < 1000 ? 0 : lineCount < 10000 ? 1000 : 500;
@@ -578,9 +525,11 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       // this happen could happen with an opened Row Detail as it seems to include an empty Slick DataView (we'll just skip those lines)
       if (itemObj && !itemObj.hasOwnProperty('getItem')) {
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
-        if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
-          // Read a regular row
-          originalDaraArray.push(this.readRegularRowData(columns, rowNumber, itemObj, rowNumber, cachedColumnMetadata));
+        if (itemObj[datasetIdPropName] !== null && itemObj[datasetIdPropName] !== undefined) {
+          // Read a regular row, its Excel row number comes after all the rows already exported (including header rows)
+          originalDaraArray.push(
+            this.readRegularRowData(columns, rowNumber, itemObj, rowNumber, cachedColumnMetadata, originalDaraArray.length + 1)
+          );
           rowWasExported = true;
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {
           // get the group row
@@ -609,41 +558,19 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   /** OPTIMIZATION: Pre-calculate column metadata to avoid repeated calculations */
   protected preCalculateColumnMetadata(columns: Column[]): Map<string, ExcelColumnExportCache> {
     const cache = new Map<string, ExcelColumnExportCache>();
-    const hasComplexSpanning = this._gridOptions.enableCellRowSpan || columns.some((col) => col.colspan || col.rowspan);
 
     for (const columnDef of columns) {
       if (!columnDef.excludeFromExport) {
-        const fieldType = getColumnFieldType(columnDef);
-        const exportOptions = { ...this._excelExportOptions };
-        const hasColumnExportWithFormatter = columnDef?.hasOwnProperty('exportWithFormatter');
-
-        // Pre-calculate date formatting logic
-        if (columnDef.exportWithFormatter !== false && isColumnDateType(fieldType)) {
+        // date columns are exported with their formatter unless it's explicitly disabled on the column,
+        // sanitization is skipped by the cell reader since it's done later in the excel export flow
+        const exportOptions = { ...this._excelExportOptions, sanitizeDataExport: false };
+        if (columnDef.exportWithFormatter !== false && isColumnDateType(getColumnFieldType(columnDef))) {
           exportOptions.exportWithFormatter = true;
         }
 
-        const hasGridExportWithFormatter = exportOptions?.hasOwnProperty('exportWithFormatter');
-        const isEvaluatingFormatter = hasColumnExportWithFormatter
-          ? !!columnDef.exportWithFormatter
-          : hasGridExportWithFormatter
-            ? !!exportOptions.exportWithFormatter
-            : false;
-
-        // exportWithFormatterWhenDefined can sanitize as well, but we already sanitize later in excel export flow.
-        exportOptions.sanitizeDataExport = false;
-
-        let fieldProperty = String(columnDef.field || columnDef.id);
-        if (typeof columnDef.field === 'string' && columnDef.field.indexOf('.') > 0) {
-          const props = columnDef.field.split('.');
-          fieldProperty = props.length > 0 ? props[0] : columnDef.field;
-        }
-
         cache.set(String(columnDef.id), {
-          autoDetectCellFormat: columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat,
           exportOptions,
-          fieldProperty,
-          hasComplexSpanning,
-          requiresFormatter: !!(columnDef.exportCustomFormatter || (isEvaluatingFormatter && columnDef.formatter)),
+          readCell: createExportCellReader(columnDef, this._grid, exportOptions, true),
           sanitizeDataExport: !!(columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport),
         });
       }
@@ -660,18 +587,26 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       }
 
       const columnId = String(columnDef.id);
-      if (this._regularCellExcelFormats[columnId]) {
-        continue;
+      if (!this._regularCellExcelFormats[columnId]) {
+        const cellStyleFormat = this.getRegularCellExcelFormat(columnDef);
+        const columnMetadata = columnMetadataCache.get(columnId);
+        if (columnMetadata) {
+          columnMetadata.cellStyleFormat = cellStyleFormat;
+        }
       }
+    }
+  }
 
-      const autoDetectCellFormat = columnMetadataCache.get(columnId)?.autoDetectCellFormat;
-      const cellStyleFormat = useCellFormatByFieldType(
-        this._stylesheet,
-        this._stylesheetFormats,
-        columnDef,
-        this._grid,
-        autoDetectCellFormat
-      );
+  /**
+   * Get the Excel format & value parser of a regular cell, auto-detected from the column (unless the user provides his own)
+   * and cached by column id, so the detection is only done once per column
+   */
+  protected getRegularCellExcelFormat(columnDef: Column): RegularCellExcelFormat {
+    const columnId = String(columnDef.id);
+    let cellStyleFormat = this._regularCellExcelFormats[columnId];
+    if (!cellStyleFormat) {
+      const autoDetectCellFormat = columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
+      cellStyleFormat = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, columnDef, this._grid, autoDetectCellFormat);
 
       // user could also override style and/or valueParserCallback
       if (columnDef.excelExportOptions?.style) {
@@ -680,16 +615,16 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       if (columnDef.excelExportOptions?.valueParserCallback) {
         cellStyleFormat.getDataValueParser = columnDef.excelExportOptions.valueParserCallback;
       }
-
       this._regularCellExcelFormats[columnId] = cellStyleFormat;
     }
+    return cellStyleFormat;
   }
 
   /** Fast path for non-formatter columns, mirrors raw-value behavior from formatter utilities. */
   protected getRawCellValue(itemObj: any, fieldProperty: string): string | number | Date {
     let output = itemObj?.hasOwnProperty(fieldProperty) ? itemObj[fieldProperty] : '';
 
-    if (output == null || (typeof output === 'object' && !(output instanceof Date) && Object.keys(output).length === 0)) {
+    if (output == null || (typeof output === 'object' && !(output instanceof Date) && isEmptyObject(output))) {
       output = '';
     }
 
@@ -730,38 +665,46 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param {Array<Object>} columns - column definitions
    * @param {Number} row - row index
    * @param {Object} itemObj - item datacontext object
+   * @param {Number} dataRowIdx - data row index
+   * @param {Map} [columnMetadataCache] - pre-calculated metadata of every column
+   * @param {Number} [excelRowNumber] - Excel row number of this row (used by cell merges), defaults to the grid row + header row(s)
    */
   protected readRegularRowData(
     columns: Column[],
     row: number,
     itemObj: any,
     dataRowIdx: number,
-    columnMetadataCache?: Map<string, ExcelColumnExportCache>
+    columnMetadataCache?: Map<string, ExcelColumnExportCache>,
+    excelRowNumber?: number
   ): string[] {
     const cachedColumnMetadata = columnMetadataCache ?? this.preCalculateColumnMetadata(columns);
-    let idx = 0;
+    const gridOptions = this._gridOptions;
     const rowOutputStrings = [];
     const columnsLn = columns.length;
     let prevColspan: number | string = 1;
-    let colspanStartIndex = 0;
+    let colspanStartExcelCol = 1;
+    // cell merges use the Excel row & column positions, Excel rows start at 2 (or at 3 when there's a pre-header row)
+    // and the 1st Excel column is used by the grouping text when grouping:: Group by [columnX]
+    const excelRow = excelRowNumber ?? row + (this._hasColumnTitlePreHeader ? 3 : 2);
+    let excelCol = this._hasGroupedItems ? 1 : 0;
     const itemMetadata = this._dataView.getItemMetadata(row);
+
+    if (this._hasGroupedItems) {
+      rowOutputStrings.push('');
+    }
 
     for (let col = 0; col < columnsLn; col++) {
       const columnDef = columns[col];
 
-      // skip excluded column
-      if (columnDef.excludeFromExport) {
+      // skip excluded column, a column with a width of 0 is also considered hidden and isn't exported (same as its header)
+      if (!isColumnExported(columnDef)) {
         continue;
       }
-
-      // if we are grouping and are on 1st column index, we need to skip this column since it will be used later by the grouping text:: Group by [columnX]
-      if (this._hasGroupedItems && idx === 0) {
-        rowOutputStrings.push('');
-      }
+      excelCol++;
 
       // when using rowspan
       let rowspan = 1;
-      if (this._gridOptions.enableCellRowSpan) {
+      if (gridOptions.enableCellRowSpan) {
         const prs = this._grid.getParentRowSpanByCell(row, col, false);
         if (prs) {
           if (prs.start === row) {
@@ -780,16 +723,18 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       if (itemMetadata?.columns) {
         const metadata = itemMetadata.columns;
         const columnData = metadata[columnDef.id] || metadata[col];
-        if (!((!isNaN(prevColspan as number) && +prevColspan > 1) || (prevColspan === '*' && col > 0))) {
+        if (!((!isNaN(prevColspan as number) && +prevColspan > 1) || prevColspan === '*')) {
           prevColspan = columnData?.colspan ?? 1;
+          colspanStartExcelCol = excelCol;
         }
         if (prevColspan === '*') {
-          colspan = columns.length - col;
+          // number of exported columns left to span, including the current one
+          colspan = columns.slice(col).filter(isColumnExported).length;
         } else {
           colspan = prevColspan as number;
           if (columnDef.id in metadata || col in metadata) {
             colspanColumnId = columnDef.id;
-            colspanStartIndex = col;
+            colspanStartExcelCol = excelCol;
           }
         }
       }
@@ -797,28 +742,23 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       // when using grid with rowspan without any colspan, we will merge some cells on single column
       if (rowspan > 1 && !isNaN(prevColspan as number) && +prevColspan === 1 && columnDef.id === colspanColumnId) {
         // -- Merge Data RowSpan only
-        const excelRowNumber = row + this.getExcelDataStartRowOffset();
-        const leftExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
-        const rightExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
-        this._sheet.mergeCells(`${leftExcelColumnChar}${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber + rowspan - 1}`);
+        const excelColumnChar = this.getExcelColumnNameByIndex(excelCol);
+        this._sheet.mergeCells(`${excelColumnChar}${excelRow}`, `${excelColumnChar}${excelRow + rowspan - 1}`);
       }
 
       // when using grid with colspan, we will merge some cells together
-      if ((prevColspan === '*' && col > 0) || (!isNaN(prevColspan as number) && +prevColspan > 1 && columnDef.id !== colspanColumnId)) {
+      if (
+        (prevColspan === '*' && excelCol > colspanStartExcelCol) ||
+        (!isNaN(prevColspan as number) && +prevColspan > 1 && columnDef.id !== colspanColumnId)
+      ) {
         // -- Merge Data, ColSpan and maybe RowSpan
-        const excelRowNumber = row + this.getExcelDataStartRowOffset();
-
-        if (typeof prevColspan === 'number' && colspan - 1 === 1) {
-          // partial column span
-          const leftExcelColumnChar = this.getExcelColumnNameByIndex(colspanStartIndex + 1);
-          const rightExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
-          this._sheet.mergeCells(`${leftExcelColumnChar}${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber + rowspan - 1}`);
-          rowOutputStrings.push(''); // clear cell that won't be shown by a cell merge
-        } else if (prevColspan === '*' && colspan === 1) {
-          // full column span (from A1 until the last column)
-          const rightExcelColumnChar = this.getExcelColumnNameByIndex(col + 1);
-          this._sheet.mergeCells(`A${excelRowNumber}`, `${rightExcelColumnChar}${excelRowNumber + rowspan - 1}`);
-        } else {
+        if (colspan === 1 || (typeof prevColspan === 'number' && colspan - 1 === 1)) {
+          // merge the cells from the colspan start until the current (last spanned) column, partial span or full span (*)
+          const leftExcelColumnChar = this.getExcelColumnNameByIndex(colspanStartExcelCol);
+          const rightExcelColumnChar = this.getExcelColumnNameByIndex(excelCol);
+          this._sheet.mergeCells(`${leftExcelColumnChar}${excelRow}`, `${rightExcelColumnChar}${excelRow + rowspan - 1}`);
+        }
+        if (prevColspan !== '*' || colspan > 1) {
           rowOutputStrings.push(''); // clear cell that won't be shown by a cell merge
         }
 
@@ -835,47 +775,19 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         // user might want to export with Formatter, and/or auto-detect Excel format, and/or export as regular cell data
 
         // Try cache first if enabled; on miss (or when cache is disabled), use the existing formatter/raw path.
-        if (this._gridOptions.enableFormattedDataCache) {
-          itemData = this._dataView.getFormattedCellValue(dataRowIdx, columnId, undefined);
+        if (gridOptions.enableFormattedDataCache) {
+          itemData = this._dataView.getFormattedCellValue(dataRowIdx, columnId, undefined, itemObj);
         }
 
         if (itemData === undefined) {
-          if (columnCachedData?.requiresFormatter) {
-            itemData = exportWithFormatterWhenDefined(
-              row,
-              col,
-              columnDef,
-              itemObj,
-              this._grid,
-              columnCachedData.exportOptions ?? columnDef.excelExportOptions ?? this._excelExportOptions,
-              true
-            );
-          } else {
-            const fieldProperty = columnCachedData?.fieldProperty ?? String(columnDef.field || columnDef.id);
-            itemData = this.getRawCellValue(itemObj, fieldProperty);
-          }
+          itemData = columnCachedData
+            ? columnCachedData.readCell(row, col, itemObj)
+            : this.getRawCellValue(itemObj, String(columnDef.field || columnDef.id));
         }
 
         // auto-detect best possible Excel format, unless the user provide his own formatting,
         // we only do this check once per column (everything after that will be pull from temp ref)
-        if (!this._regularCellExcelFormats[columnId]) {
-          const autoDetectCellFormat = columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
-          const cellStyleFormat = useCellFormatByFieldType(
-            this._stylesheet,
-            this._stylesheetFormats,
-            columnDef,
-            this._grid,
-            autoDetectCellFormat
-          );
-          // user could also override style and/or valueParserCallback
-          if (columnDef.excelExportOptions?.style) {
-            cellStyleFormat.excelFormatId = this._stylesheet.createFormat(columnDef.excelExportOptions.style).id;
-          }
-          if (columnDef.excelExportOptions?.valueParserCallback) {
-            cellStyleFormat.getDataValueParser = columnDef.excelExportOptions.valueParserCallback;
-          }
-          this._regularCellExcelFormats[columnId] = cellStyleFormat;
-        }
+        const cellStyleFormat = columnCachedData?.cellStyleFormat ?? this.getRegularCellExcelFormat(columnDef);
 
         // sanitize early, when enabled, any HTML tags (remove HTML tags)
         if (typeof itemData === 'string') {
@@ -887,7 +799,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           }
         }
 
-        const { excelFormatId, getDataValueParser } = this._regularCellExcelFormats[columnId];
+        const { excelFormatId, getDataValueParser } = cellStyleFormat;
         const formulaValue = this.getCellFormulaForExcel(itemObj, columnDef, dataRowIdx);
         if (formulaValue !== undefined) {
           rowOutputStrings.push({ value: formulaValue, metadata: { type: 'formula', style: excelFormatId } });
@@ -896,14 +808,13 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
             columnDef,
             excelFormatId,
             stylesheet: this._stylesheet,
-            gridOptions: this._gridOptions,
+            gridOptions,
             dataRowIdx,
             dataContext: itemObj,
           }) as Date | number | string | ExcelColumnMetadata;
 
           rowOutputStrings.push(parsedItemData);
         }
-        idx++;
       }
     }
 
@@ -1057,21 +968,17 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     const groupingAggregatorRowText = this._excelExportOptions.groupingAggregatorRowText || '';
     const outputStrings: Array<ExcelColumnMetadata | string | number> = [groupingAggregatorRowText];
 
-    columns.forEach((columnDef) => {
-      let itemData: number | string | ExcelColumnMetadata = '';
-      const fieldType = getColumnFieldType(columnDef);
-      const skippedField = columnDef.excludeFromExport || false;
-
+    // add every exported column (unless user wants to skip it)
+    columns.filter(isColumnExported).forEach((columnDef) => {
       // if there's a exportCustomGroupTotalsFormatter or groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI
-      if (columnDef.exportCustomGroupTotalsFormatter) {
-        const totalResult = columnDef.exportCustomGroupTotalsFormatter(itemObj, columnDef, this._grid);
-        itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
-      }
+      let itemData: number | string | ExcelColumnMetadata = columnDef.exportCustomGroupTotalsFormatter
+        ? getGroupTotalsOutput(columnDef.exportCustomGroupTotalsFormatter(itemObj, columnDef, this._grid))
+        : '';
 
       // auto-detect best possible Excel format for Group Totals, unless the user provide his own formatting,
       // we only do this check once per column (everything after that will be pull from temp ref)
       const autoDetectCellFormat = columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
-      if (fieldType === 'number' && autoDetectCellFormat !== false) {
+      if (getColumnFieldType(columnDef) === 'number' && autoDetectCellFormat !== false) {
         let groupCellFormat = this._groupTotalExcelFormats[columnDef.id];
         if (!groupCellFormat?.groupType) {
           groupCellFormat = getExcelFormatFromGridFormatter(this._stylesheet, this._stylesheetFormats, columnDef, this._grid, 'group');
@@ -1093,11 +1000,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           itemData =
             typeof groupData === 'object' && groupData.hasOwnProperty('metadata')
               ? groupData
-              : (itemData = { value: groupData, metadata: { style: groupCellFormat.excelFormat?.id } });
+              : { value: groupData, metadata: { style: groupCellFormat.excelFormat?.id } };
         }
       } else if (columnDef.groupTotalsFormatter) {
-        const totalResult = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
-        itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
+        itemData = getGroupTotalsOutput(columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid));
       }
 
       // does the user want to sanitize the output data (remove HTML tags)?
@@ -1109,11 +1015,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           itemData = htmlDecode(itemData);
         }
       }
-
-      // add the column (unless user wants to skip it)
-      if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
-        outputStrings.push(itemData);
-      }
+      outputStrings.push(itemData);
     });
 
     return outputStrings;

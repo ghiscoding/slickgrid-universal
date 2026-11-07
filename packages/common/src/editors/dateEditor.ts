@@ -1,6 +1,6 @@
 import { parse } from '@formkit/tempo';
-import { createDomElement, emptyElement, extend, queueMicrotaskPolyfill, setDeepValue } from '@slickgrid-universal/utils';
-import { Calendar, type FormatDateString, type Options } from 'vanilla-calendar-pro';
+import { createDomElement, emptyElement, extend, setDeepValue } from '@slickgrid-universal/utils';
+import { Calendar, time, type FormatDateString, type Options } from 'vanilla-calendar-pro';
 import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 import type { TranslaterService } from '../services/translater.service.js';
@@ -76,6 +76,7 @@ export class DateEditor extends BaseEditorClass implements Editor {
       const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? 'dateTimeIsoAM_PM' : 'dateIso');
 
       const pickerOptions: Options = {
+        extensions: [time],
         inputMode: true,
         enableJumpToSelectedDate: true,
         firstWeekday: 0,
@@ -168,7 +169,7 @@ export class DateEditor extends BaseEditorClass implements Editor {
         }
       }) as EventListener);
 
-      queueMicrotaskPolyfill(() => {
+      queueMicrotask(() => {
         this.calendarInstance = new Calendar(this._inputElm, this._pickerMergedOptions);
         this.calendarInstance.init();
         if (!this.args.isCompositeEditor) {
@@ -189,9 +190,11 @@ export class DateEditor extends BaseEditorClass implements Editor {
 
   destroy(): void {
     clearTimeout(this._timer);
-    queueMicrotaskPolyfill(() => {
-      this.hide();
-      this.calendarInstance?.destroy();
+    queueMicrotask(() => {
+      if (this.calendarInstance && !this.calendarInstance.context.isDestroyed) {
+        this.hide();
+        this.calendarInstance.destroy();
+      }
       emptyElement(this._editorInputGroupElm);
       emptyElement(this._inputElm);
       this._editorInputGroupElm?.remove();
@@ -239,7 +242,10 @@ export class DateEditor extends BaseEditorClass implements Editor {
     this.columnEditor.options ??= {};
     this.columnEditor.options[optionName] = newValue;
     this._pickerMergedOptions = extend(true, {}, this._pickerMergedOptions, { [optionName]: newValue });
-    this.calendarInstance?.set(this._pickerMergedOptions, { dates: true, locale: true, month: true, time: true, year: true });
+    // extensions are fixed at construction and cannot be passed to `.set()`
+    const pickerOptionsToSet = { ...this._pickerMergedOptions };
+    delete pickerOptionsToSet.extensions;
+    this.calendarInstance?.set(pickerOptionsToSet, { dates: true, locale: true, month: true, time: true, year: true });
   }
 
   focus(): void {

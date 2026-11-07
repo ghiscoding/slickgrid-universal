@@ -12,7 +12,7 @@ import {
   type GridOption,
   type Grouping,
 } from '@slickgrid-universal/common';
-import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import { SlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import { showToast } from './utilities.js';
@@ -196,7 +196,6 @@ export default class Example36 {
         return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
       rowHeight: 33,
-      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       rowDetailView: {
         columnIndexPosition: 1,
         preTemplate: this.loadingTemplate.bind(this),

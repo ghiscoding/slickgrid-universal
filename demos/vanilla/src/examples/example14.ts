@@ -104,6 +104,7 @@ export default class Example14 {
     { value: 3, label: 'Complex' },
     { value: 4, label: 'Very Complex' },
   ];
+  subTitleStyle = 'display: block';
 
   get slickerGridInstance() {
     return this.sgb?.instances;
@@ -153,8 +154,6 @@ export default class Example14 {
         cssClass: 'text-bold text-uppercase',
         // you can adjust the resize calculation via multiple options
         resizeExtraWidthPadding: 4,
-        resizeCharWidthInPx: 7.6,
-        resizeCalcWidthRatio: 1, // default ratio is ~0.9 for string but since our text is all uppercase then a higher ratio is needed
         resizeMaxWidthThreshold: 200,
         filterable: true,
         columnGroup: 'Common Factor',
@@ -282,7 +281,6 @@ export default class Example14 {
         id: 'complexity',
         name: 'Complexity',
         field: 'complexity',
-        resizeCalcWidthRatio: 0.82, // default calc ratio is 1 or 0.95 for field type of string
         sortable: true,
         filterable: true,
         columnGroup: 'Analysis',
@@ -368,7 +366,6 @@ export default class Example14 {
         filterable: true,
         columnGroup: 'Item',
         minWidth: 100,
-        // resizeCalcWidthRatio: 1.01,
         resizeMaxWidthThreshold: 185,
         // resizeExtraWidthPadding: 1,
         exportWithFormatter: true,
@@ -456,14 +453,12 @@ export default class Example14 {
               command: 'help',
               title: 'Help!',
               iconCssClass: 'mdi mdi-help-circle',
-              positionOrder: 66,
               action: () => alert('Please Help!'),
             },
             'divider',
             {
               command: 'delete-row',
               title: 'Delete Row',
-              positionOrder: 64,
               iconCssClass: 'mdi mdi-close color-danger',
               cssClass: 'red',
               textCssClass: 'text-italic color-danger-light',
@@ -488,12 +483,11 @@ export default class Example14 {
       col.header = {
         menu: {
           commandItems: [
-            { command: '', divider: true, positionOrder: 98 },
+            { command: '', divider: true },
             {
               // we can also have multiple nested sub-menus
               command: 'custom-actions',
               title: 'Hello',
-              positionOrder: 99,
               commandItems: [
                 { command: 'hello-world', title: 'Hello World' },
                 { command: 'hello-slickgrid', title: 'Hello SlickGrid' },
@@ -515,7 +509,6 @@ export default class Example14 {
             {
               command: 'feedback',
               title: 'Feedback',
-              positionOrder: 100,
               commandItems: [
                 {
                   command: 'request-update',
@@ -790,8 +783,8 @@ export default class Example14 {
 
     // then change a single grid options to make the grid non-editable (readonly)
     this.isGridEditable = !this.isGridEditable;
-    this.sgb.gridOptions = { editable: this.isGridEditable };
-    this.gridOptions = this.sgb.gridOptions;
+    this.sgb.options = { editable: this.isGridEditable };
+    this.gridOptions = this.sgb.options;
 
     // we can request a resize of the columns widths by their cell content (we need to pass `true` to request a recalc)
     // also another reason to do it here is because we use an extra editable formatter that has its own padding
@@ -1092,5 +1085,10 @@ export default class Example14 {
           <div class="autocomplete-bottom-left">${item.itemNameTranslated}</div>
           <span class="autocomplete-bottom-right">Type: <b>${item.itemTypeName === 'I' ? 'Item' : item.itemTypeName === 'C' ? 'PdCat' : 'Cat'}</b></span>
         </div>`;
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

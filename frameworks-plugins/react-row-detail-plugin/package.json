@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/react-row-detail-plugin",
-  "version": "10.11.0",
+  "version": "11.0.0-beta.0",
   "description": "React Row Detail Plugin for SlickGrid-React",
   "type": "module",
   "main": "./dist/index.js",
@@ -41,7 +41,7 @@
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
-    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/row-detail-plugin": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:",
     "slickgrid-react": "workspace:*",

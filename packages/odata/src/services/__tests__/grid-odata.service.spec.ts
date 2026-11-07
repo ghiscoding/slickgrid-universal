@@ -90,6 +90,7 @@ describe('GridOdataService', () => {
       service.init(null as any, paginationOptions, gridStub);
 
       expect(spy).toHaveBeenCalled();
+      expect(service.columns).toEqual(columns);
       expect(service.columnDefinitions).toEqual(columns);
     });
   });

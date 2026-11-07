@@ -13,7 +13,7 @@
 - [Max Visible Depth](#max-visible-depth)
 - [Tree Totals with Aggregators](#tree-totals-with-aggregators)
 - [Tree Totals Formatter](#tree-totals-formatter)
-- [Lazy Loading Tree Data](#lazy-loading-tree-data)
+- [Lazy Loading Tree Data (hierarchical only)](#lazy-loading-tree-data-hierarchical-only)
 
 ## Description
 Tree Data allows you to display a hierarchical (tree) dataset into the grid, it is visually very similar to Grouping but also very different in its implementation. A hierarchical dataset is commonly used for a parent/child relation and a great example is a Bill of Material (BOM), which you can't do with Grouping because parent/child relationship could be infinite tree level while Grouping is a defined and known level of Grouping.
@@ -22,12 +22,12 @@ Tree Data allows you to display a hierarchical (tree) dataset into the grid, it 
 
 #### data mutation
 
-For Tree Data to work with SlickGrid we need to **mutate** the original dataset, it will add a couple of new properties to your data, these properties are: `__treeLevel`, `__parentId` and `children` (these key names could be changed via the `treeDataOptions`). Also note that these properties become available in every Formatter (built-in and custom) which can be quite useful (especially in the tree level) in some cases... You might be thinking, could we do it without mutating the data? Probably but that would require to do a deep copy of the original data and that can be expensive on the performance side (no one it stopping you from doing a deep copy on your side though). The last thing to note is that internally for Tree Data to work, the lib always has 2 dataset (1x flat dataset and 1x hierarchical dataset which is basically a tree structure) and the lib keeps them in sync internally. So why do we do all of this? Well simply put, SlickGrid itself does not support a Tree Data structure and that is the reason we always have to keep 2 dataset structures internally because SlickGrid only works a flat dataset and nothing else.
+For Tree Data to work with SlickGrid we need to **mutate** the original dataset, it will add a couple of new properties to your data, these properties are: `__treeLevel`, `__parentId` and `children` (these key names could be changed via the `treeDataOptions`). Also note that these properties become available in every Formatter (built-in and custom) which can be quite useful (especially in the tree level) in some cases... You might be thinking, could we do it without mutating the data? Probably but that would require to do a deep copy of the original data and that can be expensive on the performance side (you could do a deep copy beforehand yourself, but just remember ther performance cost associated). The last thing to note is that internally for this Tree Data to work, the lib always keeps 2 dataset references internally (1x flat dataset and 1x hierarchical dataset which is the tree structure) and the lib always keeps them in sync internally. So why do we do all of this? Well simply put, SlickGrid itself does not support a Tree Data structure and that is the reason we always have to keep 2 dataset structures internally because SlickGrid only works a flat dataset and nothing else.
 
 
 #### Filtering is required by Tree Data
 
-Tree Data requires and uses Filters to work, you **cannot disable Filtering**. The way it works is that when you collapse a parent group, the grid is actually using Filters to filter out child rows and so expanding/collapsing groups which is why Filtering must be enabled. If you don't want to show Filters to the user, then use `showHeaderRow: false` grid option and/or toggle it from the Grid Menu. Also, if you don't want to see the Grid Menu toggle filter command, you should also hide it from the menu via `gridMenu: { hideToggleFilterCommand: true }`
+Tree Data requires and uses Filters to work, you **cannot disable Filtering**. The way it works is that when you collapse a parent group, the grid is actually using Filters to filter out child rows and so expanding/collapsing groups which is why Filtering must be enabled. If you don't want to show Filters to the user, then use `showHeaderRow: false` grid option and/or toggle it from the Grid Menu. Also, if you don't want to see the Grid Menu toggle filter command, you should also hide it from the menu via `gridMenu: { hideCommands: ['toggle-filter'] }`
 
 ### Demo
 [Demo Parent/Child Relationship](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example27) / [ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example27.vue)
@@ -53,6 +53,8 @@ dataset.value = [
 </script>
 ```
 
+Multi-column sorting is supported: sorters are applied in priority order to siblings at each tree level. The `initialSort` option still specifies a single initial column.
+
 _For the full list of options, refer to the [treeDataOptions](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/treeDataOption.interface.ts) interface_
 
 ###### define your grid
@@ -69,7 +71,6 @@ function defineGrid() {
 
   gridOptions.value = {
     enableFiltering: true,  // <<-- REQUIRED, it won't work without filtering enabled
-    multiColumnSort: false, // <<-- REQUIRED to be Disabled since multi-column sorting is not currently supported with Tree Data
 
     treeDataOptions: {
       columnId: 'title',           // the column where you will have the Tree with collapse/expand icons
@@ -123,7 +124,6 @@ function defineGrid() {
 
   gridOptions.value = {
     enableFiltering: true,  // <<-- REQUIRED, it won't work without filtering enabled
-    multiColumnSort: false, // <<-- REQUIRED to be Disabled since multi-column sorting is not currently supported with Tree Data
 
     treeDataOptions: {
       columnId: 'file',           // the column where you will have the Tree with collapse/expand icons
@@ -177,7 +177,6 @@ The column with the Tree already has a Formatter, so how can we add our own Form
 ```ts
 gridOptions.value = {
   enableFiltering: true,  // <<-- REQUIRED, it won't work without filtering enabled
-  multiColumnSort: false, // <<-- REQUIRED to be Disabled since multi-column sorting is not currently supported with Tree Data
 
   treeDataOptions: {
     columnId: 'title',        // the column where you will have the Tree with collapse/expand icons
@@ -221,12 +220,12 @@ const treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid
   if (data[idx + 1] && data[idx + 1][treeLevelPropName] > data[idx][treeLevelPropName]) {
     const folderPrefix = `<i class="mdi icon ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
     if (dataContext.__collapsed) {
-      return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
+      return `${spacer} <span class="slick-tree-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
     } else {
-      return `${spacer} <span class="slick-group-toggle expanded" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
+      return `${spacer} <span class="slick-tree-toggle expanded" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
     }
   } else {
-    return `${spacer} <span class="slick-group-toggle" level="${dataContext[treeLevelPropName]}"></span>${prefix}&nbsp;${value}`;
+    return `${spacer} <span class="slick-tree-toggle" level="${dataContext[treeLevelPropName]}"></span>${prefix}&nbsp;${value}`;
   }
 }
 ```
@@ -266,24 +265,10 @@ by default (unless this feature is disabled) all child nodes of the tree will be
 1- it has any children that passes the filter or
 2- current parent item passes the filter or
 3- current parent item filter is the Tree column and it passes that filter criteria regardless of other criteria (this is optional via the flag `autoApproveParentItemWhenTreeColumnIsValid: true`)
-   *    - even when the other columns don't pass the filter criteria, as use case described below
-   *    - for example if we take the Example with File Explorer (live demo) and we filter (Files = "music" and Size > 7),
-   *    - then the File "Music" will always show even if it doesn't have a Size because its tree column passes the filter (which was Files = "music")
-   *    - and the reason we do this is that we'll be able to show music files with "Size > 7" even though these files might not include the word "music"
-
-#### `autoApproveParentItemWhenTreeColumnIsValid` boolean option
-##### (see animated gif below for a demo)
-When using Tree Data, in most cases we will want to see the content (children) of a parent item when filtering but in some cases we might actually want to exclude them and that is what this flag is for.
-
-The full explanation of how filter works is the following
-by default (unless this feature is disabled) all child nodes of the tree will be included when a parent passes a filter and a group will be included if
-1- it has any children that passes the filter or
-2- current parent item passes the filter or
-3- current parent item filter is the Tree column and it passes that filter criteria regardless of other criteria (this is optional via the flag `autoApproveParentItemWhenTreeColumnIsValid: true`)
-   *    - even when the other columns don't pass the filter criteria, as use case described below
-   *    - for example if we take the Example with File Explorer (live demo) and we filter (Files = "music" and Size > 7),
-   *    - then the File "Music" will always show even if it doesn't have a Size because its tree column passes the filter (which was Files = "music")
-   *    - and the reason we do this is that we'll be able to show music files with "Size > 7" even though these files might not include the word "music"
+  - even when the other columns don't pass the filter criteria, as use case described below
+  - for example if we take the Example with File Explorer (live demo) and we filter (Files = "music" and Size > 7),
+  - then the File "Music" will always show even if it doesn't have a Size because its tree column passes the filter (which was Files = "music")
+  - and the reason we do this is that we'll be able to show music files with "Size > 7" even though these files might not include the word "music"
 
 #### `autoApproveParentItemWhenTreeColumnIsValid` boolean option
 ##### (see animated gif below for a demo)
@@ -326,19 +311,20 @@ function getTreeDataState() {
   console.log(vueGrid.getCurrentToggleState());
 }
 </script>
+```
 
 ### Max Visible Depth
 
 You can limit how deep tree nodes are visible in the grid without removing them from the dataset by using the `treeDataOptions.maxVisibleDepth` option. When defined, any row whose tree level property is greater than the provided value will be hidden by the tree filter logic.
 
 Example grid option (static):
-```vue
+```ts
 gridOptions.value = {
   treeDataOptions: {
     columnId: 'title',
     levelPropName: 'treeLevel',
     // when `maxVisibleDepth` is defined, any tree node with a level greater than this number will be hidden
-    // maxVisibleDepth: 2,
+    maxVisibleDepth: 2,
   }
 };
 ```
@@ -357,7 +343,6 @@ vueGrid.treeDataService.clearMaxVisibleDepth();
 Notes:
 - The option only hides rows from the visual grid (filtering), it does not remove them from the underlying dataset.
 - When reading or updating runtime options in code, prefer the `TreeDataService` methods rather than mutating nested option objects directly.
-```
 
 ### Tree Totals with Aggregators
 
@@ -386,7 +371,7 @@ gridOptions.value = {
 
     // aggregators: [new Aggregators.Avg('size'), new Aggregators.Sum('size')],
 
-    // OR EVEN BETTER, for better perf, you can simply use Avg to get both totals
+    // OR EVEN BETTER, Avg already does a Sum internally, so you can get it for free (you don't need to declare it)
     aggregators: [new Aggregators.Avg('size')], // produce the same as [new Aggregators.Avg('size'), new Aggregators.Sum('size')]
 
     // do we want to auto-recalc Tree Totals when using filters, that is anytime a filter changes
@@ -458,17 +443,17 @@ columns.value = [
 ];
 ```
 
-### Lazy Loading Tree Data
+### Lazy Loading Tree Data (hierarchical only)
 
 You can lazy load children on parent nodes, it does have certain requirements that must be followed:
-- parent nodes must provide define and provide children as empty array (e.g.: `children: []` or `files: []` depending on your `childrenPropName`)
+- parent nodes must define and assign an empty array to children property (e.g.: `children: []` or `files: []` depending on your `childrenPropName`)
   - this is required to identify which are the parent nodes that are lazily available
-- it only works with hierarchical data
+- it only works with hierarchical data (in other words, flat dataset aren't supported)
 - you must enable the `lazy` flag and provide `onLazyLoading` callback
 
 There are also some important notes about using Lazy Loading of Tree Data children:
 - calling "Expand All" of the Tree Data will **only** expand the nodes that were already lazily loaded
-  - the other ones will remain as collapsed
+  - the other ones will remain collapsed
 - Aggregators will be lazily calculated and aggregate only the data that it currently has loaded (only what got lazily loaded).
 
 For example, let say our hierarchical dataset is a list of files and `files` being the children props.

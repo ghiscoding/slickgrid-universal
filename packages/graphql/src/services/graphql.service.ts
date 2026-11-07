@@ -51,6 +51,11 @@ export class GraphqlService implements BackendService {
   };
 
   /** Getter for the Column Definitions */
+  get columns(): Column[] | undefined {
+    return this._columns;
+  }
+
+  /** @deprecated @use `columns` Getter for the Column Definitions */
   get columnDefinitions(): Column[] | undefined {
     return this._columns;
   }

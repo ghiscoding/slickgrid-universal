@@ -42,6 +42,8 @@ const mockDataView = {
 const gridStub = {
   autosizeColumns: vi.fn(),
   getContainerNode: vi.fn(),
+  getCanvasNode: vi.fn(),
+  getHeaderColumn: vi.fn(),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
   getOptions: vi.fn(),
@@ -89,9 +91,7 @@ describe('Resizer Service', () => {
 
     eventPubSubService = new EventPubSubService();
     service = new ResizerService(eventPubSubService);
-    service.intervalRetryDelay = 1;
     mockGridOptions = {
-      autoFixResizeWhenBrokenStyleDetected: false,
       enableAutoResize: true,
       autoResize: {
         container: '.grid1',
@@ -106,6 +106,7 @@ describe('Resizer Service', () => {
       preHeaderPanelHeight: 20,
       resizeByContentOptions: {},
     } as GridOption;
+    vi.spyOn(gridStub, 'getCanvasNode').mockImplementation(() => divContainer.querySelector('.grid-canvas') as HTMLDivElement);
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(divContainer.querySelector(`.${GRID_UID}`) as HTMLDivElement);
   });
@@ -120,6 +121,24 @@ describe('Resizer Service', () => {
   });
 
   describe('init method', () => {
+    it('should report an initial resize rejection and still schedule the delayed resize', async () => {
+      const error = new Error('Initial resize failed');
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const resizeSpy = vi.spyOn(service, 'resizeGrid').mockResolvedValue(undefined).mockRejectedValueOnce(error);
+
+      try {
+        service.init(gridStub, divContainer);
+        await Promise.resolve();
+
+        expect(consoleSpy).toHaveBeenCalledWith('Error:', error);
+        expect(resizeSpy).toHaveBeenNthCalledWith(1);
+        expect(resizeSpy).toHaveBeenNthCalledWith(2, 10, undefined);
+      } finally {
+        consoleSpy.mockRestore();
+        resizeSpy.mockRestore();
+      }
+    });
+
     it('should throw an error when there is no grid object defined', () => {
       expect(() => service.init(null as any, divContainer)).toThrow(
         '[Slickgrid-Universal] Resizer Service requires a valid Grid object and DOM Element Container to be provided.'
@@ -255,7 +274,7 @@ describe('Resizer Service', () => {
       const output = service.bindAutoResizeDataGrid();
 
       expect(output).toBeFalsy();
-      expect(service.eventHandler).toBeTruthy();
+      expect(service['_eventHandler']).toBeTruthy();
     });
 
     it('should return null when calling "calculateGridNewDimensions" method with a gridId that is not found in the DOM', () => {
@@ -602,18 +621,17 @@ describe('Resizer Service', () => {
       });
 
       beforeEach(() => {
-        mockGridOptions.resizeByContentOptions!.cellCharWidthInPx = 7;
         mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = 6;
         mockGridOptions.resizeByContentOptions!.formatterPaddingWidthInPx = 5;
-        mockGridOptions.resizeByContentOptions!.defaultRatioForStringType = 0.88;
         mockGridOptions.resizeByContentOptions!.alwaysRecalculateColumnWidth = false;
-        mockGridOptions.resizeByContentOptions!.maxItemToInspectCellContentWidth = 4;
+        mockGridOptions.resizeByContentOptions!.sampleSize = 10;
+        mockGridOptions.resizeByContentOptions!.includeHeaderWidth = false;
         mockColDefs = [
           // typically the `originalWidth` is set by the columnDefinitiosn setter in vanilla grid bundle but we can mock it for our test
           { id: 'userId', field: 'userId', width: 30, originalWidth: 30 },
           { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, minWidth: 50 },
           { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, minWidth: 50 },
-          { id: 'gender', field: 'gender', resizeCalcWidthRatio: 1.2 },
+          { id: 'gender', field: 'gender' },
           { id: 'age', field: 'age', type: 'number', resizeExtraWidthPadding: 2 },
           { id: 'street', field: 'street', maxWidth: 15 },
           { id: 'country', field: 'country', maxWidth: 15, resizeMaxWidthThreshold: 14, rerenderOnResize: true },
@@ -667,7 +685,7 @@ describe('Resizer Service', () => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColDefs);
         vi.spyOn(mockDataView, 'getItems').mockReturnValue(mockData);
         vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({
-          measureText: vi.fn().mockReturnValue({ width: 613 }), // mock canvas measureText for `getAverageCharWidthByFont()`
+          measureText: vi.fn().mockImplementation((text: string) => ({ width: text.length * 7 })), // mock canvas measureText with 7px per char
         } as unknown as CanvasRenderingContext2D);
       });
 
@@ -679,7 +697,7 @@ describe('Resizer Service', () => {
         eventPubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: 'firstName' });
 
         expect(reRenderSpy).toHaveBeenCalledWith(false);
-        expect(mockColDefs[1].width).toBe(56); // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 55.28 ceil to => 56
+        expect(mockColDefs[1].width).toBe(62); // longest word "Destinee" (length 8 * charWidth(7)) + cellPadding(6) = 62
       });
 
       it('should leave the column unchanged when the DataView has no accessible items', () => {
@@ -708,9 +726,7 @@ describe('Resizer Service', () => {
         vi.spyOn(gridStub, 'getViewports').mockReturnValue([viewportLeft, viewportRight]);
         const reRenderSpy = vi.spyOn(gridStub, 'reRenderColumns');
 
-        mockGridOptions.frozenColumn = 7;
         mockGridOptions.enableColumnResizeOnDoubleClick = true;
-        mockGridOptions.resizeByContentOptions!.widthToRemoveFromExceededWidthReadjustment = 20;
         service.init(gridStub, divContainer);
         gridStub.onColumnsResizeDblClick.notify({ triggeredByColumn: 'zip', grid: gridStub });
 
@@ -749,13 +765,13 @@ describe('Resizer Service', () => {
         expect(updateColumnsSpy).toHaveBeenCalled();
         expect(gridStub.getColumns()).toEqual([
           expect.objectContaining({ id: 'userId', width: 30 }),
-          expect.objectContaining({ id: 'firstName', width: 56 }), // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 55.28 ceil to => 56
-          expect.objectContaining({ id: 'lastName', width: 68 }), // longest word "Altenwerth" (length 10 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 67.6 ceil to => 68
-          expect.objectContaining({ id: 'gender', width: 57 }), // longest word "female" (length 6 * charWidth(7) * customRatio(1.2)) + cellPadding(6) = 56.4 ceil to 57
-          expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
+          expect.objectContaining({ id: 'firstName', width: 62 }), // longest word "Destinee" (length 8 * charWidth(7)) + cellPadding(6) = 62
+          expect.objectContaining({ id: 'lastName', width: 76 }), // longest word "Altenwerth" (length 10 * charWidth(7)) + cellPadding(6) = 76
+          expect.objectContaining({ id: 'gender', width: 48 }), // longest word "female" (length 6 * charWidth(7)) + cellPadding(6) = 48
+          expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7)) + cellPadding(6) + extraPadding(2) = 29
           expect.objectContaining({ id: 'street', width: 15 }), // longest text "20229 Tia Turnpike" goes over maxWidth so we fallback to it
           expect.objectContaining({ id: 'country', width: 14 }), // longest text "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
-          expect.objectContaining({ id: 'zip', minWidth: 44, width: 50 }), // longest number "777555"
+          expect.objectContaining({ id: 'zip', minWidth: 44, width: 48 }), // longest number "777555" (length 6 * charWidth(7)) + cellPadding(6) = 48
         ]);
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
       });
@@ -791,15 +807,200 @@ describe('Resizer Service', () => {
         expect(updateColumnsSpy).toHaveBeenCalledWith();
         expect(gridStub.getColumns()).toEqual([
           expect.objectContaining({ id: 'userId', width: 30 }),
-          expect.objectContaining({ id: 'firstName', width: 61 }), // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) + editorPadding(5) = 60.28 ceil to => 61
-          expect.objectContaining({ id: 'lastName', width: 73 }), // longest word "Altenwerth" (length 10 * charWidth(7) * ratio(0.88)) + cellPadding(6) + editorPadding(5) = 72.6 ceil to => 73
-          expect.objectContaining({ id: 'gender', width: 57 }), // longest word "female" (length 6 * charWidth(7) * customRatio(1.2)) + cellPadding(6) = 56.4 ceil to 57
-          expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
+          expect.objectContaining({ id: 'firstName', width: 67 }), // longest word "Destinee" (length 8 * charWidth(7)) + cellPadding(6) + editorPadding(5) = 67
+          expect.objectContaining({ id: 'lastName', width: 81 }), // longest word "Altenwerth" (length 10 * charWidth(7)) + cellPadding(6) + editorPadding(5) = 81
+          expect.objectContaining({ id: 'gender', width: 48 }), // longest word "female" (length 6 * charWidth(7)) + cellPadding(6) = 48
+          expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7)) + cellPadding(6) + extraPadding(2) = 29
           expect.objectContaining({ id: 'street', width: 15 }), // longest text "20229 Tia Turnpike" goes over maxWidth so we fallback to it
           expect.objectContaining({ id: 'country', width: 14 }), // longest text "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
-          expect.objectContaining({ id: 'zip', minWidth: 44, width: 50 }), // longest number "777555"
+          expect.objectContaining({ id: 'zip', minWidth: 44, width: 48 }), // longest number "777555" (length 6 * charWidth(7)) + cellPadding(6) = 48
         ]);
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
+      });
+
+      it('should read items spread evenly across the dataset when it has more items than the max item count', () => {
+        const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
+        mockGridOptions.resizeByContentOptions!.sampleSize = 4;
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        // step of 2 => reads rows 0, 2, 4 ("John", "Sarai", "Alvina") and "Destinee" (row 1) is never read
+        expect(mockColDefs[1].width).toBe(50); // longest word "Alvina" (6 * 7) + cellPadding(6) = 48 but minWidth is 50
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterResizeByContent', expect.objectContaining({ readItemCount: 3 }));
+      });
+
+      it('should measure every distinct sampled text once', () => {
+        mockGridOptions.resizeByContentOptions!.sampleSize = 100;
+        const measureTextMock = vi.fn().mockImplementation((text: string) => ({ width: text.length * 7 }));
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({ measureText: measureTextMock } as unknown as CanvasRenderingContext2D);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColDefs[1]]);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue(
+          [5, 1, 12, 7, 12, 3, 9, 2, 11, 4, 8, 10, 6, 0].map((len) => ({ firstName: 'x'.repeat(len) })).concat({ firstName: { obj: 'value' } } as any)
+        );
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(measureTextMock.mock.calls.map(([text]) => text.length)).toEqual([5, 1, 12, 7, 3, 9, 2, 11, 4, 8, 10, 6]);
+        expect(mockColDefs[1].width).toBe(90); // longest text (12 * 7) + cellPadding(6) = 90
+      });
+
+      it.each([false, true])('should find wider shorter and equal-length strings regardless of row order (%s)', (reverse) => {
+        mockGridOptions.resizeByContentOptions!.sampleSize = 100;
+        const texts = Array.from({ length: 10 }, (_, i) => 'i'.repeat(i) + 'l'.repeat(12 - i));
+        texts.push('W'.repeat(12), 'M'.repeat(8));
+        if (reverse) {
+          texts.reverse();
+        }
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColDefs[1]]);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue(texts.map((firstName) => ({ firstName })));
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({
+          measureText: (text: string) => ({ width: text.startsWith('M') ? 160 : text.startsWith('W') ? 120 : 24 }),
+        } as CanvasRenderingContext2D);
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+        expect(mockColDefs[1].width).toBe(166);
+      });
+
+      it.each([
+        ['uppercase', 'Task 102', 'TASK 102'],
+        ['lowercase', 'TASK 102', 'task 102'],
+        ['capitalize', 'task 102 example', 'Task 102 Example'],
+        ['none', 'Task 102', 'Task 102'],
+      ])('should measure text with CSS text-transform %s', (transform, input, expected) => {
+        const canvas = divContainer.querySelector('.grid-canvas')!;
+        canvas.innerHTML = `<div class="slick-row"><div class="slick-cell l0" style="text-transform: ${transform}"></div></div>`;
+        const columns = [{ id: 'title', field: 'title' }];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ title: input }]);
+        const measureText = vi.fn().mockImplementation((text: string) => ({ width: text === expected ? 100 : 10 }));
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({ measureText } as unknown as CanvasRenderingContext2D);
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(measureText).toHaveBeenCalledWith(expected);
+        expect(columns[0]).toEqual(expect.objectContaining({ width: 106 }));
+      });
+
+      it('should apply header text-transform before measuring the header', () => {
+        mockGridOptions.resizeByContentOptions!.includeHeaderWidth = true;
+        const header = document.createElement('div');
+        header.innerHTML = '<span class="slick-column-name" style="text-transform: uppercase">Title</span>';
+        vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(header);
+        const measureText = vi.fn().mockReturnValue({ width: 50 });
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({ measureText } as unknown as CanvasRenderingContext2D);
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(measureText).toHaveBeenCalledWith('TITLE');
+      });
+
+      it('should use each column font and padding, including an unrendered column cssClass', () => {
+        mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = undefined;
+        const style = document.createElement('style');
+        style.textContent = '.wide-cell { padding: 0 12px; font: 20px serif; }';
+        document.head.appendChild(style);
+        const canvas = divContainer.querySelector('.grid-canvas')!;
+        canvas.innerHTML = '<div class="slick-row"><div class="slick-cell l0" style="padding: 0 2px; font: 10px serif"></div></div>';
+        const columns = [
+          { id: 'a', field: 'value' },
+          { id: 'b', field: 'value', cssClass: 'wide-cell' },
+        ];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ value: 'WWW' }]);
+        const ctx = {
+          font: '',
+          measureText() {
+            return { width: this.font.includes('20px') ? 60 : 30 };
+          },
+        };
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue(ctx as unknown as CanvasRenderingContext2D);
+        try {
+          service.init(gridStub, divContainer);
+          service.resizeColumnsByCellContent(true);
+          expect(columns).toEqual([expect.objectContaining({ width: 34 }), expect.objectContaining({ width: 84 })]);
+          expect(canvas.querySelectorAll('.slick-row')).toHaveLength(1);
+          eventPubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: 'b' });
+          expect(columns[1]).toEqual(expect.objectContaining({ width: 84 }));
+        } finally {
+          style.remove();
+        }
+      });
+
+      it.each([false, true])('should ignore inner grid cells when measuring an outer column (rendered: %s)', (rendered) => {
+        mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = undefined;
+        const canvas = divContainer.querySelector('.grid-canvas')!;
+        canvas.innerHTML =
+          '<div class="slick-row-detail-container"><div class="grid-canvas"><div class="slick-row"><div class="slick-cell l0" style="padding: 0 40px"></div></div></div></div>';
+        if (rendered) {
+          canvas.insertAdjacentHTML('beforeend', '<div class="slick-row"><div class="slick-cell l0" style="padding: 0 4px"></div></div>');
+        }
+        const columns = [{ id: 'a', field: 'value' }];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ value: 'WWW' }]);
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(columns[0]).toEqual(expect.objectContaining({ width: rendered ? 29 : 21 }));
+        expect(canvas.querySelectorAll(':scope > .slick-row')).toHaveLength(rendered ? 1 : 0);
+      });
+
+      it('should read the cell padding & borders from the CSS of an existing grid cell when "cellPaddingWidthInPx" is not provided', () => {
+        mockGridOptions.editable = true;
+        mockGridOptions.resizeByContentOptions!.formatterPaddingWidthInPx = undefined;
+        mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = undefined;
+        const gridCanvas = divContainer.querySelector('.grid-canvas') as HTMLDivElement;
+        gridCanvas.innerHTML = '<div class="slick-row"><div class="slick-cell l1" style="padding: 0 4px; border-right: 1px solid;"></div></div>';
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(mockColDefs[1].width).toBe(65); // longest word "Destinee" (8 * 7) + paddings(4 + 4) + border(1) = 65
+        expect(gridCanvas.querySelectorAll('.slick-row').length).toBe(1);
+      });
+
+      it('should create a temp cell to read its CSS when the grid has no rows yet and remove it afterward', () => {
+        mockGridOptions.resizeByContentOptions!.cellPaddingWidthInPx = undefined;
+        const gridCanvas = divContainer.querySelector('.grid-canvas') as HTMLDivElement;
+        const appendSpy = vi.spyOn(gridCanvas, 'appendChild');
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(appendSpy).toHaveBeenCalled();
+        expect(gridCanvas.querySelector('.slick-row')).toBeNull();
+        expect(mockColDefs[1].width).toBe(56); // longest word "Destinee" (8 * 7) + no padding in JSDOM = 56
+      });
+
+      it('should still measure with the default canvas font when the grid has no canvas element', () => {
+        divContainer.querySelector('.grid-canvas')!.remove();
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(mockColDefs[1].width).toBe(62); // canvas mock still measures with default font, "Destinee" (8 * 7) + cellPadding(6) = 62
+      });
+
+      it('should include the header title width (and its sort & menu icons) when "includeHeaderWidth" is enabled', () => {
+        mockGridOptions.resizeByContentOptions!.includeHeaderWidth = true;
+        const headerElm = document.createElement('div');
+        headerElm.style.padding = '0 5px';
+        headerElm.innerHTML =
+          '<span class="slick-column-name">Very Long Gender Title</span><span class="slick-sort-indicator" style="width: 12px"></span><span class="slick-header-menu-button" style="width: 14px"></span>';
+        const headerNoNameElm = document.createElement('div');
+        headerNoNameElm.innerHTML = '<span class="slick-sort-indicator"></span>';
+        vi.spyOn(gridStub, 'getHeaderColumn').mockImplementation((id) => (id === 'gender' ? headerElm : id === 'age' ? headerNoNameElm : (undefined as any)));
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(mockColDefs[1].width).toBe(62); // no header element, content width is kept
+        expect(mockColDefs[3].width).toBe(190); // header "Very Long Gender Title" (22 * 7) + padding(5 + 5) + icons(12 + 14) = 190
+        expect(mockColDefs[4].width).toBe(29); // header without name is narrower than content (3 * 7) + cellPadding(6) + extraPadding(2) = 29
       });
 
       it('should call "resizeColumnsByCellContent" when "onFullResizeByContentRequested" pubsub event is triggered', () => {
@@ -810,233 +1011,6 @@ describe('Resizer Service', () => {
 
         expect(resizeSpy).toHaveBeenCalledWith(true);
       });
-    });
-
-    describe('AutoFix broken resize styling UI', () => {
-      let mockColDefs: Column[];
-
-      afterEach(() => {
-        vi.clearAllMocks();
-        service.dispose();
-        service.intervalRetryDelay = 1;
-        service.requestStopOfAutoFixResizeGrid(true);
-        mockColDefs = [
-          // typically the `originalWidth` is set by the columnDefinitiosn setter in vanilla grid bundle but we can mock it for our test
-          { id: 'userId', field: 'userId', width: 30, originalWidth: 30 },
-          { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, minWidth: 50 },
-          { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, minWidth: 50 },
-          { id: 'gender', field: 'gender', resizeCalcWidthRatio: 1.2 },
-          { id: 'age', field: 'age', type: 'number', resizeExtraWidthPadding: 2 },
-          { id: 'street', field: 'street', maxWidth: 15 },
-          { id: 'country', field: 'country', maxWidth: 15, resizeMaxWidthThreshold: 14, rerenderOnResize: true },
-          { id: 'zip', field: 'zip', minWidth: 44, width: 30, type: 'number' },
-        ] as Column[];
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColDefs);
-      });
-
-      it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" to be called on interval', () =>
-        new Promise((done: any) => {
-          const resizeSpy = vi.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
-          Object.defineProperty(document.querySelector(`.${GRID_UID}`), 'offsetParent', { writable: true, configurable: true, value: 55 });
-
-          mockGridOptions.autoFixResizeTimeout = 10;
-          mockGridOptions.autoFixResizeRequiredGoodCount = 5;
-          mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
-          service.intervalRetryDelay = 1;
-          service.init(gridStub, divContainer);
-
-          const divHeaderElm = divContainer.querySelector('.slick-header') as HTMLDivElement;
-          vi.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
-          vi.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
-          divHeaderElm.style.top = '30px';
-          divHeaderElm.style.left = '25px';
-          divContainer.style.top = '10px';
-          divContainer.style.left = '20px';
-
-          const intervalId = setInterval(() => {
-            Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: Math.random() * 1000 });
-            Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: Math.random() * 1000 });
-          }, service.intervalRetryDelay);
-
-          setTimeout(() => {
-            expect(divContainer.outerHTML).toBeTruthy();
-            expect(resizeSpy).toHaveBeenCalled();
-            expect(resizeSpy).toHaveBeenNthCalledWith(2, 10, undefined);
-            expect(resizeSpy).toHaveBeenNthCalledWith(3);
-            clearInterval(intervalId);
-            done();
-          }, 25);
-        }));
-
-      it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" but it should stop whenever we force it', () =>
-        new Promise((done: any) => {
-          const resizeSpy = vi.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
-
-          mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
-          service.intervalRetryDelay = 1;
-          service.init(gridStub, divContainer);
-
-          const divHeaderElm = divContainer.querySelector('.slick-header') as HTMLDivElement;
-          vi.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
-          vi.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
-          divHeaderElm.style.top = '30px';
-          divHeaderElm.style.left = '25px';
-          divContainer.style.top = '10px';
-          divContainer.style.left = '20px';
-
-          const intervalId = setInterval(() => {
-            Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: Math.random() * 1000 });
-            Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: Math.random() * 1000 });
-          }, service.intervalRetryDelay);
-
-          service.requestStopOfAutoFixResizeGrid();
-          // expect(divContainer.outerHTML).toBeTruthy();
-          expect(resizeSpy).toHaveBeenCalled();
-
-          setTimeout(() => {
-            expect(divContainer.outerHTML).toBeTruthy();
-            expect(resizeSpy).toHaveBeenCalled();
-            clearInterval(intervalId);
-            done();
-          }, 10);
-        }));
-
-      it('should try to resize grid when its UI is deemed broken and the grid was previously hidden by a tab and becomes visible again', () =>
-        new Promise((done: any) => {
-          const resizeSpy = vi.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
-
-          mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
-          service.intervalRetryDelay = 1;
-
-          const gridElm = document.querySelector<HTMLDivElement>(`.${GRID_UID}`) as HTMLDivElement;
-          service.init(gridStub, divContainer);
-          Object.defineProperty(gridElm, 'offsetParent', { writable: true, configurable: true, value: 0 });
-
-          const divHeaderElm = divContainer.querySelector('.slick-header') as HTMLDivElement;
-          vi.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
-          vi.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
-          divHeaderElm.style.top = '30px';
-          divHeaderElm.style.left = '25px';
-          divContainer.style.top = '10px';
-          divContainer.style.left = '20px';
-
-          setTimeout(() => {
-            Object.defineProperty(gridElm, 'offsetParent', { writable: true, configurable: true, value: 100 });
-          }, 5);
-
-          service.requestStopOfAutoFixResizeGrid();
-          expect(resizeSpy).toHaveBeenCalled();
-
-          setTimeout(() => {
-            expect(divContainer.outerHTML).toBeTruthy();
-            expect(resizeSpy).toHaveBeenCalled();
-            done();
-          }, 10);
-        }));
-
-      it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" and then stops after manually requesting a stop', () =>
-        new Promise((done: any) => {
-          const resizeSpy = vi.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
-
-          mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
-          service.intervalRetryDelay = 1;
-          service.init(gridStub, divContainer);
-
-          const divHeaderElm = divContainer.querySelector('.slick-header') as HTMLDivElement;
-          vi.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
-          vi.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 4, left: 0 } as unknown as DOMRect);
-          divHeaderElm.style.top = '30px';
-          divHeaderElm.style.left = '25px';
-
-          expect(divContainer.outerHTML).toBeTruthy();
-          expect(resizeSpy).toHaveBeenCalled();
-
-          setTimeout(() => {
-            service.requestStopOfAutoFixResizeGrid();
-
-            expect(divContainer.outerHTML).toBeTruthy();
-            expect(resizeSpy).toHaveBeenCalled();
-            done();
-          }, 15);
-        }));
-
-      it('should set "_cResizeCheckRequired" when grid is hidden from UI while auto-fix loop is running', async () => {
-        vi.useFakeTimers();
-
-        try {
-          mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
-          mockGridOptions.autoFixResizeTimeout = 3;
-          service.intervalRetryDelay = 1;
-
-          vi.spyOn(service as any, 'isGridVisibleInUI').mockReturnValue(false);
-          service.init(gridStub, divContainer);
-
-          await vi.advanceTimersByTimeAsync(service.intervalRetryDelay);
-
-          expect((service as any)._cResizeCheckRequired).toBe(true);
-        } finally {
-          service.requestStopOfAutoFixResizeGrid(true);
-          service.dispose();
-          vi.useRealTimers();
-        }
-      });
-
-      it('should try to resize grid when its UI is deemed broken by the 2nd condition check of "getRenderedRange"', () =>
-        new Promise((done: any) => {
-          const resizeSpy = vi.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
-          Object.defineProperty(document.querySelector(`.${GRID_UID}`), 'offsetParent', { writable: true, configurable: true, value: 55 });
-          vi.spyOn(mockDataView, 'getItemCount').mockReturnValue(99);
-          vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 0, bottom: 0, leftPx: 0, rightPx: 0 });
-          Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: null });
-          Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: null });
-
-          mockGridOptions.autoFixResizeTimeout = 10;
-          mockGridOptions.autoFixResizeRequiredGoodCount = 5;
-          mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
-          service.intervalRetryDelay = 1;
-
-          const divHeaderElm = divContainer.querySelector('.slick-header') as HTMLDivElement;
-          const divViewportElm = divContainer.querySelector('.slick-viewport') as HTMLDivElement;
-          vi.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
-          vi.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 5, left: 25 } as unknown as DOMRect);
-          vi.spyOn(divViewportElm, 'getBoundingClientRect').mockReturnValue({ top: 98, left: 25 } as unknown as DOMRect);
-          divHeaderElm.style.top = '5px';
-          divHeaderElm.style.left = '25px';
-          divContainer.style.top = '10px';
-          divContainer.style.left = '20px';
-          service.init(gridStub, divContainer);
-
-          const intervalId = setInterval(() => {
-            if (window) {
-              Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: Math.random() * 1000 });
-              Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: Math.random() * 1000 });
-            }
-          }, service.intervalRetryDelay);
-
-          setTimeout(() => {
-            expect(divContainer.outerHTML).toBeTruthy();
-            expect(resizeSpy).toHaveBeenCalled();
-            expect(resizeSpy).toHaveBeenNthCalledWith(2, 10, undefined);
-            expect(resizeSpy).toHaveBeenNthCalledWith(3);
-            clearInterval(intervalId);
-            done();
-            service.requestStopOfAutoFixResizeGrid();
-          }, 25);
-        }));
-
-      it('should try to resize grid when its UI is deemed broken but expect an error shown in the console when "resizeGrid" throws an error', () =>
-        new Promise((done: any) => {
-          const consoleSpy = vi.spyOn(console, 'log').mockReturnValue();
-          const promise = new Promise((_resolve, reject) => setTimeout(() => reject('some error'), 0));
-          vi.spyOn(service, 'resizeGrid').mockReturnValue(promise as any);
-
-          service.init(gridStub, divContainer);
-
-          setTimeout(() => {
-            expect(consoleSpy).toHaveBeenCalledWith('Error:', 'some error');
-            done();
-          }, 1);
-        }));
     });
   });
 });

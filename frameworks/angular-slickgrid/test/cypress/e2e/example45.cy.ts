@@ -9,6 +9,10 @@ describe('Example 45 - Row Detail with inner Grid', () => {
     cy.get('h2').should('contain', 'Example 45: Row Detail with inner Grid');
   });
 
+  it('should hide sub-title', () => {
+    cy.get('[data-test=toggle-subtitle]').click();
+  });
+
   it('should have exact column titles on 1st grid', () => {
     cy.get('#grid45')
       .find('.slick-header-columns')
@@ -35,7 +39,10 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       it('should open the Row Detail of the 2nd row and expect to find an inner grid with all inner column titles', () => {
         cy.get('.slick-cell.detail-view-toggle:nth(1)').click().wait(40);
 
-        cy.get('.dynamic-cell-detail').find('h4').should('contain', '- Order Details (id: 1)');
+        cy.get('.slick-row-detail-container').find('h4').should('contain', '- Order Details (id: 1)');
+        cy.get('.slick-row-detail-container.row-detail-1').parent().should('have.class', 'grid-canvas');
+        cy.get('.slick-row-detail-container.row-detail-1').children().should('have.length', 1);
+        cy.get('.slick-row-detail-container.row-detail-1').find('[class^="container_"]').should('not.exist');
 
         cy.get('#innergrid-1')
           .find('.slick-header-columns')
@@ -46,12 +53,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       it('should sort 2nd Row Detail inner grid "Freight" column in ascending order and filter "Ship City" with "m" and expect 2 sorted rows', () => {
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
-        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list')
-          .should('be.visible')
-          .children('.slick-menu-item:nth-of-type(3)')
-          .children('.slick-menu-content')
-          .should('contain', 'Sort Ascending')
-          .click();
+        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 
@@ -68,7 +70,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
           .click()
           .wait(40);
 
-        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${2})`);
+        cy.get('.slick-row-detail-container').find('h4').should('contain', `- Order Details (id: ${2})`);
 
         // 2nd row detail
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
@@ -153,16 +155,11 @@ describe('Example 45 - Row Detail with inner Grid', () => {
           .click()
           .wait(40);
 
-        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${1})`);
+        cy.get('.slick-row-detail-container').find('h4').should('contain', `- Order Details (id: ${1})`);
 
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
-        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list')
-          .should('be.visible')
-          .children('.slick-menu-item:nth-of-type(3)')
-          .children('.slick-menu-content')
-          .should('contain', 'Sort Ascending')
-          .click();
+        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
         cy.get('#innergrid-1 .search-filter.filter-orderId').clear().type('>102');
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
@@ -204,16 +201,11 @@ describe('Example 45 - Row Detail with inner Grid', () => {
           .click()
           .wait(40);
 
-        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${1})`);
+        cy.get('.slick-row-detail-container').find('h4').should('contain', `- Order Details (id: ${1})`);
 
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
-        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list')
-          .should('be.visible')
-          .children('.slick-menu-item:nth-of-type(3)')
-          .children('.slick-menu-content')
-          .should('contain', 'Sort Ascending')
-          .click();
+        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 
@@ -224,9 +216,9 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should scroll down when the row detail is just barely visible and then scroll back up and still expect same filters/sorting', () => {
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 350);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 350);
         cy.wait(50);
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 0);
 
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');
@@ -235,9 +227,9 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should scroll down by 2 pages down and then scroll back up and no longer the same filters/sorting', () => {
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 800);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 800);
         cy.wait(50);
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 0);
 
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should(
           'not.contain',
@@ -261,16 +253,11 @@ describe('Example 45 - Row Detail with inner Grid', () => {
           .click()
           .wait(40);
 
-        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${1})`);
+        cy.get('.slick-row-detail-container').find('h4').should('contain', `- Order Details (id: ${1})`);
 
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
-        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list')
-          .should('be.visible')
-          .children('.slick-menu-item:nth-of-type(3)')
-          .children('.slick-menu-content')
-          .should('contain', 'Sort Ascending')
-          .click();
+        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 
@@ -287,16 +274,11 @@ describe('Example 45 - Row Detail with inner Grid', () => {
           .click()
           .wait(40);
 
-        cy.get('.dynamic-cell-detail').find('h4').should('contain', `- Order Details (id: ${2})`);
+        cy.get('.slick-row-detail-container').find('h4').should('contain', `- Order Details (id: ${2})`);
 
         cy.get('#innergrid-2 .slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
-        cy.get('#innergrid-2 .slick-header-menu .slick-menu-command-list')
-          .should('be.visible')
-          .children('.slick-menu-item:nth-of-type(3)')
-          .children('.slick-menu-content')
-          .should('contain', 'Sort Ascending')
-          .click();
+        cy.get('#innergrid-2 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
         cy.get('#innergrid-2 .search-filter.filter-orderId').clear().type('>102');
         cy.get('#innergrid-2 .search-filter.filter-shipCity').clear().type('m*');
@@ -418,7 +400,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('#grid45').type('{pageDown}{pageDown}', { release: false });
         cy.wait(50);
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 350);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 350);
 
         // expect same grid details for both grids
         // 2nd row detail
@@ -503,12 +485,7 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('#innergrid-1').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click();
 
-        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list')
-          .should('be.visible')
-          .children('.slick-menu-item:nth-of-type(3)')
-          .children('.slick-menu-content')
-          .should('contain', 'Sort Ascending')
-          .click();
+        cy.get('#innergrid-1 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
         cy.get('#innergrid-1 .search-filter.filter-shipCity').clear().type('m*');
 
@@ -519,9 +496,9 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should scroll far down (out of viewport) and back up and expect inner grid sort/filter state is PRESERVED (keepComponentAlive)', () => {
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 800);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 800);
         cy.wait(50);
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 0);
 
         // state should be PRESERVED because keepComponentAlive is enabled
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
@@ -531,9 +508,9 @@ describe('Example 45 - Row Detail with inner Grid', () => {
       });
 
       it('should scroll out of viewport a second time and back up and still expect inner grid sort/filter state is PRESERVED', () => {
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 800);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 800);
         cy.wait(50);
-        cy.get('#grid45 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
+        cy.get('#grid45 .slick-vertical-scroller').first().scrollTo(0, 0);
 
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(0)`).should('contain', '10281');
         cy.get(`#innergrid-1 .slick-row[style*="translateY(${GRID_ROW_HEIGHT * 0}px)"] > .slick-cell:nth(1)`).should('contain', 'Madrid');

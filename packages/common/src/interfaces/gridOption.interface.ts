@@ -17,6 +17,7 @@ import type {
   ContextMenu,
   CustomFooterOption,
   CustomTooltipOption,
+  DockingOption,
   DraggableGrouping,
   EditCommand,
   EditorConstructor,
@@ -40,12 +41,14 @@ import type {
   OperatorDetailAlt,
   Pagination,
   PdfExportOption,
+  PinningOption,
   ResizeByContentOption,
   RowBasedEditOptions,
   RowDetailView,
   RowMoveManager,
   SliderOption,
   SliderRangeOption,
+  StickyRows,
   TextExportOption,
   TreeDataOption,
   VanillaCalendarOption,
@@ -64,6 +67,7 @@ export interface CustomDataView<T = any> {
   getLength(): number;
   getItemCount?: () => number;
   getFilteredItemCount?: () => number;
+  getIdPropertyName?: () => string;
   getItems?: () => T[];
   setItems?: (data: T[]) => void;
   setGrid?: (grid: SlickGrid) => void;
@@ -162,21 +166,9 @@ export interface GridOption<C extends Column = Column> {
 
   /**
    * Defaults to false. When enabled, measures rendered column headers and adjusts their shared height to fit multi-line text, HTML, or DOM content.
-   * Header heights are kept in sync when frozen columns are used and recalculated after column width changes.
+   * Header heights are kept in sync when columns are pinned and recalculated after column width changes.
    */
   autoHeaderHeight?: boolean;
-
-  /**
-   * Defaults to 60, when "autoFixResizeWhenBrokenStyleDetected" is enabled then what will be the delay timeout before quitting?
-   * Note that that the resize gets called every 200ms
-   */
-  autoFixResizeTimeout?: number;
-
-  /** Defaults to 2 (or 5x in Salesforce), how many good resize count do we require before we assume that it's all good and we can stop calling a resize of the grid? (only works when `autoFixResizeWhenBrokenStyleDetected` is enabled) */
-  autoFixResizeRequiredGoodCount?: number;
-
-  /** Defaults to false, this is a patch for Salesforce since we don't always have access to tab change events. */
-  autoFixResizeWhenBrokenStyleDetected?: boolean;
 
   /** Auto-resize options (bottom padding, minHeight, ...)  */
   autoResize?: AutoResizeOption;
@@ -215,12 +207,6 @@ export interface GridOption<C extends Column = Column> {
 
   /** Checkbox Select Plugin options (columnId, cssClass, toolTip, width) */
   checkboxSelector?: CheckboxSelectorOption;
-
-  /**
-   * Optionally override the default copy (write) to clipboard behavior.
-   * The default is to use the native Clipboard API but it isn't guaranteed to work in all environments (i.e.: Salesforce LWC).
-   */
-  clipboardWriteOverride?: (text: string) => void;
 
   /** Defaults to " - ", separator between the column group label and the column label. */
   columnGroupSeparator?: string;
@@ -367,6 +353,9 @@ export interface GridOption<C extends Column = Column> {
   /** Escape hatch geared towards testing Slickgrid in JSDOM based environments to circumvent the lack of stylesheet.ownerNode and clientWidth calculations */
   devMode?: false | DevModeOption;
 
+  /** Shared pixel budgets and overflow behavior for pinned and sticky rows/columns. */
+  docking?: DockingOption;
+
   /** Do we have paging enabled? */
   doPaging?: boolean;
 
@@ -468,12 +457,6 @@ export interface GridOption<C extends Column = Column> {
   /** Do we want to enable Context Menu? (mouse right+click) */
   enableContextMenu?: boolean;
 
-  /**
-   * Defaults to false, do we want to make a deep copy of the dataset before loading it into the grid?
-   * Useful with Salesforce to avoid proxy object error when trying to update a property of an item object by reference (which SlickGrid does a lot)
-   */
-  enableDeepCopyDatasetOnPageLoad?: boolean;
-
   /** Defaults to false, do we want to enable the Draggable Grouping Plugin? */
   enableDraggableGrouping?: boolean;
 
@@ -506,15 +489,14 @@ export interface GridOption<C extends Column = Column> {
   enableFilterTrimWhiteSpace?: boolean;
 
   /**
-   * Defaults to false, when enabled the DataView will pre-format and cache all formatter results
-   * (both export strings and raw cell display output) for every column that has a formatter.
-   * This dramatically improves export performance for large datasets (50K+ rows) by avoiding
-   * repeated formatter calls during export, and also accelerates UI rendering since SlickGrid reads
-   * the cached output instead of re-invoking formatters on every scroll/render cycle.
-   * Cache is populated asynchronously in background batches to keep the UI responsive.
+   * Defaults to false. Pre-format and cache eligible export values and cell display output.
+   * Consider enabling when expensive formatters are repeatedly used for rendering or export,
+   * especially on mostly static data. Dataset size alone is not a reason to enable caching.
+   * Cheap formatters, occasional exports, or frequent data/column changes may not benefit.
+   * Population yields between background batches but still uses main-thread time and memory.
+   * Measure warmup time, memory usage, scrolling and export performance on representative data.
    * Cache is automatically invalidated on data/column changes.
-   * IMPORTANT: this cache increases memory usage (it stores precomputed values for many cells),
-   * so it should be enabled selectively for large/formatter-heavy grids and disabled when not needed.
+   * Cache hits skip formatter execution; export sanitization, decoding and file generation still run.
    * NOTE: columns with row-metadata formatter overrides are excluded from the cell display cache
    * and will always call the live formatter.
    */
@@ -560,10 +542,9 @@ export interface GridOption<C extends Column = Column> {
   enableMouseHoverHighlightRow?: boolean;
 
   /**
-   * Do we want to always enable the mousewheel scroll handler?
-   * In other words, do we want the mouse scrolling would work from anywhere.
-   * Typically we should only enable it when using a Frozen/Pinned grid and if it does detect it to be a frozen grid,
-   * then it will automatically enable the scroll handler if this flag was originally set to undefined (which it is by default unless the user specifically disabled it).
+   * Defaults to true. Enables the mousewheel handler on the grid viewport and docking overlay,
+   * allowing wheel scrolling across grid regions and custom horizontal-wheel support. Set to false
+   * to disable SlickGrid's mousewheel handler and rely on native browser scrolling.
    */
   enableMouseWheelScrollHandler?: boolean;
 
@@ -646,7 +627,7 @@ export interface GridOption<C extends Column = Column> {
 
   /**
    * Defaults to false, force synchronous scrolling without throttling the UI render when scrolling.
-   * Note: it might be risky to disable this option on large dataset, use at your own risk
+   * Note: only relevant when `scrollRenderThrottling` is greater than 0, since renders are otherwise always synchronous
    */
   forceSyncScrolling?: boolean;
 
@@ -656,24 +637,8 @@ export interface GridOption<C extends Column = Column> {
   /** Formatter options that are defined and used for the entire grid */
   formatterOptions?: FormatterOption;
 
-  /** Optional frozen border in pixel to remove from total header width calculation (depending on your border width, it should be 0, 1 or 2 defaults is 1) */
-  frozenHeaderWidthCalcDifferential?: number;
-
-  /** Defaults to false, do we want to freeze (pin) the bottom portion instead of the top */
-  frozenBottom?: boolean;
-
-  /** Number of column index(es) to freeze (pin) in the grid */
-  frozenColumn?: number;
-
-  /** Number of row index(es) to freeze (pin) in the grid */
-  frozenRow?: number;
-
-  /**
-   * Defaults to 100, what is the minimum width to keep for the section on the right of a frozen grid?
-   * This basically fixes an issue that if the user expand any column on the left of the frozen (pinning) section
-   * and make it bigger than the viewport width, then the grid becomes unusable because the right section goes into a void/hidden area.
-   */
-  frozenRightViewportMinWidth?: number;
+  /** Unified permanent pinning for columns and rows. Set to `null` or `undefined` to clear it. */
+  pinning?: PinningOption | null;
 
   /** Defaults to false, which leads to have row(s) taking full width */
   fullWidthRows?: boolean;
@@ -723,6 +688,14 @@ export interface GridOption<C extends Column = Column> {
    * For example if our text is "José" and we type "Jose" then it won't return unless we use this flag because "é" is not equal to "e"
    */
   ignoreAccentOnStringFilterAndSort?: boolean;
+
+  /**
+   * Defaults to "material", which built-in icon set should be used for the default menu icons (Grid Menu, Header Menu, Context Menu, Cell Menu and their sub-menu chevrons)?
+   * Use "fluent" with the Fluent theme (`fi fi-*` icons) instead of the default Material icons (`mdi mdi-*`).
+   * NOTE: this only provides the default icons, any icon class explicitly defined in the menu options (e.g. `gridMenu.iconCssClass`)
+   * always takes precedence, so any other icon library can be used by overriding those icon classes.
+   */
+  iconSet?: 'material' | 'fluent';
 
   /** Do we leave space for new rows in the DOM visible buffer */
   leaveSpaceForNewRows?: boolean;
@@ -882,22 +855,16 @@ export interface GridOption<C extends Column = Column> {
   selectionOptions?: HybridSelectionModelOption;
 
   /**
-   * @deprecated Since 'transform' now works with everything (including Row Detali and RowSpan), the next major version (v11)
-   * will drop this option and only use 'transform' as the only rendering mode.
-   *
-   * Defaults to "transform", what CSS style to we want to use to render each row top offset (choose between "top" and "transform").
-   * For example, with a default `rowHeight: 22`, the 2nd row will have a `top` offset of 44px and by default have a CSS style of `transform: translateY(44px)`.
-   * NOTE: use `top` with the legacy inline Row Detail renderer. Row Detail uses an overlay and RowSpan uses hybrid positioning for transform compatibility.
-   */
-  rowTopOffsetRenderType?: 'top' | 'transform';
-
-  /**
    * Provide an optional sanitizer, a recommendation is to use DOMPurify to sanitize any HTML strings before passing them to `innerHTML`.
    * see https://github.com/cure53/DOMPurify
    */
   sanitizer?: Sanitizer;
 
-  /** Defaults to 10(ms), render throttling when using virtual scroll on large dataset */
+  /**
+   * Defaults to 0 (disabled), minimum delay (ms) between renders of large vertical scroll jumps (more than a viewport height).
+   * When disabled, every scroll event renders synchronously, which avoids blank frames while dragging the scrollbar.
+   * A value greater than 0 restores the previous throttled behavior (which was 10ms).
+   */
   scrollRenderThrottling?: number;
 
   /** CSS class name used when cell is selected */
@@ -969,26 +936,23 @@ export interface GridOption<C extends Column = Column> {
   /** Some default options to set for the PDF export service */
   pdfExportOptions?: PdfExportOption;
 
-  /** When set to true, it will skip the validation check to make sure frozen columns are not wider than the grid visible canvas width */
-  skipFreezeColumnValidation?: boolean;
+  /** When set to true, it will skip validation that pinned columns fit within the grid viewport. */
+  skipPinningValidation?: boolean;
 
-  /** Message to show when the frozen column is invalid and `invalidColumnFreezeWidthCallbackPicker` is enabled */
-  invalidColumnFreezePickerMessage?: string;
+  /** Stable row ids (or row indexes) that dock to an edge only after normal scrolling would clip them. Set to `null` to clear. */
+  stickyRows?: StickyRows | null;
 
-  /**
-   * Defaults to `alert(error)`, which will trigger when the user tries to uncheck too many columns via ColumnPicker/GridMenu.
-   * We need to have 1 or more columns visible on the right side of the frozen column.
-   */
-  invalidColumnFreezePickerCallback?: (error: string) => void;
+  /** Defaults to `alert()`, called with a validation error message when the grid rejects an operation. */
+  errorCallback?: (error: string) => void;
 
-  /** Message to show when the frozen column width is invalid and `invalidColumnFreezeWidthCallbackWidth` is enabled */
-  invalidColumnFreezeWidthMessage?: string;
+  /** Message passed to `errorCallback` when a pinning request would leave no visible center column. */
+  invalidColumnPinningPickerMessage?: string;
 
-  /**
-   * Defaults to `alert(error)`, which will trigger when the user tries to set a `frozenColumn` that is wider than the visible grid viewport width in the browser.
-   * We can't freeze wider than the viewport because the right canvas will never be visible and since the left canvas is never scrollable this would break the UX.
-   */
-  invalidColumnFreezeWidthCallback?: (error: string) => void;
+  /** Message passed to `errorCallback` when a pinning request that is not sequential from an edge would split a colspan. */
+  invalidColumnPinningSequenceMessage?: string;
+
+  /** Message passed to `errorCallback` when the pinned columns together are wider than the grid. */
+  invalidColumnPinningWidthMessage?: string;
 
   /** What is the top panel height in pixels (only accepts an integer) */
   topPanelHeight?: number;

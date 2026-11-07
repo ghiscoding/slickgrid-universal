@@ -210,7 +210,7 @@ export class Example13Component implements OnInit {
       },
       enableTextExport: true,
       gridMenu: {
-        hideExportTextDelimitedCommand: false,
+        hideCommands: ['toggle-dark-mode'],
       },
       excelExportOptions: { sanitizeDataExport: true },
       textExportOptions: { sanitizeDataExport: true },

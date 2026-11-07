@@ -19,7 +19,9 @@ export const objectStringSortComparer: SortComparer = (
   const checkForUndefinedValues = sortColumn?.valueCouldBeUndefined ?? gridOptions?.cellValueCouldBeUndefined ?? false;
 
   let position = 0;
-  if (typeof value1 !== 'object') {
+  if (value1 === value2 || (typeof value1 === 'object' && typeof value2 === 'object' && stringValue1 === stringValue2)) {
+    position = 0;
+  } else if (typeof value1 !== 'object') {
     position = -Infinity;
   } else if (typeof value2 !== 'object') {
     position = Infinity;
@@ -27,8 +29,6 @@ export const objectStringSortComparer: SortComparer = (
     position = -1;
   } else if (stringValue2 === null || (checkForUndefinedValues && stringValue2 === undefined)) {
     position = 1;
-  } else if (stringValue1 === stringValue2) {
-    position = 0;
   } else if (sortDirection) {
     position = stringValue1 < stringValue2 ? -1 : 1;
   } else {

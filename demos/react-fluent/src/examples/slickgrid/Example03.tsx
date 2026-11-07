@@ -16,7 +16,6 @@ import {
   type Grouping,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import { baseFluentGridOption } from './base-fluent-grid-options.js';
 
 const Example03: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([]);
@@ -256,7 +255,7 @@ const Example03: React.FC = () => {
       // enableTextExport: true,
       // enablePdfExport: true,
       // enableExcelExport: true,
-      ...baseFluentGridOption,
+      iconSet: 'fluent',
     };
 
     setColumns(columns);

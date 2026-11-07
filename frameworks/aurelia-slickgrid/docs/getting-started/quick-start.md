@@ -128,7 +128,7 @@ The last step is really to explore all the pages that are available in the docum
   - it gets updated very frequently, we usually mention any new/updated documentation in any new version release
 
 ### 8. How to load data with `Fetch-Client` or `Http-Client`?
-You might notice that all demos are made with mocked dataset that are embedded in each examples, that is mainly for demo purposes, but you might be wondering how to connect this with an `FetchClient`? Easy... just replace the mocked data, assigned to the `dataset` property, by your `FetchClient` call and that's it. The `dataset` property can be changed at any time, which is why you can use local data and/or connect it to a `Promise` or an async call with `FetchClient` (internally it's just a SETTER that refreshes the grid). See [Example 22](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example22) for a demo showing how to load a JSON file with `FetchClient`.
+You might notice that all demos are made with mocked dataset that are embedded in each examples, that is mainly for demo purposes, but you might be wondering how to connect this with an `FetchClient`? Easy... just replace the mocked data, assigned to the `dataset` property, by your `FetchClient` call and that's it. The `dataset` property will always stay in synch, which is why you can use local data and/or connect it to a `Promise` or an async call with `FetchClient` (internally it's just a SETTER that refreshes the grid). See [Example 22](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example22) for a demo showing how to load a JSON file with `FetchClient`.
 
 ### 9. Get Started
 The best way to get started is to clone the [Aurelia-Slickgrid-demos](https://github.com/ghiscoding/aurelia-slickgrid-demos), it has multiple examples and it is also updated frequently since it is used for the GitHub Bootstrap 5 demo page. `Aurelia-Slickgrid` has 2 `Bootstrap` themes, you can see a demo of each one below.
@@ -136,7 +136,7 @@ The best way to get started is to clone the [Aurelia-Slickgrid-demos](https://gi
 - [Bootstrap 5 - examples repo](https://github.com/ghiscoding/aurelia-slickgrid-demos/tree/master/vite-single-locale) (**without** `I18N` Service)
 
 ##### All Live Demo Examples have links to the actual code
-Like to see the code to a particular Example? Just click on the "see code" that is available in every live examples.
+Like to see the code to a particular Example? Just click on the "code" link that is available in every live examples.
 
 ### 10. CSP Compliance
 The project supports Content Security Policy (CSP) as long as you provide an optional `sanitizer` in your grid options (we recommend DOMPurify). Review the [CSP Compliance](../developer-guides/csp-compliance.md) documentation for more info.
@@ -160,4 +160,4 @@ Please start by searching any related [issues](https://github.com/ghiscoding/sli
 
 ### Final word
 
-This project is Open Source and is, for the most part, mainly done in spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/ghiscoding) ☕️, some part of the code happens when I'm at StarBucks... That is it, and please don't forget to upvote the project if you like and if it's useful to you ⭐ thank you 😉
+This project is Open Source and is, for the most part, mainly done in spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/ghiscoding) ☕️, some part of the code happens when I'm at StarBucks... That is it, and please don't forget to upvote the project if you like and if it's useful to you. ⭐ Thank you 😉

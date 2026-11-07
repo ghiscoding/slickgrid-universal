@@ -426,21 +426,18 @@ export class Example30 {
               command: 'edit',
               title: 'Edit Row',
               iconCssClass: 'mdi mdi-pencil',
-              positionOrder: 66,
               action: () => this.openCompositeModal('edit'),
             },
             {
               command: 'clone',
               title: 'Clone Row',
               iconCssClass: 'mdi mdi-content-copy',
-              positionOrder: 66,
               action: () => this.openCompositeModal('clone'),
             },
             'divider',
             {
               command: 'delete-row',
               title: 'Delete Row',
-              positionOrder: 64,
               iconCssClass: 'mdi mdi-close color-danger',
               cssClass: 'red',
               textCssClass: 'text-italic color-danger-light',
@@ -537,7 +534,7 @@ export class Example30 {
         activateCellOnMenuClick: true, // this is important to know which row index to use for Composite Editor
       },
       gridMenu: {
-        hideToggleDarkModeCommand: false, // hidden by default
+        showToggleDarkModeCommand: true, // hidden by default
         onCommand: (_, args) => {
           if (args.command === 'toggle-dark-mode') {
             this._darkMode = !this._darkMode; // keep local toggle var in sync

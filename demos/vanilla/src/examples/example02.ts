@@ -10,7 +10,6 @@ import {
   type Column,
   type GridOption,
   type Grouping,
-  type OnFormattedDataCacheCompletedEventArgs,
   type SliderOption,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -18,7 +17,6 @@ import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
-import { showToast } from './utilities.js';
 import '../material-styles.scss';
 import './example02.scss';
 
@@ -67,11 +65,6 @@ export default class Example02 {
         console.log(`sort: ${window.performance.now() - this.sortStart} ms`); // use console for Cypress tests
       });
     });
-    this._bindingEventService.bind(
-      gridContainerElm,
-      'onformatteddatacachecompleted',
-      this.handleFormattedDataCacheCompleted.bind(this) as EventListener
-    );
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // you could group by duration on page load (must be AFTER the DataView is created, so after GridBundle)
@@ -277,7 +270,6 @@ export default class Example02 {
       enablePdfExport: true,
       enableFiltering: true,
       enableGrouping: true,
-      enableFormattedDataCache: false, // enable it when you have a large dataset (e.g. we'll enable it when loading over 10K)
       columnPicker: {
         onColumnsChanged: (e, args) => console.log(e, args),
       },
@@ -327,7 +319,6 @@ export default class Example02 {
         hideLastUpdateTimestamp: false,
       },
       // forceSyncScrolling: true,
-      rowTopOffsetRenderType: 'transform', // defaults: 'top'
 
       // you can improve Date sorting by pre-parsing date items to `Date` object (this avoid reparsing the same dates multiple times)
       preParseDateColumns: '__', // or true
@@ -362,7 +353,6 @@ export default class Example02 {
       };
     }
     if (this.sgb) {
-      this.sgb.slickGrid?.setOptions({ enableFormattedDataCache: rowCount > 10000 });
       this.sgb.dataset = tmpArray;
     }
     return tmpArray;
@@ -473,15 +463,5 @@ export default class Example02 {
       },
     ] as Grouping[]);
     this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
-  }
-
-  handleFormattedDataCacheCompleted(e: CustomEvent<{ args: OnFormattedDataCacheCompletedEventArgs }>) {
-    const args = e.detail.args;
-    showToast(
-      `Formatted Data Cache completed: ${args.totalRows} rows, ${args.totalFormattedCells} cells in ${args.durationMs} ms`,
-      'info',
-      5000
-    );
-    console.log('onFormattedDataCacheCompleted', e, args);
   }
 }

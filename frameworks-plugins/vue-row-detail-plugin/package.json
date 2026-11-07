@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vue-row-detail-plugin",
-  "version": "10.11.0",
+  "version": "11.0.0-beta.0",
   "description": "Vue Row Detail Plugin for SlickGrid-Vue",
   "type": "module",
   "main": "./dist/index.js",
@@ -41,7 +41,7 @@
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
-    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/row-detail-plugin": "workspace:*",
     "slickgrid-vue": "workspace:*",
     "tslib": "catalog:",
     "vue": "catalog:"

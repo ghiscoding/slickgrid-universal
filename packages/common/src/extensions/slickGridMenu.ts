@@ -1,6 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement, extend, findWidthOrDefault, getHtmlStringOutput } from '@slickgrid-universal/utils';
 import { SlickEvent, Utils as SlickUtils } from '../core/slickCore.js';
+import type { GridMenuCallbackArgs } from '../interfaces/gridMenuCommandItemCallbackArgs.interface.js';
 import type {
   Column,
   DOMEvent,
@@ -13,15 +14,14 @@ import type {
   GridOption,
   onGridMenuColumnsChangedCallbackArgs,
 } from '../interfaces/index.js';
-import type { ExcelExportService } from '../services/excelExport.service.js';
+import type { MenuDivider } from '../interfaces/menuCommandItem.interface.js';
 import type { FilterService } from '../services/filter.service.js';
-import type { PdfExportService } from '../services/pdfExport.service.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { SortService } from '../services/sort.service.js';
-import type { TextExportService } from '../services/textExport.service.js';
 import { getTranslationPrefix } from '../services/utilities.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
+import { exportMenuResource, normalizeMenuCommandItems } from './menuUtils.js';
 
 /**
  * A control to add a Grid Menu with Extra Commands & Column Picker (hambuger menu on top-right of the grid)
@@ -120,18 +120,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
     // subscribe to the grid, when it's destroyed, we should also destroy the Grid Menu
     this._eventHandler.subscribe(this.grid.onBeforeDestroy, this.dispose.bind(this));
-
-    // when a grid optionally changes from a regular grid to a frozen grid, we need to destroy & recreate the grid menu
-    // we do this change because the Grid Menu is on the left container for a regular grid, it should however be displayed on the right container for a frozen grid
-    this._eventHandler.subscribe(this.grid.onSetOptions, (_e, args) => {
-      if (args && args.optionsBefore && args.optionsAfter) {
-        const switchedFromRegularToFrozen = args.optionsBefore.frozenColumn! >= 0 && args.optionsAfter.frozenColumn === -1;
-        const switchedFromFrozenToRegular = args.optionsBefore.frozenColumn === -1 && args.optionsAfter.frozenColumn! >= 0;
-        if (switchedFromRegularToFrozen || switchedFromFrozenToRegular) {
-          this.recreateGridMenu();
-        }
-      }
-    });
   }
 
   /** Initialize plugin. */
@@ -155,17 +143,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
     this.sharedService.gridOptions.gridMenu = this._addonOptions;
 
-    // merge original user grid menu items with internal items
-    // then sort all Grid Menu command items (sorted by pointer, no need to use the return)
-    const gridMenuCommandItems = this._userOriginalGridMenu.commandItems;
-    const originalCommandItems = this._userOriginalGridMenu && Array.isArray(gridMenuCommandItems) ? gridMenuCommandItems : [];
-
-    // merge the original commands with the built-in internal commands
-    const initialCommandItems = [...originalCommandItems, ...this.addGridMenuCustomCommands(originalCommandItems)];
-    this._addonOptions.commandItems =
-      (this._addonOptions.commandListBuilder?.(initialCommandItems) as Array<GridMenuItem | 'divider'>) ?? initialCommandItems;
+    this._addonOptions.commandItems = this.buildCommandItems();
     this.extensionUtility.translateMenuItemsFromTitleKey(this._addonOptions.commandItems || [], 'commandItems');
-    this.extensionUtility.sortItems(this._addonOptions.commandItems, 'positionOrder');
 
     // create the Grid Menu DOM element
     this.createGridMenu();
@@ -208,13 +187,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   createGridMenu(): void {
     const gridMenuWidth = (this._addonOptions?.menuWidth || this._defaults.menuWidth) as number;
     const gridContainer = this.grid.getContainerNode();
-    const headerSide = this.gridOptions.hasOwnProperty('frozenColumn') && this.gridOptions.frozenColumn! >= 0 ? 'right' : 'left';
-
     // find the header or pre-header element where to insert the grid menu button
     this._headerElm =
       this._addonOptions?.iconButtonContainer === 'preheader'
         ? gridContainer.querySelector<HTMLDivElement>('.slick-preheader-panel')
-        : gridContainer.querySelector<HTMLDivElement>(`.slick-header-${headerSide}`);
+        : gridContainer.querySelector<HTMLDivElement>('.slick-header-left');
 
     if (this._headerElm?.parentElement && this._addonOptions) {
       if (this._addonOptions.showButton ?? this._defaults.showButton) {
@@ -257,7 +234,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** Create the menu or sub-menu(s) but without the column picker which is a separate single process */
   createCommandMenu(
     triggeredByElm: HTMLElement,
-    commandItems: Array<GridMenuItem | 'divider'>,
+    commandItems: Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>>,
     level = 0,
     item?: ExtractMenuType<ExtendableItemTypes, MenuType>
   ): HTMLDivElement {
@@ -529,22 +506,25 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       this.sharedService.gridOptions.gridMenu.forceFitTitle = this._originalGridMenu.forceFitTitle || '';
       this.sharedService.gridOptions.gridMenu.syncResizeTitle = this._originalGridMenu.syncResizeTitle || '';
 
-      // merge original user grid menu items with internal items
-      // then sort all Grid Menu command items (sorted by pointer, no need to use the return)
-      // prettier-ignore
-      const originalCommandItems = this._userOriginalGridMenu && Array.isArray(this._userOriginalGridMenu.commandItems) ? this._userOriginalGridMenu.commandItems : [];
-      this.sharedService.gridOptions.gridMenu.commandItems = [
-        ...originalCommandItems,
-        ...this.addGridMenuCustomCommands(originalCommandItems),
-      ];
+      this.sharedService.gridOptions.gridMenu.commandItems = this.buildCommandItems();
       this.extensionUtility.translateMenuItemsFromTitleKey(this._addonOptions?.commandItems || [], 'commandItems');
-      this.extensionUtility.sortItems(this.sharedService.gridOptions.gridMenu.commandItems, 'positionOrder');
       this.translateTitleLabels(this.sharedService.gridOptions.gridMenu);
       this.translateTitleLabels(this._addonOptions);
 
       // translate all columns (including non-visible)
       this.extensionUtility.translateItems(this._columns, 'nameKey', 'name');
     }
+  }
+
+  protected buildCommandItems(): Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>> {
+    const userItems = this._userOriginalGridMenu?.commandItems;
+    const originalItems = Array.isArray(userItems) ? userItems : [];
+    const items = [...this.addGridMenuCustomCommands(originalItems), ...originalItems];
+    return (
+      (this._addonOptions.commandListBuilder?.(normalizeMenuCommandItems(items)) as Array<
+        GridMenuItem | MenuDivider<GridMenuCallbackArgs>
+      >) ?? items
+    );
   }
 
   translateTitleLabels(gridMenuOptions: GridMenu | null): void {
@@ -561,231 +541,164 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   // ------------------
 
   /** Create Grid Menu with Custom Commands if user has enabled Filters and/or uses a Backend Service (OData, GraphQL) */
-  protected addGridMenuCustomCommands(originalCommandItems: Array<GridMenuItem | 'divider'>): Array<GridMenuItem | 'divider'> {
+  protected addGridMenuCustomCommands(
+    originalCommandItems: Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>>
+  ): Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>> {
     const backendApi = this.gridOptions.backendServiceApi || null;
-    const gridMenuCommandItems: Array<GridMenuItem | 'divider'> = [];
+    const gridMenuCommandItems: Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>> = [];
     const gridOptions = this.gridOptions;
     const translationPrefix = getTranslationPrefix(gridOptions);
     const commandLabels = this._addonOptions?.commandLabels;
+    const textMenuFormats = gridOptions.textExportOptions?.menuFormats ?? ['csv'];
+    const addCommand = (item: GridMenuItem) =>
+      this.addMissingCommandOrAction(item, this._addonOptions.hideCommands, gridMenuCommandItems, originalCommandItems);
 
     if (this._addonOptions && this.gridOptions) {
-      // show grid menu: Unfreeze Columns/Rows
-      if (!this._addonOptions.hideClearFrozenColumnsCommand) {
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconClearFrozenColumnsCommand || 'mdi mdi-pin-off-outline',
-            _orgTitle: commandLabels?.clearFrozenColumnsCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.clearFrozenColumnsCommandKey ?? 'CLEAR_PINNING'}`,
-            disabled: false,
-            command: 'clear-pinning',
-            positionOrder: 52,
-            action: this.clearPinning.bind(this),
-          },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
-      }
-
       if (this.gridOptions.enableFiltering && !this.sharedService.hideHeaderRowAfterPageLoad) {
         // show grid menu: Clear all Filters
-        if (!this._addonOptions.hideClearAllFiltersCommand) {
-          this.addMissingCommandOrAction(
-            {
-              iconCssClass: this._addonOptions.iconClearAllFiltersCommand || 'mdi mdi-filter-remove-outline',
-              _orgTitle: commandLabels?.clearAllFiltersCommand || '',
-              titleKey: `${translationPrefix}${commandLabels?.clearAllFiltersCommandKey ?? 'CLEAR_ALL_FILTERS'}`,
-              disabled: false,
-              command: 'clear-filter',
-              positionOrder: 50,
-              action: () => {
-                this.filterService.clearFilters();
-                this.sharedService.dataView.refresh();
-                this.pubSubService.publish('onGridMenuClearAllFilters');
-              },
-            },
-            this._addonOptions.hideCommands,
-            gridMenuCommandItems,
-            originalCommandItems
-          );
-        }
-
-        // show grid menu: toggle filter row
-        if (!this._addonOptions.hideToggleFilterCommand) {
-          this.addMissingCommandOrAction(
-            {
-              iconCssClass: this._addonOptions.iconToggleFilterCommand || 'mdi mdi-flip-vertical',
-              _orgTitle: commandLabels?.toggleFilterCommand || '',
-              titleKey: `${translationPrefix}${commandLabels?.toggleFilterCommandKey ?? 'TOGGLE_FILTER_ROW'}`,
-              disabled: false,
-              command: 'toggle-filter',
-              positionOrder: 53,
-              action: this.toggleFilterBar.bind(this),
-            },
-            this._addonOptions.hideCommands,
-            gridMenuCommandItems,
-            originalCommandItems
-          );
-        }
-
-        // show grid menu: refresh dataset
-        if (backendApi && !this._addonOptions.hideRefreshDatasetCommand) {
-          this.addMissingCommandOrAction(
-            {
-              iconCssClass: this._addonOptions.iconRefreshDatasetCommand || 'mdi mdi-sync',
-              _orgTitle: commandLabels?.refreshDatasetCommand || '',
-              titleKey: `${translationPrefix}${commandLabels?.refreshDatasetCommandKey ?? 'REFRESH_DATASET'}`,
-              disabled: false,
-              command: 'refresh-dataset',
-              positionOrder: 58,
-              action: () => this.extensionUtility.refreshBackendDataset(),
-            },
-            this._addonOptions.hideCommands,
-            gridMenuCommandItems,
-            originalCommandItems
-          );
-        }
-      }
-
-      // show grid menu: toggle dark mode
-      if (!this._addonOptions.hideToggleDarkModeCommand) {
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'mdi mdi-brightness-4',
-            _orgTitle: commandLabels?.toggleDarkModeCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.toggleDarkModeCommandKey ?? 'TOGGLE_DARK_MODE'}`,
-            disabled: false,
-            command: 'toggle-dark-mode',
-            positionOrder: 54,
-            action: () => {
-              const currentDarkMode = this.sharedService.gridOptions.darkMode;
-              this.grid.setOptions({ darkMode: !currentDarkMode });
-              this.sharedService.gridOptions.darkMode = !currentDarkMode;
-            },
+        addCommand({
+          iconCssClass: this._addonOptions.iconClearAllFiltersCommand || 'mdi mdi-filter-remove-outline',
+          _orgTitle: commandLabels?.clearAllFiltersCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.clearAllFiltersCommandKey ?? 'CLEAR_ALL_FILTERS'}`,
+          disabled: false,
+          command: 'clear-filter',
+          action: () => {
+            this.filterService.clearFilters();
+            this.sharedService.dataView.refresh();
+            this.pubSubService.publish('onGridMenuClearAllFilters');
           },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
-      }
-
-      if (this.gridOptions.showPreHeaderPanel) {
-        // show grid menu: toggle pre-header row
-        if (!this._addonOptions.hideTogglePreHeaderCommand) {
-          this.addMissingCommandOrAction(
-            {
-              iconCssClass: this._addonOptions.iconTogglePreHeaderCommand || 'mdi mdi-flip-vertical',
-              _orgTitle: commandLabels?.togglePreHeaderCommand || '',
-              titleKey: `${translationPrefix}${commandLabels?.togglePreHeaderCommandKey ?? 'TOGGLE_PRE_HEADER_ROW'}`,
-              disabled: false,
-              command: 'toggle-preheader',
-              positionOrder: 53,
-              action: () => {
-                const showPreHeaderPanel = this.gridOptions?.showPreHeaderPanel ?? false;
-                this.grid.setPreHeaderPanelVisibility(!showPreHeaderPanel);
-              },
-            },
-            this._addonOptions.hideCommands,
-            gridMenuCommandItems,
-            originalCommandItems
-          );
-        }
+        });
       }
 
       if (this.gridOptions.enableSorting) {
         // show grid menu: Clear all Sorting
-        if (!this._addonOptions.hideClearAllSortingCommand) {
-          this.addMissingCommandOrAction(
-            {
-              iconCssClass: this._addonOptions.iconClearAllSortingCommand || 'mdi mdi-sort-variant-off',
-              _orgTitle: commandLabels?.clearAllSortingCommand || '',
-              titleKey: `${translationPrefix}${commandLabels?.clearAllSortingCommandKey ?? 'CLEAR_ALL_SORTING'}`,
-              disabled: false,
-              command: 'clear-sorting',
-              positionOrder: 51,
-              action: () => {
-                this.sortService.clearSorting();
-                this.sharedService.dataView.refresh();
-                this.pubSubService.publish('onGridMenuClearAllSorting');
-              },
-            },
-            this._addonOptions.hideCommands,
-            gridMenuCommandItems,
-            originalCommandItems
-          );
-        }
+        addCommand({
+          iconCssClass: this._addonOptions.iconClearAllSortingCommand || 'mdi mdi-sort-variant-off',
+          _orgTitle: commandLabels?.clearAllSortingCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.clearAllSortingCommandKey ?? 'CLEAR_ALL_SORTING'}`,
+          disabled: false,
+          command: 'clear-sorting',
+          action: () => {
+            this.sortService.clearSorting();
+            this.sharedService.dataView.refresh();
+            this.pubSubService.publish('onGridMenuClearAllSorting');
+          },
+        });
+      }
+
+      // show grid menu: Clear all Pinning
+      addCommand({
+        iconCssClass: this._addonOptions.iconClearAllPinningCommand || 'mdi mdi-pin-off-outline',
+        _orgTitle: commandLabels?.clearPinningCommand || '',
+        titleKey: `${translationPrefix}${commandLabels?.clearPinningCommandKey ?? 'CLEAR_ALL_PINNING'}`,
+        disabled: false,
+        command: 'clear-pinning',
+        action: this.clearPinning.bind(this),
+      });
+
+      if (this.gridOptions.enableFiltering && !this.sharedService.hideHeaderRowAfterPageLoad) {
+        // show grid menu: toggle filter row
+        addCommand({
+          iconCssClass: this._addonOptions.iconToggleFilterCommand || 'mdi mdi-flip-vertical',
+          _orgTitle: commandLabels?.toggleFilterCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.toggleFilterCommandKey ?? 'TOGGLE_FILTER_ROW'}`,
+          disabled: false,
+          command: 'toggle-filter',
+          action: this.toggleFilterBar.bind(this),
+        });
+      }
+
+      if (this.gridOptions.showPreHeaderPanel) {
+        // show grid menu: toggle pre-header row
+        addCommand({
+          iconCssClass: this._addonOptions.iconTogglePreHeaderCommand || 'mdi mdi-flip-vertical',
+          _orgTitle: commandLabels?.togglePreHeaderCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.togglePreHeaderCommandKey ?? 'TOGGLE_PRE_HEADER_ROW'}`,
+          disabled: false,
+          command: 'toggle-preheader',
+          action: () => {
+            const showPreHeaderPanel = this.gridOptions?.showPreHeaderPanel ?? false;
+            this.grid.setPreHeaderPanelVisibility(!showPreHeaderPanel);
+          },
+        });
+      }
+
+      // show grid menu: toggle dark mode
+      if (this._addonOptions.showToggleDarkModeCommand) {
+        addCommand({
+          iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'mdi mdi-brightness-4',
+          _orgTitle: commandLabels?.toggleDarkModeCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.toggleDarkModeCommandKey ?? 'TOGGLE_DARK_MODE'}`,
+          disabled: false,
+          command: 'toggle-dark-mode',
+          action: () => {
+            const currentDarkMode = this.sharedService.gridOptions.darkMode;
+            this.grid.setOptions({ darkMode: !currentDarkMode });
+            this.sharedService.gridOptions.darkMode = !currentDarkMode;
+          },
+        });
       }
 
       // show grid menu: Export to file
-      if (this.gridOptions.enableTextExport && !this._addonOptions.hideExportCsvCommand) {
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconExportCsvCommand || 'mdi mdi-download',
-            _orgTitle: commandLabels?.exportCsvCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.exportCsvCommandKey ?? 'EXPORT_TO_CSV'}`,
-            disabled: false,
-            command: 'export-csv',
-            positionOrder: 55,
-            action: this.exportCsv.bind(this),
-          },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+      if (this.gridOptions.enableTextExport && textMenuFormats.includes('csv')) {
+        addCommand({
+          iconCssClass: this._addonOptions.iconExportCsvCommand || 'mdi mdi-download',
+          _orgTitle: commandLabels?.exportCsvCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.exportCsvCommandKey ?? 'EXPORT_TO_CSV'}`,
+          disabled: false,
+          command: 'export-csv',
+          action: this.exportCsv.bind(this),
+        });
       }
 
       // show grid menu: Export to Excel
-      if (this.gridOptions.enableExcelExport && !this._addonOptions.hideExportExcelCommand) {
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
-            _orgTitle: commandLabels?.exportExcelCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.exportExcelCommandKey ?? 'EXPORT_TO_EXCEL'}`,
-            disabled: false,
-            command: 'export-excel',
-            positionOrder: 56,
-            action: this.exportExcel.bind(this),
-          },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+      if (this.gridOptions.enableExcelExport) {
+        addCommand({
+          iconCssClass: this._addonOptions.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
+          _orgTitle: commandLabels?.exportExcelCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.exportExcelCommandKey ?? 'EXPORT_TO_EXCEL'}`,
+          disabled: false,
+          command: 'export-excel',
+          action: this.exportExcel.bind(this),
+        });
       }
 
       // show grid menu: Export to PDF
-      if (this.gridOptions.enablePdfExport && !this._addonOptions.hideExportPdfCommand) {
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconExportPdfCommand || 'mdi mdi-file-pdf-outline text-danger',
-            _orgTitle: commandLabels?.exportPdfCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.exportPdfCommandKey ?? 'EXPORT_TO_PDF'}`,
+      if (this.gridOptions.enablePdfExport) {
+        addCommand({
+          iconCssClass: this._addonOptions.iconExportPdfCommand || 'mdi mdi-file-pdf-outline text-danger',
+          _orgTitle: commandLabels?.exportPdfCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.exportPdfCommandKey ?? 'EXPORT_TO_PDF'}`,
+          disabled: false,
+          command: 'export-pdf',
+          action: this.exportPdf.bind(this),
+        });
+      }
+
+      if (this.gridOptions.enableFiltering && !this.sharedService.hideHeaderRowAfterPageLoad) {
+        // show grid menu: refresh dataset
+        if (backendApi) {
+          addCommand({
+            iconCssClass: this._addonOptions.iconRefreshDatasetCommand || 'mdi mdi-sync',
+            _orgTitle: commandLabels?.refreshDatasetCommand || '',
+            titleKey: `${translationPrefix}${commandLabels?.refreshDatasetCommandKey ?? 'REFRESH_DATASET'}`,
             disabled: false,
-            command: 'export-pdf',
-            positionOrder: 57,
-            action: this.exportPdf.bind(this),
-          },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+            command: 'refresh-dataset',
+            action: () => this.extensionUtility.refreshBackendDataset(),
+          });
+        }
       }
 
       // show grid menu: export to text file as tab delimited
-      if (this.gridOptions.enableTextExport && !this._addonOptions.hideExportTextDelimitedCommand) {
-        this.addMissingCommandOrAction(
-          {
-            iconCssClass: this._addonOptions.iconExportTextDelimitedCommand || 'mdi mdi-download',
-            _orgTitle: commandLabels?.exportTextDelimitedCommand || '',
-            titleKey: `${translationPrefix}${commandLabels?.exportTextDelimitedCommandKey ?? 'EXPORT_TO_TAB_DELIMITED'}`,
-            disabled: false,
-            command: 'export-text-delimited',
-            positionOrder: 58,
-            action: this.exportTextDelimited.bind(this),
-          },
-          this._addonOptions.hideCommands,
-          gridMenuCommandItems,
-          originalCommandItems
-        );
+      if (this.gridOptions.enableTextExport && textMenuFormats.includes('txt')) {
+        addCommand({
+          iconCssClass: this._addonOptions.iconExportTextDelimitedCommand || 'mdi mdi-download',
+          _orgTitle: commandLabels?.exportTextDelimitedCommand || '',
+          titleKey: `${translationPrefix}${commandLabels?.exportTextDelimitedCommandKey ?? 'EXPORT_TO_TAB_DELIMITED'}`,
+          disabled: false,
+          command: 'export-text-delimited',
+          action: this.exportTextDelimited.bind(this),
+        });
       }
 
       // add the custom "Commands" title if there are any commands
@@ -802,17 +715,15 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   }
 
   protected clearPinning(): void {
-    // reset frozen props on both SlickGrid options and shared service options
+    // Clear the unified pinning state.
     const newGridOptions: Partial<GridOption> = {
-      frozenColumn: -1,
-      frozenRow: -1,
-      frozenBottom: false,
-      enableMouseWheelScrollHandler: false,
+      pinning: {
+        columns: { left: [], right: [] },
+        rows: { top: [], bottom: [] },
+      },
     };
     this.grid.setOptions(newGridOptions);
-    Object.keys(newGridOptions).forEach(
-      (c) => (this.sharedService.gridOptions[c as keyof GridOption] = newGridOptions[c as keyof GridOption])
-    );
+    this.sharedService.gridOptions.pinning = newGridOptions.pinning;
 
     // re-update columns to reflect any possible changes
     this.grid.updateColumns();
@@ -825,54 +736,19 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   }
 
   protected exportCsv(): void {
-    const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    // prettier-ignore
-    const exportCsvService = registeredResources.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
-    if (exportCsvService?.exportToFile) {
-      exportCsvService.exportToFile({ delimiter: ',', format: 'csv' });
-    } else {
-      console.error(
-        `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
-      );
-    }
+    exportMenuResource(this.sharedService, 'csv');
   }
 
   protected exportExcel(): void {
-    const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    // prettier-ignore
-    const excelService = registeredResources.find((service) => service.pluginName === 'ExcelExportService') as ExcelExportService | undefined;
-    if (excelService?.exportToExcel) {
-      excelService.exportToExcel();
-    } else {
-      console.error(
-        `[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu. Example:: this.gridOptions = { enableExcelExport: true, externalResources: [new ExcelExportService()] };`
-      );
-    }
+    exportMenuResource(this.sharedService, 'excel');
   }
 
   protected exportPdf(): void {
-    const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    const pdfService = registeredResources.find((service) => service.pluginName === 'PdfExportService') as PdfExportService | undefined;
-    if (pdfService?.exportToPdf) {
-      pdfService.exportToPdf();
-    } else {
-      console.error(
-        `[Slickgrid-Universal] You must register the PdfExportService to properly use Export to PDF in the Grid Menu. Example:: this.gridOptions = { enablePdfExport: true, externalResources: [new PdfExportService()] };`
-      );
-    }
+    exportMenuResource(this.sharedService, 'pdf');
   }
 
   protected exportTextDelimited(): void {
-    const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    // prettier-ignore
-    const exportTxtService = registeredResources.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
-    if (exportTxtService?.exportToFile) {
-      exportTxtService.exportToFile({ delimiter: '\t', format: 'txt' });
-    } else {
-      console.error(
-        `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
-      );
-    }
+    exportMenuResource(this.sharedService, 'txt');
   }
 
   protected toggleFilterBar(): void {
@@ -897,9 +773,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       iconCssClass: 'mdi mdi-menu',
       menuWidth: 16,
       commandItems: [],
-      hideClearAllFiltersCommand: false,
-      hideRefreshDatasetCommand: false,
-      hideToggleFilterCommand: false,
+      hideCommands: [],
     };
   }
 
@@ -1023,7 +897,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** Re/Create Command List by adding title, close & list of commands */
   recreateCommandList(
     triggeredByElm: HTMLElement,
-    commandItems: Array<GridMenuItem | 'divider'>,
+    commandItems: Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>>,
     menuElm: HTMLElement,
     callbackArgs: GridMenuEventWithElementCallbackArgs,
     item?: ExtractMenuType<ExtendableItemTypes, MenuType>
@@ -1033,7 +907,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     if (commandItems.length > 0) {
       const commandMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-command-list`, role: 'menu' }, menuElm);
       if (level === 0) {
-        this.populateCommandOrOptionTitle('command', this.addonOptions, commandMenuElm, level);
+        this.populateCommandTitle('command', this.addonOptions, commandMenuElm, level);
         // prettier-ignore
         const commandMenuHeaderElm = menuElm.querySelector<HTMLDivElement>(`.slick-command-header`) ?? createDomElement('div', { className: 'slick-command-header' });
         commandMenuHeaderElm.classList.add('with-close');
@@ -1046,7 +920,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         this.addSubMenuTitleWhenExists(item as ExtractMenuType<ExtendableItemTypes, MenuType>, commandMenuElm); // add sub-menu title when exists
       }
 
-      this.populateCommandOrOptionItems(
+      this.populateCommandItems(
         'command',
         this._addonOptions!,
         commandMenuElm,
@@ -1068,7 +942,12 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   ): void {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const commandItems = (item as GridMenuItem)?.commandItems || [];
-    const subMenuElm = this.createCommandMenu(e.target as HTMLElement, commandItems as Array<GridMenuItem | 'divider'>, level + 1, item);
+    const subMenuElm = this.createCommandMenu(
+      e.target as HTMLElement,
+      commandItems as Array<GridMenuItem | MenuDivider<GridMenuCallbackArgs>>,
+      level + 1,
+      item
+    );
     subMenuElm.style.display = 'block';
     document.body.appendChild(subMenuElm);
     this._gridMenuButtonElm && this.repositionMenu(e, subMenuElm, this._gridMenuButtonElm, this._addonOptions);

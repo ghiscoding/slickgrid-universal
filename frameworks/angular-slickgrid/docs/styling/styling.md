@@ -1,5 +1,6 @@
 #### index
 - [Using Built-in Themes (CSS or SASS)](#csssass-styles)
+- [Required Styles for Extra Packages](#required-styles-for-extra-packages)
 - [Using CSS Variables](#using-css-variables-instead-of-sass)
 - [Bootstrap & Other Frameworks](#bootstrap-support)
 - [SVG Icons](#svg-icons)
@@ -36,7 +37,7 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 
 // or other Themes
 @use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
-@use '@slickgrid-universal/common/dist/styles/styles/css/slickgrid-theme-material.css';
+@use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-material.css';
 @use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-salesforce.css';
 @use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-fluent.css';
 ```
@@ -56,6 +57,74 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-fluent.scss';
 ```
+
+### Menu icon sets
+The menu plugins (Grid Menu, Header Menu, Context Menu, Cell Menu and their sub-menu chevrons) use icon CSS classes, and the grid provides 2 built-in icon sets via the `iconSet` grid option:
+
+| `iconSet`              | CSS classes   | Use with                                                                      |
+| ---------------------- | ------------- | ----------------------------------------------------------------------------- |
+| `'material'` (default) | `mdi mdi-*`   | Default, Bootstrap, Material and Salesforce themes (the full themes provide the SVG icons) |
+| `'fluent'`             | `fi fi-*`     | Fluent theme                                                                  |
+
+```ts
+gridOptions = {
+  iconSet: 'fluent',
+};
+```
+
+#### Using your own icons (any icon library)
+The icon set only provides default values. Any icon class that you explicitly define in your menu options always takes precedence over the icon set, so you can override a single icon, or all of them to use any other icon library (e.g. Font Awesome, Bootstrap Icons, ...) as long as the CSS classes are available in your application. In that case, `iconSet` doesn't matter for the icons that you override.
+
+```ts
+gridOptions = {
+  iconSet: 'fluent', // optional, only used for the icons that you don't override
+
+  // override any specific icon
+  gridMenu: { iconCssClass: 'fa fa-bars' },
+  headerMenu: { iconSortAscCommand: 'fa fa-arrow-up' },
+  contextMenu: { subItemChevronClass: 'fa fa-chevron-right' },
+};
+```
+
+### Required Styles for Extra Packages
+Some features are provided by extra packages that you install separately, like the Composite Editor (`@slickgrid-universal/composite-editor-component`), the Custom Tooltip (`@slickgrid-universal/custom-tooltip-plugin`), and Row Detail (`@slickgrid-universal/row-detail-plugin`). Their styles are **not** included in the SlickGrid themes, so when you use any of these packages you **must** also import their CSS or SASS file yourself (otherwise they will be displayed without any styling), and it must always be loaded **after** the theme.
+
+##### with CSS
+Pick the file matching your theme (`default`, `bootstrap`, `fluent`, `material` or `salesforce`), use `@import` for plain CSS or `@use` when SASS is installed.
+```css
+/* style.css */
+@import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
+@import '@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor-bootstrap.css';
+@import '@slickgrid-universal/custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-bootstrap.css';
+@import '@slickgrid-universal/row-detail-plugin/dist/styles/css/slick-row-detail-bootstrap.css';
+```
+
+or add them to the `styles` array of your `angular.json` (in the same order)
+```json
+"styles": [
+  "node_modules/@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css",
+  "node_modules/@slickgrid-universal/composite-editor-component/dist/styles/css/slick-composite-editor-bootstrap.css",
+  "node_modules/@slickgrid-universal/custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-bootstrap.css",
+  "node_modules/@slickgrid-universal/row-detail-plugin/dist/styles/css/slick-row-detail-bootstrap.css"
+]
+```
+
+##### with SASS
+These package styles reuse the theme SASS variables, so any variables provided to the theme (including the package variables, e.g. `$slick-editor-modal-*` or `$slick-tooltip-*`) also apply to them.
+```scss
+/* style.scss */
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss' with (
+  $slick-primary-color: green,
+  $slick-editor-modal-container-width: 600px
+);
+@use '@slickgrid-universal/composite-editor-component/dist/styles/sass/slick-composite-editor.scss';
+@use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/sass/slick-custom-tooltip.scss';
+@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail.scss';
+```
+
+> **Note** load the theme and optional SASS styles in the **same SCSS entry file**, with the theme first. Separate compilations cannot share SASS overrides, and SASS throws an error when a module gets configured (`with (...)`) after it was already loaded. Import only the packages you use.
+
+Row Detail uses the same base package stylesheet with the Angular, Aurelia, React, and Vue Row Detail plugins. Add `@slickgrid-universal/row-detail-plugin` as a direct dependency when importing its styles, including when using a framework Row Detail plugin.
 
 ### Using CSS Variables _(instead of SASS)_
 You could change the SlickGrid styling with your own customization using [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties). The variables that you can use (over 800 of them) are all predefined as SASS variables in the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file, you will simply have to rename the `$slick-` prefix with a `--slick-` prefix to the variable name to use them as CSS Variables. To be clear, you don't need SASS but the variables names were all declared as SASS and that is what the lib will use internally but you can optionally use them all as plain CSS Variables.
@@ -108,16 +177,16 @@ The project has a few built-in icons (sort, grouping, row detail, row move, row 
 What if you want to use your own font/SVG library?
 This can be answered in 2 parts:
 1. the built-in icons can only be changed via SASS (or CSS with extra work), see above on how to change them.
-2. for all other areas using icons via CSS classes (e.g. all menu plugins), you can use the "lite" Themes and then make sure to update all the menu plugins with the correct CSS classes, for example the global grid options of the Grid Menu is configured with the following CSS classes and you'll want to remap them with the correct CSS classes to fit your needs:
+2. for all other areas using icons via CSS classes (e.g. all menu plugins), you can use the "lite" Themes and then make sure to update all the menu plugins with the correct CSS classes, for example the Grid Menu uses the following Material CSS classes by default (see [Menu icon sets](#menu-icon-sets)) and you'll want to remap them with the correct CSS classes to fit your needs:
 
 ```ts
-// default global grid options
-export const GlobalGridOptions = {
+// default Material icons, any of them can be overridden in your grid options
+const gridOptions = {
   gridMenu: {
     iconCssClass: 'mdi mdi-menu',
     iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',
     iconClearAllSortingCommand: 'mdi mdi-sort-variant-off',
-    iconClearFrozenColumnsCommand: 'mdi mdi-pin-off-outline',
+    iconUnpinningColumns: 'mdi mdi-pin-off-outline',
     iconExportCsvCommand: 'mdi mdi-download',
     iconExportExcelCommand: 'mdi mdi-file-excel-outline',
     iconExportTextDelimitedCommand: 'mdi mdi-download',

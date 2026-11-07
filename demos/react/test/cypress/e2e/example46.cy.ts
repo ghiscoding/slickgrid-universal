@@ -16,7 +16,7 @@ describe('Example 46 - Tree Data with Lazy Loading', () => {
   });
 
   it('should expect all folders to be collapsed and expect 6 initial items (6x chapters with children) in the grid', () => {
-    cy.get('.slick-group-toggle.collapsed').should('have.length', 6);
+    cy.get('.slick-tree-toggle.collapsed').should('have.length', 6);
 
     cy.get('.right-footer .item-count').contains('7');
     cy.get('.right-footer .total-count').contains('7');
@@ -37,9 +37,9 @@ describe('Example 46 - Tree Data with Lazy Loading', () => {
 
   it('should click on "Chapter 1" and expect 3 sub-chapters underneath and now have 10 items in the grid', () => {
     cy.get('div[data-row="0"] > .slick-cell:nth(1) .slick-tree-title').contains('Chapter 1');
-    cy.get('div[data-row="0"] > .slick-cell:nth(1) .slick-group-toggle.collapsed').click();
+    cy.get('div[data-row="0"] > .slick-cell:nth(1) .slick-tree-toggle.collapsed').click();
 
-    cy.get('.slick-group-toggle.collapsed').should('have.length', 8 - 1); // -1 for expanded Chapter
+    cy.get('.slick-tree-toggle.collapsed').should('have.length', 8 - 1); // -1 for expanded Chapter
     cy.get('.right-footer .item-count').contains('10');
     cy.get('.right-footer .total-count').contains('10');
 
@@ -64,26 +64,26 @@ describe('Example 46 - Tree Data with Lazy Loading', () => {
 
   it('should display an error message and keep group collapsed with an error when lazy load fails', () => {
     cy.get('div[data-row="9"] > .slick-cell:nth(1) .slick-tree-title').contains('Chapter X');
-    cy.get('div[data-row="9"] > .slick-cell:nth(1) .slick-group-toggle.collapsed').click();
+    cy.get('div[data-row="9"] > .slick-cell:nth(1) .slick-tree-toggle.collapsed').click();
     cy.get('.slick-tree-load-fail').should('exist');
     cy.get('.toast').should('contain', 'Lazy fetching failed');
   });
 
   it('should display an error message again when clicked multiple times', () => {
-    cy.get('div[data-row="9"] > .slick-cell:nth(1) .slick-group-toggle.load-fail').click();
+    cy.get('div[data-row="9"] > .slick-cell:nth(1) .slick-tree-toggle.load-fail').click();
     cy.get('.slick-tree-load-fail').should('exist');
     cy.get('.toast').should('contain', 'Lazy fetching failed');
 
-    cy.get('div[data-row="9"] > .slick-cell:nth(1) .slick-group-toggle.load-fail').click();
+    cy.get('div[data-row="9"] > .slick-cell:nth(1) .slick-tree-toggle.load-fail').click();
     cy.get('.slick-tree-load-fail').should('exist');
     cy.get('.toast').should('contain', 'Lazy fetching failed');
   });
 
   it('should click on "Chapter 1.2" and expect 3 sub-chapters underneath and now have 10 items in the grid', () => {
     cy.get('div[data-row="2"] > .slick-cell:nth(1) .slick-tree-title').contains('Chapter 1.2');
-    cy.get('div[data-row="2"] > .slick-cell:nth(1) .slick-group-toggle.collapsed').click();
+    cy.get('div[data-row="2"] > .slick-cell:nth(1) .slick-tree-toggle.collapsed').click();
 
-    cy.get('.slick-group-toggle.collapsed').should('have.length', 8);
+    cy.get('.slick-tree-toggle.collapsed').should('have.length', 8);
     cy.get('.right-footer .item-count').contains('13');
     cy.get('.right-footer .total-count').contains('13');
 
@@ -112,15 +112,15 @@ describe('Example 46 - Tree Data with Lazy Loading', () => {
   it('should click on "Collapse All", then "Expand All" and expect only the lazily loaded nodes to be expanded', () => {
     cy.get('[data-test="collapse-all-btn"]').click();
 
-    cy.get('.slick-group-toggle.collapsed').should('have.length', 6);
-    cy.get('.slick-group-toggle.expanded').should('have.length', 0);
+    cy.get('.slick-tree-toggle.collapsed').should('have.length', 6);
+    cy.get('.slick-tree-toggle.expanded').should('have.length', 0);
     cy.get('.right-footer .item-count').contains('7');
     cy.get('.right-footer .total-count').contains('13');
 
     cy.get('[data-test="expand-all-btn"]').click();
 
-    cy.get('.slick-group-toggle.collapsed').should('have.length', 8);
-    cy.get('.slick-group-toggle.expanded').should('have.length', 2);
+    cy.get('.slick-tree-toggle.collapsed').should('have.length', 8);
+    cy.get('.slick-tree-toggle.expanded').should('have.length', 2);
     cy.get('.right-footer .item-count').contains('13');
     cy.get('.right-footer .total-count').contains('13');
   });
@@ -211,10 +211,10 @@ describe('Example 46 - Tree Data with Lazy Loading', () => {
 
   it('should lazily expand "Chapter 1.2.1" and expect 1 more group added', () => {
     cy.get('div[data-row="3"] > .slick-cell:nth(1) .slick-tree-title').contains('Chapter 1.2.1');
-    cy.get('div[data-row="3"] > .slick-cell:nth(1) .slick-group-toggle.collapsed').click();
+    cy.get('div[data-row="3"] > .slick-cell:nth(1) .slick-tree-toggle.collapsed').click();
 
-    cy.get('.slick-group-toggle.collapsed').should('have.length', 2);
-    cy.get('.slick-group-toggle.expanded').should('have.length', 3);
+    cy.get('.slick-tree-toggle.collapsed').should('have.length', 2);
+    cy.get('.slick-tree-toggle.expanded').should('have.length', 3);
     cy.get('.right-footer .item-count').contains('5');
     cy.get('.right-footer .total-count').contains('16');
 
@@ -271,15 +271,15 @@ describe('Example 46 - Tree Data with Lazy Loading', () => {
   it('should click again on "Collapse All", then "Expand All" and still expect 16 of 16 items to be lazily loaded nodes to be expanded', () => {
     cy.get('[data-test="collapse-all-btn"]').click();
 
-    cy.get('.slick-group-toggle.collapsed').should('have.length', 6);
-    cy.get('.slick-group-toggle.expanded').should('have.length', 0);
+    cy.get('.slick-tree-toggle.collapsed').should('have.length', 6);
+    cy.get('.slick-tree-toggle.expanded').should('have.length', 0);
     cy.get('.right-footer .item-count').contains('7');
     cy.get('.right-footer .total-count').contains('16');
 
     cy.get('[data-test="expand-all-btn"]').click();
 
-    cy.get('.slick-group-toggle.collapsed').should('have.length', 9);
-    cy.get('.slick-group-toggle.expanded').should('have.length', 3);
+    cy.get('.slick-tree-toggle.collapsed').should('have.length', 9);
+    cy.get('.slick-tree-toggle.expanded').should('have.length', 3);
     cy.get('.right-footer .item-count').contains('16');
     cy.get('.right-footer .total-count').contains('16');
   });

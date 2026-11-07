@@ -176,8 +176,8 @@ export class Example27 {
       headerMenu: {
         iconClearFilterCommand: 'mdi mdi mdi-filter-remove-outline',
         iconClearSortCommand: 'mdi mdi-swap-vertical',
-        iconSortAscCommand: 'mdi mdi-sort-ascending',
-        iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
+        iconSortAscCommand: 'mdi mdi-arrow-up',
+        iconSortDescCommand: 'mdi mdi-arrow-down',
         iconColumnHideCommand: 'mdi mdi-close',
       },
     };

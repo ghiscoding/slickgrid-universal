@@ -52,7 +52,6 @@ const gridOptionMock = {
         command: 'clear-filter',
         disabled: false,
         iconCssClass: 'mdi mdi-filter-remove-outline',
-        positionOrder: 50,
         title: 'Clear all Filters',
       },
       {
@@ -60,7 +59,6 @@ const gridOptionMock = {
         disabled: false,
         hidden: true,
         iconCssClass: 'mdi mdi-flip-vertical',
-        positionOrder: 52,
         title: 'Toggle Filter Row',
       },
     ],
@@ -139,7 +137,7 @@ describe('FilterService', () => {
     backendUtilityService = new BackendUtilityService();
     const filterFactory = new FilterFactory(slickgridConfig, translateService, collectionService);
     service = new FilterService(filterFactory, pubSubServiceStub, sharedService, backendUtilityService, rxjsResourceStub);
-    slickgridEventHandler = service.eventHandler;
+    slickgridEventHandler = service['_eventHandler'];
     vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(div);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionMock);
   });
@@ -224,7 +222,7 @@ describe('FilterService', () => {
       const filterMetadataArray = service.getFiltersMetadata();
       const destroySpy = vi.spyOn(filterMetadataArray[0], 'destroy');
 
-      expect(service.isFilterFirstRender).toBe(false);
+      expect(service['_isFilterFirstRender']).toBe(false);
       expect(columnFilters).toEqual({
         isActive: { columnDef: mockColumn, columnId: 'isActive', operator: 'EQ', searchTerms: [true], parsedSearchTerms: true, type: 'boolean' },
       });
@@ -644,7 +642,7 @@ describe('FilterService', () => {
           { id: 'field2', field: 'field2', width: 100 },
         ];
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-        vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+        vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(mockColumns);
       });
 
       it('should clear all the Filters when the query response is a string', async () => {
@@ -663,7 +661,7 @@ describe('FilterService', () => {
         expect(service.getColumnFilters()).toEqual({});
         expect(spyFilterChange).not.toHaveBeenCalled();
         expect(spyEmitter).not.toHaveBeenCalled();
-        expect(sharedService.columnDefinitions[0].filter!.searchTerms).toBeUndefined();
+        expect(sharedService.columns[0].filter!.searchTerms).toBeUndefined();
       });
 
       it('should execute the "onError" method when the Promise throws an error', async () => {
@@ -1133,6 +1131,17 @@ describe('FilterService', () => {
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
+    });
+
+    it('does not look up column indexes when filtering without a formatter', () => {
+      service.init(gridStub);
+      const indexSpy = vi.spyOn(gridStub, 'getColumnIndex');
+      indexSpy.mockClear();
+      const columnFilters = {
+        firstName: { columnDef: { id: 'firstName', field: 'firstName' }, columnId: 'firstName', searchTerms: ['John'], type: 'string' },
+      } as ColumnFilters;
+      expect(service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters })).toBe(true);
+      expect(indexSpy).not.toHaveBeenCalled();
     });
 
     it('should return True when input value from datacontext is IN searchTerms', () => {
@@ -1943,7 +1952,7 @@ describe('FilterService', () => {
       const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
       const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.disableFilterFunctionality();
@@ -1973,7 +1982,7 @@ describe('FilterService', () => {
       const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
       const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.disableFilterFunctionality(false);
@@ -2002,7 +2011,7 @@ describe('FilterService', () => {
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
       const setColsSpy = vi.spyOn(gridStub, 'setColumns');
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.disableFilterFunctionality(false);
@@ -2027,7 +2036,7 @@ describe('FilterService', () => {
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
       const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
-      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
+      vi.spyOn(SharedService.prototype, 'columns', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
       service.toggleFilterFunctionality();
@@ -2371,6 +2380,26 @@ describe('FilterService', () => {
         expect(output).toBe(true);
         expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
         expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([21, 4, 5]));
+      });
+
+      it('should apply preset toggled items only once and match their parent by the custom dataset id property', () => {
+        gridOptionMock.datasetIdPropertyName = 'uid';
+        gridOptionMock.presets = { treeData: { toggledItems: [{ itemId: 'p1', isCollapsed: true }] } };
+        const items: any[] = [
+          { uid: 'p1', file: 'parent', __hasChildren: true, __parentId: null },
+          { uid: 'c1', file: 'child', __parentId: 'p1' },
+        ];
+
+        service.init(gridStub);
+        const output = service.preFilterTreeData(items, {});
+        expect(output).toEqual(initSetWithValues(['c1', 'p1']));
+        expect(items[0].__collapsed).toBe(true);
+
+        // presets are only applied on the first pre-filtering
+        items[0].__collapsed = false;
+        service.preFilterTreeData(items, {});
+        expect(items[0].__collapsed).toBe(false);
+        gridOptionMock.datasetIdPropertyName = undefined;
       });
 
       it('should return False when item is found BUT its parent is collapsed', async () => {

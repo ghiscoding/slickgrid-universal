@@ -48,7 +48,6 @@ prepareGrid() {
     id: 'isActive', name: 'Active', field: 'isActive',
     editor: {
       model: Editors.singleSelect,
-      // previously known as `editorOptions` for < 9.0
       options: {
         maxHeight: 400
       } as MultipleSelectOption

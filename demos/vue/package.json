@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-vue-demo",
   "private": true,
-  "version": "10.11.0",
+  "version": "11.0.0-beta.0",
   "type": "module",
   "author": {
     "name": "Ghislain B."
@@ -27,7 +27,7 @@
     "@slickgrid-universal/graphql": "workspace:*",
     "@slickgrid-universal/odata": "workspace:*",
     "@slickgrid-universal/pdf-export": "workspace:*",
-    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/row-detail-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/sql": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
@@ -40,7 +40,7 @@
     "rxjs": "catalog:",
     "slickgrid-vue": "workspace:*",
     "vue": "catalog:",
-    "vue-router": "^5.3.1"
+    "vue-router": "^5.4.0"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",

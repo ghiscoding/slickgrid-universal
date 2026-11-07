@@ -3,7 +3,6 @@ import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
 import React, { useEffect, useRef, useState } from 'react';
 import { Editors, Filters, Formatters, SlickgridReact, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
-import { baseFluentGridOption } from './base-fluent-grid-options.js';
 import { ExampleDetailPreload } from './Example-detail-preload.js';
 import Example04DetailView from './Example04-detail-view.js';
 
@@ -161,7 +160,6 @@ const Example04: React.FC = () => {
       },
       enableFiltering: true,
       enableRowDetailView: true,
-      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       darkMode,
       datasetIdPropertyName: 'rowId',
       preRegisterExternalExtensions: (pubSubService) => {
@@ -187,7 +185,7 @@ const Example04: React.FC = () => {
       selectionOptions: {
         selectActiveRow: true,
       },
-      ...baseFluentGridOption,
+      iconSet: 'fluent',
     };
   }
 

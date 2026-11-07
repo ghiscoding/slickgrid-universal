@@ -11,7 +11,6 @@ import {
   type CompositeEditorModalType,
   type EditCommand,
   type Formatter,
-  type GridOption,
   type LongTextEditorOption,
   type OnCompositeEditorChangeEventArgs,
   type SliderOption,
@@ -20,7 +19,7 @@ import {
 import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
-import { Slicker, type VanillaForceGridBundle } from '@slickgrid-universal/vanilla-force-bundle';
+import { Slicker, type SalesforceGridOption, type VanillaForceGridBundle } from '@slickgrid-universal/vanilla-force-bundle';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
 import countriesJson from './data/countries.json?raw';
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -92,7 +91,7 @@ export default class Example12 {
   private _darkMode = false;
   compositeEditorInstance: SlickCompositeEditorComponent;
   columns: Column[];
-  gridOptions: GridOption;
+  gridOptions: SalesforceGridOption;
   dataset: any[] = [];
   isGridEditable = true;
   editQueue: Array<{ item; columns: Column[]; editCommand }> = [];
@@ -472,21 +471,18 @@ export default class Example12 {
               command: 'edit',
               title: 'Edit Row',
               iconCssClass: 'mdi mdi-square-edit-outline',
-              positionOrder: 66,
               action: () => this.openCompositeModal('edit'),
             },
             {
               command: 'clone',
               title: 'Clone Row',
               iconCssClass: 'mdi mdi-content-copy',
-              positionOrder: 66,
               action: () => this.openCompositeModal('clone'),
             },
             'divider',
             {
               command: 'delete-row',
               title: 'Delete Row',
-              positionOrder: 64,
               iconCssClass: 'mdi mdi-close',
               cssClass: 'has-text-danger',
               textCssClass: 'text-italic',
@@ -588,7 +584,7 @@ export default class Example12 {
         activateCellOnMenuClick: true, // this is important to know which row index to use for Composite Editor
       },
       gridMenu: {
-        hideToggleDarkModeCommand: false, // disabled command by default
+        showToggleDarkModeCommand: true, // hidden by default
         onCommand: (_, args) => {
           if (args.command === 'toggle-dark-mode') {
             this._darkMode = !this._darkMode; // keep local toggle var in sync
@@ -860,8 +856,8 @@ export default class Example12 {
 
     // then change a single grid options to make the grid non-editable (readonly)
     this.isGridEditable = !this.isGridEditable;
-    this.sgb.gridOptions = { ...this.sgb.gridOptions, editable: this.isGridEditable };
-    this.gridOptions = this.sgb.gridOptions;
+    this.sgb.options = { ...this.sgb.options, editable: this.isGridEditable };
+    this.gridOptions = this.sgb.options;
     this.isCompositeDisabled = !this.isGridEditable;
     if (!this.isGridEditable) {
       this.isMassSelectionDisabled = true;
@@ -871,7 +867,7 @@ export default class Example12 {
   toggleDarkMode() {
     this._darkMode = !this._darkMode;
     this.toggleBodyBackground();
-    this.sgb.gridOptions = { ...this.sgb.gridOptions, darkMode: this._darkMode };
+    this.sgb.options = { ...this.sgb.options, darkMode: this._darkMode };
     this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
   }
 
@@ -1093,7 +1089,6 @@ export default class Example12 {
 
     setTimeout(() => {
       this.compositeEditorInstance?.openDetails({
-        // domElementType: 'div', // use as fallback when default <dialog> doesn't work (like in Salesforce LWC), accepts 'div' or 'dialog'
         headerTitle: modalTitle,
         modalType,
         insertOptions: { highlightRow: false }, // disable highlight to avoid flaky tests in Cypress
@@ -1119,11 +1114,11 @@ export default class Example12 {
         onSave: (formValues, _selection, dataContextOrUpdatedDatasetPreview) => {
           const serverResponseDelay = 50;
 
+          // simulate a backend server call which will reject if the "% Complete" is below 50%
           // when processing a mass update or mass selection
           if (modalType === 'mass-update' || modalType === 'mass-selection') {
             console.log(`${modalType} dataset preview`, dataContextOrUpdatedDatasetPreview);
 
-            // simulate a backend server call which will reject if the "% Complete" is below 50%
             return new Promise((resolve, reject) => {
               setTimeout(
                 () =>

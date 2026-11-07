@@ -108,13 +108,12 @@ export default class Example07 {
               iconCssClass: 'mdi mdi-help-circle',
               action: () => alert('Please help!'),
             },
-            { command: '', divider: true, positionOrder: 98 },
+            { command: '', divider: true },
             {
               // we can also have multiple nested sub-menus
               command: 'export',
               title: 'Exports',
               iconCssClass: 'mdi mdi-download',
-              positionOrder: 99,
               commandItems: [
                 { command: 'exports-txt', title: 'Text (tab delimited)' },
                 {
@@ -133,7 +132,6 @@ export default class Example07 {
             {
               command: 'feedback',
               title: 'Feedback',
-              positionOrder: 100,
               commandItems: [
                 {
                   command: 'request-update',
@@ -175,24 +173,6 @@ export default class Example07 {
                   break;
               }
             }
-          },
-          optionTitleKey: 'CHANGE_COMPLETED_FLAG',
-          optionItems: [
-            { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
-            { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
-            {
-              // we can also have multiple nested sub-menus
-              option: null,
-              title: 'Sub-Options (demo)',
-              subMenuTitleKey: 'CHANGE_COMPLETED_FLAG',
-              optionItems: [
-                { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
-                { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
-              ],
-            },
-          ],
-          onOptionSelected: (_e, args) => {
-            this.changeCompletedOption(args.dataContext, args.item.option as boolean);
           },
         },
       },
@@ -505,7 +485,7 @@ export default class Example07 {
       grid?.filterService.clearFilters();
     });
 
-    for (const columnFilter of grid?.columnDefinitions ?? []) {
+    for (const columnFilter of grid?.columns ?? []) {
       if (columnFilter.filterable) {
         const filterElm = `modal-allfilter-${columnFilter.id}`;
         const innerHtml = document.querySelector('#modal-allFilter-table')!.innerHTML;
@@ -517,13 +497,6 @@ export default class Example07 {
             </div>`;
         grid?.filterService.drawFilterTemplate(columnFilter, `#${filterElm}`);
       }
-    }
-  }
-
-  changeCompletedOption(dataContext: any, newValue: boolean) {
-    if (dataContext?.hasOwnProperty('completed')) {
-      dataContext.completed = newValue;
-      this.sgb?.gridService.updateItem(dataContext);
     }
   }
 
@@ -611,11 +584,11 @@ export default class Example07 {
 
     // you can dynamically add your column to your column definitions
     // and then use the spread operator [...cols] OR slice to force the framework to review the changes
-    this.sgb.columnDefinitions.push(newCol);
+    this.sgb.columns.push(newCol);
   }
 
   dynamicallyRemoveLastColumn() {
-    this.sgb.columnDefinitions.pop();
+    this.sgb.columns.pop();
   }
 
   hideFinishColumnDynamically() {

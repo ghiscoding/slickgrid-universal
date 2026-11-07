@@ -3,7 +3,6 @@ import {
   calculateAvailableSpace,
   classNameToList,
   createDomElement,
-  destroyAllElementProps,
   emptyElement,
   findFirstAttribute,
   findWidthOrDefault,
@@ -95,25 +94,6 @@ describe('Service/domUtilies', () => {
           `[Slickgrid-Universal] For better CSP (Content Security Policy) support, do not use "innerHTML" directly in "createDomElement('div', { innerHTML: 'some html'})"`
         )
       );
-    });
-  });
-
-  describe('destroyAllElementProps() method', () => {
-    it('should clear all DOM element props from the object', () => {
-      const obj = {
-        age: 20,
-        elm: document.createElement('div'),
-        elms: [document.createElement('div')],
-      };
-      destroyAllElementProps(obj);
-
-      expect(obj).toEqual({ age: 20, elm: null, elms: [null] });
-    });
-
-    it('should return when input is not an object', () => {
-      const result = destroyAllElementProps(null);
-
-      expect(result).toBeUndefined();
     });
   });
 
@@ -316,6 +296,43 @@ describe('Service/domUtilies', () => {
   });
 
   describe('htmlDecode() method', () => {
+    it('should skip DOM parsing for plain text, empty strings and primitive values', () => {
+      const createElementSpy = vi.spyOn(document, 'createElement');
+      try {
+        for (const input of ['', 'Task 123', 'Hablar español? 🦄', 'line one\tline two', 42, false]) {
+          expect(htmlDecode(input)).toBe(String(input));
+        }
+        expect(createElementSpy).not.toHaveBeenCalled();
+      } finally {
+        createElementSpy.mockRestore();
+      }
+    });
+
+    it.each(['\nfirst line', 'a\r\nb\rc', 'a\0b', '<b>literal markup</b>', '</textarea>tail', '&unknown;', '&amp;amp;'])(
+      'should preserve repeated textarea parsing behavior for %j',
+      (input) => {
+        let expected = input;
+        let previous: string;
+        do {
+          previous = expected;
+          const textarea = document.createElement('textarea');
+          textarea.innerHTML = expected;
+          expected = textarea.value;
+        } while (expected !== previous);
+        expect(htmlDecode(input)).toBe(expected);
+      }
+    );
+
+    it('should reuse one textarea when decoding multiple layers', () => {
+      const createElementSpy = vi.spyOn(document, 'createElement');
+      try {
+        expect(htmlDecode('&amp;amp;lt;div&amp;amp;gt;')).toBe('<div>');
+        expect(createElementSpy).toHaveBeenCalledTimes(1);
+      } finally {
+        createElementSpy.mockRestore();
+      }
+    });
+
     it('should return a decoded HTML string', () => {
       const result = htmlDecode(`&lt;div class=&quot;color: blue&quot;&gt;Bob&#39;s Boat&lt;/div&gt;`);
       expect(result).toBe(`<div class="color: blue">Bob's Boat</div>`);

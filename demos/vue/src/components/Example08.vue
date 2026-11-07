@@ -40,10 +40,10 @@ function defineGrid() {
     columnDef.header = {
       menu: {
         commandItems: [
+          // you can also add divider between commands (command is a required property but you can set it to empty string)
+          { divider: true, command: '' },
           // add Custom Header Menu Item Commands which will be appended to the existing internal custom items
           // you cannot override an internal command but you can hide them and create your own
-          // also note that the internal custom commands are in the positionOrder range of 50-60,
-          // if you want yours at the bottom then start with 61, below 50 will make your command(s) show on top
           {
             iconCssClass: 'mdi mdi-help-circle',
 
@@ -56,7 +56,6 @@ function defineGrid() {
             tooltip: 'Need assistance?',
             cssClass: 'bold', // container css class
             textCssClass: columnDef.id === 'title' || columnDef.id === 'completed' ? '' : 'blue', // just the text css class
-            positionOrder: 99,
             itemUsabilityOverride: (args) => {
               // for example if we want to disable the "Help" command over the "Title" and "Completed" column
               return !(args.column.id === 'title' || args.column.id === 'completed');
@@ -70,17 +69,12 @@ function defineGrid() {
               console.log('execute an action on Help', args);
             },
           },
-          // you can also add divider between commands (command is a required property but you can set it to empty string)
-          { divider: true, command: '', positionOrder: 98 },
-
           // you can use "divider" as a string too, but if you do then make sure it's the correct position in the list
-          // (since there's no positionOrder when using 'divider')
           // 'divider',
           {
             // we can also have multiple nested sub-menus
             command: 'custom-actions',
             title: 'Hello',
-            positionOrder: 99,
             commandItems: [
               { command: 'hello-world', title: 'Hello World' },
               { command: 'hello-slickgrid', title: 'Hello SlickGrid' },
@@ -102,7 +96,6 @@ function defineGrid() {
           {
             command: 'feedback',
             title: 'Feedback',
-            positionOrder: 100,
             commandItems: [
               {
                 command: 'request-update',
@@ -140,8 +133,6 @@ function defineGrid() {
     enableFiltering: false,
     enableCellNavigation: true,
     headerMenu: {
-      hideSortCommands: false,
-      hideColumnHideCommand: false,
       subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
       // you can use the "onCommand" (in Grid Options) and/or the "action" callback (in Column Definition)
       onCommand: (_e, args) => {
@@ -217,7 +208,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
     </h2>
 
     <div class="subtitle">
-      This example demonstrates using the <b>Slick.Plugins.HeaderMenu</b> plugin to easily add menus to colum headers.<br />
+      This example demonstrates using the <b>SlickHeaderMenu</b> plugin to easily add menus to colum headers.<br />
       These menus can be specified directly in the column definition, and are very easy to configure and use. (<a
         href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/header-menu-header-buttonss"
         target="_blank"

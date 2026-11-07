@@ -63,6 +63,7 @@ const gridStub = {
   getData: () => dataViewStub,
   getOptions: () => mockGridOptions,
   getColumns: vi.fn(),
+  getColumnsInRenderedOrder: vi.fn((includeHidden = false) => (includeHidden ? gridStub.getColumns() : gridStub.getVisibleColumns())),
   getVisibleColumns: vi.fn(),
   getGrouping: vi.fn(),
   getParentRowSpanByCell: vi.fn(),
@@ -77,9 +78,11 @@ describe('ExportService', () => {
   let mockExportTxtOptions: TextExportOption;
   let mockCsvBlob: Blob;
   let mockTxtBlob: Blob;
+  let anchorClickSpy: ReturnType<typeof vi.spyOn>;
 
   describe('with Translater Service', () => {
     beforeEach(() => {
+      anchorClickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
       translateService = new TranslateServiceStub();
       container = new ContainerServiceStub();
       container.registerInstance('PubSubService', pubSubServiceStub);
@@ -109,6 +112,7 @@ describe('ExportService', () => {
     afterEach(() => {
       delete mockGridOptions.backendServiceApi;
       service?.dispose();
+      anchorClickSpy.mockRestore();
       vi.clearAllMocks();
     });
 
@@ -280,6 +284,25 @@ describe('ExportService', () => {
         expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
+      });
+
+      it(`should skip a column with a width of 0 in the data rows, the same way as its header`, async () => {
+        const columnsWithHiddenPosition = mockColumns.map((col) => (col.id === 'position' ? { ...col, width: 0 } : col));
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsWithHiddenPosition);
+        mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
+        const spyDownload = vi.spyOn(service, 'startDownloadFile');
+
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
+        const contentExpectation = `"User Id","FirstName","LastName","Order"
+          ="1E06","John","Z","<b>10</b>"`;
+
+        service.init(gridStub, container);
+        await service.exportToFile(mockExportCsvOptions);
+
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       it(`should have the Order exported correctly with multiple formatters and use a different delimiter when "delimiterOverride" is provided`, async () => {
@@ -514,10 +537,30 @@ describe('ExportService', () => {
         expect(noCacheOutput).toBe('="1E06","&amp;Z"');
         expect(cacheMissOutput).toBe(noCacheOutput);
         expect(cacheHitOutput).toBe(noCacheOutput);
-        expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined);
-        expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
-        expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined);
-        expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
+        expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined, itemObj);
+        expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, itemObj);
+        expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined, itemObj);
+        expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, itemObj);
+      });
+
+      it('should only add the "Group by" empty cell once when the first cells of a grouped row are rowspan children', () => {
+        const columns: Column[] = [
+          { id: 'name', field: 'name' },
+          { id: 'code', field: 'code' },
+        ];
+        const textService = new TextExportService();
+        const localContainer = new ContainerServiceStub();
+        localContainer.registerInstance('PubSubService', { publish: vi.fn(), unsubscribeAll: vi.fn() });
+        const localGrid: any = {
+          getData: vi.fn().mockReturnValue({ getItemMetadata: vi.fn().mockReturnValue(null) }),
+          getOptions: vi.fn().mockReturnValue({ enableCellRowSpan: true }),
+          getParentRowSpanByCell: vi.fn().mockReturnValueOnce({ start: 0, end: 1 }).mockReturnValue(null),
+        };
+        textService.init(localGrid, localContainer);
+        Object.assign(textService as any, { _exportOptions: {}, _fileFormat: 'csv', _exportQuoteWrapper: '"', _delimiter: ',' });
+        (textService as any)._hasGroupedItems = true;
+
+        expect(textService['readRegularRowData'](columns, 1, { id: 1, name: 'N', code: 'C' })).toBe('"",,"C"');
       });
     });
 
@@ -757,6 +800,44 @@ describe('ExportService', () => {
         expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockTxtBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
+      });
+
+      it(`should use the "delimiterOverride" and sanitize & escape the group totals row the same way as regular rows`, async () => {
+        mockGridOptions.textExportOptions = { sanitizeDataExport: true, delimiterOverride: '|' };
+        mockColumns[5].groupTotalsFormatter = (totals: any) => `<b>Total: "${totals.sum.order}"</b>`;
+        const spyDownload = vi.spyOn(service, 'startDownloadFile');
+
+        const optionExpectation = { filename: 'export.csv', format: 'csv', mimeType: 'text/plain', useUtf8WithBom: false };
+        const contentExpectation = `"Group By"|"User Id"|"FirstName"|"LastName"|"Position"|"Order"
+          "Order: 20 (2 items)"
+             ""|="1E06"|"John"|"Z"|"SALES_REP"|"10"
+             ""|="2B02"|"Jane"|"DOE"|"FINANCE_MANAGER"|"10"
+             ""|""|""|""|""|"Total: ""20"""`;
+
+        service.init(gridStub, container);
+        await service.exportToFile(mockExportCsvOptions);
+
+        expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
+      });
+
+      it(`should keep the group totals HTML when sanitization is disabled and strip it when only the column enables "sanitizeDataExport"`, async () => {
+        mockGridOptions.textExportOptions = { sanitizeDataExport: false };
+        mockColumns[5].groupTotalsFormatter = (totals: any) => `<b>Total: "${totals.sum.order}"</b>`;
+        const spyDownload = vi.spyOn(service, 'startDownloadFile');
+
+        service.init(gridStub, container);
+        await service.exportToFile(mockExportTxtOptions);
+        expect(spyDownload.mock.lastCall![0].content.split('\n').pop()).toBe(';;;;;<b>Total: "20"</b>');
+
+        mockColumns[5].sanitizeDataExport = true;
+        vi.spyOn(dataViewStub, 'getItem')
+          .mockReturnValue(null)
+          .mockReturnValueOnce(mockCollection[0])
+          .mockReturnValueOnce(mockCollection[1])
+          .mockReturnValueOnce(mockCollection[2])
+          .mockReturnValueOnce(mockCollection[3]);
+        await service.exportToFile(mockExportTxtOptions);
+        expect(spyDownload.mock.lastCall![0].content.split('\n').pop()).toBe(';;;;;Total: "20"');
       });
     });
 

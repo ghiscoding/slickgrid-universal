@@ -26,11 +26,12 @@ import {
   ExtensionUtility,
   FilterFactory,
   FilterService,
+  getIconSetOptions,
   GridEventService,
   GridService,
   GridStateService,
+  hasStringDateColumns,
   HeaderGroupingService,
-  isColumnDateType,
   PaginationService,
   PluginFlagMappings,
   ResizerService,
@@ -309,16 +310,6 @@ export class AureliaSlickgridCustomElement {
     this._eventHandler = eventHandler;
     this._isAutosizeColsCalled = false;
 
-    // when detecting a frozen grid, we'll automatically enable the mousewheel scroll handler so that we can scroll from both left/right frozen containers
-    if (
-      this.options &&
-      ((this.options.frozenRow !== undefined && this.options.frozenRow >= 0) ||
-        (this.options.frozenColumn !== undefined && this.options.frozenColumn >= 0)) &&
-      this.options.enableMouseWheelScrollHandler === undefined
-    ) {
-      this.options.enableMouseWheelScrollHandler = true;
-    }
-
     this._eventPubSubService.eventNamingStyle = this.options?.eventNamingStyle ?? 'camelCase';
     this._eventPubSubService.publish('onBeforeGridCreate', true);
 
@@ -337,8 +328,7 @@ export class AureliaSlickgridCustomElement {
     }
 
     if (!this.customDataView) {
-      const dataviewInlineFilters = (this.options.dataView && this.options.dataView.inlineFilters) || false;
-      let dataViewOptions: Partial<DataViewOption> = { ...this.options.dataView, inlineFilters: dataviewInlineFilters };
+      let dataViewOptions: Partial<DataViewOption> = { ...this.options.dataView };
 
       if (this.options.draggableGrouping || this.options.enableGrouping) {
         this.groupItemMetadataProvider = new SlickGroupItemMetadataProvider(this.options.groupItemMetadataOption);
@@ -383,9 +373,9 @@ export class AureliaSlickgridCustomElement {
     // directly into the array below, so both `_columns` & `sharedService.allColumns` stay in sync
     this.extensionService.createExtensionsBeforeGridCreation(this._columns, this.options);
 
-    // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+    // if user entered some Pinning "presets", we need to apply them in the grid options
     if (this.options.presets?.pinning) {
-      this.options = { ...this.options, ...this.options.presets.pinning };
+      this.options = { ...this.options, pinning: this.options.presets.pinning };
     }
 
     // build SlickGrid Grid, also user might optionally pass a custom dataview (e.g. remote model)
@@ -411,9 +401,6 @@ export class AureliaSlickgridCustomElement {
 
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.grid, this.options, this.dataview);
-
-    // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-    this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
 
     // initialize the SlickGrid grid
     this.grid.init();
@@ -636,18 +623,15 @@ export class AureliaSlickgridCustomElement {
 
   datasetChanged(newDataset: any[], oldValue: any[]) {
     const prevDatasetLn = this._currentDatasetLength;
-    const isDatasetEqual = dequal(newDataset, this._dataset || []);
     let data = newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
-    if (
-      this.grid &&
-      this.options?.enableTreeData &&
-      Array.isArray(newDataset) &&
-      (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)
-    ) {
-      this._isDatasetHierarchicalInitialized = false;
-      data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+    if (this.grid && this.options?.enableTreeData && Array.isArray(newDataset)) {
+      const isDatasetEqual = dequal(newDataset, this._dataset || []);
+      if (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual) {
+        this._isDatasetHierarchicalInitialized = false;
+        data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+      }
     }
 
     this._dataset = data;
@@ -969,7 +953,7 @@ export class AureliaSlickgridCustomElement {
       (options.enableAutoSizeColumns && options.enableAutoResizeColumnsByCellContent)
     ) {
       throw new Error(
-        `[Aurelia-Slickgrid] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use. You can enable these 2 options ("autoFitColumnsOnFirstLoad" and "enableAutoSizeColumns") OR these other 2 options ("autosizeColumnsByCellContentOnFirstLoad" and "enableAutoResizeColumnsByCellContent").`
+        `[Aurelia-Slickgrid] Choose either viewport sizing (autoFitColumnsOnFirstLoad, enableAutoSizeColumns) or content sizing (autosizeColumnsByCellContentOnFirstLoad, enableAutoResizeColumnsByCellContent).`
       );
     }
 
@@ -1346,7 +1330,25 @@ export class AureliaSlickgridCustomElement {
     gridOptions.gridContainerId = `slickGridContainer-${this.gridId}`;
 
     // use extend to deep merge & copy to avoid immutable properties being changed in GlobalGridOptions after a route change
-    const options = extend(true, {}, GlobalGridOptions, gridOptions) as GridOption;
+    const options = extend(
+      true,
+      {},
+      getIconSetOptions(gridOptions.iconSet ?? GlobalGridOptions.iconSet),
+      GlobalGridOptions,
+      gridOptions
+    ) as GridOption;
+
+    // Command visibility and export menu format lists replace defaults instead of merging array entries by index.
+    for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
+      const commands = gridOptions[menu]?.hideCommands;
+      if (commands && options[menu]) {
+        Object.assign(options[menu], { hideCommands: [...commands] });
+      }
+    }
+    const menuFormats = gridOptions.textExportOptions?.menuFormats;
+    if (menuFormats && options.textExportOptions) {
+      options.textExportOptions.menuFormats = [...menuFormats];
+    }
 
     // if we have a backendServiceApi and the enablePagination is undefined, we'll assume that we do want to see it, else get that defined value
     if (!this.hasBackendInfiniteScroll(gridOptions)) {
@@ -1396,8 +1398,22 @@ export class AureliaSlickgridCustomElement {
     this.initializeExternalResources(resources);
   }
 
+  /** Dispose registered external resources without disposing services owned by the grid. */
   resetExternalResources() {
-    this._registeredResources = [];
+    const ownedResources: unknown[] = [
+      this.gridService,
+      this.gridStateService,
+      this.headerGroupingService,
+      this.treeDataService,
+      this.slickEmptyWarning,
+    ];
+    const previousResources = this._registeredResources;
+    this._registeredResources = previousResources.filter((resource) => !ownedResources.includes(resource));
+    previousResources.length = 0;
+    this.disposeExternalResources();
+    if (this.sharedService) {
+      this.sharedService.externalRegisteredResources = this._registeredResources;
+    }
   }
 
   /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
@@ -1570,28 +1586,11 @@ export class AureliaSlickgridCustomElement {
    * @returns {Array<Object>} sort flat parent/child dataset
    */
   protected sortTreeDataset<T>(flatDatasetInput: T[], forceGridRefresh = false): T[] {
-    const prevDatasetLn = this._currentDatasetLength;
-    let sortedDatasetResult;
-    let flatDatasetOutput: any[] = [];
-
-    // if the hierarchical dataset was already initialized then no need to re-convert it, we can use it directly from the shared service ref
-    if (this._isDatasetHierarchicalInitialized && this.datasetHierarchical) {
-      sortedDatasetResult = this.treeDataService.sortHierarchicalDataset(this.datasetHierarchical);
-      flatDatasetOutput = sortedDatasetResult.flat;
-    } else if (Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
-      // we need to first convert the flat dataset to a hierarchical dataset and then sort it
-      // we'll also add props, by mutation, required by the TreeDataService on the flat array like `__hasChildren`, `parentId` and anything else to work properly
-      sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(flatDatasetInput, this._columns, this.options);
-      this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
-      flatDatasetOutput = sortedDatasetResult.flat;
-    }
-
-    // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
-    if (flatDatasetInput.length > 0 && (forceGridRefresh || flatDatasetInput.length !== prevDatasetLn)) {
-      this.filterService.refreshTreeDataFilters(flatDatasetOutput);
-    }
-
-    return flatDatasetOutput;
+    return this.treeDataService.sortTreeDataset(flatDatasetInput, this._columns, this.options, {
+      hierarchicalDataset: this._isDatasetHierarchicalInitialized ? this.datasetHierarchical : undefined,
+      previousDatasetLength: this._currentDatasetLength,
+      forceGridRefresh,
+    });
   }
 
   protected suggestDateParsingWhenHelpful() {
@@ -1599,7 +1598,7 @@ export class AureliaSlickgridCustomElement {
       this.dataview?.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE &&
       !this.options.silenceWarnings &&
       !this.options.preParseDateColumns &&
-      this.grid.getColumns().some((c) => isColumnDateType(c.type))
+      hasStringDateColumns(this.grid.getColumns(), this.dataview.getItems())
     ) {
       console.warn(
         '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +

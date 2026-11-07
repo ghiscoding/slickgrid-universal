@@ -133,7 +133,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-      `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span>`
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span>`
     );
   });
 
@@ -143,7 +143,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-      `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title pointer" level="0">Barbara</span>`
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title pointer" level="0">Barbara</span>`
     );
   });
 
@@ -153,7 +153,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-      `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span>`
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span>`
     );
   });
 
@@ -163,7 +163,16 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect((output.html as HTMLElement).outerHTML).toEqual(
-      `<span><span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span></span>`
+      `<span><span style="display: inline-block; width: 0px;"></span><div class="slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span></span>`
+    );
+  });
+
+  it('should consider a tree level of 0 when the tree level prop exists but is undefined', () => {
+    const output = treeFormatter(1, 1, 'Bob', {} as Column, { id: 99, firstName: 'Bob', indent: undefined }, gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-0');
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Bob</span>`
     );
   });
 
@@ -172,7 +181,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-1');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-      `<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="1">Bobby</span>`
+      `<span style="display: inline-block; width: 15px;"></span><div class="slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="1">Bobby</span>`
     );
   });
 
@@ -181,7 +190,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-3');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-      `<span style="display: inline-block; width: 45px;"></span><div class="slick-group-toggle slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="3">Sponge</span>`
+      `<span style="display: inline-block; width: 45px;"></span><div class="slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="3">Sponge</span>`
     );
   });
 
@@ -190,7 +199,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-1');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-      `<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle slick-tree-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1">Jane</span>`
+      `<span style="display: inline-block; width: 15px;"></span><div class="slick-tree-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1">Jane</span>`
     );
   });
 
@@ -199,7 +208,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-      `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle slick-tree-toggle collapsed" aria-expanded="false"></div><span class="slick-tree-title" level="0">Anonymous</span>`
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-tree-toggle collapsed" aria-expanded="false"></div><span class="slick-tree-title" level="0">Anonymous</span>`
     );
   });
 
@@ -223,7 +232,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-1');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-      `<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle slick-tree-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1"><span class="mdi mdi-subdirectory-arrow-right"></span>Jane</span>`
+      `<span style="display: inline-block; width: 15px;"></span><div class="slick-tree-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1"><span class="mdi mdi-subdirectory-arrow-right"></span>Jane</span>`
     );
   });
 
@@ -233,7 +242,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-      `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara Cane</span>`
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara Cane</span>`
     );
   });
 
@@ -243,7 +252,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-      `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle slick-tree-toggle collapsed" aria-expanded="false"></div><span class="slick-tree-title" level="0">Anonymous &lt; Doe</span>`
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-tree-toggle collapsed" aria-expanded="false"></div><span class="slick-tree-title" level="0">Anonymous &lt; Doe</span>`
     );
   });
 
@@ -253,7 +262,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-      `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">444444</span>`
+      `<span style="display: inline-block; width: 0px;"></span><div class="slick-tree-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">444444</span>`
     );
   });
 
@@ -309,7 +318,7 @@ describe('Tree Formatter', () => {
 
       expect(output.addClasses).toBe('slick-tree-level-0');
       expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-        `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle slick-tree-toggle load-fail" aria-expanded="false"></div><span class="slick-tree-load-fail"></span><span class="slick-tree-title" level="0">John</span>`
+        `<span style="display: inline-block; width: 0px;"></span><div class="slick-tree-toggle load-fail" aria-expanded="false"></div><span class="slick-tree-load-fail"></span><span class="slick-tree-title" level="0">John</span>`
       );
     });
 
@@ -318,7 +327,7 @@ describe('Tree Formatter', () => {
 
       expect(output.addClasses).toBe('slick-tree-level-1');
       expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
-        `<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle slick-tree-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1">Jane</span>`
+        `<span style="display: inline-block; width: 15px;"></span><div class="slick-tree-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1">Jane</span>`
       );
     });
   });

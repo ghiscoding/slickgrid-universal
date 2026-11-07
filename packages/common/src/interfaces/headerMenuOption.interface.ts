@@ -16,30 +16,6 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
    */
   commandLabels?: HeaderMenuLabel;
 
-  /** @deprecated @use `commandListBuilder` to position order index of the "Filter Shortcuts" menu */
-  filterShortcutsPositionOrder?: number;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Column Resize by Content" command in the Header Menu (Grid Option "enableColumnResizeOnDoubleClick" has to also be enabled) */
-  hideColumnResizeByContentCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Remove Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
-  hideClearFilterCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Remove Sort" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
-  hideClearSortCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Clear Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
-  hideFilterCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true (opt-in feature), which will hide the "Freeze Columns" command in the Header Menu */
-  hideFreezeColumnsCommand?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide Sort (Asc/Desc & Clear Sort) commands in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
-  hideSortCommands?: boolean;
-
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Hide Column" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
-  hideColumnHideCommand?: boolean;
-
   /** A CSS class to be added to the menu item icon. */
   iconCssClass?: string;
 
@@ -58,11 +34,20 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
   /** icon for the "Filter Shortcuts" menu (the shortcuts will be displayed as sub-menus of this parent menu) */
   iconFilterShortcutSubMenu?: string;
 
-  /** icon for the "Freeze Columns" command */
-  iconFreezeColumns?: string;
+  /** icon for the bulk pin-columns command */
+  iconPinningColumns?: string;
 
-  /** icon for the "Unfreeze Columns" command */
-  iconUnfreezeColumns?: string;
+  /** Icon for the "Column Pinning" submenu. */
+  iconPinColumn?: string;
+
+  /** Icon for the "Pin to Left/Right" commands in the pin-column sub-menu. */
+  iconPinCommand?: string;
+
+  /** icon for the bulk unpin-columns command */
+  iconUnpinningColumns?: string;
+
+  /** Icon for the "Unpin Column" command. */
+  iconUnpinColumn?: string;
 
   /** icon for the "Sort Ascending" command */
   iconSortAscCommand?: string;

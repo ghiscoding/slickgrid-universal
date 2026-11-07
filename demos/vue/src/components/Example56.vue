@@ -77,7 +77,7 @@ function defineGrid() {
       // we can opt-in to also use same column width grid vs PDF export (it's disabled by default)
       includeColumnWidth: true,
     },
-    frozenRow: 2,
+    pinning: { rows: { top: [0, 1] } },
     gridHeight: 560,
     gridWidth: 1080,
     dataView: {
@@ -108,7 +108,7 @@ function getData(itemCount: number): TaskItem[] {
   const statuses: Array<TaskItem['status']> = ['Todo', 'In Progress', 'Done'];
   const notesPool = [
     'Short note.',
-    'Need to validate keyboard navigation and ensure screen reader output remains stable across frozen panes.',
+    'Need to validate keyboard navigation and ensure screen reader output remains stable across pinned panes.',
     'Review row height invalidation path when data changes quickly due to live updates from backend polling.',
     'Longer QA note: validate scrolling behavior at top and bottom boundaries, compare rendered range against expected rows, and confirm no visual clipping for wrapped cells.',
   ];

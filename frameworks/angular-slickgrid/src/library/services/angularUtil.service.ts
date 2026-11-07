@@ -1,4 +1,4 @@
-import { Inject, Injectable, ViewContainerRef } from '@angular/core';
+import { inject, Service, ViewContainerRef } from '@angular/core';
 import type { EmbeddedViewRef, EnvironmentInjector, Injector, NgModuleRef, Type } from '@angular/core';
 import type { AngularComponentOutput } from '../models/angularComponentOutput.interface';
 
@@ -11,9 +11,9 @@ interface CreateComponentOption {
   sanitizer?: (dirtyHtml: string) => string;
 }
 
-@Injectable()
+@Service()
 export class AngularUtilService {
-  constructor(@Inject(ViewContainerRef) private vcr: ViewContainerRef) {}
+  private vcr = inject(ViewContainerRef);
 
   createInteractiveAngularComponent<C>(
     component: Type<C>,

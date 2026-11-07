@@ -1,4 +1,11 @@
 describe('Example 7 - Header Button Plugin', () => {
+  const expectClippedBelowHeader = ($button: JQuery<HTMLElement>) => {
+    const button = $button[0];
+    const header = button.closest('.slick-header-column') as HTMLElement;
+    expect(getComputedStyle(header).overflow).to.eq('hidden');
+    expect(button.getBoundingClientRect().top).to.be.at.least(header.getBoundingClientRect().bottom);
+  };
+
   const titles = [
     'Resize me!',
     'Hover me!',
@@ -34,10 +41,20 @@ describe('Example 7 - Header Button Plugin', () => {
     it('should go over the 3rd column "Column C" and expect to see negative number in red after clicking on the red header button', () => {
       cy.get('#grid7-1 .slick-header-columns').children('.slick-header-column:nth(2)').should('contain', 'Column C');
 
+      // Make room for the button so Cypress does not scroll the clipped header contents into view.
+      cy.get('#grid7-1 .slick-header-columns').children('.slick-header-column:nth(2)').invoke('width', 120);
+
       cy.get('#grid7-1 .slick-header-columns')
         .children('.slick-header-column:nth(2)')
         .find('.slick-header-button .mdi-lightbulb-outline.text-warning.faded')
         .click();
+
+      cy.get('#grid7-1 .slick-header-columns')
+        .children('.slick-header-column:nth(2)')
+        .should(($header) => {
+          expect($header[0].scrollTop).to.eq(0);
+          expect($header.find('.slick-column-name')).to.be.visible;
+        });
 
       cy.get('#grid7-1 .slick-header-columns')
         .children('.slick-header-column:nth(2)')
@@ -75,7 +92,7 @@ describe('Example 7 - Header Button Plugin', () => {
     });
 
     it('should go over the last "Column J" and expect to find the button to have the disabled class and clicking it should not turn the negative numbers to red neither expect console log after clicking the disabled button', () => {
-      cy.get('#grid7-1 .slick-viewport-top.slick-viewport-left').scrollTo('right').wait(50);
+      cy.get('#grid7-1 .slick-horizontal-scroller').scrollTo('right').wait(50);
 
       cy.get('#grid7-1 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
@@ -87,7 +104,7 @@ describe('Example 7 - Header Button Plugin', () => {
         .children('.slick-header-column:nth(9)')
         .find('.slick-header-button.slick-header-button-disabled .mdi-lightbulb-outline.text-warning.faded')
         .should('exist')
-        .click();
+        .click({ force: true, scrollBehavior: false });
 
       cy.get('#grid7-1 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
@@ -109,14 +126,18 @@ describe('Example 7 - Header Button Plugin', () => {
     });
 
     it('should resize 1st column and make it wider', () => {
-      cy.get('#grid7-1 .slick-viewport-top.slick-viewport-left').scrollTo('left').wait(50);
+      cy.get('#grid7-1 .slick-horizontal-scroller').scrollTo('left').wait(50);
+
+      cy.get('#grid7-1 .slick-header-left, #grid7-1 .slick-header-columns-left').each(($header) => {
+        expect($header[0].scrollLeft).to.eq(0);
+      });
 
       cy.get('#grid7-1 .slick-header-columns').children('.slick-header-column:nth(0)').should('contain', 'Resize me!');
 
       cy.get('#grid7-1 .slick-header-columns')
         .children('.slick-header-column:nth(0)')
         .find('.slick-header-button:nth(3)')
-        .should('be.hidden');
+        .should(expectClippedBelowHeader);
 
       // Cypress does not yet support the .hover() method and because of that we need to manually resize the element
       // this is not ideal since it only resizes the cell not the entire column but it's enough to test the functionality
@@ -150,12 +171,12 @@ describe('Example 7 - Header Button Plugin', () => {
       cy.get('#grid7-1 .slick-header-columns')
         .children('.slick-header-column:nth(0)')
         .find('.slick-header-button:nth(3)')
-        .should('be.hidden');
+        .should(expectClippedBelowHeader);
 
       cy.get('#grid7-1 .slick-header-columns')
         .children('.slick-header-column:nth(0)')
         .find('.slick-header-button:nth(1)')
-        .should('be.hidden');
+        .should(expectClippedBelowHeader);
     });
 
     it('should go on the 2nd column "Hover me!" and expect the header button to appear only when doing hover over it', () => {
@@ -220,7 +241,7 @@ describe('Example 7 - Header Button Plugin', () => {
     });
 
     it('should go over the last "Column J" and expect to find the button to have the disabled class and clicking it should not turn the negative numbers to red neither expect console log after clicking the disabled button', () => {
-      cy.get('#grid7-2 .slick-viewport-top.slick-viewport-left').scrollTo('right').wait(50);
+      cy.get('#grid7-2 .slick-horizontal-scroller').scrollTo('right').wait(50);
 
       cy.get('#grid7-2 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
@@ -254,14 +275,14 @@ describe('Example 7 - Header Button Plugin', () => {
     });
 
     it('should resize 1st column and make it wider', () => {
-      cy.get('#grid7-2 .slick-viewport-top.slick-viewport-left').scrollTo('left').wait(50);
+      cy.get('#grid7-2 .slick-horizontal-scroller').scrollTo('left').wait(50);
 
       cy.get('#grid7-2 .slick-header-columns').children('.slick-header-column:nth(0)').should('contain', 'Resize me!');
 
       cy.get('#grid7-2 .slick-header-columns')
         .children('.slick-header-column:nth(0)')
         .find('.slick-header-button:nth(3)')
-        .should('be.hidden');
+        .should(expectClippedBelowHeader);
 
       // Cypress does not yet support the .hover() method and because of that we need to manually resize the element
       // this is not ideal since it only resizes the cell not the entire column but it's enough to test the functionality
@@ -295,12 +316,12 @@ describe('Example 7 - Header Button Plugin', () => {
       cy.get('#grid7-2 .slick-header-columns')
         .children('.slick-header-column:nth(0)')
         .find('.slick-header-button:nth(3)')
-        .should('be.hidden');
+        .should(expectClippedBelowHeader);
 
       cy.get('#grid7-2 .slick-header-columns')
         .children('.slick-header-column:nth(0)')
         .find('.slick-header-button:nth(1)')
-        .should('be.hidden');
+        .should(expectClippedBelowHeader);
     });
 
     it('should go on the 2nd column "Hover me!" and expect the header button to appear only when doing hover over it', () => {
@@ -336,12 +357,7 @@ describe('Example 7 - Header Button Plugin', () => {
         .invoke('show')
         .click();
 
-      cy.get('#grid7-2 .slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(6)')
-        .children('.slick-menu-content')
-        .should('contain', 'Remove Filter')
-        .click();
+      cy.get('#grid7-2 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Remove Filter').click();
 
       cy.get('.slick-row').should('have.length.greaterThan', 1);
     });
@@ -354,17 +370,11 @@ describe('Example 7 - Header Button Plugin', () => {
 
     it('should hover over the "Column C" and click on "Sort Ascending"', () => {
       cy.get('#grid7-2 .slick-header-column:nth(2)').first().trigger('mouseover').children('.slick-header-menu-button').click();
-
-      cy.get('#grid7-2 .slick-header-menu .slick-menu-command-list')
-        .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(3)')
-        .children('.slick-menu-content')
-        .should('contain', 'Sort Ascending')
-        .click();
+      cy.get('#grid7-2 .slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
     });
 
     it('should expect first few items of "Column C" to be negative numbers and be red', () => {
-      cy.get('#grid7-2 .slick-viewport-top.slick-viewport-left').scrollTo('top').wait(50);
+      cy.get('#grid7-2 .slick-vertical-scroller').scrollTo('top').wait(50);
 
       cy.get('#grid7-2 .slick-row').each(($row, index) => {
         if (index > 10) {

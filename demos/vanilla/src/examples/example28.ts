@@ -26,6 +26,7 @@ export default class Example28 {
   metricsItemCount = 0;
   metricsTotalItemCount = 0;
   sgb: SlickVanillaGridBundle;
+  subTitleStyle = 'display: block';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -222,5 +223,10 @@ export default class Example28 {
 
   setSortingDynamically() {
     this.sgb?.sortService.updateSorting([{ columnId: 'title', direction: 'DESC' }]);
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

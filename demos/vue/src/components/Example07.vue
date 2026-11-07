@@ -59,8 +59,6 @@ function defineGrids() {
     ...gridOptions1.value,
     enableHeaderMenu: true,
     enableFiltering: true,
-    // frozenColumn: 2,
-    // frozenRow: 2,
     headerButton: {
       onCommand: (_e: any, args) => handleOnCommand(_e, args, 2),
     },
@@ -252,8 +250,8 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
   </h2>
 
   <div class="subtitle">
-    This example demonstrates using the <b>Slick.Plugins.HeaderButtons</b> plugin to easily add buttons to colum headers. These buttons can
-    be specified directly in the column definition, and are very easy to configure and use. (<a
+    This example demonstrates using the <b>SlickHeaderButtons</b> plugin to easily add buttons to colum headers. These buttons can be
+    specified directly in the column definition, and are very easy to configure and use. (<a
       href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/header-menu-header-buttons"
       target="_blank"
       >Wiki docs</a

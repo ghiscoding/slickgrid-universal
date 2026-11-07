@@ -6,9 +6,11 @@ import { complexObjectFormatter } from '../complexObjectFormatter.js';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
   copyCellToClipboard,
+  createExportCellReader,
   exportWithFormatterWhenDefined,
   getAssociatedDateFormatter,
   getBaseDateFormatter,
+  getCopyCellValue,
   getValueFromParamsOrFormatterOptions,
 } from '../formatterUtilities.js';
 import { multipleFormatter } from '../multipleFormatter.js';
@@ -61,6 +63,10 @@ describe('formatterUtilities', () => {
           formatter: complexObjectFormatter,
         },
       ];
+    });
+
+    it('ignores a non-array columns value', () => {
+      expect(() => autoAddEditorFormatterToColumnsWithEditor(null as any, customEditableInputFormatter)).not.toThrow();
     });
 
     it('should have custom editor formatter with correct structure', () => {
@@ -301,6 +307,24 @@ describe('formatterUtilities', () => {
     });
   });
 
+  it('uses the query-field getter when copying a cell', () => {
+    const grid = { getOptions: () => ({}) } as SlickGrid;
+    const column = { id: 'name', field: 'name', queryFieldNameGetterFn: () => 'details.name' } as Column;
+    expect(getCopyCellValue({ grid, column, dataContext: { name: 'raw', details: { name: '⮟  Nested' } } })).toBe('Nested');
+  });
+
+  it('removes the unwanted U+034F character but keeps its surrounding spaces when copying a cell', () => {
+    const grid = { getOptions: () => ({}) } as SlickGrid;
+    const column = { field: 'name' } as Column;
+    expect(getCopyCellValue({ grid, column, dataContext: { name: 'Task\u034f 1' } })).toBe('Task 1');
+  });
+
+  it('returns a non-string cell value as is when copying a cell', () => {
+    const grid = { getOptions: () => undefined } as unknown as SlickGrid;
+    const column = { field: 'age' } as Column;
+    expect(getCopyCellValue({ grid, column, dataContext: { age: 45 } })).toBe(45);
+  });
+
   describe('getValueFromParamsOrGridOptions function', () => {
     it('should return options found in the Grid Option when not found in Column Definition "params" property', () => {
       const gridOptions = { formatterOptions: { minDecimal: 2 } } as GridOption;
@@ -323,6 +347,18 @@ describe('formatterUtilities', () => {
       const output = getValueFromParamsOrFormatterOptions('minDecimal', { field: 'column1' } as Column, {} as unknown as GridOption, defaultValue);
       expect(output).toBe(defaultValue);
     });
+  });
+
+  it('respects changes to the date separator after creating a formatter', () => {
+    const options = { formatterOptions: { dateSeparator: '.' } } as GridOption;
+    const grid = { getOptions: () => options } as SlickGrid;
+    const formatter = getAssociatedDateFormatter('dateIso', '-');
+    const column = { type: 'dateIso' } as Column;
+    expect(formatter(0, 0, '2002-01-01', column, {}, grid)).toBe('2002.01.01');
+    options.formatterOptions!.dateSeparator = '/';
+    expect(formatter(0, 0, '2002-01-01', column, {}, grid)).toBe('2002/01/01');
+    options.formatterOptions!.dateSeparator = '-';
+    expect(formatter(0, 0, '2002-01-01', column, {}, grid)).toBe('2002-01-01');
   });
 
   describe('getAssociatedDateFormatter function', () => {
@@ -363,6 +399,40 @@ describe('formatterUtilities', () => {
 
       expect(gridSpy).toHaveBeenCalled();
       expect(output).toBe('2002.01.01');
+    });
+
+    it('should find the default separator from the field type output format when it is not provided', () => {
+      const column = { type: 'dateIso' } as Column;
+      const grid = { getOptions: () => ({ formatterOptions: { dateSeparator: '.' } }) } as unknown as SlickGrid;
+
+      const dateIsoFormatter = getAssociatedDateFormatter('dateIso');
+      expect(dateIsoFormatter(1, 1, '2002-01-31', column, {}, grid)).toBe('2002.01.31');
+      expect(dateIsoFormatter(1, 1, '2003-02-28', column, {}, grid)).toBe('2003.02.28'); // 2nd call reuses the cached output format
+      expect(getAssociatedDateFormatter('dateUs')(1, 1, '2002-01-31', column, {}, grid)).toBe('01.31.2002');
+      expect(getAssociatedDateFormatter('dateTimeIso')(1, 1, '2002-01-31T13:04:05', column, {}, grid)).toBe('2002.01.31 13:04:05');
+      expect(getAssociatedDateFormatter('dateTimeUsAmPm')(1, 1, '2002-01-31T13:04:05', column, {}, grid)).toBe('01.31.2002 01:04:05 pm');
+    });
+
+    it('should support an empty "dateSeparator" and keep the time separators untouched', () => {
+      const column = { type: 'dateIso' } as Column;
+      const grid = { getOptions: () => ({ formatterOptions: { dateSeparator: '' } }) } as unknown as SlickGrid;
+
+      expect(getAssociatedDateFormatter('dateEuroShort')(1, 1, '2002-01-31', column, {}, grid)).toBe('310102');
+      expect(getAssociatedDateFormatter('dateTimeEuro')(1, 1, '2002-01-31T13:04:05', column, {}, grid)).toBe('31012002 13:04:05');
+    });
+
+    it('should not change a format without any separator, like "dateUtc"', () => {
+      const column = { type: 'dateIso' } as Column;
+      const grid = { getOptions: () => ({ formatterOptions: { dateSeparator: '.' } }) } as unknown as SlickGrid;
+      const defaultGrid = { getOptions: () => ({}) } as unknown as SlickGrid;
+      const formatterFn = getAssociatedDateFormatter('dateUtc');
+
+      expect(formatterFn(1, 1, '2002-01-31T13:04:05Z', column, {}, grid)).toBe(formatterFn(1, 1, '2002-01-31T13:04:05Z', column, {}, defaultGrid));
+    });
+
+    it('should not replace any separator when the date value cannot be parsed', () => {
+      const grid = { getOptions: () => ({ formatterOptions: { dateSeparator: '.' } }) } as unknown as SlickGrid;
+      expect(getAssociatedDateFormatter('dateIso')(1, 1, 'TBD-2002', { type: 'dateIso' } as Column, {}, grid)).toBe('TBD-2002');
     });
   });
 
@@ -436,6 +506,19 @@ describe('formatterUtilities', () => {
       it('should provide a column definition field defined with a dot (.) notation and expect an empty string when the complex result is an empty object', () => {
         const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, field: 'empty' }, mockItem, gridStub as SlickGrid, {});
         expect(output).toEqual('');
+      });
+
+      it('treats an object with only inherited properties as empty', () => {
+        const inheritedOnly = Object.create({ inherited: 'value' });
+        const inheritedOutput = exportWithFormatterWhenDefined(
+          1,
+          1,
+          { ...mockColumn, field: 'inheritedOnly' },
+          { ...mockItem, inheritedOnly },
+          gridStub as SlickGrid,
+          {}
+        );
+        expect(inheritedOutput).toBe('');
       });
 
       it('should provide a exportCustomFormatter in the column definition and expect the output to be formatted', () => {
@@ -595,6 +678,54 @@ describe('formatterUtilities', () => {
           // Column definition should take precedence
           expect(output).toBe('Bold Text');
         });
+      });
+
+      it('should convert a non-string formatter result (e.g. number) into a string', () => {
+        const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, formatter: () => 45 as any }, mockItem, gridStub as SlickGrid, {
+          exportWithFormatter: true,
+        });
+        expect(output).toBe('45');
+      });
+    });
+
+    describe('createExportCellReader method', () => {
+      it('should return a reader producing the same output as exportWithFormatterWhenDefined for every row', () => {
+        const items = [mockItem, { ...mockItem, firstName: null }, { ...mockItem, firstName: 'jane' }];
+        const exportOptions = { exportWithFormatter: true };
+        const readCell = createExportCellReader(mockColumn, gridStub as SlickGrid, exportOptions);
+
+        items.forEach((item, row) => {
+          expect(readCell(row, 1, item)).toBe(exportWithFormatterWhenDefined(row, 1, mockColumn, item, gridStub as SlickGrid, exportOptions));
+        });
+        expect(readCell(0, 1, mockItem)).toBe('JOHN');
+        expect(readCell(1, 1, items[1])).toBe('');
+      });
+
+      it('should return the raw value when exportWithFormatter is not enabled, including a dotted field complex object', () => {
+        expect(createExportCellReader(mockColumn, gridStub as SlickGrid, {})(0, 1, mockItem)).toBe('John');
+        expect(createExportCellReader({ ...mockColumn, field: 'address.zip' }, gridStub as SlickGrid)(0, 1, mockItem)).toEqual({ zip: 12345 });
+      });
+
+      it('should read the value from a numeric column id when the column has no field', () => {
+        const column = { id: 5, name: 'Index' } as unknown as Column;
+        expect(createExportCellReader(column, gridStub as SlickGrid)(0, 1, { 5: 'first' })).toBe('first');
+      });
+
+      it('should use the exportCustomFormatter when the item is defined, otherwise fallback to the column formatter', () => {
+        const column = { ...mockColumn, exportWithFormatter: true, exportCustomFormatter: myBoldHtmlFormatter };
+        const readCell = createExportCellReader(column, gridStub as SlickGrid);
+
+        expect(readCell(0, 1, mockItem)).toBe('<b>John</b>');
+        expect(readCell(0, 1, null)).toBe('');
+      });
+
+      it('should sanitize the output only when "sanitizeDataExport" is enabled and sanitization is not skipped', () => {
+        const column = { ...mockColumn, exportWithFormatter: true, formatter: () => '<span>Bold</span>' };
+
+        expect(createExportCellReader(column, gridStub as SlickGrid, { sanitizeDataExport: true })(0, 1, mockItem)).toBe('Bold');
+        expect(createExportCellReader(column, gridStub as SlickGrid, { sanitizeDataExport: true }, true)(0, 1, mockItem)).toBe('<span>Bold</span>');
+        expect(createExportCellReader(mockColumn, gridStub as SlickGrid, { sanitizeDataExport: true })(0, 1, mockItem)).toBe('John');
+        expect(createExportCellReader({ ...mockColumn, field: 'age' }, gridStub as SlickGrid, { sanitizeDataExport: true })(0, 1, mockItem)).toBe(45);
       });
     });
   });

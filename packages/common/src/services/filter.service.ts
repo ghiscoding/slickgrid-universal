@@ -1,7 +1,6 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { deepCopy, extend, queueMicrotaskPolyfill, stripTags } from '@slickgrid-universal/utils';
+import { deepCopy, extend, stripTags } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
-import { Constants } from '../constants.js';
 import { SlickEvent, SlickEventData, SlickEventHandler } from '../core/slickCore.js';
 import { type SlickDataView } from '../core/slickDataView.js';
 import { type SlickGrid } from '../core/slickGrid.js';
@@ -21,11 +20,13 @@ import type {
   FilterConditionOption,
   GridOption,
   SearchColumnFilter,
+  TreeDataOption,
+  TreeDataPropNames,
 } from './../interfaces/index.js';
 import type { BackendUtilityService } from './backendUtility.service.js';
 import type { RxJsFacade, Subject } from './rxjsFacade.js';
 import type { SharedService } from './shared.service.js';
-import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType } from './utilities.js';
+import { getDescendantProperty, getTreeDataPropNames, mapOperatorByFieldType } from './utilities.js';
 
 export interface OnSearchChangeEventArgs {
   clearFilterTriggered?: boolean;
@@ -51,6 +52,7 @@ export class FilterService {
   protected _previousFilters: CurrentFilter[] = [];
   protected _onSearchChange: SlickEvent<OnSearchChangeEventArgs> | null;
   protected _tmpPreFilteredData?: Set<number | string>;
+  protected _treeDataPropNames?: { treeDataOptions?: TreeDataOption; propNames: Required<TreeDataPropNames> };
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
   constructor(
@@ -67,17 +69,6 @@ export class FilterService {
     }
   }
 
-  /** Getter of the SlickGrid Event Handler */
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
-  /** Getter to know if the filter was already rendered or if it was its first time render */
-  get isFilterFirstRender(): boolean {
-    return this._isFilterFirstRender;
-  }
-
-  /** Getter of the SlickGrid Event Handler */
   get onSearchChange(): SlickEvent | null {
     return this._onSearchChange;
   }
@@ -330,10 +321,7 @@ export class FilterService {
     // when the column is a Tree Data structure and the parent is collapsed, there's no need to go further and we can just skip this row and continue with the next row
     // so we always run this check even when there are no filter search, the reason is because the user might click on the expand/collapse
     if (isGridWithTreeData && treeDataOptions) {
-      const collapsedPropName = treeDataOptions.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
-      const parentPropName = treeDataOptions.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
-      const childrenPropName = treeDataOptions?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
-      const levelPropName = treeDataOptions.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
+      const { collapsedPropName, parentPropName, levelPropName } = this.getTreeDataPropNames();
       const maxVisibleDepth = treeDataOptions.maxVisibleDepth;
       const primaryDataId = this._gridOptions.datasetIdPropertyName ?? 'id';
       const autoRecalcTotalsOnFilterChange = treeDataOptions.autoRecalcTotalsOnFilterChange ?? false;
@@ -367,11 +355,7 @@ export class FilterService {
 
         // when user enables Tree Data auto-recalc, we need to keep ref (only in hierarchical tree) of which datacontext was filtered or not
         if (autoRecalcTotalsOnFilterChange) {
-          const treeItem = findItemInTreeStructure(
-            this.sharedService.hierarchicalDataset!,
-            (x) => x[primaryDataId] === item[primaryDataId],
-            childrenPropName
-          );
+          const treeItem = this.sharedService.getHierarchicalItemById(item[primaryDataId]);
           if (treeItem) {
             treeItem.__filteredOut = !filtered;
           }
@@ -503,16 +487,6 @@ export class FilterService {
    */
   preProcessFilterConditionOnDataContext(item: any, columnFilter: SearchColumnFilter, grid: SlickGrid): FilterConditionOption | true {
     const columnDef = columnFilter.columnDef;
-    const columnId = columnFilter.columnId;
-    let columnIndex = grid.getColumnIndex(columnId) as number;
-
-    // it might be a hidden column, if so it won't be part of the getColumns (because it could be hidden via setColumns())
-    // when that happens we can try to get the column definition from all defined columns
-    const columns = this._grid.getColumns();
-    if (!columnDef && Array.isArray(columns)) {
-      columnIndex = columns.findIndex((col) => col.field === columnId);
-    }
-
     // if we still don't have a column definition then we should return then row anyway (true)
     if (!columnDef) {
       return true;
@@ -560,6 +534,7 @@ export class FilterService {
 
     // when using localization (i18n), the user might want to use the formatted output to do its filtering
     if (columnDef?.params?.useFormatterOuputToFilter === true) {
+      const columnIndex = grid.getColumnIndex(columnFilter.columnId) as number;
       const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
       const rowIndex = this._dataView && typeof this._dataView.getIdxById === 'function' ? this._dataView.getIdxById(item[idPropName]) : 0;
       // prettier-ignore
@@ -592,12 +567,16 @@ export class FilterService {
    */
   preFilterTreeData(inputItems: any[], columnFilters: ColumnFilters): Set<string | number> {
     const treeDataOptions = this._gridOptions.treeDataOptions;
-    const collapsedPropName = treeDataOptions?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
-    const parentPropName = treeDataOptions?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
-    const hasChildrenPropName = treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
+    const { collapsedPropName, parentPropName, hasChildrenPropName } = this.getTreeDataPropNames();
     const primaryDataId = this._gridOptions.datasetIdPropertyName ?? 'id';
-    const treeDataToggledItems = this._gridOptions.presets?.treeData?.toggledItems;
-    const isInitiallyCollapsed = this._gridOptions.treeDataOptions?.initiallyCollapsed ?? false;
+    const presetToggleShouldBeCollapsed = !(treeDataOptions?.initiallyCollapsed ?? false);
+    const presetToggledParentIds = new Set(
+      this._isTreePresetExecuted
+        ? []
+        : (this._gridOptions.presets?.treeData?.toggledItems ?? [])
+            .filter((toggledItem) => toggledItem.isCollapsed === presetToggleShouldBeCollapsed)
+            .map((toggledItem) => toggledItem.itemId)
+    );
     const treeDataColumnId = this._gridOptions.treeDataOptions?.columnId;
     const excludeChildrenWhenFilteringTree = this._gridOptions.treeDataOptions?.excludeChildrenWhenFilteringTree;
     const isNotExcludingChildAndValidateOnlyTreeColumn =
@@ -696,14 +675,7 @@ export class FilterService {
           let parent = (treeObj as any)[item[parentPropName]] ?? false;
 
           // if there are any presets of collapsed parents, let's processed them
-          const presetToggleShouldBeCollapsed = !isInitiallyCollapsed;
-          if (
-            !this._isTreePresetExecuted &&
-            Array.isArray(treeDataToggledItems) &&
-            treeDataToggledItems.some(
-              (collapsedItem) => collapsedItem.itemId === parent.id && collapsedItem.isCollapsed === presetToggleShouldBeCollapsed
-            )
-          ) {
+          if (parent && presetToggledParentIds.has(parent[primaryDataId])) {
             parent[collapsedPropName] = presetToggleShouldBeCollapsed;
           }
 
@@ -874,7 +846,7 @@ export class FilterService {
       // and we did not have time to convert it to a flat dataset yet (for SlickGrid to use),
       // we would end up calling the pre-filter too early because these pre-filter works only a flat dataset
       // for that use case (like Example 6), we can queue a microtask to be executed at the end of current task
-      queueMicrotaskPolyfill(() => this.refreshTreeDataFilters());
+      queueMicrotask(() => this.refreshTreeDataFilters());
     }
   }
 
@@ -1111,29 +1083,9 @@ export class FilterService {
     const columnId = columnDef?.id ?? '';
 
     if (columnId !== 'selector' && columnDef?.filterable) {
-      let searchTerms: SearchTerm[] | undefined;
-      let operator: OperatorType | undefined;
-      const newFilter: Filter | undefined = this.filterFactory.createFilter(columnDef.filter);
-      operator = (columnDef && columnDef.filter && columnDef.filter.operator) || (newFilter && newFilter.operator);
-
-      if (this._columnFilters[columnDef.id]) {
-        searchTerms = this._columnFilters[columnDef.id].searchTerms || undefined;
-        operator = this._columnFilters[columnDef.id].operator || undefined;
-      } else if (columnDef.filter) {
-        // when hiding/showing (with Column Picker or Grid Menu), it will try to re-create yet again the filters (since SlickGrid does a re-render)
-        // because of that we need to first get searchTerm(s) from the columnFilters (that is what the user last typed in a filter search input)
-        searchTerms = columnDef.filter.searchTerms || undefined;
-        this.updateColumnFilters(searchTerms, columnDef, operator);
-      }
-
-      const filterArguments: FilterArguments = {
-        grid: this._grid,
-        operator,
-        searchTerms,
-        columnDef,
-        filterContainerElm,
-        callback: this.callbackSearchEvent.bind(this),
-      };
+      const newFilter = this.filterFactory.createFilter(columnDef.filter);
+      const filterArguments = this.getFilterArguments(columnDef, filterContainerElm, newFilter);
+      const { searchTerms, operator } = filterArguments;
 
       if (newFilter) {
         newFilter.init(filterArguments);
@@ -1153,35 +1105,41 @@ export class FilterService {
   // protected functions
   // -------------------
 
+  /** Restore saved filter state and build arguments shared by header and external filters. */
+  protected getFilterArguments(columnDef: Column, filterContainerElm: HTMLElement, newFilter?: Filter): FilterArguments {
+    let searchTerms: SearchTerm[] | undefined;
+    let operator: OperatorType | undefined;
+    operator = (columnDef && columnDef.filter && columnDef.filter.operator) || (newFilter && newFilter.operator);
+
+    if (this._columnFilters[columnDef.id]) {
+      searchTerms = this._columnFilters[columnDef.id].searchTerms || undefined;
+      operator = this._columnFilters[columnDef.id].operator || undefined;
+    } else if (columnDef.filter) {
+      // when hiding/showing (with Column Picker or Grid Menu), it will try to re-create yet again the filters (since SlickGrid does a re-render)
+      // because of that we need to first get searchTerm(s) from the columnFilters (that is what the user last typed in a filter search input)
+      searchTerms = columnDef.filter.searchTerms || undefined;
+      this.updateColumnFilters(searchTerms, columnDef, operator);
+    }
+
+    return {
+      grid: this._grid,
+      operator,
+      searchTerms,
+      columnDef,
+      filterContainerElm,
+      callback: this.callbackSearchEvent.bind(this),
+    };
+  }
+
   /** Add all created filters (from their template) to the header row section area */
   protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement }, isFilterFirstRender = true): void {
     const columnDef = args.column;
     const columnId = columnDef?.id ?? '';
 
     if (columnId !== 'selector' && columnDef?.filterable && !columnDef?.hidden) {
-      let searchTerms: SearchTerm[] | undefined;
-      let operator: OperatorType | undefined;
-      const newFilter: Filter | undefined = this.filterFactory.createFilter(columnDef.filter);
-      operator = (columnDef && columnDef.filter && columnDef.filter.operator) || (newFilter && newFilter.operator);
-
-      if (this._columnFilters[columnDef.id]) {
-        searchTerms = this._columnFilters[columnDef.id].searchTerms || undefined;
-        operator = this._columnFilters[columnDef.id].operator || undefined;
-      } else if (columnDef.filter) {
-        // when hiding/showing (with Column Picker or Grid Menu), it will try to re-create yet again the filters (since SlickGrid does a re-render)
-        // because of that we need to first get searchTerm(s) from the columnFilters (that is what the user last typed in a filter search input)
-        searchTerms = columnDef.filter.searchTerms || undefined;
-        this.updateColumnFilters(searchTerms, columnDef, operator);
-      }
-
-      const filterArguments: FilterArguments = {
-        grid: this._grid,
-        operator,
-        searchTerms,
-        columnDef,
-        filterContainerElm: args.node,
-        callback: this.callbackSearchEvent.bind(this),
-      };
+      const newFilter = this.filterFactory.createFilter(columnDef.filter);
+      const filterArguments = this.getFilterArguments(columnDef, args.node, newFilter);
+      const { searchTerms, operator } = filterArguments;
 
       if (newFilter && filterArguments.filterContainerElm) {
         newFilter.init(filterArguments, isFilterFirstRender);
@@ -1345,6 +1303,15 @@ export class FilterService {
       }
     }
     return filters;
+  }
+
+  /** Get the Tree Data prop names, cached since the custom local filter needs them for every row, they're refreshed whenever the Tree Data options are replaced */
+  protected getTreeDataPropNames(): Required<TreeDataPropNames> {
+    const treeDataOptions = this._gridOptions.treeDataOptions;
+    if (!this._treeDataPropNames || this._treeDataPropNames.treeDataOptions !== treeDataOptions) {
+      this._treeDataPropNames = { treeDataOptions, propNames: getTreeDataPropNames(treeDataOptions) };
+    }
+    return this._treeDataPropNames.propNames;
   }
 
   protected getSelectorStringFromElement(elm?: HTMLElement | null): string {

@@ -1,0 +1,57 @@
+{
+  "node": "v24.16.0",
+  "sizes": [
+    10000,
+    100000
+  ],
+  "results": [
+    {
+      "name": "10000 / collection single numeric",
+      "medianMs": 20.520205000000033,
+      "p95Ms": 20.71008999999998,
+      "idsHash": "f064d50f928dc3ad4996ea3112d3159c5eccc0c75018d9f3b46a4da2aeedc854"
+    },
+    {
+      "name": "10000 / collection multiple numeric",
+      "medianMs": 57.62402199999997,
+      "p95Ms": 59.34454599999992,
+      "idsHash": "53bf2a052404528276f3d1f3e64fda2869091a6200238b45469e8e0616d4c553"
+    },
+    {
+      "name": "10000 / collection translated string",
+      "medianMs": 18.90003200000001,
+      "p95Ms": 19.29432399999996,
+      "idsHash": "cc4732197b6258629d0010c0d1d1ca80daf8060059a1e4dc99aa85d6a24ed9f2"
+    },
+    {
+      "name": "10000 / collection primitive numeric",
+      "medianMs": 19.670648999999912,
+      "p95Ms": 19.906540000000177,
+      "idsHash": "32073b0e761d6d4e18367c149ef8043b93f7b64730821963781c42b36ef0ba0f"
+    },
+    {
+      "name": "100000 / collection single numeric",
+      "medianMs": 314.64958099999967,
+      "p95Ms": 316.0412070000002,
+      "idsHash": "f2a24359da3145b21dafda469b560fadb69064194c5cd5668fb81fcea7efb53f"
+    },
+    {
+      "name": "100000 / collection multiple numeric",
+      "medianMs": 758.4988289999983,
+      "p95Ms": 820.3805400000001,
+      "idsHash": "b37e9bd208781a51abbeac56e2621c028f480c6d0f85cdaa31a9b952cfb8bd66"
+    },
+    {
+      "name": "100000 / collection translated string",
+      "medianMs": 211.1154630000001,
+      "p95Ms": 216.88448299999982,
+      "idsHash": "d3e6421d207b11337eb2f7dedb9fc8da95a60180b556eafa1b20c7a66e6c3340"
+    },
+    {
+      "name": "100000 / collection primitive numeric",
+      "medianMs": 282.5027850000006,
+      "p95Ms": 284.0237280000001,
+      "idsHash": "d8bf4ff561a60a3dbed8b30ce6628961ad3d938942a916ec2037dfdc4a689846"
+    }
+  ]
+}

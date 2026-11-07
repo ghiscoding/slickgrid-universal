@@ -7,6 +7,7 @@ import type { Binding, BoundedEventWithListener, ElementBinding, ElementBindingW
  *   2- https://www.wintellect.com/data-binding-pure-javascript/
  */
 export class BindingService {
+  protected _setter: (val: any) => void = this.valueSetter.bind(this);
   protected _value: any = null;
   protected _binding: Binding;
   protected _property: string;
@@ -16,7 +17,6 @@ export class BindingService {
   constructor(binding: Binding) {
     this._binding = binding;
     this._property = binding.property || '';
-    this._elementBindings = [];
     if (
       binding.property &&
       binding.variable &&
@@ -30,17 +30,9 @@ export class BindingService {
     if (typeof binding.variable === 'object') {
       Object.defineProperty(binding.variable, binding.property, {
         get: this.valueGetter.bind(this),
-        set: this.valueSetter.bind(this),
+        set: this._setter,
       });
     }
-  }
-
-  get boundedEventWithListeners(): BoundedEventWithListener[] {
-    return this._boundedEventWithListeners;
-  }
-
-  get elementBindings(): Array<ElementBinding | ElementBindingWithListener> {
-    return this._elementBindings;
   }
 
   get property(): string {
@@ -101,7 +93,10 @@ export class BindingService {
   ): void {
     if (element) {
       element.removeEventListener(eventName, listener, options);
-      const eventIdx = this._boundedEventWithListeners.findIndex((be) => be.uid === eventUid);
+      let eventIdx = this._boundedEventWithListeners.length - 1;
+      while (eventIdx >= 0 && this._boundedEventWithListeners[eventIdx].uid !== eventUid) {
+        eventIdx--;
+      }
       if (eventIdx >= 0) {
         this._boundedEventWithListeners.splice(eventIdx, 1);
       }
@@ -110,11 +105,12 @@ export class BindingService {
 
   /** Unbind All (remove) bounded elements with listeners */
   unbindAll(): void {
-    let boundedEvent = this._boundedEventWithListeners.pop();
-    while (boundedEvent) {
-      const { element, eventName, listener, uid } = boundedEvent;
+    while (this._boundedEventWithListeners.length) {
+      const { element, eventName, listener, uid } = this._boundedEventWithListeners[this._boundedEventWithListeners.length - 1];
       this.unbind(element, eventName, listener, undefined, uid);
-      boundedEvent = this._boundedEventWithListeners.pop();
+      if (this._boundedEventWithListeners[this._boundedEventWithListeners.length - 1]?.uid === uid) {
+        this._boundedEventWithListeners.pop();
+      }
     }
   }
 
@@ -139,7 +135,10 @@ export class BindingService {
             elmValue = +elmValue; // input is always string but we can parse to number when its type is number
           }
           this.valueSetter<T>(elmValue);
-          if (this._binding.variable.hasOwnProperty(this._binding.property) || this._binding.property in this._binding.variable) {
+          if (
+            Object.getOwnPropertyDescriptor(this._binding.variable, this._binding.property)?.set !== this._setter &&
+            (this._binding.variable.hasOwnProperty(this._binding.property) || this._binding.property in this._binding.variable)
+          ) {
             this._binding.variable[this._binding.property] = this.valueGetter();
           }
 

@@ -607,9 +607,7 @@ describe('Example 12 - Composite Editor Modal', () => {
   });
 
   it('should be able to click on the "Reset Form" button from the (Mass Update) and expect the form to be empty and not be able to Save', () => {
-    cy.window().then((win) => {
-      cy.stub(win, 'alert').as('alertStub');
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
     cy.get('.item-details-container .modified').should('have.length', 4);
     cy.get('.reset-form').contains('Reset Form').click();
@@ -924,10 +922,15 @@ describe('Example 12 - Composite Editor Modal', () => {
       .then(($col) => {
         const widthBefore = $col[0].getBoundingClientRect().width;
 
-        cy.get('.grid12 .slick-resizable-handle:nth(0)')
-          .trigger('mousedown', { which: 1, force: true })
-          .trigger('mousemove', { clientX: $col[0].getBoundingClientRect().right + 80, force: true });
-        cy.get('.grid12 .slick-header-column:nth(2)').trigger('mousemove', 'right').trigger('mouseup', { which: 1, force: true });
+        cy.get('.grid12 .slick-resizable-handle:nth(0)').trigger('mousedown', { which: 1, force: true });
+        cy.get('.grid12 .slick-resizable-handle:nth(0)').trigger('mousemove', {
+          clientX: $col[0].getBoundingClientRect().right + 80,
+          force: true,
+        });
+        cy.get('.grid12 .slick-header-column:nth(2)').trigger('mousemove', 'right');
+        // Resizing rerenders the header, so re-query it before mouseup instead of
+        // continuing a chain with the detached pre-resize subject.
+        cy.get('.grid12 .slick-header-column:nth(2)').trigger('mouseup', { which: 1, force: true });
 
         cy.get('.grid12')
           .find('.slick-header-columns:nth(1)')

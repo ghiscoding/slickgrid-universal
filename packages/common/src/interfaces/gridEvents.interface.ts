@@ -33,12 +33,6 @@ export interface OnHeaderKeyDownEventArgs extends SlickGridArg {
   event: KeyboardEvent;
   column: Column;
 }
-export interface OnBeforeAppendCellEventArgs extends SlickGridArg {
-  row: number;
-  cell: number;
-  value: any;
-  dataContext: any;
-}
 export interface OnBeforeCellEditorDestroyEventArgs extends SlickGridArg {
   editor: Editor;
 }

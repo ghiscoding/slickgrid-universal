@@ -34,17 +34,21 @@ describe('Example 19 - Row Detail View', () => {
   it('should click anywhere on 3rd row to open its Row Detail and expect its title to be Task 2 in an H2 tag', () => {
     cy.get('#grid19').find('.slick-row:nth(2)').click();
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_2 .container_2').as('detailContainer');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-2').as('detailContainer');
 
     cy.get('@detailContainer').find('h3').contains('Task 2');
+    cy.get('@detailContainer').should('have.attr', 'class', 'slick-row-detail-container row-detail-2');
+    cy.get('@detailContainer').parent().should('have.class', 'grid-canvas');
+    cy.get('@detailContainer').children().should('have.length', 1);
+    cy.get('@detailContainer').find('.container_2').should('not.exist');
   });
 
   it('should click on the "Click Me" button and expect the assignee name to showing in uppercase in an Alert', () => {
     let assignee = '';
     const alertStub = cy.stub();
-    cy.on('window:alert', alertStub);
+    cy.window().then((win) => cy.stub(win, 'alert').callsFake(alertStub));
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_2 .container_2').as('detailContainer');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-2').as('detailContainer');
 
     cy.get('@detailContainer')
       .find('input')
@@ -66,7 +70,7 @@ describe('Example 19 - Row Detail View', () => {
   });
 
   it('should click on the "Call Parent Method" button and expect a Bootstrap Alert to show up with some text containing the Task 2', () => {
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_2 .container_2').as('detailContainer');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-2').as('detailContainer');
 
     cy.get('@detailContainer').find('[data-test=parent-btn]').click();
 
@@ -76,11 +80,13 @@ describe('Example 19 - Row Detail View', () => {
   it('should click on the "Delete Row" button and expect the Task 2 to be deleted from the grid', () => {
     const expectedTasks = ['Task 0', 'Task 1', 'Task 3', 'Task 4', 'Task 5'];
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_2 .container_2').as('detailContainer');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-2').as('detailContainer');
+
+    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
 
     cy.get('@detailContainer').find('[data-test=delete-btn]').click();
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     cy.get('#grid19')
       .find('.slick-row')
@@ -99,23 +105,23 @@ describe('Example 19 - Row Detail View', () => {
 
     cy.get('#grid19').find('.slick-row:nth(2)').click();
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_3 .container_3').as('detailContainer3');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-3').as('detailContainer3');
 
     cy.get('@detailContainer3').find('h3').contains('Task 3');
 
     cy.get('#grid19').find('.slick-row:nth(0)').click();
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_0 .container_0').as('detailContainer0');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-0').as('detailContainer0');
 
     cy.get('@detailContainer0').find('h3').contains('Task 0');
 
     cy.get('[data-test=collapse-all-btn]').click();
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_0 .container_0').should('not.exist');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-0').should('not.exist');
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_1 .container_1').should('not.exist');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-1').should('not.exist');
 
     cy.get('#grid19')
       .find('.slick-row')
@@ -132,7 +138,7 @@ describe('Example 19 - Row Detail View', () => {
 
     cy.get('#grid19').find('.slick-row:nth(0)').click();
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_0 .container_0').as('detailContainer0');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-0').as('detailContainer0');
 
     cy.get('@detailContainer0').find('h3').contains('Task 0');
 
@@ -140,7 +146,7 @@ describe('Example 19 - Row Detail View', () => {
       .contains('.slick-row .slick-cell', /^Task 3$/)
       .click();
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_3 .container_3').as('detailContainer3');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-3').as('detailContainer3');
 
     cy.get('@detailContainer3').find('h3').contains('Task 3');
 
@@ -152,12 +158,7 @@ describe('Example 19 - Row Detail View', () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(4)')
-      .children('.slick-menu-content')
-      .should('contain', 'Sort Descending')
-      .click();
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Descending').click();
 
     cy.get('#slickGridContainer-grid19')
       .find('.slick-header-column:nth(1)')
@@ -166,20 +167,15 @@ describe('Example 19 - Row Detail View', () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(3)')
-      .children('.slick-menu-content')
-      .should('contain', 'Sort Ascending')
-      .click();
+    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').contains('Sort Ascending').click();
 
     cy.get('#grid19').find('.slick-header-column:nth(1)').find('.slick-sort-indicator-asc').should('have.length', 1);
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_0 .container_0').should('not.exist');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-0').should('not.exist');
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_3 .container_3').should('not.exist');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-3').should('not.exist');
 
     cy.get('#grid19')
       .find('.slick-row')
@@ -196,7 +192,7 @@ describe('Example 19 - Row Detail View', () => {
 
     cy.get('#grid19').find('.slick-row:nth(1)').click();
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_101').as('detailContainer');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-101').as('detailContainer');
 
     cy.get('@detailContainer').find('h3').contains('Task 101');
 
@@ -208,7 +204,7 @@ describe('Example 19 - Row Detail View', () => {
 
     cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_101').as('detailContainer');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-101').as('detailContainer');
 
     cy.get('@detailContainer').find('h3').contains('Task 101');
   });
@@ -220,7 +216,7 @@ describe('Example 19 - Row Detail View', () => {
 
     cy.get('#grid19').find('.slick-sort-indicator-asc').should('have.length', 0);
 
-    cy.get('.dynamic-cell-detail').should('have.length', 0);
+    cy.get('.slick-row-detail-container').should('have.length', 0);
   });
 
   it('should close all row details & make grid editable', () => {
@@ -231,7 +227,7 @@ describe('Example 19 - Row Detail View', () => {
   it('should click on 5th row detail open icon and expect it to open', () => {
     cy.get('#grid19').find('.slick-row:nth(4) .slick-cell:nth(0)').click();
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_101').as('detailContainer');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-101').as('detailContainer');
 
     cy.get('@detailContainer').find('h3').contains('Task 101');
   });
@@ -243,7 +239,7 @@ describe('Example 19 - Row Detail View', () => {
       .invoke('val')
       .then((text) => expect(text).to.eq('Task 1'));
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_101').should('not.exist');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-101').should('not.exist');
     cy.get('.editor-title').type('{esc}');
     cy.get('#grid19').contains('.slick-row .slick-cell', /^Task 1$/);
   });
@@ -253,13 +249,13 @@ describe('Example 19 - Row Detail View', () => {
 
     clickTask1Toggle();
 
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_1').as('detailContainer');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-1').as('detailContainer');
     cy.get('@detailContainer').find('h3').contains('Task 1');
     clickTask1Toggle();
     cy.get('@detailContainer').should('not.exist');
 
     clickTask1Toggle();
-    cy.get('#grid19').find('.dynamic-cell-detail .innerDetailView_1').as('detailContainer');
+    cy.get('#grid19').find('.slick-row-detail-container.row-detail-1').as('detailContainer');
     cy.get('@detailContainer').find('h3').contains('Task 1');
   });
 });

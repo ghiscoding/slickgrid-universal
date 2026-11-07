@@ -44,20 +44,8 @@ export class SlickCellExcelCopyManager {
     return this._addonOptions;
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
-  get commandQueue(): EditCommand[] {
-    return this._commandQueue;
-  }
-
   get gridOptions(): GridOption {
     return this._grid?.getOptions() ?? {};
-  }
-
-  get undoRedoBuffer(): EditUndoRedoBuffer {
-    return this._undoRedoBuffer;
   }
 
   /** Copy the currently selected cell ranges to the clipboard. */

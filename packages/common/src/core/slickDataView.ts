@@ -50,34 +50,14 @@ function isLiveDomFormatterResult(
 }
 
 export interface DataViewOption {
-  /**
-   * @deprecated Filters are always CSP-safe and this option is now ignored.
-   * Next major cleanup:
-   * - Remove both `inlineFilters` and `useCSPSafeFilter` from `DataViewOption` and the default options.
-   * - Remove framework and vanilla-bundle code that forwards `inlineFilters`, along with its compatibility tests and documentation.
-   * - Remove the deprecated `FilterCspFn` and `FilterWithCspCachingFn` type aliases.
-   * - Consider renaming the protected `*CSPSafe` methods to neutral names and update their tests and benchmarks.
-   */
-  inlineFilters: boolean;
-
   /** global override for all rows */
   globalItemMetadataProvider: ItemMetadataProvider | null;
 
   /** Optionally provide a GroupItemMetadataProvider in order to use Grouping/DraggableGrouping features */
   groupItemMetadataProvider: SlickGroupItemMetadataProvider | null;
-
-  /**
-   * @deprecated Filters are always CSP-safe and this option is now ignored. Remove it in the next major together with
-   * `inlineFilters` by following that option's cleanup checklist.
-   */
-  useCSPSafeFilter: boolean;
 }
 
 export type FilterFn<T> = (item: T, args: any) => boolean;
-/** @deprecated Filtering is always CSP-safe. Remove this unused alias in the next major. */
-export type FilterCspFn<T> = (item: T[], args: any) => T[];
-/** @deprecated Filtering is always CSP-safe. Remove this unused alias in the next major. */
-export type FilterWithCspCachingFn<T> = (item: T[], args: any, filterCache: any[]) => T[];
 export type DataIdType = number | string;
 export type SlickDataItem = SlickNonDataItem | SlickGroup | SlickGroupTotals | any;
 export type GroupGetterFn = (val: any) => string | number;
@@ -92,8 +72,6 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected defaults: DataViewOption = {
     globalItemMetadataProvider: null,
     groupItemMetadataProvider: null,
-    inlineFilters: false,
-    useCSPSafeFilter: false,
   };
 
   // private
@@ -133,6 +111,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     totalFormattedCells: 0,
   };
   protected _populateCacheRafId: number | undefined = undefined;
+  protected _populateCachePort: MessagePort | undefined = undefined;
   protected _cachePopulationGeneration = 0; // incremented on each new population run; stale closures bail out early
 
   // grouping
@@ -468,7 +447,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       gi.compiledAccumulators = [];
       let idx = gi.aggregators.length;
       while (idx--) {
-        gi.compiledAccumulators[idx] = this.compileAccumulatorLoopCSPSafe(gi.aggregators[idx]);
+        gi.compiledAccumulators[idx] = this.compileAccumulatorLoop(gi.aggregators[idx]);
       }
 
       this.toggledGroupsByLevel[i] = Object.create(null);
@@ -1127,7 +1106,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return groupedRows;
   }
 
-  protected compileAccumulatorLoopCSPSafe(aggregator: Aggregator): (items: any[]) => void {
+  protected compileAccumulatorLoop(aggregator: Aggregator): (items: any[]) => void {
     if (aggregator.accumulate) {
       return function (items: any[]) {
         if (Array.isArray(items)) {
@@ -1142,7 +1121,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     }
   }
 
-  protected compileFilterCSPSafe(items: TData[], args: any): TData[] {
+  protected filterItems(items: TData[], args: any): TData[] {
     /* v8 ignore if */
     if (typeof this.filter !== 'function') {
       return [];
@@ -1160,7 +1139,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return retval;
   }
 
-  protected compileFilterWithCachingCSPSafe(items: TData[], args: any, filterCache: any[]): TData[] {
+  protected filterItemsWithCaching(items: TData[], args: any, filterCache: any[]): TData[] {
     /* v8 ignore if */
     if (typeof this.filter !== 'function') {
       return [];
@@ -1185,11 +1164,11 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected getFilteredAndPagedItems(items: TData[]): { totalRows: number; rows: TData[] } {
     if (this.filter) {
       if (this.refreshHints.isFilterNarrowing) {
-        this.filteredItems = this.compileFilterCSPSafe(this.filteredItems, this.filterArgs);
+        this.filteredItems = this.filterItems(this.filteredItems, this.filterArgs);
       } else if (this.refreshHints.isFilterExpanding) {
-        this.filteredItems = this.compileFilterWithCachingCSPSafe(items, this.filterArgs, this.filterCache);
+        this.filteredItems = this.filterItemsWithCaching(items, this.filterArgs, this.filterCache);
       } else if (!this.refreshHints.isFilterUnchanged) {
-        this.filteredItems = this.compileFilterCSPSafe(items, this.filterArgs);
+        this.filteredItems = this.filterItems(items, this.filterArgs);
       }
     } else {
       // special case:  if not filtering and not paging, the resulting
@@ -1687,15 +1666,16 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param {number} rowIdx - The row index in the current view
    * @param {string} columnId - The column ID
    * @param {any} fallbackValue - Value to return when the cache has no entry for this cell
+   * @param {TData} item - Optional already-resolved item to avoid another row lookup
    * @returns {any} The cached formatted value or the fallback value
    */
-  getFormattedCellValue(rowIdx: number, columnId: string, fallbackValue: any): any {
+  getFormattedCellValue(rowIdx: number, columnId: string, fallbackValue: any, item?: TData): any {
     if (!this._gridOptions?.enableFormattedDataCache) {
       return fallbackValue;
     }
 
-    const item = this.getItem(rowIdx);
-    const itemId = item?.[this.idProperty as keyof TData] as DataIdType | undefined;
+    const dataContext = item ?? this.getItem(rowIdx);
+    const itemId = dataContext?.[this.idProperty as keyof TData] as DataIdType | undefined;
     if (itemId !== undefined) {
       const rowCache = this.formattedDataCache[itemId];
       if (rowCache?.[columnId] !== undefined) {
@@ -1740,10 +1720,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    */
   clearFormattedDataCache(): void {
     // Cancel any in-progress background population before wiping the cache
-    if (this._populateCacheRafId !== undefined) {
-      cancelAnimationFrame(this._populateCacheRafId);
-      this._populateCacheRafId = undefined;
-    }
+    this.cancelFormattedDataCachePopulation();
     this.formattedDataCache = Object.create(null);
     this.formattedCellCache = Object.create(null);
     this.formattedCacheMetadata = {
@@ -1751,6 +1728,23 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       lastProcessedRow: -1,
       totalFormattedCells: 0,
     };
+  }
+
+  /**
+   * Cancels any pending background population batch (RAF or MessageChannel).
+   * The MessagePort must be closed, otherwise its `onmessage` handler keeps the port alive
+   * (as a pending activity) and its closure retains the DataView & dataset, causing a memory leak.
+   */
+  protected cancelFormattedDataCachePopulation(): void {
+    if (this._populateCacheRafId !== undefined) {
+      cancelAnimationFrame(this._populateCacheRafId);
+      this._populateCacheRafId = undefined;
+    }
+    if (this._populateCachePort) {
+      this._populateCachePort.onmessage = null;
+      this._populateCachePort.close();
+      this._populateCachePort = undefined;
+    }
   }
 
   /**
@@ -1808,13 +1802,10 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     }
 
     // Cancel any still-running population before starting a new one.
-    // cancelAnimationFrame() stops the pending RAF (JS is single-threaded so a batch is never
+    // Cancelling the pending RAF/MessagePort stops the next batch (JS is single-threaded so a batch is never
     // mid-execution here), while the generation counter acts as an explicit abort signal so that
     // any closure that somehow fires after the reset detects it is stale and exits early.
-    if (this._populateCacheRafId !== undefined) {
-      cancelAnimationFrame(this._populateCacheRafId);
-      this._populateCacheRafId = undefined;
-    }
+    this.cancelFormattedDataCachePopulation();
     const generation = ++this._cachePopulationGeneration;
 
     this.formattedCacheMetadata.isPopulating = true;
@@ -1883,7 +1874,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       if (!isDone) {
         scheduleNextBatch();
       } else {
-        this._populateCacheRafId = undefined;
+        this.cancelFormattedDataCachePopulation(); // release the MessagePort/RAF so its closure can be garbage collected
         this.formattedCacheMetadata.isPopulating = false;
         const duration = Date.now() - (this.formattedCacheMetadata.cacheStartTime || 0);
         this.onFormattedDataCacheCompleted.notify({
@@ -1900,6 +1891,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     if (typeof MessageChannel !== 'undefined') {
       const { port1, port2 } = new MessageChannel();
       port1.onmessage = processBatch;
+      this._populateCachePort = port1;
       scheduleNextBatch = () => port2.postMessage(null);
     } else {
       scheduleNextBatch = () => {

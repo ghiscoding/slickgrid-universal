@@ -1,5 +1,6 @@
 import { Constants } from '../constants.js';
-import type { GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem } from '../interfaces/index.js';
+import type { GridMenuItem, GridOption, Locale, MenuCommandItem } from '../interfaces/index.js';
+import type { MenuDivider } from '../interfaces/menuCommandItem.interface.js';
 import type { BackendUtilityService } from '../services/backendUtility.service.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { TranslaterService } from '../services/translater.service.js';
@@ -20,9 +21,7 @@ export class ExtensionUtility {
    */
   getPickerTitleOutputString(propName: string, pickerName: 'gridMenu' | 'columnPicker'): string {
     if (this.sharedService.gridOptions?.enableTranslate && !this.translaterService?.translate) {
-      throw new Error(
-        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
-      );
+      throw new Error(Constants.translaterMissingError);
     }
 
     let output = '';
@@ -74,23 +73,6 @@ export class ExtensionUtility {
     return true;
   }
 
-  /**
-   * @deprecated Sort items (by pointers) in an array by a property name
-   * @param {Array<Object>} items array
-   * @param {String} property name to sort with
-   */
-  sortItems(items: any[], propertyName: string): void {
-    // sort the command items by their position in the list
-    if (Array.isArray(items)) {
-      items.sort((itemA: any, itemB: any) => {
-        if (itemA && itemB && itemA.hasOwnProperty(propertyName) && itemB.hasOwnProperty(propertyName)) {
-          return itemA[propertyName] - itemB[propertyName];
-        }
-        return 0;
-      });
-    }
-  }
-
   /** Translate the array of items from an input key and assign them to their output key */
   translateItems<T = any>(items: T[], inputKey: string, outputKey: string): void {
     if (Array.isArray(items)) {
@@ -107,10 +89,7 @@ export class ExtensionUtility {
    * @param {Array<MenuCommandItem | String>} items - Menu Command Items array
    * @param {Object} gridOptions - Grid Options
    */
-  translateMenuItemsFromTitleKey(
-    items: Array<MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider'>,
-    subMenuItemsKey = 'commandItems'
-  ): void {
+  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | GridMenuItem | MenuDivider<any>>, subMenuItemsKey = 'commandItems'): void {
     for (const item of items) {
       // translate `titleKey` and also `subMenuTitleKey` if exists
       if (typeof item === 'object') {

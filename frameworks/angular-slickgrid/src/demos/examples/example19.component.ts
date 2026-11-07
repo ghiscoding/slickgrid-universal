@@ -139,7 +139,6 @@ export class Example19Component implements OnDestroy, OnInit {
       },
       enableFiltering: true,
       enableRowDetailView: true,
-      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       darkMode: this._darkMode,
       datasetIdPropertyName: 'rowId', // optionally use a different "id"
       externalResources: [AngularRowDetailView],

@@ -7,11 +7,16 @@
     "shared-node-browser": true
   },
   "plugins": ["oxc", "typescript", "vitest"],
-  "jsPlugins": ["@angular-eslint/eslint-plugin"],
+  "jsPlugins": [
+    {
+      "name": "angular-eslint",
+      "specifier": "@angular-eslint/eslint-plugin"
+    }
+  ],
   "ignorePatterns": ["**/*.spec.ts", "**/*.cy.ts", ".angular/*", "dist/", "coverage/", "test/", "**/environment.*.ts", "**/public_api.ts"],
   "rules": {
-    "@angular-eslint/no-forward-ref": "error",
-    "@angular-eslint/directive-selector": [
+    "angular-eslint/no-forward-ref": "error",
+    "angular-eslint/directive-selector": [
       "error",
       {
         "type": "attribute",
@@ -19,7 +24,7 @@
         "style": "camelCase"
       }
     ],
-    "@angular-eslint/component-selector": [
+    "angular-eslint/component-selector": [
       "error",
       {
         "type": "element",
@@ -27,7 +32,7 @@
         "style": "kebab-case"
       }
     ],
-    "@angular-eslint/prefer-standalone": "error",
+    "angular-eslint/prefer-standalone": "error",
     "typescript/no-unused-expressions": "off",
     "typescript/no-unused-vars": [
       "error",

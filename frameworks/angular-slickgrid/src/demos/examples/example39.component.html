@@ -86,7 +86,7 @@
         <div style="margin: 10px 0px">
           <b>Metrics:</b>
           <span>
-            <span>{{ metrics()?.endTime | date: 'dd MMM, h:mm:ssa' }}</span> —
+            <span>{{ $safeNavigationMigration(metrics()?.endTime) | date: 'dd MMM, h:mm:ssa' }}</span> —
             <span data-test="itemCount">{{ metrics()?.itemCount }}</span>
             of
             <span data-test="totalItemCount">{{ metrics()?.totalItemCount }}</span>

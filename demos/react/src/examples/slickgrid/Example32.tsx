@@ -79,8 +79,6 @@ const Example32: React.FC = () => {
         minWidth: 65,
         // you can adjust the resize calculation via multiple options
         resizeExtraWidthPadding: 4,
-        resizeCharWidthInPx: 7.6,
-        resizeCalcWidthRatio: 1, // default ratio is ~0.9 for string but since our text is all uppercase then a higher ratio is needed
         resizeMaxWidthThreshold: 200,
         cssClass: 'text-uppercase fw-bold',
         columnGroup: 'Common Factor',
@@ -200,7 +198,6 @@ const Example32: React.FC = () => {
         id: 'complexity',
         name: 'Complexity',
         field: 'complexity',
-        resizeCalcWidthRatio: 0.9, // default calc ratio is 1 or ~0.9 for field type of string
         sortable: true,
         filterable: true,
         columnGroup: 'Analysis',
@@ -286,7 +283,6 @@ const Example32: React.FC = () => {
         filterable: true,
         columnGroup: 'Item',
         minWidth: 100,
-        resizeCharWidthInPx: 8,
         exportWithFormatter: true,
         dataKey: 'id',
         labelKey: 'itemName',
@@ -365,14 +361,12 @@ const Example32: React.FC = () => {
               command: 'help',
               title: 'Help!',
               iconCssClass: 'mdi mdi-help-circle',
-              positionOrder: 66,
               action: () => alert('Please Help!'),
             },
             'divider',
             {
               command: 'delete-row',
               title: 'Delete Row',
-              positionOrder: 64,
               iconCssClass: 'mdi mdi-close color-danger',
               cssClass: 'red',
               textCssClass: 'text-italic color-danger-light',
@@ -398,12 +392,11 @@ const Example32: React.FC = () => {
       col.header = {
         menu: {
           commandItems: [
-            { command: '', divider: true, positionOrder: 98 },
+            { command: '', divider: true },
             {
               // we can also have multiple nested sub-menus
               command: 'custom-actions',
               title: 'Hello',
-              positionOrder: 99,
               commandItems: [
                 { command: 'hello-world', title: 'Hello World' },
                 { command: 'hello-slickgrid', title: 'Hello SlickGrid' },
@@ -425,7 +418,6 @@ const Example32: React.FC = () => {
             {
               command: 'feedback',
               title: 'Feedback',
-              positionOrder: 100,
               commandItems: [
                 {
                   command: 'request-update',
@@ -481,7 +473,6 @@ const Example32: React.FC = () => {
 
       // optional resize calculation options
       resizeByContentOptions: {
-        defaultRatioForStringType: 0.92,
         formatterPaddingWidthInPx: 8, // optional editor formatter padding for resize calculation
       },
 

@@ -12,3 +12,24 @@ export class ContainerService {
     throw new Error('ContainerService "registerInstance" method must be implemented');
   }
 }
+
+/** A registry of existing instances. Clearing it does not dispose the instances. */
+export class MapContainerService implements ContainerService {
+  protected readonly _dependencies: Map<string, any> = new Map();
+
+  constructor(protected readonly _replaceExisting = true) {}
+
+  get<T = any>(key: string): T | null {
+    return this._dependencies.get(key) ?? null;
+  }
+
+  registerInstance(key: string, instance: any): void {
+    if (this._replaceExisting || !this._dependencies.has(key)) {
+      this._dependencies.set(key, instance);
+    }
+  }
+
+  dispose(): void {
+    this._dependencies.clear();
+  }
+}

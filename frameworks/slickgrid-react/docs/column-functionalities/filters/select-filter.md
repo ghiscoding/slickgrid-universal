@@ -73,7 +73,6 @@ const columns = [
        model: Filters.multipleSelect,
 
        // you can add "multiple-select" plugin options like styling the first row
-       // previously known as `filterOptions` for < 9.0
        options: {
           offsetLeft: 14,
           width: 100
@@ -606,7 +605,6 @@ All the available options that can be provided as filter `options` to your colum
 ```ts
 filter: {
   model: Filters.singleSelect,
-  // previously known as `filterOptions` for < 9.0
   options: {
     maxHeight: 400
   } as MultipleSelectOption

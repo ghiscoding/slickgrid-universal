@@ -1,5 +1,10 @@
 <h3 class="title is-3">
   Example 43 - AI / Web MCP Toolkit
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -12,7 +17,7 @@
   </div>
 </h3>
 
-<h5 class="mb-3 italic example-details">
+<h5 class="mb-3 italic example-details" style.bind="subTitleStyle">
   Demonstrates the optional <code>@slickgrid-universal/web-mcp</code> package (<code>WebMcpService</code>), which exposes the grid as
   <a href="https://modelcontextprotocol.io" target="_blank">Model Context Protocol (MCP)</a> tools so that AI assistants can read and
   manipulate the grid via natural language. The buttons below simulate what an LLM would call — in a real WebMCP-capable browser the same

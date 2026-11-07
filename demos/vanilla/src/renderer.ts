@@ -131,8 +131,14 @@ export class Renderer {
           observer.bind(elements, 'textContent');
           break;
         case 'value':
-          // add 2 possible events (change/keyup) on a value binding
-          observer.bind(elements, attribute, 'change').bind(elements, attribute, 'keyup');
+          // A select with an explicit onchange handler owns its change event.
+          // Keep the binding for initial/programmatic synchronization only.
+          if (Array.from(elements).some((element) => element.tagName === 'SELECT' && element.hasAttribute('onchange'))) {
+            observer.bind(elements, attribute);
+          } else {
+            // add 2 possible events (change/keyup) on a value binding
+            observer.bind(elements, attribute, 'change').bind(elements, attribute, 'keyup');
+          }
           break;
         case 'checked':
         case 'min':

@@ -35,11 +35,14 @@ describe('Example 36 - Row Detail View + Grouping', () => {
   it('should open the 1st Row Detail of Duration(0) Group and expect to find some details', () => {
     cy.get('.slick-cell.l1.r1.detail-view-toggle:nth(0)').click().wait(40);
 
-    cy.get('.dynamic-cell-detail')
+    cy.get('.slick-row-detail-container')
       .find('h4')
       .contains(/Task [0-9]*/);
 
-    cy.get('.dynamic-cell-detail').should('have.length', 1);
+    cy.get('.slick-row-detail-container').should('have.length', 1);
+    cy.get('.slick-row-detail-container').parent().should('have.class', 'grid-canvas');
+    cy.get('.slick-row-detail-container').children().should('have.length', 1);
+    cy.get('.slick-row-detail-container').find('[class^="container_"]').should('not.exist');
     cy.get('.detail label').should('contain', 'Assignee:');
     cy.get('.detail input').should('exist');
 
@@ -50,11 +53,11 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.get('[data-row="8"] > .slick-cell.l1').click();
     cy.get('[data-row="8"] > .slick-cell.l2').contains(/Task [0-9]*/);
 
-    cy.get('.dynamic-cell-detail')
+    cy.get('.slick-row-detail-container')
       .find('h4')
       .contains(/Task [0-9]*/);
 
-    cy.get('.dynamic-cell-detail').should('have.length', 2);
+    cy.get('.slick-row-detail-container').should('have.length', 2);
     cy.get('.detail label').should('contain', 'Assignee:');
     cy.get('.detail input').should('exist');
 
@@ -63,23 +66,23 @@ describe('Example 36 - Row Detail View + Grouping', () => {
 
   it('should collapse 1st Duration(0) Group and not expect any Row Detail shown', () => {
     cy.get('[data-row="0"] .slick-group-toggle.expanded').click();
-    cy.get('.dynamic-cell-detail').should('have.length', 0);
+    cy.get('.slick-row-detail-container').should('have.length', 0);
     cy.get(`[data-row="1"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 1');
   });
 
   it('should re-open 1st Duration(0) Group and expect both Row Detail to be shown', () => {
     cy.get('[data-row="0"] .slick-group-toggle.collapsed').click();
-    cy.get('.dynamic-cell-detail').should('have.length', 2);
+    cy.get('.slick-row-detail-container').should('have.length', 2);
 
-    cy.get('.dynamic-cell-detail').should('have.length', 2);
+    cy.get('.slick-row-detail-container').should('have.length', 2);
     cy.get('.detail label').should('contain', 'Assignee:');
     cy.get('.detail input').should('exist');
   });
 
   it('should be able to collapse all Row Details', () => {
-    cy.get('.dynamic-cell-detail').should('have.length', 2);
+    cy.get('.slick-row-detail-container').should('have.length', 2);
     cy.get('[data-test=collapse-all-rowdetail-btn]').click();
-    cy.get('.dynamic-cell-detail').should('have.length', 0);
+    cy.get('.slick-row-detail-container').should('have.length', 0);
   });
 
   it('should be able to select any rows, i.e.: row 2 and 4', () => {
@@ -111,34 +114,32 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.get('[data-row="0"] .slick-group-toggle.collapsed').click();
     cy.get('.slick-cell.l1.r1.detail-view-toggle:nth(0)').click().wait(40);
 
-    cy.get('.dynamic-cell-detail')
+    cy.get('.slick-row-detail-container')
       .find('h4')
       .contains(/Task [0-9]*/);
 
-    cy.get('.dynamic-cell-detail').should('have.length', 1);
+    cy.get('.slick-row-detail-container').should('have.length', 1);
     cy.get('.detail label').should('contain', 'Assignee:');
     cy.get('.detail input').should('exist');
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
-    cy.get('.dynamic-cell-detail').find('[data-test=delete-btn]').click();
+    cy.get('.slick-vertical-scroller').scrollTo('top');
+    cy.get('.slick-row-detail-container').find('[data-test=delete-btn]').click();
     cy.get('.notification.is-danger').contains(/Deleted row with Task [0-9]*/);
-    cy.get('.dynamic-cell-detail').should('have.length', 0);
+    cy.get('.slick-row-detail-container').should('have.length', 0);
   });
 
   it('should re-open first Row Details and be able to click on the "Click Me" button and expect an alert message', () => {
-    cy.window().then((win) => {
-      cy.stub(win, 'alert').as('alertStub');
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
     cy.get('[data-row="1"] > .slick-cell.l2').contains(/Task [0-9]*/);
     cy.get('[data-row="1"] > .slick-cell.l1').click().wait(40);
 
-    cy.get('.dynamic-cell-detail')
+    cy.get('.slick-row-detail-container')
       .find('h4')
       .contains(/Task [0-9]*/);
 
-    cy.get('.dynamic-cell-detail').should('have.length', 1);
+    cy.get('.slick-row-detail-container').should('have.length', 1);
     cy.get('.detail label').should('contain', 'Assignee:');
     cy.get('.detail input').should('exist');
     cy.get('input.assignee')
@@ -152,20 +153,17 @@ describe('Example 36 - Row Detail View + Grouping', () => {
   });
 
   it('should collapse first Group, then re-expand first Group and still expect an alert when clicking on the "Click Me" button inside Row Detail', () => {
-    cy.window().then((win) => {
-      const stub = cy.stub(win, 'alert').returns(true);
-      cy.wrap(stub).as('alertStub');
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
     cy.get('.slick-group-toggle.expanded').first().click();
     cy.wait(50);
     cy.get('.slick-group-toggle.collapsed').first().click();
 
-    cy.get('.dynamic-cell-detail')
+    cy.get('.slick-row-detail-container')
       .find('h4')
       .contains(/Task [0-9]*/);
 
-    cy.get('.dynamic-cell-detail').should('have.length', 1);
+    cy.get('.slick-row-detail-container').should('have.length', 1);
     cy.get('.detail label').should('contain', 'Assignee:');
     cy.get('.detail input').should('exist');
 
@@ -180,19 +178,17 @@ describe('Example 36 - Row Detail View + Grouping', () => {
   });
 
   it('should click on "Collapsed all groups" button, then click on "Expand all groups" button and still expect an alert when clicking on the "Click Me" button inside Row Detail', () => {
-    cy.window().then((win) => {
-      cy.stub(win, 'alert').as('alertStub');
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertStub'));
 
     cy.get('[data-test=collapse-all-groups-btn]').click();
     cy.wait(50);
     cy.get('[data-test=expand-all-groups-btn]').click();
 
-    cy.get('.dynamic-cell-detail')
+    cy.get('.slick-row-detail-container')
       .find('h4')
       .contains(/Task [0-9]*/);
 
-    cy.get('.dynamic-cell-detail').should('have.length', 1);
+    cy.get('.slick-row-detail-container').should('have.length', 1);
     cy.get('.detail label').should('contain', 'Assignee:');
     cy.get('.detail input').should('exist');
     cy.get('input.assignee')

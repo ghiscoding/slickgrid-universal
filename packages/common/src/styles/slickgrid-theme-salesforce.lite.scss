@@ -12,6 +12,7 @@
 
 @forward './variables-theme-salesforce';
 
+@use './theme-base-salesforce';
 @use './slick-without-bootstrap-min-styling';
 @use './variables-theme-salesforce';
 @use './slick-grid';

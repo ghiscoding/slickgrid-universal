@@ -184,10 +184,6 @@ function defineGrid(gridStatePresets?: GridState) {
     },
     gridMenu: {
       hideForceFitButton: true,
-      hideClearFrozenColumnsCommand: false,
-    },
-    headerMenu: {
-      hideFreezeColumnsCommand: false,
     },
     enablePagination: true,
     pagination: {

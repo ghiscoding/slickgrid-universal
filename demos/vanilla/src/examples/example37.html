@@ -6,6 +6,12 @@
 </style>
 <h3 class="title is-3">
   Example 37 - Hybrid Selection Model
+
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -18,7 +24,7 @@
   </div>
 </h3>
 
-<h5 class="mb-3 italic example-details">
+<h5 class="mb-3 italic example-details" style.bind="subTitleStyle">
   <ul>
     <li>
       <code>SlickHybridSelectionModel</code> This Selection Model is an hybrid approach that uses a combination of the row or cell

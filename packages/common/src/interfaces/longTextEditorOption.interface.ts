@@ -13,7 +13,7 @@ export interface LongTextEditorOption {
   useColumnWidth?: boolean;
 
   /**
-   * Defaults to 6, that is the number of visible text lines for the textarea control.
+   * Defaults to 4, that is the number of visible text lines for the textarea control.
    * Note: this only applies to Inline Editing and will not have any effect when using the Composite Editor modal window which will be fixed to 3 rows.
    */
   rows?: number;

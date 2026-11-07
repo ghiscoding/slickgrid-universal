@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/aurelia-row-detail-plugin",
-  "version": "10.11.0",
+  "version": "11.0.0-beta.0",
   "description": "Aurelia Row Detail Plugin for Aurelia-SlickGrid",
   "type": "module",
   "main": "./dist/index.js",
@@ -43,7 +43,7 @@
     "@aurelia/runtime-html": "^2.0.0-rc.2",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
-    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/row-detail-plugin": "workspace:*",
     "aurelia-slickgrid": "workspace:*",
     "rxjs": "catalog:",
     "tslib": "catalog:"

@@ -116,7 +116,6 @@ function defineGrid() {
     },
     enableFiltering: true,
     enableRowDetailView: true,
-    // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
     darkMode: isDarkMode.value,
     datasetIdPropertyName: 'rowId', // optionally use a different "id"
     externalResources: [VueRowDetailView],

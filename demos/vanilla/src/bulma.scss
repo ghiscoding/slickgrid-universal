@@ -1,6 +1,7 @@
 @use 'bulma/bulma';
 
-[data-theme=light], .theme-light {
+[data-theme='light'],
+.theme-light {
   --bulma-body-color: black !important;
   --bulma-body-background-color: white !important;
   .button {
@@ -8,7 +9,8 @@
     border-color: #acacac;
   }
 }
-[data-theme=dark], .theme-dark {
+[data-theme='dark'],
+.theme-dark {
   --bulma-body-color: white !important;
   --bulma-body-background-color: #33393e !important;
   .button {
@@ -16,14 +18,17 @@
   }
 }
 
-html, body {
+html,
+body {
   --bulma-body-background-color: transparent !important;
   --bulma-control-height: 30px;
   --bulma-hr-background-color: #d8d8d8;
 }
 :root {
   --bulma-body-background-color: transparent;
-  --bulma-body-family: BlinkMacSystemFont,-apple-system,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
+  --bulma-body-family:
+    BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, Helvetica, Arial,
+    sans-serif;
   --bulma-control-height: 30px;
   --bulma-radius-small: 6px;
 
@@ -41,8 +46,12 @@ html, body {
     column-gap: 4px;
     justify-content: space-between;
   }
-  .navbar-item, .navbar-link {
+  .navbar-item,
+  .navbar-link {
     color: white;
+  }
+  .navbar {
+    --bulma-navbar-fixed-z: 35;
   }
   .icon.mdi,
   .icon .mdi {

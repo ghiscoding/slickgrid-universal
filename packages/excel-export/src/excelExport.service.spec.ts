@@ -88,6 +88,7 @@ const gridStub = {
   getData: () => dataViewStub,
   getOptions: () => mockGridOptions,
   getColumns: vi.fn(),
+  getColumnsInRenderedOrder: vi.fn((includeHidden = false) => (includeHidden ? gridStub.getColumns() : gridStub.getVisibleColumns())),
   getVisibleColumns: vi.fn(),
   getGrouping: vi.fn(),
   getParentRowSpanByCell: vi.fn(),
@@ -95,11 +96,15 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('ExcelExportService', () => {
+  let anchorClickSpy: ReturnType<typeof vi.spyOn>;
+
   // Suppress console.error globally for all tests in this file
   beforeAll(() => {
+    anchorClickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
   afterAll(() => {
+    anchorClickSpy.mockRestore();
     (console.error as any).mockRestore?.();
   });
   let container: ContainerServiceStub;
@@ -215,6 +220,7 @@ describe('ExcelExportService', () => {
           const createObjArgs = (createObjectMock as any).mock.calls[0];
           const blob = createObjArgs[0];
           expect(streamArgs[0]).toBeInstanceOf(Workbook);
+          expect(streamArgs[1]).toBeUndefined(); // use the library's default chunk size
           expect(createObjectMock).toHaveBeenCalled();
           expect(blob.size).toBeGreaterThan(0);
           expect(blob.type).toBe('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -2239,7 +2245,7 @@ describe('ExcelExportService', () => {
         getGrouping: vi.fn().mockReturnValue([]),
         getLength: vi.fn().mockReturnValue(1),
         getItem: vi.fn().mockReturnValue({ id: 1, name: 'Y' }),
-        getItemMetadata: vi.fn().mockReturnValue({ columns: { name: { colspan: '*' } } }),
+        getItemMetadata: vi.fn().mockReturnValue({ columns: { id: { colspan: '*' } } }),
       };
       const grid: any = {
         getData: vi.fn().mockReturnValue(dv),
@@ -2260,6 +2266,160 @@ describe('ExcelExportService', () => {
       const mergeSpy = vi.spyOn((svc as any)._sheet, 'mergeCells');
       (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'Y' }, 0);
       expect(mergeSpy).toHaveBeenCalled();
+    });
+
+    describe('readRegularRowData cell merges use the exported (Excel) column & row positions', () => {
+      const createMergeService = (columns: Column[], itemMetadata: any, gridOptions: GridOption = {}, isGrouped = false) => {
+        const svc = new ExcelExportService();
+        const container = new ContainerServiceStub();
+        container.registerInstance('PubSubService', { publish: vi.fn(), unsubscribeAll: vi.fn() });
+        const dv: any = {
+          getGrouping: vi.fn().mockReturnValue(isGrouped ? [{ getter: 'id' }] : []),
+          getLength: vi.fn().mockReturnValue(1),
+          getItem: vi.fn(),
+          getItemMetadata: vi.fn().mockReturnValue(itemMetadata),
+        };
+        const grid: any = {
+          getData: vi.fn().mockReturnValue(dv),
+          getOptions: vi.fn().mockReturnValue(gridOptions),
+          getColumns: vi.fn().mockReturnValue(columns),
+          getParentRowSpanByCell: vi.fn().mockReturnValue(null),
+          getRowHeight: vi.fn().mockReturnValue(25),
+        };
+        svc.init(grid, container);
+        const wb = new Workbook();
+        (svc as any)._workbook = wb;
+        (svc as any)._sheet = wb.createWorksheet({ name: 'Sheet1' });
+        (svc as any)._stylesheet = wb.getStyleSheet();
+        (svc as any)._stylesheetFormats = { boldFormat: (svc as any)._stylesheet.createFormat({ font: { bold: true } }) };
+        (svc as any)._excelExportOptions = {};
+        (svc as any)._hasGroupedItems = isGrouped;
+        return { svc, dv, grid, mergeSpy: vi.spyOn((svc as any)._sheet, 'mergeCells') };
+      };
+      const item = { id: 1, name: 'N', code: 'C', hidden: 'H', excluded: 'E' };
+
+      it('should merge a partial colspan on the Excel columns when previous columns are excluded or hidden', () => {
+        const columns = [
+          { id: 'hidden', field: 'hidden', width: 0 },
+          { id: 'excluded', field: 'excluded', excludeFromExport: true },
+          { id: 'name', field: 'name' },
+          { id: 'code', field: 'code' },
+        ] as Column[];
+        const { svc, mergeSpy } = createMergeService(columns, { columns: { name: { colspan: 2 } } });
+
+        const output = (svc as any).readRegularRowData(columns, 0, item, 0);
+
+        expect(output).toEqual(['N', '']);
+        expect(mergeSpy).toHaveBeenCalledWith('A2', 'B2');
+      });
+
+      it('should merge a partial colspan after the "Group by" column when grouping', () => {
+        const columns = [
+          { id: 'name', field: 'name' },
+          { id: 'code', field: 'code' },
+        ] as Column[];
+        const { svc, mergeSpy } = createMergeService(columns, { columns: { name: { colspan: 2 } } }, {}, true);
+
+        const output = (svc as any).readRegularRowData(columns, 0, item, 0);
+
+        expect(output).toEqual(['', 'N', '']);
+        expect(mergeSpy).toHaveBeenCalledWith('B2', 'C2');
+      });
+
+      it('should merge a "*" colspan until the last exported column when the last grid column is hidden', () => {
+        const columns = [
+          { id: 'name', field: 'name' },
+          { id: 'code', field: 'code' },
+          { id: 'hidden', field: 'hidden', width: 0 },
+        ] as Column[];
+        const { svc, mergeSpy } = createMergeService(columns, { columns: { name: { colspan: '*' } } });
+
+        (svc as any).readRegularRowData(columns, 0, item, 0);
+
+        expect(mergeSpy).toHaveBeenCalledWith('A2', 'B2');
+      });
+
+      it('should merge a "*" colspan from its first exported column when grouping', () => {
+        const columns = [
+          { id: 'name', field: 'name' },
+          { id: 'code', field: 'code' },
+        ] as Column[];
+        const { svc, mergeSpy } = createMergeService(columns, { columns: { name: { colspan: '*' } } }, {}, true);
+
+        (svc as any).readRegularRowData(columns, 0, item, 0);
+
+        expect(mergeSpy).toHaveBeenCalledWith('B2', 'C2');
+      });
+
+      it('should keep the cell where a "*" colspan starts when it is not on the 1st column', () => {
+        const columns = [
+          { id: 'code', field: 'code' },
+          { id: 'name', field: 'name' },
+          { id: 'extra', field: 'extra' },
+        ] as Column[];
+        const { svc, mergeSpy } = createMergeService(columns, { columns: { name: { colspan: '*' } } });
+
+        const output = (svc as any).readRegularRowData(columns, 0, item, 0);
+
+        expect(output).toEqual(['C', 'N']);
+        expect(mergeSpy).toHaveBeenCalledWith('B2', 'C2');
+      });
+
+      it('should merge a rowspan on the Excel column when a previous column is excluded', () => {
+        const columns = [
+          { id: 'excluded', field: 'excluded', excludeFromExport: true },
+          { id: 'name', field: 'name' },
+        ] as Column[];
+        const { svc, grid, mergeSpy } = createMergeService(columns, { columns: { name: { rowspan: 2 } } }, { enableCellRowSpan: true });
+        grid.getParentRowSpanByCell.mockReturnValue({ start: 0, end: 1 });
+
+        (svc as any).readRegularRowData(columns, 0, item, 0);
+
+        expect(mergeSpy).toHaveBeenCalledWith('A2', 'A3');
+      });
+
+      it('should merge on the Excel row after the pre-header row when the Excel row number is not provided', () => {
+        const columns = [{ id: 'name', field: 'name' }] as Column[];
+        const { svc, grid, mergeSpy } = createMergeService(columns, { columns: { name: { rowspan: 2 } } }, { enableCellRowSpan: true });
+        grid.getParentRowSpanByCell.mockReturnValue({ start: 1, end: 2 });
+        (svc as any)._hasColumnTitlePreHeader = true;
+
+        (svc as any).readRegularRowData(columns, 1, item, 1);
+
+        expect(mergeSpy).toHaveBeenCalledWith('A4', 'A5');
+      });
+
+      it('should only add the "Group by" empty cell once when the first cells are rowspan children', () => {
+        const columns = [
+          { id: 'name', field: 'name' },
+          { id: 'code', field: 'code' },
+        ] as Column[];
+        const { svc, grid } = createMergeService(columns, null, { enableCellRowSpan: true }, true);
+        grid.getParentRowSpanByCell.mockReturnValueOnce({ start: 0, end: 1 }).mockReturnValue(null);
+
+        const output = (svc as any).readRegularRowData(columns, 1, item, 1);
+
+        expect(output).toEqual(['', '', 'C']);
+      });
+
+      it('should merge on the Excel row of the exported row when previous grid rows are not exported (e.g. Row Detail)', async () => {
+        const columns = [
+          { id: 'name', field: 'name' },
+          { id: 'code', field: 'code' },
+        ] as Column[];
+        const { svc, dv, mergeSpy } = createMergeService(columns, { columns: { name: { colspan: 2 } } });
+        const rowDetailItem = { getItem: () => null };
+        dv.getLength.mockReturnValue(2);
+        dv.getItem.mockImplementation((row: number) => (row === 0 ? rowDetailItem : item));
+
+        const outputData = await (svc as any).pushAllGridRowDataToArrayAsync([['Name', 'Code']], columns);
+
+        expect(outputData).toEqual([
+          ['Name', 'Code'],
+          ['N', ''],
+        ]);
+        expect(mergeSpy).toHaveBeenCalledWith('A2', 'B2');
+      });
     });
 
     it('readRegularRowData sanitizes and decodes strings before parsing', () => {
@@ -2318,7 +2478,7 @@ describe('ExcelExportService', () => {
 
       const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'raw-name' }, 0);
 
-      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
+      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, { id: 1, name: 'raw-name' });
       expect(out[0]).toBe('cached-name');
       expect(formatterSpy).not.toHaveBeenCalled();
     });
@@ -2432,7 +2592,7 @@ describe('ExcelExportService', () => {
 
       const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'ignored' }, 0);
 
-      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
+      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined, { id: 1, name: 'ignored' });
       expect(out[0]).toBe('&Z');
     });
 
@@ -2504,26 +2664,16 @@ describe('ExcelExportService', () => {
       vi.clearAllMocks();
     });
 
-    it('preCalculateColumnMetadata should cache per-column options and detect complex spanning when enableCellRowSpan grid option is enabled', () => {
+    it('preCalculateColumnMetadata should cache per-column options and a cell reader for every exported column', () => {
       service.init(gridStub, container);
-      (service as any)._excelExportOptions = { autoDetectCellFormat: true };
-      mockGridOptions.enableCellRowSpan = true;
+      (service as any)._excelExportOptions = { autoDetectCellFormat: true, sanitizeDataExport: true };
 
-      const cache = (service as any).preCalculateColumnMetadata(mockColumns);
-      expect(cache.get('id')).toBeDefined();
+      const cache = (service as any).preCalculateColumnMetadata([...mockColumns, { id: 'skip', field: 'skip', excludeFromExport: true }]);
+      expect(cache.has('skip')).toBe(false);
       expect(cache.get('dt').exportOptions.exportWithFormatter).toBe(true);
-      expect(cache.get('id').hasComplexSpanning).toBe(true);
-    });
-
-    it('preCalculateColumnMetadata should cache per-column options and detect complex spanning when enableCellRowSpan grid option is disabled but column has a colspan defined', () => {
-      service.init(gridStub, container);
-      (service as any)._excelExportOptions = { autoDetectCellFormat: true };
-      mockGridOptions.enableCellRowSpan = false;
-
-      const cache = (service as any).preCalculateColumnMetadata(mockColumns);
-      expect(cache.get('id')).toBeDefined();
-      expect(cache.get('dt').exportOptions.exportWithFormatter).toBe(true);
-      expect(cache.get('id').hasComplexSpanning).toBe(true);
+      expect(cache.get('id').exportOptions.sanitizeDataExport).toBe(false);
+      expect(cache.get('id').sanitizeDataExport).toBe(true);
+      expect(cache.get('title').readCell(0, 2, { id: 1, title: 'Hello' })).toBe('Hello');
     });
 
     it('cacheRegularCellExcelFormats should skip a column already cached', () => {
@@ -2581,6 +2731,25 @@ describe('ExcelExportService', () => {
       service.init(gridStub, container);
       const output = (service as any).getRawCellValue({ title: {} }, 'title');
       expect(output).toBe('');
+    });
+
+    it('readRegularRowData should read the raw cell value when the column has no pre-calculated metadata', () => {
+      service.init(gridStub, container);
+      const localColumns = [
+        { id: 'title', field: 'title', width: 100 },
+        { id: 'code', width: 100 },
+      ] as Column[];
+      (service as any)._excelExportOptions = { autoDetectCellFormat: true };
+      (service as any)._workbook = new Workbook();
+      (service as any)._stylesheet = (service as any)._workbook.getStyleSheet();
+      (service as any)._stylesheetFormats = { boldFormat: (service as any)._stylesheet.createFormat({ font: { bold: true } }) };
+      const rawCellSpy = vi.spyOn(service as any, 'getRawCellValue');
+
+      const output = (service as any).readRegularRowData(localColumns, 0, { title: 'A', code: 'B' }, 0, new Map());
+
+      expect(rawCellSpy).toHaveBeenCalledWith({ title: 'A', code: 'B' }, 'title');
+      expect(rawCellSpy).toHaveBeenCalledWith({ title: 'A', code: 'B' }, 'code');
+      expect(output).toEqual(['A', 'B']);
     });
 
     it('readRegularRowData should apply excelExportOptions style and valueParserCallback when cache entry is created', () => {

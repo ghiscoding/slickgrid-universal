@@ -25,12 +25,12 @@ export default class Example11Modal {
 
   bind(bindings: any) {
     if (bindings) {
-      if (bindings.columnDefinitions) {
-        this.columns = bindings.columnDefinitions;
+      if (bindings.columns) {
+        this.columns = bindings.columns;
         this.gridContainerElm = document.querySelector(`.modal-grid`) as HTMLDivElement;
         this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
 
-        const dataset = [this.createEmptyItem(bindings.columnDefinitions)];
+        const dataset = [this.createEmptyItem(bindings.columns)];
         this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
 
         // force editor to open (top-left)

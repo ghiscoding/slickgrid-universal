@@ -8,11 +8,12 @@ import {
   ExtensionUtility,
   FilterFactory,
   FilterService,
+  getIconSetOptions,
   GridEventService,
   GridService,
   GridStateService,
+  hasStringDateColumns,
   HeaderGroupingService,
-  isColumnDateType,
   PaginationService,
   PluginFlagMappings,
   ResizerService,
@@ -45,7 +46,7 @@ import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-compone
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
-import { deepCopy, extend } from '@slickgrid-universal/utils';
+import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import React from 'react';
 import type { Subscription } from 'rxjs';
@@ -184,18 +185,15 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
   set dataset(newDataset: any[]) {
     const prevDatasetLn = this._currentDatasetLength;
-    const isDatasetEqual = dequal(newDataset, this.dataset || []);
-    let data = this._options?.enableDeepCopyDatasetOnPageLoad ? deepCopy(newDataset) : newDataset;
+    let data = newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
-    if (
-      this.grid &&
-      this.options?.enableTreeData &&
-      Array.isArray(newDataset) &&
-      (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)
-    ) {
-      this._isDatasetHierarchicalInitialized = false;
-      data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+    if (this.grid && this.options?.enableTreeData && Array.isArray(newDataset)) {
+      const isDatasetEqual = dequal(newDataset, this.dataset || []);
+      if (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual) {
+        this._isDatasetHierarchicalInitialized = false;
+        data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+      }
     }
 
     this.refreshGridData(data || []);
@@ -428,16 +426,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     this._eventHandler = eventHandler;
     this._isAutosizeColsCalled = false;
 
-    // when detecting a frozen grid, we'll automatically enable the mousewheel scroll handler so that we can scroll from both left/right frozen containers
-    if (
-      this._options &&
-      ((this._options.frozenRow !== undefined && this._options.frozenRow >= 0) ||
-        (this._options.frozenColumn !== undefined && this._options.frozenColumn >= 0)) &&
-      this._options.enableMouseWheelScrollHandler === undefined
-    ) {
-      this._options.enableMouseWheelScrollHandler = true;
-    }
-
     this._eventPubSubService.eventNamingStyle = this._options?.eventNamingStyle ?? 'camelCase';
     this._eventPubSubService.publish(`onBeforeGridCreate`, true);
 
@@ -473,8 +461,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     if (this.props.customDataView) {
       this.dataView = this.props.customDataView;
     } else {
-      const dataviewInlineFilters = (this._options.dataView && this._options.dataView.inlineFilters) || false;
-      let dataViewOptions: Partial<DataViewOption> = { ...this._options.dataView, inlineFilters: dataviewInlineFilters };
+      let dataViewOptions: Partial<DataViewOption> = { ...this._options.dataView };
 
       if (this._options.draggableGrouping || this._options.enableGrouping) {
         this.groupItemMetadataProvider = new SlickGroupItemMetadataProvider(this._options.groupItemMetadataOption);
@@ -504,9 +491,9 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     // directly into the array below, so both `_columns` & `sharedService.allColumns` stay in sync
     this.extensionService.createExtensionsBeforeGridCreation(this._columns, this._options);
 
-    // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+    // if user entered some Pinning "presets", we need to apply them in the grid options
     if (this.options.presets?.pinning) {
-      this.options = { ...this.options, ...this.options.presets.pinning };
+      this.options = { ...this.options, pinning: this.options.presets.pinning };
     }
 
     // build SlickGrid Grid, also user might optionally pass a custom dataview (e.g. remote model)
@@ -532,9 +519,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.grid, this._options, this.dataView);
-
-    // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-    this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
 
     // initialize the SlickGrid grid
     this.grid.init();
@@ -1103,7 +1087,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       (options.enableAutoSizeColumns && options.enableAutoResizeColumnsByCellContent)
     ) {
       throw new Error(
-        `[Slickgrid-React] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use. You can enable these 2 options ("autoFitColumnsOnFirstLoad" and "enableAutoSizeColumns") OR these other 2 options ("autosizeColumnsByCellContentOnFirstLoad" and "enableAutoResizeColumnsByCellContent").`
+        `[Slickgrid-React] Choose either viewport sizing (autoFitColumnsOnFirstLoad, enableAutoSizeColumns) or content sizing (autosizeColumnsByCellContentOnFirstLoad, enableAutoResizeColumnsByCellContent).`
       );
     }
 
@@ -1486,7 +1470,25 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
   protected mergeGridOptions(gridOptions: GridOption): GridOption {
     // use extend to deep merge & copy to avoid immutable properties being changed in GlobalGridOptions after a route change
-    const options = extend(true, {}, GlobalGridOptions, gridOptions) as GridOption;
+    const options = extend(
+      true,
+      {},
+      getIconSetOptions(gridOptions.iconSet ?? GlobalGridOptions.iconSet),
+      GlobalGridOptions,
+      gridOptions
+    ) as GridOption;
+
+    // Command visibility and export menu format lists replace defaults instead of merging array entries by index.
+    for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
+      const commands = gridOptions[menu]?.hideCommands;
+      if (commands && options[menu]) {
+        Object.assign(options[menu], { hideCommands: [...commands] });
+      }
+    }
+    const menuFormats = gridOptions.textExportOptions?.menuFormats;
+    if (menuFormats && options.textExportOptions) {
+      options.textExportOptions.menuFormats = [...menuFormats];
+    }
 
     options.gridId = this.props.gridId;
     options.gridContainerId = `slickGridContainer-${this.props.gridId}`;
@@ -1529,8 +1531,22 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     this.initializeExternalResources(resources);
   }
 
+  /** Dispose registered external resources without disposing services owned by the grid. */
   resetExternalResources() {
-    this._registeredResources = [];
+    const ownedResources: unknown[] = [
+      this.gridService,
+      this.gridStateService,
+      this.headerGroupingService,
+      this.treeDataService,
+      this.slickEmptyWarning,
+    ];
+    const previousResources = this._registeredResources;
+    this._registeredResources = previousResources.filter((resource) => !ownedResources.includes(resource));
+    previousResources.length = 0;
+    this.disposeExternalResources();
+    if (this.sharedService) {
+      this.sharedService.externalRegisteredResources = this._registeredResources;
+    }
   }
 
   /** Pre-Register any Resource that don't require SlickGrid to be instantiated (for example RxJS Resource & RowDetail) */
@@ -1629,28 +1645,11 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
    * @returns {Array<Object>} sort flat parent/child dataset
    */
   protected sortTreeDataset<U>(flatDatasetInput: U[], forceGridRefresh = false): U[] {
-    const prevDatasetLn = this._currentDatasetLength;
-    let sortedDatasetResult;
-    let flatDatasetOutput: any[] = [];
-
-    // if the hierarchical dataset was already initialized then no need to re-convert it, we can use it directly from the shared service ref
-    if (this._isDatasetHierarchicalInitialized && this.datasetHierarchical) {
-      sortedDatasetResult = this.treeDataService.sortHierarchicalDataset(this.datasetHierarchical);
-      flatDatasetOutput = sortedDatasetResult.flat;
-    } else if (this._options && Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
-      // we need to first convert the flat dataset to a hierarchical dataset and then sort it
-      // we'll also add props, by mutation, required by the TreeDataService on the flat array like `__hasChildren`, `parentId` and anything else to work properly
-      sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(flatDatasetInput, this._columns, this._options);
-      this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
-      flatDatasetOutput = sortedDatasetResult.flat;
-    }
-
-    // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
-    if (flatDatasetInput.length > 0 && (forceGridRefresh || flatDatasetInput.length !== prevDatasetLn)) {
-      this.filterService.refreshTreeDataFilters(flatDatasetOutput);
-    }
-
-    return flatDatasetOutput;
+    return this.treeDataService.sortTreeDataset(flatDatasetInput, this._columns, this._options, {
+      hierarchicalDataset: this._isDatasetHierarchicalInitialized ? this.datasetHierarchical : undefined,
+      previousDatasetLength: this._currentDatasetLength,
+      forceGridRefresh,
+    });
   }
 
   protected suggestDateParsingWhenHelpful() {
@@ -1658,7 +1657,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       ((this.dataView as SlickDataView)?.getItemCount?.() ?? 0) > WARN_NO_PREPARSE_DATE_SIZE &&
       !this.options.silenceWarnings &&
       !this.options.preParseDateColumns &&
-      this.grid.getColumns().some((c) => isColumnDateType(c.type))
+      hasStringDateColumns(this.grid.getColumns(), (this.dataView as SlickDataView).getItems())
     ) {
       console.warn(
         '[Slickgrid-React] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +

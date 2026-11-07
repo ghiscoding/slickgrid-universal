@@ -1,0 +1,11 @@
+@use 'sass:color';
+@use 'sass:meta';
+@use 'sass:string';
+
+@function encodecolor($string) {
+  @if meta.type-of($string) == 'color' {
+    // Preserve the original six-digit RGB encoding, excluding the alpha channel.
+    $string: string.slice(color.ie-hex-str($string), 4);
+  }
+  @return '%23' + $string;
+}

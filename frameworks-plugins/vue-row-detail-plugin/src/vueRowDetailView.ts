@@ -1,5 +1,4 @@
 import {
-  createDomElement,
   emptyElement,
   SlickEventData,
   SlickHybridSelectionModel,
@@ -11,13 +10,12 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
 import type { GridOption, ViewModelBindableInputData } from 'slickgrid-vue';
 import { createApp, type App, type ComponentPublicInstance } from 'vue';
 import type { RowDetailView } from './interfaces.js';
 
-const ROW_DETAIL_CONTAINER_PREFIX = 'container_';
-const PRELOAD_CONTAINER_PREFIX = 'container_loading';
+const ROW_DETAIL_CONTAINER_PREFIX = 'row-detail-';
 
 type AppData = Record<string, unknown>;
 export interface CreatedView {
@@ -130,15 +128,14 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
 
     if (this._grid && this.gridOptions?.rowDetailView) {
       // load the Preload & RowDetail Templates (could be straight HTML or Vue Components)
-      // when those are Vue Components, we need to create View Component & provide the html containers to the Plugin (preTemplate/postTemplate methods)
+      // Components mount directly into the detail panel; templates only clear its previous content.
       if (!this.gridOptions.rowDetailView.preTemplate) {
         this._preloadComponent = this.gridOptions.rowDetailView.preloadComponent;
-        this.addonOptions.preTemplate = () => createDomElement('div', { className: `${PRELOAD_CONTAINER_PREFIX}` });
+        this.addonOptions.preTemplate = () => '';
       }
       if (!this.gridOptions.rowDetailView.postTemplate) {
         this._component = this.gridOptions.rowDetailView.viewComponent;
-        this.addonOptions.postTemplate = (itemDetail: any) =>
-          createDomElement('div', { className: `${ROW_DETAIL_CONTAINER_PREFIX}${itemDetail[this.datasetIdPropName]}` });
+        this.addonOptions.postTemplate = () => '';
       }
 
       if (this._grid && this.gridOptions) {
@@ -157,32 +154,24 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
           }
 
           this._eventHandler.subscribe(this.onAsyncResponse, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onAsyncResponse === 'function') {
-              this.rowDetailViewOptions.onAsyncResponse(event, args);
-            }
+            this.rowDetailViewOptions?.onAsyncResponse?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onAsyncEndUpdate, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
-              this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
-            }
+            this.rowDetailViewOptions?.onAsyncEndUpdate?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {
             // display preload template & re-render all the other Detail Views after toggling
             // the preload View will eventually go away once the data gets loaded after the "onAsyncEndUpdate" event
             await this.renderPreloadView(args.item);
-
-            if (typeof this.rowDetailViewOptions?.onAfterRowDetailToggle === 'function') {
-              this.rowDetailViewOptions.onAfterRowDetailToggle(event, args);
-            }
+            this.rowDetailViewOptions?.onAfterRowDetailToggle?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onBeforeRowDetailToggle, (event, args) => {
             // before toggling row detail, we need to create View Component if it doesn't exist
             this.handleOnBeforeRowDetailToggle(event, args);
-
-            if (typeof this.rowDetailViewOptions?.onBeforeRowDetailToggle === 'function') {
+            if (this.rowDetailViewOptions?.onBeforeRowDetailToggle) {
               return this.rowDetailViewOptions.onBeforeRowDetailToggle(event, args);
             }
             return true;
@@ -191,16 +180,11 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
           this._eventHandler.subscribe(this.onRowBackToViewportRange, async (event, args) => {
             // when row is back to viewport range, we will re-render the View Component(s)
             this.handleOnRowBackToViewportRange(event, args);
-
-            if (typeof this.rowDetailViewOptions?.onRowBackToViewportRange === 'function') {
-              this.rowDetailViewOptions.onRowBackToViewportRange(event, args);
-            }
+            this.rowDetailViewOptions?.onRowBackToViewportRange?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onBeforeRowOutOfViewportRange, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
-              this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
-            }
+            this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange?.(event, args);
             if (this.rowDetailViewOptions?.keepComponentAlive) {
               this.detachViewFromDom(args.item);
             } else {
@@ -209,9 +193,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
           });
 
           this._eventHandler.subscribe(this.onRowOutOfViewportRange, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onRowOutOfViewportRange === 'function') {
-              this.rowDetailViewOptions.onRowOutOfViewportRange(event, args);
-            }
+            this.rowDetailViewOptions?.onRowOutOfViewportRange?.(event, args);
           });
 
           // --
@@ -227,6 +209,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
 
           // on column sort/reorder, all row detail are collapsed so we can dispose of all the Views as well
           this._eventHandler.subscribe(this._grid.onSort, this.disposeAllViewComponents.bind(this));
+          this._eventHandler.subscribe(this._grid.onRendered, this.redrawDetachedViewComponents.bind(this));
 
           // on filter changed, we need to re-render all Views
           this._subscriptions.push(
@@ -277,9 +260,34 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
+  /** Remount Vue views whose root elements were detached when SlickGrid replaced row DOM. */
+  protected redrawDetachedViewComponents(): void {
+    this._views.forEach((view) => {
+      const rowIndex = this.dataView.getRowById(view.id);
+      const renderedRange = this._grid.getRenderedRange();
+      if (
+        rowIndex === undefined ||
+        !renderedRange ||
+        rowIndex < renderedRange.top ||
+        rowIndex > renderedRange.bottom ||
+        !this._renderedViewportRowIds.has(view.id) ||
+        (view.rendered && view.instance?.$el?.isConnected)
+      ) {
+        return;
+      }
+
+      view.rendered = false;
+      this.redrawViewComponent(view);
+    });
+  }
+
   /** (re)Render the Preload Component */
   protected renderPreloadView(item: any): void {
-    const containerElement = this.gridContainerElement.querySelector(`.${PRELOAD_CONTAINER_PREFIX}`);
+    if (item?.[`${this._keyPrefix}detailViewLoaded`]) {
+      return;
+    }
+
+    const containerElement = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`);
 
     if (this._preloadComponent && containerElement) {
       const bindableData = {
@@ -305,6 +313,10 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
 
   /** (re)Render the View Component (Row Detail) */
   protected renderViewModel(item: any): void {
+    if (!item[`${this._keyPrefix}detailViewLoaded`]) {
+      return;
+    }
+
     const itemId = item[this.datasetIdPropName];
     const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${ROW_DETAIL_CONTAINER_PREFIX}${itemId}`);
 

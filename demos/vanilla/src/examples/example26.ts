@@ -37,6 +37,7 @@ export default class Example26 {
   status = '';
   statusClass = 'is-success';
   isPageErrorTest = false;
+  subTitleStyle = 'display: block';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -121,9 +122,6 @@ export default class Example26 {
       enableCheckboxSelector: true,
       enableSelection: true,
       enableGrouping: true,
-      headerMenu: {
-        hideFreezeColumnsCommand: false,
-      },
       presets: {
         // NOTE: pagination preset is NOT supported with infinite scroll
         // filters: [{ columnId: 'gender', searchTerms: ['female'] }]
@@ -453,5 +451,10 @@ export default class Example26 {
 
   setSortingDynamically() {
     this.sgb?.sortService.updateSorting([{ columnId: 'name', direction: 'DESC' }]);
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

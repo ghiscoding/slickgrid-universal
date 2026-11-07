@@ -130,7 +130,6 @@ export class Example19 {
       },
       enableFiltering: true,
       enableRowDetailView: true,
-      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       darkMode: this._darkMode,
       datasetIdPropertyName: 'rowId', // optionally use a different "id"
       externalResources: [AureliaRowDetailView],
@@ -204,18 +203,22 @@ export class Example19 {
   }
 
   changeDetailViewRowCount() {
-    const options = this.rowDetailInstance.getOptions();
-    if (options && options.panelRows) {
+    const rowDetailInstance = this.rowDetailInstance;
+    const options = rowDetailInstance?.getOptions();
+    if (rowDetailInstance && options?.panelRows) {
       options.panelRows = this.detailViewRowCount; // change number of rows dynamically
-      this.rowDetailInstance.setOptions(options);
+      rowDetailInstance.setOptions(options);
     }
   }
 
   changeEditableGrid() {
     // this.rowDetailInstance.setOptions({ useRowClick: false });
     if (this.gridOptions) {
-      this.rowDetailInstance.collapseAll();
-      (this.rowDetailInstance as any).addonOptions.useRowClick = false;
+      const rowDetailInstance = this.rowDetailInstance;
+      if (rowDetailInstance) {
+        rowDetailInstance.collapseAll();
+        rowDetailInstance.setOptions({ ...rowDetailInstance.getOptions(), useRowClick: false });
+      }
       this.gridOptions.autoCommitEdit = !this.gridOptions.autoCommitEdit;
       this.aureliaGrid?.slickGrid.setOptions({
         editable: true,
@@ -227,7 +230,7 @@ export class Example19 {
   }
 
   closeAllRowDetail() {
-    this.rowDetailInstance.collapseAll();
+    this.rowDetailInstance?.collapseAll();
   }
 
   showFlashMessage(message: string, alertType = 'info') {

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 
-@Component({ template: `<button (click)="sayHello(item?.title)">{{ item?.title }}</button>` })
+@Component({
+  template: `<button (click)="sayHello($safeNavigationMigration(item?.title))">{{ item?.title }}</button>`,
+})
 export class CustomButtonFormatterComponent {
   item: any;
 

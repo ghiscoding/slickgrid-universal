@@ -132,7 +132,6 @@ All the available options that can be provided as filter `options` to your colum
 ```ts
 filter: {
   model: Filters.compoundDate,
-  // previously known as `filterOptions` for < 9.0
   options: {
     displayDateMin: 'today'
   } as VanillaCalendarOption

@@ -65,6 +65,12 @@ export class GridGroupingComponent implements OnInit, OnDestroy {
 
 ### Draggable Dropzone Location
 
+Draggable grouping uses built-in drag and drop with RTL, mouse, and touch support. Header
+reordering preserves hidden and non-reorderable columns and stays within each pinned or scrolling
+header region. Dropping a header into the grouping area changes grouping without firing
+`onColumnsReordered`.
+
+
 The Draggable Grouping can be located in either the Top-Header or the Pre-Header as described below.
 
 #### Pre-Header

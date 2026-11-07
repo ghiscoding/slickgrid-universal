@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   addToArrayWhenNotExists,
   addWhiteSpaces,
@@ -6,7 +6,6 @@ import {
   deepCopy,
   deepMerge,
   emptyObject,
-  getFunctionDetails,
   isDefined,
   isDefinedNumber,
   isEmptyObject,
@@ -16,22 +15,14 @@ import {
   isPrimitiveOrHTML,
   isPrimitiveValue,
   parseBoolean,
-  queueMicrotaskPolyfill,
   removeAccentFromText,
   setDeepValue,
   titleCase,
   toCamelCase,
   toKebabCase,
   toSentenceCase,
-  toSnakeCase,
   tryCatch,
-  uniqueArray,
-  uniqueObjectArray,
 } from '../utils.js';
-
-function removeExtraSpaces(text: string) {
-  return `${text}`.replace(/\s+/g, ' ').replace(/\r\n/g, '').trim();
-}
 
 describe('Service/Utilies', () => {
   describe('addToArrayWhenNotExists() method', () => {
@@ -104,153 +95,6 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('getFunctionDetails() method', () => {
-    test('regular function without arguments and with defined body', () => {
-      function fn() {
-        return true;
-      }
-      const result = getFunctionDetails(fn);
-
-      expect(result.params).toEqual([]);
-      expect(result.isAsync).toBe(false);
-      expect(result.body).toContain('return true;');
-    });
-
-    test('regular function with defined arguments and body', () => {
-      function fn(input: any, args: any) {
-        if (input.length > 1) {
-          return true;
-        }
-        return input['age'].toString().includes(args.searchString);
-      }
-      const result = getFunctionDetails(fn);
-
-      expect(result.params).toEqual(['input', 'args']);
-      expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toContain(
-        removeExtraSpaces(`
-        if (input.length > 1) {
-          return true;
-        };
-        return input["age"].toString().includes(args.searchString)
-      `)
-      );
-    });
-
-    test('regular async function with arguments', () => {
-      async function fn(input: any, args: any) {
-        if (input.length > 1) {
-          return true;
-        }
-        return input['age'].toString().includes(args.searchString);
-      }
-      const result = getFunctionDetails(fn);
-
-      expect(result.params).toEqual(['input', 'args']);
-      expect(result.isAsync).toBe(true);
-      expect(removeExtraSpaces(result.body)).toContain(
-        removeExtraSpaces(`
-        if (input.length > 1) {
-          return true;
-        };
-        return input["age"].toString().includes(args.searchString)
-      `)
-      );
-    });
-
-    test('nested ES6 arrow async functions with arguments', () => {
-      const fn = async (x: any) => async (y: any) => async (z: any) => z(x)(y);
-      const result = getFunctionDetails(fn);
-
-      expect(result.params).toEqual(['x']);
-      expect(result.isAsync).toBe(true);
-      expect(removeExtraSpaces(result.body)).toContain(
-        removeExtraSpaces(`
-        return async (y) => async (z) => z(x)(y)
-      `)
-      );
-    });
-
-    test('ES6 arrow function returning object in brackets', () => {
-      const fn = () => ({ status: 200, body: 'hello world' });
-      const result = getFunctionDetails(fn);
-
-      expect(result.params).toEqual([]);
-      expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces('() => ({ status: 200, body: "hello world" })'));
-    });
-
-    test('ES6 arrow function returning object in brackets minified without spaces', () => {
-      const fn = `()=>({status: 200, body: 'hello world'})`;
-      const result = getFunctionDetails(fn as any);
-
-      expect(result.params).toEqual([]);
-      expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces(`return {status: 200, body: 'hello world'}`));
-    });
-
-    test('ES6 arrow async function and spread arguments', () => {
-      const fn = async (a: number, b: number, ...rest: number[]) => {
-        let sum = a + b;
-        for (const n of rest) {
-          sum += n;
-        }
-        return sum;
-      };
-      const result = getFunctionDetails(fn);
-
-      expect(result.params).toEqual(['a', 'b', '...rest']);
-      expect(result.isAsync).toBe(true);
-      expect(removeExtraSpaces(result.body)).toContain(
-        removeExtraSpaces(`
-        let sum = a + b;
-        for (const n of rest) {
-          sum += n;
-        };
-        return sum;
-      `)
-      );
-    });
-
-    test('one liner ES6 arrow function without arguments', () => {
-      const fn = () => true;
-      const result = getFunctionDetails(fn);
-
-      expect(result.params).toEqual([]);
-      expect(result.body).toContain('return true');
-    });
-
-    test('one liner ES6 arrow function with arguments', () => {
-      const fn = (input: any) => (input ? input.length > 1 : false);
-      const result = getFunctionDetails(fn);
-
-      expect(result.params).toEqual(['input']);
-      expect(result.isAsync).toBe(false);
-      expect(result.body).toContain('return input ? input.length > 1 : false');
-    });
-
-    test('ES6 arrow function written in TypeScript', () => {
-      const fn = (input: any, args: any) => {
-        if (input.length > 1) {
-          return true;
-        }
-        return input['age'].toString().includes(args.searchString);
-      };
-      const result = getFunctionDetails(fn);
-
-      expect(result.params).toEqual(['input', 'args']);
-      expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toContain(
-        removeExtraSpaces(`
-        if (input.length > 1) {
-          return true;
-        };
-        return input["age"].toString().includes(args.searchString);
-      `)
-      );
-    });
-  });
-
   describe('isDefined() method', () => {
     it('should be truthy when comparing against any defined variable', () => {
       const result1 = isDefined({ firstName: 'John', lastName: 'Doe' });
@@ -307,6 +151,24 @@ describe('Service/Utilies', () => {
     it('should return True when comparing against an object that has properties', () => {
       const result = isEmptyObject({ firstName: 'John', lastName: 'Doe' });
       expect(result).toBe(false);
+    });
+
+    it('ignores inherited enumerable properties', () => {
+      expect(isEmptyObject(Object.create({ inherited: true }))).toBe(true);
+    });
+
+    it('returns false on the first own enumerable property', () => {
+      expect(isEmptyObject(Object.assign(Object.create({ inherited: true }), { own: true }))).toBe(false);
+    });
+
+    it('does not evaluate property getters', () => {
+      const value = Object.defineProperty({}, 'property', {
+        enumerable: true,
+        get: () => {
+          throw new Error('getter ran');
+        },
+      });
+      expect(isEmptyObject(value)).toBe(false);
     });
 
     it('should return False when comparing against an object is either empty, null or undefined', () => {
@@ -689,41 +551,6 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('queueMicrotaskPolyfill() method', () => {
-    it('uses queueMicrotask() when available', () =>
-      new Promise((done: any) => {
-        const callback = vi.fn();
-        const queueMicrotaskSpy = vi.spyOn(globalThis, 'queueMicrotask');
-        queueMicrotaskPolyfill(callback);
-        setTimeout(() => {
-          expect(queueMicrotaskSpy).toHaveBeenCalledWith(callback);
-          expect(callback).toHaveBeenCalledTimes(1);
-          queueMicrotaskSpy.mockRestore();
-          done();
-        }, 10);
-      }));
-
-    it('uses Promise.resolve().then() fallback when queueMicrotask is not available', () =>
-      new Promise((done: any) => {
-        const callback = vi.fn();
-        // Remove queueMicrotask
-        const originalQueueMicrotask = globalThis.queueMicrotask;
-        // @ts-ignore
-        delete global.queueMicrotask;
-        // Spy on Promise.resolve().then
-        const promiseThenSpy = vi.spyOn(Promise, 'resolve');
-        queueMicrotaskPolyfill(callback);
-        setTimeout(() => {
-          expect(promiseThenSpy).toHaveBeenCalled();
-          expect(callback).toHaveBeenCalledTimes(1);
-          promiseThenSpy.mockRestore();
-          // Restore queueMicrotask
-          globalThis.queueMicrotask = originalQueueMicrotask;
-          done();
-        }, 10);
-      }));
-  });
-
   describe('removeAccentFromText() method', () => {
     it('should return a normalized string without accent', () => {
       const input1 = 'José';
@@ -886,6 +713,61 @@ describe('Service/Utilies', () => {
       expect(output.__proto__).toEqual({ polluted: 'yes' });
       expect((Object.prototype as any).polluted).toBeUndefined();
     });
+
+    it('should leave a supplied path array unchanged', () => {
+      const path = ['user', 'firstName'];
+
+      setDeepValue(obj, path, 'Jane');
+
+      expect(path).toEqual(['user', 'firstName']);
+      expect(obj.user.firstName).toBe('Jane');
+    });
+
+    it('should ignore a path array with a missing key', () => {
+      const path = new Array<string>(2);
+      path[1] = 'name';
+
+      setDeepValue(obj, path, 'Jane');
+
+      expect(obj.user.firstName).toBe('John');
+      expect(Object.prototype.hasOwnProperty.call(obj, 'undefined')).toBe(false);
+    });
+
+    it('should replace inherited and non-object intermediate values', () => {
+      const inherited = { name: 'Original' };
+      const output: any = Object.create({ user: inherited });
+      output.empty = null;
+      output.primitive = 1;
+
+      setDeepValue(output, 'user.name', 'Jane');
+      setDeepValue(output, 'empty.name', 'Jane');
+      setDeepValue(output, 'primitive.name', 'Jane');
+
+      expect(output.user).toEqual({ name: 'Jane' });
+      expect(output.empty).toEqual({ name: 'Jane' });
+      expect(output.primitive).toEqual({ name: 'Jane' });
+      expect(inherited.name).toBe('Original');
+    });
+
+    it('should replace references to shared prototypes before writing nested values', () => {
+      const output: any = { object: Object.prototype, array: Array.prototype };
+
+      setDeepValue(output, 'object.polluted', 'yes');
+      setDeepValue(output, 'array.polluted', 'yes');
+
+      expect(output.object).toEqual({ polluted: 'yes' });
+      expect(output.array).toEqual({ polluted: 'yes' });
+      expect(({} as any).polluted).toBeUndefined();
+      expect(([] as any).polluted).toBeUndefined();
+    });
+
+    it('should not write directly to shared prototypes', () => {
+      setDeepValue(Object.prototype, 'polluted', 'yes');
+      setDeepValue(Array.prototype, 'polluted', 'yes');
+
+      expect(({} as any).polluted).toBeUndefined();
+      expect(([] as any).polluted).toBeUndefined();
+    });
   });
 
   describe('titleCase() method', () => {
@@ -1006,31 +888,6 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('toSnakeCase() method', () => {
-    const sentence = 'the quick brown fox';
-
-    it('should return empty string when input is empty', () => {
-      const output = toSnakeCase('');
-      expect(output).toBe('');
-    });
-
-    it('should return empty string when input is null', () => {
-      const input = null as any;
-      const output = toSnakeCase(input);
-      expect(output).toBe(null as any);
-    });
-
-    it('should return a snake-case string when input is a sentence', () => {
-      const output = toSnakeCase(sentence);
-      expect(output).toBe('the_quick_brown_fox');
-    });
-
-    it('should return a snake_case string when input is a sentence that may include numbers with only following char having the dash', () => {
-      const output = toSnakeCase(sentence + ' 123 ' + ' apples');
-      expect(output).toBe('the_quick_brown_fox123_apples');
-    });
-  });
-
   describe('Error Handling Utilities', () => {
     describe('tryCatch()', () => {
       it('should execute operation successfully', () => {
@@ -1061,56 +918,6 @@ describe('Service/Utilies', () => {
         expect(() => tryCatch(operation)).not.toThrow();
         expect(operation).toHaveBeenCalledOnce();
       });
-    });
-  });
-
-  describe('uniqueArray() method', () => {
-    it('should return original value when input is not an array', () => {
-      const output1 = uniqueArray(null as any);
-      const output2 = uniqueArray(undefined as any);
-
-      expect(output1).toBeNull();
-      expect(output2).toBe(undefined as any);
-    });
-
-    it('should return original array when array is empty', () => {
-      const output = uniqueArray([]);
-      expect(output).toEqual([]);
-    });
-
-    it('should return unique values when input array has duplicate string values', () => {
-      const output = uniqueArray(['a', 'b', 'a']);
-      expect(output).toEqual(['a', 'b']);
-    });
-
-    it('should return unique values when input array has duplicate number values', () => {
-      const output = uniqueArray([1, 5, 2, 1, 5]);
-      expect(output).toEqual([1, 5, 2]);
-    });
-  });
-
-  describe('uniqueObjectArray() method', () => {
-    it('should return original value when input is not an array', () => {
-      const output1 = uniqueObjectArray(null as any);
-      const output2 = uniqueObjectArray(undefined as any);
-
-      expect(output1).toBeNull();
-      expect(output2).toBe(undefined as any);
-    });
-
-    it('should return original array when array is empty', () => {
-      const output = uniqueObjectArray([]);
-      expect(output).toEqual([]);
-    });
-
-    it('should return unique values when input array has duplicate objects', () => {
-      const collection = [
-        { id: 9, name: 'a', order: 3 },
-        { id: 22, name: 'def', order: 45 },
-        { id: 9, name: 'a', order: 3 },
-      ];
-      const output = uniqueObjectArray(collection, 'id');
-      expect(output).toHaveLength(2);
     });
   });
 });

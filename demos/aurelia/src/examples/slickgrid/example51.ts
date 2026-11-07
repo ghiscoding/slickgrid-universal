@@ -65,7 +65,6 @@ export class Example51 {
               {
                 command: 'sort-asc',
                 title: 'Sort Ascending',
-                positionOrder: 50,
                 // Slot renderer replaces entire menu item content (can be HTML string or native DOM elements)
                 slotRenderer: (cmdItem) => `
                   <div class="menu-item">
@@ -78,7 +77,6 @@ export class Example51 {
               {
                 command: 'sort-desc',
                 title: 'Sort Descending',
-                positionOrder: 51,
                 // Slot renderer using native DOM elements
                 slotRenderer: () => {
                   const menuItemElm = createDomElement('div', { className: 'menu-item' });
@@ -107,9 +105,19 @@ export class Example51 {
           menu: {
             commandItems: [
               {
+                command: 'sort-asc',
+                title: 'Sort Ascending',
+                iconCssClass: 'mdi mdi-sort-ascending',
+              },
+              {
+                command: 'sort-desc',
+                title: 'Sort Descending',
+                iconCssClass: 'mdi mdi-sort-descending',
+              },
+              { divider: true, command: 'divider-2' },
+              {
                 command: 'column-resize-by-content',
                 title: 'Resize by Content',
-                positionOrder: 47,
                 // Slot renderer with badge
                 slotRenderer: () => `
                   <div class="menu-item">
@@ -119,20 +127,7 @@ export class Example51 {
                   </div>
                 `,
               },
-              { divider: true, command: '', positionOrder: 48 },
-              {
-                command: 'sort-asc',
-                title: 'Sort Ascending',
-                iconCssClass: 'mdi mdi-sort-ascending',
-                positionOrder: 50,
-              },
-              {
-                command: 'sort-desc',
-                title: 'Sort Descending',
-                iconCssClass: 'mdi mdi-sort-descending',
-                positionOrder: 51,
-              },
-              { divider: true, command: '', positionOrder: 52 },
+              { divider: true, command: 'divider-1' },
               {
                 command: 'clear-filter',
                 iconCssClass: 'mdi mdi-filter-remove-outline',
@@ -141,7 +136,6 @@ export class Example51 {
               {
                 command: 'clear-sort',
                 title: 'Remove Sort',
-                positionOrder: 58,
                 // Slot renderer with status indicator
                 slotRenderer: () => `
                   <div class="menu-item">
@@ -151,7 +145,6 @@ export class Example51 {
                   </div>
                 `,
               },
-
               {
                 command: 'hide-column',
                 iconCssClass: 'mdi mdi-close',
@@ -224,6 +217,14 @@ export class Example51 {
         // Demo: Header Menu with Slot - showing slotRenderer with callback (item, args)
         header: {
           menu: {
+            // Keep the custom export and filter actions ahead of the built-in commands.
+            commandListBuilder: (items) => {
+              const customCommands = ['custom-action', 'custom-actions-divider', 'filter-column'];
+              return [
+                ...items.filter((item) => item !== 'divider' && customCommands.includes(item.command)),
+                ...items.filter((item) => item === 'divider' || !customCommands.includes(item.command)),
+              ];
+            },
             commandItems: [
               {
                 command: 'custom-action',
@@ -262,7 +263,7 @@ export class Example51 {
                   alert('Custom export action triggered!');
                 },
               },
-              { divider: true, command: '' },
+              { divider: true, command: 'custom-actions-divider' },
               {
                 command: 'filter-column',
                 title: 'Filter Column',

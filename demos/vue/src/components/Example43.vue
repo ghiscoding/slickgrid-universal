@@ -150,7 +150,7 @@ function defineGrid() {
     autoEdit: true,
     editable: false,
     datasetIdPropertyName: 'employeeID',
-    frozenColumn: 0,
+    pinning: { columns: { left: 0 } },
     gridHeight: 348,
     rowHeight: 30,
     dataView: {
@@ -163,7 +163,6 @@ function defineGrid() {
     gridMenu: {
       hideColumnPickerSection: true,
     },
-    rowTopOffsetRenderType: 'top', // intentional top-positioning coverage; rowspan also supports 'transform'
   };
 }
 
@@ -445,7 +444,7 @@ function toggleEmployeeIdVisibility() {
         newMetadata[row].columns[Number(col) + colDirIdx] = (this.metadata as any)[row].columns[col];
       }
     }
-    vueGrid.slickGrid?.setOptions({ frozenColumn: showEmployeeId.value ? 0 : 1 });
+    vueGrid.slickGrid?.setOptions({ pinning: { columns: { left: showEmployeeId.value ? 0 : 1 } } });
     vueGrid.slickGrid?.updateColumnById('employeeID', { hidden: !showEmployeeId.value });
     vueGrid.slickGrid?.updateColumns();
     */

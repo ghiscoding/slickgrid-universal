@@ -19,6 +19,7 @@ export default class Example42 {
   gridOptions: GridOption;
   dataset: any[];
   sgb: SlickVanillaGridBundle;
+  subTitleStyle = 'display: block';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -325,5 +326,10 @@ export default class Example42 {
       this.sgb.slickGrid?.getTopHeaderPanel()?.querySelector(`.top-dropped-filter.col-${columndId}`)?.remove();
       columnEl.style.color = 'black';
     }
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

@@ -9,7 +9,6 @@ import {
   type OnEventArgs,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import { baseFluentGridOption } from './base-fluent-grid-options.js';
 
 const Example02: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([]);
@@ -127,7 +126,7 @@ const Example02: React.FC = () => {
           dataContextIds: [1, 2, 6, 7], // (recommended) select by your data object IDs
         },
       },
-      ...baseFluentGridOption,
+      iconSet: 'fluent',
     };
 
     setColumns(columns);

@@ -2,17 +2,10 @@
 This document shows how to get this Slickgrid bundle working with Salesforce LWC (Lighning Web Component).
 
 ### Step 1. install dependencies (static resources) one time setup in your org
-The first thing you'll need to do is to add the slickgrid bundle zip file as a new static resource, you can see below the name that we used in our Salesforce org (you can name then differently). The resource named `Sf_SlickGrid` comes from the zip file that gets created every time a new dist build is updated, the zip file can be downloaded [here](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip).
+The first thing you will need to do is to add the slickgrid bundle zip file as a new static resource, you can see the name below that we used in our Salesforce org (you can name it differently). The resource named `Sf_SlickGrid` comes from the zip file that gets created every time a new dist build is updated, the zip file can be downloaded [here](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip).
 
-#### Here are the 3 static resource files
-Click on the `zip` link and then the `Download` button on the top right to download it locally, then upload it to your org.
-
-**Note** Slickgrid-Universal 2.0 dropped jQueryUI requirement. If you come from Slickgrid-Universal version 1.x, then you will also need to follow the [Migration Guide 2.0](../migrations/migration-to-2.x.md) to upgrade to 2.x
-
-**Note** Slickgrid-Universal 3.0 dropped jQuery requirement, now the only requirement left is really the slickgrid bundle itself (see static resource below). Also note that if you come from an earlier version then make sure to follow [Migration Guide 3.0](../migrations/migration-to-3.x.md) to upgrade to 3.x
-
-**Note** Slickgrid-Universal 4.0 dropped SlickGrid external dependency (`6pac/slickgrid`) so that Slickgrid-Universal is now fully standalone. However with this change, it also indirectly dropped the `Slick` namespace. Also note that if you come from an earlier version then make sure to follow [Migration Guide 4.0](../migrations/migration-to-3.x.md) to upgrade to 4.x
-
+#### static resource files
+Click on the `zip` link and then click the `Download` button on the top right to download it locally and finally upload it to your org.
 
 | Static Resource Name | Zip | Notes |
 | -------- | --- | ----------- |
@@ -22,9 +15,10 @@ Click on the `zip` link and then the `Download` button on the top right to downl
 
 > Please note that the project has TypeScript enums which Salesforce doesn't support by default, so to make them work, we moved them into a separate namespace under `Slicker.Enums` (or simply `Enums` if you follow 2nd approach below). Also please note that field `type` can be simplified by defining them as string, for example `type: 'number'` (see [`FieldType`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/field.type.ts) enum for all available types)
 
-#### 2.1 First Approach
-Create all the Static Resources that are required by Slickgrid-Universal as shown below (they could have different names in your org).
+> **Option 2.2** to create a separate slickgrid helper is recommended
 
+#### 2.1 First Approach
+Create the Static Resource required by Slickgrid-Universal as shown below (you can choose a different static resource name).
 
 ###### View
 ```html
@@ -42,7 +36,7 @@ Create all the Static Resources that are required by Slickgrid-Universal as show
 </template>
 ```
 
-In the same file, load all external files with `connectedCallback` and get your data through a `@wire` method. Technically the `@wire` method will be processed before the `connectedCallback` and so you can assume that when calling the `initializeGrid` method we will already have the dataset ready.
+In the same file, load the external file with `connectedCallback` and get your data through a `@wire` method. Technically the `@wire` method will be processed before the `connectedCallback` and so you can assume that when calling the `initializeGrid` method we will already have the dataset ready.
 
 Notice below that in the `gridOptions`, there is a flag `useSalesforceDefaultGridOptions` that was added specifically for Salesforce project, it will internally use these global [salesforce grid options](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/vanilla-force-bundle/src/salesforce-global-grid-options.ts) for Salesforce (these options are merged with the following default global [grid options](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/global-grid-options.ts)).
 
@@ -62,7 +56,7 @@ import getSomeData from '@salesforce/apex/SomeService.getSomeData';
 
 export default class YourComponent extends LightningElement {
   slickGridInitialized = false;
-  sgb;
+  sgb; // slickgrid bundle instance
   isLoaded = false;
   dataset = []; // load your data through an Apex Controller with @wire
 
@@ -73,7 +67,7 @@ export default class YourComponent extends LightningElement {
     if (data) {
         this.dataset = data || [];
 
-        if (window.Slicker && window.Slicker.Utilities && this.sgb) {
+        if (window.Slicker?.Utilities && this.sgb) {
             this.sgb.dataset = this.dataset;
         }
     } else if (error) {}
@@ -88,10 +82,10 @@ export default class YourComponent extends LightningElement {
     try {
         this.slickGridInitialized = true;
 
-        // load all CSS Styles
+        // load CSS Styles
         await loadStyle(this, `${sf_slickGrid_bundle}/styles/css/slickgrid-theme-salesforce.css`);
 
-        // load all JS files
+        // load JS files
         await loadScript(this, `${sf_slickGrid_bundle}/slickgrid-vanilla-bundle.js`);
 
         // create the grid (column definitions, grid options & dataset)
@@ -134,7 +128,7 @@ export default class YourComponent extends LightningElement {
 }
 ```
 
-#### 2.2 Second Approach for loading Static Resources (Recommended Approach)
+#### 2.2 Second Approach for loading Static Resources (**Recommended Approach**)
 **NOTE:** in our implementation, we moved all the common css/script imports into a `slickGridHelper` LWC component, this allowed us to have much simpler imports in our external components (see next paragraph below).
 
 ```typescript

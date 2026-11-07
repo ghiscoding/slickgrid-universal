@@ -1,7 +1,7 @@
 import { format, parse } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, isDefined } from '@slickgrid-universal/utils';
-import { Calendar, type Options } from 'vanilla-calendar-pro';
+import { Calendar, months, time, type Options } from 'vanilla-calendar-pro';
 import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import { type OperatorType, type SearchTerm } from '../enums/index.js';
@@ -113,9 +113,11 @@ export class DateFilter implements Filter {
       this._bindEventService.bind(this._selectOperatorElm, 'change', this.onTriggerEvent.bind(this));
     }
 
-    // close picker on Esc/Tab keys
+    // close picker on Esc/Tab keys, but don't hide when Tab is only moving focus within the open picker
+    // (e.g. navigating from the date to the month/year selector or prev/next arrows)
     this._bindEventService.bind(document.body, 'keydown', ((e: KeyboardEvent) => {
-      if (e.key === 'Escape' || e.key === 'Tab') {
+      const pickerElm = this.calendarInstance?.context?.mainElement;
+      if (e.key === 'Escape' || (e.key === 'Tab' && !(pickerElm && e.target instanceof Node && pickerElm.contains(e.target)))) {
         this.hide();
       }
     }) as EventListener);
@@ -158,7 +160,9 @@ export class DateFilter implements Filter {
   /** Destroy the filter */
   destroy(): void {
     this._bindEventService.unbindAll();
-    this.calendarInstance?.destroy();
+    if (this.calendarInstance && !this.calendarInstance.context.isDestroyed) {
+      this.calendarInstance.destroy();
+    }
 
     emptyElement(this.filterContainerElm);
     this.filterContainerElm?.remove();
@@ -271,6 +275,7 @@ export class DateFilter implements Filter {
     }
 
     const pickerOptions: Options = {
+      extensions: [time, months],
       inputMode: true,
       enableJumpToSelectedDate: true,
       firstWeekday: 0,

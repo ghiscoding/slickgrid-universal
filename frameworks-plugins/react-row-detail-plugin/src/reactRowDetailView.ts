@@ -1,6 +1,5 @@
 import {
   addToArrayWhenNotExists,
-  createDomElement,
   SlickEventData,
   SlickHybridSelectionModel,
   unsubscribeAll,
@@ -11,19 +10,19 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
 import { flushSync } from 'react-dom';
 import type { Root } from 'react-dom/client';
 import { createReactComponentDynamically, type GridOption, type ViewModelBindableInputData } from 'slickgrid-react';
 import type { RowDetailView } from './interfaces.js';
 
-const ROW_DETAIL_CONTAINER_PREFIX = 'container_';
-const PRELOAD_CONTAINER_PREFIX = 'container_loading';
+const ROW_DETAIL_CONTAINER_PREFIX = 'row-detail-';
 
 export interface CreatedView {
   id: string | number;
   dataContext: any;
   root: Root | null;
+  container?: HTMLElement;
   rendered?: boolean;
 }
 
@@ -31,13 +30,11 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   static readonly pluginName = 'ReactRowDetailView';
   protected _component?: any;
   protected _preloadComponent?: any;
-  protected _preloadRoot?: Root;
   protected _views: CreatedView[] = [];
   protected _subscriptions: EventSubscription[] = [];
   protected _userProcessFn?: (item: any) => Promise<any>;
   protected gridContainerElement!: HTMLElement;
   protected _timer?: any;
-  protected _persistedContainers = new Map<string | number, HTMLElement>();
   _root?: Root;
 
   constructor(private readonly eventPubSubService: EventPubSubService) {
@@ -45,9 +42,18 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   }
 
   protected override beforeDetailViewRender(item: any): void {
-    this._preloadRoot?.unmount();
-    this._preloadRoot = undefined;
-    this.disposeViewByItem(item);
+    // Keep one React root on the panel while replacing the preload component with the detail component.
+    if (!this._component) {
+      this.disposeViewByItem(item);
+    }
+  }
+
+  protected override renderDetailContent(container: HTMLElement, item: any): void {
+    const view = this._views.find((view) => view.id === item[this.datasetIdPropName]);
+    // React owns these children until its root is unmounted. Clearing them here would interrupt its commit.
+    if (!view?.root || view.container !== container) {
+      super.renderDetailContent(container, item);
+    }
   }
 
   protected override renderDetailView(item: any): void {
@@ -86,7 +92,6 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
         this.disposeViewByItem(view);
       }
     } while (this._views.length > 0);
-    this._persistedContainers.clear();
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
@@ -117,24 +122,14 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
 
     if (this._grid && this.gridOptions?.rowDetailView) {
       // load the Preload & RowDetail Templates (could be straight HTML or React Components)
-      // when those are React Components, we need to create View Component & provide the html containers to the Plugin (preTemplate/postTemplate methods)
+      // Components mount directly into the detail panel; templates only clear its previous content.
       if (!this.gridOptions.rowDetailView.preTemplate) {
         this._preloadComponent = this.gridOptions.rowDetailView.preloadComponent;
-        this.addonOptions.preTemplate = () => createDomElement('div', { className: `${PRELOAD_CONTAINER_PREFIX}` });
+        this.addonOptions.preTemplate = () => '';
       }
       if (!this.gridOptions.rowDetailView.postTemplate) {
         this._component = this.gridOptions.rowDetailView.viewComponent;
-        this.addonOptions.postTemplate = (itemDetail: any) => {
-          const id = itemDetail[this.datasetIdPropName];
-          if (this.rowDetailViewOptions?.keepComponentAlive) {
-            // reuse the same container element so React's root is never re-created
-            if (!this._persistedContainers.has(id)) {
-              this._persistedContainers.set(id, createDomElement('div', { className: `${ROW_DETAIL_CONTAINER_PREFIX}${id}` }));
-            }
-            return this._persistedContainers.get(id)!;
-          }
-          return createDomElement('div', { className: `${ROW_DETAIL_CONTAINER_PREFIX}${id}` });
-        };
+        this.addonOptions.postTemplate = () => '';
       }
 
       if (this._grid && this.gridOptions) {
@@ -153,32 +148,24 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
           }
 
           this._eventHandler.subscribe(this.onAsyncResponse, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onAsyncResponse === 'function') {
-              this.rowDetailViewOptions.onAsyncResponse(event, args);
-            }
+            this.rowDetailViewOptions?.onAsyncResponse?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onAsyncEndUpdate, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
-              this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
-            }
+            this.rowDetailViewOptions?.onAsyncEndUpdate?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {
             // display preload template & re-render all the other Detail Views after toggling
             // the preload View will eventually go away once the data gets loaded after the "onAsyncEndUpdate" event
             this.renderPreloadView(args.item);
-
-            if (typeof this.rowDetailViewOptions?.onAfterRowDetailToggle === 'function') {
-              this.rowDetailViewOptions.onAfterRowDetailToggle(event, args);
-            }
+            this.rowDetailViewOptions?.onAfterRowDetailToggle?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onBeforeRowDetailToggle, (event, args) => {
             // before toggling row detail, we need to create View Component if it doesn't exist
             this.handleOnBeforeRowDetailToggle(event, args);
-
-            if (typeof this.rowDetailViewOptions?.onBeforeRowDetailToggle === 'function') {
+            if (this.rowDetailViewOptions?.onBeforeRowDetailToggle) {
               return this.rowDetailViewOptions.onBeforeRowDetailToggle(event, args);
             }
             return true;
@@ -187,18 +174,13 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
           this._eventHandler.subscribe(this.onRowBackToViewportRange, async (event, args) => {
             // when row is back to viewport range, we will re-render the View Component(s)
             this.handleOnRowBackToViewportRange(event, args);
-
-            if (typeof this.rowDetailViewOptions?.onRowBackToViewportRange === 'function') {
-              this.rowDetailViewOptions.onRowBackToViewportRange(event, args);
-            }
+            this.rowDetailViewOptions?.onRowBackToViewportRange?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onBeforeRowOutOfViewportRange, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
-              this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
-            }
+            this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange?.(event, args);
             if (this.rowDetailViewOptions?.keepComponentAlive) {
-              // root lives on in the persisted container; just mark as not rendered
+              // The core plugin detaches the panel while preserving its React root.
               const view = this._views.find((v) => v.id === args.item[this.datasetIdPropName]);
               if (view) {
                 view.rendered = false;
@@ -209,9 +191,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
           });
 
           this._eventHandler.subscribe(this.onRowOutOfViewportRange, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onRowOutOfViewportRange === 'function') {
-              this.rowDetailViewOptions.onRowOutOfViewportRange(event, args);
-            }
+            this.rowDetailViewOptions?.onRowOutOfViewportRange?.(event, args);
           });
 
           // --
@@ -224,6 +204,8 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
           if (this.gridOptions.enableSelection || this.gridOptions.enableCheckboxSelector) {
             this._eventHandler.subscribe(this._grid.onSelectedRowsChanged, () => this.redrawAllViewComponents(false));
           }
+
+          this._eventHandler.subscribe(this._grid.onRendered, this.redrawDetachedViewComponents.bind(this));
 
           // on column sort/reorder, all row detail are collapsed so we can dispose of all the Views as well
           this._eventHandler.subscribe(this._grid.onSort, this.disposeAllViewComponents.bind(this));
@@ -275,9 +257,41 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
     }
   }
 
+  /** Remount React roots whose containers were detached when SlickGrid replaced row DOM. */
+  protected redrawDetachedViewComponents(): void {
+    this._views.forEach((view) => {
+      const rowIndex = this.dataView.getRowById(view.id);
+      const renderedRange = this._grid.getRenderedRange();
+      if (
+        rowIndex === undefined ||
+        !renderedRange ||
+        rowIndex < renderedRange.top ||
+        rowIndex > renderedRange.bottom ||
+        !this._renderedViewportRowIds.has(view.id) ||
+        (view.rendered && view.container?.isConnected)
+      ) {
+        return;
+      }
+
+      if (this.rowDetailViewOptions?.keepComponentAlive && view.root && view.container?.isConnected) {
+        view.rendered = true;
+        return;
+      }
+
+      this.disposeViewComponent(view);
+      this.redrawViewComponent(view);
+    });
+  }
+
   /** (re)Render the View Component (Row Detail) */
   renderPreloadView(item: any) {
-    const containerElement = this.gridContainerElement.querySelector(`.${PRELOAD_CONTAINER_PREFIX}`);
+    if (item?.[`${this._keyPrefix}detailViewLoaded`]) {
+      return;
+    }
+
+    const containerElement = this.gridContainerElement.querySelector<HTMLElement>(
+      `.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`
+    );
     if (this._preloadComponent && containerElement) {
       // render row detail
       const bindableData = {
@@ -287,16 +301,18 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
         dataView: this.dataView,
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
-      const detailContainer = document.createElement('section');
-      containerElement.appendChild(detailContainer);
-
-      const { root } = createReactComponentDynamically(this._preloadComponent, detailContainer, bindableData);
-      this._preloadRoot = root;
+      const view = this._views.find((view) => view.id === item[this.datasetIdPropName]);
+      const { root } = createReactComponentDynamically(this._preloadComponent, containerElement, bindableData, view?.root);
+      this.upsertViewRefs(item, root, containerElement);
     }
   }
 
   /** (re)Render the View Component (Row Detail) */
   renderViewModel(item: any) {
+    if (!item[`${this._keyPrefix}detailViewLoaded`]) {
+      return;
+    }
+
     const containerElement = this.gridContainerElement.querySelector<HTMLElement>(
       `.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`
     );
@@ -314,16 +330,17 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
       // React 19 schedules root.render asynchronously. Flush this mount so a nested
       // SlickgridReact can find its #innergrid-* container before its componentDidMount.
       flushSync(() => {
-        root = createReactComponentDynamically(this._component, containerElement, bindableData).root;
+        root = createReactComponentDynamically(this._component, containerElement, bindableData, viewObj?.root).root;
       });
       if (!root) {
         return;
       }
       if (viewObj) {
         viewObj.root = root;
+        viewObj.container = containerElement;
         viewObj.rendered = true;
       } else {
-        this.upsertViewRefs(item, root);
+        this.upsertViewRefs(item, root, containerElement);
       }
     }
   }
@@ -332,12 +349,13 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   // protected functions
   // ------------------
 
-  protected upsertViewRefs(item: any, root: Root | null) {
+  protected upsertViewRefs(item: any, root: Root | null, container?: HTMLElement) {
     const viewIdx = this._views.findIndex((obj) => obj.id === item[this.datasetIdPropName]);
     const viewInfo: CreatedView = {
       id: item[this.datasetIdPropName],
       dataContext: item,
       root,
+      container,
       rendered: !!root,
     };
     if (viewIdx >= 0) {
@@ -354,7 +372,6 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
       this.disposeViewComponent(this._views[foundViewIdx]);
       if (removeFromArray) {
         this._views.splice(foundViewIdx, 1);
-        this._persistedContainers.delete(item[this.datasetIdPropName]);
       }
     }
   }
@@ -365,6 +382,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
       const container = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
       expandedView.root.unmount();
       expandedView.root = null;
+      expandedView.container = undefined;
       if (container) {
         container.textContent = '';
       }
@@ -404,7 +422,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
     const viewModel = this._views.find((x) => x.id === args.rowId);
     if (viewModel && !viewModel.rendered) {
       if (this.rowDetailViewOptions?.keepComponentAlive && viewModel.root) {
-        // persisted container was re-inserted into DOM by postTemplate; root is still live
+        // The same panel was reattached by the core plugin; its React root is still live.
         viewModel.rendered = true;
       } else {
         this.redrawViewComponent(viewModel);

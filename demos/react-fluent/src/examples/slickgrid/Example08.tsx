@@ -18,7 +18,6 @@ import {
   type SlickgridReactInstance,
   type SlickGroupTotals,
 } from 'slickgrid-react';
-import { baseFluentGridOption } from './base-fluent-grid-options.js';
 import './example08.scss';
 
 interface GroceryItem {
@@ -356,7 +355,7 @@ const Example08: React.FC = () => {
           sheet.data.push([{ value: customTitle, metadata: { style: excelFormat.id } }]);
         },
       },
-      ...baseFluentGridOption,
+      iconSet: 'fluent',
     };
 
     setColumns(columns);

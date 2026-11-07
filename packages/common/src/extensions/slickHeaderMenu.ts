@@ -17,12 +17,34 @@ import type {
   OnHeaderCellRenderedEventArgs,
   SingleColumnSort,
 } from '../interfaces/index.js';
+import type { MenuDivider } from '../interfaces/menuCommandItem.interface.js';
 import type { FilterService } from '../services/filter.service.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { SortService } from '../services/sort.service.js';
 import { getTranslationPrefix } from '../services/utilities.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
+import { commandMatcher, normalizeMenuCommandItems } from './menuUtils.js';
+
+const PINNING_COMMANDS = {
+  root: 'pin-column',
+  left: 'pin-left',
+  right: 'pin-right',
+  bulkLeft: 'pin-columns-left',
+  bulkRight: 'pin-columns-right',
+  unpin: 'unpin-column',
+  unpinAll: 'unpin-columns',
+  divider: 'divider-pin-column',
+  directionDivider: 'divider-pin-direction',
+  bulkDivider: 'divider-pin-through',
+} as const;
+const PINNING_COMMAND_GROUPS: string[][] = [
+  [PINNING_COMMANDS.left, PINNING_COMMANDS.right],
+  [PINNING_COMMANDS.bulkLeft, PINNING_COMMANDS.bulkRight],
+  [PINNING_COMMANDS.unpin, PINNING_COMMANDS.unpinAll],
+];
+const PINNING_MENU_COMMANDS = Object.values(PINNING_COMMANDS).filter((command) => command !== PINNING_COMMANDS.root);
+type PinningCommand = (typeof PINNING_COMMANDS)[keyof typeof PINNING_COMMANDS];
 
 /**
  * A plugin to add drop-down menus to column headers.
@@ -46,8 +68,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     buttonCssClass: null,
     buttonImage: null,
     minWidth: 100,
-    hideColumnHideCommand: false,
-    hideSortCommands: false,
+    hideCommands: [],
     title: '',
     subMenuOpenByEvent: 'mouseover',
   } as unknown as HeaderMenuOption;
@@ -98,10 +119,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   hideColumn(column: Column): void {
     if (this.grid) {
       // check if column freezing is allowed
-      const isFrozenAllowed = this.grid.validateColumnFreeze(column.id, true);
+      const isPinningAllowed = this.grid.validateColumnPinning(column.id, true);
 
       // when valid, update column hidden prop
-      if (isFrozenAllowed) {
+      if (isPinningAllowed) {
         this.grid.updateColumnById(column.id, { hidden: true });
 
         // then proceed with hiding the column in SlickGrid & trigger an event when done
@@ -290,6 +311,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   protected addHeaderMenuCustomCommands(columns: Column[]): HeaderMenu {
     const gridOptions = this.sharedService.gridOptions;
     const headerMenuOptions = gridOptions.headerMenu || {};
+    const hiddenCommands = headerMenuOptions.hideCommands as readonly string[] | undefined;
+    const isPinningEnabled = !headerMenuOptions.hideCommands?.includes('pinning-commands');
+    const isSortingEnabled = !headerMenuOptions.hideCommands?.includes('sort-commands');
     const translationPrefix = getTranslationPrefix(gridOptions);
     const commandLabels = this._addonOptions?.commandLabels;
 
@@ -308,95 +332,23 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             columnDef.header.menu = { commandItems: [] };
           }
 
-          let columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef?.header?.menu?.commandItems ?? [];
+          const columnHeaderMenuItems: Array<MenuCommandItem | MenuDivider> = columnDef?.header?.menu?.commandItems ?? [];
 
-          // Freeze Column (pinning)
-          let hasFrozenOrResizeCommand = false;
-          if (headerMenuOptions && !headerMenuOptions.hideFreezeColumnsCommand) {
-            hasFrozenOrResizeCommand = true;
-            if (gridOptions.frozenColumn === columns.findIndex((col) => col.id === columnDef.id)) {
-              // make sure the "freeze-columns" doesn't exist before adding the "unfreeze-columns"
-              this.removeCommandWhenFound(columnHeaderMenuItems, 'freeze-columns');
-
-              // add unfreeze command
-              const cmdUnfreeze = 'unfreeze-columns';
-              this.addMissingCommandOrAction(
-                {
-                  _orgTitle: commandLabels?.unfreezeColumnsCommand || '',
-                  iconCssClass: headerMenuOptions.iconUnfreezeColumns || 'mdi mdi-pin-off-outline',
-                  titleKey: `${translationPrefix}UNFREEZE_COLUMNS`,
-                  command: cmdUnfreeze,
-                  positionOrder: 45,
-                  action: (_e, args) => this.freezeOrUnfreezeColumns(args.column, cmdUnfreeze),
-                },
-                headerMenuOptions.hideCommands,
-                columnHeaderMenuItems
-              );
-            } else {
-              // make sure the "unfreeze-columns" doesn't exist before adding the "freeze-columns"
-              this.removeCommandWhenFound(columnHeaderMenuItems, 'unfreeze-columns');
-
-              // add freeze command
-              const cmdFreeze = 'freeze-columns';
-              this.addMissingCommandOrAction(
-                {
-                  _orgTitle: commandLabels?.freezeColumnsCommand || '',
-                  iconCssClass: headerMenuOptions.iconFreezeColumns || 'mdi mdi-pin-outline',
-                  titleKey: `${translationPrefix}FREEZE_COLUMNS`,
-                  command: 'freeze-columns',
-                  positionOrder: 45,
-                  action: (_e, args) => this.freezeOrUnfreezeColumns(args.column, cmdFreeze),
-                },
-                headerMenuOptions.hideCommands,
-                columnHeaderMenuItems
-              );
-            }
-          }
-
-          // Column Resize by Content (column autofit)
-          if (
-            headerMenuOptions &&
-            !headerMenuOptions.hideColumnResizeByContentCommand &&
-            !headerMenuOptions.hideCommands?.includes('column-resize-by-content') &&
-            this.sharedService.gridOptions.enableColumnResizeOnDoubleClick
-          ) {
-            hasFrozenOrResizeCommand = true;
-            this.addMissingCommandOrAction(
-              {
-                _orgTitle: commandLabels?.columnResizeByContentCommand || '',
-                iconCssClass: headerMenuOptions.iconColumnResizeByContentCommand || 'mdi mdi-arrow-expand-horizontal',
-                titleKey: `${translationPrefix}COLUMN_RESIZE_BY_CONTENT`,
-                command: 'column-resize-by-content',
-                positionOrder: 47,
-                action: (_e, args) => this.pubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: args.column.id }),
-              },
-              headerMenuOptions.hideCommands,
-              columnHeaderMenuItems
-            );
-          }
-
-          // add a divider (separator) between the top freeze columns commands and the rest of the commands
-          if (hasFrozenOrResizeCommand && !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 48)) {
-            columnHeaderMenuItems.push({ divider: true, command: 'divider-1', positionOrder: 48 });
-          }
-
-          // Sorting Commands
-          if (
+          const hasSortingCommands =
             gridOptions.enableSorting &&
             columnDef.sortable &&
-            headerMenuOptions &&
-            !headerMenuOptions.hideSortCommands &&
-            // @deprecated use boolean value of addMissingCommandOrAction() in next major instead
-            !(headerMenuOptions.hideCommands?.includes('sort-asc') && headerMenuOptions.hideCommands?.includes('sort-desc'))
-          ) {
+            isSortingEnabled &&
+            !(headerMenuOptions.hideCommands?.includes('sort-asc') && headerMenuOptions.hideCommands?.includes('sort-desc'));
+
+          // Sorting Commands
+          if (hasSortingCommands) {
             // sort ascending command
             this.addMissingCommandOrAction(
               {
                 _orgTitle: commandLabels?.sortAscCommand || '',
-                iconCssClass: headerMenuOptions.iconSortAscCommand || 'mdi mdi-sort-ascending',
+                iconCssClass: headerMenuOptions.iconSortAscCommand || 'mdi mdi-arrow-up',
                 titleKey: `${translationPrefix}SORT_ASCENDING`,
                 command: 'sort-asc',
-                positionOrder: 50,
                 action: (e, args) => this.sortColumn(e, args, true),
               },
               headerMenuOptions.hideCommands,
@@ -407,43 +359,148 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             this.addMissingCommandOrAction(
               {
                 _orgTitle: commandLabels?.sortDescCommand || '',
-                iconCssClass: headerMenuOptions.iconSortDescCommand || 'mdi mdi-sort-descending',
+                iconCssClass: headerMenuOptions.iconSortDescCommand || 'mdi mdi-arrow-down',
                 titleKey: `${translationPrefix}SORT_DESCENDING`,
                 command: 'sort-desc',
-                positionOrder: 51,
                 action: (e, args) => this.sortColumn(e, args, false),
               },
               headerMenuOptions.hideCommands,
               columnHeaderMenuItems
             );
 
-            // add a divider (separator) between the top sort commands and the other clear commands
-            if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 52)) {
-              columnHeaderMenuItems.push({ divider: true, command: 'divider-2', positionOrder: 52 });
+            // add a divider (separator) between the top sort commands and the pinning/resize commands
+            if (!columnHeaderMenuItems.some(commandMatcher('divider-2'))) {
+              columnHeaderMenuItems.push({ divider: true, command: 'divider-2' });
+            }
+          }
+
+          // These commands belong to the Column Pinning submenu and should
+          // never remain as standalone root commands after menu recreation.
+          for (const command of PINNING_MENU_COMMANDS) {
+            this.removeCommandWhenFound(columnHeaderMenuItems, command);
+          }
+
+          // Keep all pinning actions under one submenu so the menu shape stays
+          // consistent regardless of the selected column's current state.
+          let hasPinningOrResizeCommand = false;
+          let hasSingleColumnPinningCommand = false;
+          // Single-column pinning writes only the selected column definition.
+          if (isPinningEnabled && columnDef.pinnable !== false) {
+            const existingPinColumnCommand = columnHeaderMenuItems.find(commandMatcher(PINNING_COMMANDS.root));
+            const pinColumnCommandItems: Array<MenuCommandItem | MenuDivider> = existingPinColumnCommand?.commandItems ?? [];
+
+            // Remove stale commands/separators while retaining custom versions of visible commands.
+            for (const command of PINNING_MENU_COMMANDS) {
+              if (command.startsWith('divider-') || hiddenCommands?.includes(command)) {
+                this.removeCommandWhenFound(pinColumnCommandItems, command);
+              }
             }
 
-            if (!headerMenuOptions.hideClearSortCommand) {
+            for (const [command, titleKey, title, iconCssClass, allColumns] of [
+              [PINNING_COMMANDS.left, 'PIN_LEFT', commandLabels?.pinLeftCommand, headerMenuOptions.iconPinCommand, false],
+              [PINNING_COMMANDS.right, 'PIN_RIGHT', commandLabels?.pinRightCommand, headerMenuOptions.iconPinCommand, false],
+              [
+                PINNING_COMMANDS.bulkLeft,
+                'PIN_COLUMNS_LEFT',
+                commandLabels?.pinningColumnsLeftCommand,
+                headerMenuOptions.iconPinningColumns,
+                true,
+              ],
+              [
+                PINNING_COMMANDS.bulkRight,
+                'PIN_COLUMNS_RIGHT',
+                commandLabels?.pinningColumnsRightCommand,
+                headerMenuOptions.iconPinningColumns,
+                true,
+              ],
+              [PINNING_COMMANDS.unpin, 'UNPIN_COLUMN', commandLabels?.unpinColumnCommand, headerMenuOptions.iconUnpinColumn, false],
+              [
+                PINNING_COMMANDS.unpinAll,
+                'UNPIN_ALL_COLUMNS',
+                commandLabels?.unpinningColumnsCommand,
+                headerMenuOptions.iconUnpinningColumns,
+                true,
+              ],
+            ] as const) {
               this.addMissingCommandOrAction(
                 {
-                  _orgTitle: commandLabels?.clearSortCommand || '',
-                  iconCssClass: headerMenuOptions.iconClearSortCommand || 'mdi mdi-sort-variant-off',
-                  titleKey: `${translationPrefix}REMOVE_SORT`,
-                  command: 'clear-sort',
-                  positionOrder: 58,
-                  action: (e, args) => this.clearColumnSort(e, args),
+                  _orgTitle: title || '',
+                  iconCssClass: iconCssClass || (command.startsWith('unpin') ? 'mdi mdi-pin-off-outline' : 'mdi mdi-pin-outline'),
+                  titleKey: `${translationPrefix}${titleKey}`,
+                  command,
+                  action: (_e, args) =>
+                    allColumns ? this.pinOrUnpinColumns(args.column, command) : this.pinOrUnpinColumn(args.column, command),
                 },
                 headerMenuOptions.hideCommands,
-                columnHeaderMenuItems
+                pinColumnCommandItems
               );
             }
+
+            for (let i = 0; i < PINNING_COMMAND_GROUPS.length - 1; i++) {
+              const currentGroup = PINNING_COMMAND_GROUPS[i];
+              const nextGroup = PINNING_COMMAND_GROUPS[i + 1];
+              if (pinColumnCommandItems.some(commandMatcher(currentGroup)) && pinColumnCommandItems.some(commandMatcher(nextGroup))) {
+                const nextGroupIndex = pinColumnCommandItems.findIndex(commandMatcher(nextGroup));
+                pinColumnCommandItems.splice(nextGroupIndex, 0, {
+                  divider: true,
+                  command: i === 0 ? PINNING_COMMANDS.directionDivider : PINNING_COMMANDS.bulkDivider,
+                });
+              }
+            }
+
+            this.addMissingCommandOrAction(
+              {
+                _orgTitle: commandLabels?.pinColumnCommand || '',
+                iconCssClass: headerMenuOptions.iconPinColumn || 'mdi mdi-pin-outline',
+                titleKey: `${translationPrefix}PIN_COLUMN`,
+                command: PINNING_COMMANDS.root,
+                commandItems: pinColumnCommandItems,
+              },
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
+            );
+            hasSingleColumnPinningCommand = columnHeaderMenuItems.some(commandMatcher(PINNING_COMMANDS.root));
+            hasPinningOrResizeCommand ||= hasSingleColumnPinningCommand;
+          } else {
+            this.removeCommandWhenFound(columnHeaderMenuItems, PINNING_COMMANDS.root);
+          }
+
+          // Column Resize by Content (column autofit)
+          if (
+            !headerMenuOptions.hideCommands?.includes('column-resize-by-content') &&
+            this.sharedService.gridOptions.enableColumnResizeOnDoubleClick
+          ) {
+            hasPinningOrResizeCommand = true;
+            if (hasSingleColumnPinningCommand && !columnHeaderMenuItems.some(commandMatcher(PINNING_COMMANDS.divider))) {
+              const resizeIndex = columnHeaderMenuItems.findIndex(commandMatcher('column-resize-by-content'));
+              columnHeaderMenuItems.splice(resizeIndex < 0 ? columnHeaderMenuItems.length : resizeIndex, 0, {
+                divider: true,
+                command: PINNING_COMMANDS.divider,
+              });
+            }
+            this.addMissingCommandOrAction(
+              {
+                _orgTitle: commandLabels?.columnResizeByContentCommand || '',
+                iconCssClass: headerMenuOptions.iconColumnResizeByContentCommand || 'mdi mdi-arrow-expand-horizontal',
+                titleKey: `${translationPrefix}COLUMN_RESIZE_BY_CONTENT`,
+                command: 'column-resize-by-content',
+                action: (_e, args) => this.pubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: args.column.id }),
+              },
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
+            );
+          }
+
+          // add a divider (separator) between the top pin columns commands and the rest of the commands
+          if (hasPinningOrResizeCommand && !columnHeaderMenuItems.some(commandMatcher('divider-1'))) {
+            columnHeaderMenuItems.push({ divider: true, command: 'divider-1' });
+          } else if (!hasPinningOrResizeCommand) {
+            this.removeCommandWhenFound(columnHeaderMenuItems, 'divider-1');
           }
 
           // Filter Shortcuts via sub-menus
           const cmdShortcutName = 'filter-shortcuts-root-menu';
-          if (
-            columnDef.filter?.filterShortcuts &&
-            !columnHeaderMenuItems.some((item) => item !== 'divider' && 'command' in item && item.command === cmdShortcutName)
-          ) {
+          if (columnDef.filter?.filterShortcuts && !columnHeaderMenuItems.some(commandMatcher(cmdShortcutName))) {
             const shortcutSubItems: MenuCommandItem[] = [];
             columnDef.filter.filterShortcuts.forEach((fs) => {
               // use the Title name as the command key in kebab cas
@@ -460,22 +517,17 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               });
             });
 
-            const filterShortcutsPositionOrder = headerMenuOptions.filterShortcutsPositionOrder ?? 55;
             columnHeaderMenuItems.push({
               _orgTitle: commandLabels?.filterShortcutsCommand || '',
               iconCssClass: headerMenuOptions.iconFilterShortcutSubMenu || 'mdi mdi-filter-outline',
               titleKey: `${translationPrefix}FILTER_SHORTCUTS`,
               command: cmdShortcutName,
-              positionOrder: filterShortcutsPositionOrder,
               commandItems: shortcutSubItems,
             });
 
-            // add a divider (separator) between the top freeze columns commands and the rest of the commands
-            if (
-              hasFrozenOrResizeCommand &&
-              !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === filterShortcutsPositionOrder + 1)
-            ) {
-              columnHeaderMenuItems.push({ divider: true, command: 'divider-3', positionOrder: filterShortcutsPositionOrder + 1 });
+            // add a divider (separator) between the top pin columns commands and the rest of the commands
+            if (hasPinningOrResizeCommand && !columnHeaderMenuItems.some(commandMatcher('divider-3'))) {
+              columnHeaderMenuItems.push({ divider: true, command: 'divider-3' });
             }
           }
 
@@ -484,36 +536,45 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             gridOptions.enableFiltering &&
             columnDef.filterable &&
             headerMenuOptions &&
-            !headerMenuOptions.hideFilterCommand &&
             !headerMenuOptions.hideCommands?.includes('clear-filter')
           ) {
-            if (!headerMenuOptions.hideClearFilterCommand) {
-              this.addMissingCommandOrAction(
-                {
-                  _orgTitle: commandLabels?.clearFilterCommand || '',
-                  iconCssClass: headerMenuOptions.iconClearFilterCommand || 'mdi mdi-filter-remove-outline',
-                  titleKey: `${translationPrefix}REMOVE_FILTER`,
-                  command: 'clear-filter',
-                  positionOrder: 57,
-                  action: (e, args) => {
-                    this.clearColumnFilter(e, args);
-                  },
+            this.addMissingCommandOrAction(
+              {
+                _orgTitle: commandLabels?.clearFilterCommand || '',
+                iconCssClass: headerMenuOptions.iconClearFilterCommand || 'mdi mdi-filter-remove-outline',
+                titleKey: `${translationPrefix}REMOVE_FILTER`,
+                command: 'clear-filter',
+                action: (e, args) => {
+                  this.clearColumnFilter(e, args);
                 },
-                headerMenuOptions.hideCommands,
-                columnHeaderMenuItems
-              );
-            }
+              },
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
+            );
+          }
+
+          if (hasSortingCommands) {
+            this.addMissingCommandOrAction(
+              {
+                _orgTitle: commandLabels?.clearSortCommand || '',
+                iconCssClass: headerMenuOptions.iconClearSortCommand || 'mdi mdi-sort-variant-off',
+                titleKey: `${translationPrefix}REMOVE_SORT`,
+                command: 'clear-sort',
+                action: (e, args) => this.clearColumnSort(e, args),
+              },
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
+            );
           }
 
           // Hide Column Command
-          if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !headerMenuOptions.hideCommands?.includes('hide-column')) {
+          if (headerMenuOptions && !headerMenuOptions.hideCommands?.includes('hide-column')) {
             this.addMissingCommandOrAction(
               {
                 _orgTitle: commandLabels?.hideColumnCommand || '',
                 iconCssClass: headerMenuOptions.iconColumnHideCommand || 'mdi mdi-close',
                 titleKey: `${translationPrefix}HIDE_COLUMN`,
                 command: 'hide-column',
-                positionOrder: 59,
                 action: (_e, args) => {
                   this.hideColumn(args.column);
                   if (this.sharedService.gridOptions?.enableAutoSizeColumns) {
@@ -527,7 +588,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           }
 
           this.extensionUtility.translateMenuItemsFromTitleKey(columnHeaderMenuItems);
-          this.extensionUtility.sortItems(columnHeaderMenuItems, 'positionOrder');
         }
       });
     }
@@ -549,42 +609,66 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
   }
 
-  protected removeCommandWhenFound(columnHeaderMenuItems: Array<MenuCommandItem | 'divider'>, command: string): void {
-    const commandIdx = columnHeaderMenuItems.findIndex((item) => item !== 'divider' && item?.command === command);
-    if (commandIdx >= 0) {
+  protected removeCommandWhenFound(columnHeaderMenuItems: Array<MenuCommandItem | MenuDivider>, command: string): void {
+    for (
+      let commandIdx = columnHeaderMenuItems.findIndex(commandMatcher(command));
+      commandIdx >= 0;
+      commandIdx = columnHeaderMenuItems.findIndex(commandMatcher(command))
+    ) {
       columnHeaderMenuItems.splice(commandIdx, 1);
     }
   }
 
-  /** freeze or unfreeze columns command */
-  protected freezeOrUnfreezeColumns(column: Column, command: 'freeze-columns' | 'unfreeze-columns'): void {
-    const columnPosition = this.grid.getVisibleColumns().findIndex((col) => col.id === column.id);
-    const newGridOptions = {
-      frozenColumn: command === 'unfreeze-columns' ? -1 : columnPosition,
-      enableMouseWheelScrollHandler: true,
-    };
+  /** Pin a column to the selected edge or remove its permanent pin. */
+  protected pinOrUnpinColumn(column: Column, command: PinningCommand): void {
+    this.grid.setColumnPinning(
+      column.id,
+      command === PINNING_COMMANDS.unpin ? null : command === PINNING_COMMANDS.right ? 'right' : 'left'
+    );
 
-    // make sure column freeze is allowed before applying the change
-    if (this.grid.validateColumnFreezeWidth(newGridOptions.frozenColumn)) {
-      this.grid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
+    // remove the last pin/unpin command called from Header Menu since it will be replaced by the other one when reopening the menu
+    const columnHeaderMenuItems: Array<MenuCommandItem | MenuDivider> = column?.header?.menu?.commandItems ?? [];
+    this.removeCommandWhenFound(columnHeaderMenuItems, command);
+    this.recreateHeaderMenu(this.grid.getColumns());
+  }
 
-      // remove the last freeze/unfreeze command called from Header Menu since it will be replaced by the other one when reopening the menu
-      const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = column?.header?.menu?.commandItems ?? [];
-      this.removeCommandWhenFound(columnHeaderMenuItems, command);
+  /** Apply or clear the bulk index-based pinning option. */
+  protected pinOrUnpinColumns(column: Column, command: PinningCommand): void {
+    const pinning =
+      command === PINNING_COMMANDS.unpinAll
+        ? { left: [], right: [] }
+        : command === PINNING_COMMANDS.bulkRight
+          ? { right: this.getPinnableColumnReferences(column, 'right') }
+          : { left: this.getPinnableColumnReferences(column, 'left') };
+    this.grid.setOptions(
+      {
+        pinning: { columns: pinning },
+      },
+      false,
+      true
+    );
 
-      this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
-      this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
-      this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
+    const columnHeaderMenuItems: Array<MenuCommandItem | MenuDivider> = column?.header?.menu?.commandItems ?? [];
+    this.removeCommandWhenFound(columnHeaderMenuItems, command);
+    this.sharedService.gridOptions = this.grid.getOptions();
+    this.grid.updateColumns();
+    this.recreateHeaderMenu(this.grid.getColumns());
+  }
 
-      this.grid.updateColumns();
-      this.recreateHeaderMenu(this.grid.getColumns());
-
-      // we also need to autosize columns if the option is enabled
-      const gridOptions = this.grid.getOptions();
-      if (gridOptions.enableAutoSizeColumns) {
-        this.grid.autosizeColumns();
-      }
+  /** Return a visible-column boundary/count, or IDs when the range includes non-pinnable columns. */
+  protected getPinnableColumnReferences(column: Column, side: 'left' | 'right'): number | (string | number)[] {
+    const columns = this.grid.getVisibleColumns();
+    const columnPosition = columns.findIndex((col) => col.id === column.id);
+    if (columnPosition < 0) {
+      return -1;
     }
+
+    const columnRange = side === 'left' ? columns.slice(0, columnPosition + 1) : columns.slice(columnPosition);
+    return columnRange.some((col) => col.pinnable === false)
+      ? columnRange.filter((col) => col.pinnable !== false).map((col) => String(col.id))
+      : side === 'left'
+        ? columnPosition
+        : columns.length - columnPosition;
   }
 
   protected createParentMenu(e: DOMMouseOrTouchEvent<HTMLDivElement>, columnDef: Column, menu: HeaderMenuItems): void {
@@ -610,7 +694,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this.setMenuTriggerElement(triggerElement);
 
     // create 1st parent menu container & reposition it
-    this._menuElm = this.createCommandMenu(triggerElement, menu.commandItems as Array<MenuCommandItem | 'divider'>, columnDef);
+    this._menuElm = this.createCommandMenu(triggerElement, menu.commandItems as Array<MenuCommandItem | MenuDivider>, columnDef);
     this.grid.getContainerNode()?.appendChild(this._menuElm);
     this.repositionMenu(e, this._menuElm, undefined, this.addonOptions);
 
@@ -633,11 +717,16 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   /** Create the menu or sub-menu(s) but without the column picker which is a separate single process */
   protected createCommandMenu(
     triggeredByElm: HTMLElement,
-    commandItems: Array<MenuCommandItem | 'divider'>,
+    commandItems: Array<MenuCommandItem | MenuDivider>,
     columnDef: Column,
     level = 0,
-    item?: MenuCommandItem | 'divider'
+    item?: MenuCommandItem | MenuDivider
   ): HTMLDivElement {
+    if (level === 0) {
+      const builder = columnDef.header?.menu?.commandListBuilder ?? this.addonOptions.commandListBuilder;
+      commandItems = (builder?.(normalizeMenuCommandItems(commandItems)) as Array<MenuCommandItem | MenuDivider>) ?? commandItems;
+    }
+
     // Always use the triggering item's command (whitespace removed) as the sub-menu parent id for every level
     const subMenuCommand = (item as MenuCommandItem)?.command;
     const subMenuId = subMenuCommand ? subMenuCommand.replace(/\s/g, '') : '';
@@ -687,7 +776,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       this.addSubMenuTitleWhenExists(item as MenuCommandItem, commandMenuElm); // add sub-menu title when exists
     }
 
-    this.populateCommandOrOptionItems(
+    this.populateCommandItems(
       'command',
       this.addonOptions,
       commandMenuElm,
@@ -711,7 +800,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   protected resetHeaderMenuTranslations(columns: Column[]): void {
     columns.forEach((columnDef: Column) => {
       if (columnDef?.header?.menu?.commandItems && !columnDef.excludeFromHeaderMenu) {
-        const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef.header.menu.commandItems || [];
+        const columnHeaderMenuItems: Array<MenuCommandItem | MenuDivider> = columnDef.header.menu.commandItems || [];
         this.extensionUtility.translateMenuItemsFromTitleKey(columnHeaderMenuItems);
       }
     });

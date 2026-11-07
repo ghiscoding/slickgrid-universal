@@ -1,6 +1,6 @@
 <div id="demo-container" class="container-fluid">
   <h2>
-    Example 6: Grid connected to Backend Server with GraphQL
+    Example 6: Grid with Backend GraphQL Service
     <span class="float-end">
       <a
         style="font-size: 18px"
@@ -127,8 +127,8 @@
       <br />
       @if (metrics()) {
         <div style="margin: 10px 0px">
-          <b>Metrics:</b> {{ metrics()?.endTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics()?.executionTime }}ms |
-          {{ metrics()?.totalItemCount }} items
+          <b>Metrics:</b> {{ $safeNavigationMigration(metrics()?.endTime) | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} |
+          {{ metrics()?.executionTime }}ms | {{ metrics()?.totalItemCount }} items
         </div>
       }
       <div class="row mb-2">

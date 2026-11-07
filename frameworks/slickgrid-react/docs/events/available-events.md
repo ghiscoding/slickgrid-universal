@@ -70,7 +70,6 @@ render() {
     - `onBeforeMenuShow`
     - `onBeforeMenuClose`
     - `onCommand`
-    - `onOptionSelected`
 
 #### Column Picker (extension)
   - `onColumnPickerColumnsChanged`
@@ -163,7 +162,6 @@ render() {
   - `onAddNewRow`
   - `onAfterSetColumns`
   - `onAutosizeColumns`
-  - `onBeforeAppendCell`
   - `onBeforeCellEditorDestroy`
   - `onBeforeColumnsResize`
   - `onBeforeDestroy`

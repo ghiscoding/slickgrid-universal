@@ -1734,28 +1734,7 @@ describe('SlickDatView core file', () => {
       expect(refreshSpy).toHaveBeenCalled();
     });
 
-    it('should keep the deprecated CSP-safe option backward compatible', () => {
-      const items = [
-        { id: 1, name: 'Bob', age: 33 },
-        { id: 4, name: 'John', age: 20 },
-        { id: 3, name: 'Jane', age: 24 },
-      ];
-      const filter = (item: any) => item.id >= 2;
-
-      dv = new SlickDataView({ useCSPSafeFilter: true });
-      dv.setItems(items);
-      dv.setFilter(filter);
-
-      expect(dv.getItemCount()).toBe(3);
-      expect(dv.getFilter()).toBeTruthy();
-      expect(dv.getFilteredItemCount()).toBe(2);
-      expect(dv.getFilteredItems()).toEqual([
-        { id: 4, name: 'John', age: 20 },
-        { id: 3, name: 'Jane', age: 24 },
-      ]);
-    });
-
-    it('should always use CSP-safe filtering when deprecated inline filter options are enabled', () => {
+    it('should filter without runtime code generation and preserve access to closures', () => {
       const minimumId = 2;
       const items = [
         { id: 1, name: 'Bob', age: 33 },
@@ -1765,7 +1744,7 @@ describe('SlickDatView core file', () => {
       const filter = (item: any) => item.id >= minimumId;
       const functionSpy = vi.spyOn(globalThis, 'Function');
 
-      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: false });
+      dv = new SlickDataView();
       dv.setItems(items);
       dv.setFilter(filter);
 
@@ -1813,32 +1792,7 @@ describe('SlickDatView core file', () => {
         { id: 3, name: 'Jane', age: 24 },
       ];
 
-      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: false });
-      dv.setItems(items);
-      dv.setFilterArgs({ searchString });
-      dv.setFilter(myFilter);
-
-      expect(dv.getItemCount()).toBe(4);
-      expect(dv.getFilter()).toBeTruthy();
-      expect(dv.getFilterArgs()).toEqual({ searchString });
-      expect(dv.getFilteredItemCount()).toBe(2);
-      expect(dv.getFilteredItems()).toEqual([
-        { id: 1, name: 'Bob', age: 33 },
-        { id: 0, name: 'Hobby', age: 44 },
-      ]);
-    });
-
-    it('should keep deprecated inline and CSP-safe options backward compatible with filter arguments', () => {
-      const searchString = 'Ob'; // we'll provide "searchString" as filter args
-      const myFilter = (item: any, args: any) => item.name.toLowerCase().includes(args.searchString?.toLowerCase());
-      const items = [
-        { id: 1, name: 'Bob', age: 33 },
-        { id: 0, name: 'Hobby', age: 44 },
-        { id: 4, name: 'John', age: 20 },
-        { id: 3, name: 'Jane', age: 24 },
-      ];
-
-      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
+      dv = new SlickDataView();
       dv.setItems(items);
       dv.setFilterArgs({ searchString });
       dv.setFilter(myFilter);
@@ -1868,33 +1822,7 @@ describe('SlickDatView core file', () => {
       ];
       const filter = (item: any) => item.id >= 2;
 
-      dv = new SlickDataView({ inlineFilters: false, useCSPSafeFilter: false });
-      const onPagingInfoSpy = vi.spyOn(dv.onPagingInfoChanged, 'notify');
-      dv.setItems(items);
-      dv.setFilter(filter);
-      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 1 });
-      dv.refresh();
-
-      expect(dv.getPagingInfo()).toEqual({ dataView: dv, pageNum: 1, pageSize: 1, totalPages: 2, totalRows: 2 });
-      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 1, pageSize: 1, totalPages: 2, totalRows: 2 }, null, dv);
-      expect(dv.getItemCount()).toBe(3);
-      expect(dv.getFilter()).toBeTruthy();
-      expect(dv.getFilteredItemCount()).toBe(2);
-      expect(dv.getFilteredItems()).toEqual([
-        { id: 4, name: 'John', age: 20 },
-        { id: 3, name: 'Jane', age: 24 },
-      ]);
-    });
-
-    it('should be able to set an inline filter with Pagination and expect items to be filtered on 2nd page', () => {
-      const items = [
-        { id: 1, name: 'Bob', age: 33 },
-        { id: 4, name: 'John', age: 20 },
-        { id: 3, name: 'Jane', age: 24 },
-      ];
-      const filter = (item: any) => item.id >= 2;
-
-      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
+      dv = new SlickDataView();
       const onPagingInfoSpy = vi.spyOn(dv.onPagingInfoChanged, 'notify');
       dv.setItems(items);
       dv.setFilter(filter);
@@ -1924,7 +1852,7 @@ describe('SlickDatView core file', () => {
         return item.id >= 2;
       }
 
-      dv = new SlickDataView({ inlineFilters: false, useCSPSafeFilter: false });
+      dv = new SlickDataView();
       const onPagingInfoSpy = vi.spyOn(dv.onPagingInfoChanged, 'notify');
       const onRowCountChangeSpy = vi.spyOn(dv.onRowCountChanged, 'notify');
       const onRowsChangeSpy = vi.spyOn(dv.onRowsChanged, 'notify');
@@ -1969,68 +1897,6 @@ describe('SlickDatView core file', () => {
       dv.setFilter(function (item) {
         return item.id >= 0;
       });
-      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 3, totalRows: 5 }, null, dv);
-      expect(onRowCountChangeSpy).toHaveBeenCalledWith(
-        { dataView: dv, previous: 1, current: 2, changedRows: [1], itemCount: 5, callingOnRowsChanged: true },
-        null,
-        dv
-      );
-      expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
-    });
-
-    it('should be able to set a inline filter with Pagination and expect items to be filtered on 1st page', () => {
-      const items = [
-        { id: 1, name: 'Bob', age: 33 },
-        { id: 4, name: 'John', age: 20 },
-        { id: 3, name: 'Jane', age: 24 },
-        { id: 5, name: 'Alpha', age: 12 },
-        { id: 6, name: 'Omega', age: 24 },
-      ];
-      function myFilter(item: any) {
-        return item.id >= 2;
-      }
-
-      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
-      const onPagingInfoSpy = vi.spyOn(dv.onPagingInfoChanged, 'notify');
-      const onRowCountChangeSpy = vi.spyOn(dv.onRowCountChanged, 'notify');
-      const onRowsChangeSpy = vi.spyOn(dv.onRowsChanged, 'notify');
-      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 10 });
-      dv.setItems(items);
-      dv.setRefreshHints({ isFilterNarrowing: true });
-      dv.setFilter(myFilter);
-
-      expect(dv.getPagingInfo()).toEqual({ dataView: dv, pageNum: 0, pageSize: 10, totalPages: 1, totalRows: 4 });
-      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 10, totalPages: 1, totalRows: 5 }, null, dv);
-      expect(dv.getItemCount()).toBe(items.length);
-      expect(dv.getFilter()).toBeTruthy();
-      expect(dv.getFilteredItemCount()).toBe(4);
-      expect(dv.getFilteredItems()).toEqual([
-        { id: 4, name: 'John', age: 20 },
-        { id: 3, name: 'Jane', age: 24 },
-        { id: 5, name: 'Alpha', age: 12 },
-        { id: 6, name: 'Omega', age: 24 },
-      ]);
-
-      dv.setRefreshHints({ isFilterExpanding: true });
-      items[0].id = 11;
-      dv.setPagingOptions({ dataView: dv, pageNum: 2, pageSize: 2 });
-
-      // change filter without changing pagination & expect pageNum to be recalculated
-      dv.setFilter(function (item) {
-        return item.id >= 10;
-      });
-      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 1, totalRows: 1 }, null, dv);
-      expect(onRowCountChangeSpy).toHaveBeenCalledWith(
-        { dataView: dv, previous: 2, current: 1, itemCount: 5, changedRows: [0, 1], callingOnRowsChanged: true },
-        null,
-        dv
-      );
-      expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [0, 1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
-
-      // change filter without changing pagination will result in 2 changes but only 1 defined as changed because we ignore diffs from 0-1
-      dv.setRefreshHints({ ignoreDiffsBefore: 1, ignoreDiffsAfter: 3 });
-      items[0].id = 8;
-      dv.setFilter((item) => item.id >= 0 || item.name.includes('a'));
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 3, totalRows: 5 }, null, dv);
       expect(onRowCountChangeSpy).toHaveBeenCalledWith(
         { dataView: dv, previous: 1, current: 2, changedRows: [1], itemCount: 5, callingOnRowsChanged: true },
@@ -2521,6 +2387,21 @@ describe('SlickDatView core file', () => {
     });
 
     describe('getFormattedCellValue()', () => {
+      it('should use an already-resolved item without reading the row again', () => {
+        (dv as any).formattedDataCache[1] = { name: 'Cached Alice', empty: '', zero: 0 };
+        const getItemSpy = vi.spyOn(dv, 'getItem');
+        try {
+          expect(dv.getFormattedCellValue(999, 'name', 'MISS', cacheItems[0])).toBe('Cached Alice');
+          expect(dv.getFormattedCellValue(999, 'empty', 'MISS', cacheItems[0])).toBe('');
+          expect(dv.getFormattedCellValue(999, 'zero', 'MISS', cacheItems[0])).toBe(0);
+          expect(dv.getFormattedCellValue(999, 'missing', 'MISS', cacheItems[0])).toBe('MISS');
+          expect(dv.getFormattedCellValue(999, 'name', 'MISS', {} as any)).toBe('MISS');
+          expect(getItemSpy).not.toHaveBeenCalled();
+        } finally {
+          getItemSpy.mockRestore();
+        }
+      });
+
       it('should return fallback when cache is disabled', () => {
         const dvNoCache = new SlickDataView({});
         const gridNoCache = new SlickGrid('#myGrid', dvNoCache, columns, { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as any);
@@ -2690,6 +2571,68 @@ describe('SlickDatView core file', () => {
         expect(dvBatch.getCacheStatus().isPopulating).toBe(false);
         gridBatch.destroy();
         dvBatch.destroy();
+      });
+
+      it('should close the MessagePort once population is completed to avoid retaining the dataset in memory', async () => {
+        dv.clearFormattedDataCache();
+        dv.populateFormattedDataCacheAsync();
+        const port = (dv as any)._populateCachePort as MessagePort;
+        expect(port).toBeDefined();
+        const closeSpy = vi.spyOn(port, 'close');
+
+        await waitForCache();
+
+        expect(closeSpy).toHaveBeenCalled();
+        expect(port.onmessage).toBeNull();
+        expect((dv as any)._populateCachePort).toBeUndefined();
+      });
+
+      it('should close the previous MessagePort when population is re-triggered', () => {
+        dv.populateFormattedDataCacheAsync();
+        const firstPort = (dv as any)._populateCachePort as MessagePort;
+        const closeSpy = vi.spyOn(firstPort, 'close');
+
+        dv.populateFormattedDataCacheAsync();
+
+        expect(closeSpy).toHaveBeenCalled();
+        expect(firstPort.onmessage).toBeNull();
+        expect((dv as any)._populateCachePort).not.toBe(firstPort);
+      });
+
+      it('should close the pending MessagePort when the DataView is destroyed', () => {
+        dv.populateFormattedDataCacheAsync();
+        const port = (dv as any)._populateCachePort as MessagePort;
+        const closeSpy = vi.spyOn(port, 'close');
+
+        dv.destroy();
+
+        expect(closeSpy).toHaveBeenCalled();
+        expect((dv as any)._populateCachePort).toBeUndefined();
+      });
+
+      it('should bail out of a stale batch callback when a newer population has started', () => {
+        const queuedRafCallbacks: Array<FrameRequestCallback> = [];
+        const rafSpy = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+          queuedRafCallbacks.push(cb);
+          return queuedRafCallbacks.length as any;
+        });
+        vi.stubGlobal('MessageChannel', undefined as any);
+
+        try {
+          dv.clearFormattedDataCache();
+          queuedRafCallbacks.length = 0;
+          dv.populateFormattedDataCacheAsync();
+          const staleCallback = queuedRafCallbacks[0];
+          dv.populateFormattedDataCacheAsync();
+          const lastProcessedRow = (dv as any).formattedCacheMetadata.lastProcessedRow;
+
+          staleCallback(performance.now());
+
+          expect((dv as any).formattedCacheMetadata.lastProcessedRow).toBe(lastProcessedRow);
+        } finally {
+          vi.unstubAllGlobals();
+          rafSpy.mockRestore();
+        }
       });
 
       it('should fallback to requestAnimationFrame and cancel a pending RAF when re-triggered', () => {

@@ -1,0 +1,81 @@
+{
+  "node": "v24.16.0",
+  "sizes": [
+    1000,
+    10000
+  ],
+  "results": [
+    {
+      "name": "1000 / numeric",
+      "medianMs": 3.3878459999999677,
+      "p95Ms": 3.769300000000044,
+      "idsHash": "007a1d9bc4be83cca0d6ade3195dac5dff946f4352df818c26452e4eb772fe28"
+    },
+    {
+      "name": "1000 / string",
+      "medianMs": 3.97338000000002,
+      "p95Ms": 4.0252570000000105,
+      "idsHash": "007a1d9bc4be83cca0d6ade3195dac5dff946f4352df818c26452e4eb772fe28"
+    },
+    {
+      "name": "1000 / date",
+      "medianMs": 184.84576399999992,
+      "p95Ms": 190.9554270000001,
+      "idsHash": "7524bd2466741c8f0fcd9569895aa3df2899f17d2ce05e3d52696aea1b6c0521"
+    },
+    {
+      "name": "10000 / numeric",
+      "medianMs": 56.5316829999997,
+      "p95Ms": 59.82065499999999,
+      "idsHash": "17a78d058140e9cb128932a4748916aab24a6d2615ac3be3e9501fe1b292d259"
+    },
+    {
+      "name": "10000 / string",
+      "medianMs": 51.755157000000054,
+      "p95Ms": 52.11107600000014,
+      "idsHash": "17a78d058140e9cb128932a4748916aab24a6d2615ac3be3e9501fe1b292d259"
+    },
+    {
+      "name": "10000 / date",
+      "medianMs": 1829.2875809999987,
+      "p95Ms": 1837.6989439999998,
+      "idsHash": "2596370fcd1e5e8e3a7501b6e1a07a9f5c4ae186f038d8e7828547fff37abcf1"
+    },
+    {
+      "name": "1000 / multi-column",
+      "medianMs": 5.543525000000955,
+      "p95Ms": 5.756524000000354,
+      "idsHash": "c090f223cc8fdb14df6da1f3a6e4cc223a0ccd45be7cd22bbceac27d881a0d3f"
+    },
+    {
+      "name": "1000 / prepared dates",
+      "medianMs": 6.3280310000009194,
+      "p95Ms": 6.449626999998145,
+      "idsHash": "7524bd2466741c8f0fcd9569895aa3df2899f17d2ce05e3d52696aea1b6c0521"
+    },
+    {
+      "name": "1000 / tree equivalent fields",
+      "medianMs": 2.686645999998291,
+      "p95Ms": 2.830200000000332,
+      "idsHash": "3ce4c116fbf6427fb9ab50fc216be67feb83362c4fb6cb446d804f686bf68209"
+    },
+    {
+      "name": "10000 / multi-column",
+      "medianMs": 83.29635899999994,
+      "p95Ms": 83.37180699999954,
+      "idsHash": "6758abd29cef04cb67c74ce03f833628163df4afa5b215d6d62875b4a5db746e"
+    },
+    {
+      "name": "10000 / prepared dates",
+      "medianMs": 67.68034799999805,
+      "p95Ms": 72.12643200000093,
+      "idsHash": "2596370fcd1e5e8e3a7501b6e1a07a9f5c4ae186f038d8e7828547fff37abcf1"
+    },
+    {
+      "name": "10000 / tree equivalent fields",
+      "medianMs": 27.175176000000647,
+      "p95Ms": 27.92976500000077,
+      "idsHash": "7eef36da312ba0926715737650d23477d7f3b377b55cfe1a09d6c8c16e92c065"
+    }
+  ]
+}

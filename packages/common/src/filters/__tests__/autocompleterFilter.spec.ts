@@ -74,6 +74,42 @@ describe('AutocompleterFilter', () => {
     vi.clearAllMocks();
   });
 
+  it('ignores a stale async collection after reinitialization', async () => {
+    let resolveCollection!: (items: any[]) => void;
+    mockColumn.filter!.collectionAsync = new Promise<any[]>((resolve) => {
+      resolveCollection = resolve;
+    });
+    const pending = filter.init(filterArguments);
+    filter.destroy();
+    const currentCollection = [{ value: 'female', label: 'female' }];
+    mockColumn.filter!.collectionAsync = undefined;
+    mockColumn.filter!.collection = currentCollection;
+    await filter.init(filterArguments);
+    const renderSpy = vi.spyOn(filter, 'renderDomElement');
+    resolveCollection([{ value: 'male', label: 'male' }]);
+    await pending;
+    await Promise.resolve();
+    expect(renderSpy).not.toHaveBeenCalled();
+    expect(mockColumn.filter!.collection).toBe(currentCollection);
+  });
+
+  it('does not render or watch a collection that resolves after destruction', async () => {
+    let resolveCollection!: (items: any[]) => void;
+    mockColumn.filter!.collectionAsync = new Promise<any[]>((resolve) => {
+      resolveCollection = resolve;
+    });
+    const pending = filter.init(filterArguments);
+    filter.destroy();
+    const renderSpy = vi.spyOn(filter, 'renderDomElement');
+    const collection = [{ value: 'male', label: 'male' }];
+    resolveCollection(collection);
+    await pending;
+    await Promise.resolve();
+    expect(renderSpy).not.toHaveBeenCalled();
+    expect(mockColumn.filter!.collection).toBeUndefined();
+    expect(Object.hasOwn(collection, 'push')).toBe(false);
+  });
+
   it('should throw an error when there is no collection provided in the filter property', () =>
     new Promise((done: any) => {
       try {
@@ -98,6 +134,14 @@ describe('AutocompleterFilter', () => {
     expect(filter.instance).toBeTruthy();
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
+  });
+
+  it('preserves a shared collection when destroyed', () => {
+    const collection = [{ value: 'male', label: 'male' }];
+    mockColumn.filter.collection = collection;
+    filter.init(filterArguments);
+    filter.destroy();
+    expect(collection).toEqual([{ value: 'male', label: 'male' }]);
   });
 
   it('should initialize the filter even when user define his own global filter options', () => {

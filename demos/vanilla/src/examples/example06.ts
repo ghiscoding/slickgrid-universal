@@ -31,6 +31,7 @@ export default class Example06 {
   isRemoveLastInsertedPopSongDisabled = true;
   lastInsertedPopSongId: number | undefined;
   searchString = '';
+  subTitleStyle = 'display: block';
 
   attached() {
     this.initializeGrid();
@@ -267,12 +268,12 @@ export default class Example06 {
     if (data[idx + 1]?.[treeLevelPropName] > data[idx][treeLevelPropName] || data[idx]['__hasChildren']) {
       const folderPrefix = `<i class="mdi font-22px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
       if (dataContext.__collapsed) {
-        return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-group-toggle collapsed" level="${treeLevel}"></span>${folderPrefix} ${prefix} ${spanValue}`;
+        return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-tree-toggle collapsed" level="${treeLevel}"></span>${folderPrefix} ${prefix} ${spanValue}`;
       } else {
-        return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-group-toggle expanded" level="${treeLevel}"></span>${folderPrefix} ${prefix} ${spanValue}`;
+        return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-tree-toggle expanded" level="${treeLevel}"></span>${folderPrefix} ${prefix} ${spanValue}`;
       }
     } else {
-      return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-group-toggle" level="${treeLevel}"></span>${prefix} ${spanValue}`;
+      return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-tree-toggle" level="${treeLevel}"></span>${prefix} ${spanValue}`;
     }
   };
 
@@ -477,5 +478,10 @@ export default class Example06 {
 
     // reset dataset to clear all tree data stat mutations (basically recreate the grid entirely to start from scratch)
     this.sgb.datasetHierarchical = this.mockDataset();
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

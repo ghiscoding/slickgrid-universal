@@ -1,0 +1,243 @@
+#### Index
+- [Columns/Rows Pinning Basic](#columnsrows-pinning-basic)
+- [Rows Pinning starting from Bottom](#rows-pinning-starting-from-bottom)
+- [Change Pinning Dynamically](#change-pinning-dynamically)
+- [Command labels and translation keys](#command-labels-and-translation-keys)
+- [Sticky Columns and Rows](sticky.md)
+
+### Demo
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example04) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example04.ts)
+
+### Introduction
+Pinning keeps selected columns or rows attached to a grid edge while the remaining content scrolls. Columns can be pinned on the left or right, and rows can be pinned at the top or bottom. You can also change pinning dynamically with `setOptions()`.
+
+Set `Column.pinnable` to `false` when a column must not be pinned or unpinned from the Header Menu. It defaults to `true` and only controls the built-in UI; `Column.pinned` and the programmatic pinning APIs remain available for application-controlled state.
+
+For scroll-activated docking, see [Sticky Columns and Rows](sticky.md). Sticky columns have no built-in Header Menu commands, so a separate `Column.stickable` flag is not needed.
+
+### Header Menu commands
+
+The Pinning Commands root menu is available by default whenever the Header Menu is enabled, including when the grid has no initial `pinning` state. To hide the entire root menu, add `'pinning-commands'` to `headerMenu.hideCommands`:
+
+```ts
+headerMenu: {
+  hideCommands: ['pinning-commands'],
+}
+```
+
+To hide selected actions instead, list their command IDs in `hideCommands` (for example, `'pin-left'` or `'unpin-columns'`). Set `Column.pinnable` to `false` to hide the Pinning Commands root menu for an individual column. These settings control Header Menu visibility; pinning can still be configured through the grid options and APIs.
+
+Pinning command IDs supported by `headerMenu.hideCommands`:
+
+| Command ID |
+| --- |
+| `pinning-commands` |
+| `pin-column` |
+| `pin-left` |
+| `pin-columns-left` |
+| `pin-columns-right` |
+| `pin-right` |
+| `unpin-column` |
+| `unpin-columns` |
+
+### Command labels and translation keys
+
+The pinning commands of the Header Menu and Grid Menu use the following translation keys (Translate Service) or `TEXT_` prefixed locale keys (custom `locales` grid option):
+
+| Menu        | Command                       | Translation key                            | Default English text                 |
+| ----------- | ----------------------------- | ------------------------------------------ | ------------------------------------ |
+| Header Menu | Pinning Commands root menu    | `PIN_COLUMN`                               | Column Pinning                       |
+| Header Menu | Pin column left/right         | `PIN_LEFT` and `PIN_RIGHT`                 | Pin to Left / Pin to Right                 |
+| Header Menu | Pin columns left/right (bulk) | `PIN_COLUMNS_LEFT` and `PIN_COLUMNS_RIGHT` | Pin Left Through Here / Pin From Here To Right |
+| Header Menu | Unpin Column                  | `UNPIN_COLUMN`                             | Unpin Column                         |
+| Header Menu | Unpin All Columns             | `UNPIN_ALL_COLUMNS`                            | Unpin All Columns                    |
+| Grid Menu   | Clear all pinning             | `CLEAR_ALL_PINNING`                        | Clear all Pinning                    |
+
+You can also override these texts directly through the menu `commandLabels` options:
+
+```ts
+gridOptions = {
+  gridMenu: {
+    commandLabels: {
+      clearPinningCommand: 'Clear all Pinning',
+      clearPinningCommandKey: 'CLEAR_ALL_PINNING', // translation key, when using a Translate Service
+    },
+  },
+  headerMenu: {
+    commandLabels: {
+      pinColumnCommand: 'Column Pinning',
+      pinLeftCommand: 'Pin to Left',
+      pinRightCommand: 'Pin to Right',
+      pinningColumnsLeftCommand: 'Pin Left Through Here',
+      pinningColumnsRightCommand: 'Pin From Here To Right',
+      unpinColumnCommand: 'Unpin Column',
+      unpinningColumnsCommand: 'Unpin All Columns',
+    },
+  },
+};
+```
+## Columns/Rows Pinning basic
+To configure pinning for the entire lifetime of the grid, use the nested `pinning` Grid Option. A numeric left value is an inclusive boundary among visible columns; a numeric right value is a count from the trailing edge of the visible columns. Numeric boundaries are recalculated when columns are hidden. Use explicit arrays to pin specific columns: numeric entries are zero-based indexes, while string entries are column IDs (use a string for a numeric column ID). Explicit IDs keep the same columns pinned when visibility or order changes.
+
+Explicit column and row references do not need to be contiguous. For example, `columns.left: ['account', 'status']` pins only those columns, while `rows.top: [0, 2, 4]` pins only those rows. Pinned rows remain part of the normal dataset height, and the unpinned rows are laid out contiguously so skipped row indexes do not create blank gaps.
+
+ID references follow their row through sorting and filtering. Index references remain positional, so recompute an index used for a changing last row. `setOptions({ pinning: null })` and `setOptions({ pinning: undefined })` both clear pinning.
+
+##### Component
+```ts
+export class GridBasicComponent {
+  columns: Column[];
+  gridOptions: GridOption;
+  dataset: any[];
+
+  attached(): void {
+    // your columns definition
+    this.columns = [];
+
+    this.gridOptions = {
+      alwaysShowVerticalScroll: false,
+      pinning: {
+        columns: { left: 2 },
+        rows: { top: [0, 1, 2] },
+      },
+      // v11 and lower: frozenColumn: 2, frozenRow: 3
+    }
+  }
+}
+```
+
+> Pinning validation errors use the shared `errorCallback`, for example `errorCallback: (msg) => alert(msg)`. Each validation message remains independently configurable.
+
+> **Caution**
+> Please be aware that pinned columns cannot consume the entire grid viewport. The error is passed to the shared `errorCallback`; customize its text with `invalidColumnPinningWidthMessage` or disable validation with `skipPinningValidation`.
+
+> **Caution**
+> The Column Picker and Grid Menu also validate that at least one center column remains available. The error is passed to the shared `errorCallback`; customize its text with `invalidColumnPinningPickerMessage` or disable pinning validation with `skipPinningValidation`.
+
+> When a rendered row contains a colspan crossing docking bands, columns must be pinned sequentially from the left or right edge. A non-sequential change is rejected through the shared `errorCallback` and can be customized with `invalidColumnPinningSequenceMessage`.
+
+## Rows Pinning starting from bottom
+To pin rows at the bottom, provide the row indexes in `pinning.rows.bottom` and leave the top list empty.
+##### Component
+```ts
+export class GridBasicComponent {
+  columns: Column[];
+  gridOptions: GridOption;
+  dataset: any[];
+
+  attached(): void {
+      // your columns definition
+    this.columns = [];
+
+    this.gridOptions = {
+      alwaysShowVerticalScroll: false,
+      pinning: {
+        columns: { left: 2 },
+        rows: { bottom: [97, 98, 99] },
+      },
+      // v11 and lower: frozenColumn: 2, frozenRow: 3, frozenBottom: true
+    }
+  }
+}
+```
+
+## Change Pinning Dynamically
+You can change the number of pinned columns/rows and even the pinning of columns from top to bottom.
+
+```html
+<div class="row col-sm-12">
+    <span>
+      <label for="">Pinned Rows: </label>
+      <input type="number" min="-1"
+             value.bind="pinnedRowCount">
+      <button class="btn btn-default btn-xs"
+              click.trigger="changePinnedRowCount()">
+        Set
+      </button>
+    </span>
+    <span style="margin-left: 10px">
+      <label for="">Pinned Columns: </label>
+      <input type="number" min="-1"
+             value.bind="pinnedColumnCount">
+      <button class="btn btn-default btn-xs"
+              click.trigger="changePinnedColumnCount()">
+        Set
+      </button>
+    </span>
+    <span style="margin-left: 15px">
+      <button class="btn btn-default btn-sm" click.trigger="togglePinnedBottomRows()">
+         <i class="mdi-flip-vertical"></i> Toggle Pinned Rows
+      </button>
+      <span style="font-weight: bold;">: ${ isPinnedBottom ? 'Bottom' : 'Top' }</span>
+    </span>
+</div>
+
+<div class="gridId">
+</div>
+```
+
+##### Component
+```ts
+export class GridBasicComponent {
+  columns: Column[];
+  gridOptions: GridOption;
+  dataset: any[];
+  isPinnedBottom = false;
+
+  attached(): void {
+    // your columns definition
+    this.columns = [];
+
+    this.gridOptions = {
+      alwaysShowVerticalScroll: false,
+      pinning: {
+        columns: { left: 2 },
+        rows: { top: [0, 1, 2] },
+      },
+    }
+  }
+
+  /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
+  changePinnedColumnCount() {
+    if (this.sgb.slickGrid.setOptions) {
+      this.sgb.slickGrid.setOptions({
+        pinning: { columns: { left: this.pinnedColumnCount } }
+      });
+    }
+  }
+
+  /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
+  changePinnedRowCount() {
+    if (this.sgb.slickGrid.setOptions) {
+      this.sgb.slickGrid.setOptions({
+        pinning: { rows: { top: [0, 1, 2] } }
+      });
+    }
+  }
+
+  /** toggle dynamically, through slickgrid "setOptions()" the top/bottom pinned location */
+  togglePinnedBottomRows() {
+    if (this.sgb.slickGrid.setOptions) {
+      this.sgb.slickGrid.setOptions({
+        pinning: {
+          rows: this.isPinnedBottom ? { top: [0, 1, 2], bottom: [] } : { top: [], bottom: [0, 1, 2] },
+        }
+      });
+      this.isPinnedBottom = !this.isPinnedBottom; // toggle the variable
+    }
+  }
+}
+```
+
+## Right-to-left grids
+
+Pinning and sticky docking work in `rtl: true` grids. Band names follow reading order rather than screen position, so the same options work in either direction:
+
+| Setting | Left-to-right | Right-to-left |
+|---|---|---|
+| `columns.left` | left edge | right edge |
+| `columns.right` | right edge | left edge |
+| `sticky: true` | leading (left) edge | leading (right) edge |
+| `sticky: 'left'` / `'right'` | named edge | same logical band, mirrored |
+
+`getCellFromPoint(x, y)` still measures `x` from the grid's physical left edge. In an RTL grid it counts back from the last column and resolves points over pinned or sticky bands to the column rendered there.

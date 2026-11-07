@@ -9,8 +9,5 @@
 
 A very Simple Vanilla Implementation of a Binding Engine & Helper to add properties/events 2 way bindings. This binding engine is a very simple implementation and is used by simple components like the Custom Footer & Pagination. Again this is a very simple implementation and should not be used with large components but is good enough for small use cases like a footer, pagination and other small ones.
 
-### External Dependencies
-- [DOM Purify](https://github.com/cure53/DOMPurify) to sanitize HTML text
-
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)

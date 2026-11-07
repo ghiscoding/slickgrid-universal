@@ -5,6 +5,7 @@ export * from './dataWrapperService.js';
 export * from './dateUtils.js';
 export * from './domUtilities.js';
 export * from './excelExport.service.js';
+export * from './exportUtilities.js';
 export * from './extension.service.js';
 export * from './filter.service.js';
 export * from './grid.service.js';

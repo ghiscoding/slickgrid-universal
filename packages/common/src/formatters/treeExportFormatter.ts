@@ -1,6 +1,5 @@
 import { addWhiteSpaces, stripTags } from '@slickgrid-universal/utils';
-import { Constants } from '../constants.js';
-import { getCellValueFromQueryFieldGetter } from '../services/utilities.js';
+import { getCellValueFromQueryFieldGetter, getTreeDataPropNames } from '../services/utilities.js';
 import { type Formatter } from './../interfaces/index.js';
 import { parseFormatterWhenExist } from './formatterUtilities.js';
 
@@ -8,9 +7,7 @@ import { parseFormatterWhenExist } from './formatterUtilities.js';
 export const treeExportFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
   const gridOptions = grid.getOptions();
   const treeDataOptions = gridOptions?.treeDataOptions;
-  const collapsedPropName = treeDataOptions?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
-  const hasChildrenPropName = treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
-  const treeLevelPropName = treeDataOptions?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
+  const { collapsedPropName, hasChildrenPropName, levelPropName } = getTreeDataPropNames(treeDataOptions);
   const indentMarginLeft = treeDataOptions?.exportIndentMarginLeft ?? 5;
   const exportIndentationLeadingChar = treeDataOptions?.exportIndentationLeadingChar ?? '.';
   const exportIndentationLeadingSpaceCount = treeDataOptions?.exportIndentationLeadingSpaceCount ?? 3;
@@ -25,13 +22,13 @@ export const treeExportFormatter: Formatter = (row, cell, value, columnDef, data
     return '';
   }
 
-  if (!dataContext.hasOwnProperty(treeLevelPropName)) {
+  if (!dataContext.hasOwnProperty(levelPropName)) {
     throw new Error(
       '[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.'
     );
   }
 
-  const treeLevel = dataContext[treeLevelPropName] ?? 0;
+  const treeLevel = dataContext[levelPropName] ?? 0;
   let toggleSymbol = '';
   let indentation = 0;
 

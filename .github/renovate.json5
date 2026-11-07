@@ -3,7 +3,7 @@
   extends: ['config:base', 'group:allNonMajor'],
   labels: ['📦 dependencies', '🤖 bot'],
   dependencyDashboard: true,
-  minimumReleaseAge: '2 days',
+  minimumReleaseAge: '4 days',
   // since all PRs touches the pnpm lock file, let's open not more than 2 PRs at the same time
   prConcurrentLimit: 2,
   rangeStrategy: 'bump',
@@ -21,28 +21,14 @@
         enabled: false,
       },
     },
+    {
+      packageNames: ['pnpm'],
+      allowedVersions: '< 12.0.0',
+    },
     // Babel new major versions fail in Angular, let's ignore those
     {
       packageNames: ['@babel/core', 'undici'],
       allowedVersions: '< 8.0.0',
-    },
-    // jsdom v30 seems to cause test regressions in slickgrid.ts because of `getComputedStyle()` changes
-    {
-      packageNames: ['jsdom'],
-      allowedVersions: '< 30.0.0',
-    },
-    // postponed few packages to next major
-    {
-      packageNames: ['i18next'],
-      allowedVersions: '< 26.0.0',
-    },
-    {
-      packageNames: ['react-i18next'],
-      allowedVersions: '< 17.0.0',
-    },
-    {
-      packageNames: ['@angular-eslint/eslint-plugin'],
-      allowedVersions: '< 22.0.0',
     },
     {
       // Exclude all the packages that I personally maintain from minimumReleaseAge
@@ -50,7 +36,7 @@
       minimumReleaseAge: '0',
     },
   ],
-  ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
+  ignoreDeps: ['lee-dohm/no-response', 'node', 'typescript'],
   prBodyColumns: ['Package', 'Change', 'Age', 'Confidence'],
   schedule: ['every 4 weeks on friday'],
 }

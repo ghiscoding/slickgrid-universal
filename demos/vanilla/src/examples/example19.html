@@ -7,6 +7,11 @@
 <h3 class="title is-3">
   Example 19 - ExcelCopyBuffer with Cell Selection
   <span class="subtitle">(with Salesforce Theme)</span>
+  <span class="d-inline-flex">
+    <button class="button is-small mr-1" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -19,7 +24,7 @@
   </div>
 </h3>
 
-<h5 class="mb-3 italic example-details">
+<h5 class="mb-3 italic example-details" style.bind="subTitleStyle">
   <p>Grid - using <code>enableExcelCopyBuffer</code> which uses <code>SlickHybridSelectionModel</code></p>
   <p>The complete first row and the cells C - E of the second row are not allowing to paste values.</p>
   <p>

@@ -1,5 +1,6 @@
 #### index
 - [Usage](#usage)
+- [Rendering and DOM structure](#rendering-and-dom-structure)
 - [Changing Addon Options Dynamically](#changing-addon-options-dynamically)
 - [Calling Addon Methods Dynamically](#calling-addon-methods-dynamically)
 - [Row Detail - Preload Component - Loading Spinner](#row-detail---preload-component-loading-spinner)
@@ -23,23 +24,34 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 > So for that reason, you should avoid using dynamic elements (i.e. form inputs) because whenever a re-render kicks in, it will reset and re-render the Row Detail content as if nothing happened.
 > So you should consider using Row Detail mainly for showing static data (hence the name "Row Detail" to show more detailed info) and to be clear dynamic elements can be rendered but it's very usable if they get reset every time you scroll out of the viewport and so just remember this limitation.
 
-### Transform-compatible rendering
+### Rendering and DOM structure
 
-Row Detail automatically uses the `overlay` render mode when `rowTopOffsetRenderType` is `transform` (the default). The panel is mounted in a sibling layer of the grid canvas instead of inside the transformed row, so it remains above neighbouring rows. No additional Row Detail option is required.
+Row Detail panels are mounted directly in the grid canvas as siblings of the transformed rows. Each panel uses one `.slick-row-detail-container` element for positioning and automatic overflow scrolling. No overlay host or inner wrapper divs are created, and no rendering option is required. Panels occupy their reserved padding rows even when the parent is pinned or sticky, and stay aligned with the visible viewport during horizontal scrolling.
+
+In v11, `rowTopOffsetRenderType` and `rowDetailView.renderMode` have been removed. Remove both options from existing configurations; see the [v11 migration guide](../../../../docs/migrations/migration-to-11.x.md#row-positioning-rowtopoffsetrendertype).
 
 ```ts
 const gridOptions: GridOption = {
   enableRowDetailView: true,
-  rowTopOffsetRenderType: 'transform',
   rowDetailView: {
     // ... other Row Detail options
   }
 };
 ```
 
-`renderMode: 'inline'` remains available temporarily for existing applications and is deprecated. Explicitly selecting it makes SlickGrid use `rowTopOffsetRenderType: 'top'` for compatibility. Overlay rendering preserves the existing Row Detail classes and framework component lifecycle, but custom CSS or tests that rely on `.slick-cell + .dynamic-cell-detail` should be changed to target `.dynamic-cell-detail` directly.
+The generated panel has only two classes. For an item with ID `1`, its structure is:
 
-**v11 transition:** Overlay rendering is the permanent rendering approach. In v11, it is planned to become the only Row Detail renderer, so `renderMode` may be removed from the API.
+```html
+<div class="slick-row-detail-container row-detail-1">
+  <!-- Your Row Detail template or framework component host -->
+</div>
+```
+
+Use `.slick-row-detail-container` for shared panel styling and `.row-detail-{id}` to select a specific item, where `{id}` is the dataset item's identifier. The panel handles positioning, sizing, and automatic overflow scrolling.
+
+The Angular, Aurelia, React, and Vue Row Detail plugins mount their preload and detail components directly into this panel. Angular and Aurelia retain their framework component host elements; any elements in your own template also remain. Component lifecycle handling and `keepComponentAlive` continue to apply.
+
+In v11, `.dynamic-cell-detail` is renamed to `.slick-row-detail-container`, and `.cellDetailView_{id}` becomes `.row-detail-{id}`. The `.slick-row-detail-overlay` host, inner wrapper divs, and redundant panel classes have been removed. Update CSS and DOM queries that use `.detail-container`, `.detailViewContainer_{id}`, `.innerDetailView_{id}`, `.container_{id}`, or `.container_loading`. Select the panel using `.slick-row-detail-container` or `.row-detail-{id}`; select preload content using classes in your preload component's own markup. Panels are siblings of grid rows, so replace `.slick-cell + .dynamic-cell-detail` selectors with `.slick-row-detail-container` as well. See [Row Detail DOM and CSS selector migration](../../../../docs/migrations/migration-to-11.x.md#row-detail-dom-and-css-selectors) for a before/after DOM comparison.
 
 ### Keeping Row Detail Components Alive During Scrolling
 
@@ -81,7 +93,20 @@ changeKeepingComponentAlive() {
 
 ## Usage
 
-> Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/aurelia-row-detail-plugin`)
+### Required Styles (v11+)
+Stylesheets are now contained in each optional package, add `@slickgrid-universal/row-detail-plugin` styles after your grid theme in your global SCSS/CSS entry file:
+
+```scss
+// SASS
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@use '@slickgrid-universal/row-detail-plugin/dist/styles/sass/slick-row-detail.scss';
+
+// CSS
+@import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
+@import '@slickgrid-universal/row-detail-plugin/dist/styles/css/slick-row-detail.css';
+```
+
+Use the Sass file for your chosen theme. See [Required Styles for Extra Packages](../styling/styling.md#required-styles-for-extra-packages) for CSS imports and theme configuration details.
 
 ##### View
 ```html
@@ -433,9 +458,6 @@ addNewColumn() {
 }
 ```
 
-> **Note**
-> The code above is no longer necessary with v10.8.0 and above, the lib will now take care of that for you.
-
 ## Row Detail with Inner Grid
 
 You can also add an inner grid inside a Row Detail, however there are a few things to know off and remember. Any time a Row Detail is falling outside the main grid viewport, it will be unmounted and until it comes back into the viewport which is then remounted. The process of unmounting and remounting means that Row Detail previous states aren't preserved, however you could use Grid State & Presets to overcome this problem.
@@ -447,7 +469,7 @@ Main Grid Component
 ```ts
 import { AureliaRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin'; // for v10 and above
 import { bindable } from 'aurelia';
-import { type AureliaGridInstance, type Column, ExtensionName, type GridOption, type SlickRowDetailView, } from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, type GridOption, type SlickRowDetailView, } from 'aurelia-slickgrid';
 
 export class MainGrid implements OnInit {
   columns: Column[] = [];
@@ -521,7 +543,7 @@ Now, let's define our Inner Grid Component
 
 ```ts
 import { bindable } from 'aurelia';
-import { type AureliaGridInstance, type Column, ExtensionName, type GridOption, type SlickRowDetailView, } from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, type GridOption, type SlickRowDetailView, } from 'aurelia-slickgrid';
 
 export interface Distributor { /* ... */ }
 export interface OrderData { /* ... */ }

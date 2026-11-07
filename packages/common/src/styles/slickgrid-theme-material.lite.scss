@@ -12,6 +12,7 @@
 
 @forward './variables-theme-material';
 
+@use './theme-base-material';
 @use './slick-without-bootstrap-min-styling';
 @use './variables-theme-material';
 @use './roboto-font';

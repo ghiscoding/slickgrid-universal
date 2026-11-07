@@ -470,7 +470,7 @@ describe('Example 30  Composite Editor Modal', () => {
 
   it('should be able to click on the "Reset Form" button from the (Mass Update) and expect the form to be empty and not be able to Save', () => {
     const alertStub = cy.stub();
-    cy.on('window:alert', alertStub);
+    cy.window().then((win) => cy.stub(win, 'alert').callsFake(alertStub));
 
     cy.get('.item-details-container .modified').should('have.length', 4);
     cy.get('.reset-form').contains('Reset Form').click();
@@ -480,6 +480,7 @@ describe('Example 30  Composite Editor Modal', () => {
       .click()
       .then(() => expect(alertStub.getCall(0)).to.be.calledWith('Sorry we could not detect any changes.'));
 
+    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
     cy.get('.btn-cancel').click();
   });
 
@@ -581,6 +582,7 @@ describe('Example 30  Composite Editor Modal', () => {
     );
     cy.get('.item-details-container.editor-finish .modified').should('have.length', 1);
 
+    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
     cy.get('.btn-cancel').click();
   });
 
@@ -617,6 +619,7 @@ describe('Example 30  Composite Editor Modal', () => {
 
     cy.get('.item-details-editor-container .editor-checkbox').uncheck();
 
+    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
     cy.get('.btn-cancel').click();
 
     cy.get('[data-row="0"] > .slick-cell:nth(1)').contains('TASK 8899', { matchCase: false });
@@ -691,6 +694,7 @@ describe('Example 30  Composite Editor Modal', () => {
     cy.get('[data-row="6"] > .slick-cell:nth(11)').click({ force: true });
     cy.get('.slick-menu-item .slick-menu-content').first().should('contain', 'Edit Row').click();
     cy.get('.slick-editor-modal-title').should('contain', 'Editing - Task 4');
+    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
     cy.get('.slick-editor-modal-footer .btn-cancel').click();
     cy.get('.slick-editor-modal').should('not.exist');
   });
@@ -701,6 +705,7 @@ describe('Example 30  Composite Editor Modal', () => {
     cy.get('.slick-cell-menu').should('be.visible');
     cy.get('.slick-menu-item .slick-menu-content:nth(1)').should('contain', 'Clone Row').click();
     cy.get('.slick-editor-modal-title').should('contain', 'Clone - Task 4');
+    cy.window().then((win) => cy.stub(win, 'confirm').returns(true));
     cy.get('.slick-editor-modal-footer .btn-cancel').click();
   });
 });

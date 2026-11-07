@@ -27,13 +27,18 @@ import {
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent.js';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../test/translateServiceStub.js';
+import { TreeDataService as TreeDataServiceSource } from '../../../common/src/services/treeData.service.js';
+import { SalesforceResizerService } from '../salesforce-resizer.service.js';
 import { VanillaForceGridBundle } from '../vanilla-force-bundle.js';
+
+vi.mock('@slickgrid-universal/vanilla-bundle', () => import('../../../vanilla-bundle/src/index.js'));
 
 vi.useFakeTimers();
 
@@ -154,6 +159,10 @@ const treeDataServiceStub = {
   handleOnCellClick: vi.fn(),
   sortHierarchicalDataset: vi.fn(),
   toggleTreeDataCollapse: vi.fn(),
+  // run the real shared sorting logic against the stubbed collaborators
+  filterService: filterServiceStub,
+  sharedService: new SharedService(),
+  sortTreeDataset: TreeDataServiceSource.prototype.sortTreeDataset,
 } as unknown as TreeDataService;
 
 const mockDataView = {
@@ -238,9 +247,19 @@ vi.mock('@slickgrid-universal/custom-tooltip-plugin', () => ({
   }),
 }));
 
+const mockExcelExportService = {
+  init: vi.fn(),
+} as unknown as TextExportService;
+
 const mockTextExportService = {
   init: vi.fn(),
 } as unknown as TextExportService;
+
+vi.mock('@slickgrid-universal/excel-export', () => ({
+  ExcelExportService: vi.fn().mockImplementation(function () {
+    return mockExcelExportService;
+  }),
+}));
 
 vi.mock('@slickgrid-universal/text-export', () => ({
   TextExportService: vi.fn().mockImplementation(function () {
@@ -255,6 +274,7 @@ vi.mock('@slickgrid-universal/common', async (importOriginal) => {
   const actual = (await importOriginal()) as any;
   return {
     ...actual,
+    GlobalGridOptions: (await import('../../../common/src/global-grid-options.js')).GlobalGridOptions,
     applyHtmlToElement: (elm: HTMLElement, val: any) => {
       elm.innerHTML = `${val || ''}`;
     },
@@ -339,6 +359,15 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
     expect(component.isGridInitialized).toBeTruthy();
   });
 
+  it('should use the Salesforce resizer by default and preserve an injected resizer', () => {
+    expect(component.resizerService).toBe(resizerServiceStub);
+    const initSpy = vi.spyOn(VanillaForceGridBundle.prototype, 'initialization').mockImplementation(() => {});
+    const defaultComponent = new VanillaForceGridBundle(document.createElement('div'));
+    initSpy.mockRestore();
+    expect(defaultComponent.resizerService).toBeInstanceOf(SalesforceResizerService);
+    defaultComponent.dispose();
+  });
+
   it('should create a grid and expect multiple event published', () => {
     const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
 
@@ -364,7 +393,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       const fixedHeight = 100;
       const resizerSpy = vi.spyOn(resizerServiceStub, 'resizeGrid');
 
-      component.gridOptions = { gridHeight: fixedHeight };
+      component.options = { gridHeight: fixedHeight };
       component.initialization(divContainer, slickEventHandler);
 
       expect(resizerSpy).toHaveBeenCalledWith(0, { height: fixedHeight, width: undefined });
@@ -374,7 +403,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       const fixedHeight = 100;
       const resizerSpy = vi.spyOn(resizerServiceStub, 'resizeGrid');
 
-      component.gridOptions = { gridHeight: fixedHeight };
+      component.options = { gridHeight: fixedHeight };
       component.initialization(divContainer, slickEventHandler);
 
       expect(resizerSpy).toHaveBeenCalledWith(0, { height: fixedHeight, width: undefined });
@@ -384,7 +413,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       const fixedWidth = 255;
       const resizerSpy = vi.spyOn(resizerServiceStub, 'resizeGrid');
 
-      component.gridOptions = { gridWidth: fixedWidth };
+      component.options = { gridWidth: fixedWidth };
       component.initialization(divContainer, slickEventHandler);
 
       expect(resizerSpy).toHaveBeenCalledWith(0, { height: undefined, width: fixedWidth });
@@ -393,7 +422,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
     it('should initialize the grid with autoResize enabled and without height/width then expect a "gridResize" to be called for auto-resizing', () => {
       const resizerSpy = vi.spyOn(resizerServiceStub, 'resizeGrid');
 
-      component.gridOptions = { enableAutoResize: true };
+      component.options = { enableAutoResize: true };
       component.initialization(divContainer, slickEventHandler);
 
       expect(resizerSpy).toHaveBeenCalledWith();
@@ -411,6 +440,15 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         vi.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
       });
 
+      it('accepts and exposes Salesforce options through the options accessor', () => {
+        component.options = { enableDeepCopyDatasetOnPageLoad: true };
+
+        expect(component.options.enableDeepCopyDatasetOnPageLoad).toBe(true);
+        expect(mockGrid.setOptions).toHaveBeenCalledWith(expect.objectContaining({ enableDeepCopyDatasetOnPageLoad: true }), false, true);
+        component.options.enableDeepCopyDatasetOnPageLoad = false;
+        expect(component.options.enableDeepCopyDatasetOnPageLoad).toBe(false);
+      });
+
       it('should merge grid options with global options when slickgrid "getOptions" does not exist yet', () => {
         mockGrid.getOptions = () => null as any;
         const setOptionSpy = vi.spyOn(mockGrid, 'setOptions');
@@ -421,11 +459,11 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         ];
         const mockGridOptions = { autoCommitEdit: false, autoResize: null as any };
 
-        component.gridOptions = mockGridOptions;
+        component.options = mockGridOptions;
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
-        expect(component.gridOptions.autoCommitEdit).toEqual(false);
+        expect(component.options.autoCommitEdit).toEqual(false);
         expect(setOptionSpy).toHaveBeenCalledWith(mockGridOptions, false, true);
         expect(sharedOptionSpy).toHaveBeenCalledWith(mockGridOptions);
       });
@@ -440,13 +478,38 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         ];
         const mockGridOptions = { autoCommitEdit: false, autoResize: null as any };
 
-        component.gridOptions = mockGridOptions;
+        component.options = mockGridOptions;
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
-        expect(component.gridOptions.autoCommitEdit).toEqual(false);
+        expect(component.options.autoCommitEdit).toEqual(false);
         expect(setOptionSpy).toHaveBeenCalledWith(mockGridOptions, false, true);
         expect(sharedOptionSpy).toHaveBeenCalledWith(mockGridOptions);
+      });
+
+      it.each([false, true])('should replace hidden commands with Salesforce defaults enabled: %s', (useSalesforceDefaultGridOptions) => {
+        const hideCommands = ['export-text-delimited'] as const;
+        const input: GridOption = {
+          useSalesforceDefaultGridOptions,
+          gridMenu: { hideCommands: [...hideCommands] },
+          contextMenu: { hideCommands: [] },
+          headerMenu: { hideCommands: ['sort-asc'] },
+          textExportOptions: { menuFormats: ['txt'] },
+        };
+        const options = component.mergeGridOptions(input);
+
+        expect(options.gridMenu!.hideCommands).toEqual(hideCommands);
+        expect(options.gridMenu!.hideCommands).not.toBe(input.gridMenu!.hideCommands);
+        expect(input.gridMenu!.hideCommands).toEqual(hideCommands);
+        expect(options.textExportOptions!.menuFormats).toEqual(['txt']);
+        expect(options.textExportOptions!.menuFormats).not.toBe(input.textExportOptions!.menuFormats);
+        expect(options.contextMenu!.hideCommands).toEqual([]);
+        expect(options.headerMenu!.hideCommands).toEqual(['sort-asc']);
+
+        const defaults = component.mergeGridOptions({ useSalesforceDefaultGridOptions });
+        expect(defaults.gridMenu!.hideCommands).toBeUndefined();
+        expect(defaults.contextMenu!.hideCommands).toBeUndefined();
+        expect(defaults.textExportOptions!.menuFormats).toEqual(useSalesforceDefaultGridOptions ? ['csv'] : undefined);
       });
 
       it('should merge paginationOptions when some already exist', () => {
@@ -481,7 +544,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       it('should initialize HeaderGroupingService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is disabled', () => {
         const spy = vi.spyOn(headerGroupingServiceStub, 'init');
 
-        component.gridOptions = { createPreHeaderPanel: true, enableDraggableGrouping: false } as unknown as GridOption;
+        component.options = { createPreHeaderPanel: true, enableDraggableGrouping: false } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
         // @ts-ignore
@@ -491,27 +554,37 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       it('should call "translateColumnHeaders" from ExtensionService when "enableTranslate" is set', () => {
         const spy = vi.spyOn(extensionServiceStub, 'translateColumnHeaders');
 
-        component.gridOptions = { enableTranslate: true } as unknown as GridOption;
+        component.options = { enableTranslate: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
         expect(spy).toHaveBeenCalled();
       });
 
       it('should initialize SlickCompositeEditorComponent when "enableCompositeEditor" is set', () => {
-        component.gridOptions = { enableCompositeEditor: true, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
+        component.options = { enableCompositeEditor: true, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
         expect(component.slickCompositeEditor instanceof SlickCompositeEditorComponent).toBe(true);
       });
 
       it('should initialize ExportService when "enableTextExport" is set when using Salesforce', () => {
-        component.gridOptions = { enableTextExport: true, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
+        component.options = { enableExcelExport: true, enableTextExport: false, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
+        component.resetExternalResources();
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(ExcelExportService).toHaveBeenCalled();
+        expect(SlickCustomTooltip).toHaveBeenCalled();
+        expect(component.registeredResources.length).toBe(5); // ExcelExportService, TextExportService, SlickCustomTooltip, GridService, GridStateService, SlickEmptyCompositeEditorComponent
+      });
+
+      it('should initialize ExportService when "enableTextExport" is set when using Salesforce', () => {
+        component.options = { enableTextExport: true, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
         component.resetExternalResources();
         component.initialization(divContainer, slickEventHandler);
 
         expect(TextExportService).toHaveBeenCalled();
         expect(SlickCustomTooltip).toHaveBeenCalled();
-        expect(component.registeredResources.length).toBe(6); // ExcelExportService, TextExportService, SlickCustomTooltip, GridService, GridStateService, SlickEmptyCompositeEditorComponent
+        expect(component.registeredResources.length).toBe(5); // ExcelExportService, TextExportService, SlickCustomTooltip, GridService, GridStateService, SlickEmptyCompositeEditorComponent
       });
 
       it('should add RxJS resource to all necessary Services when RxJS external resource is registered', () => {
@@ -521,7 +594,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         const sortServiceSpy = vi.spyOn(sortServiceStub, 'addRxJsResource');
         const paginationServiceSpy = vi.spyOn(paginationServiceStub, 'addRxJsResource');
 
-        component.gridOptions = { externalResources: [rxjsMock] } as unknown as GridOption;
+        component.options = { externalResources: [rxjsMock] } as unknown as GridOption;
         component.registerExternalResources([rxjsMock], true);
         component.initialization(divContainer, slickEventHandler);
 
@@ -545,7 +618,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       it('should bind local filter when "enableFiltering" is set', () => {
         const bindLocalSpy = vi.spyOn(filterServiceStub, 'bindLocalOnFilter');
 
-        component.gridOptions = { enableFiltering: true } as unknown as GridOption;
+        component.options = { enableFiltering: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
         expect(bindLocalSpy).toHaveBeenCalledWith(mockGrid);
@@ -554,7 +627,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       it('should bind local sort when "enableSorting" is set', () => {
         const bindLocalSpy = vi.spyOn(sortServiceStub, 'bindLocalOnSort');
 
-        component.gridOptions = { enableSorting: true } as unknown as GridOption;
+        component.options = { enableSorting: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
         expect(bindLocalSpy).toHaveBeenCalledWith(mockGrid);
@@ -570,7 +643,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
           { firstName: 'Jane', lastName: 'Smith' },
         ];
         vi.spyOn(mockDataView, 'getItems').mockReturnValueOnce(mockData);
-        component.gridOptions = {
+        component.options = {
           enablePagination: true,
           presets: { pagination: { pageSize: 2, pageNumber: expectedPageNumber } },
         };
@@ -600,7 +673,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
           { firstName: 'John', lastName: 'Doe' },
           { firstName: 'Jane', lastName: 'Smith' },
         ];
-        component.gridOptions = {
+        component.options = {
           enableFiltering: true,
           enablePagination: true,
           presets: { pagination: { pageSize: 10, pageNumber: expectedPageNumber } },
@@ -666,7 +739,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
           .mockReturnValue({ hierarchical: mockHierarchical as any[], flat: mockFlatDataset as any[] });
         const refreshTreeSpy = vi.spyOn(filterServiceStub, 'refreshTreeDataFilters');
 
-        component.gridOptions = {
+        component.options = {
           enableTreeData: true,
           treeDataOptions: {
             columnId: 'file',
@@ -683,5 +756,40 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         expect(treeConvertAndSortSpy).toHaveBeenCalled();
       });
     });
+  });
+});
+
+describe('Salesforce dataset preparation', () => {
+  it('passes copied flat and hierarchical datasets to tree processing', () => {
+    const grid = Object.create(VanillaForceGridBundle.prototype) as any;
+    const dataset = [{ id: 1, nested: { value: 'original' } }];
+    grid._gridOptions = { enableDeepCopyDatasetOnPageLoad: true, enableTreeData: true };
+    grid._currentDatasetLength = 0;
+    grid.sharedService = { hierarchicalDataset: [] };
+    grid.slickGrid = {};
+    grid.dataView = { getItems: () => [] };
+    grid.sortTreeDataset = vi.fn((items) => {
+      items[0].nested.value = 'changed';
+      return items;
+    });
+    grid.refreshGridData = vi.fn();
+    grid.suggestDateParsingWhenHelpful = vi.fn();
+    grid.dataset = dataset;
+    expect(dataset[0].nested.value).toBe('original');
+    grid.dataView = undefined;
+    grid.datasetHierarchical = dataset;
+    grid.sharedService.hierarchicalDataset[0].nested.value = 'changed';
+    expect(dataset[0].nested.value).toBe('original');
+  });
+
+  it('copies nested data only when enabled', () => {
+    const grid = Object.create(VanillaForceGridBundle.prototype) as any;
+    const dataset = [{ id: 1, nested: { value: 'original' } }];
+    grid._gridOptions = { enableDeepCopyDatasetOnPageLoad: true };
+    const copy = grid.prepareDataset(dataset);
+    copy[0].nested.value = 'changed';
+    expect(dataset[0].nested.value).toBe('original');
+    grid._gridOptions.enableDeepCopyDatasetOnPageLoad = false;
+    expect(grid.prepareDataset(dataset)).toBe(dataset);
   });
 });

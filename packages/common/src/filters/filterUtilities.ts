@@ -37,14 +37,18 @@ export function buildSelectOperator(optionValues: OperatorDetail[], grid: SlickG
 function renderDomElementFromCollectionAsync(
   collection: any[],
   columnDef: Column,
-  renderDomElementCallback: (collection: any) => void
-): void {
+  renderDomElementCallback: (collection: any) => void,
+  isActive?: () => boolean
+): any[] {
   const columnFilter = columnDef?.filter ?? {};
   collection = getCollectionFromObjectWhenEnabled(collection, columnFilter);
   if (!Array.isArray(collection)) {
     throw new Error(
       'Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.'
     );
+  }
+  if (isActive && !isActive()) {
+    return collection;
   }
 
   // copy over the array received from the async call to the "collection" as the new collection to use
@@ -53,6 +57,7 @@ function renderDomElementFromCollectionAsync(
 
   // recreate Multiple Select after getting async collection
   renderDomElementCallback(collection);
+  return collection;
 }
 
 export async function renderCollectionOptionsAsync(
@@ -60,34 +65,20 @@ export async function renderCollectionOptionsAsync(
   columnDef: Column,
   renderDomElementCallback: (collection: any) => void,
   rxjs?: RxJsFacade,
-  subscriptions?: Subscription[]
+  subscriptions?: Subscription[],
+  isActive?: () => boolean
 ): Promise<any[]> {
-  const columnFilter = columnDef?.filter ?? {};
-
   let awaitedCollection: any = null;
 
   if (collectionAsync) {
     const isObservable = rxjs?.isObservable(collectionAsync) ?? false;
     awaitedCollection = await fetchAsPromise(collectionAsync, rxjs);
-    awaitedCollection = getCollectionFromObjectWhenEnabled(awaitedCollection, columnFilter);
-
-    if (!Array.isArray(awaitedCollection)) {
-      throw new Error(
-        'Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.'
-      );
-    }
-
-    // copy over the array received from the async call to the "collection" as the new collection to use
-    // this has to be BEFORE the `collectionObserver().subscribe` to avoid going into an infinite loop
-    columnFilter.collection = awaitedCollection;
-
-    // recreate Multiple Select after getting async collection
-    renderDomElementCallback(awaitedCollection);
+    awaitedCollection = renderDomElementFromCollectionAsync(awaitedCollection, columnDef, renderDomElementCallback, isActive);
 
     // because we accept Promises & HttpClient Observable only execute once
     // we will re-create an RxJs Subject which will replace the "collectionAsync" which got executed once anyway
     // doing this provide the user a way to call a "collectionAsync.next()"
-    if (isObservable) {
+    if (isObservable && (!isActive || isActive())) {
       createCollectionAsyncSubject(columnDef, renderDomElementCallback, rxjs, subscriptions);
     }
   }

@@ -82,25 +82,6 @@ export function classNameToList(className = ''): string[] {
 }
 
 /**
- * Loop through all properties of an object and nullify any properties that are instanceof HTMLElement,
- * if we detect an array then use recursion to go inside it and apply same logic
- * @param obj - object containing 1 or more properties with DOM Elements
- */
-export function destroyAllElementProps(obj: Record<string, any> | null): void {
-  if (!obj || typeof obj !== 'object') {
-    return; // Guard clause for null/undefined
-  }
-
-  Object.keys(obj).forEach((key) => {
-    if (Array.isArray(obj[key])) {
-      destroyAllElementProps(obj[key]);
-    } else if (obj[key] instanceof HTMLElement) {
-      obj[key] = null; // Nullify HTML elements
-    }
-  });
-}
-
-/**
  * Empty a DOM element by removing all of its DOM element children leaving with an empty element (basically an empty shell)
  * @return {object} element - updated element
  */
@@ -225,6 +206,12 @@ export function htmlDecode(input?: string | boolean | number): string {
   if (isDefined(input)) {
     let str = input.toString();
 
+    // Plain text needs neither entity decoding nor textarea parser normalization.
+    // Keep markup, line endings and NUL on the existing HTML parsing path.
+    if (!/[&<\r\n\0]/.test(str)) {
+      return str;
+    }
+
     // Decode numeric surrogate pairs (for emoji and some Unicode)
     str = str.replace(/&#(\d+);&#(\d+);/g, (_, high, low) => {
       high = parseInt(high, 10);
@@ -242,9 +229,9 @@ export function htmlDecode(input?: string | boolean | number): string {
 
     // Decode named entities and tags (e.g. &lt;div&gt; → <div>), repeat for double-encoded cases
     let prev: string;
+    const txt = document.createElement('textarea');
     do {
       prev = str;
-      const txt = document.createElement('textarea');
       txt.innerHTML = str;
       str = txt.value;
     } while (str !== prev);

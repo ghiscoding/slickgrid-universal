@@ -20,6 +20,12 @@ describe('the Object w/String SortComparer', () => {
     collection = undefined as any;
   });
 
+  it('treats equal null object values as equal', () => {
+    const column = { id: 'x', field: 'x', dataKey: 'label' };
+    expect(objectStringSortComparer(null, null, 1, column)).toBe(0);
+    expect(objectStringSortComparer({ label: null }, { label: null }, 1, column)).toBe(0);
+  });
+
   it('should throw an error when "dataKey" is missing in the column definition', () => {
     const direction = SortDirectionNumber.asc;
     const columnDef = { id: 'users', field: 'users' };

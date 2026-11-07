@@ -27,6 +27,7 @@ export default class Example19 {
   sgb: SlickVanillaGridBundle;
   isGridEditable = true;
   enableMultiSelection = false;
+  subTitleStyle = 'display: block';
 
   attached() {
     this._eventHandler = new SlickEventHandler();
@@ -217,8 +218,8 @@ export default class Example19 {
   toggleGridEditReadonly() {
     // then change a single grid options to make the grid non-editable (readonly)
     this.isGridEditable = !this.isGridEditable;
-    this.sgb.gridOptions = { editable: this.isGridEditable };
-    this.gridOptions = this.sgb.gridOptions;
+    this.sgb.options = { editable: this.isGridEditable };
+    this.gridOptions = this.sgb.options;
   }
 
   undoLastEdit(showLastEditor = false) {
@@ -272,5 +273,10 @@ export default class Example19 {
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
     // remove unsaved css class from that cell
     this.sgb.slickGrid?.removeCellCssStyles(`unsaved_highlight_${[column.field]}${row}`);
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

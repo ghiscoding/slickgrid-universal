@@ -1069,6 +1069,22 @@ describe('PaginationService', () => {
       expect(setPagingSpy).toHaveBeenCalledWith({ pageSize: 0, pageNum: 0 });
     });
 
+    it.each([false, true])('should toggle local pagination without an argument when initially enabled is %s', (initiallyEnabled) => {
+      const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
+      const setPagingSpy = vi.spyOn(dataviewStub, 'setPagingOptions');
+      service.init(gridStub, mockGridOption.pagination as Pagination);
+      sharedService.gridOptions.enablePagination = initiallyEnabled;
+
+      service.togglePaginationVisibility();
+
+      expect(sharedService.gridOptions.enablePagination).toBe(!initiallyEnabled);
+      expect(setPagingSpy).toHaveBeenLastCalledWith({
+        pageSize: initiallyEnabled ? 0 : mockGridOption.pagination!.pageSize,
+        pageNum: 0,
+      });
+      expect(pubSubSpy).toHaveBeenCalledWith('onPaginationVisibilityChanged', { visible: !initiallyEnabled });
+    });
+
     it('should reset DataView Pagination when using Local Grid and also expect to back to Page 1 when re-enabling the Pagination', () => {
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const setPagingSpy = vi.spyOn(dataviewStub, 'setPagingOptions');

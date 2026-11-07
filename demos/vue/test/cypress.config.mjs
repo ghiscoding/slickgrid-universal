@@ -1,19 +1,18 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
-  allowCypressEnv: false,
   video: false,
   viewportWidth: 1200,
   viewportHeight: 1020,
   fixturesFolder: 'test/cypress/fixtures',
   screenshotsFolder: 'test/cypress/screenshots',
   videosFolder: 'test/cypress/videos',
+  defaultBrowser: 'chrome',
   defaultCommandTimeout: 5000,
   pageLoadTimeout: 90000,
   // In headless/CI runs, keeping snapshots in memory can accumulate across many specs.
   // Use 0 to keep memory usage lower and reduce flaky runner stalls.
   numTestsKeptInMemory: 0,
-  experimentalMemoryManagement: true,
   scrollBehavior: 'nearest',
   retries: {
     experimentalStrategy: 'detect-flake-and-pass-on-threshold',

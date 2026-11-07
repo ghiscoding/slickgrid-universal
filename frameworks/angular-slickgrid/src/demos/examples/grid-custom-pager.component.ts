@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, inject } from '@angular/core';
 import type {
   BasePaginationComponent,
   PaginationMetadata,
@@ -14,6 +14,7 @@ import type {
   styleUrls: ['./grid-custom-pager.component.scss'],
 })
 export class CustomPagerComponent implements BasePaginationComponent {
+  protected readonly cd = inject(ChangeDetectorRef);
   protected readonly elm = inject(ElementRef);
   protected _paginationElement!: HTMLDivElement;
   protected _subscriptions: Subscription[] = [];
@@ -40,6 +41,7 @@ export class CustomPagerComponent implements BasePaginationComponent {
         this.currentPagination.pageSize = paginationChanges.pageSize;
         this.currentPagination.pageSizes = paginationChanges.pageSizes;
         this.currentPagination.totalItems = paginationChanges.totalItems;
+        this.cd.markForCheck();
       })
     );
   }

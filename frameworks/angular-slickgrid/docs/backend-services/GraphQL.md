@@ -115,12 +115,13 @@ export interface GraphqlServiceOption extends BackendServiceOption {
 
 ##### Code
 ```ts
-import { Component, Injectable, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Column, GridOption } from 'angular-slickgrid';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@slickgrid-universal/graphql';
 
-@Injectable()
-
+@Component({
+  templateUrl: './my-component.html'
+})
 export class MyComponent implements OnInit {
   columns: Column[];
   gridOptions: GridOption;

@@ -247,7 +247,7 @@ describe('Example 13 - Grouping & Aggregators', () => {
   describe('Column Header with HTML Elements', () => {
     it('should trigger an alert when clicking on the 1st column button inside its header', () => {
       const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => cy.stub(win, 'alert').callsFake(stub));
 
       cy.get('button[data-test=col1-hello-btn]')
         .click({ force: true })

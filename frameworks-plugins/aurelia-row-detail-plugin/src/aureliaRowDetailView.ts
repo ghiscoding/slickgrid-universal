@@ -2,7 +2,6 @@ import { transient, type Constructable } from '@aurelia/kernel';
 import type { ICustomElementController } from '@aurelia/runtime-html';
 import {
   addToArrayWhenNotExists,
-  createDomElement,
   SlickEventData,
   SlickHybridSelectionModel,
   unsubscribeAll,
@@ -13,12 +12,11 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
 import type { AureliaUtilService, CreatedView, GridOption, ViewModelBindableInputData } from 'aurelia-slickgrid';
 import type { RowDetailView } from './interfaces.js';
 
-const ROW_DETAIL_CONTAINER_PREFIX = 'container_';
-const PRELOAD_CONTAINER_PREFIX = 'container_loading';
+const ROW_DETAIL_CONTAINER_PREFIX = 'row-detail-';
 
 @transient()
 export class AureliaRowDetailView extends UniversalSlickRowDetailView {
@@ -111,15 +109,14 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
 
     if (this._grid && this.gridOptions?.rowDetailView) {
       // load the Preload & RowDetail Templates (could be straight HTML or Aurelia View/ViewModel)
-      // when those are Aurelia View/ViewModel, we need to create View Slot & provide the html containers to the Plugin (preTemplate/postTemplate methods)
+      // Components mount directly into the detail panel; templates only clear its previous content.
       if (!this.gridOptions.rowDetailView.preTemplate) {
         this._preloadViewModel = this.gridOptions.rowDetailView.preloadViewModel;
-        this.addonOptions.preTemplate = () => createDomElement('div', { className: `${PRELOAD_CONTAINER_PREFIX}` });
+        this.addonOptions.preTemplate = () => '';
       }
       if (!this.gridOptions.rowDetailView.postTemplate) {
         this._viewModel = this.gridOptions.rowDetailView.viewModel;
-        this.addonOptions.postTemplate = (itemDetail: any) =>
-          createDomElement('div', { className: `${ROW_DETAIL_CONTAINER_PREFIX}${itemDetail[this.datasetIdPropName]}` });
+        this.addonOptions.postTemplate = () => '';
       }
 
       if (this._grid && this.gridOptions) {
@@ -138,32 +135,24 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
           }
 
           this._eventHandler.subscribe(this.onAsyncResponse, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onAsyncResponse === 'function') {
-              this.rowDetailViewOptions.onAsyncResponse(event, args);
-            }
+            this.rowDetailViewOptions?.onAsyncResponse?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onAsyncEndUpdate, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
-              this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
-            }
+            this.rowDetailViewOptions?.onAsyncEndUpdate?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {
             // display preload template & re-render all the other Detail Views after toggling
             // the preload View will eventually go away once the data gets loaded after the "onAsyncEndUpdate" event
-            await this.renderPreloadView();
-
-            if (typeof this.rowDetailViewOptions?.onAfterRowDetailToggle === 'function') {
-              this.rowDetailViewOptions.onAfterRowDetailToggle(event, args);
-            }
+            await this.renderPreloadView(args.item);
+            this.rowDetailViewOptions?.onAfterRowDetailToggle?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onBeforeRowDetailToggle, (event, args) => {
             // before toggling row detail, we need to create View Slot if it doesn't exist
             this.handleOnBeforeRowDetailToggle(event, args);
-
-            if (typeof this.rowDetailViewOptions?.onBeforeRowDetailToggle === 'function') {
+            if (this.rowDetailViewOptions?.onBeforeRowDetailToggle) {
               return this.rowDetailViewOptions.onBeforeRowDetailToggle(event, args);
             }
             return true;
@@ -172,16 +161,11 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
           this._eventHandler.subscribe(this.onRowBackToViewportRange, async (event, args) => {
             // when row is back to viewport range, we will re-render the View Slot(s)
             await this.handleOnRowBackToViewportRange(event, args);
-
-            if (typeof this.rowDetailViewOptions?.onRowBackToViewportRange === 'function') {
-              this.rowDetailViewOptions.onRowBackToViewportRange(event, args);
-            }
+            this.rowDetailViewOptions?.onRowBackToViewportRange?.(event, args);
           });
 
           this._eventHandler.subscribe(this.onBeforeRowOutOfViewportRange, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange === 'function') {
-              this.rowDetailViewOptions.onBeforeRowOutOfViewportRange(event, args);
-            }
+            this.rowDetailViewOptions?.onBeforeRowOutOfViewportRange?.(event, args);
             if (this.rowDetailViewOptions?.keepComponentAlive) {
               this.detachViewFromDom(args.item);
             } else {
@@ -190,9 +174,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
           });
 
           this._eventHandler.subscribe(this.onRowOutOfViewportRange, (event, args) => {
-            if (typeof this.rowDetailViewOptions?.onRowOutOfViewportRange === 'function') {
-              this.rowDetailViewOptions.onRowOutOfViewportRange(event, args);
-            }
+            this.rowDetailViewOptions?.onRowOutOfViewportRange?.(event, args);
           });
 
           // --
@@ -203,9 +185,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
 
           // Re-evaluate the overlay after SlickGrid has rebuilt its rows.
           this._eventHandler.subscribe(this._grid.onRendered, () => {
-            if (this.isOverlayRenderMode) {
-              this.recalculateOutOfRangeViews(true, 0);
-            }
+            this.recalculateOutOfRangeViews(true, 0);
           });
 
           // on row selection changed, we also need to redraw
@@ -268,8 +248,14 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
   }
 
   /** (re)Render the View Slot (Row Detail) */
-  async renderPreloadView() {
-    const containerElement = this.gridContainerElement.querySelector<HTMLElement>(`.${PRELOAD_CONTAINER_PREFIX}`);
+  async renderPreloadView(item?: any) {
+    if (item?.[`${this._keyPrefix}detailViewLoaded`]) {
+      return;
+    }
+
+    const containerElement = this.gridContainerElement.querySelector<HTMLElement>(
+      item ? `.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}` : '.slick-row-detail-container:empty'
+    );
     if (this._preloadViewModel && containerElement) {
       const preloadComp = await this.aureliaUtilService.createAureliaViewModelAddToSlot(
         this._preloadViewModel,
@@ -282,6 +268,10 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
 
   /** (re)Render the View Slot (Row Detail) */
   async renderViewModel(item: any) {
+    if (!item[`${this._keyPrefix}detailViewLoaded`]) {
+      return;
+    }
+
     const containerElement = this.gridContainerElement.querySelector<HTMLElement>(
       `.${ROW_DETAIL_CONTAINER_PREFIX}${item[this.datasetIdPropName]}`
     );
@@ -331,19 +321,8 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
   protected detachViewFromDom(item: any): void {
     const foundSlot = this._slots.find((slot: CreatedView) => slot.id === item[this.datasetIdPropName]);
     if (foundSlot?.controller) {
-      // Overlay panels reuse the detailContent element when a panel is
-      // recreated after scrolling. The Aurelia controller host is that
-      // element's container, so removing it here would leave the recreated
-      // panel without a mount target. Removing the panel itself already
-      // detaches the active view while preserving its component state.
-      if (this.isOverlayRenderMode) {
-        this._keepAliveSlotIds.add(foundSlot.id);
-        return;
-      }
-
-      // physically remove the controller's host element from the visible DOM without calling deactivate()
-      const host: HTMLElement | undefined = foundSlot.controller.host;
-      host?.remove();
+      // The controller host is the detail panel itself. The core plugin
+      // detaches and reattaches that panel while preserving its active view.
       this._keepAliveSlotIds.add(foundSlot.id);
     }
   }

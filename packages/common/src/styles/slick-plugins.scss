@@ -296,17 +296,14 @@ li.hidden {
     min-width: var(--slick-submenu-min-width, v.$slick-submenu-min-width);
   }
 
-  .slick-menu-option-list,
   .slick-menu-command-list {
-    .slick-command-header,
-    .slick-option-header {
+    .slick-command-header {
       display: var(--slick-menu-title-container-display, v.$slick-menu-title-container-display);
       align-items: var(--slick-menu-title-container-align-items, v.$slick-menu-title-container-align-items);
       justify-content: var(--slick-menu-title-container-justify-content, v.$slick-menu-title-container-justify-content);
     }
 
-    .slick-command-header.with-title,
-    .slick-option-header.with-title {
+    .slick-command-header.with-title {
       border-bottom: var(--slick-menu-title-border-bottom, v.$slick-menu-title-border-bottom);
       margin-bottom: var(--slick-menu-title-margin-bottom, v.$slick-menu-title-margin-bottom);
       .slick-menu-title {
@@ -423,10 +420,6 @@ li.hidden {
       display: none;
     }
   }
-
-  .slick-menu-option-list {
-    margin-bottom: var(--slick-menu-option-list-margin-bottom, v.$slick-menu-option-list-margin-bottom);
-  }
 }
 
 .slick-cell-menu,
@@ -458,29 +451,6 @@ li.hidden {
   &.dropup {
     display: inline-block;
     position: absolute;
-  }
-}
-
-// ----------------------------------------------
-// Slick Tooltip Component
-// ----------------------------------------------
-
-.slick-custom-tooltip {
-  position: absolute;
-  background-color: var(--slick-tooltip-background-color, v.$slick-tooltip-background-color);
-  border: var(--slick-tooltip-border, v.$slick-tooltip-border);
-  border-radius: var(--slick-tooltip-border-radius, v.$slick-tooltip-border-radius);
-  padding: var(--slick-tooltip-padding, v.$slick-tooltip-padding);
-  font-size: var(--slick-tooltip-font-size, v.$slick-tooltip-font-size);
-  height: var(--slick-tooltip-height, v.$slick-tooltip-height);
-  width: var(--slick-tooltip-width, v.$slick-tooltip-width);
-  z-index: var(--slick-tooltip-z-index, v.$slick-tooltip-z-index);
-
-  .tooltip-body {
-    color: var(--slick-tooltip-color, v.$slick-tooltip-color);
-    overflow: var(--slick-tooltip-overflow, v.$slick-tooltip-overflow);
-    text-overflow: var(--slick-tooltip-text-overflow, v.$slick-tooltip-text-overflow);
-    white-space: var(--slick-tooltip-white-space, v.$slick-tooltip-white-space);
   }
 }
 
@@ -683,7 +653,6 @@ li.hidden {
 
 .ms-choice {
   font-size: var(--slick-header-font-size, v.$slick-header-font-size);
-  outline: 0;
 
   span {
     font-size: var(--slick-multiselect-input-filter-font-size, v.$slick-multiselect-input-filter-font-size);
@@ -714,13 +683,11 @@ li.hidden {
 }
 .ms-drop {
   border: var(--slick-multiselect-dropdown-border, v.$slick-multiselect-dropdown-border);
-  z-index: var(--slick-multiselect-dropdown-z-index, v.$slick-multiselect-dropdown-z-index);
 
   li {
     margin: 0;
     height: var(--slick-multiselect-item-height, v.$slick-multiselect-item-height);
     line-height: var(--slick-multiselect-item-line-height, v.$slick-multiselect-item-line-height);
-    padding: var(--slick-multiselect-item-padding, v.$slick-multiselect-item-padding);
     border: var(--slick-multiselect-item-border, v.$slick-multiselect-item-border);
     width: 100%;
     &:hover {
@@ -729,7 +696,6 @@ li.hidden {
     }
     &.highlighted {
       border: var(--slick-multiselect-option-highlight-border, v.$slick-multiselect-option-highlight-border);
-      background-color: var(--slick-multiselect-option-highlight-bg-color, v.$slick-multiselect-option-highlight-bg-color);
     }
   }
 
@@ -744,10 +710,6 @@ li.hidden {
     align-items: center;
     border-bottom: var(--slick-multiselect-select-all-border-bottom, v.$slick-multiselect-select-all-border-bottom);
     padding: var(--slick-multiselect-select-all-padding, v.$slick-multiselect-select-all-padding);
-    line-height: var(--slick-multiselect-select-all-line-height, v.$slick-multiselect-select-all-line-height);
-    &:hover {
-      background-color: var(--slick-multiselect-select-all-text-hover-color, v.$slick-multiselect-select-all-text-hover-color);
-    }
     &.highlighted {
       background-color: transparent;
     }
@@ -757,19 +719,16 @@ li.hidden {
     }
 
     label {
-      display: inline-flex;
       font-weight: normal;
-      padding: var(--slick-multiselect-select-all-label-padding, v.$slick-multiselect-select-all-label-padding);
-      border: var(--slick-multiselect-select-all-label-border, v.$slick-multiselect-select-all-label-border);
       color: var(--slick-multiselect-select-all-text-color, v.$slick-multiselect-select-all-text-color);
       &:hover {
-        cursor: pointer;
         border: var(--slick-multiselect-select-all-label-hover-border, v.$slick-multiselect-select-all-label-hover-border);
         background-color: var(--slick-multiselect-select-all-label-hover-bg-color, v.$slick-multiselect-select-all-label-hover-bg-color);
       }
     }
   }
   .ms-ok-button {
+    --ms-ok-button-border: var(--slick-multiselect-ok-button-border, #{v.$slick-multiselect-ok-button-border});
     cursor: pointer;
     display: block;
     padding: 0;
@@ -1254,56 +1213,6 @@ li.hidden {
       box-shadow: var(--slick-slider-filter-focus-box-shadow, v.$slick-slider-filter-focus-box-shadow);
     }
   }
-}
-
-// ---------------------------------------------------------
-// Row Detail View Plugin
-// ---------------------------------------------------------
-
-.slick-row-detail-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 0;
-  overflow: visible;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.slick-row,
-.slick-row-detail-overlay {
-  .detail-view-toggle {
-    display: inline-block;
-
-    &.expand {
-      @include svg.generateSvgStyle('slick-detail-view-icon-expand-svg', v.$slick-detail-view-icon-expand-svg-path);
-    }
-    &.collapse {
-      @include svg.generateSvgStyle('slick-detail-view-icon-collapse-svg', v.$slick-detail-view-icon-collapse-svg-path);
-    }
-    &.expand,
-    &.collapse {
-      cursor: pointer;
-      color: var(--slick-detail-view-icon-color, v.$slick-detail-view-icon-color);
-      font-size: var(--slick-detail-view-icon-font-size, v.$slick-detail-view-icon-font-size);
-      &:hover {
-        color: var(--slick-detail-view-icon-color-hover, v.$slick-detail-view-icon-color-hover);
-        opacity: var(--slick-detail-view-icon-opacity-hover, v.$slick-detail-view-icon-opacity-hover);
-      }
-    }
-  }
-}
-
-.dynamic-cell-detail {
-  position: absolute;
-  width: 100%;
-  overflow: auto;
-  left: var(--slick-detail-view-container-left, v.$slick-detail-view-container-left);
-  border: var(--slick-detail-view-container-border, v.$slick-detail-view-container-border);
-  background-color: var(--slick-detail-view-container-bgcolor, v.$slick-detail-view-container-bgcolor);
-  padding: var(--slick-detail-view-container-padding, v.$slick-detail-view-container-padding);
-  z-index: var(--slick-detail-view-container-z-index, v.$slick-detail-view-container-z-index);
 }
 
 .slick-drag-replace-handle {

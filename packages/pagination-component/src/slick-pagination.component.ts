@@ -114,9 +114,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     this._enableTranslate = this.gridOptions?.enableTranslate ?? false;
 
     if (this._enableTranslate && (!this._translaterService || !this._translaterService.translate)) {
-      throw new Error(
-        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
-      );
+      throw new Error(Constants.translaterMissingError);
     }
     this.translatePaginationTexts();
 
@@ -129,9 +127,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     // we'll copy the data into a local object so that we can add binding to this local object
     this._subscriptions.push(
       this._pubSubService.subscribe<PaginationMetadata>('onPaginationRefreshed', (paginationChanges) => {
-        Object.keys(paginationChanges).forEach(
-          (key) => ((this.currentPagination as any)[key] = paginationChanges[key as keyof PaginationMetadata])
-        );
+        Object.assign(this.currentPagination, paginationChanges);
         this.updatePageButtonsUsability();
         if (this._spanInfoFromToElm?.style) {
           this._spanInfoFromToElm.style.display = this.currentPagination.totalItems === 0 ? 'none' : '';
@@ -151,7 +147,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
   }
 
   /** dispose of the DOM element & bindings only (regular PubSub subscription will be preserved) */
-  disposeDom(): void {
+  protected disposeDom(): void {
     this._bindingEventService.unbindAll();
     this._bindingHelper.dispose();
     emptyElement(this._paginationElement);
@@ -167,28 +163,16 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     // left nav
     const leftNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
     const leftUlElm = createDomElement('ul', { className: 'pagination' }, leftNavElm);
-    this._seekFirstElm = createDomElement('li', { className: 'page-item seek-first' }, leftUlElm);
-    this._seekFirstElm.appendChild(
-      createDomElement('a', { className: 'page-link sgi icon-seek-first', ariaLabel: 'First Page', role: 'button' })
-    );
-    this._seekPrevElm = createDomElement('li', { className: 'page-item seek-prev' }, leftUlElm);
-    this._seekPrevElm.appendChild(
-      createDomElement('a', { className: 'page-link sgi icon-seek-prev', ariaLabel: 'Previous Page', role: 'button' })
-    );
+    this._seekFirstElm = this.createNavigationButton(leftUlElm, 'first', 'First Page');
+    this._seekPrevElm = this.createNavigationButton(leftUlElm, 'prev', 'Previous Page');
 
     const pageNumberSectionElm = this.createPageNumberSection();
 
     // right nav
     const rightNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
     const rightUlElm = createDomElement('ul', { className: 'pagination' }, rightNavElm);
-    this._seekNextElm = createDomElement('li', { className: 'page-item seek-next' }, rightUlElm);
-    this._seekNextElm.appendChild(
-      createDomElement('a', { className: 'page-link sgi icon-seek-next', ariaLabel: 'Next Page', role: 'button' })
-    );
-    this._seekEndElm = createDomElement('li', { className: 'page-item seek-end' }, rightUlElm);
-    this._seekEndElm.appendChild(
-      createDomElement('a', { className: 'page-link sgi icon-seek-end', ariaLabel: 'Last Page', role: 'button' })
-    );
+    this._seekNextElm = this.createNavigationButton(rightUlElm, 'next', 'Next Page');
+    this._seekEndElm = this.createNavigationButton(rightUlElm, 'end', 'Last Page');
 
     // append both navs to container
     paginationElm.appendChild(divNavContainerElm);
@@ -197,7 +181,6 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     divNavContainerElm.appendChild(rightNavElm);
 
     const paginationSettingsElm = this.createPaginationSettingsSection();
-    paginationElm.appendChild(divNavContainerElm);
     paginationElm.appendChild(paginationSettingsElm);
     this._paginationElement.appendChild(paginationElm);
     if (containerElm?.appendChild && this._paginationElement) {
@@ -310,6 +293,12 @@ export class SlickPaginationComponent implements BasePaginationComponent {
   // protected functions
   // --------------------
 
+  protected createNavigationButton(parent: HTMLElement, direction: string, label: string): HTMLLIElement {
+    const button = createDomElement('li', { className: `page-item seek-${direction}` }, parent);
+    createDomElement('a', { className: `page-link sgi icon-seek-${direction}`, ariaLabel: label, role: 'button' }, button);
+    return button;
+  }
+
   /** Create the Pagination Container */
   protected createPaginationContainer(): HTMLDivElement {
     const paginationContainerElm = createDomElement('div', {
@@ -328,33 +317,18 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     const divElm = createDomElement('div', { className: 'slick-page-number' });
     createDomElement('span', { className: 'text-page', textContent: 'Page' }, divElm);
     divElm.appendChild(document.createTextNode(' '));
-    if (this._paginationService.isCursorBased) {
-      // cursor based navigation cannot jump to an arbitrary page. Simply display current page number.
-      createDomElement(
-        'span',
-        {
-          className: 'page-number',
-          ariaLabel: 'Page Number',
-          dataset: { test: 'page-number-label' },
-          textContent: '1',
-        },
-        divElm
-      );
-    } else {
-      // offset based navigation can jump to any page. Allow editing of current page number.
-      createDomElement(
-        'input',
-        {
-          type: 'text',
-          className: 'form-control page-number',
-          ariaLabel: 'Page Number',
-          value: '1',
-          size: 1,
-          dataset: { test: 'page-number-input' },
-        },
-        divElm
-      );
-    }
+    // Cursor navigation displays the current page; offset navigation allows editing it.
+    const isCursorBased = this._paginationService.isCursorBased;
+    const pageNumberElm = createDomElement(
+      isCursorBased ? 'span' : 'input',
+      {
+        className: isCursorBased ? 'page-number' : 'form-control page-number',
+        ariaLabel: 'Page Number',
+        dataset: { test: isCursorBased ? 'page-number-label' : 'page-number-input' },
+      },
+      divElm
+    );
+    Object.assign(pageNumberElm, isCursorBased ? { textContent: '1' } : { type: 'text', value: '1', size: 1 });
 
     divElm.appendChild(document.createTextNode(' '));
     createDomElement('span', { className: 'text-of', textContent: 'of' }, divElm);

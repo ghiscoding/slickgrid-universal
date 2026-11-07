@@ -75,7 +75,7 @@ export class MyDemo {
     this.gridOptions = {
       darkMode: this.isDarkModeEnabled,
       gridMenu: {
-        hideToggleDarkModeCommand: false, // hidden by default
+        showToggleDarkModeCommand: true, // hidden by default
 
         // you can optionally add extra command to toggle your own page styling as well
         onCommand: (_, args) => {

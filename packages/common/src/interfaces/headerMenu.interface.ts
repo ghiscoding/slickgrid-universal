@@ -1,6 +1,7 @@
 import type { SlickEventData, SlickGrid } from '../core/index.js';
 import type { SlickHeaderMenu } from '../extensions/slickHeaderMenu.js';
 import type { Column, HeaderMenuOption, MenuCommandItem, MenuCommandItemCallbackArgs } from './index.js';
+import type { MenuDivider } from './menuCommandItem.interface.js';
 
 export type BuiltInHeaderMenuCommand =
   | 'clear-filter'
@@ -9,11 +10,18 @@ export type BuiltInHeaderMenuCommand =
   | 'divider-1'
   | 'divider-2'
   | 'divider-3'
-  | 'freeze-columns'
+  | 'pinning-commands'
+  | 'pin-column'
+  | 'pin-left'
+  | 'pin-columns-left'
+  | 'pin-columns-right'
+  | 'pin-right'
   | 'hide-column'
   | 'sort-asc'
+  | 'sort-commands'
   | 'sort-desc'
-  | 'unfreeze-columns';
+  | 'unpin-column'
+  | 'unpin-columns';
 
 export interface HeaderMenuCommandItemCallbackArgs {
   /** Column definition */
@@ -23,11 +31,11 @@ export interface HeaderMenuCommandItemCallbackArgs {
   grid: SlickGrid;
 
   /** html DOM element of the menu */
-  menu: Array<MenuCommandItem | 'divider'>;
+  menu: Array<MenuCommandItem | MenuDivider>;
 }
 
 export interface HeaderMenu extends HeaderMenuOption {
-  /** hide any built-in command from the header menu */
+  /** Hide built-in commands. 'pinning-commands' hides the entire pinning submenu and 'sort-commands' hides all sort commands. */
   hideCommands?: Array<BuiltInHeaderMenuCommand>;
 
   // --

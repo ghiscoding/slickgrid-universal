@@ -87,8 +87,6 @@ export class Example32Component implements OnInit {
         minWidth: 65,
         // you can adjust the resize calculation via multiple options
         resizeExtraWidthPadding: 4,
-        resizeCharWidthInPx: 7.6,
-        resizeCalcWidthRatio: 1,
         resizeMaxWidthThreshold: 200,
         columnGroup: 'Common Factor',
         cssClass: 'text-uppercase fw-bold',
@@ -208,7 +206,6 @@ export class Example32Component implements OnInit {
         id: 'complexity',
         name: 'Complexity',
         field: 'complexity',
-        resizeCalcWidthRatio: 0.82, // default calc ratio is 1 or 0.95 for field type of string
         sortable: true,
         filterable: true,
         columnGroup: 'Analysis',
@@ -294,7 +291,6 @@ export class Example32Component implements OnInit {
         filterable: true,
         columnGroup: 'Item',
         minWidth: 100,
-        resizeCharWidthInPx: 8,
         exportWithFormatter: true,
         dataKey: 'id',
         labelKey: 'itemName',
@@ -370,14 +366,12 @@ export class Example32Component implements OnInit {
               command: 'help',
               title: 'Help!',
               iconCssClass: 'mdi mdi-help-circle',
-              positionOrder: 66,
               action: () => alert('Please Help!'),
             },
             'divider',
             {
               command: 'delete-row',
               title: 'Delete Row',
-              positionOrder: 64,
               iconCssClass: 'mdi mdi-close color-danger',
               cssClass: 'red',
               textCssClass: 'text-italic color-danger-light',
@@ -403,12 +397,11 @@ export class Example32Component implements OnInit {
       col.header = {
         menu: {
           commandItems: [
-            { command: '', divider: true, positionOrder: 98 },
+            { command: '', divider: true },
             {
               // we can also have multiple nested sub-menus
               command: 'custom-actions',
               title: 'Hello',
-              positionOrder: 99,
               commandItems: [
                 { command: 'hello-world', title: 'Hello World' },
                 { command: 'hello-slickgrid', title: 'Hello SlickGrid' },
@@ -430,7 +423,6 @@ export class Example32Component implements OnInit {
             {
               command: 'feedback',
               title: 'Feedback',
-              positionOrder: 100,
               commandItems: [
                 {
                   command: 'request-update',
@@ -485,7 +477,6 @@ export class Example32Component implements OnInit {
 
       resizeByContentOptions: {
         // optional resize calculation options
-        defaultRatioForStringType: 0.92,
         formatterPaddingWidthInPx: 8, // optional editor formatter padding for resize calculation
       },
 

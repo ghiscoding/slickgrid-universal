@@ -1,5 +1,10 @@
 <h3 class="title is-3">
   Example 42 - Custom Filter Bar
+  <span class="d-inline-flex">
+    <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a
@@ -12,7 +17,7 @@
   </div>
 </h3>
 
-<h5 class="mb-3 italic example-details">
+<h5 class="mb-3 italic example-details" style.bind="subTitleStyle">
   Display Custom Filters in the top header bar, which is similar to how the MSSQL Extension does it. Please note that the html code used is
   not important, what is important though is that we can use <code>filterService.updateFilters()</code>,
   <code>filterService.getColumnFilters()</code>, <code>filterService.clearFilterByColumnId()</code>. Also note that the demo creates custom

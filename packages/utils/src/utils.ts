@@ -1,5 +1,3 @@
-import type { AnyFunction } from './models/types.js';
-
 const unsafeMergeKeys = new Set(['__proto__', 'constructor', 'prototype']);
 
 /**
@@ -161,57 +159,6 @@ export function emptyObject(obj: any): any {
 }
 
 /**
- * Get the function details (param & body) of a function.
- * It supports regular function and also ES6 arrow functions
- * @param {Function} fn - function to analyze
- * @param {Boolean} [addReturn] - when using ES6 function as single liner, we could add the missing `return ...`
- * @returns
- */
-export function getFunctionDetails(
-  fn: AnyFunction,
-  addReturn = true
-): {
-  params: string[];
-  body: string;
-  isAsync: boolean;
-} {
-  let isAsyncFn = false;
-
-  const getFunctionBody = (func: AnyFunction) => {
-    const fnStr = func.toString();
-    isAsyncFn = fnStr.includes('async ');
-
-    // when fn is one liner arrow fn returning an object in brackets e.g. `() => ({ hello: 'world' })`
-    if (fnStr.replaceAll(' ', '').includes('=>({')) {
-      const matches = fnStr.match(/(({.*}))/g) || [];
-      return matches.length >= 1 ? `return ${matches[0]!.trimStart()}` : fnStr;
-    }
-    const isOneLinerArrowFn = !fnStr.includes('{') && fnStr.includes('=>');
-    const body = fnStr.substring(
-      fnStr.indexOf('{') + 1 || fnStr.indexOf('=>') + 2,
-      fnStr.includes('}') ? fnStr.lastIndexOf('}') : fnStr.length
-    );
-    if (addReturn && isOneLinerArrowFn && !body.startsWith('return')) {
-      return 'return ' + body.trimStart(); // add the `return ...` to the body for ES6 arrow fn
-    }
-    return body;
-  };
-
-  const getFunctionParams = (func: AnyFunction): string[] => {
-    const STRIP_COMMENTS = /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,)]*))/gm;
-    const ARG_NAMES = /([^\s,]+)/g;
-    const fnStr = func.toString().replace(STRIP_COMMENTS, '');
-    return fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARG_NAMES) ?? [];
-  };
-
-  return {
-    params: getFunctionParams(fn),
-    body: getFunctionBody(fn),
-    isAsync: isAsyncFn satisfies typeof isAsyncFn as boolean,
-  };
-}
-
-/**
  * Check if an object is empty
  * @param obj - input object
  * @returns - boolean
@@ -220,7 +167,12 @@ export function isEmptyObject(obj: any): boolean {
   if (obj === null || obj === undefined) {
     return true;
   }
-  return Object.entries(obj).length === 0;
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 export function isDefined<T>(value: T | undefined | null): value is T {
@@ -250,7 +202,8 @@ export function isPrimitiveValue(val: any): boolean {
 }
 
 export function isPrimitiveOrHTML(val: any): boolean {
-  return isHtml(val) || isPrimitiveValue(val);
+  // primitives are a lot more common than HTML elements, so check them first
+  return isPrimitiveValue(val) || isHtml(val);
 }
 
 export function isHtml(val: any): boolean {
@@ -275,21 +228,12 @@ export function isNumber(value: any, strict = false): value is number {
 
 /** Check if an object is empty, it will also be considered empty when the input is null, undefined or isn't an object */
 export function isObjectEmpty(obj: unknown): boolean {
-  return !obj || (obj && typeof obj === 'object' && Object.keys(obj).length === 0);
+  return !obj || (typeof obj === 'object' && isEmptyObject(obj));
 }
 
 /** Parse any input (bool, number, string) and return a boolean or False when not possible */
 export function parseBoolean(input: any): boolean {
   return /(true|1)/i.test(input + '');
-}
-
-/** Use `queueMicrotask()` when available, otherwise fallback to `Promise.resolve().then(callback)` for Salesforce LWC locker service */
-export function queueMicrotaskPolyfill(callback: () => void): void {
-  if (typeof queueMicrotask === 'function') {
-    queueMicrotask(callback);
-  } else {
-    Promise.resolve().then(callback);
-  }
 }
 
 /**
@@ -305,35 +249,34 @@ export function removeAccentFromText(text: string, shouldLowerCase = false): str
 
 /** Set the object value of deeper node from a given dot (.) notation path (e.g.: "user.firstName") */
 export function setDeepValue<T = unknown>(obj: T, path: string | string[], value: any): void {
-  if (typeof path === 'string') {
-    path = path.split('.');
-  }
+  const keys = typeof path === 'string' ? path.split('.') : path;
+  let target: any = obj;
 
-  if (path.length > 1) {
-    const e = path.shift() as keyof T;
-    if (obj && e !== undefined) {
-      const key = String(e);
-      const hasOwnProperty = Object.prototype.hasOwnProperty.call(obj, e);
-      const currentValue = hasOwnProperty ? obj[e] : undefined;
-      const nextValue =
-        isDefined(currentValue) && (Array.isArray(currentValue) || Object.prototype.toString.call(currentValue) === '[object Object]')
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (!target || key === undefined || target === Object.prototype || target === Array.prototype || (i === keys.length - 1 && !key)) {
+      return;
+    }
+
+    let nextValue = value;
+    if (i < keys.length - 1) {
+      const currentValue = Object.prototype.hasOwnProperty.call(target, key) ? target[key] : undefined;
+      nextValue =
+        currentValue &&
+        typeof currentValue === 'object' &&
+        currentValue !== Object.prototype &&
+        currentValue !== Array.prototype &&
+        (Array.isArray(currentValue) || Object.prototype.toString.call(currentValue) === '[object Object]')
           ? currentValue
-          : ({} as any);
+          : {};
+    }
 
-      if (key === '__proto__') {
-        Object.defineProperty(obj, e, { configurable: true, enumerable: true, writable: true, value: nextValue });
-      } else {
-        obj[e] = nextValue;
-      }
-      setDeepValue(nextValue, path, value);
-    }
-  } else if (obj && path[0]) {
-    const key = String(path[0]);
     if (key === '__proto__') {
-      Object.defineProperty(obj, path[0] as keyof T, { configurable: true, enumerable: true, writable: true, value });
+      Object.defineProperty(target, key, { configurable: true, enumerable: true, writable: true, value: nextValue });
     } else {
-      obj[path[0] as keyof T] = value;
+      target[key] = nextValue;
     }
+    target = nextValue;
   }
 }
 
@@ -405,20 +348,6 @@ export function toSentenceCase(inputStr: string): string {
 }
 
 /**
- * Converts a string from camelCase to snake_case (underscore) case
- * @param str the string to convert
- * @return the string in kebab case
- */
-export function toSnakeCase(inputStr: string): string {
-  if (typeof inputStr === 'string') {
-    return toCamelCase(inputStr)
-      .replace(/([A-Z])/g, '_$1')
-      .toLowerCase();
-  }
-  return inputStr;
-}
-
-/**
  * Execute an operation with synchronous error handling.
  * @param operation - function to execute
  * @param onError - optional error callback
@@ -429,44 +358,4 @@ export function tryCatch(operation: () => void, onError?: (error: unknown) => vo
   } catch (error) {
     onError?.(error);
   }
-}
-
-/**
- * Takes an input array and makes sure the array has unique values by removing duplicates
- * @param array input with possible duplicates
- * @return array output without duplicates
- */
-export function uniqueArray<T = any>(arr: T[]): T[] {
-  if (Array.isArray(arr) && arr.length > 0) {
-    return arr.filter((item: T, index: number) => {
-      return arr.indexOf(item) >= index;
-    });
-  }
-  return arr;
-}
-
-/**
- * Takes an input array of objects and makes sure the array has unique object values by removing duplicates
- * it will loop through the array using a property name (or "id" when is not provided) to compare uniqueness
- * @param array input with possible duplicates
- * @param propertyName defaults to "id"
- * @return array output without duplicates
- */
-export function uniqueObjectArray(arr: any[], propertyName = 'id'): any[] {
-  if (Array.isArray(arr) && arr.length > 0) {
-    const result = [];
-    const map = new Map();
-
-    for (const item of arr) {
-      if (item && !map.has(item[propertyName])) {
-        map.set(item[propertyName], true); // set any value to Map
-        result.push({
-          id: item[propertyName],
-          name: item.name,
-        });
-      }
-    }
-    return result;
-  }
-  return arr;
 }

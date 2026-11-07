@@ -16,11 +16,9 @@ import type {
   HeaderMenuCommandItemCallbackArgs,
   MenuCommandItemCallbackArgs,
   MenuFromCellCallbackArgs,
-  MenuOptionItemCallbackArgs,
   OnActiveCellChangedEventArgs,
   OnAddNewRowEventArgs,
   OnAutosizeColumnsEventArgs,
-  OnBeforeAppendCellEventArgs,
   OnBeforeCellEditorDestroyEventArgs,
   OnBeforeColumnsResizeEventArgs,
   OnBeforeEditCellEventArgs,
@@ -103,7 +101,6 @@ export interface SlickgridReactProps {
   onActiveCellPositionChanged?: ReactSlickEventHandler<{ grid: SlickGrid }>;
   onAddNewRow?: ReactSlickEventHandler<OnAddNewRowEventArgs>;
   onAutosizeColumns?: ReactSlickEventHandler<OnAutosizeColumnsEventArgs>;
-  onBeforeAppendCell?: ReactSlickEventHandler<OnBeforeAppendCellEventArgs>;
   onBeforeCellEditorDestroy?: ReactSlickEventHandler<OnBeforeCellEditorDestroyEventArgs>;
   onBeforeColumnsResize?: ReactSlickEventHandler<OnBeforeColumnsResizeEventArgs>;
   onBeforeDestroy?: ReactSlickEventHandler<{ grid: SlickGrid }>;
@@ -168,7 +165,7 @@ export interface SlickgridReactProps {
   onBeforeMenuClose?: ReactSlickEventHandler<MenuFromCellCallbackArgs>;
   onBeforeMenuShow?: ReactSlickEventHandler<MenuFromCellCallbackArgs>;
   onColumnsChanged?: ReactSlickEventHandler<OnColumnsChangedArgs>;
-  onCommand?: ReactSlickEventHandler<MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs>;
+  onCommand?: ReactSlickEventHandler<MenuCommandItemCallbackArgs>;
   onGridMenuColumnsChanged?: ReactSlickEventHandler<OnColumnsChangedArgs>;
   onMenuClose?: ReactSlickEventHandler<GridMenuEventWithElementCallbackArgs>;
   onCopyCells?: ReactSlickEventHandler<{ ranges: SlickRange[] }>;
@@ -191,7 +188,6 @@ export interface SlickgridReactProps {
   onContextMenuCollapseAllGroups?: ReactRegularEventHandler<void>;
   onContextMenuExpandAllGroups?: ReactRegularEventHandler<void>;
   onBeforeGridDestroy?: ReactRegularEventHandler<MenuFromCellCallbackArgs>;
-  onOptionSelected?: ReactRegularEventHandler<MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs>;
   onColumnPickerColumnsChanged?: ReactRegularEventHandler<OnColumnsChangedArgs>;
   onGridMenuMenuClose?: ReactRegularEventHandler<GridMenuEventWithElementCallbackArgs>;
   onGridMenuBeforeMenuShow?: ReactRegularEventHandler<GridMenuEventWithElementCallbackArgs>;

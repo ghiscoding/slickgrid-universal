@@ -50,6 +50,7 @@ export default class Example03 {
   draggableGroupingPlugin: SlickDraggableGrouping;
   loadingClass = '';
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
+  subTitleStyle = 'display: block';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -77,6 +78,7 @@ export default class Example03 {
       () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s font-22px')
     );
     this._bindingEventService.bind(gridContainerElm, ['onafterexporttoexcel', 'onafterexporttopdf'], () => (this.loadingClass = ''));
+
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
@@ -289,11 +291,10 @@ export default class Example03 {
 
           commandTitle: 'Commands',
           commandItems: [
-            // array of command item objects, you can also use the "positionOrder" that will be used to sort the items in the list
+            { command: 'command1', title: 'Command 1', cssClass: 'orange' },
             {
               command: 'command2',
               title: 'Command 2',
-              positionOrder: 62,
               // you can use the "action" callback and/or use "onCallback" callback from the grid options, they both have the same arguments
               action: (_e, args) => {
                 console.log(args.dataContext, args.column);
@@ -304,11 +305,10 @@ export default class Example03 {
                 return !args.dataContext.completed;
               },
             },
-            { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
+            { divider: true, command: '' },
             {
               command: 'delete-row',
               title: 'Delete Row',
-              positionOrder: 64,
               iconCssClass: 'mdi mdi-close',
               cssClass: 'red',
               textCssClass: 'bold',
@@ -317,23 +317,14 @@ export default class Example03 {
                 return !args.dataContext.completed;
               },
             },
-            // you can pass divider as a string or an object with a boolean (if sorting by position, then use the object)
-            // note you should use the "divider" string only when items array is already sorted and positionOrder are not specified
-            { divider: true, command: '', positionOrder: 63 },
             // 'divider',
 
             {
               command: 'help',
               title: 'Help',
               iconCssClass: 'mdi mdi-help-circle-outline',
-              positionOrder: 66,
             },
-            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67 },
-          ],
-          optionTitle: 'Change Effort-Driven Flag',
-          optionItems: [
-            { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
-            { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
+            { command: 'something', title: 'Disabled Command', disabled: true },
           ],
         },
       },
@@ -347,12 +338,6 @@ export default class Example03 {
         container: '.demo-container',
       },
       enableFormattedDataCache: false, // enable it when you have a large dataset (e.g. we'll enable it when loading over 10K)
-      headerMenu: {
-        hideFreezeColumnsCommand: false,
-      },
-      gridMenu: {
-        hideClearFrozenColumnsCommand: false,
-      },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
@@ -390,7 +375,7 @@ export default class Example03 {
       rowHeight: 33,
       headerRowHeight: 35,
       enableDraggableGrouping: true,
-      // frozenColumn: 2,
+      // pinning: { columns: { left: 2  } },
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
         // hideGroupSortIcons: true,
@@ -423,14 +408,6 @@ export default class Example03 {
         // all the Cell Menu callback methods (except the action callback)
         // are available under the grid options as shown below
         onCommand: (e, args) => this.executeCommand(e, args),
-        onOptionSelected: (_e, args) => {
-          // change "Effort-Driven" property with new option selected from the Cell Menu
-          const dataContext = args?.dataContext;
-          if (dataContext && dataContext.hasOwnProperty('effortDriven')) {
-            dataContext.effortDriven = args.item.option;
-            this.sgb.gridService.updateItem(dataContext);
-          }
-        },
       },
     };
   }
@@ -635,5 +612,10 @@ export default class Example03 {
       command.undo();
       this.sgb?.slickGrid?.gotoCell(command.row, command.cell, false);
     }
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

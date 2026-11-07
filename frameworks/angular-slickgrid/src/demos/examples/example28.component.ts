@@ -214,8 +214,8 @@ export class Example28Component implements OnInit {
       headerMenu: {
         iconClearFilterCommand: 'mdi mdi mdi-filter-remove-outline',
         iconClearSortCommand: 'mdi mdi-swap-vertical',
-        iconSortAscCommand: 'mdi mdi-sort-ascending',
-        iconSortDescCommand: 'mdi mdi-flip-v mdi-sort-descending',
+        iconSortAscCommand: 'mdi mdi-arrow-up',
+        iconSortDescCommand: 'mdi mdi-arrow-down',
         iconColumnHideCommand: 'mdi mdi-close',
       },
     };
@@ -289,12 +289,12 @@ export class Example28Component implements OnInit {
     if (data[idx + 1]?.[treeLevelPropName] > data[idx][treeLevelPropName] || data[idx]['__hasChildren']) {
       const folderPrefix = `<i class="mdi font-22px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
       if (dataContext.__collapsed) {
-        return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-group-toggle collapsed" level="${treeLevel}"></span>${folderPrefix} ${prefix} ${spanValue}`;
+        return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-tree-toggle collapsed" level="${treeLevel}"></span>${folderPrefix} ${prefix} ${spanValue}`;
       } else {
-        return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-group-toggle expanded" level="${treeLevel}"></span>${folderPrefix} ${prefix} ${spanValue}`;
+        return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-tree-toggle expanded" level="${treeLevel}"></span>${folderPrefix} ${prefix} ${spanValue}`;
       }
     } else {
-      return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-group-toggle" level="${treeLevel}"></span>${prefix} ${spanValue}`;
+      return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-tree-toggle" level="${treeLevel}"></span>${prefix} ${spanValue}`;
     }
   };
 

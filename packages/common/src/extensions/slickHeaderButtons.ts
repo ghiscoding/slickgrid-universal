@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { type SlickEventData, type SlickEventHandler } from '../core/slickCore.js';
+import { type SlickEventData } from '../core/slickCore.js';
 import { type SlickGrid } from '../core/slickGrid.js';
 import type {
   Column,
@@ -51,10 +51,6 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
     this._addonOptions = newOptions;
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   get grid(): SlickGrid {
     return this.sharedService.slickGrid;
   }
@@ -92,7 +88,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
       let i = column.header.buttons.length;
       while (i--) {
         const buttonItem = column.header.buttons[i];
-        const itemElm = this.populateSingleCommandOrOptionItem(
+        const itemElm = this.populateSingleCommandItem(
           'command',
           this.addonOptions,
           null,

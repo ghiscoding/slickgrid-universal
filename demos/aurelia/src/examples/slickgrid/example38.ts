@@ -95,9 +95,6 @@ export class Example38 {
       enableCheckboxSelector: true,
       enableSelection: true,
       enableGrouping: true,
-      headerMenu: {
-        hideFreezeColumnsCommand: false,
-      },
       presets: {
         // NOTE: pagination preset is NOT supported with infinite scroll
         // filters: [{ columnId: 'gender', searchTerms: ['female'] }]

@@ -74,34 +74,6 @@ describe('extensionUtility', () => {
       });
     });
 
-    describe('sortItems method', () => {
-      it('should sort the items by their order property', () => {
-        const inputArray = [
-          { field: 'field1', order: 3 },
-          { field: 'field2', order: 1 },
-          { field: 'field3', order: 2 },
-        ];
-        const expectedArray = [
-          { field: 'field2', order: 1 },
-          { field: 'field3', order: 2 },
-          { field: 'field1', order: 3 },
-        ];
-
-        utility.sortItems(inputArray, 'order');
-
-        expect(inputArray).toEqual(expectedArray);
-      });
-
-      it('should sort the items by their order property when found and then return the object without the property', () => {
-        const inputArray = [{ field: 'field1', order: 3 }, { field: 'field3', order: 2 }, { field: 'field2' }];
-        const expectedArray = [{ field: 'field3', order: 2 }, { field: 'field1', order: 3 }, { field: 'field2' }];
-
-        utility.sortItems(inputArray, 'order');
-
-        expect(inputArray).toEqual(expectedArray);
-      });
-    });
-
     describe('translateMenuItemsFromTitleKey method', () => {
       it('should translate using the Translate Service', () => {
         const commandItem1 = { command: 'clear-filter', titleKey: 'CLEAR_ALL_FILTERS' } as MenuCommandItem;

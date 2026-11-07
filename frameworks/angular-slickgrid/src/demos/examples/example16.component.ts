@@ -70,6 +70,7 @@ export class Example16Component implements OnInit {
         rightPadding: 10,
       },
       enableCellNavigation: true,
+      enableSorting: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
       checkboxSelector: {

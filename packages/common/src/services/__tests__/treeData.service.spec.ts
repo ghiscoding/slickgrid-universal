@@ -110,7 +110,7 @@ describe('TreeData Service', () => {
       columnId: 'file',
     };
     service = new TreeDataService(mockPubSub, filterServiceStub, sharedService, sortServiceStub);
-    slickgridEventHandler = service.eventHandler;
+    slickgridEventHandler = service['_eventHandler'];
     vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
     vi.spyOn(filterServiceStub, 'getPreviousFilters').mockReturnValue([]);
     (unflattenParentChildArrayToTree as Mock).mockImplementationOnce(unflattenActual);
@@ -125,16 +125,10 @@ describe('TreeData Service', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should throw an error when used with multi-column sorting', () =>
-    new Promise((done: any) => {
-      try {
-        gridOptionsMock.multiColumnSort = true;
-        service.init(gridStub);
-      } catch (e: any) {
-        expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data with multi-column sorting');
-        done();
-      }
-    }));
+  it('supports multi-column sorting', () => {
+    gridOptionsMock.multiColumnSort = true;
+    expect(() => service.init(gridStub)).not.toThrow();
+  });
 
   it('should throw an error when used without filter grid option', () =>
     new Promise((done: any) => {
@@ -284,7 +278,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -302,7 +296,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -330,7 +324,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -359,7 +353,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -393,7 +387,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -434,7 +428,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -473,7 +467,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -518,8 +512,16 @@ describe('TreeData Service', () => {
       const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
       const spyInvalidate = vi.spyOn(gridStub, 'invalidate');
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
-      vi.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValueOnce({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+      const sortColumns = [
+        { columnId: 'file', sortCol: { id: 'file', field: 'file' }, sortAsc: true },
+        { columnId: 'size', sortCol: { id: 'size', field: 'size' }, sortAsc: false },
+      ];
+      vi.spyOn(sortServiceStub, 'getCurrentColumnSorts').mockReturnValueOnce(sortColumns);
+      const sortSpy = vi
+        .spyOn(sortServiceStub, 'sortHierarchicalDataset')
+        .mockReturnValueOnce({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
 
+      gridOptionsMock.multiColumnSort = true;
       gridOptionsMock.treeDataOptions!.lazy = true;
       gridOptionsMock.treeDataOptions!.childrenPropName = 'files';
       gridOptionsMock.treeDataOptions!.onLazyLoad = (node, resolve) => {
@@ -532,12 +534,14 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
+      expect(sortSpy).toHaveBeenCalledWith(expect.any(Array), sortColumns);
+      expect(dataViewStub.setItems).toHaveBeenCalledWith(mockFlatDataset, 'id');
       expect(service.getToggledItems().length).toBe(1);
       expect(spyGetItem).toHaveBeenCalled();
       expect(spyInvalidate).toHaveBeenCalled();
@@ -604,7 +608,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'slick-group-toggle';
+      div.className = 'slick-tree-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -650,7 +654,7 @@ describe('TreeData Service', () => {
         const cellElm = document.createElement('div');
         cellElm.className = 'slick-cell';
         const toggleIcon = document.createElement('span');
-        toggleIcon.className = 'slick-group-toggle';
+        toggleIcon.className = 'slick-tree-toggle';
         cellElm.appendChild(toggleIcon);
         const titleElm = document.createElement('span');
         titleElm.className = 'slick-tree-title';
@@ -676,7 +680,7 @@ describe('TreeData Service', () => {
 
         service.init(gridStub);
         const eventData = new SlickEventData();
-        div.className = 'slick-group-toggle';
+        div.className = 'slick-tree-toggle';
         Object.defineProperty(eventData, 'target', { writable: true, value: div });
         gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -699,7 +703,7 @@ describe('TreeData Service', () => {
         const cellElm = document.createElement('div');
         cellElm.className = 'slick-cell';
         const toggleIcon = document.createElement('span');
-        toggleIcon.className = 'slick-group-toggle';
+        toggleIcon.className = 'slick-tree-toggle';
         cellElm.appendChild(toggleIcon);
         const textElm = document.createElement('span');
         textElm.textContent = 'Item Text';
@@ -724,7 +728,7 @@ describe('TreeData Service', () => {
 
         service.init(gridStub);
         const eventData = new SlickEventData();
-        div.className = 'slick-group-toggle';
+        div.className = 'slick-tree-toggle';
         Object.defineProperty(eventData, 'target', { writable: true, value: div });
         gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -748,7 +752,7 @@ describe('TreeData Service', () => {
 
       const cellNode = document.createElement('div');
       const toggleElm = document.createElement('span');
-      toggleElm.className = 'slick-group-toggle';
+      toggleElm.className = 'slick-tree-toggle';
       cellNode.appendChild(toggleElm);
       vi.spyOn(gridStub, 'getActiveCellNode').mockReturnValue(cellNode);
 
@@ -979,6 +983,21 @@ describe('TreeData Service', () => {
       expect(endUpdateSpy).toHaveBeenCalled();
     });
 
+    it('should only expand lazy loaded parents that were already loaded when calling the method with collapsing False', async () => {
+      gridOptionsMock.treeDataOptions!.lazy = true;
+      mockFlatDataset[0].__lazyLoading = 'done';
+      vi.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
+      const updateItemSpy = vi.spyOn(dataViewStub, 'updateItem');
+
+      service.init(gridStub);
+      sharedService.hierarchicalDataset = service.convertFlatParentChildToTreeDataset(mockFlatDataset, gridOptionsMock);
+      await service.toggleTreeDataCollapse(false);
+
+      expect(updateItemSpy).toHaveBeenCalledTimes(1);
+      expect(updateItemSpy).toHaveBeenCalledWith(0, expect.objectContaining({ id: 0, __collapsed: false, __lazyLoading: 'done' }));
+      gridOptionsMock.treeDataOptions!.lazy = false;
+    });
+
     describe('applyToggledItemStateChanges method', () => {
       it('should execute the method and expect a full toggle or items', () => {
         const dataGetItemsSpy = vi.spyOn(dataViewStub, 'getItems').mockReturnValue(mockFlatDataset);
@@ -1071,6 +1090,17 @@ describe('TreeData Service', () => {
           type: 'toggle-collapse',
         });
         expect(endUpdateSpy).toHaveBeenCalled();
+      });
+
+      it('should update a preset toggled item instead of adding a duplicate when it gets toggled again', () => {
+        gridOptionsMock.presets = { treeData: { toggledItems: [{ itemId: 4, isCollapsed: true }] } };
+        vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockFlatDataset[3]);
+
+        service.init(gridStub);
+        service.dynamicallyToggleItemState([{ itemId: 4, isCollapsed: false }], true);
+
+        expect(service.getToggledItems()).toEqual([{ itemId: 4, isCollapsed: false }]);
+        gridOptionsMock.presets = undefined;
       });
     });
   });
@@ -1266,6 +1296,23 @@ describe('TreeData Service', () => {
       ]);
       expect(result).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
     });
+
+    it('retains all sort columns when rebuilding a tree', () => {
+      gridOptionsMock.multiColumnSort = true;
+      const sortCols = [
+        { columnId: 'file', sortCol: mockColumns[0], sortAsc: true },
+        { columnId: 'size', sortCol: mockColumns[1], sortAsc: false },
+      ];
+      const hierarchy = [{ id: 0 }];
+      vi.spyOn(service, 'convertFlatParentChildToTreeDataset').mockReturnValue(hierarchy as any);
+      const sortSpy = vi.spyOn(sortServiceStub, 'sortHierarchicalDataset');
+      service.init(gridStub);
+
+      service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock, sortCols);
+
+      expect(sortSpy).toHaveBeenCalledWith(hierarchy, sortCols, true);
+      expect(gridStub.setSortColumns).toHaveBeenCalledWith(sortCols);
+    });
   });
 
   describe('sortHierarchicalDataset method', () => {
@@ -1294,6 +1341,63 @@ describe('TreeData Service', () => {
 
       expect(getInitialSpy).toHaveBeenCalledWith(mockColumns, gridOptionsMock);
       expect(sortHierarchySpy).toHaveBeenCalledWith(mockHierarchical, [mockColumnSort]);
+    });
+  });
+
+  describe('sortTreeDataset method', () => {
+    const mockFlat = [
+      { id: 0, file: 'documents' },
+      { id: 1, file: 'vacation.txt', parentId: 0 },
+    ];
+    const mockSortedFlat = [mockFlat[0], mockFlat[1]];
+    const mockHierarchical = [{ id: 0, file: 'documents', files: [{ id: 1, file: 'vacation.txt' }] }];
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      service.init(gridStub);
+    });
+
+    it('should re-sort the provided hierarchical dataset and refresh tree filters when the dataset length changed', () => {
+      const sortSpy = vi.spyOn(service, 'sortHierarchicalDataset').mockReturnValue({ hierarchical: mockHierarchical, flat: mockSortedFlat });
+      const convertSpy = vi.spyOn(service, 'convertFlatParentChildToTreeDatasetAndSort');
+
+      const output = service.sortTreeDataset(mockFlat, [], gridOptionsMock, { hierarchicalDataset: mockHierarchical, previousDatasetLength: 0 });
+
+      expect(output).toBe(mockSortedFlat);
+      expect(sortSpy).toHaveBeenCalledWith(mockHierarchical);
+      expect(convertSpy).not.toHaveBeenCalled();
+      expect(filterServiceStub.refreshTreeDataFilters).toHaveBeenCalledWith(mockSortedFlat);
+    });
+
+    it('should convert the flat dataset, keep its hierarchical result and skip the filter refresh when the length did not change', () => {
+      const mockColumns = [{ id: 'file', field: 'file' }] as Column[];
+      const convertSpy = vi
+        .spyOn(service, 'convertFlatParentChildToTreeDatasetAndSort')
+        .mockReturnValue({ hierarchical: mockHierarchical, flat: mockSortedFlat });
+
+      const output = service.sortTreeDataset(mockFlat, mockColumns, gridOptionsMock, { previousDatasetLength: mockFlat.length });
+
+      expect(output).toBe(mockSortedFlat);
+      expect(convertSpy).toHaveBeenCalledWith(mockFlat, mockColumns, gridOptionsMock);
+      expect(sharedService.hierarchicalDataset).toBe(mockHierarchical);
+      expect(filterServiceStub.refreshTreeDataFilters).not.toHaveBeenCalled();
+    });
+
+    it('should refresh tree filters when forced even when the dataset length did not change', () => {
+      vi.spyOn(service, 'convertFlatParentChildToTreeDatasetAndSort').mockReturnValue({ hierarchical: mockHierarchical, flat: mockSortedFlat });
+
+      service.sortTreeDataset(mockFlat, undefined as any, gridOptionsMock, { previousDatasetLength: mockFlat.length, forceGridRefresh: true });
+
+      expect(filterServiceStub.refreshTreeDataFilters).toHaveBeenCalledWith(mockSortedFlat);
+    });
+
+    it('should return an empty array without converting when there are no grid options or no flat data', () => {
+      const convertSpy = vi.spyOn(service, 'convertFlatParentChildToTreeDatasetAndSort');
+
+      expect(service.sortTreeDataset(mockFlat, [], undefined, { previousDatasetLength: 0 })).toEqual([]);
+      expect(service.sortTreeDataset([], [], gridOptionsMock, { previousDatasetLength: 2 })).toEqual([]);
+      expect(convertSpy).not.toHaveBeenCalled();
+      expect(filterServiceStub.refreshTreeDataFilters).toHaveBeenCalledTimes(1);
     });
   });
 

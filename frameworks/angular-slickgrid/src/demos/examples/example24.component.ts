@@ -84,14 +84,6 @@ export class Example24Component implements OnInit, OnDestroy {
     this.angularGrid = angularGrid;
   }
 
-  get cellMenuInstance() {
-    return this.angularGrid?.extensionService?.getExtensionInstanceByName('cellMenu');
-  }
-
-  get contextMenuInstance() {
-    return this.angularGrid?.extensionService?.getExtensionInstanceByName('contextMenu');
-  }
-
   ngOnInit() {
     this.prepareGrid();
     this.dataset = this.getData(1000);
@@ -214,11 +206,10 @@ export class Example24Component implements OnInit, OnDestroy {
           // else use title without the suffix, for example "commandTitle" (no translations) or "commandTitleKey" (with translations)
           commandTitleKey: 'COMMANDS', // optional title, use "commandTitle" when not using Translate
           commandItems: [
-            // array of command item objects, you can also use the "positionOrder" that will be used to sort the items in the list
+            { command: 'command1', title: 'Command 1', cssClass: 'orange' },
             {
               command: 'command2',
               title: 'Command 2',
-              positionOrder: 62,
               // you can use the "action" callback and/or use "onCallback" callback from the grid options, they both have the same arguments
               action: (e, args) => {
                 console.log(args.dataContext, args.column);
@@ -229,11 +220,10 @@ export class Example24Component implements OnInit, OnDestroy {
                 return !args.dataContext.completed;
               },
             },
-            { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
+            { divider: true, command: '' },
             {
               command: 'delete-row',
               titleKey: 'DELETE_ROW',
-              positionOrder: 64,
               iconCssClass: 'mdi mdi-close',
               cssClass: 'red',
               textCssClass: 'bold',
@@ -242,24 +232,19 @@ export class Example24Component implements OnInit, OnDestroy {
                 return !args.dataContext.completed;
               },
             },
-            // you can pass divider as a string or an object with a boolean (if sorting by position, then use the object)
-            // note you should use the "divider" string only when items array is already sorted and positionOrder are not specified
-            { divider: true, command: '', positionOrder: 63 },
             // 'divider',
 
             {
               command: 'help',
               titleKey: 'HELP', // use "title" without translation and "titleKey" with TranslateService
               iconCssClass: 'mdi mdi-help-circle',
-              positionOrder: 66,
             },
-            { command: 'something', titleKey: 'DISABLED_COMMAND', disabled: true, positionOrder: 67 },
-            { command: '', divider: true, positionOrder: 98 },
+            { command: 'something', titleKey: 'DISABLED_COMMAND', disabled: true },
+            { command: '', divider: true },
             {
               // we can also have multiple nested sub-menus
               command: 'export',
               title: 'Exports',
-              positionOrder: 99,
               commandItems: [
                 { command: 'exports-txt', title: 'Text (tab delimited)' },
                 {
@@ -278,7 +263,6 @@ export class Example24Component implements OnInit, OnDestroy {
             {
               command: 'feedback',
               title: 'Feedback',
-              positionOrder: 100,
               commandItems: [
                 {
                   command: 'request-update',
@@ -300,28 +284,6 @@ export class Example24Component implements OnInit, OnDestroy {
                   ],
                 },
               ],
-            },
-          ],
-          optionTitleKey: 'CHANGE_COMPLETED_FLAG',
-          optionItems: [
-            { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
-            { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
-            {
-              option: null,
-              title: 'null',
-              cssClass: 'italic',
-              // you can use the "action" callback and/or use "onCallback" callback from the grid options, they both have the same arguments
-              action: (_e, _args) => {
-                // action callback.. do something
-              },
-              // only enable Action menu when the Priority is set to High
-              itemUsabilityOverride: (args) => {
-                return args.dataContext.priority === 3;
-              },
-              // only show command to 'Delete Row' when the task is not completed
-              itemVisibilityOverride: (args) => {
-                return !args.dataContext.completed;
-              },
             },
           ],
         },
@@ -357,14 +319,6 @@ export class Example24Component implements OnInit, OnDestroy {
         // all the Cell Menu callback methods (except the action callback)
         // are available under the grid options as shown below
         onCommand: (e, args) => this.executeCommand(e, args),
-        onOptionSelected: (e, args) => {
-          // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args?.dataContext;
-          if (dataContext && 'completed' in dataContext) {
-            dataContext.completed = args.item.option;
-            this.angularGrid.gridService.updateItem(dataContext);
-          }
-        },
         onBeforeMenuShow: (e, args) => {
           // for example, you could select the row that the click originated
           // this.angularGrid.gridService.setSelectedRows([args.row]);
@@ -445,24 +399,20 @@ export class Example24Component implements OnInit, OnDestroy {
       commandShownOverColumnIds: ['id', 'title', 'percentComplete', 'start', 'finish', 'completed' /*, 'priority', 'action' */],
       commandTitleKey: 'COMMANDS', // this title is optional, you could also use "commandTitle" when not using Translate
       commandItems: [
-        { divider: true, command: '', positionOrder: 61 },
+        { divider: true, command: '' },
         {
           command: 'delete-row',
           titleKey: 'DELETE_ROW',
           iconCssClass: 'mdi mdi-close',
           cssClass: 'red',
           textCssClass: 'bold',
-          positionOrder: 62,
         },
-        // you can pass divider as a string or an object with a boolean (if sorting by position, then use the object)
-        // note you should use the "divider" string only when items array is already sorted and positionOrder are not specified
         // 'divider',
-        { divider: true, command: '', positionOrder: 63 },
+        { divider: true, command: '' },
         {
           command: 'help',
           titleKey: 'HELP',
           iconCssClass: 'mdi mdi-help-circle',
-          positionOrder: 64,
           // you can use the 'action' callback and/or subscribe to the 'onCallback' event, they both have the same arguments
           action: (_e, _args) => {
             // action callback.. do something
@@ -473,13 +423,12 @@ export class Example24Component implements OnInit, OnDestroy {
             return !dataContext.completed;
           },
         },
-        { command: 'something', titleKey: 'DISABLED_COMMAND', disabled: true, positionOrder: 65 },
-        { command: '', divider: true, positionOrder: 98 },
+        { command: 'something', titleKey: 'DISABLED_COMMAND', disabled: true },
+        { command: '', divider: true },
         {
           // we can also have multiple nested sub-menus
           command: 'export',
           title: 'Exports',
-          positionOrder: 99,
           commandItems: [
             { command: 'exports-txt', title: 'Text (tab delimited)' },
             {
@@ -498,7 +447,6 @@ export class Example24Component implements OnInit, OnDestroy {
         {
           command: 'feedback',
           title: 'Feedback',
-          positionOrder: 100,
           commandItems: [
             {
               command: 'request-update',
@@ -522,57 +470,6 @@ export class Example24Component implements OnInit, OnDestroy {
           ],
         },
       ],
-
-      // Options allows you to edit a column from an option chose a list
-      // for example, changing the Priority value
-      // you can also optionally define an array of column ids that you wish to display this option list (when not defined it will show over all columns)
-      optionTitleKey: 'CHANGE_PRIORITY',
-      optionShownOverColumnIds: ['priority'], // optional, when defined it will only show over the columns (column id) defined in the array
-      optionItems: [
-        {
-          option: 0,
-          title: 'n/a',
-          textCssClass: 'italic',
-          // only enable this option when the task is Not Completed
-          itemUsabilityOverride: (args) => {
-            const dataContext = args?.dataContext;
-            return !dataContext.completed;
-          },
-          // you can use the 'action' callback and/or subscribe to the 'onCallback' event, they both have the same arguments
-          action: (_e, _args) => {
-            // action callback.. do something
-          },
-        },
-        { option: 1, iconCssClass: 'mdi mdi-star-outline yellow', titleKey: 'LOW' },
-        { option: 2, iconCssClass: 'mdi mdi-star orange', titleKey: 'MEDIUM' },
-        { option: 3, iconCssClass: 'mdi mdi-star red', titleKey: 'HIGH' },
-        // you can pass divider as a string or an object with a boolean (if sorting by position, then use the object)
-        // note you should use the "divider" string only when items array is already sorted and positionOrder are not specified
-        'divider',
-        // { divider: true, option: '', positionOrder: 3 },
-        {
-          option: 4,
-          title: 'Extreme',
-          iconCssClass: 'mdi mdi-fire',
-          disabled: true,
-          // only shown when the task is Not Completed
-          itemVisibilityOverride: (args) => {
-            const dataContext = args?.dataContext;
-            return !dataContext.completed;
-          },
-        },
-        {
-          // we can also have multiple nested sub-menus
-          option: null,
-          title: 'Sub-Options (demo)',
-          subMenuTitleKey: 'CHANGE_PRIORITY',
-          optionItems: [
-            { option: 1, iconCssClass: 'mdi mdi-star-outline yellow', titleKey: 'LOW' },
-            { option: 2, iconCssClass: 'mdi mdi-star orange', titleKey: 'MEDIUM' },
-            { option: 3, iconCssClass: 'mdi mdi-star red', titleKey: 'HIGH' },
-          ],
-        },
-      ],
       // subscribe to Context Menu
       onBeforeMenuShow: (_e, args) => {
         // for example, you could select the row it was clicked with
@@ -584,38 +481,7 @@ export class Example24Component implements OnInit, OnDestroy {
 
       // subscribe to Context Menu onCommand event (or use the action callback on each command)
       onCommand: (e, args) => this.executeCommand(e, args),
-
-      // subscribe to Context Menu onOptionSelected event (or use the action callback on each option)
-      onOptionSelected: (_e, args) => {
-        // change Priority
-        const dataContext = args?.dataContext;
-        if ('priority' in dataContext) {
-          dataContext.priority = args.item.option;
-          this.angularGrid.gridService.updateItem(dataContext);
-        }
-      },
     };
-  }
-
-  showContextCommandsAndOptions(showBothList: boolean) {
-    // when showing both Commands/Options, we can just pass an empty array to show over all columns
-    // else show on all columns except Priority
-    const showOverColumnIds = showBothList ? [] : ['id', 'title', 'complete', 'start', 'finish', 'completed', 'action'];
-    this.contextMenuInstance?.setOptions({
-      commandShownOverColumnIds: showOverColumnIds,
-      // hideCommandSection: !showBothList
-    });
-  }
-
-  showCellMenuCommandsAndOptions(showBothList: boolean) {
-    // change via the plugin setOptions
-    this.cellMenuInstance?.setOptions({
-      hideOptionSection: !showBothList,
-    });
-
-    // OR find the column, then change the same hide property
-    // var actionColumn = columns.find(function (column) { return column.id === 'action' });
-    // actionColumn.cellMenu.hideOptionSection = !showBothList;
   }
 
   switchLanguage() {

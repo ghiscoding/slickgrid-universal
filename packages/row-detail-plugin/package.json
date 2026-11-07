@@ -1,0 +1,55 @@
+{
+  "name": "@slickgrid-universal/row-detail-plugin",
+  "version": "11.0.0-beta.0",
+  "description": "SlickRowDetail plugin - A plugin to add Row Detail Panel",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./dist/styles/*": "./dist/styles/*",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "/dist",
+    "/src"
+  ],
+  "scripts": {
+    "build": "pnpm run clean && tsc && pnpm run sass:bundle",
+    "build:incremental": "tsc --incremental --declaration",
+    "clean": "remove dist tsconfig.tsbuildinfo",
+    "dev": "pnpm build:incremental && pnpm run sass:bundle",
+    "sass:bundle": "node ../../scripts/build-package-styles.mjs src/styles/slick-row-detail.scss"
+  },
+  "browserslist": [
+    "baseline widely available"
+  ],
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/row-detail-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
+  "dependencies": {
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "autoprefixer": "^10.6.1",
+    "cssnano": "^9.9.0",
+    "postcss": "catalog:",
+    "sass": "catalog:"
+  }
+}

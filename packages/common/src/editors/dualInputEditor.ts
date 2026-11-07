@@ -51,14 +51,6 @@ export class DualInputEditor extends BaseEditorClass implements Editor {
     return this.columnEditor.params || {};
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
-  get isValueSaveCalled(): boolean {
-    return this._isValueSaveCalled;
-  }
-
   init(): void {
     if (
       !this.editorParams ||

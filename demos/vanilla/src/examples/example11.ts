@@ -436,17 +436,14 @@ export default class Example11 {
         onCommand: (e, args) => this.executeCommand(e, args),
       },
       headerMenu: {
-        hideFreezeColumnsCommand: false,
         subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
       },
       gridMenu: {
-        hideClearFrozenColumnsCommand: false,
         commandItems: [
           {
             command: 'modal',
             title: 'Mass Update',
             iconCssClass: 'mdi mdi-table-edit',
-            positionOrder: 66,
           },
         ],
         onCommand: (e, args) => this.executeCommand(e, args),
@@ -626,8 +623,8 @@ export default class Example11 {
 
     // then change a single grid options to make the grid non-editable (readonly)
     this.isGridEditable = !this.isGridEditable;
-    this.sgb.gridOptions = { editable: this.isGridEditable };
-    this.gridOptions = this.sgb.gridOptions;
+    this.sgb.options = { editable: this.isGridEditable };
+    this.gridOptions = this.sgb.options;
   }
 
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
@@ -823,11 +820,16 @@ export default class Example11 {
       const columns = selectedView?.columns ?? [];
       const filters = selectedView?.filters ?? [];
       const sorters = selectedView?.sorters ?? [];
-      const pinning = selectedView?.pinning ?? { frozenBottom: false, frozenColumn: -1, frozenRow: -1 };
+      const pinning: CurrentPinning = selectedView?.pinning ?? {
+        columns: { left: [], right: [] },
+        rows: { top: [], bottom: [] },
+      };
       this.sgb.filterService.updateFilters(filters as CurrentFilter[]);
       this.sgb.sortService.updateSorting(sorters as CurrentSorter[]);
       this.sgb.gridStateService.applyColumnLayout(columns);
-      this.sgb.gridService.setPinning(pinning); // make sure to set pinning last in case some columns were hidden which would offset the pinning
+      // Apply pinning after the column layout so hidden/reordered columns do
+      // not change the stable column references used by the preset.
+      this.sgb.gridService.setPinning(pinning);
     } else {
       this.sgb.gridService.clearPinning();
       this.sgb.filterService.clearFilters();

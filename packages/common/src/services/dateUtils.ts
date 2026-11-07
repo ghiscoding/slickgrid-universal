@@ -114,9 +114,53 @@ export function formatDateByFieldType(inputDate: Date | string, inputFieldType: 
     if (outputFieldType === 'dateUtc') {
       return date.toISOString();
     }
-    return format(date, outputFormat, 'en-US');
+    return formatDate(date, outputFormat);
   }
   return '';
+}
+
+// a token must cover its whole letter run, so "MMM" or "YYY" are left over and fall back to Tempo
+// single "m"/"s" are left to Tempo too, since its padding of those depends on the surrounding format
+const NUMERIC_DATE_TOKEN_REGEX = /Y{4}(?!Y)|Y{2}(?!Y)|M{1,2}(?!M)|D{1,2}(?!D)|H{1,2}(?!H)|h{1,2}(?!h)|mm(?!m)|ss(?!s)|A(?!A)|a(?!a)/g;
+const numericDateFormats = new Map<string, boolean>();
+const padToken = (value: number, token: string) => (token.length > 1 ? String(value).padStart(2, '0') : String(value));
+
+/**
+ * Format a date with Tempo tokens, using a fast path for purely numeric formats (e.g. "YYYY-MM-DD HH:mm:ss")
+ * since Tempo's `format()` is relatively expensive when called for every rendered cell.
+ */
+export function formatDate(date: Date, dateFormat: string): string {
+  let isNumericFormat = numericDateFormats.get(dateFormat);
+  if (isNumericFormat === undefined) {
+    isNumericFormat = !/[A-Za-z[\]]/.test(dateFormat.replace(NUMERIC_DATE_TOKEN_REGEX, ''));
+    numericDateFormats.set(dateFormat, isNumericFormat);
+  }
+  if (!isNumericFormat) {
+    return format(date, dateFormat, 'en-US');
+  }
+  return dateFormat.replace(NUMERIC_DATE_TOKEN_REGEX, (token) => {
+    const hours = date.getHours();
+    switch (token[0]) {
+      case 'Y':
+        return token.length === 4 ? String(date.getFullYear()) : String(date.getFullYear()).slice(-2);
+      case 'M':
+        return padToken(date.getMonth() + 1, token);
+      case 'D':
+        return padToken(date.getDate(), token);
+      case 'H':
+        return padToken(hours, token);
+      case 'h':
+        return padToken(hours % 12 || 12, token);
+      case 'm':
+        return padToken(date.getMinutes(), token);
+      case 's':
+        return padToken(date.getSeconds(), token);
+      case 'A':
+        return hours < 12 ? 'AM' : 'PM';
+      default:
+        return hours < 12 ? 'am' : 'pm';
+    }
+  });
 }
 
 /**

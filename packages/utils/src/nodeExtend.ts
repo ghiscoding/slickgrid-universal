@@ -46,16 +46,16 @@ const isPlainObject = function isPlainObject(obj: any) {
 };
 
 // If name is '__proto__', and Object.defineProperty is available, define __proto__ as an own property on target
-const setProperty = function setProperty(target: any, options: any) {
-  if (defineProperty && options.name === '__proto__') {
-    defineProperty(target, options.name, {
+const setProperty = function setProperty(target: any, name: string, value: any) {
+  if (defineProperty && name === '__proto__') {
+    defineProperty(target, name, {
       enumerable: true,
       configurable: true,
-      value: options.newValue,
+      value,
       writable: true,
     });
   } else {
-    target[options.name] = options.newValue;
+    target[name] = value;
   }
 };
 
@@ -74,12 +74,6 @@ const getProperty = function getProperty(obj: any, name: string) {
 };
 
 export function extend<T = any>(...args: any[]): T {
-  let options;
-  let name;
-  let src;
-  let copy;
-  let copyIsArray;
-  let clone;
   let target = args[0];
   let i = 1;
   const length = args.length;
@@ -97,35 +91,26 @@ export function extend<T = any>(...args: any[]): T {
   }
 
   for (; i < length; ++i) {
-    options = args[i];
-    // Only deal with non-null/undefined values
-    if (options !== null && options !== undefined) {
-      // Extend the base object
-      for (name in options) {
-        src = getProperty(target, name);
-        copy = getProperty(options, name);
+    const options = args[i];
+    if (options === null || options === undefined) {
+      continue;
+    }
 
-        // Prevent never-ending loop
-        if (target !== copy) {
-          // Recurse if we're merging plain objects or arrays
-          if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
-            if (copyIsArray) {
-              copyIsArray = false;
-              // An explicitly provided empty array is an override, not an array to merge.
-              clone = src && isArray(src) && copy.length > 0 ? src : [];
-            } else {
-              clone = src && isPlainObject(src) ? src : {};
-            }
-
-            // Never move original objects, clone them
-            setProperty(target, { name, newValue: extend(deep, clone, copy) });
-
-            // Don't bring in undefined values
-          } else if (typeof copy !== 'undefined') {
-            setProperty(target, { name, newValue: copy });
-          }
-        }
+    for (const name in options) {
+      const src = getProperty(target, name);
+      let copy = getProperty(options, name);
+      // Prevent never-ending loop and don't bring in undefined values.
+      if (target === copy || typeof copy === 'undefined') {
+        continue;
       }
+
+      let copyIsArray = false;
+      if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
+        // An explicitly provided empty array is an override, not an array to merge.
+        const clone = copyIsArray ? (src && isArray(src) && copy.length > 0 ? src : []) : src && isPlainObject(src) ? src : {};
+        copy = extend(deep, clone, copy);
+      }
+      setProperty(target, name, copy);
     }
   }
 

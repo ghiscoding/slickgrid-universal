@@ -28,7 +28,7 @@ describe('Example 39 - Infinite Scroll with GraphQL', () => {
   it('should scroll to bottom of the grid and expect next batch of 30 items appended to current dataset for a total of 60 items', () => {
     cy.get('[data-test="itemCount"]').should('have.text', '30');
 
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.get('.slick-vertical-scroller').scrollTo('bottom');
 
     cy.get('[data-test="itemCount"]').should('have.text', '60');
 
@@ -43,7 +43,7 @@ describe('Example 39 - Infinite Scroll with GraphQL', () => {
   it('should scroll to bottom of the grid and expect next batch of 30 items appended to current dataset for a new total of 90 items', () => {
     cy.get('[data-test="itemCount"]').should('have.text', '60');
 
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.get('.slick-vertical-scroller').scrollTo('bottom');
 
     cy.get('[data-test="itemCount"]').should('have.text', '90');
 
@@ -62,7 +62,7 @@ describe('Example 39 - Infinite Scroll with GraphQL', () => {
 
     cy.get('[data-test="data-loaded-tag"]').should('not.have.class', 'fully-loaded');
 
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.get('.slick-vertical-scroller').scrollTo('bottom');
 
     cy.get('[data-test="itemCount"]').should('have.text', '100');
 
@@ -99,7 +99,7 @@ describe('Example 39 - Infinite Scroll with GraphQL', () => {
   it('should scroll to bottom again and expect next batch of 30 items appended to current dataset for a total of 60 items', () => {
     cy.get('[data-test="itemCount"]').should('have.text', '30');
 
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.get('.slick-vertical-scroller').scrollTo('bottom');
 
     cy.get('[data-test="itemCount"]').should('have.text', '60');
 
@@ -134,7 +134,7 @@ describe('Example 39 - Infinite Scroll with GraphQL', () => {
   it('should scroll to bottom again and expect next batch to be only 20 females appended to current dataset for a total of 50 items found in DB', () => {
     cy.get('[data-test="itemCount"]').should('have.text', '30');
 
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.get('.slick-vertical-scroller').scrollTo('bottom');
 
     cy.get('[data-test="itemCount"]').should('have.text', '50');
 

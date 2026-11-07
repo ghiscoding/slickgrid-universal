@@ -26,9 +26,10 @@ The framework has many options; ensure new options do not contradict or interfer
 - Avoid circular dependencies. Use `madge --circular` when dependency impact needs verification.
 - For plugin changes, preserve existing `init()`, `dispose()`, `getOptions()`, and `setOptions()` lifecycle methods where applicable. Use `BindingEventService` for DOM event binding and cleanup.
 - Plugins extend SlickGrid and use `SlickEventHandler` where applicable. Support both grid options and column definition options.
-- When changing shared behavior, check all four framework wrappers and relevant demos.
+- When changing shared behavior, check all four framework wrappers and relevant demos. Vanilla and framework demos are numbered differently; see `.agents/skills/read-docs-and-interfaces/demo-equivalents.md` for the matching demos and Cypress specs.
 - Never edit generated `dist/` output unless explicitly requested.
 - When drafting a pull request, follow `.github/pull_request_template.md`, including its conventional-commit title requirement and applicable sections and checklist items.
+- When asked for a PR title and description, return them in two separate Markdown sections, `Title` and `Description`, each with its own fenced Markdown code block so either can be copied independently. Follow `.github/pull_request_template.md` for the description.
 - Keep interactions and commit messages concise while preserving clarity.
 
 ## Testing and quality
@@ -39,11 +40,34 @@ The framework has many options; ensure new options do not contradict or interfer
 - Cypress tests use `testIsolation: false`; preserve their execution order and inherited state.
 - Cypress tests are serial: new tests inherit the grid/page state left by previous tests, so do not assume a fresh page or selection and do not reorder tests without checking dependencies.
 - Tests commonly live in `__tests__/` subdirectories. Native/vanilla tests are under `packages/`; Angular-specific tests are under `frameworks/angular-slickgrid/`.
-- For the Vanilla demo suite, start the watch server with `pnpm serve:vite`, then run the root Cypress CI suite with `pnpm cypress:ci`. To run one spec while iterating, pass its path directly (for example, `pnpm cypress:ci --spec test/cypress/e2e/example33.cy.ts`).
-- Framework demos provide headless Cypress CI scripts. Start the matching demo server first (`pnpm angular:serve`, `pnpm aurelia:serve`, `pnpm react:serve`, or `pnpm vue:serve`).
+- Before starting any dev, watch, or preview server (`pnpm dev`, `pnpm dev:<framework>`, `pnpm vite:watch`, or `pnpm *:serve`), first check whether the demo port is already in use. The user often runs the watch server locally, and starting a duplicate is slow and conflicts on the same port.
+  - Demo ports: Vanilla `8888`, Angular `4300`, React `8000`, Vue `7000`, and Aurelia `7070`.
+  - Identify the listener and whether packages are being watched (`lerna watch`). In PowerShell:
+
+    ```powershell
+    $conn = Get-NetTCPConnection -LocalPort 8888 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($conn) {
+      (Get-CimInstance Win32_Process -Filter "ProcessId=$($conn.OwningProcess)").CommandLine
+      'package watcher: ' + [bool](Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'lerna(\.js)?"?\s+watch' })
+    }
+    ```
+
+    On macOS/Linux, use `lsof -nP -iTCP:8888 -sTCP:LISTEN` and `ps -o args= -p <pid>`, and look for a `lerna watch` process with `pgrep -fl "lerna.*watch"`.
+  - If the port is in use, reuse the server without asking:
+    - A Vite dev server or `ng serve` with a package watcher (`pnpm dev`) rebuilds changed packages automatically.
+    - Without a watcher (for example, `pnpm vite:watch`), rebuild changed packages yourself (for example, `pnpm build:universal`).
+    - A `vite preview` server serves a prebuilt demo, so rebuild the demo before validating changes.
+  - Ask the user only when the listener can't be identified or doesn't look like the expected demo server, or when the port is free. Starting a server is slow, and the user may prefer to start it in their own terminal.
+  - Never stop a server you didn't start. Stop servers you started once validation is finished.
+- For the Vanilla demo suite, serve the demo on port 8888, then run the root Cypress CI suite with `pnpm cypress:ci`. To run one spec while iterating, pass its path directly (for example, `pnpm cypress:ci --spec test/cypress/e2e/example33.cy.ts`).
+  - While iterating, use `pnpm dev`, which builds the packages and watches both the packages and the demo. If the packages are already built and won't change, `pnpm vite:watch` starts only the demo dev server, which is faster.
+  - For a CI-like run, build first, then serve the built demo: `pnpm build:universal`, `pnpm build:dev`, then `pnpm vanilla:serve:demo`.
+- Demos consume the packages' built `dist/` output, not their `src/`. Without `pnpm dev` running, rebuild changed packages (for example, `pnpm build:universal`) before validating them in a demo.
+- Framework demos provide headless Cypress CI scripts. The `*:serve` scripts preview a prebuilt demo, so build it first as CI does (`pnpm build:universal`, then `pnpm <framework>:build:framework`, `pnpm <framework>:build:framework-plugins`, and `pnpm <framework>:build:demo`), then start the matching demo server (`pnpm angular:serve`, `pnpm aurelia:serve`, `pnpm react:serve`, or `pnpm vue:serve`).
 - Run the corresponding root CI command: `pnpm angular:cypress:ci`, `pnpm aurelia:cypress:ci`, `pnpm react:cypress:ci`, or `pnpm vue:cypress:ci` (for example, `pnpm aurelia:cypress:ci`). These commands use each framework's Cypress config and are preferred for validating framework-specific E2E suites.
 - Add or update tests for behavior changes, especially in core packages.
-- Maintain 100% statement, branch, function, and line coverage for changed production code. Scope coverage collection to the changed source files while including all tests needed to exercise them; passing tests alone is not sufficient.
+- Maintain 100% statement and line coverage for every changed production source file. Branch and function coverage percentages are informational.
+- Before committing, verify line coverage with unit tests scoped to each changed production source file and include all relevant tests. Passing tests or aggregate coverage alone is not sufficient. For changed test, documentation, or configuration files that are not production-code coverage targets, run the applicable tests or checks instead.
 - While actively iterating with the user, prefer cheap validation such as TypeScript diagnostics, targeted browser/manual checks, or focused benchmarks. Do not run Vitest entire test suite after every small prompt or exploratory edit; save focused Vitest runs for stable checkpoints, when the user asks, or final validation before handing off.
 - Run the smallest relevant checks first, then broader checks when practical:
 
@@ -60,6 +84,7 @@ pnpm build
 ## Documentation
 
  Update corresponding framework documentation under `frameworks/*/docs/` when applicable.
+ When adding a migration guide entry (`docs/migrations/migration-to-XX.x.md` and its `frameworks/*/docs/migrations/` copies), also update the matching AI skill in `docs/migrations/migration-to-XX.x/SKILL.md` and its `frameworks/*/docs/migrations/` copies.
  Include code examples that work across all supported frameworks.
 
 ## Common commands
@@ -171,33 +196,3 @@ rtk discover          # Find missed rtk opportunities
 rtk proxy <cmd>       # Run raw (no filtering) but track usage
 ```
 <!-- /rtk-instructions -->
-
-## VEXP context tools <!-- vexp v2.0.31 -->
-
-When VEXP context tools are available, `run_pipeline` is the primary tool and must be called first for repository tasks. VEXP returns pre-indexed, graph-ranked context in a single call.
-
-### Workflow
-
-1. Call `run_pipeline` with the task description before other repository searches.
-2. Make targeted changes from the returned context.
-3. Call `run_pipeline` again only when more context is needed.
-
-### Available MCP tools
-
-- `run_pipeline` - primary tool; runs capsule, impact, and memory in one call.
-- `get_skeleton` - compact file structure.
-- `index_status` - indexing status.
-- `expand_vexp_ref` - expand V-REF placeholders in VEXP output.
-
-### Agentic search
-
-When VEXP is available, use `run_pipeline` before built-in file search, grep, or codebase indexing. If spawning sub-agents or background tasks, pass them the context from `run_pipeline` rather than letting them search independently.
-
-### Multi-repo
-
-`run_pipeline` can query all indexed repositories. Use `repos: ["alias"]` to scope it, and use `index_status` to see aliases. If VEXP is unavailable, use the normal repository tools.
-
-### Smart features
-
-VEXP can auto-detect intent, combine hybrid ranking, use session memory, and expand its context budget as needed.
-<!-- /vexp -->

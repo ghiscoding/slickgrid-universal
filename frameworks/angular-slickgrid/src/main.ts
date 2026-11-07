@@ -1,4 +1,4 @@
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { enableProdMode, importProvidersFrom, inject, Injector, provideAppInitializer } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
@@ -43,6 +43,6 @@ bootstrapApplication(AppComponent, {
       fallbackLang: 'en',
       loader: provideTranslateHttpLoader({ prefix: './assets/i18n/', suffix: '.json' }),
     }),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
   ],
 }).catch((err) => console.log(err));

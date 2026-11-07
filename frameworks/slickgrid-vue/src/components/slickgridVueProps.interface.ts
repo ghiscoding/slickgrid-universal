@@ -13,11 +13,9 @@ import type {
   HeaderMenuCommandItemCallbackArgs,
   MenuCommandItemCallbackArgs,
   MenuFromCellCallbackArgs,
-  MenuOptionItemCallbackArgs,
   OnActiveCellChangedEventArgs,
   OnAddNewRowEventArgs,
   OnAutosizeColumnsEventArgs,
-  OnBeforeAppendCellEventArgs,
   OnBeforeCellEditorDestroyEventArgs,
   OnBeforeColumnsResizeEventArgs,
   OnBeforeEditCellEventArgs,
@@ -93,7 +91,6 @@ export interface SlickgridVueProps {
   onOnActiveCellPositionChanged?: VueSlickEventHandler<{ grid: SlickGrid }>;
   onOnAddNewRow?: VueSlickEventHandler<OnAddNewRowEventArgs>;
   onOnAutosizeColumns?: VueSlickEventHandler<OnAutosizeColumnsEventArgs>;
-  onOnBeforeAppendCell?: VueSlickEventHandler<OnBeforeAppendCellEventArgs>;
   onOnBeforeCellEditorDestroy?: VueSlickEventHandler<OnBeforeCellEditorDestroyEventArgs>;
   onOnBeforeColumnsResize?: VueSlickEventHandler<OnBeforeColumnsResizeEventArgs>;
   onOnBeforeDestroy?: VueSlickEventHandler<{ grid: SlickGrid }>;
@@ -158,7 +155,7 @@ export interface SlickgridVueProps {
   onOnBeforeMenuClose?: VueSlickEventHandler<MenuFromCellCallbackArgs>;
   onOnBeforeMenuShow?: VueSlickEventHandler<MenuFromCellCallbackArgs>;
   onOnColumnsChanged?: VueSlickEventHandler<OnColumnsChangedArgs>;
-  onOnCommand?: VueSlickEventHandler<MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs>;
+  onOnCommand?: VueSlickEventHandler<MenuCommandItemCallbackArgs>;
   onOnGridMenuColumnsChanged?: VueSlickEventHandler<OnColumnsChangedArgs>;
   onOnMenuClose?: VueSlickEventHandler<GridMenuEventWithElementCallbackArgs>;
   onOnCopyCells?: VueSlickEventHandler<{ ranges: SlickRange[] }>;
@@ -180,7 +177,6 @@ export interface SlickgridVueProps {
   onOnContextMenuClearGrouping?: VueRegularEventHandler<void>;
   onOnContextMenuCollapseAllGroups?: VueRegularEventHandler<void>;
   onOnContextMenuExpandAllGroups?: VueRegularEventHandler<void>;
-  onOnOptionSelected?: VueRegularEventHandler<MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs>;
   onOnColumnPickerColumnsChanged?: VueRegularEventHandler<OnColumnsChangedArgs>;
   onOnGridMenuMenuClose?: VueRegularEventHandler<GridMenuEventWithElementCallbackArgs>;
   onOnGridMenuBeforeMenuShow?: VueRegularEventHandler<GridMenuEventWithElementCallbackArgs>;

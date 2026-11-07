@@ -38,8 +38,8 @@ export class TranslateServiceStub implements TranslaterService {
       case 'CLEAR_ALL_SORTING':
         output = this._locale === 'en' ? 'Clear all Sorting' : 'Supprimer tous les tris';
         break;
-      case 'CLEAR_PINNING':
-        output = this._locale === 'en' ? 'Unfreeze Columns/Rows' : 'Dégeler les colonnes/rangées';
+      case 'CLEAR_ALL_PINNING':
+        output = this._locale === 'en' ? 'Clear all Pinning' : 'Supprimer toutes les épingles';
         break;
       case 'CLONE':
         output = this._locale === 'en' ? 'Clone' : 'Cloner';
@@ -113,11 +113,26 @@ export class TranslateServiceStub implements TranslaterService {
       case 'FORCE_FIT_COLUMNS':
         output = this._locale === 'en' ? 'Force fit columns' : 'Ajustement forcé des colonnes';
         break;
-      case 'FREEZE_COLUMNS':
-        output = this._locale === 'en' ? 'Freeze Columns' : 'Geler les colonnes';
+      case 'PIN_COLUMN':
+        output = this._locale === 'en' ? 'Column Pinning' : 'Épinglage de colonne';
         break;
-      case 'UNFREEZE_COLUMNS':
-        output = this._locale === 'en' ? 'Unfreeze Columns' : 'Dégeler les colonnes';
+      case 'PIN_COLUMNS_LEFT':
+        output = this._locale === 'en' ? 'Pin Left Through Here' : "Épingler à gauche jusqu'ici";
+        break;
+      case 'PIN_COLUMNS_RIGHT':
+        output = this._locale === 'en' ? 'Pin From Here To Right' : "Épingler à droite à partir d'ici";
+        break;
+      case 'PIN_LEFT':
+        output = this._locale === 'en' ? 'Pin to Left' : 'Épingler à gauche';
+        break;
+      case 'PIN_RIGHT':
+        output = this._locale === 'en' ? 'Pin to Right' : 'Épingler à droite';
+        break;
+      case 'UNPIN_COLUMN':
+        output = this._locale === 'en' ? 'Unpin Column' : 'Désépingler la colonne';
+        break;
+      case 'UNPIN_ALL_COLUMNS':
+        output = this._locale === 'en' ? 'Unpin All Columns' : 'Désépingler toutes les colonnes';
         break;
       case 'GREATER_THAN':
         output = this._locale === 'en' ? 'Greater than' : 'Plus grand que';

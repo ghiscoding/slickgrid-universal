@@ -94,7 +94,6 @@ function defineGrid() {
     },
     enableFiltering: true,
     enableRowDetailView: true,
-    // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
     rowHeight: 33,
     externalResources: [VueRowDetailView],
     rowDetailView: {

@@ -19,6 +19,7 @@ export default class Example22 {
   fetchResult = '';
   statusClass = 'is-success';
   statusStyle = 'display: none';
+  subTitleStyle = 'display: block';
   private _bindingEventService: BindingEventService;
 
   constructor() {
@@ -242,17 +243,17 @@ export default class Example22 {
   }
 
   toggleSingleMultiRowEdit() {
-    this.sgb.gridOptions = {
-      ...this.sgb.gridOptions,
+    this.sgb.options = {
+      ...this.sgb.options,
       ...{
         rowBasedEditOptions: {
-          ...this.sgb.gridOptions.rowBasedEditOptions,
-          ...{ allowMultipleRows: !this.sgb.gridOptions.rowBasedEditOptions?.allowMultipleRows },
+          ...this.sgb.options.rowBasedEditOptions,
+          ...{ allowMultipleRows: !this.sgb.options.rowBasedEditOptions?.allowMultipleRows },
         },
       },
     };
 
-    this.gridOptions = this.sgb.gridOptions;
+    this.gridOptions = this.sgb.options;
   }
 
   async switchLanguage() {
@@ -260,6 +261,11 @@ export default class Example22 {
     await this.translateService.use(nextLanguage);
     this.selectedLanguage = nextLanguage;
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }
 

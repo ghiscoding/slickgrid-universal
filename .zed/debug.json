@@ -1,0 +1,28 @@
+// Project-local debug tasks
+//
+// For more documentation on how to configure debug tasks,
+// see: https://zed.dev/docs/debugger
+[
+  {
+    "label": "Vitest - Debug Current Test File",
+    "adapter": "JavaScript",
+    "type": "node",
+    "request": "launch",
+    "program": "$ZED_WORKTREE_ROOT/node_modules/vitest/vitest.mjs",
+    "args": [
+      "run",
+      "$ZED_RELATIVE_FILE",
+      "--no-watch",
+      "--config",
+      "./test/vitest.config.mts"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "console": "integratedTerminal",
+    "skipFiles": [
+      "<node_internals>/**",
+      "**/node_modules/**"
+    ],
+    "smartStep": true,
+    "stopOnEntry": false
+  }
+]

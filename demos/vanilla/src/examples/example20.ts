@@ -8,7 +8,7 @@ import {
   type Column,
   type GridOption,
 } from '@slickgrid-universal/common';
-import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
+import { SlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example20.scss';
@@ -174,7 +174,6 @@ export default class Example20 {
         return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
       rowHeight: 33,
-      // rowTopOffsetRenderType: 'top', // no longer necessary with v10.10.0 and above; otherwise, uncomment this line
       rowDetailView: {
         columnIndexPosition: 1,
         preTemplate: this.loadingTemplate.bind(this),
@@ -233,8 +232,8 @@ export default class Example20 {
       });
     } else {
       this.rowDetail.addonOptions.useRowClick = true;
-      this.sgb.gridOptions = { ...this.sgb.gridOptions, editable: this.isGridEditable };
-      this.gridOptions = this.sgb.gridOptions;
+      this.sgb.options = { ...this.sgb.options, editable: this.isGridEditable };
+      this.gridOptions = this.sgb.options;
     }
   }
 

@@ -26,7 +26,6 @@ import {
   type SliderOption,
   type VanillaCalendarOption,
 } from 'slickgrid-react';
-import { baseFluentGridOption } from './base-fluent-grid-options.js';
 import { showToast } from './utilities.js';
 import './example11.scss'; // provide custom CSS/SASS styling
 import COUNTRIES_COLLECTION from './data/countries.json';
@@ -429,21 +428,18 @@ const Example11: React.FC = () => {
               command: 'edit',
               title: 'Edit Row',
               iconCssClass: 'fi fi-edit',
-              positionOrder: 66,
               action: () => openCompositeModal('edit'),
             },
             {
               command: 'clone',
               title: 'Clone Row',
               iconCssClass: 'fi fi-copy',
-              positionOrder: 66,
               action: () => openCompositeModal('clone'),
             },
             'divider',
             {
               command: 'delete-row',
               title: 'Delete Row',
-              positionOrder: 64,
               iconCssClass: 'fi fi-dismiss color-danger',
               cssClass: 'red',
               textCssClass: 'text-italic color-danger-light',
@@ -539,7 +535,7 @@ const Example11: React.FC = () => {
         activateCellOnMenuClick: true, // this is important to know which row index to use for Composite Editor
       },
       gridMenu: {
-        hideToggleDarkModeCommand: false, // hidden by default
+        showToggleDarkModeCommand: true, // hidden by default
         onCommand: (_, args) => {
           if (args.command === 'toggle-dark-mode') {
             const newDarkMode = !darkMode;
@@ -548,7 +544,7 @@ const Example11: React.FC = () => {
           }
         },
       },
-      ...baseFluentGridOption,
+      iconSet: 'fluent',
     };
     setColumns(columns);
     setGridOptions(gridOptions);

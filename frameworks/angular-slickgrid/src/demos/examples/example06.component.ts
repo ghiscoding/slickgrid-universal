@@ -196,7 +196,6 @@ export class Example6Component implements OnInit, OnDestroy {
             title: 'Reset Grid',
             disabled: false,
             command: 'reset-grid',
-            positionOrder: 60,
           },
         ],
         onCommand: (e, args) => {

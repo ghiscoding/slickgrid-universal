@@ -87,7 +87,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should expect the row to have moved to another row index', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
 
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
@@ -126,7 +126,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('@moveIconTask5').trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
 
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
@@ -175,7 +175,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('.vc:visible [data-vc-date-btn]:visible').contains(/22$/).first().click();
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(7)`).should('contain', '2009-01-22');
 
-      cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.slick-vertical-scroller').scrollTo('top');
     });
 
     it('should dynamically add 2x new "Title" columns', () => {
@@ -218,8 +218,6 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should open Grid Menu and expect new columns to be added to the column picker section', () => {
       const updatedTitles = [
-        '',
-        '',
         'Title',
         'Action',
         'Duration',
@@ -261,7 +259,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('.slick-header-menu .slick-menu-command-list')
         .should('be.visible')
-        .children('.slick-menu-item:nth-of-type(6)')
+        .children('.slick-menu-item:nth-of-type(8)')
         .children('.slick-menu-content')
         .should('contain', 'Remove Filter')
         .click();
@@ -363,40 +361,14 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('[data-test="toggle-filtering-btn"]').click(); // show it back
     });
 
-    it('should open the Cell Menu on row 9-10 row and change the Completed to "True" and expect the cell to be updated and have checkmark icon', () => {
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 9}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 9');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 10}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 10');
-
-      cy.wait(1);
-      cy.get('.grid7')
-        .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 9}px);"] > .slick-cell:nth(3)`)
-        .click({ force: true });
-      cy.get('.slick-cell-menu').should('be.visible');
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-title').contains('Commands');
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Delete Row');
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Help');
-      cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-title').contains('Change Completed Flag');
-      cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
-
-      // wait for previous cell menu to be closed before reopening another one
-      cy.get('.slick-cell-menu').should('not.exist');
-      cy.get('.grid7')
-        .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 10}px);"] > .slick-cell:nth(3)`)
-        .click({ force: true });
-      cy.get('.slick-cell-menu').should('be.visible');
-      cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
-      cy.get('.slick-cell-menu').should('not.exist');
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 9}px);"] > .slick-cell:nth(7)`)
-        .find('.checkmark-icon')
-        .should('have.length', 1);
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 10}px);"] > .slick-cell:nth(7)`)
-        .find('.checkmark-icon')
-        .should('have.length', 1);
-    });
-
     it('should expect "Clear all Filters" command to be hidden in the Grid Menu', () => {
-      const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+      const expectedFullHeaderMenuCommands = [
+        'Clear all Filters',
+        'Clear all Sorting',
+        'Clear all Pinning',
+        'Toggle Filter Row',
+        'Export to Excel',
+      ];
 
       cy.get('.grid7').find('button.slick-grid-menu-button').trigger('click').click({ force: true });
 
@@ -437,10 +409,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to toggle Sorting functionality (disable) and expect all header menu Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
       const expectedFullHeaderMenuCommands = [
-        'Resize by Content',
-        '',
         'Sort Ascending',
         'Sort Descending',
+        '',
+        'Column Pinning',
+        '',
+        'Resize by Content',
         '',
         'Remove Filter',
         'Remove Sort',
@@ -474,7 +448,13 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should expect "Clear Sorting" command to be hidden in the Grid Menu', () => {
-      const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+      const expectedFullHeaderMenuCommands = [
+        'Clear all Filters',
+        'Clear all Sorting',
+        'Clear all Pinning',
+        'Toggle Filter Row',
+        'Export to Excel',
+      ];
 
       cy.get('.grid7').find('button.slick-grid-menu-button').trigger('click').click();
 
@@ -493,10 +473,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to toggle Sorting functionality (re-enable) and expect all Sorting header menu commands to be visible and also Sort hints to show up also', () => {
       const expectedFullHeaderMenuCommands = [
-        'Resize by Content',
-        '',
         'Sort Ascending',
         'Sort Descending',
+        '',
+        'Column Pinning',
+        '',
+        'Resize by Content',
         '',
         'Remove Filter',
         'Remove Sort',
@@ -526,7 +508,13 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should expect "Clear Sorting" command to be visible again in the Grid Menu', () => {
-      const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+      const expectedFullHeaderMenuCommands = [
+        'Clear all Filters',
+        'Clear all Sorting',
+        'Clear all Pinning',
+        'Toggle Filter Row',
+        'Export to Excel',
+      ];
 
       cy.get('.grid7').find('button.slick-grid-menu-button').trigger('click').click();
 
@@ -545,10 +533,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to click disable Sorting functionality button and expect all Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
       const expectedFullHeaderMenuCommands = [
-        'Resize by Content',
-        '',
         'Sort Ascending',
         'Sort Descending',
+        '',
+        'Column Pinning',
+        '',
+        'Resize by Content',
         '',
         'Remove Filter',
         'Remove Sort',
@@ -583,10 +573,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to click disable Filter functionality button and expect all Filter commands to be hidden and also not show Sort hint while hovering a column', () => {
       const expectedFullHeaderMenuCommands = [
-        'Resize by Content',
-        '',
         'Sort Ascending',
         'Sort Descending',
+        '',
+        'Column Pinning',
+        '',
+        'Resize by Content',
         '',
         'Remove Filter',
         'Remove Sort',
@@ -616,7 +608,13 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should expect "Clear all Filters" command to be hidden again in the Grid Menu', () => {
-      const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+      const expectedFullHeaderMenuCommands = [
+        'Clear all Filters',
+        'Clear all Sorting',
+        'Clear all Pinning',
+        'Toggle Filter Row',
+        'Export to Excel',
+      ];
 
       cy.get('.grid7').find('button.slick-grid-menu-button').trigger('click').click();
 
@@ -634,10 +632,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should open Column Picker and show the "Finish" column back to visible and expect it to have kept its position after toggling filter/sorting', () => {
-      // first 2 cols are hidden but they do count as li item
       const expectedFullPickerTitles = [
-        '',
-        '',
         'Title',
         'Action',
         '% Complete',
@@ -662,7 +657,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-of-type(7)')
+        .children('li:nth-of-type(5)')
         .children('label')
         .should('contain', 'Finish')
         .click();
@@ -674,7 +669,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
         .children()
         .each(($child, index) => {
           if (index <= 7) {
-            expect($child.text()).to.eq(expectedFullPickerTitles[index]);
+            expect($child.text()).to.eq(['', '', ...expectedFullPickerTitles][index]);
           }
         });
     });
@@ -794,19 +789,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should hide "Finish" column from column picker', () => {
-      const originalColumns = [
-        '',
-        '',
-        'Title',
-        'Action',
-        '% Complete',
-        'Finish',
-        'Duration',
-        'Completed',
-        'Start',
-        'Prerequisites',
-        'Title',
-      ];
+      const originalColumns = ['Title', 'Action', '% Complete', 'Finish', 'Duration', 'Completed', 'Start', 'Prerequisites', 'Title'];
 
       cy.get('.grid7').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
@@ -823,14 +806,14 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-of-type(6)')
+        .children('li:nth-of-type(4)')
         .children('label')
         .should('contain', 'Finish')
         .click();
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-of-type(12)')
+        .children('li:nth-of-type(10)')
         .children('label')
         .should('contain', 'Force fit columns');
 
@@ -925,7 +908,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
       cy.get('.slick-column-picker')
         .find('.slick-column-picker-list')
-        .children('li:nth-of-type(12)')
+        .children('li:nth-of-type(10)')
         .children('label')
         .should('contain', 'Ajustement forcé des colonnes');
 
@@ -934,10 +917,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should re-open Header Menu of last "Titre" column and expect all commands to be translated to French', () => {
       const expectedFullHeaderMenuCommands = [
-        'Redimensionner par contenu',
-        '',
         'Trier par ordre croissant',
         'Trier par ordre décroissant',
+        '',
+        'Épinglage de colonne',
+        '',
+        'Redimensionner par contenu',
         '',
         'Supprimer le filtre',
         'Supprimer le tri',
@@ -969,7 +954,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should open Grid Menu and expect new columns to be added to the column picker section, also "Finish" to be unchecked while "Duration" to be at new position', () => {
-      const updatedTitles = ['', '', 'Titre', 'Action', '% Achevée', 'Fin', 'Durée', 'Terminé', 'Début', 'Prerequisites', 'Titre'];
+      const updatedTitles = ['Titre', 'Action', '% Achevée', 'Fin', 'Durée', 'Terminé', 'Début', 'Prerequisites', 'Titre'];
 
       cy.get('.grid7').find('button.slick-grid-menu-button').click({ force: true });
 
@@ -992,31 +977,6 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       });
 
       cy.get('.slick-grid-menu').find('.close').click();
-    });
-
-    it('should open the Cell Menu on first 2 rows and change the Completed to "True" and expect the cell to be updated and have checkmark icon', () => {
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 4');
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 8');
-
-      cy.get('.grid7')
-        .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`)
-        .click({ force: true });
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-title').contains('Commandes');
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Supprimer la ligne');
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Aide');
-      cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-title').contains(`Changer l'indicateur terminé`);
-      cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('Faux').click();
-      cy.get('.grid7')
-        .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`)
-        .click({ force: true });
-      cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('Faux').click();
-
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`)
-        .find('.checkmark-icon')
-        .should('have.length', 0);
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(7)`)
-        .find('.checkmark-icon')
-        .should('have.length', 0);
     });
 
     it('should open the Cell Menu on 2nd row and delete it', () => {
@@ -1177,76 +1137,6 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('@alertStub').should('have.been.calledWith', 'Exporting as Excel (xlsx)');
     });
 
-    it('should open Export->Excel sub-menu & open again Sub-Options on top and expect sub-menu to be recreated with that Sub-Options list instead of the Export->Excel list', () => {
-      const subCommands1 = ['Text (tab delimited)', 'Excel'];
-      const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
-      const subOptions = ['True', 'False'];
-
-      cy.get('.grid7')
-        .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`)
-        .click({ force: true });
-      cy.get('.slick-cell-menu.slick-menu-level-0 .slick-menu-command-list')
-        .find('.slick-menu-item .slick-menu-content')
-        .contains('Exports')
-        .click();
-
-      cy.get('.slick-cell-menu.slick-menu-level-1 .slick-menu-command-list')
-        .should('exist')
-        .find('.slick-menu-item .slick-menu-content')
-        .each(($command, index) => expect($command.text()).to.eq(subCommands1[index]));
-
-      cy.get('.slick-cell-menu.slick-menu-level-1 .slick-menu-command-list')
-        .find('.slick-menu-item .slick-menu-content')
-        .contains('Excel')
-        .click();
-
-      cy.get('.slick-cell-menu.slick-menu-level-2 .slick-menu-command-list')
-        .should('exist')
-        .find('.slick-menu-item .slick-menu-content')
-        .each(($command, index) => expect($command.text()).to.eq(subCommands2[index]));
-
-      cy.get('.slick-cell-menu.slick-menu-level-0 .slick-menu-option-list')
-        .find('.slick-menu-item .slick-menu-content')
-        .contains('Sub-Options')
-        .click();
-
-      cy.get('.slick-cell-menu.slick-menu-level-1 .slick-menu-option-list').as('optionSubList2');
-
-      cy.get('@optionSubList2').find('.slick-menu-title').contains('Change Completed Flag');
-
-      cy.get('@optionSubList2')
-        .should('exist')
-        .find('.slick-menu-item .slick-menu-content')
-        .each(($option, index) => expect($option.text()).to.eq(subOptions[index]));
-    });
-
-    it('should be able to choose "True" option from options sub-menu and expect it to add checkmark in "Completed" column', () => {
-      // cell menu is still open from last test, so no need to reopen
-      cy.get('.slick-cell-menu.slick-menu-level-1 .slick-menu-option-list').as('optionSubList2');
-      cy.get('@optionSubList2').find('.slick-menu-title').contains('Change Completed Flag');
-
-      cy.get('@optionSubList2').find('.slick-menu-item .slick-menu-content').contains('True').click();
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(8)`)
-        .find('.checkmark-icon')
-        .should('have.length', 1);
-    });
-
-    it('should be able to choose "False" option from options sub-menu and expect it to remove checkmark in "Completed" column', () => {
-      cy.get('.grid7')
-        .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`)
-        .click({ force: true });
-      cy.get('.slick-cell-menu.slick-menu-level-0 .slick-menu-option-list')
-        .find('.slick-menu-item .slick-menu-content')
-        .contains('Sub-Options')
-        .click();
-
-      cy.get('.slick-cell-menu.slick-menu-level-1 .slick-menu-option-list').as('optionSubList2');
-      cy.get('@optionSubList2').find('.slick-menu-item .slick-menu-content').contains('False').click();
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(8)`)
-        .find('.checkmark-icon')
-        .should('have.length', 0);
-    });
-
     it('should open Export->Excel sub-menu then open Feedback->ContactUs sub-menus and expect previous Export menu to no longer exists', () => {
       const subCommands1 = ['Text', 'Excel'];
       const subCommands2 = ['Request update from supplier', '', 'Contact Us'];
@@ -1320,7 +1210,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should scroll to "Task 45", open "Title" editor and expect the editor to follow scroll until it goes outside the viewport', () => {
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1500);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1500);
       cy.wait(10);
       cy.get('[data-row="35"] > .slick-cell:nth(2)').should('contain', 'Task 35');
 
@@ -1328,22 +1218,22 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1300).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1300).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1150).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1150).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1000).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1000).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1600).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 1600).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 2000).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 2000).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('not.be.visible');
 
-      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0).wait(10);
+      cy.get('.slick-vertical-scroller').scrollTo(0, 0).wait(10);
       cy.get('.slick-large-editor-text.editor-title').should('not.be.visible');
     });
 
@@ -1399,11 +1289,9 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       pressKeyTimes('TAB', 7);
       cy.get('.slick-header-columns .slick-header-menu-button:nth(2)').should('have.focus');
       cy.press(Cypress.Keyboard.Keys.ENTER);
-      cy.press(Cypress.Keyboard.Keys.DOWN);
       cy.press(Cypress.Keyboard.Keys.ENTER);
       cy.get('.slick-header-columns .slick-header-column:nth(5) .slick-sort-indicator-asc').should('exist');
       cy.press(Cypress.Keyboard.Keys.ENTER);
-      cy.press(Cypress.Keyboard.Keys.DOWN);
       cy.press(Cypress.Keyboard.Keys.DOWN);
       cy.press(Cypress.Keyboard.Keys.ENTER);
       cy.get('.slick-header-columns .slick-header-column:nth(5) .slick-sort-indicator-desc').should('exist');
@@ -1416,7 +1304,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       pressKeyTimes('TAB', 9);
       cy.get('.slick-grid-menu-button').should('have.focus');
       cy.press(Cypress.Keyboard.Keys.ENTER);
-      pressKeyTimes('DOWN', 4);
+      pressKeyTimes('DOWN', 5);
       cy.press(Cypress.Keyboard.Keys.ENTER);
 
       cy.get('.slick-header-columns')
@@ -1429,7 +1317,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
         .children()
         .each(($child, index) => expect($child.text()).to.eq(colsWithTitle[index]));
 
-      pressKeyTimes('UP', 3);
+      pressKeyTimes('UP', 4);
       cy.press(Cypress.Keyboard.Keys.ENTER);
       cy.get('.slick-header-columns .slick-header-column:nth(5) .slick-sort-indicator-asc').should('not.exist');
       cy.get('.slick-header-columns .slick-header-column:nth(5) .slick-sort-indicator-desc').should('not.exist');

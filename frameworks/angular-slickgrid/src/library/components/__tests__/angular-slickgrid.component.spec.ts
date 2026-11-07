@@ -8,6 +8,7 @@ import {
   SharedService,
   SlickDataView,
   SlickGroupItemMetadataProvider,
+  TreeDataService,
   type BackendService,
   type BackendServiceApi,
   type BackendUtilityService,
@@ -39,7 +40,6 @@ import {
   type SlickEventHandler,
   type SlickGrid,
   type SortService,
-  type TreeDataService,
 } from '@slickgrid-universal/common';
 import { type SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
@@ -239,6 +239,10 @@ const treeDataServiceStub = {
   initHierarchicalTree: vi.fn(),
   sortHierarchicalDataset: vi.fn(),
   toggleTreeDataCollapse: vi.fn(),
+  // run the real shared sorting logic against the stubbed collaborators
+  filterService: filterServiceStub,
+  sharedService: new SharedService(),
+  sortTreeDataset: TreeDataService.prototype.sortTreeDataset,
 } as unknown as TreeDataService;
 
 const mockDataView = {
@@ -284,7 +288,7 @@ const mockGrid = {
   getViewportNode: () => viewportElm,
   getUID: () => 'slickgrid_12345',
   getContainerNode: vi.fn(),
-  getFrozenColumnId: vi.fn(),
+  getPinnedColumnId: vi.fn(),
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
   getRenderedRange: vi.fn(),
@@ -301,7 +305,7 @@ const mockGrid = {
   setHeaderRowVisibility: vi.fn(),
   setOptions: vi.fn(),
   setSelectedRows: vi.fn(),
-  validateColumnFreeze: vi.fn(),
+  validateColumnPinning: vi.fn(),
   onClick: new MockSlickEvent(),
   onClicked: new MockSlickEvent(),
   onColumnsReordered: new MockSlickEvent(),
@@ -348,7 +352,6 @@ class TestPaginationComponent implements BasePaginationComponent {
 
 describe('Angular-Slickgrid Custom Component instantiated via Constructor', () => {
   let component: AngularSlickgridComponent;
-  let columns: Column[] = [];
   let eventPubSubService: EventPubSubService;
   let gridOptions!: GridOption;
   let divContainer: HTMLDivElement;
@@ -377,7 +380,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     divContainer.innerHTML = template;
     divContainer.appendChild(cellDiv);
     document.body.appendChild(divContainer);
-    columns = [{ id: 'name', field: 'name' }];
     gridOptions = {
       enableExcelExport: false,
       dataView: null,
@@ -451,6 +453,48 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     expect(component.elementRef.nativeElement).toBeTruthy();
   });
 
+  describe('command visibility option merging', () => {
+    beforeEach(() => {
+      component['forRootConfig'] = {
+        gridMenu: { hideCommands: ['export-csv', 'export-excel'] },
+        contextMenu: { hideCommands: ['copy', 'export-csv'] },
+        headerMenu: { hideCommands: ['sort-asc', 'sort-desc'] },
+        textExportOptions: { menuFormats: ['csv', 'txt'] },
+      };
+    });
+
+    it('should replace inherited visibility lists with shorter or empty grid lists without mutating inputs', () => {
+      const input: GridOption = {
+        gridMenu: { hideCommands: ['clear-sorting'] },
+        contextMenu: { hideCommands: ['export-excel'] },
+        headerMenu: { hideCommands: [] },
+        textExportOptions: { menuFormats: ['txt'] },
+      };
+      const options = component['mergeGridOptions'](input);
+
+      for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
+        expect(options[menu]!.hideCommands).toEqual(input[menu]!.hideCommands);
+        expect(options[menu]!.hideCommands).not.toBe(input[menu]!.hideCommands);
+      }
+      expect(options.textExportOptions!.menuFormats).toEqual(['txt']);
+      expect(options.textExportOptions!.menuFormats).not.toBe(input.textExportOptions!.menuFormats);
+      expect(component['forRootConfig']!.gridMenu!.hideCommands).toEqual(['export-csv', 'export-excel']);
+      expect(component['forRootConfig']!.textExportOptions!.menuFormats).toEqual(['csv', 'txt']);
+      expect(component['forRootConfig']!.headerMenu!.hideCommands).toEqual(['sort-asc', 'sort-desc']);
+    });
+
+    it('should retain and copy forRoot visibility lists when the grid omits them', () => {
+      const options = component['mergeGridOptions']({});
+
+      for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
+        expect(options[menu]!.hideCommands).toEqual(component['forRootConfig']![menu]!.hideCommands);
+        expect(options[menu]!.hideCommands).not.toBe(component['forRootConfig']![menu]!.hideCommands);
+      }
+      expect(options.textExportOptions!.menuFormats).toEqual(['csv', 'txt']);
+      expect(options.textExportOptions!.menuFormats).not.toBe(component['forRootConfig']!.textExportOptions!.menuFormats);
+    });
+  });
+
   it('should provide the gridService lazily', () => {
     const instance = TestBed.runInInjectionContext(
       () =>
@@ -487,16 +531,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     expect((instance.extensionService as any).lazyGridService()).toBeDefined();
   });
 
-  it('should load enable mousewheel event scrolling when using a frozen grid', () => {
-    component.options = gridOptions;
-    component.options.enableMouseWheelScrollHandler = undefined;
-    component.options.frozenRow = 3;
-
-    component.ngAfterViewInit();
-
-    expect(component.options.enableMouseWheelScrollHandler).toBe(true);
-  });
-
   it('should throw an error when [columns] is undefined', () =>
     new Promise((done: any) => {
       try {
@@ -511,18 +545,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       }
     }));
 
-  it('should keep frozen column index reference (via frozenVisibleColumnId) when grid is a frozen grid', () => {
-    vi.spyOn(mockGrid, 'getFrozenColumnId').mockReturnValue('name');
-    component.columns = columns;
-    component.options = gridOptions;
-    component.options.frozenColumn = 0;
-
-    component.initialization(slickEventHandler);
-
-    expect(component.eventHandler).toBe(slickEventHandler);
-    expect(sharedService.frozenVisibleColumnId).toBe('name');
-  });
-
   it('should assign "hasColumnReordered: true" when "onColumnsReordered" event is triggered', () => {
     const newVisibleColumns = [
       { id: 'lastName', field: 'lastName' },
@@ -533,7 +555,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     component.initialization(slickEventHandler);
     mockGrid.onColumnsReordered.notify({ impactedColumns: newVisibleColumns, grid: mockGrid, previousColumnOrder: ['firstName', 'lastName'] });
 
-    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(component['_eventHandler']).toEqual(slickEventHandler);
     expect(sharedService.hasColumnsReordered).toBe(true);
   });
 
@@ -542,7 +564,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     component.initialization(slickEventHandler);
     mockGrid.onSetOptions.notify({ optionsBefore: { darkMode: false }, optionsAfter: { darkMode: true }, grid: mockGrid });
 
-    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(component['_eventHandler']).toEqual(slickEventHandler);
     expect(divContainer.classList.contains('slick-dark-mode')).toBeTruthy();
   });
 
@@ -551,7 +573,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     component.initialization(slickEventHandler);
     mockGrid.onSetOptions.notify({ optionsBefore: { darkMode: true }, optionsAfter: { darkMode: false }, grid: mockGrid });
 
-    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(component['_eventHandler']).toEqual(slickEventHandler);
     expect(divContainer.classList.contains('slick-dark-mode')).toBeFalsy();
   });
 
@@ -647,6 +669,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' },
       ];
       vi.spyOn(mockGrid, 'getColumns').mockReturnValueOnce(mockColumns);
+      const getItemsSpy = vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ firstName: 'John', updatedDate: '2020-02-01' }]);
 
       component.options = { enableAutoResize: true };
       component.ngAfterViewInit();
@@ -654,6 +677,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         expect.stringContaining('[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option')
       );
+      getItemsSpy.mockReset();
     });
 
     it('should expect a console warning when assigned dataset is larger than 5K items without pre-parsing enabled', () => {
@@ -670,11 +694,13 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
 
       // we'll do a fake dataset assignment of 10001 items
       vi.spyOn(mockDataView, 'getItemCount').mockReturnValueOnce(10001);
+      const getItemsSpy = vi.spyOn(mockDataView, 'getItems').mockReturnValue([{ firstName: 'John', updatedDate: '2020-02-01' }]);
       component.dataset = [{ firstName: 'John', updatedDate: '2020-02-01' }];
 
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         expect.stringContaining('[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option')
       );
+      getItemsSpy.mockReset();
     });
 
     describe('autoAddCustomEditorFormatter grid option', () => {
@@ -710,7 +736,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         const translateSpy = vi.spyOn(extensionServiceStub, 'translateColumnHeaders');
         const autosizeSpy = vi.spyOn(mockGrid, 'autosizeColumns');
         const updateSpy = vi.spyOn(component, 'updateColumnDefinitionsList');
-        const renderSpy = vi.spyOn(extensionServiceStub, 'renderColumnHeaders');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
         vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
 
@@ -824,7 +849,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
             component.dataset = mockData;
           } catch (e: any) {
             expect(e.toString()).toContain(
-              '[Angular-Slickgrid] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use.'
+              '[Angular-Slickgrid] Choose either viewport sizing (autoFitColumnsOnFirstLoad, enableAutoSizeColumns) or content sizing (autosizeColumnsByCellContentOnFirstLoad, enableAutoResizeColumnsByCellContent).'
             );
             component.destroy();
             done();
@@ -846,7 +871,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
             component.dataset = mockData;
           } catch (e: any) {
             expect(e.toString()).toContain(
-              '[Angular-Slickgrid] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use.'
+              '[Angular-Slickgrid] Choose either viewport sizing (autoFitColumnsOnFirstLoad, enableAutoSizeColumns) or content sizing (autosizeColumnsByCellContentOnFirstLoad, enableAutoResizeColumnsByCellContent).'
             );
             component.destroy();
             done();
@@ -898,10 +923,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         component.options = { draggableGrouping: {} };
         component.initialization(slickEventHandler);
 
-        expect(SlickDataView).toHaveBeenCalledWith(
-          expect.objectContaining({ inlineFilters: false, groupItemMetadataProvider: expect.anything() }),
-          eventPubSubService
-        );
+        expect(SlickDataView).toHaveBeenCalledWith(expect.objectContaining({ groupItemMetadataProvider: expect.anything() }), eventPubSubService);
         expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
         expect(mockGrid.registerPlugin).toHaveBeenCalled();
 
@@ -916,10 +938,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         component.options = { enableGrouping: true, draggableGrouping: {} };
         component.initialization(slickEventHandler);
 
-        expect(SlickDataView).toHaveBeenCalledWith(
-          expect.objectContaining({ inlineFilters: false, groupItemMetadataProvider: expect.anything() }),
-          eventPubSubService
-        );
+        expect(SlickDataView).toHaveBeenCalledWith(expect.objectContaining({ groupItemMetadataProvider: expect.anything() }), eventPubSubService);
         expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
         expect(mockGrid.registerPlugin).toHaveBeenCalled();
       });
@@ -1352,13 +1371,17 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         expect(backendSpy).toHaveBeenCalledWith(mockColumnFilter, false);
       });
 
-      it('should override frozen grid options when "pinning" is defined in the "presets" property', () => {
-        const pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
-
+      it.each<CurrentPinning>([
+        { columns: { left: ['field1'], right: ['field3'] }, rows: { top: [0], bottom: [9] } },
+        { columns: { left: [], right: [] }, rows: { top: [], bottom: [] } },
+      ])('should override nested pinning grid options from presets: %j', (pinningMock) => {
+        component.options.pinning = { columns: { left: ['field2'] }, rows: { top: [2] } };
         component.options.presets = { pinning: pinningMock };
         component.initialization(slickEventHandler);
 
-        expect(component.options).toEqual({ ...component.options, ...pinningMock });
+        expect(component.options.pinning).toEqual(pinningMock);
+        expect(component.options).not.toHaveProperty('rows');
+        expect(component.options).not.toHaveProperty('columns');
       });
 
       it('should call the "updateFilters" method when filters are defined in the "presets" property', () => {
@@ -1939,7 +1962,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         component.initialization(slickEventHandler);
         mockDataView.onRowsChanged.notify({ rows: [1, 2, 3] } as any);
 
-        expect(component.eventHandler).toEqual(slickEventHandler);
+        expect(component['_eventHandler']).toEqual(slickEventHandler);
         expect(renderSpy).toHaveBeenCalled();
         expect(updateRowSpy).toHaveBeenCalledTimes(3);
       });
@@ -1961,7 +1984,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           callingOnRowsChanged: false,
         });
 
-        expect(component.eventHandler).toEqual(slickEventHandler);
+        expect(component['_eventHandler']).toEqual(slickEventHandler);
         expect(invalidateRowSpy).toHaveBeenCalled();
         expect(renderSpy).toHaveBeenCalled();
       });
@@ -2542,7 +2565,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         new Promise((done: any) => {
           const mockHierarchical = [{ file: 'documents', files: [{ file: 'vacation.txt' }] }];
           const hierarchicalSpy = vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
-          const clearFilterSpy = vi.spyOn(filterServiceStub, 'clearFilters');
           const refreshFilterSpy = vi.spyOn(filterServiceStub, 'refreshTreeDataFilters');
           const setItemsSpy = vi.spyOn(mockDataView, 'setItems');
           const processSpy = vi.spyOn(sortServiceStub, 'processTreeDataInitialSort');
@@ -2644,5 +2666,22 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         expect(refreshTreeSpy).toHaveBeenCalled();
       });
     });
+  });
+});
+
+describe('resetExternalResources ownership', () => {
+  it('disposes external resources and preserves grid-owned services', () => {
+    const component = Object.create(AngularSlickgridComponent.prototype) as any;
+    const owned = { dispose: vi.fn() };
+    const external = { dispose: vi.fn() };
+    const previous = [owned, external];
+    component.gridService = owned;
+    component._registeredResources = previous;
+    component.sharedService = {};
+    component.resetExternalResources();
+    expect(external.dispose).toHaveBeenCalledOnce();
+    expect(owned.dispose).not.toHaveBeenCalled();
+    expect(previous).toEqual([]);
+    expect(component.sharedService.externalRegisteredResources).toEqual([]);
   });
 });

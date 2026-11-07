@@ -6,13 +6,14 @@ import type {
   Column,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
-  MenuOptionItem,
   OnClickEventArgs,
   OnKeyDownEventArgs,
 } from '../interfaces/index.js';
+import type { MenuDivider } from '../interfaces/menuCommandItem.interface.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
+import { normalizeMenuCommandItems } from './menuUtils.js';
 
 /**
  * A plugin to add Menu on a Cell click (click on the cell that has the cellMenu object defined)
@@ -61,9 +62,6 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   init(cellMenuOptions?: CellMenu): void {
     this._addonOptions = { ...this._defaults, ...cellMenuOptions };
 
-    // sort all menu items by their position order when defined
-    this.sortMenuItems(this.grid.getColumns());
-
     this._eventHandler.subscribe(this.grid.onClick, this.handleCellClick.bind(this));
     this._eventHandler.subscribe(this.grid.onKeyDown, this.handleCellKeyDown.bind(this));
 
@@ -72,31 +70,25 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
     }
   }
 
-  /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate all list titles & all commands/options */
+  /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate all list titles & all commands */
   translateCellMenu(): void {
     const gridOptions = this.sharedService?.gridOptions;
     const columns = this.grid.getColumns();
 
     if (gridOptions?.enableTranslate && Array.isArray(columns)) {
       columns.forEach((columnDef: Column) => {
-        if (columnDef?.cellMenu && (Array.isArray(columnDef.cellMenu.commandItems) || Array.isArray(columnDef.cellMenu.optionItems))) {
-          // get both items list
-          const columnCellMenuCommandItems: Array<MenuCommandItem | 'divider'> = columnDef.cellMenu.commandItems || [];
-          const columnCellMenuOptionItems: Array<MenuOptionItem | 'divider'> = columnDef.cellMenu.optionItems || [];
+        if (columnDef?.cellMenu && Array.isArray(columnDef.cellMenu.commandItems)) {
+          // get command items
+          const columnCellMenuCommandItems: Array<MenuCommandItem | MenuDivider> = columnDef.cellMenu.commandItems || [];
 
           // translate their titles only if they have a titleKey defined
           if (columnDef.cellMenu.commandTitleKey) {
             // prettier-ignore
             columnDef.cellMenu.commandTitle = this.extensionUtility.translateWhenEnabledAndServiceExist(columnDef.cellMenu.commandTitleKey, 'TEXT_COMMANDS') || columnDef.cellMenu.commandTitle;
           }
-          if (columnDef.cellMenu.optionTitleKey) {
-            // prettier-ignore
-            columnDef.cellMenu.optionTitle = this.extensionUtility.translateWhenEnabledAndServiceExist(columnDef.cellMenu.optionTitleKey, 'TEXT_OPTIONS') || columnDef.cellMenu.optionTitle;
-          }
 
-          // translate both command/option items (whichever is provided)
+          // translate command items
           this.extensionUtility.translateMenuItemsFromTitleKey(columnCellMenuCommandItems, 'commandItems');
-          this.extensionUtility.translateMenuItemsFromTitleKey(columnCellMenuOptionItems, 'optionItems');
         }
       });
     }
@@ -118,7 +110,13 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
       }
 
       // merge the cellMenu of the column definition with the default properties
-      this._addonOptions = { ...this._addonOptions, ...columnDef.cellMenu };
+      const { commandListBuilder, ...cellMenuOptions } = columnDef.cellMenu ?? {};
+      this._addonOptions = { ...this._addonOptions, ...cellMenuOptions };
+
+      const commandItems = columnDef.cellMenu?.commandItems ?? [];
+      const builder = commandListBuilder ?? this._addonOptions.commandListBuilder;
+      this._addonOptions.commandItems =
+        (builder?.(normalizeMenuCommandItems(commandItems)) as Array<MenuCommandItem | MenuDivider>) ?? commandItems;
 
       // run the override function (when defined), if the result is false it won't go further
       const menuArgs = (args || {}) as MenuCommandItemCallbackArgs;
@@ -167,22 +165,5 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
         );
       }
     }
-  }
-
-  // --
-  // protected functions
-  // ------------------
-
-  /** @deprecated Sort items (by pointers) in an array by a property name */
-  protected sortMenuItems(columns: Column[]): void {
-    // sort both items list
-    columns.forEach((columnDef: Column) => {
-      if (columnDef?.cellMenu?.commandItems) {
-        this.extensionUtility.sortItems(columnDef.cellMenu.commandItems || [], 'positionOrder');
-      }
-      if (columnDef?.cellMenu?.optionItems) {
-        this.extensionUtility.sortItems(columnDef.cellMenu.optionItems || [], 'positionOrder');
-      }
-    });
   }
 }

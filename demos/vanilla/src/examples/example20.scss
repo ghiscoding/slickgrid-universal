@@ -32,10 +32,10 @@
   input.filter::placeholder {
     opacity: 0.4;
   }
-  .dynamic-cell-detail {
+  .slick-row-detail-container {
     // background-color: #f8f8f8;
   }
-  .dynamic-cell-detail > :first-child {
+  .slick-row-detail-container > :first-child {
     vertical-align:     middle;
     line-height:        13px;
     padding:            10px;
@@ -98,7 +98,7 @@
 }
 
 // .slick-dark-mode {
-//   .dynamic-cell-detail {
+//   .slick-row-detail-container {
 //     background-color: #3c4349;
 //   }
 // }

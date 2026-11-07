@@ -7,7 +7,6 @@ import type {
   ExtensionUtility,
   FilterService,
   GridEventService,
-  GridOption,
   GridService,
   GridStateService,
   HeaderGroupingService,
@@ -19,16 +18,18 @@ import type {
   TranslaterService,
   TreeDataService,
 } from '@slickgrid-universal/common';
-import { GlobalGridOptions } from '@slickgrid-universal/common';
+import { getIconSetOptions, GlobalGridOptions } from '@slickgrid-universal/common';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
-import type { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
-import { extend } from '@slickgrid-universal/utils';
+import { deepCopy, extend } from '@slickgrid-universal/utils';
 import { SlickVanillaGridBundle, type UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options.js';
+import type { SalesforceGridOption } from './salesforce-grid-option.interface.js';
+import { SalesforceResizerService } from './salesforce-resizer.service.js';
 
 export class VanillaForceGridBundle extends SlickVanillaGridBundle {
   slickCompositeEditor: SlickCompositeEditorComponent | undefined;
@@ -45,7 +46,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
   constructor(
     gridParentContainerElm: HTMLElement,
     columnDefs?: Column[],
-    options?: GridOption,
+    options?: SalesforceGridOption,
     dataset?: any[],
     hierarchicalDataset?: any[],
     services?: {
@@ -69,13 +70,46 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
       universalContainerService?: UniversalContainerService;
     }
   ) {
-    super(gridParentContainerElm, columnDefs, options, dataset, hierarchicalDataset, services);
+    const eventPubSubService = services?.eventPubSubService ?? new EventPubSubService(gridParentContainerElm);
+    super(gridParentContainerElm, columnDefs, options, dataset, hierarchicalDataset, {
+      ...services,
+      eventPubSubService,
+      resizerService: services?.resizerService ?? new SalesforceResizerService(eventPubSubService),
+    });
   }
 
-  mergeGridOptions(gridOptions: GridOption): GridOption {
+  override get options(): SalesforceGridOption {
+    return super.options;
+  }
+
+  override set options(options: SalesforceGridOption) {
+    super.options = options;
+  }
+
+  mergeGridOptions(gridOptions: SalesforceGridOption): SalesforceGridOption {
     const extraOptions =
       gridOptions.useSalesforceDefaultGridOptions || this._gridOptions?.useSalesforceDefaultGridOptions ? SalesforceGlobalGridOptions : {};
-    const options = extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
+    const options = extend(
+      true,
+      {},
+      getIconSetOptions(gridOptions.iconSet ?? GlobalGridOptions.iconSet),
+      GlobalGridOptions,
+      { autoFixResizeTimeout: 5 * 60 * 5, autoFixResizeRequiredGoodCount: 2, autoFixResizeWhenBrokenStyleDetected: false },
+      extraOptions,
+      gridOptions
+    );
+
+    // Command visibility and export menu format lists replace defaults instead of merging array entries by index.
+    for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
+      const commands = gridOptions[menu]?.hideCommands;
+      if (commands && options[menu]) {
+        Object.assign(options[menu], { hideCommands: [...commands] });
+      }
+    }
+    const menuFormats = gridOptions.textExportOptions?.menuFormats;
+    if (menuFormats && options.textExportOptions) {
+      options.textExportOptions.menuFormats = [...menuFormats];
+    }
 
     // also make sure to show the header row if user have enabled filtering
     if (options.enableFiltering && !options.showHeaderRow) {
@@ -112,12 +146,16 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
   // protected functions
   // ------------------
 
+  protected prepareDataset<T>(dataset: T[]): T[] {
+    return (this._gridOptions as SalesforceGridOption)?.enableDeepCopyDatasetOnPageLoad ? deepCopy([...dataset]) : dataset;
+  }
+
   protected registerResources(): void {
     // when using Salesforce, we want the Export to CSV always enabled without registering it
-    if (this.gridOptions.enableTextExport) {
+    if (this.options.enableTextExport) {
       this._registeredResources.push(new TextExportService());
     }
-    if (this.gridOptions.enableTextExport) {
+    if (this.options.enableExcelExport) {
       this._registeredResources.push(new ExcelExportService());
     }
     this._registeredResources.push(new SlickCustomTooltip());
@@ -132,19 +170,19 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
     if (
-      (this.gridOptions.createPreHeaderPanel && this.gridOptions.createTopHeaderPanel) ||
-      (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping)
+      (this.options.createPreHeaderPanel && this.options.createTopHeaderPanel) ||
+      (this.options.createPreHeaderPanel && !this.options.enableDraggableGrouping)
     ) {
       this._registeredResources.push(this.headerGroupingService);
     }
 
     // when using Tree Data View, register its Service
-    if (this.gridOptions.enableTreeData) {
+    if (this.options.enableTreeData) {
       this._registeredResources.push(this.treeDataService);
     }
 
     // when user enables translation, we need to translate Headers on first pass & subsequently in the bindDifferentHooks
-    if (this.gridOptions.enableTranslate) {
+    if (this.options.enableTranslate) {
       this.extensionService.translateColumnHeaders();
     }
 
@@ -154,7 +192,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
 
     // also initialize (render) the pagination component when using the salesforce default options
     // however before adding a new instance, just make sure there isn't one that might have been loaded by calling "registerExternalResources"
-    if (this.gridOptions.enableCompositeEditor) {
+    if (this.options.enableCompositeEditor) {
       if (!this._registeredResources.some((resource) => resource instanceof SlickCompositeEditorComponent)) {
         this.slickCompositeEditor = new SlickCompositeEditorComponent();
         this._registeredResources.push(this.slickCompositeEditor);

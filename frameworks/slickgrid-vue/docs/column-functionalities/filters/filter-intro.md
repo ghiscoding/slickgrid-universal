@@ -76,7 +76,7 @@ function showFilterRow() {
     enableFiltering: true,
     showHeaderRow: false,
     gridMenu: {
-      hideToggleFilterCommand: true
+      hideCommands: ['toggle-filter']
     },
   };
 

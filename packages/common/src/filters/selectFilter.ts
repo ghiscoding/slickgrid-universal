@@ -31,6 +31,7 @@ import { renderCollectionOptionsAsync } from './filterUtilities.js';
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;
   protected _collectionLength = 0;
+  protected _collectionGeneration = 0;
   protected _collectionObservers: Array<null | { disconnect: () => void }> = [];
   protected _locales!: Locale;
   protected _msInstance?: MultipleSelectInstance;
@@ -133,6 +134,8 @@ export class SelectFilter implements Filter {
 
   /** Initialize the filter template */
   init(args: FilterArguments): Promise<any[]> {
+    const generation = ++this._collectionGeneration;
+    const isActive = () => generation === this._collectionGeneration;
     this.grid = args.grid;
     this.callback = args.callback;
     this.columnDef = args.columnDef;
@@ -199,7 +202,8 @@ export class SelectFilter implements Filter {
             this.columnDef,
             this.renderDomElement.bind(this),
             this.rxjs,
-            this.subscriptions
+            this.subscriptions,
+            isActive
           );
           resolve(collectionOutput);
         } else {
@@ -212,7 +216,9 @@ export class SelectFilter implements Filter {
         // any collection changes will trigger a re-render of the DOM element filter
         if (this.columnFilter.collectionAsync || this.columnFilter.enableCollectionWatch) {
           await (collectionOutput ?? this.columnFilter.collectionAsync);
-          this.watchCollectionChanges();
+          if (isActive()) {
+            this.watchCollectionChanges();
+          }
         }
       } catch (e: any) {
         reject(e);
@@ -239,6 +245,7 @@ export class SelectFilter implements Filter {
 
   /** destroy the filter */
   destroy(): void {
+    this._collectionGeneration++;
     if (typeof this._msInstance?.destroy === 'function') {
       this._msInstance.destroy();
     }

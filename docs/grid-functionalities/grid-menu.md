@@ -35,16 +35,52 @@ this.gridOptions: {
 }
 ```
 
-### Custom Commands
-The Grid Menu also comes, by default, with a list of built-in custom commands (all their `positionOrder` are in the reserved range of 40 to 60)
-- Clear all Filters (you can hide it with `hideClearAllFiltersCommand: true`)
-- Clear all Sorting (you can hide it with `hideClearAllSortingCommand: true`)
-- Toggle the Filter Row (you can hide it with `hideToggleFilterCommand: true`)
-- Export to CSV (you can hide it with `hideExportCsvCommand: true`)
-- Export to Text Delimited (you can hide it with `hideExportTextDelimitedCommand: true`)
-- Refresh Dataset, only shown when using Backend Service API (you can hide it with `hideRefreshDatasetCommand: true`)
+### Default command visibility
 
-> **Note**: all `hide...` and `positionOrder` properties were deprecated in v10 and will be removed in v11, prefer the use of `hideCommands` or the `commandListBuilder` instead (see below).
+The following built-in command IDs are supported by `gridMenu.hideCommands` (commands still depend on enabled features and options):
+
+| Command ID |
+| --- |
+| `clear-filter` |
+| `clear-pinning` |
+| `clear-sorting` |
+| `export-csv` |
+| `export-excel` |
+| `export-pdf` |
+| `export-text-delimited` |
+| `refresh-dataset` |
+| `toggle-dark-mode` |
+| `toggle-filter` |
+| `toggle-preheader` |
+
+Built-in commands appear according to the enabled grid features (for example, `enableFiltering`, `enableSorting`, or `enableExcelExport`). Two commands require explicit opt-in:
+
+- `toggle-dark-mode`: enable it with `gridMenu.showToggleDarkModeCommand: true`.
+- `export-text-delimited`: enable it with `textExportOptions.menuFormats: ['csv', 'txt']` (defaults to `['csv']`, also shared with the Context Menu).
+
+Use `hideCommands` to hide any built-in command; it always takes precedence. Visibility is applied before `commandListBuilder`.
+
+```ts
+this.gridOptions = {
+  enableTextExport: true,
+  textExportOptions: { menuFormats: ['csv', 'txt'] },
+  gridMenu: {
+    showToggleDarkModeCommand: true,
+    hideCommands: ['clear-pinning'],
+  },
+};
+```
+
+### Custom Commands
+The Grid Menu also comes, by default, with a list of built-in custom commands (use `commandListBuilder` to reorder these commands)
+- Clear all Filters (you can hide it with `hideCommands: ['clear-filter']`)
+- Clear all Sorting (you can hide it with `hideCommands: ['clear-sorting']`)
+- Toggle the Filter Row (you can hide it with `hideCommands: ['toggle-filter']`)
+- Export to CSV (you can hide it with `hideCommands: ['export-csv']`)
+- Export to Text Delimited (you can hide it with `hideCommands: ['export-text-delimited']`)
+- Refresh Dataset, only shown when using Backend Service API (you can hide it with `hideCommands: ['refresh-dataset']`)
+
+> **Note**: command visibility flags (`hide...Command`) were removed in v11; use `hideCommands` or `commandListBuilder`. The `positionOrder` property was removed in v11; use `commandListBuilder` to reorder commands (see below).
 
 This section is called Custom Commands because you can also customize this section with your own commands. To do that, you need to fill in 2 properties (an array of `commandItems` and define `onGridMenuCommand` callback) in your Grid Options. For example, `Slickgrid-Universal` is configured by default with these settings (you can overwrite any one of them):
 
@@ -77,7 +113,7 @@ this.gridOptions = {
       // you can add sub-menus by adding nested `commandItems`
       {
         // we can also have multiple nested sub-menus
-        command: 'export', title: 'Exports', positionOrder: 99,
+        command: 'export', title: 'Exports',
         commandItems: [
           { command: 'exports-txt', title: 'Text (tab delimited)' },
           {
@@ -126,7 +162,6 @@ gridOptions: {
           command: 'help',
           title: 'Help',
           iconCssClass: 'mdi mdi-help-circle',
-          positionOrder: 99,
           action: () => window.open('https://example.com/help', '_blank')
         },
       ];
@@ -196,9 +231,9 @@ There are multiple events/callback hooks which are accessible from the Grid Opti
 ```ts
 gridMenu: {
   // commandItems: [
-  //   { command: 'help', title: 'Help', positionOrder: 70, action: (e, args) => console.log(args) },
-  //   { command: '', divider: true, positionOrder: 72 },
-  //   { command: 'hello', title: 'Hello', positionOrder: 69, action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'mdi mdi-close' },
+  //   { command: 'help', title: 'Help', action: (e, args) => console.log(args) },
+  //   { command: '', divider: true },
+  //   { command: 'hello', title: 'Hello', action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'mdi mdi-close' },
   // ],
   // menuUsabilityOverride: () => false,
   onBeforeMenuShow: () => {

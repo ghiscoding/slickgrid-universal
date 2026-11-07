@@ -2,6 +2,15 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   const GRID_ROW_HEIGHT = 35;
   const fullTitles = ['', '', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Completed'];
 
+  function expectHeaderMenuCommandVisibility(command: string, visible: boolean): void {
+    const selector = `.slick-header-menu [data-command="${command}"]`;
+    if (visible) {
+      cy.get(selector).should('be.visible');
+    } else {
+      cy.get(selector).should('not.be.visible');
+    }
+  }
+
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example16`);
     cy.get('h2').should('contain', 'Example 16: Row Move & Checkbox Selector');
@@ -39,7 +48,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should expect the row to have moved to another row index', () => {
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
@@ -76,7 +85,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     cy.get('@moveIconTask5').trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
+    cy.get('.slick-vertical-scroller').scrollTo('top');
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 0');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 1');
@@ -139,7 +148,13 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should expect "Clear all Filters" command to be hidden in the Grid Menu', () => {
-    const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+    const expectedFullHeaderMenuCommands = [
+      'Clear all Filters',
+      'Clear all Sorting',
+      'Clear all Pinning',
+      'Toggle Filter Row',
+      'Export to Excel',
+    ];
 
     cy.get('#grid16').find('button.slick-grid-menu-button').trigger('click').click({ force: true });
 
@@ -179,44 +194,27 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should be able to toggle Sorting functionality (disable) and expect all header menu Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
-    const expectedFullHeaderMenuCommands = [
-      'Resize by Content',
-      '',
-      'Sort Ascending',
-      'Sort Descending',
-      '',
-      'Remove Filter',
-      'Remove Sort',
-      'Hide Column',
-    ];
-
-    cy.get('.slick-sort-indicator').should('have.length.greaterThan', 0); // sort icon hints
+    cy.get('#grid16 .slick-header-sortable').should('have.length.greaterThan', 0); // sorting is enabled
     cy.get('[data-test="toggle-sorting-btn"]').click(); // disable it
-    cy.get('.slick-sort-indicator').should('have.length', 0);
+    cy.get('#grid16 .slick-header-sortable').should('have.length', 0);
+    cy.get('#grid16 .slick-sort-indicator').should('not.exist');
 
-    cy.get('#grid16')
-      .find('.slick-header-column:nth(5)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .should('be.hidden')
-      .invoke('show')
-      .click();
+    cy.get('#grid16').find('.slick-header-column:nth(5)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .children('.slick-menu-item')
-      .each(($child, index) => {
-        const commandTitle = $child.text();
-        expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
-
-        // expect all Sorting commands to be hidden
-        if (commandTitle === 'Sort Ascending' || commandTitle === 'Sort Descending' || commandTitle === 'Remove Sort') {
-          expect($child).not.to.be.visible;
-        }
-      });
+    cy.get('.slick-header-menu [data-command="pin-column"]').should('be.visible');
+    expectHeaderMenuCommandVisibility('sort-asc', false);
+    expectHeaderMenuCommandVisibility('sort-desc', false);
+    expectHeaderMenuCommandVisibility('clear-sort', false);
   });
 
   it('should expect "Clear Sorting" command to be hidden in the Grid Menu', () => {
-    const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+    const expectedFullHeaderMenuCommands = [
+      'Clear all Filters',
+      'Clear all Sorting',
+      'Clear all Pinning',
+      'Toggle Filter Row',
+      'Export to Excel',
+    ];
 
     cy.get('#grid16').find('button.slick-grid-menu-button').trigger('click').click();
 
@@ -234,40 +232,27 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should be able to toggle Sorting functionality (re-enable) and expect all Sorting header menu commands to be hidden and also not show Sort hint while hovering a column', () => {
-    const expectedFullHeaderMenuCommands = [
-      'Resize by Content',
-      '',
-      'Sort Ascending',
-      'Sort Descending',
-      '',
-      'Remove Filter',
-      'Remove Sort',
-      'Hide Column',
-    ];
-
-    cy.get('.slick-sort-indicator').should('have.length', 0); // sort icon hints
+    cy.get('#grid16 .slick-header-sortable').should('have.length', 0);
+    cy.get('#grid16 .slick-sort-indicator').should('not.exist'); // sort icon hints
     cy.get('[data-test="toggle-sorting-btn"]').click(); // enable it back
-    cy.get('.slick-sort-indicator').should('have.length.greaterThan', 0);
+    cy.get('#grid16 .slick-sort-indicator').should('have.length.greaterThan', 0);
 
-    cy.get('#grid16')
-      .find('.slick-header-column:nth(5)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .should('be.hidden')
-      .invoke('show')
-      .click();
+    cy.get('#grid16').find('.slick-header-column:nth(5)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .children('.slick-menu-item')
-      .each(($child, index) => {
-        const commandTitle = $child.text();
-        expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
-        expect($child).to.be.visible;
-      });
+    cy.get('.slick-header-menu [data-command="pin-column"]').should('be.visible');
+    expectHeaderMenuCommandVisibility('sort-asc', true);
+    expectHeaderMenuCommandVisibility('sort-desc', true);
+    expectHeaderMenuCommandVisibility('clear-sort', true);
   });
 
   it('should expect "Clear Sorting" command to be hidden in the Grid Menu', () => {
-    const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+    const expectedFullHeaderMenuCommands = [
+      'Clear all Filters',
+      'Clear all Sorting',
+      'Clear all Pinning',
+      'Toggle Filter Row',
+      'Export to Excel',
+    ];
 
     cy.get('#grid16').find('button.slick-grid-menu-button').trigger('click').click();
 
@@ -285,79 +270,36 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should be able to click disable Sorting functionality button and expect all Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
-    const expectedFullHeaderMenuCommands = [
-      'Resize by Content',
-      '',
-      'Sort Ascending',
-      'Sort Descending',
-      '',
-      'Remove Filter',
-      'Remove Sort',
-      'Hide Column',
-    ];
-
-    cy.get('.slick-sort-indicator').should('have.length.greaterThan', 0); // sort icon hints
+    cy.get('#grid16 .slick-header-sortable').should('have.length.greaterThan', 0); // sorting is enabled
     cy.get('[data-test="disable-sorting-btn"]').click().click(); // even clicking twice should have same result
-    cy.get('.slick-sort-indicator').should('have.length', 0);
+    cy.get('#grid16 .slick-header-sortable').should('have.length', 0);
+    cy.get('#grid16 .slick-sort-indicator').should('not.exist');
 
-    cy.get('#grid16')
-      .find('.slick-header-column:nth(5)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .should('be.hidden')
-      .invoke('show')
-      .click();
+    cy.get('#grid16').find('.slick-header-column:nth(5)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .children('.slick-menu-item')
-      .each(($child, index) => {
-        const commandTitle = $child.text();
-        expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
-
-        // expect all Sorting commands to be hidden
-        if (commandTitle === 'Sort Ascending' || commandTitle === 'Sort Descending' || commandTitle === 'Remove Sort') {
-          expect($child).not.to.be.visible;
-        }
-      });
+    cy.get('.slick-header-menu [data-command="pin-column"]').should('be.visible');
+    expectHeaderMenuCommandVisibility('sort-asc', false);
+    expectHeaderMenuCommandVisibility('sort-desc', false);
+    expectHeaderMenuCommandVisibility('clear-sort', false);
   });
 
   it('should be able to click disable Filter functionality button and expect all Filter commands to be hidden and also not show Sort hint while hovering a column', () => {
-    const expectedFullHeaderMenuCommands = [
-      'Resize by Content',
-      '',
-      'Sort Ascending',
-      'Sort Descending',
-      '',
-      'Remove Filter',
-      'Remove Sort',
-      'Hide Column',
-    ];
-
     cy.get('[data-test="disable-filters-btn"]').click().click(); // even clicking twice should have same result
 
-    cy.get('#grid16')
-      .find('.slick-header-column:nth(5)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .should('be.hidden')
-      .invoke('show')
-      .click();
+    cy.get('#grid16').find('.slick-header-column:nth(5)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .children('.slick-menu-item')
-      .each(($child, index) => {
-        const commandTitle = $child.text();
-        expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
-
-        // expect all Sorting commands to be hidden
-        if (commandTitle === 'Remove Filter') {
-          expect($child).not.to.be.visible;
-        }
-      });
+    cy.get('.slick-header-menu [data-command="pin-column"]').should('be.visible');
+    expectHeaderMenuCommandVisibility('clear-filter', false);
   });
 
   it('should expect "Clear all Filters" command to be hidden in the Grid Menu', () => {
-    const expectedFullHeaderMenuCommands = ['Clear all Filters', 'Clear all Sorting', 'Toggle Filter Row', 'Export to Excel'];
+    const expectedFullHeaderMenuCommands = [
+      'Clear all Filters',
+      'Clear all Sorting',
+      'Clear all Pinning',
+      'Toggle Filter Row',
+      'Export to Excel',
+    ];
 
     cy.get('#grid16').find('button.slick-grid-menu-button').trigger('click').click();
 
@@ -377,8 +319,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should open Column Picker and show the "Duration" column back to visible and expect it to have kept its position after toggling filter/sorting', () => {
-    // first 2 cols are hidden but they do count as li item
-    const expectedFullPickerTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed'];
+    const expectedFullPickerTitles = ['Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed'];
 
     cy.get('#grid16').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
@@ -391,12 +332,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
         }
       });
 
-    cy.get('.slick-column-picker')
-      .find('.slick-column-picker-list')
-      .children('li:nth-child(7)')
-      .children('label')
-      .should('contain', 'Duration')
-      .click();
+    cy.get('.slick-column-picker').find('.slick-column-picker-list').children('li').children('label').contains('Duration').click();
 
     cy.get('#grid16').get('.slick-column-picker:visible').find('.close').trigger('click').click();
 
@@ -405,7 +341,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
       .children()
       .each(($child, index) => {
         if (index <= 5) {
-          expect($child.text()).to.eq(expectedFullPickerTitles[index]);
+          expect($child.text()).to.eq(['', '', ...expectedFullPickerTitles][index]);
         }
       });
   });

@@ -122,7 +122,7 @@ describe('CellExternalCopyManager', () => {
 
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
-    expect(plugin.eventHandler).toBeTruthy();
+    expect(plugin['_eventHandler']).toBeTruthy();
   });
 
   describe('registered addon', () => {

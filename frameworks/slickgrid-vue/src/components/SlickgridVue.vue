@@ -9,11 +9,12 @@ import {
   ExtensionUtility,
   FilterFactory,
   FilterService,
+  getIconSetOptions,
   GridEventService,
   GridService,
   GridStateService,
+  hasStringDateColumns,
   HeaderGroupingService,
-  isColumnDateType,
   PaginationService,
   PluginFlagMappings,
   ResizerService,
@@ -46,7 +47,7 @@ import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-compone
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
-import { deepCopy, extend } from '@slickgrid-universal/utils';
+import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import {
   computed,
@@ -219,18 +220,15 @@ watch(
   dataModel,
   (newDataset: any[]) => {
     const prevDatasetLn = currentDatasetLength;
-    const isDatasetEqual = dequal(newDataset, dataModel.value || []);
-    let data = _gridOptions.value?.enableDeepCopyDatasetOnPageLoad ? deepCopy(newDataset) : newDataset;
+    let data = newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
-    if (
-      grid &&
-      _gridOptions.value?.enableTreeData &&
-      Array.isArray(newDataset) &&
-      (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)
-    ) {
-      isDatasetHierarchicalInitialized = false;
-      data = sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+    if (grid && _gridOptions.value?.enableTreeData && Array.isArray(newDataset)) {
+      const isDatasetEqual = dequal(newDataset, dataModel.value || []);
+      if (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual) {
+        isDatasetHierarchicalInitialized = false;
+        data = sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+      }
     }
 
     refreshGridData(data || []);
@@ -375,16 +373,6 @@ function initialization() {
   _gridOptions.value.translater = translaterService;
   isAutosizeColsCalled = false;
 
-  // when detecting a frozen grid, we'll automatically enable the mousewheel scroll handler so that we can scroll from both left/right frozen containers
-  if (
-    _gridOptions.value &&
-    ((_gridOptions.value.frozenRow !== undefined && _gridOptions.value.frozenRow >= 0) ||
-      (_gridOptions.value.frozenColumn !== undefined && _gridOptions.value.frozenColumn >= 0)) &&
-    _gridOptions.value.enableMouseWheelScrollHandler === undefined
-  ) {
-    _gridOptions.value.enableMouseWheelScrollHandler = true;
-  }
-
   eventPubSubService.eventNamingStyle = _gridOptions.value.eventNamingStyle ?? 'camelCaseWithExtraOnPrefix';
   eventPubSubService.publish('onBeforeGridCreate', true);
 
@@ -413,11 +401,7 @@ function initialization() {
     createBackendApiInternalPostProcessCallback(_gridOptions.value as GridOption);
   }
 
-  const dataviewInlineFilters = (_gridOptions.value.dataView && _gridOptions.value.dataView.inlineFilters) || false;
-  let dataViewOptions: Partial<DataViewOption> = {
-    ..._gridOptions.value.dataView,
-    inlineFilters: dataviewInlineFilters,
-  } as Partial<DataViewOption>;
+  let dataViewOptions: Partial<DataViewOption> = { ..._gridOptions.value.dataView } as Partial<DataViewOption>;
 
   if (_gridOptions.value.draggableGrouping || _gridOptions.value.enableGrouping) {
     groupItemMetadataProvider = new SlickGroupItemMetadataProvider(
@@ -462,9 +446,9 @@ function initialization() {
   // directly into the array below, so both `_columns` & `sharedService.allColumns` stay in sync
   extensionService.createExtensionsBeforeGridCreation(_columns.value as Column[], _gridOptions.value as GridOption);
 
-  // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
+  // if user entered some Pinning "presets", we need to apply them in the grid options
   if (_gridOptions.value.presets?.pinning) {
-    _gridOptions.value = { ..._gridOptions.value, ..._gridOptions.value.presets.pinning };
+    _gridOptions.value = { ..._gridOptions.value, pinning: _gridOptions.value.presets.pinning };
   }
 
   // build SlickGrid Grid, also user might optionally pass a custom dataview (e.g. remote model)
@@ -490,9 +474,6 @@ function initialization() {
 
   extensionService.bindDifferentExtensions();
   bindDifferentHooks(grid, _gridOptions.value as GridOption, dataview);
-
-  // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-  sharedService.frozenVisibleColumnId = grid.getFrozenColumnId();
 
   // initialize the SlickGrid grid
   grid.init();
@@ -1015,7 +996,7 @@ function bindResizeHook(grid: SlickGrid, options: GridOption) {
     (options.enableAutoSizeColumns && options.enableAutoResizeColumnsByCellContent)
   ) {
     throw new Error(
-      `[Slickgrid-Vue] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use. You can enable these 2 options ("autoFitColumnsOnFirstLoad" and "enableAutoSizeColumns") OR these other 2 options ("autosizeColumnsByCellContentOnFirstLoad" and "enableAutoResizeColumnsByCellContent").`
+      `[Slickgrid-Vue] Choose either viewport sizing (autoFitColumnsOnFirstLoad, enableAutoSizeColumns) or content sizing (autosizeColumnsByCellContentOnFirstLoad, enableAutoResizeColumnsByCellContent).`
     );
   }
 
@@ -1117,9 +1098,7 @@ function refreshGridData(dataset: any[], totalCount?: number) {
       isDatasetInitialized = true;
     }
 
-    if (dataset) {
-      grid.invalidate();
-    }
+    grid.invalidate();
 
     // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
     showPagination = !!(
@@ -1363,7 +1342,25 @@ function mergeGridOptions(gridOptions: GridOption): GridOption {
   gridOptions.gridContainerId = `slickGridContainer-${props.gridId}`;
 
   // use extend to deep merge & copy to avoid immutable properties being changed in GlobalGridOptions after a route change
-  const options = extend<GridOption>(true, {}, GlobalGridOptions, gridOptions);
+  const options = extend<GridOption>(
+    true,
+    {},
+    getIconSetOptions(gridOptions.iconSet ?? GlobalGridOptions.iconSet),
+    GlobalGridOptions,
+    gridOptions
+  );
+
+  // Command visibility and export menu format lists replace defaults instead of merging array entries by index.
+  for (const menu of ['gridMenu', 'contextMenu', 'headerMenu'] as const) {
+    const commands = gridOptions[menu]?.hideCommands;
+    if (commands && options[menu]) {
+      Object.assign(options[menu], { hideCommands: [...commands] });
+    }
+  }
+  const menuFormats = gridOptions.textExportOptions?.menuFormats;
+  if (menuFormats && options.textExportOptions) {
+    options.textExportOptions.menuFormats = [...menuFormats];
+  }
 
   // if we have a backendServiceApi and the enablePagination is undefined, we'll assume that we do want to see it, else get that defined value
   if (!hasBackendInfiniteScroll(gridOptions)) {
@@ -1567,32 +1564,11 @@ async function renderPagination(showPagination = true) {
  * @returns {Array<Object>} sort flat parent/child dataset
  */
 function sortTreeDataset<T>(flatDatasetInput: T[], forceGridRefresh = false): T[] {
-  const prevDatasetLn = currentDatasetLength;
-  let sortedDatasetResult;
-  let flatDatasetOutput: any[] = [];
-
-  // if the hierarchical dataset was already initialized then no need to re-convert it, we can use it directly from the shared service ref
-  if (isDatasetHierarchicalInitialized && dataHierarchicalModel.value) {
-    sortedDatasetResult = treeDataService.sortHierarchicalDataset(dataHierarchicalModel.value);
-    flatDatasetOutput = sortedDatasetResult.flat;
-  } else if (Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
-    // we need to first convert the flat dataset to a hierarchical dataset and then sort it
-    // we'll also add props, by mutation, required by the TreeDataService on the flat array like `__hasChildren`, `parentId` and anything else to work properly
-    sortedDatasetResult = treeDataService.convertFlatParentChildToTreeDatasetAndSort(
-      flatDatasetInput,
-      (_columns.value || []) as Column[],
-      _gridOptions.value as GridOption
-    );
-    sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
-    flatDatasetOutput = sortedDatasetResult.flat;
-  }
-
-  // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
-  if (flatDatasetInput.length > 0 && (forceGridRefresh || flatDatasetInput.length !== prevDatasetLn)) {
-    filterService.refreshTreeDataFilters(flatDatasetOutput);
-  }
-
-  return flatDatasetOutput;
+  return treeDataService.sortTreeDataset(flatDatasetInput, (_columns.value || []) as Column[], _gridOptions.value as GridOption, {
+    hierarchicalDataset: isDatasetHierarchicalInitialized ? dataHierarchicalModel.value : undefined,
+    previousDatasetLength: currentDatasetLength,
+    forceGridRefresh,
+  });
 }
 
 function suggestDateParsingWhenHelpful() {
@@ -1600,7 +1576,7 @@ function suggestDateParsingWhenHelpful() {
     dataview!.getItemCount() > WARN_NO_PREPARSE_DATE_SIZE &&
     !_gridOptions.value.silenceWarnings &&
     !_gridOptions.value.preParseDateColumns &&
-    grid?.getColumns().some((c) => isColumnDateType(c.type))
+    hasStringDateColumns(grid?.getColumns() ?? [], dataview!.getItems())
   ) {
     console.warn(
       '[Slickgrid-Universal] For getting better perf, we suggest you enable the `preParseDateColumns` grid option, ' +

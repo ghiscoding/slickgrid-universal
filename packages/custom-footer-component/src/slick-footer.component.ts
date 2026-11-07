@@ -24,10 +24,6 @@ export class SlickFooterComponent {
   protected _selectedRowCount = 0;
   protected _subscriptions: Subscription[] = [];
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   /** Getter for the grid uid */
   get gridUid(): string {
     return this.grid?.getUID() ?? '';
@@ -79,9 +75,7 @@ export class SlickFooterComponent {
     this.registerOnSelectedRowsChangedWhenEnabled(customFooterOptions);
 
     if (this._enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error(
-        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
-      );
+      throw new Error(Constants.translaterMissingError);
     }
     this.translateCustomFooterTexts();
 
@@ -141,14 +135,14 @@ export class SlickFooterComponent {
 
   /** Translate all Custom Footer Texts (footer with metrics) */
   translateCustomFooterTexts(): void {
+    const metricTexts = (this.customFooterOptions.metricTexts ??= {});
+
     if (this.gridOptions.enableTranslate && this.translaterService?.translate) {
-      this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
-      for (const propName of Object.keys(this.customFooterOptions.metricTexts)) {
-        if (propName.lastIndexOf('Key') > 0) {
-          const propNameWithoutKey = propName.substring(0, propName.lastIndexOf('Key'));
-          this.customFooterOptions.metricTexts[propNameWithoutKey as keyof MetricTexts] = this.translaterService.translate(
-            this.customFooterOptions.metricTexts[propName as keyof MetricTexts] || ' '
-          );
+      for (const key of Object.keys(metricTexts)) {
+        const keyIndex = key.lastIndexOf('Key');
+        if (keyIndex > 0) {
+          const textKey = key.substring(0, keyIndex) as keyof MetricTexts;
+          metricTexts[textKey] = this.translaterService.translate(metricTexts[key as keyof MetricTexts] || ' ');
         }
       }
 
@@ -157,11 +151,10 @@ export class SlickFooterComponent {
         this.leftFooterText = `${this._selectedRowCount} ${this.customFooterOptions.metricTexts!.itemsSelected}`;
       }
     } else if (this.locales) {
-      this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
-      this.customFooterOptions.metricTexts.lastUpdate ||= this.localeOrDefault('TEXT_LAST_UPDATE');
-      this.customFooterOptions.metricTexts.items ||= this.localeOrDefault('TEXT_ITEMS');
-      this.customFooterOptions.metricTexts.itemsSelected ||= this.localeOrDefault('TEXT_ITEMS_SELECTED');
-      this.customFooterOptions.metricTexts.of ||= this.localeOrDefault('TEXT_OF');
+      metricTexts.lastUpdate ||= this.localeOrDefault('TEXT_LAST_UPDATE');
+      metricTexts.items ||= this.localeOrDefault('TEXT_ITEMS');
+      metricTexts.itemsSelected ||= this.localeOrDefault('TEXT_ITEMS_SELECTED');
+      metricTexts.of ||= this.localeOrDefault('TEXT_OF');
     }
   }
 
@@ -183,9 +176,8 @@ export class SlickFooterComponent {
       },
     });
 
-    const leftFooterElm = createDomElement('div', { className: `left-footer ${this.customFooterOptions.leftContainerClass}` });
+    const leftFooterElm = createDomElement('div', { className: `left-footer ${this.customFooterOptions.leftContainerClass}` }, footerElm);
     applyHtmlToElement(leftFooterElm, this.customFooterOptions.leftFooterText, this.gridOptions);
-    footerElm.appendChild(leftFooterElm);
     footerElm.appendChild(this.createFooterRightContainer());
     this._footerElement = footerElm;
 
@@ -214,31 +206,22 @@ export class SlickFooterComponent {
       }
 
       // last update elements
-      rightFooterElm.appendChild(createDomElement('span', { className: 'item-count', textContent: `${this.metrics?.itemCount ?? '0'}` }));
+      this.appendMetricSpan(rightFooterElm, 'item-count', `${this.metrics?.itemCount ?? '0'}`);
 
       // total count element (unless hidden)
       if (!this.customFooterOptions.hideTotalItemCount) {
         // add carriage return which will add a space before the span
         rightFooterElm.appendChild(document.createTextNode('\r\n'));
-        rightFooterElm.appendChild(
-          createDomElement('span', { className: 'text-of', textContent: ` ${this.customFooterOptions.metricTexts?.of ?? 'of'} ` })
-        );
+        this.appendMetricSpan(rightFooterElm, 'text-of', ` ${this.customFooterOptions.metricTexts?.of ?? 'of'} `);
 
         // add another carriage return which will add a space after the span
         rightFooterElm.appendChild(document.createTextNode('\r\n'));
-        rightFooterElm.appendChild(
-          createDomElement('span', { className: 'total-count', textContent: `${this.metrics?.totalItemCount ?? '0'}` })
-        );
+        this.appendMetricSpan(rightFooterElm, 'total-count', `${this.metrics?.totalItemCount ?? '0'}`);
       }
 
       // add carriage return which will add a space before the span
       rightFooterElm.appendChild(document.createTextNode('\r\n'));
-      rightFooterElm.appendChild(
-        createDomElement('span', {
-          className: 'text-items',
-          textContent: ` ${this.customFooterOptions.metricTexts?.items ?? 'items'} `,
-        })
-      );
+      this.appendMetricSpan(rightFooterElm, 'text-items', ` ${this.customFooterOptions.metricTexts?.items ?? 'items'} `);
     }
 
     return rightFooterElm;
@@ -252,14 +235,16 @@ export class SlickFooterComponent {
     const lastUpdateTimestamp = this.metrics?.endTime ? format(this.metrics?.endTime, this.customFooterOptions.dateFormat, 'en-US') : '';
     const lastUpdateContainerElm = createDomElement('span');
 
-    lastUpdateContainerElm.appendChild(createDomElement('span', { className: 'text-last-update', textContent: lastUpdateText }));
+    this.appendMetricSpan(lastUpdateContainerElm, 'text-last-update', lastUpdateText);
     lastUpdateContainerElm.appendChild(document.createTextNode('\r\n'));
-    lastUpdateContainerElm.appendChild(createDomElement('span', { className: 'last-update-timestamp', textContent: lastUpdateTimestamp }));
-    lastUpdateContainerElm.appendChild(
-      createDomElement('span', { className: 'separator', textContent: ` ${this.customFooterOptions.metricSeparator || ''} ` })
-    );
+    this.appendMetricSpan(lastUpdateContainerElm, 'last-update-timestamp', lastUpdateTimestamp);
+    this.appendMetricSpan(lastUpdateContainerElm, 'separator', ` ${this.customFooterOptions.metricSeparator || ''} `);
 
     return lastUpdateContainerElm;
+  }
+
+  protected appendMetricSpan(parent: HTMLElement, className: string, text: string): void {
+    createDomElement('span', { className, textContent: text }, parent);
   }
 
   /**

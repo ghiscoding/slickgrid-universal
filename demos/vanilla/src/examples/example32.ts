@@ -17,6 +17,7 @@ export default class Example32 {
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
   showEmployeeId = true;
+  subTitleStyle = 'display: block';
   metadata: ItemMetadata | Record<number, ItemMetadata> = {
     // 10001: Davolio
     0: {
@@ -176,7 +177,11 @@ export default class Example32 {
       autoEdit: true,
       editable: false,
       datasetIdPropertyName: 'employeeID',
-      frozenColumn: 0,
+      // Keep the Employee ID visible while horizontally scrolling. The old
+      // pinned-pane option is intentionally no longer used by the POC.
+      pinning: {
+        columns: { left: 0 },
+      },
       gridHeight: 348,
       rowHeight: 30,
       dataView: {
@@ -189,7 +194,6 @@ export default class Example32 {
       gridMenu: {
         hideColumnPickerSection: true,
       },
-      rowTopOffsetRenderType: 'top', // intentional top-positioning coverage; rowspan also supports 'transform'
     };
   }
 
@@ -219,8 +223,8 @@ export default class Example32 {
 
   toggleEditing() {
     this.isEditable = !this.isEditable;
-    this.sgb.gridOptions = { ...this.sgb.gridOptions, editable: this.isEditable };
-    this.gridOptions = this.sgb.gridOptions;
+    this.sgb.options = { ...this.sgb.options, editable: this.isEditable };
+    this.gridOptions = this.sgb.options;
   }
 
   loadData() {
@@ -476,7 +480,7 @@ export default class Example32 {
         newMetadata[row].columns[Number(col) + colDirIdx] = (this.metadata as any)[row].columns[col];
       }
     }
-    this.sgb.slickGrid?.setOptions({ frozenColumn: this.showEmployeeId ? 0 : 1 });
+    this.sgb.slickGrid?.setOptions({ pinning: { columns: { left: this.showEmployeeId ? 0 : 1 } } });
     this.sgb.slickGrid?.updateColumnById('employeeID', { hidden: !this.showEmployeeId });
     this.sgb.slickGrid?.updateColumns();
     */
@@ -485,5 +489,10 @@ export default class Example32 {
     this.metadata = newMetadata;
     this.sgb.slickGrid?.remapAllColumnsRowSpan();
     this.sgb.slickGrid?.invalidate();
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }

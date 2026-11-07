@@ -46,6 +46,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   protected _bindEventService: BindingEventService;
   protected _clearFilterTriggered = false;
   protected _collection?: any[];
+  protected _collectionGeneration = 0;
   protected _collectionObservers: Array<null | { disconnect: () => void }> = [];
   protected _filterElm!: HTMLInputElement;
   protected _instance: any;
@@ -160,6 +161,8 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
    * Initialize the filter template
    */
   init(args: FilterArguments): Promise<any[] | undefined> {
+    const generation = ++this._collectionGeneration;
+    const isActive = () => generation === this._collectionGeneration;
     this.grid = args.grid;
     this.callback = args.callback;
     this.columnDef = args.columnDef;
@@ -206,7 +209,8 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
             this.columnDef,
             this.renderDomElement.bind(this),
             this.rxjs,
-            this.subscriptions
+            this.subscriptions,
+            isActive
           );
           resolve(collectionOutput);
         } else {
@@ -218,7 +222,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
         // any collection changes will trigger a re-render of the DOM element filter
         if (collectionAsync || this.columnFilter.enableCollectionWatch) {
           await (collectionOutput ?? collectionAsync);
-          this.watchCollectionChanges();
+          if (isActive()) {
+            this.watchCollectionChanges();
+          }
         }
       } catch (e: any) {
         reject(e);
@@ -244,6 +250,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
    * destroy the filter
    */
   destroy(): void {
+    this._collectionGeneration++;
     if (typeof this._instance?.destroy === 'function') {
       this._instance.destroy();
     }
@@ -252,9 +259,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       // this._filterElm.off('input').remove();
     }
     this._filterElm?.remove();
-    if (this._collection) {
-      this._collection.length = 0;
-    }
+    this._collection = undefined;
     this._bindEventService.unbindAll();
     this._collectionObservers.forEach((obs) => obs?.disconnect());
 

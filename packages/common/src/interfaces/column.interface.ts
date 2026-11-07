@@ -5,6 +5,7 @@ import type {
   ColumnExcelExportOption,
   ColumnFilter,
   CustomTooltipOption,
+  DockingSide,
   Editor,
   EditorConstructor,
   EditorValidator,
@@ -129,13 +130,13 @@ export interface Column<T = any> {
   /** Excel export custom options for cell formatting & width */
   excelExportOptions?: ColumnExcelExportOption;
 
-  /** Default to false, which leads to exclude the column title from the Column Picker. */
+  /** Defaults to false. When true, omits the column from the Column Picker DOM and its `columnListBuilder` callback. */
   excludeFromColumnPicker?: boolean;
 
   /** Default to false, which leads to exclude the column from the export. */
   excludeFromExport?: boolean;
 
-  /** Default to false, which leads to exclude the column title from the Grid Menu. */
+  /** Defaults to false. When true, omits the column from the Grid Menu DOM and its `columnListBuilder` callback. */
   excludeFromGridMenu?: boolean;
 
   /** Defaults to false, which leads to exclude the `field` property, but still includes the `fields` property, from the query (typically a backend service query) */
@@ -229,6 +230,12 @@ export interface Column<T = any> {
 
   /** Label key, for example this could be used as a property key for complex object label display (e.g. labelKey: 'name') */
   labelKey?: string;
+
+  /** Permanently dock this column at the left or right edge of the single grid viewport. */
+  pinned?: DockingSide | null;
+
+  /** Defaults to true, can the user pin or unpin this column through the Header Menu? */
+  pinnable?: boolean;
 
   /** Maximum Width of the column in pixels (number only). */
   maxWidth?: number;
@@ -325,23 +332,14 @@ export interface Column<T = any> {
   /** Is the column resizable, can we make it wider/thinner? A resize cursor icon will show on the right side of the column when enabled. */
   resizable?: boolean;
 
+  /**
+   * Dock this column only after normal scrolling would clip it. `true` uses
+   * the leading edge; `'both'` chooses the nearest edge at runtime. Ignored while permanently pinned.
+   */
+  sticky?: DockingSide | 'both' | boolean;
+
   /** defaults to false, if a column `width` is provided (or was previously calculated) should we recalculate it or not when resizing by cell content? */
   resizeAlwaysRecalculateWidth?: boolean;
-
-  /**
-   * Defaults to 1, a column width ratio to use in the calculation when resizing columns by their cell content.
-   * We have this ratio number so that if we know that the cell content has lots of thin character (like 1, i, t, ...) we can lower the ratio to take up less space.
-   * In other words and depending on which font family you use, each character will have different width, characters like (i, t, 1) takes a lot less space compare to (W, H, Q),
-   * unless of course we use a monospace font family which will have the exact same size for each characters and in that case we leave it to 1 but that rarely happens.
-   * NOTE: the default ratio is 1, except for string where we use a ratio of around ~0.9 since we have more various thinner characters like (i, l, t, ...).
-   */
-  resizeCalcWidthRatio?: number;
-
-  /**
-   * no defaults, a character width to use when resizing columns by their cell content.
-   * If nothing is provided it will use `resizeCellCharWidthInPx` defined in the grid options.
-   */
-  resizeCharWidthInPx?: number;
 
   /** no defaults, what is the column max width threshold to not go over when resizing columns by their cell content */
   resizeMaxWidthThreshold?: number;

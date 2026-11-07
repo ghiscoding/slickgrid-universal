@@ -13,11 +13,10 @@ The `Grid Menu` (also known as the "Hamburger Menu") is enabled by default in th
 
 ## How to use it?
 #### It's Enabled by default
-
 Technically, it's automatically enabled so just enjoy it, you could optionally disable it though. You could also customize the content of the Grid Menu, see below for more details.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/example09) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example09.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example01) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example01.ts)
 
 ## Customization
 ### Column Picker
@@ -29,23 +28,59 @@ The Grid Menu includes, by default, the "Column Picker" list. This brings an eas
 For very large data grid with lots of columns to scroll, you could optionally skip the creation of the Column Picker and only keep the "Commands" section.
 
 ```ts
-this.this.gridOptions: {
+this.gridOptions: {
   gridMenu: {
     hideColumnPickerSection: true,
   }
 }
 ```
 
-### Custom Commands
-The Grid Menu also comes, by default, with a list of built-in custom commands (all their `positionOrder` are in the reserved range of 40 to 60)
-- Clear all Filters (you can hide it with `hideClearAllFiltersCommand: true`)
-- Clear all Sorting (you can hide it with `hideClearAllSortingCommand: true`)
-- Toggle the Filter Row (you can hide it with `hideToggleFilterCommand: true`)
-- Export to CSV (you can hide it with `hideExportCsvCommand: true`)
-- Export to Text Delimited (you can hide it with `hideExportTextDelimitedCommand: true`)
-- Refresh Dataset, only shown when using Backend Service API (you can hide it with `hideRefreshDatasetCommand: true`)
+### Default command visibility
 
-> **Note**: all `hide...` and `positionOrder` properties were deprecated in v10 and will be removed in v11, prefer the use of `hideCommands` or the `commandListBuilder` instead (see below).
+The following built-in command IDs are supported by `gridMenu.hideCommands` (commands still depend on enabled features and options):
+
+| Command ID |
+| --- |
+| `clear-filter` |
+| `clear-pinning` |
+| `clear-sorting` |
+| `export-csv` |
+| `export-excel` |
+| `export-pdf` |
+| `export-text-delimited` |
+| `refresh-dataset` |
+| `toggle-dark-mode` |
+| `toggle-filter` |
+| `toggle-preheader` |
+
+Built-in commands appear according to the enabled grid features (for example, `enableFiltering`, `enableSorting`, or `enableExcelExport`). Two commands require explicit opt-in:
+
+- `toggle-dark-mode`: enable it with `gridMenu.showToggleDarkModeCommand: true`.
+- `export-text-delimited`: enable it with `textExportOptions.menuFormats: ['csv', 'txt']` (defaults to `['csv']`, also shared with the Context Menu).
+
+Use `hideCommands` to hide any built-in command; it always takes precedence. Visibility is applied before `commandListBuilder`.
+
+```ts
+this.gridOptions = {
+  enableTextExport: true,
+  textExportOptions: { menuFormats: ['csv', 'txt'] },
+  gridMenu: {
+    showToggleDarkModeCommand: true,
+    hideCommands: ['clear-pinning'],
+  },
+};
+```
+
+### Custom Commands
+The Grid Menu also comes, by default, with a list of built-in custom commands (use `commandListBuilder` to reorder these commands)
+- Clear all Filters (you can hide it with `hideCommands: ['clear-filter']`)
+- Clear all Sorting (you can hide it with `hideCommands: ['clear-sorting']`)
+- Toggle the Filter Row (you can hide it with `hideCommands: ['toggle-filter']`)
+- Export to CSV (you can hide it with `hideCommands: ['export-csv']`)
+- Export to Text Delimited (you can hide it with `hideCommands: ['export-text-delimited']`)
+- Refresh Dataset, only shown when using Backend Service API (you can hide it with `hideCommands: ['refresh-dataset']`)
+
+> **Note**: command visibility flags (`hide...Command`) were removed in v11; use `hideCommands` or `commandListBuilder`. The `positionOrder` property was removed in v11; use `commandListBuilder` to reorder commands (see below).
 
 This section is called Custom Commands because you can also customize this section with your own commands. To do that, you need to fill in 2 properties (an array of `commandItems` and define `onGridMenuCommand` callback) in your Grid Options. For example, `Slickgrid-Universal` is configured by default with these settings (you can overwrite any one of them):
 
@@ -78,7 +113,7 @@ this.gridOptions = {
       // you can add sub-menus by adding nested `commandItems`
       {
         // we can also have multiple nested sub-menus
-        command: 'export', title: 'Exports', positionOrder: 99,
+        command: 'export', title: 'Exports',
         commandItems: [
           { command: 'exports-txt', title: 'Text (tab delimited)' },
           {
@@ -104,7 +139,6 @@ this.gridOptions = {
 ```
 
 #### Advanced: Dynamic Command List Builder
-
 For more advanced use cases where you need to dynamically build the command list, use `commandListBuilder`. This callback receives the built-in commands and allows you to filter, sort, or modify the list before it's rendered in the UI, giving you full control over the final command list. This function is executed **after** `commandItems` is processed and is the **last call before rendering** the menu in the DOM.
 
 **When to use `commandListBuilder`:**
@@ -116,7 +150,7 @@ For more advanced use cases where you need to dynamically build the command list
 **Note:** You would typically use `commandListBuilder` **instead of** `commandItems` (not both), since the builder gives you full control over the final command list.
 
 ```ts
-this.gridOptions: {
+gridOptions: {
   gridMenu: {
     // Build the command list dynamically
     commandListBuilder: (builtInItems) => {
@@ -128,7 +162,6 @@ this.gridOptions: {
           command: 'help',
           title: 'Help',
           iconCssClass: 'mdi mdi-help-circle',
-          positionOrder: 99,
           action: () => window.open('https://example.com/help', '_blank')
         },
       ];
@@ -144,7 +177,7 @@ this.gridOptions: {
 
 **Example: Filter commands based on user permissions**
 ```ts
-this.gridOptions: {
+gridOptions: {
   gridMenu: {
     commandListBuilder: (builtInItems) => {
       // Remove export commands if user doesn't have export permission
@@ -162,7 +195,7 @@ this.gridOptions: {
 
 **Example: Reorder and customize the command list**
 ```ts
-this.gridOptions: {
+gridOptions: {
   gridMenu: {
     commandListBuilder: (builtInItems) => {
       // Add custom commands at the beginning
@@ -188,7 +221,6 @@ this.gridOptions: {
 ```
 
 #### Events
-
 There are multiple events/callback hooks which are accessible from the Grid Options
 - `onBeforeMenuShow`
 - `onAfterMenuShow`
@@ -199,9 +231,9 @@ There are multiple events/callback hooks which are accessible from the Grid Opti
 ```ts
 gridMenu: {
   // commandItems: [
-  //   { command: 'help', title: 'Help', positionOrder: 70, action: (e, args) => console.log(args) },
-  //   { command: '', divider: true, positionOrder: 72 },
-  //   { command: 'hello', title: 'Hello', positionOrder: 69, action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'mdi mdi-close' },
+  //   { command: 'help', title: 'Help', action: (e, args) => console.log(args) },
+  //   { command: '', divider: true },
+  //   { command: 'hello', title: 'Hello', action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'mdi mdi-close' },
   // ],
   // menuUsabilityOverride: () => false,
   onBeforeMenuShow: () => {
@@ -227,6 +259,7 @@ See [Custom Menu Slots](menu-slots.md) for detailed examples and best practices 
 
 ### How to change an icon of all default commands?
 You can change any of the default command icon(s) by changing the `icon[X-command]`, for example, see below for the defaults.
+
 ```ts
 this.gridOptions = {
   enableGridMenu: true,

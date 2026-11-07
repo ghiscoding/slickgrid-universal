@@ -78,7 +78,6 @@ function handleOnHeaderMenuCommand(e) {
   - `onBeforeMenuShow`
   - `onBeforeMenuClose`
   - `onCommand`
-  - `onOptionSelected`
 
 #### Column Picker (extension)
 
@@ -185,7 +184,6 @@ function handleOnHeaderMenuCommand(e) {
 - `onAddNewRow`
 - `onAfterSetColumns`
 - `onAutosizeColumns`
-- `onBeforeAppendCell`
 - `onBeforeCellEditorDestroy`
 - `onBeforeColumnsResize`
 - `onBeforeDestroy`

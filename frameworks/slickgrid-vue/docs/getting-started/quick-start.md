@@ -162,7 +162,7 @@ The best way to get started is to clone the [Slickgrid-Vue-Demos](https://github
 
 ##### All Live Demo Examples have links to the actual code
 
-Like to see the code for a particular Example? Just click on the "see code" (top right) link which are available in every live examples.
+Like to see the code for a particular Example? Just click on the "code" link (top right) link which are available in every live examples.
 
 ### 8. CSP Compliance
 
@@ -190,4 +190,4 @@ Please start by searching any related [issues](https://github.com/ghiscoding/sli
 
 ### Final word
 
-This project is Open Source and is, for the most part, mainly done in spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/ghiscoding) ☕️, some part of the code happens when I'm at StarBucks... That is it, and please don't forget to upvote the project if you like and if it's useful to you ⭐ thank you 😉
+This project is Open Source and is, for the most part, mainly done in spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/ghiscoding) ☕️, some part of the code happens when I'm at StarBucks... That is it, and please don't forget to upvote the project if you like and if it's useful to you. ⭐ Thank you 😉

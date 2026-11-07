@@ -60,6 +60,35 @@ describe('InputFilter', () => {
     expect(filter.inputType).toBe('text');
   });
 
+  it.each(['clear', 'destroy', 'enter', 'change'] as const)('cancels a pending debounce on %s', (action) => {
+    gridOptionMock.filterTypingDebounce = 100;
+    filter.init(filterArguments);
+    const input = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
+    input.value = 'abc';
+    input.dispatchEvent(new KeyboardEvent('keyup', { key: 'a' }));
+    expect(filterArguments.callback).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBeGreaterThan(0);
+    if (action === 'change') {
+      input.value = 'updated';
+      input.dispatchEvent(new Event('change'));
+    } else if (action === 'enter') {
+      input.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter' }));
+    } else {
+      filter[action]();
+    }
+    const calls = vi.mocked(filterArguments.callback).mock.calls.length;
+    vi.advanceTimersByTime(100);
+    expect(vi.mocked(filterArguments.callback).mock.calls.length).toBe(calls);
+    expect(calls).toBe(action === 'destroy' ? 0 : 1);
+    if (action === 'enter' || action === 'change') {
+      expect(filterArguments.callback).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({ searchTerms: [action === 'change' ? 'updated' : 'abc'] })
+      );
+    }
+    gridOptionMock.filterTypingDebounce = 0;
+  });
+
   it('should have an aria-label when creating the filter', () => {
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;

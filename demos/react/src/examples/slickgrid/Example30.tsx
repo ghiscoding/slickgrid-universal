@@ -422,21 +422,18 @@ const Example30: React.FC = () => {
               command: 'edit',
               title: 'Edit Row',
               iconCssClass: 'mdi mdi-pencil',
-              positionOrder: 66,
               action: () => openCompositeModal('edit'),
             },
             {
               command: 'clone',
               title: 'Clone Row',
               iconCssClass: 'mdi mdi-content-copy',
-              positionOrder: 66,
               action: () => openCompositeModal('clone'),
             },
             'divider',
             {
               command: 'delete-row',
               title: 'Delete Row',
-              positionOrder: 64,
               iconCssClass: 'mdi mdi-close color-danger',
               cssClass: 'red',
               textCssClass: 'text-italic color-danger-light',
@@ -532,7 +529,7 @@ const Example30: React.FC = () => {
         activateCellOnMenuClick: true, // this is important to know which row index to use for Composite Editor
       },
       gridMenu: {
-        hideToggleDarkModeCommand: false, // hidden by default
+        showToggleDarkModeCommand: true, // hidden by default
         onCommand: (_, args) => {
           if (args.command === 'toggle-dark-mode') {
             const newDarkMode = !darkMode;

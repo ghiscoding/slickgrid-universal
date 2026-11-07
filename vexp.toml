@@ -1,6 +1,0 @@
-# vexp configuration
-# See https://vexp.dev/docs for options
-
-[index]
-# exclude_patterns = ["vendor/**", "dist/**"]
-

@@ -33,10 +33,6 @@ export class SlickAutoTooltip {
     return this._addonOptions as AutoTooltipOption;
   }
 
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
-
   /** Initialize plugin. */
   init(grid: SlickGrid): void {
     this._addonOptions = { ...this._defaults, ...this.addonOptions };
@@ -70,15 +66,13 @@ export class SlickAutoTooltip {
     const cell = this._grid.getCellFromEvent(event);
     if (cell) {
       let node: HTMLElement | null = this._grid.getCellNode(cell.row, cell.cell);
-      let text;
+      let text = '';
       if (this._addonOptions && node && (!node.title || this._addonOptions?.replaceExisting)) {
         if (node.clientWidth < node.scrollWidth) {
           text = node.textContent?.trim() ?? '';
           if (this._addonOptions?.maxToolTipLength && text.length > this._addonOptions?.maxToolTipLength) {
             text = text.substring(0, this._addonOptions.maxToolTipLength - 3) + '...';
           }
-        } else {
-          text = '';
         }
         node.title = text;
       }

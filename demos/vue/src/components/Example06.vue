@@ -184,7 +184,6 @@ function defineGrid() {
           title: 'Reset Grid',
           disabled: false,
           command: 'reset-grid',
-          positionOrder: 60,
         },
       ],
       onCommand: (_e, args) => {

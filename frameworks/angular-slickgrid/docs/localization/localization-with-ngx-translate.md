@@ -12,11 +12,12 @@ We use `ngx-translate` because the `i18n` from Angular core is yet to support dy
 In order to use `ngx-translate`, you will have to use `@ngx-translate/core` and possibly `@ngx-translate/http-loader`. Check the table below to find the correct version to use and get more info from their website: https://ngx-translate.org/getting-started/installation/
 
 
-| Angular Version         | @ngx-translate/core |
-|-------------------------|---------------------|
-|  21+                    |        17.x         |
-|  16 - 19+               |        16.x         |
-|  16 - 17+               |        16.x (15.x)  |
+| Angular Version | @ngx-translate/core |
+|-----------------|---------------------|
+|  22+            |        18.x         |
+|  21+            |        17.x         |
+|  16 - 19+       |        16.x         |
+|  16 - 17+       |        16.x (15.x)  |
 
 ### 1. for `Angular-Slickgrid` < 10.0
 

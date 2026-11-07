@@ -193,10 +193,6 @@ export class Example15 {
       },
       gridMenu: {
         hideForceFitButton: true,
-        hideClearFrozenColumnsCommand: false,
-      },
-      headerMenu: {
-        hideFreezeColumnsCommand: false,
       },
       enablePagination: true,
       pagination: {

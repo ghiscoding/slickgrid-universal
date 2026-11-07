@@ -138,10 +138,12 @@ To update an item, you can use `updateItem(s)` and the pass the entire object(s)
 
 ##### Component
 ```typescript
-import { Component, OnInit, Injectable } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AngularGridInstance } from 'angular-slickgrid';
 
-@Injectable()
+@Component({
+  templateUrl: './grid-basic.component.html'
+})
 export class GridBasicComponent implements OnInit {
   columns: Column[];
   gridOptions: GridOption;
@@ -179,10 +181,12 @@ Upsert will do an Insert when not found or update if it found the item already e
 
 ##### Component
 ```typescript
-import { Component, OnInit, Injectable } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AngularGridInstance } from 'angular-slickgrid';
 
-@Injectable()
+@Component({
+  templateUrl: './grid-basic.component.html'
+})
 export class GridBasicComponent implements OnInit {
   columns: Column[];
   gridOptions: GridOption;
@@ -231,10 +235,12 @@ Take a look at all the available [SASS variables](https://github.com/ghiscoding/
 
 ##### Component
 ```typescript
-import { Component, OnInit, Injectable } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AngularGridInstance } from 'angular-slickgrid';
 
-@Injectable()
+@Component({
+  templateUrl: './grid-basic.component.html'
+})
 export class GridBasicComponent implements OnInit {
   columns: Column[];
   gridOptions: GridOption;

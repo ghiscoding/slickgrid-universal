@@ -96,7 +96,6 @@ const Example: React.FC = () => {
           params: { hideSliderNumbers: false }, // you can hide/show the slider numbers on both side
 
           // you can also optionally pass any option of the Slider filter
-          // previously known as `filterOptions` for < 9.0
           options: { sliderStartValue: 5 } as SliderRangeOption
         }
       },
@@ -113,7 +112,6 @@ All the available options that can be provided as filter `options` to your colum
 ```ts
 filter: {
   model: Filters.sliderRange,
-  // previously known as `filterOptions` for < 9.0
   options: {
     sliderStartValue: 5
   } as SliderOption

@@ -202,6 +202,7 @@ describe('Composite Editor Factory', () => {
 
     factory = new (SlickCompositeEditor as any)(columnsMock, containers, compositeOptions);
     const output = new factory(textEditorArgs);
+    const editorRefs = output.getEditors();
     const ctxDestroySpy = vi.spyOn(output, 'destroy');
 
     expect(factory).toBeTruthy();
@@ -211,6 +212,8 @@ describe('Composite Editor Factory', () => {
 
     expect(compOptDestroySpy).toHaveBeenCalled();
     expect(ctxDestroySpy).toHaveBeenCalled();
+    expect(editorRefs).toHaveLength(0);
+    expect(containers).toHaveLength(0);
   });
 
   it('should instantiate the factory and expect "focus" to be called when asked for', () => {
@@ -288,6 +291,16 @@ describe('Composite Editor Factory', () => {
     output.loadValue(valueMock);
 
     expect(editorLoadValueSpy).toHaveBeenCalledWith(valueMock);
+  });
+
+  it('should process an editor added during loadValue', () => {
+    const output = new factory(textEditorArgs);
+    const addedEditor = { loadValue: vi.fn() } as unknown as Editor & { args: EditorArguments };
+    vi.spyOn(output.getEditors()[0], 'loadValue').mockImplementation(() => output.getEditors().push(addedEditor));
+
+    output.loadValue(25);
+
+    expect(addedEditor.loadValue).toHaveBeenCalledWith(25);
   });
 
   it('should instantiate the factory and expect "hide" to be called when asked for', () => {

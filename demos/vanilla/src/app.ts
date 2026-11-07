@@ -2,11 +2,12 @@ import { AppRouting } from './app-routing.js';
 import type { ElementEventListener, RouterConfig } from './interfaces.js';
 import { Renderer } from './renderer.js';
 
-const pageLayoutGlobs = import.meta.glob('./examples/**/*.html', { query: '?raw', eager: true, import: 'default' });
+const pageLayoutGlobs = import.meta.glob<string>('./examples/**/*.html', { query: '?raw', import: 'default' });
 
 export class App {
   private _boundedEventWithListeners: ElementEventListener[] = [];
   private _currentRouteName = '';
+  private _routeLoadId = 0;
   documentTitle = 'Slickgrid-Universal';
   defaultRouteName: string;
   stateBangChar: string;
@@ -100,18 +101,24 @@ export class App {
   async loadRoute(routeName: string, changeBrowserState = true) {
     this.disposeAll(); // dispose all previous ViewModel & bindings before creating any new one
     this._currentRouteName = routeName;
+    const loadId = ++this._routeLoadId;
 
     if (this.renderer && routeName) {
       const mapRoute = this.routerConfig.routes.find((map) => map.route === routeName);
       if (!mapRoute && this.defaultRouteName !== '') {
         this.loadRoute(this.defaultRouteName);
         return;
-      } else if (mapRoute?.view) {
+      } else if (mapRoute?.view && mapRoute.viewModel) {
         this.renderer.render('Loading...');
-        const viewModel = this.renderer.loadViewModel(mapRoute.viewModel);
 
-        // then load the new View
-        const htmlModule = pageLayoutGlobs[mapRoute.view] as string;
+        // lazy load both the ViewModel & View modules
+        const [vmModule, htmlModule] = await Promise.all([mapRoute.viewModel(), pageLayoutGlobs[mapRoute.view]?.()]);
+
+        // user navigated to another route while this one was still loading, discard it
+        if (loadId !== this._routeLoadId) {
+          return;
+        }
+        const viewModel = this.renderer.loadViewModel(vmModule.default);
 
         if (htmlModule) {
           this.renderer.loadView(htmlModule);
@@ -190,5 +197,6 @@ export class App {
         element.removeEventListener(eventName, listener);
       }
     }
+    this._boundedEventWithListeners = [];
   }
 }

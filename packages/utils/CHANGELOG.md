@@ -4,6 +4,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
+
+### ⚠ BREAKING CHANGES
+
+* drop queueMicrotaskPolyfill that is no longer required by ([#2853](https://github.com/ghiscoding/slickgrid-universal/issues/2853))
+
+### Performance Improvements
+
+* **export:** reduce HTML decoding and Excel processing overhead ([#2868](https://github.com/ghiscoding/slickgrid-universal/issues/2868)) ([ac0d2a0](https://github.com/ghiscoding/slickgrid-universal/commit/ac0d2a093b413a771c4fa4533803e598fc447206)) - by @ghiscoding
+
+### Code Refactoring
+
+* drop queueMicrotaskPolyfill that is no longer required by ([#2853](https://github.com/ghiscoding/slickgrid-universal/issues/2853)) ([0a36bb4](https://github.com/ghiscoding/slickgrid-universal/commit/0a36bb4483a569508aa638892f809fc43a3837e6)) - by @ghiscoding
+
 ## [10.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.9.0...v10.10.0) (2026-08-28)
 
 ### Bug Fixes

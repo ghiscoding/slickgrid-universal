@@ -33,6 +33,7 @@ const Example8: React.FC = () => {
       columnDef.header = {
         menu: {
           commandItems: [
+            { divider: true, command: '' },
             {
               iconCssClass: 'mdi mdi-help-circle',
               titleKey: 'HELP',
@@ -40,7 +41,6 @@ const Example8: React.FC = () => {
               tooltip: 'Need assistance?',
               cssClass: 'bold',
               textCssClass: columnDef.id === 'title' || columnDef.id === 'completed' ? '' : 'blue',
-              positionOrder: 99,
               itemUsabilityOverride: (args) => {
                 return !(args.column.id === 'title' || args.column.id === 'completed');
               },
@@ -51,11 +51,9 @@ const Example8: React.FC = () => {
                 console.log('execute an action on Help', args);
               },
             },
-            { divider: true, command: '', positionOrder: 98 },
             {
               command: 'custom-actions',
               title: 'Hello',
-              positionOrder: 99,
               commandItems: [
                 { command: 'hello-world', title: 'Hello World' },
                 { command: 'hello-slickgrid', title: 'Hello SlickGrid' },
@@ -77,7 +75,6 @@ const Example8: React.FC = () => {
             {
               command: 'feedback',
               title: 'Feedback',
-              positionOrder: 100,
               commandItems: [
                 {
                   command: 'request-update',
@@ -118,8 +115,6 @@ const Example8: React.FC = () => {
       enableFiltering: false,
       enableCellNavigation: true,
       headerMenu: {
-        hideSortCommands: false,
-        hideColumnHideCommand: false,
         subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
         onCommand: (_e, args) => {
           const command = args.item?.command;

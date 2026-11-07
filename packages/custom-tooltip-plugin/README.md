@@ -49,3 +49,13 @@ export class MyExample {
 
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)
+
+### Styling (v11+)
+Import the Custom Tooltip stylesheet after your SlickGrid theme in your application's global SCSS entry file:
+
+```scss
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@use '@slickgrid-universal/custom-tooltip-plugin/dist/styles/sass/slick-custom-tooltip.scss';
+```
+
+For plain CSS, import `@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css` first, followed by `@slickgrid-universal/custom-tooltip-plugin/dist/styles/css/slick-custom-tooltip-bootstrap.css`. Replace `bootstrap` with your theme name (`default`, `fluent`, `material`, or `salesforce`); lite themes use the same package stylesheet.

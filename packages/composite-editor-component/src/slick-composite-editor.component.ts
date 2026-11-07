@@ -38,6 +38,7 @@ import {
   emptyElement,
   emptyObject,
   getHtmlStringOutput,
+  isEmptyObject,
   setDeepValue,
 } from '@slickgrid-universal/utils';
 import { SlickCompositeEditor } from './compositeEditor.factory.js';
@@ -62,7 +63,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   protected _compositeOptions!: CompositeEditorOption;
   protected _eventHandler: SlickEventHandler;
   protected _itemDataContext: any;
-  protected _modalElm!: HTMLDialogElement | HTMLDivElement;
+  protected _modalElm!: HTMLDialogElement;
   protected _originalDataContext: any;
   protected _options!: CompositeEditorOpenDetailOption;
   protected _lastActiveRowNumber = -1;
@@ -76,10 +77,6 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   protected grid!: SlickGrid;
   protected gridService: GridService | null = null;
   protected translaterService?: TranslaterService | null;
-
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
-  }
 
   get dataView(): SlickDataView {
     return this.grid?.getData<SlickDataView>();
@@ -121,15 +118,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     this.translaterService = containerService.get<TranslaterService>('TranslaterService');
 
     if (!this.gridService) {
-      throw new Error(
-        '[Slickgrid-Universal] it seems that the GridService is not being loaded properly, make sure the Container Service is properly implemented.'
-      );
+      throw new Error('[Slickgrid-Universal] GridService is unavailable.');
     }
 
     if (this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
-      throw new Error(
-        '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
-      );
+      throw new Error(Constants.translaterMissingError);
     }
 
     // get locales provided by user in forRoot or else use default English locales via the Constants
@@ -394,13 +387,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           }
         }
 
-        let modalColumns: Column[] = [];
-        if (isWithMassChange) {
-          // when using Mass Update, we only care about the columns that have the "massUpdate: true", we disregard anything else
-          modalColumns = this._columns.filter((col) => col.editorClass && col.editor?.massUpdate === true);
-        } else {
-          modalColumns = this._columns.filter((col) => col.editorClass);
-        }
+        // when using Mass Update, we only care about the columns that have the "massUpdate: true", we disregard anything else
+        const modalColumns = this._columns.filter((col) => col.editorClass && (!isWithMassChange || col.editor?.massUpdate === true));
 
         // user could optionally show the form inputs in a specific order instead of using default column definitions order
         if (modalColumns.some((col) => col.editor?.compositeEditorFormOrder !== undefined)) {
@@ -416,8 +404,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         const parsedHeaderTitle = headerTitle.replace(/\{\{(.*?)\}\}/g, (_match, group) => getDescendantProperty(dataContext, group));
         const layoutColCount = viewColumnLayout === 'auto' ? this.autoCalculateLayoutColumnCount(modalColumns.length) : viewColumnLayout;
 
-        const tagType = this._options.domElementType ?? 'dialog';
-        this._modalElm = createDomElement(tagType, { className: `slick-editor-modal ${gridUid}` });
+        this._modalElm = createDomElement('dialog', { className: `slick-editor-modal ${gridUid}` });
         const modalContentElm = createDomElement('div', { className: 'slick-editor-modal-content' });
 
         // add dark mode CSS class when enabled
@@ -511,37 +498,35 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._modalElm.appendChild(modalContentElm);
 
         for (const columnDef of modalColumns) {
-          if (columnDef.editorClass) {
-            const itemContainer = createDomElement('div', { className: `item-details-container editor-${columnDef.id}` });
+          const itemContainer = createDomElement('div', { className: `item-details-container editor-${columnDef.id}` });
 
-            if (layoutColCount === 1) {
-              itemContainer.classList.add('slick-col-medium-12');
-            } else {
-              itemContainer.classList.add('slick-col-medium-6', `slick-col-xlarge-${12 / layoutColCount}`);
-            }
-
-            const templateItemLabelElm = createDomElement('div', { className: `item-details-label editor-${columnDef.id}` });
-            applyHtmlToElement(templateItemLabelElm, this.getColumnLabel(columnDef) || 'n/a', this.gridOptions);
-            const templateItemEditorElm = createDomElement('div', {
-              className: 'item-details-editor-container slick-cell',
-              dataset: { editorid: `${columnDef.id}` },
-            });
-            const templateItemValidationElm = createDomElement('div', {
-              className: `item-details-validation editor-${columnDef.id}`,
-            });
-
-            // optionally add a reset button beside each editor
-            if (this._options?.showResetButtonOnEachEditor) {
-              const editorResetButtonElm = this.createEditorResetButtonElement(`${columnDef.id}`);
-              this._bindEventService.bind(editorResetButtonElm, 'click', this.handleResetInputValue.bind(this) as EventListener);
-              templateItemLabelElm.appendChild(editorResetButtonElm);
-            }
-
-            itemContainer.appendChild(templateItemLabelElm);
-            itemContainer.appendChild(templateItemEditorElm);
-            itemContainer.appendChild(templateItemValidationElm);
-            modalBodyElm.appendChild(itemContainer);
+          if (layoutColCount === 1) {
+            itemContainer.classList.add('slick-col-medium-12');
+          } else {
+            itemContainer.classList.add('slick-col-medium-6', `slick-col-xlarge-${12 / layoutColCount}`);
           }
+
+          const templateItemLabelElm = createDomElement('div', { className: `item-details-label editor-${columnDef.id}` });
+          applyHtmlToElement(templateItemLabelElm, this.getColumnLabel(columnDef) || 'n/a', this.gridOptions);
+          const templateItemEditorElm = createDomElement('div', {
+            className: 'item-details-editor-container slick-cell',
+            dataset: { editorid: `${columnDef.id}` },
+          });
+          const templateItemValidationElm = createDomElement('div', {
+            className: `item-details-validation editor-${columnDef.id}`,
+          });
+
+          // optionally add a reset button beside each editor
+          if (this._options?.showResetButtonOnEachEditor) {
+            const editorResetButtonElm = this.createEditorResetButtonElement(`${columnDef.id}`);
+            this._bindEventService.bind(editorResetButtonElm, 'click', this.handleResetInputValue.bind(this) as EventListener);
+            templateItemLabelElm.appendChild(editorResetButtonElm);
+          }
+
+          itemContainer.appendChild(templateItemLabelElm);
+          itemContainer.appendChild(templateItemEditorElm);
+          itemContainer.appendChild(templateItemValidationElm);
+          modalBodyElm.appendChild(itemContainer);
         }
 
         // optionally add a form reset button
@@ -551,9 +536,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           modalBodyElm.appendChild(resetButtonContainerElm);
         }
 
-        if (tagType === 'dialog') {
-          (this._modalElm as HTMLDialogElement).open = true;
-        }
+        (this._modalElm as HTMLDialogElement).open = true;
         document.body.appendChild(this._modalElm);
         document.body.classList.add('slick-modal-open'); // add backdrop to body
         this._bindEventService.bind(document.body, 'click', this.handleBodyClicked.bind(this));
@@ -611,7 +594,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   /** Cancel the Editing which will also close the modal window */
   async cancelEditing(): Promise<void> {
     let confirmed = true;
-    if (this.formValues && Object.keys(this.formValues).length > 0 && typeof this._options.onClose === 'function') {
+    if (this.formValues && !isEmptyObject(this.formValues) && typeof this._options.onClose === 'function') {
       confirmed = await this._options.onClose();
     }
 
@@ -655,23 +638,29 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     this.grid.getSelectionModel()?.setSelectedRanges(ranges);
   }
 
-  /** Apply Mass Update Changes (form values) to the entire dataset */
-  protected applySaveMassUpdateChanges(formValues: any, _selection: DataSelection, applyToDataview = true): any[] {
-    // not applying to dataView means that we're doing a preview of dataset and we should use a deep copy of it instead of applying changes directly to it
-    const data = applyToDataview ? this.dataView.getItems() : deepCopy(this.dataView.getItems());
-
-    // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
-    // we can loop through these changes and apply them on the selected row indexes
+  /** Apply form values to a collection of data contexts, honoring the optional mass-update validator. */
+  protected applyFormValuesToItems(formValues: any, items: any[]): void {
     Object.keys(formValues).forEach((itemProp) => {
       if (itemProp in formValues) {
-        data.forEach((dataContext: any) => {
-          // prettier-ignore
-          if (itemProp in formValues && (this._options?.validateMassUpdateChange === undefined || this._options.validateMassUpdateChange(itemProp, dataContext, formValues) !== false)) {
+        items.forEach((dataContext: any) => {
+          if (
+            itemProp in formValues &&
+            (this._options?.validateMassUpdateChange === undefined ||
+              this._options.validateMassUpdateChange(itemProp, dataContext, formValues) !== false)
+          ) {
             dataContext[itemProp] = formValues[itemProp];
           }
         });
       }
     });
+  }
+
+  /** Apply Mass Update Changes (form values) to the entire dataset */
+  protected applySaveMassUpdateChanges(formValues: any, _selection: DataSelection, applyToDataview = true): any[] {
+    // not applying to dataView means that we're doing a preview of dataset and we should use a deep copy of it instead of applying changes directly to it
+    const data = applyToDataview ? this.dataView.getItems() : deepCopy(this.dataView.getItems());
+
+    this.applyFormValuesToItems(formValues, data);
 
     // change the entire dataset with our updated dataset
     if (applyToDataview) {
@@ -689,18 +678,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     // not applying to dataView means that we're doing a preview of dataset and we should use a deep copy of it instead of applying changes directly to it
     const selectedItems = applyToDataview ? selectedTmpItems : deepCopy(selectedTmpItems);
 
-    // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
-    // we can loop through these changes and apply them on the selected row indexes
-    Object.keys(formValues).forEach((itemProp) => {
-      if (itemProp in formValues) {
-        selectedItems.forEach((dataContext: any) => {
-          // prettier-ignore
-          if (itemProp in formValues && (this._options?.validateMassUpdateChange === undefined || this._options.validateMassUpdateChange(itemProp, dataContext, formValues) !== false)) {
-            dataContext[itemProp] = formValues[itemProp];
-          }
-        });
-      }
-    });
+    this.applyFormValuesToItems(formValues, selectedItems);
 
     // update all items in the grid with the grid service
     if (applyToDataview) {
@@ -982,11 +960,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   protected handleKeyDown(event: KeyboardEvent): void {
-    if (event.code === 'Escape') {
+    if (event.key === 'Escape') {
       this.cancelEditing();
       event.stopPropagation();
       event.preventDefault();
-    } else if (event.code === 'Tab') {
+    } else if (event.key === 'Tab') {
       this.validateCurrentEditor();
     }
   }
@@ -1002,7 +980,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   /** Callback which processes a Mass Update or Mass Selection Changes */
   protected async handleMassSaving(modalType: 'mass-update' | 'mass-selection', executePostCallback: PlainFunc): Promise<void> {
-    if (!this.formValues || Object.keys(this.formValues).length === 0) {
+    if (!this.formValues || isEmptyObject(this.formValues)) {
       this.executeOnError({ type: 'warning', code: 'NO_CHANGES_DETECTED', message: 'Sorry we could not detect any changes.' });
     } else {
       const applyCallbackFnName = modalType === 'mass-update' ? 'applySaveMassUpdateChanges' : 'applySaveMassSelectionChanges';

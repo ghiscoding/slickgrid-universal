@@ -5,6 +5,12 @@
   },
   "angularCompilerOptions": {
     "compilationMode": "full",
+    "extendedDiagnostics": {
+      "checks": {
+        "nullishCoalescingNotNullable": "suppress",
+        "optionalChainNotNullable": "suppress"
+      }
+    },
     "preserveWhitespaces": true,
     "strictMetadataEmit": true
   },

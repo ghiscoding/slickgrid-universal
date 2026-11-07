@@ -368,11 +368,10 @@ export class Example33Component implements OnInit {
           hideCloseButton: false,
           commandTitle: 'Commands',
           commandItems: [
-            // array of command item objects, you can also use the "positionOrder" that will be used to sort the items in the list
+            { command: 'command1', title: 'Command 1', cssClass: 'orange' },
             {
               command: 'command2',
               title: 'Command 2',
-              positionOrder: 62,
               // you can use the "action" callback and/or use "onCallback" callback from the grid options, they both have the same arguments
               action: (_e, args) => {
                 console.log(args.dataContext, args.column);
@@ -383,11 +382,10 @@ export class Example33Component implements OnInit {
                 return !args.dataContext.completed;
               },
             },
-            { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
+            { divider: true, command: '' },
             {
               command: 'delete-row',
               title: 'Delete Row',
-              positionOrder: 64,
               iconCssClass: 'mdi mdi-close',
               cssClass: 'red',
               textCssClass: 'bold',
@@ -396,17 +394,13 @@ export class Example33Component implements OnInit {
                 return !args.dataContext.completed;
               },
             },
-            // you can pass divider as a string or an object with a boolean (if sorting by position, then use the object)
-            // note you should use the "divider" string only when items array is already sorted and positionOrder are not specified
-            { divider: true, command: '', positionOrder: 63 },
             // 'divider',
             {
               command: 'help',
               title: 'Help',
               iconCssClass: 'mdi mdi-help-circle-outline',
-              positionOrder: 66,
             },
-            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67 },
+            { command: 'something', title: 'Disabled Command', disabled: true },
           ],
         },
       },
@@ -462,14 +456,6 @@ export class Example33Component implements OnInit {
         // all the Cell Menu callback methods (except the action callback)
         // are available under the grid options as shown below
         onCommand: (e, args) => this.executeCommand(e, args),
-        onOptionSelected: (_e, args) => {
-          // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args?.dataContext;
-          if (dataContext && 'completed' in dataContext) {
-            dataContext.completed = args.item.option;
-            this.angularGrid.gridService.updateItem(dataContext);
-          }
-        },
       },
     };
   }
