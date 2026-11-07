@@ -293,6 +293,16 @@ describe('Composite Editor Factory', () => {
     expect(editorLoadValueSpy).toHaveBeenCalledWith(valueMock);
   });
 
+  it('should process an editor added during loadValue', () => {
+    const output = new factory(textEditorArgs);
+    const addedEditor = { loadValue: vi.fn() } as unknown as Editor & { args: EditorArguments };
+    vi.spyOn(output.getEditors()[0], 'loadValue').mockImplementation(() => output.getEditors().push(addedEditor));
+
+    output.loadValue(25);
+
+    expect(addedEditor.loadValue).toHaveBeenCalledWith(25);
+  });
+
   it('should instantiate the factory and expect "hide" to be called when asked for', () => {
     const output = new factory(textEditorArgs);
     const editorHideSpy = vi.spyOn(output, 'hide');

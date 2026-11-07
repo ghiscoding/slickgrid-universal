@@ -176,19 +176,32 @@ export function SlickCompositeEditor(
     };
 
     context.isValueChanged = () => {
-      return editors.some((editor) => editor.isValueChanged());
+      for (let idx = 0; idx < editors.length; idx++) {
+        if (editors[idx].isValueChanged()) {
+          return true;
+        }
+      }
+      return false;
     };
 
     context.serializeValue = () => {
-      return editors.map((editor) => editor.serializeValue());
+      const values = [];
+      for (let idx = 0; idx < editors.length; idx++) {
+        values[idx] = editors[idx].serializeValue();
+      }
+      return values;
     };
 
     context.applyValue = (item: any, state: any) => {
-      editors.forEach((editor, idx) => editor.applyValue(item, state?.[idx]));
+      for (let idx = 0; idx < editors.length; idx++) {
+        editors[idx].applyValue(item, state?.[idx]);
+      }
     };
 
     context.loadValue = (item: any) => {
-      editors.forEach((editor) => editor.loadValue(item));
+      for (let idx = 0; idx < editors.length; idx++) {
+        editors[idx].loadValue(item);
+      }
     };
 
     context.validate = (targetElm?: HTMLElement | null): EditorValidationResult => {
@@ -251,12 +264,16 @@ export function SlickCompositeEditor(
     };
 
     context.hide = () => {
-      editors.forEach((editor) => editor.hide?.());
+      for (let idx = 0; idx < editors.length; idx++) {
+        editors[idx]?.hide?.();
+      }
       options?.hide?.();
     };
 
     context.show = () => {
-      editors.forEach((editor) => editor.show?.());
+      for (let idx = 0; idx < editors.length; idx++) {
+        editors[idx]?.show?.();
+      }
       options?.show?.();
     };
 
