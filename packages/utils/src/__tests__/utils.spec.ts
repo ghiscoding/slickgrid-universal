@@ -713,6 +713,61 @@ describe('Service/Utilies', () => {
       expect(output.__proto__).toEqual({ polluted: 'yes' });
       expect((Object.prototype as any).polluted).toBeUndefined();
     });
+
+    it('should leave a supplied path array unchanged', () => {
+      const path = ['user', 'firstName'];
+
+      setDeepValue(obj, path, 'Jane');
+
+      expect(path).toEqual(['user', 'firstName']);
+      expect(obj.user.firstName).toBe('Jane');
+    });
+
+    it('should ignore a path array with a missing key', () => {
+      const path = new Array<string>(2);
+      path[1] = 'name';
+
+      setDeepValue(obj, path, 'Jane');
+
+      expect(obj.user.firstName).toBe('John');
+      expect(Object.prototype.hasOwnProperty.call(obj, 'undefined')).toBe(false);
+    });
+
+    it('should replace inherited and non-object intermediate values', () => {
+      const inherited = { name: 'Original' };
+      const output: any = Object.create({ user: inherited });
+      output.empty = null;
+      output.primitive = 1;
+
+      setDeepValue(output, 'user.name', 'Jane');
+      setDeepValue(output, 'empty.name', 'Jane');
+      setDeepValue(output, 'primitive.name', 'Jane');
+
+      expect(output.user).toEqual({ name: 'Jane' });
+      expect(output.empty).toEqual({ name: 'Jane' });
+      expect(output.primitive).toEqual({ name: 'Jane' });
+      expect(inherited.name).toBe('Original');
+    });
+
+    it('should replace references to shared prototypes before writing nested values', () => {
+      const output: any = { object: Object.prototype, array: Array.prototype };
+
+      setDeepValue(output, 'object.polluted', 'yes');
+      setDeepValue(output, 'array.polluted', 'yes');
+
+      expect(output.object).toEqual({ polluted: 'yes' });
+      expect(output.array).toEqual({ polluted: 'yes' });
+      expect(({} as any).polluted).toBeUndefined();
+      expect(([] as any).polluted).toBeUndefined();
+    });
+
+    it('should not write directly to shared prototypes', () => {
+      setDeepValue(Object.prototype, 'polluted', 'yes');
+      setDeepValue(Array.prototype, 'polluted', 'yes');
+
+      expect(({} as any).polluted).toBeUndefined();
+      expect(([] as any).polluted).toBeUndefined();
+    });
   });
 
   describe('titleCase() method', () => {
