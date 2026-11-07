@@ -109,12 +109,6 @@ export class TreeDataService {
 
     // there's a few limitations with Tree Data, we'll just throw error when that happens
     if (this._isTreeDataEnabled) {
-      if (this.gridOptions?.multiColumnSort) {
-        throw new Error(
-          '[Slickgrid-Universal] It looks like you are trying to use Tree Data with multi-column sorting, unfortunately it is not supported because of its complexity, you can disable it via "multiColumnSort: false" grid option and/or help in providing support for this feature.'
-        );
-      }
-
       if (!this.gridOptions?.enableFiltering) {
         throw new Error(
           '[Slickgrid-Universal] It looks like you are trying to use Tree Data without using the filtering option, unfortunately that is not possible with Tree Data since it relies heavily on the filters to expand/collapse the tree. You need to enable it via "enableFiltering: true"'
@@ -344,12 +338,11 @@ export class TreeDataService {
     const datasetHierarchical = this.convertFlatParentChildToTreeDataset(flatDataset, gridOptions);
 
     // 2- sort the hierarchical array recursively by an optional "initialSort" OR if nothing is provided we'll sort by the column defined as the Tree column
-    // also note that multi-column is not currently supported with Tree Data and so we'll take only the first Sort column
-    const columnSort = Array.isArray(columnSorts) && columnSorts.length ? columnSorts[0] : this.getInitialSort(columns, gridOptions);
-    const datasetSortResult = this.sortService.sortHierarchicalDataset(datasetHierarchical, [columnSort], true);
+    const finalColumnSorts = Array.isArray(columnSorts) && columnSorts.length ? columnSorts : [this.getInitialSort(columns, gridOptions)];
+    const datasetSortResult = this.sortService.sortHierarchicalDataset(datasetHierarchical, finalColumnSorts, true);
 
     // and finally add the sorting icon (this has to be done manually in SlickGrid) to the column we used for the sorting
-    this._grid?.setSortColumns([columnSort]);
+    this._grid?.setSortColumns(finalColumnSorts);
 
     return datasetSortResult;
   }

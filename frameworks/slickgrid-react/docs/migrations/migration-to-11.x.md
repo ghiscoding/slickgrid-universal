@@ -2,7 +2,7 @@
 
 SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer and a single scrollbar. Frozen columns/rows are replaced by the new Pinning feature, and we're also adding a new Sticky columns/rows feature. The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor of the new `pinning` grid option. Pinning applies to individual columns, regardless of their index, instead of a contiguous frozen range. Update your grid options and persisted grid state accordingly.
 
-This release was also audited & benchmarked with AI (ChatGPT 6 Astra/Claude Opus 5.5) and brings performance improvements across several areas: virtual scrolling on large datasets, tree-data lookups and dataset sorting, sort comparisons, filtering, formatters, and exports. The Draggable Grouping example with half a million rows now exports to Excel in 10–13 seconds (may vary), 3–4x faster than v10, while v9 would hang and leave the browser unresponsive.
+This release was also audited & benchmarked with AI (ChatGPT 6 Astra/Claude Opus 5.5) and brings performance improvements across several areas: virtual scrolling on large datasets, tree-data lookups and dataset sorting, sort comparisons, filtering, formatters, and exports. Tree Data also supports multi-column sorting. The Draggable Grouping example with half a million rows now exports to Excel in 10–13 seconds (may vary), 3–4x faster than v10, while v9 would hang and leave the browser unresponsive.
 
 ### AI-assisted migration
 

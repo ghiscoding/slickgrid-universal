@@ -163,21 +163,31 @@ describe('SortService', () => {
 
   it('sorts tree siblings by first-column priority at every level', () => {
     service.bindLocalOnSort(gridStub);
-    const columns = ['a', 'b'].map((field) => ({ columnId: field, sortAsc: true, sortCol: { id: field, field, type: 'number' as const } }));
+    const columns = ['a', 'b'].map((field) => ({ columnId: field, sortAsc: field === 'a', sortCol: { id: field, field, type: 'number' as const } }));
     const rows = [
       { a: 2, b: 1 },
       {
         a: 1,
-        b: 9,
+        b: 1,
         children: [
           { a: 2, b: 1 },
+          { a: 1, b: 1 },
           { a: 1, b: 9 },
         ],
       },
+      { a: 1, b: 9 },
     ];
     service.sortTreeData(rows, columns);
-    expect(rows.map((row) => row.a)).toEqual([1, 2]);
-    expect(rows[0].children!.map((row) => row.a)).toEqual([1, 2]);
+    expect(rows.map((row) => [row.a, row.b])).toEqual([
+      [1, 9],
+      [1, 1],
+      [2, 1],
+    ]);
+    expect(rows[1].children!.map((row) => [row.a, row.b])).toEqual([
+      [1, 9],
+      [1, 1],
+      [2, 1],
+    ]);
   });
 
   it('restores the backend sort handler when sorting is re-enabled', () => {
@@ -1581,6 +1591,34 @@ describe('SortService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith('onSortChanged', [{ columnId: 'file', direction: 'ASC' }]);
         expect(sortTreeDataSpy).toHaveBeenCalled();
         expect(emitSortChangedSpy).toHaveBeenCalled();
+      });
+
+      it('applies multiple sort columns to the flattened tree on a local sort', async () => {
+        gridOptionMock.enableTreeData = true;
+        gridOptionMock.treeDataOptions = { columnId: 'file', childrenPropName: 'files' };
+        const tree = [
+          {
+            id: 1,
+            file: 'a',
+            size: 1,
+            files: [
+              { id: 3, file: 'x', size: 1 },
+              { id: 4, file: 'x', size: 2 },
+            ],
+          },
+          { id: 2, file: 'a', size: 2 },
+        ];
+        sharedService.hierarchicalDataset = tree;
+        service.bindLocalOnSort(gridStub);
+        await new Promise(process.nextTick);
+        const setItemsSpy = vi.spyOn(dataViewStub, 'setItems').mockClear();
+
+        await service.onLocalSortChanged(gridStub, [
+          { columnId: 'file', sortCol: { id: 'file', field: 'file' }, sortAsc: true },
+          { columnId: 'size', sortCol: { id: 'size', field: 'size', type: 'number' }, sortAsc: false },
+        ]);
+
+        expect(setItemsSpy.mock.calls[0][0].map((item: any) => item.id)).toEqual([2, 1, 4, 3]);
       });
 
       it('should call onLocalSortChanged with a hierarchical dataset and expect DataView "setItems" method be called once with sorted ASC dataset', async () => {

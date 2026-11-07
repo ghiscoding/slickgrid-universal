@@ -125,16 +125,10 @@ describe('TreeData Service', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should throw an error when used with multi-column sorting', () =>
-    new Promise((done: any) => {
-      try {
-        gridOptionsMock.multiColumnSort = true;
-        service.init(gridStub);
-      } catch (e: any) {
-        expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data with multi-column sorting');
-        done();
-      }
-    }));
+  it('supports multi-column sorting', () => {
+    gridOptionsMock.multiColumnSort = true;
+    expect(() => service.init(gridStub)).not.toThrow();
+  });
 
   it('should throw an error when used without filter grid option', () =>
     new Promise((done: any) => {
@@ -1291,6 +1285,23 @@ describe('TreeData Service', () => {
         },
       ]);
       expect(result).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+    });
+
+    it('retains all sort columns when rebuilding a tree', () => {
+      gridOptionsMock.multiColumnSort = true;
+      const sortCols = [
+        { columnId: 'file', sortCol: mockColumns[0], sortAsc: true },
+        { columnId: 'size', sortCol: mockColumns[1], sortAsc: false },
+      ];
+      const hierarchy = [{ id: 0 }];
+      vi.spyOn(service, 'convertFlatParentChildToTreeDataset').mockReturnValue(hierarchy as any);
+      const sortSpy = vi.spyOn(sortServiceStub, 'sortHierarchicalDataset');
+      service.init(gridStub);
+
+      service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock, sortCols);
+
+      expect(sortSpy).toHaveBeenCalledWith(hierarchy, sortCols, true);
+      expect(gridStub.setSortColumns).toHaveBeenCalledWith(sortCols);
     });
   });
 
