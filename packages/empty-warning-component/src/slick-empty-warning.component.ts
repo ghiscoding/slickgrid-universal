@@ -62,17 +62,19 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     // lookup for split-pane grids, but fall back to that single canvas when no
     // right pane exists.
     const gridCanvasElm = gridCanvasLeftElm || rootElm.querySelector<HTMLDivElement>(`.${gridUid} .grid-canvas`);
-    const leftElementMarginLeft = mergedOptions.leftViewportMarginLeft ?? 0;
-    const rightElementMarginLeft = mergedOptions.rightViewportMarginLeft ?? 0;
-    const leftElementPinnedMarginLeft = mergedOptions.pinnedLeftViewportMarginLeft ?? 0;
-    const rightElementPinnedMarginLeft = mergedOptions.pinnedRightViewportMarginLeft ?? 0;
     const isPinnedGrid = this.gridOptions?.pinning?.columns !== undefined;
+    const leftElementMarginLeft = isPinnedGrid
+      ? (mergedOptions.pinnedLeftViewportMarginLeft ?? 0)
+      : (mergedOptions.leftViewportMarginLeft ?? 0);
+    const rightElementMarginLeft = isPinnedGrid
+      ? (mergedOptions.pinnedRightViewportMarginLeft ?? 0)
+      : (mergedOptions.rightViewportMarginLeft ?? 0);
 
     // when dealing with a grid that has "autoHeight" option, we need to override 2 height that get miscalculated
     // that is because it is not aware that we are adding this slick empty element in this grid DOM
-    if (this.gridOptions.autoHeight) {
+    if (this.gridOptions.autoHeight && isShowing) {
       const contentRootElm = rootElm.querySelector<HTMLDivElement>(`.${gridUid} .slick-content-root`);
-      if (contentRootElm && contentRootElm.style && gridCanvasElm && gridCanvasElm.style) {
+      if (contentRootElm && gridCanvasElm) {
         const contentRootHeight = parseInt(contentRootElm.style.height, 10) || 0; // this field auto calc by row height
 
         // get row height of each feature when enabled (rowHeight will always be defined because that is the cell height)
@@ -80,15 +82,9 @@ export class SlickEmptyWarningComponent implements ExternalResource {
         const filterRowHeight = this.gridOptions.enableFiltering ? (this.gridOptions?.headerRowHeight ?? 0) : 0;
         const preHeaderRowHeight = this.gridOptions.createPreHeaderPanel ? (this.gridOptions?.preHeaderPanelHeight ?? 0) : 0;
 
-        if (isShowing) {
-          // use when height with rows more that 100px
-          // AutoHeight option collapse dataview to 100px when show message without data in huge grid
-          // (default autoHeight for message - 100px you can add as param if needed)
-          let contentRootMinHeight = contentRootHeight !== null && contentRootHeight < 100 ? contentRootHeight : 100;
-          contentRootMinHeight += filterRowHeight + preHeaderRowHeight; // add preHeader & filter height when enabled
-          contentRootElm.style.minHeight = `${contentRootMinHeight}px`;
-          gridCanvasElm.style.minHeight = `${cellRowHeight}px`;
-        }
+        // AutoHeight caps the empty grid's content height at 100px, plus filter and pre-header rows.
+        contentRootElm.style.minHeight = `${Math.min(contentRootHeight, 100) + filterRowHeight + preHeaderRowHeight}px`;
+        gridCanvasElm.style.minHeight = `${cellRowHeight}px`;
       }
     }
 
@@ -114,8 +110,8 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     }
 
     // if we did find the Slick-Empty-Warning element then display it with the configured margin offsets
-    this.updateWarningElement(this._warningLeftElement, isShowing, isPinnedGrid ? leftElementPinnedMarginLeft : leftElementMarginLeft);
-    this.updateWarningElement(this._warningRightElement, isShowing, isPinnedGrid ? rightElementPinnedMarginLeft : rightElementMarginLeft);
+    this.updateWarningElement(this._warningLeftElement, isShowing, leftElementMarginLeft);
+    this.updateWarningElement(this._warningRightElement, isShowing, rightElementMarginLeft);
 
     return isShowing;
   }
