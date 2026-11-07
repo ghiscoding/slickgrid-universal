@@ -379,7 +379,21 @@ Previous releases included fallbacks for native APIs blocked by some restricted 
 - queueMicrotask: drop `queueMicrotaskPolyfill` util and use native `queueMicrotask`
 - Composite Editor: strictly use `<dialog>` and drop `CompositeEditorOption.domElementType: 'div' | 'dialog'`
 
-### Tree Formatter - remove unrelated CSS class
+### Tree Data
+
+#### Multi-Column Sorting now supported
+
+Tree Data now works with multi-column sorting, so you could re-enable (aka remove) the previous grid option.
+
+```ts
+gridOptions = {
+   enableFiltering: true, // still required
+-  multiColumnSort: false, // no longer required
+   treeDataOptions: { /* ... */ }
+}
+```
+
+#### Tree Formatter - remove unrelated CSS class
 
 The Tree Formatter originally used the `.slick-group-toggle` class, which is unrelated to tree data. In version 10 the dedicated `.slick-tree-toggle` class was introduced in order to transition and eventually use new tree class name only. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling and tests if necessary.
 
