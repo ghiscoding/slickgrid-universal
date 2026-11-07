@@ -9,6 +9,10 @@ description: Migrate SlickGrid Universal (Vanilla/Core) applications from v10 to
 
 Follow the core guide for direct grid event subscriptions. For Salesforce applications, preserve the former hidden defaults by adding `'toggle-preheader'` and `'refresh-dataset'` to `gridMenu.hideCommands` if required.
 
+## External resource reset
+
+In Vanilla, Angular, Aurelia, and React, `resetExternalResources()` now disposes registered external resources and clears the supplied resource array. Grid-owned services remain active. Replace reused resources with fresh instances after reset.
+
 ## Performance improvements
 
 v11 improves virtual scrolling, tree-data lookups and dataset sorting, sort comparisons, filtering, and exports. Tree Data also supports multi-column sorting. These optimizations do not by themselves require application migration changes; use the guide for API and behavior changes.
@@ -71,3 +75,5 @@ Search again for removed options, imports, callbacks, selectors, and dependencie
 Report the changes made, checks performed, and any unresolved state/data mappings or dependency requirements. Distinguish migration requirements from optional adoption of new features.
 
 Resize by content measures every distinct sampled text with its column cell font and padding; it does not shortlist candidates by character count.
+
+- `enableDeepCopyDatasetOnPageLoad` belongs to `SalesforceGridOption` and `VanillaForceGridBundle`; other grids must copy datasets before passing them in.

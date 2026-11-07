@@ -457,12 +457,6 @@ export interface GridOption<C extends Column = Column> {
   /** Do we want to enable Context Menu? (mouse right+click) */
   enableContextMenu?: boolean;
 
-  /**
-   * Defaults to false, do we want to make a deep copy of the dataset before loading it into the grid?
-   * Useful with Salesforce to avoid proxy object error when trying to update a property of an item object by reference (which SlickGrid does a lot)
-   */
-  enableDeepCopyDatasetOnPageLoad?: boolean;
-
   /** Defaults to false, do we want to enable the Draggable Grouping Plugin? */
   enableDraggableGrouping?: boolean;
 

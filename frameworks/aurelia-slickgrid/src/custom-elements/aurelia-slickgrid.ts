@@ -623,18 +623,15 @@ export class AureliaSlickgridCustomElement {
 
   datasetChanged(newDataset: any[], oldValue: any[]) {
     const prevDatasetLn = this._currentDatasetLength;
-    const isDatasetEqual = dequal(newDataset, this._dataset || []);
     let data = newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
-    if (
-      this.grid &&
-      this.options?.enableTreeData &&
-      Array.isArray(newDataset) &&
-      (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)
-    ) {
-      this._isDatasetHierarchicalInitialized = false;
-      data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+    if (this.grid && this.options?.enableTreeData && Array.isArray(newDataset)) {
+      const isDatasetEqual = dequal(newDataset, this._dataset || []);
+      if (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual) {
+        this._isDatasetHierarchicalInitialized = false;
+        data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+      }
     }
 
     this._dataset = data;
@@ -1401,8 +1398,22 @@ export class AureliaSlickgridCustomElement {
     this.initializeExternalResources(resources);
   }
 
+  /** Dispose registered external resources without disposing services owned by the grid. */
   resetExternalResources() {
-    this._registeredResources = [];
+    const ownedResources: unknown[] = [
+      this.gridService,
+      this.gridStateService,
+      this.headerGroupingService,
+      this.treeDataService,
+      this.slickEmptyWarning,
+    ];
+    const previousResources = this._registeredResources;
+    this._registeredResources = previousResources.filter((resource) => !ownedResources.includes(resource));
+    previousResources.length = 0;
+    this.disposeExternalResources();
+    if (this.sharedService) {
+      this.sharedService.externalRegisteredResources = this._registeredResources;
+    }
   }
 
   /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */

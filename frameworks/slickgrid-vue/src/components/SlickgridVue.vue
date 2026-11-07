@@ -47,7 +47,7 @@ import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-compone
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
-import { deepCopy, extend } from '@slickgrid-universal/utils';
+import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import {
   computed,
@@ -220,18 +220,15 @@ watch(
   dataModel,
   (newDataset: any[]) => {
     const prevDatasetLn = currentDatasetLength;
-    const isDatasetEqual = dequal(newDataset, dataModel.value || []);
-    let data = _gridOptions.value?.enableDeepCopyDatasetOnPageLoad ? deepCopy(newDataset) : newDataset;
+    let data = newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
-    if (
-      grid &&
-      _gridOptions.value?.enableTreeData &&
-      Array.isArray(newDataset) &&
-      (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)
-    ) {
-      isDatasetHierarchicalInitialized = false;
-      data = sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+    if (grid && _gridOptions.value?.enableTreeData && Array.isArray(newDataset)) {
+      const isDatasetEqual = dequal(newDataset, dataModel.value || []);
+      if (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual) {
+        isDatasetHierarchicalInitialized = false;
+        data = sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+      }
     }
 
     refreshGridData(data || []);
@@ -1101,9 +1098,7 @@ function refreshGridData(dataset: any[], totalCount?: number) {
       isDatasetInitialized = true;
     }
 
-    if (dataset) {
-      grid.invalidate();
-    }
+    grid.invalidate();
 
     // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
     showPagination = !!(

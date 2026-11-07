@@ -2630,3 +2630,20 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
     expect(component.isDatasetInitialized).toBe(false);
   });
 });
+
+describe('resetExternalResources ownership', () => {
+  it('disposes external resources and preserves grid-owned services', () => {
+    const component = Object.create(SlickVanillaGridBundle.prototype) as any;
+    const owned = { dispose: vi.fn() };
+    const external = { dispose: vi.fn() };
+    const previous = [owned, external];
+    component.gridService = owned;
+    component._registeredResources = previous;
+    component.sharedService = {};
+    component.resetExternalResources();
+    expect(external.dispose).toHaveBeenCalledOnce();
+    expect(owned.dispose).not.toHaveBeenCalled();
+    expect(previous).toEqual([]);
+    expect(component.sharedService.externalRegisteredResources).toEqual([]);
+  });
+});

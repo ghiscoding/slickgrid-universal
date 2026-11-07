@@ -2,6 +2,9 @@ import type { GridOption } from '@slickgrid-universal/common';
 
 /** Grid options specific to the Salesforce bundle. */
 export interface SalesforceGridOption extends GridOption {
+  /** Deep copy datasets to avoid modifying Salesforce proxy objects. */
+  enableDeepCopyDatasetOnPageLoad?: boolean;
+
   /** Maximum retry count at 200ms intervals. Salesforce defaults: 18000 (60 minutes). */
   autoFixResizeTimeout?: number;
 
