@@ -387,13 +387,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           }
         }
 
-        let modalColumns: Column[] = [];
-        if (isWithMassChange) {
-          // when using Mass Update, we only care about the columns that have the "massUpdate: true", we disregard anything else
-          modalColumns = this._columns.filter((col) => col.editorClass && col.editor?.massUpdate === true);
-        } else {
-          modalColumns = this._columns.filter((col) => col.editorClass);
-        }
+        // when using Mass Update, we only care about the columns that have the "massUpdate: true", we disregard anything else
+        const modalColumns = this._columns.filter((col) => col.editorClass && (!isWithMassChange || col.editor?.massUpdate === true));
 
         // user could optionally show the form inputs in a specific order instead of using default column definitions order
         if (modalColumns.some((col) => col.editor?.compositeEditorFormOrder !== undefined)) {
@@ -503,37 +498,35 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._modalElm.appendChild(modalContentElm);
 
         for (const columnDef of modalColumns) {
-          if (columnDef.editorClass) {
-            const itemContainer = createDomElement('div', { className: `item-details-container editor-${columnDef.id}` });
+          const itemContainer = createDomElement('div', { className: `item-details-container editor-${columnDef.id}` });
 
-            if (layoutColCount === 1) {
-              itemContainer.classList.add('slick-col-medium-12');
-            } else {
-              itemContainer.classList.add('slick-col-medium-6', `slick-col-xlarge-${12 / layoutColCount}`);
-            }
-
-            const templateItemLabelElm = createDomElement('div', { className: `item-details-label editor-${columnDef.id}` });
-            applyHtmlToElement(templateItemLabelElm, this.getColumnLabel(columnDef) || 'n/a', this.gridOptions);
-            const templateItemEditorElm = createDomElement('div', {
-              className: 'item-details-editor-container slick-cell',
-              dataset: { editorid: `${columnDef.id}` },
-            });
-            const templateItemValidationElm = createDomElement('div', {
-              className: `item-details-validation editor-${columnDef.id}`,
-            });
-
-            // optionally add a reset button beside each editor
-            if (this._options?.showResetButtonOnEachEditor) {
-              const editorResetButtonElm = this.createEditorResetButtonElement(`${columnDef.id}`);
-              this._bindEventService.bind(editorResetButtonElm, 'click', this.handleResetInputValue.bind(this) as EventListener);
-              templateItemLabelElm.appendChild(editorResetButtonElm);
-            }
-
-            itemContainer.appendChild(templateItemLabelElm);
-            itemContainer.appendChild(templateItemEditorElm);
-            itemContainer.appendChild(templateItemValidationElm);
-            modalBodyElm.appendChild(itemContainer);
+          if (layoutColCount === 1) {
+            itemContainer.classList.add('slick-col-medium-12');
+          } else {
+            itemContainer.classList.add('slick-col-medium-6', `slick-col-xlarge-${12 / layoutColCount}`);
           }
+
+          const templateItemLabelElm = createDomElement('div', { className: `item-details-label editor-${columnDef.id}` });
+          applyHtmlToElement(templateItemLabelElm, this.getColumnLabel(columnDef) || 'n/a', this.gridOptions);
+          const templateItemEditorElm = createDomElement('div', {
+            className: 'item-details-editor-container slick-cell',
+            dataset: { editorid: `${columnDef.id}` },
+          });
+          const templateItemValidationElm = createDomElement('div', {
+            className: `item-details-validation editor-${columnDef.id}`,
+          });
+
+          // optionally add a reset button beside each editor
+          if (this._options?.showResetButtonOnEachEditor) {
+            const editorResetButtonElm = this.createEditorResetButtonElement(`${columnDef.id}`);
+            this._bindEventService.bind(editorResetButtonElm, 'click', this.handleResetInputValue.bind(this) as EventListener);
+            templateItemLabelElm.appendChild(editorResetButtonElm);
+          }
+
+          itemContainer.appendChild(templateItemLabelElm);
+          itemContainer.appendChild(templateItemEditorElm);
+          itemContainer.appendChild(templateItemValidationElm);
+          modalBodyElm.appendChild(itemContainer);
         }
 
         // optionally add a form reset button
@@ -645,23 +638,29 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     this.grid.getSelectionModel()?.setSelectedRanges(ranges);
   }
 
-  /** Apply Mass Update Changes (form values) to the entire dataset */
-  protected applySaveMassUpdateChanges(formValues: any, _selection: DataSelection, applyToDataview = true): any[] {
-    // not applying to dataView means that we're doing a preview of dataset and we should use a deep copy of it instead of applying changes directly to it
-    const data = applyToDataview ? this.dataView.getItems() : deepCopy(this.dataView.getItems());
-
-    // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
-    // we can loop through these changes and apply them on the selected row indexes
+  /** Apply form values to a collection of data contexts, honoring the optional mass-update validator. */
+  protected applyFormValuesToItems(formValues: any, items: any[]): void {
     Object.keys(formValues).forEach((itemProp) => {
       if (itemProp in formValues) {
-        data.forEach((dataContext: any) => {
-          // prettier-ignore
-          if (itemProp in formValues && (this._options?.validateMassUpdateChange === undefined || this._options.validateMassUpdateChange(itemProp, dataContext, formValues) !== false)) {
+        items.forEach((dataContext: any) => {
+          if (
+            itemProp in formValues &&
+            (this._options?.validateMassUpdateChange === undefined ||
+              this._options.validateMassUpdateChange(itemProp, dataContext, formValues) !== false)
+          ) {
             dataContext[itemProp] = formValues[itemProp];
           }
         });
       }
     });
+  }
+
+  /** Apply Mass Update Changes (form values) to the entire dataset */
+  protected applySaveMassUpdateChanges(formValues: any, _selection: DataSelection, applyToDataview = true): any[] {
+    // not applying to dataView means that we're doing a preview of dataset and we should use a deep copy of it instead of applying changes directly to it
+    const data = applyToDataview ? this.dataView.getItems() : deepCopy(this.dataView.getItems());
+
+    this.applyFormValuesToItems(formValues, data);
 
     // change the entire dataset with our updated dataset
     if (applyToDataview) {
@@ -679,18 +678,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     // not applying to dataView means that we're doing a preview of dataset and we should use a deep copy of it instead of applying changes directly to it
     const selectedItems = applyToDataview ? selectedTmpItems : deepCopy(selectedTmpItems);
 
-    // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
-    // we can loop through these changes and apply them on the selected row indexes
-    Object.keys(formValues).forEach((itemProp) => {
-      if (itemProp in formValues) {
-        selectedItems.forEach((dataContext: any) => {
-          // prettier-ignore
-          if (itemProp in formValues && (this._options?.validateMassUpdateChange === undefined || this._options.validateMassUpdateChange(itemProp, dataContext, formValues) !== false)) {
-            dataContext[itemProp] = formValues[itemProp];
-          }
-        });
-      }
-    });
+    this.applyFormValuesToItems(formValues, selectedItems);
 
     // update all items in the grid with the grid service
     if (applyToDataview) {
