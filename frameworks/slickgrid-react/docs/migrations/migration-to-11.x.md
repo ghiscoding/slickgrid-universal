@@ -2,7 +2,7 @@
 
 SlickGrid v11 replaces the legacy frozen-pane renderer with a single-viewport docking renderer and a single scrollbar. Frozen columns/rows are replaced by the new Pinning feature, and we're also adding a new Sticky columns/rows feature. The `frozenColumn`, `frozenRow`, and `frozenBottom` options are removed in favor of the new `pinning` grid option. Pinning applies to individual columns, regardless of their index, instead of a contiguous frozen range. Update your grid options and persisted grid state accordingly.
 
-This release was also audited & benchmarked with AI (ChatGPT 6 Astra/Claude Opus 5.5) and brings performance improvements across several areas: virtual scrolling on large datasets, tree-data lookups and dataset sorting, sort comparisons, filtering, formatters, and exports. The Draggable Grouping example with half a million rows now exports to Excel in 10–13 seconds (may vary), 3–4x faster than v10, while v9 would hang and leave the browser unresponsive.
+This release was also audited & benchmarked with AI (ChatGPT 6 Astra/Claude Opus 5.5) and brings performance improvements across several areas: virtual scrolling on large datasets, tree-data lookups and dataset sorting, sort comparisons, filtering, formatters, and exports. Tree Data also supports multi-column sorting. The Draggable Grouping example with half a million rows now exports to Excel in 10–13 seconds (may vary), 3–4x faster than v10, while v9 would hang and leave the browser unresponsive.
 
 ### AI-assisted migration
 
@@ -381,7 +381,21 @@ Previous releases included fallbacks for native APIs blocked by some restricted 
 - queueMicrotask: drop `queueMicrotaskPolyfill` util and use native `queueMicrotask`
 - Composite Editor: strictly use `<dialog>` and drop `CompositeEditorOption.domElementType: 'div' | 'dialog'`
 
-### Tree Formatter - remove unrelated CSS class
+### Tree Data
+
+#### Multi-Column Sorting now supported
+
+Tree Data now works with multi-column sorting, so you could re-enable (aka remove) the previous grid option.
+
+```ts
+gridOptions = {
+   enableFiltering: true, // still required
+-  multiColumnSort: false, // no longer required
+   treeDataOptions: { /* ... */ }
+}
+```
+
+#### Tree Formatter - remove unrelated CSS class
 
 The Tree Formatter originally used the `.slick-group-toggle` class, which is unrelated to tree data. In version 10 the dedicated `.slick-tree-toggle` class was introduced in order to transition and eventually use new tree class name only. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling and tests if necessary.
 

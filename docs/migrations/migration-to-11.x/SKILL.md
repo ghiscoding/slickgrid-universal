@@ -11,7 +11,7 @@ Follow the core guide for direct grid event subscriptions. For Salesforce applic
 
 ## Performance improvements
 
-v11 improves virtual scrolling, tree-data lookups and dataset sorting, sort comparisons, filtering, and exports. These optimizations do not by themselves require application migration changes; use the guide for API and behavior changes.
+v11 improves virtual scrolling, tree-data lookups and dataset sorting, sort comparisons, filtering, and exports. Tree Data also supports multi-column sorting. These optimizations do not by themselves require application migration changes; use the guide for API and behavior changes.
 
 ## Migration workflow
 

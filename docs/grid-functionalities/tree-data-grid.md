@@ -50,6 +50,8 @@ const dataset = [
 ];
 ```
 
+Multi-column sorting is supported: sorters are applied in priority order to siblings at each tree level. The `initialSort` option still specifies a single initial column.
+
 _For the full list of options, refer to the [treeDataOptions](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/treeDataOption.interface.ts) interface_
 
 ###### define your grid
@@ -66,7 +68,6 @@ initializeGrid() {
 
   this.gridOptions = {
     enableFiltering: true,  // <<-- REQUIRED, it won't work without filtering enabled
-    multiColumnSort: false, // <<-- REQUIRED to be Disabled since multi-column sorting is not currently supported with Tree Data
 
     treeDataOptions: {
       columnId: 'title',           // the column where you will have the Tree with collapse/expand icons
@@ -124,7 +125,6 @@ initializeGrid() {
 
   this.gridOptions = {
     enableFiltering: true,  // <<-- REQUIRED, it won't work without filtering enabled
-    multiColumnSort: false, // <<-- REQUIRED to be Disabled since multi-column sorting is not currently supported with Tree Data
 
     treeDataOptions: {
       columnId: 'file',           // the column where you will have the Tree with collapse/expand icons
@@ -150,7 +150,6 @@ The column with the Tree already has a Formatter, so how can we add our own Form
 ```ts
 this.gridOptions = {
   enableFiltering: true,  // <<-- REQUIRED, it won't work without filtering enabled
-  multiColumnSort: false, // <<-- REQUIRED to be Disabled since multi-column sorting is not currently supported with Tree Data
 
   treeDataOptions: {
     columnId: 'title',        // the column where you will have the Tree with collapse/expand icons
