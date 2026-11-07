@@ -176,13 +176,7 @@ export class PaginationService {
     this.refreshPagination(false, false, true);
 
     // also keep reference to current pagination in case we need to rollback
-    const pagination = this.getFullPagination();
-    this._previousPagination = {
-      pageNumber: pagination.pageNumber,
-      pageSize: pagination.pageSize,
-      pageSizes: pagination.pageSizes,
-      totalItems: this.totalItems,
-    };
+    this.savePreviousPagination();
 
     this._initialized = true;
 
@@ -391,13 +385,7 @@ export class PaginationService {
     if (triggerInitializedEvent && !dequal(previousPagination, this.getFullPagination())) {
       this.pubSubService.publish(`onPaginationPresetsInitialized`, this.getFullPagination());
     }
-    const pagination = this.getFullPagination();
-    this._previousPagination = {
-      pageNumber: pagination.pageNumber,
-      pageSize: pagination.pageSize,
-      pageSizes: pagination.pageSizes,
-      totalItems: this.totalItems,
-    };
+    this.savePreviousPagination();
   }
 
   /** Reset the Pagination to first page and recalculate necessary numbers */
@@ -432,7 +420,7 @@ export class PaginationService {
       // when using a local grid, we can reset the DataView pagination by changing its page size
       // page size of 0 would show all, hence cancel the pagination
       if (this._isLocalGrid && this.dataView) {
-        const pageSize = visible ? this._itemsPerPage : 0;
+        const pageSize = isVisible ? this._itemsPerPage : 0;
         this.dataView.setPagingOptions({ pageSize, pageNum: 0 });
       }
 
@@ -494,13 +482,7 @@ export class PaginationService {
                   this._backendServiceApi as BackendServiceApi,
                   this._totalItems
                 );
-                const pagination = this.getFullPagination();
-                this._previousPagination = {
-                  pageNumber: pagination.pageNumber,
-                  pageSize: pagination.pageSize,
-                  pageSizes: pagination.pageSizes,
-                  totalItems: this.totalItems,
-                };
+                this.savePreviousPagination();
                 resolve(this.getFullPagination());
               })
               .catch((error) => {
@@ -514,13 +496,7 @@ export class PaginationService {
             this._subscriptions.push(
               (process as Observable<any>).subscribe(
                 (processResult: any) => {
-                  const pagination = this.getFullPagination();
-                  this._previousPagination = {
-                    pageNumber: pagination.pageNumber,
-                    pageSize: pagination.pageSize,
-                    pageSizes: pagination.pageSizes,
-                    totalItems: this.totalItems,
-                  };
+                  this.savePreviousPagination();
                   resolve(
                     this.backendUtilities?.executeBackendProcessesCallback(
                       startTime,
@@ -561,9 +537,6 @@ export class PaginationService {
     } else {
       this._dataFrom = this._pageNumber > 1 ? this._pageNumber * this._itemsPerPage - this._itemsPerPage + 1 : 1;
       this._dataTo = this._totalItems < this._itemsPerPage ? this._totalItems : (this._pageNumber || 1) * this._itemsPerPage;
-      if (this._dataTo > this._totalItems) {
-        this._dataTo = this._totalItems;
-      }
     }
 
     // do a final check on the From/To and make sure they are not greater or smaller than min/max acceptable values
@@ -622,6 +595,16 @@ export class PaginationService {
   // --
   // protected functions
   // --------------------
+
+  protected savePreviousPagination(): void {
+    const pagination = this.getFullPagination();
+    this._previousPagination = {
+      pageNumber: pagination.pageNumber,
+      pageSize: pagination.pageSize,
+      pageSizes: pagination.pageSizes,
+      totalItems: this.totalItems,
+    };
+  }
 
   /**
    * When item is added or removed, we will refresh the numbers on the pagination however we won't trigger a backend change
