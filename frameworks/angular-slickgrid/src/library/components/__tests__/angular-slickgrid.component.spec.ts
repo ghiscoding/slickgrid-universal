@@ -352,7 +352,6 @@ class TestPaginationComponent implements BasePaginationComponent {
 
 describe('Angular-Slickgrid Custom Component instantiated via Constructor', () => {
   let component: AngularSlickgridComponent;
-  let columns: Column[] = [];
   let eventPubSubService: EventPubSubService;
   let gridOptions!: GridOption;
   let divContainer: HTMLDivElement;
@@ -381,7 +380,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     divContainer.innerHTML = template;
     divContainer.appendChild(cellDiv);
     document.body.appendChild(divContainer);
-    columns = [{ id: 'name', field: 'name' }];
     gridOptions = {
       enableExcelExport: false,
       dataView: null,
@@ -738,7 +736,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         const translateSpy = vi.spyOn(extensionServiceStub, 'translateColumnHeaders');
         const autosizeSpy = vi.spyOn(mockGrid, 'autosizeColumns');
         const updateSpy = vi.spyOn(component, 'updateColumnDefinitionsList');
-        const renderSpy = vi.spyOn(extensionServiceStub, 'renderColumnHeaders');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
         vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValueOnce(mockColDefs);
 
@@ -2568,7 +2565,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         new Promise((done: any) => {
           const mockHierarchical = [{ file: 'documents', files: [{ file: 'vacation.txt' }] }];
           const hierarchicalSpy = vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'set');
-          const clearFilterSpy = vi.spyOn(filterServiceStub, 'clearFilters');
           const refreshFilterSpy = vi.spyOn(filterServiceStub, 'refreshTreeDataFilters');
           const setItemsSpy = vi.spyOn(mockDataView, 'setItems');
           const processSpy = vi.spyOn(sortServiceStub, 'processTreeDataInitialSort');
@@ -2670,5 +2666,22 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         expect(refreshTreeSpy).toHaveBeenCalled();
       });
     });
+  });
+});
+
+describe('resetExternalResources ownership', () => {
+  it('disposes external resources and preserves grid-owned services', () => {
+    const component = Object.create(AngularSlickgridComponent.prototype) as any;
+    const owned = { dispose: vi.fn() };
+    const external = { dispose: vi.fn() };
+    const previous = [owned, external];
+    component.gridService = owned;
+    component._registeredResources = previous;
+    component.sharedService = {};
+    component.resetExternalResources();
+    expect(external.dispose).toHaveBeenCalledOnce();
+    expect(owned.dispose).not.toHaveBeenCalled();
+    expect(previous).toEqual([]);
+    expect(component.sharedService.externalRegisteredResources).toEqual([]);
   });
 });

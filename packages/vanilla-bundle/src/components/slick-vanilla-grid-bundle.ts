@@ -49,7 +49,7 @@ import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-compone
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
-import { deepCopy, extend } from '@slickgrid-universal/utils';
+import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { type SlickerGridInstance } from '../interfaces/slickerGridInstance.interface.js';
 import { UniversalContainerService } from '../services/universalContainer.service.js';
@@ -131,23 +131,24 @@ export class SlickVanillaGridBundle<TData = any> {
     this.columnsChanged(columns);
   }
 
+  protected prepareDataset<T>(dataset: T[]): T[] {
+    return dataset;
+  }
+
   get dataset(): TData[] {
     return this.dataView?.getItems() || [];
   }
   set dataset(newDataset: TData[]) {
     const prevDatasetLn = this._currentDatasetLength;
-    const isDatasetEqual = dequal(newDataset, this.dataset || []);
-    let data = this._gridOptions?.enableDeepCopyDatasetOnPageLoad ? deepCopy([...newDataset]) : newDataset;
+    let data = this.prepareDataset(newDataset);
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
-    if (
-      this.slickGrid &&
-      this.options?.enableTreeData &&
-      Array.isArray(newDataset) &&
-      (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)
-    ) {
-      this._isDatasetHierarchicalInitialized = false;
-      data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+    if (this.slickGrid && this.options?.enableTreeData && Array.isArray(newDataset)) {
+      const isDatasetEqual = dequal(newDataset, this.dataset || []);
+      if (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual) {
+        this._isDatasetHierarchicalInitialized = false;
+        data = this.sortTreeDataset(data, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+      }
     }
 
     this.refreshGridData(data || []);
@@ -170,7 +171,7 @@ export class SlickVanillaGridBundle<TData = any> {
   set datasetHierarchical(newHierarchicalDataset: any[] | undefined) {
     const isDatasetEqual = dequal(newHierarchicalDataset, this.sharedService.hierarchicalDataset || []);
     const prevFlatDatasetLn = this._currentDatasetLength;
-    this.sharedService.hierarchicalDataset = newHierarchicalDataset;
+    this.sharedService.hierarchicalDataset = newHierarchicalDataset && this.prepareDataset(newHierarchicalDataset);
 
     if (newHierarchicalDataset && this.columns && this.filterService?.clearFilters) {
       this.filterService.clearFilters();
@@ -305,7 +306,7 @@ export class SlickVanillaGridBundle<TData = any> {
   ) {
     // make sure that the grid container doesn't already have the "slickgrid-container" css class
     // if it does then we won't create yet another grid, just stop there
-    if (!gridParentContainerElm || gridParentContainerElm.querySelectorAll('.slickgrid-container').length !== 0) {
+    if (!gridParentContainerElm || gridParentContainerElm.querySelector('.slickgrid-container')) {
       return;
     }
 
@@ -382,8 +383,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this.headerGroupingService = services?.headerGroupingService ?? new HeaderGroupingService(this.extensionUtility);
 
     if (hierarchicalDataset) {
-      this.sharedService.hierarchicalDataset =
-        (this._gridOptions?.enableDeepCopyDatasetOnPageLoad ? deepCopy([...hierarchicalDataset]) : hierarchicalDataset) || [];
+      this.sharedService.hierarchicalDataset = this.prepareDataset(hierarchicalDataset);
     }
     const eventHandler = new SlickEventHandler();
 
@@ -587,7 +587,7 @@ export class SlickVanillaGridBundle<TData = any> {
     }
 
     // load the data in the DataView (unless it's a hierarchical dataset, if so it will be loaded after the initial tree sort)
-    inputDataset = inputDataset || [];
+    inputDataset = this.prepareDataset(inputDataset || []);
     const initialDataset = this.options?.enableTreeData ? this.sortTreeDataset(inputDataset) : inputDataset;
 
     if (this.dataView) {
@@ -1126,9 +1126,7 @@ export class SlickVanillaGridBundle<TData = any> {
           this._isDatasetInitialized = true;
         }
 
-        if (dataset) {
-          this.slickGrid.invalidate();
-        }
+        this.slickGrid.invalidate();
 
         // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
         this.showPagination = !!(
@@ -1370,7 +1368,7 @@ export class SlickVanillaGridBundle<TData = any> {
   protected loadLocalGridPagination(dataset?: TData[]): void {
     if (this.options && this._paginationOptions) {
       this.totalItems = Array.isArray(dataset) ? dataset.length : 0;
-      if (this._paginationOptions && this.dataView?.getPagingInfo) {
+      if (this.dataView?.getPagingInfo) {
         const slickPagingInfo = this.dataView.getPagingInfo();
         if (slickPagingInfo?.hasOwnProperty('totalRows') && this._paginationOptions.totalItems !== slickPagingInfo.totalRows) {
           this.totalItems = slickPagingInfo?.totalRows || 0;
@@ -1427,8 +1425,22 @@ export class SlickVanillaGridBundle<TData = any> {
     this.initializeExternalResources(resources);
   }
 
+  /** Dispose registered external resources without disposing services owned by the grid. */
   resetExternalResources(): void {
-    this._registeredResources = [];
+    const ownedResources: unknown[] = [
+      this.gridService,
+      this.gridStateService,
+      this.headerGroupingService,
+      this.treeDataService,
+      this.slickEmptyWarning,
+    ];
+    const previousResources = this._registeredResources;
+    this._registeredResources = previousResources.filter((resource) => !ownedResources.includes(resource));
+    previousResources.length = 0;
+    this.disposeExternalResources();
+    if (this.sharedService) {
+      this.sharedService.externalRegisteredResources = this._registeredResources;
+    }
   }
 
   /** Pre-Register any Resource that don't require SlickGrid to be instantiated (for example RxJS Resource) */

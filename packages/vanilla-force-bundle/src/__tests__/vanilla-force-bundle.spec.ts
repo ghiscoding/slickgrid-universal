@@ -38,6 +38,8 @@ import { TreeDataService as TreeDataServiceSource } from '../../../common/src/se
 import { SalesforceResizerService } from '../salesforce-resizer.service.js';
 import { VanillaForceGridBundle } from '../vanilla-force-bundle.js';
 
+vi.mock('@slickgrid-universal/vanilla-bundle', () => import('../../../vanilla-bundle/src/index.js'));
+
 vi.useFakeTimers();
 
 const extensionServiceStub = {
@@ -438,6 +440,15 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         vi.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
       });
 
+      it('accepts and exposes Salesforce options through the options accessor', () => {
+        component.options = { enableDeepCopyDatasetOnPageLoad: true };
+
+        expect(component.options.enableDeepCopyDatasetOnPageLoad).toBe(true);
+        expect(mockGrid.setOptions).toHaveBeenCalledWith(expect.objectContaining({ enableDeepCopyDatasetOnPageLoad: true }), false, true);
+        component.options.enableDeepCopyDatasetOnPageLoad = false;
+        expect(component.options.enableDeepCopyDatasetOnPageLoad).toBe(false);
+      });
+
       it('should merge grid options with global options when slickgrid "getOptions" does not exist yet', () => {
         mockGrid.getOptions = () => null as any;
         const setOptionSpy = vi.spyOn(mockGrid, 'setOptions');
@@ -745,5 +756,40 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         expect(treeConvertAndSortSpy).toHaveBeenCalled();
       });
     });
+  });
+});
+
+describe('Salesforce dataset preparation', () => {
+  it('passes copied flat and hierarchical datasets to tree processing', () => {
+    const grid = Object.create(VanillaForceGridBundle.prototype) as any;
+    const dataset = [{ id: 1, nested: { value: 'original' } }];
+    grid._gridOptions = { enableDeepCopyDatasetOnPageLoad: true, enableTreeData: true };
+    grid._currentDatasetLength = 0;
+    grid.sharedService = { hierarchicalDataset: [] };
+    grid.slickGrid = {};
+    grid.dataView = { getItems: () => [] };
+    grid.sortTreeDataset = vi.fn((items) => {
+      items[0].nested.value = 'changed';
+      return items;
+    });
+    grid.refreshGridData = vi.fn();
+    grid.suggestDateParsingWhenHelpful = vi.fn();
+    grid.dataset = dataset;
+    expect(dataset[0].nested.value).toBe('original');
+    grid.dataView = undefined;
+    grid.datasetHierarchical = dataset;
+    grid.sharedService.hierarchicalDataset[0].nested.value = 'changed';
+    expect(dataset[0].nested.value).toBe('original');
+  });
+
+  it('copies nested data only when enabled', () => {
+    const grid = Object.create(VanillaForceGridBundle.prototype) as any;
+    const dataset = [{ id: 1, nested: { value: 'original' } }];
+    grid._gridOptions = { enableDeepCopyDatasetOnPageLoad: true };
+    const copy = grid.prepareDataset(dataset);
+    copy[0].nested.value = 'changed';
+    expect(dataset[0].nested.value).toBe('original');
+    grid._gridOptions.enableDeepCopyDatasetOnPageLoad = false;
+    expect(grid.prepareDataset(dataset)).toBe(dataset);
   });
 });

@@ -25,7 +25,7 @@ import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-c
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
-import { extend } from '@slickgrid-universal/utils';
+import { deepCopy, extend } from '@slickgrid-universal/utils';
 import { SlickVanillaGridBundle, type UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options.js';
 import type { SalesforceGridOption } from './salesforce-grid-option.interface.js';
@@ -76,6 +76,14 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
       eventPubSubService,
       resizerService: services?.resizerService ?? new SalesforceResizerService(eventPubSubService),
     });
+  }
+
+  override get options(): SalesforceGridOption {
+    return super.options;
+  }
+
+  override set options(options: SalesforceGridOption) {
+    super.options = options;
   }
 
   mergeGridOptions(gridOptions: SalesforceGridOption): SalesforceGridOption {
@@ -137,6 +145,10 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
   // --
   // protected functions
   // ------------------
+
+  protected prepareDataset<T>(dataset: T[]): T[] {
+    return (this._gridOptions as SalesforceGridOption)?.enableDeepCopyDatasetOnPageLoad ? deepCopy([...dataset]) : dataset;
+  }
 
   protected registerResources(): void {
     // when using Salesforce, we want the Export to CSV always enabled without registering it

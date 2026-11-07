@@ -46,7 +46,7 @@ import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-compone
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
-import { deepCopy, extend } from '@slickgrid-universal/utils';
+import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import React from 'react';
 import type { Subscription } from 'rxjs';
@@ -185,18 +185,15 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
   set dataset(newDataset: any[]) {
     const prevDatasetLn = this._currentDatasetLength;
-    const isDatasetEqual = dequal(newDataset, this.dataset || []);
-    let data = this._options?.enableDeepCopyDatasetOnPageLoad ? deepCopy(newDataset) : newDataset;
+    let data = newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
-    if (
-      this.grid &&
-      this.options?.enableTreeData &&
-      Array.isArray(newDataset) &&
-      (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)
-    ) {
-      this._isDatasetHierarchicalInitialized = false;
-      data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+    if (this.grid && this.options?.enableTreeData && Array.isArray(newDataset)) {
+      const isDatasetEqual = dequal(newDataset, this.dataset || []);
+      if (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual) {
+        this._isDatasetHierarchicalInitialized = false;
+        data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+      }
     }
 
     this.refreshGridData(data || []);
@@ -1534,8 +1531,22 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     this.initializeExternalResources(resources);
   }
 
+  /** Dispose registered external resources without disposing services owned by the grid. */
   resetExternalResources() {
-    this._registeredResources = [];
+    const ownedResources: unknown[] = [
+      this.gridService,
+      this.gridStateService,
+      this.headerGroupingService,
+      this.treeDataService,
+      this.slickEmptyWarning,
+    ];
+    const previousResources = this._registeredResources;
+    this._registeredResources = previousResources.filter((resource) => !ownedResources.includes(resource));
+    previousResources.length = 0;
+    this.disposeExternalResources();
+    if (this.sharedService) {
+      this.sharedService.externalRegisteredResources = this._registeredResources;
+    }
   }
 
   /** Pre-Register any Resource that don't require SlickGrid to be instantiated (for example RxJS Resource & RowDetail) */

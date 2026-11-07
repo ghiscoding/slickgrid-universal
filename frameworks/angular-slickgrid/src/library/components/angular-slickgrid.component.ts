@@ -191,18 +191,15 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   }
   set dataset(newDataset: any[]) {
     const prevDatasetLn = this._currentDatasetLength;
-    const isDatasetEqual = dequal(newDataset, this._dataset || []);
     let data = newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
-    if (
-      this.slickGrid &&
-      this.options?.enableTreeData &&
-      Array.isArray(newDataset) &&
-      (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)
-    ) {
-      this._isDatasetHierarchicalInitialized = false;
-      data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+    if (this.slickGrid && this.options?.enableTreeData && Array.isArray(newDataset)) {
+      const isDatasetEqual = dequal(newDataset, this._dataset || []);
+      if (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual) {
+        this._isDatasetHierarchicalInitialized = false;
+        data = this.sortTreeDataset(newDataset, !isDatasetEqual); // if dataset changed, then force a refresh anyway
+      }
     }
     this._dataset = data;
     this.refreshGridData(data || []);
@@ -919,9 +916,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
         this._isDatasetInitialized = true;
       }
 
-      if (dataset) {
-        this.slickGrid.invalidate();
-      }
+      this.slickGrid.invalidate();
 
       // display the Pagination component only after calling this refresh data first, we call it here so that if we preset pagination page number it will be shown correctly
       this.showPagination = !!(
@@ -1399,7 +1394,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   protected loadLocalGridPagination(dataset?: any[]) {
     if (this.options && this._paginationOptions) {
       this.totalItems = Array.isArray(dataset) ? dataset.length : 0;
-      if (this._paginationOptions && this.dataView?.getPagingInfo) {
+      if (this.dataView?.getPagingInfo) {
         const slickPagingInfo = this.dataView.getPagingInfo();
         if (slickPagingInfo && 'totalRows' in slickPagingInfo && this._paginationOptions.totalItems !== slickPagingInfo.totalRows) {
           this.totalItems = slickPagingInfo.totalRows || 0;
@@ -1524,8 +1519,22 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this.initializeExternalResources(resources);
   }
 
+  /** Dispose registered external resources without disposing services owned by the grid. */
   resetExternalResources() {
-    this._registeredResources = [];
+    const ownedResources: unknown[] = [
+      this.gridService,
+      this.gridStateService,
+      this.headerGroupingService,
+      this.treeDataService,
+      this.slickEmptyWarning,
+    ];
+    const previousResources = this._registeredResources;
+    this._registeredResources = previousResources.filter((resource) => !ownedResources.includes(resource));
+    previousResources.length = 0;
+    this.disposeExternalResources();
+    if (this.sharedService) {
+      this.sharedService.externalRegisteredResources = this._registeredResources;
+    }
   }
 
   /** Pre-Register any Resource that don't require SlickGrid to be instantiated (for example RxJS Resource & RowDetail) */

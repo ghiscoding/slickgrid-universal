@@ -12,6 +12,7 @@ Open the [v11 migration skill](migration-to-11.x/SKILL.md), click GitBook's **Co
 
 - minimum requirements bump
   - i18next v26+
+- [Resetting external resources](#resetting-external-resources)
 - [Replace the SortableJS dependency with native drag and drop](#replace-the-sortablejs-dependency-with-native-drag-and-drop)
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
 - [Replace menu `hide...` flags with `hideCommands`](#menu-command-visibility)
@@ -38,6 +39,10 @@ Open the [v11 migration skill](migration-to-11.x/SKILL.md), click GitBook's **Co
 > **Note:** If you are upgrading from a version earlier than v10, follow the previous migration guides in order before applying these v11 changes.
 
 v11 also introduces Sticky docking, a separate feature that shares similarities with Pinning. See the [Sticky Docking guide](../grid-functionalities/sticky.md) for its configuration and behavior.
+
+### Resetting external resources
+
+In Vanilla, Angular, Aurelia, and React, `resetExternalResources()` now calls `dispose()` on registered external resources before clearing them. Grid-owned services and the empty-warning component remain active until grid disposal. Applications that previously reset the list to retain resources for reuse should register fresh resource instances after a reset. The supplied resource array is cleared as part of the reset.
 
 ### Replace the SortableJS dependency with native drag and drop
 
@@ -546,6 +551,10 @@ Menu divider types has been improved so that divider objects `{ divider: true }`
 ## Container service lookups
 
 Retrieving a registered service works exactly as before; no change is needed. Only code that explicitly checks whether a service is missing needs attention: replace `container.get('MyService') === undefined` with `container.get('MyService') == null`. Existing checks such as `if (service)` and optional chaining (`service?.method()`) continue to work.
+
+## Salesforce dataset copying
+
+`enableDeepCopyDatasetOnPageLoad` is now a `SalesforceGridOption` option for `VanillaForceGridBundle`. It is no longer available on `GridOption` or the framework wrappers. Applications using it elsewhere must copy their datasets before passing them to the grid.
 
 ## Final Note
 
