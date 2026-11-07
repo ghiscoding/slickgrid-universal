@@ -478,6 +478,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected selectionRightCell!: number;
 
   protected selectionModel?: SelectionModel;
+  protected readonly boundHandleSelectedRangesChanged: (e: SlickEventData, ranges: SlickRange[]) => void =
+    this.handleSelectedRangesChanged.bind(this);
   protected selectedRows: number[] = [];
   protected selectedRanges: SlickRange[] = [];
 
@@ -1129,14 +1131,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.slickDraggableInstance = this.destroyAllInstances(this.slickDraggableInstance) as null;
     }
     if (this.selectionModel) {
-      this.selectionModel.onSelectedRangesChanged.unsubscribe(this.handleSelectedRangesChanged.bind(this));
+      this.selectionModel.onSelectedRangesChanged.unsubscribe(this.boundHandleSelectedRangesChanged);
       this.selectionModel.destroy?.();
     }
 
     this.selectionModel = model;
     if (this.selectionModel) {
       this.selectionModel.init(this as unknown as SlickGrid);
-      this.selectionModel.onSelectedRangesChanged.subscribe(this.handleSelectedRangesChanged.bind(this));
+      this.selectionModel.onSelectedRangesChanged.subscribe(this.boundHandleSelectedRangesChanged);
     }
     if (recreateDraggable) {
       this.createDraggable();
