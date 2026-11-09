@@ -28,7 +28,15 @@ import type {
   PagingInfo,
   RowCacheContext,
 } from '../interfaces/index.js';
-import { SlickEvent, SlickEventData, SlickGroup, SlickGroupTotals, type BasePubSub, type SlickNonDataItem } from './slickCore.js';
+import {
+  SlickEvent,
+  SlickEventData,
+  SlickEventHandler,
+  SlickGroup,
+  SlickGroupTotals,
+  type BasePubSub,
+  type SlickNonDataItem,
+} from './slickCore.js';
 import type { SlickGrid } from './slickGrid.js';
 
 function isLiveDomFormatterResult(
@@ -95,6 +103,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected filteredItems: TData[] = [];
   protected filterCache: any[] = [];
   protected _grid?: SlickGrid; // grid object will be defined after using "syncGridSelection()" or "setGrid()" method
+  protected _eventHandler: SlickEventHandler = new SlickEventHandler();
   protected _gridOptions?: ReturnType<SlickGrid['getOptions']>; // cached grid options, refreshed via onSetOptions subscription
 
   // formatted data cache (export) — keyed by item id
@@ -215,10 +224,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.filterCache = [];
     this.filteredItems = [];
     this.clearFormattedDataCache();
-    if (this._grid) {
-      this._grid.onSelectedRowsChanged?.unsubscribe();
-      this._grid.onCellCssStylesChanged?.unsubscribe();
-    }
+    this._eventHandler.unsubscribeAll();
     this.onRowsOrCountChanged?.unsubscribe();
   }
 
@@ -1417,7 +1423,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       }
     };
 
-    grid.onSelectedRowsChanged.subscribe((_e, args) => {
+    this._eventHandler.subscribe(grid.onSelectedRowsChanged, (_e, args) => {
       if (!inHandler) {
         const newSelectedRowIds = this.mapRowsToIds(args.rows);
         const selectedRowsChangedArgs = {
@@ -1617,19 +1623,20 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       }
     };
 
-    grid.onCellCssStylesChanged.subscribe((_e, args) => {
+    const handleCellCssStylesChanged = (_e: SlickEventData, args: any) => {
       if (inHandler || key !== args.key) {
         return;
       }
       if (args.hash) {
         storeCellCssStyles(args.hash);
       } else {
-        grid.onCellCssStylesChanged.unsubscribe();
+        this._eventHandler.unsubscribe(grid.onCellCssStylesChanged, handleCellCssStylesChanged);
         this.onRowsOrCountChanged.unsubscribe(update);
       }
-    });
+    };
+    this._eventHandler.subscribe(grid.onCellCssStylesChanged, handleCellCssStylesChanged);
 
-    this.onRowsOrCountChanged.subscribe(update.bind(this));
+    this.onRowsOrCountChanged.subscribe(update);
   }
 
   // --------------------------
