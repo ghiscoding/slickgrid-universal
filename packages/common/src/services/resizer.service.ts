@@ -251,7 +251,15 @@ export class ResizerService {
       gridOffsetTop = gridElmOffset.top;
     }
 
-    const availableHeight = gridHeight - gridOffsetTop - bottomPadding;
+    const gridStyle = getComputedStyle(this._gridDomElm);
+    const verticalBoxSize =
+      gridStyle.boxSizing === 'border-box'
+        ? 0
+        : (parseFloat(gridStyle.paddingTop) || 0) +
+          (parseFloat(gridStyle.paddingBottom) || 0) +
+          (parseFloat(gridStyle.borderTopWidth) || 0) +
+          (parseFloat(gridStyle.borderBottomWidth) || 0);
+    const availableHeight = gridHeight - gridOffsetTop - bottomPadding - verticalBoxSize;
     const availableWidth =
       getInnerSize(this._pageContainerElm, 'width') ||
       (autoResizeOptions.calculateAvailableSizeBy !== 'container' && window.innerWidth) ||

@@ -491,6 +491,36 @@ describe('Resizer Service', () => {
       expect(serviceCalculateSpy).toHaveReturnedWith({ height: newHeight - inputBottomPadding, width: fixedWidth });
     });
 
+    it.each([
+      { boxSizing: 'content-box', border: '0px', padding: '0px', expectedHeight: 480 },
+      { boxSizing: 'content-box', border: '3px', padding: '4px', expectedHeight: 466 },
+      { boxSizing: 'border-box', border: '3px', padding: '4px', expectedHeight: 480 },
+    ])('accounts for the computed grid box with $boxSizing and border $border', ({ boxSizing, border, padding, expectedHeight }) => {
+      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 500 });
+      service.init(gridStub, divContainer);
+      const gridElm = gridStub.getContainerNode();
+      Object.assign(gridElm.style, { boxSizing, border: `${border} solid black`, padding });
+
+      expect(service.calculateGridNewDimensions({ ...mockGridOptions, autoResize: { bottomPadding: 20 } })?.height).toBe(expectedHeight);
+    });
+
+    it('keeps the fixed height with content-box borders', () => {
+      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 300 });
+      mockGridOptions.gridHeight = 230;
+      service.init(gridStub, divContainer);
+      const gridElm = gridStub.getContainerNode();
+      Object.assign(gridElm.style, { boxSizing: 'content-box', border: '10px solid black' });
+      expect(service.calculateGridNewDimensions({ ...mockGridOptions, autoResize: { minHeight: 280 } })?.height).toBe(230);
+    });
+
+    it('keeps the configured minimum height with content-box borders', () => {
+      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 300 });
+      service.init(gridStub, divContainer);
+      const gridElm = gridStub.getContainerNode();
+      Object.assign(gridElm.style, { boxSizing: 'content-box', border: '10px solid black' });
+      expect(service.calculateGridNewDimensions({ ...mockGridOptions, autoResize: { minHeight: 280 } })?.height).toBe(280);
+    });
+
     it('should use new dimensions when passed as argument to the "resizeGrid" method', () =>
       new Promise((done: any) => {
         const newHeight = 422;
