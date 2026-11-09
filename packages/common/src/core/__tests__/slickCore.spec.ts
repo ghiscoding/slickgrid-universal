@@ -111,6 +111,37 @@ describe('SlickCore file', () => {
   });
 
   describe('SlickEvent class', () => {
+    it('clears all subscribers only when no argument is provided', () => {
+      const event = new SlickEvent();
+      const handler = vi.fn();
+      event.subscribe(handler);
+      event.unsubscribe(undefined);
+      expect(event.subscriberCount).toBe(1);
+      event.unsubscribe();
+      expect(event.subscriberCount).toBe(0);
+    });
+
+    it('handles subscription changes during notification', () => {
+      const event = new SlickEvent();
+      const removed = vi.fn();
+      const added = vi.fn();
+      const next = vi.fn();
+      const first = () => {
+        event.unsubscribe(first);
+        event.unsubscribe(removed);
+        event.subscribe(added);
+      };
+      event.subscribe(first);
+      event.subscribe(removed);
+      event.subscribe(next);
+      event.notify({});
+      expect(removed).not.toHaveBeenCalled();
+      expect(added).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledOnce();
+      event.notify({});
+      expect(added).toHaveBeenCalledOnce();
+    });
+
     it('should be able to subscribe to an event and call unsubscribe() and expect 1 subscriber to be dropped', () => {
       const spy1 = vi.fn();
       const spy2 = vi.fn();
