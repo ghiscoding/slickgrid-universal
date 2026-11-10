@@ -6,6 +6,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
 
+> [!NOTE]
+> ### Please visit the [v11.0.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v11.0.0) GitHub release for more details about the migration.
+
 ### ⚠ BREAKING CHANGES
 
 * consolidate container services with shared Map storage ([#2886](https://github.com/ghiscoding/slickgrid-universal/issues/2886))
