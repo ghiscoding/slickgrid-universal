@@ -918,14 +918,18 @@ describe('Resizer Service', () => {
         mockGridOptions.resizeByContentOptions!.includeHeaderWidth = true;
         const header = document.createElement('div');
         header.innerHTML = '<span class="slick-column-name" style="text-transform: uppercase">Title</span>';
+        divContainer.appendChild(header);
         vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(header);
         const measureText = vi.fn().mockReturnValue({ width: 50 });
         vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({ measureText } as unknown as CanvasRenderingContext2D);
 
-        service.init(gridStub, divContainer);
-        service.resizeColumnsByCellContent(true);
-
-        expect(measureText).toHaveBeenCalledWith('TITLE');
+        try {
+          service.init(gridStub, divContainer);
+          service.resizeColumnsByCellContent(true);
+          expect(measureText).toHaveBeenCalledWith('TITLE');
+        } finally {
+          header.remove();
+        }
       });
 
       it('should use each column font and padding, including an unrendered column cssClass', () => {
@@ -1023,14 +1027,20 @@ describe('Resizer Service', () => {
           '<span class="slick-column-name">Very Long Gender Title</span><span class="slick-sort-indicator" style="width: 12px"></span><span class="slick-header-menu-button" style="width: 14px"></span>';
         const headerNoNameElm = document.createElement('div');
         headerNoNameElm.innerHTML = '<span class="slick-sort-indicator"></span>';
+        divContainer.append(headerElm, headerNoNameElm);
         vi.spyOn(gridStub, 'getHeaderColumn').mockImplementation((id) => (id === 'gender' ? headerElm : id === 'age' ? headerNoNameElm : (undefined as any)));
 
-        service.init(gridStub, divContainer);
-        service.resizeColumnsByCellContent(true);
+        try {
+          service.init(gridStub, divContainer);
+          service.resizeColumnsByCellContent(true);
 
-        expect(mockColDefs[1].width).toBe(62); // no header element, content width is kept
-        expect(mockColDefs[3].width).toBe(190); // header "Very Long Gender Title" (22 * 7) + padding(5 + 5) + icons(12 + 14) = 190
-        expect(mockColDefs[4].width).toBe(29); // header without name is narrower than content (3 * 7) + cellPadding(6) + extraPadding(2) = 29
+          expect(mockColDefs[1].width).toBe(62); // no header element, content width is kept
+          expect(mockColDefs[3].width).toBe(190); // header "Very Long Gender Title" (22 * 7) + padding(5 + 5) + icons(12 + 14) = 190
+          expect(mockColDefs[4].width).toBe(29); // header without name is narrower than content (3 * 7) + cellPadding(6) + extraPadding(2) = 29
+        } finally {
+          headerElm.remove();
+          headerNoNameElm.remove();
+        }
       });
 
       it('should call "resizeColumnsByCellContent" when "onFullResizeByContentRequested" pubsub event is triggered', () => {
