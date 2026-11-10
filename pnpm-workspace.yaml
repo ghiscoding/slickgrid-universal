@@ -57,8 +57,8 @@ catalog:
   vitest: ^5.1.0
   vue: ^3.5.45
 
-# min age of 4 days in minutes (x * 24 * 60)
-minimumReleaseAge: 5760
+# min age of 3 days in minutes (x * 24 * 60)
+minimumReleaseAge: 4320
 minimumReleaseAgeExclude:
   # exclude packages that I personally maintain and are safe to use on the same day
   - '@lerna-lite/*'
