@@ -174,6 +174,12 @@ describe('FloatEditor', () => {
     });
 
     describe('isValueChanged method', () => {
+      it('does not mark an unchanged numeric float as changed', () => {
+        editor = new FloatEditor(editorArguments);
+        editor.loadValue({ price: 1.5 });
+        expect(editor.isValueChanged()).toBe(false);
+      });
+
       it('should return True when previously dispatched keyboard event is a new char 0', () => {
         const event = new (window.window as any).KeyboardEvent('keydown', { key: '0', bubbles: true, cancelable: true });
 

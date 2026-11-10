@@ -212,7 +212,7 @@ export class InputEditor extends BaseEditorClass implements Editor {
     if (this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
       return true;
     }
-    return !(elmValue === '' && (this._originalValue === null || this._originalValue === undefined)) && elmValue !== this._originalValue;
+    return elmValue !== String(this._originalValue ?? '');
   }
 
   isValueTouched(): boolean {
@@ -225,7 +225,9 @@ export class InputEditor extends BaseEditorClass implements Editor {
     if (item && fieldName !== undefined && this._input) {
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
-      const value = isComplexObject ? getDescendantProperty(item, fieldName) : (item.hasOwnProperty(fieldName) && item[fieldName]) || '';
+      const value = isComplexObject
+        ? getDescendantProperty(item, fieldName)
+        : ((item.hasOwnProperty(fieldName) ? item[fieldName] : '') ?? '');
 
       this._originalValue = value;
       this._input.value = this._originalValue as string;
