@@ -4,6 +4,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
+
+### ⚠ BREAKING CHANGES
+
+* consolidate container services with shared Map storage ([#2886](https://github.com/ghiscoding/slickgrid-universal/issues/2886))
+* simplify wrappers and scope dataset copying to Salesforce ([#2918](https://github.com/ghiscoding/slickgrid-universal/issues/2918))
+
+### Performance Improvements
+
+* **tree-data:** index tree lookups and share tree dataset sorting ([#2881](https://github.com/ghiscoding/slickgrid-universal/issues/2881)) ([5b2a7f3](https://github.com/ghiscoding/slickgrid-universal/commit/5b2a7f349a955ee390893a6704ab676bae4032e5)) - by @ghiscoding
+
+### Code Refactoring
+
+* consolidate container services with shared Map storage ([#2886](https://github.com/ghiscoding/slickgrid-universal/issues/2886)) ([ed1fd00](https://github.com/ghiscoding/slickgrid-universal/commit/ed1fd0092376d6c8eb993de7601573063f5c9b87)) - by @ghiscoding
+* simplify wrappers and scope dataset copying to Salesforce ([#2918](https://github.com/ghiscoding/slickgrid-universal/issues/2918)) ([1cc4c66](https://github.com/ghiscoding/slickgrid-universal/commit/1cc4c66d0be9900e0010cf0171cd93997a52276d)) - by @ghiscoding
+
 ## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
 
 ### ⚠ BREAKING CHANGES

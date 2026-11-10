@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
+
+### Bug Fixes
+
+* **export:** skip width-0 columns in data rows & fix PDF row mapping ([#2897](https://github.com/ghiscoding/slickgrid-universal/issues/2897)) ([120bcab](https://github.com/ghiscoding/slickgrid-universal/commit/120bcabd7cebc455d8481a4cb8f7bd0c5c7306ce)) - by @ghiscoding
+* **export:** use exported column & row positions for Excel cell merges ([#2901](https://github.com/ghiscoding/slickgrid-universal/issues/2901)) ([c611a01](https://github.com/ghiscoding/slickgrid-universal/commit/c611a0173a315b048d3f5e89357e150851f24e24)) - by @ghiscoding
+
+### Performance Improvements
+
+* **export:** speed up formatter utilities used by export services ([#2892](https://github.com/ghiscoding/slickgrid-universal/issues/2892)) ([e458460](https://github.com/ghiscoding/slickgrid-universal/commit/e45846091c97de84452f32e13ef3bba2b72d04eb)) - by @ghiscoding
+* **utils:** simplify formatter utilities & speed up empty object checks in export paths ([#2891](https://github.com/ghiscoding/slickgrid-universal/issues/2891)) ([0e9f579](https://github.com/ghiscoding/slickgrid-universal/commit/0e9f579864b62693d84f2783e5b04b10f54e2a72)) - by @ghiscoding
+
 ## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
 
 ### ⚠ BREAKING CHANGES

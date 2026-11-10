@@ -4,6 +4,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
+
+### ⚠ BREAKING CHANGES
+
+* consolidate container services with shared Map storage ([#2886](https://github.com/ghiscoding/slickgrid-universal/issues/2886))
+* **resizer:** measure resize by content with canvas, drop width ratios ([#2884](https://github.com/ghiscoding/slickgrid-universal/issues/2884))
+* simplify wrappers and scope dataset copying to Salesforce ([#2918](https://github.com/ghiscoding/slickgrid-universal/issues/2918))
+
+### Features
+
+* **resizer:** measure resize by content with canvas, drop width ratios ([#2884](https://github.com/ghiscoding/slickgrid-universal/issues/2884)) ([1394280](https://github.com/ghiscoding/slickgrid-universal/commit/139428040a76511d15a99b5ad77ff33a1dcdeb8a)) - by @ghiscoding
+* **tree-data:** enable multi-column sorting ([#2917](https://github.com/ghiscoding/slickgrid-universal/issues/2917)) ([ca7e696](https://github.com/ghiscoding/slickgrid-universal/commit/ca7e696e11a387179f0cafdd6b2e629dec378144)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update angular dependencies ([#2909](https://github.com/ghiscoding/slickgrid-universal/issues/2909)) ([71364f9](https://github.com/ghiscoding/slickgrid-universal/commit/71364f93b9dbbae6012aa64751682e5e295c5cc5)) - by @renovate-bot
+* **export:** use exported column & row positions for Excel cell merges ([#2901](https://github.com/ghiscoding/slickgrid-universal/issues/2901)) ([c611a01](https://github.com/ghiscoding/slickgrid-universal/commit/c611a0173a315b048d3f5e89357e150851f24e24)) - by @ghiscoding
+* **styles:** footer row 1px offset & single footer border variable ([#2882](https://github.com/ghiscoding/slickgrid-universal/issues/2882)) ([4525844](https://github.com/ghiscoding/slickgrid-universal/commit/45258442569be5070269760f8ffc4e6b6dda9d72)) - by @ghiscoding
+
+### Performance Improvements
+
+* **sorting:** reduce comparer overhead and fix tree multi-sort & tie handling ([#2880](https://github.com/ghiscoding/slickgrid-universal/issues/2880)) ([93ddc67](https://github.com/ghiscoding/slickgrid-universal/commit/93ddc671e31f32623768931cb90909f746e0ffaa)) - by @ghiscoding
+* **tree-data:** index tree lookups and share tree dataset sorting ([#2881](https://github.com/ghiscoding/slickgrid-universal/issues/2881)) ([5b2a7f3](https://github.com/ghiscoding/slickgrid-universal/commit/5b2a7f349a955ee390893a6704ab676bae4032e5)) - by @ghiscoding
+
+### Code Refactoring
+
+* consolidate container services with shared Map storage ([#2886](https://github.com/ghiscoding/slickgrid-universal/issues/2886)) ([ed1fd00](https://github.com/ghiscoding/slickgrid-universal/commit/ed1fd0092376d6c8eb993de7601573063f5c9b87)) - by @ghiscoding
+* simplify wrappers and scope dataset copying to Salesforce ([#2918](https://github.com/ghiscoding/slickgrid-universal/issues/2918)) ([1cc4c66](https://github.com/ghiscoding/slickgrid-universal/commit/1cc4c66d0be9900e0010cf0171cd93997a52276d)) - by @ghiscoding
+
 ## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
 
 ### ⚠ BREAKING CHANGES

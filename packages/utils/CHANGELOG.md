@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
+
+### Bug Fixes
+
+* **utils:** simplify and secure setDeepValue traversal ([#2913](https://github.com/ghiscoding/slickgrid-universal/issues/2913)) ([e2dbdd7](https://github.com/ghiscoding/slickgrid-universal/commit/e2dbdd70791b82a5694dedbcb7a0e6ddedc7eac1)) - by @ghiscoding
+
+### Performance Improvements
+
+* **export:** speed up formatter utilities used by export services ([#2892](https://github.com/ghiscoding/slickgrid-universal/issues/2892)) ([e458460](https://github.com/ghiscoding/slickgrid-universal/commit/e45846091c97de84452f32e13ef3bba2b72d04eb)) - by @ghiscoding
+* **utils:** simplify formatter utilities & speed up empty object checks in export paths ([#2891](https://github.com/ghiscoding/slickgrid-universal/issues/2891)) ([0e9f579](https://github.com/ghiscoding/slickgrid-universal/commit/0e9f579864b62693d84f2783e5b04b10f54e2a72)) - by @ghiscoding
+* **utils:** streamline tag stripping and object merging ([#2889](https://github.com/ghiscoding/slickgrid-universal/issues/2889)) ([a73d990](https://github.com/ghiscoding/slickgrid-universal/commit/a73d990e6f73e2419add631b7c39d8d7ad0bb96e)) - by @ghiscoding
+
 ## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
 
 ### ⚠ BREAKING CHANGES

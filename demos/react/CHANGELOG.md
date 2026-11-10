@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
+
+### ⚠ BREAKING CHANGES
+
+* **resizer:** measure resize by content with canvas, drop width ratios ([#2884](https://github.com/ghiscoding/slickgrid-universal/issues/2884))
+
+### Features
+
+* **resizer:** measure resize by content with canvas, drop width ratios ([#2884](https://github.com/ghiscoding/slickgrid-universal/issues/2884)) ([1394280](https://github.com/ghiscoding/slickgrid-universal/commit/139428040a76511d15a99b5ad77ff33a1dcdeb8a)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2870](https://github.com/ghiscoding/slickgrid-universal/issues/2870)) ([ce529c7](https://github.com/ghiscoding/slickgrid-universal/commit/ce529c7219885bc80d0d13726e3967a0177866c4)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2910](https://github.com/ghiscoding/slickgrid-universal/issues/2910)) ([5fadfe0](https://github.com/ghiscoding/slickgrid-universal/commit/5fadfe0f8791b76b5c298566f22d7f1bee1f2938)) - by @renovate-bot
+
 ## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
 
 ### ⚠ BREAKING CHANGES

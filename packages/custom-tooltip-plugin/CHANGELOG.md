@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
+
+### Bug Fixes
+
+* **a11y:** improve grid keyboard and ARIA behavior ([#2906](https://github.com/ghiscoding/slickgrid-universal/issues/2906)) ([af3972b](https://github.com/ghiscoding/slickgrid-universal/commit/af3972bdb61eb4283051c952b841bcff41ce91fd)) - by @ghiscoding
+* correct editor values, checkbox events and tooltip positioning ([#2927](https://github.com/ghiscoding/slickgrid-universal/issues/2927)) ([6e3d562](https://github.com/ghiscoding/slickgrid-universal/commit/6e3d562b979e87b52d59f5db78268942fbf207c2)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2910](https://github.com/ghiscoding/slickgrid-universal/issues/2910)) ([5fadfe0](https://github.com/ghiscoding/slickgrid-universal/commit/5fadfe0f8791b76b5c298566f22d7f1bee1f2938)) - by @renovate-bot
+
 ## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
 
 ### ⚠ BREAKING CHANGES
