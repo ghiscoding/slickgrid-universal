@@ -22,6 +22,14 @@
       },
     },
     {
+      packageNames: ['i18next'],
+      allowedVersions: '< 27.0.0',
+    },
+    {
+      packageNames: ['react-i18next'],
+      allowedVersions: '< 18.0.0',
+    },
+    {
       packageNames: ['pnpm'],
       allowedVersions: '< 12.0.0',
     },
