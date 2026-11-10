@@ -117,16 +117,16 @@
   },
   "engines": {
     "node": "^22.22.3 || >=24.15.0",
-    "pnpm": "11.28.8"
+    "pnpm": "11.28.11"
   },
-  "packageManager": "pnpm@11.28.8",
+  "packageManager": "pnpm@11.28.11",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
     "@formkit/tempo": "catalog:",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
-    "@lerna-lite/cli": "^5.6.4",
-    "@lerna-lite/publish": "^5.6.4",
-    "@lerna-lite/watch": "^5.6.4",
+    "@lerna-lite/cli": "^5.8.0",
+    "@lerna-lite/publish": "^5.8.0",
+    "@lerna-lite/watch": "^5.8.0",
     "@prettier/plugin-oxc": "^0.2.3",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
@@ -138,7 +138,7 @@
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
     "esbuild": "^0.28.2",
-    "eslint-plugin-cypress": "^7.0.2",
+    "eslint-plugin-cypress": "^7.0.3",
     "eslint-plugin-local-import-ext": "0.2.0",
     "globals": "catalog:",
     "jsdom": "catalog:",
