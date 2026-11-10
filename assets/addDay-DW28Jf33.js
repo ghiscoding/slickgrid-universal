@@ -1,0 +1,1 @@
+import{z as e}from"./index-Dy0NZiu4.js";function t(t,n=1){let r=e(t);return r.setDate(r.getDate()+n),r}export{t};
