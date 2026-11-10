@@ -184,6 +184,13 @@ describe('InputEditor (TextEditor)', () => {
     });
 
     describe('isValueChanged method', () => {
+      it.each([0, 5])('keeps an unchanged numeric value %s', (value) => {
+        editor = new InputEditor(editorArguments, 'text');
+        editor.loadValue({ title: value });
+        expect(divContainer.querySelector<HTMLInputElement>('input.editor-title')?.value).toBe(String(value));
+        expect(editor.isValueChanged()).toBe(false);
+      });
+
       it('should return True when previously dispatched keyboard event is a new char "a"', () => {
         const event = new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
 

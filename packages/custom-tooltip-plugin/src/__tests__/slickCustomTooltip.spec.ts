@@ -90,6 +90,14 @@ describe('SlickCustomTooltip plugin', () => {
     expect(plugin).toBeTruthy();
   });
 
+  it('does not reposition when the cell node is unavailable', () => {
+    plugin.init(gridStub, container);
+    plugin['_tooltipElm'] = document.createElement('div');
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(null);
+    expect(() => plugin['reposition']({ row: 0, cell: 0 })).not.toThrow();
+    expect(getOffset).not.toHaveBeenCalled();
+  });
+
   it('should be able to change plugin options', () => {
     const mockOptions = {
       bodyClassName: 'tooltip-body',
