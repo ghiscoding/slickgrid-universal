@@ -204,6 +204,7 @@ describe('Example 47 - Row Detail View + Grouping', () => {
         const row = cell.closest('.slick-row');
         return /^Task \d+$/.test(cell.textContent?.trim() ?? '') && !!row?.querySelector('.slick-cell.l0')?.innerHTML.trim();
       })
+      .should('have.length.at.least', 3)
       .then(($cells) => {
         const taskTitles = $cells
           .toArray()
@@ -224,15 +225,19 @@ describe('Example 47 - Row Detail View + Grouping', () => {
             .click({ force: true });
 
         toggleTask(taskTitles[0]);
+        cy.contains('.slick-row-detail-container h3', taskTitles[0]).should('exist');
         toggleTask(taskTitles[1]);
+        cy.contains('.slick-row-detail-container h3', taskTitles[1]).should('exist');
         toggleTask(taskTitles[2]);
         cy.get('.slick-row-detail-container h3').should('have.length', 3);
 
         toggleTask(taskTitles[1]);
+        cy.contains('.slick-row-detail-container h3', taskTitles[1]).should('not.exist');
         toggleTask(taskTitles[0]);
         cy.get('.slick-row-detail-container h3').should('have.length', 1);
 
         toggleTask(taskTitles[1]);
+        cy.contains('.slick-row-detail-container h3', taskTitles[1]).should('exist');
         toggleTask(taskTitles[0]);
         cy.get('.slick-row-detail-container').should('have.length', 3);
         cy.get('.slick-row-detail-container h3').should('have.length', 3);
