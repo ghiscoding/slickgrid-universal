@@ -5,7 +5,7 @@ import { SlickEventHandler } from '../core/slickCore.js';
 import { type SlickDataView } from '../core/slickDataView.js';
 import { type SlickGrid } from '../core/slickGrid.js';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities.js';
-import type { AutoResizeOption, Column, GridOption, GridSize, ResizeByContentOption } from '../interfaces/index.js';
+import type { AutoResizeOption, Column, Formatter, GridOption, GridSize, ResizeByContentOption } from '../interfaces/index.js';
 
 // using external non-typed js libraries
 const DATAGRID_BOTTOM_PADDING = 20;
@@ -31,6 +31,7 @@ export class ResizerService {
   protected _lastWindowSize?: GridSize;
   protected _totalColumnsWidthByContent = 0;
   protected _timer?: any;
+  protected _contentResizeTimer?: ReturnType<typeof setTimeout>;
   protected _resizePaused = false;
   protected _resizeObserver!: ResizeObserver;
   protected _subscriptions: EventSubscription[] = [];
@@ -75,6 +76,7 @@ export class ResizerService {
   dispose(): void {
     // first clear all timers
     clearTimeout(this._timer);
+    clearTimeout(this._contentResizeTimer);
     if (this.gridOptions.autoResize?.resizeDetection === 'container' && this._resizeObserver) {
       this._resizeObserver.disconnect();
     }
@@ -128,6 +130,19 @@ export class ResizerService {
     if (this.gridOptions.autoResize) {
       // resize by content could be called from the outside by other services via pub/sub event
       this._subscriptions.push(this.pubSubService.subscribe('onFullResizeByContentRequested', () => this.resizeColumnsByCellContent(true)));
+    }
+
+    if (this.dataView?.onRowsChanged) {
+      this._eventHandler.subscribe(this.dataView.onRowsChanged, () => {
+        if (
+          this.gridOptions.enableAutoResizeColumnsByCellContent &&
+          !this.gridOptions.resizeByContentOnlyOnFirstLoad &&
+          this._hasResizedByContentAtLeastOnce
+        ) {
+          clearTimeout(this._contentResizeTimer);
+          this._contentResizeTimer = setTimeout(() => this.resizeColumnsByCellContent(true), 0);
+        }
+      });
     }
 
     // whenever the autosizeColumns() is called, we'll recalculate our header height total cache
@@ -515,20 +530,27 @@ export class ResizerService {
   ): number {
     const columns = Array.isArray(columnOrColumns) ? columnOrColumns : [columnOrColumns];
     const dataset = this.dataView.getItems() as any[];
-    const step = Math.max(1, Math.ceil(dataset.length / maxItemToInspect));
+    const grouped = !!this.dataView.getGrouping?.()?.length;
+    const itemCount = grouped ? this.dataView.getLength() : dataset.length;
+    const step = Math.max(1, Math.ceil(itemCount / maxItemToInspect));
 
     // Deduplicate sampled texts without discarding shorter strings that may be wider in pixels.
     let readItemCount = 0;
     const candidatesMap: { [columnId: string]: Set<string> } = Object.create(null);
     columns.forEach((columnDef) => (candidatesMap[columnDef.id] = new Set()));
-    for (let rowIdx = 0; rowIdx < dataset.length; rowIdx += step) {
+    for (let rowIdx = 0; rowIdx < itemCount; rowIdx += step) {
+      const item = grouped ? this.dataView.getItem(rowIdx) : dataset[rowIdx];
+      if (item.__group) {
+        continue; // Group labels span columns and must not affect individual column widths.
+      }
+      const totalsFormatter = item.__groupTotals ? (this.dataView.getItemMetadata(rowIdx)?.formatter as Formatter) : undefined;
       columns.forEach((columnDef, colIdx) => {
         const formattedData = parseFormatterWhenExist(
-          columnDef.formatter,
+          item.__groupTotals ? totalsFormatter : columnDef.formatter,
           rowIdx,
           columnIndexOverride ?? colIdx,
           columnDef,
-          dataset[rowIdx],
+          item,
           this._grid
         );
         const text = isPrimitiveOrHTML(formattedData) ? stripTags(formattedData) : '';
