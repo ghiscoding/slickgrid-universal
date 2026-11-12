@@ -422,13 +422,6 @@
           z-index: var(--slick-rowspan-docked-z-index, 7);
         }
       }
-
-      // The generic hover rule adds a lower stacking context to the whole
-      // row. Remove it for a rowspan host so the elevated cell above can
-      // remain visible over an adjacent active row.
-      &.slick-rowspan:hover {
-        z-index: auto;
-      }
     }
 
     // Active-cell state is applied to every row region. The legacy active-row
@@ -595,6 +588,12 @@
   // Active-row padding changes the containing box and can clip the fixed-height RowSpan cell.
   .slick-row.active.slick-rowspan {
     padding: 0;
+  }
+
+  // Covered rows as well as hosts must not form stacking contexts: either
+  // could otherwise paint over a spanning cell when hovered.
+  .slick-row.slick-rowspan:not(.slick-row-pinned-top):not(.slick-row-pinned-bottom):hover {
+    z-index: auto;
   }
 
   // Keep only the spanning cell above neighboring rows. The host row itself
