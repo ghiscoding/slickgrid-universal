@@ -59,6 +59,26 @@ describe('Example 44 - Column & Row Span', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
+  it('should keep spanning cells above active and hovered covered rows', () => {
+    const expectSpanAtCoveredRow = (spanSelector: string, coveredRow: number) => {
+      cy.get(spanSelector).should(($span) => {
+        const span = $span[0];
+        const row = span.ownerDocument.querySelector<HTMLElement>(`#grid44 .slick-row[data-row="${coveredRow}"]`)!;
+        const spanRect = span.getBoundingClientRect();
+        const rowRect = row.getBoundingClientRect();
+        const painted = span.ownerDocument.elementFromPoint(spanRect.left + spanRect.width / 2, rowRect.top + rowRect.height / 2);
+        expect(painted === span || span.contains(painted)).to.eq(true);
+      });
+    };
+
+    cy.get('#grid44 .slick-row[data-row="3"] > .slick-cell.l2').click();
+    expectSpanAtCoveredRow('#grid44 .slick-row[data-row="2"] > .slick-cell.l0.rowspan', 3);
+    cy.get('#grid44 .slick-row[data-row="4"] > .slick-cell.l2').realHover();
+    expectSpanAtCoveredRow('#grid44 .slick-row[data-row="2"] > .slick-cell.l0.rowspan', 4);
+    expectSpanAtCoveredRow('#grid44 .slick-row[data-row="3"] > .slick-cell.l3.rowspan', 4);
+    cy.get('h2').realHover();
+  });
+
   it('should auto-scroll horizontally when a column is dragged past the viewport', () => {
     let draggedColumn: HTMLElement;
 
