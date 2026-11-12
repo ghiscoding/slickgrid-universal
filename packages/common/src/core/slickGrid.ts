@@ -6958,7 +6958,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
 
-    for (const row of rowsToProcess) {
+    // Retained rowspan hosts can be above the vertical render range, but their
+    // spanning cells still need to follow horizontal virtualization.
+    const rowsToProcessSet = new Set(rowsToProcess);
+    for (const row of Object.keys(this.rowsCache).map(Number)) {
+      if (this.rowsCache[row].rowSpanHost) {
+        rowsToProcessSet.add(row);
+      }
+    }
+
+    for (const row of rowsToProcessSet) {
       cacheEntry = this.rowsCache[row];
       if (cacheEntry) {
         // cellRenderQueue populated in renderRows() needs to be cleared first
@@ -7144,6 +7153,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const mandatorySpanRows = this.setDifference(renderingRows, mustRenderRows);
     if (mandatorySpanRows.size > 0) {
       mandatorySpanRows.forEach((r) => {
+        // Horizontal cell updates also include retained offscreen span hosts.
+        if (this.rowsCache[r]) {
+          return;
+        }
         this.removeRowFromCache(r); // remove any previous element to avoid duplicates in DOM
         rows.push(r);
         this.rowsCache[r] = this.createEmptyCachingRow();
