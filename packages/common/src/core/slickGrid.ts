@@ -6960,13 +6960,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // Retained rowspan hosts can be above the vertical render range, but their
     // spanning cells still need to follow horizontal virtualization.
+    const rowsToProcessSet = new Set(rowsToProcess);
     for (const row of Object.keys(this.rowsCache).map(Number)) {
-      if (this.rowsCache[row].rowSpanHost && !rowsToProcess.includes(row)) {
-        rowsToProcess.push(row);
+      if (this.rowsCache[row].rowSpanHost) {
+        rowsToProcessSet.add(row);
       }
     }
 
-    for (const row of rowsToProcess) {
+    for (const row of rowsToProcessSet) {
       cacheEntry = this.rowsCache[row];
       if (cacheEntry) {
         // cellRenderQueue populated in renderRows() needs to be cleared first
