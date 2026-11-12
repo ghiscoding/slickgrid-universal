@@ -427,6 +427,39 @@ describe('SlickGrid core file', () => {
     expect(grid.getCellFromEvent({ target: spanCell } as unknown as Event)).toEqual({ row: 0, cell: 1 });
   });
 
+  it('retains an offscreen span host and renders its newly visible columns', () => {
+    const dataView = new SlickDataView({
+      globalItemMetadataProvider: { getRowMetadata: (_item, row) => (row === 0 ? { columns: { 0: { rowspan: 3 }, 1: { rowspan: 3 } } } : undefined) },
+    });
+    dataView.setItems([{ id: 0 }, { id: 1 }, { id: 2 }]);
+    grid = new SlickGrid<any, Column>(
+      container,
+      dataView,
+      [
+        { id: 'id', field: 'id', width: 100 },
+        { id: 'other', field: 'id', width: 100 },
+      ],
+      { ...defaultOptions, enableCellRowSpan: true }
+    );
+    grid.init();
+    const internalGrid = grid as any;
+    const range = { top: 1, bottom: 1, leftPx: 0, rightPx: 50 };
+    internalGrid.removeRowFromCache(0);
+    internalGrid.removeRowFromCache(1);
+    internalGrid.renderRows(range);
+    const host = container.querySelector('.slick-row[data-row="0"]');
+    expect(host?.querySelector('.slick-cell.rowspan')).toBeTruthy();
+    expect(host?.querySelector('.slick-cell.l1')).toBeNull();
+
+    internalGrid.cleanUpAndRenderCells({ ...range, leftPx: 100, rightPx: 200 });
+    expect(host?.querySelector('.slick-cell.l1.rowspan')).toBeTruthy();
+
+    internalGrid.removeRowFromCache(1);
+    internalGrid.scrollLeft = internalGrid.lastRenderedScrollLeft + 10;
+    internalGrid.renderRows(range);
+    expect(container.querySelector('.slick-row[data-row="0"]')).toBe(host);
+  });
+
   it.each([
     ['gridMenu', ['export-text-delimited', 'toggle-dark-mode']],
     ['contextMenu', ['copy', 'export-text-delimited']],
@@ -3004,8 +3037,8 @@ describe('SlickGrid core file', () => {
 
         expect(remapRowspanSpy).toHaveBeenCalled();
         expect(slickCell0).toBeTruthy();
-        expect(slickCells.length).toBe(48);
-        expect(getDataSpy).toHaveBeenCalledTimes(32);
+        expect(slickCells.length).toBe(54);
+        expect(getDataSpy).toHaveBeenCalledTimes(31);
       });
 
       describe('getViewportHeight() method', () => {
