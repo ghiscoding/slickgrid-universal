@@ -104,7 +104,7 @@ import { RowDetailTeleportHost } from '@slickgrid-universal/vue-row-detail-plugi
 </template>
 ```
 
-Mount the host before opening details and keep it mounted for the grid's lifetime. Without it, details use isolated Vue applications.
+Mount the host before opening details and keep it mounted for the grid's lifetime. Without it, details use isolated Vue applications. If the host is mounted or unmounted while details are open, those details are remounted with the new renderer and lose their component state.
 
 ## Usage
 

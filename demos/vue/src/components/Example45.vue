@@ -16,6 +16,7 @@ const isDarkMode = ref(false);
 const isUsingAutoHeight = ref(false);
 const isUsingInnerGridStatePresets = ref(false);
 const isKeepingComponentAlive = ref(false);
+const isUsingRowDetailHost = ref(true);
 const showSubTitle = ref(true);
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
 let vueGrid!: SlickgridVueInstance;
@@ -292,6 +293,14 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="redraw-all-btn" @click="redrawAllRowDetail()">
           Force redraw all Row Details
         </button>
+        <button
+          class="btn btn-outline-secondary btn-sm btn-icon me-1"
+          data-test="toggle-row-detail-host"
+          title="toggle RowDetailTeleportHost, without it Row Details are rendered as isolated Vue apps"
+          @click="isUsingRowDetailHost = !isUsingRowDetailHost"
+        >
+          Toggle Row Detail Host
+        </button>
 
         <span class="d-inline-flex gap-4px">
           <label for="detailViewRowCount">Detail View Rows Shown: </label>
@@ -373,6 +382,6 @@ function vueGridReady(grid: SlickgridVueInstance) {
       @onVueGridCreated="vueGridReady($event.detail)"
     >
     </slickgrid-vue>
-    <RowDetailTeleportHost v-if="rowDetailInstance" :plugin="rowDetailInstance" />
+    <RowDetailTeleportHost v-if="rowDetailInstance && isUsingRowDetailHost" :plugin="rowDetailInstance" />
   </div>
 </template>

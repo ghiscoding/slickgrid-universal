@@ -96,6 +96,8 @@ There is currently a known problem with Row Detail when loading the Row Detail C
 
 > You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.
 
+This warning only applies to the default isolated React roots. Mounting the optional [`RowDetailPortalHost`](#accessing-react-context) renders Row Details through React portals instead of `createRoot()`, which avoids the warning.
+
 ### Accessing React context
 
 Render the optional host under the providers needed by your detail components, using the same plugin instance registered with the grid:
@@ -107,7 +109,7 @@ import { RowDetailPortalHost } from '@slickgrid-universal/react-row-detail-plugi
 <RowDetailPortalHost plugin={rowDetailPlugin} />
 ```
 
-Mount the host before opening details and keep it mounted for the grid's lifetime. Without it, details use isolated React roots.
+Mount the host before opening details and keep it mounted for the grid's lifetime. Without it, details use isolated React roots. If the host is mounted or unmounted while details are open, those details are remounted with the new renderer and lose their component state.
 
 ## Usage
 

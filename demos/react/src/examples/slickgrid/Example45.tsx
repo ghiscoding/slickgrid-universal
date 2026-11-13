@@ -19,6 +19,7 @@ const Example45: React.FC = () => {
   const [isUsingAutoHeight, setIsUsingAutoHeight] = useState<boolean>(false);
   const [isUsingInnerGridStatePresets, setIsUsingInnerGridStatePresets] = useState<boolean>(false);
   const [isKeepingComponentAlive, setIsKeepingComponentAlive] = useState<boolean>(false);
+  const [isUsingRowDetailHost, setIsUsingRowDetailHost] = useState(true);
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [serverWaitDelay, setServerWaitDelay] = useState<number>(FAKE_SERVER_DELAY);
 
@@ -323,6 +324,14 @@ const Example45: React.FC = () => {
             <button className="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="redraw-all-btn" onClick={redrawAllRowDetail}>
               Force redraw all Row Details
             </button>
+            <button
+              className="btn btn-outline-secondary btn-sm btn-icon me-1"
+              data-test="toggle-row-detail-host"
+              title="toggle RowDetailPortalHost, without it Row Details are rendered in isolated React roots"
+              onClick={() => setIsUsingRowDetailHost(!isUsingRowDetailHost)}
+            >
+              Toggle Row Detail Host
+            </button>
 
             <span className="d-inline-flex gap-4px">
               <label htmlFor="detailViewRowCount">Detail View Rows Shown: </label>
@@ -410,7 +419,7 @@ const Example45: React.FC = () => {
               setRowDetailPlugin($event.detail.extensionService.getExtensionInstanceByName('rowDetailView') as ReactRowDetailView);
             }}
           />
-          {rowDetailPlugin && <RowDetailPortalHost plugin={rowDetailPlugin} />}
+          {rowDetailPlugin && isUsingRowDetailHost && <RowDetailPortalHost plugin={rowDetailPlugin} />}
         </RowDetailContext.Provider>
       </div>
     </div>

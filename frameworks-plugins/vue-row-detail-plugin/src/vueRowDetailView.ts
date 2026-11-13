@@ -50,10 +50,14 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   protected _teleportGeneration = 0;
   protected _teleportListener?: (entries: RowDetailTeleportEntry[]) => void | Promise<void>;
 
-  /** @internal Used by RowDetailTeleportHost. Mount the host before opening rows. */
+  /** @internal Used by RowDetailTeleportHost. */
   registerTeleportHost(listener?: (entries: RowDetailTeleportEntry[]) => void | Promise<void>): void {
     this._teleportListener = listener;
     listener?.(this._teleportEntries);
+    // Open views belong to the previous renderer; remount them with the current one.
+    if (this._views.some((view) => view.app || view.teleportTarget)) {
+      this.redrawAllViewComponents(true);
+    }
   }
 
   protected updateTeleport(
@@ -491,6 +495,8 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     if (expandedView?.instance) {
       expandedView.rendered = false;
       expandedView.app?.unmount();
+      expandedView.app = null;
+      expandedView.instance = null;
       const container = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
       if (container) {
         container.textContent = '';

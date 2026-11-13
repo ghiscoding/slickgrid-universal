@@ -48,10 +48,14 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   protected _portalEntries: RowDetailPortalEntry[] = [];
   protected _portalListener?: (entries: RowDetailPortalEntry[]) => void | Promise<void>;
 
-  /** @internal Used by RowDetailPortalHost. Mount the host before opening rows. */
+  /** @internal Used by RowDetailPortalHost. */
   registerPortalHost(listener?: (entries: RowDetailPortalEntry[]) => void | Promise<void>): void {
     this._portalListener = listener;
     listener?.(this._portalEntries);
+    // Open views belong to the previous renderer; remount them outside the current React commit.
+    if (this._views.some((view) => view.root || view.portalTarget)) {
+      this.redrawAllViewComponents(true);
+    }
   }
 
   protected updatePortal(

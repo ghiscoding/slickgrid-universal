@@ -544,6 +544,26 @@ describe('Example 45 - Row Detail with inner Grid', () => {
         );
       });
 
+      it('should unmount the Row Detail Host and expect the open Row Detail to be remounted in isolation without the provider value', () => {
+        cy.get('[data-test="toggle-row-detail-host"]').click();
+
+        cy.get('.slick-row-detail-container.row-detail-1 [data-row-detail-context]')
+          .should('have.length', 1)
+          .and('have.attr', 'data-row-detail-context', 'missing');
+        cy.get('.slick-row-detail-container.row-detail-1').find('h4').should('contain', '- Order Details (id: 1)');
+        cy.get('#innergrid-1 .slick-header-columns').children().should('have.length', innerGridTitles.length);
+      });
+
+      it('should mount the Row Detail Host again and expect the open Row Detail to be remounted with the provider value', () => {
+        cy.get('[data-test="toggle-row-detail-host"]').click();
+
+        cy.get('.slick-row-detail-container.row-detail-1 [data-row-detail-context]')
+          .should('have.length', 1)
+          .and('have.attr', 'data-row-detail-context', 'example45');
+        cy.get('.slick-row-detail-container.row-detail-1').find('h4').should('contain', '- Order Details (id: 1)');
+        cy.get('#innergrid-1 .slick-header-columns').children().should('have.length', innerGridTitles.length);
+      });
+
       it('should collapse all rows and disable Keep Component Alive on Scroll', () => {
         cy.get('[data-test="collapse-all-btn"]').click();
         cy.get('[data-test="keep-component-alive"]').click();
