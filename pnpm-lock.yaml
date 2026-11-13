@@ -632,6 +632,9 @@ importers:
       '@slickgrid-universal/pdf-export':
         specifier: workspace:*
         version: link:../../packages/pdf-export
+      '@slickgrid-universal/pivot-plugin':
+        specifier: workspace:*
+        version: link:../../packages/pivot-plugin
       '@slickgrid-universal/row-detail-plugin':
         specifier: workspace:*
         version: link:../../packages/row-detail-plugin
@@ -1498,6 +1501,31 @@ importers:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
         version: link:../event-pub-sub
+
+  packages/pivot-plugin:
+    dependencies:
+      '@slickgrid-universal/binding':
+        specifier: workspace:*
+        version: link:../binding
+      '@slickgrid-universal/common':
+        specifier: workspace:*
+        version: link:../common
+      '@slickgrid-universal/utils':
+        specifier: workspace:*
+        version: link:../utils
+    devDependencies:
+      autoprefixer:
+        specifier: ^10.6.2
+        version: 10.6.2(postcss@8.5.32)
+      cssnano:
+        specifier: ^9.9.0
+        version: 9.9.0(postcss@8.5.32)
+      postcss:
+        specifier: 'catalog:'
+        version: 8.5.32
+      sass:
+        specifier: 'catalog:'
+        version: 1.107.1
 
   packages/pdf-export:
     dependencies:

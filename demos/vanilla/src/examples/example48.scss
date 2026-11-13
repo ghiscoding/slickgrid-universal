@@ -1,0 +1,12 @@
+.grid48-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.grid48 {
+  height: min(72vh, 760px);
+  min-height: 480px;
+  border: 1px solid #d7dde5;
+}

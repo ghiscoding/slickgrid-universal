@@ -33,7 +33,8 @@
     "bulma": "^1.0.4",
     "dompurify": "catalog:",
     "multiple-select-vanilla": "catalog:",
-    "rxjs": "catalog:"
+    "rxjs": "catalog:",
+    "@slickgrid-universal/pivot-plugin": "workspace:*"
   },
   "devDependencies": {
     "@types/fnando__sparkline": "catalog:",

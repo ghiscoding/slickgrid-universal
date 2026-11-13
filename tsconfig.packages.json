@@ -12,6 +12,7 @@
     { "path": "./packages/graphql" },
     { "path": "./packages/odata" },
     { "path": "./packages/pagination-component" },
+    { "path": "./packages/pivot-plugin" },
     { "path": "./packages/pdf-export" },
     { "path": "./packages/row-detail-plugin" },
     { "path": "./packages/rxjs-observable" },

@@ -1,0 +1,19 @@
+<h3 class="title is-3">Example 48 - Pivot Table</h3>
+<p class="mb-3">Drag fields between Filters, Columns, Rows, and Values. Double-click a value to see its source rows.</p>
+<div class="grid48-actions mb-3">
+  <label for="grid48-dataset">Dataset</label>
+  <select data-test="dataset-select" id="grid48-dataset" class="select" onchange.trigger="changeDataset(event.target.value)">
+    <option value="5000">Sales (5,000 rows)</option>
+    <option value="500">Sales (500 rows)</option>
+    <option value="excel">Excel sample</option>
+  </select>
+  <label>Grand total row <select data-test="grand-total-row-docking" onchange.trigger="setRowDocking(event.target.value)"><option value="sticky">Sticky</option><option value="pinned">Pinned</option><option value="none">None</option></select></label>
+  <label>Grand total columns <select data-test="grand-total-column-docking" onchange.trigger="setColumnDocking(event.target.value)"><option value="none">Scroll</option><option value="pinned">Pinned</option><option value="sticky">Sticky</option></select></label>
+  <label><input data-test="write-back" type="checkbox" onchange.trigger="toggleWriteBack(event.target.checked)" /> Edit values</label>
+  <label><input data-test="rtl" type="checkbox" onchange.trigger="setRtl(event.target.checked)" /> Right to left</label>
+  <label><input data-test="server-provider" type="checkbox" onchange.trigger="toggleServerProvider(event.target.checked)" /> Simulated server</label>
+  <button class="button is-small" type="button" onclick.trigger="saveLayout()">Save layout</button>
+  <button class="button is-small" type="button" onclick.trigger="restoreLayout()">Restore layout</button>
+  <button class="button is-small" type="button" onclick.trigger="resetLayout()">Reset layout</button>
+</div>
+<div class="grid48" data-test="grid48"></div>
