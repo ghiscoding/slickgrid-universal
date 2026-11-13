@@ -12,18 +12,27 @@ import {
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
 import type { GridOption, ViewModelBindableInputData } from 'slickgrid-vue';
-import { createApp, type App, type ComponentPublicInstance } from 'vue';
+import { createApp, type App, type Component, type ComponentPublicInstance } from 'vue';
 import type { RowDetailView } from './interfaces.js';
 
 const ROW_DETAIL_CONTAINER_PREFIX = 'row-detail-';
 
 type AppData = Record<string, unknown>;
+export interface RowDetailTeleportEntry {
+  id: string | number;
+  target: HTMLElement;
+  generation: number;
+  component: Component;
+  props: ViewModelBindableInputData;
+}
+
 export interface CreatedView {
   id: string | number;
   dataContext: any;
   app: App | null;
   rendered?: boolean;
   instance: ComponentPublicInstance | null;
+  teleportTarget?: HTMLElement;
 }
 
 export class VueRowDetailView extends UniversalSlickRowDetailView {
@@ -37,6 +46,40 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   protected _userProcessFn?: (item: any) => Promise<any>;
   protected gridContainerElement!: HTMLElement;
   protected _timer?: any;
+  protected _teleportEntries: RowDetailTeleportEntry[] = [];
+  protected _teleportGeneration = 0;
+  protected _teleportListener?: (entries: RowDetailTeleportEntry[]) => void | Promise<void>;
+
+  /** @internal Used by RowDetailTeleportHost. */
+  registerTeleportHost(listener?: (entries: RowDetailTeleportEntry[]) => void | Promise<void>): void {
+    this._teleportListener = listener;
+    listener?.(this._teleportEntries);
+    // Open views belong to the previous renderer; remount them with the current one.
+    if (this._views.some((view) => view.app || view.teleportTarget)) {
+      this.redrawAllViewComponents(true);
+    }
+  }
+
+  protected updateTeleport(
+    item: any,
+    container: HTMLElement,
+    component: Component,
+    props: ViewModelBindableInputData
+  ): void | Promise<void> {
+    const id = item[this.datasetIdPropName];
+    const previous = this._teleportEntries.find((entry) => entry.id === id);
+    const target = previous?.target.parentElement === container ? previous.target : document.createElement('div');
+    if (target.parentElement !== container) {
+      container.appendChild(target);
+    }
+    this._teleportEntries = [
+      ...this._teleportEntries.filter((entry) => entry.id !== id),
+      { id, target, generation: previous?.generation ?? this._teleportGeneration++, component, props },
+    ];
+    this.upsertViewRefs(item, { app: null, instance: null, rendered: true });
+    this._views.find((view) => view.id === id)!.teleportTarget = target;
+    return this._teleportListener?.(this._teleportEntries);
+  }
 
   constructor(private readonly eventPubSubService: EventPubSubService) {
     super(eventPubSubService);
@@ -52,8 +95,8 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     this.disposeViewByItem(item);
   }
 
-  protected override renderDetailView(item: any): void {
-    this.renderViewModel(item);
+  protected override renderDetailView(item: any): void | Promise<void> {
+    return this.renderViewModel(item);
   }
 
   get addonOptions() {
@@ -85,7 +128,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
     do {
       const view = this._views.pop();
       if (view) {
-        this.disposeViewByItem(view);
+        this.disposeViewComponent(view);
       }
     } while (this._views.length > 0);
   }
@@ -238,7 +281,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
       this.resetRenderedRows();
       this._views.forEach((view) => {
         if (!view.rendered || forceRedraw) {
-          forceRedraw && view.app?.unmount();
+          forceRedraw && this.disposeViewComponent(view);
           this.redrawViewComponent(view);
         }
       });
@@ -271,7 +314,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
         rowIndex < renderedRange.top ||
         rowIndex > renderedRange.bottom ||
         !this._renderedViewportRowIds.has(view.id) ||
-        (view.rendered && view.instance?.$el?.isConnected)
+        (view.rendered && (view.teleportTarget?.isConnected || view.instance?.$el?.isConnected))
       ) {
         return;
       }
@@ -298,6 +341,10 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as AppData & ViewModelBindableInputData;
 
+      if (this._teleportListener) {
+        this.updateTeleport(item, containerElement as HTMLElement, this._preloadComponent, bindableData);
+        return;
+      }
       const tmpDiv = document.createElement('div');
       this._preloadApp = createApp(this._preloadComponent, bindableData);
       const instance = this._preloadApp.mount(tmpDiv) as ComponentPublicInstance;
@@ -312,7 +359,7 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   }
 
   /** (re)Render the View Component (Row Detail) */
-  protected renderViewModel(item: any): void {
+  protected renderViewModel(item: any): void | Promise<void> {
     if (!item[`${this._keyPrefix}detailViewLoaded`]) {
       return;
     }
@@ -342,6 +389,9 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as AppData & ViewModelBindableInputData;
 
+      if (this._teleportListener) {
+        return this.updateTeleport(item, containerElement, this._component, bindableData);
+      }
       this.unmountViewWhenExists(item[this.datasetIdPropName]);
 
       // empty container & load our Row Detail Vue Component dynamically
@@ -365,6 +415,10 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
    */
   protected detachViewFromDom(item: any): void {
     const foundView = this._views.find((view: CreatedView) => view.id === item[this.datasetIdPropName]);
+    if (foundView?.teleportTarget) {
+      foundView.rendered = false;
+      return;
+    }
     if (foundView?.instance) {
       foundView.rendered = false;
       // physically remove the root element from DOM; the Vue app/instance stays alive
@@ -430,9 +484,19 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   }
 
   protected disposeViewComponent(expandedView: CreatedView): CreatedView | void {
+    if (expandedView.teleportTarget) {
+      expandedView.rendered = false;
+      this._teleportEntries = this._teleportEntries.filter((entry) => entry.id !== expandedView.id);
+      this._teleportListener?.(this._teleportEntries);
+      expandedView.teleportTarget.remove();
+      expandedView.teleportTarget = undefined;
+      return expandedView;
+    }
     if (expandedView?.instance) {
       expandedView.rendered = false;
       expandedView.app?.unmount();
+      expandedView.app = null;
+      expandedView.instance = null;
       const container = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
       if (container) {
         container.textContent = '';
@@ -472,7 +536,9 @@ export class VueRowDetailView extends UniversalSlickRowDetailView {
   ) {
     const viewModel = this._views.find((x) => x.id === args.rowId);
     if (viewModel && !viewModel.rendered) {
-      if (this.rowDetailViewOptions?.keepComponentAlive && viewModel.instance) {
+      if (this.rowDetailViewOptions?.keepComponentAlive && viewModel.teleportTarget?.isConnected) {
+        viewModel.rendered = true;
+      } else if (this.rowDetailViewOptions?.keepComponentAlive && viewModel.instance) {
         // Try to reattach; if it fails, fall back to redraw
         const reattachSuccess = this.reattachViewComponent(viewModel);
         if (!reattachSuccess) {

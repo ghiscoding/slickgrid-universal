@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { faker } from '@faker-js/faker';
-import { VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
+import { RowDetailTeleportHost, VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
 import { SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
-import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
+import { onBeforeMount, onUnmounted, provide, ref, shallowRef, type Ref } from 'vue';
 import Example45Detail, { type Distributor, type OrderData } from './Example45Detail.vue';
 import Example45Preload from './Example45Preload.vue';
 
@@ -16,11 +16,13 @@ const isDarkMode = ref(false);
 const isUsingAutoHeight = ref(false);
 const isUsingInnerGridStatePresets = ref(false);
 const isKeepingComponentAlive = ref(false);
+const isUsingRowDetailHost = ref(true);
 const showSubTitle = ref(true);
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
 let vueGrid!: SlickgridVueInstance;
 
-const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName('rowDetailView') as VueRowDetailView);
+const rowDetailInstance = shallowRef<VueRowDetailView>(undefined!);
+provide('example45RowDetailContext', 'example45');
 
 onBeforeMount(() => {
   defineGrid();
@@ -97,6 +99,10 @@ function defineGrid() {
     rowHeight: 33,
     externalResources: [VueRowDetailView],
     rowDetailView: {
+      onAsyncEndUpdate: (_event, args) => {
+        const panel = args.grid.getContainerNode().querySelector(`.slick-row-detail-container.row-detail-${args.item.id}`);
+        args.grid.getContainerNode().dataset.detailMountedAtAsyncEnd = String(!!panel?.querySelector('[data-row-detail-context]'));
+      },
       process: (item: any) => simulateServerAsyncCall(item),
       loadOnce: false, // you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events
       useRowClick: false,
@@ -241,6 +247,7 @@ function toggleSubTitle() {
 
 function vueGridReady(grid: SlickgridVueInstance) {
   vueGrid = grid;
+  rowDetailInstance.value = grid.extensionService.getExtensionInstanceByName('rowDetailView') as VueRowDetailView;
 }
 </script>
 
@@ -285,6 +292,14 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
         <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="redraw-all-btn" @click="redrawAllRowDetail()">
           Force redraw all Row Details
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-sm btn-icon me-1"
+          data-test="toggle-row-detail-host"
+          title="toggle RowDetailTeleportHost, without it Row Details are rendered as isolated Vue apps"
+          @click="isUsingRowDetailHost = !isUsingRowDetailHost"
+        >
+          Toggle Row Detail Host
         </button>
 
         <span class="d-inline-flex gap-4px">
@@ -367,5 +382,6 @@ function vueGridReady(grid: SlickgridVueInstance) {
       @onVueGridCreated="vueGridReady($event.detail)"
     >
     </slickgrid-vue>
+    <RowDetailTeleportHost v-if="rowDetailInstance && isUsingRowDetailHost" :plugin="rowDetailInstance" />
   </div>
 </template>

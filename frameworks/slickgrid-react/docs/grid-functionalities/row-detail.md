@@ -26,7 +26,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ### Rendering and DOM structure
 
-Row Detail panels are mounted directly in the grid canvas as siblings of the transformed rows. Each panel uses one `.slick-row-detail-container` element for positioning and automatic overflow scrolling. No overlay host or inner wrapper divs are created, and no rendering option is required. Panels occupy their reserved padding rows even when the parent is pinned or sticky, and stay aligned with the visible viewport during horizontal scrolling.
+Row Detail panels are mounted directly in the grid canvas as siblings of the transformed rows. Each panel uses one `.slick-row-detail-container` element for positioning and automatic overflow scrolling. The default rendering path creates no overlay host or inner wrapper divs and requires no rendering option. The optional `RowDetailPortalHost` creates an inner target `<div>` inside each panel for framework rendering. Panels occupy their reserved padding rows even when the parent is pinned or sticky, and stay aligned with the visible viewport during horizontal scrolling.
 
 In v11, `rowTopOffsetRenderType` and `rowDetailView.renderMode` have been removed. Remove both options from existing configurations; see the [v11 migration guide](../../../../docs/migrations/migration-to-11.x.md#row-positioning-rowtopoffsetrendertype).
 
@@ -95,6 +95,21 @@ changeKeepingComponentAlive() {
 There is currently a known problem with Row Detail when loading the Row Detail Components, it currently shows console warnings (see below), however these are just warnings and they don't show up in Production code. If anyone knows how to fix it please provide a Pull Request as a contribution (please note that the suggestion to use `root.render()` does NOT work as intended hence why we call `createRoot()` every time a row detail is rendered).
 
 > You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.
+
+This warning only applies to the default isolated React roots. Mounting the optional [`RowDetailPortalHost`](#accessing-react-context) renders Row Details through React portals instead of `createRoot()`, which avoids the warning.
+
+### Accessing React context
+
+Render the optional host under the providers needed by your detail components, using the same plugin instance registered with the grid:
+
+```tsx
+import { RowDetailPortalHost } from '@slickgrid-universal/react-row-detail-plugin';
+
+// rowDetailPlugin is the ReactRowDetailView instance registered with the grid
+<RowDetailPortalHost plugin={rowDetailPlugin} />
+```
+
+Mount the host before opening details and keep it mounted for the grid's lifetime. Without it, details use isolated React roots. If the host is mounted or unmounted while details are open, those details are remounted with the new renderer and lose their component state.
 
 ## Usage
 
