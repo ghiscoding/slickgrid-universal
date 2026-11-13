@@ -11,6 +11,7 @@ import {
 } from '@slickgrid-universal/common';
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-plugin';
+import type { ComponentType } from 'react';
 import { flushSync } from 'react-dom';
 import type { Root } from 'react-dom/client';
 import { createReactComponentDynamically, type GridOption, type ViewModelBindableInputData } from 'slickgrid-react';
@@ -18,12 +19,20 @@ import type { RowDetailView } from './interfaces.js';
 
 const ROW_DETAIL_CONTAINER_PREFIX = 'row-detail-';
 
+export interface RowDetailPortalEntry {
+  id: string | number;
+  target: HTMLElement;
+  component: ComponentType<any>;
+  props: ViewModelBindableInputData;
+}
+
 export interface CreatedView {
   id: string | number;
   dataContext: any;
   root: Root | null;
   container?: HTMLElement;
   rendered?: boolean;
+  portalTarget?: HTMLElement;
 }
 
 export class ReactRowDetailView extends UniversalSlickRowDetailView {
@@ -36,6 +45,34 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   protected gridContainerElement!: HTMLElement;
   protected _timer?: any;
   _root?: Root;
+  protected _portalEntries: RowDetailPortalEntry[] = [];
+  protected _portalListener?: (entries: RowDetailPortalEntry[]) => void | Promise<void>;
+
+  /** @internal Used by RowDetailPortalHost. Mount the host before opening rows. */
+  registerPortalHost(listener?: (entries: RowDetailPortalEntry[]) => void | Promise<void>): void {
+    this._portalListener = listener;
+    listener?.(this._portalEntries);
+  }
+
+  protected updatePortal(
+    item: any,
+    container: HTMLElement,
+    component: ComponentType<any>,
+    props: ViewModelBindableInputData
+  ): void | Promise<void> {
+    const id = item[this.datasetIdPropName];
+    const previous = this._portalEntries.find((entry) => entry.id === id);
+    const target = previous?.target.parentElement === container ? previous.target : document.createElement('div');
+    if (target.parentElement !== container) {
+      container.appendChild(target);
+    }
+    this._portalEntries = [...this._portalEntries.filter((entry) => entry.id !== id), { id, target, component, props }];
+    this.upsertViewRefs(item, null, container);
+    const view = this._views.find((entry) => entry.id === id)!;
+    view.portalTarget = target;
+    view.rendered = true;
+    return this._portalListener?.(this._portalEntries);
+  }
 
   constructor(private readonly eventPubSubService: EventPubSubService) {
     super(eventPubSubService);
@@ -51,13 +88,13 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   protected override renderDetailContent(container: HTMLElement, item: any): void {
     const view = this._views.find((view) => view.id === item[this.datasetIdPropName]);
     // React owns these children until its root is unmounted. Clearing them here would interrupt its commit.
-    if (!view?.root || view.container !== container) {
+    if ((!view?.root && !view?.portalTarget) || view.container !== container) {
       super.renderDetailContent(container, item);
     }
   }
 
-  protected override renderDetailView(item: any): void {
-    this.renderViewModel(item);
+  protected override renderDetailView(item: any): void | Promise<void> {
+    return this.renderViewModel(item);
   }
 
   get addonOptions() {
@@ -89,7 +126,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
     do {
       const view = this._views.pop();
       if (view) {
-        this.disposeViewByItem(view);
+        this.disposeViewComponent(view);
       }
     } while (this._views.length > 0);
   }
@@ -273,7 +310,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
         return;
       }
 
-      if (this.rowDetailViewOptions?.keepComponentAlive && view.root && view.container?.isConnected) {
+      if (this.rowDetailViewOptions?.keepComponentAlive && (view.root || view.portalTarget) && view.container?.isConnected) {
         view.rendered = true;
         return;
       }
@@ -301,6 +338,10 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
         dataView: this.dataView,
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
+      if (this._portalListener) {
+        this.updatePortal(item, containerElement, this._preloadComponent, bindableData);
+        return;
+      }
       const view = this._views.find((view) => view.id === item[this.datasetIdPropName]);
       const { root } = createReactComponentDynamically(this._preloadComponent, containerElement, bindableData, view?.root);
       this.upsertViewRefs(item, root, containerElement);
@@ -325,6 +366,9 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
         parentRef: this.rowDetailViewOptions?.parentRef,
       } as ViewModelBindableInputData;
 
+      if (this._portalListener) {
+        return this.updatePortal(item, containerElement, this._component, bindableData);
+      }
       const viewObj = this._views.find((obj) => obj.id === item[this.datasetIdPropName]);
       let root: Root | undefined;
       // React 19 schedules root.render asynchronously. Flush this mount so a nested
@@ -378,6 +422,14 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
 
   protected disposeViewComponent(expandedView: CreatedView): CreatedView | void {
     expandedView.rendered = false;
+    if (expandedView.portalTarget) {
+      this._portalEntries = this._portalEntries.filter((entry) => entry.id !== expandedView.id);
+      this._portalListener?.(this._portalEntries);
+      expandedView.portalTarget.remove();
+      expandedView.portalTarget = undefined;
+      expandedView.container = undefined;
+      return expandedView;
+    }
     if (expandedView?.root) {
       const container = this.gridContainerElement.querySelector(`.${ROW_DETAIL_CONTAINER_PREFIX}${expandedView.id}`);
       expandedView.root.unmount();
@@ -421,7 +473,7 @@ export class ReactRowDetailView extends UniversalSlickRowDetailView {
   ) {
     const viewModel = this._views.find((x) => x.id === args.rowId);
     if (viewModel && !viewModel.rendered) {
-      if (this.rowDetailViewOptions?.keepComponentAlive && viewModel.root) {
+      if (this.rowDetailViewOptions?.keepComponentAlive && (viewModel.root || viewModel.portalTarget)) {
         // The same panel was reattached by the core plugin; its React root is still live.
         viewModel.rendered = true;
       } else {

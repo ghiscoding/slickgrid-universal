@@ -1,15 +1,16 @@
 import { faker } from '@faker-js/faker';
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
+import { ReactRowDetailView, RowDetailPortalHost } from '@slickgrid-universal/react-row-detail-plugin';
 import React, { useEffect, useRef, useState } from 'react';
 import { SlickgridReact, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
-import Example45DetailView, { type Distributor, type OrderData } from './Example45-detail-view.js';
+import Example45DetailView, { RowDetailContext, type Distributor, type OrderData } from './Example45-detail-view.js';
 import { Example45Preload } from './Example45-preload.js';
 
 const FAKE_SERVER_DELAY = 250;
 const NB_ITEMS = 995;
 
 const Example45: React.FC = () => {
+  const [rowDetailPlugin, setRowDetailPlugin] = useState<ReactRowDetailView | null>(null);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<Distributor[]>(getData(NB_ITEMS));
@@ -162,6 +163,10 @@ const Example45: React.FC = () => {
         return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
+        onAsyncEndUpdate: (_event, args) => {
+          const panel = args.grid.getContainerNode().querySelector(`.slick-row-detail-container.row-detail-${args.item.id}`);
+          args.grid.getContainerNode().dataset.detailMountedAtAsyncEnd = String(!!panel?.querySelector('[data-row-detail-context]'));
+        },
         process: (item) => simulateServerAsyncCall(item),
         loadOnce: false,
         useRowClick: false,
@@ -394,13 +399,19 @@ const Example45: React.FC = () => {
 
         <hr />
 
-        <SlickgridReact
-          gridId="grid45"
-          columns={columns}
-          options={gridOptions}
-          dataset={dataset}
-          onReactGridCreated={($event) => (reactGridRef.current = $event.detail)}
-        />
+        <RowDetailContext.Provider value="example45">
+          <SlickgridReact
+            gridId="grid45"
+            columns={columns}
+            options={gridOptions}
+            dataset={dataset}
+            onReactGridCreated={($event) => {
+              reactGridRef.current = $event.detail;
+              setRowDetailPlugin($event.detail.extensionService.getExtensionInstanceByName('rowDetailView') as ReactRowDetailView);
+            }}
+          />
+          {rowDetailPlugin && <RowDetailPortalHost plugin={rowDetailPlugin} />}
+        </RowDetailContext.Provider>
       </div>
     </div>
   );

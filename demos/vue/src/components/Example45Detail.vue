@@ -7,7 +7,7 @@ import {
   type RowDetailViewProps,
   type SlickgridVueInstance,
 } from 'slickgrid-vue';
-import { onBeforeMount, onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
+import { inject, onBeforeMount, onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
 import type Example45 from './Example45.vue';
 
 export interface Distributor {
@@ -28,6 +28,8 @@ export interface OrderData {
   freight: number;
   shipName: string;
 }
+
+const contextValue = inject('example45RowDetailContext', 'missing');
 
 const props = defineProps<RowDetailViewProps<Distributor, typeof Example45>>();
 
@@ -95,7 +97,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 }
 </script>
 <template>
-  <div :class="innerGridClass">
+  <div :class="innerGridClass" :data-row-detail-context="contextValue">
     <h4>{{ model.companyName }} - Order Details (id: {{ model.id }})</h4>
     <div class="container-fluid">
       <slickgrid-vue

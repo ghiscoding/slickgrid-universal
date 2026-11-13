@@ -41,7 +41,13 @@ describe('Example 45 - Row Detail with inner Grid', () => {
 
         cy.get('.slick-row-detail-container').find('h4').should('contain', '- Order Details (id: 1)');
         cy.get('.slick-row-detail-container.row-detail-1').parent().should('have.class', 'grid-canvas');
+        cy.get('#grid45').should('have.attr', 'data-detail-mounted-at-async-end', 'true');
         cy.get('.slick-row-detail-container.row-detail-1').children().should('have.length', 1);
+        cy.get('.slick-row-detail-container.row-detail-1 [data-row-detail-context]').should(
+          'have.attr',
+          'data-row-detail-context',
+          'example45'
+        );
         cy.get('.slick-row-detail-container.row-detail-1').find('[class^="container_"]').should('not.exist');
 
         cy.get('#innergrid-1')

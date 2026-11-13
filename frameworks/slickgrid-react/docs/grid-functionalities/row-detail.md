@@ -96,6 +96,19 @@ There is currently a known problem with Row Detail when loading the Row Detail C
 
 > You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.
 
+### Accessing React context
+
+Render the optional host under the providers needed by your detail components, using the same plugin instance registered with the grid:
+
+```tsx
+import { RowDetailPortalHost } from '@slickgrid-universal/react-row-detail-plugin';
+
+// rowDetailPlugin is the ReactRowDetailView instance registered with the grid
+<RowDetailPortalHost plugin={rowDetailPlugin} />
+```
+
+Mount the host before opening details and keep it mounted for the grid's lifetime. Without it, details use isolated React roots.
+
 ## Usage
 
 ### Required Styles (v11+)

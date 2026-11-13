@@ -89,6 +89,23 @@ changeKeepingComponentAlive() {
 }
 ```
 
+### Accessing Vue providers
+
+Render the optional host under the providers needed by your detail components, using the same plugin instance registered with the grid:
+
+```vue
+<script setup lang="ts">
+import { RowDetailTeleportHost } from '@slickgrid-universal/vue-row-detail-plugin';
+// rowDetailPlugin is the VueRowDetailView instance registered with the grid
+</script>
+
+<template>
+  <RowDetailTeleportHost :plugin="rowDetailPlugin" />
+</template>
+```
+
+Mount the host before opening details and keep it mounted for the grid's lifetime. Without it, details use isolated Vue applications.
+
 ## Usage
 
 ### Required Styles (v11+)

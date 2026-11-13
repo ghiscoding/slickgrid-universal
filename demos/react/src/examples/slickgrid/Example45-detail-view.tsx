@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import {
   SlickgridReact,
   type Column,
@@ -9,6 +9,8 @@ import {
 } from 'slickgrid-react';
 import type Example45 from './Example45.js';
 import './example45-detail-view.scss';
+
+export const RowDetailContext = createContext('missing');
 
 export interface Distributor {
   id: number;
@@ -30,6 +32,7 @@ export interface OrderData {
 }
 
 const Example45DetailView: React.FC<RowDetailViewProps<Distributor, typeof Example45>> = (props) => {
+  const contextValue = useContext(RowDetailContext);
   const [showGrid, setShowGrid] = useState(false);
   const [innerGridOptions, setInnerGridOptions] = useState<GridOption | undefined>(undefined);
   const [innerColDefs, setInnerColDefs] = useState<Column[]>([]);
@@ -99,7 +102,7 @@ const Example45DetailView: React.FC<RowDetailViewProps<Distributor, typeof Examp
   }
 
   return (
-    <div className={`container-fluid ${innerGridClass}`} style={{ marginTop: '10px' }}>
+    <div className={`container-fluid ${innerGridClass}`} style={{ marginTop: '10px' }} data-row-detail-context={contextValue}>
       <h4>
         {props.model.companyName} - Order Details (id: {props.model.id})
       </h4>
