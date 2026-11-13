@@ -2,6 +2,7 @@
 - [Introduction](#introduction)
 - [Sticky Columns](#sticky-columns)
 - [Sticky Rows](#sticky-rows)
+- [Sticky Headers with autoHeight](#sticky-headers-with-autoheight)
 - [Docking Budgets and Overflow](#docking-budgets-and-overflow)
 - [Permanent Pins and Header Menus](#permanent-pins-and-header-menus)
 
@@ -59,6 +60,37 @@ limited by the docking budget rather than a fixed row count.
 Top and bottom sticky stacks share one total budget; the top stack is resolved first and the bottom
 stack uses the remaining space. Permanent rows stay at the outer edge of each band, so a sticky
 bottom row docks above a permanently pinned bottom row.
+
+### Sticky Headers with autoHeight
+With `autoHeight`, the grid has no vertical scrollbar of its own: it grows to show every row and the
+page scrolls instead, which moves the column headers out of view. Pass an object to `autoHeight`
+with `stickyHeader` enabled to keep the header layers at the top of the page while the grid is
+scrolled through:
+
+```ts
+const gridOptions: GridOption = {
+  autoHeight: { stickyHeader: true }, // also enables `autoHeight`
+};
+```
+
+The top-header panel, the pre-header and column headers, and the header row (filters) stay stacked
+in that order. `autoHeight: true` keeps the previous behavior without sticky headers.
+
+> **Note** `autoHeight` accepts a `boolean` or an object, so if your code reads it as a `boolean`, use
+> a truthy check instead, for example `const isAutoHeight = !!gridOptions.autoHeight;`.
+
+The headers stick to the top edge of the nearest scrolling ancestor, which is usually the page. If
+fixed page content, such as a fixed navbar, covers that edge, offset the headers with the
+`--slick-sticky-header-top` CSS variable:
+
+```css
+.slickgrid-container {
+  --slick-sticky-header-top: 56px; /* fixed navbar height */
+}
+```
+
+Use `--slick-sticky-header-z-index` (defaults to `7`) if the headers need a different stacking order
+relative to other page content.
 
 ### Docking Budgets and Overflow
 The optional `docking` option controls how much of the viewport can be occupied by permanent and

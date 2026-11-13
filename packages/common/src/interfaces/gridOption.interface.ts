@@ -6,6 +6,7 @@ import type { ColumnReorderFunction, OperatorType } from '../enums/index.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type {
   AutocompleterOption,
+  AutoHeightOption,
   AutoResizeOption,
   AutoTooltipOption,
   BackendServiceApi,
@@ -161,8 +162,12 @@ export interface GridOption<C extends Column = Column> {
    */
   autosizeColumnsByCellContentOnFirstLoad?: boolean;
 
-  /** Defaults to false, which leads to automatically adjust the size (height) of the grid to display the entire content without any scrolling in the grid. */
-  autoHeight?: boolean;
+  /**
+   * Defaults to false, which leads to automatically adjust the size (height) of the grid to display the entire content without any scrolling in the grid.
+   * You can also provide an object to enable it with extra options, for example `{ stickyHeader: true }` to keep the headers visible while scrolling the page.
+   * Note: when reading this option, use a truthy check (e.g. `!!gridOptions.autoHeight`) since it can be an object.
+   */
+  autoHeight?: boolean | AutoHeightOption;
 
   /**
    * Defaults to false. When enabled, measures rendered column headers and adjusts their shared height to fit multi-line text, HTML, or DOM content.

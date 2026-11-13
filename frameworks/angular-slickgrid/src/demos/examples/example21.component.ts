@@ -94,7 +94,7 @@ export class Example21Component implements OnInit {
       // enableAutoResize: false,
       // autoFitColumnsOnFirstLoad: false,
 
-      autoHeight: true,
+      autoHeight: { stickyHeader: true }, // or `autoHeight: true` without sticky headers
       autoResize: {
         container: '#demo-container',
         rightPadding: 10,
@@ -112,7 +112,7 @@ export class Example21Component implements OnInit {
 
     // mock a dataset
     const mockedDataset = [];
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 100; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor(Math.random() * 29);

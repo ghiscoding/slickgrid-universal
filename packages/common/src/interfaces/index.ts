@@ -1,5 +1,6 @@
 export type * from './aggregator.interface.js';
 export type * from './autocompleterOption.interface.js';
+export type * from './autoHeightOption.interface.js';
 export type * from './autoResizeOption.interface.js';
 export type * from './autoTooltipOption.interface.js';
 export type * from './backendService.interface.js';
