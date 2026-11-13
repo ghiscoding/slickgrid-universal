@@ -252,3 +252,8 @@ section {
     border: 1px solid #adadad;
   }
 }
+
+// the demo navbar is fixed, so offset sticky headers of `autoHeight: { stickyHeader: true }` grids below it
+.slickgrid-container {
+  --slick-sticky-header-top: #{$navbar-height};
+}
