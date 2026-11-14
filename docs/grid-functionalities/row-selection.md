@@ -306,6 +306,19 @@ this.gridOptions = {
 
 You can also `onDragReplaceCells` event to drag and fill cell values to the extended cell selection.
 
+When `FormulaService` is enabled, formula cells use this same drag handle automatically. Formula references are shifted using Excel-style relative-reference rules (`A1` shifts by row and column, while `$A$1`, `A$1`, and `$A1` preserve their absolute parts), then stored in the service's stable column/row reference format. Static values in `allowFormula` columns also support the common fill-series behavior: one value copies, multiple numbers continue linearly, and string/mixed values repeat. The formula editor continues to show the resulting A1 notation.
+
+If the grid also enables formula editing, set `autoEdit: false` so a single click selects the cell and leaves the drag handle available. Double-click the cell to open the formula editor. With `autoEdit: true`, clicking a formula cell immediately opens the editor, which can conflict with starting a drag-fill operation.
+
+```ts
+const gridOptions: GridOption = {
+  autoEdit: false,
+  enableSelection: true,
+  selectionOptions: { selectionType: 'mixed' },
+  enableFormulas: true,
+};
+```
+
 The Excel-style selection drag handle is visible by default. You can control its visibility with `selectionOptions.showDragHandle`:
 
 ```ts
