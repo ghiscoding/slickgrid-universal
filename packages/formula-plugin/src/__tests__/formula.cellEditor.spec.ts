@@ -199,6 +199,56 @@ describe('FormulaCellEditor', () => {
     gridContainer.remove();
   });
 
+  it('should leave unrelated pointer events alone while editing a formula', () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    const gridCell = document.createElement('div');
+    const outside = document.createElement('div');
+    gridContainer.appendChild(gridCell);
+    document.body.append(hostContainer, gridContainer, outside);
+    const gridStub = {
+      focus: vi.fn(),
+      getActiveCell: () => ({ row: 0, cell: 0 }),
+      getCellFromEvent: () => ({ row: 0, cell: 0 }),
+      getColumns: () => [{ id: 'a' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({}),
+      removeCellCssStyles: vi.fn(),
+      setCellCssStyles: vi.fn(),
+    } as any;
+    const editor = new FormulaCellEditor({
+      column: { field: 'total' },
+      container: hostContainer,
+      grid: gridStub,
+      item: { total: '=A1' },
+    } as any);
+    editor.loadValue({ total: '=A1' });
+
+    const rightClick = new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 2 });
+    gridCell.dispatchEvent(rightClick);
+    expect(rightClick.defaultPrevented).toBe(false);
+    expect(editor.serializeValue()).toBe('=A1');
+
+    const move = new MouseEvent('mousemove', { bubbles: true, cancelable: true });
+    gridCell.dispatchEvent(move);
+    expect(move.defaultPrevented).toBe(false);
+
+    const click = new MouseEvent('click', { bubbles: true, cancelable: true });
+    gridCell.dispatchEvent(click);
+    expect(click.defaultPrevented).toBe(false);
+
+    gridCell.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
+    const outsideClick = new MouseEvent('click', { bubbles: true, cancelable: true });
+    outside.dispatchEvent(outsideClick);
+    expect(outsideClick.defaultPrevented).toBe(false);
+
+    editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+    outside.remove();
+  });
+
   it('should highlight range under caret and rewrite that range through grid drag selection', () => {
     const hostContainer = document.createElement('div');
     const gridContainer = document.createElement('div');

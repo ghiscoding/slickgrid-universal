@@ -3,6 +3,10 @@
 Last updated: 2026-11-14 (optional package styling and PR checklist reconciliation)
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Pointer Guard Coverage (2026-11-14)
+- Added editor regressions for right-clicks, mouse movement outside a reference drag, and clicks that must pass through, including clicks outside the grid during suppression.
+- The focused FormulaCellEditor coverage run reports 100% statements and lines.
+
 ## Open Work and Decisions
 
 This checklist tracks outstanding work from the PR description and the audits below. Existing coverage and behavior notes are historical; verify them when working on an item.
