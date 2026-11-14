@@ -1,0 +1,138 @@
+/** Formula plugin styling; load after the SlickGrid theme to reuse its configured Sass variables. */
+@use '@slickgrid-universal/common/dist/styles/sass/variables' as v;
+
+.slick-cell {
+  .formula-editor-input {
+    border: var(--slick-text-editor-border, v.$slick-text-editor-border);
+    border-radius: var(--slick-text-editor-border-radius, v.$slick-text-editor-border-radius);
+    background: var(--slick-text-editor-background, v.$slick-text-editor-background);
+    color: var(--slick-text-editor-color, v.$slick-text-editor-color);
+    padding-bottom: var(--slick-text-editor-padding-bottom, v.$slick-text-editor-padding-bottom);
+    padding-left: var(--slick-text-editor-padding-left, v.$slick-text-editor-padding-left);
+    padding-right: var(--slick-text-editor-padding-right, v.$slick-text-editor-padding-right);
+    padding-top: var(--slick-text-editor-padding-top, v.$slick-text-editor-padding-top);
+    margin-left: var(--slick-text-editor-margin-left, v.$slick-text-editor-margin-left);
+    margin-bottom: var(--slick-text-editor-margin-bottom, v.$slick-text-editor-margin-bottom);
+    margin-right: var(--slick-text-editor-margin-right, v.$slick-text-editor-margin-right);
+    margin-top: var(--slick-text-editor-margin-top, v.$slick-text-editor-margin-top);
+    box-sizing: border-box;
+    outline: 0;
+    height: 100%;
+    max-width: 100%;
+
+    &:not(.input-group-editor) {
+      width: 100%;
+    }
+    &:focus {
+      outline: 0;
+      border-color: var(--slick-text-editor-focus-border-color, v.$slick-text-editor-focus-border-color);
+      box-shadow: var(--slick-text-editor-focus-box-shadow, v.$slick-text-editor-focus-box-shadow);
+    }
+
+    &.right {
+      margin-left: var(--slick-text-editor-right-input-margin-left, v.$slick-text-editor-right-input-margin-left);
+    }
+
+    &[readonly]:not(.date-picker) {
+      background-color: var(--slick-text-editor-readonly-color, v.$slick-text-editor-readonly-color);
+    }
+    &.date-picker {
+      cursor: pointer;
+    }
+  }
+
+  .formula-editor-input {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    line-height: normal;
+    overflow: auto hidden;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+}
+
+// ----------------------------------------------
+// Formula UX Helpers
+// ----------------------------------------------
+
+.excel-col-prefix {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.2rem;
+  // margin-right: 0.35rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--slick-excel-col-prefix-bg-color, #{v.$slick-excel-col-prefix-bg-color});
+  color: var(--slick-excel-col-prefix-color, #{v.$slick-excel-col-prefix-color});
+  border: 1px solid var(--slick-excel-col-prefix-border-color, #{v.$slick-excel-col-prefix-border-color});
+  vertical-align: middle;
+}
+
+.formula-token {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+.formula-token-color-1,
+.formula-token-color-7 {
+  color: #{v.$slick-formula-token-1-color};
+}
+.formula-token-color-2,
+.formula-token-color-8 {
+  color: #{v.$slick-formula-token-2-color};
+}
+.formula-token-color-3,
+.formula-token-color-9 {
+  color: #{v.$slick-formula-token-3-color};
+}
+.formula-token-color-4,
+.formula-token-color-10 {
+  color: #{v.$slick-formula-token-4-color};
+}
+.formula-token-color-5 {
+  color: #{v.$slick-formula-token-5-color};
+}
+.formula-token-color-6 {
+  color: #{v.$slick-formula-token-6-color};
+}
+
+.formula-cell-color-1,
+.formula-cell-color-7 {
+  background-color: #{v.$slick-formula-token-1-background-color} !important;
+  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-1-color} !important;
+}
+.formula-cell-color-2,
+.formula-cell-color-8 {
+  background-color: #{v.$slick-formula-token-2-background-color} !important;
+  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-2-color} !important;
+}
+.formula-cell-color-3,
+.formula-cell-color-9 {
+  background-color: #{v.$slick-formula-token-3-background-color} !important;
+  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-3-color} !important;
+}
+.formula-cell-color-4,
+.formula-cell-color-10 {
+  background-color: #{v.$slick-formula-token-4-background-color} !important;
+  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-4-color} !important;
+}
+.formula-cell-color-5 {
+  background-color: #{v.$slick-formula-token-5-background-color} !important;
+  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-5-color} !important;
+}
+.formula-cell-color-6 {
+  background-color: #{v.$slick-formula-token-6-background-color} !important;
+  box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-6-color} !important;
+}
