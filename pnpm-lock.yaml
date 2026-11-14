@@ -1479,6 +1479,19 @@ importers:
       '@slickgrid-universal/common':
         specifier: workspace:*
         version: link:../common
+    devDependencies:
+      autoprefixer:
+        specifier: ^10.6.1
+        version: 10.6.1(postcss@8.5.31)
+      cssnano:
+        specifier: ^9.9.0
+        version: 9.9.0(postcss@8.5.31)
+      postcss:
+        specifier: 'catalog:'
+        version: 8.5.31
+      sass:
+        specifier: 'catalog:'
+        version: 1.106.1
 
   packages/graphql:
     dependencies:

@@ -4,8 +4,7 @@
 
 .slick-cell {
   input.dual-editor-text,
-  input.editor-text,
-  .formula-editor-input {
+  input.editor-text {
     border: var(--slick-text-editor-border, v.$slick-text-editor-border);
     border-radius: var(--slick-text-editor-border-radius, v.$slick-text-editor-border-radius);
     background: var(--slick-text-editor-background, v.$slick-text-editor-background);
@@ -42,17 +41,6 @@
     &.date-picker {
       cursor: pointer;
     }
-  }
-
-  .formula-editor-input {
-    display: flex;
-    align-items: center;
-    flex: 1 1 auto;
-    min-width: 0;
-    line-height: normal;
-    overflow: auto hidden;
-    white-space: nowrap;
-    scrollbar-width: none;
   }
 
   .slider-editor {

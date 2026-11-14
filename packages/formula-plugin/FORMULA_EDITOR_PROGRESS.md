@@ -1,7 +1,26 @@
 # Formula Editor Plugin Progress
 
-Last updated: 2026-08-21 (formula drag-fill and complete unit-test coverage)
+Last updated: 2026-11-14 (optional package styling and PR checklist reconciliation)
 Branch context: feat/cell-formula-plugin
+
+## Open Work and Decisions
+
+This checklist tracks outstanding work from the PR description and the audits below. Existing coverage and behavior notes are historical; verify them when working on an item.
+
+- [ ] Audit unused dark-theme SASS variables and decide which should be retained or removed.
+- [ ] Support grouping and grouping formatters, including reference mapping when group rows change offsets and grouped Excel export.
+- [ ] Audit Grid State/Preset behavior and decide how formula references and formula data should persist and restore.
+- [ ] Verify and document hidden-column behavior, including editor A1 numbering and Excel export when a referenced column is excluded. Current notes say runtime resolves hidden columns and export requires `includeHidden: true` for the source column.
+- [ ] Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin.
+- [ ] Evaluate using the range drag handle to fill down to the last adjacent non-empty cell; define the click interaction and stopping behavior.
+- [ ] Evaluate reusing the existing autocompleter instead of the formula editor's custom autocomplete.
+- [ ] Review remaining browser coverage gaps in the Cypress Coverage Audit below, especially formula drag-fill reference translation and selection-model fallback.
+- [ ] Revisit formula semantic parity and the historical conflicting scalar-times-range test expectations described in the security review below; verify current behavior before deciding on a change.
+- [ ] Decide whether an optional strict selection-prerequisite mode is needed.
+
+## Latest Update: Optional Package Styling (2026-11-14)
+- Moved Formula Editor, reference color, and Excel column-prefix CSS from the common theme into the formula plugin, preserving shared theme variables.
+- Added standalone Sass and theme-specific CSS builds, a Vanilla demo import, and installation instructions.
 
 ## Latest Update: Multi-Selection Preservation and Highlight Cleanup (2026-08-26)
 - FormulaCellEditor now snapshots existing cell/row selection ranges before applying its temporary active-reference range and restores them when the temporary highlight is cleared or the editor closes.

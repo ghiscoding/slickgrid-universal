@@ -37,6 +37,19 @@ Related:
 ### Install and Register
 Install package and register Formula Service in `externalResources`.
 
+Load the formula plugin styles after the SlickGrid theme. For Sass:
+
+```scss
+@use '@slickgrid-universal/formula-plugin/dist/styles/sass/slick-formula.scss';
+```
+
+Or load the precompiled CSS for your theme (for example, `default`, `bootstrap`, `fluent`, `material`, or `salesforce`):
+
+```css
+@import '@slickgrid-universal/formula-plugin/dist/styles/css/slick-formula-default.css';
+```
+
+
 ```ts
 import { FormulaService } from '@slickgrid-universal/formula-plugin';
 

@@ -13,6 +13,14 @@ Current scope (MVP):
 
 ## Usage
 
+Load the plugin styles after the SlickGrid theme:
+
+```scss
+@use '@slickgrid-universal/formula-plugin/dist/styles/sass/slick-formula.scss';
+```
+
+Alternatively, import the matching precompiled CSS, for example `@slickgrid-universal/formula-plugin/dist/styles/css/slick-formula-default.css`.
+
 ```ts
 import { FormulaService } from '@slickgrid-universal/formula-plugin';
 
