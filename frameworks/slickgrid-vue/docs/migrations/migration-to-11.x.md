@@ -12,6 +12,7 @@ Open the [v11 migration skill](migration-to-11.x/SKILL.md), click GitBook's **Co
 
 - minimum requirements bump
   - i18next v26+
+- [Optional i18next v27 upgrade for React and Vue](#optional-i18next-v27-upgrade-for-react-and-vue)
 - [Resetting external resources](#resetting-external-resources)
 - [Replace the SortableJS dependency with native drag and drop](#replace-the-sortablejs-dependency-with-native-drag-and-drop)
 - [Replace frozen options with `pinning`](#replace-frozen-options-with-pinning)
@@ -39,6 +40,22 @@ Open the [v11 migration skill](migration-to-11.x/SKILL.md), click GitBook's **Co
 > **Note:** If you are upgrading from a version earlier than v10, follow the previous migration guides in order before applying these v11 changes.
 
 v11 also introduces Sticky docking, a separate feature that shares similarities with Pinning. See the [Sticky Docking guide](../grid-functionalities/sticky.md) for its configuration and behavior.
+
+### Optional i18next v27 upgrade for React and Vue
+
+The demos use i18next v26. If you optionally upgrade your application to v27 and get a TypeScript error when passing your i18next instance to Slickgrid, add this declaration to `src/i18next.d.ts` and include it in your TypeScript configuration:
+
+```ts
+import 'i18next';
+
+declare module 'i18next' {
+  interface CustomTypeOptions {
+    strictInterpolationChecks: false;
+  }
+}
+```
+
+This restores v26 interpolation type checks across your application; runtime behavior is unchanged. See the [i18next v27 release notes](https://github.com/i18next/i18next/releases/tag/v27.0.1) for other changes.
 
 ### Resetting external resources
 
@@ -361,8 +378,6 @@ Grid row positioning now strictly uses `transform: translateY(...)` for better p
 
 v11 simplifies the Row Detail DOM by removing redundant containers and CSS classes. Update your custom CSS and DOM selectors accordingly.
 
-> **Note** Row Detail CSS is no longer part of the main CSS stylesheet, see [Import optional package styles separately](#import-optional-package-styles-separately) for more details.
-
 ```diff
 -<div class="slick-row-detail-overlay">
 -  <div class="dynamic-cell-detail cellDetailView_123">
@@ -376,6 +391,8 @@ v11 simplifies the Row Detail DOM by removing redundant containers and CSS class
 +  <!-- Row Detail content -->
  </div>
 ```
+
+> **Note** Row Detail CSS is no longer part of the main CSS stylesheet, see [Import optional package styles separately](#import-optional-package-styles-separately) for more details.
 
 ### Remove Native API Fallbacks
 
@@ -401,7 +418,7 @@ gridOptions = {
 
 #### Tree Formatter - remove unrelated CSS class
 
-The Tree Formatter originally used the `.slick-group-toggle` class, which is unrelated to tree data. In version 10 the dedicated `.slick-tree-toggle` class was introduced in order to transition and eventually use new tree class name only. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling and tests if necessary.
+The Tree Formatter originally used `.slick-group-toggle` CSS class, but was unrelated to tree data. So, in version 10 a new `.slick-tree-toggle` class was introduced in order to eventually transition to the new class which better represent its content. Starting with version 11, the formatter has been simplified by dropping the redundant `.slick-group-toggle` class, leaving only `.slick-tree-toggle` for tree‑specific styling, update your styling and tests if necessary.
 
 ## Code Changes
 
@@ -416,7 +433,7 @@ The `onBeforeAppendCell` event and its `@onBeforeAppendCell` event prop were rem
 
 ### Excluded columns are no longer rendered in column lists
 
-Columns defined with `excludeFromColumnPicker: true` or `excludeFromGridMenu: true` are now omitted from the respective menu's DOM instead of being rendered with the `.hidden` CSS class. **For most users, this change is transparent and requires no action.**
+Columns defined with `excludeFromColumnPicker: true` or `excludeFromGridMenu: true` are now omitted from the respective menu's DOM and no longer rendered with the `.hidden` CSS class like before. **For most users, this change is transparent and requires no action.**
 
 If you use Cypress or Playwright E2E tests, update any selectors or item counts that relied on those hidden entries. Assert that excluded checkboxes do not exist instead of checking that they are hidden. Custom `columnListBuilder` callbacks now receive only eligible columns.
 
@@ -466,7 +483,9 @@ first. This lets package styles use the theme's configured Sass variables:
 
 ### New `iconSet` grid option for the Fluent theme
 
-A new `iconSet` grid option (`'material'` by default, or `'fluent'`) now provides all the default menu icons (Grid Menu, Header Menu, Context Menu, Cell Menu). When using the Fluent theme, you can replace your own Fluent icon mapping with a single option, and any icon that you still define explicitly will keep taking precedence. Sort icons were also changed to up/down arrows rather than sort icons. See [Menu icon sets](../styling/styling.md#menu-icon-sets) for more details.
+A new `iconSet` grid option (`'material'` by default, or `'fluent'`) now provides all the default menu icons (Grid Menu, Header Menu, Context Menu, Cell Menu). When using the Fluent theme, you could replace your own Fluent icon mapping with any icon that you define explicitly which will keep taking precedence. 
+
+For material icon set, the Sort icons were also changed to up/down arrows rather than sort icons. See [Menu icon sets](../styling/styling.md#menu-icon-sets) for more details.
 
 ```diff
 gridOptions = {

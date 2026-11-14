@@ -47,6 +47,8 @@ defineGrid() {
 }
 ```
 
+When `enableAutoResizeColumnsByCellContent` is enabled, DataView row changes also trigger a content recalculation after the initial resize. Rapid changes are combined into one recalculation; filtering and sorting may trigger one as well. Set `resizeByContentOnlyOnFirstLoad` to disable later automatic recalculations.
+
 ### Resize by Content - Grid Options
 There a few grid options that you can change to override the default resize options. We listed the grid options below for the resize and they should all be there but just in case, you should also check the [GridOption](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/gridOption.interface.ts) and [ResizeByContentOption](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/resizeByContentOption.interface.ts) interface.
 

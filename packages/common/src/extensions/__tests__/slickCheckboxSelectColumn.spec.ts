@@ -211,6 +211,14 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(setSelectedRowSpy).not.toHaveBeenCalled();
   });
 
+  it('does not add duplicate header click subscriptions when options change', () => {
+    plugin.init(gridStub);
+    const initialCount = gridStub.onHeaderClick.subscriberCount;
+    plugin.setOptions({ hideInColumnTitleRow: false });
+    plugin.setOptions({ hideInColumnTitleRow: false });
+    expect(gridStub.onHeaderClick.subscriberCount).toBe(initialCount);
+  });
+
   it('should recreate the Select All toggle whenever "onAfterSetColumns" grid event is triggered', () => {
     const updateColHeaderSpy = vi.spyOn(gridStub, 'updateColumnHeader');
     vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);

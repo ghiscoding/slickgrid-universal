@@ -81,7 +81,7 @@ By default a `collection` uses the `label/value` pair without translation or `la
 ```typescript
 this.columnDef.filter.collection.forEach((option: SelectOption) => {
   // translate label
-  const textLabel = (option.labelKey && typeof this.i18n.tr === 'function') ? this.i18n.tr(option.labelKey || ' ') : option.labelKey;
+  const textLabel = (option.labelKey && typeof this.translate.instant === 'function') ? this.translate.instant(option.labelKey) : option.labelKey;
 
   // use the option value & translated label
   options += `<option value="${option.value}">${textLabel}</option>`;
@@ -99,7 +99,7 @@ const valueName = (this.columnDef.filter.customStructure) ? this.columnDef.filte
 
 this.columnDef.filter.collection.forEach((option: SelectOption) => {
   // translate label
-  const textLabel = (option.labelKey && typeof this.i18n.tr === 'function') ? this.i18n.tr(option[labelName] || ' ') : option[labelName];
+  const textLabel = (option.labelKey && typeof this.translate.instant === 'function') ? this.translate.instant(option[labelName]) : option[labelName];
 
   // use the option value & translated label
   options += `<option value="${option[valueName]}">${textLabel}</option>`;

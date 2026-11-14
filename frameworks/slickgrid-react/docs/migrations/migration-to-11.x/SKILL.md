@@ -11,6 +11,10 @@ Upgrade translation dependencies to i18next v26+ and react-i18next v17+ where us
 
 Replace removed `columnSort` callbacks in Column Picker and Grid Menu with `columnListBuilder`. Return the sorted or filtered eligible-column array; this does not change the grid column order.
 
+## Optional i18next v27 upgrade
+
+The demos use i18next v26; v27 is optional. If a v27 instance fails assignment to Slickgrid's `I18Next` type, consult the [migration note](../migration-to-11.x.md#optional-i18next-v27-upgrade-for-react-and-vue). Explain that `strictInterpolationChecks: false` restores v26 type checks application-wide; review runtime changes separately.
+
 ## External resource reset
 
 In Vanilla, Angular, Aurelia, and React, `resetExternalResources()` now disposes registered external resources and clears the supplied resource array. Grid-owned services remain active. Replace reused resources with fresh instances after reset.

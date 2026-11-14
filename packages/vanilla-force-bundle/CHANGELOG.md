@@ -4,6 +4,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
+
+### ⚠ BREAKING CHANGES
+
+* **resizer:** measure resize by content with canvas, drop width ratios ([#2884](https://github.com/ghiscoding/slickgrid-universal/issues/2884))
+* simplify wrappers and scope dataset copying to Salesforce ([#2918](https://github.com/ghiscoding/slickgrid-universal/issues/2918))
+
+### Features
+
+* **resizer:** measure resize by content with canvas, drop width ratios ([#2884](https://github.com/ghiscoding/slickgrid-universal/issues/2884)) ([1394280](https://github.com/ghiscoding/slickgrid-universal/commit/139428040a76511d15a99b5ad77ff33a1dcdeb8a)) - by @ghiscoding
+
+### Bug Fixes
+
+* **binding:** reuse observers and optimize updates and cleanup ([#2887](https://github.com/ghiscoding/slickgrid-universal/issues/2887)) ([9aff42b](https://github.com/ghiscoding/slickgrid-universal/commit/9aff42ba52daaa630ea7c0bedfc59a20dd67eb66)) - by @ghiscoding
+
+### Performance Improvements
+
+* **tree-data:** index tree lookups and share tree dataset sorting ([#2881](https://github.com/ghiscoding/slickgrid-universal/issues/2881)) ([5b2a7f3](https://github.com/ghiscoding/slickgrid-universal/commit/5b2a7f349a955ee390893a6704ab676bae4032e5)) - by @ghiscoding
+
+### Code Refactoring
+
+* simplify wrappers and scope dataset copying to Salesforce ([#2918](https://github.com/ghiscoding/slickgrid-universal/issues/2918)) ([1cc4c66](https://github.com/ghiscoding/slickgrid-universal/commit/1cc4c66d0be9900e0010cf0171cd93997a52276d)) - by @ghiscoding
+
 ## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
 
 ### ⚠ BREAKING CHANGES

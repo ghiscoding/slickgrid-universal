@@ -37,7 +37,7 @@ $slick-editor-grid-cell-border-width-modified: 1px 6px 1px 1px !default;
 
 .grid-canvas {
   // Keep active row above hovered neighbors so active cell focus outline remains visible.
-  .slick-row.active {
+  .slick-row.active:not(.slick-rowspan):not(.slick-row-docked) {
     z-index: var(--slick-row-active-z-index, 6);
   }
 

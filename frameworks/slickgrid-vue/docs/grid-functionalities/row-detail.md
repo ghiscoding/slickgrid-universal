@@ -26,7 +26,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ### Rendering and DOM structure
 
-Row Detail panels are mounted directly in the grid canvas as siblings of the transformed rows. Each panel uses one `.slick-row-detail-container` element for positioning and automatic overflow scrolling. No overlay host or inner wrapper divs are created, and no rendering option is required. Panels occupy their reserved padding rows even when the parent is pinned or sticky, and stay aligned with the visible viewport during horizontal scrolling.
+Row Detail panels are mounted directly in the grid canvas as siblings of the transformed rows. Each panel uses one `.slick-row-detail-container` element for positioning and automatic overflow scrolling. The default rendering path creates no overlay host or inner wrapper divs and requires no rendering option. The optional `RowDetailTeleportHost` creates an inner target `<div>` inside each panel for framework rendering. Panels occupy their reserved padding rows even when the parent is pinned or sticky, and stay aligned with the visible viewport during horizontal scrolling.
 
 In v11, `rowTopOffsetRenderType` and `rowDetailView.renderMode` have been removed. Remove both options from existing configurations; see the [v11 migration guide](../../../../docs/migrations/migration-to-11.x.md#row-positioning-rowtopoffsetrendertype).
 
@@ -88,6 +88,23 @@ changeKeepingComponentAlive() {
   rowDetailInstance.setOptions(options);
 }
 ```
+
+### Accessing Vue providers
+
+Render the optional host under the providers needed by your detail components, using the same plugin instance registered with the grid:
+
+```vue
+<script setup lang="ts">
+import { RowDetailTeleportHost } from '@slickgrid-universal/vue-row-detail-plugin';
+// rowDetailPlugin is the VueRowDetailView instance registered with the grid
+</script>
+
+<template>
+  <RowDetailTeleportHost :plugin="rowDetailPlugin" />
+</template>
+```
+
+Mount the host before opening details and keep it mounted for the grid's lifetime. Without it, details use isolated Vue applications. If the host is mounted or unmounted while details are open, those details are remounted with the new renderer and lose their component state.
 
 ## Usage
 

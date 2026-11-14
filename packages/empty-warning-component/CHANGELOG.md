@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
+
+### Bug Fixes
+
+* **common:** hide empty warning when grid is detached from DOM ([#2874](https://github.com/ghiscoding/slickgrid-universal/issues/2874)) ([6fa98aa](https://github.com/ghiscoding/slickgrid-universal/commit/6fa98aa3e4cc1882bcec9f1ad5519054784b8a50)) - by @ghiscoding
+
 ## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
 
 ### ⚠ BREAKING CHANGES

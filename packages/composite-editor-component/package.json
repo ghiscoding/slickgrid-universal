@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/composite-editor-component",
-  "version": "11.0.0-beta.0",
+  "version": "11.0.0",
   "description": "Slick Composite Editor Component - Vanilla Implementation of a Composite Editor Modal Window Component",
   "type": "module",
   "main": "./dist/index.js",
@@ -47,8 +47,8 @@
     "@slickgrid-universal/utils": "workspace:*"
   },
   "devDependencies": {
-    "autoprefixer": "^10.6.1",
-    "cssnano": "^9.9.0",
+    "autoprefixer": "catalog:",
+    "cssnano": "catalog:",
     "postcss": "catalog:",
     "sass": "catalog:"
   }

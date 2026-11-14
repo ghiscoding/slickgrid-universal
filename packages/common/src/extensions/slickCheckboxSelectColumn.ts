@@ -46,6 +46,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   protected _checkboxColumnCellIndex: number | null = null;
   protected _dataView!: SlickDataView;
   protected _eventHandler: SlickEventHandler;
+  protected readonly _headerClickHandler: (e: SlickEventData, args: OnHeaderClickEventArgs) => void = this.handleHeaderClick.bind(this);
   protected _headerRowNode?: HTMLElement;
   protected _grid!: SlickGrid;
   protected _isSelectAllChecked = false;
@@ -116,7 +117,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
     if (!this._addonOptions.hideInColumnTitleRow) {
       this._eventHandler
-        .subscribe(this._grid.onHeaderClick, this.handleHeaderClick.bind(this))
+        .subscribe(this._grid.onHeaderClick, this._headerClickHandler)
         .subscribe(this._grid.onHeaderKeyDown, (_e, args) => this.handleHeaderKeyDown(args.event, args));
     }
 
@@ -188,7 +189,8 @@ export class SlickCheckboxSelectColumn<T = any> {
     } else {
       if (!this._addonOptions.hideInColumnTitleRow) {
         this.renderSelectAllCheckbox(this._isSelectAllChecked, this._isPartialSelectAllChecked);
-        this._eventHandler.subscribe(this._grid.onHeaderClick, this.handleHeaderClick.bind(this));
+        this._eventHandler.unsubscribe(this._grid.onHeaderClick, this._headerClickHandler);
+        this._eventHandler.subscribe(this._grid.onHeaderClick, this._headerClickHandler);
       } else {
         this.hideSelectAllFromColumnHeaderTitleRow();
         if (this._addonOptions.name) {

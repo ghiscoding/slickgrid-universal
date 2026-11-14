@@ -427,6 +427,39 @@ describe('SlickGrid core file', () => {
     expect(grid.getCellFromEvent({ target: spanCell } as unknown as Event)).toEqual({ row: 0, cell: 1 });
   });
 
+  it('retains an offscreen span host and renders its newly visible columns', () => {
+    const dataView = new SlickDataView({
+      globalItemMetadataProvider: { getRowMetadata: (_item, row) => (row === 0 ? { columns: { 0: { rowspan: 3 }, 1: { rowspan: 3 } } } : undefined) },
+    });
+    dataView.setItems([{ id: 0 }, { id: 1 }, { id: 2 }]);
+    grid = new SlickGrid<any, Column>(
+      container,
+      dataView,
+      [
+        { id: 'id', field: 'id', width: 100 },
+        { id: 'other', field: 'id', width: 100 },
+      ],
+      { ...defaultOptions, enableCellRowSpan: true }
+    );
+    grid.init();
+    const internalGrid = grid as any;
+    const range = { top: 1, bottom: 1, leftPx: 0, rightPx: 50 };
+    internalGrid.removeRowFromCache(0);
+    internalGrid.removeRowFromCache(1);
+    internalGrid.renderRows(range);
+    const host = container.querySelector('.slick-row[data-row="0"]');
+    expect(host?.querySelector('.slick-cell.rowspan')).toBeTruthy();
+    expect(host?.querySelector('.slick-cell.l1')).toBeNull();
+
+    internalGrid.cleanUpAndRenderCells({ ...range, leftPx: 100, rightPx: 200 });
+    expect(host?.querySelector('.slick-cell.l1.rowspan')).toBeTruthy();
+
+    internalGrid.removeRowFromCache(1);
+    internalGrid.scrollLeft = internalGrid.lastRenderedScrollLeft + 10;
+    internalGrid.renderRows(range);
+    expect(container.querySelector('.slick-row[data-row="0"]')).toBe(host);
+  });
+
   it.each([
     ['gridMenu', ['export-text-delimited', 'toggle-dark-mode']],
     ['contextMenu', ['copy', 'export-text-delimited']],
@@ -2575,6 +2608,26 @@ describe('SlickGrid core file', () => {
       expect(rowSelectSpy).toHaveBeenCalled();
     });
 
+    it('unsubscribes from the previous selection model without removing other subscribers', () => {
+      const first = new SlickCellSelectionModelMock();
+      const second = new SlickCellSelectionModelMock();
+      const otherHandler = vi.fn();
+      first.onSelectedRangesChanged.subscribe(otherHandler);
+      grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
+
+      grid.setSelectionModel(first as unknown as SelectionModel);
+      expect(first.onSelectedRangesChanged.subscriberCount).toBe(2);
+      grid.setSelectionModel(second as unknown as SelectionModel);
+      expect(first.onSelectedRangesChanged.subscriberCount).toBe(1);
+      expect(second.onSelectedRangesChanged.subscriberCount).toBe(1);
+
+      grid.setSelectionModel(first as unknown as SelectionModel);
+      expect(first.onSelectedRangesChanged.subscriberCount).toBe(2);
+      expect(second.onSelectedRangesChanged.subscriberCount).toBe(0);
+      grid.setSelectionModel(undefined as any);
+      expect(first.onSelectedRangesChanged.subscriberCount).toBe(1);
+    });
+
     it('should change border color for darkMode', () => {
       const cellSelectionModel = new SlickHybridSelectionModel({ selectionType: 'cell' });
 
@@ -2984,8 +3037,8 @@ describe('SlickGrid core file', () => {
 
         expect(remapRowspanSpy).toHaveBeenCalled();
         expect(slickCell0).toBeTruthy();
-        expect(slickCells.length).toBe(48);
-        expect(getDataSpy).toHaveBeenCalledTimes(32);
+        expect(slickCells.length).toBe(54);
+        expect(getDataSpy).toHaveBeenCalledTimes(31);
       });
 
       describe('getViewportHeight() method', () => {
@@ -3394,6 +3447,7 @@ describe('SlickGrid core file', () => {
         const updateRowSpy = vi.spyOn(grid, 'updateRow');
         const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
         vi.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
+        vi.spyOn(editor!, 'isValueChanged').mockReturnValue(true);
         expect(activeCellNode).toBeTruthy();
 
         const result = grid.getEditController()?.commitCurrentEdit();
@@ -3430,6 +3484,7 @@ describe('SlickGrid core file', () => {
         const updateRowSpy = vi.spyOn(grid, 'updateRow');
         const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
         vi.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
+        vi.spyOn(editor!, 'isValueChanged').mockReturnValue(true);
         expect(activeCellNode).toBeTruthy();
 
         const result = grid.getEditController()?.commitCurrentEdit();
@@ -3538,6 +3593,7 @@ describe('SlickGrid core file', () => {
         const updateRowSpy = vi.spyOn(grid, 'updateRow');
         const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
         vi.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
+        vi.spyOn(editor!, 'isValueChanged').mockReturnValue(true);
 
         const result = grid.getEditController()?.commitCurrentEdit();
 
@@ -3574,6 +3630,7 @@ describe('SlickGrid core file', () => {
         vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(0); // trick grid to think it's a new item
         const onAddNewRowSpy = vi.spyOn(grid.onAddNewRow, 'notify');
         vi.spyOn(editor!, 'serializeValue').mockReturnValue(newValue);
+        vi.spyOn(editor!, 'isValueChanged').mockReturnValue(true);
 
         const result = grid.getEditController()?.commitCurrentEdit();
 
@@ -3607,6 +3664,7 @@ describe('SlickGrid core file', () => {
         vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(0); // trick grid to think it's a new item
         const onAddNewRowSpy = vi.spyOn(grid.onAddNewRow, 'notify');
         vi.spyOn(editor!, 'serializeValue').mockReturnValue(newValue);
+        vi.spyOn(editor!, 'isValueChanged').mockReturnValue(true);
 
         const result = grid.getEditController()?.commitCurrentEdit();
         const newHeight = grid.getViewportHeight();
@@ -3630,6 +3688,7 @@ describe('SlickGrid core file', () => {
         const editor = grid.getCellEditor();
         const onValidationErrorSpy = vi.spyOn(grid.onValidationError, 'notify');
         vi.spyOn(editor!, 'validate').mockReturnValue(invalidResult);
+        vi.spyOn(editor!, 'isValueChanged').mockReturnValue(true);
         const activeCellNode = container.querySelector('.slick-cell.editable.l1.r1');
 
         const result = grid.getEditController()?.commitCurrentEdit();

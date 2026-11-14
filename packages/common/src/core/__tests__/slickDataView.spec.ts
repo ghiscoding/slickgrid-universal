@@ -2283,6 +2283,25 @@ describe('SlickDatView core file', () => {
       expect(unsubscribeCellCssStyleSpy).toHaveBeenCalled();
       expect(unsubscribeRowOrCountSpy).toHaveBeenCalledWith(expect.any(Function));
     });
+
+    it('does not restore removed styles or remove other grid subscribers', () => {
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, [{ id: 'age', field: 'age', name: 'Age' }], {
+        enableCellNavigation: true,
+        devMode: { ownerNodeIndex: 0 },
+      } as GridOption);
+      const other = vi.fn();
+      dv.setItems(items);
+      dv.syncGridCellCssStyles(grid, 'highlight');
+      grid.onCellCssStylesChanged.subscribe(other);
+      grid.setCellCssStyles('highlight', { 0: { age: 'highlight' } });
+      grid.removeCellCssStyles('highlight');
+      dv.refresh();
+      expect(grid.getCellCssStyles('highlight')).toBeUndefined();
+      expect(other).toHaveBeenCalledTimes(2);
+      dv.destroy();
+      expect(grid.onCellCssStylesChanged.subscriberCount).toBe(1);
+    });
   });
 
   // ──────────────────────────────────────────────────────────────────────────────

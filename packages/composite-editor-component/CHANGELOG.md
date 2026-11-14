@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2910](https://github.com/ghiscoding/slickgrid-universal/issues/2910)) ([5fadfe0](https://github.com/ghiscoding/slickgrid-universal/commit/5fadfe0f8791b76b5c298566f22d7f1bee1f2938)) - by @renovate-bot
+
+### Performance Improvements
+
+* **utils:** simplify formatter utilities & speed up empty object checks in export paths ([#2891](https://github.com/ghiscoding/slickgrid-universal/issues/2891)) ([0e9f579](https://github.com/ghiscoding/slickgrid-universal/commit/0e9f579864b62693d84f2783e5b04b10f54e2a72)) - by @ghiscoding
+
 ## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
 
 ### ⚠ BREAKING CHANGES

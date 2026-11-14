@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/common",
-  "version": "11.0.0-beta.0",
+  "version": "11.0.0",
   "description": "SlickGrid-Universal Common Code",
   "type": "module",
   "main": "./dist/index.js",
@@ -73,8 +73,8 @@
     "vanilla-calendar-pro": "^3.4.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.6.1",
-    "cssnano": "^9.9.0",
+    "autoprefixer": "catalog:",
+    "cssnano": "catalog:",
     "native-copyfiles": "catalog:",
     "npm-run-all2": "catalog:",
     "postcss": "catalog:",

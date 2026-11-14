@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
+
+### Bug Fixes
+
+* **binding:** reuse observers and optimize updates and cleanup ([#2887](https://github.com/ghiscoding/slickgrid-universal/issues/2887)) ([9aff42b](https://github.com/ghiscoding/slickgrid-universal/commit/9aff42ba52daaa630ea7c0bedfc59a20dd67eb66)) - by @ghiscoding
+
 ## [10.11.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.1...v10.11.2) (2026-10-01)
 
 **Note:** Version bump only for package @slickgrid-universal/binding

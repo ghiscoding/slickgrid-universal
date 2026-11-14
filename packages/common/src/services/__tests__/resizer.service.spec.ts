@@ -34,9 +34,12 @@ const mockDataView = {
   init: vi.fn(),
   destroy: vi.fn(),
   getItemMetadata: vi.fn(),
+  getItem: vi.fn(),
+  getGrouping: vi.fn(),
   getItemCount: vi.fn(),
   getItems: vi.fn(),
   getLength: vi.fn(),
+  onRowsChanged: new SlickEvent(),
 } as unknown as SlickDataView;
 
 const gridStub = {
@@ -491,6 +494,36 @@ describe('Resizer Service', () => {
       expect(serviceCalculateSpy).toHaveReturnedWith({ height: newHeight - inputBottomPadding, width: fixedWidth });
     });
 
+    it.each([
+      { boxSizing: 'content-box', border: '0px', padding: '0px', expectedHeight: 480 },
+      { boxSizing: 'content-box', border: '3px', padding: '4px', expectedHeight: 466 },
+      { boxSizing: 'border-box', border: '3px', padding: '4px', expectedHeight: 480 },
+    ])('accounts for the computed grid box with $boxSizing and border $border', ({ boxSizing, border, padding, expectedHeight }) => {
+      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 500 });
+      service.init(gridStub, divContainer);
+      const gridElm = gridStub.getContainerNode();
+      Object.assign(gridElm.style, { boxSizing, border: `${border} solid black`, padding });
+
+      expect(service.calculateGridNewDimensions({ ...mockGridOptions, autoResize: { bottomPadding: 20 } })?.height).toBe(expectedHeight);
+    });
+
+    it('keeps the fixed height with content-box borders', () => {
+      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 300 });
+      mockGridOptions.gridHeight = 230;
+      service.init(gridStub, divContainer);
+      const gridElm = gridStub.getContainerNode();
+      Object.assign(gridElm.style, { boxSizing: 'content-box', border: '10px solid black' });
+      expect(service.calculateGridNewDimensions({ ...mockGridOptions, autoResize: { minHeight: 280 } })?.height).toBe(230);
+    });
+
+    it('keeps the configured minimum height with content-box borders', () => {
+      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 300 });
+      service.init(gridStub, divContainer);
+      const gridElm = gridStub.getContainerNode();
+      Object.assign(gridElm.style, { boxSizing: 'content-box', border: '10px solid black' });
+      expect(service.calculateGridNewDimensions({ ...mockGridOptions, autoResize: { minHeight: 280 } })?.height).toBe(280);
+    });
+
     it('should use new dimensions when passed as argument to the "resizeGrid" method', () =>
       new Promise((done: any) => {
         const newHeight = 422;
@@ -846,6 +879,125 @@ describe('Resizer Service', () => {
         expect(mockColDefs[1].width).toBe(90); // longest text (12 * 7) + cellPadding(6) = 90
       });
 
+      it('should recalculate refreshed values only when requested and respect original column widths', () => {
+        const columns: Column[] = [
+          { id: 'price', field: 'price' },
+          { id: 'total', field: 'total', originalWidth: 40 },
+        ];
+        const items = [{ price: '1', total: '2' }];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue(items);
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+        expect(columns.map((column) => column.width)).toEqual([13, 40]);
+
+        items[0] = { price: '123456', total: '12345678' };
+        service.resizeColumnsByCellContent();
+        expect(columns.map((column) => column.width)).toEqual([13, 40]);
+        service.resizeColumnsByCellContent(true);
+        expect(columns.map((column) => column.width)).toEqual([48, 40]);
+
+        columns[1].resizeAlwaysRecalculateWidth = true;
+        service.resizeColumnsByCellContent(true);
+        expect(columns.map((column) => column.width)).toEqual([48, 62]);
+      });
+
+      it('should measure newly loaded values on every double-click without automatic content resizing', () => {
+        mockGridOptions.enableColumnResizeOnDoubleClick = true;
+        mockGridOptions.enableAutoResizeColumnsByCellContent = false;
+        const columns: Column[] = [{ id: 'price', field: 'price' }];
+        const items = [{ price: '' }];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue(items);
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        items[0].price = '123456';
+        gridStub.onColumnsResizeDblClick.notify({ triggeredByColumn: 'price', grid: gridStub });
+        expect(columns[0].width).toBe(48);
+
+        items[0].price = '12345678';
+        gridStub.onColumnsResizeDblClick.notify({ triggeredByColumn: 'price', grid: gridStub });
+        expect(columns[0].width).toBe(62);
+      });
+
+      it('should coalesce DataView updates into a content resize and cancel pending work on disposal', () => {
+        vi.useFakeTimers();
+        try {
+          mockGridOptions.enableAutoResize = false;
+          mockGridOptions.enableAutoResizeColumnsByCellContent = true;
+          const columns: Column[] = [{ id: 'price', field: 'price' }];
+          const items = [{ price: '1' }];
+          vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+          vi.spyOn(mockDataView, 'getItems').mockReturnValue(items);
+          service.init(gridStub, divContainer);
+          const resizeSpy = vi.spyOn(service, 'resizeColumnsByCellContent');
+          mockDataView.onRowsChanged.notify({} as any);
+          vi.runAllTimers();
+          expect(resizeSpy).not.toHaveBeenCalled();
+          service.resizeColumnsByCellContent(true);
+          resizeSpy.mockClear();
+
+          items[0].price = '123456';
+          mockDataView.onRowsChanged.notify({} as any);
+          mockDataView.onRowsChanged.notify({} as any);
+          vi.runAllTimers();
+          expect(resizeSpy).toHaveBeenCalledTimes(1);
+          expect(columns[0].width).toBe(48);
+
+          mockGridOptions.enableAutoResizeColumnsByCellContent = false;
+          mockDataView.onRowsChanged.notify({} as any);
+          vi.runAllTimers();
+          expect(resizeSpy).toHaveBeenCalledTimes(1);
+          mockGridOptions.enableAutoResizeColumnsByCellContent = true;
+          mockGridOptions.resizeByContentOnlyOnFirstLoad = true;
+          mockDataView.onRowsChanged.notify({} as any);
+          vi.runAllTimers();
+          expect(resizeSpy).toHaveBeenCalledTimes(1);
+
+          mockGridOptions.resizeByContentOnlyOnFirstLoad = false;
+          mockDataView.onRowsChanged.notify({} as any);
+          service.dispose();
+          vi.runAllTimers();
+          expect(resizeSpy).toHaveBeenCalledTimes(1);
+          resizeSpy.mockRestore();
+        } finally {
+          vi.useRealTimers();
+        }
+      });
+
+      it('should include formatted group totals but exclude group labels for full and single-column resizing', () => {
+        const columns: Column[] = [
+          { id: 'name', field: 'name' },
+          { id: 'amount', field: 'amount' },
+        ];
+        const rows = [
+          { __group: true, title: 'A very long group label' },
+          { name: 'A', amount: 1 },
+          { __groupTotals: true },
+          { __group: true, title: 'Another long group label' },
+        ];
+        const formatter = vi.fn((_row, cell) => (cell === 1 ? '<b>Total: 12345</b>' : ''));
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+        vi.spyOn(mockDataView, 'getItems').mockReturnValue([rows[1]]);
+        vi.spyOn(mockDataView, 'getGrouping').mockReturnValue([{}] as any);
+        vi.spyOn(mockDataView, 'getLength').mockReturnValue(rows.length);
+        vi.spyOn(mockDataView, 'getItem').mockImplementation((index) => rows[index] as any);
+        vi.spyOn(mockDataView, 'getItemMetadata').mockReturnValue({ formatter });
+
+        mockGridOptions.enableColumnResizeOnDoubleClick = true;
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+        expect(columns[0].width).toBe(13);
+        expect(columns[1].width).toBe(90);
+        expect(formatter.mock.calls.map(([row]) => row)).toEqual([2, 2]);
+
+        columns[1].width = 1;
+        eventPubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: 'amount' });
+        expect(columns[1].width).toBe(90);
+        vi.mocked(mockDataView.getGrouping).mockReset();
+      });
+
       it.each([false, true])('should find wider shorter and equal-length strings regardless of row order (%s)', (reverse) => {
         mockGridOptions.resizeByContentOptions!.sampleSize = 100;
         const texts = Array.from({ length: 10 }, (_, i) => 'i'.repeat(i) + 'l'.repeat(12 - i));
@@ -888,14 +1040,18 @@ describe('Resizer Service', () => {
         mockGridOptions.resizeByContentOptions!.includeHeaderWidth = true;
         const header = document.createElement('div');
         header.innerHTML = '<span class="slick-column-name" style="text-transform: uppercase">Title</span>';
+        divContainer.appendChild(header);
         vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(header);
         const measureText = vi.fn().mockReturnValue({ width: 50 });
         vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({ measureText } as unknown as CanvasRenderingContext2D);
 
-        service.init(gridStub, divContainer);
-        service.resizeColumnsByCellContent(true);
-
-        expect(measureText).toHaveBeenCalledWith('TITLE');
+        try {
+          service.init(gridStub, divContainer);
+          service.resizeColumnsByCellContent(true);
+          expect(measureText).toHaveBeenCalledWith('TITLE');
+        } finally {
+          header.remove();
+        }
       });
 
       it('should use each column font and padding, including an unrendered column cssClass', () => {
@@ -993,14 +1149,20 @@ describe('Resizer Service', () => {
           '<span class="slick-column-name">Very Long Gender Title</span><span class="slick-sort-indicator" style="width: 12px"></span><span class="slick-header-menu-button" style="width: 14px"></span>';
         const headerNoNameElm = document.createElement('div');
         headerNoNameElm.innerHTML = '<span class="slick-sort-indicator"></span>';
+        divContainer.append(headerElm, headerNoNameElm);
         vi.spyOn(gridStub, 'getHeaderColumn').mockImplementation((id) => (id === 'gender' ? headerElm : id === 'age' ? headerNoNameElm : (undefined as any)));
 
-        service.init(gridStub, divContainer);
-        service.resizeColumnsByCellContent(true);
+        try {
+          service.init(gridStub, divContainer);
+          service.resizeColumnsByCellContent(true);
 
-        expect(mockColDefs[1].width).toBe(62); // no header element, content width is kept
-        expect(mockColDefs[3].width).toBe(190); // header "Very Long Gender Title" (22 * 7) + padding(5 + 5) + icons(12 + 14) = 190
-        expect(mockColDefs[4].width).toBe(29); // header without name is narrower than content (3 * 7) + cellPadding(6) + extraPadding(2) = 29
+          expect(mockColDefs[1].width).toBe(62); // no header element, content width is kept
+          expect(mockColDefs[3].width).toBe(190); // header "Very Long Gender Title" (22 * 7) + padding(5 + 5) + icons(12 + 14) = 190
+          expect(mockColDefs[4].width).toBe(29); // header without name is narrower than content (3 * 7) + cellPadding(6) + extraPadding(2) = 29
+        } finally {
+          headerElm.remove();
+          headerNoNameElm.remove();
+        }
       });
 
       it('should call "resizeColumnsByCellContent" when "onFullResizeByContentRequested" pubsub event is triggered', () => {

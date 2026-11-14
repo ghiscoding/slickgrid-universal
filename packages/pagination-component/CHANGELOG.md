@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v11.0.0-beta.0...v11.0.0) (2026-11-10)
+
+### Bug Fixes
+
+* **pagination:** correct visibility toggle and simplify internals ([#2916](https://github.com/ghiscoding/slickgrid-universal/issues/2916)) ([cc2a255](https://github.com/ghiscoding/slickgrid-universal/commit/cc2a2557b6dd02ba08d5ab5e2148f7b58d3a6eb4)) - by @ghiscoding
+
 ## [11.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.11.3...v11.0.0-beta.0) (2026-10-27)
 
 **Note:** Version bump only for package @slickgrid-universal/pagination-component

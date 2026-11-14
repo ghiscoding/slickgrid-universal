@@ -210,10 +210,15 @@ export class SlickEvent<ArgType = any> {
 
   /**
    * Removes an event handler added with <code>subscribe(fn)</code>.
+   * Omit the argument to remove all handlers from an event owned by the caller.
    * @method unsubscribe
    * @param {Function} [fn] - Event handler to be removed.
    */
   unsubscribe(fn?: Handler<ArgType>): void {
+    if (arguments.length === 0) {
+      this._handlers = [];
+      return;
+    }
     for (let i = this._handlers.length - 1; i >= 0; i--) {
       if (this._handlers[i] === fn) {
         this._handlers.splice(i, 1);
@@ -242,9 +247,12 @@ export class SlickEvent<ArgType = any> {
     }
     scope = scope || this;
 
-    for (let i = 0; i < this._handlers.length && !(sed.isPropagationStopped() || sed.isImmediatePropagationStopped()); i++) {
-      const returnValue = this._handlers[i].call(scope, sed, args);
-      sed.addReturnValue(returnValue);
+    const handlers = this._handlers.slice();
+    for (let i = 0; i < handlers.length && !(sed.isPropagationStopped() || sed.isImmediatePropagationStopped()); i++) {
+      if (this._handlers.includes(handlers[i])) {
+        const returnValue = handlers[i].call(scope, sed, args);
+        sed.addReturnValue(returnValue);
+      }
     }
 
     // user can optionally add a global PubSub Service which makes it easy to publish/subscribe to events
