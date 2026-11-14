@@ -28,8 +28,10 @@ catalog:
   '@vitejs/plugin-vue': ^6.0.10
   '@vitest/coverage-v8': ^5.1.0
   '@vitest/ui': ^5.1.0
+  autoprefixer: ^10.6.2
   bootstrap: ^5.3.8
   cross-env: ^10.1.0
+  cssnano: ^9.9.0
   cypress: ^16.2.1
   cypress-real-events: ^1.15.1
   dequal: ^2.0.3
