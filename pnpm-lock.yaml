@@ -48,12 +48,18 @@ catalogs:
     '@vitest/ui':
       specifier: ^5.1.0
       version: 5.1.0
+    autoprefixer:
+      specifier: ^10.6.2
+      version: 10.6.2
     bootstrap:
       specifier: ^5.3.8
       version: 5.3.8
     cross-env:
       specifier: ^10.1.0
       version: 10.1.0
+    cssnano:
+      specifier: ^9.9.0
+      version: 9.9.0
     cypress:
       specifier: ^16.2.1
       version: 16.2.1
@@ -1353,10 +1359,10 @@ importers:
         version: 3.4.0
     devDependencies:
       autoprefixer:
-        specifier: ^10.6.2
+        specifier: 'catalog:'
         version: 10.6.2(postcss@8.5.32)
       cssnano:
-        specifier: ^9.9.0
+        specifier: 'catalog:'
         version: 9.9.0(postcss@8.5.32)
       native-copyfiles:
         specifier: 'catalog:'
@@ -1387,10 +1393,10 @@ importers:
         version: link:../utils
     devDependencies:
       autoprefixer:
-        specifier: ^10.6.2
+        specifier: 'catalog:'
         version: 10.6.2(postcss@8.5.32)
       cssnano:
-        specifier: ^9.9.0
+        specifier: 'catalog:'
         version: 9.9.0(postcss@8.5.32)
       postcss:
         specifier: 'catalog:'
@@ -1428,10 +1434,10 @@ importers:
         version: link:../utils
     devDependencies:
       autoprefixer:
-        specifier: ^10.6.2
+        specifier: 'catalog:'
         version: 10.6.2(postcss@8.5.32)
       cssnano:
-        specifier: ^9.9.0
+        specifier: 'catalog:'
         version: 9.9.0(postcss@8.5.32)
       postcss:
         specifier: 'catalog:'
@@ -1528,10 +1534,10 @@ importers:
         specifier: workspace:*
         version: link:../event-pub-sub
       autoprefixer:
-        specifier: ^10.6.2
+        specifier: 'catalog:'
         version: 10.6.2(postcss@8.5.32)
       cssnano:
-        specifier: ^9.9.0
+        specifier: 'catalog:'
         version: 9.9.0(postcss@8.5.32)
       postcss:
         specifier: 'catalog:'
