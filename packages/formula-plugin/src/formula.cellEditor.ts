@@ -721,7 +721,11 @@ export class FormulaCellEditor implements Editor {
       return; // No colors to apply
     }
 
-    const hash = buildFormulaReferenceCssHash(this._formulaRefColorCache.values(), this.args.grid.getColumns?.() || []);
+    const hash = buildFormulaReferenceCssHash(
+      this._formulaRefColorCache.values(),
+      this.args.grid.getColumns?.() || [],
+      this.args.grid.getDataLength?.()
+    );
 
     if (Object.keys(hash).length > 0) {
       this.args.grid.setCellCssStyles?.(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY, hash as any);

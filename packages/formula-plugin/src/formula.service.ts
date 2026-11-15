@@ -677,6 +677,15 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       )
     );
 
+    let hasMissingReference = false;
+    this.transformFormulaOutsideQuotedStrings(normalizedSyntax, (segment) => {
+      hasMissingReference ||= segment.includes(FORMULA_ERROR.REF);
+      return segment;
+    });
+    if (hasMissingReference) {
+      return FORMULA_ERROR.REF;
+    }
+
     let firstErrorCode: FormulaErrorCode | undefined;
 
     const expressionWithRanges = normalizedSyntax.replace(
@@ -1288,7 +1297,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const columnIdx = columnIds.indexOf(String(columnId));
         const rowIdx = rowIds.indexOf(String(rowId));
         if (columnIdx < 0 || rowIdx < 0) {
-          return '';
+          return FORMULA_ERROR.REF;
         }
 
         const excelColName = getExcelColumnNameByIndex(columnIdx + 1);
@@ -1303,7 +1312,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const columnIdx = columnIds.indexOf(String(columnId));
         const rowIdx = Number(rowNumber);
         if (columnIdx < 0 || Number.isNaN(rowIdx)) {
-          return '';
+          return FORMULA_ERROR.REF;
         }
 
         const excelColName = getExcelColumnNameByIndex(columnIdx + 1);

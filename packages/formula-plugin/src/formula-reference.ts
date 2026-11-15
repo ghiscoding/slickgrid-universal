@@ -181,6 +181,8 @@ export function buildFormulaReferenceCssHash(
   const hash: FormulaReferenceCssHash = Object.create(null);
 
   for (const reference of references) {
+    const first = reference.cells[0];
+    const last = reference.cells[reference.cells.length - 1];
     for (const cell of reference.cells) {
       const columnId = columns[cell.cell]?.id;
       if (columnId === undefined || columnId === null || cell.row < 0 || (rowCount !== undefined && cell.row >= rowCount)) {
@@ -188,7 +190,25 @@ export function buildFormulaReferenceCssHash(
       }
 
       const rowClasses = (hash[cell.row] ??= Object.create(null));
-      rowClasses[columnId] = reference.colorClass;
+      let classes = reference.colorClass;
+      if (reference.cells.length > 1) {
+        const bottom = rowCount === undefined ? last.row : Math.min(last.row, rowCount - 1);
+        const right = Math.min(last.cell, columns.length - 1);
+        classes += ' formula-ref-range';
+        if (cell.row === first.row) {
+          classes += ' formula-ref-top';
+        }
+        if (cell.row === bottom) {
+          classes += ' formula-ref-bottom';
+        }
+        if (cell.cell === first.cell) {
+          classes += ' formula-ref-left';
+        }
+        if (cell.cell === right) {
+          classes += ' formula-ref-right';
+        }
+      }
+      rowClasses[columnId] = classes;
     }
   }
 

@@ -107,7 +107,7 @@ describe('FormulaService', () => {
     expect((flagService as any).convertA1ReferencesToStableRefs('=A0:B1', ['value'], ['r'])).toBe('=A0:B1');
     expect((flagService as any).convertA1ReferencesToStableRefs('=A1:B1', ['value'], ['r'])).toBe('=A1:B1');
     expect((flagService as any).replaceRefFunctionsWithA1Refs('', ['value'], ['r'])).toBe('');
-    expect((flagService as any).replaceRefFunctionsWithA1Refs('=REF(COLUMN("value"),ROW("missing"))', ['value'], ['r'])).toBe('=');
+    expect((flagService as any).replaceRefFunctionsWithA1Refs('=REF(COLUMN("value"),ROW("missing"))', ['value'], ['r'])).toBe('=#REF!');
 
     (flagService as any)._dataView = { getItems: () => [{ id: 'r', value: '' }] };
     flagService.setFormula('r', 'value', '=1');
@@ -148,6 +148,35 @@ describe('FormulaService', () => {
 
     expect(service.hasFormula('id_1', 'total')).toBeTruthy();
     expect(service.getFormula('id_1', 'total')).toBe('=REF(COLUMN("price"),ROW("id_1"))*2');
+  });
+
+  it('should preserve stable references when rows move and report missing references in evaluation and export', () => {
+    const items = [
+      { id: 'first', value: 2, total: '' },
+      { id: 'second', value: 7, total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({
+      getColumns: () => columns,
+      getData: () => ({ getItems: () => items, getLength: () => items.length }),
+      getOptions: () => ({ datasetIdPropertyName: 'id' }),
+    } as any);
+    service.setFormula('second', 'total', '=A1+1');
+    items.reverse();
+    expect(service.getEvaluatedCellValue('second', 'total', undefined, undefined)).toBe(3);
+    items.pop();
+    service.setFormula('second', 'total', '=REF(COLUMN("value"),ROW("first"))+1');
+    expect(service.getEvaluatedCellValue('second', 'total', undefined, undefined)).toBe('#REF!');
+    expect(service.getExcelFormula({ rowId: 'second', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['second'], excelRowOffset: 2 } as any)).toBe(
+      '#REF!+1'
+    );
+    service.setFormula('second', 'total', '=SUM(REF(COLUMN("value"),ROW("first")):REF(COLUMN("value"),ROW("second")))');
+    expect(service.getEvaluatedCellValue('second', 'total', undefined, undefined)).toBe('#REF!');
+    expect((service as any).evaluateFormulaExpression('="text #REF!"', { visited: new Set(), memo: new Map() })).toBe('text #REF!');
   });
 
   it('should remove formula when setFormula receives empty value', () => {
@@ -728,9 +757,9 @@ describe('FormulaService', () => {
 
     expect(setCellCssStyles).toHaveBeenCalledTimes(1);
     const cssHash = setCellCssStyles.mock.calls[0][1] as Record<number, Record<string, string>>;
-    expect(cssHash[0].c).toBe('formula-cell-color-1');
-    expect(cssHash[1].c).toBe('formula-cell-color-1');
-    expect(cssHash[2].c).toBe('formula-cell-color-1');
+    expect(cssHash[0].c).toBe('formula-cell-color-1 formula-ref-range formula-ref-top formula-ref-left formula-ref-right');
+    expect(cssHash[1].c).toBe('formula-cell-color-1 formula-ref-range formula-ref-left formula-ref-right');
+    expect(cssHash[2].c).toBe('formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-left formula-ref-right');
   });
 
   it('should preserve formula reference order when assigning highlight colors', () => {
@@ -761,9 +790,9 @@ describe('FormulaService', () => {
     expect(setCellCssStyles).toHaveBeenCalledTimes(1);
     expect(setCellCssStyles.mock.calls[0][0]).toBe(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY);
     expect(setCellCssStyles.mock.calls[0][1]).toEqual({
-      0: { c: 'formula-cell-color-1', d: 'formula-cell-color-2' },
-      1: { d: 'formula-cell-color-2' },
-      2: { d: 'formula-cell-color-2' },
+      0: { c: 'formula-cell-color-1', d: 'formula-cell-color-2 formula-ref-range formula-ref-top formula-ref-left formula-ref-right' },
+      1: { d: 'formula-cell-color-2 formula-ref-range formula-ref-left formula-ref-right' },
+      2: { d: 'formula-cell-color-2 formula-ref-range formula-ref-bottom formula-ref-left formula-ref-right' },
     });
 
     // The same mapping must work when the range is the first reference in the formula.
@@ -772,9 +801,9 @@ describe('FormulaService', () => {
 
     expect(setCellCssStyles).toHaveBeenCalledTimes(1);
     expect(setCellCssStyles.mock.calls[0][1]).toEqual({
-      0: { c: 'formula-cell-color-2', d: 'formula-cell-color-1' },
-      1: { d: 'formula-cell-color-1' },
-      2: { d: 'formula-cell-color-1' },
+      0: { c: 'formula-cell-color-2', d: 'formula-cell-color-1 formula-ref-range formula-ref-top formula-ref-left formula-ref-right' },
+      1: { d: 'formula-cell-color-1 formula-ref-range formula-ref-left formula-ref-right' },
+      2: { d: 'formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-left formula-ref-right' },
     });
   });
 
@@ -1424,7 +1453,7 @@ describe('FormulaService', () => {
     expect((service as any).toExpressionLiteral(false)).toBe('false');
     expect((service as any).toExpressionLiteral(' 12.5 ')).toBe('12.5');
     expect((service as any).toExpressionLiteral('hello')).toBe('"hello"');
-    expect((service as any).replaceRefFunctionsWithA1Refs('=REF(COLUMN("missing"),ROW(1))', ['value'], ['1'], 1)).toBe('=');
+    expect((service as any).replaceRefFunctionsWithA1Refs('=REF(COLUMN("missing"),ROW(1))', ['value'], ['1'], 1)).toBe('=#REF!');
     service.registerCustomFunction('INVALID', {} as any);
     expect(service.getCustomFunction('INVALID')).toBeUndefined();
 

@@ -1,7 +1,43 @@
 # Formula Editor Plugin Progress
 
-Last updated: 2026-11-14 (optional package styling and PR checklist reconciliation)
+Last updated: 2026-11-14 (feature completion audit)
 Branch context: feat/cell-formula-plugin
+
+## Current Completion Plan
+See [FORMULA_COMPLETION_PLAN.md](./FORMULA_COMPLETION_PLAN.md) for the prioritized audit, proposed reference semantics, implementation approach and acceptance criteria. Historical notes below are not evidence that outstanding integration paths have been verified.
+
+## Latest Update: Missing Stable References (2026-11-14)
+- Missing row or column IDs now translate to `#REF!` instead of disappearing from formulas. Evaluation propagates the error and Excel conversion retains it; quoted text containing `#REF!` is unaffected.
+- Added regressions for row reorder, deleted references, missing range endpoints and Excel conversion. Grouped row mapping and range membership remain open.
+
+The former scalar-times-range test conflict is resolved in current tests: both `*` and `×` expect `#VALUE!`; broader semantic parity remains open.
+
+## Grouping Audit (2026-11-14)
+- Reproduced in Example 48: after grouping, Oranges is displayed on grid row 9, but reopening its Sub-Total shows `=C1*D1`; row 1 is a group header. The calculated value remains correct because evaluation uses dataset row IDs, while editor reference selection and highlights use visible grid row indexes.
+- Grouping can reorder records and insert headers and totals. Mapping only the two endpoints of a range can silently change which records it evaluates when grouping or sorting changes; range membership semantics need a decision before implementing the mapping.
+- Grouped Excel export currently skips the formula provider, and adds a leading grouping column plus group/totals rows. Correct export needs an explicit mapping of stored identities to actual worksheet coordinates, including collapsed or otherwise omitted rows.
+- Comparison: [Syncfusion's formula editor documentation](https://help.syncfusion.com/grid-sdk/javascript/data-grid/formula/formula-editor) describes A1 display and reference highlighting, but does not specify range membership after grouping or sorting; do not infer that behavior from the screenshot.
+- Syncfusion's custom-function example uses `customFunctions.NAME.func({ values })` and runtime registration/removal. FormulaService already supports that callback shape, flattened range values, and runtime registration/removal with its own method names; this does not resolve grouped-range semantics.
+- AG Grid's supplied v36.3.0 documentation explicitly lists tree data, row grouping, pivoting, and aggregation as unsupported for formulas, so it does not provide a grouped-reference model to copy.
+- The formula-service documentation now explicitly describes the grouped editing and Excel-export limitations until they are resolved.
+- Added a browser regression for calculated values through grouping and ungrouping. Full grouped editing, range semantics, collapse/expand, drag-fill and grouped formula export remain open.
+
+## Latest Update: Formula Range Highlighting (2026-11-14)
+- Reference ranges now draw only their outside edges, including reversed and grid-clipped ranges, using the same shared highlight hash for the editor and service.
+- Highlighted Salesforce editable-field wrappers are transparent so their borders and backgrounds do not obscure the range tint; formula editor text no longer inherits italic styling.
+- Added unit coverage for range edges and Cypress assertions for contiguous highlights. Existing selection handles retain their current behavior.
+
+## Latest Update: Dark Formula Styling (2026-11-14)
+- Dark grids now use the dark token colors for formula references and their matching cell outlines, the 20% dark token backgrounds for referenced cells, and the dark Excel column-prefix colors.
+- Preserved the existing six-color cycle, Sass variables, and light theme behavior. The separate 80% reference-cell backgrounds and colors 7–10 remain unused pending a palette change.
+- Example 48 Cypress checks the token, cell, and header colors across light → dark → light; all 18 tests passed in Chrome.
+
+## Dark Theme Investigation (2026-11-14)
+- Chrome inspection of Example 48 confirmed that formula tokens, reference outlines/backgrounds, and Excel column badges use the same light-theme colors in both modes. The editor background switches to `#111827`; token colors 1 and 2 have contrast ratios of about 3.36:1 and 3.21:1 against it.
+- The dark token and badge Sass variables are declared but not consumed. Using dark token colors 1 and 2 against that background would give approximately 8.49:1 and 8.79:1 respectively; validate the complete palette and matching reference outlines in the browser before choosing final values.
+- Reference cell backgrounds currently use token background variables (5% opacity in light mode). The separate ref-cell background variables are unused and their dark defaults have 80% opacity, so do not apply them blindly to cells with light text.
+- Colors 7–10 currently repeat colors 1–4 in the stylesheet; the separately declared values for 7–10 are unused. Decide whether to preserve that cycling or adopt ten distinct colors consistently for tokens and referenced cells.
+- Follow-up: evaluate a larger distinct palette and the separate reference-cell background variables if design requirements change.
 
 ## Latest Update: Pointer Guard Coverage (2026-11-14)
 - Added editor regressions for right-clicks, mouse movement outside a reference drag, and clicks that must pass through, including clicks outside the grid during suppression.
@@ -11,7 +47,7 @@ Branch context: feat/cell-formula-plugin
 
 This checklist tracks outstanding work from the PR description and the audits below. Existing coverage and behavior notes are historical; verify them when working on an item.
 
-- [ ] Audit unused dark-theme SASS variables and decide which should be retained or removed.
+- [x] Audit unused dark-theme SASS variables and apply the useful dark palette; retain the other variables for compatibility.
 - [ ] Support grouping and grouping formatters, including reference mapping when group rows change offsets and grouped Excel export.
 - [ ] Audit Grid State/Preset behavior and decide how formula references and formula data should persist and restore.
 - [ ] Verify and document hidden-column behavior, including editor A1 numbering and Excel export when a referenced column is excluded. Current notes say runtime resolves hidden columns and export requires `includeHidden: true` for the source column.
@@ -20,6 +56,9 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [ ] Evaluate reusing the existing autocompleter instead of the formula editor's custom autocomplete.
 - [ ] Review remaining browser coverage gaps in the Cypress Coverage Audit below, especially formula drag-fill reference translation and selection-model fallback.
 - [ ] Revisit formula semantic parity and the historical conflicting scalar-times-range test expectations described in the security review below; verify current behavior before deciding on a change.
+- [ ] Compare Syncfusion's formula reference with our registry: evaluate adding `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases. Our parser already supports the listed operators, including `%` and `^`; verify edge-case semantics separately.
+- [ ] Evaluate distinct `#CIRCREF!` and `#PARSE!` errors; circular references currently use `#REF!` and parser failures use `#ERROR!`.
+- [ ] Document and test read-only formula columns using the existing `onBeforeEditCell` cancellation mechanism; `autoAssignEditor: false` also disables the auto-assigned formula formatter and is not a per-column read-only setting.
 - [ ] Decide whether an optional strict selection-prerequisite mode is needed.
 
 ## Latest Update: Optional Package Styling (2026-11-14)

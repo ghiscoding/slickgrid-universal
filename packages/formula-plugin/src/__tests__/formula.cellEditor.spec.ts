@@ -314,8 +314,8 @@ describe('FormulaCellEditor', () => {
     expect(initialSelectionRange).toMatchObject({ fromRow: 0, fromCell: 3, toRow: 1, toCell: 3 });
     expect(setCellCssStylesCalls).toHaveLength(1);
     expect(setCellCssStylesCalls[0]).toEqual({
-      0: { d: 'formula-cell-color-1' },
-      1: { d: 'formula-cell-color-1' },
+      0: { d: 'formula-cell-color-1 formula-ref-range formula-ref-top formula-ref-left formula-ref-right' },
+      1: { d: 'formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-left formula-ref-right' },
     });
 
     const mouseDownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 });
@@ -667,10 +667,10 @@ describe('FormulaCellEditor', () => {
 
     expect(setCellCssStylesSpy).toHaveBeenCalledTimes(1);
     const cssHash = setCellCssStylesSpy.mock.calls[0][1] as Record<number, Record<string, string>>;
-    expect(cssHash[0].b).toBe('formula-cell-color-1');
-    expect(cssHash[0].c).toBe('formula-cell-color-1');
-    expect(cssHash[1].b).toBe('formula-cell-color-1');
-    expect(cssHash[1].c).toBe('formula-cell-color-1');
+    expect(cssHash[0].b).toBe('formula-cell-color-1 formula-ref-range formula-ref-top formula-ref-left');
+    expect(cssHash[0].c).toBe('formula-cell-color-1 formula-ref-range formula-ref-top formula-ref-right');
+    expect(cssHash[1].b).toBe('formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-left');
+    expect(cssHash[1].c).toBe('formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-right');
     expect(removeCellCssStylesSpy).not.toHaveBeenCalled();
 
     editor.destroy();
@@ -783,8 +783,14 @@ describe('FormulaCellEditor', () => {
     editor.loadValue((args as any).item);
 
     expect(setCellCssStylesSpy).toHaveBeenCalledWith(FORMULA_REFERENCE_HIGHLIGHT_STYLE_KEY, {
-      0: { b: 'formula-cell-color-1', c: 'formula-cell-color-1' },
-      1: { b: 'formula-cell-color-1', c: 'formula-cell-color-1' },
+      0: {
+        b: 'formula-cell-color-1 formula-ref-range formula-ref-top formula-ref-left',
+        c: 'formula-cell-color-1 formula-ref-range formula-ref-top formula-ref-right',
+      },
+      1: {
+        b: 'formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-left',
+        c: 'formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-right',
+      },
     });
 
     editor.destroy();

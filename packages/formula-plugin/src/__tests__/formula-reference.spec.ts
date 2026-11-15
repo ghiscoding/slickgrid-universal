@@ -89,4 +89,15 @@ describe('formula reference utilities', () => {
     expect(Object.keys(hash[0])).toHaveLength(11);
     expect(buildFormulaReferenceCssHash(references, columns, 0)).toEqual({});
   });
+
+  it('should outline only the perimeter of reversed and clipped rectangular ranges', () => {
+    const columns = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+    const hash = buildFormulaReferenceCssHash(buildFormulaReferenceColorInfos('=D4:A1'), columns, 3);
+    expect(hash[0].a).toBe('formula-cell-color-1 formula-ref-range formula-ref-top formula-ref-left');
+    expect(hash[0].b).toBe('formula-cell-color-1 formula-ref-range formula-ref-top');
+    expect(hash[1].b).toBe('formula-cell-color-1 formula-ref-range');
+    expect(hash[1].c).toBe('formula-cell-color-1 formula-ref-range formula-ref-right');
+    expect(hash[2].a).toBe('formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-left');
+    expect(hash[2].c).toBe('formula-cell-color-1 formula-ref-range formula-ref-bottom formula-ref-right');
+  });
 });

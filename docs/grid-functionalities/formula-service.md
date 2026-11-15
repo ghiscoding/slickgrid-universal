@@ -115,6 +115,8 @@ Formula reference storage:
 
 When a formula references a hidden source column, export it with `includeHidden: true` so the referenced column exists in the workbook. If the source column is omitted from the export, Excel cannot evaluate a formula that points to it.
 
+Grouping is not yet fully supported. Group headers and totals change displayed row positions, so formulas shown in the editor and their highlights can refer to the wrong visible rows. Grouped Excel export does not currently use the formula provider. Evaluate grouped formulas and exports with these limitations in mind.
+
 ### Formula Drag-Fill
 
 With cell-capable selection enabled, Formula Service handles the `.slick-drag-replace-handle` automatically for formula-enabled columns.

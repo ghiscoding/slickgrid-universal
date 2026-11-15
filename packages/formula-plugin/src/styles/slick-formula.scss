@@ -1,4 +1,6 @@
 /** Formula plugin styling; load after the SlickGrid theme to reuse its configured Sass variables. */
+@use 'sass:meta';
+@use 'sass:map';
 @use '@slickgrid-universal/common/dist/styles/sass/variables' as v;
 
 .slick-cell {
@@ -50,6 +52,7 @@
     overflow: auto hidden;
     white-space: nowrap;
     scrollbar-width: none;
+    font-style: normal;
   }
 }
 
@@ -110,29 +113,104 @@
 
 .formula-cell-color-1,
 .formula-cell-color-7 {
+  --formula-reference-color: #{v.$slick-formula-token-1-color};
   background-color: #{v.$slick-formula-token-1-background-color} !important;
   box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-1-color} !important;
 }
 .formula-cell-color-2,
 .formula-cell-color-8 {
+  --formula-reference-color: #{v.$slick-formula-token-2-color};
   background-color: #{v.$slick-formula-token-2-background-color} !important;
   box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-2-color} !important;
 }
 .formula-cell-color-3,
 .formula-cell-color-9 {
+  --formula-reference-color: #{v.$slick-formula-token-3-color};
   background-color: #{v.$slick-formula-token-3-background-color} !important;
   box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-3-color} !important;
 }
 .formula-cell-color-4,
 .formula-cell-color-10 {
+  --formula-reference-color: #{v.$slick-formula-token-4-color};
   background-color: #{v.$slick-formula-token-4-background-color} !important;
   box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-4-color} !important;
 }
 .formula-cell-color-5 {
+  --formula-reference-color: #{v.$slick-formula-token-5-color};
   background-color: #{v.$slick-formula-token-5-background-color} !important;
   box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-5-color} !important;
 }
 .formula-cell-color-6 {
+  --formula-reference-color: #{v.$slick-formula-token-6-color};
   background-color: #{v.$slick-formula-token-6-background-color} !important;
   box-shadow: inset 0 0 0 2px #{v.$slick-formula-token-6-color} !important;
+}
+
+.formula-ref-range {
+  box-shadow:
+    inset 0 var(--formula-ref-top, 0px) var(--formula-reference-color),
+    inset 0 var(--formula-ref-bottom, 0px) var(--formula-reference-color),
+    inset var(--formula-ref-left, 0px) 0 var(--formula-reference-color),
+    inset var(--formula-ref-right, 0px) 0 var(--formula-reference-color) !important;
+}
+
+.formula-ref-top {
+  --formula-ref-top: 2px;
+}
+.formula-ref-bottom {
+  --formula-ref-bottom: -2px;
+}
+.formula-ref-left {
+  --formula-ref-left: 2px;
+}
+.formula-ref-right {
+  --formula-ref-right: -2px;
+}
+
+// Salesforce's editable-field wrapper otherwise hides the reference tint and adds an inner border.
+.slick-cell[class*='formula-cell-color-'] > .editing-field {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+.slick-dark-mode {
+  .excel-col-prefix {
+    background: var(--slick-excel-col-prefix-bg-color, #{v.$slick-excel-col-prefix-dark-bg-color});
+    color: var(--slick-excel-col-prefix-color, #{v.$slick-excel-col-prefix-dark-color});
+    border-color: var(--slick-excel-col-prefix-border-color, #{v.$slick-excel-col-prefix-dark-border-color});
+  }
+
+  @for $index from 1 through 6 {
+    $color: map.get(meta.module-variables('v'), 'slick-formula-token-#{$index}-dark-color');
+    $background: map.get(meta.module-variables('v'), 'slick-formula-token-#{$index}-dark-background-color');
+
+    .formula-token-color-#{$index} {
+      color: $color;
+    }
+    .formula-cell-color-#{$index} {
+      --formula-reference-color: #{$color};
+      background-color: $background !important;
+      box-shadow: inset 0 0 0 2px $color !important;
+    }
+
+    @if $index <= 4 {
+      .formula-token-color-#{$index + 6} {
+        color: $color;
+      }
+      .formula-cell-color-#{$index + 6} {
+        --formula-reference-color: #{$color};
+        background-color: $background !important;
+        box-shadow: inset 0 0 0 2px $color !important;
+      }
+    }
+  }
+
+  // Keep edge-only shadows above the dark palette's single-cell outline.
+  .formula-ref-range {
+    box-shadow:
+      inset 0 var(--formula-ref-top, 0px) var(--formula-reference-color),
+      inset 0 var(--formula-ref-bottom, 0px) var(--formula-reference-color),
+      inset var(--formula-ref-left, 0px) 0 var(--formula-reference-color),
+      inset var(--formula-ref-right, 0px) 0 var(--formula-reference-color) !important;
+  }
 }

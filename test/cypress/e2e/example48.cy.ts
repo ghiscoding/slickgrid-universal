@@ -120,6 +120,11 @@ describe('Example 48 - Formula Service (MVP)', () => {
     cy.get(cell(0, 3)).should('have.class', 'formula-cell-color-2');
     cy.get(cell(1, 3)).should('have.class', 'formula-cell-color-2');
     cy.get(cell(2, 3)).should('have.class', 'formula-cell-color-2');
+    cy.get(cell(0, 3)).should('have.class', 'formula-ref-top').and('not.have.class', 'formula-ref-bottom');
+    cy.get(cell(1, 3)).should('not.have.class', 'formula-ref-top').and('not.have.class', 'formula-ref-bottom');
+    cy.get(cell(2, 3)).should('have.class', 'formula-ref-bottom').and('not.have.class', 'formula-ref-top');
+    cy.get(cell(1, 3)).find('.editing-field').should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
+    cy.get('.formula-editor-input').should('have.css', 'font-style', 'normal');
 
     // Cancel this transient edit to avoid affecting subsequent tests.
     cy.get('.formula-editor-input').type('{esc}', { force: true });
@@ -319,6 +324,16 @@ describe('Example 48 - Formula Service (MVP)', () => {
     cy.get(cell(1, 1)).contains('Apples');
   });
 
+  it('should retain calculated values while grouping and ungrouping', () => {
+    cy.reload();
+    cy.get('[data-test="group-by-btn"]').click();
+    cy.contains('.grid48 .slick-row', 'Oranges').find('.slick-cell').eq(4).should('contain', '$8.88');
+    cy.contains('.grid48 .slick-row', 'Honeycomb Cereals').find('.slick-cell').eq(4).should('contain', '$9.10');
+    cy.get('[data-test="clear-grouping-btn"]').click();
+    cy.get(cell(0, 4)).should('contain', '$8.88');
+    cy.get(cell(2, 4)).should('contain', '$9.10');
+  });
+
   it('should infer a numeric series when drag-filling static values in a formula column', () => {
     cy.reload();
 
@@ -386,5 +401,25 @@ describe('Example 48 - Formula Service (MVP)', () => {
       expect(xlsx.formulaRows[1][2]).to.equal('D3*B3');
       expect(xlsx.formulaRows[1][6]).to.equal('C3+F3');
     });
+  });
+
+  it('should switch formula reference and column-prefix colors with the grid theme', () => {
+    cy.reload();
+
+    const checkFormulaColors = (tokenColor: string, cellBackground: string, prefixBackground: string) => {
+      cy.get(cell(0, 4)).dblclick();
+      cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=C1*D1', { force: true });
+      cy.get('.formula-token-color-1').should('have.css', 'color', tokenColor);
+      cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-1').and('have.css', 'background-color', cellBackground);
+      cy.get(cell(0, 2)).should('have.css', 'box-shadow').and('contain', tokenColor);
+      cy.get('.grid48 .excel-col-prefix').first().should('have.css', 'background-color', prefixBackground);
+      cy.get('.formula-editor-input').type('{esc}', { force: true });
+    };
+
+    checkFormulaColors('rgb(50, 105, 198)', 'rgba(50, 105, 198, 0.05)', 'rgb(219, 234, 254)');
+    cy.get('[data-test="toggle-dark-mode"]').click();
+    checkFormulaColors('rgb(138, 180, 255)', 'rgba(138, 180, 255, 0.2)', 'rgb(30, 58, 138)');
+    cy.get('[data-test="toggle-dark-mode"]').click();
+    checkFormulaColors('rgb(50, 105, 198)', 'rgba(50, 105, 198, 0.05)', 'rgb(219, 234, 254)');
   });
 });
