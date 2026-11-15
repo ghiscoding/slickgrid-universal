@@ -334,6 +334,88 @@ describe('Example 48 - Formula Service (MVP)', () => {
     cy.get(cell(2, 4)).should('contain', '$9.10');
   });
 
+  it('should show grouped single-cell references at their displayed row positions', () => {
+    cy.reload();
+    cy.get('[data-test="group-by-btn"]').click();
+    cy.contains('.grid48 .slick-row', 'Oranges').find('.slick-cell').eq(4).dblclick();
+    cy.get('.formula-editor-input').should('have.text', '=C9*D9');
+    cy.contains('.grid48 .slick-row', 'Oranges').find('.slick-cell').eq(2).should('have.class', 'formula-cell-color-1');
+    cy.contains('.grid48 .slick-row', 'Oranges').find('.slick-cell').eq(3).should('have.class', 'formula-cell-color-2');
+    cy.get('.formula-editor-input').click().type('{selectall}=C2*2{enter}', { force: true });
+    cy.contains('.grid48 .slick-row', 'Oranges').find('.slick-cell').eq(4).should('contain', '$9.10');
+    cy.get('[data-test="clear-grouping-btn"]').click();
+    cy.get(cell(0, 4)).should('contain', '$9.10');
+  });
+
+  it('should drag-fill grouped formulas using displayed row references', () => {
+    cy.reload();
+    cy.get('[data-test="group-by-btn"]').click();
+    cy.contains('.grid48 .slick-row', 'Oranges').find('.slick-cell').eq(4).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=C9*2{enter}', { force: true });
+    cy.get(cell(8, 4)).click({ force: true });
+    cy.get(cell(8, 4)).find('.slick-drag-replace-handle').trigger('mousedown', { which: 1, force: true });
+    cy.get(cell(9, 4)).trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
+    cy.contains('.grid48 .slick-row', 'Apples').find('.slick-cell').eq(4).should('contain', '$3.10');
+    cy.get('[data-test="clear-grouping-btn"]').click();
+    cy.get(cell(1, 4)).should('contain', '$3.10');
+  });
+
+  it('should preserve grouped range edits across collapse, expand and ungroup', () => {
+    cy.reload();
+    cy.get('[data-test="group-by-btn"]').click();
+    cy.contains('.grid48 .slick-row', 'Oranges').find('.slick-cell').eq(4).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SUM(C2:C10){enter}', { force: true });
+    // Six taxable records plus Oranges and Apples; group headers and totals are excluded.
+    cy.contains('.grid48 .slick-row', 'Oranges')
+      .find('.slick-cell')
+      .eq(4)
+      .invoke('text')
+      .then((value) => {
+        cy.get('.grid48 .slick-group-toggle.expanded').first().click();
+        cy.contains('.grid48 .slick-row', 'Oranges').find('.slick-cell').eq(4).should('have.text', value).dblclick();
+        cy.get('.formula-editor-input').invoke('text').should('contain', 'REFRANGE(');
+        cy.get('.formula-editor-input').type('{enter}', { force: true });
+        cy.get('.grid48 .slick-group-toggle.collapsed').first().click();
+        cy.contains('.grid48 .slick-row', 'Oranges').find('.slick-cell').eq(4).should('have.text', value);
+        cy.get('[data-test="clear-grouping-btn"]').click();
+        cy.get(cell(0, 4)).should('have.text', value);
+      });
+  });
+
+  it('should drag-fill grouped range formulas with absolute references', () => {
+    cy.reload();
+    cy.get('[data-test="group-by-btn"]').click();
+    cy.contains('.grid48 .slick-row', 'Oranges').find('.slick-cell').eq(4).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SUM($C$9:C10){enter}', { force: true });
+    cy.get(cell(8, 4)).click({ force: true });
+    cy.get(cell(8, 4)).find('.slick-drag-replace-handle').trigger('mousedown', { which: 1, force: true });
+    cy.get(cell(9, 4)).trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
+    cy.contains('.grid48 .slick-row', 'Apples').find('.slick-cell').eq(4).should('contain', '$4.00').dblclick();
+    cy.get('.formula-editor-input').should('have.text', '=SUM($C$9:C11)').type('{enter}', { force: true });
+    cy.get('[data-test="clear-grouping-btn"]').click();
+    cy.get(cell(1, 4)).should('contain', '$4.00');
+  });
+
+  it('should refresh grouping formatter totals using edited formula values', () => {
+    cy.reload();
+    cy.get('[data-test="group-by-btn"]').click();
+    cy.get('.grid48 .slick-group-totals')
+      .first()
+      .find('.slick-cell')
+      .eq(4)
+      .invoke('text')
+      .then((text) => {
+        const previous = Number(text.replace(/[^0-9.-]/g, ''));
+        cy.contains('.grid48 .slick-row', 'Honeycomb Cereals').find('.slick-cell').eq(4).dblclick();
+        cy.get('.formula-editor-input').click().type('{selectall}=100{enter}', { force: true });
+        cy.get('.grid48 .slick-group-totals')
+          .first()
+          .find('.slick-cell')
+          .eq(4)
+          .should('contain', (previous + 100 - 9.1).toFixed(2));
+      });
+  });
+
   it('should infer a numeric series when drag-filling static values in a formula column', () => {
     cy.reload();
 
@@ -400,6 +482,40 @@ describe('Example 48 - Formula Service (MVP)', () => {
       // Total (G), and Custom Sum (H).
       expect(xlsx.formulaRows[1][2]).to.equal('D3*B3');
       expect(xlsx.formulaRows[1][6]).to.equal('C3+F3');
+    });
+  });
+
+  it('should export grouped single-cell formulas at their worksheet positions', () => {
+    cy.reload();
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.get('[data-test="group-by-btn"]').click();
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.get('[data-test="export-excel-btn"]').click();
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 15 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[2][4]).to.equal('C4*D4');
+      expect(xlsx.formulaRows[9][4]).to.equal('C11*D11');
+    });
+  });
+
+  it('should export contiguous and disjoint grouped ranges without including structural rows', () => {
+    cy.reload();
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SUM(C1:C2){enter}', { force: true });
+    cy.get(cell(1, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SUM(C1:C3){enter}', { force: true });
+    cy.get(cell(2, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=COUNTA(C1:C3){enter}', { force: true });
+    cy.get('[data-test="group-by-btn"]').click();
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.get('[data-test="export-excel-btn"]').click();
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 15 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[9][4]).to.equal('SUM(C11:C12)');
+      expect(xlsx.formulaRows[10][4]).to.equal("SUM('Formula References'!$A$1:$A$3)");
+      expect(xlsx.formulaRows[2][4]).to.equal('(SUMPRODUCT(--(\'Formula References\'!$A$1:$A$3<>"")))');
+      expect(xlsx.additionalSheetFormulaRows[0].slice(0, 3).map((row: string[]) => row[0])).to.deep.equal(
+        [11, 12, 4].map((row) => `IF(ISBLANK('Grocery List Formula Service'!C${row}),"",'Grocery List Formula Service'!C${row})`)
+      );
     });
   });
 

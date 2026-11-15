@@ -2,6 +2,10 @@
 
 Audited 2026-11-14 against the current working tree. This is an implementation plan, not a claim of completed support. The prior Chrome grouping reproduction and passing tests are recorded in `FORMULA_EDITOR_PROGRESS.md`; this audit did not rerun them. Competitor comparisons below refer to the documentation supplied in the conversation.
 
+## Grouping implementation update
+
+Grouped editing, stable range membership, drag-fill, formula-aware aggregation and mapped Excel export are implemented. Disjoint ranges use a helper worksheet, with direct `COUNTA` arguments translated to exclude blank source cells; LibreOffice recalculation verified this case. Formula snapshots preserve absolute flags through JSON. Custom Excel functions receive empty strings for blank helper cells, and omitted dependencies export as `#REF!`. Grid State/Preset integration remains a separate task. The original audit below is retained for context; its earlier descriptions of endpoint-only ranges and missing grouped export are historical.
+
 ## Recommended release scope
 
 Complete per-cell formulas, stable references, editing, drag-fill, persistence, and native Excel export, including grouping as requested. Treat calculated columns as a separate package. Do not make every competitor feature a release requirement.
@@ -25,7 +29,7 @@ Recommended semantics: references retain record identity when the view changes. 
 
 ## 2. Excel mapping and missing references — highest priority
 
-**Evidence:** `excelExport.service.ts:getCellFormulaForExcel()` skips grouped data. Export inserts a grouping column and group/totals rows; `getAllDataRowIds()` drops structural rows. Missing stable row or column IDs now produce `#REF!` rather than disappearing; grouped and omitted-dependency export still require validation.
+**Evidence:** grouped export inserts a grouping column and group/totals rows; `getAllDataRowIds()` drops structural rows. An opt-in grouped position map supports FormulaService single-cell formulas and contiguous stable ranges, with `#REF!` for omitted, reordered or disjoint range dependencies. Providers that have not opted in remain on the previous export path.
 
 **Implementation:**
 

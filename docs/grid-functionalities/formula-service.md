@@ -115,13 +115,51 @@ Formula reference storage:
 
 When a formula references a hidden source column, export it with `includeHidden: true` so the referenced column exists in the workbook. If the source column is omitted from the export, Excel cannot evaluate a formula that points to it.
 
-Grouping is not yet fully supported. Group headers and totals change displayed row positions, so formulas shown in the editor and their highlights can refer to the wrong visible rows. Grouped Excel export does not currently use the formula provider. Evaluate grouped formulas and exports with these limitations in mind.
+### Grouping and Group Totals
+
+Formula references use the displayed row numbers while editing a grouped grid. Group headers and totals occupy row numbers, but are not data cells: selecting a range skips those structural rows, and a single reference to one produces `#REF!`.
+
+Ranges capture their member cells in row-major order as `REFRANGE(REF(...),REF(...),...)`. This preserves both membership and argument boundaries through grouping, sorting, filtering and column reordering. Contiguous members display as `A1:A3`; disjoint members display explicitly, for example `REFRANGE(A2,A9,A3)`. References hidden by collapsed groups retain their stable `REF(COLUMN(...),ROW(...))` form. Reopening and committing a formula does not change the referenced records. Legacy endpoint-only stable ranges are expanded using the dataset order when supplied to the service; import them before reordering the original dataset.
+
+To persist a formula with its absolute-reference flags, save the snapshot instead of only the string returned by `getFormula()`. Restore it after the grid data and column IDs are available:
+
+```ts
+const snapshot = formulaService.getFormulaSnapshot(rowId, 'total');
+const json = JSON.stringify(snapshot);
+// After initializing a grid with the same row and column identities:
+formulaService.setFormulaSnapshot(rowId, 'total', JSON.parse(json));
+```
+
+Programmatic `setFormula()` A1 input uses dataset coordinates. The editor converts displayed grouped coordinates before committing. Prefer stable syntax when importing formulas independently of the displayed layout.
+
+To aggregate calculated values, wrap a standard aggregator using `createGroupingAggregator()`. The adapter leaves dataset records unchanged and works with the existing group total formatters. Its optional second argument is the column ID when that differs from the aggregator's field.
+
+```ts
+import { Aggregators, GroupTotalFormatters } from '@slickgrid-universal/common';
+
+const totalColumn = {
+  id: 'total', field: 'total', allowFormula: true,
+  groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
+};
+
+dataView.setGrouping({
+  getter: 'category',
+  aggregators: [formulaService.createGroupingAggregator(new Aggregators.Sum('total'))],
+});
+```
+
+The adapter preserves the underlying aggregator's treatment of blank and nonnumeric values, including formula errors. Grouping labels and totals remain structural rows; formulas cannot reference them as data records.
+
+Grouped Excel export uses the actual worksheet positions, including custom headers, group rows, totals and the leading grouping column. Contiguous ranges export directly. Disjoint or reordered ranges use a deduplicated **Formula References** worksheet containing links to the source cells, so functions such as `SUMIF` retain a single range argument and the original member order. Keep this helper sheet in the workbook. Helper cells return an empty string for blank sources. Direct `COUNTA` arguments using a helper range are translated to `SUMPRODUCT` so blanks are not counted. Custom Excel functions receive empty strings for blank helper cells. A dependency omitted by collapsing, filtering or excluding a source column exports as `#REF!`; expand groups and include the required columns to export those dependencies.
+
 
 ### Formula Drag-Fill
 
 With cell-capable selection enabled, Formula Service handles the `.slick-drag-replace-handle` automatically for formula-enabled columns.
 
 - formulas shift relative A1 references while keeping absolute reference parts fixed
+- grouped fill skips group headers/totals as destinations and captures only data members in translated ranges
+- references hidden by collapsed groups retain their stable identities during fill; expand the group to shift those references by displayed row positions
 - one static source value is copied
 - multiple numeric source values continue as a linear progression
 - string or mixed source values repeat in source order
@@ -142,6 +180,8 @@ Frequently used methods:
 - `registerCustomFunction(name, input)`
 - `registerCustomFunctions(functionMap)`
 - `getExcelFormula(context)`
+- `createGroupingAggregator(aggregator, columnId?)`
+- `getFormulaSnapshot(rowId, columnId)` and `setFormulaSnapshot(rowId, columnId, snapshot)` preserve stable range membership and absolute flags in JSON-serializable form
 
 For built-ins/custom functions/export compatibility, see [Formula Custom Functions](./formula-functions.md).
 

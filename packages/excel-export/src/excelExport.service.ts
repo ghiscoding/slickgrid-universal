@@ -93,6 +93,9 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected _formulaProvider?: FormulaProvider;
   protected _formulaColumnIds: Array<number | string> = [];
   protected _formulaRowIds: Array<number | string> = [];
+  protected _formulaGroupedRows: Map<string, number> = new Map();
+  protected _formulaRangeSheet?: Worksheet;
+  protected _formulaRangeCache: Map<string, string> = new Map();
 
   // references of each detected cell and/or group total formats
   protected _regularCellExcelFormats: { [fieldId: string]: RegularCellExcelFormat } = Object.create(null);
@@ -151,6 +154,9 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._formulaProvider = undefined;
     this._formulaColumnIds = [];
     this._formulaRowIds = [];
+    this._formulaGroupedRows.clear();
+    this._formulaRangeSheet = undefined;
+    this._formulaRangeCache.clear();
     this._regularCellExcelFormats = Object.create(null);
     this._groupTotalExcelFormats = Object.create(null);
   }
@@ -240,6 +246,9 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       this._sheet.setData(finalOutput);
 
       this._workbook.addWorksheet(this._sheet);
+      if (this._formulaRangeSheet) {
+        this._workbook.addWorksheet(this._formulaRangeSheet);
+      }
 
       // MIME type could be undefined, if that's the case we'll detect the type by its file extension
       // user could also provide its own mime type, if however an empty string is provided we will consider to be without any MIME type)
@@ -322,6 +331,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * Async version of getDataOutput with yielding for UI responsiveness during large dataset processing
    */
   protected async getDataOutputAsync(): Promise<Array<string[] | ExcelColumnMetadata[]>> {
+    this._formulaRangeSheet = undefined;
+    this._formulaRangeCache.clear();
     const columns = this.getColumns();
     this._formulaProvider = this.findFormulaProvider();
     this.registerFormulaProviderWorkbookArtifacts();
@@ -352,6 +363,23 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     // get all Column Header Titles (it might include a "Group by" title at A1 cell)
     // also style the headers, defaults to Bold but user could pass his own style
     outputData.push(this.getColumnHeaderData(columns, { style: columnHeaderStyleId }));
+
+    this._formulaGroupedRows.clear();
+    if (this._hasGroupedItems && this._formulaProvider?.supportsGroupedFormulaExport) {
+      this._formulaColumnIds = columns.filter(isColumnExported).map((column) => column.id);
+      let excelRow = this.getWorksheetReservedRowCount() + outputData.length + 1;
+      for (let row = 0; row < this._dataView.getLength(); row++) {
+        const item = this._dataView.getItem(row);
+        if (item && !Object.prototype.hasOwnProperty.call(item, 'getItem')) {
+          const rowId = item[this._datasetIdPropName] as number | string | undefined;
+          if (rowId !== undefined && rowId !== null) {
+            this._formulaGroupedRows.set(String(rowId), excelRow++);
+          } else if (item.__groupTotals || this._hasGroupedItems) {
+            excelRow++;
+          }
+        }
+      }
+    }
 
     // Populate the rest of the Grid Data by reading directly from DataView with yielding for responsiveness
     await this.pushAllGridRowDataToArrayAsync(outputData, columns, columnMetadataCache);
@@ -824,7 +852,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   /** Return a normalized Excel formula when a formula provider is available and the current row has an id. */
   protected getCellFormulaForExcel(itemObj: any, columnDef: Column, dataRowIdx: number): string | undefined {
     // grouped exports currently rely on row-level parser callbacks for deterministic row offsets.
-    if (!this._formulaProvider || this._hasGroupedItems) {
+    if (!this._formulaProvider || (this._hasGroupedItems && !this._formulaProvider.supportsGroupedFormulaExport)) {
       return undefined;
     }
 
@@ -842,9 +870,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       gridOptions: this._gridOptions,
       rowId,
       rowIds: this._formulaRowIds,
+      groupedRowPositions: this._hasGroupedItems ? this._formulaGroupedRows : undefined,
+      groupedColumnOffset: this._hasGroupedItems ? 1 : undefined,
+      registerFormulaRange: (references) => this.registerFormulaRange(references),
     });
 
-    if (!formula && this._formulaProvider.hasFormula?.(rowId, columnDef.id)) {
+    if (!formula && !this._hasGroupedItems && this._formulaProvider.hasFormula?.(rowId, columnDef.id)) {
       formula = this._formulaProvider.getFormula?.(rowId, columnDef.id);
     }
 
@@ -853,6 +884,36 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     }
 
     return formula.startsWith('=') ? formula.slice(1) : formula;
+  }
+
+  /** Keep disjoint references in one range argument, including for SUMIF and custom functions. */
+  protected registerFormulaRange(references: string[]): string {
+    const key = references.join(',');
+    const cached = this._formulaRangeCache.get(key);
+    if (cached) {
+      return cached;
+    }
+    if (!this._formulaRangeSheet) {
+      const names = new Set([this._sheet.name, ...this._workbook.worksheets.map((sheet) => sheet.name)]);
+      let name = 'Formula References';
+      for (let suffix = 2; names.has(name); suffix++) {
+        name = `Formula References ${suffix}`;
+      }
+      this._formulaRangeSheet = this._workbook.createWorksheet({ name });
+    }
+    const sheet = this._formulaRangeSheet;
+    if (sheet.data.length + references.length > 1048576) {
+      return '#REF!';
+    }
+    const firstRow = sheet.data.length + 1;
+    const sourceName = this._sheet.name.replace(/'/g, "''");
+    for (const reference of references) {
+      const source = `'${sourceName}'!${reference}`;
+      sheet.data.push([{ value: `IF(ISBLANK(${source}),"",${source})`, metadata: { type: 'formula' } }]);
+    }
+    const range = `'${sheet.name}'!$A$${firstRow}:$A$${sheet.data.length}`;
+    this._formulaRangeCache.set(key, range);
+    return range;
   }
 
   /** Find first registered external resource that exposes formula provider methods. */

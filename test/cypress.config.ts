@@ -18,6 +18,7 @@ interface ParsedXlsxExport {
   firstDataRow: string[];
   dataRows: string[][];
   formulaRows: string[][];
+  additionalSheetFormulaRows: string[][][];
 }
 
 function isExcelExportFile(fileName: string): boolean {
@@ -26,7 +27,13 @@ function isExcelExportFile(fileName: string): boolean {
 }
 
 function decodeXmlEntities(input: string): string {
-  return input.replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&quot;', '"').replaceAll('&apos;', "'");
+  return input
+    .replaceAll('&#39;', "'")
+    .replaceAll('&amp;', '&')
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&apos;', "'");
 }
 
 function extractZipEntries(buffer: Buffer): Map<string, Buffer> {
@@ -212,6 +219,11 @@ function parseXlsxExport(filePath: string, maxDataRows = 10): ParsedXlsxExport {
     firstDataRow,
     dataRows,
     formulaRows,
+    additionalSheetFormulaRows: [...entries.entries()]
+      .filter(([name]) => /^xl\/worksheets\/sheet\d+\.xml$/.test(name) && name !== 'xl/worksheets/sheet1.xml')
+      .map(([, content]) =>
+        Array.from({ length: Math.max(0, maxDataRows) }, (_, index) => parseSheetRowFormulas(content.toString('utf8'), index + 1))
+      ),
   };
 }
 

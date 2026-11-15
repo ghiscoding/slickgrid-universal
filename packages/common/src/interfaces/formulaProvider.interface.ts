@@ -9,6 +9,12 @@ export interface FormulaExcelExportContext {
   gridOptions: GridOption;
   rowId: number | string;
   rowIds: Array<number | string>;
+  /** Worksheet positions for data rows in a grouped export. */
+  groupedRowPositions?: ReadonlyMap<string, number>;
+  /** Number of structural columns preceding exported data columns. */
+  groupedColumnOffset?: number;
+  /** Allocate an ordered helper range for references that cannot form a worksheet rectangle. */
+  registerFormulaRange?: (references: string[]) => string;
 }
 
 export interface FormulaExcelDefinedNameExport {
@@ -30,6 +36,8 @@ export interface FormulaExcelCustomFunctionExport {
 
 /** Optional interface that a formula external resource can implement. */
 export interface FormulaProvider {
+  /** Opt in to grouped worksheet position mapping. */
+  supportsGroupedFormulaExport?: boolean;
   /** Return whether a formula exists for the given row/column cell. */
   hasFormula?: (rowId: number | string, columnId: number | string) => boolean;
 

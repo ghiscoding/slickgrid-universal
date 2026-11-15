@@ -2837,6 +2837,76 @@ describe('ExcelExportService', () => {
       expect((service as any).getCellFormulaForExcel({ id: 'row-1' }, { id: 'total' }, 0)).toBeUndefined();
     });
 
+    it('should map grouped data rows to worksheet positions before requesting formulas', async () => {
+      service.init(gridStub, container);
+      const svc = service as any;
+      const provider = { supportsGroupedFormulaExport: true, getExcelFormula: vi.fn().mockReturnValue('B4') };
+      const rows = [{ __group: true }, { id: 'a' }, { __groupTotals: true }, { id: 'b' }, { getItem: () => null }, null];
+      svc._dataView = { getLength: () => rows.length, getItem: (row: number) => rows[row] };
+      svc._sheet = { data: [[]] };
+      svc._stylesheetFormats = { boldFormat: { id: 1 } };
+      vi.spyOn(svc, 'getColumns').mockReturnValue([{ id: 'value', field: 'value' }]);
+      vi.spyOn(svc, 'findFormulaProvider').mockReturnValue(provider);
+      vi.spyOn(svc, 'registerFormulaProviderWorkbookArtifacts').mockImplementation(() => undefined);
+      vi.spyOn(svc, 'getAllDataRowIds').mockReturnValue(['a', 'b']);
+      vi.spyOn(svc, 'preCalculateColumnMetadata').mockReturnValue(new Map());
+      vi.spyOn(svc, 'cacheRegularCellExcelFormats').mockImplementation(() => undefined);
+      vi.spyOn(svc, 'getColumnHeaderData').mockImplementation(() => {
+        svc._hasGroupedItems = true;
+        return ['group', 'value'];
+      });
+      vi.spyOn(svc, 'pushAllGridRowDataToArrayAsync').mockResolvedValue([]);
+
+      await svc.getDataOutputAsync();
+      expect(svc._formulaGroupedRows).toEqual(
+        new Map([
+          ['a', 4],
+          ['b', 6],
+        ])
+      );
+      expect(svc.getCellFormulaForExcel({ id: 'a' }, { id: 'value' }, 1)).toBe('B4');
+      expect(provider.getExcelFormula).toHaveBeenCalledWith(
+        expect.objectContaining({
+          groupedColumnOffset: 1,
+          groupedRowPositions: new Map([
+            ['a', 4],
+            ['b', 6],
+          ]),
+        })
+      );
+    });
+
+    it('exports disjoint helper ranges with deduplication, sheet naming and workbook lifecycle', async () => {
+      service.init(gridStub, container);
+      const svc = service as any;
+      const provider = {
+        getExcelFormula: ({ registerFormulaRange }: any) => `SUM(${registerFormulaRange(['B4', 'B8'])})`,
+      };
+      vi.spyOn(svc, 'getDataOutputAsync').mockImplementation(() => {
+        svc._workbook.addWorksheet(svc._workbook.createWorksheet({ name: 'Existing' }));
+        svc._formulaProvider = provider;
+        svc._formulaColumnIds = ['value'];
+        svc._formulaRowIds = ['a'];
+        const formula = svc.getCellFormulaForExcel({ id: 'a' }, { id: 'value' }, 0);
+        expect(svc.registerFormulaRange(['B4', 'B8'])).toBe("'Formula References 2'!$A$1:$A$2");
+        return Promise.resolve([[{ value: formula, metadata: { type: 'formula' } }]]);
+      });
+      await service.exportToExcel({ ...mockExportExcelOptions, sheetName: 'Formula References', useStreamingExport: false });
+      expect(svc._workbook.worksheets.map((sheet: any) => sheet.name)).toEqual(['Existing', 'Formula References', 'Formula References 2']);
+      expect(svc._formulaRangeSheet.data).toEqual([
+        [{ value: `IF(ISBLANK('Formula References'!B4),"",'Formula References'!B4)`, metadata: { type: 'formula' } }],
+        [{ value: `IF(ISBLANK('Formula References'!B8),"",'Formula References'!B8)`, metadata: { type: 'formula' } }],
+      ]);
+      svc._sheet.name = "User's data";
+      expect(svc.registerFormulaRange(['C9'])).toBe("'Formula References 2'!$A$3:$A$3");
+      expect(svc._formulaRangeSheet.data[2][0].value).toBe(`IF(ISBLANK('User''s data'!C9),"",'User''s data'!C9)`);
+      svc._formulaRangeSheet.data.length = 1048576;
+      expect(svc.registerFormulaRange(['Z99'])).toBe('#REF!');
+      service.dispose();
+      expect(svc._formulaRangeSheet).toBeUndefined();
+      expect(svc._formulaRangeCache.size).toBe(0);
+    });
+
     it('findFormulaProvider should return undefined when enableFormulas is false', () => {
       const sharedServiceStub = {
         externalRegisteredResources: [

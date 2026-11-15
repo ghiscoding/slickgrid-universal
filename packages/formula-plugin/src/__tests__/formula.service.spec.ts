@@ -1,4 +1,4 @@
-import { Formatters, SlickEvent, SlickRange } from '@slickgrid-universal/common';
+import { Aggregators, Formatters, SlickEvent, SlickRange } from '@slickgrid-universal/common';
 import type { Column, FormulaExcelExportContext } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FORMULA_ERROR } from '../formula-errors.js';
@@ -105,7 +105,7 @@ describe('FormulaService', () => {
     expect((pipelineService as any).normalizeFormulaSyntax('')).toBe('');
 
     expect((flagService as any).convertA1ReferencesToStableRefs('=A0:B1', ['value'], ['r'])).toBe('=A0:B1');
-    expect((flagService as any).convertA1ReferencesToStableRefs('=A1:B1', ['value'], ['r'])).toBe('=A1:B1');
+    expect((flagService as any).convertA1ReferencesToStableRefs('=A1:B1', ['value'], ['r'])).toBe('=REFRANGE(REF(COLUMN("value"),ROW("r")),B1)');
     expect((flagService as any).replaceRefFunctionsWithA1Refs('', ['value'], ['r'])).toBe('');
     expect((flagService as any).replaceRefFunctionsWithA1Refs('=REF(COLUMN("value"),ROW("missing"))', ['value'], ['r'])).toBe('=#REF!');
 
@@ -148,6 +148,236 @@ describe('FormulaService', () => {
 
     expect(service.hasFormula('id_1', 'total')).toBeTruthy();
     expect(service.getFormula('id_1', 'total')).toBe('=REF(COLUMN("price"),ROW("id_1"))*2');
+  });
+
+  it('should map grouped single-cell references to displayed rows without losing collapsed identities', () => {
+    const items = [
+      { id: 'a', price: 2, total: '=A1*2' },
+      { id: 'b', price: 7, total: '=A2*2' },
+    ];
+    const columns: Column[] = [
+      { id: 'price', field: 'price' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    let grouped = false;
+    let rows: any[] = items;
+    const dataView = { getItems: () => items, getLength: () => rows.length, getItem: (row: number) => rows[row], getGrouping: () => (grouped ? [{}] : []) };
+    const service = new FormulaService();
+    service.init({
+      getColumns: () => columns,
+      setColumns: (next: Column[]) => columns.splice(0, columns.length, ...next),
+      getData: () => dataView,
+      getOptions: () => ({ datasetIdPropertyName: 'id' }),
+    } as any);
+    const params = columns[1].editor!.params as any;
+    grouped = true;
+    rows = [{ __group: true }, items[1], { __groupTotals: true }, items[0]];
+    expect(params.toDisplayFormula(items[0].total, items[0])).toBe('=A4*2');
+    expect(params.toStoredFormula('=A2*2', items[0])).toBe('=REF(COLUMN("price"),ROW("b"))*2');
+    expect(params.toStoredFormula('=A1*2', items[0])).toBe('=#REF!*2');
+    expect(params.toStoredFormula('=SUM(A2:A99)', items[0])).toBe('=SUM(#REF!)');
+    expect(params.toStoredFormula('=SUM(A2:Z2)', items[0])).toBe('=SUM(#REF!)');
+    expect(params.toStoredFormula('="A2:A99"', items[0])).toBe('="A2:A99"');
+    rows = [{ __group: true }, items[1]];
+    expect(params.toDisplayFormula(items[0].total, items[0])).toBe('=REF(COLUMN("price"),ROW("a"))*2');
+    expect((service as any).replaceRefFunctionsWithA1Refs('=REF(COLUMN("price"),ROW("deleted"))', ['price'], [undefined], 1, true)).toBe('=#REF!');
+    rows = [{ __group: true }, items[0], items[1]];
+    expect(params.toDisplayFormula(items[0].total, items[0])).toBe('=A2*2');
+    grouped = false;
+    expect(params.toDisplayFormula(items[0].total, items[0])).toBe('=A1*2');
+    service.setFormula('a', 'total', '=SUM($A$1:A2)');
+    grouped = true;
+    rows = [{ __group: true }, items[1]];
+    const collapsed = params.toDisplayFormula(service.getFormula('a', 'total'), items[0]);
+    expect(collapsed).toBe('=SUM(REFRANGE(REF(COLUMN("price"),ROW("a")),A2))');
+    const edited = params.toStoredFormula(`${collapsed}+1`, items[0]);
+    service.setFormula('a', 'total', edited);
+    grouped = false;
+    expect(params.toDisplayFormula(edited, items[0])).toBe('=SUM($A$1:A2)+1');
+    grouped = true;
+    service.setFormula('a', 'total', '=SUM($A$1:A2)');
+    service.setFormula('a', 'total', params.toStoredFormula(collapsed, items[0]));
+    grouped = false;
+    expect(params.toDisplayFormula(service.getFormula('a', 'total'), items[0])).toBe('=SUM($A$1:A2)');
+  });
+
+  it('preserves range membership through nested grouping, reorder, collapse and editor commits', () => {
+    const items = [
+      { key: 'a', price: 2, qty: 3, total: '' },
+      { key: 'b', price: 7, qty: 5, total: '' },
+      { key: 'c', price: 11, qty: 9, total: '' },
+      { key: 'd', price: 13, qty: 10, total: '' },
+    ];
+    const originalItems = [...items];
+    const columns: Column[] = [
+      { id: 'price', field: 'price' },
+      { id: 'qty', field: 'qty' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    let rows: any[] = items;
+    let grouping: any[] = [];
+    const service = new FormulaService();
+    service.init({
+      getColumns: () => columns,
+      setColumns: (next: Column[]) => columns.splice(0, columns.length, ...next),
+      getData: () => ({ getItems: () => items, getLength: () => rows.length, getItem: (row: number) => rows[row], getGrouping: () => grouping }),
+      getOptions: () => ({ datasetIdPropertyName: 'key' }),
+    } as any);
+    const params = columns[2].editor!.params as any;
+    service.setFormula('d', 'total', '=SUMIF(A1:A3,">5",B1:B3)');
+    const stored = service.getFormula('d', 'total')!;
+    expect(service.getEvaluatedCellValue('d', 'total')).toBe(14);
+    grouping = [{ getter: 'outer' }, { getter: 'inner' }];
+    rows = [{ __group: true }, originalItems[2], { __group: true }, originalItems[0], { __groupTotals: true }, originalItems[3], originalItems[1]];
+    items.reverse();
+    service.setFormula('d', 'total', stored);
+    expect(service.getEvaluatedCellValue('d', 'total')).toBe(14);
+    expect(params.toDisplayFormula(stored, originalItems[3])).toBe('=SUMIF(REFRANGE(A4,A7,A2),">5",REFRANGE(B4,B7,B2))');
+    const entered = params.toStoredFormula('=SUM(A7:A2)', originalItems[3]);
+    service.setFormula('d', 'total', entered);
+    expect(service.getEvaluatedCellValue('d', 'total')).toBe(33);
+    expect(entered).not.toContain('__group');
+    rows = [{ __group: true }, originalItems[3]];
+    const collapsed = params.toDisplayFormula(entered, originalItems[3]);
+    expect(collapsed).toContain('ROW("c")');
+    expect(collapsed).toContain('A2');
+    service.setFormula('d', 'total', params.toStoredFormula(collapsed, originalItems[3]));
+    expect(service.getEvaluatedCellValue('d', 'total')).toBe(33);
+    grouping = [];
+    rows = items;
+    expect(service.getEvaluatedCellValue('d', 'total')).toBe(33);
+    items.splice(
+      items.findIndex((item) => item.key === 'b'),
+      1
+    );
+    service.setFormula('d', 'total', entered);
+    expect(service.getEvaluatedCellValue('d', 'total')).toBe('#REF!');
+  });
+
+  it('feeds evaluated values to grouping aggregators and preserves records and lifecycle', () => {
+    const items = [
+      { key: 'a', price: 2, amount: '=A1*3' },
+      { key: 'b', price: 7, amount: 4 },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({
+      getColumns: () => [
+        { id: 'price', field: 'price' },
+        { id: 'total', field: 'amount', allowFormula: true },
+      ],
+      getData: () => ({ getItems: () => items }),
+      getOptions: () => ({ datasetIdPropertyName: 'key' }),
+    } as any);
+    const aggregator = service.createGroupingAggregator(new Aggregators.Sum('amount'), 'total');
+    expect(aggregator.field).toBe('amount');
+    expect(aggregator.type).toBe('sum');
+    expect(aggregator.isInitialized).toBe(false);
+    aggregator.init();
+    expect(aggregator.isInitialized).toBe(true);
+    items.forEach((item) => aggregator.accumulate!(item));
+    aggregator.accumulate!({ __group: true });
+    const totals = {};
+    aggregator.storeResult(totals);
+    expect(totals).toEqual({ sum: { amount: 10 } });
+    expect(items[0].amount).toBe('=A1*3');
+    items[0].price = 5;
+    aggregator.init();
+    items.forEach((item) => aggregator.accumulate!(item));
+    aggregator.storeResult(totals);
+    expect(totals).toEqual({ sum: { amount: 19 } });
+    const defaultColumn = service.createGroupingAggregator({ field: 'price', type: 'sum', init: vi.fn(), storeResult: vi.fn() });
+    defaultColumn.accumulate!(items[0]);
+  });
+
+  it('round trips formula snapshots and absolute flags between service instances', () => {
+    const items = [
+      { id: 'a', price: 2 },
+      { id: 'b', price: 3 },
+    ];
+    const grid = {
+      getColumns: () => [
+        { id: 'price', field: 'price' },
+        { id: 'total', field: 'total' },
+      ],
+      getData: () => ({ getItems: () => items }),
+      getOptions: () => ({}),
+    } as any;
+    const source = new FormulaService({ autoAssignEditor: false });
+    source.init(grid);
+    source.setFormula('a', 'total', '=SUM($A$1:A2)');
+    const snapshot = source.getFormulaSnapshot('a', 'total')!;
+    expect(snapshot.version).toBe(1);
+    const target = new FormulaService({ autoAssignEditor: false });
+    target.init(grid);
+    target.setFormulaSnapshot('a', 'total', JSON.parse(JSON.stringify(snapshot)));
+    expect((target as any).toDisplayFormulaForCell(target.getFormula('a', 'total'), 'a', 'total')).toBe('=SUM($A$1:A2)');
+    expect(target.getEvaluatedCellValue('a', 'total')).toBe(5);
+    snapshot.referenceFlags[0].column = false;
+    expect((target as any).toDisplayFormulaForCell(target.getFormula('a', 'total'), 'a', 'total')).toBe('=SUM($A$1:A2)');
+    expect(target.getFormulaSnapshot('missing', 'total')).toBeUndefined();
+    for (const invalid of [
+      null,
+      {},
+      { version: 2, formula: '=1', referenceFlags: [] },
+      { version: 1, formula: 12, referenceFlags: [] },
+      { version: 1, formula: '1', referenceFlags: [] },
+      { version: 1, formula: '=1', referenceFlags: null },
+      { version: 1, formula: '=1', referenceFlags: [{}] },
+    ]) {
+      expect(() => target.setFormulaSnapshot('a', 'total', invalid as any)).toThrow(TypeError);
+    }
+    expect(target.removeFormula('a', 'total')).toBe(true);
+    target.setFormula('a', 'total', '=REF(COLUMN("price"),ROW("a"))');
+    expect((target as any).toDisplayFormulaForCell(target.getFormula('a', 'total'), 'a', 'total')).toBe('=A1');
+  });
+
+  it('exports disjoint ranges as single helper arguments with original member order', () => {
+    const service = new FormulaService({ autoAssignEditor: false });
+    const items = [
+      { id: 'a', price: 2, qty: 3 },
+      { id: 'b', price: 7, qty: 5 },
+    ];
+    service.init({ getColumns: () => [{ id: 'price' }, { id: 'qty' }], getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    service.setFormula('a', 'total', '=SUMIF(A1:A2,">5",B1:B2)');
+    const registerFormulaRange = vi.fn().mockReturnValueOnce("'Formula References'!$A$1:$A$2").mockReturnValueOnce("'Formula References'!$A$3:$A$4");
+    expect(
+      service.getExcelFormula({
+        rowId: 'a',
+        columnId: 'total',
+        columnIds: ['price', 'qty'],
+        rowIds: ['b', 'a'],
+        excelRowOffset: 2,
+        groupedRowPositions: new Map([
+          ['a', 8],
+          ['b', 4],
+        ]),
+        groupedColumnOffset: 1,
+        registerFormulaRange,
+      } as any)
+    ).toBe("SUMIF('Formula References'!$A$1:$A$2,\">5\",'Formula References'!$A$3:$A$4)");
+    expect(registerFormulaRange.mock.calls).toEqual([[['B8', 'B4']], [['C8', 'C4']]]);
+    service.setFormula('a', 'total', '=COUNTA(A1:A2)');
+    registerFormulaRange.mockReturnValue("'Formula References'!$A$1:$A$2");
+    expect(
+      service.getExcelFormula({
+        rowId: 'a',
+        columnId: 'total',
+        columnIds: ['price', 'qty'],
+        rowIds: ['b', 'a'],
+        excelRowOffset: 2,
+        groupedRowPositions: new Map([
+          ['a', 8],
+          ['b', 4],
+        ]),
+        groupedColumnOffset: 1,
+        registerFormulaRange,
+      } as any)
+    ).toBe(`(SUMPRODUCT(--('Formula References'!$A$1:$A$2<>"")))`);
+    service.setFormula('a', 'total', '=SUMIF(A1:A2,">5",B1:B2)');
+    items.pop();
+    expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['price', 'qty'], rowIds: ['a'], excelRowOffset: 2 } as any)).toBe(
+      'SUMIF(#REF!,">5",#REF!)'
+    );
   });
 
   it('should preserve stable references when rows move and report missing references in evaluation and export', () => {
@@ -259,6 +489,64 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue('r2', 'total')).toBe(7);
   });
 
+  it('should fill grouped single-cell references using displayed rows and preserve absolute references', () => {
+    const columns: Column[] = [
+      { id: 'price', field: 'price' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const items = [
+      { id: 'a', price: 2, total: '=$A$1+A1' },
+      { id: 'b', price: 4, total: '' },
+      { id: 'c', price: 6, total: '' },
+    ];
+    let grouped = false;
+    let rows: any[] = items;
+    const dataView = {
+      getItems: () => items,
+      getLength: () => rows.length,
+      getItem: (row: number) => rows[row],
+      getGrouping: () => (grouped ? [{}] : []),
+      updateItems: vi.fn(),
+    };
+    const grid = {
+      getColumns: () => columns,
+      getVisibleColumns: () => columns,
+      setColumns: (next: Column[]) => columns.splice(0, columns.length, ...next),
+      getData: () => dataView,
+      getDataItem: (row: number) => rows[row],
+      getOptions: () => ({ datasetIdPropertyName: 'id' }),
+    } as any;
+    const service = new FormulaService();
+    service.init(grid);
+    grouped = true;
+    rows = [{ __group: true }, items[0], items[1], { __groupTotals: true }, { __group: true }, items[2]];
+    const fill = () =>
+      (service as any).handleDragReplaceCells({}, { prevSelectedRange: new SlickRange(1, 1), selectedRange: new SlickRange(1, 1, 5, 1), grid });
+    fill();
+    expect(service.getFormula('c', 'total')).toBe('=REF(COLUMN("price"),ROW("a"))+REF(COLUMN("price"),ROW("c"))');
+    expect(service.getEvaluatedCellValue('c', 'total')).toBe(8);
+    grouped = false;
+    expect((service as any).toDisplayFormulaForCell(service.getFormula('c', 'total'), 'c', 'total')).toBe('=$A$1+A3');
+
+    service.setFormula('a', 'total', '=SUM(A1:A2)');
+    items[2].total = '';
+    service.removeFormula('c', 'total');
+    grouped = true;
+    fill();
+    expect(service.getFormula('c', 'total')).toBe('=SUM(#REF!)');
+    expect(service.getEvaluatedCellValue('c', 'total')).toBe('#REF!');
+
+    grouped = false;
+    service.setFormula('a', 'total', '=A3');
+    service.removeFormula('b', 'total');
+    items[1].total = '';
+    grouped = true;
+    rows = [{ __group: true }, items[0], items[1]];
+    fill();
+    expect(service.getFormula('b', 'total')).toBe('=REF(COLUMN("price"),ROW("c"))');
+    expect(service.getEvaluatedCellValue('b', 'total')).toBe(6);
+  });
+
   it('should translate REF() formula syntax into Excel references', () => {
     const service = new FormulaService();
     service.setFormula('id_2', 'total', '=REF(COLUMN("price"),ROW("id_2"))*REF(COLUMN("qty"),ROW("id_2"))');
@@ -275,6 +563,53 @@ describe('FormulaService', () => {
     };
 
     expect(service.getExcelFormula(context)).toBe('B3*C3');
+  });
+
+  it('should map grouped Excel single-cell references to worksheet coordinates', () => {
+    const items = [
+      { id: 'a', price: 2, total: '=A1' },
+      { id: 'b', price: 4, total: '' },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => [{ id: 'price' }, { id: 'total' }], getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const context = {
+      rowId: 'a',
+      columnId: 'total',
+      columnIds: ['price', 'total'],
+      rowIds: ['a', 'b'],
+      excelRowOffset: 2,
+      groupedColumnOffset: 1,
+      groupedRowPositions: new Map([
+        ['a', 4],
+        ['b', 8],
+      ]),
+    } as any;
+    service.setFormula('a', 'total', '=$A$1+A2');
+    expect(service.getExcelFormula(context)).toBe('$B$4+B8');
+    context.groupedRowPositions.delete('b');
+    expect(service.getExcelFormula(context)).toBe('#REF!');
+    service.setFormula('a', 'total', '=SUM(A1:A2)');
+    expect(service.getExcelFormula(context)).toBe('#REF!');
+    context.groupedRowPositions.set('b', 5);
+    expect(service.getExcelFormula(context)).toBe('SUM(B4:B5)');
+    context.groupedRowPositions.set('b', 8);
+    expect(service.getExcelFormula(context)).toBe('SUM(#REF!)');
+    service.setFormula('a', 'total', '=SUM(A2:A1)');
+    context.groupedRowPositions.set('b', 5);
+    expect(service.getExcelFormula(context)).toBe('SUM(B4:B5)');
+    service.setFormula('a', 'total', '=SUM(A1:B2)');
+    expect(service.getExcelFormula(context)).toBe('SUM(B4:C5)');
+    context.columnIds = ['total', 'price'];
+    expect(service.getExcelFormula(context)).toBe('SUM(#REF!)');
+    context.columnIds = ['price', 'total'];
+    service.setFormula('a', 'total', '=SUM(REF(COLUMN("price"),ROW("a")):REF(COLUMN("price"),ROW("deleted")))');
+    expect(service.getExcelFormula(context)).toBe('#REF!');
+    service.setFormula('a', 'total', '=Z99');
+    expect(service.getExcelFormula(context)).toBeUndefined();
+    service.setFormula('a', 'total', '=REF(COLUMN("price"),ROW(1))');
+    expect(service.getExcelFormula(context)).toBeUndefined();
+    service.setFormula('a', 'total', '="text #REF!"');
+    expect(service.getExcelFormula(context)).toBe('"text #REF!"');
   });
 
   it('should support numeric ROW() references', () => {
@@ -574,7 +909,9 @@ describe('FormulaService', () => {
     service.init(gridStub);
     service.setFormula('a_01', 'total', '=SUM(B1:B3)');
 
-    expect(service.getFormula('a_01', 'total')).toBe('=SUM(REF(COLUMN("price"),ROW("a_01")):REF(COLUMN("price"),ROW("b_03")))');
+    expect(service.getFormula('a_01', 'total')).toBe(
+      '=SUM(REFRANGE(REF(COLUMN("price"),ROW("a_01")),REF(COLUMN("price"),ROW("o_02")),REF(COLUMN("price"),ROW("b_03"))))'
+    );
     expect(service.getEvaluatedCellValue('a_01', 'total', items[0].total, 0)).toBeCloseTo(3.6, 10);
   });
 

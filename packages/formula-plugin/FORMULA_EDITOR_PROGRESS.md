@@ -3,6 +3,34 @@
 Last updated: 2026-11-14 (feature completion audit)
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Grouped Range Editing and Export (2026-11-14)
+- Stable `REFRANGE` members preserve record and column identity and argument boundaries through grouping and reordering; structural rows are skipped. Grouped ranges support editing, highlights, collapse/expand and drag-fill. Hidden references retain stable identities; expand groups to shift them by displayed position.
+- `createGroupingAggregator` lets normal grouping formatters display evaluated formula totals. Example 48 uses it for formula columns.
+- Grouped Excel export maps actual worksheet positions and uses a Formula References helper sheet for disjoint ranges. Missing export dependencies produce `#REF!`. Direct `COUNTA` helper arguments are translated to `SUMPRODUCT` to exclude blanks; a LibreOffice recalculation returned 3 for zero, false, text, blank and empty-string cells (plain helper `COUNTA` returned 5).
+- Chrome Example 48: 26 tests passed after the helper blank-handling change. Scoped formula and Excel unit tests passed with 100% statement and line coverage for the changed production sources; targeted lint, formatting, TypeScript and formula-plugin circular-dependency checks passed.
+- `getFormulaSnapshot` and `setFormulaSnapshot` preserve stable formulas and absolute-reference flags across JSON round trips. General Grid State/Preset integration remains a separate checklist item.
+
+The earlier updates below are historical snapshots; this update supersedes their statements that grouped ranges and export are unsupported.
+
+## Latest Update: Contiguous Grouped Range Export (2026-11-14)
+- Grouped Excel export now maps stable ranges when every underlying data row and column remains adjacent and in the same order in the worksheet. Split, reordered or omitted range members produce `#REF!` rather than a formula that includes unrelated rows or totals.
+- Added unit coverage for reversed and rectangular ranges, missing and reordered members, and quoted text; Example 48 verifies both contiguous and split grouped ranges in the exported workbook. Grouped range editing and drag-fill remain unsupported.
+
+## Latest Update: Grouped Single-Cell Drag-Fill (2026-11-14)
+- Drag-fill now shifts single-cell formulas using displayed grouped rows, stores stable row IDs and retains absolute markers. Group headers and totals are skipped as targets.
+- Grouped formulas with ranges or references hidden by collapsed groups are skipped during fill until their translation is supported; this avoids silently writing a formula with different targets.
+- Added unit regressions for crossing structural rows, absolute references and unsupported sources, plus an Example 48 browser regression.
+
+## Latest Update: Grouped Excel Single-Cell References (2026-11-14)
+- Grouped Excel export maps data-row IDs to actual worksheet rows and accounts for the leading grouping column when the formula provider supports grouped mapping.
+- FormulaService exports supported single-cell references with relative/absolute markers and returns `#REF!` for omitted dependencies. Grouped range formulas remain on the existing export path until their membership semantics are implemented.
+- Added service and export unit regressions plus Example 48 workbook assertions for rows in both groups. Grouped ranges and drag-fill remain open.
+
+## Latest Update: Grouped Single-Cell References (2026-11-14)
+- The editor maps stored single-cell references to visible grouped row positions and converts entered references back to stable row IDs. Group headers and totals cannot resolve to data IDs.
+- A reference hidden by a collapsed group remains in stable `REF` form in the editor instead of being treated as deleted. The existing ungrouped evaluation mapping is retained.
+- Added service regressions for grouping, structural rows, collapse/expand, and returning to the ungrouped view. Grouped ranges, drag-fill and grouped Excel export remain unsupported and require separate work.
+
 ## Current Completion Plan
 See [FORMULA_COMPLETION_PLAN.md](./FORMULA_COMPLETION_PLAN.md) for the prioritized audit, proposed reference semantics, implementation approach and acceptance criteria. Historical notes below are not evidence that outstanding integration paths have been verified.
 
@@ -48,7 +76,7 @@ The former scalar-times-range test conflict is resolved in current tests: both `
 This checklist tracks outstanding work from the PR description and the audits below. Existing coverage and behavior notes are historical; verify them when working on an item.
 
 - [x] Audit unused dark-theme SASS variables and apply the useful dark palette; retain the other variables for compatibility.
-- [ ] Support grouping and grouping formatters, including reference mapping when group rows change offsets and grouped Excel export.
+- [x] Support grouping and grouping formatters, including reference mapping when group rows change offsets and grouped Excel export. Custom Excel functions receive empty strings for blank helper cells; collapsed or excluded export dependencies produce `#REF!`.
 - [ ] Audit Grid State/Preset behavior and decide how formula references and formula data should persist and restore.
 - [ ] Verify and document hidden-column behavior, including editor A1 numbering and Excel export when a referenced column is excluded. Current notes say runtime resolves hidden columns and export requires `includeHidden: true` for the source column.
 - [ ] Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin.

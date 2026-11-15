@@ -1,4 +1,5 @@
 import type {
+  Aggregator,
   Column,
   ColumnEditor,
   ContainerService,
@@ -15,6 +16,7 @@ import type {
 import { createDomElement, Formatters, SlickEventHandler } from '@slickgrid-universal/common';
 import { FORMULA_ERROR, isFormulaErrorCode, type FormulaErrorCode } from './formula-errors.js';
 import { createFormulaFunctionRegistry, type FormulaCallback } from './formula-functions.js';
+import { compactFormulaRange, expandFormulaRanges, mapFormulaRanges, rewriteExcelHelperCounta } from './formula-range.js';
 import {
   buildFormulaReferenceCssHash,
   FORMULA_MAX_REFERENCE_CELLS,
@@ -67,9 +69,16 @@ interface FormulaEvaluationContext {
   memo: Map<string, unknown>;
 }
 
-interface FormulaReferenceAbsoluteFlags {
+export interface FormulaReferenceAbsoluteFlags {
   column: boolean;
   row: boolean;
+}
+
+/** Serializable formula and its reference locks, independent of the current grid layout. */
+export interface FormulaCellSnapshot {
+  version: 1;
+  formula: string;
+  referenceFlags: FormulaReferenceAbsoluteFlags[];
 }
 
 /**
@@ -78,6 +87,7 @@ interface FormulaReferenceAbsoluteFlags {
  */
 export class FormulaService implements ExternalResource, FormulaProvider {
   readonly pluginName = 'FormulaService';
+  readonly supportsGroupedFormulaExport = true;
 
   protected _grid!: SlickGrid;
   protected _dataView!: SlickDataView;
@@ -237,8 +247,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const normalizedFormulaWithRefs = `=${this.replaceRefFunctionsWithA1Refs(
       normalizedFormula,
       ((this._grid?.getColumns?.() as Column[] | undefined) || []).map((col) => String(col.id)),
-      this.getDataItems().map((item) => String(item?.[this.getDatasetIdPropertyName()] ?? '')),
-      1
+      this.getGroupedDisplayRowIds() ?? this.getFormulaRowIds(),
+      1,
+      true
     )}`;
     this._formulaRefColorCache.update(normalizedFormulaWithRefs);
     const columns = this._grid.getColumns() as Column[];
@@ -382,9 +393,37 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const wasDeleted = this._formulaStore.delete(key);
     if (wasDeleted) {
       this._formulaCoordinatesByKey.delete(key);
+      this._formulaReferenceAbsoluteFlagsByKey.delete(key);
       this.resetEvaluationMemo();
     }
     return wasDeleted;
+  }
+
+  /** Capture the stable formula and its absolute reference flags for persistence. */
+  getFormulaSnapshot(rowId: number | string, columnId: number | string): FormulaCellSnapshot | undefined {
+    const key = this.buildStoreKey(rowId, columnId);
+    const formula = this._formulaStore.get(key);
+    return formula === undefined
+      ? undefined
+      : { version: 1, formula, referenceFlags: (this._formulaReferenceAbsoluteFlagsByKey.get(key) ?? []).map((flag) => ({ ...flag })) };
+  }
+
+  /** Restore a snapshot after the referenced data and columns have been initialized. */
+  setFormulaSnapshot(rowId: number | string, columnId: number | string, snapshot: FormulaCellSnapshot): void {
+    if (
+      snapshot?.version !== 1 ||
+      typeof snapshot.formula !== 'string' ||
+      !snapshot.formula.trim().startsWith('=') ||
+      !Array.isArray(snapshot.referenceFlags) ||
+      snapshot.referenceFlags.some((flag) => typeof flag?.column !== 'boolean' || typeof flag?.row !== 'boolean')
+    ) {
+      throw new TypeError('Invalid formula cell snapshot');
+    }
+    this.setFormula(rowId, columnId, snapshot.formula);
+    this._formulaReferenceAbsoluteFlagsByKey.set(
+      this.buildStoreKey(rowId, columnId),
+      snapshot.referenceFlags.map((flag) => ({ ...flag }))
+    );
   }
 
   setFormula(rowId: number | string, columnId: number | string, formula?: string | null): void {
@@ -411,14 +450,26 @@ export class FormulaService implements ExternalResource, FormulaProvider {
    * source cell, and then stored again in stable column/row-reference form.
    */
   protected handleDragReplaceCells(_event: unknown, args: OnDragReplaceCellsEventArgs): void {
+    const groupedRows = this.getGroupedDisplayRowIds();
+    const toStoredFormula = (formula: string) =>
+      groupedRows
+        ? this.convertA1ReferencesToStableRefs(formula, this.getFormulaColumnIds(), groupedRows, true)
+        : this.toStoredFormula(formula);
     handleFormulaDragFill(args, {
       grid: this._grid,
       dataView: this._dataView,
       getDatasetIdPropertyName: this.getDatasetIdPropertyName.bind(this),
       getFormula: this.getFormula.bind(this),
-      setFormula: this.setFormula.bind(this),
-      toStoredFormula: this.toStoredFormula.bind(this),
-      toDisplayFormulaForCell: this.toDisplayFormulaForCell.bind(this),
+      setFormula: (rowId, columnId, formula) => {
+        if (formula && groupedRows) {
+          this.captureFormulaReferenceAbsoluteFlags(this.buildStoreKey(rowId, columnId), formula, groupedRows);
+          this.setFormula(rowId, columnId, toStoredFormula(formula));
+        } else {
+          this.setFormula(rowId, columnId, formula);
+        }
+      },
+      toStoredFormula,
+      toDisplayFormulaForCell: (formula, rowId, columnId) => this.toDisplayFormulaForCell(formula, rowId, columnId, !!groupedRows),
     });
   }
 
@@ -433,27 +484,35 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     return found;
   }
 
-  protected captureFormulaReferenceAbsoluteFlags(key: string, formula: string): void {
-    const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_])/gi;
+  protected captureFormulaReferenceAbsoluteFlags(key: string, formula: string, rowIds?: Array<string | undefined>): void {
+    const previousFlags = this._formulaReferenceAbsoluteFlagsByKey.get(key) ?? [];
     const flags: FormulaReferenceAbsoluteFlags[] = [];
-    this.transformFormulaOutsideQuotedStrings(formula, (segment) => {
-      segment.replace(referenceRegex, (reference) => {
-        reference.split(':').forEach((endpoint) => {
-          const match = endpoint.trim().match(/^(\$?)[A-Z]{1,3}(\$?)(\d+)$/i);
-          if (match) {
-            flags.push({ column: match[1] === '$', row: match[2] === '$' });
-          }
-        });
-        return reference;
-      });
-      return segment;
+    const tokens =
+      /REF\(\s*COLUMN\("(?:\\.|[^"\\])*"\)\s*,\s*ROW\("(?:\\.|[^"\\])*"\)\s*\)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])/gi;
+    const expanded = expandFormulaRanges(formula, (row) => !rowIds || rowIds[row] !== undefined);
+    expanded.replace(tokens, (token) => {
+      if (/^REF\(/i.test(token)) {
+        flags.push(previousFlags[flags.length] ?? { column: false, row: false });
+      } else if (!/^["']/.test(token)) {
+        const match = token.match(/^(\$?)[A-Z]{1,3}(\$?)(\d+)$/i)!;
+        flags.push({ column: match[1] === '$', row: match[2] === '$' });
+      }
+      return token;
     });
     this._formulaReferenceAbsoluteFlagsByKey.set(key, flags);
   }
 
-  protected toDisplayFormulaForCell(formula: string, rowId: number | string, columnId: number | string): string {
-    const displayFormula = this.toDisplayFormula(formula);
-    return this.applyFormulaReferenceAbsoluteFlags(this.buildStoreKey(rowId, columnId), displayFormula);
+  protected toDisplayFormulaForCell(formula: string, rowId: number | string, columnId: number | string, useGroupedRows = false): string {
+    const groupedRows = useGroupedRows ? this.getGroupedDisplayRowIds() : undefined;
+    const storedFormula = this.getFormula(rowId, columnId);
+    const sourceFormula = storedFormula ?? formula;
+    const displayFormula = groupedRows
+      ? this.replaceRefFunctionsWithA1Refs(sourceFormula, this.getFormulaColumnIds(), groupedRows, 1, true)
+      : this.toDisplayFormula(sourceFormula);
+    return mapFormulaRanges(
+      this.applyFormulaReferenceAbsoluteFlags(this.buildStoreKey(rowId, columnId), displayFormula),
+      (members) => compactFormulaRange(members) ?? `REFRANGE(${members.join(',')})`
+    );
   }
 
   protected applyFormulaReferenceAbsoluteFlags(key: string, formula: string): string {
@@ -462,27 +521,24 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return formula;
     }
 
-    const referenceRegex = /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?:\s*:\s*\$?[A-Z]{1,3}\$?\d+)?(?![A-Za-z0-9_])/gi;
+    const tokens =
+      /REF\(\s*COLUMN\("(?:\\.|[^"\\])*"\)\s*,\s*ROW\("(?:\\.|[^"\\])*"\)\s*\)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])/gi;
     let flagIndex = 0;
-    return this.transformFormulaOutsideQuotedStrings(formula, (segment) =>
-      segment.replace(referenceRegex, (reference) =>
-        reference
-          .split(':')
-          .map((endpoint) => {
-            const flag = flags[flagIndex++];
-            if (!flag) {
-              return endpoint;
-            }
-            const parsed = endpoint.trim().match(/^(\$?)([A-Z]{1,3})(\$?)(\d+)$/i);
-            /* v8 ignore if - the surrounding reference regex guarantees a valid endpoint */
-            if (!parsed) {
-              return endpoint;
-            }
-            return `${flag.column ? '$' : ''}${parsed[2].toUpperCase()}${flag.row ? '$' : ''}${parsed[4]}`;
-          })
-          .join(':')
-      )
-    );
+    return formula.replace(tokens, (token) => {
+      if (/^REF\(/i.test(token)) {
+        flagIndex++;
+        return token;
+      }
+      if (/^["']/.test(token)) {
+        return token;
+      }
+      const flag = flags[flagIndex++];
+      if (!flag) {
+        return token;
+      }
+      const parsed = token.match(/^(\$?)([A-Z]{1,3})(\$?)(\d+)$/i)!;
+      return `${flag.column ? '$' : ''}${parsed[2].toUpperCase()}${flag.row ? '$' : ''}${parsed[4]}`;
+    });
   }
 
   /** Canonicalize formulas supplied before the grid was initialized. */
@@ -498,6 +554,34 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         this._formulaStore.set(key, canonicalFormula);
       }
     }
+  }
+
+  /** Adapt a standard grouping aggregator to consume calculated cell values without modifying dataset records. */
+  createGroupingAggregator(aggregator: Aggregator, columnId: number | string = aggregator.field): Aggregator {
+    return {
+      field: aggregator.field,
+      type: aggregator.type,
+      get isInitialized() {
+        return aggregator.isInitialized;
+      },
+      init: (item, isTreeAggregator) => {
+        this.resetEvaluationMemo();
+        aggregator.init(item, isTreeAggregator);
+      },
+      accumulate: (item, isTreeParent) => {
+        const rowId = item?.[this.getDatasetIdPropertyName()];
+        const value = item?.[aggregator.field];
+        const resolvedItem =
+          rowId == null
+            ? item
+            : {
+                ...item,
+                [aggregator.field]: this.getEvaluatedCellValue(rowId, columnId, value, value),
+              };
+        aggregator.accumulate?.(resolvedItem, isTreeParent);
+      },
+      storeResult: (totals) => aggregator.storeResult(totals),
+    };
   }
 
   registerCustomFunction(functionName: string, functionInput: FormulaCustomFunctionInput): void {
@@ -556,30 +640,66 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
 
     const normalizedFormula = originalFormula.startsWith('=') ? originalFormula.slice(1) : originalFormula;
-    const allGridColumnIds = (this._grid?.getColumns?.() as Column[] | undefined)?.map((col) => String(col.id)) ?? [];
-    const exportedColumnIds = context.columnIds.map((colId) => String(colId));
-    const normalizedColumnIds = exportedColumnIds;
-    const normalizedRowIds = context.rowIds.map((rowId) => String(rowId));
-    // Canonicalize legacy A1 formulas first, then resolve every stable reference against
-    // the actual exported column/row order. This keeps export independent from grid reordering.
-    const stableFormula = this.convertA1ReferencesToStableRefs(normalizedFormula, allGridColumnIds, normalizedRowIds);
-    const shiftedLegacyFormula = this.shiftDirectExcelReferences(
-      stableFormula,
-      allGridColumnIds,
-      normalizedColumnIds,
-      Math.max(0, context.excelRowOffset - 1)
+    const columns = context.columnIds.map(String);
+    const rowPositions =
+      context.groupedRowPositions ?? new Map(context.rowIds.map((id, index) => [String(id), index + context.excelRowOffset]));
+    const stableFormula = this.toStoredFormula(normalizedFormula);
+    if (context.groupedRowPositions && this.containsDirectExcelReference(stableFormula)) {
+      return undefined;
+    }
+    let mapped = stableFormula.replace(
+      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REF\(\s*COLUMN\(("(?:\\.|[^"\\])*")\)\s*,\s*ROW\(("(?:\\.|[^"\\])*")\)\s*\)/gi,
+      (token, columnId?: string, rowId?: string) => {
+        if (!columnId) {
+          return token;
+        }
+        const column = columns.indexOf(JSON.parse(columnId));
+        const row = rowPositions.get(JSON.parse(rowId!));
+        return column < 0 || row === undefined
+          ? FORMULA_ERROR.REF
+          : `${getExcelColumnNameByIndex(column + 1 + (context.groupedColumnOffset ?? 0))}${row}`;
+      }
     );
-
-    const withNumericRowRefs = this.replaceRefFunctionsWithA1Refs(
-      shiftedLegacyFormula,
-      normalizedColumnIds,
-      normalizedRowIds,
-      context.excelRowOffset
-    );
-
-    return this.normalizeFormulaSyntax(
-      this.applyFormulaReferenceAbsoluteFlags(this.buildStoreKey(context.rowId, context.columnId), withNumericRowRefs)
-    );
+    let hasUnmappedRef = false;
+    this.transformFormulaOutsideQuotedStrings(mapped, (segment) => {
+      hasUnmappedRef ||= /\bREF\s*\(/i.test(segment);
+      return segment;
+    });
+    if (context.groupedRowPositions && hasUnmappedRef) {
+      return undefined;
+    }
+    // Numeric ROW(n) and legacy A1 references remain supported for ungrouped exports.
+    if (!context.groupedRowPositions) {
+      if (mapped === stableFormula) {
+        mapped = this.shiftDirectExcelReferences(mapped, this.getFormulaColumnIds(), columns, Math.max(0, context.excelRowOffset - 1));
+      }
+      mapped = this.replaceRefFunctionsWithA1Refs(mapped, columns, context.rowIds.map(String), context.excelRowOffset);
+    }
+    let hasMissing = false;
+    this.transformFormulaOutsideQuotedStrings(mapped, (segment) => {
+      hasMissing ||= segment.includes(FORMULA_ERROR.REF);
+      return segment;
+    });
+    if (context.groupedRowPositions && hasMissing) {
+      return FORMULA_ERROR.REF;
+    }
+    mapped = this.applyFormulaReferenceAbsoluteFlags(this.buildStoreKey(context.rowId, context.columnId), mapped);
+    const helpers = new Set<string>();
+    const output = mapFormulaRanges(mapped, (members) => {
+      if (members.includes(FORMULA_ERROR.REF)) {
+        return FORMULA_ERROR.REF;
+      }
+      const contiguous = compactFormulaRange(members);
+      if (contiguous) {
+        return contiguous;
+      }
+      const helper = context.registerFormulaRange?.(members) ?? FORMULA_ERROR.REF;
+      if (helper !== FORMULA_ERROR.REF) {
+        helpers.add(helper);
+      }
+      return helper;
+    });
+    return this.normalizeFormulaSyntax(rewriteExcelHelperCounta(output, helpers));
   }
 
   /** Shift only direct A1 references left after stable references have been canonicalized. */
@@ -700,13 +820,16 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
     );
 
-    const expressionWithValues = expressionWithRanges.replace(/\$?([A-Z]{1,3})\$?(\d+)/gi, (_match, colName: string, rowNumber: string) => {
-      const resolved = this.resolveExcelReferenceValue(colName, Number(rowNumber), context);
-      if (isFormulaErrorCode(resolved) && !firstErrorCode) {
-        firstErrorCode = resolved;
+    const expressionWithValues = mapFormulaRanges(expressionWithRanges, (members) => `[${members.join(',')}]`).replace(
+      /\$?([A-Z]{1,3})\$?(\d+)/gi,
+      (_match, colName: string, rowNumber: string) => {
+        const resolved = this.resolveExcelReferenceValue(colName, Number(rowNumber), context);
+        if (isFormulaErrorCode(resolved) && !firstErrorCode) {
+          firstErrorCode = resolved;
+        }
+        return this.toExpressionLiteral(resolved);
       }
-      return this.toExpressionLiteral(resolved);
-    });
+    );
 
     if (firstErrorCode) {
       return firstErrorCode;
@@ -1213,6 +1336,19 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       .map((rowId) => String(rowId));
   }
 
+  /** Display indexes include structural rows, which cannot be formula targets. */
+  protected getGroupedDisplayRowIds(): Array<string | undefined> | undefined {
+    if (!this._dataView?.getGrouping?.().length || !this._dataView.getItem || !this._dataView.getLength) {
+      return undefined;
+    }
+    const idProperty = this.getDatasetIdPropertyName();
+    return Array.from({ length: this._dataView.getLength() }, (_, row) => {
+      const item = this._dataView.getItem(row);
+      const id = item?.__group || item?.__groupTotals ? undefined : item?.[idProperty];
+      return id == null ? undefined : String(id);
+    });
+  }
+
   /**
    * Convert user-facing A1 references to stable AG-style references.
    * Quoted formula strings are intentionally ignored so values such as "A1" remain literals.
@@ -1220,11 +1356,26 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected convertA1ReferencesToStableRefs(
     formula: string,
     columnIds: string[] = this.getFormulaColumnIds(),
-    rowIds: string[] = this.getFormulaRowIds()
+    rowIds: Array<string | undefined> = this.getFormulaRowIds(),
+    invalidRowAsError = false
   ): string {
     if (!formula || columnIds.length === 0 || rowIds.length === 0) {
       return formula;
     }
+
+    formula = formula.replace(
+      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REF\(COLUMN\("[^"]+"\),ROW\("[^"]+"\)\)\s*:\s*REF\(COLUMN\("[^"]+"\),ROW\("[^"]+"\)\)/gi,
+      (token) => (token.startsWith('REF(') ? this.replaceRefFunctionsWithA1Refs(token, columnIds, rowIds) : token)
+    );
+    if (invalidRowAsError) {
+      formula = this.transformFormulaOutsideQuotedStrings(formula, (segment) =>
+        segment.replace(/(?<![\w])\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+(?![\w])/gi, (range) => {
+          const endpoints = range.split(':').map((part) => parseExcelReferenceCell(part.trim()));
+          return endpoints.some((cell) => !cell || cell.row >= rowIds.length || cell.cell >= columnIds.length) ? FORMULA_ERROR.REF : range;
+        })
+      );
+    }
+    formula = expandFormulaRanges(formula, (row) => !invalidRowAsError || rowIds[row] !== undefined);
 
     const a1ReferenceRegex =
       /(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])\$?[A-Z]{1,3}\$?\d+(?![A-Za-z0-9_])/gi;
@@ -1239,22 +1390,15 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
         const startColumnId = columnIds[startCell.cell];
         const startRowId = rowIds[startCell.row];
+        if (startRowId === undefined && invalidRowAsError) {
+          return FORMULA_ERROR.REF;
+        }
         if (startColumnId === undefined || startRowId === undefined) {
           return reference;
         }
 
         const startRef = `REF(COLUMN(${JSON.stringify(startColumnId)}),ROW(${JSON.stringify(startRowId)}))`;
-        if (!endCell) {
-          return startRef;
-        }
-
-        const endColumnId = columnIds[endCell.cell];
-        const endRowId = rowIds[endCell.row];
-        if (endColumnId === undefined || endRowId === undefined) {
-          return reference;
-        }
-
-        return `${startRef}:REF(COLUMN(${JSON.stringify(endColumnId)}),ROW(${JSON.stringify(endRowId)}))`;
+        return startRef;
       })
     );
   }
@@ -1286,18 +1430,29 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   /** Replace REF(COLUMN("x"),ROW(...)) expressions by concrete A1 references. */
-  protected replaceRefFunctionsWithA1Refs(expression: string, columnIds: string[], rowIds: string[], excelRowOffset = 1): string {
+  protected replaceRefFunctionsWithA1Refs(
+    expression: string,
+    columnIds: string[],
+    rowIds: Array<string | undefined>,
+    excelRowOffset = 1,
+    preserveMissing = false
+  ): string {
     if (!expression) {
       return expression;
     }
 
     const withNamedRowRefs = expression.replace(
-      /REF\(\s*COLUMN\("([^"]+)"\)\s*,\s*ROW\("([^"]+)"\)\s*\)/gi,
-      (_match, columnId: string, rowId: string) => {
+      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REF\(\s*COLUMN\(("(?:\\.|[^"\\])*")\)\s*,\s*ROW\(("(?:\\.|[^"\\])*")\)\s*\)/gi,
+      (match, columnToken?: string, rowToken?: string) => {
+        if (!columnToken) {
+          return match;
+        }
+        const columnId = JSON.parse(columnToken) as string;
+        const rowId = JSON.parse(rowToken!) as string;
         const columnIdx = columnIds.indexOf(String(columnId));
         const rowIdx = rowIds.indexOf(String(rowId));
         if (columnIdx < 0 || rowIdx < 0) {
-          return FORMULA_ERROR.REF;
+          return preserveMissing && columnIdx >= 0 && this.getFormulaRowIds().includes(rowId) ? match : FORMULA_ERROR.REF;
         }
 
         const excelColName = getExcelColumnNameByIndex(columnIdx + 1);
@@ -1538,13 +1693,20 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const rowId = item?.[this.getDatasetIdPropertyName()] as number | string | undefined;
         return rowId === undefined || rowId === null
           ? this.toDisplayFormula(formula)
-          : this.toDisplayFormulaForCell(formula, rowId, column.id);
+          : this.toDisplayFormulaForCell(formula, rowId, column.id, true);
       };
       mergedParams.toStoredFormula = (formula: string, item?: any) => {
         const rowId = item?.[this.getDatasetIdPropertyName()] as number | string | undefined;
-        const storedFormula = this.toStoredFormula(formula);
+        const existing = rowId == null ? undefined : this.getFormula(rowId, column.id);
+        if (existing && formula === this.toDisplayFormulaForCell(existing, rowId!, column.id, true)) {
+          return existing;
+        }
+        const groupedRows = this.getGroupedDisplayRowIds();
+        const storedFormula = groupedRows
+          ? this.convertA1ReferencesToStableRefs(formula, this.getFormulaColumnIds(), groupedRows, true)
+          : this.toStoredFormula(formula);
         if (rowId !== undefined && rowId !== null && this.containsDirectExcelReference(formula)) {
-          this.captureFormulaReferenceAbsoluteFlags(this.buildStoreKey(rowId, column.id), formula);
+          this.captureFormulaReferenceAbsoluteFlags(this.buildStoreKey(rowId, column.id), formula, groupedRows);
         }
         return storedFormula;
       };
