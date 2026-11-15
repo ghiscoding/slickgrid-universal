@@ -48,8 +48,10 @@ export function handleFormulaDragFill(args: OnDragReplaceCellsEventArgs, context
     return;
   }
 
-  const visibleColumns = context.grid.getVisibleColumns() as Column[];
   const allColumns = (context.grid.getColumns?.() || []) as Column[];
+  const sourceCells = allColumns.flatMap((column, index) =>
+    index >= baseRange.fromCell && index <= baseRange.toCell && !column.hidden ? [index] : []
+  );
   const updatedItems = new Map<string, { id: number | string; item: any }>();
   const valueSeriesCache = new Map<string, unknown[]>();
   const rowIdProperty = context.getDatasetIdPropertyName();
@@ -66,30 +68,24 @@ export function handleFormulaDragFill(args: OnDragReplaceCellsEventArgs, context
         continue;
       }
 
+      let visibleOffset = 0;
       for (let cellOffset = 0; cellOffset < targetRange.cellCount(); cellOffset++) {
-        const targetVisibleCell = targetRange.fromCell + cellOffset;
-        const sourceVisibleCell = baseRange.fromCell + (cellOffset % baseRange.cellCount());
-        const targetColumn = visibleColumns[targetVisibleCell];
-        const sourceColumn = visibleColumns[sourceVisibleCell];
-        if (!targetColumn?.allowFormula || !sourceColumn) {
+        const targetCell = targetRange.fromCell + cellOffset;
+        const targetColumn = allColumns[targetCell];
+        if (!targetColumn || targetColumn.hidden || sourceCells.length === 0) {
+          continue;
+        }
+        const sourceCell = sourceCells[visibleOffset++ % sourceCells.length];
+        const sourceColumn = allColumns[sourceCell];
+        if (!targetColumn.allowFormula) {
           continue;
         }
 
         const targetField = String(targetColumn.field ?? targetColumn.id);
         const sourceFormula = getFormulaOrRawValue(sourceItem, sourceRowId, sourceColumn, context.getFormula);
         if (sourceFormula) {
-          const sourceColumnIndex = allColumns.findIndex((column) => String(column.id) === String(sourceColumn.id));
-          const targetColumnIndex = allColumns.findIndex((column) => String(column.id) === String(targetColumn.id));
-          if (sourceColumnIndex < 0 || targetColumnIndex < 0) {
-            continue;
-          }
-
           const displayFormula = context.toDisplayFormulaForCell(sourceFormula, sourceRowId, sourceColumn.id);
-          const translatedFormula = translateFormulaReferences(
-            displayFormula,
-            targetRow - sourceRow,
-            targetColumnIndex - sourceColumnIndex
-          );
+          const translatedFormula = translateFormulaReferences(displayFormula, targetRow - sourceRow, targetCell - sourceCell);
           setFormulaObjectProperty(targetItem, targetField, context.toStoredFormula(translatedFormula));
           context.setFormula(targetRowId, targetColumn.id, translatedFormula);
         } else {
@@ -97,8 +93,9 @@ export function handleFormulaDragFill(args: OnDragReplaceCellsEventArgs, context
             baseRange,
             direction,
             targetRow,
-            targetVisibleCell,
-            visibleColumns,
+            targetCell,
+            sourceCell,
+            allColumns,
             context.grid,
             valueSeriesCache
           );
@@ -128,6 +125,7 @@ function getSourceValueSeries(
   direction: FormulaFillDirection,
   targetRow: number,
   targetCell: number,
+  sourceCell: number,
   columns: Column[],
   grid: SlickGrid,
   cache: Map<string, unknown[]>
@@ -143,7 +141,6 @@ function getSourceValueSeries(
   };
 
   if (direction === 'vertical') {
-    const sourceCell = baseRange.fromCell + positiveModulo(targetCell - baseRange.fromCell, baseRange.cellCount());
     const cacheKey = `v${sourceCell}`;
     let sourceValues = cache.get(cacheKey);
     if (!sourceValues) {
@@ -162,11 +159,14 @@ function getSourceValueSeries(
   if (!sourceValues) {
     sourceValues = [];
     for (let sourceCell = baseRange.fromCell; sourceCell <= baseRange.toCell; sourceCell++) {
-      sourceValues.push(getSourceValue(sourceRow, sourceCell));
+      if (!columns[sourceCell]?.hidden) {
+        sourceValues.push(getSourceValue(sourceRow, sourceCell));
+      }
     }
     cache.set(cacheKey, sourceValues);
   }
-  return { seriesIndex: targetCell - baseRange.fromCell, sourceValues };
+  const visibleIndex = (cell: number) => columns.slice(0, cell).filter((column) => !column.hidden).length;
+  return { seriesIndex: visibleIndex(targetCell) - visibleIndex(baseRange.fromCell), sourceValues };
 }
 
 /** AG Grid-style default: copy one value, continue numeric ranges, and repeat mixed ranges. */

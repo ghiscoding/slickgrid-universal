@@ -113,7 +113,9 @@ Formula reference storage:
 - this keeps references aligned when columns are reordered or hidden and when rows are sorted
 - `ExcelExportService` converts the stable references back to native Excel A1 formulas using the exported column and row order
 
-When a formula references a hidden source column, export it with `includeHidden: true` so the referenced column exists in the workbook. If the source column is omitted from the export, Excel cannot evaluate a formula that points to it.
+Formula column letters follow the complete column order, including hidden columns. Hiding a column leaves a gap in the visible header letters, and references continue to point to the hidden data. A range spanning hidden columns includes their values. Mouse selection, reference highlighting and drag-fill use those same column positions; drag-fill skips hidden destination columns.
+
+When a formula references a hidden source column, export it with `includeHidden: true` so the referenced column exists in the workbook. If the source column is omitted, the exported reference becomes `#REF!`. This applies to grouped and ungrouped exports.
 
 ### Grouping and Group Totals
 

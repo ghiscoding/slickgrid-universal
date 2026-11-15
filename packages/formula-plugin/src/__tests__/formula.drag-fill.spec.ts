@@ -193,7 +193,7 @@ describe('formula drag-fill', () => {
     expect(setFormula).not.toHaveBeenCalled();
   });
 
-  it('should use the updateItem fallback and data extractors while skipping hidden source values', () => {
+  it('should skip hidden source columns without changing data', () => {
     const columns: Column[] = [
       { id: 'source', field: 'source', hidden: true, allowFormula: true },
       { id: 'target', field: 'target', allowFormula: true },
@@ -227,8 +227,116 @@ describe('formula drag-fill', () => {
       }
     );
 
-    expect(updateItem).toHaveBeenCalledWith('r2', items[1]);
-    expect(items[1].source).toBeUndefined();
+    expect(updateItem).not.toHaveBeenCalled();
+    expect(items[1].source).toBe(4);
+  });
+
+  it('fills visible formulas using logical column indexes when earlier columns are hidden', () => {
+    const columns: Column[] = [
+      { id: 'hidden', field: 'hidden', hidden: true, allowFormula: true },
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+      { id: 'other', field: 'other', allowFormula: true },
+    ];
+    const items = [
+      { id: 'a', hidden: 'keep', value: 2, total: '=B1', other: 99 },
+      { id: 'b', hidden: 'keep', value: 7, total: '', other: 99 },
+    ];
+    const updateItem = vi.fn();
+    const setFormula = vi.fn();
+    const grid = {
+      getColumns: () => columns,
+      getVisibleColumns: () => columns.filter((col) => !col.hidden),
+      getDataItem: (row: number) => items[row],
+      getOptions: () => ({}),
+    } as any;
+    handleFormulaDragFill({ grid, prevSelectedRange: new SlickRange(0, 2), selectedRange: new SlickRange(0, 2, 1, 2) } as any, {
+      grid,
+      dataView: { updateItem } as any,
+      getDatasetIdPropertyName: () => 'id',
+      getFormula: (rowId, colId) => (rowId === 'a' && colId === 'total' ? '=B1' : undefined),
+      setFormula,
+      toStoredFormula: (formula) => formula,
+      toDisplayFormulaForCell: (formula) => formula,
+    });
+    expect(items[1]).toEqual({ id: 'b', hidden: 'keep', value: 7, total: '=B2', other: 99 });
+    expect(setFormula).toHaveBeenCalledWith('b', 'total', '=B2');
+    expect(updateItem).toHaveBeenCalledWith('b', items[1]);
+  });
+
+  it('fills a horizontal number series across hidden columns without modifying them', () => {
+    const columns: Column[] = [
+      { id: 'a', field: 'a', allowFormula: true },
+      { id: 'hidden', field: 'hidden', hidden: true, allowFormula: true },
+      { id: 'b', field: 'b', allowFormula: true },
+      { id: 'c', field: 'c', allowFormula: true },
+    ];
+    const item = { id: 'a', a: 2, hidden: 100, b: 4, c: 0 };
+    const grid = {
+      getColumns: () => columns,
+      getVisibleColumns: () => columns.filter((col) => !col.hidden),
+      getDataItem: () => item,
+      getOptions: () => ({}),
+    } as any;
+    handleFormulaDragFill({ grid, prevSelectedRange: new SlickRange(0, 0, 0, 2), selectedRange: new SlickRange(0, 0, 0, 3) } as any, {
+      grid,
+      dataView: {} as any,
+      getDatasetIdPropertyName: () => 'id',
+      getFormula: () => undefined,
+      setFormula: vi.fn(),
+      toStoredFormula: (formula) => formula,
+      toDisplayFormulaForCell: (formula) => formula,
+    });
+    expect(item).toEqual({ id: 'a', a: 2, hidden: 100, b: 4, c: 6 });
+  });
+
+  it('shifts horizontal formula references by logical columns across a hidden destination', () => {
+    const columns: Column[] = [
+      { id: 'a', field: 'a', allowFormula: true },
+      { id: 'hidden', field: 'hidden', hidden: true, allowFormula: true },
+      { id: 'c', field: 'c', allowFormula: true },
+    ];
+    const item = { id: 'r', a: '=A1', hidden: 'keep', c: '' };
+    const setFormula = vi.fn();
+    const grid = {
+      getColumns: () => columns,
+      getVisibleColumns: () => columns.filter((column) => !column.hidden),
+      getDataItem: () => item,
+      getOptions: () => ({}),
+    } as any;
+    handleFormulaDragFill({ grid, prevSelectedRange: new SlickRange(0, 0), selectedRange: new SlickRange(0, 0, 0, 2) } as any, {
+      grid,
+      dataView: {} as any,
+      getDatasetIdPropertyName: () => 'id',
+      getFormula: (_row, column) => (column === 'a' ? '=A1' : undefined),
+      setFormula,
+      toStoredFormula: (formula) => formula,
+      toDisplayFormulaForCell: (formula) => formula,
+    });
+    expect(item).toEqual({ id: 'r', a: '=A1', hidden: 'keep', c: '=C1' });
+    expect(setFormula).toHaveBeenCalledOnce();
+    expect(setFormula).toHaveBeenCalledWith('r', 'c', '=C1');
+  });
+
+  it('handles missing rows within a numeric seed selection', () => {
+    const columns: Column[] = [{ id: 'total', field: 'total', allowFormula: true }];
+    const items = [{ id: 'a', total: 2 }, undefined, { id: 'b', total: 0 }, { id: 'c', total: 0 }];
+    const grid = {
+      getColumns: () => columns,
+      getVisibleColumns: () => columns,
+      getDataItem: (row: number) => items[row],
+      getOptions: () => ({}),
+    } as any;
+    handleFormulaDragFill({ grid, prevSelectedRange: new SlickRange(0, 0, 1, 0), selectedRange: new SlickRange(0, 0, 3, 0) } as any, {
+      grid,
+      dataView: {} as any,
+      getDatasetIdPropertyName: () => 'id',
+      getFormula: () => undefined,
+      setFormula: vi.fn(),
+      toStoredFormula: (formula) => formula,
+      toDisplayFormulaForCell: (formula) => formula,
+    });
+    expect(items[2]?.total).toBe(2);
   });
 
   it('should skip formula fills when visible columns are not present in the full column list', () => {

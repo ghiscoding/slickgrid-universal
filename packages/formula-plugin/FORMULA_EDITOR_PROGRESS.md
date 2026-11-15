@@ -3,6 +3,11 @@
 Last updated: 2026-11-14 (feature completion audit)
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Hidden Columns and Formula References (2026-11-14)
+- Formula letters use the full logical column order, including hidden columns. Reordering, hiding and showing preserve stable references; selecting a visible cell uses its logical letter, and ranges include hidden members.
+- Fixed drag-fill to use logical column indexes and skip hidden destinations. Horizontal numeric series continue across visible cells. Reference range borders use visible endpoints when boundary columns are hidden.
+- Browser checks cover reordered headers, reference selection/highlighting, fill, hiding/showing and Excel export with and without `includeHidden`, both grouped and ungrouped. Omitted dependencies export `#REF!`.
+
 ## Latest Update: Grouped Range Editing and Export (2026-11-14)
 - Stable `REFRANGE` members preserve record and column identity and argument boundaries through grouping and reordering; structural rows are skipped. Grouped ranges support editing, highlights, collapse/expand and drag-fill. Hidden references retain stable identities; expand groups to shift them by displayed position.
 - `createGroupingAggregator` lets normal grouping formatters display evaluated formula totals. Example 48 uses it for formula columns.
@@ -78,7 +83,7 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [x] Audit unused dark-theme SASS variables and apply the useful dark palette; retain the other variables for compatibility.
 - [x] Support grouping and grouping formatters, including reference mapping when group rows change offsets and grouped Excel export. Custom Excel functions receive empty strings for blank helper cells; collapsed or excluded export dependencies produce `#REF!`.
 - [ ] Audit Grid State/Preset behavior and decide how formula references and formula data should persist and restore.
-- [ ] Verify and document hidden-column behavior, including editor A1 numbering and Excel export when a referenced column is excluded. Current notes say runtime resolves hidden columns and export requires `includeHidden: true` for the source column.
+- [x] Verify and document hidden-column behavior, including editor A1 numbering, reference selection, drag-fill and Excel export when a referenced column is excluded.
 - [ ] Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin.
 - [ ] Evaluate using the range drag handle to fill down to the last adjacent non-empty cell; define the click interaction and stopping behavior.
 - [ ] Evaluate reusing the existing autocompleter instead of the formula editor's custom autocomplete.

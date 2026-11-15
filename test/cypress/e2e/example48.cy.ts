@@ -461,6 +461,65 @@ describe('Example 48 - Formula Service (MVP)', () => {
     cy.get('.grid48 .slick-header-columns .slick-header-column').should('have.length', 8);
     cy.get(cell(0, 3)).should('contain', '$8.88');
     cy.get(cell(0, 6)).should('contain', '$8.88');
+
+    // Letters keep the hidden Price slot: Quantity is C, Sub-Total is D, and Price remains E.
+    cy.get(cell(0, 3)).dblclick();
+    cy.get('.formula-editor-input').should('have.text', '=E1*C1');
+    cy.get('.grid48 .slick-header-column').contains('Quantity').find('.excel-col-prefix').should('have.text', 'C');
+    cy.get('.grid48 .slick-header-column').contains('Sub-Total').find('.excel-col-prefix').should('have.text', 'D');
+    cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-2');
+    cy.get('.formula-editor-input').click().type('{selectall}=', { force: true });
+    cy.get(cell(0, 2)).click();
+    cy.get('.formula-editor-input').should('have.text', '=C1').type('{enter}', { force: true });
+    cy.get(cell(0, 3)).should('contain', '$4.00');
+  });
+
+  it('should fill formulas in the correct column after hiding an earlier column', () => {
+    cy.reload();
+    cy.get('.grid48 .slick-header-column').contains('Price').trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.slick-column-picker:visible input[data-columnid="price"]').parent('.icon-checkbox-container').click({ force: true });
+    cy.get('.slick-column-picker:visible .close').click({ force: true });
+    cy.get(cell(0, 3)).click({ force: true });
+    cy.get(cell(0, 3)).find('.slick-drag-replace-handle').trigger('mousedown', { which: 1, force: true });
+    cy.get(cell(1, 3)).trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
+    cy.get(cell(1, 3)).should('contain', '$4.65').dblclick();
+    cy.get('.formula-editor-input').should('have.text', '=C2*D2').type('{enter}', { force: true });
+    cy.get(cell(1, 5)).should('contain', '$0.00');
+  });
+
+  it('should export hidden dependencies only when includeHidden is enabled', () => {
+    cy.reload();
+    cy.get('.grid48 .slick-header-column').contains('Price').trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.slick-column-picker:visible input[data-columnid="price"]').parent('.icon-checkbox-container').click({ force: true });
+    cy.get('.slick-column-picker:visible .close').click({ force: true });
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.get('[data-test="export-excel-btn"]').click();
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 2 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[1][2]).to.equal('#REF!*B3');
+    });
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.window().then((win: any) => win.Example48.excelExportService.exportToExcel({ includeHidden: true }));
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 2 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[1][3]).to.equal('B3*C3');
+    });
+    cy.get('[data-test="group-by-btn"]').click();
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.get('[data-test="export-excel-btn"]').click();
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 15 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[2][3]).to.equal('#REF!');
+    });
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.window().then((win: any) => win.Example48.excelExportService.exportToExcel({ includeHidden: true }));
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 15 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[2][4]).to.equal('C4*D4');
+    });
+    cy.get('[data-test="clear-grouping-btn"]').click();
+    cy.get('.grid48 .slick-header-column').contains('Quantity').trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.slick-column-picker:visible input[data-columnid="price"]').parent('.icon-checkbox-container').click({ force: true });
+    cy.get('.slick-column-picker:visible .close').click({ force: true });
+    cy.get(cell(0, 4)).should('contain', '$8.88').dblclick();
+    cy.get('.formula-editor-input').should('have.text', '=C1*D1').type('{enter}', { force: true });
   });
 
   it('should export reordered formulas with the correct Excel row offset', () => {

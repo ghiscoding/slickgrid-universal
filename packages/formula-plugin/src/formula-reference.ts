@@ -175,7 +175,7 @@ export function buildFormulaReferenceColorInfos(formula: string): FormulaReferen
 /** Convert colored formula references to the keyed cell-class hash expected by SlickGrid. */
 export function buildFormulaReferenceCssHash(
   references: Iterable<FormulaReferenceColorInfo>,
-  columns: Array<{ id?: number | string }>,
+  columns: Array<{ id?: number | string; hidden?: boolean }>,
   rowCount?: number
 ): FormulaReferenceCssHash {
   const hash: FormulaReferenceCssHash = Object.create(null);
@@ -183,9 +183,18 @@ export function buildFormulaReferenceCssHash(
   for (const reference of references) {
     const first = reference.cells[0];
     const last = reference.cells[reference.cells.length - 1];
+    const visibleCells = reference.cells.filter((cell) => columns[cell.cell] && !columns[cell.cell].hidden);
+    const firstVisible = visibleCells[0];
+    const lastVisible = visibleCells[visibleCells.length - 1];
     for (const cell of reference.cells) {
       const columnId = columns[cell.cell]?.id;
-      if (columnId === undefined || columnId === null || cell.row < 0 || (rowCount !== undefined && cell.row >= rowCount)) {
+      if (
+        columnId === undefined ||
+        columnId === null ||
+        columns[cell.cell].hidden ||
+        cell.row < 0 ||
+        (rowCount !== undefined && cell.row >= rowCount)
+      ) {
         continue;
       }
 
@@ -193,7 +202,7 @@ export function buildFormulaReferenceCssHash(
       let classes = reference.colorClass;
       if (reference.cells.length > 1) {
         const bottom = rowCount === undefined ? last.row : Math.min(last.row, rowCount - 1);
-        const right = Math.min(last.cell, columns.length - 1);
+        const right = lastVisible.cell;
         classes += ' formula-ref-range';
         if (cell.row === first.row) {
           classes += ' formula-ref-top';
@@ -201,7 +210,7 @@ export function buildFormulaReferenceCssHash(
         if (cell.row === bottom) {
           classes += ' formula-ref-bottom';
         }
-        if (cell.cell === first.cell) {
+        if (cell.cell === firstVisible.cell) {
           classes += ' formula-ref-left';
         }
         if (cell.cell === right) {

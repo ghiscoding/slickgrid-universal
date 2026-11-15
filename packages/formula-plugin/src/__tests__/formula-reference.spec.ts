@@ -90,6 +90,16 @@ describe('formula reference utilities', () => {
     expect(buildFormulaReferenceCssHash(references, columns, 0)).toEqual({});
   });
 
+  it('outlines the visible edges of a range whose endpoint columns are hidden', () => {
+    const columns = [{ id: 'a', hidden: true }, { id: 'b' }, { id: 'c' }, { id: 'd', hidden: true }];
+    const hash = buildFormulaReferenceCssHash(buildFormulaReferenceColorInfos('=A1:D2'), columns, 2);
+    expect(hash[0]).not.toHaveProperty('a');
+    expect(hash[1]).not.toHaveProperty('d');
+    expect(hash[0].b).toContain('formula-ref-left');
+    expect(hash[1].c).toContain('formula-ref-right');
+    expect(buildFormulaReferenceCssHash(buildFormulaReferenceColorInfos('=A1'), columns, 2)).toEqual({});
+  });
+
   it('should outline only the perimeter of reversed and clipped rectangular ranges', () => {
     const columns = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
     const hash = buildFormulaReferenceCssHash(buildFormulaReferenceColorInfos('=D4:A1'), columns, 3);
