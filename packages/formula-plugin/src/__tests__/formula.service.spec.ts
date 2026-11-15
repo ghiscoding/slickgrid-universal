@@ -331,6 +331,146 @@ describe('FormulaService', () => {
     expect((target as any).toDisplayFormulaForCell(target.getFormula('a', 'total'), 'a', 'total')).toBe('=A1');
   });
 
+  it('atomically restores the whole formula store after changing layout and data order', () => {
+    const items = [
+      { key: 1, price: 2, total: '=99' },
+      { key: 2, price: 7, total: '=88' },
+    ];
+    const columns: Column[] = [
+      { id: 'price', field: 'price' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    let rows: any[] = items;
+    let grouping = false;
+    const grid = {
+      getColumns: () => columns,
+      setColumns: (next: Column[]) => columns.splice(0, columns.length, ...next),
+      getData: () => ({
+        getItems: () => items,
+        getLength: () => rows.length,
+        getItem: (index: number) => rows[index],
+        getGrouping: () => (grouping ? [{}] : []),
+      }),
+      getOptions: () => ({ datasetIdPropertyName: 'key' }),
+    } as any;
+    const source = new FormulaService();
+    source.init(grid);
+    source.setFormula(1, 'total', '=SUM($A$1:A2)');
+    source.setFormula(2, 'total', '=4');
+    const saved = JSON.parse(JSON.stringify(source.getFormulaStoreSnapshot()));
+    source.dispose();
+    columns.reverse();
+    columns.find((column) => column.id === 'price')!.hidden = true;
+    rows = [{ __group: true }, items[1], { __groupTotals: true }, items[0]];
+    grouping = true;
+    const restored = new FormulaService();
+    restored.init(grid);
+    restored.setFormulaStoreSnapshot(saved);
+    expect(restored.getEvaluatedCellValue(1, 'total')).toBe(9);
+    expect(restored.getEvaluatedCellValue(2, 'total')).toBe(4);
+    expect((restored as any).toDisplayFormulaForCell(restored.getFormula(1, 'total'), 1, 'total', true)).toBe('=SUM(REFRANGE($B$4,B2))');
+    rows = [{ __group: true }, items[1]];
+    expect(restored.getEvaluatedCellValue(1, 'total')).toBe(9);
+    expect((restored as any).toDisplayFormulaForCell(restored.getFormula(1, 'total'), 1, 'total', true)).toContain('ROW("1")');
+    const again = restored.getFormulaStoreSnapshot();
+    expect(again.cells).toHaveLength(2);
+    saved.cells[0].referenceFlags[0].column = false;
+    expect(restored.getFormulaStoreSnapshot()).toEqual(again);
+    restored.setFormula(2, 'total', '=7');
+    expect(restored.getEvaluatedCellValue(2, 'total', '=8', undefined)).toBe(8);
+    restored.removeFormula(1, 'total');
+    restored.clearFormulas();
+    expect(restored.getFormulaStoreSnapshot()).toEqual({ version: 1, cells: [] });
+  });
+
+  it('rewires formula columns when a layout replaces definitions and unsubscribes on dispose', () => {
+    const onBeforeSetColumns = new SlickEvent<any>();
+    let columns: Column[] = [
+      { id: 'price', field: 'price' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const item = { id: 'a', price: 3, total: '=A1*2' };
+    const grid = {
+      onBeforeSetColumns,
+      getColumns: () => columns,
+      setColumns: (next: Column[]) => {
+        onBeforeSetColumns.notify({ newColumns: next });
+        columns = next;
+      },
+      getData: () => ({ getItems: () => [item], getItem: () => item }),
+      getOptions: () => ({ editable: true }),
+    } as any;
+    const service = new FormulaService();
+    service.init(grid);
+    const original = columns[1];
+    grid.setColumns([...columns]);
+    expect(columns[1]).toBe(original);
+    grid.setColumns([
+      { id: 'price', field: 'price' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ]);
+    expect(columns[1].editor?.model).toBe(FormulaCellEditor);
+    const formatted = columns[1].formatter?.(0, 1, item.total, columns[1], item, grid);
+    expect(formatted).toBeInstanceOf(HTMLElement);
+    expect((formatted as HTMLElement).textContent).toBe('6');
+    service.dispose();
+    const replacement = [{ id: 'total', field: 'total', allowFormula: true }];
+    grid.setColumns(replacement);
+    expect(replacement[0].editor).toBeUndefined();
+  });
+
+  it('rejects malformed and duplicate store snapshots without changing existing formulas', () => {
+    const service = new FormulaService({ autoAssignEditor: false });
+    expect(() => service.setFormulaStoreSnapshot({ version: 1, cells: [] })).toThrow('Initialize FormulaService');
+    service.init({ getColumns: () => [{ id: 'total' }], getData: () => ({ getItems: () => [{ id: 1 }] }), getOptions: () => ({}) } as any);
+    service.setFormula(1, 'total', '=42');
+    const before = service.getFormulaStoreSnapshot();
+    const valid = before.cells[0];
+    for (const invalid of [
+      null,
+      {},
+      { version: 2, cells: [] },
+      { version: 1, cells: null },
+      { version: 1, cells: [null] },
+      { version: 1, cells: [{ ...valid, rowId: '' }] },
+      { version: 1, cells: [{ ...valid, columnId: NaN }] },
+      { version: 1, cells: [{ ...valid, formula: 'oops' }] },
+      { version: 1, cells: [valid, { ...valid }] },
+    ]) {
+      expect(() => service.setFormulaStoreSnapshot(invalid as any)).toThrow(TypeError);
+      expect(service.getFormulaStoreSnapshot()).toEqual(before);
+    }
+    service.setFormulaStoreSnapshot({ version: 1, cells: [] });
+    expect(service.getFormulaStoreSnapshot()).toEqual({ version: 1, cells: [] });
+  });
+
+  it('retains snapshots for missing identities and does not modify or suppress dataset formulas', () => {
+    const items = [
+      { id: 'a', price: 2, total: '=2' },
+      { id: 'b', price: 7, total: '=3' },
+    ];
+    const columns: Column[] = [
+      { id: 'price', field: 'price' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const grid = { getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any;
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init(grid);
+    service.setFormula('a', 'total', '=A2');
+    const saved = service.getFormulaStoreSnapshot();
+    const missing = items.pop()!;
+    service.setFormulaStoreSnapshot(saved);
+    expect(service.hasFormula('b', 'total')).toBe(true);
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe('#REF!');
+    items.push(missing);
+    service.setFormulaStoreSnapshot(saved);
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(7);
+    service.setFormulaStoreSnapshot({ version: 1, cells: [] });
+    expect(items[0].total).toBe('=2');
+    expect(service.hasFormula('a', 'total')).toBe(false);
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(2);
+  });
+
   it('exports disjoint ranges as single helper arguments with original member order', () => {
     const service = new FormulaService({ autoAssignEditor: false });
     const items = [

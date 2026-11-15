@@ -3,6 +3,12 @@
 Last updated: 2026-11-14 (feature completion audit)
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Grid State and Formula Store Persistence (2026-11-14)
+- Added versioned bulk formula-store snapshots that retain row/column identities, stable ranges and absolute flags. Restore validates the entire snapshot before replacing the store and leaves dataset fields unchanged; missing identities remain recoverable and restored formulas take precedence over stale dataset formula strings.
+- Grid State remains layout/view state. Save it, formula snapshots and the dataset separately; apply presets and initialize data before restoring formulas. Regular grouping requires separate restoration.
+- FormulaService now reattaches its formatter/editor to replacement column definitions before `setColumns`, fixing `applyColumnLayout` displaying raw formulas; already prepared columns are not wrapped twice and the event is unsubscribed on dispose.
+- Example 48 checks presets during grid construction and dynamically restores hidden columns and grouped formulas, checks absolute-reference drag-fill, and inspects exported source values in both grouped and ungrouped workbooks. Chrome: 29 tests passed. Unit tests cover snapshot validation and 100% statement/line coverage for the changed service.
+
 ## Latest Update: Hidden Columns and Formula References (2026-11-14)
 - Formula letters use the full logical column order, including hidden columns. Reordering, hiding and showing preserve stable references; selecting a visible cell uses its logical letter, and ranges include hidden members.
 - Fixed drag-fill to use logical column indexes and skip hidden destinations. Horizontal numeric series continue across visible cells. Reference range borders use visible endpoints when boundary columns are hidden.
@@ -82,7 +88,7 @@ This checklist tracks outstanding work from the PR description and the audits be
 
 - [x] Audit unused dark-theme SASS variables and apply the useful dark palette; retain the other variables for compatibility.
 - [x] Support grouping and grouping formatters, including reference mapping when group rows change offsets and grouped Excel export. Custom Excel functions receive empty strings for blank helper cells; collapsed or excluded export dependencies produce `#REF!`.
-- [ ] Audit Grid State/Preset behavior and decide how formula references and formula data should persist and restore.
+- [x] Audit Grid State/Preset behavior and support saving/restoring formula references and data alongside Grid State.
 - [x] Verify and document hidden-column behavior, including editor A1 numbering, reference selection, drag-fill and Excel export when a referenced column is excluded.
 - [ ] Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin.
 - [ ] Evaluate using the range drag handle to fill down to the last adjacent non-empty cell; define the click interaction and stopping behavior.

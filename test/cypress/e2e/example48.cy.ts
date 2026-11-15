@@ -1,4 +1,4 @@
-describe('Example 48 - Formula Service (MVP)', () => {
+describe('Example 48 - Formula Service', () => {
   const GRID_ROW_HEIGHT = 38;
   const fullTitles = ['#', 'Name', 'Price', 'Quantity', 'Sub-Total', 'Taxable', 'Taxes', 'Total', 'Custom Sum'];
 
@@ -7,7 +7,7 @@ describe('Example 48 - Formula Service (MVP)', () => {
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example48`);
-    cy.get('h3').should('contain', 'Example 48 - Formula Service (MVP)');
+    cy.get('h3').should('contain', 'Example 48 - Formula Service');
   });
 
   it('should have exact column titles on grid', () => {
@@ -474,6 +474,59 @@ describe('Example 48 - Formula Service (MVP)', () => {
     cy.get(cell(0, 3)).should('contain', '$4.00');
   });
 
+  it('should restore formula snapshots alongside grid state after recreating the grid', () => {
+    cy.reload();
+    let saved: any;
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=$C$1*D1{enter}', { force: true });
+    cy.get('.grid48 .slick-header-column').contains('Price').trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.slick-column-picker:visible input[data-columnid="price"]').parent('.icon-checkbox-container').click({ force: true });
+    cy.get('.slick-column-picker:visible .close').click({ force: true });
+    cy.window().then((win: any) => {
+      const demo = win.Example48;
+      saved = JSON.parse(
+        JSON.stringify({
+          gridState: demo.sgb.gridStateService.getCurrentGridState(true),
+          formulas: demo.formulaService.getFormulaStoreSnapshot(),
+        })
+      );
+
+      // Also exercise presets during initial grid construction, independently of applyColumnLayout().
+      const container = win.document.createElement('div');
+      win.document.body.appendChild(container);
+      const formulaService = new demo.formulaService.constructor();
+      const columns = demo.columns.map((column: any) => ({ ...column, hidden: false }));
+      const dataset = structuredClone(demo.dataset);
+      const options = { ...demo.gridOptions, presets: saved.gridState, externalResources: [formulaService] };
+      const presetGrid = new demo.sgb.constructor(container, columns, options, dataset);
+      expect(presetGrid.slickGrid.getVisibleColumns().some((column: any) => column.id === 'price')).to.equal(false);
+      formulaService.setFormulaStoreSnapshot(saved.formulas);
+      expect(formulaService.getEvaluatedCellValue(dataset[0].id, 'subTotal')).to.equal(8.88);
+      const totalColumn = presetGrid.slickGrid.getColumns().find((column: any) => column.id === 'subTotal');
+      expect(totalColumn.editor.params.toDisplayFormula(formulaService.getFormula(dataset[0].id, 'subTotal'), dataset[0])).to.equal(
+        '=$C$1*D1'
+      );
+      presetGrid.dispose(true);
+    });
+    cy.reload();
+    cy.get('.grid48 .slick-header-column').should('have.length', 9);
+    cy.window().then((win: any) => {
+      const demo = win.Example48;
+      demo.sgb.gridStateService.applyColumnLayout(saved.gridState.columns, false);
+      demo.groupByTaxable();
+      demo.formulaService.setFormulaStoreSnapshot(saved.formulas);
+      demo.invalidateAll();
+    });
+    cy.get('.grid48 .slick-header-column').should('have.length', 8);
+    cy.contains('.grid48 .slick-row', 'Oranges').find('.slick-cell').eq(3).should('contain', '$8.88').dblclick();
+    cy.get('.formula-editor-input').should('have.text', '=$C$9*D9').type('{enter}', { force: true });
+    cy.get(cell(8, 3)).click({ force: true });
+    cy.get(cell(8, 3)).find('.slick-drag-replace-handle').trigger('mousedown', { which: 1, force: true });
+    cy.get(cell(9, 3)).trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
+    cy.contains('.grid48 .slick-row', 'Apples').find('.slick-cell').eq(3).should('contain', '$6.66').dblclick();
+    cy.get('.formula-editor-input').should('have.text', '=$C$9*D10').type('{enter}', { force: true });
+  });
+
   it('should fill formulas in the correct column after hiding an earlier column', () => {
     cy.reload();
     cy.get('.grid48 .slick-header-column').contains('Price').trigger('mouseover').trigger('contextmenu').invoke('show');
@@ -502,6 +555,7 @@ describe('Example 48 - Formula Service (MVP)', () => {
     cy.window().then((win: any) => win.Example48.excelExportService.exportToExcel({ includeHidden: true }));
     cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 2 }).then((xlsx: any) => {
       expect(xlsx.formulaRows[1][3]).to.equal('B3*C3');
+      expect(xlsx.dataRows[1].slice(0, 3)).to.deep.equal(['Oranges', '2.22', '4']);
     });
     cy.get('[data-test="group-by-btn"]').click();
     cy.task('clearXlsxDownloads', { downloadsFolder });
@@ -513,6 +567,7 @@ describe('Example 48 - Formula Service (MVP)', () => {
     cy.window().then((win: any) => win.Example48.excelExportService.exportToExcel({ includeHidden: true }));
     cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 15 }).then((xlsx: any) => {
       expect(xlsx.formulaRows[2][4]).to.equal('C4*D4');
+      expect(xlsx.dataRows[2].slice(1, 4)).to.deep.equal(['Honeycomb Cereals', '4.55', '2']);
     });
     cy.get('[data-test="clear-grouping-btn"]').click();
     cy.get('.grid48 .slick-header-column').contains('Quantity').trigger('mouseover').trigger('contextmenu').invoke('show');

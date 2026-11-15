@@ -6,7 +6,7 @@ Optional Formula Service for Slickgrid-Universal.
 
 This package provides a lightweight external resource to store formulas per cell and expose an Excel export bridge.
 
-Current scope (MVP):
+Current scope:
 - formula storage by row id + column id
 - AG-style `REF(COLUMN("x"),ROW("id"))` to Excel A1 translation for export
 - custom function registry API (for future runtime evaluator)

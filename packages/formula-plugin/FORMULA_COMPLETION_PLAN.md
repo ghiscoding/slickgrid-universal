@@ -10,6 +10,10 @@ Grouped editing, stable range membership, drag-fill, formula-aware aggregation a
 
 Column letters and reference picking use the complete logical column order, including hidden columns. Drag-fill and reference outlines account for hidden columns; browser tests cover reordered, hidden and restored columns plus grouped and ungrouped Excel exports with `includeHidden` on and off. The older browser-gap notes below are retained as historical audit context.
 
+## Grid State persistence update
+
+The formula service provides versioned, atomic `getFormulaStoreSnapshot` / `setFormulaStoreSnapshot` APIs. Save formulas and dataset data separately alongside Grid State; preset restoration remains a grid responsibility. Restored formulas retain absolute flags and stable identities, and the service rewires formula columns when a layout replaces their definitions. Chrome and unit regressions cover grid recreation, hidden columns, grouping, ranges and absolute-reference fill. Earlier persistence audit statements below are historical.
+
 ## Recommended release scope
 
 Complete per-cell formulas, stable references, editing, drag-fill, persistence, and native Excel export, including grouping as requested. Treat calculated columns as a separate package. Do not make every competitor feature a release requirement.

@@ -155,6 +155,31 @@ The adapter preserves the underlying aggregator's treatment of blank and nonnume
 Grouped Excel export uses the actual worksheet positions, including custom headers, group rows, totals and the leading grouping column. Contiguous ranges export directly. Disjoint or reordered ranges use a deduplicated **Formula References** worksheet containing links to the source cells, so functions such as `SUMIF` retain a single range argument and the original member order. Keep this helper sheet in the workbook. Helper cells return an empty string for blank sources. Direct `COUNTA` arguments using a helper range are translated to `SUMPRODUCT` so blanks are not counted. Custom Excel functions receive empty strings for blank helper cells. A dependency omitted by collapsing, filtering or excluding a source column exports as `#REF!`; expand groups and include the required columns to export those dependencies.
 
 
+### Saving Formulas with Grid State
+
+Grid State and Presets describe the layout; they do not contain formula cell data. Save a versioned formula store snapshot alongside the Grid State and the dataset. Call `getCurrentGridState(true)` to include hidden columns. Restore the dataset and grid first, apply the saved preset, then restore the formula store and refresh the grid:
+
+```ts
+// Save before the grid is destroyed.
+const saved = {
+  gridState: gridStateService.getCurrentGridState(true),
+  formulas: formulaService.getFormulaStoreSnapshot(),
+};
+const json = JSON.stringify(saved);
+
+// On the next load, parse json and set gridOptions.presets = saved.gridState
+// before creating the grid. Once the data and FormulaService are initialized:
+formulaService.setFormulaStoreSnapshot(saved.formulas);
+// If grouping or other DataView calculations depend on formulas:
+dataView.refresh();
+grid.invalidate();
+grid.render();
+```
+
+The snapshot replaces the service's entire formula store, including absolute-reference flags; it is validated before any changes are made. Restore it after the dataset, columns and external resources are initialized. Restored formulas take precedence over older formula strings in dataset cells. The method does not change the dataset: cells without a stored formula may still evaluate a formula string in their dataset field. Save and restore dataset edits separately, and call `syncFormulasFromDataset()` only when you intend dataset formulas to replace stored formulas.
+
+Formulas for row or column IDs that are not currently present remain in the store. Missing referenced IDs evaluate to `#REF!` until the corresponding data or columns return. Ordinary grouping configuration is not included in Grid State; restore it separately. For dynamic layout restoration use `gridStateService.applyColumnLayout(saved.gridState.columns)` before restoring formulas, and restore other state through the appropriate services.
+
 ### Formula Drag-Fill
 
 With cell-capable selection enabled, Formula Service handles the `.slick-drag-replace-handle` automatically for formula-enabled columns.
@@ -183,7 +208,8 @@ Frequently used methods:
 - `registerCustomFunctions(functionMap)`
 - `getExcelFormula(context)`
 - `createGroupingAggregator(aggregator, columnId?)`
-- `getFormulaSnapshot(rowId, columnId)` and `setFormulaSnapshot(rowId, columnId, snapshot)` preserve stable range membership and absolute flags in JSON-serializable form
+- `getFormulaSnapshot(rowId, columnId)` and `setFormulaSnapshot(rowId, columnId, snapshot)` preserve a single cell
+- `getFormulaStoreSnapshot()` and `setFormulaStoreSnapshot(snapshot)` save and restore the complete formula store
 
 For built-ins/custom functions/export compatibility, see [Formula Custom Functions](./formula-functions.md).
 

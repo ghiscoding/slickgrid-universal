@@ -75,6 +75,10 @@ const Example: React.FC = () => {
 
 > **Note** since v10 you can now pass `true` as the argument to `gridStateService.getCurrentGridState(true)` which will return all columns, not just the visible columns but also include the hidden columns and their "hidden" properties.
 
+### Formula Service and Grid State
+
+Grid State contains layout and view settings, not Formula Service cell data. When using the optional `@slickgrid-universal/formula-plugin`, save `formulaService.getFormulaStoreSnapshot()` alongside `gridStateService.getCurrentGridState(true)` and the dataset. Create the grid with the saved Grid State as `presets`, then call `formulaService.setFormulaStoreSnapshot(savedFormulas)` after the data and grid are initialized. Refresh the grid after restoring. The snapshot preserves stable references and absolute markers; restoring it replaces the formula store without modifying dataset fields. Regular grouping configuration must be restored separately.
+
 ### Using Grid Presets & Filter SearchTerm(s)
 What happens when we use the grid `presets` and a [Filter Default SearchTerms](../column-functionalities/filters/select-filter.md#default-search-terms)? In this case, the `presets` will win over filter `searchTerms`. The cascading order of priorities is the following
 1. Do we have any `presets`? Yes use them, else go to step 2

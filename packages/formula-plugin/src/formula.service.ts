@@ -81,6 +81,11 @@ export interface FormulaCellSnapshot {
   referenceFlags: FormulaReferenceAbsoluteFlags[];
 }
 
+export interface FormulaStoreSnapshot {
+  version: 1;
+  cells: Array<FormulaCellSnapshot & { rowId: number | string; columnId: number | string }>;
+}
+
 /**
  * Optional formula service storing formulas by row/column and exposing export helpers.
  * This MVP focuses on formula storage and Excel conversion support.
@@ -95,6 +100,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected _formulaStore: Map<string, string> = new Map<string, string>();
   protected _formulaCoordinatesByKey: Map<string, { rowId: number | string; columnId: number | string }> = new Map();
   protected _formulaReferenceAbsoluteFlagsByKey: Map<string, FormulaReferenceAbsoluteFlags[]> = new Map();
+  protected _restoredFormulaKeys: Set<string> = new Set();
   protected _formulaRefColorCache: FormulaReferenceColorCache = new FormulaReferenceColorCache();
   protected _originalColumnNamesById: Map<number | string, string | HTMLElement | DocumentFragment | undefined> = new Map();
   protected _isExcelHeaderPrefixEnabled = false;
@@ -140,6 +146,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this.canonicalizeStoredFormulas();
 
     this.autoAssignFormulaEditorToColumns();
+    if (this._grid.onBeforeSetColumns) {
+      this._eventHandler.subscribe(this._grid.onBeforeSetColumns, (_event, args) => {
+        this.autoAssignFormulaEditorToColumns(args.newColumns);
+      });
+    }
     this.validateSelectionModelPrerequisites();
   }
 
@@ -151,6 +162,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this._formulaStore.clear();
     this._formulaCoordinatesByKey.clear();
     this._formulaReferenceAbsoluteFlagsByKey.clear();
+    this._restoredFormulaKeys.clear();
     this._formulaRefColorCache.clear();
     this.resetEvaluationMemo();
     this._customFunctions.clear();
@@ -273,6 +285,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this._formulaStore.clear();
     this._formulaCoordinatesByKey.clear();
     this._formulaReferenceAbsoluteFlagsByKey.clear();
+    this._restoredFormulaKeys.clear();
     this.resetEvaluationMemo();
   }
 
@@ -335,7 +348,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     // Once a formula has a stable representation, it is authoritative even if the
     // dataset still contains a legacy A1 value. This prevents a reorder from making
     // the live cell value override the ID-based formula in the store.
-    const storedFormulaIsStable = !!normalizedStoredFormula && /\bREF\(\s*COLUMN\(/i.test(normalizedStoredFormula);
+    const storedFormulaIsStable =
+      !!normalizedStoredFormula &&
+      (/\bREF\(\s*COLUMN\(/i.test(normalizedStoredFormula) || this._restoredFormulaKeys.has(this.buildStoreKey(rowId, columnId)));
     const formula = storedFormulaIsStable
       ? normalizedStoredFormula
       : normalizedLiveFormula && normalizedLiveFormula !== normalizedStoredFormula
@@ -394,6 +409,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     if (wasDeleted) {
       this._formulaCoordinatesByKey.delete(key);
       this._formulaReferenceAbsoluteFlagsByKey.delete(key);
+      this._restoredFormulaKeys.delete(key);
       this.resetEvaluationMemo();
     }
     return wasDeleted;
@@ -408,15 +424,58 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       : { version: 1, formula, referenceFlags: (this._formulaReferenceAbsoluteFlagsByKey.get(key) ?? []).map((flag) => ({ ...flag })) };
   }
 
+  /** Capture all stored formulas for saving alongside a grid state or preset. */
+  getFormulaStoreSnapshot(): FormulaStoreSnapshot {
+    const cells: FormulaStoreSnapshot['cells'] = [];
+    for (const { rowId, columnId } of this._formulaCoordinatesByKey.values()) {
+      const snapshot = this.getFormulaSnapshot(rowId, columnId);
+      if (snapshot) {
+        cells.push({ rowId, columnId, ...snapshot });
+      }
+    }
+    return { version: 1, cells };
+  }
+
+  /** Replace the formula store atomically. Existing dataset values are not modified. */
+  setFormulaStoreSnapshot(snapshot: FormulaStoreSnapshot): void {
+    if (!this._grid) {
+      throw new Error('Initialize FormulaService before restoring formula snapshots');
+    }
+    if (snapshot?.version !== 1 || !Array.isArray(snapshot.cells)) {
+      throw new TypeError('Invalid formula store snapshot');
+    }
+
+    const formulas = new Map<string, string>();
+    const coordinates = new Map<string, { rowId: number | string; columnId: number | string }>();
+    const flags = new Map<string, FormulaReferenceAbsoluteFlags[]>();
+    const validId = (id: unknown): id is number | string =>
+      (typeof id === 'string' && id.length > 0) || (typeof id === 'number' && Number.isFinite(id));
+    for (const cell of snapshot.cells) {
+      if (!cell || !validId(cell.rowId) || !validId(cell.columnId) || !this.isValidFormulaCellSnapshot(cell)) {
+        throw new TypeError('Invalid formula store snapshot');
+      }
+      const key = this.buildStoreKey(cell.rowId, cell.columnId);
+      if (formulas.has(key)) {
+        throw new TypeError('Duplicate formula cell in snapshot');
+      }
+      formulas.set(key, this.toStoredFormula(cell.formula));
+      coordinates.set(key, { rowId: cell.rowId, columnId: cell.columnId });
+      flags.set(
+        key,
+        cell.referenceFlags.map((flag) => ({ ...flag }))
+      );
+    }
+
+    this._formulaStore = formulas;
+    this._formulaCoordinatesByKey = coordinates;
+    this._formulaReferenceAbsoluteFlagsByKey = flags;
+    this._restoredFormulaKeys = new Set(formulas.keys());
+    this.resetEvaluationMemo();
+  }
+
   /** Restore a snapshot after the referenced data and columns have been initialized. */
   setFormulaSnapshot(rowId: number | string, columnId: number | string, snapshot: FormulaCellSnapshot): void {
-    if (
-      snapshot?.version !== 1 ||
-      typeof snapshot.formula !== 'string' ||
-      !snapshot.formula.trim().startsWith('=') ||
-      !Array.isArray(snapshot.referenceFlags) ||
-      snapshot.referenceFlags.some((flag) => typeof flag?.column !== 'boolean' || typeof flag?.row !== 'boolean')
-    ) {
+    if (!this.isValidFormulaCellSnapshot(snapshot)) {
       throw new TypeError('Invalid formula cell snapshot');
     }
     this.setFormula(rowId, columnId, snapshot.formula);
@@ -424,10 +483,22 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       this.buildStoreKey(rowId, columnId),
       snapshot.referenceFlags.map((flag) => ({ ...flag }))
     );
+    this._restoredFormulaKeys.add(this.buildStoreKey(rowId, columnId));
+  }
+
+  protected isValidFormulaCellSnapshot(snapshot: FormulaCellSnapshot): boolean {
+    return (
+      snapshot?.version === 1 &&
+      typeof snapshot.formula === 'string' &&
+      snapshot.formula.trim().startsWith('=') &&
+      Array.isArray(snapshot.referenceFlags) &&
+      snapshot.referenceFlags.every((flag) => typeof flag?.column === 'boolean' && typeof flag?.row === 'boolean')
+    );
   }
 
   setFormula(rowId: number | string, columnId: number | string, formula?: string | null): void {
     const key = this.buildStoreKey(rowId, columnId);
+    this._restoredFormulaKeys.delete(key);
     if (formula == null || formula === '') {
       this._formulaStore.delete(key);
       this._formulaCoordinatesByKey.delete(key);
@@ -1654,13 +1725,13 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     return JSON.stringify(String(value));
   }
 
-  protected autoAssignFormulaEditorToColumns(): void {
+  protected autoAssignFormulaEditorToColumns(incomingColumns?: Column[]): void {
     if (this._options.autoAssignEditor === false || !this._grid?.getColumns || !this._grid?.setColumns) {
       return;
     }
 
     const autoEditableFormatter = this._grid.getOptions?.().autoAddCustomEditorFormatter as Formatter | undefined;
-    const columns = (this._grid.getColumns?.() || []) as Column[];
+    const columns = incomingColumns ?? ((this._grid.getColumns?.() || []) as Column[]);
     const formulaFunctionNames = Array.from(this.getFormulaFunctionRegistry().keys()).sort((a, b) => a.localeCompare(b));
     let hasChanges = false;
 
@@ -1673,6 +1744,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       const hasEditorModel = !!columnEditor.model;
 
       if (hasEditorModel && columnEditor.model !== FormulaCellEditor) {
+        return column;
+      }
+
+      if (columnEditor.model === FormulaCellEditor && (column.formatter as any)?.__formulaAutoEditableWrapped) {
         return column;
       }
 
@@ -1778,6 +1853,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
     if (hasChanges) {
       this._hasAutoAssignedFormulaEditor = true;
+      if (incomingColumns) {
+        incomingColumns.splice(0, incomingColumns.length, ...updatedColumns);
+        return;
+      }
       this._grid.setColumns(updatedColumns as Column[]);
       this._grid.invalidate?.();
       this._grid.render?.();
