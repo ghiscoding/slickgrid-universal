@@ -994,9 +994,6 @@ importers:
       '@formkit/tempo':
         specifier: 'catalog:'
         version: 1.1.0
-      '@gc-utils/fs-extra':
-        specifier: ^0.4.1
-        version: 0.4.1
       '@ng-select/ng-select':
         specifier: ^24.2.1
         version: 24.2.1(4b13a0ef3965f2fcdc5774220f82b92d)
@@ -1096,9 +1093,6 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 5.1.0(@types/node@24.19.2)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.0)(vite@8.3.6(@types/node@24.19.2)(esbuild@0.28.2)(less@4.8.1(supports-color@8.1.1))(sass-embedded@1.104.1)(sass@1.107.1)(yaml@2.9.1))
-      yaml:
-        specifier: ^2.9.1
-        version: 2.9.1
     publishDirectory: dist
 
   frameworks/aurelia-slickgrid:
@@ -3118,9 +3112,6 @@ packages:
   '@gar/promise-retry@1.0.3':
     resolution: {integrity: sha512-GmzA9ckNokPypTg10pgpeHNQe7ph+iIKKmhKu3Ob9ANkswreCx7R3cKmY781K8QK3AqVL3xVh9A42JvIAbkkSA==}
     engines: {node: ^20.17.0 || >=22.9.0}
-
-  '@gc-utils/fs-extra@0.4.1':
-    resolution: {integrity: sha512-R/Bwd+D67IyInbCbl6NjRYovAl3yhmRR4eWUj5Y1a+vTtZKzJkcRsyuP/iCmULLvyIunlYFTAnQ8yTRAfdBeOA==}
 
   '@griffel/core@1.21.3':
     resolution: {integrity: sha512-FMnlwhtmCRWvXEg2j/6W90wzvW+PFqdrsWFslfmxwS6l9X73gO0dnndKphht9ZOsJODvmLdqlnU1Lh8igg2mKw==}
@@ -10842,8 +10833,6 @@ snapshots:
   '@formkit/tempo@1.1.0': {}
 
   '@gar/promise-retry@1.0.3': {}
-
-  '@gc-utils/fs-extra@0.4.1': {}
 
   '@griffel/core@1.21.3':
     dependencies:

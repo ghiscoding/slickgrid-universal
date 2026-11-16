@@ -81,7 +81,6 @@
     "@faker-js/faker": "catalog:",
     "@fnando/sparkline": "catalog:",
     "@formkit/tempo": "catalog:",
-    "@gc-utils/fs-extra": "^0.4.1",
     "@ng-select/ng-select": "^24.2.1",
     "@ngx-translate/http-loader": "^18.1.0",
     "@popperjs/core": "catalog:",
@@ -115,7 +114,6 @@
     "tslib": "catalog:",
     "typescript": "~6.0.3",
     "vite": "catalog:",
-    "vitest": "catalog:",
-    "yaml": "^2.9.1"
+    "vitest": "catalog:"
   }
 }
