@@ -24,14 +24,14 @@
 </h5>
 <h6 class="is-6 mb-2 example-details">
   This demo is based on Example23. It stores formulas in FormulaService (per rowId + columnId), and Excel Export migrates these formulas to
-  native Excel formulas when ungrouped. Group total rows still use <code>groupTotalsExcelExportOptions.valueParserCallback</code>.
+  native Excel formulas, including with grouping. Group total rows still use <code>groupTotalsExcelExportOptions.valueParserCallback</code>.
 </h6>
 <h6 class="is-6 mb-2 example-details">
   Excel-like UX: when editing any <code>allowFormula: true</code> column, headers are prefixed with Excel column letters (<code>A</code>,
   <code>B</code>, ...).
 </h6>
 <h6 class="is-6 mb-4 example-details">
-  MVP note: formula editing is text-based and does not yet include token coloring, click-to-reference, or range composer UX.
+  Formula Editor supports token coloring, click-to-reference, range selection, and function autocomplete.
 </h6>
 
 <section class="row mb-2">
@@ -39,6 +39,9 @@
     <button class="button is-small" onclick.trigger="exportToExcel()" data-test="export-excel-btn">
       <span class="mdi mdi-file-excel-outline color-success"></span>
       <span>Export to Excel</span>
+    </button>
+    <button class="button is-small" onclick.trigger="exportToExcelWithHidden()" data-test="export-excel-hidden-btn">
+      <span>Export Including Hidden Columns</span>
     </button>
     <button class="button is-small" onclick.trigger="exportToExcelPortable()" data-test="export-excel-portable-btn">
       <span class="mdi mdi-file-excel-outline color-warning"></span>
@@ -57,6 +60,12 @@
       <button class="button is-small" onclick.trigger="clearAllFormulas()" data-test="clear-formulas-btn">
         <span>Clear Formula Store</span>
       </button>
+      <button class="button is-small" onclick.trigger="saveGridAndFormulas()" data-test="save-formula-state-btn">
+        <span>Save Grid and Formulas</span>
+      </button>
+      <button class="button is-small" onclick.trigger="restoreGridAndFormulas()" data-test="restore-formula-state-btn">
+        <span>Restore Grid and Formulas</span>
+      </button>
     </span>
     <span class="ml-4 text-bold">
       Tax Rate (%):
@@ -64,6 +73,17 @@
       <button class="button is-small" onclick.trigger="updateTaxRate()" data-test="update-btn">Update</button>
     </span>
   </div>
+</section>
+
+<section class="row mb-2">
+  <label>
+    Sub-Total editor:
+    <select onchange.trigger="setSubTotalEditorMode()" data-test="formula-editor-mode">
+      <option value="formula">Formula editor</option>
+      <option value="text">Text editor</option>
+      <option value="readonly">Read-only</option>
+    </select>
+  </label>
 </section>
 
 <section class="row mb-2">

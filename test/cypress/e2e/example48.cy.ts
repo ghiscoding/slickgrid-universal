@@ -52,6 +52,33 @@ describe('Example 48 - Formula Service', () => {
     cy.get(cell(2, 8)).contains('$6.55');
   });
 
+  it('should calculate with a custom editor and update dependent cells after edits', () => {
+    cy.reload();
+    cy.get(cell(0, 4)).should('contain', '$8.88');
+    cy.get('[data-test="formula-editor-mode"]').select('text');
+    cy.get(cell(0, 4)).should('contain', '$8.88').dblclick();
+    cy.get('input.editor-subTotal').should('be.visible').clear().type('=D1*2{enter}');
+    cy.get(cell(0, 4)).should('contain', '$8.00');
+    cy.get(cell(0, 7)).should('contain', '$8.00');
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('input.editor-subTotal').clear().type('17{enter}');
+    cy.get(cell(0, 4)).should('contain', '$17.00');
+    cy.get(cell(0, 7)).should('contain', '$17.00');
+  });
+
+  it('should calculate a formula column when editing is denied', () => {
+    cy.reload();
+    cy.get(cell(0, 4)).should('contain', '$8.88');
+    cy.get('[data-test="formula-editor-mode"]').select('readonly');
+    cy.get(cell(0, 4)).should('contain', '$8.88').dblclick();
+    cy.get('.formula-editor-input').should('not.exist');
+    cy.get(cell(0, 2)).dblclick();
+    cy.get('input.editor-price').clear().type('3{enter}');
+    cy.get(cell(0, 4)).should('contain', '$12.00');
+    cy.reload();
+    cy.get(cell(0, 4)).should('contain', '$8.88');
+  });
+
   it('should edit a formula cell in Formula Editor and persist the updated formula result', () => {
     cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').should('be.visible').click().type('{selectall}=C1*D1*2{enter}', { force: true });
@@ -205,14 +232,16 @@ describe('Example 48 - Formula Service', () => {
   });
 
   it('should copy and cut plain text without nbsp/html artifacts from formula editor', () => {
-    cy.window().then((win) => {
-      const writeTextStub = cy.stub().resolves();
-      Object.defineProperty(win.navigator, 'clipboard', {
-        value: { writeText: writeTextStub },
-        configurable: true,
+    cy.document()
+      .its('defaultView.navigator')
+      .then((navigator) => {
+        const writeTextStub = cy.stub().resolves();
+        Object.defineProperty(navigator, 'clipboard', {
+          value: { writeText: writeTextStub },
+          configurable: true,
+        });
+        cy.wrap(writeTextStub).as('writeTextStub');
       });
-      cy.wrap(writeTextStub).as('writeTextStub');
-    });
 
     cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input')
@@ -476,48 +505,17 @@ describe('Example 48 - Formula Service', () => {
 
   it('should restore formula snapshots alongside grid state after recreating the grid', () => {
     cy.reload();
-    let saved: any;
     cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').click().type('{selectall}=$C$1*D1{enter}', { force: true });
     cy.get('.grid48 .slick-header-column').contains('Price').trigger('mouseover').trigger('contextmenu').invoke('show');
     cy.get('.slick-column-picker:visible input[data-columnid="price"]').parent('.icon-checkbox-container').click({ force: true });
     cy.get('.slick-column-picker:visible .close').click({ force: true });
-    cy.window().then((win: any) => {
-      const demo = win.Example48;
-      saved = JSON.parse(
-        JSON.stringify({
-          gridState: demo.sgb.gridStateService.getCurrentGridState(true),
-          formulas: demo.formulaService.getFormulaStoreSnapshot(),
-        })
-      );
-
-      // Also exercise presets during initial grid construction, independently of applyColumnLayout().
-      const container = win.document.createElement('div');
-      win.document.body.appendChild(container);
-      const formulaService = new demo.formulaService.constructor();
-      const columns = demo.columns.map((column: any) => ({ ...column, hidden: false }));
-      const dataset = structuredClone(demo.dataset);
-      const options = { ...demo.gridOptions, presets: saved.gridState, externalResources: [formulaService] };
-      const presetGrid = new demo.sgb.constructor(container, columns, options, dataset);
-      expect(presetGrid.slickGrid.getVisibleColumns().some((column: any) => column.id === 'price')).to.equal(false);
-      formulaService.setFormulaStoreSnapshot(saved.formulas);
-      expect(formulaService.getEvaluatedCellValue(dataset[0].id, 'subTotal')).to.equal(8.88);
-      const totalColumn = presetGrid.slickGrid.getColumns().find((column: any) => column.id === 'subTotal');
-      expect(totalColumn.editor.params.toDisplayFormula(formulaService.getFormula(dataset[0].id, 'subTotal'), dataset[0])).to.equal(
-        '=$C$1*D1'
-      );
-      presetGrid.dispose(true);
-    });
+    cy.get('[data-test="save-formula-state-btn"]').click();
     cy.reload();
     cy.get('.grid48 .slick-header-column').should('have.length', 9);
-    cy.window().then((win: any) => {
-      const demo = win.Example48;
-      demo.sgb.gridStateService.applyColumnLayout(saved.gridState.columns, false);
-      demo.groupByTaxable();
-      demo.formulaService.setFormulaStoreSnapshot(saved.formulas);
-      demo.invalidateAll();
-    });
+    cy.get('[data-test="restore-formula-state-btn"]').click();
     cy.get('.grid48 .slick-header-column').should('have.length', 8);
+    cy.get('[data-test="group-by-btn"]').click();
     cy.contains('.grid48 .slick-row', 'Oranges').find('.slick-cell').eq(3).should('contain', '$8.88').dblclick();
     cy.get('.formula-editor-input').should('have.text', '=$C$9*D9').type('{enter}', { force: true });
     cy.get(cell(8, 3)).click({ force: true });
@@ -552,7 +550,7 @@ describe('Example 48 - Formula Service', () => {
       expect(xlsx.formulaRows[1][2]).to.equal('#REF!*B3');
     });
     cy.task('clearXlsxDownloads', { downloadsFolder });
-    cy.window().then((win: any) => win.Example48.excelExportService.exportToExcel({ includeHidden: true }));
+    cy.get('[data-test="export-excel-hidden-btn"]').click();
     cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 2 }).then((xlsx: any) => {
       expect(xlsx.formulaRows[1][3]).to.equal('B3*C3');
       expect(xlsx.dataRows[1].slice(0, 3)).to.deep.equal(['Oranges', '2.22', '4']);
@@ -564,7 +562,7 @@ describe('Example 48 - Formula Service', () => {
       expect(xlsx.formulaRows[2][3]).to.equal('#REF!');
     });
     cy.task('clearXlsxDownloads', { downloadsFolder });
-    cy.window().then((win: any) => win.Example48.excelExportService.exportToExcel({ includeHidden: true }));
+    cy.get('[data-test="export-excel-hidden-btn"]').click();
     cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 15 }).then((xlsx: any) => {
       expect(xlsx.formulaRows[2][4]).to.equal('C4*D4');
       expect(xlsx.dataRows[2].slice(1, 4)).to.deep.equal(['Honeycomb Cereals', '4.55', '2']);

@@ -9,6 +9,7 @@ import type {
   FormulaExcelDefinedNameExport,
   FormulaExcelExportContext,
   FormulaProvider,
+  OnCellChangeEventArgs,
   OnDragReplaceCellsEventArgs,
   SlickDataView,
   SlickGrid,
@@ -109,6 +110,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   protected _originalColumnDefsById: Map<number | string, Pick<Column, 'formatter' | 'params' | 'editorClass' | 'editor'>> = new Map();
   protected _evaluationMemo: Map<string, unknown> = new Map<string, unknown>();
   protected _isEvaluationMemoFlushScheduled = false;
+  protected _formulaRefreshGeneration = 0;
+  protected _formulaRefreshScheduled = false;
   protected _eventHandler: SlickEventHandler = new SlickEventHandler();
 
   protected static readonly FORMULA_EVAL_FORMATTER_FLAG = '__formulaEvalFormatter';
@@ -124,6 +127,8 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   init(grid: SlickGrid, _containerService?: ContainerService): void {
+    this._formulaRefreshGeneration++;
+    this._formulaRefreshScheduled = false;
     this._grid = grid;
     this._dataView = grid?.getData<SlickDataView>() || {};
 
@@ -134,6 +139,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
     if (this._grid.onDragReplaceCells) {
       this._eventHandler.subscribe(this._grid.onDragReplaceCells, this.handleDragReplaceCells.bind(this));
+    }
+    if (this._grid.onCellChange) {
+      this._eventHandler.subscribe(this._grid.onCellChange, this.handleCellChange.bind(this));
     }
 
     if (this._options.customFunctions) {
@@ -154,7 +162,65 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     this.validateSelectionModelPrerequisites();
   }
 
+  /** Keep the store synchronized when a non-formula editor changes a formula-enabled cell. */
+  protected handleCellChange(_event: unknown, args: OnCellChangeEventArgs): void {
+    this.resetEvaluationMemo();
+    const column = args?.column;
+    const item = args?.item;
+    if (this._formulaStore.size || column?.allowFormula) {
+      this.scheduleFormulaRefresh();
+    }
+    const metadataColumns = this._dataView?.getItemMetadata?.(args?.row)?.columns;
+    const metadataEditor =
+      column && metadataColumns && (metadataColumns[column.id]?.editorClass ?? metadataColumns[args.cell]?.editorClass);
+    const editor = metadataEditor ?? column?.editorClass ?? column?.editor?.model;
+    const activeEditor = this._grid.getCellEditor?.();
+    const isFormulaEditor = activeEditor ? activeEditor instanceof FormulaCellEditor : editor === FormulaCellEditor;
+    if (!column?.allowFormula || !item || isFormulaEditor) {
+      return;
+    }
+    const rowId = item[this.getDatasetIdPropertyName()] as number | string | undefined;
+    if (rowId === undefined || rowId === null) {
+      return;
+    }
+    const value = item[String(column.field ?? column.id)];
+    if (typeof value === 'string' && value.trim().startsWith('=')) {
+      const formula = value.trim();
+      const rows = this.getGroupedDisplayRowIds();
+      if (rows) {
+        this.captureFormulaReferenceAbsoluteFlags(this.buildStoreKey(rowId, column.id), formula, rows);
+        this.setFormula(rowId, column.id, this.convertA1ReferencesToStableRefs(formula, this.getFormulaColumnIds(), rows, true));
+      } else {
+        this.setFormula(rowId, column.id, formula);
+      }
+    } else {
+      this.removeFormula(rowId, column.id);
+    }
+  }
+
+  /** Grid commits render before onCellChange; refresh after the editor has closed. */
+  protected scheduleFormulaRefresh(): void {
+    if (this._formulaRefreshScheduled) {
+      return;
+    }
+    this._formulaRefreshScheduled = true;
+    const generation = this._formulaRefreshGeneration;
+    queueMicrotask(() => {
+      if (generation !== this._formulaRefreshGeneration) {
+        return;
+      }
+      this._formulaRefreshScheduled = false;
+      if (this._dataView?.getGrouping?.().length) {
+        this._dataView.refresh?.();
+      }
+      this._grid.invalidate?.();
+      this._grid.render?.();
+    });
+  }
+
   dispose(): void {
+    this._formulaRefreshGeneration++;
+    this._formulaRefreshScheduled = false;
     this._eventHandler.unsubscribeAll();
     this.clearFormulaReferenceHighlights();
     this.disableExcelHeaderPrefix();
@@ -1726,7 +1792,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected autoAssignFormulaEditorToColumns(incomingColumns?: Column[]): void {
-    if (this._options.autoAssignEditor === false || !this._grid?.getColumns || !this._grid?.setColumns) {
+    if (!this._grid?.getColumns || !this._grid?.setColumns) {
       return;
     }
 
@@ -1741,13 +1807,17 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
 
       const columnEditor = (column.editor || {}) as ColumnEditor;
-      const hasEditorModel = !!columnEditor.model;
+      const selectedEditor = column.editorClass ?? columnEditor.model;
+      const useFormulaEditor = selectedEditor === FormulaCellEditor || (!selectedEditor && this._options.autoAssignEditor !== false);
 
-      if (hasEditorModel && columnEditor.model !== FormulaCellEditor) {
-        return column;
-      }
-
-      if (columnEditor.model === FormulaCellEditor && (column.formatter as any)?.__formulaAutoEditableWrapped) {
+      if ((column.formatter as any)?.__formulaServiceOwner === this) {
+        if (selectedEditor !== FormulaCellEditor) {
+          const original = this._originalColumnDefsById.get(column.id);
+          if (original) {
+            original.editor = column.editor;
+            original.editorClass = column.editorClass;
+          }
+        }
         return column;
       }
 
@@ -1804,6 +1874,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           const formattedValue = basePipelineFormatter ? basePipelineFormatter(row, cell, value, columnDef, dataContext, grid) : value;
           const baseValue = formattedValue === undefined ? value : formattedValue;
 
+          if (!useFormulaEditor) {
+            return baseValue;
+          }
           if (typeof autoEditableFormatter === 'function') {
             return autoEditableFormatter(row, cell, baseValue, columnDef, dataContext, grid);
           }
@@ -1825,29 +1898,25 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         };
         (wrappedFormatter as any).__formulaAutoEditableWrapped = true;
         (wrappedFormatter as any).__formulaAutoEditableBaseFormatter = basePipelineFormatter;
+        (wrappedFormatter as any).__formulaServiceOwner = this;
         nextFormatter = wrappedFormatter;
       }
 
-      if (!this._originalColumnDefsById.has(column.id)) {
-        this._originalColumnDefsById.set(column.id, {
-          formatter: column.formatter,
-          params: column.params,
-          editorClass: column.editorClass,
-          editor: column.editor,
-        });
-      }
+      this._originalColumnDefsById.set(column.id, {
+        formatter: column.formatter,
+        params: column.params,
+        editorClass: column.editorClass,
+        editor: column.editor,
+      });
 
       hasChanges = true;
       return {
         ...column,
         formatter: nextFormatter,
         params: pipelineParams,
-        editorClass: FormulaCellEditor,
-        editor: {
-          ...columnEditor,
-          model: FormulaCellEditor,
-          params: mergedParams,
-        },
+        ...(useFormulaEditor
+          ? { editorClass: FormulaCellEditor, editor: { ...columnEditor, model: FormulaCellEditor, params: mergedParams } }
+          : {}),
       };
     });
 
@@ -1877,10 +1946,13 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const columns = (this._grid.getColumns() || []) as Column[];
     const restoredColumns = columns.map((column) => {
       const original = this._originalColumnDefsById.get(column.id);
-      if (!original) {
+      if (!original || (column.formatter as any)?.__formulaServiceOwner !== this) {
         return column;
       }
-      return { ...column, ...original };
+      const currentEditor = column.editorClass ?? column.editor?.model;
+      return currentEditor && currentEditor !== FormulaCellEditor
+        ? { ...column, formatter: original.formatter, params: original.params }
+        : { ...column, ...original };
     });
 
     this._grid.setColumns(restoredColumns as Column[]);

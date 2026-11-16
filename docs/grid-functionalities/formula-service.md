@@ -77,7 +77,7 @@ Common `FormulaServiceOption` settings:
 
 | Option | Default | Purpose |
 |---|---|---|
-| `autoAssignEditor` | `true` | Auto-attach Formula Editor and formatter pipeline to formula columns. |
+| `autoAssignEditor` | `true` | Auto-attach Formula Editor when the column has no editor. Formula values are formatted regardless of this setting. |
 | `editorParams` | `undefined` | Default editor params merged with column-level params. |
 | `autoSyncFormulasFromDataset` | `true` | Sync initial formula strings from dataset on init. |
 | `customFunctions` | `{}` | Register runtime custom functions. |
@@ -88,7 +88,28 @@ Common `FormulaServiceOption` settings:
 Formula editor is auto-assigned when:
 - Formula Service is registered
 - column has `allowFormula: true`
-- `autoAssignEditor` is not disabled
+- `autoAssignEditor` is not disabled and no other editor is configured, or Formula Editor is explicitly configured
+
+A column can use a custom editor while still calculating formulas. The existing column formatter receives the calculated value. A custom editor can enter a formula string beginning with `=` or replace it with a plain value; FormulaService updates its store after a grid edit. Formula-specific reference picking, coloring and autocomplete require Formula Editor.
+
+```ts
+import { Editors, Formatters } from '@slickgrid-universal/common';
+
+const columns = [
+  { id: 'price', field: 'price' },
+  { id: 'total', field: 'total', allowFormula: true, editor: { model: Editors.text }, formatter: Formatters.dollar },
+];
+```
+
+For a read-only formula column, prevent editing through the grid event. The formula and its dependencies continue to calculate:
+
+```ts
+grid.onBeforeEditCell.subscribe((_event, args) => {
+  if (args.column.id === 'total') return false;
+});
+```
+
+An editable-cell marker is presentation supplied by the configured formatter. A row-specific `onBeforeEditCell` rule is not automatically reflected in that marker; use a formatter that applies the same rule if its appearance should indicate editability.
 
 Editor behaviors:
 - reference token highlighting in formula text

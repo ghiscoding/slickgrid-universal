@@ -3,11 +3,21 @@
 Last updated: 2026-11-14 (feature completion audit)
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Example 48 CI Test Portability (2026-11-16)
+- Replaced Cypress access to a development-only view-model name with demo controls for hidden-column export, grid/formula save and restore, and formula editor mode. The same UI-driven tests work without relying on a framework-specific global.
+- The demo no longer duplicates FormulaService cell-change synchronization, so its custom-editor test exercises the service itself. The clipboard test accesses the browser clipboard through the document.
+
+## Latest Update: Formula Evaluation with Custom and Read-only Editors (2026-11-14)
+- Formula-enabled columns now evaluate through the existing formatter pipeline even with a custom editor or `autoAssignEditor: false`. Explicit FormulaCellEditor configuration remains supported.
+- Custom editor commits synchronize formula strings or plain values with the formula store. Cell changes clear evaluation memoization and coalesce a post-commit refresh so dependent cells and grouped totals update; pending refreshes are canceled on disposal.
+- Column layout updates preserve the selected editor and avoid duplicate formatter wrapping. Disposal restores original formatters without discarding a later custom-editor change.
+- Added unit and Example 48 browser coverage for custom editor commits, formatter pipelines, read-only edit cancellation, row-specific editor metadata and lifecycle cleanup.
+
 ## Latest Update: Grid State and Formula Store Persistence (2026-11-14)
 - Added versioned bulk formula-store snapshots that retain row/column identities, stable ranges and absolute flags. Restore validates the entire snapshot before replacing the store and leaves dataset fields unchanged; missing identities remain recoverable and restored formulas take precedence over stale dataset formula strings.
 - Grid State remains layout/view state. Save it, formula snapshots and the dataset separately; apply presets and initialize data before restoring formulas. Regular grouping requires separate restoration.
 - FormulaService now reattaches its formatter/editor to replacement column definitions before `setColumns`, fixing `applyColumnLayout` displaying raw formulas; already prepared columns are not wrapped twice and the event is unsubscribed on dispose.
-- Example 48 checks presets during grid construction and dynamically restores hidden columns and grouped formulas, checks absolute-reference drag-fill, and inspects exported source values in both grouped and ungrouped workbooks. Chrome: 29 tests passed. Unit tests cover snapshot validation and 100% statement/line coverage for the changed service.
+- Example 48 uses its save/restore controls to apply presets during grid construction, restores hidden columns and formulas, checks absolute-reference drag-fill after grouping, and inspects exported source values in both grouped and ungrouped workbooks. Chrome: 29 tests passed. Unit tests cover snapshot validation and 100% statement/line coverage for the changed service.
 
 ## Latest Update: Hidden Columns and Formula References (2026-11-14)
 - Formula letters use the full logical column order, including hidden columns. Reordering, hiding and showing preserve stable references; selecting a visible cell uses its logical letter, and ranges include hidden members.
@@ -91,13 +101,13 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [x] Audit Grid State/Preset behavior and support saving/restoring formula references and data alongside Grid State.
 - [x] Verify and document hidden-column behavior, including editor A1 numbering, reference selection, drag-fill and Excel export when a referenced column is excluded.
 - [ ] Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin.
-- [ ] Evaluate using the range drag handle to fill down to the last adjacent non-empty cell; define the click interaction and stopping behavior.
+- [ ] Evaluate using the range drag handle to fill down to the last adjacent non-empty cell; define the click interaction and stopping behavior. Might skip that one since Ag-Grid doesn't support it and it could become very complex with large dataset.
 - [ ] Evaluate reusing the existing autocompleter instead of the formula editor's custom autocomplete.
 - [ ] Review remaining browser coverage gaps in the Cypress Coverage Audit below, especially formula drag-fill reference translation and selection-model fallback.
 - [ ] Revisit formula semantic parity and the historical conflicting scalar-times-range test expectations described in the security review below; verify current behavior before deciding on a change.
 - [ ] Compare Syncfusion's formula reference with our registry: evaluate adding `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases. Our parser already supports the listed operators, including `%` and `^`; verify edge-case semantics separately.
 - [ ] Evaluate distinct `#CIRCREF!` and `#PARSE!` errors; circular references currently use `#REF!` and parser failures use `#ERROR!`.
-- [ ] Document and test read-only formula columns using the existing `onBeforeEditCell` cancellation mechanism; `autoAssignEditor: false` also disables the auto-assigned formula formatter and is not a per-column read-only setting.
+- [x] Support custom and read-only formula columns independently of Formula Editor; document and test `onBeforeEditCell` cancellation.
 - [ ] Decide whether an optional strict selection-prerequisite mode is needed.
 
 ## Latest Update: Optional Package Styling (2026-11-14)

@@ -829,6 +829,178 @@ describe('FormulaService', () => {
     expect(columns[0].editor?.model).toBe(customEditor);
   });
 
+  it('preserves custom editor models and formatter pipelines across layout changes and disposal', () => {
+    const customEditor = (() => undefined) as any;
+    const classEditor = (() => undefined) as any;
+    const formatter = vi.fn((_row, _cell, value) => `result:${value}`);
+    const originalColumns: Column[] = [
+      { id: 'price', field: 'price' },
+      { id: 'model', field: 'model', allowFormula: true, editor: { model: customEditor }, formatter },
+      { id: 'class', field: 'class', allowFormula: true, editorClass: classEditor, formatter },
+    ];
+    let columns = originalColumns.map((column) => ({ ...column }));
+    const item = { id: 1, price: 2, model: '=A1*3', class: '=A1*4' };
+    const onBeforeSetColumns = new SlickEvent<any>();
+    const grid = {
+      onBeforeSetColumns,
+      getColumns: () => columns,
+      setColumns: (next: Column[]) => {
+        onBeforeSetColumns.notify({ newColumns: next });
+        columns = next;
+      },
+      getData: () => ({ getItems: () => [item] }),
+      getOptions: () => ({ editable: true }),
+    } as any;
+    const service = new FormulaService();
+    service.init(grid);
+    expect(columns[1].editor?.model).toBe(customEditor);
+    expect(columns[2].editorClass).toBe(classEditor);
+    expect(columns[1].formatter?.(0, 1, item.model, columns[1], item, grid)).toBe('result:6');
+    expect(columns[2].formatter?.(0, 2, item.class, columns[2], item, grid)).toBe('result:8');
+    const prepared = columns[1].formatter;
+    grid.setColumns([...columns]);
+    expect(columns[1].formatter).toBe(prepared);
+    grid.setColumns(originalColumns.map((column) => ({ ...column })));
+    expect(columns[1].formatter?.(0, 1, item.model, columns[1], item, grid)).toBe('result:6');
+    service.dispose();
+    expect(columns[1].editor?.model).toBe(customEditor);
+    expect(columns[2].editorClass).toBe(classEditor);
+    expect(columns[1].formatter).toBe(formatter);
+    expect(columns[2].formatter).toBe(formatter);
+  });
+
+  it('preserves a newly assigned custom editor on disposal', () => {
+    const customEditor = (() => undefined) as any;
+    let columns: Column[] = [{ id: 'total', field: 'total', allowFormula: true }];
+    const onBeforeSetColumns = new SlickEvent<any>();
+    const grid = {
+      onBeforeSetColumns,
+      getColumns: () => columns,
+      setColumns: (next: Column[]) => {
+        onBeforeSetColumns.notify({ newColumns: next });
+        columns = next;
+      },
+      getData: () => ({ getItems: () => [] }),
+      getOptions: () => ({}),
+    } as any;
+    const service = new FormulaService();
+    service.init(grid);
+    grid.setColumns([{ ...columns[0], editorClass: customEditor, editor: { model: customEditor } }]);
+    service.dispose();
+    expect(columns[0].editorClass).toBe(customEditor);
+    expect(columns[0].editor?.model).toBe(customEditor);
+    expect(columns[0].formatter).toBeUndefined();
+  });
+
+  it('supports explicitly configured FormulaCellEditor even when automatic assignment is disabled', () => {
+    let columns: Column[] = [{ id: 'total', field: 'total', allowFormula: true, editor: { model: FormulaCellEditor } }];
+    const grid = {
+      getColumns: () => columns,
+      setColumns: (next: Column[]) => {
+        columns = next;
+      },
+      getData: () => ({ getItems: () => [{ id: 1, total: '=1' }] }),
+      getOptions: () => ({ editable: true }),
+    } as any;
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init(grid);
+    expect(columns[0].editor?.params?.toStoredFormula).toBeTypeOf('function');
+    service.dispose();
+    expect(columns[0].editor?.model).toBe(FormulaCellEditor);
+  });
+
+  it('synchronizes custom editor changes and refreshes dependent cells after the commit', async () => {
+    const onCellChange = new SlickEvent<any>();
+    const customEditor = (() => undefined) as any;
+    let grouped = false;
+    const items = [
+      { id: 'a', value: 2, total: '=A1' },
+      { id: 'b', value: 4, total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true, editor: { model: customEditor } },
+    ];
+    const refresh = vi.fn();
+    const dataView = {
+      getItems: () => items,
+      getGrouping: () => (grouped ? [{}] : []),
+      getLength: () => 3,
+      getItem: (row: number) => [{ __group: true }, ...items][row],
+      refresh,
+    };
+    const grid = {
+      onCellChange,
+      getColumns: () => columns,
+      setColumns: (next: Column[]) => columns.splice(0, columns.length, ...next),
+      getData: () => dataView,
+      getOptions: () => ({}),
+      invalidate: vi.fn(),
+      render: vi.fn(),
+    } as any;
+    const service = new FormulaService();
+    service.init(grid);
+    grid.invalidate.mockClear();
+    grid.render.mockClear();
+    items[0].total = '=A1*3';
+    onCellChange.notify({ column: columns[1], item: items[0], row: 0, cell: 1 });
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(6);
+    onCellChange.notify({ column: columns[1], item: { total: '=A1' }, row: 0, cell: 1 });
+    items[0].total = '=A2*2';
+    grouped = true;
+    onCellChange.notify({ column: columns[1], item: items[0], row: 1, cell: 1 });
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(4);
+    onCellChange.notify({ column: columns[0], item: items[0], row: 1, cell: 0 });
+    await Promise.resolve();
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(grid.invalidate).toHaveBeenCalledTimes(1);
+    expect(grid.render).toHaveBeenCalledTimes(1);
+    items[0].total = '19';
+    onCellChange.notify({ column: columns[1], item: items[0], row: 1, cell: 1 });
+    expect(service.hasFormula('a', 'total')).toBe(false);
+    service.dispose();
+    grid.invalidate.mockClear();
+    grid.render.mockClear();
+    await Promise.resolve();
+    expect(grid.invalidate).not.toHaveBeenCalled();
+    expect(grid.render).not.toHaveBeenCalled();
+  });
+
+  it('honors row-specific custom editors when synchronizing formula changes', async () => {
+    const customEditor = (() => undefined) as any;
+    const onCellChange = new SlickEvent<any>();
+    let metadata: any = { columns: { total: { editorClass: customEditor } } };
+    let activeEditor: any;
+    const items = [{ id: 'a', value: 2, total: '=A1' }];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const grid = {
+      onCellChange,
+      getColumns: () => columns,
+      setColumns: (next: Column[]) => columns.splice(0, columns.length, ...next),
+      getData: () => ({ getItems: () => items, getItemMetadata: () => metadata }),
+      getCellEditor: () => activeEditor,
+      getOptions: () => ({}),
+    } as any;
+    const service = new FormulaService();
+    service.init(grid);
+    items[0].total = '=A1*4';
+    onCellChange.notify({ column: columns[1], item: items[0], row: 0, cell: 1 });
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(8);
+    metadata = { columns: { 1: { editorClass: customEditor } } };
+    items[0].total = '=A1*5';
+    onCellChange.notify({ column: columns[1], item: items[0], row: 0, cell: 1 });
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(10);
+    activeEditor = Object.create(FormulaCellEditor.prototype);
+    items[0].total = '=A1*9';
+    onCellChange.notify({ column: columns[1], item: items[0], row: 0, cell: 1 });
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(10);
+    await Promise.resolve();
+    service.dispose();
+  });
+
   it('should stay inert when enableFormulas is explicitly disabled in grid options', () => {
     const service = new FormulaService();
     const columns: Column[] = [{ id: 'total', field: 'total', allowFormula: true }];
@@ -1582,27 +1754,22 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue(1, 'total', items[0].total, 0)).toBe(13);
   });
 
-  it('should skip auto-assignment when autoAssignEditor is disabled', () => {
-    const invalidateSpy = vi.fn();
-    const renderSpy = vi.fn();
+  it('should calculate values without assigning an editor when autoAssignEditor is disabled', () => {
+    const items = [{ id: 1, total: '=SUM(1,2)' }];
     const columns: Column[] = [{ id: 'total', field: 'total', allowFormula: true }];
-
-    const gridStub = {
+    const grid = {
       getColumns: () => columns,
-      setColumns: vi.fn(),
-      getData: () => ({}),
+      setColumns: (next: Column[]) => columns.splice(0, columns.length, ...next),
+      getData: () => ({ getItems: () => items }),
       getOptions: () => ({ editable: true }),
-      invalidate: invalidateSpy,
-      render: renderSpy,
     } as any;
-
     const service = new FormulaService({ autoAssignEditor: false });
-    service.init(gridStub);
-
-    expect(gridStub.setColumns).not.toHaveBeenCalled();
-    expect(invalidateSpy).not.toHaveBeenCalled();
-    expect(renderSpy).not.toHaveBeenCalled();
+    service.init(grid);
     expect(columns[0].editor?.model).toBeUndefined();
+    expect(columns[0].editorClass).toBeUndefined();
+    expect(columns[0].formatter?.(0, 0, items[0].total, columns[0], items[0], grid)).toBe(3);
+    service.dispose();
+    expect(columns[0].formatter).toBeUndefined();
   });
 
   it('should restore original formatter/editor config on dispose after auto-assign', () => {

@@ -8,12 +8,13 @@ import {
   type ExcelGroupValueParserArgs,
   type Formatter,
   type GridOption,
+  type GridState,
   type Grouping,
   type SlickGrid,
   type SlickGroupTotals,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { FormulaService } from '@slickgrid-universal/formula-plugin';
+import { FormulaService, type FormulaStoreSnapshot } from '@slickgrid-universal/formula-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example48.scss';
@@ -29,6 +30,15 @@ interface GroceryItem {
   total: number | string;
   customSum?: number | string;
 }
+
+interface SavedFormulaDemoState {
+  gridState: GridState;
+  formulas: FormulaStoreSnapshot;
+  dataset: GroceryItem[];
+}
+
+const FORMULA_DEMO_STATE_KEY = 'example48-formula-state';
+const FORMULA_DEMO_RESTORE_KEY = 'example48-formula-restore';
 
 /** Check if the current item (cell) is editable or not */
 function checkItemIsEditable(_dataContext: GroceryItem, columnDef: Column, grid: SlickGrid) {
@@ -58,6 +68,7 @@ export default class Example48 {
   private _bindingEventService: BindingEventService;
   private _darkMode = false;
   private _headerPrefixResetTimer?: ReturnType<typeof setTimeout>;
+  private _subTotalEditorMode = 'formula';
   columns: Column<GroceryItem>[] = [];
   dataset: GroceryItem[] = [];
   gridOptions!: GridOption;
@@ -91,7 +102,14 @@ export default class Example48 {
 
   attached() {
     this.defineGrid();
-    this.dataset = this.getData();
+    const shouldRestore = sessionStorage.getItem(FORMULA_DEMO_RESTORE_KEY) === '1';
+    sessionStorage.removeItem(FORMULA_DEMO_RESTORE_KEY);
+    const savedText = shouldRestore ? sessionStorage.getItem(FORMULA_DEMO_STATE_KEY) : null;
+    const saved: SavedFormulaDemoState | undefined = savedText ? JSON.parse(savedText) : undefined;
+    this.dataset = saved?.dataset ?? this.getData();
+    if (saved) {
+      this.gridOptions.presets = saved.gridState;
+    }
     this.gridContainerElm = document.querySelector<HTMLDivElement>('.grid48') as HTMLDivElement;
 
     this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
@@ -100,7 +118,11 @@ export default class Example48 {
     this._bindingEventService.bind(this.gridContainerElm, 'onbeforecelleditordestroy', this.handleOnBeforeCellEditorDestroy.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onclick', this.handleOnCellClicked.bind(this));
-    this.loadDefaultFormulas();
+    if (saved) {
+      this.formulaService.setFormulaStoreSnapshot(saved.formulas);
+    } else {
+      this.loadDefaultFormulas();
+    }
     this.invalidateAll();
     document.body.classList.add('salesforce-theme');
   }
@@ -364,14 +386,10 @@ export default class Example48 {
     const value = item?.[columnId as keyof GroceryItem] as string | number | undefined;
 
     if (typeof value === 'string' && value.trim().startsWith('=')) {
-      this.formulaService.setFormula(rowId, columnId, value.trim());
       this.lastFormulaEvent = `saved formula for row ${rowId}, column ${columnId}`;
     } else if (typeof value === 'string' && value.trim() === '') {
-      this.formulaService.removeFormula(rowId, columnId);
       this.lastFormulaEvent = `removed formula for row ${rowId}, column ${columnId}`;
     } else {
-      // If user replaces a formula with a plain value, clear stale formula from store.
-      this.formulaService.removeFormula(rowId, columnId);
       this.lastFormulaEvent = `set static value for row ${rowId}, column ${columnId}`;
     }
 
@@ -387,6 +405,11 @@ export default class Example48 {
 
     const args = event?.detail?.args;
     const columnDef = args?.column as Column<GroceryItem> | undefined;
+
+    if (columnDef?.id === 'subTotal' && this._subTotalEditorMode === 'readonly') {
+      event.preventDefault();
+      return false;
+    }
 
     if (columnDef?.allowFormula) {
       this.formulaService.enableExcelHeaderPrefix();
@@ -451,6 +474,52 @@ export default class Example48 {
 
   exportToExcel() {
     this.excelExportService.exportToExcel();
+  }
+
+  exportToExcelWithHidden() {
+    this.excelExportService.exportToExcel({ includeHidden: true });
+  }
+
+  saveGridAndFormulas() {
+    const state: SavedFormulaDemoState = {
+      gridState: this.sgb.gridStateService.getCurrentGridState(true),
+      formulas: this.formulaService.getFormulaStoreSnapshot(),
+      dataset: (this.sgb.dataView?.getItems() as GroceryItem[] | undefined) ?? this.dataset,
+    };
+    sessionStorage.setItem(FORMULA_DEMO_STATE_KEY, JSON.stringify(state));
+    this.lastFormulaEvent = 'saved grid and formulas';
+  }
+
+  restoreGridAndFormulas() {
+    if (sessionStorage.getItem(FORMULA_DEMO_STATE_KEY)) {
+      sessionStorage.setItem(FORMULA_DEMO_RESTORE_KEY, '1');
+      location.reload();
+    }
+  }
+
+  setSubTotalEditorMode() {
+    const select = document.querySelector<HTMLSelectElement>('[data-test="formula-editor-mode"]');
+    this._subTotalEditorMode = select?.value ?? 'formula';
+    const original = this.columns.find((column) => column.id === 'subTotal');
+    const grid = this.sgb.slickGrid;
+    if (!original || !grid) {
+      return;
+    }
+    const textEditor = this._subTotalEditorMode === 'text' ? Editors.text : undefined;
+    grid.setColumns(
+      grid.getColumns().map((column) =>
+        column.id === 'subTotal'
+          ? {
+              ...column,
+              formatter: original.formatter,
+              params: original.params,
+              editor: textEditor ? { model: textEditor } : original.editor,
+              editorClass: textEditor,
+            }
+          : column
+      )
+    );
+    this.invalidateAll();
   }
 
   async exportToExcelPortable() {
