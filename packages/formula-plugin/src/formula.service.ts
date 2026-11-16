@@ -946,8 +946,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     let firstErrorCode: FormulaErrorCode | undefined;
 
     const expressionWithRanges = normalizedSyntax.replace(
-      /\$?([A-Z]{1,3})\$?(\d+)\s*:\s*\$?([A-Z]{1,3})\$?(\d+)/gi,
-      (_match, startCol: string, startRow: string, endCol: string, endRow: string) => {
+      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?([A-Z]{1,3})\$?(\d+)\s*:\s*\$?([A-Z]{1,3})\$?(\d+)(?![A-Za-z0-9_])/gi,
+      (match, startCol: string, startRow: string, endCol: string, endRow: string) => {
+        if (!startCol) {
+          return match;
+        }
         const rangeValues = this.resolveExcelRangeValues(startCol, Number(startRow), endCol, Number(endRow), context);
         const errorInRange = rangeValues.find((value) => isFormulaErrorCode(value));
         if (isFormulaErrorCode(errorInRange) && !firstErrorCode) {
@@ -958,8 +961,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     );
 
     const expressionWithValues = mapFormulaRanges(expressionWithRanges, (members) => `[${members.join(',')}]`).replace(
-      /\$?([A-Z]{1,3})\$?(\d+)/gi,
-      (_match, colName: string, rowNumber: string) => {
+      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?([A-Z]{1,3})\$?(\d+)(?![A-Za-z0-9_])/gi,
+      (match, colName: string, rowNumber: string) => {
+        if (!colName) {
+          return match;
+        }
         const resolved = this.resolveExcelReferenceValue(colName, Number(rowNumber), context);
         if (isFormulaErrorCode(resolved) && !firstErrorCode) {
           firstErrorCode = resolved;
@@ -972,24 +978,24 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return firstErrorCode;
     }
 
-    const jsExpression = expressionWithValues
-      .replace(/<>/g, '!=')
-      .replace(/\bTRUE\b/gi, 'true')
-      .replace(/\bFALSE\b/gi, 'false')
-      .replace(/(^|[^<>=!])=([^=])/g, '$1==$2');
+    const jsExpression = this.transformFormulaOutsideQuotedStrings(expressionWithValues, (segment) =>
+      segment
+        .replace(/<>/g, '!=')
+        .replace(/\bTRUE\b/gi, 'true')
+        .replace(/\bFALSE\b/gi, 'false')
+        .replace(/(?<![<>=!])=(?!=)/g, '==')
+    );
 
-    if (/[;{}\\`]/.test(jsExpression)) {
+    let hasUnsafeSyntax = false;
+    this.transformFormulaOutsideQuotedStrings(jsExpression, (segment) => {
+      hasUnsafeSyntax ||= /[;{}\\`]/.test(segment);
+      return segment;
+    });
+    if (hasUnsafeSyntax) {
       return FORMULA_ERROR.ERROR;
     }
 
     const formulaFunctions = this.getFormulaFunctionRegistry();
-    const expressionWithoutStrings = jsExpression.replace(/"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/g, '');
-    const identifiers = expressionWithoutStrings.match(/[A-Za-z_][A-Za-z0-9_]*/g) || [];
-    const allowedIdentifiers = new Set<string>(['TRUE', 'FALSE', 'NULL', ...Array.from(formulaFunctions.keys())]);
-    if (identifiers.some((id) => !allowedIdentifiers.has(id.toUpperCase()))) {
-      return FORMULA_ERROR.NAME;
-    }
-
     try {
       // The recursive-descent parser below implements the full supported grammar (operators, ranges,
       // whitelisted functions); it is used exclusively so no formula text is ever passed to a dynamic
@@ -1034,19 +1040,37 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const quote = ch;
         i++;
         let value = '';
+        let closed = false;
         while (i < src.length) {
           const c = src[i];
           if (c === '\\' && i + 1 < src.length) {
-            value += src[i + 1];
-            i += 2;
+            const escaped = src[i + 1];
+            const unicode = escaped === 'u' ? src.slice(i + 2, i + 6) : '';
+            if (/^[\da-f]{4}$/i.test(unicode)) {
+              value += String.fromCharCode(Number.parseInt(unicode, 16));
+              i += 6;
+            } else {
+              const escapes: Record<string, string> = { n: '\n', r: '\r', t: '\t', b: '\b', f: '\f' };
+              value += escapes[escaped] ?? escaped;
+              i += 2;
+            }
             continue;
           }
           if (c === quote) {
+            if (src[i + 1] === quote) {
+              value += quote;
+              i += 2;
+              continue;
+            }
             i++;
+            closed = true;
             break;
           }
           value += c;
           i++;
+        }
+        if (!closed) {
+          return FORMULA_ERROR.ERROR;
         }
         pushToken('string', value);
         continue;
@@ -1457,7 +1481,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return expression;
     }
 
-    return expression.replace(/×/g, '*').replace(/÷/g, '/').replace(/[−–—]/g, '-');
+    return this.transformFormulaOutsideQuotedStrings(expression, (segment) =>
+      segment.replace(/×/g, '*').replace(/÷/g, '/').replace(/[−–—]/g, '-')
+    );
   }
 
   /** Return the complete logical column list, including hidden columns. */
@@ -1599,8 +1625,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     );
 
     return withNamedRowRefs.replace(
-      /REF\(\s*COLUMN\("([^"]+)"\)\s*,\s*ROW\((\d+)\)\s*\)/gi,
-      (_match, columnId: string, rowNumber: string) => {
+      /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|REF\(\s*COLUMN\("([^"]+)"\)\s*,\s*ROW\((\d+)\)\s*\)/gi,
+      (match, columnId: string, rowNumber: string) => {
+        if (!columnId) {
+          return match;
+        }
         const columnIdx = columnIds.indexOf(String(columnId));
         const rowIdx = Number(rowNumber);
         if (columnIdx < 0 || Number.isNaN(rowIdx)) {

@@ -104,6 +104,17 @@ describe('Example 48 - Formula Service', () => {
     cy.get(cell(0, 7)).contains('$8.88');
   });
 
+  it('should preserve quoted references and operators when evaluating a formula', () => {
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=IF("A1 × TRUE"="A1 × TRUE",3,0){enter}', { force: true });
+    cy.get(cell(0, 4)).should('contain', '$3.00');
+    cy.get(cell(0, 7)).should('contain', '$3.00');
+    cy.get('[data-test="reload-formulas-btn"]').click();
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').type('{enter}', { force: true });
+    cy.get(cell(0, 4)).should('contain', '$8.88');
+  });
+
   it('should keep first argument and append second reference after operator in function expression', () => {
     // Start formula entry from the Sub-Total formula cell.
     cy.get(cell(0, 4)).dblclick();

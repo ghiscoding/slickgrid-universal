@@ -18,6 +18,57 @@ describe('FormulaService', () => {
     warnSpy.mockRestore();
   });
 
+  it('preserves quoted text through reference resolution, operator normalization and export', () => {
+    const items = [
+      { id: 'a', value: 'A1', total: '' },
+      { id: 'b', value: 'C2:D3', total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    expect(evaluate('="A1:C3 TRUE FALSE <> = × ÷ − ; {} `"')).toBe('A1:C3 TRUE FALSE <> = × ÷ − ; {} `');
+    expect(evaluate('=CONCAT(A1, ":", A2)')).toBe('A1:C2:D3');
+    items[0].value = 'A1\n"quoted"\\path\t';
+    expect(evaluate('=A1')).toBe('A1\n"quoted"\\path');
+    expect(evaluate('="\\u0041\\nB"')).toBe('A\nB');
+    items[0].value = 'A1';
+    expect(evaluate('="He said ""A1 ×"""')).toBe('He said "A1 ×"');
+    expect(evaluate('=IF("A1 × TRUE"="A1 × TRUE",3,0)')).toBe(3);
+    expect(evaluate('="unterminated')).toBe('#ERROR!');
+    expect(evaluate('=CONCAT("hello A1", SUM(A1:A2))')).toBe('hello A10');
+    expect(evaluate('="REF(COLUMN(\'value\'),ROW(1))"')).toBe("REF(COLUMN('value'),ROW(1))");
+    expect(evaluate(`='REF(COLUMN("value"),ROW(1))'`)).toBe('REF(COLUMN("value"),ROW(1))');
+    expect(evaluate('=1;2')).toBe('#ERROR!');
+    service.setFormula('a', 'total', '="A1 × B2"');
+    expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a', 'b'], excelRowOffset: 2 } as any)).toBe(
+      '"A1 × B2"'
+    );
+  });
+
+  it('resolves escaped row and column IDs and propagates errors from references', () => {
+    const id = 'r"\\1';
+    const columnId = 'value"\\x';
+    const items = [
+      { id, value: 4, total: '' },
+      { id: 'b', value: '=1/0', total: '' },
+    ];
+    const columns: Column[] = [
+      { id: columnId, field: 'value', allowFormula: true },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    service.setFormula(id, 'total', '=A1*2');
+    expect(service.getEvaluatedCellValue(id, 'total')).toBe(8);
+    expect(service.getExcelFormula({ rowId: id, columnId: 'total', columnIds: [columnId, 'total'], rowIds: [id, 'b'], excelRowOffset: 2 } as any)).toBe('A2*2');
+    service.setFormula(id, 'total', '=A2+1');
+    expect(service.getEvaluatedCellValue(id, 'total')).toBe('#DIV/0!');
+  });
+
   it('should expose and merge service options', () => {
     const service = new FormulaService({ autoAssignEditor: false });
 

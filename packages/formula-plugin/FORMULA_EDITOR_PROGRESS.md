@@ -3,6 +3,11 @@
 Last updated: 2026-11-14 (feature completion audit)
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Quoted Formula Text (2026-11-16)
+- Reference resolution, comparison normalization, Unicode operator normalization and unsafe-syntax checks now leave quoted text intact, including text produced by referenced cells and ranges.
+- Formula strings support doubled quote characters, escaped control characters and Unicode escapes; unterminated quoted strings return `#ERROR!`. Quoted long-form numeric references are no longer converted as formulas.
+- Added unit regressions for quoted references and operators, escaped row/column IDs, exported text and dependent errors; the broader parser semantics audit remains open. Example 48 includes a browser regression for quoted references and Unicode operators.
+
 ## Latest Update: Example 48 CI Test Portability (2026-11-16)
 - Replaced Cypress access to a development-only view-model name with demo controls for hidden-column export, grid/formula save and restore, and formula editor mode. The same UI-driven tests work without relying on a framework-specific global.
 - The demo no longer duplicates FormulaService cell-change synchronization, so its custom-editor test exercises the service itself. The clipboard test accesses the browser clipboard through the document.
