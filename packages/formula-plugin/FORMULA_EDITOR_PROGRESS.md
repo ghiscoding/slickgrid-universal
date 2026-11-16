@@ -3,6 +3,11 @@
 Last updated: 2026-11-14 (feature completion audit)
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: IF Branches and Error Propagation (2026-11-16)
+- Built-in IF defers evaluation of its selected branch, so references, circular dependencies and custom functions in an unused branch do not execute. Custom overrides of IF retain their existing behavior.
+- Errors produced while evaluating function arguments now propagate instead of being passed to aggregate or custom functions. Stored formula references are evaluated even when the dataset field contains a plain value. Added tests for nested conditions, errors, missing references, side effects, custom overrides and circular references.
+- The parser checks syntax in both branches without executing them, including invalid arithmetic expressions and numeric literals. Broader parser semantics remain open.
+
 ## Latest Update: Quoted Formula Text (2026-11-16)
 - Reference resolution, comparison normalization, Unicode operator normalization and unsafe-syntax checks now leave quoted text intact, including text produced by referenced cells and ranges.
 - Formula strings support doubled quote characters, escaped control characters and Unicode escapes; unterminated quoted strings return `#ERROR!`. Quoted long-form numeric references are no longer converted as formulas.

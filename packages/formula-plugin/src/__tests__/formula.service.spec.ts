@@ -69,6 +69,50 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue(id, 'total')).toBe('#DIV/0!');
   });
 
+  it('evaluates only the selected IF branch and propagates errors from evaluated arguments', () => {
+    const items = [{ id: 'a', value: '=1/0', total: '' }];
+    const columns: Column[] = [
+      { id: 'value', field: 'value', allowFormula: true },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const called = vi.fn(() => 11);
+    const service = new FormulaService({ autoAssignEditor: false, customFunctions: { CALLED: called } });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    expect(evaluate('=IF(FALSE,1/0,42)')).toBe(42);
+    expect(evaluate('=IF(TRUE,42,A1)')).toBe(42);
+    expect(evaluate('=IF(FALSE,REF(COLUMN("deleted"),ROW("a")),42)')).toBe(42);
+    expect(evaluate('=IF(TRUE,IF(FALSE,CALLED(),5),CALLED())')).toBe(5);
+    expect(called).not.toHaveBeenCalled();
+    expect(evaluate('=SUM(IF(TRUE,2,1/0),3)')).toBe(5);
+    expect(evaluate('=IF(TRUE,A1,42)')).toBe('#DIV/0!');
+    expect(evaluate('=IF(A1,42,0)')).toBe('#DIV/0!');
+    expect(evaluate('=SUM(1/0)')).toBe('#DIV/0!');
+    expect(evaluate('=CALLED(1/0)')).toBe('#DIV/0!');
+    expect(called).not.toHaveBeenCalled();
+    expect(evaluate('=IF(FALSE,SUM(A1:A1),7)')).toBe(7);
+    expect(evaluate('=IF(FALSE,1)')).toBe(false);
+    expect(evaluate('=IF(TRUE,"a\\\"b","no")')).toBe('a"b');
+    expect(evaluate('=IF(TRUE,"a""b","no")')).toBe('a"b');
+    expect(evaluate('=IF(TRUE,1')).toBe('#ERROR!');
+    expect(evaluate('=IF(TRUE,1,2+)')).toBe('#ERROR!');
+    expect(evaluate('=IF(FALSE,1+,2)')).toBe('#ERROR!');
+    expect(evaluate('=IF(TRUE,1,1.2.3)')).toBe('#ERROR!');
+    expect(evaluate('=IF(TRUE,1,-([1,2]-1)^([1,2])%)')).toBe(1);
+    expect(evaluate('=IF(TRUE,1,CALLED(1/0))')).toBe(1);
+    expect(evaluate('=SUM(1')).toBe('#ERROR!');
+    expect(evaluate('=IF(FALSE,1;2,3)')).toBe('#ERROR!');
+    service.registerCustomFunction('__FORMULA_LAZY_IF_0', () => 10);
+    expect(evaluate('=IF(TRUE,1,2)+__FORMULA_LAZY_IF_0()')).toBe(11);
+    service.registerCustomFunction('IF', () => 17);
+    expect(evaluate('=IF(TRUE,1,2)')).toBe(17);
+    service.unregisterCustomFunction('IF');
+    service.setFormula('a', 'total', '=IF(FALSE,B1,7)');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(7);
+    service.setFormula('a', 'total', '=IF(TRUE,B1,7)');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe('#REF!');
+  });
+
   it('should expose and merge service options', () => {
     const service = new FormulaService({ autoAssignEditor: false });
 

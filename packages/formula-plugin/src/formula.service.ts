@@ -925,9 +925,19 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return FORMULA_ERROR.NULL;
     }
 
+    let hasUnsafeInput = false;
+    this.transformFormulaOutsideQuotedStrings(normalized, (segment) => {
+      hasUnsafeInput ||= /[;{}\\`]/.test(segment);
+      return segment;
+    });
+    if (hasUnsafeInput) {
+      return FORMULA_ERROR.ERROR;
+    }
+    const formulaFunctions = this.getFormulaFunctionRegistry();
+    const lazyExpression = this._customFunctions.has('IF') ? normalized : this.replaceLazyIfCalls(normalized, context, formulaFunctions);
     const normalizedSyntax = this.normalizeFormulaSyntax(
       this.replaceRefFunctionsWithA1Refs(
-        normalized,
+        lazyExpression,
         ((this._grid?.getColumns?.() as Column[] | undefined) || []).map((col) => String(col.id)),
         this.getDataItems().map((item) => String(item?.[this.getDatasetIdPropertyName()] ?? '')),
         1
@@ -986,16 +996,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         .replace(/(?<![<>=!])=(?!=)/g, '==')
     );
 
-    let hasUnsafeSyntax = false;
-    this.transformFormulaOutsideQuotedStrings(jsExpression, (segment) => {
-      hasUnsafeSyntax ||= /[;{}\\`]/.test(segment);
-      return segment;
-    });
-    if (hasUnsafeSyntax) {
-      return FORMULA_ERROR.ERROR;
-    }
-
-    const formulaFunctions = this.getFormulaFunctionRegistry();
     try {
       // The recursive-descent parser below implements the full supported grammar (operators, ranges,
       // whitelisted functions); it is used exclusively so no formula text is ever passed to a dynamic
@@ -1015,7 +1015,84 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     }
   }
 
-  protected evaluateExpressionWithParser(expression: string, formulaFunctions: Map<string, FormulaCallback>): unknown {
+  /** Defer built-in IF branches until the parser evaluates the containing expression. */
+  protected replaceLazyIfCalls(expression: string, context: FormulaEvaluationContext, functions: Map<string, FormulaCallback>): string {
+    const token = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])IF\s*\(/gi;
+    let result = '';
+    let previous = 0;
+    let match: RegExpExecArray | null;
+    let sequence = 0;
+    while ((match = token.exec(expression)) !== null) {
+      if (/^["']/.test(match[0])) {
+        continue;
+      }
+      const args: string[] = [];
+      let start = token.lastIndex;
+      let depth = 0;
+      let quote = '';
+      let end = start;
+      for (; end < expression.length; end++) {
+        const char = expression[end];
+        if (quote) {
+          if (char === '\\') {
+            end++;
+          } else if (char === quote) {
+            if (expression[end + 1] === quote) {
+              end++;
+            } else {
+              quote = '';
+            }
+          }
+        } else if (char === '"' || char === "'") {
+          quote = char;
+        } else if (char === '(' || char === '[') {
+          depth++;
+        } else if (char === ')' && depth === 0) {
+          args.push(expression.slice(start, end));
+          break;
+        } else if (char === ')' || char === ']') {
+          depth--;
+        } else if (char === ',' && depth === 0) {
+          args.push(expression.slice(start, end));
+          start = end + 1;
+        }
+      }
+      if (end >= expression.length || args.length < 2 || args.length > 3 || args.some((arg) => !arg.trim())) {
+        continue;
+      }
+      let name = `__FORMULA_LAZY_IF_${sequence++}`;
+      while (functions.has(name) || expression.toUpperCase().includes(name)) {
+        name = `__FORMULA_LAZY_IF_${sequence++}`;
+      }
+      const validSyntax = args.every((arg) => {
+        const syntax = this.transformFormulaOutsideQuotedStrings(this.normalizeFormulaSyntax(arg), (segment) =>
+          segment
+            .replace(/\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+/gi, '1')
+            .replace(/#(?:REF!|DIV\/0!|VALUE!|NAME\?|NUM!|NULL!|ERROR!|N\/A)/gi, '1')
+            .replace(/<>/g, '!=')
+            .replace(/(?<![<>=!])=(?!=)/g, '==')
+        );
+        return !isFormulaErrorCode(this.evaluateExpressionWithParser(syntax, functions, true));
+      });
+      functions.set(name, () => {
+        if (!validSyntax) {
+          return FORMULA_ERROR.ERROR;
+        }
+        const condition = this.evaluateFormulaExpression(args[0], context);
+        if (isFormulaErrorCode(condition)) {
+          return condition;
+        }
+        const selected = condition ? args[1] : (args[2] ?? 'FALSE');
+        return this.evaluateFormulaExpression(selected, context);
+      });
+      result += expression.slice(previous, match.index) + `${name}()`;
+      previous = end + 1;
+      token.lastIndex = previous;
+    }
+    return result + expression.slice(previous);
+  }
+
+  protected evaluateExpressionWithParser(expression: string, formulaFunctions: Map<string, FormulaCallback>, syntaxOnly = false): unknown {
     type TokenType = 'number' | 'string' | 'identifier' | 'operator' | 'paren' | 'bracket' | 'comma' | 'eof';
     interface Token {
       type: TokenType;
@@ -1208,7 +1285,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (isFormulaErrorCode(right)) {
           return right;
         }
-        left = op === '+' ? FormulaService.addFormulaValues(left, right) : FormulaService.subtractFormulaValues(left, right);
+        left = syntaxOnly
+          ? 1
+          : op === '+'
+            ? FormulaService.addFormulaValues(left, right)
+            : FormulaService.subtractFormulaValues(left, right);
         if (typeof left === 'number' && Number.isNaN(left)) {
           return FORMULA_ERROR.VALUE;
         }
@@ -1226,6 +1307,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const right = parseUnary();
         if (isFormulaErrorCode(right)) {
           return right;
+        }
+        if (syntaxOnly) {
+          left = 1;
+          continue;
         }
         if (op === '/' && Number(right) === 0) {
           return FORMULA_ERROR.DIV0;
@@ -1249,7 +1334,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (isFormulaErrorCode(right)) {
           return right;
         }
-        left = Math.pow(Number(left), Number(right));
+        left = syntaxOnly ? 1 : Math.pow(Number(left), Number(right));
         if (typeof left === 'number' && Number.isNaN(left)) {
           return FORMULA_ERROR.NUM;
         }
@@ -1264,7 +1349,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
       while (matchOperator('%')) {
         consume();
-        value = Number(value) / 100;
+        value = syntaxOnly ? 1 : Number(value) / 100;
         if (typeof value === 'number' && Number.isNaN(value)) {
           return FORMULA_ERROR.VALUE;
         }
@@ -1279,7 +1364,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (isFormulaErrorCode(unary)) {
           return unary;
         }
-        const numeric = Number(unary);
+        const numeric = syntaxOnly ? 1 : Number(unary);
         return Number.isNaN(numeric) ? FORMULA_ERROR.VALUE : numeric;
       }
       if (matchOperator('-')) {
@@ -1288,7 +1373,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (isFormulaErrorCode(unary)) {
           return unary;
         }
-        const numeric = Number(unary);
+        const numeric = syntaxOnly ? 1 : Number(unary);
         return Number.isNaN(numeric) ? FORMULA_ERROR.VALUE : -numeric;
       }
       return parsePower();
@@ -1299,12 +1384,12 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
       if (tk.type === 'number') {
         consume();
-        return Number(tk.value);
+        return syntaxOnly ? 1 : Number(tk.value);
       }
 
       if (tk.type === 'string') {
         consume();
-        return tk.value;
+        return syntaxOnly ? '' : tk.value;
       }
 
       if (tk.type === 'identifier') {
@@ -1315,7 +1400,11 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           const args: unknown[] = [];
           if (!matchParen(')')) {
             while (true) {
-              args.push(parseExpression());
+              const value = parseExpression();
+              if (isFormulaErrorCode(value)) {
+                return value;
+              }
+              args.push(value);
               if (peek().type === 'comma') {
                 consume();
                 continue;
@@ -1328,6 +1417,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
             return FORMULA_ERROR.ERROR;
           }
           consume();
+
+          if (syntaxOnly) {
+            return 1;
+          }
 
           const fn = formulaFunctions.get(upperIdent);
           if (typeof fn !== 'function') {
@@ -1346,7 +1439,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (upperIdent === 'NULL') {
           return null;
         }
-        return FORMULA_ERROR.NAME;
+        return syntaxOnly ? 1 : FORMULA_ERROR.NAME;
       }
 
       if (matchParen('(')) {
@@ -1757,14 +1850,15 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     const columnId = column.id as number | string;
     const field = (column.field ?? column.id) as string;
     const rawValue = item[field as keyof typeof item];
+    const storedFormula = this.getFormula(rowId, columnId);
 
-    if (typeof rawValue === 'string' && rawValue.trim().startsWith('=')) {
+    if (storedFormula || (typeof rawValue === 'string' && rawValue.trim().startsWith('='))) {
       const key = this.buildStoreKey(rowId, columnId);
       if (context.visited.has(key)) {
         return FORMULA_ERROR.REF;
       }
 
-      const nestedFormula = this.getFormula(rowId, columnId) ?? rawValue;
+      const nestedFormula = storedFormula ?? rawValue;
       const nestedMemoKey = this.buildEvaluationMemoKey(rowId, columnId, nestedFormula);
       if (context.memo.has(nestedMemoKey)) {
         return context.memo.get(nestedMemoKey);
