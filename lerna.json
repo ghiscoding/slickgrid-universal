@@ -16,10 +16,8 @@
     },
     "publish": {
       "cleanupTempFiles": true,
-      "stripPackageKeys": [
-        "devDependencies",
-        "scripts"
-      ]
+      "stripPackageKeys": ["devDependencies", "scripts"],
+      "syncOutputManifest": true
     },
     "watch": {
       "noBail": true,
@@ -27,10 +25,5 @@
     }
   },
   "changelogPreset": "conventionalcommits",
-  "packages": [
-    "demos/*",
-    "frameworks/*",
-    "frameworks-plugins/*",
-    "packages/*"
-  ]
+  "packages": ["demos/*", "frameworks/*", "frameworks-plugins/*", "packages/*"]
 }

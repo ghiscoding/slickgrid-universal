@@ -42,7 +42,6 @@
     "lint": "oxlint .",
     "pack-tarball": "npm pack",
     "pack-lib": "npm pack ./dist",
-    "replace-workspace": "node ./scripts/replace-workspace.mjs",
     "test": "vitest --watch",
     "test:coverage": "vitest --no-watch --coverage"
   },
