@@ -280,6 +280,43 @@ describe('FormulaService', () => {
     ).toBe('COUNTA(A2:A8)');
   });
 
+  it('evaluates and exports conditional criteria with case, wildcards and blank cells', () => {
+    const items = [
+      { id: 'a', name: 'Apple', amount: 3, total: '' },
+      { id: 'b', name: 'APPLE', amount: '4', total: '' },
+      { id: 'c', name: 'a*ple', amount: 5, total: '' },
+      { id: 'd', name: 'apple ', amount: true, total: '' },
+      { id: 'e', name: null, amount: 0, total: '' },
+      { id: 'f', name: '=""', amount: 2, total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'name', field: 'name', allowFormula: true },
+      { id: 'amount', field: 'amount' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    expect(evaluate('=COUNTIF(A1:A6,"apple")')).toBe(2);
+    expect(evaluate('=COUNTIF(A1:A6,"a~*ple")')).toBe(1);
+    expect(evaluate('=COUNTIF(A1:A6,"apple*")')).toBe(3);
+    expect(evaluate('=COUNTIF(A1:A6,"")')).toBe(2);
+    expect(evaluate('=COUNTIF(B1:B6,A5)')).toBe(1);
+    expect(evaluate('=SUMIF(A1:A6,"a?ple",B1:B6)')).toBe(8);
+    expect(evaluate('=SUMIF(A1:A6,"apple*",B1:B6)')).toBe(3);
+    service.setFormula('a', 'total', '=SUMIF(A1:A6,"a?ple",B1:B6)');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(8);
+    expect(
+      service.getExcelFormula({
+        rowId: 'a',
+        columnId: 'total',
+        columnIds: ['name', 'amount', 'total'],
+        rowIds: items.map((item) => item.id),
+        excelRowOffset: 2,
+      } as any)
+    ).toBe('SUMIF(A2:A7,"a?ple",B2:B7)');
+  });
+
   it('should expose and merge service options', () => {
     const service = new FormulaService({ autoAssignEditor: false });
 

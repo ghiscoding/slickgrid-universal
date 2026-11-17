@@ -195,18 +195,29 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
       const unwrapped = unwrapFormulaReference(value);
       return unwrapped === null || unwrapped === undefined || unwrapped === '';
     }).length;
-  const COUNTIF = (range: unknown, criteria: unknown) => {
+  const COUNTIF = (...args: unknown[]) => {
+    if (args.length !== 2) {
+      return FORMULA_ERROR.VALUE;
+    }
+    const [range, criteria] = args;
     const values = toFormulaArray(range);
-    return values.filter((value) => matchesFormulaCriteria(value, criteria)).length;
+    const matches = createFormulaCriteriaMatcher(criteria);
+    return values.filter(matches).length;
   };
-  const SUMIF = (range: unknown, criteria: unknown, sumRange?: unknown) => {
+  const SUMIF = (...args: unknown[]) => {
+    if (args.length < 2 || args.length > 3) {
+      return FORMULA_ERROR.VALUE;
+    }
+    const [range, criteria, sumRange] = args;
     const criteriaValues = toFormulaArray(range);
     const sumValues = sumRange === undefined ? criteriaValues : toFormulaArray(sumRange);
+    const matches = createFormulaCriteriaMatcher(criteria);
     const length = Math.min(criteriaValues.length, sumValues.length);
     let sum = 0;
     for (let i = 0; i < length; i++) {
-      if (matchesFormulaCriteria(criteriaValues[i], criteria)) {
-        sum += toNumericFormulaValue(sumValues[i]);
+      const value = unwrapFormulaReference(sumValues[i]);
+      if (matches(criteriaValues[i]) && typeof value === 'number' && Number.isFinite(value)) {
+        sum += value;
       }
     }
     return sum;
@@ -351,38 +362,96 @@ function toFormulaArray(value: unknown): unknown[] {
   return Array.isArray(value) ? flattenFormulaFunctionArgs(value) : [value];
 }
 
-function matchesFormulaCriteria(value: unknown, criteria: unknown): boolean {
-  value = unwrapFormulaReference(value);
-  criteria = unwrapFormulaReference(criteria);
+function createFormulaCriteriaMatcher(input: unknown): (value: unknown) => boolean {
+  const reference = isFormulaReference(input);
+  const rawCriteria = unwrapFormulaReference(input);
+  const criteria = reference && (rawCriteria === null || rawCriteria === undefined) ? 0 : rawCriteria;
   if (typeof criteria === 'number' || typeof criteria === 'boolean') {
-    return value === criteria;
+    return (value) => unwrapFormulaReference(value) === criteria;
   }
 
-  const criteriaText = String(criteria ?? '').trim();
-  const operatorMatch = criteriaText.match(/^(<=|>=|<>|=|<|>)(.*)$/);
+  const criteriaText = String(criteria ?? '');
+  const operatorMatch = criteriaText.match(/^(<=|>=|<>|=|<|>)([\s\S]*)$/);
   const operator = operatorMatch?.[1] ?? '=';
-  const operandText = (operatorMatch?.[2] ?? criteriaText).trim();
-
-  const leftNumber = isNumericFormulaValue(value) ? Number(String(value).trim()) : undefined;
+  const operandText = operatorMatch?.[2] ?? criteriaText;
+  const pattern = parseFormulaWildcardPattern(operandText);
+  const hasWildcard = pattern.some((token) => token === null || token === undefined);
   const rightNumber = isNumericFormulaValue(operandText) ? Number(operandText) : undefined;
+  const rightText = hasWildcard ? operandText.toLowerCase() : pattern.map((token) => token ?? '').join('');
 
-  const left = leftNumber ?? String(value ?? '');
-  const right = rightNumber ?? operandText;
-
-  switch (operator) {
-    case '=':
-      return left === right;
-    case '<>':
-      return left !== right;
-    case '<':
-      return (left as any) < (right as any);
-    case '>':
-      return (left as any) > (right as any);
-    case '<=':
-      return (left as any) <= (right as any);
-    case '>=':
-      return (left as any) >= (right as any);
-    default:
+  return (inputValue: unknown) => {
+    const value = unwrapFormulaReference(inputValue);
+    if (operandText === '' && (operator === '=' || operator === '<>')) {
+      const isBlank = value === null || value === undefined || value === '';
+      return operator === '=' ? isBlank : !isBlank;
+    }
+    if (value === null || value === undefined) {
       return false;
+    }
+    if (hasWildcard && (operator === '=' || operator === '<>')) {
+      const matched = typeof value === 'string' && matchesFormulaWildcard(value.toLowerCase(), pattern);
+      return operator === '=' ? matched : !matched;
+    }
+    const leftNumber = isNumericFormulaValue(value) ? Number(String(value).trim()) : undefined;
+    const left = leftNumber ?? String(value).toLowerCase();
+    const right = rightNumber ?? rightText;
+
+    switch (operator) {
+      case '=':
+        return left === right;
+      case '<>':
+        return left !== right;
+      case '<':
+        return (left as any) < (right as any);
+      case '>':
+        return (left as any) > (right as any);
+      case '<=':
+        return (left as any) <= (right as any);
+      case '>=':
+        return (left as any) >= (right as any);
+      default:
+        return false;
+    }
+  };
+}
+
+/** Null is '*', undefined is '?'; escaped wildcard characters remain literal strings. */
+function parseFormulaWildcardPattern(text: string): Array<string | null | undefined> {
+  const chars = Array.from(text.toLowerCase());
+  const tokens: Array<string | null | undefined> = [];
+  for (let i = 0; i < chars.length; i++) {
+    if (chars[i] === '~' && ['*', '?', '~'].includes(chars[i + 1])) {
+      tokens.push(chars[++i]);
+    } else {
+      tokens.push(chars[i] === '*' ? null : chars[i] === '?' ? undefined : chars[i]);
+    }
   }
+  return tokens;
+}
+
+/** Iterative glob matching avoids regular-expression backtracking on untrusted criteria. */
+function matchesFormulaWildcard(text: string, pattern: Array<string | null | undefined>): boolean {
+  const chars = Array.from(text);
+  let position = 0;
+  let token = 0;
+  let star = -1;
+  let retry = 0;
+  while (position < chars.length) {
+    if (token < pattern.length && (pattern[token] === undefined || pattern[token] === chars[position])) {
+      token++;
+      position++;
+    } else if (token < pattern.length && pattern[token] === null) {
+      star = token++;
+      retry = position;
+    } else if (star >= 0) {
+      token = star + 1;
+      position = ++retry;
+    } else {
+      return false;
+    }
+  }
+  while (token < pattern.length && pattern[token] === null) {
+    token++;
+  }
+  return token === pattern.length;
 }

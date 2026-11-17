@@ -3,6 +3,11 @@
 Last updated: 2026-11-16
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Conditional Criteria (2026-11-16)
+- `COUNTIF` and `SUMIF` now support case-insensitive text criteria, `*` and `?` wildcards, and `~` escapes without interpreting wildcard patterns as regular expressions. Text criteria preserve significant whitespace.
+- Blank cell criteria are treated as zero, while empty-text criteria match blank and empty-text values. `SUMIF` ignores text and booleans in its sum range, and both functions validate their argument counts.
+- Added unit, editor and Excel export coverage for criteria, including disjoint grouped helper ranges. LibreOffice recalculated the exported wildcard `SUMIF` and `COUNTIF` to 1.55 and 1. Mismatched `SUMIF` ranges and further mixed-type coercion remain open and are documented.
+
 ## Latest Update: Math Functions and Aliases (2026-11-16)
 - Added `ABS`, `ROUND`, `MOD` and `SQRT`, including scalar argument validation, negative rounding and divisors, and spreadsheet error results. `ROUND` requires two arguments, matching Excel rather than Syncfusion's optional digits argument.
 - Added `RANDOM` and `RAN` aliases for `RAND` and `CONCATENATE` for `CONCAT`. Excel export translates built-in aliases to native names, preserving quoted text and custom overrides.
@@ -154,7 +159,8 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [x] Preserve blank members in ranges for counting and aggregate functions, including stable references.
 - [x] Preserve single-cell and range reference types and formula-produced empty strings for `SUM`, `PRODUCT`, `MIN`, `MAX`, `AVERAGE`, `MEDIAN`, `COUNT`, `COUNTA`, and `COUNTBLANK`.
 - [x] Fix grouped disjoint Excel `COUNTA` export for formulas returning empty text while still excluding truly blank source cells.
-- [ ] Continue the formula semantics audit: remaining operator and conditional-function coercion, dates, wildcard criteria, argument counts and mismatched range dimensions.
+- [x] Add wildcard, escape, case-insensitive and blank criteria handling to `COUNTIF` and `SUMIF`; ignore nonnumeric sum-range values and validate their argument counts.
+- [ ] Continue the formula semantics audit: remaining operator and conditional-function coercion, dates, other function argument counts and mismatched range dimensions.
 - [x] Compare Syncfusion's formula reference and add `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases, with Excel export translation.
 - [ ] Evaluate distinct `#CIRCREF!` and `#PARSE!` errors; circular references currently use `#REF!` and parser failures use `#ERROR!`.
 - [x] Support custom and read-only formula columns independently of Formula Editor; document and test `onBeforeEditCell` cancellation.

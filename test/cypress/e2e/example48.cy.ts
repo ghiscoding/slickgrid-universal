@@ -134,6 +134,23 @@ describe('Example 48 - Formula Service', () => {
     cy.get(cell(0, 4)).should('contain', '$8.88');
   });
 
+  it('should evaluate and export case-insensitive wildcard criteria', () => {
+    cy.reload();
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SUMIF(B1:B3,"a*",C1:C3){enter}', { force: true });
+    cy.get(cell(0, 4)).should('contain', '$1.55');
+    cy.get(cell(0, 7)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=COUNTIF(B1:B3,"A*"){enter}', { force: true });
+    cy.get(cell(0, 7)).should('contain', '$1.00');
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.get('[data-test="export-excel-btn"]').click();
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 2 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[1][3]).to.equal('SUMIF(A3:A5,"a*",B3:B5)');
+      expect(xlsx.formulaRows[1][6]).to.equal('COUNTIF(A3:A5,"A*")');
+    });
+  });
+
   it('should suggest and calculate the added math functions', () => {
     cy.reload();
     cy.get(cell(0, 4)).dblclick();
@@ -721,6 +738,22 @@ describe('Example 48 - Formula Service', () => {
       expect(xlsx.additionalSheetFormulaRows[0].slice(3, 6).map((row: string[]) => row[0])).to.deep.equal(
         [11, 12, 4].map((row) => `--NOT(ISBLANK('Grocery List Formula Service'!E${row}))`)
       );
+    });
+  });
+
+  it('should preserve wildcard criteria in disjoint grouped Excel ranges', () => {
+    cy.reload();
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SUMIF(B1:B3,"a*",C1:C3){enter}', { force: true });
+    cy.get(cell(0, 7)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=COUNTIF(B1:B3,"A*"){enter}', { force: true });
+    cy.get('[data-test="group-by-btn"]').click();
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.get('[data-test="export-excel-btn"]').click();
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 15 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[9][4]).to.equal("SUMIF('Formula References'!$A$1:$A$3,\"a*\",'Formula References'!$A$4:$A$6)");
+      expect(xlsx.formulaRows[9][7]).to.equal('COUNTIF(\'Formula References\'!$A$1:$A$3,"A*")');
     });
   });
 

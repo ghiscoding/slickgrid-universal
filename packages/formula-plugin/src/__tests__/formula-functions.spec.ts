@@ -120,6 +120,43 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('COUNTIF')?.(['a', null], null)).toBe(1);
   });
 
+  it('matches case-insensitive text, wildcard escapes and blank criteria', () => {
+    const registry = createFormulaFunctionRegistry(new Map());
+    const count = registry.get('COUNTIF')!;
+    const values = ['Apple', 'apple ', 'APPLE', 'a*ple', 'a?ple', 'a~ple', 'aple', '', null, 0, true];
+    expect(count(values, 'apple')).toBe(2);
+    expect(count(values, 'apple ')).toBe(1);
+    expect(count(values, 'a?ple')).toBe(5);
+    expect(count(values, 'a*ple')).toBe(6);
+    expect(count(values, 'a~*ple')).toBe(1);
+    expect(count(values, 'a~?ple')).toBe(1);
+    expect(count(values, 'a~~ple')).toBe(1);
+    expect(count(['a~b', 'a~', '~'], 'a~b')).toBe(1);
+    expect(count(['a~b', 'a~', '~'], 'a~')).toBe(1);
+    expect(count(values, '')).toBe(2);
+    expect(count(values, '<>')).toBe(9);
+    expect(count(values, '*')).toBe(8);
+    expect(count(values, '<>a*')).toBe(3);
+    expect(count(values, formulaReference(null))).toBe(1);
+    expect(count(values, formulaReference(''))).toBe(2);
+    expect(count(['Apple', 'banana'], '>=BANANA')).toBe(1);
+    expect(count(['a\nb', 'ABC'], 'A?B')).toBe(1);
+    expect(count(['literal.+()'], 'literal.+()')).toBe(1);
+    expect(count(['a'.repeat(4000) + 'b'], '*a*a*a*a*a*a*a*z')).toBe(0);
+    expect(count([1])).toBe(FORMULA_ERROR.VALUE);
+    expect(count([1], 1, 1)).toBe(FORMULA_ERROR.VALUE);
+  });
+
+  it('sums only numeric sum-range values for matching criteria', () => {
+    const registry = createFormulaFunctionRegistry(new Map());
+    const sumif = registry.get('SUMIF')!;
+    expect(sumif(['Apple', 'apples', 'pear', 'APPLE'], 'apple*', [3, '4', 100, true])).toBe(3);
+    expect(sumif([1, 2, '3', 4], '>=2')).toBe(6);
+    expect(sumif(['Apple', 'apple'], 'APPLE', [null, -3])).toBe(-3);
+    expect(sumif([1])).toBe(FORMULA_ERROR.VALUE);
+    expect(sumif([1], 1, [2], 4)).toBe(FORMULA_ERROR.VALUE);
+  });
+
   it('should normalize non-finite, boolean, numeric, and invalid numeric values', () => {
     const registry = createFormulaFunctionRegistry(new Map());
 

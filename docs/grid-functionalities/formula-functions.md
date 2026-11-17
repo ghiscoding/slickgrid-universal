@@ -48,6 +48,10 @@ Current built-ins include:
 
 For Excel export, the built-in `RANDOM` and `RAN` aliases are written as `RAND`, and `CONCATENATE` is written as `CONCAT` so range arguments retain the same behavior. Custom functions overriding an alias retain their name; export them using the custom-function configuration if needed. `CONCAT` requires a compatible Excel version.
 
+`COUNTIF` and `SUMIF` match text without regard to case and support `*` (any sequence), `?` (one character), and `~` to escape a wildcard or tilde. Text comparisons preserve spaces. A blank cell used as the criterion is treated as zero; an empty-text criterion matches blank and empty-text cells. `SUMIF` adds numeric values in the sum range and ignores text and booleans.
+
+Use matching dimensions for `SUMIF`'s criteria and sum ranges. For mismatched ranges, the grid currently pairs values only up to the shorter range; Excel instead expands from the sum range's first cell, so results may differ after export.
+
 ### Custom Function Registration
 You can register functions in constructor options.
 
