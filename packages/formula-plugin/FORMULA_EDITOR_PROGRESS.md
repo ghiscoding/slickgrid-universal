@@ -3,6 +3,10 @@
 Last updated: 2026-11-16
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Operator Precedence (2026-11-16)
+- Aligned unary negation and chained exponentiation with Excel's operator precedence and left-to-right evaluation; parentheses still override the default order.
+- Added evaluation and export regressions for powers, negative exponents, percentages, references and mixed operators. Other formula semantics remain open for audit.
+
 ## Latest Update: Runtime Custom Functions (2026-11-16)
 - Registering, replacing and removing a custom function invalidates cached evaluations and schedules a coalesced grid refresh. Default Formula Editor autocomplete reads the live registry; an explicit suggestion list remains unchanged.
 - Added unit coverage for changing functions while an editor is open and for cached results. Example 48 exposes controls to remove and register CUSTOMSUM, with a UI-driven browser regression.
@@ -118,15 +122,16 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [x] Preserve quoted references and operators, escaped IDs and quoted text from referenced cells during evaluation and export.
 - [x] Evaluate only the selected built-in `IF` branch and propagate errors from evaluated function arguments; validate both branches without executing the unused one.
 - [x] Resolve the conflicting scalar-times-range expectations: both `*` and `×` now return `#VALUE!`.
-- [ ] Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin.
 - [ ] Evaluate using the range drag handle to fill down to the last adjacent non-empty cell; define the click interaction and stopping behavior. Might skip that one since Ag-Grid doesn't support it and it could become very complex with large dataset.
 - [ ] Evaluate reusing the existing autocompleter instead of the formula editor's custom autocomplete.
 - [ ] Re-audit the historical Cypress Coverage Audit against the current tests and cover remaining gaps, including selection-model fallback and reference translation where not yet exercised.
-- [ ] Continue the formula semantics audit: precedence and negative powers, coercion and blanks, dates, wildcard criteria, argument counts and mismatched range dimensions.
+- [x] Audit and align operator precedence and negative powers with Excel.
+- [ ] Continue the formula semantics audit: coercion and blanks, dates, wildcard criteria, argument counts and mismatched range dimensions.
 - [ ] Compare Syncfusion's formula reference with our registry: evaluate adding `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases. Our parser already supports the listed operators, including `%` and `^`; verify edge-case semantics separately.
 - [ ] Evaluate distinct `#CIRCREF!` and `#PARSE!` errors; circular references currently use `#REF!` and parser failures use `#ERROR!`.
 - [x] Support custom and read-only formula columns independently of Formula Editor; document and test `onBeforeEditCell` cancellation.
 - [ ] Decide whether an optional strict selection-prerequisite mode is needed.
+- [ ] **Last task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached.
 
 ## Latest Update: Optional Package Styling (2026-11-14)
 - Moved Formula Editor, reference color, and Excel column-prefix CSS from the common theme into the formula plugin, preserving shared theme variables.

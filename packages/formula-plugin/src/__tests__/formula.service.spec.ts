@@ -113,6 +113,35 @@ describe('FormulaService', () => {
     expect(service.getEvaluatedCellValue('a', 'total')).toBe('#REF!');
   });
 
+  it('evaluates operator precedence and chained powers in Excel order', () => {
+    const items = [{ id: 'a', value: 2, total: '' }];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+
+    expect(evaluate('=2^3^2')).toBe(64);
+    expect(evaluate('=2^(3^2)')).toBe(512);
+    expect(evaluate('=-2^2')).toBe(4);
+    expect(evaluate('=-(2^2)')).toBe(-4);
+    expect(evaluate('=2^-2')).toBe(0.25);
+    expect(evaluate('=-A1^2')).toBe(4);
+    expect(evaluate('=2^50%')).toBe(Math.SQRT2);
+    expect(evaluate('=5+2*3')).toBe(11);
+    expect(evaluate('=(5+2)*3')).toBe(21);
+    expect(evaluate('=8/4*2')).toBe(4);
+    expect(evaluate('=1+2&3')).toBe('33');
+    expect(evaluate('=1+2=3')).toBe(true);
+    expect(evaluate('=IF(TRUE,7,-2^2^3%)')).toBe(7);
+
+    service.setFormula('a', 'total', '=-A1^2');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(4);
+    expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a'], excelRowOffset: 2 } as any)).toBe('-A2^2');
+  });
+
   it('should expose and merge service options', () => {
     const service = new FormulaService({ autoAssignEditor: false });
 

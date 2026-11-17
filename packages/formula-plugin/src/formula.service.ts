@@ -1309,13 +1309,13 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     };
 
     const parseMultiplicative = (): unknown => {
-      let left = parseUnary();
+      let left = parsePower();
       if (isFormulaErrorCode(left)) {
         return left;
       }
       while (matchOperator('*', '/')) {
         const op = consume().value;
-        const right = parseUnary();
+        const right = parsePower();
         if (isFormulaErrorCode(right)) {
           return right;
         }
@@ -1341,7 +1341,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
       while (matchOperator('^')) {
         consume();
-        const right = parseUnary();
+        const right = parsePostfix();
         if (isFormulaErrorCode(right)) {
           return right;
         }
@@ -1354,7 +1354,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     };
 
     const parsePostfix = (): unknown => {
-      let value = parsePrimary();
+      let value = parseUnary();
       if (isFormulaErrorCode(value)) {
         return value;
       }
@@ -1387,7 +1387,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const numeric = syntaxOnly ? 1 : Number(unary);
         return Number.isNaN(numeric) ? FORMULA_ERROR.VALUE : -numeric;
       }
-      return parsePower();
+      return parsePrimary();
     };
 
     const parsePrimary = (): unknown => {
