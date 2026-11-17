@@ -13,12 +13,23 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('MAX')?.(6, '2', 8)).toBe(8);
     expect(registry.get('MAX')?.()).toBe(0);
     expect(registry.get('AVERAGE')?.(2, 4, '6')).toBe(4);
-    expect(registry.get('AVERAGE')?.()).toBe(0);
+    expect(registry.get('AVERAGE')?.()).toBe(FORMULA_ERROR.DIV0);
     expect(registry.get('MEDIAN')?.(10, 2, 6, 8)).toBe(7);
     expect(registry.get('MEDIAN')?.(1, 2, 3)).toBe(2);
     expect(registry.get('MEDIAN')?.()).toBe(0);
     expect(registry.get('POWER')?.('2', 3)).toBe(8);
     expect(registry.get('SUM')?.({ foo: 1 } as any, 2)).toBe(2);
+  });
+
+  it('ignores blank values in statistical ranges while retaining zero', () => {
+    const registry = createFormulaFunctionRegistry(new Map());
+    const values = [null, 2, undefined, 4, '', 0];
+    expect(registry.get('AVERAGE')?.(values)).toBe(2);
+    expect(registry.get('MEDIAN')?.(values)).toBe(2);
+    expect(registry.get('MIN')?.([null, 2, 4])).toBe(2);
+    expect(registry.get('MAX')?.([null, -2, -4])).toBe(-2);
+    expect(registry.get('PRODUCT')?.([null, 2, 4])).toBe(8);
+    expect(registry.get('AVERAGE')?.([null, undefined, ''])).toBe(FORMULA_ERROR.DIV0);
   });
 
   it('should evaluate SUMPRODUCT with scalar broadcast and array lengths', () => {

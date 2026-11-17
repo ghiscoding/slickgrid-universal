@@ -25,6 +25,7 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
       .reduce((acc, value) => acc + value, 0);
   const PRODUCT = (...args: unknown[]) =>
     flattenFormulaFunctionArgs(args)
+      .filter((value) => value !== null && value !== undefined && value !== '')
       .map((value) => toNumericFormulaValue(value))
       .reduce((acc, value) => acc * value, 1);
   const SUMPRODUCT = (...args: unknown[]) => {
@@ -65,19 +66,26 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     return sum;
   };
   const MIN = (...args: unknown[]) => {
-    const values = flattenFormulaFunctionArgs(args).map((value) => toNumericFormulaValue(value));
+    const values = flattenFormulaFunctionArgs(args)
+      .filter((value) => value !== null && value !== undefined && value !== '')
+      .map((value) => toNumericFormulaValue(value));
     return values.length ? Math.min(...values) : 0;
   };
   const MAX = (...args: unknown[]) => {
-    const values = flattenFormulaFunctionArgs(args).map((value) => toNumericFormulaValue(value));
+    const values = flattenFormulaFunctionArgs(args)
+      .filter((value) => value !== null && value !== undefined && value !== '')
+      .map((value) => toNumericFormulaValue(value));
     return values.length ? Math.max(...values) : 0;
   };
   const AVERAGE = (...args: unknown[]) => {
-    const values = flattenFormulaFunctionArgs(args).map((value) => toNumericFormulaValue(value));
-    return values.length ? values.reduce((acc, value) => acc + value, 0) / values.length : 0;
+    const values = flattenFormulaFunctionArgs(args)
+      .filter((value) => value !== null && value !== undefined && value !== '')
+      .map((value) => toNumericFormulaValue(value));
+    return values.length ? values.reduce((acc, value) => acc + value, 0) / values.length : FORMULA_ERROR.DIV0;
   };
   const MEDIAN = (...args: unknown[]) => {
     const values = flattenFormulaFunctionArgs(args)
+      .filter((value) => value !== null && value !== undefined && value !== '')
       .map((value) => toNumericFormulaValue(value))
       .sort((a, b) => a - b);
     if (!values.length) {

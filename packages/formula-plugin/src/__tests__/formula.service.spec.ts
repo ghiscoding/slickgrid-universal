@@ -173,6 +173,40 @@ describe('FormulaService', () => {
     );
   });
 
+  it('preserves blank range members for aggregates and custom functions', () => {
+    const items = [
+      { id: 'a', value: 2, total: '' },
+      { id: 'b', value: null, total: '' },
+      { id: 'c', value: 0, total: '' },
+      { id: 'd', value: '', total: '' },
+      { id: 'e', value: 4, total: '' },
+      { id: 'f', value: undefined, total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const inspect = vi.fn((values: unknown[]) => values.length);
+    const service = new FormulaService({ autoAssignEditor: false, customFunctions: { INSPECT: inspect } });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+
+    expect(evaluate('=AVERAGE(A1:A6)')).toBe(2);
+    expect(evaluate('=COUNT(A1:A6)')).toBe(3);
+    expect(evaluate('=COUNTA(A1:A6)')).toBe(3);
+    expect(evaluate('=COUNTBLANK(A1:A6)')).toBe(3);
+    expect(evaluate('=AVERAGE(A2:A2)')).toBe('#DIV/0!');
+    expect(evaluate('=INSPECT(A1:A6)')).toBe(6);
+    expect(inspect).toHaveBeenLastCalledWith([2, null, 0, null, 4, null]);
+
+    service.setFormula('a', 'total', '=AVERAGE(A1:A3)');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(1);
+    items.splice(1, 0, items.pop()!);
+    expect(evaluate(service.getFormula('a', 'total')!)).toBe(1);
+    expect(evaluate('=AVERAGE(REFRANGE(A1,A3,A4))')).toBe(1);
+    expect(evaluate('=AVERAGE(REFRANGE(A1,A99))')).toBe('#REF!');
+  });
+
   it('should expose and merge service options', () => {
     const service = new FormulaService({ autoAssignEditor: false });
 

@@ -981,7 +981,19 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
     );
 
-    const expressionWithValues = mapFormulaRanges(expressionWithRanges, (members) => `[${members.join(',')}]`).replace(
+    const expressionWithValues = mapFormulaRanges(expressionWithRanges, (members) => {
+      const values = members.map((member) => {
+        const cell = parseExcelReferenceCell(member);
+        const value = cell
+          ? this.resolveExcelReferenceValue(getExcelColumnNameByIndex(cell.cell + 1), cell.row + 1, context)
+          : FORMULA_ERROR.REF;
+        if (isFormulaErrorCode(value) && !firstErrorCode) {
+          firstErrorCode = value;
+        }
+        return value;
+      });
+      return this.toExpressionArrayLiteral(values);
+    }).replace(
       /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?([A-Z]{1,3})\$?(\d+)(?![A-Za-z0-9_])/gi,
       (match, colName: string, rowNumber: string) => {
         if (!colName) {
@@ -1816,7 +1828,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   protected toExpressionArrayLiteral(values: unknown[]): string {
-    return `[${values.map((value) => this.toExpressionLiteral(value)).join(',')}]`;
+    return `[${values.map((value) => (value === null || value === undefined || value === '' ? 'null' : this.toExpressionLiteral(value))).join(',')}]`;
   }
 
   protected static addFormulaValues(left: unknown, right: unknown): unknown {

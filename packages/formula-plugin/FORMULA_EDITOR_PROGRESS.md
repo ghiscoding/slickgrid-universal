@@ -3,6 +3,10 @@
 Last updated: 2026-11-16
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Blank Range Members (2026-11-16)
+- Preserve blank range members as `null` instead of zero, including stable and disjoint ranges. Count functions can distinguish blanks from zero; average, median, min, max and product ignore blank values. An average with no values returns `#DIV/0!`.
+- Custom functions now receive `null` for blank range members; Excel helper ranges supply empty strings instead. This representation is documented. More extensive reference-type, empty-formula and aggregate coercion semantics remain open.
+
 ## Latest Update: Numeric Addition (2026-11-16)
 - Arithmetic addition converts numeric text and booleans to numbers and returns `#VALUE!` for nonnumeric or empty text; `&` remains the text concatenation operator. Added evaluation and Excel export regressions.
 - Blank cell references are currently substituted with zero before function evaluation; preserve and audit blank/reference types separately for aggregate and custom functions.
@@ -131,7 +135,8 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [ ] Re-audit the historical Cypress Coverage Audit against the current tests and cover remaining gaps, including selection-model fallback and reference translation where not yet exercised.
 - [x] Audit and align operator precedence and negative powers with Excel.
 - [x] Fix arithmetic addition of numeric and nonnumeric text; retain `&` for concatenation.
-- [ ] Continue the formula semantics audit: remaining operator coercion, blank/reference types and aggregates, dates, wildcard criteria, argument counts and mismatched range dimensions.
+- [x] Preserve blank members in ranges for counting and aggregate functions, including stable references.
+- [ ] Continue the formula semantics audit: remaining operator coercion, single-cell blank/reference types, formula-produced empty strings and aggregate text/boolean handling, dates, wildcard criteria, argument counts and mismatched range dimensions.
 - [ ] Compare Syncfusion's formula reference with our registry: evaluate adding `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases. Our parser already supports the listed operators, including `%` and `^`; verify edge-case semantics separately.
 - [ ] Evaluate distinct `#CIRCREF!` and `#PARSE!` errors; circular references currently use `#REF!` and parser failures use `#ERROR!`.
 - [x] Support custom and read-only formula columns independently of Formula Editor; document and test `onBeforeEditCell` cancellation.
