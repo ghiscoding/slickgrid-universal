@@ -1,8 +1,46 @@
 import { describe, expect, it, vi } from 'vitest';
 import { FORMULA_ERROR } from '../formula-errors.js';
-import { createFormulaFunctionRegistry } from '../formula-functions.js';
+import { createFormulaFunctionRegistry, formulaReference } from '../formula-functions.js';
 
 describe('createFormulaFunctionRegistry', () => {
+  it('supports spreadsheet math functions and function aliases', () => {
+    const registry = createFormulaFunctionRegistry(new Map());
+    expect(registry.get('ABS')?.(-4)).toBe(4);
+    expect(registry.get('ABS')?.(formulaReference('-2.5'))).toBe(2.5);
+    expect(registry.get('ABS')?.(null)).toBe(0);
+    expect(registry.get('ABS')?.(true)).toBe(1);
+    expect(registry.get('SQRT')?.(16)).toBe(4);
+    expect(registry.get('SQRT')?.(-1)).toBe(FORMULA_ERROR.NUM);
+    expect(registry.get('MOD')?.(-3, 2)).toBe(1);
+    expect(registry.get('MOD')?.(3, -2)).toBe(-1);
+    expect(registry.get('MOD')?.(-3, -2)).toBe(-1);
+    expect(registry.get('MOD')?.(-4, 2)).toBe(0);
+    expect(registry.get('MOD')?.(4, 0)).toBe(FORMULA_ERROR.DIV0);
+    expect(registry.get('ROUND')?.(-1.475, 2)).toBe(-1.48);
+    expect(registry.get('ROUND')?.(1.005, 2)).toBe(1.01);
+    expect(registry.get('ROUND')?.(2.5, 0)).toBe(3);
+    expect(registry.get('ROUND')?.(-2.5, 0)).toBe(-3);
+    expect(registry.get('ROUND')?.(626.3, -3)).toBe(1000);
+    expect(registry.get('ROUND')?.(2.5, 0.9)).toBe(3);
+    expect(registry.get('ROUND')?.(-0.001, 2)).toBe(0);
+    expect(registry.get('ROUND')?.(2, 309)).toBe(2);
+    expect(registry.get('ROUND')?.(2, -309)).toBe(0);
+    expect(registry.get('ROUND')?.(1e200, 200)).toBe(1e200);
+    expect(registry.get('ROUND')?.(1.79e308, -308)).toBe(FORMULA_ERROR.NUM);
+    for (const name of ['ABS', 'SQRT', 'ROUND', 'MOD']) {
+      expect(registry.get(name)?.()).toBe(FORMULA_ERROR.VALUE);
+      expect(registry.get(name)?.('text', 2)).toBe(FORMULA_ERROR.VALUE);
+    }
+    expect(registry.get('ABS')?.('')).toBe(FORMULA_ERROR.VALUE);
+    expect(registry.get('ABS')?.('1e999')).toBe(FORMULA_ERROR.VALUE);
+    expect(registry.get('ABS')?.([1])).toBe(FORMULA_ERROR.VALUE);
+    expect(registry.get('MOD')?.(1, 2, 3)).toBe(FORMULA_ERROR.VALUE);
+    expect(registry.get('CONCATENATE')?.('x', ['y', 'z'])).toBe('xyz');
+    expect(registry.get('RANDOM')).toBe(registry.get('RAND'));
+    expect(registry.get('RAN')).toBe(registry.get('RAND'));
+    expect(createFormulaFunctionRegistry(new Map([['RAN', () => 42]])).get('RAN')?.()).toBe(42);
+  });
+
   it('should include core arithmetic/stat functions', () => {
     const registry = createFormulaFunctionRegistry(new Map());
 

@@ -142,6 +142,28 @@ describe('FormulaService', () => {
     expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a'], excelRowOffset: 2 } as any)).toBe('-A2^2');
   });
 
+  it('evaluates new math functions and exports built-in aliases as Excel functions', () => {
+    const items = [{ id: 'a', value: -1.475, total: '' }];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    expect(evaluate('=ROUND(A1,2)+MOD(-3,2)+SQRT(ABS(-16))')).toBe(3.52);
+    expect(evaluate('=SQRT(-1)')).toBe('#NUM!');
+    expect(evaluate('=MOD(1,0)')).toBe('#DIV/0!');
+    expect(evaluate('=ROUND(3)')).toBe('#VALUE!');
+    expect(evaluate('=CONCATENATE("a",A1)')).toBe('a-1.475');
+    const context = { rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a'], excelRowOffset: 2 } as any;
+    service.setFormula('a', 'total', '=RANDOM()+RAN()+CONCATENATE("RAN()",A1)');
+    expect(service.getExcelFormula(context)).toBe('RAND()+RAND()+CONCAT("RAN()",A2)');
+    service.registerCustomFunction('RAN', () => 7);
+    expect(evaluate('=RAN()')).toBe(7);
+    expect(service.getExcelFormula(context)).toBe('RAND()+RAN()+CONCAT("RAN()",A2)');
+  });
+
   it('uses numeric addition instead of concatenation for formula operands', () => {
     const items = [
       { id: 'a', value: '12.5', total: '' },

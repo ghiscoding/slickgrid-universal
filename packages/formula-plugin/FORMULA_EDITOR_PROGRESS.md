@@ -3,6 +3,11 @@
 Last updated: 2026-11-16
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Math Functions and Aliases (2026-11-16)
+- Added `ABS`, `ROUND`, `MOD` and `SQRT`, including scalar argument validation, negative rounding and divisors, and spreadsheet error results. `ROUND` requires two arguments, matching Excel rather than Syncfusion's optional digits argument.
+- Added `RANDOM` and `RAN` aliases for `RAND` and `CONCATENATE` for `CONCAT`. Excel export translates built-in aliases to native names, preserving quoted text and custom overrides.
+- Added function, evaluator, autocomplete and workbook regressions. Broader function argument and coercion audits remain open.
+
 ## Latest Update: Grouped Excel COUNTA (2026-11-16)
 - Disjoint range exports now allocate a deduplicated source-presence range for `COUNTA`, distinguishing a genuinely blank cell from a formula returning empty text without expanding large ranges into long worksheet formulas.
 - The optional export callback preserves compatibility with custom exporters; when it is absent, source references are counted directly in chunks. Formulas exceeding Excel's length limit return `#REF!` rather than an invalid workbook formula.
@@ -150,7 +155,7 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [x] Preserve single-cell and range reference types and formula-produced empty strings for `SUM`, `PRODUCT`, `MIN`, `MAX`, `AVERAGE`, `MEDIAN`, `COUNT`, `COUNTA`, and `COUNTBLANK`.
 - [x] Fix grouped disjoint Excel `COUNTA` export for formulas returning empty text while still excluding truly blank source cells.
 - [ ] Continue the formula semantics audit: remaining operator and conditional-function coercion, dates, wildcard criteria, argument counts and mismatched range dimensions.
-- [ ] Compare Syncfusion's formula reference with our registry: evaluate adding `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases. Our parser already supports the listed operators, including `%` and `^`; verify edge-case semantics separately.
+- [x] Compare Syncfusion's formula reference and add `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases, with Excel export translation.
 - [ ] Evaluate distinct `#CIRCREF!` and `#PARSE!` errors; circular references currently use `#REF!` and parser failures use `#ERROR!`.
 - [x] Support custom and read-only formula columns independently of Formula Editor; document and test `onBeforeEditCell` cancellation.
 - [ ] Decide whether an optional strict selection-prerequisite mode is needed.

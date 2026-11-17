@@ -116,6 +116,49 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     return values.length % 2 === 0 ? (values[mid - 1] + values[mid]) / 2 : values[mid];
   };
   const POWER = (arg1: unknown, arg2: unknown) => Math.pow(toNumericFormulaValue(arg1), toNumericFormulaValue(arg2));
+  const ABS = (...args: unknown[]) => {
+    const values = numericScalarArguments(args, 1);
+    return Array.isArray(values) ? Math.abs(values[0]) : values;
+  };
+  const SQRT = (...args: unknown[]) => {
+    const values = numericScalarArguments(args, 1);
+    return Array.isArray(values) ? (values[0] < 0 ? FORMULA_ERROR.NUM : Math.sqrt(values[0])) : values;
+  };
+  const MOD = (...args: unknown[]) => {
+    const values = numericScalarArguments(args, 2);
+    if (!Array.isArray(values)) {
+      return values;
+    }
+    const [number, divisor] = values;
+    if (divisor === 0) {
+      return FORMULA_ERROR.DIV0;
+    }
+    const remainder = number % divisor;
+    return remainder === 0 ? 0 : Math.sign(remainder) === Math.sign(divisor) ? remainder : remainder + divisor;
+  };
+  const ROUND = (...args: unknown[]) => {
+    const values = numericScalarArguments(args, 2);
+    if (!Array.isArray(values)) {
+      return values;
+    }
+    const [number, rawDigits] = values;
+    const digits = Math.trunc(rawDigits);
+    if (digits > 308) {
+      return number;
+    }
+    if (digits < -308) {
+      return 0;
+    }
+    const [coefficient, exponent = '0'] = Math.abs(number).toString().split('e');
+    const shifted = Number(`${coefficient}e${Number(exponent) + digits}`);
+    if (!Number.isFinite(shifted)) {
+      return number;
+    }
+    const rounded = Math.round(shifted);
+    const [roundedCoefficient, roundedExponent = '0'] = rounded.toString().split('e');
+    const result = Number(`${roundedCoefficient}e${Number(roundedExponent) - digits}`);
+    return Number.isFinite(result) ? (number < 0 && result !== 0 ? -result : result) : FORMULA_ERROR.NUM;
+  };
   const RAND = () => Math.random();
   const NOW = () => new Date();
   const TODAY = () => {
@@ -180,10 +223,17 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
   registry.set('AVERAGE', AVERAGE);
   registry.set('MEDIAN', MEDIAN);
   registry.set('POWER', POWER);
+  registry.set('ABS', ABS);
+  registry.set('ROUND', ROUND);
+  registry.set('MOD', MOD);
+  registry.set('SQRT', SQRT);
   registry.set('RAND', RAND);
+  registry.set('RANDOM', RAND);
+  registry.set('RAN', RAND);
   registry.set('NOW', NOW);
   registry.set('TODAY', TODAY);
   registry.set('CONCAT', CONCAT);
+  registry.set('CONCATENATE', CONCAT);
   registry.set('COUNT', COUNT);
   registry.set('COUNTA', COUNTA);
   registry.set('COUNTBLANK', COUNTBLANK);
@@ -191,6 +241,33 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
   registry.set('NA', NA);
 
   return registry;
+}
+
+/** Convert scalar function arguments without accepting ranges or silently converting text to zero. */
+function numericScalarArguments(args: unknown[], count: number): number[] | string {
+  if (args.length !== count) {
+    return FORMULA_ERROR.VALUE;
+  }
+  const numbers: number[] = [];
+  for (const arg of args) {
+    const value = unwrapFormulaReference(arg);
+    if (value === null || value === undefined) {
+      numbers.push(0);
+    } else if (typeof value === 'number' && Number.isFinite(value)) {
+      numbers.push(value);
+    } else if (typeof value === 'boolean') {
+      numbers.push(value ? 1 : 0);
+    } else if (typeof value === 'string' && /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(value.trim())) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) {
+        return FORMULA_ERROR.VALUE;
+      }
+      numbers.push(number);
+    } else {
+      return FORMULA_ERROR.VALUE;
+    }
+  }
+  return numbers;
 }
 
 function flattenFormulaFunctionArgs(args: unknown[]): unknown[] {

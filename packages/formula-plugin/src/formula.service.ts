@@ -859,7 +859,13 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
       return helper;
     });
-    const rewritten = this.normalizeFormulaSyntax(rewriteExcelHelperCounta(output, helpers));
+    const rewritten = this.transformFormulaOutsideQuotedStrings(
+      this.normalizeFormulaSyntax(rewriteExcelHelperCounta(output, helpers)),
+      (segment) =>
+        segment.replace(/(?<![\w.])(RANDOM|RAN|CONCATENATE)(?=\s*\()/gi, (name: string) =>
+          this._customFunctions.has(name.toUpperCase()) ? name : name.toUpperCase() === 'CONCATENATE' ? 'CONCAT' : 'RAND'
+        )
+    );
     return rewritten.length > 8192 ? FORMULA_ERROR.REF : rewritten;
   }
 

@@ -30,15 +30,23 @@ Current built-ins include:
 - `AVERAGE`
 - `MEDIAN`
 - `POWER`
-- `RAND`
+- `ABS`
+- `ROUND`
+- `MOD`
+- `SQRT`
+- `RAND` (aliases: `RANDOM`, `RAN`)
 - `NOW`
 - `TODAY`
-- `CONCAT`
+- `CONCAT` (alias: `CONCATENATE`)
 - `COUNT`
 - `COUNTA`
 - `COUNTBLANK`
 - `COUNTIF`
 - `NA`
+
+`ROUND(number, digits)` requires both arguments, matching Excel. A negative digit count rounds to the left of the decimal point; halfway values round away from zero. `MOD` uses the divisor's sign and returns `#DIV/0!` for zero. `SQRT` returns `#NUM!` for negative inputs. These scalar math functions return `#VALUE!` for invalid arguments.
+
+For Excel export, the built-in `RANDOM` and `RAN` aliases are written as `RAND`, and `CONCATENATE` is written as `CONCAT` so range arguments retain the same behavior. Custom functions overriding an alias retain their name; export them using the custom-function configuration if needed. `CONCAT` requires a compatible Excel version.
 
 ### Custom Function Registration
 You can register functions in constructor options.

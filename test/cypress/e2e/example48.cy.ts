@@ -134,6 +134,21 @@ describe('Example 48 - Formula Service', () => {
     cy.get(cell(0, 4)).should('contain', '$8.88');
   });
 
+  it('should suggest and calculate the added math functions', () => {
+    cy.reload();
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SQR', { force: true });
+    cy.contains('.formula-autocomplete div', /^SQRT$/).should('be.visible');
+    cy.get('.formula-editor-input').type('{selectall}=ROUND(-1.475,2)+MOD(-3,2)+SQRT(ABS(-16)){enter}', { force: true });
+    cy.get(cell(0, 4)).should('contain', '$3.52');
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.get('[data-test="export-excel-btn"]').click();
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 2 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[1][3]).to.equal('ROUND(-1.475,2)+MOD(-3,2)+SQRT(ABS(-16))');
+    });
+  });
+
   it('should evaluate only the selected IF branch', () => {
     cy.get(cell(0, 4)).dblclick();
     cy.get('.formula-editor-input').click().type('{selectall}=IF(FALSE,1/0,42){enter}', { force: true });
