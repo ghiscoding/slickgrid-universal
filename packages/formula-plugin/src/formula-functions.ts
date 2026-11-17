@@ -2,6 +2,24 @@ import { FORMULA_ERROR } from './formula-errors.js';
 
 export type FormulaCallback = (...args: any[]) => unknown;
 
+const referenceTag: unique symbol = Symbol('formula reference');
+export interface FormulaReferenceValue {
+  readonly [referenceTag]: true;
+  readonly value: unknown;
+}
+
+export function formulaReference(value: unknown): FormulaReferenceValue {
+  return { [referenceTag]: true, value };
+}
+
+export function isFormulaReference(value: unknown): value is FormulaReferenceValue {
+  return typeof value === 'object' && value !== null && referenceTag in value;
+}
+
+export function unwrapFormulaReference(value: unknown): unknown {
+  return isFormulaReference(value) ? value.value : value;
+}
+
 export function createFormulaFunctionRegistry(customFunctions: ReadonlyMap<string, FormulaCallback>): Map<string, FormulaCallback> {
   const registry = createBuiltInFormulaFunctions();
 
@@ -19,15 +37,14 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
   const registry = new Map<string, FormulaCallback>();
 
   const IF = (condition: unknown, yesValue: unknown, noValue: unknown) => (condition ? yesValue : noValue);
-  const SUM = (...args: unknown[]) =>
-    flattenFormulaFunctionArgs(args)
-      .map((value) => toNumericFormulaValue(value))
-      .reduce((acc, value) => acc + value, 0);
-  const PRODUCT = (...args: unknown[]) =>
-    flattenFormulaFunctionArgs(args)
-      .filter((value) => value !== null && value !== undefined && value !== '')
-      .map((value) => toNumericFormulaValue(value))
-      .reduce((acc, value) => acc * value, 1);
+  const SUM = (...args: unknown[]) => {
+    const values = aggregateNumbers(args);
+    return Array.isArray(values) ? values.reduce((acc, value) => acc + value, 0) : values;
+  };
+  const PRODUCT = (...args: unknown[]) => {
+    const values = aggregateNumbers(args);
+    return Array.isArray(values) ? values.reduce((acc, value) => acc * value, 1) : values;
+  };
   const SUMPRODUCT = (...args: unknown[]) => {
     if (!args.length) {
       return 0;
@@ -66,30 +83,34 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     return sum;
   };
   const MIN = (...args: unknown[]) => {
-    const values = flattenFormulaFunctionArgs(args)
-      .filter((value) => value !== null && value !== undefined && value !== '')
-      .map((value) => toNumericFormulaValue(value));
+    const values = aggregateNumbers(args);
+    if (!Array.isArray(values)) {
+      return values;
+    }
     return values.length ? Math.min(...values) : 0;
   };
   const MAX = (...args: unknown[]) => {
-    const values = flattenFormulaFunctionArgs(args)
-      .filter((value) => value !== null && value !== undefined && value !== '')
-      .map((value) => toNumericFormulaValue(value));
+    const values = aggregateNumbers(args);
+    if (!Array.isArray(values)) {
+      return values;
+    }
     return values.length ? Math.max(...values) : 0;
   };
   const AVERAGE = (...args: unknown[]) => {
-    const values = flattenFormulaFunctionArgs(args)
-      .filter((value) => value !== null && value !== undefined && value !== '')
-      .map((value) => toNumericFormulaValue(value));
+    const values = aggregateNumbers(args);
+    if (!Array.isArray(values)) {
+      return values;
+    }
     return values.length ? values.reduce((acc, value) => acc + value, 0) / values.length : FORMULA_ERROR.DIV0;
   };
   const MEDIAN = (...args: unknown[]) => {
-    const values = flattenFormulaFunctionArgs(args)
-      .filter((value) => value !== null && value !== undefined && value !== '')
-      .map((value) => toNumericFormulaValue(value))
-      .sort((a, b) => a - b);
+    const values = aggregateNumbers(args);
+    if (!Array.isArray(values)) {
+      return values;
+    }
+    values.sort((a, b) => a - b);
     if (!values.length) {
-      return 0;
+      return FORMULA_ERROR.NUM;
     }
     const mid = Math.floor(values.length / 2);
     return values.length % 2 === 0 ? (values[mid - 1] + values[mid]) / 2 : values[mid];
@@ -103,13 +124,34 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
   };
   const CONCAT = (...args: unknown[]) =>
     flattenFormulaFunctionArgs(args)
-      .map((arg) => String(arg ?? ''))
+      .map((arg) => String(unwrapFormulaReference(arg) ?? ''))
       .join('');
-  const COUNT = (...args: unknown[]) => flattenFormulaFunctionArgs(args).filter((value) => isNumericFormulaValue(value)).length;
+  const COUNT = (...args: unknown[]) =>
+    args.reduce<number>(
+      (count, arg) =>
+        count +
+        (Array.isArray(arg)
+          ? flattenFormulaFunctionArgs(arg).filter(
+              (value) => typeof unwrapFormulaReference(value) === 'number' && Number.isFinite(unwrapFormulaReference(value))
+            ).length
+          : isFormulaReference(arg)
+            ? typeof arg.value === 'number' && Number.isFinite(arg.value)
+              ? 1
+              : 0
+            : typeof arg === 'boolean' || isNumericFormulaValue(arg)
+              ? 1
+              : 0),
+      0
+    );
   const COUNTA = (...args: unknown[]) =>
-    flattenFormulaFunctionArgs(args).filter((value) => value !== null && value !== undefined && value !== '').length;
+    flattenFormulaFunctionArgs(args).filter((value) =>
+      isFormulaReference(value) ? value.value !== null && value.value !== undefined : value !== null && value !== undefined && value !== ''
+    ).length;
   const COUNTBLANK = (...args: unknown[]) =>
-    flattenFormulaFunctionArgs(args).filter((value) => value === null || value === undefined || value === '').length;
+    flattenFormulaFunctionArgs(args).filter((value) => {
+      const unwrapped = unwrapFormulaReference(value);
+      return unwrapped === null || unwrapped === undefined || unwrapped === '';
+    }).length;
   const COUNTIF = (range: unknown, criteria: unknown) => {
     const values = toFormulaArray(range);
     return values.filter((value) => matchesFormulaCriteria(value, criteria)).length;
@@ -163,7 +205,39 @@ function flattenFormulaFunctionArgs(args: unknown[]): unknown[] {
   return flat;
 }
 
+/** Aggregate functions treat referenced text and booleans differently from literal arguments. */
+function aggregateNumbers(args: unknown[]): number[] | string {
+  const values: number[] = [];
+  const visit = (arg: unknown, fromRange = false): boolean => {
+    if (Array.isArray(arg)) {
+      return arg.every((item) => visit(item, true));
+    }
+    const reference = isFormulaReference(arg);
+    const value = unwrapFormulaReference(arg);
+    if (reference || fromRange) {
+      if (typeof value === 'number' && Number.isFinite(value)) {
+        values.push(value);
+      }
+      return true;
+    }
+    if (value === null || value === undefined) {
+      return true;
+    }
+    if (typeof value === 'string' && !value.trim()) {
+      return false;
+    }
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) {
+      return false;
+    }
+    values.push(numeric);
+    return true;
+  };
+  return args.every((arg) => visit(arg)) ? values : FORMULA_ERROR.VALUE;
+}
+
 function toNumericFormulaValue(value: unknown): number {
+  value = unwrapFormulaReference(value);
   if (value === null || value === undefined || value === '') {
     return 0;
   }
@@ -201,6 +275,8 @@ function toFormulaArray(value: unknown): unknown[] {
 }
 
 function matchesFormulaCriteria(value: unknown, criteria: unknown): boolean {
+  value = unwrapFormulaReference(value);
+  criteria = unwrapFormulaReference(criteria);
   if (typeof criteria === 'number' || typeof criteria === 'boolean') {
     return value === criteria;
   }

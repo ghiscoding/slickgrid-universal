@@ -93,7 +93,9 @@ Useful runtime methods:
 
 This allows dynamic enable/disable of custom function packs. Registering, replacing, or removing a function invalidates cached formula results and refreshes the grid. The default Formula Editor suggestions use the current registry as you type, including when the editor is already open. A non-empty `formulaFunctionList` in editor parameters remains under application control. Alternatively, provide `getFormulaFunctionList: () => string[]` for a custom dynamic suggestion source; a non-empty explicit list takes precedence.
 
-Within a range passed to a custom function, blank dataset values (`null`, `undefined`, or an empty string) are represented as `null`. A numeric zero remains zero. Grouped Excel exports use empty strings for blank helper cells, so custom functions exported to Excel should handle both representations.
+For cell references passed to a custom function, blank dataset values (`null`, `undefined`, or an empty string) are represented as `null`; a formula that evaluates to an empty string remains `''`. Numeric strings and booleans retain their original types. Grouped Excel exports use empty strings for blank helper cells, so custom functions exported to Excel should handle both blank representations.
+
+For `SUM`, `PRODUCT`, `MIN`, `MAX`, `AVERAGE`, `MEDIAN` and `COUNT`, text and booleans in referenced cells are ignored; numeric text and booleans supplied directly as arguments are converted to numbers. `COUNTA` counts a formula that returns empty text, while `COUNTBLANK` also counts it as blank. A disjoint grouped export using a helper range currently treats such a formula result as blank in `COUNTA`, because the helper cannot distinguish it from a blank source.
 
 ### Excel Export Interop
 Formula Service exposes export helpers:

@@ -6,7 +6,8 @@ describe('createFormulaFunctionRegistry', () => {
   it('should include core arithmetic/stat functions', () => {
     const registry = createFormulaFunctionRegistry(new Map());
 
-    expect(registry.get('SUM')?.(1, 2, '3', true, null, undefined, '')).toBe(7);
+    expect(registry.get('SUM')?.(1, 2, '3', true, null, undefined)).toBe(7);
+    expect(registry.get('SUM')?.('')).toBe(FORMULA_ERROR.VALUE);
     expect(registry.get('PRODUCT')?.(2, '3', true)).toBe(6);
     expect(registry.get('MIN')?.(6, '2', 8)).toBe(2);
     expect(registry.get('MIN')?.()).toBe(0);
@@ -16,9 +17,9 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('AVERAGE')?.()).toBe(FORMULA_ERROR.DIV0);
     expect(registry.get('MEDIAN')?.(10, 2, 6, 8)).toBe(7);
     expect(registry.get('MEDIAN')?.(1, 2, 3)).toBe(2);
-    expect(registry.get('MEDIAN')?.()).toBe(0);
+    expect(registry.get('MEDIAN')?.()).toBe(FORMULA_ERROR.NUM);
     expect(registry.get('POWER')?.('2', 3)).toBe(8);
-    expect(registry.get('SUM')?.({ foo: 1 } as any, 2)).toBe(2);
+    expect(registry.get('SUM')?.({ foo: 1 } as any, 2)).toBe(FORMULA_ERROR.VALUE);
   });
 
   it('ignores blank values in statistical ranges while retaining zero', () => {
@@ -30,6 +31,11 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('MAX')?.([null, -2, -4])).toBe(-2);
     expect(registry.get('PRODUCT')?.([null, 2, 4])).toBe(8);
     expect(registry.get('AVERAGE')?.([null, undefined, ''])).toBe(FORMULA_ERROR.DIV0);
+    for (const name of ['MIN', 'MAX', 'AVERAGE', 'MEDIAN']) {
+      expect(registry.get(name)?.('not numeric')).toBe(FORMULA_ERROR.VALUE);
+    }
+    expect(registry.get('POWER')?.(true, 2)).toBe(1);
+    expect(registry.get('POWER')?.({}, 2)).toBe(0);
   });
 
   it('should evaluate SUMPRODUCT with scalar broadcast and array lengths', () => {
@@ -79,7 +85,9 @@ describe('createFormulaFunctionRegistry', () => {
   it('should normalize non-finite, boolean, numeric, and invalid numeric values', () => {
     const registry = createFormulaFunctionRegistry(new Map());
 
-    expect(registry.get('SUM')?.(Infinity, true, false, ' 2 ', 'not numeric')).toBe(3);
+    expect(registry.get('SUM')?.(true, false, ' 2 ')).toBe(3);
+    expect(registry.get('SUM')?.(Infinity)).toBe(FORMULA_ERROR.VALUE);
+    expect(registry.get('SUM')?.('not numeric')).toBe(FORMULA_ERROR.VALUE);
     expect(registry.get('SUM')?.([Number.NaN])).toBe(0);
   });
 

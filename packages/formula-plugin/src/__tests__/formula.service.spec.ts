@@ -33,7 +33,7 @@ describe('FormulaService', () => {
     expect(evaluate('="A1:C3 TRUE FALSE <> = × ÷ − ; {} `"')).toBe('A1:C3 TRUE FALSE <> = × ÷ − ; {} `');
     expect(evaluate('=CONCAT(A1, ":", A2)')).toBe('A1:C2:D3');
     items[0].value = 'A1\n"quoted"\\path\t';
-    expect(evaluate('=A1')).toBe('A1\n"quoted"\\path');
+    expect(evaluate('=A1')).toBe(items[0].value);
     expect(evaluate('="\\u0041\\nB"')).toBe('A\nB');
     items[0].value = 'A1';
     expect(evaluate('="He said ""A1 ×"""')).toBe('He said "A1 ×"');
@@ -205,6 +205,57 @@ describe('FormulaService', () => {
     expect(evaluate(service.getFormula('a', 'total')!)).toBe(1);
     expect(evaluate('=AVERAGE(REFRANGE(A1,A3,A4))')).toBe(1);
     expect(evaluate('=AVERAGE(REFRANGE(A1,A99))')).toBe('#REF!');
+  });
+
+  it('distinguishes reference values from literal arguments in aggregates', () => {
+    const items = [
+      { id: 'a', value: 4, total: '' },
+      { id: 'b', value: '6', total: '' },
+      { id: 'c', value: true, total: '' },
+      { id: 'd', value: null, total: '' },
+      { id: 'e', value: '=""', total: '' },
+      { id: 'f', value: 0, total: '' },
+      { id: 'g', value: 'text', total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'value', field: 'value', allowFormula: true },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const custom = vi.fn((...values: unknown[]) => values.length);
+    const service = new FormulaService({ autoAssignEditor: false, customFunctions: { CUSTOM: custom } });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    expect(evaluate('=SUM(A1:A7)')).toBe(4);
+    expect(evaluate('=SUM(A1,A2,A3,A4,A5)')).toBe(4);
+    expect(evaluate('=SUM("6",TRUE,4)')).toBe(11);
+    expect(evaluate('=SUM(A2+0,A3*1)')).toBe(7);
+    expect(evaluate('=AVERAGE(A1:A7)')).toBe(2);
+    expect(evaluate('=MEDIAN(A1:A7)')).toBe(2);
+    expect(evaluate('=COUNT(A1:A7)')).toBe(2);
+    expect(evaluate('=COUNT("6",TRUE,4)')).toBe(3);
+    expect(evaluate('=COUNTA(A1:A7)')).toBe(6);
+    expect(evaluate('=COUNTBLANK(A1:A7)')).toBe(2);
+    expect(evaluate('=COUNTA(A4,A5)')).toBe(1);
+    expect(evaluate('=COUNTA(A5,A5)')).toBe(2);
+    expect(evaluate('=AVERAGE(A2:A5)')).toBe('#DIV/0!');
+    expect(evaluate('=MEDIAN(A2:A5)')).toBe('#NUM!');
+    expect(evaluate('=SUM("not numeric")')).toBe('#VALUE!');
+    expect(evaluate('=A2+1')).toBe(7);
+    expect(evaluate('=A5')).toBe('');
+    expect(evaluate('=A4')).toBe(0);
+    expect(evaluate('=A4=0')).toBe(true);
+    expect(evaluate('=A4=""')).toBe(true);
+    expect(evaluate('=0=A4')).toBe(true);
+    expect(evaluate('=""=A4')).toBe(true);
+    expect(evaluate('=A5+1')).toBe('#VALUE!');
+    expect(evaluate('=IF(TRUE,A5,4)')).toBe('');
+    expect(evaluate('=CUSTOM(A2,A3,A4,A5,A1:A3)')).toBe(5);
+    expect(custom).toHaveBeenLastCalledWith('6', true, null, '', [4, '6', true]);
+    service.setFormula('a', 'total', '=COUNTA(A1:A7)');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(6);
+    expect(
+      service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: items.map((item) => item.id), excelRowOffset: 2 } as any)
+    ).toBe('COUNTA(A2:A8)');
   });
 
   it('should expose and merge service options', () => {
@@ -2330,6 +2381,9 @@ describe('FormulaService', () => {
     expect((service as any).getCellRawValue(1, 'missing')).toBeUndefined();
 
     expect((service as any).toExpressionLiteral(null)).toBe('0');
+    expect((service as any).toExpressionLiteral(1.5)).toBe('1.5');
+    expect((service as any).toExpressionLiteral(Infinity)).toBe('0');
+    expect((service as any).toExpressionLiteral({})).toBe('"[object Object]"');
     expect((service as any).toExpressionLiteral(true)).toBe('true');
     expect((service as any).toExpressionLiteral(false)).toBe('false');
     expect((service as any).toExpressionLiteral(' 12.5 ')).toBe('12.5');
