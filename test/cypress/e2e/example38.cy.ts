@@ -56,6 +56,14 @@ describe('Example 38 - Spreadsheet Drag-Fill', () => {
       });
   });
 
+  it('should keep odd rows readable when switching between light and dark themes', () => {
+    cy.get('.grid38 .slick-row.odd').first().should('have.css', 'background-color', 'rgb(251, 251, 251)');
+    cy.get('[data-test="toggle-dark-mode"]').click();
+    cy.get('.grid38 .slick-row.odd').first().should('have.css', 'background-color', 'rgb(44, 48, 52)');
+    cy.get('[data-test="toggle-dark-mode"]').click();
+    cy.get('.grid38 .slick-row.odd').first().should('have.css', 'background-color', 'rgb(251, 251, 251)');
+  });
+
   it('should click on B1 cell, type "1" and then replicate the same on C1 and D1 by increasing the value by +1 (1,2,3)', () => {
     cy.get('.grid38 .slick-row[data-row="1"] .slick-cell.l2.r2').as('cellB1');
     cy.get('@cellB1').click().type('1').type('{enter}');
