@@ -142,6 +142,37 @@ describe('FormulaService', () => {
     expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a'], excelRowOffset: 2 } as any)).toBe('-A2^2');
   });
 
+  it('uses numeric addition instead of concatenation for formula operands', () => {
+    const items = [
+      { id: 'a', value: '12.5', total: '' },
+      { id: 'b', value: null, total: '' },
+      { id: 'c', value: 'text', total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+
+    expect(evaluate('=1+"2"')).toBe(3);
+    expect(evaluate('="2"+"3"')).toBe(5);
+    expect(evaluate('=A1+1')).toBe(13.5);
+    expect(evaluate('=A2+1')).toBe(1);
+    expect(evaluate('=TRUE+2')).toBe(3);
+    expect(evaluate('=1+"text"')).toBe('#VALUE!');
+    expect(evaluate('=A3+1')).toBe('#VALUE!');
+    expect(evaluate('=""+1')).toBe('#VALUE!');
+    expect(evaluate('=1+" "')).toBe('#VALUE!');
+    expect(evaluate('="1"&"2"')).toBe('12');
+    service.setFormula('a', 'total', '=A1+"2"');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(14.5);
+    expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a', 'b', 'c'], excelRowOffset: 2 } as any)).toBe(
+      'A2+"2"'
+    );
+  });
+
   it('should expose and merge service options', () => {
     const service = new FormulaService({ autoAssignEditor: false });
 
@@ -2322,7 +2353,7 @@ describe('FormulaService', () => {
     expect(evaluate('1 2')).toBe(FORMULA_ERROR.ERROR);
     expect(evaluate('1 / 0')).toBe(FORMULA_ERROR.DIV0);
     expect(evaluate('1 + UNKNOWN')).toBe(FORMULA_ERROR.NAME);
-    expect(evaluate('1 + "x"')).toBe('1x');
+    expect(evaluate('1 + "x"')).toBe(FORMULA_ERROR.VALUE);
     expect(evaluate('1 * "x"')).toBe(FORMULA_ERROR.VALUE);
     expect(evaluate('1 < UNKNOWN')).toBe(FORMULA_ERROR.NAME);
     expect(evaluate('"a" & UNKNOWN')).toBe(FORMULA_ERROR.NAME);

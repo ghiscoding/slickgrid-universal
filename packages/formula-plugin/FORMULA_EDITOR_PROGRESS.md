@@ -3,6 +3,10 @@
 Last updated: 2026-11-16
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Numeric Addition (2026-11-16)
+- Arithmetic addition converts numeric text and booleans to numbers and returns `#VALUE!` for nonnumeric or empty text; `&` remains the text concatenation operator. Added evaluation and Excel export regressions.
+- Blank cell references are currently substituted with zero before function evaluation; preserve and audit blank/reference types separately for aggregate and custom functions.
+
 ## Latest Update: Operator Precedence (2026-11-16)
 - Aligned unary negation and chained exponentiation with Excel's operator precedence and left-to-right evaluation; parentheses still override the default order.
 - Added evaluation and export regressions for powers, negative exponents, percentages, references and mixed operators. Other formula semantics remain open for audit.
@@ -126,7 +130,8 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [ ] Evaluate reusing the existing autocompleter instead of the formula editor's custom autocomplete.
 - [ ] Re-audit the historical Cypress Coverage Audit against the current tests and cover remaining gaps, including selection-model fallback and reference translation where not yet exercised.
 - [x] Audit and align operator precedence and negative powers with Excel.
-- [ ] Continue the formula semantics audit: coercion and blanks, dates, wildcard criteria, argument counts and mismatched range dimensions.
+- [x] Fix arithmetic addition of numeric and nonnumeric text; retain `&` for concatenation.
+- [ ] Continue the formula semantics audit: remaining operator coercion, blank/reference types and aggregates, dates, wildcard criteria, argument counts and mismatched range dimensions.
 - [ ] Compare Syncfusion's formula reference with our registry: evaluate adding `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases. Our parser already supports the listed operators, including `%` and `^`; verify edge-case semantics separately.
 - [ ] Evaluate distinct `#CIRCREF!` and `#PARSE!` errors; circular references currently use `#REF!` and parser failures use `#ERROR!`.
 - [x] Support custom and read-only formula columns independently of Formula Editor; document and test `onBeforeEditCell` cancellation.

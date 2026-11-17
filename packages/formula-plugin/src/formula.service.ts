@@ -1826,7 +1826,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     if (right instanceof Date && typeof left === 'number') {
       return FormulaService.addDays(right, left);
     }
-    return (left as any) + (right as any);
+    if ((typeof left === 'string' && !left.trim()) || (typeof right === 'string' && !right.trim())) {
+      return NaN;
+    }
+    return Number(left) + Number(right);
   }
 
   protected static subtractFormulaValues(left: unknown, right: unknown): unknown {
