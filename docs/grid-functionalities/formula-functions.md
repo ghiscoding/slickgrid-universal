@@ -91,7 +91,7 @@ Useful runtime methods:
 - `unregisterCustomFunction(name)`
 - `getCustomFunction(name)`
 
-This allows dynamic enable/disable of custom function packs.
+This allows dynamic enable/disable of custom function packs. Registering, replacing, or removing a function invalidates cached formula results and refreshes the grid. The default Formula Editor suggestions use the current registry as you type, including when the editor is already open. A non-empty `formulaFunctionList` in editor parameters remains under application control. Alternatively, provide `getFormulaFunctionList: () => string[]` for a custom dynamic suggestion source; a non-empty explicit list takes precedence.
 
 ### Excel Export Interop
 Formula Service exposes export helpers:

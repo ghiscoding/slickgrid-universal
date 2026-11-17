@@ -727,6 +727,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return;
     }
     this._customFunctions.set(functionName.toUpperCase(), normalizedCallback);
+    this.resetEvaluationMemo();
+    if (this._formulaStore.size && this._grid) {
+      this.scheduleFormulaRefresh();
+    }
   }
 
   registerCustomFunctions(customFunctions: Record<string, FormulaCustomFunctionInput>): void {
@@ -736,7 +740,14 @@ export class FormulaService implements ExternalResource, FormulaProvider {
   }
 
   unregisterCustomFunction(functionName: string): boolean {
-    return this._customFunctions.delete(functionName.toUpperCase());
+    const removed = this._customFunctions.delete(functionName.toUpperCase());
+    if (removed) {
+      this.resetEvaluationMemo();
+      if (this._formulaStore.size && this._grid) {
+        this.scheduleFormulaRefresh();
+      }
+    }
+    return removed;
   }
 
   getCustomFunction(functionName: string): FormulaCallback | undefined {
@@ -1921,7 +1932,6 @@ export class FormulaService implements ExternalResource, FormulaProvider {
 
     const autoEditableFormatter = this._grid.getOptions?.().autoAddCustomEditorFormatter as Formatter | undefined;
     const columns = incomingColumns ?? ((this._grid.getColumns?.() || []) as Column[]);
-    const formulaFunctionNames = Array.from(this.getFormulaFunctionRegistry().keys()).sort((a, b) => a.localeCompare(b));
     let hasChanges = false;
 
     const updatedColumns = columns.map((column) => {
@@ -1950,7 +1960,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       } as FormulaEditorParams;
 
       if (!Array.isArray(mergedParams.formulaFunctionList) || mergedParams.formulaFunctionList.length === 0) {
-        mergedParams.formulaFunctionList = formulaFunctionNames;
+        mergedParams.formulaFunctionList = undefined;
+        mergedParams.getFormulaFunctionList ??= () =>
+          Array.from(this.getFormulaFunctionRegistry().keys()).sort((a, b) => a.localeCompare(b));
       }
 
       const userOnFormulaInputChange = mergedParams.onFormulaInputChange;

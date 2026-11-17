@@ -629,6 +629,40 @@ describe('FormulaCellEditor', () => {
     gridContainer.remove();
   });
 
+  it('uses the current dynamic function list while an editor is open', () => {
+    const hostContainer = document.createElement('div');
+    const gridContainer = document.createElement('div');
+    document.body.append(hostContainer, gridContainer);
+    let names = ['SUM'];
+    const params = { getFormulaFunctionList: () => names, formulaFunctionList: undefined as string[] | undefined };
+    const grid = {
+      focus: () => undefined,
+      getActiveCell: () => ({ row: 0, cell: 0 }),
+      getCellFromEvent: () => null,
+      getColumns: () => [{ id: 'total' }],
+      getContainerNode: () => gridContainer,
+      getEditorLock: () => ({ commitCurrentEdit: () => true }),
+      getOptions: () => ({}),
+      removeCellCssStyles: () => undefined,
+      setCellCssStyles: () => undefined,
+    } as any;
+    const editor = new FormulaCellEditor({ column: { field: 'total', editor: { params } }, container: hostContainer, grid, item: { total: '' } } as any);
+    editor.loadValue({ total: '' });
+    (editor as any)._editorElm.textContent = '=DY';
+    (editor as any).restoreCaretOffset(3);
+    (editor as any).handleInput();
+    expect((editor as any)._autocompleteItems).toEqual([]);
+    names = ['DYNAMIC'];
+    (editor as any).handleInput();
+    expect((editor as any)._autocompleteItems).toEqual(['DYNAMIC']);
+    params.formulaFunctionList = ['DYSTATIC'];
+    (editor as any).handleInput();
+    expect((editor as any)._autocompleteItems).toEqual(['DYSTATIC']);
+    editor.destroy();
+    hostContainer.remove();
+    gridContainer.remove();
+  });
+
   it('should fallback to cell-css highlighting when no selection model is available', () => {
     const hostContainer = document.createElement('div');
     const gridContainer = document.createElement('div');

@@ -18,6 +18,10 @@ The formula service provides versioned, atomic `getFormulaStoreSnapshot` / `setF
 
 Formula calculation and the existing formatter pipeline now remain active when a column uses a custom editor or automatic Formula Editor assignment is disabled. Custom editor commits synchronize the formula store; cell changes trigger a coalesced post-commit refresh. Column replacement and disposal preserve custom editors and formatting. Read-only cells are supported through `onBeforeEditCell`; formatter styling must reflect the application's own permission rule. Runtime custom-function autocomplete and registration behavior remain separate follow-up work. Earlier editor-lifecycle findings below are retained as historical context.
 
+## Runtime custom function update
+
+Registration, replacement and removal now clear evaluation memoization and refresh displayed values. Default autocomplete reads current registry names on input, including for an open editor; explicit suggestion lists remain application-controlled. Earlier notes below about static default suggestions and missing cache invalidation are historical.
+
 ## Recommended release scope
 
 Complete per-cell formulas, stable references, editing, drag-fill, persistence, and native Excel export, including grouping as requested. Treat calculated columns as a separate package. Do not make every competitor feature a release requirement.

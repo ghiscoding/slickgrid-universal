@@ -122,6 +122,54 @@ describe('FormulaService', () => {
     expect(service.getOptions()).toEqual({ autoAssignEditor: false, enableExcelHeaderPrefix: false });
   });
 
+  it('updates function suggestions and cached formula results when custom functions change', async () => {
+    const items = [{ id: 'a', total: '=DYNAMIC()' }];
+    const columns: Column[] = [{ id: 'total', field: 'total', allowFormula: true }];
+    const grid = {
+      getColumns: () => columns,
+      setColumns: (next: Column[]) => columns.splice(0, columns.length, ...next),
+      getData: () => ({ getItems: () => items }),
+      getOptions: () => ({}),
+      invalidate: vi.fn(),
+      render: vi.fn(),
+    } as any;
+    const service = new FormulaService();
+    service.init(grid);
+    grid.invalidate.mockClear();
+    grid.render.mockClear();
+    const params = columns[0].editor!.params as any;
+    expect(params.getFormulaFunctionList()).not.toContain('DYNAMIC');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe('#NAME?');
+    service.registerCustomFunction('dynamic', () => 4);
+    expect(params.getFormulaFunctionList()).toContain('DYNAMIC');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(4);
+    service.registerCustomFunction('DYNAMIC', () => 9);
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(9);
+    expect(service.unregisterCustomFunction('dynamic')).toBe(true);
+    expect(params.getFormulaFunctionList()).not.toContain('DYNAMIC');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe('#NAME?');
+    expect(service.unregisterCustomFunction('missing')).toBe(false);
+    await Promise.resolve();
+    expect(grid.invalidate).toHaveBeenCalledOnce();
+    expect(grid.render).toHaveBeenCalledOnce();
+    service.dispose();
+  });
+
+  it('retains explicitly configured function suggestions', () => {
+    const columns: Column[] = [{ id: 'total', field: 'total', allowFormula: true, editor: { params: { formulaFunctionList: ['CUSTOM'] } } }];
+    const grid = {
+      getColumns: () => columns,
+      setColumns: (next: Column[]) => columns.splice(0, columns.length, ...next),
+      getData: () => ({ getItems: () => [] }),
+      getOptions: () => ({}),
+    } as any;
+    const service = new FormulaService();
+    service.init(grid);
+    service.registerCustomFunction('OTHER', () => 1);
+    expect(columns[0].editor?.params?.formulaFunctionList).toEqual(['CUSTOM']);
+    service.dispose();
+  });
+
   it('should cover service lifecycle and conversion guard paths', () => {
     const columns: Column[] = [{ id: 'value', field: 'value', allowFormula: true }];
     const items = [{ id: 'r1', value: '=A1' }];

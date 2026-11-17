@@ -227,6 +227,7 @@ Frequently used methods:
 - `getEvaluatedCellValue(rowId, columnId, ...)`
 - `registerCustomFunction(name, input)`
 - `registerCustomFunctions(functionMap)`
+- `unregisterCustomFunction(name)`
 - `getExcelFormula(context)`
 - `createGroupingAggregator(aggregator, columnId?)`
 - `getFormulaSnapshot(rowId, columnId)` and `setFormulaSnapshot(rowId, columnId, snapshot)` preserve a single cell

@@ -52,6 +52,25 @@ describe('Example 48 - Formula Service', () => {
     cy.get(cell(2, 8)).contains('$6.55');
   });
 
+  it('should refresh formula results and suggestions when a custom function changes', () => {
+    cy.reload();
+    cy.get(cell(0, 8)).should('contain', '$6.22');
+    cy.get('[data-test="remove-customsum-btn"]').click();
+    cy.get(cell(0, 8)).should('contain', '#NAME?');
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=CUS', { force: true });
+    cy.get('.formula-autocomplete').should('not.be.visible');
+    cy.get('.formula-editor-input').type('{esc}', { force: true });
+    cy.get('[data-test="register-customsum-btn"]').click();
+    cy.get(cell(0, 8)).should('contain', '$6.22');
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=CUS', { force: true });
+    cy.contains('.formula-autocomplete div', /^CUSTOMSUM$/).should('be.visible');
+    cy.get('.formula-editor-input').type('{esc}', { force: true });
+    cy.reload();
+    cy.get(cell(0, 4)).should('contain', '$8.88');
+  });
+
   it('should calculate with a custom editor and update dependent cells after edits', () => {
     cy.reload();
     cy.get(cell(0, 4)).should('contain', '$8.88');

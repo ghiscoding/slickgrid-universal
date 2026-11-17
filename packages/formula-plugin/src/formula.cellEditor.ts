@@ -15,6 +15,8 @@ import {
 export interface FormulaEditorParams {
   debug?: boolean;
   formulaFunctionList?: string[];
+  /** Supply function names dynamically; an explicit formulaFunctionList takes precedence. */
+  getFormulaFunctionList?: () => string[];
   onFormulaInputChange?: (formula: string) => void;
   /** Convert the persisted formula to the user-facing A1 form when the editor opens. */
   toDisplayFormula?: (formula: string, item?: any) => string;
@@ -897,7 +899,7 @@ export class FormulaCellEditor implements Editor {
 
   protected getFormulaFunctionList(): string[] {
     const editorParams = this.args.column.editor?.params as FormulaEditorParams | undefined;
-    const list = editorParams?.formulaFunctionList;
+    const list = editorParams?.formulaFunctionList ?? editorParams?.getFormulaFunctionList?.();
     return Array.isArray(list) ? list : [];
   }
 

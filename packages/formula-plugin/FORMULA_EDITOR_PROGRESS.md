@@ -1,7 +1,11 @@
 # Formula Editor Plugin Progress
 
-Last updated: 2026-11-14 (feature completion audit)
+Last updated: 2026-11-16
 Branch context: feat/cell-formula-plugin
+
+## Latest Update: Runtime Custom Functions (2026-11-16)
+- Registering, replacing and removing a custom function invalidates cached evaluations and schedules a coalesced grid refresh. Default Formula Editor autocomplete reads the live registry; an explicit suggestion list remains unchanged.
+- Added unit coverage for changing functions while an editor is open and for cached results. Example 48 exposes controls to remove and register CUSTOMSUM, with a UI-driven browser regression.
 
 ## Latest Update: IF Branches and Error Propagation (2026-11-16)
 - Built-in IF defers evaluation of its selected branch, so references, circular dependencies and custom functions in an unused branch do not execute. Custom overrides of IF retain their existing behavior.
@@ -110,11 +114,15 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [x] Support grouping and grouping formatters, including reference mapping when group rows change offsets and grouped Excel export. Custom Excel functions receive empty strings for blank helper cells; collapsed or excluded export dependencies produce `#REF!`.
 - [x] Audit Grid State/Preset behavior and support saving/restoring formula references and data alongside Grid State.
 - [x] Verify and document hidden-column behavior, including editor A1 numbering, reference selection, drag-fill and Excel export when a referenced column is excluded.
+- [x] Keep formula results and default autocomplete suggestions current when custom functions are registered, replaced or removed; preserve explicitly configured suggestion lists.
+- [x] Preserve quoted references and operators, escaped IDs and quoted text from referenced cells during evaluation and export.
+- [x] Evaluate only the selected built-in `IF` branch and propagate errors from evaluated function arguments; validate both branches without executing the unused one.
+- [x] Resolve the conflicting scalar-times-range expectations: both `*` and `×` now return `#VALUE!`.
 - [ ] Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin.
 - [ ] Evaluate using the range drag handle to fill down to the last adjacent non-empty cell; define the click interaction and stopping behavior. Might skip that one since Ag-Grid doesn't support it and it could become very complex with large dataset.
 - [ ] Evaluate reusing the existing autocompleter instead of the formula editor's custom autocomplete.
-- [ ] Review remaining browser coverage gaps in the Cypress Coverage Audit below, especially formula drag-fill reference translation and selection-model fallback.
-- [ ] Revisit formula semantic parity and the historical conflicting scalar-times-range test expectations described in the security review below; verify current behavior before deciding on a change.
+- [ ] Re-audit the historical Cypress Coverage Audit against the current tests and cover remaining gaps, including selection-model fallback and reference translation where not yet exercised.
+- [ ] Continue the formula semantics audit: precedence and negative powers, coercion and blanks, dates, wildcard criteria, argument counts and mismatched range dimensions.
 - [ ] Compare Syncfusion's formula reference with our registry: evaluate adding `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases. Our parser already supports the listed operators, including `%` and `^`; verify edge-case semantics separately.
 - [ ] Evaluate distinct `#CIRCREF!` and `#PARSE!` errors; circular references currently use `#REF!` and parser failures use `#ERROR!`.
 - [x] Support custom and read-only formula columns independently of Formula Editor; document and test `onBeforeEditCell` cancellation.

@@ -14,7 +14,7 @@ import {
   type SlickGroupTotals,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { FormulaService, type FormulaStoreSnapshot } from '@slickgrid-universal/formula-plugin';
+import { FormulaService, type FormulaCustomFunctionParams, type FormulaStoreSnapshot } from '@slickgrid-universal/formula-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example48.scss';
@@ -39,6 +39,13 @@ interface SavedFormulaDemoState {
 
 const FORMULA_DEMO_STATE_KEY = 'example48-formula-state';
 const FORMULA_DEMO_RESTORE_KEY = 'example48-formula-restore';
+
+function customSum({ values }: FormulaCustomFunctionParams): number {
+  return values.reduce<number>((total, value) => {
+    const num = Number(value);
+    return total + (Number.isFinite(num) ? num : 0);
+  }, 0);
+}
 
 /** Check if the current item (cell) is editable or not */
 function checkItemIsEditable(_dataContext: GroceryItem, columnDef: Column, grid: SlickGrid) {
@@ -85,16 +92,7 @@ export default class Example48 {
     this.formulaService = new FormulaService({
       excelCustomFunctions: [{ name: 'CUSTOMSUM', args: ['values'], body: 'SUM(values)' }],
       customFunctions: {
-        CUSTOMSUM: {
-          func: (params) => {
-            let total = 0;
-            for (const value of params.values) {
-              const num = Number(value);
-              total += Number.isFinite(num) ? num : 0;
-            }
-            return total;
-          },
-        },
+        CUSTOMSUM: { func: customSum },
       },
     });
     this._bindingEventService = new BindingEventService();
@@ -478,6 +476,14 @@ export default class Example48 {
 
   exportToExcelWithHidden() {
     this.excelExportService.exportToExcel({ includeHidden: true });
+  }
+
+  registerCustomSum() {
+    this.formulaService.registerCustomFunction('CUSTOMSUM', { func: customSum });
+  }
+
+  removeCustomSum() {
+    this.formulaService.unregisterCustomFunction('CUSTOMSUM');
   }
 
   saveGridAndFormulas() {
