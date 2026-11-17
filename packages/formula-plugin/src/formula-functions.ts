@@ -20,6 +20,17 @@ export function unwrapFormulaReference(value: unknown): unknown {
   return isFormulaReference(value) ? value.value : value;
 }
 
+export function calculateFormulaPower(base: number, exponent: number): number | string {
+  if (base === 0 && exponent < 0) {
+    return FORMULA_ERROR.DIV0;
+  }
+  if (base === 0 && exponent === 0) {
+    return FORMULA_ERROR.NUM;
+  }
+  const result = Math.pow(base, exponent);
+  return Number.isFinite(result) ? result : FORMULA_ERROR.NUM;
+}
+
 export function createFormulaFunctionRegistry(customFunctions: ReadonlyMap<string, FormulaCallback>): Map<string, FormulaCallback> {
   const registry = createBuiltInFormulaFunctions();
 
@@ -36,7 +47,12 @@ export function createFormulaFunctionRegistry(customFunctions: ReadonlyMap<strin
 function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
   const registry = new Map<string, FormulaCallback>();
 
-  const IF = (condition: unknown, yesValue: unknown, noValue: unknown) => (condition ? yesValue : noValue);
+  const IF = (...args: unknown[]) => {
+    if (args.length < 2 || args.length > 3) {
+      return FORMULA_ERROR.VALUE;
+    }
+    return args[0] ? args[1] : (args[2] ?? false);
+  };
   const SUM = (...args: unknown[]) => {
     const values = aggregateNumbers(args);
     return Array.isArray(values) ? values.reduce((acc, value) => acc + value, 0) : values;
@@ -115,7 +131,10 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     const mid = Math.floor(values.length / 2);
     return values.length % 2 === 0 ? (values[mid - 1] + values[mid]) / 2 : values[mid];
   };
-  const POWER = (arg1: unknown, arg2: unknown) => Math.pow(toNumericFormulaValue(arg1), toNumericFormulaValue(arg2));
+  const POWER = (...args: unknown[]) => {
+    const values = numericScalarArguments(args, 2);
+    return Array.isArray(values) ? calculateFormulaPower(values[0], values[1]) : values;
+  };
   const ABS = (...args: unknown[]) => {
     const values = numericScalarArguments(args, 1);
     return Array.isArray(values) ? Math.abs(values[0]) : values;
@@ -159,9 +178,12 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     const result = Number(`${roundedCoefficient}e${Number(roundedExponent) - digits}`);
     return Number.isFinite(result) ? (number < 0 && result !== 0 ? -result : result) : FORMULA_ERROR.NUM;
   };
-  const RAND = () => Math.random();
-  const NOW = () => new Date();
-  const TODAY = () => {
+  const RAND = (...args: unknown[]) => (args.length ? FORMULA_ERROR.VALUE : Math.random());
+  const NOW = (...args: unknown[]) => (args.length ? FORMULA_ERROR.VALUE : new Date());
+  const TODAY = (...args: unknown[]) => {
+    if (args.length) {
+      return FORMULA_ERROR.VALUE;
+    }
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), now.getDate());
   };
@@ -222,7 +244,7 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
     }
     return sum;
   };
-  const NA = () => FORMULA_ERROR.NA;
+  const NA = (...args: unknown[]) => (args.length ? FORMULA_ERROR.VALUE : FORMULA_ERROR.NA);
 
   registry.set('IF', IF);
   registry.set('SUM', SUM);

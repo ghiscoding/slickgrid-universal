@@ -3,6 +3,11 @@
 Last updated: 2026-11-16
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Formula Errors and Function Arguments (2026-11-16)
+- Circular references now return `#CIRCREF!`, malformed syntax returns `#PARSE!`, and missing references continue to return `#REF!`. Custom-function exceptions return `#ERROR!`; dependent formulas propagate these errors and unused IF branches stay unevaluated.
+- Validated `IF`, `POWER`, `RAND` and its aliases, `NOW`, `TODAY` and `NA` argument counts. `POWER` and `^` now report zero-to-negative, zero-to-zero, invalid roots and overflow consistently.
+- Added service, function and Example 48 regressions, including circular formula export. Excel receives the original formula and applies its own circular-reference behavior; the new diagnostic codes are grid-specific.
+
 ## Latest Update: Conditional Criteria (2026-11-16)
 - `COUNTIF` and `SUMIF` now support case-insensitive text criteria, `*` and `?` wildcards, and `~` escapes without interpreting wildcard patterns as regular expressions. Text criteria preserve significant whitespace.
 - Blank cell criteria are treated as zero, while empty-text criteria match blank and empty-text values. `SUMIF` ignores text and booleans in its sum range, and both functions validate their argument counts.
@@ -162,7 +167,8 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [x] Add wildcard, escape, case-insensitive and blank criteria handling to `COUNTIF` and `SUMIF`; ignore nonnumeric sum-range values and validate their argument counts.
 - [ ] Continue the formula semantics audit: remaining operator and conditional-function coercion, dates, other function argument counts and mismatched range dimensions.
 - [x] Compare Syncfusion's formula reference and add `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases, with Excel export translation.
-- [ ] Evaluate distinct `#CIRCREF!` and `#PARSE!` errors; circular references currently use `#REF!` and parser failures use `#ERROR!`.
+- [x] Distinguish `#CIRCREF!`, `#PARSE!`, missing references and custom-function failures; document Excel export behavior.
+- [x] Validate fixed argument counts for `IF`, `POWER`, random/date functions and `NA`; align `POWER` and `^` error results.
 - [x] Support custom and read-only formula columns independently of Formula Editor; document and test `onBeforeEditCell` cancellation.
 - [ ] Decide whether an optional strict selection-prerequisite mode is needed.
 - [ ] **Last task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached.

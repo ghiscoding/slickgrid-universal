@@ -235,6 +235,12 @@ Frequently used methods:
 
 For built-ins/custom functions/export compatibility, see [Formula Custom Functions](./formula-functions.md).
 
+### Formula Errors
+
+The grid displays `#CIRCREF!` for direct or indirect circular references, `#PARSE!` for malformed formulas, and `#REF!` for missing or invalid references. Other errors include `#NAME?`, `#VALUE!`, `#DIV/0!`, `#NUM!`, `#N/A` and `#ERROR!`. A custom function that throws produces `#ERROR!`, which propagates to dependent formulas.
+
+`#CIRCREF!` and `#PARSE!` are grid error codes, not native Excel error values. Excel export preserves the underlying formulas; Excel handles circular references and invalid formulas according to its own rules and settings.
+
 ### Evaluation and Export Summary
 Evaluation supports:
 - A1 references and ranges

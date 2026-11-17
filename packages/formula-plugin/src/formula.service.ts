@@ -16,7 +16,13 @@ import type {
 } from '@slickgrid-universal/common';
 import { createDomElement, Formatters, SlickEventHandler } from '@slickgrid-universal/common';
 import { FORMULA_ERROR, isFormulaErrorCode, type FormulaErrorCode } from './formula-errors.js';
-import { createFormulaFunctionRegistry, formulaReference, unwrapFormulaReference, type FormulaCallback } from './formula-functions.js';
+import {
+  calculateFormulaPower,
+  createFormulaFunctionRegistry,
+  formulaReference,
+  unwrapFormulaReference,
+  type FormulaCallback,
+} from './formula-functions.js';
 import { compactFormulaRange, expandFormulaRanges, mapFormulaRanges, rewriteExcelHelperCounta } from './formula-range.js';
 import {
   buildFormulaReferenceCssHash,
@@ -961,7 +967,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return segment;
     });
     if (hasUnsafeInput) {
-      return FORMULA_ERROR.ERROR;
+      return FORMULA_ERROR.PARSE;
     }
     const formulaFunctions = this.getFormulaFunctionRegistry();
     const lazyExpression = this._customFunctions.has('IF') ? normalized : this.replaceLazyIfCalls(normalized, context, formulaFunctions);
@@ -1062,16 +1068,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       // code evaluator (e.g. `Function`/`eval`), which would otherwise be an unnecessary injection surface.
       const result = this.evaluateExpressionWithParser(jsExpression, formulaFunctions, false, references);
       return result === null ? 0 : result;
-    } catch (error) {
-      if (error instanceof ReferenceError) {
-        return FORMULA_ERROR.NAME;
-      }
-      if (error instanceof TypeError) {
-        return FORMULA_ERROR.VALUE;
-      }
-      if (error instanceof SyntaxError) {
-        return FORMULA_ERROR.ERROR;
-      }
+    } catch {
       return FORMULA_ERROR.ERROR;
     }
   }
@@ -1129,7 +1126,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         const syntax = this.transformFormulaOutsideQuotedStrings(this.normalizeFormulaSyntax(arg), (segment) =>
           segment
             .replace(/\$?[A-Z]{1,3}\$?\d+\s*:\s*\$?[A-Z]{1,3}\$?\d+/gi, '1')
-            .replace(/#(?:REF!|DIV\/0!|VALUE!|NAME\?|NUM!|NULL!|ERROR!|N\/A)/gi, '1')
+            .replace(/#(?:CIRCREF!|PARSE!|REF!|DIV\/0!|VALUE!|NAME\?|NUM!|NULL!|ERROR!|N\/A)/gi, '1')
             .replace(/<>/g, '!=')
             .replace(/(?<![<>=!])=(?!=)/g, '==')
         );
@@ -1137,7 +1134,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       });
       functions.set(name, () => {
         if (!validSyntax) {
-          return FORMULA_ERROR.ERROR;
+          return FORMULA_ERROR.PARSE;
         }
         const condition = this.evaluateFormulaExpression(args[0], context);
         if (isFormulaErrorCode(condition)) {
@@ -1213,7 +1210,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           i++;
         }
         if (!closed) {
-          return FORMULA_ERROR.ERROR;
+          return FORMULA_ERROR.PARSE;
         }
         pushToken('string', value);
         continue;
@@ -1227,7 +1224,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           i++;
         }
         if (!/^\d*\.?\d+$/.test(numberValue)) {
-          return FORMULA_ERROR.NUM;
+          return FORMULA_ERROR.PARSE;
         }
         pushToken('number', numberValue);
         continue;
@@ -1275,7 +1272,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         continue;
       }
 
-      return FORMULA_ERROR.ERROR;
+      return FORMULA_ERROR.PARSE;
     }
 
     pushToken('eof', '');
@@ -1411,9 +1408,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (isFormulaErrorCode(right)) {
           return right;
         }
-        left = syntaxOnly ? 1 : Math.pow(Number(left), Number(right));
-        if (typeof left === 'number' && Number.isNaN(left)) {
-          return FORMULA_ERROR.NUM;
+        left = syntaxOnly ? 1 : calculateFormulaPower(Number(left), Number(right));
+        if (isFormulaErrorCode(left)) {
+          return left;
         }
       }
       return left;
@@ -1494,7 +1491,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           }
 
           if (!matchParen(')')) {
-            return FORMULA_ERROR.ERROR;
+            return FORMULA_ERROR.PARSE;
           }
           consume();
 
@@ -1508,8 +1505,14 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           }
           const unwrapCustomArgument = (value: unknown): unknown =>
             Array.isArray(value) ? value.map(unwrapCustomArgument) : unwrapFormulaReference(value);
-          const fnResult = fn(...(this._customFunctions.has(upperIdent) ? args.map(unwrapCustomArgument) : args));
-          return isFormulaErrorCode(fnResult) ? fnResult : fnResult;
+          if (this._customFunctions.has(upperIdent)) {
+            try {
+              return fn(...args.map(unwrapCustomArgument));
+            } catch {
+              return FORMULA_ERROR.ERROR;
+            }
+          }
+          return fn(...args);
         }
 
         if (upperIdent === 'TRUE') {
@@ -1531,7 +1534,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
           return value;
         }
         if (!matchParen(')')) {
-          return FORMULA_ERROR.ERROR;
+          return FORMULA_ERROR.PARSE;
         }
         consume();
         return value;
@@ -1558,13 +1561,13 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         }
 
         if (!matchBracket(']')) {
-          return FORMULA_ERROR.ERROR;
+          return FORMULA_ERROR.PARSE;
         }
         consume();
         return values;
       }
 
-      return FORMULA_ERROR.ERROR;
+      return FORMULA_ERROR.PARSE;
     };
 
     const output = parseExpression();
@@ -1572,7 +1575,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return output;
     }
     if (peek().type !== 'eof') {
-      return FORMULA_ERROR.ERROR;
+      return FORMULA_ERROR.PARSE;
     }
     return unwrapFormulaReference(output);
   }
@@ -1936,7 +1939,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     if (storedFormula || (typeof rawValue === 'string' && rawValue.trim().startsWith('='))) {
       const key = this.buildStoreKey(rowId, columnId);
       if (context.visited.has(key)) {
-        return FORMULA_ERROR.REF;
+        return FORMULA_ERROR.CIRCREF;
       }
 
       const nestedFormula = storedFormula ?? rawValue;

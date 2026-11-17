@@ -1,10 +1,12 @@
 export const FORMULA_ERROR = {
+  CIRCREF: '#CIRCREF!',
   DIV0: '#DIV/0!',
   ERROR: '#ERROR!',
   NA: '#N/A',
   NAME: '#NAME?',
   NULL: '#NULL!',
   NUM: '#NUM!',
+  PARSE: '#PARSE!',
   REF: '#REF!',
   VALUE: '#VALUE!',
 } as const;

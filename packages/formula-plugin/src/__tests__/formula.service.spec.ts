@@ -38,11 +38,11 @@ describe('FormulaService', () => {
     items[0].value = 'A1';
     expect(evaluate('="He said ""A1 ×"""')).toBe('He said "A1 ×"');
     expect(evaluate('=IF("A1 × TRUE"="A1 × TRUE",3,0)')).toBe(3);
-    expect(evaluate('="unterminated')).toBe('#ERROR!');
+    expect(evaluate('="unterminated')).toBe('#PARSE!');
     expect(evaluate('=CONCAT("hello A1", SUM(A1:A2))')).toBe('hello A10');
     expect(evaluate('="REF(COLUMN(\'value\'),ROW(1))"')).toBe("REF(COLUMN('value'),ROW(1))");
     expect(evaluate(`='REF(COLUMN("value"),ROW(1))'`)).toBe('REF(COLUMN("value"),ROW(1))');
-    expect(evaluate('=1;2')).toBe('#ERROR!');
+    expect(evaluate('=1;2')).toBe('#PARSE!');
     service.setFormula('a', 'total', '="A1 × B2"');
     expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: ['a', 'b'], excelRowOffset: 2 } as any)).toBe(
       '"A1 × B2"'
@@ -94,14 +94,14 @@ describe('FormulaService', () => {
     expect(evaluate('=IF(FALSE,1)')).toBe(false);
     expect(evaluate('=IF(TRUE,"a\\\"b","no")')).toBe('a"b');
     expect(evaluate('=IF(TRUE,"a""b","no")')).toBe('a"b');
-    expect(evaluate('=IF(TRUE,1')).toBe('#ERROR!');
-    expect(evaluate('=IF(TRUE,1,2+)')).toBe('#ERROR!');
-    expect(evaluate('=IF(FALSE,1+,2)')).toBe('#ERROR!');
-    expect(evaluate('=IF(TRUE,1,1.2.3)')).toBe('#ERROR!');
+    expect(evaluate('=IF(TRUE,1')).toBe('#PARSE!');
+    expect(evaluate('=IF(TRUE,1,2+)')).toBe('#PARSE!');
+    expect(evaluate('=IF(FALSE,1+,2)')).toBe('#PARSE!');
+    expect(evaluate('=IF(TRUE,1,1.2.3)')).toBe('#PARSE!');
     expect(evaluate('=IF(TRUE,1,-([1,2]-1)^([1,2])%)')).toBe(1);
     expect(evaluate('=IF(TRUE,1,CALLED(1/0))')).toBe(1);
-    expect(evaluate('=SUM(1')).toBe('#ERROR!');
-    expect(evaluate('=IF(FALSE,1;2,3)')).toBe('#ERROR!');
+    expect(evaluate('=SUM(1')).toBe('#PARSE!');
+    expect(evaluate('=IF(FALSE,1;2,3)')).toBe('#PARSE!');
     service.registerCustomFunction('__FORMULA_LAZY_IF_0', () => 10);
     expect(evaluate('=IF(TRUE,1,2)+__FORMULA_LAZY_IF_0()')).toBe(11);
     service.registerCustomFunction('IF', () => 17);
@@ -110,7 +110,53 @@ describe('FormulaService', () => {
     service.setFormula('a', 'total', '=IF(FALSE,B1,7)');
     expect(service.getEvaluatedCellValue('a', 'total')).toBe(7);
     service.setFormula('a', 'total', '=IF(TRUE,B1,7)');
-    expect(service.getEvaluatedCellValue('a', 'total')).toBe('#REF!');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe('#CIRCREF!');
+  });
+
+  it('distinguishes circular references, syntax errors, invalid references and custom failures', () => {
+    const items = [
+      { id: 'a', value: 1, total: '' },
+      { id: 'b', value: 2, total: '' },
+      { id: 'c', value: 3, total: '' },
+      { id: 'd', value: 4, total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({
+      autoAssignEditor: false,
+      customFunctions: {
+        BROKEN: () => {
+          throw new TypeError('custom failure');
+        },
+      },
+    });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    service.setFormula('a', 'total', '=B1');
+    service.setFormula('b', 'total', '=B3');
+    service.setFormula('c', 'total', '=B2');
+    service.setFormula('d', 'total', '=SUM(B2:B3)');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe('#CIRCREF!');
+    expect(service.getEvaluatedCellValue('b', 'total')).toBe('#CIRCREF!');
+    expect(service.getEvaluatedCellValue('d', 'total')).toBe('#CIRCREF!');
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    expect(evaluate('=SUM(1,,2)')).toBe('#PARSE!');
+    expect(evaluate('=1..2')).toBe('#PARSE!');
+    expect(evaluate('=IF(TRUE,5,B1)')).toBe(5);
+    expect(evaluate('=IF(FALSE,5,B1)')).toBe('#CIRCREF!');
+    expect(evaluate('=IF(TRUE,5,1+)')).toBe('#PARSE!');
+    expect(evaluate('=Z1')).toBe('#REF!');
+    expect(evaluate('=MISSING()')).toBe('#NAME?');
+    expect(evaluate('=BROKEN()')).toBe('#ERROR!');
+    expect(evaluate('=IF(TRUE)')).toBe('#VALUE!');
+    expect(evaluate('=RAND(1)')).toBe('#VALUE!');
+    expect(evaluate('=POWER(0,-1)')).toBe('#DIV/0!');
+    expect(evaluate('=0^0')).toBe('#NUM!');
+    expect(evaluate('=0^-1')).toBe('#DIV/0!');
+    expect(
+      service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['value', 'total'], rowIds: items.map((item) => item.id), excelRowOffset: 2 } as any)
+    ).toBe('B2');
   });
 
   it('evaluates operator precedence and chained powers in Excel order', () => {
@@ -2524,7 +2570,7 @@ describe('FormulaService', () => {
     expect((service as any).resolveExcelRangeValues('?', 1, 'A', 1, context)).toEqual([]);
 
     context.visited.add('1::value');
-    expect((service as any).resolveExcelReferenceValue('A', 1, context)).toBe(FORMULA_ERROR.REF);
+    expect((service as any).resolveExcelReferenceValue('A', 1, context)).toBe(FORMULA_ERROR.CIRCREF);
     expect((service as any).getCellRawValue('missing', 'value')).toBeUndefined();
     expect((service as any).getCellRawValue(1, 'missing')).toBeUndefined();
 
@@ -2579,14 +2625,14 @@ describe('FormulaService', () => {
     expect(evaluate('[]')).toEqual([]);
     expect(evaluate('[1, 2]')).toEqual([1, 2]);
 
-    expect(evaluate('1..2')).toBe(FORMULA_ERROR.NUM);
-    expect(evaluate('@')).toBe(FORMULA_ERROR.ERROR);
+    expect(evaluate('1..2')).toBe(FORMULA_ERROR.PARSE);
+    expect(evaluate('@')).toBe(FORMULA_ERROR.PARSE);
     expect(evaluate('UNKNOWN')).toBe(FORMULA_ERROR.NAME);
     expect(evaluate('UNKNOWN()')).toBe(FORMULA_ERROR.NAME);
-    expect(evaluate('FN(')).toBe(FORMULA_ERROR.ERROR);
-    expect(evaluate('(1')).toBe(FORMULA_ERROR.ERROR);
-    expect(evaluate('[1')).toBe(FORMULA_ERROR.ERROR);
-    expect(evaluate('1 2')).toBe(FORMULA_ERROR.ERROR);
+    expect(evaluate('FN(')).toBe(FORMULA_ERROR.PARSE);
+    expect(evaluate('(1')).toBe(FORMULA_ERROR.PARSE);
+    expect(evaluate('[1')).toBe(FORMULA_ERROR.PARSE);
+    expect(evaluate('1 2')).toBe(FORMULA_ERROR.PARSE);
     expect(evaluate('1 / 0')).toBe(FORMULA_ERROR.DIV0);
     expect(evaluate('1 + UNKNOWN')).toBe(FORMULA_ERROR.NAME);
     expect(evaluate('1 + "x"')).toBe(FORMULA_ERROR.VALUE);
@@ -2604,7 +2650,7 @@ describe('FormulaService', () => {
 
     const context = { visited: new Set<string>(), memo: new Map<string, unknown>() };
     expect((service as any).evaluateFormulaExpression('', context)).toBe(FORMULA_ERROR.NULL);
-    expect((service as any).evaluateFormulaExpression('=1;2', context)).toBe(FORMULA_ERROR.ERROR);
+    expect((service as any).evaluateFormulaExpression('=1;2', context)).toBe(FORMULA_ERROR.PARSE);
     expect((service as any).evaluateFormulaExpression('=FOO', context)).toBe(FORMULA_ERROR.NAME);
     expect((service as any).evaluateFormulaExpression('=A1:B1', context)).toBe(FORMULA_ERROR.REF);
     expect((service as any).evaluateFormulaExpression('=SUM(A1:ZZZ1000000)', context)).toBe(FORMULA_ERROR.REF);
@@ -2614,10 +2660,12 @@ describe('FormulaService', () => {
       throwingService.registerCustomFunction('THROW', () => {
         throw new error();
       });
-      expect((throwingService as any).evaluateFormulaExpression('=THROW()', { visited: new Set(), memo: new Map() })).toBe(
-        error === ReferenceError ? FORMULA_ERROR.NAME : error === TypeError ? FORMULA_ERROR.VALUE : FORMULA_ERROR.ERROR
-      );
+      expect((throwingService as any).evaluateFormulaExpression('=THROW()', { visited: new Set(), memo: new Map() })).toBe(FORMULA_ERROR.ERROR);
     }
+    vi.spyOn(service as any, 'evaluateExpressionWithParser').mockImplementation(() => {
+      throw new Error('unexpected parser failure');
+    });
+    expect((service as any).evaluateFormulaExpression('=1', context)).toBe(FORMULA_ERROR.ERROR);
   });
 
   it('should wrap onFormulaInputChange and invoke user callback without forcing highlight refresh', () => {

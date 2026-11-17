@@ -134,6 +134,25 @@ describe('Example 48 - Formula Service', () => {
     cy.get(cell(0, 4)).should('contain', '$8.88');
   });
 
+  it('should show distinct formula errors and export circular references', () => {
+    cy.reload();
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SUM(1,,2){enter}', { force: true });
+    cy.get(cell(0, 4)).should('contain', '#PARSE!');
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=RAND(1){enter}', { force: true });
+    cy.get(cell(0, 4)).should('contain', '#VALUE!');
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=E1{enter}', { force: true });
+    cy.get(cell(0, 4)).should('contain', '#CIRCREF!');
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.get('[data-test="export-excel-btn"]').click();
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 2 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[1][3]).to.equal('D3');
+    });
+  });
+
   it('should evaluate and export case-insensitive wildcard criteria', () => {
     cy.reload();
     cy.get(cell(0, 4)).dblclick();

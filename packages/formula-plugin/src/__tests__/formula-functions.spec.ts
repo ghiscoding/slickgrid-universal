@@ -73,7 +73,7 @@ describe('createFormulaFunctionRegistry', () => {
       expect(registry.get(name)?.('not numeric')).toBe(FORMULA_ERROR.VALUE);
     }
     expect(registry.get('POWER')?.(true, 2)).toBe(1);
-    expect(registry.get('POWER')?.({}, 2)).toBe(0);
+    expect(registry.get('POWER')?.({}, 2)).toBe(FORMULA_ERROR.VALUE);
   });
 
   it('should evaluate SUMPRODUCT with scalar broadcast and array lengths', () => {
@@ -85,6 +85,7 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('SUMPRODUCT')?.([], [])).toBe(0);
     expect(registry.get('SUMPRODUCT')?.([1, undefined], [2, 3])).toBe(2);
     expect(registry.get('SUMPRODUCT')?.([[1], []], [2, 3])).toBe(5);
+    expect(registry.get('SUMPRODUCT')?.([true, false, '2', 'bad', {}], [1, 1, 1, 1, 1])).toBe(3);
     expect(registry.get('SUMPRODUCT')?.()).toBe(0);
   });
 
@@ -180,6 +181,23 @@ describe('createFormulaFunctionRegistry', () => {
     expect(typeof rand).toBe('number');
     expect((rand as number) >= 0 && (rand as number) <= 1).toBe(true);
     expect(registry.get('NA')?.()).toBe(FORMULA_ERROR.NA);
+  });
+
+  it('validates fixed-arity built-ins and reports invalid powers', () => {
+    const registry = createFormulaFunctionRegistry(new Map());
+    expect(registry.get('IF')?.(true)).toBe(FORMULA_ERROR.VALUE);
+    expect(registry.get('IF')?.(false, 1)).toBe(false);
+    expect(registry.get('IF')?.(true, 1, 2, 3)).toBe(FORMULA_ERROR.VALUE);
+    for (const name of ['RAND', 'RANDOM', 'RAN', 'NOW', 'TODAY', 'NA']) {
+      expect(registry.get(name)?.(1)).toBe(FORMULA_ERROR.VALUE);
+    }
+    expect(registry.get('POWER')?.(2)).toBe(FORMULA_ERROR.VALUE);
+    expect(registry.get('POWER')?.(0, 0)).toBe(FORMULA_ERROR.NUM);
+    expect(registry.get('POWER')?.(0, -1)).toBe(FORMULA_ERROR.DIV0);
+    expect(registry.get('POWER')?.(-1, 0.5)).toBe(FORMULA_ERROR.NUM);
+    expect(registry.get('POWER')?.(1e200, 2)).toBe(FORMULA_ERROR.NUM);
+    expect(registry.get('POWER')?.('text', 2)).toBe(FORMULA_ERROR.VALUE);
+    expect(createFormulaFunctionRegistry(new Map([['RAND', (...args: unknown[]) => args.length]])).get('RAND')?.(1)).toBe(1);
   });
 
   it('should accept valid custom functions and ignore invalid names/non-functions', () => {
