@@ -69,6 +69,19 @@ export function compactFormulaRange(members: string[]): string | undefined {
   return `${members[0]}:${members[members.length - 1]}`;
 }
 
+/** Preserve the original row-major width even when rows or columns have moved. */
+export function getFormulaRangeWidth(members: string[]): number {
+  if (!members.length) {
+    return 1;
+  }
+  const firstRow = parseExcelReferenceCell(members[0])?.row;
+  if (firstRow === undefined) {
+    return 1;
+  }
+  const nextRow = members.findIndex((member) => parseExcelReferenceCell(member)?.row !== firstRow);
+  return nextRow < 0 ? members.length : nextRow;
+}
+
 /** Rewrite COUNTA of helper ranges using source-cell presence, including formulas returning empty text. */
 export function rewriteExcelHelperCounta(formula: string, helperRanges: ReadonlyMap<string, () => string>): string {
   let output = '';

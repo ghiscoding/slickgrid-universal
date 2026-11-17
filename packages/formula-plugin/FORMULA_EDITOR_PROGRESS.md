@@ -1,7 +1,24 @@
 # Formula Editor Plugin Progress
 
-Last updated: 2026-11-16
+Last updated: 2026-11-17
 Branch context: feat/cell-formula-plugin
+
+## Handoff and Validation (2026-11-17)
+- Work remains uncommitted: the autocomplete/selection decisions and raw-reference Cypress test are combined with the `SUMPRODUCT` and grouped helper-range changes. Keep them together unless the user requests otherwise.
+- The previous 40 Example 48 Cypress tests passed before the `SUMPRODUCT` changes. The newly added grouped `SUMPRODUCT` workbook test has not been run: the Vanilla server was not listening on port 8888. Ask the user to start their watch server if it remains unavailable; do not start a duplicate.
+- After the `SUMPRODUCT` changes, 253 focused unit tests passed; changed production files had 100% statement and line coverage. Formula and Excel export TypeScript checks, focused lint, formatting, and the formula plugin source circular-dependency check passed.
+- Preserve the user's preferences: group substantive work into each step, provide a concise commit title/description, avoid dev-only window globals in Cypress, and evaluate calculated columns last with advance notice. Only replace autocomplete if there is a demonstrated LOC or bundle-size benefit.
+- Suggested next work: finish the pending browser/workbook validation, then investigate mismatched `SUMIF` dimensions and the remaining semantics audit. Follow with the outstanding browser, framework and package checks; evaluate double-click fill as a separate optional enhancement. The unchecked checklist below is authoritative, not the historical audit snapshots.
+
+## Latest Update: SUMPRODUCT Range Dimensions (2026-11-16)
+- `SUMPRODUCT` now requires matching range dimensions, returns `#VALUE!` for scalar/range or differently shaped arguments, and treats text and logical values in referenced ranges as zero.
+- Disjoint Excel helper ranges preserve their original row and column shape, including when grouping or reordering changes their positions. Custom exporters using the optional helper callbacks should honor their new width argument.
+- Mismatched `SUMIF` dimensions remain open: Excel extends or truncates the sum range from its starting cell, and a stable-reference implementation needs to preserve that behavior across layout changes.
+
+## Latest Update: Editor Integration Audit (2026-11-16)
+- Kept the existing formula autocomplete: the shared `autocompleter` requires an input or textarea with `value` and `selectionStart`, whereas Formula Editor uses a tokenized `contenteditable`. Adapting it would retain caret and token logic and add integration code; no LOC or bundle-size reduction has been established. Its installed minified module is approximately 6 KB (2.3 KB gzipped), though actual incremental bundle size depends on tree-shaking and other usage.
+- Added Example 48 browser coverage for entering stable references and reopening/exporting them as A1 references. Autocomplete suggestions inside quoted strings and replacement from the middle of a function name remain possible improvements, but are deferred to avoid adding implementation complexity without a clear benefit.
+- Keep selection prerequisites warning-only: formula evaluation and CSS reference highlights work without a selection model, and a new strict option has no demonstrated requirement. The historical browser audit below predates the current Example 48 tests; CSS fallback, warning behavior, range-endpoint dragging and workbook custom-function metadata still need direct browser coverage.
 
 ## Latest Update: Formula Errors and Function Arguments (2026-11-16)
 - Circular references now return `#CIRCREF!`, malformed syntax returns `#PARSE!`, and missing references continue to return `#REF!`. Custom-function exceptions return `#ERROR!`; dependent formulas propagate these errors and unused IF branches stay unevaluated.
@@ -156,21 +173,27 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [x] Preserve quoted references and operators, escaped IDs and quoted text from referenced cells during evaluation and export.
 - [x] Evaluate only the selected built-in `IF` branch and propagate errors from evaluated function arguments; validate both branches without executing the unused one.
 - [x] Resolve the conflicting scalar-times-range expectations: both `*` and `×` now return `#VALUE!`.
-- [ ] Evaluate using the range drag handle to fill down to the last adjacent non-empty cell; define the click interaction and stopping behavior. Might skip that one since Ag-Grid doesn't support it and it could become very complex with large dataset.
-- [ ] Evaluate reusing the existing autocompleter instead of the formula editor's custom autocomplete.
-- [ ] Re-audit the historical Cypress Coverage Audit against the current tests and cover remaining gaps, including selection-model fallback and reference translation where not yet exercised.
+- [x] Support dragging the fill handle to copy formulas into a selected target range, adjusting relative references and preserving absolute references.
+- [ ] Evaluate double-clicking the fill handle to fill down to an adjacent data boundary. Define which adjacent cells determine the stopping point and how gaps, grouping, filtering and large datasets should behave; this enhancement may be skipped.
+- [x] Evaluate the existing autocompleter: retain the current contenteditable implementation because an adapter has no demonstrated LOC or bundle-size benefit.
+- [ ] Complete direct browser coverage for selection-model CSS fallback, prerequisite warnings, range-endpoint dragging and workbook custom-function metadata. Raw stable-reference entry, drag-fill, hidden-column export and grouping are covered in Example 48.
+- [ ] Run the newly added grouped `SUMPRODUCT` Example 48 browser/workbook regression against a running watch server; verify its exported workbook calculation where practical.
 - [x] Audit and align operator precedence and negative powers with Excel.
 - [x] Fix arithmetic addition of numeric and nonnumeric text; retain `&` for concatenation.
 - [x] Preserve blank members in ranges for counting and aggregate functions, including stable references.
 - [x] Preserve single-cell and range reference types and formula-produced empty strings for `SUM`, `PRODUCT`, `MIN`, `MAX`, `AVERAGE`, `MEDIAN`, `COUNT`, `COUNTA`, and `COUNTBLANK`.
 - [x] Fix grouped disjoint Excel `COUNTA` export for formulas returning empty text while still excluding truly blank source cells.
 - [x] Add wildcard, escape, case-insensitive and blank criteria handling to `COUNTIF` and `SUMIF`; ignore nonnumeric sum-range values and validate their argument counts.
-- [ ] Continue the formula semantics audit: remaining operator and conditional-function coercion, dates, other function argument counts and mismatched range dimensions.
+- [x] Validate `SUMPRODUCT` range dimensions and preserve two-dimensional grouped Excel helper ranges.
+- [ ] Continue the formula semantics audit: remaining operator and conditional-function coercion, dates, other function argument counts and mismatched `SUMIF` dimensions.
+- [ ] Verify framework integration and the optional stylesheet across Angular, Aurelia, React and Vue; do not assume Vanilla results cover wrappers.
+- [ ] Verify package exports, Sass customization, theme builds, clean package build/install and release-version alignment; remove stale MVP/demo descriptions from current-facing docs.
+- [ ] Review overlapping/clipped reference highlights, virtualization and cleanup; decide whether overlapping-reference color policy needs changes. Evaluate editor validation and error details only if needed.
 - [x] Compare Syncfusion's formula reference and add `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases, with Excel export translation.
 - [x] Distinguish `#CIRCREF!`, `#PARSE!`, missing references and custom-function failures; document Excel export behavior.
 - [x] Validate fixed argument counts for `IF`, `POWER`, random/date functions and `NA`; align `POWER` and `^` error results.
 - [x] Support custom and read-only formula columns independently of Formula Editor; document and test `onBeforeEditCell` cancellation.
-- [ ] Decide whether an optional strict selection-prerequisite mode is needed.
+- [x] Decide whether an optional strict selection-prerequisite mode is needed: retain warning-only behavior and CSS fallback.
 - [ ] **Last task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached.
 
 ## Latest Update: Optional Package Styling (2026-11-14)
@@ -401,7 +424,7 @@ Why this mattered:
 - Added FormulaService regressions for changed live-formula precedence and both FormulaValueFormatter row-resolution paths (`DataView.getItem()` and the item-array fallback).
 - The full unit suite passes with 218 files and 6,022 tests; Formula plugin coverage is 100% statements/functions/lines and 93.52% branches.
 
-### Cypress Coverage Audit (2026-08-21)
+### Historical Cypress Coverage Audit (2026-08-21)
 
 The Example 47 Cypress spec now covers formula editing and persistence, reference insertion with autocomplete, token/grid colors, incomplete references, clipboard text, formula evaluation, custom-function cell behavior, numeric static-value series inference, runtime stability after column reorder/hide, and reordered Excel formulas with the dataset row offset.
 

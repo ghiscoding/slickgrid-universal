@@ -13,10 +13,10 @@ export interface FormulaExcelExportContext {
   groupedRowPositions?: ReadonlyMap<string, number>;
   /** Number of structural columns preceding exported data columns. */
   groupedColumnOffset?: number;
-  /** Allocate an ordered helper range for references that cannot form a worksheet rectangle. */
-  registerFormulaRange?: (references: string[]) => string;
-  /** Allocate a range of 0/1 values indicating whether each referenced cell is nonempty. */
-  registerFormulaPresenceRange?: (references: string[]) => string;
+  /** Allocate an ordered helper range; width defaults to one and preserves the original rectangle shape. */
+  registerFormulaRange?: (references: string[], width?: number) => string;
+  /** Allocate a similarly shaped range of 0/1 values indicating whether each referenced cell is nonempty. */
+  registerFormulaPresenceRange?: (references: string[], width?: number) => string;
 }
 
 export interface FormulaExcelDefinedNameExport {

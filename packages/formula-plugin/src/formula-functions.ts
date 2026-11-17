@@ -6,10 +6,11 @@ const referenceTag: unique symbol = Symbol('formula reference');
 export interface FormulaReferenceValue {
   readonly [referenceTag]: true;
   readonly value: unknown;
+  readonly row?: number;
 }
 
-export function formulaReference(value: unknown): FormulaReferenceValue {
-  return { [referenceTag]: true, value };
+export function formulaReference(value: unknown, row?: number): FormulaReferenceValue {
+  return { [referenceTag]: true, value, row };
 }
 
 export function isFormulaReference(value: unknown): value is FormulaReferenceValue {
@@ -63,35 +64,32 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
   };
   const SUMPRODUCT = (...args: unknown[]) => {
     if (!args.length) {
-      return 0;
+      return FORMULA_ERROR.VALUE;
     }
 
-    const arrays = args.map((arg) => toFormulaArray(arg).map((value) => toNumericFormulaValue(value)));
-    const maxLen = Math.max(...arrays.map((arr) => arr.length));
-    if (!maxLen || !Number.isFinite(maxLen)) {
-      return 0;
-    }
-
-    // Broadcast scalar args across array lengths to emulate Excel SUMPRODUCT behavior.
-    const normalizedArrays = arrays.map((arr) => {
-      if (arr.length === maxLen) {
-        return arr;
-      }
-      if (arr.length === 1) {
-        return Array.from({ length: maxLen }, () => arr[0]);
-      }
-      return arr;
+    const arrays = args.map((arg) => {
+      const values = toFormulaArray(arg);
+      const first = values[0];
+      const row = isFormulaReference(first) ? first.row : undefined;
+      const width = row === undefined ? 1 : values.findIndex((value) => isFormulaReference(value) && value.row !== row);
+      return { values, width: width === -1 ? values.length : width };
     });
+    const first = arrays[0];
+    if (arrays.some((array) => array.values.length !== first.values.length || array.width !== first.width)) {
+      return FORMULA_ERROR.VALUE;
+    }
 
     let sum = 0;
-    for (let i = 0; i < maxLen; i++) {
+    for (let i = 0; i < first.values.length; i++) {
       let product = 1;
-      for (const arr of normalizedArrays) {
-        if (i >= arr.length) {
-          continue;
-        }
-        // Values are normalized through toNumericFormulaValue() above, so each present entry is numeric.
-        product *= arr[i];
+      for (let j = 0; j < arrays.length; j++) {
+        const value = unwrapFormulaReference(arrays[j].values[i]);
+        product *=
+          typeof value === 'number' && Number.isFinite(value)
+            ? value
+            : !Array.isArray(args[j]) && !isFormulaReference(args[j]) && typeof value === 'boolean'
+              ? Number(value)
+              : 0;
       }
       sum += product;
     }
@@ -344,25 +342,6 @@ function aggregateNumbers(args: unknown[]): number[] | string {
     return true;
   };
   return args.every((arg) => visit(arg)) ? values : FORMULA_ERROR.VALUE;
-}
-
-function toNumericFormulaValue(value: unknown): number {
-  value = unwrapFormulaReference(value);
-  if (value === null || value === undefined || value === '') {
-    return 0;
-  }
-  if (typeof value === 'number') {
-    return Number.isFinite(value) ? value : 0;
-  }
-  if (typeof value === 'boolean') {
-    return value ? 1 : 0;
-  }
-  if (typeof value === 'string') {
-    const trimmed = value.trim();
-    const numeric = Number(trimmed);
-    return Number.isFinite(numeric) ? numeric : 0;
-  }
-  return 0;
 }
 
 function isNumericFormulaValue(value: unknown): boolean {

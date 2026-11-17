@@ -1,10 +1,14 @@
 # Formula plugin completion audit
 
-Audited 2026-11-14 against the current working tree. This is an implementation plan, not a claim of completed support. The prior Chrome grouping reproduction and passing tests are recorded in `FORMULA_EDITOR_PROGRESS.md`; this audit did not rerun them. Competitor comparisons below refer to the documentation supplied in the conversation.
+## Editor integration audit update
+
+Retain the Formula Editor's autocomplete: the existing `autocompleter` API requires an input or textarea, while the formula editor needs a tokenized contenteditable element and caret-aware replacement. An adapter has no demonstrated LOC or bundle-size advantage. Keep selection prerequisites warning-only; formula evaluation and CSS reference highlighting remain usable without a compatible selection model. Current browser gaps are tracked in `FORMULA_EDITOR_PROGRESS.md`.
+
+Original audit: 2026-11-14. Current status and validation are tracked in `FORMULA_EDITOR_PROGRESS.md`; the numbered audit sections below are historical unless explicitly marked as remaining work. Competitor comparisons refer to documentation supplied in the conversation.
 
 ## Grouping implementation update
 
-Grouped editing, stable range membership, drag-fill, formula-aware aggregation and mapped Excel export are implemented. Disjoint ranges use a helper worksheet, with direct `COUNTA` arguments translated to exclude blank source cells; LibreOffice recalculation verified this case. Formula snapshots preserve absolute flags through JSON. Custom Excel functions receive empty strings for blank helper cells, and omitted dependencies export as `#REF!`. Grid State/Preset integration remains a separate task. The original audit below is retained for context; its earlier descriptions of endpoint-only ranges and missing grouped export are historical.
+Grouped editing, stable range membership, drag-fill, formula-aware aggregation and mapped Excel export are implemented. Disjoint ranges use a helper worksheet, with direct `COUNTA` arguments translated to exclude blank source cells; LibreOffice recalculation verified this case. Formula snapshots preserve absolute flags through JSON. Custom Excel functions receive empty strings for blank helper cells, and omitted dependencies export as `#REF!`. Grid State, data and formula snapshots are persisted separately, as described below.
 
 ## Hidden column audit update
 
@@ -16,7 +20,7 @@ The formula service provides versioned, atomic `getFormulaStoreSnapshot` / `setF
 
 ## Custom editor and read-only update
 
-Formula calculation and the existing formatter pipeline now remain active when a column uses a custom editor or automatic Formula Editor assignment is disabled. Custom editor commits synchronize the formula store; cell changes trigger a coalesced post-commit refresh. Column replacement and disposal preserve custom editors and formatting. Read-only cells are supported through `onBeforeEditCell`; formatter styling must reflect the application's own permission rule. Runtime custom-function autocomplete and registration behavior remain separate follow-up work. Earlier editor-lifecycle findings below are retained as historical context.
+Formula calculation and the existing formatter pipeline now remain active when a column uses a custom editor or automatic Formula Editor assignment is disabled. Custom editor commits synchronize the formula store; cell changes trigger a coalesced post-commit refresh. Column replacement and disposal preserve custom editors and formatting. Read-only cells are supported through `onBeforeEditCell`; formatter styling must reflect the application's own permission rule. Runtime custom-function behavior is addressed in the update below.
 
 ## Runtime custom function update
 
@@ -26,7 +30,11 @@ Registration, replacement and removal now clear evaluation memoization and refre
 
 Complete per-cell formulas, stable references, editing, drag-fill, persistence, and native Excel export, including grouping as requested. Treat calculated columns as a separate package. Do not make every competitor feature a release requirement.
 
-Recommended semantics: references retain record identity when the view changes. Group headers and totals are structural rows, not formula data cells. Filtering/collapsing hides referenced records without deleting their values. Deleted records produce a reference error. These are recommended implementation defaults, not behavior already implemented.
+Implemented semantics retain referenced record identity when the view changes. Group headers and totals are structural rows, not formula data cells. Filtering/collapsing hides referenced records without deleting their values. Deleted records produce a reference error.
+
+## Historical audit details
+
+Sections 1–4 describe the original findings and acceptance criteria; they are retained for context, not as a current to-do list. See the progress checklist for completed work and remaining decisions.
 
 ## 1. Reference model and grouping — highest priority
 
@@ -74,18 +82,18 @@ Recommended semantics: references retain record identity when the view changes. 
 
 **Done when:** destroy/recreate and save/restore preserve results, `$` markers, ranges and subsequent drag-fill under different column order, grouping and filtering. Document the round trip with a runnable example.
 
-## 5. Parser and function semantics
+## 5. Parser and function semantics — current follow-up
 
 The registry contains the built-in names in the supplied AG Grid reference, plus `SUMPRODUCT` and `NA`; that is name coverage, not semantic equivalence. Existing tests now consistently expect `#VALUE!` for both ASCII and Unicode scalar-times-range shorthand. The old progress note about conflicting tests is historical.
 
-**Required correctness audit:** quoted literals containing A1-like text, escaped IDs, error propagation, operator precedence, negative powers, lazy `IF` evaluation, coercion and blank handling, date arithmetic, wildcard criteria, argument counts and mismatched range dimensions. The evaluator still performs regex substitutions; test that strings cannot be interpreted as references or operators. Prefer shared token parsing if reproductions show inconsistencies.
+**Remaining correctness audit:** operator and conditional-function coercion, dates, remaining function argument counts, and mismatched `SUMIF` ranges. Quoted text, error propagation, precedence, lazy `IF`, wildcard criteria and `SUMPRODUCT` dimensions have targeted coverage; see the progress checklist for details. The evaluator still performs regex substitutions; investigate shared token parsing if further reproductions justify it.
 
-**Compatibility additions:** consider `ABS`, `ROUND`, `MOD`, `SQRT`, aliases `RANDOM`/`RAN`/`CONCATENATE`, and distinct circular/parse errors. These are additive polish, not prerequisites for grouping. AG Grid additionally documents error tooltips and optional validation; our editor's `validate()` currently always succeeds. Treat validation and detailed error messages as separate work with explicit acceptance criteria.
+**Compatibility additions:** `ABS`, `ROUND`, `MOD`, `SQRT`, aliases `RANDOM`/`RAN`/`CONCATENATE`, and distinct circular/parse errors are implemented. AG Grid additionally documents error tooltips and optional validation; our editor's `validate()` currently always succeeds. Evaluate validation and detailed error messages separately if needed.
 
 ## 6. Browser, framework and packaging completion
 
-- Extend the current Example 48 suite with formula drag-fill (relative/absolute, filtered/grouped rows), range shrink/upward drag, fallback selection highlights, raw stable-reference entry, grouped export and persistence. Preserve serial suite state.
-- Confirm hidden columns use consistent logical letters in headers, mouse selection and highlights. The current code uses full column lists in several paths, while selection APIs use visible indexes; verify this interaction instead of relying on successful numeric evaluation alone.
+- Fill remaining Example 48 browser gaps listed in the progress checklist, including the new grouped `SUMPRODUCT` workbook regression. Drag-fill, raw stable-reference entry, hidden columns, grouping and persistence already have browser tests. Preserve serial suite state.
+- Hidden-column logical letters, selection and export have targeted coverage; investigate further only if a new regression is found.
 - Test overlapping references, clipped ranges, virtualization and cleanup. The current range CSS hash lets a later reference overwrite an earlier color on the same cell; document or improve that policy.
 - Smoke-test Angular, React, Vue and Aurelia integration with the optional stylesheet. Current formula demo coverage is Vanilla; do not imply framework validation from that alone.
 - Verify package exports, Sass customization, all five CSS builds, clean install/build and release-version alignment (`formula-plugin/package.json` currently says 10.9.0). Remove stale MVP claims and old example numbers from current-facing docs; retain historical audit entries as history.
@@ -93,7 +101,7 @@ The registry contains the built-in names in the supplied AG Grid reference, plus
 
 ## Deferred enhancements
 
-Separate calculated-columns package; double-click fill to adjacent data boundary; row-number whole-row reference picking; colored per-reference handles; swapping autocomplete libraries; external formula data-source adapter; optional strict selection prerequisites. Evaluate these independently after correctness and persistence are stable.
+Double-click fill to an adjacent data boundary (distinct from implemented drag-to-fill); row-number whole-row reference picking; colored per-reference handles; external formula data-source adapter; optional editor validation and detailed error messages. These are possible enhancements, not automatic release requirements. Autocompleter replacement and strict selection prerequisites were evaluated and rejected for now. Evaluate a separate calculated-columns package **last**, and inform the user when it is reached.
 
 ## Delivery order
 

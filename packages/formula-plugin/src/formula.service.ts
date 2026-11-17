@@ -23,7 +23,13 @@ import {
   unwrapFormulaReference,
   type FormulaCallback,
 } from './formula-functions.js';
-import { compactFormulaRange, expandFormulaRanges, mapFormulaRanges, rewriteExcelHelperCounta } from './formula-range.js';
+import {
+  compactFormulaRange,
+  expandFormulaRanges,
+  getFormulaRangeWidth,
+  mapFormulaRanges,
+  rewriteExcelHelperCounta,
+} from './formula-range.js';
 import {
   buildFormulaReferenceCssHash,
   FORMULA_MAX_REFERENCE_CELLS,
@@ -849,10 +855,13 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       if (contiguous) {
         return contiguous;
       }
-      const helper = context.registerFormulaRange?.(members) ?? FORMULA_ERROR.REF;
+      const width = getFormulaRangeWidth(members);
+      const helper =
+        (width > 1 ? context.registerFormulaRange?.(members, width) : context.registerFormulaRange?.(members)) ?? FORMULA_ERROR.REF;
       if (helper !== FORMULA_ERROR.REF) {
         helpers.set(helper, () => {
-          const presence = context.registerFormulaPresenceRange?.(members);
+          const presence =
+            width > 1 ? context.registerFormulaPresenceRange?.(members, width) : context.registerFormulaPresenceRange?.(members);
           if (presence) {
             return presence === FORMULA_ERROR.REF ? presence : `SUM(${presence})`;
           }
@@ -992,7 +1001,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
     let firstErrorCode: FormulaErrorCode | undefined;
     const references = new Map<string, unknown>();
     let referenceSequence = 0;
-    const referenceLiteral = (value: unknown) => {
+    const referenceLiteral = (value: unknown, row?: number) => {
       let name: string;
       do {
         name = `__FORMULA_CELL_${referenceSequence++}`;
@@ -1005,7 +1014,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
             : typeof value === 'object' && value !== null && !(value instanceof Date)
               ? String(value)
               : value;
-      references.set(name, formulaReference(normalizedValue));
+      references.set(name, formulaReference(normalizedValue, row));
       return name;
     };
 
@@ -1020,7 +1029,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (isFormulaErrorCode(errorInRange) && !firstErrorCode) {
           firstErrorCode = errorInRange;
         }
-        return `[${rangeValues.map(referenceLiteral).join(',')}]`;
+        const width = Math.abs(getExcelColumnIndexByName(startCol.toUpperCase()) - getExcelColumnIndexByName(endCol.toUpperCase())) + 1;
+        const firstRow = Math.min(Number(startRow), Number(endRow));
+        return `[${rangeValues.map((value, index) => referenceLiteral(value, firstRow + Math.floor(index / width))).join(',')}]`;
       }
     );
 
@@ -1033,9 +1044,9 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (isFormulaErrorCode(value) && !firstErrorCode) {
           firstErrorCode = value;
         }
-        return value;
+        return referenceLiteral(value, cell?.row);
       });
-      return `[${values.map(referenceLiteral).join(',')}]`;
+      return `[${values.join(',')}]`;
     }).replace(
       /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?<![A-Za-z0-9_])\$?([A-Z]{1,3})\$?(\d+)(?![A-Za-z0-9_])/gi,
       (match, colName: string, rowNumber: string) => {

@@ -76,17 +76,19 @@ describe('createFormulaFunctionRegistry', () => {
     expect(registry.get('POWER')?.({}, 2)).toBe(FORMULA_ERROR.VALUE);
   });
 
-  it('should evaluate SUMPRODUCT with scalar broadcast and array lengths', () => {
+  it('evaluates SUMPRODUCT using matching dimensions and numeric values', () => {
     const registry = createFormulaFunctionRegistry(new Map());
 
-    expect(registry.get('SUMPRODUCT')?.([1, 2, 3], 10)).toBe(60);
+    expect(registry.get('SUMPRODUCT')?.([1, 2, 3], 10)).toBe(FORMULA_ERROR.VALUE);
     expect(registry.get('SUMPRODUCT')?.([1, 2], [3, 4])).toBe(11);
-    expect(registry.get('SUMPRODUCT')?.([2, 3, 4], [10, 20])).toBe(84);
+    expect(registry.get('SUMPRODUCT')?.([2, 3, 4], [10, 20])).toBe(FORMULA_ERROR.VALUE);
     expect(registry.get('SUMPRODUCT')?.([], [])).toBe(0);
     expect(registry.get('SUMPRODUCT')?.([1, undefined], [2, 3])).toBe(2);
-    expect(registry.get('SUMPRODUCT')?.([[1], []], [2, 3])).toBe(5);
-    expect(registry.get('SUMPRODUCT')?.([true, false, '2', 'bad', {}], [1, 1, 1, 1, 1])).toBe(3);
-    expect(registry.get('SUMPRODUCT')?.()).toBe(0);
+    expect(registry.get('SUMPRODUCT')?.([[1], []], [2, 3])).toBe(FORMULA_ERROR.VALUE);
+    expect(registry.get('SUMPRODUCT')?.([true, false, '2', 'bad', {}], [1, 1, 1, 1, 1])).toBe(0);
+    expect(registry.get('SUMPRODUCT')?.(true, 2)).toBe(2);
+    expect(registry.get('SUMPRODUCT')?.('2', 2)).toBe(0);
+    expect(registry.get('SUMPRODUCT')?.()).toBe(FORMULA_ERROR.VALUE);
   });
 
   it('should evaluate IF and concatenation helpers', () => {

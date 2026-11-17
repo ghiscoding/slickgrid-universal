@@ -134,6 +134,22 @@ describe('Example 48 - Formula Service', () => {
     cy.get(cell(0, 4)).should('contain', '$8.88');
   });
 
+  it('should accept stable row and column references and reopen them as A1 references', () => {
+    cy.reload();
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input')
+      .click()
+      .type('{selectall}=REF(COLUMN("price"),ROW("1"))*REF(COLUMN("qty"),ROW("1")){enter}', { force: true });
+    cy.get(cell(0, 4)).should('contain', '$8.88').dblclick();
+    cy.get('.formula-editor-input').should('have.text', '=C1*D1').type('{enter}', { force: true });
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.get('[data-test="export-excel-btn"]').click();
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 2 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[1][3]).to.equal('B3*C3');
+    });
+  });
+
   it('should show distinct formula errors and export circular references', () => {
     cy.reload();
     cy.get(cell(0, 4)).dblclick();
@@ -773,6 +789,28 @@ describe('Example 48 - Formula Service', () => {
     cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 15 }).then((xlsx: any) => {
       expect(xlsx.formulaRows[9][4]).to.equal("SUMIF('Formula References'!$A$1:$A$3,\"a*\",'Formula References'!$A$4:$A$6)");
       expect(xlsx.formulaRows[9][7]).to.equal('COUNTIF(\'Formula References\'!$A$1:$A$3,"A*")');
+    });
+  });
+
+  it('should preserve SUMPRODUCT dimensions in grouped Excel helper ranges', () => {
+    cy.reload();
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SUMPRODUCT(C1:D3,C1:D3){enter}', { force: true });
+    cy.get(cell(0, 4)).should('contain', '$57.03');
+    cy.get(cell(0, 7)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SUMPRODUCT(C1:D2,C1:C4){enter}', { force: true });
+    cy.get(cell(0, 7)).should('contain', '#VALUE!');
+    cy.get('[data-test="group-by-btn"]').click();
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.get('[data-test="export-excel-btn"]').click();
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 15 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[9][4]).to.equal("SUMPRODUCT('Formula References'!$A$1:$B$3,'Formula References'!$A$1:$B$3)");
+      expect(xlsx.additionalSheetFormulaRows[0].slice(0, 3)).to.deep.equal(
+        [11, 12, 4].map((row) =>
+          ['C', 'D'].map((col) => `IF(ISBLANK('Grocery List Formula Service'!${col}${row}),"",'Grocery List Formula Service'!${col}${row})`)
+        )
+      );
     });
   });
 

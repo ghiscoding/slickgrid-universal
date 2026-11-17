@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { compactFormulaRange, expandFormulaRanges, mapFormulaRanges, rewriteExcelHelperCounta } from '../formula-range.js';
+import { compactFormulaRange, expandFormulaRanges, getFormulaRangeWidth, mapFormulaRanges, rewriteExcelHelperCounta } from '../formula-range.js';
 
 describe('stable formula ranges', () => {
   it('captures rectangles in row-major order with absolute flags and skips structural rows', () => {
@@ -26,6 +26,14 @@ describe('stable formula ranges', () => {
     expect(compactFormulaRange(['A1', 'B2'])).toBeUndefined();
     expect(compactFormulaRange(['#REF!'])).toBeUndefined();
     expect(compactFormulaRange(['A1', 'B2', 'A2', 'B2'])).toBeUndefined();
+  });
+
+  it('retains row-major width when references become disjoint or reordered', () => {
+    expect(getFormulaRangeWidth([])).toBe(1);
+    expect(getFormulaRangeWidth(['#REF!'])).toBe(1);
+    expect(getFormulaRangeWidth(['C8', 'A8'])).toBe(2);
+    expect(getFormulaRangeWidth(['C8', 'A8', 'C2', 'A2'])).toBe(2);
+    expect(getFormulaRangeWidth(['C8', 'C2'])).toBe(1);
   });
 
   it('rewrites only direct helper ranges in COUNTA while preserving nested arguments and quoted text', () => {

@@ -872,8 +872,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       rowIds: this._formulaRowIds,
       groupedRowPositions: this._hasGroupedItems ? this._formulaGroupedRows : undefined,
       groupedColumnOffset: this._hasGroupedItems ? 1 : undefined,
-      registerFormulaRange: (references) => this.registerFormulaRange(references),
-      registerFormulaPresenceRange: (references) => this.registerFormulaRange(references, true),
+      registerFormulaRange: (references, width) => this.registerFormulaRange(references, false, width),
+      registerFormulaPresenceRange: (references, width) => this.registerFormulaRange(references, true, width),
     });
 
     if (!formula && !this._hasGroupedItems && this._formulaProvider.hasFormula?.(rowId, columnDef.id)) {
@@ -888,8 +888,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   /** Keep disjoint references in one range argument, including for SUMIF and custom functions. */
-  protected registerFormulaRange(references: string[], presence = false): string {
-    const key = `${presence ? 'presence:' : 'values:'}${references.join(',')}`;
+  protected registerFormulaRange(references: string[], presence = false, width = 1): string {
+    const key = `${presence ? 'presence:' : 'values:'}${width}:${references.join(',')}`;
     const cached = this._formulaRangeCache.get(key);
     if (cached) {
       return cached;
@@ -903,18 +903,28 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       this._formulaRangeSheet = this._workbook.createWorksheet({ name });
     }
     const sheet = this._formulaRangeSheet;
-    if (sheet.data.length + references.length > 1048576) {
+    const height = references.length / width;
+    if (
+      !Number.isInteger(width) ||
+      width < 1 ||
+      width > 16384 ||
+      !Number.isInteger(height) ||
+      height < 1 ||
+      sheet.data.length + height > 1048576
+    ) {
       return '#REF!';
     }
     const firstRow = sheet.data.length + 1;
     const sourceName = this._sheet.name.replace(/'/g, "''");
-    for (const reference of references) {
-      const source = `'${sourceName}'!${reference}`;
-      sheet.data.push([
-        { value: presence ? `--NOT(ISBLANK(${source}))` : `IF(ISBLANK(${source}),"",${source})`, metadata: { type: 'formula' } },
-      ]);
+    for (let row = 0; row < height; row++) {
+      sheet.data.push(
+        references.slice(row * width, (row + 1) * width).map((reference) => {
+          const source = `'${sourceName}'!${reference}`;
+          return { value: presence ? `--NOT(ISBLANK(${source}))` : `IF(ISBLANK(${source}),"",${source})`, metadata: { type: 'formula' } };
+        })
+      );
     }
-    const range = `'${sheet.name}'!$A$${firstRow}:$A$${sheet.data.length}`;
+    const range = `'${sheet.name}'!$A$${firstRow}:$${this.getExcelColumnNameByIndex(width)}$${sheet.data.length}`;
     this._formulaRangeCache.set(key, range);
     return range;
   }
