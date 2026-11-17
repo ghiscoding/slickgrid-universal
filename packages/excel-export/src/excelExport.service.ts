@@ -873,6 +873,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       groupedRowPositions: this._hasGroupedItems ? this._formulaGroupedRows : undefined,
       groupedColumnOffset: this._hasGroupedItems ? 1 : undefined,
       registerFormulaRange: (references) => this.registerFormulaRange(references),
+      registerFormulaPresenceRange: (references) => this.registerFormulaRange(references, true),
     });
 
     if (!formula && !this._hasGroupedItems && this._formulaProvider.hasFormula?.(rowId, columnDef.id)) {
@@ -887,8 +888,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   /** Keep disjoint references in one range argument, including for SUMIF and custom functions. */
-  protected registerFormulaRange(references: string[]): string {
-    const key = references.join(',');
+  protected registerFormulaRange(references: string[], presence = false): string {
+    const key = `${presence ? 'presence:' : 'values:'}${references.join(',')}`;
     const cached = this._formulaRangeCache.get(key);
     if (cached) {
       return cached;
@@ -909,7 +910,9 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     const sourceName = this._sheet.name.replace(/'/g, "''");
     for (const reference of references) {
       const source = `'${sourceName}'!${reference}`;
-      sheet.data.push([{ value: `IF(ISBLANK(${source}),"",${source})`, metadata: { type: 'formula' } }]);
+      sheet.data.push([
+        { value: presence ? `--NOT(ISBLANK(${source}))` : `IF(ISBLANK(${source}),"",${source})`, metadata: { type: 'formula' } },
+      ]);
     }
     const range = `'${sheet.name}'!$A$${firstRow}:$A$${sheet.data.length}`;
     this._formulaRangeCache.set(key, range);

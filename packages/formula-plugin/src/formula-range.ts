@@ -69,8 +69,8 @@ export function compactFormulaRange(members: string[]): string | undefined {
   return `${members[0]}:${members[members.length - 1]}`;
 }
 
-/** Excel counts formulas returning an empty string in COUNTA; helper ranges need a value comparison instead. */
-export function rewriteExcelHelperCounta(formula: string, helperRanges: ReadonlySet<string>): string {
+/** Rewrite COUNTA of helper ranges using source-cell presence, including formulas returning empty text. */
+export function rewriteExcelHelperCounta(formula: string, helperRanges: ReadonlyMap<string, () => string>): string {
   let output = '';
   let index = 0;
   while (index < formula.length) {
@@ -133,7 +133,7 @@ export function rewriteExcelHelperCounta(formula: string, helperRanges: Readonly
     index++;
     const terms = args.map((arg) => {
       const trimmed = arg.trim();
-      return helperRanges.has(trimmed) ? `SUMPRODUCT(--(${trimmed}<>""))` : `COUNTA(${rewriteExcelHelperCounta(arg, helperRanges)})`;
+      return helperRanges.get(trimmed)?.() ?? `COUNTA(${rewriteExcelHelperCounta(arg, helperRanges)})`;
     });
     output += args.some((arg) => helperRanges.has(arg.trim()))
       ? `(${terms.join('+')})`

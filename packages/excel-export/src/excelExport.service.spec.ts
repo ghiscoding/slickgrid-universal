@@ -2880,7 +2880,8 @@ describe('ExcelExportService', () => {
       service.init(gridStub, container);
       const svc = service as any;
       const provider = {
-        getExcelFormula: ({ registerFormulaRange }: any) => `SUM(${registerFormulaRange(['B4', 'B8'])})`,
+        getExcelFormula: ({ registerFormulaRange, registerFormulaPresenceRange }: any) =>
+          `SUM(${registerFormulaRange(['B4', 'B8'])})+SUM(${registerFormulaPresenceRange(['B4', 'B8'])})`,
       };
       vi.spyOn(svc, 'getDataOutputAsync').mockImplementation(() => {
         svc._workbook.addWorksheet(svc._workbook.createWorksheet({ name: 'Existing' }));
@@ -2889,6 +2890,7 @@ describe('ExcelExportService', () => {
         svc._formulaRowIds = ['a'];
         const formula = svc.getCellFormulaForExcel({ id: 'a' }, { id: 'value' }, 0);
         expect(svc.registerFormulaRange(['B4', 'B8'])).toBe("'Formula References 2'!$A$1:$A$2");
+        expect(svc.registerFormulaRange(['B4', 'B8'], true)).toBe("'Formula References 2'!$A$3:$A$4");
         return Promise.resolve([[{ value: formula, metadata: { type: 'formula' } }]]);
       });
       await service.exportToExcel({ ...mockExportExcelOptions, sheetName: 'Formula References', useStreamingExport: false });
@@ -2896,10 +2898,12 @@ describe('ExcelExportService', () => {
       expect(svc._formulaRangeSheet.data).toEqual([
         [{ value: `IF(ISBLANK('Formula References'!B4),"",'Formula References'!B4)`, metadata: { type: 'formula' } }],
         [{ value: `IF(ISBLANK('Formula References'!B8),"",'Formula References'!B8)`, metadata: { type: 'formula' } }],
+        [{ value: `--NOT(ISBLANK('Formula References'!B4))`, metadata: { type: 'formula' } }],
+        [{ value: `--NOT(ISBLANK('Formula References'!B8))`, metadata: { type: 'formula' } }],
       ]);
       svc._sheet.name = "User's data";
-      expect(svc.registerFormulaRange(['C9'])).toBe("'Formula References 2'!$A$3:$A$3");
-      expect(svc._formulaRangeSheet.data[2][0].value).toBe(`IF(ISBLANK('User''s data'!C9),"",'User''s data'!C9)`);
+      expect(svc.registerFormulaRange(['C9'])).toBe("'Formula References 2'!$A$5:$A$5");
+      expect(svc._formulaRangeSheet.data[4][0].value).toBe(`IF(ISBLANK('User''s data'!C9),"",'User''s data'!C9)`);
       svc._formulaRangeSheet.data.length = 1048576;
       expect(svc.registerFormulaRange(['Z99'])).toBe('#REF!');
       service.dispose();

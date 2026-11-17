@@ -665,9 +665,46 @@ describe('Example 48 - Formula Service', () => {
     cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 15 }).then((xlsx: any) => {
       expect(xlsx.formulaRows[9][4]).to.equal('SUM(C11:C12)');
       expect(xlsx.formulaRows[10][4]).to.equal("SUM('Formula References'!$A$1:$A$3)");
-      expect(xlsx.formulaRows[2][4]).to.equal('(SUMPRODUCT(--(\'Formula References\'!$A$1:$A$3<>"")))');
+      expect(xlsx.formulaRows[2][4]).to.equal("(SUM('Formula References'!$A$4:$A$6))");
       expect(xlsx.additionalSheetFormulaRows[0].slice(0, 3).map((row: string[]) => row[0])).to.deep.equal(
         [11, 12, 4].map((row) => `IF(ISBLANK('Grocery List Formula Service'!C${row}),"",'Grocery List Formula Service'!C${row})`)
+      );
+      expect(xlsx.additionalSheetFormulaRows[0].slice(3, 6).map((row: string[]) => row[0])).to.deep.equal(
+        [11, 12, 4].map((row) => `--NOT(ISBLANK('Grocery List Formula Service'!C${row}))`)
+      );
+    });
+  });
+
+  it('should export grouped COUNTA with blank and empty-formula source cells', () => {
+    cy.reload();
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=""{enter}', { force: true });
+    cy.get(cell(1, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}{backspace}{enter}', { force: true });
+    cy.get(cell(2, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=5{enter}', { force: true });
+    cy.get(cell(0, 6)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=COUNTBLANK(E1:E3){enter}', { force: true });
+    cy.get(cell(0, 7)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=COUNTA(E1:E3){enter}', { force: true });
+    cy.get(cell(0, 8)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=AVERAGE(E1:E3){enter}', { force: true });
+    cy.get(cell(0, 6)).should('contain', '$2.00');
+    cy.get(cell(0, 7)).should('contain', '$2.00');
+    cy.get(cell(0, 8)).should('contain', '$5.00');
+    cy.get('[data-test="group-by-btn"]').click();
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.task('clearXlsxDownloads', { downloadsFolder });
+    cy.get('[data-test="export-excel-btn"]').click();
+    cy.task('readLatestXlsxExport', { downloadsFolder, timeoutMs: 15000, maxDataRows: 15 }).then((xlsx: any) => {
+      expect(xlsx.formulaRows[9][4]).to.equal('""');
+      expect(xlsx.formulaRows[10][4]).to.be.oneOf(['', null, undefined]);
+      expect(xlsx.formulaRows[2][4]).to.equal('5');
+      expect(xlsx.formulaRows[9][6]).to.equal("COUNTBLANK('Formula References'!$A$1:$A$3)");
+      expect(xlsx.formulaRows[9][7]).to.equal("(SUM('Formula References'!$A$4:$A$6))");
+      expect(xlsx.formulaRows[9][8]).to.equal("AVERAGE('Formula References'!$A$1:$A$3)");
+      expect(xlsx.additionalSheetFormulaRows[0].slice(3, 6).map((row: string[]) => row[0])).to.deep.equal(
+        [11, 12, 4].map((row) => `--NOT(ISBLANK('Grocery List Formula Service'!E${row}))`)
       );
     });
   });

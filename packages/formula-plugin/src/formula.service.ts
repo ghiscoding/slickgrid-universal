@@ -834,7 +834,7 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       return FORMULA_ERROR.REF;
     }
     mapped = this.applyFormulaReferenceAbsoluteFlags(this.buildStoreKey(context.rowId, context.columnId), mapped);
-    const helpers = new Set<string>();
+    const helpers = new Map<string, () => string>();
     const output = mapFormulaRanges(mapped, (members) => {
       if (members.includes(FORMULA_ERROR.REF)) {
         return FORMULA_ERROR.REF;
@@ -845,11 +845,22 @@ export class FormulaService implements ExternalResource, FormulaProvider {
       }
       const helper = context.registerFormulaRange?.(members) ?? FORMULA_ERROR.REF;
       if (helper !== FORMULA_ERROR.REF) {
-        helpers.add(helper);
+        helpers.set(helper, () => {
+          const presence = context.registerFormulaPresenceRange?.(members);
+          if (presence) {
+            return presence === FORMULA_ERROR.REF ? presence : `SUM(${presence})`;
+          }
+          const chunks: string[] = [];
+          for (let i = 0; i < members.length; i += 255) {
+            chunks.push(`COUNTA(${members.slice(i, i + 255).join(',')})`);
+          }
+          return chunks.join('+');
+        });
       }
       return helper;
     });
-    return this.normalizeFormulaSyntax(rewriteExcelHelperCounta(output, helpers));
+    const rewritten = this.normalizeFormulaSyntax(rewriteExcelHelperCounta(output, helpers));
+    return rewritten.length > 8192 ? FORMULA_ERROR.REF : rewritten;
   }
 
   /** Shift only direct A1 references left after stable references have been canonicalized. */

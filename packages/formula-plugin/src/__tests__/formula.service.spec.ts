@@ -800,12 +800,101 @@ describe('FormulaService', () => {
         groupedColumnOffset: 1,
         registerFormulaRange,
       } as any)
-    ).toBe(`(SUMPRODUCT(--('Formula References'!$A$1:$A$2<>"")))`);
+    ).toBe('(COUNTA(B8,B4))');
+    const registerFormulaPresenceRange = vi.fn().mockReturnValue("'Formula References'!$A$3:$A$4");
+    expect(
+      service.getExcelFormula({
+        rowId: 'a',
+        columnId: 'total',
+        columnIds: ['price', 'qty'],
+        rowIds: ['b', 'a'],
+        excelRowOffset: 2,
+        groupedRowPositions: new Map([
+          ['a', 8],
+          ['b', 4],
+        ]),
+        groupedColumnOffset: 1,
+        registerFormulaRange,
+        registerFormulaPresenceRange,
+      } as any)
+    ).toBe("(SUM('Formula References'!$A$3:$A$4))");
+    expect(registerFormulaPresenceRange).toHaveBeenCalledWith(['B8', 'B4']);
+    registerFormulaPresenceRange.mockReturnValue('#REF!');
+    expect(
+      service.getExcelFormula({
+        rowId: 'a',
+        columnId: 'total',
+        columnIds: ['price', 'qty'],
+        rowIds: ['b', 'a'],
+        excelRowOffset: 2,
+        groupedRowPositions: new Map([
+          ['a', 8],
+          ['b', 4],
+        ]),
+        groupedColumnOffset: 1,
+        registerFormulaRange,
+        registerFormulaPresenceRange,
+      } as any)
+    ).toBe('(#REF!)');
+    registerFormulaPresenceRange.mockReturnValue(undefined);
+    expect(
+      service.getExcelFormula({
+        rowId: 'a',
+        columnId: 'total',
+        columnIds: ['price', 'qty'],
+        rowIds: ['b', 'a'],
+        excelRowOffset: 2,
+        groupedRowPositions: new Map([
+          ['a', 8],
+          ['b', 4],
+        ]),
+        groupedColumnOffset: 1,
+        registerFormulaRange,
+        registerFormulaPresenceRange,
+      } as any)
+    ).toBe('(COUNTA(B8,B4))');
+    registerFormulaRange.mockReturnValue('H'.repeat(8200));
+    service.setFormula('a', 'total', '=SUM(A1:A2)');
+    expect(
+      service.getExcelFormula({
+        rowId: 'a',
+        columnId: 'total',
+        columnIds: ['price', 'qty'],
+        rowIds: ['b', 'a'],
+        excelRowOffset: 2,
+        groupedRowPositions: new Map([
+          ['a', 8],
+          ['b', 4],
+        ]),
+        groupedColumnOffset: 1,
+        registerFormulaRange,
+      } as any)
+    ).toBe('#REF!');
     service.setFormula('a', 'total', '=SUMIF(A1:A2,">5",B1:B2)');
     items.pop();
     expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['price', 'qty'], rowIds: ['a'], excelRowOffset: 2 } as any)).toBe(
       'SUMIF(#REF!,">5",#REF!)'
     );
+  });
+
+  it('chunks source references when a custom exporter does not provide presence ranges', () => {
+    const items = Array.from({ length: 260 }, (_, index) => ({ id: String(index), value: index }));
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => [{ id: 'value' }], getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    service.setFormula('0', 'total', '=COUNTA(A1:A260)');
+    const formula = service.getExcelFormula({
+      rowId: '0',
+      columnId: 'total',
+      columnIds: ['value'],
+      rowIds: items.map((item) => item.id),
+      excelRowOffset: 2,
+      groupedRowPositions: new Map(items.map((item, index) => [item.id, index * 2 + 2])),
+      registerFormulaRange: () => "'Formula References'!$A$1:$A$260",
+    } as any)!;
+    const chunks = [...formula.matchAll(/COUNTA\(([^)]*)\)/g)].map((match) => match[1].split(','));
+    expect(chunks.map((chunk) => chunk.length)).toEqual([255, 5]);
+    expect(chunks[0][0]).toBe('A2');
+    expect(chunks[1][4]).toBe('A520');
   });
 
   it('should preserve stable references when rows move and report missing references in evaluation and export', () => {

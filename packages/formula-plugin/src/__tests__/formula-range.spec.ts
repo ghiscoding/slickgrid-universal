@@ -30,11 +30,13 @@ describe('stable formula ranges', () => {
 
   it('rewrites only direct helper ranges in COUNTA while preserving nested arguments and quoted text', () => {
     const helper = "'Formula References'!$A$1:$A$3";
-    const helpers = new Set([helper]);
-    expect(rewriteExcelHelperCounta(`COUNTA(${helper},IF(A1=1,"a,b",""))`, helpers)).toBe(`(SUMPRODUCT(--(${helper}<>""))+COUNTA(IF(A1=1,"a,b","")))`);
-    expect(rewriteExcelHelperCounta(`IF(TRUE,COUNTA(${helper}),COUNTA(A1:A2))`, helpers)).toBe(`IF(TRUE,(SUMPRODUCT(--(${helper}<>""))),COUNTA(A1:A2))`);
+    const helpers = new Map([[helper, () => "SUM('Formula References'!$A$4:$A$6)"]]);
+    expect(rewriteExcelHelperCounta(`COUNTA(${helper},IF(A1=1,"a,b",""))`, helpers)).toBe(`(SUM('Formula References'!$A$4:$A$6)+COUNTA(IF(A1=1,"a,b","")))`);
+    expect(rewriteExcelHelperCounta(`IF(TRUE,COUNTA(${helper}),COUNTA(A1:A2))`, helpers)).toBe(`IF(TRUE,(SUM('Formula References'!$A$4:$A$6)),COUNTA(A1:A2))`);
     expect(rewriteExcelHelperCounta(`"COUNTA(${helper})"+MYCOUNTA(${helper})`, helpers)).toBe(`"COUNTA(${helper})"+MYCOUNTA(${helper})`);
     expect(rewriteExcelHelperCounta(`COUNTA(${helper}`, helpers)).toBe(`COUNTA(${helper}`);
-    expect(rewriteExcelHelperCounta(`COUNTA("a""b",'a''b'!A1,${helper})`, helpers)).toBe(`(COUNTA("a""b")+COUNTA('a''b'!A1)+SUMPRODUCT(--(${helper}<>"")))`);
+    expect(rewriteExcelHelperCounta(`COUNTA("a""b",'a''b'!A1,${helper})`, helpers)).toBe(
+      `(COUNTA("a""b")+COUNTA('a''b'!A1)+SUM('Formula References'!$A$4:$A$6))`
+    );
   });
 });

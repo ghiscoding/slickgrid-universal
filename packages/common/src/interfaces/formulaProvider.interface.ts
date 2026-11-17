@@ -15,6 +15,8 @@ export interface FormulaExcelExportContext {
   groupedColumnOffset?: number;
   /** Allocate an ordered helper range for references that cannot form a worksheet rectangle. */
   registerFormulaRange?: (references: string[]) => string;
+  /** Allocate a range of 0/1 values indicating whether each referenced cell is nonempty. */
+  registerFormulaPresenceRange?: (references: string[]) => string;
 }
 
 export interface FormulaExcelDefinedNameExport {

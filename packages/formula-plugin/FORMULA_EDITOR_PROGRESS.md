@@ -3,11 +3,16 @@
 Last updated: 2026-11-16
 Branch context: feat/cell-formula-plugin
 
+## Latest Update: Grouped Excel COUNTA (2026-11-16)
+- Disjoint range exports now allocate a deduplicated source-presence range for `COUNTA`, distinguishing a genuinely blank cell from a formula returning empty text without expanding large ranges into long worksheet formulas.
+- The optional export callback preserves compatibility with custom exporters; when it is absent, source references are counted directly in chunks. Formulas exceeding Excel's length limit return `#REF!` rather than an invalid workbook formula.
+- Added unit and Example 48 workbook regressions. LibreOffice recalculated an exported grouped workbook containing an empty-string formula, a blank cell and a numeric formula: `COUNTA` and `COUNTBLANK` both returned 2, and `AVERAGE` returned 5.
+
 ## Latest Update: Reference Types and Aggregates (2026-11-16)
 - Preserve reference provenance and values during evaluation. Aggregate functions distinguish referenced text, booleans and blanks from direct arguments; numeric text is no longer silently converted when read from a cell.
 - Distinguish a blank cell from a formula that returns empty text for single references and ranges. `COUNTA` and `COUNTBLANK` both count a formula-produced empty string; blank cells compare equal to zero or empty text.
 - Custom functions receive unwrapped reference values, preserving numeric strings, booleans and formula-produced empty strings. Added tests for mixed values, direct versus range arguments, references inside expressions, nested formulas and Excel export.
-- A grouped disjoint helper range cannot currently distinguish a blank source from a formula returning empty text, so exported `COUNTA` still excludes both. Track this Excel discrepancy below.
+- Follow-up: the grouped disjoint helper-range `COUNTA` discrepancy described in this audit was fixed in the update above.
 
 ## Latest Update: Blank Range Members (2026-11-16)
 - Preserve blank range members as `null` instead of zero, including stable and disjoint ranges. Count functions can distinguish blanks from zero; average, median, min, max and product ignore blank values. An average with no values returns `#DIV/0!`.
@@ -143,7 +148,7 @@ This checklist tracks outstanding work from the PR description and the audits be
 - [x] Fix arithmetic addition of numeric and nonnumeric text; retain `&` for concatenation.
 - [x] Preserve blank members in ranges for counting and aggregate functions, including stable references.
 - [x] Preserve single-cell and range reference types and formula-produced empty strings for `SUM`, `PRODUCT`, `MIN`, `MAX`, `AVERAGE`, `MEDIAN`, `COUNT`, `COUNTA`, and `COUNTBLANK`.
-- [ ] Fix grouped disjoint Excel `COUNTA` export for formulas returning empty text while still excluding truly blank source cells.
+- [x] Fix grouped disjoint Excel `COUNTA` export for formulas returning empty text while still excluding truly blank source cells.
 - [ ] Continue the formula semantics audit: remaining operator and conditional-function coercion, dates, wildcard criteria, argument counts and mismatched range dimensions.
 - [ ] Compare Syncfusion's formula reference with our registry: evaluate adding `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases. Our parser already supports the listed operators, including `%` and `^`; verify edge-case semantics separately.
 - [ ] Evaluate distinct `#CIRCREF!` and `#PARSE!` errors; circular references currently use `#REF!` and parser failures use `#ERROR!`.
