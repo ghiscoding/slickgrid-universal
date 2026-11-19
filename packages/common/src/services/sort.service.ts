@@ -132,6 +132,10 @@ export class SortService {
   }
 
   handleLocalOnSort(_e: SlickEventData, args: SingleColumnSort | MultiColumnSort): void {
+    // A resource can temporarily display its own row model and handle sorting itself.
+    if (typeof this._grid?.getData()?.sort !== 'function') {
+      return;
+    }
     // multiSort and singleSort are not exactly the same, but we want to structure it the same so that the `for` loop works the same,
     // and also to avoid having to rewrite the `for` loop in the sort, so we will make the singleSort an array of 1 object
     const sortColumns: Array<SingleColumnSort> = args.multiColumnSort
@@ -467,6 +471,9 @@ export class SortService {
     const datasetIdPropertyName = this._gridOptions.datasetIdPropertyName || 'id';
     const isTreeDataEnabled = this._gridOptions.enableTreeData || false;
     const dataView = grid.getData<SlickDataView>();
+    if (typeof dataView?.sort !== 'function') {
+      return;
+    }
     await this.pubSubService.publish('onBeforeSortChange', { sortColumns }, 0);
 
     if (grid && dataView) {

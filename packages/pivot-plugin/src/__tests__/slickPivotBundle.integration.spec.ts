@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SlickVanillaGridBundle } from '../../../vanilla-bundle/src/components/slick-vanilla-grid-bundle.js';
 import { SlickPivot } from '../slick.pivot.js';
 import { SlickPivotFieldList } from '../slick.pivotfieldlist.js';
@@ -26,6 +26,7 @@ describe('pivot external resources with the vanilla bundle', () => {
       ],
       {
         enableCellNavigation: true,
+        enableSorting: true,
         enableGridMenu: true,
         enableColumnPicker: true,
         enableHeaderMenu: true,
@@ -47,13 +48,18 @@ describe('pivot external resources with the vanilla bundle', () => {
     expect(bundle.slickGrid?.getData()).toBe(pivot.rowModel);
     const picker = bundle.extensionService.getExtensionInstanceByName('columnPicker');
     const menu = bundle.extensionService.getExtensionInstanceByName('gridMenu');
-    expect(picker.columns.map((column) => column.id)).toEqual(bundle.slickGrid.getColumns().map((column) => column.id));
-    expect(menu.columns.map((column) => column.id)).toEqual(bundle.slickGrid.getColumns().map((column) => column.id));
-    const valueColumn = bundle.slickGrid.getColumns()[1];
+    expect(picker.columns.map((column) => column.id)).toEqual(bundle.slickGrid!.getColumns().map((column) => column.id));
+    expect(menu.columns.map((column) => column.id)).toEqual(bundle.slickGrid!.getColumns().map((column) => column.id));
+    const valueColumn = bundle.slickGrid!.getColumns()[1];
+    const sourceSort = vi.spyOn(bundle.dataView!, 'sort');
+    bundle.slickGrid!.onSort.notify({ columnId: valueColumn.id, sortCol: valueColumn, sortAsc: false, multiColumnSort: false, grid: bundle.slickGrid! });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(sourceSort).not.toHaveBeenCalled();
+    expect(pivot.getSpec().sort?.some((sort) => sort.direction === 'desc')).toBe(true);
     bundle.extensionService.getExtensionInstanceByName('headerMenu').hideColumn(valueColumn);
     expect(menu.columns.find((column) => column.id === valueColumn.id)?.hidden).toBe(true);
-    bundle.slickGrid.updateColumnById(valueColumn.id, { hidden: false });
-    bundle.slickGrid.updateColumns();
+    bundle.slickGrid!.updateColumnById(valueColumn.id, { hidden: false });
+    bundle.slickGrid!.updateColumns();
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(bundle.slickGrid?.getPreHeaderPanel()?.querySelector('.slick-pivot-header-caption')).not.toBeNull();
     await pivot.setPivotMode(false);

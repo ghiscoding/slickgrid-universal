@@ -47,7 +47,9 @@ const initialSpec: Partial<PivotSpec> = {
   rows: ['region', 'country'],
   columns: ['orderDate.year'],
   filters: [{ field: 'channel' }],
-  values: [{ field: 'amount', aggregator: 'sum', numberFormat: { style: 'currency', currency: 'USD', maximumFractionDigits: 0 } }],
+  values: [
+    { field: 'amount', aggregator: 'sum', numberFormat: { locale: 'en-CA', style: 'currency', currency: 'USD', maximumFractionDigits: 0 } },
+  ],
 };
 
 function createSales(count: number): Sale[] {
