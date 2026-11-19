@@ -54,12 +54,14 @@ jobs:
       - name: Build Slickgrid-Universal packages (excludes frameworks)
         run: pnpm build:universal
 
-      # Keep the runner's system timezone consistent with the fixed EST used by the tests.
+      # Etc/GMT+5 is fixed UTC-5 (the legacy EST zoneinfo file may be absent).
       - name: Set unit test timezone
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
         run: |
-          sudo ln -sf /usr/share/zoneinfo/EST /etc/localtime
+          test -r /usr/share/zoneinfo/Etc/GMT+5
+          sudo ln -sf /usr/share/zoneinfo/Etc/GMT+5 /etc/localtime
           date '+%Z %z'
+          test "$(date +%z)" = -0500
 
       - name: Run Vitest unit tests
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
