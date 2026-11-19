@@ -54,6 +54,13 @@ jobs:
       - name: Build Slickgrid-Universal packages (excludes frameworks)
         run: pnpm build:universal
 
+      # Keep the runner's system timezone consistent with the fixed EST used by the tests.
+      - name: Set unit test timezone
+        if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
+        run: |
+          sudo ln -sf /usr/share/zoneinfo/EST /etc/localtime
+          date '+%Z %z'
+
       - name: Run Vitest unit tests
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
         run: pnpm test:coverage
