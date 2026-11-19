@@ -62,6 +62,24 @@ describe('SlickGrid unified pinning', () => {
     expect(slickGrid.getOptions().pinning?.rows).toEqual({ top: [0], bottom: [2] });
   });
 
+  it.each([false, true])('keeps cell widths after clearing column pinning (sticky rows=%s)', (stickyRows) => {
+    const slickGrid = createGrid({
+      fullWidthRows: true,
+      pinning: { columns: { left: ['a'] } },
+      ...(stickyRows ? { stickyRows: { top: [0] } } : {}),
+      devMode: { ownerNodeIndex: 0, containerClientWidth: 800 },
+    });
+    slickGrid.setOptions({ pinning: { columns: { left: [], right: [] } } });
+    const internals = slickGrid as any;
+    const rules = columns.map(() => ({ left: { style: document.createElement('div').style }, right: { style: document.createElement('div').style } }));
+    vi.spyOn(internals, 'getColumnCssRules').mockImplementation((index: number) => rules[index]);
+    internals.applyColumnWidths();
+    const width = internals.usesDockingRowRegions() ? internals.getDockingRenderedWidths().center : internals.canvasWidthL;
+    rules.forEach((rule) => {
+      expect(width - parseFloat(rule.left.style.left) - parseFloat(rule.right.style.right)).toBe(80);
+    });
+  });
+
   it.each([false, true])('cancels the left-pinned header separator with a negative inline margin (rtl=%s)', (rtl) => {
     const slickGrid = createGrid({ rtl, pinning: { columns: { left: ['a'] } } });
     const internals = slickGrid as any;

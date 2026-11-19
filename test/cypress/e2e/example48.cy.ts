@@ -1,8 +1,8 @@
 describe('Example 48 - Pivot Table', () => {
-  const pivotTable = '.grid48 .slick-pivot-table';
-  const grid = `${pivotTable} .slick-pivot-table-grid`;
-  const panel = `${pivotTable} .slick-pivot-table-fields`;
-  const status = `${pivotTable} .slick-pivot-table-status`;
+  const pivotTable = '.grid48';
+  const grid = `${pivotTable} .grid48-grid`;
+  const panel = `${pivotTable} .slick-pivot-layout-fields`;
+  const status = `${pivotTable} .slick-pivot-layout-status`;
   const toolbarItem = (item: string) => `${pivotTable} .slick-pivot-toolbar [data-item="${item}"]`;
   const details = 'dialog.slick-pivot-details';
   const cell = (row: number, column: number) => `${grid} .slick-row[data-row="${row}"] .slick-cell.l${column}`;
@@ -101,7 +101,7 @@ describe('Example 48 - Pivot Table', () => {
 
   // a test failing with the details dialog open would leave the page behind it out of reach
   afterEach(() => {
-    cy.window().then((win: any) => win.pivotTable?.getDetails()?.close());
+    cy.window().then((win: any) => win.fieldList?.getDetails()?.close());
   });
 
   it('should display Example title', () => {
@@ -111,13 +111,10 @@ describe('Example 48 - Pivot Table', () => {
   });
 
   it('should build the pivot table from its parts: a toolbar, the grid, the field list and a status bar', () => {
-    cy.get(`${pivotTable} > *`).then(($parts) => {
-      expect(Array.from($parts).map((part) => part.className)).to.deep.equal([
-        'slick-pivot-table-toolbar',
-        'slick-pivot-table-body slick-pivot-table-fields-end',
-        'slick-pivot-table-status',
-      ]);
-    });
+    cy.get(`${pivotTable} > .grid48-slot .grid48-grid`).should('exist');
+    cy.get(`${pivotTable} > .slick-pivot-layout-toolbar`).should('exist');
+    cy.get(`${pivotTable} > .slick-pivot-layout-fields`).should('exist');
+    cy.get(`${pivotTable} > .slick-pivot-layout-status`).should('exist');
     cy.get(`${pivotTable} .slick-pivot-toolbar`).should('have.attr', 'role', 'group').and('have.attr', 'aria-label', 'PivotTable options');
     cy.get(`${pivotTable} .slick-pivot-toolbar [data-item]`).should(($items) => {
       expect(Array.from($items).map((item) => item.getAttribute('data-item'))).to.deep.equal([
@@ -141,6 +138,17 @@ describe('Example 48 - Pivot Table', () => {
     cy.get(`${panel} .slick-pivot-panel-close`).should('exist');
   });
 
+  it('keeps the grid inside its allocated area beside the field list', () => {
+    cy.get(panel).should('be.visible');
+    cy.window().should((win: any) => {
+      const gridRect = win.grid.getContainerNode().getBoundingClientRect();
+      const slotRect = win.document.querySelector('.grid48-slot').getBoundingClientRect();
+      const paneRect = win.document.querySelector(panel).getBoundingClientRect();
+      expect(gridRect.right).to.be.at.most(slotRect.right + 1);
+      expect(slotRect.right).to.be.at.most(paneRect.left + 1);
+    });
+  });
+
   it('should list the fields, checking the ones used by the pivot', () => {
     cy.get(`${fieldItem('region')} .slick-pivot-field-checkbox`).should('be.checked');
     cy.get(`${fieldItem('amount')} .slick-pivot-field-checkbox`).should('be.checked');
@@ -155,25 +163,100 @@ describe('Example 48 - Pivot Table', () => {
     cy.get(`${pill('filters', 'channel')} .slick-pivot-pill-summary`).should('have.text', '(All)');
   });
 
+  it('switches pivot mode on the same host grid and restores the source DataView', () => {
+    cy.window().then((win: any) => {
+      const originalGrid = win.grid;
+      cy.get(`${panel} .slick-pivot-mode-checkbox`).uncheck();
+      cy.window().should((current: any) => {
+        expect(current.grid).to.equal(originalGrid);
+        expect(current.pivot.isPivotMode()).to.equal(false);
+        expect(current.grid.getData()).not.to.equal(current.pivot.rowModel);
+        expect(current.grid.getDataLength()).to.equal(5000);
+      });
+      cy.get(`${panel} .slick-pivot-mode-checkbox`).check();
+      cy.window().should((current: any) => {
+        expect(current.grid).to.equal(originalGrid);
+        expect(current.pivot.isPivotMode()).to.equal(true);
+        expect(current.grid.getData()).to.equal(current.pivot.rowModel);
+      });
+    });
+  });
+
+  it('manages pivot columns in the grid menu and keeps cells aligned after clearing pinning', () => {
+    cy.get(`${grid} .slick-grid-menu-button`).click();
+    cy.get('.slick-grid-menu:visible .slick-column-picker-list').should('contain', '2025').and('not.contain', 'Country');
+    cy.get('.slick-grid-menu:visible .slick-column-picker-list').contains('2025').click();
+    cy.window().should((win: any) => {
+      expect(win.grid.getColumns().find((column: any) => column.name === '2025').hidden).to.equal(true);
+    });
+    cy.get('.slick-grid-menu:visible .slick-column-picker-list').contains('2025').click();
+    cy.window().should((win: any) => {
+      expect(win.grid.getColumns().find((column: any) => column.name === '2025').hidden).to.equal(false);
+    });
+    cy.get('.slick-grid-menu:visible').contains('Clear all Pinning').click();
+    cy.window().should((win: any) => {
+      const columns = win.grid.getColumns();
+      const totalIndex = columns.findIndex((column: any) => column.name === 'Grand Total');
+      const header = win.grid.getHeaderColumn(columns[totalIndex].id).getBoundingClientRect();
+      const totalCell = win.document.querySelector(`${grid} .slick-row[data-row="0"] .slick-cell.l${totalIndex}`).getBoundingClientRect();
+      expect(Math.abs(header.left - totalCell.left)).to.be.lessThan(1.5);
+      // The last header is 2px narrower to leave space for the GridMenu resize handle.
+      expect(Math.abs(header.right - totalCell.right)).to.be.lessThan(2.5);
+    });
+    cy.window().then((win: any) => win.pivot.refresh());
+  });
+
+  it('shows unit prices and discounts in the source data', () => {
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).uncheck();
+    cy.get(cell(0, 8)).should('have.text', '5');
+    cy.get(cell(0, 9)).should('have.text', '0');
+    cy.get(cell(5, 9)).should('have.text', '0.05');
+    cy.window().should((win: any) => {
+      const row = win.grid.getDataItem(5);
+      expect(row.amount).to.equal(Math.round(row.units * row.unitPrice * (1 - row.discount) * 100) / 100);
+    });
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).check();
+  });
+
+  it('shows source filters only in regular mode and retains them across pivot mode', () => {
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).uncheck();
+    cy.get(`${grid} .search-filter.filter-region`).should('be.visible').type('East');
+    cy.window().its('grid').invoke('getDataLength').should('eq', 1250);
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).check();
+    cy.window().its('grid').invoke('getOptions').its('showHeaderRow').should('eq', false);
+    cy.get(status).should('contain', '5,000 of 5,000 source rows');
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).uncheck();
+    cy.get(`${grid} .search-filter.filter-region`).should('have.value', 'East').clear();
+    cy.window().its('grid').invoke('getDataLength').should('eq', 5000);
+    ['region', 'country', 'channel', 'category', 'product', 'orderId', 'orderDate', 'units', 'unitPrice', 'discount', 'amount'].forEach(
+      (field) => cy.get(`${grid} .search-filter.filter-${field}`).should('be.visible')
+    );
+    cy.get(`${grid} .search-filter.filter-units input`).type('1');
+    cy.window().its('grid').invoke('getDataLength').should('eq', 250);
+    cy.get(`${grid} .search-filter.filter-units input`).clear();
+    cy.window().its('grid').invoke('getDataLength').should('eq', 5000);
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).check();
+  });
+
   it('should render the initial pivot in compact layout with the captions, subtotals and a sticky grand total row', () => {
     expectHeaderNames(['Row Labels', '2023', '2024', '2025', 'Grand Total']);
     cy.get(`${grid} .slick-pivot-header-caption`).first().should('have.text', 'Sum of amount');
     cy.get(`${grid} .slick-pivot-header-caption`).last().should('have.text', 'Years (Order Date)');
     cy.get(cell(0, 0)).should('contain', 'East').find('.slick-pivot-toggle').should('have.class', 'expanded');
     cy.get(`${grid} .slick-row[data-row="0"]`).should('have.class', 'slick-pivot-group');
-    cy.get(cell(0, 1)).should('have.text', 'US$918,360');
+    cy.get(cell(0, 1)).should('have.text', 'US$185,835');
     cy.get(cell(1, 0)).should('contain', 'China');
     // a short pivot shows its sticky grand total right below its last row
-    cy.get(`${grid} .slick-pivot-grand-total`).should('not.have.class', 'slick-row-pinned-bottom');
+    cy.get(`${grid} .slick-pivot-grand-total`).should('have.class', 'slick-row-sticky');
     cy.get(`${grid} .slick-pivot-grand-total .slick-cell.l0`).should('contain', 'Grand Total');
-    cy.get(`${grid} .slick-pivot-grand-total .slick-cell.l4`).should('have.text', 'US$10,978,500');
+    cy.get(`${grid} .slick-pivot-grand-total .slick-cell.l4`).should('have.text', 'US$2,560,315');
     cy.get(status).should('contain', '5,000 of 5,000 source rows');
   });
 
   it('should collapse and expand a row group with its toggle', () => {
     cy.get(`${cell(0, 0)} .slick-pivot-toggle`).click();
     cy.get(`${cell(0, 0)} .slick-pivot-toggle`).should('have.class', 'collapsed');
-    cy.get(cell(0, 1)).should('have.text', 'US$918,360');
+    cy.get(cell(0, 1)).should('have.text', 'US$185,835');
     cy.get(cell(1, 0)).should('contain', 'North');
     cy.get(`${cell(0, 0)} .slick-pivot-toggle`).click();
     cy.get(cell(1, 0)).should('contain', 'China');
@@ -193,6 +276,22 @@ describe('Example 48 - Pivot Table', () => {
     expectAreaFields('rows', ['myCol1']);
     expectAreaFields('columns', ['myCol2']);
     cy.get(`${areaList('values')} .slick-pivot-pill-label`).should('have.text', 'Sum of myCol1');
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).uncheck();
+    cy.window()
+      .its('grid')
+      .invoke('getColumns')
+      .should((columns: any[]) => {
+        expect(columns.map((column) => column.id)).to.deep.equal(['myCol1', 'myCol2', 'myCol3', 'myCol4']);
+      });
+    ['1', 'Apples', '43', 'Hot'].forEach((value, column) => cy.get(cell(0, column)).should('have.text', value));
+    cy.get('[data-test="dataset-select"]').select('500');
+    cy.window().its('grid').invoke('getDataLength').should('eq', 500);
+    cy.window().its('grid').invoke('getColumns').its('0.id').should('eq', 'region');
+    cy.get('[data-test="dataset-select"]').select('excel');
+    cy.window().its('grid').invoke('getDataLength').should('eq', 4);
+    cy.get(cell(0, 1)).should('have.text', 'Apples');
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).should('not.be.checked').check();
+    expectHeaderNames(['Row Labels', 'Apples', 'Bananas', 'Grand Total']);
   });
 
   it('should add a text field to the rows, and a number field to the values, when checking them', () => {
@@ -210,6 +309,11 @@ describe('Example 48 - Pivot Table', () => {
     expectAreaFields('rows', ['myCol1']);
     expectAreaFields('columns', ['myCol2']);
     cy.get('[data-test="dataset-select"]').select('5000');
+    expectHeaderNames(['Row Labels', '2023', '2024', '2025', 'Grand Total']);
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).uncheck();
+    cy.window().its('grid').invoke('getColumns').its('0.id').should('eq', 'region');
+    cy.get(cell(0, 0)).should('have.text', 'East');
+    cy.get(`${panel} .slick-pivot-mode-checkbox`).check();
   });
 
   it('should move a field from the rows to the columns by dragging it', () => {
@@ -295,9 +399,9 @@ describe('Example 48 - Pivot Table', () => {
       const totals = regions.map((region: any) => win.pivot.getResult().cells[region.key][win.pivot.getResult().columnTree.key][0]);
       expect(totals).to.deep.equal([...totals].sort((a: number, b: number) => a - b));
     });
-    cy.get(cell(0, 0)).should('contain', 'West');
-    cy.get(`${grid} .slick-header-column`).contains('Grand Total').click();
     cy.get(cell(0, 0)).should('contain', 'East');
+    cy.get(`${grid} .slick-header-column`).contains('Grand Total').click();
+    cy.get(cell(0, 0)).should('contain', 'West');
     cy.get(`${grid} .slick-header-column`).contains('Row Labels').click();
     cy.get(cell(0, 0)).should('contain', 'East');
   });
@@ -320,7 +424,7 @@ describe('Example 48 - Pivot Table', () => {
     cy.get(`${panel} .slick-pivot-value-show-as`).select('No Calculation');
     cy.get(`${panel} .slick-pivot-value-format`).select('Number (1,234)');
     cy.get(`${panel} .slick-pivot-dialog-ok`).click();
-    cy.get(`${grid} .slick-pivot-grand-total .slick-cell.l4`).should('have.text', '10,978,500');
+    cy.get(`${grid} .slick-pivot-grand-total .slick-cell.l4`).should('have.text', '2,560,315');
   });
 
   it('should change the summary of a value from the "Summarize Values By" items of its pill menu', () => {
@@ -339,7 +443,7 @@ describe('Example 48 - Pivot Table', () => {
     cy.get(`${radioItems}[aria-checked="true"]`).should('have.text', 'Count');
     cy.get(radioItems).contains('Sum').click();
     cy.get(`${areaList('values')} .slick-pivot-pill-label`).should('have.text', 'Sum of amount');
-    cy.get(`${grid} .slick-pivot-grand-total .slick-cell.l4`).should('have.text', '10,978,500');
+    cy.get(`${grid} .slick-pivot-grand-total .slick-cell.l4`).should('have.text', '2,560,315');
   });
 
   it('should switch to the tabular layout with bottom subtotals', () => {
@@ -359,6 +463,10 @@ describe('Example 48 - Pivot Table', () => {
   it('should list the source rows of a double-clicked cell in a sortable details dialog', () => {
     cy.get(cell(1, 1)).dblclick();
     cy.get(details).should('be.visible').and('have.attr', 'open');
+    cy.window().should((win: any) => expect(win.fieldList.getDetails().getGrid().getOptions().rowHeight).to.equal(32));
+    cy.get(`${details} .slick-row`)
+      .first()
+      .should(($row) => expect($row[0].getBoundingClientRect().height).to.equal(32));
     cy.focused().should('have.class', 'slick-pivot-details-close');
     cy.window().then((win: any) => {
       const item = win.grid.getDataItem(1);
@@ -367,7 +475,7 @@ describe('Example 48 - Pivot Table', () => {
         .getEngine()
         .getSourceRows(win.pivot.getSourceRows(), win.pivot.getSpec(), item.__pivot.key, columnKey).length;
       cy.get(`${details} .slick-pivot-details-title`).should('have.text', `${expected} source rows — East › China / 2023`);
-      cy.wrap(win.pivotTable.getDetails().getGrid().getDataLength()).should('eq', expected);
+      cy.wrap(win.fieldList.getDetails().getGrid().getDataLength()).should('eq', expected);
     });
     // One column per configured field.
     cy.get(`${details} .slick-header-column .slick-column-name`).should(($names) => {
@@ -389,7 +497,7 @@ describe('Example 48 - Pivot Table', () => {
     // Sort the numeric order IDs, largest first.
     cy.get(`${details} .slick-header-column`).contains('Order Id').click().click();
     cy.window().should((win: any) => {
-      const detailsGrid = win.pivotTable.getDetails().getGrid();
+      const detailsGrid = win.fieldList.getDetails().getGrid();
       const ids = Array.from({ length: detailsGrid.getDataLength() }, (_v, i) => detailsGrid.getDataItem(i).orderId);
       expect(ids).to.deep.equal([...ids].sort((a, b) => b - a));
     });
@@ -456,7 +564,7 @@ describe('Example 48 - Pivot Table', () => {
   });
 
   it('should resize the field list by dragging its splitter or with its keyboard', () => {
-    const splitter = `${pivotTable} .slick-pivot-table-splitter`;
+    const splitter = `${pivotTable} .slick-pivot-layout-splitter`;
     cy.get(splitter)
       .should('have.attr', 'role', 'separator')
       .and('have.attr', 'aria-valuenow', '320')
@@ -483,7 +591,7 @@ describe('Example 48 - Pivot Table', () => {
     cy.get(splitter)
       .invoke('attr', 'aria-valuemax')
       .then((max) => cy.get(splitter).should('have.attr', 'aria-valuenow', max));
-    cy.window().then((win: any) => win.pivotTable.setFieldListWidth(320));
+    cy.window().then((win: any) => win.fieldList.setWidth(320));
     cy.get(panel).invoke('outerWidth').should('eq', 320);
   });
 
@@ -502,9 +610,9 @@ describe('Example 48 - Pivot Table', () => {
 
   it('should compute the same pivot with the (simulated) asynchronous server provider', () => {
     cy.get('[data-test="server-provider"]').check();
-    cy.get(grid).should('have.class', 'slick-pivot-loading');
-    cy.get(grid).should('not.have.class', 'slick-pivot-loading');
-    cy.get(`${grid} .slick-pivot-grand-total .slick-cell.l4`).should('have.text', '10,978,500');
+    cy.window().its('grid').invoke('getContainerNode').should('have.class', 'slick-pivot-loading');
+    cy.window().its('grid').invoke('getContainerNode').should('not.have.class', 'slick-pivot-loading');
+    cy.get(`${grid} .slick-pivot-grand-total .slick-cell.l4`).should('have.text', '2,560,315');
     cy.get('[data-test="server-provider"]').uncheck();
   });
 
@@ -581,6 +689,7 @@ describe('Example 48 - Pivot Table', () => {
           rows.every((row: any) => Number.isInteger(row.units)),
           'whole units'
         ).to.eq(true);
+        expect(rows.every((row: any) => row.amount === Math.round(row.units * row.unitPrice * (1 - row.discount) * 100) / 100)).to.eq(true);
       });
 
       cy.get(toolbarItem('undo')).click();
@@ -604,7 +713,7 @@ describe('Example 48 - Pivot Table', () => {
     cy.get('[data-test="grand-total-row-docking"]').select('pinned');
     cy.get(`${grid} .slick-pivot-grand-total`).should('have.class', 'slick-row-pinned-bottom');
     cy.get('[data-test="grand-total-row-docking"]').select('sticky');
-    cy.get(`${grid} .slick-pivot-grand-total`).should('not.have.class', 'slick-row-pinned-bottom');
+    cy.get(`${grid} .slick-pivot-grand-total`).should('have.class', 'slick-row-sticky');
 
     cy.get('[data-test="grand-total-column-docking"]').select('pinned');
     cy.window().its('grid').invoke('getOptions').its('pinning.columns.right').should('have.length', 2);
@@ -629,7 +738,7 @@ describe('Example 48 - Pivot Table', () => {
 
   it('should mirror the pivot in a right-to-left grid, rendering the visible cells of a wide pivot wherever it is scrolled', () => {
     cy.get('[data-test="rtl"]').check();
-    cy.get(grid).should('have.class', 'slick-rtl');
+    cy.window().its('grid').invoke('getContainerNode').should('have.class', 'slick-rtl');
     cy.get(pivotTable).should('have.attr', 'dir', 'rtl');
     // the field list is at the end of the line, which is on the left
     cy.get(panel).then(($panel) =>
@@ -656,9 +765,30 @@ describe('Example 48 - Pivot Table', () => {
       .first()
       .should('have.attr', 'style')
       .and('contain', 'margin-inline-start: 15px');
+  });
 
+  it('keeps wide pivot columns readable after changing direction', () => {
+    const expectReadableColumns = () => {
+      cy.window().should((win: any) => {
+        const columns = win.grid.getColumns().filter((column: any) => column.cssClass?.includes('slick-pivot-value'));
+        expect(columns.length).to.be.greaterThan(30);
+        expect(Math.min(...columns.map((column: any) => column.width))).to.be.at.least(80);
+      });
+    };
+
+    expectReadableColumns();
     cy.get('[data-test="rtl"]').uncheck();
-    cy.get(grid).should('not.have.class', 'slick-rtl');
-    cy.get(pivotTable).should('have.attr', 'dir', 'ltr');
+    cy.window().its('grid').invoke('getContainerNode').should('not.have.class', 'slick-rtl');
+    expectReadableColumns();
+    cy.get('[data-test="rtl"]').check();
+    cy.window().its('grid').invoke('getContainerNode').should('have.class', 'slick-rtl');
+    expectReadableColumns();
+    cy.get('[data-test="rtl"]').uncheck();
+    cy.get(pivotTable).should('have.css', 'direction', 'ltr');
+    cy.get('[data-test="write-back"]').uncheck();
+    cy.contains('button', 'Reset layout').click();
+    expectHeaderNames(['Row Labels', '2023', '2024', '2025', 'Grand Total']);
+    expectAreaFields('columns', ['orderDate.year']);
+    cy.get(`${areaList('values')} .slick-pivot-pill`).should('have.length', 1);
   });
 });

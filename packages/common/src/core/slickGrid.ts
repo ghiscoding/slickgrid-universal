@@ -3638,7 +3638,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected applyColumnWidths(): void {
     let rule: any;
     const renderedWidths = this.getDockingRenderedWidths();
-    const centerWidth = this.hasDockedColumns() ? renderedWidths.center : this.dockingLayout.centerWidth;
+    // The cell's right offset is relative to its actual row region, which can
+    // remain viewport-wide after the last pinned column has been cleared.
+    const centerWidth = this.usesDockingRowRegions() || this.hasDockedColumns() ? renderedWidths.center : this.canvasWidthL;
     for (let i = 0; i < this.columns.length; i++) {
       if (this.columns[i]) {
         const w = this.columns[i].hidden ? 0 : this.columns[i].width || 0;

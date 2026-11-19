@@ -1,6 +1,13 @@
-import { BindingEventService as BindingEventService_ } from '@slickgrid-universal/binding';
-import { Editors, SlickEvent as SlickEvent_, SlickEventHandler as SlickEventHandler_ } from '@slickgrid-universal/common';
-import type { SlickGrid } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { Editors, SlickEvent, SlickEventHandler, SlickRange } from '@slickgrid-universal/common';
+import type {
+  ColumnSort,
+  ContainerService,
+  ExtensionService,
+  HeaderGroupingService,
+  PinningOption,
+  SlickGrid,
+} from '@slickgrid-universal/common';
 import * as Utils from '@slickgrid-universal/utils';
 import type {
   Column,
@@ -11,6 +18,7 @@ import type {
   OnPivotCellDrillDownEventArgs,
   OnPivotChangedEventArgs,
   OnPivotHistoryChangedEventArgs,
+  OnPivotModeChangedEventArgs,
   OnPivotSpecChangedEventArgs,
   OnPivotWriteBackEventArgs,
   PivotCellEdit,
@@ -33,20 +41,11 @@ import type {
   SlickPlugin,
   StickyRows,
 } from './pivot.models.js';
-import { PIVOT_VALUES_FIELD as PIVOT_VALUES_FIELD_, PivotEngine as PivotEngine_ } from './slick.pivotengine.js';
+import { PIVOT_VALUES_FIELD, PivotEngine } from './slick.pivotengine.js';
 
-// for (iife) load Slick methods from global Slick object, or use imports for (esm)
-const BindingEventService = BindingEventService_;
-const SlickEvent = SlickEvent_;
-const SlickEventHandler = SlickEventHandler_;
-const PivotEngine = PivotEngine_;
-const PIVOT_VALUES_FIELD = PIVOT_VALUES_FIELD_;
-
-/** Editors, resolved when they are needed: the iife build may load slick.editors.js after this plugin */
 function getEditors() {
   return { Float: Editors.float };
 }
-
 /** Id of the compact layout row label column */
 const ROW_LABELS_COLUMN_ID = '__pivot_rows';
 
@@ -98,6 +97,44 @@ type ResolvedPivotOption = Required<
 /** Band in which a column is drawn: pinned to an edge, sticky, or scrolling with the centre */
 type ColumnBand = 'left' | 'right' | 'sticky' | 'center';
 
+/** Selected cells of one pivot row, kept by the id of the row while the pivot rows change */
+interface KeptSelection {
+  id: string;
+  fromCell: number;
+  toCell: number;
+  /** Whether every cell of the row was selected, as with a row selection model */
+  wholeRow: boolean;
+}
+
+/** What the grid had before showing the pivot, given back when Pivot Mode is turned off */
+interface HostGridState {
+  data: any;
+  columns: Column[];
+  sortColumns: ColumnSort[];
+  pinning: PinningOption;
+  stickyRows: StickyRows;
+  showPreHeaderPanel: boolean;
+  preHeaderPanelHeight?: number;
+  preHeaderContent: DocumentFragment;
+  preHeaderWidth: string;
+  preHeaderScrollerHeight: string;
+}
+
+/** Text of a column name, which can be HTML or an element */
+function getColumnLabel(column: Column): string {
+  const name = column.name as unknown;
+  let text = '';
+  if (typeof name === 'string') {
+    // the content of a template is inert: its images do not load and its scripts do not run
+    const template = document.createElement('template');
+    template.innerHTML = name;
+    text = template.content.textContent ?? '';
+  } else if (name && typeof (name as Node).textContent === 'string') {
+    text = (name as Node).textContent!;
+  }
+  return text.trim() || String(column.id);
+}
+
 function escapeHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
@@ -120,13 +157,18 @@ const SHOW_AS_PERCENT_TYPES = [
  * multi-level column headers, compact/outline/tabular row layouts, subtotals, grand totals,
  * expand & collapse, sorting and drill-down.
  *
- * The plugin owns the grid columns and data: create the grid with `pivot.rowModel` as its data
- * (and `SlickPivot.getGridOptions()` merged into its options) then register the plugin.
+ * Create the grid as usual, with its own data and columns (and `SlickPivot.getGridOptions()` merged
+ * into its options, for the pre-header panel of the column groups), then register the plugin. The
+ * fields are made from the columns and the source rows are the grid data. In Pivot Mode (`pivotMode`,
+ * on by default) the plugin shows the pivot in the grid; turning it off gives the grid its own data,
+ * columns and options back. A grid that only shows a pivot can instead be created with `pivot.rowModel`
+ * as its data.
  *
  * @example
- * const pivot = new SlickPivot({ source: rows, fields, spec: { rows: ['Region'], columns: ['Year'], values: [{ field: 'Amount', aggregator: 'sum' }] } });
- * const grid = new SlickGrid('#grid', pivot.rowModel, [], SlickPivot.getGridOptions({ enableCellNavigation: true }));
+ * const grid = new SlickGrid('#grid', dataView, columns, SlickPivot.getGridOptions({ enableCellNavigation: true }));
+ * const pivot = new SlickPivot({ spec: { rows: ['region'], columns: ['year'], values: [{ field: 'amount', aggregator: 'sum' }] } });
  * grid.registerPlugin(pivot);
+ * pivot.setPivotMode(false); // the grid shows the data view again
  */
 export class SlickPivot implements SlickPlugin {
   // --
@@ -166,6 +208,9 @@ export class SlickPivot implements SlickPlugin {
   /** Raised when write-backs can (or no longer can) be undone or redone */
   onHistoryChanged = new SlickEvent<OnPivotHistoryChangedEventArgs>('onHistoryChanged');
 
+  /** Raised when Pivot Mode is turned on or off */
+  onPivotModeChanged = new SlickEvent<OnPivotModeChangedEventArgs>('onPivotModeChanged');
+
   /** Data provider to pass to the grid as its data */
   readonly rowModel: CustomDataView<PivotRowItem> & {
     getItems: () => PivotRowItem[];
@@ -178,12 +223,13 @@ export class SlickPivot implements SlickPlugin {
   // --
   // protected props
   protected _grid?: SlickGrid;
-  protected _engine: PivotEngine_;
+  protected _engine: PivotEngine;
   protected _options: ResolvedPivotOption;
   protected _spec: PivotSpec;
   protected _result?: PivotResult;
   protected _rows: PivotRowItem[] = [];
   protected _rowIndexById = new Map<string, number>();
+  protected _keptSelection?: KeptSelection[];
   protected _managedColumnPins = { left: false, right: false };
   protected _resizeObserver?: ResizeObserver;
   protected _stickySyncFrame?: number;
@@ -193,20 +239,32 @@ export class SlickPivot implements SlickPlugin {
   protected _columns: Column[] = [];
   protected _columnInfo = new Map<string | number, InternalColumnInfo>();
   protected _rowNodeIndex = new Map<string, PivotHeaderNode>();
+  protected _columnNodeIndex = new Map<string, PivotHeaderNode>();
   protected _collapsedRows = new Set<string>();
   protected _collapsedColumns = new Set<string>();
   protected _userWidths = new Map<string, number>();
-  protected _eventHandler: SlickEventHandler_;
-  protected _bindingEventService: BindingEventService_;
-  protected _sourceHandler: SlickEventHandler_;
+  protected _eventHandler: SlickEventHandler;
+  protected _gridHandler: SlickEventHandler;
+  protected _bindingEventService: BindingEventService;
+  protected _sourceHandler: SlickEventHandler;
   protected _refreshTimer?: ReturnType<typeof setTimeout>;
   protected _abortController?: AbortController;
   protected _loading = false;
   protected _scrollLeft = 0;
   protected _sortIndicator?: { semanticKey: string; sortAsc: boolean };
   protected _headerRowHeight = 25;
+  protected _pivotMode: boolean;
+  /** The grid was created with `rowModel` as its data: it only shows the pivot */
+  protected _dedicatedGrid = false;
+  protected _gridDestroying = false;
+  protected _hostState?: HostGridState;
+  /** The pivot was not computed while Pivot Mode was off */
+  protected _stale = false;
+  protected _fieldsSignature?: string;
   protected _defaults: ResolvedPivotOption = {
     fields: [],
+    fieldsFromColumns: true,
+    pivotMode: true,
     columnDefaults: {},
     rowHeaderColumn: {},
     rowLabelsCaption: 'Row Labels',
@@ -229,16 +287,38 @@ export class SlickPivot implements SlickPlugin {
   };
 
   /**
-   * Grid options required by the plugin (a pre-header panel for the column group headers),
-   * merged into the given options
+   * Grid options required by the plugin (a pre-header panel for the column group headers, which the
+   * grid can only create with the grid), merged into the given options. The plugin shows the panel
+   * while it needs it.
    */
   static getGridOptions<T extends Record<string, any>>(
     gridOptions?: T
-  ): T & { createPreHeaderPanel: boolean; showPreHeaderPanel: boolean; preHeaderPanelHeight: number } {
-    return { preHeaderPanelHeight: 25, ...gridOptions, createPreHeaderPanel: true, showPreHeaderPanel: true } as any;
+  ): T & { createPreHeaderPanel: boolean; preHeaderPanelHeight: number } {
+    return { preHeaderPanelHeight: 25, ...gridOptions, createPreHeaderPanel: true } as any;
   }
 
-  constructor(options: PivotOption) {
+  /** Prepare the pre-header before a Universal wrapper constructs its grid. */
+  prepareGridOptions(gridOptions: import('@slickgrid-universal/common').GridOption): void {
+    gridOptions.createPreHeaderPanel = true;
+    gridOptions.preHeaderPanelHeight ??= 25;
+    const options = gridOptions.pivotOptions;
+    if (options) {
+      this._options = Utils.extend(true, {}, this._options, options);
+      this._options.fields = options.fields ?? this._options.fields;
+      this._options.source = options.source ?? this._options.source;
+      this._options.provider = options.provider ?? this._options.provider;
+      this._engine = new PivotEngine({
+        fields: this._options.fields,
+        aggregators: this._options.aggregators,
+        locale: this._options.locale ?? this._options.numberFormat?.locale,
+      });
+      this._spec = this._engine.normalizeSpec(options.spec ?? this._spec);
+      this._pivotMode = this._options.pivotMode;
+      this.watchSource(this._options.source);
+    }
+  }
+
+  constructor(options: PivotOption = {}) {
     this._options = Utils.extend(true, {}, this._defaults, options);
     // arrays & functions must not be deep merged
     this._options.fields = options.fields ?? [];
@@ -250,7 +330,9 @@ export class SlickPivot implements SlickPlugin {
       locale: options.locale ?? options.numberFormat?.locale,
     });
     this._spec = this._engine.normalizeSpec(options.spec);
+    this._pivotMode = this._options.pivotMode;
     this._eventHandler = new SlickEventHandler();
+    this._gridHandler = new SlickEventHandler();
     this._sourceHandler = new SlickEventHandler();
     this._bindingEventService = new BindingEventService();
 
@@ -265,27 +347,95 @@ export class SlickPivot implements SlickPlugin {
     };
 
     this.watchSource(this._options.source);
-    if (!this._options.provider) {
-      // compute synchronously so that the row model and columns are ready before the grid is created
+    if (!this._options.provider && this.knowsSpecFields()) {
+      // compute synchronously so that the row model and columns are ready before the grid is created; the fields
+      // made from the columns of a grid are only known once the plugin is registered
       this.computeLocally();
     }
   }
 
-  init(grid: SlickGrid) {
-    this._grid = grid;
-    if (typeof grid.getData === 'function' && grid.getData() !== this.rowModel) {
-      grid.setData(this.rowModel);
+  protected _headerGroupingService?: HeaderGroupingService;
+  protected _containerService?: ContainerService;
+
+  /** The menus keep their own column lists independently of SlickGrid's active columns. */
+  protected syncMenuColumns(columns: Column[]): void {
+    const extensions = this._containerService?.get<ExtensionService>('ExtensionService');
+    const picker = extensions?.getExtensionInstanceByName('columnPicker');
+    const menu = extensions?.getExtensionInstanceByName('gridMenu');
+    if (picker) {
+      picker.columns = [...columns];
     }
-    grid.getContainerNode().classList.add('slick-pivot');
+    if (menu) {
+      menu.columns = [...columns];
+    }
+  }
+
+  init(grid: SlickGrid, containerService?: ContainerService) {
+    this._grid = grid;
+    this._containerService = containerService;
+    this._headerGroupingService = containerService?.get<HeaderGroupingService>('HeaderGroupingService') ?? undefined;
     this._headerRowHeight = this._options.headerRowHeight ?? grid.getOptions().preHeaderPanelHeight ?? 25;
+    this._dedicatedGrid = grid.getData() === this.rowModel;
+    if (this._dedicatedGrid) {
+      this._pivotMode = true;
+    } else {
+      if (!this._options.source) {
+        this._options.source = grid.getData() as PivotSource;
+        this.watchSource(this._options.source);
+      }
+      this.applyFields();
+      // the result computed by the constructor used other fields
+      this._stale = true;
+    }
 
     if (!grid.getPreHeaderPanel()) {
       console.warn(
         '[SlickPivot] the column group headers need a pre-header panel, create the grid with "SlickPivot.getGridOptions()" (createPreHeaderPanel: true).'
       );
     }
+    // the grid gives the plugins up while it is destroyed: there is nothing to give back then
+    this._eventHandler.subscribe(grid.onBeforeDestroy, () => (this._gridDestroying = true));
 
-    this._eventHandler
+    if (this._pivotMode) {
+      this.attachToGrid();
+    }
+  }
+
+  /** Show the pivot in the grid, keeping what the grid had to give it back when Pivot Mode is turned off */
+  protected attachToGrid(): Promise<void> {
+    const grid = this._grid!;
+    if (!this._dedicatedGrid) {
+      this.stopEditing();
+      const gridOptions = grid.getOptions();
+      const preHeaderPanel = grid.getPreHeaderPanel();
+      const preHeaderContent = document.createDocumentFragment();
+      while (preHeaderPanel?.firstChild) {
+        preHeaderContent.appendChild(preHeaderPanel.firstChild);
+      }
+      this._hostState = {
+        data: grid.getData(),
+        columns: grid.getColumns(),
+        sortColumns: grid.getSortColumns().map((sort) => ({ ...sort })),
+        pinning: Utils.extend(true, {}, gridOptions.pinning ?? {}),
+        stickyRows: Utils.extend(true, {}, gridOptions.stickyRows ?? {}),
+        showPreHeaderPanel: !!gridOptions.showPreHeaderPanel,
+        preHeaderPanelHeight: gridOptions.preHeaderPanelHeight,
+        preHeaderContent,
+        preHeaderWidth: preHeaderPanel?.style.width ?? '',
+        preHeaderScrollerHeight: (preHeaderPanel?.parentElement as HTMLElement | null)?.style.height ?? '',
+      };
+      grid.resetActiveCell();
+      grid.setData(this.rowModel);
+      // once the grid shows the pivot, so that a DataView synced with the grid keeps the ids of its selected rows
+      this.clearSelection();
+      if (this.applyFields(true)) {
+        this._stale = true;
+      }
+    }
+    grid.getContainerNode().classList.add('slick-pivot');
+    grid.getContainerNode().classList.toggle('slick-pivot-loading', this._loading);
+
+    this._gridHandler
       .subscribe(grid.onClick, this.handleClick.bind(this))
       .subscribe(grid.onKeyDown, this.handleKeyDown.bind(this))
       .subscribe(grid.onDblClick, this.handleDblClick.bind(this))
@@ -293,14 +443,17 @@ export class SlickPivot implements SlickPlugin {
       .subscribe(grid.onScroll, this.handleScroll.bind(this))
       .subscribe(grid.onColumnsResized, this.handleColumnsResized.bind(this))
       .subscribe(grid.onColumnsDrag, () => this.renderHeaderGroups())
-      .subscribe(grid.onAfterUpdateColumns, () => this.renderHeaderGroups())
+      .subscribe(grid.onAfterUpdateColumns, () => {
+        this.syncMenuColumns(grid.getColumns());
+        this.renderHeaderGroups();
+      })
       .subscribe(grid.onHeaderCellRendered, this.handleHeaderCellRendered.bind(this))
       .subscribe(grid.onBeforeEditCell, this.handleBeforeEditCell.bind(this))
       .subscribe(grid.onCellChange, this.handleCellChange.bind(this));
 
     if (typeof ResizeObserver !== 'undefined') {
       // the trailing band moves with the width of the grid
-      this._resizeObserver = new ResizeObserver(() => this.syncDockedHeaderGroups());
+      this._resizeObserver ??= new ResizeObserver(() => this.syncDockedHeaderGroups());
       this._resizeObserver.observe(grid.getContainerNode());
     }
 
@@ -309,18 +462,147 @@ export class SlickPivot implements SlickPlugin {
       this._bindingEventService.bind(preHeaderPanel, 'click', this.handlePreHeaderClick.bind(this) as EventListener);
     }
 
-    if (this._result) {
-      // the result was computed by the constructor, render it and let the subscribers know
+    if (this._result && !this._stale) {
+      // the result is up to date (computed by the constructor), render it and let the subscribers know
       this.afterResult();
-    } else {
-      this.refresh();
+      return Promise.resolve();
     }
+    return this.refresh();
+  }
+
+  /** Stop showing the pivot in the grid and, unless the grid is being destroyed, give it back its own data, columns and options */
+  protected detachFromGrid(): void {
+    const grid = this._grid!;
+    this._gridHandler.unsubscribeAll();
+    this._bindingEventService.unbindAll();
+    this._resizeObserver?.disconnect();
+    if (this._stickySyncFrame !== undefined) {
+      cancelAnimationFrame(this._stickySyncFrame);
+      this._stickySyncFrame = undefined;
+    }
+    grid.getContainerNode().classList.remove('slick-pivot', 'slick-pivot-loading');
+    const preHeaderPanel = grid.getPreHeaderPanel();
+    if (preHeaderPanel) {
+      Utils.emptyElement(preHeaderPanel);
+      preHeaderPanel.classList.remove('slick-pivot-header-groups');
+      preHeaderPanel.style.removeProperty('--slick-pivot-scroll-left');
+    }
+
+    const host = this._hostState;
+    this._hostState = undefined;
+    if (!host || this._gridDestroying) {
+      return;
+    }
+    this.stopEditing();
+    grid.resetActiveCell();
+    this.clearSelection();
+    const gridOptions = grid.getOptions();
+    if (preHeaderPanel) {
+      preHeaderPanel.appendChild(host.preHeaderContent);
+      preHeaderPanel.style.width = host.preHeaderWidth;
+      const scroller = preHeaderPanel.parentElement as HTMLElement | null;
+      if (scroller) {
+        scroller.style.height = host.preHeaderScrollerHeight;
+      }
+    }
+    // the options object is live, like when the plugin sets the height of the column groups
+    gridOptions.preHeaderPanelHeight = host.preHeaderPanelHeight;
+    const { pinning, stickyRows } = host;
+    grid.setOptions(
+      {
+        pinning: {
+          ...pinning,
+          columns: { ...pinning.columns, left: pinning.columns?.left ?? [], right: pinning.columns?.right ?? [] },
+          rows: { ...pinning.rows, top: pinning.rows?.top ?? [], bottom: pinning.rows?.bottom ?? [] },
+        },
+        stickyRows: { top: stickyRows.top ?? [], bottom: stickyRows.bottom ?? [], both: stickyRows.both ?? [] },
+      },
+      true,
+      true
+    );
+    this._managedColumnPins = { left: false, right: false };
+    grid.setData(host.data);
+    grid.setColumns(host.columns);
+    this.syncMenuColumns(host.columns);
+    grid.setSortColumns(host.sortColumns);
+    grid.setPreHeaderPanelVisibility(host.showPreHeaderPanel);
+    // a DataView synced with the grid selects its rows again, which it kept by id while the grid showed the pivot
+    (host.data as { resyncGrid?: () => void }).resyncGrid?.();
+    grid.resizeCanvas();
+  }
+
+  /** Commit (or cancel) the cell being edited before the grid changes what it shows */
+  protected stopEditing(): void {
+    const editorLock = this._grid?.getEditorLock();
+    if (editorLock?.isActive() && !editorLock.commitCurrentEdit()) {
+      editorLock.cancelCurrentEdit();
+    }
+  }
+
+  /**
+   * Clear the selection when the grid changes between the pivot and its own rows: a selected row index of the pivot
+   * does not point to a source row, nor the other way round
+   */
+  protected clearSelection(): void {
+    const selectionModel = this._grid?.getSelectionModel();
+    if (selectionModel?.getSelectedRanges().length) {
+      selectionModel.setSelectedRanges([], 'SlickPivot.clearSelection');
+    }
+  }
+
+  /** Whether the grid shows the pivot (true) or its own data and columns */
+  isPivotMode(): boolean {
+    return this._pivotMode;
+  }
+
+  /** Whether Pivot Mode can be turned off: not on a grid created with `rowModel` as its data, which has nothing else to show */
+  canTogglePivotMode(): boolean {
+    return !this._dedicatedGrid;
+  }
+
+  /**
+   * Show the pivot in the grid (true), or give the grid back its own data, columns and options (false),
+   * keeping the spec, the collapsed groups and the column widths for the next time
+   */
+  setPivotMode(pivotMode: boolean): Promise<void> {
+    if (pivotMode === this._pivotMode) {
+      return Promise.resolve();
+    }
+    if (!pivotMode && this._dedicatedGrid) {
+      console.warn('[SlickPivot] Pivot Mode cannot be turned off on a grid created with "pivot.rowModel" as its data.');
+      return Promise.resolve();
+    }
+    this._pivotMode = pivotMode;
+    let done = Promise.resolve();
+    if (this._grid) {
+      if (pivotMode) {
+        this._headerGroupingService?.dispose();
+        done = this.attachToGrid();
+      } else {
+        this.detachFromGrid();
+        this._headerGroupingService?.init(this._grid);
+      }
+    }
+    this.onPivotModeChanged.notify({ pivotMode });
+    return done;
+  }
+
+  /** Turn Pivot Mode off if on, on if off */
+  togglePivotMode(): Promise<void> {
+    return this.setPivotMode(!this._pivotMode);
   }
 
   destroy() {
     clearTimeout(this._refreshTimer);
     this._abortController?.abort();
+    if (this._grid && this._pivotMode) {
+      this.detachFromGrid();
+      if (!this._gridDestroying && this._containerService?.get('HeaderGroupingService') === this._headerGroupingService) {
+        this._headerGroupingService?.init(this._grid);
+      }
+    }
     this._eventHandler.unsubscribeAll();
+    this._gridHandler.unsubscribeAll();
     this._sourceHandler.unsubscribeAll();
     this._bindingEventService.unbindAll();
     this.onBeforePivot.unsubscribe();
@@ -334,27 +616,20 @@ export class SlickPivot implements SlickPlugin {
     this.onBeforeWriteBack.unsubscribe();
     this.onWriteBack.unsubscribe();
     this.onHistoryChanged.unsubscribe();
+    this.onPivotModeChanged.unsubscribe();
     this._resizeObserver?.disconnect();
     if (this._stickySyncFrame !== undefined) {
       cancelAnimationFrame(this._stickySyncFrame);
     }
-    if (this._grid) {
-      this._grid.getContainerNode().classList.remove('slick-pivot', 'slick-pivot-loading');
-      const preHeaderPanel = this._grid.getPreHeaderPanel();
-      if (preHeaderPanel) {
-        Utils.emptyElement(preHeaderPanel);
-        preHeaderPanel.classList.remove('slick-pivot-header-groups');
-      }
-    }
   }
 
-  /** Release resources when registered through Universal's externalResources option. */
+  /** Release resources registered through externalResources. */
   dispose(): void {
     this.destroy();
   }
 
   /** The pivot engine (field and aggregator registries) */
-  getEngine(): PivotEngine_ {
+  getEngine(): PivotEngine {
     return this._engine;
   }
 
@@ -392,20 +667,22 @@ export class SlickPivot implements SlickPlugin {
     return this._engine.getFields();
   }
 
-  /** Replace the field definitions, removing the fields that no longer exist from the spec */
+  /**
+   * Replace the field definitions (added to the fields made from the grid columns, see `fieldsFromColumns`),
+   * removing the fields that no longer exist from the spec
+   */
   setFields(fields: PivotField[]): Promise<void> {
     this._options.fields = fields;
-    this._engine.setFields(fields);
-    // the level fields of the date hierarchies are known too
-    const known = { has: (id: string) => id === PIVOT_VALUES_FIELD || !!this._engine.getField(id) };
-    return this.setSpec({
-      ...this._spec,
-      rows: this._spec.rows.filter((id) => known.has(id)),
-      columns: this._spec.columns.filter((id) => known.has(id)),
-      values: this._spec.values.filter((value) => known.has(value.field)),
-      filters: (this._spec.filters ?? []).filter((filter) => known.has(filter.field)),
-      sort: (this._spec.sort ?? []).filter((sort) => known.has(sort.field)),
-    });
+    this.applyFields();
+    return this.setSpec(this.pruneSpec(this._spec));
+  }
+
+  /**
+   * Make the fields again from the grid columns, for example after the application translated or replaced them,
+   * removing the fields that no longer exist from the spec
+   */
+  refreshFields(): Promise<void> {
+    return this.setFields(this._options.fields);
   }
 
   /** Current (normalized) spec */
@@ -436,7 +713,7 @@ export class SlickPivot implements SlickPlugin {
   load(config: { fields?: PivotField[]; source?: PivotSource; spec?: Partial<PivotSpec> }): Promise<void> {
     if (config.fields) {
       this._options.fields = config.fields;
-      this._engine.setFields(config.fields);
+      this.applyFields();
     }
     if ('source' in config) {
       this._options.source = config.source;
@@ -563,7 +840,8 @@ export class SlickPivot implements SlickPlugin {
       return false;
     }
     const provider = this._options.provider;
-    return provider ? !!provider.writeBack && value.writeBack !== false && !value.showAs : this._engine.canWriteBack(value);
+    const method = (value.writeBack || {}).method ?? this._options.writeBack.method;
+    return provider ? !!provider.writeBack && value.writeBack !== false && !value.showAs : this._engine.canWriteBack(value, method);
   }
 
   /**
@@ -580,6 +858,8 @@ export class SlickPivot implements SlickPlugin {
     const settings = { ...this._options.writeBack, ...(value.writeBack || {}) };
     const edit: PivotCellEdit = {
       ...cell,
+      rowPath: { ...this._rowNodeIndex.get(cell.rowKey)?.path },
+      columnPath: { ...this._columnNodeIndex.get(cell.columnKey)?.path },
       oldValue: this._result?.cells[cell.rowKey]?.[cell.columnKey]?.[valueIndex] ?? null,
       newValue,
       method: settings.method ?? 'weighted',
@@ -706,9 +986,15 @@ export class SlickPivot implements SlickPlugin {
   async refresh(): Promise<void> {
     clearTimeout(this._refreshTimer);
     this._refreshTimer = undefined;
+    if (this._grid && !this._pivotMode) {
+      // computed when Pivot Mode is turned on again
+      this._stale = true;
+      return;
+    }
     if (this.onBeforePivot.notify({ spec: this._spec }).getReturnValue() === false) {
       return;
     }
+    this._stale = false;
 
     const provider = this._options.provider;
     if (!provider) {
@@ -800,6 +1086,75 @@ export class SlickPivot implements SlickPlugin {
   // protected functions
   // -----------------
 
+  /** Whether the engine knows every field of the spec (the level fields of the date hierarchies included) */
+  protected knowsSpecFields(): boolean {
+    const known = (id: string) => id === PIVOT_VALUES_FIELD || !!this._engine.getField(id);
+    const spec = this._spec;
+    return (
+      spec.rows.every(known) &&
+      spec.columns.every(known) &&
+      spec.values.every((value) => known(value.field)) &&
+      (spec.filters ?? []).every((filter) => known(filter.field)) &&
+      (spec.sort ?? []).every((sort) => known(sort.field))
+    );
+  }
+
+  /** The spec without the fields that the engine does not know */
+  protected pruneSpec(spec: PivotSpec): PivotSpec {
+    const known = (id: string) => id === PIVOT_VALUES_FIELD || !!this._engine.getField(id);
+    return {
+      ...spec,
+      rows: spec.rows.filter(known),
+      columns: spec.columns.filter(known),
+      values: spec.values.filter((value) => known(value.field)),
+      filters: (spec.filters ?? []).filter((filter) => known(filter.field)),
+      sort: (spec.sort ?? []).filter((sort) => known(sort.field)),
+    };
+  }
+
+  /**
+   * Fields of the engine: on a grid created with its own columns, a field per column that has a `field` and
+   * is not excluded from the column picker, completed or replaced by the `fields` option of the same id
+   */
+  protected resolveFields(): PivotField[] {
+    const own = this._options.fields ?? [];
+    const grid = this._grid;
+    if (!grid || this._dedicatedGrid || !this._options.fieldsFromColumns) {
+      return own;
+    }
+    const byId = new Map(own.map((field) => [field.id, field]));
+    const columns = this._hostState?.columns ?? grid.getColumns();
+    const fields = columns
+      .filter((column) => column.field && !column.excludeFromColumnPicker)
+      .map((column) => {
+        const id = String(column.id);
+        const field: PivotField = { id, label: getColumnLabel(column), field: column.field, ...byId.get(id) };
+        byId.delete(id);
+        return field;
+      });
+    return [...fields, ...byId.values()];
+  }
+
+  /**
+   * Give the engine the resolved fields, returning whether they changed. With `prune`, the fields that no longer
+   * exist are taken out of the spec (raising `onSpecChanged`).
+   */
+  protected applyFields(prune = false): boolean {
+    const fields = this.resolveFields();
+    const signature = JSON.stringify(fields, (_key, value) => (typeof value === 'function' ? String(value) : value));
+    if (signature === this._fieldsSignature) {
+      return false;
+    }
+    this._fieldsSignature = signature;
+    this._engine.setFields(fields);
+    if (prune && !this.knowsSpecFields()) {
+      const previousSpec = this._spec;
+      this._spec = this._engine.normalizeSpec(this.pruneSpec(this._spec));
+      this.onSpecChanged.notify({ spec: this._spec, previousSpec });
+    }
+    return true;
+  }
+
   protected watchSource(source?: PivotSource): void {
     this._sourceHandler.unsubscribeAll();
     const dataView = source as any;
@@ -833,19 +1188,23 @@ export class SlickPivot implements SlickPlugin {
 
   protected applyResult(result: PivotResult): void {
     this._result = result;
-    this._rowNodeIndex.clear();
-    const indexNode = (node: PivotHeaderNode) => {
-      this._rowNodeIndex.set(node.key, node);
-      node.children.forEach(indexNode);
+    const indexNodes = (index: Map<string, PivotHeaderNode>, tree: PivotHeaderNode) => {
+      index.clear();
+      const indexNode = (node: PivotHeaderNode) => {
+        index.set(node.key, node);
+        node.children.forEach(indexNode);
+      };
+      indexNode(tree);
     };
-    indexNode(result.rowTree);
+    indexNodes(this._rowNodeIndex, result.rowTree);
+    indexNodes(this._columnNodeIndex, result.columnTree);
     this.pruneCollapsedKeys();
     this.buildColumns();
     this.buildRows();
   }
 
   protected afterResult(): void {
-    if (this._grid) {
+    if (this._grid && this._pivotMode) {
       this.updateGrid(true);
     }
     if (this._result?.truncated) {
@@ -856,7 +1215,9 @@ export class SlickPivot implements SlickPlugin {
 
   protected setLoading(loading: boolean): void {
     this._loading = loading;
-    this._grid?.getContainerNode().classList.toggle('slick-pivot-loading', loading);
+    if (this._pivotMode) {
+      this._grid?.getContainerNode().classList.toggle('slick-pivot-loading', loading);
+    }
     this.onLoadingChanged.notify({ loading });
   }
 
@@ -1048,7 +1409,9 @@ export class SlickPivot implements SlickPlugin {
   ): Array<{ node: PivotHeaderNode; valueIndex: number; segments: HeaderSegment[]; isTotal: boolean; isGrandTotal: boolean }> {
     const spec = this._spec;
     const columnFieldCount = this.getColumnFieldIds().length;
-    const visibleValues = this.getVisibleValueIndexes();
+    // the values shown in the grand total columns only are not repeated under every column item
+    const totalsOnly = new Set(spec.values.filter((value) => value.totalsOnly).map((value) => value.id));
+    const visibleValues = this.getVisibleValueIndexes().filter((index) => !totalsOnly.has(result.values[index].id));
     const showValueLevel = visibleValues.length > 1;
     const valuesPosition =
       spec.columns.indexOf(PIVOT_VALUES_FIELD) >= 0
@@ -1134,10 +1497,13 @@ export class SlickPivot implements SlickPlugin {
       key: `${root.key}|grandtotal`,
       label: hasColumnFields ? (spec.grandTotals?.label ?? this._options.grandTotalLabel) : '',
     };
+    // row totals (values shown in the grand total columns only) are captioned by their own label, like "Total Of Amount"
+    const totalsOnly = new Set(spec.values.filter((value) => value.totalsOnly).map((value) => value.id));
+    const onlyRowTotals = visibleValues.length > 0 && visibleValues.every((index) => totalsOnly.has(result.values[index].id));
     return visibleValues.map((valueIndex) => {
       const valueSegment: HeaderSegment = { key: `${root.key}|v${valueIndex}`, label: result.values[valueIndex].label };
       let segments: HeaderSegment[];
-      if (!hasColumnFields) {
+      if (!hasColumnFields || onlyRowTotals) {
         segments = [valueSegment];
       } else {
         segments = visibleValues.length > 1 ? [grandTotalSegment, valueSegment] : [grandTotalSegment];
@@ -1340,7 +1706,59 @@ export class SlickPivot implements SlickPlugin {
     this.setRows(rows);
   }
 
+  /** Selected cells of the grid by the ids of their pivot rows, to select them again in the rows that replace them */
+  protected getSelectionByRowId(): KeptSelection[] | undefined {
+    const grid = this._grid;
+    const ranges = grid?.getData() === this.rowModel ? grid.getSelectionModel()?.getSelectedRanges() : undefined;
+    if (!grid || !ranges?.length) {
+      return undefined;
+    }
+    const lastCell = grid.getColumns().length - 1;
+    const kept: KeptSelection[] = [];
+    ranges.forEach((range) => {
+      for (let row = range.fromRow; row <= range.toRow; row++) {
+        const id = this._rows[row]?.id;
+        if (id !== undefined) {
+          kept.push({ id, fromCell: range.fromCell, toCell: range.toCell, wholeRow: range.fromCell === 0 && range.toCell >= lastCell });
+        }
+      }
+    });
+    return kept;
+  }
+
+  /**
+   * Select the kept rows again where they now are, as a DataView does with its rows: a group expanded above them or
+   * a new result moves them. The rows that no longer exist are dropped, and the cells are kept within the columns.
+   */
+  protected restoreSelection(): void {
+    const kept = this._keptSelection;
+    this._keptSelection = undefined;
+    const grid = this._grid;
+    const selectionModel = grid?.getData() === this.rowModel ? grid.getSelectionModel() : undefined;
+    if (!grid || !kept || !selectionModel) {
+      return;
+    }
+    const lastCell = grid.getColumns().length - 1;
+    const ranges: SlickRange[] = [];
+    kept.forEach(({ id, fromCell, toCell, wholeRow }) => {
+      const row = this._rowIndexById.get(id);
+      if (row === undefined || fromCell > lastCell) {
+        return;
+      }
+      const cells = { fromCell, toCell: wholeRow ? lastCell : Math.min(toCell, lastCell) };
+      const previous = ranges[ranges.length - 1];
+      if (previous && previous.toRow === row - 1 && previous.fromCell === cells.fromCell && previous.toCell === cells.toCell) {
+        previous.toRow = row;
+      } else {
+        ranges.push(new SlickRange(row, cells.fromCell, row, cells.toCell));
+      }
+    });
+    selectionModel.setSelectedRanges(ranges, 'SlickPivot.restoreSelection');
+  }
+
   protected setRows(rows: PivotRowItem[]): void {
+    // the rows that were shown, until the grid is updated with the new ones
+    this._keptSelection ??= this.getSelectionByRowId();
     this._rows = rows;
     this._rowIndexById.clear();
     rows.forEach((row, index) => this._rowIndexById.set(row.id, index));
@@ -1468,9 +1886,11 @@ export class SlickPivot implements SlickPlugin {
       // pin before setting the columns, so that the grid lays out the pinned columns while applying them
       this.applyPinning('columns');
       grid.setColumns(this._columns);
+      this.syncMenuColumns(grid.getColumns());
     }
     grid.invalidateAllRows();
     grid.updateRowCount();
+    this.restoreSelection();
     this.applyPinning('rows');
     grid.render();
     if (columnsChanged) {
@@ -1717,11 +2137,20 @@ export class SlickPivot implements SlickPlugin {
       if (!first) {
         return undefined;
       }
-      const target = Math.min(first.getBoundingClientRect().left, last.getBoundingClientRect().left);
+      const firstRect = first.getBoundingClientRect();
+      const lastRect = last.getBoundingClientRect();
+      const target = Math.min(firstRect.left, lastRect.left);
+      const width = Math.max(firstRect.right, lastRect.right) - target;
       const offset = parseFloat(cell.style.getPropertyValue('--slick-pivot-dock-offset')) || 0;
-      return Math.round(offset + target - cell.getBoundingClientRect().left);
+      return { offset: Math.round(offset + target - cell.getBoundingClientRect().left), width };
     });
-    cells.forEach((cell, i) => offsets[i] !== undefined && cell.style.setProperty('--slick-pivot-dock-offset', `${offsets[i]}px`));
+    cells.forEach((cell, i) => {
+      const alignment = offsets[i];
+      if (alignment) {
+        cell.style.setProperty('--slick-pivot-dock-offset', `${alignment.offset}px`);
+        cell.style.width = `${alignment.width}px`;
+      }
+    });
   }
 
   // --

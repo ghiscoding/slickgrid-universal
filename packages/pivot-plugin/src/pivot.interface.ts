@@ -1,5 +1,12 @@
 import type { Column } from '@slickgrid-universal/common';
 
+declare module '@slickgrid-universal/common' {
+  interface GridOption<C extends Column = Column> {
+    /** Options for the registered pivot external resource. */
+    pivotOptions?: PivotOption;
+  }
+}
+
 /** The four areas of the pivot field list (Excel "PivotTable Fields") */
 export type PivotArea = 'filters' | 'rows' | 'columns' | 'values';
 
@@ -38,8 +45,10 @@ export type PivotDateLevel = 'year' | 'quarter' | 'month' | 'day';
  *   (an equal split when the current total is 0)
  * - `equal`: every source row gets the same value
  * - `equalIncrement`: every source row changes by the same amount
+ * - `fill`: every source row gets the typed value itself, of any type, for a setting repeated on every row
+ *   of a cell; only for aggregators whose result is one of the values (`first`, `last`, `min`, `max`)
  */
-export type PivotAllocationMethod = 'weighted' | 'equal' | 'equalIncrement';
+export type PivotAllocationMethod = 'weighted' | 'equal' | 'equalIncrement' | 'fill';
 
 export interface PivotField<T = any> {
   /** Unique id of the field, used by the spec */
@@ -143,7 +152,8 @@ export interface PivotAggregator<S = any, R = any> {
 
   /**
    * Write-back: return the new source values (one per source row behind the cell) that give the cell
-   * the `target` result. Values aggregated by an aggregator without `allocate` cannot be edited.
+   * the `target` result. Values aggregated by an aggregator without `allocate` cannot be edited, except with
+   * the `fill` method, which the engine applies itself for the aggregators whose `resultType` is `same`.
    * The built-in `sum`, `avg`, `first` and `last` aggregators allocate.
    */
   allocate?: (target: any, values: any[], context: PivotAllocationContext) => any[];
@@ -187,6 +197,12 @@ export interface PivotValue {
 
   /** Computed but not displayed, for example an input of a measure */
   hidden?: boolean;
+
+  /**
+   * Shown in the grand total columns only, not under every column item, like the row total of an
+   * MS Access crosstab (a Row Heading with a Total other than Group By), defaults to false
+   */
+  totalsOnly?: boolean;
 
   /** Write-back settings of this value, overriding the plugin `writeBack` option; `false` makes the value read-only */
   writeBack?: false | Pick<PivotWriteBackOption, 'method' | 'precision'>;
@@ -232,6 +248,15 @@ export interface PivotCellEdit {
 
   /** Key of the column header node of the cell */
   columnKey: string;
+
+  /**
+   * Item values of the row of the cell, keyed by field id (`{ Region: 'East', Country: 'China' }`), empty for
+   * the grand total row; with `columnPath`, they identify the cell, for example to save it in a table keyed by them
+   */
+  rowPath: Record<string, any>;
+
+  /** Item values of the column of the cell, keyed by field id, empty for the grand total column */
+  columnPath: Record<string, any>;
 
   /** Id of the edited value */
   valueId: string;
@@ -302,6 +327,14 @@ export interface PivotFilter {
 
   /** Keep the top (or bottom) N items of the field, ranked by the grand total of a value */
   top?: { count: number; valueId: string; direction?: 'top' | 'bottom' };
+
+  /**
+   * Keep the items matching an MS Access style criteria expression, compared with the item values (case
+   * insensitive for text): `1997`, `>= 100`, `<> "North"`, `"East" Or "West"`, `Between 1 And 5`,
+   * `In ("A", "B")`, `Like "C*"` (`*`, `?` and `#` wildcards), `Is Null`, `Not ...`, combined with
+   * `And` and `Or`; dates are written `#2024-01-31#`. Serializable, unlike `predicate`.
+   */
+  criteria?: string;
 
   /** Arbitrary filter (like the "Where" criteria of an MS Access query); not serializable */
   predicate?: (value: any, row: any) => boolean;
@@ -513,13 +546,32 @@ export interface PivotDataProvider {
 export type PivotSource<T = any> = T[] | { getItems: () => T[] };
 
 export interface PivotOption {
-  /** Field definitions */
-  fields: PivotField[];
+  /**
+   * Field definitions. On a grid created with its own columns, the fields are made from the columns
+   * (see `fieldsFromColumns`) and these fields are added to them, or replace the field of the same id.
+   */
+  fields?: PivotField[];
+
+  /**
+   * On a grid created with its own data and columns, make a field of every column that has a `field`
+   * and is not excluded from the column picker (its id, name and `field`), defaults to true
+   */
+  fieldsFromColumns?: boolean;
+
+  /**
+   * Show the pivot in the grid when the plugin is registered, defaults to true. On a grid created with its
+   * own data and columns, `setPivotMode(false)` gives them back and `setPivotMode(true)` shows the pivot
+   * again, keeping the spec.
+   */
+  pivotMode?: boolean;
 
   /** Initial pivot spec */
   spec?: Partial<PivotSpec>;
 
-  /** Source rows (array or DataView); a DataView is watched and re-pivoted when its items change */
+  /**
+   * Source rows (array or DataView); a DataView is watched and re-pivoted when its items change. Defaults to
+   * the data of a grid created with its own data.
+   */
   source?: PivotSource;
 
   /** Custom aggregators, keyed by id, added to the built-in ones */
@@ -713,6 +765,11 @@ export interface OnPivotWriteBackEventArgs extends PivotCellEdit {
 
   /** What wrote the values: a cell edit, `undo()` or `redo()` (`onBeforeWriteBack` is only raised for edits) */
   source: 'edit' | 'undo' | 'redo';
+}
+
+export interface OnPivotModeChangedEventArgs {
+  /** Whether the grid shows the pivot (true) or its own data and columns (false) */
+  pivotMode: boolean;
 }
 
 export interface OnPivotHistoryChangedEventArgs {

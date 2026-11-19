@@ -160,7 +160,7 @@ function normalizeKey(value: any): NormalizedKey {
   }
   if (isDate(value)) {
     const time = value.getTime();
-    return isNaN(time) ? BLANK_KEY : `^@d:${time}`;
+    return isNaN(time) ? BLANK_KEY : `\u0000d:${time}`;
   }
   if (typeof value === 'number' || typeof value === 'string' || typeof value === 'boolean') {
     return value;
@@ -202,6 +202,243 @@ function compareNullableNumbers(a: any, b: any, direction: number): number {
 
 function getNow(): number {
   return typeof performance !== 'undefined' ? performance.now() : Date.now();
+}
+
+// --
+// criteria expressions
+// -----------------
+
+type CriteriaToken = { type: 'literal'; value: any; bare?: boolean } | { type: 'word'; value: string } | { type: 'symbol'; value: string };
+
+const CRITERIA_KEYWORDS = ['and', 'or', 'not', 'between', 'in', 'like', 'is', 'null'];
+
+/** Tokens of a criteria expression: literals (text, numbers, dates, booleans), keywords and symbols */
+function tokenizeCriteria(text: string): CriteriaToken[] {
+  const tokens: CriteriaToken[] = [];
+  let i = 0;
+  while (i < text.length) {
+    const char = text[i];
+    if (/\s/.test(char)) {
+      i++;
+    } else if (char === '"' || char === "'") {
+      // a quote is doubled inside the text, like in Access: "say ""hi"""
+      let value = '';
+      i++;
+      while (i < text.length && (text[i] !== char || text[i + 1] === char)) {
+        value += text[i];
+        i += text[i] === char ? 2 : 1;
+      }
+      if (i >= text.length) {
+        throw new Error(`a text is not closed, add a ${char}`);
+      }
+      i++;
+      tokens.push({ type: 'literal', value });
+    } else if (char === '#') {
+      const end = text.indexOf('#', i + 1);
+      const date = end > i ? toDate(text.slice(i + 1, end).trim()) : null;
+      if (!date) {
+        throw new Error(end > i ? `"${text.slice(i, end + 1)}" is not a date` : 'a date is not closed, add a #');
+      }
+      tokens.push({ type: 'literal', value: date });
+      i = end + 1;
+    } else if (/[\d.]/.test(char) || (char === '-' && /[\d.]/.test(text[i + 1] ?? ''))) {
+      const match = /^-?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?/i.exec(text.slice(i))!;
+      tokens.push({ type: 'literal', value: Number(match[0]) });
+      i += match[0].length;
+    } else if (/[<>=(),]/.test(char)) {
+      const symbol = ['<=', '>=', '<>'].find((op) => text.startsWith(op, i)) ?? char;
+      tokens.push({ type: 'symbol', value: symbol });
+      i += symbol.length;
+    } else {
+      const match = /^[^\s<>=(),"'#]+/.exec(text.slice(i))!;
+      const word = match[0];
+      const lower = word.toLowerCase();
+      if (CRITERIA_KEYWORDS.includes(lower)) {
+        tokens.push({ type: 'word', value: lower });
+      } else if (lower === 'true' || lower === 'false') {
+        tokens.push({ type: 'literal', value: lower === 'true' });
+      } else {
+        // unquoted text is text, words in a row make one text (New York)
+        const previous = tokens[tokens.length - 1];
+        if (previous?.type === 'literal' && previous.bare) {
+          previous.value += ` ${word}`;
+        } else {
+          tokens.push({ type: 'literal', value: word, bare: true });
+        }
+      }
+      i += word.length;
+    }
+  }
+  return tokens;
+}
+
+/** Compare an item value with a criteria literal: dates by time, numbers by value, text without case */
+function compareCriteriaValue(value: any, literal: any): number | null {
+  if (isBlank(value)) {
+    return null;
+  }
+  if (isDate(literal) || isDate(value)) {
+    const a = toDate(value);
+    const b = toDate(literal);
+    return a && b ? a.getTime() - b.getTime() : null;
+  }
+  if (typeof literal === 'boolean' || typeof value === 'boolean') {
+    return value === literal ? 0 : String(value).localeCompare(String(literal));
+  }
+  const a = toNumber(value);
+  const b = toNumber(literal);
+  if (a !== null && b !== null) {
+    return a - b;
+  }
+  return String(value).localeCompare(String(literal), undefined, { sensitivity: 'base' });
+}
+
+/** Regular expression of a `Like` pattern: `*` any text, `?` any character, `#` a digit, `[a-c]` and `[!a-c]` a set */
+function likePatternToRegExp(pattern: string): RegExp {
+  let source = '';
+  for (let i = 0; i < pattern.length; i++) {
+    const char = pattern[i];
+    if (char === '*') {
+      source += '.*';
+    } else if (char === '?') {
+      source += '.';
+    } else if (char === '#') {
+      source += '\\d';
+    } else if (char === '[' && pattern.indexOf(']', i + 1) > i + 1) {
+      const end = pattern.indexOf(']', i + 1);
+      const set = pattern.slice(i + 1, end);
+      source += `[${set.startsWith('!') ? `^${set.slice(1)}` : set}]`.replace(/\\/g, '\\\\');
+      i = end;
+    } else {
+      source += char.replace(/[.+^${}()|\\/\]]/g, '\\$&');
+    }
+  }
+  return new RegExp(`^${source}$`, 'i');
+}
+
+/**
+ * Compile an MS Access style criteria expression into a test of the item values. Throws an error
+ * telling what is wrong when the expression is not valid.
+ */
+function compileCriteria(text: string): (value: any) => boolean {
+  const tokens = tokenizeCriteria(text);
+  let position = 0;
+  const peek = () => tokens[position];
+  const isWord = (word: string) => peek()?.type === 'word' && peek().value === word;
+  const isSymbol = (symbol: string) => peek()?.type === 'symbol' && peek().value === symbol;
+  const expect = (what: string, test: boolean) => {
+    if (!test) {
+      const token = peek();
+      throw new Error(
+        token
+          ? `${what} is expected before "${token.value instanceof Date ? `#${token.value.toISOString().slice(0, 10)}#` : token.value}"`
+          : `${what} is expected at the end`
+      );
+    }
+    position++;
+  };
+  const literal = (): any => {
+    const token = peek();
+    expect('a value', token?.type === 'literal');
+    return token.value;
+  };
+
+  const condition = (): ((value: any) => boolean) => {
+    if (isSymbol('(')) {
+      position++;
+      const inner = or();
+      expect('")"', isSymbol(')'));
+      return inner;
+    }
+    if (isWord('null')) {
+      position++;
+      return (value) => isBlank(value);
+    }
+    if (isWord('is')) {
+      position++;
+      const negated = isWord('not') && !!++position;
+      expect('Null', isWord('null'));
+      return negated ? (value) => !isBlank(value) : (value) => isBlank(value);
+    }
+    if (isWord('between')) {
+      position++;
+      const low = literal();
+      expect('And', isWord('and'));
+      const high = literal();
+      return (value) => {
+        const fromLow = compareCriteriaValue(value, low);
+        const toHigh = compareCriteriaValue(value, high);
+        return fromLow !== null && toHigh !== null && fromLow >= 0 && toHigh <= 0;
+      };
+    }
+    if (isWord('like')) {
+      position++;
+      const regExp = likePatternToRegExp(String(literal()));
+      return (value) => !isBlank(value) && regExp.test(String(value));
+    }
+    if (isWord('in')) {
+      position++;
+      expect('"("', isSymbol('('));
+      const values = [literal()];
+      while (isSymbol(',')) {
+        position++;
+        values.push(literal());
+      }
+      expect('")"', isSymbol(')'));
+      return (value) => values.some((item) => compareCriteriaValue(value, item) === 0);
+    }
+    const token = peek();
+    const operator = token?.type === 'symbol' && ['=', '<>', '<', '<=', '>', '>='].includes(token.value) ? token.value : '=';
+    if (token?.type === 'symbol' && operator === token.value) {
+      position++;
+    }
+    const target = literal();
+    const test = {
+      '=': (n: number) => n === 0,
+      '<>': (n: number) => n !== 0,
+      '<': (n: number) => n < 0,
+      '<=': (n: number) => n <= 0,
+      '>': (n: number) => n > 0,
+      '>=': (n: number) => n >= 0,
+    }[operator]!;
+    return (value) => {
+      const comparison = compareCriteriaValue(value, target);
+      return comparison !== null && test(comparison);
+    };
+  };
+  const not = (): ((value: any) => boolean) => {
+    if (isWord('not')) {
+      position++;
+      const inner = not();
+      return (value) => !inner(value);
+    }
+    return condition();
+  };
+  const and = (): ((value: any) => boolean) => {
+    const tests = [not()];
+    while (isWord('and')) {
+      position++;
+      tests.push(not());
+    }
+    return tests.length === 1 ? tests[0] : (value) => tests.every((test) => test(value));
+  };
+  const or = (): ((value: any) => boolean) => {
+    const tests = [and()];
+    while (isWord('or')) {
+      position++;
+      tests.push(and());
+    }
+    return tests.length === 1 ? tests[0] : (value) => tests.some((test) => test(value));
+  };
+
+  if (!tokens.length) {
+    return () => true;
+  }
+  const test = or();
+  if (position < tokens.length) {
+    expect('Or, And or the end', false);
+  }
+  return test;
 }
 
 // --
@@ -511,6 +748,18 @@ export class PivotEngine {
   protected _locale?: string | string[];
 
   /** Id of the level field of a date hierarchy, for example `OrderDate.year` */
+  /**
+   * Compile an MS Access style criteria expression (see `PivotFilter.criteria`) into a test of the item
+   * values. Throws an error telling what is wrong when the expression is not valid.
+   */
+  static parseCriteria(criteria: string, fieldId?: string): (value: any) => boolean {
+    try {
+      return compileCriteria(criteria);
+    } catch (error: any) {
+      throw new Error(`[PivotEngine] invalid criteria${fieldId ? ` of "${fieldId}"` : ''}: ${error.message}`);
+    }
+  }
+
   static getDateLevelId(fieldId: string, level: PivotDateLevel): string {
     return `${fieldId}.${level}`;
   }
@@ -850,18 +1099,15 @@ export class PivotEngine {
   // -----------------
 
   /**
-   * Whether the cells of a value can be edited (write-back): its aggregator allocates, its field can be
+   * Whether the cells of a value can be edited (write-back) with an allocation method (by default the one of
+   * the value): its aggregator allocates (with `fill`, its result is one of the values), its field can be
    * written (a plain property or a field with a `setter`) and the value is not shown as a calculation
    */
-  canWriteBack(value: PivotValue): boolean {
+  canWriteBack(value: PivotValue, method = value.writeBack ? value.writeBack.method : undefined): boolean {
     const field = this.getField(value.field);
-    return (
-      value.writeBack !== false &&
-      !value.showAs &&
-      !!this._aggregators.get(value.aggregator)?.allocate &&
-      !!field &&
-      (!!field.setter || !field.getter)
-    );
+    const aggregator = this._aggregators.get(value.aggregator);
+    const allocates = method === 'fill' ? aggregator?.resultType === 'same' : !!aggregator?.allocate;
+    return value.writeBack !== false && !value.showAs && allocates && !!field && (!!field.setter || !field.getter);
   }
 
   /**
@@ -877,7 +1123,9 @@ export class PivotEngine {
   ): PivotWriteBackChange[] {
     const spec = this.normalizeSpec(inputSpec);
     const value = spec.values.find((item) => item.id === cell.valueId);
-    if (!value || !this.canWriteBack(value)) {
+    const valueOptions = value?.writeBack || {};
+    const method = options?.method ?? valueOptions.method ?? 'weighted';
+    if (!value || !this.canWriteBack(value, method)) {
       return [];
     }
     const sourceRows = this.getSourceRows(rows, spec, cell.rowKey, cell.columnKey);
@@ -887,13 +1135,10 @@ export class PivotEngine {
     const field = this.requireField(value.field);
     const getter = this.createGetter(field);
     const oldValues = sourceRows.map((row) => getter(row));
-    const valueOptions = value.writeBack || {};
-    const context: PivotAllocationContext = {
-      method: options?.method ?? valueOptions.method ?? 'weighted',
-      precision: options?.precision ?? valueOptions.precision,
-      rows: sourceRows,
-    };
-    const newValues = this._aggregators.get(value.aggregator)!.allocate!(target, oldValues, context);
+    const context: PivotAllocationContext = { method, precision: options?.precision ?? valueOptions.precision, rows: sourceRows };
+    const filled = typeof target === 'number' && context.precision !== undefined ? roundTo(target, context.precision) : target;
+    const newValues =
+      method === 'fill' ? oldValues.map(() => filled) : this._aggregators.get(value.aggregator)!.allocate!(target, oldValues, context);
     return sourceRows
       .map((row, i) => ({ row, field: field.id, oldValue: oldValues[i], newValue: newValues[i] }))
       .filter((change) => change.newValue !== change.oldValue);
@@ -1033,7 +1278,7 @@ export class PivotEngine {
     }
 
     const rowFilters = filters
-      .filter((filter) => filter.include || filter.exclude || filter.label || filter.predicate)
+      .filter((filter) => filter.include || filter.exclude || filter.label || filter.criteria?.trim() || filter.predicate)
       .map((filter) => this.createRowFilter(filter, blankLabel));
     let filteredRows = rowFilters.length ? rows.filter((row) => rowFilters.every((test) => test(row))) : rows;
 
@@ -1070,9 +1315,13 @@ export class PivotEngine {
     const exclude = filter.exclude ? new Set(filter.exclude.map((value) => normalizeKey(this.coerceFilterValue(field, value)))) : undefined;
     const labelFilter = filter.label;
     const search = labelFilter?.value?.toLowerCase() ?? '';
+    const criteria = filter.criteria?.trim() ? PivotEngine.parseCriteria(filter.criteria, field.id) : undefined;
 
     return (row: any) => {
       const value = getter(row);
+      if (criteria && !criteria(value)) {
+        return false;
+      }
       if (include || exclude) {
         const key = normalizeKey(value);
         if ((include && !include.has(key)) || exclude?.has(key)) {

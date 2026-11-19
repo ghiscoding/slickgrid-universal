@@ -62,6 +62,9 @@ function createMockGrid(options: Partial<GridOption> = {}, containerWidth = 0): 
   const includes = (references: any, id: string | number) => Array.isArray(references) && references.includes(id);
 
   const grid = {
+    getData: vi.fn(),
+    onBeforeDestroy: new SlickEvent(),
+    getSelectionModel: vi.fn(() => undefined),
     getContainerNode: vi.fn(() => container),
     getPreHeaderPanel: vi.fn(() => preHeaderPanel),
     getOptions: vi.fn(() => gridOptions),
@@ -135,6 +138,7 @@ describe('SlickPivot plugin', () => {
   const createPivot = (options: Partial<PivotOption> = {}, gridOptions: Partial<GridOption> = {}, containerWidth = 0) => {
     const mock = createMockGrid(gridOptions, containerWidth);
     const pivot = new SlickPivot({ fields, source: createRows(), spec: baseSpec, numberFormat: { locale: 'en-US' }, locale: 'en-US', ...options });
+    vi.mocked(mock.grid.getData).mockReturnValue(pivot.rowModel);
     pivot.init(mock.grid);
     created.push(pivot);
     return { pivot, ...mock };
@@ -167,8 +171,9 @@ describe('SlickPivot plugin', () => {
     const setData = vi.fn();
     Object.assign(mock.grid, { getData, setData });
     const pivot = new SlickPivot({ fields, source: createRows(), spec: baseSpec });
+    vi.mocked(mock.grid.getData).mockReturnValue(pivot.rowModel);
     pivot.init(mock.grid);
-    expect(setData).toHaveBeenCalledWith(pivot.rowModel);
+    expect(setData).not.toHaveBeenCalled();
     expect(mock.container.classList.contains('slick-pivot')).toBe(true);
     pivot.dispose();
     expect(mock.container.classList.contains('slick-pivot')).toBe(false);
@@ -179,9 +184,26 @@ describe('SlickPivot plugin', () => {
       enableCellNavigation: true,
       preHeaderPanelHeight: 30,
       createPreHeaderPanel: true,
-      showPreHeaderPanel: true,
     });
-    expect(SlickPivot.getGridOptions()).toEqual({ preHeaderPanelHeight: 25, createPreHeaderPanel: true, showPreHeaderPanel: true });
+    expect(SlickPivot.getGridOptions()).toEqual({ preHeaderPanelHeight: 25, createPreHeaderPanel: true });
+  });
+
+  it('aligns docked group widths with the actual header bounds', () => {
+    const { pivot, grid, preHeaderPanel } = createPivot();
+    const cell = document.createElement('div');
+    cell.className = 'slick-pivot-header-group-docked';
+    cell.dataset.firstColumn = 'first';
+    cell.dataset.lastColumn = 'last';
+    preHeaderPanel.appendChild(cell);
+    const first = document.createElement('div');
+    const last = document.createElement('div');
+    vi.spyOn(first, 'getBoundingClientRect').mockReturnValue({ left: 100, right: 148 } as DOMRect);
+    vi.spyOn(last, 'getBoundingClientRect').mockReturnValue({ left: 148, right: 198 } as DOMRect);
+    vi.spyOn(cell, 'getBoundingClientRect').mockReturnValue({ left: 95 } as DOMRect);
+    vi.mocked(grid.getHeaderColumn).mockImplementation((id) => (id === 'first' ? first : last));
+    (pivot as any).syncDockedHeaderGroups();
+    expect(cell.style.width).toBe('98px');
+    expect(cell.style.getPropertyValue('--slick-pivot-dock-offset')).toBe('5px');
   });
 
   describe('compact layout', () => {
@@ -796,6 +818,8 @@ describe('SlickPivot plugin', () => {
       const args = after.mock.calls[0][1];
       expect(args).toEqual({
         ...cell,
+        rowPath: { region: 'East', country: 'China' },
+        columnPath: {},
         oldValue: 40,
         newValue: 60,
         method: 'weighted',
@@ -1294,6 +1318,8 @@ describe('SlickPivot plugin', () => {
       expect(provider.writeBack).toHaveBeenCalledWith(expect.objectContaining({ spec: expect.anything() }), {
         rowKey: EAST,
         columnKey: ROOT,
+        rowPath: { region: 'East' },
+        columnPath: {},
         valueId: 'sum:amount',
         oldValue: 450,
         newValue: 1,
@@ -1526,6 +1552,7 @@ describe('SlickPivot plugin', () => {
       vi.mocked(mock.grid.getPreHeaderPanel).mockReturnValue(undefined as any);
       const pivot = new SlickPivot({ fields, source: createRows(), spec: baseSpec, enableWriteBack: true, columnDefaults: { editor: null as any } });
       created.push(pivot);
+      vi.mocked(mock.grid.getData).mockReturnValue(pivot.rowModel);
       pivot.init(mock.grid);
       expect(consoleWarn).toHaveBeenCalledWith(expect.stringContaining('[SlickPivot] the column group headers need a pre-header panel'));
       expect(pivot.getColumns()[1].editor).toEqual({ model: Editors.float });

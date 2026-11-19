@@ -1,47 +1,28 @@
 # SlickGrid Universal Pivot
 
-Optional pivot table plugin for SlickGrid Universal, adapted from [SlickGrid PR #1334](https://github.com/6pac/SlickGrid/pull/1334) (MIT license). It includes the pivot engine, grid plugin, field list, toolbar, source-row details dialog, and a composed pivot table.
+Optional pivot engine, grid resource, and interactive field-list resource, adapted from [SlickGrid PR #1334](https://github.com/6pac/SlickGrid/pull/1334). Install `@slickgrid-universal/pivot-plugin` alongside the normal grid packages and import a matching pivot stylesheet.
 
-```bash
-pnpm add @slickgrid-universal/pivot-plugin @slickgrid-universal/common
-```
-
-Import the matching theme stylesheet, for example:
+Create your grid normally and explicitly register the optional resources. The layout container must hold the grid element; the field-list resource adds the sidebar, toolbar, and status bar without creating another grid.
 
 ```ts
+import { SlickPivot, SlickPivotFieldList } from '@slickgrid-universal/pivot-plugin';
 import '@slickgrid-universal/pivot-plugin/dist/styles/css/slick.pivot-default.css';
-```
 
-For a complete pivot table, give the container a height and create `SlickPivotTable`:
-
-```ts
-import { SlickPivotTable } from '@slickgrid-universal/pivot-plugin';
-
-const table = new SlickPivotTable('#pivot', {
-  fields: [
-    { id: 'region', label: 'Region' },
-    { id: 'year', label: 'Year', type: 'number' },
-    { id: 'amount', label: 'Amount', type: 'number' },
-  ],
-  source: [
-    { region: 'East', year: 2025, amount: 120 },
-    { region: 'West', year: 2025, amount: 80 },
-  ],
-  spec: {
-    rows: ['region'],
-    columns: ['year'],
-    values: [{ field: 'amount', aggregator: 'sum' }],
-  },
+const pivot = new SlickPivot({
+  pivotMode: false,
+  fields: [{ id: 'year', type: 'number' }, { id: 'amount', type: 'number' }],
+  spec: { rows: ['region'], columns: ['year'], values: [{ field: 'amount', aggregator: 'sum' }] },
 });
-
-// When the host view is removed:
-table.destroy();
+const fieldList = new SlickPivotFieldList({ container: '#grid-and-pivot', pivot });
+const gridOptions = {
+  externalResources: [pivot, fieldList],
+  enableCellNavigation: true,
+};
+// Pass gridOptions, your regular column definitions, and dataset to your grid wrapper.
+// After the wrapper has initialized the grid, enable the pivot:
+await pivot.setPivotMode(true);
 ```
 
-`SlickPivot` can also be registered as a Universal external resource. Create it before the grid, pass `pivot.rowModel` as the grid data, and merge `SlickPivot.getGridOptions()` into the grid options so the grouped column headers have a pre-header panel. The class implements `init()` and `dispose()` for the external resource lifecycle. `PivotEngine` can be used without a DOM or grid.
+Fields are derived from the grid columns, with `fields` providing overrides or calculated fields. `pivot.setPivotMode(false)` restores the host grid's data and columns; `pivot.setPivotMode(true)` displays the saved pivot layout again. Register both resources explicitly; options alone do not load the plugin.
 
-The `src/styles/slick.pivot.scss` source and compiled styles for Bootstrap, Default, Fluent, Material, and Salesforce themes are published with the package.
-
-See [Vanilla Example 48](../../demos/vanilla/src/examples/example48.ts) for a complete interactive demo with the field list, toolbar, layout actions, and 5,000 sales rows.
-
-The **Pivot Mode** checkbox switches between pivot results and local source rows. The pivot layout is retained across switches. The checkbox is disabled when there is no local source, such as a provider-only pivot. Use `table.isPivotMode()` and `table.setPivotMode(enabled)` to read or change the mode.
+Start the resource with `pivotMode: false` and enable it after the wrapper initializes: Universal services need the original DataView during grid creation. The pivot displays aggregated rows while active. Application handlers, menus, exports, filtering, and selection logic that expect source records must account for pivot mode. See Vanilla Example 48 for a complete example.

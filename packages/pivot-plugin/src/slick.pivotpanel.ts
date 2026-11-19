@@ -58,6 +58,15 @@ export interface PivotPanelOption {
   /** Show a close button in the panel header, raising `onClose`, defaults to false */
   showCloseButton: boolean;
 
+  /**
+   * Show the Pivot Mode switch, which shows the pivot in the grid or gives the grid back its own data and columns,
+   * defaults to true (it is left out for a grid created with `pivot.rowModel` as its data, which only shows the pivot)
+   */
+  showPivotModeToggle: boolean;
+
+  /** Caption of the Pivot Mode switch, defaults to "Pivot Mode" */
+  pivotModeLabel: string;
+
   /** Show the "Defer layout update" checkbox, defaults to true */
   showDeferUpdate: boolean;
 
@@ -156,6 +165,9 @@ export class SlickPivotPanel {
   protected _fieldListElm!: HTMLUListElement;
   protected _areaElms = new Map<PivotArea, HTMLUListElement>();
   protected _deferCheckbox?: HTMLInputElement;
+  protected _pivotModeCheckbox?: HTMLInputElement;
+  /** Everything below the header and the Pivot Mode switch, inert while Pivot Mode is off */
+  protected _bodyElms: HTMLElement[] = [];
   protected _updateButton?: HTMLButtonElement;
   protected _statusElm!: HTMLDivElement;
   protected _liveElm!: HTMLDivElement;
@@ -175,6 +187,8 @@ export class SlickPivotPanel {
     areasHint: 'Drag fields between areas below:',
     valuesPillLabel: 'Σ Values',
     showCloseButton: false,
+    showPivotModeToggle: true,
+    pivotModeLabel: 'Pivot Mode',
     showDeferUpdate: true,
     deferLayoutUpdate: false,
     maxFilterItems: 500,
@@ -243,6 +257,7 @@ export class SlickPivotPanel {
         }
       })
       .subscribe(this.pivot.onPivotChanged, () => this.renderStatus())
+      .subscribe(this.pivot.onPivotModeChanged, () => this.render())
       .subscribe(this.pivot.onLoadingChanged, (_e, args) => this._panelElm.classList.toggle('slick-pivot-panel-busy', args.loading));
     this.render();
   }
@@ -296,6 +311,7 @@ export class SlickPivotPanel {
   /** Re-render the field list and the areas */
   render(): void {
     this._typeCache.clear();
+    this.renderPivotMode();
     this.renderFieldList();
     this.renderAreas();
     this.renderFooter();
@@ -741,6 +757,13 @@ export class SlickPivotPanel {
       );
       this._bindingEventService.bind(closeButton, 'click', () => this.onClose.notify({ panel: this }));
     }
+    if (options.showPivotModeToggle && this.pivot.canTogglePivotMode()) {
+      const label = Utils.createDomElement('label', { className: 'slick-pivot-mode' }, this._panelElm);
+      const checkbox = Utils.createDomElement('input', { type: 'checkbox', className: 'slick-pivot-mode-checkbox', role: 'switch' }, label);
+      Utils.createDomElement('span', { className: 'slick-pivot-mode-label', textContent: options.pivotModeLabel }, label);
+      this._bindingEventService.bind(checkbox, 'change', () => this.pivot.setPivotMode(checkbox.checked));
+      this._pivotModeCheckbox = checkbox;
+    }
 
     const search = Utils.createDomElement('div', { className: 'slick-pivot-panel-search' }, this._panelElm);
     this._searchInput = Utils.createDomElement(
@@ -791,11 +814,22 @@ export class SlickPivotPanel {
     }
     this._statusElm = Utils.createDomElement('div', { className: 'slick-pivot-panel-status' }, this._panelElm);
     this._liveElm = Utils.createDomElement('div', { className: 'slick-pivot-live', ariaLive: 'polite' }, this._panelElm);
+    this._bodyElms = [search, this._fieldListElm, this._fieldListElm.nextElementSibling as HTMLElement, areasElm, footer, this._statusElm];
 
     this._bindingEventService.bind(this._panelElm, 'pointerdown', this.handlePointerDown.bind(this) as EventListener);
     this._bindingEventService.bind(this._panelElm, 'click', this.handleClick.bind(this) as EventListener);
     this._bindingEventService.bind(this._panelElm, 'change', this.handleChange.bind(this) as EventListener);
     this._bindingEventService.bind(this._panelElm, 'keydown', this.handleKeyDown.bind(this) as EventListener);
+  }
+
+  /** Check the Pivot Mode switch as the pivot is, the rest of the panel being inert while Pivot Mode is off */
+  protected renderPivotMode(): void {
+    const pivotMode = this.pivot.isPivotMode();
+    if (this._pivotModeCheckbox) {
+      this._pivotModeCheckbox.checked = pivotMode;
+    }
+    this._panelElm.classList.toggle('slick-pivot-panel-off', !pivotMode);
+    this._bodyElms.forEach((elm) => elm.toggleAttribute('inert', !pivotMode));
   }
 
   protected renderFieldList(): void {

@@ -4,4 +4,4 @@ export * from './slick.pivot.js';
 export * from './slick.pivotpanel.js';
 export * from './slick.pivottoolbar.js';
 export * from './slick.pivotdetails.js';
-export * from './slick.pivottable.js';
+export * from './slick.pivotfieldlist.js';
