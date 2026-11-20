@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Example 48 now tests reference highlighting across 80 restored rows: colors appear on virtualized rows and clear after cancel, including when those rows are rendered again. All 46 Cypress tests passed.
 - Vanilla Example 48 passed all 45 Cypress tests against the watch server, including CSV, text comparisons, reference highlights and grouped workbook exports. LibreOffice recalculated the grouped `SUMPRODUCT` workbook to 57.0334 and returned `#VALUE!` for mismatched ranges.
 - Formula Editor now calls the configured editor or column validator with the displayed formula text. Automatic syntax rejection remains disabled; calculation errors remain visible in cells.
 - `COUNT` now counts valid JavaScript dates from direct values, cells, ranges, `NOW()` and `TODAY()`; invalid dates and referenced date strings remain excluded.
@@ -197,7 +198,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Verify CSV/text export of evaluated formula values with grouped and ungrouped integration tests. With formatters disabled, export retains the raw dataset value.
 - [x] Add a CSV export control to Example 48 and document the formatter requirement.
 - [x] Run the Example 48 grouped and ungrouped CSV browser assertions against the Vanilla demo server.
-- [ ] Validate reference highlight behavior during scrolling and row virtualization, including cleanup; Example 48's 11 rows do not exercise row virtualization, so provide a suitable test setup.
+- [x] Validate reference highlights during scrolling and row virtualization, including cleanup, using an enlarged Example 48 dataset.
 - [x] Audit and align operator precedence and negative powers with Excel.
 - [x] Fix arithmetic addition of numeric and nonnumeric text; retain `&` for concatenation.
 - [x] Preserve blank members in ranges for counting and aggregate functions, including stable references.

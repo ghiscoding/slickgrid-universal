@@ -871,6 +871,34 @@ describe('Example 48 - Formula Service', () => {
     });
   });
 
+  it('should render and clear reference highlights on virtualized rows', () => {
+    cy.reload();
+    cy.get('[data-test="clear-grouping-btn"]').click();
+    cy.get(cell(0, 4)).should('contain', '$8.88');
+    cy.get('[data-test="save-formula-state-btn"]').click();
+    cy.window().then((win) => {
+      const key = 'example48-formula-state';
+      const state = JSON.parse(win.sessionStorage.getItem(key)!);
+      for (let id = 12; id <= 80; id++) {
+        state.dataset.push({ id, name: `Item ${id}`, qty: 1, price: id, taxable: false, subTotal: '', taxes: '', total: '' });
+      }
+      win.sessionStorage.setItem(key, JSON.stringify(state));
+      win.sessionStorage.setItem('example48-formula-restore', '1');
+    });
+    cy.reload();
+    cy.get(cell(0, 4)).dblclick();
+    cy.get('.formula-editor-input').click().type('{selectall}=SUM(C1:C80)', { force: true });
+    cy.get(cell(0, 2)).should('have.class', 'formula-cell-color-1');
+    cy.get('.grid48 .slick-vertical-scroller').scrollTo('bottom');
+    cy.get(cell(79, 2)).should('have.class', 'formula-cell-color-1').and('have.class', 'formula-ref-bottom');
+    cy.get('.grid48 .slick-vertical-scroller').scrollTo('top');
+    cy.get('.formula-editor-input').type('{esc}', { force: true });
+    cy.get('.grid48 [class*="formula-cell-color-"]').should('not.exist');
+    cy.get('.grid48 .slick-vertical-scroller').scrollTo('bottom');
+    cy.get(cell(79, 2)).should('not.have.class', 'formula-cell-color-1');
+    cy.reload();
+  });
+
   it('should switch formula reference and column-prefix colors with the grid theme', () => {
     cy.reload();
 
