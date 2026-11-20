@@ -13,6 +13,9 @@ export interface ExternalResource {
   /** optionally Create the plugin before the Grid creation to avoid having odd behaviors. */
   create?: (columns: Column[], gridOptions: GridOption) => void;
 
+  /** Prepare grid options before the grid is constructed. */
+  prepareGridOptions?: (gridOptions: GridOption, columns: Column[]) => void;
+
   /** Dispose method */
   dispose?: () => void;
 }

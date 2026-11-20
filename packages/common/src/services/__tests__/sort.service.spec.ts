@@ -1144,6 +1144,22 @@ describe('SortService', () => {
   });
 
   describe('onLocalSortChanged method', () => {
+    it('leaves sorting to a displayed row model that does not implement DataView sorting', async () => {
+      service.bindLocalOnSort(gridStub);
+      const getData = vi.spyOn(gridStub, 'getData').mockReturnValue({ getLength: () => 1, getItem: () => ({ id: 1 }) } as any);
+      const sort = vi.spyOn(dataViewStub, 'sort');
+      const localSort = vi.spyOn(service, 'onLocalSortChanged');
+      const invalidate = vi.spyOn(gridStub, 'invalidate');
+
+      service.handleLocalOnSort(new SlickEventData(), { sortCol: { id: 'value' }, sortAsc: true } as SingleColumnSort);
+      expect(localSort).not.toHaveBeenCalled();
+
+      await service.onLocalSortChanged(gridStub, []);
+      expect(sort).not.toHaveBeenCalled();
+      expect(invalidate).not.toHaveBeenCalled();
+      getData.mockRestore();
+    });
+
     it('should call a dataview "reSort" when the flag requires it', async () => {
       const spyResort = vi.spyOn(dataViewStub, 'reSort');
 
