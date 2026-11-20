@@ -1,13 +1,14 @@
 # Formula Editor Plugin Progress
 
-## Handoff update (2026-11-19)
+## Handoff update (2026-11-20)
 - Added Example 48 browser assertions for clipped and overlapping reference highlights, cancel cleanup, range-endpoint dragging, and exported custom-function metadata. These additions and the existing grouped SUMPRODUCT regression still need a browser run against the Vanilla demo server; Example 48's 11 rows do not exercise row virtualization.
+- Added selection-model prerequisite warning and CSS-fallback coverage using Example 48's one-shot session-storage test configuration. The browser assertions still need to run against the Vanilla demo server.
 - The earlier uncommitted work is now committed; the branch was clean at the start of this session.
-- Aligned the formula package version with the monorepo's 11.0.0 version and corrected the package README's outdated evaluator description. A forced TypeScript build, all five Sass theme builds, custom Sass color compilation, public JS/CSS resolution, npm pack dry run, and all 150 formula plugin unit tests passed. The pnpm package build itself produced no output and was stopped; a clean install is still unverified. The grouped SUMPRODUCT browser regression still needs a running Vanilla demo server.
+- Aligned the formula package version with the monorepo's 11.0.0 version and corrected the package README's outdated evaluator description. A forced TypeScript build, all five Sass theme builds, custom Sass color compilation, public JS/CSS resolution, npm pack dry run, and all 150 formula plugin unit tests passed. The pnpm package build also passed; a clean install is still unverified. The grouped SUMPRODUCT browser regression still needs a running Vanilla demo server.
 - SUMIF currently truncates mismatched ranges to the shorter flattened array. Excel-compatible expansion requires preserving the additional referenced cells as stable identities; do not implement it as a simple change to the array length.
 - Highlight review: overlapping cells use the later reference's color and edges, now documented and covered by a unit test. The hash clips to the data and visible columns; SlickGrid stores the hash independently of rendered rows and applies it during cell rendering. Editor destruction and service disposal remove the overlay. Browser validation of scrolling/virtualization and cleanup remains open.
 
-Last updated: 2026-11-19
+Last updated: 2026-11-20
 Branch context: feat/cell-formula-plugin
 
 ## Handoff and Validation (2026-11-17)
@@ -183,7 +184,8 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Support dragging the fill handle to copy formulas into a selected target range, adjusting relative references and preserving absolute references.
 - [x] Evaluate double-clicking the fill handle to fill down to an adjacent data boundary. Defer this optional enhancement: the current grid exposes drag replacement but no double-click fill event, and adjacent-boundary rules across groups and filters need a separate design. A future implementation should stop at the first blank in a chosen adjacent visible data column, stop at structural rows, respect filtering, and cap the number of filled cells; multiple adjacent columns and overwrite behavior require an explicit product decision.
 - [x] Evaluate the existing autocompleter: retain the current contenteditable implementation because an adapter has no demonstrated LOC or bundle-size benefit.
-- [ ] Add browser coverage for selection-model CSS fallback and prerequisite warnings using a suitable demo configuration.
+- [x] Add browser coverage for selection-model CSS fallback and prerequisite warnings using Example 48's one-shot session-storage test configuration.
+- [ ] Run the selection-model fallback and prerequisite-warning browser coverage against the Vanilla demo server.
 - [ ] Run and fix the new Example 48 assertions for case-insensitive text comparisons, range-endpoint dragging, clipped and overlapping highlights, cancel cleanup and exported custom-function metadata. The tests are written but have not yet been run.
 - [ ] Run the grouped `SUMPRODUCT` Example 48 browser/workbook regression against a running watch server; verify its exported workbook calculation where practical.
 - [x] Verify CSV/text export of evaluated formula values with grouped and ungrouped integration tests. With formatters disabled, export retains the raw dataset value.
@@ -204,7 +206,8 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Audit and correct comparisons between logical, numeric and text values, including chained comparisons and blank references. Logical values remain numeric in arithmetic.
 - [ ] Audit remaining operator and conditional-function coercion, dates and function argument counts; investigate shared token parsing if further reproductions justify it.
 - [ ] Smoke-test formula integration and the optional stylesheet in Angular, Aurelia, React and Vue. The only current formula demo is Vanilla Example 48, so arrange framework-specific setups and do not infer wrapper behavior from Vanilla.
-- [ ] Complete a clean package install and pnpm package build; investigate the stalled pnpm build. Package exports, custom Sass, five theme builds and version alignment were checked, but clean installation is unverified.
+- [x] Complete the pnpm formula-plugin package build; package exports, custom Sass, five theme builds and version alignment are verified.
+- [ ] Verify a clean install of the packed package and its production dependencies; the offline install attempt did not complete.
 - [x] Review current-facing documentation for stale MVP claims and demo references; update the formula guides and all four framework export guides to point to Vanilla Example 48.
 - [ ] Complete final validation for changed files: relevant tests, lint, formatting and TypeScript; verify 100% statement and line coverage per changed production file, and dependency/circular checks when imports change. Include browser and workbook checks where applicable.
 - [ ] Evaluate editor validation and detailed error messages if needed; the editor currently accepts input without validation.
@@ -216,6 +219,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Validate fixed argument counts for `IF`, `POWER`, random/date functions and `NA`; align `POWER` and `^` error results.
 - [x] Support custom and read-only formula columns independently of Formula Editor; document and test `onBeforeEditCell` cancellation.
 - [x] Decide whether an optional strict selection-prerequisite mode is needed: retain warning-only behavior and CSS fallback.
+- [ ] Replicate vanilla example 48 to all framework wrappers as next available example number. All wrappers have an exact copy of the Cypress E2E test.
 - [ ] **Last task:** Evaluate a separate calculated-columns package and identify utilities that could be shared with the formula plugin. Inform the user when this task is reached.
 
 ## Latest Update: Optional Package Styling (2026-11-14)
