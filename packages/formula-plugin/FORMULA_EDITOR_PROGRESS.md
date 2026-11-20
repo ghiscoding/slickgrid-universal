@@ -1,6 +1,7 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- `COUNT` now counts valid JavaScript dates from direct values, cells, ranges, `NOW()` and `TODAY()`; invalid dates and referenced date strings remain excluded.
 - Validated count-function argument counts: `COUNT` and `COUNTA` require an argument, and `COUNTBLANK` requires exactly one. All 160 Formula Plugin tests pass with full statement and line coverage for the changed function file.
 - Packed the Formula Plugin and installed its tarball in an isolated offline consumer using local workspace overrides for its 11.0.0 dependencies; `FormulaService` and the default CSS export resolve. A registry-only clean install remains unverified.
 - Consolidated lazy `IF` and `SUMIF` function-argument scanning in one parser, preserving quoted text and nested expressions.
@@ -208,6 +209,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Match Excel `SUMIF` behavior for mismatched ranges by sizing `sum_range` from its first cell to the criteria range dimensions; preserve expanded cells through layout changes, snapshots and Excel export.
 - [x] Audit and correct comparisons between logical, numeric and text values, including chained comparisons and blank references. Logical values remain numeric in arithmetic.
 - [x] Validate required argument counts for `COUNT`, `COUNTA` and `COUNTBLANK`.
+- [x] Count valid date values in `COUNT`, including references and date-function results.
 - [ ] Audit remaining operator and conditional-function coercion, dates and other function argument counts.
 - [x] Consolidate argument, quote and nesting scans shared by lazy `IF` evaluation and `SUMIF` range normalization; preserve existing parsing behavior and coverage.
 - [ ] Smoke-test formula integration and the optional stylesheet in Angular, Aurelia, React and Vue. The only current formula demo is Vanilla Example 48, so arrange framework-specific setups and do not infer wrapper behavior from Vanilla.

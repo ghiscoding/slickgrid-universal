@@ -105,6 +105,10 @@ describe('createFormulaFunctionRegistry', () => {
 
     expect(registry.get('COUNT')?.(1, '2', 'x', '', null, undefined, Infinity)).toBe(2);
     expect(registry.get('COUNT')?.([formulaReference(4), formulaReference('4'), null])).toBe(1);
+    const date = new Date(2024, 0, 1);
+    const invalidDate = new Date(NaN);
+    expect(registry.get('COUNT')?.(date, invalidDate, formulaReference(date), formulaReference(invalidDate))).toBe(2);
+    expect(registry.get('COUNT')?.([formulaReference(date), formulaReference(invalidDate), date, '2024-01-01'])).toBe(2);
     expect(registry.get('COUNT')?.(formulaReference(4), formulaReference(0), formulaReference('4'), formulaReference(null), formulaReference(Infinity))).toBe(
       2
     );

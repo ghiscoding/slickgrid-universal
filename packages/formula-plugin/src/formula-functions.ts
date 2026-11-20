@@ -199,14 +199,12 @@ function createBuiltInFormulaFunctions(): Map<string, FormulaCallback> {
           (count, arg) =>
             count +
             (Array.isArray(arg)
-              ? flattenFormulaFunctionArgs(arg).filter(
-                  (value) => typeof unwrapFormulaReference(value) === 'number' && Number.isFinite(unwrapFormulaReference(value))
-                ).length
+              ? flattenFormulaFunctionArgs(arg).filter((value) => isCountableNumericValue(unwrapFormulaReference(value))).length
               : isFormulaReference(arg)
-                ? typeof arg.value === 'number' && Number.isFinite(arg.value)
+                ? isCountableNumericValue(arg.value)
                   ? 1
                   : 0
-                : typeof arg === 'boolean' || isNumericFormulaValue(arg)
+                : typeof arg === 'boolean' || isCountableNumericValue(arg) || isNumericFormulaValue(arg)
                   ? 1
                   : 0),
           0
@@ -353,6 +351,10 @@ function aggregateNumbers(args: unknown[]): number[] | string {
     return true;
   };
   return args.every((arg) => visit(arg)) ? values : FORMULA_ERROR.VALUE;
+}
+
+function isCountableNumericValue(value: unknown): boolean {
+  return (typeof value === 'number' && Number.isFinite(value)) || (value instanceof Date && Number.isFinite(value.getTime()));
 }
 
 function isNumericFormulaValue(value: unknown): boolean {

@@ -337,6 +337,25 @@ describe('FormulaService', () => {
     );
   });
 
+  it('counts date values in references, ranges and date function results', () => {
+    const items = [
+      { id: 'a', value: new Date(2024, 0, 1), total: '' },
+      { id: 'b', value: '2024-01-01', total: '' },
+      { id: 'c', value: new Date(NaN), total: '' },
+    ];
+    const columns: Column[] = [
+      { id: 'value', field: 'value' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+
+    expect(evaluate('=COUNT(A1:A3)')).toBe(1);
+    expect(evaluate('=COUNT(A1,A2,A3)')).toBe(1);
+    expect(evaluate('=COUNT(TODAY(),NOW())')).toBe(2);
+  });
+
   it('preserves blank range members for aggregates and custom functions', () => {
     const items = [
       { id: 'a', value: 2, total: '' },
