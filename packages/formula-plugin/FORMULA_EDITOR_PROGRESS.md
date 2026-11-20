@@ -201,6 +201,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Correct number-versus-text comparison and uppercase logical values in `&` concatenation; cover both with unit tests.
 - [x] Report arithmetic and function overflow as `#NUM!` without masking division-by-zero errors, and render logical values consistently in `CONCAT`/`CONCATENATE`.
 - [ ] Fix mismatched `SUMIF` dimensions with Excel-compatible expansion/truncation and stable identities across layout changes; cover evaluation, persistence and export.
+- [x] Audit and correct comparisons between logical, numeric and text values, including chained comparisons and blank references. Logical values remain numeric in arithmetic.
 - [ ] Audit remaining operator and conditional-function coercion, dates and function argument counts; investigate shared token parsing if further reproductions justify it.
 - [ ] Smoke-test formula integration and the optional stylesheet in Angular, Aurelia, React and Vue. The only current formula demo is Vanilla Example 48, so arrange framework-specific setups and do not infer wrapper behavior from Vanilla.
 - [ ] Complete a clean package install and pnpm package build; investigate the stalled pnpm build. Package exports, custom Sass, five theme builds and version alignment were checked, but clean installation is unverified.

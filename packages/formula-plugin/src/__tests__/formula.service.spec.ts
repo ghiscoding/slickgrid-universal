@@ -91,6 +91,33 @@ describe('FormulaService', () => {
     );
   });
 
+  it('keeps logical values distinct from numbers and text in comparisons', () => {
+    const items = [{ id: 'a', blank: null, logical: false, total: '' }];
+    const columns: Column[] = [
+      { id: 'blank', field: 'blank' },
+      { id: 'logical', field: 'logical' },
+      { id: 'total', field: 'total', allowFormula: true },
+    ];
+    const service = new FormulaService({ autoAssignEditor: false });
+    service.init({ getColumns: () => columns, getData: () => ({ getItems: () => items }), getOptions: () => ({}) } as any);
+    const evaluate = (formula: string) => (service as any).evaluateFormulaExpression(formula, { visited: new Set(), memo: new Map() });
+    expect(evaluate('=1=TRUE')).toBe(false);
+    expect(evaluate('=0<>FALSE')).toBe(true);
+    expect(evaluate('=1=1=1')).toBe(false);
+    expect(evaluate('=TRUE>99')).toBe(true);
+    expect(evaluate('="text"<FALSE')).toBe(true);
+    expect(evaluate('=FALSE>"text"')).toBe(true);
+    expect(evaluate('=A1=FALSE')).toBe(true);
+    expect(evaluate('=FALSE=A1')).toBe(true);
+    expect(evaluate('=B1=0')).toBe(false);
+    expect(evaluate('=TRUE+1')).toBe(2);
+    service.setFormula('a', 'total', '=IF(B1=0,1,2)');
+    expect(service.getEvaluatedCellValue('a', 'total')).toBe(2);
+    expect(service.getExcelFormula({ rowId: 'a', columnId: 'total', columnIds: ['blank', 'logical', 'total'], rowIds: ['a'], excelRowOffset: 2 } as any)).toBe(
+      'IF(B2=0,1,2)'
+    );
+  });
+
   it('reports arithmetic and function overflow without masking division errors or lazy branches', () => {
     const items = [{ id: 'a', large: 1e308, tiny: 1e-308, total: '' }];
     const columns: Column[] = [

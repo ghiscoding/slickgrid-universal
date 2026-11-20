@@ -1307,10 +1307,10 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         let right = unwrapFormulaReference(parseConcatenation());
         left = unwrapFormulaReference(left);
         if (left === null) {
-          left = typeof right === 'string' ? '' : 0;
+          left = typeof right === 'string' ? '' : typeof right === 'boolean' ? false : 0;
         }
         if (right === null) {
-          right = typeof left === 'string' ? '' : 0;
+          right = typeof left === 'string' ? '' : typeof left === 'boolean' ? false : 0;
         }
         if (isFormulaErrorCode(right)) {
           return right;
@@ -1318,11 +1318,15 @@ export class FormulaService implements ExternalResource, FormulaProvider {
         if (typeof left === 'string' && typeof right === 'string') {
           left = left.toUpperCase();
           right = right.toUpperCase();
-        } else if ((typeof left === 'number' && typeof right === 'string') || (typeof left === 'string' && typeof right === 'number')) {
-          // Spreadsheet comparisons order text after numbers without converting numeric text.
-          const leftIsText = typeof left === 'string';
-          left = leftIsText ? 1 : 0;
-          right = leftIsText ? 0 : 1;
+        } else if (
+          typeof left !== typeof right &&
+          ['number', 'string', 'boolean'].includes(typeof left) &&
+          ['number', 'string', 'boolean'].includes(typeof right)
+        ) {
+          // Spreadsheet comparisons order numbers before text and logical values.
+          const rank = (value: unknown) => (typeof value === 'boolean' ? 2 : typeof value === 'string' ? 1 : 0);
+          left = rank(left);
+          right = rank(right);
         }
         switch (op) {
           case '==':

@@ -250,7 +250,7 @@ Evaluation supports:
 - arithmetic/comparison operators
 - built-in and custom functions
 
-Comparisons between text values ignore letter case, including comparisons used in `IF` conditions. Comparisons between numbers and text treat them as different types, with text ordered after numbers. The `&` operator renders logical values as `TRUE` or `FALSE`.
+Comparisons between text values ignore letter case, including comparisons used in `IF` conditions. Numbers, text and logical values are distinct in comparisons and ordered in that sequence. In arithmetic, logical values are converted to numbers. The `&` operator renders them as `TRUE` or `FALSE`.
 
 Arithmetic or function results that overflow return `#NUM!`; division by zero returns `#DIV/0!`.
 
