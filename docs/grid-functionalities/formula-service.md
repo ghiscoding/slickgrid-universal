@@ -275,5 +275,5 @@ For CSV or text export, enable `exportWithFormatter: true` in `TextExportService
 - Verify no upstream custom key handler is intercepting first.
 
 ### Demo
-- Demo Page: https://ghiscoding.github.io/slickgrid-universal/#/example46
-- Demo Component: https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example46.ts
+- Demo Page: https://ghiscoding.github.io/slickgrid-universal/#/example48
+- Demo Component: https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example48.ts

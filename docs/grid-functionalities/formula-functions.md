@@ -141,7 +141,7 @@ For cross-suite reliability:
 3. Restore original formula strings in-memory after export.
 
 Reference implementation:
-- [Example 46](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example46.ts)
+- [Example 48](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example48.ts)
 
 ### Examples
 Runtime registration after init:

@@ -204,7 +204,7 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [ ] Audit remaining operator and conditional-function coercion, dates and function argument counts; investigate shared token parsing if further reproductions justify it.
 - [ ] Smoke-test formula integration and the optional stylesheet in Angular, Aurelia, React and Vue. The only current formula demo is Vanilla Example 48, so arrange framework-specific setups and do not infer wrapper behavior from Vanilla.
 - [ ] Complete a clean package install and pnpm package build; investigate the stalled pnpm build. Package exports, custom Sass, five theme builds and version alignment were checked, but clean installation is unverified.
-- [ ] Finish reviewing current-facing documentation for stale MVP claims and demo references; the package README has been corrected.
+- [x] Review current-facing documentation for stale MVP claims and demo references; update the formula guides and all four framework export guides to point to Vanilla Example 48.
 - [ ] Complete final validation for changed files: relevant tests, lint, formatting and TypeScript; verify 100% statement and line coverage per changed production file, and dependency/circular checks when imports change. Include browser and workbook checks where applicable.
 - [ ] Evaluate editor validation and detailed error messages if needed; the editor currently accepts input without validation.
 - [ ] Deferred: evaluate whole-row reference picking, whole-column drag-handle expansion, colored reference handles and an external formula data-source adapter as separate enhancements.

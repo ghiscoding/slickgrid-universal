@@ -27,7 +27,7 @@ Built-in formulas (for example `SUM`, `IF`, arithmetic expressions) generally ev
 
 If cross-suite reliability is required, treat custom functions as Excel-only and export precomputed scalar values from your app/example instead of exporting custom-function formulas.
 
-For Formula Service custom functions and a portable export workflow, see [Vanilla Formula Service doc](../../../../docs/grid-functionalities/formula-service.md) and [Example 46](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example46.ts).
+For Formula Service custom functions and a portable export workflow, see [Vanilla Formula Service doc](../../../../docs/grid-functionalities/formula-service.md) and [Example 48](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example48.ts).
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example12.vue)
