@@ -101,7 +101,7 @@ The registry contains the built-in names in the supplied AG Grid reference, plus
 
 ## Deferred enhancements
 
-Double-click fill to an adjacent data boundary (distinct from implemented drag-to-fill); row-number whole-row reference picking; colored per-reference handles; external formula data-source adapter; optional editor validation and detailed error messages. These are possible enhancements, not automatic release requirements. Autocompleter replacement and strict selection prerequisites were evaluated and rejected for now. Evaluate a separate calculated-columns package **last**, and inform the user when it is reached.
+Row-number whole-row reference picking; colored per-reference handles; external formula data-source adapter. These are possible enhancements, not automatic release requirements. Double-click fill was rejected; drag-fill remains supported. Autocompleter replacement and strict selection prerequisites were evaluated and rejected for now. Evaluate a separate calculated-columns package **last**, and inform the user when it is reached.
 
 ## Delivery order
 

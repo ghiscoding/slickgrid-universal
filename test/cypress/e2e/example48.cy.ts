@@ -913,6 +913,23 @@ describe('Example 48 - Formula Service', () => {
     cy.reload();
   });
 
+  it('should warn and use CSS reference highlights without a selection model', () => {
+    cy.reload();
+    cy.get(cell(0, 4)).should('contain', '$8.88');
+    cy.window().then((win) => cy.spy(win.console, 'warn').as('selectionWarning'));
+    cy.get('[data-test="show-selection-fallback-btn"]').click();
+    cy.get('.formula-fallback-grid .slick-row[data-row="0"] .slick-cell').eq(1).should('contain', '9').dblclick();
+    cy.get('@selectionWarning').should('have.been.calledOnce');
+    cy.get('@selectionWarning').should(
+      'have.been.calledWithMatch',
+      'Formula range visuals and drag-resize rely on an active cell-capable SelectionModel'
+    );
+    cy.get('.formula-fallback-grid .slick-row[data-row="0"] .slick-cell').eq(0).should('have.class', 'formula-cell-color-1');
+    cy.get('.formula-fallback-grid .slick-row[data-row="2"] .slick-cell').eq(0).should('have.class', 'formula-cell-color-1');
+    cy.get('.formula-editor-input').type('{esc}', { force: true });
+    cy.get('.formula-fallback-grid [class*="formula-cell-color-"]').should('not.exist');
+  });
+
   it('should switch formula reference and column-prefix colors with the grid theme', () => {
     cy.reload();
 

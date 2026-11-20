@@ -82,6 +82,7 @@ export default class Example48 {
   gridOptions!: GridOption;
   gridContainerElm!: HTMLDivElement;
   sgb!: SlickVanillaGridBundle;
+  fallbackGrid?: SlickVanillaGridBundle;
   excelExportService: ExcelExportService;
   textExportService: TextExportService;
   formulaService: FormulaService;
@@ -133,6 +134,7 @@ export default class Example48 {
     this.formulaService.clearFormulaReferenceHighlights();
     this.formulaService.disableExcelHeaderPrefix();
     this._bindingEventService.unbindAll();
+    this.fallbackGrid?.dispose();
     this.sgb?.dispose();
     this.gridContainerElm?.remove();
     document.querySelector('.demo-container')?.classList.remove('dark-mode');
@@ -476,6 +478,39 @@ export default class Example48 {
 
   exportToExcel() {
     this.excelExportService.exportToExcel();
+  }
+
+  showSelectionFallback() {
+    if (this.fallbackGrid) {
+      return;
+    }
+    const container = document.querySelector<HTMLDivElement>('.formula-fallback-grid')!;
+    const formulaService = new FormulaService();
+    const columns: Column[] = [
+      { id: 'value', name: 'Value', field: 'value', width: 150 },
+      { id: 'total', name: 'Formula', field: 'total', width: 200, allowFormula: true },
+    ];
+    const dataset = [
+      { id: 1, value: 2, total: '=SUM(A1:A3)' },
+      { id: 2, value: 3, total: '' },
+      { id: 3, value: 4, total: '' },
+    ];
+    this.fallbackGrid = new Slicker.GridBundle(
+      container,
+      columns,
+      {
+        ...ExampleGridOptions,
+        autoEdit: false,
+        editable: true,
+        enableCellNavigation: true,
+        enableFormulas: true,
+        enableSelection: false,
+        externalResources: [formulaService],
+        gridHeight: 180,
+        gridWidth: 400,
+      },
+      dataset
+    );
   }
 
   exportToExcelWithHidden() {

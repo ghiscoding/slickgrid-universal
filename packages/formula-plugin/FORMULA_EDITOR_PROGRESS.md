@@ -1,6 +1,8 @@
 # Formula Editor Plugin Progress
 
 ## Handoff update (2026-11-20)
+- Example 48 includes a separate formula grid without selection. Cypress verifies the prerequisite warning and CSS reference highlights and cleanup; all 48 Example 48 tests passed.
+- Double-click fill was rejected as a product direction; retain drag-fill and do not treat double-click fill as remaining work.
 - Formula autocomplete now ignores quoted text and replaces the complete function name when selecting a suggestion from its middle. All 47 Example 48 Cypress tests and 163 Formula Plugin unit tests passed.
 - Installed the packed Formula Plugin in a fresh consumer with production dependencies from npm and no workspace overrides. The JavaScript, five CSS themes and Sass exports resolved successfully.
 - Example 48 now tests reference highlighting across 80 restored rows: colors appear on virtualized rows and clear after cancel, including when those rows are rendered again. All 46 Cypress tests passed.
@@ -11,7 +13,7 @@
 - Packed the Formula Plugin and installed its tarball in an isolated offline consumer using local workspace overrides for its 11.0.0 dependencies; `FormulaService` and the default CSS export resolve. A registry-only clean install remains unverified.
 - Consolidated lazy `IF` and `SUMIF` function-argument scanning in one parser, preserving quoted text and nested expressions.
 - Added Example 48 browser assertions for clipped and overlapping reference highlights, cancel cleanup, range-endpoint dragging, and exported custom-function metadata. These additions and the existing grouped SUMPRODUCT regression still need a browser run against the Vanilla demo server; Example 48's 11 rows do not exercise row virtualization.
-- Removed the unverified Example 48 selection-warning browser scenario after repeated failures; unit coverage remains and browser coverage is still open.
+- Replaced the earlier unreliable selection-warning scenario with a separate, user-selectable fallback grid and passing browser coverage.
 - Fixed mismatched `SUMIF` ranges to size `sum_range` from its first cell to the criteria range dimensions, storing the effective cells as stable references. Evaluation, snapshot restore after reorder, and Excel export are covered; all 160 Formula Plugin tests passed with 100% statement and line coverage for the changed production files.
 - The earlier uncommitted work is now committed; the branch was clean at the start of this session.
 - Aligned the formula package version with the monorepo's 11.0.0 version and corrected the package README's outdated evaluator description. A forced TypeScript build, all five Sass theme builds, custom Sass color compilation, public JS/CSS resolution, npm pack dry run, and all 150 formula plugin unit tests passed. The pnpm package build also passed; a clean install is still unverified. The grouped SUMPRODUCT browser regression still needs a running Vanilla demo server.
@@ -26,7 +28,7 @@ Branch context: feat/cell-formula-plugin
 - The previous 40 Example 48 Cypress tests passed before the `SUMPRODUCT` changes. The newly added grouped `SUMPRODUCT` workbook test has not been run: the Vanilla server was not listening on port 8888. Ask the user to start their watch server if it remains unavailable; do not start a duplicate.
 - After the `SUMPRODUCT` changes, 253 focused unit tests passed; changed production files had 100% statement and line coverage. Formula and Excel export TypeScript checks, focused lint, formatting, and the formula plugin source circular-dependency check passed.
 - Preserve the user's preferences: group substantive work into each step, provide a concise commit title/description, avoid dev-only window globals in Cypress, and evaluate calculated columns last with advance notice. Only replace autocomplete if there is a demonstrated LOC or bundle-size benefit.
-- Suggested next work: finish the pending browser/workbook validation, then investigate mismatched `SUMIF` dimensions and the remaining semantics audit. Follow with the outstanding browser, framework and package checks; evaluate double-click fill as a separate optional enhancement. The unchecked checklist below is authoritative, not the historical audit snapshots.
+- Historical suggested work included browser validation, `SUMIF` dimensions and the semantics audit. The unchecked checklist below is authoritative, not the historical audit snapshots.
 
 ## Latest Update: SUMPRODUCT Range Dimensions (2026-11-16)
 - `SUMPRODUCT` now requires matching range dimensions, returns `#VALUE!` for scalar/range or differently shaped arguments, and treats text and logical values in referenced ranges as zero.
@@ -192,9 +194,9 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Evaluate only the selected built-in `IF` branch and propagate errors from evaluated function arguments; validate both branches without executing the unused one.
 - [x] Resolve the conflicting scalar-times-range expectations: both `*` and `×` now return `#VALUE!`.
 - [x] Support dragging the fill handle to copy formulas into a selected target range, adjusting relative references and preserving absolute references.
-- [x] Evaluate double-clicking the fill handle to fill down to an adjacent data boundary. Defer this optional enhancement: the current grid exposes drag replacement but no double-click fill event, and adjacent-boundary rules across groups and filters need a separate design. A future implementation should stop at the first blank in a chosen adjacent visible data column, stop at structural rows, respect filtering, and cap the number of filled cells; multiple adjacent columns and overwrite behavior require an explicit product decision.
+- [x] Evaluate double-click fill: do not implement it; retain drag-fill as the supported fill interaction.
 - [x] Evaluate the existing autocompleter: retain the current contenteditable implementation because an adapter has no demonstrated LOC or bundle-size benefit.
-- [ ] Add and validate browser coverage for selection-model CSS fallback and prerequisite warnings using a suitable demo configuration.
+- [x] Add and validate browser coverage for selection-model CSS fallback and prerequisite warnings using a separate Example 48 grid without selection.
 - [x] Run Example 48 assertions for case-insensitive text comparisons, range-endpoint dragging, clipped and overlapping highlights, cancel cleanup and exported custom-function metadata.
 - [x] Run the grouped `SUMPRODUCT` Example 48 browser/workbook regression and verify its exported workbook calculation in LibreOffice.
 - [x] Verify CSV/text export of evaluated formula values with grouped and ungrouped integration tests. With formatters disabled, export retains the raw dataset value.
@@ -225,7 +227,6 @@ This checklist is the authoritative list of remaining work and decisions, includ
 - [x] Evaluate editor validation: support editor and column validators and their messages; retain calculation errors in cells instead of automatically blocking formula input.
 - [ ] Deferred: evaluate whole-row reference picking, whole-column drag-handle expansion, colored reference handles and an external formula data-source adapter as separate enhancements.
 - [x] Prevent autocomplete inside quoted strings and replace the complete function name when selecting from its middle.
-- [ ] Deferred: revisit double-click fill only if requested; the boundary, grouping, filtering and overwrite policy needs a separate design.
 - [x] Compare Syncfusion's formula reference and add `ABS`, `ROUND`, `MOD`, `SQRT`, and the `RANDOM`, `RAN`, and `CONCATENATE` aliases, with Excel export translation.
 - [x] Distinguish `#CIRCREF!`, `#PARSE!`, missing references and custom-function failures; document Excel export behavior.
 - [x] Validate fixed argument counts for `IF`, `POWER`, random/date functions and `NA`; align `POWER` and `^` error results.
@@ -475,7 +476,7 @@ The following implemented paths remain covered by unit tests but do not yet have
 - Without a cell-capable selection model, range visuals fall back to CSS highlighting only.
 - TreeDataService-style hard throw was intentionally not used for formula selection prerequisites; behavior is warning-only to avoid breaking existing grids.
 - Grouping and Grouping Formatter integration is currently a known limitation for FormulaService and grouped formula export.
-- Series inference currently covers AG Grid's common default path only; modifier-key toggles, custom fill callbacks, range-reduction clearing, and double-click fill remain follow-ups.
+- Series inference currently covers AG Grid's common default path only; modifier-key toggles, custom fill callbacks and range-reduction clearing were identified as possible follow-ups. Double-click fill was later rejected.
 - The FormulaService currently supports all function names and operators listed in the AG Grid Formula Reference, plus `SUMPRODUCT` and `NA`. Revisit for closer Excel/AG Grid semantic parity later, including wildcard criteria, type-coercion edge cases, and distinct `#CIRCREF!` / `#PARSE!` error codes (circular references currently return `#REF!`, and parser failures return `#ERROR!`).
 
 ## Fast Verification
